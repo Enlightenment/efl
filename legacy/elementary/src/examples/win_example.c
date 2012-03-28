@@ -175,7 +175,7 @@ _win_focused_cb(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
    printf("Window focused: %s\n", name);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
    Evas_Object *win, *win2, *bg, *bigbox, *box, *btn, *o;
@@ -324,7 +324,8 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    WIN_ACTION(sticky);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-ELM_MAIN();
+ELM_MAIN()

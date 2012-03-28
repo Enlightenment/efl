@@ -36,7 +36,7 @@ _delay_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UN
    printf("Value delay changed to %0.f\n", elm_spinner_value_get(obj));
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *sp;
@@ -130,6 +130,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
 ELM_MAIN()

@@ -68,7 +68,7 @@ _btn_scale_cb(void        *data __UNUSED__,
    elm_object_scale_set(d.btn, elm_slider_value_get(obj));
 }
 
-int
+EAPI_MAIN int
 elm_main(int    argc __UNUSED__,
          char **argv __UNUSED__)
 {
@@ -190,5 +190,4 @@ elm_main(int    argc __UNUSED__,
    /* exit code */
    return 0;
 }
-
 ELM_MAIN()

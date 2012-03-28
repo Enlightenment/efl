@@ -90,7 +90,7 @@ _transit_start(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED_
    elm_transit_go(trans);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *obj, *icon, *box, *vbox, *btn, *dummy;
@@ -170,10 +170,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
-
-   eina_list_free(objs);
+   elm_shutdown();
 
    return 0;
 }
-
 ELM_MAIN()

@@ -245,7 +245,7 @@ _del(void *data, Evas *evas, Evas_Object *obj, void *event_info)
 }
 
 
-EAPI int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *bt, *gl;
@@ -332,6 +332,8 @@ elm_main(int argc, char **argv)
 
    // run the mainloop and process events and callbacks
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
 ELM_MAIN()

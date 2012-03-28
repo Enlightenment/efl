@@ -45,7 +45,7 @@ _size_changed_cb(void *data __UNUSED__, Evas_Object *layout, const char *emissio
    printf("Minimum size for this theme: %dx%d\n", w, h);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *btn, *layout;
@@ -92,8 +92,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-
 ELM_MAIN()

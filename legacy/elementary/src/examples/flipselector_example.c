@@ -204,6 +204,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    fprintf(stdout, "%s", commands);
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
 ELM_MAIN()

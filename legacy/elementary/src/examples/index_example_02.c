@@ -92,7 +92,7 @@ _index_icmp(const void *data1,
    return strcasecmp(label1, label2);
 }
 
-int
+EAPI_MAIN int
 elm_main(int    argc __UNUSED__,
          char **argv __UNUSED__)
 {
@@ -149,7 +149,8 @@ elm_main(int    argc __UNUSED__,
    elm_index_autohide_disabled_set(idx, EINA_FALSE);
 
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
-
 ELM_MAIN()

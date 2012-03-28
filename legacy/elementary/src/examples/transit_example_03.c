@@ -174,7 +174,7 @@ _cb_tween_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
      *mode = ELM_TRANSIT_TWEEN_MODE_ACCELERATE;
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *obj, *icon, *box, *vbox, *vbox2, *hbox, *btn;
@@ -328,8 +328,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-
 ELM_MAIN()

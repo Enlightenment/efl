@@ -39,7 +39,7 @@ btn_style_click_cb(void *data __UNUSED__, Evas_Object *btn, void *ev __UNUSED__)
    elm_object_style_set(btn, styles[sel_style]);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
    Evas_Object *win, *bg, *box, *btn;
@@ -77,7 +77,8 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_smart_callback_add(btn, "clicked", btn_style_click_cb, NULL);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-ELM_MAIN();
+ELM_MAIN()

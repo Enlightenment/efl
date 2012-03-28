@@ -100,7 +100,7 @@ _btn_options_cb(void *data, Evas_Object *btn, void *ev __UNUSED__)
      }
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
    Evas_Object *win, *bg, *box, *box2, *btn, *icon;
@@ -263,7 +263,8 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    data.cursors.down = btn;
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-ELM_MAIN();
+ELM_MAIN()

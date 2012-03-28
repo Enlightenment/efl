@@ -19,7 +19,7 @@ _btn_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev __U
    loaded = 1 - loaded;
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
    Evas_Object *win, *bg, *box, *btn;
@@ -68,7 +68,8 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, NULL);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-ELM_MAIN();
+ELM_MAIN()

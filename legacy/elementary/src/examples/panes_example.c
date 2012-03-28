@@ -60,7 +60,7 @@ _clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUS
      }
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *panes, *panes_h, *bt;
@@ -120,6 +120,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
 ELM_MAIN()

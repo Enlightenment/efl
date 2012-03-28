@@ -56,7 +56,7 @@ _swallow_btn_cb(void *data, Evas_Object *btn __UNUSED__, void *event_info __UNUS
    evas_object_del(item);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *icon, *icon2, *bt, *bt2, *layout;
@@ -148,8 +148,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-
 ELM_MAIN()

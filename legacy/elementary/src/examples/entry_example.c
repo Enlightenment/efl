@@ -494,7 +494,7 @@ _win_del_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
    elm_exit();
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
    Evas_Object *win, *bg, *box, *tb, *en, *o, *icon;
@@ -578,7 +578,8 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_resize(win, 300, 780);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-ELM_MAIN();
+ELM_MAIN()

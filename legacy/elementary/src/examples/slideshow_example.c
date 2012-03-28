@@ -179,7 +179,7 @@ _cmp_func(const void *data1,
    return strcasecmp(img_path1, img_path2);
 }
 
-int
+EAPI_MAIN int
 elm_main(int    argc __UNUSED__,
          char **argv __UNUSED__)
 {
@@ -317,7 +317,8 @@ elm_main(int    argc __UNUSED__,
    _notify_show(notify, NULL, NULL, NULL);
 
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
-
 ELM_MAIN()

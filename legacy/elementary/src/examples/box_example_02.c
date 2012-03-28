@@ -71,7 +71,7 @@ _test_box_transition_change(void *data)
                                               tdata->transitions);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
    Evas_Object *win, *bg, *bigbox, *bx, *bt;
@@ -167,7 +167,8 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    _test_box_transition_change(&tdata);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-ELM_MAIN();
+ELM_MAIN()

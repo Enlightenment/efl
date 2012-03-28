@@ -68,7 +68,7 @@ down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    ecore_thread_cancel(thr);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *o, *bg;
@@ -102,7 +102,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    thr = ecore_thread_feedback_run(th_do, th_feedback, th_end, th_cancel,
                                    NULL, EINA_TRUE);
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
-
 ELM_MAIN()

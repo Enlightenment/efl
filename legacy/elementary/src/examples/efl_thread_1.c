@@ -50,7 +50,7 @@ my_thread_new(void)
       perror("pthread_create");
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *o, *bg;
@@ -77,7 +77,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    my_thread_new();
 
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
-
 ELM_MAIN()

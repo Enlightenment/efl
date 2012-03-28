@@ -27,7 +27,7 @@ _generation_error_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *eve
    printf("thumbnail generation error.\n");
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
 #if 0
@@ -83,5 +83,4 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    /* exit code */
    return 0;
 }
-
 ELM_MAIN()

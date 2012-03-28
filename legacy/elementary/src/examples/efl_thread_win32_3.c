@@ -73,7 +73,7 @@ my_thread_mainloop_code(void *data)
    free(inf);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *o, *bg;
@@ -100,7 +100,8 @@ elm_main(int argc, char **argv)
    my_thread_new();
 
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
-
 ELM_MAIN()

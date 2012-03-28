@@ -8,7 +8,7 @@
 # define __UNUSED__
 #endif
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bt, *bt2, *bt3, *bt4;
@@ -83,8 +83,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_transit_chain_transit_add(trans3, trans4);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-
 ELM_MAIN()

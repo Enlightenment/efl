@@ -236,7 +236,7 @@ _button_add(Evas_Object *list, Evas_Object *box, const char *label, Evas_Smart_C
    return bt;
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *box, *fbox;
@@ -362,8 +362,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-
 ELM_MAIN()

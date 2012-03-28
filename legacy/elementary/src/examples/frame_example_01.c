@@ -75,11 +75,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
-
-   evas_object_del(r1);
-   evas_object_del(r2);
-   evas_object_del(r3);
-   evas_object_del(r4);
+   elm_shutdown();
 
    return 0;
 }

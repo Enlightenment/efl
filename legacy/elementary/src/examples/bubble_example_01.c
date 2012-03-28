@@ -66,8 +66,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(bubble);
 
    elm_run();
-
-   evas_object_del(icon);
+   elm_shutdown();
 
    return 0;
 }

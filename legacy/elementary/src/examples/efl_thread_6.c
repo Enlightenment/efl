@@ -122,7 +122,7 @@ anim(void *data)
    return EINA_TRUE;
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *o, *bg;
@@ -163,7 +163,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
      }
 
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
-
 ELM_MAIN()

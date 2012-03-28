@@ -11,7 +11,7 @@
 static void _anchorblock_clicked_cb(void *data, Evas_Object *obj, void *ev);
 static void _anchorview_clicked_cb(void *data, Evas_Object *obj, void *ev);
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
    Evas_Object *win, *box, *o, *frame;
@@ -80,10 +80,11 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    elm_object_content_set(frame, o);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-ELM_MAIN();
+ELM_MAIN()
 
 static void _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_Smart_Cb btn_end_cb);
 

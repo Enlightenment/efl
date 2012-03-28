@@ -15,7 +15,7 @@ on_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
    elm_exit();
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg;
@@ -52,5 +52,4 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    /* exit code */
    return 0;
 }
-
 ELM_MAIN()

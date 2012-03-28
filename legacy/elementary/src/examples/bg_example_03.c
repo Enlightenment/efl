@@ -61,7 +61,7 @@ _cb_color_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
      elm_bg_color_set(o_bg, 0, 255, 0);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg;
@@ -168,6 +168,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }

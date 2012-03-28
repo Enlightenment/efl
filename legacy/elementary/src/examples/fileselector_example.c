@@ -238,7 +238,8 @@ elm_main(int    argc __UNUSED__,
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
+
    return 0;
 }
-
 ELM_MAIN()

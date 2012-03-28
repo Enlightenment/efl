@@ -307,7 +307,7 @@ _button_add(Evas_Object *list, Evas_Object *box, const char *label, Evas_Smart_C
    return bt;
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *box, *fbox;
@@ -340,7 +340,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
         _itc->func.state_get = NULL;
         _itc->func.del = NULL;
      }
-   
+
    if (!_itp)
      {
         _itp = elm_genlist_item_class_new();
@@ -350,7 +350,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
         _itp->func.state_get = NULL;
         _itp->func.del = NULL;
      }
-   
+
    if (!_itfav)
      {
         _itfav = elm_genlist_item_class_new();
@@ -423,8 +423,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-
 ELM_MAIN()

@@ -88,7 +88,7 @@ _realize_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    elm_genlist_realized_items_update(list);
 }
 
-int
+EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *box, *hbox;
@@ -201,8 +201,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(win);
 
    elm_run();
+   elm_shutdown();
 
    return 0;
 }
-
 ELM_MAIN()
