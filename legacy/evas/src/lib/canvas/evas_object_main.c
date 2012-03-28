@@ -85,14 +85,14 @@ evas_object_change(Evas_Object *obj)
    if (obj->changed_move)
      {
         movch = 1;
-        obj->changed_move = 0;
-        if (!obj->changed_nomove) obj->changed_move_only = 1;
+        obj->changed_move = EINA_FALSE;
+        if (!obj->changed_nomove) obj->changed_move_only = EINA_TRUE;
         if (obj->changed) return;
      }
    else
      {
-        obj->changed_move_only = 0;
-        obj->changed_nomove = 1;
+        obj->changed_move_only = EINA_FALSE;
+        obj->changed_nomove = EINA_TRUE;
         if (obj->changed) return;
      }
 //   obj->changed = 1;
@@ -100,7 +100,7 @@ evas_object_change(Evas_Object *obj)
    /* set changed flag on all objects this one clips too */
    if (!((movch) && (obj->is_static_clip)))
      {
-        EINA_LIST_FOREACH(obj->clip.clipees, l, obj2) 
+        EINA_LIST_FOREACH(obj->clip.clipees, l, obj2)
           evas_object_change(obj2);
      }
    EINA_LIST_FOREACH(obj->proxy.proxies, l, obj2)
@@ -198,7 +198,7 @@ evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj)
                  obj->prev.cache.clip.y,
                  obj->prev.cache.clip.w,
                  obj->prev.cache.clip.h);
-/*        
+/*
         evas_add_rect(rects,
                       obj->cur.geometry.x,
                       obj->cur.geometry.y,
@@ -225,7 +225,7 @@ evas_object_clip_changes_clean(Evas_Object *obj)
 {
    Eina_Rectangle *r;
 
-   EINA_LIST_FREE(obj->clip.changes, r) 
+   EINA_LIST_FREE(obj->clip.changes, r)
      eina_rectangle_free(r);
 }
 
@@ -397,7 +397,7 @@ evas_object_del(Evas_Object *obj)
 
    if (obj->ref > 0)
      {
-        obj->del_ref = 1;
+        obj->del_ref = EINA_TRUE;
         return;
      }
 #ifdef EVAS_FRAME_QUEUING
@@ -407,7 +407,7 @@ evas_object_del(Evas_Object *obj)
    evas_object_hide(obj);
    if (obj->focused)
      {
-        obj->focused = 0;
+        obj->focused = EINA_FALSE;
         obj->layer->evas->focused = NULL;
         _evas_object_event_new();
         evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL, _evas_event_counter);
@@ -458,12 +458,12 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    nx = x;
    ny = y;
 
-   if (!obj->is_frame) 
+   if (!obj->is_frame)
      {
         int fx, fy;
 
         evas_output_framespace_get(obj->layer->evas, &fx, &fy, NULL, NULL);
-        if (!obj->smart.parent) 
+        if (!obj->smart.parent)
           {
              nx += fx;
              ny += fy;
@@ -501,7 +501,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    obj->cur.geometry.y = ny;
 
 ////   obj->cur.cache.geometry.validity = 0;
-   obj->changed_move = 1;
+   obj->changed_move = EINA_TRUE;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    obj->doing.in_move--;
@@ -541,12 +541,12 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
    nw = w;
    nh = h;
-   if (!obj->is_frame) 
+   if (!obj->is_frame)
      {
         int fw, fh;
 
         evas_output_framespace_get(obj->layer->evas, NULL, NULL, &fw, &fh);
-        if (!obj->smart.parent) 
+        if (!obj->smart.parent)
           {
              nw = w - fw;
              nh = h - fh;
@@ -1008,7 +1008,7 @@ evas_object_hide(Evas_Object *obj)
      }
    else
      {
-/*        
+/*
         if (obj->mouse_grabbed > 0)
           obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
         if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
@@ -1379,8 +1379,8 @@ evas_object_static_clip_get(const Evas_Object *obj)
    return obj->is_static_clip;
 }
 
-EAPI void 
-evas_object_is_frame_object_set(Evas_Object *obj, Eina_Bool is_frame) 
+EAPI void
+evas_object_is_frame_object_set(Evas_Object *obj, Eina_Bool is_frame)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1388,8 +1388,8 @@ evas_object_is_frame_object_set(Evas_Object *obj, Eina_Bool is_frame)
    obj->is_frame = is_frame;
 }
 
-EAPI Eina_Bool 
-evas_object_is_frame_object_get(Evas_Object *obj) 
+EAPI Eina_Bool
+evas_object_is_frame_object_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
