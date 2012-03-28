@@ -16,6 +16,20 @@
  * @defgroup Ecore_IMF_Context_Group Ecore Input Method Context Functions
  *
  * Functions that operate on Ecore Input Method Context objects.
+
+ * Ecore Input Method Context Function defines the interface for EFL input methods. 
+ * An input method is used by EFL text input widgets like elm_entry 
+ * (based on edje_entry) to map from key events to Unicode character strings.
+ *
+ * The default input method can be set through setting the ECORE_IMF_MODULE environment variable.
+ *
+ * An input method may consume multiple key events in sequence and finally output the composed result. 
+ * This is called preediting, and an input method may provide feedback about 
+ * this process by displaying the intermediate composition states as preedit text.
+ *
+ * Immodule is plugin to connect your application and input method framework such as SCIM, ibus, and so on.@n
+ * ecore_imf_init() should be called to initialize and load immodule.@n
+ * ecore_imf_shutdown() is used for shutdowning and unloading immodule. 
  */
 
 /**
@@ -760,7 +774,7 @@ ecore_imf_context_autocapital_type_get(Ecore_IMF_Context *ctx)
 }
 
 /**
- * Set the callback to be used on get_surrounding request.
+ * Set the callback to be used on surrounding_get request.
  *
  * This callback will be called when the Input Method Context
  * module requests the surrounding context.
@@ -957,6 +971,9 @@ EAPI void *ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
 
 /**
  * Retrieve context around insertion point.
+ * Input methods typically want context in order to constrain input text based on existing text; 
+ * this is important for languages such as Thai where only some sequences of characters are allowed.
+ * In addition, the text around the insertion point can be used for supporting autocapital feature.
  *
  * This function is implemented by calling the
  * Ecore_IMF_Context::retrieve_surrounding_func (
