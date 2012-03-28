@@ -32,7 +32,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    Elm_Calendar_Mark *mark;
    struct tm selected_time;
    time_t current_time;
-   struct tm sunday = {0, 0, 12, 7, 0, 0, 0, 0, -1 };
+   struct tm sunday = { 0, 0, 12, 7, 0, 0, 0, 0, -1, 0, NULL };
    /* tm {sec, min, hour, mday, mon, year, wday, yday, isdst } */
    /* weekdays since Sunday, range 0 to 6 */
    struct tm christmas;
