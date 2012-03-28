@@ -439,7 +439,6 @@ EFL_ATTRIBUTE_UNUSED
 
 have_wince="no"
 have_win32="no"
-EINA_CFLAGS=""
 case "$host_os" in
    mingw32ce*)
       EINA_CFLAGS="${EVIL_CFLAGS}"
