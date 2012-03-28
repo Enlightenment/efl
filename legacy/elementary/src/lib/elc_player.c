@@ -427,7 +427,7 @@ _player_button_add(Evas_Object *parent, Evas_Object *obj, Evas_Object *layout, c
    return bt;
 }
 
-static const char *
+static char *
 _double_to_time(double value)
 {
    char buf[256];
@@ -447,7 +447,13 @@ _double_to_time(double value)
      snprintf(buf, sizeof(buf), "%02i.%02i",
               ps, pf);
 
-   return eina_stringshare_add(buf);
+   return (char *)eina_stringshare_add(buf);
+}
+
+static void
+_value_free(char *data)
+{
+   eina_stringshare_del(data);
 }
 #endif
 
@@ -555,8 +561,8 @@ elm_player_add(Evas_Object *parent)
 
    wd->slider = elm_slider_add(parent);
    elm_widget_sub_object_add(obj, wd->slider);
-   elm_slider_indicator_format_function_set(wd->slider, _double_to_time, eina_stringshare_del);
-   elm_slider_units_format_function_set(wd->slider, _double_to_time, eina_stringshare_del);
+   elm_slider_indicator_format_function_set(wd->slider, _double_to_time, _value_free);
+   elm_slider_units_format_function_set(wd->slider, _double_to_time, _value_free);
    elm_slider_min_max_set(wd->slider, 0, 0);
    elm_slider_value_set(wd->slider, 0);
    elm_object_disabled_set(wd->slider, EINA_TRUE);
