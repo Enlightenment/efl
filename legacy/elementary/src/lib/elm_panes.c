@@ -166,6 +166,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
      {
         evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
+        edje_object_part_unswallow(wd->panes, sub);
         wd->contents.left = NULL;
         _sizing_eval(obj);
      }
@@ -173,11 +174,11 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
      {
         evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
+        edje_object_part_unswallow(wd->panes, sub);
         wd->contents.right= NULL;
         _sizing_eval(obj);
      }
 }
-
 
 static void
 _clicked(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__, const char *source __UNUSED__)
@@ -216,14 +217,12 @@ static void
 _content_left_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->contents.left == content) return;
    if (wd->contents.left)
-     {
-        evas_object_del(wd->contents.left);
-        wd->contents.left = NULL;
-     }
+     evas_object_del(wd->contents.left);
+   wd->contents.left = content;
    if (content)
      {
-        wd->contents.left = content;
         elm_widget_sub_object_add(obj, content);
         edje_object_part_swallow(wd->panes, "elm.swallow.left", content);
      }
@@ -233,14 +232,12 @@ static void
 _content_right_set(Evas_Object *obj, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->contents.right == content) return;
    if (wd->contents.right)
-     {
-        evas_object_del(wd->contents.right);
-        wd->contents.right = NULL;
-     }
+     evas_object_del(wd->contents.right);
+   wd->contents.right = content;
    if (content)
      {
-        wd->contents.right = content;
         elm_widget_sub_object_add(obj, content);
         edje_object_part_swallow(wd->panes, "elm.swallow.right", content);
      }
@@ -253,8 +250,6 @@ _content_left_unset(Evas_Object *obj)
    if (!wd->contents.left) return NULL;
    Evas_Object *content = wd->contents.left;
    elm_widget_sub_object_del(obj, content);
-   edje_object_part_unswallow(wd->panes, content);
-   wd->contents.left = NULL;
    return content;
 }
 
@@ -265,8 +260,6 @@ _content_right_unset(Evas_Object *obj)
    if (!wd->contents.right) return NULL;
    Evas_Object *content = wd->contents.right;
    elm_widget_sub_object_del(obj, content);
-   edje_object_part_unswallow(wd->panes, content);
-   wd->contents.right = NULL;
    return content;
 }
 
