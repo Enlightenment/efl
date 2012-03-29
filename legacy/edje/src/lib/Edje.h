@@ -161,6 +161,8 @@ Unlike Ebits, Edje separates the layout and behavior logic.
 What follows is a list with various commented examples, covering a great
 part of Edje's API:
 
+Note: The example files are located at /Where/Enlightenment/is/installed/share/edje/examples
+
 - @ref Example_Edje_Basics
 - @ref tutorial_edje_swallow
 - @ref tutorial_edje_table
