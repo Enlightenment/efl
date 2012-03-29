@@ -86,6 +86,7 @@ test_menu.c \
 test_multi.c \
 test_multibuttonentry.c \
 test_naviframe.c \
+test_naviframe_complex.c \
 test_notify.c \
 test_panel.c \
 test_panes.c \
