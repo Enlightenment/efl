@@ -183,35 +183,42 @@
 
 /**
  * @page tutorial_edje_text Edje Text example
- * @dontinclude edje-text.c
+ *
  *
  * This example shows how to manipulate TEXT and TEXTBLOCK parts from code.
  *
  * The very first we are going to do is register a callback to react to changes
  * in the text of our parts:
- * @skip _on_destroy
- * @skip static void
- * @until }
+ * @dontinclude edje-text.c
+ * @skipline edje_object_text_change_cb_set
  *
+ *
+ * @dontinclude edje-text.c
  * @skipline text_change
  * @note Since edje_obj represent a group we'll be notified whenever any part's
  * text in that group changes.
  *
  * We now set the text for two our two parts:
- * @until text_set
- * @until text_set
+ * @dontinclude edje-text.c
+ * @skip text_set
+ * @until edje_object_part_text_set(edje_obj, "part_two"
  * @note Since the "part_two" part is a TEXTBLOCK we can use formatting such as
  * @<b@>
  *
  * And we now move on to selection issues, first thing we do is make sure the
  * user can select text:
- * @until select_allow
+ * @dontinclude edje-text.c
+ * @skip edje_object_part_text_select_allow_set
+ * @until edje_object_part_text_select_all
  *
  * We then select the entire text, and print the selected text:
- * @until printf
+ * @dontinclude edje-text.c
+ * @skipline printf("selection: %s\n",
  *
  * We now unselect the entire text(set selection to none), and print the
  * selected text:
+ * @dontinclude edje-text.c
+ * @skip edje_object_part_text_select_none
  * @until printf
  *
  * Our example will look like this:
@@ -222,7 +229,7 @@
  *
  * The full source code follows:
  * @include edje-text.c
- * @example edje-text.c
+ *
  *
  * The theme used in this example is:
  * @include text.edc
@@ -487,10 +494,11 @@
  * setting some global data on a structure, load the edje file and so:
  *
  * @dontinclude edje-drag.c
- * @skip value changed
- * @skip }
- * @skip int
- * @until evas_object_show(app.edje)
+ * @skip static const char *PARTNAME
+ * @until ;
+ *
+ * @skip main(int argc __UNUSED__, char *argv[])
+ * @until evas_object_show
  *
  * We want to use the drag_page and drag_step functions, and in order to do so we
  * need to define the step size and page size of our dragable part. They are
@@ -505,14 +513,29 @@
  * this part will receive mouse events). Thus, we set a callback for the signal
  * "drag", which comes from the dragable part:
  *
- * @until _knob_moved_cb
+ * @dontinclude edje-drag.c
+ * @skipline evas_object_event_callback_add
+ *
+ * @skipline edje_object_signal_callback_add
  *
  * Now, let's take a look at our key down callback:
  *
  * @dontinclude edje-drag.c
- * @skip _canvas_resize_cb
- * @skip static
- * @until unhandled key
+ * @skip _on_bg_key_down
+ * @until }
+ * @skip else
+ * @until }
+ * @skip else
+ * @until }
+ * @skip else
+ * @until }
+ * @skip else
+ * @until }
+ * @skip else
+ * @until }
+ * @skip else
+ * @until }
+ * @skip else
  * @until }
  *
  * On this callback we define that the user will use the "up" and "down" arrows
@@ -529,6 +552,8 @@
  * And here is the callback for the @c "drag" signal that is received from the
  * theme:
  *
+ * @dontinclude edje-drag.c
+ * @skip _on_knob_moved
  * @until }
  *
  * The example's window should look like this picture:
@@ -577,7 +602,7 @@
  *
  * After this, some boilerplate code to load the theme:
  *
- * @until evas_object_show(app.edje)
+ * @until evas_object_show(app.bg)
  *
  * Now we are going to setup a callback to tell us that the animation has ended.
  * We do this just to avoid sending signals to the theme while it's animating.
@@ -625,7 +650,9 @@
  *
  * Finally we add a callback for the animation ended signal:
  *
+ * @skip  _animation_end_cb
  * @until }
+ *
  *
  * The example's window should look like this picture:
  *
@@ -953,4 +980,3 @@
  * @include edje-multisense.c
  * @include sound.edc
  */
- 
