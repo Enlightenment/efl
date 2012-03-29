@@ -136,8 +136,6 @@
  * @image latex edje-basics-example.eps width=\textwidth
  *
  * The full example follows.
- *
- *
  * @include edje-basic.c
  *
  * To compile use this command:
@@ -682,13 +680,13 @@
  * Let's move to the code, then. After instantiating the Edje object,
  * we register two <b>signal callbacks</b> on it. The first one uses
  * @b globbing, making all of the wheel mouse actions over the left
- * rectangle to trigger @c _mouse_wheel_cb. Note that those kind of
+ * rectangle to trigger @c _mouse_wheel. Note that those kind of
  * signals are generated @b internally (and automatically) in Edje. The
  * second is a direct signal match, to a (custom) signal we defined in
  * the EDC, ourselves:
  * @dontinclude edje-signals-messages.c
  * @skip edje_object_add
- * @until _mouse_over_cb
+ * @until _mouse_over
  * @dontinclude edje-signals-messages.c
  * @skip print signals coming from theme
  * @until }
@@ -771,6 +769,16 @@
  *
  * @include signals-messages.edc
  * @include edje-signals-messages.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-signals-messages edje-signals-messages.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\"
+ * -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc signals-messages.edc
+ * @endverbatim
  * @example edje-signals-messages.c
  */
 
@@ -839,7 +847,7 @@
  *
  * The full source code follows:
  * @include edje-color-class.c
- * @example edje-color-class.c
+ *
  *
  * The theme used in this example is:
  * @include color-class.edc
@@ -883,7 +891,7 @@
  * Let's start by looking at the piece of code responsible to the actions commented
  * above.
  * @dontinclude edje-animations.c
- * @skip _on_key_down_cb
+ * @skip _on_key_down
  * @until Stopping
  * @until }
  * @until }
