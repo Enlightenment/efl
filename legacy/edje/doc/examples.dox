@@ -332,8 +332,9 @@
  *
  * The code until now is the one that follows:
  *
- * @skip main
- * @until evas_object_show(app.edje)
+ * @dontinclude edje-box.c
+ * @skip main(int argc __UNUSED__, char *argv[])
+ * @until ecore_evas_data_set(ee, "background", bg)
  *
  * Also notice that we set the callback @c _bg_key_down for @c "key down" events
  * on the background object, and that object is the one with focus.
@@ -343,6 +344,8 @@
  * events on every object. These callbacks will be used to add or delete objects
  * from the box part.
  *
+ * @dontinclude edje-box.c
+ * @skip bg = evas_object_rectangle_add(evas)
  * @until evas_object_event
  * @until }
  *
@@ -416,9 +419,7 @@
  * But the important part is the next one:
  *
  * @dontinclude edje-box2.c
- * @skip static struct _App
- * @skip static
- * @until }
+ * @skip static void
  * @until }
  *
  * This code implements our custom layout, which will position every object
@@ -429,9 +430,10 @@
  * Later on the @c main function, everything we need to do is to register this
  * custom layout function with edje:
  *
+ * @dontinclude edje-box2.c
  * @skipline edje_box_layout_register
  *
- * And use it inside the .edc file:
+ * And use it inside the box.edc file:
  *
  * @dontinclude box.edc
  * @skip example/group2
