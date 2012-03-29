@@ -46,8 +46,8 @@ void *alloca(size_t);
 #include "Ecore_Getopt.h"
 
 static const char *prog = NULL;
-static char **argv = NULL;
-static int argc = 0;
+static char **_argv = NULL;
+static int _argc = 0;
 static int cols = 80;
 static int helpcol = 80 / 3;
 
@@ -677,13 +677,14 @@ ecore_getopt_help(FILE               *fp,
 {
    const char *var;
 
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!parser) return;
 
-   if (argc < 1)
+   if (_argc < 1)
      {
-        ecore_app_args_get(&argc, &argv);
-        if ((argc > 0) && (argv[0]))
-          prog = argv[0];
+        ecore_app_args_get(&_argc, &_argv);
+        if ((_argc > 0) && (_argv[0]))
+          prog = _argv[0];
         else
           prog = parser->prog;
      }
