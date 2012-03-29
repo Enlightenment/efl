@@ -68,7 +68,7 @@ set_api_state(api_data *api)
       case INDEX_ITEM_FIND:
            {
               Elm_Object_Item *i = elm_index_item_find(d->id, d->item);
-              if(i)
+              if (i)
                 {
                    printf("Item Find - Found Item.\n");
                    elm_object_item_del(i);

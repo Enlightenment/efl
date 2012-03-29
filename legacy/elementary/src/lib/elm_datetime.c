@@ -347,7 +347,7 @@ _max_days_get(int year, int month)
    localtime_r(&t, &time1);
    time1.tm_year = year;
    time1.tm_mon = month;
-   for(day = MIN_DAYS_IN_MONTH; day <= mapping[ELM_DATETIME_DATE].def_max; day++)
+   for (day = MIN_DAYS_IN_MONTH; day <= mapping[ELM_DATETIME_DATE].def_max; day++)
      {
         time1.tm_mday = day;
         mktime(&time1);

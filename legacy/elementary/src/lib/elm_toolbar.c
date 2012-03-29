@@ -268,7 +268,7 @@ _del_pre_hook(Evas_Object *obj)
 
    if (!wd) return;
    it = ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items);
-   while(it)
+   while (it)
      {
         next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
         _item_del(it);

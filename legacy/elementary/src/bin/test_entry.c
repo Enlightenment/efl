@@ -1743,7 +1743,7 @@ item_provider(void *images __UNUSED__, Evas_Object *en, const char *item)
    Evas_Object *o = NULL;;
    char buf[1024];
 
-   if(!strcmp(item, "itemprovider"))
+   if (!strcmp(item, "itemprovider"))
      {
         snprintf(buf, sizeof(buf), "%s/images/icon_00.png",
                  elm_app_data_dir_get());
@@ -1760,7 +1760,7 @@ prepend_item_provider(void *images __UNUSED__, Evas_Object *en, const char *item
    Evas_Object *o = NULL;;
    char buf[1024];
 
-   if(!strcmp(item, "itemprovider"))
+   if (!strcmp(item, "itemprovider"))
      {
         snprintf(buf, sizeof(buf), "%s/images/icon_10.png",
                  elm_app_data_dir_get());

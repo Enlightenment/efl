@@ -289,7 +289,7 @@ _content_set_hook(Evas_Object *obj, const char *item, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd || !content) return;
    if (item && !strcmp(item, "default")) return;
-   if(strcmp(elm_object_widget_type_get(content), "check")) return;
+   if (strcmp(elm_object_widget_type_get(content), "check")) return;
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {

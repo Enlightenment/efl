@@ -715,7 +715,7 @@ notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
                   if ((j == CNP_ATOM_text_uri) ||
                       (j == CNP_ATOM_text_urilist))
                     {
-                      if(!is_uri_type_data(sel, notify)) continue;
+                      if (!is_uri_type_data(sel, notify)) continue;
                     }
                   cnp_debug("Atom %s matches\n",atoms[j].name);
                   goto done;

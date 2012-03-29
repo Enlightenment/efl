@@ -129,7 +129,7 @@ external_calendar_params_parse(void *data __UNUSED__,
         if (!strcmp(param->name, "year_min"))
           mem->year_min = param->i;
 
-        else if(!strcmp(param->name, "year_max"))
+        else if (!strcmp(param->name, "year_max"))
           mem->year_max = param->i;
 
         else if (!strcmp(param->name, "sel_enable"))

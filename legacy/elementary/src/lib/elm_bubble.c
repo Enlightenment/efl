@@ -168,7 +168,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 
    if (!part || !strcmp(part, "default"))
      _content_set(obj, content);
-   else if(!strcmp(part, "icon"))
+   else if (!strcmp(part, "icon"))
      _icon_set(obj, content);
 }
 
@@ -180,7 +180,7 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    if (!wd) return NULL;
    if (!part || !strcmp(part, "default"))
      return wd->content;
-   else if(!strcmp(part, "icon"))
+   else if (!strcmp(part, "icon"))
      return wd->icon;
    return NULL;
 }
@@ -193,7 +193,7 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    if (!wd) return NULL;
    if (!part || !strcmp(part, "default"))
      return _content_unset(obj);
-   else if(!strcmp(part, "icon"))
+   else if (!strcmp(part, "icon"))
      return _icon_unset(obj);
    return NULL;
 }
@@ -353,7 +353,7 @@ elm_bubble_pos_set(Evas_Object *obj, Elm_Bubble_Pos pos)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if(pos<ELM_BUBBLE_POS_TOP_LEFT || pos>ELM_BUBBLE_POS_BOTTOM_RIGHT) return;
+   if (pos<ELM_BUBBLE_POS_TOP_LEFT || pos>ELM_BUBBLE_POS_BOTTOM_RIGHT) return;
    wd->pos = pos;
    _theme_hook(obj);
 }

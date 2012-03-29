@@ -1189,10 +1189,10 @@ elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, int *r __UNU
    item = (Elm_Color_Item *) it;
    if (item)
      {
-        if(r) *r = item->color->r;
-        if(g) *g = item->color->g;
-        if(b) *b = item->color->b;
-        if(a) *a = item->color->a;
+        if (r) *r = item->color->r;
+        if (g) *g = item->color->g;
+        if (b) *b = item->color->b;
+        if (a) *a = item->color->a;
      }
 }
 

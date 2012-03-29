@@ -240,7 +240,7 @@ _item_text_set_hook(Elm_Object_Item *it,
 
    if (!part || !strcmp(part, "default"))
      snprintf(buf, sizeof(buf), "elm.text.title");
-   else if(!strcmp("subtitle", part))
+   else if (!strcmp("subtitle", part))
      snprintf(buf, sizeof(buf), "elm.text.subtitle");
    else
      snprintf(buf, sizeof(buf), "%s", part);
@@ -284,7 +284,7 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 
    if (!part || !strcmp(part, "default"))
      snprintf(buf, sizeof(buf), "elm.text.title");
-   else if(!strcmp("subtitle", part))
+   else if (!strcmp("subtitle", part))
      snprintf(buf, sizeof(buf), "elm.text.subtitle");
    else
      snprintf(buf, sizeof(buf), "%s", part);
@@ -1326,7 +1326,7 @@ elm_naviframe_item_pop_to(Elm_Object_Item *it)
 
    l = wd->stack->last->prev;
 
-   while(l)
+   while (l)
      {
         if (EINA_INLIST_CONTAINER_GET(l, Elm_Naviframe_Item) ==
             ((Elm_Naviframe_Item *)it)) break;

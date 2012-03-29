@@ -3392,7 +3392,7 @@ elm_win_socket_listen(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bo
    if (!win) return EINA_FALSE;
    if (!win->ee) return EINA_FALSE;
 
-   if(!ecore_evas_extn_socket_listen(win->ee, svcname, svcnum, svcsys))
+   if (!ecore_evas_extn_socket_listen(win->ee, svcname, svcnum, svcsys))
      return EINA_FALSE;
 
    return EINA_TRUE;

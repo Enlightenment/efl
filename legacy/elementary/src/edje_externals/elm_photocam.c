@@ -129,7 +129,7 @@ external_photocam_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_
 	     return EINA_TRUE;
 	  }
      }
-   else if(!strcmp(param->name, "paused"))
+   else if (!strcmp(param->name, "paused"))
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {

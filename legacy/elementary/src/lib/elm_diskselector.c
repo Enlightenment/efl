@@ -966,7 +966,7 @@ _check_identical_item(Elm_Diskselector_Item *it, Evas_Object *icon)
                                   idx - ic + (2 * ac));
           }
 
-        if(dit) _item_icon_set(dit, icon);
+        if (dit) _item_icon_set(dit, icon);
         _sizing_eval(wd->self);
      }
 }

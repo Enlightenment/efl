@@ -408,7 +408,7 @@ consume_event(Widget_Data *wd, void *event_info,
 {  /* Mark EVAS_EVENT_FLAG_ON_HOLD on events that are used by gesture layer */
    /* ev_flags != EVAS_EVENT_FLAG_NONE means target used event and g-layer  */
    /* should not refeed this event.                                         */
-   if(!event_info)
+   if (!event_info)
      return;  /* This happens when restarting gestures  */
 
    if ((ev_flags) || (!wd->repeat_events))
@@ -1400,7 +1400,7 @@ static void
 _compute_taps_center(Long_Tap_Type *st,
       Evas_Coord *x_out, Evas_Coord *y_out, Pointer_Event *pe)
 {
-   if(!eina_list_count(st->touched))
+   if (!eina_list_count(st->touched))
      return;
 
    Eina_List *l;
@@ -1524,7 +1524,7 @@ _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
 
       case EVAS_CALLBACK_MULTI_MOVE:
       case EVAS_CALLBACK_MOUSE_MOVE:
-        if(st->info.n &&
+        if (st->info.n &&
            ((gesture->state == ELM_GESTURE_STATE_START) ||
                (gesture->state == ELM_GESTURE_STATE_MOVE)))
           {  /* Report MOVE only if STARTED */
@@ -2663,7 +2663,7 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
               Eina_List *l;
               Pointer_Event *p;
 
-              if(eina_list_count(wd->touched) > 2)
+              if (eina_list_count(wd->touched) > 2)
                 {  /* Process zoom only when 2 fingers on surface */
                    ev_flag = _set_state(gesture_zoom,
                          ELM_GESTURE_STATE_ABORT, &st->info, EINA_FALSE);
@@ -2888,7 +2888,7 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
               Eina_List *l;
               Pointer_Event *p;
 
-              if(eina_list_count(wd->touched) > 2)
+              if (eina_list_count(wd->touched) > 2)
                 {  /* Process rotate only when 2 fingers on surface */
                    ev_flag = _set_state(gesture,
                          ELM_GESTURE_STATE_ABORT, &st->info, EINA_FALSE);
@@ -3182,10 +3182,10 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    int i;
    Gesture_Info *g;
    printf("Gesture | State | is tested\n");
-   for(i = ELM_GESTURE_N_TAPS; i < ELM_GESTURE_LAST; i++)
+   for (i = ELM_GESTURE_N_TAPS; i < ELM_GESTURE_LAST; i++)
      {
         g = wd->gesture[i];
-        if(g)
+        if (g)
           printf("   %d       %d       %d\n", i, g->state, g->test);
      }
 #endif

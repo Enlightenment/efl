@@ -272,7 +272,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
    if (!part || !strcmp(part, "left"))
      _content_left_set(obj, content);
-   else if(!strcmp(part, "right"))
+   else if (!strcmp(part, "right"))
      _content_right_set(obj, content);
 }
 

@@ -36,7 +36,7 @@ static void
 set_api_state(api_data *api)
 {
    const Eina_List *disks = elm_box_children_get(api->box);
-   if(!eina_list_count(disks))
+   if (!eina_list_count(disks))
      return;
 
    switch(api->state)

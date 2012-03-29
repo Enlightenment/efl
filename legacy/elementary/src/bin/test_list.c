@@ -79,7 +79,7 @@ Scroll to end
       case ITEM_INSERT_BEFORE: /* 1 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_list_item_insert_before(li,
                         eina_list_nth(items, eina_list_count(items)-1),
@@ -93,7 +93,7 @@ Scroll to end
       case ITEM_INSERT_AFTER: /* 2 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_list_item_insert_after(li,
                         eina_list_nth(items, eina_list_count(items)-2),
@@ -107,7 +107,7 @@ Scroll to end
       case ITEM_SEPARATOR_SET: /* 3 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_list_item_separator_set(eina_list_nth(items, eina_list_count(items)-3), EINA_TRUE);
                   elm_list_item_bring_in(eina_list_nth(items, eina_list_count(items)-3));
@@ -119,7 +119,7 @@ Scroll to end
       case LIST_ITEM_DEL: /* 4 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_object_item_del(eina_list_data_get(eina_list_last(items)));
                 }
@@ -138,7 +138,7 @@ Scroll to end
       case TOOLTIP_TEXT_SET: /* 7 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_object_item_tooltip_text_set(eina_list_data_get(eina_list_last(items)), "Tooltip set from API");
                 }
@@ -149,7 +149,7 @@ Scroll to end
       case TOOLTIP_UNSET: /* 8 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_object_item_tooltip_unset(eina_list_data_get(eina_list_last(items)));
                 }
@@ -159,7 +159,7 @@ Scroll to end
       case ITEM_CURSOR_SET: /* 9 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_object_item_cursor_set(eina_list_data_get(eina_list_last(items)), ELM_CURSOR_HAND2);
                 }
@@ -169,7 +169,7 @@ Scroll to end
       case ITEM_CURSOR_STYLE_SET: /* 10 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_object_item_cursor_style_set(eina_list_data_get(eina_list_last(items)), "transparent");
                 }
@@ -179,7 +179,7 @@ Scroll to end
       case DISABLED_SET: /* 11 */
            {
               const Eina_List *items = elm_list_items_get(li);
-              if(eina_list_count(items))
+              if (eina_list_count(items))
                 {
                   elm_object_item_disabled_set(eina_list_data_get(eina_list_last(items)), EINA_TRUE);
                 }

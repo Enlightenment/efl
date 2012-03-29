@@ -24,7 +24,7 @@ static void
 set_api_state(api_data *api)
 {
    const Eina_List *items = elm_box_children_get(api->box);
-   if(!eina_list_count(items))
+   if (!eina_list_count(items))
      return;
 
    /* Get first item of list of vbox children */

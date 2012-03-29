@@ -1078,9 +1078,9 @@ _track_place(Widget_Data *wd)
         _region_to_coord_convert(wd, lon_min, lat_max, size, &xmin, &ymin);
         _region_to_coord_convert(wd, lon_max, lat_min, size, &xmax, &ymax);
 
-        if( !(xmin < px && xmax < px) && !(xmin > px+ow && xmax > px+ow))
+        if ( !(xmin < px && xmax < px) && !(xmin > px+ow && xmax > px+ow))
         {
-           if( !(ymin < py && ymax < py) && !(ymin > py+oh && ymax > py+oh))
+           if ( !(ymin < py && ymax < py) && !(ymin > py+oh && ymax > py+oh))
            {
               //display the route
               evas_object_move(route, xmin - px, ymin - py);

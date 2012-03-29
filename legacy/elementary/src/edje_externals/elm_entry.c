@@ -122,7 +122,7 @@ external_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
      }
    else if (!strcmp(param->name, "single line"))
      {
-        if(param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              elm_entry_single_line_set(obj, param->i);
              return EINA_TRUE;
@@ -130,7 +130,7 @@ external_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
      }
    else if (!strcmp(param->name, "password"))
      {
-        if(param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              elm_entry_password_set(obj, param->i);
              return EINA_TRUE;

@@ -148,7 +148,7 @@ _remove_obj_from_list(Elm_Transit *transit, Evas_Object *obj)
 {
    //Remove duplicated objects
    //TODO: Need to consider about optimizing here
-   while(1)
+   while (1)
      {
         if (!eina_list_data_find_list(transit->objs, obj))
           break;

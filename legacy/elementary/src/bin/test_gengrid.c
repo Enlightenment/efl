@@ -412,7 +412,7 @@ cursor_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    for ((item = elm_gengrid_first_item_get(grid)); item;
         (item = elm_gengrid_item_next_get(item)))
      {
-        if(!elm_check_state_get(obj))
+        if (!elm_check_state_get(obj))
           {
              elm_gengrid_item_cursor_unset(item);
              continue;

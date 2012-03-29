@@ -39,7 +39,7 @@ static void
 set_api_state(api_data *api)
 {
    const Eina_List *items = elm_box_children_get(api->box);
-   if(!eina_list_count(items))
+   if (!eina_list_count(items))
      return;
 
    /* use elm_box_children_get() to get list of children */
@@ -51,7 +51,7 @@ set_api_state(api_data *api)
          break;
 
       case BOX_PACK_BEFORE:
-         if(eina_list_count(items) > 1)
+         if (eina_list_count(items) > 1)
                {  /* Put last item before the one preceeding it */
                   elm_box_unpack(api->box, eina_list_data_get(eina_list_last(items)));
                   elm_box_pack_before(api->box,
@@ -61,7 +61,7 @@ set_api_state(api_data *api)
          break;
 
       case BOX_PACK_AFTER:
-         if(eina_list_count(items) > 1)
+         if (eina_list_count(items) > 1)
                {  /* Put item before last to last */
                   elm_box_unpack(api->box, eina_list_nth(items,
                            eina_list_count(items)-2));
