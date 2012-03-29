@@ -1963,7 +1963,7 @@ _item_flips_realize(Elm_Gen_Item *it,
                     Evas_Object *target,
                     Eina_List **source)
 {
-   Eina_List *res = NULL;
+   Eina_List *res = it->content_objs;
 
    if (it->itc->func.content_get)
      {
