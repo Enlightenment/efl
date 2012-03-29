@@ -209,7 +209,7 @@ extern "C" {
  * #endif
  * @endcode
  *
- * Note the #if check can be dropped if your program refuses to compile or
+ * Note the \#if check can be dropped if your program refuses to compile or
  * work with an Eet version less than 1.3.0.
  */
 typedef struct _Eet_Version
