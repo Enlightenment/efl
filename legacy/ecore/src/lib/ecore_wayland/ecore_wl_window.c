@@ -227,25 +227,56 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
-   if ((win->surface) && (buffer))
-     wl_surface_attach(win->surface, buffer, x, y);
-   if (win->surface)
+
+   switch (win->buffer_type)
      {
-        if (win->region.input)
+      case ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW:
+        /* FIXME: weston has wl_egl_window_get_attached_size */
+        break;
+      case ECORE_WL_WINDOW_BUFFER_TYPE_EGL_IMAGE:
+      case ECORE_WL_WINDOW_BUFFER_TYPE_SHM:
+        if (win->surface)
           {
-             wl_surface_set_input_region(win->surface, win->region.input);
-             wl_region_destroy(win->region.input);
-             win->region.input = NULL;
+             int dx = 0, dy = 0;
+
+             if ((win->server_allocation.w != win->allocation.w) || 
+                 (win->server_allocation.h != win->allocation.h))
+               {
+                  dx = win->allocation.w - win->server_allocation.w;
+                  dy = win->allocation.h - win->server_allocation.h;
+                  if (buffer)
+                    wl_surface_attach(win->surface, buffer, dx, dy);
+               }
+             else
+               {
+                  if (buffer)
+                    wl_surface_attach(win->surface, buffer, x, y);
+               }
+
+             win->server_allocation = win->allocation;
           }
-        if (win->region.opaque)
-          {
-             wl_surface_set_opaque_region(win->surface, win->region.opaque);
-             wl_region_destroy(win->region.opaque);
-             win->region.opaque = NULL;
-          }
-        wl_surface_damage(win->surface, 0, 0, 
-                          win->allocation.w, win->allocation.h);
+        break;
+      default:
+        return;
      }
+
+   if (win->region.input)
+     {
+        wl_surface_set_input_region(win->surface, win->region.input);
+        wl_region_destroy(win->region.input);
+        win->region.input = NULL;
+     }
+
+   if (win->region.opaque)
+     {
+        wl_surface_set_opaque_region(win->surface, win->region.opaque);
+        wl_region_destroy(win->region.opaque);
+        win->region.opaque = NULL;
+     }
+
+   if (win->surface)
+     wl_surface_damage(win->surface, 0, 0, 
+                       win->allocation.w, win->allocation.h);
 }
 
 /**

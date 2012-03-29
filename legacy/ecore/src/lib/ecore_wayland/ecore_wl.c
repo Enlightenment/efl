@@ -217,7 +217,6 @@ ecore_wl_flush(void)
 
    while (_ecore_wl_disp->mask & WL_DISPLAY_WRITABLE)
      wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_WRITABLE);
-//   wl_display_flush(_ecore_wl_disp->wl.display); // old flush code
 }
 
 /**
@@ -230,14 +229,9 @@ ecore_wl_flush(void)
 EAPI void 
 ecore_wl_sync(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    wl_display_sync(_ecore_wl_disp->wl.display);
-
-   //wl_display_roundtrip(_ecore_wl_disp->wl.display);
-
-   // old sync code
-//   wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE);
 }
 
 /**
@@ -324,6 +318,12 @@ ecore_wl_dpi_get(void)
 
    w = _ecore_wl_disp->output->allocation.w;
    return (((w * 254) / mw) + 5) / 10;
+}
+
+EAPI void 
+ecore_wl_display_iterate(void)
+{
+   wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE);
 }
 
 /* local functions */

@@ -276,6 +276,7 @@ EAPI struct wl_display *ecore_wl_display_get(void);
 EAPI void ecore_wl_screen_size_get(int *w, int *h);
 EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
 EAPI int ecore_wl_dpi_get(void);
+EAPI void ecore_wl_display_iterate(void);
 
 EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
 EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input, unsigned int timestamp);
