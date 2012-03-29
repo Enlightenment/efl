@@ -9536,7 +9536,7 @@ struct _Evas_Smart_Cb_Description
  * will need to check if the smart private data was already allocated
  * by some child object or not. This macro makes it easier to do it.
  *
- * @note This is an idiom used when one calls the parent's @c. add()
+ * @note This is an idiom used when one calls the parent's @c .add()
  * after the specialized code. Naturally, the parent's base smart data
  * has to be contemplated as the specialized one's first member, for
  * things to work.
@@ -11150,7 +11150,7 @@ EAPI Eina_Bool                  evas_object_box_remove                          
  * unparenting it again.
  *
  * @param o The box object to remove a child object from
- * @param in The numeric position (starting from @c 0) of the child
+ * @param pos The numeric position (starting from @c 0) of the child
  * object to be removed
  * @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
  *
@@ -11226,8 +11226,8 @@ EAPI Eina_List                 *evas_object_box_children_get                    
  * which have @a id as identifier
  *
  * @param o The box to search child options from
- * @param id The numerical identifier of the option being searched, for
- * its name
+ * @param property The numerical identifier of the option being searched,
+ * for its name
  * @return The name of the given property or @c NULL, on errors.
  *
  * @note This call won't do anything for a canonical Evas box. Only
@@ -11265,7 +11265,7 @@ EAPI int                        evas_object_box_option_property_id_get          
  * @param o The box parenting the child element
  * @param opt The box option structure bound to the child box element
  * to set a property on
- * @param id The numerical ID of the given property
+ * @param property The numerical ID of the given property
  * @param ... (List of) actual value(s) to be set for this
  * property. It (they) @b must be of the same type the user has
  * defined for it (them).
@@ -11292,8 +11292,8 @@ EAPI Eina_Bool                  evas_object_box_option_property_set             
  * @param o The box parenting the child element
  * @param opt The box option structure bound to the child box element
  * to set a property on
- * @param id The numerical ID of the given property
- * @param va_list The variable argument list implementing the value to
+ * @param property The numerical ID of the given property
+ * @param args The variable argument list implementing the value to
  * be set for this property. It @b must be of the same type the user has
  * defined for it.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
@@ -11338,8 +11338,8 @@ EAPI Eina_Bool                  evas_object_box_option_property_get             
  * @param o The box parenting the child element
  * @param opt The box option structure bound to the child box element
  * to get a property from
- * @param id The numerical ID of the given property
- * @param va_list The variable argument list with pointers to where to
+ * @param property The numerical ID of the given property
+ * @param args The variable argument list with pointers to where to
  * store the values of this property. They @b must point to variables
  * of the same type the user has defined for them.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
@@ -11460,7 +11460,7 @@ EAPI void                                evas_object_table_align_get       (cons
  * from right to left instead of left to right. That is, 1,1 is top right, not
  * top left.
  *
- * @param obj The table object.
+ * @param o The table object.
  * @param mirrored the mirrored mode to set
  * @since 1.1.0
  */
@@ -11469,7 +11469,7 @@ EAPI void                                evas_object_table_mirrored_set    (Evas
 /**
  * Gets the mirrored mode of the table.
  *
- * @param obj The table object.
+ * @param o The table object.
  * @return EINA_TRUE if it's a mirrored table, EINA_FALSE otherwise.
  * @since 1.1.0
  * @see evas_object_table_mirrored_set()
@@ -11627,7 +11627,7 @@ EAPI void                                evas_object_grid_size_get        (const
  * from right to left instead of left to right. That is, 0,0 is top right, not
  * to left.
  *
- * @param obj The grid object.
+ * @param o The grid object.
  * @param mirrored the mirrored mode to set
  * @since 1.1.0
  */
@@ -11636,7 +11636,7 @@ EAPI void                                evas_object_grid_mirrored_set    (Evas_
 /**
  * Gets the mirrored mode of the grid.
  *
- * @param obj The grid object.
+ * @param o The grid object.
  * @return EINA_TRUE if it's a mirrored grid, EINA_FALSE otherwise.
  * @see evas_object_grid_mirrored_set()
  * @since 1.1.0
@@ -11899,7 +11899,7 @@ EAPI void              evas_cserve_disconnect                 (void);
  * used in conjunction with evas_object_image_load_error_get(), as in:
  *
  * Example code:
- * @dontinclude evas-load-error-str.c
+ * @dontinclude evas-images.c
  * @skip img1 =
  * @until ecore_main_loop_begin(
  *
