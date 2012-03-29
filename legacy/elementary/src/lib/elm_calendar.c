@@ -24,7 +24,7 @@ struct _Widget_Data
    Eina_List *marks;
    double interval, first_interval;
    int year_min, year_max, spin_speed;
-   int today_it, selected_it, first_day_it;
+   int today_it, selected_it, first_day_it, first_week_day;
    Ecore_Timer *spin, *update_timer;
    Elm_Calendar_Format_Cb format_func;
    const char *weekdays[7];
@@ -241,7 +241,10 @@ _populate(Evas_Object *obj)
    mktime(&first_day);
 
    // Layout of the calendar is changed for removing the unfilled last row.
-   wd->first_day_it = first_day.tm_wday;
+   if (first_day.tm_wday < wd->first_week_day)
+     wd->first_day_it = first_day.tm_wday + 7 - wd->first_week_day;
+   else
+     wd->first_day_it = first_day.tm_wday - wd->first_week_day;
 
    if ((35 - wd->first_day_it) > (maxdays - 1)) last_row = EINA_FALSE;
 
@@ -286,7 +289,7 @@ _populate(Evas_Object *obj)
    for (i = 0; i < 42; i++)
      {
         _text_day_color_update(wd, i); // EINA_DEPRECATED
-        if ((!day) && (i == first_day.tm_wday)) day = 1;
+        if ((!day) && (i == wd->first_day_it)) day = 1;
 
         if ((day == wd->current_time.tm_mday)
             && (mon == wd->current_time.tm_mon)
@@ -379,7 +382,7 @@ _set_headers(Evas_Object *obj)
    for (i = 0; i < 7; i++)
      {
         part[3] = i + '0';
-        edje_object_part_text_set(wd->calendar, part, wd->weekdays[i]);
+        edje_object_part_text_set(wd->calendar, part, wd->weekdays[(i + wd->first_week_day) % 7]);
      }
 }
 
@@ -972,4 +975,28 @@ elm_calendar_marks_draw(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    _populate(obj);
+}
+
+EAPI void
+elm_calendar_first_day_of_week_set(Evas_Object *obj, int day)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((day > 6) || (day < 0)) return;
+   if (wd->first_week_day != day)
+     {
+        wd->first_week_day = day;
+        _set_headers(obj);
+        _populate(obj);
+     }
+}
+
+EAPI int
+elm_calendar_first_day_of_week_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return -1;
+   return wd->first_week_day;
 }
