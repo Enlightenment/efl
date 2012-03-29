@@ -78,6 +78,7 @@ ecore_app_args_get(int    *argc,
 EAPI void
 ecore_app_restart(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
 #ifdef HAVE_EXECVP
    char *args[4096];
    int i;

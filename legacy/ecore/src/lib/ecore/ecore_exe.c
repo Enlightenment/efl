@@ -344,6 +344,7 @@ static int run_pri = ECORE_EXE_PRIORITY_INHERIT;
 EAPI void
 ecore_exe_run_priority_set(int pri)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    run_pri = pri;
 }
 
@@ -359,6 +360,7 @@ ecore_exe_run_priority_set(int pri)
 EAPI int
 ecore_exe_run_priority_get(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    return run_pri;
 }
 
@@ -375,6 +377,7 @@ EAPI Ecore_Exe *
 ecore_exe_run(const char *exe_cmd,
               const void *data)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    return ecore_exe_pipe_run(exe_cmd, 0, data);
 }
 
@@ -417,6 +420,7 @@ ecore_exe_pipe_run(const char     *exe_cmd,
    int ok = 1;
    int result;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!exe_cmd) return NULL;
    exe = calloc(1, sizeof(Ecore_Exe));
    if (!exe) return NULL;
@@ -709,6 +713,7 @@ EAPI void
 ecore_exe_callback_pre_free_set(Ecore_Exe   *exe,
                                 Ecore_Exe_Cb func)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
@@ -737,6 +742,7 @@ ecore_exe_send(Ecore_Exe  *exe,
 {
    void *buf;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_send");
@@ -778,6 +784,7 @@ ecore_exe_send(Ecore_Exe  *exe,
 EAPI void
 ecore_exe_close_stdin(Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_close_stdin");
@@ -803,6 +810,7 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe,
                           int        start_lines,
                           int        end_lines)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_auto_limits_set");
@@ -869,6 +877,7 @@ ecore_exe_event_data_get(Ecore_Exe      *exe,
    unsigned char *inbuf;
    int inbuf_num;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_event_data_get");
@@ -995,6 +1004,7 @@ EAPI void
 ecore_exe_tag_set(Ecore_Exe  *exe,
                   const char *tag)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_tag_set");
@@ -1021,6 +1031,7 @@ ecore_exe_tag_set(Ecore_Exe  *exe,
 EAPI const char *
 ecore_exe_tag_get(const Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_tag_get");
@@ -1046,6 +1057,7 @@ ecore_exe_free(Ecore_Exe *exe)
    int ok = 0;
    int result;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_free");
@@ -1120,6 +1132,7 @@ ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
 EAPI pid_t
 ecore_exe_pid_get(const Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_pid_get");
@@ -1138,6 +1151,7 @@ ecore_exe_pid_get(const Ecore_Exe *exe)
 EAPI const char *
 ecore_exe_cmd_get(const Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_cmd_get");
@@ -1155,6 +1169,7 @@ ecore_exe_cmd_get(const Ecore_Exe *exe)
 EAPI void *
 ecore_exe_data_get(const Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_data_get");
@@ -1176,6 +1191,7 @@ ecore_exe_data_set(Ecore_Exe *exe,
                    void      *data)
 {
    void *ret;
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, __func__);
@@ -1194,6 +1210,7 @@ ecore_exe_data_set(Ecore_Exe *exe,
 EAPI Ecore_Exe_Flags
 ecore_exe_flags_get(const Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_data_get");
@@ -1209,6 +1226,7 @@ ecore_exe_flags_get(const Ecore_Exe *exe)
 EAPI void
 ecore_exe_pause(Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_pause");
@@ -1224,6 +1242,7 @@ ecore_exe_pause(Ecore_Exe *exe)
 EAPI void
 ecore_exe_continue(Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_continue");
@@ -1239,6 +1258,7 @@ ecore_exe_continue(Ecore_Exe *exe)
 EAPI void
 ecore_exe_interrupt(Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_interrupt");
@@ -1255,6 +1275,7 @@ ecore_exe_interrupt(Ecore_Exe *exe)
 EAPI void
 ecore_exe_quit(Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_quit");
@@ -1271,6 +1292,7 @@ ecore_exe_quit(Ecore_Exe *exe)
 EAPI void
 ecore_exe_terminate(Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_terminate");
@@ -1290,6 +1312,7 @@ ecore_exe_kill(Ecore_Exe *exe)
 {
    struct _ecore_exe_dead_exe *dead;
 
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_kill");
@@ -1320,6 +1343,7 @@ EAPI void
 ecore_exe_signal(Ecore_Exe *exe,
                  int        num)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_signal");
@@ -1338,6 +1362,7 @@ ecore_exe_signal(Ecore_Exe *exe,
 EAPI void
 ecore_exe_hup(Ecore_Exe *exe)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
    {
       ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE, "ecore_exe_hup");

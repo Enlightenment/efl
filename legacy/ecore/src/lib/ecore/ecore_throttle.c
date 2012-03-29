@@ -66,6 +66,7 @@ static int throttle_val = 0;
 EAPI void
 ecore_throttle_adjust(double amount)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    int adj = amount * 1000000.0;
    throttle_val += adj;
    if (throttle_val < 0) throttle_val = 0;
@@ -83,6 +84,7 @@ ecore_throttle_adjust(double amount)
 EAPI double
 ecore_throttle_get(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0.0);
    return (double)throttle_val / 1000000.0;
 }
 

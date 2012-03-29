@@ -265,7 +265,7 @@ _ecore_thread_worker_free(Ecore_Pthread_Worker *worker)
    CDD(worker->cond);
    LKD(worker->mutex);
 
-   if (_ecore_thread_worker_count > (_ecore_thread_count_max + 1) * 16)
+   if (_ecore_thread_worker_count > ((_ecore_thread_count_max + 1) * 16))
      {
         free(worker);
         return;
@@ -762,6 +762,8 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    Ecore_Pthread_Data *pth = NULL;
 #endif
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+   
    if (!func_blocking) return NULL;
 
    work = _ecore_thread_worker_new();
@@ -975,6 +977,8 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
    Ecore_Pthread_Worker *worker;
    Ecore_Pthread_Data *pth = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
+   
    if (!func_heavy) return NULL;
 
    worker = _ecore_thread_worker_new();
@@ -1251,6 +1255,7 @@ EAPI int
 ecore_thread_active_get(void)
 {
 #ifdef EFL_HAVE_THREADS
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    return _ecore_thread_count;
 #else
    return 0;
@@ -1263,6 +1268,7 @@ ecore_thread_pending_get(void)
 #ifdef EFL_HAVE_THREADS
    int ret;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    LKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads);
    LKU(_ecore_pending_job_threads_mutex);
@@ -1278,6 +1284,7 @@ ecore_thread_pending_feedback_get(void)
 #ifdef EFL_HAVE_THREADS
    int ret;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    LKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads_feedback);
    LKU(_ecore_pending_job_threads_mutex);
@@ -1293,6 +1300,7 @@ ecore_thread_pending_total_get(void)
 #ifdef EFL_HAVE_THREADS
    int ret;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    LKL(_ecore_pending_job_threads_mutex);
    ret = eina_list_count(_ecore_pending_job_threads) + eina_list_count(_ecore_pending_job_threads_feedback);
    LKU(_ecore_pending_job_threads_mutex);
@@ -1305,12 +1313,14 @@ ecore_thread_pending_total_get(void)
 EAPI int
 ecore_thread_max_get(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    return _ecore_thread_count_max;
 }
 
 EAPI void
 ecore_thread_max_set(int num)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (num < 1) return;
    /* avoid doing something hilarious by blocking dumb users */
    if (num >= (2 * eina_cpu_count())) return;
@@ -1321,6 +1331,7 @@ ecore_thread_max_set(int num)
 EAPI void
 ecore_thread_max_reset(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    _ecore_thread_count_max = eina_cpu_count();
 }
 

@@ -69,6 +69,7 @@ static double precision = 10.0 / 1000000.0;
 EAPI double
 ecore_timer_precision_get(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0.0);
    return precision;
 }
 
@@ -100,6 +101,7 @@ ecore_timer_precision_get(void)
 EAPI void
 ecore_timer_precision_set(double value)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
 
    if (value < 0.0)
@@ -139,6 +141,7 @@ ecore_timer_add(double        in,
    double now;
    Ecore_Timer *timer = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!func) goto unlock;
    if (in < 0.0) in = 0.0;
@@ -177,6 +180,7 @@ ecore_timer_loop_add(double        in,
 {
    Ecore_Timer *timer;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    timer = _ecore_timer_loop_add(in, func, data);
    _ecore_unlock();
@@ -198,6 +202,7 @@ ecore_timer_del(Ecore_Timer *timer)
 {
    void *data = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
@@ -225,6 +230,7 @@ EAPI void
 ecore_timer_interval_set(Ecore_Timer *timer,
                          double       in)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
@@ -249,6 +255,7 @@ ecore_timer_interval_get(Ecore_Timer *timer)
 {
    double interval;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0.0);
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
@@ -276,6 +283,7 @@ EAPI void
 ecore_timer_delay(Ecore_Timer *timer,
                   double       add)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
      {
         ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
@@ -302,6 +310,7 @@ EAPI void
 ecore_timer_reset(Ecore_Timer *timer)
 {
    double now, add;
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
      {
         ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
@@ -331,6 +340,7 @@ ecore_timer_pending_get(Ecore_Timer *timer)
    double now;
    double ret = 0.0;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0.0);
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
@@ -370,6 +380,7 @@ ecore_timer_freeze(Ecore_Timer *timer)
 {
    double now;
 
+   EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
@@ -413,6 +424,7 @@ ecore_timer_thaw(Ecore_Timer *timer)
 {
    double now;
 
+   EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
@@ -445,6 +457,7 @@ ecore_timer_dump(void)
    int living_timer = 0;
    int unknow_timer = 0;
 
+   EINA_MAIN_LOOP_CHECK_RETURN(NULL);
    _ecore_lock();
    result = eina_strbuf_new();
 

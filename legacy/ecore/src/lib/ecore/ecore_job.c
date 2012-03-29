@@ -60,6 +60,7 @@ ecore_job_add(Ecore_Cb    func,
 {
    Ecore_Job *job;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!func) return NULL;
 
    job = ecore_job_calloc(1);
@@ -86,6 +87,7 @@ ecore_job_del(Ecore_Job *job)
 {
    void *data;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_JOB))
      {
         ECORE_MAGIC_FAIL(job, ECORE_MAGIC_JOB,

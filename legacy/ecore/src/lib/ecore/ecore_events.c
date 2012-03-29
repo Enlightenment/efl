@@ -79,6 +79,7 @@ ecore_event_handler_add(int                    type,
 {
    Ecore_Event_Handler *eh = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
 
    if (!func) goto unlock;
@@ -127,6 +128,7 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
    void *data = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!ECORE_MAGIC_CHECK(event_handler, ECORE_MAGIC_EVENT_HANDLER))
      {
@@ -146,6 +148,7 @@ ecore_event_handler_data_get(Ecore_Event_Handler *eh)
 {
    void *data = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
@@ -164,6 +167,7 @@ ecore_event_handler_data_set(Ecore_Event_Handler *eh,
 {
    void *old = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!ECORE_MAGIC_CHECK(eh, ECORE_MAGIC_EVENT_HANDLER))
      {
@@ -193,6 +197,7 @@ ecore_event_add(int          type,
 {
    Ecore_Event *event = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
 
 /*   if (!ev) goto unlock; */
@@ -210,6 +215,7 @@ ecore_event_del(Ecore_Event *event)
 {
    void *data = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT))
      {
@@ -229,6 +235,7 @@ ecore_event_type_new(void)
 {
    int id;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    _ecore_lock();
    id = event_id_max++;
    _ecore_unlock();
@@ -244,6 +251,7 @@ ecore_event_filter_add(Ecore_Data_Cb   func_start,
 {
    Ecore_Event_Filter *ef = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!func_filter) goto unlock;
    ef = ecore_event_filter_calloc(1);
@@ -264,6 +272,7 @@ ecore_event_filter_del(Ecore_Event_Filter *ef)
 {
    void *data = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!ECORE_MAGIC_CHECK(ef, ECORE_MAGIC_EVENT_FILTER))
      {
@@ -283,12 +292,14 @@ unlock:
 EAPI int
 ecore_event_current_type_get(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    return ecore_raw_event_type;
 }
 
 EAPI void *
 ecore_event_current_event_get(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    return ecore_raw_event_event;
 }
 

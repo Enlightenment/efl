@@ -193,6 +193,7 @@ EAPI void
 ecore_poller_poll_interval_set(Ecore_Poller_Type type __UNUSED__,
                                double            poll_time)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    poll_interval = poll_time;
    _ecore_poller_next_tick_eval();
 }
@@ -200,6 +201,7 @@ ecore_poller_poll_interval_set(Ecore_Poller_Type type __UNUSED__,
 EAPI double
 ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0.0);
    return poll_interval;
 }
 
@@ -212,6 +214,7 @@ ecore_poller_add(Ecore_Poller_Type type __UNUSED__,
    Ecore_Poller *poller;
    int ibit;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!func) return NULL;
    if (interval < 1) interval = 1;
 
@@ -246,6 +249,7 @@ ecore_poller_poller_interval_set(Ecore_Poller *poller,
 {
    int ibit;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
    if (!ECORE_MAGIC_CHECK(poller, ECORE_MAGIC_POLLER))
      {
         ECORE_MAGIC_FAIL(poller, ECORE_MAGIC_POLLER,
@@ -281,6 +285,7 @@ ecore_poller_poller_interval_get(Ecore_Poller *poller)
 {
    int ibit, interval = 1;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
    if (!ECORE_MAGIC_CHECK(poller, ECORE_MAGIC_POLLER))
      {
         ECORE_MAGIC_FAIL(poller, ECORE_MAGIC_POLLER,
@@ -302,6 +307,7 @@ ecore_poller_del(Ecore_Poller *poller)
 {
    void *data;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(poller, ECORE_MAGIC_POLLER))
      {
         ECORE_MAGIC_FAIL(poller, ECORE_MAGIC_POLLER,

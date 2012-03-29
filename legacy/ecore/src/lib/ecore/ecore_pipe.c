@@ -125,6 +125,7 @@ ecore_pipe_add(Ecore_Pipe_Cb handler,
    Ecore_Pipe *p;
    int fds[2];
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!handler) return NULL;
 
    p = ecore_pipe_calloc(1);
@@ -162,6 +163,7 @@ ecore_pipe_del(Ecore_Pipe *p)
 {
    void *data;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_del");
@@ -185,6 +187,7 @@ ecore_pipe_del(Ecore_Pipe *p)
 EAPI void
 ecore_pipe_read_close(Ecore_Pipe *p)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_close");
@@ -212,6 +215,7 @@ ecore_pipe_read_close(Ecore_Pipe *p)
 EAPI void
 ecore_pipe_freeze(Ecore_Pipe *p)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_freeze");
@@ -235,6 +239,7 @@ ecore_pipe_freeze(Ecore_Pipe *p)
 EAPI void
 ecore_pipe_thaw(Ecore_Pipe *p)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    if (!ECORE_MAGIC_CHECK(p, ECORE_MAGIC_PIPE))
      {
         ECORE_MAGIC_FAIL(p, ECORE_MAGIC_PIPE, "ecore_pipe_read_thaw");
@@ -273,6 +278,7 @@ ecore_pipe_wait(Ecore_Pipe *p,
    int ret;
    int total = 0;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(-1);
    if (p->fd_read == PIPE_FD_INVALID)
      return -1;
 
@@ -280,7 +286,7 @@ ecore_pipe_wait(Ecore_Pipe *p,
    FD_SET(p->fd_read, &rset);
 
    if (wait >= 0.0)
-     end = ecore_time_get() + wait;
+     end = ecore_loop_time_get() + wait;
    timeout = wait;
 
    while (message_count > 0 && (timeout > 0.0 || wait <= 0.0))
@@ -335,7 +341,7 @@ ecore_pipe_wait(Ecore_Pipe *p,
           }
 
         if (wait >= 0.0)
-          timeout = end - ecore_time_get();
+          timeout = end - ecore_loop_time_get();
      }
 
    return total;

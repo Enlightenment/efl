@@ -856,6 +856,7 @@ _ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 EAPI int
 ecore_main_loop_iterate_may_block(int may_block)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
 #ifndef USE_G_MAIN_LOOP
    _ecore_lock();
 in_main_loop++;
@@ -870,6 +871,7 @@ in_main_loop--;
 EAPI void
 ecore_main_loop_iterate(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
 #ifndef USE_G_MAIN_LOOP
    _ecore_lock();
    _ecore_main_loop_iterate_internal(1);
@@ -900,6 +902,7 @@ ecore_main_loop_iterate(void)
 EAPI void
 ecore_main_loop_begin(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
 #ifndef USE_G_MAIN_LOOP
    _ecore_lock();
    in_main_loop++;
@@ -928,6 +931,7 @@ ecore_main_loop_begin(void)
 EAPI void
 ecore_main_loop_quit(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    do_quit = 1;
 #ifdef USE_G_MAIN_LOOP
    if (ecore_main_loop)
@@ -950,6 +954,7 @@ ecore_main_loop_quit(void)
 EAPI void
 ecore_main_loop_select_func_set(Ecore_Select_Function func)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    main_loop_select = func;
 }
 
@@ -961,6 +966,7 @@ ecore_main_loop_select_func_set(Ecore_Select_Function func)
 EAPI Ecore_Select_Function
 ecore_main_loop_select_func_get(void)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    return main_loop_select;
 }
 
@@ -974,6 +980,7 @@ ecore_main_fd_handler_add(int                    fd,
 {
    Ecore_Fd_Handler *fdh = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
 
    if ((fd < 0) || (flags == 0) || (!func)) goto unlock;
@@ -1019,6 +1026,7 @@ ecore_main_win32_handler_add(void                 *h,
 {
    Ecore_Win32_Handler *wh;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!h || !func) return NULL;
 
    wh = ecore_win32_handler_calloc(1);
@@ -1050,6 +1058,7 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 {
    void *ret = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
@@ -1068,6 +1077,7 @@ unlock:
 EAPI void *
 ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(win32_handler, ECORE_MAGIC_WIN32_HANDLER))
      {
         ECORE_MAGIC_FAIL(win32_handler, ECORE_MAGIC_WIN32_HANDLER,
@@ -1093,6 +1103,7 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
                                            Ecore_Fd_Prep_Cb  func,
                                            const void       *data)
 {
+   EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
@@ -1116,6 +1127,7 @@ ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
 {
    int fd = -1;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(-1);
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
@@ -1136,6 +1148,7 @@ ecore_main_fd_handler_active_get(Ecore_Fd_Handler      *fd_handler,
 {
    int ret = EINA_FALSE;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
@@ -1158,6 +1171,7 @@ ecore_main_fd_handler_active_set(Ecore_Fd_Handler      *fd_handler,
 {
    int ret;
 
+   EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
 
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))

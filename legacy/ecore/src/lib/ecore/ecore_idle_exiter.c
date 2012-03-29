@@ -46,6 +46,7 @@ ecore_idle_exiter_add(Ecore_Task_Cb func,
 {
    Ecore_Idle_Exiter *ie = NULL;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    _ecore_lock();
    if (!func) goto unlock;
    ie = ecore_idle_exiter_calloc(1);
@@ -70,6 +71,7 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 {
    void *data;
 
+   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
    if (!ECORE_MAGIC_CHECK(idle_exiter, ECORE_MAGIC_IDLE_EXITER))
      {
         ECORE_MAGIC_FAIL(idle_exiter, ECORE_MAGIC_IDLE_EXITER,
