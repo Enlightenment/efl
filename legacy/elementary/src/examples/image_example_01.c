@@ -10,6 +10,7 @@ elm_main(int argc, char **argv)
    Evas_Object *win, *bg, *image;
    char buf[PATH_MAX];
 
+   elm_app_info_set(elm_main, "elementary", "images/plant_01.jpg");
    win = elm_win_add(NULL, "image", ELM_WIN_BASIC);
    elm_win_title_set(win, "Image");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -21,7 +22,7 @@ elm_main(int argc, char **argv)
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
 
    image = elm_image_add(win);
    if (!elm_image_file_set(image, buf, NULL))
