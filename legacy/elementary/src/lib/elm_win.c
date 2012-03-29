@@ -616,7 +616,7 @@ static void
 _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Win *win = data;
-   Evas_Object *child;
+   Evas_Object *child, *child2 = NULL;
 
    if (win->parent)
      {
@@ -638,15 +638,36 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    if (win->shot.timer) ecore_timer_del(win->shot.timer);
    evas_object_event_callback_del_full(win->win_obj, EVAS_CALLBACK_DEL,
                                        _elm_win_obj_callback_del, win);
-   while (((child = evas_object_bottom_get(win->evas))) &&
-          (child != obj))
+   child = evas_object_bottom_get(win->evas);
+   while (child)
      {
-        evas_object_del(child);
-     }
-   while (((child = evas_object_top_get(win->evas))) &&
-          (child != obj))
-     {
-        evas_object_del(child);
+        /* if the object we see *IS* the window object (because we are
+         * faking a parent object inside the canvas), then skip it and
+         * go to the next one */
+        if (child == obj)
+          {
+             child = evas_object_above_get(child);
+             if (!child) break;
+          }
+        /* if we are using the next object above from the previous loop */
+        if (child == child2)
+          {
+             /* this object has refcounts from the previous loop */
+             child2 = evas_object_above_get(child);
+             if (child2) evas_object_ref(child2);
+             evas_object_del(child);
+             /* so unref from previous loop */
+             evas_object_unref(child);
+             child = child2;
+          }
+        else
+          {
+             /* just delete as normal (probably only first object */
+             child2 = evas_object_above_get(child);
+             if (child2) evas_object_ref(child2);
+             evas_object_del(child);
+             child = child2;
+          }
      }
 #ifdef HAVE_ELEMENTARY_X
    if (win->client_message_handler)
