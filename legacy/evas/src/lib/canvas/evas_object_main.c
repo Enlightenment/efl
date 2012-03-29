@@ -372,7 +372,6 @@ evas_object_ref(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    obj->ref++;
-   if (obj->ref == 0) obj->ref--;
 }
 
 EAPI void
@@ -384,6 +383,15 @@ evas_object_unref(Evas_Object *obj)
    if (obj->ref == 0) return;
    obj->ref--;
    if ((obj->del_ref) && (obj->ref == 0)) evas_object_del(obj);
+}
+
+EAPI int
+evas_object_ref_get(const Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   return obj->ref;
 }
 
 EAPI void

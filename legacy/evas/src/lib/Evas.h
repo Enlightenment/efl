@@ -3294,6 +3294,25 @@ EAPI void              evas_object_ref                   (Evas_Object *obj);
  */
 EAPI void              evas_object_unref                 (Evas_Object *obj);
 
+/**
+ * Get the object reference count.
+ *
+ * @param obj The given Evas object to query
+ *
+ * This gets the reference count for an object (normally 0 until it is
+ * referenced). Values of 1 or greater mean that someone is holding a
+ * reference to this object that needs to be unreffed before it can be
+ * deleted.
+ *
+ * @see evas_object_ref()
+ * @see evas_object_unref()
+ * @see evas_object_del()
+ *
+ * @ingroup Evas_Object_Group_Basic
+ * @since 1.2.0
+ */
+EAPI int               evas_object_ref_get               (const Evas_Object *obj);
+
 
 /**
  * Marks the given Evas object for deletion (when Evas will free its

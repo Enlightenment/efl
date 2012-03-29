@@ -21,6 +21,7 @@ Additions:
    * EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN.
    * EVAS_GL_OPTIONS_DIRECT.
    * evas_object_textblock_style_user_pop/push.
+   * evas_object_ref_get
 
 Fixes:
 

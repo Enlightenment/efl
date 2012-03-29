@@ -676,3 +676,8 @@
 
 	* Remove Software SDL engine.
 
+2012-02-23  Carsten Haitzler (The Rasterman)
+
+        * Add evas_object_ref_get() to be able to tell if others ref
+        an object.
+
