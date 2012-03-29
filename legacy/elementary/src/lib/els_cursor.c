@@ -269,6 +269,7 @@ _elm_cursor_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, 
    elm_object_cursor_unset(obj);
 }
 
+#ifdef HAVE_ELEMENTARY_X
 static int
 _elm_cursor_strcmp(const void *data1, const void *data2)
 {
@@ -276,6 +277,7 @@ _elm_cursor_strcmp(const void *data1, const void *data2)
    const struct _Cursor_Id *c2 = data2;
    return strcmp (c1->name, c2->name);
 }
+#endif
 
 static void
 _elm_cursor_cur_set(Elm_Cursor *cur)
