@@ -418,9 +418,9 @@ EAPI void                     evas_gl_config_free        (Evas_GL_Config *cfg) E
  * Creates and returns new Evas_GL_Surface object for GL Rendering.
  *
  * @param evas_gl The given Evas_GL object.
- * @param config The pixel format and configuration of the rendering surface.
- * @param width The width of the surface.
- * @param height The height of the surface.
+ * @param cfg The pixel format and configuration of the rendering surface.
+ * @param w The width of the surface.
+ * @param h The height of the surface.
  * @return The created GL surface object, or NULL on failure.
  */
 EAPI Evas_GL_Surface         *evas_gl_surface_create     (Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
