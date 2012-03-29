@@ -238,7 +238,6 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
         y = _ecore_fb_tslib_event.y;
         pressure = _ecore_fb_tslib_event.pressure;
         v = 1; /* loop, there might be more samples */
-        t = ecore_time_get();
 #else
         ptr = (char *)&(_ecore_fb_ts_event);
         ptr += _ecore_fb_ts_event_byte_count;
@@ -260,6 +259,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
           }
         pressure = _ecore_fb_ts_event.pressure;
 #endif
+        t = ecore_loop_time_get();
         /* add event to queue */
         /* always add a move event */
         if ((pressure) || (prev_pressure))
@@ -271,12 +271,13 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
              if (!e) goto retry;
              e->x = x;
              e->y = y;
-             e->root.x = x;
-             e->root.y = y;
-             e->window = (Ecore_Window)_ecore_fb_ts_event_window;
+             e->root.x = e->x;
+             e->root.y = e->y;
+             e->window = 1;
              e->event_window = e->window;
              e->root_window = e->window;
              e->same_screen = 1;
+             e->timestamp = ecore_loop_time_get() * 1000.0;
              ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, NULL, NULL);
           }
         if ((pressure) && (!prev_pressure))
@@ -288,6 +289,8 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
              if (!e) goto retry;
              e->x = x;
              e->y = y;
+             e->root.x = e->x;
+             e->root.y = e->y;
              e->buttons = 1;
              if ((t - last_time) <= _ecore_fb_double_click_time)
                {
@@ -308,10 +311,11 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
                {
                   did_triple = 0;
                }
-             e->window = (Ecore_Window)_ecore_fb_ts_event_window;
+             e->window = 1;
              e->event_window = e->window;
              e->root_window = e->window;
              e->same_screen = 1;
+             e->timestamp = ecore_loop_time_get() * 1000.0;
              ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
           }
         else if ((!pressure) && (prev_pressure))
@@ -323,15 +327,18 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
              if (!e) goto retry;
              e->x = prev_x;
              e->y = prev_y;
+             e->root.x = e->x;
+             e->root.y = e->y;
              e->buttons = 1;
              if (did_double)
                 e->double_click = 1;
              if (did_triple)
                 e->triple_click = 1;
-             e->window = (Ecore_Window)_ecore_fb_ts_event_window;
+             e->window = 1;
              e->event_window = e->window;
              e->root_window = e->window;
              e->same_screen = 1;
+             e->timestamp = ecore_loop_time_get() * 1000.0;
              ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
           }
         if (did_triple)

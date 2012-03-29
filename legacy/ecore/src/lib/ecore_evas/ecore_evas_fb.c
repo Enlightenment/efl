@@ -378,6 +378,17 @@ _ecore_evas_show(Ecore_Evas *ee)
 }
 
 static void
+_ecore_evas_hide(Ecore_Evas *ee)
+{
+   if (ee->prop.focused)
+     {
+        ee->prop.focused = 0;
+        evas_focus_out(ee->evas);
+        if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+     }
+}
+
+static void
 _ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
@@ -516,7 +527,7 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      _ecore_evas_rotation_set,
      NULL,
      _ecore_evas_show,
-     NULL,
+     _ecore_evas_hide,
      NULL,
      NULL,
      NULL,
@@ -600,7 +611,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
    ee->prop.layer = 0;
-   ee->prop.focused = 1;
+   ee->prop.focused = 0;
    ee->prop.borderless = 1;
    ee->prop.override = 1;
    ee->prop.maximized = 1;

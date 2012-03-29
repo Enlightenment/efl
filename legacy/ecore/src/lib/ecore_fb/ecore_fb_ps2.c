@@ -64,7 +64,7 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
         if (v < 0) return EINA_TRUE;
         _ecore_fb_ps2_event_byte_count += v;
         if (v < num) return EINA_TRUE;
-        t = ecore_time_get();
+        t = ecore_loop_time_get();
         _ecore_fb_ps2_event_byte_count = 0;
         if (_ecore_fb_ps2_event.button & 0x10)
            x = prev_x + (0xffffff00 | _ecore_fb_ps2_event.x);
@@ -84,13 +84,20 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
         if (1)
           {
              /* MOVE: mouse is down and was */
-             Ecore_Fb_Event_Mouse_Move *e;
+             Ecore_Event_Mouse_Move *e;
 
              e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Move));
              if (!e) goto retry;
              e->x = x;
              e->y = y;
-             ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, e, NULL, NULL);
+             e->root.x = e->x;
+             e->root.y = e->y;
+             e->window = 1;
+             e->event_window = e->window;
+             e->root_window = e->window;
+             e->same_screen = 1;
+             e->timestamp = ecore_loop_time_get() * 1000.0;
+             ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, NULL, NULL);
           }
         for (i = 1; i <= 3; i++)
           {
@@ -100,13 +107,19 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
              if (((button & mask)) && (!(prev_button & mask)))
                {
                   /* DOWN: mouse is down, but was not now */
-                  Ecore_Fb_Event_Mouse_Button_Down *e;
+                  Ecore_Event_Mouse_Button *e;
 
-                  e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Down));
+                  e = calloc(1, sizeof(Ecore_Event_Mouse_Button));
                   if (!e) goto retry;
                   e->x = x;
                   e->y = y;
+                  e->root.x = e->x;
+                  e->root.y = e->y;
                   e->button = i;
+                  e->window = 1;
+                  e->event_window = e->window;
+                  e->root_window = e->window;
+                  e->same_screen = 1;
                   if ((t - last_time) <= _ecore_fb_double_click_time)
                     {
                        e->double_click = 1;
@@ -126,23 +139,31 @@ _ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
                     {
                        did_triple = 0;
                     }
-                  ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
+                  e->timestamp = ecore_loop_time_get() * 1000.0;
+                  ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
                }
              else if ((!(button & mask)) && ((prev_button & mask)))
                {
                   /* UP: mouse was down, but is not now */
-                  Ecore_Fb_Event_Mouse_Button_Up *e;
+                  Ecore_Event_Mouse_Button *e;
 
-                  e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Up));
+                  e = calloc(1, sizeof(Ecore_Event_Mouse_Button));
                   if (!e) goto retry;
                   e->x = x;
                   e->y = y;
+                  e->root.x = e->x;
+                  e->root.y = e->y;
                   e->button = i;
+                  e->window = 1;
+                  e->event_window = e->window;
+                  e->root_window = e->window;
+                  e->same_screen = 1;
                   if (did_double)
                      e->double_click = 1;
                   if (did_triple)
                      e->triple_click = 1;
-                  ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
+                  e->timestamp = ecore_loop_time_get() * 1000.0;
+                  ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
                }
           }
         if (did_triple)

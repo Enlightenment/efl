@@ -190,6 +190,11 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
                   free(e);
                   goto retry;
                }
+             e->window = 1;
+             e->event_window = e->window;
+             e->root_window = e->window; 
+             e->same_screen = 1;
+             e->timestamp = ecore_loop_time_get() * 1000.0;
              ecore_event_add(ECORE_FB_EVENT_KEY_DOWN, e, _ecore_fb_event_free_key_down, NULL);
              if (!strcmp(e->keyname, "Control_L"))
                 _ecore_fb_ctrl++;
@@ -248,6 +253,11 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
                   free(e);
                   goto retry;
                }
+             e->window = 1;
+             e->event_window = e->window;
+             e->root_window = e->window; 
+             e->same_screen = 1;
+             e->timestamp = ecore_loop_time_get() * 1000.0;
              ecore_event_add(ECORE_FB_EVENT_KEY_UP, e, _ecore_fb_event_free_key_up, NULL);
              if (!strcmp(e->keyname, "Control_L"))
                 _ecore_fb_ctrl--;

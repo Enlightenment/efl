@@ -605,3 +605,9 @@
 
         * scim-immodule: fix bug candidate window covers the preedit string when preedit string appears in 2 line.
 
+2012-03-29 Carsten Haitzler (The Rasterman)
+
+        * Fix range of issues with ecore_fb and even ecore_evas where
+        it didn't work right on the fb. (timestamps wrong, focus
+        handling etc.). This makes it work fully again.
+

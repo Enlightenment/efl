@@ -120,7 +120,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
         if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
 
-        e->timestamp = ecore_time_get();
+        e->timestamp = ecore_loop_time_get() * 1000.0;
         e->window = (Ecore_Window)dev->window;
         e->event_window = (Ecore_Window)dev->window;
         e->root_window = (Ecore_Window)dev->window;
@@ -136,7 +136,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
      {
         int button;
         Ecore_Event_Mouse_Button *e;
-        double current = ecore_time_get();
+        double current = ecore_loop_time_get();
 
         button = ((iev->code & 0x00F) + 1);
         if (iev->value)
@@ -168,7 +168,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         if (!e)
           return;
 
-        e->timestamp = current;
+        e->timestamp = current * 1000.0;
         e->window = (Ecore_Window)dev->window;
         e->event_window = (Ecore_Window)dev->window;
         e->root_window = (Ecore_Window)dev->window;
@@ -247,7 +247,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
              e->root.x = e->x;
              e->root.y = e->y;
 
-             e->timestamp = ecore_time_get();
+             e->timestamp = ecore_loop_time_get() * 1000.0;
 
              ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, NULL, NULL);
 
@@ -280,7 +280,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
              if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
              if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
 
-             e->timestamp = ecore_time_get();
+             e->timestamp = ecore_loop_time_get() * 1000.0;
 
              ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, e, NULL, NULL);
 
@@ -356,7 +356,7 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
         ev->y = dev->mouse.y;
         ev->root.x = ev->x;
         ev->root.y = ev->y;
-        ev->timestamp = ecore_time_get();
+        ev->timestamp = ecore_loop_time_get() * 1000.0;
      }
    else if (dev->mouse.event == ECORE_EVENT_MOUSE_BUTTON_DOWN)
      {
@@ -367,7 +367,7 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
         ev->root.x = ev->x;
         ev->root.y = ev->y;
         ev->buttons = 1;
-        ev->timestamp = ecore_time_get();
+        ev->timestamp = ecore_loop_time_get() * 1000.0;
         ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
      }
    else if (dev->mouse.event == ECORE_EVENT_MOUSE_BUTTON_UP)
@@ -379,7 +379,7 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
         ev->root.x = ev->x;
         ev->root.y = ev->y;
         ev->buttons = 1;
-        ev->timestamp = ecore_time_get();
+        ev->timestamp = ecore_loop_time_get() * 1000.0;
         ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
      }
 }
