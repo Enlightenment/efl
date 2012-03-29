@@ -694,7 +694,7 @@ ecore_x_window_size_get(Ecore_X_Window win,
 /**
  * Retrieves the geometry of the given window.
  *
- * Note that the x & y coordingates are relative to your parent.  In
+ * Note that the x & y coordinates are relative to your parent.  In
  * particular for reparenting window managers - relative to you window border.
  * If you want screen coordinates either walk the window tree to the root,
  * else for ecore_evas applications see ecore_evas_geometry_get().  Elementary

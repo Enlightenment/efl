@@ -949,8 +949,8 @@ ecore_x_current_time_get(void)
  * Return the screen DPI
  *
  * This is a simplistic call to get DPI. It does not account for differing
- * DPI in the x amd y axes nor does it accoutn for multihead or xinerama and
- * xrander where different parts of the screen may have differen DPI etc.
+ * DPI in the x amd y axes nor does it account for multihead or xinerama and
+ * xrander where different parts of the screen may have different DPI etc.
  *
  * @return the general screen DPI (dots/pixels per inch).
  */
