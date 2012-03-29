@@ -136,6 +136,7 @@ static Eina_Bool _item_multi_select_up(Widget_Data *wd);
 static Eina_Bool _item_multi_select_down(Widget_Data *wd);
 static Eina_Bool _item_single_select_up(Widget_Data *wd);
 static Eina_Bool _item_single_select_down(Widget_Data *wd);
+static Evas_Object * _item_content_unset_hook(Elm_Gen_Item *it, const char *part);
 static Eina_Bool _event_hook(Evas_Object       *obj,
                              Evas_Object       *src,
                              Evas_Callback_Type type,
@@ -3589,7 +3590,7 @@ _item_content_set_hook(Elm_Gen_Item *it, const char *part, Evas_Object *content)
    if (content && part)
      {
         if (eina_list_data_find(it->content_objs, content)) return;
-        prev_obj = edje_object_part_swallow_get(VIEW(it), part);
+        prev_obj = _item_content_unset_hook(it, part);
         if (prev_obj) evas_object_del(prev_obj);
         it->content_objs = eina_list_append(it->content_objs, content);
         edje_object_part_swallow(VIEW(it), part, content);
