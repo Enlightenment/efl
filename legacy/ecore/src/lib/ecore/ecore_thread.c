@@ -289,7 +289,10 @@ _ecore_thread_end(Ecore_Pthread_Data *pth,
 {
    Ecore_Pthread_Worker *worker = (Ecore_Pthread_Worker *)work;
 
-   if (!worker->message_run || !worker->feedback_run || (worker->feedback_run && !worker->no_queue))
+   if (((!worker->message_run) || 
+        (!worker->feedback_run) ||
+        ((worker->feedback_run) && (!worker->no_queue))) &&
+       (!worker->no_queue))
      _ecore_thread_count--;
 
    if (PHJ(pth->thread) != 0)
@@ -578,7 +581,7 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
    end->cancel = EINA_FALSE;
    end->feedback_run = EINA_FALSE;
    end->message_run = EINA_FALSE;
-   end->no_queue = EINA_FALSE;
+//   end->no_queue = EINA_FALSE;
    end->kill = EINA_FALSE;
    end->hash = NULL;
    LKI(end->mutex);
@@ -641,7 +644,7 @@ restart:
    work->feedback_run = EINA_FALSE;
    work->message_run = EINA_FALSE;
    work->kill = EINA_FALSE;
-   work->no_queue = EINA_FALSE;
+//   work->no_queue = EINA_FALSE;
    work->hash = NULL;
 
    ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
