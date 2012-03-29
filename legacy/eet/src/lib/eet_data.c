@@ -2114,7 +2114,7 @@ eet_data_write_cipher(Eet_File            *ef,
                       const char          *name,
                       const char          *cipher_key,
                       const void          *data,
-                      int                  compress)
+                      int                  comp)
 {
    Eet_Dictionary *ed;
    void *data_enc;
@@ -2127,7 +2127,7 @@ eet_data_write_cipher(Eet_File            *ef,
    if (!data_enc)
      return 0;
 
-   val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
+   val = eet_write_cipher(ef, name, data_enc, size, comp, cipher_key);
    free(data_enc);
    return val;
 }
@@ -2137,9 +2137,9 @@ eet_data_write(Eet_File            *ef,
                Eet_Data_Descriptor *edd,
                const char          *name,
                const void          *data,
-               int                  compress)
+               int                  comp)
 {
-   return eet_data_write_cipher(ef, edd, name, NULL, data, compress);
+   return eet_data_write_cipher(ef, edd, name, NULL, data, comp);
 }
 
 static void
@@ -4670,7 +4670,7 @@ eet_data_undump_cipher(Eet_File   *ef,
                        const char *cipher_key,
                        const char *text,
                        int         textlen,
-                       int         compress)
+                       int         comp)
 {
    Eet_Dictionary *ed;
    void *data_enc;
@@ -4683,7 +4683,7 @@ eet_data_undump_cipher(Eet_File   *ef,
    if (!data_enc)
      return 0;
 
-   val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
+   val = eet_write_cipher(ef, name, data_enc, size, comp, cipher_key);
    free(data_enc);
    return val;
 }
@@ -4693,9 +4693,9 @@ eet_data_undump(Eet_File   *ef,
                 const char *name,
                 const char *text,
                 int         textlen,
-                int         compress)
+                int         comp)
 {
-   return eet_data_undump_cipher(ef, name, NULL, text, textlen, compress);
+   return eet_data_undump_cipher(ef, name, NULL, text, textlen, comp);
 }
 
 EAPI void *
@@ -4844,7 +4844,7 @@ eet_data_node_write_cipher(Eet_File   *ef,
                            const char *name,
                            const char *cipher_key,
                            Eet_Node   *node,
-                           int         compress)
+                           int         comp)
 {
    Eet_Dictionary *ed;
    void *data_enc;
@@ -4857,7 +4857,7 @@ eet_data_node_write_cipher(Eet_File   *ef,
    if (!data_enc)
      return 0;
 
-   val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
+   val = eet_write_cipher(ef, name, data_enc, size, comp, cipher_key);
    free(data_enc);
    return val;
 }
