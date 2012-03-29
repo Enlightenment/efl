@@ -43,8 +43,10 @@ enum _Conformant_Part_Type
    ELM_CONFORM_CLIPBOARD_PART    = 8
 };
 
+#ifdef HAVE_ELEMENTARY_X
 #define SUB_TYPE_COUNT 2
 static char *sub_type[SUB_TYPE_COUNT] = { "scroller", "genlist" };
+#endif
 
 /* local function prototypes */
 static const char *widtype = NULL;
@@ -73,7 +75,6 @@ static void _conformant_move_resize_event_cb(void *data,
                                              void *event_info);
 static void _sizing_eval(Evas_Object *obj);
 static void _show_region_job(void *data);
-static Eina_Bool _prop_change(void *data, int type, void *event);
 static void _changed_size_hints(void *data, Evas *e,
                                 Evas_Object *obj,
                                 void *event_info);
@@ -258,14 +259,17 @@ _conformant_part_size_set(Evas_Object *obj, Evas_Object *sobj, Evas_Coord sx,
 static void
 _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
 {
-   Ecore_X_Window zone = 0, xwin;
+#ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window zone = 0;
    Evas_Object *top;
+#endif
+   Ecore_X_Window xwin;
    int sx = -1, sy = -1, sw = -1, sh = -1;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   top = elm_widget_top_get(obj);
 #ifdef HAVE_ELEMENTARY_X
+   top = elm_widget_top_get(obj);
    xwin = elm_win_xwindow_get(top);
    if (xwin)
      zone = ecore_x_e_illume_zone_get(xwin);
@@ -492,6 +496,7 @@ _conformant_move_resize_event_cb(void *data __UNUSED__, Evas *e __UNUSED__,
 }
 
 // showing the focused/important region.
+#ifdef HAVE_ELEMENTARY_X
 static void
 _content_resize_event_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj
                          __UNUSED__, void *event_info __UNUSED__)
@@ -500,13 +505,12 @@ _content_resize_event_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj
    Widget_Data *wd = elm_widget_data_get(conformant);
    if (!wd) return;
 
-#ifdef HAVE_ELEMENTARY_X
    if (wd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF) return;
-#endif
 
    if (wd->show_region_job) ecore_job_del(wd->show_region_job);
    wd->show_region_job = ecore_job_add(_show_region_job, conformant);
 }
+#endif
 
 static void
 _show_region_job(void *data)

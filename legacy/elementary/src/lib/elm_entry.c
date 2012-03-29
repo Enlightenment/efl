@@ -1716,8 +1716,11 @@ static void
 _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+#ifdef HAVE_ELEMENTARY_X
    Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ?
      ELM_SEL_TYPE_PRIMARY : ELM_SEL_TYPE_CLIPBOARD;
+#endif
+
    if (!wd) return;
    if (!wd->editable) return;
    evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
@@ -2361,7 +2364,10 @@ _elm_entry_text_get(const Evas_Object *obj, const char *item)
 EAPI Evas_Object *
 elm_entry_add(Evas_Object *parent)
 {
-   Evas_Object *obj, *top;
+#ifdef HAVE_ELEMENTARY_X
+   Evas_Object *top;
+#endif
+   Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
 
