@@ -735,22 +735,6 @@ _ecore_thread_shutdown(void)
 #endif
 }
 
-void
-_ecore_thread_assert_main_loop_thread(const char *function)
-{
-   Eina_Bool good;
-#ifdef EFL_HAVE_THREADS
-   good = PHE(get_main_loop_thread(), PHS());
-#else
-   good = EINA_TRUE;
-#endif
-   if (!good)
-     {
-        EINA_LOG_CRIT("Call to %s from wrong thread!", function);
-        abort();
-     }
-}
-
 EAPI Ecore_Thread *
 ecore_thread_run(Ecore_Thread_Cb func_blocking,
                  Ecore_Thread_Cb func_end,
