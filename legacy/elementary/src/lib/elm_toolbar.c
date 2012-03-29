@@ -1232,6 +1232,7 @@ elm_toolbar_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_translate_hook_set(obj, _translate_hook);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 
    wd->more_item = NULL;
    wd->selected_item = NULL;
