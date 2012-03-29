@@ -1413,7 +1413,10 @@ eet_open(const char   *file,
         /* Prevent garbage in futur comparison. */
          fp = eina_file_open(file, EINA_FALSE);
          if (!fp)
-           goto open_error;
+           {
+              size = 0;
+              goto open_error;
+           }
 
          size = eina_file_size_get(fp);
 
