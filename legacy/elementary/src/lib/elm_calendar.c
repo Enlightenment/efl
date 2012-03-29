@@ -24,10 +24,11 @@ struct _Widget_Data
    Eina_List *marks;
    double interval, first_interval;
    int year_min, year_max, spin_speed;
-   int today_it, selected_it, first_day_it, first_week_day;
+   int today_it, selected_it, first_day_it;
+   Elm_Calendar_Weekday first_week_day;
    Ecore_Timer *spin, *update_timer;
    Elm_Calendar_Format_Cb format_func;
-   const char *weekdays[7];
+   const char *weekdays[ELM_DAY_LAST];
    struct tm current_time, selected_time;
    Day_Color day_color[42]; // EINA_DEPRECATED
    Eina_Bool selection_enabled : 1;
@@ -97,7 +98,7 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    if (!wd) return;
-   elm_coords_finger_size_adjust(8, &minw, 7, &minh);
+   elm_coords_finger_size_adjust(8, &minw, ELM_DAY_LAST, &minh);
    edje_object_size_min_restricted_calc(wd->calendar, &minw, &minh, minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
@@ -170,7 +171,7 @@ _cit_mark(Evas_Object *cal, int cit, const char *mtype)
 static inline int
 _weekday_get(int first_week_day, int day)
 {
-   return (day + first_week_day - 1) % 7;
+   return (day + first_week_day - 1) % ELM_DAY_LAST;
 }
 
 // EINA_DEPRECATED
@@ -241,8 +242,8 @@ _populate(Evas_Object *obj)
    mktime(&first_day);
 
    // Layout of the calendar is changed for removing the unfilled last row.
-   if (first_day.tm_wday < wd->first_week_day)
-     wd->first_day_it = first_day.tm_wday + 7 - wd->first_week_day;
+   if (first_day.tm_wday < (int)wd->first_week_day)
+     wd->first_day_it = first_day.tm_wday + ELM_DAY_LAST - wd->first_week_day;
    else
      wd->first_day_it = first_day.tm_wday - wd->first_week_day;
 
@@ -379,10 +380,12 @@ _set_headers(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   for (i = 0; i < 7; i++)
+   for (i = 0; i < ELM_DAY_LAST; i++)
      {
         part[3] = i + '0';
-        edje_object_part_text_set(wd->calendar, part, wd->weekdays[(i + wd->first_week_day) % 7]);
+        edje_object_part_text_set(
+           wd->calendar, part,
+           wd->weekdays[(i + wd->first_week_day) % ELM_DAY_LAST]);
      }
 }
 
@@ -406,7 +409,7 @@ _del_hook(Evas_Object *obj)
           }
      }
 
-   for (i = 0; i < 7; i++)
+   for (i = 0; i < ELM_DAY_LAST; i++)
      eina_stringshare_del(wd->weekdays[i]);
 
    free(wd);
@@ -680,12 +683,12 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    else if ((!strcmp(ev->keyname, "Up"))  ||
             (!strcmp(ev->keyname, "KP_Up")))
      {
-        _update_sel_it(obj, wd->selected_it-7);
+        _update_sel_it(obj, wd->selected_it-ELM_DAY_LAST);
      }
    else if ((!strcmp(ev->keyname, "Down")) ||
             (!strcmp(ev->keyname, "KP_Down")))
      {
-        _update_sel_it(obj, wd->selected_it+7);
+        _update_sel_it(obj, wd->selected_it+ELM_DAY_LAST);
      }
    else if ((!strcmp(ev->keyname, "Prior")) ||
             (!strcmp(ev->keyname, "KP_Prior")))
@@ -752,7 +755,7 @@ elm_calendar_add(Evas_Object *parent)
 
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
-   for (i = 0; i < 7; i++)
+   for (i = 0; i < ELM_DAY_LAST; i++)
      {
         /* FIXME: I'm not aware of a known max, so if it fails,
          * just make it larger. :| */
@@ -795,7 +798,7 @@ elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[])
 
    EINA_SAFETY_ON_NULL_RETURN(weekdays);
 
-   for (i = 0; i < 7; i++)
+   for (i = 0; i < ELM_DAY_LAST; i++)
      {
         eina_stringshare_replace(&wd->weekdays[i], weekdays[i]);
      }
@@ -978,12 +981,12 @@ elm_calendar_marks_draw(Evas_Object *obj)
 }
 
 EAPI void
-elm_calendar_first_day_of_week_set(Evas_Object *obj, int day)
+elm_calendar_first_day_of_week_set(Evas_Object *obj, Elm_Calendar_Weekday day)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((day > 6) || (day < 0)) return;
+   if (day >= ELM_DAY_LAST) return;
    if (wd->first_week_day != day)
      {
         wd->first_week_day = day;
@@ -992,7 +995,7 @@ elm_calendar_first_day_of_week_set(Evas_Object *obj, int day)
      }
 }
 
-EAPI int
+EAPI Elm_Calendar_Weekday
 elm_calendar_first_day_of_week_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) -1;

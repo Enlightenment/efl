@@ -61,6 +61,30 @@ typedef enum
  */
 typedef _Elm_Calendar_Mark_Repeat_Type Elm_Calendar_Mark_Repeat_Type;
 
+typedef enum
+{
+   ELM_DAY_SUNDAY,
+   ELM_DAY_MONDAY,
+   ELM_DAY_TUESDAY,
+   ELM_DAY_WEDNESDAY,
+   ELM_DAY_THURSDAY,
+   ELM_DAY_FRIDAY,
+   ELM_DAY_SATURDAY,
+   ELM_DAY_LAST
+} _Elm_Calendar_Weekday;
+
+/**
+ * @enum _Elm_Calendar_Weekday
+ * @typedef Elm_Calendar_Weekday
+ *
+ * a weekday
+ *
+ * @see elm_calendar_first_day_of_week_set()
+ *
+ * @ingroup Calendar
+ */
+typedef _Elm_Calendar_Weekday Elm_Calendar_Weekday;
+
 typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a calendar mark. Created with elm_calendar_mark_add() and deleted with elm_calendar_mark_del(). */
 
 /**
@@ -452,7 +476,7 @@ EAPI double               elm_calendar_interval_get(const Evas_Object *obj);
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_first_day_of_week_set(Evas_Object *obj, int day);
+EAPI void                 elm_calendar_first_day_of_week_set(Evas_Object *obj, Elm_Calendar_Weekday day);
 
 /**
  * Get the first day of week, who are used on calendar widgets'.
@@ -465,7 +489,7 @@ EAPI void                 elm_calendar_first_day_of_week_set(Evas_Object *obj, i
  *
  * @ingroup Calendar
  */
-EAPI int                  elm_calendar_first_day_of_week_get(const Evas_Object *obj);
+EAPI Elm_Calendar_Weekday elm_calendar_first_day_of_week_get(const Evas_Object *obj);
 
 /**
  * @}

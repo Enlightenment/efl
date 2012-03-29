@@ -150,7 +150,7 @@ test_calendar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bxx, bx);
 
    cal = elm_calendar_add(win);
-   elm_calendar_first_day_of_week_set(cal, 1);
+   elm_calendar_first_day_of_week_set(cal, ELM_DAY_MONDAY);
    evas_object_size_hint_weight_set(cal, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, cal);
 
@@ -286,7 +286,7 @@ test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_calendar_min_max_year_set(cal3, -1, -1);
 
    elm_calendar_weekdays_names_set(cal, weekdays);
-   elm_calendar_first_day_of_week_set(cal, 6);
+   elm_calendar_first_day_of_week_set(cal, ELM_DAY_SATURDAY);
    elm_calendar_interval_set(cal, 0.4);
    elm_calendar_format_function_set(cal, _format_month_year);
    elm_calendar_min_max_year_set(cal, 2010, 2020);
