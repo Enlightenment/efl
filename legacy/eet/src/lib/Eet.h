@@ -3173,7 +3173,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
  * the array. This array will be allocated separately to the struct it
  * is in.
  *
- * @since 1.5.0
+ * @since 1.6.0
  * @ingroup Eet_Data_Group
  */
 #define EET_DATA_DESCRIPTOR_ADD_BASIC_VAR_ARRAY(edd, struct_type, name, member, type) \
