@@ -29,6 +29,7 @@ Additions:
     * eet_alias_get API
     * eet_data_xattr_cipher_get and eet_data_xattr_cipher_set APIs
     * EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY API
+    * EET_DATA_DESCRIPTOR_ADD_BASIC_VAR_ARRAY API
 
 Fixes:
 

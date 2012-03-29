@@ -573,3 +573,9 @@
 
 	* add eet_dictionary_count.
 	* add "eet -t FILE.EET".
+
+2012-03-29  David Seikel (onefang)
+
+	* Added a new macro for adding variable arrays of basic types.
+	   EET_DATA_DESCRIPTOR_ADD_BASIC_VAR_ARRAY
+
