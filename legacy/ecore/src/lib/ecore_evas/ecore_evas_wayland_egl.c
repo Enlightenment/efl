@@ -178,8 +178,8 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
         ERR("Failed to initialize Ecore_Wayland");
         return NULL;
      }
-   else if (count >= 1)
-     ecore_wl_sync();
+   else if (count == 1)
+     ecore_wl_display_iterate();
 
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {
@@ -763,7 +763,7 @@ _ecore_evas_wl_render(Ecore_Evas *ee)
                ecore_wl_window_damage(ee->engine.wl.win, 
                                       r->x, r->y, r->w, r->h);
 
-             ecore_wl_flush();
+             /* ecore_wl_flush(); */
 
              evas_render_updates_free(updates);
              _ecore_evas_idle_timeout_update(ee);
