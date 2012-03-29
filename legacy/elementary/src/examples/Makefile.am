@@ -7,6 +7,7 @@ filesdir = $(pkgdatadir)/examples
 files_DATA =
 
 AM_CPPFLAGS = \
+-Wno-unused-parameter \
 -I. \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
