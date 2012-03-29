@@ -127,6 +127,8 @@
  * @skip strcmp(ev->keyname, "r") == 0
  * @until }
  *
+ *
+ *
  * The example's window should look like this picture:
  *
  * @image html edje-basics-example.png
@@ -135,7 +137,17 @@
  *
  * The full example follows.
  *
+ *
  * @include edje-basic.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-basic edje-basic.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\" -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc basic.edc
+ * @endverbatim
  * @example edje-basic.c
  */
 
@@ -159,6 +171,15 @@
  *
  * The full source code follows:
  * @include edje-swallow.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-swallow edje-swallow.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\" -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc swallow.edc
+ * @endverbatim
  * @example edje-swallow.c
  */
 
@@ -207,7 +228,16 @@
  *
  * The theme used in this example is:
  * @include text.edc
- * @example text.edc
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-text edje-text.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\" -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc text.edc
+ * @endverbatim
+ * @example edje-text.c
  */
 
 /**
@@ -263,6 +293,15 @@
  *
  * The full source code follows:
  * @include edje-table.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-table edje-table.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\" -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc table.edc
+ * @endverbatim
  * @example edje-table.c
  */
 
@@ -346,6 +385,15 @@
  *
  * The full source code follows:
  * @include edje-box.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-box edje-box.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\" -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc box.edc
+ * @endverbatim
  * @example edje-box.c
  */
 
@@ -400,6 +448,15 @@
  *
  * The full source code follows:
  * @include edje-box2.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-box2 edje-box2.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\" -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc box.edc
+ * @endverbatim
  * @example edje-box2.c
  */
 
@@ -482,6 +539,15 @@
  *
  * The full source code follows:
  * @include edje-drag.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-drag edje-drag.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\" -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc drag.edc
+ * @endverbatim
  * @example edje-drag.c
  */
 
@@ -569,6 +635,19 @@
  *
  * The full source code follows:
  * @include edje-perspective.c
+ *
+ * The full .edc file
+ * @include perspective.edc
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-perspective edje-perspective.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\"
+ * -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc perspective.edc
+ * @endverbatim
  * @example edje-perspective.c
  */
 
@@ -762,7 +841,18 @@
  *
  * The theme used in this example is:
  * @include color-class.edc
- * @example color-class.edc
+ *
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-color-class edje-color-class.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\"
+ * -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc color-class.edc
+ * @endverbatim
+ * @example edje-color-class.c
  */
 
 /**
@@ -826,6 +916,16 @@
  *
  * @include edje-animations.c
  * @include animations.edc
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-animations edje-animations.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\"
+ * -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc animations.edc
+ * @endverbatim
  */
 
  /**

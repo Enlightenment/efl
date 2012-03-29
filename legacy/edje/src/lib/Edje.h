@@ -171,8 +171,6 @@ Note: The example files are located at /Where/Enlightenment/is/installed/share/e
 - @ref tutorial_edje_color_class
 - @ref tutorial_edje_animations
 - @ref Example_Edje_Signals_Messages
-
-
 */
 
 /**
