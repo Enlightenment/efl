@@ -671,7 +671,7 @@ _ecore_getopt_help_options(FILE               *fp,
  *
  * Message will be print to stderr.
  */
-void
+EAPI void
 ecore_getopt_help(FILE               *fp,
                   const Ecore_Getopt *parser)
 {
@@ -1675,7 +1675,7 @@ _ecore_getopt_parse_find_long_other(const Ecore_Getopt      *parser,
  *
  * @return EINA_TRUE if there are duplicates, EINA_FALSE otherwise.
  */
-Eina_Bool
+EAPI Eina_Bool
 ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
 {
    const Ecore_Getopt_Desc *desc = parser->descs;
@@ -1776,7 +1776,7 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  *
  * @return index of first non-option parameter or -1 on error.
  */
-int
+EAPI int
 ecore_getopt_parse(const Ecore_Getopt *parser,
                    Ecore_Getopt_Value *values,
                    int                 argc,
@@ -1846,7 +1846,7 @@ error:
  * @param list pointer to list to be freed.
  * @return always NULL, so you can easily make your list head NULL.
  */
-Eina_List *
+EAPI Eina_List *
 ecore_getopt_list_free(Eina_List *list)
 {
    void *data;
@@ -1865,7 +1865,7 @@ ecore_getopt_list_free(Eina_List *list)
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
-Eina_Bool
+EAPI Eina_Bool
 ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser __UNUSED__,
                                      const Ecore_Getopt_Desc *desc __UNUSED__,
                                      const char              *str,
@@ -1893,7 +1893,7 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser __UNUSED__,
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
-Eina_Bool
+EAPI Eina_Bool
 ecore_getopt_callback_size_parse(const Ecore_Getopt      *parser __UNUSED__,
                                  const Ecore_Getopt_Desc *desc __UNUSED__,
                                  const char              *str,
