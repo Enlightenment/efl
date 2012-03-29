@@ -524,11 +524,11 @@ _del_hook(Evas_Object *obj)
      }
    if (wd->delay_write) ecore_timer_del(wd->delay_write);
    if (wd->input_panel_imdata) free(wd->input_panel_imdata);
-   free(wd);
 
    if (wd->anchor_hover.hover_style) eina_stringshare_del(wd->anchor_hover.hover_style);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
+   free(wd);
 }
 
 static void
