@@ -549,6 +549,7 @@ _del_hook(Evas_Object *obj)
    if (wd->multi_timer) ecore_timer_del(wd->multi_timer);
    if (wd->decorate_type) eina_stringshare_del(wd->decorate_type);
    if (wd->scr_hold_timer) ecore_timer_del(wd->scr_hold_timer);
+   if (wd->tree_effect_animator) ecore_animator_del(wd->tree_effect_animator);
    free(wd);
 }
 
