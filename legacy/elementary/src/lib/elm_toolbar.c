@@ -425,15 +425,18 @@ _item_content_set_hook(Elm_Object_Item *it,
                        Evas_Object *content)
 {
    double scale;
-
    if (part && strcmp(part, "object")) return;
    Elm_Toolbar_Item *item = (Elm_Toolbar_Item *) it;
    Evas_Object *obj = WIDGET(item);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd || !obj) return;
    if (item->object == content) return;
+
+   if (item->object) evas_object_del(item->object);
+
    item->object = content;
-   elm_widget_sub_object_add(obj, item->object);
+   if (item->object)
+     elm_widget_sub_object_add(obj, item->object);
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
    _theme_hook_item(obj, item, scale, wd->icon_size);
 }

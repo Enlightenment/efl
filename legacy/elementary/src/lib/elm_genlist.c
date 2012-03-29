@@ -3584,8 +3584,13 @@ _item_content_get_hook(Elm_Gen_Item *it, const char *part)
 static void
 _item_content_set_hook(Elm_Gen_Item *it, const char *part, Evas_Object *content)
 {
+   Evas_Object *prev_obj;
+
    if (content && part)
      {
+        if (eina_list_data_find(it->content_objs, content)) return;
+        prev_obj = edje_object_part_swallow_get(VIEW(it), part);
+        if (prev_obj) evas_object_del(prev_obj);
         it->content_objs = eina_list_append(it->content_objs, content);
         edje_object_part_swallow(VIEW(it), part, content);
      }

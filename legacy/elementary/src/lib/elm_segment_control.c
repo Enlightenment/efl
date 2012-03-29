@@ -469,18 +469,13 @@ _item_content_set_hook(Elm_Object_Item *it,
                        Evas_Object *content)
 {
    Elm_Segment_Item *item;
-
    if (part && strcmp(part, "icon")) return;
 
    item = (Elm_Segment_Item *)it;
+   if (content == item->icon) return;
 
    //Remove the existing icon
-   if (item->icon)
-     {
-        edje_object_part_unswallow(VIEW(item), item->icon);
-        evas_object_del(item->icon);
-        item->icon = NULL;
-     }
+   if (item->icon) evas_object_del(item->icon);
    item->icon = content;
    if (item->icon)
      {

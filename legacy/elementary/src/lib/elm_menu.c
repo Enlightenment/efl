@@ -174,21 +174,17 @@ _item_content_set_hook(Elm_Object_Item *it,
                        Evas_Object *content)
 {
    Elm_Menu_Item *item;
-
    if (part && strcmp(part, "default")) return;
 
    item = (Elm_Menu_Item *)it;
+   if (content == item->content) return;
 
-   if (item->content)
-     {
-        elm_widget_sub_object_del(WIDGET(item), item->content);
-        evas_object_del(item->content);
-     }
+   if (item->content) evas_object_del(item->content);
 
    item->content = content;
-
    elm_widget_sub_object_add(WIDGET(item), item->content);
-   edje_object_part_swallow(VIEW(item), "elm.swallow.content", item->content);
+   if (item->content)
+     edje_object_part_swallow(VIEW(item), "elm.swallow.content", item->content);
    _sizing_eval(WIDGET(item));
 }
 

@@ -1078,7 +1078,6 @@ _item_icon_set(Elm_Popup_Content_Item *item, Evas_Object *icon)
    if (item->icon == icon) return;
    if (item->icon)
      {
-        elm_widget_sub_object_del(WIDGET(item), item->icon);
         evas_object_data_del(item->icon, "_popup_content_item");
         evas_object_del(item->icon);
      }

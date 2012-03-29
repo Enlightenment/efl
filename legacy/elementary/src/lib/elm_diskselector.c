@@ -909,8 +909,7 @@ static void
 _item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
 {
    if (it->icon == icon) return;
-   if (it->icon)
-     evas_object_del(it->icon);
+   if (it->icon) evas_object_del(it->icon);
    it->icon = icon;
    if (VIEW(it))
      {

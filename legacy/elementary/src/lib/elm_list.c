@@ -1050,7 +1050,7 @@ _item_disable(Elm_Object_Item *it)
 }
 
 static void
-_item_content_set(Elm_Object_Item *it, const char *part, Evas_Object *content)
+_item_content_set_hook(Elm_Object_Item *it, const char *part, Evas_Object *content)
 {
    Elm_List_Item *item = (Elm_List_Item *)it;
    Evas_Object **icon_p = NULL;
@@ -1092,7 +1092,7 @@ _item_content_set(Elm_Object_Item *it, const char *part, Evas_Object *content)
 }
 
 static Evas_Object *
-_item_content_get(const Elm_Object_Item *it, const char *part)
+_item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
    Elm_List_Item *item = (Elm_List_Item *)it;
 
@@ -1110,20 +1110,20 @@ _item_content_get(const Elm_Object_Item *it, const char *part)
 }
 
 static Evas_Object *
-_item_content_unset(const Elm_Object_Item *it, const char *part)
+_item_content_unset_hook(const Elm_Object_Item *it, const char *part)
 {
    Elm_List_Item *item = (Elm_List_Item *)it;
 
    if ((!part) || (!strcmp(part, "start")))
      {
         Evas_Object *obj = item->icon;
-        _item_content_set((Elm_Object_Item *)it, part, NULL);
+        _item_content_set_hook((Elm_Object_Item *)it, part, NULL);
         return obj;
      }
    else if (!strcmp(part, "end"))
      {
         Evas_Object *obj = item->end;
-        _item_content_set((Elm_Object_Item *)it, part, NULL);
+        _item_content_set_hook((Elm_Object_Item *)it, part, NULL);
         return obj;
      }
    return NULL;
@@ -1214,9 +1214,9 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
                                        _changed_size_hints, obj);
      }
    elm_widget_item_disable_hook_set(it, _item_disable);
-   elm_widget_item_content_set_hook_set(it, _item_content_set);
-   elm_widget_item_content_get_hook_set(it, _item_content_get);
-   elm_widget_item_content_unset_hook_set(it, _item_content_unset);
+   elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
+   elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
+   elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
    elm_widget_item_text_set_hook_set(it, _item_text_set);
    elm_widget_item_text_get_hook_set(it, _item_text_get);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
