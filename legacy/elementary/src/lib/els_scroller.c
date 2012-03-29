@@ -1786,7 +1786,7 @@ _smart_event_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSE
         sd->down.dragged_began = EINA_FALSE;
         sd->down.hold_parent = EINA_FALSE;
         sd->down.cancelled = EINA_FALSE;
-        if(sd->hold || sd->freeze)
+        if (sd->hold || sd->freeze)
            sd->down.want_reset = EINA_TRUE;
         else
            sd->down.want_reset = EINA_FALSE;
@@ -2409,7 +2409,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                          y = sd->down.sy - (ev->cur.canvas.y - sd->down.y);
                        else
                          y = sd->down.sy;
-                       if(sd->down.want_reset)
+                       if (sd->down.want_reset)
                          {
                             sd->down.x = ev->cur.canvas.x;
                             sd->down.y = ev->cur.canvas.y;
