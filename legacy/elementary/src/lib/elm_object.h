@@ -35,6 +35,10 @@ EAPI const char                  *elm_object_part_text_get(const Evas_Object *ob
  * @param part The content part name to set (NULL for the default content)
  * @param content The new content of the object
  *
+ * This sets a new object to a widget as a content object. If any object was
+ * already set as a content object in the same part, previous object will be
+ * deleted automatically.
+ *
  * @note Elementary objects may have many contents
  *
  * @ingroup General

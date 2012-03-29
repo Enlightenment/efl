@@ -699,11 +699,8 @@ _title_icon_set(Evas_Object *obj, Evas_Object *icon)
    if (!wd) return;
    if (wd->title_icon == icon) return;
    title_visibility_old = (wd->title_text) || (wd->title_icon);
-   if (wd->title_icon)
-     {
-        evas_object_del(wd->title_icon);
-        wd->title_icon = NULL;
-     }
+   if (wd->title_icon) evas_object_del(wd->title_icon);
+
    wd->title_icon = icon;
    title_visibility_current = (wd->title_text) || (wd->title_icon);
    elm_object_part_content_set(wd->base, "elm.swallow.title.icon",

@@ -464,12 +464,14 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    if (part && strcmp(part, "video")) return;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   if (!wd) return;
    double pos, length;
    Eina_Bool seekable;
 
    if (!_elm_video_check(content)) return;
+   if (wd->video == content) return;
 
+   if (wd->video) evas_object_del(wd->video);
    _cleanup_callback(wd);
 
    wd->video = content;
@@ -542,6 +544,7 @@ elm_player_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
    elm_widget_content_set_hook_set(obj, _content_set_hook);
+   /* TODO: add content_unset and content_get hook */
 
    wd->layout = edje_object_add(e);
    _elm_theme_object_set(obj, wd->layout, "player", "base", "default");

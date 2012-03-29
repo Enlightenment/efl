@@ -855,6 +855,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *edje;
+   Evas_Object *prev_content;
    if ((!wd) || (!content)) return;
 
    if (wd->scroll)
@@ -862,23 +863,20 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    else
       edje = wd->ent;
 
-   /* Delete the currently swallowed object */
-   Evas_Object *cswallow;
-
    if (!part || !strcmp(part, "icon"))
      {
-        cswallow = edje_object_part_swallow_get(edje, "elm.swallow.icon");
+        prev_content = edje_object_part_swallow_get(edje, "elm.swallow.icon");
         edje_object_signal_emit(edje, "elm,action,show,icon", "elm");
      }
    else if (!strcmp(part, "end"))
      {
-        cswallow = edje_object_part_swallow_get(edje, "elm.swallow.end");
+        prev_content = edje_object_part_swallow_get(edje, "elm.swallow.end");
         edje_object_signal_emit(edje, "elm,action,show,end", "elm");
      }
    else
-     cswallow = edje_object_part_swallow_get(edje, part);
+     prev_content = edje_object_part_swallow_get(edje, part);
 
-   if (cswallow) evas_object_del(cswallow);
+   if (prev_content) evas_object_del(prev_content);
 
    evas_event_freeze(evas_object_evas_get(obj));
    elm_widget_sub_object_add(obj, content);

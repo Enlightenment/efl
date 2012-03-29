@@ -280,6 +280,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+
    elm_object_part_content_set(wd->btn, part, content);
 }
 

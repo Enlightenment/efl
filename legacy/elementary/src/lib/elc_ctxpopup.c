@@ -774,13 +774,11 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Evas_Coord min_w = -1, min_h = -1;
-
    Widget_Data *wd;
-
    if ((part) && (strcmp(part, "default"))) return;
-
    wd = elm_widget_data_get(obj);
    if ((!wd) || (!content)) return;
+   if (content == wd->content) return;
 
    //TODO: wd->list
    if (wd->content) evas_object_del(wd->content);

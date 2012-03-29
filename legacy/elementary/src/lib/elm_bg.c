@@ -122,19 +122,16 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
-
    if (part && strcmp(part, "overlay")) return;
-
    wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->overlay)
-     {
-        evas_object_del(wd->overlay);
-        wd->overlay = NULL;
-     }
+
+   if (content == wd->overlay) return;
+   if (wd->overlay) evas_object_del(wd->overlay);
+
+   wd->overlay = content;
    if (content)
      {
-        wd->overlay = content;
         edje_object_part_swallow(wd->base, "elm.swallow.content", content);
         elm_widget_sub_object_add(obj, content);
      }
