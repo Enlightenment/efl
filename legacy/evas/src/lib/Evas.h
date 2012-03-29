@@ -1788,7 +1788,7 @@ EAPI Evas_Engine_Info *evas_engine_info_get              (const Evas *e) EINA_WA
  *
  * @param   e    The pointer to the Evas Canvas
  * @param   info The pointer to the Engine Info to use
- * @return  1 if no error occurred, 0 otherwise
+ * @return  EINA_TRUE if no error occurred, EINA_FALSE otherwise
  * @ingroup Evas_Output_Method
  */
 EAPI Eina_Bool         evas_engine_info_set              (Evas *e, Evas_Engine_Info *info) EINA_ARG_NONNULL(1);
@@ -7864,7 +7864,7 @@ EAPI const char       *evas_object_text_text_get         (const Evas_Object *obj
  *
  * BiDi delimiters are use for in-paragraph separation of bidi segments. This
  * is useful for example in recipients fields of e-mail clients where bidi
- * oddities can occur when mixing rtl and ltr.
+ * oddities can occur when mixing RTL and LTR.
  *
  * @param obj The given text object.
  * @param delim A null terminated string of delimiters, e.g ",|".
@@ -7877,7 +7877,7 @@ EAPI void              evas_object_text_bidi_delimiters_set(Evas_Object *obj, co
  *
  * BiDi delimiters are use for in-paragraph separation of bidi segments. This
  * is useful for example in recipients fields of e-mail clients where bidi
- * oddities can occur when mixing rtl and ltr.
+ * oddities can occur when mixing RTL and LTR.
  *
  * @param obj The given text object.
  * @return A null terminated string of delimiters, e.g ",|". If empty, returns NULL.
@@ -8489,7 +8489,7 @@ EAPI double                       evas_object_textblock_valign_get(const Evas_Ob
  *
  * BiDi delimiters are use for in-paragraph separation of bidi segments. This
  * is useful for example in recipients fields of e-mail clients where bidi
- * oddities can occur when mixing rtl and ltr.
+ * oddities can occur when mixing RTL and LTR.
  *
  * @param obj The given textblock object.
  * @param delim A null terminated string of delimiters, e.g ",|".
@@ -8502,7 +8502,7 @@ EAPI void                         evas_object_textblock_bidi_delimiters_set(Evas
  *
  * BiDi delimiters are use for in-paragraph separation of bidi segments. This
  * is useful for example in recipients fields of e-mail clients where bidi
- * oddities can occur when mixing rtl and ltr.
+ * oddities can occur when mixing RTL and LTR.
  *
  * @param obj The given textblock object.
  * @return A null terminated string of delimiters, e.g ",|". If empty, returns NULL.
@@ -8941,7 +8941,7 @@ EAPI void                         evas_textblock_cursor_range_delete(Evas_Textbl
 
 
 /**
- * Return the text of the paragraph cur points to - returns the text in markup..
+ * Return the text of the paragraph cur points to - returns the text in markup.
  *
  * @param cur the cursor pointing to the paragraph.
  * @return the text on success, NULL otherwise.
@@ -11172,7 +11172,7 @@ EAPI Eina_Bool                  evas_object_box_remove_at                       
  * again.
  *
  * @param o The box object to remove a child object from
- * @param child The handle to the child object to be removed
+ * @param clear if true, it will delete just removed children.
  * @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise
  *
  * This has the same effect of calling evas_object_box_remove() on
