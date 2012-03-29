@@ -119,15 +119,15 @@ struct _Eina_Simple_XML_Node_Data
 
 typedef enum _Eina_Simple_XML_Type
 {
-  EINA_SIMPLE_XML_OPEN = 0, /*!< <tag attribute="value"> */
-  EINA_SIMPLE_XML_OPEN_EMPTY, /*!< <tag attribute="value" /> */
-  EINA_SIMPLE_XML_CLOSE, /*!< </tag> */
+  EINA_SIMPLE_XML_OPEN = 0, /*!< \<tag attribute="value"\> */
+  EINA_SIMPLE_XML_OPEN_EMPTY, /*!< \<tag attribute="value" /\> */
+  EINA_SIMPLE_XML_CLOSE, /*!< \</tag\> */
   EINA_SIMPLE_XML_DATA, /*!< tag text data */
-  EINA_SIMPLE_XML_CDATA, /*!< <![CDATA[something]]> */
+  EINA_SIMPLE_XML_CDATA, /*!< \<![CDATA[something]]\> */
   EINA_SIMPLE_XML_ERROR, /*!< error contents */
-  EINA_SIMPLE_XML_PROCESSING, /*!< <?xml ... ?> <?php .. ?> */
-  EINA_SIMPLE_XML_DOCTYPE, /*!< <!DOCTYPE html */
-  EINA_SIMPLE_XML_COMMENT, /*!< <!-- something --> */
+  EINA_SIMPLE_XML_PROCESSING, /*!< \<?xml ... ?\> \<?php .. ?\> */
+  EINA_SIMPLE_XML_DOCTYPE, /*!< \<!DOCTYPE html */
+  EINA_SIMPLE_XML_COMMENT, /*!< \<!-- something --\> */
   EINA_SIMPLE_XML_IGNORED /*!< whatever is ignored by parser, like whitespace */
 } Eina_Simple_XML_Type;
 

@@ -29,7 +29,7 @@
  *
  * This is an example that illustrates how Eina_Tiler works for a given set of
  * rectangles. The rectangles must be given in the command line in the form:
- * <width>x<height>+<x offset>+<y offset>
+ * \<width\>x\<height\>+\<x offset\>+\<y offset\>
  * The example will show two panels, the first(input) will show the given
  * rectangles(in different colors) and in the seconds(output) it will show the
  * rectangles given by the tiler. The rectangles will be added one by one every

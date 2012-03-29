@@ -130,7 +130,7 @@
  * @skip int
  * @until eina_init
  *
- * We then create the array much like we did on @ref eina_inarray_example_01:
+ * We then create the array much like we did on @ref eina_inarray_example_01 :
  * @until inarray_new
  *
  * The point were this example significantly differs from the first eina inline

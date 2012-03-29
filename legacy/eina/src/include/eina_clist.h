@@ -43,7 +43,7 @@
  *
  * Elements of this list are members of the structs stored in the list
  *
- * Advantages over @ref Eina_List and @ref Eina_Inlist:
+ * Advantages over @ref Eina_List and @ref Eina_Inlist :
  *  - uses less memory (two machine words per item)
  *  - allows removing items without knowing which list they're in using O(1) time
  *  - no need to keep updating the head pointer as the list is changed

@@ -358,14 +358,14 @@
  * It may be the case that someone needs to have some inlist nodes added to a
  * @ref Eina_List too. If this happens, the inlist nodes can be added to the
  * @ref Eina_List without any problems. This example demonstrates this case:
- * @ref inlist_02_example_page
+ * @ref eina_inlist_02_example_page
  *
  * It's also possible to have some data that is part of two different inlists.
  * If this is the case, then it won't be possible to use the convenience macros
  * to both of the lists. It will be necessary to create a new set of macros that
  * will allow access to the second list node info. An example for this usage can
  * be found here:
- * @ref inlist_03_example_page
+ * @ref eina_inlist_03_example_page
  *
  * List of examples:
  * @li @ref eina_inlist_01_example_page
