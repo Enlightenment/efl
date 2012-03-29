@@ -2859,6 +2859,8 @@ _elm_widget_item_free(Elm_Widget_Item *item)
         return;
      }
 
+   _elm_access_item_unregister(item);
+   
    EINA_LIST_FREE(item->callbacks, cb) free(cb);
 
    if (item->del_func)

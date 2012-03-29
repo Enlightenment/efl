@@ -228,6 +228,7 @@ struct _Elm_Access_Item
 
 struct _Elm_Access_Info
 {
+   Evas_Object *hoverobj;
    Eina_List   *items;
    Ecore_Timer *delay_timer;
 };
@@ -244,6 +245,7 @@ EAPI void             _elm_access_object_hilight(Evas_Object *obj);
 EAPI void             _elm_access_object_unhilight(Evas_Object *obj);
 EAPI void             _elm_access_object_hilight_disable(Evas *e);
 EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object *hoverobj);
+EAPI void             _elm_access_item_unregister(Elm_Widget_Item *item);
 EAPI void             _elm_access_item_register(Elm_Widget_Item *item, Evas_Object *hoverobj);
 EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 

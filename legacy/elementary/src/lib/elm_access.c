@@ -467,24 +467,35 @@ _access_item_mouse_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNU
      }
 }
 
-static void
-_access_item_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+static void _access_item_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+
+EAPI void
+_elm_access_item_unregister(Elm_Widget_Item *item)
 {
    Elm_Access_Info *ac;
 
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_IN,
-                                       _access_item_mouse_in_cb, data);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_OUT,
-                                       _access_item_mouse_out_cb, data);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
-                                       _access_item_del_cb, data);
-   ac = ((Elm_Widget_Item *)data)->access;
-   ((Elm_Widget_Item *)data)->access = NULL;
+   ac = item->access;
    if (ac)
      {
+        evas_object_event_callback_del_full(ac->hoverobj,
+                                            EVAS_CALLBACK_MOUSE_IN,
+                                            _access_item_mouse_in_cb, item);
+        evas_object_event_callback_del_full(ac->hoverobj,
+                                            EVAS_CALLBACK_MOUSE_OUT,
+                                            _access_item_mouse_out_cb, item);
+        evas_object_event_callback_del_full(ac->hoverobj,
+                                            EVAS_CALLBACK_DEL,
+                                            _access_item_del_cb, item);
+        item->access = NULL;
         _elm_access_clear(ac);
         free(ac);
      }
+}
+
+static void
+_access_item_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   _elm_access_item_unregister((Elm_Widget_Item *)data);
 }
 
 EAPI void
@@ -499,6 +510,7 @@ _elm_access_item_register(Elm_Widget_Item *item, Evas_Object *hoverobj)
    evas_object_event_callback_add(hoverobj, EVAS_CALLBACK_DEL,
                                   _access_item_del_cb, item);
    ac = calloc(1, sizeof(Elm_Access_Info));
+   ac->hoverobj = hoverobj;
    item->access = ac;
 }
 
