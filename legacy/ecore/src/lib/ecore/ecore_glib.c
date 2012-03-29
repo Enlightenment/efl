@@ -111,17 +111,17 @@ _ecore_glib_context_poll_to(GPollFD      *pfds,
    for (; (itr < itr_end) && (ready > 0); itr++)
      {
         itr->revents = 0;
-        if (FD_ISSET(itr->fd, rfds))
+        if (FD_ISSET(itr->fd, rfds) && (itr->events & G_IO_IN))
           {
              itr->revents |= G_IO_IN;
              ready--;
           }
-        if (FD_ISSET(itr->fd, wfds))
+        if (FD_ISSET(itr->fd, wfds) && (itr->events & G_IO_OUT))
           {
              itr->revents |= G_IO_OUT;
              ready--;
           }
-        if (FD_ISSET(itr->fd, efds))
+        if (FD_ISSET(itr->fd, efds) && (itr->events & (G_IO_HUP | G_IO_ERR)))
           {
              itr->revents |= G_IO_ERR;
              ready--;
