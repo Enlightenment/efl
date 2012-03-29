@@ -1,7 +1,7 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 #define IND_NUM 20

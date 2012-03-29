@@ -1,9 +1,10 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+#include <Elementary.h>
 #ifndef M_PI
 #define M_PI 3.14159265
 #endif

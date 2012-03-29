@@ -1,7 +1,7 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 /* We zoom out to this value so we'll be able to use map and have a nice

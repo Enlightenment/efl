@@ -1,8 +1,8 @@
-#include <Elementary.h>
 #include <Elementary_Cursor.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 // XXX: show all type of cursors in the elementary_test. this needs to be the first test

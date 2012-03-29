@@ -1,7 +1,7 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 #include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 /* A simple test, just displaying datetime in its default format */

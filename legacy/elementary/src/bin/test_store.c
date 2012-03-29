@@ -5,11 +5,11 @@
           http://www.enlightenment.org/~raster/store.tar.gz
  */
 
-#include <Elementary.h>
 
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 typedef struct _My_Item My_Item;

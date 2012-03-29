@@ -1,8 +1,8 @@
 /* Test for Focus Chain Linear*/
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Eina_Bool

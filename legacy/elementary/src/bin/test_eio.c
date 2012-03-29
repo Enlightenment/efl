@@ -1,10 +1,10 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
 #include <Eio.h>
 #include <sys/times.h>
 
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Elm_Genlist_Item_Class it_eio;

@@ -1,7 +1,7 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 void
 test_separator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)

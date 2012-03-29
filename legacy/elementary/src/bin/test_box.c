@@ -1,8 +1,8 @@
-#include <Elementary.h>
 #include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 #define ICON_MAX 24
 

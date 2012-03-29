@@ -1,7 +1,7 @@
-#include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
 icon_clicked(void *data , Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)

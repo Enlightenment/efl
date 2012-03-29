@@ -1,9 +1,8 @@
-#include <Elementary.h>
-#include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-# ifndef ELM_LIB_QUICKLAUNCH
+#include <Elementary.h>
+#ifndef ELM_LIB_QUICKLAUNCH
 struct _Api_Data
 {
    Evas_Object *grid;

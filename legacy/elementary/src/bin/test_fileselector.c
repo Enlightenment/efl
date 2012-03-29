@@ -2,8 +2,8 @@
 # include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
 
+#include <Elementary.h>
 #ifndef ENABLE_NLS
 # ifndef setlocale
 #  define setlocale(c, l)
@@ -13,6 +13,7 @@
 # endif
 #endif
 
+#include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
 my_fileselector_done(void            *data,
