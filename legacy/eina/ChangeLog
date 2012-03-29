@@ -241,3 +241,7 @@
 2012-03-16  Raphael Kubo da Costa
 
 	* Adjust Valgrind's CFLAGS to fix the build when it is in a non-default location.
+
+2012-03-29 Iván Briano
+
+	* Avoid freeing old data before returning it on eina_hash_set().

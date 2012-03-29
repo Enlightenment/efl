@@ -1136,7 +1136,10 @@ eina_hash_set(Eina_Hash *hash, const void *key, const void *data)
 	  }
 	else
 	  {
+            Eina_Free_Cb cb = hash->data_free_cb;
+            hash->data_free_cb = NULL;
 	    _eina_hash_del_by_hash_el(hash, hash_element, hash_head, key_hash);
+            hash->data_free_cb = cb;
 	  }
 
         return old_data;
