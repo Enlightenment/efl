@@ -1861,7 +1861,7 @@ typedef void (*Ecore_Thread_Notify_Cb)(void *data, Ecore_Thread *thread, void *m
  */
 EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Cb func_blocking, Ecore_Thread_Cb func_end, Ecore_Thread_Cb func_cancel, const void *data);
 /**
- * Launch a thread to run a task than can talk back to the main thread
+ * Launch a thread to run a task that can talk back to the main thread
  *
  * @param func_heavy The function that should run in another thread.
  * @param func_notify Function that receives the data sent from the thread
