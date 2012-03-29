@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` conformant_example_02.c -o conformant_example_02
+ * gcc -g conformant_example_02.c -o conformant_example_02 `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

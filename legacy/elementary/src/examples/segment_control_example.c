@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` segment_control_example.c -o segment_control_example
+ * gcc -g segment_control_example.c -o segment_control_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

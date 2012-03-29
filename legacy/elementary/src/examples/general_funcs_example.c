@@ -1,5 +1,5 @@
 /* Compile with:
- * gcc -g `pkg-config --cflags --libs elementary` general_funcs_example.c -o general_funcs_example
+ * gcc -g general_funcs_example.c -o general_funcs_example `pkg-config --cflags --libs elementary`
  */
 
 #include <Elementary.h>

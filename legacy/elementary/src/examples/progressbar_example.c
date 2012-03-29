@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` progressbar_example.c -o progressbar_example -DDATA_DIR="\"<directory>\'""
+ * gcc -g progressbar_example.c -o progressbar_example `pkg-config --cflags --libs elementary` -DDATA_DIR="\"<directory>\""
  * @endverbatim
  */
 

@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` datetime_example.c -o datetime_example
+//gcc -g datetime_example.c -o datetime_example `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 

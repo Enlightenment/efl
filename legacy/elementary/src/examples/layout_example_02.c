@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` layout_example_02.c -o layout_example_02
+//gcc -g layout_example_02.c -o layout_example_02 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 

@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` actionslider_example_01.c -o actionslider_example_01
+//gcc -g actionslider_example_01.c -o actionslider_example_01 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 

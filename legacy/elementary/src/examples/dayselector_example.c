@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` dayselector_example.c -o dayselector_example
+ * gcc -g dayselector_example.c -o dayselector_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` separator_example_01.c -o separator_example_01
+//gcc -g separator_example_01.c -o separator_example_01 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 

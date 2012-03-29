@@ -4,7 +4,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` mapbuf_example.c -o mapbuf_example
+ * gcc -g mapbuf_example.c -o mapbuf_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

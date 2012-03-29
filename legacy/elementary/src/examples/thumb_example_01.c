@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` thumb_example_01.c -o thumb_example_01
+//gcc -g thumb_example_01.c -o thumb_example_01 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 #define DATA_DIR "."

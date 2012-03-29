@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` toolbar_example_01.c -o toolbar_example_01
+ * gcc -g toolbar_example_01.c -o toolbar_example_01 `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

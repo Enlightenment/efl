@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` panes_example.c -o panes_example
+ * gcc -g panes_example.c -o panes_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

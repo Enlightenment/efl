@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` genlist_example_02.c -o genlist_example_02
+//gcc -g genlist_example_02.c -o genlist_example_02 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 #include <time.h>

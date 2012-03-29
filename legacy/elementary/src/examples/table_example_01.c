@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` table_example_01.c -o table_example_01
+//gcc -g table_example_01.c -o table_example_01 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 

@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` slider_example.c -o slider_example
+ * gcc -g slider_example.c -o slider_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

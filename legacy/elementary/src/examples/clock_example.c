@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` clock_example.c -o clock_example
+ * gcc -g clock_example.c -o clock_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

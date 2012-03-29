@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` flipselector_example.c -o flipselector_example
+ * gcc -g flipselector_example.c -o flipselector_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

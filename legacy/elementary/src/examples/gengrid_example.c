@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` gengrid_example.c -o gengrid_example
+ * gcc -g gengrid_example.c -o gengrid_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 

@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` map_example_02.c -o map_example_02
+ * gcc -g map_example_02.c -o map_example_02 `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 
