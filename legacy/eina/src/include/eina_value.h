@@ -1721,7 +1721,7 @@ static inline Eina_Bool eina_value_array_pappend(Eina_Value *value,
 
 /**
  * @brief Retrieves a value from the array as an Eina_Value copy.
- * @param value source value object
+ * @param src source value object
  * @param position index of the member
  * @param dst where to return the array member
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
