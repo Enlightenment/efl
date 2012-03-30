@@ -75,6 +75,7 @@ extern "C" {
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <math.h>
+#include <direct.h>
 
 
 #ifdef _MSC_VER
