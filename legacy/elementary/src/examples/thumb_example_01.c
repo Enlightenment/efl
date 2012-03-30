@@ -26,9 +26,11 @@ elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg;
    Evas_Object *thumb;
-   Ethumb_Client *client;
    char buf[PATH_MAX];
-
+#ifdef ELM_ETHUMB   
+   Ethumb_Client *client;
+#endif
+   
    elm_need_ethumb();
 
    elm_app_info_set(elm_main, "elementary", "images/plant_01.jpg");
@@ -42,6 +44,7 @@ elm_main(int argc, char **argv)
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
+#ifdef ELM_ETHUMB
    client = elm_thumb_ethumb_client_get();
    if (!client)
      {
@@ -49,7 +52,8 @@ elm_main(int argc, char **argv)
 	return 1;
      }
    ethumb_client_size_set(client, 160, 160);
-
+#endif
+   
    thumb = elm_thumb_add(win);
 
    evas_object_smart_callback_add(thumb, "generate,start", _generation_started_cb, NULL);
