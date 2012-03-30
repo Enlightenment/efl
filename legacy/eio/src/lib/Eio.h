@@ -22,10 +22,6 @@
 #ifndef EIO_H__
 # define EIO_H__
 
-#ifdef _MSC_VER
-# include <Evil.h>
-#endif
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
