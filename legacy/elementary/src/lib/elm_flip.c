@@ -58,7 +58,7 @@ static void _sizing_eval(Evas_Object *obj);
 static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
-static void _state_slices_clear(Widget_Data *st);
+static void _state_slices_clear(Widget_Data *wd);
 static void _configure(Evas_Object *obj);
 
 static const char SIG_ANIMATE_BEGIN[] = "animate,begin";
@@ -170,16 +170,16 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 }
 
 static Slice *
-_slice_new(Widget_Data *st, Evas_Object *obj)
+_slice_new(Widget_Data *wd, Evas_Object *obj)
 {
    Slice *sl;
 
    sl = calloc(1, sizeof(Slice));
    if (!sl) return NULL;
    sl->obj = evas_object_image_add(evas_object_evas_get(obj));
-   elm_widget_sub_object_add(st->obj, sl->obj);
-   evas_object_clip_set(sl->obj, evas_object_clip_get(st->obj));
-   evas_object_smart_member_add(sl->obj, st->obj);
+   elm_widget_sub_object_add(wd->obj, sl->obj);
+   evas_object_clip_set(sl->obj, evas_object_clip_get(wd->obj));
+   evas_object_smart_member_add(sl->obj, wd->obj);
    evas_object_image_smooth_scale_set(sl->obj, EINA_FALSE);
    evas_object_pass_events_set(sl->obj, EINA_TRUE);
    evas_object_image_source_set(sl->obj, obj);
@@ -194,7 +194,7 @@ _slice_free(Slice *sl)
 }
 
 static void
-_slice_apply(Widget_Data *st, Slice *sl, Evas_Coord x __UNUSED__,
+_slice_apply(Widget_Data *wd, Slice *sl, Evas_Coord x __UNUSED__,
              Evas_Coord y __UNUSED__, Evas_Coord w, Evas_Coord h __UNUSED__,
              Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
 {
@@ -207,28 +207,28 @@ _slice_apply(Widget_Data *st, Slice *sl, Evas_Coord x __UNUSED__,
    for (i = 0; i < 4; i++)
      {
         evas_map_point_color_set(m, i, 255, 255, 255, 255);
-        if (st->dir == 0)
+        if (wd->dir == 0)
           {
              int p[4] = { 0, 1, 2, 3 };
              evas_map_point_coord_set(m, i, ox + sl->x[p[i]], oy + sl->y[p[i]],
                                       sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, sl->u[p[i]] , sl->v[p[i]]);
           }
-        else if (st->dir == 1)
+        else if (wd->dir == 1)
           {
              int p[4] = { 1, 0, 3, 2 };
              evas_map_point_coord_set(m, i, ox + (w - sl->x[p[i]]),
                                       oy + sl->y[p[i]], sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, ow - sl->u[p[i]], sl->v[p[i]]);
           }
-        else if (st->dir == 2)
+        else if (wd->dir == 2)
           {
              int p[4] = { 1, 0, 3, 2 };
              evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + sl->x[p[i]],
                                       sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, sl->v[p[i]] , sl->u[p[i]]);
           }
-        else/* if (st->dir == 3) will be this anyway */
+        else/* if (wd->dir == 3) will be this anyway */
           {
              int p[4] = { 0, 1, 2, 3 };
              evas_map_point_coord_set(m, i, ox + sl->y[p[i]],
@@ -243,7 +243,7 @@ _slice_apply(Widget_Data *st, Slice *sl, Evas_Coord x __UNUSED__,
 }
 
 static void
-_slice_3d(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y,
+_slice_3d(Widget_Data *wd __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y,
           Evas_Coord w, Evas_Coord h)
 {
    Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
@@ -264,7 +264,7 @@ _slice_3d(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y,
 }
 
 static void
-_slice_light(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_slice_light(Widget_Data *wd __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
    int i;
@@ -292,7 +292,7 @@ _slice_light(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, 
 }
 
 static void
-_slice_xyz(Widget_Data *st __UNUSED__, Slice *sl,
+_slice_xyz(Widget_Data *wd __UNUSED__, Slice *sl,
            double xx1, double yy1, double zz1,
            double xx2, double yy2, double zz2,
            double xx3, double yy3, double zz3,
@@ -305,7 +305,7 @@ _slice_xyz(Widget_Data *st __UNUSED__, Slice *sl,
 }
 
 static void
-_slice_uv(Widget_Data *st __UNUSED__, Slice *sl,
+_slice_uv(Widget_Data *wd __UNUSED__, Slice *sl,
           double u1, double v1,
           double u2, double v2,
           double u3, double v3,
@@ -352,29 +352,29 @@ _interp_point(Vertex3 *vi1, Vertex3 *vi2, Vertex3 *vo, double v)
 }
 
 static void
-_state_slices_clear(Widget_Data *st)
+_state_slices_clear(Widget_Data *wd)
 {
    int i, j, num;
 
-   if (st->slices)
+   if (wd->slices)
      {
         num = 0;
-        for (j = 0; j < st->slices_h; j++)
+        for (j = 0; j < wd->slices_h; j++)
           {
-             for (i = 0; i < st->slices_w; i++)
+             for (i = 0; i < wd->slices_w; i++)
                {
-                  if (st->slices[num]) _slice_free(st->slices[num]);
-                  if (st->slices2[num]) _slice_free(st->slices2[num]);
+                  if (wd->slices[num]) _slice_free(wd->slices[num]);
+                  if (wd->slices2[num]) _slice_free(wd->slices2[num]);
                   num++;
                }
           }
-        free(st->slices);
-        free(st->slices2);
-        st->slices = NULL;
-        st->slices2 = NULL;
+        free(wd->slices);
+        free(wd->slices2);
+        wd->slices = NULL;
+        wd->slices2 = NULL;
      }
-   st->slices_w = 0;
-   st->slices_h = 0;
+   wd->slices_w = 0;
+   wd->slices_h = 0;
 }
 
 static int
@@ -424,7 +424,7 @@ _slice_obj_vert_color_merge(Slice *s1, int p1, Slice *s2, int p2,
 }
 
 static int
-_state_update(Widget_Data *st)
+_state_update(Widget_Data *wd)
 {
    Evas_Coord xx1, yy1, xx2, yy2, mx, my;
    Evas_Coord x, y, w, h, ox, oy, ow, oh;
@@ -436,35 +436,35 @@ _state_update(Widget_Data *st)
    Vertex3 *tvo, *tvol;
    Evas_Object *front, *back;
 
-   st->backflip = EINA_TRUE;
-   if (st->state)
+   wd->backflip = EINA_TRUE;
+   if (wd->state)
      {
-        front = st->front.content;
-        back = st->front.content;
+        front = wd->front.content;
+        back = wd->front.content;
      }
    else
      {
-        front = st->back.content;
-        back = st->back.content;
+        front = wd->back.content;
+        back = wd->back.content;
      }
 
-   evas_object_geometry_get(st->obj, &x, &y, &w, &h);
+   evas_object_geometry_get(wd->obj, &x, &y, &w, &h);
    ox = x; oy = y; ow = w; oh = h;
-   xx1 = st->down_x;
-   yy1 = st->down_y;
-   xx2 = st->x;
-   yy2 = st->y;
+   xx1 = wd->down_x;
+   yy1 = wd->down_y;
+   xx2 = wd->x;
+   yy2 = wd->y;
 
-   if (st->dir == 0)
+   if (wd->dir == 0)
      {
         // no nothing. left drag is standard
      }
-   else if (st->dir == 1)
+   else if (wd->dir == 1)
      {
         xx1 = (w - 1) - xx1;
         xx2 = (w - 1) - xx2;
      }
-   else if (st->dir == 2)
+   else if (wd->dir == 2)
      {
         Evas_Coord tmp;
 
@@ -472,7 +472,7 @@ _state_update(Widget_Data *st)
         tmp = xx2; xx2 = yy2; yy2 = tmp;
         tmp = w; w = h; h = tmp;
      }
-   else/* if (st->dir == 3) will be this anyway */
+   else/* if (wd->dir == 3) will be this anyway */
      {
         Evas_Coord tmp;
 
@@ -563,26 +563,26 @@ _state_update(Widget_Data *st)
 
    nw = (w + gszw - 1) / gszw;
    nh = (h + gszh - 1) / gszh;
-   if ((st->slices_w != nw) || (st->slices_h != nh)) _state_slices_clear(st);
-   st->slices_w = nw;
-   st->slices_h = nh;
-   if (!st->slices)
+   if ((wd->slices_w != nw) || (wd->slices_h != nh)) _state_slices_clear(wd);
+   wd->slices_w = nw;
+   wd->slices_h = nh;
+   if (!wd->slices)
      {
-        st->slices = calloc(st->slices_w * st->slices_h, sizeof(Slice *));
-        if (!st->slices) return 0;
-        st->slices2 = calloc(st->slices_w * st->slices_h, sizeof(Slice *));
-        if (!st->slices2)
+        wd->slices = calloc(wd->slices_w * wd->slices_h, sizeof(Slice *));
+        if (!wd->slices) return 0;
+        wd->slices2 = calloc(wd->slices_w * wd->slices_h, sizeof(Slice *));
+        if (!wd->slices2)
           {
-             free(st->slices);
-             st->slices = NULL;
+             free(wd->slices);
+             wd->slices = NULL;
              return 0;
           }
      }
 
-   num = (st->slices_w + 1) * (st->slices_h + 1);
+   num = (wd->slices_w + 1) * (wd->slices_h + 1);
 
    tvo = alloca(sizeof(Vertex3) * num);
-   tvol = alloca(sizeof(Vertex3) * (st->slices_w + 1));
+   tvol = alloca(sizeof(Vertex3) * (wd->slices_w + 1));
 
    for (col = 0, gx = 0; gx <= (w + gszw - 1); gx += gszw, col++)
      {
@@ -617,10 +617,10 @@ _state_update(Widget_Data *st)
           }
      }
 
-   jump = st->slices_h + 1;
+   jump = wd->slices_h + 1;
    for (col = 0, gx = 0; gx < w; gx += gszw, col++)
      {
-        num = st->slices_h * col;
+        num = wd->slices_h * col;
         num2 = jump * col;
 
         gw = gszw;
@@ -630,7 +630,7 @@ _state_update(Widget_Data *st)
           {
              Vertex3 vo[4];
 
-             if (b > 0) nn = num + st->slices_h - row - 1;
+             if (b > 0) nn = num + wd->slices_h - row - 1;
              else nn = num + row;
 
              gh = gszh;
@@ -652,54 +652,54 @@ _state_update(Widget_Data *st)
                }
 
              // FRONT
-             sl = st->slices[nn];
+             sl = wd->slices[nn];
              if (!sl)
                {
-                  sl = _slice_new(st, front);
-                  st->slices[nn] = sl;
+                  sl = _slice_new(wd, front);
+                  wd->slices[nn] = sl;
                }
-             _slice_xyz(st, sl,
+             _slice_xyz(wd, sl,
                         vo[0].x, vo[0].y, vo[0].z,
                         vo[1].x, vo[1].y, vo[1].z,
                         vo[2].x, vo[2].y, vo[2].z,
                         vo[3].x, vo[3].y, vo[3].z);
              if (b <= 0)
-               _slice_uv(st, sl,
+               _slice_uv(wd, sl,
                          gx, gy, gx + gw,  gy,  gx + gw,  gy + gh, gx, gy + gh);
              else
-               _slice_uv(st, sl,
+               _slice_uv(wd, sl,
                          gx, h - (gy + gh), gx + gw, h - (gy + gh), gx + gw,
                          h - gy, gx, h - gy);
 
              // BACK
-             sl = st->slices2[nn];
+             sl = wd->slices2[nn];
              if (!sl)
                {
-                  sl = _slice_new(st, back);
-                  st->slices2[nn] = sl;
+                  sl = _slice_new(wd, back);
+                  wd->slices2[nn] = sl;
                }
 
-             _slice_xyz(st, sl,
+             _slice_xyz(wd, sl,
                         vo[1].x, vo[1].y, vo[1].z,
                         vo[0].x, vo[0].y, vo[0].z,
                         vo[3].x, vo[3].y, vo[3].z,
                         vo[2].x, vo[2].y, vo[2].z);
-             if (st->backflip)
+             if (wd->backflip)
                {
                   if (b <= 0)
-                    _slice_uv(st, sl, gx + gw, gy, gx, gy, gx, gy + gh, gx + gw,
+                    _slice_uv(wd, sl, gx + gw, gy, gx, gy, gx, gy + gh, gx + gw,
                               gy + gh);
                   else
-                    _slice_uv(st, sl, gx + gw, h - (gy + gh), gx, h - (gy + gh),
+                    _slice_uv(wd, sl, gx + gw, h - (gy + gh), gx, h - (gy + gh),
                               gx, h - gy, gx + gw, h - gy);
                }
              else
                {
                   if (b <= 0)
-                    _slice_uv(st, sl, w - (gx + gw), gy, w - (gx), gy, w - (gx),
+                    _slice_uv(wd, sl, w - (gx + gw), gy, w - (gx), gy, w - (gx),
                               gy + gh, w - (gx + gw), gy + gh);
                   else
-                    _slice_uv(st, sl, w - (gx + gw), h - (gy + gh), w - (gx),
+                    _slice_uv(wd, sl, w - (gx + gw), h - (gy + gh), w - (gx),
                               h - (gy + gh),  w - (gx), h - gy, w - (gx + gw),
                               h - gy);
                }
@@ -707,70 +707,70 @@ _state_update(Widget_Data *st)
      }
 
    num = 0;
-   for (j = 0; j < st->slices_h; j++)
+   for (j = 0; j < wd->slices_h; j++)
      {
-        for (i = 0; i < st->slices_w; i++)
+        for (i = 0; i < wd->slices_w; i++)
           {
-             _slice_apply(st, st->slices[num], x, y, w, h, ox, oy, ow, oh);
-             _slice_apply(st, st->slices2[num], x, y, w, h, ox, oy, ow, oh);
-             _slice_light(st, st->slices[num], ox, oy, ow, oh);
-             _slice_light(st, st->slices2[num], ox, oy, ow, oh);
+             _slice_apply(wd, wd->slices[num], x, y, w, h, ox, oy, ow, oh);
+             _slice_apply(wd, wd->slices2[num], x, y, w, h, ox, oy, ow, oh);
+             _slice_light(wd, wd->slices[num], ox, oy, ow, oh);
+             _slice_light(wd, wd->slices2[num], ox, oy, ow, oh);
              num++;
           }
      }
 
-   for (i = 0; i <= st->slices_w; i++)
+   for (i = 0; i <= wd->slices_w; i++)
      {
-        num = i * st->slices_h;
-        for (j = 0; j <= st->slices_h; j++)
+        num = i * wd->slices_h;
+        for (j = 0; j <= wd->slices_h; j++)
           {
              Slice *s[4];
 
              s[0] = s[1] = s[2] = s[3] = NULL;
              if ((i > 0) && (j > 0))
-                s[0] = st->slices[num - 1 - st->slices_h];
-             if ((i < st->slices_w) && (j > 0))
-                s[1] = st->slices[num - 1];
-             if ((i > 0) && (j < st->slices_h))
-                s[2] = st->slices[num - st->slices_h];
-             if ((i < st->slices_w) && (j < st->slices_h))
-                s[3] = st->slices[num];
-             if (st->dir == 0)
+                s[0] = wd->slices[num - 1 - wd->slices_h];
+             if ((i < wd->slices_w) && (j > 0))
+                s[1] = wd->slices[num - 1];
+             if ((i > 0) && (j < wd->slices_h))
+                s[2] = wd->slices[num - wd->slices_h];
+             if ((i < wd->slices_w) && (j < wd->slices_h))
+                s[3] = wd->slices[num];
+             if (wd->dir == 0)
                 _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
-             else if (st->dir == 1)
+             else if (wd->dir == 1)
                 _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
-             else if (st->dir == 2)
+             else if (wd->dir == 2)
                 _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
-             else/* if (st->dir == 3) will be this anyway */
+             else/* if (wd->dir == 3) will be this anyway */
                 _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
              s[0] = s[1] = s[2] = s[3] = NULL;
              if ((i > 0) && (j > 0))
-               s[0] = st->slices2[num - 1 - st->slices_h];
-             if ((i < st->slices_w) && (j > 0))
-               s[1] = st->slices2[num - 1];
-             if ((i > 0) && (j < st->slices_h))
-               s[2] = st->slices2[num - st->slices_h];
-             if ((i < st->slices_w) && (j < st->slices_h))
-                s[3] = st->slices2[num];
-             if (st->dir == 0)
+               s[0] = wd->slices2[num - 1 - wd->slices_h];
+             if ((i < wd->slices_w) && (j > 0))
+               s[1] = wd->slices2[num - 1];
+             if ((i > 0) && (j < wd->slices_h))
+               s[2] = wd->slices2[num - wd->slices_h];
+             if ((i < wd->slices_w) && (j < wd->slices_h))
+                s[3] = wd->slices2[num];
+             if (wd->dir == 0)
                 _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
-             else if (st->dir == 1)
+             else if (wd->dir == 1)
                 _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
-             else if (st->dir == 2)
+             else if (wd->dir == 2)
                 _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
-             else/* if (st->dir == 3) will be this anyway */
+             else/* if (wd->dir == 3) will be this anyway */
                 _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
              num++;
           }
      }
 
    num = 0;
-   for (i = 0; i < st->slices_w; i++)
+   for (i = 0; i < wd->slices_w; i++)
      {
-        for (j = 0; j < st->slices_h; j++)
+        for (j = 0; j < wd->slices_h; j++)
           {
-             _slice_3d(st, st->slices[num], ox, oy, ow, oh);
-             _slice_3d(st, st->slices2[num], ox, oy, ow, oh);
+             _slice_3d(wd, wd->slices[num], ox, oy, ow, oh);
+             _slice_3d(wd, wd->slices2[num], ox, oy, ow, oh);
              num++;
           }
      }
@@ -779,9 +779,9 @@ _state_update(Widget_Data *st)
 }
 
 static void
-_state_end(Widget_Data *st)
+_state_end(Widget_Data *wd)
 {
-   _state_slices_clear(st);
+   _state_slices_clear(wd);
 }
 
 
