@@ -706,17 +706,12 @@ _state_update(Widget_Data *wd)
           }
      }
 
-   num = 0;
-   for (j = 0; j < wd->slices_h; j++)
+   for (num = 0; num < wd->slices_h * wd->slices_w; num++)
      {
-        for (i = 0; i < wd->slices_w; i++)
-          {
-             _slice_apply(wd, wd->slices[num], x, y, w, h, ox, oy, ow, oh);
-             _slice_apply(wd, wd->slices2[num], x, y, w, h, ox, oy, ow, oh);
-             _slice_light(wd, wd->slices[num], ox, oy, ow, oh);
-             _slice_light(wd, wd->slices2[num], ox, oy, ow, oh);
-             num++;
-          }
+        _slice_apply(wd, wd->slices[num], x, y, w, h, ox, oy, ow, oh);
+        _slice_apply(wd, wd->slices2[num], x, y, w, h, ox, oy, ow, oh);
+        _slice_light(wd, wd->slices[num], ox, oy, ow, oh);
+        _slice_light(wd, wd->slices2[num], ox, oy, ow, oh);
      }
 
    for (i = 0; i <= wd->slices_w; i++)
@@ -764,15 +759,10 @@ _state_update(Widget_Data *wd)
           }
      }
 
-   num = 0;
-   for (i = 0; i < wd->slices_w; i++)
+   for (num = 0; num < wd->slices_h * wd->slices_w; num++)
      {
-        for (j = 0; j < wd->slices_h; j++)
-          {
-             _slice_3d(wd, wd->slices[num], ox, oy, ow, oh);
-             _slice_3d(wd, wd->slices2[num], ox, oy, ow, oh);
-             num++;
-          }
+        _slice_3d(wd, wd->slices[num], ox, oy, ow, oh);
+        _slice_3d(wd, wd->slices2[num], ox, oy, ow, oh);
      }
 
    return 1;
