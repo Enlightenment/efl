@@ -1184,7 +1184,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,escape", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
+   else if (!strcmp(ev->keyname, "Up") ||
+            (!strcmp(ev->keyname, "KP_Up") && !ev->string))
      {
         if (multiline)
           {
@@ -1204,7 +1205,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,up", rp->part->name);
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
      }
-   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+   else if (!strcmp(ev->keyname, "Down") ||
+            (!strcmp(ev->keyname, "KP_Down") && !ev->string))
      {
         if (multiline)
           {
@@ -1224,7 +1226,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,down", rp->part->name);
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
      }
-   else if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
+   else if (!strcmp(ev->keyname, "Left") ||
+            (!strcmp(ev->keyname, "KP_Left") && !ev->string))
      {
         if (en->select_allow)
           {
@@ -1243,7 +1246,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
+   else if (!strcmp(ev->keyname, "Right") ||
+            (!strcmp(ev->keyname, "KP_Right") && !ev->string))
      {
         if (en->select_allow)
           {
@@ -1299,7 +1303,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,backspace", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "Delete") || !strcmp(ev->keyname, "KP_Delete"))
+   else if (!strcmp(ev->keyname, "Delete") ||
+            (!strcmp(ev->keyname, "KP_Delete") && !ev->string))
      {
         if (control)
           {
@@ -1333,7 +1338,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,delete", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "Home") || !strcmp(ev->keyname, "KP_Home"))
+   else if (!strcmp(ev->keyname, "Home") ||
+            ((!strcmp(ev->keyname, "KP_Home")) && !ev->string))
      {
         if (en->select_allow)
           {
@@ -1351,7 +1357,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,home", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "End") || !strcmp(ev->keyname, "KP_End"))
+   else if (!strcmp(ev->keyname, "End") ||
+            ((!strcmp(ev->keyname, "KP_End")) && !ev->string))
      {
         if (en->select_allow)
           {
@@ -1463,7 +1470,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         // remove a tab
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "Prior") || !strcmp(ev->keyname, "KP_Prior"))
+   else if (!strcmp(ev->keyname, "Prior") ||
+            (!strcmp(ev->keyname, "KP_Prior") && !ev->string))
      {
         if (en->select_allow)
           {
@@ -1479,7 +1487,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,pgup", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->keyname, "Next") || !strcmp(ev->keyname, "KP_Next"))
+   else if (!strcmp(ev->keyname, "Next") ||
+            (!strcmp(ev->keyname, "KP_Next") && !ev->string))
      {
         if (en->select_allow)
           {
