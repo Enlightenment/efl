@@ -3539,6 +3539,8 @@ elm_genlist_add(Evas_Object *parent)
 void
 _item_select(Elm_Gen_Item *it)
 {
+   Evas_Object *obj = WIDGET(it);
+
    if ((it->generation < it->wd->generation) || (it->mode_set) ||
        (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
        (it->wd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
@@ -3550,7 +3552,7 @@ _item_select(Elm_Gen_Item *it)
      }
    else if (it->wd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) return;
 
-   evas_object_ref(WIDGET(it));
+   evas_object_ref(obj);
    it->walking++;
    it->wd->walking++;
    if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), it);
@@ -3573,7 +3575,7 @@ _item_select(Elm_Gen_Item *it)
         else
           it->wd->last_selected_item = (Elm_Object_Item *)it;
      }
-   evas_object_unref(WIDGET(it));
+   evas_object_unref(obj);
 }
 
 static Evas_Object *
