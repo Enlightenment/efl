@@ -8,6 +8,8 @@ static void
 _response_cb(void *data, Evas_Object *obj __UNUSED__,
              void *event_info __UNUSED__)
 {
+   Evas_Object *popup_data = evas_object_data_get(data, "im");
+   if (popup_data) evas_object_del(popup_data);
    evas_object_hide(data);
    evas_object_del(data);
 }
@@ -17,6 +19,8 @@ _block_clicked_cb(void *data __UNUSED__, Evas_Object *obj,
                   void *event_info __UNUSED__)
 {
    printf("\nblock,clicked callback\n");
+   Evas_Object *popup_data = evas_object_data_get(obj, "im");
+   if (popup_data) evas_object_del(popup_data);
    evas_object_del(obj);
 }
 
@@ -214,6 +218,55 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    evas_object_show(popup);
 }
 
+static void
+_restack_btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *im;
+   char buf[PATH_MAX];
+   void *popup_data;
+
+   popup_data = evas_object_data_get(data, "im");
+   if (popup_data) return;
+
+   im = evas_object_image_filled_add(evas_object_evas_get(obj));
+   snprintf(buf, sizeof(buf), "%s/images/%s",
+            elm_app_data_dir_get(), "twofish.jpg");
+   evas_object_image_file_set(im, buf, NULL);
+   evas_object_move(im, 40, 40);
+   evas_object_resize(im, 320, 320);
+   evas_object_show(im);
+   evas_object_data_set((Evas_Object *)data, "im", im);
+
+   evas_object_raise((Evas_Object *)data);
+}
+
+static void
+_popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj __UNUSED__,
+                                    void *event_info __UNUSED__)
+{
+   Evas_Object *popup;
+   Evas_Object *btn, *btn2;
+
+   popup = elm_popup_add(data);
+   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_text_set(popup, "When you click the 'Restack' button, "
+                       "an image will be located under this popup");
+   elm_object_part_text_set(popup, "title,text", "Title");
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Restack");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _restack_btn_clicked, popup);
+   evas_object_smart_callback_add(popup, "block,clicked", _block_clicked_cb,
+                                  NULL);
+
+   btn2 = elm_button_add(popup);
+   elm_object_text_set(btn2, "Close");
+   elm_object_part_content_set(popup, "button2", btn2);
+   evas_object_smart_callback_add(btn2, "clicked", _response_cb, popup);
+
+   evas_object_show(popup);
+}
+
 void
 test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
            void *event_info __UNUSED__)
@@ -252,6 +305,8 @@ test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
                         NULL, _popup_center_title_content_3button_cb, win);
    elm_list_item_append(list, "popup-center-title + items + 3 buttons", NULL,
                         NULL, _popup_center_title_item_3button_cb, win);
+   elm_list_item_append(list, "popup-center-title + text + 2 buttons (check restacking)", NULL, NULL,
+                        _popup_center_title_text_2button_restack_cb, win);
    elm_list_go(list);
    evas_object_show(list);
    evas_object_show(win);

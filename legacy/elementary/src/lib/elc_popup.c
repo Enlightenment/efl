@@ -1193,6 +1193,18 @@ _item_signal_emit_hook(Elm_Object_Item *it, const char *emission,
    edje_object_signal_emit(VIEW(item), emission, source);
 }
 
+static void
+_popup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+               void *event_info __UNUSED__)
+{
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   evas_object_show(wd->notify);
+}
+
 EAPI Evas_Object *
 elm_popup_add(Evas_Object *parent)
 {
@@ -1218,7 +1230,6 @@ elm_popup_add(Evas_Object *parent)
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    wd->notify = elm_notify_add(obj);
-   elm_widget_resize_object_set(obj, wd->notify);
    elm_notify_parent_set(wd->notify, parent);
    elm_notify_orient_set(wd->notify, ELM_NOTIFY_ORIENT_CENTER);
    elm_notify_allow_events_set(wd->notify, EINA_FALSE);
@@ -1229,6 +1240,8 @@ elm_popup_add(Evas_Object *parent)
 
    evas_object_event_callback_add(wd->notify, EVAS_CALLBACK_RESIZE,
                                   _notify_resize, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _popup_show,
+                                  NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK, _restack, NULL);
    wd->base = elm_layout_add(obj);
    evas_object_size_hint_weight_set(wd->base, EVAS_HINT_EXPAND,
