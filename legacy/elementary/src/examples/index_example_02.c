@@ -29,7 +29,8 @@ _index_changed(void        *data,
                Evas_Object *obj,
                void        *event_info)
 {
-   elm_gengrid_item_bring_in(event_info, ELM_GENGRID_ITEM_SCROLLTO_IN);
+   Elm_Object_Item *item = elm_object_item_data_get(event_info);
+   elm_gengrid_item_bring_in(item, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
 static void
