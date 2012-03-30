@@ -1322,9 +1322,9 @@ _mouse_down(void        *data,
           evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
           evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
        }
-   if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->item->swipe_timer) ecore_timer_del(it->item->swipe_timer);
    it->item->swipe_timer = ecore_timer_add(0.4, _swipe_cancel, it);
+   if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->realized)
      it->long_timer = ecore_timer_add(it->wd->longpress_timeout, _long_press,
                                       it);
@@ -5827,7 +5827,11 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    if (it->tooltip.del_cb)
      it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
    it->wd->walking -= it->walking;
-   if (it->long_timer) ecore_timer_del(it->long_timer);
+   if (it->long_timer)
+     {
+        ecore_timer_del(it->long_timer);
+        it->long_timer = NULL;
+     }
    if (it->group)
      it->wd->group_items = eina_list_remove(it->wd->group_items, it);
 
