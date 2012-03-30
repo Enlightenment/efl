@@ -5,7 +5,7 @@
  * @mainpage Evil
  * @image html  e_big.png
  * @author Vincent Torri
- * @version 1.0.0
+ * @version 1.1.0
  * @date 2008-2012
  *
  * @section intro_sec Introduction
@@ -143,6 +143,8 @@ typedef unsigned long  gid_t;
 # endif
 # define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
 # define S_ISREG(m) (((m) & _S_IFMT) == _S_IFREG)
+
+# define S_ISLNK(m) 0
 
 # define S_IRUSR _S_IRUSR
 # define S_IWUSR _S_IWUSR

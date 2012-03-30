@@ -4,6 +4,7 @@ Evil NEWS - User visible changes.
 
 ** Add evil_path_is_absolute() API
 ** Add POSIX printf() family functions
+** Add S_ISLNK macro
 
 * Evil 1.0:
 
