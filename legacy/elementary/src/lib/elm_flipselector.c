@@ -324,6 +324,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      return EINA_FALSE;
 
    if (wd->spin) ecore_timer_del(wd->spin);
+   wd->spin = NULL;
 
    /* TODO: if direction setting via API is not coming in, replace
       these calls by flip_{next,prev} */
@@ -663,6 +664,7 @@ elm_flipselector_flip_next(Evas_Object *obj)
    if (!wd) return;
 
    if (wd->spin) ecore_timer_del(wd->spin);
+   wd->spin = NULL;
 
    _flipselector_walk(wd);
    _flip_down(wd);
@@ -678,6 +680,7 @@ elm_flipselector_flip_prev(Evas_Object *obj)
    if (!wd) return;
 
    if (wd->spin) ecore_timer_del(wd->spin);
+   wd->spin = NULL;
 
    _flipselector_walk(wd);
    _flip_up(wd);

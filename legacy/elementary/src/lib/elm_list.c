@@ -133,7 +133,9 @@ _elm_list_item_free(Elm_List_Item *it)
    eina_stringshare_del(it->label);
 
    if (it->swipe_timer) ecore_timer_del(it->swipe_timer);
+   it->swipe_timer = NULL;
    if (it->long_timer) ecore_timer_del(it->long_timer);
+   it->long_timer = NULL;
    if (it->icon) evas_object_del(it->icon);
    if (it->end) evas_object_del(it->end);
 }

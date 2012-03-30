@@ -70,6 +70,7 @@ _del_pre_hook(Evas_Object *obj)
         elm_widget_item_free(it);
      }
    if (wd->delay) ecore_timer_del(wd->delay);
+   wd->delay = NULL;
 }
 
 static void
