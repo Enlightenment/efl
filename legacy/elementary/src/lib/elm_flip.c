@@ -719,42 +719,38 @@ _state_update(Widget_Data *wd)
         num = i * wd->slices_h;
         for (j = 0; j <= wd->slices_h; j++)
           {
-             Slice *s[4];
+             Slice *s[4] = { NULL }, *s2[4] = { NULL };
 
-             s[0] = s[1] = s[2] = s[3] = NULL;
              if ((i > 0) && (j > 0))
-                s[0] = wd->slices[num - 1 - wd->slices_h];
+                s[0] = wd->slices[num - 1 - wd->slices_h],
+                s2[0] = wd->slices2[num - 1 - wd->slices_h];
              if ((i < wd->slices_w) && (j > 0))
-                s[1] = wd->slices[num - 1];
+                s[1] = wd->slices[num - 1],
+                s2[1] = wd->slices2[num - 1];
              if ((i > 0) && (j < wd->slices_h))
-                s[2] = wd->slices[num - wd->slices_h];
+                s[2] = wd->slices[num - wd->slices_h],
+                s2[2] = wd->slices2[num - wd->slices_h];
              if ((i < wd->slices_w) && (j < wd->slices_h))
-                s[3] = wd->slices[num];
-             if (wd->dir == 0)
-                _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
-             else if (wd->dir == 1)
-                _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
-             else if (wd->dir == 2)
-                _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
-             else/* if (wd->dir == 3) will be this anyway */
-                _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
-             s[0] = s[1] = s[2] = s[3] = NULL;
-             if ((i > 0) && (j > 0))
-               s[0] = wd->slices2[num - 1 - wd->slices_h];
-             if ((i < wd->slices_w) && (j > 0))
-               s[1] = wd->slices2[num - 1];
-             if ((i > 0) && (j < wd->slices_h))
-               s[2] = wd->slices2[num - wd->slices_h];
-             if ((i < wd->slices_w) && (j < wd->slices_h))
-                s[3] = wd->slices2[num];
-             if (wd->dir == 0)
-                _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
-             else if (wd->dir == 1)
-                _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
-             else if (wd->dir == 2)
-                _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
-             else/* if (wd->dir == 3) will be this anyway */
-                _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
+                s[3] = wd->slices[num],
+                s2[3] = wd->slices2[num];
+             switch (wd->dir)
+               {
+                case 0:
+                  _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
+                  _slice_obj_vert_color_merge(s2[0], 3, s2[1], 2, s2[2], 0, s2[3], 1);
+                  break;
+                case 1:
+                  _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
+                  _slice_obj_vert_color_merge(s2[0], 2, s2[1], 3, s2[2], 1, s2[3], 0);
+                  break;
+                case 2:
+                  _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
+                  _slice_obj_vert_color_merge(s2[0], 2, s2[1], 3, s2[2], 1, s2[3], 0);
+                  break;
+                default:
+                  _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
+                  _slice_obj_vert_color_merge(s2[0], 3, s2[1], 2, s2[2], 0, s2[3], 1);
+               }
              num++;
           }
      }
