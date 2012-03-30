@@ -105,7 +105,18 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-requirements_eio="eet >= 1.6.0 eina >= 1.2.0 ecore >= 1.2.0"
+EFL_EIO_BUILD=""
+case "$host_os" in
+   mingw*)
+      PKG_CHECK_EXISTS([evil >= 1.0.0])
+      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if evil package is installed])
+      requirements_eio="${requirements_eio} evil >= 1.0.0"
+      EFL_EIO_BUILD="-DEFL_EIO_BUILD"
+   ;;
+esac
+AC_SUBST([EFL_EIO_BUILD])
+
+requirements_eio="${requirements_eio} eet >= 1.6.0 eina >= 1.2.0 ecore >= 1.2.0"
 AC_SUBST([requirements_eio])
 
 PKG_CHECK_MODULES([EIO], [${requirements_eio}])
