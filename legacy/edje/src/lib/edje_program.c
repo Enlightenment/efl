@@ -479,8 +479,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
      }
    if ((recursions >= 64) || (recursion_limit))
      {
-	ERR("Programs recursing up to recursion limit of %i. Disabled.",
-	    64);
+	ERR("Programs recursing up to recursion limit of %i in '%s' with '%s', '%s' from '%s', '%s'. Disabled.",
+	    64, pr->name, ssig, ssrc, ed->path, ed->group);
 	recursion_limit = 1;
 	return;
      }
