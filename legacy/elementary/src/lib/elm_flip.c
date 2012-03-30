@@ -170,7 +170,7 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 }
 
 static Slice *
-_slice_new(Widget_Data *st __UNUSED__, Evas_Object *obj)
+_slice_new(Widget_Data *st, Evas_Object *obj)
 {
    Slice *sl;
 
