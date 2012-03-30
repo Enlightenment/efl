@@ -867,7 +867,11 @@ _item_del(Elm_Gen_Item *it)
    if (it->wd->expanded_next_item == it) it->wd->expanded_next_item = NULL;
    if (it->parent)
      it->parent->item->items = eina_list_remove(it->parent->item->items, it);
-   if (it->item->swipe_timer) ecore_timer_del(it->item->swipe_timer);
+   if (it->item->swipe_timer)
+     {
+        ecore_timer_del(it->item->swipe_timer);
+        it->item->swipe_timer = NULL;
+     }
    _elm_genlist_item_del_serious(it);
    elm_genlist_item_class_unref((Elm_Genlist_Item_Class *)it->itc);
    evas_event_thaw(evas_object_evas_get(obj));
