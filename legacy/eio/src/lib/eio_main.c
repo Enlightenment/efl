@@ -240,7 +240,7 @@ eio_shutdown(void)
 
    if (_eio_count > 0) return _eio_count;
 
-   EIO_MUTEX_DESTROY(direct_info);
+   EIO_MUTEX_DESTROY(direct_info_pool);
    EIO_MUTEX_DESTROY(progress_pool);
    EIO_MUTEX_DESTROY(char_pool);
    EIO_MUTEX_DESTROY(associate_pool);
