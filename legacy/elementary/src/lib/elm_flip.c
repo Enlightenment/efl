@@ -811,10 +811,7 @@ flip_show_hide(Evas_Object *obj)
                 evas_object_show(wd->front.clip);
              else
                 evas_object_hide(wd->front.clip);
-             if (wd->back.content)
-                evas_object_hide(wd->back.clip);
-             else
-                evas_object_hide(wd->back.clip);
+             evas_object_hide(wd->back.clip);
           }
      }
    else
