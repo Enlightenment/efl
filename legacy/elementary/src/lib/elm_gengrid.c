@@ -27,7 +27,7 @@
 struct Elm_Gen_Item_Type
 {
    Elm_Gen_Item   *it;
-   Ecore_Animator *item_moving_effect_timer;
+   Ecore_Animator *item_reorder_move_animator;
    Evas_Coord   gx, gy, ox, oy, tx, ty, rx, ry;
    unsigned int moving_effect_start_time;
    int          prev_group;
@@ -1042,7 +1042,7 @@ _item_unrealize_cb(Elm_Gen_Item *it)
 }
 
 static Eina_Bool
-_reorder_item_moving_effect_timer_cb(void *data)
+_reorder_item_move_animator_cb(void *data)
 {
    Elm_Gen_Item *it = data;
    double tt, t;
@@ -1080,7 +1080,7 @@ _reorder_item_moving_effect_timer_cb(void *data)
         else
           evas_object_resize(VIEW(it), it->wd->item_width, it->wd->item_height);
         it->item->moving = EINA_FALSE;
-        it->item->item_moving_effect_timer = NULL;
+        it->item->item_reorder_move_animator = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
 
@@ -1315,7 +1315,7 @@ _item_place(Elm_Gen_Item *it,
                                       it->item->ry = it->item->oy;
                                       it->item->moving = EINA_TRUE;
                                       it->item->moving_effect_start_time = ecore_loop_time_get();
-                                      it->item->item_moving_effect_timer = ecore_animator_add(_reorder_item_moving_effect_timer_cb, it);
+                                      it->item->item_reorder_move_animator = ecore_animator_add(_reorder_item_move_animator_cb, it);
                                       return;
                                    }
                               }
@@ -1385,10 +1385,10 @@ _item_place(Elm_Gen_Item *it,
                          }
                     }
                }
-             else if (it->item->item_moving_effect_timer)
+             else if (it->item->item_reorder_move_animator)
                {
-                  ecore_animator_del(it->item->item_moving_effect_timer);
-                  it->item->item_moving_effect_timer = NULL;
+                  ecore_animator_del(it->item->item_reorder_move_animator);
+                  it->item->item_reorder_move_animator = NULL;
                   it->item->moving = EINA_FALSE;
                }
           }
