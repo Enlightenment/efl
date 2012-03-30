@@ -162,7 +162,7 @@ elm_main(int argc, char **argv)
 
    evas_object_size_hint_min_set(bg, 160, 160);
    evas_object_size_hint_max_set(bg, 640, 640);
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 460, 320);
    evas_object_show(win);
 
    elm_run();
