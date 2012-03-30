@@ -3,9 +3,6 @@
 //where directory is the path where images/insanely_huge_test_image.jpg can be found.
 
 #include <Elementary.h>
-#ifndef DATA_DIR
-# define DATA_DIR "/usr/share/elementary"
-#endif
 
 static void _fit(void *data, Evas_Object *obj, void *event_info);
 static void _unfit(void *data, Evas_Object *obj, void *event_info);
@@ -16,7 +13,9 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *obj, *photocam;
+   char buf[PATH_MAX];
 
+   elm_app_info_set(elm_main, "elementary", "images/insanely_huge_test_image.jpg");
    win = elm_win_add(NULL, "photocam", ELM_WIN_BASIC);
    elm_win_title_set(win, "Photocam");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -28,7 +27,8 @@ elm_main(int argc, char **argv)
    evas_object_show(bg);
 
    photocam = elm_photocam_add(win);
-   elm_photocam_file_set(photocam, DATA_DIR"/images/insanely_huge_test_image.jpg");
+   snprintf(buf, sizeof(buf), "%s/images/insanely_huge_test_image.jpg", elm_app_data_dir_get());
+   elm_photocam_file_set(photocam, buf);
    elm_photocam_bounce_set(photocam, EINA_FALSE, EINA_TRUE);
    evas_object_smart_callback_add(photocam, "loaded,detail", _bring_in, NULL);
    evas_object_resize(photocam, 500, 400);

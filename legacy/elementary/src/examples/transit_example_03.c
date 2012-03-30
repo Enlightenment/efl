@@ -3,9 +3,6 @@
 //where directory is the a path where images/icon_07.png can be found.
 
 #include <Elementary.h>
-#ifndef DATA_DIR
-# define DATA_DIR "/usr/share/elementary"
-#endif
 
 /* structure to hold context for many callbacks */
 struct Context {
@@ -188,6 +185,8 @@ elm_main(int argc, char **argv)
    context.repeat_times = 0;
    context.tween_mode = ELM_TRANSIT_TWEEN_MODE_LINEAR;
 
+   elm_app_info_set(elm_main, "elementary", "images/icon_07.png");
+
    /* add a window */
    win = elm_win_add(NULL, "transit", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit Example");
@@ -222,7 +221,7 @@ elm_main(int argc, char **argv)
    obj = elm_button_add(win);
    elm_object_text_set(obj, "Transformed object!");
    icon = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/icon_07.png", DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_07.png", elm_app_data_dir_get());
    elm_icon_file_set(icon, buf, NULL);
    elm_object_part_content_set(obj, "icon", icon);
    evas_object_move(obj, 160, 60);

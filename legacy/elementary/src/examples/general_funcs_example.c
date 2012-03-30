@@ -6,7 +6,7 @@
 
 #define BIN_DIR  "/usr/bin"
 #define LIB_DIR  "/usr/lib"
-#define DATA_DIR "/usr/share/elementary"
+#define DATA_DIR "/usr/local/share/elementary"
 
 #define WIDTH             300
 #define HEIGHT            300

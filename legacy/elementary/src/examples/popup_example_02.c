@@ -2,7 +2,6 @@
 //gcc -o popup_example_02 popup_example_02.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#define DATA_DIR "../../data"
 
 static void _response_cb(void *data, Evas_Object *obj, void *event_info);
 
@@ -12,6 +11,7 @@ elm_main(int argc, char **argv)
    Evas_Object *win, *bg, *popup, *btn1, *btn2, *btn3, *icon1;
    char buf[256];
 
+   elm_app_info_set(elm_main, "elementary", "images/logo_small.png");
    win = elm_win_add(NULL, "popup", ELM_WIN_BASIC);
    elm_win_title_set(win, "Popup");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -34,7 +34,7 @@ elm_main(int argc, char **argv)
    elm_object_part_text_set(popup, "title,text", "Title");
 
    icon1 = elm_icon_add(popup);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(icon1, buf, NULL);
    //Setting popup title-icon
    elm_object_part_content_set(popup, "title,icon", icon1);

@@ -6,7 +6,6 @@
 #endif
 
 #include <Elementary.h>
-#define DATA_DIR "../../data"
 
 static void
 _btn_activate_cb(void *data, Evas_Object *obj, void *event)
@@ -173,7 +172,9 @@ EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
    Evas_Object *win, *win2, *bg, *bigbox, *box, *btn, *o;
+   char buf[256];
 
+   elm_app_info_set(elm_main, "elementary", "images/logo.png");
    win = elm_win_add(NULL, "win-example", ELM_WIN_BASIC);
    elm_win_title_set(win, "Elm_Win Example");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
@@ -210,7 +211,8 @@ elm_main(int argc, char *argv[])
    evas_object_smart_callback_add(win2, "focus,in", _win_focused_cb, "managed");
 
    o = elm_icon_add(win2);
-   elm_icon_file_set(o, DATA_DIR "/images/logo.png", NULL);
+   sprintf(buf, "%s/images/logo.png", elm_app_data_dir_get());
+   elm_icon_file_set(o, buf, NULL);
    elm_icon_resizable_set(o, 0, 0);
    elm_icon_no_scale_set(o, EINA_TRUE);
    elm_win_resize_object_add(win2, o);

@@ -5,14 +5,11 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g progressbar_example.c -o progressbar_example `pkg-config --cflags --libs elementary` -DDATA_DIR="\"<directory>\""
+ * gcc -g progressbar_example.c -o progressbar_example `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 
 #include <Elementary.h>
-#ifndef DATA_DIR
-# define DATA_DIR "/usr/share/elementary"
-#endif
 
 typedef struct Progressbar_Example
 {
@@ -101,6 +98,7 @@ elm_main(int    argc,
    Evas_Object *win, *bg, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2;
    char buf[PATH_MAX];
 
+   elm_app_info_set(elm_main, "elementary", "images/logo_small.png");
    win = elm_win_add(NULL, "progressbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Progress bar example");
    evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
@@ -134,7 +132,7 @@ elm_main(int    argc,
    example_data.pb2 = pb;
 
    ic1 = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic1, buf, NULL);
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 

@@ -2,7 +2,6 @@
 //gcc -g image_example_01.c -o image_example_01 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#define DATA_DIR "."
 
 int
 elm_main(int argc, char **argv)

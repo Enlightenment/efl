@@ -1,11 +1,8 @@
 //Compile with:
-//gcc -o bg_example_03 bg_example_03.c -g `pkg-config --cflags --libs elementary` -DDATA_DIR="\"<directory>\""
+//gcc -o bg_example_03 bg_example_03.c -g `pkg-config --cflags --libs elementary`
 //where directory is the a path where images/plant_01.jpg can be found.
 
 #include <Elementary.h>
-#ifndef DATA_DIR
-# define DATA_DIR "/usr/share/elementary"
-#endif
 
 static void
 on_done(void *data, Evas_Object *obj, void *event_info)
@@ -32,7 +29,7 @@ _cb_overlay_changed(void *data, Evas_Object *obj, void *event)
         Evas_Object *parent, *over;
         char buff[PATH_MAX];
 
-        snprintf(buff, sizeof(buff), "%s/objects/test.edj", DATA_DIR);
+        snprintf(buff, sizeof(buff), "%s/objects/test.edj", elm_app_data_dir_get());
         parent = elm_object_parent_widget_get(o_bg);
         over = edje_object_add(evas_object_evas_get(parent));
         edje_object_file_set(over, buff, "bg_overlay");
@@ -67,6 +64,7 @@ elm_main(int argc, char **argv)
    Evas_Object *rd, *rdg;
    char buf[PATH_MAX];
 
+   elm_app_info_set(elm_main, "elementary", "objects/test.edj");
    win = elm_win_add(NULL, "bg-options", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bg Options");
    evas_object_smart_callback_add(win, "delete,request", on_done, NULL);
@@ -83,7 +81,7 @@ elm_main(int argc, char **argv)
    evas_object_show(box);
 
    o_bg = elm_bg_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_bg_file_set(o_bg, buf, NULL);
    evas_object_size_hint_weight_set(o_bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(o_bg, EVAS_HINT_FILL, EVAS_HINT_FILL);

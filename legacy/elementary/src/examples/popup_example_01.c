@@ -2,7 +2,6 @@
 //gcc -o popup_example_01 popup_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#define DATA_DIR "../../data"
 
 static void _block_clicked(void *data, Evas_Object *obj, void *event_info);
 static void _timeout(void *data, Evas_Object *obj, void *event_info);

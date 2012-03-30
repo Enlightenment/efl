@@ -10,9 +10,6 @@
  */
 
 #include <Elementary.h>
-#ifndef DATA_DIR
-# define DATA_DIR "/usr/share/elementary"
-#endif
 
 typedef struct _Overlay_Data
 {
@@ -20,18 +17,14 @@ typedef struct _Overlay_Data
    const char *file;
 } Overlay_Data;
 
-Overlay_Data data_argentina = {"Argentina",
-     DATA_DIR"/images/rock_01.jpg"};
-Overlay_Data data_chile = {"Chile",
-     DATA_DIR"/images/rock_02.jpg"};
-Overlay_Data data_sampa = {"São Paulo",
-     DATA_DIR"/images/sky_01.jpg"};
-Overlay_Data data_rio = {"Rio de Janeiro",
-     DATA_DIR"/images/sky_02.jpg"};
-Overlay_Data data_brasilia = {"Brasília",
-     DATA_DIR"/images/sky_03.jpg"};
+Overlay_Data data_argentina = {"Argentina", NULL};
+Overlay_Data data_chile = {"Chile", NULL};
+Overlay_Data data_sampa = {"São Paulo", NULL};
+Overlay_Data data_rio = {"Rio de Janeiro", NULL};
+Overlay_Data data_brasilia = {"Brasília", NULL};
 
 static Elm_Map_Overlay *bubble;
+const char *data_dir;
 
 static Evas_Object *
 _icon_get(Evas_Object *obj, const char *file)
@@ -45,25 +38,33 @@ _icon_get(Evas_Object *obj, const char *file)
 static Evas_Object *
 _city_icon_get(Evas_Object *obj)
 {
-   return _icon_get(obj, DATA_DIR"/images/icon_07.png");
+   char buf[256];
+   snprintf(buf, sizeof(buf), "%s/images/icon_07.png", data_dir);
+   return _icon_get(obj, buf);
 }
 
 static Evas_Object *
 _clas_city_icon_get(Evas_Object *obj)
 {
-   return _icon_get(obj, DATA_DIR"/images/icon_05.png");
+   char buf[256];
+   snprintf(buf, sizeof(buf), "%s/images/icon_05.png", data_dir);
+   return _icon_get(obj, buf);
 }
 
 static Evas_Object *
 _country_icon_get(Evas_Object *obj)
 {
-   return _icon_get(obj, DATA_DIR"/images/icon_06.png");
+   char buf[256];
+   snprintf(buf, sizeof(buf), "%s/images/icon_06.png", data_dir);
+   return _icon_get(obj, buf);
 }
 
 static Evas_Object *
 _clas_country_icon_get(Evas_Object *obj)
 {
-   return _icon_get(obj, DATA_DIR"/images/icon_04.png");
+   char buf[256];
+   snprintf(buf, sizeof(buf), "%s/images/icon_04.png", data_dir);
+   return _icon_get(obj, buf);
 }
 
 static Evas_Object *
@@ -164,6 +165,21 @@ elm_main(int argc, char **argv)
    Evas_Object *win, *bg, *map, *box, *bt;
    Eina_List *ovls = NULL;
    Elm_Map_Overlay *ovl, *city_clas, *country_clas;
+   char buf[255];
+
+   elm_app_info_set(elm_main, "elementary", "images");
+   data_dir = elm_app_data_dir_get();
+
+   snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", "sdf");
+   data_argentina.file = strdup(buf);
+   snprintf(buf, sizeof(buf), "%s/images/rock_02.jpg", "sdf");
+   data_chile.file = strdup(buf);
+   snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", "sdf");
+   data_sampa.file = strdup(buf);
+   snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", "sdf");
+   data_rio.file = strdup(buf);
+   snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", "sdf");
+   data_brasilia.file = strdup(buf);
 
    win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
    elm_win_title_set(win, "Map Overlay Example");

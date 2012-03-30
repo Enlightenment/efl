@@ -2,7 +2,6 @@
 //gcc -g thumb_example_01.c -o thumb_example_01 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#define DATA_DIR "."
 
 static void
 _generation_started_cb(void *data, Evas_Object *o, void *event_info)
@@ -32,6 +31,7 @@ elm_main(int argc, char **argv)
 
    elm_need_ethumb();
 
+   elm_app_info_set(elm_main, "elementary", "images/plant_01.jpg");
    win = elm_win_add(NULL, "thumb", ELM_WIN_BASIC);
    elm_win_title_set(win, "Thumbnailer");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -57,7 +57,7 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(thumb, "generate,error", _generation_error_cb, NULL);
 
    elm_thumb_editable_set(thumb, EINA_FALSE);
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_thumb_file_set(thumb, buf, NULL);
    elm_thumb_reload(thumb);
 

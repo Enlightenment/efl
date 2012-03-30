@@ -10,7 +10,6 @@
  */
 
 #include <Elementary.h>
-#define DATA_DIR "../../data"
 
 static void
 _on_done(void        *data,
@@ -23,15 +22,7 @@ _on_done(void        *data,
 static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
 
-static const char *img1 = DATA_DIR "/images/logo.png";
-static const char *img2 = DATA_DIR "/images/plant_01.jpg";
-static const char *img3 = DATA_DIR "/images/rock_01.jpg";
-static const char *img4 = DATA_DIR "/images/rock_02.jpg";
-static const char *img5 = DATA_DIR "/images/sky_01.jpg";
-static const char *img6 = DATA_DIR "/images/sky_04.jpg";
-static const char *img7 = DATA_DIR "/images/wood_01.jpg";
-static const char *img8 = DATA_DIR "/images/mystrale.jpg";
-static const char *img9 = DATA_DIR "/images/mystrale_2.jpg";
+static char img1[256], img2[256], img3[256], img4[256], img5[256], img6[256], img7[256], img8[256], img9[256];
 
 static void
 _notify_show(void        *data,
@@ -182,6 +173,19 @@ elm_main(int    argc,
    Elm_Object_Item *slide_first, *slide_last, *slide_it;
    const char *transition, *layout;
    const Eina_List *l, *list;
+   const char *data_dir;
+
+   elm_app_info_set(elm_main, "elementary", "images");
+   data_dir = elm_app_data_dir_get();
+   snprintf(img1, sizeof(img1), "%s/images/logo.png", data_dir);
+   snprintf(img2, sizeof(img2), "%s/images/plant_01.jpg", data_dir);
+   snprintf(img3, sizeof(img3), "%s/images/rock_01.jpg", data_dir);
+   snprintf(img4, sizeof(img4), "%s/images/rock_02.jpg", data_dir);
+   snprintf(img5, sizeof(img5), "%s/images/sky_01.jpg", data_dir);
+   snprintf(img6, sizeof(img6), "%s/images/sky_04.jpg", data_dir);
+   snprintf(img7, sizeof(img7), "%s/images/wood_01.jpg", data_dir);
+   snprintf(img8, sizeof(img8), "%s/images/mystrale.jpg", data_dir);
+   snprintf(img9, sizeof(img9), "%s/images/mystrale_2.jpg", data_dir);
 
    win = elm_win_add(NULL, "slideshow", ELM_WIN_BASIC);
    elm_win_title_set(win, "Slideshow example");

@@ -2,7 +2,6 @@
 //gcc -g layout_example_03.c -o layout_example_03 `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#define DATA_DIR "."
 
 #define TITLE "example/title"
 #define SWALLOW "example/custom"
@@ -44,7 +43,9 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *btn, *layout;
+   char buf[PATH_MAX];
 
+   elm_app_info_set(elm_main, "elementary", "examples/layout_example.edj");
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
    elm_win_autodel_set(win, EINA_TRUE);
@@ -59,9 +60,8 @@ elm_main(int argc, char **argv)
    layout = elm_layout_add(win);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, layout);
-   elm_layout_file_set(
-       layout, DATA_DIR "/examples/layout_example.edj",
-       "example/mylayout3");
+   snprintf(buf, sizeof(buf), "%s/examples/layout_example.edj", elm_app_data_dir_get());
+   elm_layout_file_set(layout, buf, "example/mylayout3");
    evas_object_show(layout);
 
    elm_object_signal_callback_add(layout, "size,changed", "", _size_changed_cb, layout);

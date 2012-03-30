@@ -10,7 +10,6 @@
  */
 
 #include <Elementary.h>
-#define DATA_DIR "../../data"
 
 static const char *items[] = \
 {
@@ -58,7 +57,7 @@ _grid_content_get(void        *data,
    if (!strcmp(part, "elm.swallow.icon"))
      {
         char buf[PATH_MAX];
-        snprintf(buf, sizeof(buf), "%s/images/%s", DATA_DIR,
+        snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(),
                  "sky_01.jpg");
 
         Evas_Object *icon = elm_bg_add(obj);
@@ -98,6 +97,7 @@ elm_main(int    argc,
 
    Elm_Gengrid_Item_Class gic;
 
+   elm_app_info_set(elm_main, "elementary", "images");
    win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
    elm_win_title_set(win, "Index Example");
    evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
