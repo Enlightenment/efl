@@ -40,7 +40,7 @@ struct Efreet_Uri
 EAPI const char *efreet_uri_encode(Efreet_Uri *uri);
 
 /**
- * @param full_uri a valid uri string to parse
+ * @param val a valid uri string to parse
  * @return Return The corresponding Efreet_Uri structure. Or NULL on errors.
  * @brief Read a single uri and return an Efreet_Uri struct. If there's no
  * hostname in the uri then the hostname parameter will be NULL. All the uri

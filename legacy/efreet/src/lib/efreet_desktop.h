@@ -235,7 +235,7 @@ EAPI const char       *efreet_desktop_environment_get(void);
  * @param files an eina list of file names to execute, as either absolute paths,
  * relative paths, or uris
  * @param cb_command a callback to call for each prepared command line
- * @param cb_progress a callback to get progress for the downloads
+ * @param cb_prog a callback to get progress for the downloads
  * @param data user data passed to the callback
  * @return Returns 1 on success or 0 on failure
  * @brief Get a command to use to execute a desktop entry, and receive progress

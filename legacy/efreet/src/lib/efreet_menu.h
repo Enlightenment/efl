@@ -92,7 +92,7 @@ EAPI Efreet_Menu     *efreet_menu_parse(const char *path);
 EAPI int              efreet_menu_save(Efreet_Menu *menu, const char *path);
 
 /**
- * @param entry The Efreet_Menu to free
+ * @param menu The Efreet_Menu to free
  * @return Returns no value
  * @brief Frees the given structure
  */
