@@ -1,10 +1,6 @@
 #include "edje_private.h"
 
 
-/**
- * @cond
- */
-
 static Eina_Hash   *_edje_file_hash = NULL;
 static int          _edje_file_cache_size = 16;
 static Eina_List   *_edje_file_cache = NULL;
@@ -487,11 +483,6 @@ _edje_file_cache_shutdown(void)
    edje_file_cache_flush();
 }
 
-
-
-/**
- * @endcond
- */
 
 /*============================================================================*
  *                                 Global                                     *

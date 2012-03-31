@@ -700,7 +700,7 @@
  * @until }
  * @until }
  *
- * The @c #define's on the beginning will serve as message
+ * The @c \#define's on the beginning will serve as message
  * identifiers, for our accorded message interface between the code
  * and the this theme file.
  *
@@ -978,5 +978,5 @@
  *
  * The full source code follows:
  * @include edje-multisense.c
- * @include sound.edc
+ * @include multisense.edc
  */

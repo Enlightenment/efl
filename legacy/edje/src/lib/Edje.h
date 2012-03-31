@@ -1119,7 +1119,7 @@ EAPI double       edje_object_scale_get           (const Evas_Object *obj);
  * @brief Set the RTL orientation for this object.
  *
  * @param obj A handle to an Edje object.
- * @rtl new value of flag EINA_TRUE/EINA_FALSE
+ * @param rtl new value of flag EINA_TRUE/EINA_FALSE
  * @since 1.1.0
  */
 EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool rtl);
@@ -2142,7 +2142,6 @@ EAPI void         edje_object_size_min_calc           (Evas_Object *obj, Evas_Co
  * object's area, <b>occupied by all parts in the object</b>
  *
  * @param obj A handle to an Edje object
- * @param part The Edje part's name
  * @param x A pointer to a variable where to store the parts region's
  * x coordinate
  * @param y A pointer to a variable where to store the parts region's
@@ -2517,6 +2516,7 @@ EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
+ * @param text The text string
  * @since 1.2.0
  */
 EAPI void             edje_object_part_text_user_insert        (const Evas_Object *obj, const char *part, const char *text);
@@ -2623,7 +2623,7 @@ EAPI void             edje_object_part_text_cursor_end_set              (Evas_Ob
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
- * @param sry the cursor to copy from
+ * @param src the cursor to copy from
  * @param dst the cursor to copy to
  */
 EAPI void             edje_object_part_text_cursor_copy                 (Evas_Object *obj, const char *part, Edje_Cursor src, Edje_Cursor dst);
@@ -2675,7 +2675,7 @@ EAPI Eina_Bool        edje_object_part_text_cursor_is_format_get        (const E
 
 /**
  * @brief Return true if the cursor points to a visible format
- * For example \t, \n, item and etc.
+ * For example \\t, \\n, item and etc.
  * @see  evas_textblock_cursor_format_is_visible_get
  *
  * @param obj A valid Evas_Object handle
@@ -4014,7 +4014,7 @@ EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char 
     * results are undefined) and the "z0" z value. This allows for some "depth"
     * control and @p foc must be greater than 0.
     *
-    * @param m map to change.
+    * @param ps The perspective object
     * @param px The perspective distance X coordinate
     * @param py The perspective distance Y coordinate
     * @param z0 The "0" z plane value

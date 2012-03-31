@@ -2757,7 +2757,7 @@ st_collections_group_orientation(void)
         This block is used to trigger some signal when the Edje object is resized.
     @endblock
 
-    @edcref
+    @page edcref
     @property
         vertical
     @parameters
