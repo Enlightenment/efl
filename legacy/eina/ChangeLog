@@ -245,3 +245,8 @@
 2012-03-29 Iván Briano
 
 	* Avoid freeing old data before returning it on eina_hash_set().
+
+2012-03-31  Vincent Torri
+
+	* Add missing API eina_file_map_faulted() on Windows. Does nothing
+	for now
