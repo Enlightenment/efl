@@ -20,17 +20,13 @@
 #include "eio_private.h"
 #include "Eio.h"
 
-EAPI int EIO_MONITOR_ERROR;
-EAPI int EIO_MONITOR_FILE_CREATED;
-EAPI int EIO_MONITOR_FILE_DELETED;
-EAPI int EIO_MONITOR_FILE_MODIFIED;
-EAPI int EIO_MONITOR_FILE_CLOSED;
-EAPI int EIO_MONITOR_DIRECTORY_CREATED;
-EAPI int EIO_MONITOR_DIRECTORY_DELETED;
-EAPI int EIO_MONITOR_DIRECTORY_MODIFIED;
-EAPI int EIO_MONITOR_DIRECTORY_CLOSED;
-EAPI int EIO_MONITOR_SELF_RENAME;
-EAPI int EIO_MONITOR_SELF_DELETED;
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
 
 static Eina_Hash *_eio_monitors = NULL;
 static pid_t _monitor_pid = -1;
@@ -121,6 +117,18 @@ _eio_monitor_error_cb(void *data, Eio_File *handler __UNUSED__, int error)
    return ;
 }
 
+/**
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 void
 eio_monitor_init(void)
 {
@@ -157,6 +165,86 @@ eio_monitor_shutdown(void)
 
    _monitor_pid = -1;
 }
+
+void
+_eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code)
+{
+   Eio_Monitor_Event *ev;
+
+   ev = calloc(1, sizeof (Eio_Monitor_Event));
+   if (!ev) return ;
+
+   ev->monitor = monitor;
+   EINA_REFCOUNT_REF(ev->monitor);
+   ev->filename = eina_stringshare_add(filename);
+
+   ecore_event_add(event_code, ev, _eio_monitor_event_cleanup_cb, NULL);
+}
+
+void
+_eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
+{
+  const char *tmp;
+
+  /* destroy old state */
+  if (monitor->exist) eio_file_cancel(monitor->exist);
+
+  if (monitor->backend)
+    {
+       if (!monitor->fallback)
+         eio_monitor_backend_del(monitor);
+       else
+         eio_monitor_fallback_del(monitor);
+    }
+
+  /* rename */
+  tmp = monitor->path;
+  monitor->path = eina_stringshare_add(newpath);
+  eina_hash_move(_eio_monitors, tmp, monitor->path);
+  eina_stringshare_del(tmp);
+
+  /* That means death (cmp pointer and not content) */
+  if (tmp == monitor->path)
+    {
+      _eio_monitor_error(monitor, -1);
+      return ;
+    }
+
+  EINA_REFCOUNT_REF(monitor); /* as we spawn a thread for this monitor, we need to refcount specifically for it */
+
+  /* restart */
+  monitor->rename = EINA_TRUE;
+  monitor->exist = eio_file_direct_stat(monitor->path,
+                                        _eio_monitor_stat_cb,
+                                        _eio_monitor_error_cb,
+                                        monitor);
+
+  /* FIXME: probably should handle this more gracefully */
+  if (!monitor->exist) abort();
+  /* and notify the app */
+  _eio_monitor_send(monitor, newpath, EIO_MONITOR_SELF_RENAME);
+}
+
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
+
+EAPI int EIO_MONITOR_ERROR;
+EAPI int EIO_MONITOR_FILE_CREATED;
+EAPI int EIO_MONITOR_FILE_DELETED;
+EAPI int EIO_MONITOR_FILE_MODIFIED;
+EAPI int EIO_MONITOR_FILE_CLOSED;
+EAPI int EIO_MONITOR_DIRECTORY_CREATED;
+EAPI int EIO_MONITOR_DIRECTORY_DELETED;
+EAPI int EIO_MONITOR_DIRECTORY_MODIFIED;
+EAPI int EIO_MONITOR_DIRECTORY_CLOSED;
+EAPI int EIO_MONITOR_SELF_RENAME;
+EAPI int EIO_MONITOR_SELF_DELETED;
 
 EAPI Eio_Monitor *
 eio_monitor_add(const char *path)
@@ -229,63 +317,4 @@ eio_monitor_path_get(Eio_Monitor *monitor)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(monitor, NULL);
    return monitor->path;
-}
-
-void
-_eio_monitor_send(Eio_Monitor *monitor, const char *filename, int event_code)
-{
-   Eio_Monitor_Event *ev;
-
-   ev = calloc(1, sizeof (Eio_Monitor_Event));
-   if (!ev) return ;
-
-   ev->monitor = monitor;
-   EINA_REFCOUNT_REF(ev->monitor);
-   ev->filename = eina_stringshare_add(filename);
-
-   ecore_event_add(event_code, ev, _eio_monitor_event_cleanup_cb, NULL);
-}
-
-void
-_eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
-{
-  const char *tmp;
-
-  /* destroy old state */
-  if (monitor->exist) eio_file_cancel(monitor->exist);
-
-  if (monitor->backend)
-    {
-       if (!monitor->fallback)
-         eio_monitor_backend_del(monitor);
-       else
-         eio_monitor_fallback_del(monitor);
-    }
-
-  /* rename */
-  tmp = monitor->path;
-  monitor->path = eina_stringshare_add(newpath);
-  eina_hash_move(_eio_monitors, tmp, monitor->path);
-  eina_stringshare_del(tmp);
-
-  /* That means death (cmp pointer and not content) */
-  if (tmp == monitor->path)
-    {
-      _eio_monitor_error(monitor, -1);
-      return ;
-    }
-
-  EINA_REFCOUNT_REF(monitor); /* as we spawn a thread for this monitor, we need to refcount specifically for it */
-
-  /* restart */
-  monitor->rename = EINA_TRUE;
-  monitor->exist = eio_file_direct_stat(monitor->path,
-                                        _eio_monitor_stat_cb,
-                                        _eio_monitor_error_cb,
-                                        monitor);
-
-  /* FIXME: probably should handle this more gracefully */
-  if (!monitor->exist) abort();
-  /* and notify the app */
-  _eio_monitor_send(monitor, newpath, EIO_MONITOR_SELF_RENAME);
 }

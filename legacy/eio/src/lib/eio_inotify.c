@@ -25,10 +25,24 @@
 #else
 # include <asm/unistd.h>
 # include <linux/inotify.h>
-static inline int inotify_init(void);
-static inline int inotify_add_watch(int fd, const char *name, __u32 mask);
-static inline int inotify_rm_watch(int fd, __u32 wd);
 #endif
+
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
+typedef struct _Eio_Inotify_Table Eio_Inotify_Table;
+
+struct _Eio_Inotify_Table
+{
+   int mask;
+   int *ev_file_code;
+   int *ev_dir_code;
+};
 
 struct _Eio_Monitor_Backend
 {
@@ -39,30 +53,6 @@ struct _Eio_Monitor_Backend
 
 static Ecore_Fd_Handler *_inotify_fdh = NULL;
 static Eina_Hash *_inotify_monitors = NULL;
-
-static void
-_eio_inotify_del(void *data)
-{
-   Eio_Monitor_Backend *emb = data;
-   int fd;
-
-   if (emb->hwnd)
-     {
-        fd = ecore_main_fd_handler_fd_get(_inotify_fdh);
-        inotify_rm_watch(fd, emb->hwnd);
-        emb->hwnd = 0;
-     }
-
-   free(emb);
-}
-
-typedef struct _Eio_Inotify_Table Eio_Inotify_Table;
-struct _Eio_Inotify_Table
-{
-   int mask;
-   int *ev_file_code;
-   int *ev_dir_code;
-};
 
 #define EIO_INOTIFY_LINE(Ino, Ef, Ed)		\
   { Ino, &EIO_MONITOR_##Ef, &EIO_MONITOR_##Ed }
@@ -79,6 +69,42 @@ static const Eio_Inotify_Table match[] = {
   EIO_INOTIFY_LINE(IN_MOVE_SELF, SELF_DELETED, SELF_DELETED),
   EIO_INOTIFY_LINE(IN_UNMOUNT, SELF_DELETED, SELF_DELETED)
 };
+
+#ifndef HAVE_SYS_INOTIFY
+static inline int
+inotify_init(void)
+{
+   return syscall(__NR_inotify_init);
+}
+
+static inline int
+inotify_add_watch(int fd, const char *name, __u32 mask)
+{
+   return syscall(__NR_inotify_add_watch, fd, name, mask);
+}
+
+static inline int
+inotify_rm_watch(int fd, __u32 wd)
+{
+   return syscall(__NR_inotify_rm_watch, fd, wd);
+}
+#endif
+
+static void
+_eio_inotify_del(void *data)
+{
+   Eio_Monitor_Backend *emb = data;
+   int fd;
+
+   if (emb->hwnd)
+     {
+        fd = ecore_main_fd_handler_fd_get(_inotify_fdh);
+        inotify_rm_watch(fd, emb->hwnd);
+        emb->hwnd = 0;
+     }
+
+   free(emb);
+}
 
 static void
 _eio_inotify_events(Eio_Monitor_Backend *backend, const char *file, int mask)
@@ -137,6 +163,23 @@ _eio_inotify_handler(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
 
    return ECORE_CALLBACK_RENEW;
 }
+
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
+/**
+ * @endcond
+ */
 
 void eio_monitor_backend_init(void)
 {
@@ -212,22 +255,7 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    monitor->backend = NULL;
 }
 
-#ifndef HAVE_SYS_INOTIFY
-static inline int
-inotify_init(void)
-{
-   return syscall(__NR_inotify_init);
-}
 
-static inline int
-inotify_add_watch(int fd, const char *name, __u32 mask)
-{
-   return syscall(__NR_inotify_add_watch, fd, name, mask);
-}
-
-static inline int
-inotify_rm_watch(int fd, __u32 wd)
-{
-   return syscall(__NR_inotify_rm_watch, fd, wd);
-}
-#endif
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/

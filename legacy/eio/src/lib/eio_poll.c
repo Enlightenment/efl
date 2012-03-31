@@ -20,7 +20,16 @@
 #include "eio_private.h"
 #include "Eio.h"
 
+/*============================================================================*
+ *                                  Local                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
 typedef struct _Eio_Monitor_Stat Eio_Monitor_Stat;
+
 struct _Eio_Monitor_Stat
 {
    Eina_Stat buffer;
@@ -46,26 +55,6 @@ struct _Eio_Monitor_Backend
 };
 
 static Eina_Bool _eio_monitor_fallback_timer_cb(void *data);
-
-#if !defined HAVE_INOTIFY && !defined HAVE_NOTIFY_WIN32
-void eio_monitor_backend_init(void)
-{
-}
-
-void eio_monitor_backend_shutdown(void)
-{
-}
-
-void eio_monitor_backend_add(Eio_Monitor *monitor)
-{
-  eio_monitor_fallback_add(monitor);
-}
-
-void eio_monitor_backend_del(Eio_Monitor *monitor)
-{
-  eio_monitor_fallback_del(monitor);
-}
-#endif
 
 static void
 _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
@@ -269,6 +258,38 @@ _eio_monitor_fallback_timer_cb(void *data)
    return EINA_FALSE;
 }
 
+/**
+ * @endcond
+ */
+
+/*============================================================================*
+ *                                 Global                                     *
+ *============================================================================*/
+
+/**
+ * @cond LOCAL
+ */
+
+#if !defined HAVE_INOTIFY && !defined HAVE_NOTIFY_WIN32
+void eio_monitor_backend_init(void)
+{
+}
+
+void eio_monitor_backend_shutdown(void)
+{
+}
+
+void eio_monitor_backend_add(Eio_Monitor *monitor)
+{
+  eio_monitor_fallback_add(monitor);
+}
+
+void eio_monitor_backend_del(Eio_Monitor *monitor)
+{
+  eio_monitor_fallback_del(monitor);
+}
+#endif
+
 void
 eio_monitor_fallback_init(void)
 {
@@ -321,3 +342,12 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
      }
    free(backend);
 }
+
+/**
+ * @endcond
+ */
+
+
+/*============================================================================*
+ *                                   API                                      *
+ *============================================================================*/
