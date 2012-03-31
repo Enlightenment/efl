@@ -131,7 +131,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
    if (_eina_mmap_log_dom < 0)
      {
         _eina_mmap_log_dom = eina_log_domain_register("eina_mmap",
-                                                         EINA_LOG_COLOR_DEFAULT);
+                                                      EINA_LOG_COLOR_DEFAULT);
         if (_eina_mmap_log_dom < 0)
           {
              EINA_LOG_ERR("Could not register log domain: eina_mmap");
