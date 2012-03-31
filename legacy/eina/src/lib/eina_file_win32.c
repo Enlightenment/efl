@@ -1172,7 +1172,34 @@ EAPI Eina_Bool
 eina_file_map_faulted(Eina_File *file, void *map)
 {
   /*
-   * FIXME: http://msdn.microsoft.com/en-us/library/windows/desktop/aa366801%28v=vs.85%29.aspx
+   * FIXME:
+   * vc++ : http://msdn.microsoft.com/en-us/library/windows/desktop/aa366801%28v=vs.85%29.aspx
+   *
+   * mingw-w64 :
+   * - 32 bits : there is a way to implement __try/__except/__final in C.
+   *   see excpt.h header for 32-bits
+   * - 64 bits : some inline assembly required for it.  See as example our
+   *   startup-code in WinMainCRTStartup() in crtexe.c :
+{
+  int ret = 255;
+#ifdef __SEH__
+  asm ("\t.l_startw:\n"
+    "\t.seh_handler __C_specific_handler, @except\n"
+    "\t.seh_handlerdata\n"
+    "\t.long 1\n"
+    "\t.rva .l_startw, .l_endw, _gnu_exception_handler ,.l_endw\n"
+    "\t.text"
+    );
+#endif
+  mingw_app_type = 1;
+  __security_init_cookie ();
+  ret = __tmainCRTStartup ();
+#ifdef __SEH__
+  asm ("\tnop\n"
+    "\t.l_endw: nop\n");
+#endif
+  return ret;
+}
    */
    return EINA_FALSE;
 }
