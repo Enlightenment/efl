@@ -1168,6 +1168,15 @@ eina_file_map_free(Eina_File *file, void *map)
    eina_lock_release(&file->lock);
 }
 
+EAPI Eina_Bool
+eina_file_map_faulted(Eina_File *file, void *map)
+{
+  /*
+   * FIXME: http://msdn.microsoft.com/en-us/library/windows/desktop/aa366801%28v=vs.85%29.aspx
+   */
+   return EINA_FALSE;
+}
+
 EAPI int
 eina_file_statat(void *container __UNUSED__, Eina_File_Direct_Info *info, Eina_Stat *st)
 {
