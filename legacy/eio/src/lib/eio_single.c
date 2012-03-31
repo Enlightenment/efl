@@ -578,4 +578,3 @@ eio_file_chown(const char *path,
 
    return &c->common;
 }
-

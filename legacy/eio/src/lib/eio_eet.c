@@ -638,4 +638,3 @@ eio_eet_write_cipher(Eet_File *ef,
      return NULL;
    return &ew->common;
 }
-

@@ -996,4 +996,3 @@ eio_dir_direct_ls(const char *dir,
 
    return &async->ls.common;
 }
-

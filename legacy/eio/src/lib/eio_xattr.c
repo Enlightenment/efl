@@ -502,4 +502,3 @@ eio_file_xattr_int_set(const char *path,
 
    return _eio_file_xattr_setup_set(async, path, attribute, flags, done_cb, error_cb, data);
 }
-
