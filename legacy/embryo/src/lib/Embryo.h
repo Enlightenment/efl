@@ -772,7 +772,7 @@ EAPI int              embryo_program_recursion_get(Embryo_Program *ep);
  *       declared @c public in the Small source code.
  *
  * @param   ep The given program.
- * @param   fn The given function.  Normally "main", in which case the
+ * @param   func The given function.  Normally "main", in which case the
  *             constant @c EMBRYO_FUNCTION_MAIN can be used.
  * @return  @c EMBRYO_PROGRAM_OK on success.  @c EMBRYO_PROGRAM_SLEEP if the
  *          program is halted by the Small @c sleep call.
