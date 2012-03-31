@@ -9,21 +9,21 @@ includes_HEADERS = Eio.h eio_inline_helper.x
 includesdir = $(includedir)/eio-@VMAJ@
 
 libeio_la_SOURCES = \
+eio_dir.c \
+eio_eet.c \
 eio_file.c \
 eio_main.c \
-eio_single.c \
-eio_dir.c \
-eio_monitor.c \
-eio_poll.c \
 eio_map.c \
-eio_eet.c \
+eio_monitor.c \
+eio_monitor_poll.c \
+eio_single.c \
 eio_xattr.c
 
 if EIO_HAVE_INOTIFY
-libeio_la_SOURCES += eio_inotify.c
+libeio_la_SOURCES += eio_monitor_inotify.c
 else
 if EIO_HAVE_WINCHANGE
-libeio_la_SOURCES += eio_winchange.c
+libeio_la_SOURCES += eio_monitor_win32.c
 endif
 endif
 
