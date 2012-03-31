@@ -717,6 +717,7 @@ ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr,
  * Use this function to add a SSL PEM private key
  * Simply specify the key file here to use it in the server object for connecting or listening.
  * If there is an error loading the key, an error will automatically be logged.
+ * @param svr The server object
  * @param key_file The path to the key file.
  * @return EINA_FALSE if the file cannot be loaded,
  * otherwise EINA_TRUE.

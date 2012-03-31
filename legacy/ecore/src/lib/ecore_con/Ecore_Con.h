@@ -1359,6 +1359,7 @@ typedef enum _Ecore_Con_Url_Http_Version
 
 /**
  * Change the HTTP version used for the request
+ * @param url_con Connection object through which the request will be sent.
  * @param version The version to be used
  * @return EINA_TRUE on success, EINA_FALSE on failure to change version
  * @since 1.2

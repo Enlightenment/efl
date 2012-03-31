@@ -129,7 +129,7 @@ ecore_x_damage_free(Ecore_X_Damage damage)
  * Synchronously modifies the regions in the following manner:
  * If @p repair is @c XCB_NONE:
  *   1) parts = damage
- *   2) damage = <empty>
+ *   2) damage = \<empty\>
  * Otherwise:
  *   1) parts = damage INTERSECT repair
  *   2) damage = damage - parts

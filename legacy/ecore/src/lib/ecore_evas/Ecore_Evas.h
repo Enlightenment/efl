@@ -531,7 +531,7 @@ EAPI Eina_Bool   ecore_evas_modal_get(const Ecore_Evas *ee);
  * @brief Set the "i demand attention" flag on a canvas window
  *
  * @param ee The Ecore_Evas
- * @param demand_attention The flag state to set
+ * @param demand The flag state to set
  *
  * A window may demand attention now (eg you must enter a password before
  * continuing), and so it may flag a window with this.

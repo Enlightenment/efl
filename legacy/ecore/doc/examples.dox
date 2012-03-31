@@ -1170,10 +1170,10 @@
  * The main function does some setup that includes reading parameters from
  * the command line to change its behaviour and test different results.
  * These are:
- * @li -t <some_num> maximum number of threads to run at the same time.
- * @li -p <some_path> adds @c some_path to the list used by the feedback jobs.
+ * @li -t \<some_num\> maximum number of threads to run at the same time.
+ * @li -p \<some_path\> adds @c some_path to the list used by the feedback jobs.
  * This parameter can be used multiple times.
- * @li -m <some_num> the number of messages to process before the program is
+ * @li -m \<some_num\> the number of messages to process before the program is
  * signalled to exit.
  *
  * Skipping some bits, we init Ecore and our application data.
