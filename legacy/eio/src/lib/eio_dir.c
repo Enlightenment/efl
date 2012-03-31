@@ -83,12 +83,12 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
    EINA_ITERATOR_FOREACH(it, info)
      {
         Eina_Bool filter = EINA_TRUE;
-        struct stat buffer;
+        _eio_stat_t buffer;
 
         switch (info->type)
           {
            case EINA_FILE_DIR:
-              if (lstat(info->path, &buffer) != 0)
+              if (_eio_lstat(info->path, &buffer) != 0)
                 goto on_error;
 
               if (S_ISLNK(buffer.st_mode))
@@ -683,16 +683,16 @@ _eio_dir_stat_find_forward(Eio_File_Dir_Ls *async,
 
    if (filter)
      {
-        Eio_File_Direct_Info *send;
+        Eio_File_Direct_Info *send_di;
 
-        send = eio_direct_info_malloc();
-        if (!send) return EINA_FALSE;
+        send_di = eio_direct_info_malloc();
+        if (!send_di) return EINA_FALSE;
 
-        memcpy(&send->info, info, sizeof (Eina_File_Direct_Info));
-	send->associated = async->ls.common.worker.associated;
+        memcpy(&send_di->info, info, sizeof (Eina_File_Direct_Info));
+	send_di->associated = async->ls.common.worker.associated;
 	async->ls.common.worker.associated = NULL;
 
-        async->pack = eina_list_append(async->pack, send);
+        async->pack = eina_list_append(async->pack, send_di);
      }
    else if (async->ls.common.worker.associated)
      {

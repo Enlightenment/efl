@@ -64,9 +64,23 @@
 # undef WIN32_LEAN_AND_MEAN
 #endif
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include <Ecore.h>
 
 #include "Eio.h"
+
+#ifdef _WIN32
+typedef struct __stat64 _eio_stat_t;
+#define _eio_stat(p, b) _stat64(p, b)
+#define _eio_lstat(p, b) _stat64(p, b)
+#else
+typedef struct stat _eio_stat_t;
+#define _eio_stat(p, b) stat(p, b)
+#define _eio_lstat(p, b) lstat(p, b)
+#endif
 
 /* Keeping 32 Eio_File_Progress alive should be enought */
 #define EIO_PROGRESS_LIMIT 32

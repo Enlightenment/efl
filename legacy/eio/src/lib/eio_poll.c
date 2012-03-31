@@ -74,7 +74,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
    Eina_Iterator *it;
    Eina_Stat *est;
    Eina_File_Direct_Info *info;
-   struct stat st;
+   _eio_stat_t st;
    /* FIXME : copy ecore_file_monitor_poll here */
 
    if (!backend->initialised)
@@ -85,7 +85,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
    if (!backend->parent)
      return ;
 
-   if (stat(backend->parent->path, &st))
+   if (_eio_stat(backend->parent->path, &st))
      {
         if (backend->initialised && !backend->destroyed)
           {
@@ -107,8 +107,13 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
    est->gid = st.st_gid;
    est->rdev = st.st_rdev;
    est->size = st.st_size;
+#ifdef _WIN32
+   est->blksize = 0;
+   est->blocks = 0;
+#else
    est->blksize = st.st_blksize;
    est->blocks = st.st_blocks;
+#endif
    est->atime = st.st_atime;
    est->mtime = st.st_mtime;
    est->ctime = st.st_ctime;

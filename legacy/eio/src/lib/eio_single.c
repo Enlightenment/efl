@@ -102,7 +102,7 @@ _eio_file_unlink_error(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
-_eio_file_struct_2_eina(Eina_Stat *es, struct stat *st)
+_eio_file_struct_2_eina(Eina_Stat *es, _eio_stat_t *st)
 {
    es->dev = st->st_dev;
    es->ino = st->st_ino;
@@ -112,8 +112,13 @@ _eio_file_struct_2_eina(Eina_Stat *es, struct stat *st)
    es->gid = st->st_gid;
    es->rdev = st->st_rdev;
    es->size = st->st_size;
+#ifdef _WIN32
+   es->blksize = 0;
+   es->blocks = 0;
+#else
    es->blksize = st->st_blksize;
    es->blocks = st->st_blocks;
+#endif
    es->atime = st->st_atime;
    es->mtime = st->st_mtime;
    es->ctime = st->st_ctime;
@@ -138,9 +143,9 @@ static void
 _eio_file_stat(void *data, Ecore_Thread *thread)
 {
    Eio_File_Stat *s = data;
-   struct stat buf;
+   _eio_stat_t buf;
 
-   if (stat(s->path, &buf) != 0)
+   if (_eio_stat(s->path, &buf) != 0)
      eio_file_thread_error(&s->common, thread);
 
    _eio_file_struct_2_eina(&s->buffer, &buf);
@@ -199,6 +204,13 @@ _eio_file_chmod(void *data, Ecore_Thread *thread)
 static void
 _eio_file_chown(void *data, Ecore_Thread *thread)
 {
+#ifdef _WIN32
+  /* FIXME:
+   * look at http://wwwthep.physik.uni-mainz.de/~frink/chown/readme.html
+   */
+  (void)data;
+  (void)thread;
+#else
    Eio_File_Chown *own = data;
    char *tmp;
    uid_t owner = -1;
@@ -251,6 +263,7 @@ _eio_file_chown(void *data, Ecore_Thread *thread)
  on_error:
    ecore_thread_cancel(thread);
    return ;
+#endif
 }
 
 static void

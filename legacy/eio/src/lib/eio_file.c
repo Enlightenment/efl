@@ -65,16 +65,16 @@ _eio_file_heavy(void *data, Ecore_Thread *thread)
 
 	if (filter)
           {
-             Eio_File_Char *send;
+             Eio_File_Char *send_fc;
 
-             send = eio_char_malloc();
-             if (!send) goto on_error;
+             send_fc = eio_char_malloc();
+             if (!send_fc) goto on_error;
 
-             send->filename = file;
-	     send->associated = async->ls.common.worker.associated;
+             send_fc->filename = file;
+	     send_fc->associated = async->ls.common.worker.associated;
 	     async->ls.common.worker.associated = NULL;
 
-	     pack = eina_list_append(pack, send);
+	     pack = eina_list_append(pack, send_fc);
           }
 	else
           {
@@ -161,16 +161,16 @@ _eio_file_eina_ls_heavy(Ecore_Thread *thread, Eio_File_Direct_Ls *async, Eina_It
 
 	if (filter)
 	  {
-	     Eio_File_Direct_Info *send;
+	     Eio_File_Direct_Info *send_di;
 
-	     send = eio_direct_info_malloc();
-	     if (!send) continue;
+	     send_di = eio_direct_info_malloc();
+	     if (!send_di) continue;
 
-	     memcpy(&send->info, info, sizeof (Eina_File_Direct_Info));
-	     send->associated = async->ls.common.worker.associated;
+	     memcpy(&send_di->info, info, sizeof (Eina_File_Direct_Info));
+	     send_di->associated = async->ls.common.worker.associated;
 	     async->ls.common.worker.associated = NULL;
 
-             pack = eina_list_append(pack, send);
+             pack = eina_list_append(pack, send_di);
 	  }
 	else if (async->ls.common.worker.associated)
 	  {
