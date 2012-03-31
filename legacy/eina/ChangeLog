@@ -249,4 +249,4 @@
 2012-03-31  Vincent Torri
 
 	* Add missing API eina_file_map_faulted() on Windows. Does nothing
-	for now
+	for now.
