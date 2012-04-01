@@ -821,7 +821,7 @@ EAPI double       emotion_object_ratio_get             (const Evas_Object *obj);
  *
  * @param obj The object from which we are retrieving the video size.
  * @param iw A pointer to a variable where the width will be stored.
- * @param iw A pointer to a variable where the height will be stored.
+ * @param ih A pointer to a variable where the height will be stored.
  *
  * This function returns the reported size of the loaded video file. If a file
  * that doesn't contain a video channel is loaded, then this size can be
@@ -1229,7 +1229,7 @@ EAPI Eina_Bool    emotion_object_extension_may_play_get(const char *file);
 EAPI Evas_Object *emotion_object_image_get(const Evas_Object *obj);
 
 /**
- * @defgroup Emotion_Webcam
+ * @defgroup Emotion_Webcam API available for accessing webcam
  */
 
 typedef struct _Emotion_Webcam Emotion_Webcam; /**< Webcam description */

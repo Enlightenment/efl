@@ -1,8 +1,7 @@
 PROJECT_NAME           = Emotion
 PROJECT_NUMBER         = @PACKAGE_VERSION@
 OUTPUT_DIRECTORY       = .
-INPUT                  = emotion.dox \
-                         @top_srcdir@/src/lib \
+INPUT                  = @top_srcdir@/src/lib \
                          @srcdir@/examples.dox
 IMAGE_PATH             = img
 OUTPUT_LANGUAGE        = English
@@ -43,7 +42,6 @@ VERBATIM_HEADERS       = NO
 SHOW_INCLUDE_FILES     = NO
 JAVADOC_AUTOBRIEF      = YES
 MULTILINE_CPP_IS_BRIEF = NO
-DETAILS_AT_TOP         = NO
 INHERIT_DOCS           = YES
 INLINE_INFO            = YES
 SORT_MEMBER_DOCS       = YES
@@ -134,8 +132,7 @@ GRAPHICAL_HIERARCHY    = NO
 DOT_IMAGE_FORMAT       = png
 DOT_PATH               = 
 DOTFILE_DIRS           = 
-MAX_DOT_GRAPH_WIDTH    = 512
-MAX_DOT_GRAPH_HEIGHT   = 512
+DOT_GRAPH_MAX_NODES    = 50
 GENERATE_LEGEND        = YES
 DOT_CLEANUP            = YES
 SEARCHENGINE           = NO
