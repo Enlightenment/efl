@@ -1603,7 +1603,7 @@ ethumb_client_aspect_get(const Ethumb_Client *client)
  * @param client the client instance to use. Must @b not be @c
  *        NULL. May be pending connected (can be called before @c
  *        connected_cb)
- * @param f format identifier to use, either #ETHUMB_THUMB_ORIENT_NONE (0),
+ * @param o format identifier to use, either #ETHUMB_THUMB_ORIENT_NONE (0),
  *        #ETHUMB_THUMB_ROTATE_90_CW (1), #ETHUMB_THUMB_ROTATE_180 (2),
  *        #ETHUMB_THUMB_ROTATE_90_CCW (3), #ETHUMB_THUMB_FLIP_HORIZONTAL (4),
  *        #ETHUMB_THUMB_FLIP_VERTICAL (5), #ETHUMB_THUMB_FLIP_TRANSPOSE (6),
@@ -1764,6 +1764,8 @@ ethumb_client_compress_get(const Ethumb_Client *client)
  * @param file file path to edje.
  * @param group group inside edje to use.
  * @param swallow name of swallow part.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  */
 EAPI Eina_Bool
 ethumb_client_frame_set(Ethumb_Client *client, const char *file, const char *group, const char *swallow)
