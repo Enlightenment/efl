@@ -313,9 +313,9 @@ EAPI Eina_List       *eeze_udev_find_by_sysattr(const char *sysattr, const char 
 /**
  * Find devices using an #Eeze_Udev_Type and/or a name.
  *
- * @param etype An #Eeze_Udev_Type or 0
- * @param name A filter for the device name or #NULL
- * @return A stringshared Eina_List of matched devices or #NULL on failure
+ * @param type An #Eeze_Udev_Type or 0
+ * @param name A filter for the device name or @c NULL
+ * @return A stringshared Eina_List of matched devices or @c NULL on failure
  *
  * Return a list of syspaths (/sys/$syspath) for matching udev devices.
  */
@@ -324,10 +324,10 @@ EAPI Eina_List       *eeze_udev_find_by_type(Eeze_Udev_Type type, const char *na
 /**
  * A more advanced find, allows finds using udev properties.
  *
- * @param subsystem The udev subsystem to filter by, or NULL
- * @param type "ID_INPUT_KEY", "ID_INPUT_MOUSE", "ID_INPUT_TOUCHPAD", NULL, etc
- * @param name A filter for the device name, or NULL
- * @return A stringshared Eina_List* of matched devices or NULL on failure
+ * @param subsystem The udev subsystem to filter by, or @c NULL
+ * @param type "ID_INPUT_KEY", "ID_INPUT_MOUSE", "ID_INPUT_TOUCHPAD", @c NULL, etc
+ * @param name A filter for the device name, or @c NULL
+ * @return A stringshared Eina_List* of matched devices or @c NULL on failure
  *
  * Return a list of syspaths (/sys/$syspath) for matching udev devices.
  * Requires at least one filter.
@@ -352,7 +352,7 @@ EAPI Eina_List       *eeze_udev_find_by_filter(const char *subsystem, const char
  * Get the syspath of a device from the /dev/ path.
  *
  * @param devpath The /dev/ path of the device
- * @return A stringshared char* which corresponds to the /sys/ path of the device or NULL on failure
+ * @return A stringshared char* which corresponds to the /sys/ path of the device or @c NULL on failure
  *
  * Takes "/dev/path" and returns the corresponding /sys/ path (without the "/sys/")
  */
@@ -380,7 +380,7 @@ EAPI Eina_List       *eeze_udev_syspath_get_parents(const char *syspath);
  * Get the /dev/ path from the /sys/ path.
  *
  * @param syspath The /sys/ path with or without the /sys/
- * @return A stringshared char* with the /dev/ path or NULL on failure
+ * @return A stringshared char* with the /dev/ path or @c NULL on failure
  *
  * Takes /sys/$PATH and turns it into the corresponding "/dev/x/y".
  */
@@ -390,7 +390,7 @@ EAPI const char      *eeze_udev_syspath_get_devpath(const char *syspath);
  * Get the /dev/ name from the /sys/ path.
  *
  * @param syspath The /sys/ path with or without the /sys/
- * @return A stringshared char* of the device name without the /dev/ path, or NULL on failure
+ * @return A stringshared char* of the device name without the /dev/ path, or @c NULL on failure
  *
  * Takes /sys/$PATH and turns it into the corresponding /dev/x/"y".
  */
@@ -400,7 +400,7 @@ EAPI const char      *eeze_udev_syspath_get_devname(const char *syspath);
  * Get the subsystem of a device from the /sys/ path.
  *
  * @param syspath The /sys/ path with or without the /sys/
- * @return A stringshared char* with the subsystem of the device or NULL on failure
+ * @return A stringshared char* with the subsystem of the device or @c NULL on failure
  *
  * Takes /sys/$PATH and returns the corresponding device subsystem,
  * such as "input" for keyboards/mice.
@@ -412,7 +412,7 @@ EAPI const char      *eeze_udev_syspath_get_subsystem(const char *syspath);
  *
  * @param syspath The /sys/ path with or without the /sys/
  * @param property The property to get; full list of these is a FIXME
- * @return A stringshared char* with the property or NULL on failure
+ * @return A stringshared char* with the property or @c NULL on failure
  */
 EAPI const char      *eeze_udev_syspath_get_property(const char *syspath, const char *property);
 
@@ -421,7 +421,7 @@ EAPI const char      *eeze_udev_syspath_get_property(const char *syspath, const 
  *
  * @param syspath The /sys/ path with or without the /sys/
  * @param sysattr The sysattr to get; full list of these is a FIXME
- * @return A stringshared char* with the sysattr or NULL on failure
+ * @return A stringshared char* with the sysattr or @c NULL on failure
  */
 EAPI const char      *eeze_udev_syspath_get_sysattr(const char *syspath, const char *sysattr);
 
@@ -468,7 +468,7 @@ EAPI Eina_Bool        eeze_udev_syspath_is_touchpad(const char *syspath);
  *
  * @param syspath The /sys/ path of the device to start at, with or without the /sys/
  * @param sysattr The attribute to find
- * @param value OPTIONAL: The value that @p sysattr should have, or NULL
+ * @param value OPTIONAL: The value that @p sysattr should have, or @c NULL
  *
  * @return If the sysattr (with value) is found, returns TRUE.  Else, false.
  */
@@ -481,7 +481,7 @@ EAPI Eina_Bool        eeze_udev_walk_check_sysattr(const char *syspath, const ch
  * @param syspath The /sys/ path of the device to start at, with or without the /sys/
  * @param sysattr The attribute to find
  *
- * @return The stringshared value of @p sysattr if found, or NULL
+ * @return The stringshared value of @p sysattr if found, or @c NULL
  */
 EAPI const char      *eeze_udev_walk_get_sysattr(const char *syspath, const char *sysattr);
    /**
@@ -511,7 +511,7 @@ EAPI const char      *eeze_udev_walk_get_sysattr(const char *syspath, const char
  * @param cb The function to call when the watch receives data of type #Eeze_Udev_Watch_Cb
  * @param user_data Data to pass to the callback function
  *
- * @return A watch struct for the watch type specified, or NULL on failure
+ * @return A watch struct for the watch type specified, or @c NULL on failure
  *
  * Eeze watches will monitor udev for changes of type(s) @p event to devices of type @p type.  When these changes occur, the stringshared
  * syspath of the device will be sent to function @p func, along with the bitmask of the event type which can be detected through
@@ -523,7 +523,7 @@ EAPI Eeze_Udev_Watch *eeze_udev_watch_add(Eeze_Udev_Type type, int event, Eeze_U
  * Deletes a watch.
  *
  * @param watch An Eeze_Udev_Watch object
- * @return The data originally associated with the watch, or NULL
+ * @return The data originally associated with the watch, or @c NULL
  *
  * Deletes a watch, closing file descriptors and freeing related udev memory.
  */
