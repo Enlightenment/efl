@@ -228,7 +228,7 @@
     * for AM/PM field.
     *
     * Each separator can be a maximum of 6 UTF-8 bytes.
-    * Space is also taken as a separator but it can come only once for each field.
+    * Space is also taken as a separator.
     *
     * Following are the allowed set of format specifiers for each datetime field.
     *
@@ -307,7 +307,7 @@
     * for AM/PM field.
     *
     * Each separator can be a maximum of 6 UTF-8 bytes.
-    * Space is also taken as a separator but it can come only once for each field.
+    * Space is also taken as a separator.
     *
     * Following are the allowed set of format specifiers for each datetime field.
     *

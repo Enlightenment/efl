@@ -382,6 +382,8 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, week_start, T_INT);
    ELM_CONFIG_VAL(D, T, weekend_start, T_INT);
    ELM_CONFIG_VAL(D, T, weekend_len, T_INT);
+   ELM_CONFIG_VAL(D, T, year_min, T_INT);
+   ELM_CONFIG_VAL(D, T, year_max, T_INT);
    ELM_CONFIG_LIST(D, T, color_palette, _config_color_palette_edd);
 #undef T
 #undef D
@@ -1034,6 +1036,8 @@ _config_load(void)
    _elm_config->week_start = 1; /* monday */
    _elm_config->weekend_start = 6; /* saturday */
    _elm_config->weekend_len = 2;
+   _elm_config->year_min = 2;
+   _elm_config->year_max = 137;
    _elm_config->color_palette = NULL;
 }
 

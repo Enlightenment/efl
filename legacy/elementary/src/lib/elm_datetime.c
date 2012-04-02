@@ -77,8 +77,8 @@ struct _Format_Map
 };
 
 // default limits for individual fields
-static const Format_Map mapping[DATETIME_TYPE_COUNT] = {
-   [ELM_DATETIME_YEAR]   =  { "Yy",   0, 137 },
+static Format_Map mapping[DATETIME_TYPE_COUNT] = {
+   [ELM_DATETIME_YEAR]   =  { "Yy",  -1,  -1  },
    [ELM_DATETIME_MONTH]  =  { "mbBh", 0,  11  },
    [ELM_DATETIME_DATE]   =  { "de",   1,  31  },
    [ELM_DATETIME_HOUR]   =  { "IHkl", 0,  23  },
@@ -652,6 +652,7 @@ _parse_format(Evas_Object *obj, char *fmt_ptr)
      {
         if (fmt_parsing)
           {
+             fmt_parsing = EINA_FALSE;
              for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
                {
                   if (strchr(mapping[idx].fmt_char, cur))
@@ -663,23 +664,21 @@ _parse_format(Evas_Object *obj, char *fmt_ptr)
                        field->fmt[1] = cur;
                        field->fmt_exist = EINA_TRUE;
                        field->location = location++;
-                       fmt_parsing = EINA_FALSE;
                        sep_lookup = EINA_TRUE;
                        len = 0;
                        break;
                     }
                }
           }
-        if (cur == ' ') separator[len++] = cur;
-        else if (cur == '%') fmt_parsing = EINA_TRUE;
-        if ((cur == ' ') || (cur == '%'))
+        if (cur == '%')
           {
+             fmt_parsing = EINA_TRUE;
              sep_parsing = EINA_FALSE;
              // set the separator to previous field
              separator[len] = 0;
              if (field) eina_stringshare_replace(&field->separator, separator);
           }
-        if (sep_parsing && (len < MAX_SEPARATOR_LEN-1) &&
+        if (sep_parsing && (len < MAX_SEPARATOR_LEN - 1) &&
             (field->type != ELM_DATETIME_AMPM) &&
             (!((field->type == ELM_DATETIME_MINUTE) && (cur ==':'))))
            separator[len++] = cur;
@@ -767,6 +766,8 @@ _field_list_init(Evas_Object *obj)
    t = time(NULL);
    localtime_r(&t, &wd->curr_time);
 
+   mapping[ELM_DATETIME_YEAR].def_min = _elm_config->year_min;
+   mapping[ELM_DATETIME_YEAR].def_max = _elm_config->year_max;
    for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
      {
         field = wd->field_list + idx;

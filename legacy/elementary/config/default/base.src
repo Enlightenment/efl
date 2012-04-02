@@ -59,6 +59,8 @@ group "Elm_Config" struct {
   value "week_start" int: 1;
   value "weekend_start" int: 6;
   value "weekend_len" int: 2;
+  value "year_min" int: 2;
+  value "year_max" int: 137;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";

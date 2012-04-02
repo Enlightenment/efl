@@ -168,6 +168,8 @@ struct _Elm_Config
    int           week_start;
    int           weekend_start;
    int           weekend_len;
+   int           year_min;
+   int           year_max;
    Eina_List    *color_palette;
 
    /* Not part of the EET file */
