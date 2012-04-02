@@ -230,15 +230,27 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
      IN_UNMOUNT;
 
    if (!_inotify_fdh)
-     eio_monitor_fallback_add(monitor);
+     {
+        eio_monitor_fallback_add(monitor);
+        return;
+     }
 
    backend = calloc(1, sizeof (Eio_Monitor_Backend));
-   if (!backend) return eio_monitor_fallback_add(monitor);
+   if (!backend)
+     {
+        eio_monitor_fallback_add(monitor);
+        return;
+     }
 
    backend->parent = monitor;
    backend->hwnd = inotify_add_watch(ecore_main_fd_handler_fd_get(_inotify_fdh), monitor->path, mask);
    if (!backend->hwnd)
-     return eio_monitor_fallback_add(monitor);
+     {
+        eio_monitor_fallback_add(monitor);
+        free(backend);
+        return;
+     }
+
    monitor->backend = backend;
 
    eina_hash_direct_add(_inotify_monitors, &backend->hwnd, backend);
