@@ -42,8 +42,7 @@ _colorpalette_longpressed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 void
 test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *cs, *fr, *ly, *re;
-   char buf[PATH_MAX];
+   Evas_Object *win, *bg, *bx, *cs, *fr, *re;
    int r, g, b, a;
 
    win = elm_win_add(NULL, "colorselector", ELM_WIN_BASIC);
@@ -68,17 +67,9 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
-   ly = elm_layout_add(win);
-   snprintf(buf, sizeof(buf), "%s/objects/colorpreview.edj", elm_app_data_dir_get());
-   elm_layout_file_set(ly, buf, "main");
-   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_object_content_set(fr, ly);
-   evas_object_show(ly);
-
    re = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_show(re);
-   elm_object_part_content_set(ly, "ColorPreview", re);
+   elm_object_content_set(fr, re);
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, 1.0, 0);
