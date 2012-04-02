@@ -60,7 +60,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_win_resize_object_add(win, bx);
    evas_object_show(bx);
 
-   fr = elm_frame_add(win);
+   fr = elm_frame_add(bx);
    evas_object_size_hint_weight_set(fr, 1.0, 0.5);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(fr, "Color View");
@@ -71,14 +71,14 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_show(re);
    elm_object_content_set(fr, re);
 
-   fr = elm_frame_add(win);
+   fr = elm_frame_add(bx);
    evas_object_size_hint_weight_set(fr, 1.0, 0);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0);
    elm_object_text_set(fr, "Color Selector");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
-   cs = elm_colorselector_add(win);
+   cs = elm_colorselector_add(fr);
    elm_colorselector_palette_color_add(cs, 255, 90, 18, 255);
    elm_colorselector_palette_color_add(cs, 255, 213, 0, 255);
    elm_colorselector_palette_color_add(cs, 146, 255, 11, 255);
@@ -103,8 +103,10 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_object_content_set(fr, cs);
    evas_object_show(cs);
    evas_object_smart_callback_add(cs, "changed", _colorselector_clicked_cb, re);
-   evas_object_smart_callback_add(cs, "color,item,selected", _colorpalette_clicked_cb, re);
-   evas_object_smart_callback_add(cs, "color,item,longpressed", _colorpalette_longpressed_cb, re);
+   evas_object_smart_callback_add(cs, "color,item,selected",
+                                  _colorpalette_clicked_cb, re);
+   evas_object_smart_callback_add(cs, "color,item,longpressed",
+                                  _colorpalette_longpressed_cb, re);
 
    elm_colorselector_color_get(cs, &r, &g, &b, &a);
    /* Fix Alpha pre multiplication by edje */
