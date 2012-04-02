@@ -89,13 +89,13 @@ _mapbuf(Evas_Object *obj)
         evas_map_smooth_set(m, wd->smooth);
         evas_map_alpha_set(m, wd->alpha);
         evas_object_map_set(wd->content, m);
-        evas_object_map_enable_set(wd->content, wd->enabled);
+        evas_object_map_enable_set(wd->content, EINA_TRUE);
         evas_map_free(m);
      }
    else
      {
         evas_object_map_set(wd->content, NULL);
-        evas_object_map_enable_set(wd->content, 0);
+        evas_object_map_enable_set(wd->content, EINA_FALSE);
         evas_object_move(wd->content, x, y);
         evas_object_resize(wd->content, w, h);
      }
@@ -122,10 +122,8 @@ _configure(Evas_Object *obj)
                   Evas *e = evas_object_evas_get(obj);
                   evas_smart_objects_calculate(e);
                   evas_nochange_push(e);
-                  //                  printf("x-------------------- %i %i\n", x, y);
                   evas_object_move(wd->content, x, y);
                   evas_smart_objects_calculate(e);
-                  //                  printf("y--------------------\n");
                   evas_nochange_pop(e);
                }
           }
