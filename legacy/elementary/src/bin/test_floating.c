@@ -65,18 +65,12 @@ _del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 void
 test_floating(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *gl;
+   Evas_Object *win, *gl;
    int i;
    Ecore_Animator *ani;
 
-   win = elm_win_add(NULL, "floating", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Floating");
+   win = elm_win_util_standard_add("floating", "Floating");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    gl = elm_genlist_add(win);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

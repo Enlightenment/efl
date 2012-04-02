@@ -155,18 +155,12 @@ test_fileselector_button(void *data       __UNUSED__,
                          Evas_Object *obj __UNUSED__,
                          void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_bt, *en, *lb, *bxx;
+   Evas_Object *win, *vbox, *hbox, *ic, *bt, *fs_bt, *en, *lb, *bxx;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_add(NULL, "fileselector-button", ELM_WIN_BASIC);
-   elm_win_title_set(win, "File Selector Button");
+   win = elm_win_util_standard_add("fileselector-button", "File Selector Button");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);

@@ -222,7 +222,7 @@ _photocam_move_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 void
 test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *ph, *tb2, *bt, *box;
+   Evas_Object *win, *ph, *tb2, *bt, *box;
    // these were just testing - use the "select photo" browser to select one
    const char *img[5] =
      {
@@ -233,14 +233,8 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
         "/home/raster/t5.jpg"   // 466 mpixel
      };
 
-   win = elm_win_add(NULL, "photocam", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Photocam");
+   win = elm_win_util_standard_add("photocam", "PhotoCam");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    ph = elm_photocam_add(win);
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

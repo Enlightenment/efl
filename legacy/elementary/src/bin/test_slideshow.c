@@ -110,19 +110,13 @@ _slide_transition(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 void
 test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
+   Evas_Object *win, *notify, *bx, *bt, *hv, *spin;
    const Eina_List *l;
    const char *transition, *layout;
    Elm_Object_Item *slide_last_it;
 
-   win = elm_win_add(NULL, "slideshow", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Slideshow");
+   win = elm_win_util_standard_add("slideshow", "Slideshow");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    slideshow = elm_slideshow_add(win);
    elm_slideshow_loop_set(slideshow, EINA_TRUE);

@@ -165,7 +165,7 @@ test_cursor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 void
 test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *o, *grid, *gl;
+   Evas_Object *win, *bx, *o, *grid, *gl;
    Elm_Object_Item *glit1, *glit2, *glit3;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *lit;
@@ -185,14 +185,8 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
         "wood_01.jpg",
      };
 
-   win = elm_win_add(NULL, "cursor2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Cursor 2");
+   win = elm_win_util_standard_add("cursor2", "Cursor 2");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -289,21 +283,15 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 void
 test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *o;
+   Evas_Object *win, *bx, *o;
    Elm_Object_Item *lit;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "cursor3", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Cursor 3");
+   win = elm_win_util_standard_add("cursor3", "Cursor 3");
    elm_win_autodel_set(win, EINA_TRUE);
 
    snprintf(buf, sizeof(buf), "%s/objects/cursors.edj", elm_app_data_dir_get());
    elm_theme_extension_add(NULL, buf);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -400,19 +388,13 @@ test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 void
 test_cursor4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *ly, *bt;
+   Evas_Object *win, *bx, *ly, *bt;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "cursor layout", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Cursor Layout");
+   win = elm_win_util_standard_add("cursor layout", "Cursor Layout");
    elm_win_autodel_set(win, EINA_TRUE);
 
    snprintf(buf, sizeof(buf), "%s/objects/cursors.edj", elm_app_data_dir_get());
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

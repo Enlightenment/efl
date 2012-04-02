@@ -236,17 +236,11 @@ _transit_resizable_flip(void *data, Evas_Object *obj, void *event_info __UNUSED_
 void
 test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bt, *ic;
+   Evas_Object *win, *bx, *bt, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "transit", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit");
+   win = elm_win_util_standard_add("transit", "Transit");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -287,16 +281,10 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 void
 test_transit2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt;
+   Evas_Object *win, *bt;
 
-   win = elm_win_add(NULL, "transit2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit 2");
+   win = elm_win_util_standard_add("transit2", "Transit 2");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Resizing Effect");
@@ -313,16 +301,10 @@ test_transit2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt, *bt2;
+   Evas_Object *win, *bt, *bt2;
 
-   win = elm_win_add(NULL, "transit3", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit 3");
+   win = elm_win_util_standard_add("transit3", "Transit 3");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Front Button - Flip Effect");
@@ -346,16 +328,10 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt;
+   Evas_Object *win, *bt;
 
-   win = elm_win_add(NULL, "transit4", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit 4");
+   win = elm_win_util_standard_add("transit4", "Transit 4");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Zoom Effect");
@@ -373,17 +349,11 @@ test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt, *bt2, *ic;
+   Evas_Object *win, *bt, *bt2, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "transit5", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit 5");
+   win = elm_win_util_standard_add("transit5", "Transit 5");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
@@ -419,17 +389,11 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt, *bt2, *ic;
+   Evas_Object *win, *bt, *bt2, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "transit6", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit 6");
+   win = elm_win_util_standard_add("transit6","Transit 6");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
@@ -465,16 +429,10 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt, *bt2;
+   Evas_Object *win, *bt, *bt2;
 
-   win = elm_win_add(NULL, "transit7", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit 7");
+   win = elm_win_util_standard_add("transit7", "Transit 7");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Front Button - Resizable Flip Effect");
@@ -498,18 +456,12 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt;
+   Evas_Object *win, *bt;
    Elm_Transit *trans;
    Elm_Transit_Effect *effect_context;
 
-   win = elm_win_add(NULL, "transit8", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit 8");
+   win = elm_win_util_standard_add("transit8", "Transit 8");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Button - Custom Effect");
@@ -538,17 +490,11 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_transit9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt, *bt2, *bt3, *bt4;
+   Evas_Object *win, *bt, *bt2, *bt3, *bt4;
    Elm_Transit *trans, *trans2, *trans3, *trans4;
 
-   win = elm_win_add(NULL, "transit9", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Transit 9");
+   win = elm_win_util_standard_add("transit9", "Transit 9");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Chain 1");

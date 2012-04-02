@@ -57,22 +57,12 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    Evas_Object *win;
    unsigned int i, j;
 
-   win = elm_win_add(NULL, "focus", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Focus");
+   win = elm_win_util_standard_add("focus", "Focus");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    evas_object_resize(win, 800, 600);
    elm_object_event_callback_add(win, _event, NULL);
    elm_win_autodel_set(win, EINA_TRUE);
    my_show(win);
-
-     {
-        Evas_Object *bg;
-        bg = elm_bg_add(win);
-        evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND,
-                                         EVAS_HINT_EXPAND);
-        elm_win_resize_object_add(win, bg);
-        my_show(bg);
-     }
 
    Evas_Object *mainbx = elm_box_add(win);
    elm_box_horizontal_set(mainbx, EINA_TRUE);

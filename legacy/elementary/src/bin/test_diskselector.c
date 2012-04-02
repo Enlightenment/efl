@@ -202,7 +202,7 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 void
 test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *disk, *ic, *bxx, *bt;
+   Evas_Object *win, *bx, *disk, *ic, *bxx, *bt;
    Elm_Object_Item *ds_it;
    char buf[PATH_MAX];
    api_data *api = calloc(1, sizeof(api_data));
@@ -216,16 +216,9 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    };
    char date[3];
 
-   win = elm_win_add(NULL, "diskselector", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Disk Selector");
+   win = elm_win_util_standard_add("diskselector", "Disk Selector");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);

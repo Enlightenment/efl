@@ -469,18 +469,12 @@ cursor_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 void
 test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bt, *content_box, *bxx, *bx, *tg;
+   Evas_Object *win, *bt, *content_box, *bxx, *bx, *tg;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
-   elm_win_title_set(win, "GenGrid");
+   win = elm_win_util_standard_add("gengrid", "GenGrid");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    api->box = bxx;
@@ -686,16 +680,10 @@ _size_changed(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *grid, *bx, *hbx, *bt, *ck;
+   Evas_Object *win, *grid, *bx, *hbx, *bt, *ck;
 
-   win = elm_win_add(NULL, "gengrid2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "GenGrid2");
+   win = elm_win_util_standard_add("gengrid2", "GenGrid 2");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -788,19 +776,13 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *grid;
+   Evas_Object *win, *grid;
    static Testitem ti[144];
    int i, n;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "gengrid_group", ELM_WIN_BASIC);
-   elm_win_title_set(win, "GenGrid Group");
+   win = elm_win_util_standard_add("gengrid_group", "GenGrid Group");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    grid = elm_gengrid_add(win);
    elm_gengrid_item_size_set(grid, 150, 150);

@@ -501,17 +501,11 @@ _zoom_manual(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
 static void
 _track_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *fs, *bg, *vbox, *hbox, *sep;
+   Evas_Object *fs, *vbox, *hbox, *sep;
    char *path = NULL;
 
-   fs_win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
-   elm_win_title_set(fs_win, "File Selector");
+   fs_win = elm_win_util_standard_add("fileselector", "File Selector");
    elm_win_autodel_set(fs_win, 1);
-
-   bg = elm_bg_add(fs_win);
-   elm_win_resize_object_add(fs_win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    vbox = elm_box_add(fs_win);
    elm_win_resize_object_add(fs_win, vbox);
@@ -970,20 +964,14 @@ _del_map(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 void
 test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *map;
+   Evas_Object *win, *map;
    int idx = 0;
    const char **tile_srcs;
    const char **route_srcs;
    const char **name_srcs;
 
-   win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Map");
+   win = elm_win_util_standard_add("map", "Map");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    map = elm_map_add(win);
    if (map)

@@ -523,21 +523,15 @@ void
 test_gesture_layer2(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
       void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *tb, *lb, *bx;
+   Evas_Object *win, *tb, *lb, *bx;
    Evas_Object *r; /* Gesture layer transparent object */
    Evas_Object *g; /* The Gesture Layer object */
 
    infra_data *infra = _infra_data_alloc();
 
-   win = elm_win_add(NULL, "table", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Table");
+   win = elm_win_util_standard_add("table", "Table");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_smart_callback_add(win, "delete,request", my_win_del, infra);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    /* START - Building icons table */
    bx = elm_box_add(win);
