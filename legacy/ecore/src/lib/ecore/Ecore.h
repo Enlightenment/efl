@@ -544,7 +544,7 @@ EAPI int ecore_thread_main_loop_end(void);
  * @endcode
  *
  * One very important thing to note here is the @c EVENT_TYPE, to register a
- * handler for an event you must know it's type before hand. Ecore provides
+ * handler for an event you must know its type before hand. Ecore provides
  * the following events which are emitted in response to POSIX
  * signals(https://en.wikipedia.org/wiki/Signal_%28computing%29):
  * @li @b ECORE_EVENT_SIGNAL_USER
