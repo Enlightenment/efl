@@ -558,7 +558,7 @@ _mouse_up(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *eve
 void
 test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bt, *gl;
+   Evas_Object *win, *bg, *bx, *bt, *gl;
    Ecore_Animator *ani;
    GLData *gld = NULL;
 
@@ -569,11 +569,18 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    // new window - do the usual and give it a name, title and delete handler
    // Set the engine to opengl_x11
    elm_config_preferred_engine_set("opengl_x11");
-   win = elm_win_util_standard_add("glview", "GLView");
+   win = elm_win_add(NULL, "glview", ELM_WIN_BASIC);
    // Set preferred engine back to default from config
    elm_config_preferred_engine_set(NULL);
-
+   
+   elm_win_title_set(win, "GLView");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   // add a standard bg
+   bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

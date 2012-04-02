@@ -162,14 +162,20 @@ id_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 void
 test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bxx, *gl, *id, *bt;
+   Evas_Object *win, *bg, *bxx, *gl, *id, *bt;
    Elm_Object_Item *glit;
    int i, j;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_util_standard_add("index", "Index");
+   win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Index");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);
@@ -329,14 +335,20 @@ test_index2_id_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void 
 void
 test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *box, *bt;
+   Evas_Object *win, *bg, *box, *bt;
    Test_Index2_Elements *gui;
 
    gui = malloc(sizeof(*gui));
 
-   win = elm_win_util_standard_add("sorted-index-list", "Sorted Index and List");
+   win = elm_win_add(NULL, "sorted-index-list", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Sorted Index and List");
    evas_object_smart_callback_add(win, "delete,request", test_index2_del, gui);
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

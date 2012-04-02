@@ -134,11 +134,17 @@ fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_factory(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *sc, *fc;
+   Evas_Object *win, *bg, *bx, *sc, *fc;
    int i;
 
-   win = elm_win_util_standard_add("factory", "Factory");
+   win = elm_win_add(NULL, "factory", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Factory");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
 #ifdef HOMOG

@@ -86,6 +86,8 @@ struct _Fonts_Data
     }                                                               \
   while (0)
 
+static Evas_Object *main_win = NULL;
+
 static int quiet = 0;
 static int interactive = 1;
 
@@ -3020,14 +3022,22 @@ _status_config_full(Evas_Object *win,
 }
 
 static void
-win_create(void)
+status_win(void)
 {
-   Evas_Object *win, *bx0;
+   Evas_Object *win, *bg, *bx0;
 
-   win = elm_win_util_standard_add("main", "Elementary Config");
+   win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
+   main_win = win;
+   elm_win_title_set(win, "Elementary Config");
+
    ecore_event_handler_add(ELM_EVENT_CONFIG_ALL_CHANGED, _config_all_changed,
                            win);
+
    evas_object_smart_callback_add(win, "delete,request", config_exit, NULL);
+   bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
 
    bx0 = elm_box_add(win);
    evas_object_size_hint_weight_set(bx0, 1.0, 1.0);
@@ -3105,7 +3115,7 @@ elm_main(int    argc,
 #ifdef ELM_EFREET
         elm_need_efreet();
 #endif
-        win_create(); /* create main window */
+        status_win(); /* create main window */
         if (!interactive)
           ecore_timer_add(2.0, _exit_timer, NULL);
      }

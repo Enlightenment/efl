@@ -7,7 +7,7 @@
 void
 test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *ic, *ic1, *ic2, *ic3, *ic4, *ic5;
+   Evas_Object *win, *bg, *ic, *ic1, *ic2, *ic3, *ic4, *ic5;
    Elm_Object_Item *seg_it;
 
    Evas_Object * in_layout;
@@ -20,8 +20,14 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    char buf5[PATH_MAX];
    char buf6[PATH_MAX];
 
-   win = elm_win_util_standard_add("segmentcontrol", "Segment Control");
+   win = elm_win_add(NULL, "segmentcontrol", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Segment Control");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    in_layout = elm_layout_add( win );
    elm_win_resize_object_add(win, in_layout);

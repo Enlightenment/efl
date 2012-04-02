@@ -90,12 +90,17 @@ static Evas_Object *
 _new_window_hook(void *data, Evas_Object *obj __UNUSED__, Eina_Bool js __UNUSED__, const Elm_Web_Window_Features *wf __UNUSED__)
 {
    Web_Test *wt = data;
-   Evas_Object *new_win, *new_web;
+   Evas_Object *new_win, *new_web, *bg;
 
-   new_win = elm_win_util_standard_add("elm-web-test-popup", "Elm Web Test Popup");
+   new_win = elm_win_add(NULL, "elm-web-test-popup", ELM_WIN_BASIC);
    elm_win_autodel_set(new_win, EINA_TRUE);
    evas_object_resize(new_win, 300, 300);
    evas_object_show(new_win);
+
+   bg = elm_bg_add(new_win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(new_win, bg);
+   evas_object_show(bg);
 
    new_web = elm_web_add(new_win);
    elm_web_useragent_set(new_web, wt->user_agent);
@@ -333,25 +338,32 @@ test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 {
    const char user_agent_firefox[] = "Mozilla/5.0 (X11; Linux x86_64; rv:9.0.1) Gecko/20100101 Firefox/9.0.1";
    const char user_agent_mobile[] = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543a Safari/419.3";
-   Evas_Object *win, *bx, *bx2, *bt, *web, *url;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *web, *url;
    Web_Test *wt;
 
    elm_need_web();
 
    wt = calloc(1, sizeof(*wt));
 
+   win = elm_win_add(NULL, "web", ELM_WIN_BASIC);
+
    if (mobile == EINA_TRUE)
-     {
-        win = elm_win_util_standard_add("web-mobile", "Web Mobile");
-        wt->user_agent = user_agent_mobile;
-     }
+   {
+      wt->user_agent = user_agent_mobile;
+      elm_win_title_set(win, "Web-mobile");
+   }
    else
-     {
-        win = elm_win_util_standard_add("web", "Web");
-        wt->user_agent = user_agent_firefox;
-     }
+   {
+      wt->user_agent = user_agent_firefox;
+      elm_win_title_set(win, "Web");
+   }
 
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);

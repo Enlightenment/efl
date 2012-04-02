@@ -117,12 +117,18 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 void
 test_calendar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *cal, *bx, *bxx, *bt;
+   Evas_Object *win, *bg, *cal, *bx, *bxx, *bt;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_util_standard_add("calendar", "Calendar");
+   win = elm_win_add(NULL, "calendar", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Calendar");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);
@@ -207,7 +213,7 @@ _format_month_year(struct tm *stm)
 void
 test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bxh, *cal, *cal2, *cal3, *en;
+   Evas_Object *win, *bg, *bx, *bxh, *cal, *cal2, *cal3, *en;
    Elm_Calendar_Mark *mark;
    struct tm selected_time;
    time_t current_time;
@@ -217,8 +223,14 @@ test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
       "Thursday", "Friday", "Saturday"
    };
 
-   win = elm_win_util_standard_add("calendar2", "Calendar 2");
+   win = elm_win_add(NULL, "calendar2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Calendar 2");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

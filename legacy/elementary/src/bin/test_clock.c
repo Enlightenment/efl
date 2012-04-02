@@ -96,13 +96,19 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 void
 test_clock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *ck, *bt, *bxx;
+   Evas_Object *win, *bg, *bx, *ck, *bt, *bxx;
    unsigned int digedit;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_util_standard_add("clock", "Clock");
+   win = elm_win_add(NULL, "clock", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Clock");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);
@@ -205,12 +211,18 @@ _hmode_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *hbx, *ck, *bt, *bxx;
+   Evas_Object *win, *bg, *bx, *hbx, *ck, *bt, *bxx;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_util_standard_add("clock2", "Clock 2");
+   win = elm_win_add(NULL, "clock2", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Clock 2");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);
@@ -264,10 +276,16 @@ test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 void
 test_clock3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *ck, *lb;
+   Evas_Object *win, *bg, *bx, *ck, *lb;
 
-   win = elm_win_util_standard_add("clock3", "Clock 3");
+   win = elm_win_add(NULL, "clock3", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Clock 3");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

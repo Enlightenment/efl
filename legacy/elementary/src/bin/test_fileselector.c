@@ -119,7 +119,7 @@ test_fileselector(void *data       __UNUSED__,
                   Evas_Object *obj __UNUSED__,
                   void *event_info __UNUSED__)
 {
-   Evas_Object *win, *fs, *vbox, *hbox, *bt, *sep;
+   Evas_Object *win, *fs, *bg, *vbox, *hbox, *bt, *sep;
 
    /* Set the locale according to the system pref.
     * If you dont do so the file selector will order the files list in
@@ -129,8 +129,14 @@ test_fileselector(void *data       __UNUSED__,
 
    elm_need_ethumb();
 
-   win = elm_win_util_standard_add("fileselector", "File Selector");
+   win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
+   elm_win_title_set(win, "File Selector");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    vbox = elm_box_add(win);
    elm_win_resize_object_add(win, vbox);

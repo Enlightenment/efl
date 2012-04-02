@@ -37,11 +37,17 @@ _clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_layout(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *box, *ly, *bt;
+   Evas_Object *win, *bg, *box, *ly, *bt;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("layout", "Layout");
+   win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Layout");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

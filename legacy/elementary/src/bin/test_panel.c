@@ -154,11 +154,17 @@ _dir_has_subs(const char *path)
 void
 test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *panel, *bx, *vbx, *toolbar;
+   Evas_Object *win, *bg, *panel, *bx, *vbx, *toolbar;
    Evas_Object *list;
 
-   win = elm_win_util_standard_add("panel", "Panel");
+   win = elm_win_add(NULL, "panel", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Panel");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    vbx = elm_box_add(win);
    elm_win_resize_object_add(win, vbx);

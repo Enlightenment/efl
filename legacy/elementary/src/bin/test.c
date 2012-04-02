@@ -252,11 +252,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
     * is no parent. "main" is the name of the window - used by the window
     * manager for identifying the window uniquely amongst all the windows
     * within this application (and all instances of the application). The
-    * type is a basic window (the final parameter).
-    * You can call elm_win_util_standard_add() instead. This is a convenient API
-    * for window and bg creation. You don't need to create bg object manually.
-    * You can also set the title of the window at the same time. 
-    *   ex) win = elm_win_util_standard_add("main", "Elementary Tests"); */
+    * type is a basic window (the final parameter) */
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
    /* Set the title of the window - This is in the titlebar. */
    elm_win_title_set(win, "Elementary Tests");

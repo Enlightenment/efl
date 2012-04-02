@@ -77,11 +77,17 @@ my_entry_bt_6(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 void
 test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bx2, *bt, *en;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en;
    char buf[4096];
 
-   win = elm_win_util_standard_add("entry", "Entry");
+   win = elm_win_add(NULL, "entry", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -269,12 +275,18 @@ scrolled_anchor_test(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 void
 test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bx2, *bt, *en, *en_p, *sp;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en, *en_p, *sp;
    static Elm_Entry_Filter_Accept_Set digits_filter_data, digits_filter_data2;
    static Elm_Entry_Filter_Limit_Size limit_filter_data, limit_filter_data2;
 
-   win = elm_win_util_standard_add("entry-scrolled", "Entry Scrolled");
+   win = elm_win_add(NULL, "entry-scrolled", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry Scrolled");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -705,10 +717,16 @@ my_ent_bt_pas(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 void
 test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bx2, *bt, *en;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en;
 
-   win = elm_win_util_standard_add("entry3", "Entry 3");
+   win = elm_win_add(NULL, "entry3", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry 3");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1261,11 +1279,17 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 void
 test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *ly, *en;
+   Evas_Object *win, *bg, *ly, *en;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("entry4", "Entry 4");
+   win = elm_win_add(NULL, "entry4", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry 4");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    ly = elm_layout_add(win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
@@ -1324,10 +1348,16 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 void
 test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bx2, *bt, *en;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *en;
 
-   win = elm_win_util_standard_add("entry5", "Entry 5");
+   win = elm_win_add(NULL, "entry5", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry 5");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1614,10 +1644,16 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 void
 test_entry6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *en;
+   Evas_Object *win, *bg, *bx, *en;
 
-   win = elm_win_util_standard_add("entry6", "Entry 6");
+   win = elm_win_add(NULL, "entry6", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry 6");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -2130,10 +2166,16 @@ auto_save_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_entry_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *bx2, *bt, *np, *ch;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *np, *ch;
 
-   win = elm_win_util_standard_add("entry-notepad", "Entry Notepad");
+   win = elm_win_add(NULL, "entry-notepad", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry Notepad");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

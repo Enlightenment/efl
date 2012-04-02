@@ -71,12 +71,18 @@ my_progressbar_destroy(void *data __UNUSED__, Evas_Object *obj, void *event_info
 void
 test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2;
+   Evas_Object *win, *bg, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2;
    char buf[PATH_MAX];
 
-   win = elm_win_util_standard_add("progressbar", "Progressbar");
+   win = elm_win_add(NULL, "progressbar", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Progressbar");
    evas_object_smart_callback_add(win, "delete,request",
                                   my_progressbar_destroy, NULL);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);

@@ -228,11 +228,18 @@ _st_store_unfetch(void *data __UNUSED__, Elm_Store_Item *sti)
 void
 test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *gl, *bx;
+   Evas_Object *win, *bg, *gl, *bx;
+
    Elm_Store *st;
 
-   win = elm_win_util_standard_add("store", "Store");
+   win = elm_win_add(NULL, "store", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Store");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

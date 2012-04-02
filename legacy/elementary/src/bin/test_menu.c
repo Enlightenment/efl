@@ -4,7 +4,7 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static Evas_Object *menu;
+static Evas_Object *win, *bg, *menu, *rect;
 
 static void
 _show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
@@ -97,11 +97,16 @@ _populate_1(Evas_Object *obj, Elm_Object_Item *menu_it)
 void
 test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *rect;
    Elm_Object_Item *menu_it;
 
-   win = elm_win_util_standard_add("menu", "Menu");
+   win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Menu");
    elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_win_resize_object_add(win, rect);
