@@ -199,18 +199,12 @@ test_multibuttonentry(void *data __UNUSED__,
                       Evas_Object *obj __UNUSED__,
                       void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *sc, *bx;
+   Evas_Object *win, *sc, *bx;
    Evas_Object *ly;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "Multibuttonentry", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Multibuttonentry");
+   win = elm_win_util_standard_add("multibuttonentry", "MultiButtonEntry");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    ly = elm_layout_add(win);
    snprintf(buf, sizeof(buf), "%s/objects/multibuttonentry.edj", elm_app_data_dir_get());

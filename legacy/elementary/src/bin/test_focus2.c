@@ -48,11 +48,10 @@ _focus_layout_part(void *data, Evas_Object *o __UNUSED__, void *event_info __UNU
 void
 test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *ly, *bt, *en, *bt1;
+   Evas_Object *win, *bx, *ly, *bt, *en, *bt1;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "focus2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Focus2");
+   win = elm_win_util_standard_add("focus2", "Focus 2");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
 
@@ -62,11 +61,6 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_event_callback_add
      (evas_object_evas_get(win), EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT,
       _focus_out, NULL);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);

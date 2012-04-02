@@ -61,18 +61,12 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 void
 test_inwin(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *inwin, *lb, *bxx, *bt;
+   Evas_Object *win, *inwin, *lb, *bxx, *bt;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_add(NULL, "inwin", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Inwin");
+   win = elm_win_util_standard_add("inwin", "InWin");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    inwin = elm_win_inwin_add(win);
    api->inwin = inwin;
@@ -107,16 +101,10 @@ test_inwin(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 void
 test_inwin2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *inwin, *lb;
+   Evas_Object *win, *inwin, *lb;
 
-   win = elm_win_add(NULL, "inwin2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Inwin 2");
+   win = elm_win_util_standard_add("inwin2", "InWin 2");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    inwin = elm_win_inwin_add(win);
    elm_object_style_set(inwin, "minimal_vertical");

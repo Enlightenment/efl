@@ -64,20 +64,14 @@ tb_5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar 7");
+   win = elm_win_util_standard_add("toolbar", "Toolbar");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
@@ -174,20 +168,14 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 void
 test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *item;
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar 2");
+   win = elm_win_util_standard_add("toolbar2", "Toolbar 2");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
@@ -284,20 +272,14 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar3", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar 3");
+   win = elm_win_util_standard_add("toolbar3", "Toolbar 3");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
@@ -394,20 +376,14 @@ test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar4", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar 4");
+   win = elm_win_util_standard_add("toolbar4", "Toolbar 4");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
@@ -504,20 +480,14 @@ test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar5", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar 5");
+   win = elm_win_util_standard_add("toolbar5", "Toolbar 5");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
@@ -618,20 +588,14 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar");
+   win = elm_win_util_standard_add("toolbar6", "Toolbar 6");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
@@ -729,20 +693,14 @@ test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar");
+   win = elm_win_util_standard_add("toolbar7", "Toolbar 7");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
@@ -840,20 +798,14 @@ test_toolbar7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *sl, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *sl, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *item;
    Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "toolbar8", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar 8");
+   win = elm_win_util_standard_add("toolbar8", "Toolbar 8");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);

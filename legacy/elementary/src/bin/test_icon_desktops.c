@@ -59,19 +59,13 @@ desktop_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 void
 test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *gl;
+   Evas_Object *win, *gl;
 #ifdef ELM_EFREET
    Eina_List *desktops;
 #endif
 
-   win = elm_win_add(NULL, "icon-desktops", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Icon Desktops");
+   win = elm_win_util_standard_add("icon-desktops", "Icon Desktops");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    it_desk.item_style     = "default";
    it_desk.func.text_get = desk_gl_text_get;

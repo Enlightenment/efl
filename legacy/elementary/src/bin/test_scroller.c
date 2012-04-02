@@ -30,7 +30,7 @@ my_bt_go_900_900(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 void
 test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg2, *tb, *tb2, *bg, *sc, *bt;
+   Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt;
    int i, j, n;
    char buf[PATH_MAX];
    const char *img[9] =
@@ -46,14 +46,8 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
           "wood_01.jpg"
      };
 
-   win = elm_win_add(NULL, "scroller", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Scroller");
+   win = elm_win_util_standard_add("scroller", "Scroller");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -138,17 +132,11 @@ click_through(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 void
 test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bt, *bx, *bx2, *bg, *sc, *tb, *tb2, *rc;
+   Evas_Object *win, *bt, *bx, *bx2, *sc, *tb, *tb2, *rc;
    int i, j;
 
-   win = elm_win_add(NULL, "scroller2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Scroller 2");
+   win = elm_win_util_standard_add("scroller2", "Scroller 2");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);

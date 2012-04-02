@@ -129,19 +129,13 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 void
 test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *ic, *bxx, *bt;
+   Evas_Object *win, *bx, *ic, *bxx, *bt;
    char buf[PATH_MAX];
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_add(NULL, "box-vert", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Box Vert");
+   win = elm_win_util_standard_add("box-vert", "Box Vert");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);
@@ -201,16 +195,10 @@ _del_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_box_vert2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bt;
+   Evas_Object *win, *bx, *bt;
 
-   win = elm_win_add(NULL, "box-vert2", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Box Vert 2");
+   win = elm_win_util_standard_add("box-vert2", "Box Vert 2");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
@@ -264,18 +252,13 @@ test_box_vert2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 void
 test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *ic, *bxx, *bt;
+   Evas_Object *win, *bx, *ic, *bxx, *bt;
    char buf[PATH_MAX];
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_add(NULL, "box-horiz", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Box Horiz");
+   win = elm_win_util_standard_add("box-horiz", "Box Horiz");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);
@@ -655,17 +638,11 @@ _win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 test_box_transition(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bt;
+   Evas_Object *win, *bx, *bt;
    Transitions_Data *tdata;
 
-   win = elm_win_add(NULL, "box-transition", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Box Transition");
+   win = elm_win_util_standard_add("box-transition", "Box Transition");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);

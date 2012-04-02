@@ -835,18 +835,12 @@ im_move_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
 void
 test_flip_page(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *im, *im2, *rc;
+   Evas_Object *win, *im, *im2, *rc;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "flip_page", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Flip Page");
+   win = elm_win_util_standard_add("flip-page", "Flip Page");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    im2 = evas_object_image_filled_add(evas_object_evas_get(win));
    snprintf(buf, sizeof(buf), "%s/images/%s",

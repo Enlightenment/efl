@@ -14,17 +14,11 @@ _change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *sl, *ic, *sl1, *bx2;
+   Evas_Object *win, *bx, *sl, *ic, *sl1, *bx2;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "slider", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Slider");
+   win = elm_win_util_standard_add("slider", "Slider");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

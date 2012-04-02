@@ -6,7 +6,7 @@
 void
 test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *sc, *tb, *th;
+   Evas_Object *win, *sc, *tb, *th;
    int i, j, n;
    char buf[PATH_MAX];
    const char *img[11] =
@@ -26,14 +26,8 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    elm_need_ethumb();
 
-   win = elm_win_add(NULL, "thumb", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Thumb");
+   win = elm_win_util_standard_add("thumb", "Thumb");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    tb = elm_table_add(win);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

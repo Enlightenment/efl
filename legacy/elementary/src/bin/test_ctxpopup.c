@@ -288,16 +288,10 @@ static void _list_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, vo
 void
 test_ctxpopup(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *list;
+   Evas_Object *win, *list;
 
-   win = elm_win_add(NULL, "Contextual Popup", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Contextual Popup");
+   win = elm_win_util_standard_add("contextual-popup", "Contextual Popup");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    list = elm_list_add(win);
    elm_win_resize_object_add(win, list);

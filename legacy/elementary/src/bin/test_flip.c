@@ -63,18 +63,12 @@ my_fl_8(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 test_flip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *fl, *o, *bt, *ly;
+   Evas_Object *win, *bx, *bx2, *fl, *o, *bt, *ly;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "flip", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Flip");
+   win = elm_win_util_standard_add("flip", "Flip");
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -373,17 +367,11 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 void
 test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *fl, *fl_f, *fl_b, *o, *bt, *fr;
+   Evas_Object *win, *bx, *bx2, *fl, *fl_f, *fl_b, *o, *bt, *fr;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "flip3", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Flip Flip");
+   win = elm_win_util_standard_add("flip3", "Flip Flip");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -511,17 +499,11 @@ my_fl_ch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *fl, *im, *li, *bt, *rd, *rdg;
+   Evas_Object *win, *bx, *fl, *im, *li, *bt, *rd, *rdg;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "flip4", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Flip Interactive");
+   win = elm_win_util_standard_add("flip-interactive", "Flip Interactive");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
