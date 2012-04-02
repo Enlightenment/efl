@@ -4,28 +4,16 @@ group {
    data.item: "horizontal_pad" "10";
    data.item: "vertical_pad" "10";
    parts {
-      part { name: "base";
-         type: RECT;
-         scale: 1;
-         mouse_events: 1;
-         description { state: "default" 0.0;
-            visible: 0;
-            align: 0.0 0.0;
-         }
-      }
       part { name: "palette";
          type: SWALLOW;
          scale: 1;
-         mouse_events: 1;
          description { state: "default" 0.0;
             align: 0.0 0.0;
             rel1 {
                relative: 0.0 0.0;
-               to: "base";
             }
             rel2 {
                relative: 1.0 0.0;
-               to: "base";
             }
          }
       }
@@ -45,16 +33,11 @@ group {
       part { name: "selector";
          type: SWALLOW;
          scale: 1;
-         mouse_events: 1;
          description { state: "default" 0.0;
             align: 0.0 1.0;
             rel1 {
                relative: 0.0 1.0;
                to: "bottom_padding";
-            }
-            rel2 {
-               relative: 1.0 1.0;
-               to: "base";
             }
          }
       }
@@ -65,7 +48,6 @@ group { name: "elm/colorselector/bg/default";
    parts {
       part { name: "elm.colorbar_0";
          type: SWALLOW;
-         mouse_events: 1;
          description { state: "default" 0.0;
             min: 120 30;
             rel1.relative: 0.0 0.00653594771;
@@ -74,7 +56,6 @@ group { name: "elm/colorselector/bg/default";
       }
       part { name: "elm.colorbar_1";
          type: SWALLOW;
-         mouse_events: 1;
          description { state: "default" 0.0;
             min: 120 30;
             rel1.relative: 0.0 0.254901961;
@@ -83,7 +64,6 @@ group { name: "elm/colorselector/bg/default";
       }
       part { name: "elm.colorbar_2";
          type: SWALLOW;
-         mouse_events: 1;
          description { state: "default" 0.0;
             min: 120 30;
             rel1.relative: 0.0 0.503267974;
@@ -92,7 +72,6 @@ group { name: "elm/colorselector/bg/default";
       }
       part { name: "elm.colorbar_3";
          type: SWALLOW;
-         mouse_events: 1;
          description { state: "default" 0.0;
             min: 120 30;
             rel1.relative: 0.0 0.751633987;
@@ -132,7 +111,6 @@ group { name: "elm/colorselector/base/default";
       }
       part { name: "elm.arrow_bg";
          type: SWALLOW;
-         mouse_events: 1;
          description { state: "default" 0.0;
             rel1 {
                relative: 1.0 0.17;
@@ -148,7 +126,6 @@ group { name: "elm/colorselector/base/default";
       }
       part { name: "elm.arrow";
          type: RECT;
-         mouse_events: 1;
          scale: 1;
          description { state: "default" 0.0;
             min: 1 1;
@@ -190,7 +167,6 @@ group { name: "elm/colorselector/base/default";
       }
       part { name: "event";
          type: RECT;
-         mouse_events: 1;
          description { state: "default" 0.0;
             rel1 {
                to: "elm.arrow_icon";
@@ -208,7 +184,6 @@ group { name: "elm/colorselector/base/default";
       }
       part { name: "elm.l_button";
          type: SWALLOW;
-         mouse_events: 1;
          scale: 1;
          description { state: "default" 0.0;
             min: 24 24;
@@ -226,7 +201,6 @@ group { name: "elm/colorselector/base/default";
       }
       part { name: "elm.r_button";
          type: SWALLOW;
-         mouse_events: 1;
          scale: 1;
          description { state: "default" 0.0;
             min: 24 24;
@@ -252,7 +226,6 @@ group{ name: "elm/colorselector/image/colorbar_0/default";
    parts {
       part { name: "colorbar_0_image";
          type: IMAGE;
-         mouse_events: 1;
          description { state: "default" 0.0;
             rel2.offset: -1 -1;
             image.normal: "color_picker_color.png";
@@ -268,7 +241,6 @@ group { name: "elm/colorselector/image/colorbar_1/default";
    parts {
       part { name: "colorbar_1_image";
          type: IMAGE;
-         mouse_events: 1;
          description { state: "default" 0.0;
             rel2.offset: -1 -1;
             image.normal: "color_picker_opacity.png";
@@ -284,7 +256,6 @@ group { name: "elm/colorselector/image/colorbar_2/default";
    parts {
       part { name: "colorbar_2_image";
          type: IMAGE;
-         mouse_events: 1;
          description { state: "default" 0.0;
             rel2.offset: -1 -1;
             image.normal: "color_picker_brightness.png";
@@ -300,7 +271,6 @@ group { name: "elm/colorselector/image/colorbar_3/default";
    parts {
       part { name: "colorbar_3_image";
          type: IMAGE;
-         mouse_events: 1;
          description { state: "default" 0.0;
             rel2.offset: -1 -1;
             image.normal: "color_picker_alpha.png";
@@ -316,7 +286,6 @@ group { name: "elm/colorselector/bg_image/colorbar_3/default";
    parts {
       part { name: "colorbar_3_image";
          type: IMAGE;
-         mouse_events: 1;
          description { state: "default" 0.0;
             rel2.offset: -1 -1;
             image.normal: "color_picker_alpha_bg.png";
@@ -332,14 +301,12 @@ group { name: "elm/colorselector/arrow/default";
    parts {
       part { name: "bg";
          type: RECT;
-         mouse_events: 1;
          description { state: "default" 0.0;
             color: 0 0 0 0;
          }
       }
       part { name: "arrow_image";
          type: IMAGE;
-         mouse_events: 1;
          description { state: "default" 0.0;
             image.normal: "icon_arrow_down.png";
          }
@@ -351,7 +318,6 @@ group { name: "elm/colorselector/item/default";
    parts {
       part { name: "color_bg";
          type: RECT;
-         mouse_events: 1;
          scale: 1;
          description { state: "default" 0.0;
             min: 40 40;
@@ -359,7 +325,6 @@ group { name: "elm/colorselector/item/default";
       }
       part { name: "color_obj";
          type: SWALLOW;
-         mouse_events: 1;
          scale: 1;
          description { state: "default" 0.0;
             rel1.to: "color_bg";
@@ -367,7 +332,6 @@ group { name: "elm/colorselector/item/default";
          }
       }
       part { name: "focus_color";
-         mouse_events:1;
          scale: 1;
          type: RECT;
          description { state: "default" 0.0;
@@ -403,7 +367,6 @@ group { name: "elm/colorselector/item/color/default";
    parts {
       part { name: "color_rect";
          type: RECT;
-         mouse_events: 1;
          scale: 1;
          description{ state: "default" 0.0;
          }
