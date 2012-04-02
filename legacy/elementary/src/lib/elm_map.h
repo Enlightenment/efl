@@ -1035,9 +1035,9 @@ EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Over
 /**
  * Get the overlay members of the group overlay.
  *
- * @param clas The group overlay has overlay members.
+ * @param grp The group overlay has overlay members.
  *
- * @return The list of group overlay memebers.
+ * @return The list of group overlay members.
  *
  * The group overlays are virtualy overlays. Those are shown and hidden dynamically.
  * You can add callback to the class overlay. If one of the group overlays in this class
@@ -1498,3 +1498,6 @@ EAPI Evas_Object          *elm_map_track_add(Evas_Object *obj, void *emap);
  */
 EAPI void                  elm_map_track_remove(Evas_Object *obj, Evas_Object *route);
 
+/**
+ * @}
+ */

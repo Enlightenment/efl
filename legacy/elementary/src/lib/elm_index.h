@@ -135,6 +135,7 @@ EAPI void                  elm_index_item_selected_set(Elm_Object_Item *it, Eina
  * Returns the last selected item, for a given index widget.
  *
  * @param obj The index object.
+ * @param level @c 0 or @c 1, the currently implemented levels.
  * @return The last item @b selected on @p obj (or @c NULL, on errors).
  *
  * @ingroup Index

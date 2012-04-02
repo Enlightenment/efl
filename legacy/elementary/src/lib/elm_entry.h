@@ -234,7 +234,7 @@
  *
  * @section entry-examples
  *
- * An overview of the Entry API can be seen in @ref entry_example_01
+ * An overview of the Entry API can be seen in @ref entry_example
  *
  * @{
  */

@@ -96,6 +96,6 @@ EAPI Eina_Bool elm_frame_collapse_get(const Evas_Object *obj);
  */
 EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
 
-/*
+/**
  * @}
  */

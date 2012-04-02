@@ -29,10 +29,12 @@
 
 /**
  * Identifiers on how a background widget is to display its image --
- * if it was tset to use an image file.
+ * if it was set to use an image file.
  *
  * @see elm_bg_option_set()
  * @see elm_bg_option_get()
+ *
+ * @ingroup Bg
  */
 typedef enum
 {

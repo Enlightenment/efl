@@ -46,3 +46,7 @@ EAPI void        elm_route_longitude_min_max_get(const Evas_Object *obj, double 
  * @ingroup Route
  */
 EAPI void        elm_route_latitude_min_max_get(const Evas_Object *obj, double *min, double *max);
+
+/**
+ * @}
+ */

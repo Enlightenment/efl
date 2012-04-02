@@ -930,7 +930,7 @@ EAPI void              elm_web_window_features_unref(Elm_Web_Window_Features *wf
  * Gets boolean properties from Elm_Web_Window_Features
  * (such as statusbar, menubar, etc) that are on a window.
  *
- * @param obj The web window features object
+ * @param wf The web window features object
  * @param flag The web window feature flag whose value is required.
  *
  * @return EINA_TRUE if the flag is set, EINA_FALSE otherwise
@@ -941,7 +941,7 @@ EAPI Eina_Bool              elm_web_window_features_property_get(const Elm_Web_W
  *
  * TODO : Add documentation.
  *
- * @param obj The web window features object
+ * @param wf The web window features object
  * @param x, y, w, h - the co-ordinates of the web view window.
  *
  */

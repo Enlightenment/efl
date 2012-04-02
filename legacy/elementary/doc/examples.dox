@@ -140,7 +140,7 @@
  * @skip size_hint_weight_set
  * @until resize_object_add
  *
- * See @ref evas_object_size_hint_weight_set and elm_win_resize_object_add()
+ * See evas_object_size_hint_weight_set() and elm_win_resize_object_add()
  * for more detailed info about these functions.
  *
  * The end of the example is quite simple, just setting the minimum and
@@ -3469,7 +3469,7 @@
  */
 
 /**
-  * @page glview_01_example_page - GLView Example
+  * @page glview_example_01_page - GLView Example
   * @include glview_example_01.c
   */
 
@@ -3983,7 +3983,7 @@
  * @image html screenshots/index_example_03.png
  * @image latex screenshots/index_example_03.eps
  *
- * See the full @ref index_example.c "source code" for
+ * See the full @ref index_example_02.c "source code" for
  * this example.
  *
  * @example index_example_02.c

@@ -8,7 +8,7 @@
  *
  * Below is an illustrative example of how to use GLView and and OpenGL
  * to render in elementary environment.
- * @ref glview_01_example_page
+ * @ref glview_example_01_page
  *
  */
 
