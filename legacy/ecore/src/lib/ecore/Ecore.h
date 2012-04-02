@@ -1123,7 +1123,7 @@ EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
  * For now only 1 core poller type is supported: ECORE_POLLER_CORE, the default
  * interval for ECORE_POLLER_CORE is 0.125(or 1/8th) second.
  *
- * The creation of a poller is extremely simple and only required one line:
+ * The creation of a poller is extremely simple and only requires one line:
  * @code
  * ecore_poller_add(ECORE_POLLER_CORE, 1, my_poller_function, NULL);
  * @endcode

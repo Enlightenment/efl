@@ -82,7 +82,7 @@ _timer_cb(void *data)
    if (ctxt->timer)
      ctxt->timer = NULL;
 
-   return ECORE_CALLBACK_CANCEL; // same as EINA_TRUE
+   return ECORE_CALLBACK_CANCEL; // same as EINA_FALSE
 }
 
 int main(int argc, char **argv)
