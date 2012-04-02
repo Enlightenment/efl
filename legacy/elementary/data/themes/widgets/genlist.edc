@@ -9367,7 +9367,7 @@ group { name: "elm/genlist/item/edit/default";
             rel2.to_x: "elm.edit.icon.1";
          }
       }
-      part { name: "elm.swallow.decorate.content";
+      part { name: "elm.swallow.edit.content";
          clip_to: "disclip";
          type: SWALLOW;
          mouse_events: 1;
@@ -9505,7 +9505,7 @@ group { name: "elm/genlist/item/edit/default";
       }
       // edit mode signal
       program { name: "edit_mode_enabled_effect";
-         signal: "elm,state,decorate,enabled,effect";
+         signal: "elm,state,edit,enabled,effect";
          source: "elm";
          action: STATE_SET "enabled" 0.0;
          transition: DECELERATE 0.7;
@@ -9513,7 +9513,7 @@ group { name: "elm/genlist/item/edit/default";
          target: "elm.edit.icon.2";
       }
       program { name: "edit_mode_disabled_effect";
-         signal: "elm,state,decorate,disabled,effect";
+         signal: "elm,state,edit,disabled,effect";
          source: "elm";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.7;
@@ -9521,14 +9521,14 @@ group { name: "elm/genlist/item/edit/default";
          target: "elm.edit.icon.2";
       }
       program { name: "edit_mode_enabled";
-         signal: "elm,state,decorate,enabled";
+         signal: "elm,state,edit,enabled";
          source: "elm";
          action: STATE_SET "enabled" 0.0;
          target: "elm.edit.icon.1";
          target: "elm.edit.icon.2";
       }
       program { name: "edit_mode_disabled";
-         signal: "elm,state,decorate,disabled";
+         signal: "elm,state,edit,disabled";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.edit.icon.1";
@@ -9547,7 +9547,7 @@ group { name: "elm/genlist/item/edit/default";
          name:    "enable_flip_mode_next";
          action:  STATE_SET "flipped" 0.0;
          transition: DECELERATE 0.5;
-         target:  "elm.swallow.decorate.content";
+         target:  "elm.swallow.edit.content";
       }
       program {
          name:    "disable_flip_mode";
@@ -9555,7 +9555,7 @@ group { name: "elm/genlist/item/edit/default";
          source:  "elm";
          action:  STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
-         target:  "elm.swallow.decorate.content";
+         target:  "elm.swallow.edit.content";
          target:  "elm.edit.icon.1";
          target:  "elm.edit.icon.2";
       }

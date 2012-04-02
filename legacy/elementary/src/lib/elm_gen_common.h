@@ -31,7 +31,7 @@ struct Elm_Gen_Item
    Elm_Gen_Item_Type        *item;
    const Elm_Gen_Item_Class *itc;
    Evas_Coord                x, y, dx, dy;
-   Evas_Object              *spacer, *deco_obj;
+   Evas_Object              *spacer, *edit_obj;
    Elm_Gen_Item             *parent;
    Eina_List                *texts, *contents, *states, *content_objs;
    Ecore_Timer              *long_timer;

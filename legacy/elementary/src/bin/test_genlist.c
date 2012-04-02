@@ -2387,9 +2387,9 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
 
    // "edit_default" EDC layout is like below. each part is swallow part.
    // the existing item is swllowed to elm.swallow.edit.content part.
-   // --------------------------------------------------------------------
-   // | elm.edit.icon.1 | elm.swallow.decorate.content | elm.edit.icon,2 |
-   // --------------------------------------------------------------------
+   // ----------------------------------------------------------------
+   // | elm.edit.icon.1 | elm.swallow.edit.content | elm.edit.icon,2 |
+   // ----------------------------------------------------------------
 
    if (!strcmp(part, "elm.swallow.end"))
      {
@@ -2434,7 +2434,7 @@ gl15_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-gl15_deco_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+gl15_edit_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_genlist_decorate_mode_set(data, EINA_TRUE);
    elm_genlist_select_mode_set(data, ELM_OBJECT_SELECT_MODE_ALWAYS);
@@ -2460,7 +2460,7 @@ test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    int i;
    static Testitem tit[100];
 
-   win = elm_win_util_standard_add("genlist-decorate-mode", "Genlist Decorate Mode");
+   win = elm_win_util_standard_add("genlist-edit-mode", "Genlist Edit Mode");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -2503,7 +2503,7 @@ test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Edit mode");
-   evas_object_smart_callback_add(bt, "clicked", gl15_deco_mode, gl);
+   evas_object_smart_callback_add(bt, "clicked", gl15_edit_mode, gl);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
