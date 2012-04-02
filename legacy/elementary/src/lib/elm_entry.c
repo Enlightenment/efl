@@ -2349,7 +2349,8 @@ _elm_entry_text_get(const Evas_Object *obj, const char *item)
              return NULL;
           }
         memcpy(tmpbuf, text, tlen);
-        memcpy(tmpbuf + tlen, wd->append_text_left, wd->append_text_len);
+        if (wd->append_text_left)
+          memcpy(tmpbuf + tlen, wd->append_text_left, strlen(wd->append_text_len));
         tmpbuf[tlen + wd->append_text_len] = '\0';
         eina_stringshare_replace(&wd->text, tmpbuf);
         free(tmpbuf);
