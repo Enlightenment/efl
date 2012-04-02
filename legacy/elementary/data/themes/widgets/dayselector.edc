@@ -359,7 +359,7 @@ group {
          description {
             state: "weekend_style1" 0.0;
             inherit: "default" 0.0;
-            color: 8 96 170 255;
+            color: 60 100 255 255;
          }
          description {
             state: "selected" 0.0;
