@@ -1141,6 +1141,7 @@ elm_colorselector_mode_set(Evas_Object *obj, Elm_Colorselector_Mode mode)
                 edje_object_part_swallow(wd->base, "palette", wd->box);
                 evas_object_show(wd->box);
              }
+           edje_object_signal_emit(wd->base, "elm,state,palette", "elm");
            break;
         case ELM_COLORSELECTOR_COMPONENTS:
            if (edje_object_part_swallow_get(wd->base, "palette"))
@@ -1153,6 +1154,7 @@ elm_colorselector_mode_set(Evas_Object *obj, Elm_Colorselector_Mode mode)
                 edje_object_part_swallow(wd->base, "selector", wd->sel);
                 evas_object_show(wd->sel);
              }
+           edje_object_signal_emit(wd->base, "elm,state,components", "elm");
            break;
         case ELM_COLORSELECTOR_BOTH:
            if (!edje_object_part_swallow_get(wd->base, "palette"))
@@ -1165,10 +1167,13 @@ elm_colorselector_mode_set(Evas_Object *obj, Elm_Colorselector_Mode mode)
                 edje_object_part_swallow(wd->base, "selector", wd->sel);
                 evas_object_show(wd->sel);
              }
+           edje_object_signal_emit(wd->base, "elm,state,both", "elm");
            break;
         default:
            return;
      }
+   edje_object_message_signal_process(wd->base);
+
    _sizing_eval(obj);
 }
 

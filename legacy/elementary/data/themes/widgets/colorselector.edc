@@ -29,6 +29,10 @@ group {
             rel2.to: "palette";
             align: 0.0 0.0;
          }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            min: 0 0;
+         }
       }
       part { name: "selector";
          type: SWALLOW;
@@ -41,6 +45,27 @@ group {
             }
          }
       }
+   }
+   programs {
+      program { name: "palette";
+         source: "elm";
+         signal: "elm,state,palette";
+         action: STATE_SET "disabled" 0.0;
+         target: "bottom_padding";
+      }
+      program { name: "components";
+         source: "elm";
+         signal: "elm,state,components";
+         action: STATE_SET "disabled" 0.0;
+         target: "bottom_padding";
+      }
+      program { name: "both";
+         source: "elm";
+         signal: "elm,state,both";
+         action: STATE_SET "default" 0.0;
+         target: "bottom_padding";
+      }
+
    }
 }
 

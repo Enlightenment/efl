@@ -59,7 +59,7 @@ _components_cb(void *data, Evas_Object *obj __UNUSED__,
    Evas_Object *cs = data;
    Evas_Object *win = evas_object_data_get(cs, "win");
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_COMPONENTS);
-   evas_object_resize(win, 320, 350);
+   evas_object_resize(win, 320, 455);
 }
 
 static void
@@ -68,7 +68,7 @@ _both_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *cs = data;
    Evas_Object *win = evas_object_data_get(cs, "win");
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_BOTH);
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320, 535);
 }
 
 void
@@ -180,7 +180,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    evas_object_show(bt);
    elm_box_pack_end(bx2, bt);
 
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 320, 500);
    evas_object_show(win);
 }
 #endif
