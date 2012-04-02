@@ -544,14 +544,24 @@ EAPI int ecore_thread_main_loop_end(void);
  * @endcode
  *
  * One very important thing to note here is the @c EVENT_TYPE, to register a
- * handler for an event you must know it's type before hand. This information
- * can be found on the documentation of the library emitting the signal, so,
- * for example, for events related to windowing one would look in @ref
- * Ecore_Evas_Group.
+ * handler for an event you must know it's type before hand. Ecore provides
+ * the following events which are emitted in response to POSIX
+ * signals(https://en.wikipedia.org/wiki/Signal_%28computing%29):
+ * @li @b ECORE_EVENT_SIGNAL_USER
+ * @li @b ECORE_EVENT_SIGNAL_HUP
+ * @li @b ECORE_EVENT_SIGNAL_POWER
+ * @li @b ECORE_EVENT_SIGNAL_EXIT
+ *
+ * These, however, aren't the only signals one can handle. Many
+ * libraries(including ecore modules) have their own signals that can be
+ * listened for and handled, to do that one only needs to know the type of the
+ * event. This information can be found on the documentation of the library
+ * emitting the signal, so, for example, for events related to windowing one
+ * would look in @ref Ecore_Evas_Group.
  *
  * Examples of libraries that integrate into ecore's main loop by providing
  * events are @ref Ecore_Con_Group, @ref Ecore_Evas_Group and @ref
- * Ecore_Exe_Group amongst others. This usage can be divided into two parts,
+ * Ecore_Exe_Group, amongst others. This usage can be divided into two parts,
  * setup and adding events. The setup is very simple, all that needs doing is
  * getting a type id for the event:
  * @code
