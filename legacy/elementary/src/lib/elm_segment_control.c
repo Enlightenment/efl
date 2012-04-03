@@ -532,8 +532,6 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label)
                          *_elm_config->scale);
    evas_object_smart_member_add(VIEW(it), obj);
    elm_widget_sub_object_add(obj, VIEW(it));
-   evas_object_clip_set(VIEW(it), evas_object_clip_get(obj));
-
    _elm_theme_object_set(obj, VIEW(it), "segment_control", "item",
                          elm_object_style_get(obj));
    edje_object_mirrored_set(VIEW(it),

@@ -221,6 +221,7 @@ _item_realize(Elm_Slideshow_Item *item)
         evas_object_smart_member_add(VIEW(item), obj);
         item->l_built = eina_list_append(NULL, item);
         wd->items_built = eina_list_merge(wd->items_built, item->l_built);
+        //FIXME: item could be showed by obj
         evas_object_hide(VIEW(item));
      }
    else if (item->l_built)
@@ -253,6 +254,7 @@ _item_realize(Elm_Slideshow_Item *item)
                        _item_next->l_built = eina_list_append(NULL, _item_next);
                        wd->items_built = eina_list_merge(wd->items_built,
                                                          _item_next->l_built);
+                       //FIXME: _item_next could be showed by obj later
                        evas_object_hide(VIEW(_item_next));
                     }
                   else if (_item_next && _item_next->l_built)
@@ -284,6 +286,7 @@ _item_realize(Elm_Slideshow_Item *item)
                        _item_prev->l_built = eina_list_append(NULL, _item_prev);
                        wd->items_built = eina_list_merge(wd->items_built,
                                                          _item_prev->l_built);
+                       //FIXME: _item_prev could be showed by obj later
                        evas_object_hide(VIEW(_item_prev));
                     }
                   else if (_item_prev && _item_prev->l_built)
@@ -407,11 +410,9 @@ elm_slideshow_add(Evas_Object *parent)
 
    wd->slideshow = edje_object_add(e);
    _elm_theme_object_set(obj, wd->slideshow, "slideshow", "base", "default");
-   evas_object_smart_member_add(wd->slideshow, obj);
    wd->count_item_pre_before = 2;
    wd->count_item_pre_after = 2;
    elm_widget_resize_object_set(obj, wd->slideshow);
-   evas_object_show(wd->slideshow);
 
    wd->transitions = elm_widget_stringlist_get(edje_object_data_get(wd->slideshow, "transitions"));
    if (eina_list_count(wd->transitions) > 0)

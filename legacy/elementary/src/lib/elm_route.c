@@ -249,7 +249,6 @@ elm_route_emap_set(Evas_Object *obj, EMap_Route *emap)
              o = evas_object_line_add(evas_object_evas_get(obj));
              segment->obj = o;
              evas_object_smart_member_add(o, obj);
-             evas_object_show(o);
 
              segment->must_calc = EINA_TRUE;
 

@@ -200,7 +200,6 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    elm_widget_sub_object_del(obj, content);
    evas_object_smart_member_del(content);
    evas_object_color_set(wd->clip, 0, 0, 0, 0);
-   evas_object_clip_unset(content);
    evas_object_data_del(content, "_elm_leaveme");
    return content;
 }
