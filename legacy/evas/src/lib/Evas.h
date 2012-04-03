@@ -387,7 +387,6 @@ typedef enum _Evas_BiDi_Direction
  *
  * @see evas_object_event_callback_add()
  * @see evas_event_callback_add()
- * @ingroup Evas_Canvas_Events
  */
 typedef enum _Evas_Callback_Type
 {
