@@ -1567,8 +1567,9 @@ EAPI void                          elm_genlist_item_fields_update(Elm_Object_Ite
  * Activate a genlist mode on an item
  *
  * @param it The genlist item
- * @param mode_type Mode name
- * @param mode_set Boolean to define set or unset mode.
+ * @param decorate_it_type Mode name
+ * @param decorate_it_set Boolean to define set or unset mode.
+
  *
  * A genlist mode is a different way of selecting an item. Once a mode is
  * activated on an item, any other selected item is immediately unselected.
@@ -1603,7 +1604,7 @@ EAPI void                          elm_genlist_item_fields_update(Elm_Object_Ite
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_item_decorate_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
+EAPI void                          elm_genlist_item_decorate_mode_set(Elm_Object_Item *it, const char *decorate_it_type, Eina_Bool decorate_it_set);
 
 /**
  * Get the item's decorate mode.

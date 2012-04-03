@@ -62,7 +62,7 @@ struct Elm_Gen_Item
    Eina_Bool                 down : 1;
    Eina_Bool                 group : 1;
    Eina_Bool                 reorder : 1;
-   Eina_Bool                 mode_set : 1; /**< item uses style mode for highlight/select */
+   Eina_Bool                 decorate_it_set : 1; /**< item uses style mode for highlight/select */
    Eina_Bool                 flipped : 1; /**< a flag that shows the flip status of the item. */
 };
 
@@ -125,7 +125,7 @@ struct _Widget_Data
    Elm_List_Mode                  mode;
    Ecore_Timer                   *multi_timer, *scr_hold_timer;
    Ecore_Animator                *reorder_move_animator;
-   const char                    *decorate_type;
+   const char                    *decorate_it_type;
    double                         start_time;
    Evas_Coord                     prev_x, prev_y, prev_mx, prev_my;
    Evas_Coord                     cur_x, cur_y, cur_mx, cur_my;
