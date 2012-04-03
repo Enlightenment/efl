@@ -164,6 +164,7 @@ static void _smart_clip_set(Evas_Object *obj,
 static void _smart_clip_unset(Evas_Object *obj);
 static void _smart_calculate(Evas_Object *obj);
 static void _smart_member_add(Evas_Object *obj, Evas_Object *child);
+static void _smart_member_del(Evas_Object *obj, Evas_Object *child);
 static void _smart_init(void);
 
 static void _if_focused_revert(Evas_Object *obj,
@@ -3767,6 +3768,13 @@ _smart_member_add(Evas_Object *obj, Evas_Object *child)
      evas_object_hide(child);
 }
 
+static void
+_smart_member_del(Evas_Object *obj __UNUSED__, Evas_Object *child)
+{
+   if (evas_object_data_get(child, "_elm_leaveme")) return;
+   evas_object_clip_unset(child);
+}
+
 /* never need to touch this */
 static void
 _smart_init(void)
@@ -3788,7 +3796,7 @@ _smart_init(void)
              _smart_clip_unset,
              _smart_calculate,
              _smart_member_add,
-             NULL,
+             _smart_member_del,
              NULL,
              NULL,
              NULL,
