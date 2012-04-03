@@ -49,5 +49,6 @@ src/lib/eio_poll.lo
 src/lib/eio_single.lo
 src/lib/eio_xattr.lo
 src/lib/libeio.la
+src/lib/eio_eet.lo
 stamp-h1
 
