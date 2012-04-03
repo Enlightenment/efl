@@ -5,6 +5,7 @@
  *
  * @li @ref Example_Edje_Basics
  * @li @ref tutorial_edje_swallow
+ * @li @ref tutorial_edje_swallow2
  * @li @ref tutorial_edje_text
  * @li @ref tutorial_edje_table
  * @li @ref tutorial_edje_color_class
@@ -1025,7 +1026,7 @@
  * @skip if(strcmp
  * @until evas_object_move
  *
- *The example's window should look like this picture:
+ * The example's window should look like this picture:
  *
  * @image html basic2final.png
  * @image rtf basic2final.png
@@ -1047,4 +1048,60 @@
  * edje_cc -id /path/to/the/image basic2.edc
  * @endverbatim
  *
+ */
+
+/**
+ * @page tutorial_edje_swallow2 Swallow example 2
+ *
+ * This example will show you how to load an image using evas and fill a swallow with it.
+ * It's basically almost like the last example, but with a minor change.
+ *
+ * This variables are used to store the name of the image that is going to be used,
+ * the path to it and a variable that will store the error cause if something goes wrong.
+ *
+ * Here it is:
+ * @dontinclude edje-swallow2.c
+ * @skipline char         edje_file
+ * @skipline const char  *img
+ * @skipline Evas_Load
+ *
+ *
+ * Then we load the image with this command:
+ *
+ * @skip img =
+ * @until evas_object_image_file_set(img,
+ *
+ * To check if we had some problem we use:
+ *
+ * @skip err = evas
+ * @until }
+ *
+ * Now we are going to swallow it and check if worked. If you notice we are
+ * using "part_one" as argument. We do this because we must explicit what part of our
+ * .edc file we want to swallow:
+ *
+ * @skip edje_object_part
+ * @until printf
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html swallow2final.png
+ * @image rtf swallow2final.png
+ * @image latex swallow2final.eps width=\textwidth
+ *
+ * The complete .edc file:
+ * @include swallow.edc
+ *
+ * And the source code:
+ * @include edje-swallow2.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-swallow2 edje-swallow2.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\"
+ * -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc swallow.edc
+ * @endverbatim
  */

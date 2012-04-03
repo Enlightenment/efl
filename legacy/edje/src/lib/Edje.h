@@ -166,6 +166,7 @@ part of Edje's API:
 - @ref Example_Edje_Basics
 - @ref tutorial_edje_basic2
 - @ref tutorial_edje_swallow
+- @ref tutorial_edje_swallow2
 - @ref tutorial_edje_table
 - @ref tutorial_edje_box
 - @ref tutorial_edje_box2
