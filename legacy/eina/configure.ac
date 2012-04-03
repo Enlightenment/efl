@@ -529,30 +529,8 @@ if test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_mall
 fi
 
 # dlopen and dladdr
-dlopen_libs=""
-case "$host_os" in
-   mingw*)
-# managed by evil
-      AC_DEFINE([HAVE_DLADDR])
-      AC_DEFINE([HAVE_DLOPEN])
-      dlopen_libs="-ldl"
-      ;;
-   *)
-      AC_CHECK_FUNCS([dlopen], [res="yes"], [res="no"])
-      if test "x${res}" = "xyes" ; then
-         AC_CHECK_FUNCS([dladdr], [AC_DEFINE([HAVE_DLADDR])])
-         AC_DEFINE([HAVE_DLOPEN])
-      else
-         AC_CHECK_LIB([dl], [dlopen], [res="yes"], [res="no"])
-         if test "x${res}" = "xyes" ; then
-            AC_CHECK_LIB([dl], [dladdr], [AC_DEFINE([HAVE_DLADDR])])
-            AC_DEFINE(HAVE_DLOPEN)
-            dlopen_libs="-ldl"
-         fi
-      fi
-      ;;
-esac
-AC_SUBST([dlopen_libs])
+EFL_CHECK_DLOPEN
+EFL_CHECK_DLADDR
 
 have_log="yes"
 EFL_CHECK_FNMATCH([have_log="yes"], [have_log="no"])
