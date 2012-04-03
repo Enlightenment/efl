@@ -1729,8 +1729,8 @@ elm_flip_add(Evas_Object *parent)
    evas_object_color_set(wd->back.clip, 255, 255, 255, 255);
    evas_object_move(wd->back.clip, -49999, -49999);
    evas_object_resize(wd->back.clip, 99999, 99999);
-   elm_widget_sub_object_add(wd->back.clip, obj);
-   evas_object_smart_member_add(obj, wd->back.clip);
+   elm_widget_sub_object_add(obj, wd->back.clip);
+   evas_object_smart_member_add(wd->back.clip, obj);
    evas_object_clip_set(wd->back.clip, wd->clip);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
