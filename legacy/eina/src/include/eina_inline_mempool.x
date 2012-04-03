@@ -138,6 +138,7 @@ eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
 static inline void
 eina_mempool_free(Eina_Mempool *mp, void *element)
 {
+   if (!element) return ;
    mp->backend.free(mp->backend_data, element);
 }
 
