@@ -639,7 +639,7 @@ add_tests:
    if (test_win_only)
      {
         EINA_LIST_FREE(tests, t)
-           free (t);
+          free(t);
 
         return;
      }
