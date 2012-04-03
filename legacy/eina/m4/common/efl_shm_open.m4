@@ -1,4 +1,4 @@
-dnl Copyright (C) 2010 Vincent Torri <vtorri at univ-evry dot fr>
+dnl Copyright (C) 2012 Vincent Torri <vtorri at univ-evry dot fr>
 dnl That code is public domain and can be freely used or copied.
 
 dnl Macro that check if shm_open function is available or not.
