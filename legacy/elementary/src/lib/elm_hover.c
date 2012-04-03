@@ -681,16 +681,18 @@ static void
 _elm_hover_sub_obj_unparent(Evas_Object *obj)
 {
    Widget_Data *wd;
+   Evas_Object *smt_sub;
 
    wd = elm_widget_data_get(obj);
+   if (!wd) return;
 
+   smt_sub = wd->smt_sub;
    elm_widget_sub_object_del(obj, wd->smt_sub);
-   evas_object_event_callback_del_full(wd->smt_sub,
+   evas_object_event_callback_del_full(smt_sub,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_hover_sub_obj_placement_eval_cb,
                                        obj);
-   edje_object_part_unswallow(wd->cov, wd->smt_sub);
-   wd->smt_sub = NULL;
+   edje_object_part_unswallow(wd->cov, smt_sub);
 }
 
 EAPI const char *
@@ -841,9 +843,7 @@ _content_unset_hook(Evas_Object *obj, const char *swallow)
              if (!wd->subs[i].obj) return NULL;
              Evas_Object *content = wd->subs[i].obj;
              elm_widget_sub_object_del(obj, wd->subs[i].obj);
-             edje_object_part_unswallow(wd->cov, wd->subs[i].obj);
-             wd->subs[i].obj = NULL;
-
+             edje_object_part_unswallow(wd->cov, content);
              return content;
           }
      }

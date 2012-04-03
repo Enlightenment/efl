@@ -368,6 +368,7 @@ _content_unset_hook(Evas_Object *obj, const char *item)
           {
              content = VIEW(it);
              wd->items = eina_list_remove(wd->items, it);
+             elm_widget_sub_object_del(obj, VIEW(it));
              evas_object_smart_callback_del(VIEW(it), "changed", _item_clicked_cb);
              evas_object_event_callback_del(VIEW(it), EVAS_CALLBACK_DEL, _item_del_cb);
              edje_object_part_unswallow(wd->base, VIEW(it));
