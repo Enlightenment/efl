@@ -244,11 +244,10 @@ _eio_file_direct_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_d
      }
 }
 
-#ifdef HAVE_XATTR
 static void
-_eio_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
-                     Eio_File_Progress *op __UNUSED__,
-                     Eina_File *f, int out)
+_eio_eina_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
+			  Eio_File_Progress *op __UNUSED__,
+			  Eina_File *f, int out)
 {
    Eina_Iterator *it;
    Eina_Xattr *attr;
@@ -256,11 +255,14 @@ _eio_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
    it = eina_file_xattr_value_get(f);
    EINA_ITERATOR_FOREACH(it, attr)
      {
+#ifdef HAVE_XATTR
         fsetxattr(out, attr->name, attr->value, attr->length, 0);
+#endif
      }
    eina_iterator_free(it);
 }
 
+#ifdef HAVE_XATTR
 static void
 _eio_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
                      Eio_File_Progress *op __UNUSED__,
@@ -661,9 +663,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
              goto on_error;
           }
 
-#ifdef HAVE_XATTR
-        _eio_file_copy_eina_xattr(thread, copy, f, out);
-#endif
+        _eio_eina_file_copy_xattr(thread, copy, f, out);
 
         eina_file_close(f);
      }

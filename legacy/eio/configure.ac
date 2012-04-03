@@ -225,6 +225,30 @@ if test "x${have_lstat}" = "xyes" ; then
    AC_DEFINE([HAVE_LSTAT], [1], [Define to mention that lstat syscall is supported])
 fi
 
+# extended attribute
+
+AC_MSG_CHECKING([for extended attributes])
+
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/xattr.h>
+       ]],
+       [[
+size_t tmp = listxattr("/", NULL, 0);
+tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
+setxattr("/", "user.ethumb.md5", NULL, 0, 0);
+       ]])],
+   [
+    AC_DEFINE([HAVE_XATTR], [1], [Define to 1 if you have the `listxattr', `setxattr' and `getxattr' functions.])
+    have_xattr="yes"
+   ],
+   [have_xattr="no"])
+
+AC_MSG_RESULT([${have_xattr}])
+
 # Check for inotify specificity
 have_inotify="no"
 have_notify_win32="no"
