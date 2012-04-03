@@ -1488,16 +1488,3 @@ elm_object_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
    return elm_widget_item_cursor_engine_only_get(it);
 }
-
-EAPI void
-elm_object_item_smart_callback_add(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func, const void *data)
-{
-   elm_widget_item_smart_callback_add((Elm_Widget_Item *)it, event, func, data);
-}
-
-EAPI void *
-elm_object_item_smart_callback_del(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func)
-{
-   return elm_widget_item_smart_callback_del((Elm_Widget_Item *)it, event,
-                                             func);
-}
