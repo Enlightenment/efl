@@ -58,7 +58,7 @@ struct Elm_Gen_Item_Type
    Evas_Coord                    scrl_x, scrl_y, old_scrl_y;
 
    Elm_Gen_Item                 *rel;
-   Evas_Object                  *mode_view;
+   Evas_Object                  *deco_it_view;
    int                           expanded_depth;
    int                           order_num_in;
 
@@ -75,7 +75,7 @@ struct Elm_Gen_Item_Type
    Eina_Bool                     stacking_even : 1;
    Eina_Bool                     nostacking : 1;
    Eina_Bool                     move_effect_enabled : 1;
-   Eina_Bool                     decorate_mode_item_realized : 1;
+   Eina_Bool                     decorate_all_item_realized : 1;
    Eina_Bool                     tree_effect_finished : 1; /* tree effect */
    Eina_Bool                     tree_effect_hideme : 1; /* item hide for tree effect */
 };
@@ -696,7 +696,7 @@ _item_highlight(Elm_Gen_Item *it)
        (!it->wd->highlight) ||
        (it->generation < it->wd->generation) ||
        (it->highlighted) || elm_widget_item_disabled_get(it) ||
-       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) || (it->item->mode_view) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) || (it->item->deco_it_view) ||
        (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return;
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
@@ -853,7 +853,7 @@ _item_del(Elm_Gen_Item *it)
    elm_genlist_item_subitems_clear((Elm_Object_Item *)it);
    if (it->wd->show_item == it) it->wd->show_item = NULL;
    if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
-   if (it->item->decorate_mode_item_realized) _decorate_mode_item_unrealize(it);
+   if (it->item->decorate_all_item_realized) _decorate_mode_item_unrealize(it);
    if (it->item->block) _item_block_del(it);
    if (it->item->queued)
      it->wd->queue = eina_list_remove(it->wd->queue, it);
@@ -1568,7 +1568,7 @@ _mode_finished_signal_cb(void        *data,
    if (!data) return;
    if (!obj) return;
    Elm_Gen_Item *it = data;
-   if ((it->generation < it->wd->generation) || (!it->realized) || (!it->item->mode_view)) return;
+   if ((it->generation < it->wd->generation) || (!it->realized) || (!it->item->deco_it_view)) return;
    char buf[1024];
    Evas *te = evas_object_evas_get(obj);
 
@@ -2508,8 +2508,8 @@ _item_block_position(Item_Block *itb,
                                      ((it->wd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE) &&
                                      (it->item->old_scrl_y == it->item->scrl_y)))
                                    {
-                                      if (it->item->mode_view)
-                                        _item_position(it, it->item->mode_view,
+                                      if (it->item->deco_it_view)
+                                        _item_position(it, it->item->deco_it_view,
                                                        it->item->scrl_x,
                                                        it->item->scrl_y);
                                       else
@@ -3196,15 +3196,15 @@ _mode_item_realize(Elm_Gen_Item *it)
 {
    char buf[1024];
 
-   if ((it->item->mode_view) || (it->generation < it->wd->generation)) return;
+   if ((it->item->deco_it_view) || (it->generation < it->wd->generation)) return;
 
    evas_event_freeze(evas_object_evas_get(it->wd->obj));
-   it->item->mode_view = edje_object_add(evas_object_evas_get(WIDGET(it)));
-   edje_object_scale_set(it->item->mode_view,
+   it->item->deco_it_view = edje_object_add(evas_object_evas_get(WIDGET(it)));
+   edje_object_scale_set(it->item->deco_it_view,
                          elm_widget_scale_get(WIDGET(it)) *
                          _elm_config->scale);
-   evas_object_smart_member_add(it->item->mode_view, it->wd->pan_smart);
-   elm_widget_sub_object_add(WIDGET(it), it->item->mode_view);
+   evas_object_smart_member_add(it->item->deco_it_view, it->wd->pan_smart);
+   elm_widget_sub_object_add(WIDGET(it), it->item->deco_it_view);
 
    strncpy(buf, "item", sizeof(buf));
    if (it->wd->mode == ELM_LIST_COMPRESS)
@@ -3214,17 +3214,17 @@ _mode_item_realize(Elm_Gen_Item *it)
    strncat(buf, "/", sizeof(buf) - strlen(buf));
    strncat(buf, it->itc->decorate_item_style, sizeof(buf) - strlen(buf));
 
-   _elm_theme_object_set(WIDGET(it), it->item->mode_view, "genlist", buf,
+   _elm_theme_object_set(WIDGET(it), it->item->deco_it_view, "genlist", buf,
                          elm_widget_style_get(WIDGET(it)));
-   edje_object_mirrored_set(it->item->mode_view,
+   edje_object_mirrored_set(it->item->deco_it_view,
                             elm_widget_mirrored_get(WIDGET(it)));
 
    /* signal callback add */
-   evas_object_event_callback_add(it->item->mode_view, EVAS_CALLBACK_MOUSE_DOWN,
+   evas_object_event_callback_add(it->item->deco_it_view, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, it);
-   evas_object_event_callback_add(it->item->mode_view, EVAS_CALLBACK_MOUSE_UP,
+   evas_object_event_callback_add(it->item->deco_it_view, EVAS_CALLBACK_MOUSE_UP,
                                   _mouse_up, it);
-   evas_object_event_callback_add(it->item->mode_view, EVAS_CALLBACK_MOUSE_MOVE,
+   evas_object_event_callback_add(it->item->deco_it_view, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move, it);
 
    /* text_get, content_get, state_get */
@@ -3232,14 +3232,14 @@ _mode_item_realize(Elm_Gen_Item *it)
       will clean our mess */
    assert(eina_list_count(it->item->deco_it_content_objs) == 0);
 
-   _item_text_realize(it, it->item->mode_view, &it->item->deco_it_texts, NULL);
+   _item_text_realize(it, it->item->deco_it_view, &it->item->deco_it_texts, NULL);
    it->item->deco_it_content_objs =
-     _item_content_realize(it, it->item->mode_view,
+     _item_content_realize(it, it->item->deco_it_view,
                            &it->item->deco_it_contents, NULL);
-   _item_state_realize(it, it->item->mode_view, &it->item->deco_it_states, NULL);
+   _item_state_realize(it, it->item->deco_it_view, &it->item->deco_it_states, NULL);
 
-   edje_object_part_swallow(it->item->mode_view,
-                            edje_object_data_get(it->item->mode_view, "mode_part"),
+   edje_object_part_swallow(it->item->deco_it_view,
+                            edje_object_data_get(it->item->deco_it_view, "mode_part"),
                             VIEW(it));
 
    it->want_unrealize = EINA_FALSE;
@@ -3252,7 +3252,7 @@ _mode_item_unrealize(Elm_Gen_Item *it)
 {
    Widget_Data *wd = it->wd;
    Evas_Object *content;
-   if (!it->item->mode_view) return;
+   if (!it->item->deco_it_view) return;
 
    evas_event_freeze(evas_object_evas_get(it->wd->obj));
    elm_widget_stringlist_free(it->item->deco_it_texts);
@@ -3264,10 +3264,10 @@ _mode_item_unrealize(Elm_Gen_Item *it)
    EINA_LIST_FREE(it->item->deco_it_content_objs, content)
      evas_object_del(content);
 
-   edje_object_part_unswallow(it->item->mode_view, VIEW(it));
+   edje_object_part_unswallow(it->item->deco_it_view, VIEW(it));
    evas_object_smart_member_add(VIEW(it), wd->pan_smart);
-   evas_object_del(it->item->mode_view);
-   it->item->mode_view = NULL;
+   evas_object_del(it->item->deco_it_view);
+   it->item->deco_it_view = NULL;
 
    if (wd->mode_item == it)
      wd->mode_item = NULL;
@@ -3298,12 +3298,12 @@ _item_mode_set(Elm_Gen_Item *it)
    _mode_item_realize(it);
    if (it->item->group_item)
      evas_object_raise(it->item->VIEW(group_item));
-   _item_position(it, it->item->mode_view, it->item->scrl_x, it->item->scrl_y);
+   _item_position(it, it->item->deco_it_view, it->item->scrl_x, it->item->scrl_y);
    evas_event_thaw(evas_object_evas_get(it->wd->obj));
    evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
 
    snprintf(buf, sizeof(buf), "elm,state,%s,active", wd->decorate_type);
-   edje_object_signal_emit(it->item->mode_view, buf, "elm");
+   edje_object_signal_emit(it->item->deco_it_view, buf, "elm");
 }
 
 static void
@@ -3320,8 +3320,8 @@ _item_mode_unset(Widget_Data *wd)
    snprintf(buf, sizeof(buf), "elm,state,%s,passive", wd->decorate_type);
    snprintf(buf2, sizeof(buf2), "elm,state,%s,passive,finished", wd->decorate_type);
 
-   edje_object_signal_emit(it->item->mode_view, buf, "elm");
-   edje_object_signal_callback_add(it->item->mode_view, buf2, "elm", _mode_finished_signal_cb, it);
+   edje_object_signal_emit(it->item->deco_it_view, buf, "elm");
+   edje_object_signal_callback_add(it->item->deco_it_view, buf2, "elm", _mode_finished_signal_cb, it);
 
    wd->mode_item = NULL;
 }
@@ -3341,7 +3341,7 @@ _decorate_mode_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    const char *stacking_even;
    const char *stacking;
 
-   if ((!it) || (it->item->decorate_mode_item_realized) ||
+   if ((!it) || (it->item->decorate_all_item_realized) ||
        (it->generation < it->wd->generation))
      return;
 
@@ -3393,7 +3393,7 @@ _decorate_mode_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    _decorate_mode_item_position(it, it->item->scrl_x, it->item->scrl_y);
    evas_object_show(it->deco_all_obj);
 
-   it->item->decorate_mode_item_realized = EINA_TRUE;
+   it->item->decorate_all_item_realized = EINA_TRUE;
    it->want_unrealize = EINA_FALSE;
 }
 
@@ -3401,7 +3401,7 @@ static void
 _decorate_mode_item_unrealize(Elm_Gen_Item *it)
 {
    Evas_Object *icon;
-   if ((!it) || (!it->item->decorate_mode_item_realized)) return;
+   if ((!it) || (!it->item->decorate_all_item_realized)) return;
 
    edje_object_part_unswallow(it->deco_all_obj, VIEW(it));
    evas_object_smart_member_add(VIEW(it), it->wd->pan_smart);
@@ -3423,7 +3423,7 @@ _decorate_mode_item_unrealize(Elm_Gen_Item *it)
    _item_mouse_callbacks_del(it, it->deco_all_obj);
    _item_mouse_callbacks_add(it, VIEW(it));
 
-   it->item->decorate_mode_item_realized = EINA_FALSE;
+   it->item->decorate_all_item_realized = EINA_FALSE;
 }
 
 static void
