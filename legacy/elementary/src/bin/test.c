@@ -231,11 +231,60 @@ _frame_clicked(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 }
 
 static void
+_menu_create(Evas_Object *win, Evas_Object *tbx, void **tt, Eina_List *tests, const char *option_str __UNUSED__)
+{
+   struct elm_test *t = NULL;
+   const char *pcat = NULL;
+   Evas_Object *cfr = NULL, *tbx2 = NULL, *bt = NULL, *ic = NULL;
+   char buf[PATH_MAX];
+
+   EINA_LIST_FREE(tests, t)
+     {
+        if ((!pcat) || (strcmp(pcat, t->category)))
+          {
+             cfr = elm_frame_add(win);
+             // FIXME: add new style of frame for this
+             evas_object_smart_callback_add(cfr, "clicked", _frame_clicked, NULL);
+             elm_frame_autocollapse_set(cfr, EINA_TRUE);
+             elm_object_text_set(cfr, t->category);
+             evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
+             evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
+             elm_box_pack_end(tbx, cfr);
+             evas_object_show(cfr);
+
+             tbx2 = elm_box_add(win);
+             elm_box_layout_set(tbx2, evas_object_box_layout_flow_horizontal, NULL, NULL);
+             evas_object_size_hint_weight_set(tbx2, EVAS_HINT_EXPAND, 0.0);
+             evas_object_size_hint_align_set(tbx2, EVAS_HINT_FILL, 0.0);
+             elm_box_align_set(tbx2, 0.0, 0.5);
+             elm_object_content_set(cfr, tbx2);
+             evas_object_show(tbx2);
+          }
+        bt = elm_button_add(win);
+        // FIXME: add new style of button for this like efm in e17
+        elm_object_text_set(bt, t->name);
+        if (t->icon)
+          {
+             ic = elm_icon_add(win);
+             snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), t->icon);
+             elm_icon_file_set(ic, buf, NULL);
+             elm_object_part_content_set(bt, "icon", ic);
+             evas_object_show(ic);
+          }
+        elm_box_pack_end(tbx2, bt);
+        evas_object_show(bt);
+        evas_object_smart_callback_add(bt, "clicked", t->cb, NULL);
+        pcat = t->category;
+        if (t == *tt) *tt = cfr;
+        free(t);
+     }
+}
+
+static void
 my_win_main(char *autorun, Eina_Bool test_win_only)
 {
    Evas_Object *win = NULL, *bg = NULL, *bx0 = NULL, *lb = NULL;
-   Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *ic = NULL;
-   Evas_Object *tbx = NULL, *cfr = NULL, *tbx2 = NULL, *bt = NULL;
+   Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *tbx = NULL;
    Eina_List *tests, *l;
    struct elm_test *t = NULL;
    void *tt;
@@ -596,52 +645,7 @@ add_tests:
      }
 
    if (tests)
-     {
-        const char *pcat = NULL;
-
-        EINA_LIST_FREE(tests, t)
-          {
-             if ((!pcat) || (strcmp(pcat, t->category)))
-               {
-                  cfr = elm_frame_add(win);
-                  // FIXME: add new style of frame for this
-                  evas_object_smart_callback_add(cfr, "clicked", _frame_clicked, NULL);
-                  elm_frame_autocollapse_set(cfr, EINA_TRUE);
-                  elm_object_text_set(cfr, t->category);
-                  evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
-                  evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
-                  elm_box_pack_end(tbx, cfr);
-                  evas_object_show(cfr);
-
-                  tbx2 = elm_box_add(win);
-                  elm_box_layout_set(tbx2, evas_object_box_layout_flow_horizontal, NULL, NULL);
-                  evas_object_size_hint_weight_set(tbx2, EVAS_HINT_EXPAND, 0.0);
-                  evas_object_size_hint_align_set(tbx2, EVAS_HINT_FILL, 0.0);
-                  elm_box_align_set(tbx2, 0.0, 0.5);
-                  elm_object_content_set(cfr, tbx2);
-                  evas_object_show(tbx2);
-               }
-             bt = elm_button_add(win);
-             // FIXME: add new style of button for this like efm in e17
-             elm_object_text_set(bt, t->name);
-             if (t->icon)
-               {
-                  char buf[PATH_MAX];
-
-                  ic = elm_icon_add(win);
-                  snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), t->icon);
-                  elm_icon_file_set(ic, buf, NULL);
-                  elm_object_part_content_set(bt, "icon", ic);
-                  evas_object_show(ic);
-               }
-             elm_box_pack_end(tbx2, bt);
-             evas_object_show(bt);
-             evas_object_smart_callback_add(bt, "clicked", t->cb, NULL);
-             pcat = t->category;
-             if (t == tt) tt = cfr;
-             free(t);
-          }
-     }
+     _menu_create(win, tbx, &tt, tests, NULL);
 
    /* set an initial window size */
    evas_object_resize(win, 480, 480);
