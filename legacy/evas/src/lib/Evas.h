@@ -387,6 +387,7 @@ typedef enum _Evas_BiDi_Direction
  *
  * @see evas_object_event_callback_add()
  * @see evas_event_callback_add()
+ * @ingroup Evas_Canvas_Events
  */
 typedef enum _Evas_Callback_Type
 {
@@ -432,7 +433,7 @@ typedef enum _Evas_Callback_Type
    /*
     * More Evas object event types - see evas_object_event_callback_add():
     */
-   EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanims in Evas that throw out original image data) */
+   EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanism in Evas that throw out original image data) */
 
    EVAS_CALLBACK_RENDER_PRE, /**< Called just before rendering starts on the canvas target @since 1.2 */
    EVAS_CALLBACK_RENDER_POST, /**< Called just after rendering stops on the canvas target @since 1.2 */
