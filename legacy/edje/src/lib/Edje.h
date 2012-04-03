@@ -164,6 +164,7 @@ part of Edje's API:
 @note The example files are located at /Where/Enlightenment/is/installed/share/edje/examples
 
 - @ref Example_Edje_Basics
+- @ref tutorial_edje_basic2
 - @ref tutorial_edje_swallow
 - @ref tutorial_edje_table
 - @ref tutorial_edje_box
@@ -201,6 +202,7 @@ part of Edje's API:
 @author Govindaraju SM <govi.sm@samsung.com> <govism@gmail.com>
 @author Prince Kumar Dubey <prince.dubey@samsung.com> <prince.dubey@gmail.com>
 @author David Seikel <onefang at gmail.com>
+@author Guilherme Íscaro <iscaro@profusion.mobi>
 
 Please contact <enlightenment-devel@lists.sourceforge.net> to get in
 contact with the developers and maintainers.

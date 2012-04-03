@@ -1,0 +1,24 @@
+collections {
+   group {
+      name: "image_group";
+      max: 500 500;
+      min: 50 50;
+
+     images{
+		image: "bubble.png" COMP;
+     }
+
+    parts{
+          	part{
+                   name: "part_image";
+                   type: IMAGE;
+                   description{
+                       image{
+				normal: "bubble.png";
+                       }
+                   }
+		}
+    }
+
+   }
+}

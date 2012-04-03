@@ -15,6 +15,7 @@
  * @li @ref tutorial_edje_perspective
  * @li @ref tutorial_edje_animations
  * @li @ref tutorial_edje_multisense
+ * @li @ref tutorial_edje_basic2
  */
 
 /**
@@ -979,4 +980,71 @@
  * The full source code follows:
  * @include edje-multisense.c
  * @include multisense.edc
+ */
+
+/**
+ * @page tutorial_edje_basic2 Edje basics example 2
+ *
+ * In this example we will show how to load an image and move it across the window.
+ *
+ * To load the image to our program, it needs to be declared in the .edc using the images block:
+ * @dontinclude basic2.edc
+ * @skip images
+ * @until }
+ *
+ * @note COMP means that we are using a lossless compression
+ *
+ * Then to be able to use it in our window we must declare a part for this image:
+ *
+ * @skip part{
+ * @until }
+ * @until }
+ * @until }
+ *
+ * Now we move to our .c file, you will notice this #define:
+ * @dontinclude edje-basic2.c
+ * @skipline #define WALK
+ *
+ * This means how fast we want to move the image across the screen
+ *
+ * To load our edje file we will use this command, we do just like the last example (Basic example):
+ *
+ * @skip if(!edje_object
+ * @until evas_object_show
+ *
+ * If we want to move our image, we need to add a callback to be able to do this, so we define:
+ *
+ * @skipline evas_object_event_callback
+ *
+ * To get the position of the image we use this:
+ * @dontinclude edje-basic2.c
+ * @skipline evas_object_geometry
+ *
+ * Now we use the if's to check in what direction the user wants to move the image then we move it:
+ *
+ * @skip if(strcmp
+ * @until evas_object_move
+ *
+ *The example's window should look like this picture:
+ *
+ * @image html basic2final.png
+ * @image rtf basic2final.png
+ * @image latex basic2final.eps width=\textwidth
+ *
+ * The complete .edc file:
+ * @include basic2.edc
+ *
+ * And the source code:
+ * @include edje-basic2.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o edje-basic2 edje-basic2.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\"
+ * -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc -id /path/to/the/image basic2.edc
+ * @endverbatim
+ *
  */
