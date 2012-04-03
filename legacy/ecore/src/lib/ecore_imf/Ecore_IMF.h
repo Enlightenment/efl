@@ -435,6 +435,10 @@ struct _Ecore_IMF_Context_Info
    int         canvas_required; /* Whether the canvas usage is required for this input method */
 };
 
+/**
+ * @}
+ */
+
 EAPI int                           ecore_imf_init(void);
 EAPI int                           ecore_imf_shutdown(void);
 
@@ -520,7 +524,3 @@ EAPI Eina_Bool                     ecore_imf_context_input_panel_caps_lock_mode_
 #endif
 
 #endif
-
-/**
- * @}
- */

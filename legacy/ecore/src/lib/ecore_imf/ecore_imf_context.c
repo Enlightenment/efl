@@ -1290,9 +1290,9 @@ ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
 /**
  * Call a given callback on the context @p ctx.
  *
- * ecore_imf_context_preedit_start_event_add, ecore_imf_context_preedit_end_event_add, 
- * ecore_imf_context_preedit_changed_event_add, ecore_imf_context_commit_event_add and
- * ecore_imf_context_delete_surrounding_event_add APIs are asynchronous 
+ * ecore_imf_context_preedit_start_event_add(), ecore_imf_context_preedit_end_event_add(), 
+ * ecore_imf_context_preedit_changed_event_add(), ecore_imf_context_commit_event_add() and
+ * ecore_imf_context_delete_surrounding_event_add() APIs are asynchronous 
  * because those API adds each event to the event queue.
  *
  * This API provides the way to call each callback function immediately.
