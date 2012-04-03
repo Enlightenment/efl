@@ -691,7 +691,7 @@ _sizing_eval(Evas_Object *obj)
 }
 
 static int
-_evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas_Object_Box_Option **objects, int n_objects, int remaining, int weight_total)
+_evas_object_box_layout_horizontal_weight_apply(Evas_Object_Box_Data *priv, Evas_Object_Box_Option **objects, int n_objects, int remaining, double weight_total)
 {
    int rem_diff = 0;
    int i;
@@ -849,7 +849,7 @@ evas_object_box_layout_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, vo
 }
 
 static int
-_evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_Object_Box_Option **objects, int n_objects, int remaining, int weight_total)
+_evas_object_box_layout_vertical_weight_apply(Evas_Object_Box_Data *priv, Evas_Object_Box_Option **objects, int n_objects, int remaining, double weight_total)
 {
    int rem_diff = 0;
    int i;

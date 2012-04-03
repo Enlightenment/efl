@@ -681,3 +681,7 @@
         * Add evas_object_ref_get() to be able to tell if others ref
         an object.
 
+2012-04-03  Gustavo Sverzut Barbieri (k-s)
+
+	* Box layouts: fix handling of weights that have decimal parts,
+	they were being handled as "int" where "double" was expected.
