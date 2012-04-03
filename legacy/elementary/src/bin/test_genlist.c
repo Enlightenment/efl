@@ -1803,10 +1803,10 @@ _my_gl_mode_cancel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *fr, *lb, *bx, *bx2, *bx3, *rd, *rdg, *gl;
+   Evas_Object *win, *fr, *bx, *bx2, *rd, *rdg, *gl;
    int i;
 
-   win = elm_win_util_standard_add("genlist10", "Genlist Mode");
+   win = elm_win_util_standard_add("genlist-decorate-item-mode", "Genlist Decorate Item Mode");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = elm_box_add(win);
@@ -1815,7 +1815,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bx);
 
    fr = elm_frame_add(win);
-   elm_object_text_set(fr, "Mode Type");
+   elm_object_text_set(fr, "Decorate Mode Type");
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
@@ -1823,33 +1823,21 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_object_content_set(fr, bx2);
    evas_object_show(bx2);
 
-   lb = elm_label_add(win);
-   elm_object_text_set(lb,
-                       "Sweep genlist items to the right.<br/>"
-                       "Test this by changing Mode Type to Slide or Rotate.");
-   elm_box_pack_end(bx2, lb);
-   evas_object_show(lb);
-
-   bx3 = elm_box_add(win);
-   elm_box_horizontal_set(bx3, EINA_TRUE);
-   elm_box_pack_end(bx2, bx3);
-   evas_object_show(bx3);
-
    rd = elm_radio_add(win);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 0);
-   elm_object_text_set(rd, "Slide  ");
+   elm_object_text_set(rd, "Slide : Sweep genlist items to the right.");
    evas_object_show(rd);
-   elm_box_pack_end(bx3, rd);
+   elm_box_pack_end(bx2, rd);
    rdg = rd;
 
    rd = elm_radio_add(win);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_radio_state_value_set(rd, 1);
-   elm_object_text_set(rd, "Rotate");
+   elm_object_text_set(rd, "Rotate : Click each item.");
    elm_radio_group_add(rd, rdg);
    evas_object_show(rd);
-   elm_box_pack_end(bx3, rd);
+   elm_box_pack_end(bx2, rd);
 
    gl = elm_genlist_add(win);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);

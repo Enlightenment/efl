@@ -437,7 +437,8 @@ add_tests:
    ADD_TEST(NULL, "Lists", "Genlist Tree", test_genlist6);
    ADD_TEST(NULL, "Lists", "Genlist Group", test_genlist8);
    ADD_TEST(NULL, "Lists", "Genlist Group Tree", test_genlist9);
-   ADD_TEST(NULL, "Lists", "Genlist Mode", test_genlist10);
+   ADD_TEST(NULL, "Lists", "Genlist Decorate Item Mode", test_genlist10);
+   ADD_TEST(NULL, "Lists", "Genlist Decorate All Mode", test_genlist15);
    ADD_TEST(NULL, "Lists", "Genlist Reorder Mode", test_genlist11);
 #ifdef HAVE_EIO
    ADD_TEST(NULL, "Lists", "Genlist Eio", test_eio);
@@ -445,7 +446,6 @@ add_tests:
    ADD_TEST(NULL, "Lists", "Genlist Textblock", test_genlist12);
    ADD_TEST(NULL, "Lists", "Genlist Tree, Insert Sorted", test_genlist13);
    ADD_TEST(NULL, "Lists", "Genlist Tree, Insert Relative", test_genlist14);
-   ADD_TEST(NULL, "Lists", "Genlist Edit Mode", test_genlist15);
    ADD_TEST(NULL, "Lists", "Genlist Flip Mode", test_genlist16);
    ADD_TEST(NULL, "Lists", "Genlist Tree Effect", test_genlist17);
    ADD_TEST(NULL, "Lists", "GenGrid", test_gengrid);
