@@ -371,6 +371,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    Subinfo *si;
    const Eina_List *l;
    if (!wd) return;
+   EINA_SAFETY_ON_NULL_RETURN(part);
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
         if ((si->type == SWALLOW) && (!strcmp(part, si->part)))
