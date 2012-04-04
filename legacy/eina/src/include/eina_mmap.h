@@ -20,7 +20,7 @@
  * SIGBUS, that replaces the "bad page" with a pzge of 0's (from /dev/zero)
  * if a SIGBUS occurs. This allows for safe mmap() of files that may truncate
  * or from files on devices with IO errors. Normally these cases will result
- * in a SIGBUS being delivered (and termination of yyour process), but
+ * in a SIGBUS being delivered (and termination of your process), but
  * when "mmap safety" is enabled, this will not occur. Instead a page of
  * bytes of the value 0 will replace the "bad page", allowing the process
  * to continue and allow its own parsing error detection to safely abort
