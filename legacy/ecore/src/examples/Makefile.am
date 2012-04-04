@@ -27,7 +27,8 @@ SRCS = \
 	ecore_animator_example.c \
 	ecore_fd_handler_example.c \
 	ecore_poller_example.c \
-	ecore_event_example.c \
+	ecore_event_example_01.c \
+	ecore_event_example_02.c \
 	ecore_idler_example.c \
 	ecore_timer_example.c \
 	ecore_time_functions_example.c \
@@ -71,7 +72,8 @@ examples_PROGRAMS += \
 	ecore_animator_example \
 	ecore_fd_handler_example \
 	ecore_poller_example \
-	ecore_event_example \
+	ecore_event_example_01 \
+	ecore_event_example_02 \
 	ecore_idler_example \
 	ecore_job_example \
 	ecore_timer_example \

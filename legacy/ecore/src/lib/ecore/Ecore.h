@@ -552,6 +552,7 @@ EAPI int ecore_thread_main_loop_end(void);
  * @li @b ECORE_EVENT_SIGNAL_POWER
  * @li @b ECORE_EVENT_SIGNAL_EXIT
  *
+ * @warning Don't override these using the @c signal or @c sigaction calls.
  * These, however, aren't the only signals one can handle. Many
  * libraries(including ecore modules) have their own signals that can be
  * listened for and handled, to do that one only needs to know the type of the
@@ -578,9 +579,9 @@ EAPI int ecore_thread_main_loop_end(void);
  * The usage when an @c event is needed is not that much more complex and can be
  * seen in @ref ecore_event_add.
  *
- * Example that deals with events:
- *
- * @li @ref ecore_event_example_c
+ * Examples that deals with events:
+ * @li @ref ecore_event_example_01_c
+ * @li @ref ecore_event_example_02_c
  *
  * @ingroup Ecore_Main_Loop_Group
  *

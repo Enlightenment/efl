@@ -7,7 +7,8 @@
  * @li @ref ecore_timer_example_c
  * @li @ref ecore_idler_example_c
  * @li @ref ecore_job_example_c
- * @li @ref ecore_event_example_c
+ * @li @ref ecore_event_example_01_c
+ * @li @ref ecore_event_example_02_c
  * @li @ref ecore_fd_handler_example_c
  * @li @ref ecore_poller_example_c
  * @li @ref ecore_con_lookup_example_c
@@ -201,7 +202,38 @@
  */
 
 /**
- * @page ecore_event_example_c ecore events and handlers - Setup and use
+ * @page ecore_event_example_01_c Handling events example
+ * This example shows the simplest possible way to register a handler for an
+ * ecore event, this way we can focus on the important aspects. The example will
+ * start the main loop and quit it when it receives the ECORE_EVENT_SIGNAL_EXIT
+ * event. This event is triggered by a SIGTERM(pressing ctrl+c).
+ *
+ * So let's start with the function we want called when we receive the event,
+ * instead of just stopping the main loop we'll also print a message, that's
+ * just so it's clear that it got called:
+ * @dontinclude ecore_event_example_01.c
+ * @skip static
+ * @until }
+ * @note We return ECORE_CALLBACK_DONE because we don't want any other handlers
+ * for this event to be called, the program is quitting after all.
+ *
+ * We then have our main function and the obligatory initialization of ecore:
+ * @until ecore_init
+ *
+ * We then get to the one line of our example that makes everything work, the
+ * registering of the callback:
+ * @until handler_add
+ * @note The @c NULL there is because there is no need to pass data to the
+ * callback.
+ *
+ * And the all that is left to do is start the main loop:
+ * @until }
+ *
+ * Full source code for this example: @ref ecore_event_example_01.c.
+ */
+
+/**
+ * @page ecore_event_example_02_c ecore events and handlers - Setup and use
  * This example shows how to create a new type of event, setup some event
  * handlers to it, fire the event and have the callbacks called. After
  * finishing, we delete the event handlers so no memory will leak.
@@ -210,7 +242,7 @@
  *
  * Let's start the example from the beginning:
  *
- * @dontinclude ecore_event_example.c
+ * @dontinclude ecore_event_example_02.c
  * @until _event_type
  *
  * First thing is to declare a struct that will be passed as context to the
@@ -894,9 +926,15 @@
  */
 
 /**
- * @example ecore_event_example.c
+ * @example ecore_event_example_01.c
+ * This example shows how to create an event handler. Explanation: @ref
+ * ecore_event_example_01_c
+ */
+
+/**
+ * @example ecore_event_example_02.c
  * This example shows how to setup, change, and delete event handlers. See
- * @ref ecore_event_example_c "the explanation here".
+ * @ref ecore_event_example_02_c "the explanation here".
  */
 
 /**
