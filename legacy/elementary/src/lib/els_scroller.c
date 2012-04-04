@@ -2297,7 +2297,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
           {
              int dodir = 0;
 
-             if (sd->scrollto.x.animator)
+             if ((sd->scrollto.x.animator) && (!sd->hold) && (!sd->freeze))
                {
                   Evas_Coord px;
                   ecore_animator_del(sd->scrollto.x.animator);
@@ -2307,7 +2307,7 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
                   sd->down.x = sd->down.history[0].x;
                }
 
-             if (sd->scrollto.y.animator)
+             if ((sd->scrollto.y.animator) && (!sd->hold) && (!sd->freeze))
                {
                   Evas_Coord py;
                   ecore_animator_del(sd->scrollto.y.animator);
