@@ -946,9 +946,10 @@ ecore_ipc_client_data_size_max_set(Ecore_Ipc_Client *cl, int size)
 }
 
 /**
- * Sets the max data payload size for an Ipc message in bytes
+ * Gets the max data payload size for an Ipc message in bytes
  *
  * @param   cl            The given client.
+ * @return The maximum data payload size in bytes on success, @c -1 on failure.
  * @ingroup Ecore_Ipc_Client_Group
  */
 EAPI int

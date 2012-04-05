@@ -197,6 +197,7 @@ ecore_x_dpms_timeouts_get(unsigned int *standby,
  * @param standby Amount of time of inactivity before standby mode will be invoked.
  * @param suspend Amount of time of inactivity before the screen is placed into suspend mode.
  * @param off     Amount of time of inactivity before the monitor is shut off.
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI Eina_Bool

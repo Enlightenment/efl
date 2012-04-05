@@ -841,11 +841,10 @@ ecore_file_ls(const char *dir)
  * @brief Return the executable from the given command.
  *
  * @param app The application command, with parameters.
- *
- * This function returns the executable from @p app as a newly
- * allocated string. Arguments are removed and escae characters are
- * handled. If @p app is @c NULL, or on failure, the function returns
- * @c NULL. When not needed anymore, the returned value must be freed.
+ * @return The executable from @p app as a newly allocated string. Arguments 
+ * are removed and escape characters are handled. If @p app is @c NULL, or 
+ * on failure, the function returns @c NULL. When not needed anymore, the 
+ * returned value must be freed.
  */
 EAPI char *
 ecore_file_app_exe_get(const char *app)

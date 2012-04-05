@@ -867,6 +867,7 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe,
  *
  * @param   exe The given process handle.
  * @param   flags   Is this a ECORE_EXE_PIPE_READ or ECORE_EXE_PIPE_ERROR?
+ * @return The event data.
  */
 EAPI Ecore_Exe_Event_Data *
 ecore_exe_event_data_get(Ecore_Exe      *exe,

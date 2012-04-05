@@ -630,8 +630,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win,
  * Get a window string property.
  * @param win The window
  * @param type The property
- *
- * Return window string property of a window. String must be free'd when done.
+ * @return Window string property of a window. String must be free'd when done.
  */
 EAPI char *
 ecore_x_window_prop_string_get(Ecore_X_Window win,

@@ -1863,6 +1863,7 @@ ecore_getopt_list_free(Eina_List *list)
  * @param str Geometry value
  * @param storage must be a pointer to @c Eina_Rectangle and will be used to
  * store the four values passed in the given string.
+ * @return EINA_TRUE on success, EINA_FALSE on incorrect geometry value.
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
@@ -1891,6 +1892,7 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser __UNUSED__,
  * @param storage must be a pointer to @c Eina_Rectangle and will be used to
  * store the two values passed in the given string and 0 in the x and y
  * fields.
+ * @return EINA_TRUE on success, EINA_FALSE on incorrect size value.
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */

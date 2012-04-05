@@ -941,7 +941,8 @@ ecore_x_randr_mode_size_get(Ecore_X_Window     root,
  * comparison functions, since it includes 0-bytes.
  * @param root window this information should be queried from
  * @param output the XID of the output
- * @param length length of the byte-array. If NULL, request will fail.
+ * @param length length of the byte-array. If @c NULL, request will fail.
+ * @return EDID information of the output.
  */
 EAPI unsigned char *
 ecore_x_randr_output_edid_get(Ecore_X_Window       root,
@@ -989,11 +990,11 @@ ecore_x_randr_output_edid_get(Ecore_X_Window       root,
 }
 
 /**
- * @brief gets the the outputs which might be used simultenously on the same
- * CRTC.
+ * @brief gets the outputs which might be used simultaneously on the same CRTC.
  * @param root window that this information should be queried for.
  * @param output the output which's clones we concern
  * @param num number of possible clones
+ * @return The existing outputs, @c NULL otherwise.
  */
 EAPI Ecore_X_Randr_Output *
 ecore_x_randr_output_clones_get(Ecore_X_Window       root,

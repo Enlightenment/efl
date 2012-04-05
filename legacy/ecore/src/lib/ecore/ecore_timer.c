@@ -63,7 +63,7 @@ static double precision = 10.0 / 1000000.0;
 
 /**
  * Retrieves the current precision used by timer infrastructure.
- *
+ * @return Current precision.
  * @see ecore_timer_precision_set()
  */
 EAPI double
@@ -332,6 +332,7 @@ ecore_timer_reset(Ecore_Timer *timer)
  * Get the pending time regarding a timer.
  *
  * @param        timer The timer to learn from.
+ * @return The pending time.
  * @ingroup        Ecore_Timer_Group
  */
 EAPI double

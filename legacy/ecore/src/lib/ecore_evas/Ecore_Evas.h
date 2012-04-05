@@ -990,6 +990,7 @@ EAPI Ecore_Evas     *ecore_evas_ews_new(int x, int y, int w, int h);
 /**
  * Returns the backing store image object that represents the given
  * window in EWS.
+ * @return The evas object of EWS backing store.
  *
  * @note This should not be modified anyhow, but may be helpful to
  *       determine stacking and geometry of it for window managers
