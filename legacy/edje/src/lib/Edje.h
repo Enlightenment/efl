@@ -2200,7 +2200,7 @@ EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Co
 
 /**
  * @brief Check if an Edje part exists in a given Edje object's group
- * definition..
+ * definition.
  *
  * @param obj A handle to an Edje object
  * @param part The part's name to check for existence in @p obj's

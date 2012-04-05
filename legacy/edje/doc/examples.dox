@@ -1002,7 +1002,7 @@
  * @until }
  * @until }
  *
- * Now we move to our .c file, you will notice this #define:
+ * Now we move to our .c file, you will notice this define:
  * @dontinclude edje-basic2.c
  * @skipline #define WALK
  *
