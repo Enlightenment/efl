@@ -217,7 +217,7 @@ typedef struct _Eet_Version
    int major; /** < major (binary or source incompatible changes) */
    int minor; /** < minor (new features, bugfixes, major improvements version) */
    int micro; /** < micro (bugfix, internal improvements, no new features version) */
-   int revision; /** < svn revision (0 if a proper rlease or the svn revsion number Eet is built from) */
+   int revision; /** < svn revision (0 if a proper release or the svn revision number Eet is built from) */
 } Eet_Version;
 
 EAPI extern Eet_Version *eet_version;
@@ -264,8 +264,8 @@ typedef enum _Eet_Error
  * Initialize the EET library.
  *
  * The first time this function is called, it will perform all the internal
- * initialization required for the library to function properly and incrememnt
- * the initializiation counter. Any subsequent call only increment this counter
+ * initialization required for the library to function properly and increment
+ * the initialization counter. Any subsequent call only increment this counter
  * and return its new value, so it's safe to call this function more than once.
  *
  * @return The new init count. Will be 0 if initialization failed.
@@ -357,7 +357,7 @@ eet_clearcache(void);
  *
  * Next, we copy into our buffer our set of strings, including their null
  * terminators and write them into the file. No error checking for the sake
- * of brevitiy. And a call to eet_sync() to make sure all out data is
+ * of brevity. And a call to eet_sync() to make sure all out data is
  * properly written down to disk, even though we haven't yet closed the file.
  * @until eet_sync
  *
@@ -488,7 +488,7 @@ typedef enum _Eet_File_Mode
  *
  * This handle will be returned by the functions eet_open() and
  * eet_memopen_read() and is used by every other function that affects the
- * file in any way. When you are done with it, call eet_close() to clsoe it
+ * file in any way. When you are done with it, call eet_close() to close it
  * and, if the file was open for writing, write down to disk any changes made
  * to it.
  *
@@ -622,7 +622,7 @@ eet_sync(Eet_File *ef);
  *
  * @see eet_dictionary_string_check() to know if given string came
  *      from the dictionary or it was dynamically allocated using
- *      the #Eet_Data_Descriptor_Class instructrions.
+ *      the #Eet_Data_Descriptor_Class instructions.
  *
  * @since 1.0.0
  * @ingroup Eet_File_Group
@@ -696,7 +696,7 @@ eet_read(Eet_File *ef,
  * This function finds an entry in the eet file that is stored under the
  * name specified, and returns that data if not compressed and successful.
  * NULL is returned if the lookup fails or if memory errors are
- * encountered or if the data is comrpessed. The calling program must never
+ * encountered or if the data is compressed. The calling program must never
  * call free() on the returned data. The number of bytes in the returned
  * data chunk are placed in size_ret.
  *
@@ -1791,7 +1791,7 @@ eet_identity_open(const char *certificate_file,
                   Eet_Key_Password_Callback cb);
 
 /**
- * Close and release all ressource used by an Eet_Key.  An
+ * Close and release all resource used by an Eet_Key.  An
  * reference counter prevent it from being freed until all file
  * using it are also closed.
  *
@@ -2005,7 +2005,7 @@ eet_identity_certificate_print(const unsigned char *certificate,
  * use it to load older configuration files and update them as needed.
  * @until }
  *
- * Finally, clsoe the file and return the newly loaded config data.
+ * Finally, close the file and return the newly loaded config data.
  * @until }
  *
  * Saving data is just as easy. The full version of the following function
@@ -2090,7 +2090,7 @@ eet_identity_certificate_print(const unsigned char *certificate,
  * We won't ignore the headers this time to show how easy it is to use Eina
  * data types with Eet, but we'll still skip most of the code that is not
  * pertinent to what we want to show now, but as usual, you can get it full
- * by follwing @ref eet-data-nested.c "this link".
+ * by following @ref eet-data-nested.c "this link".
  *
  * @dontinclude eet-data-nested.c
  * @skipline Eina.h
@@ -2405,7 +2405,7 @@ typedef void                            (*Eet_Descriptor_Array_Free_Callback)(vo
  * Instructs Eet about memory management for different needs under
  * serialization and parse process.
  *
- * The list and hash methods match the Eina API, so for a more detalied
+ * The list and hash methods match the Eina API, so for a more detailed
  * reference on them, look at the Eina_List and Eina_Hash documentation,
  * respectively.
  * For the most part these will be used with the standard Eina functions,
@@ -2459,7 +2459,7 @@ struct _Eet_Data_Descriptor_Class
  * @param func_hash_free The function to free an entire hash table.
  * @return A new empty data descriptor.
  *
- * This function creates a new data descriptore and returns a handle to the
+ * This function creates a new data descriptor and returns a handle to the
  * new data descriptor. On creation it will be empty, containing no contents
  * describing anything other than the shell of the data structure.
  *
@@ -2544,7 +2544,7 @@ eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
  * adding to the description.
  *
  * Once you have described all the members of a struct you want loaded or
- * savedi, eet can load and save those members for you, encode them into
+ * saved, eet can load and save those members for you, encode them into
  * endian-independent serialised data chunks for transmission across a
  * a network or more.
  *
@@ -2691,7 +2691,7 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd);
  *        #EET_T_INT. If #EET_T_UNKNOW, then it is considered to be a
  *        group, list or hash.
  * @param group_type If element type is #EET_T_UNKNOW, then the @p
- *        group_type will speficy if it is a list (#EET_G_LIST),
+ *        group_type will specify if it is a list (#EET_G_LIST),
  *        array (#EET_G_ARRAY) and so on. If #EET_G_UNKNOWN, then
  *        the member is a subtype (pointer to another type defined by
  *        another #Eet_Data_Descriptor).
@@ -2751,7 +2751,7 @@ eet_data_read(Eet_File *ef,
  * @param ef The eet file handle to write to.
  * @param edd The data descriptor to use when encoding.
  * @param name The key to store the data under in the eet file.
- * @param data A pointer to the data structure to ssave and encode.
+ * @param data A pointer to the data structure to save and encode.
  * @param compress Compression flags for storage.
  * @return bytes written on successful write, 0 on failure.
  *
@@ -2952,7 +2952,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
  * serialised chunk of data that can be decoded again by
  * eet_data_descriptor_decode(). This is useful for being able to transmit
  * data structures across sockets, pipes, IPC or shared file mechanisms,
- * without having to worry about memory space, machine type, endianess etc.
+ * without having to worry about memory space, machine type, endianness etc.
  *
  * The parameter @p edd must point to a valid data descriptor, and
  * @p data_in must point to the right data structure to encode. If not, the
@@ -3453,7 +3453,7 @@ eet_data_xattr_cipher_get(const char *filename,
  * @param edd The data descriptor to use when encoding.
  * @param name The key to store the data under in the eet file.
  * @param cipher_key The key to use as cipher.
- * @param data A pointer to the data structure to ssave and encode.
+ * @param data A pointer to the data structure to save and encode.
  * @param compress Compression flags for storage.
  * @return bytes written on successful write, 0 on failure.
  *
@@ -3478,7 +3478,7 @@ eet_data_write_cipher(Eet_File *ef,
  * @param attribute The attribute to store the data to.
  * @param edd The data descriptor to use when encoding.
  * @param cipher_key The key to use as cipher.
- * @param data A pointer to the data structure to ssave and encode.
+ * @param data A pointer to the data structure to save and encode.
  * @param flags The policy to use when setting the data.
  * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
@@ -4102,7 +4102,7 @@ typedef struct _Eet_Connection Eet_Connection;
 
 /**
  * @typedef Eet_Read_Cb
- * Called back when an @ref Eet_Data_Group has been received completly and could be used.
+ * Called back when an @ref Eet_Data_Group has been received completely and could be used.
  *
  * @ingroup Eet_Connection_Group
  */
