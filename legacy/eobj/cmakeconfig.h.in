@@ -1,0 +1,13 @@
+#define PACKAGE "@CMAKE_PROJECT_NAME@"
+#define PACKAGE_NAME PACKAGE
+#define VERSION "@EOBJ_VERSION@"
+#define VMAJ @EOBJ_VERSION_MAJOR@
+#define VMIN @EOBJ_VERSION_MINOR@
+#define VMIC @EOBJ_VERSION_MICRO@
+
+#cmakedefine HAVE___ATTRIBUTE__
+#ifdef HAVE___ATTRIBUTE__
+#define __UNUSED__ __attribute__((unused))
+#else
+#define __UNUSED__
+#endif
