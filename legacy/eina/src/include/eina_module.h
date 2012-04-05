@@ -122,11 +122,10 @@ extern EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED;
  * @brief Return a new module.
  *
  * @param file The name of the file module to load.
- *
- * This function returns a new module. If @p file is @c NULL, the
- * function returns @c NULL, otherwise, it allocates an Eina_Module,
- * stores a duplicate string of @p file, sets its reference to @c 0
- * and its handle to @c NULL.
+ * @return A new module. If @p file is @c NULL, the function 
+ * returns @c NULL, otherwise, it allocates an Eina_Module, stores
+ * a duplicate string of @p file, sets its reference to @c 0 and
+ * its handle to @c NULL.
  *
  * When the new module is not needed anymore, use eina_module_free()
  * to free the allocated memory.

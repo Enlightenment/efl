@@ -15,6 +15,7 @@
  * @brief Enable or disable safe mmaped IO handling
  *
  * @param enabled The enabled state (to enable, pass EINA_TRUE)
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This enables (if possible on your platform) a signal handler for
  * SIGBUS, that replaces the "bad page" with a pzge of 0's (from /dev/zero)

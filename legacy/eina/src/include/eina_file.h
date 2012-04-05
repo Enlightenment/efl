@@ -348,6 +348,7 @@ EAPI char *eina_file_path_sanitize(const char *path);
  *
  * @param name Filename to open
  * @param shared Requested a shm
+ * @return Eina_File handle to the file
  *
  * Opens a file in read-only mode. @p name should be an absolute path. An
  * Eina_File handle can be shared among multiple instances if @p shared is
@@ -467,6 +468,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  *
  * @param file The file handler to the mmaped file.
  * @param map Memory map to check if an error occured on it.
+ * @return #EINA_TRUE if there was an IO error, #EINA_FALSE otherwise.
  *
  * @since 1.2
  */

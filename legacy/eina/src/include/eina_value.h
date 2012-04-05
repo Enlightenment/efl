@@ -3314,6 +3314,7 @@ static inline Eina_Bool eina_value_struct_pget(const Eina_Value *value,
  * @param src source value object
  * @param name name to find the member
  * @param dst where to return the member value.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * The argument @a dst is considered uninitialized and it's setup to
  * the type of the member.
@@ -3329,6 +3330,7 @@ static inline Eina_Bool eina_value_struct_value_get(const Eina_Value *src,
  * @param dst destination value object
  * @param name name to find the member
  * @param src source value
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @since 1.2
  */
@@ -3341,6 +3343,7 @@ static inline Eina_Bool eina_value_struct_value_set(Eina_Value *dst,
  * @param src source value object
  * @param member the member description to use
  * @param dst where to return the member value.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * The argument @a dst is considered uninitialized and it's setup to
  * the type of the member.
@@ -3356,6 +3359,7 @@ static inline Eina_Bool eina_value_struct_member_value_get(const Eina_Value *src
  * @param dst destination value object
  * @param member the member description to use
  * @param src source value
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @since 1.2
  */

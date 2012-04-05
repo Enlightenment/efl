@@ -210,6 +210,7 @@ EAPI void               eina_tiler_tile_size_set(Eina_Tiler *t, int w, int h);
  *
  * @param t The tiler in which to add a container.
  * @param r The rectangle to be added.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_tiler_rect_del()
  */
