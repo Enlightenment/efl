@@ -556,6 +556,8 @@ eet_open(const char *file,
  * so you must keep it around as long as the eet file is open. There is
  * currently no cache for this kind of Eet_File, so it's reopened every time
  * you use eet_memopen_read.
+ * @return A handle to the file.
+ *
  * Files opened this way will always be in read-only mode.
  *
  * @since 1.1.0
@@ -579,6 +581,7 @@ eet_mode_get(Eet_File *ef);
 /**
  * Close an eet file handle and flush pending writes.
  * @param ef A valid eet file handle.
+ * @return An eet error identifier.
  *
  * This function will flush any pending writes to disk if the eet file
  * was opened for write, and free all data associated with the file handle
@@ -595,6 +598,7 @@ eet_close(Eet_File *ef);
 /**
  * Sync content of an eet file handle, flushing pending writes.
  * @param ef A valid eet file handle.
+ * @return An eet error identifier.
  *
  * This function will flush any pending writes to disk. The eet file must
  * be opened for write.
@@ -2504,6 +2508,7 @@ EINA_DEPRECATED EAPI Eet_Data_Descriptor *
  * new data descriptor. On creation it will be empty, containing no contents
  * describing anything other than the shell of the data structure.
  * @param eddc The class from where to create the data descriptor.
+ * @return A handle to the new data descriptor.
  *
  * You add structure members to the data descriptor using the macros
  * EET_DATA_DESCRIPTOR_ADD_BASIC(), EET_DATA_DESCRIPTOR_ADD_SUB() and
@@ -2511,9 +2516,9 @@ EINA_DEPRECATED EAPI Eet_Data_Descriptor *
  * adding to the description.
  *
  * Once you have described all the members of a struct you want loaded or
- * savedi, eet can load and save those members for you, encode them into
+ * saved, eet can load and save those members for you, encode them into
  * endian-independent serialised data chunks for transmission across a
- * a network or more.
+ * network or more.
  *
  * This function specially ignores str_direct_alloc and str_direct_free. It
  * is useful when the eet_data you are reading doesn't have a dictionary,
@@ -2531,6 +2536,7 @@ eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc);
  * new data descriptor. On creation it will be empty, containing no contents
  * describing anything other than the shell of the data structure.
  * @param eddc The class from where to create the data descriptor.
+ * @return A handle to the new data descriptor.
  *
  * You add structure members to the data descriptor using the macros
  * EET_DATA_DESCRIPTOR_ADD_BASIC(), EET_DATA_DESCRIPTOR_ADD_SUB() and
