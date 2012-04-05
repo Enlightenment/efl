@@ -882,14 +882,6 @@ static void
 _clear_cb(Widget_Data *wd)
 {
    wd->anchor_item = NULL;
-   while (wd->blocks)
-     {
-        Item_Block *itb = (Item_Block *)(wd->blocks);
-
-        wd->blocks = eina_inlist_remove(wd->blocks, wd->blocks);
-        if (itb->items) eina_list_free(itb->items);
-        free(itb);
-     }
    if (wd->queue_idle_enterer)
      {
         ecore_idle_enterer_del(wd->queue_idle_enterer);
