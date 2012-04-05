@@ -168,7 +168,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 
    /* TODO: fix logic for horizontal mode */
    if ((!strcmp(ev->keyname, "Left")) ||
-       (!strcmp(ev->keyname, "KP_Left")))
+       ((!strcmp(ev->keyname, "KP_Left")) && !ev->string))
      {
         if ((wd->h_mode) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -182,7 +182,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
           x -= step_x;
      }
    else if ((!strcmp(ev->keyname, "Right")) ||
-            (!strcmp(ev->keyname, "KP_Right")))
+            ((!strcmp(ev->keyname, "KP_Right")) && !ev->string))
      {
         if ((wd->h_mode) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -196,7 +196,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
           x += step_x;
      }
    else if ((!strcmp(ev->keyname, "Up"))  ||
-            (!strcmp(ev->keyname, "KP_Up")))
+            ((!strcmp(ev->keyname, "KP_Up")) && !ev->string))
      {
         if ((!wd->h_mode) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -210,7 +210,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
           y -= step_y;
      }
    else if ((!strcmp(ev->keyname, "Down")) ||
-            (!strcmp(ev->keyname, "KP_Down")))
+            ((!strcmp(ev->keyname, "KP_Down")) && !ev->string))
      {
         if ((!wd->h_mode) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -224,7 +224,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
           y += step_y;
      }
    else if ((!strcmp(ev->keyname, "Home")) ||
-            (!strcmp(ev->keyname, "KP_Home")))
+            ((!strcmp(ev->keyname, "KP_Home")) && !ev->string))
      {
         it = eina_list_data_get(wd->items);
         elm_list_item_bring_in((Elm_Object_Item *)it);
@@ -232,7 +232,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         return EINA_TRUE;
      }
    else if ((!strcmp(ev->keyname, "End")) ||
-            (!strcmp(ev->keyname, "KP_End")))
+            ((!strcmp(ev->keyname, "KP_End")) && !ev->string))
      {
         it = eina_list_data_get(eina_list_last(wd->items));
         elm_list_item_bring_in((Elm_Object_Item *)it);
@@ -240,7 +240,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         return EINA_TRUE;
      }
    else if ((!strcmp(ev->keyname, "Prior")) ||
-            (!strcmp(ev->keyname, "KP_Prior")))
+            ((!strcmp(ev->keyname, "KP_Prior")) && !ev->string))
      {
         if (wd->h_mode)
           {
@@ -258,7 +258,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
           }
      }
    else if ((!strcmp(ev->keyname, "Next")) ||
-            (!strcmp(ev->keyname, "KP_Next")))
+            ((!strcmp(ev->keyname, "KP_Next")) && !ev->string))
      {
         if (wd->h_mode)
           {
