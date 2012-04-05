@@ -38,9 +38,9 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * @return The prefix handle, or NULL on failure
  *
  * Applications and libraries are most often not just single executables nor
- * single shared library binares, but also come with extra modules they
+ * single shared library binaries, but also come with extra modules they
  * have to load, extra binary utilities they need to run, or have data files
- * they need to load. A very primitve application ASSUMES a fixed install
+ * they need to load. A very primitive application ASSUMES a fixed install
  * location at compile-time, but this disallows the ability to re-locate
  * the application (or library) somewhere else after compilation (if you run
  * out of space on a given disk, partition etc. for example), or necessitate

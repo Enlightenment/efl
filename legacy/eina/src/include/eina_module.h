@@ -50,7 +50,7 @@
  *
  * The loaded shared objects may have two visible functions that will
  * be called and might provide initialization and shutdown
- * proceedures. The symbols are @c __eina_module_init and
+ * procedures. The symbols are @c __eina_module_init and
  * @c __eina_module_shutdown and will be defined by the macros
  * EINA_MODULE_INIT() and EINA_MODULE_SHUTDOWN().
  *
@@ -162,11 +162,11 @@ EAPI Eina_Bool
  * #EINA_FALSE is returned. If it is a internal Eina module and the
  * module can not be initialized, the error
  * #EINA_ERROR_MODULE_INIT_FAILED is set and #EINA_FALSE is
- * returned. If the module has already been loaded, it's refeence
+ * returned. If the module has already been loaded, it's reference
  * counter is increased by one and #EINA_TRUE is returned. If @p module is
  * @c NULL, the function returns immediately #EINA_FALSE.
  *
- * When the symbols of the shared file objetcts are not needed
+ * When the symbols of the shared file objects are not needed
  * anymore, call eina_module_unload() to unload the module.
  */
 EAPI Eina_Bool
@@ -190,7 +190,7 @@ EAPI Eina_Bool
  eina_module_unload(Eina_Module *module) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Retrive the data associated to a symbol.
+ * @brief Retrieve the data associated to a symbol.
  *
  * @param module The module.
  * @param symbol The symbol.
@@ -236,7 +236,7 @@ EAPI char *
  eina_module_symbol_path_get(const void *symbol, const char *sub_dir) EINA_PURE EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 /**
- * @brief Return the path built from the value of an environment varialbe and a
+ * @brief Return the path built from the value of an environment variable and a
  * given sub directory.
  *
  * @param env The environment variable to expand.

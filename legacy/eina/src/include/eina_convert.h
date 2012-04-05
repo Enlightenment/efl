@@ -38,7 +38,7 @@
  *
  * To convert an integer to a string in the decimal base,
  * eina_convert_itoa() should be used. If the hexadecimal base is
- * wanted, eina_convert_xtoa() should be used. They all need a bufffer
+ * wanted, eina_convert_xtoa() should be used. They all need a buffer
  * sufficiently large to store all the cyphers.
  *
  * Here is an example of use:

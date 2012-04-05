@@ -271,7 +271,7 @@ EAPI Eina_Iterator *eina_file_ls(const char *dir) EINA_WARN_UNUSED_RESULT EINA_A
  *
  * @note The container for the iterator is of type DIR*.
  * @note The iterator will walk over '.' and '..' without returning them.
- * @note The difference between this function ahd eina_file_direct_ls() is that
+ * @note The difference between this function and eina_file_direct_ls() is that
  *       it guarantees the file type information will be correct incurring a
  *       possible performance penalty.
  *
@@ -320,7 +320,7 @@ EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Sta
  *
  * @note The container for the iterator is of type DIR*.
  * @note The iterator will walk over '.' and '..' without returning them.
- * @note The difference between this function ahd eina_file_stat_ls() is that
+ * @note The difference between this function and eina_file_stat_ls() is that
  *       it may not get the file type information however it is likely to be
  *       faster.
  *
@@ -363,7 +363,7 @@ EAPI Eina_File *eina_file_open(const char *name, Eina_Bool shared) EINA_WARN_UNU
  *
  * @param file File handler to unref.
  *
- * Decremente file's refcount and if it reaches zero close it.
+ * Decrement file's refcount and if it reaches zero close it.
  *
  * @since 1.1
  */
@@ -467,7 +467,7 @@ EAPI void eina_file_map_free(Eina_File *file, void *map);
  * @brief Tell if their was an IO error during the life of a mmaped file
  *
  * @param file The file handler to the mmaped file.
- * @param map Memory map to check if an error occured on it.
+ * @param map Memory map to check if an error occurred on it.
  * @return #EINA_TRUE if there was an IO error, #EINA_FALSE otherwise.
  *
  * @since 1.2

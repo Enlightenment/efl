@@ -118,8 +118,8 @@
  * @section grid_slicer Grid Slicer
  *
  * Grid slicer and Eina_Tiler are usually used together, that is however @b not
- * nescessary, they can be used independently. Grid slicer provides an easy API
- * to divide an area in tiles which is usefull in certain applications to divide
+ * necessary, they can be used independently. Grid slicer provides an easy API
+ * to divide an area in tiles which is useful in certain applications to divide
  * the area that will be rendered into tiles. It's customary to, then create one
  * Eina_Tiler for each tile.
  *
@@ -257,7 +257,7 @@ EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
  * iterate over every tile in the grid having as its data a
  * #Eina_Tile_Grid_Info.
  *
- * @note This is a convinience function, iterating over the returned iterator is
+ * @note This is a convenience function, iterating over the returned iterator is
  * equivalent to calling eina_tile_grid_slicer_setup() and calling
  * eina_tile_grid_slicer_next() untill it returns EINA_FALSE.
  */
