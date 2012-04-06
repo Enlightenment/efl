@@ -10,7 +10,7 @@
 struct _Ecore_Poller
 {
    EINA_INLIST;
-                 ECORE_MAGIC;
+   ECORE_MAGIC;
    int           ibit;
    unsigned char delete_me : 1;
    Ecore_Task_Cb func;
