@@ -54,6 +54,7 @@ struct Elm_Gen_Item_Type
    Elm_Genlist_Item_Type        type;
    Eina_List                    *deco_it_texts, *deco_it_contents, *deco_it_states, *deco_it_content_objs;
    Eina_List                    *deco_all_textss, *deco_all_contents, *deco_all_states, *deco_all_content_objs;
+   Eina_List                    *flip_contents, *flip_content_objs;
    Ecore_Timer                  *swipe_timer;
    Evas_Coord                    scrl_x, scrl_y, old_scrl_y;
 
@@ -2138,7 +2139,8 @@ _item_realize(Elm_Gen_Item *it,
         if (it->flipped)
           {
              edje_object_signal_emit(VIEW(it), "elm,state,flip,enabled", "elm");
-             it->content_objs = _item_flips_realize(it, VIEW(it), &it->contents);
+             it->item->flip_content_objs =
+               _item_flips_realize(it, VIEW(it), &it->item->flip_contents);
           }
 
         if (!it->item->mincalcd)
@@ -5795,9 +5797,16 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
    it->contents = NULL;
    elm_widget_stringlist_free(it->states);
    it->states = NULL;
-
    EINA_LIST_FREE(it->content_objs, content)
      evas_object_del(content);
+
+   if (it->flipped)
+     {
+        elm_widget_stringlist_free(it->item->flip_contents);
+        it->item->flip_contents = NULL;
+        EINA_LIST_FREE(it->item->flip_content_objs, content)
+          evas_object_del(content);
+     }
 
    it->unrealize_cb(it);
 
