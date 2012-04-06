@@ -257,13 +257,8 @@ group { name: "elm/popup/base/default";
          scale : 1;
          description { state: "default" 0.0;
             align: 0.0 0.0;
-            visible: 0;
             rel1.to: "elm.bg.action_area";
             rel2.to: "elm.bg.action_area";
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            visible: 1;
          }
       }
    }
@@ -333,7 +328,6 @@ group { name: "elm/popup/base/default";
             else
               set_state(PART:"elm.swallow.content", "show_action_area", 0.0);
             set_state(PART:"elm.bg.action_area", "visible", 0.0);
-            set_state(PART:"elm.swallow.action_area", "visible", 0.0);
          }
       }
       program { name: hide_action_area;
@@ -349,7 +343,6 @@ group { name: "elm/popup/base/default";
             else
               set_state(PART:"elm.swallow.content", "default", 0.0);
             set_state(PART:"elm.bg.action_area", "default", 0.0);
-            set_state(PART:"elm.swallow.action_area", "default", 0.0);
          }
       }
    } /* end of programs */

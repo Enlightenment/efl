@@ -98,6 +98,8 @@ static Evas_Object *_action_button_get(Evas_Object *obj, unsigned int idx);
 static Evas_Object *_action_button_unset(Evas_Object *obj, unsigned int idx);
 static void _button_remove(Evas_Object *obj, Evas_Object *content,
                            Eina_Bool delete);
+static void _popup_show(void *data, Evas *e, Evas_Object *obj,
+                        void *event_info);
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
 static const Evas_Smart_Cb_Description _signals[] = {
@@ -147,6 +149,7 @@ _del_pre_hook(Evas_Object *obj)
    evas_object_smart_callback_del(wd->notify, "timeout", _timeout);
    evas_object_event_callback_del(wd->notify, EVAS_CALLBACK_RESIZE,
                                   _notify_resize);
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _popup_show);
    wd->button_count = 0;
    for (i = 0; i < ELM_POPUP_ACTION_BUTTON_MAX; i++)
      if (wd->buttons[i])
@@ -737,6 +740,7 @@ _content_set(Evas_Object *obj, Evas_Object *content)
                                     wd->content_area);
         elm_object_part_content_set(wd->content_area, "elm.swallow.content",
                                     content);
+        evas_object_show(content);
      }
    _sizing_eval(obj);
 }
@@ -776,11 +780,14 @@ _button_remove(Evas_Object *obj, Evas_Object *content, Eina_Bool delete)
        elm_object_part_content_unset(wd->action_area, buf);
        elm_object_part_content_set(wd->action_area, buf,
                                    wd->buttons[i]->btn);
+       evas_object_show(wd->buttons[i]->btn);
        wd->buttons[i]->delete_me = EINA_TRUE;
     }
    if (!wd->button_count)
     {
        _layout_set(obj);
+       elm_object_part_content_unset(wd->base, "elm.swallow.action_area");
+       evas_object_hide(wd->action_area);
        edje_object_message_signal_process(elm_layout_edje_get(wd->base));
     }
    else
@@ -829,6 +836,7 @@ _action_button_set(Evas_Object *obj, Evas_Object *btn, unsigned int idx)
              elm_object_part_content_unset(wd->action_area, buf);
              elm_object_part_content_set(wd->action_area, buf,
                                          wd->buttons[i]->btn);
+             evas_object_show(wd->buttons[i]->btn);
              /* Setting delete_me to TRUE in order to let _sub_del handle it
                 if deleted externally and update the buttons array after freeing
                 action data allocated earlier.
@@ -837,6 +845,7 @@ _action_button_set(Evas_Object *obj, Evas_Object *btn, unsigned int idx)
           }
         elm_object_part_content_set(wd->base, "elm.swallow.action_area",
                                     wd->action_area);
+        evas_object_show(wd->action_area);
         if (wd->button_count == 1)
           _layout_set(obj);
         edje_object_message_signal_process(wd->base);
@@ -1022,13 +1031,17 @@ _content_unset_hook(Evas_Object *obj, const char *part)
 }
 
 static Eina_Bool
-_focus_next_hook(const Evas_Object *obj __UNUSED__,
-                 Elm_Focus_Direction dir __UNUSED__,
-                 Evas_Object **next __UNUSED__)
+_focus_next_hook(const Evas_Object *obj,
+                 Elm_Focus_Direction dir,
+                 Evas_Object **next)
 {
-   //TODO: Implement Focus chanin Handling in Popup for action area buttons
-   return EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd)
+     return EINA_FALSE;
+   return elm_widget_focus_next_get(wd->notify, dir, next);
 }
+
 static void
 _item_text_set(Elm_Popup_Content_Item *item, const char *label)
 {
@@ -1226,6 +1239,7 @@ elm_popup_add(Evas_Object *parent)
    elm_widget_content_set_hook_set(obj, _content_set_hook);
    elm_widget_content_get_hook_set(obj, _content_get_hook);
    elm_widget_content_unset_hook_set(obj,_content_unset_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_focus_next_hook_set(obj, _focus_next_hook);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
