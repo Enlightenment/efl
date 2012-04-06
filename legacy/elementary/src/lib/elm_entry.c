@@ -2329,7 +2329,6 @@ _elm_entry_text_get(const Evas_Object *obj, const char *item)
    if (item && strcmp(item, "default")) return NULL;
    const char *text;
    if (!wd) return NULL;
-   if (wd->text) return wd->text;
    text = edje_object_part_text_get(wd->ent, "elm.text");
    if (!text)
      {
