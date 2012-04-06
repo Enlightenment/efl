@@ -75,38 +75,46 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
    elm_scroller_child_size_get(obj, &max_x, &max_y);
 
-   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
+   if ((!strcmp(ev->keyname, "Left")) ||
+       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
      {
         x -= step_x;
      }
-   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
+   else if ((!strcmp(ev->keyname, "Right")) ||
+            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
      {
         x += step_x;
      }
-   else if ((!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
+   else if ((!strcmp(ev->keyname, "Up")) ||
+            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
      {
         y -= step_y;
      }
-   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
+   else if ((!strcmp(ev->keyname, "Down")) ||
+            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
      {
         y += step_y;
      }
-   else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
+   else if ((!strcmp(ev->keyname, "Home")) ||
+            ((!strcmp(ev->keyname, "KP_Home")) && (!ev->string)))
      {
         y = 0;
      }
-   else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
+   else if ((!strcmp(ev->keyname, "End")) ||
+            ((!strcmp(ev->keyname, "KP_End")) && (!ev->string)))
      {
         y = max_y - v_h;
      }
-   else if ((!strcmp(ev->keyname, "Prior")) || (!strcmp(ev->keyname, "KP_Prior")))
+   else if ((!strcmp(ev->keyname, "Prior")) ||
+            ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
      {
         if (page_y < 0)
           y -= -(page_y * v_h) / 100;
         else
           y -= page_y;
      }
-   else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
+   else if ((!strcmp(ev->keyname, "Next")) ||
+            ((!strcmp(ev->keyname, "KP_Next")) && (!ev->string)))
      {
         if (page_y < 0)
           y += -(page_y * v_h) / 100;

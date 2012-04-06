@@ -520,16 +520,20 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      {
         Evas_Event_Key_Down *ev = event_info;
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-        else if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left")
-                 || !strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+        else if (!strcmp(ev->keyname, "Left") ||
+                 ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)) ||
+                 !strcmp(ev->keyname, "Down") ||
+                 ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
           {
              _val_dec_start(obj);
              edje_object_signal_emit(wd->spinner, "elm,left,anim,activate", "elm");
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
           }
-        else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right")
-                 || !strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
+        else if (!strcmp(ev->keyname, "Right") ||
+                 ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)) ||
+                 !strcmp(ev->keyname, "Up") ||
+                 ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
           {
              _val_inc_start(obj);
              edje_object_signal_emit(wd->spinner, "elm,right,anim,activate", "elm");
@@ -541,11 +545,15 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      {
         Evas_Event_Key_Down *ev = event_info;
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-        if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right")
-            || !strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
+        if (!strcmp(ev->keyname, "Right") ||
+            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)) ||
+            !strcmp(ev->keyname, "Up") ||
+            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
           _val_inc_stop(obj);
-        else if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left")
-                 || !strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
+        else if (!strcmp(ev->keyname, "Left") ||
+                 ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)) ||
+                 !strcmp(ev->keyname, "Down") ||
+                 ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
           _val_dec_stop(obj);
         else  return EINA_FALSE;
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;

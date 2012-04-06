@@ -553,22 +553,22 @@ _elm_win_event_cb(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_T
              return EINA_TRUE;
           }
         else if ((!strcmp(ev->keyname, "Left")) ||
-                 (!strcmp(ev->keyname, "KP_Left")))
+                 ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
           {
              //TODO : woohyun jung
           }
         else if ((!strcmp(ev->keyname, "Right")) ||
-                 (!strcmp(ev->keyname, "KP_Right")))
+                 ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
           {
              //TODO : woohyun jung
           }
         else if ((!strcmp(ev->keyname, "Up")) ||
-                 (!strcmp(ev->keyname, "KP_Up")))
+                 ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
           {
              //TODO : woohyun jung
           }
         else if ((!strcmp(ev->keyname, "Down")) ||
-                 (!strcmp(ev->keyname, "KP_Down")))
+                 ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
           {
              //TODO : woohyun jung
           }
