@@ -1,3 +1,6 @@
+
+#define _GNU_SOURCE
+#include <string.h>
 #include <Elementary.h>
 #include "test.h"
 #ifdef HAVE_CONFIG_H
@@ -183,6 +186,10 @@ void test_web_normal(void *data, Evas_Object *obj, void *event_info);
 void test_web_mobile(void *data, Evas_Object *obj, void *event_info);
 #endif
 
+Evas_Object *win, *tbx; // TODO: refactoring
+void *tt;
+Eina_List *tests;
+
 struct elm_test
 {
    const char *icon;
@@ -231,15 +238,18 @@ _frame_clicked(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSE
 }
 
 static void
-_menu_create(Evas_Object *win, Evas_Object *tbx, void **tt, Eina_List *tests, const char *option_str __UNUSED__)
+_menu_create(const char *option_str)
 {
    struct elm_test *t = NULL;
    const char *pcat = NULL;
    Evas_Object *cfr = NULL, *tbx2 = NULL, *bt = NULL, *ic = NULL;
    char buf[PATH_MAX];
+   Eina_List *l;
 
-   EINA_LIST_FREE(tests, t)
+   elm_box_clear(tbx);
+   EINA_LIST_FOREACH(tests, l, t)
      {
+        if (option_str && !strcasestr(t->name, option_str)) continue;
         if ((!pcat) || (strcmp(pcat, t->category)))
           {
              cfr = elm_frame_add(win);
@@ -275,19 +285,34 @@ _menu_create(Evas_Object *win, Evas_Object *tbx, void **tt, Eina_List *tests, co
         evas_object_show(bt);
         evas_object_smart_callback_add(bt, "clicked", t->cb, NULL);
         pcat = t->category;
-        if (t == *tt) *tt = cfr;
-        free(t);
+        if (t == tt) tt = cfr;
      }
+}
+
+static void
+_entry_activated_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   const char *str = elm_entry_entry_get(obj);
+   if (!str) return;
+   _menu_create(str);
+}
+
+static void
+_btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   const char *str = elm_entry_entry_get(data);
+   if (!str) return;
+   _menu_create(str);
 }
 
 static void
 my_win_main(char *autorun, Eina_Bool test_win_only)
 {
-   Evas_Object *win = NULL, *bg = NULL, *bx0 = NULL, *lb = NULL;
-   Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *tbx = NULL;
-   Eina_List *tests, *l;
+   Evas_Object *bg = NULL, *bx0 = NULL, *bx1 = NULL, *lb = NULL;
+   Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *en = NULL;
+   Evas_Object *btn = NULL;
+   Eina_List *l;
    struct elm_test *t = NULL;
-   void *tt;
 
    if (test_win_only) goto add_tests;
    /* Create an elm window - It returns an evas object. This is a little
@@ -366,6 +391,36 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    evas_object_smart_callback_add(tg, "changed", _ui_tg_changed, NULL);
    elm_box_pack_end(bx0, tg);
    evas_object_show(tg);
+
+   bx1 = elm_box_add(win);
+   elm_box_horizontal_set(bx1, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx1, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx1, EVAS_HINT_FILL, 0.0);
+   elm_box_pack_end(bx0, bx1);
+   evas_object_show(bx1);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, " Search Menu :");
+   evas_object_size_hint_weight_set(en, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, 0.0, EVAS_HINT_FILL);
+   elm_box_pack_end(bx1, lb);
+   evas_object_show(lb);
+
+   en = elm_entry_add(win);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_smart_callback_add(en, "activated", _entry_activated_cb, NULL);
+   elm_box_pack_end(bx1, en);
+   evas_object_show(en);
+   elm_object_focus_set(en, EINA_TRUE);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "Go");
+   evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, en);
+   elm_box_pack_end(bx1, btn);
+   evas_object_show(btn);
 
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
@@ -645,7 +700,7 @@ add_tests:
      }
 
    if (tests)
-     _menu_create(win, tbx, &tt, tests, NULL);
+     _menu_create(NULL);
 
    /* set an initial window size */
    evas_object_resize(win, 480, 480);
