@@ -328,6 +328,7 @@ EAPI void             elm_widget_data_set(Evas_Object *obj, void *data);
 EAPI void            *elm_widget_data_get(const Evas_Object *obj);
 EAPI void             elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
 EAPI void             elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
+EAPI const Eina_List *elm_widget_sub_object_list_get(const Evas_Object *obj);
 EAPI void             elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);
 EAPI void             elm_widget_hover_object_set(Evas_Object *obj, Evas_Object *sobj);
 EAPI void             elm_widget_signal_emit(Evas_Object *obj, const char *emission, const char *source);

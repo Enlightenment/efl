@@ -1036,6 +1036,13 @@ elm_widget_sub_object_del(Evas_Object *obj,
    evas_object_smart_callback_call(obj, "sub-object-del", sobj);
 }
 
+EAPI const Eina_List *
+elm_widget_sub_object_list_get(const Evas_Object *obj)
+{
+   API_ENTRY return NULL;
+   return (const Eina_List *)sd->subobjs;
+}
+
 EAPI void
 elm_widget_resize_object_set(Evas_Object *obj,
                              Evas_Object *sobj)

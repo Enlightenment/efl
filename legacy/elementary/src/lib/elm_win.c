@@ -498,19 +498,20 @@ _elm_win_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
 {
    Elm_Win *wd = elm_widget_data_get(obj);
    const Eina_List *items;
+   const Eina_List *list;
    void *(*list_data_get) (const Eina_List *list);
 
    if (!wd)
      return EINA_FALSE;
+   list = elm_widget_sub_object_list_get(obj);
 
    /* Focus chain */
-   if (wd->subobjs)
+   if (list)
      {
         if (!(items = elm_widget_focus_custom_chain_get(obj)))
           {
-             items = wd->subobjs;
-             if (!items)
-               return EINA_FALSE;
+             if (!list) return EINA_FALSE;
+             items = list;
           }
         list_data_get = eina_list_data_get;
 
