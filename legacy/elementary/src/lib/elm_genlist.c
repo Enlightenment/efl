@@ -1811,6 +1811,79 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
      }
 }
 
+static Eina_List*
+_item_mode_content_realize(Elm_Gen_Item *it,
+                           Evas_Object *target,
+                           Eina_List **source,
+                           const char *parts,
+                           Eina_List **contents_list)
+{
+   Eina_List *res = *contents_list;
+
+   if (it->itc->func.content_get)
+     {
+        const Eina_List *l;
+        const char *key;
+
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             Evas_Object *ic = it->itc->func.content_get
+                ((void *)it->base.data, WIDGET(it), l->data);
+
+             if (ic)
+               {
+                  res = eina_list_append(res, ic);
+                  edje_object_part_swallow(target, key, ic);
+                  evas_object_show(ic);
+                  elm_widget_sub_object_add(WIDGET(it), ic);
+                  if (it->item->deco_it_view || it->wd->decorate_all_mode)
+                    {
+                       if (elm_widget_item_disabled_get(it))
+                         elm_widget_disabled_set(ic, EINA_TRUE);
+                    }
+               }
+          }
+     }
+
+   return res;
+}
+
+static Eina_List*
+_item_mode_content_unrealize(Elm_Gen_Item *it,
+                             Evas_Object *target,
+                             Eina_List **source,
+                             const char *parts,
+                             Eina_List **contents_list)
+{
+   Eina_List *res = *contents_list;
+
+   if (it->itc->func.content_get)
+     {
+        const Eina_List *l;
+        const char *key;
+        Evas_Object *ic = NULL;
+
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             ic = edje_object_part_swallow_get(target, key);
+             if (ic)
+               {
+                  res = eina_list_remove(res, ic);
+                  edje_object_part_unswallow(target, ic);
+                  evas_object_del(ic);
+               }
+          }
+     }
+
+   return res;
+}
+
 static void
 _item_cache_free(Item_Cache *itc)
 {
@@ -1891,21 +1964,19 @@ _item_content_realize(Elm_Gen_Item *it,
                       Eina_List **source,
                       const char *parts)
 {
-   Eina_List *res = NULL;
+   Eina_List *res = it->content_objs;
+
 
    if (it->itc->func.content_get)
      {
         const Eina_List *l;
         const char *key;
         Evas_Object *ic = NULL;
-        Eina_List *cons = NULL;
 
-        cons = elm_widget_stringlist_get(edje_object_data_get(target, "contents"));
+        if (!(*source))
+          *source = elm_widget_stringlist_get(edje_object_data_get(target, "contents"));
 
-        if (parts && (eina_list_count(*source) != eina_list_count(it->content_objs)))
-          res = it->content_objs;
-
-        EINA_LIST_FOREACH(cons, l, key)
+        EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
@@ -1923,7 +1994,6 @@ _item_content_realize(Elm_Gen_Item *it,
                     elm_widget_disabled_set(ic, EINA_TRUE);
                }
           }
-        *source = eina_list_merge(*source, cons);
      }
 
    return res;
@@ -1962,43 +2032,6 @@ _item_state_realize(Elm_Gen_Item *it,
                }
           }
      }
-}
-
-static Eina_List *
-_item_flips_realize(Elm_Gen_Item *it,
-                    Evas_Object *target,
-                    Eina_List **source)
-{
-   Eina_List *res = it->content_objs;
-
-   if (it->itc->func.content_get)
-     {
-        const Eina_List *l;
-        const char *key;
-        Evas_Object *ic = NULL;
-        Eina_List *cons = NULL;
-
-        cons = elm_widget_stringlist_get(edje_object_data_get(target, "flips"));
-
-        EINA_LIST_FOREACH(cons, l, key)
-          {
-             if (it->itc->func.content_get)
-               ic = it->itc->func.content_get
-                  ((void *)it->base.data, WIDGET(it), key);
-             if (ic)
-               {
-                  res = eina_list_append(res, ic);
-                  edje_object_part_swallow(target, key, ic);
-                  evas_object_show(ic);
-                  elm_widget_sub_object_add(WIDGET(it), ic);
-                  if (elm_widget_item_disabled_get(it))
-                    elm_widget_disabled_set(ic, EINA_TRUE);
-               }
-          }
-        *source = eina_list_merge(*source, cons);
-     }
-
-   return res;
 }
 
 static void
@@ -2139,8 +2172,12 @@ _item_realize(Elm_Gen_Item *it,
         if (it->flipped)
           {
              edje_object_signal_emit(VIEW(it), "elm,state,flip,enabled", "elm");
+             it->item->flip_contents =
+               elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "flips"));
              it->item->flip_content_objs =
-               _item_flips_realize(it, VIEW(it), &it->item->flip_contents);
+               _item_mode_content_realize(it, VIEW(it),
+                                          &it->item->flip_contents, NULL,
+                                          &it->item->flip_content_objs);
           }
 
         if (!it->item->mincalcd)
@@ -3235,11 +3272,13 @@ _decorate_item_realize(Elm_Gen_Item *it)
    assert(eina_list_count(it->item->deco_it_content_objs) == 0);
 
    _item_text_realize(it, it->item->deco_it_view, &it->item->deco_it_texts, NULL);
+   it->item->deco_it_contents =
+     elm_widget_stringlist_get(edje_object_data_get(it->item->deco_it_view, "contents"));
    it->item->deco_it_content_objs =
-     _item_content_realize(it, it->item->deco_it_view,
-                           &it->item->deco_it_contents, NULL);
+     _item_mode_content_realize(it, it->item->deco_it_view,
+                                &it->item->deco_it_contents, NULL,
+                                &it->item->deco_it_content_objs);
    _item_state_realize(it, it->item->deco_it_view, &it->item->deco_it_states, NULL);
-
    edje_object_part_swallow(it->item->deco_it_view,
                             edje_object_data_get(it->item->deco_it_view, "mode_part"),
                             VIEW(it));
@@ -3386,9 +3425,13 @@ _decorate_all_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    _item_mouse_callbacks_add(it, it->deco_all_obj);
 
    _item_text_realize(it, it->deco_all_obj, &it->item->deco_all_textss, NULL);
-   if (it->flipped)  edje_object_signal_emit(it->deco_all_obj, "elm,state,flip,enabled", "elm");
+   if (it->flipped) edje_object_signal_emit(it->deco_all_obj, "elm,state,flip,enabled", "elm");
+   it->item->deco_all_contents =
+     elm_widget_stringlist_get(edje_object_data_get(it->deco_all_obj, "contents"));
    it->item->deco_all_content_objs =
-     _item_content_realize(it, it->deco_all_obj, &it->item->deco_all_contents, NULL);
+     _item_mode_content_realize(it, it->deco_all_obj,
+                                &it->item->deco_all_contents, NULL,
+                                &it->item->deco_all_content_objs);
    _item_state_realize(it, it->deco_all_obj, &it->item->deco_all_states, NULL);
    edje_object_part_swallow(it->deco_all_obj, "elm.swallow.decorate.content", VIEW(it));
 
@@ -5007,6 +5050,40 @@ elm_genlist_item_fields_update(Elm_Object_Item *it,
                                                    &_it->contents, parts);
         _it->content_objs = _item_content_realize(_it, VIEW(_it),
                                                  &_it->contents, parts);
+
+        if (_it->flipped)
+          {
+             _it->item->flip_content_objs =
+               _item_mode_content_unrealize(_it, VIEW(_it),
+                                            &_it->item->flip_contents, parts,
+                                            &_it->item->flip_content_objs);
+             _it->item->flip_content_objs =
+               _item_mode_content_realize(_it, VIEW(_it),
+                                          &_it->item->flip_contents, parts,
+                                          &_it->item->flip_content_objs);
+          }
+        if (_it->item->deco_it_view)
+          {
+             _it->item->deco_it_content_objs =
+               _item_mode_content_unrealize(_it, _it->item->deco_it_view,
+                                            &_it->item->deco_it_contents, parts,
+                                            &_it->item->deco_it_content_objs);
+             _it->item->deco_it_content_objs =
+               _item_mode_content_realize(_it, _it->item->deco_it_view,
+                                          &_it->item->deco_it_contents, parts,
+                                          &_it->item->deco_it_content_objs);
+          }
+        if (_it->wd->decorate_all_mode)
+          {
+             _it->item->deco_all_content_objs =
+               _item_mode_content_unrealize(_it, _it->deco_all_obj,
+                                            &_it->item->deco_all_contents, parts,
+                                            &_it->item->deco_all_content_objs);
+             _it->item->deco_all_content_objs =
+               _item_mode_content_realize(_it, _it->deco_all_obj,
+                                          &_it->item->deco_all_contents, parts,
+                                          &_it->item->deco_all_content_objs);
+          }
      }
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_STATE))
      _item_state_realize(_it, VIEW(_it), &_it->states, parts);
