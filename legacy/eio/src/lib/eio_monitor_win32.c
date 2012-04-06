@@ -91,6 +91,13 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
       _snprintf(filename, PATH_MAX, "%s\\%s", w->monitor->path, name);
       free(name);
 
+      name = filename;
+      while (*name)
+        {
+          if (*name == '/') *name = '\\';
+          name++;
+        }
+
       switch (fni->Action)
         {
         case FILE_ACTION_ADDED:
