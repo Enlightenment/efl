@@ -112,15 +112,15 @@ test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
             "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
             " (before this)<br/>"
 
-              "And as well (absize + ascent): "
-                 "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
-                   " (full) "
-                   "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
-                   " or even paths to image files on disk too like: "
-                   "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
-                   " ... end."
-                   , elm_app_data_dir_get()
-                   );
+            "And as well (absize + ascent): "
+            "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
+            " (full) "
+            "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
+            " or even paths to image files on disk too like: "
+            "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
+            " ... end."
+            , elm_app_data_dir_get()
+            );
    elm_object_text_set(en, buf);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
