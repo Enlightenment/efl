@@ -1904,7 +1904,8 @@ _item_text_realize(Elm_Gen_Item *it,
         const Eina_List *l;
         const char *key;
 
-        *source = elm_widget_stringlist_get(edje_object_data_get(target, "texts"));
+        if (!(*source))
+          *source = elm_widget_stringlist_get(edje_object_data_get(target, "texts"));
         EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
@@ -2010,7 +2011,8 @@ _item_state_realize(Elm_Gen_Item *it,
         const char *key;
         char buf[4096];
 
-        *source = elm_widget_stringlist_get(edje_object_data_get(target, "states"));
+        if (!(*source))
+          *source = elm_widget_stringlist_get(edje_object_data_get(target, "states"));
         EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
@@ -2171,8 +2173,9 @@ _item_realize(Elm_Gen_Item *it,
         if (it->flipped)
           {
              edje_object_signal_emit(VIEW(it), "elm,state,flip,enabled", "elm");
-             it->item->flip_contents =
-               elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "flips"));
+             if (!(it->item->flip_contents))
+               it->item->flip_contents =
+                  elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "flips"));
              it->item->flip_content_objs =
                _item_mode_content_realize(it, VIEW(it),
                                           &it->item->flip_contents, NULL,
@@ -3271,8 +3274,9 @@ _decorate_item_realize(Elm_Gen_Item *it)
    assert(eina_list_count(it->item->deco_it_content_objs) == 0);
 
    _item_text_realize(it, it->item->deco_it_view, &it->item->deco_it_texts, NULL);
-   it->item->deco_it_contents =
-     elm_widget_stringlist_get(edje_object_data_get(it->item->deco_it_view, "contents"));
+   if (!it->item->deco_it_contents)
+     it->item->deco_it_contents =
+        elm_widget_stringlist_get(edje_object_data_get(it->item->deco_it_view, "contents"));
    it->item->deco_it_content_objs =
      _item_mode_content_realize(it, it->item->deco_it_view,
                                 &it->item->deco_it_contents, NULL,
@@ -3425,8 +3429,9 @@ _decorate_all_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
 
    _item_text_realize(it, it->deco_all_view, &it->item->deco_all_texts, NULL);
    if (it->flipped) edje_object_signal_emit(it->deco_all_view, "elm,state,flip,enabled", "elm");
-   it->item->deco_all_contents =
-     elm_widget_stringlist_get(edje_object_data_get(it->deco_all_view, "contents"));
+   if (!it->item->deco_all_contents)
+     it->item->deco_all_contents =
+        elm_widget_stringlist_get(edje_object_data_get(it->deco_all_view, "contents"));
    it->item->deco_all_content_objs =
      _item_mode_content_realize(it, it->deco_all_view,
                                 &it->item->deco_all_contents, NULL,
@@ -5100,6 +5105,34 @@ elm_genlist_item_item_class_update(Elm_Object_Item *it,
    if (_it->generation < _it->wd->generation) return;
    _it->itc = itc;
    _it->item->nocache_once = EINA_TRUE;
+
+   elm_widget_stringlist_free(_it->texts);
+   _it->texts = NULL;
+   elm_widget_stringlist_free(_it->contents);
+   _it->contents = NULL;
+   elm_widget_stringlist_free(_it->states);
+   _it->states = NULL;
+
+   if (_it->flipped)
+     {
+        elm_widget_stringlist_free(_it->item->flip_contents);
+        _it->item->flip_contents = NULL;
+     }
+   if (_it->item->deco_it_view)
+     {
+        elm_widget_stringlist_free(_it->item->deco_it_texts);
+        _it->item->deco_it_texts = NULL;
+        elm_widget_stringlist_free(_it->item->deco_it_contents);
+        _it->item->deco_it_contents = NULL;
+     }
+   if (_it->wd->decorate_all_mode)
+     {
+        elm_widget_stringlist_free(_it->item->deco_all_texts);
+        _it->item->deco_all_texts = NULL;
+        elm_widget_stringlist_free(_it->item->deco_all_contents);
+        _it->item->deco_all_contents = NULL;
+     }
+
    elm_genlist_item_update(it);
 }
 
