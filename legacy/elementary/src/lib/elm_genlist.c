@@ -53,7 +53,7 @@ struct Elm_Gen_Item_Type
    Elm_Gen_Item                 *group_item;
    Elm_Genlist_Item_Type        type;
    Eina_List                    *deco_it_texts, *deco_it_contents, *deco_it_states, *deco_it_content_objs;
-   Eina_List                    *deco_all_textss, *deco_all_contents, *deco_all_states, *deco_all_content_objs;
+   Eina_List                    *deco_all_texts, *deco_all_contents, *deco_all_states, *deco_all_content_objs;
    Eina_List                    *flip_contents, *flip_content_objs;
    Ecore_Timer                  *swipe_timer;
    Evas_Coord                    scrl_x, scrl_y, old_scrl_y;
@@ -709,11 +709,11 @@ _item_highlight(Elm_Gen_Item *it)
        (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return;
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
-   if (it->deco_all_obj) edje_object_signal_emit(it->deco_all_obj, "elm,state,selected", "elm");
+   if (it->deco_all_view) edje_object_signal_emit(it->deco_all_view, "elm,state,selected", "elm");
    selectraise = edje_object_data_get(VIEW(it), "selectraise");
    if ((selectraise) && (!strcmp(selectraise, "on")))
      {
-        if (it->deco_all_obj) evas_object_raise(it->deco_all_obj);
+        if (it->deco_all_view) evas_object_raise(it->deco_all_view);
         else evas_object_raise(VIEW(it));
         if ((it->item->group_item) && (it->item->group_item->realized))
           evas_object_raise(it->item->VIEW(group_item));
@@ -726,17 +726,17 @@ _item_unhighlight(Elm_Gen_Item *it)
 {
    if ((it->generation < it->wd->generation) || (!it->highlighted)) return;
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
-   if (it->deco_all_obj) edje_object_signal_emit(it->deco_all_obj, "elm,state,unselected", "elm");
+   if (it->deco_all_view) edje_object_signal_emit(it->deco_all_view, "elm,state,unselected", "elm");
    if (!it->item->nostacking)
      {
        if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even)
          {
-             if (it->deco_all_obj) evas_object_lower(it->deco_all_obj);
+             if (it->deco_all_view) evas_object_lower(it->deco_all_view);
              else evas_object_lower(VIEW(it));
          }
        else
          {
-             if (it->deco_all_obj) evas_object_raise(it->deco_all_obj);
+             if (it->deco_all_view) evas_object_raise(it->deco_all_view);
              else evas_object_raise(VIEW(it));
          }
      }
@@ -992,8 +992,8 @@ _mouse_move(void        *data,
              else
                y_pos = it_scrl_y;
 
-             if (it->deco_all_obj)
-               _item_position(it, it->deco_all_obj, it->item->scrl_x, y_pos);
+             if (it->deco_all_view)
+               _item_position(it, it->deco_all_view, it->item->scrl_x, y_pos);
              else
              _item_position(it, VIEW(it), it->item->scrl_x, y_pos);
 
@@ -1077,8 +1077,8 @@ _long_press(void *data)
      {
         it->wd->reorder_it = it;
         it->wd->reorder_start_y = 0;
-        if (it->deco_all_obj)
-          evas_object_raise(it->deco_all_obj);
+        if (it->deco_all_view)
+          evas_object_raise(it->deco_all_view);
         else
           evas_object_raise(VIEW(it));
 
@@ -1723,12 +1723,12 @@ _elm_genlist_item_odd_even_update(Elm_Gen_Item *it)
      {
         if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even)
           {
-             if (it->deco_all_obj) evas_object_lower(it->deco_all_obj);
+             if (it->deco_all_view) evas_object_lower(it->deco_all_view);
              else evas_object_lower(VIEW(it));
           }
         else
           {
-             if (it->deco_all_obj) evas_object_raise(it->deco_all_obj);
+             if (it->deco_all_view) evas_object_raise(it->deco_all_view);
              else evas_object_raise(VIEW(it));
           }
      }
@@ -1736,12 +1736,12 @@ _elm_genlist_item_odd_even_update(Elm_Gen_Item *it)
    if (it->item->order_num_in & 0x1)
      {
         edje_object_signal_emit(VIEW(it), "elm,state,odd", "elm");
-        if (it->deco_all_obj) edje_object_signal_emit(it->deco_all_obj, "elm,state,odd", "elm");
+        if (it->deco_all_view) edje_object_signal_emit(it->deco_all_view, "elm,state,odd", "elm");
      }
    else
      {
         edje_object_signal_emit(VIEW(it), "elm,state,even", "elm");
-        if (it->deco_all_obj) edje_object_signal_emit(it->deco_all_obj, "elm,state,even", "elm");
+        if (it->deco_all_view) edje_object_signal_emit(it->deco_all_view, "elm,state,even", "elm");
      }
 }
 
@@ -1757,8 +1757,8 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
                   edje_object_signal_emit(VIEW(it),
                                           "elm,state,selected", "elm");
 
-                  if (it->deco_all_obj)
-                    edje_object_signal_emit(it->deco_all_obj,
+                  if (it->deco_all_view)
+                    edje_object_signal_emit(it->deco_all_view,
                                             "elm,state,selected", "elm");
                }
           }
@@ -1767,8 +1767,8 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
              if (elm_widget_item_disabled_get(it))
                edje_object_signal_emit(VIEW(it),
                                        "elm,state,disabled", "elm");
-             if (it->deco_all_obj)
-               edje_object_signal_emit(it->deco_all_obj,
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view,
                                        "elm,state,disabled", "elm");
           }
         if (it->item->expanded != itc->expanded)
@@ -1776,8 +1776,8 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
              if (it->item->expanded)
                edje_object_signal_emit(VIEW(it),
                                        "elm,state,expanded", "elm");
-             if (it->deco_all_obj)
-               edje_object_signal_emit(it->deco_all_obj,
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view,
                                        "elm,state,expanded", "elm");
           }
      }
@@ -1787,8 +1787,8 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
           {
              edje_object_signal_emit(VIEW(it),
                                      "elm,state,selected", "elm");
-             if (it->deco_all_obj)
-               edje_object_signal_emit(it->deco_all_obj,
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view,
                                        "elm,state,selected", "elm");
           }
 
@@ -1796,16 +1796,16 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
           {
              edje_object_signal_emit(VIEW(it),
                                      "elm,state,disabled", "elm");
-             if (it->deco_all_obj)
-               edje_object_signal_emit(it->deco_all_obj,
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view,
                                        "elm,state,disabled", "elm");
           }
         if (it->item->expanded)
           {
              edje_object_signal_emit(VIEW(it),
                                      "elm,state,expanded", "elm");
-             if (it->deco_all_obj)
-               edje_object_signal_emit(it->deco_all_obj,
+             if (it->deco_all_view)
+               edje_object_signal_emit(it->deco_all_view,
                                        "elm,state,expanded", "elm");
           }
      }
@@ -1965,7 +1965,6 @@ _item_content_realize(Elm_Gen_Item *it,
                       const char *parts)
 {
    Eina_List *res = it->content_objs;
-
 
    if (it->itc->func.content_get)
      {
@@ -2132,7 +2131,7 @@ _item_realize(Elm_Gen_Item *it,
                                         "elm", _signal_contract, it);
         _item_mouse_callbacks_add(it, VIEW(it));
 
-        if ((it->wd->decorate_all_mode) && (!it->deco_all_obj) &&
+        if ((it->wd->decorate_all_mode) && (!it->deco_all_view) &&
             (it->item->type != ELM_GENLIST_ITEM_GROUP) && (it->itc->decorate_all_item_style))
           _decorate_all_item_realize(it, EINA_FALSE);
 
@@ -2242,8 +2241,8 @@ _item_realize(Elm_Gen_Item *it,
      {
         if (it->itc->decorate_all_item_style)
           {
-             if (!it->deco_all_obj) _decorate_all_item_realize(it, EINA_FALSE);
-             edje_object_message_signal_process(it->deco_all_obj);
+             if (!it->deco_all_view) _decorate_all_item_realize(it, EINA_FALSE);
+             edje_object_message_signal_process(it->deco_all_view);
           }
      }
    edje_object_message_signal_process(VIEW(it));
@@ -2443,8 +2442,8 @@ _reorder_move_animator_cb(void *data)
         down = EINA_FALSE;
      }
 
-   if (it->deco_all_obj)
-     _item_position(it, it->deco_all_obj, it->item->scrl_x, it->item->old_scrl_y);
+   if (it->deco_all_view)
+     _item_position(it, it->deco_all_view, it->item->scrl_x, it->item->old_scrl_y);
    else
      _item_position(it, VIEW(it), it->item->scrl_x, it->item->old_scrl_y);
    _group_items_recalc(it->wd);
@@ -3371,8 +3370,8 @@ static void
 _decorate_all_item_position(Elm_Gen_Item *it, int itx, int ity)
 {
    if ((!it) || (!it->wd->decorate_all_mode)) return;
-   evas_object_resize(it->deco_all_obj, it->item->w, it->item->h);
-   evas_object_move(it->deco_all_obj, itx, ity);
+   evas_object_resize(it->deco_all_view, it->item->w, it->item->h);
+   evas_object_move(it->deco_all_view, itx, ity);
 }
 
 static void
@@ -3386,11 +3385,11 @@ _decorate_all_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
        (it->generation < it->wd->generation))
      return;
 
-   it->deco_all_obj = edje_object_add(evas_object_evas_get(WIDGET(it)));
-   edje_object_scale_set(it->deco_all_obj, elm_widget_scale_get(WIDGET(it)) *
+   it->deco_all_view = edje_object_add(evas_object_evas_get(WIDGET(it)));
+   edje_object_scale_set(it->deco_all_view, elm_widget_scale_get(WIDGET(it)) *
                          _elm_config->scale);
-   evas_object_smart_member_add(it->deco_all_obj, it->wd->pan_smart);
-   elm_widget_sub_object_add(WIDGET(it), it->deco_all_obj);
+   evas_object_smart_member_add(it->deco_all_view, it->wd->pan_smart);
+   elm_widget_sub_object_add(WIDGET(it), it->deco_all_view);
 
    if (it->item->type & ELM_GENLIST_ITEM_TREE)
       strncpy(buf, "tree", sizeof(buf));
@@ -3401,7 +3400,7 @@ _decorate_all_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    strncat(buf, "/", sizeof(buf) - strlen(buf));
    strncat(buf, it->itc->decorate_all_item_style, sizeof(buf) - strlen(buf));
 
-   _elm_theme_object_set(WIDGET(it),  it->deco_all_obj, "genlist", buf,
+   _elm_theme_object_set(WIDGET(it),  it->deco_all_view, "genlist", buf,
                          elm_widget_style_get(WIDGET(it)));
 
    stacking_even = edje_object_data_get(VIEW(it), "stacking_even");
@@ -3412,31 +3411,31 @@ _decorate_all_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    if (!stacking) stacking = "yes";
    it->item->nostacking = !!strcmp("yes", stacking);
 
-   edje_object_mirrored_set(it->deco_all_obj,
+   edje_object_mirrored_set(it->deco_all_view,
                             elm_widget_mirrored_get(WIDGET(it)));
 
    _elm_genlist_item_odd_even_update(it);
    _elm_genlist_item_state_update(it, NULL);
 
-   if (effect_on) edje_object_signal_emit(it->deco_all_obj, "elm,state,decorate,enabled,effect", "elm");
-   else edje_object_signal_emit(it->deco_all_obj, "elm,state,decorate,enabled", "elm");
+   if (effect_on) edje_object_signal_emit(it->deco_all_view, "elm,state,decorate,enabled,effect", "elm");
+   else edje_object_signal_emit(it->deco_all_view, "elm,state,decorate,enabled", "elm");
 
    _item_mouse_callbacks_del(it, VIEW(it));
-   _item_mouse_callbacks_add(it, it->deco_all_obj);
+   _item_mouse_callbacks_add(it, it->deco_all_view);
 
-   _item_text_realize(it, it->deco_all_obj, &it->item->deco_all_textss, NULL);
-   if (it->flipped) edje_object_signal_emit(it->deco_all_obj, "elm,state,flip,enabled", "elm");
+   _item_text_realize(it, it->deco_all_view, &it->item->deco_all_texts, NULL);
+   if (it->flipped) edje_object_signal_emit(it->deco_all_view, "elm,state,flip,enabled", "elm");
    it->item->deco_all_contents =
-     elm_widget_stringlist_get(edje_object_data_get(it->deco_all_obj, "contents"));
+     elm_widget_stringlist_get(edje_object_data_get(it->deco_all_view, "contents"));
    it->item->deco_all_content_objs =
-     _item_mode_content_realize(it, it->deco_all_obj,
+     _item_mode_content_realize(it, it->deco_all_view,
                                 &it->item->deco_all_contents, NULL,
                                 &it->item->deco_all_content_objs);
-   _item_state_realize(it, it->deco_all_obj, &it->item->deco_all_states, NULL);
-   edje_object_part_swallow(it->deco_all_obj, "elm.swallow.decorate.content", VIEW(it));
+   _item_state_realize(it, it->deco_all_view, &it->item->deco_all_states, NULL);
+   edje_object_part_swallow(it->deco_all_view, "elm.swallow.decorate.content", VIEW(it));
 
    _decorate_all_item_position(it, it->item->scrl_x, it->item->scrl_y);
-   evas_object_show(it->deco_all_obj);
+   evas_object_show(it->deco_all_view);
 
    it->item->decorate_all_item_realized = EINA_TRUE;
    it->want_unrealize = EINA_FALSE;
@@ -3448,24 +3447,24 @@ _decorate_all_item_unrealize(Elm_Gen_Item *it)
    Evas_Object *icon;
    if ((!it) || (!it->item->decorate_all_item_realized)) return;
 
-   edje_object_part_unswallow(it->deco_all_obj, VIEW(it));
+   edje_object_part_unswallow(it->deco_all_view, VIEW(it));
    evas_object_smart_member_add(VIEW(it), it->wd->pan_smart);
    elm_widget_sub_object_add(WIDGET(it), VIEW(it));
    _elm_genlist_item_odd_even_update(it);
    _elm_genlist_item_state_update(it, NULL);
 
-   evas_object_del(it->deco_all_obj);
-   it->deco_all_obj = NULL;
-   elm_widget_stringlist_free(it->item->deco_all_textss);
-   it->item->deco_all_textss = NULL;
+   evas_object_del(it->deco_all_view);
+   it->deco_all_view = NULL;
+   elm_widget_stringlist_free(it->item->deco_all_texts);
+   it->item->deco_all_texts = NULL;
    elm_widget_stringlist_free(it->item->deco_all_contents);
    it->item->deco_all_contents = NULL;
    elm_widget_stringlist_free(it->item->deco_all_states);
    it->item->deco_all_states = NULL;
    EINA_LIST_FREE(it->item->deco_all_content_objs, icon)
      evas_object_del(icon);
-   edje_object_message_signal_process(it->deco_all_obj);
-   _item_mouse_callbacks_del(it, it->deco_all_obj);
+   edje_object_message_signal_process(it->deco_all_view);
+   _item_mouse_callbacks_del(it, it->deco_all_view);
    _item_mouse_callbacks_add(it, VIEW(it));
 
    it->item->decorate_all_item_realized = EINA_FALSE;
@@ -3683,14 +3682,14 @@ _item_disable_hook(Elm_Object_Item *it)
         if (elm_widget_item_disabled_get(it))
           {
              edje_object_signal_emit(VIEW(_it), "elm,state,disabled", "elm");
-             if (_it->deco_all_obj)
-               edje_object_signal_emit(_it->deco_all_obj, "elm,state,disabled", "elm");
+             if (_it->deco_all_view)
+               edje_object_signal_emit(_it->deco_all_view, "elm,state,disabled", "elm");
           }
         else
           {
              edje_object_signal_emit(VIEW(_it), "elm,state,enabled", "elm");
-             if (_it->deco_all_obj)
-               edje_object_signal_emit(_it->deco_all_obj, "elm,state,enabled", "elm");
+             if (_it->deco_all_view)
+               edje_object_signal_emit(_it->deco_all_view, "elm,state,enabled", "elm");
           }
         EINA_LIST_FOREACH(_it->content_objs, l, obj)
           elm_widget_disabled_set(obj, elm_widget_item_disabled_get(_it));
@@ -5076,11 +5075,11 @@ elm_genlist_item_fields_update(Elm_Object_Item *it,
         if (_it->wd->decorate_all_mode)
           {
              _it->item->deco_all_content_objs =
-               _item_mode_content_unrealize(_it, _it->deco_all_obj,
+               _item_mode_content_unrealize(_it, _it->deco_all_view,
                                             &_it->item->deco_all_contents, parts,
                                             &_it->item->deco_all_content_objs);
              _it->item->deco_all_content_objs =
-               _item_mode_content_realize(_it, _it->deco_all_obj,
+               _item_mode_content_realize(_it, _it->deco_all_view,
                                           &_it->item->deco_all_contents, parts,
                                           &_it->item->deco_all_content_objs);
           }
