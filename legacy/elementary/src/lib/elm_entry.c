@@ -3192,7 +3192,8 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
    if (lim->max_char_count > 0)
      {
         len = evas_string_char_len_get(current);
-        if (len >= lim->max_char_count)
+        newlen = evas_string_char_len_get(utfstr);
+        if ((len >= lim->max_char_count) && (newlen > 0))
           {
              evas_object_smart_callback_call(entry, "maxlength,reached", NULL);
              free(*text);
@@ -3201,14 +3202,14 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
              free(utfstr);
              return;
           }
-        newlen = evas_string_char_len_get(utfstr);
         if ((len + newlen) > lim->max_char_count)
           _add_chars_till_limit(entry, text, (lim->max_char_count - len), LENGTH_UNIT_CHAR);
      }
    else if (lim->max_byte_count > 0)
      {
         len = strlen(current);
-        if (len >= lim->max_byte_count)
+        newlen = strlen(utfstr);
+        if ((len >= lim->max_byte_count) && (newlen > 0))
           {
              evas_object_smart_callback_call(entry, "maxlength,reached", NULL);
              free(*text);
@@ -3217,7 +3218,6 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
              free(utfstr);
              return;
           }
-        newlen = strlen(utfstr);
         if ((len + newlen) > lim->max_byte_count)
           _add_chars_till_limit(entry, text, (lim->max_byte_count - len), LENGTH_UNIT_BYTE);
      }
