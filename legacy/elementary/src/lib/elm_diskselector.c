@@ -596,23 +596,29 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
         return EINA_TRUE;
    }
 
-   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")) ||
-       (!strcmp(ev->keyname, "Up"))  || (!strcmp(ev->keyname, "KP_Up")))
+   if ((!strcmp(ev->keyname, "Left")) ||
+       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)) ||
+       (!strcmp(ev->keyname, "Up"))  ||
+       ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
      {
         l = wd->selected_item->node->prev;
         if ((!l) && (wd->round))
           l = eina_list_last(wd->items);
      }
-   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")) ||
-            (!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
+   else if ((!strcmp(ev->keyname, "Right")) ||
+            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)) ||
+            (!strcmp(ev->keyname, "Down")) ||
+            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
      {
         l = wd->selected_item->node->next;
         if ((!l) && (wd->round))
           l = wd->items;
      }
-   else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
+   else if ((!strcmp(ev->keyname, "Home")) ||
+            ((!strcmp(ev->keyname, "KP_Home")) && (!ev->string)))
      l = wd->items;
-   else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
+   else if ((!strcmp(ev->keyname, "End")) ||
+            ((!strcmp(ev->keyname, "KP_End")) && (!ev->string)))
      l = eina_list_last(wd->items);
    else return EINA_FALSE;
 

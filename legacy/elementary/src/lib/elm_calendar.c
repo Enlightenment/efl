@@ -671,32 +671,32 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    if (!wd->selection_enabled) return EINA_FALSE;
 
    if ((!strcmp(ev->keyname, "Left")) ||
-       (!strcmp(ev->keyname, "KP_Left")))
+       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
      {
         _update_sel_it(obj, wd->selected_it-1);
      }
    else if ((!strcmp(ev->keyname, "Right")) ||
-            (!strcmp(ev->keyname, "KP_Right")))
+            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
      {
         _update_sel_it(obj, wd->selected_it+1);
      }
    else if ((!strcmp(ev->keyname, "Up"))  ||
-            (!strcmp(ev->keyname, "KP_Up")))
+            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
      {
         _update_sel_it(obj, wd->selected_it-ELM_DAY_LAST);
      }
    else if ((!strcmp(ev->keyname, "Down")) ||
-            (!strcmp(ev->keyname, "KP_Down")))
+            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
      {
         _update_sel_it(obj, wd->selected_it+ELM_DAY_LAST);
      }
    else if ((!strcmp(ev->keyname, "Prior")) ||
-            (!strcmp(ev->keyname, "KP_Prior")))
+            ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
      {
         if (_update_month(obj, -1)) _populate(obj);
      }
    else if ((!strcmp(ev->keyname, "Next")) ||
-            (!strcmp(ev->keyname, "KP_Next")))
+            ((!strcmp(ev->keyname, "KP_Next")) && (!ev->string)))
      {
         if (_update_month(obj, 1)) _populate(obj);
      }

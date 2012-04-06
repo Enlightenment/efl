@@ -143,7 +143,8 @@ _event_hook(Evas_Object        *obj,
    elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &v_w, &v_h);
 
-   if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
+   if ((!strcmp(ev->keyname, "Left")) ||
+       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
      {
         if ((wd->horizontal) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -164,7 +165,8 @@ _event_hook(Evas_Object        *obj,
         else
           x -= step_x;
      }
-   else if ((!strcmp(ev->keyname, "Right")) || (!strcmp(ev->keyname, "KP_Right")))
+   else if ((!strcmp(ev->keyname, "Right")) ||
+            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
      {
         if ((wd->horizontal) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -185,7 +187,8 @@ _event_hook(Evas_Object        *obj,
         else
           x += step_x;
      }
-   else if ((!strcmp(ev->keyname, "Up")) || (!strcmp(ev->keyname, "KP_Up")))
+   else if ((!strcmp(ev->keyname, "Up")) ||
+            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
      {
         if ((wd->horizontal) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -206,7 +209,8 @@ _event_hook(Evas_Object        *obj,
         else
           y -= step_y;
      }
-   else if ((!strcmp(ev->keyname, "Down")) || (!strcmp(ev->keyname, "KP_Down")))
+   else if ((!strcmp(ev->keyname, "Down")) ||
+            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
      {
         if ((wd->horizontal) &&
             (((evas_key_modifier_is_set(ev->modifiers, "Shift")) &&
@@ -227,7 +231,8 @@ _event_hook(Evas_Object        *obj,
         else
           y += step_y;
      }
-   else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
+   else if ((!strcmp(ev->keyname, "Home")) ||
+            ((!strcmp(ev->keyname, "KP_Home")) && (!ev->string)))
      {
         it = elm_gengrid_first_item_get(obj);
         elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
@@ -235,7 +240,8 @@ _event_hook(Evas_Object        *obj,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
+   else if ((!strcmp(ev->keyname, "End")) ||
+            ((!strcmp(ev->keyname, "KP_End")) && (!ev->string)))
      {
         it = elm_gengrid_last_item_get(obj);
         elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
@@ -243,7 +249,8 @@ _event_hook(Evas_Object        *obj,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if ((!strcmp(ev->keyname, "Prior")) || (!strcmp(ev->keyname, "KP_Prior")))
+   else if ((!strcmp(ev->keyname, "Prior")) ||
+            ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
      {
         if (wd->horizontal)
           {
@@ -260,7 +267,8 @@ _event_hook(Evas_Object        *obj,
                y -= page_y;
           }
      }
-   else if ((!strcmp(ev->keyname, "Next")) || (!strcmp(ev->keyname, "KP_Next")))
+   else if ((!strcmp(ev->keyname, "Next")) ||
+            ((!strcmp(ev->keyname, "KP_Next")) && (!ev->string)))
      {
         if (wd->horizontal)
           {
