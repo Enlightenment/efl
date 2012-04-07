@@ -49,7 +49,7 @@ typedef enum
  *
  * @param o Object to set filter mode on.
  * @param mode Mode to set.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
    EAPI Eina_Bool                            evas_object_filter_mode_set      (Evas_Object *o, Evas_Filter_Mode mode);
 
@@ -78,7 +78,7 @@ typedef enum
  *
  * @param o Object to set the filter on.
  * @param filter Filter to set.
- * @return EINA_TRUE On success
+ * @return @c EINA_TRUE on success.
  */
    EAPI Eina_Bool                            evas_object_filter_set           (Evas_Object *o, Evas_Filter filter);
 
@@ -103,7 +103,7 @@ typedef enum
  * @param o Object to set parameter on.
  * @param param Name of parameter to set.
  * @param val Value to set.
- * @return EINA_TRUE if at least one parameter was set, EINA_FALSE
+ * @return @c EINA_TRUE if at least one parameter was set, @c EINA_FALSE
  * otherwise.
  */
    EAPI Eina_Bool                            evas_object_filter_param_int_set (Evas_Object *o, const char *param, int val);
@@ -160,7 +160,8 @@ typedef enum
  *
  * @param o Object to set value on.
  * @param param Name of the parameter to set.
- * @param EINA_TRUE if at least one parameter was set, EINA_FALSE otherwise.
+ * @param @c EINA_TRUE if at least one parameter was set, @c EINA_FALSE
+ * otherwise.
  */
    EAPI Eina_Bool                            evas_object_filter_param_float_set(Evas_Object *o, const char *param, double val);
 

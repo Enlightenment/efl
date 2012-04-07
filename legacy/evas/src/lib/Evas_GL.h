@@ -455,7 +455,7 @@ EAPI void                     evas_gl_context_destroy    (Evas_GL *evas_gl, Evas
  * @param evas_gl The given Evas_GL object.
  * @param surf The given Evas GL surface.
  * @param ctx The given Evas GL context.
- * @return EINA_TRUE if successful, EINA_FALSE if not.
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE if not.
  */
 EAPI Eina_Bool                evas_gl_make_current       (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *ctx) EINA_ARG_NONNULL(1,2);
 
@@ -481,7 +481,7 @@ EAPI Evas_GL_Func             evas_gl_proc_address_get   (Evas_GL *evas_gl, cons
  * @param evas_gl The given Evas_GL object.
  * @param surf The given Evas GL surface to retrieve the Native Surface info from.
  * @param ns The native surface structure that the function fills in.
- * @return EINA_TRUE if successful, EINA_FALSE if not.
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE if not.
  */
 EAPI Eina_Bool                evas_gl_native_surface_get (Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_Surface *ns) EINA_ARG_NONNULL(1,2,3);
 

@@ -1305,8 +1305,7 @@ EAPI Eina_Bool         evas_async_events_put             (const void *target, Ev
  * @attention it is recommended that one calls evas_init() before
  *       creating new canvas.
  *
- * @return A new uninitialised Evas canvas on success.  Otherwise, @c
- * NULL.
+ * @return A new uninitialised Evas canvas on success. Otherwise, @c NULL.
  * @ingroup Evas_Canvas
  */
 EAPI Evas             *evas_new                          (void) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
@@ -1677,7 +1676,7 @@ EAPI int               evas_render_method_lookup         (const char *name) EINA
  * available. The strings should never be modified, neither should the
  * list be modified. This list should be cleaned up as soon as the
  * program no longer needs it using evas_render_method_list_free(). If
- * no engines are available from Evas, NULL will be returned.
+ * no engines are available from Evas, @c NULL will be returned.
  *
  * Example:
  * @code
@@ -1788,7 +1787,7 @@ EAPI Evas_Engine_Info *evas_engine_info_get              (const Evas *e) EINA_WA
  *
  * @param   e    The pointer to the Evas Canvas
  * @param   info The pointer to the Engine Info to use
- * @return  EINA_TRUE if no error occurred, EINA_FALSE otherwise
+ * @return  @c EINA_TRUE if no error occurred, @c EINA_FALSE otherwise.
  * @ingroup Evas_Output_Method
  */
 EAPI Eina_Bool         evas_engine_info_set              (Evas *e, Evas_Engine_Info *info) EINA_ARG_NONNULL(1);
@@ -1868,7 +1867,7 @@ EAPI void              evas_output_viewport_set          (Evas *e, Evas_Coord x,
  * size and location values into the variables pointed to by @p x, @p
  * y, @p w and @p h.  On success the variables have the output
  * location and size values written to them in canvas units. Any of @p
- * x, @p y, @p w or @p h that are NULL will not be written to. If @p e
+ * x, @p y, @p w or @p h that are @c NULL will not be written to. If @p e
  * is invalid, the results are undefined.
  *
  * Example:
@@ -2256,7 +2255,7 @@ EAPI void              evas_event_callback_priority_add(Evas *e, Evas_Callback_T
  * calling the function @p func when triggered. If the removal is
  * successful it will also return the data pointer that was passed to
  * evas_event_callback_add() when the callback was added to the
- * canvas. If not successful NULL will be returned.
+ * canvas. If not successful @c NULL will be returned.
  *
  * Example:
  * @code
@@ -2776,10 +2775,10 @@ EAPI int               evas_image_cache_get              (const Evas *e) EINA_WA
  * @param maxh Pointer to hold the return value in pixels of the maximum height
  *
  * This function returns the larges image or surface size that evas can handle
- * in pixels, and if there is one, returns EINA_TRUE. It returns EINA_FALSE
- * if no extra constraint on maximum image size exists. You still should
- * check the return values of @p maxw and @p maxh as there may still be a
- * limit, just a much higher one.
+ * in pixels, and if there is one, returns @c EINA_TRUE. It returns 
+ * @c EINA_FALSE if no extra constraint on maximum image size exists. You still
+ * should check the return values of @p maxw and @p maxh as there may still be
+ * a limit, just a much higher one.
  *
  * @since 1.1
  */
@@ -3121,10 +3120,10 @@ EAPI const Eina_List  *evas_object_clipees_get           (const Evas_Object *obj
  * to take away the focus from it.
  *
  * Changing focus only affects where (key) input events go. There can
- * be only one object focused at any time. If @p focus is @c
- * EINA_TRUE, @p obj will be set as the currently focused object and
- * it will receive all keyboard events that are not exclusive key
- * grabs on other objects.
+ * be only one object focused at any time. If @p focus is @c EINA_TRUE,
+ * @p obj will be set as the currently focused object and it will 
+ * receive all keyboard events that are not exclusive key grabs on 
+ * other objects.
  *
  * Example:
  * @dontinclude evas-events.c
@@ -3144,8 +3143,7 @@ EAPI void              evas_object_focus_set             (Evas_Object *obj, Eina
  * Retrieve whether an object has the focus.
  *
  * @param obj The object to retrieve focus information from.
- * @return @c EINA_TRUE if the object has the focus, @c EINA_FALSE
- * otherwise.
+ * @return @c EINA_TRUE if the object has the focus, @c EINA_FALSE otherwise.
  *
  * If the passed object is the currently focused one, @c EINA_TRUE is
  * returned. @c EINA_FALSE is returned, otherwise.
@@ -3742,7 +3740,7 @@ EAPI Evas_Object      *evas_object_below_get             (const Evas_Object *obj
  *
  * These events have their values in the #Evas_Callback_Type
  * enumeration, which has also ones happening on the canvas level (see
- * #Evas_Canvas_Events ).
+ * @ref Evas_Canvas_Events ).
  *
  * Examples on this group of functions can be found @ref
  * Example_Evas_Stacking "here" and @ref Example_Evas_Events "here".
@@ -3971,7 +3969,7 @@ EAPI void                 evas_object_event_callback_priority_add(Evas_Object *o
  * calling the function @p func when triggered. If the removal is
  * successful it will also return the data pointer that was passed to
  * evas_object_event_callback_add() when the callback was added to the
- * object. If not successful NULL will be returned.
+ * object. If not successful @c NULL will be returned.
  *
  * Example:
  * @code
@@ -4108,8 +4106,8 @@ EAPI Eina_Bool         evas_object_repeat_events_get      (const Evas_Object *ob
  * up to its parent.
  *
  * @param obj the smart object's child to operate on
- * @param prop whether to propagate events (@c EINA_TRUE) or not (@c
- * EINA_FALSE)
+ * @param prop whether to propagate events (@c EINA_TRUE) or not
+ * (@c EINA_FALSE)
  *
  * This function has @b no effect if @p obj is not a member of a smart
  * object.
@@ -5699,8 +5697,8 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  * detection for a given Evas object.
  *
  * @param obj The given object.
- * @param precise whether to use precise point collision detection or
- * not The default value is false.
+ * @param precise Whether to use precise point collision detection or
+ * not. The default value is false.
  *
  * Use this function to make Evas treat objects' transparent areas as
  * @b not belonging to it with regard to mouse pointer events. By
@@ -5742,12 +5740,12 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  *
  * @param obj The given object.
  * @param is_static_clip @c EINA_TRUE if it's to be used as a static
- * clipper, @c EINA_FALSE otherwise
+ * clipper, @c EINA_FALSE otherwise.
  *
  * This is a hint to Evas that this object is used as a big static
  * clipper and shouldn't be moved with children and otherwise
- * considered specially. The default value for new objects is @c
- * EINA_FALSE.
+ * considered specially. The default value for new objects is 
+ * @c EINA_FALSE.
  *
  * @see evas_object_static_clip_get()
  *
@@ -5759,8 +5757,8 @@ EAPI Evas_Render_Op            evas_object_render_op_get        (const Evas_Obje
  * Get the "static clipper" hint flag for a given Evas object.
  *
  * @param obj The given object.
- * @return @c EINA_TRUE if it's set as a static clipper, @c
- * EINA_FALSE otherwise
+ * @return @c EINA_TRUE if it's set as a static clipper,
+ * @c EINA_FALSE otherwise.
  *
  * @see evas_object_static_clip_set() for more details
  *
@@ -6424,7 +6422,6 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  * rundown on formats:
  *
  * - #EVAS_COLORSPACE_ARGB8888:
- *   .
  *   This pixel format is a linear block of pixels, starting at the
  *   top-left row by row until the bottom right of the image or pixel
  *   region. All pixels are 32-bit unsigned int's with the high-byte
@@ -6441,9 +6438,8 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  *   So 50% transparent blue will be: 0x80000080. This will not be
  *   "dark" - just 50% transparent. Values are 0 == black, 255 ==
  *   solid or full red, green or blue.
- *
+ * .
  * - #EVAS_COLORSPACE_YCBCR422P601_PL:
- *   .
  *   This is a pointer-list indirected set of YUV (YCbCr) pixel
  *   data. This means that the data returned or set is not actual
  *   pixel data, but pointers TO lines of pixel data. The list of
@@ -6467,13 +6463,11 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  *   \n\n
  *   Values are 0 to 255, indicating full or no signal in that plane
  *   respectively.
- *
+ * .
  * - #EVAS_COLORSPACE_YCBCR422P709_PL:
- *   .
  *   Not implemented yet.
- *
+ * .
  * - #EVAS_COLORSPACE_RGB565_A5P:
- *   .
  *   In the process of being implemented in 1 engine only. This may
  *   change.
  *   \n\n
@@ -6498,12 +6492,11 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  *   EVAS_COLORSPACE_ARGB8888 so:
  *   \n\n
  *   R = (r * a) / 32; G = (g * a) / 32; B = (b * a) / 32;
- *
+ * .
  * - #EVAS_COLORSPACE_GRY8:
- *   .
  *   The image is just a alpha mask (8 bit's per pixel). This is used
  *   for alpha masking.
- *
+ * .
  * Some examples on this group of functions can be found @ref
  * Example_Evas_Images "here".
  *
@@ -6571,14 +6564,14 @@ EAPI Evas_Object             *evas_object_image_filled_add             (Evas *e)
  * itself). The @p data at the address is copied and stored for future use, so
  * no @p data needs to be kept after this call is made. It will be managed and
  * freed for you when no longer needed. The @p size is limited to 2 gigabytes
- * in size, and must be greater than 0. A NULL @p data pointer is also invalid.
- * Set the filename to NULL to reset to empty state and have the image file
- * data freed from memory using evas_object_image_file_set().
+ * in size, and must be greater than 0. A @c NULL @p data pointer is also 
+ * invalid. Set the filename to @c NULL to reset to empty state and have the 
+ * image file data freed from memory using evas_object_image_file_set().
  *
- * The @p format is optional (pass NULL if you don't need/use it). It is used
- * to help Evas guess better which loader to use for the data. It may simply
- * be the "extension" of the file as it would normally be on disk such as
- * "jpg" or "png" or "gif" etc.
+ * The @p format is optional (pass @c NULL if you don't need/use it). It is
+ * used to help Evas guess better which loader to use for the data. It may
+ * simply be the "extension" of the file as it would normally be on disk
+ * such as "jpg" or "png" or "gif" etc.
  *
  * @param obj The given image object.
  * @param data The image file data address
@@ -6736,7 +6729,7 @@ EAPI Evas_Border_Fill_Mode    evas_object_image_border_center_fill_get (const Ev
  *
  * @param obj The given image object.
  * @param setting @c EINA_TRUE, to make the fill property follow
- *        object size or @c EINA_FALSE, otherwise
+ *        object size or @c EINA_FALSE, otherwise.
  *
  * If @p setting is @c EINA_TRUE, then every evas_object_resize() will
  * @b automatically trigger a call to evas_object_image_fill_set()
@@ -6964,7 +6957,7 @@ EAPI void                    *evas_object_image_data_get               (const Ev
  *
  * Note that this function does not modify the raw image data.  If the
  * requested colorspace is the same as the image colorspace nothing is
- * done and NULL is returned. You should use
+ * done and @c NULL is returned. You should use
  * evas_object_image_colorspace_get() to check the current image
  * colorspace.
  *
@@ -7296,7 +7289,7 @@ EAPI void                     evas_object_image_load_region_get        (const Ev
  * Define if the orientation information in the image file should be honored.
  *
  * @param obj The given image object pointer.
- * @param enable @p EINA_TRUE means that it should honor the orientation information
+ * @param enable @c EINA_TRUE means that it should honor the orientation information
  * @since 1.1
  */
 EAPI void                     evas_object_image_load_orientation_set        (Evas_Object *obj, Eina_Bool enable) EINA_ARG_NONNULL(1);
@@ -7515,7 +7508,8 @@ EAPI Eina_Bool                evas_object_image_source_unset           (Evas_Obj
  * Check if a file extension may be supported by @ref Evas_Object_Image.
  *
  * @param file The file to check
- * @return EINA_TRUE if we may be able to opeen it, EINA_FALSE if it's unlikely.
+ * @return @c EINA_TRUE if we may be able to open it, @c EINA_FALSE if it's
+ * unlikely.
  * @since 1.1.0
  *
  * If file is a Eina_Stringshare, use directly @ref evas_object_image_extension_can_load_fast_get.
@@ -7528,7 +7522,8 @@ EAPI Eina_Bool evas_object_image_extension_can_load_get(const char *file);
  * Check if a file extension may be supported by @ref Evas_Object_Image.
  *
  * @param file The file to check, it should be an Eina_Stringshare.
- * @return EINA_TRUE if we may be able to open it, EINA_FALSE if it's unlikely.
+ * @return @c EINA_TRUE if we may be able to open it, @c EINA_FALSE if it's
+ * unlikely.
  * @since 1.1.0
  *
  * This functions is threadsafe.
@@ -7899,7 +7894,7 @@ EAPI const char       *evas_object_text_bidi_delimiters_get(const Evas_Object *o
  * This function is used to obtain the X, Y, width and height of a the character
  * located at @p pos within the @c Evas_Object @p obj. @p obj must be a text object
  * as created with evas_object_text_add(). Any of the @c Evas_Coord parameters (@p cx,
- * @p cy, @p cw, @p ch) may be NULL in which case no value will be assigned to that
+ * @p cy, @p cw, @p ch) may be @c NULL in which case no value will be assigned to that
  * parameter.
  *
  * @param obj	The text object to retrieve position information for.
@@ -7909,7 +7904,7 @@ EAPI const char       *evas_object_text_bidi_delimiters_get(const Evas_Object *o
  * @param cw	A pointer to an @c Evas_Coord to store the Width value in (can be NULL).
  * @param ch	A pointer to an @c Evas_Coord to store the Height value in (can be NULL).
  *
- * @returns EINA_FALSE on success, EINA_TRUE on error.
+ * @return @c EINA_FALSE on success, @c EINA_TRUE on error.
  */
 EAPI Eina_Bool         evas_object_text_char_pos_get     (const Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
    EAPI int               evas_object_text_char_coords_get  (const Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
@@ -8344,9 +8339,10 @@ EAPI const char                  *evas_textblock_escape_string_range_get(const c
  * version of the text. i.e: <br> and <\n> will be replaced with \n, &...; with
  * the actual char and etc.
  *
- * @param obj the textblock object to work with. (if NULL, tries the default)
- * @param text the markup text (if NULL, return NULL)
- * @return an allocated plain text version of the markup
+ * @param obj The textblock object to work with. (if @c NULL, tries the 
+ * default).
+ * @param text The markup text (if @c NULL, return @c NULL).
+ * @return An allocated plain text version of the markup.
  * @since 1.2.0
  */
 EAPI char                        *evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
@@ -8357,10 +8353,10 @@ EAPI char                        *evas_textblock_text_markup_to_utf8(const Evas_
  * Replaces \\n -\> \<br/\> \\t -\> \<tab/\> and etc. Generally needed before you pass
  * plain text to be set in a textblock.
  *
- * @param obj the textblock object to work with (if NULL, it just does the
+ * @param obj the textblock object to work with (if @c NULL, it just does the
  * default behaviour, i.e with no extra object information).
- * @param text the markup text (if NULL, return NULL)
- * @return an allocated plain text version of the markup
+ * @param text The markup text (if @c NULL, return @c NULL).
+ * @return An allocated plain text version of the markup.
  * @since 1.2.0
  */
 EAPI char                        *evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
@@ -8454,10 +8450,10 @@ EAPI void                         evas_object_textblock_replace_char_set(Evas_Ob
 
 /**
  * @brief Get the "replacement character" for given textblock object. Returns
- * NULL if no replacement character is in use.
+ * @c NULL if no replacement character is in use.
  *
  * @param obj The given textblock object
- * @return replacement character or @c NULL
+ * @return Replacement character or @c NULL.
  */
 EAPI const char                  *evas_object_textblock_replace_char_get(Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -8470,7 +8466,7 @@ EAPI const char                  *evas_object_textblock_replace_char_get(Evas_Ob
  * etc.).
  *
  * @param obj The given textblock object.
- * @param align A value between 0.0 and 1.0
+ * @param align A value between @c 0.0 and @c 1.0.
  * @since 1.1.0
  */
 EAPI void                         evas_object_textblock_valign_set(Evas_Object *obj, double align);
@@ -8479,7 +8475,7 @@ EAPI void                         evas_object_textblock_valign_set(Evas_Object *
  * @brief Gets the vertical alignment of a textblock
  *
  * @param obj The given textblock object.
- * @return The alignment set for the object
+ * @return The alignment set for the object.
  * @since 1.1.0
  */
 EAPI double                       evas_object_textblock_valign_get(const Evas_Object *obj);
@@ -8505,7 +8501,8 @@ EAPI void                         evas_object_textblock_bidi_delimiters_set(Evas
  * oddities can occur when mixing RTL and LTR.
  *
  * @param obj The given textblock object.
- * @return A null terminated string of delimiters, e.g ",|". If empty, returns NULL.
+ * @return A null terminated string of delimiters, e.g ",|". If empty, returns
+ * @c NULL.
  * @since 1.1.0
  */
 EAPI const char                  *evas_object_textblock_bidi_delimiters_get(const Evas_Object *obj);
@@ -8515,7 +8512,7 @@ EAPI const char                  *evas_object_textblock_bidi_delimiters_get(cons
  * as a paragraph separator.
  *
  * @param obj The given textblock object.
- * @param mode EINA_TRUE for legacy mode, EINA_FALSE otherwise.
+ * @param mode @c EINA_TRUE for legacy mode, @c EINA_FALSE otherwise.
  * @since 1.1.0
  */
 EAPI void                         evas_object_textblock_legacy_newline_set(Evas_Object *obj, Eina_Bool mode) EINA_ARG_NONNULL(1);
@@ -8525,7 +8522,7 @@ EAPI void                         evas_object_textblock_legacy_newline_set(Evas_
  * as a paragraph separator.
  *
  * @param obj The given textblock object.
- * @return EINA_TRUE if in legacy mode, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if in legacy mode, @c EINA_FALSE otherwise.
  * @since 1.1.0
  */
 EAPI Eina_Bool                    evas_object_textblock_legacy_newline_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
@@ -8566,7 +8563,7 @@ EAPI const char                  *evas_object_textblock_text_markup_get(const Ev
  * Return the object's main cursor.
  *
  * @param obj the object.
- * @return the obj's main cursor.
+ * @return The @p obj's main cursor.
  */
 EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -8613,7 +8610,8 @@ EAPI void                         evas_textblock_cursor_paragraph_last(Evas_Text
  * Advances to the start of the next text node
  *
  * @param cur the cursor to update
- * @return #EINA_TRUE if it managed to advance a paragraph, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it managed to advance a paragraph, @c EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_paragraph_next(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
@@ -8621,14 +8619,15 @@ EAPI Eina_Bool                    evas_textblock_cursor_paragraph_next(Evas_Text
  * Advances to the end of the previous text node
  *
  * @param cur the cursor to update
- * @return #EINA_TRUE if it managed to advance a paragraph, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it managed to advance a paragraph, @c EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_paragraph_prev(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
  * Returns the
  *
- * @param obj The evas, must not be NULL.
+ * @param obj The evas, must not be @c NULL.
  * @param anchor the anchor name to get
  * @return Returns the list format node corresponding to the anchor, may be null if there are none.
  */
@@ -8637,7 +8636,7 @@ EAPI const Eina_List             *evas_textblock_node_format_list_get(const Evas
 /**
  * Returns the first format node.
  *
- * @param obj The evas, must not be NULL.
+ * @param obj The evas, must not be @c NULL.
  * @return Returns the first format node, may be null if there are none.
  */
 EAPI const Evas_Object_Textblock_Node_Format *evas_textblock_node_format_first_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -8689,7 +8688,7 @@ EAPI void                         evas_textblock_cursor_set_at_format(Evas_Textb
  * Return the format node at the position pointed by cur.
  *
  * @param cur the position to look at.
- * @return the format node if found, NULL otherwise.
+ * @return the format node if found, @c NULL otherwise.
  * @see evas_textblock_cursor_format_is_visible_get()
  */
 EAPI const Evas_Object_Textblock_Node_Format *evas_textblock_cursor_format_get(const Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
@@ -8716,7 +8715,8 @@ EAPI void                         evas_textblock_cursor_at_format_set(Evas_Textb
  * of a visible format.
  *
  * @param cur the cursor to look at.
- * @return #EINA_TRUE if the cursor points to a visible format, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the cursor points to a visible format, @c EINA_FALSE
+ * otherwise.
  * @see evas_textblock_cursor_format_get()
  */
 EAPI Eina_Bool                    evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
@@ -8725,7 +8725,7 @@ EAPI Eina_Bool                    evas_textblock_cursor_format_is_visible_get(co
  * Advances to the next format node
  *
  * @param cur the cursor to be updated.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_format_next(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
@@ -8733,7 +8733,7 @@ EAPI Eina_Bool                    evas_textblock_cursor_format_next(Evas_Textblo
  * Advances to the previous format node.
  *
  * @param cur the cursor to update.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
@@ -8741,7 +8741,8 @@ EAPI Eina_Bool                    evas_textblock_cursor_format_prev(Evas_Textblo
  * Returns true if the cursor points to a format.
  *
  * @param cur the cursor to check.
- * @return Returns #EINA_TRUE if a cursor points to a format #EINA_FALSE otherwise.
+ * @return  @c EINA_TRUE if a cursor points to a format @c EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
@@ -8749,7 +8750,7 @@ EAPI Eina_Bool                    evas_textblock_cursor_is_format(const Evas_Tex
  * Advances 1 char forward.
  *
  * @param cur the cursor to advance.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
@@ -8757,7 +8758,7 @@ EAPI Eina_Bool                    evas_textblock_cursor_char_next(Evas_Textblock
  * Advances 1 char backward.
  *
  * @param cur the cursor to advance.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
@@ -8765,7 +8766,7 @@ EAPI Eina_Bool                    evas_textblock_cursor_char_prev(Evas_Textblock
  * Moves the cursor to the start of the word under the cursor.
  *
  * @param cur the cursor to move.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
  * @since 1.2.0
  */
 EAPI Eina_Bool                    evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
@@ -8774,7 +8775,7 @@ EAPI Eina_Bool                    evas_textblock_cursor_word_start(Evas_Textbloc
  * Moves the cursor to the end of the word under the cursor.
  *
  * @param cur the cursor to move.
- * @return #EINA_TRUE on success #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
  * @since 1.2.0
  */
 EAPI Eina_Bool                    evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
@@ -8832,7 +8833,7 @@ EAPI void                         evas_textblock_cursor_pos_set(Evas_Textblock_C
  *
  * @param cur cursor to update.
  * @param line numer to set.
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line) EINA_ARG_NONNULL(1);
 
@@ -8900,7 +8901,7 @@ EAPI int                          evas_textblock_cursor_text_prepend(Evas_Textbl
  * any previous paragraph anyway.
  *
  * @param cur the cursor to look at.
- * @return #EINA_TRUE if the cursor points to the terminating null, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the cursor points to the terminating null, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format) EINA_ARG_NONNULL(1, 2);
 
@@ -8944,7 +8945,7 @@ EAPI void                         evas_textblock_cursor_range_delete(Evas_Textbl
  * Return the text of the paragraph cur points to - returns the text in markup.
  *
  * @param cur the cursor pointing to the paragraph.
- * @return the text on success, NULL otherwise.
+ * @return the text on success, @c NULL otherwise.
  */
 EAPI const char                  *evas_textblock_cursor_paragraph_text_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -8961,7 +8962,7 @@ EAPI int                          evas_textblock_cursor_paragraph_text_length_ge
  *
  * @param start the start of the range.
  * @param end the end of the range.
- * @return EINA_TRUE on success. EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  * @since 1.1.0
  */
 EAPI Eina_Bool                         evas_textblock_cursor_visible_range_get(Evas_Textblock_Cursor *start, Evas_Textblock_Cursor *end) EINA_ARG_NONNULL(1, 2);
@@ -9064,7 +9065,7 @@ EAPI int                          evas_textblock_cursor_line_geometry_get(const 
  * @param cur the cursor to set.
  * @param x coord to set by.
  * @param y coord to set by.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
 
@@ -9092,7 +9093,7 @@ EAPI Eina_List                   *evas_textblock_cursor_range_geometry_get(const
  * Checks if the cursor points to the end of the line.
  *
  * @param cur the cursor to check.
- * @return #EINA_TRUE if true, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if true, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                    evas_textblock_cursor_eol_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -9106,7 +9107,7 @@ EAPI Eina_Bool                    evas_textblock_cursor_eol_get(const Evas_Textb
  * @param cy y coord of the line.
  * @param cw w coord of the line.
  * @param ch h coord of the line.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool                    evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch) EINA_ARG_NONNULL(1);
 
@@ -10135,8 +10136,8 @@ EAPI void              evas_object_smart_callbacks_descriptions_get(const Evas_O
  *        search have a special case for @a name being the same
  *        pointer as registered with Evas_Smart_Cb_Description, one
  *        can use it to avoid excessive use of strcmp().
- * @param class_description pointer to return class description or @c
- *        NULL if not found. If parameter is @c NULL, no search will
+ * @param class_description pointer to return class description or
+ *        @c NULL if not found. If parameter is @c NULL, no search will
  *        be done on class descriptions.
  * @param instance_description pointer to return instance description
  *        or @c NULL if not found. If parameter is @c NULL, no search
@@ -10181,8 +10182,8 @@ EAPI void              evas_object_smart_changed         (Evas_Object *obj) EINA
  * @note just setting this flag will not make the canvas' whole scene
  *       dirty, by itself, and evas_render() will have no effect. To
  *       force that, use evas_object_smart_changed(), that will also
- *       automatically call this function automatically, with @c
- *       EINA_TRUE as parameter.
+ *       automatically call this function automatically, with
+ *       @c EINA_TRUE as parameter.
  *
  * @see evas_object_smart_need_recalculate_get()
  * @see evas_object_smart_calculate()
@@ -11470,7 +11471,7 @@ EAPI void                                evas_object_table_mirrored_set    (Evas
  * Gets the mirrored mode of the table.
  *
  * @param o The table object.
- * @return EINA_TRUE if it's a mirrored table, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it's a mirrored table, @c EINA_FALSE otherwise.
  * @since 1.1.0
  * @see evas_object_table_mirrored_set()
  */
@@ -11637,7 +11638,7 @@ EAPI void                                evas_object_grid_mirrored_set    (Evas_
  * Gets the mirrored mode of the grid.
  *
  * @param o The grid object.
- * @return EINA_TRUE if it's a mirrored grid, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it's a mirrored grid, @c EINA_FALSE otherwise.
  * @see evas_object_grid_mirrored_set()
  * @since 1.1.0
  */

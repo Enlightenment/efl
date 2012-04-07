@@ -889,7 +889,8 @@ EVAS_MEMPOOL(_mp_obj);
  * @internal
  * Checks if a char is a whitespace.
  * @param c the unicode codepoint.
- * @return EINA_TRUE if the unicode codepoint is a whitespace, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the unicode codepoint is a whitespace, @c EINA_FALSE
+ * otherwise.
  */
 static Eina_Bool
 _is_white(Eina_Unicode c)
@@ -1619,7 +1620,8 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char 
 
 /**
  * @internal
- * Returns #EINA_TRUE if the item is a format parameter, #EINA_FALSE otherwise.
+ * Returns @c EINA_TRUE if the item is a format parameter, @c EINA_FALSE
+ * otherwise.
  *
  * @param[in] item the item to check - Not NULL.
  */
@@ -5660,7 +5662,8 @@ _evas_textblock_cursor_node_format_before_or_at_pos_get(const Evas_Textblock_Cur
  * @param cur the cursor we are currently at. - NOT NULL.
  * @param[out] lnr the line found - not null.
  * @param[out] itr the item found - not null.
- * @return EINA_TRUE if we matched the previous format, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if we matched the previous format, @c EINA_FALSE
+ * otherwise.
  */
 static Eina_Bool
 _find_layout_item_match(const Evas_Textblock_Cursor *cur, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
@@ -6562,7 +6565,7 @@ _evas_textblock_node_format_remove(Evas_Object_Textblock *o, Evas_Object_Textblo
  * @param n the text node the positinos refer to.
  * @param start the start of where to delete from.
  * @param end the end of the section to delete, if end == -1 it means the end of the string.
- * @returns #EINA_TRUE if removed a PS, false otherwise.
+ * @returns @c EINA_TRUE if removed a PS, @c EINA_FALSE otherwise.
  */
 static Eina_Bool
 _evas_textblock_node_text_adjust_offsets_to_start(Evas_Object_Textblock *o,
