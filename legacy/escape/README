@@ -1,0 +1,4 @@
+ The Escape library is a library that acts implements some of the missing
+ function from the PS3 GameOS system that are needed for the proper
+ functioning of the EFL.
+
