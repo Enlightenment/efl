@@ -73,7 +73,6 @@ EAPI extern int ECORE_IMF_EVENT_DELETE_SURROUNDING;
 typedef void (*Ecore_IMF_Event_Cb) (void *data, Ecore_IMF_Context *ctx, void *event_info);
 
 /**
- * @enum _Ecore_IMF_Callback_Type
  * @typedef Ecore_IMF_Callback_Type
  *
  * Ecore IMF Event callback types.
@@ -90,7 +89,6 @@ typedef enum
 } Ecore_IMF_Callback_Type;
 
 /**
- * @enum _Ecore_IMF_Event_Type
  * @typedef Ecore_IMF_Event_Type
  *
  * Ecore IMF event types.
@@ -146,7 +144,6 @@ typedef enum
 } Ecore_IMF_Input_Mode;
 
 /**
- * @enum _Ecore_IMF_Preedit_Type
  * @typedef Ecore_IMF_Preedit_Type
  *
  * Ecore IMF Preedit style types
@@ -162,7 +159,6 @@ typedef enum
 } Ecore_IMF_Preedit_Type;
 
 /**
- * @enum _Ecore_IMF_Autocapital_Type
  * @typedef Ecore_IMF_Autocapital_Type
  *
  * Autocapitalization Types.
@@ -178,7 +174,6 @@ typedef enum
 } Ecore_IMF_Autocapital_Type;
 
 /**
- * @enum _Ecore_IMF_Input_Panel_Layout
  * @typedef Ecore_IMF_Input_Panel_Layout
  *
  * Input panel (virtual keyboard) layout types.
@@ -202,7 +197,6 @@ typedef enum
 } Ecore_IMF_Input_Panel_Layout;
 
 /**
- * @enum _Ecore_IMF_Input_Panel_Lang
  * @typedef Ecore_IMF_Input_Panel_Lang
  *
  * Input panel (virtual keyboard) language modes.
@@ -216,7 +210,6 @@ typedef enum
 } Ecore_IMF_Input_Panel_Lang;
 
 /**
- * @enum _Ecore_IMF_Input_Panel_Return_Key_Type
  * @typedef Ecore_IMF_Input_Panel_Return_Key_Type
  *
  * "Return" Key types on the input panel (virtual keyboard).
