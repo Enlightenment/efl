@@ -8,8 +8,10 @@ EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_$(V)) -id $(srcdir) -fd $(srcdir)
 examplesdir = $(datadir)/$(PACKAGE)/examples
 
 if ENABLE_MULTISENSE
+MULTISENSE_BIN_FILE = edje-multisense
+MULTISENSE_C_FILE   = edje-multisense.c
 MULTISENSE_EDC_FILE = multisense.edc
-SND_DIR = -sd $(srcdir)
+SND_DIR             = -sd $(srcdir)
 endif
 
 #put here all EDCs one needs to the examples
@@ -41,6 +43,7 @@ files_DATA = \
 	red.png \
 	test.png \
 	Vera.ttf \
+        duck.wav \
 	edje-basic.c \
 	edje-swallow.c \
 	edje-text.c \
@@ -52,7 +55,8 @@ files_DATA = \
 	edje-color-class.c \
 	edje-perspective.c \
 	edje-animations.c \
-	sigtest.c
+	sigtest.c \
+	$(MULTISENSE_C_FILE)
 
 EXTRA_DIST = $(files_DATA)
 
@@ -81,7 +85,8 @@ examples_PROGRAMS = \
 	edje-swallow \
 	edje-table \
 	edje-text \
-	sigtest
+	sigtest \
+	$(MULTISENSE_BIN_FILE)
 
 LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
 
