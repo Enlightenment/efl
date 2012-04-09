@@ -100,6 +100,8 @@ static void _button_remove(Evas_Object *obj, Evas_Object *content,
                            Eina_Bool delete);
 static void _popup_show(void *data, Evas *e, Evas_Object *obj,
                         void *event_info);
+static void _popup_hide(void *data, Evas *e, Evas_Object *obj,
+                        void *event_info);
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
 static const Evas_Smart_Cb_Description _signals[] = {
@@ -1218,6 +1220,18 @@ _popup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
    evas_object_show(wd->notify);
 }
 
+static void
+_popup_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+               void *event_info __UNUSED__)
+{
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   evas_object_hide(wd->notify);
+}
+
 EAPI Evas_Object *
 elm_popup_add(Evas_Object *parent)
 {
@@ -1255,6 +1269,8 @@ elm_popup_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->notify, EVAS_CALLBACK_RESIZE,
                                   _notify_resize, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_SHOW, _popup_show,
+                                  NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE, _popup_hide,
                                   NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK, _restack, NULL);
    wd->base = elm_layout_add(obj);

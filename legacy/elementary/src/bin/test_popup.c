@@ -4,6 +4,9 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+static Evas_Object *g_popup = NULL;
+static int times = 0;
+
 static void
 _response_cb(void *data, Evas_Object *obj __UNUSED__,
              void *event_info __UNUSED__)
@@ -12,6 +15,13 @@ _response_cb(void *data, Evas_Object *obj __UNUSED__,
    if (popup_data) evas_object_del(popup_data);
    evas_object_hide(data);
    evas_object_del(data);
+}
+
+static void
+_g_popup_response_cb(void *data, Evas_Object *obj __UNUSED__,
+             void *event_info __UNUSED__)
+{
+   evas_object_hide(data);
 }
 
 static void
@@ -267,6 +277,34 @@ _popup_center_title_text_2button_restack_cb(void *data, Evas_Object *obj __UNUSE
    evas_object_show(popup);
 }
 
+static void
+_popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj __UNUSED__,
+                              void *event_info __UNUSED__)
+{
+   Evas_Object *btn;
+   char str[128];
+
+   times++;
+   if (g_popup)
+     {
+        sprintf(str, "You have checked this popup %d times.", times);
+        elm_object_text_set(g_popup, str);
+        evas_object_show(g_popup);
+        return;
+     }
+
+   g_popup = elm_popup_add(data);
+   evas_object_size_hint_weight_set(g_popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_text_set(g_popup, "Hide this popup by using the button."
+                       "When you click list item again, you can see this popup.");
+   btn = elm_button_add(g_popup);
+   elm_object_text_set(btn, "Hide");
+   elm_object_part_content_set(g_popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _g_popup_response_cb, g_popup);
+
+   evas_object_show(g_popup);
+}
+
 void
 test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
            void *event_info __UNUSED__)
@@ -301,6 +339,8 @@ test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
                         NULL, _popup_center_title_item_3button_cb, win);
    elm_list_item_append(list, "popup-center-title + text + 2 buttons (check restacking)", NULL, NULL,
                         _popup_center_title_text_2button_restack_cb, win);
+   elm_list_item_append(list, "popup-center-text + 1 button (check hide, show)", NULL, NULL,
+                        _popup_center_text_1button_hide_show_cb, win);
    elm_list_go(list);
    evas_object_show(list);
    evas_object_show(win);
