@@ -1,0 +1,48 @@
+collections {
+   group {
+      name: "animation_group";
+      max: 700 700;
+      min: 700 700;
+     images{
+         image: "bubble.png" COMP;
+     }
+    parts{
+              part{
+                   name: "part_bubble";
+                   type: IMAGE;
+                   description{
+                       state: "default" 0.0;
+                       max: 63 63;
+                       min: 63 63;
+                       image{
+                            normal: "bubble.png";
+                       }
+                       rel1.relative: 0.0 0.0;
+                       rel2.relative: 0.0 0.0;
+                    }
+                    description {
+                       state: "down-state" 1.0;
+                       inherit: "default" 0.0;
+                       rel1.relative: 0.0 1.0;
+                       rel2.relative: 0.0 0.0;
+                     }
+         }
+
+    }
+    programs{
+       program {
+         signal: "load";
+         source: "";
+         in: 0.5 0.0;
+         after: "animation,state1";
+       }
+       program {
+         name: "animation,state1";
+         source: "";
+         action: STATE_SET "down-state" 1.0;
+         target: "part_bubble";
+         transition: BOUNCE 2.5 0.0 5.0;
+      }
+    }
+   }
+}

@@ -18,6 +18,7 @@
  * @li @ref tutorial_edje_multisense
  * @li @ref tutorial_edje_basic2
  * @li @ref tutorial_edje_signals_2
+ * @li @ref tutorial_edje_animations_2
  */
 
 /**
@@ -1179,5 +1180,94 @@
  * `pkg-config --cflags --libs evas ecore ecore-evas edje`
  *
  * edje_cc -id /path/to/the/image signalsBubble.edc
+ * @endverbatim
+ */
+
+/**
+ * @page tutorial_edje_animations_2 Edje animations example 2
+ *
+ * In this example we will make an animation of a bouncing ball.
+ *
+ * Our focus now will be in the .edc file, because in the C source code we just load the edje object and do
+ * nothing else.
+ *
+ * We want to give the freedom to the object to use the whole canvas of our program, so lets define
+ * the min, max of our group:
+ *
+ * @dontinclude animations2.edc
+ * @skipline max
+ * @skipline min
+ *
+ * You will notice that in our .c file the canvas will have this size
+ *
+ * Now we will define our part that's going to be our image, the ball:
+ * @skip part{
+ * @until type:
+ *
+ *
+ * At the description block bellow we are saying that this part has an image, defining
+ * the max and min size and it's position on the edje_object. The default state is the first
+ * state of the part, this means that when the edje object is loaded this one is going to be showed to you.
+ *
+ * Here it is:
+ * @dontinclude animations2.edc
+ * @skip description
+ * @until }
+ * @until }
+ *
+ * Now in the next description block we are saying where the ball is going to stop.
+ * Note that we have the "inherit" property. This means we are inheriting everything from default,
+ * except rel1 and rel2, because we are redefining it.
+ *
+ * Check the code:
+ *
+ * @skip description
+ * @until }
+ *
+ * We defined how our object will look like and it's position during the animation,
+ * now we need to define how it's going to act during the time. To do this we will
+ * use the programs block
+ *
+ * The first program block will start the animation, it will wait for the 'load' signal. This signal
+ * is generated when the edje object is loaded. The 'after' property is saying to this program block exactly this:
+ * "When you finish, call the program 'animation,state1' ". The 'in' property is saying, wait 0.5 seconds until you execute this program block.
+ *
+ * Here is the code:
+ *
+ * @skip program {
+ * @until }
+ *
+ * Now lets make the ball move and bounce it. In the second program block we are defining what we need to do
+ * with the action property. So we are saying change to the state "down-state" using the transition BOUNCE
+ * and apply this to the part "part_bubble". You can notice that BOUNCE has three parameters, the first one
+ * is saying how much time the transition will last, the second one is the factor of curviness
+ * and the last one is saying how many times and object will bounce.
+ *
+ * The code is very easy:
+ *
+ * @skip program {
+ * @until }
+ *
+ * Now all you have to do is compile the code and run it!
+ *
+ * When you compile and run it you should see this:
+ * @image html signal2final.png
+ * @image rtf signal2final.png
+ * @image latex signal2final.eps width=\textwidth
+ *
+ * The .edc file:
+ * @include animations2.edc
+ *
+ * The source code:
+ * @include animations2.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o animations2 animations2.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\"
+ * -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc  animations2.edc
  * @endverbatim
  */

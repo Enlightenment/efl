@@ -172,6 +172,7 @@ part of Edje's API:
 - @ref tutorial_edje_box2
 - @ref tutorial_edje_color_class
 - @ref tutorial_edje_animations
+- @ref tutorial_edje_animations_2
 - @ref Example_Edje_Signals_Messages
 - @ref tutorial_edje_signals_2
 - @ref tutorial_edje_text
