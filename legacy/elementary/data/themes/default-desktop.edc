@@ -758,7 +758,6 @@ collections {
     group { name: "elm/scroller/base/default";
         alias: "elm/list/base/default";
         alias: "elm/genlist/base/default";
-        alias: "elm/carousel/base/default";
         alias: "elm/gengrid/base/default";
 
         data {
