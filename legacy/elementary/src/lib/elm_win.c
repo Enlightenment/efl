@@ -509,10 +509,8 @@ _elm_win_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
    if (list)
      {
         if (!(items = elm_widget_focus_custom_chain_get(obj)))
-          {
-             if (!list) return EINA_FALSE;
-             items = list;
-          }
+          items = list;
+
         list_data_get = eina_list_data_get;
 
         elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
@@ -520,7 +518,6 @@ _elm_win_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
         if (*next)
           return EINA_TRUE;
      }
-
    *next = (Evas_Object *)obj;
    return EINA_FALSE;
 }
