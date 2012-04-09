@@ -78,8 +78,8 @@ EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizon
  * @param subobj The subobject to be added to the table
  * @param x Row number
  * @param y Column number
- * @param w rowspan
- * @param h colspan
+ * @param w colspan
+ * @param h rowspan
  *
  * @note All positioning inside the table is relative to rows and columns, so
  * a value of 0 for x and y, means the top left cell of the table, and a
