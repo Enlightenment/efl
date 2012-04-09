@@ -718,11 +718,34 @@ group { name: "elm/entry/base/default";
          tag:  "preedit" "+ underline=on underline_color=#000";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
+      style { name: "entry_textblock_guide_style";
+         base: "font=Sans font_size=10 color=#00000040 wrap=word text_class=entry left_margin=4 right_margin=4 ellipsis=0.0";
+         tag:  "em" "+ font_style=Oblique";
+         tag:  "hilight" "+ font_weight=Bold";
+      }
    }
    data {
         //         item: context_menu_orientation "horizontal";
    }
    parts {
+      part { name: "elm.guide";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            text {
+               style: "entry_textblock_guide_style";
+               min: 0 1;
+               align: 0.0 0.0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "elm.text";
          type: TEXTBLOCK;
          mouse_events: 1;
@@ -773,6 +796,18 @@ group { name: "elm/entry/base/default";
          action: STATE_SET "default" 0.0;
          target: "elm.text";
       }
+      program { name: "gdisable";
+         signal: "elm,guide,disabled";
+         source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "elm.guide";
+      }
+      program { name: "genable";
+         signal: "elm,guide,enabled";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.guide";
+      }
    }
 }
 
@@ -796,8 +831,31 @@ group { name: "elm/entry/base-mixedwrap/default";
          tag:  "preedit" "+ underline=on underline_color=#000";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
+      style { name: "entry_textblock_guide_style_mixedwrap";
+         base: "font=Sans font_size=10 color=#00000040 wrap=mixed text_class=entry left_margin=4 right_margin=4 ellipsis=0.0";
+         tag:  "em" "+ font_style=Oblique";
+         tag:  "hilight" "+ font_weight=Bold";
+      }
    }
    parts {
+      part { name: "elm.guide";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            text {
+               style: "entry_textblock_guide_style_mixedwrap";
+               min: 0 1;
+               align: 0.0 0.0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "elm.text";
          description { state: "default" 0.0;
             fixed: 1 0;
@@ -838,8 +896,31 @@ group { name: "elm/entry/base-charwrap/default";
          tag:  "preedit" "+ underline=on underline_color=#000";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
+      style { name: "entry_textblock_guide_style_charwrap";
+         base: "font=Sans font_size=10 color=#00000040 wrap=char text_class=entry left_margin=4 right_margin=4 ellipsis=0.0";
+         tag:  "em" "+ font_style=Oblique";
+         tag:  "hilight" "+ font_weight=Bold";
+      }
    }
    parts {
+      part { name: "elm.guide";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            text {
+               style: "entry_textblock_guide_style_charwrap";
+               min: 0 1;
+               align: 0.0 0.0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "elm.text";
          description { state: "default" 0.0;
             fixed: 1 0;
@@ -863,6 +944,24 @@ group { name: "elm/entry/base-charwrap/default";
 group { name: "elm/entry/base-nowrap/default";
    inherit: "elm/entry/base/default";
    parts {
+      part { name: "elm.guide";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            text {
+               style: "entry_textblock_guide_style";
+               min: 0 1;
+               align: 0.0 0.0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "elm.text";
          description { state: "default" 0.0;
             text {
@@ -902,8 +1001,31 @@ group { name: "elm/entry/base-single/default";
          tag:  "preedit" "+ underline=on underline_color=#000";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
+      style { name: "entry_single_textblock_guide_style";
+         base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry left_margin=4 right_margin=4 ellipsis=0.0";
+         tag:  "em" "+ font_style=Oblique";
+         tag:  "hilight" "+ font_weight=Bold";
+      }
    }
    parts {
+      part { name: "elm.guide";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            text {
+               style: "entry_single_textblock_guide_style";
+               min: 0 1;
+               align: 0.0 0.0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "elm.text";
          multiline: 0;
          description { state: "default" 0.0;
@@ -1057,6 +1179,24 @@ group { name: "elm/entry/base-nowrap-noedit/default";
 group { name: "elm/entry/base-password/default";
    inherit: "elm/entry/base/default";
    parts {
+      part { name: "elm.guide";
+         type: TEXTBLOCK;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            text {
+               style: "entry_single_textblock_guide_style";
+               min: 0 1;
+               align: 0.0 0.0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
       part { name: "elm.text";
          entry_mode: PASSWORD;
          multiline: 0;

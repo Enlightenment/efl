@@ -81,6 +81,7 @@ struct _Widget_Data
    Eina_Bool prediction_allow : 1;
    Eina_Bool input_panel_return_key_disabled : 1;
    Eina_Bool autoreturnkey : 1;
+   Eina_Bool havetext : 1;
    Elm_Cnp_Mode cnp_mode : 2;
 };
 
@@ -379,6 +380,18 @@ _delay_write(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static void
+_elm_entry_update_guide(Evas_Object *obj, Eina_Bool havetext)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((havetext) && (!wd->havetext))
+     edje_object_signal_emit(wd->ent, "elm,guide,disabled", "elm");
+   else if ((!havetext) && (wd->havetext))
+     edje_object_signal_emit(wd->ent, "elm,guide,enabled", "elm");
+   wd->havetext = havetext;
+}
+
 static Elm_Entry_Markup_Filter *
 _filter_new(Elm_Entry_Filter_Cb func, void *data)
 {
@@ -588,6 +601,8 @@ _theme_hook(Evas_Object *obj)
           elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
      }
    _sizing_eval(obj);
+   wd->havetext = !wd->havetext;
+   _elm_entry_update_guide(obj, !wd->havetext);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }
@@ -1555,6 +1570,7 @@ _entry_changed_common_handling(void *data, const char *event)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord minh;
+   const char *text;
    if (!wd) return;
    evas_event_freeze(evas_object_evas_get(data));
    wd->changed = EINA_TRUE;
@@ -1579,6 +1595,14 @@ _entry_changed_common_handling(void *data, const char *event)
     * any access to wd after this could be invalid */
    evas_object_smart_callback_call(data, event, NULL);
    _check_enable_return_key(data);
+   text = edje_object_part_text_get(wd->ent, "elm.text");
+   if (text)
+     {
+        if (text[0])
+          _elm_entry_update_guide(data, EINA_TRUE);
+        else
+          _elm_entry_update_guide(data, EINA_FALSE);
+     }
 }
 
 static void
@@ -2181,6 +2205,8 @@ _text_append_idler(void *data)
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 
+   _elm_entry_update_guide(obj, EINA_TRUE);
+   
    /* If there's still more to go, renew the idler, else, cleanup */
    if (wd->append_text_position < wd->append_text_len)
      {
@@ -2277,9 +2303,14 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
    if (!wd) return;
    evas_event_freeze(evas_object_evas_get(obj));
    if (!entry) entry = "";
-   if (item && strcmp(item, "default"))
+   if (item)
      {
-        edje_object_part_text_set(wd->ent, item, entry);
+        if (!strcmp(item, "guide"))
+          edje_object_part_text_set(wd->ent, "elm.guide", entry);
+        else
+          edje_object_part_text_set(wd->ent, item, entry);
+        evas_event_thaw(evas_object_evas_get(obj));
+        evas_event_thaw_eval(evas_object_evas_get(obj));
         return;
      }
 
@@ -2317,6 +2348,10 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
      {
         edje_object_part_text_set(wd->ent, "elm.text", entry);
      }
+   if ((entry) && (entry[0]))
+     _elm_entry_update_guide(obj, EINA_TRUE);
+   else
+     _elm_entry_update_guide(obj, EINA_FALSE);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }

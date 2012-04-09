@@ -2039,13 +2039,13 @@ test_entry8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    bt = elm_icon_add(win);
    elm_icon_standard_set(bt, "home");
    evas_object_size_hint_min_set(bt, 48, 48);
-   evas_object_color_set(bt, 255, 0, 0, 128);
+   evas_object_color_set(bt, 128, 0, 0, 128);
    evas_object_show(bt);
    elm_object_part_content_set(en3, "icon", bt);
 
    bt = elm_icon_add(win);
    elm_icon_standard_set(bt, "delete");
-   evas_object_color_set(bt, 255, 0, 0, 128);
+   evas_object_color_set(bt, 128, 0, 0, 128);
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_show(bt);
    elm_object_part_content_set(en3, "end", bt);
@@ -2074,6 +2074,7 @@ test_entry8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(rect);
 
    en4 = elm_entry_add(win);
+   elm_object_part_text_set(en4, "guide", "Type in here");
    elm_entry_scrollable_set(en4, EINA_TRUE);
    elm_entry_bounce_set(en4, EINA_TRUE, EINA_TRUE);
    elm_entry_autocapital_type_set(en4, EINA_TRUE);
