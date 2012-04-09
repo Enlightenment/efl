@@ -1052,17 +1052,17 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
    if (r > a)
      {
         r = a;
-        ERR("Evas only handle pre multiplied color !");
+        ERR("Evas only handles pre multiplied colors!");
      }
    if (g > a)
      {
         g = a;
-        ERR("Evas only handle pre multiplied color !");
+        ERR("Evas only handles pre multiplied colors!");
      }
    if (b > a)
      {
         b = a;
-        ERR("Evas only handle pre multiplied color !");
+        ERR("Evas only handles pre multiplied colors!");
      }
 
    if (evas_object_intercept_call_color_set(obj, r, g, b, a)) return;
