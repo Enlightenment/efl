@@ -2148,7 +2148,7 @@ _text_append_idler(void *data)
    wd->changed = EINA_TRUE;
 
    start = wd->append_text_position;
-   if (start + _CHUNK_SIZE < wd->append_text_len)
+   if ((start + _CHUNK_SIZE) < wd->append_text_len)
      {
         int pos = start;
         int tag_start, esc_start;
