@@ -779,6 +779,7 @@ notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 
    data = notify->data;
    str = malloc(sizeof(char) * (data->length + 1));
+   if (!str) return 0;
    strncpy(str, (char *)data->data, data->length);
    str[data->length] = '\0';
 
@@ -791,11 +792,13 @@ notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
         ddata.data = data->data;
         ddata.len = data->length;
         sel->datacb(sel->udata, sel->widget, &ddata);
+        free(str);
         return 0;
      }
 
-   cnp_debug("Notify handler text %d %d %p\n", data->format,data->length, data->data);
-   mkupstr = _elm_util_text_to_mkup((const char *) str);
+   cnp_debug("Notify handler text %d %d %p\n", data->format,
+             data->length, data->data);
+   mkupstr = _elm_util_text_to_mkup((const char *)str);
    cnp_debug("String is %s (from %s)\n", str, data->data);
    _elm_entry_entry_paste(sel->requestwidget, mkupstr);
    free(str);
