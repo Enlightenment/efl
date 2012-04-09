@@ -28,6 +28,9 @@ EDCS = \
 	animations.edc \
 	lua_script.edc \
 	sigtest.edc \
+	animations2.edc \
+	basic2.edc \
+	signalsBubble.edc \
 	$(MULTISENSE_EDC_FILE)
 
 .edc.edj:
@@ -56,6 +59,10 @@ files_DATA = \
 	edje-perspective.c \
 	edje-animations.c \
 	sigtest.c \
+	animations2.c \
+	edje-basic2.c \
+	signals2.c \
+	edje-swallow2.c \
 	$(MULTISENSE_C_FILE)
 
 EXTRA_DIST = $(files_DATA)
@@ -86,6 +93,10 @@ examples_PROGRAMS = \
 	edje-table \
 	edje-text \
 	sigtest \
+	animations2 \
+	edje-basic2 \
+	signals2 \
+	edje-swallow2 \
 	$(MULTISENSE_BIN_FILE)
 
 LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
