@@ -173,6 +173,7 @@ part of Edje's API:
 - @ref tutorial_edje_color_class
 - @ref tutorial_edje_animations
 - @ref Example_Edje_Signals_Messages
+- @ref tutorial_edje_signals_2
 - @ref tutorial_edje_text
 - @ref tutorial_edje_drag
 - @ref tutorial_edje_perspective

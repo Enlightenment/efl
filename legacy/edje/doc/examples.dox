@@ -17,6 +17,7 @@
  * @li @ref tutorial_edje_animations
  * @li @ref tutorial_edje_multisense
  * @li @ref tutorial_edje_basic2
+ * @li @ref tutorial_edje_signals_2
  */
 
 /**
@@ -1103,5 +1104,80 @@
  * `pkg-config --cflags --libs evas ecore ecore-evas edje`
  *
  * edje_cc swallow.edc
+ * @endverbatim
+ */
+
+/**
+ * @page tutorial_edje_signals_2 Edje Signals example 2
+ *
+ * In this example we will make use of signals to help to move an image away from the mouse pointer.
+ *
+ * Signals are software interruption, this means that when it happens and if the program is sensitive to it
+ * the program will stop whatever it is doing and handle the signal.
+ *
+ * In this example we are only sensitive to the "mouve,move" signal so we need to register a callback to it.
+ * To do this we will add a signal callback to our edje object that will detect "mouse,move" signal
+ * comming from the part "part_image" and when this happens we will call the fuction _on_mouse_over passing
+ * the evas pointer as a parameter. The evas pointer is passed as a parameter because we need to know
+ * where is the mouse pointer in the screen.
+ *
+ * We can see bellow how we can listen to the signal:
+ *
+ * @dontinclude signals2.c
+ * @skip edje_object_signal
+ * @until );
+ *
+ *
+ * Now, let's pass to the callback function. If we want to keep the ball away from the mouse pointer
+ * we need to now where is the ball and where is the mouse and we can easily discovery these things using
+ * this:
+ *
+ * For the the object position in the canvas:
+ * @dontinclude signals2.c
+ * @skipline evas_object_geometry
+ *
+ * For the mouse position relative to the screen:
+ * @skipline evas_pointer_output
+ *
+ * Now that we have the position of the mouse and the object we just need
+ * to set the new location and move the object. To set the new location we do this:
+ * @skip if
+ * @until y -= (
+ *
+ * You can change the formula above if you like. Because we are changing the object's position
+ * we need to do something if the new position is beyound the canvas size. So here it is:
+ *
+ * @skip if
+ * @until y = 0
+ *
+ * Then now what we need to do is move the object:
+ * @skipline  evas_object
+ *
+ * Here is the complete callback function:
+ *
+ * @dontinclude signals2.c
+ * @skip _on_mouse_over
+ * @until }
+ *
+ *
+ * When you compile and run it you should see this:
+ * @image html signal2final.png
+ * @image rtf signal2final.png
+ * @image latex signal2final.eps width=\textwidth
+ *
+ * The .edc file:
+ * @include signalsBubble.edc
+ *
+ * The source code:
+ * @include signals2.c
+ *
+ * To compile use this command:
+ * @verbatim
+ * gcc -o signals2 signals2.c -DPACKAGE_BIN_DIR=\"/Where/enlightenment/is/installed/bin\"
+ * -DPACKAGE_LIB_DIR=\"/Where/enlightenment/is/installed/lib\"
+ * -DPACKAGE_DATA_DIR=\"/Where/enlightenment/is/installed/share\"
+ * `pkg-config --cflags --libs evas ecore ecore-evas edje`
+ *
+ * edje_cc -id /path/to/the/image signalsBubble.edc
  * @endverbatim
  */
