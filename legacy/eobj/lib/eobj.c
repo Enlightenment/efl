@@ -318,8 +318,6 @@ _eobj_ops_internal(Eobj *obj, const Eobj_Class *obj_klass, va_list *p_list)
         op = va_arg(*p_list, Eobj_Op);
      }
 
-   va_end(*p_list);
-
    return ret;
 }
 
