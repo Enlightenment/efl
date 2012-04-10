@@ -240,7 +240,6 @@
  */
 
 /**
- * @enum _Elm_Text_Format
  * @typedef Elm_Text_Format
  *
  * Text Format types.
@@ -254,7 +253,6 @@ typedef enum
 } Elm_Text_Format;
 
 /**
- * @enum _Elm_Wrap_Type
  * @typedef Elm_Wrap_Type
  *
  * Line wrapping types.
@@ -271,7 +269,6 @@ typedef enum
 } Elm_Wrap_Type; /**< Type of word or character wrapping to use */
 
 /**
- * @enum _Elm_Input_Panel_Layout
  * @typedef Elm_Input_Panel_Layout
  *
  * Input panel (virtual keyboard) layout types.
@@ -295,7 +292,6 @@ typedef enum
 } Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired. */
 
 /**
- * @enum _Elm_Input_Panel_Lang
  * @typedef Elm_Input_Panel_Lang
  *
  * Input panel (virtual keyboard) language modes.
@@ -309,7 +305,6 @@ typedef enum
 } Elm_Input_Panel_Lang;
 
 /**
- * @enum _Elm_Autocapital_Type
  * @typedef Elm_Autocapital_Type
  *
  * Autocapitalization Types.
@@ -325,7 +320,6 @@ typedef enum
 } Elm_Autocapital_Type; /**< Choose method of auto-capitalization */
 
 /**
- * @enum _Elm_Input_Panel_Return_Key_Type
  * @typedef Elm_Input_Panel_Return_Key_Type
  *
  * "Return" Key types on the input panel (virtual keyboard).
@@ -1448,14 +1442,13 @@ EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object 
 EAPI void                  *elm_entry_imf_context_get(Evas_Object *obj);
 
 /**
- * @enum _Elm_Cnp_Mode
  * @typedef Elm_Cnp_Mode
  * Enum of entry's copy & paste policy.
  *
  * @see elm_entry_cnp_mode_set()
  * @see elm_entry_cnp_mode_get()
  */
-typedef enum _Elm_Cnp_Mode {
+typedef enum {
    ELM_CNP_MODE_MARKUP,   /**< copy & paste text with markup tag */
    ELM_CNP_MODE_NO_IMAGE, /**< copy & paste text without item(image) tag */
    ELM_CNP_MODE_PLAINTEXT /**< copy & paste text without markup tag */

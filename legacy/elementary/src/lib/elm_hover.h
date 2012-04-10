@@ -80,6 +80,12 @@
  *
  * @{
  */
+
+/**
+ * @typedef Elm_Hover_Axis
+ *
+ * The orientation axis for the hover object
+ */
 typedef enum
 {
    ELM_HOVER_AXIS_NONE, /**< ELM_HOVER_AXIS_NONE -- no preferred orientation */
