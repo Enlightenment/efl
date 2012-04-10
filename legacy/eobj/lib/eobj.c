@@ -4,8 +4,8 @@
 
 static int _eobj_log_dom = -1;
 
-static Eobj_Class **classes;
-static Eobj_Class_Id classes_last_id;
+static Eobj_Class **_eobj_classes;
+static Eobj_Class_Id _eobj_classes_last_id;
 static Eina_Bool _eobj_init_count = 0;
 
 #define CONSTRUCT_ERROR_KEY "__construct_error"
@@ -78,8 +78,8 @@ struct _Eobj {
 #define OP_CLASS_OFFSET_GET(x) (((x) >> OP_CLASS_OFFSET) & 0xffff)
 #define OP_CLASS_GET(op) ({ \
       Eobj_Class_Id tmp = OP_CLASS_OFFSET_GET(op); \
-      (Eobj_Class *) ((tmp <= classes_last_id) && (tmp > 0)) ? \
-      (classes[tmp - 1]) : NULL; \
+      (Eobj_Class *) ((tmp <= _eobj_classes_last_id) && (tmp > 0)) ? \
+      (_eobj_classes[tmp - 1]) : NULL; \
       })
 
 /* Structure of Eobj_Op is:
@@ -104,7 +104,8 @@ struct _Dich_Chain1
    Dich_Chain2 *chain;
 };
 
-typedef struct {
+typedef struct
+{
      EINA_INLIST;
      const Eobj_Class *klass;
      Eina_Bool exists : 1; /* < True if already exists in class (incl parents). */
@@ -210,9 +211,9 @@ static const Eobj_Op_Description *
 _eobj_op_id_desc_get(Eobj_Op op)
 {
    int i;
-   Eobj_Class **cls_itr = classes;
+   Eobj_Class **cls_itr = _eobj_classes;
 
-   for (i = 0 ; i < classes_last_id ; i++, cls_itr++)
+   for (i = 0 ; i < _eobj_classes_last_id ; i++, cls_itr++)
      {
         if (*cls_itr)
           {
@@ -445,13 +446,13 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    klass = calloc(1, sizeof(Eobj_Class));
    klass->parent = parent;
-   klass->class_id = ++classes_last_id;
+   klass->class_id = ++_eobj_classes_last_id;
      {
         /* FIXME: Handle errors. */
         Eobj_Class **tmp;
-        tmp = realloc(classes, classes_last_id * sizeof(*classes));
-        classes = tmp;
-        classes[klass->class_id - 1] = klass;
+        tmp = realloc(_eobj_classes, _eobj_classes_last_id * sizeof(*_eobj_classes));
+        _eobj_classes = tmp;
+        _eobj_classes[klass->class_id - 1] = klass;
      }
 
    /* Handle class extensions */
@@ -599,7 +600,7 @@ fail:
    return NULL;
 }
 
-Eobj *
+EAPI Eobj *
 eobj_ref(Eobj *obj)
 {
    obj->refcount++;
@@ -823,8 +824,8 @@ eobj_init(void)
 
    eina_init();
 
-   classes = NULL;
-   classes_last_id = 0;
+   _eobj_classes = NULL;
+   _eobj_classes_last_id = 0;
    _eobj_log_dom = eina_log_domain_register("eobj", EINA_COLOR_LIGHTBLUE);
    if (_eobj_log_dom < 0)
      {
@@ -839,19 +840,19 @@ EAPI Eina_Bool
 eobj_shutdown(void)
 {
    int i;
-   Eobj_Class **cls_itr = classes;
+   Eobj_Class **cls_itr = _eobj_classes;
 
    if (--_eobj_init_count > 0)
       return EINA_TRUE;
 
-   for (i = 0 ; i < classes_last_id ; i++, cls_itr++)
+   for (i = 0 ; i < _eobj_classes_last_id ; i++, cls_itr++)
      {
         if (*cls_itr)
            eobj_class_free(*cls_itr);
      }
 
-   if (classes)
-      free(classes);
+   if (_eobj_classes)
+      free(_eobj_classes);
 
    eina_log_domain_unregister(_eobj_log_dom);
    _eobj_log_dom = -1;
