@@ -763,7 +763,7 @@ _ecore_evas_wl_render(Ecore_Evas *ee)
                ecore_wl_window_damage(ee->engine.wl.win, 
                                       r->x, r->y, r->w, r->h);
 
-             /* ecore_wl_flush(); */
+             ecore_wl_flush();
 
              evas_render_updates_free(updates);
              _ecore_evas_idle_timeout_update(ee);
@@ -804,9 +804,9 @@ _ecore_evas_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *eve
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
    ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
@@ -823,9 +823,9 @@ _ecore_evas_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *ev
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
-   ee = ecore_event_window_match(ev->win);
+   ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
    _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
    evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);

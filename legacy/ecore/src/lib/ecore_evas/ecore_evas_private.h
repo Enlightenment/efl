@@ -283,6 +283,9 @@ struct _Ecore_Evas_Engine
         Evas_Object *frame;
 
 # if defined(BUILD_ECORE_EVAS_WAYLAND_SHM)
+        struct wl_shm_pool *pool;
+        size_t pool_size;
+        void *pool_data;
         struct wl_buffer *buffer;
 # endif
 
