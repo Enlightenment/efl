@@ -18,7 +18,7 @@ static Ecore_Event_Handler *_ecore_job_handler = NULL;
 
 struct _Ecore_Job
 {
-                ECORE_MAGIC;
+   ECORE_MAGIC;
    Ecore_Event *event;
    Ecore_Cb     func;
    void        *data;
