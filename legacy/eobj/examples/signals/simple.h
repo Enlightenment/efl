@@ -1,7 +1,7 @@
 #ifndef SIMPLE_H
 #define SIMPLE_H
 
-#include "eobj.h"
+#include "Eobj.h"
 
 extern EAPI Eobj_Op SIMPLE_BASE_ID;
 

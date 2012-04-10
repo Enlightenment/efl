@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include "eobj_suite.h"
-#include "eobj.h"
+#include "Eobj.h"
 
 START_TEST(eobj_simple)
 {

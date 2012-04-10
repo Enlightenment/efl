@@ -1,4 +1,4 @@
-#include "eobj.h"
+#include "Eobj.h"
 #include "simple.h"
 
 EAPI Eobj_Op SIMPLE_BASE_ID = 0;

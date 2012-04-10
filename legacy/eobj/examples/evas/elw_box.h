@@ -1,7 +1,7 @@
 #ifndef ELW_BOX_H
 #define ELW_BOX_H
 
-#include "eobj.h"
+#include "Eobj.h"
 
 extern EAPI Eobj_Op ELW_BOX_BASE_ID;
 

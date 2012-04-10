@@ -1,7 +1,7 @@
 #ifndef EVAS_OBJ_H
 #define EVAS_OBJ_H
 
-#include "eobj.h"
+#include "Eobj.h"
 
 extern EAPI Eobj_Op EVAS_OBJ_BASE_ID;
 

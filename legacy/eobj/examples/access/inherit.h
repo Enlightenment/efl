@@ -1,7 +1,7 @@
 #ifndef INHERIT_H
 #define INHERIT_H
 
-#include "eobj.h"
+#include "Eobj.h"
 
 extern EAPI Eobj_Op INHERIT_BASE_ID;
 

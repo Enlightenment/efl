@@ -1,7 +1,7 @@
 #ifndef ELW_BUTTON_H
 #define ELW_BUTTON_H
 
-#include "eobj.h"
+#include "Eobj.h"
 
 extern EAPI Eobj_Op ELW_BUTTON_BASE_ID;
 

@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "eobj.h"
+#include "Eobj.h"
 
 #include "eobj_suite.h"
 

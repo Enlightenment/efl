@@ -1,4 +1,4 @@
-#include "eobj.h"
+#include "Eobj.h"
 #include "simple.h"
 #include "simple2.h"
 #include "simple3.h"

@@ -1,7 +1,6 @@
 #include <Eina.h>
-#include <eina_log.h>
 
-#include "eobj.h"
+#include "Eobj.h"
 
 static int _eobj_log_dom = -1;
 

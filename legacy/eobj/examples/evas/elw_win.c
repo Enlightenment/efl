@@ -1,6 +1,6 @@
 #include <Elementary.h>
 
-#include "eobj.h"
+#include "Eobj.h"
 #include "evas_obj.h"
 #include "elw_win.h"
 

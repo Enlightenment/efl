@@ -1,4 +1,4 @@
-#include "eobj.h"
+#include "Eobj.h"
 #include "mixin.h"
 #include "simple2.h"
 

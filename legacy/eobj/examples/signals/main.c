@@ -1,4 +1,4 @@
-#include "eobj.h"
+#include "Eobj.h"
 #include "simple.h"
 
 static Eina_Bool

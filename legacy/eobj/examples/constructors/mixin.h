@@ -1,7 +1,7 @@
 #ifndef MIXIN_H
 #define MIXIN_H
 
-#include "eobj.h"
+#include "Eobj.h"
 
 extern EAPI Eobj_Op MIXIN_BASE_ID;
 
