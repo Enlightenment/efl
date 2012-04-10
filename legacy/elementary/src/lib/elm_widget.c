@@ -922,6 +922,7 @@ elm_widget_sub_object_add(Evas_Object *obj,
                           Evas_Object *sobj)
 {
    API_ENTRY return;
+   EINA_SAFETY_ON_TRUE_RETURN(obj == sobj);
    double scale, pscale = elm_widget_scale_get(sobj);
    Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
    Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
