@@ -851,8 +851,39 @@ _ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
  *
  * DO NOT use this function unless you are the person God comes to ask for
  * advice when He has trouble managing the Universe.
+ *
+ * @see ecore_main_loop_iterate_may_block()
  */
+EAPI void
+ecore_main_loop_iterate(void)
+{
+   EINA_MAIN_LOOP_CHECK_RETURN;
+#ifndef USE_G_MAIN_LOOP
+   _ecore_lock();
+   _ecore_main_loop_iterate_internal(1);
+   _ecore_unlock();
+#else
+   g_main_context_iteration(NULL, 0);
+#endif
+}
 
+/**
+ * Runs a single iteration of the main loop to process everything on the
+ * queue with block/non-blocking status.
+ *
+ * @param may_block A flag if the main loop has a possibility of blocking.
+ * (@c EINA_TRUE = may block/@c EINA_FALSE = non block)
+ *
+ * This is an extension API for ecore_main_loop_iterate() with additional
+ * parameter. It does everything that is already done inside an
+ * @c Ecore main loop, like checking for expired timers, idlers, etc. But it
+ * will do it only once and return, instead of keep watching for new events.
+ *
+ * DO NOT use this function unless you are the person God comes to ask for
+ * advice when He has trouble managing the Universe.
+ *
+ * @see ecore_main_loop_iterate()
+ */
 EAPI int
 ecore_main_loop_iterate_may_block(int may_block)
 {
@@ -866,18 +897,6 @@ in_main_loop--;
    return _ecore_event_exist();
 #else
    return g_main_context_iteration(NULL, may_block);
-#endif
-}
-EAPI void
-ecore_main_loop_iterate(void)
-{
-   EINA_MAIN_LOOP_CHECK_RETURN;
-#ifndef USE_G_MAIN_LOOP
-   _ecore_lock();
-   _ecore_main_loop_iterate_internal(1);
-   _ecore_unlock();
-#else
-   g_main_context_iteration(NULL, 0);
 #endif
 }
 
