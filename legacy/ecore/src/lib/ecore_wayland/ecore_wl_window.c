@@ -156,9 +156,15 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
         if (!(input = win->keyboard_device))
           {
              if (win->parent)
-               input = win->parent->keyboard_device;
+               {
+                  if (!(input = win->parent->keyboard_device))
+                    input = win->parent->pointer_device;
+               }
           }
 
+        if ((!input) || (!input->input_device)) return;
+
+        ecore_wl_input_ungrab(input, input->timestamp);
         wl_shell_surface_move(win->shell_surface, input->input_device,
                               input->timestamp);
      }
@@ -205,7 +211,18 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
      {
         Ecore_Wl_Input *input;
 
-        input = win->keyboard_device;
+        if (!(input = win->keyboard_device))
+          {
+             if (win->parent)
+               {
+                  if (!(input = win->parent->keyboard_device))
+                    input = win->parent->pointer_device;
+               }
+          }
+
+        if ((!input) || (!input->input_device)) return;
+
+        ecore_wl_input_ungrab(input, input->timestamp);
         wl_shell_surface_resize(win->shell_surface, input->input_device, 
                                 input->timestamp, location);
      }
@@ -298,7 +315,6 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
    if (win->surface) return;
 
    win->surface = wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
-
    wl_surface_set_user_data(win->surface, win);
 
    win->shell_surface = 
@@ -323,14 +339,17 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         break;
       case ECORE_WL_WINDOW_TYPE_MENU:
         wl_shell_surface_set_popup(win->shell_surface, 
-                                   win->parent->pointer_device->input_device, 
-                                   win->parent->pointer_device->timestamp, 
+                                   _ecore_wl_disp->input->input_device,
+                                   _ecore_wl_disp->input->timestamp,
+                                   /* win->parent->pointer_device->input_device,  */
+                                   /* win->parent->pointer_device->timestamp, */ 
                                    win->parent->shell_surface, 
                                    win->allocation.x, win->allocation.y, 0);
         break;
       case ECORE_WL_WINDOW_TYPE_TOPLEVEL:
-      default:
         wl_shell_surface_set_toplevel(win->shell_surface);
+        break;
+      default:
         break;
      }
 
@@ -341,6 +360,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         wl_region_add(win->region.input, win->allocation.x, win->allocation.y, 
                       win->allocation.w, win->allocation.h);
      }
+
    if (!win->transparent)
      {
         win->region.opaque = 
@@ -478,6 +498,16 @@ ecore_wl_window_surface_get(Ecore_Wl_Window *win)
    return win->surface;
 }
 
+/* @since 1.2 */
+EAPI struct wl_shell_surface *
+ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return NULL;
+   return win->shell_surface;
+}
+
 EAPI Ecore_Wl_Window *
 ecore_wl_window_find(unsigned int id)
 {
@@ -510,6 +540,15 @@ ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int 
    input = _ecore_wl_disp->input;
    wl_input_device_attach(input->input_device, timestamp, 
                           buffer, hot_x, hot_y);
+}
+
+/* @since 1.2 */
+EAPI void 
+ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   win->parent = parent;
 }
 
 /* local functions */

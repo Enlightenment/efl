@@ -18,6 +18,13 @@ static const struct wl_output_listener _ecore_wl_output_listener =
    _ecore_wl_output_cb_mode
 };
 
+/* @since 1.2 */
+EAPI struct wl_list 
+ecore_wl_outputs_get(void)
+{
+   return _ecore_wl_disp->outputs;
+}
+
 void 
 _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id)
 {

@@ -65,6 +65,7 @@ struct _Ecore_Wl_Display
         struct wl_display *display;
         struct wl_compositor *compositor;
         struct wl_shell *shell;
+        struct wl_shell *desktop_shell;
         struct wl_shm *shm;
         struct wl_data_device_manager *data_device_manager;
      } wl;
@@ -161,9 +162,9 @@ struct _Ecore_Wl_Event_Mouse_In
      {
         int x, y;
      } root;
-   unsigned int win;
-   unsigned int event_win;
-   unsigned int root_win;
+   unsigned int window;
+   unsigned int event_window;
+   unsigned int root_window;
    unsigned int timestamp;
 };
 
@@ -175,9 +176,9 @@ struct _Ecore_Wl_Event_Mouse_Out
      {
         int x, y;
      } root;
-   unsigned int win;
-   unsigned int event_win;
-   unsigned int root_win;
+   unsigned int window;
+   unsigned int event_window;
+   unsigned int root_window;
    unsigned int timestamp;
 };
 
@@ -281,6 +282,8 @@ EAPI void ecore_wl_display_iterate(void);
 EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
 EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input, unsigned int timestamp);
 
+EAPI struct wl_list ecore_wl_outputs_get(void);
+
 EAPI Ecore_Wl_Window *ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type);
 EAPI void ecore_wl_window_free(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y);
@@ -295,8 +298,10 @@ EAPI void ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscr
 EAPI void ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent);
 EAPI void ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h);
 EAPI struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);
+EAPI struct wl_shell_surface *ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win);
 EAPI Ecore_Wl_Window *ecore_wl_window_find(unsigned int id);
 EAPI void ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type);
 EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int hot_x, int hot_y, unsigned int timestamp);
+EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
 
 #endif

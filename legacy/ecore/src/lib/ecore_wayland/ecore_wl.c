@@ -411,6 +411,8 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
 
    ewd = data;
 
+   /* TODO: Add listener for wl_display so we can catch fatal errors !! */
+
    if (!strcmp(interface, "wl_compositor"))
      ewd->wl.compositor = wl_display_bind(disp, id, &wl_compositor_interface);
    else if (!strcmp(interface, "wl_output"))
@@ -419,6 +421,8 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
      _ecore_wl_input_add(ewd, id);
    else if (!strcmp(interface, "wl_shell"))
      ewd->wl.shell = wl_display_bind(disp, id, &wl_shell_interface);
+   /* else if (!strcmp(interface, "desktop_shell")) */
+   /*   ewd->wl.desktop_shell = wl_display_bind(disp, id, &wl_shell_interface); */
    else if (!strcmp(interface, "wl_shm"))
      ewd->wl.shm = wl_display_bind(disp, id, &wl_shm_interface);
    else if (!strcmp(interface, "wl_data_device_manager"))
