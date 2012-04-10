@@ -26,7 +26,9 @@
  */
 
 /**
- * Checks whenever the given level should be printed out.
+ * @brief Checks whenever the given level should be printed out.
+ *
+ * @param level The level to print
  *
  * This is useful to enable certain blocks of code just when given
  * level is to be used.
@@ -53,7 +55,10 @@ eina_log_level_check(int level)
 }
 
 /**
- * Checks whenever the given level should be printed out.
+ * @brief Checks whenever the given level should be printed out.
+ *
+ * @param domain The domain to check
+ * @param level The level to print
  *
  * This is useful to enable certain blocks of code just when given
  * level is to be used.

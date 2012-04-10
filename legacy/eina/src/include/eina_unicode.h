@@ -109,6 +109,9 @@ EAPI Eina_Unicode *eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *
 
 /**
  * @see eina_str_escape()
+ *
+ * @param str The string to escape.
+ * @return The escaped string.
  */
 EAPI Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str) EINA_ARG_NONNULL(1) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
