@@ -18,6 +18,8 @@
 typedef struct _Eobj Eobj;
 typedef uintptr_t Eobj_Op;
 
+#define EOBJ_NOOP ((Eobj_Op) 0)
+
 typedef struct _Eobj_Class Eobj_Class;
 typedef int Eobj_Class_Id;
 

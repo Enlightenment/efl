@@ -54,7 +54,7 @@ struct _Eobj {
 
      Eina_Inlist *generic_data;
 
-     Eina_List *kls_itr;
+     Eina_Inlist *kls_itr;
 
      Eina_Bool delete:1;
      EINA_MAGIC
@@ -208,26 +208,54 @@ dich_func_clean_all(Eobj_Class *klass)
 
 /* END OF DICH */
 
-static inline void
-_eobj_kls_itr_init(Eobj *obj)
+typedef struct
 {
-   obj->kls_itr = eina_list_prepend(obj->kls_itr, obj->klass->mro);
+   EINA_INLIST;
+   Eobj_Op op;
+   const Eobj_Class **kls_itr;
+} Eobj_Kls_Itr_Node;
+
+static inline void
+_eobj_kls_itr_init(Eobj *obj, Eobj_Op op)
+{
+   if (obj->kls_itr &&
+         EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node))
+     {
+        /* Nothing ATM. */
+     }
+   else
+     {
+        Eobj_Kls_Itr_Node *node = calloc(1, sizeof(*node));
+        node->op = op;
+        node->kls_itr = obj->klass->mro;
+        obj->kls_itr = eina_inlist_prepend(obj->kls_itr,
+              EINA_INLIST_GET(node));
+     }
 }
 
 static inline void
-_eobj_kls_itr_end(Eobj *obj)
+_eobj_kls_itr_end(Eobj *obj, Eobj_Op op)
 {
-   obj->kls_itr = eina_list_remove_list(obj->kls_itr, obj->kls_itr);
+   Eobj_Kls_Itr_Node *node =
+      EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node);
+
+   if (node->op != op)
+      return;
+
+   obj->kls_itr = eina_inlist_remove(obj->kls_itr, obj->kls_itr);
+   free(node);
 }
 
 static inline const Eobj_Class *
 _eobj_kls_itr_next(Eobj *obj)
 {
-   const Eobj_Class **kls_itr = eina_list_data_get(obj->kls_itr);
+   Eobj_Kls_Itr_Node *node =
+      EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node);
+   const Eobj_Class **kls_itr = node->kls_itr;
    if (*kls_itr)
      {
         kls_itr++;
-        eina_list_data_set(obj->kls_itr, kls_itr);
+        node->kls_itr = kls_itr;
         return *kls_itr;
      }
    else
@@ -239,7 +267,9 @@ _eobj_kls_itr_next(Eobj *obj)
 static inline Eina_Bool
 _eobj_kls_itr_reached_end(const Eobj *obj)
 {
-   const Eobj_Class **kls_itr = eina_list_data_get(obj->kls_itr);
+   Eobj_Kls_Itr_Node *node =
+      EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node);
+   const Eobj_Class **kls_itr = node->kls_itr;
    return !(*kls_itr && *(kls_itr + 1));
 }
 
@@ -344,7 +374,6 @@ _eobj_ops_internal(Eobj *obj, const Eobj_Class *obj_klass, va_list *p_list)
    op = va_arg(*p_list, Eobj_Op);
    while (op)
      {
-        _eobj_kls_itr_init(obj);
         if (!_eobj_op_internal(obj, obj_klass, op, p_list, EINA_TRUE))
           {
              const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
@@ -355,10 +384,8 @@ _eobj_ops_internal(Eobj *obj, const Eobj_Class *obj_klass, va_list *p_list)
                    op, _id_name, _dom_name,
                    obj_klass->desc->name);
              ret = EINA_FALSE;
-             _eobj_kls_itr_end(obj);
              break;
           }
-        _eobj_kls_itr_end(obj);
         op = va_arg(*p_list, Eobj_Op);
      }
 
@@ -385,6 +412,7 @@ eobj_super_do(Eobj *obj, Eobj_Op op, ...)
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
    va_start(p_list, op);
+   _eobj_kls_itr_init(obj, op);
    if (!_eobj_op_internal(obj, obj_klass, op, &p_list, EINA_FALSE))
      {
         const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
@@ -396,6 +424,7 @@ eobj_super_do(Eobj *obj, Eobj_Op op, ...)
               obj_klass->desc->name);
         ret = EINA_FALSE;
      }
+   _eobj_kls_itr_end(obj, op);
    va_end(p_list);
    return ret;
 }
@@ -657,7 +686,7 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
 
    obj->data_blob = calloc(1, klass->data_offset + klass->desc->private_size);
 
-   _eobj_kls_itr_init(obj);
+   _eobj_kls_itr_init(obj, EOBJ_NOOP);
    eobj_class_constructor(obj, klass);
    if (eobj_generic_data_get(obj, CONSTRUCT_ERROR_KEY))
      {
@@ -670,7 +699,7 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
         ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
      }
-   _eobj_kls_itr_end(obj);
+   _eobj_kls_itr_end(obj, EOBJ_NOOP);
 
    return obj;
 
@@ -692,7 +721,7 @@ eobj_unref(Eobj *obj)
    if (--(obj->refcount) == 0)
      {
         const Eobj_Class *klass = eobj_class_get(obj);
-        _eobj_kls_itr_init(obj);
+        _eobj_kls_itr_init(obj, EOBJ_NOOP);
         eobj_class_destructor(obj, klass);
         if (eobj_generic_data_get(obj, CONSTRUCT_ERROR_KEY))
           {
@@ -703,11 +732,16 @@ eobj_unref(Eobj *obj)
           {
              ERR("Type '%s' - Not all of the object destructors have been executed.", klass->desc->name);
           }
-        _eobj_kls_itr_end(obj);
+        _eobj_kls_itr_end(obj, EOBJ_NOOP);
         /*FIXME: add eobj_class_unref(klass) ? - just to clear the caches. */
 
         /* If for some reason it's not empty, clear it. */
-        eina_list_free(obj->kls_itr);
+        while (obj->kls_itr)
+          {
+             Eina_Inlist *nitr = nitr->next;
+             free(EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node));
+             obj->kls_itr = nitr;
+          }
 
         Eina_List *itr, *itr_n;
         Eobj *emb_obj;
