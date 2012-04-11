@@ -678,15 +678,15 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
 
    _eobj_kls_itr_init(obj);
    eobj_class_constructor(obj, klass);
-   if (*obj->kls_itr && *(obj->kls_itr + 1))
-     {
-        ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
-        goto fail;
-     }
-
    if (eobj_generic_data_get(obj, CONSTRUCT_ERROR_KEY))
      {
         ERR("Type '%s' - One of the object constructors have failed.", klass->desc->name);
+        goto fail;
+     }
+
+   if (*obj->kls_itr && *(obj->kls_itr + 1))
+     {
+        ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
      }
 
@@ -712,6 +712,15 @@ eobj_unref(Eobj *obj)
         const Eobj_Class *klass = eobj_class_get(obj);
         _eobj_kls_itr_init(obj);
         eobj_class_destructor(obj, klass);
+        if (eobj_generic_data_get(obj, CONSTRUCT_ERROR_KEY))
+          {
+             ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
+          }
+
+        if (*obj->kls_itr && *(obj->kls_itr + 1))
+          {
+             ERR("Type '%s' - Not all of the object destructors have been executed.", klass->desc->name);
+          }
         /*FIXME: add eobj_class_unref(klass) ? - just to clear the caches. */
 
         Eina_List *itr, *itr_n;
