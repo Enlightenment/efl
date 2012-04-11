@@ -95,7 +95,6 @@ EAPI Eina_Bool eobj_do_internal(Eobj *obj, ...);
 EAPI Eina_Bool eobj_super_do(Eobj *obj, Eobj_Op op, ...);
 
 EAPI const Eobj_Class *eobj_class_get(Eobj *obj);
-EAPI const Eobj_Class *eobj_class_parent_get(const Eobj_Class *klass);
 EAPI const char *eobj_class_name_get(const Eobj_Class *klass);
 
 EAPI void eobj_constructor_super(Eobj *obj);

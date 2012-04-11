@@ -435,12 +435,6 @@ eobj_class_get(Eobj *obj)
    return obj->klass;
 }
 
-EAPI const Eobj_Class *
-eobj_class_parent_get(const Eobj_Class *klass)
-{
-   return klass->parent;
-}
-
 EAPI const char *
 eobj_class_name_get(const Eobj_Class *klass)
 {
