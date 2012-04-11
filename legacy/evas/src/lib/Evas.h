@@ -4196,10 +4196,10 @@ EAPI Eina_Bool         evas_object_freeze_events_get(const Evas_Object *obj) EIN
  * 3D effects.
  *
  * As usual, Evas provides both the raw and easy to use methods. The
- * raw methods allow developer to create its maps somewhere else,
- * maybe load them from some file format. The easy to use methods,
- * calculate the points given some high-level parameters, such as
- * rotation angle, ambient light and so on.
+ * raw methods allow developers to create their maps somewhere else,
+ * possibly loading them from some file format. The easy to use methods
+ * calculate the points given some high-level parameters such as
+ * rotation angle, ambient light, and so on.
  *
  * @note applying mapping will reduce performance, so use with
  *       care. The impact on performance depends on engine in
