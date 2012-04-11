@@ -55,7 +55,7 @@ struct _Eobj {
 
      Eina_Inlist *generic_data;
 
-     const Eobj_Class *kls_itr;
+     const Eobj_Class **kls_itr;
 
      Eina_Bool delete:1;
      EINA_MAGIC
@@ -118,6 +118,9 @@ struct _Eobj_Class
    const Eobj_Class_Description *desc;
    Dich_Chain1 chain[DICH_CHAIN1_SIZE];
    Eina_Inlist *extensions;
+
+   const Eobj_Class **mro;
+
    Eina_Bool constructed : 1;
 };
 
@@ -372,6 +375,79 @@ _eobj_class_base_op_init(Eobj_Class *klass)
    *(desc->ops.base_op_id) = klass->class_id << OP_CLASS_OFFSET;
 }
 
+static Eina_List *
+_eobj_class_mro_add(Eina_List *mro, const Eobj_Class *klass)
+{
+   if (!klass)
+      return mro;
+
+   mro = eina_list_append(mro, klass);
+
+     {
+        Eobj_Extension_Node *extn;
+        EINA_INLIST_FOREACH(klass->extensions, extn)
+          {
+             mro = _eobj_class_mro_add(mro, extn->klass);
+          }
+     }
+
+   mro = _eobj_class_mro_add(mro, klass->parent);
+
+   return mro;
+}
+
+static void
+_eobj_class_mro_init(Eobj_Class *klass)
+{
+   Eina_List *mro = NULL;
+
+   DBG("Started creating MRO for class '%s'", klass->desc->name);
+   mro = _eobj_class_mro_add(mro, klass);
+
+     {
+        Eina_List *itr1, *itr2, *itr2n;
+
+        itr1 = eina_list_last(mro);
+        while (itr1)
+          {
+             itr2 = eina_list_prev(itr1);
+
+             while (itr2)
+               {
+                  itr2n = eina_list_prev(itr2);
+
+                  if (eina_list_data_get(itr1) == eina_list_data_get(itr2))
+                    {
+                       mro = eina_list_remove_list(mro, itr2);
+                    }
+
+                  itr2 = itr2n;
+               }
+
+             itr1 = eina_list_prev(itr1);
+          }
+     }
+
+   /* Copy the mro and free the list. */
+     {
+        const Eobj_Class *kls_itr;
+        const Eobj_Class **mro_itr;
+        klass->mro = calloc(sizeof(*klass->mro), eina_list_count(mro) + 1);
+
+        mro_itr = klass->mro;
+
+        EINA_LIST_FREE(mro, kls_itr)
+          {
+             *(mro_itr++) = kls_itr;
+
+             DBG("Added '%s' to MRO", kls_itr->desc->name);
+          }
+        *(mro_itr) = NULL;
+     }
+
+   DBG("Finished creating MRO for class '%s'", klass->desc->name);
+}
+
 static void
 _eobj_class_constructor(Eobj_Class *klass)
 {
@@ -380,10 +456,10 @@ _eobj_class_constructor(Eobj_Class *klass)
 
    klass->constructed = EINA_TRUE;
 
-   if (!klass->desc->class_constructor)
-      return;
+   if (klass->desc->class_constructor)
+      klass->desc->class_constructor(klass);
 
-   klass->desc->class_constructor(klass);
+   _eobj_class_mro_init(klass);
 }
 
 EAPI void
@@ -513,9 +589,12 @@ eobj_class_free(Eobj_Class *klass)
           }
      }
 
+   free(klass->mro);
+
    free(klass);
 }
 
+/* FIXME: Do I still need count parents? */
 static int
 _eobj_class_count_parents(const Eobj_Class *klass)
 {
@@ -525,6 +604,12 @@ _eobj_class_count_parents(const Eobj_Class *klass)
       count++;
 
    return count;
+}
+
+static void
+_eobj_kls_itr_init(Eobj *obj)
+{
+   obj->kls_itr = obj->klass->mro;
 }
 
 EAPI Eobj *
@@ -576,8 +661,9 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
           }
      }
 
+   _eobj_kls_itr_init(obj);
    eobj_class_constructor(obj, klass);
-   if (obj->kls_itr && obj->kls_itr->parent)
+   if (*obj->kls_itr && *(obj->kls_itr + 1))
      {
         ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
@@ -609,6 +695,7 @@ eobj_unref(Eobj *obj)
    if (--(obj->refcount) == 0)
      {
         const Eobj_Class *klass = eobj_class_get(obj);
+        _eobj_kls_itr_init(obj);
         eobj_class_destructor(obj, klass);
         /*FIXME: add eobj_class_unref(klass) ? - just to clear the caches. */
 
@@ -673,19 +760,8 @@ _eobj_destructor_default(Eobj *obj)
 static void
 eobj_class_constructor(Eobj *obj, const Eobj_Class *klass)
 {
-   const Eobj_Extension_Node *extn;
-
-   obj->kls_itr = klass;
-
    if (!klass)
       return;
-
-   EINA_INLIST_FOREACH(klass->extensions, extn)
-     {
-        /* Only call if it's the first one in the class. */
-        if (!extn->exists && extn->klass->desc->constructor)
-           extn->klass->desc->constructor(obj);
-     }
 
    if (klass->desc->constructor)
       klass->desc->constructor(obj);
@@ -696,10 +772,6 @@ eobj_class_constructor(Eobj *obj, const Eobj_Class *klass)
 static void
 eobj_class_destructor(Eobj *obj, const Eobj_Class *klass)
 {
-   const Eobj_Extension_Node *extn;
-
-   obj->kls_itr = klass;
-
    if (!klass)
       return;
 
@@ -707,28 +779,20 @@ eobj_class_destructor(Eobj *obj, const Eobj_Class *klass)
       klass->desc->destructor(obj);
    else
       _eobj_destructor_default(obj);
-
-   EINA_INLIST_REVERSE_FOREACH(klass->extensions, extn)
-     {
-        /* Only call if it's the first one in the class. */
-        if (!extn->exists && extn->klass->desc->destructor)
-           extn->klass->desc->destructor(obj);
-     }
-
 }
 
 EAPI void
 eobj_constructor_super(Eobj *obj)
 {
-   if (obj->kls_itr->parent)
-      eobj_class_constructor(obj, obj->kls_itr->parent);
+   if (*obj->kls_itr)
+      eobj_class_constructor(obj, *++(obj->kls_itr));
 }
 
 EAPI void
 eobj_destructor_super(Eobj *obj)
 {
-   if (obj->kls_itr->parent)
-      eobj_class_destructor(obj, obj->kls_itr->parent);
+   if (*obj->kls_itr)
+      eobj_class_destructor(obj, *++(obj->kls_itr));
 }
 
 EAPI void *
