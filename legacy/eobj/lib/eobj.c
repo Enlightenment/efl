@@ -55,7 +55,7 @@ struct _Eobj {
 
      Eina_Inlist *generic_data;
 
-     const Eobj_Class **kls_itr;
+     Eina_List *kls_itr;
 
      Eina_Bool delete:1;
      EINA_MAGIC
@@ -210,28 +210,36 @@ dich_func_clean_all(Eobj_Class *klass)
 static inline void
 _eobj_kls_itr_init(Eobj *obj)
 {
-   obj->kls_itr = obj->klass->mro;
+   obj->kls_itr = eina_list_prepend(obj->kls_itr, obj->klass->mro);
 }
 
 static inline void
 _eobj_kls_itr_end(Eobj *obj)
 {
-   /*pop*/
+   obj->kls_itr = eina_list_remove_list(obj->kls_itr, obj->kls_itr);
 }
 
 static inline const Eobj_Class *
 _eobj_kls_itr_next(Eobj *obj)
 {
-   if (*obj->kls_itr)
-      return *++(obj->kls_itr);
+   const Eobj_Class **kls_itr = eina_list_data_get(obj->kls_itr);
+   if (*kls_itr)
+     {
+        kls_itr++;
+        eina_list_data_set(obj->kls_itr, kls_itr);
+        return *kls_itr;
+     }
    else
-      return NULL;
+     {
+        return NULL;
+     }
 }
 
 static inline Eina_Bool
 _eobj_kls_itr_reached_end(const Eobj *obj)
 {
-   return !(*obj->kls_itr && *(obj->kls_itr + 1));
+   const Eobj_Class **kls_itr = eina_list_data_get(obj->kls_itr);
+   return !(*kls_itr && *(kls_itr + 1));
 }
 
 /* FIXME: Decide if it should be fast, and if so, add a mapping.
@@ -728,6 +736,9 @@ eobj_unref(Eobj *obj)
           }
         _eobj_kls_itr_end(obj);
         /*FIXME: add eobj_class_unref(klass) ? - just to clear the caches. */
+
+        /* If for some reason it's not empty, clear it. */
+        eina_list_free(obj->kls_itr);
 
         Eina_List *itr, *itr_n;
         Eobj *emb_obj;
