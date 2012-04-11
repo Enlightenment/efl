@@ -761,6 +761,12 @@ eobj_unref(Eobj *obj)
      }
 }
 
+EAPI int
+eobj_ref_get(const Eobj *obj)
+{
+   return obj->refcount;
+}
+
 EAPI void
 eobj_del(Eobj *obj)
 {

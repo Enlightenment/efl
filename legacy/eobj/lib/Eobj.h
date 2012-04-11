@@ -110,6 +110,7 @@ EAPI Eobj *eobj_parent_get(Eobj *obj);
 EAPI void *eobj_data_get(Eobj *obj, const Eobj_Class *klass);
 EAPI Eobj *eobj_ref(Eobj *obj);
 EAPI void eobj_unref(Eobj *obj);
+EAPI int eobj_ref_get(const Eobj *obj);
 EAPI void eobj_del(Eobj *obj);
 EAPI void *eobj_generic_data_set(Eobj *obj, const char *key, const void *data);
 EAPI void *eobj_generic_data_get(const Eobj *obj, const char *key);
