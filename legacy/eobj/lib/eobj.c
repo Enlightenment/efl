@@ -344,6 +344,7 @@ _eobj_ops_internal(Eobj *obj, const Eobj_Class *obj_klass, va_list *p_list)
    op = va_arg(*p_list, Eobj_Op);
    while (op)
      {
+        _eobj_kls_itr_init(obj);
         if (!_eobj_op_internal(obj, obj_klass, op, p_list, EINA_TRUE))
           {
              const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
@@ -354,8 +355,10 @@ _eobj_ops_internal(Eobj *obj, const Eobj_Class *obj_klass, va_list *p_list)
                    op, _id_name, _dom_name,
                    obj_klass->desc->name);
              ret = EINA_FALSE;
+             _eobj_kls_itr_end(obj);
              break;
           }
+        _eobj_kls_itr_end(obj);
         op = va_arg(*p_list, Eobj_Op);
      }
 
@@ -368,9 +371,7 @@ eobj_do_internal(Eobj *obj, ...)
    Eina_Bool ret;
    va_list p_list;
    va_start(p_list, obj);
-   _eobj_kls_itr_init(obj);
    ret = _eobj_ops_internal(obj, eobj_class_get(obj), &p_list);
-   _eobj_kls_itr_end(obj);
    va_end(p_list);
    return ret;
 }
