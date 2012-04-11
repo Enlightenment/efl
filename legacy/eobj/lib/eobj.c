@@ -207,10 +207,31 @@ dich_func_clean_all(Eobj_Class *klass)
 
 /* END OF DICH */
 
-static void
+static inline void
 _eobj_kls_itr_init(Eobj *obj)
 {
    obj->kls_itr = obj->klass->mro;
+}
+
+static inline void
+_eobj_kls_itr_end(Eobj *obj)
+{
+   /*pop*/
+}
+
+static inline const Eobj_Class *
+_eobj_kls_itr_next(Eobj *obj)
+{
+   if (*obj->kls_itr)
+      return *++(obj->kls_itr);
+   else
+      return NULL;
+}
+
+static inline Eina_Bool
+_eobj_kls_itr_reached_end(const Eobj *obj)
+{
+   return !(*obj->kls_itr && *(obj->kls_itr + 1));
 }
 
 /* FIXME: Decide if it should be fast, and if so, add a mapping.
@@ -340,6 +361,7 @@ eobj_do_internal(Eobj *obj, ...)
    va_start(p_list, obj);
    _eobj_kls_itr_init(obj);
    ret = _eobj_ops_internal(obj, eobj_class_get(obj), &p_list);
+   _eobj_kls_itr_end(obj);
    va_end(p_list);
    return ret;
 }
@@ -347,7 +369,9 @@ eobj_do_internal(Eobj *obj, ...)
 EAPI Eina_Bool
 eobj_super_do(Eobj *obj, Eobj_Op op, ...)
 {
-   const Eobj_Class *obj_klass = *++(obj->kls_itr);
+   const Eobj_Class *obj_klass = _eobj_kls_itr_next(obj);
+   if (!obj_klass) return EINA_TRUE;
+
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
    va_start(p_list, op);
@@ -664,11 +688,12 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
         goto fail;
      }
 
-   if (*obj->kls_itr && *(obj->kls_itr + 1))
+   if (!_eobj_kls_itr_reached_end(obj))
      {
         ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
      }
+   _eobj_kls_itr_end(obj);
 
    return obj;
 
@@ -697,10 +722,11 @@ eobj_unref(Eobj *obj)
              ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
           }
 
-        if (*obj->kls_itr && *(obj->kls_itr + 1))
+        if (!_eobj_kls_itr_reached_end(obj))
           {
              ERR("Type '%s' - Not all of the object destructors have been executed.", klass->desc->name);
           }
+        _eobj_kls_itr_end(obj);
         /*FIXME: add eobj_class_unref(klass) ? - just to clear the caches. */
 
         Eina_List *itr, *itr_n;
@@ -788,15 +814,13 @@ eobj_class_destructor(Eobj *obj, const Eobj_Class *klass)
 EAPI void
 eobj_constructor_super(Eobj *obj)
 {
-   if (*obj->kls_itr)
-      eobj_class_constructor(obj, *++(obj->kls_itr));
+   eobj_class_constructor(obj, _eobj_kls_itr_next(obj));
 }
 
 EAPI void
 eobj_destructor_super(Eobj *obj)
 {
-   if (*obj->kls_itr)
-      eobj_class_destructor(obj, *++(obj->kls_itr));
+   eobj_class_destructor(obj, _eobj_kls_itr_next(obj));
 }
 
 EAPI void *
