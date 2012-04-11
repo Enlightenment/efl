@@ -208,6 +208,12 @@ dich_func_clean_all(Eobj_Class *klass)
 
 /* END OF DICH */
 
+static void
+_eobj_kls_itr_init(Eobj *obj)
+{
+   obj->kls_itr = obj->klass->mro;
+}
+
 /* FIXME: Decide if it should be fast, and if so, add a mapping.
  * Otherwise, this is very slow. But since it's only for debugging... */
 static const Eobj_Op_Description *
@@ -238,7 +244,7 @@ _eobj_op_id_desc_get(Eobj_Op op)
 }
 
 static Eina_Bool
-_eobj_op_internal(Eobj *obj, const Eobj_Class *obj_klass, Eobj_Op op, va_list *p_list)
+_eobj_op_internal(Eobj *obj, const Eobj_Class *obj_klass, Eobj_Op op, va_list *p_list, Eina_Bool recursive)
 {
    const Eobj_Class *klass = obj_klass;
    eobj_op_func_type func;
@@ -261,6 +267,9 @@ _eobj_op_internal(Eobj *obj, const Eobj_Class *obj_klass, Eobj_Op op, va_list *p
           }
      }
 
+   if (!recursive)
+      return EINA_FALSE;
+
    if (!klass)
      {
         klass = obj_klass;
@@ -270,7 +279,7 @@ _eobj_op_internal(Eobj *obj, const Eobj_Class *obj_klass, Eobj_Op op, va_list *p
              Eobj_Extension_Node *itr;
              EINA_INLIST_FOREACH(klass->extensions, itr)
                {
-                  if (_eobj_op_internal(obj, itr->klass, op, p_list))
+                  if (_eobj_op_internal(obj, itr->klass, op, p_list, recursive))
                     {
                        return EINA_TRUE;
                     }
@@ -283,7 +292,7 @@ _eobj_op_internal(Eobj *obj, const Eobj_Class *obj_klass, Eobj_Op op, va_list *p
              Eobj *emb_obj;
              EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj)
                {
-                  if (_eobj_op_internal(emb_obj, eobj_class_get(emb_obj), op, p_list))
+                  if (_eobj_op_internal(emb_obj, eobj_class_get(emb_obj), op, p_list, recursive))
                     {
                        return EINA_TRUE;
                     }
@@ -306,7 +315,7 @@ _eobj_ops_internal(Eobj *obj, const Eobj_Class *obj_klass, va_list *p_list)
    op = va_arg(*p_list, Eobj_Op);
    while (op)
      {
-        if (!_eobj_op_internal(obj, obj_klass, op, p_list))
+        if (!_eobj_op_internal(obj, obj_klass, op, p_list, EINA_TRUE))
           {
              const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
              const char *_id_name = (desc) ? desc->name : NULL;
@@ -330,18 +339,30 @@ eobj_do_internal(Eobj *obj, ...)
    Eina_Bool ret;
    va_list p_list;
    va_start(p_list, obj);
+   _eobj_kls_itr_init(obj);
    ret = _eobj_ops_internal(obj, eobj_class_get(obj), &p_list);
    va_end(p_list);
    return ret;
 }
 
 EAPI Eina_Bool
-eobj_class_do_internal(Eobj *obj, const Eobj_Class *klass, ...)
+eobj_super_do(Eobj *obj, Eobj_Op op, ...)
 {
-   Eina_Bool ret;
+   const Eobj_Class *obj_klass = *++(obj->kls_itr);
+   Eina_Bool ret = EINA_TRUE;
    va_list p_list;
-   va_start(p_list, klass);
-   ret = _eobj_ops_internal(obj, klass, &p_list);
+   va_start(p_list, op);
+   if (!_eobj_op_internal(obj, obj_klass, op, &p_list, EINA_FALSE))
+     {
+        const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
+        const char *_id_name = (desc) ? desc->name : NULL;
+        const Eobj_Class *op_klass = OP_CLASS_GET(op);
+        const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
+        ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.",
+              op, _id_name, _dom_name,
+              obj_klass->desc->name);
+        ret = EINA_FALSE;
+     }
    va_end(p_list);
    return ret;
 }
@@ -604,12 +625,6 @@ _eobj_class_count_parents(const Eobj_Class *klass)
       count++;
 
    return count;
-}
-
-static void
-_eobj_kls_itr_init(Eobj *obj)
-{
-   obj->kls_itr = obj->klass->mro;
 }
 
 EAPI Eobj *

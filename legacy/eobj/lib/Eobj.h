@@ -87,13 +87,10 @@ EAPI Eina_Bool eobj_init(void);
 EAPI Eina_Bool eobj_shutdown(void);
 
 #define eobj_do(object, ...) eobj_do_internal(object, __VA_ARGS__, NULL)
-/* FIXME: Change this to SUPER as well. */
-#define eobj_class_do(object, klass, ...) eobj_class_do_internal(object, klass, __VA_ARGS__, NULL)
-#define eobj_class_parent_do(object, klass, ...) eobj_class_do_internal(object, eobj_class_parent_get(klass), __VA_ARGS__, NULL)
 
 EAPI Eina_Bool eobj_do_internal(Eobj *obj, ...);
 
-EAPI Eina_Bool eobj_class_do_internal(Eobj *obj, const Eobj_Class *klass, ...);
+EAPI Eina_Bool eobj_super_do(Eobj *obj, Eobj_Op op, ...);
 
 EAPI const Eobj_Class *eobj_class_get(Eobj *obj);
 EAPI const Eobj_Class *eobj_class_parent_get(const Eobj_Class *klass);

@@ -25,7 +25,7 @@ _position_set(Eobj *obj, Eobj_Op op, va_list *list)
    x = va_arg(*list, Evas_Coord);
    y = va_arg(*list, Evas_Coord);
    printf("But set position %d,%d\n", x, y);
-   eobj_class_parent_do(obj, _my_class, EVAS_OBJ_POSITION_SET(x, y));
+   eobj_super_do(obj, EVAS_OBJ_POSITION_SET(x, y));
 }
 
 static void
