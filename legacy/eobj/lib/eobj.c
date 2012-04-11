@@ -406,13 +406,16 @@ eobj_do_internal(Eobj *obj, ...)
 EAPI Eina_Bool
 eobj_super_do(Eobj *obj, Eobj_Op op, ...)
 {
-   const Eobj_Class *obj_klass = _eobj_kls_itr_next(obj);
-   if (!obj_klass) return EINA_TRUE;
+   const Eobj_Class *obj_klass;
 
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
-   va_start(p_list, op);
    _eobj_kls_itr_init(obj, op);
+   obj_klass = _eobj_kls_itr_next(obj);
+
+   if (!obj_klass) goto end;
+
+   va_start(p_list, op);
    if (!_eobj_op_internal(obj, obj_klass, op, &p_list, EINA_FALSE))
      {
         const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
@@ -424,8 +427,10 @@ eobj_super_do(Eobj *obj, Eobj_Op op, ...)
               obj_klass->desc->name);
         ret = EINA_FALSE;
      }
-   _eobj_kls_itr_end(obj, op);
    va_end(p_list);
+
+end:
+   _eobj_kls_itr_end(obj, op);
    return ret;
 }
 
