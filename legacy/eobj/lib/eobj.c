@@ -439,8 +439,6 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    _CLS_NEW_CHECK(desc);
    _CLS_NEW_CHECK(desc->name);
-   _CLS_NEW_CHECK(desc->constructor);
-   _CLS_NEW_CHECK(desc->destructor);
 
    klass = calloc(1, sizeof(Eobj_Class));
    klass->parent = parent;
@@ -660,6 +658,18 @@ eobj_constructor_error_get(const Eobj *obj)
    return (intptr_t) eobj_generic_data_get(obj, CONSTRUCT_ERROR_KEY);
 }
 
+static inline void
+_eobj_constructor_default(Eobj *obj)
+{
+   eobj_constructor_super(obj);
+}
+
+static inline void
+_eobj_destructor_default(Eobj *obj)
+{
+   eobj_destructor_super(obj);
+}
+
 static void
 eobj_class_constructor(Eobj *obj, const Eobj_Class *klass)
 {
@@ -677,7 +687,10 @@ eobj_class_constructor(Eobj *obj, const Eobj_Class *klass)
            extn->klass->desc->constructor(obj);
      }
 
-   klass->desc->constructor(obj);
+   if (klass->desc->constructor)
+      klass->desc->constructor(obj);
+   else
+      _eobj_constructor_default(obj);
 }
 
 static void
@@ -690,7 +703,10 @@ eobj_class_destructor(Eobj *obj, const Eobj_Class *klass)
    if (!klass)
       return;
 
-   klass->desc->destructor(obj);
+   if (klass->desc->destructor)
+      klass->desc->destructor(obj);
+   else
+      _eobj_destructor_default(obj);
 
    EINA_INLIST_REVERSE_FOREACH(klass->extensions, extn)
      {

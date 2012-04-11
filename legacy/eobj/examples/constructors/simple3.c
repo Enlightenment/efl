@@ -10,12 +10,6 @@ _constructor(Eobj *obj)
    (void) obj;
 }
 
-static void
-_destructor(Eobj *obj)
-{
-   eobj_destructor_super(obj);
-}
-
 const Eobj_Class *
 simple3_class_get(void)
 {
@@ -28,7 +22,7 @@ simple3_class_get(void)
         NULL,
         0,
         _constructor,
-        _destructor,
+        NULL,
         NULL,
         NULL
    };

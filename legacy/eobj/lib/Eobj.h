@@ -87,6 +87,7 @@ EAPI Eina_Bool eobj_init(void);
 EAPI Eina_Bool eobj_shutdown(void);
 
 #define eobj_do(object, ...) eobj_do_internal(object, __VA_ARGS__, NULL)
+/* FIXME: Change this to SUPER as well. */
 #define eobj_class_do(object, klass, ...) eobj_class_do_internal(object, klass, __VA_ARGS__, NULL)
 #define eobj_class_parent_do(object, klass, ...) eobj_class_do_internal(object, eobj_class_parent_get(klass), __VA_ARGS__, NULL)
 

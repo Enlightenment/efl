@@ -5,18 +5,6 @@
 
 static Eobj_Class *_my_class = NULL;
 
-static void
-_constructor(Eobj *obj)
-{
-   eobj_constructor_super(obj);
-}
-
-static void
-_destructor(Eobj *obj)
-{
-   eobj_destructor_super(obj);
-}
-
 const Eobj_Class *
 simple4_class_get(void)
 {
@@ -28,8 +16,8 @@ simple4_class_get(void)
         EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
         0,
-        _constructor,
-        _destructor,
+        NULL,
+        NULL,
         NULL,
         NULL
    };

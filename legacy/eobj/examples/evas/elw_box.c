@@ -40,17 +40,6 @@ _constructor(Eobj *obj)
 }
 
 static void
-_destructor(Eobj *obj)
-{
-   eobj_destructor_super(obj);
-
-   //Widget_Data *wd = eobj_data_get(obj, _my_class);
-   /* FIXME: Commented out because it's automatically done because our tree
-    * is not made of only eobj */
-//   evas_object_del(wd->bx);
-}
-
-static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
@@ -78,7 +67,7 @@ elw_box_class_get(void)
         NULL,
         sizeof(Widget_Data),
         _constructor,
-        _destructor,
+        NULL,
         _class_constructor,
         NULL
    };

@@ -32,18 +32,6 @@ _a_set(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_constructor(Eobj *obj)
-{
-   eobj_constructor_super(obj);
-}
-
-static void
-_destructor(Eobj *obj)
-{
-   eobj_destructor_super(obj);
-}
-
-static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
@@ -75,8 +63,8 @@ simple_class_get(void)
         EOBJ_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
         event_desc,
         sizeof(Private_Data),
-        _constructor,
-        _destructor,
+        NULL,
+        NULL,
         _class_constructor,
         NULL
    };

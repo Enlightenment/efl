@@ -18,18 +18,6 @@ _prot_print(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_constructor(Eobj *obj)
-{
-   eobj_constructor_super(obj);
-}
-
-static void
-_destructor(Eobj *obj)
-{
-   eobj_destructor_super(obj);
-}
-
-static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
@@ -56,8 +44,8 @@ inherit_class_get(void)
         EOBJ_CLASS_DESCRIPTION_OPS(&INHERIT_BASE_ID, op_desc, INHERIT_SUB_ID_LAST),
         NULL,
         0,
-        _constructor,
-        _destructor,
+        NULL,
+        NULL,
         _class_constructor,
         NULL
    };
