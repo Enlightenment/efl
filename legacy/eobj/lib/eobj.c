@@ -593,7 +593,7 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    klass->desc = desc;
 
-   /* If we have a parent, update the current offset. */
+   /* If we have a class parent, update the current offset. */
    if (klass->parent)
      {
         /* FIXME: Make sure this alignment is enough. */
