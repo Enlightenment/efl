@@ -108,7 +108,6 @@ typedef struct
 {
      EINA_INLIST;
      const Eobj_Class *klass;
-     Eina_Bool exists : 1; /* < True if already exists in class (incl parents). */
 } Eobj_Extension_Node;
 
 struct _Eobj_Class
@@ -497,24 +496,6 @@ eobj_class_funcs_set(Eobj_Class *klass, const Eobj_Op_Func_Description *func_des
      }
 }
 
-static Eina_Bool
-_eobj_class_extn_exists(const Eobj_Class *klass, const Eobj_Class *extn_cls)
-{
-   while (klass)
-     {
-        Eobj_Extension_Node *extn;
-        EINA_INLIST_FOREACH(klass->extensions, extn)
-          {
-             if (extn->klass == extn_cls)
-                return EINA_TRUE;
-          }
-
-        klass = klass->parent;
-     }
-
-   return EINA_FALSE;
-}
-
 EAPI Eobj_Class *
 eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...)
 {
@@ -566,7 +547,6 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
                      {
                         Eobj_Extension_Node *node = calloc(1, sizeof(*node));
                         node->klass = extn;
-                        node->exists = _eobj_class_extn_exists(klass, extn);
                         klass->extensions =
                            eina_inlist_append(klass->extensions,
                                  EINA_INLIST_GET(node));
