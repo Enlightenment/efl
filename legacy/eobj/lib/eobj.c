@@ -46,7 +46,6 @@ struct _Eobj {
      Eobj *parent;
      const Eobj_Class *klass;
      void *data_blob;
-     void **datas;
      int refcount;
      Eina_List *composite_objects;
 
@@ -119,6 +118,8 @@ struct _Eobj_Class
    Eina_Inlist *extensions;
 
    const Eobj_Class **mro;
+
+   size_t data_offset; /* < Offset of the data within object data. */
 
    Eina_Bool constructed : 1;
 };
@@ -591,6 +592,17 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
      }
 
    klass->desc = desc;
+
+   /* If we have a parent, update the current offset. */
+   if (klass->parent)
+     {
+        /* FIXME: Make sure this alignment is enough. */
+        klass->data_offset = klass->parent->data_offset +
+           klass->parent->desc->private_size +
+           (sizeof(void *) -
+                  (klass->parent->desc->private_size % sizeof(void *)));
+     }
+
    _eobj_class_base_op_init(klass);
 
    /* FIXME: Shouldn't be called here - should be called from eobj_add. */
@@ -627,18 +639,6 @@ eobj_class_free(Eobj_Class *klass)
    free(klass);
 }
 
-/* FIXME: Do I still need count parents? */
-static int
-_eobj_class_count_parents(const Eobj_Class *klass)
-{
-   int count = 0;
-
-   for (count = 0 ; klass->parent ; klass = klass->parent)
-      count++;
-
-   return count;
-}
-
 EAPI Eobj *
 eobj_add(const Eobj_Class *klass, Eobj *parent)
 {
@@ -653,40 +653,8 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
    obj->parent = parent;
 
    obj->refcount++;
-     {
-        size_t datas_count = 0;
-        intptr_t offset = 0;
-        size_t i;
-        const Eobj_Class *kls_itr;
-        void **pvt_itr;
-        datas_count = _eobj_class_count_parents(klass) + 1;
 
-        obj->datas = calloc(datas_count, sizeof(*(obj->datas)));
-
-        /* Calculate all the offsets and set in the datas array. */
-        pvt_itr = obj->datas + datas_count - 1;
-        for (kls_itr = klass ; kls_itr->parent ; kls_itr = kls_itr->parent)
-           {
-              *pvt_itr = (void *) offset;
-
-              /* FIXME: Make sure this alignment is enough. */
-              offset += kls_itr->desc->private_size +
-                 (sizeof(void *) -
-                  (kls_itr->desc->private_size % sizeof(void *)));
-              pvt_itr--;
-           }
-
-        /* Allocate the datas blob and update the offsets. */
-        obj->data_blob = calloc(1, offset);
-
-        pvt_itr = obj->datas;
-        for (i = 0 ; i < datas_count ; i++)
-          {
-             *pvt_itr = ((char *) obj->data_blob) + (intptr_t) *pvt_itr;
-
-              pvt_itr++;
-          }
-     }
+   obj->data_blob = calloc(1, klass->data_offset + klass->desc->private_size);
 
    _eobj_kls_itr_init(obj);
    eobj_class_constructor(obj, klass);
@@ -753,7 +721,6 @@ eobj_unref(Eobj *obj)
 
         if (obj->data_blob)
            free(obj->data_blob);
-        free(obj->datas);
 
         _eobj_generic_data_del_all(obj);
 
@@ -845,7 +812,7 @@ eobj_data_get(Eobj *obj, const Eobj_Class *klass)
 {
    /* FIXME: Add a check that this is of the right klass and we don't seg.
     * Probably just return NULL. */
-   return obj->datas[_eobj_class_count_parents(klass)];
+   return ((char *) obj->data_blob) + klass->data_offset;
 }
 
 typedef struct
