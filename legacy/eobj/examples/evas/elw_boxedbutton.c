@@ -6,6 +6,8 @@
 #include "elw_button.h"
 #include "elw_boxedbutton.h"
 
+#include "config.h"
+
 typedef struct
 {
 //   Evas_Object *bx;
@@ -14,7 +16,7 @@ typedef struct
 static Eobj_Class *_my_class = NULL;
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_constructor_super(obj);
 
@@ -25,12 +27,6 @@ _constructor(Eobj *obj)
 
    eobj_do(obj, ELW_BOX_PACK_END(bt));
    eobj_unref(bt);
-}
-
-static void
-_destructor(Eobj *obj)
-{
-   eobj_destructor_super(obj);
 }
 
 const Eobj_Class *
@@ -45,7 +41,7 @@ elw_boxedbutton_class_get(void)
         NULL,
         sizeof(Widget_Data),
         _constructor,
-        _destructor,
+        NULL,
         NULL,
         NULL
    };

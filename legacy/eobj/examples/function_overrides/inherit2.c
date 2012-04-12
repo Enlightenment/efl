@@ -4,14 +4,15 @@
 #include "inherit.h"
 #include "inherit2.h"
 
+#include "config.h"
+
 EAPI Eobj_Op INHERIT2_BASE_ID = 0;
 
 static Eobj_Class *_my_class = NULL;
 
 static void
-_a_set(Eobj *obj, Eobj_Op op, va_list *list)
+_a_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
-   (void) op;
    int a;
    a = va_arg(*list, int);
    printf("%s %d\n", eobj_class_name_get(_my_class), a);

@@ -2,14 +2,15 @@
 #include "mixin.h"
 #include "simple.h"
 
+#include "config.h"
+
 EAPI Eobj_Op MIXIN_BASE_ID = 0;
 
 static Eobj_Class *_my_class = NULL;
 
 static void
-_add_and_print_set(Eobj *obj, Eobj_Op op, va_list *list)
+_add_and_print_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
-   (void) op;
    int a, b, x;
    eobj_do(obj, SIMPLE_A_GET(&a), SIMPLE_B_GET(&b));
    x = va_arg(*list, const int);
@@ -19,7 +20,7 @@ _add_and_print_set(Eobj *obj, Eobj_Op op, va_list *list)
 extern int my_init_count;
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_constructor_super(obj);
 
@@ -27,7 +28,7 @@ _constructor(Eobj *obj)
 }
 
 static void
-_destructor(Eobj *obj)
+_destructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_destructor_super(obj);
 

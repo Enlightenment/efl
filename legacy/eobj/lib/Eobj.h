@@ -31,7 +31,7 @@ typedef enum
    EOBJ_CLASS_TYPE_MIXIN
 } Eobj_Class_Type;
 
-typedef void (*eobj_op_func_type)(Eobj *, Eobj_Op, va_list *list);
+typedef void (*eobj_op_func_type)(Eobj *, void *class_data, va_list *list);
 
 typedef struct
 {
@@ -71,9 +71,9 @@ typedef struct
         size_t count;
    } ops;
    const Eobj_Event_Description **events;
-   size_t private_size;
-   void (*constructor)(Eobj *obj);
-   void (*destructor)(Eobj *obj);
+   size_t data_size;
+   void (*constructor)(Eobj *obj, void *class_data);
+   void (*destructor)(Eobj *obj, void *class_data);
    void (*class_constructor)(Eobj_Class *klass);
    void (*class_destructor)(Eobj_Class *klass);
 } Eobj_Class_Description;

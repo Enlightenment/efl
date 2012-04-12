@@ -4,6 +4,8 @@
 #include "evas_obj.h"
 #include "elw_button.h"
 
+#include "config.h"
+
 EAPI Eobj_Op ELW_BUTTON_BASE_ID = 0;
 
 EAPI const Eobj_Event_Description _SIG_CLICKED =
@@ -17,9 +19,8 @@ typedef struct
 static Eobj_Class *_my_class = NULL;
 
 static void
-_position_set(Eobj *obj, Eobj_Op op, va_list *list)
+_position_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
-   (void) op;
    (void) obj;
    Evas_Coord x, y;
    x = va_arg(*list, Evas_Coord);
@@ -29,10 +30,9 @@ _position_set(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_text_set(Eobj *obj, Eobj_Op op, va_list *list)
+_text_set(Eobj *obj __UNUSED__, void *class_data, va_list *list)
 {
-   Widget_Data *wd = eobj_data_get(obj, _my_class);
-   (void) op;
+   Widget_Data *wd = class_data;
    const char *text;
    text = va_arg(*list, const char *);
    elm_object_text_set(wd->bt, text);
@@ -48,11 +48,11 @@ _btn_clicked(void *data, Evas_Object *evas_obj, void *event_info)
 }
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data)
 {
    eobj_constructor_super(obj);
 
-   Widget_Data *wd = eobj_data_get(obj, _my_class);
+   Widget_Data *wd = class_data;
 
    /* FIXME: An hack, because our tree is not yet only Eobj */
    wd->bt = elm_button_add(eobj_evas_object_get(eobj_parent_get(obj)));
@@ -64,11 +64,11 @@ _constructor(Eobj *obj)
 }
 
 static void
-_destructor(Eobj *obj)
+_destructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_destructor_super(obj);
 
-   //Widget_Data *wd = eobj_data_get(obj, _my_class);
+   //Widget_Data *wd = class_data;
    /* FIXME: Commented out because it's automatically done because our tree
     * is not made of only eobj */
    //evas_object_del(wd->bt);

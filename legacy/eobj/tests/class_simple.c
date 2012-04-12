@@ -1,15 +1,16 @@
 #include "Eobj.h"
 #include "class_simple.h"
 
+#include "config.h"
+
 EAPI Eobj_Op SIMPLE_BASE_ID = 0;
 
 static Eobj_Class *_my_class = NULL;
 
 static void
-_a_set(Eobj *obj, Eobj_Op op, va_list *list)
+_a_set(Eobj *obj __UNUSED__, void *class_data, va_list *list)
 {
-   Simple_Public_Data *pd = eobj_data_get(obj, _my_class);
-   (void) op;
+   Simple_Public_Data *pd = class_data;
    int a;
    a = va_arg(*list, int);
    printf("%s %d\n", eobj_class_name_get(_my_class), a);
@@ -17,10 +18,9 @@ _a_set(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_a_print(Eobj *obj, Eobj_Op op, va_list *list)
+_a_print(Eobj *obj __UNUSED__, void *class_data, va_list *list)
 {
-   Simple_Public_Data *pd = eobj_data_get(obj, _my_class);
-   (void) op;
+   Simple_Public_Data *pd = class_data;
    (void) list;
    printf("Print %s %d\n", eobj_class_name_get(_my_class), pd->a);
 }

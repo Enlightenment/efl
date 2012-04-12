@@ -16,10 +16,9 @@ EAPI const Eobj_Event_Description _SIG_A_CHANGED =
 static Eobj_Class *_my_class = NULL;
 
 static void
-_a_set(Eobj *obj, Eobj_Op op, va_list *list)
+_a_set(Eobj *obj, void *class_data, va_list *list)
 {
-   Private_Data *pd = eobj_data_get(obj, _my_class);
-   (void) op;
+   Private_Data *pd = class_data;
    int a;
    a = va_arg(*list, int);
    pd->a = a;

@@ -2,6 +2,8 @@
 
 #include "Eobj.h"
 
+#include "config.h"
+
 static int _eobj_log_dom = -1;
 
 static Eobj_Class **_eobj_classes;
@@ -333,7 +335,7 @@ _eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list)
 
         if (func)
           {
-             func(obj, op, p_list);
+             func(obj, eobj_data_get(obj, klass), p_list);
              ret = EINA_TRUE;
              goto end;
           }
@@ -638,9 +640,9 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
         /* Update the current offset. */
         /* FIXME: Make sure this alignment is enough. */
         klass->data_offset = klass->parent->data_offset +
-           klass->parent->desc->private_size +
+           klass->parent->desc->data_size +
            (sizeof(void *) -
-                  (klass->parent->desc->private_size % sizeof(void *)));
+                  (klass->parent->desc->data_size % sizeof(void *)));
      }
 
    klass->class_id = ++_eobj_classes_last_id;
@@ -707,7 +709,7 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
 
    obj->refcount++;
 
-   obj->data_blob = calloc(1, klass->data_offset + klass->desc->private_size);
+   obj->data_blob = calloc(1, klass->data_offset + klass->desc->data_size);
 
    _eobj_kls_itr_init(obj, EOBJ_NOOP);
    eobj_class_constructor(obj, klass);
@@ -836,7 +838,7 @@ eobj_class_constructor(Eobj *obj, const Eobj_Class *klass)
       return;
 
    if (klass->desc->constructor)
-      klass->desc->constructor(obj);
+      klass->desc->constructor(obj, eobj_data_get(obj, klass));
    else
       _eobj_constructor_default(obj);
 }
@@ -848,7 +850,7 @@ eobj_class_destructor(Eobj *obj, const Eobj_Class *klass)
       return;
 
    if (klass->desc->destructor)
-      klass->desc->destructor(obj);
+      klass->desc->destructor(obj, eobj_data_get(obj, klass));
    else
       _eobj_destructor_default(obj);
 }
@@ -870,7 +872,10 @@ eobj_data_get(Eobj *obj, const Eobj_Class *klass)
 {
    /* FIXME: Add a check that this is of the right klass and we don't seg.
     * Probably just return NULL. */
-   return ((char *) obj->data_blob) + klass->data_offset;
+   if (klass->desc->data_size > 0)
+      return ((char *) obj->data_blob) + klass->data_offset;
+   else
+      return NULL;
 }
 
 typedef struct
@@ -1248,13 +1253,13 @@ EAPI const Eobj_Event_Description _EOBJ_SIG_CALLBACK_DEL =
    EOBJ_EVENT_DESCRIPTION("callback,del", "?", "Called when a callback was deleted.");
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data __UNUSED__)
 {
    DBG("%p - %s.", obj, _my_class->desc->name);
 }
 
 static void
-_destructor(Eobj *obj)
+_destructor(Eobj *obj, void *class_data __UNUSED__)
 {
    DBG("%p - %s.", obj, _my_class->desc->name);
 }

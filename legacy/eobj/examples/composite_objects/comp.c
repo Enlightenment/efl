@@ -2,6 +2,8 @@
 #include "simple.h"
 
 #include "comp.h"
+#include "config.h"
+
 #include "../eunit_tests.h"
 
 EAPI Eobj_Op COMP_BASE_ID = 0;
@@ -9,16 +11,15 @@ EAPI Eobj_Op COMP_BASE_ID = 0;
 static Eobj_Class *_my_class = NULL;
 
 static void
-_a_get(Eobj *obj, Eobj_Op op, va_list *list)
+_a_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
-   (void) op;
    int *a;
    a = va_arg(*list, int *);
    eobj_super_do(obj, SIMPLE_A_GET(a));
 }
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_constructor_super(obj);
 

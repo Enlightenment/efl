@@ -2,6 +2,8 @@
 #include "mixin.h"
 #include "simple.h"
 
+#include "config.h"
+
 EAPI Eobj_Op SIMPLE_BASE_ID = 0;
 
 typedef struct
@@ -14,20 +16,18 @@ static Eobj_Class *_my_class = NULL;
 
 #define _GET_SET_FUNC(name) \
 static void \
-_##name##_get(Eobj *obj, Eobj_Op op, va_list *list) \
+_##name##_get(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
 { \
-   Private_Data *pd = eobj_data_get(obj, _my_class); \
-   (void) op; \
+   Private_Data *pd = class_data; \
    int *name; \
    name = va_arg(*list, int *); \
    *name = pd->name; \
    printf("%s %d\n", __func__, pd->name); \
 } \
 static void \
-_##name##_set(Eobj *obj, Eobj_Op op, va_list *list) \
+_##name##_set(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
 { \
-   Private_Data *pd = eobj_data_get(obj, _my_class); \
-   (void) op; \
+   Private_Data *pd = class_data; \
    int name; \
    name = va_arg(*list, int); \
    pd->name = name; \
@@ -40,7 +40,7 @@ _GET_SET_FUNC(b)
 extern int my_init_count;
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_constructor_super(obj);
 
@@ -48,7 +48,7 @@ _constructor(Eobj *obj)
 }
 
 static void
-_destructor(Eobj *obj)
+_destructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_destructor_super(obj);
 

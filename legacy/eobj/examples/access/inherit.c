@@ -4,15 +4,16 @@
 
 #include "inherit.h"
 
+#include "config.h"
+
 EAPI Eobj_Op INHERIT_BASE_ID = 0;
 
 static Eobj_Class *_my_class = NULL;
 
 static void
-_prot_print(Eobj *obj, Eobj_Op op, va_list *list)
+_prot_print(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
    Simple_Protected_Data *pd = eobj_data_get(obj, SIMPLE_CLASS);
-   (void) op;
    (void) list;
    printf("%s %d\n", __func__, pd->protected_x1);
 }

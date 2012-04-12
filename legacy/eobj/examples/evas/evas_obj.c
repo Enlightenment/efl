@@ -3,6 +3,8 @@
 #include "Eobj.h"
 #include "evas_obj.h"
 
+#include "config.h"
+
 static Eobj_Class *_my_class = NULL;
 
 EAPI Eobj_Op EVAS_OBJ_BASE_ID = 0;
@@ -13,10 +15,9 @@ typedef struct
 } Widget_Data;
 
 static void
-_position_set(Eobj *obj, Eobj_Op op, va_list *list)
+_position_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
-   (void) op;
    Evas_Coord x, y;
    x = va_arg(*list, Evas_Coord);
    y = va_arg(*list, Evas_Coord);
@@ -24,10 +25,9 @@ _position_set(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_size_set(Eobj *obj, Eobj_Op op, va_list *list)
+_size_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
-   (void) op;
    Evas_Coord w, h;
    w = va_arg(*list, Evas_Coord);
    h = va_arg(*list, Evas_Coord);
@@ -35,10 +35,9 @@ _size_set(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_color_set(Eobj *obj, Eobj_Op op, va_list *list)
+_color_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
-   (void) op;
    int r, g, b, a;
    r = va_arg(*list, int);
    g = va_arg(*list, int);
@@ -48,10 +47,9 @@ _color_set(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_color_get(Eobj *obj, Eobj_Op op, va_list *list)
+_color_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
-   (void) op;
    int *r, *g, *b, *a;
    r = va_arg(*list, int*);
    g = va_arg(*list, int*);
@@ -61,10 +59,9 @@ _color_get(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_visibility_set(Eobj *obj, Eobj_Op op, va_list *list)
+_visibility_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
-   (void) op;
    Eina_Bool v;
    v = va_arg(*list, int);
    if (v) evas_object_show(evas_obj);
@@ -72,17 +69,16 @@ _visibility_set(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_child_add(Eobj *obj, Eobj_Op op, va_list *list)
+_child_add(Eobj *obj __UNUSED__, void *class_data, va_list *list)
 {
-   Widget_Data *wd = eobj_data_get(obj, _my_class);
-   (void) op;
+   Widget_Data *wd = class_data;
    Eobj *child;
    child = va_arg(*list, Eobj *);
    wd->children = eina_list_append(wd->children, eobj_ref(child));
 }
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_constructor_super(obj);
 
@@ -93,11 +89,11 @@ _constructor(Eobj *obj)
 }
 
 static void
-_destructor(Eobj *obj)
+_destructor(Eobj *obj, void *class_data)
 {
    eobj_destructor_super(obj);
 
-   Widget_Data *wd = eobj_data_get(obj, _my_class);
+   Widget_Data *wd = class_data;
 
    Eobj *child;
    EINA_LIST_FREE(wd->children, child)

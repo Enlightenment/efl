@@ -4,6 +4,8 @@
 #include "evas_obj.h"
 #include "elw_box.h"
 
+#include "config.h"
+
 EAPI Eobj_Op ELW_BOX_BASE_ID = 0;
 
 typedef struct
@@ -14,10 +16,9 @@ typedef struct
 static Eobj_Class *_my_class = NULL;
 
 static void
-_pack_end(Eobj *obj, Eobj_Op op, va_list *list)
+_pack_end(Eobj *obj __UNUSED__, void *class_data, va_list *list)
 {
-   Widget_Data *wd = eobj_data_get(obj, _my_class);
-   (void) op;
+   Widget_Data *wd = class_data;
    Eobj *child_obj;
    child_obj = va_arg(*list, Eobj *);
    /* FIXME: Ref and the later uref child_obj here... */
@@ -25,11 +26,11 @@ _pack_end(Eobj *obj, Eobj_Op op, va_list *list)
 }
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data)
 {
    eobj_constructor_super(obj);
 
-   Widget_Data *wd = eobj_data_get(obj, _my_class);
+   Widget_Data *wd = class_data;
 
    /* FIXME: An hack, because our tree is not yet only Eobj */
    wd->bx = elm_box_add(eobj_evas_object_get(eobj_parent_get(obj)));

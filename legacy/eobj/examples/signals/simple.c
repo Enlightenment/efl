@@ -1,6 +1,8 @@
 #include "Eobj.h"
 #include "simple.h"
 
+#include "config.h"
+
 EAPI Eobj_Op SIMPLE_BASE_ID = 0;
 
 typedef struct
@@ -15,10 +17,9 @@ EAPI const Eobj_Event_Description _SIG_A_CHANGED =
 static Eobj_Class *_my_class = NULL;
 
 static void
-_a_set(Eobj *obj, Eobj_Op op, va_list *list)
+_a_set(Eobj *obj, void *class_data, va_list *list)
 {
-   Private_Data *pd = eobj_data_get(obj, _my_class);
-   (void) op;
+   Private_Data *pd = class_data;
    int a;
    a = va_arg(*list, int);
    pd->a = a;
@@ -62,7 +63,7 @@ _cb_deled(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event
 }
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data __UNUSED__)
 {
    eobj_constructor_super(obj);
 
@@ -70,12 +71,6 @@ _constructor(Eobj *obj)
    eobj_event_callback_add(obj, EOBJ_SIG_CALLBACK_DEL, _cb_deled, NULL);
 
    eobj_generic_data_set(obj, "cb_count", (intptr_t) 0);
-}
-
-static void
-_destructor(Eobj *obj)
-{
-   eobj_destructor_super(obj);
 }
 
 static void
@@ -111,7 +106,7 @@ simple_class_get(void)
         event_desc,
         sizeof(Private_Data),
         _constructor,
-        _destructor,
+        NULL,
         _class_constructor,
         NULL
    };

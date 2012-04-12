@@ -2,10 +2,12 @@
 #include "mixin.h"
 #include "simple3.h"
 
+#include "config.h"
+
 static Eobj_Class *_my_class = NULL;
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data __UNUSED__)
 {
    (void) obj;
 }

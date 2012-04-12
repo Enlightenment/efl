@@ -23,11 +23,11 @@ my_win_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_constructor(Eobj *obj)
+_constructor(Eobj *obj, void *class_data)
 {
    eobj_constructor_super(obj);
 
-   Widget_Data *wd = eobj_data_get(obj, _my_class);
+   Widget_Data *wd = class_data;
 
    /* FIXME: Will actually do something about those when I care... */
    wd->win = elm_win_add(NULL, "eobj-test", ELM_WIN_BASIC);
@@ -43,17 +43,6 @@ _constructor(Eobj *obj)
    eobj_evas_object_set(obj, wd->win);
 }
 
-static void
-_destructor(Eobj *obj)
-{
-   eobj_destructor_super(obj);
-
-   //Widget_Data *wd = eobj_data_get(obj, _my_class);
-   /* FIXME: Commented out because it's automatically done because our tree
-    * is not made of only eobj */
-//   evas_object_del(wd->bx);
-}
-
 const Eobj_Class *
 elw_win_class_get(void)
 {
@@ -66,7 +55,7 @@ elw_win_class_get(void)
         NULL,
         sizeof(Widget_Data),
         _constructor,
-        _destructor,
+        NULL,
         NULL,
         NULL
    };
