@@ -16,6 +16,7 @@ static void _eobj_callback_remove_all(Eobj *obj);
 static void _eobj_generic_data_del_all(Eobj *obj);
 static void eobj_class_constructor(Eobj *obj, const Eobj_Class *klass);
 static void eobj_class_destructor(Eobj *obj, const Eobj_Class *klass);
+static void eobj_constructor_error_unset(Eobj *obj);
 
 #ifdef CRITICAL
 #undef CRITICAL
@@ -712,6 +713,7 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
    obj->data_blob = calloc(1, klass->data_offset + klass->desc->data_size);
 
    _eobj_kls_itr_init(obj, EOBJ_NOOP);
+   eobj_constructor_error_unset(obj);
    eobj_class_constructor(obj, klass);
    if (eobj_constructor_error_get(obj))
      {
@@ -747,6 +749,7 @@ eobj_unref(Eobj *obj)
      {
         const Eobj_Class *klass = eobj_class_get(obj);
         _eobj_kls_itr_init(obj, EOBJ_NOOP);
+        eobj_constructor_error_unset(obj);
         eobj_class_destructor(obj, klass);
         if (eobj_constructor_error_get(obj))
           {
@@ -763,6 +766,7 @@ eobj_unref(Eobj *obj)
         /* If for some reason it's not empty, clear it. */
         while (obj->kls_itr)
           {
+             WRN("Kls_Itr is not empty, possibly a bug, please report. - An error will be reported for each kls_itr in the stack.");
              Eina_Inlist *nitr = nitr->next;
              free(EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node));
              obj->kls_itr = nitr;
@@ -772,6 +776,7 @@ eobj_unref(Eobj *obj)
         Eobj *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
+             /* FIXME: Should probably be unref. */
              eobj_del(emb_obj);
              obj->composite_objects =
                 eina_list_remove_list(obj->composite_objects, itr);
@@ -811,6 +816,12 @@ EAPI void
 eobj_constructor_error_set(Eobj *obj)
 {
    eobj_generic_data_set(obj, CONSTRUCT_ERROR_KEY, (void *) EINA_TRUE);
+}
+
+static void
+eobj_constructor_error_unset(Eobj *obj)
+{
+   eobj_generic_data_del(obj, CONSTRUCT_ERROR_KEY);
 }
 
 EAPI Eina_Bool
