@@ -574,14 +574,6 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    klass = calloc(1, sizeof(Eobj_Class));
    klass->parent = parent;
-   klass->class_id = ++_eobj_classes_last_id;
-     {
-        /* FIXME: Handle errors. */
-        Eobj_Class **tmp;
-        tmp = realloc(_eobj_classes, _eobj_classes_last_id * sizeof(*_eobj_classes));
-        _eobj_classes = tmp;
-        _eobj_classes[klass->class_id - 1] = klass;
-     }
 
    /* Handle class extensions */
      {
@@ -614,14 +606,50 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    klass->desc = desc;
 
-   /* If we have a class parent, update the current offset. */
+   /* Handle the inheritance */
    if (klass->parent)
      {
+        /* Verify the inheritance is allowed. */
+        switch (klass->desc->type)
+          {
+           case EOBJ_CLASS_TYPE_REGULAR:
+           case EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT:
+              if ((klass->parent->desc->type != EOBJ_CLASS_TYPE_REGULAR) &&
+                    (klass->parent->desc->type != EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT))
+                {
+                   /* FIXME: Actually handle it. */
+                   ERR("Regular classes ('%s') aren't allowed to inherit from non-regular classes ('%s').", klass->desc->name, klass->parent->desc->name);
+                   goto cleanup;
+                }
+              break;
+           case EOBJ_CLASS_TYPE_INTERFACE:
+           case EOBJ_CLASS_TYPE_MIXIN:
+              if ((klass->parent->desc->type != EOBJ_CLASS_TYPE_REGULAR) &&
+                    (klass->parent->desc->type != EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT))
+                {
+                   /* FIXME: Actually handle it. */
+                   ERR("Non-regular classes ('%s') aren't allowed to inherit from regular classes ('%s').", klass->desc->name, klass->parent->desc->name);
+                   goto cleanup;
+                }
+              break;
+          }
+
+
+     /* Update the current offset. */
         /* FIXME: Make sure this alignment is enough. */
         klass->data_offset = klass->parent->data_offset +
            klass->parent->desc->private_size +
            (sizeof(void *) -
                   (klass->parent->desc->private_size % sizeof(void *)));
+     }
+
+   klass->class_id = ++_eobj_classes_last_id;
+     {
+        /* FIXME: Handle errors. */
+        Eobj_Class **tmp;
+        tmp = realloc(_eobj_classes, _eobj_classes_last_id * sizeof(*_eobj_classes));
+        _eobj_classes = tmp;
+        _eobj_classes[klass->class_id - 1] = klass;
      }
 
    _eobj_class_base_op_init(klass);
@@ -632,6 +660,10 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
    va_end(p_list);
 
    return klass;
+
+cleanup:
+   eobj_class_free(klass);
+   return NULL;
 }
 #undef _CLS_NEW_CHECK
 
