@@ -587,7 +587,7 @@ eet_mode_get(Eet_File *ef);
  * was opened for write, and free all data associated with the file handle
  * and file, and close the file. If it was opened for read (or read/write),
  * the file handle may still be held open internally for caching purposes.
- * To flush speuclatively held eet file handles use eet_clearcache().
+ * To flush speculatively held eet file handles use eet_clearcache().
  *
  * If the eet file handle is not valid nothing will be done.
  *
