@@ -539,13 +539,6 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 
    if ((!ee) || (ee->visible)) return;
 
-   einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
-   if (!einfo)
-     {
-        ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
-        return;
-     }
-
    if (ee->engine.wl.win)
      ecore_wl_window_show(ee->engine.wl.win);
 
@@ -559,19 +552,15 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
      }
    else
      {
-        int size = 0;
+        int w = 0, size = 0;
 
         /* FIXME: This should use output size */
-        size = 6 * 1024 * 1024;
+        ecore_wl_screen_size_get(&w, NULL);
+        size = 6 * w * w;
         pool = 
           _ecore_evas_wl_shm_pool_create(size, &data);
         ee->engine.wl.pool_size = size;
      }
-
-   _ecore_evas_wl_buffer_new(ee, pool);
-
-   einfo->info.dest = data;
-   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
    if (data != ee->engine.wl.pool_data)
      {
@@ -581,6 +570,18 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         ee->engine.wl.pool = pool;
         ee->engine.wl.pool_data = data;
      }
+
+   _ecore_evas_wl_buffer_new(ee, pool);
+
+   einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
+   if (!einfo)
+     {
+        ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
+        return;
+     }
+
+   einfo->info.dest = data;
+   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
    /* ecore_wl_flush(); */
 
