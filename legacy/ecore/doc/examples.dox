@@ -238,7 +238,8 @@
  * handlers to it, fire the event and have the callbacks called. After
  * finishing, we delete the event handlers so no memory will leak.
  *
- * See the full source code for this example @ref ecore_event_example.c "here".
+ * See the full source code for this example @ref ecore_event_example_02.c
+ * "here".
  *
  * Let's start the example from the beginning:
  *

@@ -919,10 +919,12 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root,
 }
 
 /**
- * @brief gets the width and hight of a given mode
- * @param mode the mode which's size is to be looked up
- * @param w width of given mode in px
- * @param h height of given mode in px
+ * @brief Gets the width and hight of a given mode.
+ *
+ * @param root Window which's screen's ressources are queried.
+ * @param mode The mode which's size is to be looked up.
+ * @param w Width of given mode in px.
+ * @param h Height of given mode in px.
  */
 EAPI void
 ecore_x_randr_mode_size_get(Ecore_X_Window     root,

@@ -1202,6 +1202,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
 /**
  * @brief Sets a CRTC relative to another one.
  *
+ * @param root The root window which's default display will be set.
  * @param crtc_r1 The CRTC to be positioned.
  * @param crtc_r2 The CRTC the position should be relative to.
  * @param policy The relation between the crtcs.
