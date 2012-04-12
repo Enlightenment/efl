@@ -337,22 +337,22 @@ _eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list)
              ret = EINA_TRUE;
              goto end;
           }
-        else
-          {
-             /* Try composite objects */
-             Eina_List *itr;
-             Eobj *emb_obj;
-             EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj)
-               {
-                  if (_eobj_op_internal(emb_obj, op, p_list))
-                    {
-                       ret = EINA_TRUE;
-                       goto end;
-                    }
-               }
-          }
 
         klass = _eobj_kls_itr_next(obj);
+     }
+
+   /* Try composite objects */
+     {
+        Eina_List *itr;
+        Eobj *emb_obj;
+        EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj)
+          {
+             if (_eobj_op_internal(emb_obj, op, p_list))
+               {
+                  ret = EINA_TRUE;
+                  goto end;
+               }
+          }
      }
 
 end:
