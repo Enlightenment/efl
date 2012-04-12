@@ -585,12 +585,16 @@ eet_mode_get(Eet_File *ef);
  *
  * This function will flush any pending writes to disk if the eet file
  * was opened for write, and free all data associated with the file handle
- * and file, and close the file.
+ * and file, and close the file. If it was opened for read (or read/write),
+ * the file handle may still be held open internally for caching purposes.
+ * To flush speuclatively held eet file handles use eet_clearcache().
  *
  * If the eet file handle is not valid nothing will be done.
  *
  * @since 1.0.0
  * @ingroup Eet_File_Group
+ * 
+ * @see eet_clearcache()
  */
 EAPI Eet_Error
 eet_close(Eet_File *ef);
