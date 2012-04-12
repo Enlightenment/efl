@@ -692,3 +692,6 @@
         when gl window buffer is smaller than the fbo. used wrong
         surface size in clipping logic.
 
+2012-04-12  Tom Hacohen (TAsn)
+
+	* Textblock: Fixed compilation with liblinebreak disabled.
