@@ -713,7 +713,7 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
 
    _eobj_kls_itr_init(obj, EOBJ_NOOP);
    eobj_class_constructor(obj, klass);
-   if (eobj_generic_data_get(obj, CONSTRUCT_ERROR_KEY))
+   if (eobj_constructor_error_get(obj))
      {
         ERR("Type '%s' - One of the object constructors have failed.", klass->desc->name);
         goto fail;
@@ -748,7 +748,7 @@ eobj_unref(Eobj *obj)
         const Eobj_Class *klass = eobj_class_get(obj);
         _eobj_kls_itr_init(obj, EOBJ_NOOP);
         eobj_class_destructor(obj, klass);
-        if (eobj_generic_data_get(obj, CONSTRUCT_ERROR_KEY))
+        if (eobj_constructor_error_get(obj))
           {
              ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
           }
