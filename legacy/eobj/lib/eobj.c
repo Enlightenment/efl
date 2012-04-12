@@ -319,7 +319,7 @@ _eobj_op_id_desc_get(Eobj_Op op)
 }
 
 static Eina_Bool
-_eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list, Eina_Bool try_comp)
+_eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list)
 {
    const Eobj_Class *klass;
    Eina_Bool ret = EINA_FALSE;
@@ -341,14 +341,13 @@ _eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list, Eina_Bool try_comp)
         klass = _eobj_kls_itr_next(obj);
      }
 
-   /* Try composite objects only if it was requested. */
-   if (try_comp)
+   /* Try composite objects */
      {
         Eina_List *itr;
         Eobj *emb_obj;
         EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj)
           {
-             if (_eobj_op_internal(emb_obj, op, p_list, EINA_TRUE))
+             if (_eobj_op_internal(emb_obj, op, p_list))
                {
                   ret = EINA_TRUE;
                   goto end;
@@ -371,7 +370,7 @@ _eobj_ops_internal(Eobj *obj, va_list *p_list)
    op = va_arg(*p_list, Eobj_Op);
    while (op)
      {
-        if (!_eobj_op_internal(obj, op, p_list, EINA_TRUE))
+        if (!_eobj_op_internal(obj, op, p_list))
           {
              const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
              const char *_id_name = (desc) ? desc->name : NULL;
@@ -411,7 +410,7 @@ eobj_super_do(Eobj *obj, Eobj_Op op, ...)
 
    /* Advance the kls itr. */
    obj_klass = _eobj_kls_itr_next(obj);
-   if (!_eobj_op_internal(obj, op, &p_list, EINA_FALSE))
+   if (!_eobj_op_internal(obj, op, &p_list))
      {
         const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
         const char *_id_name = (desc) ? desc->name : NULL;
