@@ -997,6 +997,10 @@ eobj_composite_is(Eobj *emb_obj)
    Eobj *obj = eobj_parent_get(emb_obj);
    Eina_List *itr;
    Eobj *tmp;
+
+   if (!obj)
+      return EINA_FALSE;
+
    EINA_LIST_FOREACH(obj->composite_objects, itr, tmp)
      {
         if (tmp == emb_obj)
