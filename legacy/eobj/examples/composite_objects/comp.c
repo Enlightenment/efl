@@ -30,6 +30,8 @@ _constructor(Eobj *obj, void *class_data __UNUSED__)
    fail_if(eobj_composite_is(obj));
    fail_if(!eobj_composite_is(simple));
 
+   eobj_generic_data_set(obj, "simple-obj", simple);
+
    eobj_unref(simple);
 }
 

@@ -36,6 +36,22 @@ main(int argc, char *argv[])
    eobj_do(obj, SIMPLE_A_GET(&a));
    fail_if(a != 1);
 
+   /* disable the callback forwarder, and fail if it's still called. */
+   Eobj *simple = eobj_generic_data_get(obj, "simple-obj");
+   eobj_ref(simple);
+   eobj_event_callback_forwarder_del(simple, SIG_A_CHANGED, obj);
+
+   cb_called = EINA_FALSE;
+   eobj_do(obj, SIMPLE_A_SET(2));
+   fail_if(cb_called);
+
+   fail_if(!eobj_composite_is(simple));
+   eobj_composite_object_detach(obj, simple);
+   fail_if(eobj_composite_is(simple));
+   eobj_composite_object_attach(obj, simple);
+   fail_if(!eobj_composite_is(simple));
+
+   eobj_unref(simple);
    eobj_unref(obj);
 
    eobj_shutdown();

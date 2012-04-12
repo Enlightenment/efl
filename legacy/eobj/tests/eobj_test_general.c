@@ -30,6 +30,20 @@ START_TEST(eobj_op_errors)
    /* Ilegal class. */
    fail_if(eobj_do(obj, 0x0F010111));
 
+   fail_if(eobj_ref_get(obj) != 1);
+
+   eobj_ref(obj);
+   fail_if(eobj_ref_get(obj) != 2);
+
+   eobj_ref(obj);
+   fail_if(eobj_ref_get(obj) != 3);
+
+   eobj_unref(obj);
+   fail_if(eobj_ref_get(obj) != 2);
+
+   eobj_unref(obj);
+   fail_if(eobj_ref_get(obj) != 1);
+
    eobj_unref(obj);
    eobj_shutdown();
 }
