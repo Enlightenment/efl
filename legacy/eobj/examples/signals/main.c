@@ -27,6 +27,7 @@ main(int argc, char *argv[])
    eobj_init();
 
    Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
+   Simple_Public_Data *pd = eobj_data_get(obj, SIMPLE_CLASS);
 
    /* The order of these two is undetermined. */
    eobj_event_callback_priority_add(obj, SIG_A_CHANGED, EOBJ_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2);
@@ -40,7 +41,14 @@ main(int argc, char *argv[])
 
    fail_if(cb_count != 3);
 
-   eobj_event_callback_del_full(obj, SIG_A_CHANGED, _a_changed_cb, NULL);
+   eobj_event_callback_del_full(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 3);
+   fail_if(pd->cb_count != 3);
+   eobj_event_callback_del_full(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 4);
+   fail_if(pd->cb_count != 2);
+   eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb);
+   fail_if(pd->cb_count != 1);
+   eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb);
+   fail_if(pd->cb_count != 0);
 
    eobj_unref(obj);
    eobj_shutdown();

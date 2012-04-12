@@ -5,6 +5,7 @@ EAPI Eobj_Op SIMPLE_BASE_ID = 0;
 
 typedef struct
 {
+   Simple_Public_Data pub;
    int a;
 } Private_Data;
 
@@ -29,6 +30,7 @@ _a_set(Eobj *obj, Eobj_Op op, va_list *list)
 Eina_Bool
 _cb_added(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event_info)
 {
+   Simple_Public_Data *pd = eobj_data_get(obj, _my_class);
    const Eobj_Event_Description *cb_desc = event_info;
    (void) data;
    (void) desc;
@@ -36,16 +38,16 @@ _cb_added(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event
    if (cb_desc != SIG_A_CHANGED)
       return EINA_TRUE;
 
-   int count = (int) eobj_generic_data_get(obj, "cb_count") + 1;
-   eobj_generic_data_set(obj, "cb_count", (void *) count);
+   pd->cb_count++;
 
-   printf("Added SIG_A_CHANGED callback to %p. Count: %d\n", obj, count);
+   printf("Added SIG_A_CHANGED callback to %p. Count: %d\n", obj, pd->cb_count);
    return EINA_TRUE;
 }
 
 Eina_Bool
 _cb_deled(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event_info)
 {
+   Simple_Public_Data *pd = eobj_data_get(obj, _my_class);
    const Eobj_Event_Description *cb_desc = event_info;
    (void) data;
    (void) desc;
@@ -53,10 +55,9 @@ _cb_deled(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event
    if (cb_desc != SIG_A_CHANGED)
       return EINA_TRUE;
 
-   int count = (int) eobj_generic_data_get(obj, "cb_count") - 1;
-   eobj_generic_data_set(obj, "cb_count", (void *) count);
+   pd->cb_count--;
 
-   printf("Removed SIG_A_CHANGED callback from %p. Count: %d\n", obj, count);
+   printf("Removed SIG_A_CHANGED callback from %p. Count: %d\n", obj, pd->cb_count);
    return EINA_TRUE;
 }
 

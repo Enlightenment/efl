@@ -10,6 +10,11 @@ enum {
      SIMPLE_SUB_ID_LAST
 };
 
+typedef struct
+{
+   int cb_count;
+} Simple_Public_Data;
+
 #define SIMPLE_ID(sub_id) (SIMPLE_BASE_ID + sub_id)
 
 #define SIMPLE_A_SET(a) SIMPLE_ID(SIMPLE_SUB_ID_A_SET), EOBJ_TYPECHECK(int, a)
