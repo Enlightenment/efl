@@ -10,6 +10,8 @@
 START_TEST(eobj_simple)
 {
    fail_if(!eobj_init()); /* one init by test suite */
+   fail_if(eobj_init() != 1);
+   fail_if(eobj_shutdown() != 1);
    fail_if(!eobj_shutdown());
 }
 END_TEST

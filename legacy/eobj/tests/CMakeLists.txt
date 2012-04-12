@@ -4,6 +4,7 @@ if (CHECK_ENABLED)
       eobj_suite.c
       eobj_test_init.c
       eobj_test_general.c
+      class_simple.c
       )
 
    add_executable(eobj_suite ${EOBJ_SUITE_CC_SOURCES})

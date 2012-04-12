@@ -7,12 +7,25 @@
 #include "eobj_suite.h"
 #include "Eobj.h"
 
-START_TEST(eobj_simple)
+#include "class_simple.h"
+
+START_TEST(eobj_op_errors)
 {
+   eobj_init();
+   Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
+
+   /* Out of bounds op for a legal class. */
+   fail_if(eobj_do(obj, 0x00010111));
+
+   /* Ilegal class. */
+   fail_if(eobj_do(obj, 0x0F010111));
+
+   eobj_unref(obj);
+   eobj_shutdown();
 }
 END_TEST
 
 void eobj_test_general(TCase *tc)
 {
-   tcase_add_test(tc, eobj_simple);
+   tcase_add_test(tc, eobj_op_errors);
 }
