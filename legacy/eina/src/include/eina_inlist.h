@@ -773,9 +773,18 @@ EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
 EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 
 /* This two macros are helpers for the _FOREACH ones, don't use them */
+/**
+ * @def _EINA_INLIST_OFFSET
+ * @param ref The reference to be used.
+ */
 #define _EINA_INLIST_OFFSET(ref)         ((char *)&(ref)->__in_list - (char *)(ref))
 
 #if !defined(__cplusplus)
+/**
+ * @def _EINA_INLIST_CONTAINER
+ * @param ref The reference to be used.
+ * @param ptr The pointer to be used.
+ */
 #define _EINA_INLIST_CONTAINER(ref, ptr) (void *)((char *)(ptr) - \
                                                   _EINA_INLIST_OFFSET(ref))
 #else
@@ -791,10 +800,21 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 #define EINA_INLIST_FOREACH(list, l)                                     \
   for (l = NULL, l = (list ? _EINA_INLIST_CONTAINER(l, list) : NULL); l; \
        l = (EINA_INLIST_GET(l)->next ? _EINA_INLIST_CONTAINER(l, EINA_INLIST_GET(l)->next) : NULL))
+/**
+ * @def EINA_INLIST_FOREACH_SAFE
+ * @param list The first list to be used.
+ * @param list2 The second list to be used.
+ * @param l The auxiliar variable to be used.
+ */
 #define EINA_INLIST_FOREACH_SAFE(list, list2, l) \
    for (l = (list ? _EINA_INLIST_CONTAINER(l, list) : NULL), list2 = l ? ((EINA_INLIST_GET(l) ? EINA_INLIST_GET(l)->next : NULL)) : NULL; \
         l; \
         l = _EINA_INLIST_CONTAINER(l, list2), list2 = list2 ? list2->next : NULL)
+/**
+ * @def EINA_INLIST_REVERSE_FOREACH
+ * @param list The list to be reversed.
+ * @param l The auxiliar variable to be used.
+ */
 #define EINA_INLIST_REVERSE_FOREACH(list, l)                                \
   for (l = NULL, l = (list ? _EINA_INLIST_CONTAINER(l, list->last) : NULL); \
        l; l = (EINA_INLIST_GET(l)->prev ? _EINA_INLIST_CONTAINER(l, EINA_INLIST_GET(l)->prev) : NULL))

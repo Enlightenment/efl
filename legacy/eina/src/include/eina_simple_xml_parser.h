@@ -116,7 +116,10 @@ struct _Eina_Simple_XML_Node_Data
    size_t length;
    char data[];
 };
-
+/**
+ * @typedef _Eina_Simple_XML_Type
+ * a simple XML type.
+ */
 typedef enum _Eina_Simple_XML_Type
 {
   EINA_SIMPLE_XML_OPEN = 0, /*!< \<tag attribute="value"\> */

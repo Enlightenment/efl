@@ -53,6 +53,10 @@
 #   define EAPI
 #  endif
 # else
+/**
+ * @def EAPI
+ * @brief Used to export functions(by changing visibility).
+ */
 #  define EAPI
 # endif
 #endif
@@ -205,14 +209,56 @@
  * Used to warn when the function is considered as deprecated.
  */
 # define EINA_DEPRECATED
+/**
+ * @def EINA_MALLOC
+ * @brief EINA_MALLOC is used to tell the compiler that a function may be treated
+ * as if any non-NULL pointer it returns cannot alias any other pointer valid when
+ * the function returns and that the memory has undefined content.
+ */
 # define EINA_MALLOC
+/**
+ * @def EINA_PURE
+ * @brief EINA_PURE is used to tell the compiler this functions has no effects
+ * except the return value and their return value depends only on the parameters
+ * and/or global variables.
+ */
 # define EINA_PURE
+/**
+ * @def EINA_PRINTF
+ * @param fmt The format to be used.
+ * @param arg The argument to be used.
+ */
 # define EINA_PRINTF(fmt, arg)
+/**
+ * @def EINA_SCANF
+ * @param fmt The format to be used.
+ * @param arg The argument to be used.
+ */
 # define EINA_SCANF(fmt, arg)
+/**
+ * @def EINA_FORMAT
+ * @param fmt The format to be used.
+ */
 # define EINA_FORMAT(fmt)
+/**
+ * @def EINA_CONST
+ * @brief Attribute from gcc to prevent the function to read/modify any global memory.
+ */
 # define EINA_CONST
+/**
+ * @def EINA_NOINSTRUMENT
+ * @brief Attribute from gcc to disable instrumentation for a specific function.
+ */
 # define EINA_NOINSTRUMENT
+/**
+ * @def EINA_UNLIKELY
+ * @param exp The expression to be used.
+ */
 # define EINA_UNLIKELY(exp) exp
+/**
+ * @def EINA_LIKELY
+ * @param exp The expression to be used.
+ */
 # define EINA_LIKELY(exp)   exp
 #endif /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 

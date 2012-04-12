@@ -1403,6 +1403,15 @@ struct _Eina_Model_Type
    void *__extension_ptr3; /**< not to be used */
 };
 
+/**
+ * @def EINA_MODEL_TYPE_INIT
+ * @param name The name of the model to be used.
+ * @param type The type of the model to be used.
+ * @param private_type The private type to be used.
+ * @param parent The parent of the model to be used.
+ * @param interfaces The interfaces to be used.
+ * @param events The events that the model will support.
+ */
 #define EINA_MODEL_TYPE_INIT(name, type, private_type, parent, interfaces, events) \
   {EINA_MODEL_TYPE_VERSION,                                         \
    sizeof(private_type),                                            \
@@ -1442,7 +1451,14 @@ struct _Eina_Model_Type
    NULL,                                                            \
    NULL                                                             \
    }
-
+/**
+ * @def EINA_MODEL_TYPE_INIT_NOPRIVATE
+ * @param name The name of the model to be used.
+ * @param type The type of the model to be used.
+ * @param parent The parent of the model to be used.
+ * @param interfaces The interfaces to be used.
+ * @param events The events that the model will support.
+ */
 #define EINA_MODEL_TYPE_INIT_NOPRIVATE(name, type, parent, interfaces, events) \
   {EINA_MODEL_TYPE_VERSION,                                         \
    0,                                                               \
@@ -1482,7 +1498,10 @@ struct _Eina_Model_Type
    NULL,                                                            \
    NULL                                                             \
    }
-
+/**
+ * @def EINA_MODEL_TYPE_INIT_NULL
+ * @brief NULL value eina model type.
+ */
 #define EINA_MODEL_TYPE_INIT_NULL                                   \
   {0,                                                               \
    0,                                                               \
@@ -2041,9 +2060,20 @@ EAPI const void *eina_model_method_offset_resolve(const Eina_Model *model, unsig
  * @since 1.2
  */
 EAPI const void *eina_model_type_method_offset_resolve(const Eina_Model_Type *type, const Eina_Model *model, unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
-
+/**
+ * @def eina_model_method_resolve
+ * @param model The model to be resolved.
+ * @param struct_type The struct of the element to be resolved.
+ * @param method The method to be resolved.
+ */
 #define eina_model_method_resolve(model, struct_type, method) eina_model_method_offset_resolve((model), offsetof(struct_type, method))
-
+/**
+ * @def eina_model_type_method_resolve
+ * @param type The type of the model to be resolved.
+ * @param model The model to be resolved.
+ * @param struct_type The struct of the element to be resolved.
+ * @param method The method to be resolved.
+ */
 #define eina_model_type_method_resolve(type, model, struct_type, method) eina_model_type_method_offset_resolve((type), (model), offsetof(struct_type, method))
 
 /**
@@ -2104,7 +2134,14 @@ struct _Eina_Model_Interface
    void *__extension_ptr2; /**< not to be used @internal */
    void *__extension_ptr3; /**< not to be used @internal */
 };
-
+/**
+ * @def EINA_MODEL_INTERFACE_INIT
+ * @param name The name of the interface to be created.
+ * @param iface The interface to be used.
+ * @param private_type The private type to be used.
+ * @param parent The parent of the interface to be created.
+ * @param events The events that the interface will support.
+ */
 #define EINA_MODEL_INTERFACE_INIT(name, iface, private_type, parent, events) \
   {EINA_MODEL_INTERFACE_VERSION,                                        \
    sizeof(private_type),                                                \
@@ -2123,7 +2160,13 @@ struct _Eina_Model_Interface
    NULL,                                                                \
    NULL                                                                 \
    }
-
+/**
+ * @def EINA_MODEL_INTERFACE_INIT_NOPRIVATE
+ * @param name The name of the interface to be created.
+ * @param iface The interface to be used.
+ * @param parent The parent of the interface to be created.
+ * @param events The events that the interface will support.
+ */
 #define EINA_MODEL_INTERFACE_INIT_NOPRIVATE(name, iface, parent, events) \
   {EINA_MODEL_INTERFACE_VERSION,                                        \
    0,                                                                   \
@@ -2142,7 +2185,10 @@ struct _Eina_Model_Interface
    NULL,                                                                \
    NULL                                                                 \
    }
-
+/**
+ * @def EINA_MODEL_INTERFACE_INIT_NULL
+ * @brief NULL value eina model interface.
+ */
 #define EINA_MODEL_INTERFACE_INIT_NULL      \
   {0,                                       \
    0,                                       \
@@ -2226,7 +2272,13 @@ EAPI Eina_Bool eina_model_interface_copy(const Eina_Model_Interface *iface,
 EAPI Eina_Bool eina_model_interface_deep_copy(const Eina_Model_Interface *iface,
                                               const Eina_Model *src,
                                               Eina_Model *dst) EINA_ARG_NONNULL(1, 2, 3);
-
+/**
+ * @def eina_model_interface_method_resolve
+ * @param iface The interface to be resolved.
+ * @param model The model of the interface to be resolved.
+ * @param struct_type The struct of the element to be resolved.
+ * @param method The method of the interface to be resolved.
+ */
 #define eina_model_interface_method_resolve(iface, model, struct_type, method) eina_model_interface_method_offset_resolve((iface), (model), offsetof(struct_type, method))
 
 /**

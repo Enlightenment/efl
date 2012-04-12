@@ -138,7 +138,16 @@ static inline Eina_Bool eina_semaphore_release(Eina_Semaphore *sem, int count_re
       }									\
   } while (0)
 #else
+/**
+ * @def EINA_MAIN_LOOP_CHECK_RETURN_VAL
+ * @brief The macro doesn't do anything unless EINA_HAVE_DEBUG_THREADS is defined.
+ * @param val The value to be returned.
+ */
 # define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)
+/**
+ * @def EINA_MAIN_LOOP_CHECK_RETURN
+ * @brief The macro doesn't do anything unless EINA_HAVE_DEBUG_THREADS is defined.
+ */
 # define EINA_MAIN_LOOP_CHECK_RETURN
 #endif
 

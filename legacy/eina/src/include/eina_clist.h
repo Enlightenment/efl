@@ -303,24 +303,48 @@ static inline void eina_clist_move_tail(Eina_Clist *dst, Eina_Clist *src);
 static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
 
 /**
- * iterate through the list
+ * @def EINA_CLIST_FOR_EACH
+ * @brief Iterate through the list.
+ * @param cursor The pointer to be used during the interation.
+ * @param list The list to be interated.
  */
 #define EINA_CLIST_FOR_EACH(cursor,list) \
     for ((cursor) = (list)->next; (cursor) != (list); (cursor) = (cursor)->next)
 
-/* iterate through the list, with safety against removal */
+/**
+ * @def EINA_CLIST_FOR_EACH_SAFE
+ * @brief Iterate through the list, with safety against removal.
+ * @param cursor The pointer to be used during the interation.
+ * @param cursor2 The auxiliar pointer to be used during the interation.
+ * @param list The list to be interated.
+ */
 #define EINA_CLIST_FOR_EACH_SAFE(cursor, cursor2, list) \
     for ((cursor) = (list)->next, (cursor2) = (cursor)->next; \
          (cursor) != (list); \
          (cursor) = (cursor2), (cursor2) = (cursor)->next)
 
-/* iterate through the list using a list entry */
+/**
+ * @def EINA_CLIST_FOR_EACH_ENTRY
+ * @brief Iterate through the list using a list entry.
+ * @param elem The element to be used.
+ * @param list The list to be iterated.
+ * @param type The type of the list.
+ * @param field The field of the element.
+ */
 #define EINA_CLIST_FOR_EACH_ENTRY(elem, list, type, field) \
     for ((elem) = EINA_CLIST_ENTRY((list)->next, type, field); \
          &(elem)->field != (list); \
          (elem) = EINA_CLIST_ENTRY((elem)->field.next, type, field))
 
-/* iterate through the list using a list entry, with safety against removal */
+/**
+ * @def EINA_CLIST_FOR_EACH_ENTRY_SAFE
+ * @brief Iterate through the list using a list entry, with safety against removal.
+ * @param cursor The pointer to be used during the interation.
+ * @param cursor2 The auxiliar pointer to be used during the interation.
+ * @param list The list to be interated.
+ * @param type The type of the list.
+ * @param field The field of the element.
+*/
 #define EINA_CLIST_FOR_EACH_ENTRY_SAFE(cursor, cursor2, list, type, field) \
     for ((cursor) = EINA_CLIST_ENTRY((list)->next, type, field), \
          (cursor2) = EINA_CLIST_ENTRY((cursor)->field.next, type, field); \
@@ -328,23 +352,50 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
          (cursor) = (cursor2), \
          (cursor2) = EINA_CLIST_ENTRY((cursor)->field.next, type, field))
 
-/* iterate through the list in reverse order */
+/**
+ * @def EINA_CLIST_FOR_EACH_REV
+ * @brief Iterate through the list in reverse order.
+ * @param cursor The pointer to be used during the interation.
+ * @param list The list to be interated.
+ */
 #define EINA_CLIST_FOR_EACH_REV(cursor,list) \
     for ((cursor) = (list)->prev; (cursor) != (list); (cursor) = (cursor)->prev)
 
-/* iterate through the list in reverse order, with safety against removal */
+/**
+ * @def EINA_CLIST_FOR_EACH_SAFE_REV
+ * @brief Iterate through the list in reverse order, with safety against removal.
+ * @param cursor The pointer to be used during the interation.
+ * @param cursor2 The auxiliar pointer to be used during the interation.
+ * @param list The list to be interated.
+ */
 #define EINA_CLIST_FOR_EACH_SAFE_REV(cursor, cursor2, list) \
     for ((cursor) = (list)->prev, (cursor2) = (cursor)->prev; \
          (cursor) != (list); \
          (cursor) = (cursor2), (cursor2) = (cursor)->prev)
 
-/* iterate through the list in reverse order using a list entry */
+/**
+ * @def EINA_CLIST_FOR_EACH_ENTRY_REV
+ * @brief Iterate through the list in reverse order using a list entry.
+ * @param elem The element to be used.
+ * @param list The list to be iterated.
+ * @param type The type of the list.
+ * @param field The field of the element.
+ */
 #define EINA_CLIST_FOR_EACH_ENTRY_REV(elem, list, type, field) \
     for ((elem) = EINA_CLIST_ENTRY((list)->prev, type, field); \
          &(elem)->field != (list); \
          (elem) = EINA_CLIST_ENTRY((elem)->field.prev, type, field))
 
-/* iterate through the list in reverse order using a list entry, with safety against removal */
+/**
+ * @def EINA_CLIST_FOR_EACH_ENTRY_SAFE_REV
+ * @brief Iterate through the list in reverse order using a list entry, with safety against
+ * removal.
+ * @param cursor The pointer to be used during the interation.
+ * @param cursor2 The auxiliar pointer to be used during the interation.
+ * @param list The list to be interated.
+ * @param type The type of the list.
+ * @param field The field of the element.
+ */
 #define EINA_CLIST_FOR_EACH_ENTRY_SAFE_REV(cursor, cursor2, list, type, field) \
     for ((cursor) = EINA_CLIST_ENTRY((list)->prev, type, field), \
          (cursor2) = EINA_CLIST_ENTRY((cursor)->field.prev, type, field); \
@@ -352,11 +403,21 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
          (cursor) = (cursor2), \
          (cursor2) = EINA_CLIST_ENTRY((cursor)->field.prev, type, field))
 
-/* macros for statically initialized lists */
+/**
+ * @def EINA_CLIST_INIT
+ * @brief Macros for statically initialized lists.
+ * @param list The list to be used.
+ */
 #undef EINA_CLIST_INIT
 #define EINA_CLIST_INIT(list)  { &(list), &(list) }
 
-/* get pointer to object containing list element */
+/**
+ * @def EINA_CLIST_ENTRY
+ * @brief Get pointer to object containing list element.
+ * @param elem The element to be used.
+ * @param type The type of the element.
+ * @param field The field of the element.
+ */
 #undef EINA_CLIST_ENTRY
 #define EINA_CLIST_ENTRY(elem, type, field) \
     ((type *)((char *)(elem) - (unsigned long)(&((type *)0)->field)))

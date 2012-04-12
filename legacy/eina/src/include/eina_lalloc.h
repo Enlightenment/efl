@@ -34,8 +34,16 @@
  */
 
 typedef Eina_Bool (*Eina_Lalloc_Alloc)(void *user_data, int num);
+/**
+ * @def EINA_LALLOC_ALLOC
+ * @param function The function to allocate.
+ */
 #define EINA_LALLOC_ALLOC(function) ((Eina_Lalloc_Alloc)function)
 typedef void      (*Eina_Lalloc_Free)(void *user_data);
+/**
+ * @def EINA_LALLOC_FREE
+ * @param function The function to free.
+ */
 #define EINA_LALLOC_FREE(function)  ((Eina_Lalloc_Free)function)
 
 typedef struct _Eina_Lalloc Eina_Lalloc;

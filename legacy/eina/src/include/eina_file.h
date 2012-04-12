@@ -125,7 +125,10 @@ typedef enum {
 } Eina_File_Type;
 
 typedef struct _Eina_File Eina_File;
-
+/**
+ * @typedef Eina_File_Populate
+ * File access type used in Eina_File_Direct_info.
+ */
 typedef enum {
   EINA_FILE_RANDOM,     /**< Advise random memory access to the mapped memory. */
   EINA_FILE_SEQUENTIAL, /**< Advise sequential memory access to the mapped memory. */
@@ -142,6 +145,10 @@ typedef enum {
  * is a possibility that PATH_MAX could be more than 8192. if anyone spots
  * a path_max that is bigger - let us know, but, for now we will assume
  * it never happens */
+/**
+ * @def EINA_PATH_MAX
+ * @brief The constant defined as the highest value for PATH_MAX.
+ */
 #define EINA_PATH_MAX 8192
 /**
  * @struct _Eina_File_Direct_Info
