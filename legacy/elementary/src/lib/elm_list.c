@@ -1132,7 +1132,7 @@ _item_content_unset_hook(const Elm_Object_Item *it, const char *part)
 }
 
 static void
-_item_text_set(Elm_Object_Item *it, const char *part, const char *text)
+_item_text_set_hook(Elm_Object_Item *it, const char *part, const char *text)
 {
    Elm_List_Item *list_it = (Elm_List_Item *)it;
    if (part && strcmp(part, "default")) return;
@@ -1142,7 +1142,7 @@ _item_text_set(Elm_Object_Item *it, const char *part, const char *text)
 }
 
 static const char *
-_item_text_get(const Elm_Object_Item *it, const char *part)
+_item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
    return ((Elm_List_Item *)it)->label;
@@ -1219,8 +1219,8 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
    elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
-   elm_widget_item_text_set_hook_set(it, _item_text_set);
-   elm_widget_item_text_get_hook_set(it, _item_text_get);
+   elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
+   elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    return it;
 }

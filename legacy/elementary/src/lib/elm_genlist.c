@@ -3664,7 +3664,7 @@ _item_content_unset_hook(Elm_Gen_Item *it, const char *part)
 }
 
 static const char *
-_item_text_hook(Elm_Gen_Item *it, const char *part)
+_item_text_get_hook(Elm_Gen_Item *it, const char *part)
 {
    if (!it->itc->func.text_get) return NULL;
    return edje_object_part_text_get(VIEW(it), part);
@@ -3761,7 +3761,7 @@ _elm_genlist_item_new(Widget_Data              *wd,
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
    elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
-   elm_widget_item_text_get_hook_set(it, _item_text_hook);
+   elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
