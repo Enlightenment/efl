@@ -1290,9 +1290,11 @@ evas_gl_common_context_rectangle_push(Evas_Engine_GL_Context *gc,
 	Evas_GL_Image *im;
 	im = (void *)dc->mask.mask;
 	evas_gl_common_context_font_push(gc, im->tex,
-				x - dc->mask.x,y - dc->mask.y,
-				dc->mask.w,dc->mask.h,
-				x,y,w,h,r,g,b,a);
+                                         x - dc->mask.x,
+                                         y - dc->mask.y,
+                                         dc->mask.w, dc->mask.h,
+                                         x, y, w, h,
+                                         r, g, b, a);
 	return;
      }
 
