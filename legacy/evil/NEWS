@@ -5,6 +5,7 @@ Evil NEWS - User visible changes.
 ** Add evil_path_is_absolute() API
 ** Add POSIX printf() family functions
 ** Add S_ISLNK macro
+** Do not declare and define localtime_r() if it's already defined
 
 * Evil 1.0:
 

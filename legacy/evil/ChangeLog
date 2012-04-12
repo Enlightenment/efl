@@ -1,3 +1,10 @@
+2012-04-12  Vincent Torri  <doursse at users dot sf dot net>
+
+	* NEWS:
+	* src/lib/evil_time.c:
+	* src/lib/evil_time.h:
+	Do not declare and define localtime_r() if it's already defined.
+
 2012-03-30  Vincent Torri  <doursse at users dot sf dot net>
 
 	* NEWS:

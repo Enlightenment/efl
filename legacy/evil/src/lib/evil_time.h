@@ -13,6 +13,8 @@
  */
 
 
+#ifndef localtime_r
+
 /**
  * @brief Convert the calendar time to broken-time representation in a
  * user supplied data.
@@ -32,6 +34,8 @@
  * Supported OS: Windows XP.
  */
 EAPI struct tm *localtime_r(const time_t *timep, struct tm *result);
+
+#endif /* localtime_r */
 
 #ifdef UNDER_CE
 
