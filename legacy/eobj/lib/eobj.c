@@ -215,13 +215,13 @@ typedef struct
    const Eobj_Class **kls_itr;
 } Eobj_Kls_Itr_Node;
 
-static inline void
+static inline Eina_Bool
 _eobj_kls_itr_init(Eobj *obj, Eobj_Op op)
 {
    if (obj->kls_itr &&
          EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node))
      {
-        /* Nothing ATM. */
+        return EINA_FALSE;
      }
    else
      {
@@ -230,6 +230,8 @@ _eobj_kls_itr_init(Eobj *obj, Eobj_Op op)
         node->kls_itr = obj->klass->mro;
         obj->kls_itr = eina_inlist_prepend(obj->kls_itr,
               EINA_INLIST_GET(node));
+
+        return EINA_TRUE;
      }
 }
 
@@ -410,7 +412,7 @@ eobj_super_do(Eobj *obj, Eobj_Op op, ...)
 
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
-   _eobj_kls_itr_init(obj, op);
+   Eina_Bool kls_itr_end = _eobj_kls_itr_init(obj, op);
    obj_klass = _eobj_kls_itr_next(obj);
 
    if (!obj_klass) goto end;
@@ -430,7 +432,7 @@ eobj_super_do(Eobj *obj, Eobj_Op op, ...)
    va_end(p_list);
 
 end:
-   _eobj_kls_itr_end(obj, op);
+   if (kls_itr_end) _eobj_kls_itr_end(obj, op);
    return ret;
 }
 
