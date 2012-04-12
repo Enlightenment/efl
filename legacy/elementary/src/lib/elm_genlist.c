@@ -3638,29 +3638,21 @@ _item_content_get_hook(Elm_Gen_Item *it, const char *part)
 }
 
 static void
-_item_content_set_hook(Elm_Gen_Item *it, const char *part, Evas_Object *content)
+_item_content_set_hook(Elm_Gen_Item *it __UNUSED__,
+                       const char   *part __UNUSED__,
+                       Evas_Object  *content __UNUSED__)
 {
-   Evas_Object *prev_obj;
-
-   if (content && part)
-     {
-        if (eina_list_data_find(it->content_objs, content)) return;
-        prev_obj = _item_content_unset_hook(it, part);
-        if (prev_obj) evas_object_del(prev_obj);
-        it->content_objs = eina_list_append(it->content_objs, content);
-        edje_object_part_swallow(VIEW(it), part, content);
-     }
+   WRN("genlist/gengrid do not support elm_object_item_part_content_set.\n"
+       "Use normal genlist/gengrid content_get callback model.");
 }
 
 static Evas_Object *
-_item_content_unset_hook(Elm_Gen_Item *it, const char *part)
+_item_content_unset_hook(Elm_Gen_Item *it __UNUSED__,
+                         const char   *part __UNUSED__)
 {
-   Evas_Object *obj;
-   obj = edje_object_part_swallow_get(VIEW(it), part);
-   if (!obj) return NULL;
-   it->content_objs = eina_list_remove(it->content_objs, obj);
-   edje_object_part_unswallow(VIEW(it), obj);
-   return obj;
+   WRN("genlist/gengrid do not support elm_object_item_part_content_set.\n"
+       "Use normal genlist/gengrid content_get callback model.");
+   return NULL;
 }
 
 static const char *
@@ -3668,6 +3660,15 @@ _item_text_get_hook(Elm_Gen_Item *it, const char *part)
 {
    if (!it->itc->func.text_get) return NULL;
    return edje_object_part_text_get(VIEW(it), part);
+}
+
+static void
+_item_text_set_hook(Elm_Object_Item *it __UNUSED__,
+                    const char      *part __UNUSED__,
+                    const char      *text __UNUSED__)
+{
+   WRN("genlist/gengrid do not support elm_object_item_part_text_set.\n"
+       "Use normal genlist/gengrid text_get callback model.");
 }
 
 static void
@@ -3762,6 +3763,7 @@ _elm_genlist_item_new(Widget_Data              *wd,
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
    elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
+   elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
