@@ -45,6 +45,7 @@ add_subdirectory(examples/signals)
 add_subdirectory(examples/access)
 add_subdirectory(examples/constructors)
 add_subdirectory(examples/function_overrides)
+add_subdirectory(examples/composite_objects)
 
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 
