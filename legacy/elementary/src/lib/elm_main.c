@@ -1319,20 +1319,20 @@ elm_object_item_part_content_set(Elm_Object_Item *it,
                                  const char *part,
                                  Evas_Object *content)
 {
-   _elm_widget_item_content_part_set((Elm_Widget_Item *)it, part, content);
+   _elm_widget_item_part_content_set((Elm_Widget_Item *)it, part, content);
 }
 
 EAPI Evas_Object *
 elm_object_item_part_content_get(const Elm_Object_Item *it,
                                  const char *part)
 {
-   return _elm_widget_item_content_part_get((Elm_Widget_Item *)it, part);
+   return _elm_widget_item_part_content_get((Elm_Widget_Item *)it, part);
 }
 
 EAPI Evas_Object *
 elm_object_item_part_content_unset(Elm_Object_Item *it, const char *part)
 {
-   return _elm_widget_item_content_part_unset((Elm_Widget_Item *)it, part);
+   return _elm_widget_item_part_content_unset((Elm_Widget_Item *)it, part);
 }
 
 EAPI void
@@ -1340,13 +1340,13 @@ elm_object_item_part_text_set(Elm_Object_Item *it,
                               const char *part,
                               const char *label)
 {
-   _elm_widget_item_text_part_set((Elm_Widget_Item *)it, part, label);
+   _elm_widget_item_part_text_set((Elm_Widget_Item *)it, part, label);
 }
 
 EAPI const char *
 elm_object_item_part_text_get(const Elm_Object_Item *it, const char *part)
 {
-   return _elm_widget_item_text_part_get((Elm_Widget_Item *)it, part);
+   return _elm_widget_item_part_text_get((Elm_Widget_Item *)it, part);
 }
 
 EAPI void
