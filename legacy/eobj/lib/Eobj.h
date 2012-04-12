@@ -103,6 +103,7 @@ EAPI void eobj_constructor_error_set(Eobj *obj);
 EAPI Eina_Bool eobj_constructor_error_get(const Eobj *obj);
 
 EAPI Eobj_Class *eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...);
+/* FIXME: Do I want that exposed? */
 EAPI void eobj_class_free(Eobj_Class *klass);
 EAPI void eobj_class_funcs_set(Eobj_Class *klass, const Eobj_Op_Func_Description *func_descs);
 

@@ -635,7 +635,7 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
           }
 
 
-     /* Update the current offset. */
+        /* Update the current offset. */
         /* FIXME: Make sure this alignment is enough. */
         klass->data_offset = klass->parent->data_offset +
            klass->parent->desc->private_size +
