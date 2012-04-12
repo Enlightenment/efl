@@ -685,3 +685,10 @@
 
 	* Box layouts: fix handling of weights that have decimal parts,
 	they were being handled as "int" where "double" was expected.
+
+2012-04-12  Carsten Haitzler (The Rasterman)
+
+        * Fix gl engine clipping bug when rendering to evas map fbo's
+        when gl window buffer is smaller than the fbo. used wrong
+        surface size in clipping logic.
+

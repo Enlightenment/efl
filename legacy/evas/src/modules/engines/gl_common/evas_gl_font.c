@@ -162,7 +162,7 @@ evas_gl_font_texture_draw(void *context, void *surface __UNUSED__, void *draw_co
      }
    /* save out clip info */
    c = gc->dc->clip.use; cx = gc->dc->clip.x; cy = gc->dc->clip.y; cw = gc->dc->clip.w; ch = gc->dc->clip.h;
-   evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->w, gc->h);
+   evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->shared->w, gc->shared->h);
    evas_common_draw_context_clip_clip(gc->dc, x, y, tex->w, tex->h);
    /* our clip is 0 size.. abort */
    if ((gc->dc->clip.w <= 0) || (gc->dc->clip.h <= 0))

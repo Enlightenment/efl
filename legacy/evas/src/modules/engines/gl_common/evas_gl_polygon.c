@@ -248,7 +248,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
    free(point);
    free(sorted_index);
 
-   evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->w, gc->h);
+   evas_common_draw_context_clip_clip(gc->dc, 0, 0, gc->shared->w, gc->shared->h);
 
    if (spans)
      {
