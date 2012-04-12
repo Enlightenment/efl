@@ -6,8 +6,6 @@
 
 #include "config.h"
 
-EAPI Eobj_Op INHERIT3_BASE_ID = 0;
-
 static Eobj_Class *_my_class = NULL;
 
 static void

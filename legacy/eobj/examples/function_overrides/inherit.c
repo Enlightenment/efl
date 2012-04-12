@@ -3,8 +3,6 @@
 
 #include "inherit.h"
 
-EAPI Eobj_Op INHERIT_BASE_ID = 0;
-
 static Eobj_Class *_my_class = NULL;
 
 const Eobj_Class *

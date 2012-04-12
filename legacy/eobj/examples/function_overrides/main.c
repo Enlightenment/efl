@@ -29,6 +29,14 @@ main(int argc, char *argv[])
 
    eobj_unref(obj);
 
+   obj = eobj_add(INHERIT2_CLASS, NULL);
+   eobj_do(obj, INHERIT2_PRINT());
+   eobj_unref(obj);
+
+   obj = eobj_add(SIMPLE_CLASS, NULL);
+   fail_if(eobj_do(obj, INHERIT2_PRINT2()));
+   eobj_unref(obj);
+
    eobj_shutdown();
    return 0;
 }

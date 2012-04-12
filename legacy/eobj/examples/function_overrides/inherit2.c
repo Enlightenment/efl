@@ -6,6 +6,8 @@
 
 #include "config.h"
 
+#include "../eunit_tests.h"
+
 EAPI Eobj_Op INHERIT2_BASE_ID = 0;
 
 static Eobj_Class *_my_class = NULL;
@@ -21,10 +23,25 @@ _a_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
+_print(Eobj *obj, void *class_data __UNUSED__, va_list *list __UNUSED__)
+{
+   printf("Hey\n");
+   fail_if(eobj_super_do(obj, INHERIT2_PRINT()));
+}
+
+static void
+_print2(Eobj *obj __UNUSED__, void *class_data __UNUSED__, va_list *list __UNUSED__)
+{
+   printf("Hey2\n");
+}
+
+static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
         EOBJ_OP_FUNC_DESCRIPTION(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
+        EOBJ_OP_FUNC_DESCRIPTION(INHERIT2_ID(INHERIT2_SUB_ID_PRINT), _print),
+        EOBJ_OP_FUNC_DESCRIPTION(INHERIT2_ID(INHERIT2_SUB_ID_PRINT2), _print2),
         EOBJ_OP_FUNC_DESCRIPTION_SENTINEL
    };
 
@@ -36,10 +53,16 @@ inherit2_class_get(void)
 {
    if (_my_class) return _my_class;
 
+   static const Eobj_Op_Description op_desc[] = {
+        EOBJ_OP_DESCRIPTION(INHERIT2_SUB_ID_PRINT, "", "Print hey"),
+        EOBJ_OP_DESCRIPTION(INHERIT2_SUB_ID_PRINT2, "", "Print hey2"),
+        EOBJ_OP_DESCRIPTION_SENTINEL
+   };
+
    static const Eobj_Class_Description class_desc = {
         "Inherit2",
         EOBJ_CLASS_TYPE_REGULAR,
-        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        EOBJ_CLASS_DESCRIPTION_OPS(&INHERIT2_BASE_ID, op_desc, INHERIT2_SUB_ID_LAST),
         NULL,
         0,
         NULL,
