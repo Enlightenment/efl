@@ -1150,11 +1150,13 @@ eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Even
              cb->delete_me = EINA_TRUE;
              _eobj_callbacks_clear(obj);
              ret = data;
-             goto end;
+             goto found;
           }
      }
 
-end:
+   return NULL;
+
+found:
    eobj_event_callback_call(obj, EOBJ_SIG_CALLBACK_DEL, desc);
    return ret;
 }
@@ -1175,11 +1177,13 @@ eobj_event_callback_del_full(Eobj *obj, const Eobj_Event_Description *desc, Eobj
              cb->delete_me = EINA_TRUE;
              _eobj_callbacks_clear(obj);
              ret = data;
-             goto end;
+             goto found;
           }
      }
 
-end:
+   return NULL;
+
+found:
    eobj_event_callback_call(obj, EOBJ_SIG_CALLBACK_DEL, desc);
    return ret;
 }
