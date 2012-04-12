@@ -292,30 +292,21 @@ _eobj_kls_itr_reached_end(const Eobj *obj)
    return !(*kls_itr && *(kls_itr + 1));
 }
 
-/* FIXME: Decide if it should be fast, and if so, add a mapping.
- * Otherwise, this is very slow. But since it's only for debugging... */
 static const Eobj_Op_Description *
 _eobj_op_id_desc_get(Eobj_Op op)
 {
-   int i;
-   Eobj_Class **cls_itr = _eobj_classes;
+   const Eobj_Class *klass = OP_CLASS_GET(op);
 
-   for (i = 0 ; i < _eobj_classes_last_id ; i++, cls_itr++)
+   if (!klass || !klass->desc->ops.base_op_id) return NULL;
+
+   Eobj_Op base_op_id = *klass->desc->ops.base_op_id;
+
+   const Eobj_Op_Description *desc = klass->desc->ops.descs;
+   size_t i;
+   for (i = 0 ; i < klass->desc->ops.count ; i++, desc++)
      {
-        if (*cls_itr)
-          {
-             const Eobj_Op_Description *desc = (*cls_itr)->desc->ops.descs;
-             if (!desc)
-                continue;
-
-             Eobj_Op base_op_id = *(*cls_itr)->desc->ops.base_op_id;
-             while (desc->sub_op)
-               {
-                  if ((base_op_id + desc->sub_op) == op)
-                     return desc;
-                  desc++;
-               }
-          }
+        if ((base_op_id + desc->sub_op) == op)
+           return desc;
      }
 
    return NULL;
