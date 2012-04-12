@@ -50,5 +50,6 @@ src/lib/eio_single.lo
 src/lib/eio_xattr.lo
 src/lib/libeio.la
 src/lib/eio_eet.lo
+src/lib/eio_monitor_inotify.lo
+src/lib/eio_monitor_poll.lo
 stamp-h1
-
