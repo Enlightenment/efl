@@ -317,7 +317,6 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
         Image_Entry_Frame *new_frame = NULL;
         int                cur_frame = frame->index;
         int                start_frame = 1;
-        int                j = 0;
 
         if (_find_close_frame(ie, cur_frame, &new_frame))
           start_frame = new_frame->index + 1;
@@ -343,12 +342,12 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
           }
         else
           {
-             Gif_Frame *gif_frame = NULL;
+             Gif_Frame *gif_frame2 = NULL;
              ptr_src = new_frame->data;
              if (new_frame->info)
                {
-                  gif_frame = (Gif_Frame *)(new_frame->info);
-                  disposal = gif_frame->frame_info.disposal;
+                  gif_frame2 = (Gif_Frame *)(new_frame->info);
+                  disposal = gif_frame2->frame_info.disposal;
                }
              switch(disposal) /* we only support disposal flag 0,1,2 */
                {
