@@ -2,6 +2,8 @@
 #include "simple.h"
 #include "comp.h"
 
+#include "../eunit_tests.h"
+
 static int cb_called = EINA_FALSE;
 
 static Eina_Bool
@@ -29,18 +31,11 @@ main(int argc, char *argv[])
 
    int a;
    eobj_do(obj, SIMPLE_A_SET(1));
-   if (!cb_called)
-     {
-        printf("Error! %d\n", __LINE__);
-        return 1;
-     }
+   fail_if(!cb_called);
 
    eobj_do(obj, SIMPLE_A_GET(&a));
-   if (a != 1)
-     {
-        printf("Error! %d\n", __LINE__);
-        return 1;
-     }
+   fail_if(a != 1);
+
    eobj_unref(obj);
 
    eobj_shutdown();

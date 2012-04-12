@@ -4,6 +4,8 @@
 #include "inherit2.h"
 #include "inherit3.h"
 
+#include "../eunit_tests.h"
+
 int
 main(int argc, char *argv[])
 {
@@ -15,20 +17,15 @@ main(int argc, char *argv[])
 
    eobj_do(obj, SIMPLE_A_SET(1));
    Simple_Public_Data *pd = eobj_data_get(obj, SIMPLE_CLASS);
-   if (pd->a != 2)
-     {
-        return 1;
-     }
+   fail_if(pd->a != 2);
+
    eobj_unref(obj);
 
    obj = eobj_add(INHERIT3_CLASS, NULL);
 
    eobj_do(obj, SIMPLE_A_SET(1));
    pd = eobj_data_get(obj, SIMPLE_CLASS);
-   if (pd->a != 3)
-     {
-        return 1;
-     }
+   fail_if(pd->a != 3);
 
    eobj_unref(obj);
 

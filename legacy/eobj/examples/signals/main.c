@@ -1,6 +1,10 @@
 #include "Eobj.h"
 #include "simple.h"
 
+#include "../eunit_tests.h"
+
+static int cb_count = 0;
+
 static Eina_Bool
 _a_changed_cb(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event_info)
 {
@@ -9,6 +13,8 @@ _a_changed_cb(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *e
    (void) obj;
    int new_a = *((int *) event_info);
    printf("%s event_info:'%d' data:'%s'\n", __func__, new_a, (const char *) data);
+
+   cb_count++;
 
    /* Fix data is NULL, stop. */
    return !!data;
@@ -32,6 +38,8 @@ main(int argc, char *argv[])
    eobj_event_callback_priority_add(obj, SIG_A_CHANGED, EOBJ_CALLBACK_PRIORITY_AFTER, _a_changed_cb, "NOT CALLED");
 
    eobj_do(obj, SIMPLE_A_SET(1));
+
+   fail_if(cb_count != 3);
 
    eobj_event_callback_del_full(obj, SIG_A_CHANGED, _a_changed_cb, NULL);
 

@@ -5,6 +5,8 @@
 #include "simple4.h"
 #include "mixin.h"
 
+#include "../eunit_tests.h"
+
 int my_init_count = 0;
 
 int
@@ -17,11 +19,7 @@ main(int argc, char *argv[])
 
    Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
 
-   if (my_init_count != 2)
-     {
-        printf("Error! my_init_count == %d\n", my_init_count);
-        ret = 1;
-     }
+   fail_if(my_init_count != 2);
 
    eobj_do(obj, SIMPLE_A_SET(1), SIMPLE_B_SET(2));
 
@@ -30,42 +28,22 @@ main(int argc, char *argv[])
 
    eobj_unref(obj);
 
-   if (my_init_count != 0)
-     {
-        printf("Error! my_init_count == %d\n", my_init_count);
-        ret = 1;
-     }
+   fail_if(my_init_count != 0);
 
    obj = eobj_add(SIMPLE2_CLASS, NULL);
-   if (obj)
-     {
-        printf("Error! obj is supposed to be NULL.\n");
-        ret = 1;
-     }
+   fail_if(obj);
 
    obj = eobj_add(SIMPLE3_CLASS, NULL);
-   if (obj)
-     {
-        printf("Error! obj is supposed to be NULL.\n");
-        ret = 1;
-     }
+   fail_if(obj);
 
    my_init_count = 0;
    obj = eobj_add(SIMPLE4_CLASS, NULL);
 
-   if (my_init_count != 2)
-     {
-        printf("Error! my_init_count == %d\n", my_init_count);
-        ret = 1;
-     }
+   fail_if(my_init_count != 2);
 
    eobj_unref(obj);
 
-   if (my_init_count != 0)
-     {
-        printf("Error! my_init_count == %d\n", my_init_count);
-        ret = 1;
-     }
+   fail_if(my_init_count != 0);
 
    eobj_shutdown();
    return ret;
