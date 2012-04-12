@@ -2,6 +2,7 @@
 #include "simple.h"
 
 #include "comp.h"
+#include "../eunit_tests.h"
 
 EAPI Eobj_Op COMP_BASE_ID = 0;
 
@@ -24,6 +25,9 @@ _constructor(Eobj *obj)
    Eobj *simple = eobj_add(SIMPLE_CLASS, obj);
    eobj_composite_object_attach(obj, simple);
    eobj_event_callback_forwarder_add(simple, SIG_A_CHANGED, obj);
+
+   fail_if(eobj_composite_is(obj));
+   fail_if(!eobj_composite_is(simple));
 
    eobj_unref(simple);
 }
