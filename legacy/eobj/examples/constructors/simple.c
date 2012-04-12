@@ -14,6 +14,8 @@ typedef struct
 
 static Eobj_Class *_my_class = NULL;
 
+static char *class_var = NULL;
+
 #define _GET_SET_FUNC(name) \
 static void \
 _##name##_get(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
@@ -67,6 +69,14 @@ _class_constructor(Eobj_Class *klass)
    };
 
    eobj_class_funcs_set(klass, func_desc);
+
+   class_var = malloc(10);
+}
+
+static void
+_class_destructor(Eobj_Class *klass __UNUSED__)
+{
+   free(class_var);
 }
 
 const Eobj_Class *
@@ -91,7 +101,7 @@ simple_class_get(void)
         _constructor,
         _destructor,
         _class_constructor,
-        NULL
+        _class_destructor
    };
 
    return _my_class = eobj_class_new(&class_desc, EOBJ_CLASS_BASE, MIXIN_CLASS, NULL);
