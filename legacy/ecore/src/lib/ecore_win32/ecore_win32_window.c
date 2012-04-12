@@ -926,13 +926,13 @@ ecore_win32_window_focus_get(void)
  * @brief Iconify or restore the given window.
  *
  * @param window The window.
- * @param on EINA_TRUE to iconify the window, EINA_FALSE to restore it.
+ * @param on @c EINA_TRUE to iconify the window, @c EINA_FALSE to restore it.
  *
- * This function iconify or restore @p window. If @p on
- * is set to EINA_TRUE, the window will be iconified, if it is set to
- * EINA_FALSE, it will be restored. If @p window is @c NULL or if the
- * state does not change (like iconifying the window while it is
- * already iconified), this function does nothing.
+ * This function iconify or restore @p window. If @p on is set to @c EINA_TRUE,
+ * the window will be iconified, if it is set to @c EINA_FALSE, it will be
+ * restored. If @p window is @c NULL or if the state does not change (like
+ * iconifying the window while it is already iconified), this function does
+ * nothing.
  */
 EAPI void
 ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
@@ -954,13 +954,13 @@ ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
  * @brief Remove or restore the border of the given window.
  *
  * @param window The window.
- * @param on EINA_TRUE to remove the border, EINA_FALSE to restore it.
+ * @param on @c EINA_TRUE to remove the border, @c EINA_FALSE to restore it.
  *
- * This function remove or restore the border of @p window. If @p on
- * is set to EINA_TRUE, the window will have no border, if it is set to
- * EINA_FALSE, it will have a border. If @p window is @c NULL or if the
- * state does not change (like setting to borderless while the window
- * has no border), this function does nothing.
+ * This function remove or restore the border of @p window. If @p on is set to
+ * @c EINA_TRUE, the window will have no border, if it is set to @c EINA_FALSE,
+ * it will have a border. If @p window is @c NULL or if the state does not
+ * change (like setting to borderless while the window has no border), this
+ * function does nothing.
  */
 EAPI void
 ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
@@ -1030,13 +1030,13 @@ ecore_win32_window_borderless_set(Ecore_Win32_Window *window,
  * @brief Set the given window to fullscreen.
  *
  * @param window The window.
- * @param on EINA_TRUE for fullscreen mode, EINA_FALSE for windowed mode.
+ * @param on @c EINA_TRUE for fullscreen mode, @c EINA_FALSE for windowed mode.
  *
- * This function set @p window to fullscreen or windowed mode. If @p on
- * is set to EINA_TRUE, the window will be fullscreen, if it is set to
- * EINA_FALSE, it will be windowed. If @p window is @c NULL or if the
- * state does not change (like setting to fullscreen while the window
- * is already fullscreen), this function does nothing.
+ * This function set @p window to fullscreen or windowed mode. If @p on is set
+ * to @c EINA_TRUE, the window will be fullscreen, if it is set to
+ * @c EINA_FALSE, it will be windowed. If @p window is @c NULL or if the state
+ * does not change (like setting to fullscreen while the window is already
+ * fullscreen), this function does nothing.
  */
 EAPI void
 ecore_win32_window_fullscreen_set(Ecore_Win32_Window *window,

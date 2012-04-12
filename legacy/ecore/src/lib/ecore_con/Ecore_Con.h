@@ -681,8 +681,8 @@ EAPI int               ecore_con_shutdown(void);
  * @param name IP address or server name to translate.
  * @param done_cb Callback to notify when done.
  * @param data User data to be given to done_cb.
- * @return EINA_TRUE if the request did not fail to be set up, EINA_FALSE if it
- * failed.
+ * @return @c EINA_TRUE if the request did not fail to be set up, @c EINA_FALSE
+ * if it failed.
  *
  * This function performs a DNS lookup on the hostname specified by @p name,
  * then calls @p done_cb with the result and the @p data given as parameter.
@@ -915,7 +915,7 @@ EAPI void *            ecore_con_server_data_set(Ecore_Con_Server *svr,
  * Retrieves whether the given server is currently connected.
  *
  * @param   svr The given server.
- * @return  #EINA_TRUE if the server is connected.  #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the server is connected, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool         ecore_con_server_connected_get(Ecore_Con_Server *svr);
 /**
@@ -1013,7 +1013,8 @@ EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr,
  * @return  A pointer to an internal string that contains the IP address of
  *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
  *          This string should not be modified or trusted to stay valid after
- *          deletion for the @p svr object. If no IP is known NULL is returned.
+ *          deletion for the @p svr object. If no IP is known @c NULL is
+ *          returned.
  */
 EAPI const char *      ecore_con_server_ip_get(Ecore_Con_Server *svr);
 /**
@@ -1167,7 +1168,7 @@ EAPI void *            ecore_con_client_data_get(Ecore_Con_Client *cl);
  *          the connected client in the form "XXX.YYY.ZZZ.AAA" IP notation.
  *
  * The returned string should not be modified, freed or trusted to stay valid
- * after deletion for the @p cl object. If no IP is known NULL is returned.
+ * after deletion for the @p cl object. If no IP is known @c NULL is returned.
  */
 EAPI const char *      ecore_con_client_ip_get(Ecore_Con_Client *cl);
 /**
@@ -1228,7 +1229,7 @@ EAPI void              ecore_con_client_timeout_set(Ecore_Con_Client *cl, double
  * Returns whether the client is still connected
  *
  * @param   cl The given client.
- * @return  #EINA_TRUE if connected, else EINA_FALSE
+ * @return @c EINA_TRUE if connected, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool         ecore_con_client_connected_get(Ecore_Con_Client *cl);
 /**
@@ -1361,7 +1362,7 @@ typedef enum _Ecore_Con_Url_Http_Version
  * Change the HTTP version used for the request
  * @param url_con Connection object through which the request will be sent.
  * @param version The version to be used
- * @return EINA_TRUE on success, EINA_FALSE on failure to change version
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure to change version.
  * @since 1.2
  * @see ecore_con_url_pipeline_get()
  */
@@ -1388,7 +1389,7 @@ EAPI int               ecore_con_url_shutdown(void);
 
 /**
  * Enable or disable HTTP 1.1 pipelining.
- * @param enable EINA_TRUE will turn it on, EINA_FALSE will disable it.
+ * @param enable @c EINA_TRUE will turn it on, @c EINA_FALSE will disable it.
  *
  * Pipelining allows to send one request after another one, without having to
  * wait for the reply of the first request. The respective replies are received
@@ -1404,7 +1405,7 @@ EAPI int               ecore_con_url_shutdown(void);
 EAPI void              ecore_con_url_pipeline_set(Eina_Bool enable);
 /**
  * Is HTTP 1.1 pipelining enable ?
- * @return EINA_TRUE if it is enable.
+ * @return @c EINA_TRUE if it is enable.
  *
  * @see ecore_con_url_pipeline_set()
  */
@@ -1416,7 +1417,7 @@ EAPI Eina_Bool         ecore_con_url_pipeline_get(void);
  * @param url URL that will receive requests. Can be changed using
  *            ecore_con_url_url_set.
  *
- * @return NULL on error, a new Ecore_Con_Url on success.
+ * @return @c NULL on error, a new Ecore_Con_Url on success.
  *
  * Creates and initializes a new Ecore_Con_Url connection object that can be
  * used for sending requests.
@@ -1431,7 +1432,7 @@ EAPI Ecore_Con_Url *   ecore_con_url_new(const char *url);
  * @param url URL that will receive requests
  * @param custom_request Custom request (e.g. GET, POST, HEAD, PUT, etc)
  *
- * @return NULL on error, a new Ecore_Con_Url on success.
+ * @return @c NULL on error, a new Ecore_Con_Url on success.
  *
  * Creates and initializes a new Ecore_Con_Url for a custom request (e.g. HEAD,
  * SUBSCRIBE and other obscure HTTP requests). This object should be used like
@@ -1456,8 +1457,7 @@ EAPI void              ecore_con_url_free(Ecore_Con_Url *url_con);
  * @param url_con Connection object through which the request will be sent.
  * @param url URL that will receive the request
  *
- * @return EINA_TRUE on success, EINA_FALSE on error.
- *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  */
 EAPI Eina_Bool         ecore_con_url_url_set(Ecore_Con_Url *url_con,
                                              const char *url);
@@ -1465,7 +1465,8 @@ EAPI Eina_Bool         ecore_con_url_url_set(Ecore_Con_Url *url_con,
  * Gets the URL to send the request to.
  *
  * @param url_con Connection object through which the request will be sent.
- * @return URL that will receive the request, NULL on failure. URL is stringshared.
+ * @return URL that will receive the request, @c NULL on failure. URL is
+ * stringshared.
  * @since 1.1
  */
 EAPI const char       *ecore_con_url_url_get(Ecore_Con_Url *url_con);
@@ -1578,9 +1579,10 @@ EAPI int               ecore_con_url_received_bytes_get(Ecore_Con_Url *url_con);
  * @param password Password to use in authentication
  * @param safe Whether to use "safer" methods (eg, NOT http basic auth)
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  *
- * ATTENTION: requires libcurl >= 7.19.1 to work, otherwise will always return 0.
+ * @attention Requires libcurl >= 7.19.1 to work, otherwise will always return
+ * @c 0.
  */
 EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
                                                   const char *username,
@@ -1591,7 +1593,7 @@ EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
  *
  * @param url_con Connection object to perform a request on, previously created
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  *
  * The request is performed immediately, but you need to setup event handlers
  * for #ECORE_CON_EVENT_URL_DATA, #ECORE_CON_EVENT_URL_COMPLETE or
@@ -1618,7 +1620,7 @@ EAPI Eina_Bool         ecore_con_url_get(Ecore_Con_Url *url_con);
  * @param content_type Content type of the payload (e.g. text/xml). Can be @c
  * NULL.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  *
  * The request starts immediately, but you need to setup event handlers
  * for #ECORE_CON_EVENT_URL_DATA, #ECORE_CON_EVENT_URL_COMPLETE or
@@ -1659,12 +1661,14 @@ EAPI void              ecore_con_url_time(Ecore_Con_Url *url_con,
 
 /**
  * @brief Uploads a file to an ftp site.
+ *
  * @param url_con The Ecore_Con_Url object to send with
  * @param filename The path to the file to send
  * @param user The username to log in with
  * @param pass The password to log in with
  * @param upload_dir The directory to which the file should be uploaded
- * @return #EINA_TRUE on success, else #EINA_FALSE.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
+ *
  * Upload @p filename to an ftp server set in @p url_con using @p user
  * and @p pass to directory @p upload_dir
  */
@@ -1864,7 +1868,7 @@ EAPI int               ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
  * @param url_con Connection object that will use the proxy.
  * @param proxy Porxy string or @c NULL to disable
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  * @since 1.2
  */
 EAPI Eina_Bool ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy);
@@ -1877,7 +1881,7 @@ EAPI Eina_Bool ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy
  * @param url_con Connection object that will use the proxy.
  * @param username Username string.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  *
  * @see ecore_con_url_proxy_set()
  *
@@ -1893,7 +1897,7 @@ EAPI Eina_Bool ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const ch
  * @param url_con Connection object that will use the proxy.
  * @param password Password string.
  *
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error.
  *
  * @see ecore_con_url_proxy_set()
  *

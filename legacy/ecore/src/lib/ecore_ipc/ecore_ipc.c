@@ -504,7 +504,7 @@ ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
 /**
  * Retrieves whether the given IPC server is currently connected.
  * @param   svr The given IPC server.
- * @return  #EINA_TRUE if the server is connected.  #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the server is connected, @c EINA_FALSE otherwise.
  * @ingroup Ecore_IPC_Server_Group
  */
 EAPI Eina_Bool
@@ -971,7 +971,8 @@ ecore_ipc_client_data_size_max_get(Ecore_Ipc_Client *cl)
  * @return  A pointer to an internal string that contains the IP address of
  *          the connected server in the form "XXX.YYY.ZZZ.AAA" IP notation.
  *          This string should not be modified or trusted to stay valid after
- *          deletion for the @p cl object. If no IP is known NULL is returned.
+ *          deletion for the @p cl object. If no IP is known @c NULL is
+ *          returned.
  * @ingroup Ecore_Ipc_Client_Group
  */
 EAPI const char *

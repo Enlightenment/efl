@@ -654,7 +654,7 @@ ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *svr)
  * If there is an error loading the certificate, an error will automatically be logged.
  * @param svr The server object
  * @param cert The path to the certificate.
- * @return EINA_FALSE if the file cannot be loaded, otherwise EINA_TRUE.
+ * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
  */
 
 EAPI Eina_Bool
@@ -686,7 +686,7 @@ ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr,
  * If there is an error loading the CAs, an error will automatically be logged.
  * @param svr The server object
  * @param ca_file The path to the CA file.
- * @return EINA_FALSE if the file cannot be loaded, otherwise EINA_TRUE.
+ * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
  * @note since 1.2, this function can load directores
  */
 
@@ -719,8 +719,7 @@ ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr,
  * If there is an error loading the key, an error will automatically be logged.
  * @param svr The server object
  * @param key_file The path to the key file.
- * @return EINA_FALSE if the file cannot be loaded,
- * otherwise EINA_TRUE.
+ * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
  */
 
 EAPI Eina_Bool
@@ -752,8 +751,7 @@ ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr,
  * If there is an error loading the CRL, an error will automatically be logged.
  * @param svr The server object
  * @param crl_file The path to the CRL file.
- * @return EINA_FALSE if the file cannot be loaded,
- * otherwise EINA_TRUE.
+ * @return @c EINA_FALSE if the file cannot be loaded, otherwise @c EINA_TRUE.
  */
 
 EAPI Eina_Bool
@@ -785,7 +783,7 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr,
  * The connection should be treated as disconnected until the next event.
  * @param svr The server object
  * @param ssl_type The SSL connection type (ONLY).
- * @return EINA_FALSE if the connection cannot be upgraded, otherwise EINA_TRUE.
+ * @return @c EINA_FALSE if the connection cannot be upgraded, otherwise @c EINA_TRUE.
  * @note This function is NEVER to be used on a server object created with ecore_con_server_add
  * @warning Setting a wrong value for @p compl_type WILL mess up your program.
  * @since 1.1
@@ -824,7 +822,7 @@ ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type ssl_type)
  * The connection should be treated as disconnected until the next event.
  * @param cl The client object
  * @param ssl_type The SSL connection type (ONLY).
- * @return EINA_FALSE if the connection cannot be upgraded, otherwise EINA_TRUE.
+ * @return @c EINA_FALSE if the connection cannot be upgraded, otherwise @c EINA_TRUE.
  * @warning Setting a wrong value for @p compl_type WILL mess up your program.
  * @since 1.1
  */

@@ -43,10 +43,11 @@ extern int _randr_version;
 #endif
 
 /**
- * @brief enable event selection. This enables basic interaction with
- * output/crtc events and requires RRandR >= 1.2.
- * @param win select this window's properties for RandRR events
- * @param on enable/disable selecting
+ * @brief Enable event selection. This enables basic interaction with
+ * output/crtc events and requires RandR >= 1.2.
+ *
+ * @param win Select this window's properties for RandR events.
+ * @param on Enable/disable selecting.
  */
 EAPI void
 ecore_x_randr_events_select(Ecore_X_Window win,
@@ -72,10 +73,12 @@ ecore_x_randr_events_select(Ecore_X_Window win,
 }
 
 /**
- * @brief validates a CRTC for a given root window's screen.
- * @param root the window which's default display will be queried
- * @param crtc the CRTC to be validated.
- * @return in case it is found EINA_TRUE will be returned. Else EINA_FALSE is returned.
+ * @brief Validates a CRTC for a given root window's screen.
+ *
+ * @param root The window which's default display will be queried.
+ * @param crtc The CRTC to be validated.
+ * @return In case it is found, @c EINA_TRUE will be returned, @c EINA_FALSE
+ * otherwise.
  */
 static inline Eina_Bool
 _ecore_x_randr_crtc_validate(Ecore_X_Window root,
@@ -244,13 +247,18 @@ ecore_x_randr_screen_size_range_get(Ecore_X_Window root,
 }
 
 /*
- * @param root window which's screen's size should be set. If invalid (e.g. NULL) no action is taken.
- * @param w width in px the screen should be set to. If out of valid boundaries, current value is assumed.
- * @param h height in px the screen should be set to. If out of valid boundaries, current value is assumed.
- * @param w_mm width in mm the screen should be set to. If 0, current aspect is assumed.
- * @param h_mm height in mm the screen should be set to. If 0, current aspect is assumed.
- * @return EINA_TRUE if request was successfully sent or screen is already in
- * requested size, EINA_FALSE if parameters are invalid
+ * @param root Window which's screen's size should be set. If invalid (e.g. 
+ * @c NULL) no action is taken.
+ * @param w Width in px the screen should be set to. If out of valid
+ * boundaries, current value is assumed.
+ * @param h Height in px the screen should be set to. If out of valid
+ * boundaries, current value is assumed.
+ * @param w_mm Width in mm the screen should be set to. If @c 0, current
+ * aspect is assumed.
+ * @param h_mm Height in mm the screen should be set to. If @c 0, current
+ * aspect is assumed.
+ * @return @c EINA_TRUE if request was successfully sent or screen is already
+ * in requested size, @c EINA_FALSE if parameters are invalid.
  */
 EAPI Eina_Bool
 ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
@@ -380,8 +388,9 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root,
 }
 
 /*
- * @brief add a mode to a display
- * @param root window to which's screen's ressources are added
+ * @brief Add a mode to a display.
+ *
+ * @param root Window to which's screen's ressources are added.
  * @param mode_info
  * @return Ecore_X_Randr_Mode of the added mode. Ecore_X_Randr_None if mode
  * adding failed.
@@ -405,7 +414,8 @@ ecore_x_randr_mode_info_add(Ecore_X_Window root,
 }
 
 /*
- * @brief delete a mode from the display
+ * @brief Delete a mode from the display.
+ *
  * @param mode_info
  * @since 1.2.0
  */
@@ -480,9 +490,10 @@ ecore_x_randr_mode_info_get(Ecore_X_Window root,
 }
 
 /*
- * @brief free detailed mode information. The pointer handed in will be set to
- * NULL after freeing the memory.
- * @param mode_info the mode information that should be freed
+ * @brief Free detailed mode information. The pointer handed in will be set to
+ * @c NULL after freeing the memory.
+ *
+ * @param mode_info The mode information that should be freed.
  */
 EAPI void
 ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
@@ -501,10 +512,11 @@ ecore_x_randr_mode_info_free(Ecore_X_Randr_Mode_Info *mode_info)
 }
 
 /*
- * @brief get all known CRTCs related to a root window's screen
- * @param root window which's screen's ressources are queried
- * @param num number of CRTCs returned
- * @return CRTC IDs
+ * @brief Get all known CRTCs related to a root window's screen.
+ *
+ * @param root Window which's screen's ressources are queried.
+ * @param num Number of CRTCs returned.
+ * @return CRTC IDs.
  */
 EAPI Ecore_X_Randr_Crtc *
 ecore_x_randr_crtcs_get(Ecore_X_Window root,
@@ -538,7 +550,7 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root,
  * @brief get the CRTCs, which display a certain window
  * @param window window the displaying crtcs shall be found for
  * @param num the number of crtcs displaying the window
- * @return array of crtcs that display a certain window. NULL if no crtcs
+ * @return Array of crtcs that display a certain window. @c NULL if no crtcs
  * was found that displays the specified window.
  */
 EAPI Ecore_X_Randr_Crtc *
@@ -552,7 +564,7 @@ ecore_x_randr_current_crtc_get(Ecore_X_Window window,
  * @brief get the CRTCs, which display a certain window
  * @param window window the displaying crtcs shall be found for
  * @param num the number of crtcs displaying the window
- * @return array of crtcs that display a certain window. NULL if no crtcs
+ * @return Array of crtcs that display a certain window. @c NULL if no crtcs
  * was found that displays the specified window.
  * @since 1.2.0
  */
@@ -768,12 +780,16 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window root,
 }
 
 /*
- * @brief sets the position of given CRTC within root window's screen
- * @param root the window's screen to be queried
- * @param crtc the CRTC which's position within the mentioned screen is to be altered
- * @param x position on the x-axis (0 == left) of the screen. if x < 0 current value will be kept.
- * @param y position on the y-ayis (0 == top) of the screen. if y < 0, current value will be kept.
- * @return EINA_TRUE if position could be successfully be altered.
+ * @brief Sets the position of given CRTC within root window's screen.
+ *
+ * @param root The window's screen to be queried.
+ * @param crtc The CRTC which's position within the mentioned screen is to be
+ * altered.
+ * @param x Position on the x-axis (0 == left) of the screen. if x < 0 current
+ * value will be kept.
+ * @param y Position on the y-ayis (0 == top) of the screen. if y < 0, current
+ * value will be kept.
+ * @return @c EINA_TRUE if position could successfully be altered.
  */
 EAPI Eina_Bool
 ecore_x_randr_crtc_pos_set(Ecore_X_Window root,
@@ -858,16 +874,18 @@ ecore_x_randr_crtc_mode_get(Ecore_X_Window root,
 }
 
 /**
- * @brief sets a mode for a CRTC and the outputs attached to it
- * @param root the window's screen to be queried
- * @param crtc the CRTC which shall be set
- * @param outputs array of outputs which have to be compatible with the mode. If
- * NULL CRTC will be disabled.
- * @param noutputs number of outputs in array to be used. Use
- * Ecore_X_Randr_Unset (or -1) to use currently used outputs.
- * @param mode XID of the mode to be set. If set to 0 the CRTC will be disabled.
- * If set to -1 the call will fail.
- * @return EINA_TRUE if mode setting was successful. Else EINA_FALSE
+ * @brief Sets a mode for a CRTC and the outputs attached to it.
+ *
+ * @param root The window's screen to be queried.
+ * @param crtc The CRTC which shall be set.
+ * @param outputs Array of outputs which have to be compatible with the mode.
+ * If @c NULL, CRTC will be disabled.
+ * @param noutputs Number of outputs in array to be used. Use
+ * Ecore_X_Randr_Unset (or @c -1) to use currently used outputs.
+ * @param mode XID of the mode to be set. If set to @c 0 the CRTC will be
+ * disabled. If set to @c -1 the call will fail.
+ * @return @c EINA_TRUE if mode setting was successful, @c EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_crtc_mode_set(Ecore_X_Window root,
@@ -1097,24 +1115,26 @@ ecore_x_randr_crtc_clone_set(Ecore_X_Window root,
 }
 
 /**
- * @brief sets the demanded parameters for a given CRTC. Note that the CRTC is
+ * @brief Sets the demanded parameters for a given CRTC. Note that the CRTC is
  * auto enabled in it's preferred mode, when it was disabled before.
- * @param root the root window which's default display will be queried
- * @param crtc the CRTC which's configuration should be altered
- * @param outputs an array of outputs, that should display this CRTC's content.
- * @param noutputs number of outputs in the array of outputs.
- * If set to Ecore_X_Randr_Unset, current outputs and number of outputs will be used.
- * If set to Ecore_X_Randr_None, CRTC will be disabled
- * @param x new x coordinate. If <0 (e.g. Ecore_X_Randr_Unset) the current x
+ *
+ * @param root The root window which's default display will be queried.
+ * @param crtc The CRTC which's configuration should be altered.
+ * @param outputs An array of outputs, that should display this CRTC's content.
+ * @param noutputs Number of outputs in the array of outputs. If set to
+ * Ecore_X_Randr_Unset, current outputs and number of outputs will be used.
+ * If set to Ecore_X_Randr_None, CRTC will be disabled.
+ * @param x New x coordinate. If <0 (e.g. Ecore_X_Randr_Unset) the current x
  * corrdinate will be assumed.
- * @param y new y coordinate. If <0 (e.g. Ecore_X_Randr_Unset) the current y
+ * @param y New y coordinate. If <0 (e.g. Ecore_X_Randr_Unset) the current y
  * corrdinate will be assumed.
- * @param mode the new mode to be set. If Ecore_X_Randr_None is passed, the
- * CRTC will be disabled. If Ecore_X_Randr_Unset is passed, the current mode is assumed.
- * @param orientation the new orientation to be set. If Ecore_X_Randr_Unset is used,
- * the current mode is assumed.
- * @return EINA_TRUE if the configuration alteration was successful, else
- * EINA_FALSE
+ * @param mode The new mode to be set. If Ecore_X_Randr_None is passed, the
+ * CRTC will be disabled. If Ecore_X_Randr_Unset is passed, the current mode is
+ * assumed.
+ * @param orientation The new orientation to be set. If Ecore_X_Randr_Unset is
+ * used, the current mode is assumed.
+ * @return @c EINA_TRUE if the configuration alteration was successful,
+ * @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
@@ -1180,14 +1200,16 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
 }
 
 /**
- * @brief sets a CRTC relative to another one.
- * @param crtc_r1 the CRTC to be positioned.
- * @param crtc_r2 the CRTC the position should be relative to
- * @param policy the relation between the crtcs
- * @param alignment in case CRTCs size differ, aligns CRTC1 accordingly at CRTC2's
- * borders
- * @return EINA_TRUE if crtc could be successfully positioned. EINA_FALSE if
- * repositioning failed or if position of new crtc would be out of given screen's min/max bounds.
+ * @brief Sets a CRTC relative to another one.
+ *
+ * @param crtc_r1 The CRTC to be positioned.
+ * @param crtc_r2 The CRTC the position should be relative to.
+ * @param policy The relation between the crtcs.
+ * @param alignment In case CRTCs size differ, aligns CRTC1 accordingly at
+ * CRTC2's borders.
+ * @return @c EINA_TRUE if crtc could be successfully positioned, @c EINA_FALSE
+ * if repositioning failed or if position of new crtc would be out of given
+ * screen's min/max bounds.
  */
 EAPI Eina_Bool
 ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
@@ -1484,12 +1506,14 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
 }
 
 /*
- * @brief add given mode to given output
- * @param output the output the mode is added to
- * @param mode the mode added to the output
- * @return EINA_FALSE if output or mode equal Ecore_X_Randr_None, else EINA_TRUE
- * Additionally, if xcb backend is used, the success of the addition is reported
- * back directly.
+ * @brief Add given mode to given output.
+ *
+ * @param output The output the mode is added to.
+ * @param mode The mode added to the output.
+ * @return @c EINA_FALSE if output or mode equal Ecore_X_Randr_None, else
+ * @c EINA_TRUE.
+ * Additionally, if xcb backend is used, the success of the addition is
+ * reported back directly.
  * @since 1.2.0
  */
 EAPI Eina_Bool
@@ -1917,13 +1941,16 @@ ecore_x_randr_move_all_crtcs_but(Ecore_X_Window root,
 }
 
 /*
- * @brief move given CRTCs belonging to the given root window's screen dx/dy pixels relative to their current position. The screen size will be automatically adjusted if necessary and possible.
- * @param root window which's screen's resources are used
- * @param crtcs list of CRTCs to be moved
- * @param ncrtc number of CRTCs in array
- * @param dx amount of pixels the CRTCs should be moved in x direction
- * @param dy amount of pixels the CRTCs should be moved in y direction
- * @return EINA_TRUE if all crtcs could be moved successfully.
+ * @brief Move given CRTCs belonging to the given root window's screen dx/dy
+ * pixels relative to their current position. The screen size will be
+ * automatically adjusted if necessary and possible.
+ *
+ * @param root Window which's screen's resources are used.
+ * @param crtcs List of CRTCs to be moved.
+ * @param ncrtc Number of CRTCs in array.
+ * @param dx Amount of pixels the CRTCs should be moved in x direction.
+ * @param dy Amount of pixels the CRTCs should be moved in y direction.
+ * @return @c EINA_TRUE if all crtcs could be moved successfully.
  */
 EAPI Eina_Bool
 ecore_x_randr_move_crtcs(Ecore_X_Window root,
@@ -2088,9 +2115,10 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
 }
 
 /**
- * @brief set up the backlight level to the given level.
- * @param root the window's screen which will be set.
- * @param level of the backlight between 0 and 1
+ * @brief Set up the backlight level to the given level.
+ *
+ * @param root The window's screen which will be set.
+ * @param level Of the backlight between @c 0 and @c 1.
  */
 
 EAPI void
@@ -2137,8 +2165,8 @@ ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root,
 }
 
 /*
- * @brief check if a backlight is available
- * @return whether a blacklight is available
+ * @brief Check if a backlight is available.
+ * @return Whether a backlight is available.
  */
 
 EAPI Eina_Bool
@@ -2157,10 +2185,11 @@ ecore_x_randr_output_backlight_available(void)
 }
 
 /*
- * @brief get the backlight level of the given output
- * @param root window which's screen should be queried
- * @param output from which the backlight level should be retrieved
- * @return the backlight level
+ * @brief Get the backlight level of the given output.
+ *
+ * @param root Window which's screen should be queried.
+ * @param output From which the backlight level should be retrieved.
+ * @return The backlight level.
  */
 
 EAPI double
@@ -2229,11 +2258,12 @@ ecore_x_randr_output_backlight_level_get(Ecore_X_Window root,
 }
 
 /*
- * @brief set the backlight level of a given output
- * @param root window which's screen should be queried
- * @param output that should be set
- * @param level for which the backlight should be set
- * @return EINA_TRUE in case of success
+ * @brief Set the backlight level of a given output.
+ *
+ * @param root Window which's screen should be queried.
+ * @param output That should be set.
+ * @param level For which the backlight should be set.
+ * @return @c EINA_TRUE in case of success.
  */
 
 EAPI Eina_Bool
@@ -2290,11 +2320,12 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window root,
 }
 
 /*
- * @brief get the outputs, which display a certain window
- * @param window window the displaying outputs shall be found for
- * @param num the number of outputs displaying the window
- * @return array of outputs that display a certain window. NULL if no outputs
- * was found that displays the specified window.
+ * @brief Get the outputs, which display a certain window.
+ *
+ * @param window Window the displaying outputs shall be found for
+ * @param num The number of outputs displaying the window
+ * @return Array of outputs that display a certain window. @c NULL if no
+ * outputs was found that displays the specified window.
  */
 
 EAPI Ecore_X_Randr_Output *
@@ -2344,11 +2375,12 @@ _ecore_x_randr_current_output_get_fail:
 
 /*
  * @deprecated bad naming. Use ecore_x_randr_window_outputs_get instead.
- * @brief get the outputs, which display a certain window
- * @param window window the displaying outputs shall be found for
- * @param num the number of outputs displaying the window
- * @return array of outputs that display a certain window. NULL if no outputs
- * was found that displays the specified window.
+ * @brief Get the outputs, which display a certain window.
+ *
+ * @param window Window the displaying outputs shall be found for.
+ * @param num The number of outputs displaying the window.
+ * @return Array of outputs that display a certain window. @c NULL if no
+ * outputs was found that displays the specified window.
  */
 
 EAPI Ecore_X_Randr_Output *

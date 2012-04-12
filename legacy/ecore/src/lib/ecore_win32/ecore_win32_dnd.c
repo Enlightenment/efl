@@ -103,12 +103,12 @@ ecore_win32_dnd_shutdown()
  *
  * @param data The name pf the Drag operation.
  * @param size The size of the name.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * This function start a Drag operation with the name @p data. If
- * @p data is @c NULL, EINA_FALSE is returned. if @p size is less than
- * 0, it is set to the length (as strlen()) of @p data. On success the
- * function returns EINA_TRUE, otherwise it returns EINA_FALSE.
+ * @p data is @c NULL, @c EINA_FALSE is returned. if @p size is less than
+ * @c 0, it is set to the length (as strlen()) of @p data. On success the
+ * function returns @c EINA_TRUE, otherwise it returns @c EINA_FALSE.
  */
 EAPI Eina_Bool
 ecore_win32_dnd_begin(const char *data,
@@ -174,12 +174,12 @@ ecore_win32_dnd_begin(const char *data,
  * @param window The destination of the Drop operation.
  * @param callback The callback called when the Drop operation
  * finishes.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * This function register a Drop operation on @p window. Once the Drop
  * operation finishes, @p callback is called. If @p window is @c NULL,
- * the function returns EINA_FALSE. On success, it returns EINA_TRUE,
- * otherwise it returns EINA_FALSE.
+ * the function returns @c EINA_FALSE. On success, it returns @c EINA_TRUE,
+ * otherwise it returns @c EINA_FALSE.
  */
 EAPI Eina_Bool
 ecore_win32_dnd_register_drop_target(Ecore_Win32_Window                 *window,

@@ -197,13 +197,13 @@ _ecore_file_download(const char *url,
  * @param  progress_cb A callback called during the download operation.
  * @param  data User data passed to both callbacks.
  * @param  job_ret Job used to abort the download.
- * @return EINA_TRUE if the download start or EINA_FALSE on failure
+ * @return @c EINA_TRUE if the download start or @c EINA_FALSE on failure.
  *
  * This function starts the download of the URL @p url and saves it to
  * @p dst. @p url must provide the protocol, including 'http://',
  * 'ftp://' or 'file://'. Ecore_File must be compiled with CURL to
  * download using http and ftp protocols. If @p dst is ill-formed, or
- * if it already exists, the function returns EINA_FALSE. When the
+ * if it already exists, the function returns @c EINA_FALSE. When the
  * download is complete, the callback @p completion_cb is called and
  * @p data is passed to it. The @p status parameter of @p completion_cb
  * will be filled with the status of the download (200, 404,...). The
@@ -215,7 +215,7 @@ _ecore_file_download(const char *url,
  * that case @p job_ret can be filled. It can be used with
  * ecore_file_download_abort() or ecore_file_download_abort_all() to
  * respectively abort one or all download operations. This function returns
- * EINA_TRUE if the download starts, EINA_FALSE otherwise.
+ * @c EINA_TRUE if the download starts, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_file_download(const char *url,
@@ -238,7 +238,7 @@ ecore_file_download(const char *url,
  * @param  data User data passed to both callbacks.
  * @param  job_ret Job used to abort the download.
  * @param  headers pointer of header lists.
- * @return EINA_TRUE if the download start or EINA_FALSE on failure
+ * @return @c EINA_TRUE if the download start or @c EINA_FALSE on failure.
  */
 EAPI Eina_Bool
 ecore_file_download_full(const char *url,
@@ -256,10 +256,10 @@ ecore_file_download_full(const char *url,
  * @brief Check if the given protocol is available.
  *
  * @param  protocol The protocol to check.
- * @return EINA_TRUE if protocol is handled, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if protocol is handled, @c EINA_FALSE otherwise.
  *
- * This function returns EINA_TRUE if @p protocol is supported,
- * EINA_FALSE otherwise. @p protocol can be 'http://', 'ftp://' or
+ * This function returns @c EINA_TRUE if @p protocol is supported,
+ * @c EINA_FALSE otherwise. @p protocol can be 'http://', 'ftp://' or
  * 'file://'. Ecore_FILE must be compiled with CURL to handle http and
  * ftp protocols.
  */

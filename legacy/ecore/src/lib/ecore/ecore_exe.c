@@ -733,7 +733,7 @@ ecore_exe_callback_pre_free_set(Ecore_Exe   *exe,
  * @param exe  The child process to send to
  * @param data The data to send
  * @param size The size of the data to send, in bytes
- * @return EINA_TRUE if successful, EINA_FALSE on failure.
+ * @return @c EINA_TRUE if successful, @c EINA_FALSE on failure.
  */
 EAPI Eina_Bool
 ecore_exe_send(Ecore_Exe  *exe,
@@ -1145,7 +1145,7 @@ ecore_exe_pid_get(const Ecore_Exe *exe)
 /**
  * Retrieves the command of the given spawned process.
  * @param   exe Handle to the given spawned process.
- * @return The command on success.  NULL otherwise. This string is the
+ * @return The command on success, @c NULL otherwise. This string is the
  *         pointer to the internal value and must not be modified in
  *         any way.
  */

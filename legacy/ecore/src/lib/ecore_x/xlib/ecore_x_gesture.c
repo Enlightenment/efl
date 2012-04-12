@@ -33,8 +33,9 @@ _ecore_x_gesture_init(void)
 }
 
 /*
- * @brief query whether gesture is available or not
- * @return EINA_TRUE, if extension is available, else EINA_FALSE
+ * @brief Query whether gesture is available or not.
+ *
+ * @return @c EINA_TRUE, if extension is available, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_gesture_supported(void)

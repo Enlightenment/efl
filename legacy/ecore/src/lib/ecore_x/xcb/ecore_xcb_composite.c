@@ -69,7 +69,8 @@ _ecore_xcb_composite_finalize(void)
 /**
  * Return whether the Composite Extension is available
  *
- * @return EINA_TRUE is the Composite Extension is available, EINA_FALSE if not
+ * @return @c EINA_TRUE is the Composite Extension is available, @c EINA_FALSE
+ * if not.
  *
  * @ingroup Ecore_X_Composite_Group
  */

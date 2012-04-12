@@ -294,7 +294,7 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
  * also be used for purposes internal to the Input Method Context.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @param window The client window. This may be NULL to indicate
+ * @param window The client window. This may be @c NULL to indicate
  *               that the previous client window no longer exists.
  * @ingroup Ecore_IMF_Context_Group
  */
@@ -342,7 +342,7 @@ ecore_imf_context_client_window_get(Ecore_IMF_Context *ctx)
  * also be used for purposes internal to the Input Method Context.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @param canvas The client canvas. This may be NULL to indicate
+ * @param canvas The client canvas. This may be @c NULL to indicate
  *               that the previous client canvas no longer exists.
  * @ingroup Ecore_IMF_Context_Group
  */
@@ -660,8 +660,8 @@ ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int 
 
 /**
  * Set whether the IM context should use the preedit string
- * to display feedback. If @c use_preedit is EINA_FALSE (default
- * is EINA_TRUE), then the IM context may use some other method to display
+ * to display feedback. If @c use_preedit is @c EINA_FALSE (default
+ * is @c EINA_TRUE), then the IM context may use some other method to display
  * feedback, such as displaying it in a child of the root window.
  *
  * @param ctx An #Ecore_IMF_Context.
@@ -682,7 +682,8 @@ ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
 
 /**
  * Set whether the IM context should allow to use the text prediction.
- * If @c prediction is EINA_FALSE (default is EINA_TRUE), then the IM context will not display the text prediction window.
+ * If @p prediction is @c EINA_FALSE (default is @c EINA_TRUE), then the IM
+ * context will not display the text prediction window.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param prediction Whether the IM context should allow to use the text prediction.
@@ -709,7 +710,8 @@ ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool predict
  * Get whether the IM context should allow to use the text prediction.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @return EINA_TRUE if it allows to use the text prediction, otherwise EINA_FALSE.
+ * @return @c EINA_TRUE if it allows to use the text prediction, otherwise
+ * @c EINA_FALSE.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.1.0
  */
@@ -842,17 +844,17 @@ ecore_imf_context_input_mode_get(Ecore_IMF_Context *ctx)
 
 /**
  * Allow an Ecore Input Context to internally handle an event.
- * If this function returns EINA_TRUE, then no further processing
+ * If this function returns @c EINA_TRUE, then no further processing
  * should be done for this event.
  *
  * Input methods must be able to accept all types of events (simply
- * returning EINA_FALSE if the event was not handled), but there is no
+ * returning @c EINA_FALSE if the event was not handled), but there is no
  * obligation of any events to be submitted to this function.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param type The type of event defined by #Ecore_IMF_Event_Type.
  * @param event The event itself.
- * @return EINA_TRUE if the event was handled; otherwise EINA_FALSE.
+ * @return @c EINA_TRUE if the event was handled; otherwise @c EINA_FALSE.
  * @ingroup Ecore_IMF_Context_Group
  *
  * Example
@@ -983,11 +985,12 @@ EAPI void *ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
  * @param ctx An #Ecore_IMF_Context.
  * @param text Location to store a UTF-8 encoded string of text
  *             holding context around the insertion point.
- *             If the function returns EINA_TRUE, then you must free
+ *             If the function returns @c EINA_TRUE, then you must free
  *             the result stored in this location with free().
  * @param cursor_pos Location to store the position in characters of
  *                   the insertion cursor within @p text.
- * @return EINA_TRUE if surrounding text was provided; otherwise EINA_FALSE.
+ * @return @c EINA_TRUE if surrounding text was provided; otherwise
+ * @c EINA_FALSE.
  * @ingroup Ecore_IMF_Context_Module_Group
  */
 EAPI Eina_Bool
@@ -1668,7 +1671,7 @@ ecore_imf_context_input_panel_return_key_disabled_set(Ecore_IMF_Context *ctx, Ei
  * Get whether the return key on the input panel should be disabled or not.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @return EINA_TRUE if it should be disabled
+ * @return @c EINA_TRUE if it should be disabled.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.2.0
  */
@@ -1689,7 +1692,7 @@ ecore_imf_context_input_panel_return_key_disabled_get(Ecore_IMF_Context *ctx)
  * Set the caps lock mode on the input panel.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @param mode Turn on caps lock on the input panel if EINA_TRUE
+ * @param mode Turn on caps lock on the input panel if @c EINA_TRUE.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.2.0
  */
@@ -1713,7 +1716,7 @@ ecore_imf_context_input_panel_caps_lock_mode_set(Ecore_IMF_Context *ctx, Eina_Bo
  * Get the caps lock mode on the input panel.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @return EINA_TRUE if the caps lock is turned on.
+ * @return @c EINA_TRUE if the caps lock is turned on.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.2.0
  */

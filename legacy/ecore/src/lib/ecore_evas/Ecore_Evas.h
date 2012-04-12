@@ -222,7 +222,7 @@ EAPI void        ecore_evas_engines_free(Eina_List *engines);
  * @brief Creates a new Ecore_Evas based on engine name and common parameters.
  *
  * @param engine_name engine name as returned by
- *        ecore_evas_engines_get() or NULL to use environment variable
+ *        ecore_evas_engines_get() or @c NULL to use environment variable
  *        ECORE_EVAS_ENGINE, that can be undefined and in this case
  *        this call will try to find the first working engine.
  * @param x horizontal position of window (not supported in all engines)
@@ -230,19 +230,20 @@ EAPI void        ecore_evas_engines_free(Eina_List *engines);
  * @param w width of window
  * @param h height of window
  * @param extra_options string with extra parameter, dependent on engines
- *        or NULL. String is usually in the form: 'key1=value1;key2=value2'.
+ *        or @ NULL. String is usually in the form: 'key1=value1;key2=value2'.
  *        Pay attention that when getting that from shell commands, most
  *        consider ';' as the command terminator, so you need to escape
  *        it or use quotes.
  *
- * @return Ecore_Evas instance or NULL if creation failed.
+ * @return Ecore_Evas instance or @c NULL if creation failed.
  */
 EAPI Ecore_Evas *ecore_evas_new(const char *engine_name, int x, int y, int w, int h, const char *extra_options);
 /**
  * @brief Set whether an Ecore_Evas has an alpha channel or not.
  *
  * @param ee The Ecore_Evas to shape
- * @param alpha EINA_TRUE to enable the alpha channel, EINA_FALSE to disable it
+ * @param alpha @c EINA_TRUE to enable the alpha channel, @c EINA_FALSE to
+ * disable it
  *
  * This function allows you to make an Ecore_Evas translucent using an
  * alpha channel. See ecore_evas_shaped_set() for details. The difference
@@ -257,10 +258,11 @@ EAPI void        ecore_evas_alpha_set(Ecore_Evas *ee, Eina_Bool alpha);
 /**
  * @brief Query whether an Ecore_Evas has an alpha channel.
  * @param ee The Ecore_Evas to query.
- * @return EINA_TRUE if ee has an alpha channel, EINA_FALSE if it does not.
+ * @return @c EINA_TRUE if ee has an alpha channel, @c EINA_FALSE if it does
+ * not.
  *
- * This function returns EINA_TRUE if @p ee has an alpha channel, and EINA_FALSE
- * if it does not.
+ * This function returns @c EINA_TRUE if @p ee has an alpha channel, and
+ * @c EINA_FALSE if it does not.
  *
  * @see ecore_evas_alpha_set()
  */
@@ -269,8 +271,8 @@ EAPI Eina_Bool   ecore_evas_alpha_get(const Ecore_Evas *ee);
  * @brief Set whether an Ecore_Evas has an transparent window or not.
  *
  * @param ee The Ecore_Evas to shape
- * @param transparent EINA_TRUE to enable the transparent window, EINA_FALSE to
- * disable it
+ * @param transparent @c EINA_TRUE to enable the transparent window,
+ * @c EINA_FALSE to disable it
  *
  * This function sets some translucency options, for more complete support see
  * ecore_evas_alpha_set().
@@ -284,7 +286,7 @@ EAPI void        ecore_evas_transparent_set(Ecore_Evas *ee, Eina_Bool transparen
  * @brief  Query whether an Ecore_Evas is transparent.
  *
  * @param ee The Ecore_Evas to query.
- * @return EINA_TRUE if ee is transparent, EINA_FALSE if it isn't.
+ * @return @c EINA_TRUE if ee is transparent, @c EINA_FALSE if it isn't.
  *
  * @see ecore_evas_transparent_set()
  */
@@ -300,7 +302,7 @@ EAPI Eina_Bool   ecore_evas_transparent_get(const Ecore_Evas *ee);
  *
  * This function takes four pointers to (already allocated) ints, and places
  * the geometry of @p ee in them. If any of the parameters is not desired you
- * may pass NULL on them.
+ * may pass @c NULL on them.
  *
  * @code
  * int x, y, w, h;
@@ -323,11 +325,12 @@ EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, i
  * @param h A pointer to an int to place the h size in
  *
  * This function takes four pointers to (already allocated) ints, and places
- * the geometry which @p ee was latest recently requested . If any of the parameters is not desired you
- * may pass NULL on them. 
+ * the geometry which @p ee was latest recently requested . If any of the
+ * parameters is not desired you may pass @c NULL on them. 
  * This function can represent recently requested geometry. 
- * ecore_evas_geometry_get function returns the value is updated after engine finished request.
- * By comparison, ecore_evas_request_geometry_get returns recently requested value.
+ * ecore_evas_geometry_get function returns the value is updated after engine
+ * finished request. By comparison, ecore_evas_request_geometry_get returns
+ * recently requested value.
  *
  * @code
  * int x, y, w, h;
@@ -341,10 +344,10 @@ EAPI void        ecore_evas_request_geometry_get(const Ecore_Evas *ee, int *x, i
  * @brief Set the focus of an Ecore_Evas' window.
  *
  * @param ee The Ecore_Evas
- * @param on EINA_TRUE for focus, EINA_FALSE to defocus.
+ * @param on @c EINA_TRUE for focus, @c EINA_FALSE to defocus.
  *
- * This function focuses @p ee if @p on is EINA_TRUE, or unfocuses @p ee if @p
- * on is EINA_FALSE.
+ * This function focuses @p ee if @p on is @c EINA_TRUE, or unfocuses @p ee if 
+ * @p on is @c EINA_FALSE.
  *
  * @warning Support for this depends on the underlying windowing system.
  */
@@ -353,7 +356,7 @@ EAPI void        ecore_evas_focus_set(Ecore_Evas *ee, Eina_Bool on);
  * @brief Query whether an Ecore_Evas' window is focused or not.
  *
  * @param ee The Ecore_Evas to set
- * @return EINA_TRUE if @p ee if focused, EINA_FALSE if not.
+ * @return @c EINA_TRUE if @p ee if focused, @c EINA_FALSE if not.
  *
  * @see ecore_evas_focus_set()
  */
@@ -362,10 +365,10 @@ EAPI Eina_Bool   ecore_evas_focus_get(const Ecore_Evas *ee);
  * @brief Iconify or uniconify an Ecore_Evas' window.
  *
  * @param ee The Ecore_Evas
- * @param on EINA_TRUE to iconify, EINA_FALSE to uniconify.
+ * @param on @c EINA_TRUE to iconify, @c EINA_FALSE to uniconify.
  *
- * This function iconifies @p ee if @p on is EINA_TRUE, or uniconifies @p ee if
- * @p on is EINA_FALSE.
+ * This function iconifies @p ee if @p on is @c EINA_TRUE, or uniconifies @p ee
+ * if @p on is @c EINA_FALSE.
  *
  * @note Iconify and minimize are synonyms.
  *
@@ -376,7 +379,7 @@ EAPI void        ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on);
  * @brief Query whether an Ecore_Evas' window is iconified or not.
  *
  * @param ee The Ecore_Evas to set
- * @return EINA_TRUE if @p ee is iconified, EINA_FALSE if not.
+ * @return @c EINA_TRUE if @p ee is iconified, @c EINA_FALSE if not.
  *
  * @note Iconify and minimize are synonyms.
  *
@@ -387,10 +390,10 @@ EAPI Eina_Bool   ecore_evas_iconified_get(const Ecore_Evas *ee);
  * @brief Set whether an Ecore_Evas' window is borderless or not.
  *
  * @param ee The Ecore_Evas
- * @param on EINA_TRUE for borderless, EINA_FALSE for bordered.
+ * @param on @c EINA_TRUE for borderless, @c EINA_FALSE for bordered.
  *
- * This function makes @p ee borderless if @p on is EINA_TRUE, or bordered if @p
- * on is EINA_FALSE.
+ * This function makes @p ee borderless if @p on is @c EINA_TRUE, or bordered
+ * if @p on is @c EINA_FALSE.
  *
  * @warning Support for this depends on the underlying windowing system.
  */
@@ -399,7 +402,7 @@ EAPI void        ecore_evas_borderless_set(Ecore_Evas *ee, Eina_Bool on);
  * @brief Query whether an Ecore_Evas' window is borderless or not.
  *
  * @param ee The Ecore_Evas to set
- * @return EINA_TRUE if @p ee is borderless, EINA_FALSE if not.
+ * @return @c EINA_TRUE if @p ee is borderless, @c EINA_FALSE if not.
  *
  * @see ecore_evas_borderless_set()
  */
@@ -408,10 +411,10 @@ EAPI Eina_Bool   ecore_evas_borderless_get(const Ecore_Evas *ee);
  * @brief Set whether or not an Ecore_Evas' window is fullscreen.
  *
  * @param ee The Ecore_Evas
- * @param on EINA_TRUE fullscreen, EINA_FALSE not.
+ * @param on @c EINA_TRUE fullscreen, @c EINA_FALSE not.
  *
- * This function causes @p ee to be fullscreen if @p on is EINA_TRUE,
- * or not if @p on is EINA_FALSE.
+ * This function causes @p ee to be fullscreen if @p on is @c EINA_TRUE, or
+ * not if @p on is @c EINA_FALSE.
  *
  * @warning Support for this depends on the underlying windowing system.
  */
@@ -420,7 +423,7 @@ EAPI void        ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
  * @brief Query whether an Ecore_Evas' window is fullscreen or not.
  *
  * @param ee The Ecore_Evas to set
- * @return EINA_TRUE if @p ee is fullscreen, EINA_FALSE if not.
+ * @return @c EINA_TRUE if @p ee is fullscreen, @c EINA_FALSE if not.
  *
  * @see ecore_evas_fullscreen_set()
  */
@@ -431,7 +434,7 @@ EAPI Eina_Bool   ecore_evas_fullscreen_get(const Ecore_Evas *ee);
  * @param ee The Ecore_Evas
  * @param ee_group The other group member
  *
- * If @p ee_group is NULL, @p ee is removed from the group, otherwise it is
+ * If @p ee_group is @c NULL, @p ee is removed from the group, otherwise it is
  * added. Note that if you free the @p ee_group canvas before @p ee, then
  * getting the group canvas with ecore_evas_window_group_get() will return
  * an invalid handle.
@@ -639,10 +642,10 @@ EAPI int         ecore_evas_layer_get(const Ecore_Evas *ee);
  * @brief Maximize (or unmaximize) an Ecore_Evas' window.
  *
  * @param ee The Ecore_Evas
- * @param on EINA_TRUE to maximize, EINA_FALSE to unmaximize.
+ * @param on @c EINA_TRUE to maximize, @c EINA_FALSE to unmaximize.
  *
- * This function maximizes @p ee if @p on is EINA_TRUE, or unmaximizes @p ee
- * if @p on is EINA_FALSE.
+ * This function maximizes @p ee if @p on is @c EINA_TRUE, or unmaximizes @p ee
+ * if @p on is @c EINA_FALSE.
  *
  * @warning Support for this depends on the underlying windowing system.
  */
@@ -651,7 +654,7 @@ EAPI void        ecore_evas_maximized_set(Ecore_Evas *ee, Eina_Bool on);
  * @brief Query whether an Ecore_Evas' window is maximized or not.
  *
  * @param ee The Ecore_Evas to set
- * @return EINA_TRUE if @p ee is maximized, EINA_FALSE if not.
+ * @return @c EINA_TRUE if @p ee is maximized, @c EINA_FALSE if not.
  *
  * @see ecore_evas_maximized_set()
  */
@@ -823,6 +826,7 @@ EAPI void        ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n,
  * @brief Returns a pointer to the underlying window.
  *
  * @param ee The Ecore_Evas whose window is desired.
+ * @return A pointer to the underlying window.
  *
  * @warning Support for this depends on the underlying windowing system.
  */
@@ -1166,7 +1170,7 @@ EAPI const char *ecore_evas_engine_name_get(const Ecore_Evas *ee);
  * @brief Return the Ecore_Evas for this Evas
  *
  * @param e The Evas to get the Ecore_Evas from
- * @return The Ecore_Evas that holds this Evas, or NULL if not held by one.
+ * @return The Ecore_Evas that holds this Evas, or @c NULL if not held by one.
  *
  * @warning Only use on Evas' created with ecore evas!
  */
@@ -1188,7 +1192,7 @@ EAPI void        ecore_evas_free(Ecore_Evas *ee);
  * This function retrieves user specific data that has been stored within an
  * Ecore_Evas structure with ecore_evas_data_set().
  *
- * @returns NULL on error or no data found, A pointer to the user data on
+ * @returns @c NULL on error or no data found, A pointer to the user data on
  *     success.
  *
  * @see ecore_evas_data_set()
@@ -1649,10 +1653,10 @@ EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
  * @brief Get geometry of screen associated with this Ecore_Evas.
  *
  * @param ee The Ecore_Evas whose window's to query container screen geometry.
- * @param x where to return the horizontal offset value. May be NULL.
- * @param y where to return the vertical offset value. May be NULL.
- * @param w where to return the width value. May be NULL.
- * @param h where to return the height value. May be NULL.
+ * @param x where to return the horizontal offset value. May be @c NULL.
+ * @param y where to return the vertical offset value. May be @c NULL.
+ * @param w where to return the width value. May be @c NULL.
+ * @param h where to return the height value. May be @c NULL.
  *
  * @since 1.1
  */
@@ -1667,7 +1671,7 @@ EAPI Eina_Bool   ecore_evas_draw_frame_get(const Ecore_Evas *ee);
  * @param ee The Ecore_Evas to associate to @a obj
  * @param obj The object to associate to @a ee
  * @param flags The association flags.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * Association means that operations on one will affect the other, for
  * example moving the object will move the window, resize the object will
@@ -1708,14 +1712,14 @@ EAPI Eina_Bool    ecore_evas_object_associate(Ecore_Evas *ee, Evas_Object *obj, 
  *
  * @param ee The Ecore_Evas to dissociate from @a obj
  * @param obj The object to dissociate from @a ee
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool    ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj);
 /**
  * @brief Get the object associated with @p ee
  *
  * @param ee The Ecore_Evas to get the object from.
- * @return The associated object, or NULL if there is no associated object.
+ * @return The associated object, or @c NULL if there is no associated object.
  */
 EAPI Evas_Object *ecore_evas_object_associate_get(const Ecore_Evas *ee);
 
@@ -1757,13 +1761,15 @@ EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 /**
  * Sets the engine to be used by the backing store engine.
  *
- * @return EINA_TRUE on success, EINA_FALSE if ews is already in use.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE if ews is already in use.
  * @since 1.1
  */
 EAPI Eina_Bool ecore_evas_ews_engine_set(const char *engine, const char *options);
 
 /**
  * Reconfigure the backing store used.
+ *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  * @since 1.1
  */
 EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
@@ -1771,6 +1777,7 @@ EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
 /**
  * Return the internal backing store in use.
  *
+ * @return The internal backing store in use.
  * @note this will forced it to be created, making future calls to
  * ecore_evas_ews_engine_set() void.
  *
@@ -1782,6 +1789,7 @@ EAPI Ecore_Evas *ecore_evas_ews_ecore_evas_get(void);
 /**
  * Return the internal backing store in use.
  *
+ * @return The internal backing store in use.
  * @note this will forced it to be created, making future calls to
  * ecore_evas_ews_engine_set() void.
  *
@@ -1809,7 +1817,8 @@ EAPI void ecore_evas_ews_background_set(Evas_Object *o);
 /**
  * Return all Ecore_Evas* created by EWS.
  *
- * @note do not change the returned list or its contents.
+ * @return An eina list of Ecore_evases.
+ e @note Do not change the returned list or its contents.
  * @since 1.1
  */
 EAPI const Eina_List *ecore_evas_ews_children_get(void);
@@ -1886,10 +1895,10 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
  * This creates a new extn_socket canvas wrapper, with image data array
  * @b bound to the ARGB format, 8 bits per pixel.
  *
- * If creation is successful, an Ecore_Evas handle is returned or NULL if creation
- * fails. Also focus, show, hide etc. callbacks
- * will also be called if the plug object is shown, or already visible on
- * connect, or if it is hidden later, focused or unfocused.
+ * If creation is successful, an Ecore_Evas handle is returned or @c NULL if
+ * creation fails. Also focus, show, hide etc. callbacks will also be called
+ * if the plug object is shown, or already visible on connect, or if it is
+ * hidden later, focused or unfocused.
  *
  * This function has to be flowed by ecore_evas_extn_socket_listen(),
  * for starting ecore ipc service.
@@ -1959,17 +1968,23 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
 EAPI Ecore_Evas *ecore_evas_extn_socket_new(int w, int h);
 
 /**
- * @brief Create a socket to provide the service for external ecore evas socket. 
+ * @brief Create a socket to provide the service for external ecore evas
+ * socket. 
  *
- * @param ee The Ecore_Evas
- * @param svcname The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail.
- * @param svcnum A number (any value, 0 beig the common default) to differentiate multiple instances of services with the same name.
- * @param svcsys A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user ide that created the service.
- * @return EINA_TRUE if creation is successful, EINA_FALSE if it does not.
+ * @param ee The Ecore_Evas.
+ * @param svcname The name of the service to be advertised. ensure that it is
+ * unique (when combined with @p svcnum) otherwise creation may fail.
+ * @param svcnum A number (any value, @c 0 being the common default) to
+ * differentiate multiple instances of services with the same name.
+ * @param svcsys A boolean that if true, specifies to create a system-wide
+ * service all users can connect to, otherwise the service is private to the
+ * user ide that created the service.
+ * @return @c EINA_TRUE if creation is successful, @c EINA_FALSE if it does
+ * not.
  * 
- * This creates socket specified by @p svcname, @p svcnum and @p svcsys. If creation
- * is successful, EINA_TRUE is returned or EINA_FALSE if creation
- * fails. 
+ * This creates socket specified by @p svcname, @p svcnum and @p svcsys. If
+ * creation is successful, @c EINA_TRUE is returned or @c EINA_FALSE if
+ * creation fails. 
  *
  * @see ecore_evas_extn_socket_new()
  * @see ecore_evas_extn_plug_new()
@@ -2051,14 +2066,17 @@ EAPI void ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj);
 EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target);
 
 /**
- * @brief Connect a external ecore evas plug to service provided by external ecore evas socket
+ * @brief Connect an external ecore evas plug to service provided by external
+ * ecore evas socket.
  *
- * @param obj The Ecore_Evas containing the canvas in which the new image object will live.
+ * @param obj The Ecore_Evas containing the canvas in which the new image
+ * object will live.
  * @param svcname The service name to connect to set up by the socket.
  * @param svcnum The service number to connect to (set up by socket).
- * @param svcsys Booleain to set if the service is a system one or not (set up by socket).
- * @return EINA_TRUE if creation is successful, EINA_FALSE if it does not.
- * 
+ * @param svcsys Boolean to set if the service is a system one or not (set up
+ * by socket).
+ * @return @c EINA_TRUE if creation is successful, @c EINA_FALSE if it does
+ * not.
  *
  * @see ecore_evas_extn_plug_new()
  * 

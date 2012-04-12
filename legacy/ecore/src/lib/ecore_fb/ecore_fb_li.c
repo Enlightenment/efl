@@ -428,11 +428,12 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh __UNUSED__)
  * @brief Set the listen mode for an input device .
  *
  * @param dev The device to set the mode of.
- * @param listen EINA_FALSE to disable listening mode, EINA_TRUE to enable it.
+ * @param listen @c EINA_FALSE to disable listening mode, @c EINA_TRUE to
+ * enable it.
  *
- * This function enables or disables listening on the input device @p
- * dev. If @p listen is #EINA_FALSE, listening mode is disabled, if it
- * is #EINA_TRUE, it is enabled.
+ * This function enables or disables listening on the input device @p dev.
+ * If @p listen is @c EINA_FALSE, listening mode is disabled, if it is
+ * @c EINA_TRUE, it is enabled.
  */
 EAPI void
 ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)

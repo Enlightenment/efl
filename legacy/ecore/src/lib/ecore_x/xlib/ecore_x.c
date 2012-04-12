@@ -977,7 +977,7 @@ ecore_x_dpi_get(void)
  *       base + [(base * percent) / 100]
  * where @c base is the bell's base volume as set by XChangeKeyboardControl(3).
  *
- * @returns EINA_TRUE on success, EINA_FALSE otherwise.
+ * @returns @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_bell(int percent)
@@ -1808,7 +1808,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win,
  * @param d3      The client message data item 4
  * @param d4      The client message data item 5
  *
- * @return EINA_TRUE on success EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_client_message32_send(Ecore_X_Window win,
@@ -1842,9 +1842,9 @@ ecore_x_client_message32_send(Ecore_X_Window win,
  * @param win     The window the message is sent to.
  * @param type    The client message type.
  * @param data    Data to be sent.
- * @param len     Number of data bytes, max 20.
+ * @param len     Number of data bytes, max @c 20.
  *
- * @return EINA_TRUE on success EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_client_message8_send(Ecore_X_Window win,

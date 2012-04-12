@@ -1674,7 +1674,7 @@ _ecore_getopt_parse_find_long_other(const Ecore_Getopt      *parser,
 /**
  * Check parser for duplicate entries, print them out.
  *
- * @return EINA_TRUE if there are duplicates, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if there are duplicates, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
@@ -1743,8 +1743,9 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  * (others than @c ECORE_GETOPT_DESC_ARG_REQUIREMENT_YES), are expected
  * to provide a value in @c def to be used.
  *
- * The following actions will store 1 on value as a boolean
- * (@c value->boolp) if it's not NULL to indicate these actions were executed:
+ * The following actions will store @c 1 on value as a boolean
+ * (@c value->boolp) if it's not @c NULL to indicate these actions were
+ * executed:
  *   - @c ECORE_GETOPT_ACTION_HELP
  *   - @c ECORE_GETOPT_ACTION_VERSION
  *   - @c ECORE_GETOPT_ACTION_COPYRIGHT
@@ -1758,7 +1759,7 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  * integer and so on.
  *
  * If parser is in strict mode (see @c Ecore_Getopt->strict), then any
- * error will abort parsing and -1 is returned. Otherwise it will try
+ * error will abort parsing and @c -1 is returned. Otherwise it will try
  * to continue as far as possible.
  *
  * This function may reorder @a argv elements.
@@ -1845,7 +1846,7 @@ error:
  * Utility to free list and nodes allocated by @a ECORE_GETOPT_ACTION_APPEND.
  *
  * @param list pointer to list to be freed.
- * @return always NULL, so you can easily make your list head NULL.
+ * @return always @c NULL, so you can easily make your list head @c NULL.
  */
 EAPI Eina_List *
 ecore_getopt_list_free(Eina_List *list)
@@ -1863,7 +1864,7 @@ ecore_getopt_list_free(Eina_List *list)
  * @param str Geometry value
  * @param storage must be a pointer to @c Eina_Rectangle and will be used to
  * store the four values passed in the given string.
- * @return EINA_TRUE on success, EINA_FALSE on incorrect geometry value.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on incorrect geometry value.
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */
@@ -1890,9 +1891,9 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser __UNUSED__,
  *
  * @param str size value
  * @param storage must be a pointer to @c Eina_Rectangle and will be used to
- * store the two values passed in the given string and 0 in the x and y
+ * store the two values passed in the given string and @c 0 in the x and y
  * fields.
- * @return EINA_TRUE on success, EINA_FALSE on incorrect size value.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on incorrect size value.
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
  */

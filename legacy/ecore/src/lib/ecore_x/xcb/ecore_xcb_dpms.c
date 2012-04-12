@@ -59,8 +59,8 @@ _ecore_xcb_dpms_finalize(void)
  * @return @c EINA_TRUE if the DPMS extension is available,
  * @c EINA_FALSE otherwise.
  *
- * Return EINA_TRUE if the X server supports the DPMS Extension version 1.0,
- * EINA_FALSE otherwise.
+ * Return @c EINA_TRUE if the X server supports the DPMS Extension version 1.0,
+ * @c EINA_FALSE otherwise.
  *
  * @ingroup Ecore_X_DPMS_Group
  */
@@ -194,10 +194,11 @@ ecore_x_dpms_timeouts_get(unsigned int *standby,
 
 /**
  * Sets the timeouts. The values are in unit of seconds.
+ *
  * @param standby Amount of time of inactivity before standby mode will be invoked.
  * @param suspend Amount of time of inactivity before the screen is placed into suspend mode.
  * @param off     Amount of time of inactivity before the monitor is shut off.
- * @return EINA_TRUE on success, EINA_FALSE on failure.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI Eina_Bool

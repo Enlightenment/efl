@@ -696,13 +696,13 @@ ecore_wince_window_size_get(Ecore_WinCE_Window *window,
  * @brief Set the given window to fullscreen.
  *
  * @param window The window.
- * @param on EINA_TRUE for fullscreen mode, EINA_FALSE for windowed mode.
+ * @param on @c EINA_TRUE for fullscreen mode, @c EINA_FALSE for windowed mode.
  *
- * This function set @p window to fullscreen or windowed mode. If @p on
- * is set to EINA_TRUE, the window will be fullscreen, if it is set to
- * EINA_FALSE, it will be windowed. If @p window is @c NULL or if the
- * state does not change (like setting to fullscreen while the window
- * is already fullscreen), this function does nothing.
+ * This function set @p window to fullscreen or windowed mode. If @p on is set
+ * to @c EINA_TRUE, the window will be fullscreen, if it is set to
+ * @c EINA_FALSE, it will be windowed. If @p window is @c NULL or if the state
+ * does not change (like setting to fullscreen while the window is already
+ * fullscreen), this function does nothing.
  */
 EAPI void
 ecore_wince_window_fullscreen_set(Ecore_WinCE_Window *window,

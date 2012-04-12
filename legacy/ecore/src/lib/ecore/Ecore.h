@@ -680,7 +680,7 @@ struct _Ecore_Event_Signal_Realtime    /** Realtime event */
  * @param type The type of the event this handler will get called for
  * @param func The function to call when the event is found in the queue
  * @param data A data pointer to pass to the called function @p func
- * @return A new Event handler, or NULL on failure
+ * @return A new Event handler, or @c NULL on failure.
  *
  * Add an event handler to the list of handlers. This will, on success, return
  * a handle to the event handler object that was created, that can be used
@@ -706,7 +706,7 @@ EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, Ecore_Event_Handler_
  *
  * Delete a specified event handler from the handler list. On success this will
  * delete the event handler and return the pointer passed as @p data when the
- * handler was added by ecore_event_handler_add(). On failure NULL will be
+ * handler was added by ecore_event_handler_add(). On failure @c NULL will be
  * returned. Once a handler is deleted it will no longer be called.
  */
 EAPI void *ecore_event_handler_del(Ecore_Event_Handler *event_handler);
@@ -775,23 +775,24 @@ EAPI int ecore_event_type_new(void);
  * @param func_filter Function to call on each event
  * @param func_end Function to call after the queue has been filtered
  * @param data Data to pass to the filter functions
- * @return A filter handle on success, NULL otherwise
+ * @return A filter handle on success, @c NULL otherwise.
  *
  * Adds a callback to filter events from the event queue. Filters are called on
  * the queue just before Event handler processing to try and remove redundant
  * events. Just as processing is about to start @a func_start is called and
  * passed the @a data pointer, the return value of this functions is passed to
  * @a func_filter as loop_data. @a func_filter is also passed @a data and the
- * event type and event structure. If this @a func_filter returns #EINA_FALSE,
- * the event is removed from the queue, if it returns #EINA_TRUE, the event is
- * kept. When processing is finished @p func_end is called and is passed the
- * loop_data(returned by @c func_start) and @p data pointer to clean up.
+ * event type and event structure. If this @a func_filter returns
+ * @c EINA_FALSE, the event is removed from the queue, if it returns
+ * @c EINA_TRUE, the event is kept. When processing is finished @p func_end is
+ * called and is passed the loop_data(returned by @c func_start) and @p data
+ * pointer to clean up.
  */
 EAPI Ecore_Event_Filter *ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ecore_End_Cb func_end, const void *data);
 /**
  * @brief Delete an event filter.
  * @param ef The event filter handle
- * @return The data set for the filter on success, NULL otherwise
+ * @return The data set for the filter on success, @c NULL otherwise.
  *
  * Delete a filter that has been added by its @p ef handle.
  */
@@ -814,7 +815,7 @@ EAPI int ecore_event_current_type_get(void);
 /**
  * @brief Return the current event type pointer handled.
  * @return The current event pointer being handled if inside a handler callback,
- * NULL otherwise
+ * @c NULL otherwise.
  *
  * If the program is currently inside an Ecore event handler callback this
  * will return the pointer of the current event being processed.
@@ -900,7 +901,7 @@ struct _Ecore_Exe_Event_Del    /** Process exit event */
 {
    pid_t      pid; /**< The process ID of the process that exited */
    int        exit_code; /**< The exit code of the process */
-   Ecore_Exe *exe; /**< The handle to the exited process, or NULL if not found */
+   Ecore_Exe *exe; /**< The handle to the exited process, or @c NULL if not found */
    int        exit_signal; /** < The signal that caused the process to exit */
    Eina_Bool  exited    : 1; /** < set to 1 if the process exited of its own accord */
    Eina_Bool  signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
@@ -921,7 +922,7 @@ struct _Ecore_Exe_Event_Data    /** Data from a child process event */
    Ecore_Exe                 *exe; /**< The handle to the process */
    void                      *data; /**< the raw binary data from the child process that was received */
    int                        size; /**< the size of this data in bytes */
-   Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to NULL */
+   Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to @c NULL */
 };
 
 EAPI void ecore_exe_run_priority_set(int pri);
@@ -1075,8 +1076,8 @@ EAPI void ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handle
 /**
  * @brief Marks an FD handler for deletion.
  * @param fd_handler The FD handler.
- * @return The data pointer set using @ref ecore_main_fd_handler_add, for @a
- * fd_handler on success, @c NULL otherwise.
+ * @return The data pointer set using @ref ecore_main_fd_handler_add, for
+ * @a fd_handler on success, @c NULL otherwise.
  * This function marks an fd handler to be deleted during an iteration of the
  * main loop. It does NOT close the associated fd!
  *
@@ -1095,9 +1096,9 @@ EAPI int ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
 /**
  * @brief Gets which flags are active on an FD handler.
  * @param fd_handler The given FD handler.
- * @param flags The flags, @c ECORE_FD_READ, @c ECORE_FD_WRITE or @c
- * ECORE_FD_ERROR to query.
- * @return  #EINA_TRUE if any of the given flags are active, #EINA_FALSE
+ * @param flags The flags, @c ECORE_FD_READ, @c ECORE_FD_WRITE or
+ * @c ECORE_FD_ERROR to query.
+ * @return @c EINA_TRUE if any of the given flags are active, @c EINA_FALSE
  * otherwise.
  */
 EAPI Eina_Bool ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
@@ -1308,10 +1309,10 @@ typedef Eina_Bool (*Ecore_Timeline_Cb)(void *data, double pos);
  * @param data The data to pass to the function
  * @return A handle to the new animator
  *
- * This function adds a animator and returns its handle on success and NULL on
- * failure. The function @p func will be called every N seconds where N is the
- * @p frametime interval set by ecore_animator_frametime_set(). The function
- * will be passed the @p data pointer as its parameter.
+ * This function adds a animator and returns its handle on success and @c NULL
+ * on failure. The function @p func will be called every N seconds where N is
+ * the @p frametime interval set by ecore_animator_frametime_set(). The
+ * function will be passed the @p data pointer as its parameter.
  *
  * When the animator @p func is called, it must return a value of either 1 or
  * 0. If it returns 1 (or ECORE_CALLBACK_RENEW), it will be called again at
@@ -1360,7 +1361,7 @@ EAPI Ecore_Animator *ecore_animator_timeline_add(double runtime, Ecore_Timeline_
  *
  * Delete the specified @p animator from the set of animators that are
  * executed during main loop execution. This function returns the data
- * parameter that was being passed to the callback on success, or NULL on
+ * parameter that was being passed to the callback on success, or @c NULL on
  * failure. After this call returns the specified animator object @p animator
  * is invalid and should not be used again. It will not get called again after
  * deletion.
@@ -1521,7 +1522,7 @@ EAPI Ecore_Animator_Source ecore_animator_source_get(void);
  * to allow the source of ticks to be dynamically enabled or disabled as
  * needed, the @p func when set is called to enable the tick source to
  * produce tick events that call ecore_animator_custom_tick(). If @p func
- * is NULL then no function is called to begin custom ticking.
+ * is @c NULL then no function is called to begin custom ticking.
  *
  * @see ecore_animator_source_set()
  * @see ecore_animator_custom_source_tick_end_callback_set()
@@ -1535,10 +1536,10 @@ EAPI void ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, co
  * @param data The data passed to the tick end function as its parameter
  *
  * This function is a matching pair to the function set by
- *ecore_animator_custom_source_tick_begin_callback_set() and is called
- * when ticking is to stop. If @p func is NULL then no function will be
+ * ecore_animator_custom_source_tick_begin_callback_set() and is called
+ * when ticking is to stop. If @p func is @c NULL then no function will be
  * called to stop ticking. For more information please see
- *ecore_animator_custom_source_tick_begin_callback_set().
+ * ecore_animator_custom_source_tick_begin_callback_set().
  *
  * @see ecore_animator_source_set()
  * @see ecore_animator_custom_source_tick_begin_callback_set()
@@ -1594,8 +1595,8 @@ EAPI double ecore_loop_time_get(void);
  * }
  * ecore_timer_add(interval_in_seconds, my_func, data_given_to_function);
  * @endcode
- * @note If the function was to be executed only once simply return EINA_FALSE
- * instead.
+ * @note If the function was to be executed only once simply return
+ * @c EINA_FALSE instead.
  *
  * An example that shows the usage of a lot of these:
  * @li @ref ecore_timer_example_c
@@ -1678,12 +1679,12 @@ typedef struct _Ecore_Idle_Exiter  Ecore_Idle_Exiter; /**< A handle for idle exi
  * Add an idler handler.
  * @param  func The function to call when idling.
  * @param  data The data to be passed to this @p func call.
- * @return A idler handle if successfully added.  NULL otherwise.
+ * @return A idler handle if successfully added, @c NULL otherwise.
  *
  * Add an idler handle to the event loop, returning a handle on
- * success and NULL otherwise.  The function @p func will be called
+ * success and @c NULL otherwise. The function @p func will be called
  * repeatedly while no other events are ready to be processed, as
- * long as it returns 1 (or ECORE_CALLBACK_RENEW). A return of 0
+ * long as it returns @c 1 (or ECORE_CALLBACK_RENEW). A return of @c 0
  * (or ECORE_CALLBACK_CANCEL) deletes the idler.
  *
  * Idlers are useful for progressively prossessing data without blocking.
@@ -1693,7 +1694,7 @@ EAPI Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
 /**
  * Delete an idler callback from the list to be executed.
  * @param  idler The handle of the idler callback to delete
- * @return The data pointer passed to the idler callback on success.  NULL
+ * @return The data pointer passed to the idler callback on success, @c NULL
  *         otherwise.
  */
 EAPI void *ecore_idler_del(Ecore_Idler *idler);
@@ -1822,7 +1823,7 @@ typedef void (*Ecore_Thread_Notify_Cb)(void *data, Ecore_Thread *thread, void *m
  * @param func_cancel Function to call from main loop if the thread running
  * @p func_blocking is cancelled or fails to start (may be NULL)
  * @param data User context data to pass to all callbacks.
- * @return A new thread handler, or NULL on failure
+ * @return A new thread handler, or @c NULL on failure.
  *
  * This function will try to create a new thread to run @p func_blocking in,
  * or if the maximum number of concurrent threads has been reached, will
@@ -1882,7 +1883,7 @@ EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Cb func_blocking, Ecore_Thread_
  * @p func_heavy is cancelled or fails to start
  * @param data User context data to pass to all callback.
  * @param try_no_queue If you want to run outside of the thread pool.
- * @return A new thread handler, or NULL on failure
+ * @return A new thread handler, or @c NULL on failure.
  *
  * See ecore_thread_run() for a general description of this function.
  *
@@ -1918,26 +1919,26 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy, Ecore_T
  * Cancel a running thread.
  *
  * @param thread The thread to cancel.
- * @return Will return EINA_TRUE if the thread has been cancelled,
- *         EINA_FALSE if it is pending.
+ * @return Will return @c EINA_TRUE if the thread has been cancelled,
+ *         @c EINA_FALSE if it is pending.
  *
  * This function can be called both in the main loop or in the running thread.
  *
  * This function cancels a running thread. If @p thread can be immediately
  * cancelled (it's still pending execution after creation or rescheduling),
  * then the @c cancel callback will be called, @p thread will be freed and
- * the function will return EINA_TRUE.
+ * the function will return @c EINA_TRUE.
  *
- * If the thread is already running, then this function returns EINA_FALSE
+ * If the thread is already running, then this function returns @c EINA_FALSE
  * after marking the @p thread as pending cancellation. For the thread to
  * actually be terminated, it needs to return from the user function back
  * into Ecore control. This can happen in several ways:
  * @li The function ends and returns normally. If it hadn't been cancelled,
  * @c func_end would be called here, but instead @c func_cancel will happen.
  * @li The function returns after requesting to be rescheduled with
- *ecore_thread_reschedule().
+ * ecore_thread_reschedule().
  * @li The function is prepared to leave early by checking if
- *ecore_thread_check() returns EINA_TRUE.
+ * ecore_thread_check() returns @c EINA_TRUE.
  *
  * The user function can cancel itself by calling ecore_thread_cancel(), but
  * it should always use the ::Ecore_Thread handle passed to it and never
@@ -1945,7 +1946,7 @@ EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy, Ecore_T
  * other way.
  *
  * @p thread will be freed and should not be used again if this function
- * returns EINA_TRUE or after the @c func_cancel callback returns.
+ * returns @c EINA_TRUE or after the @c func_cancel callback returns.
  *
  * @see ecore_thread_check()
  */
@@ -1954,13 +1955,13 @@ EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
  * Checks if a thread is pending cancellation
  *
  * @param thread The thread to test.
- * @return EINA_TRUE if the thread is pending cancellation,
- *         EINA_FALSE if it is not.
+ * @return @c EINA_TRUE if the thread is pending cancellation,
+ *         @c EINA_FALSE if it is not.
  *
  * This function can be called both in the main loop or in the running thread.
  *
  * When ecore_thread_cancel() is called on an already running task, the
- * thread is marked as pending cancellation. This function returns EINA_TRUE
+ * thread is marked as pending cancellation. This function returns @c EINA_TRUE
  * if this mark is set for the given @p thread and can be used from the
  * main loop thread to check if a still active thread has been cancelled,
  * or from the user function running in the thread to check if it should
@@ -1975,13 +1976,13 @@ EAPI Eina_Bool ecore_thread_check(Ecore_Thread *thread);
  *
  * @param thread The current ::Ecore_Thread context to send data from
  * @param msg_data Data to be transmitted to the main loop
- * @return EINA_TRUE if @p msg_data was successfully sent to main loop,
- *         EINA_FALSE if anything goes wrong.
+ * @return @c EINA_TRUE if @p msg_data was successfully sent to main loop,
+ *         @c EINA_FALSE if anything goes wrong.
  *
  * You should use this function only in the @c func_heavy call.
  *
  * Only the address to @p msg_data will be sent and once this function
- * returns EINA_TRUE, the job running in the thread should never touch the
+ * returns @c EINA_TRUE, the job running in the thread should never touch the
  * contents of it again. The data sent should be malloc()'ed or something
  * similar, as long as it's not memory local to the thread that risks being
  * overwritten or deleted once it goes out of scope or the thread finishes.
@@ -1996,8 +1997,8 @@ EAPI Eina_Bool ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data)
  * Asks for the function in the thread to be called again at a later time
  *
  * @param thread The current ::Ecore_Thread context to rescheduled
- * @return EINA_TRUE if the task was successfully rescheduled,
- *         EINA_FALSE if anything goes wrong.
+ * @return @c EINA_TRUE if the task was successfully rescheduled,
+ *         @c EINA_FALSE if anything goes wrong.
  *
  * This function should be called only from the same function represented
  * by @p thread.
@@ -2007,7 +2008,7 @@ EAPI Eina_Bool ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data)
  * If no other tasks are waiting or there are sufficient threads available,
  * the rescheduled task will be launched again immediately.
  *
- * This should never return EINA_FALSE, unless it was called from the wrong
+ * This should never return @c EINA_FALSE, unless it was called from the wrong
  * thread or with the wrong arguments.
  *
  * The @c func_end callback set when the thread is created will not be
@@ -2025,7 +2026,7 @@ EAPI Eina_Bool ecore_thread_reschedule(Ecore_Thread *thread);
  * through the Ecore_Thread API.
  *
  * @note Jobs started through the ecore_thread_feedback_run() function with
- * the @c try_no_queue parameter set to EINA_TRUE will not be accounted for
+ * the @c try_no_queue parameter set to @c EINA_TRUE will not be accounted for
  * in the return of this function unless the thread creation fails and it
  * falls back to using one from the pool.
  */
@@ -2120,7 +2121,7 @@ EAPI int ecore_thread_available_get(void);
  * @param cb Function to free the data when removed from the hash
  * @param direct If true, this will not copy the key string (like
  * eina_hash_direct_add())
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  *
  * Ecore Thread has a mechanism to share data across several worker functions
  * that run on the same system thread. That is, the data is stored per
@@ -2174,7 +2175,7 @@ EAPI int ecore_thread_available_get(void);
  * change the value under a @p key, or you don't know if one exists already,
  * you can use ecore_thread_local_data_set().
  *
- * Neither @p key nor @p value may be NULL and @p key will be copied in the
+ * Neither @p key nor @p value may be @c NULL and @p key will be copied in the
  * hash, unless @p direct is set, in which case the string used should not
  * be freed until the data is removed from the hash.
  *
@@ -2183,7 +2184,7 @@ EAPI int ecore_thread_available_get(void);
  * because @p thread was terminated and the hash destroyed. This parameter
  * may be NULL, in which case @p value needs to be manually freed after
  * removing it from the hash with either ecore_thread_local_data_del() or
- *ecore_thread_local_data_set(), but it's very unlikely that this is what
+ * ecore_thread_local_data_set(), but it's very unlikely that this is what
  * you want.
  *
  * This function, and all of the others in the @c ecore_thread_local_data
@@ -2212,8 +2213,8 @@ EAPI Eina_Bool ecore_thread_local_data_add(Ecore_Thread *thread, const char *key
  * If the hash already contains something under @p key, the data will be
  * replaced by @p value and the old value will be returned.
  *
- * NULL will also be returned if either @p key or @p value are NULL, or if
- * an error occurred.
+ * @c NULL will also be returned if either @p key or @p value are @c NULL, or
+ * if an error occurred.
  *
  * This function, and all of the others in the @c ecore_thread_local_data
  * family of functions, can only be called within the worker function running
@@ -2230,7 +2231,7 @@ EAPI void *ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, vo
  *
  * @param thread The thread context the data belongs to
  * @param key The name under which the data is stored
- * @return The value under the given key, or NULL on error
+ * @return The value under the given key, or @c NULL on error.
  *
  * Finds and return the data stored in the shared hash under the key @p key.
  *
@@ -2248,11 +2249,11 @@ EAPI void *ecore_thread_local_data_find(Ecore_Thread *thread, const char *key);
  *
  * @param thread The thread context the data belongs to
  * @param key The name under which the data is stored
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  *
  * If there's any data stored associated with @p key in the global hash,
- * this function will remove it from it and return EINA_TRUE. If no data
- * exists or an error occurs, it returns EINA_FALSE.
+ * this function will remove it from it and return @c EINA_TRUE. If no data
+ * exists or an error occurs, it returns @c EINA_FALSE.
  *
  * If the data was added to the hash with a free function, then it will
  * also be freed after removing it from the hash, otherwise it requires
@@ -2277,7 +2278,7 @@ EAPI Eina_Bool ecore_thread_local_data_del(Ecore_Thread *thread, const char *key
  * @param cb Function to free the data when removed from the hash
  * @param direct If true, this will not copy the key string (like
  * eina_hash_direct_add())
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  *
  * Ecore Thread keeps a hash that can be used to share data across several
  * threads, including the main loop one, without having to manually handle
@@ -2288,7 +2289,7 @@ EAPI Eina_Bool ecore_thread_local_data_del(Ecore_Thread *thread, const char *key
  * change the value under a @p key, or you don't know if one exists already,
  * you can use ecore_thread_global_data_set().
  *
- * Neither @p key nor @p value may be NULL and @p key will be copied in the
+ * Neither @p key nor @p value may be @c NULL and @p key will be copied in the
  * hash, unless @p direct is set, in which case the string used should not
  * be freed until the data is removed from the hash.
  *
@@ -2322,8 +2323,8 @@ EAPI Eina_Bool ecore_thread_global_data_add(const char *key, void *value, Eina_F
  * If the hash already contains something under @p key, the data will be
  * replaced by @p value and the old value will be returned.
  *
- * NULL will also be returned if either @p key or @p value are NULL, or if
- * an error occurred.
+ * @c NULL will also be returned if either @p key or @p value are @c NULL, or
+ * if an error occurred.
  *
  * @see ecore_thread_global_data_add()
  * @see ecore_thread_global_data_del()
@@ -2334,7 +2335,7 @@ EAPI void *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_
  * Gets data stored in the hash shared by all threads
  *
  * @param key The name under which the data is stored
- * @return The value under the given key, or NULL on error
+ * @return The value under the given key, or @c NULL on error.
  *
  * Finds and return the data stored in the shared hash under the key @p key.
  *
@@ -2351,11 +2352,11 @@ EAPI void *ecore_thread_global_data_find(const char *key);
  * Deletes from the shared hash the data corresponding to the given key
  *
  * @param key The name under which the data is stored
- * @return EINA_TRUE on success, EINA_FALSE on failure
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
  *
  * If there's any data stored associated with @p key in the global hash,
- * this function will remove it from it and return EINA_TRUE. If no data
- * exists or an error occurs, it returns EINA_FALSE.
+ * this function will remove it from it and return @c EINA_TRUE. If no data
+ * exists or an error occurs, it returns @c EINA_FALSE.
  *
  * If the data was added to the hash with a free function, then it will
  * also be freed after removing it from the hash, otherwise it requires
@@ -2375,15 +2376,15 @@ EAPI Eina_Bool ecore_thread_global_data_del(const char *key);
  *
  * @param key The name under which the data is stored
  * @param seconds The amount of time in seconds to wait for the data.
- * @return The value under the given key, or NULL on error
+ * @return The value under the given key, or @c NULL on error.
  *
  * Finds and return the data stored in the shared hash under the key @p key.
  *
  * If there's nothing in the hash under the given @p key, the function
  * will block and wait up to @p seconds seconds for some other thread to
  * add it with either ecore_thread_global_data_add() or
- *ecore_thread_global_data_set(). If after waiting there's still no data
- * to get, NULL will be returned.
+ * ecore_thread_global_data_set(). If after waiting there's still no data
+ * to get, @c NULL will be returned.
  *
  * If @p seconds is 0, then no waiting will happen and this function works
  * like ecore_thread_global_data_find(). If @p seconds is less than 0, then

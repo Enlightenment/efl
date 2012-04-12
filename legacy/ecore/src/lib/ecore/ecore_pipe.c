@@ -373,7 +373,7 @@ ecore_pipe_write_close(Ecore_Pipe *p)
  * @param p      The Ecore_Pipe object.
  * @param buffer The data to write into the pipe.
  * @param nbytes The size of the @p buffer in bytes
- * @return       Returns EINA_TRUE on a successful write, EINA_FALSE on an error
+ * @return       @c EINA_TRUE on a successful write, @c EINA_FALSE on error.
  */
 EAPI Eina_Bool
 ecore_pipe_write(Ecore_Pipe  *p,

@@ -2962,9 +2962,9 @@ ecore_x_randr_output_crtc_set(Ecore_X_Window root,
 /*
  * @brief Validates the header from raw EDID data.
  *
- * @param edid the edid structure
- * @param edid_length length of the edid structure
- * @return EINA_TRUE, if the header is valid. Else EINA_FALSE.
+ * @param edid The edid structure.
+ * @param edid_length Length of the edid structure.
+ * @return @c EINA_TRUE, if the header is valid, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_edid_has_valid_header(unsigned char *edid,
@@ -2973,9 +2973,9 @@ ecore_x_randr_edid_has_valid_header(unsigned char *edid,
 /*
  * @brief Checks whether a display's EDID has a valid checksum.
  *
- * @param edid the edid structure
- * @param edid_length length of the edid structure
- * @return EINA_TRUE, if the checksum is valid. Else EINA_FALSE.
+ * @param edid The edid structure.
+ * @param edid_length Length of the edid structure.
+ * @return @c EINA_TRUE, if the checksum is valid, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_edid_info_has_valid_checksum(unsigned char *edid,
@@ -3080,9 +3080,10 @@ ecore_x_randr_edid_manufacturer_model_get(unsigned char *edid,
 /*
  * @brief Looks up the DPMS support from raw EDID data.
  *
- * @param edid the edid structure
- * @param edid_length length of the edid structure
- * @return EINA_TRUE, if DPMS is supported in some way. Else EINA_FALSE.
+ * @param edid The edid structure.
+ * @param edid_length Length of the edid structure.
+ * @return @c EINA_TRUE, if DPMS is supported in some way, @c EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_edid_dpms_available_get(unsigned char *edid,
@@ -3091,9 +3092,9 @@ ecore_x_randr_edid_dpms_available_get(unsigned char *edid,
 /*
  * @brief Looks up the DPMS Standby support from raw EDID data.
  *
- * @param edid the edid structure
- * @param edid_length length of the edid structure
- * @return EINA_TRUE, if DPMS Standby is supported. Else EINA_FALSE.
+ * @param edid The edid structure.
+ * @param edid_length Length of the edid structure.
+ * @return @c EINA_TRUE, if DPMS Standby is supported, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid,
@@ -3102,9 +3103,9 @@ ecore_x_randr_edid_dpms_standby_available_get(unsigned char *edid,
 /*
  * @brief Looks up the DPMS Suspend support from raw EDID data.
  *
- * @param edid the edid structure
- * @param edid_length length of the edid structure
- * @return EINA_TRUE, if DPMS Suspend is supported. Else EINA_FALSE.
+ * @param edid The edid structure.
+ * @param edid_length Length of the edid structure.
+ * @return @c EINA_TRUE, if DPMS Suspend is supported, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid,
@@ -3113,9 +3114,9 @@ ecore_x_randr_edid_dpms_suspend_available_get(unsigned char *edid,
 /*
  * @brief Looks up the DPMS Off support from raw EDID data.
  *
- * @param edid the edid structure
- * @param edid_length length of the edid structure
- * @return EINA_TRUE, if DPMS Off is supported. Else EINA_FALSE.
+ * @param edid The edid structure.
+ * @param edid_length Length of the edid structure.
+ * @return @c EINA_TRUE, if DPMS Off is supported, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_edid_dpms_off_available_get(unsigned char *edid,
@@ -3157,9 +3158,10 @@ ecore_x_randr_edid_display_colorscheme_get(unsigned char *edid,
 /*
  * @brief Get the display type from raw EDID data.
  *
- * @param edid the edid structure
- * @param edid_length length of the edid structure
- * @return EINA_TRUE, if the display is a digital one. Else EINA_FALSE.
+ * @param edid The edid structure.
+ * @param edid_length Length of the edid structure.
+ * @return @c EINA_TRUE, if the display is a digital one, @c EINA_FALSE
+ * otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_edid_display_type_digital_get(unsigned char *edid,
@@ -3355,8 +3357,8 @@ ecore_x_region_picture_clip_set(Ecore_X_Region region,
  * xfixes selection notification request.
  *
  * This lets you choose which selections you want to get notifications for.
- * @param selection the selection atom.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @param selection The selection atom.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  * @since 1.1.0
  */
 EAPI Eina_Bool

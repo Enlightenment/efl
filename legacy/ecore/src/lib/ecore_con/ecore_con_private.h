@@ -174,15 +174,15 @@ struct _Ecore_Con_Server
    double disconnect_time;
    double client_disconnect_time;
    const char *ip;
-   Eina_Bool created : 1; /* EINA_TRUE if server is our listening server */
-   Eina_Bool connecting : 1; /* EINA_FALSE if just initialized or connected */
-   Eina_Bool handshaking : 1; /* EINA_TRUE if server is ssl handshaking */
+   Eina_Bool created : 1; /* @c EINA_TRUE if server is our listening server */
+   Eina_Bool connecting : 1; /* @c EINA_FALSE if just initialized or connected */
+   Eina_Bool handshaking : 1; /* @c EINA_TRUE if server is ssl handshaking */
    Eina_Bool upgrade : 1;  /* STARTTLS queued */
    Eina_Bool ssl_prepared : 1;
-   Eina_Bool use_cert : 1; /* EINA_TRUE if using certificate auth */
+   Eina_Bool use_cert : 1; /* @c EINA_TRUE if using certificate auth */
    Ecore_Con_Ssl_State ssl_state; /* current state of ssl handshake on the server */
-   Eina_Bool verify : 1; /* EINA_TRUE if certificates will be verified */
-   Eina_Bool verify_basic : 1; /* EINA_TRUE if certificates will be verified only against the hostname */
+   Eina_Bool verify : 1; /* @c EINA_TRUE if certificates will be verified */
+   Eina_Bool verify_basic : 1; /* @c EINA_TRUE if certificates will be verified only against the hostname */
    Eina_Bool reject_excess_clients : 1;
    Eina_Bool delete_me : 1; /* del event has been queued */
 #ifdef _WIN32

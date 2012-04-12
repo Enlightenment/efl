@@ -87,12 +87,12 @@ _ecore_file_path_from_env(const char *env)
  * @brief Check if the given directory is in PATH.
  *
  * @param in_dir The name of the directory to search in PATH.
- * @return EINA_TRUE if the directory exist in PATH, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if the directory exist in PATH, @c EINA_FALSE otherwise.
  *
  * This function checks if @p in_dir is in the environment variable
  * PATH. If @p in_dir is @c NULL, or if PATH is empty, or @p in_dir is
- * not in PATH, the function returns EINA_FALSE, otherwise it returns
- * EINA_TRUE.
+ * not in PATH, the function returns @c EINA_FALSE, otherwise it returns
+ * @c EINA_TRUE.
  */
 EAPI Eina_Bool
 ecore_file_path_dir_exists(const char *in_dir)
@@ -117,13 +117,12 @@ ecore_file_path_dir_exists(const char *in_dir)
  * @brief Check if the given application is installed.
  *
  * @param  exe The name of the application
- * @return EINA_TRUE if the exe is in PATH and is executable,
- * EINA_FALSE otherwise.
- *
+ * @return @c EINA_TRUE if the @p exe is in PATH and is executable,
+ * @c EINA_FALSE otherwise.
  *
  * This function checks if @p exe exists in PATH and is executable. If
  * @p exe is @c NULL or is not executable, the function returns
- * EINA_FALSE, otherwise it returns EINA_TRUE.
+ * @c EINA_FALSE, otherwise it returns @c EINA_TRUE.
  */
 EAPI Eina_Bool
 ecore_file_app_installed(const char *exe)

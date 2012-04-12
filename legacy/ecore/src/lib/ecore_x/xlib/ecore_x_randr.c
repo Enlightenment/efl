@@ -53,8 +53,9 @@ _ecore_x_randr_init(void)
 }
 
 /*
- * @brief query whether randr is available or not
- * @return EINA_TRUE, if extension is available, else EINA_FALSE
+ * @brief Query whether randr is available or not.
+ *
+ * @return @c EINA_TRUE, if extension is available, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_query(void)
@@ -63,8 +64,8 @@ ecore_x_randr_query(void)
 }
 
 /*
- * @return version of the RandRR extension supported by the server or,
- * in case RandRR extension is not available, Ecore_X_Randr_Unset (=-1).
+ * @return version of the RandR extension supported by the server or, in case
+ * RandR extension is not available, Ecore_X_Randr_Unset (=-1).
  * bit version information: 31   MAJOR   16 | 15   MINOR   0
  */
 EAPI int

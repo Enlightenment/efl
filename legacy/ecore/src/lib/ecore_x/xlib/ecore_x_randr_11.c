@@ -69,10 +69,13 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 }
 
 /*
- * @brief sets a given screen's primary output's orientation
- * @param root window which's screen's primary output will be queried
- * @param orientation orientation which should be set for the root window's screen primary output
- * @return EINA_TRUE if the primary output's orientation could be successfully altered
+ * @brief Sets a given screen's primary output's orientation.
+ *
+ * @param root Window which's screen's primary output will be queried.
+ * @param orientation orientation which should be set for the root window's
+ * screen primary output.
+ * @return @c EINA_TRUE if the primary output's orientation could be
+ * successfully altered.
  */
 EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_orientation_set(
@@ -200,10 +203,14 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root,
 }
 
 /*
- * @brief sets a given screen's primary output size, but disables all other outputs at the same time
- * @param root window which's primary output will be queried
- * @param size_index within the list of sizes reported as supported by the root window's screen primary output
- * @return EINA_TRUE on success, EINA_FALSE on failure due to e.g. invalid times
+ * @brief Sets a given screen's primary output size, but disables all other
+ * outputs at the same time.
+ *
+ * @param root Window which's primary output will be queried.
+ * @param size_index Within the list of sizes reported as supported by the root
+ * window's screen primary output.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure due to e.g.
+ * invalid times.
  */
 EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root,
@@ -300,11 +307,12 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root,
 
 //>= 1.1
 /*
- * @brief sets the current primary output's refresh rate
- * @param root window which's primary output will be queried
- * @param size_index referencing the size to be set
- * @param rate the refresh rate to be set
- * @return EINA_TRUE on success else EINA_FALSE
+ * @brief Sets the current primary output's refresh rate.
+ *
+ * @param root Window which's primary output will be queried.
+ * @param size_index Referencing the size to be set.
+ * @param rate The refresh rate to be set.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_refresh_rate_set(

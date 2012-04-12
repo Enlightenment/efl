@@ -1350,15 +1350,16 @@ ecore_evas_rotation_get(const Ecore_Evas *ee)
 
 /**
  * Set whether an Ecore_Evas is shaped or not.
- * @param ee The Ecore_Evas to shape
- * @param shaped EINA_TRUE to shape, EINA_FALSE to not
+ *
+ * @param ee The Ecore_Evas to shape.
+ * @param shaped @c EINA_TRUE to shape, @c EINA_FALSE to not.
  *
  * This function allows one to make an Ecore_Evas shaped to the contents of the
- * evas. If @p shaped is EINA_TRUE, @p ee will be transparent in parts of the evas that
- * contain no objects. If @p shaped is EINA_FALSE, then @p ee will be rectangular, and
- * and parts with no data will show random framebuffer artifacting. For
- * non-shaped Ecore_Evases, it is recommend to cover the entire evas with a
- * background object.
+ * evas. If @p shaped is @c EINA_TRUE, @p ee will be transparent in parts of
+ * the evas that contain no objects. If @p shaped is @c EINA_FALSE, then @p ee
+ * will be rectangular, and parts with no data will show random framebuffer
+ * artifacting. For non-shaped Ecore_Evases, it is recommended to cover the
+ * entire evas with a background object.
  */
 EAPI void
 ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped)
@@ -1375,10 +1376,11 @@ ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped)
 
 /**
  * Query whether an Ecore_Evas is shaped or not.
- * @param ee The Ecore_Evas to query.
- * @return EINA_TRUE if shaped, EINA_FALSE if not.
  *
- * This function returns EINA_TRUE if @p ee is shaped, and EINA_FALSE if not.
+ * @param ee The Ecore_Evas to query.
+ * @return @c EINA_TRUE if shaped, @c EINA_FALSE if not.
+ *
+ * This function returns @c EINA_TRUE if @p ee is shaped, and @c EINA_FALSE if not.
  */
 EAPI Eina_Bool
 ecore_evas_shaped_get(const Ecore_Evas *ee)
@@ -1909,11 +1911,12 @@ ecore_evas_borderless_get(const Ecore_Evas *ee)
 
 /**
  * Tell the WM whether or not to ignore an Ecore_Evas' window
- * @param ee The Ecore_Evas
- * @param on EINA_TRUE to ignore, EINA_FALSE to not.
  *
- * This function causes the window manager to ignore @p ee if @p on is EINA_TRUE,
- * or not ignore @p ee if @p on is EINA_FALSE.
+ * @param ee The Ecore_Evas.
+ * @param on @c EINA_TRUE to ignore, @c EINA_FALSE to not.
+ *
+ * This function causes the window manager to ignore @p ee if @p on is
+ * @c EINA_TRUE, or not ignore @p ee if @p on is @c EINA_FALSE.
  */
 EAPI void
 ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on)
@@ -1930,9 +1933,9 @@ ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on)
 
 /**
  * Query whether an Ecore_Evas' window is overridden or not
- * @param ee The Ecore_Evas to set
- * @return EINA_TRUE if @p ee is overridden, EINA_FALSE if not.
  *
+ * @param ee The Ecore_Evas to set.
+ * @return @c EINA_TRUE if @p ee is overridden, @c EINA_FALSE if not.
  */
 EAPI Eina_Bool
 ecore_evas_override_get(const Ecore_Evas *ee)
