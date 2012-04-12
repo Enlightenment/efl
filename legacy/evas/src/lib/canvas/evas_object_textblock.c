@@ -6055,9 +6055,9 @@ evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
 #else
 
 #define BREAK_AFTER(i) \
-   ((!str[i + 1]) || \
-    (_is_white(str[i]) && !_is_white(str[i + 1])) || \
-    (!_is_white(str[i]) && _is_white(str[i + 1])))
+   ((!text[i + 1]) || \
+    (_is_white(text[i]) && !_is_white(text[i + 1])) || \
+    (!_is_white(text[i]) && _is_white(text[i + 1])))
 
 #endif
 
