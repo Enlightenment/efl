@@ -615,3 +615,4 @@
 
 	* remove EAPI from _ecore_event_signal_user_new(). It should never
 	be exported outside of libecore.so
+	* stop leaking every system signal event.
