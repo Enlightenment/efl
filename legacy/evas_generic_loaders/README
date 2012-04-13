@@ -19,7 +19,7 @@ Recommended:
   gstreamer
   poppler
   libraw
-  libspecter
+  libspectre
 
 
 These are additional "generic" loaders for Evas that are stand-alone
