@@ -730,13 +730,13 @@ _item_unhighlight(Elm_Gen_Item *it)
      {
        if ((it->item->order_num_in & 0x1) ^ it->item->stacking_even)
          {
-             if (it->deco_all_view) evas_object_lower(it->deco_all_view);
-             else evas_object_lower(VIEW(it));
+            if (it->deco_all_view) evas_object_lower(it->deco_all_view);
+            else evas_object_lower(VIEW(it));
          }
        else
          {
-             if (it->deco_all_view) evas_object_raise(it->deco_all_view);
-             else evas_object_raise(VIEW(it));
+            if (it->deco_all_view) evas_object_raise(it->deco_all_view);
+            else evas_object_raise(VIEW(it));
          }
      }
    it->highlighted = EINA_FALSE;
@@ -994,7 +994,7 @@ _mouse_move(void        *data,
              if (it->deco_all_view)
                _item_position(it, it->deco_all_view, it->item->scrl_x, y_pos);
              else
-             _item_position(it, VIEW(it), it->item->scrl_x, y_pos);
+               _item_position(it, VIEW(it), it->item->scrl_x, y_pos);
 
              if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
              it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
@@ -3027,10 +3027,6 @@ _pan_resize(Evas_Object *obj,
    evas_object_smart_changed(obj);
    if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
    sd->wd->calc_job = NULL;
-/* OLD
-   if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
-   sd->wd->calc_job = ecore_job_add(_calc_job, sd->wd);
- */
 }
 
 static void
