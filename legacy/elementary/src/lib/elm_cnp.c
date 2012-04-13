@@ -417,7 +417,8 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
      {
         if (format == ELM_SEL_FORMAT_IMAGE)
           {
-             sel->selbuf = malloc(buflen+1);
+             // selbuf is actual image data, not text/string
+             sel->selbuf = malloc(buflen);
              memcpy(sel->selbuf, selbuf, buflen);
           }
         else
