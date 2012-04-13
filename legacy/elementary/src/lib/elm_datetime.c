@@ -712,6 +712,7 @@ _reload_format(Evas_Object *obj)
 #endif
 
    dt_fmt = (char *)malloc(MAX_FORMAT_LEN);
+   if (!dt_fmt) return;
    strncpy(dt_fmt, wd->format, MAX_FORMAT_LEN);
 
    _expand_format(dt_fmt);
