@@ -3397,7 +3397,7 @@ _smart_reconfigure(Smart_Data *sd)
 }
 
 EAPI void
-_elm_widget_item_content_part_set(Elm_Widget_Item *item,
+_elm_widget_item_part_content_set(Elm_Widget_Item *item,
                                   const char *part,
                                   Evas_Object *content)
 {
@@ -3412,7 +3412,7 @@ _elm_widget_item_content_part_set(Elm_Widget_Item *item,
 }
 
 EAPI Evas_Object *
-_elm_widget_item_content_part_get(const Elm_Widget_Item *item,
+_elm_widget_item_part_content_get(const Elm_Widget_Item *item,
                                   const char *part)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
@@ -3426,7 +3426,7 @@ _elm_widget_item_content_part_get(const Elm_Widget_Item *item,
 }
 
 EAPI Evas_Object *
-_elm_widget_item_content_part_unset(Elm_Widget_Item *item,
+_elm_widget_item_part_content_unset(Elm_Widget_Item *item,
                                     const char *part)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
@@ -3440,7 +3440,7 @@ _elm_widget_item_content_part_unset(Elm_Widget_Item *item,
 }
 
 EAPI void
-_elm_widget_item_text_part_set(Elm_Widget_Item *item,
+_elm_widget_item_part_text_set(Elm_Widget_Item *item,
                                const char *part,
                                const char *label)
 {
@@ -3455,7 +3455,7 @@ _elm_widget_item_text_part_set(Elm_Widget_Item *item,
 }
 
 EAPI const char *
-_elm_widget_item_text_part_get(const Elm_Widget_Item *item,
+_elm_widget_item_part_text_get(const Elm_Widget_Item *item,
                                const char *part)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
