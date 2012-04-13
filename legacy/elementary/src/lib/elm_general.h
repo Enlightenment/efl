@@ -135,7 +135,7 @@ typedef Eina_Bool             (*Elm_Event_Cb)(void *data, Evas_Object *obj, Evas
  * macro. There is no need to use this if you use this macro (which
  * is highly advisable). An elm_main() should contain the entry
  * point code for your application, having the same prototype as
- * elm_init(), and @b not being static (putting the @c EAPI symbol
+ * elm_init(), and @b not being static (putting the @c EAPI_MAIN symbol
  * in front of its type declaration is advisable). The @c
  * ELM_MAIN() call should be placed just after it.
  *
