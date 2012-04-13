@@ -611,3 +611,7 @@
         it didn't work right on the fb. (timestamps wrong, focus
         handling etc.). This makes it work fully again.
 
+2012-04-13 Gustavo Sverzut Barbieri (k-s)
+
+	* remove EAPI from _ecore_event_signal_user_new(). It should never
+	be exported outside of libecore.so

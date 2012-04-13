@@ -164,7 +164,7 @@ Ecore_Timer *_ecore_exe_doomsday_clock_get(Ecore_Exe *exe);
 void         _ecore_exe_doomsday_clock_set(Ecore_Exe *exe,
                                            Ecore_Timer *dc);
 
-EAPI void *_ecore_event_signal_user_new(void);
+void      *_ecore_event_signal_user_new(void);
 void      *_ecore_event_signal_hup_new(void);
 void      *_ecore_event_signal_exit_new(void);
 void      *_ecore_event_signal_power_new(void);

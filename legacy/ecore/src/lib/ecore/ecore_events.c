@@ -604,7 +604,7 @@ _ecore_event_call(void)
      }
 }
 
-EAPI void *
+void *
 _ecore_event_signal_user_new(void)
 {
    Ecore_Event_Signal_User *e;
