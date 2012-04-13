@@ -1760,6 +1760,8 @@ _fonts_data_fill(Evas *evas)
         const Eina_List *ll;
 
         tc_data = calloc(1, sizeof(*tc_data));
+        if (!tc_data) continue;
+
         tc_data->name = eina_stringshare_add(etc->name);
         tc_data->desc = eina_stringshare_add(etc->desc);
 
