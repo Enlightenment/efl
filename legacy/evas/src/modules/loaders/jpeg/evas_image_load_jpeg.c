@@ -258,6 +258,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    Eina_Bool change_wh = EINA_FALSE;
    unsigned int load_opts_w = 0, load_opts_h = 0;
 
+   memset(&cinfo, 0, sizeof(cinfo));
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
    jerr.pub.emit_message = _JPEGErrorHandler2;
@@ -515,6 +516,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    volatile Eina_Bool change_wh = EINA_FALSE;
    Eina_Bool line_done = EINA_FALSE;
 
+   memset(&cinfo, 0, sizeof(cinfo));
    if (ie->flags.rotated)
      {
         degree = ie->load_opts.degree;
