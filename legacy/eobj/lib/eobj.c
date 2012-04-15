@@ -387,9 +387,11 @@ eobj_do_internal(Eobj *obj, ...)
 {
    Eina_Bool ret;
    va_list p_list;
+   eobj_ref(obj);
    va_start(p_list, obj);
    ret = _eobj_ops_internal(obj, &p_list);
    va_end(p_list);
+   eobj_unref(obj);
    return ret;
 }
 
@@ -705,7 +707,10 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
 
    _eobj_kls_itr_init(obj, EOBJ_NOOP);
    eobj_constructor_error_unset(obj);
+
+   eobj_ref(obj);
    eobj_class_constructor(obj, klass);
+
    if (eobj_constructor_error_get(obj))
      {
         ERR("Type '%s' - One of the object constructors have failed.", klass->desc->name);
@@ -718,10 +723,13 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
         goto fail;
      }
    _eobj_kls_itr_end(obj, EOBJ_NOOP);
+   eobj_unref(obj);
 
    return obj;
 
 fail:
+   /* Unref twice, once for the ref above, and once for the basic object ref. */
+   eobj_unref(obj);
    eobj_unref(obj);
    return NULL;
 }
@@ -1201,6 +1209,7 @@ eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc,
 {
    Eobj_Callback_Description *cb;
 
+   eobj_ref(obj);
    obj->walking_list++;
 
    EINA_INLIST_FOREACH(obj->callbacks, cb)
@@ -1219,6 +1228,7 @@ eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc,
      }
    obj->walking_list--;
    _eobj_callbacks_clear(obj);
+   eobj_unref(obj);
 
    return EINA_TRUE;
 }
