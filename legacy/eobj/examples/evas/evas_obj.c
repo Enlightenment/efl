@@ -51,10 +51,10 @@ _color_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
    int *r, *g, *b, *a;
-   r = va_arg(*list, int*);
-   g = va_arg(*list, int*);
-   b = va_arg(*list, int*);
-   a = va_arg(*list, int*);
+   r = va_arg(*list, int *);
+   g = va_arg(*list, int *);
+   b = va_arg(*list, int *);
+   a = va_arg(*list, int *);
    evas_object_color_get(evas_obj, r, g, b, a);
 }
 
