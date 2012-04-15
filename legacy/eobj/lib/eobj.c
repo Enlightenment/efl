@@ -10,8 +10,6 @@ static Eobj_Class **_eobj_classes;
 static Eobj_Class_Id _eobj_classes_last_id;
 static Eina_Bool _eobj_init_count = 0;
 
-#define CONSTRUCT_ERROR_KEY "__construct_error"
-
 static void _eobj_callback_remove_all(Eobj *obj);
 static void _eobj_generic_data_del_all(Eobj *obj);
 static void eobj_class_constructor(Eobj *obj, const Eobj_Class *klass);
@@ -46,6 +44,7 @@ static void eobj_constructor_error_unset(Eobj *obj);
 typedef struct _Eobj_Callback_Description Eobj_Callback_Description;
 
 struct _Eobj {
+     EINA_MAGIC
      Eobj *parent;
      const Eobj_Class *klass;
      void *data_blob;
@@ -60,7 +59,7 @@ struct _Eobj {
      Eina_Inlist *kls_itr;
 
      Eina_Bool delete:1;
-     EINA_MAGIC
+     Eina_Bool construct_error:1;
 };
 
 /* Start of Dich */
@@ -814,19 +813,19 @@ eobj_parent_get(Eobj *obj)
 EAPI void
 eobj_constructor_error_set(Eobj *obj)
 {
-   eobj_generic_data_set(obj, CONSTRUCT_ERROR_KEY, (void *) EINA_TRUE);
+   obj->construct_error = EINA_TRUE;
 }
 
 static void
 eobj_constructor_error_unset(Eobj *obj)
 {
-   eobj_generic_data_del(obj, CONSTRUCT_ERROR_KEY);
+   obj->construct_error = EINA_FALSE;
 }
 
 EAPI Eina_Bool
 eobj_constructor_error_get(const Eobj *obj)
 {
-   return (intptr_t) eobj_generic_data_get(obj, CONSTRUCT_ERROR_KEY);
+   return obj->construct_error;
 }
 
 static inline void
