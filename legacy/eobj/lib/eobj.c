@@ -982,6 +982,7 @@ eobj_generic_data_del(Eobj *obj, const char *key)
 EAPI Eina_Bool
 eobj_init(void)
 {
+   const char *log_dom = "eobj";
    if (_eobj_init_count++ > 0)
       return EINA_TRUE;
 
@@ -989,10 +990,10 @@ eobj_init(void)
 
    _eobj_classes = NULL;
    _eobj_classes_last_id = 0;
-   _eobj_log_dom = eina_log_domain_register("eobj", EINA_COLOR_LIGHTBLUE);
+   _eobj_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_LIGHTBLUE);
    if (_eobj_log_dom < 0)
      {
-        EINA_LOG_ERR("Could not register log domain: eobj");
+        EINA_LOG_ERR("Could not register log domain: %s", log_dom);
         return EINA_FALSE;
      }
 
