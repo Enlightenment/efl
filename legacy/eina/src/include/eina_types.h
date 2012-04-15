@@ -108,9 +108,9 @@
 # endif
 
 # if (!defined(EINA_SAFETY_CHECKS)) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
-#  define EINA_ARG_NONNULL(idx, ...) __attribute__ ((__nonnull__(idx, ## __VA_ARGS__)))
+#  define EINA_ARG_NONNULL(...) __attribute__ ((__nonnull__(__VA_ARGS__)))
 # else
-#  define EINA_ARG_NONNULL(idx, ...)
+#  define EINA_ARG_NONNULL(...)
 # endif
 
 # if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1)
@@ -151,7 +151,7 @@
 
 #elif defined(_WIN32)
 # define EINA_WARN_UNUSED_RESULT
-# define EINA_ARG_NONNULL(idx, ...)
+# define EINA_ARG_NONNULL(...)
 # if defined(_MSC_VER) && _MSC_VER >= 1300
 #  define EINA_DEPRECATED __declspec(deprecated)
 # else
@@ -202,7 +202,7 @@
  * @def EINA_ARG_NONNULL
  * Used to warn when the specified arguments of the function are @c NULL.
  */
-# define EINA_ARG_NONNULL(idx, ...)
+# define EINA_ARG_NONNULL(...)
 
 /**
  * @def EINA_DEPRECATED

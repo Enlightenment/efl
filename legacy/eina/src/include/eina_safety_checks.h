@@ -210,7 +210,7 @@ EAPI extern Eina_Error EINA_ERROR_SAFETY_FAILED;
 #ifdef EINA_ARG_NONNULL
 /* make EINA_ARG_NONNULL void so GCC does not optimize safety checks */
 #undef EINA_ARG_NONNULL
-#define EINA_ARG_NONNULL(idx, ...)
+#define EINA_ARG_NONNULL(...)
 #endif
 
 #else /* no safety checks */
