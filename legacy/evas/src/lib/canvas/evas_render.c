@@ -1156,6 +1156,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                             ecx, ecy, ecw, ech);
         if (obj->cur.cache.clip.visible)
           {
+             obj->layer->evas->engine.func->context_multiplier_unset
+               (e->engine.data.output, e->engine.data.context);
              obj->layer->evas->engine.func->image_map_draw
                (e->engine.data.output, e->engine.data.context, surface,
                    obj->cur.map->surface, obj->cur.map->count, pts,
