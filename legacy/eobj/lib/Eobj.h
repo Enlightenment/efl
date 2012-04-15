@@ -16,7 +16,7 @@
 #define EOBJ_ARRAY_SIZE(arr) (sizeof(arr) / sizeof(*arr))
 
 typedef struct _Eobj Eobj;
-typedef uintptr_t Eobj_Op;
+typedef unsigned int Eobj_Op;
 
 #define EOBJ_NOOP ((Eobj_Op) 0)
 
@@ -88,7 +88,7 @@ typedef struct
 EAPI Eina_Bool eobj_init(void);
 EAPI Eina_Bool eobj_shutdown(void);
 
-#define eobj_do(object, ...) eobj_do_internal(object, __VA_ARGS__, NULL)
+#define eobj_do(object, ...) eobj_do_internal(object, __VA_ARGS__, (Eobj_Op) 0)
 
 EAPI Eina_Bool eobj_do_internal(Eobj *obj, ...);
 
