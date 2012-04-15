@@ -150,7 +150,9 @@ EAPI Eina_Bool eobj_event_callback_forwarder_add(Eobj *obj, const Eobj_Event_Des
 EAPI Eina_Bool eobj_event_callback_forwarder_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj *new_obj);
 
 /* callbacks of the same priority are called in reverse order of creation. */
-EAPI Eina_Bool eobj_event_callback_add(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb cb, const void *data);
+#define eobj_event_callback_add(obj, desc, cb, data) \
+   eobj_event_callback_priority_add(obj, desc, \
+         EOBJ_CALLBACK_PRIORITY_DEFAULT, cb, data)
 EAPI Eina_Bool eobj_event_callback_priority_add(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Callback_Priority priority, Eobj_Event_Cb cb, const void *data);
 EAPI void *eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func);
 EAPI void *eobj_event_callback_del_full(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func, const void *user_data);

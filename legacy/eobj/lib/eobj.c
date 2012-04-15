@@ -1121,16 +1121,6 @@ _callback_priority_cmp(const void *_a, const void *_b)
 }
 
 EAPI Eina_Bool
-eobj_event_callback_add(Eobj *obj,
-      const Eobj_Event_Description *desc,
-      Eobj_Event_Cb cb,
-      const void *data)
-{
-   return eobj_event_callback_priority_add(obj, desc,
-         EOBJ_CALLBACK_PRIORITY_DEFAULT, cb, data);
-}
-
-EAPI Eina_Bool
 eobj_event_callback_priority_add(Eobj *obj,
       const Eobj_Event_Description *desc,
       Eobj_Callback_Priority priority,
