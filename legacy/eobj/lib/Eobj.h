@@ -41,7 +41,7 @@ typedef unsigned int Eobj_Op;
 
 /**
  * @def EOBJ_NOOP
- * A special Eobj_Op meaning "No operation".
+ * A special #Eobj_Op meaning "No operation".
  */
 #define EOBJ_NOOP ((Eobj_Op) 0)
 
@@ -529,7 +529,7 @@ EAPI Eina_Bool eobj_composite_is(Eobj *comp_obj);
  * @typedef Eobj_Callback_Priority
  *
  * Callback priority value. Range is -32k - 32k. The lower the number, the
- * bigger the priority.
+ * higher the priority.
  *
  * @see EOBJ_CALLBACK_PRIORITY_AFTER
  * @see EOBJ_CALLBACK_PRIORITY_BEFORE
