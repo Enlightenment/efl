@@ -30,8 +30,8 @@ Fixes:
    * grab count negative values with weird multi-finger press/release usage.
    * clip bug that shows up in buffer engine.
    * disabled buggy SSE3 routines.
-   * repeat events passing between layers withing the same object.
-   * unitialized value when running generic loader.
+   * repeat events passing between layers within the same object.
+   * uninitialized value when running generic loader.
    * rounding of update regions in scaled image objects.
    * handling of layouts where weights have sub integer values.
    * gl engine cliupping bug when rendering maps to fbo's.
@@ -60,7 +60,7 @@ Additions:
 
     * auto-align feature to textblock
     * mixedwrap wrap mode to textblock
-    * harfbuzzsupport for shaping
+    * harfbuzz support for shaping
     * WBMP loader
     * mirror mode for tables
     * proxy abilities to image objects to choose source ro mirror
@@ -100,7 +100,7 @@ Additions:
     * YUV 601 input support for evas_object_image_data_convert
     * NV12 colorspace for evas image objects
     * MT12 colorspace for evas image objects
-    * underline dashing suport to textblock
+    * underline dashing support to textblock
     * API to get largest image size
     * GL Cocoa engine
     * Evas GL support in software backend through OSMesa
@@ -139,7 +139,7 @@ Fixes:
     * compile when --disable-async-preload is used
     * callback counter bug
     * grab count and hide bug
-    * infintie loop bug when re-inserting objects during pre-render calc
+    * infinite loop bug when re-inserting objects during pre-render calc
     * evas_object_image_data_convert
     * TGA loader detects false positives less and handles alpha TGAs better
     * repeat event flag not inherited from parent smart like pass events
