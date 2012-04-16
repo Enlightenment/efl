@@ -4,6 +4,8 @@
 
 #include "config.h"
 
+typedef int Eobj_Class_Id;
+
 static int _eobj_log_dom = -1;
 
 static Eobj_Class **_eobj_classes;
@@ -422,7 +424,7 @@ eobj_super_do(Eobj *obj, Eobj_Op op, ...)
 }
 
 EAPI const Eobj_Class *
-eobj_class_get(Eobj *obj)
+eobj_class_get(const Eobj *obj)
 {
    return obj->klass;
 }
@@ -545,6 +547,31 @@ eobj_class_funcs_set(Eobj_Class *klass, const Eobj_Op_Func_Description *func_des
      }
 }
 
+void
+eobj_class_free(Eobj_Class *klass)
+{
+   if (klass->constructed)
+     {
+        if (klass->desc->class_destructor)
+           klass->desc->class_destructor(klass);
+
+        dich_func_clean_all(klass);
+     }
+
+     {
+        Eina_Inlist *itrn;
+        Eobj_Extension_Node *extn;
+        EINA_INLIST_FOREACH_SAFE(klass->extensions, itrn, extn)
+          {
+             free(extn);
+          }
+     }
+
+   free(klass->mro);
+
+   free(klass);
+}
+
 EAPI Eobj_Class *
 eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...)
 {
@@ -661,31 +688,6 @@ cleanup:
    return NULL;
 }
 #undef _CLS_NEW_CHECK
-
-EAPI void
-eobj_class_free(Eobj_Class *klass)
-{
-   if (klass->constructed)
-     {
-        if (klass->desc->class_destructor)
-           klass->desc->class_destructor(klass);
-
-        dich_func_clean_all(klass);
-     }
-
-     {
-        Eina_Inlist *itrn;
-        Eobj_Extension_Node *extn;
-        EINA_INLIST_FOREACH_SAFE(klass->extensions, itrn, extn)
-          {
-             free(extn);
-          }
-     }
-
-   free(klass->mro);
-
-   free(klass);
-}
 
 EAPI Eobj *
 eobj_add(const Eobj_Class *klass, Eobj *parent)

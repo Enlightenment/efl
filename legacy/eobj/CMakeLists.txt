@@ -49,3 +49,4 @@ add_subdirectory(examples/composite_objects)
 
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 
+add_subdirectory(doc)
