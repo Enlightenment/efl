@@ -489,6 +489,11 @@ _ecore_wince_event_char_get(int    key,
   *keysymbol = NULL;
   *keycompose = NULL;
 
+   /* check control charaters such as ^a(key:1), ^z(key:26) */
+   if ((key > 0) && (key < 27) &&
+       ((GetKeyState(VK_CONTROL) & 0x8000) ||
+        (GetKeyState(VK_CONTROL) & 0x8000))) key += 96;
+
    switch (key)
      {
      case VK_APP3:

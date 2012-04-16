@@ -616,3 +616,7 @@
 	* remove EAPI from _ecore_event_signal_user_new(). It should never
 	be exported outside of libecore.so
 	* stop leaking every system signal event.
+
+2012-04-16  Shinwoo Kim
+
+	* Check control charater and convert into printing character on Windows

@@ -95,6 +95,7 @@ Fixes:
      - possible 0 byte allocation.
     * ecore_win32/wince:
      - do not autorepeat Ctrl, Shift, Alt and Win keys.
+     - Check control charater and convert into printing character
     * ecore_con:
      - fix case where SSL certificates not being used.
      - post data corruption due to it not being copied to the con struct.
