@@ -695,3 +695,8 @@
 2012-04-12  Tom Hacohen (TAsn)
 
 	* Textblock: Fixed compilation with liblinebreak disabled.
+
+2012-04-14  Carsten Haitzler (The Rasterman)
+
+        * Fix color multiplier staying set when rendering map.
+

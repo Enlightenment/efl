@@ -33,6 +33,10 @@ Fixes:
    * repeat events passing between layers withing the same object.
    * unitialized value when running generic loader.
    * rounding of update regions in scaled image objects.
+   * handling of layouts where weights have sub integer values.
+   * gl engine cliupping bug when rendering maps to fbo's.
+   * liblinebreak disabled compilation bug.
+   * color multiplier staying set when rendering map.
 
 Improvements:
 
