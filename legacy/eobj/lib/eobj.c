@@ -1275,11 +1275,17 @@ eobj_base_class_get(void)
 {
    if (_my_class) return _my_class;
 
+   static const Eobj_Event_Description *event_desc[] = {
+        EOBJ_SIG_CALLBACK_ADD,
+        EOBJ_SIG_CALLBACK_DEL,
+        NULL
+   };
+
    static const Eobj_Class_Description class_desc = {
         "Eobj Base",
         EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT,
         EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-        NULL,
+        event_desc,
         0,
         _constructor,
         _destructor,
