@@ -94,7 +94,7 @@ _advance_frame3(void *data)
 {
    static int x = 0;
 
-   if(x >= 250)
+   if (x >= 250)
       x = 0;
    evas_object_move(data, ++x, 350);
 

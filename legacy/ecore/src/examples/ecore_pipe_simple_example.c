@@ -48,7 +48,7 @@ main (int argc, char *argv[])
    pipe = ecore_pipe_add(handler, NULL);
 
    child_pid = fork();
-   if(!child_pid)
+   if (!child_pid)
      {
         ecore_pipe_read_close(pipe);
         do_lengthy_task(pipe);

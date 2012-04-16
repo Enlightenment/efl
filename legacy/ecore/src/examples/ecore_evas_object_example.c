@@ -31,7 +31,7 @@ main(void)
    evas_object_show(bg);
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
-   if(bg == ecore_evas_object_associate_get(ee))
+   if (bg == ecore_evas_object_associate_get(ee))
       printf("Association worked!\n");
 
    cursor = evas_object_rectangle_add(ecore_evas_get(ee));
@@ -40,7 +40,7 @@ main(void)
    ecore_evas_object_cursor_set(ee, cursor, 0, 1, 1);
 
    ecore_evas_cursor_get(ee, &obj, &layer, &x, &y);
-   if(obj == cursor && layer == 0 && x == 1 && y == 1)
+   if (obj == cursor && layer == 0 && x == 1 && y == 1)
       printf("Set cursor worked!\n");
 
    ecore_main_loop_begin();
