@@ -3,6 +3,7 @@
         1.0.0 release
 
 2011-01-29  Mike Blumenkrantz (discomfitor/zmike)
+
 	* added disk manipulation functions
 	(eeze_disk_function, eeze_disk_new, eeze_disk_new_from_mount, eeze_disk_free, eeze_disk_scan,
 	eeze_disk_data_set, eeze_disk_data_get, eeze_disk_syspath_get, eeze_disk_devpath_get,
@@ -13,21 +14,26 @@
 	eeze_mount_mtab_scan, eeze_mount_fstab_scan)
 
 2011-02-09  Mike Blumenkrantz (discomfitor/zmike)
+
 	* added handling of mountopts
         * iso automounting in eeze_mount
 	(EEZE_DISK_MOUNTOPT_UTF8, EEZE_DISK_MOUNTOPT_NOEXEC, EEZE_DISK_MOUNTOPT_NOSUID,
 	EEZE_DISK_MOUNTOPT_REMOUNT, eeze_disk_mountopts_set, eeze_disk_mountopts_get)
 
 2011-03-03  Mike Blumenkrantz (discomfitor/zmike)
+
 	* fixed bug with watches involving filtering being too aggressive for removed/offlined devices
 
 2011-03-12  Mike Blumenkrantz (discomfitor/zmike)
+
 	* added EEZE_UDEV_TYPE_NET
 
 2011-03-12  Mike Blumenkrantz (discomfitor/zmike)
+
 	* added eeze_udev_syspath_get_devname
 
 2011-05-15  Mike Blumenkrantz (discomfitor/zmike)
+
 	* added eeze_disk_cancel, to cancel the current pending mount/umount operation on a disk
 	* added a uid=%i mount option using getuid (NOT geteuid)
 	* added wrapper for mount command exes (such as sudo) with eeze_disk_mount_wrapper_set
@@ -38,23 +44,28 @@
 	eeze_disk_udev_walk_get_sysattr)
 
 2011-05-16  Mike Blumenkrantz (discomfitor/zmike)
+
 	* fixed bug with EEZE_UDEV_TYPE_DRIVE_* detection
 	* fixed eeze_udev_find_unlisted_similar to be less permissive
 	* added EEZE_EVENT_DISK_EJECT and eeze_disk_eject, functions for ejecting a disk
 
 2011-06-29  Mike Blumenkrantz (discomfitor/zmike)
+
         * fixed bug where EEZE_UDEV_EVENT_NONE would not match all events for watches
         * fixed segv when detecting removable drives
         * added eeze_scanner utility daemon
         * fixed bug where watches would not properly detect disk events
 
 2011-07-15  Cedric Bail
+
 	* added EEZE_UDEV_TYPE_V4L
 
 2011-08-01  Mike Blumenkrantz (discomfitor/zmike)
+
         * added fix for battery/ac detection with very recent versions of udev
 
 2011-11-17  Mike Blumenkrantz (discomfitor/zmike)
+
         * added eeze_disk_can_{mount,unmount,eject} to determine at runtime whether eeze
           is capable of performing disk operations
 
@@ -63,6 +74,7 @@
         1.1.0 release
 
 2011-12-02  Mike Blumenkrantz (discomfitor/zmike)
+
         * added network device api (eeze_net_*) and Eeze_Net.h header
 
 2012-01-09  Mikael Sans
