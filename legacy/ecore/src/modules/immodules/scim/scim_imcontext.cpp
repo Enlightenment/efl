@@ -1120,6 +1120,8 @@ isf_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char*
 
         if (attrs)
           {
+              *attrs = NULL;
+#if 0
              if (mbs.length())
                {
                   int start_index, end_index;
@@ -1216,6 +1218,7 @@ isf_imf_context_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx, char*
 
                   delete [] attrs_flag;
                }
+#endif
           }
      }
    else

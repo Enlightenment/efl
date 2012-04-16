@@ -45,7 +45,7 @@ Additions:
      - ecore_x_illume_clipboard_state_get()
      - ecore_x_illume_clipboard_geometry_set()
      - ecore_x_illume_clipboard_geometry_get()
-     - Add indiactor rotation and transparency controls
+     - Add indicator rotation and transparency controls
     * ecore_evas:
      - Add Shm and Egl engines for ecore_evas to draw in Wayland.
      - Add Socket and Plug to draw other process area.
@@ -68,7 +68,7 @@ Additions:
      - add HEX, TERMINAL and PASSWORD layouts
      - panel-specific data set/get
      - panel show/hide
-     - set return key type or disable return on panell
+     - set return key type or disable return on panel
     * ecore_win32:
      - ecore_win32_focus()
      - ecore_win32_focus_get()
@@ -80,7 +80,7 @@ Additions:
      - ecore_wince_window_focus()
      - ecore_wince_window_focus_get()
     * ecore_wayland:
-     - Add wayallnd support to ecore
+     - Add wayland support to ecore
 
 Fixes:
     * ecore:
@@ -196,10 +196,10 @@ Fixes:
     * space key handling in ecore_wince/ecore_win32 support
     * wince background erasing
     * 300 second timeout to handle slow or large downloads in ecore_con
-    * ecore_file intoify fd's to not be inherited by forked children
+    * ecore_file inotify fd's to not be inherited by forked children
     * ecore_file compilation if ecore_con and curl disabled
     * crash in ecore_con_ssl when attempting connections on dead socket
-    * ecore-evas intereptor not handling override-redirect
+    * ecore-evas interceptor not handling override-redirect
     * ecore_con_url_ftp_upload to complete uploads always
     * window removal from ignore_list in ecore_x
     * bug in ecore_evas when setting modifiers for sub buffer canvases
@@ -214,18 +214,18 @@ Fixes:
     * security issue in openssl certificate verification
     * gnutls server client certificate verification
     * epoll delete of fd handling in forked child
-    * grouping of timers that go off very close to eachother go off together
+    * grouping of timers that go off very close to each other go off together
     * generic event buffer handling in ecore_x fixed
     * use current size not requested size when getting geom in ecore-evas
     * ecore_cocoa now handles windows correctly
     * ecore_file_download error handling when ecore_con_url_get fails
-    * focus and mouse-in ininital siate on some ecore-evas back-ends
+    * focus and mouse-in initial state on some ecore-evas back-ends
 
 Improvements:
 
     * reduced memory needed for list of fd's in ecore by using inlist
     * ecore_evas now is able to send render-done even if not syncing to comp
-    * more safety checks in ecore_con ares support
+    * more safety checks in ecore_con are support
     * ecore timer monotonic clock now supported on OSX
     * make ecore_con work on Windows
     * improve resize/move on Windows
