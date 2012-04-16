@@ -46,6 +46,54 @@ typedef unsigned int Eobj_Op;
 #define EOBJ_NOOP ((Eobj_Op) 0)
 
 /**
+ * @typedef eobj_op_func_type
+ * The type of the Op functions. This is the type of the functions used by
+ * Eobj.
+ */
+typedef void (*eobj_op_func_type)(Eobj *, void *class_data, va_list *list);
+
+/**
+ * @addtogroup Eobj_Events Eobj's Event Handling
+ * @{
+ */
+
+/**
+ * @struct _Eobj_Event_Description
+ * This struct holds the description of a specific event.
+ */
+struct _Eobj_Event_Description
+{
+   const char *name; /**< name of the event. */
+   const char *type; /**< describes the data passed in event_info */
+   const char *doc; /**< Explanation about the event. */
+};
+
+/**
+ * @typedef Eobj_Event_Description
+ * A convenience typedef for #_Eobj_Event_Description
+ */
+typedef struct _Eobj_Event_Description Eobj_Event_Description;
+
+/**
+ * @def EOBJ_EVENT_DESCRIPTION(name, type, doc)
+ * An helper macro to help populating #Eobj_Event_Description
+ * @param name The name of the event.
+ * @param type The type string of the event.
+ * @param doc Additional doc for the event.
+ * @see Eobj_Event_Description
+ */
+#define EOBJ_EVENT_DESCRIPTION(name, type, doc) { name, type, doc }
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Eobj_Class Eobj Class
+ * @{
+ */
+
+/**
  * @typedef Eobj_Class
  * The basic Object class type.
  */
@@ -67,13 +115,6 @@ enum _Eobj_Class_Type
  * A convenience typedef for #_Eobj_Class_Type.
  */
 typedef enum _Eobj_Class_Type Eobj_Class_Type;
-
-/**
- * @typedef eobj_op_func_type
- * The type of the Op functions. This is the type of the functions used by
- * Eobj.
- */
-typedef void (*eobj_op_func_type)(Eobj *, void *class_data, va_list *list);
 
 /**
  * @struct _Eobj_Op_Func_Description
@@ -104,24 +145,6 @@ typedef struct _Eobj_Op_Func_Description Eobj_Op_Func_Description;
  * array. It must appear at the end of the ARRAY.
  */
 #define EOBJ_OP_FUNC_SENTINEL { 0, NULL }
-
-/**
- * @struct _Eobj_Event_Description
- * This struct holds the description of a specific event.
- */
-struct _Eobj_Event_Description
-{
-   const char *name; /**< name of the event. */
-   const char *type; /**< describes the data passed in event_info */
-   const char *doc; /**< Explanation about the event. */
-};
-
-/**
- * @typedef Eobj_Event_Description
- * A convenience typedef for #_Eobj_Event_Description
- */
-typedef struct _Eobj_Event_Description Eobj_Event_Description;
-
 
 /**
  * @struct _Eobj_Op_Description
@@ -199,14 +222,35 @@ typedef struct _Eobj_Class_Description Eobj_Class_Description;
 #define EOBJ_OP_DESCRIPTION_SENTINEL { 0, NULL, NULL, NULL }
 
 /**
- * @def EOBJ_EVENT_DESCRIPTION(name, type, doc)
- * An helper macro to help populating #Eobj_Event_Description
- * @param name The name of the event.
- * @param type The type string of the event.
- * @param doc Additional doc for the event.
- * @see Eobj_Event_Description
+ * @brief Create a new class.
+ * @param desc the class description to create the class with.
+ * @param parent the class to inherit from.
+ * @param ... A NULL terminated list of extensions (interfaces, mixins and the classes of any composite objects).
+ * @return The new class's handle on success, or NULL otherwise.
  */
-#define EOBJ_EVENT_DESCRIPTION(name, type, doc) { name, type, doc }
+EAPI Eobj_Class *eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...);
+
+/**
+ * @brief Sets the OP functions for a class.
+ * @param klass the class to set the functions to.
+ * @param func_descs a NULL terminated array of #Eobj_Op_Func_Description
+ *
+ * Should be called from within the class constructor.
+ */
+EAPI void eobj_class_funcs_set(Eobj_Class *klass, const Eobj_Op_Func_Description *func_descs);
+
+/**
+ * @brief Gets the name of the passed class.
+ * @param klass the class to work on.
+ * @return The class's name.
+ *
+ * @see eobj_class_get()
+ */
+EAPI const char *eobj_class_name_get(const Eobj_Class *klass);
+
+/**
+ * @}
+ */
 
 /**
  * @brief Init the eobj subsystem
@@ -267,15 +311,6 @@ EAPI Eina_Bool eobj_super_do(Eobj *obj, Eobj_Op op, ...);
 EAPI const Eobj_Class *eobj_class_get(const Eobj *obj);
 
 /**
- * @brief Gets the name of the passed class.
- * @param klass the class to work on.
- * @return The class's name.
- *
- * @see eobj_class_get()
- */
-EAPI const char *eobj_class_name_get(const Eobj_Class *klass);
-
-/**
  * @brief Calls the super constructor of the object passed.
  * @param obj the object to work on.
  *
@@ -311,24 +346,6 @@ EAPI void eobj_constructor_error_set(Eobj *obj);
  * @see eobj_constructor_error_set()
  */
 EAPI Eina_Bool eobj_constructor_error_get(const Eobj *obj);
-
-/**
- * @brief Create a new class.
- * @param desc the class description to create the class with.
- * @param parent the class to inherit from.
- * @param ... A NULL terminated list of extensions (interfaces, mixins and the classes of any composite objects).
- * @return The new class's handle on success, or NULL otherwise.
- */
-EAPI Eobj_Class *eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...);
-
-/**
- * @brief Sets the OP functions for a class.
- * @param klass the class to set the functions to.
- * @param func_descs a NULL terminated array of #Eobj_Op_Func_Description
- *
- * Should be called from within the class constructor.
- */
-EAPI void eobj_class_funcs_set(Eobj_Class *klass, const Eobj_Op_Func_Description *func_descs);
 
 /**
  * @brief Create a new object.
@@ -425,6 +442,11 @@ EAPI void *eobj_generic_data_get(const Eobj *obj, const char *key);
 EAPI void *eobj_generic_data_del(Eobj *obj, const char *key);
 
 /**
+ * @addtogroup Eobj_Composite_Objects Composite Objects.
+ * @{
+ */
+
+/**
  * @brief Make an object a composite object of another.
  * @param obj the "parent" object.
  * @param comp_obj the object that will be used to composite obj.
@@ -454,7 +476,15 @@ EAPI void eobj_composite_object_detach(Eobj *obj, Eobj *comp_obj);
  */
 EAPI Eina_Bool eobj_composite_is(Eobj *comp_obj);
 
-/* Events */
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Eobj_Events Eobj's Event Handling
+ * @{
+ */
+
 /**
  * @def EOBJ_CALLBACK_PRIORITY_BEFORE
  * Slightly more prioritized than default.
@@ -607,6 +637,10 @@ EAPI extern const Eobj_Event_Description _EOBJ_SIG_CALLBACK_DEL;
  * The "Callback listener deleted" event.
  */
 #define EOBJ_SIG_CALLBACK_DEL (&(_EOBJ_SIG_CALLBACK_DEL))
+
+/**
+ * @}
+ */
 
 /**
  * @addtogroup Eobj_Class_Base Eobj's Base class.
