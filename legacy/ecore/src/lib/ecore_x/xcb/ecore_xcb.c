@@ -707,8 +707,9 @@ ecore_x_pointer_control_set(int accel_num, int accel_denom, int threshold)
    CHECK_XCB_CONN;
 
    vcookie =
-     xcb_change_pointer_control(_ecore_xcb_conn,
-                                accel_num, accel_denom, threshold, 1, 1);
+     xcb_change_pointer_control_checked(_ecore_xcb_conn,
+                                        accel_num, accel_denom, threshold, 
+                                        1, 1);
    err = xcb_request_check(_ecore_xcb_conn, vcookie);
    if (err)
      {
@@ -758,6 +759,7 @@ ecore_x_pointer_mapping_set(unsigned char *map, int nmap)
    cookie = xcb_set_pointer_mapping_unchecked(_ecore_xcb_conn, nmap, map);
    reply = xcb_set_pointer_mapping_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
+
    ret =
      (reply->status == XCB_MAPPING_STATUS_SUCCESS) ? EINA_TRUE : EINA_FALSE;
 
