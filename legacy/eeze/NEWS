@@ -1,11 +1,12 @@
-Eeze 1.1.0
+Eeze 1.2.0
 
 Changes since Eeze 1.1.0:
 -------------------------
 
-Additions :
+Additions:
 
     * Detect bluetooth devices.
+    * Network device API (eeze_net_*).
 
 Changes since Eeze 1.0.0:
 -------------------------
