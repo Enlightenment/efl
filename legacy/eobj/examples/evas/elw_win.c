@@ -49,7 +49,7 @@ elw_win_class_get(void)
    if (_my_class) return _my_class;
 
    static const Eobj_Class_Description class_desc = {
-        "Elw Box",
+        "Elw Win",
         EOBJ_CLASS_TYPE_REGULAR,
         EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
