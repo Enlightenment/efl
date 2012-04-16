@@ -400,3 +400,9 @@
 2012-03-30  Jihoon Kim
 
 	* Fix number doesn't insert even though NUM LOCK is locked.
+
+2012-04-16  Carsten Haitzler (The Rasterman)
+
+        * Add EDJE_VERSION_12 define so edc files can #ifdef compile
+        right.
+

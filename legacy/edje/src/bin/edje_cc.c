@@ -75,6 +75,9 @@ main(int argc, char **argv)
    tmp_dir = getenv("TMPDIR");
 
    img_dirs = eina_list_append(img_dirs, ".");
+   
+   /* add defines to epp so edc files can detect edje_cc version */
+   defines = eina_list_append(defines, mem_strdup("-DEDJE_VERSION_12=12"));
 
    progname = argv[0];
    for (i = 1; i < argc; i++)
