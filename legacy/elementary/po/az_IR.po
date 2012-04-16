@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <tom.hacohen@partner.samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:2006
+#: src/lib/elm_config.c:2010
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-03-24 11:51+0900\n"
+"POT-Creation-Date: 2012-04-16 15:55+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1009 src/lib/elm_entry.c:1357
+#: src/lib/elc_fileselector.c:1009 src/lib/elm_entry.c:1371
 msgid "Cancel"
 msgstr ""
 
@@ -33,58 +33,58 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-#: src/lib/elm_button.c:287
+#: src/lib/elm_button.c:284
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:408 src/lib/elm_check.c:394 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:887
+#: src/lib/elm_button.c:405 src/lib/elm_check.c:390 src/lib/elm_radio.c:295
+#: src/lib/elm_toolbar.c:891
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elm_button.c:462
+#: src/lib/elm_button.c:459
 msgid "Button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:158
+#: src/lib/elm_calendar.c:159
 msgid "%B %Y"
 msgstr ""
 
-#: src/lib/elm_check.c:311 src/lib/elm_check.c:314 src/lib/elm_check.c:405
+#: src/lib/elm_check.c:307 src/lib/elm_check.c:310 src/lib/elm_check.c:401
 #: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:324 src/lib/elm_check.c:327 src/lib/elm_check.c:414
+#: src/lib/elm_check.c:320 src/lib/elm_check.c:323 src/lib/elm_check.c:410
 #: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:401 src/lib/elm_check.c:411
+#: src/lib/elm_check.c:397 src/lib/elm_check.c:407
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:467
+#: src/lib/elm_check.c:463
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1482
+#: src/lib/elm_config.c:1486
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:1351
+#: src/lib/elm_entry.c:1365
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elm_entry.c:1354
+#: src/lib/elm_entry.c:1368
 msgid "Cut"
 msgstr ""
 
-#: src/lib/elm_entry.c:1368
+#: src/lib/elm_entry.c:1382
 msgid "Select"
 msgstr ""
 
-#: src/lib/elm_entry.c:1374
+#: src/lib/elm_entry.c:1388
 msgid "Paste"
 msgstr ""
 
@@ -92,22 +92,22 @@ msgstr ""
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:803
+#: src/lib/elm_toolbar.c:807
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:885
+#: src/lib/elm_toolbar.c:889
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:889
+#: src/lib/elm_toolbar.c:893
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:891
+#: src/lib/elm_toolbar.c:895
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:955
+#: src/lib/elm_toolbar.c:959
 msgid "Tool Item"
 msgstr ""

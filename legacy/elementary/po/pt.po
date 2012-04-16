@@ -1,12 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:2006
+#: src/lib/elm_config.c:2010
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-03-24 11:51+0900\n"
+"POT-Creation-Date: 2012-04-16 15:55+0900\n"
 "PO-Revision-Date: 2011-11-17 12:25-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -25,7 +25,7 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1009 src/lib/elm_entry.c:1357
+#: src/lib/elc_fileselector.c:1009 src/lib/elm_entry.c:1371
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -33,58 +33,58 @@ msgstr "Cancelar"
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elm_button.c:287
+#: src/lib/elm_button.c:284
 msgid "Clicked"
 msgstr "Clicado"
 
-#: src/lib/elm_button.c:408 src/lib/elm_check.c:394 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:887
+#: src/lib/elm_button.c:405 src/lib/elm_check.c:390 src/lib/elm_radio.c:295
+#: src/lib/elm_toolbar.c:891
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
-#: src/lib/elm_button.c:462
+#: src/lib/elm_button.c:459
 msgid "Button"
 msgstr "Botão"
 
-#: src/lib/elm_calendar.c:158
+#: src/lib/elm_calendar.c:159
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:311 src/lib/elm_check.c:314 src/lib/elm_check.c:405
+#: src/lib/elm_check.c:307 src/lib/elm_check.c:310 src/lib/elm_check.c:401
 #: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr "Estado: ligado"
 
-#: src/lib/elm_check.c:324 src/lib/elm_check.c:327 src/lib/elm_check.c:414
+#: src/lib/elm_check.c:320 src/lib/elm_check.c:323 src/lib/elm_check.c:410
 #: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr "Estado: desligado"
 
-#: src/lib/elm_check.c:401 src/lib/elm_check.c:411
+#: src/lib/elm_check.c:397 src/lib/elm_check.c:407
 msgid "State"
 msgstr "Estado"
 
-#: src/lib/elm_check.c:467
+#: src/lib/elm_check.c:463
 msgid "Check"
 msgstr "Verificar"
 
-#: src/lib/elm_config.c:1482
+#: src/lib/elm_config.c:1486
 msgid "default:LTR"
 msgstr "omissão: LTR"
 
-#: src/lib/elm_entry.c:1351
+#: src/lib/elm_entry.c:1365
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1354
+#: src/lib/elm_entry.c:1368
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1368
+#: src/lib/elm_entry.c:1382
 msgid "Select"
 msgstr "Selecionar"
 
-#: src/lib/elm_entry.c:1374
+#: src/lib/elm_entry.c:1388
 msgid "Paste"
 msgstr "Colar"
 
@@ -92,23 +92,23 @@ msgstr "Colar"
 msgid "Radio"
 msgstr "Opção"
 
-#: src/lib/elm_toolbar.c:803
+#: src/lib/elm_toolbar.c:807
 msgid "Selected"
 msgstr "Selecionado"
 
-#: src/lib/elm_toolbar.c:885
+#: src/lib/elm_toolbar.c:889
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:889
+#: src/lib/elm_toolbar.c:893
 msgid "State: Selected"
 msgstr "Estado: selecionado"
 
-#: src/lib/elm_toolbar.c:891
+#: src/lib/elm_toolbar.c:895
 msgid "Has menu"
 msgstr "Tem menu"
 
-#: src/lib/elm_toolbar.c:955
+#: src/lib/elm_toolbar.c:959
 msgid "Tool Item"
 msgstr "Ferramenta"
 
