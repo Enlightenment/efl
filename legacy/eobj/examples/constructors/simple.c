@@ -61,11 +61,11 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC_DESCRIPTION(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EOBJ_OP_FUNC_DESCRIPTION(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
-        EOBJ_OP_FUNC_DESCRIPTION(SIMPLE_ID(SIMPLE_SUB_ID_B_SET), _b_set),
-        EOBJ_OP_FUNC_DESCRIPTION(SIMPLE_ID(SIMPLE_SUB_ID_B_GET), _b_get),
-        EOBJ_OP_FUNC_DESCRIPTION_SENTINEL
+        EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
+        EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
+        EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_SET), _b_set),
+        EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_GET), _b_get),
+        EOBJ_OP_FUNC_SENTINEL
    };
 
    eobj_class_funcs_set(klass, func_desc);

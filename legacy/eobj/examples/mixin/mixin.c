@@ -33,8 +33,8 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC_DESCRIPTION(MIXIN_ID(MIXIN_SUB_ID_ADD_AND_SET), _add_and_print_set),
-        EOBJ_OP_FUNC_DESCRIPTION_SENTINEL
+        EOBJ_OP_FUNC(MIXIN_ID(MIXIN_SUB_ID_ADD_AND_SET), _add_and_print_set),
+        EOBJ_OP_FUNC_SENTINEL
    };
 
    eobj_class_funcs_set(klass, func_desc);

@@ -44,8 +44,8 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC_DESCRIPTION(ELW_BOX_ID(ELW_BOX_SUB_ID_PACK_END), _pack_end),
-        EOBJ_OP_FUNC_DESCRIPTION_SENTINEL
+        EOBJ_OP_FUNC(ELW_BOX_ID(ELW_BOX_SUB_ID_PACK_END), _pack_end),
+        EOBJ_OP_FUNC_SENTINEL
    };
 
    eobj_class_funcs_set(klass, func_desc);

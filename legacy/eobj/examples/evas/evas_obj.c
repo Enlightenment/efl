@@ -106,13 +106,13 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC_DESCRIPTION(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
-        EOBJ_OP_FUNC_DESCRIPTION(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_SET), _size_set),
-        EOBJ_OP_FUNC_DESCRIPTION(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_SET), _color_set),
-        EOBJ_OP_FUNC_DESCRIPTION(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_GET), _color_get),
-        EOBJ_OP_FUNC_DESCRIPTION(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_VISIBILITY_SET), _visibility_set),
-        EOBJ_OP_FUNC_DESCRIPTION(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CHILD_ADD), _child_add),
-        EOBJ_OP_FUNC_DESCRIPTION_SENTINEL
+        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
+        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_SET), _size_set),
+        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_SET), _color_set),
+        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_GET), _color_get),
+        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_VISIBILITY_SET), _visibility_set),
+        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CHILD_ADD), _child_add),
+        EOBJ_OP_FUNC_SENTINEL
    };
 
    eobj_class_funcs_set(klass, func_desc);

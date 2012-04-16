@@ -78,9 +78,9 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC_DESCRIPTION(ELW_BUTTON_ID(ELW_BUTTON_SUB_ID_TEXT_SET), _text_set),
-        EOBJ_OP_FUNC_DESCRIPTION(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
-        EOBJ_OP_FUNC_DESCRIPTION_SENTINEL
+        EOBJ_OP_FUNC(ELW_BUTTON_ID(ELW_BUTTON_SUB_ID_TEXT_SET), _text_set),
+        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
+        EOBJ_OP_FUNC_SENTINEL
    };
 
    eobj_class_funcs_set(klass, func_desc);

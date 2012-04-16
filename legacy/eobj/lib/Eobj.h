@@ -39,8 +39,8 @@ typedef struct
    eobj_op_func_type func;
 } Eobj_Op_Func_Description;
 
-#define EOBJ_OP_FUNC_DESCRIPTION(op, func) { op, func }
-#define EOBJ_OP_FUNC_DESCRIPTION_SENTINEL { 0, NULL }
+#define EOBJ_OP_FUNC(op, func) { op, func }
+#define EOBJ_OP_FUNC_SENTINEL { 0, NULL }
 
 typedef struct
 {

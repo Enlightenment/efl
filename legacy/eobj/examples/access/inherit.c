@@ -22,8 +22,8 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC_DESCRIPTION(INHERIT_ID(INHERIT_SUB_ID_PROT_PRINT), _prot_print),
-        EOBJ_OP_FUNC_DESCRIPTION_SENTINEL
+        EOBJ_OP_FUNC(INHERIT_ID(INHERIT_SUB_ID_PROT_PRINT), _prot_print),
+        EOBJ_OP_FUNC_SENTINEL
    };
 
    eobj_class_funcs_set(klass, func_desc);
