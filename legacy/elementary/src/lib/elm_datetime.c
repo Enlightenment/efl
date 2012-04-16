@@ -74,19 +74,21 @@ struct _Format_Map
    char *fmt_char;
    int def_min;
    int def_max;
+   char *ignore_sep;
 };
 
 // default limits for individual fields
 static Format_Map mapping[DATETIME_TYPE_COUNT] = {
-   [ELM_DATETIME_YEAR]   =  { "Yy",  -1,  -1  },
-   [ELM_DATETIME_MONTH]  =  { "mbBh", 0,  11  },
-   [ELM_DATETIME_DATE]   =  { "de",   1,  31  },
-   [ELM_DATETIME_HOUR]   =  { "IHkl", 0,  23  },
-   [ELM_DATETIME_MINUTE] =  { "M",    0,  59  },
-   [ELM_DATETIME_AMPM]   =  { "pP",   0,  1   }
+   [ELM_DATETIME_YEAR]   =  { "Yy",  -1,  -1, "" },
+   [ELM_DATETIME_MONTH]  =  { "mbBh", 0,  11, "" },
+   [ELM_DATETIME_DATE]   =  { "de",   1,  31, "" },
+   [ELM_DATETIME_HOUR]   =  { "IHkl", 0,  23, "" },
+   [ELM_DATETIME_MINUTE] =  { "M",    0,  59, ":" },
+   [ELM_DATETIME_AMPM]   =  { "pP",   0,   1, "" }
 };
 
 static const char *multifield_formats = "cxXrRTDF";
+static const char *ignore_separators = "()";
 
 static Datetime_Mod_Api *dt_mod = NULL;
 static const char *widtype = NULL;
@@ -640,7 +642,7 @@ _parse_format(Evas_Object *obj, char *fmt_ptr)
 {
    Widget_Data *wd;
    Datetime_Field *field = NULL;
-   unsigned int len = 0, idx, location = 0;
+   unsigned int len = 0, idx = 0, location = 0;
    char separator[MAX_SEPARATOR_LEN];
    char cur;
    Eina_Bool fmt_parsing = EINA_FALSE, sep_parsing = EINA_FALSE,
@@ -678,9 +680,11 @@ _parse_format(Evas_Object *obj, char *fmt_ptr)
              separator[len] = 0;
              if (field) eina_stringshare_replace(&field->separator, separator);
           }
+
+        // ignore the set of chars (global, field specific) as field separators.
         if (sep_parsing && (len < MAX_SEPARATOR_LEN - 1) &&
-            (field->type != ELM_DATETIME_AMPM) &&
-            (!((field->type == ELM_DATETIME_MINUTE) && (cur ==':'))))
+            (field->type != ELM_DATETIME_AMPM) && (!strchr(ignore_separators, cur)) &&
+            (!strchr(mapping[idx].ignore_sep, cur)))
            separator[len++] = cur;
         if (sep_lookup) sep_parsing = EINA_TRUE;
         sep_lookup = EINA_FALSE;
