@@ -17,3 +17,7 @@ set_target_properties(eobj PROPERTIES
 set_target_properties(eobj PROPERTIES
                          VERSION ${EOBJ_VERSION} SOVERSION ${EOBJ_VERSION_MAJOR})
 set_target_properties(eobj PROPERTIES OUTPUT_NAME "eobj")
+
+INSTALL(TARGETS eobj DESTINATION "lib")
+INSTALL(FILES  "${CMAKE_CURRENT_SOURCE_DIR}/Eobj.h"
+      DESTINATION "include")

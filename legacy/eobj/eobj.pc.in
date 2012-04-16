@@ -1,0 +1,13 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: Eobj
+Description: EFL's generic object system library.
+Version: @EOBJ_VERSION@
+Libs: -L${libdir} -leobj
+Libs.private:
+Cflags: -I${includedir}/eobj-@EOBJ_VERSION_MAJOR@
+
+~                                                                           

@@ -50,3 +50,12 @@ add_subdirectory(examples/composite_objects)
 add_subdirectory(tests EXCLUDE_FROM_ALL)
 
 add_subdirectory(doc)
+
+# PKGCONFIG file.
+CONFIGURE_FILE(
+   "${PROJECT_SOURCE_DIR}/eobj.pc.in"
+   "${PROJECT_BINARY_DIR}/eobj.pc"
+   )
+
+INSTALL(FILES "${PROJECT_BINARY_DIR}/eobj.pc"
+      DESTINATION "lib/pkgconfig")
