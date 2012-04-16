@@ -1,5 +1,30 @@
-Embryo 1.1.0
+Embryo 1.2.0
 
+Changes since Embryo 1.1.0:
+---------------------------
+
+Additions:
+
+    * exotic support
+    * asin()
+    * acos()
+    * atan()
+    * atan2()
+    * log1p()
+    * cbrt()
+    * exp(),
+    * exp2()
+    * hypot()
+    * EMBRYO_12
+    
+Fixes:
+
+    * windows compilation support
+
+Improvements:
+
+    * exotic support
+    
 Changes since Embryo 1.0.0:
 ---------------------------
 
@@ -11,3 +36,4 @@ Fixes:
 Improvements:
 
     * make embryo_cc use eina_prefix to determine installation location
+

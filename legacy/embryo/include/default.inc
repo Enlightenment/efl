@@ -211,3 +211,21 @@ stock bool:operator!(Float:oper)
 forward operator%(Float:oper1, Float:oper2);
 forward operator%(Float:oper1, oper2);
 forward operator%(oper1, Float:oper2);
+
+/**************************************************************************/
+/* ADDED in embryo 1.2                                                    */
+/**************************************************************************/
+/* use this to determine embryo age */
+#define EMBRYO_12 12
+/* Return the inverse sine, cosine or tangent. The output may be radians, */
+/* degrees or grades. */
+native Float:asin(Float:value, Float_Angle_Mode:mode=RADIAN);
+native Float:acos(Float:value, Float_Angle_Mode:mode=RADIAN);
+native Float:atan(Float:value, Float_Angle_Mode:mode=RADIAN);
+native Float:atan2(Float:valuey, Float:valuex, Float_Angle_Mode:mode=RADIAN);
+/* same as libc functions */
+native Float:log1p(Float:value);
+native Float:cbrt(Float:value);
+native Float:exp(Float:value);
+native Float:exp2(Float:value);
+native Float:hypot(Float:valuex, Float:valuey);

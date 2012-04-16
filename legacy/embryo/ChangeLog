@@ -27,3 +27,8 @@
 
 	* Fix windows compilation issues
 
+2012-04-16 Carsten Haitzler (The Rasterman)
+
+        * Add asin(), acos(), atan(), atan2(), log1p(), cbrt(), exp(),
+        exp2(), hypot(), EMBRYO_12 define
+
