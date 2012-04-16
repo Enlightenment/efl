@@ -1,0 +1,13 @@
+Evas Generic Loaders 1.2.0
+
+Changes since Evas Generic Loaders 1.1.0:
+-----------------------------------------
+
+Additions:
+
+   * symlinks for *.dv, *.qt and *.rv video file formats
+
+Fixes:
+
+   * distcheck for parallel builds
+
