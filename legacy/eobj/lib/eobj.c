@@ -747,6 +747,18 @@ eobj_unref(Eobj *obj)
 {
    if (--(obj->refcount) == 0)
      {
+        /* We need that for the event callbacks that may ref/unref. */
+        obj->refcount++;
+
+        if (!obj->delete)
+          {
+             eobj_event_callback_call(obj, EOBJ_EV_DEL, NULL);
+             obj->delete = EINA_TRUE;
+          }
+        eobj_event_callback_call(obj, EOBJ_EV_FREE, NULL);
+
+        obj->refcount--;
+
         const Eobj_Class *klass = eobj_class_get(obj);
         _eobj_kls_itr_init(obj, EOBJ_NOOP);
         eobj_constructor_error_unset(obj);
@@ -802,7 +814,11 @@ eobj_ref_get(const Eobj *obj)
 EAPI void
 eobj_del(Eobj *obj)
 {
-   obj->delete = EINA_TRUE;
+   if (!obj->delete)
+     {
+        eobj_event_callback_call(obj, EOBJ_EV_DEL, NULL);
+        obj->delete = EINA_TRUE;
+     }
    eobj_unref(obj);
 }
 
@@ -1254,9 +1270,13 @@ static Eobj_Class *_my_class = NULL;
 
 /* FIXME: Set proper type descriptions. */
 EAPI const Eobj_Event_Description _EOBJ_EV_CALLBACK_ADD =
-   EOBJ_EVENT_DESCRIPTION("callback,add", "?", "Called when a callback was added.");
+   EOBJ_EVENT_DESCRIPTION("callback,add", "?", "A callback was added.");
 EAPI const Eobj_Event_Description _EOBJ_EV_CALLBACK_DEL =
-   EOBJ_EVENT_DESCRIPTION("callback,del", "?", "Called when a callback was deleted.");
+   EOBJ_EVENT_DESCRIPTION("callback,del", "?", "A callback was deleted.");
+EAPI const Eobj_Event_Description _EOBJ_EV_FREE =
+   EOBJ_EVENT_DESCRIPTION("free", "", "Obj is being freed.");
+EAPI const Eobj_Event_Description _EOBJ_EV_DEL =
+   EOBJ_EVENT_DESCRIPTION("del", "", "Obj is being deleted.");
 
 static void
 _constructor(Eobj *obj, void *class_data __UNUSED__)
@@ -1278,6 +1298,8 @@ eobj_base_class_get(void)
    static const Eobj_Event_Description *event_desc[] = {
         EOBJ_EV_CALLBACK_ADD,
         EOBJ_EV_CALLBACK_DEL,
+        EOBJ_EV_FREE,
+        EOBJ_EV_DEL,
         NULL
    };
 

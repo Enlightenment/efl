@@ -442,6 +442,30 @@ EAPI void *eobj_generic_data_get(const Eobj *obj, const char *key);
 EAPI void *eobj_generic_data_del(Eobj *obj, const char *key);
 
 /**
+ * @var _EOBJ_EV_FREE
+ * see #EOBJ_EV_FREE
+ */
+EAPI extern const Eobj_Event_Description _EOBJ_EV_FREE;
+
+/**
+ * @def EOBJ_EV_FREE
+ * Object is being freed.
+ */
+#define EOBJ_EV_FREE (&(_EOBJ_EV_FREE))
+
+/**
+ * @var _EOBJ_EV_DEL
+ * see #EOBJ_EV_DEL
+ */
+EAPI extern const Eobj_Event_Description _EOBJ_EV_DEL;
+
+/**
+ * @def EOBJ_EV_DEL
+ * Object is being deleted.
+ */
+#define EOBJ_EV_DEL (&(_EOBJ_EV_DEL))
+
+/**
  * @addtogroup Eobj_Composite_Objects Composite Objects.
  * @{
  */
