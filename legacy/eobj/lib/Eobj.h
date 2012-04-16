@@ -613,30 +613,30 @@ EAPI void *eobj_event_callback_del_full(Eobj *obj, const Eobj_Event_Description 
 EAPI Eina_Bool eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc, const void *event_info);
 
 /**
- * @var _EOBJ_SIG_CALLBACK_ADD
- * see EOBJ_SIG_CALLBACK_ADD
+ * @var _EOBJ_EV_CALLBACK_ADD
+ * see EOBJ_EV_CALLBACK_ADD
  */
-EAPI extern const Eobj_Event_Description _EOBJ_SIG_CALLBACK_ADD;
+EAPI extern const Eobj_Event_Description _EOBJ_EV_CALLBACK_ADD;
 
 /**
- * @def EOBJ_SIG_CALLBACK_ADD
+ * @def EOBJ_EV_CALLBACK_ADD
  * The event description (of type #Eobj_Event_Description) for
  * The "Callback listener added" event.
  */
-#define EOBJ_SIG_CALLBACK_ADD (&(_EOBJ_SIG_CALLBACK_ADD))
+#define EOBJ_EV_CALLBACK_ADD (&(_EOBJ_EV_CALLBACK_ADD))
 
 /**
- * @var _EOBJ_SIG_CALLBACK_DEL
- * see EOBJ_SIG_CALLBACK_DEL
+ * @var _EOBJ_EV_CALLBACK_DEL
+ * see EOBJ_EV_CALLBACK_DEL
  */
-EAPI extern const Eobj_Event_Description _EOBJ_SIG_CALLBACK_DEL;
+EAPI extern const Eobj_Event_Description _EOBJ_EV_CALLBACK_DEL;
 
 /**
- * @def EOBJ_SIG_CALLBACK_DEL
+ * @def EOBJ_EV_CALLBACK_DEL
  * The event description (of type #Eobj_Event_Description) for
  * The "Callback listener deleted" event.
  */
-#define EOBJ_SIG_CALLBACK_DEL (&(_EOBJ_SIG_CALLBACK_DEL))
+#define EOBJ_EV_CALLBACK_DEL (&(_EOBJ_EV_CALLBACK_DEL))
 
 /**
  * @}

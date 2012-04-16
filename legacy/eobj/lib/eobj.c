@@ -1137,7 +1137,7 @@ eobj_event_callback_priority_add(Eobj *obj,
    obj->callbacks = eina_inlist_sorted_insert(obj->callbacks,
          EINA_INLIST_GET(cb), _callback_priority_cmp);
 
-   eobj_event_callback_call(obj, EOBJ_SIG_CALLBACK_ADD, desc);
+   eobj_event_callback_call(obj, EOBJ_EV_CALLBACK_ADD, desc);
 
    return EINA_TRUE;
 }
@@ -1164,7 +1164,7 @@ eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Even
    return NULL;
 
 found:
-   eobj_event_callback_call(obj, EOBJ_SIG_CALLBACK_DEL, desc);
+   eobj_event_callback_call(obj, EOBJ_EV_CALLBACK_DEL, desc);
    return ret;
 }
 
@@ -1191,7 +1191,7 @@ eobj_event_callback_del_full(Eobj *obj, const Eobj_Event_Description *desc, Eobj
    return NULL;
 
 found:
-   eobj_event_callback_call(obj, EOBJ_SIG_CALLBACK_DEL, desc);
+   eobj_event_callback_call(obj, EOBJ_EV_CALLBACK_DEL, desc);
    return ret;
 }
 
@@ -1253,9 +1253,9 @@ eobj_event_callback_forwarder_del(Eobj *obj, const Eobj_Event_Description *desc,
 static Eobj_Class *_my_class = NULL;
 
 /* FIXME: Set proper type descriptions. */
-EAPI const Eobj_Event_Description _EOBJ_SIG_CALLBACK_ADD =
+EAPI const Eobj_Event_Description _EOBJ_EV_CALLBACK_ADD =
    EOBJ_EVENT_DESCRIPTION("callback,add", "?", "Called when a callback was added.");
-EAPI const Eobj_Event_Description _EOBJ_SIG_CALLBACK_DEL =
+EAPI const Eobj_Event_Description _EOBJ_EV_CALLBACK_DEL =
    EOBJ_EVENT_DESCRIPTION("callback,del", "?", "Called when a callback was deleted.");
 
 static void
@@ -1276,8 +1276,8 @@ eobj_base_class_get(void)
    if (_my_class) return _my_class;
 
    static const Eobj_Event_Description *event_desc[] = {
-        EOBJ_SIG_CALLBACK_ADD,
-        EOBJ_SIG_CALLBACK_DEL,
+        EOBJ_EV_CALLBACK_ADD,
+        EOBJ_EV_CALLBACK_DEL,
         NULL
    };
 
