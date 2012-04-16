@@ -20,9 +20,36 @@ Additions:
     * ecore_x:
      - ecore_x_randr_output_backlight_available()
      - ecore_x_randr_window_crtcs_get()
+     - Add ability to get resource id of last x error
+     - get keycode from keyname
+     - ecore_x_randr_mode_add()
+     - ecore_x_randr_mode_del()
+     - ecore_x_randr_output_mode_add()
+     - ecore_x_randr_output_mode_del()
+     - Add indicator controls
+     - ecore_x_netwm_icons_set()
+     - ecore_evas_window_group_set()
+     - ecore_evas_window_group_get()
+     - ecore_evas_aspect_set()
+     - ecore_evas_aspect_get()
+     - ecore_evas_urgent_set()
+     - ecore_evas_urgent_get()
+     - ecore_evas_modal_set()
+     - ecore_evas_modal_get()
+     - ecore_evas_demand_attention_set()
+     - ecore_evas_demand_attention_get()
+     - ecore_evas_focus_skip_set()
+     - ecore_evas_focus_skip_get()
+     - ecore_evas_callback_state_change_set()
+     - ecore_x_illume_clipboard_state_set()
+     - ecore_x_illume_clipboard_state_get()
+     - ecore_x_illume_clipboard_geometry_set()
+     - ecore_x_illume_clipboard_geometry_get()
+     - Add indiactor rotation and transparency controls
     * ecore_evas:
      - Add Shm and Egl engines for ecore_evas to draw in Wayland.
      - Add Socket and Plug to draw other process area.
+     - Ability to set pointer for wayland support
     * ecore_wayland
      - Add Ecore_Wayland (backend to support Wayland).
     * ecore_imf
@@ -37,25 +64,52 @@ Additions:
      - ecore_imf_context_input_panel_return_key_disabled_get()
      - ecore_imf_context_input_panel_caps_lock_mode_set()
      - ecore_imf_context_input_panel_caps_lock_mode_get()
+     - add XIM attribute support
+     - add HEX, TERMINAL and PASSWORD layouts
+     - panel-specific data set/get
+     - panel show/hide
+     - set return key type or disable return on panell
     * ecore_win32:
      - ecore_win32_focus()
      - ecore_win32_focus_get()
+     - ecore_win32_window_focus()
+     - ecore_win32_window_focus_get()
     * ecore_wince:
      - ecore_wince_focus()
      - ecore_wince_focus_get()
+     - ecore_wince_window_focus()
+     - ecore_wince_window_focus_get()
+    * ecore_wayland:
+     - Add wayallnd support to ecore
 
 Fixes:
+    * ecore:
+     - animator adding another animator that adds another animator ... loop.
+     - possible leak related to g_static_mutex's on some architectures.
+     - stop leaking signal events
     * ecore_thread:
      - ecore_thread_feedback_run now handle try_no_queue the way it logically should.
      - prevent double free that could cause crash when an Ecore_Thread stop.
     * ecore_x:
      - ecore_x_randr_modes_info_get does not cut off the trailing '\0' anymore.
+     - possible 0 byte allocation.
     * ecore_win32/wince:
-     - do not autorepeat Ctrl, Shift, Alt and Win keys
+     - do not autorepeat Ctrl, Shift, Alt and Win keys.
+    * ecore_con:
+     - fix case where SSL certificates not being used.
+     - post data corruption due to it not being copied to the con struct.
+    * ecore_evas:
+     - mouse down count handling when grabs happen.
+     - ecore_evas_fb support works again now with keyboard input
+    * ecore_file:
+     - do not limit downloads to 30sec with ecore_file_download().
+    * ecore_fb:
+     - bring ecore_fb back to a working state
 
 Improvements:
     * ecore:
      - most allocations moved to mempools
+     - ecore_thread rewrite to use eina_lock and other ecore infra
     * ecore_con:
      - certificates can now be added for STARTTTLS
     * ecore_win32:
@@ -65,6 +119,7 @@ Improvements:
      - use Ecore thread safe async call
     * ecore_evas:
      - use Evas buffer backend for SDL software engine
+     - clean up ecore-evas-buffer code somewhat
 
 Deprecations:
     * ecore_x:
