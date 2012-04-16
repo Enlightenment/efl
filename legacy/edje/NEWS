@@ -10,10 +10,31 @@ Additions:
     * edje.version() Lua function.
     * minmul edc property.
     * add min: SOURCE and max: SOURCE to IMAGE and GROUP parts.
-    * add edje_object_markup_filter_callback_add/del/delfull().
     * add broadcast_signal: bool.
-    * add edje_object_part_text_imf_context_get()
-    * add edje_object_update_hints_set() and edje_object_update_hints_get()
+    * add edje_object_part_text_imf_context_get().
+    * add edje_object_update_hints_set() and edje_object_update_hints_get().
+    * nee keybindings in entry flr ctrl+arrows, ctrl+del and ctrl+backspace.
+    * cursor,changed,manual signal from entry.
+    * undo/redo in entry + IMF.
+    * HEX, TERMINAL, PASSOWORD vkbd types added.
+    * recalc smart callback for object size changes back to C.
+    * EDJE_ASPECT_PREFER_SOURCE.
+    * Lua: edje.version().
+    * minmul property.
+    * edje_object_part_text_style_user_set/get().
+    * min/max: SOURCE.
+    * edje_object_text_markup_filter_callback_add/del/del_full().
+    * edje_object_part_text_input_panel_show/hide().
+    * edje_object_part_text_imf_context_reset().
+    * edje_object_part_text_prediction_allow_set/get().
+    * add a way to disable signal broadcasting.
+    * edje_object_part_text_input_panel_language_set/get().
+    * edje_object_part_text_input_panel_imdata_set/get().
+    * edje_object_part_text_input_panel_return_key_type_set/get().
+    * edje_object_part_text_input_panel_return_key_disabled_set/get().
+    * edje_object_part_text_user_insert()
+    * double click in entry selects word, triple selects line.
+    * EDJE_VERSION_12 define in edc for #ifdefs handling edje 1.2 (or older)
 
 Improvements:
     * speedup load time of Edje file.
@@ -22,11 +43,31 @@ Improvements:
     * unswallow object about to be swallowed if necessary.
     * Lua scripts now more resilient against API changes.
     * edje_cc only store the image activelly used in an edje file.
+    * reduction in part walking.
+    * check group existence at edje_cc time.
+    * edje_object_part_text_cursor_content_get() prototype fixed.
+    * calling non-existant lua functions doesn't crash now.
+    * make it possible to update size hints automatically
 
 Fixes:
     * Correctly count and propagate preload signal with GROUP.
     * Fix rotation with fixed point.
     * Correctly propagate scale factor to GROUP.
+    * Potential crash from buffer overflow copying map data.
+    * Limits detection by edje_cc.
+    * Errant free() call in loading of edje files.
+    * unswallow objects that are going to be swallowed elsewhere.
+    * ability to change edje source correctly inside edje callback.
+    * overriding group in edje_cc.
+    * filter now only valid once program affecting parts is done.
+    * edje_object_part_text_input_panel_enabled_set/get if IMF doesn't exist.
+    * EDJE_CALC_CACHE issues and when using relative to_x/y on separate parts.
+    * filter preventing any action being triggered.
+    * singal propagation when matching target GROUP exists.
+    * correctly count and propagate preload signal with GROUP
+    * rotation with fixed point
+    * propagate scale factor to GROUPS
+    * fix no number inserts even if numlock is locked
 
 Changes since Edje 1.0.0:
 -------------------------
