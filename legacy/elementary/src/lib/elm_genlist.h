@@ -996,7 +996,7 @@ EAPI void                          elm_genlist_realized_items_update(Evas_Object
 EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
 
 /**
- * Add a new genlist item class in a given genlist widget.
+ * Create a new genlist item class in a given genlist widget.
  *
  * @return New allocated a genlist item class.
  *
