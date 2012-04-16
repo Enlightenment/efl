@@ -84,7 +84,7 @@ EAPI int eina_init(void);
 /**
  * @brief Shut down the Eina library.
  *
- * @return 0 when all the modules is completely shut down, 1 or
+ * @return 0 when all the modules are completely shut down, 1 or
  * greater otherwise.
  *
  * This function shuts down the Eina library. It returns 0 when it has
