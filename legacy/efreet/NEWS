@@ -1,5 +1,14 @@
-Efreet 1.1.0
+Efreet 1.2.0
 
+Changes since Efreet 1.1.0:
+---------------------------
+
+Improvements:
+
+    * use eina_file_direct_ls() instead of opendir().
+    * compilation warnings fixed.
+    * documentation improvements/fixes
+    
 Changes since Efreet 1.0.0:
 ---------------------------
 
