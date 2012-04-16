@@ -1197,6 +1197,7 @@ EAPI Eina_Bool
 eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc,
       const void *event_info)
 {
+   Eina_Bool ret = EINA_TRUE;
    Eobj_Callback_Description *cb;
 
    eobj_ref(obj);
@@ -1210,6 +1211,7 @@ eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc,
              if (!cb->func((void *) cb->func_data, obj, desc,
                       (void *) event_info))
                {
+                  ret = EINA_FALSE;
                   break;
                }
           }
@@ -1220,7 +1222,7 @@ eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc,
    _eobj_callbacks_clear(obj);
    eobj_unref(obj);
 
-   return EINA_TRUE;
+   return ret;
 }
 
 static Eina_Bool
