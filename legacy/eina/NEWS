@@ -20,6 +20,7 @@ Additions:
     * eina_*buf_manage_new_length.
     * EINA_C_ARRAY_LENGTH macro.
     * Eina_Stringshare typedef.
+    * add eina_file_map_faulted() for windows port (was missing).
 
 Fixes:
 
