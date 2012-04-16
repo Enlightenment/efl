@@ -760,8 +760,8 @@ ecore_x_pointer_mapping_set(unsigned char *map, int nmap)
    reply = xcb_set_pointer_mapping_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
 
-   ret =
-     (reply->status == XCB_MAPPING_STATUS_SUCCESS) ? EINA_TRUE : EINA_FALSE;
+   if (reply->status == XCB_MAPPING_STATUS_SUCCESS)
+     ret = EINA_TRUE;
 
    free(reply);
    return ret;
