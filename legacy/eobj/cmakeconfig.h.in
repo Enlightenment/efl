@@ -1,9 +1,9 @@
-#define PACKAGE "@CMAKE_PROJECT_NAME@"
+#define PACKAGE "@PACKAGE@"
 #define PACKAGE_NAME PACKAGE
-#define VERSION "@EOBJ_VERSION@"
-#define VMAJ @EOBJ_VERSION_MAJOR@
-#define VMIN @EOBJ_VERSION_MINOR@
-#define VMIC @EOBJ_VERSION_MICRO@
+#define VERSION "@PACKAGE_VERSION@"
+#define VMAJ @VMAJ@
+#define VMIN @VMIN@
+#define VMIC @VMIC@
 
 #cmakedefine HAVE___ATTRIBUTE__
 #ifdef HAVE___ATTRIBUTE__

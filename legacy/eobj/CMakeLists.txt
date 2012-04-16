@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(eobj)
-set(EOBJ_VERSION_MAJOR 0)
-set(EOBJ_VERSION_MINOR 1)
-set(EOBJ_VERSION_MICRO 0)
-set(EOBJ_VERSION ${EOBJ_VERSION_MAJOR}.${EOBJ_VERSION_MINOR}.${EOBJ_VERSION_MICRO})
+set(VMAJ 0)
+set(VMIN 1)
+set(VMIC 0)
+set(PACKAGE_VERSION ${VMAJ}.${VMIN}.${VMIC})
 
 set(PACKAGE ${CMAKE_PROJECT_NAME})
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -55,6 +55,7 @@ add_subdirectory(doc)
 CONFIGURE_FILE(
    "${PROJECT_SOURCE_DIR}/eobj.pc.in"
    "${PROJECT_BINARY_DIR}/eobj.pc"
+   @ONLY
    )
 
 INSTALL(FILES "${PROJECT_BINARY_DIR}/eobj.pc"
