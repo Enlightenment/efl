@@ -30,8 +30,8 @@
 #include "eina_iterator.h"
 
 /*============================================================================*
-*                                  Local                                     *
-*============================================================================*/
+ *                                  Local                                     *
+ *============================================================================*/
 
 /**
  * @cond LOCAL
@@ -43,7 +43,7 @@ static const char EINA_MAGIC_ITERATOR_STR[] = "Eina Iterator";
    do {                                                          \
         if (!EINA_MAGIC_CHECK(d, EINA_MAGIC_ITERATOR)) {              \
              EINA_MAGIC_FAIL(d, EINA_MAGIC_ITERATOR); }                  \
-     } while(0)
+   } while(0)
 
 /**
  * @endcond
@@ -51,8 +51,8 @@ static const char EINA_MAGIC_ITERATOR_STR[] = "Eina Iterator";
 
 
 /*============================================================================*
-*                                 Global                                     *
-*============================================================================*/
+ *                                 Global                                     *
+ *============================================================================*/
 
 /**
  * @internal
@@ -89,8 +89,8 @@ eina_iterator_shutdown(void)
 }
 
 /*============================================================================*
-*                                   API                                      *
-*============================================================================*/
+ *                                   API                                      *
+ *============================================================================*/
 
 EAPI void
 eina_iterator_free(Eina_Iterator *iterator)
@@ -114,7 +114,7 @@ EAPI Eina_Bool
 eina_iterator_next(Eina_Iterator *iterator, void **data)
 {
    if (!iterator)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    EINA_MAGIC_CHECK_ITERATOR(iterator);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iterator,       EINA_FALSE);
@@ -140,12 +140,13 @@ eina_iterator_foreach(Eina_Iterator *iterator,
    if (!eina_iterator_lock(iterator)) return ;
 
    container = iterator->get_container(iterator);
-   while (iterator->next(iterator, &data) == EINA_TRUE) {
+   while (iterator->next(iterator, &data) == EINA_TRUE)
+     {
         if (cb(container, data, (void *)fdata) != EINA_TRUE)
-	   goto on_exit;
+          goto on_exit;
      }
 
- on_exit:
+on_exit:
    (void) eina_iterator_unlock(iterator);
 }
 
@@ -156,7 +157,7 @@ eina_iterator_lock(Eina_Iterator *iterator)
    EINA_SAFETY_ON_NULL_RETURN_VAL(iterator, EINA_FALSE);
 
    if (iterator->lock)
-      return iterator->lock(iterator);
+     return iterator->lock(iterator);
    return EINA_TRUE;
 }
 
@@ -167,6 +168,6 @@ eina_iterator_unlock(Eina_Iterator *iterator)
    EINA_SAFETY_ON_NULL_RETURN_VAL(iterator, EINA_FALSE);
 
    if (iterator->unlock)
-      return iterator->unlock(iterator);
+     return iterator->unlock(iterator);
    return EINA_TRUE;
 }
