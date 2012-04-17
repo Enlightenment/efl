@@ -44,6 +44,7 @@ simple_class_get(void)
 
    static const Eobj_Op_Description op_desc[] = {
         EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
+        EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_PRINT, "", "Print property A"),
         EOBJ_OP_DESCRIPTION_SENTINEL
    };
 
