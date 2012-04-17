@@ -683,17 +683,15 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
               if ((klass->parent->desc->type != EOBJ_CLASS_TYPE_REGULAR) &&
                     (klass->parent->desc->type != EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT))
                 {
-                   /* FIXME: Actually handle it. */
                    ERR("Regular classes ('%s') aren't allowed to inherit from non-regular classes ('%s').", klass->desc->name, klass->parent->desc->name);
                    goto cleanup;
                 }
               break;
            case EOBJ_CLASS_TYPE_INTERFACE:
            case EOBJ_CLASS_TYPE_MIXIN:
-              if ((klass->parent->desc->type != EOBJ_CLASS_TYPE_REGULAR) &&
-                    (klass->parent->desc->type != EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT))
+              if ((klass->parent->desc->type != EOBJ_CLASS_TYPE_INTERFACE) &&
+                    (klass->parent->desc->type != EOBJ_CLASS_TYPE_MIXIN))
                 {
-                   /* FIXME: Actually handle it. */
                    ERR("Non-regular classes ('%s') aren't allowed to inherit from regular classes ('%s').", klass->desc->name, klass->parent->desc->name);
                    goto cleanup;
                 }
