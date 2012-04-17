@@ -281,6 +281,13 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    free(data);
 }
 
+static void _filter_all_cb(void *data, Evas_Object *obj __UNUSED__,
+                           void *event_info __UNUSED__)
+{
+   Evas_Object *popup = (Evas_Object *)data;
+   evas_object_del(popup);
+}
+
 void
 test_list(void        *data __UNUSED__,
           Evas_Object *obj __UNUSED__,
@@ -319,7 +326,7 @@ test_list(void        *data __UNUSED__,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_resizable_set(ic, 1, 1);
-   list_it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
+   list_it1 = elm_list_item_append(li, "Hello", ic, NULL, _filter_all_cb, bxx);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_resizable_set(ic, 0, 0);
@@ -704,11 +711,99 @@ _bt_clicked(void        *data __UNUSED__,
 }
 
 static void
-_it_clicked(void        *data __UNUSED__,
-            Evas_Object *obj __UNUSED__,
-            void        *event_info __UNUSED__)
+_first_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
+                  void *event_info __UNUSED__)
+{
+   char str[128];
+   Evas_Object *li = (Evas_Object *) data;
+   Evas_Object *lb;
+
+   Elm_Object_Item *lit = elm_list_first_item_get(li);
+   if (!lit) return;
+   sprintf(str, "%s is selected", elm_object_item_text_get(lit));
+   elm_list_item_bring_in(lit);
+   elm_list_item_selected_set(lit, EINA_TRUE);
+
+   lb = evas_object_data_get(li, "label");
+   elm_object_text_set(lb, str);
+}
+
+static void
+_prev_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
+{
+   char str[128];
+   Evas_Object *li = (Evas_Object *) data;
+   Evas_Object *lb;
+
+   Elm_Object_Item *lit = elm_list_selected_item_get(li);
+   if (!lit) return;
+   lit = elm_list_item_prev(lit);
+   if (!lit) return;
+
+   sprintf(str, "%s is selected", elm_object_item_text_get(lit));
+   elm_list_item_bring_in(lit);
+   elm_list_item_selected_set(lit, EINA_TRUE);
+
+   lb = evas_object_data_get(li, "label");
+   elm_object_text_set(lb, str);
+}
+
+static void
+_next_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
+{
+   char str[128];
+   Evas_Object *li = (Evas_Object *) data;
+   Evas_Object *lb;
+
+   Elm_Object_Item *lit = elm_list_selected_item_get(li);
+   if (!lit) return;
+   lit = elm_list_item_next(lit);
+   if (!lit) return;
+
+   sprintf(str, "%s is selected", elm_object_item_text_get(lit));
+   elm_list_item_bring_in(lit);
+   elm_list_item_selected_set(lit, EINA_TRUE);
+
+   lb = evas_object_data_get(li, "label");
+   elm_object_text_set(lb, str);
+}
+
+static void
+_last_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
+{
+   char str[128];
+   Evas_Object *li = (Evas_Object *) data;
+   Evas_Object *lb;
+
+   Elm_Object_Item *lit = elm_list_last_item_get(li);
+   if (!lit) return;
+   sprintf(str, "%s is selected", elm_object_item_text_get(lit));
+   elm_list_item_bring_in(lit);
+   elm_list_item_selected_set(lit, EINA_TRUE);
+
+   lb = evas_object_data_get(li, "label");
+   elm_object_text_set(lb, str);
+}
+
+static void
+_it_clicked(void *data, Evas_Object *obj __UNUSED__,
+                 void *event_info __UNUSED__)
 {
    printf("item was clicked\n");
+   if (!data) return;
+   Evas_Object *li = (Evas_Object *) data;
+   Evas_Object *lb;
+   char str[128];
+
+   Elm_Object_Item *lit = elm_list_selected_item_get(li);
+   if (!lit) return;
+   sprintf(str, "%s is selected", elm_object_item_text_get(lit));
+
+   lb = evas_object_data_get(li, "label");
+   elm_object_text_set(lb, str);
 }
 
 void
@@ -1020,4 +1115,74 @@ test_list5(void        *data __UNUSED__,
    evas_object_show(win);
 }
 
+void
+test_list6(void        *data __UNUSED__,
+           Evas_Object *obj __UNUSED__,
+           void        *event_info __UNUSED__)
+{
+   Evas_Object *win, *gd, *bt, *li, *lb;
+   win = elm_win_util_standard_add("list6", "List 6");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   gd = elm_grid_add(win);
+   elm_grid_size_set(gd, 100, 100);
+   elm_win_resize_object_add(win, gd);
+   evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   li = elm_list_add(win);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_list_mode_set(li, ELM_LIST_COMPRESS);
+   elm_grid_pack(gd, li,  4,  4, 92, 72);
+   evas_object_show(li);
+
+   elm_list_item_append(li, "Eina", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Eet", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Evas", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Ecore", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Embryo", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Edje", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Efreet", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "E_dbus", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Eeze", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Expedite", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Emotion", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Ethumb", NULL, NULL, _it_clicked, li);
+   elm_list_item_append(li, "Elementary", NULL, NULL, _it_clicked, li);
+   elm_list_go(li);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "First");
+   evas_object_smart_callback_add(bt, "clicked", _first_bt_clicked, li);
+   elm_grid_pack(gd, bt,  4,  80, 20, 10);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Prev");
+   evas_object_smart_callback_add(bt, "clicked", _prev_bt_clicked, li);
+   elm_grid_pack(gd, bt,  28,  80, 20, 10);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next");
+   evas_object_smart_callback_add(bt, "clicked", _next_bt_clicked, li);
+   elm_grid_pack(gd, bt,  52,  80, 20, 10);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Last");
+   evas_object_smart_callback_add(bt, "clicked", _last_bt_clicked, li);
+   elm_grid_pack(gd, bt,  76,  80, 20, 10);
+   evas_object_show(bt);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, "Nothing is selected");
+   elm_grid_pack(gd, lb,  4,  90, 92, 10);
+   evas_object_show(lb);
+
+   evas_object_data_set(li, "label", lb);
+
+   evas_object_show(gd);
+   evas_object_resize(win, 480, 480);
+   evas_object_show(win);
+}
 #endif

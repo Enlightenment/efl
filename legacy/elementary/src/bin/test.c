@@ -70,6 +70,7 @@ void test_list2(void *data, Evas_Object *obj, void *event_info);
 void test_list3(void *data, Evas_Object *obj, void *event_info);
 void test_list4(void *data, Evas_Object *obj, void *event_info);
 void test_list5(void *data, Evas_Object *obj, void *event_info);
+void test_list6(void *data, Evas_Object *obj, void *event_info);
 void test_inwin(void *data, Evas_Object *obj, void *event_info);
 void test_inwin2(void *data, Evas_Object *obj, void *event_info);
 void test_scaling(void *data, Evas_Object *obj, void *event_info);
@@ -532,6 +533,7 @@ add_tests:
    ADD_TEST(NULL, "Lists", "List 3", test_list3);
    ADD_TEST(NULL, "Lists", "List 4", test_list4);
    ADD_TEST(NULL, "Lists", "List 5", test_list5);
+   ADD_TEST(NULL, "Lists", "List 6", test_list6);
    ADD_TEST(NULL, "Lists", "Genlist", test_genlist);
    ADD_TEST(NULL, "Lists", "Genlist 2", test_genlist2);
    ADD_TEST(NULL, "Lists", "Genlist 3", test_genlist3);
