@@ -8,7 +8,7 @@
 #include "Ecore_Wayland.h"
 
 /* local function prototypes */
-static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int timestamp, unsigned int edges, int w, int h);
+static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int edges, int w, int h);
 static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface __UNUSED__);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, unsigned int timestamp);
 
@@ -553,7 +553,7 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
 
 /* local functions */
 static void 
-_ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int timestamp, unsigned int edges, int w, int h)
+_ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int edges, int w, int h)
 {
    Ecore_Wl_Window *win;
 
@@ -569,7 +569,8 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
    win->region.input = NULL;
    if (win->region.opaque) wl_region_destroy(win->region.opaque);
    win->region.opaque = NULL;
-   _ecore_wl_window_configure_send(win, w, h, timestamp);
+   /* FIXME: 0 timestamp here may not work. need to test */
+   _ecore_wl_window_configure_send(win, w, h, 0);
 }
 
 static void 

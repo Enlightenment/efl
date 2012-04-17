@@ -72,6 +72,7 @@ struct _Ecore_Wl_Display
 
    int fd;
    unsigned int mask;
+   unsigned int serial;
    Ecore_Fd_Handler *fd_hdl;
 
    struct wl_list inputs;
@@ -110,6 +111,7 @@ struct _Ecore_Wl_Input
    unsigned int button;
    unsigned int timestamp;
    unsigned int modifiers;
+   unsigned int pointer_enter_serial;
    int sx, sy;
 
    struct wl_list link;
