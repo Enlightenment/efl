@@ -220,6 +220,10 @@ typedef enum
   EMOTION_HIBERNATE /**< destroy the pipeline, and keep half resolution or object resolution if lower */
 } Emotion_Suspend;
 
+/**
+ * @enum _Emotion_Aspect
+ * Defines the aspect ratio option.
+ */
 enum _Emotion_Aspect
 {
   EMOTION_ASPECT_KEEP_NONE, /**< ignore video aspect ratio */
@@ -382,8 +386,7 @@ EAPI Evas_Object *emotion_object_add                   (Evas *evas);
  * @see emotion_object_audio_mute_set()
  * @see emotion_object_video_mute_set()
  *
- * @ingroup Emotion_Audio
- * @ingroup Emotion_Video
+ * @ingroup Emotion_Init
  */
 EAPI void         emotion_object_module_option_set     (Evas_Object *obj, const char *opt, const char *val);
 

@@ -3,7 +3,7 @@ PROJECT_NUMBER         = @PACKAGE_VERSION@
 OUTPUT_DIRECTORY       = .
 INPUT                  = @top_srcdir@/src/lib \
                          @srcdir@/examples.dox
-IMAGE_PATH             = img
+IMAGE_PATH             = @srcdir@/img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
