@@ -699,11 +699,11 @@ enum {
 
 /**
  * @def EOBJ_BASE_DATA_DEL(key)
- * Get generic data from object.
+ * Del generic data from object.
  * @param key the key associated with the data
  *
  * @see #EOBJ_BASE_DATA_SET
- * @see #EOBJ_BASE_DATA_DEL
+ * @see #EOBJ_BASE_DATA_GET
  */
 #define EOBJ_BASE_DATA_DEL(key) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_DEL), EOBJ_TYPECHECK(const char *, key)
 
