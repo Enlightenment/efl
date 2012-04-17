@@ -37,7 +37,8 @@ main(int argc, char *argv[])
    fail_if(a != 1);
 
    /* disable the callback forwarder, and fail if it's still called. */
-   Eobj *simple = eobj_generic_data_get(obj, "simple-obj");
+   Eobj *simple;
+   eobj_do(obj, EOBJ_BASE_DATA_GET("simple-obj", (void **) &simple));
    eobj_ref(simple);
    eobj_event_callback_forwarder_del(simple, SIG_A_CHANGED, obj);
 

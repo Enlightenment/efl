@@ -32,14 +32,16 @@ const Eobj_Class *evas_object_class_get(void) EINA_CONST;
 static inline Evas_Object *
 eobj_evas_object_get(Eobj *obj)
 {
-   return eobj_generic_data_get(obj, EVAS_OBJ_STR);
+   void *data;
+   eobj_do(obj, EOBJ_BASE_DATA_GET(EVAS_OBJ_STR, &data));
+   return data;
 }
 
 /* FIXME: Hack in the meanwhile. */
 static inline void
 eobj_evas_object_set(Eobj *obj, Evas_Object *evas_obj)
 {
-   eobj_generic_data_set(obj, EVAS_OBJ_STR, evas_obj);
+   eobj_do(obj, EOBJ_BASE_DATA_SET(EVAS_OBJ_STR, evas_obj, NULL));
 }
 
 #endif

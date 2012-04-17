@@ -1,47 +1,22 @@
 #include <Eina.h>
 
 #include "Eobj.h"
+#include "eobj_private.h"
 
 #include "config.h"
 
 typedef int Eobj_Class_Id;
 
-static int _eobj_log_dom = -1;
+int _eobj_log_dom = -1;
 
 static Eobj_Class **_eobj_classes;
 static Eobj_Class_Id _eobj_classes_last_id;
 static Eina_Bool _eobj_init_count = 0;
 
 static void _eobj_callback_remove_all(Eobj *obj);
-static void _eobj_generic_data_del_all(Eobj *obj);
 static void eobj_class_constructor(Eobj *obj, const Eobj_Class *klass);
 static void eobj_class_destructor(Eobj *obj, const Eobj_Class *klass);
 static void eobj_constructor_error_unset(Eobj *obj);
-
-#ifdef CRITICAL
-#undef CRITICAL
-#endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eobj_log_dom, __VA_ARGS__)
-
-#ifdef ERR
-#undef ERR
-#endif
-#define ERR(...) EINA_LOG_DOM_ERR(_eobj_log_dom, __VA_ARGS__)
-
-#ifdef WRN
-#undef WRN
-#endif
-#define WRN(...) EINA_LOG_DOM_WARN(_eobj_log_dom, __VA_ARGS__)
-
-#ifdef INF
-#undef INF
-#endif
-#define INF(...) EINA_LOG_DOM_INFO(_eobj_log_dom, __VA_ARGS__)
-
-#ifdef DBG
-#undef DBG
-#endif
-#define DBG(...) EINA_LOG_DOM_DBG(_eobj_log_dom, __VA_ARGS__)
 
 typedef struct _Eobj_Callback_Description Eobj_Callback_Description;
 
@@ -55,8 +30,6 @@ struct _Eobj {
 
      Eina_Inlist *callbacks;
      int walking_list;
-
-     Eina_Inlist *generic_data;
 
      Eina_Inlist *kls_itr;
 
@@ -846,8 +819,6 @@ eobj_unref(Eobj *obj)
         if (obj->data_blob)
            free(obj->data_blob);
 
-        _eobj_generic_data_del_all(obj);
-
         free(obj);
      }
 }
@@ -950,97 +921,6 @@ eobj_data_get(Eobj *obj, const Eobj_Class *klass)
       return ((char *) obj->data_blob) + klass->data_offset;
    else
       return NULL;
-}
-
-typedef struct
-{
-   EINA_INLIST;
-   Eina_Stringshare *key;
-   void *data;
-} Eobj_Generic_Data_Node;
-
-static void
-_eobj_generic_data_node_free(Eobj_Generic_Data_Node *node)
-{
-   eina_stringshare_del(node->key);
-   free(node);
-}
-
-static void
-_eobj_generic_data_del_all(Eobj *obj)
-{
-   Eina_Inlist *nnode;
-   Eobj_Generic_Data_Node *node;
-
-   EINA_INLIST_FOREACH_SAFE(obj->generic_data, nnode, node)
-     {
-        obj->generic_data = eina_inlist_remove(obj->generic_data,
-              EINA_INLIST_GET(node));
-
-        _eobj_generic_data_node_free(node);
-     }
-}
-
-EAPI void *
-eobj_generic_data_set(Eobj *obj, const char *key, const void *data)
-{
-   void *prev_data;
-   Eobj_Generic_Data_Node *node;
-
-   if (!key) return NULL;
-   if (!data) return NULL;
-
-   prev_data = eobj_generic_data_del(obj, key);
-
-   node = malloc(sizeof(Eobj_Generic_Data_Node));
-   node->key = eina_stringshare_add(key);
-   node->data = (void *) data;
-   obj->generic_data = eina_inlist_prepend(obj->generic_data,
-         EINA_INLIST_GET(node));
-
-   return prev_data;
-}
-
-EAPI void *
-eobj_generic_data_get(const Eobj *obj, const char *key)
-{
-   Eobj_Generic_Data_Node *node;
-
-   if (!key) return NULL;
-
-   EINA_INLIST_FOREACH(obj->generic_data, node)
-     {
-        if (!strcmp(node->key, key))
-          {
-             ((Eobj *) obj)->generic_data =
-                eina_inlist_promote(obj->generic_data, EINA_INLIST_GET(node));
-             return node->data;
-          }
-     }
-   return NULL;
-}
-
-EAPI void *
-eobj_generic_data_del(Eobj *obj, const char *key)
-{
-   Eobj_Generic_Data_Node *node;
-
-   if (!key) return NULL;
-
-   EINA_INLIST_FOREACH(obj->generic_data, node)
-     {
-        if (!strcmp(node->key, key))
-          {
-             void *data;
-
-             data = node->data;
-             obj->generic_data = eina_inlist_remove(obj->generic_data,
-                   EINA_INLIST_GET(node));
-             _eobj_generic_data_node_free(node);
-             return data;
-          }
-     }
-   return NULL;
 }
 
 EAPI Eina_Bool
@@ -1310,58 +1190,5 @@ eobj_event_callback_forwarder_del(Eobj *obj, const Eobj_Event_Description *desc,
 {
    eobj_event_callback_del_full(obj, desc, _eobj_event_forwarder_callback, new_obj);
    return EINA_TRUE;
-}
-
-/* EOBJ_CLASS_BASE stuff */
-static const Eobj_Class *_my_class = NULL;
-
-/* FIXME: Set proper type descriptions. */
-EAPI const Eobj_Event_Description _EOBJ_EV_CALLBACK_ADD =
-   EOBJ_EVENT_DESCRIPTION("callback,add", "?", "A callback was added.");
-EAPI const Eobj_Event_Description _EOBJ_EV_CALLBACK_DEL =
-   EOBJ_EVENT_DESCRIPTION("callback,del", "?", "A callback was deleted.");
-EAPI const Eobj_Event_Description _EOBJ_EV_FREE =
-   EOBJ_EVENT_DESCRIPTION("free", "", "Obj is being freed.");
-EAPI const Eobj_Event_Description _EOBJ_EV_DEL =
-   EOBJ_EVENT_DESCRIPTION("del", "", "Obj is being deleted.");
-
-static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
-{
-   DBG("%p - %s.", obj, _my_class->desc->name);
-}
-
-static void
-_destructor(Eobj *obj, void *class_data __UNUSED__)
-{
-   DBG("%p - %s.", obj, _my_class->desc->name);
-}
-
-EAPI const Eobj_Class *
-eobj_base_class_get(void)
-{
-   if (_my_class) return _my_class;
-
-   static const Eobj_Event_Description *event_desc[] = {
-        EOBJ_EV_CALLBACK_ADD,
-        EOBJ_EV_CALLBACK_DEL,
-        EOBJ_EV_FREE,
-        EOBJ_EV_DEL,
-        NULL
-   };
-
-   static const Eobj_Class_Description class_desc = {
-        "Eobj Base",
-        EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT,
-        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-        event_desc,
-        0,
-        _constructor,
-        _destructor,
-        NULL,
-        NULL
-   };
-
-   return _my_class = eobj_class_new(&class_desc, NULL, NULL);
 }
 

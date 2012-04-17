@@ -53,21 +53,33 @@ START_TEST(eobj_generic_data)
 {
    eobj_init();
    Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
+   void *data;
 
-   eobj_generic_data_set(obj, "test1", (void *) 1);
-   fail_if(1 != (int) eobj_generic_data_get(obj, "test1"));
-   fail_if(1 != (int) eobj_generic_data_del(obj, "test1"));
-   fail_if(eobj_generic_data_del(obj, "test1"));
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test1", (void *) 1, NULL));
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test1", &data));
+   fail_if(1 != (int) data);
+   eobj_do(obj, EOBJ_BASE_DATA_DEL("test1"));
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test1", &data));
+   fail_if(data);
 
-   eobj_generic_data_set(obj, "test1", (void *) 1);
-   eobj_generic_data_set(obj, "test2", (void *) 2);
-   fail_if(2 != (int) eobj_generic_data_get(obj, "test2"));
-   fail_if(2 != (int) eobj_generic_data_del(obj, "test2"));
-   fail_if(eobj_generic_data_del(obj, "test2"));
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test1", (void *) 1, NULL));
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test2", (void *) 2, NULL));
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test1", &data));
+   fail_if(1 != (int) data);
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test2", &data));
+   fail_if(2 != (int) data);
 
-   fail_if(1 != (int) eobj_generic_data_get(obj, "test1"));
-   fail_if(1 != (int) eobj_generic_data_del(obj, "test1"));
-   fail_if(eobj_generic_data_del(obj, "test1"));
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test2", &data));
+   fail_if(2 != (int) data);
+   eobj_do(obj, EOBJ_BASE_DATA_DEL("test2"));
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test2", &data));
+   fail_if(data);
+
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test1", &data));
+   fail_if(1 != (int) data);
+   eobj_do(obj, EOBJ_BASE_DATA_DEL("test1"));
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test1", &data));
+   fail_if(data);
 
    eobj_unref(obj);
    eobj_shutdown();

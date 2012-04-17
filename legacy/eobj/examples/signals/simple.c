@@ -70,7 +70,7 @@ _constructor(Eobj *obj, void *class_data __UNUSED__)
    eobj_event_callback_add(obj, EOBJ_EV_CALLBACK_ADD, _cb_added, NULL);
    eobj_event_callback_add(obj, EOBJ_EV_CALLBACK_DEL, _cb_deled, NULL);
 
-   eobj_generic_data_set(obj, "cb_count", (intptr_t) 0);
+   eobj_do(obj, EOBJ_BASE_DATA_SET("cb_count", (intptr_t) 0, NULL));
 }
 
 static void

@@ -1,5 +1,6 @@
 LIST(APPEND EOBJ_CC_SOURCES
    eobj.c
+   eobj_base_class.c
    )
 
 include_directories(

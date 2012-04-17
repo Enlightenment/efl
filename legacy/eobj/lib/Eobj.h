@@ -408,40 +408,6 @@ EAPI int eobj_ref_get(const Eobj *obj);
 EAPI void eobj_del(Eobj *obj);
 
 /**
- * @brief Set generic data to object.
- * @param obj the object to work on.
- * @param key the key associated with the data
- * @param data the data to set.
- * @return the previous data associated with the key.
- *
- * @see eobj_generic_data_get()
- * @see eobj_generic_data_del()
- */
-EAPI void *eobj_generic_data_set(Eobj *obj, const char *key, const void *data);
-
-/**
- * @brief Get generic data from object.
- * @param obj the object to work on.
- * @param key the key associated with the data
- * @return the data associated with the key.
- *
- * @see eobj_generic_data_set()
- * @see eobj_generic_data_del()
- */
-EAPI void *eobj_generic_data_get(const Eobj *obj, const char *key);
-
-/**
- * @brief Del generic data from object.
- * @param obj the object to work on.
- * @param key the key associated with the data
- * @return the data previously associated with the key.
- *
- * @see eobj_generic_data_set()
- * @see eobj_generic_data_get()
- */
-EAPI void *eobj_generic_data_del(Eobj *obj, const char *key);
-
-/**
  * @var _EOBJ_EV_FREE
  * see #EOBJ_EV_FREE
  */
@@ -681,6 +647,65 @@ EAPI extern const Eobj_Event_Description _EOBJ_EV_CALLBACK_DEL;
  * @internal
  * */
 EAPI const Eobj_Class *eobj_base_class_get(void) EINA_CONST;
+
+/**
+ * @typedef eobj_base_data_free_func
+ * Data free func prototype.
+ */
+typedef void (*eobj_base_data_free_func)(void *);
+
+/**
+ * @var EOBJ_BASE_BASE_ID
+ * #EOBJ_BASE_CLASS 's base id.
+ */
+extern EAPI Eobj_Op EOBJ_BASE_BASE_ID;
+
+enum {
+     EOBJ_BASE_SUB_ID_DATA_SET,
+     EOBJ_BASE_SUB_ID_DATA_GET,
+     EOBJ_BASE_SUB_ID_DATA_DEL,
+     EOBJ_BASE_SUB_ID_LAST
+};
+
+/**
+ * @def EOBJ_BASE_ID(sub_id)
+ * Helper macro to get the full Op ID out of the sub_id for EOBJ_BASE.
+ * @param sub_id the sub id inside EOBJ_BASE.
+ */
+#define EOBJ_BASE_ID(sub_id) (EOBJ_BASE_BASE_ID + sub_id)
+
+/**
+ * @def EOBJ_BASE_DATA_SET(key, data, free_func)
+ * Set generic data to object.
+ * @param key the key associated with the data
+ * @param data the data to set.
+ * @param free_func the func to free data with (NULL means "do nothing").
+ *
+ * @see #EOBJ_BASE_DATA_GET
+ * @see #EOBJ_BASE_DATA_DEL
+ */
+#define EOBJ_BASE_DATA_SET(key, data, free_func) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_SET), EOBJ_TYPECHECK(const char *, key), EOBJ_TYPECHECK(const void *, data), EOBJ_TYPECHECK(eobj_base_data_free_func, free_func)
+
+/**
+ * @def EOBJ_BASE_DATA_GET(key, data)
+ * Get generic data from object.
+ * @param key the key associated with the data
+ * @param data the data for the key
+ *
+ * @see #EOBJ_BASE_DATA_SET
+ * @see #EOBJ_BASE_DATA_DEL
+ */
+#define EOBJ_BASE_DATA_GET(key, data) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_GET), EOBJ_TYPECHECK(const char *, key), EOBJ_TYPECHECK(void **, data)
+
+/**
+ * @def EOBJ_BASE_DATA_DEL(key)
+ * Get generic data from object.
+ * @param key the key associated with the data
+ *
+ * @see #EOBJ_BASE_DATA_SET
+ * @see #EOBJ_BASE_DATA_DEL
+ */
+#define EOBJ_BASE_DATA_DEL(key) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_DEL), EOBJ_TYPECHECK(const char *, key)
 
 /**
  * @}
