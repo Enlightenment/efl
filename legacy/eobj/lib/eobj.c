@@ -84,6 +84,7 @@ struct _Eobj {
       (Eobj_Class *) ((tmp <= _eobj_classes_last_id) && (tmp > 0)) ? \
       (_eobj_classes[tmp - 1]) : NULL; \
       })
+#define OP_SUB_ID_GET(op) ((op) & 0xffff)
 
 /* Structure of Eobj_Op is:
  * 16bit: class
@@ -297,18 +298,10 @@ static const Eobj_Op_Description *
 _eobj_op_id_desc_get(Eobj_Op op)
 {
    const Eobj_Class *klass = OP_CLASS_GET(op);
+   Eobj_Op sub_id = OP_SUB_ID_GET(op);
 
-   if (!klass || !klass->desc->ops.base_op_id) return NULL;
-
-   Eobj_Op base_op_id = *klass->desc->ops.base_op_id;
-
-   const Eobj_Op_Description *desc = klass->desc->ops.descs;
-   size_t i;
-   for (i = 0 ; i < klass->desc->ops.count ; i++, desc++)
-     {
-        if ((base_op_id + desc->sub_op) == op)
-           return desc;
-     }
+   if (klass && (sub_id < klass->desc->ops.count))
+      return klass->desc->ops.descs + sub_id;
 
    return NULL;
 }
@@ -572,6 +565,33 @@ eobj_class_free(Eobj_Class *klass)
    free(klass);
 }
 
+
+static Eina_Bool
+_eobj_class_check_op_descs(const Eobj_Class *klass)
+{
+   const Eobj_Class_Description *desc = klass->desc;
+   const Eobj_Op_Description *itr;
+   size_t i;
+
+   itr = desc->ops.descs;
+   for (i = 0 ; i < desc->ops.count ; i++, itr++)
+     {
+        if (itr->sub_op != i)
+          {
+             ERR("Wrong order in Ops description for class '%s'. Expected %d and got %d", desc->name, i, itr->sub_op);
+             return EINA_FALSE;
+          }
+     }
+
+   if (itr && itr->name)
+     {
+        ERR("Found extra Ops description for class '%s'. Expected %d descriptions, but found more.", desc->name, desc->ops.count);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 EAPI Eobj_Class *
 eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...)
 {
@@ -663,6 +683,12 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
            klass->parent->desc->data_size +
            (sizeof(void *) -
                   (klass->parent->desc->data_size % sizeof(void *)));
+     }
+
+   if (!_eobj_class_check_op_descs(klass))
+     {
+        ERR("Class '%s' has a bad op description.", klass->desc->name);
+        goto cleanup;
      }
 
    klass->class_id = ++_eobj_classes_last_id;
