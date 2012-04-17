@@ -282,6 +282,11 @@ ecore_wl_screen_size_get(int *w, int *h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (w) *w = 0;
+   if (h) *h = 0;
+
+   if (!_ecore_wl_disp->output) return;
+
    if (w) *w = _ecore_wl_disp->output->allocation.w;
    if (h) *h = _ecore_wl_disp->output->allocation.h;
 }
@@ -312,6 +317,8 @@ ecore_wl_dpi_get(void)
    int w, mw;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!_ecore_wl_disp->output) return 75;
 
    mw = _ecore_wl_disp->output->mw;
    if (mw <= 0) return 75;

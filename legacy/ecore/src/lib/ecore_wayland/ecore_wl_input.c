@@ -44,11 +44,11 @@ static void _ecore_wl_input_cb_data_drop(void *data, struct wl_data_device *data
 static void _ecore_wl_input_cb_data_selection(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer);
 
 static void _ecore_wl_input_keyboard_focus_remove(Ecore_Wl_Input *input, unsigned int timestamp);
-static void _ecore_wl_input_pointer_focus_set(Ecore_Wl_Input *input, Ecore_Wl_Window *focus, unsigned int timestamp, int x, int y);
+static void _ecore_wl_input_pointer_focus_set(Ecore_Wl_Input *input, Ecore_Wl_Window *focus, unsigned int timestamp);
 static void _ecore_wl_input_pointer_focus_remove(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, unsigned int timestamp);
-static void _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, unsigned int timestamp);
-static void _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, unsigned int timestamp);
+static void _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
+static void _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
 static void _ecore_wl_input_focus_in_send(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, unsigned int timestamp);
@@ -105,7 +105,7 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input, unsigned int timestamp)
 
    if (input->pointer_focus)
      _ecore_wl_input_pointer_focus_set(input, input->pointer_focus, 
-                                       timestamp, input->sx, input->sy);
+                                       timestamp);
 }
 
 void 
@@ -181,9 +181,11 @@ _ecore_wl_input_cb_motion(void *data, struct wl_input_device *input_device __UNU
    input->sx = sx;
    input->sy = sy;
 
+   input->timestamp = timestamp;
+
    if (!(input->grab && input->grab_button))
      _ecore_wl_input_pointer_focus_set(input, input->pointer_focus, 
-                                       timestamp, sx, sy);
+                                       timestamp);
 
    /* TODO: FIXME: NB: Weston window code has set pointer image here also */
    _ecore_wl_input_mouse_move_send(input, timestamp);
@@ -200,6 +202,8 @@ _ecore_wl_input_cb_button(void *data, struct wl_input_device *input_device __UNU
 
    input->timestamp = timestamp;
    input->display->serial = serial;
+
+   _ecore_wl_input_mouse_move_send(input, timestamp);
 
    if ((input->pointer_focus) && (!input->grab) && (state))
      ecore_wl_input_grab(input, input->pointer_focus, button);
@@ -285,7 +289,8 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_input_device *input_devic
    input->sx = sx;
    input->sy = sy;
 
-   _ecore_wl_input_pointer_focus_set(input, win, input->timestamp, sx, sy);
+   _ecore_wl_input_mouse_move_send(input, input->timestamp);
+   _ecore_wl_input_pointer_focus_set(input, win, input->timestamp);
 }
 
 static void 
@@ -296,7 +301,10 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_input_device *input_devic
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
+
    input->display->serial = serial;
+
+   _ecore_wl_input_mouse_move_send(input, input->timestamp);
    _ecore_wl_input_pointer_focus_remove(input, input->timestamp);
 }
 
@@ -468,29 +476,31 @@ _ecore_wl_input_keyboard_focus_remove(Ecore_Wl_Input *input, unsigned int timest
 }
 
 static void 
-_ecore_wl_input_pointer_focus_set(Ecore_Wl_Input *input, Ecore_Wl_Window *focus, unsigned int timestamp, int x, int y)
+_ecore_wl_input_pointer_focus_set(Ecore_Wl_Input *input, Ecore_Wl_Window *focus, unsigned int timestamp)
 {
+   Ecore_Wl_Window *ofocus = NULL;
+
    if ((focus) && (focus == input->pointer_focus)) return;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   input->sx = x;
-   input->sy = y;
-
-   if (input->pointer_focus)
+   if ((ofocus = input->pointer_focus))
      {
-        Ecore_Wl_Window *nwin;
-
-        nwin = input->pointer_focus;
-        _ecore_wl_input_mouse_out_send(input, timestamp);
+        if (input->grab) ofocus = input->grab;
+        _ecore_wl_input_mouse_out_send(input, ofocus, timestamp);
         input->pointer_focus = NULL;
-        nwin->pointer_device = NULL;
+        ofocus->pointer_device = NULL;
      }
 
    if (focus)
      {
+        Ecore_Wl_Window *win;
+
+        win = focus;
+        if (input->grab) win = input->grab;
+
+        _ecore_wl_input_mouse_in_send(input, win, timestamp);
         input->pointer_focus = focus;
-        _ecore_wl_input_mouse_in_send(input, timestamp);
         focus->pointer_device = input;
      }
 }
@@ -504,7 +514,7 @@ _ecore_wl_input_pointer_focus_remove(Ecore_Wl_Input *input, unsigned int timesta
 
    win = input->pointer_focus;
 
-   _ecore_wl_input_pointer_focus_set(input, NULL, timestamp, 0, 0);
+   _ecore_wl_input_pointer_focus_set(input, NULL, timestamp);
 
    input->pointer_focus = NULL;
    if (win) win->pointer_device = NULL;
@@ -550,7 +560,7 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, unsigned int timestamp)
 }
 
 static void 
-_ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, unsigned int timestamp)
+_ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp)
 {
    Ecore_Wl_Event_Mouse_In *ev;
 
@@ -565,22 +575,14 @@ _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, unsigned int timestamp)
    ev->modifiers = input->modifiers;
    ev->timestamp = timestamp;
 
-   if (input->grab)
-     {
-        ev->window = input->grab->id;
-        ev->event_window = input->grab->id;
-     }
-   else if (input->pointer_focus)
-     {
-        ev->window = input->pointer_focus->id;
-        ev->event_window = input->pointer_focus->id;
-     }
+   ev->window = win->id;
+   ev->event_window = win->id;
 
    ecore_event_add(ECORE_WL_EVENT_MOUSE_IN, ev, NULL, NULL);
 }
 
 static void 
-_ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, unsigned int timestamp)
+_ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp)
 {
    Ecore_Wl_Event_Mouse_Out *ev;
 
@@ -595,16 +597,8 @@ _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, unsigned int timestamp)
    ev->modifiers = input->modifiers;
    ev->timestamp = timestamp;
 
-   if (input->grab)
-     {
-        ev->window = input->grab->id;
-        ev->event_window = input->grab->id;
-     }
-   else if (input->pointer_focus)
-     {
-        ev->window = input->pointer_focus->id;
-        ev->event_window = input->pointer_focus->id;
-     }
+   ev->window = win->id;
+   ev->event_window = win->id;
 
    ecore_event_add(ECORE_WL_EVENT_MOUSE_OUT, ev, NULL, NULL);
 }
