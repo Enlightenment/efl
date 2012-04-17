@@ -1016,7 +1016,7 @@ EAPI Elm_Genlist_Item_Class *elm_genlist_item_class_new(void);
 
 /**
  * Remove an item class in a given genlist widget.
- k*
+ *
  * @param itc The itc to be removed.
  *
  * This removes item class from the genlist widget.
