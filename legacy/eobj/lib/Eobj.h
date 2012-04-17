@@ -408,30 +408,6 @@ EAPI int eobj_ref_get(const Eobj *obj);
 EAPI void eobj_del(Eobj *obj);
 
 /**
- * @var _EOBJ_EV_FREE
- * see #EOBJ_EV_FREE
- */
-EAPI extern const Eobj_Event_Description _EOBJ_EV_FREE;
-
-/**
- * @def EOBJ_EV_FREE
- * Object is being freed.
- */
-#define EOBJ_EV_FREE (&(_EOBJ_EV_FREE))
-
-/**
- * @var _EOBJ_EV_DEL
- * see #EOBJ_EV_DEL
- */
-EAPI extern const Eobj_Event_Description _EOBJ_EV_DEL;
-
-/**
- * @def EOBJ_EV_DEL
- * Object is being deleted.
- */
-#define EOBJ_EV_DEL (&(_EOBJ_EV_DEL))
-
-/**
  * @addtogroup Eobj_Weak_Ref Weak reference for Eobj objects.
  * @{
  */
@@ -653,32 +629,6 @@ EAPI void *eobj_event_callback_del_full(Eobj *obj, const Eobj_Event_Description 
 EAPI Eina_Bool eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc, const void *event_info);
 
 /**
- * @var _EOBJ_EV_CALLBACK_ADD
- * see EOBJ_EV_CALLBACK_ADD
- */
-EAPI extern const Eobj_Event_Description _EOBJ_EV_CALLBACK_ADD;
-
-/**
- * @def EOBJ_EV_CALLBACK_ADD
- * The event description (of type #Eobj_Event_Description) for
- * The "Callback listener added" event.
- */
-#define EOBJ_EV_CALLBACK_ADD (&(_EOBJ_EV_CALLBACK_ADD))
-
-/**
- * @var _EOBJ_EV_CALLBACK_DEL
- * see EOBJ_EV_CALLBACK_DEL
- */
-EAPI extern const Eobj_Event_Description _EOBJ_EV_CALLBACK_DEL;
-
-/**
- * @def EOBJ_EV_CALLBACK_DEL
- * The event description (of type #Eobj_Event_Description) for
- * The "Callback listener deleted" event.
- */
-#define EOBJ_EV_CALLBACK_DEL (&(_EOBJ_EV_CALLBACK_DEL))
-
-/**
  * @}
  */
 
@@ -756,6 +706,56 @@ enum {
  * @see #EOBJ_BASE_DATA_GET
  */
 #define EOBJ_BASE_DATA_DEL(key) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_DEL), EOBJ_TYPECHECK(const char *, key)
+
+/**
+ * @var _EOBJ_EV_CALLBACK_ADD
+ * see EOBJ_EV_CALLBACK_ADD
+ */
+EAPI extern const Eobj_Event_Description _EOBJ_EV_CALLBACK_ADD;
+
+/**
+ * @def EOBJ_EV_CALLBACK_ADD
+ * The event description (of type #Eobj_Event_Description) for
+ * The "Callback listener added" event.
+ */
+#define EOBJ_EV_CALLBACK_ADD (&(_EOBJ_EV_CALLBACK_ADD))
+
+/**
+ * @var _EOBJ_EV_CALLBACK_DEL
+ * see EOBJ_EV_CALLBACK_DEL
+ */
+EAPI extern const Eobj_Event_Description _EOBJ_EV_CALLBACK_DEL;
+
+/**
+ * @def EOBJ_EV_CALLBACK_DEL
+ * The event description (of type #Eobj_Event_Description) for
+ * The "Callback listener deleted" event.
+ */
+#define EOBJ_EV_CALLBACK_DEL (&(_EOBJ_EV_CALLBACK_DEL))
+
+/**
+ * @var _EOBJ_EV_FREE
+ * see #EOBJ_EV_FREE
+ */
+EAPI extern const Eobj_Event_Description _EOBJ_EV_FREE;
+
+/**
+ * @def EOBJ_EV_FREE
+ * Object is being freed.
+ */
+#define EOBJ_EV_FREE (&(_EOBJ_EV_FREE))
+
+/**
+ * @var _EOBJ_EV_DEL
+ * see #EOBJ_EV_DEL
+ */
+EAPI extern const Eobj_Event_Description _EOBJ_EV_DEL;
+
+/**
+ * @def EOBJ_EV_DEL
+ * Object is being deleted.
+ */
+#define EOBJ_EV_DEL (&(_EOBJ_EV_DEL))
 
 /**
  * @}
