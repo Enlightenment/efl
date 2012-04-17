@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-#define LOGFNS 1
+//#define LOGFNS 1
 
 #ifdef LOGFNS
 # include <stdio.h>
@@ -473,8 +473,6 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    ee->w = w;
    ee->h = h;
 
-
-
 //   ecore_wl_window_damage(ee->engine.wl.win, 0, 0, ee->w, ee->h);
 
    /* einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas); */
@@ -554,9 +552,12 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
      {
         int w = 0, size = 0;
 
-        /* FIXME: This should use output size */
         ecore_wl_screen_size_get(&w, NULL);
-        size = 6 * w * w;
+
+        /* set a default width */
+        if (w == 0) w = 1024;
+
+        size = (6 * w * w);
         pool = 
           _ecore_evas_wl_shm_pool_create(size, &data);
         ee->engine.wl.pool_size = size;
