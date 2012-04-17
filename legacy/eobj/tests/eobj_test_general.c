@@ -19,6 +19,45 @@ START_TEST(eobj_simple)
 }
 END_TEST
 
+START_TEST(eobj_xrefs)
+{
+   eobj_init();
+   Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
+   Eobj *obj2 = eobj_add(SIMPLE_CLASS, NULL);
+   Eobj *obj3 = eobj_add(SIMPLE_CLASS, NULL);
+
+   eobj_xref(obj, obj2);
+   fail_if(eobj_ref_get(obj) != 2);
+   eobj_xref(obj, obj3);
+   fail_if(eobj_ref_get(obj) != 3);
+
+   eobj_xunref(obj, obj2);
+   fail_if(eobj_ref_get(obj) != 2);
+   eobj_xunref(obj, obj3);
+   fail_if(eobj_ref_get(obj) != 1);
+
+#ifndef NDEBUG
+   eobj_xunref(obj, obj3);
+   fail_if(eobj_ref_get(obj) != 1);
+
+   eobj_xref(obj, obj2);
+   fail_if(eobj_ref_get(obj) != 2);
+
+   eobj_xunref(obj, obj3);
+   fail_if(eobj_ref_get(obj) != 2);
+
+   eobj_xunref(obj, obj2);
+   fail_if(eobj_ref_get(obj) != 1);
+#endif
+
+   eobj_unref(obj);
+   eobj_unref(obj2);
+   eobj_unref(obj3);
+
+   eobj_shutdown();
+}
+END_TEST
+
 START_TEST(eobj_weak_reference)
 {
    eobj_init();
@@ -161,4 +200,5 @@ void eobj_test_general(TCase *tc)
    tcase_add_test(tc, eobj_op_errors);
    tcase_add_test(tc, eobj_simple);
    tcase_add_test(tc, eobj_weak_reference);
+   tcase_add_test(tc, eobj_xrefs);
 }

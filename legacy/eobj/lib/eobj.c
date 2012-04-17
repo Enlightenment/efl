@@ -26,6 +26,10 @@ struct _Eobj {
      const Eobj_Class *klass;
      void *data_blob;
      int refcount;
+#ifndef NDEBUG
+     Eina_Inlist *xrefs;
+#endif
+
      Eina_List *composite_objects;
 
      Eina_Inlist *callbacks;
@@ -755,6 +759,63 @@ fail:
    return NULL;
 }
 
+typedef struct
+{
+   EINA_INLIST;
+   const Eobj *ref_obj;
+   const char *file;
+   int line;
+} Eobj_Xref_Node;
+
+EAPI Eobj *
+eobj_xref_internal(Eobj *obj, const Eobj *ref_obj, const char *file, int line)
+{
+   eobj_ref(obj);
+
+#ifndef NDEBUG
+   Eobj_Xref_Node *xref = calloc(1, sizeof(*xref));
+   xref->ref_obj = ref_obj;
+   xref->file = file;
+   xref->line = line;
+
+   /* FIXME: Make it sorted. */
+   obj->xrefs = eina_inlist_prepend(obj->xrefs, EINA_INLIST_GET(xref));
+#else
+   (void) ref_obj;
+   (void) file;
+   (void) line;
+#endif
+
+   return obj;
+}
+
+EAPI void
+eobj_xunref(Eobj *obj, const Eobj *ref_obj)
+{
+#ifndef NDEBUG
+   Eobj_Xref_Node *xref = NULL;
+   EINA_INLIST_FOREACH(obj->xrefs, xref)
+     {
+        if (xref->ref_obj == ref_obj)
+           break;
+     }
+
+   if (xref)
+     {
+        obj->xrefs = eina_inlist_remove(obj->xrefs, EINA_INLIST_GET(xref));
+        free(xref);
+     }
+   else
+     {
+        ERR("ref_obj (%p) does not reference obj (%p). Aborting unref.", ref_obj, obj);
+        return;
+     }
+#else
+   (void) ref_obj;
+#endif
+   eobj_unref(obj);
+}
+
 EAPI Eobj *
 eobj_ref(Eobj *obj)
 {
@@ -803,6 +864,17 @@ eobj_unref(Eobj *obj)
              free(EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node));
              obj->kls_itr = nitr;
           }
+
+#ifndef NDEBUG
+        /* If for some reason it's not empty, clear it. */
+        while (obj->xrefs)
+          {
+             WRN("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
+             Eina_Inlist *nitr = nitr->next;
+             free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eobj_Kls_Itr_Node));
+             obj->xrefs = nitr;
+          }
+#endif
 
         Eina_List *itr, *itr_n;
         Eobj *emb_obj;

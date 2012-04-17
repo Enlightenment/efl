@@ -399,6 +399,25 @@ EAPI void eobj_unref(Eobj *obj);
  */
 EAPI int eobj_ref_get(const Eobj *obj);
 
+#define eobj_xref(obj, ref_obj) eobj_xref_internal(obj, ref_obj, __FILE__, __LINE__)
+
+/**
+ * @brief Increment the object's reference count by 1.
+ * @param obj the object to work on.
+ * @return The object passed.
+ *
+ * @see eobj_xunref()
+ */
+EAPI Eobj *eobj_xref_internal(Eobj *obj, const Eobj *ref_obj, const char *file, int line);
+
+/**
+ * @brief Decrement the object's reference count by 1 and free it if needed.
+ * @param obj the object to work on.
+ *
+ * @see eobj_xref_internal()
+ */
+EAPI void eobj_xunref(Eobj *obj, const Eobj *ref_obj);
+
 /**
  * @brief Delete the object passed (disregarding ref count).
  * @param obj the object to work on.
