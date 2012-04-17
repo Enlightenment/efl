@@ -1,5 +1,6 @@
 /**
  * @defgroup Web Web
+ * @ingroup Elementary
  *
  * @image html img/widget/web/preview-00.png
  * @image latex img/widget/web/preview-00.eps
@@ -156,6 +157,8 @@ struct _Elm_Web_Menu_Item
  *
  * @see elm_web_popup_selected_set()
  * @see elm_web_popup_destroy()
+ *
+ * @ingroup Web
  */
 typedef struct _Elm_Web_Menu Elm_Web_Menu;
 
@@ -175,6 +178,8 @@ typedef struct _Elm_Web_Menu Elm_Web_Menu;
  *
  * @see elm_web_popup_selected_set()
  * @see elm_web_popup_destroy()
+ *
+ * @ingroup Web
  */
 struct _Elm_Web_Menu
 {
@@ -243,6 +248,8 @@ typedef enum
  * Returning @c NULL should cancel the request.
  *
  * @see elm_web_window_create_hook_set()
+ *
+ * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Window_Open)(void *data, Evas_Object *obj, Eina_Bool js, const Elm_Web_Window_Features *window_features);
 
@@ -262,6 +269,8 @@ typedef Evas_Object *(*Elm_Web_Window_Open)(void *data, Evas_Object *obj, Eina_B
  * If the function returns @c NULL the popup will be ignored.
  *
  * @see elm_web_dialog_alert_hook_set()
+ *
+ * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Dialog_Alert)(void *data, Evas_Object *obj, const char *message);
 
@@ -283,6 +292,8 @@ typedef Evas_Object *(*Elm_Web_Dialog_Alert)(void *data, Evas_Object *obj, const
  * If the function returns @c NULL the popup will be ignored.
  *
  * @see elm_web_dialog_confirm_hook_set()
+ *
+ * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Dialog_Confirm)(void *data, Evas_Object *obj, const char *message, Eina_Bool *ret);
 
@@ -307,6 +318,8 @@ typedef Evas_Object *(*Elm_Web_Dialog_Confirm)(void *data, Evas_Object *obj, con
  * If the function returns @c NULL the popup will be ignored.
  *
  * @see elm_web_dialog_prompt_hook_set()
+ *
+ * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, const char *message, const char *def_value, char **value, Eina_Bool *ret);
 
@@ -333,6 +346,8 @@ typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, cons
  * If the function returns @c NULL the popup will be ignored.
  *
  * @see elm_web_dialog_file selector_hook_set()
+ *
+ * @ingroup Web
  */
 typedef Evas_Object *(*Elm_Web_Dialog_File_Selector)(void *data, Evas_Object *obj, Eina_Bool allows_multiple, Eina_List *accept_types, Eina_List **selected, Eina_Bool *ret);
 
@@ -351,6 +366,8 @@ typedef Evas_Object *(*Elm_Web_Dialog_File_Selector)(void *data, Evas_Object *ob
  * @li @p source_id Source id
  *
  * @see elm_web_console_message_hook_set()
+ *
+ * @ingroup Web
  */
 typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char *message, unsigned int line_number, const char *source_id);
 
@@ -362,6 +379,8 @@ typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char
  *
  * @see elm_web_uri_set()
  * @see elm_web_webkit_view_get()
+ *
+ * @ingroup Web
  */
 EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
 
@@ -371,6 +390,7 @@ EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
  * @param obj The object
  * @param user_agent String for useragent
  *
+ * @ingroup Web
  */
 EAPI void elm_web_useragent_set(Evas_Object *obj, const char *user_agent);
 
@@ -380,6 +400,7 @@ EAPI void elm_web_useragent_set(Evas_Object *obj, const char *user_agent);
  * @param obj The object
  * @return Useragent string
  *
+ * @ingroup Web
  */
 EAPI const char* elm_web_useragent_get(const Evas_Object *obj);
 
@@ -397,6 +418,8 @@ EAPI const char* elm_web_useragent_get(const Evas_Object *obj);
  *         ewebkit)
  *
  * @see elm_web_add()
+ *
+ * @ingroup Web
  */
 EAPI Evas_Object      *elm_web_webkit_view_get(const Evas_Object *obj);
 
@@ -412,6 +435,8 @@ EAPI Evas_Object      *elm_web_webkit_view_get(const Evas_Object *obj);
  * @param obj The web object where to set the hook function
  * @param func The hook function to be called when a window is requested
  * @param data User data
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_window_create_hook_set(Evas_Object *obj, Elm_Web_Window_Open func, void *data);
 
@@ -427,6 +452,8 @@ EAPI void              elm_web_window_create_hook_set(Evas_Object *obj, Elm_Web_
  * @param data User data
  *
  * @see elm_web_inwin_mode_set()
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_dialog_alert_hook_set(Evas_Object *obj, Elm_Web_Dialog_Alert func, void *data);
 
@@ -442,6 +469,8 @@ EAPI void              elm_web_dialog_alert_hook_set(Evas_Object *obj, Elm_Web_D
  * @param data User data
  *
  * @see elm_web_inwin_mode_set()
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_dialog_confirm_hook_set(Evas_Object *obj, Elm_Web_Dialog_Confirm func, void *data);
 
@@ -457,6 +486,8 @@ EAPI void              elm_web_dialog_confirm_hook_set(Evas_Object *obj, Elm_Web
  * @param data User data
  *
  * @see elm_web_inwin_mode_set()
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_dialog_prompt_hook_set(Evas_Object *obj, Elm_Web_Dialog_Prompt func, void *data);
 
@@ -473,6 +504,8 @@ EAPI void              elm_web_dialog_prompt_hook_set(Evas_Object *obj, Elm_Web_
  * @param data User data
  *
  * @see elm_web_inwin_mode_set()
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_dialog_file_selector_hook_set(Evas_Object *obj, Elm_Web_Dialog_File_Selector func, void *data);
 
@@ -485,6 +518,8 @@ EAPI void              elm_web_dialog_file_selector_hook_set(Evas_Object *obj, E
  * @param obj The web object where to set the hook function
  * @param func The callback function to be used
  * @param data User data
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_console_message_hook_set(Evas_Object *obj, Elm_Web_Console_Message func, void *data);
 
@@ -495,6 +530,8 @@ EAPI void              elm_web_console_message_hook_set(Evas_Object *obj, Elm_We
  * @return EINA_TRUE if tab propagation is enabled, EINA_FALSE otherwise
  *
  * @see elm_web_tab_propagate_set()
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_tab_propagate_get(const Evas_Object *obj);
 
@@ -509,6 +546,8 @@ EAPI Eina_Bool         elm_web_tab_propagate_get(const Evas_Object *obj);
  *
  * @param obj The web object
  * @param propagate Whether to propagate Tab keys to Elementary or not
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_tab_propagate_set(Evas_Object *obj, Eina_Bool propagate);
 
@@ -521,6 +560,8 @@ EAPI void              elm_web_tab_propagate_set(Evas_Object *obj, Eina_Bool pro
  * @param obj The web object
  * @param uri The URI to set
  * @return EINA_TRUE if the URI could be set, EINA_FALSE if an error occurred
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
 
@@ -533,6 +574,8 @@ EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
  * @param obj The web object
  * @return A stringshared internal string with the current URI, or NULL on
  * failure
+ *
+ * @ingroup Web
  */
 EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
 
@@ -545,6 +588,8 @@ EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
  * @param obj The web object
  * @return A stringshared internal string with the current title, or NULL on
  * failure
+ *
+ * @ingroup Web
  */
 EAPI const char       *elm_web_title_get(const Evas_Object *obj);
 
@@ -559,6 +604,8 @@ EAPI const char       *elm_web_title_get(const Evas_Object *obj);
  * @param g Green component
  * @param b Blue component
  * @param a Alpha component
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_bg_color_set(Evas_Object *obj, int r, int g, int b, int a);
 
@@ -573,6 +620,8 @@ EAPI void              elm_web_bg_color_set(Evas_Object *obj, int r, int g, int 
  * @param g Green component
  * @param b Blue component
  * @param a Alpha component
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
 
@@ -584,6 +633,8 @@ EAPI void              elm_web_bg_color_get(const Evas_Object *obj, int *r, int 
  * @param obj The web object
  * @return A newly allocated string, or NULL if nothing is selected or an
  * error occurred
+ * 
+ * @ingroup Web
  */
 EAPI char             *elm_web_selection_get(const Evas_Object *obj);
 
@@ -598,6 +649,8 @@ EAPI char             *elm_web_selection_get(const Evas_Object *obj);
  * @param index The index selected
  *
  * @see elm_web_popup_destroy()
+ * 
+ * @ingroup Web
  */
 EAPI void              elm_web_popup_selected_set(Evas_Object *obj, int index);
 
@@ -612,6 +665,8 @@ EAPI void              elm_web_popup_selected_set(Evas_Object *obj, int index);
  * @param obj The web object
  * @return EINA_TRUE if the menu was successfully destroyed, or EINA_FALSE
  * if there was no menu to destroy
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_popup_destroy(Evas_Object *obj);
 
@@ -626,6 +681,8 @@ EAPI Eina_Bool         elm_web_popup_destroy(Evas_Object *obj);
  *
  * @return @c EINA_TRUE if the given string was found, @c EINA_FALSE if not
  * or failure
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_text_search(const Evas_Object *obj, const char *string, Eina_Bool case_sensitive, Eina_Bool forward, Eina_Bool wrap);
 
@@ -639,6 +696,8 @@ EAPI Eina_Bool         elm_web_text_search(const Evas_Object *obj, const char *s
  * @param limit Maximum amount of matches, or zero to unlimited
  *
  * @return number of matched @a string
+ * 
+ * @ingroup Web
  */
 EAPI unsigned int      elm_web_text_matches_mark(Evas_Object *obj, const char *string, Eina_Bool case_sensitive, Eina_Bool highlight, unsigned int limit);
 
@@ -648,6 +707,8 @@ EAPI unsigned int      elm_web_text_matches_mark(Evas_Object *obj, const char *s
  * @param obj The web object
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_text_matches_unmark_all(Evas_Object *obj);
 
@@ -661,6 +722,8 @@ EAPI Eina_Bool         elm_web_text_matches_unmark_all(Evas_Object *obj);
  * @param highlight Whether to highlight the marks or not
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_text_matches_highlight_set(Evas_Object *obj, Eina_Bool highlight);
 
@@ -671,6 +734,8 @@ EAPI Eina_Bool         elm_web_text_matches_highlight_set(Evas_Object *obj, Eina
  *
  * @return EINA_TRUE is marks are set to be highlighted, EINA_FALSE
  * otherwise
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_text_matches_highlight_get(const Evas_Object *obj);
 
@@ -685,6 +750,8 @@ EAPI Eina_Bool         elm_web_text_matches_highlight_get(const Evas_Object *obj
  *
  * @return A value between 0.0 and 1.0 indicating the progress, or -1.0 on
  * failure
+ * 
+ * @ingroup Web
  */
 EAPI double            elm_web_load_progress_get(const Evas_Object *obj);
 
@@ -698,6 +765,8 @@ EAPI double            elm_web_load_progress_get(const Evas_Object *obj);
  * @param obj The web object
  *
  * @return EINA_TRUE if the cancel was successful, EINA_FALSE otherwise
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_stop(Evas_Object *obj);
 
@@ -707,6 +776,8 @@ EAPI Eina_Bool         elm_web_stop(Evas_Object *obj);
  * @param obj The web object
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_reload(Evas_Object *obj);
 
@@ -716,6 +787,8 @@ EAPI Eina_Bool         elm_web_reload(Evas_Object *obj);
  * @param obj The web object
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_reload_full(Evas_Object *obj);
 
@@ -732,6 +805,8 @@ EAPI Eina_Bool         elm_web_reload_full(Evas_Object *obj);
  * @see elm_web_back_possible()
  * @see elm_web_forward()
  * @see elm_web_navigate()
+ * 
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_back(Evas_Object *obj);
 
@@ -748,6 +823,8 @@ EAPI Eina_Bool         elm_web_back(Evas_Object *obj);
  * @see elm_web_forward_possible_get()
  * @see elm_web_back()
  * @see elm_web_navigate()
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_forward(Evas_Object *obj);
 
@@ -766,6 +843,8 @@ EAPI Eina_Bool         elm_web_forward(Evas_Object *obj);
  * @see elm_web_history_enabled_set()
  * @see elm_web_back()
  * @see elm_web_forward()
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_navigate(Evas_Object *obj, int steps);
 
@@ -776,6 +855,8 @@ EAPI Eina_Bool         elm_web_navigate(Evas_Object *obj, int steps);
  *
  * @return EINA_TRUE if it's possible to back in history, EINA_FALSE
  * otherwise
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_back_possible_get(Evas_Object *obj);
 
@@ -786,6 +867,8 @@ EAPI Eina_Bool         elm_web_back_possible_get(Evas_Object *obj);
  *
  * @return EINA_TRUE if it's possible to forward in history, EINA_FALSE
  * otherwise
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_forward_possible_get(Evas_Object *obj);
 
@@ -800,6 +883,8 @@ EAPI Eina_Bool         elm_web_forward_possible_get(Evas_Object *obj);
  *
  * @return EINA_TRUE if enough history exists to perform the given jump,
  * EINA_FALSE otherwise
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_navigate_possible_get(Evas_Object *obj, int steps);
 
@@ -809,6 +894,8 @@ EAPI Eina_Bool         elm_web_navigate_possible_get(Evas_Object *obj, int steps
  * @param obj The web object
  *
  * @return EINA_TRUE if history is enabled, EINA_FALSE otherwise
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_history_enabled_get(const Evas_Object *obj);
 
@@ -817,6 +904,8 @@ EAPI Eina_Bool         elm_web_history_enabled_get(const Evas_Object *obj);
  *
  * @param obj The web object
  * @param enabled Whether to enable or disable the browsing history
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_history_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
@@ -830,6 +919,8 @@ EAPI void              elm_web_history_enabled_set(Evas_Object *obj, Eina_Bool e
  *
  * @param obj The web object
  * @param zoom The zoom level to set
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_zoom_set(Evas_Object *obj, double zoom);
 
@@ -845,6 +936,8 @@ EAPI void              elm_web_zoom_set(Evas_Object *obj, double zoom);
  * @param obj The web object
  *
  * @return The zoom level set on the object
+ *
+ * @ingroup Web
  */
 EAPI double            elm_web_zoom_get(const Evas_Object *obj);
 
@@ -864,6 +957,8 @@ EAPI double            elm_web_zoom_get(const Evas_Object *obj);
  *
  * @param obj The web object
  * @param mode The mode to set
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode mode);
 
@@ -874,6 +969,8 @@ EAPI void              elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode
  *
  * @return The current zoom mode set for the object, or
  * ::ELM_WEB_ZOOM_MODE_LAST on error
+ *
+ * @ingroup Web
  */
 EAPI Elm_Web_Zoom_Mode elm_web_zoom_mode_get(const Evas_Object *obj);
 
@@ -885,6 +982,8 @@ EAPI Elm_Web_Zoom_Mode elm_web_zoom_mode_get(const Evas_Object *obj);
  * @param y The y coordinate of the region to show
  * @param w The width of the region to show
  * @param h The height of the region to show
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_region_show(Evas_Object *obj, int x, int y, int w, int h);
 
@@ -899,6 +998,8 @@ EAPI void              elm_web_region_show(Evas_Object *obj, int x, int y, int w
  * @param y The y coordinate of the region to show
  * @param w The width of the region to show
  * @param h The height of the region to show
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
 
@@ -911,6 +1012,8 @@ EAPI void              elm_web_region_bring_in(Evas_Object *obj, int x, int y, i
  *
  * @param obj The web object
  * @param value EINA_TRUE to use Inwin, EINA_FALSE to use a normal window
+ *
+ * @ingroup Web
  */
 EAPI void              elm_web_inwin_mode_set(Evas_Object *obj, Eina_Bool value);
 
@@ -920,6 +1023,8 @@ EAPI void              elm_web_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
  * @param obj The web object
  *
  * @return EINA_TRUE if Inwin mode is set, EINA_FALSE otherwise
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool         elm_web_inwin_mode_get(const Evas_Object *obj);
 
@@ -934,6 +1039,8 @@ EAPI void              elm_web_window_features_unref(Elm_Web_Window_Features *wf
  * @param flag The web window feature flag whose value is required.
  *
  * @return EINA_TRUE if the flag is set, EINA_FALSE otherwise
+ *
+ * @ingroup Web
  */
 EAPI Eina_Bool              elm_web_window_features_property_get(const Elm_Web_Window_Features *wf, Elm_Web_Window_Feature_Flag flag);
 
@@ -944,6 +1051,7 @@ EAPI Eina_Bool              elm_web_window_features_property_get(const Elm_Web_W
  * @param wf The web window features object
  * @param x, y, w, h - the co-ordinates of the web view window.
  *
+ * @ingroup Web
  */
 EAPI void              elm_web_window_features_region_get(const Elm_Web_Window_Features *wf, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 

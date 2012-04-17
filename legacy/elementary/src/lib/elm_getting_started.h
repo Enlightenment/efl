@@ -1,5 +1,6 @@
 /**
  * @defgroup Start Getting Started
+ * @ingroup Elementary
  *
  * To write an Elementary app, you can get started with the following:
  *

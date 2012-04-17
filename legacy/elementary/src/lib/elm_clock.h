@@ -1,5 +1,6 @@
 /**
  * @defgroup Clock Clock
+ * @ingroup Elementary
  *
  * @image html img/widget/clock/preview-00.png
  * @image latex img/widget/clock/preview-00.eps

@@ -1,5 +1,7 @@
 /**
  * @defgroup Elm_Gesture_Layer Gesture Layer
+ * @ingroup Elementary
+ *
  * Gesture Layer Usage:
  *
  * Use Gesture Layer to detect gestures.

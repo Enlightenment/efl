@@ -1,5 +1,6 @@
 /**
  * @defgroup CopyPaste CopyPaste
+ * @ingroup Elementary
  *
  * Implements the following functionality
  *    a. select, copy/cut and paste

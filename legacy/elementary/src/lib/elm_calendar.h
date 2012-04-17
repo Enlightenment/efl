@@ -1,5 +1,6 @@
 /**
  * @defgroup Calendar Calendar
+ * @ingroup Elementary
  *
  * This is a Calendar widget. Calender widget helps applications to flexibly
  * display a calender with day of the week, day, year and month. Applications will be
@@ -97,6 +98,8 @@ typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a c
  * @return String representing time that will be set to calendar's text.
  *
  * @see elm_calendar_format_function_set()
+ *
+ * @ingroup Calendar
  */
 typedef char * (*Elm_Calendar_Format_Cb)(struct tm *stime);
 

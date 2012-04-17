@@ -1,5 +1,6 @@
 /**
  * @defgroup Progressbar Progress bar
+ * @ingroup Elementary
  *
  * The progress bar is a widget for visually representing the
  * progress status of a given job/task.

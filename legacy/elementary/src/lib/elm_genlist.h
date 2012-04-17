@@ -1,5 +1,6 @@
 /**
  * @defgroup Genlist Genlist
+ * @ingroup Elementary
  *
  * @image html img/widget/genlist/preview-00.png
  * @image latex img/widget/genlist/preview-00.eps

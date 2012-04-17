@@ -1,5 +1,6 @@
 /**
  * @defgroup Video Video
+ * @ingroup Elementary
  *
  * @addtogroup Video
  * @{

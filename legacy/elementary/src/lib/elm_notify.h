@@ -1,5 +1,6 @@
 /**
  * @defgroup Notify Notify
+ * @ingroup Elementary
  *
  * @image html img/widget/notify/preview-00.png
  * @image latex img/widget/notify/preview-00.eps
@@ -53,6 +54,8 @@ typedef enum
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Notify
  */
 EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent);
 
@@ -64,6 +67,8 @@ EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent);
  *
  * Once the parent object is set, a previously set one will be disconnected
  * and replaced.
+ *
+ * @ingroup Notify
  */
 EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
 
@@ -74,6 +79,8 @@ EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_O
  * @return The parent
  *
  * @see elm_notify_parent_set()
+ *
+ * @ingroup Notify
  */
 EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj);
 
@@ -86,6 +93,8 @@ EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj);
  * Sets the position in which the notify will appear in its parent.
  *
  * @see @ref Elm_Notify_Orient for possible values.
+ *
+ * @ingroup Notify
  */
 EAPI void                         elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
 
@@ -96,6 +105,8 @@ EAPI void                         elm_notify_orient_set(Evas_Object *obj, Elm_No
  *
  * @see elm_notify_orient_set()
  * @see Elm_Notify_Orient
+ *
+ * @ingroup Notify
  */
 EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj);
 
@@ -116,6 +127,8 @@ EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj);
  *
  * @note If the value > 0.0 and the notify is previously visible, the
  * timer will be started with this value, canceling any running timer.
+ *
+ * @ingroup Notify
  */
 EAPI void                         elm_notify_timeout_set(Evas_Object *obj, double timeout);
 
@@ -124,6 +137,8 @@ EAPI void                         elm_notify_timeout_set(Evas_Object *obj, doubl
  * @param obj the notify object
  *
  * @see elm_notify_timeout_set()
+ *
+ * @ingroup Notify
  */
 EAPI double                       elm_notify_timeout_get(const Evas_Object *obj);
 
@@ -138,6 +153,8 @@ EAPI double                       elm_notify_timeout_get(const Evas_Object *obj)
  * by the others widgets, else the events are blocked.
  *
  * @note The default value is EINA_TRUE.
+ *
+ * @ingroup Notify
  */
 EAPI void                         elm_notify_allow_events_set(Evas_Object *obj, Eina_Bool allow);
 
@@ -146,6 +163,8 @@ EAPI void                         elm_notify_allow_events_set(Evas_Object *obj, 
  * @param obj the notify object
  *
  * @see elm_notify_allow_events_set()
+ *
+ * @ingroup Notify
  */
 EAPI Eina_Bool                    elm_notify_allow_events_get(const Evas_Object *obj);
 

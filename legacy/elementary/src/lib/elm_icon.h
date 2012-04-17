@@ -1,5 +1,6 @@
 /**
  * @defgroup Icon Icon
+ * @ingroup Elementary
  *
  * @image html img/widget/icon/preview-00.png
  * @image latex img/widget/icon/preview-00.eps

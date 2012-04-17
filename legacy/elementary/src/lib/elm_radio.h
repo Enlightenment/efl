@@ -1,5 +1,6 @@
 /**
  * @defgroup Radio Radio
+ * @ingroup Elementary
  *
  * @image html img/widget/radio/preview-00.png
  * @image latex img/widget/radio/preview-00.eps
@@ -57,6 +58,8 @@
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Radio
  */
 EAPI Evas_Object                 *elm_radio_add(Evas_Object *parent);
 
@@ -70,6 +73,8 @@ EAPI Evas_Object                 *elm_radio_add(Evas_Object *parent);
  * value assigned. In order to have them work as a group, they need to know
  * about each other. This adds the given radio object to the group of which
  * the group object indicated is a member.
+ *
+ * @ingroup Radio
  */
 EAPI void                         elm_radio_group_add(Evas_Object *obj, Evas_Object *group);
 
@@ -80,6 +85,8 @@ EAPI void                         elm_radio_group_add(Evas_Object *obj, Evas_Obj
  * @param value The value to use if this radio object is selected
  *
  * This sets the value of the radio.
+ *
+ * @ingroup Radio
  */
 EAPI void                         elm_radio_state_value_set(Evas_Object *obj, int value);
 
@@ -90,8 +97,9 @@ EAPI void                         elm_radio_state_value_set(Evas_Object *obj, in
  * @return The value used if this radio object is selected
  *
  * This gets the value of the radio.
- *
  * @see elm_radio_value_set()
+ *
+ * @ingroup Radio
  */
 EAPI int                          elm_radio_state_value_get(const Evas_Object *obj);
 
@@ -103,6 +111,8 @@ EAPI int                          elm_radio_state_value_get(const Evas_Object *o
  *
  * This sets the value of the radio group and will also set the value if
  * pointed to, to the value supplied, but will not call any callbacks.
+ *
+ * @ingroup Radio
  */
 EAPI void                         elm_radio_value_set(Evas_Object *obj, int value);
 
@@ -111,6 +121,8 @@ EAPI void                         elm_radio_value_set(Evas_Object *obj, int valu
  *
  * @param obj The radio object (any radio object of the group).
  * @return The integer state
+ *
+ * @ingroup Radio
  */
 EAPI int                          elm_radio_value_get(const Evas_Object *obj);
 
@@ -127,6 +139,8 @@ EAPI int                          elm_radio_value_get(const Evas_Object *obj);
  * when this is called, the radio objects state will also be modified to
  * reflect the value of the integer valuep points to, just like calling
  * elm_radio_value_set().
+ *
+ * @ingroup Radio
  */
 EAPI void                         elm_radio_value_pointer_set(Evas_Object *obj, int *valuep);
 
@@ -135,6 +149,8 @@ EAPI void                         elm_radio_value_pointer_set(Evas_Object *obj, 
  *
  * @param obj Any radio object (any object of a group)
  * @return The selected radio object
+ *
+ * @ingroup Radio
  */
 EAPI Evas_Object                 *elm_radio_selected_object_get(Evas_Object *obj);
 

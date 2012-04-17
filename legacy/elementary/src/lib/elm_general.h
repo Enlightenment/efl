@@ -1,5 +1,6 @@
 /**
  * @defgroup General General
+ * @ingroup Elementary
  *
  * @brief General Elementary API. Functions that don't relate to
  * Elementary objects specifically.

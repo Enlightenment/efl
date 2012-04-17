@@ -1,5 +1,6 @@
 /**
  * @defgroup Theme Theme
+ * @ingroup Elementary
  *
  * Elementary uses Edje to theme its widgets, naturally. But for the most
  * part this is hidden behind a simpler interface that lets the user set
@@ -91,6 +92,8 @@ typedef struct _Elm_Theme Elm_Theme;
  * actually apply it yet. The child of the scroller will have a specific
  * theme set to show this preview before the user decides to apply it to all
  * applications).
+ *
+ * @ingroup Theme
  */
 EAPI Elm_Theme       *elm_theme_new(void);
 
@@ -100,6 +103,8 @@ EAPI Elm_Theme       *elm_theme_new(void);
  * @param th The theme to free
  *
  * This frees a theme created with elm_theme_new().
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_free(Elm_Theme *th);
 
@@ -113,6 +118,8 @@ EAPI void             elm_theme_free(Elm_Theme *th);
  * and overlays from @p th to @p thdst. If @p th references a theme, then
  * @p thdst is also set to reference it, with all the theme settings,
  * overlays and extensions that @p th had.
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst);
 
@@ -125,6 +132,8 @@ EAPI void             elm_theme_copy(Elm_Theme *th, Elm_Theme *thdst);
  * This clears @p th to be empty and then sets it to refer to @p thref
  * so @p th acts as an override to @p thref, but where its overrides
  * don't apply, it will fall through to @p thref for configuration.
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref);
 
@@ -136,6 +145,8 @@ EAPI void             elm_theme_ref_set(Elm_Theme *th, Elm_Theme *thref);
  *
  * This gets the theme set as the reference theme by elm_theme_ref_set().
  * If no theme is set as a reference, NULL is returned.
+ *
+ * @ingroup Theme
  */
 EAPI Elm_Theme       *elm_theme_ref_get(Elm_Theme *th);
 
@@ -147,6 +158,8 @@ EAPI Elm_Theme       *elm_theme_ref_get(Elm_Theme *th);
  * This returns the internal default theme setup handle that all widgets
  * use implicitly unless a specific theme is set. This is also often use
  * as a shorthand of NULL.
+ *
+ * @ingroup Theme
  */
 EAPI Elm_Theme       *elm_theme_default_get(void);
 
@@ -166,6 +179,8 @@ EAPI Elm_Theme       *elm_theme_default_get(void);
  * of trouble.
  *
  * @see elm_theme_extension_add()
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_overlay_add(Elm_Theme *th, const char *item);
 
@@ -176,6 +191,8 @@ EAPI void             elm_theme_overlay_add(Elm_Theme *th, const char *item);
  * @param item The name of the theme overlay
  *
  * @see elm_theme_overlay_add()
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_overlay_del(Elm_Theme *th, const char *item);
 
@@ -186,6 +203,8 @@ EAPI void             elm_theme_overlay_del(Elm_Theme *th, const char *item);
  * @return List of theme overlays. Do not free it.
  *
  * @see elm_theme_overlay_add()
+ *
+ * @ingroup Theme
  */
 EAPI const Eina_List *elm_theme_overlay_list_get(const Elm_Theme *th);
 
@@ -207,6 +226,8 @@ EAPI const Eina_List *elm_theme_overlay_list_get(const Elm_Theme *th);
  * Use this call instead of elm_theme_overlay_add() for almost all cases.
  *
  * @see elm_object_style_set()
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_extension_add(Elm_Theme *th, const char *item);
 
@@ -217,6 +238,8 @@ EAPI void             elm_theme_extension_add(Elm_Theme *th, const char *item);
  * @param item The name of the theme extension
  *
  * @see elm_theme_extension_add()
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_extension_del(Elm_Theme *th, const char *item);
 
@@ -227,6 +250,8 @@ EAPI void             elm_theme_extension_del(Elm_Theme *th, const char *item);
  * @return List of theme extensions. Do not free it.
  *
  * @see elm_theme_extension_add()
+ *
+ * @ingroup Theme
  */
 EAPI const Eina_List *elm_theme_extension_list_get(const Elm_Theme *th);
 
@@ -245,6 +270,8 @@ EAPI const Eina_List *elm_theme_extension_list_get(const Elm_Theme *th);
  *
  * @see elm_theme_get()
  * @see elm_theme_list_get()
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_set(Elm_Theme *th, const char *theme);
 
@@ -259,6 +286,8 @@ EAPI void             elm_theme_set(Elm_Theme *th, const char *theme);
  *
  * @see elm_theme_set()
  * @see elm_theme_list_get()
+ *
+ * @ingroup Theme
  */
 EAPI const char      *elm_theme_get(Elm_Theme *th);
 
@@ -280,6 +309,8 @@ EAPI const char      *elm_theme_get(Elm_Theme *th);
  *
  * @see elm_theme_set()
  * @see elm_theme_get()
+ *
+ * @ingroup Theme
  */
 EAPI const Eina_List *elm_theme_list_get(const Elm_Theme *th);
 
@@ -298,6 +329,8 @@ EAPI const Eina_List *elm_theme_list_get(const Elm_Theme *th);
  * relative to home. The @p in_search_path boolean pointed to is set to
  * EINA_TRUE if the file was a search-able file and is in the search path,
  * and EINA_FALSE otherwise.
+ *
+ * @ingroup Theme
  */
 EAPI char            *elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path);
 
@@ -310,6 +343,8 @@ EAPI char            *elm_theme_list_item_path_get(const char *f, Eina_Bool *in_
  * in the given theme. If @p th is NULL, then the default theme is flushed.
  * Call this function if source theme data has changed in such a way as to
  * make any caches Elementary kept invalid.
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_flush(Elm_Theme *th);
 
@@ -318,6 +353,8 @@ EAPI void             elm_theme_flush(Elm_Theme *th);
  *
  * This will flush all themes in the current application context, by calling
  * elm_theme_flush() on each of them.
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_full_flush(void);
 
@@ -330,6 +367,8 @@ EAPI void             elm_theme_full_flush(void);
  * for theme elements, and returns them in alphabetical order as theme
  * element names in a list of strings. Free this with
  * elm_theme_name_available_list_free() when you are done with the list.
+ *
+ * @ingroup Theme
  */
 EAPI Eina_List       *elm_theme_name_available_list_new(void);
 
@@ -339,6 +378,8 @@ EAPI Eina_List       *elm_theme_name_available_list_new(void);
  * This frees the list of themes returned by
  * elm_theme_name_available_list_new(). Once freed the list should no longer
  * be used. a new list mys be created.
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_theme_name_available_list_free(Eina_List *list);
 
@@ -356,6 +397,8 @@ EAPI void             elm_theme_name_available_list_free(Eina_List *list);
  * Use special themes with great care as this will annoy users and make
  * configuration difficult. Avoid any custom themes at all if it can be
  * helped.
+ *
+ * @ingroup Theme
  */
 EAPI void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
 
@@ -369,6 +412,8 @@ EAPI void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
  * set on that object. It will not return inherited themes from parents, only
  * the specific theme set for that specific object. See elm_object_theme_set()
  * for more information.
+ *
+ * @ingroup Theme
  */
 EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj);
 
@@ -381,6 +426,8 @@ EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj);
  *
  * This function is used to return data items from edc in @p th, an overlay, or an extension.
  * It works the same way as edje_file_data_get() except that the return is stringshared.
+ *
+ * @ingroup Theme
  */
 EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key);
 

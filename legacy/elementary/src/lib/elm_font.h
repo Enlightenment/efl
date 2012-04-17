@@ -1,5 +1,6 @@
 /**
  * @defgroup Fonts Elementary Fonts
+ * @ingroup Elementary
  *
  * These are functions dealing with font rendering, selection and the
  * like for Elementary applications. One might fetch which system

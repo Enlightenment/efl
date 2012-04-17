@@ -1,5 +1,6 @@
 /**
  * @defgroup Scrollhints Scrollhints
+ * @ingroup Elementary
  *
  * Objects when inside a scroller can scroll, but this may not always be
  * desirable in certain situations. This allows an object to hint to itself

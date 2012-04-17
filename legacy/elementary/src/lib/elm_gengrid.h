@@ -1,5 +1,6 @@
 /**
  * @defgroup Gengrid Gengrid (Generic grid)
+ * @ingroup Elementary
  *
  * This widget aims to position objects in a grid layout while
  * actually creating and rendering only the visible ones, using the

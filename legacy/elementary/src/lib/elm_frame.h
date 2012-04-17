@@ -1,5 +1,6 @@
 /**
  * @defgroup Frame Frame
+ * @ingroup Elementary
  *
  * @image html img/widget/frame/preview-00.png
  * @image latex img/widget/frame/preview-00.eps
@@ -44,6 +45,8 @@
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Frame
  */
 EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
 
@@ -55,6 +58,8 @@ EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
  * When @p enable is EINA_TRUE, clicking a frame's label will collapse the frame
  * vertically, shrinking it to the height of the label.
  * By default, this is DISABLED.
+ *
+ * @ingroup Frame
  */
 EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool autocollapse);
 
@@ -66,6 +71,8 @@ EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool autocollapse);
  * When this returns EINA_TRUE, clicking a frame's label will collapse the frame
  * vertically, shrinking it to the height of the label.
  * By default, this is DISABLED.
+ *
+ * @ingroup Frame
  */
 EAPI Eina_Bool elm_frame_autocollapse_get(const Evas_Object *obj);
 
@@ -75,6 +82,8 @@ EAPI Eina_Bool elm_frame_autocollapse_get(const Evas_Object *obj);
  * @param collapse true to collapse, false to expand
  *
  * Use this to toggle the collapsed state of a frame, bypassing animations.
+ *
+ * @ingroup Frame
  */
 EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
 
@@ -84,6 +93,8 @@ EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
  * @return true if collapsed, false otherwise
  *
  * Use this to determine the collapse state of a frame.
+ *
+ * @ingroup Frame
  */
 EAPI Eina_Bool elm_frame_collapse_get(const Evas_Object *obj);
 
@@ -93,6 +104,8 @@ EAPI Eina_Bool elm_frame_collapse_get(const Evas_Object *obj);
  * @param collapse true to collapse, false to expand
  *
  * Use this to toggle the collapsed state of a frame, triggering animations.
+ *
+ * @ingroup Frame
  */
 EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
 

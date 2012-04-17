@@ -1,5 +1,6 @@
 /**
  * @defgroup Debug Debug
+ * @ingroup Elementary
  * Don't use it unless you are sure.
  *
  * @{

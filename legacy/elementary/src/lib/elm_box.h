@@ -1,5 +1,6 @@
 /**
  * @defgroup Box Box
+ * @ingroup Elementary
  *
  * @image html img/widget/box/preview-00.png
  * @image latex img/widget/box/preview-00.eps width=\textwidth
@@ -86,6 +87,8 @@ typedef struct _Elm_Box_Transition Elm_Box_Transition;
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Box
  */
 EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
 
@@ -102,6 +105,8 @@ EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
  * @param obj The box object
  * @param horizontal The horizontal flag (EINA_TRUE = horizontal,
  * EINA_FALSE = vertical)
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
@@ -123,6 +128,8 @@ EAPI Eina_Bool           elm_box_horizontal_get(const Evas_Object *obj);
  *
  * @param obj The box object
  * @param homogeneous The homogeneous flag
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
 
@@ -131,6 +138,8 @@ EAPI void                elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool hom
  *
  * @param obj The box object
  * @return EINA_TRUE if it's homogeneous, EINA_FALSE otherwise
+ *
+ * @ingroup Box
  */
 EAPI Eina_Bool           elm_box_homogeneous_get(const Evas_Object *obj);
 
@@ -152,6 +161,8 @@ EAPI Eina_Bool           elm_box_homogeneous_get(const Evas_Object *obj);
  * @see elm_box_unpack()
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj);
 
@@ -173,6 +184,8 @@ EAPI void                elm_box_pack_start(Evas_Object *obj, Evas_Object *subob
  * @see elm_box_unpack()
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj);
 
@@ -194,6 +207,8 @@ EAPI void                elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
  * @see elm_box_unpack()
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before);
 
@@ -215,6 +230,8 @@ EAPI void                elm_box_pack_before(Evas_Object *obj, Evas_Object *subo
  * @see elm_box_unpack()
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after);
 
@@ -228,6 +245,8 @@ EAPI void                elm_box_pack_after(Evas_Object *obj, Evas_Object *subob
  *
  * @see elm_box_unpack()
  * @see elm_box_unpack_all()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_clear(Evas_Object *obj);
 
@@ -242,6 +261,8 @@ EAPI void                elm_box_clear(Evas_Object *obj);
  *
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_unpack(Evas_Object *obj, Evas_Object *subobj);
 
@@ -258,6 +279,8 @@ EAPI void                elm_box_unpack(Evas_Object *obj, Evas_Object *subobj);
  *
  * @see elm_box_clear()
  * @see elm_box_unpack()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_unpack_all(Evas_Object *obj);
 
@@ -270,6 +293,8 @@ EAPI void                elm_box_unpack_all(Evas_Object *obj);
  * You must free this list with eina_list_free() once you are done with it.
  *
  * @param obj The box object
+ *
+ * @ingroup Box
  */
 EAPI Eina_List    *elm_box_children_get(const Evas_Object *obj);
 
@@ -284,6 +309,8 @@ EAPI Eina_List    *elm_box_children_get(const Evas_Object *obj);
  * @param obj The box object
  * @param horizontal The horizontal space between elements
  * @param vertical The vertical space between elements
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
 
@@ -295,6 +322,8 @@ EAPI void                elm_box_padding_set(Evas_Object *obj, Evas_Coord horizo
  * @param vertical The vertical space between elements
  *
  * @see elm_box_padding_set()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical);
 
@@ -308,6 +337,8 @@ EAPI void                elm_box_padding_get(const Evas_Object *obj, Evas_Coord 
  * @param obj The box object
  * @param horizontal The horizontal alignment of elements
  * @param vertical The vertical alignment of elements
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_align_set(Evas_Object *obj, double horizontal, double vertical);
 
@@ -319,6 +350,8 @@ EAPI void                elm_box_align_set(Evas_Object *obj, double horizontal, 
  * @param vertical The vertical alignment of elements
  *
  * @see elm_box_align_set()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical);
 
@@ -332,6 +365,8 @@ EAPI void                elm_box_align_get(const Evas_Object *obj, double *horiz
  * added item you must force recalculate before doing so.
  *
  * @param obj The box object.
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_recalculate(Evas_Object *obj);
 
@@ -367,6 +402,8 @@ EAPI void                elm_box_recalculate(Evas_Object *obj);
  * @param free_data Function called to free @p data
  *
  * @see elm_box_layout_transition()
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, Ecore_Cb free_data);
 
@@ -401,6 +438,8 @@ EAPI void                elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_La
  * @see elm_box_transition_new
  * @see elm_box_transition_free
  * @see elm_box_layout_set
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_layout_transition(Evas_Object *obj, Evas_Object_Box_Data *priv, void *data);
 
@@ -434,6 +473,8 @@ EAPI void                elm_box_layout_transition(Evas_Object *obj, Evas_Object
  *
  * @see elm_box_transition_new
  * @see elm_box_layout_transition
+ *
+ * @ingroup Box
  */
 EAPI Elm_Box_Transition *elm_box_transition_new(const double duration, Evas_Object_Box_Layout start_layout, void *start_layout_data, Ecore_Cb start_layout_free_data, Evas_Object_Box_Layout end_layout, void *end_layout_data, Ecore_Cb end_layout_free_data, Ecore_Cb transition_end_cb, void *transition_end_data);
 
@@ -447,6 +488,8 @@ EAPI Elm_Box_Transition *elm_box_transition_new(const double duration, Evas_Obje
  *
  * @see elm_box_transition_new
  * @see elm_box_layout_transition
+ *
+ * @ingroup Box
  */
 EAPI void                elm_box_transition_free(void *data);
 

@@ -1,5 +1,6 @@
 /**
  * @defgroup GLView GLView
+ * @ingroup Elementary
  *
  * A GLView widget allows for simple GL rendering in elementary environment.
  * GLView hides all the complicated evas_gl details so that the user only

@@ -1,5 +1,6 @@
 /**
  * @defgroup Plug Plug
+ * @ingroup Elementary
  *
  * An object that allows one to show an image which other process created.
  * It can be used anywhere like any other elementary widget.

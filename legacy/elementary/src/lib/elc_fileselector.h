@@ -1,5 +1,6 @@
 /**
  * @defgroup Fileselector File Selector
+ * @ingroup Elementary
  *
  * @image html img/widget/fileselector/preview-00.png
  * @image latex img/widget/fileselector/preview-00.eps

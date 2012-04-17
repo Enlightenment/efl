@@ -1,5 +1,6 @@
 /**
  * @defgroup Fingers Fingers
+ * @ingroup Elementary
  *
  * Elementary is designed to be finger-friendly for touchscreens,
  * and so in addition to scaling for display resolution, it can

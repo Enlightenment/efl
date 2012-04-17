@@ -1,5 +1,4 @@
 /**
- *
  * @defgroup Transit Transit
  * @ingroup Elementary
  *

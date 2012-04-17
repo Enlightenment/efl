@@ -1,5 +1,6 @@
 /**
  * @defgroup Table Table
+ * @ingroup Elementary
  *
  * A container widget to arrange other widgets in a table where items can
  * span multiple columns or rows - even overlap (and then be raised or
@@ -30,6 +31,8 @@
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Table
  */
 EAPI Evas_Object *elm_table_add(Evas_Object *parent);
 
@@ -39,6 +42,8 @@ EAPI Evas_Object *elm_table_add(Evas_Object *parent);
  * @param obj The layout object
  * @param homogeneous A boolean to set if the layout is homogeneous in the
  * table (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous)
+ *
+ * @ingroup Table
  */
 EAPI void      elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
 
@@ -48,6 +53,8 @@ EAPI void      elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous
  * @param obj The table object
  * @return A boolean to indicating if the layout is homogeneous in the table
  * (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous)
+ *
+ * @ingroup Table
  */
 EAPI Eina_Bool elm_table_homogeneous_get(const Evas_Object *obj);
 
@@ -59,6 +66,8 @@ EAPI Eina_Bool elm_table_homogeneous_get(const Evas_Object *obj);
  * @param vertical set the vertical padding.
  *
  * Default value is 0.
+ *
+ * @ingroup Table
  */
 EAPI void      elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
 
@@ -68,6 +77,8 @@ EAPI void      elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Ev
  * @param obj The layout object.
  * @param horizontal set the horizontal padding.
  * @param vertical set the vertical padding.
+ *
+ * @ingroup Table
  */
 EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical);
 
@@ -84,6 +95,8 @@ EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizon
  * @note All positioning inside the table is relative to rows and columns, so
  * a value of 0 for x and y, means the top left cell of the table, and a
  * value of 1 for w and h means @p subobj only takes that 1 cell.
+ *
+ * @ingroup Table
  */
 EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
 
@@ -92,6 +105,8 @@ EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int 
  *
  * @param obj The table object
  * @param subobj The subobject
+ *
+ * @ingroup Table
  */
 EAPI void      elm_table_unpack(Evas_Object *obj, Evas_Object *subobj);
 
@@ -100,6 +115,8 @@ EAPI void      elm_table_unpack(Evas_Object *obj, Evas_Object *subobj);
  *
  * @param obj The table object
  * @param clear If true, will delete children, else just remove from table.
+ *
+ * @ingroup Table
  */
 EAPI void      elm_table_clear(Evas_Object *obj, Eina_Bool clear);
 
@@ -117,6 +134,8 @@ EAPI void      elm_table_clear(Evas_Object *obj, Eina_Bool clear);
  * @note All positioning inside the table is relative to rows and columns, so
  * a value of 0 for x and y, means the top left cell of the table, and a
  * value of 1 for w and h means @p subobj only takes that 1 cell.
+ *
+ * @ingroup Table
  */
 EAPI void      elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h);
 
@@ -130,6 +149,8 @@ EAPI void      elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int 
  * @param h colspan
  *
  * @see elm_table_pack_set()
+ *
+ * @ingroup Table
  */
 EAPI void      elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h);
 

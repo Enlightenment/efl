@@ -1,5 +1,6 @@
 /**
  * @defgroup Multibuttonentry Multibuttonentry
+ * @ingroup Elementary
  *
  * A Multibuttonentry is a widget to allow a user enter text and manage it as a number
  * of buttons. Each text button is inserted by pressing the "return" key.

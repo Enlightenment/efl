@@ -1,5 +1,6 @@
 /**
  * @defgroup Config Elementary Config
+ * @ingroup Elementary
  *
  * Elementary configuration is formed by a set options bounded to a
  * given @ref Profile profile, like @ref Theme theme, @ref Fingers
@@ -54,6 +55,7 @@ EAPI void      elm_config_all_flush(void);
 
 /**
  * @defgroup Profile Elementary Profile
+ * @ingroup Elementary
  *
  * Profiles are pre-set options that affect the whole look-and-feel of
  * Elementary-based applications. There are, for example, profiles
@@ -140,7 +142,8 @@ EAPI void        elm_config_profile_set(const char *profile);
  */
 
 /**
- * @defgroup Scrolling Scrolling
+ * @defgroup Scrolling Elementary Scrolling
+ * @ingroup Elementary
  *
  * These are functions setting how scrollable views in Elementary
  * widgets should behave on user interaction.
@@ -478,6 +481,7 @@ EAPI void   elm_config_scale_set(double scale);
 
 /**
  * @defgroup Password_last_show Password show last
+ * @ingroup Elementary
  *
  * Show last feature of password mode enables user to view
  * the last input entered for few seconds before masking it.
@@ -541,6 +545,7 @@ EAPI void      elm_config_password_show_last_timeout_set(double password_show_la
 
 /**
  * @defgroup Engine Elementary Engine
+ * @ingroup Elementary
  *
  * These are functions setting and querying which rendering engine
  * Elementary will use for drawing its windows' pixels.

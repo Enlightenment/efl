@@ -1,5 +1,6 @@
 /**
  * @defgroup Hover Hover
+ * @ingroup Elementary
  *
  * @image html img/widget/hover/preview-00.png
  * @image latex img/widget/hover/preview-00.eps
@@ -99,6 +100,8 @@ typedef enum
  *
  * @param parent The parent object
  * @return The hover object or NULL if one could not be created
+ *
+ * @ingroup Hover
  */
 EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
 
@@ -109,6 +112,8 @@ EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
  * @param target The object to center the hover onto.
  *
  * This function will cause the hover to be centered on the target object.
+ *
+ * @ingroup Hover
  */
 EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
 
@@ -119,6 +124,8 @@ EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
  * @return The target object for the hover.
  *
  * @see elm_hover_target_set()
+ *
+ * @ingroup Hover
  */
 EAPI Evas_Object *elm_hover_target_get(const Evas_Object *obj);
 
@@ -130,6 +137,8 @@ EAPI Evas_Object *elm_hover_target_get(const Evas_Object *obj);
  *
  * This function will cause the hover to take up the entire space that the
  * parent object fills.
+ *
+ * @ingroup Hover
  */
 EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
 
@@ -140,6 +149,8 @@ EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
  * @return The parent object to locate the hover over.
  *
  * @see elm_hover_parent_set()
+ *
+ * @ingroup Hover
  */
 EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
 
@@ -168,6 +179,8 @@ EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
  * returned position may be in either axis.
  *
  * @see elm_object_part_content_set()
+ *
+ * @ingroup Hover
  */
 EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
 
@@ -177,6 +190,8 @@ EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, El
  * @param obj The hover object
  * Use this function to simulate clicking outside the hover to dismiss it.
  * In this way, the hover will be hidden and the "clicked" signal will be emitted.
+ *
+ * @ingroup Hover
  */
 EAPI void elm_hover_dismiss(Evas_Object *obj);
 /**

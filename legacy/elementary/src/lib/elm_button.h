@@ -1,5 +1,6 @@
 /**
  * @defgroup Button Button
+ * @ingroup Elementary
  *
  * @image html img/widget/button/preview-00.png
  * @image latex img/widget/button/preview-00.eps
@@ -53,10 +54,17 @@
  */
 
 /**
+ * @addtogroup Button
+ * @{
+ */
+
+/**
  * Add a new button to the parent's canvas
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Button
  */
 EAPI Evas_Object                 *elm_button_add(Evas_Object *parent);
 
@@ -74,6 +82,8 @@ EAPI Evas_Object                 *elm_button_add(Evas_Object *parent);
  *
  * @param obj The button object
  * @param on  A bool to turn on/off the event
+ *
+ * @ingroup Button
  */
 EAPI void                         elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on);
 
@@ -84,6 +94,8 @@ EAPI void                         elm_button_autorepeat_set(Evas_Object *obj, Ei
  * @return EINA_TRUE if autorepeat is on, EINA_FALSE otherwise
  *
  * @see elm_button_autorepeat_set()
+ *
+ * @ingroup Button
  */
 EAPI Eina_Bool                    elm_button_autorepeat_get(const Evas_Object *obj);
 
@@ -100,6 +112,8 @@ EAPI Eina_Bool                    elm_button_autorepeat_get(const Evas_Object *o
  *
  * @see elm_button_autorepeat_set()
  * @see elm_button_autorepeat_gap_timeout_set()
+ *
+ * @ingroup Button
  */
 EAPI void                         elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t);
 
@@ -110,6 +124,8 @@ EAPI void                         elm_button_autorepeat_initial_timeout_set(Evas
  * @return Timeout in seconds
  *
  * @see elm_button_autorepeat_initial_timeout_set()
+ *
+ * @ingroup Button
  */
 EAPI double                       elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj);
 
@@ -123,6 +139,8 @@ EAPI double                       elm_button_autorepeat_initial_timeout_get(cons
  * @param t   Interval in seconds
  *
  * @see elm_button_autorepeat_initial_timeout_set()
+ *
+ * @ingroup Button
  */
 EAPI void                         elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t);
 
@@ -131,6 +149,8 @@ EAPI void                         elm_button_autorepeat_gap_timeout_set(Evas_Obj
  *
  * @param obj The button object
  * @return Interval in seconds
+ *
+ * @ingroup Button
  */
 EAPI double                       elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj);
 

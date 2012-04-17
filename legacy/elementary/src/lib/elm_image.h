@@ -1,5 +1,6 @@
 /**
  * @defgroup Image Image
+ * @ingroup Elementary
  *
  * @image html img/widget/image/preview-00.png
  * @image latex img/widget/image/preview-00.eps

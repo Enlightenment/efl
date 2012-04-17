@@ -1,5 +1,6 @@
 /**
  * @defgroup Flip Flip
+ * @ingroup Elementary
  *
  * @image html img/widget/flip/preview-00.png
  * @image latex img/widget/flip/preview-00.eps
@@ -68,6 +69,8 @@ typedef enum
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Flip
  */
 EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
 
@@ -77,6 +80,8 @@ EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
  * @param obj The flip object
  * @return EINA_TRUE if front front is showing, EINA_FALSE if the back is
  * showing.
+ *
+ * @ingroup Flip
  */
 Eina_Bool elm_flip_front_visible_get(const Evas_Object *obj);
 
@@ -89,6 +94,8 @@ Eina_Bool elm_flip_front_visible_get(const Evas_Object *obj);
  * @param y The Y coordinate
  *
  * @warning This function currently does nothing.
+ *
+ * @ingroup Flip
  */
 EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
 
@@ -137,6 +144,8 @@ EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord 
  *
  * @image html elm_flip.png
  * @image latex elm_flip.eps width=\textwidth
+ *
+ * @ingroup Flip
  */
 EAPI void                 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode);
 
@@ -162,6 +171,8 @@ EAPI void                 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode);
  * @note ELM_FLIP_INTERACTION_ROTATE won't cause
  * ELM_FLIP_ROTATE_XZ_CENTER_AXIS or ELM_FLIP_ROTATE_YZ_CENTER_AXIS to
  * happen, those can only be achieved with elm_flip_go();
+ *
+ * @ingroup Flip
  */
 EAPI void                 elm_flip_interaction_set(Evas_Object *obj, Elm_Flip_Interaction mode);
 
@@ -172,6 +183,8 @@ EAPI void                 elm_flip_interaction_set(Evas_Object *obj, Elm_Flip_In
  * @return The interactive flip mode
  *
  * Returns the interactive flip mode set by elm_flip_interaction_set()
+ *
+ * @ingroup Flip
  */
 EAPI Elm_Flip_Interaction elm_flip_interaction_get(const Evas_Object *obj);
 
@@ -187,6 +200,8 @@ EAPI Elm_Flip_Interaction elm_flip_interaction_get(const Evas_Object *obj);
  * call this function once for each direction that should be enabled.
  *
  * @see elm_flip_interaction_set()
+ *
+ * @ingroup Flip
  */
 EAPI void                 elm_flip_interaction_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
 
@@ -200,6 +215,8 @@ EAPI void                 elm_flip_interaction_direction_enabled_set(Evas_Object
  * Gets the enabled state set by elm_flip_interaction_direction_enabled_set()
  *
  * @see elm_flip_interaction_set()
+ *
+ * @ingroup Flip
  */
 EAPI Eina_Bool            elm_flip_interaction_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction dir);
 
@@ -216,6 +233,8 @@ EAPI Eina_Bool            elm_flip_interaction_direction_enabled_get(Evas_Object
  * smaller than the finger size set(as set in your Elementary configuration).
  *
  * @see elm_flip_interaction_set()
+ *
+ * @ingroup Flip
  */
 EAPI void                 elm_flip_interaction_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction dir, double hitsize);
 
@@ -228,6 +247,8 @@ EAPI void                 elm_flip_interaction_direction_hitsize_set(Evas_Object
  *
  * Returns the amount of sensitive area set by
  * elm_flip_interaction_direction_hitsize_set().
+ *
+ * @ingroup Flip
  */
 EAPI double               elm_flip_interaction_direction_hitsize_get(Evas_Object *obj, Elm_Flip_Direction dir);
 

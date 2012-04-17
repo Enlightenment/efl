@@ -1,5 +1,6 @@
 /**
  * @defgroup Scaling Widget Scaling
+ * @ingroup Elementary
  *
  * Different widgets can be scaled independently. These functions
  * allow you to manipulate this scaling on a per-widget basis. The

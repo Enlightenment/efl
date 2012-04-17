@@ -1,5 +1,6 @@
 /**
  * @defgroup Thumb Thumb
+ * @ingroup Elementary
  *
  * @image html img/widget/thumb/preview-00.png
  * @image latex img/widget/thumb/preview-00.eps

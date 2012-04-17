@@ -1,5 +1,6 @@
 /**
  * @defgroup Cursors Cursors
+ * @ingroup Elementary
  *
  * The Elementary cursor is an internal smart object used to
  * customize the mouse cursor displayed over objects (or

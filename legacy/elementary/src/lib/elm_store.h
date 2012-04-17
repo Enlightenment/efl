@@ -1,5 +1,6 @@
 /**
  * @defgroup Store Elementary Store
+ * @ingroup Elementary
  *
  * Store is an abstracting API that is intended to farm off fetching of data
  * to threads running asynchronously from the mainloop that actually fetch
@@ -144,6 +145,8 @@ struct _Elm_Store_Item_Info_Filesystem
  * This creates a new store object to then configure so it works.
  *
  * @return A new store object, or NULL if creation fails
+ *
+ * @ingroup Store
  */
 EAPI Elm_Store              *elm_store_filesystem_new(void);
 /**
@@ -155,6 +158,8 @@ EAPI Elm_Store              *elm_store_filesystem_new(void);
  * pending operation to do this).
  *
  * @param st The store to free
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_free(Elm_Store *st);
 
@@ -171,6 +176,8 @@ EAPI void                    elm_store_free(Elm_Store *st);
  *
  * @param st The store to modify
  * @param dir A string giving the path to the directory to scan
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, const char *dir);
 
@@ -182,6 +189,8 @@ EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, c
  * changes it or until the store is freed with elm_store_free().
  *
  * @return A string with the path set, or NULL if none set.
+ *
+ * @ingroup Store
  */
 EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store *st);
 
@@ -195,6 +204,8 @@ EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store 
  *
  * @param sti The store item to get the path from
  * @return A full path in a string or NULL if none available
+ *
+ * @ingroup Store
  */
 EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti);
 
@@ -207,6 +218,8 @@ EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_
  *
  * @param st The store to do the filling.
  * @param obj The genlist object to fill in and control the content of from the store.
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj);
 
@@ -219,6 +232,8 @@ EAPI void                    elm_store_target_genlist_set(Elm_Store *st, Evas_Ob
  *
  * @param st The store to modify
  * @param max The number of items to keep (should be greater than or equal to 0)
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_cache_set(Elm_Store *st, int max);
 
@@ -230,6 +245,8 @@ EAPI void                    elm_store_cache_set(Elm_Store *st, int max);
  * @param st The store to query
  * @return The maximum number of items to cache (>= 0)
  * @see elm_store_cache_set()
+ *
+ * @ingroup Store
  */
 EAPI int                     elm_store_cache_get(const Elm_Store *st);
 
@@ -244,6 +261,8 @@ EAPI int                     elm_store_cache_get(const Elm_Store *st);
  * @param st The store to set the function of
  * @param func The function to be called
  * @param data the data pointer to be passed to the @p func function when called
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data);
 
@@ -261,6 +280,8 @@ EAPI void                    elm_store_list_func_set(Elm_Store *st, Elm_Store_It
  * @param st The store to set the function of
  * @param func The function to be called
  * @param data the data pointer to be passed to the @p func function when called
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void *data);
 
@@ -274,6 +295,8 @@ EAPI void                    elm_store_fetch_func_set(Elm_Store *st, Elm_Store_I
  * @param st The store to set the function of
  * @param func The function to be called
  * @param data the data pointer to be passed to the @p func function when called
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data);
 
@@ -282,6 +305,8 @@ EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store
  *
  * @param st The store to modify
  * @param use_thread EINA_TRUE to use a thread to fetch, EINA_FALSE don't use a thread.
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool use_thread);
 
@@ -290,6 +315,8 @@ EAPI void                    elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool
  *
  * @return The state set currently for the store.
  * @see elm_store_fetch_thread_set()
+ *
+ * @ingroup Store
  */
 EAPI Eina_Bool               elm_store_fetch_thread_get(const Elm_Store *st);
 
@@ -304,6 +331,8 @@ EAPI Eina_Bool               elm_store_fetch_thread_get(const Elm_Store *st);
  *
  * @param st The store to modify
  * @param sorted EINA_TRUE if we are to sort, EINA_FALSE if not.
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_sorted_set(Elm_Store *st, Eina_Bool sorted);
 
@@ -314,6 +343,8 @@ EAPI void                    elm_store_sorted_set(Elm_Store *st, Eina_Bool sorte
  *
  * @param st The store to query
  * @return EINA_TRUE if sorted, EINA_FALSE if not.
+ *
+ * @ingroup Store
  */
 EAPI Eina_Bool               elm_store_sorted_get(const Elm_Store *st);
 
@@ -327,6 +358,8 @@ EAPI Eina_Bool               elm_store_sorted_get(const Elm_Store *st);
  *
  * @param sti The store item to set the data pointer of
  * @param data The data pointer to set.
+ *
+ * @ingroup Store
  */
 EAPI void                    elm_store_item_data_set(Elm_Store_Item *sti, void *data);
 
@@ -337,6 +370,8 @@ EAPI void                    elm_store_item_data_set(Elm_Store_Item *sti, void *
  *
  * @param sti The store item to query
  * @return The data pointer set on the item
+ *
+ * @ingroup Store
  */
 EAPI void                   *elm_store_item_data_get(Elm_Store_Item *sti);
 
@@ -347,6 +382,8 @@ EAPI void                   *elm_store_item_data_get(Elm_Store_Item *sti);
  *
  * @param sti The store item to query
  * @return The store the item belongs to
+ *
+ * @ingroup Store
  */
 EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti);
 
@@ -355,6 +392,8 @@ EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti)
  *
  * @param sti The store item to query
  * @return The genlist object item handle controlled by this store item
+ *
+ * @ingroup Store
  */
 EAPI const Elm_Object_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti);
 

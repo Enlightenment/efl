@@ -1,5 +1,6 @@
 /**
  * @defgroup Photo Photo
+ * @ingroup Elementary
  *
  * For displaying a photo, for ex., a person (contact). Simple, yet
  * with a very specific purpose.

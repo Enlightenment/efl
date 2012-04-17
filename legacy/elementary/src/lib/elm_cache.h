@@ -1,5 +1,6 @@
 /**
  * @defgroup Caches Caches
+ * @ingroup Elementary
  *
  * These are functions which let one fine-tune some cache values for
  * Elementary applications, thus allowing for performance adjustments.

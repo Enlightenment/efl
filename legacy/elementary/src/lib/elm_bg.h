@@ -1,5 +1,6 @@
 /**
  * @defgroup Bg Bg
+ * @ingroup Elementary
  *
  * @image html img/widget/bg/preview-00.png
  * @image latex img/widget/bg/preview-00.eps

@@ -1,5 +1,6 @@
 /**
  * @defgroup File_Selector_Button File Selector Button
+ * @ingroup Elementary
  *
  * @image html img/widget/fileselector_button/preview-00.png
  * @image latex img/widget/fileselector_button/preview-00.eps
@@ -60,6 +61,8 @@
  * @param parent The parent object
  * @return a new file selector button widget handle or @c NULL, on
  * errors
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent);
 
@@ -77,6 +80,8 @@ EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent
  * button widget is @b not under "inwin mode".
  *
  * @see elm_fileselector_button_window_title_get()
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI void                        elm_fileselector_button_window_title_set(Evas_Object *obj, const char *title);
 
@@ -88,6 +93,8 @@ EAPI void                        elm_fileselector_button_window_title_set(Evas_O
  * @return Title of the file selector button's window
  *
  * @see elm_fileselector_button_window_title_get() for more details
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI const char                 *elm_fileselector_button_window_title_get(const Evas_Object *obj);
 
@@ -104,6 +111,8 @@ EAPI const char                 *elm_fileselector_button_window_title_get(const 
  * window (when applicable) is 400x400 pixels.
  *
  * @see elm_fileselector_button_window_size_get()
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI void                        elm_fileselector_button_window_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height);
 
@@ -119,6 +128,8 @@ EAPI void                        elm_fileselector_button_window_size_set(Evas_Ob
  * interested in: they'll be ignored by the function.
  *
  * @see elm_fileselector_button_window_size_set(), for more details
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI void                        elm_fileselector_button_window_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height);
 
@@ -135,6 +146,8 @@ EAPI void                        elm_fileselector_button_window_size_get(const E
  * environment variable's value.
  *
  * @see elm_fileselector_button_path_get()
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI void                        elm_fileselector_button_path_set(Evas_Object *obj, const char *path);
 
@@ -146,6 +159,8 @@ EAPI void                        elm_fileselector_button_path_set(Evas_Object *o
  * @return path The path string
  *
  * @see elm_fileselector_button_path_set() for more details
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI const char                 *elm_fileselector_button_path_get(const Evas_Object *obj);
 
@@ -166,6 +181,8 @@ EAPI const char                 *elm_fileselector_button_path_get(const Evas_Obj
  * selectors.
  *
  * @see elm_fileselector_expandable_get()
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI void                        elm_fileselector_button_expandable_set(Evas_Object *obj, Eina_Bool value);
 
@@ -178,6 +195,8 @@ EAPI void                        elm_fileselector_button_expandable_set(Evas_Obj
  * is in tree view, @c EINA_FALSE otherwise (and or errors)
  *
  * @see elm_fileselector_expandable_set() for more details
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI Eina_Bool                   elm_fileselector_button_expandable_get(const Evas_Object *obj);
 
@@ -196,6 +215,8 @@ EAPI Eina_Bool                   elm_fileselector_button_expandable_get(const Ev
  * selector.
  *
  * @see elm_fileselector_folder_only_get()
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI void                        elm_fileselector_button_folder_only_set(Evas_Object *obj, Eina_Bool value);
 
@@ -210,6 +231,8 @@ EAPI void                        elm_fileselector_button_folder_only_set(Evas_Ob
  * are being displayed in it too (and on errors)
  *
  * @see elm_fileselector_button_folder_only_set() for more details
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI Eina_Bool                   elm_fileselector_button_folder_only_get(const Evas_Object *obj);
 
@@ -227,6 +250,8 @@ EAPI Eina_Bool                   elm_fileselector_button_folder_only_get(const E
  * selector.
  *
  * @see elm_fileselector_is_save_get()
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI void                        elm_fileselector_button_is_save_set(Evas_Object *obj, Eina_Bool value);
 
@@ -240,6 +265,8 @@ EAPI void                        elm_fileselector_button_is_save_set(Evas_Object
  * errors)
  *
  * @see elm_fileselector_button_is_save_set() for more details
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI Eina_Bool                   elm_fileselector_button_is_save_get(const Evas_Object *obj);
 
@@ -254,6 +281,8 @@ EAPI Eina_Bool                   elm_fileselector_button_is_save_get(const Evas_
  *
  * @see elm_win_inwin_add() for more information on inner windows
  * @see elm_fileselector_button_inwin_mode_get()
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI void                        elm_fileselector_button_inwin_mode_set(Evas_Object *obj, Eina_Bool value);
 
@@ -267,6 +296,8 @@ EAPI void                        elm_fileselector_button_inwin_mode_set(Evas_Obj
  * if it will use a dedicated window
  *
  * @see elm_fileselector_button_inwin_mode_set() for more details
+ *
+ * @ingroup File_Selector_Button
  */
 EAPI Eina_Bool                   elm_fileselector_button_inwin_mode_get(const Evas_Object *obj);
 

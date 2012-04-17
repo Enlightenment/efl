@@ -1,5 +1,6 @@
 /**
  * @defgroup Separator Separator
+ * @ingroup Elementary
  *
  * @brief Separator is a very thin object used to separate other objects.
  *
@@ -14,6 +15,8 @@
  * @param parent The parent object
  *
  * @return The separator object, or NULL upon failure
+ *
+ * @ingroup Separator
  */
 EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
 /**
@@ -21,6 +24,8 @@ EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
  *
  * @param obj The separator object
  * @param horizontal If true, the separator is horizontal
+ *
+ * @ingroup Separator
  */
 EAPI void      elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 /**
@@ -30,6 +35,8 @@ EAPI void      elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizont
  * @return If true, the separator is horizontal
  *
  * @see elm_separator_horizontal_set()
+ *
+ * @ingroup Separator
  */
 EAPI Eina_Bool elm_separator_horizontal_get(const Evas_Object *obj);
 /**

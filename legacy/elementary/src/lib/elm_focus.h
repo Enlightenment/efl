@@ -1,5 +1,6 @@
 /**
  * @defgroup Focus Focus
+ * @ingroup Elementary
  *
  * An Elementary application has, at all times, one (and only one)
  * @b focused object. This is what determines where the input

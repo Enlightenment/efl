@@ -1,5 +1,6 @@
 /**
  * @defgroup Ctxpopup Ctxpopup
+ * @ingroup Elementary
  *
  * @image html img/widget/ctxpopup/preview-00.png
  * @image latex img/widget/ctxpopup/preview-00.eps

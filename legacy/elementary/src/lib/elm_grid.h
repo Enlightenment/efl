@@ -1,5 +1,6 @@
 /**
  * @defgroup Grid Grid
+ * @ingroup Elementary
  *
  * The grid is a grid layout widget that lays out a series of children as a
  * fixed "grid" of widgets using a given percentage of the grid width and

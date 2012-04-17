@@ -1,5 +1,6 @@
 /**
  * @defgroup Layout Layout
+ * @ingroup Elementary
  *
  * @image html img/widget/layout/preview-00.png
  * @image latex img/widget/layout/preview-00.eps width=\textwidth

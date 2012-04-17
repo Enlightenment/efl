@@ -1,5 +1,6 @@
 /**
  * @defgroup Tooltips Tooltips
+ * @ingroup Elementary
  *
  * The Tooltip is an (internal, for now) smart object used to show a
  * content in a frame on mouse hover of objects(or widgets), with
@@ -34,6 +35,8 @@ EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
  *
  * @param obj The tooltip object.
  * @param text The text to be displayed.
+ *
+ * @ingroup Tooltips
  */
 EAPI void        elm_object_tooltip_text_set(Evas_Object *obj, const char *text);
 EAPI void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text);
@@ -50,6 +53,8 @@ EAPI void        elm_object_tooltip_unset(Evas_Object *obj);
  *
  * @param obj an object with tooltip already set.
  * @param style the theme style to use (default, transparent, ...)
+ *
+ * @ingroup Tooltips
  */
 EAPI void        elm_object_tooltip_style_set(Evas_Object *obj, const char *style);
 
@@ -59,6 +64,8 @@ EAPI void        elm_object_tooltip_style_set(Evas_Object *obj, const char *styl
  * @param obj an object with tooltip already set.
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a tooltip set, then NULL is returned.
+ *
+ * @ingroup Tooltips
  */
 EAPI const char *elm_object_tooltip_style_get(const Evas_Object *obj);
 
@@ -70,6 +77,8 @@ EAPI const char *elm_object_tooltip_style_get(const Evas_Object *obj);
  *
  * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
+ *
+ * @ingroup Tooltips
  */
 EAPI Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable);
 
@@ -81,6 +90,8 @@ EAPI Eina_Bool   elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool 
  * This function returns whether a tooltip is allowed to expand beyond
  * its parent window's canvas.
  * It will instead be limited only by the size of the display.
+ *
+ * @ingroup Tooltips
  */
 EAPI Eina_Bool   elm_object_tooltip_window_mode_get(const Evas_Object *obj);
 

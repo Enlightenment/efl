@@ -1,5 +1,6 @@
 /**
  * @defgroup Label Label
+ * @ingroup Elementary
  *
  * @image html img/widget/label/preview-00.png
  * @image latex img/widget/label/preview-00.eps
@@ -36,6 +37,8 @@
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Label
  */
 EAPI Evas_Object                *elm_label_add(Evas_Object *parent);
 
@@ -50,6 +53,8 @@ EAPI Evas_Object                *elm_label_add(Evas_Object *parent);
  * @li ELM_WRAP_CHAR - wrap between characters
  * @li ELM_WRAP_WORD - wrap between words
  * @li ELM_WRAP_MIXED - Word wrap, and if that fails, char wrap
+ *
+ * @ingroup Label
  */
 EAPI void                        elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap);
 
@@ -60,6 +65,8 @@ EAPI void                        elm_label_line_wrap_set(Evas_Object *obj, Elm_W
  * @return Wrap type
  *
  * @see elm_label_line_wrap_set()
+ *
+ * @ingroup Label
  */
 EAPI Elm_Wrap_Type               elm_label_line_wrap_get(const Evas_Object *obj);
 
@@ -72,6 +79,8 @@ EAPI Elm_Wrap_Type               elm_label_line_wrap_get(const Evas_Object *obj)
  * This function sets the maximum width size hint of the label.
  *
  * @warning This is only relevant if the label is inside a container.
+ *
+ * @ingroup Label
  */
 EAPI void                        elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w);
 
@@ -82,6 +91,8 @@ EAPI void                        elm_label_wrap_width_set(Evas_Object *obj, Evas
  * @return The wrap width in pixels at a minimum where words need to wrap
  *
  * @see elm_label_wrap_width_set()
+ *
+ * @ingroup Label
  */
 EAPI Evas_Coord                  elm_label_wrap_width_get(const Evas_Object *obj);
 
@@ -96,6 +107,8 @@ EAPI Evas_Coord                  elm_label_wrap_width_get(const Evas_Object *obj
  *
  * @warning This doesn't work with slide(elm_label_slide_set()) or if the
  * chosen wrap method was ELM_WRAP_WORD.
+ *
+ * @ingroup Label
  */
 EAPI void                        elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis);
 
@@ -106,6 +119,8 @@ EAPI void                        elm_label_ellipsis_set(Evas_Object *obj, Eina_B
  * @return If true, an ellipsis will be shown at the end of the label area.
  *
  * @see elm_label_ellipsis_set()
+ *
+ * @ingroup Label
  */
 EAPI Eina_Bool                   elm_label_ellipsis_get(const Evas_Object *obj);
 
@@ -120,6 +135,8 @@ EAPI Eina_Bool                   elm_label_ellipsis_get(const Evas_Object *obj);
  *
  * @warning This only works with the themes "slide_short", "slide_long" and
  * "slide_bounce".
+ *
+ * @ingroup Label
  */
 EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool slide);
 
@@ -130,6 +147,8 @@ EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool
  * @return If true, sliding effect is shown.
  *
  * @see elm_label_slide_set()
+ *
+ * @ingroup Label
  */
 EAPI Eina_Bool                   elm_label_slide_get(const Evas_Object *obj);
 
@@ -139,6 +158,8 @@ EAPI Eina_Bool                   elm_label_slide_get(const Evas_Object *obj);
  * @param obj The label object
  * @param duration The duration in seconds in moving text from slide begin position
  * to slide end position
+ *
+ * @ingroup Label
  */
 EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, double duration);
 
@@ -149,6 +170,8 @@ EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, 
  * @return The duration time in moving text from slide begin position to slide end position
  *
  * @see elm_label_slide_duration_set()
+ *
+ * @ingroup Label
  */
 EAPI double                      elm_label_slide_duration_get(const Evas_Object *obj);
 

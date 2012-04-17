@@ -1,5 +1,6 @@
 /**
  * @defgroup Scroller Scroller
+ * @ingroup Elementary
  *
  * A scroller holds a single object and "scrolls it around". This means that
  * it allows the user to use a scrollbar (or a finger) to drag the viewable
@@ -59,6 +60,8 @@ typedef enum
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Scroller
  */
 EAPI Evas_Object                 *elm_scroller_add(Evas_Object *parent);
 
@@ -68,6 +71,8 @@ EAPI Evas_Object                 *elm_scroller_add(Evas_Object *parent);
  * @param obj The scroller object
  * @param widget The widget name to use (default is "scroller")
  * @param base The base name to use (default is "base")
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base);
 
@@ -82,6 +87,8 @@ EAPI void                         elm_scroller_custom_widget_base_theme_set(Evas
  * irrespective of its content. This will make the scroller minimum size the
  * right size horizontally and/or vertically to perfectly fit its content in
  * that direction.
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_content_min_limit(Evas_Object *obj, Eina_Bool w, Eina_Bool h);
 
@@ -97,6 +104,8 @@ EAPI void                         elm_scroller_content_min_limit(Evas_Object *ob
  * This will ensure all (or part if it does not fit) of the designated
  * region in the virtual content object (0, 0 starting at the top-left of the
  * virtual content object) is shown within the scroller.
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
@@ -112,6 +121,8 @@ EAPI void                         elm_scroller_region_show(Evas_Object *obj, Eva
  * needed, and otherwise kept hidden. ELM_SCROLLER_POLICY_ON turns it on all
  * the time, and ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
  * respectively for the horizontal and vertical scrollbars.
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
@@ -123,6 +134,8 @@ EAPI void                         elm_scroller_policy_set(Evas_Object *obj, Elm_
  * @param policy_v Vertical scrollbar policy
  *
  * @see elm_scroller_policy_set()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
@@ -142,6 +155,8 @@ EAPI void                         elm_scroller_policy_get(const Evas_Object *obj
  * @note All coordinates are relative to the content.
  *
  * @see elm_scroller_region_show()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_region_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
@@ -153,6 +168,8 @@ EAPI void                         elm_scroller_region_get(const Evas_Object *obj
  * @param h Height of the content object.
  *
  * This gets the size of the content object of the scroller.
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_child_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
@@ -167,6 +184,8 @@ EAPI void                         elm_scroller_child_size_get(const Evas_Object 
  * content object. This is a visual way to indicate the end has been reached.
  * This is enabled by default for both axis. This API will set if it is enabled
  * for the given axis with the boolean parameters for each axis.
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -178,6 +197,8 @@ EAPI void                         elm_scroller_bounce_set(Evas_Object *obj, Eina
  * @param v_bounce Will the scroller bounce vertically or not
  *
  * @see elm_scroller_bounce_set()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
@@ -198,6 +219,8 @@ EAPI void                         elm_scroller_bounce_get(const Evas_Object *obj
  * is "half a viewport". Sane usable values are normally between 0.0 and 1.0
  * including 1.0. If you only want 1 axis to be page "limited", use 0.0 for
  * the other axis.
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
 
@@ -212,6 +235,8 @@ EAPI void                         elm_scroller_page_relative_set(Evas_Object *ob
  * for that axis.
  *
  * @see elm_scroller_page_relative_set()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
 
@@ -230,6 +255,8 @@ EAPI void                         elm_scroller_page_size_set(Evas_Object *obj, E
  * @see elm_scroller_last_page_get()
  * @see elm_scroller_page_show()
  * @see elm_scroller_page_bring_in()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -246,6 +273,8 @@ EAPI void                         elm_scroller_current_page_get(const Evas_Objec
  * @see elm_scroller_current_page_get()
  * @see elm_scroller_page_show()
  * @see elm_scroller_page_bring_in()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -270,6 +299,8 @@ EAPI void                         elm_scroller_last_page_get(const Evas_Object *
  * @endcode
  *
  * @see elm_scroller_page_bring_in()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_page_show(Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
@@ -294,6 +325,8 @@ EAPI void                         elm_scroller_page_show(Evas_Object *obj, int h
  * @endcode
  *
  * @see elm_scroller_page_show()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_page_bring_in(Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
@@ -315,6 +348,8 @@ EAPI void                         elm_scroller_page_bring_in(Evas_Object *obj, i
  * show other content along the way.
  *
  * @see elm_scroller_region_show()
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_region_bring_in(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
 
@@ -326,6 +361,8 @@ EAPI void                         elm_scroller_region_bring_in(Evas_Object *obj,
  *
  * This enables or disabled event propagation from the scroller content to
  * the scroller and its parent. By default event propagation is disabled.
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagation);
 
@@ -338,6 +375,8 @@ EAPI void                         elm_scroller_propagate_events_set(Evas_Object 
  * This gets the event propagation for a scroller.
  *
  * @see elm_scroller_propagate_events_set()
+ *
+ * @ingroup Scroller
  */
 EAPI Eina_Bool                    elm_scroller_propagate_events_get(const Evas_Object *obj);
 
@@ -359,6 +398,8 @@ EAPI Eina_Bool                    elm_scroller_propagate_events_get(const Evas_O
  *  y=1.0, for showing the top most region of the content.
  *
  * Default values for x and y are 0.0
+ *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_gravity_set(Evas_Object *obj, double x, double y);
 
@@ -373,6 +414,7 @@ EAPI void                         elm_scroller_gravity_set(Evas_Object *obj, dou
  *
  * @see elm_scroller_gravity_set()
  *
+ * @ingroup Scroller
  */
 EAPI void                         elm_scroller_gravity_get(const Evas_Object *obj, double *x, double *y);
 

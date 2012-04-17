@@ -1,5 +1,6 @@
 /**
  * @defgroup Dayselector Dayselector
+ * @ingroup Elementary
  *
  * @image html img/widget/dayselector/preview-00.png
  * @image latex img/widget/dayselector/preview-00.eps
@@ -106,6 +107,7 @@ EAPI Evas_Object *elm_dayselector_add(Evas_Object *parent);
  * @see Elm_Dayselector_Day
  * @see elm_dayselector_day_selected_get()
  *
+ * @ingroup Dayselector
  */
 EAPI void   elm_dayselector_day_selected_set(Evas_Object *obj, Elm_Dayselector_Day day, Eina_Bool selected);
 
@@ -119,6 +121,7 @@ EAPI void   elm_dayselector_day_selected_set(Evas_Object *obj, Elm_Dayselector_D
  * @see Elm_Dayselector_Day
  * @see elm_dayselector_day_selected_set()
  *
+ * @ingroup Dayselector
  */
 EAPI Eina_Bool   elm_dayselector_day_selected_get(const Evas_Object *obj, Elm_Dayselector_Day day);
 
@@ -131,6 +134,7 @@ EAPI Eina_Bool   elm_dayselector_day_selected_get(const Evas_Object *obj, Elm_Da
  * @see Elm_Dayselector_Day
  * @see elm_dayselector_week_start_get()
  *
+ * @ingroup Dayselector
  */
 EAPI void   elm_dayselector_week_start_set(Evas_Object *obj, Elm_Dayselector_Day day);
 
@@ -143,6 +147,7 @@ EAPI void   elm_dayselector_week_start_set(Evas_Object *obj, Elm_Dayselector_Day
  * @see Elm_Dayselector_Day
  * @see elm_dayselector_week_start_set()
  *
+ * @ingroup Dayselector
  */
 EAPI Elm_Dayselector_Day   elm_dayselector_week_start_get(const Evas_Object *obj);
 
@@ -155,6 +160,7 @@ EAPI Elm_Dayselector_Day   elm_dayselector_week_start_get(const Evas_Object *obj
  * @see Elm_Dayselector_Day
  * @see elm_dayselector_weekend_start_get()
  *
+ * @ingroup Dayselector
  */
 EAPI void   elm_dayselector_weekend_start_set(Evas_Object *obj, Elm_Dayselector_Day day);
 
@@ -167,6 +173,7 @@ EAPI void   elm_dayselector_weekend_start_set(Evas_Object *obj, Elm_Dayselector_
  * @see Elm_Dayselector_Day
  * @see elm_dayselector_weekend_start_set()
  *
+ * @ingroup Dayselector
  */
 EAPI Elm_Dayselector_Day   elm_dayselector_weekend_start_get(const Evas_Object *obj);
 
@@ -178,6 +185,7 @@ EAPI Elm_Dayselector_Day   elm_dayselector_weekend_start_get(const Evas_Object *
  *
  * @see elm_dayselector_weekend_length_get()
  *
+ * @ingroup Dayselector
  */
 EAPI void   elm_dayselector_weekend_length_set(Evas_Object *obj, unsigned int length);
 
@@ -190,6 +198,7 @@ EAPI void   elm_dayselector_weekend_length_set(Evas_Object *obj, unsigned int le
  * @see Elm_Dayselector_Day
  * @see elm_dayselector_weekend_length_set()
  *
+ * @ingroup Dayselector
  */
 EAPI unsigned int   elm_dayselector_weekend_length_get(const Evas_Object *obj);
 
