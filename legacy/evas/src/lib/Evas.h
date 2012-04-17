@@ -8156,7 +8156,6 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * @section Evas_Object_Textblock_Tutorial Textblock Object Tutorial
  *
  * This part explains about the textblock object's API and proper usage.
- * If you want to develop textblock, you should also refer to @ref Evas_Object_Textblock_Internal.
  * The main user of the textblock object is the edje entry object in Edje, so
  * that's a good place to learn from, but I think this document is more than
  * enough, if it's not, please contact me and I'll update it.
@@ -8178,7 +8177,7 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * instead.
  *
  * @subsection textblock_cursors Textblock Object Cursors
- * A textblock Cursor @ref Evas_Textblock_Cursor is data type that represents
+ * A textblock Cursor is data type that represents
  * a position in a textblock. Each cursor contains information about the
  * paragraph it points to, the position in that paragraph and the object itself.
  * Cursors register to textblock objects upon creation, this means that once
@@ -8221,11 +8220,10 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * tags defined in the style, see @ref evas_textblock_style_set
  *
  * @subsection textblock_special_formats Special Formats
- * Textblock supports various format directives that can be used either in
- * markup, or by calling @ref evas_object_textblock_format_append or
- * @ref evas_object_textblock_format_prepend. In addition to the mentioned
- * format directives, textblock allows creating additional format directives
- * using "tags" that can be set in the style see @ref evas_textblock_style_set .
+ * Textblock supports various format directives that can be used in markup. In
+ * addition to the mentioned format directives, textblock allows creating
+ * additional format directives using "tags" that can be set in the style see
+ * @ref evas_textblock_style_set .
  *
  * Textblock supports the following formats:
  * @li font - Font description in fontconfig like format, e.g: "Sans:style=Italic:lang=hi". or "Serif:style=Bold".
@@ -9623,7 +9621,7 @@ EAPI void                            *evas_smart_data_get                 (const
  *         should not be modified in any way. If no callbacks are
  *         known, @c NULL is returned. The array is sorted by event
  *         names and elements refer to the original values given to
- *         evas_smart_class_new()'s #Evas_Smart_Class::callbacks
+ *         evas_smart_class_new()'s Evas_Smart_Class::callbacks
  *         (pointer to them).
  *
  * This is likely different from

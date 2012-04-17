@@ -1,8 +1,8 @@
 PROJECT_NAME           = Evas
 PROJECT_NUMBER         = @PACKAGE_VERSION@
 OUTPUT_DIRECTORY       = .
-INPUT                  = @srcdir@/evas.dox @srcdir@/examples.dox @top_srcdir@/src/lib
-IMAGE_PATH             = img
+INPUT                  = @builddir@/evas.dox @srcdir@/examples.dox @top_srcdir@/src/lib
+IMAGE_PATH             = @srcdir@/img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
 HTML_OUTPUT            = html
