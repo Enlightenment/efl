@@ -81,6 +81,16 @@ START_TEST(eobj_op_errors)
 }
 END_TEST
 
+static void
+_fake_free_func(void *data)
+{
+   if (!data)
+      return;
+
+   int *a = data;
+   ++*a;
+}
+
 START_TEST(eobj_generic_data)
 {
    eobj_init();
@@ -113,7 +123,34 @@ START_TEST(eobj_generic_data)
    eobj_do(obj, EOBJ_BASE_DATA_GET("test1", &data));
    fail_if(data);
 
+   int a = 0;
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test3", &a, _fake_free_func));
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test3", &data));
+   fail_if(&a != data);
+   eobj_do(obj, EOBJ_BASE_DATA_GET("test3", NULL));
+   eobj_do(obj, EOBJ_BASE_DATA_DEL("test3"));
+   fail_if(a != 1);
+
+   a = 0;
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test3", &a, _fake_free_func));
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test3", NULL, _fake_free_func));
+   fail_if(a != 1);
+   a = 0;
+   data = (void *) 123;
+   eobj_do(obj, EOBJ_BASE_DATA_SET(NULL, &a, _fake_free_func));
+   eobj_do(obj, EOBJ_BASE_DATA_GET(NULL, &data));
+   fail_if(data);
+   eobj_do(obj, EOBJ_BASE_DATA_DEL(NULL));
+
+   a = 0;
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test3", &a, _fake_free_func));
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test3", NULL, NULL));
+   fail_if(a != 1);
+   eobj_do(obj, EOBJ_BASE_DATA_SET("test3", &a, _fake_free_func));
+
    eobj_unref(obj);
+   fail_if(a != 2);
+
    eobj_shutdown();
 }
 END_TEST
