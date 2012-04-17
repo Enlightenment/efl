@@ -19,14 +19,14 @@ _a_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
    a = va_arg(*list, int);
    printf("%s %d\n", eobj_class_name_get(_my_class), a);
    eobj_do(obj, SIMPLE_A_PRINT());
-   eobj_super_do(obj, SIMPLE_A_SET(a + 1));
+   eobj_do_super(obj, SIMPLE_A_SET(a + 1));
 }
 
 static void
 _print(Eobj *obj, void *class_data __UNUSED__, va_list *list __UNUSED__)
 {
    printf("Hey\n");
-   fail_if(eobj_super_do(obj, INHERIT2_PRINT()));
+   fail_if(eobj_do_super(obj, INHERIT2_PRINT()));
 }
 
 static void

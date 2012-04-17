@@ -397,7 +397,7 @@ eobj_do_internal(Eobj *obj, ...)
 }
 
 EAPI Eina_Bool
-eobj_super_do(Eobj *obj, Eobj_Op op, ...)
+eobj_do_super(Eobj *obj, Eobj_Op op, ...)
 {
    const Eobj_Class *obj_klass;
    Eina_Bool ret = EINA_TRUE;

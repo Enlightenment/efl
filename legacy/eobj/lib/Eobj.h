@@ -299,7 +299,7 @@ EAPI Eina_Bool eobj_do_internal(Eobj *obj, ...);
  *
  * @see #eobj_do
  */
-EAPI Eina_Bool eobj_super_do(Eobj *obj, Eobj_Op op, ...);
+EAPI Eina_Bool eobj_do_super(Eobj *obj, Eobj_Op op, ...);
 
 /**
  * @brief Gets the class of the object.

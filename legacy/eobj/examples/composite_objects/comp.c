@@ -15,7 +15,7 @@ _a_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
    int *a;
    a = va_arg(*list, int *);
-   eobj_super_do(obj, SIMPLE_A_GET(a));
+   eobj_do_super(obj, SIMPLE_A_GET(a));
 }
 
 static void
