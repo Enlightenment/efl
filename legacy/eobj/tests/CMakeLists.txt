@@ -4,6 +4,7 @@ if (CHECK_ENABLED)
       eobj_suite.c
       eobj_test_init.c
       eobj_test_general.c
+      eobj_test_class_errors.c
       class_simple.c
       )
 

@@ -5,6 +5,7 @@
 
 void eobj_test_init(TCase *tc);
 void eobj_test_general(TCase *tc);
+void eobj_test_class_errors(TCase *tc);
 
 
 #endif /* _EOBJ_SUITE_H */

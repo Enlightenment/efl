@@ -20,6 +20,7 @@ struct _Eobj_Test_Case
 static const Eobj_Test_Case etc[] = {
   { "Eobj init", eobj_test_init },
   { "Eobj general", eobj_test_general },
+  { "Eobj class errors", eobj_test_class_errors },
   { NULL, NULL }
 };
 
