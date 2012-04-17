@@ -565,7 +565,7 @@ eobj_class_free(Eobj_Class *klass)
    free(klass);
 }
 
-
+/* DEVCHECK */
 static Eina_Bool
 _eobj_class_check_op_descs(const Eobj_Class *klass)
 {
@@ -573,12 +573,36 @@ _eobj_class_check_op_descs(const Eobj_Class *klass)
    const Eobj_Op_Description *itr;
    size_t i;
 
+   if (desc->ops.count > 0)
+     {
+        if (!desc->ops.base_op_id)
+          {
+             ERR("Class '%s' has a non-zero ops count, but base_id is NULL.",
+                   desc->name);
+             return EINA_FALSE;
+          }
+
+        if (!desc->ops.descs)
+          {
+             ERR("Class '%s' has a non-zero ops count, but there are no descs.",
+                   desc->name);
+             return EINA_FALSE;
+          }
+     }
+
    itr = desc->ops.descs;
    for (i = 0 ; i < desc->ops.count ; i++, itr++)
      {
         if (itr->sub_op != i)
           {
-             ERR("Wrong order in Ops description for class '%s'. Expected %d and got %d", desc->name, i, itr->sub_op);
+             if (itr->name)
+               {
+                  ERR("Wrong order in Ops description for class '%s'. Expected %d and got %d", desc->name, i, itr->sub_op);
+               }
+             else
+               {
+                  ERR("Found too few Ops description for class '%s'. Expected %d descriptions, but found %d.", desc->name, desc->ops.count, i);
+               }
              return EINA_FALSE;
           }
      }
@@ -605,7 +629,7 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
      { \
         if (!x) \
           { \
-             ERR("%s can't be NULL! Aborting.", #x); \
+             ERR("%s must not be NULL! Aborting.", #x); \
              return NULL; \
           } \
      } \
@@ -687,7 +711,6 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    if (!_eobj_class_check_op_descs(klass))
      {
-        ERR("Class '%s' has a bad op description.", klass->desc->name);
         goto cleanup;
      }
 
