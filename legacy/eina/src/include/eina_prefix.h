@@ -106,11 +106,12 @@ typedef struct _Eina_Prefix Eina_Prefix;
  *
  * Compile the following defining at compile time your prefixes like (example):
  *
- * gcc appname.c -o appname \
- * -DPACKAGE_BIN_DIR=/usr/local/bin \
- * -DPACKAGE_LIB_DIR=/usr/local/lib \
- * -DPACKAGE_DATA_DIR=/usr/local/share/appname \
- * -DLOCALE_DIR=/usr/local/share/locale
+ * gcc appname.c -o appname
+ * -DPACKAGE_BIN_DIR=\\"/usr/local/bin\"
+ * -DPACKAGE_LIB_DIR=\\"/usr/local/lib\"
+ * -DPACKAGE_DATA_DIR=\\"/usr/local/share/appname\"
+ * -DLOCALE_DIR=\\"/usr/local/share/locale\"
+ * `pkg-config --cflags --libs eina`
  *
  * (of course add appropriate compile flags to linking etc. etc. and note that
  * locale dir is optional. if you don't need it provide data dir as the
@@ -120,10 +121,14 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * to using a unix-style relative path from that dir, eg directory/filename.png)
  *
  * @code
+ * #include <Eina.h>
+ *
  * static Eina_Prefix *pfx = NULL;
  *
- * int main(argc, char **argv)
+ * int main(int argc, char **argv)
  * {
+ *   eina_init();
+ *
  *   pfx = eina_prefix_new(argv[0], main, "APPNAME", "appname", NULL,
  *                         PACKAGE_BIN_DIR, PACKAGE_LIB_DIR,
  *                         PACKAGE_DATA_DIR, LOCALE_DIR);
@@ -133,6 +138,8 @@ typedef struct _Eina_Prefix Eina_Prefix;
  *   printf("libraries are in: %s\n", eina_prefix_lib_get(pfx));
  *   printf("data files are in: %s\n", eina_prefix_data_get(pfx));
  *   eina_prefix_free(pfx);
+ *
+ *   eina_shutdown();
  * }
  * @endcode
  *
