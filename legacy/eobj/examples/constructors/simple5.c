@@ -29,6 +29,6 @@ simple5_class_get(void)
         NULL
    };
 
-   _my_class = eobj_class_new(&class_desc, EOBJ_CLASS_BASE, NULL);
+   _my_class = eobj_class_new(&class_desc, EOBJ_BASE_CLASS, NULL);
    return _my_class;
 }

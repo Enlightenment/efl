@@ -12,7 +12,7 @@
 START_TEST(eobj_simple)
 {
    eobj_init();
-   Eobj *obj = eobj_add(EOBJ_CLASS_BASE, NULL);
+   Eobj *obj = eobj_add(EOBJ_BASE_CLASS, NULL);
    fail_if(obj);
 
    eobj_shutdown();

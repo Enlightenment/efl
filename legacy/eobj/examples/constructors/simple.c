@@ -104,5 +104,5 @@ simple_class_get(void)
         _class_destructor
    };
 
-   return _my_class = eobj_class_new(&class_desc, EOBJ_CLASS_BASE, MIXIN_CLASS, NULL);
+   return _my_class = eobj_class_new(&class_desc, EOBJ_BASE_CLASS, MIXIN_CLASS, NULL);
 }

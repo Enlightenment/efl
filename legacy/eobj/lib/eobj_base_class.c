@@ -113,7 +113,7 @@ _data_del(Eobj *obj __UNUSED__, void *class_data, va_list *list)
      }
 }
 
-/* EOBJ_CLASS_BASE stuff */
+/* EOBJ_BASE_CLASS stuff */
 static const Eobj_Class *_my_class = NULL;
 
 /* FIXME: Set proper type descriptions. */

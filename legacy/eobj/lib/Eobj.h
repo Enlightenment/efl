@@ -638,12 +638,12 @@ EAPI Eina_Bool eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description 
  */
 
 /**
- * @def EOBJ_CLASS_BASE
+ * @def EOBJ_BASE_CLASS
  * The class type for the Eobj base class.
  */
-#define EOBJ_CLASS_BASE eobj_base_class_get()
+#define EOBJ_BASE_CLASS eobj_base_class_get()
 /**
- * @brief Use #EOBJ_CLASS_BASE
+ * @brief Use #EOBJ_BASE_CLASS
  * @internal
  * */
 EAPI const Eobj_Class *eobj_base_class_get(void) EINA_CONST;
