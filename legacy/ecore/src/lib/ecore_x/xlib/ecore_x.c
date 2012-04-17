@@ -1425,7 +1425,7 @@ ecore_x_pointer_mapping_set(unsigned char *map,
                             int nmap)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   return XSetPointerMapping(_ecore_x_disp, map, nmap) ? EINA_TRUE : EINA_FALSE;
+   return (XSetPointerMapping(_ecore_x_disp, map, nmap) == MappingSuccess) ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI Eina_Bool
