@@ -645,10 +645,12 @@ _selected_item_indicate(Elm_Diskselector_Item *it)
    wd = elm_widget_data_get(WIDGET(it));
 
    if (!wd) return;
+   if (!it->label) return;
 
    EINA_LIST_FOREACH(wd->r_items, l, item)
      {
-        if (!strcmp(item->label, it->label)) edje_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
+        if (item->label && !strcmp(item->label, it->label))
+           edje_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
         else
            edje_object_signal_emit(VIEW(item), "elm,state,default", "elm");
      }
