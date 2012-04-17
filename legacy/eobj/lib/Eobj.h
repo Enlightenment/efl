@@ -432,6 +432,56 @@ EAPI extern const Eobj_Event_Description _EOBJ_EV_DEL;
 #define EOBJ_EV_DEL (&(_EOBJ_EV_DEL))
 
 /**
+ * @addtogroup Eobj_Weak_Ref Weak reference for Eobj objects.
+ * @{
+ */
+
+/**
+ * @struct _Eobj_Weak_Ref
+ * This is exposed for performance, please use eobj_weak_ref_get() when you
+ * actually want to get the refed object.
+ */
+struct _Eobj_Weak_Ref
+{
+   Eobj *obj; /**< The object being referenced. */
+};
+
+/**
+ * @typedef Eobj_Weak_Ref
+ * Weak reference type for Eobj.
+ */
+typedef struct _Eobj_Weak_Ref Eobj_Weak_Ref;
+
+/**
+ * @brief Create a new weak reference to obj.
+ * @param obj The object being referenced.
+ * @return A new weak reference.
+ */
+EAPI Eobj_Weak_Ref *eobj_weak_ref_new(const Eobj *obj);
+
+/**
+ * @brief Free the weak reference passed.
+ * @param wref the weak reference to free.
+ */
+EAPI void eobj_weak_ref_free(Eobj_Weak_Ref *wref);
+
+/**
+ * @brief Get the referenced object from the weak reference.
+ * @param wref the weak reference to get the object from.
+ * @return The object referenced by wref.
+ */
+static inline Eobj *
+eobj_weak_ref_get(const Eobj_Weak_Ref *wref)
+{
+   return wref->obj;
+}
+
+/**
+ * @}
+ */
+
+
+/**
  * @addtogroup Eobj_Composite_Objects Composite Objects.
  * @{
  */

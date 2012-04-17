@@ -829,6 +829,40 @@ eobj_ref_get(const Eobj *obj)
    return obj->refcount;
 }
 
+/* Weak reference. */
+Eina_Bool
+_eobj_weak_ref_cb(void *data, Eobj *obj __UNUSED__, const Eobj_Event_Description *desc __UNUSED__, void *event_info __UNUSED__)
+{
+   Eobj_Weak_Ref *wref = data;
+   wref->obj = NULL;
+
+   return EINA_TRUE;
+}
+
+EAPI Eobj_Weak_Ref *
+eobj_weak_ref_new(const Eobj *_obj)
+{
+   Eobj *obj = (Eobj *) _obj;
+   Eobj_Weak_Ref *wref = calloc(1, sizeof(*wref));
+   wref->obj = obj;
+   eobj_event_callback_add(obj, EOBJ_EV_DEL, _eobj_weak_ref_cb, wref);
+
+   return wref;
+}
+
+EAPI void
+eobj_weak_ref_free(Eobj_Weak_Ref *wref)
+{
+   if (wref->obj)
+     {
+        eobj_event_callback_del_full(wref->obj, EOBJ_EV_DEL, _eobj_weak_ref_cb,
+              wref);
+     }
+   free(wref);
+}
+
+/* EOF Weak reference. */
+
 EAPI void
 eobj_del(Eobj *obj)
 {

@@ -13,8 +13,40 @@ START_TEST(eobj_simple)
 {
    eobj_init();
    Eobj *obj = eobj_add(EOBJ_CLASS_BASE, NULL);
-
    fail_if(obj);
+
+   eobj_shutdown();
+}
+END_TEST
+
+START_TEST(eobj_weak_reference)
+{
+   eobj_init();
+
+   Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
+   Eobj_Weak_Ref *wref = eobj_weak_ref_new(obj);
+   fail_if(!eobj_weak_ref_get(wref));
+
+   eobj_unref(obj);
+   fail_if(eobj_weak_ref_get(wref));
+
+   eobj_weak_ref_free(wref);
+
+   obj = eobj_add(SIMPLE_CLASS, NULL);
+   wref = eobj_weak_ref_new(obj);
+
+   eobj_ref(obj);
+   fail_if(!eobj_weak_ref_get(wref));
+
+   eobj_del(obj);
+   fail_if(eobj_weak_ref_get(wref));
+
+   eobj_unref(obj);
+   fail_if(eobj_weak_ref_get(wref));
+
+   eobj_weak_ref_free(wref);
+
+
    eobj_shutdown();
 }
 END_TEST
@@ -91,4 +123,5 @@ void eobj_test_general(TCase *tc)
    tcase_add_test(tc, eobj_generic_data);
    tcase_add_test(tc, eobj_op_errors);
    tcase_add_test(tc, eobj_simple);
+   tcase_add_test(tc, eobj_weak_reference);
 }
