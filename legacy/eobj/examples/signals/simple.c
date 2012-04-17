@@ -14,7 +14,7 @@ typedef struct
 EAPI const Eobj_Event_Description _SIG_A_CHANGED =
         EOBJ_EVENT_DESCRIPTION("a,changed", "i", "Called when a has changed.");
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 _a_set(Eobj *obj, void *class_data, va_list *list)

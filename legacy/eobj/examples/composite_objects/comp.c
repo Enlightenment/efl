@@ -8,7 +8,7 @@
 
 EAPI Eobj_Op COMP_BASE_ID = 0;
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 _a_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)

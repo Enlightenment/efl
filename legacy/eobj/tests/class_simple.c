@@ -5,7 +5,7 @@
 
 EAPI Eobj_Op SIMPLE_BASE_ID = 0;
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 _a_set(Eobj *obj __UNUSED__, void *class_data, va_list *list)

@@ -12,7 +12,7 @@ typedef struct
    int b;
 } Private_Data;
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 #define _GET_SET_FUNC(name) \
 static void \

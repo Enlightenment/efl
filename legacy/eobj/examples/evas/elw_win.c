@@ -10,7 +10,7 @@ typedef struct
    Evas_Object *bg;
 } Widget_Data;
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 my_win_del(void *data, Evas_Object *obj, void *event_info)

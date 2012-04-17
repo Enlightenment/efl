@@ -592,7 +592,7 @@ _eobj_class_check_op_descs(const Eobj_Class *klass)
    return EINA_TRUE;
 }
 
-EAPI Eobj_Class *
+EAPI const Eobj_Class *
 eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...)
 {
    Eobj_Class *klass;
@@ -1292,7 +1292,7 @@ eobj_event_callback_forwarder_del(Eobj *obj, const Eobj_Event_Description *desc,
 }
 
 /* EOBJ_CLASS_BASE stuff */
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 /* FIXME: Set proper type descriptions. */
 EAPI const Eobj_Event_Description _EOBJ_EV_CALLBACK_ADD =

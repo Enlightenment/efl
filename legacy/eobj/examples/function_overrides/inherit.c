@@ -3,7 +3,7 @@
 
 #include "inherit.h"
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 const Eobj_Class *
 inherit_class_get(void)

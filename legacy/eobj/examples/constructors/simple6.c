@@ -4,7 +4,7 @@
 
 #include "config.h"
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 _destructor(Eobj *obj, void *class_data __UNUSED__)

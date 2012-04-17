@@ -10,7 +10,7 @@
 
 EAPI Eobj_Op INHERIT2_BASE_ID = 0;
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 _a_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)

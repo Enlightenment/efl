@@ -13,7 +13,7 @@ typedef struct
    Evas_Object *bx;
 } Widget_Data;
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 _pack_end(Eobj *obj __UNUSED__, void *class_data, va_list *list)

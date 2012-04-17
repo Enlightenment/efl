@@ -8,7 +8,7 @@
 
 EAPI Eobj_Op INHERIT_BASE_ID = 0;
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 _prot_print(Eobj *obj, void *class_data __UNUSED__, va_list *list)

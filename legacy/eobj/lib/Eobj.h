@@ -228,7 +228,7 @@ typedef struct _Eobj_Class_Description Eobj_Class_Description;
  * @param ... A NULL terminated list of extensions (interfaces, mixins and the classes of any composite objects).
  * @return The new class's handle on success, or NULL otherwise.
  */
-EAPI Eobj_Class *eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...);
+EAPI const Eobj_Class *eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...);
 
 /**
  * @brief Sets the OP functions for a class.

@@ -3,7 +3,7 @@
 #include "simple.h"
 #include "simple4.h"
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 const Eobj_Class *
 simple4_class_get(void)

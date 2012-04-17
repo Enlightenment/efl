@@ -16,7 +16,7 @@ typedef struct
    Evas_Object *bt;
 } Widget_Data;
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 static void
 _position_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)

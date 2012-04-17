@@ -5,7 +5,7 @@
 
 #include "config.h"
 
-static Eobj_Class *_my_class = NULL;
+static const Eobj_Class *_my_class = NULL;
 
 EAPI Eobj_Op EVAS_OBJ_BASE_ID = 0;
 
