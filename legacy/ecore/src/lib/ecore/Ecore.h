@@ -957,7 +957,7 @@ EAPI void ecore_exe_hup(Ecore_Exe *exe);
  */
 
 /**
- * @defgroup Ecore_FD_Handler_Group File Event Handling Functions
+ * @defgroup Ecore_FD_Handler_Group File Descriptor Handling Functions
  *
  * @brief Functions that deal with file descriptor handlers.
  *
@@ -965,7 +965,8 @@ EAPI void ecore_exe_hup(Ecore_Exe *exe);
  * without blocking the program or doing expensive pooling. This can be used to
  * monitor a socket, pipe, or other stream for which an FD can be had.
  *
- * @warning This function @b can't be used for monitoring to regular files!
+ * @warning File descriptor handlers can't be used to monitor for file creation,
+ * modification or deletion, see @ref Ecore_File_Group for this.
  *
  * One common FD to be monitored is the standard input(stdin), monitoring it for
  * reading requires a single call:
