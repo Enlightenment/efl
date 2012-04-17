@@ -49,8 +49,34 @@ START_TEST(eobj_op_errors)
 }
 END_TEST
 
+START_TEST(eobj_generic_data)
+{
+   eobj_init();
+   Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
+
+   eobj_generic_data_set(obj, "test1", (void *) 1);
+   fail_if(1 != (int) eobj_generic_data_get(obj, "test1"));
+   fail_if(1 != (int) eobj_generic_data_del(obj, "test1"));
+   fail_if(eobj_generic_data_del(obj, "test1"));
+
+   eobj_generic_data_set(obj, "test1", (void *) 1);
+   eobj_generic_data_set(obj, "test2", (void *) 2);
+   fail_if(2 != (int) eobj_generic_data_get(obj, "test2"));
+   fail_if(2 != (int) eobj_generic_data_del(obj, "test2"));
+   fail_if(eobj_generic_data_del(obj, "test2"));
+
+   fail_if(1 != (int) eobj_generic_data_get(obj, "test1"));
+   fail_if(1 != (int) eobj_generic_data_del(obj, "test1"));
+   fail_if(eobj_generic_data_del(obj, "test1"));
+
+   eobj_unref(obj);
+   eobj_shutdown();
+}
+END_TEST
+
 void eobj_test_general(TCase *tc)
 {
+   tcase_add_test(tc, eobj_generic_data);
    tcase_add_test(tc, eobj_op_errors);
    tcase_add_test(tc, eobj_simple);
 }
