@@ -827,7 +827,7 @@ EAPI unsigned int elm_gengrid_items_count(const Evas_Object *obj);
  *
  * @return New allocated a gengrid item class.
  *
- * This adds gengrid item class for the gengrid widget. When adding a item,
+ * This adds gengrid item class for the gengrid widget. When adding an item,
  * gengrid_item_{append, prepend, insert} function needs item class of the item.
  * Given callback parameters are used at retrieving {text, content} of
  * added item. Set as NULL if it's not used.
@@ -841,7 +841,7 @@ EAPI unsigned int elm_gengrid_items_count(const Evas_Object *obj);
 EAPI Elm_Gengrid_Item_Class *elm_gengrid_item_class_new(void);
 
 /**
- * Remove a item class in a given gengrid widget.
+ * Remove an item class in a given gengrid widget.
  *
  * @param itc The itc to be removed.
  *

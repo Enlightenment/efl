@@ -1001,7 +1001,7 @@ EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
  *
  * @return New allocated a genlist item class.
  *
- * This adds genlist item class for the genlist widget. When adding a item,
+ * This adds genlist item class for the genlist widget. When adding an item,
  * genlist_item_{append, prepend, insert} function needs item class of the item.
  * Given callback parameters are used at retrieving {text, content} of
  * added item. Set as NULL if it's not used.
@@ -1015,8 +1015,8 @@ EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
 EAPI Elm_Genlist_Item_Class *elm_genlist_item_class_new(void);
 
 /**
- * Remove a item class in a given genlist widget.
- *
+ * Remove an item class in a given genlist widget.
+ k*
  * @param itc The itc to be removed.
  *
  * This removes item class from the genlist widget.
