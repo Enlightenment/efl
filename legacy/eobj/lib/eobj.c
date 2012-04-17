@@ -880,10 +880,7 @@ eobj_unref(Eobj *obj)
         Eobj *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             /* FIXME: Should probably be unref. */
-             eobj_del(emb_obj);
-             obj->composite_objects =
-                eina_list_remove_list(obj->composite_objects, itr);
+             eobj_composite_object_detach(obj, emb_obj);
           }
 
         _eobj_callback_remove_all(obj);
@@ -1078,7 +1075,7 @@ eobj_shutdown(void)
 EAPI void
 eobj_composite_object_attach(Eobj *obj, Eobj *emb_obj)
 {
-   eobj_ref(emb_obj);
+   eobj_xref(emb_obj, obj);
    obj->composite_objects = eina_list_prepend(obj->composite_objects, emb_obj);
 }
 
@@ -1086,7 +1083,7 @@ EAPI void
 eobj_composite_object_detach(Eobj *obj, Eobj *emb_obj)
 {
    obj->composite_objects = eina_list_remove(obj->composite_objects, emb_obj);
-   eobj_unref(emb_obj);
+   eobj_xunref(emb_obj, obj);
 }
 
 EAPI Eina_Bool

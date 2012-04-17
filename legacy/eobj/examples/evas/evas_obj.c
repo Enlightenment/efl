@@ -69,12 +69,12 @@ _visibility_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_child_add(Eobj *obj __UNUSED__, void *class_data, va_list *list)
+_child_add(Eobj *obj, void *class_data, va_list *list)
 {
    Widget_Data *wd = class_data;
    Eobj *child;
    child = va_arg(*list, Eobj *);
-   wd->children = eina_list_append(wd->children, eobj_ref(child));
+   wd->children = eina_list_append(wd->children, eobj_xref(child, obj));
 }
 
 static void
@@ -98,7 +98,7 @@ _destructor(Eobj *obj, void *class_data)
    Eobj *child;
    EINA_LIST_FREE(wd->children, child)
      {
-        eobj_del(child);
+        eobj_xunref(child, obj);
      }
 }
 
