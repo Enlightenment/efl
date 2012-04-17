@@ -41,13 +41,13 @@
  * @li "icon" - An icon of the radio
  *
  * Supported elm_object common APIs.
- * @li elm_object_part_text_set
- * @li elm_object_part_text_get
- * @li elm_object_part_content_set
- * @li elm_object_part_content_get
- * @li elm_object_part_content_unset
- * @li elm_object_disabled_set
- * @li elm_object_disabled_get
+ * @li @ref elm_object_part_text_set
+ * @li @ref elm_object_part_text_get
+ * @li @ref elm_object_part_content_set
+ * @li @ref elm_object_part_content_get
+ * @li @ref elm_object_part_content_unset
+ * @li @ref elm_object_disabled_set
+ * @li @ref elm_object_disabled_get
  *
  * @ref tutorial_radio show most of this API in action.
  * @{

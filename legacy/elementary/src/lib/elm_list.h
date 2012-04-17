@@ -42,13 +42,13 @@
  * @li "default" - label in the list item
  *
  * Supported elm_object_item common APIs.
- * @li elm_object_item_disabled_set
- * @li elm_object_item_disabled_get
- * @li elm_object_item_part_text_set
- * @li elm_object_item_part_text_get
- * @li elm_object_item_part_content_set
- * @li elm_object_item_part_content_get
- * @li elm_object_item_part_content_unset
+ * @li @ref elm_object_item_disabled_set
+ * @li @ref elm_object_item_disabled_get
+ * @li @ref elm_object_item_part_text_set
+ * @li @ref elm_object_item_part_text_get
+ * @li @ref elm_object_item_part_content_set
+ * @li @ref elm_object_item_part_content_get
+ * @li @ref elm_object_item_part_content_unset
  *
  * List of examples:
  * @li @ref list_example_01

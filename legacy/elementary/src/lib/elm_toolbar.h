@@ -29,10 +29,10 @@
  * @li "default" - label of the toolbar item
  *
  * Supported elm_object_item common APIs.
- * @li elm_object_item_disabled_set
- * @li elm_object_item_disabled_get
- * @li elm_object_item_part_text_set
- * @li elm_object_item_part_text_get
+ * @li @ref elm_object_item_disabled_set
+ * @li @ref elm_object_item_disabled_get
+ * @li @ref elm_object_item_part_text_set
+ * @li @ref elm_object_item_part_text_get
  *
  * List of examples:
  * @li @ref toolbar_example_01

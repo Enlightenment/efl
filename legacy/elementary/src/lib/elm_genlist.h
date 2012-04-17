@@ -330,22 +330,22 @@
  * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.
  *
  * Supported elm_object common APIs
- * @li elm_object_signal_emit()
+ * @li @ref elm_object_signal_emit()
  *
  * Supported elm_object_item common APIs
- * @li elm_object_item_part_content_get()
- * @li elm_object_item_part_text_get()
- * @li elm_object_item_disabled_set()
- * @li elm_object_item_disabled_get()
- * @li elm_object_item_signal_emit()
+ * @li @ref elm_object_item_part_content_get()
+ * @li @ref elm_object_item_part_text_get()
+ * @li @ref elm_object_item_disabled_set()
+ * @li @ref elm_object_item_disabled_get()
+ * @li @ref elm_object_item_signal_emit()
  *
  * Unsupported elm_object_item common APIs due to the genlist concept.
  * Genlist fills content/text according to the appropriate callback functions.
  * Please use elm_genlist_item_update() or elm_genlist_item_fields_update()
  * instead.
- * @li elm_object_item_part_content_set()
- * @li elm_object_item_part_content_unset()
- * @li elm_object_item_part_text_set()
+ * @li @ref elm_object_item_part_content_set()
+ * @li @ref elm_object_item_part_content_unset()
+ * @li @ref elm_object_item_part_text_set()
  *
  * @section Genlist_Examples Examples
  *

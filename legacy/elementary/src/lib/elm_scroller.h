@@ -30,12 +30,12 @@
  * @li "default" - A content of the scroller
  *
  * Supported elm_object common APIs.
- * @li elm_object_signal_emit
- * @li elm_object_signal_callback_add
- * @li elm_object_signal_callback_del
- * @li elm_object_part_content_set
- * @li elm_object_part_content_get
- * @li elm_object_part_content_unset
+ * @li @ref elm_object_signal_emit
+ * @li @ref elm_object_signal_callback_add
+ * @li @ref elm_object_signal_callback_del
+ * @li @ref elm_object_part_content_set
+ * @li @ref elm_object_part_content_get
+ * @li @ref elm_object_part_content_unset
  *
  * In @ref tutorial_scroller you'll find an example of how to use most of
  * this API.

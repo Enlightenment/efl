@@ -31,11 +31,11 @@
  * - @c "vertical": up/down buttons at the right side and text left aligned.
  *
  * Supported elm_object common APIs.
- * @li elm_object_signal_emit
- * @li elm_object_signal_callback_add
- * @li elm_object_signal_callback_del
- * @li elm_object_disabled_set
- * @li elm_object_disabled_get
+ * @li @ref elm_object_signal_emit
+ * @li @ref elm_object_signal_callback_add
+ * @li @ref elm_object_signal_callback_del
+ * @li @ref elm_object_disabled_set
+ * @li @ref elm_object_disabled_get
  *
  * Here is an example on its usage:
  * @ref spinner_example

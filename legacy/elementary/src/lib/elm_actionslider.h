@@ -35,8 +35,8 @@
  * @li "center" - A center label of the actionslider
  *
  * Supported elm_object common APIs.
- * @li elm_object_part_text_set
- * @li elm_object_part_text_get
+ * @li @ref elm_object_part_text_set
+ * @li @ref elm_object_part_text_get
  *
  * See an example of actionslider usage @ref actionslider_example_page "here"
  * @{

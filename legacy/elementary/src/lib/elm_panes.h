@@ -31,9 +31,9 @@
  * top.
  *
  * Supported elm_object common APIs.
- * @li elm_object_part_content_set
- * @li elm_object_part_content_get
- * @li elm_object_part_content_unset
+ * @li @ref elm_object_part_content_set
+ * @li @ref elm_object_part_content_get
+ * @li @ref elm_object_part_content_unset
  *
  * Here is an example on its usage:
  * @li @ref panes_example

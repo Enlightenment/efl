@@ -32,11 +32,11 @@
  *
  * Supported elm_object_item common APIs.
  *
- * @li elm_object_part_text_set,
- * @li elm_object_part_text_get,
- * @li elm_object_part_content_set,
- * @li elm_object_part_content_get,
- * @li elm_object_part_content_unset
+ * @li @ref elm_object_part_text_set,
+ * @li @ref elm_object_part_text_get,
+ * @li @ref elm_object_part_content_set,
+ * @li @ref elm_object_part_content_get,
+ * @li @ref elm_object_part_content_unset
  *
  * @li "day0" indicates Sunday, "day1" indicates Monday etc. continues and so,
  * "day6" indicates the Saturday part name.

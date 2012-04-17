@@ -86,19 +86,19 @@
  * @li "default" - Item's label
  *
  * Supported elm_object common APIs.
- * @li elm_object_part_content_set
- * @li elm_object_part_content_get
- * @li elm_object_part_content_unset
+ * @li @ref elm_object_part_content_set
+ * @li @ref elm_object_part_content_get
+ * @li @ref elm_object_part_content_unset
  *
  * Supported elm_object_item common APIs.
- * @li elm_object_item_disabled_set
- * @li elm_object_item_disabled_get
- * @li elm_object_item_part_text_set
- * @li elm_object_item_part_text_get
- * @li elm_object_item_part_content_set
- * @li elm_object_item_part_content_get
- * @li elm_object_item_signal_emit
- * @li elm_object_item_del
+ * @li @ref elm_object_item_disabled_set
+ * @li @ref elm_object_item_disabled_get
+ * @li @ref elm_object_item_part_text_set
+ * @li @ref elm_object_item_part_text_get
+ * @li @ref elm_object_item_part_content_set
+ * @li @ref elm_object_item_part_content_get
+ * @li @ref elm_object_item_signal_emit
+ * @li @ref elm_object_item_del
  *
  * Here are some sample code to illustrate Popup usage:
  * @li @ref popup_example_01_c

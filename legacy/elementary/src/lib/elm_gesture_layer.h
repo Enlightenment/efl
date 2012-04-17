@@ -57,8 +57,8 @@
  * and ends when no fingers touches surface (a *UP event).
  *
  * Supported elm_object common APIs.
- * @li elm_object_disabled_set
- * @li elm_object_disabled_get
+ * @li @ref elm_object_disabled_set
+ * @li @ref elm_object_disabled_get
  *
  */
 

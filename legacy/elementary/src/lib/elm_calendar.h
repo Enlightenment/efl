@@ -16,9 +16,9 @@
  * - @c "changed" - emitted when the date in the calendar is changed.
  *
  * Supported elm_object common APIs.
- * @li elm_object_signal_emit
- * @li elm_object_signal_callback_add
- * @li elm_object_signal_callback_del
+ * @li @ref elm_object_signal_emit
+ * @li @ref elm_object_signal_callback_add
+ * @li @ref elm_object_signal_callback_del
  *
  * Here is some sample code using it:
  * @li @ref calendar_example_01

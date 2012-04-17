@@ -18,9 +18,9 @@
  * @li "overlay" - overlay of the bg
  *
  * Supported elm_object common APIs.
- * @li elm_object_part_content_set
- * @li elm_object_part_content_get
- * @li elm_object_part_content_unset
+ * @li @ref elm_object_part_content_set
+ * @li @ref elm_object_part_content_get
+ * @li @ref elm_object_part_content_unset
  *
  * Here is some sample code using it:
  * @li @ref bg_01_example_page
