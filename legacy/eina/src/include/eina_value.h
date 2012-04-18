@@ -285,8 +285,7 @@
  * It is meant for simple data types, providing uniform access and
  * release functions, useful to exchange data preserving their
  * types. For more complex hierarchical data, with properties and
- * children, reference counting, inheritance and interfaces, see @ref
- * Eina_Model_Group.
+ * children, reference counting, inheritance and interfaces, 
  *
  * Examples of usage of the Eina_Value API:
  * @li @ref eina_value_example_01_page
@@ -590,23 +589,6 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BLOB;
  * @since 1.2
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT;
-
-/**
- * @var EINA_VALUE_TYPE_MODEL
- *
- * manages Eina_Model type. Use the value get/set to change the model
- * in use, it will increase the reference while in use by the value.
- *
- * eina_value_set() takes a pointer to #Eina_Model, increasing the
- * reference.
- *
- * eina_value_get() takes a pointer to pointer to #Eina_Model, it's an
- * exact copy of the current model, no copies are done, no references
- * are increased.
- *
- * @since 1.2
- */
-EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_MODEL;
 
 /**
  * @var EINA_ERROR_VALUE_FAILED

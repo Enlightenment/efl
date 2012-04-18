@@ -64,7 +64,9 @@ void *alloca (size_t);
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_value.h"
-#include "eina_model.h" /* uses eina_value.h */
+/* no model for now
+#include "eina_model.h" // uses eina_value.h
+ */
 
 /*============================================================================*
 *                                  Local                                     *
@@ -4447,6 +4449,7 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_STRUCT = {
   _eina_value_type_struct_pget
 };
 
+/* no model for now
 static Eina_Bool
 _eina_value_type_model_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
 {
@@ -4473,7 +4476,7 @@ _eina_value_type_model_copy(const Eina_Value_Type *type __UNUSED__, const void *
    const Eina_Model * const *s = src;
    Eina_Model **d = dst;
    if (*s)
-     *d = eina_model_copy(*s); /* is it better to deep-copy? */
+     *d = eina_model_copy(*s); // is it better to deep-copy?
    else
      *d = NULL;
    return EINA_TRUE;
@@ -4565,11 +4568,12 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_MODEL = {
   _eina_value_type_model_copy,
   _eina_value_type_model_compare,
   _eina_value_type_model_convert_to,
-  NULL, /* no convert from */
+  NULL, // no convert from
   _eina_value_type_model_vset,
   _eina_value_type_model_pset,
   _eina_value_type_model_pget
 };
+*/
 
 /* keep all basic types inlined in an array so we can compare if it's
  * a basic type using pointer arithmetic.
@@ -5017,8 +5021,10 @@ eina_value_init(void)
    EINA_VALUE_TYPE_TIMEVAL = &_EINA_VALUE_TYPE_TIMEVAL;
    EINA_VALUE_TYPE_BLOB = &_EINA_VALUE_TYPE_BLOB;
    EINA_VALUE_TYPE_STRUCT = &_EINA_VALUE_TYPE_STRUCT;
+/* no model for now
    EINA_VALUE_TYPE_MODEL = &_EINA_VALUE_TYPE_MODEL;
-
+ */
+   
    EINA_VALUE_BLOB_OPERATIONS_MALLOC = &_EINA_VALUE_BLOB_OPERATIONS_MALLOC;
 
    EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = &_EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH;
@@ -5100,7 +5106,9 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
+/* no model for now
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_MODEL = NULL;
+ */
 
 EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
 
