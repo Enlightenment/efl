@@ -360,12 +360,10 @@ _eobj_ops_internal(Eobj *obj, va_list *p_list)
      {
         if (!_eobj_op_internal(obj, op, p_list))
           {
-             const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
-             const char *_id_name = (desc) ? desc->name : NULL;
              const Eobj_Class *op_klass = OP_CLASS_GET(op);
              const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
              ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.",
-                   op, _id_name, _dom_name,
+                   op, _eobj_op_id_name_get(op), _dom_name,
                    obj->klass->desc->name);
              ret = EINA_FALSE;
              break;
@@ -407,12 +405,10 @@ eobj_do_super(Eobj *obj, Eobj_Op op, ...)
    va_start(p_list, op);
    if (!_eobj_op_internal(obj, op, &p_list))
      {
-        const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
-        const char *_id_name = (desc) ? desc->name : NULL;
         const Eobj_Class *op_klass = OP_CLASS_GET(op);
         const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
         ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.",
-              op, _id_name, _dom_name,
+              op, _eobj_op_id_name_get(op), _dom_name,
               (obj_klass) ? obj_klass->desc->name : NULL);
         ret = EINA_FALSE;
      }
