@@ -98,10 +98,6 @@ ecore_x_netwm_wm_identify(Ecore_X_Window root,
                           const char *wm_name)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   ecore_x_window_prop_window_set(root,
-                                  ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
-                                  &check,
-                                  1);
    ecore_x_window_prop_window_set(check,
                                   ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
                                   &check,
@@ -113,6 +109,10 @@ ecore_x_netwm_wm_identify(Ecore_X_Window root,
    _ecore_x_window_prop_string_utf8_set(root,
                                         ECORE_X_ATOM_NET_WM_NAME,
                                         wm_name);
+   ecore_x_window_prop_window_set(root,
+                                  ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK,
+                                  &check,
+                                  1);
 }
 
 /*
