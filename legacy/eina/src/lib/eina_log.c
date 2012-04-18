@@ -28,6 +28,10 @@
 #include <assert.h>
 #include <errno.h>
 
+#ifdef HAVE_EXECINFO_H
+#include <execinfo.h>
+#endif
+
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -1827,6 +1831,22 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d,
    _eina_log_print_prefix(stderr, d, level, file, fnc, line);
    vfprintf(stderr, fmt, args);
    putc('\n', stderr);
+# if defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS
+   if (getenv("EINA_LOG_BACKTRACE"))
+     {
+        void *bt[256];
+	char **strings;
+	int btlen;
+	int i;
+
+	btlen = backtrace((void **)bt, 256);
+	strings = backtrace_symbols((void **)bt, btlen);
+	fprintf(stderr, "*** Backtrace ***\n");
+	for (i = 0; i < btlen; ++i)
+	  fprintf(stderr, "%s\n", strings[i]);
+	free(strings);
+     }
+# endif
 #else
    (void) d;
    (void) level;
@@ -1853,6 +1873,22 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d,
    _eina_log_print_prefix(stdout, d, level, file, fnc, line);
    vprintf(fmt, args);
    putchar('\n');
+# if defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS
+   if (getenv("EINA_LOG_BACKTRACE"))
+     {
+        void *bt[256];
+	char **strings;
+	int btlen;
+	int i;
+
+	btlen = backtrace((void **)bt, 256);
+	strings = backtrace_symbols((void **)bt, btlen);
+	fprintf(stdout, "*** Backtrace ***\n");
+	for (i = 0; i < btlen; ++i)
+	  fprintf(stdout, "%s\n", strings[i]);
+	free(strings);
+     }
+# endif
 #else
    (void) d;
    (void) level;
@@ -1894,6 +1930,22 @@ eina_log_print_cb_file(const Eina_Log_Domain *d,
 #endif
    fprintf(f, "%s<%u> %s:%d %s() ", d->name, eina_log_pid_get(), 
            file, line, fnc);
+# if defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS      
+   if (getenv("EINA_LOG_BACKTRACE"))
+     {
+        void *bt[256];
+	char **strings;
+	int btlen;
+	int i;
+
+	btlen = backtrace((void **)bt, 256);
+	strings = backtrace_symbols((void **)bt, btlen);
+	fprintf(f, "*** Backtrace ***\n");
+	for (i = 0; i < btlen; ++i)
+	  fprintf(f, "%s\n", strings[i]);
+	free(strings);
+     }
+# endif
 #ifdef EFL_HAVE_THREADS
 end:
 #endif
@@ -1991,3 +2043,4 @@ eina_log_vprint(int domain, Eina_Log_Level level, const char *file,
    (void) args;
 #endif
 }
+
