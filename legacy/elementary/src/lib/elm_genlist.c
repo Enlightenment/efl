@@ -5897,6 +5897,9 @@ _elm_genlist_item_del_notserious(Elm_Gen_Item *it)
 {
    elm_widget_item_pre_notify_del(it);
    it->generation = it->wd->generation - 1; /* This means that the item is deleted */
+
+   if ((it->relcount > 0) || (it->walking > 0)) return;
+
    if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
 
    if (it->itc->func.del)
