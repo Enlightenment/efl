@@ -33,7 +33,6 @@ eina_main.c \
 eina_matrixsparse.c \
 eina_mempool.c \
 eina_mmap.c \
-eina_model.c \
 eina_module.c \
 eina_prefix.c \
 eina_quadtree.c \
@@ -54,7 +53,8 @@ eina_ustringshare.c \
 eina_value.c \
 eina_xattr.c
 
-# Will be back for developper after 1.1
+# Will be back for developper after 1.2
+# eina_model.c \
 # eina_object.c
 
 if EINA_HAVE_WIN32
