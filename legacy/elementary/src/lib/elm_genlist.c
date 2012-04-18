@@ -5642,10 +5642,13 @@ elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc)
 void _flip_job(void *data)
 {
    Elm_Gen_Item *it = (Elm_Gen_Item *) data;
+   _item_unhighlight(it);
+   _item_unselect(it);
    _elm_genlist_item_unrealize(it, EINA_FALSE);
-   if (it->selected) _item_unselect(it);
    it->flipped = EINA_TRUE;
    it->item->nocache = EINA_TRUE;
+   if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
+   it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
 }
 
 EAPI void
@@ -5661,8 +5664,6 @@ elm_genlist_item_flip_set(Elm_Object_Item *it,
    if (flip)
      {
         ecore_job_add(_flip_job, _it);
-        if (_it->wd->calc_job) ecore_job_del(_it->wd->calc_job);
-        _it->wd->calc_job = ecore_job_add(_calc_job, _it->wd);
      }
    else
      {
@@ -5876,13 +5877,10 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
    EINA_LIST_FREE(it->content_objs, content)
      evas_object_del(content);
 
-   if (it->flipped)
-     {
-        elm_widget_stringlist_free(it->item->flip_contents);
-        it->item->flip_contents = NULL;
-        EINA_LIST_FREE(it->item->flip_content_objs, content)
-          evas_object_del(content);
-     }
+   elm_widget_stringlist_free(it->item->flip_contents);
+   it->item->flip_contents = NULL;
+   EINA_LIST_FREE(it->item->flip_content_objs, content)
+     evas_object_del(content);
 
    it->unrealize_cb(it);
 
