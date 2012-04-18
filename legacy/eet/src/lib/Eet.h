@@ -556,6 +556,8 @@ eet_open(const char *file,
  * so you must keep it around as long as the eet file is open. There is
  * currently no cache for this kind of Eet_File, so it's reopened every time
  * you use eet_memopen_read.
+ * @param data Address of file in memory.
+ * @param size Size of memory to be read.
  * @return A handle to the file.
  *
  * Files opened this way will always be in read-only mode.
