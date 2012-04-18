@@ -126,7 +126,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_OPENGL_SDL,
    ECORE_EVAS_ENGINE_EWS,
    ECORE_EVAS_ENGINE_PSL1GHT,
-   ECORE_EVAS_ENGINE_WAYLAND_SHM, 
+   ECORE_EVAS_ENGINE_WAYLAND_SHM,
    ECORE_EVAS_ENGINE_WAYLAND_EGL
 } Ecore_Evas_Engine_Type;
 
@@ -326,8 +326,8 @@ EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, i
  *
  * This function takes four pointers to (already allocated) ints, and places
  * the geometry which @p ee was latest recently requested . If any of the
- * parameters is not desired you may pass @c NULL on them. 
- * This function can represent recently requested geometry. 
+ * parameters is not desired you may pass @c NULL on them.
+ * This function can represent recently requested geometry.
  * ecore_evas_geometry_get function returns the value is updated after engine
  * finished request. By comparison, ecore_evas_request_geometry_get returns
  * recently requested value.
@@ -346,7 +346,7 @@ EAPI void        ecore_evas_request_geometry_get(const Ecore_Evas *ee, int *x, i
  * @param ee The Ecore_Evas
  * @param on @c EINA_TRUE for focus, @c EINA_FALSE to defocus.
  *
- * This function focuses @p ee if @p on is @c EINA_TRUE, or unfocuses @p ee if 
+ * This function focuses @p ee if @p on is @c EINA_TRUE, or unfocuses @p ee if
  * @p on is @c EINA_FALSE.
  *
  * @warning Support for this depends on the underlying windowing system.
@@ -445,9 +445,9 @@ EAPI Eina_Bool   ecore_evas_fullscreen_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_window_group_set(Ecore_Evas *ee, const Ecore_Evas *ee_group);
 /**
  * @brief Get the canvas group set.
- * 
+ *
  * This returns the handle set by ecore_evas_window_group_set().
- * 
+ *
  * @param ee The Ecore_Evas to set
  * @return The Canvas group handle
  *
@@ -462,16 +462,16 @@ EAPI const Ecore_Evas *ecore_evas_window_group_get(const Ecore_Evas *ee);
  * @param aspect The aspect ratio (width divided by height), or 0 to disable
  *
  * This sets the desired aspect ratio of a canvas window
- * 
+ *
  * @warning Support for this depends on the underlying windowing system.
  * @since 1.2
  */
 EAPI void        ecore_evas_aspect_set(Ecore_Evas *ee, double aspect);
 /**
  * @brief Get the aspect ratio of a canvas window
- * 
+ *
  * This returns the value set by ecore_evas_aspect_set().
- * 
+ *
  * @param ee The Ecore_Evas to set
  * @return The aspect ratio
  *
@@ -487,16 +487,16 @@ EAPI double      ecore_evas_aspect_get(const Ecore_Evas *ee);
  *
  * This sets the "urgent" state hint on a window so the desktop environment
  * can highlight it somehow.
- * 
+ *
  * @warning Support for this depends on the underlying windowing system.
  * @since 1.2
  */
 EAPI void        ecore_evas_urgent_set(Ecore_Evas *ee, Eina_Bool urgent);
 /**
  * @brief Get the urgent state on the cavas window
- * 
+ *
  * This returns the value set by ecore_evas_urgent_set()
- * 
+ *
  * @param ee The Ecore_Evas to set
  * @return The urgent state set
  *
@@ -513,16 +513,16 @@ EAPI Eina_Bool   ecore_evas_urgent_get(const Ecore_Evas *ee);
  * This hints if the window should be modal (eg if it is also transient
  * for another window, the other window will maybe be denied focus by
  * the desktop window manager).
- * 
+ *
  * @warning Support for this depends on the underlying windowing system.
  * @since 1.2
  */
 EAPI void        ecore_evas_modal_set(Ecore_Evas *ee, Eina_Bool modal);
 /**
  * @brief Get The modal flag
- * 
+ *
  * This returns the value set by ecore_evas_modal_set().
- * 
+ *
  * @param ee The Ecore_Evas to set
  * @return The modal flag
  *
@@ -538,16 +538,16 @@ EAPI Eina_Bool   ecore_evas_modal_get(const Ecore_Evas *ee);
  *
  * A window may demand attention now (eg you must enter a password before
  * continuing), and so it may flag a window with this.
- * 
+ *
  * @warning Support for this depends on the underlying windowing system.
  * @since 1.2
  */
 EAPI void        ecore_evas_demand_attention_set(Ecore_Evas *ee, Eina_Bool demand);
 /**
  * @brief Get the "i demand attention" flag
- * 
+ *
  * This returns the value set by ecore_evas_demand_attention_set().
- * 
+ *
  * @param ee The Ecore_Evas to set
  * @return The "i demand attention" flag.
  *
@@ -565,16 +565,16 @@ EAPI Eina_Bool   ecore_evas_demand_attention_get(const Ecore_Evas *ee);
  * sometimes (example for a small notification window that hovers around
  * a taskbar or panel, or hovers around a window until some activity
  * dismisses it).
- * 
+ *
  * @warning Support for this depends on the underlying windowing system.
  * @since 1.2
  */
 EAPI void        ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip);
 /**
  * @brief Get the "focus skip" flag
- * 
+ *
  * This returns the value set by ecore_evas_focus_skip_set().
- * 
+ *
  * @param ee The Ecore_Evas to set
  * @return The "focus skip" flag.
  *
@@ -582,7 +582,7 @@ EAPI void        ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip);
  * @since 1.2
  */
 EAPI Eina_Bool   ecore_evas_focus_skip_get(const Ecore_Evas *ee);
-   
+
 /**
  * @brief Set if this evas should ignore @b all events.
  *
@@ -1410,9 +1410,48 @@ EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, Ecore_Evas_Eve
  */
 EAPI void        ecore_evas_callback_state_change_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 
+/**
+ * Get an Ecore_Evas's Evas
+ * @param ee The Ecore_Evas whose Evas you wish to get
+ * @return The Evas wrapped by @p ee
+ *
+ * This function returns the Evas contained within @p ee.
+ */
 EAPI Evas       *ecore_evas_get(const Ecore_Evas *ee);
+
+/**
+ * Provide Managed move co-ordinates for an Ecore_Evas
+ * @param ee The Ecore_Evas to move
+ * @param x The x coordinate to set as the managed location
+ * @param y The y coordinate to set as the managed location
+ *
+ * This sets the managed geometry position of the @p ee to (@p x, @p y)
+ */
 EAPI void        ecore_evas_managed_move(Ecore_Evas *ee, int x, int y);
+
+/**
+ * Set whether an Ecore_Evas is shaped or not.
+ *
+ * @param ee The Ecore_Evas to shape.
+ * @param shaped @c EINA_TRUE to shape, @c EINA_FALSE to not.
+ *
+ * This function allows one to make an Ecore_Evas shaped to the contents of the
+ * evas. If @p shaped is @c EINA_TRUE, @p ee will be transparent in parts of
+ * the evas that contain no objects. If @p shaped is @c EINA_FALSE, then @p ee
+ * will be rectangular, and parts with no data will show random framebuffer
+ * artifacting. For non-shaped Ecore_Evases, it is recommended to cover the
+ * entire evas with a background object.
+ */
 EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped);
+
+/**
+ * Query whether an Ecore_Evas is shaped or not.
+ *
+ * @param ee The Ecore_Evas to query.
+ * @return @c EINA_TRUE if shaped, @c EINA_FALSE if not.
+ *
+ * This function returns @c EINA_TRUE if @p ee is shaped, and @c EINA_FALSE if not.
+ */
 EAPI Eina_Bool   ecore_evas_shaped_get(const Ecore_Evas *ee);
 /**
  * @brief Show an Ecore_Evas' window
@@ -1430,6 +1469,13 @@ EAPI void        ecore_evas_show(Ecore_Evas *ee);
  * This function makes @p ee hidden(not visible).
  */
 EAPI void        ecore_evas_hide(Ecore_Evas *ee);
+
+/**
+ * Activate (set focus to, via the window manager) an Ecore_Evas' window.
+ * @param ee The Ecore_Evas to activate.
+ *
+ * This functions activates the Ecore_Evas.
+ */
 EAPI void        ecore_evas_activate(Ecore_Evas *ee);
 
 
@@ -1604,13 +1650,77 @@ EAPI void        ecore_evas_cursor_get(const Ecore_Evas *ee, Evas_Object **obj, 
  * @see ecore_evas_cursor_set()
  */
 EAPI void        ecore_evas_object_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int hot_x, int hot_y);
+
+/**
+ * Tell the WM whether or not to ignore an Ecore_Evas' window
+ *
+ * @param ee The Ecore_Evas.
+ * @param on @c EINA_TRUE to ignore, @c EINA_FALSE to not.
+ *
+ * This function causes the window manager to ignore @p ee if @p on is
+ * @c EINA_TRUE, or not ignore @p ee if @p on is @c EINA_FALSE.
+ */
 EAPI void        ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on);
+
+/**
+ * Query whether an Ecore_Evas' window is overridden or not
+ *
+ * @param ee The Ecore_Evas to set.
+ * @return @c EINA_TRUE if @p ee is overridden, @c EINA_FALSE if not.
+ */
 EAPI Eina_Bool   ecore_evas_override_get(const Ecore_Evas *ee);
+
+/**
+ * Set whether or not an Ecore_Evas' window should avoid damage
+ *
+ * @param ee The Ecore_Evas
+ * @param on The type of the damage management
+ *
+ * This function causes @p ee to be drawn to a pixmap to avoid recalculations.
+ * On expose events it will copy from the pixmap to the window.
+ */
 EAPI void        ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on);
+
+/**
+ * Query whether an Ecore_Evas' window avoids damage or not
+ * @param ee The Ecore_Evas to set
+ * @return The type of the damage management
+ *
+ */
 EAPI Ecore_Evas_Avoid_Damage_Type ecore_evas_avoid_damage_get(const Ecore_Evas *ee);
+
+/**
+ * Set the withdrawn state of an Ecore_Evas' window.
+ * @param ee The Ecore_Evas whose window's withdrawn state is set.
+ * @param withdrawn The Ecore_Evas window's new withdrawn state.
+ *
+ */
 EAPI void        ecore_evas_withdrawn_set(Ecore_Evas *ee, Eina_Bool withdrawn);
+
+/**
+ * Returns the withdrawn state of an Ecore_Evas' window.
+ * @param ee The Ecore_Evas whose window's withdrawn state is returned.
+ * @return The Ecore_Evas window's withdrawn state.
+ *
+ */
 EAPI Eina_Bool   ecore_evas_withdrawn_get(const Ecore_Evas *ee);
+
+/**
+ * Set the sticky state of an Ecore_Evas window.
+ *
+ * @param ee The Ecore_Evas whose window's sticky state is set.
+ * @param sticky The Ecore_Evas window's new sticky state.
+ *
+ */
 EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky);
+
+/**
+ * Returns the sticky state of an Ecore_Evas' window.
+ *
+ * @param ee The Ecore_Evas whose window's sticky state is returned.
+ * @return The Ecore_Evas window's sticky state.
+ *
+ */
 EAPI Eina_Bool   ecore_evas_sticky_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_manual_render_set(Ecore_Evas *ee, Eina_Bool manual_render);
 EAPI Eina_Bool   ecore_evas_manual_render_get(const Ecore_Evas *ee);
@@ -1884,14 +1994,14 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
 
 EAPI extern int ECORE_EVAS_EXTN_CLIENT_ADD; /**< this event is received when a plug has connected to an extn socket @since 1.2 */
 EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a plug has disconnected from an extn socket @since 1.2 */
-   
+
 /**
  * @brief Create a new Ecore_Evas canvas for the new external ecore evas socket
- * 
+ *
  * @param w The width of the canvas, in pixels
  * @param h The height of the canvas, in pixels
  * @return A new @c Ecore_Evas instance or @c NULL, on failure
- * 
+ *
  * This creates a new extn_socket canvas wrapper, with image data array
  * @b bound to the ARGB format, 8 bits per pixel.
  *
@@ -1926,9 +2036,9 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
  * in the ecore event queue, with event_info being the image object pointer
  * passed as a void pointer. When a client disconnects you will get the
  * ECORE_EVAS_EXTN_CLIENT_DEL event.
- * 
+ *
  * You can set up event handles for these events as follows:
- * 
+ *
  * @code
  * static void client_add_cb(void *data, int event, void *event_info)
  * {
@@ -1936,14 +2046,14 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
  *   printf("client added to image object %p\n", obj);
  *   evas_object_show(obj);
  * }
- * 
+ *
  * static void client_del_cb(void *data, int event, void *event_info)
  * {
  *   Evas_Object *obj = event_info;
  *   printf("client deleted from image object %p\n", obj);
  *   evas_object_hide(obj);
  * }
- * 
+ *
  * void setup(void)
  * {
  *   ecore_event_handler_add(ECORE_EVAS_EXTN_CLIENT_ADD,
@@ -1952,24 +2062,24 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
  *                           client_del_cb, NULL);
  * }
  * @endcode
- * 
+ *
  * Note that events come in later after the event happened. You may want to be
  * careful as data structures you had associated with the image object
  * may have been freed after deleting, but the object may still be around
  * awating cleanup and thus still be valid.You can change the size with something like:
- * 
+ *
  * @see ecore_evas_extn_socket_listen()
  * @see ecore_evas_extn_plug_new()
  * @see ecore_evas_extn_plug_object_data_lock()
  * @see ecore_evas_extn_plug_object_data_unlock()
- * 
+ *
  * @since 1.2
  */
 EAPI Ecore_Evas *ecore_evas_extn_socket_new(int w, int h);
 
 /**
  * @brief Create a socket to provide the service for external ecore evas
- * socket. 
+ * socket.
  *
  * @param ee The Ecore_Evas.
  * @param svcname The name of the service to be advertised. ensure that it is
@@ -1981,16 +2091,16 @@ EAPI Ecore_Evas *ecore_evas_extn_socket_new(int w, int h);
  * user ide that created the service.
  * @return @c EINA_TRUE if creation is successful, @c EINA_FALSE if it does
  * not.
- * 
+ *
  * This creates socket specified by @p svcname, @p svcnum and @p svcsys. If
  * creation is successful, @c EINA_TRUE is returned or @c EINA_FALSE if
- * creation fails. 
+ * creation fails.
  *
  * @see ecore_evas_extn_socket_new()
  * @see ecore_evas_extn_plug_new()
  * @see ecore_evas_extn_plug_object_data_lock()
  * @see ecore_evas_extn_plug_object_data_unlock()
- * 
+ *
  * @since 1.2
  */
 EAPI Eina_Bool ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys);
@@ -1999,22 +2109,22 @@ EAPI Eina_Bool ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname
  * @brief Lock the pixel data so the socket cannot change it
  *
  * @param obj The image object returned by ecore_evas_extn_plug_new() to lock
- * 
+ *
  * You may need to get the image pixel data with evas_object_image_data_get()
  * from the image object, but need to ensure that it does not change while
  * you are using the data. This function lets you set an advisory lock on the
  * image data so the external plug process will not render to it or alter it.
- * 
+ *
  * You should only hold the lock for just as long as you need to read out the
  * image data or otherwise deal with it, and then unlock it with
  * ecore_evas_extn_plug_object_data_unlock(). Keeping a lock over more than
  * 1 iteration of the main ecore loop will be problematic, so avoid it. Also
  * forgetting to unlock may cause the socket process to freeze and thus create
  * odd behavior.
- * 
+ *
  * @see ecore_evas_extn_plug_new()
  * @see ecore_evas_extn_plug_object_data_unlock()
- * 
+ *
  * @since 1.2
  */
 EAPI void ecore_evas_extn_plug_object_data_lock(Evas_Object *obj);
@@ -2023,23 +2133,23 @@ EAPI void ecore_evas_extn_plug_object_data_lock(Evas_Object *obj);
  * @brief Unlock the pixel data so the socket can change it again.
  *
  * @param obj The image object returned by ecore_evas_extn_plug_new() to unlock
- * 
- * This unlocks after an advisor lock has been taken by 
+ *
+ * This unlocks after an advisor lock has been taken by
  * ecore_evas_extn_plug_object_data_lock().
- * 
+ *
  * @see ecore_evas_extn_plug_new()
  * @see ecore_evas_extn_plug_object_data_lock()
- * 
+ *
  * @since 1.2
  */
-EAPI void ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj); 
-  
+EAPI void ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj);
+
 /**
  * @brief Create a new external ecore evas plug
  *
  * @param ee_target The Ecore_Evas containing the canvas in which the new image object will live.
  * @return An evas image object that will contain the image output of a socket.
- * 
+ *
  * This creates an image object that will contain the output of another
  * processes socket canvas when it connects. All input will be sent back to
  * this process as well, effectively swallowing or placing the socket process
@@ -2049,7 +2159,7 @@ EAPI void ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj);
  * to fill the image unless otherwise reconfigured. The Ecore_Evas size
  * of the plug is the master size and determines size in pixels of the
  * plug canvas. You can change the size with something like:
- * 
+ *
  * @code
  * Eina_Bool res = EINA_FALSE;
  * Evas_Object *obj = ecore_evas_extn_plug_new(ee);
@@ -2058,9 +2168,9 @@ EAPI void ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj);
  * if (!res) return;
  * ecore_evas_resize(ee, 240, 400);
  * @endcode
- * 
+ *
  * @see ecore_evas_extn_socket_new()
- * @see ecore_evas_extn_plug_connect() 
+ * @see ecore_evas_extn_plug_connect()
  * @since 1.2
  */
 EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target);
@@ -2079,11 +2189,11 @@ EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target);
  * not.
  *
  * @see ecore_evas_extn_plug_new()
- * 
+ *
  * @since 1.2
  */
 EAPI Eina_Bool ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
-        
+
 /**
  * @}
  */

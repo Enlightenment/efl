@@ -257,7 +257,7 @@ ecore_evas_init(void)
 #endif
 
    _ecore_evas_extn_init();
-   
+
    if (getenv("ECORE_EVAS_COMP_NOSYNC"))
       _ecore_evas_app_comp_sync = 0;
    return _ecore_evas_init_count;
@@ -279,7 +279,7 @@ ecore_evas_shutdown(void)
    while (ecore_evases) _ecore_evas_free(ecore_evases);
 
    _ecore_evas_extn_shutdown();
-   
+
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
    ecore_idle_enterer_del(ecore_evas_idle_enterer);
    ecore_evas_idle_enterer = NULL;
@@ -1146,13 +1146,6 @@ ecore_evas_callback_state_change_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
    ee->func.fn_state_change = func;
 }
 
-/**
- * Get an Ecore_Evas's Evas
- * @param ee The Ecore_Evas whose Evas you wish to get
- * @return The Evas wrapped by @p ee
- *
- * This function returns the Evas contained within @p ee.
- */
 EAPI Evas *
 ecore_evas_get(const Ecore_Evas *ee)
 {
@@ -1179,14 +1172,6 @@ ecore_evas_move(Ecore_Evas *ee, int x, int y)
    IFE;
 }
 
-/**
- * Provide Managed move co-ordinates for an Ecore_Evas
- * @param ee The Ecore_Evas to move
- * @param x The x coordinate to set as the managed location
- * @param y The y coordinate to set as the managed location
- *
- * This sets the managed geometry position of the @p ee to (@p x, @p y)
- */
 EAPI void
 ecore_evas_managed_move(Ecore_Evas *ee, int x, int y)
 {
@@ -1348,19 +1333,6 @@ ecore_evas_rotation_get(const Ecore_Evas *ee)
    return ee->rotation;
 }
 
-/**
- * Set whether an Ecore_Evas is shaped or not.
- *
- * @param ee The Ecore_Evas to shape.
- * @param shaped @c EINA_TRUE to shape, @c EINA_FALSE to not.
- *
- * This function allows one to make an Ecore_Evas shaped to the contents of the
- * evas. If @p shaped is @c EINA_TRUE, @p ee will be transparent in parts of
- * the evas that contain no objects. If @p shaped is @c EINA_FALSE, then @p ee
- * will be rectangular, and parts with no data will show random framebuffer
- * artifacting. For non-shaped Ecore_Evases, it is recommended to cover the
- * entire evas with a background object.
- */
 EAPI void
 ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped)
 {
@@ -1374,14 +1346,6 @@ ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped)
    IFE;
 }
 
-/**
- * Query whether an Ecore_Evas is shaped or not.
- *
- * @param ee The Ecore_Evas to query.
- * @return @c EINA_TRUE if shaped, @c EINA_FALSE if not.
- *
- * This function returns @c EINA_TRUE if @p ee is shaped, and @c EINA_FALSE if not.
- */
 EAPI Eina_Bool
 ecore_evas_shaped_get(const Ecore_Evas *ee)
 {
@@ -1508,12 +1472,6 @@ ecore_evas_lower(Ecore_Evas *ee)
    IFE;
 }
 
-/**
- * Activate (set focus to, via the window manager) an Ecore_Evas' window.
- * @param ee The Ecore_Evas to activate.
- *
- * This functions activates the Ecore_Evas.
- */
 EAPI void
 ecore_evas_activate(Ecore_Evas *ee)
 {
@@ -1909,15 +1867,6 @@ ecore_evas_borderless_get(const Ecore_Evas *ee)
    return ee->prop.borderless ? EINA_TRUE : EINA_FALSE;
 }
 
-/**
- * Tell the WM whether or not to ignore an Ecore_Evas' window
- *
- * @param ee The Ecore_Evas.
- * @param on @c EINA_TRUE to ignore, @c EINA_FALSE to not.
- *
- * This function causes the window manager to ignore @p ee if @p on is
- * @c EINA_TRUE, or not ignore @p ee if @p on is @c EINA_FALSE.
- */
 EAPI void
 ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on)
 {
@@ -1931,12 +1880,6 @@ ecore_evas_override_set(Ecore_Evas *ee, Eina_Bool on)
    IFE;
 }
 
-/**
- * Query whether an Ecore_Evas' window is overridden or not
- *
- * @param ee The Ecore_Evas to set.
- * @return @c EINA_TRUE if @p ee is overridden, @c EINA_FALSE if not.
- */
 EAPI Eina_Bool
 ecore_evas_override_get(const Ecore_Evas *ee)
 {
@@ -1999,15 +1942,6 @@ ecore_evas_fullscreen_get(const Ecore_Evas *ee)
    return ee->prop.fullscreen ? EINA_TRUE : EINA_FALSE;
 }
 
-/**
- * Set whether or not an Ecore_Evas' window should avoid damage
- *
- * @param ee The Ecore_Evas
- * @param on The type of the damage management
- *
- * This function causes @p ee to be drawn to a pixmap to avoid recalculations.
- * On expose events it will copy from the pixmap to the window.
- */
 EAPI void
 ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on)
 {
@@ -2021,12 +1955,6 @@ ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on)
    IFE;
 }
 
-/**
- * Query whether an Ecore_Evas' window avoids damage or not
- * @param ee The Ecore_Evas to set
- * @return The type of the damage management
- *
- */
 EAPI Ecore_Evas_Avoid_Damage_Type
 ecore_evas_avoid_damage_get(const Ecore_Evas *ee)
 {
@@ -2039,12 +1967,6 @@ ecore_evas_avoid_damage_get(const Ecore_Evas *ee)
    return ee->prop.avoid_damage;
 }
 
-/**
- * Set the withdrawn state of an Ecore_Evas' window.
- * @param ee The Ecore_Evas whose window's withdrawn state is set.
- * @param withdrawn The Ecore_Evas window's new withdrawn state.
- *
- */
 EAPI void
 ecore_evas_withdrawn_set(Ecore_Evas *ee, Eina_Bool withdrawn)
 {
@@ -2059,12 +1981,6 @@ ecore_evas_withdrawn_set(Ecore_Evas *ee, Eina_Bool withdrawn)
    IFE;
 }
 
-/**
- * Returns the withdrawn state of an Ecore_Evas' window.
- * @param ee The Ecore_Evas whose window's withdrawn state is returned.
- * @return The Ecore_Evas window's withdrawn state.
- *
- */
 EAPI Eina_Bool
 ecore_evas_withdrawn_get(const Ecore_Evas *ee)
 {
@@ -2077,13 +1993,6 @@ ecore_evas_withdrawn_get(const Ecore_Evas *ee)
    return ee->prop.withdrawn ? EINA_TRUE : EINA_FALSE;
 }
 
-/**
- * Set the sticky state of an Ecore_Evas window.
- *
- * @param ee The Ecore_Evas whose window's sticky state is set.
- * @param sticky The Ecore_Evas window's new sticky state.
- *
- */
 EAPI void
 ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky)
 {
@@ -2098,13 +2007,6 @@ ecore_evas_sticky_set(Ecore_Evas *ee, Eina_Bool sticky)
    IFE;
 }
 
-/**
- * Returns the sticky state of an Ecore_Evas' window.
- *
- * @param ee The Ecore_Evas whose window's sticky state is returned.
- * @return The Ecore_Evas window's sticky state.
- *
- */
 EAPI Eina_Bool
 ecore_evas_sticky_get(const Ecore_Evas *ee)
 {
@@ -2391,8 +2293,8 @@ ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int
    IFE;
 }
 
-EAPI void 
-ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame) 
+EAPI void
+ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2402,8 +2304,8 @@ ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame)
    ee->prop.draw_frame = draw_frame;
 }
 
-EAPI Eina_Bool 
-ecore_evas_draw_frame_get(const Ecore_Evas *ee) 
+EAPI Eina_Bool
+ecore_evas_draw_frame_get(const Ecore_Evas *ee)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -2831,7 +2733,7 @@ ecore_evas_input_event_unregister(Ecore_Evas *ee)
 }
 
 #if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined (BUILD_ECORE_EVAS_WAYLAND_EGL)
-EAPI void 
+EAPI void
 ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
 {
    if (!ee) return;
@@ -2849,7 +2751,7 @@ ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
      }
 }
 
-EAPI void 
+EAPI void
 ecore_evas_wayland_type_set(Ecore_Evas *ee, int type)
 {
    if (!ee) return;
@@ -2862,7 +2764,7 @@ ecore_evas_wayland_window_get(const Ecore_Evas *ee)
    return ee->engine.wl.win;
 }
 
-EAPI void 
+EAPI void
 ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y)
 {
    Ecore_Wl_Window *win;
@@ -2872,13 +2774,13 @@ ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y)
 }
 
 #else
-EAPI void 
+EAPI void
 ecore_evas_wayland_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
 {
 
 }
 
-EAPI void 
+EAPI void
 ecore_evas_wayland_type_set(Ecore_Evas *ee __UNUSED__, int type __UNUSED__)
 {
 
@@ -2890,7 +2792,7 @@ ecore_evas_wayland_window_get(const Ecore_Evas *ee __UNUSED__)
    return NULL;
 }
 
-EAPI void 
+EAPI void
 ecore_evas_wayland_pointer_set(Ecore_Evas *ee __UNUSED__, int hot_x __UNUSED__, int hot_y __UNUSED__)
 {
 
