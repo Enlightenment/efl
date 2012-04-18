@@ -20,6 +20,8 @@ _a_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
    printf("%s %d\n", eobj_class_name_get(_my_class), a);
    eobj_do(obj, SIMPLE_A_PRINT());
    eobj_do_super(obj, SIMPLE_A_SET(a + 1));
+
+   fail_if(eobj_do_super(obj, SIMPLE_A_PRINT()));
 }
 
 static void

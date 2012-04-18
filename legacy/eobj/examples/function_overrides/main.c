@@ -35,6 +35,12 @@ main(int argc, char *argv[])
 
    obj = eobj_add(SIMPLE_CLASS, NULL);
    fail_if(eobj_do(obj, INHERIT2_PRINT2()));
+
+   fail_if(eobj_do_super(obj, SIMPLE_A_PRINT()));
+
+   eobj_constructor_super(obj);
+   eobj_destructor_super(obj);
+
    eobj_unref(obj);
 
    eobj_shutdown();

@@ -190,6 +190,31 @@ dich_func_clean_all(Eobj_Class *klass)
 
 /* END OF DICH */
 
+static const Eobj_Op_Description noop_desc =
+        EOBJ_OP_DESCRIPTION(EOBJ_NOOP, "", "No operation.");
+
+static const Eobj_Op_Description *
+_eobj_op_id_desc_get(Eobj_Op op)
+{
+   const Eobj_Class *klass = OP_CLASS_GET(op);
+   Eobj_Op sub_id = OP_SUB_ID_GET(op);
+
+   if (op == EOBJ_NOOP)
+      return &noop_desc;
+
+   if (klass && (sub_id < klass->desc->ops.count))
+      return klass->desc->ops.descs + sub_id;
+
+   return NULL;
+}
+
+static const char *
+_eobj_op_id_name_get(Eobj_Op op)
+{
+   const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
+   return (desc) ? desc->name : NULL;
+}
+
 typedef struct
 {
    EINA_INLIST;
@@ -245,10 +270,20 @@ _eobj_kls_itr_get(Eobj *obj)
 }
 
 static inline const Eobj_Class *
-_eobj_kls_itr_next(Eobj *obj)
+_eobj_kls_itr_next(Eobj *obj, Eobj_Op op)
 {
    Eobj_Kls_Itr_Node *node =
       EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node);
+
+   if (!node || (node->op != op))
+     {
+        Eobj_Op node_op = (node) ? node->op : EOBJ_NOOP;
+        ERR("Called with op %d ('%s') while expecting: %d ('%s'). This probaly means you called eobj_*_super functions from a wrong place.",
+              op, _eobj_op_id_name_get(op),
+              node_op, _eobj_op_id_name_get(node_op));
+        return NULL;
+     }
+
    const Eobj_Class **kls_itr = node->kls_itr;
    if (*kls_itr)
      {
@@ -271,18 +306,6 @@ _eobj_kls_itr_reached_end(const Eobj *obj)
    return !(*kls_itr && *(kls_itr + 1));
 }
 
-static const Eobj_Op_Description *
-_eobj_op_id_desc_get(Eobj_Op op)
-{
-   const Eobj_Class *klass = OP_CLASS_GET(op);
-   Eobj_Op sub_id = OP_SUB_ID_GET(op);
-
-   if (klass && (sub_id < klass->desc->ops.count))
-      return klass->desc->ops.descs + sub_id;
-
-   return NULL;
-}
-
 static Eina_Bool
 _eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list)
 {
@@ -303,7 +326,7 @@ _eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list)
              goto end;
           }
 
-        klass = _eobj_kls_itr_next(obj);
+        klass = _eobj_kls_itr_next(obj, op);
      }
 
    /* Try composite objects */
@@ -373,10 +396,15 @@ eobj_do_super(Eobj *obj, Eobj_Op op, ...)
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
 
-   va_start(p_list, op);
-
    /* Advance the kls itr. */
-   obj_klass = _eobj_kls_itr_next(obj);
+   obj_klass = _eobj_kls_itr_next(obj, op);
+
+   if (!obj_klass)
+     {
+        return EINA_FALSE;
+     }
+
+   va_start(p_list, op);
    if (!_eobj_op_internal(obj, op, &p_list))
      {
         const Eobj_Op_Description *desc = _eobj_op_id_desc_get(op);
@@ -1006,13 +1034,13 @@ eobj_class_destructor(Eobj *obj, const Eobj_Class *klass)
 EAPI void
 eobj_constructor_super(Eobj *obj)
 {
-   eobj_class_constructor(obj, _eobj_kls_itr_next(obj));
+   eobj_class_constructor(obj, _eobj_kls_itr_next(obj, EOBJ_NOOP));
 }
 
 EAPI void
 eobj_destructor_super(Eobj *obj)
 {
-   eobj_class_destructor(obj, _eobj_kls_itr_next(obj));
+   eobj_class_destructor(obj, _eobj_kls_itr_next(obj, EOBJ_NOOP));
 }
 
 EAPI void *
