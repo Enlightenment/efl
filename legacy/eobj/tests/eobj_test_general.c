@@ -19,7 +19,7 @@ START_TEST(eobj_simple)
 }
 END_TEST
 
-START_TEST(eobj_xrefs)
+START_TEST(eobj_refs)
 {
    eobj_init();
    Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
@@ -54,6 +54,12 @@ START_TEST(eobj_xrefs)
    eobj_unref(obj2);
    eobj_unref(obj3);
 
+   /* Just check it doesn't seg atm. */
+   obj = eobj_add(SIMPLE_CLASS, NULL);
+   eobj_ref(obj);
+   eobj_del(obj);
+   eobj_del(obj);
+
    eobj_shutdown();
 }
 END_TEST
@@ -84,6 +90,13 @@ START_TEST(eobj_weak_reference)
    fail_if(eobj_weak_ref_get(wref));
 
    eobj_weak_ref_free(wref);
+
+   obj = eobj_add(SIMPLE_CLASS, NULL);
+
+   wref = eobj_weak_ref_new(obj);
+   eobj_weak_ref_free(wref);
+
+   eobj_unref(obj);
 
 
    eobj_shutdown();
@@ -200,5 +213,5 @@ void eobj_test_general(TCase *tc)
    tcase_add_test(tc, eobj_op_errors);
    tcase_add_test(tc, eobj_simple);
    tcase_add_test(tc, eobj_weak_reference);
-   tcase_add_test(tc, eobj_xrefs);
+   tcase_add_test(tc, eobj_refs);
 }

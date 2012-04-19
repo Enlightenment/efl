@@ -1321,7 +1321,7 @@ eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc,
 
    EINA_INLIST_FOREACH(obj->callbacks, cb)
      {
-        if (!cb->delete_me  && (cb->event == desc))
+        if (!cb->delete_me && (cb->event == desc))
           {
              /* Abort callback calling if the func says so. */
              if (!cb->func((void *) cb->func_data, obj, desc,
