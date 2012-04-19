@@ -272,6 +272,9 @@
  * @image latex img/widget/layout/preview-00.eps
  * @image html img/layout-predefined.png
  * @image latex img/layout-predefined.eps
+ *
+ * @li @ref Naviframe
+ *
  * @li @ref Panes
  *
  * @image html img/widget/panes/preview-00.png
