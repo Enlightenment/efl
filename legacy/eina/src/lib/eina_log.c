@@ -109,7 +109,7 @@ static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
 
 #ifdef EINA_LOG_BACKTRACE
 static int _backtrace_level = -1;
-#endif 
+#endif
 
 #ifdef EFL_HAVE_THREADS
 
@@ -1342,8 +1342,10 @@ eina_log_init(void)
 
    assert((sizeof(_names) / sizeof(_names[0])) == EINA_LOG_LEVELS);
 
+#ifdef EINA_LOG_BACKTRACE
    if ((tmp = getenv(EINA_LOG_ENV_BACKTRACE)))
      _backtrace_level = atoi(tmp);
+#endif
 
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)))
       color_disable = atoi(tmp);
