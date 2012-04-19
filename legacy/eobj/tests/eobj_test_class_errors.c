@@ -159,8 +159,88 @@ START_TEST(eobj_inherit_errors)
 }
 END_TEST
 
+START_TEST(eobj_inconsistent_mro)
+{
+   eobj_init();
+
+   const Eobj_Class *klass;
+   const Eobj_Class *klass_mixin;
+   const Eobj_Class *klass_mixin2;
+   const Eobj_Class *klass_mixin3;
+
+   static const Eobj_Class_Description class_desc_simple = {
+        "Simple",
+        EOBJ_CLASS_TYPE_REGULAR,
+        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        0,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+   };
+
+   static const Eobj_Class_Description class_desc_mixin = {
+        "Mixin",
+        EOBJ_CLASS_TYPE_MIXIN,
+        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        0,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+   };
+
+   static const Eobj_Class_Description class_desc_mixin2 = {
+        "Mixin2",
+        EOBJ_CLASS_TYPE_MIXIN,
+        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        0,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+   };
+
+   static const Eobj_Class_Description class_desc_mixin3 = {
+        "Mixin3",
+        EOBJ_CLASS_TYPE_MIXIN,
+        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        0,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+   };
+
+   klass_mixin = eobj_class_new(&class_desc_mixin, NULL, NULL);
+   fail_if(!klass_mixin);
+
+   klass_mixin2 = eobj_class_new(&class_desc_mixin2, klass_mixin, NULL);
+   fail_if(!klass_mixin2);
+
+   klass_mixin3 = eobj_class_new(&class_desc_mixin3, klass_mixin, NULL);
+   fail_if(!klass_mixin3);
+
+   klass = eobj_class_new(&class_desc_simple, EOBJ_BASE_CLASS, klass_mixin, klass_mixin2, NULL);
+   fail_if(klass);
+
+   klass = eobj_class_new(&class_desc_simple, EOBJ_BASE_CLASS, klass_mixin2, klass_mixin, NULL);
+   fail_if(!klass);
+
+   klass = eobj_class_new(&class_desc_simple, EOBJ_BASE_CLASS, klass_mixin2, klass_mixin3, NULL);
+   fail_if(!klass);
+
+   eobj_shutdown();
+}
+END_TEST
+
 void eobj_test_class_errors(TCase *tc)
 {
    tcase_add_test(tc, eobj_incomplete_desc);
    tcase_add_test(tc, eobj_inherit_errors);
+   tcase_add_test(tc, eobj_inconsistent_mro);
 }

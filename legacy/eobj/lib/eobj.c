@@ -443,25 +443,60 @@ _eobj_class_base_op_init(Eobj_Class *klass)
 static Eina_List *
 _eobj_class_mro_add(Eina_List *mro, const Eobj_Class *klass)
 {
+   Eina_List *extn_pos = NULL;
+   Eina_Bool check_consistency = !mro;
    if (!klass)
       return mro;
 
    mro = eina_list_append(mro, klass);
 
+   /* Recursively add extenions. */
      {
         Eobj_Extension_Node *extn;
         EINA_INLIST_FOREACH(klass->extensions, extn)
           {
              mro = _eobj_class_mro_add(mro, extn->klass);
+             if (!mro)
+                return NULL;
+
+             if (check_consistency)
+               {
+                  extn_pos = eina_list_append(extn_pos, eina_list_last(mro));
+               }
           }
      }
+
+   /* Check if we can create a consistent mro. We only do it for the class
+    * we are working on (i.e no parents). */
+   if (check_consistency)
+     {
+        Eobj_Extension_Node *extn;
+
+        Eina_List *itr = extn_pos;
+        EINA_INLIST_FOREACH(klass->extensions, extn)
+          {
+             /* Get the first one after the extension. */
+             Eina_List *extn_list = eina_list_next(eina_list_data_get(itr));
+
+             /* If we found the extension again. */
+             if (eina_list_data_find_list(extn_list, extn->klass))
+               {
+                  eina_list_free(mro);
+                  ERR("Cannot create a consistent method resolution order for class '%s' because of '%s'.", klass->desc->name, extn->klass->desc->name);
+                  return NULL;
+               }
+
+             itr = eina_list_next(itr);
+          }
+     }
+
 
    mro = _eobj_class_mro_add(mro, klass->parent);
 
    return mro;
 }
 
-static void
+static Eina_Bool
 _eobj_class_mro_init(Eobj_Class *klass)
 {
    Eina_List *mro = NULL;
@@ -469,6 +504,10 @@ _eobj_class_mro_init(Eobj_Class *klass)
    DBG("Started creating MRO for class '%s'", klass->desc->name);
    mro = _eobj_class_mro_add(mro, klass);
 
+   if (!mro)
+      return EINA_FALSE;
+
+   /* Remove duplicates and make them the right order. */
      {
         Eina_List *itr1, *itr2, *itr2n;
 
@@ -511,6 +550,8 @@ _eobj_class_mro_init(Eobj_Class *klass)
      }
 
    DBG("Finished creating MRO for class '%s'", klass->desc->name);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -523,8 +564,6 @@ _eobj_class_constructor(Eobj_Class *klass)
 
    if (klass->desc->class_constructor)
       klass->desc->class_constructor(klass);
-
-   _eobj_class_mro_init(klass);
 }
 
 EAPI void
@@ -709,6 +748,11 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
      }
 
    if (!_eobj_class_check_op_descs(klass))
+     {
+        goto cleanup;
+     }
+
+   if (!_eobj_class_mro_init(klass))
      {
         goto cleanup;
      }
