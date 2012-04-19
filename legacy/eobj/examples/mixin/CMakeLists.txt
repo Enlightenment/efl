@@ -3,6 +3,7 @@ LIST(APPEND MIXIN_CC_SOURCES
    simple.c
    mixin.c
    mixin2.c
+   mixin3.c
    )
 
 include_directories(

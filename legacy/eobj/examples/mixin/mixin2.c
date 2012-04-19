@@ -5,16 +5,24 @@
 
 #include "config.h"
 
+#include "../eunit_tests.h"
+
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_add_and_print_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_ab_sum_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
-   int a, b, x;
-   eobj_do(obj, SIMPLE_A_GET(&a), SIMPLE_B_GET(&b));
-   x = va_arg(*list, const int);
-   printf("%s %d\n", eobj_class_name_get(eobj_class_get(obj)), a + b + x);
-   eobj_do_super(obj, MIXIN_ADD_AND_PRINT(x));
+   int *sum = va_arg(*list, int *);
+   printf("%s %s\n", eobj_class_name_get(_my_class), __func__);
+   eobj_do_super(obj, MIXIN_AB_SUM_GET(sum));
+
+   ++*sum;
+
+     {
+        int _a, _b;
+        eobj_do(obj, SIMPLE_A_GET(&_a), SIMPLE_B_GET(&_b));
+        fail_if(*sum != _a + _b + 1);
+     }
 }
 
 static void
@@ -33,7 +41,7 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC(MIXIN_ID(MIXIN_SUB_ID_ADD_AND_SET), _add_and_print_set),
+        EOBJ_OP_FUNC(MIXIN_ID(MIXIN_SUB_ID_AB_SUM_GET), _ab_sum_get),
         EOBJ_OP_FUNC_SENTINEL
    };
 

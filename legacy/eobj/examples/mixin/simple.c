@@ -1,6 +1,7 @@
 #include "Eobj.h"
 #include "mixin.h"
 #include "mixin2.h"
+#include "mixin3.h"
 #include "simple.h"
 
 #include "config.h"
@@ -77,5 +78,5 @@ simple_class_get(void)
         NULL
    };
 
-   return _my_class = eobj_class_new(&class_desc, EOBJ_BASE_CLASS, MIXIN2_CLASS, NULL);
+   return _my_class = eobj_class_new(&class_desc, EOBJ_BASE_CLASS, MIXIN3_CLASS, MIXIN2_CLASS, NULL);
 }
