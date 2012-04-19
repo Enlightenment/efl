@@ -28,8 +28,9 @@
 #include <assert.h>
 #include <errno.h>
 
-#ifdef HAVE_EXECINFO_H
-#include <execinfo.h>
+#if defined HAVE_EXECINFO_H && defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS
+# include <execinfo.h>
+# define EINA_LOG_BACKTRACE
 #endif
 
 #ifdef HAVE_UNISTD_H
@@ -74,6 +75,7 @@
 #define EINA_LOG_ENV_COLOR_DISABLE "EINA_LOG_COLOR_DISABLE"
 #define EINA_LOG_ENV_FILE_DISABLE "EINA_LOG_FILE_DISABLE"
 #define EINA_LOG_ENV_FUNCTION_DISABLE "EINA_LOG_FUNCTION_DISABLE"
+#define EINA_LOG_ENV_BACKTRACE "EINA_LOG_BACKTRACE"
 
 #ifdef EINA_ENABLE_LOG
 
@@ -102,6 +104,10 @@ static Eina_Bool _disable_file = EINA_FALSE;
 static Eina_Bool _disable_function = EINA_FALSE;
 static Eina_Bool _abort_on_critical = EINA_FALSE;
 static int _abort_level_on_critical = EINA_LOG_LEVEL_CRITICAL;
+
+#ifdef EINA_LOG_BACKTRACE
+static int _backtrace_level = -1;
+#endif 
 
 #ifdef EFL_HAVE_THREADS
 
@@ -1334,6 +1340,9 @@ eina_log_init(void)
 
    assert((sizeof(_names) / sizeof(_names[0])) == EINA_LOG_LEVELS);
 
+   if ((tmp = getenv(EINA_LOG_ENV_BACKTRACE)))
+     _backtrace_level = atoi(tmp);
+
    if ((tmp = getenv(EINA_LOG_ENV_COLOR_DISABLE)))
       color_disable = atoi(tmp);
    else
@@ -1817,6 +1826,26 @@ eina_log_domain_registered_level_get(int domain)
 #endif
 }
 
+#ifdef EINA_LOG_BACKTRACE
+# define DISPLAY_BACKTRACE(File, Level)			\
+  if (EINA_UNLIKELY(Level < _backtrace_level))		\
+    {							\
+      void *bt[256];					\
+      char **strings;					\
+      int btlen;					\
+      int i;						\
+      							\
+      btlen = backtrace((void **)bt, 256);		\
+      strings = backtrace_symbols((void **)bt, btlen);	\
+      fprintf(File, "*** Backtrace ***\n");		\
+      for (i = 0; i < btlen; ++i)			\
+	fprintf(File, "%s\n", strings[i]);		\
+      free(strings);					\
+    }
+#else
+# define DISPLAY_BACKTRACE(File, Level)
+#endif
+
 EAPI void
 eina_log_print_cb_stderr(const Eina_Log_Domain *d,
                          Eina_Log_Level level,
@@ -1831,22 +1860,7 @@ eina_log_print_cb_stderr(const Eina_Log_Domain *d,
    _eina_log_print_prefix(stderr, d, level, file, fnc, line);
    vfprintf(stderr, fmt, args);
    putc('\n', stderr);
-# if defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS
-   if (getenv("EINA_LOG_BACKTRACE"))
-     {
-        void *bt[256];
-	char **strings;
-	int btlen;
-	int i;
-
-	btlen = backtrace((void **)bt, 256);
-	strings = backtrace_symbols((void **)bt, btlen);
-	fprintf(stderr, "*** Backtrace ***\n");
-	for (i = 0; i < btlen; ++i)
-	  fprintf(stderr, "%s\n", strings[i]);
-	free(strings);
-     }
-# endif
+   DISPLAY_BACKTRACE(stderr, level);
 #else
    (void) d;
    (void) level;
@@ -1873,22 +1887,7 @@ eina_log_print_cb_stdout(const Eina_Log_Domain *d,
    _eina_log_print_prefix(stdout, d, level, file, fnc, line);
    vprintf(fmt, args);
    putchar('\n');
-# if defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS
-   if (getenv("EINA_LOG_BACKTRACE"))
-     {
-        void *bt[256];
-	char **strings;
-	int btlen;
-	int i;
-
-	btlen = backtrace((void **)bt, 256);
-	strings = backtrace_symbols((void **)bt, btlen);
-	fprintf(stdout, "*** Backtrace ***\n");
-	for (i = 0; i < btlen; ++i)
-	  fprintf(stdout, "%s\n", strings[i]);
-	free(strings);
-     }
-# endif
+   DISPLAY_BACKTRACE(stdout, level);
 #else
    (void) d;
    (void) level;
@@ -1930,22 +1929,7 @@ eina_log_print_cb_file(const Eina_Log_Domain *d,
 #endif
    fprintf(f, "%s<%u> %s:%d %s() ", d->name, eina_log_pid_get(), 
            file, line, fnc);
-# if defined HAVE_BACKTRACE && defined HAVE_BACKTRACE_SYMBOLS      
-   if (getenv("EINA_LOG_BACKTRACE"))
-     {
-        void *bt[256];
-	char **strings;
-	int btlen;
-	int i;
-
-	btlen = backtrace((void **)bt, 256);
-	strings = backtrace_symbols((void **)bt, btlen);
-	fprintf(f, "*** Backtrace ***\n");
-	for (i = 0; i < btlen; ++i)
-	  fprintf(f, "%s\n", strings[i]);
-	free(strings);
-     }
-# endif
+   DISPLAY_BACKTRACE(f, level);
 #ifdef EFL_HAVE_THREADS
 end:
 #endif
