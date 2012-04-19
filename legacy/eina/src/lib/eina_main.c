@@ -298,6 +298,8 @@ eina_init(void)
           }
      }
 
+   eina_cpu_count_internal();
+
    _eina_main_count = 1;
    return 1;
 }

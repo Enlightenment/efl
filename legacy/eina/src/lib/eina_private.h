@@ -142,6 +142,8 @@ void eina_log_threads_init(void);
 void eina_log_threads_shutdown(void);
 #endif
 
+void eina_cpu_count_internal(void);
+
 void eina_file_mmap_faulty(void *addr, long page_size);
 
 #endif /* EINA_PRIVATE_H_ */

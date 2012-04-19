@@ -32,6 +32,7 @@ Fixes:
     * forgotten initialization of eina list count during eina_list_split_list.
     * leak in Eina_File.
     * deadlock in Eina_File.
+    * make it possible to force the number of detected CPU on a system.
 
 Improvements:
 

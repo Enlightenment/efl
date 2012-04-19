@@ -130,7 +130,10 @@ EAPI Eina_Cpu_Features eina_cpu_features_get(void)
    return ecf;
 }
 
-EAPI int eina_cpu_count(void)
+static int _cpu_count = -1;
+
+static int
+_eina_cpu_count_internal(void)
 {
 #ifdef EFL_HAVE_THREADS
 
@@ -204,4 +207,17 @@ EAPI int eina_cpu_count(void)
 #else
    return 1;
 #endif
+}
+
+EAPI int eina_cpu_count(void)
+{
+   return _cpu_count;
+}
+
+void eina_cpu_count_internal(void)
+{
+   if (getenv("EINA_CPU_FAKE"))
+     _cpu_count = atoi(getenv("EINA_CPU_FAKE"));
+   else
+     _cpu_count = _eina_cpu_count_internal();
 }
