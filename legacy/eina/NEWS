@@ -20,7 +20,6 @@ Additions:
     * EINA_C_ARRAY_LENGTH macro.
     * Eina_Stringshare typedef.
     * add eina_file_map_faulted() for windows port (was missing).
-    * Environment variable EINA_LOG_BACKTRACE trigger the display of backtrace attached to a log event.
 
 Fixes:
 

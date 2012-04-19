@@ -250,8 +250,3 @@
 
 	* Add missing API eina_file_map_faulted() on Windows. Does nothing
 	for now.
-
-2012-03-31  Cedric Bail
-
-	* Add environment variable EINA_LOG_BACKTRACE to trigger the display of a backtraced attached
-	to a log event.
