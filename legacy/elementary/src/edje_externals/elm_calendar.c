@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "private.h"
 
 typedef struct _Elm_Params_Calendar
@@ -5,9 +7,29 @@ typedef struct _Elm_Params_Calendar
    Elm_Params base;
    int year_min;
    int year_max;
-   Eina_Bool sel_enable;
-   Eina_Bool sel_exists:1;
+   const char *select_mode;
+
 } Elm_Params_Calendar;
+
+#define SELECT_MODE_GET(CHOICES, STR)                                \
+   unsigned int i;                                              \
+   for (i = 0; i < (sizeof(CHOICES) / sizeof(CHOICES[0])); ++i) \
+     if (!strcmp(STR, CHOICES[i]))                              \
+       return i;
+
+
+static const char *_calendar_select_modes[] = {"default", "always", "none",
+                                               "ondemand", NULL};
+
+static Elm_Calendar_Select_Mode
+_calendar_select_mode_get(const char *select_mode)
+{
+   assert(sizeof(_calendar_select_modes) /
+          sizeof(_calendar_select_modes[0])
+          == ELM_CALENDAR_SELECT_MODE_ONDEMAND + 2);
+   SELECT_MODE_GET(_calendar_select_modes, select_mode);
+   return -1;
+}
 
 static void
 external_calendar_state_set(void *data __UNUSED__, Evas_Object *obj,
@@ -15,6 +37,7 @@ external_calendar_state_set(void *data __UNUSED__, Evas_Object *obj,
                             float pos __UNUSED__)
 {
    const Elm_Params_Calendar *p;
+   Elm_Calendar_Select_Mode select_mode;
    int min,max;
 
    if (to_params) p = to_params;
@@ -31,8 +54,11 @@ external_calendar_state_set(void *data __UNUSED__, Evas_Object *obj,
         elm_calendar_min_max_year_get(obj, &min, NULL);
         elm_calendar_min_max_year_set(obj, min, p->year_max);
      }
-   if (p->sel_exists)
-     elm_calendar_day_selection_disabled_set(obj, !p->sel_enable);
+   if (p->select_mode)
+     {
+        select_mode = _calendar_select_mode_get(p->select_mode);
+        elm_calendar_select_mode_set(obj, select_mode);
+     }
 }
 
 static Eina_Bool
@@ -59,11 +85,13 @@ external_calendar_param_set(void *data __UNUSED__, Evas_Object *obj,
              return EINA_TRUE;
           }
      }
-   else if (!strcmp(param->name, "sel_enable"))
+   else if (!strcmp(param->name, "select_mode"))
      {
-        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
           {
-             elm_calendar_day_selection_disabled_set(obj,!param->i );
+             Elm_Calendar_Select_Mode select_mode;
+             select_mode = _calendar_select_mode_get(param->s);
+             elm_calendar_select_mode_set(obj, select_mode);
              return EINA_TRUE;
           }
      }
@@ -96,14 +124,17 @@ external_calendar_param_get(void *data __UNUSED__, const Evas_Object *obj,
              return EINA_TRUE;
           }
      }
-   else if (!strcmp(param->name, "sel_enable"))
+   else if (!strcmp(param->name, "select_mode"))
      {
-        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
           {
-             param->i = !elm_calendar_day_selection_disabled_get(obj);
+             Elm_Calendar_Select_Mode mode;
+             mode = elm_calendar_select_mode_get(obj);
+             param->s = _calendar_select_modes[mode];
              return EINA_TRUE;
           }
      }
+
 
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -132,11 +163,8 @@ external_calendar_params_parse(void *data __UNUSED__,
         else if (!strcmp(param->name, "year_max"))
           mem->year_max = param->i;
 
-        else if (!strcmp(param->name, "sel_enable"))
-          {
-             mem->sel_enable = param->i;
-             mem->sel_exists = EINA_TRUE;
-          }
+        else if (!strcmp(param->name, "select_mode"))
+          mem->select_mode = eina_stringshare_add(param->s);
      }
 
    return mem;
@@ -154,6 +182,9 @@ external_calendar_content_get(void *data __UNUSED__,
 static void
 external_calendar_params_free(void *params)
 {
+   Elm_Params_Calendar *mem = params;
+   if (mem->select_mode)
+     eina_stringshare_del(mem->select_mode);
    free(params);
 }
 
@@ -161,7 +192,7 @@ static Edje_External_Param_Info external_calendar_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_INT("year_min"),
    EDJE_EXTERNAL_PARAM_INFO_INT("year_max"),
-   EDJE_EXTERNAL_PARAM_INFO_BOOL("sel_enable"),
+   EDJE_EXTERNAL_PARAM_INFO_STRING("select_mode"),
    EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
 
