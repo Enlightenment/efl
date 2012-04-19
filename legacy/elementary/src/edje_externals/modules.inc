@@ -1,6 +1,7 @@
 DEFINE_TYPE(actionslider)
 DEFINE_TYPE(bubble)
 DEFINE_TYPE(button)
+DEFINE_TYPE(calendar)
 DEFINE_TYPE(check)
 DEFINE_TYPE(clock)
 DEFINE_TYPE(entry)
