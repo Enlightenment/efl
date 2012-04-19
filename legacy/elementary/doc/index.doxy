@@ -29,7 +29,7 @@
  * The other two main groups in Elementary are:
  * @li @ref widgetslist - These are the widgets you'll compose your UI out of.
  * @li @ref containerslist - These are the containers which hold the widgets.
- * 
+ *
  * Also see other generic EFL programming guides:
  * @li @ref threading
  */
@@ -296,21 +296,21 @@
  */
 /**
  * @page threading Threading
- * 
+ *
  * You may use threads with EFL, but only in specific ways. If you plan on
  * using threads it is very important you see the following example guides.
  * See the following
- * 
+ *
  * @ref efl_thread_1
- * 
+ *
  * @ref efl_thread_2
- * 
+ *
  * @ref efl_thread_3
- * 
+ *
  * @ref efl_thread_4
- * 
+ *
  * @ref efl_thread_5
- * 
+ *
  * @ref efl_thread_6
- * 
+ *
  */
