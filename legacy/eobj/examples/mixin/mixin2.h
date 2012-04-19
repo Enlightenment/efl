@@ -3,6 +3,11 @@
 
 #include "Eobj.h"
 
+typedef struct
+{
+   int count;
+} Mixin2_Public_Data;
+
 #define MIXIN2_CLASS mixin2_class_get()
 const Eobj_Class *mixin2_class_get(void) EINA_CONST;
 

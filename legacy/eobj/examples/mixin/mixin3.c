@@ -12,11 +12,13 @@ static const Eobj_Class *_my_class = NULL;
 static void
 _ab_sum_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 {
+   Mixin3_Public_Data *pd = class_data;
    int *sum = va_arg(*list, int *);
    printf("%s %s\n", eobj_class_name_get(_my_class), __func__);
    eobj_do_super(obj, MIXIN_AB_SUM_GET(sum));
 
    ++*sum;
+   pd->count += 3;
 
      {
         int _a, _b;
@@ -58,7 +60,7 @@ mixin3_class_get(void)
         EOBJ_CLASS_TYPE_MIXIN,
         EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
-        0,
+        sizeof(Mixin3_Public_Data),
         _constructor,
         _destructor,
         _class_constructor,

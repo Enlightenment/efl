@@ -63,6 +63,9 @@ struct _Eobj {
       })
 #define OP_SUB_ID_GET(op) ((op) & 0xffff)
 
+#define EOBJ_ALIGN_SIZE(size) \
+        ((size) + (sizeof(void *) - ((size) % sizeof(void *))))
+
 /* Structure of Eobj_Op is:
  * 16bit: class
  * 16bit: op.
@@ -91,6 +94,12 @@ typedef struct
      const Eobj_Class *klass;
 } Eobj_Extension_Node;
 
+typedef struct
+{
+     const Eobj_Class *klass;
+     size_t offset;
+} Eobj_Extension_Data_Offset;
+
 struct _Eobj_Class
 {
    Eobj_Class_Id class_id;
@@ -98,6 +107,9 @@ struct _Eobj_Class
    const Eobj_Class_Description *desc;
    Dich_Chain1 chain[DICH_CHAIN1_SIZE];
    Eina_Inlist *extensions;
+
+   Eobj_Extension_Data_Offset *extn_data_off;
+   size_t extn_data_size;
 
    const Eobj_Class **mro;
 
@@ -600,7 +612,11 @@ eobj_class_free(Eobj_Class *klass)
           }
      }
 
-   free(klass->mro);
+   if (klass->mro)
+      free(klass->mro);
+
+   if (klass->extn_data_off)
+      free(klass->extn_data_off);
 
    free(klass);
 }
@@ -742,9 +758,7 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
         /* Update the current offset. */
         /* FIXME: Make sure this alignment is enough. */
         klass->data_offset = klass->parent->data_offset +
-           klass->parent->desc->data_size +
-           (sizeof(void *) -
-                  (klass->parent->desc->data_size % sizeof(void *)));
+           EOBJ_ALIGN_SIZE(klass->parent->desc->data_size);
      }
 
    if (!_eobj_class_check_op_descs(klass))
@@ -755,6 +769,47 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
    if (!_eobj_class_mro_init(klass))
      {
         goto cleanup;
+     }
+
+   /* create MIXIN offset table. */
+     {
+        const Eobj_Class **mro_itr = klass->mro;
+        Eobj_Extension_Data_Offset *extn_data_itr;
+        size_t extn_num = 0;
+        size_t extn_data_off = klass->data_offset +
+           EOBJ_ALIGN_SIZE(klass->desc->data_size);
+
+        /* FIXME: Make faster... */
+        while (*mro_itr)
+          {
+             if (((*mro_itr)->desc->type == EOBJ_CLASS_TYPE_MIXIN) &&
+                   ((*mro_itr)->desc->data_size > 0))
+               {
+                  extn_num++;
+               }
+             mro_itr++;
+          }
+
+        klass->extn_data_off = calloc(extn_num + 1,
+              sizeof(*klass->extn_data_off));
+
+        extn_data_itr = klass->extn_data_off;
+        mro_itr = klass->mro;
+        while (*mro_itr)
+          {
+             if (((*mro_itr)->desc->type == EOBJ_CLASS_TYPE_MIXIN) &&
+                   ((*mro_itr)->desc->data_size > 0))
+               {
+                  extn_data_itr->klass = *mro_itr;
+                  extn_data_itr->offset = extn_data_off;
+
+                  extn_data_off += EOBJ_ALIGN_SIZE(extn_data_itr->klass->desc->data_size);
+                  extn_data_itr++;
+               }
+             mro_itr++;
+          }
+
+        klass->extn_data_size = extn_data_off;
      }
 
    klass->class_id = ++_eobj_classes_last_id;
@@ -796,7 +851,8 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
 
    obj->refcount++;
 
-   obj->data_blob = calloc(1, klass->data_offset + klass->desc->data_size);
+   obj->data_blob = calloc(1, klass->data_offset + klass->desc->data_size +
+         klass->extn_data_size);
 
    _eobj_kls_itr_init(obj, EOBJ_NOOP);
    eobj_constructor_error_unset(obj);
@@ -1089,9 +1145,29 @@ eobj_data_get(Eobj *obj, const Eobj_Class *klass)
    /* FIXME: Add a check that this is of the right klass and we don't seg.
     * Probably just return NULL. */
    if (klass->desc->data_size > 0)
-      return ((char *) obj->data_blob) + klass->data_offset;
-   else
-      return NULL;
+     {
+        if (klass->desc->type == EOBJ_CLASS_TYPE_MIXIN)
+          {
+             Eobj_Extension_Data_Offset *doff_itr =
+                eobj_class_get(obj)->extn_data_off;
+
+             if (!doff_itr)
+                return NULL;
+
+             while (doff_itr->klass)
+               {
+                  if (doff_itr->klass == klass)
+                     return ((char *) obj->data_blob) + doff_itr->offset;
+                  doff_itr++;
+               }
+          }
+        else
+          {
+             return ((char *) obj->data_blob) + klass->data_offset;
+          }
+     }
+
+   return NULL;
 }
 
 EAPI Eina_Bool
