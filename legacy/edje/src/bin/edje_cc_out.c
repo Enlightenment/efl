@@ -1682,30 +1682,30 @@ data_process_lookups(void)
 
    EINA_LIST_FOREACH(edje_collections, l, pc)
      {
-	unsigned int count = 0;
-	unsigned int i;
+        unsigned int count = 0;
+        unsigned int i;
 
         if (pc->lua_script_only)
-           is_lua = EINA_TRUE;
+          is_lua = EINA_TRUE;
 #define PROGRAM_ID_SET(Type, Pc, It, Count)				\
-	for (It = 0; It < Pc->programs.Type ## _count; ++It)		\
-	  {								\
-	     Pc->programs.Type[It]->id = Count++;			\
-	  }
+        for (It = 0; It < Pc->programs.Type ## _count; ++It)		\
+          {								\
+             Pc->programs.Type[It]->id = Count++;			\
+          }
 
-	PROGRAM_ID_SET(fnmatch, pc, i, count);
-	PROGRAM_ID_SET(strcmp, pc, i, count);
-	PROGRAM_ID_SET(strncmp, pc, i, count);
-	PROGRAM_ID_SET(strrncmp, pc, i, count);
-	PROGRAM_ID_SET(nocmp, pc, i, count);
+        PROGRAM_ID_SET(fnmatch, pc, i, count);
+        PROGRAM_ID_SET(strcmp, pc, i, count);
+        PROGRAM_ID_SET(strncmp, pc, i, count);
+        PROGRAM_ID_SET(strrncmp, pc, i, count);
+        PROGRAM_ID_SET(nocmp, pc, i, count);
 
 #undef PROGRAM_ID_SET
      }
 
    EINA_LIST_FREE(part_lookups, part)
      {
-	Edje_Part *ep;
-	unsigned int i;
+        Edje_Part *ep;
+        unsigned int i;
 
         if (!strcmp(part->name, "-"))
           {
@@ -1716,7 +1716,7 @@ data_process_lookups(void)
              for (i = 0; i < part->pc->parts_count; ++i)
                {
                   ep = part->pc->parts[i];
-                  
+
                   if ((ep->name) && (!strcmp(ep->name, part->name)))
                     {
                        handle_slave_lookup(part_slave_lookups, part->dest, ep->id);
@@ -1733,72 +1733,72 @@ data_process_lookups(void)
                }
           }
 
-	free(part->name);
-	free(part);
+        free(part->name);
+        free(part);
      }
 
    EINA_LIST_FREE(program_lookups, program)
      {
-	unsigned int i;
-	Eina_Bool find = EINA_FALSE;
+        unsigned int i;
+        Eina_Bool find = EINA_FALSE;
 
 #define PROGRAM_MATCH(Type, Pl, It)					\
-	for (It = 0; It < Pl->pc->programs.Type ## _count; ++It)	\
-	  {								\
-	     Edje_Program *ep;						\
-	     								\
-	     ep = Pl->pc->programs.Type[It];				\
-	     								\
-	     if ((Pl->anonymous && ep == Pl->u.ep) ||			\
-		 ((!Pl->anonymous) && (ep->name) && (!strcmp(ep->name, Pl->u.name)))) \
-	       {							\
-		  *(Pl->dest) = ep->id;					\
-		  find = EINA_TRUE;					\
-		  break;						\
-	       }							\
-	  }
+        for (It = 0; It < Pl->pc->programs.Type ## _count; ++It)	\
+          {								\
+             Edje_Program *ep;						\
+             \
+             ep = Pl->pc->programs.Type[It];				\
+             \
+             if ((Pl->anonymous && ep == Pl->u.ep) ||			\
+                 ((!Pl->anonymous) && (ep->name) && (!strcmp(ep->name, Pl->u.name)))) \
+               {							\
+                  *(Pl->dest) = ep->id;					\
+                  find = EINA_TRUE;					\
+                  break;						\
+               }							\
+          }
 
-	PROGRAM_MATCH(fnmatch, program, i);
-	PROGRAM_MATCH(strcmp, program, i);
-	PROGRAM_MATCH(strncmp, program, i);
-	PROGRAM_MATCH(strrncmp, program, i);
-	PROGRAM_MATCH(nocmp, program, i);
+        PROGRAM_MATCH(fnmatch, program, i);
+        PROGRAM_MATCH(strcmp, program, i);
+        PROGRAM_MATCH(strncmp, program, i);
+        PROGRAM_MATCH(strrncmp, program, i);
+        PROGRAM_MATCH(nocmp, program, i);
 
 #undef PROGRAM_MATCH
 
-	if (!find)
-	  {
-	     if (!program->anonymous)
-	       ERR("%s: Error. Unable to find program name \"%s\".",
-		   progname, program->u.name);
-	     else
-	       ERR("%s: Error. Unable to find anonymous program.",
-		   progname);
-	     exit(-1);
-	  }
+        if (!find)
+          {
+             if (!program->anonymous)
+               ERR("%s: Error. Unable to find program name \"%s\".",
+                   progname, program->u.name);
+             else
+               ERR("%s: Error. Unable to find anonymous program.",
+                   progname);
+             exit(-1);
+          }
 
-	if (!program->anonymous)
-	  free(program->u.name);
-	free(program);
+        if (!program->anonymous)
+          free(program->u.name);
+        free(program);
      }
 
    EINA_LIST_FREE(group_lookups, group)
      {
-	Edje_Part_Collection_Directory_Entry *de;
+        Edje_Part_Collection_Directory_Entry *de;
 
         if (group->part)
-	  {
-	    if (group->part->type != EDJE_PART_TYPE_GROUP
-                && group->part->type != EDJE_PART_TYPE_TEXTBLOCK
-                && group->part->type != EDJE_PART_TYPE_BOX
-                && group->part->type != EDJE_PART_TYPE_TABLE)
-	      goto free_group;
-	  }
+          {
+             if (group->part->type != EDJE_PART_TYPE_GROUP
+                 && group->part->type != EDJE_PART_TYPE_TEXTBLOCK
+                 && group->part->type != EDJE_PART_TYPE_BOX
+                 && group->part->type != EDJE_PART_TYPE_TABLE)
+               goto free_group;
+          }
 
-	de = eina_hash_find(edje_file->collection, group->name);
+        de = eina_hash_find(edje_file->collection, group->name);
 
-	if (!de)
-	  {
+        if (!de)
+          {
              Eina_Bool found = EINA_FALSE;
 
              EINA_LIST_FOREACH(aliases, l, de)
@@ -1808,16 +1808,16 @@ data_process_lookups(void)
                     break;
                  }
              if (!found) de = NULL;
-	  }
+          }
 
-	if (!de)
+        if (!de)
           {
              ERR("%s: Error. Unable to find group name \"%s\".",
-		 progname, group->name);
+                 progname, group->name);
              exit(-1);
           }
 
-     free_group:
+free_group:
         free(group->name);
         free(group);
      }
@@ -1826,77 +1826,77 @@ data_process_lookups(void)
 
    EINA_LIST_FREE(image_lookups, image)
      {
-	Eina_Bool find = EINA_FALSE;
+        Eina_Bool find = EINA_FALSE;
 
-	if (edje_file->image_dir)
-	  {
+        if (edje_file->image_dir)
+          {
              Edje_Image_Directory_Entry *de;
-	     unsigned int i;
+             unsigned int i;
 
-	     for (i = 0; i < edje_file->image_dir->entries_count; ++i)
-	       {
-		  de = edje_file->image_dir->entries + i;
+             for (i = 0; i < edje_file->image_dir->entries_count; ++i)
+               {
+                  de = edje_file->image_dir->entries + i;
 
-		  if ((de->entry) && (!strcmp(de->entry, image->name)))
-		    {
-		       handle_slave_lookup(image_slave_lookups, image->dest, de->id);
-		       if (de->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
-			 *(image->dest) = -de->id - 1;
-		       else
-			 *(image->dest) = de->id;
-		       *(image->set) = EINA_FALSE;
-		       find = EINA_TRUE;
+                  if ((de->entry) && (!strcmp(de->entry, image->name)))
+                    {
+                       handle_slave_lookup(image_slave_lookups, image->dest, de->id);
+                       if (de->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+                         *(image->dest) = -de->id - 1;
+                       else
+                         *(image->dest) = de->id;
+                       *(image->set) = EINA_FALSE;
+                       find = EINA_TRUE;
 
                        if (!eina_hash_find(images_in_use, image->name))
                          eina_hash_direct_add(images_in_use, de->entry, de);
-		       break;
-		    }
-	       }
+                       break;
+                    }
+               }
 
-	     if (!find)
-	       {
-		 Edje_Image_Directory_Set *set;
+             if (!find)
+               {
+                  Edje_Image_Directory_Set *set;
 
-		 for (i = 0; i < edje_file->image_dir->sets_count; ++i)
-		   {
-		      set = edje_file->image_dir->sets + i;
+                  for (i = 0; i < edje_file->image_dir->sets_count; ++i)
+                    {
+                       set = edje_file->image_dir->sets + i;
 
-		      if ((set->name) && (!strcmp(set->name, image->name)))
-			{
-                           Edje_Image_Directory_Set_Entry *child;
-                           Eina_List *lc;
+                       if ((set->name) && (!strcmp(set->name, image->name)))
+                         {
+                            Edje_Image_Directory_Set_Entry *child;
+                            Eina_List *lc;
 
-			   handle_slave_lookup(image_slave_lookups, image->dest, set->id);
-			   *(image->dest) = set->id;
-			   *(image->set) = EINA_TRUE;
-			   find = EINA_TRUE;
+                            handle_slave_lookup(image_slave_lookups, image->dest, set->id);
+                            *(image->dest) = set->id;
+                            *(image->set) = EINA_TRUE;
+                            find = EINA_TRUE;
 
-			   EINA_LIST_FOREACH(set->entries, lc, child)
-                             if (!eina_hash_find(images_in_use, child->name))
-                               eina_hash_direct_add(images_in_use, child->name, child);
+                            EINA_LIST_FOREACH(set->entries, lc, child)
+                               if (!eina_hash_find(images_in_use, child->name))
+                                 eina_hash_direct_add(images_in_use, child->name, child);
 
-                           if (!eina_hash_find(images_in_use, image->name))
-                             eina_hash_direct_add(images_in_use, set->name, set);
-			   break;
-			}
-		   }
-	       }
-	  }
+                            if (!eina_hash_find(images_in_use, image->name))
+                              eina_hash_direct_add(images_in_use, set->name, set);
+                            break;
+                         }
+                    }
+               }
+          }
 
-	if (!find)
-	  {
-	     ERR("%s: Error. Unable to find image name \"%s\".",
-		 progname, image->name);
-	     exit(-1);
-	  }
+        if (!find)
+          {
+             ERR("%s: Error. Unable to find image name \"%s\".",
+                 progname, image->name);
+             exit(-1);
+          }
 
-	free(image->name);
-	free(image);
+        free(image->name);
+        free(image);
      }
 
    if (edje_file->image_dir && !is_lua)
      {
-	Edje_Image_Directory_Entry *de;
+        Edje_Image_Directory_Entry *de;
         Edje_Image_Directory_Set *set;
         unsigned int i;
 
