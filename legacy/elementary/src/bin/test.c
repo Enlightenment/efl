@@ -402,8 +402,8 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
 
    lb = elm_label_add(win);
    elm_object_text_set(lb, " Search Menu :");
-   evas_object_size_hint_weight_set(en, 0.0, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(en, 0.0, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(lb, 0.0, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(lb, 0.0, EVAS_HINT_FILL);
    elm_box_pack_end(bx1, lb);
    evas_object_show(lb);
 
