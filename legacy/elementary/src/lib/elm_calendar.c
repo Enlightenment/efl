@@ -1006,8 +1006,7 @@ elm_calendar_select_mode_set(Evas_Object *obj, Elm_Calendar_Select_Mode mode)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((mode >= ELM_CALENDAR_SELECT_MODE_DEFAULT)
-       && (mode <= ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+   if ((mode <= ELM_CALENDAR_SELECT_MODE_ONDEMAND)
        && (wd->select_mode != mode))
      {
         wd->select_mode = mode;
