@@ -1034,7 +1034,7 @@ eobj_ref_get(const Eobj *obj)
 
 /* Weak reference. */
 Eina_Bool
-_eobj_weak_ref_cb(void *data, Eobj *obj __UNUSED__, const Eobj_Event_Description *desc __UNUSED__, void *event_info __UNUSED__)
+_eobj_weak_ref_cb(void *data, Eobj *obj EINA_UNUSED, const Eobj_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eobj_Weak_Ref *wref = data;
    wref->obj = NULL;

@@ -28,13 +28,13 @@ _ab_sum_get(Eobj *obj, void *class_data, va_list *list)
 }
 
 static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
+_constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_constructor_super(obj);
 }
 
 static void
-_destructor(Eobj *obj, void *class_data __UNUSED__)
+_destructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_destructor_super(obj);
 }

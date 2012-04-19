@@ -19,7 +19,7 @@ typedef struct
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_position_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_position_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    (void) obj;
    Evas_Coord x, y;
@@ -30,7 +30,7 @@ _position_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_text_set(Eobj *obj __UNUSED__, void *class_data, va_list *list)
+_text_set(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Widget_Data *wd = class_data;
    const char *text;
@@ -64,7 +64,7 @@ _constructor(Eobj *obj, void *class_data)
 }
 
 static void
-_destructor(Eobj *obj, void *class_data __UNUSED__)
+_destructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_destructor_super(obj);
 

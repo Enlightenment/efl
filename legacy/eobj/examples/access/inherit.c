@@ -11,7 +11,7 @@ EAPI Eobj_Op INHERIT_BASE_ID = 0;
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_prot_print(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_prot_print(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    Simple_Protected_Data *pd = eobj_data_get(obj, SIMPLE_CLASS);
    (void) list;

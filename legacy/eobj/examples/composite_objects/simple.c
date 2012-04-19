@@ -23,7 +23,7 @@ _a_set(Eobj *obj, void *class_data, va_list *list)
 }
 
 static void
-_a_get(Eobj *obj __UNUSED__, void *class_data, va_list *list)
+_a_get(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Simple_Public_Data *pd = class_data;
    int *a;

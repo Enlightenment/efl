@@ -236,8 +236,8 @@ START_TEST(eobj_inconsistent_mro)
 }
 END_TEST
 
-static void _stub_constructor(Eobj *obj __UNUSED__, void *data __UNUSED__) {}
-static void _stub_class_constructor(Eobj_Class *klass __UNUSED__) {}
+static void _stub_constructor(Eobj *obj EINA_UNUSED, void *data EINA_UNUSED) {}
+static void _stub_class_constructor(Eobj_Class *klass EINA_UNUSED) {}
 
 START_TEST(eobj_bad_interface)
 {

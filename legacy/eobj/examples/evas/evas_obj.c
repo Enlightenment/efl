@@ -15,7 +15,7 @@ typedef struct
 } Widget_Data;
 
 static void
-_position_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_position_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
    Evas_Coord x, y;
@@ -25,7 +25,7 @@ _position_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_size_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_size_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
    Evas_Coord w, h;
@@ -35,7 +35,7 @@ _size_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_color_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_color_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
    int r, g, b, a;
@@ -47,7 +47,7 @@ _color_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_color_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_color_get(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
    int *r, *g, *b, *a;
@@ -59,7 +59,7 @@ _color_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_visibility_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_visibility_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    Evas_Object *evas_obj = eobj_evas_object_get(obj);
    Eina_Bool v;
@@ -78,7 +78,7 @@ _child_add(Eobj *obj, void *class_data, va_list *list)
 }
 
 static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
+_constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_constructor_super(obj);
 

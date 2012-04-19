@@ -11,7 +11,7 @@ EAPI Eobj_Op COMP_BASE_ID = 0;
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_a_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_a_get(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    int *a;
    a = va_arg(*list, int *);
@@ -19,7 +19,7 @@ _a_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
+_constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_constructor_super(obj);
 

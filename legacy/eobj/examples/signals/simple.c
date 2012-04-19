@@ -63,7 +63,7 @@ _cb_deled(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event
 }
 
 static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
+_constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_constructor_super(obj);
 

@@ -7,7 +7,7 @@
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_destructor(Eobj *obj, void *class_data __UNUSED__)
+_destructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    (void) obj;
 }

@@ -18,7 +18,7 @@ static char *class_var = NULL;
 
 #define _GET_SET_FUNC(name) \
 static void \
-_##name##_get(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
+_##name##_get(Eobj *obj EINA_UNUSED, void *class_data, va_list *list) \
 { \
    Private_Data *pd = class_data; \
    int *name; \
@@ -27,7 +27,7 @@ _##name##_get(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
    printf("%s %d\n", __func__, pd->name); \
 } \
 static void \
-_##name##_set(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
+_##name##_set(Eobj *obj EINA_UNUSED, void *class_data, va_list *list) \
 { \
    Private_Data *pd = class_data; \
    int name; \
@@ -42,7 +42,7 @@ _GET_SET_FUNC(b)
 extern int my_init_count;
 
 static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
+_constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_constructor_super(obj);
 
@@ -50,7 +50,7 @@ _constructor(Eobj *obj, void *class_data __UNUSED__)
 }
 
 static void
-_destructor(Eobj *obj, void *class_data __UNUSED__)
+_destructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_destructor_super(obj);
 
@@ -74,7 +74,7 @@ _class_constructor(Eobj_Class *klass)
 }
 
 static void
-_class_destructor(Eobj_Class *klass __UNUSED__)
+_class_destructor(Eobj_Class *klass EINA_UNUSED)
 {
    free(class_var);
 }

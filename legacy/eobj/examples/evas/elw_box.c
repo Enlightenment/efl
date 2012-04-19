@@ -16,7 +16,7 @@ typedef struct
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_pack_end(Eobj *obj __UNUSED__, void *class_data, va_list *list)
+_pack_end(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Widget_Data *wd = class_data;
    Eobj *child_obj;

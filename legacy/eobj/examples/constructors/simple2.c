@@ -7,7 +7,7 @@
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
+_constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_constructor_super(obj);
 

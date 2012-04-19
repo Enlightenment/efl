@@ -10,7 +10,7 @@
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_ab_sum_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_ab_sum_get(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    Mixin3_Public_Data *pd = class_data;
    int *sum = va_arg(*list, int *);
@@ -28,13 +28,13 @@ _ab_sum_get(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
+_constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_constructor_super(obj);
 }
 
 static void
-_destructor(Eobj *obj, void *class_data __UNUSED__)
+_destructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    eobj_destructor_super(obj);
 }

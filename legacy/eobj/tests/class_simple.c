@@ -8,7 +8,7 @@ EAPI Eobj_Op SIMPLE_BASE_ID = 0;
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_a_set(Eobj *obj __UNUSED__, void *class_data, va_list *list)
+_a_set(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Simple_Public_Data *pd = class_data;
    int a;
@@ -18,7 +18,7 @@ _a_set(Eobj *obj __UNUSED__, void *class_data, va_list *list)
 }
 
 static void
-_a_print(Eobj *obj __UNUSED__, void *class_data, va_list *list)
+_a_print(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Simple_Public_Data *pd = class_data;
    (void) list;

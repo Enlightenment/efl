@@ -67,7 +67,7 @@ _data_set(Eobj *obj, void *class_data, va_list *list)
 }
 
 static void
-_data_get(Eobj *obj __UNUSED__, void *class_data, va_list *list)
+_data_get(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Private_Data *pd = class_data;
    const char *key = va_arg(*list, const char *);
@@ -92,7 +92,7 @@ _data_get(Eobj *obj __UNUSED__, void *class_data, va_list *list)
 }
 
 static void
-_data_del(Eobj *obj __UNUSED__, void *class_data, va_list *list)
+_data_del(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Private_Data *pd = class_data;
    const char *key = va_arg(*list, const char *);
@@ -127,7 +127,7 @@ EAPI const Eobj_Event_Description _EOBJ_EV_DEL =
    EOBJ_EVENT_DESCRIPTION("del", "", "Obj is being deleted.");
 
 static void
-_constructor(Eobj *obj, void *class_data __UNUSED__)
+_constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
    DBG("%p - %s.", obj, eobj_class_name_get(_my_class));
 }

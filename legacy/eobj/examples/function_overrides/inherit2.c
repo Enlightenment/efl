@@ -13,7 +13,7 @@ EAPI Eobj_Op INHERIT2_BASE_ID = 0;
 static const Eobj_Class *_my_class = NULL;
 
 static void
-_a_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
+_a_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    int a;
    a = va_arg(*list, int);
@@ -25,14 +25,14 @@ _a_set(Eobj *obj, void *class_data __UNUSED__, va_list *list)
 }
 
 static void
-_print(Eobj *obj, void *class_data __UNUSED__, va_list *list __UNUSED__)
+_print(Eobj *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    printf("Hey\n");
    fail_if(eobj_do_super(obj, INHERIT2_PRINT()));
 }
 
 static void
-_print2(Eobj *obj __UNUSED__, void *class_data __UNUSED__, va_list *list __UNUSED__)
+_print2(Eobj *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    printf("Hey2\n");
 }

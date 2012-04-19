@@ -18,7 +18,7 @@ static const Eobj_Class *_my_class = NULL;
 
 #define _GET_SET_FUNC(name) \
 static void \
-_##name##_get(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
+_##name##_get(Eobj *obj EINA_UNUSED, void *class_data, va_list *list) \
 { \
    Private_Data *pd = class_data; \
    int *name; \
@@ -27,7 +27,7 @@ _##name##_get(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
    printf("%s %d\n", __func__, pd->name); \
 } \
 static void \
-_##name##_set(Eobj *obj __UNUSED__, void *class_data, va_list *list) \
+_##name##_set(Eobj *obj EINA_UNUSED, void *class_data, va_list *list) \
 { \
    Private_Data *pd = class_data; \
    int name; \
