@@ -399,20 +399,35 @@ EAPI void eobj_unref(Eobj *obj);
  */
 EAPI int eobj_ref_get(const Eobj *obj);
 
+/**
+ * @def eobj_xref(obj, ref_obj)
+ * Convenience macro around eobj_xref()
+ * @see eobj_xref()
+ */
 #define eobj_xref(obj, ref_obj) eobj_xref_internal(obj, ref_obj, __FILE__, __LINE__)
 
 /**
- * @brief Increment the object's reference count by 1.
+ * @brief Increment the object's reference count by 1 (and associate the ref with ref_obj)
  * @param obj the object to work on.
- * @return The object passed.
+ * @param ref_obj the object that references obj.
+ * @param file the call's filename.
+ * @param line the call's line number.
+ * @return The object passed (obj)
+ *
+ * People should not use this function, use #eobj_xref instead.
  *
  * @see eobj_xunref()
  */
 EAPI Eobj *eobj_xref_internal(Eobj *obj, const Eobj *ref_obj, const char *file, int line);
 
 /**
- * @brief Decrement the object's reference count by 1 and free it if needed.
+ * @brief Decrement the object's reference count by 1 and free it if needed. Will free the ref associated with ref_obj).
  * @param obj the object to work on.
+ * @param ref_obj the object that references obj.
+ *
+ * This function only enforces the checks for object association. I.e don't rely
+ * on it. If such enforces are compiled out, this function behaves the same as
+ * eobj_unref().
  *
  * @see eobj_xref_internal()
  */
