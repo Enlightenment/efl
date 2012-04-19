@@ -14,8 +14,8 @@ static Eobj_Class_Id _eobj_classes_last_id;
 static Eina_Bool _eobj_init_count = 0;
 
 static void _eobj_callback_remove_all(Eobj *obj);
-static void eobj_class_constructor(Eobj *obj, const Eobj_Class *klass);
-static void eobj_class_destructor(Eobj *obj, const Eobj_Class *klass);
+static void _eobj_constructor(Eobj *obj, const Eobj_Class *klass);
+static void _eobj_destructor(Eobj *obj, const Eobj_Class *klass);
 static void eobj_constructor_error_unset(Eobj *obj);
 
 typedef struct _Eobj_Callback_Description Eobj_Callback_Description;
@@ -868,7 +868,7 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
    eobj_constructor_error_unset(obj);
 
    eobj_ref(obj);
-   eobj_class_constructor(obj, klass);
+   _eobj_constructor(obj, klass);
 
    if (eobj_constructor_error_get(obj))
      {
@@ -977,7 +977,7 @@ eobj_unref(Eobj *obj)
         const Eobj_Class *klass = eobj_class_get(obj);
         _eobj_kls_itr_init(obj, EOBJ_NOOP);
         eobj_constructor_error_unset(obj);
-        eobj_class_destructor(obj, klass);
+        _eobj_destructor(obj, klass);
         if (eobj_constructor_error_get(obj))
           {
              ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
@@ -1114,7 +1114,7 @@ _eobj_destructor_default(Eobj *obj)
 }
 
 static void
-eobj_class_constructor(Eobj *obj, const Eobj_Class *klass)
+_eobj_constructor(Eobj *obj, const Eobj_Class *klass)
 {
    if (!klass)
       return;
@@ -1126,7 +1126,7 @@ eobj_class_constructor(Eobj *obj, const Eobj_Class *klass)
 }
 
 static void
-eobj_class_destructor(Eobj *obj, const Eobj_Class *klass)
+_eobj_destructor(Eobj *obj, const Eobj_Class *klass)
 {
    if (!klass)
       return;
@@ -1140,13 +1140,13 @@ eobj_class_destructor(Eobj *obj, const Eobj_Class *klass)
 EAPI void
 eobj_constructor_super(Eobj *obj)
 {
-   eobj_class_constructor(obj, _eobj_kls_itr_next(obj, EOBJ_NOOP));
+   _eobj_constructor(obj, _eobj_kls_itr_next(obj, EOBJ_NOOP));
 }
 
 EAPI void
 eobj_destructor_super(Eobj *obj)
 {
-   eobj_class_destructor(obj, _eobj_kls_itr_next(obj, EOBJ_NOOP));
+   _eobj_destructor(obj, _eobj_kls_itr_next(obj, EOBJ_NOOP));
 }
 
 EAPI void *
