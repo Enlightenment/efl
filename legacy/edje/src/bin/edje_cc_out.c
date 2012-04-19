@@ -1707,24 +1707,31 @@ data_process_lookups(void)
 	Edje_Part *ep;
 	unsigned int i;
 
-	for (i = 0; i < part->pc->parts_count; ++i)
-	  {
-	     ep = part->pc->parts[i];
+        if (!strcmp(part->name, "-"))
+          {
+             *(part->dest) = -1;
+          }
+        else
+          {
+             for (i = 0; i < part->pc->parts_count; ++i)
+               {
+                  ep = part->pc->parts[i];
+                  
+                  if ((ep->name) && (!strcmp(ep->name, part->name)))
+                    {
+                       handle_slave_lookup(part_slave_lookups, part->dest, ep->id);
+                       *(part->dest) = ep->id;
+                       break;
+                    }
+               }
 
-	     if ((ep->name) && (!strcmp(ep->name, part->name)))
-	       {
-		  handle_slave_lookup(part_slave_lookups, part->dest, ep->id);
-		  *(part->dest) = ep->id;
-		  break;
-	       }
-	  }
-
-	if (i == part->pc->parts_count)
-	  {
-	     ERR("%s: Error. Unable to find part name \"%s\".",
-		 progname, part->name);
-	     exit(-1);
-	  }
+             if (i == part->pc->parts_count)
+               {
+                  ERR("%s: Error. Unable to find part name \"%s\".",
+                      progname, part->name);
+                  exit(-1);
+               }
+          }
 
 	free(part->name);
 	free(part);
