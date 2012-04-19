@@ -368,7 +368,7 @@ EAPI Eobj *eobj_parent_get(Eobj *obj);
  * @param klass the klass associated with the data.
  * @return a pointer to the data.
  */
-EAPI void *eobj_data_get(Eobj *obj, const Eobj_Class *klass);
+EAPI void *eobj_data_get(const Eobj *obj, const Eobj_Class *klass);
 
 /**
  * @brief Increment the object's reference count by 1.

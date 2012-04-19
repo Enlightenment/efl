@@ -1140,7 +1140,7 @@ eobj_destructor_super(Eobj *obj)
 }
 
 EAPI void *
-eobj_data_get(Eobj *obj, const Eobj_Class *klass)
+eobj_data_get(const Eobj *obj, const Eobj_Class *klass)
 {
    /* FIXME: Add a check that this is of the right klass and we don't seg.
     * Probably just return NULL. */
