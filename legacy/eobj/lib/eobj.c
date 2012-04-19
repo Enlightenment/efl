@@ -685,7 +685,7 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
      { \
         if (!x) \
           { \
-             ERR("%s must not be NULL! Aborting.", #x); \
+             ERR("'%s' must not be False! Aborting.", #x); \
              return NULL; \
           } \
      } \
@@ -693,6 +693,16 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    _CLS_NEW_CHECK(desc);
    _CLS_NEW_CHECK(desc->name);
+
+   /* Check restrictions on Interface types. */
+   if (desc->type == EOBJ_CLASS_TYPE_INTERFACE)
+     {
+        _CLS_NEW_CHECK(!desc->constructor);
+        _CLS_NEW_CHECK(!desc->destructor);
+        _CLS_NEW_CHECK(!desc->class_constructor);
+        _CLS_NEW_CHECK(!desc->class_destructor);
+        _CLS_NEW_CHECK(!desc->data_size);
+     }
 
    klass = calloc(1, sizeof(Eobj_Class));
    klass->parent = parent;

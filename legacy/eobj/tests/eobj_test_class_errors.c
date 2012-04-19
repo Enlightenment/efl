@@ -1,6 +1,4 @@
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
+#include "config.h"
 
 #include <stdio.h>
 
@@ -238,9 +236,67 @@ START_TEST(eobj_inconsistent_mro)
 }
 END_TEST
 
+static void _stub_constructor(Eobj *obj __UNUSED__, void *data __UNUSED__) {}
+static void _stub_class_constructor(Eobj_Class *klass __UNUSED__) {}
+
+START_TEST(eobj_bad_interface)
+{
+   eobj_init();
+
+   const Eobj_Class *klass;
+
+   static Eobj_Class_Description class_desc = {
+        "Interface",
+        EOBJ_CLASS_TYPE_INTERFACE,
+        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        10,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+   };
+
+   klass = eobj_class_new(&class_desc, NULL, NULL);
+   fail_if(klass);
+
+   class_desc.data_size = 0;
+   class_desc.constructor = _stub_constructor;
+
+   klass = eobj_class_new(&class_desc, NULL, NULL);
+   fail_if(klass);
+
+   class_desc.constructor = NULL;
+   class_desc.destructor = _stub_constructor;
+
+   klass = eobj_class_new(&class_desc, NULL, NULL);
+   fail_if(klass);
+
+   class_desc.destructor = NULL;
+   class_desc.class_constructor = _stub_class_constructor;
+
+   klass = eobj_class_new(&class_desc, NULL, NULL);
+   fail_if(klass);
+
+   class_desc.class_constructor = NULL;
+   class_desc.class_destructor = _stub_class_constructor;
+
+   klass = eobj_class_new(&class_desc, NULL, NULL);
+   fail_if(klass);
+
+   class_desc.class_destructor = NULL;
+
+   klass = eobj_class_new(&class_desc, NULL, NULL);
+   fail_if(!klass);
+
+   eobj_shutdown();
+}
+END_TEST
+
 void eobj_test_class_errors(TCase *tc)
 {
    tcase_add_test(tc, eobj_incomplete_desc);
    tcase_add_test(tc, eobj_inherit_errors);
    tcase_add_test(tc, eobj_inconsistent_mro);
+   tcase_add_test(tc, eobj_bad_interface);
 }
