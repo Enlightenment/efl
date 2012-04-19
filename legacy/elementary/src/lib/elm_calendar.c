@@ -31,7 +31,7 @@ struct _Widget_Data
    const char *weekdays[ELM_DAY_LAST];
    struct tm current_time, selected_time;
    Day_Color day_color[42]; // EINA_DEPRECATED
-   Eina_Bool selection_enabled : 1;
+   Elm_Calendar_Select_Mode select_mode;
 };
 
 struct _Elm_Calendar_Mark
@@ -302,7 +302,7 @@ _populate(Evas_Object *obj)
              if ((wd->selected_it > -1) && (wd->selected_it != i))
                _unselect(wd, wd->selected_it);
 
-             if (wd->selection_enabled) _select(wd, i);
+             if (wd->select_mode != ELM_CALENDAR_SELECT_NONE) _select(wd, i);
 
              wd->selected_it = i;
           }
@@ -600,7 +600,7 @@ _update_sel_it(Evas_Object *obj, int sel_it)
 {
    int day;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if ((!wd) || (!wd->selection_enabled))
+   if ((!wd) || (wd->select_mode == ELM_CALENDAR_SELECT_NONE))
      return;
 
    day = _get_item_day(obj, sel_it);
@@ -621,7 +621,7 @@ _day_selected(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
 {
    int sel_it;
    Widget_Data *wd = elm_widget_data_get(data);
-   if ((!wd) || (!wd->selection_enabled))
+   if ((!wd) || (wd->select_mode == ELM_CALENDAR_SELECT_NONE))
      return;
    sel_it = atoi(source);
 
@@ -668,7 +668,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 
    if (!wd) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (!wd->selection_enabled) return EINA_FALSE;
+   if (wd->select_mode ==  ELM_CALENDAR_SELECT_NONE) return EINA_FALSE;
 
    if ((!strcmp(ev->keyname, "Left")) ||
        ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
@@ -736,7 +736,6 @@ elm_calendar_add(Evas_Object *parent)
    wd->today_it = -1;
    wd->selected_it = -1;
    wd->first_day_it = -1;
-   wd->selection_enabled = EINA_TRUE;
    wd->format_func = _format_month_year;
    wd->marks = NULL;
 
@@ -864,26 +863,22 @@ elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max)
    if (max) *max = wd->year_max + 1900;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_calendar_day_selection_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->selection_enabled = (!disabled);
-   if (!disabled)
-     _select(wd, wd->selected_it);
+   if (disabled)
+     elm_calendar_select_mode_set(obj, ELM_CALENDAR_SELECT_NONE);
    else
-     _unselect(wd, wd->selected_it);
+     elm_calendar_select_mode_set(obj, ELM_CALENDAR_SELECT_DEFAULT);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_calendar_day_selection_disabled_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return (!wd->selection_enabled);
+   return !!(wd->select_mode == ELM_CALENDAR_SELECT_NONE);
 }
 
 EAPI void
@@ -1003,3 +998,32 @@ elm_calendar_first_day_of_week_get(const Evas_Object *obj)
    if (!wd) return -1;
    return wd->first_week_day;
 }
+
+EAPI void
+elm_calendar_select_mode_set(Evas_Object *obj, Elm_Calendar_Select_Mode mode)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((mode >= ELM_CALENDAR_SELECT_DEFAULT)
+       && (mode <= ELM_CALENDAR_SELECT_ONDEMAND)
+       && (wd->select_mode != mode))
+     {
+        wd->select_mode = mode;
+        if (wd->select_mode == ELM_CALENDAR_SELECT_ALWAYS)
+          _select(wd, wd->selected_it);
+        else
+          _unselect(wd, wd->selected_it);
+     }
+}
+
+EAPI Elm_Calendar_Select_Mode
+elm_calendar_select_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return -1;
+   return wd->select_mode;
+}
+
+

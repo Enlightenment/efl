@@ -86,6 +86,27 @@ typedef enum
  */
 typedef _Elm_Calendar_Weekday Elm_Calendar_Weekday;
 
+
+typedef enum
+{
+   ELM_CALENDAR_SELECT_DEFAULT = 0, /**< Default value. a day is always selected. */
+   ELM_CALENDAR_SELECT_ALWAYS, /**< a day is always selected. */
+   ELM_CALENDAR_SELECT_NONE, /**< None of the days can be selected. */
+   ELM_CALENDAR_SELECT_ONDEMAND /**< User may have selected a day or not. (not supported yet)*/
+} _Elm_Calendar_Select_Mode;
+
+/**
+ * @enum _Elm_Calendar_Select_Mode
+ * @typedef Elm_Calendar_Select_Mode
+ *
+ * the mode, who determine how user could select a day
+ *
+ * @see elm_calendar_select_mode_set()
+ *
+ * @ingroup Calendar
+ */
+typedef _Elm_Calendar_Select_Mode Elm_Calendar_Select_Mode;
+
 typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a calendar mark. Created with elm_calendar_mark_add() and deleted with elm_calendar_mark_del(). */
 
 /**
@@ -207,41 +228,31 @@ EAPI void                 elm_calendar_min_max_year_set(Evas_Object *obj, int mi
 EAPI void                 elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max);
 
 /**
- * Enable or disable day selection
+ * Set select day mode to use.
  *
  * @param obj The calendar object.
- * @param disabled @c EINA_TRUE to disable selection or @c EINA_FALSE to
- * enable it.
+ * @param select_mdoe The select mode to use.
  *
- * Enabled by default. If disabled, the user still can select months,
- * but not days. Selected days are highlighted on calendar.
- * It should be used if you won't need such selection for the widget usage.
- *
- * When a day is selected, or month is changed, smart callbacks for
- * signal "changed" will be called.
- *
- * @see elm_calendar_day_selection_disabled_get()
- *
- * @ref calendar_example_04
+ * Set the day selection mode used.
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_day_selection_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+EAPI void                 elm_calendar_select_mode_set(Evas_Object *obj, Elm_Calendar_Select_Mode mode);
 
 /**
- * Get a value whether day selection is disabled or not.
+ * Get the select day mode used.
  *
  * @param obj The calendar object.
- * @return EINA_TRUE means day selection is disabled. EINA_FALSE indicates
- * it's enabled. If @p obj is NULL, EINA_FALSE is returned.
  *
- * @see elm_calendar_day_selection_disabled_set() for details.
+ * @return the selected mode
  *
- * @ref calendar_example_05
+ * Get the day selection mode used.
+ *
+ * @see elm_calendar_select_mode_set() for more details
  *
  * @ingroup Calendar
  */
-EAPI Eina_Bool            elm_calendar_day_selection_disabled_get(const Evas_Object *obj);
+EAPI Elm_Calendar_Select_Mode elm_calendar_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set selected date to be highlighted on calendar.

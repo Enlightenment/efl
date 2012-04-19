@@ -410,3 +410,14 @@ EINA_DEPRECATED EAPI void * elm_multibuttonentry_item_data_get(const Elm_Object_
  * @deprecated Use elm_object_item_data_set instead.
  */
 EINA_DEPRECATED EAPI void elm_multibuttonentry_item_data_set(Elm_Object_Item *it, void *data);
+
+/**
+ * @deprecated Use elm_calendar_select_mode_set instead.
+ */
+EINA_DEPRECATED EAPI void                 elm_calendar_day_selection_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+ * @deprecated Use elm_calendar_select_mode_get instead.
+ */
+EINA_DEPRECATED EAPI Eina_Bool            elm_calendar_day_selection_disabled_get(const Evas_Object *obj);
+
