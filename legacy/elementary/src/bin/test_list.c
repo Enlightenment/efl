@@ -281,13 +281,6 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    free(data);
 }
 
-static void _filter_all_cb(void *data, Evas_Object *obj __UNUSED__,
-                           void *event_info __UNUSED__)
-{
-   Evas_Object *popup = (Evas_Object *)data;
-   evas_object_del(popup);
-}
-
 void
 test_list(void        *data __UNUSED__,
           Evas_Object *obj __UNUSED__,
@@ -326,7 +319,7 @@ test_list(void        *data __UNUSED__,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_resizable_set(ic, 1, 1);
-   list_it1 = elm_list_item_append(li, "Hello", ic, NULL, _filter_all_cb, bxx);
+   list_it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_resizable_set(ic, 0, 0);
