@@ -880,8 +880,10 @@ _item_del(Elm_Gen_Item *it)
              ecore_animator_del(wd->tree_effect_animator);
              wd->tree_effect_animator = NULL;
           }
+        wd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
      }
    if (wd->expanded_next_item == it) wd->expanded_next_item = NULL;
+   if (wd->move_items) wd->move_items = eina_list_remove(wd->move_items, it);
    if (it->parent)
      it->parent->item->items = eina_list_remove(it->parent->item->items, it);
    if (it->item->swipe_timer)
