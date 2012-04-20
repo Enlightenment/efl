@@ -1157,6 +1157,75 @@ edje_object_part_text_get(const Evas_Object *obj, const char *part)
    return NULL;
 }
 
+EAPI Eina_Bool
+edje_object_part_text_escaped_set(Evas_Object *obj, const char *part, const char *text)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return EINA_FALSE;
+   if ((rp->part->type == EDJE_PART_TYPE_TEXT) && (text))
+     {
+        Eina_Strbuf *sbuf;
+        char *esc_start = NULL, *esc_end = NULL;
+        char *s, *p;
+        Eina_Bool ret;
+        
+        sbuf = eina_strbuf_new();
+        p = (char *)text;
+        s = p;
+        for (;;)
+          {
+             if ((*p == 0) || (esc_end) || (esc_start))
+               {
+                  if (esc_end)
+                    {
+                       const char *escape;
+                       
+                       escape = evas_textblock_escape_string_range_get
+                         (esc_start, esc_end + 1);
+                       if (escape) eina_strbuf_append(sbuf, escape);
+                       esc_start = esc_end = NULL;
+                    }
+                  else if (*p == 0)
+                    {
+                       eina_strbuf_append_length(sbuf, s, p - s);
+                       s = NULL;
+                    }
+                  if (*p == 0)
+                    break;
+               }
+             
+             if (*p == '&')
+               {
+                  esc_start = p;
+                  esc_end = NULL;
+                  eina_strbuf_append_length(sbuf, s, p - s);
+                  s = NULL;
+               }
+             else if (*p == ';')
+               {
+                  if (esc_start)
+                    {
+                       esc_end = p;
+                       s = p + 1;
+                    }
+               }
+             p++;
+          }
+        ret = _edje_object_part_text_raw_set
+          (obj, rp, part, eina_strbuf_string_get(sbuf));
+        eina_strbuf_free(sbuf);
+        return ret;
+     }
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return EINA_FALSE;
+   return _edje_object_part_text_raw_set(obj, rp, part, text);
+}
+
+
 char *
 _edje_text_escape(const char *text)
 {

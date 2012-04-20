@@ -2299,6 +2299,19 @@ EAPI void         edje_object_text_change_cb_set      (Evas_Object *obj, Edje_Te
 EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const char *part, const char *text);
 
 /**
+ * @brief Sets the text for an object part, but converts HTML escapes to UTF8
+ *
+ * This converts the given string @p text to UTF8 assuming it contains HTML
+ * style escapes like "&amp;" and "&copy;" etc. IF the part is of type TEXT,
+ * as opposed to TEXTBLOCK.
+ * 
+ * @param obj A valid Evas Object handle
+ * @param part The part name
+ * @param text The text string
+ */
+EAPI Eina_Bool    edje_object_part_text_escaped_set   (Evas_Object *obj, const char *part, const char *text);
+       
+/**
  * @brief Return the text of the object part.
  *
  * @param obj A valid Evas_Object handle

@@ -35,6 +35,7 @@ Additions:
     * edje_object_part_text_user_insert()
     * double click in entry selects word, triple selects line.
     * EDJE_VERSION_12 define in edc for #ifdefs handling edje 1.2 (or older)
+    * edje_object_part_text_escaped_set()
 
 Improvements:
     * speedup load time of Edje file.
