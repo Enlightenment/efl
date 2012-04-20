@@ -2253,6 +2253,12 @@ _item_realize(Elm_Gen_Item *it,
 static void
 _item_unrealize_cb(Elm_Gen_Item *it)
 {
+   Evas_Object *content;
+   elm_widget_stringlist_free(it->item->flip_contents);
+   it->item->flip_contents = NULL;
+   EINA_LIST_FREE(it->item->flip_content_objs, content)
+     evas_object_del(content);
+
    if (it->item->nocache_once || it->item->nocache)
      {
         evas_object_del(VIEW(it));
@@ -5876,11 +5882,6 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
    elm_widget_stringlist_free(it->states);
    it->states = NULL;
    EINA_LIST_FREE(it->content_objs, content)
-     evas_object_del(content);
-
-   elm_widget_stringlist_free(it->item->flip_contents);
-   it->item->flip_contents = NULL;
-   EINA_LIST_FREE(it->item->flip_content_objs, content)
      evas_object_del(content);
 
    it->unrealize_cb(it);
