@@ -620,3 +620,7 @@
 2012-04-16  Shinwoo Kim
 
 	* Check control charater and convert into printing character on Windows
+
+2012-04-20  Vincent Torri
+
+	* Add override_set() support in ecore_evas_win32.

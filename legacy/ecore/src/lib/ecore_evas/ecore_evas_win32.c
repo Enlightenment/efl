@@ -333,14 +333,17 @@ _ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSE
    if (!ee) return 1; /* pass on event */
    if ((Ecore_Window)e->window != ee->prop.window) return 1;
 
-   if ((ee->x != e->x) || (ee->y != e->y))
+   if (ee->prop.override)
      {
-        ee->x = e->x;
-        ee->y = e->y;
-        ee->req.x = ee->x;
-        ee->req.y = ee->y;
+        if ((ee->x != e->x) || (ee->y != e->y))
+          {
+             ee->x = e->x;
+             ee->y = e->y;
+             ee->req.x = ee->x;
+             ee->req.y = ee->y;
 
-        if (ee->func.fn_move) ee->func.fn_move(ee);
+             if (ee->func.fn_move) ee->func.fn_move(ee);
+          }
      }
 
    if ((ee->w != e->width) || (ee->h != e->height))
@@ -862,6 +865,24 @@ _ecore_evas_win32_borderless_set(Ecore_Evas *ee, int on)
 }
 
 static void
+_ecore_evas_win32_override_set(Ecore_Evas *ee, int on)
+{
+   struct _Ecore_Win32_Window *window;
+
+   INF("ecore evas override set");
+
+   window = (struct _Ecore_Win32_Window *)ee->prop.window;
+
+   if (ee->prop.override == on) return;
+   if (ee->should_be_visible) ecore_win32_window_hide(window);
+   /* FIXME: use borderless_set for now */
+   ecore_win32_window_borderless_set(window, on);
+   if (ee->should_be_visible) ecore_win32_window_show(window);
+   if (ee->prop.focused) ecore_win32_window_focus(window);
+   ee->prop.override = on;
+}
+
+static void
 _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 {
    struct _Ecore_Win32_Window *window;
@@ -879,8 +900,7 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 
    if (on != 0)
    {
-      ecore_win32_window_fullscreen_set((struct _Ecore_Win32_Window *)ee->prop.window,
-                                        on);
+      ecore_win32_window_fullscreen_set(window, on);
    }
    else
    {
@@ -966,7 +986,7 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      _ecore_evas_win32_focus_set,
      _ecore_evas_win32_iconified_set,
      _ecore_evas_win32_borderless_set,
-     NULL, /* _ecore_evas_x_override_set */
+     _ecore_evas_win32_override_set,
      NULL,
      _ecore_evas_win32_fullscreen_set,
      NULL, /* _ecore_evas_x_avoid_damage_set */

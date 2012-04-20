@@ -50,6 +50,7 @@ Additions:
      - Add Shm and Egl engines for ecore_evas to draw in Wayland.
      - Add Socket and Plug to draw other process area.
      - Ability to set pointer for wayland support
+     - Add override_set support on Windows XP
     * ecore_wayland
      - Add Ecore_Wayland (backend to support Wayland).
     * ecore_imf
