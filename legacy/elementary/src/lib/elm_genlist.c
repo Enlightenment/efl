@@ -6089,7 +6089,7 @@ static Eina_Bool
 _tree_effect_animator_cb(void *data)
 {
    Widget_Data *wd = data;
-   if (!wd) return EINA_FALSE;
+   if (!wd) return ECORE_CALLBACK_CANCEL;
    Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh;
    Elm_Gen_Item *it = NULL, *it2, *expanded_next_it;
    const Eina_List *l;
