@@ -76,16 +76,16 @@ _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_object_item_text_get(event_info));
 }
 
-#define ITEM_NEW(_hov, _label, _icon)                                           \
-   if (_icon)                                                                    \
-     {                                                                          \
-        ic = elm_icon_add(obj);                                                 \
-        elm_icon_standard_set(ic, _icon);                                       \
-        elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);                         \
-     }                                                                          \
-   else                                                                         \
-      ic = NULL;                                                                \
-   it = elm_ctxpopup_item_append(_hov, _label, ic, _ctxpopup_item_cb, NULL);    \
+#define ITEM_NEW(_hov, _label, _icon)                                         \
+   if (_icon)                                                                 \
+     {                                                                        \
+        ic = elm_icon_add(obj);                                               \
+        elm_icon_standard_set(ic, _icon);                                     \
+        elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);                   \
+     }                                                                        \
+   else                                                                       \
+      ic = NULL;                                                              \
+   it = elm_ctxpopup_item_append(_hov, _label, ic, _ctxpopup_item_cb, NULL);  \
 
 static void
 _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
