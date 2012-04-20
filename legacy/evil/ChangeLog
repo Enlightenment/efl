@@ -1,3 +1,10 @@
+2012-04-20  Vincent Torri  <doursse at users dot sf dot net>
+
+	* NEWS:
+	* src/lib/evil_string.c:
+	* src/lib/evil_string.h:
+	Add strcasestr() API.
+
 2012-04-12  Vincent Torri  <doursse at users dot sf dot net>
 
 	* NEWS:
