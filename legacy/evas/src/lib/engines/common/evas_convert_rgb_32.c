@@ -193,7 +193,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
                                          h); \
    }
 
-FAST_SIMPLE_ROTATE(8888, DATA8)
+FAST_SIMPLE_ROTATE(8888, DATA32)
 #endif
 
 
