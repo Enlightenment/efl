@@ -119,7 +119,7 @@ _output_setup(int w,
      }
    re->tb = evas_common_tilebuf_new(w, h);
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
-   eina_inarray_setup(&re->previous_rects, sizeof (Eina_Rectangle), 8);
+   eina_inarray_step_set(&re->previous_rects, sizeof (Eina_Inarray), sizeof (Eina_Rectangle), 8);
    return re;
 }
 
@@ -312,7 +312,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
                   Eina_Rectangle local;
 
                   EINA_RECTANGLE_SET(&local, rect->x, rect->y, rect->w, rect->h);
-                  eina_inarray_append(&re->previous_rects, &local);
+                  eina_inarray_push(&re->previous_rects, &local);
                }
 
              /* and regenerate the damage list by tacking into account the damage over two frames */

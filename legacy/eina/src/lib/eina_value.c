@@ -2666,7 +2666,7 @@ _eina_value_type_array_pset(const Eina_Value_Type *type, void *mem, const void *
    if (tmem->array)
      {
         _eina_value_type_array_flush_elements(tmem);
-        eina_inarray_setup(tmem->array, desc->subtype->value_size, desc->step);
+        eina_inarray_step_set(tmem->array, sizeof (Eina_Inarray), desc->subtype->value_size, desc->step);
      }
    else
      {

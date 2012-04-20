@@ -114,6 +114,7 @@ static void
 _eina_inarray_setup(Eina_Inarray *array, unsigned int member_size, unsigned int step)
 {
    EINA_MAGIC_SET(array, EINA_MAGIC_INARRAY);
+   array->version = EINA_ARRAY_VERSION;
    array->member_size = member_size;
    array->len = 0;
    array->max = 0;
@@ -127,7 +128,7 @@ _eina_inarray_resize(Eina_Inarray *array, unsigned int new_size)
    unsigned int new_max;
    void *tmp;
 
-   if (new_size < array->max)
+   if (new_size < array->max) /* don't change this behaviour as eina_inarray_pop rely on it */
      return EINA_TRUE;
 
    if (new_size % array->step == 0)
@@ -360,10 +361,24 @@ eina_inarray_free(Eina_Inarray *array)
 }
 
 EAPI void
-eina_inarray_setup(Eina_Inarray *array, unsigned int member_size, unsigned int step)
+eina_inarray_step_set(Eina_Inarray *array,
+		      unsigned int sizeof_eina_inarray,
+		      unsigned int member_size,
+		      unsigned int step)
 {
    EINA_SAFETY_ON_NULL_RETURN(array);
    EINA_SAFETY_ON_TRUE_RETURN(member_size == 0);
+
+   if (sizeof (Eina_Inarray) != sizeof_eina_inarray)
+     {
+        ERR("Unknow Eina_Inarray size ! Got %i, expected %i\n",
+            sizeof_eina_inarray,
+            (int) sizeof (Eina_Inarray));
+        /* Force memory to zero to provide a small layer of security */
+        memset(array, 0, sizeof_eina_inarray);
+        return ;
+     }
+
    _eina_inarray_setup(array, member_size, step);
 }
 
@@ -378,7 +393,7 @@ eina_inarray_flush(Eina_Inarray *array)
 }
 
 EAPI int
-eina_inarray_append(Eina_Inarray *array, const void *data)
+eina_inarray_push(Eina_Inarray *array, const void *data)
 {
    void *p;
 
@@ -421,7 +436,7 @@ eina_inarray_insert(Eina_Inarray *array, const void *data, Eina_Compare_Cb compa
         return -1;
       return position;
    }
-   return eina_inarray_append(array, data);
+   return eina_inarray_push(array, data);
 }
 
 EAPI int
@@ -481,15 +496,15 @@ found:
    return position;
 }
 
-EAPI int
+EAPI void *
 eina_inarray_pop(Eina_Inarray *array)
 {
-   EINA_MAGIC_CHECK_INARRAY(array, -1);
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(array->len == 0, -1);
+   EINA_MAGIC_CHECK_INARRAY(array, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(array->len == 0, NULL);
    if (!_eina_inarray_resize(array, array->len - 1))
-     return -1;
+     return NULL;
    array->len--;
-   return array->len + 1;
+   return _eina_inarray_get(array, array->len + 1);
 }
 
 EAPI void *

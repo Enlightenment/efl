@@ -1133,11 +1133,11 @@ START_TEST(eina_value_test_array)
    inarray = eina_inarray_new(sizeof(char), 0);
    fail_unless(inarray != NULL);
    c = 11;
-   fail_unless(eina_inarray_append(inarray, &c) >= 0);
+   fail_unless(eina_inarray_push(inarray, &c) >= 0);
    c = 21;
-   fail_unless(eina_inarray_append(inarray, &c) >= 0);
+   fail_unless(eina_inarray_push(inarray, &c) >= 0);
    c = 31;
-   fail_unless(eina_inarray_append(inarray, &c) >= 0);
+   fail_unless(eina_inarray_push(inarray, &c) >= 0);
    desc.subtype = EINA_VALUE_TYPE_CHAR;
    desc.step = 0;
    desc.array = inarray;

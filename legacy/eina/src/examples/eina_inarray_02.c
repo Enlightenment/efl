@@ -21,7 +21,7 @@ main(int argc, char **argv)
 
    for (i = 0; i < 20; i++){
       str = &strings[i];
-      eina_inarray_append(iarr, str);
+      eina_inarray_push(iarr, str);
    }
 
    printf("Inline array of strings:\n");

@@ -50,14 +50,14 @@
  * insertion function expect a memory address we have to put the value we want
  * to store in a variable(this should be no problem since in real world usage
  * that's usually where the value will be anyways):
- * @until append
+ * @until push
  * @note Because the inline array copies the value given to it we can later
  * change @c ch, which we do, without affecting the contents of the array.
  *
  * So let's add some more elements:
- * @until append
- * @until append
- * @until append
+ * @until push
+ * @until push
+ * @until push
  *
  * We will then iterate over our array and print every position of it. The thing
  * to note here is not so much the values which will be the expected 'a', 'b',
@@ -71,26 +71,26 @@
  * @until _flush
  *
  * And then to be able to store a different type on the same array we use the
- * eina_array_setup() function, which is just like the eina_inarray_new()
+ * eina_inarray_step_set() function, which is just like the eina_inarray_new()
  * function except it receives already allocated memory. This time we're going
  * to ask eina to use a step of size 4 because that's how many elements we'll be
  * putting on the array:
- * @until _setup
+ * @until _step_set
  * @note Strictly speaking the reason to call eina_inarray_setup() is not
  * because we're storing different type, but rather because our types have
  * different sizes. Eina inline arrays don't actually know anything about types,
  * they only deal in blocks of memory of a given size.
- * @note Since eina_array_setup() receives already allocated memory you can(and
+ * @note Since eina_inarray_step_set() receives already allocated memory you can(and
  * it is in fact good practice) use inline arrays not declared as pointers:
  * @code
  * Eina_Inarray arr;
- * eina_inarray_setup(&arr, sizeof(int), 4);
+ * eina_inarray_step_set(&arr, sizeof(arr), sizeof(int), 4);
  * @endcode
  *
  * And now to add our integer values to the array:
- * @until append
- * @until append
- * @until append
+ * @until push
+ * @until push
+ * @until push
  *
  * Just to change things up a bit we've left out the 99 value, but will still
  * add it in such a way to keep the array ordered. There are many ways to do
@@ -193,13 +193,16 @@ typedef struct _Eina_Inarray Eina_Inarray;
 /**
  * Inline array structure, use #Eina_Inarray typedef instead.
  *
- * Do not modify these fields directly, use eina_inarray_setup() or
+ * Do not modify these fields directly, use eina_inarray_step_set() or
  * eina_inarray_new() instead.
  *
  * @since 1.2
  */
 struct _Eina_Inarray
 {
+#define EINA_ARRAY_VERSION 1
+   int          version; /**< Should match EINA_ARRAY_VERSION used when compiled your apps, provided for ABI compatibility */
+
    unsigned int member_size; /**< byte size of each entry in members */
    unsigned int len; /**< number of elements used in members */
    unsigned int max; /**< number of elements allocated in members */
@@ -258,9 +261,10 @@ EAPI void eina_inarray_free(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  *
  * @since 1.2
  */
-EAPI void eina_inarray_setup(Eina_Inarray *array,
-                             unsigned int member_size,
-                             unsigned int step) EINA_ARG_NONNULL(1);
+EAPI void eina_inarray_step_set(Eina_Inarray *array,
+                                unsigned int sizeof_eina_inarray,
+                                unsigned int member_size,
+                                unsigned int step) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Remove every member from array.
@@ -284,8 +288,8 @@ EAPI void eina_inarray_flush(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  *
  * @since 1.2
  */
-EAPI int eina_inarray_append(Eina_Inarray *array,
-                             const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI int eina_inarray_push(Eina_Inarray *array,
+                           const void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Copy the data to array at position found by comparison function
@@ -304,7 +308,7 @@ EAPI int eina_inarray_append(Eina_Inarray *array,
  *
  * @see eina_inarray_insert_sorted()
  * @see eina_inarray_insert_at()
- * @see eina_inarray_append()
+ * @see eina_inarray_push()
  *
  * @since 1.2
  */
@@ -359,11 +363,13 @@ EAPI int eina_inarray_remove(Eina_Inarray *array,
 /**
  * @brief Removes the last member of the array
  * @param array array object
- * @return the index of the removed member or -1 on errors.
+ * @return the data poped out of the array.
+ *
+ * Note: The data could be considered valid only until any other operation touch the Inarray.
  *
  * @since 1.2
  */
-EAPI int eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
+EAPI void *eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Get the member at given position
@@ -373,7 +379,7 @@ EAPI int eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  *
  * Gets the member given its position in the array. It is a pointer to
  * its current memory, then it can be invalidated with functions that
- * changes the array such as eina_inarray_append(),
+ * changes the array such as eina_inarray_push(),
  * eina_inarray_insert_at() or eina_inarray_remove_at() or variants.
  *
  * See also eina_inarray_lookup() and eina_inarray_lookup_sorted().

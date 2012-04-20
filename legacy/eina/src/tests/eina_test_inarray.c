@@ -46,7 +46,7 @@ START_TEST(eina_inarray_test_simple)
 
    for (i = 0; i < test_members; i++)
      {
-        pos = eina_inarray_append(array, &i);
+        pos = eina_inarray_push(array, &i);
         fail_unless(pos == i);
      }
    fail_unless(eina_inarray_count(array) == (unsigned)test_members);
@@ -251,7 +251,7 @@ START_TEST(eina_inarray_test_sort)
    for (i = 0; i < numbers_count; i++)
      {
         short val = rand_numbers[i];
-        eina_inarray_append(array, &val);
+        eina_inarray_push(array, &val);
      }
    eina_inarray_sort(array, short_cmp);
    fail_unless(check_short_sorted(array));
@@ -273,7 +273,7 @@ START_TEST(eina_inarray_test_reverse)
    for (i = 0; i < numbers_count; i++)
      {
         short val = i;
-        eina_inarray_append(array, &val);
+        eina_inarray_push(array, &val);
      }
    eina_inarray_reverse(array);
 
@@ -326,7 +326,7 @@ START_TEST(eina_inarray_test_itr)
    for (i = 0; i < numbers_count; i++)
      {
         short val = i;
-        eina_inarray_append(array, &val);
+        eina_inarray_push(array, &val);
      }
    i = 0;
    EINA_INARRAY_FOREACH(array, member)
