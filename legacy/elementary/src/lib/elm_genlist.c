@@ -4821,7 +4821,7 @@ _elm_genlist_expanded_next_item_get(Elm_Gen_Item *it)
 static void
 _elm_genlist_move_items_set(Elm_Gen_Item *it)
 {
-   Eina_List *l;
+   Eina_List *l, *ll;
    Elm_Gen_Item *it2 = NULL;
    Evas_Coord ox, oy, ow, oh, dh = 0;
 
@@ -4830,7 +4830,7 @@ _elm_genlist_move_items_set(Elm_Gen_Item *it)
    if (it->item->expanded)
      {
         it->wd->move_items = elm_genlist_realized_items_get(it->wd->obj);
-        EINA_LIST_FOREACH(it->wd->move_items, l, it2)
+        EINA_LIST_FOREACH_SAFE(it->wd->move_items, l, ll, it2)
           {
              if (it2 == it->wd->expanded_next_item) break;
              it->wd->move_items = eina_list_remove(it->wd->move_items, it2);
