@@ -6061,7 +6061,7 @@ _item_tree_effect_finish(Widget_Data *wd)
    if (wd->tree_effect_animator)
      {
         if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
-           _item_subitems_clear(wd->expanded_item);
+          _item_subitems_clear(wd->expanded_item);
         EINA_LIST_FOREACH(wd->expanded_item->item->items, l, it)
           {
              it->item->tree_effect_finished = EINA_TRUE;
