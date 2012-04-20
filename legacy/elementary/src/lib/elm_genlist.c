@@ -872,7 +872,15 @@ _item_del(Elm_Gen_Item *it)
         if (!wd->anchor_item)
           wd->anchor_item = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
      }
-   if (wd->expanded_item == it) wd->expanded_item = NULL;
+   if (wd->expanded_item == it)
+     {
+        wd->expanded_item = NULL;
+        if (wd->tree_effect_animator)
+          {
+             ecore_animator_del(wd->tree_effect_animator);
+             wd->tree_effect_animator = NULL;
+          }
+     }
    if (wd->expanded_next_item == it) wd->expanded_next_item = NULL;
    if (it->parent)
      it->parent->item->items = eina_list_remove(it->parent->item->items, it);
