@@ -1,11 +1,10 @@
-
-#define _GNU_SOURCE
-#include <string.h>
-#include <Elementary.h>
-#include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+#include <string.h>
+#include <Elementary.h>
+#include "test.h"
 #ifndef ELM_LIB_QUICKLAUNCH
 
 /* all tests prototypes */
