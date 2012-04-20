@@ -217,7 +217,7 @@ ecore_win32_window_override_new(Ecore_Win32_Window *parent,
    return ecore_win32_window_internal_new(parent,
                                           x, y,
                                           width, height,
-                                          WS_POPUP);
+                                          WS_POPUP & ~(WS_CAPTION | WS_THICKFRAME));
 }
 
 /**
