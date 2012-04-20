@@ -1808,7 +1808,7 @@ START_TEST(eina_value_test_array_of_struct)
 }
 END_TEST
 
-
+#if 0
 START_TEST(eina_value_test_model)
 {
    Eina_Value *value, inv;
@@ -1851,6 +1851,7 @@ START_TEST(eina_value_test_model)
    eina_shutdown();
 }
 END_TEST
+#endif
 
 void
 eina_test_value(TCase *tc)
@@ -1870,5 +1871,7 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_blob);
    tcase_add_test(tc, eina_value_test_struct);
    tcase_add_test(tc, eina_value_test_array_of_struct);
+#if 0
    tcase_add_test(tc, eina_value_test_model);
+#endif
 }
