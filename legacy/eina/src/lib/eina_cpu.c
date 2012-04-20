@@ -42,6 +42,7 @@
 # define TH_MAX 8
 #endif
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
