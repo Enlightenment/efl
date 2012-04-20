@@ -2308,6 +2308,7 @@ EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const c
  * @param obj A valid Evas Object handle
  * @param part The part name
  * @param text The text string
+ * @since 1.2
  */
 EAPI Eina_Bool    edje_object_part_text_escaped_set   (Evas_Object *obj, const char *part, const char *text);
        
