@@ -856,23 +856,24 @@ static void
 _item_del(Elm_Gen_Item *it)
 {
    Evas_Object *obj = WIDGET(it);
+   Widget_Data *wd = it->wd;
 
    evas_event_freeze(evas_object_evas_get(obj));
    elm_genlist_item_subitems_clear((Elm_Object_Item *)it);
-   if (it->wd->show_item == it) it->wd->show_item = NULL;
+   if (wd->show_item == it) wd->show_item = NULL;
    if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
    if (it->item->decorate_all_item_realized) _decorate_all_item_unrealize(it);
    if (it->item->block) _item_block_del(it);
    if (it->item->queued)
-     it->wd->queue = eina_list_remove(it->wd->queue, it);
-   if (it->wd->anchor_item == it)
+     wd->queue = eina_list_remove(wd->queue, it);
+   if (wd->anchor_item == it)
      {
-        it->wd->anchor_item = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
-        if (!it->wd->anchor_item)
-          it->wd->anchor_item = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+        wd->anchor_item = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
+        if (!wd->anchor_item)
+          wd->anchor_item = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
      }
-   if (it->wd->expanded_item == it) it->wd->expanded_item = NULL;
-   if (it->wd->expanded_next_item == it) it->wd->expanded_next_item = NULL;
+   if (wd->expanded_item == it) wd->expanded_item = NULL;
+   if (wd->expanded_next_item == it) wd->expanded_next_item = NULL;
    if (it->parent)
      it->parent->item->items = eina_list_remove(it->parent->item->items, it);
    if (it->item->swipe_timer)
