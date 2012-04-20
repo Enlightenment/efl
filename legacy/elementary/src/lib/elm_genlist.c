@@ -3437,6 +3437,8 @@ _decorate_all_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    _decorate_all_item_position(it, it->item->scrl_x, it->item->scrl_y);
    evas_object_show(it->deco_all_view);
 
+   if (it->selected) edje_object_signal_emit(it->deco_all_view, "elm,state,selected", "elm");
+
    it->item->decorate_all_item_realized = EINA_TRUE;
    it->want_unrealize = EINA_FALSE;
 }
@@ -5551,7 +5553,6 @@ elm_genlist_decorate_mode_set(Evas_Object *obj, Eina_Bool decorated)
           {
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                {
-                  if (it->selected) _item_unselect(it);
                   if (it->itc->decorate_all_item_style)
                      _decorate_all_item_realize(it, EINA_TRUE);
                }
