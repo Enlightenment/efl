@@ -371,15 +371,15 @@ _sizing_eval(Evas_Object *obj)
    if (wd->sentinel)
      {
         const char *label = elm_object_item_text_get(DATA_GET(wd->sentinel));
-        tmp = edje_object_part_text_get(wd->base, "top");
-        edje_object_part_text_set(wd->base, "top", label);
+        tmp = edje_object_part_text_get(wd->base, "elm.top");
+        edje_object_part_text_escaped_set(wd->base, "elm.top", label);
      }
 
    edje_object_size_min_restricted_calc(wd->base, &minw, &minh, minw, minh);
    elm_coords_finger_size_adjust(1, &minw, 2, &minh);
    evas_object_size_hint_min_get(obj, &w, &h);
 
-   if (wd->sentinel) edje_object_part_text_set(wd->base, "top", tmp);
+   if (wd->sentinel) edje_object_part_text_escaped_set(wd->base, "elm.top", tmp);
 
    if (w > minw) minw = w;
    if (h > minh) minh = h;
@@ -401,8 +401,8 @@ _update_view(Evas_Object *obj)
    item = DATA_GET(wd->current);
    if (item) label = item->label;
 
-   edje_object_part_text_set(wd->base, "top", label ? label : "");
-   edje_object_part_text_set(wd->base, "bottom", label ? label : "");
+   edje_object_part_text_escaped_set(wd->base, "elm.top", label ? label : "");
+   edje_object_part_text_escaped_set(wd->base, "elm.bottom", label ? label : "");
    edje_object_message_signal_process(wd->base);
 }
 

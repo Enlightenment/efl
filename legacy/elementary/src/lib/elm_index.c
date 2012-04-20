@@ -288,7 +288,7 @@ _index_box_auto_fill(Evas_Object *obj, Evas_Object *box, int level)
                                      elm_widget_style_get(obj));
           }
 
-        edje_object_part_text_set(o, "elm.text", it->letter);
+        edje_object_part_text_escaped_set(o, "elm.text", it->letter);
         edje_object_size_min_restricted_calc(o, &mw, &mh, 0, 0);
         evas_object_size_hint_min_set(o, mw, mh);
         evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -458,8 +458,8 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
      }
    if (!label) label = strdup("");
    if (!last) last = strdup("");
-   edje_object_part_text_set(wd->base, "elm.text.body", label);
-   edje_object_part_text_set(wd->base, "elm.text", last);
+   edje_object_part_text_escaped_set(wd->base, "elm.text.body", label);
+   edje_object_part_text_escaped_set(wd->base, "elm.text", last);
    free(label);
    free(last);
 }

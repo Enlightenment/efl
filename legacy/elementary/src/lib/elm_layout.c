@@ -308,7 +308,7 @@ _parts_text_fix(Widget_Data *wd)
    EINA_LIST_FOREACH(wd->subs, l, si)
      {
         if (si->type == TEXT)
-          edje_object_part_text_set(wd->lay, si->part, si->p.text.text);
+          edje_object_part_text_escaped_set(wd->lay, si->part, si->p.text.text);
      }
 }
 
@@ -330,7 +330,7 @@ _elm_layout_label_set(Evas_Object *obj, const char *part, const char *text)
                   eina_stringshare_del(si->part);
                   eina_stringshare_del(si->p.text.text);
                   free(si);
-                  edje_object_part_text_set(wd->lay, part, NULL);
+                  edje_object_part_text_escaped_set(wd->lay, part, NULL);
                   wd->subs = eina_list_remove_list(wd->subs, l);
                   return;
                }
@@ -350,7 +350,7 @@ _elm_layout_label_set(Evas_Object *obj, const char *part, const char *text)
      }
 
    eina_stringshare_replace(&si->p.text.text, text);
-   edje_object_part_text_set(wd->lay, part, text);
+   edje_object_part_text_escaped_set(wd->lay, part, text);
    _request_sizing_eval(wd);
 }
 

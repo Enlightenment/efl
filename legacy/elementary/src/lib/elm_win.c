@@ -2127,7 +2127,7 @@ elm_win_title_set(Evas_Object *obj, const char *title)
    eina_stringshare_replace(&(win->title), title);
    ecore_evas_title_set(win->ee, win->title);
    if (win->frame_obj)
-     edje_object_part_text_set(win->frame_obj, "elm.text.title", win->title);
+     edje_object_part_text_escaped_set(win->frame_obj, "elm.text.title", win->title);
 }
 
 EAPI const char *
@@ -3239,7 +3239,7 @@ _elm_inwin_text_set_hook(Evas_Object *obj, const char *item, const char *text)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd || !item) return;
-   edje_object_part_text_set(wd->frm, item, text);
+   edje_object_part_text_escaped_set(wd->frm, item, text);
    _sizing_eval(obj);
 }
 

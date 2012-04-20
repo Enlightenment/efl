@@ -934,7 +934,7 @@ _item_realize(Elm_Gen_Item *it)
                 ((void *)it->base.data, WIDGET(it), key);
              if (s)
                {
-                  edje_object_part_text_set(VIEW(it), key, s);
+                  edje_object_part_text_escaped_set(VIEW(it), key, s);
                   free(s);
                }
           }

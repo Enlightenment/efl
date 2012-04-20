@@ -1513,7 +1513,7 @@ static void
 _overlay_default_layout_text_update(Overlay_Default *ovl, const char *text)
 {
    if (!ovl->content && !ovl->icon && !ovl->clas_content && !ovl->clas_icon)
-      edje_object_part_text_set(elm_layout_edje_get(ovl->layout), "elm.text",
+      edje_object_part_text_escaped_set(elm_layout_edje_get(ovl->layout), "elm.text",
                                 text);
 }
 
@@ -2277,7 +2277,7 @@ _overlay_scale_show(Overlay_Scale *ovl)
    if (text < 1)  snprintf(buf, sizeof(buf), "%d m", (int)(text * 1000));
    else   snprintf(buf, sizeof(buf), "%d km", (int)text);
 
-   edje_object_part_text_set(elm_layout_edje_get(ovl->obj), "elm.text", buf);
+   edje_object_part_text_escaped_set(elm_layout_edje_get(ovl->obj), "elm.text", buf);
    _obj_place(ovl->obj, ovl->x, ovl->y, w, ovl->h);
 }
 

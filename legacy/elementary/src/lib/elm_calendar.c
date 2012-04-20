@@ -207,11 +207,11 @@ _set_month_year(Widget_Data *wd)
    buf = wd->format_func(&wd->selected_time);
    if (buf)
      {
-        edje_object_part_text_set(wd->calendar, "month_text", buf);
+        edje_object_part_text_escaped_set(wd->calendar, "month_text", buf);
         free(buf);
      }
    else
-     edje_object_part_text_set(wd->calendar, "month_text", "");
+     edje_object_part_text_escaped_set(wd->calendar, "month_text", "");
 }
 
 static void
@@ -384,9 +384,9 @@ _set_headers(Evas_Object *obj)
    for (i = 0; i < ELM_DAY_LAST; i++)
      {
         part[3] = i + '0';
-        edje_object_part_text_set(
-           wd->calendar, part,
-           wd->weekdays[(i + wd->first_week_day) % ELM_DAY_LAST]);
+        edje_object_part_text_escaped_set
+        (wd->calendar, part,
+            wd->weekdays[(i + wd->first_week_day) % ELM_DAY_LAST]);
      }
 }
 

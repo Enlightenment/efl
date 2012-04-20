@@ -590,7 +590,7 @@ _set_label(Evas_Object *obj, const char *str)
         Evas_Coord width, height, sum_width = 0;
         evas_object_size_hint_min_set(wd->label, 0, 0);
         evas_object_resize(wd->label, 0, 0);
-        edje_object_part_text_set(wd->label, "mbe.label", str);
+        edje_object_part_text_escaped_set(wd->label, "mbe.label", str);
 
         if (!strcmp(str, ""))
           {
@@ -636,7 +636,7 @@ _set_guidetext(Evas_Object *obj, const char *str)
         evas_object_size_hint_weight_set(wd->guidetext, 0.0, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(wd->guidetext, EVAS_HINT_FILL,
                                                            EVAS_HINT_FILL);
-        edje_object_part_text_set(wd->guidetext, "elm.text", str);
+        edje_object_part_text_escaped_set(wd->guidetext, "elm.text", str);
         _view_update(obj);
      }
 }
@@ -848,7 +848,7 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
    elm_object_text_set(wd->entry, "");
 
    _elm_theme_object_set(obj, btn, "multibuttonentry", "btn", elm_widget_style_get(obj));
-   edje_object_part_text_set(btn, "elm.btn.text", str_utf8);
+   edje_object_part_text_escaped_set(btn, "elm.btn.text", str_utf8);
    edje_object_part_geometry_get(btn, "elm.btn.text", NULL, NULL, &width, &height);
 
    evas_object_size_hint_min_set(btn, width, height);
@@ -1383,7 +1383,7 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
    if (part && strcmp(part, "default")) return;
    if (!label) return;
    item = (Elm_Multibuttonentry_Item *)it;
-   edje_object_part_text_set(item->button, "elm.btn.text", label);
+   edje_object_part_text_escaped_set(item->button, "elm.btn.text", label);
    _resize_button(item->button, &item->rw, &item->vw);
 }
 

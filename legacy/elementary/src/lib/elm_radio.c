@@ -117,7 +117,7 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->radio, "elm,state,text,visible", "elm");
    else
      edje_object_signal_emit(wd->radio, "elm,state,text,hidden", "elm");
-   edje_object_part_text_set(wd->radio, "elm.text", wd->label);
+   edje_object_part_text_escaped_set(wd->radio, "elm.text", wd->label);
    if (elm_widget_disabled_get(obj))
      {
         edje_object_signal_emit(wd->radio, "elm,state,disabled", "elm");
@@ -263,7 +263,7 @@ _elm_radio_label_set(Evas_Object *obj, const char *item, const char *label)
         edje_object_signal_emit(wd->radio, "elm,state,text,hidden", "elm");
         edje_object_message_signal_process(wd->radio);
      }
-   edje_object_part_text_set(wd->radio, "elm.text", label);
+   edje_object_part_text_escaped_set(wd->radio, "elm.text", label);
    _sizing_eval(obj);
 }
 

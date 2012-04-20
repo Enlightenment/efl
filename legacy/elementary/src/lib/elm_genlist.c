@@ -1926,7 +1926,7 @@ _item_text_realize(Elm_Gen_Item *it,
 
              if (s)
                {
-                  edje_object_part_text_set(target, key, s);
+                  edje_object_part_text_escaped_set(target, key, s);
                   free(s);
                }
              else

@@ -68,7 +68,7 @@ _theme_hook(Evas_Object *obj)
      }
    if (wd->label)
      {
-        edje_object_part_text_set(wd->progressbar, "elm.text", wd->label);
+        edje_object_part_text_escaped_set(wd->progressbar, "elm.text", wd->label);
         edje_object_signal_emit(wd->progressbar, "elm,state,text,visible", "elm");
      }
    if (wd->pulse)
@@ -159,10 +159,10 @@ _units_set(Evas_Object *obj)
      {
         char buf[1024];
         snprintf(buf, sizeof(buf), wd->units, 100 * wd->val);
-        edje_object_part_text_set(wd->progressbar, "elm.text.status", buf);
+        edje_object_part_text_escaped_set(wd->progressbar, "elm.text.status", buf);
      }
    else
-     edje_object_part_text_set(wd->progressbar, "elm.text.status", NULL);
+     edje_object_part_text_escaped_set(wd->progressbar, "elm.text.status", NULL);
 }
 
 static void
@@ -183,7 +183,7 @@ _elm_progressbar_label_set(Evas_Object *obj, const char *item, const char *label
         edje_object_signal_emit(wd->progressbar, "elm,state,text,hidden", "elm");
         edje_object_message_signal_process(wd->progressbar);
      }
-   edje_object_part_text_set(wd->progressbar, "elm.text", label);
+   edje_object_part_text_escaped_set(wd->progressbar, "elm.text", label);
    _sizing_eval(obj);
 }
 

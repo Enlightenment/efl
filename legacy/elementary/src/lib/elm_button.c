@@ -127,7 +127,7 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
    else
      edje_object_signal_emit(wd->btn, "elm,state,icon,hidden", "elm");
-   edje_object_part_text_set(wd->btn, "elm.text", wd->label);
+   edje_object_part_text_escaped_set(wd->btn, "elm.text", wd->label);
    if (elm_object_disabled_get(obj))
      edje_object_signal_emit(wd->btn, "elm,state,disabled", "elm");
    edje_object_message_signal_process(wd->btn);
@@ -375,7 +375,7 @@ _elm_button_label_set(Evas_Object *obj, const char *item, const char *label)
    else
      edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
    edje_object_message_signal_process(wd->btn);
-   edje_object_part_text_set(wd->btn, "elm.text", label);
+   edje_object_part_text_escaped_set(wd->btn, "elm.text", label);
    _sizing_eval(obj);
 }
 

@@ -206,8 +206,8 @@ _theme_hook(Evas_Object *obj)
                                    "item", elm_widget_style_get(obj));
              if (item->label)
                {
-                  edje_object_part_text_set(VIEW(item), "elm.text",
-                                            item->label);
+                  edje_object_part_text_escaped_set(VIEW(item), "elm.text",
+                                                    item->label);
                   edje_object_signal_emit(VIEW(item),
                                           "elm,state,item,text,visible", "elm");
                }
@@ -1048,7 +1048,7 @@ static void
 _item_text_set(Elm_Popup_Content_Item *item, const char *label)
 {
    if (!eina_stringshare_replace(&item->label, label)) return;
-   edje_object_part_text_set(VIEW(item), "elm.text", label);
+   edje_object_part_text_escaped_set(VIEW(item), "elm.text", label);
    if (item->label)
      edje_object_signal_emit(VIEW(item),
                              "elm,state,item,text,visible", "elm");

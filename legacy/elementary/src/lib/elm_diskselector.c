@@ -226,7 +226,7 @@ _check_string(void *data)
         // cut it off at byte mark returned form _check_letter
         strncpy(buf, it->label, length);
         buf[length] = '\0';
-        edje_object_part_text_set(VIEW(it), "elm.text", buf);
+        edje_object_part_text_escaped_set(VIEW(it), "elm.text", buf);
      }
 
    if (wd->check_idler)
@@ -288,14 +288,14 @@ _item_del_pre_hook(Elm_Object_Item *it)
              if (dit)
                {
                   eina_stringshare_replace(&wd->first->label, dit->label);
-                  edje_object_part_text_set(wd->VIEW(first), "elm.text",
+                  edje_object_part_text_escaped_set(wd->VIEW(first), "elm.text",
                                             wd->first->label);
                }
              dit = eina_list_nth(wd->items, 1);
              if (dit)
                {
                   eina_stringshare_replace(&wd->second->label, dit->label);
-                  edje_object_part_text_set(wd->VIEW(second), "elm.text",
+                  edje_object_part_text_escaped_set(wd->VIEW(second), "elm.text",
                                             wd->second->label);
                }
              // if more than 3 itmes should be displayed
@@ -304,21 +304,21 @@ _item_del_pre_hook(Elm_Object_Item *it)
                   dit = eina_list_nth(wd->items, i);
                   item2 = eina_list_nth(wd->over_items, i - 2);
                   eina_stringshare_replace(&item2->label, dit->label);
-                  edje_object_part_text_set(VIEW(item2), "elm.text", item2->label);
+                  edje_object_part_text_escaped_set(VIEW(item2), "elm.text", item2->label);
                }
 
              dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 1);
              if (dit)
                {
                   eina_stringshare_replace(&wd->last->label, dit->label);
-                  edje_object_part_text_set(wd->VIEW(last), "elm.text",
+                  edje_object_part_text_escaped_set(wd->VIEW(last), "elm.text",
                                             wd->last->label);
                }
              dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 2);
              if (dit)
                {
                   eina_stringshare_replace(&wd->s_last->label, dit->label);
-                  edje_object_part_text_set(wd->VIEW(s_last), "elm.text",
+                  edje_object_part_text_escaped_set(wd->VIEW(s_last), "elm.text",
                                             wd->s_last->label);
                }
              // if more than 3 itmes should be displayed
@@ -327,7 +327,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
                   dit = eina_list_nth(wd->items, wd->item_count - i);
                   item2 = eina_list_nth(wd->under_items, i - 3);
                   eina_stringshare_replace(&item2->label, dit->label);
-                  edje_object_part_text_set(VIEW(item2), "elm.text",
+                  edje_object_part_text_escaped_set(VIEW(item2), "elm.text",
                                             item2->label);
                }
           }
@@ -367,7 +367,7 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
 
    if (it->label)
      {
-        edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+        edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
         edje_object_signal_callback_add(VIEW(it), "elm,action,click", "", _item_click_cb, it);
      }
    if (it->icon)
@@ -504,7 +504,7 @@ _theme_hook(Evas_Object * obj)
           {
              _elm_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                    elm_widget_style_get(obj));
-             edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+             edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
           }
      }
    else
@@ -513,7 +513,7 @@ _theme_hook(Evas_Object * obj)
           {
              _elm_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                    elm_widget_style_get(obj));
-             edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+             edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
           }
      }
    _elm_theme_object_set(obj, wd->right_blank, "diskselector", "item",
@@ -986,7 +986,7 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
    if (part && strcmp(part, "default")) return;
    item = (Elm_Diskselector_Item *)it;
    eina_stringshare_replace(&item->label, label);
-   edje_object_part_text_set(VIEW(item), "elm.text", item->label);
+   edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
 }
 
 static const char *

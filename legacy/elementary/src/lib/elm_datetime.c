@@ -325,7 +325,7 @@ _theme_hook(Evas_Object *obj)
              snprintf(buf, sizeof(buf), EDC_PART_FIELD_ENABLE_SIG_STR, field->location);
              edje_object_signal_emit(wd->base, buf, "elm");
              snprintf(buf, sizeof(buf), EDC_PART_SEPARATOR_STR, field->location);
-             edje_object_part_text_set(wd->base, buf, field->separator);
+             edje_object_part_text_escaped_set(wd->base, buf, field->separator);
              dt_mod->field_value_display(wd->mod_data, field->item_obj);
           }
         else
@@ -751,7 +751,7 @@ _reload_format(Evas_Object *obj)
              edje_object_signal_emit(wd->base, buf, "elm");
           }
         snprintf(buf, sizeof(buf), EDC_PART_SEPARATOR_STR, (field->location + 1));
-        edje_object_part_text_set(wd->base, buf, field->separator);
+        edje_object_part_text_escaped_set(wd->base, buf, field->separator);
      }
    edje_object_message_signal_process(wd->base);
    _field_list_arrange(obj);

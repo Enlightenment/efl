@@ -57,7 +57,7 @@ _theme_hook(Evas_Object *obj)
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _elm_theme_object_set(obj, wd->frm, "frame", "base",
                          elm_widget_style_get(obj));
-   edje_object_part_text_set(wd->frm, "elm.text", wd->label);
+   edje_object_part_text_escaped_set(wd->frm, "elm.text", wd->label);
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    edje_object_scale_set(wd->frm,
@@ -127,7 +127,7 @@ _elm_frame_label_set(Evas_Object *obj, const char *item, const char *label)
    if (item && strcmp(item, "default")) return;
    if (!wd) return;
    eina_stringshare_replace(&(wd->label), label);
-   edje_object_part_text_set(wd->frm, "elm.text", wd->label);
+   edje_object_part_text_escaped_set(wd->frm, "elm.text", wd->label);
    _sizing_eval(obj);
 }
 

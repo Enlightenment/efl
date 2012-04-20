@@ -180,9 +180,9 @@ _elm_ews_border_config_apply(Ecore_Evas *ee, Evas_Object *o, Elm_Theme *th)
 
    title = ecore_evas_title_get(ee);
    ecore_evas_name_class_get(ee, &name, &class);
-   edje_object_part_text_set(o, "elm.text.title", title);
-   edje_object_part_text_set(o, "elm.text.name", name);
-   edje_object_part_text_set(o, "elm.text.class", class);
+   edje_object_part_text_escaped_set(o, "elm.text.title", title);
+   edje_object_part_text_escaped_set(o, "elm.text.name", name);
+   edje_object_part_text_escaped_set(o, "elm.text.class", class);
 
    _elm_ews_border_geo_apply(ee, o);
    _elm_ews_border_focus_apply(ee, o);

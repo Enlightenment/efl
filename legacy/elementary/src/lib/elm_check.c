@@ -115,9 +115,9 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->chk, "elm,state,text,visible", "elm");
    else
      edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
-   edje_object_part_text_set(wd->chk, "elm.text", wd->label);
-   edje_object_part_text_set(wd->chk, "elm.ontext", wd->ontext);
-   edje_object_part_text_set(wd->chk, "elm.offtext", wd->offtext);
+   edje_object_part_text_escaped_set(wd->chk, "elm.text", wd->label);
+   edje_object_part_text_escaped_set(wd->chk, "elm.ontext", wd->ontext);
+   edje_object_part_text_escaped_set(wd->chk, "elm.offtext", wd->offtext);
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(wd->chk, "elm,state,disabled", "elm");
    edje_object_message_signal_process(wd->chk);
@@ -341,17 +341,17 @@ _elm_check_label_set(Evas_Object *obj, const char *item, const char *label)
         else
            edje_object_signal_emit(wd->chk, "elm,state,text,hidden", "elm");
         edje_object_message_signal_process(wd->chk);
-        edje_object_part_text_set(wd->chk, "elm.text", label);
+        edje_object_part_text_escaped_set(wd->chk, "elm.text", label);
      }
    else if ((item) && (!strcmp(item, "on")))
      {
         eina_stringshare_replace(&wd->ontext, label);
-        edje_object_part_text_set(wd->chk, "elm.ontext", wd->ontext);
+        edje_object_part_text_escaped_set(wd->chk, "elm.ontext", wd->ontext);
      }
    else if ((item) && (!strcmp(item, "off")))
      {
         eina_stringshare_replace(&wd->offtext, label);
-        edje_object_part_text_set(wd->chk, "elm.offtext", wd->offtext);
+        edje_object_part_text_escaped_set(wd->chk, "elm.offtext", wd->offtext);
      }
    _sizing_eval(obj);
 }

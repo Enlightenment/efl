@@ -227,7 +227,7 @@ _write_label(Evas_Object *obj)
      snprintf(buf, sizeof(buf), "%.0f", wd->val);
 
 apply:
-   edje_object_part_text_set(wd->spinner, "elm.text", buf);
+   edje_object_part_text_escaped_set(wd->spinner, "elm.text", buf);
    if (wd->entry_visible) _entry_show(wd);
 }
 

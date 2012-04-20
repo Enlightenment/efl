@@ -211,7 +211,7 @@ _title_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    const char *title;
 
    title = emotion_object_title_get(wd->emotion);
-   edje_object_part_text_set(wd->layout, "elm,title", title);
+   edje_object_part_text_escaped_set(wd->layout, "elm,title", title);
    edje_object_signal_emit(wd->layout, "elm,video,title", "elm");
 }
 

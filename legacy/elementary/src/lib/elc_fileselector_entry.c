@@ -8,6 +8,7 @@ struct _Widget_Data
    Evas_Object *edje;
    Evas_Object *button;
    Evas_Object *entry;
+   char *path;
 };
 
 static const char *widtype = NULL;
@@ -71,7 +72,12 @@ _FILE_CHOSEN_fwd(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    const char *file = event_info;
-   elm_object_text_set(wd->entry, file);
+   char *s;
+   
+   s = elm_entry_utf8_to_markup(file);
+   if (!s) return;
+   elm_object_text_set(wd->entry, s);
+   free(s);
    evas_object_smart_callback_call(data, SIG_FILE_CHOSEN, event_info);
 }
 
@@ -99,6 +105,7 @@ static void
 _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->path) free(wd->path);
    free(wd);
 }
 
@@ -404,9 +411,16 @@ elm_fileselector_entry_path_set(Evas_Object *obj, const char *path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   char *s;
+   
    if (!wd) return;
    elm_fileselector_button_path_set(wd->button, path);
-   elm_object_text_set(wd->entry, path);
+   s = elm_entry_utf8_to_markup(path);
+   if (s)
+     {
+        elm_object_text_set(wd->entry, s);
+        free(s);
+     }
 }
 
 EAPI const char *
@@ -414,8 +428,11 @@ elm_fileselector_entry_path_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
+   
    if (!wd) return NULL;
-   return elm_object_text_get(wd->entry);
+   if (wd->path) free(wd->path);
+   wd->path = elm_entry_markup_to_utf8(elm_object_text_get(wd->entry));
+   return wd->path;
 }
 
 EAPI void

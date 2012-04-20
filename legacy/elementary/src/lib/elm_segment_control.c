@@ -331,7 +331,7 @@ _swallow_item_objects(Elm_Segment_Item *it)
 
    if (it->label)
      {
-        edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+        edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
         edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
      }
    else
@@ -453,7 +453,7 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
      edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
    edje_object_message_signal_process(VIEW(item));
    //label can be NULL also.
-   edje_object_part_text_set(VIEW(item), "elm.text", item->label);
+   edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
 }
 
 static const char *
@@ -544,7 +544,7 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label)
    else
      edje_object_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
    edje_object_message_signal_process(VIEW(it));
-   edje_object_part_text_set(VIEW(it), "elm.text", label);
+   edje_object_part_text_escaped_set(VIEW(it), "elm.text", label);
 
    it->icon = icon;
    if (it->icon) elm_widget_sub_object_add(VIEW(it), it->icon);

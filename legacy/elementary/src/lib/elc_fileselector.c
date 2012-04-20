@@ -247,9 +247,9 @@ _itc_text_get(void              *data,
                Evas_Object *obj   __UNUSED__,
                const char *source __UNUSED__)
 {
-   return strdup(ecore_file_file_get(data)); /* NOTE this will be
-                                              * free() by the
-                                              * caller */
+   return elm_entry_utf8_to_markup(ecore_file_file_get(data)); /* NOTE this will be
+                                                                * free() by the
+                                                                * caller */
 }
 
 static Evas_Object *
@@ -388,6 +388,8 @@ _sel_do(void *data)
      }
    else /* navigating through folders only or file is not a dir. */
      {
+        char *s;
+        
         if (wd->expand && wd->mode == ELM_FILESELECTOR_LIST)
           _do_anchors(sd->fs, path);
         else if (wd->only_folder)
@@ -397,8 +399,14 @@ _sel_do(void *data)
              _populate(sd->fs, p, NULL);
              eina_stringshare_del(p);
           }
-        elm_object_text_set(wd->filename_entry,
-                                     ecore_file_file_get(path));
+        s = elm_entry_utf8_to_markup(ecore_file_file_get(path));
+        if (s)
+          {
+             elm_object_text_set(wd->filename_entry, s);
+             free(s);
+          }
+        else
+          elm_object_text_set(wd->filename_entry, "");
      }
 
    evas_object_smart_callback_call(sd->fs, SIG_SELECTED, (void *)path);
@@ -519,11 +527,15 @@ _do_anchors(Evas_Object *obj,
             const char  *path)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   char **tok, buf[PATH_MAX * 3];
+   char **tok, buf[PATH_MAX * 3], *s;
    int i, j;
+   
    if (!wd) return;
+   s = elm_entry_utf8_to_markup(path);
+   if (!s) return;
    buf[0] = '\0';
-   tok = eina_str_split(path, "/", 0);
+   tok = eina_str_split(s, "/", 0);
+   free(s);
    eina_strlcat(buf, "<a href=/>root</a>", sizeof(buf));
    for (i = 0; tok[i]; i++)
      {
@@ -1144,16 +1156,31 @@ elm_fileselector_selected_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
+   if (!wd->path) return NULL;
+   
    if (wd->filename_entry)
      {
         const char *name;
         char buf[PATH_MAX];
-        char *dir;
+        char *dir, *s;
 
         dir = wd->only_folder ? ecore_file_dir_get(wd->path) : strdup(wd->path);
         name = elm_object_text_get(wd->filename_entry);
-        snprintf(buf, sizeof(buf), "%s/%s",
-                 dir, name);
+        if (name)
+          {
+             s = elm_entry_markup_to_utf8(name);
+             if (s)
+               {
+                  snprintf(buf, sizeof(buf), "%s/%s", dir, s);
+                  free(s);
+               }
+             else
+               snprintf(buf, sizeof(buf), "%s", dir);
+          }
+        else
+          {
+             snprintf(buf, sizeof(buf), "%s", dir);
+          }
         if (wd->only_folder && !ecore_file_is_dir(buf))
           eina_stringshare_replace(&wd->selection, ecore_file_dir_get(buf));
         else
@@ -1201,8 +1228,16 @@ elm_fileselector_selected_set(Evas_Object *obj,
         _populate(obj, ecore_file_dir_get(path), NULL);
         if (wd->filename_entry)
           {
-             elm_object_text_set(wd->filename_entry,
-                                          ecore_file_file_get(path));
+             char *s;
+             
+             s = elm_entry_utf8_to_markup(ecore_file_file_get(path));
+             if (s)
+               {
+                  elm_object_text_set(wd->filename_entry, s);
+                  free(s);
+               }
+             else
+               elm_object_text_set(wd->filename_entry, "");
              eina_stringshare_replace(&wd->selection, path);
           }
      }

@@ -79,13 +79,13 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    edje_object_mirrored_set(wd->as, rtl);
    if (!elm_widget_mirrored_get(obj))
      {
-        edje_object_part_text_set(wd->as, "elm.text.left", wd->text_left);
-        edje_object_part_text_set(wd->as, "elm.text.right", wd->text_right);
+        edje_object_part_text_escaped_set(wd->as, "elm.text.left", wd->text_left);
+        edje_object_part_text_escaped_set(wd->as, "elm.text.right", wd->text_right);
      }
    else
      {
-        edje_object_part_text_set(wd->as, "elm.text.left", wd->text_right);
-        edje_object_part_text_set(wd->as, "elm.text.right", wd->text_left);
+        edje_object_part_text_escaped_set(wd->as, "elm.text.left", wd->text_right);
+        edje_object_part_text_escaped_set(wd->as, "elm.text.right", wd->text_left);
      }
    edje_object_part_drag_value_get(wd->as, "elm.drag_button_base", &pos, NULL);
    edje_object_part_drag_value_set(wd->as, "elm.drag_button_base", 1.0 - pos, 0.5);
@@ -126,8 +126,8 @@ _theme_hook(Evas_Object *obj)
    edje_object_part_swallow(wd->as, "elm.drag_button_base", wd->drag_button_base);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
-   edje_object_part_text_set(wd->as, "elm.text.center", wd->text_center);
-   edje_object_part_text_set(wd->as, "elm.text.indicator", wd->indicator_label);
+   edje_object_part_text_escaped_set(wd->as, "elm.text.center", wd->text_center);
+   edje_object_part_text_escaped_set(wd->as, "elm.text.indicator", wd->indicator_label);
    edje_object_message_signal_process(wd->as);
    _sizing_eval(obj);
 }
@@ -326,29 +326,29 @@ _elm_actionslider_label_set(Evas_Object *obj, const char *item, const char *labe
    if (!item || !strcmp(item, "indicator"))
      {
         eina_stringshare_replace(&wd->indicator_label, label);
-        edje_object_part_text_set(wd->as, "elm.text.indicator",
-              wd->indicator_label);
+        edje_object_part_text_escaped_set(wd->as, "elm.text.indicator",
+                                          wd->indicator_label);
      }
    else if (!strcmp(item, "left"))
      {
         eina_stringshare_replace(&wd->text_left, label);
         if (!elm_widget_mirrored_get(obj))
-          edje_object_part_text_set(wd->as, "elm.text.left", wd->text_left);
+          edje_object_part_text_escaped_set(wd->as, "elm.text.left", wd->text_left);
         else
-          edje_object_part_text_set(wd->as, "elm.text.right", wd->text_left);
+          edje_object_part_text_escaped_set(wd->as, "elm.text.right", wd->text_left);
      }
    else if (!strcmp(item, "center"))
      {
         eina_stringshare_replace(&wd->text_center, label);
-        edje_object_part_text_set(wd->as, "elm.text.center", wd->text_center);
+        edje_object_part_text_escaped_set(wd->as, "elm.text.center", wd->text_center);
      }
    else if (!strcmp(item, "right"))
      {
         eina_stringshare_replace(&wd->text_right, label);
         if (!elm_widget_mirrored_get(obj))
-          edje_object_part_text_set(wd->as, "elm.text.right", wd->text_right);
+          edje_object_part_text_escaped_set(wd->as, "elm.text.right", wd->text_right);
         else
-          edje_object_part_text_set(wd->as, "elm.text.left", wd->text_right);
+          edje_object_part_text_escaped_set(wd->as, "elm.text.left", wd->text_right);
      }
 }
 

@@ -1138,7 +1138,7 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *text)
    if (part && strcmp(part, "default")) return;
    if (!eina_stringshare_replace(&list_it->label, text)) return;
    if (VIEW(list_it))
-     edje_object_part_text_set(VIEW(list_it), "elm.text", text);
+     edje_object_part_text_escaped_set(VIEW(list_it), "elm.text", text);
 }
 
 static const char *
@@ -1351,7 +1351,7 @@ _fix_items(Evas_Object *obj)
                   else if (!strcmp(stacking, "above"))
                     evas_object_raise(VIEW(it));
                }
-             edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+             edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
 
              if ((!it->icon) && (minh[0] > 0))
                {
