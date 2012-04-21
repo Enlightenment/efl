@@ -1250,6 +1250,8 @@ evas_gl_common_shader_program_init_done(void)
 {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    glReleaseShaderCompiler();
+#else
+   if (glsym_glReleaseShaderCompiler) glsym_glReleaseShaderCompiler();
 #endif
 }
 

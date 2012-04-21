@@ -631,6 +631,7 @@ extern void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
 extern void (*glsym_glGetProgramBinary)     (GLuint a, GLsizei b, GLsizei *c, GLenum *d, void *e);
 extern void (*glsym_glProgramBinary)        (GLuint a, GLenum b, const void *c, GLint d);
 extern void (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d);
+extern void (*glsym_glReleaseShaderCompiler)(void);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
