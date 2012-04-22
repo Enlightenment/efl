@@ -700,3 +700,7 @@
 
         * Fix color multiplier staying set when rendering map.
 
+2012-04-22  Carsten Haitzler (The Rasterman)
+
+        * Fix shader binary saving to save with dir existing already.
+

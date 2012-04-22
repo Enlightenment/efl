@@ -37,6 +37,7 @@ Fixes:
    * gl engine cliupping bug when rendering maps to fbo's.
    * liblinebreak disabled compilation bug.
    * color multiplier staying set when rendering map.
+   * shader binary now saves if shader dir exists already.
 
 Improvements:
 
