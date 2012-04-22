@@ -41,6 +41,7 @@ SRCS = \
 	eina_model_01.c \
 	eina_model_02.c \
 	eina_model_03.c \
+	eina_simple_xml_parser_01.c \
 	eina_value_01.c \
 	eina_value_02.c \
 	eina_value_03.c \
@@ -85,6 +86,7 @@ examples_PROGRAMS += \
 	eina_model_02 \
 	eina_model_03 \
 	eina_model_04 \
+	eina_simple_xml_parser_01 \
 	eina_value_01 \
 	eina_value_02 \
 	eina_value_03 \

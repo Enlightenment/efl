@@ -27,6 +27,80 @@
 #include "eina_inlist.h"
 
 /**
+ * @page eina_simple_xml_parser_example_01_page
+ * @dontinclude eina_simple_xml_parser_01.c
+ *
+ * We are going to parse an XML sample file and print the data to stdout.
+ *
+ * Like all examples we start by including Eina:
+ * @skipline #include
+ *
+ * We declare 2 booleans to keep track of tags:
+ * @skipline tag_login
+ * @skipline tag_message
+ *
+ * Here we declare some variables and initialize eina:
+ * @until eina_init
+ *
+ * We fill buffer with the XML data from chat.xml:
+ * @until fread
+ *
+ * We will use an Eina_Array to store the data:
+ * @skipline array
+ *
+ * Here we call eina_simple_xml_parse(). We pass the buffer with data, its size,
+ * we ask to strip leading and trailing whitespace, we give the callback
+ * function and the array to store the formatted data:
+ * @until _xml_tag_cb
+ *
+ * This will loop over the array and print the data using _print callback:
+ * @skipline foreach
+ *
+ * This is the main XML parser callback, it will check for known tags and get
+ * the corresponding values:
+ * @skip static
+ * @until str
+ *
+ * We first check for opening tag:
+ * @skipline type
+ *
+ * If we know the tag should have attributes, then we find them using
+ * eina_simple_xml_tag_attributes_find() and give them to another parsing
+ * function using eina_simple_xml_attributes_parse():
+ * @until _xml_attr_cb
+ *
+ * We check for other known tags:
+ * @until tag_message
+ *
+ * We then check data for corresponding tag:
+ * @until EINA_FALSE
+ *
+ * We are doing the formatting in same time and put all the <post> children
+ * in str.
+ * @until EINA_FALSE
+ *
+ * Finally, we store our string in the array:
+ * @skipline push
+ *
+ * This is the callback to parse the attributes, we check for key name and keep
+ * the value:
+ * @skip static
+ * @until snprintf
+ *
+ * This is the function that simply print items of the array:
+ * @until EINA_TRUE
+ *
+ * You can see the full source code
+ * @ref eina_simple_xml_parser_example_01 "here".
+ */
+
+/**
+ * @page eina_simple_xml_parser_example_01
+ * @include eina_simple_xml_parser_01.c
+ * @example eina_simple_xml_parser_01.c
+ */
+
+/**
  * @defgroup Eina_Simple_XML_Group Simple_XML
  *
  * Simplistic relaxed SAX-like XML parser.
@@ -48,6 +122,9 @@
  * will not tokenize this. If you want you can use
  * eina_simple_xml_tag_attributes_find() and then
  * eina_simple_xml_attributes_parse().
+ *
+ * For more information, see
+ * @ref eina_simple_xml_parser_example_01_page "this example".
  */
 
 /**
