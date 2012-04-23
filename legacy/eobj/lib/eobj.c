@@ -1089,14 +1089,16 @@ _eobj_weak_ref_cb(void *data, Eobj *obj EINA_UNUSED, const Eobj_Event_Descriptio
    return EOBJ_CALLBACK_CONTINUE;
 }
 
-EAPI void
+EAPI Eobj *
 eobj_weak_ref_add(const Eobj *_obj, Eobj **wref)
 {
    Eobj *obj = (Eobj *) _obj;
-   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, obj);
 
    *wref = obj;
    eobj_event_callback_add(obj, EOBJ_EV_DEL, _eobj_weak_ref_cb, wref);
+
+   return obj;
 }
 
 EAPI void

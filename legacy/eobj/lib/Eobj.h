@@ -545,8 +545,9 @@ EAPI void eobj_del(Eobj *obj);
  * @brief Create a new weak reference to obj.
  * @param obj The object being referenced.
  * @param wref The pointer to use for the weak ref.
+ * @return The object being referenced (obj).
  */
-EAPI void eobj_weak_ref_add(const Eobj *obj, Eobj **wref);
+EAPI Eobj *eobj_weak_ref_add(const Eobj *obj, Eobj **wref);
 
 /**
  * @brief Free the weak reference passed.
