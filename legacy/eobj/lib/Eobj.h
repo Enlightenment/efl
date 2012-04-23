@@ -463,6 +463,13 @@ EAPI void *eobj_data_get(const Eobj *obj, const Eobj_Class *klass);
  * @param obj the object to work on.
  * @return The object passed.
  *
+ * It's very easy to get a refcount leak and start leaking memory because
+ * of a forgotten unref or an extra ref. That is why there are eobj_xref
+ * and eobj_xunref that will make debugging easier in such a case.
+ * Therefor, these functions should only be used in small scopes, i.e at the
+ * start of some section in which the object may get freed, or if you know
+ * what you are doing.
+ *
  * @see eobj_unref()
  * @see eobj_ref_get()
  */
