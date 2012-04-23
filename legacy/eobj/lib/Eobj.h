@@ -793,9 +793,9 @@ enum {
 /**
  * @def EOBJ_BASE_DATA_SET(key, data, free_func)
  * Set generic data to object.
- * @param key the key associated with the data
- * @param data the data to set.
- * @param free_func the func to free data with (NULL means "do nothing").
+ * @param[in] key the key associated with the data
+ * @param[in] data the data to set.
+ * @param[in] free_func the func to free data with (NULL means "do nothing").
  *
  * @see #EOBJ_BASE_DATA_GET
  * @see #EOBJ_BASE_DATA_DEL
@@ -805,8 +805,8 @@ enum {
 /**
  * @def EOBJ_BASE_DATA_GET(key, data)
  * Get generic data from object.
- * @param key the key associated with the data
- * @param data the data for the key
+ * @param[in] key the key associated with the data
+ * @param[out] data the data for the key
  *
  * @see #EOBJ_BASE_DATA_SET
  * @see #EOBJ_BASE_DATA_DEL
@@ -816,7 +816,7 @@ enum {
 /**
  * @def EOBJ_BASE_DATA_DEL(key)
  * Del generic data from object.
- * @param key the key associated with the data
+ * @param[in] key the key associated with the data
  *
  * @see #EOBJ_BASE_DATA_SET
  * @see #EOBJ_BASE_DATA_GET

@@ -17,6 +17,11 @@ typedef struct
 
 #define SIMPLE_ID(sub_id) (SIMPLE_BASE_ID + sub_id)
 
+/**
+ * @def SIMPLE_A_SET(a)
+ * @brief Set value to a - property
+ * @param[in] a integer value to set
+ */
 #define SIMPLE_A_SET(a) SIMPLE_ID(SIMPLE_SUB_ID_A_SET), EOBJ_TYPECHECK(int, a)
 
 extern const Eobj_Event_Description _SIG_A_CHANGED;
