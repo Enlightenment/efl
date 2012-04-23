@@ -1192,6 +1192,7 @@ edje_object_part_text_escaped_set(Evas_Object *obj, const char *part, const char
                     }
                   else if (*p == 0)
                     {
+                       if (!s) s = esc_start; /* This would happen when there is & that isn't escaped */
                        eina_strbuf_append_length(sbuf, s, p - s);
                        s = NULL;
                     }
@@ -1201,6 +1202,7 @@ edje_object_part_text_escaped_set(Evas_Object *obj, const char *part, const char
              
              if (*p == '&')
                {
+                  if (!s) s = esc_start; /* This would happen when there is & that isn't escaped */
                   esc_start = p;
                   esc_end = NULL;
                   eina_strbuf_append_length(sbuf, s, p - s);
