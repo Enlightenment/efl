@@ -348,7 +348,9 @@ _inside_rects(Shadow            *s,
  * @param   base The base window to start searching from (normally root).
  * @param   x The given X position.
  * @param   y The given Y position.
- * @return  The window at that position.
+ * @param   skip The list of windows to be skipped.
+ * @param   skip_num The number of windows to be skipped.
+ * @return  The window at the desired position.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
 EAPI Ecore_X_Window

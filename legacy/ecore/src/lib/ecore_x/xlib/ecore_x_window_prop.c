@@ -434,11 +434,6 @@ ecore_x_window_prop_window_list_get(Ecore_X_Window win,
    return ecore_x_window_prop_xid_list_get(win, atom, XA_WINDOW, plst);
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
 EAPI Ecore_X_Atom
 ecore_x_window_prop_any_type(void)
 {
@@ -446,9 +441,13 @@ ecore_x_window_prop_any_type(void)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Set a property of Ecore_X_Window.
+ * @param win The window for which the property will be set.
+ * @param property The property of the window to be set.
+ * @param type The type of the property that will be set.
+ * @param size The size of the property that will be set.
+ * @param data The data of the property that will be set.
+ * @param number The size of data.
  */
 EAPI void
 ecore_x_window_prop_property_set(Ecore_X_Window win,
@@ -489,9 +488,16 @@ ecore_x_window_prop_property_set(Ecore_X_Window win,
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Get a property of Ecore_X_Window.
+ * @note If there aren't any data to be got the function return NULL.
+ *       If the function can't allocate the memory then 0 is returned.
+ * @param win The window for which the property will be got.
+ * @param property The property of the window that will be gotten.
+ * @param type The type of the property that will be gotten.
+ * @param size This parameter isn't in use.
+ * @param data The data of the property that will be gotten.
+ * @param num The size of property.
+ * @return size_ret The size of array that contains the property.
  */
 EAPI int
 ecore_x_window_prop_property_get(Ecore_X_Window win,
@@ -707,9 +713,12 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Get a array containing the protocols of @a win
+ * @note If there aren't any properties to be counted or any protocols to get
+ *       then the function returns NULL.
+ * @param win The window for which protocol list will be got.
+ * @param num_ret Contains the number of elements of the array to be returned.
+ * @return The array that contains the protocols.
  */
 EAPI Ecore_X_WM_Protocol *
 ecore_x_window_prop_protocol_list_get(Ecore_X_Window win,

@@ -51,6 +51,7 @@ _ecore_wl_window_shutdown(void)
  * @param y      Y position
  * @param w      Width
  * @param h      Height
+ * @param buffer_type The type of the buffer to be used to create a new Ecore_Wl_Window.
  * 
  * @return The new window
  * 

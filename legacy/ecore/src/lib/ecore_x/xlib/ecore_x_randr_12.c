@@ -1702,6 +1702,7 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window root,
 /**
  * @brief gets the given output's name as reported by X
  * @param root the window which's screen will be queried
+ * @param output The output for which the name will be reported.
  * @param len length of returned c-string.
  * @return name of the output as reported by X
  */

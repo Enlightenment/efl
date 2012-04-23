@@ -692,7 +692,7 @@ _ecore_x_shutdown(int close_display)
  * and any event handlers for it are removed.
  *
  * @return  The number of times the library has been initialized without
- *          being shut down.
+ *          being shut down. 0 is returned if an error occurs.
  * @ingroup Ecore_X_Init_Group
  */
 EAPI int
@@ -798,6 +798,7 @@ ecore_x_screen_count_get(void)
 /**
  * Retrieves the index number of the given screen.
  *
+ * @param screen The screen for which the index will be retrieved.
  * @return  The index number of the screen.
  * @ingroup Ecore_X_Display_Attr_Group
  *
@@ -812,15 +813,16 @@ ecore_x_screen_index_get(const Ecore_X_Screen *screen)
 /**
  * Retrieves the screen based on index number.
  *
+ * @param index The index that will be used to retrieve the screen.
  * @return  The Ecore_X_Screen at this index.
  * @ingroup Ecore_X_Display_Attr_Group
  *
  * @since 1.1
  */
 EAPI Ecore_X_Screen *
-ecore_x_screen_get(int idx)
+ecore_x_screen_get(int index)
 {
-   return XScreenOfDisplay(_ecore_x_disp, idx);
+   return XScreenOfDisplay(_ecore_x_disp, index);
 }
 
 /**
@@ -1802,6 +1804,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win,
  *
  * @param win     The window the message is sent to.
  * @param type    The client message type.
+ * @param mask    The mask of the message to be sent.
  * @param d0      The client message data item 1
  * @param d1      The client message data item 2
  * @param d2      The client message data item 3

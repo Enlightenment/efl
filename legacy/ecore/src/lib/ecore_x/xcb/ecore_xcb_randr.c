@@ -1059,6 +1059,7 @@ ecore_x_randr_output_possible_crtcs_get(Ecore_X_Window       root,
 /**
  * @brief gets the given output's name as reported by X
  * @param root the window which's screen will be queried
+ * @param output The output name given to be reported.
  * @param len length of returned c-string.
  * @return name of the output as reported by X
  */
@@ -1219,7 +1220,7 @@ EAPI Eina_Bool
 ecore_x_randr_crtc_settings_set(Ecore_X_Window            root,
                                 Ecore_X_Randr_Crtc        crtc,
                                 Ecore_X_Randr_Output     *outputs,
-                                int                       num,
+                                int                       noutputs,
                                 int                       x,
                                 int                       y,
                                 Ecore_X_Randr_Mode        mode,
@@ -1255,15 +1256,15 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window            root,
         xcb_randr_set_crtc_config_reply_t *sreply;
 
         if ((mode == Ecore_X_Randr_None) ||
-            (num == Ecore_X_Randr_None))
+            (noutputs == Ecore_X_Randr_None))
           {
              outputs = NULL;
-             num = 0;
+             noutputs = 0;
           }
-        else if (num == (int)Ecore_X_Randr_Unset)
+        else if (noutputs == (int)Ecore_X_Randr_Unset)
           {
              outputs = xcb_randr_get_crtc_info_outputs(creply);
-             num = creply->num_outputs;
+             noutputs = creply->num_outputs;
           }
         if ((int)mode == Ecore_X_Randr_Unset) mode = creply->mode;
         if (x < 0) x = creply->x;
@@ -1275,7 +1276,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window            root,
           xcb_randr_set_crtc_config_unchecked(_ecore_xcb_conn,
                                               crtc, XCB_CURRENT_TIME, stamp,
                                               x, y, mode, orientation,
-                                              num, outputs);
+                                              noutputs, outputs);
         sreply =
           xcb_randr_set_crtc_config_reply(_ecore_xcb_conn, scookie, NULL);
         if (sreply)
@@ -1298,7 +1299,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window            root,
  * @param crtc The CRTC which shall be set
  * @param outputs Array of outputs which have to be compatible with the mode. If
  * @c NULL CRTC will be disabled.
- * @param num Number of outputs in array to be used. Use
+ * @param noutputs Number of outputs in array to be used. Use
  * Ecore_X_Randr_Unset (or @c -1) to use currently used outputs.
  * @param mode XID of the mode to be set. If set to @c 0 the CRTC will be
  * disabled. If set to @c -1 the call will fail.
@@ -1309,7 +1310,7 @@ EAPI Eina_Bool
 ecore_x_randr_crtc_mode_set(Ecore_X_Window        root,
                             Ecore_X_Randr_Crtc    crtc,
                             Ecore_X_Randr_Output *outputs,
-                            int                   num,
+                            int                   noutputs,
                             Ecore_X_Randr_Mode    mode)
 {
    Eina_Bool ret = EINA_FALSE;
@@ -1322,7 +1323,7 @@ ecore_x_randr_crtc_mode_set(Ecore_X_Window        root,
 
    if ((int)mode == Ecore_X_Randr_Unset) return ret;
    ret =
-     ecore_x_randr_crtc_settings_set(root, crtc, outputs, num,
+     ecore_x_randr_crtc_settings_set(root, crtc, outputs, noutputs,
                                      Ecore_X_Randr_Unset, Ecore_X_Randr_Unset,
                                      mode, Ecore_X_Randr_Unset);
 #endif
@@ -1752,8 +1753,9 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window     root,
 /**
  * @brief Sets a CRTC relative to another one.
  *
- * @param crtc1 The CRTC to be positioned.
- * @param crtc2 The CRTC the position should be relative to.
+ * @param root The window on which CRTC's position will be set.
+ * @param crtc_r1 The CRTC to be positioned.
+ * @param crtc_r2 The CRTC the position should be relative to.
  * @param policy The relation between the crtcs.
  * @param alignment In case CRTCs size differ, aligns CRTC1 accordingly at
  * CRTC2's borders.
@@ -1763,8 +1765,8 @@ ecore_x_randr_crtc_geometry_get(Ecore_X_Window     root,
  */
 EAPI Eina_Bool
 ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window                   root,
-                                    Ecore_X_Randr_Crtc               crtc1,
-                                    Ecore_X_Randr_Crtc               crtc2,
+                                    Ecore_X_Randr_Crtc               crtc_r1,
+                                    Ecore_X_Randr_Crtc               crtc_r2,
                                     Ecore_X_Randr_Output_Policy      policy,
                                     Ecore_X_Randr_Relative_Alignment alignment)
 {
@@ -1779,16 +1781,16 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window                   root,
 #ifdef ECORE_XCB_RANDR
    RANDR_CHECK_1_2_RET(EINA_FALSE);
 
-   if ((ecore_x_randr_crtc_mode_get(root, crtc1) == 0) ||
-       (ecore_x_randr_crtc_mode_get(root, crtc2) == 0))
+   if ((ecore_x_randr_crtc_mode_get(root, crtc_r1) == 0) ||
+       (ecore_x_randr_crtc_mode_get(root, crtc_r2) == 0))
      return EINA_FALSE;
 
-   if ((!_ecore_xcb_randr_crtc_validate(root, crtc1) ||
-        (!(crtc1 != crtc2) && (!_ecore_xcb_randr_crtc_validate(root, crtc2)))))
+   if ((!_ecore_xcb_randr_crtc_validate(root, crtc_r1) ||
+        (!(crtc_r1 != crtc_r2) && (!_ecore_xcb_randr_crtc_validate(root, crtc_r2)))))
      return EINA_FALSE;
 
-   ecore_x_randr_crtc_geometry_get(root, crtc1, &r1.x, &r1.y, &r1.w, &r1.h);
-   ecore_x_randr_crtc_geometry_get(root, crtc2, &r2.x, &r2.y, &r2.w, &r2.h);
+   ecore_x_randr_crtc_geometry_get(root, crtc_r1, &r1.x, &r1.y, &r1.w, &r1.h);
+   ecore_x_randr_crtc_geometry_get(root, crtc_r2, &r2.x, &r2.y, &r2.w, &r2.h);
    ecore_x_randr_screen_size_range_get(root, NULL, NULL, &w_max, &h_max);
    ecore_x_randr_screen_current_size_get(root, &cw, &ch, NULL, NULL);
 
@@ -1835,7 +1837,7 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window                   root,
         break;
 
       case ECORE_X_RANDR_OUTPUT_POLICY_CLONE:
-        return ecore_x_randr_crtc_pos_set(root, crtc1, r2.x, r2.y);
+        return ecore_x_randr_crtc_pos_set(root, crtc_r1, r2.x, r2.y);
         break;
 
       case ECORE_X_RANDR_OUTPUT_POLICY_NONE:
@@ -1846,7 +1848,7 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window                   root,
    if (((yn + r1.h) > h_max) || ((xn + r1.w) > w_max))
      return EINA_FALSE;
 
-   return ecore_x_randr_crtc_pos_set(root, crtc1, xn, yn);
+   return ecore_x_randr_crtc_pos_set(root, crtc_r1, xn, yn);
 #endif
 
    return EINA_FALSE;

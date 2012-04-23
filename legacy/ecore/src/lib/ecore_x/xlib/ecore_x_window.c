@@ -769,9 +769,9 @@ ecore_x_window_depth_get(Ecore_X_Window win)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Show the cursor on a window of type Ecore_X_Window.
+ * @param win The window for which the cursor will be showed.
+ * @param show Enables the show of the cursor on the window if equals EINA_TRUE, disables if equals EINA_FALSE.
  */
 EAPI void
 ecore_x_window_cursor_show(Ecore_X_Window win,
@@ -1173,6 +1173,8 @@ _ecore_x_window_shadow_tree_at_xy_get(Window base,
  * @param   base The base window to start searching from (normally root).
  * @param   x The given X position.
  * @param   y The given Y position.
+ * @param   skip The list of windows to be skipped.
+ * @param   skip_num The number of windows to be skipped.
  * @return  The window at that position.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
@@ -1356,6 +1358,8 @@ ecore_x_window_at_xy_get(int x,
  * but skips the windows in the list.
  * @param   x The given X position.
  * @param   y The given Y position.
+ * @param   skip The list of windows to be skipped.
+ * @param   skip_num The number of windows to be skipped.
  * @return  The window at that position.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
