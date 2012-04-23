@@ -231,11 +231,11 @@ EAPI extern int ECORE_WINCE_EVENT_MOUSE_IN; /**< Ecore_Event for the #Ecore_WinC
 EAPI extern int ECORE_WINCE_EVENT_MOUSE_OUT; /**< Ecore_Event for the #Ecore_WinCE_Event_Mouse_Out event */
 EAPI extern int ECORE_WINCE_EVENT_WINDOW_FOCUS_IN; /**< Ecore_Event for the #Ecore_WinCE_Event_Window_Focus_In event */
 EAPI extern int ECORE_WINCE_EVENT_WINDOW_FOCUS_OUT; /**< Ecore_Event for the #Ecore_WinCE_Event_Window_Focus_Out event */
-EAPI extern int ECORE_WINCE_EVENT_WINDOW_DAMAGE; /**< Ecore_Event for the #Ecore_WinCE_Event_Damage event */
-EAPI extern int ECORE_WINCE_EVENT_WINDOW_CREATE; /**< Ecore_Event for the #Ecore_WinCE_Event_Create event */
-EAPI extern int ECORE_WINCE_EVENT_WINDOW_DESTROY; /**< Ecore_Event for the #Ecore_WinCE_Event_Destroy event */
-EAPI extern int ECORE_WINCE_EVENT_WINDOW_HIDE; /**< Ecore_Event for the #Ecore_WinCE_Event_Hide event */
-EAPI extern int ECORE_WINCE_EVENT_WINDOW_SHOW; /**< Ecore_Event for the #Ecore_WinCE_Event_Show event */
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_DAMAGE; /**< Ecore_Event for the Ecore_WinCE_Event_Damage event */
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_CREATE; /**< Ecore_Event for the Ecore_WinCE_Event_Create event */
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_DESTROY; /**< Ecore_Event for the Ecore_WinCE_Event_Destroy event */
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_HIDE; /**< Ecore_Event for the Ecore_WinCE_Event_Hide event */
+EAPI extern int ECORE_WINCE_EVENT_WINDOW_SHOW; /**< Ecore_Event for the Ecore_WinCE_Event_Show event */
 EAPI extern int ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST; /**< Ecore_Event for the #Ecore_WinCE_Event_Window_Delete_Request event */
 
 

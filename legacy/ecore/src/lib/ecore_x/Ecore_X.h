@@ -119,6 +119,10 @@ typedef enum _Ecore_X_Composite_Update_Type
    ECORE_X_COMPOSITE_UPDATE_MANUAL
 } Ecore_X_Composite_Update_Type;
 
+/**
+ * @typedef _Ecore_X_Window_State
+ * Defines the different states of the window of Ecore_X.
+ */
 typedef enum _Ecore_X_Window_State
 {
    /* Unknown state */
@@ -1008,6 +1012,10 @@ typedef enum _Ecore_X_Window_Input_Mode
     ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL
 } Ecore_X_Window_Input_Mode;
 
+/**
+ * @typedef _Ecore_X_Window_State_Hint
+ * Defines the different state hint of the window of Ecore_X.
+ */
 typedef enum _Ecore_X_Window_State_Hint
 {
    /** Do not provide any state hint to the window manager */
@@ -3472,6 +3480,7 @@ EAPI const char *
 
 /**
  * Given a keyname, return the keycode representing that key
+ * @param keyname The key from which to get the keycode.
  * @return The keycode of the key.
  *
  * @since 1.2.0
