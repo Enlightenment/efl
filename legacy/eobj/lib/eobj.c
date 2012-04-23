@@ -24,7 +24,6 @@ struct _Eobj {
      EINA_MAGIC
      Eobj *parent;
      const Eobj_Class *klass;
-     void *data_blob;
      int refcount;
 #ifndef NDEBUG
      Eina_Inlist *xrefs;
@@ -848,14 +847,13 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
         return NULL;
      }
 
-   Eobj *obj = calloc(1, sizeof(*obj));
+   Eobj *obj = calloc(1, EOBJ_ALIGN_SIZE(sizeof(*obj)) +
+         (klass->data_offset + EOBJ_ALIGN_SIZE(klass->desc->data_size)) +
+         klass->extn_data_size);
    obj->klass = klass;
    obj->parent = parent;
 
    obj->refcount++;
-
-   obj->data_blob = calloc(1, klass->data_offset + klass->desc->data_size +
-         klass->extn_data_size);
 
    _eobj_kls_itr_init(obj, EOBJ_NOOP);
    eobj_constructor_error_unset(obj);
@@ -1012,9 +1010,6 @@ eobj_unref(Eobj *obj)
 
         _eobj_callback_remove_all(obj);
 
-        if (obj->data_blob)
-           free(obj->data_blob);
-
         free(obj);
      }
 }
@@ -1160,13 +1155,15 @@ eobj_data_get(const Eobj *obj, const Eobj_Class *klass)
              while (doff_itr->klass)
                {
                   if (doff_itr->klass == klass)
-                     return ((char *) obj->data_blob) + doff_itr->offset;
+                     return ((char *) obj) + EOBJ_ALIGN_SIZE(sizeof(*obj)) +
+                           doff_itr->offset;
                   doff_itr++;
                }
           }
         else
           {
-             return ((char *) obj->data_blob) + klass->data_offset;
+          return ((char *) obj) + EOBJ_ALIGN_SIZE(sizeof(*obj)) +
+             klass->data_offset;
           }
      }
 
