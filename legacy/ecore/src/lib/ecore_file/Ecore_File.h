@@ -62,7 +62,7 @@ typedef struct _Ecore_File_Monitor       Ecore_File_Monitor;
 typedef struct _Ecore_File_Download_Job  Ecore_File_Download_Job;
 
 /**
- * @typedef Ecore_File_Event
+ * @typedef _Ecore_File_Event
  * The event type returned when a file or directory is monitored.
  */
 typedef enum _Ecore_File_Event
@@ -90,7 +90,7 @@ typedef void (*Ecore_File_Monitor_Cb)(void *data, Ecore_File_Monitor *em, Ecore_
 typedef void (*Ecore_File_Download_Completion_Cb)(void *data, const char *file, int status);
 
 /**
- * @typedef Ecore_File_Progress_Return
+ * @typedef _Ecore_File_Progress_Return
  * What to do with the download as a return from the 
  * Ecore_File_Download_Progress_Cb function, if provided.
  */

@@ -85,7 +85,7 @@ ecore_file_monitor_shutdown(void)
  * notification or polling) is available, or if @p path is not a file,
  * the function returns @c NULL. Otherwise, it returns a newly
  * allocated Ecore_File_Monitor object and the monitoring begins. When
- * one of the #Ecore_File_Event event is notified, @p func is called
+ * one of the Ecore_File_Event event is notified, @p func is called
  * and @p data is passed to @p func. Call ecore_file_monitor_del() to
  * stop the monitoring.
  */

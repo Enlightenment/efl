@@ -801,7 +801,7 @@ ecore_imf_context_retrieve_surrounding_callback_set(Ecore_IMF_Context *ctx, Eina
  * Set the input mode used by the Ecore Input Context.
  *
  * The input mode can be one of the input modes defined in
- * #Ecore_IMF_Input_Mode. The default input mode is
+ * Ecore_IMF_Input_Mode. The default input mode is
  * ECORE_IMF_INPUT_MODE_FULL.
  *
  * @param ctx An #Ecore_IMF_Context.
@@ -979,7 +979,7 @@ EAPI void *ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
  * set using #ecore_imf_context_retrieve_surrounding_callback_set).
  *
  * There is no obligation for a widget to respond to the
- * ::retrieve_surrounding_func, so input methods must be prepared
+ * retrieve_surrounding_func, so input methods must be prepared
  * to function without context.
  *
  * @param ctx An #Ecore_IMF_Context.

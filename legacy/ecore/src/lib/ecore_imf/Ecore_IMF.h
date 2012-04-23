@@ -106,7 +106,10 @@ typedef enum
    ECORE_IMF_EVENT_KEY_DOWN,    /**< Key Down event */
    ECORE_IMF_EVENT_KEY_UP       /**< Key Up event */
 } Ecore_IMF_Event_Type;
-
+/**
+ * @typedef Ecore_IMF_Keyboard_Modifiers
+ * Type for Ecore_IMF keyboard modifiers
+ */
 typedef enum
 {
    ECORE_IMF_KEYBOARD_MODIFIER_NONE  = 0,      /**< No active modifiers */
@@ -116,6 +119,10 @@ typedef enum
    ECORE_IMF_KEYBOARD_MODIFIER_WIN   = 1 << 3  /**< "Win" (between "Ctrl" and "Alt") is pressed */
 } Ecore_IMF_Keyboard_Modifiers;
 
+/**
+ * @typedef Ecore_IMF_Keyboard_Locks
+ * Type for Ecore_IMF keyboard locks
+ */
 typedef enum
 {
    ECORE_IMF_KEYBOARD_LOCK_NONE      = 0,      /**< No locks are active */
@@ -123,7 +130,10 @@ typedef enum
    ECORE_IMF_KEYBOARD_LOCK_CAPS      = 1 << 1, /**< "Caps" lock is active */
    ECORE_IMF_KEYBOARD_LOCK_SCROLL    = 1 << 2  /**< "Scroll" lock is active */
 } Ecore_IMF_Keyboard_Locks;
-
+/**
+ * @typedef Ecore_IMF_Mouse_Flags
+ * Type for Ecore_IMF mouse flags
+ */
 typedef enum
 {
    ECORE_IMF_MOUSE_NONE              = 0,      /**< A single click */
