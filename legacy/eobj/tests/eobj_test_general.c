@@ -242,6 +242,77 @@ START_TEST(eobj_generic_data)
 }
 END_TEST
 
+START_TEST(eobj_magic_checks)
+{
+   char buf[sizeof(long)]; /* Just enough to hold eina magic + a bit more. */
+   eobj_init();
+
+   memset(buf, 1, sizeof(buf));
+   Eobj *obj = eobj_add((Eobj_Class *) buf, NULL);
+   fail_if(obj);
+
+   obj = eobj_add(SIMPLE_CLASS, (Eobj *) buf);
+   fail_if(obj);
+
+   obj = eobj_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+
+   fail_if(eobj_do((Eobj *) buf, EOBJ_NOOP));
+   fail_if(eobj_do_super((Eobj *) buf, EOBJ_NOOP));
+   fail_if(eobj_class_get((Eobj *) buf));
+   fail_if(eobj_class_name_get((Eobj_Class*) buf));
+   eobj_class_funcs_set((Eobj_Class *) buf, NULL);
+
+   fail_if(eobj_class_new(NULL, (Eobj_Class *) buf), NULL);
+
+   eobj_xref(obj, (Eobj *) buf);
+   eobj_xunref(obj, (Eobj *) buf);
+   eobj_xref((Eobj *) buf, obj);
+   eobj_xunref((Eobj *) buf, obj);
+
+   eobj_ref((Eobj *) buf);
+   eobj_unref((Eobj *) buf);
+
+   fail_if(0 != eobj_ref_get((Eobj *) buf));
+
+   Eobj_Weak_Ref *wref = eobj_weak_ref_new((Eobj *) buf);
+   fail_if(eobj_weak_ref_get(wref));
+   eobj_weak_ref_free(wref);
+
+   eobj_del((Eobj *) buf);
+
+   fail_if(eobj_parent_get((Eobj *) buf));
+
+   eobj_constructor_error_set((Eobj *) buf);
+   fail_if(!eobj_constructor_error_get((Eobj *) buf));
+
+   eobj_constructor_super((Eobj *) buf);
+   eobj_destructor_super((Eobj *) buf);
+
+   fail_if(eobj_data_get((Eobj *) buf, SIMPLE_CLASS));
+
+   eobj_composite_object_attach((Eobj *) buf, obj);
+   eobj_composite_object_attach(obj, (Eobj *) buf);
+   eobj_composite_object_detach((Eobj *) buf, obj);
+   eobj_composite_object_detach(obj, (Eobj *) buf);
+   eobj_composite_is((Eobj *) buf);
+
+   fail_if(eobj_event_callback_add((Eobj *) buf, NULL, NULL, NULL));
+   fail_if(eobj_event_callback_del((Eobj *) buf, NULL, NULL));
+   fail_if(eobj_event_callback_del_full((Eobj *) buf, NULL, NULL, NULL));
+   fail_if(eobj_event_callback_call((Eobj *) buf, NULL, NULL));
+
+   fail_if(eobj_event_callback_forwarder_add((Eobj *) buf, NULL, obj));
+   fail_if(eobj_event_callback_forwarder_add(obj, NULL, (Eobj *) buf));
+   fail_if(eobj_event_callback_forwarder_del((Eobj *) buf, NULL, obj));
+   fail_if(eobj_event_callback_forwarder_del(obj, NULL, (Eobj *) buf));
+
+   eobj_unref(obj);
+
+   eobj_shutdown();
+}
+END_TEST
+
 void eobj_test_general(TCase *tc)
 {
    tcase_add_test(tc, eobj_generic_data);
@@ -249,4 +320,5 @@ void eobj_test_general(TCase *tc)
    tcase_add_test(tc, eobj_simple);
    tcase_add_test(tc, eobj_weak_reference);
    tcase_add_test(tc, eobj_refs);
+   tcase_add_test(tc, eobj_magic_checks);
 }

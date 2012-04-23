@@ -22,6 +22,29 @@ static void eobj_constructor_error_unset(Eobj *obj);
 
 typedef struct _Eobj_Callback_Description Eobj_Callback_Description;
 
+#define EOBJ_EINA_MAGIC 0xa186bc32 /* Nothing magical about this number. */
+#define EOBJ_EINA_MAGIC_STR "Eobj"
+#define EOBJ_CLASS_EINA_MAGIC 0xa186bb32 /* Nothing magical about this number. */
+#define EOBJ_CLASS_EINA_MAGIC_STR "Eobj Class"
+
+#define EOBJ_MAGIC_RETURN_VAL(d, magic, ret) \
+   do { \
+        if (!EINA_MAGIC_CHECK(d, magic)) \
+          { \
+             EINA_MAGIC_FAIL(d, magic); \
+             return ret; \
+          } \
+   } while (0)
+
+#define EOBJ_MAGIC_RETURN(d, magic) \
+   do { \
+        if (!EINA_MAGIC_CHECK(d, magic)) \
+          { \
+             EINA_MAGIC_FAIL(d, magic); \
+             return; \
+          } \
+   } while (0)
+
 struct _Eobj {
      EINA_MAGIC
      Eobj *parent;
@@ -103,6 +126,7 @@ typedef struct
 
 struct _Eobj_Class
 {
+   EINA_MAGIC
    Eobj_Class_Id class_id;
    const Eobj_Class *parent;
    const Eobj_Class_Description *desc;
@@ -369,6 +393,9 @@ eobj_do_internal(Eobj *obj, ...)
    Eina_Bool ret = EINA_TRUE;
    Eobj_Op op = EOBJ_NOOP;
    va_list p_list;
+
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_FALSE);
+
    eobj_ref(obj);
 
    va_start(p_list, obj);
@@ -401,6 +428,7 @@ eobj_do_super(Eobj *obj, Eobj_Op op, ...)
    const Eobj_Class *obj_klass;
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_FALSE);
 
    /* Advance the kls itr. */
    obj_klass = _eobj_kls_itr_next(obj, op);
@@ -428,12 +456,16 @@ eobj_do_super(Eobj *obj, Eobj_Op op, ...)
 EAPI const Eobj_Class *
 eobj_class_get(const Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_FALSE);
+
    return obj->klass;
 }
 
 EAPI const char *
 eobj_class_name_get(const Eobj_Class *klass)
 {
+   EOBJ_MAGIC_RETURN_VAL(klass, EOBJ_CLASS_EINA_MAGIC, NULL);
+
    return klass->desc->name;
 }
 
@@ -576,6 +608,8 @@ _eobj_class_constructor(Eobj_Class *klass)
 EAPI void
 eobj_class_funcs_set(Eobj_Class *klass, const Eobj_Op_Func_Description *func_descs)
 {
+   EOBJ_MAGIC_RETURN(klass, EOBJ_CLASS_EINA_MAGIC);
+
    const Eobj_Op_Func_Description *itr;
    itr = func_descs;
    if (itr)
@@ -672,6 +706,12 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 {
    Eobj_Class *klass;
    va_list p_list;
+
+   if (parent && !EINA_MAGIC_CHECK(parent, EOBJ_CLASS_EINA_MAGIC))
+     {
+        EINA_MAGIC_FAIL(parent, EOBJ_CLASS_EINA_MAGIC);
+        return NULL;
+     }
 
    va_start(p_list, parent);
 
@@ -828,6 +868,8 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
      }
    eina_lock_release(&_eobj_class_creation_lock);
 
+   EINA_MAGIC_SET(klass, EOBJ_CLASS_EINA_MAGIC);
+
    _eobj_class_base_op_init(klass);
 
    _eobj_class_constructor(klass);
@@ -845,6 +887,10 @@ cleanup:
 EAPI Eobj *
 eobj_add(const Eobj_Class *klass, Eobj *parent)
 {
+   EOBJ_MAGIC_RETURN_VAL(klass, EOBJ_CLASS_EINA_MAGIC, NULL);
+
+   if (parent) EOBJ_MAGIC_RETURN_VAL(parent, EOBJ_EINA_MAGIC, NULL);
+
    if (klass->desc->type != EOBJ_CLASS_TYPE_REGULAR)
      {
         ERR("Class '%s' is not instantiate-able. Aborting.", klass->desc->name);
@@ -862,6 +908,7 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
    _eobj_kls_itr_init(obj, EOBJ_NOOP);
    eobj_constructor_error_unset(obj);
 
+   EINA_MAGIC_SET(obj, EOBJ_EINA_MAGIC);
    eobj_ref(obj);
    _eobj_constructor(obj, klass);
 
@@ -899,6 +946,8 @@ typedef struct
 EAPI Eobj *
 eobj_xref_internal(Eobj *obj, const Eobj *ref_obj, const char *file, int line)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, obj);
+
    eobj_ref(obj);
 
 #ifndef NDEBUG
@@ -921,6 +970,7 @@ eobj_xref_internal(Eobj *obj, const Eobj *ref_obj, const char *file, int line)
 EAPI void
 eobj_xunref(Eobj *obj, const Eobj *ref_obj)
 {
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
 #ifndef NDEBUG
    Eobj_Xref_Node *xref = NULL;
    EINA_INLIST_FOREACH(obj->xrefs, xref)
@@ -948,6 +998,8 @@ eobj_xunref(Eobj *obj, const Eobj *ref_obj)
 EAPI Eobj *
 eobj_ref(Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, obj);
+
    obj->refcount++;
    return obj;
 }
@@ -955,6 +1007,8 @@ eobj_ref(Eobj *obj)
 EAPI void
 eobj_unref(Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
+
    if (--(obj->refcount) == 0)
      {
         /* We need that for the event callbacks that may ref/unref. */
@@ -1021,6 +1075,8 @@ eobj_unref(Eobj *obj)
 EAPI int
 eobj_ref_get(const Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, 0);
+
    return obj->refcount;
 }
 
@@ -1039,6 +1095,9 @@ eobj_weak_ref_new(const Eobj *_obj)
 {
    Eobj *obj = (Eobj *) _obj;
    Eobj_Weak_Ref *wref = calloc(1, sizeof(*wref));
+
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, wref);
+
    wref->obj = obj;
    eobj_event_callback_add(obj, EOBJ_EV_DEL, _eobj_weak_ref_cb, wref);
 
@@ -1061,6 +1120,8 @@ eobj_weak_ref_free(Eobj_Weak_Ref *wref)
 EAPI void
 eobj_del(Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
+
    if (!obj->delete)
      {
         eobj_event_callback_call(obj, EOBJ_EV_DEL, NULL);
@@ -1072,12 +1133,16 @@ eobj_del(Eobj *obj)
 EAPI Eobj *
 eobj_parent_get(Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, NULL);
+
    return obj->parent;
 }
 
 EAPI void
 eobj_constructor_error_set(Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
+
    obj->construct_error = EINA_TRUE;
 }
 
@@ -1090,6 +1155,8 @@ eobj_constructor_error_unset(Eobj *obj)
 EAPI Eina_Bool
 eobj_constructor_error_get(const Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_TRUE);
+
    return obj->construct_error;
 }
 
@@ -1132,18 +1199,24 @@ _eobj_destructor(Eobj *obj, const Eobj_Class *klass)
 EAPI void
 eobj_constructor_super(Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
+
    _eobj_constructor(obj, _eobj_kls_itr_next(obj, EOBJ_NOOP));
 }
 
 EAPI void
 eobj_destructor_super(Eobj *obj)
 {
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
+
    _eobj_destructor(obj, _eobj_kls_itr_next(obj, EOBJ_NOOP));
 }
 
 EAPI void *
 eobj_data_get(const Eobj *obj, const Eobj_Class *klass)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, NULL);
+
    /* FIXME: Add a check that this is of the right klass and we don't seg.
     * Probably just return NULL. */
    if (EINA_LIKELY(klass->desc->data_size > 0))
@@ -1198,6 +1271,10 @@ eobj_init(void)
         return EINA_FALSE;
      }
 
+   eina_magic_string_static_set(EOBJ_EINA_MAGIC, EOBJ_EINA_MAGIC_STR);
+   eina_magic_string_static_set(EOBJ_CLASS_EINA_MAGIC,
+         EOBJ_CLASS_EINA_MAGIC_STR);
+
    return EINA_TRUE;
 }
 
@@ -1231,6 +1308,9 @@ eobj_shutdown(void)
 EAPI void
 eobj_composite_object_attach(Eobj *obj, Eobj *emb_obj)
 {
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
+   EOBJ_MAGIC_RETURN(emb_obj, EOBJ_EINA_MAGIC);
+
    eobj_xref(emb_obj, obj);
    obj->composite_objects = eina_list_prepend(obj->composite_objects, emb_obj);
 }
@@ -1238,6 +1318,9 @@ eobj_composite_object_attach(Eobj *obj, Eobj *emb_obj)
 EAPI void
 eobj_composite_object_detach(Eobj *obj, Eobj *emb_obj)
 {
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
+   EOBJ_MAGIC_RETURN(emb_obj, EOBJ_EINA_MAGIC);
+
    obj->composite_objects = eina_list_remove(obj->composite_objects, emb_obj);
    eobj_xunref(emb_obj, obj);
 }
@@ -1245,6 +1328,12 @@ eobj_composite_object_detach(Eobj *obj, Eobj *emb_obj)
 EAPI Eina_Bool
 eobj_composite_is(Eobj *emb_obj)
 {
+   if (!EINA_MAGIC_CHECK(emb_obj, EOBJ_EINA_MAGIC))
+     {
+        EINA_MAGIC_FAIL(emb_obj, EOBJ_EINA_MAGIC);
+        return EINA_FALSE;
+     }
+
    Eobj *obj = eobj_parent_get(emb_obj);
    Eina_List *itr;
    Eobj *tmp;
@@ -1331,6 +1420,8 @@ eobj_event_callback_priority_add(Eobj *obj,
       Eobj_Event_Cb func,
       const void *data)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_FALSE);
+
    Eobj_Callback_Description *cb = calloc(1, sizeof(*cb));
    cb->event = desc;
    cb->func = func;
@@ -1347,6 +1438,8 @@ eobj_event_callback_priority_add(Eobj *obj,
 EAPI void *
 eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, NULL);
+
    void *ret = NULL;
    Eobj_Callback_Description *cb;
    EINA_INLIST_FOREACH(obj->callbacks, cb)
@@ -1373,6 +1466,8 @@ found:
 EAPI void *
 eobj_event_callback_del_full(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func, const void *user_data)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, NULL);
+
    void *ret = NULL;
    Eobj_Callback_Description *cb;
    EINA_INLIST_FOREACH(obj->callbacks, cb)
@@ -1401,6 +1496,8 @@ EAPI Eina_Bool
 eobj_event_callback_call(Eobj *obj, const Eobj_Event_Description *desc,
       const void *event_info)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_FALSE);
+
    Eina_Bool ret = EINA_TRUE;
    Eobj_Callback_Description *cb;
 
@@ -1441,12 +1538,18 @@ _eobj_event_forwarder_callback(void *data, Eobj *obj, const Eobj_Event_Descripti
 EAPI Eina_Bool
 eobj_event_callback_forwarder_add(Eobj *obj, const Eobj_Event_Description *desc, Eobj *new_obj)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_FALSE);
+   EOBJ_MAGIC_RETURN_VAL(new_obj, EOBJ_EINA_MAGIC, EINA_FALSE);
+
    return eobj_event_callback_add(obj, desc, _eobj_event_forwarder_callback, new_obj);
 }
 
 EAPI Eina_Bool
 eobj_event_callback_forwarder_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj *new_obj)
 {
+   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_FALSE);
+   EOBJ_MAGIC_RETURN_VAL(new_obj, EOBJ_EINA_MAGIC, EINA_FALSE);
+
    eobj_event_callback_del_full(obj, desc, _eobj_event_forwarder_callback, new_obj);
    return EINA_TRUE;
 }
