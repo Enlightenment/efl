@@ -3,11 +3,13 @@
 #  EINA_FOUND - System has eina
 #  EINA_INCLUDE_DIRS - The eina include directories
 #  EINA_LIBRARIES - The libraries needed to use eina
+#  EINA_LDFLAGS_OTHER - Other LDFLAGS needed te use eina.
 #  EINA_DEFINITIONS - Compiler switches required for using eina
 
 find_package(PkgConfig)
 pkg_check_modules(PC_LIBEINA QUIET eina)
 set(EINA_DEFINITIONS ${PC_LIBEINA_CFLAGS_OTHER})
+set(EINA_LDFLAGS_OTHER ${PC_LIBEINA_LDFLAGS_OTHER})
 
 find_path(EINA_INCLUDE_DIR Eina.h
           HINTS ${PC_LIBEINA_INCLUDEDIR} ${PC_LIBEINA_INCLUDE_DIRS}

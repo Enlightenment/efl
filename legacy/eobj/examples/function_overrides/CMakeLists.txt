@@ -17,6 +17,7 @@ add_executable(function_overrides ${FUNCTION_OVERRIDES_CC_SOURCES})
 get_target_property(eobj_LIB_FILE eobj LOCATION)
 target_link_libraries(function_overrides
    ${EINA_LIBRARIES}
+   ${EINA_LDFLAGS_OTHER}
    ${eobj_LIB_FILE}
    )
 

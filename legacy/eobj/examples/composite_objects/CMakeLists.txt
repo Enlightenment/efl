@@ -15,6 +15,7 @@ add_executable(composite_objects ${COMPOSITE_OBJECTS_CC_SOURCES})
 get_target_property(eobj_LIB_FILE eobj LOCATION)
 target_link_libraries(composite_objects
    ${EINA_LIBRARIES}
+   ${EINA_LDFLAGS_OTHER}
    ${eobj_LIB_FILE}
    )
 

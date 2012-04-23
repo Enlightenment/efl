@@ -12,8 +12,6 @@ if (CHECK_ENABLED)
 
    include_directories(
       ${EINA_INCLUDE_DIRS}
-      ${EVAS_INCLUDE_DIRS}
-      ${ELEMENTARY_INCLUDE_DIRS}
       ${CMAKE_SOURCE_DIR}/lib
       ${CHECK_INCLUDE_DIRS}
       )
@@ -21,8 +19,7 @@ if (CHECK_ENABLED)
    get_target_property(eobj_LIB_FILE eobj LOCATION)
    target_link_libraries(eobj_suite
       ${EINA_LIBRARIES}
-      ${EVAS_LIBRARIES}
-      ${ELEMENTARY_LIBRARIES}
+      ${EINA_LDFLAGS_OTHER}
       ${eobj_LIB_FILE}
       ${CHECK_LIBRARIES}
       )

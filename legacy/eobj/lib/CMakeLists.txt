@@ -10,6 +10,7 @@ include_directories(
 add_library(eobj SHARED ${EOBJ_CC_SOURCES})
 target_link_libraries(eobj
    ${EINA_LIBRARIES}
+   ${EINA_LDFLAGS_OTHER}
    ${EFL_COVERAGE_LIBS}
    )
 
