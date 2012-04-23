@@ -114,7 +114,7 @@ _data_del(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 }
 
 /* EOBJ_BASE_CLASS stuff */
-static const Eobj_Class *_my_class = NULL;
+#define MY_CLASS EOBJ_BASE_CLASS
 
 /* FIXME: Set proper type descriptions. */
 EAPI const Eobj_Event_Description _EOBJ_EV_CALLBACK_ADD =
@@ -129,13 +129,13 @@ EAPI const Eobj_Event_Description _EOBJ_EV_DEL =
 static void
 _constructor(Eobj *obj, void *class_data EINA_UNUSED)
 {
-   DBG("%p - %s.", obj, eobj_class_name_get(_my_class));
+   DBG("%p - %s.", obj, eobj_class_name_get(MY_CLASS));
 }
 
 static void
 _destructor(Eobj *obj, void *class_data)
 {
-   DBG("%p - %s.", obj, eobj_class_name_get(_my_class));
+   DBG("%p - %s.", obj, eobj_class_name_get(MY_CLASS));
 
    _eobj_generic_data_del_all(class_data);
 }
@@ -153,38 +153,32 @@ _class_constructor(Eobj_Class *klass)
    eobj_class_funcs_set(klass, func_desc);
 }
 
-EAPI const Eobj_Class *
-eobj_base_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Op_Description op_desc[] = {
+     EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_SET, "?", "Set data for key."),
+     EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_GET, "?", "Get data for key."),
+     EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_DEL, "?", "Del key."),
+     EOBJ_OP_DESCRIPTION_SENTINEL
+};
 
-   static const Eobj_Op_Description op_desc[] = {
-        EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_SET, "?", "Set data for key."),
-        EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_GET, "?", "Get data for key."),
-        EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_DEL, "?", "Del key."),
-        EOBJ_OP_DESCRIPTION_SENTINEL
-   };
+static const Eobj_Event_Description *event_desc[] = {
+     EOBJ_EV_CALLBACK_ADD,
+     EOBJ_EV_CALLBACK_DEL,
+     EOBJ_EV_FREE,
+     EOBJ_EV_DEL,
+     NULL
+};
 
-   static const Eobj_Event_Description *event_desc[] = {
-        EOBJ_EV_CALLBACK_ADD,
-        EOBJ_EV_CALLBACK_DEL,
-        EOBJ_EV_FREE,
-        EOBJ_EV_DEL,
-        NULL
-   };
+static const Eobj_Class_Description class_desc = {
+     "Eobj Base",
+     EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT,
+     EOBJ_CLASS_DESCRIPTION_OPS(&EOBJ_BASE_BASE_ID, op_desc, EOBJ_BASE_SUB_ID_LAST),
+     event_desc,
+     sizeof(Private_Data),
+     _constructor,
+     _destructor,
+     _class_constructor,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Eobj Base",
-        EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT,
-        EOBJ_CLASS_DESCRIPTION_OPS(&EOBJ_BASE_BASE_ID, op_desc, EOBJ_BASE_SUB_ID_LAST),
-        event_desc,
-        sizeof(Private_Data),
-        _constructor,
-        _destructor,
-        _class_constructor,
-        NULL
-   };
-
-   return _my_class = eobj_class_new(&class_desc, NULL, NULL);
-}
+EOBJ_DEFINE_CLASS(eobj_base_class_get, &class_desc, NULL, NULL)
 

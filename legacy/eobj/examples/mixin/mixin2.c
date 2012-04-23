@@ -7,14 +7,14 @@
 
 #include "../eunit_tests.h"
 
-static const Eobj_Class *_my_class = NULL;
+#define MY_CLASS MIXIN2_CLASS
 
 static void
 _ab_sum_get(Eobj *obj, void *class_data, va_list *list)
 {
    Mixin2_Public_Data *pd = class_data;
    int *sum = va_arg(*list, int *);
-   printf("%s %s\n", eobj_class_name_get(_my_class), __func__);
+   printf("%s %s\n", eobj_class_name_get(MY_CLASS), __func__);
    eobj_do_super(obj, MIXIN_AB_SUM_GET(sum));
 
    ++*sum;
@@ -50,24 +50,17 @@ _class_constructor(Eobj_Class *klass)
    eobj_class_funcs_set(klass, func_desc);
 }
 
-const Eobj_Class *
-mixin2_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Class_Description class_desc = {
+     "Mixin2",
+     EOBJ_CLASS_TYPE_MIXIN,
+     EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     NULL,
+     sizeof(Mixin2_Public_Data),
+     _constructor,
+     _destructor,
+     _class_constructor,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Mixin2",
-        EOBJ_CLASS_TYPE_MIXIN,
-        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-        NULL,
-        sizeof(Mixin2_Public_Data),
-        _constructor,
-        _destructor,
-        _class_constructor,
-        NULL
-   };
+EOBJ_DEFINE_CLASS(mixin2_class_get, &class_desc, MIXIN_CLASS, NULL);
 
-   _my_class = eobj_class_new(&class_desc, MIXIN_CLASS, NULL);
-
-   return _my_class;
-}

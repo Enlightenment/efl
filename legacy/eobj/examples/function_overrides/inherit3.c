@@ -6,14 +6,14 @@
 
 #include "config.h"
 
-static const Eobj_Class *_my_class = NULL;
+#define MY_CLASS INHERIT3_CLASS
 
 static void
 _a_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    int a;
    a = va_arg(*list, int);
-   printf("%s %d\n", eobj_class_name_get(_my_class), a);
+   printf("%s %d\n", eobj_class_name_get(MY_CLASS), a);
    eobj_do_super(obj, SIMPLE_A_SET(a + 1));
 }
 
@@ -28,22 +28,17 @@ _class_constructor(Eobj_Class *klass)
    eobj_class_funcs_set(klass, func_desc);
 }
 
-const Eobj_Class *
-inherit3_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Class_Description class_desc = {
+     "Inherit3",
+     EOBJ_CLASS_TYPE_REGULAR,
+     EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     NULL,
+     0,
+     NULL,
+     NULL,
+     _class_constructor,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Inherit3",
-        EOBJ_CLASS_TYPE_REGULAR,
-        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-        NULL,
-        0,
-        NULL,
-        NULL,
-        _class_constructor,
-        NULL
-   };
+EOBJ_DEFINE_CLASS(inherit3_class_get, &class_desc, INHERIT2_CLASS, NULL);
 
-   return _my_class = eobj_class_new(&class_desc, INHERIT2_CLASS, NULL);
-}

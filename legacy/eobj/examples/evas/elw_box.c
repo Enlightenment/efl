@@ -13,7 +13,7 @@ typedef struct
    Evas_Object *bx;
 } Widget_Data;
 
-static const Eobj_Class *_my_class = NULL;
+#define MY_CLASS ELW_BOX_CLASS
 
 static void
 _pack_end(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
@@ -51,28 +51,22 @@ _class_constructor(Eobj_Class *klass)
    eobj_class_funcs_set(klass, func_desc);
 }
 
-const Eobj_Class *
-elw_box_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Op_Description op_desc[] = {
+     EOBJ_OP_DESCRIPTION(ELW_BOX_SUB_ID_PACK_END, "o", "Pack obj at the end of box."),
+     EOBJ_OP_DESCRIPTION_SENTINEL
+};
 
-   static const Eobj_Op_Description op_desc[] = {
-        EOBJ_OP_DESCRIPTION(ELW_BOX_SUB_ID_PACK_END, "o", "Pack obj at the end of box."),
-        EOBJ_OP_DESCRIPTION_SENTINEL
-   };
+static const Eobj_Class_Description class_desc = {
+     "Elw Box",
+     EOBJ_CLASS_TYPE_REGULAR,
+     EOBJ_CLASS_DESCRIPTION_OPS(&ELW_BOX_BASE_ID, op_desc, ELW_BOX_SUB_ID_LAST),
+     NULL,
+     sizeof(Widget_Data),
+     _constructor,
+     NULL,
+     _class_constructor,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Elw Box",
-        EOBJ_CLASS_TYPE_REGULAR,
-        EOBJ_CLASS_DESCRIPTION_OPS(&ELW_BOX_BASE_ID, op_desc, ELW_BOX_SUB_ID_LAST),
-        NULL,
-        sizeof(Widget_Data),
-        _constructor,
-        NULL,
-        _class_constructor,
-        NULL
-   };
-
-   return _my_class = eobj_class_new(&class_desc, EVAS_OBJ_CLASS, NULL);
-}
+EOBJ_DEFINE_CLASS(elw_box_class_get, &class_desc, EVAS_OBJ_CLASS, NULL)
 

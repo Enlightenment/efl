@@ -6,7 +6,7 @@
 
 EAPI Eobj_Op MIXIN_BASE_ID = 0;
 
-static const Eobj_Class *_my_class = NULL;
+#define MY_CLASS MIXIN_CLASS
 
 static void
 _add_and_print_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
@@ -46,27 +46,22 @@ _class_constructor(Eobj_Class *klass)
    eobj_class_funcs_set(klass, func_desc);
 }
 
-const Eobj_Class *
-mixin_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Op_Description op_desc[] = {
+     EOBJ_OP_DESCRIPTION(MIXIN_SUB_ID_ADD_AND_SET, "i", "Add A + B + param and print it"),
+     EOBJ_OP_DESCRIPTION_SENTINEL
+};
 
-   static const Eobj_Op_Description op_desc[] = {
-        EOBJ_OP_DESCRIPTION(MIXIN_SUB_ID_ADD_AND_SET, "i", "Add A + B + param and print it"),
-        EOBJ_OP_DESCRIPTION_SENTINEL
-   };
+static const Eobj_Class_Description class_desc = {
+     "Mixin",
+     EOBJ_CLASS_TYPE_MIXIN,
+     EOBJ_CLASS_DESCRIPTION_OPS(&MIXIN_BASE_ID, op_desc, MIXIN_SUB_ID_LAST),
+     NULL,
+     0,
+     _constructor,
+     _destructor,
+     _class_constructor,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Mixin",
-        EOBJ_CLASS_TYPE_MIXIN,
-        EOBJ_CLASS_DESCRIPTION_OPS(&MIXIN_BASE_ID, op_desc, MIXIN_SUB_ID_LAST),
-        NULL,
-        0,
-        _constructor,
-        _destructor,
-        _class_constructor,
-        NULL
-   };
+EOBJ_DEFINE_CLASS(mixin_class_get, &class_desc, NULL, NULL);
 
-   return _my_class = eobj_class_new(&class_desc, NULL, NULL);
-}

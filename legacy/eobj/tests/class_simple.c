@@ -3,9 +3,9 @@
 
 #include "config.h"
 
-EAPI Eobj_Op SIMPLE_BASE_ID = 0;
+#define MY_CLASS SIMPLE_CLASS
 
-static const Eobj_Class *_my_class = NULL;
+EAPI Eobj_Op SIMPLE_BASE_ID = 0;
 
 static void
 _a_set(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
@@ -13,7 +13,7 @@ _a_set(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
    Simple_Public_Data *pd = class_data;
    int a;
    a = va_arg(*list, int);
-   printf("%s %d\n", eobj_class_name_get(_my_class), a);
+   printf("%s %d\n", eobj_class_name_get(MY_CLASS), a);
    pd->a = a;
 }
 
@@ -22,7 +22,7 @@ _a_print(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Simple_Public_Data *pd = class_data;
    (void) list;
-   printf("Print %s %d\n", eobj_class_name_get(_my_class), pd->a);
+   printf("Print %s %d\n", eobj_class_name_get(MY_CLASS), pd->a);
 }
 
 static void
@@ -37,28 +37,23 @@ _class_constructor(Eobj_Class *klass)
    eobj_class_funcs_set(klass, func_desc);
 }
 
-const Eobj_Class *
-simple_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Op_Description op_desc[] = {
+     EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
+     EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_PRINT, "", "Print property A"),
+     EOBJ_OP_DESCRIPTION_SENTINEL
+};
 
-   static const Eobj_Op_Description op_desc[] = {
-        EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
-        EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_PRINT, "", "Print property A"),
-        EOBJ_OP_DESCRIPTION_SENTINEL
-   };
+static const Eobj_Class_Description class_desc = {
+     "Simple",
+     EOBJ_CLASS_TYPE_REGULAR,
+     EOBJ_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
+     NULL,
+     sizeof(Simple_Public_Data),
+     NULL,
+     NULL,
+     _class_constructor,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Simple",
-        EOBJ_CLASS_TYPE_REGULAR,
-        EOBJ_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
-        NULL,
-        sizeof(Simple_Public_Data),
-        NULL,
-        NULL,
-        _class_constructor,
-        NULL
-   };
+EOBJ_DEFINE_CLASS(simple_class_get, &class_desc, EOBJ_BASE_CLASS, NULL)
 
-   return _my_class = eobj_class_new(&class_desc, EOBJ_BASE_CLASS, NULL);
-}

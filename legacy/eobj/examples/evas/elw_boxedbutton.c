@@ -13,7 +13,7 @@ typedef struct
 //   Evas_Object *bx;
 } Widget_Data;
 
-static const Eobj_Class *_my_class = NULL;
+#define MY_CLASS ELW_BOXEDBUTTON_CLASS
 
 static void
 _constructor(Eobj *obj, void *class_data EINA_UNUSED)
@@ -29,24 +29,17 @@ _constructor(Eobj *obj, void *class_data EINA_UNUSED)
    eobj_unref(bt);
 }
 
-const Eobj_Class *
-elw_boxedbutton_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Class_Description class_desc = {
+     "Elw BoxedButton",
+     EOBJ_CLASS_TYPE_REGULAR,
+     EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     NULL,
+     sizeof(Widget_Data),
+     _constructor,
+     NULL,
+     NULL,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Elw BoxedButton",
-        EOBJ_CLASS_TYPE_REGULAR,
-        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
-        NULL,
-        sizeof(Widget_Data),
-        _constructor,
-        NULL,
-        NULL,
-        NULL
-   };
-
-   return _my_class = eobj_class_new(&class_desc, ELW_BOX_CLASS,
-         ELW_BUTTON_CLASS, NULL);
-}
+EOBJ_DEFINE_CLASS(elw_boxedbutton_class_get, &class_desc, ELW_BOX_CLASS, ELW_BUTTON_CLASS, NULL)
 

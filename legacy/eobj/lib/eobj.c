@@ -7,6 +7,8 @@
 
 typedef int Eobj_Class_Id;
 
+/* Used inside the class_get functions of classes, see #EOBJ_DEFINE_CLASS */
+EAPI Eina_Lock _eobj_class_creation_lock;
 int _eobj_log_dom = -1;
 
 static Eobj_Class **_eobj_classes;
@@ -815,6 +817,7 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
         klass->extn_data_size = extn_data_off;
      }
 
+   eina_lock_take(&_eobj_class_creation_lock);
    klass->class_id = ++_eobj_classes_last_id;
      {
         /* FIXME: Handle errors. */
@@ -823,6 +826,7 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
         _eobj_classes = tmp;
         _eobj_classes[klass->class_id - 1] = klass;
      }
+   eina_lock_release(&_eobj_class_creation_lock);
 
    _eobj_class_base_op_init(klass);
 
@@ -1188,6 +1192,12 @@ eobj_init(void)
         return EINA_FALSE;
      }
 
+   if (!eina_lock_new(&_eobj_class_creation_lock))
+     {
+        EINA_LOG_ERR("Could not init lock.");
+        return EINA_FALSE;
+     }
+
    return EINA_TRUE;
 }
 
@@ -1208,6 +1218,8 @@ eobj_shutdown(void)
 
    if (_eobj_classes)
       free(_eobj_classes);
+
+   eina_lock_free(&_eobj_class_creation_lock);
 
    eina_log_domain_unregister(_eobj_log_dom);
    _eobj_log_dom = -1;

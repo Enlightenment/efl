@@ -14,7 +14,7 @@ typedef struct
    int b;
 } Private_Data;
 
-static const Eobj_Class *_my_class = NULL;
+#define MY_CLASS SIMPLE_CLASS
 
 #define _GET_SET_FUNC(name) \
 static void \
@@ -53,30 +53,24 @@ _class_constructor(Eobj_Class *klass)
    eobj_class_funcs_set(klass, func_desc);
 }
 
-const Eobj_Class *
-simple_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Op_Description op_desc[] = {
+     EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
+     EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "i", "Get property A"),
+     EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_B_SET, "i", "Set property B"),
+     EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_B_GET, "i", "Get property B"),
+     EOBJ_OP_DESCRIPTION_SENTINEL
+};
 
-   static const Eobj_Op_Description op_desc[] = {
-        EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
-        EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "i", "Get property A"),
-        EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_B_SET, "i", "Set property B"),
-        EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_B_GET, "i", "Get property B"),
-        EOBJ_OP_DESCRIPTION_SENTINEL
-   };
+static const Eobj_Class_Description class_desc = {
+     "Simple",
+     EOBJ_CLASS_TYPE_REGULAR,
+     EOBJ_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
+     NULL,
+     sizeof(Private_Data),
+     NULL,
+     NULL,
+     _class_constructor,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Simple",
-        EOBJ_CLASS_TYPE_REGULAR,
-        EOBJ_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
-        NULL,
-        sizeof(Private_Data),
-        NULL,
-        NULL,
-        _class_constructor,
-        NULL
-   };
-
-   return _my_class = eobj_class_new(&class_desc, EOBJ_BASE_CLASS, MIXIN3_CLASS, MIXIN2_CLASS, NULL);
-}
+EOBJ_DEFINE_CLASS(simple_class_get, &class_desc, EOBJ_BASE_CLASS, MIXIN3_CLASS, MIXIN2_CLASS, NULL);

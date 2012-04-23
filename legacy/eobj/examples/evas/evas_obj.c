@@ -5,7 +5,7 @@
 
 #include "config.h"
 
-static const Eobj_Class *_my_class = NULL;
+#define MY_CLASS EVAS_OBJ_CLASS
 
 EAPI Eobj_Op EVAS_OBJ_BASE_ID = 0;
 
@@ -118,32 +118,26 @@ _class_constructor(Eobj_Class *klass)
    eobj_class_funcs_set(klass, func_desc);
 }
 
-const Eobj_Class *
-evas_object_class_get(void)
-{
-   if (_my_class) return _my_class;
+static const Eobj_Op_Description op_desc[] = {
+     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POSITION_SET, "ii", "Position of an evas object."),
+     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_SET, "ii", "Size of an evas object."),
+     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_SET, "iiii", "Color of an evas object."),
+     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_GET, "iiii", "Color of an evas object."),
+     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_VISIBILITY_SET, "b", "Visibility of an evas object."),
+     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CHILD_ADD, "o", "Add a child eobj."),
+     EOBJ_OP_DESCRIPTION_SENTINEL
+};
 
-   static const Eobj_Op_Description op_desc[] = {
-        EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POSITION_SET, "ii", "Position of an evas object."),
-        EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_SET, "ii", "Size of an evas object."),
-        EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_SET, "iiii", "Color of an evas object."),
-        EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_GET, "iiii", "Color of an evas object."),
-        EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_VISIBILITY_SET, "b", "Visibility of an evas object."),
-        EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CHILD_ADD, "o", "Add a child eobj."),
-        EOBJ_OP_DESCRIPTION_SENTINEL
-   };
+static const Eobj_Class_Description class_desc = {
+     "Evas Object",
+     EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT,
+     EOBJ_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_BASE_ID, op_desc, EVAS_OBJ_SUB_ID_LAST),
+     NULL,
+     sizeof(Widget_Data),
+     _constructor,
+     _destructor,
+     _class_constructor,
+     NULL
+};
 
-   static const Eobj_Class_Description class_desc = {
-        "Evas Object",
-        EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT,
-        EOBJ_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_BASE_ID, op_desc, EVAS_OBJ_SUB_ID_LAST),
-        NULL,
-        sizeof(Widget_Data),
-        _constructor,
-        _destructor,
-        _class_constructor,
-        NULL
-   };
-
-   return _my_class = eobj_class_new(&class_desc, EOBJ_BASE_CLASS, NULL);
-}
+EOBJ_DEFINE_CLASS(evas_object_class_get, &class_desc, EOBJ_BASE_CLASS, NULL)

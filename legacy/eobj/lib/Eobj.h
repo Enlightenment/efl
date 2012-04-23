@@ -5,6 +5,17 @@
 #include <Eina.h>
 
 /**
+ * @var _eobj_class_creation_lock
+ * This variable is used for locking purposes in the class_get function
+ * defined in #EOBJ_DEFINE_CLASS.
+ * This is just to work around the fact that we need to init locks before
+ * using them.
+ * Don't touch it if you don't know what you are doing.
+ * @internal
+ */
+EAPI extern Eina_Lock _eobj_class_creation_lock;
+
+/**
  * @defgroup Eobj Eobj Generic Object System
  *
  * The Eobj generic object system. It was designed to be the base object
@@ -100,6 +111,51 @@ typedef struct _Eobj_Event_Description Eobj_Event_Description;
 typedef struct _Eobj_Class Eobj_Class;
 
 /**
+ * @def EOBJ_DEFINE_CLASS(class_get_func_name, class_desc, parent_class, ...)
+ * A convenience macro to be used for creating the class_get function. This
+ * macro is fairly simple but should still be used as it'll let us improve
+ * things easily.
+ * @param class_get_func_name the name of the wanted class_get function name.
+ * @param class_desc the class description.
+ * @param parent_class The parent class for the function. Look at eobj_class_new() for more information.
+ * @param ... List of etxensions. Look at eobj_class_new() for more information.
+ *
+ * You must use this macro if you want thread safety in class creation.
+ */
+#define EOBJ_DEFINE_CLASS(class_get_func_name, class_desc, parent_class, ...) \
+EAPI const Eobj_Class * \
+class_get_func_name(void) \
+{ \
+   static volatile char lk_init = 0; \
+   static Eina_Lock _my_lock; \
+   static const Eobj_Class * volatile _my_class = NULL; \
+   if (EINA_LIKELY(!!_my_class)) return _my_class; \
+   \
+   eina_lock_take(&_eobj_class_creation_lock); \
+   if (!lk_init) \
+      eina_lock_new(&_my_lock); \
+   if (lk_init < 2) eina_lock_take(&_my_lock); \
+   if (!lk_init) \
+      lk_init = 1; \
+   else \
+     { \
+        if (lk_init < 2) eina_lock_release(&_my_lock); \
+        eina_lock_release(&_eobj_class_creation_lock); \
+        return _my_class; \
+     } \
+   eina_lock_release(&_eobj_class_creation_lock); \
+   _my_class = eobj_class_new(class_desc, parent_class, __VA_ARGS__); \
+   eina_lock_release(&_my_lock); \
+   \
+   eina_lock_take(&_eobj_class_creation_lock); \
+   eina_lock_free(&_my_lock); \
+   lk_init = 2; \
+   eina_lock_release(&_eobj_class_creation_lock); \
+   return _my_class; \
+}
+
+
+/**
  * An enum representing the possible types of an Eobj class.
  */
 enum _Eobj_Class_Type
@@ -139,6 +195,7 @@ typedef struct _Eobj_Op_Func_Description Eobj_Op_Func_Description;
  * array.
  */
 #define EOBJ_OP_FUNC(op, func) { op, func }
+
 /**
  * @def EOBJ_OP_FUNC_SENTINEL
  * A convenience macro to be used when populating the #Eobj_Op_Func_Description
@@ -227,6 +284,11 @@ typedef struct _Eobj_Class_Description Eobj_Class_Description;
  * @param parent the class to inherit from.
  * @param ... A NULL terminated list of extensions (interfaces, mixins and the classes of any composite objects).
  * @return The new class's handle on success, or NULL otherwise.
+ *
+ * You should use #EOBJ_DEFINE_CLASS. It'll provide thread safety and other
+ * features easily.
+ *
+ * @see #EOBJ_DEFINE_CLASS
  */
 EAPI const Eobj_Class *eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...);
 
