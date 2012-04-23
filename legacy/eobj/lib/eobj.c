@@ -1083,35 +1083,30 @@ eobj_ref_get(const Eobj *obj)
 Eina_Bool
 _eobj_weak_ref_cb(void *data, Eobj *obj EINA_UNUSED, const Eobj_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eobj_Weak_Ref *wref = data;
-   wref->obj = NULL;
+   Eobj **wref = data;
+   *wref = NULL;
 
    return EOBJ_CALLBACK_CONTINUE;
 }
 
-EAPI Eobj_Weak_Ref *
-eobj_weak_ref_new(const Eobj *_obj)
+EAPI void
+eobj_weak_ref_add(const Eobj *_obj, Eobj **wref)
 {
    Eobj *obj = (Eobj *) _obj;
-   Eobj_Weak_Ref *wref = calloc(1, sizeof(*wref));
+   EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
 
-   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, wref);
-
-   wref->obj = obj;
+   *wref = obj;
    eobj_event_callback_add(obj, EOBJ_EV_DEL, _eobj_weak_ref_cb, wref);
-
-   return wref;
 }
 
 EAPI void
-eobj_weak_ref_free(Eobj_Weak_Ref *wref)
+eobj_weak_ref_del(Eobj **wref)
 {
-   if (wref->obj)
+   if (*wref)
      {
-        eobj_event_callback_del_full(wref->obj, EOBJ_EV_DEL, _eobj_weak_ref_cb,
+        eobj_event_callback_del_full(*wref, EOBJ_EV_DEL, _eobj_weak_ref_cb,
               wref);
      }
-   free(wref);
 }
 
 /* EOF Weak reference. */
