@@ -469,8 +469,7 @@ _eobj_class_mro_add(Eina_List *mro, const Eobj_Class *klass)
         EINA_INLIST_FOREACH(klass->extensions, extn)
           {
              mro = _eobj_class_mro_add(mro, extn->klass);
-             if (!mro)
-                return NULL;
+             /* Not possible: if (!mro) return NULL; */
 
              if (check_consistency)
                {
@@ -1155,9 +1154,9 @@ eobj_data_get(const Eobj *obj, const Eobj_Class *klass)
 {
    /* FIXME: Add a check that this is of the right klass and we don't seg.
     * Probably just return NULL. */
-   if (klass->desc->data_size > 0)
+   if (EINA_LIKELY(klass->desc->data_size > 0))
      {
-        if (klass->desc->type == EOBJ_CLASS_TYPE_MIXIN)
+        if (EINA_UNLIKELY(klass->desc->type == EOBJ_CLASS_TYPE_MIXIN))
           {
              Eobj_Extension_Data_Offset *doff_itr =
                 eobj_class_get(obj)->extn_data_off;
