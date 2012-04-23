@@ -103,10 +103,45 @@ START_TEST(eobj_weak_reference)
 }
 END_TEST
 
+static void
+_a_set(Eobj *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   fail_if(EINA_TRUE);
+}
+
+static void
+_op_errors_class_constructor(Eobj_Class *klass)
+{
+   const Eobj_Op_Func_Description func_desc[] = {
+        EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_LAST), _a_set),
+        EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_LAST + 1), _a_set),
+        EOBJ_OP_FUNC(0x0F010111, _a_set),
+        EOBJ_OP_FUNC_SENTINEL
+   };
+
+   eobj_class_funcs_set(klass, func_desc);
+}
+
 START_TEST(eobj_op_errors)
 {
    eobj_init();
-   Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
+
+   static const Eobj_Class_Description class_desc = {
+        "Simple",
+        EOBJ_CLASS_TYPE_REGULAR,
+        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        0,
+        NULL,
+        NULL,
+        _op_errors_class_constructor,
+        NULL
+   };
+
+   const Eobj_Class *klass = eobj_class_new(&class_desc, SIMPLE_CLASS, NULL);
+   fail_if(!klass);
+
+   Eobj *obj = eobj_add(klass, NULL);
 
    /* Out of bounds op for a legal class. */
    fail_if(eobj_do(obj, 0x00010111));

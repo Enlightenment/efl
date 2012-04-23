@@ -151,6 +151,7 @@ dich_func_set(Eobj_Class *klass, Eobj_Op op, eobj_op_func_type func)
           {
              ERR("OP %x is too big for the domain '%s', expected value < %x.",
                    op, op_klass->desc->name, op_klass->desc->ops.count);
+             return;
           }
      }
    else
