@@ -992,6 +992,53 @@ eobj_ref(Eobj *obj)
    return obj;
 }
 
+static void
+_eobj_del_internal(Eobj *obj)
+{
+   /* We need that for the event callbacks that may ref/unref. */
+   obj->refcount++;
+
+   if (!obj->delete)
+     {
+        eobj_event_callback_call(obj, EOBJ_EV_DEL, NULL);
+        obj->delete = EINA_TRUE;
+     }
+
+   obj->refcount--;
+
+   const Eobj_Class *klass = eobj_class_get(obj);
+   _eobj_kls_itr_init(obj, EOBJ_NOOP);
+   eobj_constructor_error_unset(obj);
+   _eobj_destructor(obj, klass);
+   if (eobj_constructor_error_get(obj))
+     {
+        ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
+     }
+
+   if (!_eobj_kls_itr_reached_end(obj))
+     {
+        ERR("Type '%s' - Not all of the object destructors have been executed.", klass->desc->name);
+     }
+   _eobj_kls_itr_end(obj, EOBJ_NOOP);
+   /*FIXME: add eobj_class_unref(klass) ? - just to clear the caches. */
+
+   /* If for some reason it's not empty, clear it. */
+   while (obj->kls_itr)
+     {
+        WRN("Kls_Itr is not empty, possibly a bug, please report. - An error will be reported for each kls_itr in the stack.");
+        Eina_Inlist *nitr = nitr->next;
+        free(EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node));
+        obj->kls_itr = nitr;
+     }
+
+   Eina_List *itr, *itr_n;
+   Eobj *emb_obj;
+   EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
+     {
+        eobj_composite_object_detach(obj, emb_obj);
+     }
+}
+
 EAPI void
 eobj_unref(Eobj *obj)
 {
@@ -999,60 +1046,24 @@ eobj_unref(Eobj *obj)
 
    if (--(obj->refcount) == 0)
      {
+        _eobj_del_internal(obj);
         /* We need that for the event callbacks that may ref/unref. */
         obj->refcount++;
 
-        if (!obj->delete)
-          {
-             eobj_event_callback_call(obj, EOBJ_EV_DEL, NULL);
-             obj->delete = EINA_TRUE;
-          }
         eobj_event_callback_call(obj, EOBJ_EV_FREE, NULL);
 
         obj->refcount--;
 
-        const Eobj_Class *klass = eobj_class_get(obj);
-        _eobj_kls_itr_init(obj, EOBJ_NOOP);
-        eobj_constructor_error_unset(obj);
-        _eobj_destructor(obj, klass);
-        if (eobj_constructor_error_get(obj))
-          {
-             ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
-          }
-
-        if (!_eobj_kls_itr_reached_end(obj))
-          {
-             ERR("Type '%s' - Not all of the object destructors have been executed.", klass->desc->name);
-          }
-        _eobj_kls_itr_end(obj, EOBJ_NOOP);
-        /*FIXME: add eobj_class_unref(klass) ? - just to clear the caches. */
-
-        /* If for some reason it's not empty, clear it. */
-        while (obj->kls_itr)
-          {
-             WRN("Kls_Itr is not empty, possibly a bug, please report. - An error will be reported for each kls_itr in the stack.");
-             Eina_Inlist *nitr = nitr->next;
-             free(EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node));
-             obj->kls_itr = nitr;
-          }
-
 #ifndef NDEBUG
-        /* If for some reason it's not empty, clear it. */
-        while (obj->xrefs)
-          {
-             WRN("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
-             Eina_Inlist *nitr = nitr->next;
-             free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eobj_Kls_Itr_Node));
-             obj->xrefs = nitr;
-          }
+   /* If for some reason it's not empty, clear it. */
+   while (obj->xrefs)
+     {
+        WRN("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
+        Eina_Inlist *nitr = nitr->next;
+        free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eobj_Kls_Itr_Node));
+        obj->xrefs = nitr;
+     }
 #endif
-
-        Eina_List *itr, *itr_n;
-        Eobj *emb_obj;
-        EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
-          {
-             eobj_composite_object_detach(obj, emb_obj);
-          }
 
         _eobj_callback_remove_all(obj);
 
@@ -1112,8 +1123,7 @@ eobj_del(Eobj *obj)
 
    if (!obj->delete)
      {
-        eobj_event_callback_call(obj, EOBJ_EV_DEL, NULL);
-        obj->delete = EINA_TRUE;
+        _eobj_del_internal(obj);
      }
    eobj_unref(obj);
 }
