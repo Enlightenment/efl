@@ -715,28 +715,17 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    va_start(p_list, parent);
 
-#define _CLS_NEW_CHECK(x) \
-   do \
-     { \
-        if (!x) \
-          { \
-             ERR("'%s' must not be False! Aborting.", #x); \
-             return NULL; \
-          } \
-     } \
-   while(0)
-
-   _CLS_NEW_CHECK(desc);
-   _CLS_NEW_CHECK(desc->name);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc->name, NULL);
 
    /* Check restrictions on Interface types. */
    if (desc->type == EOBJ_CLASS_TYPE_INTERFACE)
      {
-        _CLS_NEW_CHECK(!desc->constructor);
-        _CLS_NEW_CHECK(!desc->destructor);
-        _CLS_NEW_CHECK(!desc->class_constructor);
-        _CLS_NEW_CHECK(!desc->class_destructor);
-        _CLS_NEW_CHECK(!desc->data_size);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->constructor, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->destructor, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->class_constructor, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->class_destructor, NULL);
+        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->data_size, NULL);
      }
 
    klass = calloc(1, sizeof(Eobj_Class));
@@ -882,7 +871,6 @@ cleanup:
    eobj_class_free(klass);
    return NULL;
 }
-#undef _CLS_NEW_CHECK
 
 EAPI Eobj *
 eobj_add(const Eobj_Class *klass, Eobj *parent)
@@ -891,7 +879,7 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
 
    if (parent) EOBJ_MAGIC_RETURN_VAL(parent, EOBJ_EINA_MAGIC, NULL);
 
-   if (klass->desc->type != EOBJ_CLASS_TYPE_REGULAR)
+   if (EINA_UNLIKELY(klass->desc->type != EOBJ_CLASS_TYPE_REGULAR))
      {
         ERR("Class '%s' is not instantiate-able. Aborting.", klass->desc->name);
         return NULL;
@@ -912,13 +900,13 @@ eobj_add(const Eobj_Class *klass, Eobj *parent)
    eobj_ref(obj);
    _eobj_constructor(obj, klass);
 
-   if (eobj_constructor_error_get(obj))
+   if (EINA_UNLIKELY(eobj_constructor_error_get(obj)))
      {
         ERR("Type '%s' - One of the object constructors have failed.", klass->desc->name);
         goto fail;
      }
 
-   if (!_eobj_kls_itr_reached_end(obj))
+   if (EINA_UNLIKELY(!_eobj_kls_itr_reached_end(obj)))
      {
         ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
