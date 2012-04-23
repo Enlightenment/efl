@@ -9,7 +9,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef _EOBJ_BUILD
+# ifdef EFL_EOBJ_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
@@ -17,7 +17,7 @@
 #  endif /* ! DLL_EXPORT */
 # else
 #  define EAPI __declspec(dllimport)
-# endif /* ! _EOBJ_BUILD */
+# endif /* ! EFL_EOBJ_BUILD */
 #else
 # ifdef __GNUC__
 #  if __GNUC__ >= 4

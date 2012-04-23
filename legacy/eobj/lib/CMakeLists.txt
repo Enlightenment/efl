@@ -3,7 +3,7 @@ LIST(APPEND EOBJ_CC_SOURCES
    eobj_base_class.c
    )
 
-ADD_DEFINITIONS(-D_EOBJ_BUILD=1)
+ADD_DEFINITIONS(-DEFL_EOBJ_BUILD=1)
 
 include_directories(
    ${EINA_INCLUDE_DIRS}
