@@ -362,16 +362,20 @@ end:
    return ret;
 }
 
-static inline Eina_Bool
-_eobj_ops_internal(Eobj *obj, va_list *p_list)
+EAPI Eina_Bool
+eobj_do_internal(Eobj *obj, ...)
 {
    Eina_Bool ret = EINA_TRUE;
-   Eobj_Op op = 0;
+   Eobj_Op op = EOBJ_NOOP;
+   va_list p_list;
+   eobj_ref(obj);
 
-   op = va_arg(*p_list, Eobj_Op);
+   va_start(p_list, obj);
+
+   op = va_arg(p_list, Eobj_Op);
    while (op)
      {
-        if (!_eobj_op_internal(obj, op, p_list))
+        if (!_eobj_op_internal(obj, op, &p_list))
           {
              const Eobj_Class *op_klass = OP_CLASS_GET(op);
              const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
@@ -381,21 +385,11 @@ _eobj_ops_internal(Eobj *obj, va_list *p_list)
              ret = EINA_FALSE;
              break;
           }
-        op = va_arg(*p_list, Eobj_Op);
+        op = va_arg(p_list, Eobj_Op);
      }
 
-   return ret;
-}
-
-EAPI Eina_Bool
-eobj_do_internal(Eobj *obj, ...)
-{
-   Eina_Bool ret;
-   va_list p_list;
-   eobj_ref(obj);
-   va_start(p_list, obj);
-   ret = _eobj_ops_internal(obj, &p_list);
    va_end(p_list);
+
    eobj_unref(obj);
    return ret;
 }
@@ -592,7 +586,7 @@ eobj_class_funcs_set(Eobj_Class *klass, const Eobj_Op_Func_Description *func_des
      }
 }
 
-void
+static void
 eobj_class_free(Eobj_Class *klass)
 {
    if (klass->constructed)
@@ -833,7 +827,6 @@ eobj_class_new(const Eobj_Class_Description *desc, const Eobj_Class *parent, ...
 
    _eobj_class_base_op_init(klass);
 
-   /* FIXME: Shouldn't be called here - should be called from eobj_add. */
    _eobj_class_constructor(klass);
 
    va_end(p_list);
