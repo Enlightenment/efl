@@ -56,7 +56,7 @@
  * that the return value is attributed to the @a list variable, this needs to
  * be done every time we use a a function that alters the contents of the list.
  * 
- * Now that we have a list we some elements in it we can look at it's contents.
+ * Now that we have a list with some elements in it we can look at it's contents.
  * @until printf
  * 
  * There are many ways of accessing elements in the list, including by it's
@@ -151,7 +151,7 @@
  */
 
 /**
- * @page eina_list_03_example_page Reordering Eina_List elments
+ * @page eina_list_03_example_page Reordering Eina_List elements
  * @dontinclude eina_list_03.c
  * 
  * If you don't know how to create lists see
@@ -190,7 +190,7 @@
  */
 
 /**
- * @page eina_list_03_c Reordering Eina_List elments example
+ * @page eina_list_03_c Reordering Eina_List elements example
  *
  * @include eina_list_03.c
  * @example eina_list_03.c

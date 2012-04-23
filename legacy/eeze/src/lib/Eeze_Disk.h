@@ -116,7 +116,7 @@ EAPI Eina_Bool      eeze_disk_can_eject(void);
 
 /**
  * @brief Create a new disk object from a /sys/ path or /dev/ path
- * @param path The /sys/ or /dev path of the disk; CANNOT be #NULL
+ * @param path The /sys/ or /dev path of the disk; CANNOT be @c NULL.
  * @return The new disk object
  *
  * This function creates a new #Eeze_Disk from @p path.  Note that this function
@@ -128,7 +128,7 @@ EAPI Eeze_Disk     *eeze_disk_new(const char *path);
 
 /**
  * @brief Create a new disk object from a mount point
- * @param mount_point The mount point of the disk; CANNOT be #NULL
+ * @param mount_point The mount point of the disk; CANNOT be @c NULL
  * @return The new disk object
  *
  * This function creates a new #Eeze_Disk from @p mount_point.  Note that this function
@@ -207,7 +207,7 @@ EAPI const char    *eeze_disk_devpath_get(Eeze_Disk *disk);
  * @param disk The disk
  * @return The filesystem type
  *
- * This retrieves the filesystem that the disk is using, or #NULL if unknown.
+ * This retrieves the filesystem that the disk is using, or @c NULL if unknown.
  * @since 1.1
  */
 EAPI const char    *eeze_disk_fstype_get(Eeze_Disk *disk);
@@ -217,7 +217,7 @@ EAPI const char    *eeze_disk_fstype_get(Eeze_Disk *disk);
  * @param disk The disk
  * @return The vendor
  *
- * This retrieves the vendor which manufactured the disk, or #NULL if unknown.
+ * This retrieves the vendor which manufactured the disk, or @c NULL if unknown.
  * @since 1.1
  */
 EAPI const char    *eeze_disk_vendor_get(Eeze_Disk *disk);
@@ -227,7 +227,7 @@ EAPI const char    *eeze_disk_vendor_get(Eeze_Disk *disk);
  * @param disk The disk
  * @return The model
  *
- * This retrieves the model of the disk, or #NULL if unknown.
+ * This retrieves the model of the disk, or @c NULL if unknown.
  * @since 1.1
  */
 EAPI const char    *eeze_disk_model_get(Eeze_Disk *disk);
@@ -237,7 +237,7 @@ EAPI const char    *eeze_disk_model_get(Eeze_Disk *disk);
  * @param disk The disk
  * @return The serial number
  *
- * This retrieves the serial number the disk, or #NULL if unknown.
+ * This retrieves the serial number the disk, or @c NULL if unknown.
  * @since 1.1
  */
 EAPI const char    *eeze_disk_serial_get(Eeze_Disk *disk);
@@ -247,7 +247,7 @@ EAPI const char    *eeze_disk_serial_get(Eeze_Disk *disk);
  * @param disk The disk
  * @return The UUID
  *
- * This retrieves the UUID of the disk, or #NULL if unknown.
+ * This retrieves the UUID of the disk, or @c NULL if unknown.
  * A UUID is a 36 character (hopefully) unique identifier which can
  * be used to store persistent information about a disk.
  * @since 1.1
@@ -259,7 +259,7 @@ EAPI const char    *eeze_disk_uuid_get(Eeze_Disk *disk);
  * @param disk The disk
  * @return The label
  *
- * This retrieves the label (name) of the disk, or #NULL if unknown.
+ * This retrieves the label (name) of the disk, or @c NULL if unknown.
  * @since 1.1
  */
 EAPI const char    *eeze_disk_label_get(Eeze_Disk *disk);
@@ -278,7 +278,7 @@ EAPI Eeze_Disk_Type eeze_disk_type_get(Eeze_Disk *disk);
 /**
  * @brief Return whether the disk is removable
  * @param disk The disk
- * @return EINA_TRUE if removable, else EINA_FALSE
+ * @return @c EINA_TRUE if removable, @c EINA_FALSE otherwise.
  * @since 1.1
  */
 EAPI Eina_Bool      eeze_disk_removable_get(Eeze_Disk *disk);
@@ -289,7 +289,8 @@ EAPI Eina_Bool      eeze_disk_removable_get(Eeze_Disk *disk);
  * @param disk The disk
  * @return The mount state
  *
- * This returns the mounted state of the disk.  #EINA_TRUE if mounted, else #EINA_FALSE.
+ * This returns the mounted state of the disk.  @c EINA_TRUE if mounted,
+ * @c EINA_FALSE otherwise.
  * @since 1.1
  */
 EAPI Eina_Bool      eeze_disk_mounted_get(Eeze_Disk *disk);
@@ -297,7 +298,7 @@ EAPI Eina_Bool      eeze_disk_mounted_get(Eeze_Disk *disk);
 /**
  * @brief Get the previously set mount wrapper for a disk
  * @param disk The disk
- * @return The wrapper, or NULL on failure
+ * @return The wrapper, or @c NULL on failure.
  *
  * This returns the wrapper previously set with eeze_disk_mount_wrapper_set
  * @since 1.1
@@ -308,11 +309,11 @@ EAPI const char    *eeze_disk_mount_wrapper_get(Eeze_Disk *disk);
  * @brief Set a wrapper to run mount commands with
  * @param disk The disk to wrap mount commands for
  * @param wrapper The wrapper executable
- * @return EINA_TRUE on success, else EINA_FALSE
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * Use this function to set up a wrapper for running mount/umount commands. The wrapper must
  * NOT use any of the standard mount/umount error code return values, and it must return 0 on success.
- * Note that this function will call stat() on @p wrapper if not NULL to test for existence.
+ * Note that this function will call stat() on @p wrapper if not @c NULL to test for existence.
  * @since 1.1
  */
 EAPI Eina_Bool      eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wrapper);
@@ -320,7 +321,7 @@ EAPI Eina_Bool      eeze_disk_mount_wrapper_set(Eeze_Disk *disk, const char *wra
 /**
  * @brief Begin a mount operation on the disk
  * @param disk The disk
- * @return #EINA_TRUE if the operation was started, else #EINA_FALSE
+ * @return @c EINA_TRUE if the operation was started, @c EINA_FALSE otherwise.
  *
  * This call is used to begin a mount operation on @p disk.  The operation will
  * run asynchronously in a pipe, emitting an EEZE_EVENT_DISK_MOUNT event with the disk object
@@ -336,7 +337,7 @@ EAPI Eina_Bool      eeze_disk_mount(Eeze_Disk *disk);
 /**
  * @brief Begin an unmount operation on the disk
  * @param disk The disk
- * @return #EINA_TRUE if the operation was started, else #EINA_FALSE
+ * @return @c EINA_TRUE if the operation was started, @c EINA_FALSE otherwise.
  *
  * This call is used to begin an unmount operation on @p disk.  The operation will
  * run asynchronously in a pipe, emitting an EEZE_EVENT_DISK_UNMOUNT event with the disk object
@@ -352,7 +353,7 @@ EAPI Eina_Bool      eeze_disk_unmount(Eeze_Disk *disk);
 /**
  * @brief Begin an eject operation on the disk
  * @param disk The disk
- * @return #EINA_TRUE if the operation was started, else #EINA_FALSE
+ * @return @c EINA_TRUE if the operation was started, @c EINA_FALSE otherwise.
  *
  * This call is used to begin an eject operation on @p disk.  The operation will
  * run asynchronously in a pipe, emitting an EEZE_EVENT_DISK_EJECT event with the disk object
@@ -389,7 +390,7 @@ EAPI const char    *eeze_disk_mount_point_get(Eeze_Disk *disk);
  * @brief Set the mount point of a disk
  * @param disk The disk
  * @param mount_point The mount point
- * @return EINA_TRUE on success, else EINA_FALSE
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * This function sets the mount point associated with @p disk.
  * Note that to determine whether the disk is actually mounted, eeze_disk_mounted_get should be used.
@@ -402,7 +403,7 @@ EAPI Eina_Bool      eeze_disk_mount_point_set(Eeze_Disk *disk, const char *mount
  * @brief Set the mount options using flags
  * @param disk The disk
  * @param opts An ORed set of #Eeze_Mount_Opts
- * @return EINA_TRUE on success, else EINA_FALSE
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * This function replaces the current mount opts of a disk with the ones in @p opts.
  * @since 1.1
@@ -422,7 +423,7 @@ EAPI unsigned long  eeze_disk_mountopts_get(Eeze_Disk *disk);
 
 /**
  * @brief Begin watching mtab and fstab
- * @return #EINA_TRUE if watching was started, else #EINA_FALSE
+ * @return @c EINA_TRUE if watching was started, @c EINA_FALSE otherwise.
  *
  * This function creates inotify watches on /etc/mtab and /etc/fstab and watches
  * them for changes.  This function should be used when expecting a lot of disk
@@ -443,14 +444,14 @@ EAPI void           eeze_mount_tabs_unwatch(void);
 
 /**
  * @brief Scan /etc/mtab a single time
- * @return #EINA_TRUE if mtab could be scanned, else #EINA_FALSE
+ * @return @c EINA_TRUE if mtab could be scanned, @c EINA_FALSE otherwise.
  *
  * This function is used to perform a single scan on /etc/mtab.  It is used to gather
  * information about mounted filesystems which can then be used with your #Eeze_Disk objects
  * where appropriate.  These files will automatically be scanned any time a mount point or mount state
  * is requested unless eeze_mount_tabs_watch has been called previously, in which case data is stored for
  * use.
- * If this function is called after eeze_mount_tabs_watch, #EINA_TRUE will be returned.
+ * If this function is called after eeze_mount_tabs_watch, @c EINA_TRUE will be returned.
  * @see eeze_mount_tabs_watch, eeze_mount_fstab_scan
  * @since 1.1
  */
@@ -458,14 +459,14 @@ EAPI Eina_Bool      eeze_mount_mtab_scan(void);
 
 /**
  * @brief Scan /etc/fstab a single time
- * @return #EINA_TRUE if mtab could be scanned, else #EINA_FALSE
+ * @return @c EINA_TRUE if mtab could be scanned, @c EINA_FALSE otherwise.
  *
  * This function is used to perform a single scan on /etc/fstab.  It is used to gather
  * information about mounted filesystems which can then be used with your #Eeze_Disk objects
  * where appropriate.  These files will automatically be scanned any time a mount point or mount state
  * is requested unless eeze_mount_tabs_watch has been called previously, in which case data is stored for
  * use.
- * If this function is called after eeze_mount_tabs_watch, #EINA_TRUE will be returned.
+ * If this function is called after eeze_mount_tabs_watch, @c EINA_TRUE will be returned.
  * @see eeze_mount_tabs_watch, eeze_mount_mtab_scan
  * @since 1.1
  */
@@ -476,7 +477,7 @@ EAPI Eina_Bool      eeze_mount_fstab_scan(void);
  *
  * @param disk The disk
  * @param property The property to get; full list of these is a FIXME
- * @return A stringshared char* with the property or NULL on failure
+ * @return A stringshared char* with the property or @c NULL on failure.
  * @since 1.1
  */
 
@@ -487,7 +488,7 @@ EAPI const char    *eeze_disk_udev_get_property(Eeze_Disk *disk, const char *pro
  *
  * @param disk The disk
  * @param sysattr The sysattr to get; full list of these is a FIXME
- * @return A stringshared char* with the sysattr or NULL on failure
+ * @return A stringshared char* with the sysattr or @c NULL on failure.
  * @since 1.1
  */
 
@@ -510,9 +511,10 @@ EAPI const char    *eeze_disk_udev_get_parent(Eeze_Disk *disk);
  *
  * @param disk The disk to walk
  * @param sysattr The attribute to find
- * @param value OPTIONAL: The value that @p sysattr should have, or NULL
+ * @param value OPTIONAL: The value that @p sysattr should have, or @c NULL.
  *
- * @return If the sysattr (with value) is found, returns TRUE.  Else, false.
+ * @return If the sysattr (with value) is found, returns @c EINA_TRUE,
+ * @EINA_FALSE otherwise.
  * @since 1.1
  */
 EAPI Eina_Bool      eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk, const char *sysattr, const char *value);
@@ -524,7 +526,7 @@ EAPI Eina_Bool      eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk, const cha
  * @param disk The disk
  * @param sysattr The attribute to find
  *
- * @return The stringshared value of @p sysattr if found, or NULL
+ * @return The stringshared value of @p sysattr if found, or @c NULL.
  * @since 1.1
  */
 EAPI const char    *eeze_disk_udev_walk_get_sysattr(Eeze_Disk *disk, const char *sysattr);

@@ -75,7 +75,7 @@
  * We then check data for corresponding tag:
  * @until EINA_FALSE
  *
- * We are doing the formatting in same time and put all the <post> children
+ * We are doing the formatting in same time and put all the \<post\> children
  * in str.
  * @until EINA_FALSE
  *

@@ -1306,8 +1306,7 @@ EAPI int               ecore_con_client_port_get(Ecore_Con_Client *cl);
  *
  * These are complete examples for the API:
  * @li @ref ecore_con_url_download_example.c "Downloading a file"
- * @li @ref ecore_con_url_headers_example.c "Setting many options for the
- * connection"
+ * @li @ref ecore_con_url_headers_example.c "Setting many options for the connection"
  *
  * @{
  */
