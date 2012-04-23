@@ -42,7 +42,7 @@ _cb_added(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event
    pd->cb_count++;
 
    printf("Added SIG_A_CHANGED callback to %p. Count: %d\n", obj, pd->cb_count);
-   return EINA_TRUE;
+   return EOBJ_CALLBACK_CONTINUE;
 }
 
 Eina_Bool
@@ -59,7 +59,7 @@ _cb_deled(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event
    pd->cb_count--;
 
    printf("Removed SIG_A_CHANGED callback from %p. Count: %d\n", obj, pd->cb_count);
-   return EINA_TRUE;
+   return EOBJ_CALLBACK_CONTINUE;
 }
 
 static void

@@ -14,7 +14,7 @@ _btn_clicked_cb(void *data, Eobj *obj, const Eobj_Event_Description *desc, void 
    const Eobj_Class *klass = eobj_class_get(obj);
    printf("%s obj-type:'%s' data:'%s'\n", desc->name, eobj_class_name_get(klass), (const char *) data);
 
-   return EINA_TRUE;
+   return EOBJ_CALLBACK_CONTINUE;
 }
 
 int

@@ -16,7 +16,7 @@ _a_changed_cb(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *e
 
    cb_called = EINA_TRUE;
 
-   return EINA_TRUE;
+   return EOBJ_CALLBACK_CONTINUE;
 }
 
 int

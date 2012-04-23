@@ -626,6 +626,20 @@ EAPI Eina_Bool eobj_composite_is(Eobj *comp_obj);
 typedef short Eobj_Callback_Priority;
 
 /**
+ * @def EOBJ_CALLBACK_STOP
+ * Stop calling callbacks for the even of which the callback was called for.
+ * @see EOBJ_CALLBACK_CONTINUE
+ */
+#define EOBJ_CALLBACK_STOP EINA_FALSE
+
+/**
+ * @def EOBJ_CALLBACK_CONTINUE
+ * Continue calling callbacks for the even of which the callback was called for.
+ * @see EOBJ_CALLBACK_STOP
+ */
+#define EOBJ_CALLBACK_CONTINUE EINA_TRUE
+
+/**
  * @typedef Eobj_Event_Cb
  *
  * An event callback prototype.
@@ -634,7 +648,7 @@ typedef short Eobj_Callback_Priority;
  * @param obj The object which initiated the event.
  * @param desc The event's description.
  * @param event_info additional data passed with the event.
- * @return #EINA_FALSE to stop calling additional callbacks for the event, #EINA_TRUE to continue.
+ * @return #EOBJ_CALLBACK_STOP to stop calling additional callbacks for the event, #EOBJ_CALLBACK_CONTINUE to continue.
  */
 typedef Eina_Bool (*Eobj_Event_Cb)(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event_info);
 

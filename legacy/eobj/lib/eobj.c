@@ -1031,7 +1031,7 @@ _eobj_weak_ref_cb(void *data, Eobj *obj EINA_UNUSED, const Eobj_Event_Descriptio
    Eobj_Weak_Ref *wref = data;
    wref->obj = NULL;
 
-   return EINA_TRUE;
+   return EOBJ_CALLBACK_CONTINUE;
 }
 
 EAPI Eobj_Weak_Ref *
