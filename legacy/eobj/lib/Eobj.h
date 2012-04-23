@@ -542,16 +542,25 @@ EAPI void eobj_del(Eobj *obj);
  */
 
 /**
- * @brief Create a new weak reference to obj.
+ * @brief Add a new weak reference to obj.
  * @param obj The object being referenced.
  * @param wref The pointer to use for the weak ref.
  * @return The object being referenced (obj).
+ *
+ * This function registers the object handle pointed by wref to obj so when
+ * obj is deleted it'll be updated to NULL. This functions should be used
+ * when you want to keep track of an object in a safe way, but you don't want
+ * to prevent it from being freed.
+ *
+ * @see eobj_weak_ref_del()
  */
 EAPI Eobj *eobj_weak_ref_add(const Eobj *obj, Eobj **wref);
 
 /**
- * @brief Free the weak reference passed.
+ * @brief Delete the weak reference passed.
  * @param wref the weak reference to free.
+ *
+ * @see eobj_weak_ref_add()
  */
 EAPI void eobj_weak_ref_del(Eobj **wref);
 
