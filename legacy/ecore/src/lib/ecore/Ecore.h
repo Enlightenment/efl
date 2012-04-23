@@ -419,7 +419,7 @@ EAPI extern Ecore_Version *ecore_version;
 typedef Eina_Bool (*Ecore_Task_Cb)(void *data);
 
 /**
- * @typedef Ecore_Eselect_Function
+ * @typedef Ecore_Select_Function
  * A function which can be used to replace select() in the main loop
  */
 typedef int (*Ecore_Select_Function)(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
@@ -850,6 +850,10 @@ EAPI extern int ECORE_EXE_EVENT_DEL;     /**< A child process has been deleted (
 EAPI extern int ECORE_EXE_EVENT_DATA;    /**< Data from a child process. */
 EAPI extern int ECORE_EXE_EVENT_ERROR;    /**< Errors from a child process. */
 
+/**
+ * @enum _Ecore_Exe_Flags
+ * Flags for executing a child with its stdin and/or stdout piped back.
+ */
 enum _Ecore_Exe_Flags    /* flags for executing a child with its stdin and/or stdout piped back */
 {
    ECORE_EXE_NONE = 0, /**< No exe flags at all */
@@ -866,6 +870,10 @@ enum _Ecore_Exe_Flags    /* flags for executing a child with its stdin and/or st
 };
 typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
+/**
+ * @enum _Ecore_Exe_Win32_Priority
+ * Defines the priority of the proccess.
+ */
 enum _Ecore_Exe_Win32_Priority
 {
    ECORE_EXE_WIN32_PRIORITY_IDLE, /**< Idle priority, for monitoring the system */
@@ -995,6 +1003,10 @@ EAPI void ecore_exe_hup(Ecore_Exe *exe);
 
 typedef struct _Ecore_Fd_Handler Ecore_Fd_Handler; /**< A handle for Fd handlers */
 
+/**
+ * @enum _Ecore_Fd_Handler_Flags
+ * What to monitor the file descriptor for: reading, writing or error.
+ */
 enum _Ecore_Fd_Handler_Flags
 {
    ECORE_FD_READ = 1, /**< Fd Read mask */
@@ -1151,6 +1163,10 @@ EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
  * @{
  */
 
+/**
+ * @enum _Ecore_Poller_Type
+ * Defines the frequency of ticks for the poller.
+ */
 enum _Ecore_Poller_Type    /* Poller types */
 {
    ECORE_POLLER_CORE = 0 /**< The core poller interval */
@@ -1274,6 +1290,10 @@ EAPI void *ecore_poller_del(Ecore_Poller *poller);
 
 typedef struct _Ecore_Animator Ecore_Animator; /**< A handle for animators */
 
+/**
+ * @enum _Ecore_Pos_Map
+ * Defines the position mappings for the animation.
+ */
 enum _Ecore_Pos_Map    /* Position mappings */
 {
    ECORE_POS_MAP_LINEAR, /**< Linear 0.0 -> 1.0 */
@@ -1289,6 +1309,10 @@ enum _Ecore_Pos_Map    /* Position mappings */
 };
 typedef enum _Ecore_Pos_Map Ecore_Pos_Map;
 
+/**
+ * @enum _Ecore_Animator_Source
+ * Defines the timing sources for animators.
+ */
 enum _Ecore_Animator_Source    /* Timing sources for animators */
 {
    ECORE_ANIMATOR_SOURCE_TIMER, /**< The default system clock/timer based animator that ticks every "frametime" seconds */

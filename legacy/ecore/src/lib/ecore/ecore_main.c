@@ -969,6 +969,7 @@ ecore_main_loop_quit(void)
  *
  * @warning you don't know how to use, don't even try to use it.
  *
+ * @param func The function to be used.
  */
 EAPI void
 ecore_main_loop_select_func_set(Ecore_Select_Function func)

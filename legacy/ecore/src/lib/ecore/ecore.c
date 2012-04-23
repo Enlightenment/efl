@@ -209,6 +209,7 @@ shutdown_evil:
 /**
  * Shut down connections, signal handlers sockets etc.
  *
+ * @return 0 if ecore shuts down, greater than 0 otherwise.
  * This function shuts down all things set up in ecore_init() and cleans up all
  * event queues, handlers, filters, timers, idlers, idle enterers/exiters
  * etc. set up after ecore_init() was called.

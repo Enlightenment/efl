@@ -250,7 +250,7 @@ typedef struct _Ecore_Con_Url Ecore_Con_Url;
 
 
 /**
- * @addtogroup Ecore_Con_Events_Group Events
+ * @addtogroup Ecore_Con_Events_Group
  * @{
  */
 
@@ -1691,7 +1691,8 @@ EAPI void              ecore_con_url_verbose_set(Ecore_Con_Url *url_con,
                                                  Eina_Bool verbose);
 /**
  * Enable or disable EPSV extension
- * @return  FIXME: To be more documented.
+ * @param url_con  The Ecore_Con_Url instance which will be acted upon.
+ * @param use_epsv Boolean to enable/disable the EPSV extension.
  */
 EAPI void              ecore_con_url_ftp_use_epsv_set(Ecore_Con_Url *url_con,
                                                       Eina_Bool use_epsv);

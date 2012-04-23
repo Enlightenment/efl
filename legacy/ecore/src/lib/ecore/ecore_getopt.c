@@ -669,7 +669,8 @@ _ecore_getopt_help_options(FILE               *fp,
 /**
  * Show nicely formatted help message for the given parser.
  *
- * Message will be print to stderr.
+ * @param fp The file the message will be printed on.
+ * @param parser The parser to be used.
  */
 EAPI void
 ecore_getopt_help(FILE               *fp,
@@ -1675,6 +1676,7 @@ _ecore_getopt_parse_find_long_other(const Ecore_Getopt      *parser,
  * Check parser for duplicate entries, print them out.
  *
  * @return @c EINA_TRUE if there are duplicates, @c EINA_FALSE otherwise.
+ * @param parser The parser to be checked.
  */
 EAPI Eina_Bool
 ecore_getopt_parser_has_duplicates(const Ecore_Getopt *parser)
@@ -1861,7 +1863,10 @@ ecore_getopt_list_free(Eina_List *list)
 /**
  * Helper ecore_getopt callback to parse geometry (x:y:w:h).
  *
+ * @param parser This parameter isn't in use.
+ * @param desc This parameter isn't in use.
  * @param str Geometry value
+ * @param data This parameter isn't in use.
  * @param storage must be a pointer to @c Eina_Rectangle and will be used to
  * store the four values passed in the given string.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on incorrect geometry value.
@@ -1889,7 +1894,10 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser __UNUSED__,
 /**
  * Helper ecore_getopt callback to parse geometry size (WxH).
  *
+ * @param parser This parameter isn't in use.
+ * @param desc This parameter isn't in use.
  * @param str size value
+ * @param data This parameter isn't in use.
  * @param storage must be a pointer to @c Eina_Rectangle and will be used to
  * store the two values passed in the given string and @c 0 in the x and y
  * fields.
