@@ -661,7 +661,7 @@ ecore_fb_input_device_name_get(Ecore_Fb_Input_Device *dev)
  * @return The capability of the device.
  *
  * This function returns the capability of the device @p dev. If @p dev is
- * @c NULL, this function returns #ECORE_FB_INPUT_DEVICE_CAP_NONE.
+ * @c NULL, this function returns ECORE_FB_INPUT_DEVICE_CAP_NONE.
  */
 EAPI Ecore_Fb_Input_Device_Cap
 ecore_fb_input_device_cap_get(Ecore_Fb_Input_Device *dev)

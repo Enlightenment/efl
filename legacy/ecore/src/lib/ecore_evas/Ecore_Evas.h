@@ -812,13 +812,12 @@ EAPI void        ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const 
 /**
  * @brief Get the name and class of an Ecore_Evas' window
  *
- * @p ee The Ecore_Evas to query
- * @p n A pointer to a string to place the name in.
- * @p c A pointer to a string to place the class in.
- *
  * This function gets the name of @p ee into @p n, and its class into
  * @p c.
  *
+ * @param ee The Ecore_Evas to query.
+ * @param n A pointer to a string to place the name in.
+ * @param c A pointer to a string to place the class in.
  * @see ecore_evas_name_class_set()
  */
 EAPI void        ecore_evas_name_class_get(const Ecore_Evas *ee, const char **n, const char **c);
@@ -1000,6 +999,7 @@ EAPI Ecore_Evas     *ecore_evas_ews_new(int x, int y, int w, int h);
  *       determine stacking and geometry of it for window managers
  *       that decorate windows.
  *
+ * @param ee The Ecore_Evas from which to get the backing store.
  * @see ecore_evas_ews_manager_set()
  * @see ecore_evas_ews_evas_get()
  * @since 1.1
@@ -1010,6 +1010,7 @@ EAPI Evas_Object *ecore_evas_ews_backing_store_get(const Ecore_Evas *ee);
  * Calls the window to be deleted (freed), but can let user decide to
  * forbid it by using ecore_evas_callback_delete_request_set()
  *
+ * @param ee The Ecore_Evas for which window will be deleted.
  * @since 1.1
  */
 EAPI void ecore_evas_ews_delete_request(Ecore_Evas *ee);
@@ -1871,6 +1872,8 @@ EAPI void           ecore_evas_x11_shape_input_apply(Ecore_Evas *ee);
 /**
  * Sets the engine to be used by the backing store engine.
  *
+ * @param engine The engine to be set.
+ * @param options The options of the engine to be set.
  * @return @c EINA_TRUE on success, @c EINA_FALSE if ews is already in use.
  * @since 1.1
  */
@@ -1879,6 +1882,10 @@ EAPI Eina_Bool ecore_evas_ews_engine_set(const char *engine, const char *options
 /**
  * Reconfigure the backing store used.
  *
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to setup.
+ * @param h The height of the Ecore_Evas to setup.
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  * @since 1.1
  */
@@ -1921,6 +1928,7 @@ EAPI Evas_Object *ecore_evas_ews_background_get(void);
  * rectangle.
  *
  * @note previous object will be deleted!
+ * @param o The Evas_Object for which to set the background.
  */
 EAPI void ecore_evas_ews_background_set(Evas_Object *o);
 

@@ -2979,9 +2979,15 @@ _ecore_evas_x_flush_post(void *data, Evas *e __UNUSED__, void *event_info __UNUS
 #endif
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Create Ecore_Evas using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and NULL is returned.
+ * @param disp_name The name of the Ecore_Evas to be created.
+ * @param parent The parent of the Ecore_Evas to be created.
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return A handle to the created Ecore_Evas.
  */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 EAPI Ecore_Evas *
@@ -3182,9 +3188,10 @@ ecore_evas_software_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window par
 #endif
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Get the window from Ecore_Evas using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and 0 is returned.
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window.
  */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 EAPI Ecore_X_Window
@@ -3201,9 +3208,10 @@ ecore_evas_software_x11_window_get(const Ecore_Evas *ee __UNUSED__)
 #endif
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Set the direct_resize of Ecore_Evas using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas in which to set direct resize.
+ * @param on Enables the resize of Ecore_Evas if equals EINA_TRUE, disables if equals EINA_FALSE.
  */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 EAPI void
@@ -3237,9 +3245,10 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool o
 #endif
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Gets if the Ecore_Evas is being directly resized using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and EINA_FALSE is returned.
+ * @param ee The Ecore_Evas from which to get direct resize.
+ * @return EINA_TRUE if the resize was managed directly, otherwise return EINA_FALSE.
  */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 EAPI Eina_Bool
@@ -3256,9 +3265,10 @@ ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
 #endif
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Add extra window on Ecore_Evas using software x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas on which to add the window.
+ * @param win The window to be added at the Ecore_Evas.
  */
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_X11
 EAPI void
@@ -3287,9 +3297,15 @@ ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_
 #endif
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Create Ecore_Evas using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and NULL is returned.
+ * @param disp_name The name of the display of the Ecore_Evas to be created.
+ * @param parent The parent of the Ecore_Evas to be created.
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return The new Ecore_Evas.
  */
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI Ecore_Evas *
@@ -3419,9 +3435,10 @@ ecore_evas_gl_x11_options_new(const char *disp_name __UNUSED__, Ecore_X_Window p
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Get the window from Ecore_Evas using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and 0 is returned.
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window of Ecore_Evas.
  */
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI Ecore_X_Window
@@ -3438,9 +3455,10 @@ ecore_evas_gl_x11_window_get(const Ecore_Evas *ee __UNUSED__)
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Set direct_resize for Ecore_Evas using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas in which to set direct resize.
+ * @param on Enables the resize of Ecore_Evas if equals EINA_TRUE, disables if equals EINA_FALSE.
  */
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI void
@@ -3456,9 +3474,10 @@ ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UN
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Gets if the Ecore_Evas is being directly resized using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and EINA_FALSE is returned.
+ * @param ee The Ecore_Evas from which to get direct resize.
+ * @return EINA_TRUE if the resize was managed directly, otherwise return EINA_FALSE.
  */
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI Eina_Bool
@@ -3475,9 +3494,10 @@ ecore_evas_gl_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Add extra window on Ecore_Evas using opengl x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas for which to add the window.
+ * @param win The window to be added at the Ecore_Evas.
  */
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI void
@@ -3493,9 +3513,12 @@ ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Wind
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Set the functions to be used before and after the swap callback.
+ * @note If ecore is not compiled with support to x11 then nothing is done and the function is returned.
+ * @param ee The Ecore_Evas for which to set the swap callback.
+ * @param data The data for which to set the swap callback.
+ * @param pre_cb The function to be called before the callback.
+ * @param post_cb The function to be called after the callback.
  */
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
 EAPI void
@@ -3525,11 +3548,6 @@ ecore_evas_gl_x11_pre_post_swap_callback_set(const Ecore_Evas *ee __UNUSED__, vo
 }
 #endif /* ! BUILD_ECORE_EVAS_OPENGL_X11 */
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed or maybe removed rather?
- */
 EAPI Ecore_Evas *
 ecore_evas_xrender_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window parent __UNUSED__,
                            int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
@@ -3537,52 +3555,38 @@ ecore_evas_xrender_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window pare
    return NULL;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed or maybe removed rather?
- */
 EAPI Ecore_X_Window
 ecore_evas_xrender_x11_window_get(const Ecore_Evas *ee __UNUSED__)
 {
    return 0;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
 EAPI void
 ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Bool on __UNUSED__)
 {
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
 EAPI Eina_Bool
 ecore_evas_xrender_x11_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
 {
    return 0;
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
 EAPI void
 ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Ecore_X_Window win __UNUSED__)
 {
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Create Ecore_Evas using software 16 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and NULL is returned.
+ * @param disp_name The name of the display of the Ecore_Evas to be created.
+ * @param parent The parent of the Ecore_Evas to be created.
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return The new Ecore_Evas.
  */
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI Ecore_Evas *
@@ -3736,9 +3740,10 @@ ecore_evas_software_x11_16_new(const char *disp_name __UNUSED__, Ecore_X_Window 
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Get the window from Ecore_Evas using software 16 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and 0 is returned.
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window of Ecore_Evas.
  */
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI Ecore_X_Window
@@ -3755,9 +3760,10 @@ ecore_evas_software_x11_16_window_get(const Ecore_Evas *ee __UNUSED__)
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Set direct_resize for Ecore_Evas using software 16 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas in which to set direct resize.
+ * @param on Enables the resize of Ecore_Evas if equals EINA_TRUE, disables if equals EINA_FALSE.
  */
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI void
@@ -3791,9 +3797,10 @@ ecore_evas_software_x11_16_direct_resize_set(Ecore_Evas *ee __UNUSED__, Eina_Boo
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Gets if the Ecore_Evas is being directly resized using software 16 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and 0 is returned.
+ * @param ee The Ecore_Evas from which to get direct resize.
+ * @return EINA_TRUE if the resize was managed directly, otherwise return EINA_FALSE.
  */
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI Eina_Bool
@@ -3810,9 +3817,10 @@ ecore_evas_software_x11_16_direct_resize_get(const Ecore_Evas *ee __UNUSED__)
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Add extra window on Ecore_Evas using software 16 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done.
+ * @param ee The Ecore_Evas on which to add the window.
+ * @param win The window to be added at the Ecore_Evas.
  */
 #if BUILD_ECORE_EVAS_SOFTWARE_16_X11
 EAPI void
@@ -3842,9 +3850,15 @@ ecore_evas_software_x11_16_extra_event_window_add(Ecore_Evas *ee __UNUSED__, Eco
 
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Create Ecore_Evas using software 8 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and NULL is returned.
+ * @param disp_name The name of the display of the Ecore_Evas to be created.
+ * @param parent The parent of the Ecore_Evas to be created.
+ * @param x The X coordinate to be used.
+ * @param y The Y coordinate to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return The new Ecore_Evas.
  */
 EAPI Ecore_Evas *
 ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent,
@@ -4055,9 +4069,10 @@ ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent,
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Get window from Ecore_Evas using software 8 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and 0 is returned.
+ * @param ee The Ecore_Evas from which to get the window.
+ * @return The window of type Ecore_X_Window of Ecore_Evas.
  */
 EAPI Ecore_X_Window
 ecore_evas_software_x11_8_window_get(const Ecore_Evas *ee)
@@ -4071,9 +4086,10 @@ ecore_evas_software_x11_8_window_get(const Ecore_Evas *ee)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Get subwindow from Ecore_Evas using software 8 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and 0 is returned.
+ * @param ee The Ecore_Evas from which to get the subwindow.
+ * @return The window of type Ecore_X_Window of Ecore_Evas.
  */
 EAPI Ecore_X_Window
 ecore_evas_software_x11_8_subwindow_get(const Ecore_Evas *ee)
@@ -4087,9 +4103,10 @@ ecore_evas_software_x11_8_subwindow_get(const Ecore_Evas *ee)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Set direct_size for Ecore_Evas using software 8 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and the function is returned.
+ * @param ee The Ecore_Evas in which to set direct resize.
+ * @param on Enables the resize of Ecore_Evas if equals EINA_TRUE, disables if equals EINA_FALSE.
  */
 EAPI void
 ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
@@ -4122,9 +4139,10 @@ ecore_evas_software_x11_8_direct_resize_set(Ecore_Evas *ee, Eina_Bool on)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Gets if the Ecore_Evas is being directly resized using software 8 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and 0 is returned.
+ * @param ee The Ecore_Evas from which to get direct resize.
+ * @return EINA_TRUE if the resize was managed directly, otherwise return EINA_FALSE.
  */
 EAPI Eina_Bool
 ecore_evas_software_x11_8_direct_resize_get(const Ecore_Evas *ee)
@@ -4138,9 +4156,10 @@ ecore_evas_software_x11_8_direct_resize_get(const Ecore_Evas *ee)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Add extra window on Ecore_Evas using software 8 x11.
+ * @note If ecore is not compiled with support to x11 then nothing is done and the function is returned.
+ * @param ee The Ecore_Evas on which to add the window.
+ * @param win The window to be added at Ecore_Evas.
  */
 EAPI void
 ecore_evas_software_x11_8_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)

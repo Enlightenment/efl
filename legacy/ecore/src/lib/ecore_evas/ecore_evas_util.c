@@ -412,6 +412,12 @@ _ecore_evas_object_dissociate(Ecore_Evas *ee, Evas_Object *obj)
  *
  * If there is a boolean storage provided, then it is marked with 1
  * when this option is executed.
+ * @param parser This parameter isn't in use.
+ * @param desc This parameter isn't in use.
+ * @param str This parameter isn't in use.
+ * @param data The data to be used.
+ * @param storage The storage to be used.
+ * @return The function always return 1.
  */
 unsigned char
 ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser __UNUSED__, const Ecore_Getopt_Desc *desc __UNUSED__, const char *str __UNUSED__, void *data, Ecore_Getopt_Value *storage)

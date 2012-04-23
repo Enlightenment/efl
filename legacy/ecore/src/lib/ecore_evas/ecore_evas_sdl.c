@@ -22,11 +22,10 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
-/**
- ** SDL only handle one window at a time. That's by definition, there is nothing wrong here.
- **
- **/
-
+/*
+ * SDL only handle one window at a time. That's by definition, there is nothing wrong here.
+ *
+ */
 #if defined(BUILD_ECORE_EVAS_SOFTWARE_SDL) || defined(BUILD_ECORE_EVAS_OPENGL_SDL)
 
 /* static char *ecore_evas_default_display = "0"; */

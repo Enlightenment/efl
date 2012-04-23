@@ -565,9 +565,12 @@ static Ecore_Evas_Engine_Func _ecore_fb_engine_func =
 #endif
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * @brief Create Ecore_Evas using fb backend.
+ * @param disp_name The name of the display to be used.
+ * @param rotation The rotation to be used.
+ * @param w The width of the Ecore_Evas to be created.
+ * @param h The height of the Ecore_Evas to be created.
+ * @return The new Ecore_Evas.
  */
 #ifdef BUILD_ECORE_EVAS_FB
 EAPI Ecore_Evas *
