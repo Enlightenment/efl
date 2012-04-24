@@ -4,6 +4,8 @@
 # include <limits.h>
 # include <xkbcommon/xkbcommon.h>
 
+# include "Ecore.h"
+# include "Ecore_Input.h"
 # include "Ecore_Wayland.h"
 
 //# define LOGFNS 1

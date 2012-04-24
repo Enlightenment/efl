@@ -18,11 +18,7 @@
 # define BTN_BACK 0x116
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
-#include "Ecore_Input.h"
 #include "ecore_wl_private.h"
-#include "Ecore_Wayland.h"
 
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close);
@@ -155,6 +151,8 @@ ecore_wl_init(const char *name)
 
    wl_display_add_global_listener(_ecore_wl_disp->wl.display, 
                                   _ecore_wl_cb_handle_global, _ecore_wl_disp);
+
+   /* Init egl */
 
    /* FIXME: Process connection events ?? */
    /* wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE); */

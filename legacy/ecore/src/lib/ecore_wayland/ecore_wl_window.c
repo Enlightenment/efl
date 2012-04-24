@@ -2,12 +2,10 @@
 # include <config.h>
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
 #include "ecore_wl_private.h"
-#include "Ecore_Wayland.h"
 
 /* local function prototypes */
+static void _ecore_wl_window_cb_ping(void *data __UNUSED__, struct wl_shell_surface *shell_surface, unsigned int serial);
 static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int edges, int w, int h);
 static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface __UNUSED__);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, unsigned int timestamp);
@@ -18,6 +16,7 @@ static Eina_Hash *_windows = NULL;
 /* wayland listeners */
 static const struct wl_shell_surface_listener _ecore_wl_shell_surface_listener = 
 {
+   _ecore_wl_window_cb_ping,
    _ecore_wl_window_cb_configure,
    _ecore_wl_window_cb_popup_done
 };
@@ -118,8 +117,9 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
      }
 
    if (win->region.input) wl_region_destroy(win->region.input);
+   win->region.input = NULL;
    if (win->region.opaque) wl_region_destroy(win->region.opaque);
-
+   win->region.opaque = NULL;
    if (win->shell_surface) wl_shell_surface_destroy(win->shell_surface);
    win->shell_surface = NULL;
 
@@ -148,8 +148,10 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+
    win->allocation.x = x;
    win->allocation.y = y;
+
    if (win->shell_surface)
      {
         Ecore_Wl_Input *input;
@@ -165,7 +167,6 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
 
         if ((!input) || (!input->input_device)) return;
 
-        ecore_wl_input_ungrab(input, input->timestamp);
         wl_shell_surface_move(win->shell_surface, input->input_device,
                               input->display->serial);
      }
@@ -191,8 +192,10 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+
    win->allocation.w = w;
    win->allocation.h = h;
+
    if (win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN)
      {
         win->region.input = 
@@ -200,6 +203,7 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
         wl_region_add(win->region.input, win->allocation.x, win->allocation.y, 
                       win->allocation.w, win->allocation.h);
      }
+
    if (!win->transparent)
      {
         win->region.opaque = 
@@ -223,7 +227,6 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
         if ((!input) || (!input->input_device)) return;
 
-        ecore_wl_input_ungrab(input, input->timestamp);
         wl_shell_surface_resize(win->shell_surface, input->input_device, 
                                 input->display->serial, location);
      }
@@ -255,21 +258,8 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
       case ECORE_WL_WINDOW_BUFFER_TYPE_SHM:
         if (win->surface)
           {
-             int dx = 0, dy = 0;
-
-             if ((win->server_allocation.w != win->allocation.w) || 
-                 (win->server_allocation.h != win->allocation.h))
-               {
-                  dx = win->allocation.w - win->server_allocation.w;
-                  dy = win->allocation.h - win->server_allocation.h;
-                  if (buffer)
-                    wl_surface_attach(win->surface, buffer, dx, dy);
-               }
-             else
-               {
-                  if (buffer)
-                    wl_surface_attach(win->surface, buffer, x, y);
-               }
+             if (buffer)
+               wl_surface_attach(win->surface, buffer, x, y);
 
              win->server_allocation = win->allocation;
           }
@@ -277,6 +267,10 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
       default:
         return;
      }
+
+   if (win->surface)
+     wl_surface_damage(win->surface, 0, 0, 
+                       win->allocation.w, win->allocation.h);
 
    if (win->region.input)
      {
@@ -291,10 +285,6 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
         wl_region_destroy(win->region.opaque);
         win->region.opaque = NULL;
      }
-
-   if (win->surface)
-     wl_surface_damage(win->surface, 0, 0, 
-                       win->allocation.w, win->allocation.h);
 }
 
 /**
@@ -490,6 +480,16 @@ ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h)
    win->allocation.h = h;
 }
 
+EAPI void 
+ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+   win->allocation.x = x;
+   win->allocation.y = y;
+}
+
 EAPI struct wl_surface *
 ecore_wl_window_surface_get(Ecore_Wl_Window *win)
 {
@@ -554,6 +554,12 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
 
 /* local functions */
 static void 
+_ecore_wl_window_cb_ping(void *data __UNUSED__, struct wl_shell_surface *shell_surface, unsigned int serial)
+{
+   wl_shell_surface_pong(shell_surface, serial);
+}
+
+static void 
 _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int edges, int w, int h)
 {
    Ecore_Wl_Window *win;
@@ -561,17 +567,20 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(win = data)) return;
+
    if ((w <= 0) || (h <= 0)) return;
 
-   win->edges = edges;
-   win->allocation.w = w;
-   win->allocation.h = h;
-   if (win->region.input) wl_region_destroy(win->region.input);
-   win->region.input = NULL;
-   if (win->region.opaque) wl_region_destroy(win->region.opaque);
-   win->region.opaque = NULL;
-   /* FIXME: 0 timestamp here may not work. need to test */
-   _ecore_wl_window_configure_send(win, w, h, 0);
+   if ((win->allocation.w != w) || (win->allocation.h != h))
+     {
+        win->edges = edges;
+        if (win->region.input) wl_region_destroy(win->region.input);
+        win->region.input = NULL;
+        if (win->region.opaque) wl_region_destroy(win->region.opaque);
+        win->region.opaque = NULL;
+
+        /* FIXME: 0 timestamp here may not work. need to test */
+        _ecore_wl_window_configure_send(win, w, h, 0);
+     }
 }
 
 static void 
@@ -582,7 +591,7 @@ _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surfac
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(win = data)) return;
-   ecore_wl_input_ungrab(win->pointer_device, 0);
+   ecore_wl_input_ungrab(win->pointer_device);
 }
 
 static void 

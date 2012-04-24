@@ -2,10 +2,7 @@
 # include <config.h>
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
 #include "ecore_wl_private.h"
-#include "Ecore_Wayland.h"
 
 /* local function prototypes */
 static void _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__, int x, int y, int w, int h, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__);

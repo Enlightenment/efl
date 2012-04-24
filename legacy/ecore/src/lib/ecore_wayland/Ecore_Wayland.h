@@ -146,6 +146,8 @@ struct _Ecore_Wl_Window
    /* Eina_Bool redraw_scheduled : 1; */
    /* Eina_Bool resize_scheduled : 1; */
    Eina_Bool transparent : 1;
+   Eina_Bool moving : 1;
+   Eina_Bool resizing : 1;
 
    Ecore_Wl_Window_Type type;
    Ecore_Wl_Window_Buffer_Type buffer_type;
@@ -282,7 +284,7 @@ EAPI int ecore_wl_dpi_get(void);
 EAPI void ecore_wl_display_iterate(void);
 
 EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
-EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input, unsigned int timestamp);
+EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input);
 
 EAPI struct wl_list ecore_wl_outputs_get(void);
 
@@ -299,6 +301,7 @@ EAPI void ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximize
 EAPI void ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen);
 EAPI void ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent);
 EAPI void ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h);
+EAPI void ecore_wl_window_update_location(Ecore_Wl_Window *win, int x, int y);
 EAPI struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);
 EAPI struct wl_shell_surface *ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win);
 EAPI Ecore_Wl_Window *ecore_wl_window_find(unsigned int id);

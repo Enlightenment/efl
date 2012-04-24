@@ -2,10 +2,7 @@
 # include <config.h>
 #endif
 
-#include "Ecore.h"
-#include "ecore_private.h"
 #include "ecore_wl_private.h"
-#include "Ecore_Wayland.h"
 
 /* local function prototypes */
 static void _ecore_wl_dnd_offer(void *data, struct wl_data_offer *wl_data_offer __UNUSED__, const char *type);
@@ -77,6 +74,8 @@ _ecore_wl_dnd_leave(void *data, struct wl_data_device *data_device __UNUSED__)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
+   /* FIXME: NB: This MAY need to raise a wl_event_dnd_leave for the 
+    * source window */
    _ecore_wl_dnd_del(input->drag_source);
    input->drag_source = NULL;
 }
