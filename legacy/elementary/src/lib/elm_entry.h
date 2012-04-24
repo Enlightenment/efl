@@ -1479,7 +1479,8 @@ EAPI void                   elm_entry_input_panel_return_key_autoenabled_set(Eva
 /**
  * Reset the input method context of the entry if needed.
  *
- * This can be necessary in the case where modifying the buffer would confuse on-going input method behavior
+ * This can be necessary in the case where modifying the buffer would confuse on-going input method behavior.
+ * This will typically cause the Input Method Context to clear the preedit state.
  * @param obj The entry object
  *
  * @ingroup Entry
