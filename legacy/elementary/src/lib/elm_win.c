@@ -796,6 +796,8 @@ _elm_win_obj_callback_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
         evas_object_geometry_get(obj, &x, &y, NULL, NULL);
         win->screen.x = x;
         win->screen.y = y;
+
+        /* FIXME: We should update ecore_wl_window_location here !! */
      }
    else if (win->img_obj)
      {
@@ -1563,8 +1565,13 @@ _elm_win_frame_cb_move_start(void *data, Evas_Object *obj __UNUSED__, const char
    if (!(win = data)) return;
    /* FIXME: Change mouse pointer */
 
-   /* NB: 0,0 are dummy values. Wayland handles the move by itself */
-   ecore_evas_move(win->ee, 0, 0);
+   /* NB: Wayland handles moving surfaces by itself so we cannot 
+    * specify a specific x/y we want. Instead, we will pass in the 
+    * existing x/y values so they can be recorded as 'previous' position. 
+    * The new position will get updated automatically when the move is 
+    * finished */
+
+   ecore_evas_wayland_move(win->ee, win->screen.x, win->screen.y);
 }
 
 static void
