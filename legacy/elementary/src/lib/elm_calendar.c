@@ -29,9 +29,10 @@ struct _Widget_Data
    Ecore_Timer *spin, *update_timer;
    Elm_Calendar_Format_Cb format_func;
    const char *weekdays[ELM_DAY_LAST];
-   struct tm current_time, selected_time;
+   struct tm current_time, selected_time, showed_time;
    Day_Color day_color[42]; // EINA_DEPRECATED
    Elm_Calendar_Select_Mode select_mode;
+   Eina_Bool selected:1;
 };
 
 struct _Elm_Calendar_Mark
@@ -130,6 +131,7 @@ static inline void
 _select(Widget_Data *wd, int selected)
 {
    char emission[32];
+   wd->selected_it = selected;
    snprintf(emission, sizeof(emission), "cit_%i,selected", selected);
    edje_object_signal_emit(wd->calendar, emission, "elm");
 }
@@ -204,7 +206,7 @@ _set_month_year(Widget_Data *wd)
    char *buf;
 
    /* Set selected month */
-   buf = wd->format_func(&wd->selected_time);
+   buf = wd->format_func(&wd->showed_time);
    if (buf)
      {
         edje_object_part_text_escaped_set(wd->calendar, "month_text", buf);
@@ -229,15 +231,15 @@ _populate(Evas_Object *obj)
 
    if (wd->today_it > 0) _not_today(wd);
 
-   maxdays = _maxdays_get(&wd->selected_time);
-   mon = wd->selected_time.tm_mon;
-   yr = wd->selected_time.tm_year;
+   maxdays = _maxdays_get(&wd->showed_time);
+   mon = wd->showed_time.tm_mon;
+   yr = wd->showed_time.tm_year;
 
    _set_month_year(wd);
 
    /* Set days */
    day = 0;
-   first_day = wd->selected_time;
+   first_day = wd->showed_time;
    first_day.tm_mday = 1;
    mktime(&first_day);
 
@@ -301,11 +303,19 @@ _populate(Evas_Object *obj)
           {
              if ((wd->selected_it > -1) && (wd->selected_it != i))
                _unselect(wd, wd->selected_it);
-
-             if (wd->select_mode != ELM_CALENDAR_SELECT_MODE_NONE)
-               _select(wd, i);
-
-             wd->selected_it = i;
+             if (wd->select_mode == ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+               {
+                  if ((mon == wd->selected_time.tm_mon)
+                      && (yr == wd->selected_time.tm_year)
+                      && (wd->selected))
+                    {
+                       _select(wd, i);
+                    }
+               }
+             else if (wd->select_mode != ELM_CALENDAR_SELECT_MODE_NONE)
+               {
+                  _select(wd, i);
+               }
           }
 
         if ((day) && (day <= maxdays))
@@ -323,8 +333,8 @@ _populate(Evas_Object *obj)
    EINA_LIST_FOREACH(wd->marks, l, mark)
      {
         struct tm *mtime = &mark->mark_time;
-        int month = wd->selected_time.tm_mon;
-        int year = wd->selected_time.tm_year;
+        int month = wd->showed_time.tm_mon;
+        int year = wd->showed_time.tm_year;
         int mday_it = mtime->tm_mday + wd->first_day_it - 1;
 
         switch (mark->repeat)
@@ -488,6 +498,10 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 static inline void
 _fix_selected_time(Widget_Data *wd)
 {
+   if (wd->selected_time.tm_mon != wd->showed_time.tm_mon)
+     wd->selected_time.tm_mon = wd->showed_time.tm_mon;
+   if (wd->selected_time.tm_year != wd->showed_time.tm_year)
+     wd->selected_time.tm_year = wd->showed_time.tm_year;
    mktime(&wd->selected_time);
 }
 
@@ -500,39 +514,43 @@ _update_month(Evas_Object *obj, int delta)
    if (!wd) return EINA_FALSE;
 
    /* check if it's a valid time. for 32 bits, year greater than 2037 is not */
-   time_check = wd->selected_time;
+   time_check = wd->showed_time;
    time_check.tm_mon += delta;
    if (mktime(&time_check) == -1)
      return EINA_FALSE;
 
-   wd->selected_time.tm_mon += delta;
-   if (wd->selected_time.tm_mon < 0)
+   wd->showed_time.tm_mon += delta;
+   if (wd->showed_time.tm_mon < 0)
      {
-        if (wd->selected_time.tm_year == wd->year_min)
+        if (wd->showed_time.tm_year == wd->year_min)
           {
-             wd->selected_time.tm_mon++;
+             wd->showed_time.tm_mon++;
              return EINA_FALSE;
           }
-        wd->selected_time.tm_mon = 11;
-        wd->selected_time.tm_year--;
+        wd->showed_time.tm_mon = 11;
+        wd->showed_time.tm_year--;
      }
-   else if (wd->selected_time.tm_mon > 11)
+   else if (wd->showed_time.tm_mon > 11)
      {
-        if (wd->selected_time.tm_year == wd->year_max)
+        if (wd->showed_time.tm_year == wd->year_max)
           {
-             wd->selected_time.tm_mon--;
+             wd->showed_time.tm_mon--;
              return EINA_FALSE;
           }
-        wd->selected_time.tm_mon = 0;
-        wd->selected_time.tm_year++;
+        wd->showed_time.tm_mon = 0;
+        wd->showed_time.tm_year++;
      }
 
-   maxdays = _maxdays_get(&wd->selected_time);
-   if (wd->selected_time.tm_mday > maxdays)
-     wd->selected_time.tm_mday = maxdays;
+   if ((wd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+       && (wd->select_mode != ELM_CALENDAR_SELECT_MODE_NONE))
+     {
+        maxdays = _maxdays_get(&wd->showed_time);
+        if (wd->selected_time.tm_mday > maxdays)
+          wd->selected_time.tm_mday = maxdays;
 
-   _fix_selected_time(wd);
-   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+        _fix_selected_time(wd);
+        evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
+     }
 
    return EINA_TRUE;
 }
@@ -590,7 +608,7 @@ _get_item_day(Evas_Object *obj, int selected_it)
    if (!wd) return 0;
 
    day = selected_it - wd->first_day_it + 1;
-   if ((day < 0) || (day > _maxdays_get(&wd->selected_time)))
+   if ((day < 0) || (day > _maxdays_get(&wd->showed_time)))
      return 0;
 
    return day;
@@ -609,11 +627,12 @@ _update_sel_it(Evas_Object *obj, int sel_it)
      return;
 
    _unselect(wd, wd->selected_it);
+   if (!wd->selected)
+     wd->selected = EINA_TRUE;
 
-   wd->selected_it = sel_it;
    wd->selected_time.tm_mday = day;
-   _select(wd, wd->selected_it);
    _fix_selected_time(wd);
+   _select(wd, sel_it);
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
@@ -650,8 +669,8 @@ _update_cur_date(void *data)
    t = _time_to_next_day(&wd->current_time);
    ecore_timer_interval_set(wd->update_timer, t);
 
-   if ((wd->current_time.tm_mon != wd->selected_time.tm_mon) ||
-       (wd->current_time.tm_year!= wd->selected_time.tm_year))
+   if ((wd->current_time.tm_mon != wd->showed_time.tm_mon) ||
+       (wd->current_time.tm_year!= wd->showed_time.tm_year))
      return ECORE_CALLBACK_RENEW;
 
    day = wd->current_time.tm_mday + wd->first_day_it - 1;
@@ -669,30 +688,9 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
 
    if (!wd) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-   if (wd->select_mode ==  ELM_CALENDAR_SELECT_MODE_NONE) return EINA_FALSE;
 
-   if ((!strcmp(ev->keyname, "Left")) ||
-       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
-     {
-        _update_sel_it(obj, wd->selected_it-1);
-     }
-   else if ((!strcmp(ev->keyname, "Right")) ||
-            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
-     {
-        _update_sel_it(obj, wd->selected_it+1);
-     }
-   else if ((!strcmp(ev->keyname, "Up"))  ||
-            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
-     {
-        _update_sel_it(obj, wd->selected_it-ELM_DAY_LAST);
-     }
-   else if ((!strcmp(ev->keyname, "Down")) ||
-            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
-     {
-        _update_sel_it(obj, wd->selected_it+ELM_DAY_LAST);
-     }
-   else if ((!strcmp(ev->keyname, "Prior")) ||
-            ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
+   if ((!strcmp(ev->keyname, "Prior")) ||
+       ((!strcmp(ev->keyname, "KP_Prior")) && (!ev->string)))
      {
         if (_update_month(obj, -1)) _populate(obj);
      }
@@ -700,6 +698,45 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
             ((!strcmp(ev->keyname, "KP_Next")) && (!ev->string)))
      {
         if (_update_month(obj, 1)) _populate(obj);
+     }
+
+   else if ((wd->select_mode != ELM_CALENDAR_SELECT_MODE_NONE)
+            && ((wd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+                || (wd->selected)))
+     {
+        if ((!strcmp(ev->keyname, "Left")) ||
+            ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+          {
+             if ((wd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+                 || ((wd->showed_time.tm_year == wd->selected_time.tm_year)
+                     && (wd->showed_time.tm_mon == wd->selected_time.tm_mon)))
+               _update_sel_it(obj, wd->selected_it-1);
+          }
+        else if ((!strcmp(ev->keyname, "Right")) ||
+                 ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+          {
+             if ((wd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+                 || ((wd->showed_time.tm_year == wd->selected_time.tm_year)
+                     && (wd->showed_time.tm_mon == wd->selected_time.tm_mon)))
+               _update_sel_it(obj, wd->selected_it+1);
+          }
+        else if ((!strcmp(ev->keyname, "Up"))  ||
+                 ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+          {
+             if ((wd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+                 || ((wd->showed_time.tm_year == wd->selected_time.tm_year)
+                     && (wd->showed_time.tm_mon == wd->selected_time.tm_mon)))
+               _update_sel_it(obj, wd->selected_it-ELM_DAY_LAST);
+          }
+        else if ((!strcmp(ev->keyname, "Down")) ||
+                 ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+          {
+             if ((wd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+                 || ((wd->showed_time.tm_year == wd->selected_time.tm_year)
+                     && (wd->showed_time.tm_mon == wd->selected_time.tm_mon)))
+               _update_sel_it(obj, wd->selected_it+ELM_DAY_LAST);
+          }
+        else return EINA_FALSE;
      }
    else return EINA_FALSE;
 
@@ -776,8 +813,9 @@ elm_calendar_add(Evas_Object *parent)
      }
 
    current_time = time(NULL);
-   localtime_r(&current_time, &wd->selected_time);
-   wd->current_time = wd->selected_time;
+   localtime_r(&current_time, &wd->showed_time);
+   wd->current_time = wd->showed_time;
+   wd->selected_time = wd->showed_time;
    t = _time_to_next_day(&wd->current_time);
    wd->update_timer = ecore_timer_add(t, _update_cur_date, obj);
 
@@ -846,11 +884,10 @@ elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max)
      wd->year_max = max;
    else
      wd->year_max = wd->year_min;
-   if (wd->selected_time.tm_year > wd->year_max)
-     wd->selected_time.tm_year = wd->year_max;
-   if (wd->selected_time.tm_year < wd->year_min)
-     wd->selected_time.tm_year = wd->year_min;
-   _fix_selected_time(wd);
+   if (wd->showed_time.tm_year > wd->year_max)
+     wd->showed_time.tm_year = wd->year_max;
+   if (wd->showed_time.tm_year < wd->year_min)
+     wd->showed_time.tm_year = wd->year_min;
    _populate(obj);
 }
 
@@ -891,6 +928,7 @@ elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time)
 
    EINA_SAFETY_ON_NULL_RETURN(selected_time);
    wd->selected_time = *selected_time;
+   _fix_selected_time(wd);
    _populate(obj);
    return;
 }
@@ -1010,7 +1048,10 @@ elm_calendar_select_mode_set(Evas_Object *obj, Elm_Calendar_Select_Mode mode)
        && (wd->select_mode != mode))
      {
         wd->select_mode = mode;
-        if (wd->select_mode == ELM_CALENDAR_SELECT_MODE_ALWAYS)
+        if (wd->select_mode == ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+          wd->selected = EINA_FALSE;
+        if ((wd->select_mode == ELM_CALENDAR_SELECT_MODE_ALWAYS)
+          || (wd->select_mode == ELM_CALENDAR_SELECT_MODE_DEFAULT))
           _select(wd, wd->selected_it);
         else
           _unselect(wd, wd->selected_it);

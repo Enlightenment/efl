@@ -92,7 +92,7 @@ typedef enum
    ELM_CALENDAR_SELECT_MODE_DEFAULT = 0, /**< Default value. a day is always selected. */
    ELM_CALENDAR_SELECT_MODE_ALWAYS, /**< a day is always selected. */
    ELM_CALENDAR_SELECT_MODE_NONE, /**< None of the days can be selected. */
-   ELM_CALENDAR_SELECT_MODE_ONDEMAND /**< User may have selected a day or not. (not supported yet)*/
+   ELM_CALENDAR_SELECT_MODE_ONDEMAND /**< User may have selected a day or not. */
 } _Elm_Calendar_Select_Mode;
 
 /**
