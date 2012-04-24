@@ -2751,6 +2751,24 @@ ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
      }
 }
 
+EAPI void 
+ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y)
+{
+   if (!ee) return;
+   if (!strcmp(ee->driver, "wayland_shm"))
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+        _ecore_evas_wayland_shm_move(ee, x, y);
+#endif
+     }
+   else if (!strcmp(ee->driver, "wayland_egl"))
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+        _ecore_evas_wayland_egl_move(ee, x, y);
+#endif
+     }
+}
+
 EAPI void
 ecore_evas_wayland_type_set(Ecore_Evas *ee, int type)
 {
@@ -2776,6 +2794,12 @@ ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y)
 #else
 EAPI void
 ecore_evas_wayland_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
+{
+
+}
+
+EAPI void 
+ecore_evas_wayland_move(Ecore_Evas *ee __UNUSED__, int x __UNUSED__, int y __UNUSED__)
 {
 
 }
