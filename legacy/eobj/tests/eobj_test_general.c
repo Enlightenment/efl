@@ -70,16 +70,16 @@ START_TEST(eobj_weak_reference)
 
    Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
    Eobj *wref;
-   eobj_weak_ref_add(&wref, obj);
+   eobj_do(obj, eobj_wref_add(&wref));
    fail_if(!wref);
 
    eobj_unref(obj);
    fail_if(wref);
 
-   eobj_weak_ref_del(&wref);
+   eobj_do(obj, eobj_wref_del(&wref));
 
    obj = eobj_add(SIMPLE_CLASS, NULL);
-   eobj_weak_ref_add(&wref, obj);
+   eobj_do(obj, eobj_wref_add(&wref));
 
    eobj_ref(obj);
    fail_if(!wref);
@@ -90,12 +90,12 @@ START_TEST(eobj_weak_reference)
    eobj_unref(obj);
    fail_if(wref);
 
-   eobj_weak_ref_del(&wref);
+   eobj_do(obj, eobj_wref_del(&wref));
 
    obj = eobj_add(SIMPLE_CLASS, NULL);
 
-   eobj_weak_ref_add(&wref, obj);
-   eobj_weak_ref_del(&wref);
+   eobj_do(obj, eobj_wref_add(&wref));
+   eobj_do(obj, eobj_wref_del(&wref));
 
    eobj_unref(obj);
 
@@ -283,9 +283,9 @@ START_TEST(eobj_magic_checks)
    fail_if(0 != eobj_ref_get((Eobj *) buf));
 
    Eobj *wref = NULL;
-   eobj_weak_ref_add(&wref, (Eobj *) buf);
+   eobj_do((Eobj *) buf, eobj_wref_add(&wref));
    fail_if(wref);
-   eobj_weak_ref_del(&wref);
+   eobj_do(obj, eobj_wref_del(&wref));
 
    eobj_del((Eobj *) buf);
 

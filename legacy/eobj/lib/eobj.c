@@ -1097,40 +1097,6 @@ eobj_ref_get(const Eobj *obj)
    return obj->refcount;
 }
 
-/* Weak reference. */
-Eina_Bool
-_eobj_weak_ref_cb(void *data, Eobj *obj EINA_UNUSED, const Eobj_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Eobj **wref = data;
-   *wref = NULL;
-
-   return EOBJ_CALLBACK_CONTINUE;
-}
-
-EAPI Eobj *
-eobj_weak_ref_add(Eobj **wref, const Eobj *_obj)
-{
-   Eobj *obj = (Eobj *) _obj;
-   EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, obj);
-
-   *wref = obj;
-   eobj_event_callback_add(obj, EOBJ_EV_DEL, _eobj_weak_ref_cb, wref);
-
-   return obj;
-}
-
-EAPI void
-eobj_weak_ref_del(Eobj **wref)
-{
-   if (*wref)
-     {
-        eobj_event_callback_del(*wref, EOBJ_EV_DEL, _eobj_weak_ref_cb,
-              wref);
-     }
-}
-
-/* EOF Weak reference. */
-
 EAPI void
 eobj_del(Eobj *obj)
 {

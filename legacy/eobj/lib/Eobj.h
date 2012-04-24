@@ -620,39 +620,6 @@ EAPI void eobj_xunref(Eobj *obj, const Eobj *ref_obj);
 EAPI void eobj_del(Eobj *obj);
 
 /**
- * @addtogroup Eobj_Weak_Ref Weak reference for Eobj objects.
- * @{
- */
-
-/**
- * @brief Add a new weak reference to obj.
- * @param wref The pointer to use for the weak ref.
- * @param obj The object being referenced.
- * @return The object being referenced (obj).
- *
- * This function registers the object handle pointed by wref to obj so when
- * obj is deleted it'll be updated to NULL. This functions should be used
- * when you want to keep track of an object in a safe way, but you don't want
- * to prevent it from being freed.
- *
- * @see eobj_weak_ref_del()
- */
-EAPI Eobj *eobj_weak_ref_add(Eobj **wref, const Eobj *obj);
-
-/**
- * @brief Delete the weak reference passed.
- * @param wref the weak reference to free.
- *
- * @see eobj_weak_ref_add()
- */
-EAPI void eobj_weak_ref_del(Eobj **wref);
-
-/**
- * @}
- */
-
-
-/**
  * @addtogroup Eobj_Composite_Objects Composite Objects.
  * @{
  */
@@ -873,6 +840,8 @@ enum {
      EOBJ_BASE_SUB_ID_DATA_SET,
      EOBJ_BASE_SUB_ID_DATA_GET,
      EOBJ_BASE_SUB_ID_DATA_DEL,
+     EOBJ_BASE_SUB_ID_WREF_ADD,
+     EOBJ_BASE_SUB_ID_WREF_DEL,
      EOBJ_BASE_SUB_ID_LAST
 };
 
@@ -915,6 +884,29 @@ enum {
  * @see #eobj_base_data_get
  */
 #define eobj_base_data_del(key) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_DEL), EOBJ_TYPECHECK(const char *, key)
+
+/**
+ * @def eobj_wref_add
+ * @brief Add a new weak reference to obj.
+ * @param wref The pointer to use for the weak ref.
+ *
+ * This function registers the object handle pointed by wref to obj so when
+ * obj is deleted it'll be updated to NULL. This functions should be used
+ * when you want to keep track of an object in a safe way, but you don't want
+ * to prevent it from being freed.
+ *
+ * @see #eobj_wref_del
+ */
+#define eobj_wref_add(wref) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_WREF_ADD), EOBJ_TYPECHECK(Eobj **, wref)
+
+/**
+ * @def eobj_wref_del
+ * @brief Delete the weak reference passed.
+ * @param wref the weak reference to free.
+ *
+ * @see #eobj_wref_add
+ */
+#define eobj_wref_del(wref) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_WREF_DEL), EOBJ_TYPECHECK(Eobj **, wref)
 
 /**
  * @var _EOBJ_EV_CALLBACK_ADD

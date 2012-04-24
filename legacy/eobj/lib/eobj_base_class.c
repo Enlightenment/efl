@@ -114,6 +114,43 @@ _data_del(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
      }
 }
 
+/* Weak reference. */
+static Eina_Bool
+_eobj_weak_ref_cb(void *data, Eobj *obj EINA_UNUSED, const Eobj_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eobj **wref = data;
+   *wref = NULL;
+
+   return EOBJ_CALLBACK_CONTINUE;
+}
+
+static void
+_wref_add(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
+{
+   Eobj **wref = va_arg(*list, Eobj **);
+
+   *wref = (Eobj *) obj;
+   /* FIXME: The cast and the one in the next func are both bad and should be
+    * fixed once the event callback functions are fixed. */
+   eobj_event_callback_add((Eobj *) obj, EOBJ_EV_DEL, _eobj_weak_ref_cb, wref);
+}
+
+static void
+_wref_del(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
+{
+   Eobj **wref = va_arg(*list, Eobj **);
+   if (*wref != obj)
+     {
+        ERR("Wref is a weak ref to %p, while this function was called on %p.",
+              *wref, obj);
+        return;
+     }
+   eobj_event_callback_del((Eobj *) obj, EOBJ_EV_DEL, _eobj_weak_ref_cb, wref);
+}
+
+/* EOF Weak reference. */
+
+
 /* EOBJ_BASE_CLASS stuff */
 #define MY_CLASS EOBJ_BASE_CLASS
 
@@ -148,6 +185,8 @@ _class_constructor(Eobj_Class *klass)
         EOBJ_OP_FUNC(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_SET), _data_set),
         EOBJ_OP_FUNC_CONST(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_GET), _data_get),
         EOBJ_OP_FUNC(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_DEL), _data_del),
+        EOBJ_OP_FUNC_CONST(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_WREF_ADD), _wref_add),
+        EOBJ_OP_FUNC_CONST(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_WREF_DEL), _wref_del),
         EOBJ_OP_FUNC_SENTINEL
    };
 
@@ -158,6 +197,8 @@ static const Eobj_Op_Description op_desc[] = {
      EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_SET, "?", "Set data for key."),
      EOBJ_OP_DESCRIPTION_CONST(EOBJ_BASE_SUB_ID_DATA_GET, "?", "Get data for key."),
      EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_DEL, "?", "Del key."),
+     EOBJ_OP_DESCRIPTION_CONST(EOBJ_BASE_SUB_ID_WREF_ADD, "?", "Add a weak ref to the object."),
+     EOBJ_OP_DESCRIPTION_CONST(EOBJ_BASE_SUB_ID_WREF_DEL, "?", "Delete the weak ref."),
      EOBJ_OP_DESCRIPTION_SENTINEL
 };
 
