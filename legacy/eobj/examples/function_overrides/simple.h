@@ -18,8 +18,8 @@ typedef struct
 
 #define SIMPLE_ID(sub_id) (SIMPLE_BASE_ID + sub_id)
 
-#define SIMPLE_A_SET(a) SIMPLE_ID(SIMPLE_SUB_ID_A_SET), EOBJ_TYPECHECK(int, a)
-#define SIMPLE_A_PRINT() SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT)
+#define simple_a_set(a) SIMPLE_ID(SIMPLE_SUB_ID_A_SET), EOBJ_TYPECHECK(int, a)
+#define simple_a_print() SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT)
 
 extern const Eobj_Event_Description _SIG_A_CHANGED;
 #define SIG_A_CHANGED (&(_SIG_A_CHANGED))

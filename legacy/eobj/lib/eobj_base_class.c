@@ -56,7 +56,7 @@ _data_set(Eobj *obj, void *class_data, va_list *list)
 
    if (!key) return;
 
-   eobj_do(obj, EOBJ_BASE_DATA_DEL(key));
+   eobj_do(obj, eobj_base_data_del(key));
 
    node = malloc(sizeof(Eobj_Generic_Data_Node));
    node->key = eina_stringshare_add(key);

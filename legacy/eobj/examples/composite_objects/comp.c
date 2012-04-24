@@ -15,7 +15,7 @@ _a_get(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
 {
    int *a;
    a = va_arg(*list, int *);
-   eobj_query_super(obj, SIMPLE_A_GET(a));
+   eobj_query_super(obj, simple_a_get(a));
 }
 
 static void
@@ -30,7 +30,7 @@ _constructor(Eobj *obj, void *class_data EINA_UNUSED)
    fail_if(eobj_composite_is(obj));
    fail_if(!eobj_composite_is(simple));
 
-   eobj_do(obj, EOBJ_BASE_DATA_SET("simple-obj", simple, NULL));
+   eobj_do(obj, eobj_base_data_set("simple-obj", simple, NULL));
 
    eobj_unref(simple);
 }

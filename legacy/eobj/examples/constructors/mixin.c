@@ -12,7 +12,7 @@ static void
 _add_and_print_set(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
 {
    int a, b, x;
-   eobj_query(obj, SIMPLE_A_GET(&a), SIMPLE_B_GET(&b));
+   eobj_query(obj, simple_a_get(&a), simple_b_get(&b));
    x = va_arg(*list, const int);
    printf("%s %d\n", __func__, a + b + x);
 }

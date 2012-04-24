@@ -14,11 +14,11 @@ enum {
 
 
 /**
- * @def MIXIN_AB_SUM_GET(sum)
+ * @def mixin_ab_sum_get(sum)
  * @brief Get sum of a,b integer elements
  * @param[out] sum integer pointer to sum - value
  */
-#define MIXIN_AB_SUM_GET(sum) MIXIN_ID(MIXIN_SUB_ID_AB_SUM_GET), EOBJ_TYPECHECK(int *, sum)
+#define mixin_ab_sum_get(sum) MIXIN_ID(MIXIN_SUB_ID_AB_SUM_GET), EOBJ_TYPECHECK(int *, sum)
 
 #define MIXIN_CLASS mixin_class_get()
 const Eobj_Class *mixin_class_get(void) EINA_CONST;

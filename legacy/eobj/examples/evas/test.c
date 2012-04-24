@@ -30,26 +30,26 @@ main(int argc, char *argv[])
    eobj_init();
 
    Eobj *win = eobj_add(ELW_WIN_CLASS, NULL);
-   eobj_do(win, EVAS_OBJ_SIZE_SET(winw, winh), EVAS_OBJ_VISIBILITY_SET(EINA_TRUE));
+   eobj_do(win, evas_obj_size_set(winw, winh), evas_obj_visibility_set(EINA_TRUE));
 
    Eobj *bt = eobj_add(ELW_BUTTON_CLASS, win);
-   eobj_do(bt, EVAS_OBJ_POSITION_SET(25, 25),
-         EVAS_OBJ_SIZE_SET(50, 50),
-         EVAS_OBJ_COLOR_SET(255, 0, 0, 255),
-         ELW_BUTTON_TEXT_SET("Click"),
-         EVAS_OBJ_VISIBILITY_SET(EINA_TRUE));
+   eobj_do(bt, evas_obj_position_set(25, 25),
+         evas_obj_size_set(50, 50),
+         evas_obj_color_set(255, 0, 0, 255),
+         elw_button_text_set("Click"),
+         evas_obj_visibility_set(EINA_TRUE));
    eobj_event_callback_add(bt, SIG_CLICKED, _btn_clicked_cb, "btn");
 
    int r, g, b, a;
-   eobj_do(bt, EVAS_OBJ_COLOR_GET(&r, &g, &b, &a));
+   eobj_do(bt, evas_obj_color_get(&r, &g, &b, &a));
    printf("RGBa(%d, %d, %d, %d)\n", r, g, b, a);
 
    Eobj *bx = eobj_add(ELW_BOXEDBUTTON_CLASS, win);
-   eobj_do(bx, EVAS_OBJ_POSITION_SET(100, 100),
-         EVAS_OBJ_SIZE_SET(70, 70),
-         EVAS_OBJ_COLOR_SET(0, 0, 255, 255),
-         ELW_BUTTON_TEXT_SET("Click2"),
-         EVAS_OBJ_VISIBILITY_SET(EINA_TRUE));
+   eobj_do(bx, evas_obj_position_set(100, 100),
+         evas_obj_size_set(70, 70),
+         evas_obj_color_set(0, 0, 255, 255),
+         elw_button_text_set("Click2"),
+         evas_obj_visibility_set(EINA_TRUE));
    eobj_event_callback_add(bx, SIG_CLICKED, _btn_clicked_cb, "bxedbtn");
 
    elm_run();

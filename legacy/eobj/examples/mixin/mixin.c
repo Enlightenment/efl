@@ -12,7 +12,7 @@ static void
 _ab_sum_get(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
 {
    int a, b;
-   eobj_query(obj, SIMPLE_A_GET(&a), SIMPLE_B_GET(&b));
+   eobj_query(obj, simple_a_get(&a), simple_b_get(&b));
    int *sum = va_arg(*list, int *);
    if (sum)
       *sum = a + b;

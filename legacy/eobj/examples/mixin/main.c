@@ -15,13 +15,13 @@ main(int argc, char *argv[])
 
    Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
 
-   eobj_do(obj, SIMPLE_A_SET(1), SIMPLE_B_SET(2));
+   eobj_do(obj, simple_a_set(1), simple_b_set(2));
 
    int a, b, sum = 0;
-   eobj_do(obj, SIMPLE_A_GET(&a), SIMPLE_B_GET(&b),  MIXIN_AB_SUM_GET(&sum));
+   eobj_do(obj, simple_a_get(&a), simple_b_get(&b),  mixin_ab_sum_get(&sum));
    fail_if(sum != a + b + 2); /* 2 for the two mixins... */
 
-   eobj_do(obj, MIXIN_AB_SUM_GET(&sum), MIXIN_AB_SUM_GET(&sum));
+   eobj_do(obj, mixin_ab_sum_get(&sum), mixin_ab_sum_get(&sum));
 
    Mixin2_Public_Data *pd2 = eobj_data_get(obj, MIXIN2_CLASS);
    fail_if(pd2->count != 6);

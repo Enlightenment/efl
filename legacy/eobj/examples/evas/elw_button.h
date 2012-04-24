@@ -13,12 +13,12 @@ enum {
 #define ELW_BUTTON_ID(sub_id) (ELW_BUTTON_BASE_ID + sub_id)
 
 /**
- * @def ELW_BUTTON_TEXT_SET(text)
+ * @def elw_button_text_set(text)
  * @brief Set button text
  * @param[in] text text to assing to button
  * FIXME Doesn't belong here, but just for the example...
  */
-#define ELW_BUTTON_TEXT_SET(text) ELW_BUTTON_ID(ELW_BUTTON_SUB_ID_TEXT_SET), EOBJ_TYPECHECK(const char *, text)
+#define elw_button_text_set(text) ELW_BUTTON_ID(ELW_BUTTON_SUB_ID_TEXT_SET), EOBJ_TYPECHECK(const char *, text)
 
 extern const Eobj_Event_Description _SIG_CLICKED;
 #define SIG_CLICKED (&(_SIG_CLICKED))

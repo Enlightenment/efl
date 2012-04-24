@@ -18,17 +18,17 @@ _a_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
    int a;
    a = va_arg(*list, int);
    printf("%s %d\n", eobj_class_name_get(MY_CLASS), a);
-   eobj_do(obj, SIMPLE_A_PRINT());
-   eobj_do_super(obj, SIMPLE_A_SET(a + 1));
+   eobj_do(obj, simple_a_print());
+   eobj_do_super(obj, simple_a_set(a + 1));
 
-   fail_if(eobj_do_super(obj, SIMPLE_A_PRINT()));
+   fail_if(eobj_do_super(obj, simple_a_print()));
 }
 
 static void
 _print(Eobj *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    printf("Hey\n");
-   fail_if(eobj_do_super(obj, INHERIT2_PRINT()));
+   fail_if(eobj_do_super(obj, inherit2_print()));
 }
 
 static void

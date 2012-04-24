@@ -343,7 +343,7 @@ START_TEST(eobj_const_ops)
    fail_if(!klass);
 
    Eobj *obj = eobj_add(klass, NULL);
-   eobj_do(obj, SIMPLE_A_SET(7), SIMPLE_A_PRINT());
+   eobj_do(obj, simple_a_set(7), simple_a_print());
    fail_if(_const_ops_counter != 0);
 
    eobj_unref(obj);

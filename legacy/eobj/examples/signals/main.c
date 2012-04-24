@@ -37,7 +37,7 @@ main(int argc, char *argv[])
    /* This will never be called because the previous callback returns NULL. */
    eobj_event_callback_priority_add(obj, SIG_A_CHANGED, EOBJ_CALLBACK_PRIORITY_AFTER, _a_changed_cb, (void *) 4);
 
-   eobj_do(obj, SIMPLE_A_SET(1));
+   eobj_do(obj, simple_a_set(1));
 
    fail_if(cb_count != 3);
 

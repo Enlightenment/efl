@@ -85,7 +85,7 @@ _constructor(Eobj *obj, void *class_data EINA_UNUSED)
    /* Add type check. */
    Eobj *parent = eobj_parent_get(obj);
    if (parent)
-      eobj_do(parent, EVAS_OBJ_CHILD_ADD(obj));
+      eobj_do(parent, evas_obj_child_add(obj));
 }
 
 static void

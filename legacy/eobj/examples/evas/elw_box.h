@@ -13,11 +13,11 @@ enum {
 #define ELW_BOX_ID(sub_id) (ELW_BOX_BASE_ID + sub_id)
 
 /**
- * @def ELW_BOX_PACK_END(obj)
+ * @def elw_box_pack_end(obj)
  * @brief Pack object to the end of the box
  * @param[in] obj object to pack into box
  */
-#define ELW_BOX_PACK_END(obj) ELW_BOX_ID(ELW_BOX_SUB_ID_PACK_END), EOBJ_TYPECHECK(Eobj *, obj)
+#define elw_box_pack_end(obj) ELW_BOX_ID(ELW_BOX_SUB_ID_PACK_END), EOBJ_TYPECHECK(Eobj *, obj)
 
 #define ELW_BOX_CLASS elw_box_class_get()
 const Eobj_Class *elw_box_class_get(void) EINA_CONST;

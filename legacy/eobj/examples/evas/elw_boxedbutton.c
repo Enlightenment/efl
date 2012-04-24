@@ -23,9 +23,9 @@ _constructor(Eobj *obj, void *class_data EINA_UNUSED)
    Eobj *bt = eobj_add(ELW_BUTTON_CLASS, obj);
    eobj_composite_object_attach(obj, bt);
    eobj_event_callback_forwarder_add(bt, SIG_CLICKED, obj);
-   eobj_do(bt, EVAS_OBJ_VISIBILITY_SET(EINA_TRUE));
+   eobj_do(bt, evas_obj_visibility_set(EINA_TRUE));
 
-   eobj_do(obj, ELW_BOX_PACK_END(bt));
+   eobj_do(obj, elw_box_pack_end(bt));
    eobj_unref(bt);
 }
 

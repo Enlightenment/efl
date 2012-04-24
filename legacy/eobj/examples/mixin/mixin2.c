@@ -16,14 +16,14 @@ _ab_sum_get(const Eobj *obj, const void *class_data, va_list *list)
    Mixin2_Public_Data *pd = (Mixin2_Public_Data *) class_data;
    int *sum = va_arg(*list, int *);
    printf("%s %s\n", eobj_class_name_get(MY_CLASS), __func__);
-   eobj_query_super(obj, MIXIN_AB_SUM_GET(sum));
+   eobj_query_super(obj, mixin_ab_sum_get(sum));
 
    ++*sum;
    pd->count += 2;
 
      {
         int _a, _b;
-        eobj_query(obj, SIMPLE_A_GET(&_a), SIMPLE_B_GET(&_b));
+        eobj_query(obj, simple_a_get(&_a), simple_b_get(&_b));
         fail_if(*sum != _a + _b + 1);
      }
 }

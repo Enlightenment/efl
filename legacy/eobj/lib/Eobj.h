@@ -884,37 +884,37 @@ enum {
 #define EOBJ_BASE_ID(sub_id) (EOBJ_BASE_BASE_ID + sub_id)
 
 /**
- * @def EOBJ_BASE_DATA_SET(key, data, free_func)
+ * @def eobj_base_data_set(key, data, free_func)
  * Set generic data to object.
  * @param[in] key the key associated with the data
  * @param[in] data the data to set.
  * @param[in] free_func the func to free data with (NULL means "do nothing").
  *
- * @see #EOBJ_BASE_DATA_GET
- * @see #EOBJ_BASE_DATA_DEL
+ * @see #eobj_base_data_get
+ * @see #eobj_base_data_del
  */
-#define EOBJ_BASE_DATA_SET(key, data, free_func) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_SET), EOBJ_TYPECHECK(const char *, key), EOBJ_TYPECHECK(const void *, data), EOBJ_TYPECHECK(eobj_base_data_free_func, free_func)
+#define eobj_base_data_set(key, data, free_func) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_SET), EOBJ_TYPECHECK(const char *, key), EOBJ_TYPECHECK(const void *, data), EOBJ_TYPECHECK(eobj_base_data_free_func, free_func)
 
 /**
- * @def EOBJ_BASE_DATA_GET(key, data)
+ * @def eobj_base_data_get(key, data)
  * Get generic data from object.
  * @param[in] key the key associated with the data
  * @param[out] data the data for the key
  *
- * @see #EOBJ_BASE_DATA_SET
- * @see #EOBJ_BASE_DATA_DEL
+ * @see #eobj_base_data_set
+ * @see #eobj_base_data_del
  */
-#define EOBJ_BASE_DATA_GET(key, data) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_GET), EOBJ_TYPECHECK(const char *, key), EOBJ_TYPECHECK(void **, data)
+#define eobj_base_data_get(key, data) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_GET), EOBJ_TYPECHECK(const char *, key), EOBJ_TYPECHECK(void **, data)
 
 /**
- * @def EOBJ_BASE_DATA_DEL(key)
+ * @def eobj_base_data_del(key)
  * Del generic data from object.
  * @param[in] key the key associated with the data
  *
- * @see #EOBJ_BASE_DATA_SET
- * @see #EOBJ_BASE_DATA_GET
+ * @see #eobj_base_data_set
+ * @see #eobj_base_data_get
  */
-#define EOBJ_BASE_DATA_DEL(key) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_DEL), EOBJ_TYPECHECK(const char *, key)
+#define eobj_base_data_del(key) EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_DEL), EOBJ_TYPECHECK(const char *, key)
 
 /**
  * @var _EOBJ_EV_CALLBACK_ADD

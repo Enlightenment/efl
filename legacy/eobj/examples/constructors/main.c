@@ -23,10 +23,10 @@ main(int argc, char *argv[])
 
    fail_if(my_init_count != 2);
 
-   eobj_do(obj, SIMPLE_A_SET(1), SIMPLE_B_SET(2));
+   eobj_do(obj, simple_a_set(1), simple_b_set(2));
 
    int a, b;
-   eobj_do(obj, SIMPLE_A_GET(&a), SIMPLE_B_GET(&b),  MIXIN_ADD_AND_PRINT(5));
+   eobj_do(obj, simple_a_get(&a), simple_b_get(&b),  mixin_add_and_print(5));
 
    eobj_unref(obj);
 
