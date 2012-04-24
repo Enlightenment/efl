@@ -109,7 +109,7 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
    Evas_Coord x, y, w, h, xx, yy;
    const Eina_List *l;
    Evas_Object *obj;
-   Evas_Coord minw, minh, wdif, hdif;
+   Evas_Coord minw, minh;
    int count = 0;
    double expand = 0.0;
    double ax, ay;
@@ -164,8 +164,6 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
              h = minh;
           }
      }
-   wdif = w - minw;
-   hdif = h - minh;
    xx = x;
    yy = y;
    EINA_LIST_FOREACH(priv->children, l, opt)
@@ -200,7 +198,6 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
                   if ((expand > 0) && (xw))
                     {
                        ow = ((w - minw) * wx) / expand;
-                       wdif -= ow;
                        ww += ow;
                     }
                }
@@ -233,7 +230,6 @@ _els_box_layout(Evas_Object *o, Evas_Object_Box_Data *priv, int horizontal, int 
                   if ((expand > 0) && (xh))
                     {
                        oh = ((h - minh) * wy) / expand;
-                       hdif -= oh;
                        hh += oh;
                     }
                }
