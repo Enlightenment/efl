@@ -1090,7 +1090,7 @@ _eobj_weak_ref_cb(void *data, Eobj *obj EINA_UNUSED, const Eobj_Event_Descriptio
 }
 
 EAPI Eobj *
-eobj_weak_ref_add(const Eobj *_obj, Eobj **wref)
+eobj_weak_ref_add(Eobj **wref, const Eobj *_obj)
 {
    Eobj *obj = (Eobj *) _obj;
    EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, obj);
