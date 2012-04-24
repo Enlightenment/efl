@@ -41,26 +41,26 @@ main(int argc, char *argv[])
 
    fail_if(cb_count != 3);
 
-   eobj_event_callback_del_full(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 3);
+   eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 3);
    fail_if(pd->cb_count != 3);
 
-   fail_if(eobj_event_callback_del_full(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 12));
+   fail_if(eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 12));
    fail_if(pd->cb_count != 3);
 
-   fail_if(4 != (int) eobj_event_callback_del_full(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 4));
+   fail_if(4 != (int) eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 4));
    fail_if(pd->cb_count != 2);
-   eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb);
+   eobj_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb);
    fail_if(pd->cb_count != 1);
 
-   fail_if(eobj_event_callback_del(obj, SIG_A_CHANGED, NULL));
+   fail_if(eobj_event_callback_del_lazy(obj, SIG_A_CHANGED, NULL));
    fail_if(pd->cb_count != 1);
-   fail_if(eobj_event_callback_del_full(obj, SIG_A_CHANGED, NULL, 0));
+   fail_if(eobj_event_callback_del(obj, SIG_A_CHANGED, NULL, 0));
    fail_if(pd->cb_count != 1);
 
-   eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb);
+   eobj_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb);
    fail_if(pd->cb_count != 0);
 
-   fail_if(eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb));
+   fail_if(eobj_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb));
    fail_if(pd->cb_count != 0);
 
    eobj_unref(obj);

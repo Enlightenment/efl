@@ -1124,7 +1124,7 @@ eobj_weak_ref_del(Eobj **wref)
 {
    if (*wref)
      {
-        eobj_event_callback_del_full(*wref, EOBJ_EV_DEL, _eobj_weak_ref_cb,
+        eobj_event_callback_del(*wref, EOBJ_EV_DEL, _eobj_weak_ref_cb,
               wref);
      }
 }
@@ -1449,7 +1449,7 @@ eobj_event_callback_priority_add(Eobj *obj,
 }
 
 EAPI void *
-eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func)
+eobj_event_callback_del_lazy(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func)
 {
    EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, NULL);
 
@@ -1477,7 +1477,7 @@ found:
 }
 
 EAPI void *
-eobj_event_callback_del_full(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func, const void *user_data)
+eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func, const void *user_data)
 {
    EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, NULL);
 
@@ -1563,7 +1563,7 @@ eobj_event_callback_forwarder_del(Eobj *obj, const Eobj_Event_Description *desc,
    EOBJ_MAGIC_RETURN_VAL(obj, EOBJ_EINA_MAGIC, EINA_FALSE);
    EOBJ_MAGIC_RETURN_VAL(new_obj, EOBJ_EINA_MAGIC, EINA_FALSE);
 
-   eobj_event_callback_del_full(obj, desc, _eobj_event_forwarder_callback, new_obj);
+   eobj_event_callback_del(obj, desc, _eobj_event_forwarder_callback, new_obj);
    return EINA_TRUE;
 }
 

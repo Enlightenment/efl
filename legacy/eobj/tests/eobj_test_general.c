@@ -306,8 +306,8 @@ START_TEST(eobj_magic_checks)
    eobj_composite_is((Eobj *) buf);
 
    fail_if(eobj_event_callback_add((Eobj *) buf, NULL, NULL, NULL));
-   fail_if(eobj_event_callback_del((Eobj *) buf, NULL, NULL));
-   fail_if(eobj_event_callback_del_full((Eobj *) buf, NULL, NULL, NULL));
+   fail_if(eobj_event_callback_del_lazy((Eobj *) buf, NULL, NULL));
+   fail_if(eobj_event_callback_del((Eobj *) buf, NULL, NULL, NULL));
    fail_if(eobj_event_callback_call((Eobj *) buf, NULL, NULL));
 
    fail_if(eobj_event_callback_forwarder_add((Eobj *) buf, NULL, obj));

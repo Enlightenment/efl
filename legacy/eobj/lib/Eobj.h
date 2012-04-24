@@ -812,9 +812,9 @@ EAPI Eina_Bool eobj_event_callback_priority_add(Eobj *obj, const Eobj_Event_Desc
  * @param func the callback to delete.
  * @return The additional data that was set to be passed to the callback.
  *
- * @see eobj_event_callback_del_full()
+ * @see eobj_event_callback_del()
  */
-EAPI void *eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func);
+EAPI void *eobj_event_callback_del_lazy(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func);
 
 /**
  * @brief Del a callback with a specific data associated to it for an event.
@@ -824,9 +824,9 @@ EAPI void *eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc
  * @param user_data The data to compare.
  * @return The additional data that was set to be passed to the callback.
  *
- * @see eobj_event_callback_del()
+ * @see eobj_event_callback_del_lazy()
  */
-EAPI void *eobj_event_callback_del_full(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func, const void *user_data);
+EAPI void *eobj_event_callback_del(Eobj *obj, const Eobj_Event_Description *desc, Eobj_Event_Cb func, const void *user_data);
 
 /**
  * @brief Call the callbacks for an event of an object.
