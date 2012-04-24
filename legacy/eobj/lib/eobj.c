@@ -1013,14 +1013,13 @@ eobj_ref(Eobj *obj)
 static void
 _eobj_del_internal(Eobj *obj)
 {
+   if (obj->delete)
+      return;
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
-   if (!obj->delete)
-     {
-        eobj_event_callback_call(obj, EOBJ_EV_DEL, NULL);
-        obj->delete = EINA_TRUE;
-     }
+   eobj_event_callback_call(obj, EOBJ_EV_DEL, NULL);
+   obj->delete = EINA_TRUE;
 
    obj->refcount--;
 
@@ -1102,10 +1101,7 @@ eobj_del(Eobj *obj)
 {
    EOBJ_MAGIC_RETURN(obj, EOBJ_EINA_MAGIC);
 
-   if (!obj->delete)
-     {
-        _eobj_del_internal(obj);
-     }
+   _eobj_del_internal(obj);
    eobj_unref(obj);
 }
 
