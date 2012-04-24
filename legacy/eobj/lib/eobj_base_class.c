@@ -67,9 +67,10 @@ _data_set(Eobj *obj, void *class_data, va_list *list)
 }
 
 static void
-_data_get(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
+_data_get(const Eobj *obj EINA_UNUSED, const void *class_data, va_list *list)
 {
-   Private_Data *pd = class_data;
+   /* We don't really change it... */
+   Private_Data *pd = (Private_Data *) class_data;
    const char *key = va_arg(*list, const char *);
    void **data = va_arg(*list, void **);
    Eobj_Generic_Data_Node *node;
@@ -145,7 +146,7 @@ _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
         EOBJ_OP_FUNC(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_SET), _data_set),
-        EOBJ_OP_FUNC(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_GET), _data_get),
+        EOBJ_OP_FUNC_CONST(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_GET), _data_get),
         EOBJ_OP_FUNC(EOBJ_BASE_ID(EOBJ_BASE_SUB_ID_DATA_DEL), _data_del),
         EOBJ_OP_FUNC_SENTINEL
    };
@@ -155,7 +156,7 @@ _class_constructor(Eobj_Class *klass)
 
 static const Eobj_Op_Description op_desc[] = {
      EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_SET, "?", "Set data for key."),
-     EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_GET, "?", "Get data for key."),
+     EOBJ_OP_DESCRIPTION_CONST(EOBJ_BASE_SUB_ID_DATA_GET, "?", "Get data for key."),
      EOBJ_OP_DESCRIPTION(EOBJ_BASE_SUB_ID_DATA_DEL, "?", "Del key."),
      EOBJ_OP_DESCRIPTION_SENTINEL
 };

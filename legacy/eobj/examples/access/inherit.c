@@ -11,7 +11,7 @@ EAPI Eobj_Op INHERIT_BASE_ID = 0;
 #define MY_CLASS INHERIT_CLASS
 
 static void
-_prot_print(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
+_prot_print(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
 {
    Simple_Protected_Data *pd = eobj_data_get(obj, SIMPLE_CLASS);
    (void) list;
@@ -22,7 +22,7 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC(INHERIT_ID(INHERIT_SUB_ID_PROT_PRINT), _prot_print),
+        EOBJ_OP_FUNC_CONST(INHERIT_ID(INHERIT_SUB_ID_PROT_PRINT), _prot_print),
         EOBJ_OP_FUNC_SENTINEL
    };
 
@@ -30,7 +30,7 @@ _class_constructor(Eobj_Class *klass)
 }
 
 static const Eobj_Op_Description op_desc[] = {
-     EOBJ_OP_DESCRIPTION(INHERIT_SUB_ID_PROT_PRINT, "", "Print protected var x1."),
+     EOBJ_OP_DESCRIPTION_CONST(INHERIT_SUB_ID_PROT_PRINT, "", "Print protected var x1."),
      EOBJ_OP_DESCRIPTION_SENTINEL
 };
 

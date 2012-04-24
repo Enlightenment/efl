@@ -86,8 +86,20 @@ typedef unsigned int Eobj_Op;
  * @typedef eobj_op_func_type
  * The type of the Op functions. This is the type of the functions used by
  * Eobj.
+ *
+ * @see eobj_op_func_type_const
  */
 typedef void (*eobj_op_func_type)(Eobj *, void *class_data, va_list *list);
+
+/**
+ * @typedef eobj_op_func_type_const
+ * The type of the const Op functions. This is the type of the functions used
+ * by Eobj. This is the same as #eobj_op_func_type, except that this should
+ * be used with functions that don't modify the data.
+ *
+ * @see eobj_op_func_type
+ */
+typedef void (*eobj_op_func_type_const)(const Eobj *, const void *class_data, va_list *list);
 
 /**
  * @addtogroup Eobj_Events Eobj's Event Handling
@@ -207,6 +219,7 @@ struct _Eobj_Op_Func_Description
 {
    Eobj_Op op; /**< The op */
    eobj_op_func_type func; /**< The function to call for the op. */
+   Eina_Bool constant; /**< #EINA_TRUE if this function is a const. */
 };
 
 /**
@@ -219,15 +232,27 @@ typedef struct _Eobj_Op_Func_Description Eobj_Op_Func_Description;
  * @def EOBJ_OP_FUNC(op, func)
  * A convenience macro to be used when populating the #Eobj_Op_Func_Description
  * array.
+ *
+ * @see EOBJ_OP_FUNC_CONST
  */
-#define EOBJ_OP_FUNC(op, func) { op, func }
+#define EOBJ_OP_FUNC(op, func) { op, EOBJ_TYPECHECK(eobj_op_func_type, func), EINA_FALSE }
+
+/**
+ * @def EOBJ_OP_FUNC_CONST(op, func)
+ * A convenience macro to be used when populating the #Eobj_Op_Func_Description
+ * array.
+ * The same as #EOBJ_OP_FUNC but for const functions.
+ *
+ * @see EOBJ_OP_FUNC
+ */
+#define EOBJ_OP_FUNC_CONST(op, func) { op, (eobj_op_func_type) EOBJ_TYPECHECK(eobj_op_func_type_const, func), EINA_TRUE }
 
 /**
  * @def EOBJ_OP_FUNC_SENTINEL
  * A convenience macro to be used when populating the #Eobj_Op_Func_Description
  * array. It must appear at the end of the ARRAY.
  */
-#define EOBJ_OP_FUNC_SENTINEL { 0, NULL }
+#define EOBJ_OP_FUNC_SENTINEL { 0, NULL, EINA_FALSE }
 
 /**
  * @struct _Eobj_Op_Description
@@ -239,6 +264,7 @@ struct _Eobj_Op_Description
    const char *name; /**< The name of the op. */
    const char *type; /**< descripbes the Op's function signature. */
    const char *doc; /**< Explanation about the Op. */
+   Eina_Bool constant; /**< #EINA_TRUE if this op's implementation should not change the obj. */
 };
 
 /**
@@ -292,9 +318,25 @@ typedef struct _Eobj_Class_Description Eobj_Class_Description;
  * @param type The type string for the op.
  * @param doc Additional doc for the op.
  * @see Eobj_Op_Description
+ * @see EOBJ_OP_DESCRIPTION_CONST
  * @see EOBJ_OP_DESCRIPTION_SENTINEL
  */
-#define EOBJ_OP_DESCRIPTION(sub_id, type, doc) { sub_id, #sub_id, type, doc }
+#define EOBJ_OP_DESCRIPTION(sub_id, type, doc) { sub_id, #sub_id, type, doc, EINA_FALSE }
+
+/**
+ * @def EOBJ_OP_DESCRIPTION_CONST(op, type, doc)
+ * An helper macro to help populating #Eobj_Op_Description
+ * This macro is the same as EOBJ_OP_DESCRIPTION but indicates that the op's
+ * implementation should not change the object.
+ * @param sub_id The sub id of the op being described.
+ * @param type The type string for the op.
+ * @param doc Additional doc for the op.
+ * @see Eobj_Op_Description
+ * @see EOBJ_OP_DESCRIPTION
+ * @see EOBJ_OP_DESCRIPTION_SENTINEL
+ */
+#define EOBJ_OP_DESCRIPTION_CONST(sub_id, type, doc) { sub_id, #sub_id, type, doc, EINA_TRUE }
+
 /**
  * @def EOBJ_OP_DESCRIPTION_SENTINEL
  * An helper macro to help populating #Eobj_Op_Description
@@ -302,7 +344,7 @@ typedef struct _Eobj_Class_Description Eobj_Class_Description;
  * @see Eobj_Op_Description
  * @see EOBJ_OP_DESCRIPTION
  */
-#define EOBJ_OP_DESCRIPTION_SENTINEL { 0, NULL, NULL, NULL }
+#define EOBJ_OP_DESCRIPTION_SENTINEL { 0, NULL, NULL, NULL, EINA_FALSE }
 
 /**
  * @brief Create a new class.
@@ -361,11 +403,19 @@ EAPI Eina_Bool eobj_shutdown(void);
  * A convenience wrapper around eobj_do_internal()
  * @see eobj_do_internal
  */
-#define eobj_do(object, ...) eobj_do_internal(object, __VA_ARGS__, (Eobj_Op) 0)
+#define eobj_do(obj, ...) eobj_do_internal(obj, EINA_FALSE, __VA_ARGS__, EOBJ_NOOP)
+
+/**
+ * @def eobj_query
+ * Same as #eobj_do but only for const ops.
+ * @see eobj_do
+ */
+#define eobj_query(obj, ...) eobj_do_internal((Eobj *) EOBJ_TYPECHECK(const Eobj *, obj), EINA_TRUE, __VA_ARGS__, EOBJ_NOOP)
 
 /**
  * @brief Issues ops on an object.
  * @param obj The object to work on
+ * @param constant #EINA_TRUE if this call is on a constant object.
  * @param ... NULL terminated list of OPs and parameters.
  * @return #EINA_TRUE on success.
  *
@@ -374,20 +424,53 @@ EAPI Eina_Bool eobj_shutdown(void);
  *
  * @see #eobj_do
  */
-EAPI Eina_Bool eobj_do_internal(Eobj *obj, ...);
+EAPI Eina_Bool eobj_do_internal(Eobj *obj, Eina_Bool constant, ...);
 
 /**
  * @brief Calls the super function for the specific op.
  * @param obj The object to work on
+ * @param ... list of parameters.
+ * @return #EINA_TRUE on success.
+ *
+ * Unlike eobj_do() and eobj_query(), this function only accepts one op.
+ *
+ * Use the helper macros, don't pass the parameters manually.
+ *
+ * Same as eobj_do_super() just for const objects.
+ *
+ * @see #eobj_query
+ * @see eobj_do_super()
+ */
+#define eobj_query_super(obj, ...) eobj_do_super_internal((Eobj *) EOBJ_TYPECHECK(const Eobj *, obj), EINA_TRUE, __VA_ARGS__)
+
+/**
+ * @brief Calls the super function for the specific op.
+ * @param obj The object to work on
+ * @param ... list of parameters.
+ * @return #EINA_TRUE on success.
+ *
+ * Unlike eobj_do() and eobj_query(), this function only accepts one op.
+ *
+ * @see #eobj_query
+ * @see eobj_query_super()
+ */
+#define eobj_do_super(obj, ...) eobj_do_super_internal((Eobj *) EOBJ_TYPECHECK(const Eobj *, obj), EINA_FALSE, __VA_ARGS__)
+
+/**
+ * @brief Calls the super function for the specific op.
+ * @param obj The object to work on
+ * @param constant #EINA_TRUE if this call is on a constant object.
  * @param op The wanted op.
  * @param ... list of parameters.
  * @return #EINA_TRUE on success.
  *
- * Use the helper macros, don't pass the parameters manually.
+ * Don't use this function, use the wrapping macros instead.
  *
  * @see #eobj_do
+ * @see #eobj_do_super
+ * @see #eobj_query_super
  */
-EAPI Eina_Bool eobj_do_super(Eobj *obj, Eobj_Op op, ...);
+EAPI Eina_Bool eobj_do_super_internal(Eobj *obj, Eina_Bool constant, Eobj_Op op, ...);
 
 /**
  * @brief Gets the class of the object.

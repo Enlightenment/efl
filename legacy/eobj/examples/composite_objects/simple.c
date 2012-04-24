@@ -23,9 +23,9 @@ _a_set(Eobj *obj, void *class_data, va_list *list)
 }
 
 static void
-_a_get(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
+_a_get(const Eobj *obj EINA_UNUSED, const void *class_data, va_list *list)
 {
-   Simple_Public_Data *pd = class_data;
+   const Simple_Public_Data *pd = class_data;
    int *a;
    a = va_arg(*list, int *);
    *a = pd->a;
@@ -36,7 +36,7 @@ _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
         EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
+        EOBJ_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
         EOBJ_OP_FUNC_SENTINEL
    };
 
@@ -45,7 +45,7 @@ _class_constructor(Eobj_Class *klass)
 
 static const Eobj_Op_Description op_desc[] = {
      EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
-     EOBJ_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "i", "Get property A"),
+     EOBJ_OP_DESCRIPTION_CONST(SIMPLE_SUB_ID_A_GET, "i", "Get property A"),
      EOBJ_OP_DESCRIPTION_SENTINEL
 };
 

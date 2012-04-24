@@ -345,11 +345,20 @@ _eobj_kls_itr_reached_end(const Eobj *obj)
 }
 
 static Eina_Bool
-_eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list)
+_eobj_op_internal(Eobj *obj, Eina_Bool constant, Eobj_Op op, va_list *p_list)
 {
    const Eobj_Class *klass;
    Eina_Bool ret = EINA_FALSE;
    Eina_Bool _itr_init;
+
+   const Eobj_Op_Description *op_desc = _eobj_op_id_desc_get(op);
+
+   if (op_desc &&
+         ((constant == EINA_TRUE) && (op_desc->constant == EINA_FALSE)))
+     {
+        ERR("Tried calling non-const or non-existant op '%s' (%d) from a const (query) function.", (op_desc) ? op_desc->name : NULL, op);
+        return EINA_FALSE;
+     }
 
    _itr_init = _eobj_kls_itr_init(obj, op);
    klass = _eobj_kls_itr_get(obj);
@@ -373,7 +382,7 @@ _eobj_op_internal(Eobj *obj, Eobj_Op op, va_list *p_list)
         Eobj *emb_obj;
         EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj)
           {
-             if (_eobj_op_internal(emb_obj, op, p_list))
+             if (_eobj_op_internal(emb_obj, constant, op, p_list))
                {
                   ret = EINA_TRUE;
                   goto end;
@@ -388,7 +397,7 @@ end:
 }
 
 EAPI Eina_Bool
-eobj_do_internal(Eobj *obj, ...)
+eobj_do_internal(Eobj *obj, Eina_Bool constant, ...)
 {
    Eina_Bool ret = EINA_TRUE;
    Eobj_Op op = EOBJ_NOOP;
@@ -398,12 +407,12 @@ eobj_do_internal(Eobj *obj, ...)
 
    eobj_ref(obj);
 
-   va_start(p_list, obj);
+   va_start(p_list, constant);
 
    op = va_arg(p_list, Eobj_Op);
    while (op)
      {
-        if (!_eobj_op_internal(obj, op, &p_list))
+        if (!_eobj_op_internal(obj, constant, op, &p_list))
           {
              const Eobj_Class *op_klass = OP_CLASS_GET(op);
              const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
@@ -423,7 +432,7 @@ eobj_do_internal(Eobj *obj, ...)
 }
 
 EAPI Eina_Bool
-eobj_do_super(Eobj *obj, Eobj_Op op, ...)
+eobj_do_super_internal(Eobj *obj, Eina_Bool constant, Eobj_Op op, ...)
 {
    const Eobj_Class *obj_klass;
    Eina_Bool ret = EINA_TRUE;
@@ -439,7 +448,7 @@ eobj_do_super(Eobj *obj, Eobj_Op op, ...)
      }
 
    va_start(p_list, op);
-   if (!_eobj_op_internal(obj, op, &p_list))
+   if (!_eobj_op_internal(obj, constant, op, &p_list))
      {
         const Eobj_Class *op_klass = OP_CLASS_GET(op);
         const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
@@ -616,7 +625,16 @@ eobj_class_funcs_set(Eobj_Class *klass, const Eobj_Op_Func_Description *func_des
      {
         for ( ; itr->op != 0 ; itr++)
           {
-             dich_func_set(klass, itr->op, itr->func);
+             const Eobj_Op_Description *op_desc = _eobj_op_id_desc_get(itr->op);
+
+             if (EINA_LIKELY(!op_desc || (itr->constant == op_desc->constant)))
+               {
+                  dich_func_set(klass, itr->op, itr->func);
+               }
+             else
+               {
+                  ERR("Set function's constant property (%d) is different than the one in the op description (%d) for op '%s' in class '%s'.", itr->constant, op_desc->constant, op_desc->name, klass->desc->name);
+               }
           }
      }
 }

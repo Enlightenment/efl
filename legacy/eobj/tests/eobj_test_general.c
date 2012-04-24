@@ -165,6 +165,12 @@ START_TEST(eobj_op_errors)
    fail_if(eobj_ref_get(obj) != 1);
 
    eobj_unref(obj);
+
+   obj = eobj_add(SIMPLE_CLASS, NULL);
+   fail_if(!eobj_do(obj, SIMPLE_A_PRINT()));
+   fail_if(!eobj_query(obj, SIMPLE_A_PRINT()));
+   fail_if(eobj_query(obj, SIMPLE_A_SET(1)));
+
    eobj_shutdown();
 }
 END_TEST

@@ -293,10 +293,70 @@ START_TEST(eobj_bad_interface)
 }
 END_TEST
 
+static int _const_ops_counter = 0;
+
+static void
+_const_ops_a_set(const Eobj *obj EINA_UNUSED, const void *class_data EINA_UNUSED, va_list *list)
+{
+   int a = va_arg(*list, int);
+   (void) a;
+   _const_ops_counter++;
+}
+
+static void
+_const_ops_a_print(Eobj *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   _const_ops_counter++;
+}
+
+static void
+_const_ops_class_constructor(Eobj_Class *klass)
+{
+   const Eobj_Op_Func_Description func_desc[] = {
+        EOBJ_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _const_ops_a_set),
+        EOBJ_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), _const_ops_a_print),
+        EOBJ_OP_FUNC_SENTINEL
+   };
+
+   eobj_class_funcs_set(klass, func_desc);
+}
+
+START_TEST(eobj_const_ops)
+{
+   eobj_init();
+
+   const Eobj_Class *klass;
+
+   static Eobj_Class_Description class_desc = {
+        "Simple",
+        EOBJ_CLASS_TYPE_REGULAR,
+        EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        0,
+        NULL,
+        NULL,
+        _const_ops_class_constructor,
+        NULL
+   };
+
+   klass = eobj_class_new(&class_desc, SIMPLE_CLASS, NULL);
+   fail_if(!klass);
+
+   Eobj *obj = eobj_add(klass, NULL);
+   eobj_do(obj, SIMPLE_A_SET(7), SIMPLE_A_PRINT());
+   fail_if(_const_ops_counter != 0);
+
+   eobj_unref(obj);
+
+   eobj_shutdown();
+}
+END_TEST
+
 void eobj_test_class_errors(TCase *tc)
 {
    tcase_add_test(tc, eobj_incomplete_desc);
    tcase_add_test(tc, eobj_inherit_errors);
    tcase_add_test(tc, eobj_inconsistent_mro);
    tcase_add_test(tc, eobj_bad_interface);
+   tcase_add_test(tc, eobj_const_ops);
 }

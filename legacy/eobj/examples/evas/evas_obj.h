@@ -73,10 +73,10 @@ const Eobj_Class *evas_object_class_get(void) EINA_CONST;
 #define EVAS_OBJ_STR "Evas_Obj"
 /* FIXME: Hack in the meanwhile. */
 static inline Evas_Object *
-eobj_evas_object_get(Eobj *obj)
+eobj_evas_object_get(const Eobj *obj)
 {
    void *data;
-   eobj_do(obj, EOBJ_BASE_DATA_GET(EVAS_OBJ_STR, &data));
+   eobj_query(obj, EOBJ_BASE_DATA_GET(EVAS_OBJ_STR, &data));
    return data;
 }
 

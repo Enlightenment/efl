@@ -10,19 +10,20 @@
 #define MY_CLASS MIXIN3_CLASS
 
 static void
-_ab_sum_get(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
+_ab_sum_get(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
 {
-   Mixin3_Public_Data *pd = class_data;
+   /* This cast is just a hack for the test. */
+   Mixin3_Public_Data *pd = (Mixin3_Public_Data *) class_data;
    int *sum = va_arg(*list, int *);
    printf("%s %s\n", eobj_class_name_get(MY_CLASS), __func__);
-   eobj_do_super(obj, MIXIN_AB_SUM_GET(sum));
+   eobj_query_super(obj, MIXIN_AB_SUM_GET(sum));
 
    ++*sum;
    pd->count += 3;
 
      {
         int _a, _b;
-        eobj_do(obj, SIMPLE_A_GET(&_a), SIMPLE_B_GET(&_b));
+        eobj_query(obj, SIMPLE_A_GET(&_a), SIMPLE_B_GET(&_b));
         fail_if(*sum != _a + _b + 2);
      }
 }
@@ -43,7 +44,7 @@ static void
 _class_constructor(Eobj_Class *klass)
 {
    const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC(MIXIN_ID(MIXIN_SUB_ID_AB_SUM_GET), _ab_sum_get),
+        EOBJ_OP_FUNC_CONST(MIXIN_ID(MIXIN_SUB_ID_AB_SUM_GET), _ab_sum_get),
         EOBJ_OP_FUNC_SENTINEL
    };
 
