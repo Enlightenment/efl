@@ -451,7 +451,7 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
 
 
 EAPI Evas_Object *
-evas_object_image_source_get(Evas_Object *obj)
+evas_object_image_source_get(const Evas_Object *obj)
 {
    Evas_Object_Image *o;
 

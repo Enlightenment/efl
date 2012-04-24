@@ -7491,7 +7491,7 @@ EAPI Eina_Bool                evas_object_image_source_set             (Evas_Obj
  *
  * @see evas_object_image_source_set() for more details
  */
-EAPI Evas_Object             *evas_object_image_source_get             (Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object             *evas_object_image_source_get             (const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Clear the source object on a proxy image object.
