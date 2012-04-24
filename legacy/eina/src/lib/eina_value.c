@@ -4959,8 +4959,7 @@ eina_value_init(void)
    if (tmp && tmp[0])
      choice = tmp;
 
-   if (choice)
-     _eina_value_mp_choice = strdup(choice);
+   _eina_value_mp_choice = strdup(choice);
 
    _eina_value_mp = eina_mempool_add
       (_eina_value_mp_choice, "value", NULL, sizeof(Eina_Value), 320);
