@@ -145,7 +145,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    f = eina_file_open(file, 0);
    if (!f)
      {
-        ERR("XPM ERROR: file failed to open");
+        if (load_data)
+          ERR("XPM ERROR: file failed to open");
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
@@ -153,7 +154,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    position = 0;
    if (length < 9)
      {
-        ERR("XPM ERROR: file size, %zd, is to small", length);
+        if (load_data)
+          ERR("XPM ERROR: file size, %zd, is to small", length);
         eina_file_close(f);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	return EINA_FALSE;
@@ -162,7 +164,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
    if (!map)
      {
-        ERR("XPM ERROR: file failed to mmap");
+        if (load_data)
+          ERR("XPM ERROR: file failed to mmap");
         eina_file_close(f);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	return EINA_FALSE;
