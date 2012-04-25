@@ -1572,9 +1572,9 @@ _scr_hold_timer_cb(void *data)
 
 static void
 _decorate_item_finished_signal_cb(void        *data,
-								  Evas_Object *obj,
-								  const char  *emission __UNUSED__,
-								  const char  *source __UNUSED__)
+                                  Evas_Object *obj,
+                                  const char  *emission __UNUSED__,
+                                  const char  *source __UNUSED__)
 {
    if (!data) return;
    if (!obj) return;
