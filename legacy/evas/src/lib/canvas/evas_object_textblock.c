@@ -7711,12 +7711,14 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
         eina_ustrbuf_remove(n2->unicode, 0, cur2->pos);
         /* Merge the nodes because we removed the PS */
         _evas_textblock_cursors_update_offset(cur1, cur1->node, cur1->pos,
-              - cur1->pos);
-        _evas_textblock_cursors_update_offset(cur2, cur2->node, 0, - cur2->pos);
+                                              -cur1->pos);
+        _evas_textblock_cursors_update_offset(cur2, cur2->node, 0, -cur2->pos);
         _evas_textblock_nodes_merge(o, n1);
      }
    fnode = _evas_textblock_cursor_node_format_at_pos_get(cur1);
 
+   n1 = cur1->node;
+   n2 = cur2->node;
    n1->dirty = n2->dirty = EINA_TRUE;
    if (should_merge)
      {
