@@ -83,7 +83,7 @@
  *
  * To convert a double to a string, eina_convert_dtoa() should be
  * used. Like with the integer functions, a buffer must be used. The
- * resulting string ghas the following format (which is the result
+ * resulting string has the following format (which is the result
  * obtained with snprintf() and the @%a modifier):
  *
  * @code
