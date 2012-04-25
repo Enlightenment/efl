@@ -840,9 +840,9 @@ _grid_item_free(Grid_Item *gi)
    if (gi->g && gi->g->grid) eina_matrixsparse_data_idx_set(gi->g->grid,
                                                             gi->y, gi->x, NULL);
    if (gi->url) eina_stringshare_del(gi->url);
+   if (gi->file_have) ecore_file_remove(gi->file);
    if (gi->file) eina_stringshare_del(gi->file);
    if (gi->img) evas_object_del(gi->img);
-   if (gi->file_have) ecore_file_remove(gi->file);
    free(gi);
 }
 
