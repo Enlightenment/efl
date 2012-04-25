@@ -410,6 +410,11 @@ _del_hook(Evas_Object * obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->idler)
+     {
+        ecore_idle_enterer_del(wd->idler);
+        wd->idler = NULL;
+     }
    free(wd);
 }
 
