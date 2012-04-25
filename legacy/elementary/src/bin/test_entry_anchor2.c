@@ -11,6 +11,12 @@ my_entry_anchor_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 }
 
 static void
+anchor_click(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Entry_Anchor_Info *ev)
+{
+   printf("anchor click %d: '%s' (%d, %d)\n", ev->button, ev->name, ev->x, ev->y);
+}
+
+static void
 my_anchorview_anchor(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *av = data;
@@ -91,6 +97,7 @@ test_entry_anchor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
                        "to refer to them this way. <item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>");
    evas_object_size_hint_weight_set(av, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(av, "anchor,hover,opened", my_anchorview_anchor, av);
+   evas_object_smart_callback_add(av, "anchor,clicked", (Evas_Smart_Cb)anchor_click, av);
    elm_win_resize_object_add(win, av);
    evas_object_show(av);
 
