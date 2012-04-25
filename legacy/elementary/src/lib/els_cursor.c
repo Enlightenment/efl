@@ -147,8 +147,13 @@ static void
 _elm_cursor_obj_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Cursor *cur = data;
-
-   if (cur) cur->obj = NULL;
+   
+   if (cur)
+     {
+        evas_object_event_callback_del_full(cur->obj, EVAS_CALLBACK_DEL,
+                                            _elm_cursor_obj_del, cur);
+        cur->obj = NULL;
+     }
 }
 
 static Eina_Bool
@@ -211,9 +216,7 @@ _elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
      {
 #ifdef HAVE_ELEMENTARY_X
         if (cur->win)
-          {
-             ecore_x_window_cursor_set(cur->win, cur->cursor);
-          }
+          ecore_x_window_cursor_set(cur->win, cur->cursor);
 #endif
      }
    evas_event_thaw(cur->evas);
@@ -247,17 +250,13 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
      }
 
    if ((!cur->engine_only) || (!cur->use_engine))
-     {
-        ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
-                                     cur->hot_x, cur->hot_y);
-     }
+     ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
+                                  cur->hot_x, cur->hot_y);
    else
      {
 #ifdef HAVE_ELEMENTARY_X
         if (cur->win)
-          {
-             ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
-          }
+          ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
 #endif
      }
    evas_event_thaw(cur->evas);
@@ -413,7 +412,12 @@ elm_object_cursor_unset(Evas_Object *obj)
      elm_widget_cursor_del(cur->owner, cur);
 
    if (cur->obj)
-     evas_object_del(cur->obj);
+     {
+        evas_object_event_callback_del_full(cur->obj, EVAS_CALLBACK_DEL,
+                                            _elm_cursor_obj_del, cur);
+        evas_object_del(cur->obj);
+        cur->obj = NULL;
+     }
 
    if (cur->visible)
      {
@@ -426,12 +430,12 @@ elm_object_cursor_unset(Evas_Object *obj)
 #endif
      }
 
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_IN,
-                                  _elm_cursor_mouse_in);
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_OUT,
-                                  _elm_cursor_mouse_out);
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL, _elm_cursor_del);
-
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_IN,
+                                  _elm_cursor_mouse_in, cur);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_OUT,
+                                  _elm_cursor_mouse_out, cur);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _elm_cursor_del, cur);
    evas_object_data_del(obj, _cursor_key);
    free(cur);
 }
@@ -485,7 +489,8 @@ elm_cursor_theme(Elm_Cursor *cur)
      _elm_cursor_set_hot_spots(cur);
 }
 
-EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search)
+EAPI void
+elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
    cur->engine_only = theme_search;
