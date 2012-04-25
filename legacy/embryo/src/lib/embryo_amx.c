@@ -427,7 +427,7 @@ embryo_program_vm_push(Embryo_Program *ep)
 	return;
      }
    hdr = (Embryo_Header *)ep->code;
-   ep->base = malloc(hdr->stp);
+   ep->base = calloc(1, hdr->stp);
    if (!ep->base)
      {
 	ep->pushes = 0;
