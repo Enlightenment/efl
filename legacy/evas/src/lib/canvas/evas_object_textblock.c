@@ -7411,7 +7411,9 @@ _evas_textblock_cursor_is_at_the_end(const Evas_Textblock_Cursor *cur)
 
    if (!cur) return EINA_FALSE;
    if (!cur->node) return EINA_FALSE;
+   if (cur->pos < 0) return EINA_FALSE;
    text = eina_ustrbuf_string_get(cur->node->unicode);
+   if ((cur->pos - 1) > eina_ustrbuf_length_get(cur->node->unicode)) return EINA_FALSE;
    return ((text[cur->pos] == 0) && (!EINA_INLIST_GET(cur->node)->next)) ?
               EINA_TRUE : EINA_FALSE;
 }
