@@ -312,11 +312,11 @@ void
 test_calendar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *cal, *bxx;
-   api_data *api = calloc(1, sizeof(api_data));
+   struct tm selected_time;
+   time_t current_time;
 
    win = elm_win_util_standard_add("calendar", "Calendar");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);
@@ -326,6 +326,9 @@ test_calendar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    cal = elm_calendar_add(win);
    elm_calendar_first_day_of_week_set(cal, ELM_DAY_THURSDAY);
    elm_calendar_select_mode_set(cal, ELM_CALENDAR_SELECT_MODE_ONDEMAND);
+   current_time = time(NULL) + 34 * 84600;
+   localtime_r(&current_time, &selected_time);
+   elm_calendar_selected_time_set(cal, &selected_time);
    evas_object_size_hint_weight_set(cal, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bxx, cal);
 

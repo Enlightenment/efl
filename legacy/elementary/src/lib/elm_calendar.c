@@ -928,6 +928,13 @@ elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time)
 
    EINA_SAFETY_ON_NULL_RETURN(selected_time);
    wd->selected_time = *selected_time;
+   if (!wd->selected)
+     wd->selected = EINA_TRUE;
+   if (wd->selected_time.tm_year != wd->showed_time.tm_year)
+     wd->showed_time.tm_year = wd->selected_time.tm_year;
+   if (wd->selected_time.tm_mon != wd->showed_time.tm_mon)
+     wd->showed_time.tm_mon = wd->selected_time.tm_mon;
+
    _fix_selected_time(wd);
    _populate(obj);
    return;
@@ -940,6 +947,9 @@ elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(selected_time, EINA_FALSE);
+   if ((wd->select_mode == ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+       && (!wd->selected))
+     return EINA_FALSE;
    *selected_time = wd->selected_time;
    return EINA_TRUE;
 }
