@@ -662,7 +662,7 @@ _ecore_thread_worker_new(void)
 
    result = eina_trash_pop(&_ecore_thread_worker_trash);
 
-   if (!result) result = malloc(sizeof (Ecore_Pthread_Worker));
+   if (!result) result = calloc(1, sizeof(Ecore_Pthread_Worker));
    else _ecore_thread_worker_count--;
 
    LKI(result->cancel_mutex);
