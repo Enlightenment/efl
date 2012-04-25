@@ -1572,9 +1572,9 @@ _scr_hold_timer_cb(void *data)
 
 static void
 _decorate_item_finished_signal_cb(void        *data,
-                         Evas_Object *obj,
-                         const char  *emission __UNUSED__,
-                         const char  *source __UNUSED__)
+								  Evas_Object *obj,
+								  const char  *emission __UNUSED__,
+								  const char  *source __UNUSED__)
 {
    if (!data) return;
    if (!obj) return;
@@ -1766,7 +1766,6 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
                {
                   edje_object_signal_emit(VIEW(it),
                                           "elm,state,selected", "elm");
-
                   if (it->deco_all_view)
                     edje_object_signal_emit(it->deco_all_view,
                                             "elm,state,selected", "elm");
@@ -1801,7 +1800,6 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
                edje_object_signal_emit(it->deco_all_view,
                                        "elm,state,selected", "elm");
           }
-
         if (elm_widget_item_disabled_get(it))
           {
              edje_object_signal_emit(VIEW(it),
@@ -1823,10 +1821,10 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
 
 static Eina_List*
 _item_mode_content_realize(Elm_Gen_Item *it,
-                           Evas_Object *target,
-                           Eina_List **source,
-                           const char *parts,
-                           Eina_List **contents_list)
+                           Evas_Object  *target,
+                           Eina_List   **source,
+                           const char   *parts,
+                           Eina_List   **contents_list)
 {
    Eina_List *res = *contents_list;
 
@@ -1863,10 +1861,10 @@ _item_mode_content_realize(Elm_Gen_Item *it,
 
 static Eina_List*
 _item_mode_content_unrealize(Elm_Gen_Item *it,
-                             Evas_Object *target,
-                             Eina_List **source,
-                             const char *parts,
-                             Eina_List **contents_list)
+                             Evas_Object  *target,
+                             Eina_List   **source,
+                             const char   *parts,
+                             Eina_List   **contents_list)
 {
    Eina_List *res = *contents_list;
 
@@ -1905,9 +1903,9 @@ _item_cache_free(Item_Cache *itc)
 
 static void
 _item_text_realize(Elm_Gen_Item *it,
-                   Evas_Object *target,
-                   Eina_List **source,
-                   const char *parts)
+                   Evas_Object  *target,
+                   Eina_List   **source,
+                   const char   *parts)
 {
    if (it->itc->func.text_get)
      {
@@ -1939,9 +1937,9 @@ _item_text_realize(Elm_Gen_Item *it,
 
 static Eina_List *
 _item_content_unrealize(Elm_Gen_Item *it,
-                        Evas_Object *target,
-                        Eina_List **source,
-                        const char *parts)
+                        Evas_Object  *target,
+                        Eina_List   **source,
+                        const char   *parts)
 {
    Eina_List *res = it->content_objs;
 
@@ -1971,9 +1969,9 @@ _item_content_unrealize(Elm_Gen_Item *it,
 
 static Eina_List *
 _item_content_realize(Elm_Gen_Item *it,
-                      Evas_Object *target,
-                      Eina_List **source,
-                      const char *parts)
+                      Evas_Object  *target,
+                      Eina_List   **source,
+                      const char   *parts)
 {
    Eina_List *res = it->content_objs;
 
@@ -2011,9 +2009,9 @@ _item_content_realize(Elm_Gen_Item *it,
 
 static void
 _item_state_realize(Elm_Gen_Item *it,
-                    Evas_Object *target,
-                    Eina_List **source,
-                    const char *parts)
+                    Evas_Object  *target,
+                    Eina_List   **source,
+                    const char   *parts)
 {
    if (it->itc->func.state_get)
      {
@@ -2047,8 +2045,8 @@ _item_state_realize(Elm_Gen_Item *it,
 
 static void
 _item_realize(Elm_Gen_Item *it,
-              int               in,
-              Eina_Bool         calc)
+              int           in,
+              Eina_Bool     calc)
 {
    const char *treesize;
    char buf[1024];
@@ -2481,9 +2479,9 @@ _reorder_move_animator_cb(void *data)
 
 static void
 _item_position(Elm_Gen_Item *it,
-               Evas_Object      *view,
-               Evas_Coord        it_x,
-               Evas_Coord        it_y)
+               Evas_Object  *view,
+               Evas_Coord    it_x,
+               Evas_Coord    it_y)
 {
    if (!it) return;
    if (!view) return;
@@ -3193,17 +3191,17 @@ _scr_anim_stop(void        *data,
 }
 
 static void
-_scr_drag_start(void            *data,
-                Evas_Object     *obj __UNUSED__,
-                void            *event_info __UNUSED__)
+_scr_drag_start(void        *data,
+                Evas_Object *obj __UNUSED__,
+                void        *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_START, NULL);
 }
 
 static void
-_scr_drag_stop(void            *data,
-               Evas_Object     *obj __UNUSED__,
-               void            *event_info __UNUSED__)
+_scr_drag_stop(void        *data,
+               Evas_Object *obj __UNUSED__,
+               void        *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_STOP, NULL);
 }
@@ -3823,7 +3821,7 @@ _item_block_new(Widget_Data *wd, Eina_Bool prepend)
 }
 
 static Eina_Bool
-_item_block_add(Widget_Data *wd,
+_item_block_add(Widget_Data  *wd,
                 Elm_Gen_Item *it)
 {
    Item_Block *itb = NULL;
@@ -4143,8 +4141,8 @@ _item_idle_enterer(void *data)
 }
 
 static void
-_item_queue(Widget_Data *wd,
-            Elm_Gen_Item *it,
+_item_queue(Widget_Data    *wd,
+            Elm_Gen_Item   *it,
             Eina_Compare_Cb cb)
 {
    if (it->item->queued) return;
@@ -4850,8 +4848,8 @@ _elm_genlist_move_items_set(Elm_Gen_Item *it)
 }
 
 EAPI void
-elm_genlist_item_expanded_set(Elm_Object_Item  *it,
-                              Eina_Bool         expanded)
+elm_genlist_item_expanded_set(Elm_Object_Item *it,
+                              Eina_Bool        expanded)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
@@ -4897,13 +4895,13 @@ elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it)
 }
 
 static Eina_Bool
-_elm_genlist_item_compute_coordinates(Elm_Object_Item *it,
+_elm_genlist_item_compute_coordinates(Elm_Object_Item               *it,
                                       Elm_Genlist_Item_Scrollto_Type type,
-                                      Eina_Bool bring_in,
-                                      Evas_Coord *x,
-                                      Evas_Coord *y,
-                                      Evas_Coord *w,
-                                      Evas_Coord *h)
+                                      Eina_Bool                      bring_in,
+                                      Evas_Coord                    *x,
+                                      Evas_Coord                    *y,
+                                      Evas_Coord                    *w,
+                                      Evas_Coord                    *h)
 {
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
    Evas_Coord gith = 0;
@@ -5022,8 +5020,8 @@ elm_genlist_item_update(Elm_Object_Item *it)
 }
 
 EAPI void
-elm_genlist_item_fields_update(Elm_Object_Item *it,
-                               const char *parts,
+elm_genlist_item_fields_update(Elm_Object_Item            *it,
+                               const char                 *parts,
                                Elm_Genlist_Item_Field_Type itf)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
@@ -5080,7 +5078,7 @@ elm_genlist_item_fields_update(Elm_Object_Item *it,
 }
 
 EAPI void
-elm_genlist_item_item_class_update(Elm_Object_Item *it,
+elm_genlist_item_item_class_update(Elm_Object_Item              *it,
                                    const Elm_Genlist_Item_Class *itc)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
@@ -5165,7 +5163,7 @@ elm_genlist_item_tooltip_text_set(Elm_Object_Item *it,
 }
 
 EAPI void
-elm_genlist_item_tooltip_content_cb_set(Elm_Object_Item           *it,
+elm_genlist_item_tooltip_content_cb_set(Elm_Object_Item            *it,
                                         Elm_Tooltip_Item_Content_Cb func,
                                         const void                 *data,
                                         Evas_Smart_Cb               del_cb)
@@ -5236,7 +5234,7 @@ elm_genlist_item_tooltip_style_get(const Elm_Object_Item *it)
 
 EAPI Eina_Bool
 elm_genlist_item_tooltip_window_mode_set(Elm_Object_Item *it,
-                                         Eina_Bool disable)
+                                         Eina_Bool        disable)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
@@ -5283,8 +5281,8 @@ elm_genlist_item_cursor_unset(Elm_Object_Item *it)
 }
 
 EAPI void
-elm_genlist_item_cursor_style_set(Elm_Object_Item  *it,
-                                  const char       *style)
+elm_genlist_item_cursor_style_set(Elm_Object_Item *it,
+                                  const char      *style)
 {
    elm_widget_item_cursor_style_set(it, style);
 }
@@ -5469,9 +5467,9 @@ elm_genlist_realized_items_update(Evas_Object *obj)
 }
 
 EAPI void
-elm_genlist_item_decorate_mode_set(Elm_Object_Item  *it,
-                                   const char       *decorate_it_type,
-                                   Eina_Bool         decorate_it_set)
+elm_genlist_item_decorate_mode_set(Elm_Object_Item *it,
+                                   const char      *decorate_it_type,
+                                   Eina_Bool        decorate_it_set)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
@@ -5741,7 +5739,7 @@ elm_genlist_highlight_mode_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_genlist_item_select_mode_set(Elm_Object_Item *it,
+elm_genlist_item_select_mode_set(Elm_Object_Item       *it,
                                  Elm_Object_Select_Mode mode)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
