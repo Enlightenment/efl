@@ -3803,6 +3803,17 @@ _parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    wd->anchor_hover.hover_parent = NULL;
 }
 
+static void
+_anchor_hover_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   if (wd->anchor_hover.pop) evas_object_del(wd->anchor_hover.pop);
+   wd->anchor_hover.pop = NULL;
+   evas_object_event_callback_del_full(wd->anchor_hover.hover, EVAS_CALLBACK_DEL,
+                                       _anchor_hover_del, obj);
+}
+
 EAPI void
 elm_entry_anchor_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -3879,6 +3890,8 @@ _entry_hover_anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    evas_object_resize(wd->anchor_hover.pop, info->w, info->h);
 
    wd->anchor_hover.hover = elm_hover_add(obj);
+   evas_object_event_callback_add(wd->anchor_hover.hover, EVAS_CALLBACK_DEL,
+                                  _anchor_hover_del, obj);
    elm_widget_mirrored_set(wd->anchor_hover.hover, elm_widget_mirrored_get(obj));
    if (wd->anchor_hover.hover_style)
      elm_object_style_set(wd->anchor_hover.hover, wd->anchor_hover.hover_style);
@@ -3925,10 +3938,9 @@ _entry_hover_anchor_clicked(void *data, Evas_Object *obj, void *event_info)
          !elm_object_part_content_get(wd->anchor_hover.hover, "bottom"))
      {
         evas_object_del(wd->anchor_hover.hover);
+        wd->anchor_hover.hover = NULL;
      }
    else
-     {
-        evas_object_show(wd->anchor_hover.hover);
-     }
+     evas_object_show(wd->anchor_hover.hover);
 }
 /* END - ANCHOR HOVER */
