@@ -80,7 +80,7 @@ static Elm_Genlist_Item_Class _store_item_class;
 static void
 _store_cache_trim(Elm_Store *st)
 {
-   while ((st->realized ) &&
+   while ((st->realized) &&
           (((int)eina_list_count(st->realized) - st->realized_count)
            > st->cache_max))
      {
@@ -122,11 +122,15 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         ecore_thread_cancel(st->list_th);
         st->list_th = NULL;
      }
-   eina_list_free(st->realized);
+   st->realized = eina_list_free(st->realized);
    while (st->items)
      {
         Elm_Store_Item *sti = (Elm_Store_Item *)st->items;
-        if (sti->eval_job) ecore_job_del(sti->eval_job);
+        if (sti->eval_job)
+          {
+             ecore_job_del(sti->eval_job);
+             sti->eval_job = NULL;
+          }
         if (sti->fetch_th)
           {
              ecore_thread_cancel(sti->fetch_th);
@@ -547,12 +551,16 @@ elm_store_free(Elm_Store *st)
         ecore_thread_cancel(st->list_th);
         st->list_th = NULL;
      }
-   eina_list_free(st->realized);
+   st->realized = eina_list_free(st->realized);
    item_free = st->item.free;
    while (st->items)
      {
         Elm_Store_Item *sti = (Elm_Store_Item *)st->items;
-        if (sti->eval_job) ecore_job_del(sti->eval_job);
+        if (sti->eval_job)
+          {
+             ecore_job_del(sti->eval_job);
+             sti->eval_job = NULL;
+          }
         if (sti->fetch_th)
           {
              ecore_thread_cancel(sti->fetch_th);
