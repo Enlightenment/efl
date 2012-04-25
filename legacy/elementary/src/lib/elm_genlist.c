@@ -2815,7 +2815,7 @@ _calc_job(void *data)
               dy = 0;
               break;
           }
-        if (wd->show_item)
+        if ((wd->show_item) && (wd->show_item->item->block))
           {
              if ((pan_w > (wd->show_item->x + wd->show_item->item->block->x)) &&
                  (pan_h > (wd->show_item->y + wd->show_item->item->block->y + dy)))
