@@ -95,6 +95,7 @@ widget-preview: widget-build
 		BIN=$${ENTRY[2]} ; \
 		X=$${ENTRY[3]} ; \
 		Y=$${ENTRY[4]} ; \
+		echo "generating widget preview image" $${SS} "for widget" $${DIR}; \
 		$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/$${DIR} $${SS} $(top_builddir)/doc/widgets/$${BIN} $${X} $${Y} ; \
 		mkdir -p $(top_builddir)/doc/latex/img/widget/$${DIR} ; \
 		convert $(top_builddir)/doc/html/img/widget/$${DIR}/$${SS} $(top_builddir)/doc/latex/img/widget/$${DIR}/$${SS/.png/.eps} ; \
