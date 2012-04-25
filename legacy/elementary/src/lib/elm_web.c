@@ -1,4 +1,4 @@
-#include <Elementary.h>
+[6~#include <Elementary.h>
 #include "elm_priv.h"
 
 // TODO:
@@ -439,7 +439,7 @@ _dialog_new(Evas_Object *parent)
    d = calloc(1, sizeof(Dialog_Data));
    if (!d) return NULL;
 
-   if (!parent || wd->inwin_mode)
+   if (!parent || !wd->inwin_mode)
      {
         Evas_Object *bg;
 
