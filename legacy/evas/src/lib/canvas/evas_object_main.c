@@ -408,9 +408,6 @@ evas_object_del(Evas_Object *obj)
         obj->del_ref = EINA_TRUE;
         return;
      }
-#ifdef EVAS_FRAME_QUEUING
-   evas_common_frameq_flush();
-#endif
 
    evas_object_hide(obj);
    if (obj->focused)

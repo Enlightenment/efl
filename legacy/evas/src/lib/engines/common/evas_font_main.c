@@ -52,9 +52,6 @@ evas_common_font_shutdown(void)
    evas_common_font_flush();
 
    FT_Done_FreeType(evas_ft_lib);
-#ifdef EVAS_FRAME_QUEUING
-   evas_common_font_draw_finish();
-#endif
    evas_ft_lib = 0;
 }
 

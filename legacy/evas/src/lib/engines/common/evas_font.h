@@ -67,10 +67,6 @@ EAPI int               evas_common_font_query_char_at_coords (RGBA_Font *fn, con
 EAPI int               evas_common_font_query_last_up_to_pos (RGBA_Font *fn, const Evas_Text_Props *intl_props, int x, int y);
 EAPI int               evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi, RGBA_Font_Int **cur_fi, Evas_Script_Type script, const Eina_Unicode *text, int run_len);
 
-#ifdef EVAS_FRAME_QUEUING
-EAPI void evas_common_font_draw_finish(void);
-#endif
-
 void evas_common_font_load_init(void);
 void evas_common_font_load_shutdown(void);
 

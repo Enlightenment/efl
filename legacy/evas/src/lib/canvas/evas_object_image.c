@@ -888,10 +888,6 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
    return;
    MAGIC_CHECK_END();
    _evas_object_image_cleanup(obj, o);
-#ifdef EVAS_FRAME_QUEUING
-   if (o->engine_data)
-     evas_common_pipe_op_image_flush(o->engine_data);
-#endif
    p_data = o->engine_data;
    if (data)
      {
@@ -968,9 +964,6 @@ evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
    return NULL;
    MAGIC_CHECK_END();
    if (!o->engine_data) return NULL;
-#ifdef EVAS_FRAME_QUEUING
-   evas_common_pipe_op_image_flush(o->engine_data);
-#endif
 
    data = NULL;
    if (obj->layer->evas->engine.func->image_scale_hint_set)
@@ -1153,9 +1146,6 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
      {
         int stride = 0;
 
-#ifdef EVAS_FRAME_QUEUING
-        evas_common_pipe_op_image_flush(o->engine_data);
-#endif
         o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
@@ -1676,13 +1666,6 @@ evas_object_image_colorspace_set(Evas_Object *obj, Evas_Colorspace cspace)
    MAGIC_CHECK_END();
 
    _evas_object_image_cleanup(obj, o);
-#ifdef EVAS_FRAME_QUEUING
-   if ((Evas_Colorspace)o->cur.cspace != cspace)
-     {
-        if (o->engine_data)
-          evas_common_pipe_op_image_flush(o->engine_data);
-     }
-#endif
 
    o->cur.cspace = cspace;
    if (o->engine_data)
@@ -1823,10 +1806,6 @@ evas_object_image_scale_hint_set(Evas_Object *obj, Evas_Image_Scale_Hint hint)
    return;
    MAGIC_CHECK_END();
    if (o->scale_hint == hint) return;
-#ifdef EVAS_FRAME_QUEUING
-   if (o->engine_data)
-      evas_common_pipe_op_image_flush(o->engine_data);
-#endif
    o->scale_hint = hint;
    if (o->engine_data)
      {
@@ -1874,10 +1853,6 @@ evas_object_image_content_hint_set(Evas_Object *obj, Evas_Image_Content_Hint hin
    return;
    MAGIC_CHECK_END();
    if (o->content_hint == hint) return;
-#ifdef EVAS_FRAME_QUEUING
-   if (o->engine_data)
-      evas_common_pipe_op_image_flush(o->engine_data);
-#endif
    o->content_hint = hint;
    if (o->engine_data)
      {

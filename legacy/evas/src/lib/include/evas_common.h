@@ -581,18 +581,9 @@ struct _Image_Entry
    Image_Timestamp        tstamp;
 
    int                    references;
-#ifdef EVAS_FRAME_QUEUING
-   LK(lock_references);   // needed for accessing references
-#endif
 
 #ifdef BUILD_PIPE_RENDER
    RGBA_Pipe           *pipe;
-#ifdef EVAS_FRAME_QUEUING
-   LK(ref_fq_add);
-   LK(ref_fq_del);
-   Eina_Condition cond_fq_del;
-   int ref_fq[2];		// ref_fq[0] is for addition, ref_fq[1] is for deletion
-#endif
 #endif
 
    unsigned char          scale;
@@ -912,12 +903,6 @@ struct _RGBA_Font
    Fash_Int        *fash;
    Font_Hint_Flags  hinting;
    int              references;
-#ifdef EVAS_FRAME_QUEUING
-   int              ref_fq[2]; //ref_fq[0] is for addition, ref_fq[1] is for deletion
-   Eina_Condition   cond_fq_del;
-   LK(ref_fq_add);
-   LK(ref_fq_del);
-#endif
    LK(lock);
    unsigned char    sizeok : 1;
 };

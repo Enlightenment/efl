@@ -119,11 +119,6 @@ struct _Outbuf
         /* a list of previous frame pending regions to write to the target */
         Eina_List *prev_pending_writes;
 
-# ifdef EVAS_FRAME_QUEUING
-        /* protecting prev_pending_writes */
-        LK(lock);
-# endif
-
         unsigned char mask_dither : 1;
         unsigned char destination_alpha : 1;
         unsigned char debug : 1;

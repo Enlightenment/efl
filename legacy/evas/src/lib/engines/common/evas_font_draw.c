@@ -42,13 +42,6 @@ evas_common_font_draw_init(void)
 {
 }
 
-#ifdef EVAS_FRAME_QUEUING
-EAPI void
-evas_common_font_draw_finish(void)
-{
-}
-#endif
-
 /*
  * BiDi handling: We receive the shaped string + other props from text_props,
  * we need to reorder it so we'll have the visual string (the way we draw)
@@ -341,9 +334,6 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    if (ext_w <= 0) return;
    if (ext_h <= 0) return;
 
-#ifdef EVAS_FRAME_QUEUING
-   LKL(fn->lock);
-#endif
 //   evas_common_font_size_use(fn);
    func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
 
@@ -373,7 +363,4 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
           }
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
      }
-#ifdef EVAS_FRAME_QUEUING
-   LKU(fn->lock);
-#endif
 }

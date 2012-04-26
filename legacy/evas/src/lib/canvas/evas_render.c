@@ -264,14 +264,9 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    obj->rect_del = 0;
    obj->render_pre = 0;
 
-#ifndef EVAS_FRAME_QUEUING
-   /* because of clip objects - delete 2 cycles later */
    if (obj->delete_me == 2)
-#else
-     if (obj->delete_me == evas_common_frameq_get_frameq_sz() + 2)
-#endif
-       eina_array_push(delete_objects, obj);
-     else if (obj->delete_me != 0) obj->delete_me++;
+     eina_array_push(delete_objects, obj);
+   else if (obj->delete_me != 0) obj->delete_me++;
    /* If the object will be removed, we should not cache anything during this run. */
    if (obj->delete_me != 0) clean_them = EINA_TRUE;
 
@@ -1755,10 +1750,6 @@ evas_render_updates(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
 
-#ifdef EVAS_FRAME_QUEUING
-   evas_common_frameq_flush_ready ();
-#endif
-
    if (!e->changed) return NULL;
    return evas_render_updates_internal(e, 1, 1);
 }
@@ -1769,10 +1760,6 @@ evas_render(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-
-#ifdef EVAS_FRAME_QUEUING
-   evas_common_frameq_flush_ready ();
-#endif
 
    if (!e->changed) return;
    evas_render_updates_internal(e, 0, 1);
@@ -1817,15 +1804,7 @@ evas_render_idle_flush(Evas *e)
 EAPI void
 evas_sync(Evas *e)
 {
-#ifdef EVAS_FRAME_QUEUING
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   evas_common_frameq_flush();
-#else
-   (void) e;
-#endif
+  (void) e;
 }
 
 static void
@@ -1895,22 +1874,15 @@ evas_render_object_recalc(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
 
-#ifndef EVAS_FRAME_QUEUING
    if ((!obj->changed) && (obj->delete_me < 2))
-#else
-     if ((!obj->changed))
-#endif
-       {
-          Evas *e;
-
-          e = obj->layer->evas;
-          if ((!e) || (e->cleanup)) return;
-#ifdef EVAS_FRAME_QUEUING
-          if (obj->delete_me >= evas_common_frameq_get_frameq_sz() + 2) return;
-#endif
-          eina_array_push(&e->pending_objects, obj);
-          obj->changed = 1;
-       }
+     {
+       Evas *e;
+       
+       e = obj->layer->evas;
+       if ((!e) || (e->cleanup)) return;
+       eina_array_push(&e->pending_objects, obj);
+       obj->changed = 1;
+     }
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/

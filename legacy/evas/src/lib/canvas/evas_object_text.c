@@ -352,11 +352,6 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
                                               obj->layer->evas->pointer.y, 1, 1);
      }
 
-#ifdef EVAS_FRAME_QUEUING
-   if (o->font)
-      evas_common_pipe_op_text_flush((RGBA_Font *) o->font);
-#endif
-
    /* DO IT */
    if (o->font)
      {
@@ -1874,9 +1869,6 @@ _evas_object_text_rehint(Evas_Object *obj)
 
    o = (Evas_Object_Text *)(obj->object_data);
    if (!o->font) return;
-#ifdef EVAS_FRAME_QUEUING
-   evas_common_pipe_op_text_flush((RGBA_Font *) o->font);
-#endif
    evas_font_load_hinting_set(obj->layer->evas, o->font,
 			      obj->layer->evas->hinting);
    was = evas_object_is_in_output_rect(obj,

@@ -4,207 +4,6 @@
 #include <unistd.h>
 
 #ifdef BUILD_PIPE_RENDER
-
-#ifdef EVAS_FRAME_QUEUING
-#define SCALECACHE
-static Evas_FrameQ gframeq;	// global frameQ
-
-static Evas_Surface *
-evas_common_surface_alloc(void *surface, int x, int y, int w, int h)
-{
-   Evas_Surface *e_surface;
-
-   e_surface = calloc(1, sizeof(Evas_Surface));
-   e_surface->im = surface;
-   LKL(e_surface->im->cache_entry.ref_fq_add);
-   e_surface->im->cache_entry.ref_fq[0]++;
-   LKU(e_surface->im->cache_entry.ref_fq_add);
-   e_surface->x = x;
-   e_surface->y = y;
-   e_surface->w = w;
-   e_surface->h = h;
-
-   return e_surface;
-}
-
-static void
-evas_common_surface_dealloc(Evas_Surface *surface)
-{
-   Evas_Surface *d_surface;
-
-   while (surface)
-     {
-        d_surface = surface;
-        surface = (Evas_Surface *)eina_inlist_remove(EINA_INLIST_GET(surface), EINA_INLIST_GET(d_surface));
-        LKL(d_surface->im->cache_entry.ref_fq_del);
-        d_surface->im->cache_entry.ref_fq[1]++;
-        LKU(d_surface->im->cache_entry.ref_fq_del);
-        free(d_surface);
-     }
-}
-
-static void
-evas_common_surface_add(Evas_Frame *frame, Evas_Surface *surface)
-{
-   frame->surfaces = (Evas_Surface *)eina_inlist_append(EINA_INLIST_GET(frame->surfaces), EINA_INLIST_GET(surface));
-}
-
-static Evas_Frame * 
-evas_common_frame_alloc(void)
-{
-   Evas_Frame *frame;
-
-   frame = calloc(1, sizeof(Evas_Frame));
-   frame->surfaces = NULL;
-   return frame;
-}
-
-static void 
-evas_common_frame_dealloc(Evas_Frame *frame)
-{
-   evas_common_surface_dealloc(frame->surfaces);
-   free(frame);
-}
-
-static void
-evas_common_frame_add(Evas_FrameQ *frameq, Evas_Frame *frame)
-{
-   Evas_Frame *temp_frame;
-   
-   LKL(frameq->mutex);
-   while ((int)eina_inlist_count(EINA_INLIST_GET(frameq->frames)) >= frameq->frameq_sz)
-     {
-        /* wait a worker thread finish previous frame */
-        eina_condition_wait(&(frameq->cond_done));
-     }
-   frameq->frames = (Evas_Frame *) eina_inlist_append(EINA_INLIST_GET(frameq->frames), EINA_INLIST_GET(frame));
-
-   // this frame need not to be scheduled for flushing time
-   EINA_INLIST_FOREACH(EINA_INLIST_GET(frameq->frames), temp_frame)
-     {
-       if (!temp_frame->ready)
-         {
-            break;
-         }
-     }
-   if (temp_frame && temp_frame == frame)
-      frame->dont_schedule = 1;
-
-   LKU(frameq->mutex);
-
-   eina_condition_signal(&(frameq->cond_new));
-}
-
-EAPI Evas_Surface *
-evas_common_frameq_new_surface(void *surface, int x, int y, int w, int h)
-{
-   return evas_common_surface_alloc(surface, x, y, w, h);
-}
-
-EAPI void
-evas_common_frameq_add_surface(Evas_Surface *surface)
-{
-   evas_common_surface_add(gframeq.cur_frame, surface);
-}
-
-EAPI void 
-evas_common_frameq_set_frame_data(void *data, 
-                                  void (*fn_output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h),
-                                  void (*fn_output_flush)  (void *data),
-                                  void (*fn_output_set_priv)(void *data, void *cur, void *prev))
-{
-   if (gframeq.cur_frame) 
-     {
-        gframeq.cur_frame->data = data;
-        gframeq.cur_frame->output_redraws_next_update_push = fn_output_redraws_next_update_push;
-        gframeq.cur_frame->output_flush = fn_output_flush;
-        gframeq.cur_frame->output_set_priv = fn_output_set_priv;
-     }
-}
-
-EAPI void
-evas_common_frameq_prepare_frame(void)
-{
-   if (!gframeq.cur_frame )
-     {
-        gframeq.cur_frame = evas_common_frame_alloc();
-     }
-}
-
-EAPI void
-evas_common_frameq_ready_frame(void)
-{
-   if (gframeq.cur_frame)
-     {
-        evas_common_frame_add(&gframeq, gframeq.cur_frame);
-        gframeq.cur_frame = NULL; // create a new frame for the next frame later
-     }
-}
-
-
-EAPI void
-evas_common_frameq_init(void)
-{
-   gframeq.frames = NULL;
-   LKI(gframeq.mutex);
-   eina_condition_new(&(gframeq.cond_new), &(gframeq.mutex));
-   eina_condition_new(&(gframeq.cond_ready), &(gframeq.mutex));
-   eina_condition_new(&(gframeq.cond_done), &(gframeq.mutex));
-   gframeq.initialised = 0;	// worker thread are not created yet
-   gframeq.frameq_sz = 1;	// this value ensures the first frame can be enqueued.
-}
-
-EAPI void
-evas_common_frameq_destroy(void)
-{
-#if 0 // let them destroyed indirectly with program exit
-   LKL(gframeq.mutex);
-   eina_condition_free(&(gframeq.cond_new));
-   eina_condition_free(&(gframeq.cond_ready));
-   eina_condition_free(&(gframeq.cond_done));
-   LKU(gframeq.mutex);
-#endif
-   LKD(gframeq.mutex);
-
-   gframeq.frames = NULL;
-   gframeq.initialised = 0;
-}
-
-EAPI void
-evas_common_frameq_flush(void)
-{
-   if (! evas_common_frameq_enabled())
-      return;
-
-   LKL(gframeq.mutex);
-   while(eina_inlist_count(EINA_INLIST_GET(gframeq.frames)) > 0)
-     {
-        /* wait a worker thread finish previous frame */
-        eina_condition_wait(&(gframeq.cond_done));
-   }
-   LKU(gframeq.mutex);
-}
-
-
-EAPI void
-evas_common_frameq_flush_ready(void)
-{
-   return;
-}
-
-EAPI int
-evas_common_frameq_get_frameq_sz(void)
-{
-   return gframeq.frameq_sz;
-}
-
-EAPI int
-evas_common_frameq_enabled(void)
-{
-   return gframeq.initialised;
-}
-#endif
-
 static RGBA_Pipe *evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op);
 static void evas_common_pipe_draw_context_copy(RGBA_Draw_Context *dc, RGBA_Pipe_Op *op);
 static void evas_common_pipe_op_free(RGBA_Pipe_Op *op);
@@ -300,501 +99,6 @@ evas_common_pipe_thread(void *data)
      }
    return NULL;
 }
-
-#ifdef EVAS_FRAME_QUEUING
-static void
-evas_common_frameq_release(void *data)
-{
-   Evas_FrameQ *frameq;
-   Evas_Frameq_Thread_Info *fq_info;
-   Thinfo *thinfo;
-
-   thinfo = data;
-   fq_info = (Evas_Frameq_Thread_Info *)(thinfo->fq_info);
-   frameq = fq_info->frameq;
-
-   /* This thread may or may not own the mutex.
-    * But there's no way to determine the ownership of the mutex, so release it anyway 
-    */
-   LKU(frameq->mutex);
-}
-
-static void *
-evas_common_frameq_thread(void *data)
-{
-   Evas_FrameQ *frameq;
-   Evas_Frame *frame;
-   Evas_Surface *surface;
-   RGBA_Pipe *p;
-   Thinfo *thinfo;
-   Evas_Frameq_Thread_Info *fq_info;
-   RGBA_Pipe_Thread_Info p_info;
-
-   thinfo = data;
-   fq_info = (Evas_Frameq_Thread_Info *)(thinfo->fq_info);
-   frameq = fq_info->frameq;
-
-   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-   pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
-   /* install  thread cancelation cleanup handler */
-   pthread_cleanup_push(evas_common_frameq_release, data); 
-
-   for (;;)
-     {
-        frame = NULL;
-		
-        /* 1. pick a frame to draw */
-        LKL(frameq->mutex);
-        while(!frame)
-          {
-             EINA_INLIST_FOREACH(EINA_INLIST_GET(frameq->frames), frame)
-               {
-                  if (!frame->in_process)
-                    {
-                       frame->in_process = 1;
-                       break;
-                    }
-               }
-             if (frame)
-               {
-                  break;
-               }
-             pthread_testcancel();
-             eina_condition_wait(&(frameq->cond_new));
-          }
-        LKU(frameq->mutex);
-
-        /* 2. draw selected frame */
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(frame->surfaces), surface)
-          {
-             p_info.im = surface->im;
-             p_info.x = 0;
-             p_info.y = 0;
-             p_info.w = surface->im->cache_entry.w;
-             p_info.h = surface->im->cache_entry.h;
-
-             EINA_INLIST_FOREACH(EINA_INLIST_GET(p_info.im->cache_entry.pipe), p)
-               {
-                  int i;
-
-                  for (i = 0; i < p->op_num; i++)
-                    {
-                       if (p->op[i].op_func)
-                         {
-                            p->op[i].op_func(p_info.im, &(p->op[i]), &p_info);
-                         }
-                    }
-               }
-
-             /* push surface out */
-             if (! surface->dontpush)
-               {
-                  frame->output_redraws_next_update_push(frame->data,  
-                              surface->im, surface->x, surface->y, surface->w, surface->h);
-               }
-          }
-
-        // record frame ready time, will be used in post worker thread, evas_common_frameq_thread_post()
-        gettimeofday(&frame->ready_time, NULL);
-
-        LKL(frameq->mutex);
-        frame->ready = 1;
-        eina_condition_signal(&(frameq->cond_ready));
-        LKU(frameq->mutex);
-     }
-
-   // Remove cleanup handler
-   pthread_cleanup_pop(0);
-   return NULL;
-}
-
-
-#define INTERVAL_QSIZE 17  // Actual size is 'INTERVAL_QSIZE - 1' because of not using index
-#define SATISFACTION_THRESHOLD 4 // 4 ms --> 250 FPS
-#define RESET_RATIO 4   // RESET_RATIO * [Average Ready Gap | get_max_interval()] --> Reset Threshold
-#define DOUBLE_RESET_TIME_INTERVAL_THRESHOLD 16000 // make it double in case of less 16ms
-#define RESET_ABSOLUTE_INTERVAL 600000  // 600 msec
-
-struct iq_node
-{
-   long long rt;
-   long long ri;
-};
-
-static struct iq_node _IQ[INTERVAL_QSIZE];
-static int _IQ_head = 0, _IQ_tail = 0;
-static int _IQ_length = 0;
-static long long min_ready, max_ready;
-static long long average_interval;
-
-static int 
-_IQ_next_index(int i)
-{
-   return (i + 1) % INTERVAL_QSIZE;
-}
-
-static int 
-_IQ_previous_index(int i)
-{
-   if (--i < 0) i += INTERVAL_QSIZE;
-   return i;
-}
-
-static void 
-_IQ_init(void)
-{
-   _IQ_length = _IQ_head = _IQ_tail = 0;
-   min_ready = LLONG_MAX, max_ready = LLONG_MIN;
-   average_interval = 0;
-}
-
-static int 
-_IQ_empty(void)
-{
-   return (_IQ_head == _IQ_tail) ? 1 : 0;
-}
-
-static int 
-_IQ_full(void)
-{
-   return (_IQ_head == ((_IQ_tail + 1) % INTERVAL_QSIZE)) ? 1 : 0;
-}
-
-static void 
-_IQ_insert(long long ready_time, long long last_interval)
-{
-   if (_IQ_full()) return;
-
-   if (_IQ_empty())
-     {
-        if (last_interval < 0)
-          {
-             last_interval = -last_interval;
-          }
-        _IQ[_IQ_tail].rt = ready_time;
-        _IQ[_IQ_tail].ri = last_interval;
-        min_ready = ready_time - last_interval;
-        max_ready = ready_time;
-        _IQ_tail = _IQ_next_index(_IQ_tail);
-        _IQ_length++;
-     }
-   else
-     {
-        if (max_ready < ready_time)
-          {
-             _IQ[_IQ_tail].rt = ready_time;
-             _IQ[_IQ_tail].ri = ready_time - max_ready;
-             _IQ_tail = _IQ_next_index(_IQ_tail);
-             _IQ_length++;
-             max_ready = ready_time;
-          }
-        else if (ready_time < min_ready)
-          {
-             last_interval = _IQ[_IQ_head].ri;
-             _IQ[_IQ_head].ri = _IQ[_IQ_head].rt - ready_time;
-             _IQ_head = _IQ_previous_index(_IQ_head);
-             _IQ[_IQ_head].rt = ready_time;
-             _IQ[_IQ_head].ri = last_interval;
-             min_ready = ready_time;
-             _IQ_length++;
-          }
-        else
-          {
-             int i, j, k, l = 0;
-             for (i = _IQ_head; i != _IQ_tail; i = j)
-               {
-                  j = _IQ_next_index(i);
-                  if (_IQ[j].rt < ready_time)
-                    {
-                       continue;
-                    }
-                  break;
-               }
-             for (k = _IQ_tail; k != j; k = l)
-               {
-                  l = _IQ_previous_index(k);
-                  _IQ[k] = _IQ[l];
-               }
-             i = _IQ_next_index(j);
-             _IQ[j].ri -= (_IQ[j].rt - ready_time);
-             _IQ[j].rt = ready_time;
-             _IQ[i].ri = _IQ[i].rt - ready_time;
-             _IQ_tail = _IQ_next_index(_IQ_tail);
-             _IQ_length++;
-          }
-     }
-   average_interval = (max_ready - min_ready) / _IQ_length;
-}
-
-static long long 
-_IQ_delete(void)
-{
-   struct iq_node oldest;
-  
-   if (_IQ_empty()) return 0;
-   oldest = _IQ[_IQ_head];
-   _IQ_head = (_IQ_head + 1) % INTERVAL_QSIZE;
-   if ((--_IQ_length) == 0)
-     {
-        _IQ_init();
-     }
-   else
-     {
-        min_ready = _IQ[_IQ_head].rt;
-        average_interval = (max_ready - min_ready) / _IQ_length;
-     }
-
-   return oldest.ri;
-}
-
-static long long 
-get_max_interval(void)
-{
-   int i;
-   long long max = LLONG_MIN;
-
-   for ( i= _IQ_head ; i != _IQ_tail ; i = _IQ_next_index(i))
-     {
-        if (_IQ[i].ri > max)
-          {
-             max = _IQ[i].ri;
-          }
-     }
-
-   return max;
-}
-
-static long long 
-tv_to_long_long(struct timeval *tv)
-{
-   if (!tv)
-     {
-        return 0;
-     }
-
-   return tv->tv_sec * 1000000LL + tv->tv_usec;
-}
-
-static long long
-evas_common_frameq_schedule_flush_time(int frameq_sz, int thread_no, 
-                                       long long last_ready_time, long long current_ready_time,
-                                       long long last_flush_time, int ready_frames_num,
-                                       int dont_schedule)
-{
-   // to get each time and to do others
-   long long current_time = 0LL;
-   long long current_ready_interval = 0LL;
-   long long theshold_time = SATISFACTION_THRESHOLD * 1000LL;	// ms -> usec
-   long long reset_time_interval = 0LL;
-   long long sleep_time = 0LL;
-   long long saved_ready_time, saved_ready_interval;
-   long long time_slept = 0LL;
-   static long long time_lag = 0;
-   struct timeval now;
-   int frameq_full_threshold =0;
-   int need_reset = 0;
-   int need_schedule = 0;
-
-   frameq_full_threshold = frameq_sz -thread_no;	// Qsize - threads#
-   
-   /* 1.5 defer flush time of current frame if need */
-   // in case of the first time, just keep ready time only
-   if (last_ready_time == 0LL)
-     {
-        last_ready_time = current_ready_time;
-     }
-   else
-     {
-        /* 1.5.1 get current ready time & interval */
-        saved_ready_time = current_ready_time;
-        saved_ready_interval = current_ready_interval = current_ready_time - last_ready_time;
-        // compensate a case which current ready time is older than previous one, 
-        // doesn't work on the interval queue
-        if (current_ready_interval < 0)
-          {
-             current_ready_time = last_ready_time;
-             current_ready_interval = 0;
-          }
-
-        /* 1.5.2 get the reset time interval before keeping a new one */
-        if (!_IQ_empty())
-          {
-             reset_time_interval = RESET_RATIO * average_interval;
-             if (average_interval < DOUBLE_RESET_TIME_INTERVAL_THRESHOLD) 
-               {
-                  reset_time_interval *= 2;
-               }
-          }
-
-        /* 1.5.3 reset - if too late, discard all saved interval and start from here */
-        if (current_ready_interval > RESET_ABSOLUTE_INTERVAL)
-          {
-             need_reset = 1;
-          }
-        else if (_IQ_length >= thread_no * 2 && current_ready_interval > reset_time_interval)
-          {
-             need_reset = 1;
-          }
-        else if (_IQ_length >= thread_no && _IQ_length < thread_no * 2 
-             && current_ready_interval > get_max_interval() * RESET_RATIO)
-          {
-             need_reset = 1;
-          }
-       
-        if (need_reset)
-          {
-             _IQ_init();
-          }
-        else
-          {
-             /* 1.5.4 enqueue - keep a new interval for next average interval */
-             if (_IQ_full())
-               {
-                  _IQ_delete();
-               }
-             _IQ_insert(saved_ready_time, saved_ready_interval);
-
-             /* 1.5.5 schedule - if faster than average interval, figure out sleep time to meet it */
-             if (!dont_schedule)
-               {
-                  need_schedule = 0;
-                  sleep_time = 0;
-                  if (_IQ_length >= thread_no * 2 && average_interval > theshold_time)
-                    {
-                       need_schedule = 1;
-                    }
-                  // compensate the case that postworker blocks the workers from getting a new fresh frame
-                  // It's actually occurred when during the wait time of postworker, the frame queue is full
-                  // Consequently check the number of currently ready frames and apply some time drop to average time according to the number
-                  if (ready_frames_num >= frameq_full_threshold)
-                    {
-                       need_schedule = 0;
-                    }
-                  if (need_schedule)
-                    {
-                       gettimeofday(&now, NULL);
-                       current_time = tv_to_long_long(&now);
-                       time_lag += (current_time - last_flush_time);
-                       sleep_time = (average_interval < time_lag) ? 0 : (average_interval - time_lag);
-                    }
-               }
-
-             /* 1.5.6 sleep - actually sleep and get over-slept time (time_lag) for next frame */
-             if (sleep_time > 0)
-               {
-                  sleep_time = sleep_time * 9 / 10;
-                  usleep((unsigned int)sleep_time);
-                  gettimeofday(&now, NULL);
-                  time_slept = tv_to_long_long(&now) - current_time;
-                  time_lag = time_slept - sleep_time;
-               }
-             else
-               {
-                  time_lag = 0;
-               }
-          }
-        last_ready_time = current_ready_time;
-     }
-
-   return last_ready_time;
-}
-
-static void *
-evas_common_frameq_thread_post(void *data)
-{
-   Evas_FrameQ *frameq;
-   Evas_Frame *frame;
-   Evas_Surface *surface;
-   Thinfo *thinfo;
-   Evas_Frameq_Thread_Info *fq_info;
-   Eina_List   *pending_writes = NULL;
-   Eina_List   *prev_pending_writes = NULL;
-
-   long long last_ready_time = 0LL;
-   long long current_ready_time;
-   Evas_Frame *temp_frame = NULL;
-   int ready_frames_num;
-   long long last_flush_time = 0LL;
-   struct timeval now;
-   int dont_schedule = 0;
-
-   thinfo = data;
-   fq_info = (Evas_Frameq_Thread_Info *)(thinfo->fq_info);
-   frameq = fq_info->frameq;
-
-   pthread_setcancelstate(PTHREAD_CANCEL_ENABLE, NULL);
-   pthread_setcanceltype(PTHREAD_CANCEL_DEFERRED, NULL);
-   /* install  thread cancelation cleanup handler */
-   pthread_cleanup_push(evas_common_frameq_release, data); 
-
-   _IQ_init();
-
-   for (;;)
-     {
-        /* 1. wait the first frame being done */
-        LKL(frameq->mutex);
-        while(!frameq->frames || !frameq->frames->ready)
-          {
-             eina_condition_wait(&(frameq->cond_ready));
-          }
-        frame = frameq->frames;
-
-        /* 1.5. prepare to schedule flush time */
-        current_ready_time = tv_to_long_long(&frame->ready_time);
-        ready_frames_num = 0;
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(frameq->frames), temp_frame)
-          {
-             if (temp_frame->ready == 1)
-               {
-                  ready_frames_num++;
-               }
-          }
-        dont_schedule = (frame->dont_schedule)?1:0;
-        LKU(frameq->mutex);
-
-        /* 2. generate pending_writes */
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(frame->surfaces), surface)
-         {
-            evas_common_pipe_flush(surface->im);
-            if (! surface->dontpush)
-              {
-                 pending_writes = eina_list_append(pending_writes, surface->im);
-              }
-         }
-
-        /* 2.5. schedule flush time */
-        last_ready_time = evas_common_frameq_schedule_flush_time(
-                                       frameq->frameq_sz, frameq->thread_num, 
-                                       last_ready_time, current_ready_time,
-                                       last_flush_time, ready_frames_num, dont_schedule);
-
-        /* 3. flush redraws */
-        frame->output_set_priv(frame->data, pending_writes, prev_pending_writes);
-        frame->output_flush(frame->data);
-        gettimeofday(&now, NULL);
-        // keep as the last flush time
-        last_flush_time = now.tv_sec * 1000000LL + now.tv_usec;
-
-        prev_pending_writes = pending_writes;
-        pending_writes = NULL;
-
-        /* 4. remove this frame from the frame queue */
-        LKL(frameq->mutex);
-        frameq->frames = 
-            (Evas_Frame *)eina_inlist_remove(EINA_INLIST_GET(frameq->frames), 
-                  EINA_INLIST_GET(frame));
-
-        LKU(frameq->mutex);
-        eina_condition_broadcast(&frameq->cond_done);
-        evas_common_frame_dealloc(frame);
-     }
-
-   // Remove cleanup handler
-   pthread_cleanup_pop(0);
-   return NULL;
-}
-
-#endif /* EVAS_FRAME_QUEUING */
 #endif
 
 #ifdef BUILD_PTHREAD
@@ -808,10 +112,6 @@ evas_common_pipe_begin(RGBA_Image *im)
 {
 #ifdef BUILD_PTHREAD
    int i, y, h;
-
-#ifdef EVAS_FRAME_QUEUING
-   return;
-#endif
 
    if (!im->cache_entry.pipe) return;
    if (thread_num == 1) return;
@@ -844,138 +144,35 @@ evas_common_pipe_begin(RGBA_Image *im)
 #endif
 }
 
-#ifdef EVAS_FRAME_QUEUING
-EAPI void
-evas_common_frameq_begin(void)
-{
-#ifdef BUILD_PTHREAD
-   int i;
-   Evas_Frameq_Thread_Info *fp_info;
-   pthread_attr_t attr;
-   cpu_set_t cpu;
-
-   if (!gframeq.initialised)
-     {
-        int cpunum, set_cpu_affinity = 0;
-
-        cpunum = eina_cpu_count();
-        gframeq.thread_num = cpunum;
-        gframeq.frameq_sz = cpunum * FRAMEQ_SZ_PER_THREAD;
-
-	eina_threads_init();
-
-        for (i = 0; i < gframeq.thread_num; i++)
-          {
-
-             fp_info = calloc(1, sizeof(Evas_Frameq_Thread_Info));
-             fp_info->frameq = &gframeq;
-
-             gframeq.thinfo[i].thread_num = i;
-             gframeq.thinfo[i].fq_info = fp_info;
-
-             pthread_attr_init(&attr);
-             if (set_cpu_affinity)
-               {
-                  CPU_ZERO(&cpu);
-                  CPU_SET((i+1) % cpunum, &cpu);
-                  pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-               }
-
-             pthread_create(&(gframeq.thinfo[i].thread_id), &attr,
-                     evas_common_frameq_thread, &(gframeq.thinfo[i]));
-
-             pthread_attr_destroy(&attr);
-             pthread_detach(gframeq.thinfo[i].thread_id);
-          }
-
-          {
-             fp_info = calloc(1, sizeof(Evas_Frameq_Thread_Info));
-             fp_info->frameq = &gframeq;
-
-             gframeq.thinfo[i].thread_num = i;
-             gframeq.thinfo[i].fq_info = fp_info;
-
-             pthread_attr_init(&attr);
-             if (set_cpu_affinity)
-               {
-                  CPU_ZERO(&cpu);
-                  CPU_SET((i+1) % cpunum, &cpu);
-                  pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-               }
-
-             pthread_create(&(gframeq.thinfo[i].thread_id), &attr,
-                     evas_common_frameq_thread_post, &(gframeq.thinfo[i]));
-             pthread_attr_destroy(&attr);
-             pthread_detach(gframeq.thinfo[i].thread_id);
-          }
-        gframeq.initialised = 1;	// now worker threads are created.
-
-	INF("initialised");
-	DBG("%d cpus, set_cpu_affinity=%d, frameq_sz=%d",
-	    cpunum, set_cpu_affinity, gframeq.frameq_sz);
-     }
-#endif /* BUILD_PTHREAD */
-}
-
-EAPI void
-evas_common_frameq_finish(void)
-{
-   int i;
-   
-   /* 1. cancel all worker threads */
-   for (i = 0; i < gframeq.thread_num; i++)
-     {
-        pthread_cancel(gframeq.thinfo[i].thread_id);
-     }
-     // cancel post-worker thread
-     pthread_cancel(gframeq.thinfo[i].thread_id);
-
-   /* 2. send signal to worker threads so that they enter to the thread cancelation cleanup handler */
-   for (i = 0; i < gframeq.thread_num; i++)
-     {
-        eina_condition_signal(&(gframeq.cond_new));
-     }
-   // send signal to post-worker thread
-   eina_condition_signal(&(gframeq.cond_ready));
-
-   /* all the workers were created and detached before
-    *  so don't need to join them here.
-    */
-
-}
-
-#endif /* EVAS_FRAME_QUEUING */
-
 EAPI void
 evas_common_pipe_flush(RGBA_Image *im)
 {
    if (!im->cache_entry.pipe) return;
-#ifndef EVAS_FRAME_QUEUING
 #ifdef BUILD_PTHREAD
    if (thread_num > 1)
      {
-        /* sync worker threads */
-        pthread_barrier_wait(&(thbarrier[1]));
+       /* sync worker threads */
+       pthread_barrier_wait(&(thbarrier[1]));
      }
    else
 #endif
      {
        RGBA_Pipe *p;
        int i;
-
-        /* process pipe - 1 thead */
-        for (p = im->cache_entry.pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
-          {
-             for (i = 0; i < p->op_num; i++)
-               {
-                  if (p->op[i].op_func)
-                    {
-                       p->op[i].op_func(im, &(p->op[i]), NULL);
-                    }
-               }
-          }
+       
+       /* process pipe - 1 thead */
+       for (p = im->cache_entry.pipe; p; p = (RGBA_Pipe *)(EINA_INLIST_GET(p))->next)
+	 {
+	   for (i = 0; i < p->op_num; i++)
+	     {
+	       if (p->op[i].op_func)
+		 {
+		   p->op[i].op_func(im, &(p->op[i]), NULL);
+		 }
+	     }
+	 }
      }
-#endif /* !EVAS_FRAME_QUEUING */
+
    evas_common_cpu_end_opt();
    evas_common_pipe_free(im);
 }
@@ -1153,36 +350,10 @@ evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 static void
 evas_common_pipe_op_text_free(RGBA_Pipe_Op *op)
 {
-#ifdef EVAS_FRAME_QUEUING
-   LKL(op->op.text.font->ref_fq_del);
-   op->op.text.font->ref_fq[1]++;
-   LKU(op->op.text.font->ref_fq_del);
-   eina_condition_signal(&(op->op.text.font->cond_fq_del));
-#else
    evas_common_font_free(op->op.text.font);
-#endif
    evas_common_text_props_content_unref(&(op->op.text.intl_props));
    evas_common_pipe_op_free(op);
 }
-
-#ifdef EVAS_FRAME_QUEUING
-/* flush all op using @fn */
-EAPI void
-evas_common_pipe_op_text_flush(RGBA_Font *fn)
-{
-   if (! evas_common_frameq_enabled())
-      return;
-
-   LKL(fn->ref_fq_add);
-   LKL(fn->ref_fq_del);
-
-   while (fn->ref_fq[0] != fn->ref_fq[1])
-     eina_condition_wait(&(fn->cond_fq_del));
-
-   LKU(fn->ref_fq_del);
-   LKU(fn->ref_fq_add);
-}
-#endif
 
 static void
 evas_common_pipe_text_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info)
@@ -1218,13 +389,7 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    op->op.text.y = y;
    evas_common_text_props_content_copy_and_ref(&(op->op.text.intl_props),
          intl_props);
-#ifdef EVAS_FRAME_QUEUING
-   LKL(fn->ref_fq_add);
-   fn->ref_fq[0]++;
-   LKU(fn->ref_fq_add);
-#else
    fn->references++;
-#endif
    op->op.text.font = fn;
    op->op_func = evas_common_pipe_text_draw_do;
    op->free_func = evas_common_pipe_op_text_free;
@@ -1236,38 +401,13 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 static void
 evas_common_pipe_op_image_free(RGBA_Pipe_Op *op)
 {
-#ifdef EVAS_FRAME_QUEUING
-   LKL(op->op.image.src->cache_entry.ref_fq_del);
-   op->op.image.src->cache_entry.ref_fq[1]++;
-   LKU(op->op.image.src->cache_entry.ref_fq_del);
-   eina_condition_signal(&(op->op.image.src->cache_entry.cond_fq_del));
-#else
    op->op.image.src->ref--;
    if (op->op.image.src->ref == 0)
      {
         evas_cache_image_drop(&op->op.image.src->cache_entry);
      }
-#endif
    evas_common_pipe_op_free(op);
 }
-
-#ifdef EVAS_FRAME_QUEUING
-EAPI void
-evas_common_pipe_op_image_flush(RGBA_Image *im)
-{
-   if (! evas_common_frameq_enabled())
-      return;
-   
-   LKL(im->cache_entry.ref_fq_add);
-   LKL(im->cache_entry.ref_fq_del);
-
-   while (im->cache_entry.ref_fq[0] != im->cache_entry.ref_fq[1])
-     eina_condition_wait(&(im->cache_entry.cond_fq_del));
-
-   LKU(im->cache_entry.ref_fq_del);
-   LKU(im->cache_entry.ref_fq_add);
-}
-#endif
 
 static void
 evas_common_pipe_image_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info)
@@ -1388,44 +528,21 @@ evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst,
    op->op.image.dy = dst_region_y;
    op->op.image.dw = dst_region_w;
    op->op.image.dh = dst_region_h;
-#ifdef EVAS_FRAME_QUEUING
-   LKL(src->cache_entry.ref_fq_add);
-   src->cache_entry.ref_fq[0]++;
-   LKU(src->cache_entry.ref_fq_add);
-#else
    src->ref++;
-#endif
    op->op.image.src = src;
    op->op_func = evas_common_pipe_image_draw_do;
    op->free_func = evas_common_pipe_op_image_free;
    evas_common_pipe_draw_context_copy(dc, op);
 
-#ifdef EVAS_FRAME_QUEUING
-   /* laod every src image here.
-    * frameq utilize all cpu cores already by worker threads
-    * so another threads and barrier waiting can't be of any benefit.
-    * therefore, not instantiate loader threads.
-    */
-   if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-      evas_cache_image_load_data(&src->cache_entry);
-   evas_common_image_colorspace_normalize(src);
-#else
    evas_common_pipe_image_load(src);
-#endif
 }
 
 static void
 evas_common_pipe_op_map_free(RGBA_Pipe_Op *op)
 {
-#ifdef EVAS_FRAME_QUEUING
-   LKL(op->op.image.src->cache_entry.ref_fq_del);
-   op->op.image.src->cache_entry.ref_fq[1]++;
-   LKU(op->op.image.src->cache_entry.ref_fq_del);
-#else
    op->op.map.src->ref--;
    if (op->op.map.src->ref == 0)
      evas_cache_image_drop(&op->op.map.src->cache_entry);
-#endif
    free(op->op.map.p);
    evas_common_pipe_op_free(op);
 }
@@ -1477,31 +594,14 @@ evas_common_pipe_map_draw(RGBA_Image *src, RGBA_Image *dst,
    op->op.map.npoints = npoints;
    op->op.map.smooth = smooth;
    op->op.map.level = level;
-#ifdef EVAS_FRAME_QUEUING
-   LKL(src->cache_entry.ref_fq_add);
-   src->cache_entry.ref_fq[0]++;
-   LKU(src->cache_entry.ref_fq_add);
-#else
    src->ref++;
-#endif
    op->op.map.src = src;
    op->op.map.p = pts_copy;
    op->op_func = evas_common_pipe_map_draw_do;
    op->free_func = evas_common_pipe_op_map_free;
    evas_common_pipe_draw_context_copy(dc, op);
 
-#ifdef EVAS_FRAME_QUEUING
-   /* laod every src image here.
-    * frameq utilize all cpu cores already by worker threads
-    * so another threads and barrier waiting can't be of any benefit.
-    * therefore, not instantiate loader threads.
-    */
-   if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-      evas_cache_image_load_data(&src->cache_entry);
-   evas_common_image_colorspace_normalize(src);
-#else
    evas_common_pipe_image_load(src);
-#endif
 }
 
 static void

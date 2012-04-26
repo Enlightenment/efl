@@ -139,12 +139,6 @@ _evas_common_rgba_image_new(void)
    if (!im) return NULL;
    im->flags = RGBA_IMAGE_NOTHING;
    im->ref = 1;
-#ifdef EVAS_FRAME_QUEUING
-   LKI(im->cache_entry.ref_fq_add);
-   LKI(im->cache_entry.ref_fq_del);
-   eina_condition_new(&(im->cache_entry.cond_fq_del),
-		      &(im->cache_entry.ref_fq_del));
-#endif
 
    evas_common_rgba_image_scalecache_init(&im->cache_entry);
 
@@ -158,11 +152,6 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
 
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_free(im);
-# ifdef EVAS_FRAME_QUEUING
-   LKD(im->cache_entry.ref_fq_add);
-   LKD(im->cache_entry.ref_fq_del);
-   eina_condition_free(&(im->cache_entry.cond_fq_del));
-# endif
 #endif
    evas_common_rgba_image_scalecache_shutdown(&im->cache_entry);
    if (ie->info.module) evas_module_unref((Evas_Module *)ie->info.module);

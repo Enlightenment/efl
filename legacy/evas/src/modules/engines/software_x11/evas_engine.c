@@ -93,10 +93,6 @@ struct _Render_Engine
         int dpi;
      } xr;
  */
-#ifdef EVAS_FRAME_QUEUING
-   Evas_Engine_Render_Mode render_mode;
-#endif
-
    void (*outbuf_free)(Outbuf *ob);
    void (*outbuf_reconfigure)(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
    int (*outbuf_get_rot)(Outbuf *ob);
@@ -106,9 +102,6 @@ struct _Render_Engine
    void (*outbuf_flush)(Outbuf *ob);
    void (*outbuf_idle_flush)(Outbuf *ob);
    Eina_Bool (*outbuf_alpha_get)(Outbuf *ob);
-#ifdef EVAS_FRAME_QUEUING
-   void (*outbuf_set_priv)(Outbuf *ob, void *cur, void *prev);
-#endif
 };
 
 /* prototypes we will use here */
@@ -483,10 +476,6 @@ eng_setup(Evas *e, void *in)
              re->outbuf_flush = evas_software_xlib_outbuf_flush;
              re->outbuf_idle_flush = evas_software_xlib_outbuf_idle_flush;
 	     re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
-# ifdef EVAS_FRAME_QUEUING
-             re->outbuf_set_priv = evas_software_xlib_outbuf_set_priv;
-             re->render_mode = info->render_mode;
-# endif
           }
 #endif
 
@@ -515,10 +504,6 @@ eng_setup(Evas *e, void *in)
              re->outbuf_flush = evas_software_xcb_outbuf_flush;
              re->outbuf_idle_flush = evas_software_xcb_outbuf_idle_flush;
 	     re->outbuf_alpha_get = evas_software_xcb_outbuf_alpha_get;
-# ifdef EVAS_FRAME_QUEUING
-             re->outbuf_set_priv = evas_software_xcb_outbuf_priv_set;
-             re->render_mode = info->render_mode;
-# endif
           }
 #endif
 
@@ -528,9 +513,6 @@ eng_setup(Evas *e, void *in)
      {
 	int ponebuf = 0;
 
-#ifdef EVAS_FRAME_QUEUING
-        evas_common_frameq_flush();
-#endif
 	re = e->engine.data.output;
 	ponebuf = re->ob->onebuf;
 
@@ -554,9 +536,6 @@ eng_setup(Evas *e, void *in)
                                                  info->info.destination_alpha);
 
              evas_software_xlib_outbuf_debug_set(re->ob, info->info.debug);
-# ifdef EVAS_FRAME_QUEUING
-             re->render_mode = info->render_mode;
-# endif
           }
 #endif
 
@@ -581,9 +560,6 @@ eng_setup(Evas *e, void *in)
                                               info->info.destination_alpha);
 
              evas_software_xcb_outbuf_debug_set(re->ob, info->info.debug);
-#ifdef EVAS_FRAME_QUEUING
-             re->render_mode = info->render_mode;
-#endif
           }
 #endif
 	re->ob->onebuf = ponebuf;
@@ -713,92 +689,16 @@ static void
 eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
-#ifdef EVAS_FRAME_QUEUING
-   Evas_Surface *e_surface;
-#endif
 
    re = (Render_Engine *)data;
-#if defined(BUILD_PIPE_RENDER) && !defined(EVAS_FRAME_QUEUING)
+#if defined(BUILD_PIPE_RENDER)
    evas_common_pipe_map_begin(surface);
-#endif /* BUILD_PIPE_RENDER  && !EVAS_FRAME_QUEUING*/
-
-#ifdef EVAS_FRAME_QUEUING
-   if (re->render_mode == EVAS_RENDER_MODE_NONBLOCKING)
-     {
-        /* create a new frame if this is the first surface of this frame */
-        evas_common_frameq_prepare_frame();
-        /* add surface into the frame */
-        e_surface = evas_common_frameq_new_surface(surface, x, y, w, h);
-        evas_common_frameq_add_surface(e_surface);
-        return;
-     }
-#endif
+#endif /* BUILD_PIPE_RENDER */
 
    re->outbuf_push_updated_region(re->ob, surface, x, y, w, h);
    re->outbuf_free_region_for_update(re->ob, surface);
    evas_common_cpu_end_opt();
 }
-
-#ifdef EVAS_FRAME_QUEUING
-static void *
-eng_image_map_surface_new(void *data , int w, int h, int alpha)
-{
-   void *surface;
-   DATA32 *pixels;
-   Render_Engine *re;
-   Evas_Surface *e_surface;
-
-   re = (Render_Engine *)data;
-
-   surface = 
-     evas_cache_image_copied_data(evas_common_image_cache_get(), w, h, NULL, 
-                                  alpha, EVAS_COLORSPACE_ARGB8888);
-   pixels = evas_cache_image_pixels(surface);
-
-   if (re->render_mode == EVAS_RENDER_MODE_NONBLOCKING)
-     {
-        /* create a new frame if this is the first surface of this frame */
-        evas_common_frameq_prepare_frame();
-
-        /* add surface into the frame */
-        e_surface = evas_common_frameq_new_surface(surface, 0, 0, w, h);
-
-        /* this surface is not going to be pushed to screen */
-        e_surface->dontpush = 1;
-        evas_common_frameq_add_surface(e_surface);
-     }
-   return surface;
-}
-
-static void
-eng_output_frameq_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   re->outbuf_push_updated_region(re->ob, surface, x, y, w, h);
-   re->outbuf_free_region_for_update(re->ob, surface);
-   evas_common_cpu_end_opt();
-}
-
-static void
-eng_output_frameq_flush(void *data)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   re->outbuf_flush(re->ob);
-}
-
-static void
-eng_output_frameq_set_priv(void *data, void *cur, void *prev)
-{
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
-   re->outbuf_set_priv(re->ob, cur, prev);
-}
-#endif
 
 static void
 eng_output_flush(void *data)
@@ -806,19 +706,7 @@ eng_output_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-#ifdef EVAS_FRAME_QUEUING
-   if (re->render_mode == EVAS_RENDER_MODE_NONBLOCKING)
-     {
-        evas_common_frameq_set_frame_data(data,
-                                          eng_output_frameq_redraws_next_update_push,
-                                          eng_output_frameq_flush,
-                                          eng_output_frameq_set_priv);
-        evas_common_frameq_ready_frame();
-        evas_common_frameq_begin();
-     } 
-   else
-#endif
-     re->outbuf_flush(re->ob);
+   re->outbuf_flush(re->ob);
 }
 
 static void
@@ -887,9 +775,6 @@ module_open(Evas_Module *em)
    ORD(output_redraws_next_update_push);
    ORD(output_flush);
    ORD(output_idle_flush);
-#ifdef EVAS_FRAME_QUEUING
-   ORD(image_map_surface_new);
-#endif
 
    /* now advertise out own api */
    em->functions = (void *)(&func);

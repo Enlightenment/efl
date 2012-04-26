@@ -438,11 +438,7 @@ static void
 eng_rectangle_draw(void *data __UNUSED__, void *context, void *surface, int x, int y, int w, int h)
 {
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1)
-#ifdef EVAS_FRAME_QUEUING
-        && evas_common_frameq_enabled()
-#endif
-        )
+   if ((cpunum > 1))
      evas_common_pipe_rectangle_draw(surface, context, x, y, w, h);
    else
 #endif
@@ -456,11 +452,7 @@ static void
 eng_line_draw(void *data __UNUSED__, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1)
- #ifdef EVAS_FRAME_QUEUING
-        && evas_common_frameq_enabled()
-#endif
-        )
+   if ((cpunum > 1))
     evas_common_pipe_line_draw(surface, context, x1, y1, x2, y2);
    else
 #endif   
@@ -486,11 +478,7 @@ static void
 eng_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1)
-#ifdef EVAS_FRAME_QUEUING
-        && evas_common_frameq_enabled()
-#endif
-        )
+   if ((cpunum > 1))
      evas_common_pipe_poly_draw(surface, context, polygon, x, y);
    else
 #endif
@@ -820,11 +808,7 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
    if (!image) return;
    im = image;
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1)
-#ifdef EVAS_FRAME_QUEUING
-        && evas_common_frameq_enabled()
-#endif
-        )
+   if ((cpunum > 1))
      {
         evas_common_rgba_image_scalecache_prepare((Image_Entry *)(im), 
                                                   surface, context, smooth,
@@ -903,11 +887,7 @@ eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *im
    else
      {
 #ifdef BUILD_PIPE_RENDER
-        if ((cpunum > 1)
-# ifdef EVAS_FRAME_QUEUING
-       && evas_common_frameq_enabled()
-# endif
-        )
+        if ((cpunum > 1))
           evas_common_pipe_map_draw(im, surface, context, npoints, p, smooth, level);
         else
 #endif
@@ -1187,11 +1167,7 @@ static void
 eng_font_draw(void *data __UNUSED__, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
 {
 #ifdef BUILD_PIPE_RENDER
-   if ((cpunum > 1)
-#ifdef EVAS_FRAME_QUEUING
-        && evas_common_frameq_enabled()
-#endif
-        )
+   if ((cpunum > 1))
      evas_common_pipe_text_draw(surface, context, (RGBA_Font *) font, x, y,
            text_props);
    else

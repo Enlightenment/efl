@@ -23,8 +23,4 @@ Eina_Bool evas_software_xcb_outbuf_alpha_get(Outbuf *buf);
 void evas_software_xcb_outbuf_debug_set(Outbuf *buf, Eina_Bool debug);
 void evas_software_xcb_outbuf_debug_show(Outbuf *buf, xcb_drawable_t drawable, int x, int y, int w, int h);
 
-# ifdef EVAS_FRAME_QUEUING
-void evas_software_xcb_outbuf_priv_set(Outbuf *buf, void *cur, void *prev);
-# endif
-
 #endif

@@ -25,29 +25,17 @@ static int _shmsize = 0;
 static int _shmlimit = (10 * 1024 * 1024);
 static const unsigned int _shmcountlimit = 32;
 
-#ifdef EVAS_FRAME_QUEUING
-static LK(lock_shmpool);
-# define SHMPOOL_LOCK() LKL(lock_shmpool);
-# define SHMPOOL_UNLOCK() LKU(lock_shmpool);
-#else
-# define SHMPOOL_LOCK()
-# define SHMPOOL_UNLOCK()
-#endif
+#define SHMPOOL_LOCK()
+#define SHMPOOL_UNLOCK()
 
 void 
 evas_software_xcb_outbuf_init(void) 
 {
-#ifdef EVAS_FRAME_QUEUING
-   LKI(lock_shmpool);
-#endif
 }
 
 void 
 evas_software_xcb_outbuf_free(Outbuf *buf) 
 {
-#ifdef EVAS_FRAME_QUEUING
-   LKL(buf->priv.lock);
-#endif
    while (buf->priv.pending_writes) 
      {
         RGBA_Image *im = NULL;
@@ -63,9 +51,6 @@ evas_software_xcb_outbuf_free(Outbuf *buf)
         if (obr->mask) _unfind_xcbob(obr->mask, EINA_FALSE);
         free(obr);
      }
-#ifdef EVAS_FRAME_QUEUING
-   LKU(buf->priv.lock);
-#endif
    evas_software_xcb_outbuf_idle_flush(buf);
    evas_software_xcb_outbuf_flush(buf);
    if (buf->priv.x11.xcb.gc)
@@ -77,9 +62,6 @@ evas_software_xcb_outbuf_free(Outbuf *buf)
                                         buf->priv.x11.xcb.cmap, 
                                         buf->priv.x11.xcb.visual, 
                                         buf->priv.pal);
-#ifdef EVAS_FRAME_QUEUING
-   LKD(buf->priv.lock);
-#endif
    free(buf);
    _clear_xcbob(EINA_FALSE);
 }
@@ -230,10 +212,6 @@ evas_software_xcb_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, xcb_co
 
    evas_software_xcb_outbuf_drawable_set(buf, draw);
    evas_software_xcb_outbuf_mask_set(buf, mask);
-
-#ifdef EVAS_FRAME_QUEUING
-   LKI(buf->priv.lock);
-#endif
 
    return buf;
 }
@@ -470,10 +448,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
 //        memset(im->image.data, 0, (w * h * sizeof(DATA32)));
      }
 
-#ifdef EVAS_FRAME_QUEUING
-   if (!evas_common_frameq_enabled())
-#endif
-     buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
+   buf->priv.pending_writes = eina_list_append(buf->priv.pending_writes, im);
 
    return im;
 }
@@ -585,9 +560,6 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
                                                      buf->priv.x11.xcb.gcm, 
                                                      obr->x, obr->y, 0);
           }
-# ifdef EVAS_FRAME_QUEUING
-        LKL(buf->priv.lock);
-# endif
         while (buf->priv.prev_pending_writes) 
           {
              im = buf->priv.prev_pending_writes->data;
@@ -601,9 +573,6 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
              free(obr);
           }
         buf->priv.prev_pending_writes = buf->priv.pending_writes;
-# ifdef EVAS_FRAME_QUEUING
-        LKU(buf->priv.lock);
-# endif
         buf->priv.pending_writes = NULL;
         xcb_flush(buf->priv.x11.xcb.conn);
 #else
@@ -648,9 +617,6 @@ evas_software_xcb_outbuf_idle_flush(Outbuf *buf)
      }
    else 
      {
-#ifdef EVAS_FRAME_QUEUING
-        LKL(buf->priv.lock);
-#endif
         if (buf->priv.prev_pending_writes)
           _xcbob_sync(buf->priv.x11.xcb.conn);
         while (buf->priv.prev_pending_writes) 
@@ -668,9 +634,6 @@ evas_software_xcb_outbuf_idle_flush(Outbuf *buf)
              if (obr->mask) _unfind_xcbob(obr->mask, EINA_FALSE);
              free(obr);
           }
-#ifdef EVAS_FRAME_QUEUING
-        LKU(buf->priv.lock);
-#endif
         _clear_xcbob(EINA_FALSE);
      }
 }
@@ -967,13 +930,6 @@ evas_software_xcb_outbuf_debug_show(Outbuf *buf, xcb_drawable_t drawable, int x,
      }
 }
 
-#ifdef EVAS_FRAME_QUEUING
-void 
-evas_software_xcb_outbuf_priv_set(Outbuf *buf, void *cur, void *prev __UNUSED__) 
-{
-   buf->priv.pending_writes = (Eina_List *)cur;
-}
-#endif
 
 /* local functions */
 static Xcb_Output_Buffer *

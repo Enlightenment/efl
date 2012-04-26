@@ -475,11 +475,6 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
    fi->hinting = fn->hinting;
    fn->references = 1;
    LKI(fn->lock);
-#ifdef EVAS_FRAME_QUEUING
-   LKI(fn->ref_fq_add);
-   LKI(fn->ref_fq_del);
-   eina_condition_new(&(fn->cond_fq_del), &(fn->ref_fq_del));
-#endif
    if (fi->inuse) evas_common_font_int_promote(fi);
    else
     {
@@ -539,11 +534,6 @@ evas_common_font_load(const char *name, int size, Font_Rend_Flags wanted_rend)
    fi->hinting = fn->hinting;
    fn->references = 1;
    LKI(fn->lock);
-#ifdef EVAS_FRAME_QUEUING
-   LKI(fn->ref_fq_add);
-   LKI(fn->ref_fq_del);
-   eina_condition_new(&(fn->cond_fq_del), &(fn->ref_fq_del));
-#endif
    if (fi->inuse) evas_common_font_int_promote(fi);
    else
     {
@@ -607,18 +597,6 @@ evas_common_font_free(RGBA_Font *fn)
    if (!fn) return;
    fn->references--;
    if (fn->references > 0) return;
-#ifdef EVAS_FRAME_QUEUING
-   LKL(fn->ref_fq_add);
-   LKL(fn->ref_fq_del);
-   if (fn->ref_fq[0] != fn->ref_fq[1])
-     {
-        LKU(fn->ref_fq_add);
-        LKU(fn->ref_fq_del);
-        return;
-     }
-   LKU(fn->ref_fq_add);
-   LKU(fn->ref_fq_del);
-#endif
    EINA_LIST_FOREACH(fn->fonts, l, fi)
      {
 	fi->references--;
@@ -632,11 +610,6 @@ evas_common_font_free(RGBA_Font *fn)
    eina_list_free(fn->fonts);
    if (fn->fash) fn->fash->freeme(fn->fash);
    LKD(fn->lock);
-#ifdef EVAS_FRAME_QUEUING
-   LKD(fn->ref_fq_add);
-   LKD(fn->ref_fq_del);
-   eina_condition_free(&(fn->cond_fq_del));
-#endif
    free(fn);
 }
 
