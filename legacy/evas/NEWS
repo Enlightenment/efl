@@ -6,6 +6,9 @@ Changes since Evas 1.2.0:
 Improvements:
    * Lock less font rendering.
 
+Removal:
+   * Remove EVAS_SLI.
+
 Evas 1.2.0
 
 Changes since Evas 1.1.0:

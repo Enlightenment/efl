@@ -203,10 +203,6 @@ extern EAPI int _evas_log_dom_global;
 # define THI(x) int x
 # define TH_MAX 8
 
-// even though in theory having every Nth rendered line done by a different
-// thread might even out load across threads - it actually slows things down.
-//#define EVAS_SLI 1
-
 #else
 # define TH(x)
 # define THI(x)

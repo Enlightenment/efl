@@ -303,29 +303,25 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
                                            in_w = 0;
                                            dx = chr_x;
                                            dy = y - (chr_y - i - y);
-#ifdef EVAS_SLI
-                                           if (((dy) % dc->sli.h) == dc->sli.y)
-#endif
-                                             {
-                                                if ((dx < (ext_x + ext_w)) &&
-                                                    (dy >= (ext_y)) &&
-                                                    (dy < (ext_y + ext_h)))
-                                                  {
-                                                     if (dx + w > (ext_x + ext_w))
-                                                       in_w += (dx + w) - (ext_x + ext_w);
-                                                     if (dx < ext_x)
-                                                       {
-                                                          in_w += ext_x - dx;
-                                                          in_x = ext_x - dx;
-                                                          dx = ext_x;
-                                                       }
-                                                     if (in_w < w)
-                                                       {
-                                                          func(NULL, data + (i * j) + in_x, dc->col.col,
-                                                               im + (dy * im_w) + dx, w - in_w);
-                                                       }
-                                                  }
-                                             }
+
+					   if ((dx < (ext_x + ext_w)) &&
+					       (dy >= (ext_y)) &&
+					       (dy < (ext_y + ext_h)))
+					     {
+					       if (dx + w > (ext_x + ext_w))
+						 in_w += (dx + w) - (ext_x + ext_w);
+					       if (dx < ext_x)
+						 {
+						   in_w += ext_x - dx;
+						   in_x = ext_x - dx;
+						   dx = ext_x;
+						 }
+					       if (in_w < w)
+						 {
+						   func(NULL, data + (i * j) + in_x, dc->col.col,
+							im + (dy * im_w) + dx, w - in_w);
+						 }
+					     }
                                         }
                                    }
                               }
@@ -345,42 +341,38 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
                                       in_w = 0;
                                       dx = chr_x;
                                       dy = y - (chr_y - i - y);
-#ifdef EVAS_SLI
-                                      if (((dy) % dc->sli.h) == dc->sli.y)
-#endif
-                                        {
-                                           tp = tmpbuf;
-                                           dp = data + (i * fg->glyph_out->bitmap.pitch);
-                                           for (bi = 0; bi < w; bi += 8)
-                                             {
-                                                bits = *dp;
-                                                if ((w - bi) < 8) end = w - bi;
-                                                else end = 8;
-                                                for (bj = 0; bj < end; bj++)
-                                                  {
-                                                     *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
-                                                     tp++;
-                                                  }
-                                                dp++;
-                                             }
-                                           if ((dx < (ext_x + ext_w)) &&
-                                               (dy >= (ext_y)) &&
-                                               (dy < (ext_y + ext_h)))
-                                             {
-                                                if (dx + w > (ext_x + ext_w))
-                                                  in_w += (dx + w) - (ext_x + ext_w);
-                                                if (dx < ext_x)
-                                                  {
-                                                     in_w += ext_x - dx;
-                                                     in_x = ext_x - dx;
-                                                     dx = ext_x;
-                                                  }
-                                                if (in_w < w)
-                                                  {
-                                                     func(NULL, tmpbuf + in_x, dc->col.col,
-                                                          im + (dy * im_w) + dx, w - in_w);
-                                                  }
-                                             }
+
+				      tp = tmpbuf;
+				      dp = data + (i * fg->glyph_out->bitmap.pitch);
+				      for (bi = 0; bi < w; bi += 8)
+					{
+					  bits = *dp;
+					  if ((w - bi) < 8) end = w - bi;
+					  else end = 8;
+					  for (bj = 0; bj < end; bj++)
+					    {
+					      *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
+					      tp++;
+					    }
+					  dp++;
+					}
+				      if ((dx < (ext_x + ext_w)) &&
+					  (dy >= (ext_y)) &&
+					  (dy < (ext_y + ext_h)))
+					{
+					  if (dx + w > (ext_x + ext_w))
+					    in_w += (dx + w) - (ext_x + ext_w);
+					  if (dx < ext_x)
+					    {
+					      in_w += ext_x - dx;
+					      in_x = ext_x - dx;
+					      dx = ext_x;
+					    }
+					  if (in_w < w)
+					    {
+					      func(NULL, tmpbuf + in_x, dc->col.col,
+						   im + (dy * im_w) + dx, w - in_w);
+					    }
                                         }
                                    }
                               }

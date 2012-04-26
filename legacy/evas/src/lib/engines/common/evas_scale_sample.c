@@ -327,16 +327,12 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                }
              for (y = 0; y < dst_clip_h; y++)
                {
-                  /* * blend here [clip_w *] ptr -> dst_ptr * */
-#ifdef EVAS_SLI
-                  if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
-#endif
-                    {
-                       func(ptr, mask, dc->mul.col, dst_ptr, dst_clip_w);
-                    }
-                  ptr += src_w;
-                  dst_ptr += dst_w;
-                  if (mask) mask += maskobj->cache_entry.w;
+		 /* * blend here [clip_w *] ptr -> dst_ptr * */
+		 func(ptr, mask, dc->mul.col, dst_ptr, dst_clip_w);
+
+		 ptr += src_w;
+		 dst_ptr += dst_w;
+		 if (mask) mask += maskobj->cache_entry.w;
                }
 	  }
      }
@@ -357,19 +353,16 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	  {
 	     for (y = 0; y < dst_clip_h; y++)
 	       {
-# ifdef EVAS_SLI
-                  if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
-# endif
-                    {
-                       dst_ptr = dptr;
-                       for (x = 0; x < dst_clip_w; x++)
-                         {
-                            ptr = row_ptr[y] + lin_ptr[x];
-                            *dst_ptr = *ptr;
-                            dst_ptr++;
-                         }
-                    }
-                  dptr += dst_w;
+
+		 dst_ptr = dptr;
+		 for (x = 0; x < dst_clip_w; x++)
+		   {
+		     ptr = row_ptr[y] + lin_ptr[x];
+		     *dst_ptr = *ptr;
+		     dst_ptr++;
+		   }
+
+		 dptr += dst_w;
                }
 	  }
 	else
@@ -379,21 +372,17 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
              buf = alloca(dst_clip_w * sizeof(DATA32));
              for (y = 0; y < dst_clip_h; y++)
                {
-#ifdef EVAS_SLI
-                  if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
-#endif
-                    {
-                       dst_ptr = buf;
-                       for (x = 0; x < dst_clip_w; x++)
-                         {
-                            ptr = row_ptr[y] + lin_ptr[x];
-                            *dst_ptr = *ptr;
-                            dst_ptr++;
-                         }
-                       /* * blend here [clip_w *] buf -> dptr * */
-                       func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
-                    }
-                  dptr += dst_w;
+		 dst_ptr = buf;
+		 for (x = 0; x < dst_clip_w; x++)
+		   {
+		     ptr = row_ptr[y] + lin_ptr[x];
+		     *dst_ptr = *ptr;
+		     dst_ptr++;
+		   }
+		 /* * blend here [clip_w *] buf -> dptr * */
+		 func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
+
+		 dptr += dst_w;
                }
 	  }
      }
