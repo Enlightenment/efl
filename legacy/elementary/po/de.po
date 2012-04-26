@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-04-20 22:30+0900\n"
+"POT-Creation-Date: 2012-04-26 12:58+0900\n"
 "PO-Revision-Date: 2011-02-25 20:22+0100\n"
 "Last-Translator: Fabian Nowak <timystery@arcor.de>\n"
 "Language-Team: German\n"
@@ -48,7 +48,7 @@ msgstr ""
 msgid "Button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:159
+#: src/lib/elm_calendar.c:161
 msgid "%B %Y"
 msgstr ""
 

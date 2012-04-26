@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-04-20 22:30+0900\n"
+"POT-Creation-Date: 2012-04-26 12:58+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -46,7 +46,7 @@ msgstr ""
 msgid "Button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:159
+#: src/lib/elm_calendar.c:161
 msgid "%B %Y"
 msgstr ""
 

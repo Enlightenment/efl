@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-04-20 22:30+0900\n"
+"POT-Creation-Date: 2012-04-26 12:58+0900\n"
 "PO-Revision-Date: 2011-11-17 12:25-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -46,7 +46,7 @@ msgstr "Estado: inativo"
 msgid "Button"
 msgstr "Botão"
 
-#: src/lib/elm_calendar.c:159
+#: src/lib/elm_calendar.c:161
 msgid "%B %Y"
 msgstr "%B %Y"
 
