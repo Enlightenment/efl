@@ -1,6 +1,12 @@
 #ifndef _EVAS_ENGINE_WAYLAND_SHM_H
 # define _EVAS_ENGINE_WAYLAND_SHM_H
 
+/*
+ * Wayland supoprt is considered experimental as wayland itself is still
+ * unstable and liable to change core protocol. If you use this api, it is
+ * possible it will break in future, until this notice is removed.
+ */
+
 typedef struct _Evas_Engine_Info_Wayland_Shm Evas_Engine_Info_Wayland_Shm;
 struct _Evas_Engine_Info_Wayland_Shm 
 {

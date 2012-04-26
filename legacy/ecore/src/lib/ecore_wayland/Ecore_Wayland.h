@@ -1,6 +1,12 @@
 #ifndef _ECORE_WAYLAND_H_
 # define _ECORE_WAYLAND_H_
 
+/*
+ * Wayland supoprt is considered experimental as wayland itself is still
+ * unstable and liable to change core protocol. If you use this api, it is
+ * possible it will break in future, until this notice is removed.
+ */
+
 # include <Eina.h>
 # include <wayland-client.h>
 

@@ -1,6 +1,12 @@
 #ifndef _EVAS_ENGINE_WAYLAND_EGL_H
 #define _EVAS_ENGINE_WAYLAND_EGL_H
 
+/*
+ * Wayland supoprt is considered experimental as wayland itself is still
+ * unstable and liable to change core protocol. If you use this api, it is
+ * possible it will break in future, until this notice is removed.
+ */
+
 #include <wayland-client.h>
 
 typedef struct _Evas_Engine_Info_Wayland_Egl Evas_Engine_Info_Wayland_Egl;
