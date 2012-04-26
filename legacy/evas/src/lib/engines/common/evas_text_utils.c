@@ -5,6 +5,8 @@
 #include "language/evas_language_utils.h"
 #include "evas_font_ot.h"
 
+#define PROPS_CHANGE(Props) Props->changed = EINA_TRUE;
+
 void
 evas_common_text_props_bidi_set(Evas_Text_Props *props,
       Evas_BiDi_Paragraph_Props *bidi_par_props, size_t start)
@@ -19,12 +21,14 @@ evas_common_text_props_bidi_set(Evas_Text_Props *props,
    (void) bidi_par_props;
    props->bidi.dir = EVAS_BIDI_DIRECTION_LTR;
 #endif
+   PROPS_CHANGE(props);
 }
 
 void
 evas_common_text_props_script_set(Evas_Text_Props *props, Evas_Script_Type scr)
 {
    props->script = scr;
+   PROPS_CHANGE(props);
 }
 
 void
@@ -249,6 +253,8 @@ evas_common_text_props_split(Evas_Text_Props *base,
      }
    ext->text_len = base->text_len - (ext->text_offset - base->text_offset);
    base->text_len = (ext->text_offset - base->text_offset);
+   PROPS_CHANGE(base);
+   PROPS_CHANGE(ext);
 }
 
 /* Won't work in the middle of ligatures */
@@ -268,6 +274,7 @@ evas_common_text_props_merge(Evas_Text_Props *item1,
 
    item1->len += item2->len;
    item1->text_len += item2->text_len;
+   PROPS_CHANGE(item1);
 }
 
 EAPI Eina_Bool
@@ -298,6 +305,8 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
+
+   text_props->changed = EINA_TRUE;
 
 #ifdef OT_SUPPORT
    size_t char_index;
@@ -419,13 +428,8 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
              idx = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
           }
 
-        LKL(fi->ft_mutex);
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
-        if (!fg)
-          {
-             LKU(fi->ft_mutex);
-             continue;
-          }
+        if (!fg) continue;
         kern = 0;
 
         if ((use_kerning) && (prev_index) && (idx) &&
@@ -440,7 +444,6 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
           }
 
         pface = fi->src->ft.face;
-        LKU(fi->ft_mutex);
 
         gl_itr->index = idx;
         gl_itr->x_bear = fg->glyph_out->left;

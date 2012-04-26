@@ -22,6 +22,7 @@ EAPI int               evas_common_font_glyph_search         (RGBA_Font *fn, RGB
 EAPI RGBA_Font_Glyph  *evas_common_font_int_cache_glyph_get  (RGBA_Font_Int *fi, FT_UInt index);
 EAPI FT_UInt           evas_common_get_char_index            (RGBA_Font_Int* fi, Eina_Unicode gl);
 EAPI void              evas_common_font_draw_init            (void);
+EAPI void	       evas_common_font_draw_prepare         (const Evas_Text_Props *text_props);
 
 /* load */
 EAPI void              evas_common_font_dpi_set              (int dpi);

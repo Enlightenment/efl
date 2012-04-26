@@ -1252,6 +1252,7 @@ evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    op->op_func = evas_common_pipe_text_draw_do;
    op->free_func = evas_common_pipe_op_text_free;
    evas_common_pipe_draw_context_copy(dc, op);
+   evas_common_pipe_text_prepare(intl_props);
 }
 
 /**************** IMAGE *****************/
@@ -1563,10 +1564,12 @@ evas_common_pipe_map_render(RGBA_Image *root)
 }
 
 #ifdef BUILD_PTHREAD
-static Eina_List *task = NULL;
+static Eina_List *im_task = NULL;
+static Eina_List *text_task = NULL;
 static Thinfo task_thinfo[TH_MAX];
 static pthread_barrier_t task_thbarrier[2];
-static LK(task_mutext);
+static LK(im_task_mutex);
+static LK(text_task_mutex);
 #endif
 
 #ifdef BUILD_PTHREAD
@@ -1581,14 +1584,14 @@ evas_common_pipe_load(void *data)
       /* wait for start signal */
       pthread_barrier_wait(&(tinfo->barrier[0]));
 
-      while (task)
+      while (im_task)
 	{
 	  RGBA_Image *im = NULL;
 
-	  LKL(task_mutext);
-	  im = eina_list_data_get(task);
-	  task = eina_list_remove_list(task, task);
-	  LKU(task_mutext);
+	  LKL(im_task_mutex);
+	  im = eina_list_data_get(im_task);
+	  im_task = eina_list_remove_list(im_task, im_task);
+	  LKU(im_task_mutex);
 
 	  if (im)
 	    {
@@ -1598,6 +1601,28 @@ evas_common_pipe_load(void *data)
 
 	      im->flags &= ~RGBA_IMAGE_TODO_LOAD;
 	    }
+	}
+
+      while (text_task)
+	{
+           Evas_Text_Props *text_props;
+           RGBA_Font_Int *fi;
+	  
+           LKL(text_task_mutex);
+           fi = eina_list_data_get(text_task);
+           text_task = eina_list_remove_list(text_task, text_task);
+           LKU(text_task_mutex);
+
+           if (fi)
+             {
+                LKL(fi->ft_mutex);
+                EINA_LIST_FREE(fi->task, text_props)
+		  {
+                     evas_common_font_draw_prepare(text_props);
+                     text_props->changed = EINA_FALSE;
+		  }
+                LKU(fi->ft_mutex);
+             }
 	}
 
       /* send finished signal */    
@@ -1611,7 +1636,7 @@ evas_common_pipe_load(void *data)
 static volatile int bval = 0;
 
 static void
-evas_common_pipe_image_load_do(void)
+evas_common_pipe_load_do(void)
 {
 #ifdef BUILD_PTHREAD
   /* Notify worker thread. */
@@ -1633,13 +1658,15 @@ evas_common_pipe_init(void)
 
 	cpunum = eina_cpu_count();
 	thread_num = cpunum;
+	fprintf(stderr, "number of cpu: %i\n", cpunum);
 // on  single cpu we still want this initted.. otherwise we block forever
 // waiting onm pthread barriers for async rendering on a single core!
 //	if (thread_num == 1) return EINA_FALSE;
 
 	eina_threads_init();
 
-        LKI(task_mutext);
+        LKI(im_task_mutex);
+	LKI(text_task_mutex);
 
 	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
 	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
@@ -1704,8 +1731,41 @@ evas_common_pipe_image_load(RGBA_Image *im)
   return ;
 
  add_task:
-  task = eina_list_append(task, im);
+  LKL(im_task_mutex);
+  im_task = eina_list_append(im_task, im);
+  LKU(im_task_mutex);
   im->flags |= RGBA_IMAGE_TODO_LOAD;
+}
+
+EAPI void
+evas_common_pipe_text_prepare(const Evas_Text_Props *text_props)
+{
+   RGBA_Font_Int *fi;
+   const Evas_Text_Props *tmp_props;
+   const Eina_List *l;
+
+   if (!text_props->changed) return ;
+
+   fi = text_props->font_instance;
+   if (!fi) return ;
+
+   LKL(fi->ft_mutex);
+
+   if (!fi->task) 
+     {
+       LKL(text_task_mutex);
+       text_task = eina_list_append(text_task, fi);
+       LKU(text_task_mutex);
+     }
+
+   EINA_LIST_FOREACH(fi->task, l, tmp_props)
+     if (tmp_props == text_props)
+       goto end;
+
+   fi->task = eina_list_append(fi->task, text_props);
+
+ end:
+   LKU(fi->ft_mutex);
 }
 
 EAPI void
@@ -1715,7 +1775,7 @@ evas_common_pipe_map_begin(RGBA_Image *root)
     {
       RGBA_Image *im;
 
-      EINA_LIST_FREE(task, im)
+      EINA_LIST_FREE(im_task, im)
 	{
 	  if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
 	    evas_cache_image_load_data(&im->cache_entry);
@@ -1725,7 +1785,7 @@ evas_common_pipe_map_begin(RGBA_Image *root)
 	}
     }
 
-  evas_common_pipe_image_load_do();
+  evas_common_pipe_load_do();
 
   evas_common_pipe_map_render(root);
 }

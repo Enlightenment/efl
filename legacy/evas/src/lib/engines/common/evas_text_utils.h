@@ -24,6 +24,8 @@ struct _Evas_Text_Props
    Evas_Script_Type script;
    Evas_Text_Props_Info *info;
    void *font_instance;
+
+   Eina_Bool changed : 1;
 };
 
 struct _Evas_Text_Props_Info

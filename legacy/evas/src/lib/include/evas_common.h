@@ -950,6 +950,8 @@ struct _RGBA_Font_Int
    Font_Rend_Flags  wanted_rend; /* The wanted rendering style */
    Font_Rend_Flags  runtime_rend; /* The rendering we need to do on runtime
                                      in order to comply with the wanted_rend. */
+
+   Eina_List       *task;
    unsigned char    sizeok : 1;
    unsigned char    inuse : 1;
 };

@@ -704,6 +704,10 @@
 
         * Fix shader binary saving to save with dir existing already.
 
-2012-04-26 Carsten Haitzler (The Rasterman)
+2012-04-26  Carsten Haitzler (The Rasterman)
 
         1.2.0 release
+
+2012-04-26  Cedric Bail
+
+	* Lock less font rendering.

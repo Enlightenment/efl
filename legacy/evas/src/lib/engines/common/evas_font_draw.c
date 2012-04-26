@@ -88,7 +88,7 @@ evas_common_font_draw_finish(void)
  * is on the right, and not on the left).
  */
 static void
-evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn __UNUSED__, int x, int y,
+evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                                const Evas_Text_Props *text_props, RGBA_Gfx_Func func, int ext_x, int ext_y, int ext_w,
                                int ext_h, int im_w, int im_h __UNUSED__)
 {
@@ -213,15 +213,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 
         idx = EVAS_FONT_WALK_INDEX;
 
-        LKL(fi->ft_mutex);
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
-        if (!fg)
-          {
-             LKU(fi->ft_mutex);
-             continue;
-          }
-
-        LKU(fi->ft_mutex);
+        if (!fg) continue;
 
         if (dc->font_ext.func.gl_new)
           {
@@ -408,6 +401,39 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
 }
 
 EAPI void
+evas_common_font_draw_prepare(const Evas_Text_Props *text_props)
+{
+   RGBA_Font_Int *fi;
+   EVAS_FONT_WALK_TEXT_INIT();
+
+   fi = text_props->font_instance;
+   if (!fi) return;
+
+   evas_common_font_int_reload(fi);
+
+   if (fi->src->current_size != fi->size)
+     {
+
+        FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
+        fi->src->current_size = fi->size;
+     }
+
+   EVAS_FONT_WALK_TEXT_START()
+     {
+        FT_UInt idx;
+        RGBA_Font_Glyph *fg;
+
+        if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
+        idx = EVAS_FONT_WALK_INDEX;
+
+        fg = evas_common_font_int_cache_glyph_get(fi, idx);
+     }
+   EVAS_FONT_WALK_TEXT_END();
+}
+
+EAPI void
 evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Evas_Text_Props *text_props)
 {
    int ext_x, ext_y, ext_w, ext_h;
@@ -454,7 +480,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 
    if (!dc->cutout.rects)
      {
-        evas_common_font_draw_internal(dst, dc, fn, x, y, text_props,
+        evas_common_font_draw_internal(dst, dc, x, y, text_props,
                                        func, ext_x, ext_y, ext_w, ext_h,
                                        im_w, im_h);
      }
@@ -470,7 +496,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
                {
                   r = rects->rects + i;
                   evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
-                  evas_common_font_draw_internal(dst, dc, fn, x, y, text_props,
+                  evas_common_font_draw_internal(dst, dc, x, y, text_props,
                                                  func, r->x, r->y, r->w, r->h,
                                                  im_w, im_h);
                }
