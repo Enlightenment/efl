@@ -10,3 +10,6 @@
 
         * Fix distcheck with highly parallel builds
 
+2012-04-26 Carsten Haitzler (The Rasterman)
+
+        1.2.0 release
