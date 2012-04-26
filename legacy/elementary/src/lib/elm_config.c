@@ -1354,23 +1354,23 @@ _env_get(void)
    if (s) _elm_config->thumbscroll_threshold = atoi(s);
    // FIXME: floatformat locale issues here 1.0 vs 1,0 - should just be 1.0
    s = getenv("ELM_THUMBSCROLL_MOMENTUM_THRESHOLD");
-   if (s) _elm_config->thumbscroll_momentum_threshold = atof(s);
+   if (s) _elm_config->thumbscroll_momentum_threshold = _elm_atof(s);
    s = getenv("ELM_THUMBSCROLL_FRICTION");
-   if (s) _elm_config->thumbscroll_friction = atof(s);
+   if (s) _elm_config->thumbscroll_friction = _elm_atof(s);
    s = getenv("ELM_THUMBSCROLL_BOUNCE_ENABLE");
    if (s) _elm_config->thumbscroll_bounce_enable = !!atoi(s);
    s = getenv("ELM_THUMBSCROLL_BOUNCE_FRICTION");
-   if (s) _elm_config->thumbscroll_bounce_friction = atof(s);
+   if (s) _elm_config->thumbscroll_bounce_friction = _elm_atof(s);
    s = getenv("ELM_PAGE_SCROLL_FRICTION");
-   if (s) _elm_config->page_scroll_friction = atof(s);
+   if (s) _elm_config->page_scroll_friction = _elm_atof(s);
    s = getenv("ELM_BRING_IN_SCROLL_FRICTION");
-   if (s) _elm_config->bring_in_scroll_friction = atof(s);
+   if (s) _elm_config->bring_in_scroll_friction = _elm_atof(s);
    s = getenv("ELM_ZOOM_FRICTION");
-   if (s) _elm_config->zoom_friction = atof(s);
+   if (s) _elm_config->zoom_friction = _elm_atof(s);
    s = getenv("ELM_THUMBSCROLL_BORDER_FRICTION");
    if (s)
      {
-        friction = atof(s);
+        friction = _elm_atof(s);
         if (friction < 0.0)
           friction = 0.0;
 
@@ -1382,7 +1382,7 @@ _env_get(void)
    s = getenv("ELM_THUMBSCROLL_SENSITIVITY_FRICTION");
    if (s)
      {
-        friction = atof(s);
+        friction = _elm_atof(s);
         if (friction < 0.1)
           friction = 0.1;
 
@@ -1392,13 +1392,13 @@ _env_get(void)
         _elm_config->thumbscroll_sensitivity_friction = friction;
      }
    s = getenv("ELM_SCROLL_SMOOTH_AMOUNT");
-   if (s) _elm_config->scroll_smooth_amount = atof(s);
+   if (s) _elm_config->scroll_smooth_amount = _elm_atof(s);
    s = getenv("ELM_SCROLL_SMOOTH_HISTORY_WEIGHT");
-   if (s) _elm_config->scroll_smooth_history_weight = atof(s);
+   if (s) _elm_config->scroll_smooth_history_weight = _elm_atof(s);
    s = getenv("ELM_SCROLL_SMOOTH_FUTURE_TIME");
-   if (s) _elm_config->scroll_smooth_future_time = atof(s);
+   if (s) _elm_config->scroll_smooth_future_time = _elm_atof(s);
    s = getenv("ELM_SCROLL_SMOOTH_TIME_WINDOW");
-   if (s) _elm_config->scroll_smooth_time_window = atof(s);
+   if (s) _elm_config->scroll_smooth_time_window = _elm_atof(s);
    s = getenv("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
 
@@ -1457,7 +1457,7 @@ _env_get(void)
    if (s) _elm_config->font_cache = atoi(s);
 
    s = getenv("ELM_SCALE");
-   if (s) _elm_config->scale = atof(s);
+   if (s) _elm_config->scale = _elm_atof(s);
 
    s = getenv("ELM_FINGER_SIZE");
    if (s) _elm_config->finger_size = atoi(s);
@@ -1468,13 +1468,13 @@ _env_get(void)
    s = getenv("ELM_PASSWORD_SHOW_LAST_TIMEOUT");
    if (s)
      {
-        double pw_show_last_timeout = atof(s);
+        double pw_show_last_timeout = _elm_atof(s);
         if (pw_show_last_timeout >= 0.0)
           _elm_config->password_show_last_timeout = pw_show_last_timeout;
      }
 
    s = getenv("ELM_FPS");
-   if (s) _elm_config->fps = atof(s);
+   if (s) _elm_config->fps = _elm_atof(s);
    if (_elm_config->fps < 1.0) _elm_config->fps = 1.0;
 
    s = getenv("ELM_MODULES");
@@ -1488,7 +1488,7 @@ _env_get(void)
    s = getenv("ELM_TOOLTIP_DELAY");
    if (s)
      {
-        double delay = atof(s);
+        double delay = _elm_atof(s);
         if (delay >= 0.0)
           _elm_config->tooltip_delay = delay;
      }
@@ -1515,7 +1515,7 @@ _env_get(void)
    if (s) _elm_config->icon_size = atoi(s);
 
    s = getenv("ELM_LONGPRESS_TIMEOUT");
-   if (s) _elm_config->longpress_timeout = atof(s);
+   if (s) _elm_config->longpress_timeout = _elm_atof(s);
    if (_elm_config->longpress_timeout < 0.0)
      _elm_config->longpress_timeout = 0.0;
 

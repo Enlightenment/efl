@@ -172,7 +172,7 @@ _shot_delay_get(Elm_Win *win)
                   *pd = *p;
                }
              *pd = 0;
-             v = atof(d);
+             v = _elm_atof(d);
              free(d);
              return v;
           }

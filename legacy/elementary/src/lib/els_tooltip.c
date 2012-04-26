@@ -324,7 +324,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         str = edje_object_data_get(tt->tooltip, "hide_timeout");
         if (str)
           {
-             tt->hide_timeout = atof(str);
+             tt->hide_timeout = _elm_atof(str);
              if (tt->hide_timeout < 0.0) tt->hide_timeout = 0.0;
           }
 

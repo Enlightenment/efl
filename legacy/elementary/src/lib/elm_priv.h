@@ -15,6 +15,8 @@
 
 #include "elm_widget.h"
 
+#include <langinfo.h>
+
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
 #define ERR(...)      EINA_LOG_DOM_ERR (_elm_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_elm_log_dom, __VA_ARGS__)
@@ -311,5 +313,7 @@ _elm_dgettext(const char *string)
 
 /* Used by the paste handler */
 void _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
+
+double _elm_atof(const char *s);
 
 #endif

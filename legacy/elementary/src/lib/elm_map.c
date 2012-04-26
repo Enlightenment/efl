@@ -2675,8 +2675,8 @@ cb_dump_name_attrs(void *data, const char *key, const char *value)
    Name_Dump *dump = (Name_Dump*)data;
    if (!dump) return EINA_FALSE;
 
-   if (!strncmp(key, NOMINATIM_ATTR_LON, sizeof(NOMINATIM_ATTR_LON))) dump->lon = atof(value);
-   else if (!strncmp(key, NOMINATIM_ATTR_LAT, sizeof(NOMINATIM_ATTR_LAT))) dump->lat = atof(value);
+   if (!strncmp(key, NOMINATIM_ATTR_LON, sizeof(NOMINATIM_ATTR_LON))) dump->lon = _elm_atof(value);
+   else if (!strncmp(key, NOMINATIM_ATTR_LAT, sizeof(NOMINATIM_ATTR_LAT))) dump->lat = _elm_atof(value);
 
    return EINA_TRUE;
 }
@@ -2709,7 +2709,7 @@ cb_route_dump(void *data, Eina_Simple_XML_Type type, const char *value, unsigned
            char *buf = malloc(length);
            if (!buf) return EINA_FALSE;
            snprintf(buf, length, "%s", value);
-           if (dump->id == ROUTE_XML_DISTANCE) dump->distance = atof(buf);
+           if (dump->id == ROUTE_XML_DISTANCE) dump->distance = _elm_atof(buf);
            else if (!(dump->description) && (dump->id == ROUTE_XML_DESCRIPTION)) dump->description = strdup(buf);
            else if (dump->id == ROUTE_XML_COORDINATES) dump->coordinates = strdup(buf);
            free(buf);

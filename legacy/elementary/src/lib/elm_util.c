@@ -44,3 +44,20 @@ _elm_util_text_to_mkup(const char *text)
 {
    return evas_textblock_text_utf8_to_markup(NULL, text);
 }
+
+double
+_elm_atof(const char *s)
+{
+   char *cradix, *buf, *p;
+   
+   if ((!s) || (!s[0])) return 0.0;
+   cradix = nl_langinfo(RADIXCHAR);
+   if (!cradix) return atof(s);
+   buf = alloca(strlen(s) + 1);
+   strcpy(buf, s);
+   for (p = buf; *p; p++)
+     {
+        if (*p == '.') *p = *cradix;
+     }
+   return atof(buf);
+}
