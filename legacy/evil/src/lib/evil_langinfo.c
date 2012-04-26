@@ -43,8 +43,7 @@ nl_langinfo(nl_item index)
         }
       case RADIXCHAR:
         {
-           /* FIXME: better returned value... */
-           return ".";
+           return localeconv()->decimal_point;
         }
      }
 

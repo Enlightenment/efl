@@ -1,3 +1,9 @@
+2012-04-26  Vincent Torri  <doursse at users dot sf dot net>
+
+	* NEWS:
+	* src/lib/evil_langinfo.c:
+	Fix nl_langinfo(RADIXCHAR).
+
 2012-04-20  Vincent Torri  <doursse at users dot sf dot net>
 
 	* NEWS:

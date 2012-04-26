@@ -7,6 +7,7 @@ Evil NEWS - User visible changes.
 ** Add S_ISLNK macro
 ** Add strcasestr() API
 ** Do not declare and define localtime_r() if it's already defined
+** Fix nl_langinfo(RADIXCHAR)
 
 * Evil 1.0:
 
