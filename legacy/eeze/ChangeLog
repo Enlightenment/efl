@@ -80,3 +80,7 @@
 2012-01-09  Mikael Sans
 
 	* added EEZE_UDEV_TYPE_BLUETOOTH
+
+2012-04-26 Carsten Haitzler (The Rasterman)
+
+        1.2.0 release

@@ -1,3 +1,14 @@
+2007-09-01  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/modules/emotion_gstreamer.c: (em_file_open):
+	* src/modules/emotion_gstreamer_pipeline.c: (cb_handoff),
+	(emotion_pipeline_dvd_build), (emotion_pipeline_uri_build),
+	(emotion_pipeline_file_build), (_emotion_streams_sinks_get),
+	(_emotion_video_sink_fill), (_emotion_audio_sink_fill):
+	* src/modules/emotion_gstreamer_pipeline.h:
+	add the support of URI playback. Minor fixes.
+	Fix bug #114
+
 2007-10-31  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.in:
@@ -19,18 +30,6 @@
 	add the support of URI playback. Minor fixes.
 	Fix bug #114
 
-2007-09-01  Vincent Torri  <doursse at users dot sf dot net>
+2012-04-26 Carsten Haitzler (The Rasterman)
 
-	* src/modules/emotion_gstreamer.c: (em_file_open):
-	* src/modules/emotion_gstreamer_pipeline.c: (cb_handoff),
-	(emotion_pipeline_dvd_build), (emotion_pipeline_uri_build),
-	(emotion_pipeline_file_build), (_emotion_streams_sinks_get),
-	(_emotion_video_sink_fill), (_emotion_audio_sink_fill):
-	* src/modules/emotion_gstreamer_pipeline.h:
-	add the support of URI playback. Minor fixes.
-	Fix bug #114
-
-Wed Mar 29 20:33:40 2006                        Michael Jennings (mej)
-
-Xine plugins seem to no longer be built.
-----------------------------------------------------------------------
+        1.0.0 release

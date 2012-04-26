@@ -704,3 +704,6 @@
 
         * Fix shader binary saving to save with dir existing already.
 
+2012-04-26 Carsten Haitzler (The Rasterman)
+
+        1.2.0 release

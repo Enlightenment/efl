@@ -32,3 +32,6 @@
         * Add asin(), acos(), atan(), atan2(), log1p(), cbrt(), exp(),
         exp2(), hypot(), EMBRYO_12 define
 
+2012-04-26 Carsten Haitzler (The Rasterman)
+
+        1.2.0 release

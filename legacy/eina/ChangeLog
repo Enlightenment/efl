@@ -254,3 +254,7 @@
 2012-04-19  Cedric Bail
 
 	* Make it possible to force the number of detected CPU on a system.
+
+2012-04-26 Carsten Haitzler (The Rasterman)
+
+        1.2.0 release

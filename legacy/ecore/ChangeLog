@@ -624,3 +624,7 @@
 2012-04-20  Vincent Torri
 
 	* Add override_set() support in ecore_evas_win32.
+
+2012-04-26 Carsten Haitzler (The Rasterman)
+
+        1.2.0 release
