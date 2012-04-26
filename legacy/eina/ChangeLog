@@ -258,3 +258,7 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
         1.2.0 release
+
+2012-04-26  Cedric Bail
+
+	* Add backtrace support Eina_Log.
