@@ -711,4 +711,4 @@
 2012-04-26  Cedric Bail
 
 	* Lock less font rendering.
-	* Removing EVAS_SLI.
+	* Removing EVAS_SLI, METRIC_CACHE and WORD_CACHE.
