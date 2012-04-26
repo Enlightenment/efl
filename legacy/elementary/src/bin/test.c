@@ -729,6 +729,7 @@ elm_main(int argc, char **argv)
 {
    Eina_Bool test_win_only = EINA_FALSE;
    char *autorun = NULL;
+   struct elm_test *t = NULL;
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
@@ -758,6 +759,10 @@ elm_main(int argc, char **argv)
    my_win_main(autorun, test_win_only); /* create main window */
    elm_run(); /* and run the program now and handle all events etc. */
    /* if the mainloop that elm_run() runs exist - we exit the app */
+
+   EINA_LIST_FREE(tests, t)
+      free(t);
+
    elm_shutdown(); /* clean up and shut down */
    /* exit code */
    return 0;
