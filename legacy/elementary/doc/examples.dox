@@ -1762,7 +1762,6 @@
  *
  * See the full @ref clock_example_c "source code" for this example.
  *
- * @example clock_example.c
  */
 
 /**
@@ -1807,7 +1806,6 @@
  * See the full @ref datetime_example_c "source code" for
  * this example.
  *
- * @example datetime_example.c
  */
 
 /**
@@ -1847,7 +1845,6 @@
  *
  * See the full @ref dayselector_example_c "source code" for this example.
  *
- * @example dayselector_example.c
  */
 
 /**
@@ -2933,7 +2930,6 @@
  *
  * See the full @ref flipselector_example_c "source code" for this example.
  *
- * @example flipselector_example.c
  */
 
 /**
@@ -3009,7 +3005,6 @@
  *
  * See the full @ref fileselector_example_c "source code" for this example.
  *
- * @example fileselector_example.c
  */
 
 /**
@@ -3084,7 +3079,6 @@
  * See the full @ref fileselector_button_example_c "source code" for
  * this example.
  *
- * @example fileselector_button_example.c
  */
 
 /**
@@ -3161,7 +3155,6 @@
  * See the full @ref fileselector_entry_example_c "source code" for
  * this example.
  *
- * @example fileselector_entry_example.c
  */
 
 /**
@@ -3930,7 +3923,6 @@
  * See the full @ref index_example_01_c "source code" for
  * this example.
  *
- * @example index_example_01.c
  */
 
 /**
@@ -3986,7 +3978,6 @@
  * See the full @ref index_example_02.c "source code" for
  * this example.
  *
- * @example index_example_02.c
  */
 
 /**
@@ -4430,7 +4421,6 @@
  * See the full @ref gengrid_example_c "source code" for
  * this example.
  *
- * @example gengrid_example.c
  */
 /**
  * @page entry_example Entry - Example of simple editing
@@ -5181,7 +5171,6 @@
  * See the full @ref progressbar_example_c "source code" for
  * this example.
  *
- * @example progressbar_example.c
  */
 
 /**
@@ -5530,7 +5519,6 @@
  * See the full @ref slideshow_example_c "source code" for
  * this example.
  *
- * @example slideshow_example.c
  */
 
 /**
