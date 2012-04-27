@@ -1335,6 +1335,8 @@ EAPI const char           *elm_map_source_get(const Evas_Object *obj, Elm_Map_So
  * @param flat The start latitude.
  * @param tlon The destination longitude.
  * @param tlat The destination latitude.
+ * @param route_cb The route to be traced.
+ * @param data A pointer of user data.
  *
  * @return The created route or @c NULL upon failure.
  *

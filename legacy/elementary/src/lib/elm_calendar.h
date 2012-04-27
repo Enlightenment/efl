@@ -231,7 +231,7 @@ EAPI void                 elm_calendar_min_max_year_get(const Evas_Object *obj, 
  * Set select day mode to use.
  *
  * @param obj The calendar object.
- * @param select_mdoe The select mode to use.
+ * @param mode The select mode to use.
  *
  * Set the day selection mode used.
  *
