@@ -86,7 +86,7 @@ typedef enum
 } Elm_Icon_Type;
 
 /**
- * @enum _Elm_Icon_Lookup_Order
+ * @enum Elm_Icon_Lookup_Order
  * @typedef Elm_Icon_Lookup_Order
  *
  * Lookup order used by elm_icon_standard_set(). Should look for icons in the

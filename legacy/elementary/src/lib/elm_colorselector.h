@@ -38,7 +38,7 @@ typedef struct _Elm_Custom_Palette
 } Elm_Custom_Palette;
 
 /**
- * @enum _Elm_Colorselector_Mode
+ * @enum Elm_Colorselector_Mode
  * @typedef Elm_Colorselector_Mode
  *
  * Different modes supported by Colorselector

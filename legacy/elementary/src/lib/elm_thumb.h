@@ -47,7 +47,7 @@
  */
 
 /**
- * @enum _Elm_Thumb_Animation_Setting
+ * @enum Elm_Thumb_Animation_Setting
  * @typedef Elm_Thumb_Animation_Setting
  *
  * Used to set if a video thumbnail is animating or not.

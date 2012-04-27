@@ -46,7 +46,7 @@
  */
 
 /**
- * @enum _Elm_Toolbar_Shrink_Mode
+ * @enum Elm_Toolbar_Shrink_Mode
  * @typedef Elm_Toolbar_Shrink_Mode
  *
  * Set toolbar's items display behavior, it can be scrollable,

@@ -62,7 +62,7 @@
  */
 
 /**
- * @enum _Elm_List_Mode
+ * @enum Elm_List_Mode
  * @typedef Elm_List_Mode
  *
  * Set list's resize behavior, transverse axis scroll and

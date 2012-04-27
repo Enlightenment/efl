@@ -87,8 +87,10 @@ typedef enum
 } Elm_Gesture_Type;
 
 /**
- * @enum _Elm_Gesture_State
+ * @enum Elm_Gesture_State
  * Enum of gesture states.
+ * @typedef Elm_Gesture_State
+ * Typedef of gesture states.
  * @ingroup Elm_Gesture_Layer
  */
 typedef enum
