@@ -129,4 +129,5 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile.in $(wildcard img/*.*) e.css head.html foot.html shot.sh
+EXTRA_DIST = Doxyfile.in $(wildcard img/*.*) e.css head.html foot.html shot.sh \
+	     DoxygenLayout.xml examples.dox index.doxy
