@@ -6168,10 +6168,8 @@ _tree_effect_animator_cb(void *data)
                   y = dy;
                }
 
-             if (!it->realized)
-               {
-                  _item_realize(it, in, 0);
-               }
+             if (!it->realized && !it->item->queued)
+               _item_realize(it, in, 0);
              in++;
 
              if (it != expanded_next_it)
