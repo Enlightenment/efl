@@ -1,3 +1,10 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
-        1.0.0 release
+	* 1.0.0 release
+
+2012-04-27 Daniel Juyung Seo (SeoZ)
+
+	* Genlist : Fixed genlist expandable effect bug when we expand/contract
+	  items with many children very quickly.
+	* Genlist : Realize move items during tree effect only when the item is
+	  not in the queue.
