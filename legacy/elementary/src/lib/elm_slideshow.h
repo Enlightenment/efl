@@ -125,7 +125,7 @@ EAPI Elm_Object_Item      *elm_slideshow_item_add(Evas_Object *obj, const Elm_Sl
  * @param itc The item class for the item
  * @param data The item's data
  * @param func The comparing function to be used to sort slideshow
- * items <b>by #Elm_Slideshow_Item item handles</b>
+ * items <b>by #Elm_Slideshow_Item_Class item handles</b>
  * @return Returns The slideshow item handle, on success, or
  * @c NULL, on errors
  *

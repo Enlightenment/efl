@@ -60,7 +60,7 @@
  * functions in this struct (methods) when an item is "realized"
  * (i.e., created dynamically, while the user is scrolling the
  * grid). All objects will simply be deleted when no longer needed
- * with evas_object_del(). The #Elm_GenGrid_Item_Class structure
+ * with evas_object_del(). The #Elm_Gengrid_Item_Class structure
  * contains the following members:
  * - @c item_style - This is a constant string and simply defines
  * the name of the item style. It @b must be specified and the
@@ -549,7 +549,7 @@ EAPI Elm_Object_Item             *elm_gengrid_selected_item_get(const Evas_Objec
  * This returns a list of the selected items, in the order that
  * they appear in the grid. This list is only valid as long as no
  * more items are selected or unselected (or unselected implicitly
- * by deletion). The list contains #Gengrid item pointers as
+ * by deletion). The list contains Gengrid item pointers as
  * data, naturally.
  *
  * @see elm_gengrid_selected_item_get()

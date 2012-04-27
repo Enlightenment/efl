@@ -240,7 +240,7 @@ EAPI Elm_Object_Item      *elm_index_item_insert_before(Evas_Object *obj, Elm_Ob
  * @param func The function to call when the item is clicked.
  * @param data The item data to set for the index's item
  * @param cmp_func The comparing function to be used to sort index
- * items <b>by #index item handles</b>
+ * items <b>by index item handles</b>
  * @param cmp_data_func A @b fallback function to be called for the
  * sorting of index items <b>by item data</b>). It will be used
  * when @p cmp_func returns @c 0 (equality), which means an index

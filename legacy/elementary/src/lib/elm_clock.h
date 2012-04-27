@@ -135,8 +135,7 @@ EAPI void              elm_clock_time_get(const Evas_Object *obj, int *hrs, int 
  * user interaction</b>. When in edition mode, clocks @b stop
  * ticking, until one brings them back to canonical mode. The
  * elm_clock_edit_mode_set() function will influence which digits
- * of the clock will be editable. By default, all of them will be
- * (#ELM_CLOCK_NONE).
+ * of the clock will be editable.
  *
  * @note am/pm sheets, if being shown, will @b always be editable
  * under edition mode.
@@ -170,10 +169,6 @@ EAPI Eina_Bool         elm_clock_edit_get(const Evas_Object *obj);
  * @param obj The clock object
  * @param digedit Bit mask indicating the digits to be editable
  * (values in #Elm_Clock_Edit_Mode).
- *
- * If the @p digedit param is #ELM_CLOCK_NONE, editing will be
- * disabled on @p obj (same effect as elm_clock_edit_set(), with @c
- * EINA_FALSE).
  *
  * @see elm_clock_edit_mode_get()
  *
