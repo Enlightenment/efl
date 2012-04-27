@@ -874,12 +874,13 @@ _item_del(Elm_Gen_Item *it)
      }
    if (wd->expanded_item == it)
      {
-        wd->expanded_item = NULL;
         if (wd->tree_effect_animator)
           {
+             _item_tree_effect_finish(wd);
              ecore_animator_del(wd->tree_effect_animator);
              wd->tree_effect_animator = NULL;
           }
+        wd->expanded_item = NULL;
         wd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
      }
    if (wd->expanded_next_item == it) wd->expanded_next_item = NULL;
