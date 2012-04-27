@@ -71,6 +71,16 @@ EAPI Evas_Object                 *elm_object_item_part_content_unset(Elm_Object_
  */
 EAPI void                         elm_object_item_part_text_set(Elm_Object_Item *it, const char *part, const char *label);
 
+/**
+ * Macro to set a label of an object item.
+ *
+ * @param it The Elementary object item.
+ * @param label The new text of the label.
+ *
+ * @note Elementary object items may have many labels.
+ *
+ * @ingroup General
+ */
 #define elm_object_item_text_set(it, label) elm_object_item_part_text_set((it), NULL, (label))
 
 /**

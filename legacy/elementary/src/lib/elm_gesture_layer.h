@@ -28,7 +28,7 @@
  * (again with @ref elm_gesture_layer_cb_set)
  *
  * The information reported by gesture layer to your callback is depending
- * on @ref Elm_Gesture_Type:
+ * on @ref Elm_Gesture_Type :
  * @ref Elm_Gesture_Taps_Info is the info reported for tap gestures:
  * @ref ELM_GESTURE_N_TAPS, @ref ELM_GESTURE_N_LONG_TAPS,
  * @ref ELM_GESTURE_N_DOUBLE_TAPS, @ref ELM_GESTURE_N_TRIPLE_TAPS.
