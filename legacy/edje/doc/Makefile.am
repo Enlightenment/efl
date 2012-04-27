@@ -32,4 +32,4 @@ doc:
 endif
 
 EXTRA_DIST = Doxyfile e.css foot.html head.html $(wildcard img/*.*) \
-             $(wildcard examples/*.*)
+             $(wildcard examples/*.*) examples.dox

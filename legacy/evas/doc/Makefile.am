@@ -37,4 +37,5 @@ EXTRA_DIST = $(srcdir)/Doxyfile.in \
 	$(srcdir)/e.css \
 	$(srcdir)/head.html \
 	$(srcdir)/foot.html \
-	$(srcdir)/evas.dox.in
+	$(srcdir)/evas.dox.in \
+	$(srcdir)/examples.dox

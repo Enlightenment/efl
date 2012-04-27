@@ -37,4 +37,5 @@ EXTRA_DIST = $(builddir)/Doxyfile \
 	$(srcdir)/foot.html \
 	$(srcdir)/head.html \
 	$(wildcard $(srcdir)/img/*.*) \
-	$(srcdir)/eet.dox.in
+	$(srcdir)/eet.dox.in \
+	$(srcdir)/examples.dox
