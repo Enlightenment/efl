@@ -52,9 +52,11 @@
  * @author Bluezery <ohpowel@@gmail.com>
  * @author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
  * @author Sanjeev BA <iamsanjeev@@gmail.com>
- * @author Hyunsil Park <hyunsil.park@samsung.com>
- * @author Goun Lee <gouni.lee@samsung.com>
- * @author Mikael Sans <sans.mikael@gmail.com>
+ * @author Hyunsil Park <hyunsil.park@@samsung.com>
+ * @author Goun Lee <gouni.lee@@samsung.com>
+ * @author Mikael Sans <sans.mikael@@gmail.com>
+ * @author Doyoun Kang <doyoun.kang@@samsung.com>
+ * @author M.V.K. Sumanth <sumanth.m@@samsung.com> <mvksumanth@@gmail.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
