@@ -298,9 +298,16 @@ Recommended reading:
 @author Jiyoun Park <jy0703.park@@samsung.com>
 @author Myoungwoon Roy Kim(roy_kim) <myoungwoon.kim@@samsung.com> <myoungwoon@@gmail.com>
 @author Thierry el Borgi <thierry@@substantiel.fr>
+@author Shilpa Singh <shilpa.singh@@samsung.com> <shilpasingh.o@@gmail.com>
 @author ChunEon Park <hermet@@hermet.pe.kr>
-@author Christopher 'devilhorns' Michael <cpmichael1@comcast.net>
-@author Seungsoo Woo <om101.woo@samsung.com>
+@author Christopher 'devilhorns' Michael <cpmichael1@@comcast.net>
+@author Seungsoo Woo <om101.woo@@samsung.com>
+@author Youness Alaoui <kakaroto@@kakaroto.homelinux.net>
+@author Jim Kukunas <james.t.kukunas@@linux.intel.com>
+@author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
+@author Rafal Krypa <r.krypa@@samsung.com>
+@author Hyoyoung Chang <hyoyoung@@gmail.com>
+@author Jérôme Pinot <ngc891@@gmail.com>
 
 Please contact <enlightenment-devel@lists.sourceforge.net> to get in
 contact with the developers and maintainers.

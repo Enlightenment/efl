@@ -116,6 +116,8 @@ sudo make install
    @author Bluezery <ohpowel@gmail.com>
    @author Doyoun Kang <wayofmine@gmail.com> <doyoun.kang@samsung.com>
    @author Haifeng Deng <haifeng.deng@samsung.com>
+   @author Jérémy Zurcher <jeremy@asynk.ch>
+   @author Vikram Narayanan <vikram186@gmail.com>
 
    Please contact <enlightenment-devel@lists.sourceforge.net> to get in
    contact with the developers and maintainers.
