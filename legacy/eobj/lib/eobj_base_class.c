@@ -33,7 +33,7 @@ static void
 _eobj_generic_data_del_all(Private_Data *pd)
 {
    Eina_Inlist *nnode;
-   Eobj_Generic_Data_Node *node;
+   Eobj_Generic_Data_Node *node = NULL;
 
    EINA_INLIST_FOREACH_SAFE(pd->generic_data, nnode, node)
      {

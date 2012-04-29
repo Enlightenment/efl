@@ -188,16 +188,13 @@ dich_func_set(Eobj_Class *klass, Eobj_Op op, eobj_op_func_type func)
    Dich_Chain1 *chain1 = &klass->chain[DICH_CHAIN1(op)];
    if (!chain1->chain)
      {
-        klass->chain[DICH_CHAIN1(op)].chain =
-           chain1->chain =
-           calloc(DICH_CHAIN2_SIZE, sizeof(*(chain1->chain)));
+        chain1->chain = calloc(DICH_CHAIN2_SIZE, sizeof(*(chain1->chain)));
      }
 
    Dich_Chain2 *chain2 = &chain1->chain[DICH_CHAIN2(op)];
    if (!chain2->funcs)
      {
-        chain2->funcs = chain1->chain[DICH_CHAIN2(op)].funcs =
-           calloc(num_ops, sizeof(*(chain2->funcs)));
+        chain2->funcs = calloc(num_ops, sizeof(*(chain2->funcs)));
      }
 
    chain2->funcs[DICH_CHAIN_LAST(op)].func = func;
@@ -652,7 +649,7 @@ eobj_class_free(Eobj_Class *klass)
 
      {
         Eina_Inlist *itrn;
-        Eobj_Extension_Node *extn;
+        Eobj_Extension_Node *extn = NULL;
         EINA_INLIST_FOREACH_SAFE(klass->extensions, itrn, extn)
           {
              free(extn);
@@ -1043,7 +1040,7 @@ _eobj_del_internal(Eobj *obj)
    while (obj->kls_itr)
      {
         WRN("Kls_Itr is not empty, possibly a bug, please report. - An error will be reported for each kls_itr in the stack.");
-        Eina_Inlist *nitr = nitr->next;
+        Eina_Inlist *nitr = obj->kls_itr->next;
         free(EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eobj_Kls_Itr_Node));
         obj->kls_itr = nitr;
      }
@@ -1076,7 +1073,7 @@ eobj_unref(Eobj *obj)
    while (obj->xrefs)
      {
         WRN("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
-        Eina_Inlist *nitr = nitr->next;
+        Eina_Inlist *nitr = obj->xrefs->next;
         free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eobj_Kls_Itr_Node));
         obj->xrefs = nitr;
      }
@@ -1350,7 +1347,7 @@ static void
 _eobj_callback_remove_all(Eobj *obj)
 {
    Eina_Inlist *initr;
-   Eobj_Callback_Description *cb;
+   Eobj_Callback_Description *cb = NULL;
    EINA_INLIST_FOREACH_SAFE(obj->callbacks, initr, cb)
      {
         _eobj_callback_remove(obj, cb);
@@ -1361,7 +1358,7 @@ static void
 _eobj_callbacks_clear(Eobj *obj)
 {
    Eina_Inlist *itn;
-   Eobj_Callback_Description *cb;
+   Eobj_Callback_Description *cb = NULL;
 
    /* Abort if we are currently walking the list. */
    if (obj->walking_list > 0)
