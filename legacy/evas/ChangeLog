@@ -712,3 +712,8 @@
 
 	* Lock less font rendering.
 	* Removing EVAS_FRAME_QUEUING, EVAS_SLI, METRIC_CACHE and WORD_CACHE.
+
+2012-04-29  Tom Hacohen (TAsn)
+
+	* Textblock: Fixed a couple of bugs with range delete.
+

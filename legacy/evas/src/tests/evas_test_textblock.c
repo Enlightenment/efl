@@ -765,6 +765,42 @@ START_TEST(evas_textblock_format_removal)
    fnode = evas_textblock_node_format_next_get(fnode);
    fail_if (fnode);
 
+   /* Range deletion across paragraph - a bug found in elm. */
+   evas_object_textblock_text_markup_set(tb,
+         "This is an entry widget in this window that<ps/>"
+         "uses markup <b>like this</> for styling and<ps/>"
+         "formatting <em>like this</>, as well as<ps/>"
+         "<a href=X><link>links in the text</></a>, so enter text<ps/>"
+         "in here to edit it. By the way, links are<ps/>"
+         "called <a href=anc-02>Anchors</a> so you will need<ps/>"
+         "to refer to them this way.<ps/>"
+         "<ps/>"
+
+         "Also you can stick in items with (relsize + ascent): "
+         "<item relsize=16x16 vsize=ascent href=emoticon/evil-laugh></item>"
+         " (full) "
+         "<item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>"
+         " (to the left)<ps/>"
+
+         "Also (size + ascent): "
+         "<item size=16x16 vsize=ascent href=emoticon/haha></item>"
+         " (full) "
+         "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
+         " (before this)<ps/>"
+
+         "And as well (absize + ascent): "
+         "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
+         " (full) "
+         "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
+         " or even paths to image files on disk too like: "
+         "<item absize=96x128 vsize=full href=file://bla/images/sky_01.jpg></item>"
+         " ... end.");
+   evas_textblock_cursor_paragraph_first(cur);
+   evas_textblock_cursor_paragraph_last(main_cur);
+   evas_textblock_cursor_range_delete(cur, main_cur);
+   fnode = evas_textblock_node_format_first_get(tb);
+   fail_if(fnode);
+
    /* Two formats in the same place. */
    evas_object_textblock_text_markup_set(tb, "a<b><a>b</a></b>b");
    evas_textblock_cursor_pos_set(cur, 1);
