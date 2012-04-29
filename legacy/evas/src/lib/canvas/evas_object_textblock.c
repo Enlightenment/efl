@@ -5195,7 +5195,7 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
         Evas_Object_Textblock_Node_Format *fnode;
         Eina_Unicode *text_base, *text;
         int off;
-        size_t len;
+        int len;
 
         /* For each text node to thorugh all of it's format nodes
          * append text from the start to the offset of the next format
@@ -5203,7 +5203,7 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
          * this is the core algorithm of the layout mechanism.
          * Skip the unicode replacement chars when there are because
          * we don't want to print them. */
-        len = eina_ustrbuf_length_get(n->unicode);
+        len = (int) eina_ustrbuf_length_get(n->unicode);
         text_base = text =
            eina_unicode_strndup(eina_ustrbuf_string_get(n->unicode), len);
         fnode = n->format_node;
