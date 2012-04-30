@@ -439,8 +439,8 @@ evas_object_del(Evas_Object *obj)
    while (obj->proxy.proxies)
      evas_object_image_source_unset(obj->proxy.proxies->data);
    if (obj->cur.clipper) evas_object_clip_unset(obj);
-   if (obj->smart.smart) evas_object_smart_del(obj);
    evas_object_map_set(obj, NULL);
+   if (obj->smart.smart) evas_object_smart_del(obj);
    _evas_object_event_new();
    evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL, _evas_event_counter);
    _evas_post_event_callback_call(obj->layer->evas);
