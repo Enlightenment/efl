@@ -22,6 +22,19 @@ EDCS = \
 	table.edc \
 	box.edc \
 	drag.edc \
+	edje_example.edc \
+	embryo_custom_state.edc \
+	embryo_pong.edc \
+	embryo_run_program.edc \
+	embryo_set_state.edc \
+	embryo_set_text.edc \
+	embryo_timer.edc \
+	external_elm_anchorblock.edc \
+	external_elm_button.edc \
+	external_elm_check.edc \
+	external_elm_panes.edc \
+	external_emotion_elm.edc \
+	toggle_using_filter.edc \
 	signals-messages.edc \
 	color-class.edc \
 	perspective.edc \
@@ -47,6 +60,7 @@ files_DATA = \
 	test.png \
 	Vera.ttf \
         duck.wav \
+	edje_example.c \
 	edje-basic.c \
 	edje-swallow.c \
 	edje-text.c \

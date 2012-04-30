@@ -37,7 +37,9 @@ SRCS = \
 	eina_inlist_03.c \
 	eina_str_01.c \
 	eina_strbuf_01.c \
+	eina_stringshare_01.c \
 	eina_tiler_01.c \
+	eina_magic_01.c \
 	eina_model_01.c \
 	eina_model_02.c \
 	eina_model_03.c \
@@ -45,7 +47,8 @@ SRCS = \
 	eina_value_01.c \
 	eina_value_02.c \
 	eina_value_03.c \
-	eina_inarray_01.c
+	eina_inarray_01.c \
+	eina_inarray_02.c
 
 examples_PROGRAMS =
 
@@ -82,6 +85,8 @@ examples_PROGRAMS += \
 	eina_inlist_03 \
 	eina_str_01 \
 	eina_strbuf_01 \
+	eina_stringshare_01 \
+	eina_magic_01 \
 	eina_model_01 \
 	eina_model_02 \
 	eina_model_03 \
@@ -90,7 +95,8 @@ examples_PROGRAMS += \
 	eina_value_01 \
 	eina_value_02 \
 	eina_value_03 \
-	eina_inarray_01
+	eina_inarray_01 \
+	eina_inarray_02
 
 eina_model_04_SOURCES = \
 	eina_model_04_animal.c \

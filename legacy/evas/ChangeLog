@@ -717,3 +717,7 @@
 
 	* Textblock: Fixed a couple of bugs with range delete.
 
+2012-04-30  Jérôme Pinot
+
+	* Add missing files in the tarballs.
+

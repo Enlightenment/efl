@@ -6,6 +6,9 @@ Changes since Evas 1.2.0:
 Improvements:
    * Lock less font rendering.
 
+Fixes:
+   * Add missing files in the tarball.
+
 Removal:
    * Remove EVAS_FRAME_QUEUING, EVAS_SLI, METRIC_CACHE and WORD_CACHE.
 
