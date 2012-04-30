@@ -17,6 +17,7 @@
               (text_props->start > 0)) ? \
            text_props->info->glyph[text_props->start - 1].pen_after : 0 ; \
         size_t char_index; \
+        (void) _pen_x; /* Sometimes it won't be used */ \
         (void) _pen_y; /* Sometimes it won't be used */
 
 /* Visual walk helper macros */
