@@ -1049,7 +1049,7 @@ evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, 
    if (!_dfb_lock_and_sync_image(screen, im, DSLF_READ | DSLF_WRITE))
      return;
 
-   evas_common_font_draw(im, context, font, x, y, intl_props);
+   evas_common_font_draw(im, context, x, y, intl_props);
    evas_common_cpu_end_opt();
 
    im->image.data = NULL;

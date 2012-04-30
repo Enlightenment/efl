@@ -403,7 +403,7 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int
       evas_direct3d_font_texture_new,
       evas_direct3d_font_texture_free,
       evas_direct3d_font_texture_draw);
-   evas_common_font_draw(&im, context, (RGBA_Font *) font, x, y, intl_props);
+   evas_common_font_draw(&im, context, x, y, intl_props);
    evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
 }
 

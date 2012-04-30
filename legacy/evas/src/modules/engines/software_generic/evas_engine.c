@@ -1168,13 +1168,11 @@ eng_font_draw(void *data __UNUSED__, void *context, void *surface, Evas_Font_Set
 {
 #ifdef BUILD_PIPE_RENDER
    if ((cpunum > 1))
-     evas_common_pipe_text_draw(surface, context, (RGBA_Font *) font, x, y,
-           text_props);
+     evas_common_pipe_text_draw(surface, context, x, y, text_props);
    else
 #endif   
      {
-	evas_common_font_draw(surface, context, (RGBA_Font *) font, x, y,
-              text_props);
+	evas_common_font_draw(surface, context, x, y, text_props);
 	evas_common_cpu_end_opt();
      }
 }

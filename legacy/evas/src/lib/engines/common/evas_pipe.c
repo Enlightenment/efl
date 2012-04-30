@@ -350,7 +350,6 @@ evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 static void
 evas_common_pipe_op_text_free(RGBA_Pipe_Op *op)
 {
-   evas_common_font_free(op->op.text.font);
    evas_common_text_props_content_unref(&(op->op.text.intl_props));
    evas_common_pipe_op_free(op);
 }
@@ -364,33 +363,26 @@ evas_common_pipe_text_draw_do(RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Threa
 
         memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
         evas_common_draw_context_clip_clip(&(context), info->x, info->y, info->w, info->h);
-        evas_common_font_draw(dst, &(context),
-                  op->op.text.font, op->op.text.x, op->op.text.y,
-                  &op->op.text.intl_props);
+        evas_common_font_draw(dst, &(context), op->op.text.x, op->op.text.y, &op->op.text.intl_props);
      }
    else
      {
-        evas_common_font_draw(dst, &(op->context),
-                  op->op.text.font, op->op.text.x, op->op.text.y,
-                  &op->op.text.intl_props);
+        evas_common_font_draw(dst, &(op->context), op->op.text.x, op->op.text.y, &op->op.text.intl_props);
      }
 }
 
 EAPI void
 evas_common_pipe_text_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
-               RGBA_Font *fn, int x, int y, const Evas_Text_Props *intl_props)
+			   int x, int y, const Evas_Text_Props *intl_props)
 {
    RGBA_Pipe_Op *op;
 
-   if (!fn) return;
    dst->cache_entry.pipe = evas_common_pipe_add(dst->cache_entry.pipe, &op);
    if (!dst->cache_entry.pipe) return;
    op->op.text.x = x;
    op->op.text.y = y;
    evas_common_text_props_content_copy_and_ref(&(op->op.text.intl_props),
          intl_props);
-   fn->references++;
-   op->op.text.font = fn;
    op->op_func = evas_common_pipe_text_draw_do;
    op->free_func = evas_common_pipe_op_text_free;
    evas_common_pipe_draw_context_copy(dc, op);

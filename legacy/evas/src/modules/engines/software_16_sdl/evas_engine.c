@@ -917,7 +917,7 @@ evas_engine_sdl16_font_draw(void *data __UNUSED__, void *context, void *surface,
                                          evas_common_soft16_font_glyph_new,
                                          evas_common_soft16_font_glyph_free,
                                          evas_common_soft16_font_glyph_draw);
-   evas_common_font_draw((RGBA_Image *) eim->cache_entry.src, context, font, x, y, intl_props);
+   evas_common_font_draw((RGBA_Image *) eim->cache_entry.src, context, x, y, intl_props);
    evas_common_draw_context_font_ext_set(context,
                                          NULL,
                                          NULL,

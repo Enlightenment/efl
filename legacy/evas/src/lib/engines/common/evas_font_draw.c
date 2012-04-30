@@ -296,7 +296,7 @@ evas_common_font_draw_prepare(const Evas_Text_Props *text_props)
 }
 
 EAPI void
-evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const Evas_Text_Props *text_props)
+evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, const Evas_Text_Props *text_props)
 {
    int ext_x, ext_y, ext_w, ext_h;
    int im_w, im_h;

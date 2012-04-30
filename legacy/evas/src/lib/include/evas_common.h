@@ -731,7 +731,6 @@ struct _RGBA_Pipe_Op
 	 RGBA_Polygon_Point *points;
       } poly;
       struct {
-	 RGBA_Font          *font;
 	 int                 x, y;
          Evas_Text_Props     intl_props;
       } text;
