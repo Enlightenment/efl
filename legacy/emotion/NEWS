@@ -6,6 +6,7 @@ Changes since Emotion 1.0.0:
 Additions:
 
 Fixes:
+	- build out of tree.
 
 Improvements:
 

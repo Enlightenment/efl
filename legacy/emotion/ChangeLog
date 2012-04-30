@@ -33,3 +33,7 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
 	* 1.0.0 release
+
+2012-04-30 Jérôme Pinot
+
+	* Fix build out of tree.
