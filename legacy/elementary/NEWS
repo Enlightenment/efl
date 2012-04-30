@@ -9,6 +9,7 @@ Fixes:
 
    * Genlist : Fixed genlist expandable effect bug when we expand/contract items with many children very quickly.
    * Genlist : Realize move items during tree effect only when the item is not in the queue.
+   * Add missing files in the tarball.
 
 Improvements:
 

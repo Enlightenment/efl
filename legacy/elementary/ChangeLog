@@ -8,3 +8,7 @@
 	  items with many children very quickly.
 	* Genlist : Realize move items during tree effect only when the item is
 	  not in the queue.
+
+2012-04-30  Jérôme Pinot
+
+	* Add missing files in the tarballs.

@@ -82,6 +82,7 @@ genlist_example_02.c \
 genlist_example_03.c \
 genlist_example_04.c \
 genlist_example_05.c \
+glview_example_01.c \
 hover_example_01.c \
 hoversel_example_01.c \
 icon_example_01.c \
@@ -194,6 +195,7 @@ genlist_example_02 \
 genlist_example_03 \
 genlist_example_04 \
 genlist_example_05 \
+glview_example_01 \
 hover_example_01 \
 hoversel_example_01 \
 icon_example_01 \
@@ -321,6 +323,7 @@ genlist_example_02:genlist_example_02.png:0.1 \
 genlist_example_03:genlist_example_03.png:0.1 \
 genlist_example_04:genlist_example_04.png:0.1 \
 genlist_example_05:genlist_example_05.png:0.1 \
+glview_example_01:glview_example_01.png:0.0 \
 thumb_example_01:thumb_example_01.png:0.5 \
 entry_example:entry_example.png:0.0 \
 progressbar_example:progressbar_example.png:0.0 \
@@ -359,3 +362,5 @@ screenshots:
 	@echo "Examples are not built. Run \"./configure --enable-build-examples\" first."
 
 endif
+
+EXTRA_DIST = dict.txt layout_example.edc theme_example.edc
