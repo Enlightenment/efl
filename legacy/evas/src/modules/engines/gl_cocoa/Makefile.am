@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @GL_EET_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
+@FRIBIDI_CFLAGS@ \
 @evas_engine_gl_cocoa_cflags@
 
 if BUILD_ENGINE_GL_COCOA

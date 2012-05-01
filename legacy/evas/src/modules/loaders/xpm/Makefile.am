@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
+@FRIBIDI_CFLAGS@ \
 @evas_image_loader_xpm_cflags@ \
 @EVIL_CFLAGS@
 

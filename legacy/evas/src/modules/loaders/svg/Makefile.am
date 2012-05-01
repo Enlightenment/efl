@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
+@FRIBIDI_CFLAGS@ \
 @evas_image_loader_svg_cflags@
 
 if BUILD_LOADER_SVG

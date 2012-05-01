@@ -8,7 +8,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 @EINA_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
-@PIXMAN_CFLAGS@
+@PIXMAN_CFLAGS@ \
+@FRIBIDI_CFLAGS@
 
 SOFTWARE_GENERIC_SOURCES = evas_engine.c
 

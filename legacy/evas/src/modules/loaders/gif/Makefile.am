@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
+@FRIBIDI_CFLAGS@ \
 @evas_image_loader_gif_cflags@ \
 @EINA_CFLAGS@
 

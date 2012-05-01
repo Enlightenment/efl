@@ -14,7 +14,8 @@ AM_CPPFLAGS = \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@ \
-@PIXMAN_CFLAGS@
+@PIXMAN_CFLAGS@ \
+@FRIBIDI_CFLAGS@
 
 noinst_LTLIBRARIES   = libevas_canvas.la
 libevas_canvas_la_SOURCES  = \
