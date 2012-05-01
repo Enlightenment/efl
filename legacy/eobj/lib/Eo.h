@@ -908,6 +908,21 @@ enum {
 #define eo_wref_del(wref) EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), EO_TYPECHECK(Eo **, wref)
 
 /**
+ * @def eo_wref_del_safe
+ * @brief Delete the weak reference passed.
+ * @param wref the weak reference to free.
+ *
+ * Same as eo_wref_del(), with the different that it's not called from eobj_do()
+ * so you don't need to check if *wref is not NULL.
+ *
+ * @see #eo_wref_del
+ */
+#define eo_wref_del_safe(wref) \
+   do { \
+        if (*wref) eo_do(*wref, eo_wref_del(wref)); \
+   } while (0)
+
+/**
  * @var _EO_EV_CALLBACK_ADD
  * see EO_EV_CALLBACK_ADD
  */
