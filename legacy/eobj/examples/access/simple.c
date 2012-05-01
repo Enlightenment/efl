@@ -10,7 +10,7 @@ typedef struct
    int a;
 } Private_Data;
 
-EAPI const Eo_Event_Description _SIG_A_CHANGED =
+EAPI const Eo_Event_Description _EV_A_CHANGED =
         EO_EVENT_DESCRIPTION("a,changed", "i", "Called when a has changed.");
 
 #define MY_CLASS SIMPLE_CLASS
@@ -27,7 +27,7 @@ _a_set(Eo *obj, void *class_data, va_list *list)
    pd->protected.protected_x1 = a + 1;
    pd->protected.public.public_x2 = a + 2;
 
-   eo_event_callback_call(obj, SIG_A_CHANGED, &pd->a);
+   eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
 }
 
 static void
@@ -47,7 +47,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 
 static const Eo_Event_Description *event_desc[] = {
-     SIG_A_CHANGED,
+     EV_A_CHANGED,
      NULL
 };
 

@@ -5,7 +5,7 @@
 
 EAPI Eo_Op SIMPLE_BASE_ID = 0;
 
-EAPI const Eo_Event_Description _SIG_A_CHANGED =
+EAPI const Eo_Event_Description _EV_A_CHANGED =
         EO_EVENT_DESCRIPTION("a,changed", "i", "Called when a has changed.");
 
 #define MY_CLASS SIMPLE_CLASS
@@ -19,7 +19,7 @@ _a_set(Eo *obj, void *class_data, va_list *list)
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    pd->a = a;
 
-   eo_event_callback_call(obj, SIG_A_CHANGED, &pd->a);
+   eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
 }
 
 static void
@@ -50,7 +50,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 
 static const Eo_Event_Description *event_desc[] = {
-     SIG_A_CHANGED,
+     EV_A_CHANGED,
      NULL
 };
 

@@ -8,7 +8,7 @@
 
 EAPI Eo_Op ELW_BUTTON_BASE_ID = 0;
 
-EAPI const Eo_Event_Description _SIG_CLICKED =
+EAPI const Eo_Event_Description _EV_CLICKED =
         EO_EVENT_DESCRIPTION("clicked", "", "Called when there was a click.");
 
 typedef struct
@@ -44,7 +44,7 @@ _btn_clicked(void *data, Evas_Object *evas_obj, void *event_info)
    (void) evas_obj;
    (void) event_info;
    Eo *obj = data;
-   eo_event_callback_call(obj, SIG_CLICKED, NULL);
+   eo_event_callback_call(obj, EV_CLICKED, NULL);
 }
 
 static void
@@ -92,7 +92,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 
 static const Eo_Event_Description *event_desc[] = {
-     SIG_CLICKED,
+     EV_CLICKED,
      NULL
 };
 
