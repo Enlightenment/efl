@@ -70,7 +70,7 @@ START_TEST(eo_weak_reference)
 
    Eo *obj = eo_add(SIMPLE_CLASS, NULL);
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
-   Eo *wref;
+   Eo *wref, *wref2, *wref3;
    eo_do(obj, eo_wref_add(&wref));
    fail_if(!wref);
 
@@ -103,7 +103,23 @@ START_TEST(eo_weak_reference)
 
    wref = obj;
    eo_do(obj, eo_wref_del(&wref));
-   fail_if(wref != obj);
+   fail_if(wref);
+
+   wref = wref2 = wref3 = NULL;
+   eo_do(obj, eo_wref_add(&wref), eo_wref_add(&wref2), eo_wref_add(&wref3));
+   fail_if(!wref);
+   fail_if(!wref2);
+   fail_if(!wref3);
+   eo_do(obj, eo_wref_del(&wref), eo_wref_del(&wref2), eo_wref_del(&wref3));
+   fail_if(wref);
+   fail_if(wref2);
+   fail_if(wref3);
+
+   eo_do(obj, eo_wref_add(&wref2), eo_wref_add(&wref3));
+   wref = obj;
+   eo_do(obj, eo_wref_del(&wref));
+   fail_if(wref);
+   eo_do(obj, eo_wref_del(&wref2), eo_wref_del(&wref3));
 
    eo_unref(obj);
    eo_unref(obj2);

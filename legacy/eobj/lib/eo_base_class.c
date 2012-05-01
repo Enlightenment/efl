@@ -164,13 +164,13 @@ _wref_del(const Eo *obj, const void *class_data, va_list *list)
    if (!pd->wrefs)
      {
         ERR("There are no weak refs for object %p", obj);
+        *wref = NULL;
         return;
      }
 
    /* Move the last item in the array instead of the current wref. */
    count = _wref_count(pd);
 
-   if (count > 1)
      {
         Eo ***itr;
         for (itr = pd->wrefs ; *itr ; itr++)
@@ -182,9 +182,19 @@ _wref_del(const Eo *obj, const void *class_data, va_list *list)
                }
           }
 
+        if (!*itr)
+          {
+             ERR("Wref %p is not associated with object %p", wref, obj);
+             *wref = NULL;
+             return;
+          }
+     }
+
+   if (count > 1)
+     {
         // No count--; because of the NULL that is not included in the count. */
         pd->wrefs = realloc(pd->wrefs, sizeof(*pd->wrefs) * count);
-        pd->wrefs[count] = NULL;
+        pd->wrefs[count - 1] = NULL;
      }
    else
      {
