@@ -146,6 +146,7 @@ _wref_del(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
         return;
      }
    eo_event_callback_del((Eo *) obj, EO_EV_DEL, _eo_weak_ref_cb, wref);
+   *wref = NULL;
 }
 
 /* EOF Weak reference. */
