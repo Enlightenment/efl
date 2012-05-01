@@ -509,6 +509,7 @@ struct _Evas_Object
       Evas_Object          *map_parent;
       double                scale;
       Evas_Coord_Rectangle  geometry;
+      Evas_Coord_Rectangle  bounding_box;
       struct {
          struct {
             Evas_Coord      x, y, w, h;
@@ -620,6 +621,7 @@ struct _Evas_Object
    Eina_Bool                   del_ref : 1;
 
    Eina_Bool                   is_frame : 1;
+   Eina_Bool                   child_has_map : 1;
 };
 
 struct _Evas_Func_Node
@@ -889,6 +891,7 @@ extern "C" {
 
 Evas_Object *evas_object_new(Evas *e);
 void evas_object_free(Evas_Object *obj, int clean_layer);
+void evas_object_update_bounding_box(Evas_Object *obj);
 void evas_object_inject(Evas_Object *obj, Evas *e);
 void evas_object_release(Evas_Object *obj, int clean_layer);
 void evas_object_change(Evas_Object *obj);

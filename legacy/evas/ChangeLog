@@ -721,3 +721,7 @@
 
 	* Add missing files in the tarballs.
 
+2012-05-01  Cedric Bail
+
+	* Compute limited bounding box for Smart object.
+	* Use bounding box to reduce the number of object explored during event propagation.

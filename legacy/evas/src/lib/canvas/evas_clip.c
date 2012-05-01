@@ -219,7 +219,12 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
      }
    obj->cur.clipper = clip;
    clip->clip.clipees = eina_list_append(clip->clip.clipees, obj);
-   if (clip->clip.clipees) clip->cur.have_clipees = 1;
+   if (clip->clip.clipees)
+     {
+        clip->cur.have_clipees = 1;
+        if (clip->changed)
+          evas_object_update_bounding_box(clip);
+     }
 
    /* If it's NOT a rectangle set the mask bits too */
    /* FIXME: Optmz ths chck */

@@ -449,6 +449,169 @@ evas_object_del(Evas_Object *obj)
    evas_object_change(obj);
 }
 
+void
+evas_object_update_bounding_box(Evas_Object *obj)
+{
+   Eina_Bool propagate = EINA_FALSE;
+   Evas_Coord x, y, w, h;
+   Evas_Coord px, py, pw, ph;
+   Eina_Bool clip;
+
+   if (!obj->smart.parent) return ;
+   if (obj->child_has_map) return ; /* Disable bounding box computation for this object and its parent */
+   /* We could also remove object that are not visible from the bounding box, use the clipping information
+      to reduce the bounding of the object they are clipping, but for the moment this will do it's jobs */
+   clip = !!obj->clip.clipees;
+
+   if (obj->smart.smart)
+     {
+        x = obj->cur.bounding_box.x;
+        y = obj->cur.bounding_box.y;
+        w = obj->cur.bounding_box.w;
+        h = obj->cur.bounding_box.h;
+        px = obj->prev.bounding_box.x;
+        py = obj->prev.bounding_box.y;
+        pw = obj->prev.bounding_box.w;
+        ph = obj->prev.bounding_box.h;
+     }
+   else
+     {
+        x = obj->cur.geometry.x;
+        y = obj->cur.geometry.y;
+        w = obj->cur.geometry.w;
+        h = obj->cur.geometry.h;
+        px = obj->prev.geometry.x;
+        py = obj->prev.geometry.y;
+        pw = obj->prev.geometry.w;
+        ph = obj->prev.geometry.h;
+     }
+
+   /* Update left limit */
+   if (!clip && x < obj->smart.parent->cur.bounding_box.x)
+     {
+        obj->smart.parent->cur.bounding_box.w += obj->smart.parent->cur.bounding_box.x - x;
+        obj->smart.parent->cur.bounding_box.x = x;
+        propagate = EINA_TRUE;
+     }
+   else if ((px == obj->smart.parent->cur.bounding_box.x && x > obj->smart.parent->cur.bounding_box.x)
+            || (clip && x == obj->smart.parent->cur.bounding_box.x))
+     {
+        const Eina_Inlist *list;
+        const Evas_Object *o;
+        Evas_Coord minx = clip ? obj->layer->evas->output.w : x;
+
+        list = evas_object_smart_members_get_direct(obj->smart.parent);
+        EINA_INLIST_FOREACH(list, o)
+          {
+             Evas_Coord tx = o->smart.smart ? o->cur.bounding_box.x : o->cur.geometry.x;
+
+             if (!o->clip.clipees && tx < minx) minx = tx;
+          }
+
+        if (minx != obj->smart.parent->cur.bounding_box.x)
+          {
+             obj->smart.parent->cur.bounding_box.w += obj->smart.parent->cur.bounding_box.x - minx;
+             obj->smart.parent->cur.bounding_box.x = minx;
+             propagate = EINA_TRUE;
+          }
+     }
+
+   /* Update top limit */
+   if (y < obj->smart.parent->cur.bounding_box.y)
+     {
+        obj->smart.parent->cur.bounding_box.h += obj->smart.parent->cur.bounding_box.x - x;
+        obj->smart.parent->cur.bounding_box.y = y;
+        propagate = EINA_TRUE;
+     }
+   else if ((py == obj->smart.parent->cur.bounding_box.y && y  > obj->smart.parent->cur.bounding_box.y)
+            || (clip && y == obj->smart.parent->cur.bounding_box.y))
+     {
+        const Eina_Inlist *list;
+        const Evas_Object *o;
+        Evas_Coord miny = clip ? obj->layer->evas->output.h : y;
+
+        list = evas_object_smart_members_get_direct(obj->smart.parent);
+        EINA_INLIST_FOREACH(list, o)
+          {
+             Evas_Coord ty = o->smart.smart ? o->cur.bounding_box.y : o->cur.geometry.y;
+
+             if (!o->clip.clipees && ty < miny) miny = ty;
+          }
+
+        if (miny != obj->smart.parent->cur.bounding_box.y)
+          {
+             obj->smart.parent->cur.bounding_box.h += obj->smart.parent->cur.bounding_box.y - miny;
+             obj->smart.parent->cur.bounding_box.y = miny;
+             propagate = EINA_TRUE;
+          }
+     }
+
+   /* Update right limit */
+   if (x + w > obj->smart.parent->cur.bounding_box.x + obj->smart.parent->cur.bounding_box.w)
+     {
+        obj->smart.parent->cur.bounding_box.w = x + w - obj->smart.parent->cur.bounding_box.x;
+        propagate = EINA_TRUE;
+     }
+   else if ((px + pw == obj->smart.parent->cur.bounding_box.x + obj->smart.parent->cur.bounding_box.w &&
+             x + w < obj->smart.parent->cur.bounding_box.x + obj->smart.parent->cur.bounding_box.w)
+            || (clip && x + w == obj->smart.parent->cur.bounding_box.x + obj->smart.parent->cur.bounding_box.w))
+     {
+        const Eina_Inlist *list;
+        const Evas_Object *o;
+        Evas_Coord maxw = clip ? 0 : x + w;
+
+        list = evas_object_smart_members_get_direct(obj->smart.parent);
+        EINA_INLIST_FOREACH(list, o)
+          {
+             Evas_Coord tw = o->smart.smart
+               ? o->cur.bounding_box.x + o->cur.bounding_box.w
+               : o->cur.geometry.x + o->cur.geometry.w;
+
+             if (!o->clip.clipees && tw > maxw) maxw = tw;
+          }
+
+        if (maxw != obj->smart.parent->cur.bounding_box.x + obj->smart.parent->cur.bounding_box.w)
+          {
+             obj->smart.parent->cur.bounding_box.w = maxw - obj->smart.parent->cur.bounding_box.x;
+             propagate = EINA_TRUE;
+          }
+     }
+
+   /* Update bottom limit */
+   if (y + h > obj->smart.parent->cur.bounding_box.y + obj->smart.parent->cur.bounding_box.h)
+     {
+        obj->smart.parent->cur.bounding_box.h = y + h - obj->smart.parent->cur.bounding_box.y;
+        propagate = EINA_TRUE;
+     }
+   else if ((py + ph == obj->smart.parent->cur.bounding_box.y + obj->smart.parent->cur.bounding_box.h &&
+             y + h < obj->smart.parent->cur.bounding_box.y + obj->smart.parent->cur.bounding_box.h) ||
+            (clip && y + h == obj->smart.parent->cur.bounding_box.y + obj->smart.parent->cur.bounding_box.h))
+     {
+        const Eina_Inlist *list;
+        const Evas_Object *o;
+        Evas_Coord maxh = clip ? 0 : y + h;
+
+        list = evas_object_smart_members_get_direct(obj->smart.parent);
+        EINA_INLIST_FOREACH(list, o)
+          {
+             Evas_Coord th = o->smart.smart
+               ? o->cur.bounding_box.y + o->cur.bounding_box.h
+               : o->cur.geometry.y + o->cur.geometry.h;
+
+             if (!o->clip.clipees && th > maxh) maxh = th;
+          }
+
+        if (maxh != obj->smart.parent->cur.bounding_box.y + obj->smart.parent->cur.bounding_box.h)
+          {
+             obj->smart.parent->cur.bounding_box.h = maxh - obj->smart.parent->cur.bounding_box.y;
+             propagate = EINA_TRUE;
+          }
+     }
+
+   if (propagate)
+     evas_object_update_bounding_box(obj->smart.parent);
+}
+
 EAPI void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
@@ -504,6 +667,8 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 
    obj->cur.geometry.x = nx;
    obj->cur.geometry.y = ny;
+
+   evas_object_update_bounding_box(obj);
 
 ////   obj->cur.cache.geometry.validity = 0;
    obj->changed_move = EINA_TRUE;
@@ -589,6 +754,8 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 
    obj->cur.geometry.w = nw;
    obj->cur.geometry.h = nh;
+
+   evas_object_update_bounding_box(obj);
 
 ////   obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);

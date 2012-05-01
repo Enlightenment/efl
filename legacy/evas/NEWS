@@ -5,6 +5,7 @@ Changes since Evas 1.2.0:
 
 Improvements:
    * Lock less font rendering.
+   * Reduce cost of propagating event by limiting the object we explore by using a bouncing box.
 
 Fixes:
    * Add missing files in the tarball.

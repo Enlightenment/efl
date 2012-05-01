@@ -365,9 +365,27 @@ evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
    return evas_map_coords_get(m, x, y, NULL, NULL, 0);
 }
 
+static Eina_Bool
+_evas_object_map_parent_check(Evas_Object *parent)
+{
+   const Eina_Inlist *list;
+   const Evas_Object *o;
+
+   if (!parent) return EINA_FALSE;
+
+   list = evas_object_smart_members_get_direct(parent->smart.parent);
+   EINA_INLIST_FOREACH(list, o)
+     if (o->cur.usemap) break ;
+   if (o) return EINA_FALSE; /* Still some child have a map enable */
+   parent->child_has_map = EINA_FALSE;
+   _evas_object_map_parent_check(parent->smart.parent);
+   return EINA_TRUE;
+}
+
 EAPI void
 evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
 {
+   Evas_Object *parents;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -406,6 +424,17 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
    evas_object_change(obj);
    if (!obj->changed_pchange) obj->changed_pchange = pchange;
    obj->changed_map = EINA_TRUE;
+
+   if (enabled)
+     {
+        for (parents = obj->smart.parent; parents; parents = parents->smart.parent)
+          parents->child_has_map = EINA_TRUE;
+     }
+   else
+     {
+        if (_evas_object_map_parent_check(obj->smart.parent))
+          evas_object_update_bounding_box(obj);
+     }
 }
 
 EAPI Eina_Bool
