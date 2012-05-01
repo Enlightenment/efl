@@ -10,6 +10,7 @@ EAPI Eo_Op EO_BASE_BASE_ID = EO_NOOP;
 typedef struct
 {
    Eina_Inlist *generic_data;
+   Eo ***wrefs;
 } Private_Data;
 
 typedef struct
@@ -115,29 +116,43 @@ _data_del(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 }
 
 /* Weak reference. */
-static Eina_Bool
-_eo_weak_ref_cb(void *data, Eo *obj EINA_UNUSED, const Eo_Event_Description *desc EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Eo **wref = data;
-   *wref = NULL;
 
-   return EO_CALLBACK_CONTINUE;
+static inline size_t
+_wref_count(Private_Data *pd)
+{
+   size_t count = 0;
+   if (!pd->wrefs)
+      return 0;
+
+   Eo ***itr;
+   for (itr = pd->wrefs ; *itr ; itr++)
+      count++;
+
+   return count;
 }
 
 static void
-_wref_add(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
+_wref_add(const Eo *obj, const void *class_data, va_list *list)
 {
+   Private_Data *pd = (Private_Data *) class_data;
+   size_t count;
    Eo **wref = va_arg(*list, Eo **);
 
+   count = _wref_count(pd);
+   count += 1; /* New wref. */
+
+   pd->wrefs= realloc(pd->wrefs, sizeof(*pd->wrefs) * (count + 1));
+
+   pd->wrefs[count - 1] = wref;
+   pd->wrefs[count] = NULL;
    *wref = (Eo *) obj;
-   /* FIXME: The cast and the one in the next func are both bad and should be
-    * fixed once the event callback functions are fixed. */
-   eo_event_callback_add((Eo *) obj, EO_EV_DEL, _eo_weak_ref_cb, wref);
 }
 
 static void
-_wref_del(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
+_wref_del(const Eo *obj, const void *class_data, va_list *list)
 {
+   Private_Data *pd = (Private_Data *) class_data;
+   size_t count;
    Eo **wref = va_arg(*list, Eo **);
    if (*wref != obj)
      {
@@ -145,8 +160,54 @@ _wref_del(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
               *wref, obj);
         return;
      }
-   eo_event_callback_del((Eo *) obj, EO_EV_DEL, _eo_weak_ref_cb, wref);
+
+   if (!pd->wrefs)
+     {
+        ERR("There are no weak refs for object %p", obj);
+        return;
+     }
+
+   /* Move the last item in the array instead of the current wref. */
+   count = _wref_count(pd);
+
+   if (count > 1)
+     {
+        Eo ***itr;
+        for (itr = pd->wrefs ; *itr ; itr++)
+          {
+             if (*itr == wref)
+               {
+                  *itr = pd->wrefs[count - 1];
+                  break;
+               }
+          }
+
+        // No count--; because of the NULL that is not included in the count. */
+        pd->wrefs = realloc(pd->wrefs, sizeof(*pd->wrefs) * count);
+        pd->wrefs[count] = NULL;
+     }
+   else
+     {
+        free(pd->wrefs);
+        pd->wrefs = NULL;
+     }
+
    *wref = NULL;
+}
+
+static inline void
+_wref_destruct(Private_Data *pd)
+{
+   Eo ***itr;
+   if (!pd->wrefs)
+      return;
+
+   for (itr = pd->wrefs ; *itr ; itr++)
+     {
+        **itr = NULL;
+     }
+
+   free(pd->wrefs);
 }
 
 /* EOF Weak reference. */
@@ -177,6 +238,7 @@ _destructor(Eo *obj, void *class_data)
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
 
    _eo_generic_data_del_all(class_data);
+   _wref_destruct(class_data);
 }
 
 static void

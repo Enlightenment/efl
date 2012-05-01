@@ -101,6 +101,10 @@ START_TEST(eo_weak_reference)
    eo_wref_del_safe(&wref);
    fail_if(wref);
 
+   wref = obj;
+   eo_do(obj, eo_wref_del(&wref));
+   fail_if(wref != obj);
+
    eo_unref(obj);
    eo_unref(obj2);
 
