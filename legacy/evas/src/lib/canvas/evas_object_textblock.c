@@ -2796,6 +2796,7 @@ _text_item_update_sizes(Ctxt *c, Evas_Object_Textblock_Text_Item *ti)
       case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP_RIGHT:
       case EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT:
         dx = 1;
+        break;
       case EVAS_TEXT_STYLE_SHADOW_DIRECTION_TOP:
       case EVAS_TEXT_STYLE_SHADOW_DIRECTION_BOTTOM:
       default:
