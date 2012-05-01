@@ -1,4 +1,4 @@
-#include "Eobj.h"
+#include "Eo.h"
 #include "simple.h"
 #include "simple2.h"
 #include "simple3.h"
@@ -17,43 +17,43 @@ main(int argc, char *argv[])
    int ret = 0;
    (void) argc;
    (void) argv;
-   eobj_init();
+   eo_init();
 
-   Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
 
    fail_if(my_init_count != 2);
 
-   eobj_do(obj, simple_a_set(1), simple_b_set(2));
+   eo_do(obj, simple_a_set(1), simple_b_set(2));
 
    int a, b;
-   eobj_do(obj, simple_a_get(&a), simple_b_get(&b),  mixin_add_and_print(5));
+   eo_do(obj, simple_a_get(&a), simple_b_get(&b),  mixin_add_and_print(5));
 
-   eobj_unref(obj);
+   eo_unref(obj);
 
    fail_if(my_init_count != 0);
 
-   obj = eobj_add(SIMPLE2_CLASS, NULL);
+   obj = eo_add(SIMPLE2_CLASS, NULL);
    fail_if(obj);
 
-   obj = eobj_add(SIMPLE3_CLASS, NULL);
+   obj = eo_add(SIMPLE3_CLASS, NULL);
    fail_if(obj);
 
    my_init_count = 0;
-   obj = eobj_add(SIMPLE4_CLASS, NULL);
+   obj = eo_add(SIMPLE4_CLASS, NULL);
 
    fail_if(my_init_count != 2);
 
-   eobj_unref(obj);
+   eo_unref(obj);
 
    fail_if(my_init_count != 0);
 
-   obj = eobj_add(SIMPLE5_CLASS, NULL);
-   eobj_unref(obj);
+   obj = eo_add(SIMPLE5_CLASS, NULL);
+   eo_unref(obj);
 
-   obj = eobj_add(SIMPLE6_CLASS, NULL);
-   eobj_unref(obj);
+   obj = eo_add(SIMPLE6_CLASS, NULL);
+   eo_unref(obj);
 
-   eobj_shutdown();
+   eo_shutdown();
    return ret;
 }
 

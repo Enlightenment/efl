@@ -3,11 +3,11 @@ exec_prefix=${prefix}
 libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
-Name: Eobj
+Name: Eo
 Description: EFL's generic object system library.
 Version: @PACKAGE_VERSION@
-Libs: -L${libdir} -leobj
+Libs: -L${libdir} -leo
 Libs.private:
-Cflags: -I${includedir}/eobj-@VMAJ@
+Cflags: -I${includedir}/eo-@VMAJ@
 
 ~                                                                           

@@ -1,4 +1,4 @@
-#include "Eobj.h"
+#include "Eo.h"
 #include "simple.h"
 #include "simple_protected.h"
 
@@ -6,38 +6,38 @@
 
 #include "config.h"
 
-EAPI Eobj_Op INHERIT_BASE_ID = 0;
+EAPI Eo_Op INHERIT_BASE_ID = 0;
 
 #define MY_CLASS INHERIT_CLASS
 
 static void
-_prot_print(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
+_prot_print(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
 {
-   Simple_Protected_Data *pd = eobj_data_get(obj, SIMPLE_CLASS);
+   Simple_Protected_Data *pd = eo_data_get(obj, SIMPLE_CLASS);
    (void) list;
    printf("%s %d\n", __func__, pd->protected_x1);
 }
 
 static void
-_class_constructor(Eobj_Class *klass)
+_class_constructor(Eo_Class *klass)
 {
-   const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC_CONST(INHERIT_ID(INHERIT_SUB_ID_PROT_PRINT), _prot_print),
-        EOBJ_OP_FUNC_SENTINEL
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC_CONST(INHERIT_ID(INHERIT_SUB_ID_PROT_PRINT), _prot_print),
+        EO_OP_FUNC_SENTINEL
    };
 
-   eobj_class_funcs_set(klass, func_desc);
+   eo_class_funcs_set(klass, func_desc);
 }
 
-static const Eobj_Op_Description op_desc[] = {
-     EOBJ_OP_DESCRIPTION_CONST(INHERIT_SUB_ID_PROT_PRINT, "", "Print protected var x1."),
-     EOBJ_OP_DESCRIPTION_SENTINEL
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION_CONST(INHERIT_SUB_ID_PROT_PRINT, "", "Print protected var x1."),
+     EO_OP_DESCRIPTION_SENTINEL
 };
 
-static const Eobj_Class_Description class_desc = {
+static const Eo_Class_Description class_desc = {
      "Inherit",
-     EOBJ_CLASS_TYPE_REGULAR,
-     EOBJ_CLASS_DESCRIPTION_OPS(&INHERIT_BASE_ID, op_desc, INHERIT_SUB_ID_LAST),
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&INHERIT_BASE_ID, op_desc, INHERIT_SUB_ID_LAST),
      NULL,
      0,
      NULL,
@@ -46,4 +46,4 @@ static const Eobj_Class_Description class_desc = {
      NULL
 };
 
-EOBJ_DEFINE_CLASS(inherit_class_get, &class_desc, SIMPLE_CLASS, NULL)
+EO_DEFINE_CLASS(inherit_class_get, &class_desc, SIMPLE_CLASS, NULL)

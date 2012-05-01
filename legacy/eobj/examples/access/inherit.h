@@ -1,9 +1,9 @@
 #ifndef INHERIT_H
 #define INHERIT_H
 
-#include "Eobj.h"
+#include "Eo.h"
 
-extern EAPI Eobj_Op INHERIT_BASE_ID;
+extern EAPI Eo_Op INHERIT_BASE_ID;
 
 enum {
      INHERIT_SUB_ID_PROT_PRINT,
@@ -15,6 +15,6 @@ enum {
 #define inherit_prot_print() INHERIT_ID(INHERIT_SUB_ID_PROT_PRINT)
 
 #define INHERIT_CLASS inherit_class_get()
-const Eobj_Class *inherit_class_get(void) EINA_CONST;
+const Eo_Class *inherit_class_get(void) EINA_CONST;
 
 #endif

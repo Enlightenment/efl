@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-project(eobj)
+project(eo)
 set(VMAJ 0)
 set(VMIN 1)
 set(VMIC 0)
@@ -53,10 +53,10 @@ add_subdirectory(doc)
 
 # PKGCONFIG file.
 CONFIGURE_FILE(
-   "${PROJECT_SOURCE_DIR}/eobj.pc.in"
-   "${PROJECT_BINARY_DIR}/eobj.pc"
+   "${PROJECT_SOURCE_DIR}/eo.pc.in"
+   "${PROJECT_BINARY_DIR}/eo.pc"
    @ONLY
    )
 
-INSTALL(FILES "${PROJECT_BINARY_DIR}/eobj.pc"
+INSTALL(FILES "${PROJECT_BINARY_DIR}/eo.pc"
       DESTINATION "lib/pkgconfig")

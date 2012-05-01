@@ -5,29 +5,29 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "Eobj.h"
+#include "Eo.h"
 
-#include "eobj_suite.h"
+#include "eo_suite.h"
 
-typedef struct _Eobj_Test_Case Eobj_Test_Case;
+typedef struct _Eo_Test_Case Eo_Test_Case;
 
-struct _Eobj_Test_Case
+struct _Eo_Test_Case
 {
    const char *test_case;
    void      (*build)(TCase *tc);
 };
 
-static const Eobj_Test_Case etc[] = {
-  { "Eobj init", eobj_test_init },
-  { "Eobj general", eobj_test_general },
-  { "Eobj class errors", eobj_test_class_errors },
+static const Eo_Test_Case etc[] = {
+  { "Eo init", eo_test_init },
+  { "Eo general", eo_test_general },
+  { "Eo class errors", eo_test_class_errors },
   { NULL, NULL }
 };
 
 static void
 _list_tests(void)
 {
-  const Eobj_Test_Case *itr;
+  const Eo_Test_Case *itr;
 
    itr = etc;
    fputs("Available Test Cases:\n", stderr);
@@ -47,13 +47,13 @@ _use_test(int argc, const char **argv, const char *test_case)
 }
 
 static Suite *
-eobj_suite_build(int argc, const char **argv)
+eo_suite_build(int argc, const char **argv)
 {
    TCase *tc;
    Suite *s;
    int i;
 
-   s = suite_create("Eobj");
+   s = suite_create("Eo");
 
    for (i = 0; etc[i].test_case; ++i)
      {
@@ -92,7 +92,7 @@ main(int argc, char **argv)
 	  return 0;
        }
 
-   s = eobj_suite_build(argc - 1, (const char **)argv + 1);
+   s = eo_suite_build(argc - 1, (const char **)argv + 1);
    sr = srunner_create(s);
 
    srunner_run_all(sr, CK_ENV);

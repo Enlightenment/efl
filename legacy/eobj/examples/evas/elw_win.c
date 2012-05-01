@@ -1,6 +1,6 @@
 #include <Elementary.h>
 
-#include "Eobj.h"
+#include "Eo.h"
 #include "evas_obj.h"
 #include "elw_win.h"
 
@@ -23,15 +23,15 @@ my_win_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_constructor(Eobj *obj, void *class_data)
+_constructor(Eo *obj, void *class_data)
 {
-   eobj_constructor_super(obj);
+   eo_constructor_super(obj);
 
    Widget_Data *wd = class_data;
 
    /* FIXME: Will actually do something about those when I care... */
-   wd->win = elm_win_add(NULL, "eobj-test", ELM_WIN_BASIC);
-   elm_win_title_set(wd->win, "Eobj Test");
+   wd->win = elm_win_add(NULL, "eo-test", ELM_WIN_BASIC);
+   elm_win_title_set(wd->win, "Eo Test");
    elm_win_autodel_set(wd->win, EINA_TRUE);
    evas_object_smart_callback_add(wd->win, "delete,request", my_win_del, NULL);
 
@@ -40,13 +40,13 @@ _constructor(Eobj *obj, void *class_data)
    evas_object_size_hint_weight_set(wd->bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(wd->bg);
 
-   eobj_evas_object_set(obj, wd->win);
+   eo_evas_object_set(obj, wd->win);
 }
 
-static const Eobj_Class_Description class_desc = {
+static const Eo_Class_Description class_desc = {
      "Elw Win",
-     EOBJ_CLASS_TYPE_REGULAR,
-     EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
      sizeof(Widget_Data),
      _constructor,
@@ -56,5 +56,5 @@ static const Eobj_Class_Description class_desc = {
 };
 
 
-EOBJ_DEFINE_CLASS(elw_win_class_get, &class_desc, EVAS_OBJ_CLASS, NULL)
+EO_DEFINE_CLASS(elw_win_class_get, &class_desc, EVAS_OBJ_CLASS, NULL)
 

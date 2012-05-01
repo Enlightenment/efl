@@ -1,14 +1,14 @@
 if (CHECK_ENABLED)
 
-   LIST(APPEND EOBJ_SUITE_CC_SOURCES
-      eobj_suite.c
-      eobj_test_init.c
-      eobj_test_general.c
-      eobj_test_class_errors.c
+   LIST(APPEND EO_SUITE_CC_SOURCES
+      eo_suite.c
+      eo_test_init.c
+      eo_test_general.c
+      eo_test_class_errors.c
       class_simple.c
       )
 
-   add_executable(eobj_suite ${EOBJ_SUITE_CC_SOURCES})
+   add_executable(eo_suite ${EO_SUITE_CC_SOURCES})
 
    include_directories(
       ${EINA_INCLUDE_DIRS}
@@ -16,14 +16,14 @@ if (CHECK_ENABLED)
       ${CHECK_INCLUDE_DIRS}
       )
 
-   get_target_property(eobj_LIB_FILE eobj LOCATION)
-   target_link_libraries(eobj_suite
+   get_target_property(eo_LIB_FILE eo LOCATION)
+   target_link_libraries(eo_suite
       ${EINA_LIBRARIES}
       ${EINA_LDFLAGS_OTHER}
-      ${eobj_LIB_FILE}
+      ${eo_LIB_FILE}
       ${CHECK_LIBRARIES}
       )
 
-   add_test(eobj_suite eobj_suite)
-   add_dependencies(check eobj_suite)
+   add_test(eo_suite eo_suite)
+   add_dependencies(check eo_suite)
 endif (CHECK_ENABLED)

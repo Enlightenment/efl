@@ -14,13 +14,13 @@ include_directories(
 
 add_executable(function_overrides ${FUNCTION_OVERRIDES_CC_SOURCES})
 
-get_target_property(eobj_LIB_FILE eobj LOCATION)
+get_target_property(eo_LIB_FILE eo LOCATION)
 target_link_libraries(function_overrides
    ${EINA_LIBRARIES}
    ${EINA_LDFLAGS_OTHER}
-   ${eobj_LIB_FILE}
+   ${eo_LIB_FILE}
    )
 
-add_dependencies(function_overrides eobj)
+add_dependencies(function_overrides eo)
 
 add_test(Example_function_overrides function_overrides)

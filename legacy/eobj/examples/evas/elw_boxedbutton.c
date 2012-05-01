@@ -1,6 +1,6 @@
 #include <Elementary.h>
 
-#include "Eobj.h"
+#include "Eo.h"
 #include "evas_obj.h"
 #include "elw_box.h"
 #include "elw_button.h"
@@ -16,23 +16,23 @@ typedef struct
 #define MY_CLASS ELW_BOXEDBUTTON_CLASS
 
 static void
-_constructor(Eobj *obj, void *class_data EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eobj_constructor_super(obj);
+   eo_constructor_super(obj);
 
-   Eobj *bt = eobj_add(ELW_BUTTON_CLASS, obj);
-   eobj_composite_object_attach(obj, bt);
-   eobj_event_callback_forwarder_add(bt, SIG_CLICKED, obj);
-   eobj_do(bt, evas_obj_visibility_set(EINA_TRUE));
+   Eo *bt = eo_add(ELW_BUTTON_CLASS, obj);
+   eo_composite_object_attach(obj, bt);
+   eo_event_callback_forwarder_add(bt, SIG_CLICKED, obj);
+   eo_do(bt, evas_obj_visibility_set(EINA_TRUE));
 
-   eobj_do(obj, elw_box_pack_end(bt));
-   eobj_unref(bt);
+   eo_do(obj, elw_box_pack_end(bt));
+   eo_unref(bt);
 }
 
-static const Eobj_Class_Description class_desc = {
+static const Eo_Class_Description class_desc = {
      "Elw BoxedButton",
-     EOBJ_CLASS_TYPE_REGULAR,
-     EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
      sizeof(Widget_Data),
      _constructor,
@@ -41,5 +41,5 @@ static const Eobj_Class_Description class_desc = {
      NULL
 };
 
-EOBJ_DEFINE_CLASS(elw_boxedbutton_class_get, &class_desc, ELW_BOX_CLASS, ELW_BUTTON_CLASS, NULL)
+EO_DEFINE_CLASS(elw_boxedbutton_class_get, &class_desc, ELW_BOX_CLASS, ELW_BUTTON_CLASS, NULL)
 

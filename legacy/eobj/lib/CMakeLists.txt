@@ -1,27 +1,27 @@
-LIST(APPEND EOBJ_CC_SOURCES
-   eobj.c
-   eobj_base_class.c
+LIST(APPEND EO_CC_SOURCES
+   eo.c
+   eo_base_class.c
    )
 
-ADD_DEFINITIONS(-DEFL_EOBJ_BUILD=1)
+ADD_DEFINITIONS(-DEFL_EO_BUILD=1)
 
 include_directories(
    ${EINA_INCLUDE_DIRS}
    )
 
-add_library(eobj SHARED ${EOBJ_CC_SOURCES})
-target_link_libraries(eobj
+add_library(eo SHARED ${EO_CC_SOURCES})
+target_link_libraries(eo
    ${EINA_LIBRARIES}
    ${EINA_LDFLAGS_OTHER}
    ${EFL_COVERAGE_LIBS}
    )
 
-set_target_properties(eobj PROPERTIES
+set_target_properties(eo PROPERTIES
    COMPILE_FLAGS "${EFL_COVERAGE_CFLAGS}")
-set_target_properties(eobj PROPERTIES
-                         VERSION ${EOBJ_VERSION} SOVERSION ${EOBJ_VERSION_MAJOR})
-set_target_properties(eobj PROPERTIES OUTPUT_NAME "eobj")
+set_target_properties(eo PROPERTIES
+                         VERSION ${EO_VERSION} SOVERSION ${EO_VERSION_MAJOR})
+set_target_properties(eo PROPERTIES OUTPUT_NAME "eo")
 
-INSTALL(TARGETS eobj DESTINATION "lib")
-INSTALL(FILES  "${CMAKE_CURRENT_SOURCE_DIR}/Eobj.h"
+INSTALL(TARGETS eo DESTINATION "lib")
+INSTALL(FILES  "${CMAKE_CURRENT_SOURCE_DIR}/Eo.h"
       DESTINATION "include")

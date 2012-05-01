@@ -1,4 +1,4 @@
-#include "Eobj.h"
+#include "Eo.h"
 #include "simple.h"
 #include "inherit.h"
 #include "inherit2.h"
@@ -11,39 +11,39 @@ main(int argc, char *argv[])
 {
    (void) argc;
    (void) argv;
-   eobj_init();
+   eo_init();
 
-   Eobj *obj = eobj_add(INHERIT2_CLASS, NULL);
+   Eo *obj = eo_add(INHERIT2_CLASS, NULL);
 
-   eobj_do(obj, simple_a_set(1));
-   Simple_Public_Data *pd = eobj_data_get(obj, SIMPLE_CLASS);
+   eo_do(obj, simple_a_set(1));
+   Simple_Public_Data *pd = eo_data_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 2);
 
-   eobj_unref(obj);
+   eo_unref(obj);
 
-   obj = eobj_add(INHERIT3_CLASS, NULL);
+   obj = eo_add(INHERIT3_CLASS, NULL);
 
-   eobj_do(obj, simple_a_set(1));
-   pd = eobj_data_get(obj, SIMPLE_CLASS);
+   eo_do(obj, simple_a_set(1));
+   pd = eo_data_get(obj, SIMPLE_CLASS);
    fail_if(pd->a != 3);
 
-   eobj_unref(obj);
+   eo_unref(obj);
 
-   obj = eobj_add(INHERIT2_CLASS, NULL);
-   eobj_do(obj, inherit2_print());
-   eobj_unref(obj);
+   obj = eo_add(INHERIT2_CLASS, NULL);
+   eo_do(obj, inherit2_print());
+   eo_unref(obj);
 
-   obj = eobj_add(SIMPLE_CLASS, NULL);
-   fail_if(eobj_do(obj, inherit2_print2()));
+   obj = eo_add(SIMPLE_CLASS, NULL);
+   fail_if(eo_do(obj, inherit2_print2()));
 
-   fail_if(eobj_do_super(obj, simple_a_print()));
+   fail_if(eo_do_super(obj, simple_a_print()));
 
-   eobj_constructor_super(obj);
-   eobj_destructor_super(obj);
+   eo_constructor_super(obj);
+   eo_destructor_super(obj);
 
-   eobj_unref(obj);
+   eo_unref(obj);
 
-   eobj_shutdown();
+   eo_shutdown();
    return 0;
 }
 

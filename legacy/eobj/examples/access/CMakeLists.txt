@@ -12,13 +12,13 @@ include_directories(
 
 add_executable(access ${ACCESS_CC_SOURCES})
 
-get_target_property(eobj_LIB_FILE eobj LOCATION)
+get_target_property(eo_LIB_FILE eo LOCATION)
 target_link_libraries(access
    ${EINA_LIBRARIES}
    ${EINA_LDFLAGS_OTHER}
-   ${eobj_LIB_FILE}
+   ${eo_LIB_FILE}
    )
 
-add_dependencies(access eobj)
+add_dependencies(access eo)
 
 add_test(Example_access access)

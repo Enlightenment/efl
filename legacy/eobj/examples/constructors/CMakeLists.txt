@@ -17,13 +17,13 @@ include_directories(
 
 add_executable(constructors ${CONSTRUCTORS_CC_SOURCES})
 
-get_target_property(eobj_LIB_FILE eobj LOCATION)
+get_target_property(eo_LIB_FILE eo LOCATION)
 target_link_libraries(constructors
    ${EINA_LIBRARIES}
    ${EINA_LDFLAGS_OTHER}
-   ${eobj_LIB_FILE}
+   ${eo_LIB_FILE}
    )
 
-add_dependencies(constructors eobj)
+add_dependencies(constructors eo)
 
 add_test(Example_constructors constructors)

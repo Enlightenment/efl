@@ -1,4 +1,4 @@
-#include "Eobj.h"
+#include "Eo.h"
 #include "mixin.h"
 #include "simple6.h"
 
@@ -7,17 +7,17 @@
 #define MY_CLASS SIMPLE6_CLASS
 
 static void
-_destructor(Eobj *obj, void *class_data EINA_UNUSED)
+_destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eobj_constructor_super(obj);
+   eo_constructor_super(obj);
 
-   eobj_constructor_error_set(obj);
+   eo_constructor_error_set(obj);
 }
 
-static const Eobj_Class_Description class_desc = {
+static const Eo_Class_Description class_desc = {
      "Simple6",
-     EOBJ_CLASS_TYPE_REGULAR,
-     EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
      0,
      NULL,
@@ -26,5 +26,5 @@ static const Eobj_Class_Description class_desc = {
      NULL
 };
 
-EOBJ_DEFINE_CLASS(simple6_class_get, &class_desc, EOBJ_BASE_CLASS, NULL);
+EO_DEFINE_CLASS(simple6_class_get, &class_desc, EO_BASE_CLASS, NULL);
 

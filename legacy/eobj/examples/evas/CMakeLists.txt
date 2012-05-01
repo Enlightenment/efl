@@ -15,13 +15,13 @@ include_directories(
    )
 
 add_executable(evas ${EVAS_CC_SOURCES})
-get_target_property(eobj_LIB_FILE eobj LOCATION)
+get_target_property(eo_LIB_FILE eo LOCATION)
 target_link_libraries(evas
    ${EINA_LIBRARIES}
    ${EINA_LDFLAGS_OTHER}
    ${EVAS_LIBRARIES}
    ${ELEMENTARY_LIBRARIES}
-   ${eobj_LIB_FILE}
+   ${eo_LIB_FILE}
    )
 
-add_dependencies(evas eobj)
+add_dependencies(evas eo)

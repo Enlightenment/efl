@@ -1,13 +1,13 @@
 #include <Elementary.h>
 
-#include "Eobj.h"
+#include "Eo.h"
 #include "evas_obj.h"
 
 #include "config.h"
 
 #define MY_CLASS EVAS_OBJ_CLASS
 
-EAPI Eobj_Op EVAS_OBJ_BASE_ID = 0;
+EAPI Eo_Op EVAS_OBJ_BASE_ID = 0;
 
 typedef struct
 {
@@ -15,9 +15,9 @@ typedef struct
 } Widget_Data;
 
 static void
-_position_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
+_position_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
-   Evas_Object *evas_obj = eobj_evas_object_get(obj);
+   Evas_Object *evas_obj = eo_evas_object_get(obj);
    Evas_Coord x, y;
    x = va_arg(*list, Evas_Coord);
    y = va_arg(*list, Evas_Coord);
@@ -25,9 +25,9 @@ _position_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 }
 
 static void
-_size_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
+_size_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
-   Evas_Object *evas_obj = eobj_evas_object_get(obj);
+   Evas_Object *evas_obj = eo_evas_object_get(obj);
    Evas_Coord w, h;
    w = va_arg(*list, Evas_Coord);
    h = va_arg(*list, Evas_Coord);
@@ -35,9 +35,9 @@ _size_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 }
 
 static void
-_color_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
+_color_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
-   Evas_Object *evas_obj = eobj_evas_object_get(obj);
+   Evas_Object *evas_obj = eo_evas_object_get(obj);
    int r, g, b, a;
    r = va_arg(*list, int);
    g = va_arg(*list, int);
@@ -47,9 +47,9 @@ _color_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 }
 
 static void
-_color_get(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
+_color_get(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
 {
-   Evas_Object *evas_obj = eobj_evas_object_get(obj);
+   Evas_Object *evas_obj = eo_evas_object_get(obj);
    int *r, *g, *b, *a;
    r = va_arg(*list, int *);
    g = va_arg(*list, int *);
@@ -59,9 +59,9 @@ _color_get(const Eobj *obj, const void *class_data EINA_UNUSED, va_list *list)
 }
 
 static void
-_visibility_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
+_visibility_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
-   Evas_Object *evas_obj = eobj_evas_object_get(obj);
+   Evas_Object *evas_obj = eo_evas_object_get(obj);
    Eina_Bool v;
    v = va_arg(*list, int);
    if (v) evas_object_show(evas_obj);
@@ -69,69 +69,69 @@ _visibility_set(Eobj *obj, void *class_data EINA_UNUSED, va_list *list)
 }
 
 static void
-_child_add(Eobj *obj, void *class_data, va_list *list)
+_child_add(Eo *obj, void *class_data, va_list *list)
 {
    Widget_Data *wd = class_data;
-   Eobj *child;
-   child = va_arg(*list, Eobj *);
-   wd->children = eina_list_append(wd->children, eobj_xref(child, obj));
+   Eo *child;
+   child = va_arg(*list, Eo *);
+   wd->children = eina_list_append(wd->children, eo_xref(child, obj));
 }
 
 static void
-_constructor(Eobj *obj, void *class_data EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
-   eobj_constructor_super(obj);
+   eo_constructor_super(obj);
 
    /* Add type check. */
-   Eobj *parent = eobj_parent_get(obj);
+   Eo *parent = eo_parent_get(obj);
    if (parent)
-      eobj_do(parent, evas_obj_child_add(obj));
+      eo_do(parent, evas_obj_child_add(obj));
 }
 
 static void
-_destructor(Eobj *obj, void *class_data)
+_destructor(Eo *obj, void *class_data)
 {
-   eobj_destructor_super(obj);
+   eo_destructor_super(obj);
 
    Widget_Data *wd = class_data;
 
-   Eobj *child;
+   Eo *child;
    EINA_LIST_FREE(wd->children, child)
      {
-        eobj_xunref(child, obj);
+        eo_xunref(child, obj);
      }
 }
 
 static void
-_class_constructor(Eobj_Class *klass)
+_class_constructor(Eo_Class *klass)
 {
-   const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
-        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_SET), _size_set),
-        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_SET), _color_set),
-        EOBJ_OP_FUNC_CONST(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_GET), _color_get),
-        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_VISIBILITY_SET), _visibility_set),
-        EOBJ_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CHILD_ADD), _child_add),
-        EOBJ_OP_FUNC_SENTINEL
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
+        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_SET), _size_set),
+        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_SET), _color_set),
+        EO_OP_FUNC_CONST(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_GET), _color_get),
+        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_VISIBILITY_SET), _visibility_set),
+        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CHILD_ADD), _child_add),
+        EO_OP_FUNC_SENTINEL
    };
 
-   eobj_class_funcs_set(klass, func_desc);
+   eo_class_funcs_set(klass, func_desc);
 }
 
-static const Eobj_Op_Description op_desc[] = {
-     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POSITION_SET, "ii", "Position of an evas object."),
-     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_SET, "ii", "Size of an evas object."),
-     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_SET, "iiii", "Color of an evas object."),
-     EOBJ_OP_DESCRIPTION_CONST(EVAS_OBJ_SUB_ID_COLOR_GET, "iiii", "Color of an evas object."),
-     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_VISIBILITY_SET, "b", "Visibility of an evas object."),
-     EOBJ_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CHILD_ADD, "o", "Add a child eobj."),
-     EOBJ_OP_DESCRIPTION_SENTINEL
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POSITION_SET, "ii", "Position of an evas object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_SET, "ii", "Size of an evas object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_SET, "iiii", "Color of an evas object."),
+     EO_OP_DESCRIPTION_CONST(EVAS_OBJ_SUB_ID_COLOR_GET, "iiii", "Color of an evas object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_VISIBILITY_SET, "b", "Visibility of an evas object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CHILD_ADD, "o", "Add a child eo."),
+     EO_OP_DESCRIPTION_SENTINEL
 };
 
-static const Eobj_Class_Description class_desc = {
+static const Eo_Class_Description class_desc = {
      "Evas Object",
-     EOBJ_CLASS_TYPE_REGULAR_NO_INSTANT,
-     EOBJ_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_BASE_ID, op_desc, EVAS_OBJ_SUB_ID_LAST),
+     EO_CLASS_TYPE_REGULAR_NO_INSTANT,
+     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_BASE_ID, op_desc, EVAS_OBJ_SUB_ID_LAST),
      NULL,
      sizeof(Widget_Data),
      _constructor,
@@ -140,4 +140,4 @@ static const Eobj_Class_Description class_desc = {
      NULL
 };
 
-EOBJ_DEFINE_CLASS(evas_object_class_get, &class_desc, EOBJ_BASE_CLASS, NULL)
+EO_DEFINE_CLASS(evas_object_class_get, &class_desc, EO_BASE_CLASS, NULL)

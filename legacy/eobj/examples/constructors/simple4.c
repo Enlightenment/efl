@@ -1,14 +1,14 @@
-#include "Eobj.h"
+#include "Eo.h"
 #include "mixin.h"
 #include "simple.h"
 #include "simple4.h"
 
 #define MY_CLASS SIMPLE4_CLASS
 
-static const Eobj_Class_Description class_desc = {
+static const Eo_Class_Description class_desc = {
      "Simple4",
-     EOBJ_CLASS_TYPE_REGULAR,
-     EOBJ_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
      0,
      NULL,
@@ -17,5 +17,5 @@ static const Eobj_Class_Description class_desc = {
      NULL
 };
 
-EOBJ_DEFINE_CLASS(simple4_class_get, &class_desc, SIMPLE_CLASS, MIXIN_CLASS, NULL);
+EO_DEFINE_CLASS(simple4_class_get, &class_desc, SIMPLE_CLASS, MIXIN_CLASS, NULL);
 

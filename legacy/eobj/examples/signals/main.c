@@ -1,4 +1,4 @@
-#include "Eobj.h"
+#include "Eo.h"
 #include "simple.h"
 
 #include "../eunit_tests.h"
@@ -6,7 +6,7 @@
 static int cb_count = 0;
 
 static Eina_Bool
-_a_changed_cb(void *data, Eobj *obj, const Eobj_Event_Description *desc, void *event_info)
+_a_changed_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
 {
    (void) desc;
    (void) obj;
@@ -24,47 +24,47 @@ main(int argc, char *argv[])
 {
    (void) argc;
    (void) argv;
-   eobj_init();
+   eo_init();
 
-   Eobj *obj = eobj_add(SIMPLE_CLASS, NULL);
-   Simple_Public_Data *pd = eobj_data_get(obj, SIMPLE_CLASS);
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   Simple_Public_Data *pd = eo_data_get(obj, SIMPLE_CLASS);
 
    /* The order of these two is undetermined. */
-   eobj_event_callback_priority_add(obj, SIG_A_CHANGED, EOBJ_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2);
-   eobj_event_callback_priority_add(obj, SIG_A_CHANGED, EOBJ_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1);
+   eo_event_callback_priority_add(obj, SIG_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2);
+   eo_event_callback_priority_add(obj, SIG_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1);
    /* This will be called afterwards. */
-   eobj_event_callback_priority_add(obj, SIG_A_CHANGED, EOBJ_CALLBACK_PRIORITY_DEFAULT, _a_changed_cb, (void *) 3);
+   eo_event_callback_priority_add(obj, SIG_A_CHANGED, EO_CALLBACK_PRIORITY_DEFAULT, _a_changed_cb, (void *) 3);
    /* This will never be called because the previous callback returns NULL. */
-   eobj_event_callback_priority_add(obj, SIG_A_CHANGED, EOBJ_CALLBACK_PRIORITY_AFTER, _a_changed_cb, (void *) 4);
+   eo_event_callback_priority_add(obj, SIG_A_CHANGED, EO_CALLBACK_PRIORITY_AFTER, _a_changed_cb, (void *) 4);
 
-   eobj_do(obj, simple_a_set(1));
+   eo_do(obj, simple_a_set(1));
 
    fail_if(cb_count != 3);
 
-   eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 3);
+   eo_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 3);
    fail_if(pd->cb_count != 3);
 
-   fail_if(eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 12));
+   fail_if(eo_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 12));
    fail_if(pd->cb_count != 3);
 
-   fail_if(4 != (int) eobj_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 4));
+   fail_if(4 != (int) eo_event_callback_del(obj, SIG_A_CHANGED, _a_changed_cb, (void *) 4));
    fail_if(pd->cb_count != 2);
-   eobj_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb);
+   eo_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb);
    fail_if(pd->cb_count != 1);
 
-   fail_if(eobj_event_callback_del_lazy(obj, SIG_A_CHANGED, NULL));
+   fail_if(eo_event_callback_del_lazy(obj, SIG_A_CHANGED, NULL));
    fail_if(pd->cb_count != 1);
-   fail_if(eobj_event_callback_del(obj, SIG_A_CHANGED, NULL, 0));
+   fail_if(eo_event_callback_del(obj, SIG_A_CHANGED, NULL, 0));
    fail_if(pd->cb_count != 1);
 
-   eobj_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb);
+   eo_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb);
    fail_if(pd->cb_count != 0);
 
-   fail_if(eobj_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb));
+   fail_if(eo_event_callback_del_lazy(obj, SIG_A_CHANGED, _a_changed_cb));
    fail_if(pd->cb_count != 0);
 
-   eobj_unref(obj);
-   eobj_shutdown();
+   eo_unref(obj);
+   eo_shutdown();
    return 0;
 }
 

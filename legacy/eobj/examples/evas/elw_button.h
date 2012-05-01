@@ -1,9 +1,9 @@
 #ifndef ELW_BUTTON_H
 #define ELW_BUTTON_H
 
-#include "Eobj.h"
+#include "Eo.h"
 
-extern EAPI Eobj_Op ELW_BUTTON_BASE_ID;
+extern EAPI Eo_Op ELW_BUTTON_BASE_ID;
 
 enum {
      ELW_BUTTON_SUB_ID_TEXT_SET,
@@ -18,12 +18,12 @@ enum {
  * @param[in] text text to assing to button
  * FIXME Doesn't belong here, but just for the example...
  */
-#define elw_button_text_set(text) ELW_BUTTON_ID(ELW_BUTTON_SUB_ID_TEXT_SET), EOBJ_TYPECHECK(const char *, text)
+#define elw_button_text_set(text) ELW_BUTTON_ID(ELW_BUTTON_SUB_ID_TEXT_SET), EO_TYPECHECK(const char *, text)
 
-extern const Eobj_Event_Description _SIG_CLICKED;
+extern const Eo_Event_Description _SIG_CLICKED;
 #define SIG_CLICKED (&(_SIG_CLICKED))
 
 #define ELW_BUTTON_CLASS elw_button_class_get()
-const Eobj_Class *elw_button_class_get(void) EINA_CONST;
+const Eo_Class *elw_button_class_get(void) EINA_CONST;
 
 #endif

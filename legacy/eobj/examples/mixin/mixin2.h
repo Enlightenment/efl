@@ -1,7 +1,7 @@
 #ifndef MIXIN2_H
 #define MIXIN2_H
 
-#include "Eobj.h"
+#include "Eo.h"
 
 typedef struct
 {
@@ -9,6 +9,6 @@ typedef struct
 } Mixin2_Public_Data;
 
 #define MIXIN2_CLASS mixin2_class_get()
-const Eobj_Class *mixin2_class_get(void) EINA_CONST;
+const Eo_Class *mixin2_class_get(void) EINA_CONST;
 
 #endif

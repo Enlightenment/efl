@@ -12,13 +12,13 @@ include_directories(
 
 add_executable(composite_objects ${COMPOSITE_OBJECTS_CC_SOURCES})
 
-get_target_property(eobj_LIB_FILE eobj LOCATION)
+get_target_property(eo_LIB_FILE eo LOCATION)
 target_link_libraries(composite_objects
    ${EINA_LIBRARIES}
    ${EINA_LDFLAGS_OTHER}
-   ${eobj_LIB_FILE}
+   ${eo_LIB_FILE}
    )
 
-add_dependencies(composite_objects eobj)
+add_dependencies(composite_objects eo)
 
 add_test(Example_composite_objects composite_objects)

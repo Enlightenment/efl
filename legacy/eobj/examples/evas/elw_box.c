@@ -1,12 +1,12 @@
 #include <Elementary.h>
 
-#include "Eobj.h"
+#include "Eo.h"
 #include "evas_obj.h"
 #include "elw_box.h"
 
 #include "config.h"
 
-EAPI Eobj_Op ELW_BOX_BASE_ID = 0;
+EAPI Eo_Op ELW_BOX_BASE_ID = 0;
 
 typedef struct
 {
@@ -16,50 +16,50 @@ typedef struct
 #define MY_CLASS ELW_BOX_CLASS
 
 static void
-_pack_end(Eobj *obj EINA_UNUSED, void *class_data, va_list *list)
+_pack_end(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Widget_Data *wd = class_data;
-   Eobj *child_obj;
-   child_obj = va_arg(*list, Eobj *);
+   Eo *child_obj;
+   child_obj = va_arg(*list, Eo *);
    /* FIXME: Ref and the later uref child_obj here... */
-   elm_box_pack_end(wd->bx, eobj_evas_object_get(child_obj));
+   elm_box_pack_end(wd->bx, eo_evas_object_get(child_obj));
 }
 
 static void
-_constructor(Eobj *obj, void *class_data)
+_constructor(Eo *obj, void *class_data)
 {
-   eobj_constructor_super(obj);
+   eo_constructor_super(obj);
 
    Widget_Data *wd = class_data;
 
-   /* FIXME: An hack, because our tree is not yet only Eobj */
-   wd->bx = elm_box_add(eobj_evas_object_get(eobj_parent_get(obj)));
+   /* FIXME: An hack, because our tree is not yet only Eo */
+   wd->bx = elm_box_add(eo_evas_object_get(eo_parent_get(obj)));
    evas_object_size_hint_align_set(wd->bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(wd->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   eobj_evas_object_set(obj, wd->bx);
+   eo_evas_object_set(obj, wd->bx);
 }
 
 static void
-_class_constructor(Eobj_Class *klass)
+_class_constructor(Eo_Class *klass)
 {
-   const Eobj_Op_Func_Description func_desc[] = {
-        EOBJ_OP_FUNC(ELW_BOX_ID(ELW_BOX_SUB_ID_PACK_END), _pack_end),
-        EOBJ_OP_FUNC_SENTINEL
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(ELW_BOX_ID(ELW_BOX_SUB_ID_PACK_END), _pack_end),
+        EO_OP_FUNC_SENTINEL
    };
 
-   eobj_class_funcs_set(klass, func_desc);
+   eo_class_funcs_set(klass, func_desc);
 }
 
-static const Eobj_Op_Description op_desc[] = {
-     EOBJ_OP_DESCRIPTION(ELW_BOX_SUB_ID_PACK_END, "o", "Pack obj at the end of box."),
-     EOBJ_OP_DESCRIPTION_SENTINEL
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ELW_BOX_SUB_ID_PACK_END, "o", "Pack obj at the end of box."),
+     EO_OP_DESCRIPTION_SENTINEL
 };
 
-static const Eobj_Class_Description class_desc = {
+static const Eo_Class_Description class_desc = {
      "Elw Box",
-     EOBJ_CLASS_TYPE_REGULAR,
-     EOBJ_CLASS_DESCRIPTION_OPS(&ELW_BOX_BASE_ID, op_desc, ELW_BOX_SUB_ID_LAST),
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ELW_BOX_BASE_ID, op_desc, ELW_BOX_SUB_ID_LAST),
      NULL,
      sizeof(Widget_Data),
      _constructor,
@@ -68,5 +68,5 @@ static const Eobj_Class_Description class_desc = {
      NULL
 };
 
-EOBJ_DEFINE_CLASS(elw_box_class_get, &class_desc, EVAS_OBJ_CLASS, NULL)
+EO_DEFINE_CLASS(elw_box_class_get, &class_desc, EVAS_OBJ_CLASS, NULL)
 
