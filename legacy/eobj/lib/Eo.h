@@ -61,8 +61,7 @@ EAPI extern Eina_Lock _eo_class_creation_lock;
    ({ \
     type __x; \
     __x = x; \
-    (void) __x; \
-    (type) x; \
+    (type) __x; \
     })
 
 /**
