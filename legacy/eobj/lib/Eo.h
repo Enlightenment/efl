@@ -578,7 +578,7 @@ EAPI int eo_ref_get(const Eo *obj);
 
 /**
  * @def eo_xref(obj, ref_obj)
- * Convenience macro around eo_xref()
+ * Convenience macro around eo_xref_internal()
  * @see eo_xref()
  */
 #define eo_xref(obj, ref_obj) eo_xref_internal(obj, ref_obj, __FILE__, __LINE__)
@@ -592,6 +592,8 @@ EAPI int eo_ref_get(const Eo *obj);
  * @return The object passed (obj)
  *
  * People should not use this function, use #eo_xref instead.
+ * A compile flag my make it and eobj_xunref() behave the same as eobj_ref()
+ * and eobj_unref() respectively. So this should be used wherever possible.
  *
  * @see eo_xunref()
  */
