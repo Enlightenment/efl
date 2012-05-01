@@ -218,7 +218,7 @@ struct _Eo_Op_Func_Description
 {
    Eo_Op op; /**< The op */
    eo_op_func_type func; /**< The function to call for the op. */
-   Eina_Bool constant; /**< #EINA_TRUE if this function is a const. */
+   Eina_Bool constant; /**< @c EINA_TRUE if this function is a const. */
 };
 
 /**
@@ -263,7 +263,7 @@ struct _Eo_Op_Description
    const char *name; /**< The name of the op. */
    const char *type; /**< descripbes the Op's function signature. */
    const char *doc; /**< Explanation about the Op. */
-   Eina_Bool constant; /**< #EINA_TRUE if this op's implementation should not change the obj. */
+   Eina_Bool constant; /**< @c EINA_TRUE if this op's implementation should not change the obj. */
 };
 
 /**
@@ -383,7 +383,7 @@ EAPI const char *eo_class_name_get(const Eo_Class *klass);
 
 /**
  * @brief Init the eo subsystem
- * @return #EINA_TRUE on success.
+ * @return @c EINA_TRUE on success.
  *
  * @see eo_shutfown()
  */
@@ -391,7 +391,7 @@ EAPI Eina_Bool eo_init(void);
 
 /**
  * @brief Shutdown the eo subsystem
- * @return #EINA_TRUE on success.
+ * @return @c EINA_TRUE on success.
  *
  * @see eo_init()
  */
@@ -414,9 +414,9 @@ EAPI Eina_Bool eo_shutdown(void);
 /**
  * @brief Issues ops on an object.
  * @param obj The object to work on
- * @param constant #EINA_TRUE if this call is on a constant object.
+ * @param constant @c EINA_TRUE if this call is on a constant object.
  * @param ... NULL terminated list of OPs and parameters.
- * @return #EINA_TRUE on success.
+ * @return @c EINA_TRUE on success.
  *
  * Use the helper macros, don't pass the parameters manually.
  * Use #eo_do instead of this function.
@@ -429,7 +429,7 @@ EAPI Eina_Bool eo_do_internal(Eo *obj, Eina_Bool constant, ...);
  * @brief Calls the super function for the specific op.
  * @param obj The object to work on
  * @param ... list of parameters.
- * @return #EINA_TRUE on success.
+ * @return @c EINA_TRUE on success.
  *
  * Unlike eo_do() and eo_query(), this function only accepts one op.
  *
@@ -446,7 +446,7 @@ EAPI Eina_Bool eo_do_internal(Eo *obj, Eina_Bool constant, ...);
  * @brief Calls the super function for the specific op.
  * @param obj The object to work on
  * @param ... list of parameters.
- * @return #EINA_TRUE on success.
+ * @return @c EINA_TRUE on success.
  *
  * Unlike eo_do() and eo_query(), this function only accepts one op.
  *
@@ -458,10 +458,10 @@ EAPI Eina_Bool eo_do_internal(Eo *obj, Eina_Bool constant, ...);
 /**
  * @brief Calls the super function for the specific op.
  * @param obj The object to work on
- * @param constant #EINA_TRUE if this call is on a constant object.
+ * @param constant @c EINA_TRUE if this call is on a constant object.
  * @param op The wanted op.
  * @param ... list of parameters.
- * @return #EINA_TRUE on success.
+ * @return @c EINA_TRUE on success.
  *
  * Don't use this function, use the wrapping macros instead.
  *
@@ -509,7 +509,7 @@ EAPI void eo_constructor_error_set(Eo *obj);
 /**
  * @brief Check if there was an error constructing obj
  * @param obj the object to work on.
- * @return #EINA_TRUE if there was an error.
+ * @return @c EINA_TRUE if there was an error.
  *
  * (Should only be called from within a constructor/destructor).
  *
@@ -646,7 +646,7 @@ EAPI void eo_composite_object_detach(Eo *obj, Eo *comp_obj);
 /**
  * @brief Check if an object is a composite object.
  * @param comp_obj the object to be checked.
- * @return #EINA_TRUE if it is, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if it is, @c EINA_FALSE otherwise.
  *
  * @see eo_composite_object_attach()
  * @see eo_composite_object_detach()
@@ -722,7 +722,7 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
  * @param obj The object to listen to events on.
  * @param desc The description of the event to listen to.
  * @param new_obj The object to emit events from.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * @see eo_event_callback_forwarder_del()
  */
@@ -733,7 +733,7 @@ EAPI Eina_Bool eo_event_callback_forwarder_add(Eo *obj, const Eo_Event_Descripti
  * @param obj The object to listen to events on.
  * @param desc The description of the event to listen to.
  * @param new_obj The object to emit events from.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * @see eo_event_callback_forwarder_add()
  */
@@ -746,7 +746,7 @@ EAPI Eina_Bool eo_event_callback_forwarder_del(Eo *obj, const Eo_Event_Descripti
  * @param desc The description of the event to listen to.
  * @param cb the callback to call.
  * @param data additional data to pass to the callback.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * callbacks of the same priority are called in reverse order of creation.
  *
@@ -763,7 +763,7 @@ EAPI Eina_Bool eo_event_callback_forwarder_del(Eo *obj, const Eo_Event_Descripti
  * @param priority The priority of the callback.
  * @param cb the callback to call.
  * @param data additional data to pass to the callback.
- * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
  *
  * callbacks of the same priority are called in reverse order of creation.
  *
@@ -799,7 +799,7 @@ EAPI void *eo_event_callback_del(Eo *obj, const Eo_Event_Description *desc, Eo_E
  * @param obj The object to work on.
  * @param desc The description of the event to call.
  * @param event_info Extra event info to pass to the callbacks.
- * @return #EINA_FALSE if one of the callbacks aborted the callback calls or #EINA_TRUE otherwise.
+ * @return @c EINA_FALSE if one of the callbacks aborted the callback calls or @c EINA_TRUE otherwise.
  */
 EAPI Eina_Bool eo_event_callback_call(Eo *obj, const Eo_Event_Description *desc, const void *event_info);
 
