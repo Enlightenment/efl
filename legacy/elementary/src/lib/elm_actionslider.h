@@ -21,12 +21,15 @@
  *
  * @note By default all positions are set as enabled.
  *
- * Signals that you can add callbacks for are:
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for actionslider objects.
  *
- * "selected" - when user selects an enabled position (the label is passed as
- *              event info)".
- * "pos_changed" - when the indicator reaches any of the positions("left",
- *                 "right" or "center").
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * @li @c "selected" - when user selects an enabled position (the
+ *              label is passed as event info)".
+ * @li @c "pos_changed" - when the indicator reaches any of the
+ *                 positions("left", "right" or "center").
  *
  * Default text parts of the actionslider widget that you can use for are:
  * @li "indicator" - An indicator label of the actionslider
