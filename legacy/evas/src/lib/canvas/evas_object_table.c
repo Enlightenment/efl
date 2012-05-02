@@ -33,10 +33,10 @@ struct _Evas_Object_Table_Cache
          double h, v;
       } weights;
       struct {
-	 int h, v;
+         int h, v;
       } expands;
       struct {
-	 Evas_Coord w, h;
+         Evas_Coord w, h;
       } min;
    } total;
    struct {
@@ -88,28 +88,28 @@ struct _Evas_Object_Table_Accessor
    const Evas_Object *table;
 };
 
-#define EVAS_OBJECT_TABLE_DATA_GET(o, ptr)			\
-  Evas_Object_Table_Data *ptr = evas_object_smart_data_get(o)
+#define EVAS_OBJECT_TABLE_DATA_GET(o, ptr)                              \
+   Evas_Object_Table_Data *ptr = evas_object_smart_data_get(o)
 
-#define EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, ptr)			\
-  EVAS_OBJECT_TABLE_DATA_GET(o, ptr);					\
-  if (!ptr)								\
-    {									\
-      CRIT("no widget data for object %p (%s)",		\
-	   o, evas_object_type_get(o));					\
-       abort();								\
-       return;								\
+#define EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, ptr)                    \
+   EVAS_OBJECT_TABLE_DATA_GET(o, ptr);                                  \
+if (!ptr)                                                               \
+{                                                                       \
+   CRIT("no widget data for object %p (%s)",                            \
+        o, evas_object_type_get(o));                                    \
+   abort();                                                             \
+   return;                                                              \
 }
 
-#define EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, ptr, val)		\
-  EVAS_OBJECT_TABLE_DATA_GET(o, ptr);					\
-  if (!ptr)								\
-    {									\
-       CRIT("No widget data for object %p (%s)",	                \
-	       o, evas_object_type_get(o));				\
-       abort();								\
-       return val;							\
-    }
+#define EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, ptr, val)           \
+   EVAS_OBJECT_TABLE_DATA_GET(o, ptr);                                  \
+if (!ptr)                                                               \
+{                                                                       \
+   CRIT("No widget data for object %p (%s)",                            \
+        o, evas_object_type_get(o));                                    \
+   abort();                                                             \
+   return val;                                                          \
+}
 
 static const char EVAS_OBJECT_TABLE_OPTION_KEY[] = "|EvTb";
 
@@ -168,14 +168,14 @@ _evas_object_table_cache_alloc(int cols, int rows)
    int size;
 
    size = sizeof(Evas_Object_Table_Cache) +
-      ((cols + rows) * 
+      ((cols + rows) *
           (sizeof(double) + sizeof(Evas_Coord) + sizeof(Eina_Bool)));
    cache = malloc(size);
    if (!cache)
      {
-	ERR("Could not allocate table cache %dx%d (%d bytes): %s",
-	      cols, rows, size, strerror(errno));
-	return NULL;
+        ERR("Could not allocate table cache %dx%d (%d bytes): %s",
+            cols, rows, size, strerror(errno));
+        return NULL;
      }
 
    cache->weights.h = (double *)(cache + 1);
@@ -206,7 +206,7 @@ _evas_object_table_cache_reset(Evas_Object_Table_Data *priv)
    c->total.min.h = 0;
 
    size = ((priv->size.rows + priv->size.cols) *
-	   (sizeof(double) + sizeof(Evas_Coord) + sizeof(Eina_Bool)));
+           (sizeof(double) + sizeof(Evas_Coord) + sizeof(Eina_Bool)));
    memset(c + 1, 0, size);
 }
 
@@ -216,8 +216,8 @@ _evas_object_table_cache_invalidate(Evas_Object_Table_Data *priv)
    priv->hints_changed = 1;
    if (priv->cache)
      {
-	_evas_object_table_cache_free(priv->cache);
-	priv->cache = NULL;
+        _evas_object_table_cache_free(priv->cache);
+        priv->cache = NULL;
      }
 }
 
@@ -301,15 +301,15 @@ _evas_object_table_calculate_cell(const Evas_Object_Table_Option *opt, Evas_Coor
    *x += opt->pad.l;
    if (cw != *w)
      {
-	*x += (*w - cw) * opt->align.h;
-	*w = cw;
+        *x += (*w - cw) * opt->align.h;
+        *w = cw;
      }
 
    *y += opt->pad.t;
    if (ch != *h)
      {
-	*y += (*h - ch) * opt->align.v;
-	*h = ch;
+        *y += (*h - ch) * opt->align.v;
+        *h = ch;
      }
 }
 
@@ -330,80 +330,80 @@ _evas_object_table_calculate_hints_homogeneous(Evas_Object *o, Evas_Object_Table
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-	Evas_Object *child = opt->obj;
-	Evas_Coord child_minw, child_minh, cell_minw, cell_minh;
-	double weightw, weighth;
+        Evas_Object *child = opt->obj;
+        Evas_Coord child_minw, child_minh, cell_minw, cell_minh;
+        double weightw, weighth;
 
-	evas_object_size_hint_min_get(child, &opt->min.w, &opt->min.h);
-	evas_object_size_hint_max_get(child, &opt->max.w, &opt->max.h);
-	evas_object_size_hint_padding_get
-	  (child, &opt->pad.l, &opt->pad.r, &opt->pad.t, &opt->pad.b);
-	evas_object_size_hint_align_get(child, &opt->align.h, &opt->align.v);
-	evas_object_size_hint_weight_get(child, &weightw, &weighth);
+        evas_object_size_hint_min_get(child, &opt->min.w, &opt->min.h);
+        evas_object_size_hint_max_get(child, &opt->max.w, &opt->max.h);
+        evas_object_size_hint_padding_get
+           (child, &opt->pad.l, &opt->pad.r, &opt->pad.t, &opt->pad.b);
+        evas_object_size_hint_align_get(child, &opt->align.h, &opt->align.v);
+        evas_object_size_hint_weight_get(child, &weightw, &weighth);
 
-	child_minw = opt->min.w + opt->pad.l + opt->pad.r;
-	child_minh = opt->min.h + opt->pad.t + opt->pad.b;
+        child_minw = opt->min.w + opt->pad.l + opt->pad.r;
+        child_minh = opt->min.h + opt->pad.t + opt->pad.b;
 
-	cell_minw = (child_minw + opt->colspan - 1) / opt->colspan;
-	cell_minh = (child_minh + opt->rowspan - 1) / opt->rowspan;
+        cell_minw = (child_minw + opt->colspan - 1) / opt->colspan;
+        cell_minh = (child_minh + opt->rowspan - 1) / opt->rowspan;
 
-	opt->expand_h = 0;
-	if ((weightw > 0.0) &&
-	    ((opt->max.w < 0) ||
-	     ((opt->max.w > -1) && (opt->min.w < opt->max.w))))
-	  {
-	     opt->expand_h = 1;
-	     expand_h = 1;
-	  }
+        opt->expand_h = 0;
+        if ((weightw > 0.0) &&
+            ((opt->max.w < 0) ||
+             ((opt->max.w > -1) && (opt->min.w < opt->max.w))))
+          {
+             opt->expand_h = 1;
+             expand_h = 1;
+          }
 
-	opt->expand_v = 0;
-	if ((weighth > 0.0) &&
-	    ((opt->max.h < 0) ||
-	     ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
-	  {
-	     opt->expand_v = 1;
-	     expand_v = 1;
-	  }
+        opt->expand_v = 0;
+        if ((weighth > 0.0) &&
+            ((opt->max.h < 0) ||
+             ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
+          {
+             opt->expand_v = 1;
+             expand_v = 1;
+          }
 
-	opt->fill_h = 0;
-	if (opt->align.h < 0.0)
-	  {
-	     opt->align.h = 0.5;
-	     opt->fill_h = 1;
-	  }
-	opt->fill_v = 0;
-	if (opt->align.v < 0.0)
-	  {
-	     opt->align.v = 0.5;
-	     opt->fill_v = 1;
-	  }
+        opt->fill_h = 0;
+        if (opt->align.h < 0.0)
+          {
+             opt->align.h = 0.5;
+             opt->fill_h = 1;
+          }
+        opt->fill_v = 0;
+        if (opt->align.v < 0.0)
+          {
+             opt->align.v = 0.5;
+             opt->fill_v = 1;
+          }
 
-	/* greatest mininum values, with paddings */
-	if (minw < cell_minw)
-	  minw = cell_minw;
-	if (minh < cell_minh)
-	  minh = cell_minh;
-	/* greatest mininum values, without paddings */
-	if (o_minw < opt->min.w)
-	  o_minw = opt->min.w;
-	if (o_minh < opt->min.h)
-	  o_minh = opt->min.h;
+        /* greatest mininum values, with paddings */
+        if (minw < cell_minw)
+          minw = cell_minw;
+        if (minh < cell_minh)
+          minh = cell_minh;
+        /* greatest mininum values, without paddings */
+        if (o_minw < opt->min.w)
+          o_minw = opt->min.w;
+        if (o_minh < opt->min.h)
+          o_minh = opt->min.h;
      }
 
    if (priv->homogeneous == EVAS_OBJECT_TABLE_HOMOGENEOUS_ITEM)
      {
-	if (o_minw < 1)
-	  {
-	     ERR("homogeneous table based on item size but no "
-		   "horizontal mininum size specified! Using expand.");
-	     expand_h = 1;
-	  }
-	if (o_minh < 1)
-	  {
-	     ERR("homogeneous table based on item size but no "
-		   "vertical mininum size specified! Using expand.");
-	     expand_v = 1;
-	  }
+        if (o_minw < 1)
+          {
+             ERR("homogeneous table based on item size but no "
+                 "horizontal mininum size specified! Using expand.");
+             expand_h = 1;
+          }
+        if (o_minh < 1)
+          {
+             ERR("homogeneous table based on item size but no "
+                 "vertical mininum size specified! Using expand.");
+             expand_v = 1;
+          }
      }
 
    minw = priv->size.cols * (minw + priv->pad.h) - priv->pad.h;
@@ -433,16 +433,16 @@ _evas_object_table_calculate_layout_homogeneous_sizes_item(const Evas_Object *o,
      expand_h = 0;
    if (!expand_h)
      {
-	*x += (*w - minw) * priv->align.h;
-	*w = minw;
+        *x += (*w - minw) * priv->align.h;
+        *w = minw;
      }
 
    if (*h < minh)
      expand_v = 0;
    if (!expand_v)
      {
-	*y += (*h - minh) * priv->align.v;
-	*h = minh;
+        *y += (*h - minh) * priv->align.v;
+        *h = minh;
      }
 }
 
@@ -464,35 +464,35 @@ _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Object_Tabl
    Evas_Coord x = 0, y = 0, w = 0, h = 0, ww, hh, cellw = 0, cellh = 0;
    Eina_List *l;
    Evas_Object_Table_Option *opt;
-   
+
    _evas_object_table_calculate_layout_homogeneous_sizes
-     (o, priv, &x, &y, &w, &h, &cellw, &cellh);
-   
+      (o, priv, &x, &y, &w, &h, &cellw, &cellh);
+
    ww = w - ((priv->size.cols - 1) * priv->pad.h);
    hh = h - ((priv->size.rows - 1) * priv->pad.v);
-   
+
    if (ww < 0) ww = 0;
    if (ww < 0) ww = 0;
-   
+
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-	Evas_Object *child = opt->obj;
-	Evas_Coord cx, cy, cw, ch, cox, coy, cow, coh;
+        Evas_Object *child = opt->obj;
+        Evas_Coord cx, cy, cw, ch, cox, coy, cow, coh;
 
-	cx = x + ((opt->col * ww) / priv->size.cols);
+        cx = x + ((opt->col * ww) / priv->size.cols);
         cw = x + (((opt->col + opt->colspan) * ww) / priv->size.cols) - cx;
-	cy = y + ((opt->row * hh) / priv->size.rows);
+        cy = y + ((opt->row * hh) / priv->size.rows);
         ch = y + (((opt->row + opt->rowspan) * hh) / priv->size.rows) - cy;
 
         cx += (opt->col) * priv->pad.h;
         cy += (opt->row) * priv->pad.v;
-        
+
         cox = cx;
         coy = cy;
         cow = cw;
         coh = ch;
 
-	_evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
+        _evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
         if (cw > cow)
           {
              cx = cox;
@@ -512,7 +512,7 @@ _evas_object_table_calculate_layout_homogeneous(Evas_Object *o, Evas_Object_Tabl
           {
              evas_object_move(child, cx, cy);
           }
-	evas_object_resize(child, cw, ch);
+        evas_object_resize(child, cw, ch);
      }
 }
 
@@ -574,7 +574,7 @@ _evas_object_table_sizes_calc_expand(Evas_Coord *sizes, int start, int end, Evas
    const Eina_Bool *itr_expand = expands + start;
    Evas_Coord step = 0, last_space = 0;
    int total = 0, i = start;
-   
+
    /* XXX move to fixed point math and spread errors among cells */
    if (weighttot > 0.0)
      {
@@ -627,13 +627,13 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
    Eina_List *l;
    double totweightw = 0.0, totweighth = 0.0;
    int i;
-   
+
    if (!priv->cache)
      {
-	priv->cache = _evas_object_table_cache_alloc
-	  (priv->size.cols, priv->size.rows);
-	if (!priv->cache)
-	  return;
+        priv->cache = _evas_object_table_cache_alloc
+           (priv->size.cols, priv->size.rows);
+        if (!priv->cache)
+          return;
      }
    c = priv->cache;
    _evas_object_table_cache_reset(priv);
@@ -645,50 +645,50 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
    memset(c->weights.v, 0, priv->size.rows);
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-	Evas_Object *child = opt->obj;
-	double weightw, weighth;
+        Evas_Object *child = opt->obj;
+        double weightw, weighth;
 
-	evas_object_size_hint_min_get(child, &opt->min.w, &opt->min.h);
-	evas_object_size_hint_max_get(child, &opt->max.w, &opt->max.h);
-	evas_object_size_hint_padding_get
-	  (child, &opt->pad.l, &opt->pad.r, &opt->pad.t, &opt->pad.b);
-	evas_object_size_hint_align_get(child, &opt->align.h, &opt->align.v);
-	evas_object_size_hint_weight_get(child, &weightw, &weighth);
+        evas_object_size_hint_min_get(child, &opt->min.w, &opt->min.h);
+        evas_object_size_hint_max_get(child, &opt->max.w, &opt->max.h);
+        evas_object_size_hint_padding_get
+           (child, &opt->pad.l, &opt->pad.r, &opt->pad.t, &opt->pad.b);
+        evas_object_size_hint_align_get(child, &opt->align.h, &opt->align.v);
+        evas_object_size_hint_weight_get(child, &weightw, &weighth);
 
-	opt->expand_h = 0;
-	if ((weightw > 0.0) &&
-	    ((opt->max.w < 0) ||
-	     ((opt->max.w > -1) && (opt->min.w < opt->max.w))))
-	  opt->expand_h = 1;
+        opt->expand_h = 0;
+        if ((weightw > 0.0) &&
+            ((opt->max.w < 0) ||
+             ((opt->max.w > -1) && (opt->min.w < opt->max.w))))
+          opt->expand_h = 1;
 
-	opt->expand_v = 0;
-	if ((weighth > 0.0) &&
-	    ((opt->max.h < 0) ||
-	     ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
-	  opt->expand_v = 1;
-        
-	opt->fill_h = 0;
-	if (opt->align.h < 0.0)
-	  {
-	     opt->align.h = 0.5;
-	     opt->fill_h = 1;
-	  }
-	opt->fill_v = 0;
-	if (opt->align.v < 0.0)
-	  {
-	     opt->align.v = 0.5;
-	     opt->fill_v = 1;
-	  }
+        opt->expand_v = 0;
+        if ((weighth > 0.0) &&
+            ((opt->max.h < 0) ||
+             ((opt->max.h > -1) && (opt->min.h < opt->max.h))))
+          opt->expand_v = 1;
 
-	if (!opt->expand_h)
-	  memset(c->expands.h + opt->col, 0, opt->colspan);
+        opt->fill_h = 0;
+        if (opt->align.h < 0.0)
+          {
+             opt->align.h = 0.5;
+             opt->fill_h = 1;
+          }
+        opt->fill_v = 0;
+        if (opt->align.v < 0.0)
+          {
+             opt->align.v = 0.5;
+             opt->fill_v = 1;
+          }
+
+        if (!opt->expand_h)
+          memset(c->expands.h + opt->col, 0, opt->colspan);
         else
           {
              for (i = opt->col; i < opt->col + opt->colspan; i++)
-                c->weights.h[i] += (weightw / (double)opt->colspan);
+               c->weights.h[i] += (weightw / (double)opt->colspan);
           }
-	if (!opt->expand_v)
-	  memset(c->expands.v + opt->row, 0, opt->rowspan);
+        if (!opt->expand_v)
+          memset(c->expands.v + opt->row, 0, opt->rowspan);
         else
           {
              for (i = opt->row; i < opt->row + opt->rowspan; i++)
@@ -701,54 +701,54 @@ _evas_object_table_calculate_hints_regular(Evas_Object *o, Evas_Object_Table_Dat
    /* calculate sizes for each row and column */
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-	Evas_Coord tot, need;
+        Evas_Coord tot, need;
 
-	/* handle horizontal */
-	tot = _evas_object_table_sum_sizes(c->sizes.h, opt->col, opt->end_col);
-	need = opt->min.w + opt->pad.l + opt->pad.r;
-	if (tot < need)
-	  {
-	     Evas_Coord space = need - tot;
-	     int count;
+        /* handle horizontal */
+        tot = _evas_object_table_sum_sizes(c->sizes.h, opt->col, opt->end_col);
+        need = opt->min.w + opt->pad.l + opt->pad.r;
+        if (tot < need)
+          {
+             Evas_Coord space = need - tot;
+             int count;
 
-	     count = _evas_object_table_count_expands
-	       (c->expands.h, opt->col, opt->end_col);
+             count = _evas_object_table_count_expands
+                (c->expands.h, opt->col, opt->end_col);
 
-	     if (count > 0)
-	       _evas_object_table_sizes_calc_expand
-		 (c->sizes.h, opt->col, opt->end_col, space,
-		  c->expands.h, count, c->weights.h, totweightw);
-	     else
-	       _evas_object_table_sizes_calc_noexpand
-		 (c->sizes.h, opt->col, opt->end_col, space);
-	  }
+             if (count > 0)
+               _evas_object_table_sizes_calc_expand
+                  (c->sizes.h, opt->col, opt->end_col, space,
+                   c->expands.h, count, c->weights.h, totweightw);
+             else
+               _evas_object_table_sizes_calc_noexpand
+                  (c->sizes.h, opt->col, opt->end_col, space);
+          }
 
-	/* handle vertical */
-	tot = _evas_object_table_sum_sizes(c->sizes.v, opt->row, opt->end_row);
-	need = opt->min.h + opt->pad.t + opt->pad.b;
-	if (tot < opt->min.h)
-	  {
-	     Evas_Coord space = need - tot;
-	     int count;
+        /* handle vertical */
+        tot = _evas_object_table_sum_sizes(c->sizes.v, opt->row, opt->end_row);
+        need = opt->min.h + opt->pad.t + opt->pad.b;
+        if (tot < opt->min.h)
+          {
+             Evas_Coord space = need - tot;
+             int count;
 
-	     count = _evas_object_table_count_expands
-	       (c->expands.v, opt->row, opt->end_row);
+             count = _evas_object_table_count_expands
+                (c->expands.v, opt->row, opt->end_row);
 
-	     if (count > 0)
-	       _evas_object_table_sizes_calc_expand
-		 (c->sizes.v, opt->row, opt->end_row, space,
-		  c->expands.v, count, c->weights.v, totweighth);
-	     else
-	       _evas_object_table_sizes_calc_noexpand
-		 (c->sizes.v, opt->row, opt->end_row, space);
-	  }
+             if (count > 0)
+               _evas_object_table_sizes_calc_expand
+                  (c->sizes.v, opt->row, opt->end_row, space,
+                   c->expands.v, count, c->weights.v, totweighth);
+             else
+               _evas_object_table_sizes_calc_noexpand
+                  (c->sizes.v, opt->row, opt->end_row, space);
+          }
      }
 
    c->total.weights.h = totweightw;
    c->total.weights.v = totweighth;
-   
+
    c->total.expands.h = _evas_object_table_count_expands
-     (c->expands.h, 0, priv->size.cols);
+      (c->expands.h, 0, priv->size.cols);
    c->total.expands.v = _evas_object_table_count_expands
      (c->expands.v, 0, priv->size.rows);
 
@@ -781,63 +781,63 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
    /* handle horizontal */
    if ((c->total.expands.h <= 0) || (c->total.min.w >= w))
      {
-	x += (w - c->total.min.w) * priv->align.h;
-	w = c->total.min.w;
-	cols = c->sizes.h;
+        x += (w - c->total.min.w) * priv->align.h;
+        w = c->total.min.w;
+        cols = c->sizes.h;
      }
    else
      {
-	int size = priv->size.cols * sizeof(Evas_Coord);
-	cols = malloc(size);
-	if (!cols)
-	  {
-	     ERR("Could not allocate temp columns (%d bytes): %s",
+        int size = priv->size.cols * sizeof(Evas_Coord);
+        cols = malloc(size);
+        if (!cols)
+          {
+             ERR("Could not allocate temp columns (%d bytes): %s",
                  size, strerror(errno));
              goto end;
-	  }
-	memcpy(cols, c->sizes.h, size);
-	_evas_object_table_sizes_calc_expand
-	  (cols, 0, priv->size.cols, w - c->total.min.w,
-	   c->expands.h, c->total.expands.h, c->weights.h, c->total.weights.h);
+          }
+        memcpy(cols, c->sizes.h, size);
+        _evas_object_table_sizes_calc_expand
+           (cols, 0, priv->size.cols, w - c->total.min.w,
+            c->expands.h, c->total.expands.h, c->weights.h, c->total.weights.h);
      }
 
    /* handle vertical */
    if ((c->total.expands.v <= 0) || (c->total.min.h >= h))
      {
-	y += (h - c->total.min.h) * priv->align.v;
-	h = c->total.min.h;
-	rows = c->sizes.v;
+        y += (h - c->total.min.h) * priv->align.v;
+        h = c->total.min.h;
+        rows = c->sizes.v;
      }
    else
      {
-	int size = priv->size.rows * sizeof(Evas_Coord);
-	rows = malloc(size);
-	if (!rows)
-	  {
-	     ERR("could not allocate temp rows (%d bytes): %s",
+        int size = priv->size.rows * sizeof(Evas_Coord);
+        rows = malloc(size);
+        if (!rows)
+          {
+             ERR("could not allocate temp rows (%d bytes): %s",
                  size, strerror(errno));
-	     goto end;
-	  }
-	memcpy(rows, c->sizes.v, size);
-	_evas_object_table_sizes_calc_expand
-	  (rows, 0, priv->size.rows, h - c->total.min.h,
-	   c->expands.v, c->total.expands.v, c->weights.v, c->total.weights.v);
+             goto end;
+          }
+        memcpy(rows, c->sizes.v, size);
+        _evas_object_table_sizes_calc_expand
+           (rows, 0, priv->size.rows, h - c->total.min.h,
+            c->expands.v, c->total.expands.v, c->weights.v, c->total.weights.v);
      }
 
    EINA_LIST_FOREACH(priv->children, l, opt)
      {
-	Evas_Object *child = opt->obj;
-	Evas_Coord cx, cy, cw, ch;
+        Evas_Object *child = opt->obj;
+        Evas_Coord cx, cy, cw, ch;
 
-	cx = x + opt->col * (priv->pad.h);
-	cx += _evas_object_table_sum_sizes(cols, 0, opt->col);
-	cw = _evas_object_table_sum_sizes(cols, opt->col, opt->end_col);
+        cx = x + opt->col * (priv->pad.h);
+        cx += _evas_object_table_sum_sizes(cols, 0, opt->col);
+        cw = _evas_object_table_sum_sizes(cols, opt->col, opt->end_col);
 
-	cy = y + opt->row * (priv->pad.v);
-	cy += _evas_object_table_sum_sizes(rows, 0, opt->row);
-	ch = _evas_object_table_sum_sizes(rows, opt->row, opt->end_row);
+        cy = y + opt->row * (priv->pad.v);
+        cy += _evas_object_table_sum_sizes(rows, 0, opt->row);
+        ch = _evas_object_table_sum_sizes(rows, opt->row, opt->end_row);
 
-	_evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
+        _evas_object_table_calculate_cell(opt, &cx, &cy, &cw, &ch);
 
         if (priv->is_mirrored)
           {
@@ -847,7 +847,7 @@ _evas_object_table_calculate_layout_regular(Evas_Object *o, Evas_Object_Table_Da
           {
              evas_object_move(child, cx, cy);
           }
-	evas_object_resize(child, cw, ch);
+        evas_object_resize(child, cw, ch);
      }
 
  end:
@@ -870,8 +870,8 @@ _evas_object_table_smart_calculate_regular(Evas_Object *o, Evas_Object_Table_Dat
 }
 
 EVAS_SMART_SUBCLASS_NEW("Evas_Object_Table", _evas_object_table,
-			Evas_Smart_Class, Evas_Smart_Class,
-			evas_object_smart_clipped_class_get, NULL)
+                        Evas_Smart_Class, Evas_Smart_Class,
+                        evas_object_smart_clipped_class_get, NULL)
 
 static void
 _evas_object_table_smart_add(Evas_Object *o)
@@ -902,11 +902,11 @@ _evas_object_table_smart_del(Evas_Object *o)
    l = priv->children;
    while (l)
      {
-	Evas_Object_Table_Option *opt = l->data;
-	_evas_object_table_child_disconnect(o, opt->obj);
-	_evas_object_table_option_del(opt->obj);
-	free(opt);
-	l = eina_list_remove_list(l, l);
+        Evas_Object_Table_Option *opt = l->data;
+        _evas_object_table_child_disconnect(o, opt->obj);
+        _evas_object_table_option_del(opt->obj);
+        free(opt);
+        l = eina_list_remove_list(l, l);
      }
 
    if (priv->cache)
@@ -934,9 +934,9 @@ _evas_object_table_smart_calculate(Evas_Object *o)
 
    if ((priv->size.cols < 1) || (priv->size.rows < 1))
      {
-	DBG("Nothing to do: cols=%d, rows=%d",
-	      priv->size.cols, priv->size.rows);
-	return;
+        DBG("Nothing to do: cols=%d, rows=%d",
+            priv->size.cols, priv->size.rows);
+        return;
      }
 
    if (priv->homogeneous)
@@ -1007,13 +1007,13 @@ evas_object_table_align_get(const Evas_Object *o, double *horizontal, double *ve
    EVAS_OBJECT_TABLE_DATA_GET(o, priv);
    if (priv)
      {
-	if (horizontal) *horizontal = priv->align.h;
-	if (vertical) *vertical = priv->align.v;
+        if (horizontal) *horizontal = priv->align.h;
+        if (vertical) *vertical = priv->align.v;
      }
    else
      {
-	if (horizontal) *horizontal = 0.5;
-	if (vertical) *vertical = 0.5;
+        if (horizontal) *horizontal = 0.5;
+        if (vertical) *vertical = 0.5;
      }
 }
 
@@ -1035,13 +1035,13 @@ evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas
    EVAS_OBJECT_TABLE_DATA_GET(o, priv);
    if (priv)
      {
-	if (horizontal) *horizontal = priv->pad.h;
-	if (vertical) *vertical = priv->pad.v;
+        if (horizontal) *horizontal = priv->pad.h;
+        if (vertical) *vertical = priv->pad.v;
      }
    else
      {
-	if (horizontal) *horizontal = 0;
-	if (vertical) *vertical = 0;
+        if (horizontal) *horizontal = 0;
+        if (vertical) *vertical = 0;
      }
 }
 
@@ -1076,13 +1076,13 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
 
    if (rowspan < 1)
      {
-	ERR("rowspan < 1");
-	return EINA_FALSE;
+        ERR("rowspan < 1");
+        return EINA_FALSE;
      }
    if (colspan < 1)
      {
-	ERR("colspan < 1");
-	return EINA_FALSE;
+        ERR("colspan < 1");
+        return EINA_FALSE;
      }
 
    opt = _evas_object_table_option_get(child);
@@ -1103,17 +1103,17 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
    opt->rowspan = rowspan;
    opt->end_col = col + colspan;
    opt->end_row = row + rowspan;
-   
+
    if (evas_object_smart_parent_get(child) == o)
      {
         Eina_Bool need_shrink = EINA_FALSE;
-        
+
         if (priv->size.cols < opt->end_col)
-           priv->size.cols = opt->end_col;
+          priv->size.cols = opt->end_col;
         else
-           need_shrink = EINA_TRUE;
+          need_shrink = EINA_TRUE;
         if (priv->size.rows < opt->end_row)
-           priv->size.rows = opt->end_row;
+          priv->size.rows = opt->end_row;
         else
           need_shrink = EINA_TRUE;
 
@@ -1122,7 +1122,7 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
              Eina_List *l;
              Evas_Object_Table_Option *opt2;
              int max_row = 0, max_col = 0;
-             
+
              EINA_LIST_FOREACH(priv->children, l, opt2)
                {
                   if (max_col < opt2->end_col) max_col = opt2->end_col;
@@ -1148,12 +1148,12 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
         opt->expand_v = 0;
 
         priv->children = eina_list_append(priv->children, opt);
-        
+
         if (priv->size.cols < opt->end_col)
-           priv->size.cols = opt->end_col;
+          priv->size.cols = opt->end_col;
         if (priv->size.rows < opt->end_row)
-           priv->size.rows = opt->end_row;
-        
+          priv->size.rows = opt->end_row;
+
         _evas_object_table_option_set(child, opt);
         evas_object_smart_member_add(child, o);
         _evas_object_table_child_connect(o, child);
@@ -1175,37 +1175,37 @@ _evas_object_table_remove_opt(Evas_Object_Table_Data *priv, Evas_Object_Table_Op
    l = priv->children;
    while (l)
      {
-	Evas_Object_Table_Option *cur_opt = l->data;
+        Evas_Object_Table_Option *cur_opt = l->data;
 
-	if (cur_opt != opt)
-	  {
-	     if (max_col < cur_opt->end_col)
-	       max_col = cur_opt->end_col;
-	     if (max_row < cur_opt->end_row)
-	       max_row = cur_opt->end_row;
+        if (cur_opt != opt)
+          {
+             if (max_col < cur_opt->end_col)
+               max_col = cur_opt->end_col;
+             if (max_row < cur_opt->end_row)
+               max_row = cur_opt->end_row;
 
-	     l = l->next;
-	  }
-	else
-	  {
-	     Eina_List *tmp = l->next;
-	     priv->children = eina_list_remove_list(priv->children, l);
+             l = l->next;
+          }
+        else
+          {
+             Eina_List *tmp = l->next;
+             priv->children = eina_list_remove_list(priv->children, l);
 
-	     if ((priv->size.cols > opt->end_col) &&
-		 (priv->size.rows > opt->end_row))
-	       break;
-	     else
-	       {
-		  was_greatest = 1;
-		  l = tmp;
-	       }
-	  }
+             if ((priv->size.cols > opt->end_col) &&
+                 (priv->size.rows > opt->end_row))
+               break;
+             else
+               {
+                  was_greatest = 1;
+                  l = tmp;
+               }
+          }
      }
 
    if (was_greatest)
      {
-	priv->size.cols = max_col;
-	priv->size.rows = max_row;
+        priv->size.cols = max_col;
+        priv->size.rows = max_row;
      }
 }
 
@@ -1218,15 +1218,15 @@ evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
 
    if (o != evas_object_smart_parent_get(child))
      {
-	ERR("cannot unpack child from incorrect table!");
-	return EINA_FALSE;
+        ERR("cannot unpack child from incorrect table!");
+        return EINA_FALSE;
      }
 
    opt = _evas_object_table_option_del(child);
    if (!opt)
      {
-	ERR("cannot unpack child with no packing option!");
-	return EINA_FALSE;
+        ERR("cannot unpack child with no packing option!");
+        return EINA_FALSE;
      }
 
    _evas_object_table_child_disconnect(o, child);
@@ -1248,12 +1248,12 @@ evas_object_table_clear(Evas_Object *o, Eina_Bool clear)
 
    EINA_LIST_FREE(priv->children, opt)
      {
-	_evas_object_table_child_disconnect(o, opt->obj);
-	_evas_object_table_option_del(opt->obj);
-	evas_object_smart_member_del(opt->obj);
-	if (clear)
-	  evas_object_del(opt->obj);
-	free(opt);
+        _evas_object_table_child_disconnect(o, opt->obj);
+        _evas_object_table_option_del(opt->obj);
+        evas_object_smart_member_del(opt->obj);
+        if (clear)
+          evas_object_del(opt->obj);
+        free(opt);
      }
    priv->size.cols = 0;
    priv->size.rows = 0;
@@ -1267,13 +1267,13 @@ evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows)
    EVAS_OBJECT_TABLE_DATA_GET(o, priv);
    if (priv)
      {
-	if (cols) *cols = priv->size.cols;
-	if (rows) *rows = priv->size.rows;
+        if (cols) *cols = priv->size.cols;
+        if (rows) *rows = priv->size.rows;
      }
    else
      {
-	if (cols) *cols = -1;
-	if (rows) *rows = -1;
+        if (cols) *cols = -1;
+        if (rows) *rows = -1;
      }
 }
 
