@@ -54,6 +54,8 @@ struct _Elm_Hover_Smart_Data
    Content_Info         *smt_sub;  /* 'smart placement' sub object */
    Content_Info          subs[sizeof(_content_aliases) /
                               sizeof(_content_aliases[0]) - 1];
+
+   Eina_Bool             on_del : 1;
 };
 
 static const char SIG_CLICKED[] = "clicked";
@@ -94,6 +96,71 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 EVAS_SMART_SUBCLASS_NEW
   (HOVER_SMART_NAME, _elm_hover, Elm_Layout_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
+
+static void
+_parent_move_cb(void *data,
+                Evas *e __UNUSED__,
+                Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
+   elm_layout_sizing_eval(data);
+}
+
+static void
+_parent_resize_cb(void *data,
+                  Evas *e __UNUSED__,
+                  Evas_Object *obj __UNUSED__,
+                  void *event_info __UNUSED__)
+{
+   elm_layout_sizing_eval(data);
+}
+
+static void
+_parent_show_cb(void *data __UNUSED__,
+                Evas *e __UNUSED__,
+                Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
+}
+
+static void
+_parent_hide_cb(void *data,
+                Evas *e __UNUSED__,
+                Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
+   evas_object_hide(data);
+}
+
+static void
+_parent_del_cb(void *data,
+               Evas *e __UNUSED__,
+               Evas_Object *obj __UNUSED__,
+               void *event_info __UNUSED__)
+{
+   elm_hover_parent_set(data, NULL);
+   elm_layout_sizing_eval(data);
+}
+
+static void
+_elm_hover_parent_detach(Evas_Object *obj)
+{
+   ELM_HOVER_DATA_GET(obj, sd);
+
+   if (sd->parent)
+     {
+        evas_object_event_callback_del_full
+          (sd->parent, EVAS_CALLBACK_MOVE, _parent_move_cb, obj);
+        evas_object_event_callback_del_full
+          (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
+        evas_object_event_callback_del_full
+          (sd->parent, EVAS_CALLBACK_SHOW, _parent_show_cb, obj);
+        evas_object_event_callback_del_full
+          (sd->parent, EVAS_CALLBACK_HIDE, _parent_hide_cb, obj);
+        evas_object_event_callback_del_full
+          (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
+     }
+}
 
 static void
 _elm_hover_left_space_calc(Elm_Hover_Smart_Data *sd,
@@ -276,6 +343,8 @@ _elm_hover_smart_sizing_eval(Evas_Object *obj)
               y2 = 0, w2 = 0, h2 = 0;
 
    ELM_HOVER_DATA_GET(obj, sd);
+
+   if (sd->on_del) return;
 
    if (sd->parent) evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
    evas_object_geometry_get(obj, &x2, &y2, &w2, &h2);
@@ -492,51 +561,6 @@ _hov_dismiss_cb(void *data,
 }
 
 static void
-_parent_move_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
-{
-   elm_layout_sizing_eval(data);
-}
-
-static void
-_parent_resize_cb(void *data,
-                  Evas *e __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
-{
-   elm_layout_sizing_eval(data);
-}
-
-static void
-_parent_show_cb(void *data __UNUSED__,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
-{
-}
-
-static void
-_parent_hide_cb(void *data,
-                Evas *e __UNUSED__,
-                Evas_Object *obj __UNUSED__,
-                void *event_info __UNUSED__)
-{
-   evas_object_hide(data);
-}
-
-static void
-_parent_del_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj __UNUSED__,
-               void *event_info __UNUSED__)
-{
-   elm_hover_parent_set(data, NULL);
-   elm_layout_sizing_eval(data);
-}
-
-static void
 _elm_hover_smart_add(Evas_Object *obj)
 {
    unsigned int i;
@@ -569,11 +593,17 @@ _elm_hover_smart_add(Evas_Object *obj)
 static void
 _elm_hover_smart_del(Evas_Object *obj)
 {
+   ELM_HOVER_DATA_GET(obj, sd);
+
+   sd->on_del = EINA_TRUE;
+
    if (evas_object_visible_get(obj))
      evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
 
    elm_hover_target_set(obj, NULL);
-   elm_hover_parent_set(obj, NULL);
+
+   _elm_hover_parent_detach(obj);
+   sd->parent = NULL;
 
    ELM_WIDGET_CLASS(_elm_hover_parent_sc)->base.del(obj);
 }
@@ -709,19 +739,7 @@ elm_hover_parent_set(Evas_Object *obj,
    ELM_HOVER_CHECK(obj);
    ELM_HOVER_DATA_GET(obj, sd);
 
-   if (sd->parent)
-     {
-        evas_object_event_callback_del_full
-          (sd->parent, EVAS_CALLBACK_MOVE, _parent_move_cb, obj);
-        evas_object_event_callback_del_full
-          (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
-        evas_object_event_callback_del_full
-          (sd->parent, EVAS_CALLBACK_SHOW, _parent_show_cb, obj);
-        evas_object_event_callback_del_full
-          (sd->parent, EVAS_CALLBACK_HIDE, _parent_hide_cb, obj);
-        evas_object_event_callback_del_full
-          (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
-     }
+   _elm_hover_parent_detach(obj);
 
    sd->parent = parent;
    if (sd->parent)
