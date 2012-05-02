@@ -57,10 +57,10 @@ _overflow_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 void
 slider_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    Evas_Object *fl = (Evas_Object *)data;
+   Evas_Object *fl = (Evas_Object *)data;
 
-    double val = elm_slider_value_get(obj);
-    elm_flipselector_first_interval_set(fl, val);
+   double val = elm_slider_value_get(obj);
+   elm_flipselector_first_interval_set(fl, val);
 }
 
 void
@@ -84,14 +84,14 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    unsigned int i;
    Evas_Object *win, *bx, *fp, *bt, *bx2, *sl;
    static const char *lbl[] = {
-     "Elementary",
-     "Evas",
-     "Eina",
-     "Edje",
-     "Eet",
-     "Ecore",
-     "Efreet",
-     "Edbus"
+        "Elementary",
+        "Evas",
+        "Eina",
+        "Edje",
+        "Eet",
+        "Ecore",
+        "Efreet",
+        "Edbus"
    };
 
    win = elm_win_util_standard_add("flipselector", "Flip Selector");
@@ -124,8 +124,8 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_size_hint_weight_set(fp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    for (i = 1990; i <= 2099; i++)
      {
-	snprintf(buf, 8, "%d", i);
-	elm_flipselector_item_append(fp, buf, _sel_cb, NULL);
+        snprintf(buf, 8, "%d", i);
+        elm_flipselector_item_append(fp, buf, _sel_cb, NULL);
      }
 
    bt = elm_button_add(win);
