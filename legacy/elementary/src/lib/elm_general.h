@@ -164,6 +164,10 @@ EAPI int       elm_init(int argc, char **argv);
  *
  * @see elm_init() for an example
  *
+ * @note elm_shutdown() will iterate main loop until all ecore_evas are freed.
+ * There is a possibility to call your ecore callbacks(timer, animator, event,
+ * job, and etc.) in elm_shutdown()
+ *
  * @ingroup General
  */
 EAPI int       elm_shutdown(void);
