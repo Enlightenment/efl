@@ -12433,6 +12433,8 @@ EAPI Evas_Modifier_Mask   evas_key_modifier_mask_get     (const Evas *e, const c
  *
  * See the full example @ref Example_Evas_Events "here".
  *
+ * @warning Providing impossible modifier sets creates undefined behavior
+ *
  * @see evas_object_key_ungrab
  * @see evas_object_focus_set
  * @see evas_object_focus_get
