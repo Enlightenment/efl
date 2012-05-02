@@ -514,7 +514,7 @@ EAPI const char    *eeze_disk_udev_get_parent(Eeze_Disk *disk);
  * @param value OPTIONAL: The value that @p sysattr should have, or @c NULL.
  *
  * @return If the sysattr (with value) is found, returns @c EINA_TRUE,
- * @EINA_FALSE otherwise.
+ * @c EINA_FALSE otherwise.
  * @since 1.1
  */
 EAPI Eina_Bool      eeze_disk_udev_walk_check_sysattr(Eeze_Disk *disk, const char *sysattr, const char *value);
