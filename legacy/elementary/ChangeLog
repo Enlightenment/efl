@@ -5,9 +5,9 @@
 2012-04-27 Daniel Juyung Seo (SeoZ)
 
 	* Genlist : Fixed genlist expandable effect bug when we expand/contract
-	  items with many children very quickly.
+	items with many children very quickly.
 	* Genlist : Realize move items during tree effect only when the item is
-	  not in the queue.
+	not in the queue.
 
 2012-04-30 Jérôme Pinot
 
@@ -20,4 +20,9 @@
 2012-05-02 Carsten Haitzler (The Rasterman)
 
 	* Fix possible problems with other subsystems depending on X11 display
-        being closed (XCloseDisplay not close() on socket fd).
+	being closed (XCloseDisplay not close() on socket fd).
+
+2012-05-02  ChunEon Park (Hermet)
+
+	* Font: actually it doesnt append the font to the hash when font_hash is
+	created inside. Now it is fixed.
