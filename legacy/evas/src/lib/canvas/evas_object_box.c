@@ -47,7 +47,6 @@ if (!ptr)                                                               \
    CRIT("no widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
    fflush(stderr);                                                      \
-   abort();                                                             \
    return;                                                              \
 }
 
@@ -58,7 +57,6 @@ if (!ptr)                                                               \
    CRIT("no widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
    fflush(stderr);                                                      \
-   abort();                                                             \
    return val;                                                          \
 }
 
