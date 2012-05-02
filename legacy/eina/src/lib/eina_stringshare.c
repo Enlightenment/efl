@@ -765,6 +765,9 @@ EAPI int
 eina_stringshare_strlen(Eina_Stringshare *str)
 {
    int len;
+
+   if (!str) return 0;
+
    /* special cases */
    if (str[0] == '\0')
       return 0;
