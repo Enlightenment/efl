@@ -39,7 +39,7 @@ evas_gl_new(Evas *e)
 
    if (!evas_gl->evas->engine.func->gl_context_create)
      {
-        ERR("Evas GL engine not available.");
+        ERR("GL engine not available\n");
         free(evas_gl);
         return NULL;
      }
@@ -96,7 +96,7 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
 
    if (!config)
      {
-        ERR("Invalid Config Pointer!");
+        ERR("Invalid Config\n");
         return NULL;
      }
 
@@ -108,7 +108,7 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
 
    if (!surf->data)
      {
-        ERR("Failed creating a surface from the engine.");
+        ERR("Failed creating a surface from the engine\n");
         free(surf);
         return NULL;
      }
@@ -129,7 +129,7 @@ evas_gl_surface_destroy(Evas_GL *evas_gl, Evas_GL_Surface *surf)
 
    if (!surf)
      {
-        ERR("Trying to destroy a NULL surface pointer!");
+        ERR("Trying to destroy a NULL surface pointer!\n");
         return;
      }
 
@@ -158,7 +158,7 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
    ctx = calloc(1, sizeof(Evas_GL_Context));
    if (!ctx)
      {
-        ERR("Unable to create a Evas_GL_Context object");
+        ERR("Unable to create a Evas_GL_Context object\n");
         return NULL;
      }
 
@@ -175,7 +175,7 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
    // Set a few variables
    if (!ctx->data)
      {
-        ERR("Failed creating a context from the engine.");
+        ERR("Failed creating a context from the engine\n");
         free(ctx);
         return NULL;
      }
@@ -197,7 +197,7 @@ evas_gl_context_destroy(Evas_GL *evas_gl, Evas_GL_Context *ctx)
 
    if (!ctx)
      {
-        ERR("Trying to destroy a NULL context pointer!");
+        ERR("Trying to destroy a NULL context pointer!\n");
         return;
      }
 
@@ -255,12 +255,6 @@ evas_gl_native_surface_get(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_Native_
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
    return EINA_FALSE;
    MAGIC_CHECK_END();
-
-   if ((!surf) || (!ns))
-     {
-        ERR("Invalid input parameters!");
-        return EINA_FALSE;
-     }
 
    return (Eina_Bool)evas_gl->evas->engine.func->gl_native_surface_get(evas_gl->evas->engine.data.output, surf->data, ns);
 }

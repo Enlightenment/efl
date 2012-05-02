@@ -2,6 +2,7 @@
 #define _EVAS_GL_H
 
 #include <Evas.h>
+//#include <GL/gl.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -421,11 +422,6 @@ EAPI void                     evas_gl_config_free        (Evas_GL_Config *cfg) E
  * @param w The width of the surface.
  * @param h The height of the surface.
  * @return The created GL surface object, or NULL on failure.
- *
- * The surface_create function internally finds the closest surface
- * configureation that matches the input config. The function then internally 
- * sets the input config parameters to the configuratoin that was actually
- * used to create the surface.
  */
 EAPI Evas_GL_Surface         *evas_gl_surface_create     (Evas_GL *evas_gl, Evas_GL_Config *cfg, int w, int h) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1,2);
 
