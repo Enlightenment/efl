@@ -4089,6 +4089,15 @@ _smart_add(Evas_Object *obj)
                                           * settings */
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_mirrored_set(obj, elm_config_mirrored_get());
+
+   /* just a helper for inheriting classes */
+   if (priv->resize_obj)
+     {
+        Evas_Object *r_obj = priv->resize_obj;
+        priv->resize_obj = NULL;
+
+        elm_widget_resize_object_set(obj, r_obj);
+     }
 }
 
 static Evas_Object *
