@@ -1,5 +1,5 @@
 /**
- * @defgroup Bg Bg
+ * @defgroup Bg Background
  * @ingroup Elementary
  *
  * @image html img/widget/bg/preview-00.png
@@ -14,8 +14,11 @@
  * properties useful to a background, like setting it to tiled,
  * centered, scaled or stretched.
  *
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for background objects.
+ *
  * Default content parts of the bg widget that you can use for are:
- * @li "overlay" - overlay of the bg
+ * @li @c "overlay" - overlay of the bg
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_part_content_set
