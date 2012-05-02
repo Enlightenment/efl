@@ -486,6 +486,21 @@ _eo_class_base_op_init(Eo_Class *klass)
    *(desc->ops.base_op_id) = klass->class_id << OP_CLASS_OFFSET;
 }
 
+static Eina_Bool
+_eo_class_mro_has(const Eo_Class *klass, const Eo_Class *find)
+{
+   const Eo_Class **itr;
+   for (itr = klass->mro ; *itr ; itr++)
+     {
+        if (*itr == find)
+          {
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
 static Eina_List *
 _eo_class_mro_add(Eina_List *mro, const Eo_Class *klass)
 {
@@ -1189,8 +1204,13 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
 {
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, NULL);
 
-   /* FIXME: Add a check that this is of the right klass and we don't seg.
-    * Probably just return NULL. */
+#ifndef NDEBUG
+   if (!_eo_class_mro_has(obj->klass, klass))
+     {
+        ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
+        return NULL;
+     }
+#endif
    if (EINA_LIKELY(klass->desc->data_size > 0))
      {
         if (EINA_UNLIKELY(klass->desc->type == EO_CLASS_TYPE_MIXIN))

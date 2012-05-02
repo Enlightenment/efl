@@ -19,6 +19,33 @@ START_TEST(eo_simple)
 }
 END_TEST
 
+START_TEST(eo_data_fetch)
+{
+   eo_init();
+
+   static const Eo_Class_Description class_desc = {
+        "Simple2",
+        EO_CLASS_TYPE_REGULAR,
+        EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        10,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+   };
+
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   fail_if(!klass);
+
+   Eo *obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   fail_if(eo_data_get(obj, SIMPLE_CLASS));
+
+   eo_shutdown();
+}
+END_TEST
+
 START_TEST(eo_refs)
 {
    eo_init();
@@ -353,4 +380,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_weak_reference);
    tcase_add_test(tc, eo_refs);
    tcase_add_test(tc, eo_magic_checks);
+   tcase_add_test(tc, eo_data_fetch);
 }
