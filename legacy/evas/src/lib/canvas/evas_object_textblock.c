@@ -4915,18 +4915,21 @@ EAPI const char *
 evas_textblock_escape_string_get(const char *escape)
 {
    /* &amp; -> & */
+   if (!escape) return NULL;
    return _escaped_char_get(escape, escape + strlen(escape));
 }
 
 EAPI const char *
 evas_textblock_escape_string_range_get(const char *escape_start, const char *escape_end)
 {
+   if ((!escape_start) || (!escape_end)) return NULL;
    return _escaped_char_get(escape_start, escape_end);
 }
 
 EAPI const char *
 evas_textblock_string_escape_get(const char *string, int *len_ret)
 {
+   if ((!string) || (!len_ret)) return NULL;
    /* & -> &amp; */
    return _escaped_char_match(string, len_ret);
 }
@@ -5005,6 +5008,7 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
 EAPI void
 evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char *text)
 {
+   if (!cur) return;
    Evas_Object *obj = cur->obj;
    TB_HEAD();
    if (text)
@@ -5769,12 +5773,14 @@ evas_textblock_node_format_last_get(const Evas_Object *obj)
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_next_get(const Evas_Object_Textblock_Node_Format *n)
 {
+   if (!n) return NULL;
    return _NODE_FORMAT(EINA_INLIST_GET(n)->next);
 }
 
 EAPI const Evas_Object_Textblock_Node_Format *
 evas_textblock_node_format_prev_get(const Evas_Object_Textblock_Node_Format *n)
 {
+   if (!n) return NULL;
    return _NODE_FORMAT(EINA_INLIST_GET(n)->prev);
 }
 
@@ -7205,6 +7211,7 @@ evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *_text
    int len;
    /*append is essentially prepend without advancing */
    len = evas_textblock_cursor_text_append(cur, _text);
+   if (len == 0) return 0;
    cur->pos += len; /*Advance */
    return len;
 }
@@ -7932,7 +7939,7 @@ _evas_textblock_cursor_range_text_plain_get(const Evas_Textblock_Cursor *cur1, c
 EAPI Eina_List *
 evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
-   Evas_Object *obj = cur1->obj;
+   Evas_Object *obj;
    Eina_List *ret = NULL;
    Evas_Object_Textblock_Node_Text *n1, *n2;
    Evas_Object_Textblock_Node_Format *first, *last;
@@ -7940,6 +7947,9 @@ evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const
    if (!cur1 || !cur1->node) return NULL;
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
+
+   obj = cur1->obj;
+
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
         const Evas_Textblock_Cursor *tc;
@@ -8101,6 +8111,7 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
    const Evas_Textblock_Cursor *dir_cur;
    Evas_Textblock_Cursor cur2;
    Evas_Object_Textblock *o;
+   if (!cur) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
 
@@ -8386,6 +8397,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
 EAPI int
 evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
+   if (!cur) -1;
    return _evas_textblock_cursor_char_pen_geometry_common_get(
          cur->ENFN->font_char_coords_get, cur, cx, cy, cw, ch);
 }
@@ -8393,6 +8405,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 EAPI int
 evas_textblock_cursor_pen_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
+   if (!cur) -1;
    return _evas_textblock_cursor_char_pen_geometry_common_get(
          cur->ENFN->font_pen_coords_get, cur, cx, cy, cw, ch);
 }
