@@ -83,6 +83,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    char buf[8];
    unsigned int i;
    Evas_Object *win, *bx, *fp, *bt, *bx2, *sl;
+   Elm_Object_Item *it, *edje_it = NULL;
    static const char *lbl[] = {
         "Elementary",
         "Evas",
@@ -108,7 +109,11 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_smart_callback_add(fp, "underflowed", _overflow_cb, NULL);
    evas_object_smart_callback_add(fp, "overflowed", _underflow_cb, NULL);
    for (i = 0; i < sizeof(lbl)/sizeof(char *); i++)
-     elm_flipselector_item_append(fp, lbl[i], NULL, NULL);
+     {
+        it = elm_flipselector_item_append(fp, lbl[i], NULL, NULL);
+        if (i == 3) edje_it = it;
+     }
+   elm_flipselector_item_selected_set(edje_it, EINA_TRUE);
    elm_box_pack_end(bx, fp);
    evas_object_show(fp);
 
