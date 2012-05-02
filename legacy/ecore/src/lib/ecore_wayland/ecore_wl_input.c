@@ -33,6 +33,9 @@
 # define BTN_BACK 0x116
 #endif
 
+/* Required for keysym names - in the future available in libxkbcommon */
+#include <X11/keysym.h>
+
 /* local function prototypes */
 static void _ecore_wl_input_cb_motion(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, int sx, int sy);
 static void _ecore_wl_input_cb_button(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state);
@@ -62,6 +65,8 @@ static void _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input __UNUSED__, Eco
 static void _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
 static void _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
 static void _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int value, unsigned int timestamp);
+
+static int _ecore_wl_input_keysym_to_string(unsigned int symbol, char *buffer, int len);
 
 /* wayland interfaces */
 static const struct wl_input_device_listener _ecore_wl_input_listener = 
@@ -236,12 +241,65 @@ _ecore_wl_input_cb_axis(void *data, struct wl_input_device *input_device __UNUSE
    _ecore_wl_input_mouse_wheel_send(input, axis, value, timestamp);
 }
 
+/*
+ * _ecore_wl_input_keysym_to_string: Translate a symbol to its printable form 
+ * 
+ * @symbol: the symbol to translate
+ * @buffer: the buffer where to put the translated string
+ * @len: size of the buffer
+ *
+ * Translates @symbol into a printable representation in @buffer, if possible.
+ *
+ * Return value: The number of bytes of the translated string, 0 if the
+ *               symbol can't be printed
+ *
+ * Note: The code is derived from libX11's src/KeyBind.c
+ *       Copyright 1985, 1987, 1998  The Open Group
+ *
+ */
+static int 
+_ecore_wl_input_keysym_to_string(unsigned int symbol, char *buffer, int len)
+{
+  unsigned long high_bytes;
+  unsigned char c;
+
+   high_bytes = symbol >> 8;
+   if (!(len &&
+         ((high_bytes == 0) ||
+             ((high_bytes == 0xFF) &&
+                 (((symbol >= XK_BackSpace) &&
+                   (symbol <= XK_Clear)) ||
+                     (symbol == XK_Return) ||
+                     (symbol == XK_Escape) ||
+                     (symbol == XK_KP_Space) ||
+                     (symbol == XK_KP_Tab) ||
+                     (symbol == XK_KP_Enter) ||
+                     ((symbol >= XK_KP_Multiply) &&
+                         (symbol <= XK_KP_9)) ||
+                     (symbol == XK_KP_Equal) ||
+                     (symbol == XK_Delete))))))
+     return 0;
+
+   /* if X keysym, convert to ascii by grabbing low 7 bits */
+   if (symbol == XK_KP_Space)
+     c = XK_space & 0x7F; /* patch encoding botch */
+   else if (high_bytes == 0xFF)
+     c = symbol & 0x7F;
+   else
+     c = symbol & 0xFF;
+
+   buffer[0] = c;
+   return 1;
+}
+
 static void 
-_ecore_wl_input_cb_key(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int key, unsigned int state)
+_ecore_wl_input_cb_key(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state)
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
-   unsigned int keycode = 0;
+   unsigned int keysym, modified_keysym, level = 0;
+   char key[8], keyname[8], string[8];
+   Ecore_Event_Key *e;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -250,16 +308,61 @@ _ecore_wl_input_cb_key(void *data, struct wl_input_device *input_device __UNUSED
    input->timestamp = timestamp;
    input->display->serial = serial;
    win = input->keyboard_focus;
+
    if ((!win) || (win->keyboard_device != input)) return;
 
    /* FIXME: NB: I believe this should be min_key_code rather than 8, 
     * but weston code has it like this */
-   keycode = key + 8;
+   keycode += 8;
 
-   /* if ((input->modifiers & XKB_COMMON_SHIFT_MASK) &&  */
-   /*     (XkbKeyGroupWidth(_ecore_wl_disp->xkb, keycode, 0) > 1))  */
-   /*   level = 1; */
-   /* keysym = XkbKeySymEntry(_ecore_wl_disp->xkb, keycode, level, 0); */
+   if ((input->modifiers & XKB_COMMON_SHIFT_MASK) &&
+       (XkbKeyGroupWidth(_ecore_wl_disp->xkb, keycode, 0) > 1))
+     level = 1;
+
+   memset(key, 0, sizeof(key));
+   memset(keyname, 0, sizeof(keyname));
+   memset(string, 0, sizeof(string));
+
+   modified_keysym = XkbKeySymEntry(_ecore_wl_disp->xkb, keycode, level, 0);
+   xkb_keysym_to_string(modified_keysym, key, sizeof(key));
+
+   keysym = XkbKeySymEntry(_ecore_wl_disp->xkb, keycode, 0, 0);
+   xkb_keysym_to_string(keysym, keyname, sizeof(keyname));
+
+   /* TODO: Switch over to the libxkbcommon API when it is available */
+   if (!_ecore_wl_input_keysym_to_string(modified_keysym, string, sizeof(string)))
+     string[0] = '\0';
+
+   e = malloc(sizeof(Ecore_Event_Key) + strlen(keyname) + strlen(key) +
+              strlen(string) + 3);
+
+   e->keyname = (char *)(e + 1);
+   e->key = e->keyname + strlen(keyname) + 1;
+   e->string = strlen(string) ? e->key + strlen(key) + 1 : NULL;
+   e->compose = e->string;
+
+   strcpy((char *)e->keyname, keyname);
+   strcpy((char *)e->key, key);
+   if (strlen (string))
+     strcpy((char *)e->string, string);
+
+   e->window = win->id;
+   e->event_window = win->id;
+   e->timestamp = timestamp;
+
+   /* The Ecore_Event_Modifiers don't quite match the X mask bits */
+   e->modifiers = 0;
+   if (input->modifiers & XKB_COMMON_SHIFT_MASK)
+     e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   if (input->modifiers & XKB_COMMON_CONTROL_MASK)
+     e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   if (input->modifiers & XKB_COMMON_MOD1_MASK)
+     e->modifiers |= ECORE_EVENT_MODIFIER_ALT;
+
+   if (state)
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
+   else
+     ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
 
    if (state)
      input->modifiers |= _ecore_wl_disp->xkb->map->modmap[keycode];
