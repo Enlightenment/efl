@@ -514,12 +514,9 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
 
    if ((obj->cur.map) && (obj->cur.map->count == map->count))
      {
-        Evas_Map *omap = obj->cur.map;
-        obj->cur.map = _evas_map_new(map->count);
-        memcpy(obj->cur.map, omap, sizeof(Evas_Map) + (map->count * sizeof(Evas_Map_Point)));
+        /* We do have the same exact count of point in this map, so just copy it */
         _evas_map_copy(obj->cur.map, map);
-        if (obj->prev.map == omap) obj->prev.map = NULL;
-        free(omap);
+	if (obj->prev.map == obj->cur.map) obj->prev.map = NULL;
      }
    else
      {
