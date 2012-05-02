@@ -4,10 +4,10 @@
 static const char SMART_NAME[] = "elm_widget";
 
 #define API_ENTRY                                    \
-  Smart_Data * sd = evas_object_smart_data_get(obj); \
+  Elm_Widget_Smart_Data * sd = evas_object_smart_data_get(obj); \
   if ((!sd) || (!_elm_widget_is(obj)))
 #define INTERNAL_ENTRY                               \
-  Smart_Data * sd = evas_object_smart_data_get(obj); \
+  Elm_Widget_Smart_Data * sd = evas_object_smart_data_get(obj); \
   if (!sd) return
 
 #undef elm_widget_text_set_hook_set
@@ -16,12 +16,12 @@ static const char SMART_NAME[] = "elm_widget";
 #undef elm_widget_content_get_hook_set
 #undef elm_widget_content_unset_hook_set
 
-typedef struct _Smart_Data        Smart_Data;
+typedef struct _Elm_Widget_Smart_Data        Elm_Widget_Smart_Data;
 typedef struct _Edje_Signal_Data  Edje_Signal_Data;
 typedef struct _Elm_Event_Cb_Data Elm_Event_Cb_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
 
-struct _Smart_Data
+struct _Elm_Widget_Smart_Data
 {
    Evas_Object *obj;
    const char  *type;
@@ -143,7 +143,7 @@ struct _Elm_Translate_String_Data
 };
 
 /* local subsystem functions */
-static void _smart_reconfigure(Smart_Data *sd);
+static void _smart_reconfigure(Elm_Widget_Smart_Data *sd);
 static void _smart_add(Evas_Object *obj);
 static void _smart_del(Evas_Object *obj);
 static void _smart_move(Evas_Object *obj,
@@ -222,7 +222,7 @@ _sub_obj_del(void        *data,
              Evas_Object *obj,
              void        *event_info __UNUSED__)
 {
-   Smart_Data *sd = data;
+   Elm_Widget_Smart_Data *sd = data;
 
    if (_elm_widget_is(obj))
      {
@@ -252,7 +252,7 @@ _sub_obj_mouse_down(void        *data,
                     Evas_Object *obj __UNUSED__,
                     void        *event_info)
 {
-   Smart_Data *sd = data;
+   Elm_Widget_Smart_Data *sd = data;
    Evas_Event_Mouse_Down *ev = event_info;
    if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
      sd->still_in = EINA_TRUE;
@@ -264,7 +264,7 @@ _sub_obj_mouse_move(void        *data,
                     Evas_Object *obj,
                     void        *event_info)
 {
-   Smart_Data *sd = data;
+   Elm_Widget_Smart_Data *sd = data;
    Evas_Event_Mouse_Move *ev = event_info;
    if (sd->still_in)
      {
@@ -287,7 +287,7 @@ _sub_obj_mouse_up(void        *data,
                   Evas_Object *obj,
                   void        *event_info __UNUSED__)
 {
-   Smart_Data *sd = data;
+   Elm_Widget_Smart_Data *sd = data;
    if (sd->still_in)
      elm_widget_focus_mouse_up_handle(obj);
    sd->still_in = EINA_FALSE;
@@ -300,7 +300,7 @@ _propagate_x_drag_lock(Evas_Object *obj,
    INTERNAL_ENTRY;
    if (sd->parent_obj)
      {
-        Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
+        Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
         if (sd2)
           {
              sd2->child_drag_x_locked += dir;
@@ -316,7 +316,7 @@ _propagate_y_drag_lock(Evas_Object *obj,
    INTERNAL_ENTRY;
    if (sd->parent_obj)
      {
-        Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
+        Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
         if (sd2)
           {
              sd2->child_drag_y_locked += dir;
@@ -399,7 +399,7 @@ _elm_object_focus_chain_del_cb(void        *data,
                                Evas_Object *obj,
                                void        *event_info __UNUSED__)
 {
-   Smart_Data *sd = data;
+   Elm_Widget_Smart_Data *sd = data;
 
    sd->focus_chain = eina_list_remove(sd->focus_chain, obj);
 }
@@ -421,7 +421,7 @@ void
 _elm_widget_focus_region_show(const Evas_Object *obj)
 {
    Evas_Coord x, y, w, h, ox, oy;
-   Smart_Data *sd2;
+   Elm_Widget_Smart_Data *sd2;
    Evas_Object *o;
 
    API_ENTRY return;
@@ -935,7 +935,7 @@ elm_widget_sub_object_add(Evas_Object *obj,
 
    if (_elm_widget_is(sobj))
      {
-        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
+        Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sobj);
         if (sd2)
           {
              if (sd2->parent_obj == obj)
@@ -1015,7 +1015,7 @@ elm_widget_sub_object_del(Evas_Object *obj,
                     }
                }
           }
-        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
+        Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sobj);
         if (sd2)
           {
              sd2->parent_obj = NULL;
@@ -1056,7 +1056,7 @@ elm_widget_resize_object_set(Evas_Object *obj,
         evas_object_data_del(sd->resize_obj, "elm-parent");
         if (_elm_widget_is(sd->resize_obj))
           {
-             Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
+             Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
              if (sd2) sd2->parent_obj = NULL;
              evas_object_event_callback_del_full(sd->resize_obj,
                                                  EVAS_CALLBACK_HIDE,
@@ -1088,7 +1088,7 @@ elm_widget_resize_object_set(Evas_Object *obj,
    evas_object_data_del(sobj, "elm-parent");
    if (_elm_widget_is(sobj))
      {
-        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
+        Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sobj);
         if (sd2) sd2->parent_obj = NULL;
         evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_HIDE,
                                             _sub_obj_hide, sd);
@@ -1110,7 +1110,7 @@ elm_widget_resize_object_set(Evas_Object *obj,
    // set the resize obj up
    if (_elm_widget_is(sobj))
      {
-        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
+        Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sobj);
         if (sd2)
           {
              sd2->parent_obj = obj;
@@ -1363,7 +1363,7 @@ elm_widget_parent_widget_get(const Evas_Object *obj)
 
    if (_elm_widget_is(obj))
      {
-        Smart_Data *sd = evas_object_smart_data_get(obj);
+        Elm_Widget_Smart_Data *sd = evas_object_smart_data_get(obj);
         if (!sd) return NULL;
         parent = sd->parent_obj;
      }
@@ -1389,7 +1389,7 @@ elm_widget_parent2_get(const Evas_Object *obj)
 {
    if (_elm_widget_is(obj))
      {
-        Smart_Data *sd = evas_object_smart_data_get(obj);
+        Elm_Widget_Smart_Data *sd = evas_object_smart_data_get(obj);
         if (sd) return sd->parent2;
      }
    return NULL;
@@ -2206,7 +2206,7 @@ elm_widget_focus_region_get(const Evas_Object *obj,
                             Evas_Coord        *w,
                             Evas_Coord        *h)
 {
-   Smart_Data *sd;
+   Elm_Widget_Smart_Data *sd;
 
    if (!obj) return;
 
@@ -3382,7 +3382,7 @@ _elm_widget_item_cursor_engine_only_get(const Elm_Widget_Item *item)
 
 // smart object funcs
 static void
-_smart_reconfigure(Smart_Data *sd)
+_smart_reconfigure(Elm_Widget_Smart_Data *sd)
 {
    if (sd->resize_obj)
      {
@@ -3538,9 +3538,9 @@ _elm_widget_item_access_info_set(Elm_Widget_Item *item, const char *txt)
 static void
 _smart_add(Evas_Object *obj)
 {
-   Smart_Data *sd;
+   Elm_Widget_Smart_Data *sd;
 
-   sd = calloc(1, sizeof(Smart_Data));
+   sd = calloc(1, sizeof(Elm_Widget_Smart_Data));
    if (!sd) return;
    sd->obj = obj;
    sd->x = sd->y = sd->w = sd->h = 0;
