@@ -1532,13 +1532,6 @@ elm_widget_sub_object_del(Evas_Object *obj,
    return EINA_TRUE;
 }
 
-EAPI const Eina_List *
-elm_widget_sub_object_list_get(const Evas_Object *obj)
-{
-   API_ENTRY return NULL;
-   return (const Eina_List *)sd->subobjs;
-}
-
 /* a resize object is a sub object with some more callbacks on it and
  * a smart member of the parent
  */
