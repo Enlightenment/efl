@@ -175,6 +175,7 @@ _new_window_add(Widget_Data *wd)
    win = elm_win_add(NULL, "fileselector_button", ELM_WIN_DIALOG_BASIC);
    elm_win_title_set(win, wd->window_title);
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_smart_callback_add(win, "delete,request", _selection_done, wd);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
