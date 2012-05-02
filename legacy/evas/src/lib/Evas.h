@@ -5321,6 +5321,7 @@ EAPI void              evas_object_size_hint_aspect_set  (Evas_Object *obj, Evas
  *
  * @note Use @c NULL pointers on the hint components you're not
  * interested in: they'll be ignored by the function.
+ * @note If @c obj is invalid, then the hint components will be set with 0.5
  *
  * @see evas_object_size_hint_align_set() for more information
  */
@@ -5393,6 +5394,7 @@ EAPI void              evas_object_size_hint_align_set   (Evas_Object *obj, doub
  *
  * @note Use @c NULL pointers on the hint components you're not
  * interested in: they'll be ignored by the function.
+ * @note If @c obj is invalid, then the hint components will be set with 0.0
  *
  * @see evas_object_size_hint_weight_set() for an example
  */
