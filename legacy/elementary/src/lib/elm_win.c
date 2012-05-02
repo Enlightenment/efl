@@ -1600,9 +1600,7 @@ _elm_win_frame_cb_move_start(void *data,
     * position. The new position will get updated automatically when
     * the move is finished */
 
-#if 0 /* isolate it properly under a configure flag, you wayland coder */
    ecore_evas_wayland_move(sd->ee, sd->screen.x, sd->screen.y);
-#endif
 }
 
 static void
