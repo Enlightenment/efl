@@ -54,14 +54,13 @@ EVAS_SMART_SUBCLASS_NEW
   (VIDEO_SMART_NAME, _elm_video, Elm_Layout_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
 
-#ifdef HAVE_EMOTION
-
 static Eina_Bool
 _elm_video_smart_event(Evas_Object *obj,
                        Evas_Object *src __UNUSED__,
                        Evas_Callback_Type type,
                        void *event_info)
 {
+#ifdef HAVE_EMOTION
    Evas_Event_Key_Down *ev = event_info;
 
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
@@ -121,11 +120,20 @@ _elm_video_smart_event(Evas_Object *obj,
    INF("keyname: '%s' not handled", ev->keyname);
 
    return EINA_FALSE;
+#else
+
+   (void *)obj;
+   (void *)type;
+   (void *)event_info;
+
+   return EINA_FALSE;
+#endif
 }
 
 static void
 _elm_video_smart_sizing_eval(Evas_Object *obj)
 {
+#ifdef HAVE_EMOTION
    ELM_VIDEO_DATA_GET(obj, sd);
 
    Evas_Coord minw = -1, minh = -1;
@@ -143,8 +151,13 @@ _elm_video_smart_sizing_eval(Evas_Object *obj)
      }
 
    evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
+#else
+
+   (void *)obj;
+#endif
 }
 
+#ifdef HAVE_EMOTION
 static void
 _on_size_hints_changed(void *data,
                        Evas *e __UNUSED__,
@@ -255,6 +268,9 @@ _elm_video_smart_add(Evas_Object *obj)
 
    ELM_WIDGET_CLASS(_elm_video_parent_sc)->base.add(obj);
 
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+
+#ifdef HAVE_EMOTION
    priv->stop = EINA_FALSE;
    priv->remember = EINA_FALSE;
 
@@ -280,9 +296,8 @@ _elm_video_smart_add(Evas_Object *obj)
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
 
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-
    priv->timer = ecore_timer_add(20.0, _suspend_cb, obj);
+#endif
 }
 
 static void
@@ -290,8 +305,10 @@ _elm_video_smart_del(Evas_Object *obj)
 {
    ELM_VIDEO_DATA_GET(obj, sd);
 
+#ifdef HAVE_EMOTION
    if (sd->timer) ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
+#endif
 
    ELM_WIDGET_CLASS(_elm_video_parent_sc)->base.del(obj);
 }
@@ -352,7 +369,7 @@ elm_video_file_set(Evas_Object *obj,
 
    return EINA_TRUE;
 #else
-   (void)video;
+   (void)obj;
    (void)filename;
 
    return EINA_FALSE;
@@ -368,7 +385,7 @@ elm_video_emotion_get(const Evas_Object *obj)
 
    return sd->emotion;
 #else
-   (void)video;
+   (void)obj;
    return NULL;
 #endif
 }
@@ -387,7 +404,7 @@ elm_video_play(Evas_Object *obj)
    sd->stop = EINA_FALSE;
    emotion_object_play_set(sd->emotion, EINA_TRUE);
 #else
-   (void)video;
+   (void)obj;
 #endif
 }
 
@@ -407,7 +424,7 @@ elm_video_pause(Evas_Object *obj)
    emotion_object_play_set(sd->emotion, EINA_FALSE);
    elm_layout_signal_emit(obj, "elm,video,pause", "elm");
 #else
-   (void)video;
+   (void)obj;
 #endif
 }
 
@@ -430,7 +447,7 @@ elm_video_stop(Evas_Object *obj)
    elm_layout_signal_emit(obj, "elm,video,stop", "elm");
    emotion_object_suspend_set(sd->emotion, EMOTION_HIBERNATE);
 #else
-   (void)video;
+   (void)obj;
 #endif
 }
 
@@ -443,7 +460,7 @@ elm_video_is_playing_get(const Evas_Object *obj)
 
    return emotion_object_play_get(sd->emotion);
 #else
-   (void)video;
+   (void)obj;
    return EINA_FALSE;
 #endif
 }
@@ -457,7 +474,7 @@ elm_video_is_seekable_get(const Evas_Object *obj)
 
    return emotion_object_seekable_get(sd->emotion);
 #else
-   (void)video;
+   (void)obj;
    return EINA_FALSE;
 #endif
 }
@@ -471,7 +488,7 @@ elm_video_audio_mute_get(const Evas_Object *obj)
 
    return emotion_object_audio_mute_get(sd->emotion);
 #else
-   (void)video;
+   (void)obj;
    return EINA_FALSE;
 #endif
 }
@@ -486,7 +503,7 @@ elm_video_audio_mute_set(Evas_Object *obj,
 
    emotion_object_audio_mute_set(sd->emotion, mute);
 #else
-   (void)video;
+   (void)obj;
    (void)mute;
 #endif
 }
@@ -500,7 +517,7 @@ elm_video_audio_level_get(const Evas_Object *obj)
 
    return emotion_object_audio_volume_get(sd->emotion);
 #else
-   (void)video;
+   (void)obj;
    return 0.0;
 #endif
 }
@@ -515,7 +532,7 @@ elm_video_audio_level_set(Evas_Object *obj,
 
    emotion_object_audio_volume_set(sd->emotion, volume);
 #else
-   (void)video;
+   (void)obj;
    (void)volume;
 #endif
 }
@@ -529,7 +546,7 @@ elm_video_play_position_get(const Evas_Object *obj)
 
    return emotion_object_position_get(sd->emotion);
 #else
-   (void)video;
+   (void)obj;
    return 0.0;
 #endif
 }
@@ -544,7 +561,7 @@ elm_video_play_position_set(Evas_Object *obj,
 
    emotion_object_position_set(sd->emotion, position);
 #else
-   (void)video;
+   (void)obj;
    (void)position;
 #endif
 }
@@ -558,7 +575,7 @@ elm_video_play_length_get(const Evas_Object *obj)
 
    return emotion_object_play_length_get(sd->emotion);
 #else
-   (void)video;
+   (void)obj;
    return 0.0;
 #endif
 }
@@ -572,7 +589,7 @@ elm_video_title_get(const Evas_Object *obj)
 
    return emotion_object_title_get(sd->emotion);
 #else
-   (void)video;
+   (void)obj;
    return NULL;
 #endif
 }
@@ -587,7 +604,7 @@ elm_video_remember_position_set(Evas_Object *obj,
 
    sd->remember = remember;
 #else
-   (void)video;
+   (void)obj;
    (void)remember;
 #endif
 }
@@ -601,7 +618,7 @@ elm_video_remember_position_get(const Evas_Object *obj)
 
    return sd->remember;
 #else
-   (void)video;
+   (void)obj;
    return EINA_FALSE;
 #endif
 }

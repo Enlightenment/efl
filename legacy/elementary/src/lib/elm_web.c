@@ -16,6 +16,7 @@
   "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en)"                  \
   " AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543a" \
   " Safari/419.3 " PACKAGE_NAME "/" PACKAGE_VERSION
+#endif
 
 static const char WEB_SMART_NAME[] = "elm_web";
 
@@ -44,6 +45,7 @@ static const char WEB_SMART_NAME[] = "elm_web";
   if (!obj || !elm_widget_type_check((obj), WEB_SMART_NAME, __func__)) \
     return
 
+#ifdef HAVE_ELEMENTARY_WEB
 static Ewk_View_Smart_Class _ewk_view_parent_sc =
   EWK_VIEW_SMART_CLASS_INIT_NULL;
 
@@ -241,6 +243,8 @@ set:
      ewk_view_theme_set
        (ELM_WIDGET_DATA(sd)->resize_obj, WEBKIT_DATADIR "/themes/default.edj");
 #endif
+
+   (void)obj;
 
    return EINA_TRUE;
 }
@@ -1281,6 +1285,7 @@ _elm_web_smart_del(Evas_Object *obj)
 {
    ELM_WEB_DATA_GET(obj, sd);
 
+#ifdef HAVE_ELEMENTARY_WEB
    if (sd->zoom.timer)
      {
         ecore_timer_del(sd->zoom.timer);
@@ -1292,6 +1297,7 @@ _elm_web_smart_del(Evas_Object *obj)
         ecore_animator_del(sd->bring_in.animator);
         sd->bring_in.animator = NULL;
      }
+#endif
 
    _elm_web_parent_sc->base.del(obj); /* handles freeing sd */
 }
