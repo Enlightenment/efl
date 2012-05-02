@@ -569,7 +569,7 @@ group { name: "elm/bubble/bottom_right/default";
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
-            visible: 0.0;
+            visible: 0;
             align: 1.0 1.0;
             aspect: 1.0 1.0;
             aspect_preference: VERTICAL;
