@@ -486,6 +486,10 @@ evas_object_update_bounding_box(Evas_Object *obj)
         ph = obj->prev.geometry.h;
      }
 
+   /* We are not yet trying to find the smallest bounding box, but we want to find a good approximation quickly.
+    * That's why we initialiaze min and max search to geometry of the parent object.
+    */
+
    /* Update left limit */
    if (!clip && x < obj->smart.parent->cur.bounding_box.x)
      {
@@ -498,7 +502,7 @@ evas_object_update_bounding_box(Evas_Object *obj)
      {
         const Eina_Inlist *list;
         const Evas_Object *o;
-        Evas_Coord minx = clip ? obj->layer->evas->output.w : x;
+        Evas_Coord minx = obj->smart.parent->cur.geometry.x;
 
         list = evas_object_smart_members_get_direct(obj->smart.parent);
         EINA_INLIST_FOREACH(list, o)
@@ -528,7 +532,7 @@ evas_object_update_bounding_box(Evas_Object *obj)
      {
         const Eina_Inlist *list;
         const Evas_Object *o;
-        Evas_Coord miny = clip ? obj->layer->evas->output.h : y;
+        Evas_Coord miny = obj->smart.parent->cur.geometry.y;
 
         list = evas_object_smart_members_get_direct(obj->smart.parent);
         EINA_INLIST_FOREACH(list, o)
@@ -558,7 +562,7 @@ evas_object_update_bounding_box(Evas_Object *obj)
      {
         const Eina_Inlist *list;
         const Evas_Object *o;
-        Evas_Coord maxw = clip ? 0 : x + w;
+        Evas_Coord maxw = obj->smart.parent->cur.geometry.x + obj->smart.parent->cur.geometry.w;
 
         list = evas_object_smart_members_get_direct(obj->smart.parent);
         EINA_INLIST_FOREACH(list, o)
@@ -589,7 +593,7 @@ evas_object_update_bounding_box(Evas_Object *obj)
      {
         const Eina_Inlist *list;
         const Evas_Object *o;
-        Evas_Coord maxh = clip ? 0 : y + h;
+        Evas_Coord maxh = obj->smart.parent->cur.geometry.y + obj->smart.parent->cur.geometry.h;
 
         list = evas_object_smart_members_get_direct(obj->smart.parent);
         EINA_INLIST_FOREACH(list, o)
