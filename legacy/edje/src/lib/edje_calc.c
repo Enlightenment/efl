@@ -2840,11 +2840,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
         else mo = ep->object;
         if (chosen_desc->map.on)
           {
-             Evas_Map *map;
+             static Evas_Map *map = NULL;
 
              ed->have_mapped_part = 1;
              // create map and populate with part geometry
-             map = evas_map_new(4);
+	     if (!map) map = evas_map_new(4);
              evas_map_util_points_populate_from_object(map, ep->object);
              if (ep->part->type == EDJE_PART_TYPE_IMAGE)
                {
@@ -2898,7 +2898,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
              evas_object_map_set(mo, map);
              evas_object_map_enable_set(mo, 1);
-             evas_map_free(map);
           }
         else
           {
