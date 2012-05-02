@@ -1789,6 +1789,8 @@ evas_object_pointer_mode_get(const Evas_Object *obj)
 EAPI void
 evas_event_refeed_event(Evas *e, void *event_copy, Evas_Callback_Type event_type)
 {
+   if (!event_copy) return;
+
    switch (event_type)
      {
       case EVAS_CALLBACK_MOUSE_IN:
