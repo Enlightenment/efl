@@ -183,11 +183,13 @@ EAPI int       elm_shutdown(void);
 EAPI void      elm_run(void);
 
 /**
- * Exit Elementary's main loop
+ * Ask to exit Elementary's main loop
  *
  * If this call is issued, it will flag the main loop to cease
  * processing and return back to its parent function (usually your
- * elm_main() function).
+ * elm_main() function). This does not mean the main loop instantly quits.
+ * So your ecore callbacks(timer, animator, event, job, and etc.) have chances
+ * to be called even after elm_exit().
  *
  * @see elm_init() for an example. There, just after a request to
  * close the window comes, the main loop will be left.
