@@ -2054,7 +2054,7 @@ _elm_config_sub_shutdown(void)
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
-        ecore_x_disconnect();
+        ecore_x_shutdown();
 #endif
      }
 }
