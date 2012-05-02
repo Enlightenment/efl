@@ -12,3 +12,7 @@
 2012-04-30  Jérôme Pinot
 
 	* Add missing files in the tarballs.
+
+2012-05-02  Cedric Bail
+
+	* Do less allocation and reuse much more Evas_Map.

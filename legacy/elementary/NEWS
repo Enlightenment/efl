@@ -13,5 +13,7 @@ Fixes:
 
 Improvements:
 
+   * Allocate once and reuse Evas_Map.
+
 Removal:
 

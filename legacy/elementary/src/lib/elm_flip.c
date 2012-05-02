@@ -197,10 +197,10 @@ _slice_apply(Widget_Data *wd, Slice *sl, Evas_Coord x __UNUSED__,
              Evas_Coord y __UNUSED__, Evas_Coord w, Evas_Coord h __UNUSED__,
              Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
 {
-   Evas_Map *m;
+   static Evas_Map *m = NULL;
    int i;
 
-   m = evas_map_new(4);
+   if (!m) m = evas_map_new(4);
    if (!m) return;
    evas_map_smooth_set(m, EINA_FALSE);
    for (i = 0; i < 4; i++)
@@ -238,7 +238,6 @@ _slice_apply(Widget_Data *wd, Slice *sl, Evas_Coord x __UNUSED__,
    evas_object_map_enable_set(sl->obj, EINA_TRUE);
    evas_object_image_fill_set(sl->obj, 0, 0, ow, oh);
    evas_object_map_set(sl->obj, m);
-   evas_map_free(m);
 }
 
 static void
