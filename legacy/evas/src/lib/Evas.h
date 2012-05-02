@@ -9242,8 +9242,6 @@ EAPI void              evas_object_line_xy_get           (const Evas_Object *obj
  *
  * @warning We don't guarantee any proper results if you create a Polygon 
  * object without setting the evas engine.
- * 
- * without setting the evas engine.
  *
  * @ingroup Evas_Object_Specific
  *
