@@ -6259,6 +6259,9 @@ EAPI void             *evas_object_intercept_move_callback_del        (Evas_Obje
  * evas_object_show(clipper);
  * @endcode
  *
+ * @warning We don't guarantee any proper results if you create a Rectangle 
+ * object without setting the evas engine. 
+ *
  * For an example that more fully exercise the use of an evas object rectangle
  * see @ref Example_Evas_Object_Manipulation.
  *
@@ -6503,7 +6506,10 @@ EAPI Evas_Object      *evas_object_rectangle_add         (Evas *e) EINA_WARN_UNU
  * - #EVAS_COLORSPACE_GRY8:
  *   The image is just a alpha mask (8 bit's per pixel). This is used
  *   for alpha masking.
- * .
+ *
+ * @warning We don't guarantee any proper results if you create a Image object
+ * without setting the evas engine.
+ * 
  * Some examples on this group of functions can be found @ref
  * Example_Evas_Images "here".
  *
@@ -7711,6 +7717,9 @@ EAPI void evas_object_image_animated_frame_set(Evas_Object *obj, int frame_num);
  *
  * See some @ref Example_Evas_Text "examples" on this group of functions.
  *
+ * @warning We don't guarantee any proper results if you create a Text object
+ * without setting the evas engine.
+ *
  * @ingroup Evas_Object_Specific
  */
 
@@ -8269,6 +8278,9 @@ EAPI Evas_BiDi_Direction evas_object_text_direction_get  (const Evas_Object *obj
  * @li ellipsis - Value between 0.0-1.0 to indicate the type of ellipsis, or -1.0 to indicate ellipsis isn't wanted.
  * @li password - "on" or "off". This is used to specifically turn replacing chars with the replacement char (i.e password mode) on and off.
  *
+ * @warning We don't guarantee any proper results if you create a Textblock
+ * object
+ * without setting the evas engine.
  *
  * @todo put here some usage examples
  *
@@ -9178,6 +9190,9 @@ EAPI void                         evas_object_textblock_size_native_get(const Ev
  *
  * Functions used to deal with evas line objects.
  *
+ * @warning We don't guarantee any proper results if you create a Line object
+ * without setting the evas engine.
+ *
  * @ingroup Evas_Object_Specific
  *
  * @{
@@ -9224,6 +9239,11 @@ EAPI void              evas_object_line_xy_get           (const Evas_Object *obj
  *
  * Hint: as evas does not provide ellipse, smooth paths or circle, one
  * can calculate points and convert these to a polygon.
+ *
+ * @warning We don't guarantee any proper results if you create a Polygon 
+ * object without setting the evas engine.
+ * 
+ * without setting the evas engine.
  *
  * @ingroup Evas_Object_Specific
  *
