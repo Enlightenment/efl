@@ -41,7 +41,8 @@ Elementary_Cursor.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
-elm_widget.h
+elm_widget.h \
+elm_widget_container.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 includesub_HEADERS = \
@@ -160,6 +161,7 @@ elm_cnp.c \
 elm_colorselector.c \
 elm_config.c \
 elm_conform.c \
+elm_container.c \
 elm_datetime.c \
 elm_diskselector.c \
 elm_entry.c \
