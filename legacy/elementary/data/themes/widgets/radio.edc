@@ -34,7 +34,7 @@ group { name: "elm/radio/base/default";
             visible: 1;
          }
       }
-      part { name: "elm.swallow.content";
+      part { name: "elm.swallow.icon";
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 0;
@@ -71,7 +71,7 @@ group { name: "elm/radio/base/default";
          scale: 1;
          description { state: "default" 0.0;
             visible: 0;
-            rel1.to_x: "elm.swallow.content";
+            rel1.to_x: "elm.swallow.icon";
             rel1.relative: 1.0 0.0;
             rel1.offset: 1 1;
             rel2.relative: 1.0 1.0;
@@ -155,13 +155,13 @@ group { name: "elm/radio/base/default";
          signal: "elm,state,icon,visible";
          source: "elm";
          action:  STATE_SET "visible" 0.0;
-         target: "elm.swallow.content";
+         target: "elm.swallow.icon";
       }
       program { name: "icon_hide";
          signal: "elm,state,icon,hidden";
          source: "elm";
          action:  STATE_SET "default" 0.0;
-         target: "elm.swallow.content";
+         target: "elm.swallow.icon";
       }
       program { name: "disable";
          signal: "elm,state,disabled";
@@ -180,11 +180,11 @@ group { name: "elm/radio/base/default";
             else
             set_state(PART:"elm.text", "disabled", 0.0);
 
-            get_state(PART:"elm.swallow.content", st, 30, vl);
+            get_state(PART:"elm.swallow.icon", st, 30, vl);
             if (!strcmp(st, "visible"))
-            set_state(PART:"elm.swallow.content", "disabled_visible", 0.0);
+            set_state(PART:"elm.swallow.icon", "disabled_visible", 0.0);
             else
-            set_state(PART:"elm.swallow.content", "disabled", 0.0);
+            set_state(PART:"elm.swallow.icon", "disabled", 0.0);
          }
       }
       program { name: "enable";
@@ -204,11 +204,11 @@ group { name: "elm/radio/base/default";
             else
             set_state(PART:"elm.text", "default", 0.0);
 
-            get_state(PART:"elm.swallow.content", st, 30, vl);
+            get_state(PART:"elm.swallow.icon", st, 30, vl);
             if (!strcmp(st, "visible"))
-            set_state(PART:"elm.swallow.content", "visible", 0.0);
+            set_state(PART:"elm.swallow.icon", "visible", 0.0);
             else
-            set_state(PART:"elm.swallow.content", "default", 0.0);
+            set_state(PART:"elm.swallow.icon", "default", 0.0);
          }
       }
    }
