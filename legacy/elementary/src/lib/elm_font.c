@@ -39,23 +39,24 @@ _elm_font_properties_get(Eina_Hash **font_hash,
                   strncpy(name, font, len);
                }
           }
-
         if (!strncmp(s1, ELM_FONT_TOKEN_STYLE, strlen(ELM_FONT_TOKEN_STYLE)))
           {
              style = s1 + strlen(ELM_FONT_TOKEN_STYLE);
 
-             if (font_hash) efp = eina_hash_find(*font_hash, name);
-             if (!efp)
+             if (font_hash)
                {
-                  efp = calloc(1, sizeof(Elm_Font_Properties));
-                  if (efp)
+                  efp = eina_hash_find(*font_hash, name);
+                  if (!efp)
                     {
-                       efp->name = eina_stringshare_add(name);
-                       if ((font_hash && !*font_hash))
+                       efp = calloc(1, sizeof(Elm_Font_Properties));
+                       if (efp)
                          {
-                            *font_hash = eina_hash_string_superfast_new(NULL);
+                            efp->name = eina_stringshare_add(name);
+                            if (!*font_hash)
+                              *font_hash = eina_hash_string_superfast_new(NULL);
                             eina_hash_add(*font_hash, name, efp);
                          }
+
                     }
                }
              s2 = strchr(style, ',');
@@ -82,19 +83,14 @@ _elm_font_properties_get(Eina_Hash **font_hash,
      }
    else
      {
-        if (font_hash) efp = eina_hash_find(*font_hash, font);
-        if (!efp)
+        if ((font_hash) && (!eina_hash_find(*font_hash, font)))
           {
              efp = calloc(1, sizeof(Elm_Font_Properties));
-             if (efp)
-               {
-                  efp->name = eina_stringshare_add(font);
-                  if (font_hash && !*font_hash)
-                    {
-                       *font_hash = eina_hash_string_superfast_new(NULL);
-                       eina_hash_add(*font_hash, font, efp);
-                    }
-               }
+             if (!efp) return NULL;
+
+             efp->name = eina_stringshare_add(font);
+             if (!*font_hash) *font_hash = eina_hash_string_superfast_new(NULL);
+             eina_hash_add(*font_hash, font, efp);
           }
      }
    return efp;
