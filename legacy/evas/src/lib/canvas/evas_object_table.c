@@ -97,7 +97,6 @@ if (!ptr)                                                               \
 {                                                                       \
    CRIT("no widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
-   abort();                                                             \
    return;                                                              \
 }
 
@@ -107,7 +106,6 @@ if (!ptr)                                                               \
 {                                                                       \
    CRIT("No widget data for object %p (%s)",                            \
         o, evas_object_type_get(o));                                    \
-   abort();                                                             \
    return val;                                                          \
 }
 
