@@ -265,12 +265,12 @@ _item_text_set_hook(Elm_Object_Item *it,
 
    if (label)
      {
-        snprintf(buf, sizeof(buf), "elm,state,%s,show", buf);
+        snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
         elm_object_signal_emit(VIEW(navi_it), buf, "elm");
      }
    else
      {
-        snprintf(buf, sizeof(buf), "elm,state,%s,hide", buf);
+        snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
         elm_object_signal_emit(VIEW(navi_it), buf, "elm");
      }
 
