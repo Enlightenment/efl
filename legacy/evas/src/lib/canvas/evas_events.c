@@ -77,7 +77,11 @@ _evas_event_object_list_raw_in_get(Evas *e, Eina_List *in,
                            (obj->cur.bounding_box.x <= x &&
                             obj->cur.bounding_box.x + obj->cur.bounding_box.w >= x &&
                             obj->cur.bounding_box.y <= y &&
-                            obj->cur.bounding_box.y + obj->cur.bounding_box.h >= y))
+                            obj->cur.bounding_box.y + obj->cur.bounding_box.h >= y) ||
+			   (obj->cur.geometry.x <= x &&
+			    obj->cur.geometry.y + obj->cur.geometry.w >= x &&
+			    obj->cur.geometry.y <= y &&
+			    obj->cur.geometry.y + obj->cur.geometry.h >= y))
                          in = _evas_event_object_list_in_get
                            (e, in, evas_object_smart_members_get_direct(obj),
                             stop, x, y, &norep);
