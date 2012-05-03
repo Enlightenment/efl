@@ -51,13 +51,9 @@
  * the elm_object_part_content_set/get APIs thus providing a way to handle
  * the different check styles for individual days.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for dayselector objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
- * @li @c "dayselector,changed" - when the user changes the state of a day.
- * @li @c "language,changed" - the program's language changed
+ * The widget emits the following signals:
+ * @li "dayselector,changed" - when the user changes the state of a day.
+ * @li "language,changed" - the program's language changed
  *
  * Available styles for dayselector are:
  * @li default

@@ -25,12 +25,8 @@
  * Custom themes can of course invent new markup tags and style them any way
  * they like.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for label objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
- * @li @c "language,changed": The program's language changed.
+ * The following signals may be emitted by the label widget:
+ * @li "language,changed": The program's language changed.
  *
  * See @ref tutorial_label for a demonstration of how to use a label widget.
  * @{

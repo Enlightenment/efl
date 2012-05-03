@@ -188,69 +188,9 @@ EAPI Eina_Bool                    elm_layout_file_set(Evas_Object *obj, const ch
  *
  * @return (1 = success, 0 = error)
  *
- * Note that @a style will be the new style of @a obj too, as in an
- * elm_object_style_set() call.
- *
  * @ingroup Layout
  */
 EAPI Eina_Bool                    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style);
-
-/**
- * Send a (Edje) signal to a given layout widget's underlying Edje
- * object.
- *
- * @param obj The layout object handle
- * @param emission The signal's name string
- * @param source The signal's source string
- *
- * This function sends a signal to the underlying Edje object of @a
- * obj. An Edje program on that Edje object's definition can respond
- * to a signal by specifying matching 'signal' and 'source' fields.
- *
- * @ingroup Layout
- */
-EAPI void elm_layout_signal_emit(Evas_Object *obj, const char *emission, const char *source);
-
-/**
- * Add a callback for a (Edje) signal emitted by a layout widget's
- * underlying Edje object.
- *
- * @param obj The layout object handle
- * @param emission The signal's name string
- * @param source The signal's source string
- * @param func The callback function to be executed when the signal is
- * emitted.
- * @param data A pointer to data to pass in to the callback function.
- *
- * This function connects a callback function to a signal emitted by
- * the underlying Edje object of @a obj. Globs are accepted in either
- * the emission or source strings (see @c
- * edje_object_signal_callback_add()).
- *
- * @ingroup Layout
- */
-EAPI void elm_layout_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
-
-/**
- * Remove a signal-triggered callback from a given layout widget.
- *
- * @param obj The layout object handle
- * @param emission The signal's name string
- * @param source The signal's source string
- * @param func The callback function being executed when the signal
- * was emitted.
- * @return The data pointer of the signal callback (passed on
- * elm_layout_signal_callback_add()) or @c NULL, on errors.
- *
- * This function removes the @b last callback attached to a signal
- * emitted by the undelying Edje object of @a obj, with parameters @a
- * emission, @a source and @c func matching exactly those passed to a
- * previous call to elm_object_signal_callback_add(). The data pointer
- * that was passed to this call will be returned.
- *
- * @ingroup Layout
- */
-EAPI void *elm_layout_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
 /**
  * Append child to layout box part.
@@ -638,71 +578,6 @@ EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_set(Evas_Ob
 EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name);
 
 /**
- * Set the layout content.
- *
- * @param obj The layout object
- * @param swallow The swallow part name in the edje file
- * @param content The child that will be added in this layout object
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_object_part_content_unset() function.
- *
- * @note In an Edje theme, the part used as a content container is called @c
- * SWALLOW. This is why the parameter name is called @p swallow, but it is
- * expected to be a part name just like the second parameter of
- * elm_layout_box_append().
- *
- * @see elm_layout_box_append()
- * @see elm_object_part_content_get()
- * @see elm_object_part_content_unset()
- * @see @ref secBox
- */
-EAPI Eina_Bool                    elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
-
-/**
- * Get the child object in the given content part.
- *
- * @param obj The layout object
- * @param swallow The SWALLOW part to get its content
- *
- * @return The swallowed object or NULL if none or an error occurred
- */
-EAPI Evas_Object                 *elm_layout_content_get(const Evas_Object *obj, const char *swallow);
-
-/**
- * Unset the layout content.
- *
- * @param obj The layout object
- * @param swallow The swallow part name in the edje file
- * @return The content that was being used
- *
- * Unparent and return the content object which was set for this part.
- */
-EAPI Evas_Object                 *elm_layout_content_unset(Evas_Object *obj, const char *swallow);
-
-/**
- * Set the text of the given part
- *
- * @param obj The layout object
- * @param part The TEXT part where to set the text
- * @param text The text to set
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
- */
-EAPI Eina_Bool                    elm_layout_text_set(Evas_Object *obj, const char *part, const char *text);
-
-/**
- * Get the text set in the given part
- *
- * @param obj The layout object
- * @param part The TEXT part to retrieve the text off
- *
- * @return The text set in @p part
- */
-EAPI const char                  *elm_layout_text_get(const Evas_Object *obj, const char *part);
-
-/**
  * @def elm_layout_icon_set
  * Convenience macro to set the icon object in a layout that follows the
  * Elementary naming convention for its parts.
@@ -753,6 +628,10 @@ EAPI const char                  *elm_layout_text_get(const Evas_Object *obj, co
  */
 #define elm_layout_end_get(_ly) \
   elm_object_part_content_get((_ly), "elm.swallow.end")
+
+/* smart callbacks called:
+ * "theme,changed" - when elm theme is changed.
+ */
 
 /**
  * @}

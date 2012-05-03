@@ -26,15 +26,11 @@
  * the object or applications scaling factor. At any point code can query the
  * slider for its value with elm_slider_value_get().
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for slider objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
- * - @c "changed" - Whenever the slider value is changed by the user.
- * - @c "slider,drag,start" - dragging the slider indicator around has started.
- * - @c "slider,drag,stop" - dragging the slider indicator around has stopped.
- * - @c "delay,changed" - A short time after the value is changed by the user.
+ * Smart callbacks one can listen to:
+ * - "changed" - Whenever the slider value is changed by the user.
+ * - "slider,drag,start" - dragging the slider indicator around has started.
+ * - "slider,drag,stop" - dragging the slider indicator around has stopped.
+ * - "delay,changed" - A short time after the value is changed by the user.
  * This will be called only when the user stops dragging for
  * a very short period or when they release their
  * finger/mouse, so it avoids possibly expensive reactions to

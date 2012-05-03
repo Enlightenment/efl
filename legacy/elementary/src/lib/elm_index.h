@@ -21,11 +21,7 @@
  * List "lists", @ref Genlist "generic lists" or @ref Gengrid
  * "general grids".
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for index objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * Smart events one  can add callbacks for are:
  * - @c "changed" - When the selected index item changes. @c
  *      event_info is the selected item's data pointer.
  * - @c "delay,changed" - When the selected index item changes, but

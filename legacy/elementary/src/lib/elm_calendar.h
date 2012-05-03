@@ -2,23 +2,17 @@
  * @defgroup Calendar Calendar
  * @ingroup Elementary
  *
- * This is a calendar widget. It helps applications to flexibly
- * display a calender with day of the week, date, year and
- * month. Applications are able to set specific dates to be reported
- * back, when selected, in the smart callbacks of the calendar
- * widget. The API of this widget lets the applications perform other
- * functions, like:
+ * This is a Calendar widget. Calender widget helps applications to flexibly
+ * display a calender with day of the week, day, year and month. Applications will be
+ * able to choose a specific date that will be reported in the smart_callbacks for
+ * the calendar widget. The APIs of calendar widget let the applications perform
+ * other functions like,
+ * placing marks on specific dates
+ * Setting the bounds for the calendar (minimum and maximum years)
+ * Setting the day names of the week. ( for ex. Thu. or Thursday)
+ * Setting the year and month format.
  *
- * - placing marks on specific dates
- * - setting the bounds for the calendar (minimum and maximum years)
- * - setting the day names of the week (e.g. "Thu" or "Thursday")
- * - setting the year and month format.
- *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for calendar objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * Signals that you can add callbacks for are:
  * - @c "changed" - emitted when the date in the calendar is changed.
  *
  * Supported elm_object common APIs.

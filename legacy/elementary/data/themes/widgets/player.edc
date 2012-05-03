@@ -1,6 +1,6 @@
 group {
    name: "elm/player/base/default";
-   min: 365 60;
+   min: 290 26;
 
    parts {
       part {
@@ -8,7 +8,6 @@ group {
          name: "media_player/slider";
 
          description {
-            fixed: 1 1;
             rel2 {
                relative: 1.0 0.0;
                to_x: "media_player/forward";
@@ -20,7 +19,6 @@ group {
          name: "media_player/rewind";
 
          description {
-            fixed: 1 1;
             rel1 {
                to_y: "media_player/slider";
                offset: 42 0;

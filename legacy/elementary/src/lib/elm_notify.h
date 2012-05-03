@@ -14,15 +14,13 @@
  * @li "timeout" - when timeout happens on notify and it's hidden
  * @li "block,clicked" - when a click outside of the notify happens
  *
- * This widget inherits from @ref elm-container-class, so that the
- * functions meant to act on it will wor work for mapbuf objects:
+ * Default content parts of the notify widget that you can use for are:
+ * @li "default" - A content of the notify
  *
+ * Supported elm_object common APIs.
  * @li @ref elm_object_part_content_set
  * @li @ref elm_object_part_content_get
  * @li @ref elm_object_part_content_unset
- *
- * Default content parts of the notify widget that you can use are:
- * @li @c "default" - The main content of the notify
  *
  * @ref tutorial_notify show usage of the API.
  *

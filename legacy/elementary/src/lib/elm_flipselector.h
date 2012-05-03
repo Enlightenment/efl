@@ -16,11 +16,7 @@
  * so that it helps the user to reach an item which is distant from
  * the current selection.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for flip selector objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * Smart callbacks one can register to:
  * - @c "selected" - when the widget's selected text item is changed
  * - @c "overflowed" - when the widget's current selection is changed
  *   from the first item in its list to the last

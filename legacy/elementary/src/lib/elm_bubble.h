@@ -29,12 +29,8 @@
  * @li "bottom_left"
  * @li "bottom_right"
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for bubble objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
- * @li @c "clicked" - This is called when a user has clicked the bubble.
+ * Signals that you can add callbacks for are:
+ * @li "clicked" - This is called when a user has clicked the bubble.
  *
  * Default content parts of the bubble that you can use for are:
  * @li "default" - A content of the bubble

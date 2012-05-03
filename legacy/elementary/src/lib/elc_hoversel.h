@@ -12,16 +12,10 @@
  * items in the hoversel menu (no more than 8), though is capable of many
  * more.
  *
- * This widget inherits from the @ref Button one, so that all the
- * functions acting on it also work for hoversel objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Button:
- * - @c "clicked" - the user clicked the hoversel button and popped up
- *   the sel
- * - @c "selected" - an item in the hoversel list is selected. event_info
- *   is the item
- * - @c "dismissed" - the hover is dismissed
+ * Signals that you can add callbacks for are:
+ * "clicked" - the user clicked the hoversel button and popped up the sel
+ * "selected" - an item in the hoversel list is selected. event_info is the item
+ * "dismissed" - the hover is dismissed
  *
  * Default content parts of the hoversel widget that you can use for are:
  * @li "icon" - An icon of the hoversel

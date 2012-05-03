@@ -12,11 +12,7 @@
  * This is a push-button. Press it and run some function. It can contain
  * a simple label and icon object and it also has an autorepeat feature.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for button objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * This widget emits the following signals:
  * @li "clicked": the user clicked the button (press/release).
  * @li "repeated": the user pressed the button without releasing it.
  * @li "pressed": button was pressed.

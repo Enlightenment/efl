@@ -27,11 +27,7 @@
  * Applications can query the progress bar for its value with
  * elm_progressbar_value_get().
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for progress bar objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * Available widget styles for progress bars:
  * - @c "default"
  * - @c "wheel" (simple style, no text, no progression, only
  *      "pulse" effect is available)

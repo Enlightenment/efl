@@ -12,15 +12,13 @@
  * need to resize or move it frequently (the content object and its
  * children).
  *
- * This widget inherits from @ref elm-container-class, so that the
- * functions meant to act on it will wor work for mapbuf objects:
+ * Default content parts of the mapbuf widget that you can use for are:
+ * @li "default" - A content of the mapbuf
  *
+ * Supported elm_object common APIs.
  * @li @ref elm_object_part_content_set
  * @li @ref elm_object_part_content_get
  * @li @ref elm_object_part_content_unset
- *
- * Default content parts of the mapbuf widget that you can use are:
- * @li "default" - The main content of the mapbuf
  *
  * To enable map, elm_mapbuf_enabled_set() should be used.
  *

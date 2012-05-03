@@ -30,12 +30,8 @@
  * am/pm indicator may be optionally shown, too, when it will
  * switch to 12h.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for clock objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
- * - @c "changed" - the clock's user changed the time
+ * Smart callbacks one can register to:
+ * - "changed" - the clock's user changed the time
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_signal_emit

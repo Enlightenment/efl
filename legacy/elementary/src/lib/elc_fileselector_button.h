@@ -25,11 +25,7 @@
  * @li @c "hoversel_vertical"
  * @li @c "hoversel_vertical_entry"
  *
- * This widget inherits from the @ref Button one, so that all the
- * functions acting on it also work for file selector button objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Button:
+ * Smart callbacks one can register to:
  * - @c "file,chosen" - the user has selected a path, whose string
  *   pointer comes as the @c event_info data (a stringshared
  *   string)

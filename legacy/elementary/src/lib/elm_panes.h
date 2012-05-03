@@ -14,15 +14,11 @@
  * Panes can be displayed vertically or horizontally, and contents
  * size proportion can be customized (homogeneous by default).
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for panes objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
- * - @c "press" - The panes has been pressed (button wasn't released yet).
- * - @c "unpressed" - The panes was released after being pressed.
- * - @c "clicked" - The panes has been clicked>
- * - @c "clicked,double" - The panes has been double clicked
+ * Smart callbacks one can listen to:
+ * - "press" - The panes has been pressed (button wasn't released yet).
+ * - "unpressed" - The panes was released after being pressed.
+ * - "clicked" - The panes has been clicked>
+ * - "clicked,double" - The panes has been double clicked
  *
  * Available styles for it:
  * - @c "default"

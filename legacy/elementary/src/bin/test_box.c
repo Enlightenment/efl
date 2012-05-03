@@ -189,7 +189,7 @@ _del_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    elm_box_unpack(data, obj);
    evas_object_move(obj, 0, 0);
    evas_object_color_set(obj, 128, 64, 0, 128);
-   evas_object_del(obj);
+//   evas_object_del(obj);
 }
 
 void

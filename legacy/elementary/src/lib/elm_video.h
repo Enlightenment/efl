@@ -20,19 +20,16 @@
  * linked Elm_Video so it will use the video decoder, if available. It also
  * activates the "remember" function on the linked Elm_Video object.
  *
- * Both widgets inherit from the @ref Layout one, so that all the
- * functions acting on it also work for video objects.
+ * Signals that you can add callback for are :
  *
- * The player widget emits the following signals, besides the ones
- * sent from @ref Layout:
- *  - @c "forward,clicked" - the user clicked the forward button.
- *  - @c "info,clicked" - the user clicked the info button.
- *  - @c "next,clicked" - the user clicked the next button.
- *  - @c "pause,clicked" - the user clicked the pause button.
- *  - @c "play,clicked" - the user clicked the play button.
- *  - @c "prev,clicked" - the user clicked the prev button.
- *  - @c "rewind,clicked" - the user clicked the rewind button.
- *  - @c "stop,clicked" - the user clicked the stop button.
+ * "forward,clicked" - the user clicked the forward button.
+ * "info,clicked" - the user clicked the info button.
+ * "next,clicked" - the user clicked the next button.
+ * "pause,clicked" - the user clicked the pause button.
+ * "play,clicked" - the user clicked the play button.
+ * "prev,clicked" - the user clicked the prev button.
+ * "rewind,clicked" - the user clicked the rewind button.
+ * "stop,clicked" - the user clicked the stop button.
  *
  * Default content parts of the player widget that you can use for are:
  * @li "video" - A video of the player

@@ -1,72 +1,49 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
 
 #ifdef HAVE_EMOTION
 # include <Emotion.h>
 #endif
 
-/* TODO: add buffering support to Emotion and display buffering
- * progress in the theme when needed */
+/* TODO: add buffering support to Emotion and display buffering progression in the theme when needed */
 
-static const char VIDEO_SMART_NAME[] = "elm_video";
-
-typedef struct _Elm_Video_Smart_Data Elm_Video_Smart_Data;
-struct _Elm_Video_Smart_Data
+typedef struct _Widget_Data Widget_Data;
+struct _Widget_Data
 {
-   Elm_Layout_Smart_Data base;
+   Evas_Object *layout;
+   Evas_Object *emotion;
 
-   Evas_Object          *emotion;
-   Ecore_Timer          *timer;
+   Ecore_Timer *timer;
 
-   Eina_Bool             stop : 1;
-   Eina_Bool             remember : 1;
+   Eina_Bool stop : 1;
+   Eina_Bool remember : 1;
 };
 
-#define ELM_VIDEO_DATA_GET(o, sd) \
-  Elm_Video_Smart_Data * sd = evas_object_smart_data_get(o)
+#ifdef HAVE_EMOTION
+static const char *widtype = NULL;
 
-#define ELM_VIDEO_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_VIDEO_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
+static const Evas_Smart_Cb_Description _signals[] = {
+  { NULL, NULL }
+};
 
-#define ELM_VIDEO_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_VIDEO_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_VIDEO_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), VIDEO_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
-EVAS_SMART_SUBCLASS_NEW
-  (VIDEO_SMART_NAME, _elm_video, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
+static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
+static void _theme_hook(Evas_Object *obj);
+static void _sizing_eval(Evas_Object *obj);
+static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _on_focus_hook(void *data, Evas_Object *obj);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
 
 static Eina_Bool
-_elm_video_smart_event(Evas_Object *obj,
-                       Evas_Object *src __UNUSED__,
-                       Evas_Callback_Type type,
-                       void *event_info)
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
 {
-#ifdef HAVE_EMOTION
-   Evas_Event_Key_Down *ev = event_info;
-
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-
    if ((!strcmp(ev->keyname, "Left")) ||
        ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
      {
@@ -82,10 +59,8 @@ _elm_video_smart_event(Evas_Object *obj,
           }
 
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
         return EINA_TRUE;
      }
-
    if ((!strcmp(ev->keyname, "Right")) ||
        ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
      {
@@ -102,10 +77,8 @@ _elm_video_smart_event(Evas_Object *obj,
           }
 
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
         return EINA_TRUE;
      }
-
    if (!strcmp(ev->keyname, "space"))
      {
         if (elm_video_is_playing_get(obj))
@@ -113,512 +86,496 @@ _elm_video_smart_event(Evas_Object *obj,
         else
           elm_video_play(obj);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-
         return EINA_TRUE;
      }
-
-   INF("keyname: '%s' not handled", ev->keyname);
-
+   fprintf(stderr, "keyname: '%s' not handle\n", ev->keyname);
    return EINA_FALSE;
-#else
-
-   (void *)obj;
-   (void *)type;
-   (void *)event_info;
-
-   return EINA_FALSE;
-#endif
 }
 
 static void
-_elm_video_smart_sizing_eval(Evas_Object *obj)
+_del_hook(Evas_Object *obj)
 {
-#ifdef HAVE_EMOTION
-   ELM_VIDEO_DATA_GET(obj, sd);
+   Widget_Data *wd = elm_widget_data_get(obj);
 
+   if (!wd) return;
+   if (wd->timer) ecore_timer_del(wd->timer);
+   free(wd);
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     {
+        edje_object_signal_emit(wd->layout, "elm,action,focus", "elm");
+        evas_object_focus_set(wd->layout, EINA_TRUE);
+     }
+   else
+     {
+        edje_object_signal_emit(wd->layout, "elm,action,unfocus", "elm");
+        evas_object_focus_set(wd->layout, EINA_FALSE);
+     }
+}
+
+static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->layout, rtl);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _elm_theme_object_set(obj, wd->layout, "video", "base", elm_widget_style_get(obj));
+   edje_object_scale_set(wd->layout, elm_widget_scale_get(obj) *
+                         _elm_config->scale);
+   _sizing_eval(obj);
+}
+
+static void
+_sizing_eval(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord w, h;
 
-   evas_object_size_hint_request_get(sd->emotion, &minw, &minh);
-   evas_object_size_hint_aspect_set
-     (sd->emotion, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
-   edje_object_size_min_calc(ELM_WIDGET_DATA(sd)->resize_obj, &w, &h);
+   if (!wd) return;
+   evas_object_size_hint_request_get(wd->emotion, &minw, &minh);
+   evas_object_size_hint_aspect_set(wd->emotion, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
+   edje_object_size_min_calc(wd->layout, &w, &h);
 
    if (w != 0 && h != 0)
      {
         minw = w;
         minh = h;
      }
-
    evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
-#else
-
-   (void *)obj;
-#endif
-}
-
-#ifdef HAVE_EMOTION
-static void
-_on_size_hints_changed(void *data,
-                       Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
-                       void *event_info __UNUSED__)
-{
-   elm_layout_sizing_eval(data);
 }
 
 static void
-_on_open_done(void *data,
-              Evas_Object *obj __UNUSED__,
-              void *event_info __UNUSED__)
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_layout_signal_emit(data, "elm,video,open", "elm");
+   _sizing_eval(data);
 }
 
 static void
-_on_playback_started(void *data,
-                     Evas_Object *obj __UNUSED__,
-                     void *event_info __UNUSED__)
+_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   elm_layout_signal_emit(data, "elm,video,play", "elm");
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (wd->remember) emotion_object_last_position_save(wd->emotion);
 }
 
 static void
-_on_playback_finished(void *data,
-                      Evas_Object *obj __UNUSED__,
-                      void *event_info __UNUSED__)
+_open_done(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_layout_signal_emit(data, "elm,video,end", "elm");
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   edje_object_signal_emit(wd->layout, "elm,video,open", "elm");
 }
 
 static void
-_on_aspect_ratio_updated(void *data,
-                         Evas_Object *obj __UNUSED__,
-                         void *event_info __UNUSED__)
+_playback_started(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_layout_sizing_eval(data);
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   edje_object_signal_emit(wd->layout, "elm,video,play", "elm");
 }
 
 static void
-_on_title_changed(void *data,
-                  Evas_Object *obj __UNUSED__,
-                  void *event_info __UNUSED__)
+_playback_finished(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   edje_object_signal_emit(wd->layout, "elm,video,end", "elm");
+}
+
+static void
+_update_aspect_ratio(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   _sizing_eval(data);
+}
+
+static void
+_title_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
    const char *title;
 
-   ELM_VIDEO_DATA_GET(data, sd);
-
-   title = emotion_object_title_get(sd->emotion);
-   elm_layout_text_set(data, "elm,title", title);
-   elm_layout_signal_emit(data, "elm,video,title", "elm");
+   title = emotion_object_title_get(wd->emotion);
+   edje_object_part_text_escaped_set(wd->layout, "elm,title", title);
+   edje_object_signal_emit(wd->layout, "elm,video,title", "elm");
 }
 
 static void
-_on_audio_level_changed(void *data,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
+_audio_level_change(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   (void)data;
+   (void) data;
 }
 
 static Eina_Bool
 _suspend_cb(void *data)
 {
+   Widget_Data *wd = elm_widget_data_get(data);
    double interval;
 
-   ELM_VIDEO_DATA_GET(data, sd);
-
-   interval = ecore_timer_interval_get(sd->timer);
+   interval = ecore_timer_interval_get(wd->timer);
    if (interval <= 20)
-     emotion_object_suspend_set(sd->emotion, EMOTION_SLEEP);
+     emotion_object_suspend_set(wd->emotion, EMOTION_SLEEP);
    else if (interval <= 30)
-     emotion_object_suspend_set(sd->emotion, EMOTION_DEEP_SLEEP);
+     emotion_object_suspend_set(wd->emotion, EMOTION_DEEP_SLEEP);
    else
      {
-        emotion_object_suspend_set(sd->emotion, EMOTION_HIBERNATE);
-        sd->timer = NULL;
-
+        emotion_object_suspend_set(wd->emotion, EMOTION_HIBERNATE);
+        wd->timer = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
 
-   ecore_timer_interval_set(sd->timer, interval + 10);
+   ecore_timer_interval_set(wd->timer, interval + 10);
    return ECORE_CALLBACK_RENEW;
 }
-
 #endif
 
 Eina_Bool
 _elm_video_check(Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(video) EINA_FALSE;
-
-   return EINA_TRUE;
+  ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
+  return EINA_TRUE;
 #else
-   (void)video;
-
-   return EINA_FALSE;
+  (void) video;
+  return EINA_FALSE;
 #endif
-}
-
-static void
-_elm_video_smart_add(Evas_Object *obj)
-{
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Video_Smart_Data);
-
-   ELM_WIDGET_CLASS(_elm_video_parent_sc)->base.add(obj);
-
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-
-#ifdef HAVE_EMOTION
-   priv->stop = EINA_FALSE;
-   priv->remember = EINA_FALSE;
-
-   priv->emotion = emotion_object_add(evas_object_evas_get(obj));
-   emotion_object_init(priv->emotion, NULL);
-
-   elm_layout_theme_set(obj, "video", "base", elm_widget_style_get(obj));
-   elm_layout_content_set(obj, "elm.swallow.video", priv->emotion);
-
-   evas_object_smart_callback_add
-     (priv->emotion, "open_done", _on_open_done, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "playback_started", _on_playback_started, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "playback_finished", _on_playback_finished, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "frame_resize", _on_aspect_ratio_updated, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "title_change", _on_title_changed, obj);
-   evas_object_smart_callback_add
-     (priv->emotion, "audio_level_change", _on_audio_level_changed, obj);
-
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
-
-   priv->timer = ecore_timer_add(20.0, _suspend_cb, obj);
-#endif
-}
-
-static void
-_elm_video_smart_del(Evas_Object *obj)
-{
-   ELM_VIDEO_DATA_GET(obj, sd);
-
-#ifdef HAVE_EMOTION
-   if (sd->timer) ecore_timer_del(sd->timer);
-   if (sd->remember) emotion_object_last_position_save(sd->emotion);
-#endif
-
-   ELM_WIDGET_CLASS(_elm_video_parent_sc)->base.del(obj);
-}
-
-static void
-_elm_video_smart_set_user(Elm_Layout_Smart_Class *sc)
-{
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_video_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _elm_video_smart_del;
-
-   ELM_WIDGET_CLASS(sc)->event = _elm_video_smart_event;
-   ELM_WIDGET_CLASS(sc)->focus_next = NULL; /* not 'focus chain manager' */
-
-   sc->sizing_eval = _elm_video_smart_sizing_eval;
 }
 
 EAPI Evas_Object *
 elm_video_add(Evas_Object *parent)
 {
 #ifdef HAVE_EMOTION
-   Evas *e;
    Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   ELM_SET_WIDTYPE(widtype, "video");
+   elm_widget_type_set(obj, "video");
+   elm_widget_sub_object_add(parent, obj);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_event_hook_set(obj, _event_hook);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
+   wd->stop = EINA_FALSE;
+   wd->remember = EINA_FALSE;
 
-   obj = evas_object_smart_add(e, _elm_video_smart_class_new());
+   wd->layout = edje_object_add(e);
+   _elm_theme_object_set(obj, wd->layout, "video", "base", "default");
+   elm_widget_resize_object_set(obj, wd->layout);
+   evas_object_show(wd->layout);
+   evas_object_size_hint_weight_set(wd->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
+   wd->emotion = emotion_object_add(e);
+   emotion_object_init(wd->emotion, NULL);
+   elm_widget_sub_object_add(obj, wd->emotion);
+   edje_object_part_swallow(wd->layout, "elm.swallow.video", wd->emotion);
+
+   evas_object_smart_callback_add(wd->emotion, "open_done", _open_done, obj);
+   evas_object_smart_callback_add(wd->emotion, "playback_started", _playback_started, obj);
+   evas_object_smart_callback_add(wd->emotion, "playback_finished", _playback_finished, obj);
+   evas_object_smart_callback_add(wd->emotion, "frame_resize", _update_aspect_ratio, obj);
+   evas_object_smart_callback_add(wd->emotion, "title_change", _title_change, obj);
+   evas_object_smart_callback_add(wd->emotion, "audio_level_change", _audio_level_change, obj);
+
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, NULL);
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _sizing_eval(obj);
+
+   wd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
 
    return obj;
 #else
-   (void)parent;
-
+   (void) parent;
    return NULL;
 #endif
 }
 
 EAPI Eina_Bool
-elm_video_file_set(Evas_Object *obj,
-                   const char *filename)
+elm_video_file_set(Evas_Object *video, const char *filename)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) EINA_FALSE;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   if (sd->remember) emotion_object_last_position_save(sd->emotion);
-   sd->stop = EINA_FALSE;
-   if (!emotion_object_file_set(sd->emotion, filename)) return EINA_FALSE;
+   if (wd->remember) emotion_object_last_position_save(wd->emotion);
+   wd->stop = EINA_FALSE;
+   if (!emotion_object_file_set(wd->emotion, filename)) return EINA_FALSE;
 
    if ((!strncmp(filename, "file://", 7)) || (!strstr(filename, "://")))
-     emotion_object_last_position_load(sd->emotion);
+     emotion_object_last_position_load(wd->emotion);
 
-   elm_layout_signal_emit(obj, "elm,video,load", "elm");
+   edje_object_signal_emit(wd->layout, "elm,video,load", "elm");
 
    return EINA_TRUE;
 #else
-   (void)obj;
-   (void)filename;
+   (void) video;
+   (void) filename;
 
    return EINA_FALSE;
 #endif
 }
 
 EAPI Evas_Object *
-elm_video_emotion_get(const Evas_Object *obj)
+elm_video_emotion_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) NULL;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return sd->emotion;
+   return wd->emotion;
 #else
-   (void)obj;
+   (void) video;
    return NULL;
 #endif
 }
 
 EAPI void
-elm_video_play(Evas_Object *obj)
+elm_video_play(Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj);
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype);
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   if (emotion_object_play_get(sd->emotion)) return;
+   if (emotion_object_play_get(wd->emotion)) return ;
 
-   if (sd->timer) ecore_timer_del(sd->timer);
-   sd->timer = NULL;
-   sd->stop = EINA_FALSE;
-   emotion_object_play_set(sd->emotion, EINA_TRUE);
+   if (wd->timer) ecore_timer_del(wd->timer);
+   wd->timer = NULL;
+   wd->stop = EINA_FALSE;
+   emotion_object_play_set(wd->emotion, EINA_TRUE);
 #else
-   (void)obj;
+   (void) video;
 #endif
 }
 
 /* FIXME: pause will setup timer and go into sleep or
  * hibernate after a while without activity.
  */
+
 EAPI void
-elm_video_pause(Evas_Object *obj)
+elm_video_pause(Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj);
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype);
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   if (!emotion_object_play_get(sd->emotion)) return;
+   if (!emotion_object_play_get(wd->emotion)) return ;
 
-   if (!sd->timer) sd->timer = ecore_timer_add(20.0, _suspend_cb, obj);
-   emotion_object_play_set(sd->emotion, EINA_FALSE);
-   elm_layout_signal_emit(obj, "elm,video,pause", "elm");
+   if (!wd->timer) wd->timer = ecore_timer_add(20.0, _suspend_cb, video);
+   emotion_object_play_set(wd->emotion, EINA_FALSE);
+   edje_object_signal_emit(wd->layout, "elm,video,pause", "elm");
 #else
-   (void)obj;
+   (void) video;
 #endif
 }
 
 /* FIXME: stop should go into hibernate state directly.
  */
 EAPI void
-elm_video_stop(Evas_Object *obj)
+elm_video_stop(Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj);
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype);
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   if (!emotion_object_play_get(sd->emotion) && sd->stop) return;
+   if (!emotion_object_play_get(wd->emotion) && wd->stop) return ;
 
-   if (sd->timer) ecore_timer_del(sd->timer);
-   sd->timer = NULL;
-
-   sd->stop = EINA_TRUE;
-   emotion_object_play_set(sd->emotion, EINA_FALSE);
-   elm_layout_signal_emit(obj, "elm,video,stop", "elm");
-   emotion_object_suspend_set(sd->emotion, EMOTION_HIBERNATE);
+   if (wd->timer) ecore_timer_del(wd->timer);
+   wd->timer = NULL;
+   wd->stop = EINA_TRUE;
+   emotion_object_play_set(wd->emotion, EINA_FALSE);
+   edje_object_signal_emit(wd->layout, "elm,video,stop", "elm");
+   emotion_object_suspend_set(wd->emotion, EMOTION_HIBERNATE);
 #else
-   (void)obj;
+   (void) video;
 #endif
 }
 
 EAPI Eina_Bool
-elm_video_is_playing_get(const Evas_Object *obj)
+elm_video_is_playing_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) EINA_FALSE;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return emotion_object_play_get(sd->emotion);
+   return emotion_object_play_get(wd->emotion);
 #else
-   (void)obj;
+   (void) video;
    return EINA_FALSE;
 #endif
 }
 
 EAPI Eina_Bool
-elm_video_is_seekable_get(const Evas_Object *obj)
+elm_video_is_seekable_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) EINA_FALSE;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return emotion_object_seekable_get(sd->emotion);
+   return emotion_object_seekable_get(wd->emotion);
 #else
-   (void)obj;
+   (void) video;
    return EINA_FALSE;
 #endif
 }
 
 EAPI Eina_Bool
-elm_video_audio_mute_get(const Evas_Object *obj)
+elm_video_audio_mute_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) EINA_FALSE;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return emotion_object_audio_mute_get(sd->emotion);
+   return emotion_object_audio_mute_get(wd->emotion);
 #else
-   (void)obj;
+   (void) video;
    return EINA_FALSE;
 #endif
 }
 
 EAPI void
-elm_video_audio_mute_set(Evas_Object *obj,
-                         Eina_Bool mute)
+elm_video_audio_mute_set(Evas_Object *video, Eina_Bool mute)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj);
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype);
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   emotion_object_audio_mute_set(sd->emotion, mute);
+   emotion_object_audio_mute_set(wd->emotion, mute);
 #else
-   (void)obj;
-   (void)mute;
+   (void) video;
+   (void) mute;
 #endif
 }
 
 EAPI double
-elm_video_audio_level_get(const Evas_Object *obj)
+elm_video_audio_level_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) 0.0;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return emotion_object_audio_volume_get(sd->emotion);
+   return emotion_object_audio_volume_get(wd->emotion);
 #else
-   (void)obj;
+   (void) video;
    return 0.0;
 #endif
 }
 
 EAPI void
-elm_video_audio_level_set(Evas_Object *obj,
-                          double volume)
+elm_video_audio_level_set(Evas_Object *video, double volume)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj);
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype);
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   emotion_object_audio_volume_set(sd->emotion, volume);
+   emotion_object_audio_volume_set(wd->emotion, volume);
 #else
-   (void)obj;
-   (void)volume;
+   (void) video;
+   (void) volume;
 #endif
 }
 
 EAPI double
-elm_video_play_position_get(const Evas_Object *obj)
+elm_video_play_position_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) 0.0;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return emotion_object_position_get(sd->emotion);
+   return emotion_object_position_get(wd->emotion);
 #else
-   (void)obj;
+   (void) video;
    return 0.0;
 #endif
 }
 
 EAPI void
-elm_video_play_position_set(Evas_Object *obj,
-                            double position)
+elm_video_play_position_set(Evas_Object *video, double position)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj);
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype);
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   emotion_object_position_set(sd->emotion, position);
+   emotion_object_position_set(wd->emotion, position);
 #else
-   (void)obj;
-   (void)position;
+   (void) video;
+   (void) position;
 #endif
 }
 
 EAPI double
-elm_video_play_length_get(const Evas_Object *obj)
+elm_video_play_length_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) 0.0;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return emotion_object_play_length_get(sd->emotion);
+   return emotion_object_play_length_get(wd->emotion);
 #else
-   (void)obj;
+   (void) video;
    return 0.0;
 #endif
 }
 
 EAPI const char *
-elm_video_title_get(const Evas_Object *obj)
+elm_video_title_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) NULL;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return emotion_object_title_get(sd->emotion);
+   return emotion_object_title_get(wd->emotion);
 #else
-   (void)obj;
+   (void) video;
    return NULL;
 #endif
 }
 
 EAPI void
-elm_video_remember_position_set(Evas_Object *obj,
-                                Eina_Bool remember)
+elm_video_remember_position_set(Evas_Object *video, Eina_Bool remember)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj);
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype);
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   sd->remember = remember;
+   wd->remember = remember;
 #else
-   (void)obj;
-   (void)remember;
+   (void) video;
+   (void) remember;
 #endif
 }
 
 EAPI Eina_Bool
-elm_video_remember_position_get(const Evas_Object *obj)
+elm_video_remember_position_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
-   ELM_VIDEO_CHECK(obj) EINA_FALSE;
-   ELM_VIDEO_DATA_GET(obj, sd);
+   ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(video);
 
-   return sd->remember;
+   return wd->remember;
 #else
-   (void)obj;
+   (void) video;
    return EINA_FALSE;
 #endif
 }

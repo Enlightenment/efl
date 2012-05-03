@@ -1,6 +1,5 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
 
 /**
  * TODO
@@ -9,142 +8,131 @@
  * Add events (move, start ...)
  */
 
-static const char PANES_SMART_NAME[] = "elm_panes";
+typedef struct _Widget_Data Widget_Data;
 
-typedef struct _Elm_Panes_Smart_Data Elm_Panes_Smart_Data;
-
-struct _Elm_Panes_Smart_Data
+struct _Widget_Data
 {
-   Elm_Layout_Smart_Data base;
+   Evas_Object *panes;
 
    struct
-   {
-      int       x_diff;
-      int       y_diff;
-      Eina_Bool move;
-   } move;
+     {
+        Evas_Object *left;
+        Evas_Object *right;
+     } contents;
 
-   Eina_Bool             double_clicked : 1;
-   Eina_Bool             horizontal : 1;
-   Eina_Bool             fixed : 1;
+   struct
+     {
+        int x_diff;
+        int y_diff;
+        Eina_Bool move;
+     } move;
+
+   Eina_Bool clicked_double;
+   Eina_Bool horizontal;
+   Eina_Bool fixed;
 };
+
+static const char *widtype = NULL;
+static void _del_hook(Evas_Object *obj);
+static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
+static void _theme_hook(Evas_Object *obj);
+static void _sizing_eval(Evas_Object *obj);
+static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_PRESS[] = "press";
 static const char SIG_UNPRESS[] = "unpress";
-static const char SIG_DOUBLE_CLICKED[] = "clicked,double";
-static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
+
+static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_CLICKED, ""},
    {SIG_PRESS, ""},
    {SIG_UNPRESS, ""},
-   {SIG_DOUBLE_CLICKED, ""},
+   {SIG_CLICKED_DOUBLE, ""},
    {NULL, NULL}
 };
 
-static const Elm_Layout_Part_Alias_Description _content_aliases[] =
+static void
+_del_hook(Evas_Object *obj)
 {
-   {"left", "elm.swallow.left"},
-   {"right", "elm.swallow.right"},
-   {NULL, NULL}
-};
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   free(wd);
+}
 
-#define ELM_PANES_DATA_GET(o, sd) \
-  Elm_Panes_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_PANES_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_PANES_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_PANES_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_PANES_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_PANES_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), PANES_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
-EVAS_SMART_SUBCLASS_NEW
-  (PANES_SMART_NAME, _elm_panes, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
-
-static Eina_Bool
-_elm_panes_smart_theme(Evas_Object *obj)
+static void
+_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_mirrored_set(wd->panes, rtl);
+}
+
+static void
+_theme_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const char *style = elm_widget_style_get(obj);
    double size;
 
-   ELM_PANES_DATA_GET(obj, sd);
-
-   if (sd->horizontal)
-     eina_stringshare_replace(&(ELM_LAYOUT_DATA(sd)->group), "horizontal");
-   else
-     eina_stringshare_replace(&(ELM_LAYOUT_DATA(sd)->group), "vertical");
-
-   if (!ELM_WIDGET_CLASS(_elm_panes_parent_sc)->theme(obj)) return EINA_FALSE;
-
+   if (!wd) return;
+   _elm_widget_mirrored_reload(obj);
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
    size = elm_panes_content_left_size_get(obj);
 
-   if (sd->fixed) elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+   if (wd->horizontal)
+     _elm_theme_object_set(obj, wd->panes, "panes", "horizontal", style);
+   else
+     _elm_theme_object_set(obj, wd->panes, "panes", "vertical", style);
 
-   elm_layout_sizing_eval(obj);
+   if (wd->contents.left)
+     edje_object_part_swallow(wd->panes, "elm.swallow.left", wd->contents.left);
+   if (wd->contents.right)
+     edje_object_part_swallow(wd->panes, "elm.swallow.right", wd->contents.right);
+   if (wd->fixed)
+     edje_object_signal_emit(wd->panes, "elm.panes.fixed", "elm");
 
+   edje_object_scale_set(wd->panes, elm_widget_scale_get(obj) *
+                         _elm_config->scale);
+   _sizing_eval(obj);
    elm_panes_content_left_size_set(obj, size);
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool
-_elm_panes_smart_focus_next(const Evas_Object *obj,
-                            Elm_Focus_Direction dir,
-                            Evas_Object **next)
+_elm_panes_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
    double w, h;
-   unsigned char i;
-   Evas_Object *to_focus;
+   edje_object_part_drag_value_get(wd->panes, "elm.bar", &w, &h);
+   if (((wd->horizontal) && ( h == 0.0 )) || ((!wd->horizontal) && ( w == 0.0 )))
+     return elm_widget_focus_next_get(wd->contents.right, dir, next);
+
    Evas_Object *chain[2];
-   Evas_Object *left, *right;
-
-   ELM_PANES_DATA_GET(obj, sd);
-
-   edje_object_part_drag_value_get
-     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.bar", &w, &h);
-
-   left = elm_layout_content_get(obj, "left");
-   right = elm_layout_content_get(obj, "right");
-
-   if (((sd->horizontal) && (h == 0.0)) || ((!sd->horizontal) && (w == 0.0)))
-     return elm_widget_focus_next_get(right, dir, next);
 
    /* Direction */
    if (dir == ELM_FOCUS_PREVIOUS)
      {
-        chain[0] = right;
-        chain[1] = left;
+        chain[0] = wd->contents.right;
+        chain[1] = wd->contents.left;
      }
    else if (dir == ELM_FOCUS_NEXT)
      {
-        chain[0] = left;
-        chain[1] = right;
+        chain[0] = wd->contents.left;
+        chain[1] = wd->contents.right;
      }
-   else return EINA_FALSE;
+   else
+     return EINA_FALSE;
 
-   i = elm_widget_focus_get(chain[1]);
+   unsigned char i = elm_widget_focus_get(chain[1]);
 
-   if (elm_widget_focus_next_get(chain[i], dir, next)) return EINA_TRUE;
+   if (elm_widget_focus_next_get(chain[i], dir, next))
+     return EINA_TRUE;
 
    i = !i;
 
+   Evas_Object *to_focus;
    if (elm_widget_focus_next_get(chain[i], dir, &to_focus))
      {
         *next = to_focus;
@@ -155,233 +143,328 @@ _elm_panes_smart_focus_next(const Evas_Object *obj,
 }
 
 static void
-_on_clicked(void *data,
-            Evas_Object *obj __UNUSED__,
-            const char *emission __UNUSED__,
-            const char *source __UNUSED__)
+_sizing_eval(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+}
+
+static void
+_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   _sizing_eval(data);
+}
+
+static void
+_sub_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *sub = event_info;
+
+   if (!wd) return;
+   if (sub == wd->contents.left)
+     {
+        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
+        edje_object_part_unswallow(wd->panes, sub);
+        wd->contents.left = NULL;
+        _sizing_eval(obj);
+     }
+   else if (sub == wd->contents.right)
+     {
+        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
+        edje_object_part_unswallow(wd->panes, sub);
+        wd->contents.right= NULL;
+        _sizing_eval(obj);
+     }
+}
+
+static void
+_clicked(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 static void
-_double_clicked(void *data,
-                Evas_Object *obj __UNUSED__,
-                const char *emission __UNUSED__,
-                const char *source __UNUSED__)
+_clicked_double(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   ELM_PANES_DATA_GET(data, sd);
+   Widget_Data *wd = elm_widget_data_get(data);
 
-   sd->double_clicked = EINA_TRUE;
+   wd->clicked_double = EINA_TRUE;
 }
 
 static void
-_on_pressed(void *data,
-            Evas_Object *obj __UNUSED__,
-            const char *emission __UNUSED__,
-            const char *source __UNUSED__)
+_press(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    evas_object_smart_callback_call(data, SIG_PRESS, NULL);
 }
 
 static void
-_on_unpressed(void *data,
-              Evas_Object *obj __UNUSED__,
-              const char *emission __UNUSED__,
-              const char *source __UNUSED__)
+_unpress(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   ELM_PANES_DATA_GET(data, sd);
+   Widget_Data *wd = elm_widget_data_get(data);
    evas_object_smart_callback_call(data, SIG_UNPRESS, NULL);
 
-   if (sd->double_clicked)
+   if (wd->clicked_double)
      {
-        evas_object_smart_callback_call(data, SIG_DOUBLE_CLICKED, NULL);
-        sd->double_clicked = EINA_FALSE;
+        evas_object_smart_callback_call(data, SIG_CLICKED_DOUBLE, NULL);
+        wd->clicked_double = EINA_FALSE;
      }
 }
 
 static void
-_elm_panes_smart_add(Evas_Object *obj)
+_content_left_set(Evas_Object *obj, Evas_Object *content)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Panes_Smart_Data);
-
-   ELM_WIDGET_CLASS(_elm_panes_parent_sc)->base.add(obj);
-
-   elm_layout_theme_set(obj, "panes", "vertical", elm_widget_style_get(obj));
-
-   elm_panes_content_left_size_set(obj, 0.5);
-
-   edje_object_signal_callback_add
-     (ELM_WIDGET_DATA(priv)->resize_obj, "elm,action,click", "",
-     _on_clicked, obj);
-   edje_object_signal_callback_add
-     (ELM_WIDGET_DATA(priv)->resize_obj, "elm,action,click,double", "",
-     _double_clicked, obj);
-   edje_object_signal_callback_add
-     (ELM_WIDGET_DATA(priv)->resize_obj, "elm,action,press", "",
-     _on_pressed, obj);
-   edje_object_signal_callback_add
-     (ELM_WIDGET_DATA(priv)->resize_obj, "elm,action,unpress", "",
-     _on_unpressed, obj);
-
-   elm_widget_can_focus_set(obj, EINA_FALSE);
-
-   elm_layout_sizing_eval(obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->contents.left == content) return;
+   if (wd->contents.left)
+     evas_object_del(wd->contents.left);
+   wd->contents.left = content;
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        edje_object_part_swallow(wd->panes, "elm.swallow.left", content);
+     }
 }
 
 static void
-_elm_panes_smart_set_user(Elm_Layout_Smart_Class *sc)
+_content_right_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_panes_smart_add;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->contents.right == content) return;
+   if (wd->contents.right)
+     evas_object_del(wd->contents.right);
+   wd->contents.right = content;
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        edje_object_part_swallow(wd->panes, "elm.swallow.right", content);
+     }
+}
 
-   ELM_WIDGET_CLASS(sc)->theme = _elm_panes_smart_theme;
-   ELM_WIDGET_CLASS(sc)->focus_next = _elm_panes_smart_focus_next;
+static Evas_Object *
+_content_left_unset(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd->contents.left) return NULL;
+   Evas_Object *content = wd->contents.left;
+   elm_widget_sub_object_del(obj, content);
+   return content;
+}
 
-   sc->content_aliases = _content_aliases;
+static Evas_Object *
+_content_right_unset(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd->contents.right) return NULL;
+   Evas_Object *content = wd->contents.right;
+   elm_widget_sub_object_del(obj, content);
+   return content;
+}
+
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
+   if (!part || !strcmp(part, "left"))
+     _content_left_set(obj, content);
+   else if (!strcmp(part, "right"))
+     _content_right_set(obj, content);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
+   if (!part || !strcmp(part, "left"))
+     return wd->contents.left;
+   else if (!strcmp(part, "right"))
+     return wd->contents.right;
+   return NULL;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
+   if (!part || !strcmp(part, "left"))
+     return _content_left_unset(obj);
+   else if (!strcmp(part, "right"))
+     return _content_right_unset(obj);
+   return NULL;
 }
 
 EAPI Evas_Object *
 elm_panes_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
+   ELM_SET_WIDTYPE(widtype, "panes");
+   elm_widget_type_set(obj, "panes");
+   elm_widget_sub_object_add(parent, obj);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_focus_next_hook_set(obj, _elm_panes_focus_next_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
 
-   obj = evas_object_smart_add(e, _elm_panes_smart_class_new());
+   wd->panes = edje_object_add(e);
+   _elm_theme_object_set(obj, wd->panes, "panes", "vertical", "default");
+   elm_widget_resize_object_set(obj, wd->panes);
+   evas_object_show(wd->panes);
 
-   if (!elm_widget_sub_object_add(parent, obj))
-     ERR("could not add %p as sub object of %p", obj, parent);
+   elm_panes_content_left_size_set(obj, 0.5);
 
+   edje_object_signal_callback_add(wd->panes, "elm,action,click", "",
+                                   _clicked, obj);
+   edje_object_signal_callback_add(wd->panes, "elm,action,click,double", "",
+                                   _clicked_double, obj);
+   edje_object_signal_callback_add(wd->panes, "elm,action,press", "",
+                                   _press, obj);
+   edje_object_signal_callback_add(wd->panes, "elm,action,unpress", "",
+                                   _unpress, obj);
+
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints, obj);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+   _sizing_eval(obj);
    return obj;
 }
 
 EINA_DEPRECATED EAPI void
-elm_panes_content_left_set(Evas_Object *obj,
-                           Evas_Object *content)
+elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content)
 {
-   elm_layout_content_set(obj, "left", content);
+   _content_set_hook(obj, "left", content);
 }
 
 EINA_DEPRECATED EAPI void
-elm_panes_content_right_set(Evas_Object *obj,
-                            Evas_Object *content)
+elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
 {
-   elm_layout_content_set(obj, "right", content);
+   _content_set_hook(obj, "right", content);
 }
 
 EINA_DEPRECATED EAPI Evas_Object *
 elm_panes_content_left_get(const Evas_Object *obj)
 {
-   return elm_layout_content_get(obj, "left");
+   return _content_get_hook(obj, "left");
 }
 
 EINA_DEPRECATED EAPI Evas_Object *
 elm_panes_content_right_get(const Evas_Object *obj)
 {
-   return elm_layout_content_get(obj, "right");
+   return _content_get_hook(obj, "right");
 }
 
 EINA_DEPRECATED EAPI Evas_Object *
 elm_panes_content_left_unset(Evas_Object *obj)
 {
-   return elm_layout_content_unset(obj, "left");
+   return _content_unset_hook(obj, "left");
 }
 
 EINA_DEPRECATED EAPI Evas_Object *
 elm_panes_content_right_unset(Evas_Object *obj)
 {
-   return elm_layout_content_unset(obj, "right");
+   return _content_unset_hook(obj, "right");
 }
 
 EAPI double
 elm_panes_content_left_size_get(const Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   Widget_Data *wd = elm_widget_data_get(obj);
    double w, h;
 
-   ELM_PANES_CHECK(obj) 0.0;
-   ELM_PANES_DATA_GET(obj, sd);
-
-   edje_object_part_drag_value_get
-     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.bar", &w, &h);
-
-   if (sd->horizontal) return h;
+   if (!wd) return 0;
+   edje_object_part_drag_value_get(wd->panes, "elm.bar", &w, &h);
+   if (wd->horizontal) return h;
    else return w;
 }
 
 EAPI void
-elm_panes_content_left_size_set(Evas_Object *obj,
-                                double size)
+elm_panes_content_left_size_set(Evas_Object *obj, double size)
 {
-   ELM_PANES_CHECK(obj);
-   ELM_PANES_DATA_GET(obj, sd);
-
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (size < 0.0) size = 0.0;
-   else if (size > 1.0)
-     size = 1.0;
-   if (sd->horizontal)
-     edje_object_part_drag_value_set
-       (ELM_WIDGET_DATA(sd)->resize_obj, "elm.bar", 0.0, size);
+   else if (size > 1.0) size = 1.0;
+   if (wd->horizontal)
+     edje_object_part_drag_value_set(wd->panes, "elm.bar", 0.0, size);
    else
-     edje_object_part_drag_value_set
-       (ELM_WIDGET_DATA(sd)->resize_obj, "elm.bar", size, 0.0);
+     edje_object_part_drag_value_set(wd->panes, "elm.bar", size, 0.0);
 }
 
 EAPI double
 elm_panes_content_right_size_get(const Evas_Object *obj)
 {
-   return 1.0 - elm_panes_content_left_size_get(obj);
+   return (1.0 - elm_panes_content_left_size_get(obj));
 }
 
 EAPI void
-elm_panes_content_right_size_set(Evas_Object *obj,
-                                 double size)
+elm_panes_content_right_size_set(Evas_Object *obj, double size)
 {
    elm_panes_content_left_size_set(obj, (1.0 - size));
 }
 
 EAPI void
-elm_panes_horizontal_set(Evas_Object *obj,
-                         Eina_Bool horizontal)
+elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
-   ELM_PANES_CHECK(obj);
-   ELM_PANES_DATA_GET(obj, sd);
-
-   sd->horizontal = horizontal;
-   _elm_panes_smart_theme(obj);
-
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->horizontal = horizontal;
+   _theme_hook(obj);
    elm_panes_content_left_size_set(obj, 0.5);
 }
 
 EAPI Eina_Bool
 elm_panes_horizontal_get(const Evas_Object *obj)
 {
-   ELM_PANES_CHECK(obj) EINA_FALSE;
-   ELM_PANES_DATA_GET(obj, sd);
-
-   return sd->horizontal;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->horizontal;
 }
 
 EAPI void
 elm_panes_fixed_set(Evas_Object *obj, Eina_Bool fixed)
 {
-   ELM_PANES_CHECK(obj);
-   ELM_PANES_DATA_GET(obj, sd);
-
-   sd->fixed = !!fixed;
-   if (sd->fixed == EINA_TRUE)
-     elm_layout_signal_emit(obj, "elm.panes.fixed", "elm");
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->fixed = !!fixed;
+   if (wd->fixed == EINA_TRUE)
+     edje_object_signal_emit(wd->panes, "elm.panes.fixed", "elm");
    else
-     elm_layout_signal_emit(obj, "elm.panes.unfixed", "elm");
+     edje_object_signal_emit(wd->panes, "elm.panes.unfixed", "elm");
 }
 
 EAPI Eina_Bool
 elm_panes_fixed_get(const Evas_Object *obj)
 {
-   ELM_PANES_CHECK(obj) EINA_FALSE;
-   ELM_PANES_DATA_GET(obj, sd);
-
-   return sd->fixed;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->fixed;
 }

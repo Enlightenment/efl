@@ -16,11 +16,6 @@
  * space required for such stuff, and when they popup, as a keyboard
  * shows when an entry is selected, conformant content won't change.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for conformant objects.
- *
- * This widget emits the same signals sent from @ref Layout:
- *
  * Available styles for it:
  * - @c "default"
  *

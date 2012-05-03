@@ -41,14 +41,12 @@ Elementary_Cursor.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
-elm_widget.h \
-elm_widget_container.h \
-elm_widget_layout.h
+elm_widget.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 includesub_HEADERS = \
 elc_ctxpopup.h \
-elm_dayselector.h \
+elc_dayselector.h \
 elc_fileselector_button.h \
 elc_fileselector_entry.h \
 elc_fileselector.h \
@@ -139,7 +137,7 @@ includesubdir = $(includedir)/elementary-@VMAJ@/
 libelementary_la_SOURCES = \
 elm_priv.h \
 elc_ctxpopup.c \
-elm_dayselector.c \
+elc_dayselector.c \
 elc_popup.c \
 elc_fileselector_button.c \
 elc_fileselector.c \
@@ -162,7 +160,6 @@ elm_cnp.c \
 elm_colorselector.c \
 elm_config.c \
 elm_conform.c \
-elm_container.c \
 elm_datetime.c \
 elm_diskselector.c \
 elm_entry.c \
