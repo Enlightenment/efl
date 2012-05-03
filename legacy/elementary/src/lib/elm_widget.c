@@ -265,11 +265,20 @@ PROXY_MAKE(disable);
 PROXY_MAKE(theme);
 PROXY_MAKE(translate);
 UNIMPLEMENTED_MAKE(disable);
-UNIMPLEMENTED_MAKE(theme);
 UNIMPLEMENTED_MAKE(translate);
 
 #undef PROXY_MAKE
 #undef UNIMPLEMENTED_MAKE
+
+static Eina_Bool
+_elm_widget_theme_func(Evas_Object *obj)
+{
+   _elm_widget_mirrored_reload(obj);
+
+   elm_widget_disabled_set(obj, elm_widget_disabled_get(obj));
+
+   return EINA_TRUE;
+}
 
 static Eina_Bool
 _elm_widget_on_focus_func_compat(Evas_Object *obj)
@@ -545,13 +554,18 @@ _elm_widget_smart_set(Elm_Widget_Smart_Class *api)
 #define API_DEFAULT_SET_UNIMPLEMENTED(_prefix) \
   api->_prefix = _elm_widget_##_prefix##_func_unimplemented;
 
+   /* NB: always remember to call these parent versions on children,
+    * except for the unimplemented ones and calculate, which is moot */
+
 #define API_DEFAULT_SET(_prefix) \
   api->_prefix = _elm_widget_##_prefix##_func;
 
    /* base api */
    API_DEFAULT_SET_UNIMPLEMENTED(on_focus);
    API_DEFAULT_SET_UNIMPLEMENTED(disable);
-   API_DEFAULT_SET_UNIMPLEMENTED(theme);
+
+   api->theme = _elm_widget_theme_func;
+
    API_DEFAULT_SET_UNIMPLEMENTED(translate);
    API_DEFAULT_SET_UNIMPLEMENTED(event);
    API_DEFAULT_SET_UNIMPLEMENTED(focus_next);
