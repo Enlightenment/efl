@@ -43,17 +43,18 @@ _elm_font_properties_get(Eina_Hash **font_hash,
 
         /* add a font name */
         if (font_hash)
+          efp = eina_hash_find(*font_hash, name);
+        if (!efp)
           {
-             efp = eina_hash_find(*font_hash, name);
-             if (!efp)
+             efp = calloc(1, sizeof(Elm_Font_Properties));
+             if (!efp) return NULL;
+             
+             efp->name = eina_stringshare_add(name);
+             if (font_hash)
                {
-                  efp = calloc(1, sizeof(Elm_Font_Properties));
-                  if (!efp) return NULL;
-
-                  efp->name = eina_stringshare_add(name);
                   if (!*font_hash)
                     *font_hash = eina_hash_string_superfast_new(NULL);
-                   eina_hash_add(*font_hash, name, efp);
+                  eina_hash_add(*font_hash, name, efp);
                }
           }
 
@@ -184,23 +185,15 @@ elm_font_available_hash_add(Eina_List *list)
    font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Regular");
    font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Bold");
    font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Oblique");
-   font_hash = _elm_font_available_hash_add(font_hash,
-                                            "Sans:style=Bold Oblique");
-
+   font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Bold Oblique");
    font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Regular");
    font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Bold");
    font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Oblique");
-   font_hash = _elm_font_available_hash_add(font_hash,
-                                            "Serif:style=Bold Oblique");
-
-   font_hash = _elm_font_available_hash_add(font_hash,
-                                            "Monospace:style=Regular");
-   font_hash = _elm_font_available_hash_add(font_hash,
-                                            "Monospace:style=Bold");
-   font_hash = _elm_font_available_hash_add(font_hash,
-                                            "Monospace:style=Oblique");
-   font_hash = _elm_font_available_hash_add(font_hash,
-                                            "Monospace:style=Bold Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Bold Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash, "Monospace:style=Regular");
+   font_hash = _elm_font_available_hash_add(font_hash, "Monospace:style=Bold");
+   font_hash = _elm_font_available_hash_add(font_hash, "Monospace:style=Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash, "Monospace:style=Bold Oblique");
 
    EINA_LIST_FOREACH(list, l, key)
      if (key) _elm_font_available_hash_add(font_hash, key);
