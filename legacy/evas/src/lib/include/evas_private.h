@@ -527,6 +527,8 @@ struct _Evas_Object
       Eina_Bool             have_clipees : 1;
       Eina_Bool             anti_alias : 1;
       Evas_Render_Op        render_op : 4;
+
+      Eina_Bool             valid_bounding_box : 1;
    } cur, prev;
 
    char                       *name;

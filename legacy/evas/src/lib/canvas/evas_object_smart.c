@@ -170,6 +170,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    evas_object_mapped_clip_across_mark(obj);
    if (smart_obj->smart.smart->smart_class->member_add)
      smart_obj->smart.smart->smart_class->member_add(smart_obj, obj);
+   evas_object_update_bounding_box(obj);
 }
 
 EAPI void
@@ -907,6 +908,18 @@ static void
 evas_object_smart_render_pre(Evas_Object *obj)
 {
    if (obj->pre_render_done) return;
+   if (!obj->child_has_map)
+     {
+#if 0
+        if (obj->cur.bounding_box.w == obj->prev.bounding_box.w &&
+            obj->cur.bounding_box.h == obj->prev.bounding_box.h &&
+            (obj->cur.bounding_box.x != obj->prev.bounding_box.x ||
+             obj->cur.bounding_box.y != obj->prev.bounding_box.y))
+          {
+             fprintf(stderr, "Wouhou, I can detect moving smart object (%s)\n", evas_object_type_get(obj));
+          }
+#endif
+     }
    if ((obj->cur.map != obj->prev.map) ||
        (obj->cur.usemap != obj->prev.usemap))
      {
