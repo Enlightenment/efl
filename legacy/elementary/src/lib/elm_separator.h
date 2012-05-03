@@ -6,9 +6,15 @@
  *
  * A separator can be vertical or horizontal.
  *
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for separator objects.
+ *
+ * This widget emits the signals coming from @ref Layout.
+ *
  * @ref tutorial_separator is a good example of how to use a separator.
  * @{
  */
+
 /**
  * @brief Add a separator object to @p parent
  *
@@ -19,6 +25,7 @@
  * @ingroup Separator
  */
 EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
+
 /**
  * @brief Set the horizontal mode of a separator object
  *
@@ -28,6 +35,7 @@ EAPI Evas_Object *elm_separator_add(Evas_Object *parent);
  * @ingroup Separator
  */
 EAPI void      elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+
 /**
  * @brief Get the horizontal mode of a separator object
  *
@@ -39,6 +47,7 @@ EAPI void      elm_separator_horizontal_set(Evas_Object *obj, Eina_Bool horizont
  * @ingroup Separator
  */
 EAPI Eina_Bool elm_separator_horizontal_get(const Evas_Object *obj);
+
 /**
  * @}
  */
