@@ -3004,7 +3004,7 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
          return 0;
      }
 
-   switch(cfg->depth_bits)
+   switch((int)cfg->depth_bits)
      {
       case EVAS_GL_DEPTH_NONE:
          break;
@@ -3042,7 +3042,7 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
          return 0;
      }
 
-   switch(cfg->stencil_bits)
+   switch((int)cfg->stencil_bits)
      {
       case EVAS_GL_STENCIL_NONE:
          break;
@@ -3068,17 +3068,17 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
               break;
            }
       case EVAS_GL_STENCIL_BIT_8:
-         if (re->gl_cap.stencil_8)
+         if ((sfc->rb_depth_fmt == re->gl_cap.depth_24) && (re->gl_cap.depth_24_stencil_8))
+           {
+              sfc->rb_depth_stencil_fmt = re->gl_cap.depth_24_stencil_8;
+              sfc->rb_stencil_fmt = re->gl_cap.stencil_8;
+              cfg->stencil_bits = EVAS_GL_STENCIL_BIT_8;
+              break;
+           }
+         else if (re->gl_cap.stencil_8)
            {
               sfc->rb_stencil_fmt = re->gl_cap.stencil_8;
               cfg->stencil_bits   = EVAS_GL_STENCIL_BIT_8;
-              break;
-           }
-         else if (re->gl_cap.depth_24_stencil_8)
-           {
-              sfc->rb_depth_stencil_fmt = re->gl_cap.depth_24_stencil_8;
-              cfg->depth_bits   = EVAS_GL_DEPTH_BIT_24;
-              cfg->stencil_bits = EVAS_GL_STENCIL_BIT_8;
               break;
            }
       case EVAS_GL_STENCIL_BIT_16:
