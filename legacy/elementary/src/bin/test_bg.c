@@ -244,6 +244,9 @@ test_bg_options(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    /* color choices ... this is ghetto, but we don't have a 'colorpicker'
     * widget yet :( */
    rd = elm_spinner_add(win);
+   elm_object_tooltip_text_set(rd, "The background's part being affected<br/>"
+                                   "here may be seen only if you enlarge<br/>"
+                                   "the window and mark the 'Center' radio.");
    elm_object_style_set(rd, "vertical");
    elm_spinner_min_max_set(rd, 1, 4);
    elm_spinner_label_format_set(rd, "%.0f");
