@@ -1,6 +1,9 @@
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_cs.h"
+#ifdef EVAS_CSERVE2
+#include "evas_cs2_private.h"
+#endif
 
 #ifdef LKDEBUG
 EAPI Eina_Bool lockdebug = EINA_FALSE;
@@ -46,6 +49,9 @@ evas_init(void)
 #endif
 #ifdef EVAS_CSERVE
    if (getenv("EVAS_CSERVE")) evas_cserve_init();
+#endif
+#ifdef EVAS_CSERVE2
+   if (getenv("EVAS_CSERVE2")) evas_cserve2_init();
 #endif
 #ifdef BUILD_ASYNC_PRELOAD
    _evas_preload_thread_init();

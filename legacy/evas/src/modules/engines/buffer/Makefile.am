@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/lib/include \
+-I$(top_srcdir)/src/lib/cserve2 \
 -I$(top_srcdir)/src/modules/engines \
 @EINA_CFLAGS@ \
 @FREETYPE_CFLAGS@ \

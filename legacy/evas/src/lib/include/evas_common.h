@@ -435,6 +435,9 @@ typedef void (*Gfx_Func_Copy)    (DATA32 *src, DATA32 *dst, int len);
 typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
 #include "../cache/evas_cache.h"
+#ifdef EVAS_CSERVE2
+#include "../cache2/evas_cache2.h"
+#endif
 
 /*****************************************************************************/
 
@@ -569,6 +572,9 @@ struct _Image_Entry
    EINA_INLIST;
 
    Evas_Cache_Image      *cache;
+#ifdef EVAS_CSERVE2
+   Evas_Cache2           *cache2;
+#endif
 
    const char            *cache_key;
 
@@ -614,6 +620,9 @@ struct _Image_Entry
    Image_Entry_Flags      flags;
    Evas_Image_Scale_Hint  scale_hint;
    void                  *data1, *data2;
+#ifdef EVAS_CSERVE2
+   unsigned int           open_rid, load_rid, preload_rid;
+#endif
    int                    server_id;
    int                    connect_num;
    int                    channel;

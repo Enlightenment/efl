@@ -9,6 +9,9 @@
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_cs.h"
+#ifdef EVAS_CSERVE2
+#include "evas_cs2_private.h"
+#endif
 
 struct ext_loader_s
 {
@@ -183,6 +186,20 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
           }
      }
 #endif
+
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     {
+        ERR("This function shouldn't be called anymore!");
+        // DBG("try cserve2 '%s' '%s'", ie->file, ie->key ? ie->key : "");
+        // if (evas_cserve2_image_load(ie, ie->file, ie->key, &(ie->load_opts)))
+        //   {
+        //      DBG("try cserve2 '%s' '%s' loaded!",
+        //          ie->file, ie->key ? ie->key : "");
+        //      return EVAS_LOAD_ERROR_NONE;
+        //   }
+     }
+#endif
    if (stat(ie->file, &st) != 0 || S_ISDIR(st.st_mode))
      {
         DBG("trying to open directory '%s' !", ie->file);
@@ -330,6 +347,28 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
                }
           }
 	return EVAS_LOAD_ERROR_GENERIC;
+     }
+#endif
+
+#ifdef EVAS_CSERVE2
+   if (ie->data1)
+     {
+        ERR("This function shouldn't be called anymore!");
+        // DBG("try cserve2 image data '%s' '%s'",
+        //     ie->file, ie->key ? ie->key : "");
+        // if (evas_cserve2_image_data_load(ie))
+        //   {
+        //      RGBA_Image *im = (RGBA_Image *)ie;
+        //      im->image.data = evas_cserve2_image_data_get(ie);
+        //      DBG("try cserve2 image data '%s' '%s' loaded!",
+        //          ie->file, ie->key ? ie->key : "");
+        //      if (im->image.data)
+        //        {
+        //           im->image.no_free = 1;
+        //           return EVAS_LOAD_ERROR_NONE;
+        //        }
+        //   }
+        // return EVAS_LOAD_ERROR_GENERIC;
      }
 #endif
 

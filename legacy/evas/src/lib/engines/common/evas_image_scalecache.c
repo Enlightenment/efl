@@ -8,6 +8,9 @@
 
 #include <assert.h>
 
+#ifdef EVAS_CSERVE2
+#include "evas_cs2_private.h"
+#endif
 #include "evas_common.h"
 #include "evas_private.h"
 #include "evas_image_private.h"
@@ -523,7 +526,14 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
    if ((src_region_w == dst_region_w) && (src_region_h == dst_region_h))
      {
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-	  evas_cache_image_load_data(&im->cache_entry);
+          {
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_load_data(&im->cache_entry);
+             else
+#endif
+               evas_cache_image_load_data(&im->cache_entry);
+          }
 	evas_common_image_colorspace_normalize(im);
 
 //        noscales++;
@@ -546,7 +556,14 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
    if (!sci)
      {
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-	  evas_cache_image_load_data(&im->cache_entry);
+          {
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_load_data(&im->cache_entry);
+             else
+#endif
+               evas_cache_image_load_data(&im->cache_entry);
+          }
 	evas_common_image_colorspace_normalize(im);
 
 //        misses++;
@@ -630,7 +647,14 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                   evas_common_draw_context_set_render_op(ct, _EVAS_RENDER_COPY);
                }
              if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-               evas_cache_image_load_data(&im->cache_entry);
+               {
+#ifdef EVAS_CSERVE2
+                  if (evas_cserve2_use_get())
+                    evas_cache2_image_load_data(&im->cache_entry);
+                  else
+#endif
+                    evas_cache_image_load_data(&im->cache_entry);
+               }
              evas_common_image_colorspace_normalize(im);
              if (im->image.data)
                {
@@ -733,6 +757,9 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
 #ifdef EVAS_CSERVE             
                       || (ie->data1)
 #endif             
+#ifdef EVAS_CSERVE2
+                      || (ie->data1)
+#endif
                      )  &&
                      (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)))
                {
@@ -740,7 +767,12 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
                                      (im->cache.newest_usage / 20)))
                     {
                        //FIXME: imagedataunload - inform owners
-                       evas_common_rgba_image_unload(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+                       if (evas_cserve2_use_get())
+                         evas_cache2_image_unload_data(&im->cache_entry);
+                       else
+#endif
+                         evas_common_rgba_image_unload(&im->cache_entry);
                     }
                }
           }
@@ -748,7 +780,14 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
    else
      {
         if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-	  evas_cache_image_load_data(&im->cache_entry);
+          {
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_load_data(&im->cache_entry);
+             else
+#endif
+               evas_cache_image_load_data(&im->cache_entry);
+          }
 	evas_common_image_colorspace_normalize(im);
 //        misses++;
         LKU(im->cache.lock);
@@ -771,7 +810,14 @@ evas_common_rgba_image_scalecache_do(Image_Entry *ie, RGBA_Image *dst,
 #else   
    RGBA_Image *im = (RGBA_Image *)ie;
    if (im->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-     evas_cache_image_load_data(&im->cache_entry);
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_load_data(&im->cache_entry);
+        else
+#endif
+          evas_cache_image_load_data(&im->cache_entry);
+     }
    evas_common_image_colorspace_normalize(im);
    if (im->image.data)
      {

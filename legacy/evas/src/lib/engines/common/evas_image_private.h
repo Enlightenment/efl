@@ -8,8 +8,6 @@ int             evas_common_rgba_image_colorspace_set        (Image_Entry* dst, 
 
 void evas_common_scalecache_init(void);
 void evas_common_scalecache_shutdown(void);
-void evas_common_rgba_image_scalecache_init(Image_Entry *ie);
-void evas_common_rgba_image_scalecache_shutdown(Image_Entry *ie);
 void evas_common_rgba_image_scalecache_dirty(Image_Entry *ie);
 void evas_common_rgba_image_scalecache_orig_use(Image_Entry *ie);
 int evas_common_rgba_image_scalecache_usage_get(Image_Entry *ie);

@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = canvas cache cserve file engines include
+SUBDIRS = canvas cache cache2 cserve cserve2 file engines include
 EVAS_STATIC_MODULE =
 EVAS_STATIC_LIBADD =
 
@@ -212,11 +212,18 @@ libevas_cserve_la = cserve/libevas_cserve.la
 
 endif
 
+if EVAS_CSERVE2
+
+libevas_cserve2_la = cserve2/libevas_cserve2.la
+
+endif
+
 libevas_la_LIBADD = \
 canvas/libevas_canvas.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 $(libevas_cserve_la) \
+$(libevas_cserve2_la) \
 engines/common/libevas_engine_common.la \
 @FREETYPE_LIBS@ \
 @FRIBIDI_LIBS@ \
@@ -235,8 +242,19 @@ canvas/libevas_canvas.la \
 file/libevas_file.la \
 cache/libevas_cache.la \
 $(libevas_cserve_la) \
+$(libevas_cserve2_la) \
 engines/common/libevas_engine_common.la \
 $(EVAS_STATIC_MODULE)
+
+if EVAS_CSERVE2
+
+libevas_la_LIBADD += \
+cache2/libevas_cache2.la
+
+libevas_la_DEPENDENCIES += \
+cache2/libevas_cache2.la
+
+endif
 
 if BUILD_ENGINE_SOFTWARE_16
 
@@ -257,4 +275,4 @@ libevas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @versio
 ### Evas_GL we are still using it in our code, so just don't install it.
 EXTRA_DIST=Evas_GL.h
 
-DIST_SUBDIRS = canvas cache cserve file engines include
+DIST_SUBDIRS = canvas cache cache2 cserve cserve2 file engines include

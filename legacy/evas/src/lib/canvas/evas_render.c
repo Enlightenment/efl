@@ -1366,6 +1366,10 @@ evas_render_updates_internal(Evas *e,
    MAGIC_CHECK_END();
    if (!e->changed) return NULL;
 
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+      evas_cserve2_dispatch();
+#endif
    evas_call_smarts_calculate(e);
 
    RD("[--- RENDER EVAS (size: %ix%i)\n", e->viewport.w, e->viewport.h);

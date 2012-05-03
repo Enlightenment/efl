@@ -67,6 +67,10 @@ examples_PROGRAMS += evas_images2
 evas_images2_SOURCES = evas-images2.c
 evas_images2_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+examples_PROGRAMS += evas_images3
+evas_images3_SOURCES = evas-images3.c
+evas_images3_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 examples_PROGRAMS += evas_text
 evas_text_SOURCES = evas-text.c
 evas_text_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
@@ -116,6 +120,7 @@ files_DATA += \
 	$(srcdir)/evas-init-shutdown.c \
 	$(srcdir)/evas-images.c \
 	$(srcdir)/evas-images2.c \
+	$(srcdir)/evas-images3.c \
 	$(srcdir)/evas-object-manipulation.c \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \
@@ -132,6 +137,7 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-init-shutdown.c \
 	$(srcdir)/evas-images.c \
 	$(srcdir)/evas-images2.c \
+	$(srcdir)/evas-images3.c \
 	$(srcdir)/evas-object-manipulation.c \
 	$(srcdir)/evas-events.c \
 	$(srcdir)/evas-aspect-hints.c \

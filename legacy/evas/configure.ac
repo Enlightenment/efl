@@ -92,6 +92,7 @@ want_fribidi="auto"
 want_harfbuzz="auto"
 want_pixman="no"
 want_evas_cserve="yes"
+want_evas_cserve2="yes"
 
 want_evas_engine_buffer="yes"
 want_evas_engine_software_xlib="no"
@@ -605,14 +606,34 @@ AC_ARG_ENABLE([evas-cserve],
 AC_MSG_CHECKING(whether to build shared cache server and support)
 AC_MSG_RESULT(${want_evas_cserve})
 
+# (shm_open (for cache server)
+AC_ARG_ENABLE([evas-cserve2],
+   AC_HELP_STRING([--disable-evas-cserve2],
+      [disable shared cache server 2 support. @<:@default=enabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_evas_cserve2="yes"
+    else
+       want_evas_cserve2="no"
+    fi
+   ])
+AC_MSG_CHECKING(whether to build shared cache server 2 and support)
+AC_MSG_RESULT(${want_evas_cserve2})
+
+if test "x${want_evas_cserve2}" = "xyes"; then
+   want_evas_cserve="no"
+fi
+
 shm_open_libs=""
-if test "x${want_evas_cserve}" = "xyes" ; then
+if test "x${want_evas_cserve}" = "xyes" -o "x${want_evas_cserve2}" = "xyes" ; then
    EFL_CHECK_SHM_OPEN(
       [
-       want_evas_cserve="yes"
        shm_open_libs=${EFL_SHM_OPEN_LIBS}
       ],
-      [want_evas_cserve="no"])
+      [
+       want_evas_cserve="no"
+       want_evas_cserve2="no"
+      ])
 fi
 AC_SUBST([shm_open_libs])
 
@@ -621,6 +642,12 @@ if test "x${want_evas_cserve}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL([EVAS_CSERVE], [test "x${want_evas_cserve}" = "xyes"])
+
+if test "x${want_evas_cserve2}" = "xyes" ; then
+  AC_DEFINE(EVAS_CSERVE2, 1, [Shared cache server.])
+fi
+
+AM_CONDITIONAL([EVAS_CSERVE2], [test "x${want_evas_cserve2}" = "xyes"])
 
 
 
@@ -1865,11 +1892,25 @@ doc/Makefile
 doc/Doxyfile
 src/Makefile
 src/bin/Makefile
+src/bin/loaders/Makefile
+src/bin/loaders/jpeg/Makefile
+src/bin/loaders/png/Makefile
+src/bin/loaders/eet/Makefile
+src/bin/loaders/tiff/Makefile
+src/bin/loaders/xpm/Makefile
+src/bin/loaders/bmp/Makefile
+src/bin/loaders/ico/Makefile
+src/bin/loaders/tga/Makefile
+src/bin/loaders/pmaps/Makefile
+src/bin/loaders/wbmp/Makefile
+src/bin/loaders/psd/Makefile
 src/lib/Makefile
 src/lib/canvas/Makefile
 src/lib/file/Makefile
 src/lib/cache/Makefile
+src/lib/cache2/Makefile
 src/lib/cserve/Makefile
+src/lib/cserve2/Makefile
 src/lib/engines/Makefile
 src/lib/engines/common/Makefile
 src/lib/engines/common/evas_op_add/Makefile
@@ -2044,6 +2085,7 @@ echo
 echo "Features:"
 echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
 echo "  Cache Server............: $want_evas_cserve"
+echo "  Cache Server 2..........: $want_evas_cserve2"
 echo
 dnl
 dnl ... DISABLED! some testing has shown that this seems to have some

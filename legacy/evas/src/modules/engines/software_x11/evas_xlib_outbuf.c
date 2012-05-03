@@ -5,6 +5,9 @@
 #include <sys/time.h>
 #include <sys/utsname.h>
 
+#ifdef EVAS_CSERVE2
+#include "evas_cs2_private.h"
+#endif
 #include "evas_common.h"
 #include "evas_macros.h"
 #include "evas_xlib_outbuf.h"
@@ -157,7 +160,14 @@ evas_software_xlib_outbuf_free(Outbuf *buf)
 	im = buf->priv.pending_writes->data;
 	buf->priv.pending_writes = eina_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	obr = im->extended_info;
-	evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     {
+        evas_cache2_image_close(&im->cache_entry);
+     }
+   else
+#endif
+     evas_cache_image_drop(&im->cache_entry);
 	if (obr->xob) _unfind_xob(obr->xob, 0);
 	if (obr->mxob) _unfind_xob(obr->mxob, 0);
 	free(obr);
@@ -411,10 +421,20 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
                   free(obr);
                   return NULL;
                }
-             im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
-                                                      buf->w, buf->h,
-                                                      (DATA32 *) evas_software_xlib_x_output_buffer_data(obr->xob, &bpl),
-                                                      alpha, EVAS_COLORSPACE_ARGB8888);
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               {
+                  im = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
+                                                           buf->w, buf->h,
+                                                           (DATA32 *) evas_software_xlib_x_output_buffer_data(obr->xob, &bpl),
+                                                           alpha, EVAS_COLORSPACE_ARGB8888);
+               }
+             else
+#endif
+               im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                                        buf->w, buf->h,
+                                                        (DATA32 *) evas_software_xlib_x_output_buffer_data(obr->xob, &bpl),
+                                                        alpha, EVAS_COLORSPACE_ARGB8888);
              if (!im)
                {
                   evas_software_xlib_x_output_buffer_free(obr->xob, 0);
@@ -432,14 +452,24 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
 	  }
 	else
 	  {
-	     im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               im = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
+             else
+#endif
+               im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
              if (!im)
                {
                   free(obr);
                   return NULL;
                }
              im->cache_entry.flags.alpha |= alpha ? 1 : 0;
-             evas_cache_image_surface_alloc(&im->cache_entry, buf->w, buf->h);
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               evas_cache2_image_surface_alloc(&im->cache_entry, buf->w, buf->h);
+             else
+#endif
+               evas_cache_image_surface_alloc(&im->cache_entry, buf->w, buf->h);
 	     im->extended_info = obr;
 	     if ((buf->rot == 0) || (buf->rot == 180))
                {
@@ -451,7 +481,14 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
                                                                     NULL);
                   if (!obr->xob)
                     {
-                       evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+                       if (evas_cserve2_use_get())
+                         {
+                            evas_cache2_image_close(&im->cache_entry);
+                         }
+                       else
+#endif
+                         evas_cache_image_drop(&im->cache_entry);
                        free(obr);
                        return NULL;
                     }
@@ -472,7 +509,14 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
                                                                     NULL);
                   if (!obr->xob)
                     {
-                       evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+                       if (evas_cserve2_use_get())
+                         {
+                            evas_cache2_image_close(&im->cache_entry);
+                         }
+                       else
+#endif
+                         evas_cache_image_drop(&im->cache_entry);
                        free(obr);
                        return NULL;
                     }
@@ -532,10 +576,18 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
              free(obr);
              return NULL;
           }
-        im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
-                                                 w, h,
-                                                 (DATA32 *) evas_software_xlib_x_output_buffer_data(obr->xob, &bpl),
-                                                 alpha, EVAS_COLORSPACE_ARGB8888);
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          im = (RGBA_Image *)evas_cache2_image_data(evas_common_image_cache2_get(),
+                                                    w, h,
+                                                    (DATA32 *) evas_software_xlib_x_output_buffer_data(obr->xob, &bpl),
+                                                    alpha, EVAS_COLORSPACE_ARGB8888);
+        else
+#endif
+          im = (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(),
+                                                   w, h,
+                                                   (DATA32 *) evas_software_xlib_x_output_buffer_data(obr->xob, &bpl),
+                                                   alpha, EVAS_COLORSPACE_ARGB8888);
         if (!im)
           {
              _unfind_xob(obr->xob, 0);
@@ -552,7 +604,12 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
      }
    else
      {
-        im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          im = (RGBA_Image *)evas_cache2_image_empty(evas_common_image_cache2_get());
+        else
+#endif
+          im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
         if (!im)
           {
              free(obr);
@@ -561,7 +618,12 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
         im->cache_entry.w = w;
         im->cache_entry.h = h;
         im->cache_entry.flags.alpha |= alpha ? 1 : 0;
-        evas_cache_image_surface_alloc(&im->cache_entry, w, h);
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_surface_alloc(&im->cache_entry, w, h);
+        else
+#endif
+          evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 	im->extended_info = obr;
 	if ((buf->rot == 0) || (buf->rot == 180))
           {
@@ -573,7 +635,14 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
                                   NULL);
              if (!obr->xob)
                {
-                  evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+                  if (evas_cserve2_use_get())
+                    {
+                       evas_cache2_image_close(&im->cache_entry);
+                    }
+                  else
+#endif
+                    evas_cache_image_drop(&im->cache_entry);
                   free(obr);
                   return NULL;
                }
@@ -594,7 +663,14 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
                                   NULL);
              if (!obr->xob)
                {
-                  evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+                  if (evas_cserve2_use_get())
+                    {
+                       evas_cache2_image_close(&im->cache_entry);
+                    }
+                  else
+#endif
+                    evas_cache_image_drop(&im->cache_entry);
                   free(obr);
                   return NULL;
                }
@@ -723,7 +799,14 @@ evas_software_xlib_outbuf_flush(Outbuf *buf)
                 eina_list_remove_list(buf->priv.prev_pending_writes,
                                       buf->priv.prev_pending_writes);
 	     obr = im->extended_info;
-	     evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               {
+                  evas_cache2_image_close(&im->cache_entry);
+               }
+             else
+#endif
+               evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xob) _unfind_xob(obr->xob, 0);
 	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
 	     free(obr);
@@ -760,11 +843,25 @@ evas_software_xlib_outbuf_flush(Outbuf *buf)
 	     im = eina_list_data_get(buf->priv.pending_writes);
 	     buf->priv.pending_writes = eina_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	     obr = im->extended_info;
-	     evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               {
+                  evas_cache2_image_close(&im->cache_entry);
+               }
+             else
+#endif
+               evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xob) _unfind_xob(obr->xob, 0);
 	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
 	     free(obr);
-	     evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               {
+                  evas_cache2_image_close(&im->cache_entry);
+               }
+             else
+#endif
+               evas_cache_image_drop(&im->cache_entry);
 	  }
 #endif
      }
@@ -785,7 +882,14 @@ evas_software_xlib_outbuf_idle_flush(Outbuf *buf)
 	if (obr->xob) evas_software_xlib_x_output_buffer_free(obr->xob, 0);
 	if (obr->mxob) evas_software_xlib_x_output_buffer_free(obr->mxob, 0);
 	free(obr);
-	evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          {
+             evas_cache2_image_close(&im->cache_entry);
+          }
+        else
+#endif
+          evas_cache_image_drop(&im->cache_entry);
      }
    else
      {
@@ -800,7 +904,14 @@ evas_software_xlib_outbuf_idle_flush(Outbuf *buf)
                 eina_list_remove_list(buf->priv.prev_pending_writes,
                                       buf->priv.prev_pending_writes);
 	     obr = im->extended_info;
-	     evas_cache_image_drop(&im->cache_entry);
+#ifdef EVAS_CSERVE2
+             if (evas_cserve2_use_get())
+               {
+                  evas_cache2_image_close(&im->cache_entry);
+               }
+             else
+#endif
+               evas_cache_image_drop(&im->cache_entry);
 	     if (obr->xob) _unfind_xob(obr->xob, 0);
 	     if (obr->mxob) _unfind_xob(obr->mxob, 0);
 	     free(obr);

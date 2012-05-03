@@ -1,0 +1,1479 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
+#include <stdio.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
+#include <math.h>
+
+#include "evas_macros.h"
+
+#include "evas_cserve2.h"
+#include "evas_cserve2_slave.h"
+
+static Eina_Bool
+read_short(unsigned char *map, size_t length, size_t *position, short *ret)
+{
+   unsigned char b[2];
+
+   if (*position + 2 > length) return EINA_FALSE;
+   b[0] = map[(*position)++];
+   b[1] = map[(*position)++];
+   *ret = (b[1] << 8) | b[0];
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_ushort(unsigned char *map, size_t length, size_t *position, unsigned short *ret)
+{
+   unsigned char b[2];
+
+   if (*position + 2 > length) return EINA_FALSE;
+   b[0] = map[(*position)++];
+   b[1] = map[(*position)++];
+   *ret = (b[1] << 8) | b[0];
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_int(unsigned char *map, size_t length, size_t *position, int *ret)
+{
+   unsigned char b[4];
+   int i;
+
+   if (*position + 4 > length) return EINA_FALSE;
+   for (i = 0; i < 4; i++)
+     b[i] = map[(*position)++];
+   *ret = ARGB_JOIN(b[3], b[2], b[1], b[0]);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_uint(unsigned char *map, size_t length, size_t *position, unsigned int *ret)
+{
+   unsigned char b[4];
+   int i;
+
+   if (*position + 4 > length) return EINA_FALSE;
+   for (i = 0; i < 4; i++)
+     b[i] = map[(*position)++];
+   *ret = ARGB_JOIN(b[3], b[2], b[1], b[0]);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_uchar(unsigned char *map, size_t length, size_t *position, unsigned char *ret)
+{
+   if (*position + 1 > length) return EINA_FALSE;
+   *ret = map[(*position)++];
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_skip(size_t length, size_t *position, int skip)
+{
+   if (*position + skip > length) return EINA_FALSE;
+   *position += skip;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_mem(unsigned char *map, size_t length, size_t *position, void *buffer, int size)
+{
+   if (*position + size > length) return EINA_FALSE;
+   memcpy(buffer, map + *position, size);
+   *position += size;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+evas_image_load_file_head_bmp(Evas_Img_Load_Params *ilp, const char *file, const char *key __UNUSED__, int *error)
+{
+   Eina_File *f;
+   void *map = NULL;
+   size_t position = 0;
+   char hasa = 0;
+   int w = 0, h = 0, bit_count = 0, image_size = 0, comp = 0;
+   unsigned int offset, head_size, amask = 0;
+   int fsize = 0;
+   unsigned int bmpsize;
+   unsigned short res1, res2;
+
+   f = eina_file_open(file, 0);
+   if (!f)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
+
+   *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+   fsize = eina_file_size_get(f);
+   if (fsize < 2) goto close_file;
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto close_file;
+
+   if (strncmp(map, "BM", 2)) goto close_file; // magic number
+   position += 2;
+   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+   if (!read_uint(map, fsize, &position, &bmpsize)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &res1)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &res2)) goto close_file;
+   if (!read_uint(map, fsize, &position, &offset)) goto close_file;
+   if (!read_uint(map, fsize, &position, &head_size)) goto close_file;
+   if (head_size == 12) // OS/2 V1 + Windows 3.0
+     {
+        short tmp;
+
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        w = tmp; // width
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        h = tmp; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8 & 24
+     }
+   else if (head_size == 64) // OS/2 V2
+     {
+        short tmp;
+        int tmp2;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        w = tmp2; // width
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        h = tmp2; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        comp = tmp2; // compression method
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        image_size = tmp2; // bitmap data size
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //important_colors = tmp2; // number of important colors - 0 if all
+	if (!read_skip(fsize, &position, 24)) goto close_file; // skip unused header
+        if (image_size == 0) image_size = fsize - offset;
+     }
+   else if (head_size == 40) // Windows 3.0 + (v3)
+     {
+        short tmp;
+        int tmp2;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        w = tmp2; // width
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        h = tmp2; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        comp = tmp2; // compression method
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        image_size = tmp2; // bitmap data size
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //important_colors = tmp2; // number of important colors - 0 if all
+        if (image_size == 0) image_size = fsize - offset;
+        if ((comp == 0) && (bit_count == 32)) hasa = 1; // GIMP seems to store it this way
+     }
+   else if (head_size == 108) // Windows 95/NT4 + (v4)
+     {
+        short tmp;
+        int tmp2;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        w = tmp2; // width
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        h = tmp2; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        comp = tmp2; // compression method
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        image_size = tmp2; // bitmap data size
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //important_colors = tmp2; // number of important colors - 0 if all
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //rmask = tmp2; // red mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //gmask = tmp2; // green mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //bmask = tmp2; // blue mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        amask = tmp2; // alpha mask
+        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
+        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
+        if (image_size == 0) image_size = fsize - offset;
+        if ((amask) && (bit_count == 32)) hasa = 1;
+     }
+   else if (head_size == 124) // Windows 98/2000 + (v5)
+     {
+        short tmp;
+        int tmp2;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        w = tmp2; // width
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        h = tmp2; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        comp = tmp2; // compression method
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //image_size = tmp2; // bitmap data size
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //important_colors = tmp2; // number of important colors - 0 if all
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //rmask = tmp2; // red mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //gmask = tmp2; // green mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //bmask = tmp2; // blue mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        amask = tmp2; // alpha mask
+        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
+        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
+        if (!read_skip(fsize, &position, 16)) goto close_file; // skip others
+        if (image_size == 0) image_size = fsize - offset;
+        if ((amask) && (bit_count == 32)) hasa = 1;
+     }
+   else
+     goto close_file;
+
+   if (h < 0)
+     {
+        h = -h;
+        //right_way_up = 1;
+     }
+
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(w, h))
+     {
+        if (IMG_TOO_BIG(w, h))
+          *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        else
+          *error = EVAS_LOAD_ERROR_GENERIC;
+	goto close_file;
+     }
+   /* It is not bad idea that bmp loader support scale down decoding 
+    * because of memory issue in mobile world.*/
+   if (ilp->opts.scale_down_by > 1)
+     {
+        w /= ilp->opts.scale_down_by;
+        h /= ilp->opts.scale_down_by;
+     }
+
+   if (bit_count < 16)
+     {
+        //if ((palette_size < 0) || (palette_size > 256)) pal_num = 256;
+        //else pal_num = palette_size;
+        if (bit_count == 1)
+          {
+             if (comp == 0) // no compression
+               {
+               }
+             else
+               goto close_file;
+          }
+        else if (bit_count == 4)
+          {
+             if (comp == 0) // no compression
+               {
+               }
+             else if (comp == 2) // rle 4bit/pixel
+               {
+               }
+             else
+               goto close_file;
+          }
+        else if (bit_count == 8)
+          {
+             if (comp == 0) // no compression
+               {
+               }
+             else if (comp == 1) // rle 8bit/pixel
+               {
+               }
+             else
+               goto close_file;
+          }
+     }
+   else if ((bit_count == 16) || (bit_count == 24) || (bit_count == 32))
+     {
+        if (comp == 0) // no compression
+          {
+             // handled
+          }
+        else if (comp == 3) // bit field
+          {
+             // handled
+          }
+        else if (comp == 4) // jpeg - only printer drivers
+          goto close_file;
+        else if (comp == 3) // png - only printer drivers
+          goto close_file;
+        else
+          goto close_file;
+     }
+   else
+     goto close_file;
+
+   ilp->w = w;
+   ilp->h = h;
+   if (hasa) ilp->alpha = 1;
+
+   eina_file_map_free(f, map);
+   eina_file_close(f);
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
+
+ close_file:
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+evas_image_load_file_data_bmp(Evas_Img_Load_Params *ilp, const char *file, const char *key __UNUSED__, int *error)
+{
+   Eina_File *f;
+   void *map = NULL;
+   size_t position = 0;
+   unsigned char *buffer = NULL, *buffer_end = NULL, *p;
+   char hasa = 0;
+   int x = 0, y = 0, w = 0, h = 0, bit_count = 0, image_size = 0,
+     comp = 0, palette_size = -1;
+   unsigned int offset = 0, head_size = 0;
+   unsigned int *pal = NULL, pal_num = 0, *pix = NULL, *surface = NULL, fix,
+     rmask = 0, gmask = 0, bmask = 0, amask = 0;
+   int right_way_up = 0;
+   unsigned char r, g, b, a;
+   int fsize = 0;
+   unsigned int bmpsize;
+   unsigned short res1, res2;
+
+   /* for scale decoding */
+   unsigned int *scale_surface = NULL, *scale_pix = NULL;
+   int scale_ratio = 1, image_w = 0, image_h = 0;
+   int row_size = 0; /* Row size is rounded up to a multiple of 4bytes */
+   int read_line = 0; /* total read line */
+
+   f = eina_file_open(file, 0);
+   if (!f)
+     {
+	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+	return EINA_FALSE;
+     }
+
+   *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+   fsize = eina_file_size_get(f);
+   if (fsize < 2) goto close_file;
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto close_file;
+
+   if (strncmp(map, "BM", 2)) goto close_file; // magic number
+   position += 2;
+   *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+   if (!read_uint(map, fsize, &position, &bmpsize)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &res1)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &res2)) goto close_file;
+   if (!read_uint(map, fsize, &position, &offset)) goto close_file;
+   if (!read_uint(map, fsize, &position, &head_size)) goto close_file;
+   image_size = fsize - offset;
+   if (image_size < 1) goto close_file;
+
+   if (head_size == 12) // OS/2 V1 + Windows 3.0
+     {
+        short tmp;
+
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        w = tmp; // width
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        h = tmp; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8 & 24
+     }
+   else if (head_size == 64) // OS/2 V2
+     {
+        short tmp;
+        int tmp2;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        w = tmp2; // width
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        h = tmp2; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        comp = tmp2; // compression method
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        image_size = tmp2; // bitmap data size
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //important_colors = tmp2; // number of important colors - 0 if all
+        if (!read_skip(fsize, &position, 24)) goto close_file; // skip unused header
+        if (image_size == 0) image_size = fsize - offset;
+     }
+   else if (head_size == 40) // Windows 3.0 + (v3)
+     {
+        short tmp;
+        int tmp2;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        w = tmp2; // width
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        h = tmp2; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        comp = tmp2; // compression method
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        image_size = tmp2; // bitmap data size
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //important_colors = tmp2; // number of important colors - 0 if all
+        if (image_size == 0) image_size = fsize - offset;
+        if ((comp == 0) && (bit_count == 32)) hasa = 1; // GIMP seems to store it this way
+     }
+   else if (head_size == 108) // Windows 95/NT4 + (v4)
+     {
+        short tmp;
+        int tmp2;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        w = tmp2; // width
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        h = tmp2; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        comp = tmp2; // compression method
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        image_size = tmp2; // bitmap data size
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //important_colors = tmp2; // number of important colors - 0 if all
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        rmask = tmp2; // red mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        gmask = tmp2; // green mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        bmask = tmp2; // blue mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        amask = tmp2; // alpha mask
+        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
+        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
+        if (image_size == 0) image_size = fsize - offset;
+        if ((amask) && (bit_count == 32)) hasa = 1;
+     }
+   else if (head_size == 124) // Windows 98/2000 + (v5)
+     {
+        short tmp;
+        int tmp2;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        w = tmp2; // width
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        h = tmp2; // height
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        //planes = tmp; // must be 1
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
+        bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        comp = tmp2; // compression method
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        image_size = tmp2; // bitmap data size
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        //important_colors = tmp2; // number of important colors - 0 if all
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        rmask = tmp2; // red mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        gmask = tmp2; // green mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        bmask = tmp2; // blue mask
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
+        amask = tmp2; // alpha mask
+        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
+        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
+        if (!read_skip(fsize, &position, 16)) goto close_file; // skip others
+        if (image_size == 0) image_size = fsize - offset;
+        if ((amask) && (bit_count == 32)) hasa = 1;
+     }
+   else
+     goto close_file;
+
+   if (h < 0)
+     {
+        h = -h;
+        right_way_up = 1;
+     }
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(w, h))
+     {
+        if (IMG_TOO_BIG(w, h))
+          *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        else
+          *error = EVAS_LOAD_ERROR_GENERIC;
+	goto close_file;
+     }
+   /* It is not bad idea that bmp loader support scale down decoding
+    * because of memory issue in mobile world. */
+   if (ilp->opts.scale_down_by > 1)
+     scale_ratio = ilp->opts.scale_down_by;
+   image_w = w;
+   image_h = h;
+
+   if (scale_ratio > 1)
+     {
+        w /= scale_ratio;
+        h /= scale_ratio;
+
+        if ((w < 1) || (h < 1) )
+          {
+             *error = EVAS_LOAD_ERROR_GENERIC;
+             goto close_file;
+          }
+     }
+
+   if ((w != (int)ilp->w) || (h != (int)ilp->h))
+     {
+	*error = EVAS_LOAD_ERROR_GENERIC;
+	goto close_file;
+     }
+   surface = ilp->buffer;
+   if (!surface)
+     {
+	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+	goto close_file;
+     }
+
+   row_size = ceil((double)(image_w * bit_count) / 32) * 4;
+
+   if (bit_count < 16)
+     {
+        unsigned int i;
+
+        if (bit_count == 1)
+          {
+             if ((palette_size <= 0) || (palette_size > 2)) pal_num = 2;
+             else pal_num = palette_size;
+          }
+        else if (bit_count == 4)
+          {
+             if ((palette_size <= 0) || (palette_size > 16)) pal_num = 16;
+             else pal_num = palette_size;
+          }
+        else if (bit_count == 8)
+          {
+             if ((palette_size <= 0) || (palette_size > 256)) pal_num = 256;
+             else pal_num = palette_size;
+          }
+        pal = alloca(256 * 4);
+        for (i = 0; i < pal_num; i++)
+          {
+             if (!read_uchar(map, fsize, &position, &b)) goto close_file;
+             if (!read_uchar(map, fsize, &position, &g)) goto close_file;
+             if (!read_uchar(map, fsize, &position, &r)) goto close_file;
+             if ((head_size != 12) /*&& (palette_size != 0)*/)
+               { // OS/2 V1 doesn't do the pad byte
+                  if (!read_uchar(map, fsize, &position, &a)) goto close_file;
+               }
+             a = 0xff; // fillin a as solid for paletted images
+             pal[i] = ARGB_JOIN(a, r, g, b);
+          }
+        position = offset;
+
+        if ((scale_ratio == 1) || (comp !=0))
+          buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
+        else
+          {
+             scale_surface = malloc(image_w * sizeof(DATA32)); //for one line decoding
+             if (!scale_surface)
+               {
+                  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                  goto close_file;
+               }
+             buffer = malloc(row_size); // scale down is usually set because of memory issue, so read line by line
+          }
+
+        if (!buffer)
+          {
+             *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             goto close_file;
+          }
+        if ((scale_ratio == 1) || (comp !=0))
+          buffer_end = buffer + image_size;
+        else
+          buffer_end = buffer + row_size;
+        p = buffer;
+
+        if ((scale_ratio == 1) || (comp !=0))
+          {
+             if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
+          }
+        else
+          {
+             if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+          }
+
+        if (bit_count == 1)
+          {
+             if (comp == 0) // no compression
+               {
+                  pix = surface;
+
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       if (scale_ratio > 1) pix = scale_surface; // one line decoding
+
+                       for (x = 0; x < image_w; x++)
+                         {
+                            if ((x & 0x7) == 0x0)
+                              {
+                                 *pix = pal[*p >> 7];
+                              }
+                            else if ((x & 0x7) == 0x1)
+                              {
+                                 *pix = pal[(*p >> 6) & 0x1];
+                              }
+                            else if ((x & 0x7) == 0x2)
+                              {
+                                 *pix = pal[(*p >> 5) & 0x1];
+                              }
+                            else if ((x & 0x7) == 0x3)
+                              {
+                                 *pix = pal[(*p >> 4) & 0x1];
+                              }
+                            else if ((x & 0x7) == 0x4)
+                              {
+                                 *pix = pal[(*p >> 3) & 0x1];
+                              }
+                            else if ((x & 0x7) == 0x5)
+                              {
+                                 *pix = pal[(*p >> 2) & 0x1];
+                              }
+                            else if ((x & 0x7) == 0x6)
+                              {
+                                 *pix = pal[(*p >> 1) & 0x1];
+                              }
+                            else
+                              {
+                                 *pix = pal[*p & 0x1];
+                                 p++;
+                              }
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+
+                       if (scale_ratio > 1)
+                         {
+                            if (!right_way_up) scale_pix = surface + ((h - 1 - y) * w);
+                            else scale_pix = surface + (y * w);
+
+                            pix = scale_surface;
+                            for (x = 0; x < w; x++)
+                              {
+                                 *scale_pix = *pix;
+                                 scale_pix ++;
+                                 pix += scale_ratio;
+                              }
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            if ((x & 0x7) != 0) p++;
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+               }
+             else
+               goto close_file;
+          }
+        else if (bit_count == 4)
+          {
+             if (comp == 0) // no compression
+               {
+                  pix = surface;
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       if (scale_ratio > 1) pix = scale_surface; // one line decoding
+                       for (x = 0; x < image_w; x++)
+                         {
+                            if ((x & 0x1) == 0x1)
+                              {
+                                 *pix = pal[*p & 0x0f];
+                                 p++;
+                              }
+                            else
+                              {
+                                 *pix = pal[*p >> 4];
+                              }
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+                       if (scale_ratio > 1)
+                         {
+                            if (!right_way_up) scale_pix = surface + ((h - 1 - y) * w);
+                            else scale_pix = surface + (y * w);
+
+                            pix = scale_surface;
+                            for (x = 0; x < w; x++)
+                              {
+                                 *scale_pix = *pix;
+                                 scale_pix ++;
+                                 pix += scale_ratio;
+                              }
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            if ((x & 0x1) != 0) p++;
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+               }
+             else if (comp == 2) // rle 4bit/pixel
+               {
+                  int count = 0, done = 0, wpad;
+                  int scale_x = 0, scale_y = 0;
+                  Eina_Bool scale_down_line = EINA_TRUE;
+
+                  pix = surface;
+                  if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                  wpad = ((image_w + 1) / 2) * 2;
+                  while (p < buffer_end)
+                    {
+                       if (p[0])
+                         {
+                            if (scale_down_line)
+                              {
+                                 if ((x + p[0]) <= wpad)
+                                   {
+                                      unsigned int col1 = pal[p[1] >> 4];
+                                      unsigned int col2 = pal[p[1] & 0xf];
+
+                                      count = p[0] / 2;
+                                      while (count > 0)
+                                        {
+                                           if (x < w)
+                                             {
+                                                if (((x % scale_ratio) == 0) && (scale_x < w))
+                                                  {
+                                                     *pix = col1;
+                                                     pix++;
+                                                     scale_x++;
+                                                  }
+                                                x++;
+                                             }
+                                           if (x < w)
+                                             {
+                                                if (((x % scale_ratio) == 0) && (scale_x < w))
+                                                  {
+                                                     *pix = col2;
+                                                     pix++;
+                                                     scale_x++;
+                                                  }
+                                                x++;
+                                             }
+                                           count--;
+                                        }
+                                      if (p[0] & 0x1)
+                                        {
+                                           if (((x % scale_ratio) == 0) && (scale_x < w))
+                                             {
+                                                *pix = col1;
+                                                pix++;
+                                                scale_x++;
+                                             }
+                                           x++;
+                                        }
+                                   }
+                              }
+                            p += 2;
+                         }
+                       else
+                         {
+                            switch (p[1])
+                              {
+                               case 0: // EOL
+                                  x = 0;
+                                  scale_x = 0;
+                                  y++;
+                                  if ((y % scale_ratio) == 0)
+                                    {
+                                       scale_y++;
+                                       scale_down_line = EINA_TRUE;
+                                       if (!right_way_up)
+                                         pix = surface + ((h - 1 - scale_y) * w);
+                                       else
+                                         pix = surface + (scale_y * w);
+                                    }
+                                  else
+                                    scale_down_line = EINA_FALSE;
+                                  if (scale_y >= h)
+                                    {
+                                       p = buffer_end;
+                                    }
+                                  p += 2;
+                                  break;
+                               case 1: // EOB
+                                  p = buffer_end;
+                                  break;
+                               case 2: // DELTA
+                                  x += p[2];
+                                  y += p[3];
+                                  scale_x = x / scale_ratio;
+                                  scale_y = y / scale_ratio;
+                                  if ((scale_x >= w) || (scale_y >= h))
+                                    {
+                                       p = buffer_end;
+                                    }
+                                  if (!right_way_up)
+                                    pix = surface + scale_x + ((h - 1 - scale_y) * w);
+                                  else
+                                    pix = surface + scale_x + (scale_y * w);
+                                  p += 4;
+                                  break;
+                               default:
+                                  count = p[1];
+                                  if (((p + count) > buffer_end) ||
+                                      ((x + count) > w))
+                                    {
+                                       p = buffer_end;
+                                       break;
+                                    }
+                                  p += 2;
+                                  done = count;
+                                  count /= 2;
+                                  while (count > 0)
+                                    {
+                                       if (((x % scale_ratio) == 0) && (scale_x < w))
+                                         {
+                                            *pix = pal[*p >> 4];
+                                            pix++;
+                                            scale_x++;
+                                         }
+                                       x++;
+                                       if (((x % scale_ratio) == 0) && (scale_x < w))
+                                         {
+                                            *pix = pal[*p & 0xf];
+                                            pix++;
+                                            scale_x++;
+                                         }
+                                       x++;
+
+                                       p++;
+                                       count--;
+                                    }
+
+                                  if (done & 0x1)
+                                    {
+                                       if (((x % scale_ratio) == 0) && (scale_x < w))
+                                         {
+                                            *pix = pal[*p >> 4];
+                                            scale_x++;
+                                         }
+                                       x++;
+                                       p++;
+                                    }
+                                  if ((done & 0x3) == 0x1)
+                                    p += 2;
+                                  else if ((done & 0x3) == 0x2)
+                                    p += 1;
+                                  break;
+                              }
+                         }
+                    }
+               }
+             else
+               goto close_file;
+          }
+        else if (bit_count == 8)
+          {
+             if (comp == 0) // no compression
+               {
+                  pix = surface;
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       for (x = 0; x < w; x++)
+                         {
+                            *pix = pal[*p];
+                            p += scale_ratio;
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+                       if (scale_ratio > 1)
+                         {
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+               }
+             else if (comp == 1) // rle 8bit/pixel
+               {
+                  int count = 0, done = 0;
+                  int scale_x = 0, scale_y = 0;
+                  Eina_Bool scale_down_line = EINA_TRUE;
+
+                  pix = surface;
+                  if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+
+                  while (p < buffer_end)
+                    {
+                       if (p[0])
+                         {
+                            if (scale_down_line)
+                              {
+                                 if ((x + p[0]) <= image_w)
+                                   {
+                                      unsigned int col = pal[p[1]];
+
+                                      count = p[0];
+                                      while (count > 0)
+                                        {
+                                           if (((x % scale_ratio) == 0) && (scale_x < w))
+                                             {
+                                                *pix = col;
+                                                pix++;
+                                                scale_x ++;
+                                             }
+                                           x++;
+                                           count--;
+                                        }
+                                   }
+                              }
+                            p += 2;
+                         }
+                       else
+                         {
+                            switch (p[1])
+                              {
+                               case 0: // EOL
+                                  x = 0;
+                                  scale_x = 0;
+                                  y++;
+                                  if ((y % scale_ratio) == 0)
+                                    {
+                                       scale_y++;
+                                       scale_down_line = EINA_TRUE;
+                                       if (!right_way_up)
+                                         pix = surface + ((h - 1 - scale_y) * w);
+                                       else
+                                         pix = surface + (scale_y * w);
+                                    }
+                                  else
+                                    scale_down_line = EINA_FALSE;
+
+                                  if (scale_y >= h)
+                                    {
+                                       p = buffer_end;
+                                    }
+                                  p += 2;
+                                  break;
+                               case 1: // EOB
+                                  p = buffer_end;
+                                  break;
+                               case 2: // DELTA
+                                  x += p[2];
+                                  y += p[3];
+                                  scale_x = x / scale_ratio;
+                                  scale_y = y / scale_ratio;
+                                  if ((scale_x >= w) || (scale_y >= h))
+                                    {
+                                       p = buffer_end;
+                                    }
+                                  if (!right_way_up)
+                                    pix = surface + scale_x + ((h - 1 - scale_y) * w);
+                                  else
+                                    pix = surface + scale_x + (scale_y * w);
+                                  p += 4;
+                                  break;
+                               default:
+                                  count = p[1];
+                                  if (((p + count) > buffer_end) ||
+                                      ((x + count) > image_w))
+                                    {
+                                       p = buffer_end;
+                                       break;
+                                    }
+                                  p += 2;
+                                  done = count;
+                                  while (count > 0)
+                                    {
+                                       if (((x % scale_ratio) == 0) && (scale_x < w))
+                                         {
+                                            *pix = pal[*p];
+                                            pix++;
+                                            scale_x ++;
+                                         }
+                                       p++;
+                                       x++;
+                                       count--;
+                                    }
+                                  if (done & 0x1) p++;
+                                  break;
+                              }
+                         }
+                    }
+               }
+             else
+               goto close_file;
+          }
+     }
+   else if ((bit_count == 16) || (bit_count == 24) || (bit_count == 32))
+     {
+        if (comp == 0) // no compression
+          {
+             position = offset;
+             if (scale_ratio == 1)
+               buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
+             else
+               buffer = malloc(row_size); // scale down is usually set because of memory issue, so read line by line
+             if (!buffer)
+               {
+                  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                  goto close_file;
+               }
+             if (scale_ratio == 1)
+               buffer_end = buffer + image_size;
+             else
+               buffer_end = buffer + row_size;
+
+             p = buffer;
+             if (scale_ratio == 1)
+               {
+                  if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
+               }
+             else
+               {
+                  if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+               }
+             if (bit_count == 16)
+               {
+                  unsigned short tmp;
+
+                  pix = surface;
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       for (x = 0; x < w; x++)
+                         {
+                            tmp = *((unsigned short *)(p));
+
+                            r = (tmp >> 7) & 0xf8; r |= r >> 5;
+                            g = (tmp >> 2) & 0xf8; g |= g >> 5;
+                            b = (tmp << 3) & 0xf8; b |= b >> 5;
+                            *pix = ARGB_JOIN(0xff, r, g, b);
+
+                              p += 2 * scale_ratio;
+
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+                       if (scale_ratio > 1)
+                         {
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+               }
+             else if (bit_count == 24)
+               {
+                  pix = surface;
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       for (x = 0; x < w; x++)
+                         {
+                            b = p[0];
+                            g = p[1];
+                            r = p[2];
+                            *pix = ARGB_JOIN(0xff, r, g, b);
+                            p += 3 * scale_ratio;
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+                       if (scale_ratio > 1)
+                         {
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+               }
+             else if (bit_count == 32)
+               {
+                  int none_zero_alpha = 0;
+                  pix = surface;
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       for (x = 0; x < w; x++)
+                         {
+                            b = p[0];
+                            g = p[1];
+                            r = p[2];
+                            a = p[3];
+                            if (a) none_zero_alpha = 1;
+                            if (!hasa) a = 0xff;
+                            *pix = ARGB_JOIN(a, r, g, b);
+                            p += 4 * scale_ratio;
+
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+                       if (scale_ratio > 1)
+                         {
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+                  if (!none_zero_alpha)
+                    {
+                       ilp->alpha = 0;
+                       if (hasa)
+                         {
+                            unsigned int *pixend = surface + (w * h);
+
+                            for (pix = surface; pix < pixend; pix++)
+                               A_VAL(pix) = 0xff;
+                         }
+                    }
+               }
+             else
+               goto close_file;
+          }
+        else if (comp == 3) // bit field
+          {
+             if (!read_uint(map, fsize, &position, &rmask)) goto close_file;
+             if (!read_uint(map, fsize, &position, &gmask)) goto close_file;
+             if (!read_uint(map, fsize, &position, &bmask)) goto close_file;
+
+             position = offset;
+             if (scale_ratio == 1)
+               buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
+             else
+               buffer = malloc(row_size); // scale down is usually set because of memory issue, so read line by line
+
+             if (!buffer)
+               {
+                  *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                  goto close_file;
+               }
+             if (scale_ratio == 1)
+               buffer_end = buffer + image_size;
+             else
+               buffer_end = buffer + row_size;
+
+             p = buffer;
+             if (scale_ratio == 1)
+               {
+                  if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
+               }
+             else
+               {
+                  if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+               }
+
+             if ((bit_count == 16) &&
+                 (rmask == 0xf800) && (gmask == 0x07e0) && (bmask == 0x001f)
+                 )
+               {
+                  unsigned short tmp;
+
+                  pix = surface;
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       for (x = 0; x < w; x++)
+                         {
+                            tmp = *((unsigned short *)(p));
+
+                            r = (tmp >> 8) & 0xf8; r |= r >> 5;
+                            g = (tmp >> 3) & 0xfc; g |= g >> 6;
+                            b = (tmp << 3) & 0xf8; b |= b >> 5;
+                            *pix = ARGB_JOIN(0xff, r, g, b);
+
+                            p += 2 * scale_ratio;
+
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+                       if (scale_ratio > 1)
+                         {
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+               }
+             else if ((bit_count == 16) && 
+                      (rmask == 0x7c00) && (gmask == 0x03e0) && (bmask == 0x001f)
+                     )
+               {
+                  unsigned short tmp;
+                  pix = surface;
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       for (x = 0; x < w; x++)
+                         {
+                            tmp = *((unsigned short *)(p));
+
+                            r = (tmp >> 7) & 0xf8; r |= r >> 5;
+                            g = (tmp >> 2) & 0xf8; g |= g >> 5;
+                            b = (tmp << 3) & 0xf8; b |= b >> 5;
+                            *pix = ARGB_JOIN(0xff, r, g, b);
+                              p += 2 * scale_ratio;
+
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+                       if (scale_ratio > 1)
+                         {
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer_end, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+               }
+             else if (bit_count == 32)
+               {
+                  pix = surface;
+                  for (y = 0; y < h; y++)
+                    {
+                       if (!right_way_up) pix = surface + ((h - 1 - y) * w);
+                       for (x = 0; x < w; x++)
+                         {
+                            b = p[0];
+                            g = p[1];
+                            r = p[2];
+                            a = p[3];
+                            if (!hasa) a = 0xff;
+                            *pix = ARGB_JOIN(a, r, g, b);
+
+                              p += 4 * scale_ratio;
+
+                            if (p >= buffer_end) break;
+                            pix++;
+                         }
+                       if (scale_ratio > 1)
+                         {
+                            read_line += scale_ratio;
+                            if (read_line >= image_h) break;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
+                            p = buffer;
+                            buffer_end = buffer + row_size;
+                         }
+                       else
+                         {
+                            fix = (int)(((unsigned long)p) & 0x3);
+                            if (fix > 0) p += 4 - fix; // align row read
+                            if (p >= buffer_end) break;
+                         }
+                    }
+               }
+             else
+               goto close_file;
+          }
+        else if (comp == 4) // jpeg - only printer drivers
+          {
+             goto close_file;
+          }
+        else if (comp == 3) // png - only printer drivers
+          {
+             goto close_file;
+          }
+        else
+          goto close_file;
+     }
+   else
+     goto close_file;
+
+   if (buffer) free(buffer);
+   if (scale_surface) free(scale_surface);
+
+   eina_file_map_free(f, map);
+   eina_file_close(f);
+
+   evas_cserve2_image_premul(ilp);
+   *error = EVAS_LOAD_ERROR_NONE;
+   return EINA_TRUE;
+
+ close_file:
+   if (buffer) free(buffer);
+   if (scale_surface) free(scale_surface);
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
+   return EINA_FALSE;
+}
+
+static Evas_Loader_Module_Api modapi =
+{
+   EVAS_CSERVE2_MODULE_API_VERSION,
+   "bmp",
+   evas_image_load_file_head_bmp,
+   evas_image_load_file_data_bmp
+};
+
+static Eina_Bool
+module_init(void)
+{
+   return evas_cserve2_loader_register(&modapi);
+}
+
+static void
+module_shutdown(void)
+{
+}
+
+EINA_MODULE_INIT(module_init);
+EINA_MODULE_SHUTDOWN(module_shutdown);

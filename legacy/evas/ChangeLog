@@ -725,3 +725,9 @@
 
 	* Compute limited bounding box for Smart object.
 	* Use bounding box to reduce the number of object explored during event propagation.
+
+2012-05-03  Iván Briano (Sachiel)
+
+	* Add CServe2 and image cache2 that makes use of it. Several changes
+	in the buffer and software engines to use the right cache if CServe2
+	is requested for the application.
