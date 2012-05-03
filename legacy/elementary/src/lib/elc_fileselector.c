@@ -296,6 +296,44 @@ _itc_del(void *data,
    eina_stringshare_del(data);
 }
 
+static void
+_anchors_do(Evas_Object *obj,
+            const char *path)
+{
+   char **tok, buf[PATH_MAX * 3], *s;
+   int i, j;
+
+   ELM_FILESELECTOR_DATA_GET(obj, sd);
+
+   s = elm_entry_utf8_to_markup(path);
+   if (!s) return;
+
+   buf[0] = '\0';
+   tok = eina_str_split(s, "/", 0);
+   free(s);
+
+   eina_strlcat(buf, "<a href=/>root</a>", sizeof(buf));
+   for (i = 0; tok[i]; i++)
+     {
+        if ((!tok[i]) || (!tok[i][0])) continue;
+        eina_strlcat(buf, sd->path_separator, sizeof(buf));
+        eina_strlcat(buf, "<a href=", sizeof(buf));
+        for (j = 0; j <= i; j++)
+          {
+             if (strlen(tok[j]) < 1) continue;
+             eina_strlcat(buf, "/", sizeof(buf));
+             eina_strlcat(buf, tok[j], sizeof(buf));
+          }
+        eina_strlcat(buf, ">", sizeof(buf));
+        eina_strlcat(buf, tok[i], sizeof(buf));
+        eina_strlcat(buf, "</a>", sizeof(buf));
+     }
+   free(tok[0]);
+   free(tok);
+
+   elm_object_text_set(sd->path_entry, buf);
+}
+
 #ifdef HAVE_EIO
 static Eina_Bool
 _ls_filter_cb(void *data __UNUSED__,
@@ -382,44 +420,6 @@ _file_list_cmp(const void *a,
      }
 
    return strcoll(elm_object_item_data_get(la), elm_object_item_data_get(lb));
-}
-
-static void
-_anchors_do(Evas_Object *obj,
-            const char *path)
-{
-   char **tok, buf[PATH_MAX * 3], *s;
-   int i, j;
-
-   ELM_FILESELECTOR_DATA_GET(obj, sd);
-
-   s = elm_entry_utf8_to_markup(path);
-   if (!s) return;
-
-   buf[0] = '\0';
-   tok = eina_str_split(s, "/", 0);
-   free(s);
-
-   eina_strlcat(buf, "<a href=/>root</a>", sizeof(buf));
-   for (i = 0; tok[i]; i++)
-     {
-        if ((!tok[i]) || (!tok[i][0])) continue;
-        eina_strlcat(buf, sd->path_separator, sizeof(buf));
-        eina_strlcat(buf, "<a href=", sizeof(buf));
-        for (j = 0; j <= i; j++)
-          {
-             if (strlen(tok[j]) < 1) continue;
-             eina_strlcat(buf, "/", sizeof(buf));
-             eina_strlcat(buf, tok[j], sizeof(buf));
-          }
-        eina_strlcat(buf, ">", sizeof(buf));
-        eina_strlcat(buf, tok[i], sizeof(buf));
-        eina_strlcat(buf, "</a>", sizeof(buf));
-     }
-   free(tok[0]);
-   free(tok);
-
-   elm_object_text_set(sd->path_entry, buf);
 }
 
 static void
