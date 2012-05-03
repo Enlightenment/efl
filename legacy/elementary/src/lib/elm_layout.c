@@ -180,6 +180,32 @@ _elm_layout_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Eva
                                          next);
 }
 
+static Eina_Bool
+_elm_layout_focus_direction_hook(const Evas_Object *obj, const Evas_Object *base, double degree,
+                                 Evas_Object **direction, double *weight)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const Eina_List *items;
+   void *(*list_data_get) (const Eina_List *list);
+
+   if ((!wd) || (!wd->subs))
+     return EINA_FALSE;
+
+   /* Focus chain (This block is diferent of elm_win cycle)*/
+   if ((items = elm_widget_focus_custom_chain_get(obj)))
+     list_data_get = eina_list_data_get;
+   else
+     {
+        items = wd->subs;
+        list_data_get = _elm_layout_list_data_get;
+
+        if (!items) return EINA_FALSE;
+     }
+
+   return elm_widget_focus_list_direction_get(obj, base, items, list_data_get, degree,
+                                              direction, weight);
+}
+
 static void
 _sizing_eval(Widget_Data *wd)
 {
@@ -458,6 +484,7 @@ elm_layout_add(Evas_Object *parent)
    elm_widget_changed_hook_set(obj, _changed_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_focus_next_hook_set(obj, _elm_layout_focus_next_hook);
+   elm_widget_focus_direction_hook_set(obj, _elm_layout_focus_direction_hook);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);

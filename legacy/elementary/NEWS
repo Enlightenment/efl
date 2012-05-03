@@ -5,6 +5,8 @@ Changes since Elementary 1.0.0:
 
 Additions:
 
+   * Focus can be moved in all directions by elm_widget_focus_go function.
+
 Fixes:
 
    * Genlist : Fixed genlist expandable effect bug when we expand/contract items with many children very quickly.

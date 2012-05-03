@@ -80,7 +80,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
           {
              Evas_Object *lb = elm_label_add(win);
-             elm_object_text_set(lb, "<b>Use Tab or Shift+Tab</b>");
+             elm_object_text_set(lb, "<b>Use Tab or Shift+Tab<br/>or Arrow keys</b>");
              evas_object_size_hint_weight_set(lb, 0.0, 0.0);
              evas_object_size_hint_align_set(lb, EVAS_HINT_FILL,
                                              EVAS_HINT_FILL);

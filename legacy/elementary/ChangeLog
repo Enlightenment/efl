@@ -26,3 +26,8 @@
 
 	* Font: actually it doesnt append the font to the hash when font_hash is
 	  created inside. Now it is fixed.
+
+2012-05-03  WooHyun Jung
+
+	* Add feature about focus. Focus can be moved in all direction by
+	  by elm_widget_focus_go function.

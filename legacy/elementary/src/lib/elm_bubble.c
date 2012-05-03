@@ -213,6 +213,19 @@ _elm_bubble_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Eva
    return elm_widget_focus_next_get(cur, dir, next);
 }
 
+static Eina_Bool
+_elm_bubble_focus_direction_hook(const Evas_Object *obj, const Evas_Object *base, double degree,
+                                 Evas_Object **direction, double *weight)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if ((!wd) || (!wd->content))
+     return EINA_FALSE;
+
+   /* Try Focus cycle in subitem */
+   return elm_widget_focus_direction_get(wd->content, base, degree, direction, weight);
+}
+
 static void
 _sizing_eval(Evas_Object *obj)
 {
@@ -322,6 +335,7 @@ elm_bubble_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_focus_next_hook_set(obj, _elm_bubble_focus_next_hook);
+   elm_widget_focus_direction_hook_set(obj, _elm_bubble_focus_direction_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_text_set_hook_set(obj, _elm_bubble_label_set);
    elm_widget_text_get_hook_set(obj, _elm_bubble_label_get);

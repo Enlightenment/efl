@@ -313,6 +313,7 @@ EAPI void             elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func
 EAPI void             elm_widget_on_change_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data);
 EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data);
 EAPI void             elm_widget_focus_region_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h));
+EAPI void             elm_widget_focus_direction_hook_set(Evas_Object *obj, Eina_Bool  (*func)(const Evas_Object *obj, const Evas_Object *base, double degree, Evas_Object **direction, double *weight));
 EAPI void             elm_widget_text_set_hook_set(Evas_Object *obj, Elm_Widget_Text_Set_Cb func);
 #define elm_widget_text_set_hook_set(obj, func)      elm_widget_text_set_hook_set(obj, (Elm_Widget_Text_Set_Cb)(func))
 EAPI void             elm_widget_text_get_hook_set(Evas_Object *obj, Elm_Widget_Text_Get_Cb func);
@@ -358,8 +359,10 @@ EAPI const Eina_List *elm_widget_focus_custom_chain_get(const Evas_Object *obj);
 EAPI void             elm_widget_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 EAPI void             elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 EAPI void             elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
-EAPI void             elm_widget_focus_direction_go(Evas_Object *obj, int x, int y);
+EAPI Eina_Bool        elm_widget_focus_direction_go(Evas_Object *obj, double degree);
+EAPI Eina_Bool        elm_widget_focus_direction_get(const Evas_Object *obj, const Evas_Object *base, double degree, Evas_Object **direction, double *weight);
 EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
+EAPI Eina_Bool        elm_widget_focus_list_direction_get(const Evas_Object  *obj, const Evas_Object *base, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), double degree, Evas_Object **direction, double *weight);
 EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, int first);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);

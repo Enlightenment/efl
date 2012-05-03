@@ -522,6 +522,32 @@ _elm_win_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_O
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_elm_win_focus_direction_hook(const Evas_Object *obj, const Evas_Object *base, double degree,
+                              Evas_Object **direction, double *weight)
+{
+   Elm_Win *wd = elm_widget_data_get(obj);
+   const Eina_List *items;
+   const Eina_List *list;
+   void *(*list_data_get) (const Eina_List *list);
+
+   if (!wd)
+     return EINA_FALSE;
+   list = elm_widget_sub_object_list_get(obj);
+
+   /* Focus chain */
+   if (list)
+     {
+        if (!(items = elm_widget_focus_custom_chain_get(obj)))
+          items = list;
+
+        list_data_get = eina_list_data_get;
+
+        return elm_widget_focus_list_direction_get(obj, base,  items, list_data_get, degree, direction, weight);
+     }
+   return EINA_FALSE;
+}
+
 static void
 _elm_win_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 {
@@ -540,6 +566,9 @@ _elm_win_event_cb(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_T
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
         Evas_Event_Key_Down *ev = event_info;
+        Evas_Object *current_focused;
+
+        current_focused = elm_widget_focused_object_get(obj);
         if (!strcmp(ev->keyname, "Tab"))
           {
              if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
@@ -552,22 +581,34 @@ _elm_win_event_cb(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_T
         else if ((!strcmp(ev->keyname, "Left")) ||
                  ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
           {
-             //TODO : woohyun jung
+             if (current_focused == obj)
+               elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+             else
+               elm_widget_focus_direction_go(obj, 270.0);
           }
         else if ((!strcmp(ev->keyname, "Right")) ||
                  ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
           {
-             //TODO : woohyun jung
+             if (current_focused == obj)
+               elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+             else
+               elm_widget_focus_direction_go(obj, 90.0);
           }
         else if ((!strcmp(ev->keyname, "Up")) ||
                  ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
           {
-             //TODO : woohyun jung
+             if (current_focused == obj)
+               elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+             else
+               elm_widget_focus_direction_go(obj, 0.0);
           }
         else if ((!strcmp(ev->keyname, "Down")) ||
                  ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
           {
-             //TODO : woohyun jung
+             if (current_focused == obj)
+               elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+             else
+               elm_widget_focus_direction_go(obj, 180.0);
           }
      }
 
@@ -1980,6 +2021,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    elm_widget_can_focus_set(win->win_obj, EINA_TRUE);
    elm_widget_highlight_ignore_set(win->win_obj, EINA_TRUE);
    elm_widget_focus_next_hook_set(win->win_obj, _elm_win_focus_next_hook);
+   elm_widget_focus_direction_hook_set(win->win_obj, _elm_win_focus_direction_hook);
    evas_object_color_set(win->win_obj, 0, 0, 0, 0);
    evas_object_move(win->win_obj, 0, 0);
    evas_object_resize(win->win_obj, 1, 1);
