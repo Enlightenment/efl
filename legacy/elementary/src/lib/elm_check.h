@@ -9,20 +9,24 @@
  * @image html img/widget/check/preview-02.png
  * @image latex img/widget/check/preview-02.eps
  *
- * @brief The check widget allows for toggling a value between true and
- * false.
+ * @brief The check widget allows for toggling a value between true
+ * and false.
  *
- * Check objects are a lot like radio objects in layout and functionality
- * except they do not work as a group, but independently and only toggle the
- * value of a boolean from false to true (0 or 1). elm_check_state_set() sets
- * the boolean state (1 for true, 0 for false), and elm_check_state_get()
- * returns the current state. For convenience, like the radio objects, you
- * can set a pointer to a boolean directly with elm_check_state_pointer_set()
- * for it to modify.
+ * Check objects are a lot like radio objects in layout and
+ * functionality, except they do not work as a group, but
+ * independently, and only toggle the value of a boolean between false
+ * and true. elm_check_state_set() sets the boolean state and
+ * elm_check_state_get() returns the current state. For convenience,
+ * like the radio objects, you can set a pointer to a boolean directly
+ * with elm_check_state_pointer_set() for it to modify.
  *
- * Signals that you can add callbacks for are:
- * "changed" - This is called whenever the user changes the state of the check
- *             objects(event_info is NULL).
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for check objects.
+ *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * - @c "changed" - This is called whenever the user changes the state of
+ *             the check objects (@c event_info is always @c NULL).
  *
  * Default content parts of the check widget that you can use for are:
  * @li "icon" - An icon of the check
