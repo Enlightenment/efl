@@ -14,24 +14,25 @@ _elm_font_properties_get(Eina_Hash **font_hash,
                          const char *font)
 {
    Elm_Font_Properties *efp = NULL;
-   char *s1;
+   char *token = strchr(font, ':');
 
-   s1 = strchr(font, ':');
-   if (s1)
+   if (token &&
+       !strncmp(token, ELM_FONT_TOKEN_STYLE, strlen(ELM_FONT_TOKEN_STYLE)))
      {
-        char *s2, *name, *style;
+        char *name, *subname, *style, *substyle;
         int len;
 
-        len = s1 - font;
+        /* get font name */
+        len = token - font;
         name = calloc(sizeof(char), len + 1);
         if (!name) return NULL;
         strncpy(name, font, len);
 
-        /* get subname (should be english)  */
-        s2 = strchr(name, ',');
-        if (s2)
+        /* remove subnames from the font name (should be english)  */
+        subname = strchr(name, ',');
+        if (subname)
           {
-             len = s2 - name;
+             len = subname - name;
              name = realloc(name, sizeof(char) * len + 1);
              if (name)
                {
@@ -39,60 +40,57 @@ _elm_font_properties_get(Eina_Hash **font_hash,
                   strncpy(name, font, len);
                }
           }
-        if (!strncmp(s1, ELM_FONT_TOKEN_STYLE, strlen(ELM_FONT_TOKEN_STYLE)))
+
+        /* add a font name */
+        if (font_hash)
           {
-             style = s1 + strlen(ELM_FONT_TOKEN_STYLE);
-
-             if (font_hash)
+             efp = eina_hash_find(*font_hash, name);
+             if (!efp)
                {
-                  efp = eina_hash_find(*font_hash, name);
-                  if (!efp)
-                    {
-                       efp = calloc(1, sizeof(Elm_Font_Properties));
-                       if (efp)
-                         {
-                            efp->name = eina_stringshare_add(name);
-                            if (!*font_hash)
-                              *font_hash = eina_hash_string_superfast_new(NULL);
-                            eina_hash_add(*font_hash, name, efp);
-                         }
+                  efp = calloc(1, sizeof(Elm_Font_Properties));
+                  if (!efp) return NULL;
 
-                    }
+                  efp->name = eina_stringshare_add(name);
+                  if (!*font_hash)
+                    *font_hash = eina_hash_string_superfast_new(NULL);
+                   eina_hash_add(*font_hash, name, efp);
                }
-             s2 = strchr(style, ',');
-             if (s2)
-               {
-                  char *style_old;
-
-                  len = s2 - style;
-                  style_old = style;
-                  style = calloc(sizeof(char), len + 1);
-                  if (style)
-                    {
-                       strncpy(style, style_old, len);
-                       efp->styles = eina_list_append(efp->styles,
-                                                   eina_stringshare_add(style));
-                       free(style);
-                    }
-               }
-             else
-               efp->styles = eina_list_append(efp->styles,
-                                              eina_stringshare_add(style));
           }
+
         free(name);
-     }
-   else
-     {
-        if ((font_hash) && (!eina_hash_find(*font_hash, font)))
-          {
-             efp = calloc(1, sizeof(Elm_Font_Properties));
-             if (!efp) return NULL;
 
-             efp->name = eina_stringshare_add(font);
-             if (!*font_hash) *font_hash = eina_hash_string_superfast_new(NULL);
-             eina_hash_add(*font_hash, font, efp);
+        style = token + strlen(ELM_FONT_TOKEN_STYLE);
+        substyle = strchr(style, ',');
+
+        //TODO: Seems to need to add all styles. not only one.
+        if (substyle)
+          {
+             char *style_old = style;
+
+             len = substyle - style;
+             style = calloc(sizeof(char), len + 1);
+             if (style)
+               {
+                  strncpy(style, style_old, len);
+                  efp->styles = eina_list_append(efp->styles,
+                                                 eina_stringshare_add(style));
+                  free(style);
+               }
           }
+        else
+          efp->styles = eina_list_append(efp->styles,
+                                         eina_stringshare_add(style));
      }
+   else if ((font_hash) && (!eina_hash_find(*font_hash, font)))
+     {
+        efp = calloc(1, sizeof(Elm_Font_Properties));
+        if (!efp) return NULL;
+
+        efp->name = eina_stringshare_add(font);
+        if (!*font_hash) *font_hash = eina_hash_string_superfast_new(NULL);
+        eina_hash_add(*font_hash, font, efp);
+     }
+
    return efp;
 }
 
