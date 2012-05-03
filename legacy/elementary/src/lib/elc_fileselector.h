@@ -31,8 +31,11 @@
  * library, the second form of view will display preview thumbnails
  * of files which it supports.
  *
- * Smart callbacks one can register to:
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for file selector objects.
  *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
  * - @c "selected" - the user has clicked on a file (when not in
  *      folders-only mode) or directory (when in folders-only mode)
  * - @c "directory,open" - the list has been populated with new
