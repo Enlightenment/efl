@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_container.h"
 
 static const char SMART_NAME[] = "elm_widget";
 static const char SMART_NAME_COMPAT[] = "elm_widget_compat";
@@ -2506,6 +2507,8 @@ elm_widget_signal_emit(Evas_Object *obj,
 
    if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->signal)
      COMPAT_SMART_DATA(sd)->signal(obj, emission, source);
+   else if (evas_object_smart_type_check(obj, "elm_layout"))
+     elm_layout_signal_emit(obj, emission, source);
 }
 
 static void
@@ -2528,21 +2531,30 @@ elm_widget_signal_callback_add(Evas_Object   *obj,
    Edje_Signal_Data *esd;
    API_ENTRY return;
 
-   if (!_elm_legacy_is(obj) || !COMPAT_SMART_DATA(sd)->callback_add) return;
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   esd = ELM_NEW(Edje_Signal_Data);
-   if (!esd) return;
+   if (_elm_legacy_is(obj) && !COMPAT_SMART_DATA(sd)->callback_add) return;
+   else if (!evas_object_smart_type_check(obj, "elm_layout"))
+     return;
 
-   esd->obj = obj;
-   esd->func = func;
-   esd->emission = eina_stringshare_add(emission);
-   esd->source = eina_stringshare_add(source);
-   esd->data = data;
-   COMPAT_SMART_DATA(sd)->edje_signals = eina_list_append
-     (COMPAT_SMART_DATA(sd)->edje_signals, esd);
-   COMPAT_SMART_DATA(sd)->callback_add
-     (obj, emission, source, _edje_signal_callback, esd);
+   if (_elm_legacy_is(obj))
+     {
+        esd = ELM_NEW(Edje_Signal_Data);
+        if (!esd) return;
+
+        esd->obj = obj;
+        esd->func = func;
+        esd->emission = eina_stringshare_add(emission);
+        esd->source = eina_stringshare_add(source);
+        esd->data = data;
+        COMPAT_SMART_DATA(sd)->edje_signals = eina_list_append
+          (COMPAT_SMART_DATA(sd)->edje_signals, esd);
+
+        COMPAT_SMART_DATA(sd)->callback_add
+          (obj, emission, source, _edje_signal_callback, esd);
+     }
+   else
+     elm_layout_signal_callback_add(obj, emission, source, func, data);
 }
 
 EAPI void *
@@ -2555,26 +2567,34 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
    Eina_List *l;
    void *data = NULL;
    API_ENTRY return NULL;
-   if (!_elm_legacy_is(obj) || !COMPAT_SMART_DATA(sd)->callback_del)
+
+   if (_elm_legacy_is(obj) && !COMPAT_SMART_DATA(sd)->callback_del)
+     return NULL;
+   else if (!evas_object_smart_type_check(obj, "elm_layout"))
      return NULL;
 
-   EINA_LIST_FOREACH(COMPAT_SMART_DATA(sd)->edje_signals, l, esd)
+   if (_elm_legacy_is(obj))
      {
-        if ((esd->func == func) && (!strcmp(esd->emission, emission)) &&
-            (!strcmp(esd->source, source)))
+        EINA_LIST_FOREACH (COMPAT_SMART_DATA(sd)->edje_signals, l, esd)
           {
-             COMPAT_SMART_DATA(sd)->edje_signals = eina_list_remove_list
-               (COMPAT_SMART_DATA(sd)->edje_signals, l);
-             eina_stringshare_del(esd->emission);
-             eina_stringshare_del(esd->source);
-             data = esd->data;
-             free(esd);
-
-             COMPAT_SMART_DATA(sd)->callback_del
-               (obj, emission, source, _edje_signal_callback, esd);
-             return data;
+             if ((esd->func == func) && (!strcmp(esd->emission, emission)) &&
+                 (!strcmp(esd->source, source)))
+               {
+                  COMPAT_SMART_DATA(sd)->edje_signals = eina_list_remove_list
+                    (COMPAT_SMART_DATA(sd)->edje_signals, l);
+                  eina_stringshare_del(esd->emission);
+                  eina_stringshare_del(esd->source);
+                  data = esd->data;
+                  free(esd);
+                  break;
+               }
           }
+
+        COMPAT_SMART_DATA(sd)->callback_del
+          (obj, emission, source, _edje_signal_callback, esd);
      }
+   else
+     elm_layout_signal_callback_del(obj, emission, source, func);
 
    return data;
 }
@@ -3029,6 +3049,8 @@ elm_widget_text_part_set(Evas_Object *obj, const char *part, const char *label)
 
    if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->text_set)
      COMPAT_SMART_DATA(sd)->text_set(obj, part, label);
+   else if (evas_object_smart_type_check(obj, "elm_layout"))
+     elm_layout_text_set(obj, part, label);
 }
 
 EAPI const char *
@@ -3036,10 +3058,12 @@ elm_widget_text_part_get(const Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
-   if (!_elm_legacy_is(obj) || !COMPAT_SMART_DATA(sd)->text_get)
-     return NULL;
+   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->text_get)
+     return COMPAT_SMART_DATA(sd)->text_get(obj, part);
+   else if (evas_object_smart_type_check(obj, "elm_layout"))
+     return elm_layout_text_get(obj, part);
 
-   return COMPAT_SMART_DATA(sd)->text_get(obj, part);
+   return NULL;
 }
 
 EAPI void
@@ -3146,6 +3170,8 @@ elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *con
 
    if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_set)
      COMPAT_SMART_DATA(sd)->content_set(obj, part, content);
+   else if (evas_object_smart_type_check(obj, "elm_container"))
+     ELM_CONTAINER_CLASS(sd->api)->content_set(obj, part, content);
 }
 
 EAPI Evas_Object *
@@ -3153,10 +3179,12 @@ elm_widget_content_part_get(const Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
-   if (!_elm_legacy_is(obj) || !COMPAT_SMART_DATA(sd)->content_get)
-       return NULL;
+   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_get)
+     return COMPAT_SMART_DATA(sd)->content_get(obj, part);
+   else if (evas_object_smart_type_check(obj, "elm_container"))
+     return ELM_CONTAINER_CLASS(sd->api)->content_get(obj, part);
 
-   return COMPAT_SMART_DATA(sd)->content_get(obj, part);
+   return NULL;
 }
 
 EAPI Evas_Object *
@@ -3164,10 +3192,12 @@ elm_widget_content_part_unset(Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
-   if (!_elm_legacy_is(obj) || !COMPAT_SMART_DATA(sd)->content_unset)
-       return NULL;
+   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_unset)
+     return COMPAT_SMART_DATA(sd)->content_unset(obj, part);
+   else if (evas_object_smart_type_check(obj, "elm_container"))
+     return ELM_CONTAINER_CLASS(sd->api)->content_unset(obj, part);
 
-   return COMPAT_SMART_DATA(sd)->content_unset(obj, part);
+   return NULL;
 }
 
 EAPI void
@@ -3360,7 +3390,10 @@ elm_widget_type_check(const Evas_Object *obj,
    const char *provided, *expected = "(unknown)";
    static int abort_on_warn = -1;
    provided = elm_widget_type_get(obj);
-   if (EINA_LIKELY(provided == type)) return EINA_TRUE;
+   if (_elm_legacy_is(obj) && EINA_LIKELY(provided == type))
+     return EINA_TRUE;
+   /* TODO: eventually migrate to check_ptr version */
+   else if (evas_object_smart_type_check(obj, type)) return EINA_TRUE;
    if (type) expected = type;
    if ((!provided) || (!provided[0]))
      {

@@ -42,7 +42,8 @@ includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
 elm_widget.h \
-elm_widget_container.h
+elm_widget_container.h \
+elm_widget_layout.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 includesub_HEADERS = \
