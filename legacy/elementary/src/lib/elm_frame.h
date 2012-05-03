@@ -19,7 +19,11 @@
  *
  * Of all this styles only default shows the title.
  *
- * Smart callbacks one can listen to:
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for frame objects.
+ *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
  * - @c "clicked" - The user has clicked the frame's label
  *
  * Default content parts of the frame widget that you can use for are:
