@@ -369,6 +369,152 @@ _elm_widget_focus_direction_func_unimplemented(const Evas_Object *obj __UNUSED__
    return EINA_FALSE;
 }
 
+static Eina_Bool
+_elm_widget_sub_object_add_func(Evas_Object *obj,
+                                Evas_Object *sobj)
+{
+   double scale, pscale = elm_widget_scale_get(sobj);
+   Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
+   Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
+
+   ELM_WIDGET_DATA_GET(obj, sd);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
+
+   if (sobj == sd->parent_obj)
+     {
+        /* in this case, sobj must be an elm widget, or something
+         * very wrong is happening */
+        if (!_elm_widget_is(sobj)) return EINA_FALSE;
+
+        if (!elm_widget_sub_object_del(sobj, obj)) return EINA_FALSE;
+        WRN("You passed a parent object of obj = %p as the sub object = %p!",
+            obj, sobj);
+     }
+
+   if (_elm_widget_is(sobj))
+     {
+        ELM_WIDGET_DATA_GET(sobj, sdc);
+
+        if (sdc)
+          {
+             if (sdc->parent_obj == obj) return EINA_TRUE;
+             if (sdc->parent_obj)
+               {
+                  if (!elm_widget_sub_object_del(sdc->parent_obj, sobj))
+                    return EINA_FALSE;
+               }
+             sdc->parent_obj = obj;
+             _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
+             if (!sd->child_can_focus && (_is_focusable(sobj)))
+               sd->child_can_focus = EINA_TRUE;
+          }
+     }
+   else
+     {
+        void *data = evas_object_data_get(sobj, "elm-parent");
+
+        if (data)
+          {
+             if (data == obj) return EINA_TRUE;
+             if (!elm_widget_sub_object_del(data, sobj)) return EINA_FALSE;
+          }
+     }
+
+   sd->subobjs = eina_list_append(sd->subobjs, sobj);
+   evas_object_data_set(sobj, "elm-parent", obj);
+   evas_object_event_callback_add
+     (sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
+   if (_elm_widget_is(sobj))
+     {
+        evas_object_event_callback_add
+          (sobj, EVAS_CALLBACK_HIDE, _sub_obj_hide, sd);
+
+        scale = elm_widget_scale_get(sobj);
+        th = elm_widget_theme_get(sobj);
+        mirrored = elm_widget_mirrored_get(sobj);
+
+        if ((scale != pscale) || (th != pth) || (pmirrored != mirrored))
+          elm_widget_theme(sobj);
+
+        if (elm_widget_focus_get(sobj)) _focus_parents(obj);
+     }
+
+   return EINA_TRUE;
+}
+
+
+static Eina_Bool
+_elm_widget_sub_object_del_func(Evas_Object *obj,
+                                Evas_Object *sobj)
+{
+   Evas_Object *sobj_parent;
+
+   if (!sobj) return EINA_FALSE;
+
+   ELM_WIDGET_DATA_GET(obj, sd);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
+
+   sobj_parent = evas_object_data_del(sobj, "elm-parent");
+   if (sobj_parent != obj)
+     {
+        static int abort_on_warn = -1;
+
+        ERR("removing sub object %p (%s) from parent %p (%s), "
+            "but elm-parent is different %p (%s)!",
+            sobj, elm_widget_type_get(sobj), obj, elm_widget_type_get(obj),
+            sobj_parent, elm_widget_type_get(sobj_parent));
+
+        if (EINA_UNLIKELY(abort_on_warn == -1))
+          {
+             if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+             else abort_on_warn = 0;
+          }
+        if (abort_on_warn == 1) abort();
+
+        return EINA_FALSE;
+     }
+
+   if (_elm_widget_is(sobj))
+     {
+        if (elm_widget_focus_get(sobj))
+          {
+             elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
+             elm_widget_tree_unfocusable_set(sobj, EINA_FALSE);
+          }
+        if ((sd->child_can_focus) && (_is_focusable(sobj)))
+          {
+             Evas_Object *subobj;
+             const Eina_List *l;
+
+             sd->child_can_focus = EINA_FALSE;
+
+             EINA_LIST_FOREACH (sd->subobjs, l, subobj)
+               {
+                  if (_is_focusable(subobj))
+                    {
+                       sd->child_can_focus = EINA_TRUE;
+                       break;
+                    }
+               }
+          }
+
+        ELM_WIDGET_DATA_GET(sobj, sdc);
+        sdc->parent_obj = NULL;
+     }
+
+   if (sd->resize_obj == sobj) sd->resize_obj = NULL;
+
+   sd->subobjs = eina_list_remove(sd->subobjs, sobj);
+
+   evas_object_event_callback_del_full
+     (sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
+   if (_elm_widget_is(sobj))
+     evas_object_event_callback_del_full
+       (sobj, EVAS_CALLBACK_HIDE, _sub_obj_hide, sd);
+
+   return EINA_TRUE;
+}
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
 {
    /* FIXME: complete later */
@@ -410,6 +556,15 @@ _elm_widget_smart_set(Elm_Widget_Smart_Class *api)
    API_DEFAULT_SET_UNIMPLEMENTED(event);
    API_DEFAULT_SET_UNIMPLEMENTED(focus_next);
    API_DEFAULT_SET_UNIMPLEMENTED(focus_direction);
+
+   /* NB: because those two weren't hooks before, translate the
+    * individual calls to them on the widgets as we bring them to the
+    * new class hierarchy. also, sub_object_{add,del} must be
+    * different than member_{add,del} here, because widget parenting
+    * on elm does not always imply parent and child will live on the
+    * same Evas layer */
+   API_DEFAULT_SET(sub_object_add);
+   API_DEFAULT_SET(sub_object_del);
 
 #undef API_DEFAULT_SET
 #undef API_DEFAULT_SET_UNIMPLEMENTED
@@ -474,12 +629,26 @@ _sub_obj_del(void        *data,
         if (elm_widget_focus_get(obj)) _unfocus_parents(sd->obj);
      }
    if (obj == sd->resize_obj)
-     sd->resize_obj = NULL;
+      {
+         /* already dels sub object */
+         elm_widget_resize_object_set(sd->obj, NULL);
+         return;
+      }
    else if (obj == sd->hover_obj)
-     sd->hover_obj = NULL;
+      {
+         sd->hover_obj = NULL;
+         return;
+      }
+    else if (_elm_legacy_is(sd->obj))
+      {
+         evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
+         sd->subobjs = eina_list_remove(sd->subobjs, obj);
+      }
    else
-     sd->subobjs = eina_list_remove(sd->subobjs, obj);
-   evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
+     {
+        if (!elm_widget_sub_object_del(sd->obj, obj))
+          ERR("failed to remove sub object %p from %p\n", obj, sd->obj);
+     }
 }
 
 static void
@@ -1330,8 +1499,7 @@ elm_widget_sub_object_add(Evas_Object *obj,
         if (data)
           {
              if (data == obj) return EINA_TRUE;
-             evas_object_event_callback_del(sobj, EVAS_CALLBACK_DEL,
-                                            _sub_obj_del);
+             elm_widget_sub_object_del(data, sobj);
           }
      }
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
@@ -1405,10 +1573,9 @@ elm_widget_sub_object_del(Evas_Object *obj,
         if (sd2)
           {
              sd2->parent_obj = NULL;
-             if (sd2->resize_obj == sobj)
-               sd2->resize_obj = NULL;
-             else
-               sd->subobjs = eina_list_remove(sd->subobjs, sobj);
+              if (sd2->resize_obj == sobj) sd2->resize_obj = NULL;
+
+              sd->subobjs = eina_list_remove(sd->subobjs, sobj);
           }
         else
           sd->subobjs = eina_list_remove(sd->subobjs, sobj);
@@ -1432,27 +1599,24 @@ elm_widget_sub_object_list_get(const Evas_Object *obj)
    return (const Eina_List *)sd->subobjs;
 }
 
+/* a resize object is a sub object with some more callbacks on it and
+ * a smart member of the parent
+ */
 EAPI void
 elm_widget_resize_object_set(Evas_Object *obj,
                              Evas_Object *sobj)
 {
+   Evas_Object *parent;
+
    API_ENTRY return;
+
+   if (sd->resize_obj == sobj) return;
+
    // orphan previous resize obj
    if (sd->resize_obj)
      {
         evas_object_clip_unset(sd->resize_obj);
-        evas_object_data_del(sd->resize_obj, "elm-parent");
-        if (_elm_widget_is(sd->resize_obj))
-          {
-             ELM_WIDGET_DATA_GET(sd->resize_obj, sd2);
 
-             if (sd2) sd2->parent_obj = NULL;
-             evas_object_event_callback_del_full(sd->resize_obj,
-                                                 EVAS_CALLBACK_HIDE,
-                                                 _sub_obj_hide, sd);
-          }
-        evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_DEL,
-                                            _sub_obj_del, sd);
         evas_object_event_callback_del_full(sd->resize_obj,
                                             EVAS_CALLBACK_MOUSE_DOWN,
                                             _sub_obj_mouse_down, sd);
@@ -1468,48 +1632,33 @@ elm_widget_resize_object_set(Evas_Object *obj,
           {
              if (elm_widget_focus_get(sd->resize_obj)) _unfocus_parents(obj);
           }
+
+        elm_widget_sub_object_del(obj, sd->resize_obj);
      }
 
    sd->resize_obj = sobj;
    if (!sobj) return;
 
    // orphan new resize obj
-   evas_object_data_del(sobj, "elm-parent");
-   if (_elm_widget_is(sobj))
+   parent = evas_object_data_get(sobj, "elm-parent");
+   if (parent && parent != obj)
      {
-        ELM_WIDGET_DATA_GET(sobj, sd2);
+        ELM_WIDGET_DATA_GET(parent, sdp);
 
-        if (sd2) sd2->parent_obj = NULL;
-        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_HIDE,
-                                            _sub_obj_hide, sd);
-     }
-   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL,
-                                       _sub_obj_del, sd);
-   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _sub_obj_mouse_down, sd);
-   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_MOUSE_MOVE,
-                                       _sub_obj_mouse_move, sd);
-   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_MOUSE_UP,
-                                       _sub_obj_mouse_up, sd);
-   evas_object_smart_member_del(sobj);
-   if (_elm_widget_is(sobj))
-     {
-        if (elm_widget_focus_get(sobj)) _unfocus_parents(obj);
+        /* should be there, just being paranoid */
+        if (sdp)
+          {
+             if (sdp->resize_obj == sobj)
+               elm_widget_resize_object_set(parent, NULL);
+             else
+               elm_widget_sub_object_del(parent, sobj);
+          }
      }
 
-   // set the resize obj up
-   if (_elm_widget_is(sobj))
-     {
-        ELM_WIDGET_DATA_GET(sobj, sd2);
+   elm_widget_sub_object_add(obj, sobj);
 
-        sd2->parent_obj = obj;
-        sd2->top_win_focused = sd->top_win_focused;
-        evas_object_event_callback_add(sobj, EVAS_CALLBACK_HIDE,
-                                       _sub_obj_hide, sd);
-     }
    evas_object_smart_member_add(sobj, obj);
-   evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
-                                  _sub_obj_del, sd);
+
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_DOWN,
                                   _sub_obj_mouse_down, sd);
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_MOVE,
@@ -1517,14 +1666,12 @@ elm_widget_resize_object_set(Evas_Object *obj,
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_MOUSE_UP,
                                   _sub_obj_mouse_up, sd);
    _smart_reconfigure(sd);
-   evas_object_data_set(sobj, "elm-parent", obj);
-   evas_object_smart_callback_call(obj, "sub-object-add", sobj);
-   if (_elm_widget_is(sobj))
-     {
-        if (elm_widget_focus_get(sobj)) _focus_parents(obj);
-     }
 }
 
+/* WARNING: the programmer is responsible, in the scenario of
+ * exchanging a hover object, of cleaning the old hover "target"
+ * before
+ */
 EAPI void
 elm_widget_hover_object_set(Evas_Object *obj,
                             Evas_Object *sobj)
@@ -4450,28 +4597,33 @@ _smart_del(Evas_Object *obj)
 
    ELM_WIDGET_DATA_GET(obj, sd);
 
-   if (sd->resize_obj)
-     {
-        sobj = sd->resize_obj;
-        sd->resize_obj = NULL;
-        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-        evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
-        evas_object_del(sobj);
-        sd->resize_obj = NULL;
-     }
    if (sd->hover_obj)
      {
-        sobj = sd->hover_obj;
-        sd->hover_obj = NULL;
-        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-        evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
-        evas_object_del(sobj);
+        /* detach it from us */
+        evas_object_event_callback_del_full
+          (sd->hover_obj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
         sd->hover_obj = NULL;
      }
-   EINA_LIST_FREE(sd->subobjs, sobj)
+
+   while (sd->subobjs)
      {
-        evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-        evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
+        sobj = eina_list_data_get(sd->subobjs);
+
+        /* let the objects clean-up themselves and get rid of this list */
+        if (_elm_legacy_is(sd->obj))
+          {
+             evas_object_smart_callback_call(obj, "sub-object-del", sobj);
+             sd->subobjs = eina_list_remove_list(sd->subobjs, sd->subobjs);
+          }
+        else
+          {
+             if (!elm_widget_sub_object_del(obj, sobj))
+               {
+                  ERR("failed to remove sub object %p from %p\n", sobj, obj);
+                  sd->subobjs = eina_list_remove_list
+                      (sd->subobjs, sd->subobjs);
+               }
+          }
         evas_object_del(sobj);
      }
    sd->tooltips = eina_list_free(sd->tooltips); /* should be empty anyway */
