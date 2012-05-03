@@ -1053,8 +1053,6 @@ _elm_win_smart_del(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);
 
-   Evas_Object *child, *child2;
-
    /* NB: child deletion handled by parent's smart del */
 
    if (sd->parent)
@@ -1077,38 +1075,6 @@ _elm_win_smart_del(Evas_Object *obj)
    if (sd->deferred_child_eval_job) ecore_job_del(sd->deferred_child_eval_job);
    if (sd->shot.info) eina_stringshare_del(sd->shot.info);
    if (sd->shot.timer) ecore_timer_del(sd->shot.timer);
-
-   child = evas_object_bottom_get(sd->evas);
-   while (child)
-     {
-        /* if the object we see *IS* the window object (because we are
-         * faking a parent object inside the canvas), then skip it and
-         * go to the next one */
-        if (child == obj)
-          {
-             child = evas_object_above_get(child);
-             if (!child) break;
-          }
-        /* if we are using the next object above from the previous loop */
-        if (child == child2)
-          {
-             /* this object has refcounts from the previous loop */
-             child2 = evas_object_above_get(child);
-             if (child2) evas_object_ref(child2);
-             evas_object_del(child);
-             /* so unref from previous loop */
-             evas_object_unref(child);
-             child = child2;
-          }
-        else
-          {
-             /* just delete as normal (probably only first object) */
-             child2 = evas_object_above_get(child);
-             if (child2) evas_object_ref(child2);
-             evas_object_del(child);
-             child = child2;
-          }
-     }
 
 #ifdef HAVE_ELEMENTARY_X
    if (sd->client_message_handler)
