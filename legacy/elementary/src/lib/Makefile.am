@@ -48,7 +48,7 @@ includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 includesub_HEADERS = \
 elc_ctxpopup.h \
-elc_dayselector.h \
+elm_dayselector.h \
 elc_fileselector_button.h \
 elc_fileselector_entry.h \
 elc_fileselector.h \
@@ -139,7 +139,7 @@ includesubdir = $(includedir)/elementary-@VMAJ@/
 libelementary_la_SOURCES = \
 elm_priv.h \
 elc_ctxpopup.c \
-elc_dayselector.c \
+elm_dayselector.c \
 elc_popup.c \
 elc_fileselector_button.c \
 elc_fileselector.c \
