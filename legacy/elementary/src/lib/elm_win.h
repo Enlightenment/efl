@@ -1277,6 +1277,10 @@ EAPI Ecore_X_Window elm_win_xwindow_get(const Evas_Object *obj);
  * possible, but it's sized vertically the most it needs to fit its\
  * contents.
  *
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for inner windown objects. It also
+ * emits the signals inherited from @ref Layout.
+ *
  * Some examples of Inwin can be found in the following:
  * @li @ref inwin_example_01
  *
