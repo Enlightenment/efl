@@ -1,502 +1,467 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_layout.h"
 
-typedef struct _Widget_Data Widget_Data;
-typedef struct _Group Group;
+static const char RADIO_SMART_NAME[] = "elm_radio";
+
+typedef struct _Elm_Radio_Smart_Data Elm_Radio_Smart_Data;
+typedef struct _Group                Group;
 
 struct _Group
 {
-   int value;
-   int *valuep;
+   int        value;
+   int       *valuep;
    Eina_List *radios;
 };
 
-struct _Widget_Data
+struct _Elm_Radio_Smart_Data
 {
-   Evas_Object *radio;
-   Evas_Object *icon;
-   int value;
-   const char *label;
-   Eina_Bool state;
-   Group *group;
+   Elm_Layout_Smart_Data base;
+
+   int                   value;
+   Eina_Bool             state;
+
+   Group                *group;
 };
 
-static const char *widtype = NULL;
-static void _state_set(Evas_Object *obj, Eina_Bool state);
-static void _del_hook(Evas_Object *obj);
-static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
-static void _theme_hook(Evas_Object *obj);
-static void _disable_hook(Evas_Object *obj);
-static void _sizing_eval(Evas_Object *obj);
-static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _sub_del(void *data, Evas_Object *obj, void *event_info);
-static void _signal_radio_on(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _on_focus_hook(void *data, Evas_Object *obj);
-static void _activate(Evas_Object *obj);
-static void _activate_hook(Evas_Object *obj);
-static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
-                             Evas_Callback_Type type, void *event_info);
+#define ELM_RADIO_DATA_GET(o, sd) \
+  Elm_Radio_Smart_Data * sd = evas_object_smart_data_get(o)
+
+#define ELM_RADIO_DATA_GET_OR_RETURN(o, ptr)         \
+  ELM_RADIO_DATA_GET(o, ptr);                        \
+  if (!ptr)                                          \
+    {                                                \
+       CRITICAL("No widget data for object %p (%s)", \
+                o, evas_object_type_get(o));         \
+       return;                                       \
+    }
+
+#define ELM_RADIO_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  ELM_RADIO_DATA_GET(o, ptr);                         \
+  if (!ptr)                                           \
+    {                                                 \
+       CRITICAL("No widget data for object %p (%s)",  \
+                o, evas_object_type_get(o));          \
+       return val;                                    \
+    }
+
+#define ELM_RADIO_CHECK(obj)                                             \
+  if (!obj || !elm_widget_type_check((obj), RADIO_SMART_NAME, __func__)) \
+    return
+
+static const Elm_Layout_Part_Alias_Description _content_aliases[] =
+{
+   {"icon", "elm.swallow.content"},
+   {NULL, NULL}
+};
+
+static const Elm_Layout_Part_Alias_Description _text_aliases[] =
+{
+   {"default", "elm.text"},
+   {NULL, NULL}
+};
 
 static const char SIG_CHANGED[] = "changed";
-static const Evas_Smart_Cb_Description _signals[] = {
-  {SIG_CHANGED, ""},
-  {NULL, NULL}
+static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+   {SIG_CHANGED, ""},
+   {NULL, NULL}
 };
 
-static Eina_Bool
-_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
-{
-   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
-   Evas_Event_Key_Down *ev = event_info;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
-   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
-
-   if ((strcmp(ev->keyname, "Return")) &&
-       (strcmp(ev->keyname, "KP_Enter")) &&
-       (strcmp(ev->keyname, "space")))
-     return EINA_FALSE;
-   _activate(obj);
-   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-   return EINA_TRUE;
-}
-
-static void
-_del_hook(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->label) eina_stringshare_del(wd->label);
-   wd->group->radios = eina_list_remove(wd->group->radios, obj);
-   if (!wd->group->radios) free(wd->group);
-   wd->group = NULL;
-   free(wd);
-}
-
-static void
-_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (elm_widget_focus_get(obj))
-     {
-        edje_object_signal_emit(wd->radio, "elm,action,focus", "elm");
-        evas_object_focus_set(wd->radio, EINA_TRUE);
-     }
-   else
-     {
-        edje_object_signal_emit(wd->radio, "elm,action,unfocus", "elm");
-        evas_object_focus_set(wd->radio, EINA_FALSE);
-     }
-}
-
-static void
-_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   edje_object_mirrored_set(wd->radio, rtl);
-}
-
-static void
-_theme_hook(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _elm_widget_mirrored_reload(obj);
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
-   _elm_theme_object_set(obj, wd->radio, "radio", "base", elm_widget_style_get(obj));
-   if (wd->icon)
-     edje_object_signal_emit(wd->radio, "elm,state,icon,visible", "elm");
-   else
-     edje_object_signal_emit(wd->radio, "elm,state,icon,hidden", "elm");
-   if (wd->state)
-     edje_object_signal_emit(wd->radio, "elm,state,radio,on", "elm");
-   else
-     edje_object_signal_emit(wd->radio, "elm,state,radio,off", "elm");
-   if (wd->label)
-     edje_object_signal_emit(wd->radio, "elm,state,text,visible", "elm");
-   else
-     edje_object_signal_emit(wd->radio, "elm,state,text,hidden", "elm");
-   edje_object_part_text_escaped_set(wd->radio, "elm.text", wd->label);
-   if (elm_widget_disabled_get(obj))
-     {
-        edje_object_signal_emit(wd->radio, "elm,state,disabled", "elm");
-        if (wd->state) _state_set(obj, 0);
-     }
-   edje_object_message_signal_process(wd->radio);
-   edje_object_scale_set(wd->radio, elm_widget_scale_get(obj) * _elm_config->scale);
-   _sizing_eval(obj);
-}
-
-static void
-_disable_hook(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (elm_widget_disabled_get(obj))
-     {
-        edje_object_signal_emit(wd->radio, "elm,state,disabled", "elm");
-        if (wd->state) _state_set(obj, 0);
-     }
-   else
-     edje_object_signal_emit(wd->radio, "elm,state,enabled", "elm");
-}
-
-static void
-_sizing_eval(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1;
-   if (!wd) return;
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc(wd->radio, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
-static void
-_changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if (obj != wd->icon) return;
-   _sizing_eval(data);
-}
-
-static void
-_sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *sub = event_info;
-   if (!wd) return;
-   if (sub == wd->icon)
-     {
-        edje_object_signal_emit(wd->radio, "elm,state,icon,hidden", "elm");
-        evas_object_event_callback_del_full
-           (sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
-        wd->icon = NULL;
-        _sizing_eval(obj);
-     }
-}
+/* Inheriting from elm_layout. Besides, we need no more than what is
+ * there */
+EVAS_SMART_SUBCLASS_NEW
+  (RADIO_SMART_NAME, _elm_radio, Elm_Layout_Smart_Class,
+  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
 _state_set(Evas_Object *obj, Eina_Bool state)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if ((state != wd->state) && (!elm_widget_disabled_get(obj)))
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if ((state != sd->state) && (!elm_widget_disabled_get(obj)))
      {
-        wd->state = state;
-        if (wd->state)
-          edje_object_signal_emit(wd->radio, "elm,state,radio,on", "elm");
+        sd->state = state;
+        if (sd->state)
+          elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
         else
-          edje_object_signal_emit(wd->radio, "elm,state,radio,off", "elm");
+          elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
      }
 }
 
 static void
-_state_set_all(Widget_Data *wd)
+_state_set_all(Elm_Radio_Smart_Data *sd)
 {
    const Eina_List *l;
-   Evas_Object *child, *selected = NULL;
    Eina_Bool disabled = EINA_FALSE;
-   EINA_LIST_FOREACH(wd->group->radios, l, child)
+   Evas_Object *child, *selected = NULL;
+
+   EINA_LIST_FOREACH (sd->group->radios, l, child)
      {
-        Widget_Data *wd2 = elm_widget_data_get(child);
-        if (wd2->state) selected = child;
-        if (wd2->value == wd->group->value)
+        ELM_RADIO_DATA_GET(child, sdc);
+
+        if (sdc->state) selected = child;
+        if (sdc->value == sd->group->value)
           {
-             _state_set(child, 1);
-             if (!wd2->state) disabled = EINA_TRUE;
+             _state_set(child, EINA_TRUE);
+             if (!sdc->state) disabled = EINA_TRUE;
           }
-        else _state_set(child, 0);
+        else _state_set(child, EINA_FALSE);
      }
+
    if ((disabled) && (selected)) _state_set(selected, 1);
 }
 
 static void
 _activate(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->group->value == wd->value) return;
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if (sd->group->value == sd->value) return;
+
    if ((_elm_config->access_mode == ELM_ACCESS_MODE_OFF) ||
        (_elm_access_2nd_click_timeout(obj)))
      {
-        wd->group->value = wd->value;
-        if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
-        _state_set_all(wd);
+        sd->group->value = sd->value;
+        if (sd->group->valuep) *(sd->group->valuep) = sd->group->value;
+
+        _state_set_all(sd);
+
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
           _elm_access_say(E_("State: On"));
         evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
      }
 }
 
+/* FIXME: replicated from elm_layout just because radio's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
 static void
-_activate_hook(Evas_Object *obj)
+_icon_signal_emit(Evas_Object *obj)
 {
+   char buf[64];
+
+   snprintf(buf, sizeof(buf), "elm,state,icon,%s",
+            elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
+
+   elm_layout_signal_emit(obj, buf, "elm");
+}
+
+/* FIXME: replicated from elm_layout just because radio's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static Eina_Bool
+_elm_radio_smart_sub_object_del(Evas_Object *obj,
+                                 Evas_Object *sobj)
+{
+   if (!ELM_WIDGET_CLASS(_elm_radio_parent_sc)->sub_object_del(obj, sobj))
+     return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+/* FIXME: replicated from elm_layout just because radio's icon spot
+ * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
+ * can changed the theme API */
+static Eina_Bool
+_elm_radio_smart_content_set(Evas_Object *obj,
+                              const char *part,
+                              Evas_Object *content)
+{
+   if (!ELM_CONTAINER_CLASS(_elm_radio_parent_sc)->content_set
+         (obj, part, content))
+     return EINA_FALSE;
+
+   _icon_signal_emit(obj);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_elm_radio_smart_event(Evas_Object *obj,
+                       Evas_Object *src __UNUSED__,
+                       Evas_Callback_Type type,
+                       void *event_info)
+{
+   Evas_Event_Key_Down *ev;
+
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   ev = event_info;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+   if ((strcmp(ev->keyname, "Return")) &&
+       (strcmp(ev->keyname, "KP_Enter")) &&
+       (strcmp(ev->keyname, "space")))
+     return EINA_FALSE;
+
    _activate(obj);
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_elm_radio_smart_theme(Evas_Object *obj)
+{
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if (!ELM_WIDGET_CLASS(_elm_radio_parent_sc)->theme(obj)) return EINA_FALSE;
+
+   if (sd->state) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
+   else elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
+
+   if (elm_widget_disabled_get(obj) && sd->state) _state_set(obj, EINA_FALSE);
+
+   edje_object_message_signal_process(ELM_WIDGET_DATA(sd)->resize_obj);
+
+   /* FIXME: replicated from elm_layout just because radio's icon
+    * spot is elm.swallow.content, not elm.swallow.icon. Fix that
+    * whenever we can changed the theme API */
+   _icon_signal_emit(obj);
+
+   elm_layout_sizing_eval(obj);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_elm_radio_smart_disable(Evas_Object *obj)
+{
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if (!ELM_WIDGET_CLASS(_elm_radio_parent_sc)->disable(obj)) return EINA_FALSE;
+
+   if (elm_widget_disabled_get(obj) && sd->state) _state_set(obj, EINA_FALSE);
+
+   return EINA_TRUE;
 }
 
 static void
-_signal_radio_on(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_elm_radio_smart_sizing_eval(Evas_Object *obj)
+{
+   Evas_Coord minw = -1, minh = -1;
+
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc
+     (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh, minw, minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, -1, -1);
+}
+
+static void
+_radio_on_cb(void *data,
+             Evas_Object *obj __UNUSED__,
+             const char *emission __UNUSED__,
+             const char *source __UNUSED__)
 {
    _activate(data);
 }
 
-static void
-_elm_radio_label_set(Evas_Object *obj, const char *item, const char *label)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (item && strcmp(item, "default")) return;
-   if (!wd) return;
-   eina_stringshare_replace(&wd->label, label);
-   if (label)
-     {
-        edje_object_signal_emit(wd->radio, "elm,state,text,visible", "elm");
-        edje_object_message_signal_process(wd->radio);
-     }
-   else
-     {
-        edje_object_signal_emit(wd->radio, "elm,state,text,hidden", "elm");
-        edje_object_message_signal_process(wd->radio);
-     }
-   edje_object_part_text_escaped_set(wd->radio, "elm.text", label);
-   _sizing_eval(obj);
-}
-
-static const char *
-_elm_radio_label_get(const Evas_Object *obj, const char *item)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (item && strcmp(item, "default")) return NULL;
-   if (!wd) return NULL;
-   return wd->label;
-}
-
 static char *
-_access_info_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
+_access_info_cb(void *data __UNUSED__,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
 {
    const char *txt = elm_widget_access_info_get(obj);
-   if (!txt) txt = _elm_radio_label_get(obj, NULL);
+
+   if (!txt) txt = elm_layout_text_get(obj, NULL);
    if (txt) return strdup(txt);
+
    return NULL;
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item __UNUSED__)
+_access_state_cb(void *data __UNUSED__,
+                 Evas_Object *obj,
+                 Elm_Widget_Item *item __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (elm_widget_disabled_get(obj))
-     return strdup(E_("State: Disabled"));
-   if (wd->state)
-     return strdup(E_("State: On"));
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if (elm_widget_disabled_get(obj)) return strdup(E_("State: Disabled"));
+   if (sd->state) return strdup(E_("State: On"));
+
    return strdup(E_("State: Off"));
 }
 
 static void
-_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+_elm_radio_smart_add(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd;
+   EVAS_SMART_DATA_ALLOC(obj, Elm_Radio_Smart_Data);
 
-   if (part && strcmp(part, "icon")) return;
-   wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->icon == content) return;
-   if (wd->icon) evas_object_del(wd->icon);
-   wd->icon = content;
-   if (content)
-     {
-        elm_widget_sub_object_add(obj, content);
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        edje_object_part_swallow(wd->radio, "elm.swallow.content", content);
-        edje_object_signal_emit(wd->radio, "elm,state,icon,visible", "elm");
-        edje_object_message_signal_process(wd->radio);
-     }
-   _sizing_eval(obj);
+   ELM_WIDGET_CLASS(_elm_radio_parent_sc)->base.add(obj);
+
+   elm_layout_theme_set(obj, "radio", "base", elm_widget_style_get(obj));
+
+   elm_layout_signal_callback_add
+     (obj, "elm,action,radio,on", "", _radio_on_cb, obj);
+   elm_layout_signal_callback_add
+     (obj, "elm,action,radio,toggle", "", _radio_on_cb, obj);
+
+   priv->group = calloc(1, sizeof(Group));
+   priv->group->radios = eina_list_append(priv->group->radios, obj);
+   priv->state = EINA_FALSE;
+
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   elm_layout_sizing_eval(obj);
+
+   _elm_access_object_register(obj, ELM_WIDGET_DATA(priv)->resize_obj);
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Radio"));
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, obj);
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, obj);
 }
 
-static Evas_Object *
-_content_get_hook(const Evas_Object *obj, const char *part)
+static void
+_elm_radio_smart_del(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd;
+   ELM_RADIO_DATA_GET(obj, sd);
 
-   if (part && strcmp(part, "icon")) return NULL;
-   wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->icon;
+   sd->group->radios = eina_list_remove(sd->group->radios, obj);
+   if (!sd->group->radios) free(sd->group);
+
+   ELM_WIDGET_CLASS(_elm_radio_parent_sc)->base.del(obj);
 }
 
-static Evas_Object *
-_content_unset_hook(Evas_Object *obj, const char *part)
+static void
+_elm_radio_smart_set_user(Elm_Layout_Smart_Class *sc)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd;
-   Evas_Object *icon;
-   if (part && strcmp(part, "icon")) return NULL;
-   wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->icon) return NULL;
-   icon = wd->icon;
-   elm_widget_sub_object_del(obj, wd->icon);
-   evas_object_event_callback_del_full(wd->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-   edje_object_part_unswallow(wd->radio, wd->icon);
-   wd->icon = NULL;
-   return icon;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_radio_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_radio_smart_del;
+
+   ELM_WIDGET_CLASS(sc)->disable = _elm_radio_smart_disable;
+   ELM_WIDGET_CLASS(sc)->theme = _elm_radio_smart_theme;
+   ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_radio_smart_sub_object_del;
+   ELM_WIDGET_CLASS(sc)->event = _elm_radio_smart_event;
+
+   /* not a 'focus chain manager' */
+   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
+   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
+
+   ELM_CONTAINER_CLASS(sc)->content_set = _elm_radio_smart_content_set;
+
+   sc->sizing_eval = _elm_radio_smart_sizing_eval;
+
+   sc->content_aliases = _content_aliases;
+   sc->text_aliases = _text_aliases;
 }
 
 EAPI Evas_Object *
 elm_radio_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
    Evas *e;
-   Widget_Data *wd;
+   Evas_Object *obj;
 
-   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   ELM_SET_WIDTYPE(widtype, "radio");
-   elm_widget_type_set(obj, "radio");
-   elm_widget_sub_object_add(parent, obj);
-   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
-   elm_widget_data_set(obj, wd);
-   elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_disable_hook_set(obj, _disable_hook);
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_activate_hook_set(obj, _activate_hook);
-   elm_widget_event_hook_set(obj, _event_hook);
-   elm_widget_text_set_hook_set(obj, _elm_radio_label_set);
-   elm_widget_text_get_hook_set(obj, _elm_radio_label_get);
-   elm_widget_content_set_hook_set(obj, _content_set_hook);
-   elm_widget_content_get_hook_set(obj, _content_get_hook);
-   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
+   e = evas_object_evas_get(parent);
+   if (!e) return NULL;
 
-   wd->radio = edje_object_add(e);
-   _elm_theme_object_set(obj, wd->radio, "radio", "base", "default");
-   edje_object_signal_callback_add(wd->radio, "elm,action,radio,on", "", _signal_radio_on, obj);
-   edje_object_signal_callback_add(wd->radio, "elm,action,radio,toggle", "", _signal_radio_on, obj);
-   elm_widget_resize_object_set(obj, wd->radio);
+   obj = evas_object_smart_add(e, _elm_radio_smart_class_new());
 
-   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-
-   wd->group = calloc(1, sizeof(Group));
-   wd->group->radios = eina_list_append(wd->group->radios, obj);
-   wd->state = 0;
-
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
-   _sizing_eval(obj);
-
-   // TODO: convert Elementary to subclassing of Evas_Smart_Class
-   // TODO: and save some bytes, making descriptions per-class and not instance!
-   evas_object_smart_callbacks_descriptions_set(obj, _signals);
-
-   _elm_access_object_register(obj, wd->radio);
-   _elm_access_text_set(_elm_access_object_get(obj),
-                        ELM_ACCESS_TYPE, E_("Radio"));
-   _elm_access_callback_set(_elm_access_object_get(obj),
-                            ELM_ACCESS_INFO, _access_info_cb, obj);
-   _elm_access_callback_set(_elm_access_object_get(obj),
-                            ELM_ACCESS_STATE, _access_state_cb, obj);
+   if (!elm_widget_sub_object_add(parent, obj))
+     ERR("could not add %p as sub object of %p", obj, parent);
 
    return obj;
 }
 
 EAPI void
-elm_radio_group_add(Evas_Object *obj, Evas_Object *group)
+elm_radio_group_add(Evas_Object *obj,
+                    Evas_Object *group)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Widget_Data *wd2 = elm_widget_data_get(group);
-   if (!wd) return;
-   if (!wd2)
+   ELM_RADIO_CHECK(obj);
+   ELM_RADIO_DATA_GET(obj, sd);
+   ELM_RADIO_DATA_GET(group, sdg);
+
+   if (!sdg)
      {
-        if (eina_list_count(wd->group->radios) == 1)
-          return;
-        wd->group->radios = eina_list_remove(wd->group->radios, obj);
-        wd->group = calloc(1, sizeof(Group));
-        wd->group->radios = eina_list_append(wd->group->radios, obj);
+        if (eina_list_count(sd->group->radios) == 1) return;
+        sd->group->radios = eina_list_remove(sd->group->radios, obj);
+        sd->group = calloc(1, sizeof(Group));
+        sd->group->radios = eina_list_append(sd->group->radios, obj);
      }
-   else if (wd->group == wd2->group) return;
+   else if (sd->group == sdg->group)
+     return;
    else
      {
-        wd->group->radios = eina_list_remove(wd->group->radios, obj);
-        if (!wd->group->radios) free(wd->group);
-        wd->group = wd2->group;
-        wd->group->radios = eina_list_append(wd->group->radios, obj);
+        sd->group->radios = eina_list_remove(sd->group->radios, obj);
+        if (!sd->group->radios) free(sd->group);
+        sd->group = sdg->group;
+        sd->group->radios = eina_list_append(sd->group->radios, obj);
      }
-   if (wd->value == wd->group->value) _state_set(obj, 1);
-   else _state_set(obj, 0);
+   if (sd->value == sd->group->value) _state_set(obj, EINA_TRUE);
+   else _state_set(obj, EINA_FALSE);
 }
 
 EAPI void
-elm_radio_state_value_set(Evas_Object *obj, int value)
+elm_radio_state_value_set(Evas_Object *obj,
+                          int value)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->value = value;
-   if (wd->value == wd->group->value) _state_set(obj, 1);
-   else _state_set(obj, 0);
+   ELM_RADIO_CHECK(obj);
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   sd->value = value;
+   if (sd->value == sd->group->value) _state_set(obj, EINA_TRUE);
+   else _state_set(obj, EINA_FALSE);
 }
 
 EAPI int
 elm_radio_state_value_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
-   return wd->value;
+   ELM_RADIO_CHECK(obj) 0;
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   return sd->value;
 }
 
 EAPI void
-elm_radio_value_set(Evas_Object *obj, int value)
+elm_radio_value_set(Evas_Object *obj,
+                    int value)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (value == wd->group->value) return;
-   wd->group->value = value;
-   if (wd->group->valuep) *(wd->group->valuep) = wd->group->value;
-   _state_set_all(wd);
+   ELM_RADIO_CHECK(obj);
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if (value == sd->group->value) return;
+   sd->group->value = value;
+   if (sd->group->valuep) *(sd->group->valuep) = sd->group->value;
+   _state_set_all(sd);
 }
 
 EAPI int
 elm_radio_value_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
-   return wd->group->value;
+   ELM_RADIO_CHECK(obj) 0;
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   return sd->group->value;
 }
 
 EAPI void
-elm_radio_value_pointer_set(Evas_Object *obj, int *valuep)
+elm_radio_value_pointer_set(Evas_Object *obj,
+                            int *valuep)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   ELM_RADIO_CHECK(obj);
+   ELM_RADIO_DATA_GET(obj, sd);
+
    if (valuep)
      {
-        wd->group->valuep = valuep;
-        if (*(wd->group->valuep) != wd->group->value)
+        sd->group->valuep = valuep;
+        if (*(sd->group->valuep) != sd->group->value)
           {
-             wd->group->value = *(wd->group->valuep);
-             _state_set_all(wd);
+             sd->group->value = *(sd->group->valuep);
+             _state_set_all(sd);
           }
      }
-   else
-     {
-        wd->group->valuep = NULL;
-     }
+   else sd->group->valuep = NULL;
 }
 
 EAPI Evas_Object *
@@ -504,17 +469,16 @@ elm_radio_selected_object_get(Evas_Object *obj)
 {
    Eina_List *l;
    Evas_Object *child;
-   Widget_Data *wd2;
 
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
+   ELM_RADIO_CHECK(obj) NULL;
+   ELM_RADIO_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH(wd->group->radios, l, child)
+   EINA_LIST_FOREACH (sd->group->radios, l, child)
      {
-        wd2  = elm_widget_data_get(child);
-        if (wd2->value == wd->group->value)
-           return child;
+        ELM_RADIO_DATA_GET(child, sdc);
+
+        if (sdc->value == sd->group->value) return child;
      }
+
    return NULL;
 }

@@ -30,7 +30,11 @@
  * The radio objects will modify this directly. That implies the pointer must
  * point to valid memory for as long as the radio objects exist.
  *
- * Signals that you can add callbacks for are:
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for radio objects.
+ *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
  * @li changed - This is called whenever the user changes the state of one of
  * the radio objects within the group of radio objects that work together.
  *
