@@ -1179,12 +1179,13 @@ _elm_layout_smart_add(Evas_Object *obj)
 {
    EVAS_SMART_DATA_ALLOC(obj, Elm_Layout_Smart_Data);
 
+   /* has to be there *before* parent's smart_add() */
+   ELM_WIDGET_DATA(priv)->resize_obj =
+     edje_object_add(evas_object_evas_get(obj));
+
    ELM_WIDGET_CLASS(_elm_layout_parent_sc)->base.add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
-
-   priv->base.resize_obj = edje_object_add(evas_object_evas_get(obj));
-   elm_widget_resize_object_set(obj, priv->base.resize_obj);
 
    edje_object_signal_callback_add
      (ELM_WIDGET_DATA(priv)->resize_obj, "size,eval", "elm",
