@@ -24,34 +24,26 @@
  * @li menu
  * @li hoversel_vertical
  *
- * The following are the available position for content:
- * @li left
- * @li top-left
- * @li top
- * @li top-right
- * @li right
- * @li bottom-right
- * @li bottom
- * @li bottom-left
- * @li middle
- * @li smart
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for hover objects.
  *
- * Signals that you can add callbacks for are:
- * @li "clicked" - the user clicked the empty space in the hover to dismiss
- * @li "smart,changed" - a content object placed under the "smart"
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * @li @c "clicked" - the user clicked the empty space in the hover to dismiss
+ * @li @c "smart,changed" - a content object placed under the "smart"
  *                   policy was replaced to a new slot direction.
  *
  * Default content parts of the hover widget that you can use for are:
- * @li "left"
- * @li "top-left"
- * @li "top"
- * @li "top-right"
- * @li "right"
- * @li "bottom-right"
- * @li "bottom"
- * @li "bottom-left"
- * @li "middle"
- * @li "smart"
+ * @li @c "left"
+ * @li @c "top-left"
+ * @li @c "top"
+ * @li @c "top-right"
+ * @li @c "right"
+ * @li @c "bottom-right"
+ * @li @c "bottom"
+ * @li @c "bottom-left"
+ * @li @c "middle"
+ * @li @c "smart"
  *
  * @note These content parts indicates the direction that the content will be
  * displayed
