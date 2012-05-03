@@ -68,7 +68,8 @@ evas_cserve2_cache.c \
 evas_cserve2_main_loop_linux.c
 
 evas_cserve2_LDADD = \
-@EINA_LIBS@
+@EINA_LIBS@ \
+@EFL_SHM_OPEN_LIBS@
 
 evas_cserve2_client_SOURCES = \
 evas_cserve2_client.c
@@ -80,12 +81,14 @@ evas_cserve2_utils.c
 evas_cserve2_slave_LDFLAGS = -export-dynamic
 
 evas_cserve2_slave_LDADD = \
-@EINA_LIBS@
+@EINA_LIBS@ \
+@EFL_SHM_OPEN_LIBS@
 
 dummy_slave_SOURCES = \
 dummy_slave.c
 
 dummy_slave_LDADD = \
-@EINA_LIBS@
+@EINA_LIBS@ \
+@EFL_SHM_OPEN_LIBS@
 
 endif
