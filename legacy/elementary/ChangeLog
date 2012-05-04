@@ -31,3 +31,7 @@
 
 	* Add feature about focus. Focus can be moved in all direction by
 	  by elm_widget_focus_go function.
+
+2012-05-04  Leandro Pereira
+
+        * Fix icon not appearing in default Genlist theme.
