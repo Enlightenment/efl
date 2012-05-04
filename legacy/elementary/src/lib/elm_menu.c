@@ -230,10 +230,10 @@ _sizing_eval(Evas_Object *obj)
    if (elm_widget_mirrored_get(obj))
      x_p -= w_p;
 
-   if (x_p+bw > x2+w2) x_p -= x_p+bw - (x2+w2);
+   if ((x_p + bw) > (x2 + w2)) x_p -= (x_p + bw) - (x2 + w2);
    if (x_p < x2) x_p += x2 - x_p;
 
-   if (y_p+h_p+bh > y2+h2) y_p -= y_p+h_p+bh - (y2+h2);
+   if ((y_p + h_p + bh) > (y2 + h2)) y_p -= (y_p + h_p + bh) - (y2 + h2);
    if (y_p < y2) y_p += y2 - y_p;
 
 
@@ -263,12 +263,12 @@ _submenu_sizing_eval(Elm_Menu_Item *parent)
    evas_object_geometry_get(parent->submenu.bx, &bx, &by, &bw, &bh);
    evas_object_geometry_get(wd->parent, &px, &py, &pw, &ph);
 
-   x_p = x2+w2;
+   x_p = x2 + w2;
    y_p = y2;
 
    /* If it overflows on the right, adjust the x */
-   if ((x_p + bw > px + pw) || elm_widget_mirrored_get(WIDGET(parent)))
-     x_p = x2-bw;
+   if (((x_p + bw) > (px + pw)) || elm_widget_mirrored_get(WIDGET(parent)))
+     x_p = x2 - bw;
 
    /* If it overflows on the left, adjust the x - usually only happens
     * with an RTL interface */
@@ -276,11 +276,11 @@ _submenu_sizing_eval(Elm_Menu_Item *parent)
      x_p = x2 + w2;
 
    /* If after all the adjustments it still overflows, fix it */
-   if (x_p + bw > px + pw)
-     x_p = x2-bw;
+   if ((x_p + bw) > (px + pw))
+     x_p = x2 - bw;
 
-   if (y_p+bh > py+ph)
-     y_p -= y_p+bh - (py+ph);
+   if ((y_p + bh) > (py + ph))
+     y_p -= (y_p + bh) - (py + ph);
    if (y_p < py)
      y_p += y_p - y_p;
 
