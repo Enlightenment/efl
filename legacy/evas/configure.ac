@@ -620,6 +620,17 @@ AC_ARG_ENABLE([evas-cserve2],
 AC_MSG_CHECKING(whether to build shared cache server 2 and support)
 AC_MSG_RESULT(${want_evas_cserve2})
 
+# cserve2 only works on Linux so far.
+if test "x${want_evas_cserve2}" = "xyes" ; then
+   AC_CHECK_HEADERS(
+      [sys/epoll.h sys/inotify.h sys/signalfd.h],
+      [],
+      [
+       want_evas_cserve2="no"
+      ]
+   )
+fi
+
 if test "x${want_evas_cserve2}" = "xyes"; then
    want_evas_cserve="no"
 fi
