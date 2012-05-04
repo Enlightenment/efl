@@ -7365,7 +7365,6 @@ _evas_textblock_cursor_is_at_the_end(const Evas_Textblock_Cursor *cur)
 
    if (!cur) return EINA_FALSE;
    if (!cur->node) return EINA_FALSE;
-   if (cur->pos < 0) return EINA_FALSE;
    text = eina_ustrbuf_string_get(cur->node->unicode);
    if ((cur->pos - 1) > eina_ustrbuf_length_get(cur->node->unicode)) return EINA_FALSE;
    return ((text[cur->pos] == 0) && (!EINA_INLIST_GET(cur->node)->next)) ?
@@ -7943,12 +7942,12 @@ evas_textblock_cursor_range_formats_get(const Evas_Textblock_Cursor *cur1, const
    Eina_List *ret = NULL;
    Evas_Object_Textblock_Node_Text *n1, *n2;
    Evas_Object_Textblock_Node_Format *first, *last;
-   TB_HEAD_RETURN(NULL);
    if (!cur1 || !cur1->node) return NULL;
    if (!cur2 || !cur2->node) return NULL;
    if (cur1->obj != cur2->obj) return NULL;
 
    obj = cur1->obj;
+   TB_HEAD_RETURN(NULL);
 
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
@@ -8397,7 +8396,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
 EAPI int
 evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   if (!cur) -1;
+   if (!cur) return -1;
    return _evas_textblock_cursor_char_pen_geometry_common_get(
          cur->ENFN->font_char_coords_get, cur, cx, cy, cw, ch);
 }
@@ -8405,7 +8404,7 @@ evas_textblock_cursor_char_geometry_get(const Evas_Textblock_Cursor *cur, Evas_C
 EAPI int
 evas_textblock_cursor_pen_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   if (!cur) -1;
+   if (!cur) return -1;
    return _evas_textblock_cursor_char_pen_geometry_common_get(
          cur->ENFN->font_pen_coords_get, cur, cx, cy, cw, ch);
 }
