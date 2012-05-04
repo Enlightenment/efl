@@ -1407,6 +1407,8 @@ EAPI void             *evas_data_attach_get              (const Evas *e) EINA_WA
  * This is the function by which one tells evas that a part of the
  * canvas has to be repainted.
  *
+ * @note All newly created Evas rectangles get the default color values of 255 255 255 255 (opaque white).
+ *
  * @ingroup Evas_Canvas
  */
 EAPI void              evas_damage_rectangle_add         (Evas *e, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
