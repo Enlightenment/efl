@@ -1283,9 +1283,9 @@ _elm_web_smart_add(Evas_Object *obj)
 static void
 _elm_web_smart_del(Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    ELM_WEB_DATA_GET(obj, sd);
 
-#ifdef HAVE_ELEMENTARY_WEB
    if (sd->zoom.timer)
      {
         ecore_timer_del(sd->zoom.timer);
