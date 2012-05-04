@@ -6175,7 +6175,7 @@ EAPI void             *evas_object_intercept_move_callback_del        (Evas_Obje
  * rectangle, however the rectangle is actually very useful and should be
  * manipulated using the generic @ref Evas_Object_Group "evas object functions".
  *
- * The evas rectangle server a number of key functions when working on evas
+ * The evas rectangle serves a number of key functions when working on evas
  * programs:
  * @li Background
  * @li Debugging
