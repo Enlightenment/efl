@@ -11,11 +11,11 @@ Enlightenment Input Output Library
 ==================================
 
 This library is intended to provide non blocking IO by using thread for all
-operation that may block. It depends only on eina and ecore right now. It
-should integrate all the features/functions of Ecore_File that could block.
+operations that may block. It depends only on eina, eet and ecore right now.
+It should integrate all the features/functions of Ecore_File that could block.
 
-This should become one day part of what we call the EFL and be a dependence
-of E17. Feel free to contribute, help is always appreciated !
+It is part of what we call the EFL and can be a dependence of E17. Feel free
+to contribute, help is always appreciated !
 
 ------------------------------------------------------------------------------
 COMPILING AND INSTALLING:
