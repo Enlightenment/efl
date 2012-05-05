@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <eina_main.h>
 #include <eina_error.h>
 
 Eina_Error MY_ERROR_NEGATIVE;

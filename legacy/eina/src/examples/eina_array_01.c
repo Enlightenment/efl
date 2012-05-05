@@ -9,7 +9,7 @@
 static Eina_Bool
 _print(const void *container, void *data, void *fdata)
 {
-   printf("%s\n", data);
+  printf("%s\n", (char *)data);
    return EINA_TRUE;
 }
 

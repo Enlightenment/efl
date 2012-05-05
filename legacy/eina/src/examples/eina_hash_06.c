@@ -42,7 +42,7 @@ _phone_book_foreach_cb(const Eina_Hash *phone_book, const void *key,
 {
    const int64_t *id = key;
    const char *number = data;
-   printf("%ld: %s\n", *id, number);
+   printf("%lld: %s\n", *id, number);
 
    // Return EINA_FALSE to stop this callback from being called
    return EINA_TRUE;
@@ -75,7 +75,7 @@ main(int argc, const char *argv[])
    if (phone)
      {
 	printf("Printing entry.\n");
-	printf("Id: %ld\n", entry_id);
+	printf("Id: %lld\n", entry_id);
 	printf("Number: %s\n\n", phone);
      }
 
@@ -150,7 +150,7 @@ main(int argc, const char *argv[])
 	Eina_Hash_Tuple *t = data;
 	const int64_t *id = t->key;
 	const char *number = t->data;
-	printf("%ld: %s\n", *id, number);
+	printf("%lld: %s\n", *id, number);
      }
    eina_iterator_free(it); // Always free the iterator after its use
    printf("\n");
@@ -161,7 +161,7 @@ main(int argc, const char *argv[])
    while (eina_iterator_next(it, &data))
      {
 	const int64_t *id = data;
-	printf("%ld\n", *id);
+	printf("%lld\n", *id);
      }
    eina_iterator_free(it);
    printf("\n");
