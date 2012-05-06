@@ -40,7 +40,10 @@ START_TEST(eo_data_fetch)
 
    Eo *obj = eo_add(klass, NULL);
    fail_if(!obj);
+#ifndef NDEBUG
    fail_if(eo_data_get(obj, SIMPLE_CLASS));
+#endif
+   eo_unref(obj);
 
    eo_shutdown();
 }
