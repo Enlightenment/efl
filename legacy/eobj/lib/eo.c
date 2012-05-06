@@ -5,7 +5,7 @@
 
 #include "config.h"
 
-typedef int Eo_Class_Id;
+typedef size_t Eo_Class_Id;
 
 /* Used inside the class_get functions of classes, see #EO_DEFINE_CLASS */
 EAPI Eina_Lock _eo_class_creation_lock;
@@ -75,24 +75,23 @@ struct _Eo {
 /* Start of Dich */
 /* Dich search, split to 0xff 0xff 0xffff */
 
-#define DICH_CHAIN1_MASK (0xff)
-#define DICH_CHAIN2_MASK (0xff)
+#define DICH_CHAIN1_MASK (0xffff)
 #define DICH_CHAIN_LAST_MASK (0xffff)
-#define DICH_CHAIN1_SIZE (DICH_CHAIN1_MASK + 1)
-#define DICH_CHAIN2_SIZE (DICH_CHAIN2_MASK + 1)
-#define DICH_CHAIN_LAST_SIZE (DICH_CHAIN_LAST_MASK + 1)
-#define DICH_CHAIN1(x) (((x) >> 24) & DICH_CHAIN1_MASK)
-#define DICH_CHAIN2(x) (((x) >> 16) & DICH_CHAIN2_MASK)
+#define DICH_CHAIN1(x) (((x) >> 16) & DICH_CHAIN1_MASK)
 #define DICH_CHAIN_LAST(x) ((x) & DICH_CHAIN_LAST_MASK)
 
 #define OP_CLASS_OFFSET 16
 #define OP_CLASS_OFFSET_GET(x) (((x) >> OP_CLASS_OFFSET) & 0xffff)
 #define OP_CLASS_GET(op) ({ \
       Eo_Class_Id tmp = OP_CLASS_OFFSET_GET(op); \
-      (Eo_Class *) ((tmp <= _eo_classes_last_id) && (tmp > 0)) ? \
-      (_eo_classes[tmp - 1]) : NULL; \
+      ID_CLASS_GET(tmp); \
       })
 #define OP_SUB_ID_GET(op) ((op) & 0xffff)
+
+#define ID_CLASS_GET(id) ({ \
+      (Eo_Class *) ((id <= _eo_classes_last_id) && (id > 0)) ? \
+      (_eo_classes[id - 1]) : NULL; \
+      })
 
 #define EO_ALIGN_SIZE(size) \
         ((size) + (sizeof(void *) - ((size) % sizeof(void *))))
@@ -109,14 +108,9 @@ typedef struct
    eo_op_func_type func;
 } op_type_funcs;
 
-typedef struct
-{
-   op_type_funcs *funcs;
-} Dich_Chain2;
-
 struct _Dich_Chain1
 {
-   Dich_Chain2 *chain;
+   op_type_funcs *funcs;
 };
 
 typedef struct
@@ -137,7 +131,7 @@ struct _Eo_Class
    Eo_Class_Id class_id;
    const Eo_Class *parent;
    const Eo_Class_Description *desc;
-   Dich_Chain1 chain[DICH_CHAIN1_SIZE];
+   Dich_Chain1 *chain; /**< The size is class_id */
    Eina_Inlist *extensions;
 
    Eo_Extension_Data_Offset *extn_data_off;
@@ -153,19 +147,20 @@ struct _Eo_Class
 static inline eo_op_func_type
 dich_func_get(const Eo_Class *klass, Eo_Op op)
 {
-   const Dich_Chain1 *chain1 = &klass->chain[DICH_CHAIN1(op)];
-   if (!chain1) return NULL;
-   if (!chain1->chain) return NULL;
-   Dich_Chain2 *chain2 = &chain1->chain[DICH_CHAIN2(op)];
-   if (!chain2) return NULL;
-   if (!chain2->funcs) return NULL;
+   if (!klass->chain) return NULL;
 
+   size_t idx1 = DICH_CHAIN1(op) - 1;
+   if (idx1 >= klass->class_id) return NULL;
+   const Dich_Chain1 *chain1 = &klass->chain[idx1];
+   if (!chain1->funcs) return NULL;
+
+   size_t idxl = DICH_CHAIN_LAST(op);
    /* num_ops is calculated from the class. */
-   const Eo_Class *op_klass = OP_CLASS_GET(op);
-   if (!op_klass || (DICH_CHAIN_LAST(op) >= op_klass->desc->ops.count))
+   const Eo_Class *op_klass = ID_CLASS_GET(idx1 + 1);
+   if (!op_klass || (idxl >= op_klass->desc->ops.count))
       return NULL;
 
-   return chain2->funcs[DICH_CHAIN_LAST(op)].func;
+   return chain1->funcs[idxl].func;
 }
 
 static inline void
@@ -192,42 +187,37 @@ dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
         return;
      }
 
-   Dich_Chain1 *chain1 = &klass->chain[DICH_CHAIN1(op)];
-   if (!chain1->chain)
+   if (!klass->chain)
      {
-        chain1->chain = calloc(DICH_CHAIN2_SIZE, sizeof(*(chain1->chain)));
+        klass->chain = calloc(klass->class_id, sizeof(*klass->chain));
      }
 
-   Dich_Chain2 *chain2 = &chain1->chain[DICH_CHAIN2(op)];
-   if (!chain2->funcs)
+   size_t idx1 = DICH_CHAIN1(op) - 1;
+   Dich_Chain1 *chain1 = &klass->chain[idx1];
+   if (!chain1->funcs)
      {
-        chain2->funcs = calloc(num_ops, sizeof(*(chain2->funcs)));
+        chain1->funcs = calloc(num_ops, sizeof(*(chain1->funcs)));
      }
 
-   chain2->funcs[DICH_CHAIN_LAST(op)].func = func;
+   chain1->funcs[DICH_CHAIN_LAST(op)].func = func;
 }
 
 static inline void
 dich_func_clean_all(Eo_Class *klass)
 {
-   int i;
+   size_t i;
    Dich_Chain1 *chain1 = klass->chain;
 
-   for (i = 0 ; i < DICH_CHAIN1_SIZE ; i++, chain1++)
+   if (!chain1)
+      return;
+
+   for (i = 0 ; i < klass->class_id ; i++, chain1++)
      {
-        int j;
-        Dich_Chain2 *chain2 = chain1->chain;
-
-        if (!chain2)
-           continue;
-
-        for (j = 0 ; j < DICH_CHAIN2_SIZE ; j++, chain2++)
-          {
-             free(chain2->funcs);
-          }
-        free(chain1->chain);
-        chain1->chain = NULL;
+        if (chain1->funcs)
+           free(chain1->funcs);
      }
+   free(klass->chain);
+   klass->chain = NULL;
 }
 
 /* END OF DICH */
@@ -1261,7 +1251,7 @@ eo_init(void)
 EAPI Eina_Bool
 eo_shutdown(void)
 {
-   int i;
+   size_t i;
    Eo_Class **cls_itr = _eo_classes;
 
    if (--_eo_init_count > 0)
