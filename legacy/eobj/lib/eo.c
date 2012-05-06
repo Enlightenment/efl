@@ -22,6 +22,12 @@ static void eo_constructor_error_unset(Eo *obj);
 
 typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
+typedef struct
+{
+   Eo_Op op;
+   const Eo_Class **kls_itr;
+} Eo_Kls_Itr;
+
 #define EO_EINA_MAGIC 0xa186bc32 /* Nothing magical about this number. */
 #define EO_EINA_MAGIC_STR "Eo"
 #define EO_CLASS_EINA_MAGIC 0xa186bb32 /* Nothing magical about this number. */
@@ -59,7 +65,7 @@ struct _Eo {
      Eina_Inlist *callbacks;
      int walking_list;
 
-     Eina_Inlist *kls_itr;
+     Eo_Kls_Itr mro_itr;
 
      Eina_Bool delete:1;
      Eina_Bool construct_error:1;
@@ -250,80 +256,53 @@ _eo_op_id_name_get(Eo_Op op)
    return (desc) ? desc->name : NULL;
 }
 
-typedef struct
+static inline void
+_eo_kls_itr_init(Eo *obj, Eo_Op op, Eo_Kls_Itr *prev_state)
 {
-   EINA_INLIST;
-   Eo_Op op;
-   const Eo_Class **kls_itr;
-} Eo_Kls_Itr_Node;
+   prev_state->op = obj->mro_itr.op;
+   prev_state->kls_itr = obj->mro_itr.kls_itr;
 
-static inline Eina_Bool
-_eo_kls_itr_init(Eo *obj, Eo_Op op)
-{
-   if (obj->kls_itr)
+   /* If we are in a constructor/destructor or we changed an op - init. */
+   if ((op == EO_NOOP) || (obj->mro_itr.op != op))
      {
-        Eo_Kls_Itr_Node *node =
-           EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eo_Kls_Itr_Node);
-        if (node->op == op)
-          {
-             return EINA_FALSE;
-          }
-     }
-
-
-     {
-        Eo_Kls_Itr_Node *node = calloc(1, sizeof(*node));
-        node->op = op;
-        node->kls_itr = obj->klass->mro;
-        obj->kls_itr = eina_inlist_prepend(obj->kls_itr,
-              EINA_INLIST_GET(node));
-
-        return EINA_TRUE;
+        obj->mro_itr.op = op;
+        obj->mro_itr.kls_itr = obj->klass->mro;
      }
 }
 
 static inline void
-_eo_kls_itr_end(Eo *obj, Eo_Op op)
+_eo_kls_itr_end(Eo *obj, Eo_Kls_Itr *prev_state)
 {
-   Eo_Kls_Itr_Node *node =
-      EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eo_Kls_Itr_Node);
-
-   if (node->op != op)
-      return;
-
-   obj->kls_itr = eina_inlist_remove(obj->kls_itr, obj->kls_itr);
-   free(node);
+   if (obj->mro_itr.op != prev_state->op)
+     {
+        obj->mro_itr.op = prev_state->op;
+        obj->mro_itr.kls_itr = prev_state->kls_itr;
+     }
 }
 
 static inline const Eo_Class *
 _eo_kls_itr_get(Eo *obj)
 {
-   Eo_Kls_Itr_Node *node =
-      EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eo_Kls_Itr_Node);
-
-   return (node) ? *(node->kls_itr) : NULL;
+   return (obj->mro_itr.kls_itr) ? *(obj->mro_itr.kls_itr) : NULL;
 }
 
 static inline const Eo_Class *
 _eo_kls_itr_next(Eo *obj, Eo_Op op)
 {
-   Eo_Kls_Itr_Node *node =
-      EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eo_Kls_Itr_Node);
-
-   if (!node || (node->op != op))
+   if (obj->mro_itr.op != op)
      {
-        Eo_Op node_op = (node) ? node->op : EO_NOOP;
+        Eo_Op node_op = obj->mro_itr.op;
         ERR("Called with op %d ('%s') while expecting: %d ('%s'). This probaly means you called eo_*_super functions from a wrong place.",
               op, _eo_op_id_name_get(op),
               node_op, _eo_op_id_name_get(node_op));
         return NULL;
      }
 
-   const Eo_Class **kls_itr = node->kls_itr;
+   const Eo_Class **kls_itr = obj->mro_itr.kls_itr;
    if (*kls_itr)
      {
         kls_itr++;
-        node->kls_itr = kls_itr;
+        obj->mro_itr.kls_itr = kls_itr;
         return *kls_itr;
      }
    else
@@ -335,9 +314,7 @@ _eo_kls_itr_next(Eo *obj, Eo_Op op)
 static inline Eina_Bool
 _eo_kls_itr_reached_end(const Eo *obj)
 {
-   Eo_Kls_Itr_Node *node =
-      EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eo_Kls_Itr_Node);
-   const Eo_Class **kls_itr = node->kls_itr;
+   const Eo_Class **kls_itr = obj->mro_itr.kls_itr;
    return !(*kls_itr && *(kls_itr + 1));
 }
 
@@ -346,7 +323,6 @@ _eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
 {
    const Eo_Class *klass;
    Eina_Bool ret = EINA_FALSE;
-   Eina_Bool _itr_init;
 
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
 
@@ -357,7 +333,8 @@ _eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
         return EINA_FALSE;
      }
 
-   _itr_init = _eo_kls_itr_init(obj, op);
+   Eo_Kls_Itr prev_state;
+   _eo_kls_itr_init(obj, op, &prev_state);
    klass = _eo_kls_itr_get(obj);
    while (klass)
      {
@@ -388,8 +365,7 @@ _eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
      }
 
 end:
-
-   if (_itr_init) _eo_kls_itr_end(obj, op);
+   _eo_kls_itr_end(obj, &prev_state);
    return ret;
 }
 
@@ -923,7 +899,9 @@ eo_add(const Eo_Class *klass, Eo *parent)
 
    obj->refcount++;
 
-   _eo_kls_itr_init(obj, EO_NOOP);
+   Eo_Kls_Itr prev_state;
+
+   _eo_kls_itr_init(obj, EO_NOOP, &prev_state);
    eo_constructor_error_unset(obj);
 
    EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
@@ -941,12 +919,13 @@ eo_add(const Eo_Class *klass, Eo *parent)
         ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
      }
-   _eo_kls_itr_end(obj, EO_NOOP);
+   _eo_kls_itr_end(obj, &prev_state);
    eo_unref(obj);
 
    return obj;
 
 fail:
+   _eo_kls_itr_end(obj, &prev_state);
    /* Unref twice, once for the ref above, and once for the basic object ref. */
    eo_unref(obj);
    eo_unref(obj);
@@ -1036,7 +1015,9 @@ _eo_del_internal(Eo *obj)
    obj->refcount--;
 
    const Eo_Class *klass = eo_class_get(obj);
-   _eo_kls_itr_init(obj, EO_NOOP);
+   Eo_Kls_Itr prev_state;
+
+   _eo_kls_itr_init(obj, EO_NOOP, &prev_state);
    eo_constructor_error_unset(obj);
    _eo_destructor(obj, klass);
    if (eo_constructor_error_get(obj))
@@ -1048,17 +1029,8 @@ _eo_del_internal(Eo *obj)
      {
         ERR("Type '%s' - Not all of the object destructors have been executed.", klass->desc->name);
      }
-   _eo_kls_itr_end(obj, EO_NOOP);
+   _eo_kls_itr_end(obj, &prev_state);
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
-
-   /* If for some reason it's not empty, clear it. */
-   while (obj->kls_itr)
-     {
-        WRN("Kls_Itr is not empty, possibly a bug, please report. - An error will be reported for each kls_itr in the stack.");
-        Eina_Inlist *nitr = obj->kls_itr->next;
-        free(EINA_INLIST_CONTAINER_GET(obj->kls_itr, Eo_Kls_Itr_Node));
-        obj->kls_itr = nitr;
-     }
 
    Eina_List *itr, *itr_n;
    Eo *emb_obj;
