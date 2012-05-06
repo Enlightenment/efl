@@ -20,6 +20,8 @@ static void _eo_constructor(Eo *obj, const Eo_Class *klass);
 static void _eo_destructor(Eo *obj, const Eo_Class *klass);
 static void eo_constructor_error_unset(Eo *obj);
 static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
+static inline Eo *_eo_ref(Eo *obj);
+static inline void _eo_unref(Eo *obj);
 
 typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
@@ -369,7 +371,7 @@ eo_do_internal(Eo *obj, Eina_Bool constant, ...)
 
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
-   eo_ref(obj);
+   _eo_ref(obj);
 
    va_start(p_list, constant);
 
@@ -391,7 +393,7 @@ eo_do_internal(Eo *obj, Eina_Bool constant, ...)
 
    va_end(p_list);
 
-   eo_unref(obj);
+   _eo_unref(obj);
    return ret;
 }
 
@@ -896,7 +898,7 @@ eo_add(const Eo_Class *klass, Eo *parent)
    eo_constructor_error_unset(obj);
 
    EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
-   eo_ref(obj);
+   _eo_ref(obj);
    _eo_constructor(obj, klass);
 
    if (EINA_UNLIKELY(eo_constructor_error_get(obj)))
@@ -911,15 +913,15 @@ eo_add(const Eo_Class *klass, Eo *parent)
         goto fail;
      }
    _eo_kls_itr_end(obj, &prev_state);
-   eo_unref(obj);
+   _eo_unref(obj);
 
    return obj;
 
 fail:
    _eo_kls_itr_end(obj, &prev_state);
    /* Unref twice, once for the ref above, and once for the basic object ref. */
-   eo_unref(obj);
-   eo_unref(obj);
+   _eo_unref(obj);
+   _eo_unref(obj);
    return NULL;
 }
 
@@ -936,7 +938,7 @@ eo_xref_internal(Eo *obj, const Eo *ref_obj, const char *file, int line)
 {
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, obj);
 
-   eo_ref(obj);
+   _eo_ref(obj);
 
 #ifndef NDEBUG
    Eo_Xref_Node *xref = calloc(1, sizeof(*xref));
@@ -980,7 +982,14 @@ eo_xunref(Eo *obj, const Eo *ref_obj)
 #else
    (void) ref_obj;
 #endif
-   eo_unref(obj);
+   _eo_unref(obj);
+}
+
+static inline Eo *
+_eo_ref(Eo *obj)
+{
+   obj->refcount++;
+   return obj;
 }
 
 EAPI Eo *
@@ -988,8 +997,7 @@ eo_ref(Eo *obj)
 {
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, obj);
 
-   obj->refcount++;
-   return obj;
+   return _eo_ref(obj);
 }
 
 static void
@@ -1031,11 +1039,9 @@ _eo_del_internal(Eo *obj)
      }
 }
 
-EAPI void
-eo_unref(Eo *obj)
+static inline void
+_eo_unref(Eo *obj)
 {
-   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
-
    if (--(obj->refcount) == 0)
      {
         _eo_del_internal(obj);
@@ -1063,6 +1069,14 @@ eo_unref(Eo *obj)
      }
 }
 
+EAPI void
+eo_unref(Eo *obj)
+{
+   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
+
+   _eo_unref(obj);
+}
+
 EAPI int
 eo_ref_get(const Eo *obj)
 {
@@ -1077,7 +1091,7 @@ eo_del(Eo *obj)
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
 
    _eo_del_internal(obj);
-   eo_unref(obj);
+   _eo_unref(obj);
 }
 
 EAPI Eo *
@@ -1471,7 +1485,7 @@ eo_event_callback_call(Eo *obj, const Eo_Event_Description *desc,
    Eina_Bool ret = EINA_TRUE;
    Eo_Callback_Description *cb;
 
-   eo_ref(obj);
+   _eo_ref(obj);
    obj->walking_list++;
 
    EINA_INLIST_FOREACH(obj->callbacks, cb)
@@ -1491,7 +1505,7 @@ eo_event_callback_call(Eo *obj, const Eo_Event_Description *desc,
      }
    obj->walking_list--;
    _eo_callbacks_clear(obj);
-   eo_unref(obj);
+   _eo_unref(obj);
 
    return ret;
 }
