@@ -60,13 +60,15 @@
  * @li @ref elm_object_disabled_set
  * @li @ref elm_object_disabled_get
  *
+ * @{
+ *
  */
 
 /**
+ * @enum _Elm_Gesture_Type
  * Enum of supported gesture types.
- * @ingroup Elm_Gesture_Layer
  */
-typedef enum
+enum _Elm_Gesture_Type
 {
    ELM_GESTURE_FIRST = 0,
 
@@ -84,28 +86,36 @@ typedef enum
    ELM_GESTURE_ROTATE, /**< Rotate */
 
    ELM_GESTURE_LAST
-} Elm_Gesture_Type;
+};
 
 /**
- * @enum Elm_Gesture_State
- * Enum of gesture states.
- * @typedef Elm_Gesture_State
- * Typedef of gesture states.
- * @ingroup Elm_Gesture_Layer
+ * @typedef Elm_Gesture_Type
+ * Convenient macro around #_Elm_Gesture_Type
  */
-typedef enum
+typedef enum _Elm_Gesture_Type Elm_Gesture_Type;
+
+/**
+ * @enum _Elm_Gesture_State
+ * Enum of gesture states.
+ */
+enum _Elm_Gesture_State
 {
    ELM_GESTURE_STATE_UNDEFINED = -1, /**< Gesture not STARTed */
    ELM_GESTURE_STATE_START, /**< Gesture STARTed     */
    ELM_GESTURE_STATE_MOVE, /**< Gesture is ongoing  */
    ELM_GESTURE_STATE_END, /**< Gesture completed   */
    ELM_GESTURE_STATE_ABORT /**< Ongoing gesture was ABORTed */
-} Elm_Gesture_State;
+};
+
+/**
+ * @typedef Elm_Gesture_State
+ * Convenient macro around #_Elm_Gesture_State
+ */
+typedef enum _Elm_Gesture_State Elm_Gesture_State;
 
 /**
  * @struct _Elm_Gesture_Taps_Info
  * Struct holds taps info for user
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Taps_Info
 {
@@ -117,7 +127,6 @@ struct _Elm_Gesture_Taps_Info
 /**
  * @typedef Elm_Gesture_Taps_Info
  * holds taps info for user
- * @ingroup Elm_Gesture_Layer
  */
 typedef struct _Elm_Gesture_Taps_Info Elm_Gesture_Taps_Info;
 
@@ -128,7 +137,6 @@ typedef struct _Elm_Gesture_Taps_Info Elm_Gesture_Taps_Info;
  * x1 holds x value of x direction starting point
  * and same holds for y1.
  * This is noticeable when doing V-shape movement
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Momentum_Info /* Report line ends, timestamps, and momentum computed        */
 {Evas_Coord   x1; /**< Final-swipe direction starting point on X */
@@ -148,14 +156,12 @@ struct _Elm_Gesture_Momentum_Info /* Report line ends, timestamps, and momentum 
 /**
  * @typedef Elm_Gesture_Momentum_Info
  * holds momentum info for user
- * @ingroup Elm_Gesture_Layer
  */
 typedef struct _Elm_Gesture_Momentum_Info Elm_Gesture_Momentum_Info;
 
 /**
  * @struct _Elm_Gesture_Line_Info
  * Struct holds line info for user
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Line_Info   /* Report line ends, timestamps, and momentum computed      */
 {Elm_Gesture_Momentum_Info momentum; /**< Line momentum info */
@@ -165,14 +171,12 @@ struct _Elm_Gesture_Line_Info   /* Report line ends, timestamps, and momentum co
 /**
  * @typedef Elm_Gesture_Line_Info
  * Holds line info for user
- * @ingroup Elm_Gesture_Layer
  */
 typedef struct _Elm_Gesture_Line_Info Elm_Gesture_Line_Info;
 
 /**
  * @struct _Elm_Gesture_Zoom_Info
  * Struct holds zoom info for user
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Zoom_Info
 {
@@ -185,14 +189,12 @@ struct _Elm_Gesture_Zoom_Info
 /**
  * @typedef Elm_Gesture_Zoom_Info
  * Holds zoom info for user
- * @ingroup Elm_Gesture_Layer
  */
 typedef struct _Elm_Gesture_Zoom_Info Elm_Gesture_Zoom_Info;
 
 /**
  * @struct _Elm_Gesture_Rotate_Info
  * Struct holds rotation info for user
- * @ingroup Elm_Gesture_Layer
  */
 struct _Elm_Gesture_Rotate_Info
 {
@@ -206,7 +208,6 @@ struct _Elm_Gesture_Rotate_Info
 /**
  * @typedef Elm_Gesture_Rotate_Info
  * Holds rotation info for user
- * @ingroup Elm_Gesture_Layer
  */
 typedef struct _Elm_Gesture_Rotate_Info Elm_Gesture_Rotate_Info;
 
@@ -219,7 +220,6 @@ typedef struct _Elm_Gesture_Rotate_Info Elm_Gesture_Rotate_Info;
  * You should probably return EVAS_EVENT_FLAG_ON_HOLD if your widget acted
  * upon the event, in an irreversible way.
  *
- * @ingroup Elm_Gesture_Layer
  */
 typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
 
@@ -239,7 +239,6 @@ typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
  * @param cb_type what event this callback tracks: START, MOVE, END, ABORT.
  * @param data user info to be sent to callback (usually, Smart Data)
  *
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
@@ -250,7 +249,6 @@ EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Type id
  *
  * @return repeat events settings.
  * @see elm_gesture_layer_hold_events_set()
- * @ingroup Elm_Gesture_Layer
  */
 EAPI Eina_Bool    elm_gesture_layer_hold_events_get(const Evas_Object *obj);
 
@@ -263,7 +261,6 @@ EAPI Eina_Bool    elm_gesture_layer_hold_events_get(const Evas_Object *obj);
  * @param obj gesture layer.
  * @param hold_events hold events or not.
  *
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void         elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool hold_events);
 
@@ -276,7 +273,6 @@ EAPI void         elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool 
  * @param step new zoom step value.
  *
  * @see elm_gesture_layer_zoom_step_get()
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void         elm_gesture_layer_zoom_step_set(Evas_Object *obj, double step);
 
@@ -287,7 +283,6 @@ EAPI void         elm_gesture_layer_zoom_step_set(Evas_Object *obj, double step)
  * @return zoom step value.
  *
  * @see elm_gesture_layer_zoom_step_set()
- * @ingroup Elm_Gesture_Layer
  */
 EAPI double       elm_gesture_layer_zoom_step_get(const Evas_Object *obj);
 
@@ -299,7 +294,6 @@ EAPI double       elm_gesture_layer_zoom_step_get(const Evas_Object *obj);
  * @param obj gesture-layer.
  * @param step new rotate step value.
  *
- * @ingroup Elm_Gesture_Layer
  */
 EAPI void         elm_gesture_layer_rotate_step_set(Evas_Object *obj, double step);
 
@@ -309,7 +303,6 @@ EAPI void         elm_gesture_layer_rotate_step_set(Evas_Object *obj, double ste
  * @param obj gesture-layer.
  * @return rotate step value.
  *
- * @ingroup Elm_Gesture_Layer
  */
 EAPI double       elm_gesture_layer_rotate_step_get(const Evas_Object *obj);
 
@@ -320,7 +313,6 @@ EAPI double       elm_gesture_layer_rotate_step_get(const Evas_Object *obj);
  *
  * @return TRUE, FALSE on success, failure.
  *
- * @ingroup Elm_Gesture_Layer
  */
 EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *target);
 
@@ -333,6 +325,9 @@ EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *target
  *
  * @return new gesture-layer object.
  *
- * @ingroup Elm_Gesture_Layer
  */
 EAPI Evas_Object *elm_gesture_layer_add(Evas_Object *parent);
+
+/**
+ * @}
+ */
