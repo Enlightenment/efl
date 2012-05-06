@@ -19,6 +19,7 @@ static void _eo_callback_remove_all(Eo *obj);
 static void _eo_constructor(Eo *obj, const Eo_Class *klass);
 static void _eo_destructor(Eo *obj, const Eo_Class *klass);
 static void eo_constructor_error_unset(Eo *obj);
+static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
 
 typedef struct _Eo_Callback_Description Eo_Callback_Description;
 
@@ -342,7 +343,7 @@ _eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
 
         if (func)
           {
-             func(obj, eo_data_get(obj, klass), p_list);
+             func(obj, _eo_data_get(obj, klass), p_list);
              ret = EINA_TRUE;
              goto end;
           }
@@ -1138,7 +1139,7 @@ _eo_constructor(Eo *obj, const Eo_Class *klass)
       return;
 
    if (klass->desc->constructor)
-      klass->desc->constructor(obj, eo_data_get(obj, klass));
+      klass->desc->constructor(obj, _eo_data_get(obj, klass));
    else
       _eo_constructor_default(obj);
 }
@@ -1150,7 +1151,7 @@ _eo_destructor(Eo *obj, const Eo_Class *klass)
       return;
 
    if (klass->desc->destructor)
-      klass->desc->destructor(obj, eo_data_get(obj, klass));
+      klass->desc->destructor(obj, _eo_data_get(obj, klass));
    else
       _eo_destructor_default(obj);
 }
@@ -1171,18 +1172,9 @@ eo_destructor_super(Eo *obj)
    _eo_destructor(obj, _eo_kls_itr_next(obj, EO_NOOP));
 }
 
-EAPI void *
-eo_data_get(const Eo *obj, const Eo_Class *klass)
+static inline void *
+_eo_data_get(const Eo *obj, const Eo_Class *klass)
 {
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, NULL);
-
-#ifndef NDEBUG
-   if (!_eo_class_mro_has(obj->klass, klass))
-     {
-        ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
-        return NULL;
-     }
-#endif
    if (EINA_LIKELY(klass->desc->data_size > 0))
      {
         if (EINA_UNLIKELY(klass->desc->type == EO_CLASS_TYPE_MIXIN))
@@ -1207,14 +1199,32 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
              klass->data_offset;
           }
      }
-   else
-     {
-        /* FIXME: Enable this to only work when called from the outside.
-        ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
-        */
-     }
 
    return NULL;
+}
+
+EAPI void *
+eo_data_get(const Eo *obj, const Eo_Class *klass)
+{
+   void *ret;
+   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, NULL);
+
+#ifndef NDEBUG
+   if (!_eo_class_mro_has(obj->klass, klass))
+     {
+        ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
+        return NULL;
+     }
+#endif
+
+   ret = _eo_data_get(obj, klass);
+
+   if (!ret && (klass->desc->data_size == 0))
+     {
+        ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
+     }
+
+   return ret;
 }
 
 EAPI Eina_Bool
