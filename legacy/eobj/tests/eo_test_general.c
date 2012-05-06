@@ -23,7 +23,8 @@ START_TEST(eo_data_fetch)
 {
    eo_init();
 
-   static const Eo_Class_Description class_desc = {
+   /* Usually should be const, not const only for the test... */
+   static Eo_Class_Description class_desc = {
         "Simple2",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -43,6 +44,15 @@ START_TEST(eo_data_fetch)
 #ifndef NDEBUG
    fail_if(eo_data_get(obj, SIMPLE_CLASS));
 #endif
+   eo_unref(obj);
+
+   class_desc.data_size = 0;
+   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   fail_if(!klass);
+
+   obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   fail_if(eo_data_get(obj, klass));
    eo_unref(obj);
 
    eo_shutdown();
