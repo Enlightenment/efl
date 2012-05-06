@@ -1089,7 +1089,7 @@ eo_unref(Eo *obj)
      {
         WRN("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
         Eina_Inlist *nitr = obj->xrefs->next;
-        free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Kls_Itr_Node));
+        free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node));
         obj->xrefs = nitr;
      }
 #endif
@@ -1237,7 +1237,9 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
      }
    else
      {
+        /* FIXME: Enable this to only work when called from the outside.
         ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
+        */
      }
 
    return NULL;
