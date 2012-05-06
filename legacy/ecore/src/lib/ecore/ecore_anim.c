@@ -274,6 +274,7 @@ ecore_animator_pos_map(double        pos,
          return pos;
 
        case ECORE_POS_MAP_ACCELERATE:
+         if (pos == 1.0) return 1.0;
          pos = 1.0 - _pos_map_sin(M_PI_2 + pos * M_PI_2);
          return pos;
 
