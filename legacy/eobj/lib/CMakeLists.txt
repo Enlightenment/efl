@@ -19,7 +19,7 @@ target_link_libraries(eo
 set_target_properties(eo PROPERTIES
    COMPILE_FLAGS "${EFL_COVERAGE_CFLAGS}")
 set_target_properties(eo PROPERTIES
-                         VERSION ${EO_VERSION} SOVERSION ${EO_VERSION_MAJOR})
+   VERSION ${PACKAGE_VERSION} SOVERSION ${VMAJ})
 set_target_properties(eo PROPERTIES OUTPUT_NAME "eo")
 
 INSTALL(TARGETS eo DESTINATION "lib")
