@@ -1235,6 +1235,10 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
              klass->data_offset;
           }
      }
+   else
+     {
+        ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
+     }
 
    return NULL;
 }
