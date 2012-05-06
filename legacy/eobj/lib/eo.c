@@ -455,6 +455,7 @@ _eo_class_base_op_init(Eo_Class *klass)
    *(desc->ops.base_op_id) = klass->class_id << OP_CLASS_OFFSET;
 }
 
+#ifndef NDEBUG
 static Eina_Bool
 _eo_class_mro_has(const Eo_Class *klass, const Eo_Class *find)
 {
@@ -469,6 +470,7 @@ _eo_class_mro_has(const Eo_Class *klass, const Eo_Class *find)
 
    return EINA_FALSE;
 }
+#endif
 
 static Eina_List *
 _eo_class_mro_add(Eina_List *mro, const Eo_Class *klass)
