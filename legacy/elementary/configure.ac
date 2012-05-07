@@ -652,7 +652,7 @@ if test "x${have_mman}" = "xyes"; then
    AC_DEFINE(HAVE_MMAN_H, 1, [Have sys/mman.h header file])
 fi
 
-AC_CHECK_HEADERS([locale.h langinfo.h])
+AC_CHECK_HEADERS([locale.h langinfo.h sys/times.h])
 
 my_libs="-lm"
 AC_SUBST(my_libs)
