@@ -628,8 +628,3 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
         1.2.0 release
-
-2012-05-06  Mike Blumenkrantz
-
-        Fix bug in ecore_animator_pos_map where final frame is never
-        reached when using ECORE_POS_MAP_ACCELERATE
