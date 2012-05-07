@@ -3734,6 +3734,7 @@ _elm_genlist_item_new(Widget_Data              *wd,
                       const void               *func_data)
 {
    Elm_Gen_Item *it;
+   if (!itc) return NULL;
 
    it = elm_widget_item_new(wd->obj, Elm_Gen_Item);
    if (!it) return NULL;
