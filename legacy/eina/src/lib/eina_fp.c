@@ -449,7 +449,7 @@ eina_f32p32_cos(Eina_F32p32 a)
    /* Find which case from 0 to 2 * PI */
    remainder_2PI = a - (a / F32P32_2PI) * F32P32_2PI;
 
-   interpol = eina_f32p32_div(eina_f32p32_scale(remainder_PI, MAX_PREC * 2),
+   interpol = eina_f32p32_div(eina_f32p32_scale(remainder_PI, (MAX_PREC - 1) * 2),
                               EINA_F32P32_PI);
    idx = eina_f32p32_int_to(interpol);
    if (idx >= MAX_PREC)
@@ -504,15 +504,15 @@ eina_f32p32_sin(Eina_F32p32 a)
    /* Find which case from 0 to 2 * PI */
    remainder_2PI = a - (a / F32P32_2PI) * F32P32_2PI;
 
-   interpol = eina_f32p32_div(eina_f32p32_scale(remainder_PI, MAX_PREC * 2),
+   interpol = eina_f32p32_div(eina_f32p32_scale(remainder_PI, (MAX_PREC - 1) * 2),
                               EINA_F32P32_PI);
    idx = eina_f32p32_int_to(interpol);
    if (idx >= MAX_PREC)
-      idx = 2 * MAX_PREC - (idx + 1);
+     idx = 2 * MAX_PREC - (idx + 1);
 
    index2 = idx + 1;
    if (index2 == MAX_PREC)
-      index2 = idx - 1;
+     index2 = idx - 1;
 
    result = eina_f32p32_add(eina_trigo[idx],
                             eina_f32p32_mul(eina_f32p32_sub(eina_trigo[idx],

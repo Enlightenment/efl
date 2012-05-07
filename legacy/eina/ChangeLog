@@ -266,3 +266,7 @@
 2012-04-30  Jérôme Pinot
 
 	* Add missing files in the tarballs.
+
+2012-05-06  Cedric Bail
+
+	* Fix a rounding issue near 1.0 for eina_f32p32_cos and eina_f32p32_sin.
