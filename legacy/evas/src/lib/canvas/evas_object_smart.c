@@ -13,6 +13,7 @@ struct _Evas_Object_Smart
    Eina_Inlist      *contained;
    Evas_Smart_Cb_Description_Array callbacks_descriptions;
    int               walking_list;
+   int               member_count;
    Eina_Bool         deletions_waiting : 1;
    Eina_Bool         need_recalculate : 1;
 };
@@ -158,6 +159,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 
    if (obj->smart.parent) evas_object_smart_member_del(obj);
 
+   o->member_count++;
    evas_object_release(obj, 1);
    obj->layer = smart_obj->layer;
    obj->cur.layer = obj->layer->layer;
@@ -191,6 +193,7 @@ evas_object_smart_member_del(Evas_Object *obj)
 
    o = (Evas_Object_Smart *)(obj->smart.parent->object_data);
    o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(obj));
+   o->member_count--;
    obj->smart.parent = NULL;
    evas_object_smart_member_cache_invalidate(obj, EINA_TRUE, EINA_TRUE);
    obj->layer->usage--;
@@ -911,12 +914,16 @@ evas_object_smart_render_pre(Evas_Object *obj)
    if (!obj->child_has_map)
      {
 #if 0
-        if (obj->cur.bounding_box.w == obj->prev.bounding_box.w &&
+        Evas_Object_Smart *o;
+
+        o = (Evas_Object_Smart *)(obj->object_data);
+        if (o->member_count > 1 &&
+            obj->cur.bounding_box.w == obj->prev.bounding_box.w &&
             obj->cur.bounding_box.h == obj->prev.bounding_box.h &&
             (obj->cur.bounding_box.x != obj->prev.bounding_box.x ||
              obj->cur.bounding_box.y != obj->prev.bounding_box.y))
           {
-             fprintf(stderr, "Wouhou, I can detect moving smart object (%s)\n", evas_object_type_get(obj));
+             fprintf(stderr, "Wouhou, I can detect moving smart object (%s, %p < %p)\n", evas_object_type_get(obj), obj, obj->smart.parent);
           }
 #endif
      }
