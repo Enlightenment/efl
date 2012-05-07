@@ -367,7 +367,6 @@ static void
 _image_preloaded_cb(void *data, const void *msg_received)
 {
    const Msg_Base *answer = msg_received;
-   const Msg_Opened *msg = msg_received;
    Image_Entry *ie = data;
    Data_Entry *dentry = ie->data2;
 
@@ -433,7 +432,7 @@ _build_absolute_path(const char *path, char buf[], int size)
 }
 
 static unsigned int
-_image_open_server_send(Image_Entry *ie, const char *file, const char *key, RGBA_Image_Loadopts *lopt)
+_image_open_server_send(Image_Entry *ie, const char *file, const char *key, RGBA_Image_Loadopts *lopt __UNUSED__)
 {
    int flen, klen;
    int size;

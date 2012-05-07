@@ -1,6 +1,9 @@
 #include "evas_common.h"
 #include "evas_private.h"
 #include <math.h>
+#ifdef EVAS_CSERVE2
+#include "evas_cs2_private.h"
+#endif
 
 // debug rendering
 /* #define REND_DGB 1 */

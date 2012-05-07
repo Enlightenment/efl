@@ -21,6 +21,10 @@ debug_msg(const char *typestr, const void *buf, int size)
       printf("%x ", str[i]);
 
     printf("\n");
+#else
+    (void)typestr;
+    (void)buf;
+    (void)size;
 #endif
 }
 

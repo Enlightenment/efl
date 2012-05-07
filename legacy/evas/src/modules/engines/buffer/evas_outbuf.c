@@ -159,7 +159,7 @@ evas_buffer_outbuf_buf_switch_buffer(Outbuf *buf)
              if (evas_cserve2_use_get())
                {
                   evas_cache2_image_close(&buf->priv.back_buf->cache_entry);
-                  buf->priv.back_buf = (RGBA_Image *) evas_cache2_image_data(evas_common_image_cache_get(),
+                  buf->priv.back_buf = (RGBA_Image *) evas_cache2_image_data(evas_common_image_cache2_get(),
                                                                             buf->w, buf->h,
                                                                             buf->dest,
                                                                             buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888 ? 1 : 0,

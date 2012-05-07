@@ -227,7 +227,6 @@ static const char *
 _slave_path_get(const char *name)
 {
    char buf[PATH_MAX], cwd[PATH_MAX];
-   struct stat st;
 
    if (name[0] == '/')
      {
