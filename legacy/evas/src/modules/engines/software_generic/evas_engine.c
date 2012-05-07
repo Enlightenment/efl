@@ -767,7 +767,7 @@ eng_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32 **im
         if (err) *err = error;
 
         if (to_write)
-          im = evas_cache2_image_writable(&im->cache_entry);
+          im = (RGBA_Image *)evas_cache2_image_writable(&im->cache_entry);
 
         *image_data = im->image.data;
         return im;
@@ -998,6 +998,16 @@ static void *
 eng_image_map_surface_new(void *data __UNUSED__, int w, int h, int alpha)
 {
    void *surface;
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     {
+        surface = evas_cache2_image_copied_data(evas_common_image_cache2_get(),
+                                                w, h, NULL, alpha,
+                                                EVAS_COLORSPACE_ARGB8888);
+        evas_cache2_image_pixels(surface);
+        return surface;
+     }
+#endif
    surface = evas_cache_image_copied_data(evas_common_image_cache_get(), 
                                           w, h, NULL, alpha, 
                                           EVAS_COLORSPACE_ARGB8888);

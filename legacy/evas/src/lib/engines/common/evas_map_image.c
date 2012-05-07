@@ -1,5 +1,8 @@
 #include "evas_common.h"
 #include "evas_blend_private.h"
+#ifdef EVAS_CSERVE2
+#include "evas_cs2_private.h"
+#endif
 
 #ifdef BUILD_SCALE_SMOOTH
 # ifdef BUILD_MMX
@@ -385,7 +388,14 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
    int          i;
    
    if (src->cache_entry.space == EVAS_COLORSPACE_ARGB8888)
-     evas_cache_image_load_data(&src->cache_entry);
+     {
+#ifdef EVAS_CSERVE2
+        if (evas_cserve2_use_get())
+          evas_cache2_image_load_data(&src->cache_entry);
+        else
+#endif
+          evas_cache_image_load_data(&src->cache_entry);
+     }
    evas_common_image_colorspace_normalize(src);
    if (!src->image.data) return;
 #ifdef BUILD_MMX
