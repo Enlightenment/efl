@@ -245,7 +245,8 @@ libelementary_la_LIBADD = \
 @ELEMENTARY_ECORE_CON_LIBS@ \
 @EVIL_LIBS@ \
 @EIO_LIBS@ \
-@EMOTION_LIBS@
+@EMOTION_LIBS@ \
+@LTLIBINTL@
 
 libelementary_la_LDFLAGS = \
 -no-undefined @lt_enable_auto_import@ \
