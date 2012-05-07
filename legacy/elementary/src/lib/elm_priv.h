@@ -15,7 +15,9 @@
 
 #include "elm_widget.h"
 
-#include <langinfo.h>
+#ifdef HAVE_LANGINFO_H
+# include <langinfo.h>
+#endif
 
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
 #define ERR(...)      EINA_LOG_DOM_ERR (_elm_log_dom, __VA_ARGS__)
