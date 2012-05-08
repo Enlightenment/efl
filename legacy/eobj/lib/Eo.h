@@ -530,7 +530,7 @@ EAPI Eo *eo_add(const Eo_Class *klass, Eo *parent);
  * @param obj the object to get the parent of.
  * @return a pointer to the parent object.
  */
-EAPI Eo *eo_parent_get(Eo *obj);
+EAPI Eo *eo_parent_get(const Eo *obj);
 
 /**
  * @brief Get a pointer to the data of an object for a specific class.

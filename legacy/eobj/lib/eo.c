@@ -1097,7 +1097,7 @@ eo_del(Eo *obj)
 }
 
 EAPI Eo *
-eo_parent_get(Eo *obj)
+eo_parent_get(const Eo *obj)
 {
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, NULL);
 
