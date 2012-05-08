@@ -46,9 +46,9 @@ const char *_elm_engines[] = {
 /* whenever you want to add a new text class support into Elementary,
    declare it both here and in the (default) theme */
 static const Elm_Text_Class _elm_text_classes[] = {
-   {"button", "Button Labels"},
-   {"label", "Text Labels"},
-   {"entry", "Text Entries"},
+   {"button", "Button"},
+   {"label", "Label"},
+   {"entry", "Entry"},
    {"title_bar", "Title Bar"},
    {"list_item", "List Items"},
    {"grid_item", "Grid Items"},
