@@ -108,6 +108,7 @@ typedef struct _Dich_Chain1 Dich_Chain1;
 typedef struct
 {
    eo_op_func_type func;
+   const Eo_Class *src;
 } op_type_funcs;
 
 struct _Dich_Chain1
@@ -146,8 +147,52 @@ struct _Eo_Class
    Eina_Bool constructed : 1;
 };
 
-static inline eo_op_func_type
-dich_func_get(const Eo_Class *klass, Eo_Op op)
+static inline void
+_dich_chain_alloc(Dich_Chain1 *chain1, size_t num_ops)
+{
+   if (!chain1->funcs)
+     {
+        chain1->funcs = calloc(num_ops, sizeof(*(chain1->funcs)));
+     }
+}
+
+static inline void
+_dich_copy_all(Eo_Class *dst, const Eo_Class *src)
+{
+   if (!src->chain) return;
+
+   if (!dst->chain)
+     {
+        dst->chain = calloc(dst->class_id, sizeof(*dst->chain));
+     }
+
+   Eo_Class_Id i;
+   const Dich_Chain1 *sc1 = src->chain;
+   Dich_Chain1 *dc1 = dst->chain;
+   for (i = 0 ; i < src->class_id ; i++, sc1++, dc1++)
+     {
+        if (sc1->funcs)
+          {
+             size_t j;
+             const Eo_Class *op_klass = ID_CLASS_GET(i + 1);
+             size_t num_ops = op_klass->desc->ops.count;
+             _dich_chain_alloc(dc1, num_ops);
+
+             const op_type_funcs *sf = sc1->funcs;
+             op_type_funcs *df = dc1->funcs;
+             for (j = 0 ; j < num_ops ; j++, df++, sf++)
+               {
+                  if (sf->func)
+                    {
+                       memcpy(df, sf, sizeof(*df));
+                    }
+               }
+          }
+     }
+}
+
+static inline const op_type_funcs *
+_dich_func_get(const Eo_Class *klass, Eo_Op op)
 {
    if (!klass->chain) return NULL;
 
@@ -162,11 +207,11 @@ dich_func_get(const Eo_Class *klass, Eo_Op op)
    if (!op_klass || (idxl >= op_klass->desc->ops.count))
       return NULL;
 
-   return chain1->funcs[idxl].func;
+   return &chain1->funcs[idxl];
 }
 
 static inline void
-dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
+_dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 {
    const Eo_Class *op_klass = OP_CLASS_GET(op);
    size_t num_ops;
@@ -196,16 +241,13 @@ dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 
    size_t idx1 = DICH_CHAIN1(op) - 1;
    Dich_Chain1 *chain1 = &klass->chain[idx1];
-   if (!chain1->funcs)
-     {
-        chain1->funcs = calloc(num_ops, sizeof(*(chain1->funcs)));
-     }
-
+   _dich_chain_alloc(chain1, num_ops);
    chain1->funcs[DICH_CHAIN_LAST(op)].func = func;
+   chain1->funcs[DICH_CHAIN_LAST(op)].src = klass;
 }
 
 static inline void
-dich_func_clean_all(Eo_Class *klass)
+_dich_func_clean_all(Eo_Class *klass)
 {
    size_t i;
    Dich_Chain1 *chain1 = klass->chain;
@@ -294,7 +336,18 @@ _eo_kls_itr_next(Eo *obj, Eo_Op op)
    const Eo_Class **kls_itr = obj->mro_itr.kls_itr;
    if (*kls_itr)
      {
-        kls_itr++;
+        if (op != EO_NOOP)
+          {
+             const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
+
+             while (*kls_itr && (*(kls_itr++) != fsrc->src))
+                ;
+          }
+        else
+          {
+             kls_itr++;
+          }
+
         obj->mro_itr.kls_itr = kls_itr;
         return *kls_itr;
      }
@@ -329,18 +382,16 @@ _eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
    Eo_Kls_Itr prev_state;
    _eo_kls_itr_init(obj, op, &prev_state);
    klass = _eo_kls_itr_get(obj);
-   while (klass)
+   if (klass)
      {
-        eo_op_func_type func = dich_func_get(klass, op);
+        const op_type_funcs *func = _dich_func_get(klass, op);
 
-        if (func)
+        if (func && func->func)
           {
-             func(obj, _eo_data_get(obj, klass), p_list);
+             func->func(obj, _eo_data_get(obj, func->src), p_list);
              ret = EINA_TRUE;
              goto end;
           }
-
-        klass = _eo_kls_itr_next(obj, op);
      }
 
    /* Try composite objects */
@@ -408,10 +459,8 @@ eo_do_super_internal(Eo *obj, Eina_Bool constant, Eo_Op op, ...)
    /* Advance the kls itr. */
    obj_klass = _eo_kls_itr_next(obj, op);
 
-   if (!obj_klass)
-     {
-        return EINA_FALSE;
-     }
+   if (obj->mro_itr.op != op)
+      return EINA_FALSE;
 
    va_start(p_list, op);
    if (!_eo_op_internal(obj, constant, op, &p_list))
@@ -612,7 +661,7 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
 
              if (EINA_LIKELY(!op_desc || (itr->constant == op_desc->constant)))
                {
-                  dich_func_set(klass, itr->op, itr->func);
+                  _dich_func_set(klass, itr->op, itr->func);
                }
              else
                {
@@ -630,7 +679,7 @@ eo_class_free(Eo_Class *klass)
         if (klass->desc->class_destructor)
            klass->desc->class_destructor(klass);
 
-        dich_func_clean_all(klass);
+        _dich_func_clean_all(klass);
      }
 
      {
@@ -859,6 +908,18 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
    eina_lock_release(&_eo_class_creation_lock);
 
    EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
+
+   /* Flatten the function array */
+     {
+        const Eo_Class **mro_itr = klass->mro;
+        for (  ; *mro_itr ; mro_itr++)
+           ;
+
+        for ( mro_itr-- ; mro_itr >= klass->mro ; mro_itr--)
+          {
+             _dich_copy_all(klass, *mro_itr);
+          }
+     }
 
    _eo_class_base_op_init(klass);
 
