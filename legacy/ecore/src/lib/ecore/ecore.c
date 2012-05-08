@@ -171,12 +171,16 @@ ecore_init(void)
    _ecore_job_init();
    _ecore_time_init();
 
-   eina_lock_new(&_thread_safety);
    eina_lock_new(&_thread_mutex);
    eina_condition_new(&_thread_cond, &_thread_mutex);
    eina_lock_new(&_thread_feedback_mutex);
    eina_condition_new(&_thread_feedback_cond, &_thread_feedback_mutex);
-   _thread_call = ecore_pipe_add(_thread_callback, NULL);
+   if (!_thread_call)
+     {
+       _thread_call = ecore_pipe_add(_thread_callback, NULL);
+       eina_lock_new(&_thread_safety);
+     }
+
    eina_lock_new(&_thread_id_lock);
 
    eina_lock_new(&_ecore_main_loop_lock);
@@ -241,8 +245,8 @@ ecore_shutdown(void)
      _thread_call = NULL;
      ecore_pipe_wait(p, 1, 0.1);
      ecore_pipe_del(p);
-    */
      eina_lock_free(&_thread_safety);
+    */
      eina_condition_free(&_thread_cond);
      eina_lock_free(&_thread_mutex);
      eina_condition_free(&_thread_feedback_cond);
