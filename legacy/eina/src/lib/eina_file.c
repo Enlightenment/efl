@@ -41,6 +41,7 @@ void *alloca (size_t);
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
+#include <stdint.h>
 #ifdef HAVE_DIRENT_H
 # include <dirent.h>
 #endif
@@ -1125,6 +1126,139 @@ eina_file_map_all(Eina_File *file, Eina_File_Populate rule)
 
    eina_lock_release(&file->lock);
    return ret;
+}
+
+typedef struct _Eina_Lines_Iterator Eina_Lines_Iterator;
+struct _Eina_Lines_Iterator
+{
+   Eina_Iterator iterator;
+
+   Eina_File *fp;
+   const char *map;
+   const char *end;
+
+   int boundary;
+
+   Eina_File_Lines current;
+};
+
+/* search '\r' and '\n' by preserving cache locality and page locality
+   in doing a search inside 4K boundary.
+ */
+static inline const char *
+_eina_fine_eol(const char *start, int boundary, const char *end)
+{
+   const char *cr;
+   const char *lf;
+   unsigned long long chunk;
+
+   while (start < end)
+     {
+        chunk = start + boundary < end ? boundary : end - start;
+        cr = memchr(start, '\r', chunk);
+        lf = memchr(start, '\n', chunk);
+        if (cr)
+          {
+             if (lf && lf < cr)
+               return lf + 1;
+             return cr + 1;
+          }
+        else if (lf)
+           return lf + 1;
+
+        start += chunk;
+        boundary = 4096;
+     }
+
+   return end;
+}
+
+static Eina_Bool
+_eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
+{
+   const char *eol;
+
+   if (it->current.line.end >= it->end)
+     return EINA_FALSE;
+
+   while ((*it->current.line.end == '\n' || *it->current.line.end == '\r')
+          && it->current.line.end < it->end)
+     it->current.line.end++;
+
+   if (it->current.line.end == it->end)
+     return EINA_FALSE;
+
+   eol = _eina_fine_eol(it->current.line.end,
+                        it->boundary,
+                        it->end);
+   it->boundary = (uintptr_t) eol & 0x3FF;
+   if (it->boundary == 0) it->boundary = 4096;
+
+   it->current.line.start = it->current.line.end;
+   while (*eol == '\n' || *eol == '\r')
+     eol--;
+
+   it->current.line.end = eol;
+   it->current.length = eol - it->current.line.start - 1;
+
+   *data = &it->current;
+   return EINA_TRUE;
+}
+
+static Eina_File *
+_eina_file_map_lines_iterator_container(Eina_Lines_Iterator *it)
+{
+   return it->fp;
+}
+
+static void
+_eina_file_map_lines_iterator_free(Eina_Lines_Iterator *it)
+{
+   eina_file_map_free(it->fp, (void*) it->map);
+   eina_file_close(it->fp);
+
+   EINA_MAGIC_SET(&it->iterator, 0);
+   free(it);
+}
+
+EAPI Eina_Iterator *
+eina_file_map_lines(Eina_File *file)
+{
+   Eina_Lines_Iterator *it;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+
+   if (file->length == 0) return NULL;
+
+   it = calloc(1, sizeof (Eina_Lines_Iterator));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->map = eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+   if (!it->map)
+     {
+        free(it);
+        return NULL;
+     }
+
+   eina_lock_take(&file->lock);
+   file->refcount++;
+   eina_lock_release(&file->lock);
+
+   it->fp = file;
+   it->boundary = 4096;
+   it->current.line.start = it->map;
+   it->current.line.end = it->current.line.start;
+   it->current.length = 0;
+   it->end = it->map + it->fp->length;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_map_lines_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_file_map_lines_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_map_lines_iterator_free);
+
+   return &it->iterator;
 }
 
 EAPI void *

@@ -270,3 +270,7 @@
 2012-05-06  Cedric Bail
 
 	* Fix a rounding issue near 1.0 for eina_f32p32_cos and eina_f32p32_sin.
+
+2012-05-08  Cedric Bail
+
+	* Add eina_file_map_lines to iterate on lines of a mapped file.

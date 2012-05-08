@@ -5,6 +5,7 @@ Changes since Eina 1.2.0:
 
 Additions:
     * Add backtrace support to Eina_Log, use EINA_LOG_BACKTRACE to enable it.
+    * Add an helper to iterate over line in a mapped file.
 
 Fixes:
     * Add missing files in the tarball.

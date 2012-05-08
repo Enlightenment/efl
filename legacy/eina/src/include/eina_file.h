@@ -99,6 +99,12 @@ typedef struct _Eina_File_Direct_Info Eina_File_Direct_Info;
 typedef struct _Eina_Stat Eina_Stat;
 
 /**
+ * @typedef Eina_File_Lines
+ * A typedef to #_Eina_File_Lines.
+ */
+typedef struct _Eina_File_Lines Eina_File_Lines;
+
+/**
  * @typedef Eina_File_Dir_List_Cb
  * Type for a callback to be called when iterating over the files of a
  * directory.
@@ -186,6 +192,20 @@ struct _Eina_Stat
    unsigned long int    mtimensec;
    unsigned long int    ctime;
    unsigned long int    ctimensec;
+};
+
+/**
+ * @struct _Eina_File_Lines
+ * A structure to store information of line
+ * @since 1.3
+ */
+struct _Eina_File_Lines
+{
+  struct {
+    const char *start;
+    const char *end;
+  } line;
+  unsigned long long length;
 };
 
 /**
@@ -469,6 +489,19 @@ EAPI void *eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
  * @since 1.1
  */
 EAPI void eina_file_map_free(Eina_File *file, void *map);
+
+/**
+ * @brief Map line by line in memory efficiently with an Eina_Iterator
+ * @param file The file to run over
+ * @return an Eina_Iterator that will produce @typedef Eina_File_Lines.
+ *
+ * This function return an iterator that will act like fgets without the
+ * useless memcpy. Be aware that once eina_iterator_next has been called,
+ * nothing garanty you that the memory will still be mapped.
+ *
+ * @since 1.3
+ */
+EAPI Eina_Iterator *eina_file_map_lines(Eina_File *file);
 
 /**
  * @brief Tell if their was an IO error during the life of a mmaped file
