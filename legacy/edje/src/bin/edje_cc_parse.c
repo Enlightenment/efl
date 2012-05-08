@@ -739,8 +739,8 @@ compile(void)
                  eina_prefix_lib_get(pfx));
         if (ecore_file_exists(buf2))
           {
-             snprintf(buf, sizeof(buf), "%s %s -I%s %s -o %s",
-                      buf2, file_in, inc, def, tmpn);
+             snprintf(buf, sizeof(buf), "%s -a %s %s -I%s %s -o %s",
+                      buf2, watchfile ? watchfile : "/dev/null", file_in, inc, def, tmpn);
              ret = system(buf);
           }
         else

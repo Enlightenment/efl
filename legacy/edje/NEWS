@@ -3,6 +3,9 @@ Edje 1.3.0
 Changes since Edje 1.2.0:
 -------------------------
 
+Additions:
+    * Add edje_watch to monitore change on edje source.
+
 Improvements:
     * Allocate once and reuse Evas_Map.
 

@@ -20,6 +20,7 @@ char      *file_in = NULL;
 char      *tmp_dir = NULL;
 char      *file_out = NULL;
 char      *progname = NULL;
+char      *watchfile = NULL;
 int        verbose = 0;
 
 int        no_lossy = 0;
@@ -38,6 +39,7 @@ main_help(void)
       "\n"
       "Where OPTIONS is one or more of:\n"
       "\n"
+      "-w files.txt             Dump all sources files path into files.txt\n"
       "-id image/directory      Add a directory to look in for relative path images\n"
       "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
@@ -150,6 +152,12 @@ main(int argc, char **argv)
 	  {
 	     i++;
 	     file_out = argv[i];
+	  }
+	else if ((!strcmp(argv[i], "-w")) && (i < (argc - 1)))
+	  {
+             i++;
+             watchfile = argv[i];
+             unlink(watchfile);
 	  }
 	else if (!file_in)
 	  file_in = argv[i];

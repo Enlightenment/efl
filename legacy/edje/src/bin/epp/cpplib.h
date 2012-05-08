@@ -473,6 +473,9 @@ struct cpp_options {
 
    /* Target-name to write with the dependency information.  */
    char               *deps_target;
+
+   /* Target file to write all include file */
+   const char         *watchfile;
 };
 
 #define CPP_TRADITIONAL(PFILE) (CPP_OPTIONS(PFILE)-> traditional)
@@ -635,6 +638,8 @@ int                 cpp_read_check_assertion(cpp_reader * pfile);
 void               *xmalloc(unsigned size);
 void               *xrealloc(void *old, unsigned size);
 void               *xcalloc(unsigned number, unsigned size);
+
+void                using_file(const char *filename);
 
 #ifdef __EMX__
 #define PATH_SEPARATOR ';'

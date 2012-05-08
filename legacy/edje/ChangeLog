@@ -423,3 +423,7 @@
 2012-05-02  Cedric Bail
 
 	* Doing less allocation and reuse Evas_Map does help.
+
+2012-05-08  Cedric Bail
+
+	* Add edje_watch tools to automatically rebuild edc.

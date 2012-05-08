@@ -5489,6 +5489,7 @@ open_include_file(cpp_reader * pfile, char *filename,
        && !strncmp(searchptr->fname, filename, p - filename))
      {
 	/* FILENAME is in SEARCHPTR, which we've already checked.  */
+        using_file(filename);
 	return open(filename, O_RDONLY | O_BINARY, 0666);
      }
    if (p == filename)
@@ -5508,8 +5509,12 @@ open_include_file(cpp_reader * pfile, char *filename,
      }
    for (map = read_name_map(pfile, dir); map; map = map->map_next)
       if (!strcmp(map->map_from, from))
-	 return open(map->map_to, O_RDONLY | O_BINARY, 0666);
+        {
+           using_file(map->map_to);
+           return open(map->map_to, O_RDONLY | O_BINARY, 0666);
+        }
 
+   using_file(filename);
    return open(filename, O_RDONLY | O_BINARY, 0666);
 }
 
@@ -5519,6 +5524,7 @@ static int
 open_include_file(cpp_reader * pfile __UNUSED__, char *filename,
 		  file_name_list * searchptr __UNUSED__)
 {
+   using_file(filename);
    return open(filename, O_RDONLY | O_BINARY, 0666);
 }
 
@@ -6561,6 +6567,20 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
 		     i++, push_pending(pfile, "-D", argv[i]);
 		  break;
 
+	       case 'a':
+                  {
+                     if (!strcmp(argv[i], "-a"))
+                       {
+                          if (i + 1 == argc)
+                            cpp_fatal("Filename missing after `-a` option");
+                          else if (strcmp(argv[++i], "/dev/null"))
+                            {
+                               opts->watchfile = argv[i];
+                            }
+                       }
+		     break;
+                  }
+
 	       case 'A':
 		  {
 		     char               *p = NULL;
@@ -7425,3 +7445,17 @@ cpp_perror_with_name(cpp_reader * pfile, const char *name)
  *
  * Support for_lint flag.
  */
+
+extern cpp_options         options;
+
+void
+using_file(const char *filename)
+{
+   FILE *f;
+
+   f = fopen(options.watchfile, "a");
+   if (!f) return ;
+   fputs(filename, f);
+   fputc('\n', f);
+   fclose(f);
+}

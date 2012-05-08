@@ -323,6 +323,7 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 	  {
 	     long pos;
 
+	     using_file(fn->file);
 	     fseek(f, 0, SEEK_END);
 	     pos = ftell(f);
 	     rewind(f);
@@ -350,6 +351,7 @@ data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_b
 		    {
 		       long pos;
 
+		       using_file(buf);
 		       fseek(f, 0, SEEK_END);
 		       pos = ftell(f);
 		       rewind(f);
@@ -533,7 +535,10 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 			    evas_object_image_file_set(im, buf, NULL);
 			    load_err = evas_object_image_load_error_get(im);
 			    if (load_err == EVAS_LOAD_ERROR_NONE)
-			      break;
+			      {
+                                 using_file(buf);
+                                 break;
+			      }
 			    evas_object_del(im);
 			    im = NULL;
 			    if (load_err != EVAS_LOAD_ERROR_DOES_NOT_EXIST)
@@ -552,6 +557,7 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 				 evas_object_del(im);
 				 im = NULL;
 			      }
+                            if (im) using_file(img->entry);
 			 }
 		    }
 		  if (im)
@@ -716,8 +722,10 @@ data_write_sounds(Eet_File * ef, int *sound_num, int *input_bytes, int *input_ra
              stat(enc_info->file, &st);
              size = st.st_size;
              fp = fopen(enc_info->file, "rb");
+	     if (fp) using_file(enc_info->file);
 #else
              fp = fopen(snd_path, "rb");
+	     if (fp) using_file(snd_path);
 #endif
              if (!fp)
                {
@@ -2166,4 +2174,16 @@ data_process_script_lookups(void)
 	memset(cl->ptr, ' ', cl->len);
 	strncpy(cl->ptr, buf, n);
      }
+}
+
+void
+using_file(const char *filename)
+{
+  FILE *f;
+
+  f = fopen(watchfile, "a");
+  if (!f) return ;
+  fputs(filename, f);
+  fputc('\n', f);
+  fclose(f);
 }

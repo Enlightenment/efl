@@ -104,6 +104,7 @@ EFL_ENABLE_BIN([edje-recc])
 EFL_ENABLE_BIN([edje-player])
 EFL_ENABLE_BIN([edje-inspector])
 EFL_ENABLE_BIN([edje-external-inspector])
+EFL_ENABLE_BIN([edje-watch])
 
 # Optional EDJE_PROGRAM_CACHE (use much more ram, but increase speed in some cases)
 want_edje_program_cache="no"
@@ -292,6 +293,18 @@ PKG_CHECK_MODULES([ECORE_IMF],
    ],
    [have_ecore_imf="no"])
 
+have_eio="no"
+PKG_CHECK_MODULES([EIO],
+   [
+    eio >= 1.0.0
+   ],
+   [
+    AC_DEFINE([HAVE_EIO], [1], [Eio is available for monitoring file assynchronously])
+    have_eio="yes"
+    requirement_edje="eio >= 1.0.0 ${requirement_edje}"
+   ],
+   [have_eio="no"])
+
 # Enable Multisense use
 want_multisense="yes"
 AC_ARG_ENABLE([multisense],
@@ -467,6 +480,9 @@ if test "x$have_edje_external_inspector" = "xyes"; then
    PKG_CHECK_MODULES([EDJE_EXTERNAL_INSPECTOR], [ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0])
 fi
 
+if test "x$have_edje_watch" = "xyes"; then
+   PKG_CHECK_MODULES([EDJE_WATCH], [ecore >= 1.2.0 eina >= 1.2.0 eio >= 1.0.0])
+fi
 
 ### Checks for header files
 AC_CHECK_HEADERS([locale.h sys/resource.h])
@@ -614,6 +630,7 @@ echo "  Build edje_recc..............: $have_edje_recc"
 echo "  Build edje_player............: $have_edje_player"
 echo "  Build edje_inspector.........: $have_edje_inspector"
 echo "  Build edje_external_inspector: $have_edje_external_inspector"
+echo "  Build edje_watch.............: $have_edje_watch"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
