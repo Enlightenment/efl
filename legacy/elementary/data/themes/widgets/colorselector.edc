@@ -9,6 +9,7 @@ group {
          scale: 1;
          description { state: "default" 0.0;
             align: 0.0 0.0;
+            fixed: 0 1;
             rel1 {
                relative: 0.0 0.0;
             }
@@ -39,6 +40,7 @@ group {
          scale: 1;
          description { state: "default" 0.0;
             align: 0.0 1.0;
+            fixed: 0 1;
             rel1 {
                relative: 0.0 1.0;
                to: "bottom_padding";
@@ -65,7 +67,6 @@ group {
          action: STATE_SET "default" 0.0;
          target: "bottom_padding";
       }
-
    }
 }
 
