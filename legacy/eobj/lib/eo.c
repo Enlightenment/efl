@@ -33,7 +33,9 @@ typedef struct
 
 #define EO_EINA_MAGIC 0xa186bc32 /* Nothing magical about this number. */
 #define EO_EINA_MAGIC_STR "Eo"
-#define EO_CLASS_EINA_MAGIC 0xa186bb32 /* Nothing magical about this number. */
+#define EO_DELETED_EINA_MAGIC 0xa186bb32 /* Nothing magical about this number. */
+#define EO_DELETED_EINA_MAGIC_STR "Eo - Deleted object"
+#define EO_CLASS_EINA_MAGIC 0xa186ba32 /* Nothing magical about this number. */
 #define EO_CLASS_EINA_MAGIC_STR "Eo Class"
 
 #define EO_MAGIC_RETURN_VAL(d, magic, ret) \
@@ -1128,6 +1130,7 @@ _eo_unref(Eo *obj)
 
         _eo_callback_remove_all(obj);
 
+        EINA_MAGIC_SET(obj, EO_DELETED_EINA_MAGIC);
         free(obj);
      }
 }
@@ -1319,6 +1322,8 @@ eo_init(void)
      }
 
    eina_magic_string_static_set(EO_EINA_MAGIC, EO_EINA_MAGIC_STR);
+   eina_magic_string_static_set(EO_DELETED_EINA_MAGIC,
+         EO_DELETED_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_CLASS_EINA_MAGIC,
          EO_CLASS_EINA_MAGIC_STR);
 
