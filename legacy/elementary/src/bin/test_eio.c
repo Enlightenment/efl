@@ -1,18 +1,37 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+#ifdef HAVE_SYS_TIMES_H
+# include <sys/times.h>
+#endif
+
+#ifdef _WIN32
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
+# include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+#endif
+
 #include <Eio.h>
-#include <sys/times.h>
 
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
 static Elm_Genlist_Item_Class it_eio;
 
+#ifdef _WIN32
+ULONGLONG st_time_kernel;
+ULONGLONG st_time_user;
+ULONGLONG en_time_kernel;
+ULONGLONG en_time_user;
+#else
 static clock_t st_time;
 static clock_t en_time;
 static struct tms st_cpu;
 static struct tms en_cpu;
+#endif
 
 static void _sel_file(void *data, Evas_Object *obj, void *event_info);
 static Eina_Bool _ls_filter_cb(void *data, Eio_File *handler, const char *file);
@@ -62,12 +81,38 @@ _ls_main_cb(void *data, Eio_File *handler __UNUSED__, const char *file)
 static void
 _ls_done_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__)
 {
+#ifdef _WIN32
+   FILETIME tc;
+   FILETIME te;
+   FILETIME tk;
+   FILETIME tu;
+   ULARGE_INTEGER time_kernel;
+   ULARGE_INTEGER time_user;
+
+   if (!GetProcessTimes(GetCurrentProcess(),
+                        &tc, &te, &tk, &tu))
+     return;
+
+   time_kernel.u.LowPart = tk.dwLowDateTime;
+   time_kernel.u.HighPart = tk.dwHighDateTime;
+   en_time_kernel = time_kernel.QuadPart;
+
+   time_user.u.LowPart = tu.dwLowDateTime;
+   time_user.u.HighPart = tu.dwHighDateTime;
+   en_time_user = time_user.QuadPart;
+
+   fprintf(stderr, "ls done\n");
+   fprintf(stderr, "Kernel Time: %lld, User Time: %lld",
+           (en_time_kernel - st_time_kernel),
+           (en_time_user - st_time_user));
+#else
    en_time = times(&en_cpu);
    fprintf(stderr, "ls done\n");
    fprintf(stderr, "Real Time: %.jd, User Time: %.jd, System Time: %.jd\n",
            (intmax_t)(en_time - st_time),
            (intmax_t)(en_cpu.tms_utime - st_cpu.tms_utime),
            (intmax_t)(en_cpu.tms_stime - st_cpu.tms_stime));
+#endif
 }
 
 static void
@@ -82,7 +127,28 @@ _file_chosen(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    const char *file = event_info;
    if (file)
      {
+#ifdef _WIN32
+        FILETIME tc;
+        FILETIME te;
+        FILETIME tk;
+        FILETIME tu;
+        ULARGE_INTEGER time_kernel;
+        ULARGE_INTEGER time_user;
+
+        if (!GetProcessTimes(GetCurrentProcess(),
+                             &tc, &te, &tk, &tu))
+          return;
+
+        time_kernel.u.LowPart = tk.dwLowDateTime;
+        time_kernel.u.HighPart = tk.dwHighDateTime;
+        st_time_kernel = time_kernel.QuadPart;
+
+        time_user.u.LowPart = tu.dwLowDateTime;
+        time_user.u.HighPart = tu.dwHighDateTime;
+        st_time_user = time_user.QuadPart;
+#else
         st_time = times(&st_cpu);
+#endif
         eio_file_ls(file,
                     _ls_filter_cb,
                     _ls_main_cb,

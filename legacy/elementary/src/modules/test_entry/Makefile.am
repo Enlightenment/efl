@@ -17,7 +17,8 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EDBUS_CFLAGS@ \
 @ELEMENTARY_EFREET_CFLAGS@ \
 @ELEMENTARY_ETHUMB_CFLAGS@ \
-@ELEMENTARY_EMAP_CFLAGS@
+@ELEMENTARY_EMAP_CFLAGS@ \
+@EVIL_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -28,6 +29,6 @@ pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = mod.c
 
-module_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
+module_la_LIBADD = $(top_builddir)/src/lib/libelementary.la @EVIL_LIBS@
 module_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
