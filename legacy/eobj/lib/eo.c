@@ -1074,8 +1074,6 @@ _eo_del_internal(Eo *obj)
    eo_event_callback_call(obj, EO_EV_DEL, NULL);
    obj->del = EINA_TRUE;
 
-   obj->refcount--;
-
    const Eo_Class *klass = eo_class_get(obj);
    Eo_Kls_Itr prev_state;
 
@@ -1100,6 +1098,8 @@ _eo_del_internal(Eo *obj)
      {
         eo_composite_object_detach(obj, emb_obj);
      }
+
+   obj->refcount--;
 }
 
 static inline void
