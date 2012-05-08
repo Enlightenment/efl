@@ -489,16 +489,14 @@ eina_value_pset(Eina_Value *value, const void *ptr)
      {
         if (type == EINA_VALUE_TYPE_STRINGSHARE)
           {
-             const char * const *pstr = (const char * const *) ptr;
-             const char *str = *pstr;
+             const char *str = *((const char * const *) ptr);
 
              return eina_stringshare_replace((const char **)&value->value.ptr,
                                              str);
           }
         else if (type == EINA_VALUE_TYPE_STRING)
           {
-             const char * const * pstr = (const char * const *) ptr;
-             const char *str = *pstr;
+             const char *str = *((const char * const *) ptr);
              if (value->value.ptr == str) return EINA_TRUE;
              if (!str)
                {
