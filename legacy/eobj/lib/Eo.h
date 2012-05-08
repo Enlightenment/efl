@@ -450,10 +450,10 @@ EAPI Eina_Bool eo_do_internal(Eo *obj, Eina_Bool constant, ...);
  *
  * Unlike eo_do() and eo_query(), this function only accepts one op.
  *
- * @see #eo_query
+ * @see #eo_do
  * @see eo_query_super()
  */
-#define eo_do_super(obj, ...) eo_do_super_internal((Eo *) EO_TYPECHECK(const Eo *, obj), EINA_FALSE, __VA_ARGS__)
+#define eo_do_super(obj, ...) eo_do_super_internal(obj, EINA_FALSE, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
