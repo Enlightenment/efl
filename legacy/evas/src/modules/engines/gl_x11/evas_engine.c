@@ -106,7 +106,6 @@ struct _Render_Engine_GL_Context
 
    int         scissor_enabled;
    int         scissor_upated;
-   GLfloat     df_clear_color[4];
 
    Render_Engine_GL_Surface   *current_sfc;
 };
@@ -2894,7 +2893,7 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
    glDeleteFramebuffers(1, &fbo);
    if (tex) glDeleteTextures(1, &tex);
-   if (rb) glDeleteBuffers(1, &rb);
+   if (rb) glDeleteRenderbuffers(1, &rb);
 
    if (fb_status != GL_FRAMEBUFFER_COMPLETE)
       return 0;
@@ -3303,7 +3302,7 @@ finish:
 
    if (!ret)
      {
-        if (!sfc) free(sfc);
+        if (sfc) free(sfc);
      }
    return ret;
 }
@@ -3932,15 +3931,7 @@ evgl_glClear(GLbitfield mask)
 static void
 evgl_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
 {
-   Render_Engine_GL_Context *ctx = current_evgl_ctx;
-
-   current_evgl_ctx->df_clear_color[0] = red;
-   current_evgl_ctx->df_clear_color[1] = green;
-   current_evgl_ctx->df_clear_color[2] = blue;
-   current_evgl_ctx->df_clear_color[3] = alpha;
-
    glClearColor(red, green, blue, alpha);
-
 }
 
 static void
