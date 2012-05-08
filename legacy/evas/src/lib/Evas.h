@@ -9526,33 +9526,33 @@ struct _Evas_Smart_Cb_Description
  * @ingroup Evas_Smart_Group
  */
 #define EVAS_SMART_SUBCLASS_NEW(smart_name, prefix, api_type, parent_type, parent_func, cb_desc) \
-  static const parent_type * prefix##_parent_sc = NULL;			\
-  static void prefix##_smart_set_user(api_type *api);			\
-  static void prefix##_smart_set(api_type *api)				\
-  {									\
-     Evas_Smart_Class *sc;						\
-     if (!(sc = (Evas_Smart_Class *)api))				\
-       return;								\
-     if (!prefix##_parent_sc)						\
-       prefix##_parent_sc = parent_func();				\
-     evas_smart_class_inherit(sc, prefix##_parent_sc);                  \
-     prefix##_smart_set_user(api);					\
-  }									\
-  static Evas_Smart * prefix##_smart_class_new(void)			\
-  {									\
-     static Evas_Smart *smart = NULL;					\
-     static api_type api;						\
-     if (!smart)							\
-       {								\
-	  Evas_Smart_Class *sc = (Evas_Smart_Class *)&api;		\
-	  memset(&api, 0, sizeof(api_type));				\
-	  sc->version = EVAS_SMART_CLASS_VERSION;			\
-	  sc->name = smart_name;					\
-	  sc->callbacks = cb_desc;					\
-	  prefix##_smart_set(&api);					\
-	  smart = evas_smart_class_new(sc);				\
-       }								\
-     return smart;							\
+  static const parent_type * prefix##_parent_sc = NULL;         \
+  static void prefix##_smart_set_user(api_type *api);           \
+  static void prefix##_smart_set(api_type *api)                 \
+  {                                                             \
+     Evas_Smart_Class *sc;                                      \
+     if (!(sc = (Evas_Smart_Class *)api))                       \
+       return;                                                  \
+     if (!prefix##_parent_sc)                                   \
+       prefix##_parent_sc = parent_func();                      \
+     evas_smart_class_inherit(sc, prefix##_parent_sc);          \
+     prefix##_smart_set_user(api);                              \
+  }                                                             \
+  static Evas_Smart * prefix##_smart_class_new(void)            \
+  {                                                             \
+     static Evas_Smart *smart = NULL;                           \
+     static api_type api;                                       \
+     if (!smart)                                                \
+       {                                                        \
+          Evas_Smart_Class *sc = (Evas_Smart_Class *)&api;      \
+          memset(&api, 0, sizeof(api_type));                    \
+          sc->version = EVAS_SMART_CLASS_VERSION;               \
+          sc->name = smart_name;                                \
+          sc->callbacks = cb_desc;                              \
+          prefix##_smart_set(&api);                             \
+          smart = evas_smart_class_new(sc);                     \
+       }                                                        \
+     return smart;                                              \
   }
 
 /**
