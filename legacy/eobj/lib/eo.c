@@ -70,7 +70,7 @@ struct _Eo {
 
      Eo_Kls_Itr mro_itr;
 
-     Eina_Bool delete:1;
+     Eina_Bool del:1;
      Eina_Bool construct_error:1;
 };
 
@@ -1066,13 +1066,13 @@ eo_ref(Eo *obj)
 static void
 _eo_del_internal(Eo *obj)
 {
-   if (obj->delete)
+   if (obj->del)
       return;
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
    eo_event_callback_call(obj, EO_EV_DEL, NULL);
-   obj->delete = EINA_TRUE;
+   obj->del = EINA_TRUE;
 
    obj->refcount--;
 
@@ -1563,7 +1563,7 @@ eo_event_callback_call(Eo *obj, const Eo_Event_Description *desc,
                   break;
                }
           }
-        if (obj->delete)
+        if (obj->del)
           break;
      }
    obj->walking_list--;
