@@ -12,7 +12,6 @@
 /* The base size of the shadow image. */
 #define SHADOW_W 118
 #define SHADOW_H 118
-#define RAD2DEG(x) ((x) * 57.295779513)
 
 static double zoom_out_animation_duration = 0.4;
 
@@ -139,8 +138,8 @@ rotate_move(void *_po, void *event_info)
 {
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Rotate_Info *p = (Elm_Gesture_Rotate_Info *) event_info;
-   printf("rotate move <%d,%d> base=<%f> <%f>\n", p->x, p->y, RAD2DEG(p->base_angle), RAD2DEG(p->angle));
-   po->rotate = po->base_rotate + (int) RAD2DEG(p->base_angle - p->angle);
+   printf("rotate move <%d,%d> base=<%f> <%f>\n", p->x, p->y, p->base_angle, p->angle);
+   po->rotate = po->base_rotate + (int) p->angle - p->base_angle;
    if (po->rotate < 0)
       po->rotate += 360;
    apply_changes(po);
@@ -152,8 +151,8 @@ rotate_end(void *_po, void *event_info)
 {
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Rotate_Info *p = (Elm_Gesture_Rotate_Info *) event_info;
-   printf("rotate end/abort <%d,%d> base=<%f> <%f>\n", p->x, p->y, RAD2DEG(p->base_angle), RAD2DEG(p->angle));
-   po->base_rotate += (int) RAD2DEG(p->base_angle - p->angle);
+   printf("rotate end/abort <%d,%d> base=<%f> <%f>\n", p->x, p->y, p->base_angle, p->angle);
+   po->base_rotate += (int) p->angle - p->base_angle;
    if (po->rotate < 0)
       po->rotate += 360;
    return EVAS_EVENT_FLAG_NONE;
