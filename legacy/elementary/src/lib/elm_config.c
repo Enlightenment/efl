@@ -1141,7 +1141,7 @@ _elm_config_profile_save(void)
    ret = ecore_file_mv(buf2, buf);
    if (!ret)
      {
-        ERR("Error saving Elementary's configuration file");
+        ERR("Error saving Elementary's configuration profile file");
         goto err;
      }
 
