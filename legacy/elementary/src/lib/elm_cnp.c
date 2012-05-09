@@ -62,21 +62,21 @@ enum
 
 struct _Cnp_Selection
 {
-   const char          *debug;
-   Evas_Object         *widget;
-   char                *selbuf;
-   Evas_Object         *requestwidget;
-   void                *udata;
-   Elm_Sel_Format  requestformat;
-   Elm_Drop_Cb          datacb;
-   Eina_Bool      (*set)     (Ecore_X_Window, const void *data, int size);
-   Eina_Bool      (*clear)   (void);
-   void           (*request) (Ecore_X_Window, const char *target);
+   const char        *debug;
+   Evas_Object       *widget;
+   char              *selbuf;
+   Evas_Object       *requestwidget;
+   void              *udata;
+   Elm_Sel_Format     requestformat;
+   Elm_Drop_Cb        datacb;
+   Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
+   Eina_Bool        (*clear)   (void);
+   void             (*request) (Ecore_X_Window, const char *target);
 
-   Elm_Sel_Format  format;
-   Ecore_X_Selection    ecore_sel;
+   Elm_Sel_Format     format;
+   Ecore_X_Selection  ecore_sel;
 
-   Eina_Bool         active : 1;
+   Eina_Bool          active : 1;
 };
 
 struct _Escape
@@ -95,8 +95,8 @@ struct _Tmp_Info
 
 struct _Cnp_Atom
 {
-   const char          *name;
-   Elm_Sel_Format  formats;
+   const char           *name;
+   Elm_Sel_Format       formats;
    /* Called by ecore to do conversion */
    Converter_Fn_Cb      converter;
    Response_Handler_Cb  response;
@@ -116,11 +116,11 @@ struct _Saved_Type
 
 struct _Dropable
 {
-   Evas_Object         *obj;
+   Evas_Object    *obj;
    /* FIXME: Cache window */
    Elm_Sel_Format  types;
-   Elm_Drop_Cb          dropcb;
-   void                *cbdata;
+   Elm_Drop_Cb     dropcb;
+   void           *cbdata;
 };
 
 static Tmp_Info *elm_cnp_tempfile_create(int size);
