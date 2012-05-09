@@ -135,10 +135,20 @@ _edje_file_warn(void *data)
    Eina_List *l, *ll;
    Edje *ed;
 
-   EINA_LIST_FOREACH_SAFE(edf->edjes, l, ll, ed)
+   edf->references++;
+
+   EINA_LIST_FOREACH(edf->edjes, l, ed)
+     _edje_ref(ed);
+
+   EINA_LIST_FOREACH(edf->edjes, l, ed)
      {
         _edje_emit(ed, "edje,change,file", "edje");
      }
+
+   EINA_LIST_FOREACH_SAFE(edf->edjes, l, ll, ed)
+     _edje_unref(ed);
+
+   edf->references--;
 
    edf->timeout = NULL;
    return EINA_FALSE;
