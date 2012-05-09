@@ -34,7 +34,8 @@ static pid_t _monitor_pid = -1;
 static void
 _eio_monitor_free(Eio_Monitor *monitor)
 {
-   eina_hash_del(_eio_monitors, monitor->path, monitor);
+   if (!monitor->delete_me)
+     eina_hash_del(_eio_monitors, monitor->path, monitor);
 
    if (monitor->exist) eio_file_cancel(monitor->exist);
 
@@ -262,6 +263,7 @@ EAPI Eio_Monitor *
 eio_monitor_stringshared_add(const char *path)
 {
    Eio_Monitor *monitor;
+   struct stat st;
 
    if (_monitor_pid == -1) return NULL;
 
@@ -271,17 +273,28 @@ eio_monitor_stringshared_add(const char *path)
        eio_monitor_init();
      }
 
+   if (stat(path, &st) != 0) return NULL;
+
    monitor = eina_hash_find(_eio_monitors, path);
 
    if (monitor)
      {
-        EINA_REFCOUNT_REF(monitor);
-        return monitor;
+        if (st.st_mtime != monitor->mtime)
+          {
+             monitor->delete_me = EINA_TRUE;
+             eina_hash_del(_eio_monitors, monitor->path, monitor);
+          }
+        else
+          {
+             EINA_REFCOUNT_REF(monitor);
+             return monitor;
+          }
      }
 
    monitor = malloc(sizeof (Eio_Monitor));
    if (!monitor) return NULL;
 
+   monitor->mtime = st.st_mtime;
    monitor->backend = NULL; // This is needed to avoid race condition
    monitor->path = eina_stringshare_ref(path);
    monitor->fallback = EINA_FALSE;

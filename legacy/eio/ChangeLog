@@ -5,3 +5,7 @@
 2012-04-30 Jérôme Pinot
 
 	* Fix build out of tree.
+
+2012-05-09 Cedric Bail
+
+	* Actually test if we are really requesting to monitor the same file.

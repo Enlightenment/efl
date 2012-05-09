@@ -411,8 +411,11 @@ struct _Eio_Monitor
    EINA_REFCOUNT;
    int error;
 
+   time_t mtime;
+
    Eina_Bool fallback : 1;
    Eina_Bool rename : 1;
+   Eina_Bool delete_me : 1;
 };
 
 /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong. */
