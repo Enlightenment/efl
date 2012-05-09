@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 @EVIL_CFLAGS@ \
 @EDJE_CFLAGS@ \
 @ECORE_IMF_CFLAGS@ \
+@EIO_CFLAGS@ \
 @EFL_EDJE_BUILD@ \
 @REMIX_CFLAGS@ \
 @SNDFILE_CFLAGS@ 
@@ -114,6 +115,10 @@ edje_amalgamation.c: $(base_sources) Makefile
 	@echo "# include <Ecore_IMF.h>" >> edje_amalgamation.c
 	@echo "#endif" >> edje_amalgamation.c
 
+	@echo "#ifdef HAVE_EIO" >> edje_amalgamation.c
+	@echo "# include <Eio.h>" >> edje_amalgamation.c
+	@echo "#endif" >> edje_amalgamation.c
+
 	@echo "#include <edje_private.h>" >> edje_amalgamation.c
 
 	@for f in $(base_sources); do \
@@ -123,7 +128,7 @@ edje_amalgamation.c: $(base_sources) Makefile
 		  file="$$f" ; \
 	   fi ; \
 	   echo "/* file: $$file */" >> edje_amalgamation.c; \
-	   grep -v -e '^# *include \+.\(config\|\|Evil\|Eina\|Eet\|Evas\|Ecore\|Embryo\|Ecore_IMF\|string\|math\|limits\|sys/stat\|errno\|time\|unistd\|locale\|lua\|lauxlib\|edje_private\)[.]h.*' $$file >> edje_amalgamation.c; \
+	   grep -v -e '^# *include \+.\(config\|\|Evil\|Eina\|Eet\|Evas\|Ecore\|Embryo\|Ecore_IMF\|Eio\|string\|math\|limits\|sys/stat\|errno\|time\|unistd\|locale\|lua\|lauxlib\|edje_private\)[.]h.*' $$file >> edje_amalgamation.c; \
 	done
 	@echo "edje_amalgamation.c generated"
 
@@ -131,7 +136,7 @@ else
 libedje_la_SOURCES = $(base_sources)
 endif
 
-libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ @EVIL_LIBS@ @REMIX_LIBS@ @SNDFILE_LIBS@ -lm
+libedje_la_LIBADD = @EDJE_LIBS@ @ECORE_IMF_LIBS@ @EIO_LIBS@ @EVIL_LIBS@ @REMIX_LIBS@ @SNDFILE_LIBS@ -lm
 libedje_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 EXTRA_DIST = edje_private.h edje_container.h edje_convert.h

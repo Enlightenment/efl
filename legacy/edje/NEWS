@@ -5,6 +5,8 @@ Changes since Edje 1.2.0:
 
 Additions:
     * Add edje_watch to monitore change on edje source.
+    * Emit ['edje,change,file', 'edje'] when the file change on disk.
+    * edje_player will automatically reload the file when it change on disk.
 
 Improvements:
     * Allocate once and reuse Evas_Map.

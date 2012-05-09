@@ -116,6 +116,7 @@ main(int argc, char **argv)
    fprintf(stderr, "SYSTEM('%s')\n", edje_cc_command);
    system(edje_cc_command);
    read_watch_file(watchfile);
+   fprintf(stderr, "DONE\n");
 
    ecore_main_loop_begin();
 

@@ -89,7 +89,7 @@ edje_file_collection_list(const char *file)
    int error_ret = 0;
 
    if ((!file) || (!*file)) return NULL;
-   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
+   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
    if (edf)
      {
 	Eina_Iterator *i;
@@ -129,7 +129,7 @@ edje_file_group_exists(const char *file, const char *glob)
    if ((!file) || (!*file) || (!glob))
       return EINA_FALSE;
 
-   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
+   edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
    if (!edf)
       return EINA_FALSE;
 
@@ -189,7 +189,7 @@ edje_file_data_get(const char *file, const char *key)
 
    if (key)
      {
-	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
+	edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL, NULL);
 	if (edf)
 	  {
 	     str = (char*) edje_string_get(eina_hash_find(edf->data, key));
@@ -902,7 +902,8 @@ _edje_file_add(Edje *ed)
    if (!_edje_edd_edje_file) return;
    ed->file = _edje_cache_file_coll_open(ed->path, ed->group,
 					 &(ed->load_error),
-					 &(ed->collection));
+					 &(ed->collection),
+					 ed);
 
    if (!ed->collection)
      {
@@ -1055,7 +1056,10 @@ _edje_file_del(Edje *ed)
      }
    if (ed->file)
      {
-	_edje_cache_file_unref(ed->file);
+#ifdef HAVE_EIO
+        ed->file->edjes = eina_list_remove(ed->file->edjes, ed);
+#endif
+        _edje_cache_file_unref(ed->file);
 	ed->file = NULL;
      }
    if (ed->actions)
@@ -1096,6 +1100,9 @@ void
 _edje_file_free(Edje_File *edf)
 {
    Edje_Color_Class *ecc;
+#ifdef HAVE_EIO
+   Ecore_Event_Handler *event;
+#endif
 
 #define HASH_FREE(Hash)				\
    if (Hash) eina_hash_free(Hash);		\
@@ -1165,6 +1172,12 @@ _edje_file_free(Edje_File *edf)
      }
 
    if (edf->collection_patterns) edje_match_patterns_free(edf->collection_patterns);
+#ifdef HAVE_EIO
+   if (edf->timeout) ecore_timer_del(edf->timeout);
+   EINA_LIST_FREE(edf->handlers, event)
+     ecore_event_handler_del(event);
+   eio_monitor_del(edf->monitor);
+#endif
    if (edf->path) eina_stringshare_del(edf->path);
    if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
    _edje_textblock_style_cleanup(edf);

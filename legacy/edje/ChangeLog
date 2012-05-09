@@ -432,4 +432,5 @@
 
 	* Fix bug in case of nesting edje_object_signal_emit and edje_object_signal_callback_{add,del}
 	* Check that the file changed on disk when trying to reopen it.
-
+	* Emit ['edje,change,file', 'edje'] when the file change on disk.
+	* Automatically reload edje file when it change in edje_player.

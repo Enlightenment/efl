@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)/remix\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/remix\" \
 @EDJE_CFLAGS@ \
+@EIO_CFLAGS@ \
 @REMIX_CFLAGS@ \
 @ALSA_CFLAGS@
 

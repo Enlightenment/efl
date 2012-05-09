@@ -74,6 +74,10 @@ void *alloca (size_t);
 #endif
 #include <Embryo.h>
 
+#ifdef HAVE_EIO
+# include <Eio.h>
+#endif
+
 #include "Edje.h"
 
 EAPI extern int _edje_default_log_dom ;
@@ -465,6 +469,13 @@ struct _Edje_File
    Edje_Patterns		  *collection_patterns;
 
    Eet_File                       *ef;
+
+#ifdef HAVE_EIO
+   Eio_Monitor                    *monitor;
+   Eina_List                      *edjes;
+   Eina_List                      *handlers;
+   Ecore_Timer                    *timeout;
+#endif
 
    unsigned char                   free_strings : 1;
    unsigned char                   dangling : 1;

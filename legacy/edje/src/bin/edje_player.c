@@ -37,6 +37,8 @@ struct opts {
    char *title;
 };
 
+static Eina_Bool _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group);
+
 static Ecore_Evas *win;
 
 static void
@@ -456,6 +458,17 @@ _create_bg(Evas *evas, const struct opts *opts)
    return bg;
 }
 
+static void
+_edje_reload(void *data __UNUSED__, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   const char *file;
+   const char *group;
+   edje_object_signal_callback_del(obj, "edje,change,file", "edje", _edje_reload);
+
+   edje_object_file_get(obj, &file, &group);
+   _edje_load_or_show_error(obj, file, group);
+}
+
 static Eina_Bool
 _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group)
 {
@@ -464,6 +477,7 @@ _edje_load_or_show_error(Evas_Object *edje, const char *file, const char *group)
 
    if (edje_object_file_set(edje, file, group))
      {
+        edje_object_signal_callback_add(edje, "edje,change,file", "edje", _edje_reload, NULL);;
         evas_object_focus_set(edje, EINA_TRUE);
         return EINA_TRUE;
      }
