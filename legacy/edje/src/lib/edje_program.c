@@ -1289,7 +1289,7 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
    if (ed->just_added_callbacks)
      _edje_callbacks_patterns_clean(ed);
 
-   ed->walking_callbacks = 1;
+   ed->walking_callbacks++;
 
    if (ed->callbacks)
      {
@@ -1321,14 +1321,15 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
                {
                   escb->func(escb->data, ed->obj, sig, src);
                   if (_edje_block_break(ed))
-                    goto break_prog;
+                    break;
                }
           }
      }
    break_prog:
 
-   ed->walking_callbacks = 0;
-   if ((ed->delete_callbacks) || (ed->just_added_callbacks))
+   ed->walking_callbacks--;
+   if (!ed->walking_callbacks &&
+       ((ed->delete_callbacks) || (ed->just_added_callbacks)))
      {
 	ed->delete_callbacks = 0;
 	ed->just_added_callbacks = 0;

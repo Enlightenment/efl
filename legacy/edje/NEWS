@@ -11,6 +11,7 @@ Improvements:
 
 Fixes:
     * Add missing files in the tarballs.
+    * Prevent crash when running nested edje_object_signal_emit with edje_object_signal_callback_{add,del}.
 
 Edje 1.2.0
 
