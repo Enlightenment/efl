@@ -35,3 +35,7 @@
 2012-05-04  Leandro Pereira
 
         * Fix icon not appearing in default Genlist theme.
+
+2012-05-09  Cedric Bail
+
+	* Reload theme when it change on disk.

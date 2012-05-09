@@ -182,6 +182,7 @@ _els_smart_icon_file_edje_set(Evas_Object *obj, const char *file, const char *pa
    sd->edje = EINA_TRUE;
    if (!edje_object_file_set(sd->obj, file, part))
      return EINA_FALSE;
+   /* FIXME: do i want to update icon on file change ? */
    _smart_reconfigure(sd);
    return EINA_TRUE;
 }

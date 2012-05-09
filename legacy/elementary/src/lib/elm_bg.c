@@ -189,6 +189,18 @@ elm_bg_add(Evas_Object *parent)
    return obj;
 }
 
+static void
+_elm_bg_file_reload(void *data, Evas_Object *obj,
+		    const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+  Evas_Object *bg = data;
+  const char *file;
+  const char *group;
+
+  edje_object_file_get(obj, &file, &group);
+  elm_bg_file_set(bg, file, group);
+}
+
 EAPI Eina_Bool
 elm_bg_file_set(Evas_Object *obj,
                 const char *file,
@@ -220,6 +232,8 @@ elm_bg_file_set(Evas_Object *obj,
         sd->img = edje_object_add
             (evas_object_evas_get(ELM_WIDGET_DATA(sd)->resize_obj));
         ret = edje_object_file_set(sd->img, file, group);
+	edje_object_signal_callback_del(sd->img, "edje,change,file", "edje", _elm_bg_file_reload);
+	edje_object_signal_callback_add(sd->img, "edje,change,file", "edje", _elm_bg_file_reload, obj);
      }
    else
      {

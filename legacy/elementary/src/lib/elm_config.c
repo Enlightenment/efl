@@ -2119,6 +2119,7 @@ _elm_config_reload(void)
    _elm_config_font_overlay_apply();
    _elm_rescale();
    _elm_recache();
+   ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
 }
 
 void

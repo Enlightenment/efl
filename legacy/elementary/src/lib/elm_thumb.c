@@ -198,6 +198,8 @@ _retry_thumb(Widget_Data *wd)
                    wd->file);
              goto view_err;
           }
+	/* FIXME: Do we want to reload a thumbnail when the file change ? I think no at the moment as
+	   this may increase the presure on the system a lot when using it in a file browser */
      }
    else
      {

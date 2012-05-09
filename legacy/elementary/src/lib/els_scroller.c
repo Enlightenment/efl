@@ -301,6 +301,20 @@ elm_smart_scroller_extern_pan_set(Evas_Object *obj, Evas_Object *pan,
    evas_object_show(sd->pan_obj);
 }
 
+static void
+_elm_smart_scroller_custom_edje_file_reload(void *data,
+					    Evas_Object *obj,
+					    const char *emission __UNUSED__,
+					    const char *source __UNUSED__)
+{
+   Evas_Object *scroller = data;
+   const char *file;
+   const char *group;
+
+   edje_object_file_get(obj, &file, &group);
+   elm_smart_scroller_custom_edje_file_set(scroller, (char*) file, (char*) group);
+}
+
 void
 elm_smart_scroller_custom_edje_file_set(Evas_Object *obj, char *file, char *group)
 {
@@ -309,6 +323,13 @@ elm_smart_scroller_custom_edje_file_set(Evas_Object *obj, char *file, char *grou
    edje_object_file_set(sd->edje_obj, file, group);
    if (sd->pan_obj)
      edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", sd->pan_obj);
+   edje_object_signal_callback_del(sd->edje_obj,
+                                   "edje,change,file", "edje",
+                                   _elm_smart_scroller_custom_edje_file_reload);
+   edje_object_signal_callback_add(sd->edje_obj,
+                                   "edje,change,file", "edje",
+                                   _elm_smart_scroller_custom_edje_file_reload,
+                                   obj);
    sd->vbar_visible = !sd->vbar_visible;
    sd->hbar_visible = !sd->hbar_visible;
    _smart_scrollbar_bar_visibility_adjust(sd);

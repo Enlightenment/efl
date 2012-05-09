@@ -6,6 +6,7 @@ Changes since Elementary 1.0.0:
 Additions:
 
    * Focus can be moved in all directions by elm_widget_focus_go function.
+   * Reload theme when it change on disk.
 
 Fixes:
 
