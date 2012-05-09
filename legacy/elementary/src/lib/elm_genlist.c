@@ -535,7 +535,7 @@ _on_focus_hook(void        *data __UNUSED__,
      {
         elm_object_signal_emit(wd->obj, "elm,action,focus", "elm");
         evas_object_focus_set(wd->obj, EINA_TRUE);
-        if ((wd->selected) && (!wd->last_selected_item))
+        if ((wd->items) && (wd->selected) && (!wd->last_selected_item))
           wd->last_selected_item = eina_list_data_get(wd->selected);
      }
    else
