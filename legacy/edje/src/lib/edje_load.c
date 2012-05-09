@@ -290,8 +290,16 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    if (!file) file = "";
    if (!group) group = "";
    if (((ed->path) && (!strcmp(file, ed->path))) &&
-       (ed->group) && (!strcmp(group, ed->group)))
-     return 1;
+       (ed->group) && (!strcmp(group, ed->group)) &&
+       ed->file)
+     {
+        struct stat st;
+
+        if (stat(file, &st) != 0)
+          return 1;
+        if (st.st_mtime == ed->file->mtime)
+          return 1;
+     }
 
    tev = evas_object_evas_get(obj);
    evas_event_freeze(tev);
@@ -299,6 +307,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
+
    _edje_file_del(ed);
 
    eina_stringshare_replace(&ed->path, file);

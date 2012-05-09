@@ -431,3 +431,5 @@
 2012-05-09  Cedric Bail
 
 	* Fix bug in case of nesting edje_object_signal_emit and edje_object_signal_callback_{add,del}
+	* Check that the file changed on disk when trying to reopen it.
+
