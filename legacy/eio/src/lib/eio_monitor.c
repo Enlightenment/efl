@@ -299,6 +299,7 @@ eio_monitor_stringshared_add(const char *path)
    monitor->path = eina_stringshare_ref(path);
    monitor->fallback = EINA_FALSE;
    monitor->rename = EINA_FALSE;
+   monitor->delete_me = EINA_FALSE;
 
    EINA_REFCOUNT_INIT(monitor);
    EINA_REFCOUNT_REF(monitor); /* as we spawn a thread for this monitor, we need to refcount specifically for it */
