@@ -772,6 +772,7 @@ _item_block_del(Elm_Gen_Item *it)
 {
    Eina_Inlist *il;
    Item_Block *itb = it->item->block;
+   Eina_Bool block_changed = EINA_FALSE;
 
    itb->items = eina_list_remove(itb->items, it);
    itb->count--;
@@ -815,6 +816,7 @@ _item_block_del(Elm_Gen_Item *it)
                   it->wd->blocks = eina_inlist_remove(it->wd->blocks,
                                                       EINA_INLIST_GET(itb));
                   free(itb);
+                  block_changed = EINA_TRUE;
                }
              else if ((itbn) && ((itbn->count + itb->count) < itb->wd->max_items_per_block + itb->wd->max_items_per_block/2))
                {
@@ -834,8 +836,16 @@ _item_block_del(Elm_Gen_Item *it)
                   it->wd->blocks =
                     eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
                   free(itb);
+                  block_changed = EINA_TRUE;
                }
           }
+     }
+   if (block_changed)
+     {
+        it->wd->pan_changed = EINA_TRUE;
+        evas_object_smart_changed(it->wd->pan_smart);
+        if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
+        it->wd->calc_job = NULL;
      }
 }
 
