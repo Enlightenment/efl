@@ -905,6 +905,7 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
    else
 #endif
      {
+#if 0
 #ifdef EVAS_CSERVE2
         if (evas_cserve2_use_get())
           {
@@ -917,6 +918,7 @@ eng_image_draw(void *data __UNUSED__, void *context, void *surface, void *image,
         evas_common_image_colorspace_normalize(im);
 
 image_loaded:
+#endif
         evas_common_rgba_image_scalecache_prepare(&im->cache_entry, surface, context, smooth,
                                                   src_x, src_y, src_w, src_h,
                                                   dst_x, dst_y, dst_w, dst_h);
