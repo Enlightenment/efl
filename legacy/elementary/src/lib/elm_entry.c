@@ -120,6 +120,7 @@ static const char *widtype = NULL;
 #ifdef HAVE_ELEMENTARY_X
 static Eina_Bool _drag_drop_cb(void *data, Evas_Object *obj, Elm_Selection_Data *);
 #endif
+static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
@@ -539,6 +540,7 @@ _del_hook(Evas_Object *obj)
    if (wd->input_panel_imdata) free(wd->input_panel_imdata);
 
    if (wd->anchor_hover.hover_style) eina_stringshare_del(wd->anchor_hover.hover_style);
+   evas_object_smart_callback_del_full(obj, "sub-object-del", _sub_del, wd);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
    free(wd);
