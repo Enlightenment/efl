@@ -130,7 +130,7 @@ _elm_bubble_smart_focus_direction(const Evas_Object *obj,
 
    content = elm_layout_content_get(obj, NULL);
 
-   if (content) return EINA_FALSE;
+   if (!content) return EINA_FALSE;
 
    /* Try Focus cycle in subitem */
    return elm_widget_focus_direction_get
