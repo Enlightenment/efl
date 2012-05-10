@@ -632,3 +632,7 @@
 2012-05-08  Cedric Bail
 
 	* Don't over allocate Ecore_Pipe during ecore_init/ecore_shutdown.
+
+2012-05-10  Cedric Bail
+
+	* Reduce rounding error in ecore_animator_pos_map.

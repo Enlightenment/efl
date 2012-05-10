@@ -203,11 +203,13 @@ _pos_map_sin(double in)
    return eina_f32p32_double_to(eina_f32p32_sin(eina_f32p32_double_from(in)));
 }
 
+#if 0
 static double
 _pos_map_cos(double in)
 {
    return eina_f32p32_double_to(eina_f32p32_cos(eina_f32p32_double_from(in)));
 }
+#endif
 
 static double
 _pos_map_accel_factor(double pos,
@@ -258,6 +260,15 @@ _pos_map_spring(double pos,
    return _pos_map_sin((M_PI / 2.0) + (p2 * len)) * decay;
 }
 
+#define DBL_TO(Fp) eina_f32p32_double_to(Fp)
+#define DBL_FROM(D) eina_f32p32_double_from(D)
+#define INT_FROM(I) eina_f32p32_int_from(I)
+#define SIN(Fp) eina_f32p32_sin(Fp)
+#define COS(Fp) eina_f32p32_cos(Fp)
+#define ADD(A, B) eina_f32p32_add(A, B)
+#define SUB(A, B) eina_f32p32_sub(A, B)
+#define MUL(A, B) eina_f32p32_mul(A, B)
+
 EAPI double
 ecore_animator_pos_map(double        pos,
                        Ecore_Pos_Map map,
@@ -274,15 +285,18 @@ ecore_animator_pos_map(double        pos,
          return pos;
 
        case ECORE_POS_MAP_ACCELERATE:
-         pos = 1.0 - _pos_map_sin(M_PI_2 + pos * M_PI_2);
+	 /* pos = 1 - sin(Pi / 2 + pos * Pi / 2); */
+	 pos = DBL_TO(SUB(INT_FROM(1), SIN(ADD((EINA_F32P32_PI >> 1), MUL(DBL_FROM(pos), (EINA_F32P32_PI >> 1))))));
          return pos;
 
        case ECORE_POS_MAP_DECELERATE:
-         pos = _pos_map_sin(pos * M_PI_2);
+	 /* pos = sin(pos * Pi / 2); */
+	 pos = DBL_TO(SIN(MUL(DBL_FROM(pos), (EINA_F32P32_PI >> 1))));
          return pos;
 
        case ECORE_POS_MAP_SINUSOIDAL:
-         pos = (1.0 - _pos_map_cos(pos * M_PI)) / 2.0;
+	 /* pos = (1 - cos(pos * Pi)) / 2 */
+	 pos = DBL_TO((SUB(INT_FROM(1), COS(MUL(DBL_FROM(pos), EINA_F32P32_PI)))) >> 1);
          return pos;
 
        case ECORE_POS_MAP_ACCELERATE_FACTOR:
