@@ -411,7 +411,9 @@ consume_event(Widget_Data *wd, void *event_info,
    if (!event_info)
      return;  /* This happens when restarting gestures  */
 
-   if ((ev_flags) || (!wd->repeat_events))
+   if (!wd->repeat_events) ev_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
+   if (ev_flags)
      {
         switch(event_type)
           {
@@ -3222,16 +3224,6 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
 
    if (_get_event_flag(event_info, event_type) & EVAS_EVENT_FLAG_ON_HOLD)
      _event_history_add(data, event_info, event_type);
-   else if ((event_type == EVAS_CALLBACK_MOUSE_UP) ||
-         (event_type == EVAS_CALLBACK_MULTI_UP))
-     {
-        Eina_List *pending = _device_is_pending(wd->pending, event_info, event_type);
-        if (pending)
-          {
-             consume_event(wd, event_info, event_type, EVAS_EVENT_FLAG_ON_HOLD);
-             _event_history_add(data, event_info, event_type);
-          }
-     }
 
    /* we maintain list of touched devices              */
    /* We also use move to track current device x.y pos */
