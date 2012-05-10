@@ -434,3 +434,7 @@
 	* Check that the file changed on disk when trying to reopen it.
 	* Emit ['edje,change,file', 'edje'] when the file change on disk.
 	* Automatically reload edje file when it change in edje_player.
+
+2012-05-10  Cedric Bail
+
+	* Preserve user box and table items during call of edje_object_file_set.

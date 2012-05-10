@@ -1,5 +1,16 @@
 #include "edje_private.h"
 
+typedef struct _Edje_Table_Items Edje_Table_Items;
+struct _Edje_Table_Items
+{
+   Evas_Object *child;
+   const char *part;
+   unsigned short col;
+   unsigned short row;
+   unsigned short colspan;
+   unsigned short rowspan;
+};
+
 #ifdef EDJE_PROGRAM_CACHE
 static Eina_Bool  _edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 #endif
@@ -7,6 +18,8 @@ static void _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element
 static void _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *source);
 
 static Eina_List *_edje_swallows_collect(Edje *ed);
+static Eina_List *_edje_box_items_collect(Edje *ed);
+static Eina_List *_edje_table_items_collect(Edje *ed);
 
 /************************** API Routines **************************/
 
@@ -281,6 +294,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    Eina_List *sources = NULL;
    Eina_List *externals = NULL;
    Eina_List *old_swallows;
+   Eina_List *old_table_items;
+   Eina_List *old_box_items;
    unsigned int n;
    Eina_List *parts = NULL;
    int group_path_started = 0;
@@ -304,6 +319,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    tev = evas_object_evas_get(obj);
    evas_event_freeze(tev);
    old_swallows = _edje_swallows_collect(ed);
+   old_table_items = _edje_table_items_collect(ed);
+   old_box_items = _edje_box_items_collect(ed);
 
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
@@ -844,6 +861,39 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		    }
 	       }
 
+             if (old_box_items)
+               {
+                  while (old_box_items)
+                    {
+                       const char *name;
+                       Evas_Object *child;
+
+                       name = eina_list_data_get(old_box_items);
+                       old_box_items = eina_list_remove_list(old_box_items, old_box_items);
+
+                       child = eina_list_data_get(old_box_items);
+                       old_box_items = eina_list_remove_list(old_box_items, old_box_items);
+
+                       edje_object_part_box_append(obj, name, child);
+                       eina_stringshare_del(name);
+                    }
+               }
+
+             if (old_table_items)
+               {
+                  Edje_Table_Items *item;
+
+                  EINA_LIST_FREE(old_table_items, item)
+                    {
+                       edje_object_part_table_pack(obj,
+                                                   item->part, item->child,
+                                                   item->col, item->row,
+                                                   item->colspan, item->rowspan);
+                       eina_stringshare_del(item->part);
+                       free(item);
+                    }
+               }
+
 	     _edje_recalc(ed);
 	     _edje_thaw(ed);
 	     _edje_unblock(ed);
@@ -932,6 +982,77 @@ _edje_swallows_collect(Edje *ed)
 	swallows = eina_list_append(swallows, rp->swallowed_object);
      }
    return swallows;
+}
+
+static Eina_List *
+_edje_table_items_collect(Edje *ed)
+{
+   Eina_List *items = NULL;
+   unsigned int i;
+
+   if (!ed->file || !ed->table_parts) return NULL;
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp;
+        Eina_List *children;
+        Evas_Object *child;
+
+        rp = ed->table_parts[i];
+        if (rp->part->type != EDJE_PART_TYPE_TABLE) continue ;
+
+        children = evas_object_table_children_get(rp->object);
+        EINA_LIST_FREE(children, child)
+          if (!evas_object_data_get(child, "\377 edje.table_item"))
+            {
+               Edje_Table_Items *n;
+
+               n = malloc(sizeof (Edje_Table_Items));
+               if (!n) continue ;
+
+               evas_object_table_pack_get(rp->object, child,
+                                          &n->col, &n->row,
+                                          &n->colspan, &n->rowspan);
+               n->child = child;
+               n->part = eina_stringshare_add(rp->part->name);
+
+               _edje_real_part_table_unpack(rp, child);
+
+               items = eina_list_append(items, n);
+            }
+     }
+
+   return items;
+}
+
+static Eina_List *
+_edje_box_items_collect(Edje *ed)
+{
+   Eina_List *items = NULL;
+   unsigned int i;
+
+   if (!ed->file || !ed->table_parts) return NULL;
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp;
+        Eina_List *children;
+        Evas_Object *child;
+
+        rp = ed->table_parts[i];
+        if (rp->part->type != EDJE_PART_TYPE_BOX) continue ;
+
+        children = evas_object_box_children_get(rp->object);
+        EINA_LIST_FREE(children, child)
+          if (!evas_object_data_get(child, "\377 edje.box_item"))
+            {
+               items = eina_list_append(items,
+                                        eina_stringshare_add(rp->part->name));
+               items = eina_list_append(items,
+                                        child);
+               _edje_real_part_box_remove(rp, child);
+            }
+     }
+
+   return items;
 }
 
 void
