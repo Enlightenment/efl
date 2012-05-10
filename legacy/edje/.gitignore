@@ -36,6 +36,7 @@ cscope.out
 /src/bin/edje_convert
 /src/bin/edje_decc
 /src/bin/edje_player
+/src/bin/edje_watch
 /stamp-h1
 tags
 /config.cache
