@@ -6,9 +6,17 @@ endif
 
 bin_SCRIPTS = @EDJE_RECC_PRG@
 
-bin_PROGRAMS = @EDJE_CC_PRG@ @EDJE_DECC_PRG@ @EDJE_PLAYER_PRG@ @EDJE_INSPECTOR_PRG@ @EDJE_EXTERNAL_INSPECTOR_PRG@ @EDJE_WATCH_PRG@
+bin_PROGRAMS = @EDJE_CC_PRG@ @EDJE_DECC_PRG@ @EDJE_PLAYER_PRG@ @EDJE_INSPECTOR_PRG@ @EDJE_EXTERNAL_INSPECTOR_PRG@
 
-EXTRA_PROGRAMS = edje_cc edje_decc edje_player edje_inspector edje_external_inspector edje_watch
+if BUILD_EDJE_WATCH
+bin_PROGRAMS += @EDJE_WATCH_PRG@
+endif
+
+EXTRA_PROGRAMS = edje_cc edje_decc edje_player edje_inspector edje_external_inspector
+
+if BUILD_EDJE_WATCH
+EXTRA_PROGRAMS += edje_watch
+endif
 
 edje_cc_SOURCES = \
 edje_cc.c \
