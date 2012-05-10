@@ -672,14 +672,30 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj 
    if (!extn) return;
    if (extn->ipc.server)
      {
-        Ipc_Data_Ev_Mouse_Down ipc;
+       /* We have send mouse move event before mouse down event */
+       {
+          Ipc_Data_Ev_Mouse_Move ipc_move;
+          Evas_Coord x, y;
 
-        ipc.b = ev->button;
-        ipc.flags = ev->flags;
-        ipc.timestamp = ev->timestamp;
-        ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
-        ipc.event_flags = ev->event_flags;
-        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_DOWN, 0, 0, 0, &ipc, sizeof(ipc));
+          x = ev->canvas.x;
+          y = ev->canvas.y;
+          _ecore_evas_extn_coord_translate(ee, &x, &y);
+          ipc_move.x = x;
+          ipc_move.y = y;
+          ipc_move.timestamp = ev->timestamp;
+          ipc_move.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+          ipc_move.event_flags = ev->event_flags;
+          ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_MOVE, 0, 0, 0, &ipc_move, sizeof(ipc_move));
+       }
+       {
+          Ipc_Data_Ev_Mouse_Down ipc;
+          ipc.b = ev->button;
+          ipc.flags = ev->flags;
+          ipc.timestamp = ev->timestamp;
+          ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
+          ipc.event_flags = ev->event_flags;
+          ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_DOWN, 0, 0, 0, &ipc, sizeof(ipc));
+       }
      }
 }
 

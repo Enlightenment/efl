@@ -636,3 +636,7 @@
 2012-05-10  Cedric Bail
 
 	* Reduce rounding error in ecore_animator_pos_map.
+
+2012-05-10  Jiyoun Park
+
+	* Send mouse move event before mouse down event in ecore_extn

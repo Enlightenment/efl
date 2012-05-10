@@ -6,6 +6,7 @@ Fixes:
     * ecore
      - Prevent running out of fd when cycling ecore_init/ecore_shutdown.
      - Reduce rounding error in ecore_animator_pos_map.
+     - Send mouse move event before mouse down event in ecore_extn
 
 Ecore 1.2.0
 
