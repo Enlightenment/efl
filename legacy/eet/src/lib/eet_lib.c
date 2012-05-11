@@ -633,6 +633,33 @@ eet_shutdown(void)
      return eet_init_count;
 
    eet_clearcache();
+
+   if (eet_writers_num || eet_readers_num)
+     {
+        Eet_File **closelist = NULL;
+        int num = 0;
+        int i;
+
+        closelist = alloca((eet_writers_num + eet_readers_num)
+                           * sizeof(Eet_File *));
+        for (i = 0; i < eet_writers_num; i++)
+          {
+             closelist[num++] = eet_writers[i];
+             eet_writers[i]->delete_me_now = 1;
+          }
+
+        for (i = 0; i < eet_readers_num; i++)
+          {
+             closelist[num++] = eet_readers[i];
+             eet_readers[i]->delete_me_now = 1;
+          }
+
+        for (i = 0; i < num; i++)
+          {
+             ERR("File '%s' is still open !", closelist[i]->path);
+             eet_internal_close(closelist[i], EINA_TRUE);
+          }
+     }
    eet_node_shutdown();
    eet_mempool_shutdown();
 

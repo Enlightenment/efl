@@ -582,3 +582,7 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
         1.6.0 release
+
+2012-05-11  Cedric Bail
+
+	* Force destruction of all pending file when shuting down eet.
