@@ -837,7 +837,10 @@ EAPI void *ecore_event_current_event_get(void);
 /**
  * @defgroup Ecore_Exe_Group Process Spawning Functions
  *
- * Functions that deal with and send signals to spawned processes.
+ * This module is responsible for managing portable processes using Ecore.
+ * With this module you're able to spawn processes and you also can pause, quit your spawned processes
+ * An interaction between your process and those spawned is possible using pipes or signals.
+ *
  *
  * @ingroup Ecore_Main_Loop_Group
  *
