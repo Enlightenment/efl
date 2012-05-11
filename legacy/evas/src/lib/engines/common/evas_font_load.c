@@ -702,7 +702,7 @@ static void
 _evas_common_font_int_clear(RGBA_Font_Int *fi)
 {
    int i, j, k;
-   
+
    LKL(fi->ft_mutex);
    if (!fi->fash)
      {
@@ -743,6 +743,7 @@ _evas_common_font_int_clear(RGBA_Font_Int *fi)
      }
    if (fi->inuse) fonts_use_usage -= fi->usage;
    fi->usage = 0;
+   fi->generation++;
    LKU(fi->ft_mutex);
 }
 

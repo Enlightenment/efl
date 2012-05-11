@@ -263,7 +263,7 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
 }
 
 EAPI void
-evas_common_font_draw_prepare(const Evas_Text_Props *text_props)
+evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 {
    RGBA_Font_Int *fi;
    EVAS_FONT_WALK_TEXT_INIT();
@@ -293,6 +293,8 @@ evas_common_font_draw_prepare(const Evas_Text_Props *text_props)
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
      }
    EVAS_FONT_WALK_TEXT_END();
+
+   text_props->generation = fi->generation;
 }
 
 EAPI void

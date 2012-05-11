@@ -805,7 +805,11 @@ evas_common_pipe_text_prepare(const Evas_Text_Props *text_props)
    const Evas_Text_Props *tmp_props;
    const Eina_List *l;
 
-   if (!text_props->changed) return ;
+   fi = text_props->font_instance;
+   if (!fi) return ;
+
+   if (!text_props->changed && text_props->generation == fi->generation)
+     return ;
 
    fi = text_props->font_instance;
    if (!fi) return ;

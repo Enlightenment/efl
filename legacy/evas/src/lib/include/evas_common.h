@@ -941,6 +941,9 @@ struct _RGBA_Font_Int
                                      in order to comply with the wanted_rend. */
 
    Eina_List       *task;
+
+   int              generation;
+
    unsigned char    sizeok : 1;
    unsigned char    inuse : 1;
 };
