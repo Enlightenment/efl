@@ -1252,7 +1252,7 @@ _elm_colorselector_smart_event(Evas_Object *obj,
                  /*when focus is shifted to component start from first color type*/
                  sd->sel_color_type = HUE;
               }
-            else return FALSE;
+            else return EINA_FALSE;
          }
        else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
          {
@@ -1260,7 +1260,7 @@ _elm_colorselector_smart_event(Evas_Object *obj,
             /*Append color type only if next color bar is available*/
             if (edje_object_part_swallow_get(sd->col_bars_area, colorbar_s))
               sd->sel_color_type = sd->sel_color_type + 1;
-            else return FALSE;
+            else return EINA_FALSE;
          }
      }
    else return EINA_FALSE;
