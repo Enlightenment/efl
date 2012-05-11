@@ -114,3 +114,8 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
         1.2.0 release
+
+2012-05-11  Cedric Bail
+
+	* Faster loading of mime type.
+

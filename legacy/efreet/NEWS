@@ -1,3 +1,12 @@
+Efreet 1.3.0
+
+Changes since Efreet 1.2.0:
+---------------------------
+
+Improvements:
+
+    * Faster mime type loading.
+
 Efreet 1.2.0
 
 Changes since Efreet 1.1.0:

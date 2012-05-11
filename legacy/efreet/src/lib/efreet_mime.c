@@ -807,6 +807,23 @@ efreet_mime_glob_remove(const char *glob)
     return 0;
 }
 
+static inline const char *
+efreet_eat_space(const char *head, const Eina_File_Lines *ln, Eina_Bool not)
+{
+   if (not)
+     {
+        while (!isspace(*head) && (head < ln->line.end))
+          head++;
+     }
+   else
+     {
+        while (isspace(*head) && (head < ln->line.end))
+          head++;
+     }
+
+   return head;
+}
+
 /**
  * @internal
  * @param file mime.types file to load
@@ -820,45 +837,63 @@ efreet_mime_glob_remove(const char *glob)
 static void
 efreet_mime_mime_types_load(const char *file)
 {
-    FILE *f = NULL;
-    char buf[4096], mimetype[4096];
-    char ext[4096], *p = NULL, *pp = NULL;
+   const Eina_File_Lines *ln;
+   Eina_Iterator *it;
+   Eina_File *f;
+   const char *head_line;
+   const char *word_start;
+   const char *mimetype;
 
-    f = fopen(file, "rb");
-    if (!f) return;
-    while (fgets(buf, sizeof(buf), f))
-    {
-        p = buf;
-        while (isspace(*p) && (*p != 0) && (*p != '\n')) p++;
+   f = eina_file_open(file, 0);
+   if (!f) return ;
 
-        if (*p == '#') continue;
-        if ((*p == '\n') || (*p == 0)) continue;
+   it = eina_file_map_lines(f);
+   if (it)
+     {
+        Eina_Strbuf *ext;
 
-        pp = p;
-        while (!isspace(*p) && (*p != 0) && (*p != '\n')) p++;
+        ext = eina_strbuf_new();
 
-        if ((*p == '\n') || (*p == 0)) continue;
-        strncpy(mimetype, pp, (p - pp));
-        mimetype[p - pp] = 0;
+        EINA_ITERATOR_FOREACH(it, ln)
+          {
+             head_line = efreet_eat_space(ln->line.start, ln, EINA_FALSE);
+             if (head_line == ln->line.end) continue ;
 
-        do
-        {
-            while (isspace(*p) && (*p != 0) && (*p != '\n')) p++;
+             if (*head_line == '#') continue ;
 
-            if ((*p == '\n') || (*p == 0)) break;
+             word_start = head_line;
+             head_line = efreet_eat_space(head_line, ln, EINA_TRUE);
 
-            pp = p;
-            while (!isspace(*p) && (*p != 0) && (*p != '\n')) p++;
+             if (head_line == ln->line.end) continue ;
+             mimetype = eina_stringshare_add_length(word_start, head_line - word_start);
+             do
+               {
+                  head_line = efreet_eat_space(head_line, ln, EINA_FALSE);
+                  if (head_line == ln->line.end) break ;
 
-            strncpy(ext, pp, (p - pp));
-            ext[p - pp] = 0;
+                  word_start = head_line;
+                  head_line = efreet_eat_space(head_line, ln, EINA_TRUE);
 
-            eina_hash_del(wild, ext, NULL);
-            eina_hash_add(wild, ext, (void*)eina_stringshare_add(mimetype));
-        }
-        while ((*p != '\n') && (*p != 0));
-    }
-    fclose(f);
+                  eina_strbuf_append_length(ext, word_start, head_line - word_start);
+
+                  eina_hash_del(wild,
+                                eina_strbuf_string_get(ext),
+                                NULL);
+                  eina_hash_add(wild,
+                                eina_strbuf_string_get(ext),
+                                eina_stringshare_ref(mimetype));
+
+                  eina_strbuf_reset(ext);
+               }
+             while (head_line < ln->line.end);
+
+             eina_stringshare_del(mimetype);
+          }
+
+        eina_strbuf_free(ext);
+        eina_iterator_free(it);
+     }
+   eina_file_close(f);
 }
 
 /**
