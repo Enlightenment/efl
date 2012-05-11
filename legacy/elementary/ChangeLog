@@ -36,11 +36,11 @@
 
         * Fix icon not appearing in default Genlist theme.
 
-2012-05-09  cedric bail
+2012-05-09  Cedric bail
 
-	* reload theme when it change on disk.
+	* Reload theme when it change on disk.
 
 2012-05-11  ShilpaOnkar Singh
 
-	* _elm_colorselector_smart_event function added
+	* Added focus key event handling for the colorselector
 
