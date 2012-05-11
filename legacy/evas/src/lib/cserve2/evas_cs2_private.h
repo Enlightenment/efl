@@ -12,6 +12,7 @@ struct _Data_Entry {
       int use_offset;
       int mmap_size;
       int image_size;
+      Eina_File *f;
       void *data;
    } shm;
 };

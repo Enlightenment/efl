@@ -488,9 +488,40 @@ evas_cache2_init(const Evas_Cache2_Image_Func *cb)
    return cache;
 }
 
+static Eina_Bool
+_evas_cache_image_free_cb(__UNUSED__ const Eina_Hash *hash, __UNUSED__ const void *key, void *data, void *fdata)
+{
+   Eina_List **delete_list = fdata;
+   *delete_list = eina_list_prepend(*delete_list, data);
+   return EINA_TRUE;
+}
+
 EAPI void
 evas_cache2_shutdown(Evas_Cache2 *cache)
 {
+   Eina_List *delete_list;
+   Image_Entry *im;
+
+   while (cache->lru)
+     {
+        im = (Image_Entry *)cache->lru;
+        _evas_cache_image_entry_delete(cache, im);
+     }
+   /* This is mad, I am about to destroy image still alive, but we need to prevent leak. */
+   while (cache->dirty)
+     {
+        im = (Image_Entry *)cache->dirty;
+        _evas_cache_image_entry_delete(cache, im);
+     }
+
+   delete_list = NULL;
+   eina_hash_foreach(cache->activ, _evas_cache_image_free_cb, &delete_list);
+   while (delete_list)
+     {
+        _evas_cache_image_entry_delete(cache, eina_list_data_get(delete_list));
+        delete_list = eina_list_remove_list(delete_list, delete_list);
+     }
+
    eina_hash_free(cache->activ);
    eina_hash_free(cache->inactiv);
 

@@ -312,7 +312,6 @@ _image_loaded_cb(void *data, const void *msg_received)
    Image_Entry *ie = data;
    Data_Entry *dentry = ie->data2;
    const char *shmpath;
-   int fd;
 
    ie->load_rid = 0;
 
@@ -337,24 +336,24 @@ _image_loaded_cb(void *data, const void *msg_received)
    dentry->shm.mmap_size = msg->shm.mmap_size;
    dentry->shm.image_size = msg->shm.image_size;
 
-   fd = shm_open(shmpath, O_RDONLY, S_IRUSR);
-   if (fd < 0)
+   dentry->shm.f = eina_file_open(shmpath, EINA_TRUE);
+   if (!dentry->shm.f)
      {
         free(dentry);
         ie->data2 = NULL;
         return;
      }
 
-   dentry->shm.data = mmap(NULL, dentry->shm.mmap_size, PROT_READ,
-                           MAP_SHARED, fd, dentry->shm.mmap_offset);
+   dentry->shm.data = eina_file_map_new(dentry->shm.f, EINA_FILE_WILLNEED,
+                                        dentry->shm.mmap_offset,
+                                        dentry->shm.mmap_size);
 
-   if (dentry->shm.data == MAP_FAILED)
+   if (!dentry->shm.data)
      {
+        eina_file_close(dentry->shm.f);
         free(dentry);
         ie->data2 = NULL;
      }
-
-   close(fd);
 
    if (ie->data2)
      {
@@ -589,6 +588,11 @@ _image_close_server_send(Image_Entry *ie)
 
    if (ie->data2)
      {
+        Data_Entry *dentry = ie->data2;
+        if (dentry->shm.data)
+          eina_file_map_free(dentry->shm.f, dentry->shm.data);
+        if (dentry->shm.f)
+          eina_file_close(dentry->shm.f);
         free(ie->data2);
         ie->data2 = NULL;
      }
@@ -620,6 +624,11 @@ _image_unload_server_send(Image_Entry *ie)
      return 0;
 
    dentry = ie->data2;
+
+   if (dentry->shm.data)
+     eina_file_map_free(dentry->shm.f, dentry->shm.data);
+   if (dentry->shm.f)
+     eina_file_close(dentry->shm.f);
 
    // if (dentry->shm.path)
    //   free(dentry->shm.path);
