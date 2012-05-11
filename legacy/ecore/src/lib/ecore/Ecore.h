@@ -1069,6 +1069,9 @@ typedef Eina_Bool (*Ecore_Win32_Handle_Cb)(void *data, Ecore_Win32_Handler *wh);
  * Some systems, notably xlib, handle their own buffering, and would otherwise
  * not work with select(). These systems should use a @a buf_func. This is a
  * most annoying hack, only ecore_x uses it, so refer to that for an example.
+ *
+ * @warning This function should @b not be used for monitoring "normal" files, like text files.
+ *
  */
 EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func, const void *data, Ecore_Fd_Cb buf_func, const void *buf_data);
 /**
