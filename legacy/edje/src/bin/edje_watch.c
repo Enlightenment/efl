@@ -120,6 +120,8 @@ main(int argc, char **argv)
 
    ecore_main_loop_begin();
 
+   unlink(watchfile);
+
    eio_shutdown();
    ecore_shutdown();
    eina_shutdown();
