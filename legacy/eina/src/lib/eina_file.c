@@ -1195,8 +1195,6 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
    if (it->boundary == 0) it->boundary = 4096;
 
    it->current.line.start = it->current.line.end;
-   while (*eol == '\n' || *eol == '\r')
-     eol--;
 
    it->current.line.end = eol;
    it->current.length = eol - it->current.line.start - 1;
