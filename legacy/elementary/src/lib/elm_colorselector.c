@@ -44,7 +44,7 @@ struct _Elm_Colorselector_Smart_Data
    Evas_Object           *col_bars_area;
    Evas_Object           *palette_box;
 
-   Eina_List             *items;
+   Eina_List             *items, *selected;
    Color_Bar_Data        *cb_data[4];
 
    Ecore_Timer           *longpress_timer;
@@ -58,7 +58,8 @@ struct _Elm_Colorselector_Smart_Data
    int                    lr, lg, lb;
 
    double                 h, s, l;
-   Elm_Colorselector_Mode mode;
+   Elm_Colorselector_Mode mode, focused;
+   int sel_color_type;
 
    Eina_Bool              longpressed : 1;
    Eina_Bool              config_load : 1;
@@ -137,6 +138,7 @@ _items_del(Elm_Colorselector_Smart_Data *sd)
      }
 
    sd->items = NULL;
+   sd->selected = NULL;
 }
 
 static void
@@ -393,6 +395,7 @@ _colorbar_cb(void *data,
    Color_Bar_Data *cb_data = data;
    double arrow_x = 0, arrow_y;
    Evas_Coord x, y, w, h;
+   ELM_COLORSELECTOR_DATA_GET(cb_data->parent, sd);
 
    evas_object_geometry_get(cb_data->bar, &x, &y, &w, &h);
    edje_object_part_drag_value_get
@@ -408,6 +411,8 @@ _colorbar_cb(void *data,
    evas_object_smart_callback_call(cb_data->parent, SIG_CHANGED, NULL);
    evas_event_feed_mouse_cancel(e, 0, NULL);
    evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
+   sd->sel_color_type = cb_data->color_type;
+   sd->focused = ELM_COLORSELECTOR_COMPONENTS;
 }
 
 static void
@@ -418,7 +423,7 @@ _button_clicked_cb(void *data,
    Eina_Bool is_right = EINA_FALSE;
    Color_Bar_Data *cb_data = data;
    double x, y, step;
-   char buf[1024];
+   ELM_COLORSELECTOR_DATA_GET(cb_data->parent, sd);
 
    if (obj == cb_data->rbt)
      {
@@ -427,11 +432,6 @@ _button_clicked_cb(void *data,
      }
    else step = -1.0;
 
-   snprintf(buf, sizeof(buf), "elm,state,%s,button,down", is_right ? "right" :
-            "left");
-
-   edje_object_signal_emit
-     (cb_data->lbt, buf, is_right ? "right_button" : "left_button");
    edje_object_part_drag_value_get(cb_data->colorbar, "elm.arrow", &x, &y);
 
    switch (cb_data->color_type)
@@ -468,6 +468,8 @@ _button_clicked_cb(void *data,
    edje_object_part_drag_value_set(cb_data->colorbar, "elm.arrow", x, y);
    _rectangles_redraw(data, x);
    evas_object_smart_callback_call(cb_data->parent, SIG_CHANGED, NULL);
+   sd->sel_color_type = cb_data->color_type;
+   sd->focused = ELM_COLORSELECTOR_COMPONENTS;
 }
 
 static void
@@ -879,6 +881,8 @@ _on_color_released(void *data,
                    void *event_info __UNUSED__)
 {
    Elm_Color_Item *item = (Elm_Color_Item *)data;
+   Eina_List *l;
+   Elm_Color_Item *temp_item;
    Evas_Event_Mouse_Down *ev = event_info;
    if (!item) return;
 
@@ -899,6 +903,9 @@ _on_color_released(void *data,
           (WIDGET(item), item->color->r, item->color->g, item->color->b,
           item->color->a);
      }
+   EINA_LIST_FOREACH (sd->items, l, temp_item)
+     if (item == temp_item) sd->selected = l;
+   sd->focused = ELM_COLORSELECTOR_PALETTE;
 }
 
 static Elm_Color_Item *
@@ -1138,6 +1145,9 @@ _elm_colorselector_smart_add(Evas_Object *obj)
    elm_layout_content_set(obj, "selector", priv->col_bars_area);
 
    priv->mode = ELM_COLORSELECTOR_BOTH;
+   priv->focused = ELM_COLORSELECTOR_PALETTE;
+   priv->sel_color_type = HUE;
+   priv->selected = priv->items;
    priv->er = 255;
    priv->eg = 0;
    priv->eb = 0;
@@ -1150,6 +1160,7 @@ _elm_colorselector_smart_add(Evas_Object *obj)
    _color_bars_add(obj);
 
    elm_layout_sizing_eval(obj);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
 static void
@@ -1169,6 +1180,104 @@ _elm_colorselector_smart_del(Evas_Object *obj)
    ELM_WIDGET_CLASS(_elm_colorselector_parent_sc)->base.del(obj);
 }
 
+static Eina_Bool
+_elm_colorselector_smart_event(Evas_Object *obj,
+                          Evas_Object *src __UNUSED__,
+                          Evas_Callback_Type type,
+                          void *event_info)
+{
+   Eina_List *cl = NULL;
+   Elm_Color_Item *item = NULL;
+   char colorbar_s[128];
+   if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
+   Evas_Event_Key_Down *ev = event_info;
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   if (!sd) return EINA_FALSE;
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+   if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+   if (!sd->selected) sd->selected = sd->items;
+
+   if ((!strcmp(ev->keyname, "Left")) ||
+       ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)))
+     {
+        if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
+          cl = eina_list_prev(sd->selected);
+        else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
+          _button_clicked_cb(sd->cb_data[sd->sel_color_type], sd->cb_data[sd->sel_color_type]->lbt, NULL);
+        else return EINA_FALSE;
+     }
+   else if ((!strcmp(ev->keyname, "Right")) ||
+            ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)))
+     {
+        if (sd->focused == ELM_COLORSELECTOR_PALETTE && sd->selected)
+          cl = eina_list_next(sd->selected);
+        else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
+          _button_clicked_cb(sd->cb_data[sd->sel_color_type], sd->cb_data[sd->sel_color_type]->rbt, NULL);
+        else return EINA_FALSE;
+     }
+   else if ((!strcmp(ev->keyname, "Up"))  ||
+            ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
+     {
+        if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
+          {
+             sd->sel_color_type = sd->sel_color_type - 1;
+             if (sd->sel_color_type < HUE)
+               {
+                  if (sd->mode == ELM_COLORSELECTOR_BOTH)
+                    {
+                       sd->focused = ELM_COLORSELECTOR_PALETTE;
+                       /*when focus is shifted to palette start from first item*/
+                       sd->selected = sd->items;
+                       cl = sd->selected;
+                    }
+                  else
+                    {
+                       sd->sel_color_type = HUE;
+                       return EINA_FALSE;
+                    }
+               }
+          }
+        else if (sd->focused == ELM_COLORSELECTOR_PALETTE)
+          return EINA_FALSE;
+     }
+   else if ((!strcmp(ev->keyname, "Down")) ||
+            ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
+     {
+       if (sd->focused == ELM_COLORSELECTOR_PALETTE)
+         {
+            if (sd->mode == ELM_COLORSELECTOR_BOTH)
+              {
+                 sd->focused = ELM_COLORSELECTOR_COMPONENTS;
+                 /*when focus is shifted to component start from first color type*/
+                 sd->sel_color_type = HUE;
+              }
+            else return FALSE;
+         }
+       else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
+         {
+            snprintf(colorbar_s, sizeof(colorbar_s), "elm.colorbar_%d", (sd->sel_color_type + 1));
+            /*Append color type only if next color bar is available*/
+            if (edje_object_part_swallow_get(sd->col_bars_area, colorbar_s))
+              sd->sel_color_type = sd->sel_color_type + 1;
+            else return FALSE;
+         }
+     }
+   else return EINA_FALSE;
+   if (cl)
+     {
+        item = eina_list_data_get(cl);
+        elm_object_signal_emit(VIEW(item), "elm,anim,activate", "elm");
+        evas_object_smart_callback_call(WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
+        elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g, item->color->b, item->color->a);
+        sd->selected = cl;
+     }
+   else if (!cl && sd->focused == ELM_COLORSELECTOR_PALETTE)
+     return EINA_FALSE;
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
+}
+
 static void
 _elm_colorselector_smart_set_user(Elm_Layout_Smart_Class *sc)
 {
@@ -1180,6 +1289,7 @@ _elm_colorselector_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_colorselector_smart_theme;
+   ELM_WIDGET_CLASS(sc)->event = _elm_colorselector_smart_event;
 
    sc->sizing_eval = _elm_colorselector_smart_sizing_eval;
 }
@@ -1249,17 +1359,23 @@ elm_colorselector_mode_set(Evas_Object *obj,
       case ELM_COLORSELECTOR_PALETTE:
         elm_layout_content_set(obj, "palette", sd->palette_box);
         elm_layout_signal_emit(obj, "elm,state,palette", "elm");
+        sd->focused = ELM_COLORSELECTOR_PALETTE;
+        sd->selected = sd->items;
         break;
 
       case ELM_COLORSELECTOR_COMPONENTS:
         elm_layout_content_set(obj, "selector", sd->col_bars_area);
         elm_layout_signal_emit(obj, "elm,state,components", "elm");
+        sd->focused = ELM_COLORSELECTOR_COMPONENTS;
+        sd->sel_color_type = HUE;
         break;
 
       case ELM_COLORSELECTOR_BOTH:
         elm_layout_content_set(obj, "palette", sd->palette_box);
         elm_layout_content_set(obj, "selector", sd->col_bars_area);
         elm_layout_signal_emit(obj, "elm,state,both", "elm");
+        sd->focused = ELM_COLORSELECTOR_PALETTE;
+        sd->selected = sd->items;
         break;
 
       default:
@@ -1371,8 +1487,11 @@ EAPI void
 elm_colorselector_palette_clear(Evas_Object *obj)
 {
    ELM_COLORSELECTOR_CHECK(obj);
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
    _colors_remove(obj);
+   if (sd->mode == ELM_COLORSELECTOR_BOTH)
+     sd->focused = ELM_COLORSELECTOR_COMPONENTS;
 }
 
 EAPI void

@@ -386,6 +386,20 @@ group { name: "elm/colorselector/item/default";
          action: STATE_SET "default" 0.0;
          target: "focus_color";
       }
+      program {
+         name:   "item_pressed_anim";
+         signal: "elm,anim,activate";
+         source: "elm";
+         action: STATE_SET "focused" 0.0;
+         target: "focus_color";
+         after: "item_unpressed_anim";
+      }
+      program {
+         name:   "item_unpressed_anim";
+         action: STATE_SET "default" 0.0;
+         transition: DECELERATE 0.2;
+         target: "focus_color";
+      }
    }
 }
 
