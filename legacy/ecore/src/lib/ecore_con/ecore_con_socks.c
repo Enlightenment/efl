@@ -557,7 +557,7 @@ ecore_con_socks_init(void)
    unsigned char addr6[sizeof(struct in6_addr)];
 #endif
 
-   /* ECORE_CON_SOCKS_V4=[user@]host:port-[1|0] */
+   /* ECORE_CON_SOCKS_V4=[user@]host-port:[1|0] */
    socks = getenv("ECORE_CON_SOCKS_V4");
    if (!socks)
      {
