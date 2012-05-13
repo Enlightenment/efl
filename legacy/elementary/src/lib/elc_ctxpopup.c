@@ -738,13 +738,11 @@ static void
 _theme_hook(Evas_Object *obj)
 {
    Widget_Data *wd;
-   Eina_Bool rtl;
 
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
    _elm_widget_mirrored_reload(obj);
-   rtl = elm_widget_mirrored_get(obj);
 
    _elm_theme_object_set(obj, wd->bg, "ctxpopup", "bg",
                          elm_widget_style_get(obj));
