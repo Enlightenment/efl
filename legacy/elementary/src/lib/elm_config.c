@@ -1480,11 +1480,6 @@ _env_get(void)
    s = getenv("ELM_MODULES");
    if (s) eina_stringshare_replace(&_elm_config->modules, s);
 
-   /* Get RTL orientation from system */
-   setlocale(LC_ALL, "");
-   bindtextdomain(PACKAGE, LOCALE_DIR);
-   _elm_config->is_mirrored = !strcmp(E_("default:LTR"), "default:RTL");
-
    s = getenv("ELM_TOOLTIP_DELAY");
    if (s)
      {
@@ -2019,6 +2014,13 @@ _translation_init()
    _elm_config->translate = !(strcmp (cur_dom, "messages") &&
          !*trans_comment && strncmp (msg_locale, "en_", 3) &&
          strcmp (msg_locale, "C"));
+   /* Get RTL orientation from system */
+   if (_elm_config->translate)
+     {
+        bindtextdomain(PACKAGE, LOCALE_DIR);
+        _elm_config->is_mirrored = !strcmp(E_("default:LTR"), "default:RTL");
+     }
+
 #endif
 }
 
