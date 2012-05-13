@@ -83,6 +83,19 @@ _expandable_clicked(void            *data,
 }
 
 static void
+_buttons_clicked(void            *data,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
+{
+   Evas_Object *fs = data;
+   printf("Toggle Buttons\n");
+   if (elm_fileselector_buttons_ok_cancel_get(fs))
+     elm_fileselector_buttons_ok_cancel_set(fs, EINA_FALSE);
+   else
+     elm_fileselector_buttons_ok_cancel_set(fs, EINA_TRUE);
+}
+
+static void
 _sel_get_clicked(void            *data,
                  Evas_Object *obj __UNUSED__,
                  void *event_info __UNUSED__)
@@ -185,6 +198,13 @@ test_fileselector(void *data       __UNUSED__,
    elm_object_text_set(bt, "expandable");
    elm_check_state_set(bt, elm_fileselector_expandable_get(fs));
    evas_object_smart_callback_add(bt, "changed", _expandable_clicked, fs);
+   elm_box_pack_end(hbox, bt);
+   evas_object_show(bt);
+
+   bt = elm_check_add(win);
+   elm_object_text_set(bt, "buttons");
+   elm_check_state_set(bt, elm_fileselector_buttons_ok_cancel_get(fs));
+   evas_object_smart_callback_add(bt, "changed", _buttons_clicked, fs);
    elm_box_pack_end(hbox, bt);
    evas_object_show(bt);
 

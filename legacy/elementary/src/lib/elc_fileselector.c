@@ -336,15 +336,19 @@ _anchors_do(Evas_Object *obj,
 
 #ifdef HAVE_EIO
 static Eina_Bool
-_ls_filter_cb(void *data __UNUSED__,
+_ls_filter_cb(void *data,
               Eio_File *handler,
               const Eina_File_Direct_Info *info)
 {
+   Listing_Request *lreq = data;
    const char *filename;
 
    if (info->path[info->name_start] == '.')
      return EINA_FALSE;
 
+   if (lreq->sd->only_folder && info->type != EINA_FILE_DIR)
+      return EINA_FALSE;
+   
    filename = eina_stringshare_add(info->path);
    eio_file_associate_direct_add
      (handler, "filename", filename, EINA_FREE_CB(eina_stringshare_del));

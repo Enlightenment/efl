@@ -44,3 +44,6 @@
 
 	* Added focus key event handling for the colorselector
 
+2012-05-13  Dave Andreoli
+	* Fileselector: honor folder_only when using EIO
+
