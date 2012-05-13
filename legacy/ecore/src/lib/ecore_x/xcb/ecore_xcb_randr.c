@@ -1628,7 +1628,7 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
 
    root = ecore_x_window_root_get(window);
    crtcs = ecore_x_randr_crtcs_get(root, &ncrtcs);
-   if (!crtcs) return NULL;
+   if (!crtcs) goto _ecore_x_randr_window_crtcs_get_fail;
 
    /* now get window RELATIVE to root window - thats what matters. */
    cookie = xcb_translate_coordinates(_ecore_xcb_conn, window, root, 0, 0);
@@ -1637,6 +1637,12 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
    w_geo.y = trans->dst_y;
    free(trans);
 
+   ret = calloc(1, ncrtcs * sizeof(Ecore_X_Randr_Crtc));
+   if (!ret)
+     {
+        free(crtcs);
+        goto _ecore_x_randr_window_crtcs_get_fail;
+     }
    for (i = 0, nret = 0; i < ncrtcs; i++)
      {
         /* if crtc is not enabled, don't bother about it any further */
@@ -1647,9 +1653,8 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
                                          &c_geo.w, &c_geo.h);
          if (eina_rectangles_intersect(&w_geo, &c_geo))
            {
-              ret = realloc(ret, (++nret *
-                                   sizeof(Ecore_X_Randr_Output)));
               ret[nret] = crtcs[i];
+              nret++;
            }
      }
    free(crtcs);
@@ -1657,6 +1662,7 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
    if (num) *num = nret;
    return ret;
 
+_ecore_x_randr_window_crtcs_get_fail:
 #endif
    if (num) *num = 0;
    return NULL;
@@ -2442,7 +2448,7 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
 #ifdef ECORE_XCB_RANDR
    Ecore_X_Window root;
    Ecore_X_Randr_Crtc *crtcs;
-   Ecore_X_Randr_Output *outputs, *ret = NULL;
+   Ecore_X_Randr_Output *outputs, *ret = NULL, *tret;
    int ncrtcs, noutputs, i, nret = 0;
 #endif
 
@@ -2465,10 +2471,13 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
               &noutputs);
         if (!outputs)
           goto _ecore_x_randr_current_output_get_fail_free;
-        nret += noutputs;
-        ret = realloc(ret, (nret * sizeof(Ecore_X_Randr_Output)));
+        tret = realloc(ret, ((nret + noutputs) * sizeof(Ecore_X_Randr_Output)));
+        if (!tret) goto _ecore_x_randr_current_output_get_fail_free;
+        ret = tret;
         memcpy(&ret[nret], outputs, (noutputs * sizeof(Ecore_X_Randr_Output)));
+        nret += noutputs;
         free(outputs);
+        outputs = NULL;
      }
    free(crtcs);
 

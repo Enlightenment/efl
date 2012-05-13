@@ -640,3 +640,8 @@
 2012-05-10  Jiyoun Park
 
 	* Send mouse move event before mouse down event in ecore_extn
+
+2012-05-13 Carsten Haitzler (The Rasterman)
+
+        * Fix ecore-x randr issues with memory access when building
+        output arrays which are memory segv bugs waiting to crash.

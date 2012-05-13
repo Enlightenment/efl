@@ -596,6 +596,12 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
    w_geo.x = rx;
    w_geo.y = ry;
 
+   ret = calloc(1, ncrtcs * sizeof(Ecore_X_Randr_Crtc));
+   if (!ret)
+     {
+        free(crtcs);
+        goto _ecore_x_randr_window_crtcs_get_fail;
+     }
    for (i = 0, nret = 0; i < ncrtcs; i++)
      {
         /* if crtc is not enabled, don't bother about it any further */
@@ -607,8 +613,8 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
                                         &c_geo.w, &c_geo.h);
         if (eina_rectangles_intersect(&w_geo, &c_geo))
           {
-             ret = realloc(ret, (sizeof(Ecore_X_Randr_Crtc) * ++nret));
              ret[nret] = crtcs[i];
+             nret++;
           }
      }
    free(crtcs);
@@ -2337,7 +2343,7 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
 #ifdef ECORE_XRANDR
    Ecore_X_Window root;
    Ecore_X_Randr_Crtc *crtcs;
-   Ecore_X_Randr_Output *outputs, *ret = NULL;
+   Ecore_X_Randr_Output *outputs, *ret = NULL, *tret;
    int ncrtcs, noutputs, i, nret = 0;
 
    if (_randr_version < RANDR_1_2) goto _ecore_x_randr_current_output_get_fail;
@@ -2345,18 +2351,21 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
    root = ecore_x_window_root_get(window);
    if (!(crtcs = ecore_x_randr_window_crtcs_get(window, &ncrtcs)))
      goto _ecore_x_randr_current_output_get_fail;
-
+   
    for (i = 0, nret = 0; i < ncrtcs; i++)
      {
 
         outputs = ecore_x_randr_crtc_outputs_get(root, crtcs[i],
-              &noutputs);
+                                                 &noutputs);
         if (!outputs)
           goto _ecore_x_randr_current_output_get_fail_free;
-        nret += noutputs;
-        ret = realloc(ret, (nret * sizeof(Ecore_X_Randr_Output)));
+        tret = realloc(ret, ((nret + noutputs) * sizeof(Ecore_X_Randr_Output)));
+        if (!tret) goto _ecore_x_randr_current_output_get_fail_free;
+        ret = tret;
         memcpy(&ret[nret], outputs, (noutputs * sizeof(Ecore_X_Randr_Output)));
+        nret += noutputs;
         free(outputs);
+        outputs = NULL;
      }
    free(crtcs);
 
