@@ -566,6 +566,8 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 		       int  im_w, im_h;
 		       int  im_alpha;
 		       char buf[256];
+		       unsigned int  *start, *end;
+		       Eina_Bool opaque = EINA_TRUE;
 
 		       evas_object_image_size_get(im, &im_w, &im_h);
 		       im_alpha = evas_object_image_alpha_get(im);
@@ -604,6 +606,21 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 				 qual = img->source_param;
 				 if (qual < min_quality) qual = min_quality;
 				 if (qual > max_quality) qual = max_quality;
+			      }
+			    if (im_alpha)
+			      {
+			         start = (unsigned int *) im_data;
+			         end = start + (im_w * im_h);
+			         while (start < end)
+			           {
+			              if ((*start & 0xff000000) != 0xff000000)
+			                {
+			                   opaque = EINA_FALSE;
+			                   break;
+			                }
+			              start++;
+			           }
+			         if (opaque) im_alpha = 0;
 			      }
 			    if (mode == 0)
 			      bytes = eet_data_image_write(ef, buf,
