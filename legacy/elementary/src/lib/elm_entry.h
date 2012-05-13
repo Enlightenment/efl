@@ -168,6 +168,17 @@
  * the URI form @c file:///path/to/an/image.png and the entry will then
  * use that image for the item.
  *
+ * @section entry-style-set Setting entry's style
+ *
+ * There are 2 major ways to change the entry's style:
+ * - Theme - set the "base" field to the desired style.
+ * - User style - Pushing overrides to the theme style to the textblock object by using evas_object_textblock_style_user_push().
+ *
+ * You should modify the theme when you would like to change the style for
+ * aesthetic reasons. While the user style should be changed when you would
+ * like to change the style to something specific defined at run-time, e.g,
+ * setting font or font size in a text editor.
+ *
  * @section entry-files Loading and saving files
  *
  * Entries have convenience functions to load text from a file and save
