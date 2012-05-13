@@ -552,6 +552,8 @@ _elm_player_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_player_smart_content_set;
 
    sc->sizing_eval = _elm_player_smart_sizing_eval;
+#else
+   (void) sc;
 #endif
 }
 
@@ -574,6 +576,8 @@ elm_player_add(Evas_Object *parent)
 
    return obj;
 #else
+   (void) parent;
+   (void) _elm_player_smart_class_new;
    return NULL;
 #endif
 }

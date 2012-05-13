@@ -122,9 +122,9 @@ _elm_video_smart_event(Evas_Object *obj,
    return EINA_FALSE;
 #else
 
-   (void *)obj;
-   (void *)type;
-   (void *)event_info;
+   (void) obj;
+   (void) type;
+   (void) event_info;
 
    return EINA_FALSE;
 #endif
@@ -153,7 +153,7 @@ _elm_video_smart_sizing_eval(Evas_Object *obj)
    evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
 #else
 
-   (void *)obj;
+   (void) obj;
 #endif
 }
 
@@ -308,6 +308,8 @@ _elm_video_smart_del(Evas_Object *obj)
 #ifdef HAVE_EMOTION
    if (sd->timer) ecore_timer_del(sd->timer);
    if (sd->remember) emotion_object_last_position_save(sd->emotion);
+#else
+   (void) sd;
 #endif
 
    ELM_WIDGET_CLASS(_elm_video_parent_sc)->base.del(obj);
@@ -348,7 +350,8 @@ elm_video_add(Evas_Object *parent)
 
    return obj;
 #else
-   (void)parent;
+   (void) parent;
+   (void) _elm_video_smart_class_new;
 
    return NULL;
 #endif
