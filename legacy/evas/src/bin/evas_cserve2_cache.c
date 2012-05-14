@@ -853,8 +853,8 @@ _file_changed_cb(const char *path __UNUSED__, Eina_Bool deleted __UNUSED__, void
 int
 cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid)
 {
-   uintptr_t file_id;
-   Entry *entry;
+   unsigned int file_id;
+   File_Data *entry;
    Reference *ref;
    File_Watch *fw;
    char buf[4906];
@@ -884,10 +884,10 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
 
    // search whether the file is already opened by another client
    snprintf(buf, sizeof(buf), "%s:%s", path, key);
-   file_id = (uintptr_t)eina_hash_find(file_ids, buf);
+   file_id = (unsigned int)eina_hash_find(file_ids, buf);
    if (file_id)
      {
-        DBG("found file_id %d for client file id %d",
+        DBG("found file_id %u for client file id %d",
                 file_id, client_file_id);
         entry = eina_hash_find(file_entries, &file_id);
         if (!entry)
@@ -910,7 +910,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
    while ((file_id == 0) || (eina_hash_find(file_entries, &file_id)))
      file_id = _file_id++;
 
-   DBG("Creating new entry with file_id: %d for file \"%s:%s\"",
+   DBG("Creating new entry with file_id: %u for file \"%s:%s\"",
        file_id, path, key);
    entry = calloc(1, sizeof(*entry));
    entry->type = CSERVE2_IMAGE_FILE;
@@ -1247,7 +1247,7 @@ cserve2_cache_request_failed(void *data, Error_Type type)
 
    EINA_LIST_FOREACH(entry->references, l, ref)
      {
-        Eina_Hash *hash;
+        Eina_Hash *hash = NULL;
         if (entry->type == CSERVE2_IMAGE_FILE)
           hash = ref->client->files.referencing;
         else if (entry->type == CSERVE2_IMAGE_DATA)

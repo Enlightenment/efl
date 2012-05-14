@@ -355,7 +355,7 @@ Eina_Bool
 cserve2_main_loop_setup(void)
 {
    int sfd;
-   int socket;
+   int sock;
    int ifd;
 
    epoll_fd = epoll_create1(EPOLL_CLOEXEC);
@@ -393,18 +393,18 @@ cserve2_main_loop_setup(void)
         return EINA_FALSE;
      }
 
-   socket = _socketfd_setup();
-   if (socket == -1)
+   sock = _socketfd_setup();
+   if (sock == -1)
      {
         ERR("Could not setup socketfd.");
         goto error_socket;
      }
 
-   DBG("Add watch for socket fd: %d", socket);
-   if (!cserve2_fd_watch_add(socket, FD_READ, _socketfd_handler, NULL))
+   DBG("Add watch for socket fd: %d", sock);
+   if (!cserve2_fd_watch_add(sock, FD_READ, _socketfd_handler, NULL))
      {
         ERR("Could not add watch for socketf.");
-        close(socket);
+        close(sock);
         goto error_socket;
      }
 
