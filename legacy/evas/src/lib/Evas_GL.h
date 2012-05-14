@@ -47,12 +47,21 @@ typedef enum _Evas_GL_Options_Bits
    EVAS_GL_OPTIONS_DIRECT  = (1<<0)
 } Evas_GL_Options_Bits;
 
+typedef enum _Evas_GL_Multisample_Bits
+{
+   EVAS_GL_MULTISAMPLE_NONE = 0,
+   EVAS_GL_MULTISAMPLE_LOW  = 1,
+   EVAS_GL_MULTISAMPLE_MED  = 2,
+   EVAS_GL_MULTISAMPLE_HIGH = 3 
+} Evas_GL_Multisample_Bits;
+
 struct _Evas_GL_Config
 {
-   Evas_GL_Color_Format     color_format;
-   Evas_GL_Depth_Bits       depth_bits;
-   Evas_GL_Stencil_Bits     stencil_bits;
-   Evas_GL_Options_Bits     options_bits;
+   Evas_GL_Color_Format       color_format;
+   Evas_GL_Depth_Bits         depth_bits;
+   Evas_GL_Stencil_Bits       stencil_bits;
+   Evas_GL_Options_Bits       options_bits;
+   Evas_GL_Multisample_Bits   multisample_bits;
 };
 
 #define EVAS_GL_EXTENSIONS       1
@@ -1121,6 +1130,12 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 #define GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG                      0x8C01
 #define GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG                     0x8C02
 #define GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG                     0x8C03
+
+/* GL_IMG_multisampled_render_to_texture */
+#define GL_RENDERBUFFER_SAMPLES_IMG                             0x9133
+#define GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE_IMG               0x9134
+#define GL_MAX_SAMPLES_IMG                                      0x9135
+#define GL_TEXTURE_SAMPLES_IMG                                  0x9136
 
 /*------------------------------------------------------------------------*
  * NV extension tokens
