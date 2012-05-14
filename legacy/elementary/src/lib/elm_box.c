@@ -186,6 +186,7 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord w, h;
 
    ELM_BOX_DATA_GET(obj, sd);
 
@@ -195,6 +196,13 @@ _sizing_eval(Evas_Object *obj)
      (ELM_WIDGET_DATA(sd)->resize_obj, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if (w < minw) w = minw;
+   if (h < minh) h = minh;
+   if ((maxw >= 0) && (w > maxw)) w = maxw;
+   if ((maxh >= 0) && (h > maxh)) h = maxh;
+   evas_object_resize(obj, w, h);
 }
 
 static void
