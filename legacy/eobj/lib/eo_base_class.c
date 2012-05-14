@@ -493,6 +493,8 @@ static const Eo_Op_Description op_desc[] = {
 };
 
 static const Eo_Event_Description *event_desc[] = {
+     EO_EV_CALLBACK_ADD,
+     EO_EV_CALLBACK_DEL,
      EO_EV_DEL,
      NULL
 };
