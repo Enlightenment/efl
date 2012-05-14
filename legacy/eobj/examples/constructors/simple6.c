@@ -11,7 +11,7 @@ _destructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    eo_constructor_super(obj);
 
-   eo_constructor_error_set(obj);
+   eo_error_set(obj);
 }
 
 static const Eo_Class_Description class_desc = {

@@ -497,25 +497,17 @@ EAPI void eo_constructor_super(Eo *obj);
 EAPI void eo_destructor_super(Eo *obj);
 
 /**
- * @brief Notify eo that there was an error when constructing the object.
+ * @def eo_error_set
+ * @brief Notify eo that there was an error when constructing, destructing or calling a function of the object.
  * @param obj the object to work on.
  *
- * (Should only be called from within a constructor/destructor).
- *
- * @see eo_constructor_error_get()
+ * @see eo_error_get()
  */
-EAPI void eo_constructor_error_set(Eo *obj);
+#define eo_error_set(obj) eo_error_set_internal(obj, __FILE__, __LINE__)
 
-/**
- * @brief Check if there was an error constructing obj
- * @param obj the object to work on.
- * @return @c EINA_TRUE if there was an error.
- *
- * (Should only be called from within a constructor/destructor).
- *
- * @see eo_constructor_error_set()
- */
-EAPI Eina_Bool eo_constructor_error_get(const Eo *obj);
+/* @cond 0 */
+EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
+/* @endcond */
 
 /**
  * @brief Create a new object.

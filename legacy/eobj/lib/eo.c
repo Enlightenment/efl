@@ -17,7 +17,8 @@ static Eina_Bool _eo_init_count = 0;
 
 static void _eo_constructor(Eo *obj, const Eo_Class *klass);
 static void _eo_destructor(Eo *obj, const Eo_Class *klass);
-static void eo_constructor_error_unset(Eo *obj);
+static inline Eina_Bool _eo_error_get(const Eo *obj);
+static inline void _eo_error_unset(Eo *obj);
 static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
 static inline Eo *_eo_ref(Eo *obj);
 static inline void _eo_unref(Eo *obj);
@@ -929,13 +930,13 @@ eo_add(const Eo_Class *klass, Eo *parent)
    Eo_Kls_Itr prev_state;
 
    _eo_kls_itr_init(obj, EO_NOOP, &prev_state);
-   eo_constructor_error_unset(obj);
+   _eo_error_unset(obj);
 
    EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
    _eo_ref(obj);
    _eo_constructor(obj, klass);
 
-   if (EINA_UNLIKELY(eo_constructor_error_get(obj)))
+   if (EINA_UNLIKELY(_eo_error_get(obj)))
      {
         ERR("Type '%s' - One of the object constructors have failed.", klass->desc->name);
         goto fail;
@@ -1050,9 +1051,9 @@ _eo_del_internal(Eo *obj)
    Eo_Kls_Itr prev_state;
 
    _eo_kls_itr_init(obj, EO_NOOP, &prev_state);
-   eo_constructor_error_unset(obj);
+   _eo_error_unset(obj);
    _eo_destructor(obj, klass);
-   if (eo_constructor_error_get(obj))
+   if (_eo_error_get(obj))
      {
         ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
      }
@@ -1132,24 +1133,30 @@ eo_parent_get(const Eo *obj)
 }
 
 EAPI void
-eo_constructor_error_set(Eo *obj)
+eo_error_set_internal(const Eo *obj, const char *file, int line)
 {
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
 
-   obj->construct_error = EINA_TRUE;
+   ERR("Error with obj '%p' at %s:%d", obj, file, line);
+
+   ((Eo *) obj)->construct_error = EINA_TRUE;
 }
 
-static void
-eo_constructor_error_unset(Eo *obj)
+static inline void
+_eo_error_unset(Eo *obj)
 {
    obj->construct_error = EINA_FALSE;
 }
 
-EAPI Eina_Bool
-eo_constructor_error_get(const Eo *obj)
+/**
+ * @internal
+ * @brief Check if there was an error when constructing, destructing or calling a function of the object.
+ * @param obj the object to work on.
+ * @return @c EINA_TRUE if there was an error.
+ */
+static inline Eina_Bool
+_eo_error_get(const Eo *obj)
 {
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_TRUE);
-
    return obj->construct_error;
 }
 

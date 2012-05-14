@@ -355,8 +355,7 @@ START_TEST(eo_magic_checks)
 
    fail_if(eo_parent_get((Eo *) buf));
 
-   eo_constructor_error_set((Eo *) buf);
-   fail_if(!eo_constructor_error_get((Eo *) buf));
+   eo_error_set((Eo *) buf);
 
    eo_constructor_super((Eo *) buf);
    eo_destructor_super((Eo *) buf);
