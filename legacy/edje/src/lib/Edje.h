@@ -1382,6 +1382,11 @@ EAPI Eina_List   *edje_color_class_list           (void);
  *
  * This function updates all Edje members at the process level which
  * belong to this text class with the new font attributes.
+ * If the @p size is 0 then the font size will be kept with the previous size.
+ * If the @p size is less then 0 then the font size will be calculated in the
+ * percentage. For example, if the @p size is -50, then the font size will be
+ * scaled to half of the original size and if the @p size is -10 then the font
+ * size will be scaled as much as 0.1x. 
  *
  * @see edje_text_class_get().
  *
