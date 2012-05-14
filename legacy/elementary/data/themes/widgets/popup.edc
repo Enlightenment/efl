@@ -170,6 +170,7 @@ group { name: "elm/popup/base/default";
          type: TEXTBLOCK;
          scale:1;
          description { state: "default" 0.0;
+            fixed: 1 1;
             text {
               style: "popup_title_style";
               min: 0 0;

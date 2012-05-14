@@ -53,3 +53,6 @@
 	* menu: remove crash issue when no-parent item is passed to the
 	elm_menu_item_separator_add()
 
+2012-05-14 Shinwoo Kim (kimcinoo)
+	* popup: Bug Fix: improper usage of textblock
+
