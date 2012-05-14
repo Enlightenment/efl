@@ -482,7 +482,7 @@ _spacer_move_cb(void *data,
              if (!sd->frozen)
                {
                   elm_widget_scroll_freeze_push(data);
-                  sd->frozen = 1;
+                  sd->frozen = EINA_TRUE;
                }
              ev->event_flags &= ~EVAS_EVENT_FLAG_ON_HOLD;
           }
@@ -495,7 +495,7 @@ _spacer_move_cb(void *data,
              if (sd->frozen)
                {
                   elm_widget_scroll_freeze_pop(data);
-                  sd->frozen = 0;
+                  sd->frozen = EINA_FALSE;
                }
              elm_layout_signal_emit(data, "elm,state,indicator,hide", "elm");
              elm_slider_value_set(data, sd->val2);
@@ -539,7 +539,7 @@ _spacer_up_cb(void *data,
    if (sd->frozen)
      {
         elm_widget_scroll_freeze_pop(data);
-        sd->frozen = 0;
+        sd->frozen = EINA_FALSE;
      }
    elm_layout_signal_emit(data, "elm,state,indicator,hide", "elm");
 }
