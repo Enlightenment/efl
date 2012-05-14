@@ -1110,12 +1110,6 @@ _eo_unref(Eo *obj)
    if (--(obj->refcount) == 0)
      {
         _eo_del_internal(obj);
-        /* We need that for the event callbacks that may ref/unref. */
-        obj->refcount++;
-
-        eo_event_callback_call(obj, EO_EV_FREE, NULL);
-
-        obj->refcount--;
 
 #ifndef NDEBUG
    /* If for some reason it's not empty, clear it. */

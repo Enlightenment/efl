@@ -951,18 +951,6 @@ EAPI extern const Eo_Event_Description _EO_EV_CALLBACK_DEL;
 #define EO_EV_CALLBACK_DEL (&(_EO_EV_CALLBACK_DEL))
 
 /**
- * @var _EO_EV_FREE
- * see #EO_EV_FREE
- */
-EAPI extern const Eo_Event_Description _EO_EV_FREE;
-
-/**
- * @def EO_EV_FREE
- * Object is being freed.
- */
-#define EO_EV_FREE (&(_EO_EV_FREE))
-
-/**
  * @var _EO_EV_DEL
  * see #EO_EV_DEL
  */

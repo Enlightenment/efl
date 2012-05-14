@@ -231,8 +231,6 @@ EAPI const Eo_Event_Description _EO_EV_CALLBACK_ADD =
    EO_EVENT_DESCRIPTION("callback,add", "?", "A callback was added.");
 EAPI const Eo_Event_Description _EO_EV_CALLBACK_DEL =
    EO_EVENT_DESCRIPTION("callback,del", "?", "A callback was deleted.");
-EAPI const Eo_Event_Description _EO_EV_FREE =
-   EO_EVENT_DESCRIPTION("free", "", "Obj is being freed.");
 EAPI const Eo_Event_Description _EO_EV_DEL =
    EO_EVENT_DESCRIPTION("del", "", "Obj is being deleted.");
 
@@ -278,7 +276,6 @@ static const Eo_Op_Description op_desc[] = {
 static const Eo_Event_Description *event_desc[] = {
      EO_EV_CALLBACK_ADD,
      EO_EV_CALLBACK_DEL,
-     EO_EV_FREE,
      EO_EV_DEL,
      NULL
 };
