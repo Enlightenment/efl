@@ -18,13 +18,16 @@
  *
  * It also allows specific values to be replaced by pre-defined labels.
  *
- * Smart callbacks one can register to:
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for spinner objects.
  *
- * - "changed" - Whenever the spinner value is changed.
- * - "delay,changed" - A short time after the value is changed by the user.
- *    This will be called only when the user stops dragging for a very short
- *    period or when they release their finger/mouse, so it avoids possibly
- *    expensive reactions to the value change.
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * - @c "changed" - Whenever the spinner value is changed.
+ * - @c "delay,changed" - A short time after the value is changed by
+ *    the user.  This will be called only when the user stops dragging
+ *    for a very short period or when they release their finger/mouse,
+ *    so it avoids possibly expensive reactions to the value change.
  *
  * Available styles for it:
  * - @c "default";

@@ -1,176 +1,91 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_layout.h"
 #include <ctype.h>
 
-typedef struct _Widget_Data Widget_Data;
+static const char SPINNER_SMART_NAME[] = "elm_spinner";
+
+typedef struct _Elm_Spinner_Smart_Data    Elm_Spinner_Smart_Data;
 typedef struct _Elm_Spinner_Special_Value Elm_Spinner_Special_Value;
 
-struct _Widget_Data
+struct _Elm_Spinner_Smart_Data
 {
-   Evas_Object *spinner, *ent;
-   const char *label;
-   double val, val_min, val_max, orig_val, step, base;
-   double drag_start_pos, spin_speed, interval, first_interval;
-   int round;
-   Ecore_Timer *delay, *spin;
-   Eina_List *special_values;
-   Eina_Bool wrap : 1;
-   Eina_Bool entry_visible : 1;
-   Eina_Bool dragging : 1;
-   Eina_Bool editable : 1;
+   Elm_Layout_Smart_Data base;
+
+   Evas_Object          *ent;
+   const char           *label;
+   double                val, val_min, val_max, orig_val, step, val_base;
+   double                drag_start_pos, spin_speed, interval, first_interval;
+   int                   round;
+   Ecore_Timer          *delay, *spin;
+   Eina_List            *special_values;
+
+   Eina_Bool             entry_visible : 1;
+   Eina_Bool             dragging : 1;
+   Eina_Bool             editable : 1;
+   Eina_Bool             wrap : 1;
 };
 
 struct _Elm_Spinner_Special_Value
 {
-   double value;
+   double      value;
    const char *label;
 };
 
-static const char *widtype = NULL;
-static void _del_hook(Evas_Object *obj);
-static void _disable_hook(Evas_Object *obj);
-static void _write_label(Evas_Object *obj);
-static void _sizing_eval(Evas_Object *obj);
-//static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static Eina_Bool _value_set(Evas_Object *obj, double delta);
-static void _on_focus_hook(void *data, Evas_Object *obj);
-static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
-                             Evas_Callback_Type type, void *event_info);
-
-static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
-
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
-
-static const Evas_Smart_Cb_Description _signals[] = {
+static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
    {SIG_DELAY_CHANGED, ""},
    {NULL, NULL}
 };
 
-static void
-_del_hook(Evas_Object *obj)
-{
-   Elm_Spinner_Special_Value *sv;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->label) eina_stringshare_del(wd->label);
-   if (wd->delay) ecore_timer_del(wd->delay);
-   if (wd->spin) ecore_timer_del(wd->spin);
-   if (wd->special_values)
-     {
-        EINA_LIST_FREE(wd->special_values, sv)
-          {
-             eina_stringshare_del(sv->label);
-             free(sv);
-          }
-     }
-   free(wd);
-}
+#define ELM_SPINNER_SMART_DATA(_sd) \
+  ((Elm_Spinner_Smart_Data *)_sd)
+
+#define ELM_SPINNER_DATA_GET(o, sd) \
+  Elm_Spinner_Smart_Data * sd = evas_object_smart_data_get(o)
+
+#define ELM_SPINNER_DATA_GET_OR_RETURN(o, ptr)       \
+  ELM_SPINNER_DATA_GET(o, ptr);                      \
+  if (!ptr)                                          \
+    {                                                \
+       CRITICAL("No widget data for object %p (%s)", \
+                o, evas_object_type_get(o));         \
+       return;                                       \
+    }
+
+#define ELM_SPINNER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  ELM_SPINNER_DATA_GET(o, ptr);                         \
+  if (!ptr)                                             \
+    {                                                   \
+       CRITICAL("No widget data for object %p (%s)",    \
+                o, evas_object_type_get(o));            \
+       return val;                                      \
+    }
+
+#define ELM_SPINNER_CHECK(obj)                                  \
+  if (!obj || !elm_widget_type_check((obj), SPINNER_SMART_NAME, \
+                                     __func__))                 \
+    return
+
+/* Inheriting from elm_layout. Besides, we need no more than what is
+ * there */
+EVAS_SMART_SUBCLASS_NEW
+  (SPINNER_SMART_NAME, _elm_spinner, Elm_Layout_Smart_Class,
+  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
-_disable_hook(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (elm_widget_disabled_get(obj))
-      edje_object_signal_emit(wd->spinner, "elm,state,disabled", "elm");
-   else
-      edje_object_signal_emit(wd->spinner, "elm,state,enabled", "elm");
-}
-
-static void
-_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   edje_object_signal_emit(wd->spinner, emission, source);
-}
-
-static void
-_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   edje_object_signal_callback_add(wd->spinner, emission,
-                                   source, func_cb, data);
-}
-
-static void
-_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   edje_object_signal_callback_del_full(wd->spinner, emission, source,
-                                        func_cb, data);
-}
-
-static void
-_mirrored_set(Evas_Object *obj, Eina_Bool rtl)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   edje_object_mirrored_set(wd->spinner, rtl);
-}
-
-static void
-_theme_hook(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _elm_widget_mirrored_reload(obj);
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
-   _elm_theme_object_set(obj, wd->spinner, "spinner", "base", elm_widget_style_get(obj));
-   edje_object_part_swallow(wd->spinner, "elm.swallow.entry", wd->ent);
-   _write_label(obj);
-   if (elm_widget_focus_get(obj))
-      edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
-   else
-      edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
-   if (elm_widget_disabled_get(obj))
-      edje_object_signal_emit(wd->spinner, "elm,state,disabled", "elm");
-   edje_object_message_signal_process(wd->spinner);
-   edje_object_scale_set(wd->spinner, elm_widget_scale_get(obj) * _elm_config->scale);
-   _sizing_eval(obj);
-}
-
-static void
-_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (elm_widget_focus_get(obj))
-     {
-        edje_object_signal_emit(wd->spinner, "elm,action,focus", "elm");
-        evas_object_focus_set(wd->spinner, EINA_TRUE);
-     }
-   else
-     {
-        edje_object_signal_emit(wd->spinner, "elm,action,unfocus", "elm");
-        evas_object_focus_set(wd->spinner, EINA_FALSE);
-     }
-}
-
-static Eina_Bool
-_delay_change(void *data)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return ECORE_CALLBACK_CANCEL;
-   wd->delay = NULL;
-   evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void
-_entry_show(Widget_Data *wd)
+_entry_show(Elm_Spinner_Smart_Data *sd)
 {
    char buf[32], fmt[32] = "%0.f";
 
    /* try to construct just the format from given label
     * completely ignoring pre/post words
     */
-   if (wd->label)
+   if (sd->label)
      {
-        const char *start = strchr(wd->label, '%');
+        const char *start = strchr(sd->label, '%');
         while (start)
           {
              /* handle %% */
@@ -200,176 +115,179 @@ _entry_show(Widget_Data *wd)
                }
           }
      }
-   snprintf(buf, sizeof(buf), fmt, wd->val);
-   elm_object_text_set(wd->ent, buf);
+   snprintf(buf, sizeof(buf), fmt, sd->val);
+   elm_object_text_set(sd->ent, buf);
 }
 
 static void
-_write_label(Evas_Object *obj)
+_label_write(Evas_Object *obj)
 {
    Eina_List *l;
-   Elm_Spinner_Special_Value *sv;
-   Widget_Data *wd = elm_widget_data_get(obj);
    char buf[1024];
+   Elm_Spinner_Special_Value *sv;
 
-   if (!wd) return;
-   EINA_LIST_FOREACH(wd->special_values, l, sv)
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   EINA_LIST_FOREACH (sd->special_values, l, sv)
      {
-        if (sv->value == wd->val)
+        if (sv->value == sd->val)
           {
              snprintf(buf, sizeof(buf), "%s", sv->label);
              goto apply;
           }
      }
-   if (wd->label)
-     snprintf(buf, sizeof(buf), wd->label, wd->val);
+   if (sd->label)
+     snprintf(buf, sizeof(buf), sd->label, sd->val);
    else
-     snprintf(buf, sizeof(buf), "%.0f", wd->val);
+     snprintf(buf, sizeof(buf), "%.0f", sd->val);
 
 apply:
-   edje_object_part_text_escaped_set(wd->spinner, "elm.text", buf);
-   if (wd->entry_visible) _entry_show(wd);
+   elm_layout_text_set(obj, "elm.text", buf);
+   if (sd->entry_visible) _entry_show(sd);
 }
 
 static Eina_Bool
-_value_set(Evas_Object *obj, double new_val)
+_delay_change(void *data)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
+   ELM_SPINNER_DATA_GET(data, sd);
 
-   if (!wd) return EINA_FALSE;
+   sd->delay = NULL;
+   evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
 
-   if (wd->round > 0)
-     new_val = wd->base +
-     (double)((((int)(new_val - wd->base)) / wd->round) * wd->round);
+   return ECORE_CALLBACK_CANCEL;
+}
 
-   if (wd->wrap)
+static Eina_Bool
+_value_set(Evas_Object *obj,
+           double new_val)
+{
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (sd->round > 0)
+     new_val = sd->val_base +
+       (double)((((int)(new_val - sd->val_base)) / sd->round) * sd->round);
+
+   if (sd->wrap)
      {
-        while (new_val < wd->val_min)
-          new_val = wd->val_max + new_val + 1 - wd->val_min;
-        while (new_val > wd->val_max)
-          new_val = wd->val_min + new_val - wd->val_max - 1;
+        while (new_val < sd->val_min)
+          new_val = sd->val_max + new_val + 1 - sd->val_min;
+        while (new_val > sd->val_max)
+          new_val = sd->val_min + new_val - sd->val_max - 1;
      }
    else
      {
-        if (new_val < wd->val_min)
-          new_val = wd->val_min;
-        else if (new_val > wd->val_max)
-          new_val = wd->val_max;
+        if (new_val < sd->val_min)
+          new_val = sd->val_min;
+        else if (new_val > sd->val_max)
+          new_val = sd->val_max;
      }
 
-   if (new_val == wd->val) return EINA_FALSE;
-   wd->val = new_val;
+   if (new_val == sd->val) return EINA_FALSE;
+   sd->val = new_val;
 
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
-   if (wd->delay) ecore_timer_del(wd->delay);
-   wd->delay = ecore_timer_add(0.2, _delay_change, obj);
+   if (sd->delay) ecore_timer_del(sd->delay);
+   sd->delay = ecore_timer_add(0.2, _delay_change, obj);
 
    return EINA_TRUE;
 }
 
 static void
-_sizing_eval(Evas_Object *obj)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord minw = -1, minh = -1;
-   if (!wd) return;
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc(wd->spinner, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
-/*
-   static void
-   _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info)
-   {
-   _sizing_eval(data);
-   }
- */
-
-static void
 _val_set(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
    double pos = 0.0;
-   if (!wd) return;
-   if (wd->val_max > wd->val_min)
-     pos = ((wd->val - wd->val_min) / (wd->val_max - wd->val_min));
+
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (sd->val_max > sd->val_min)
+     pos = ((sd->val - sd->val_min) / (sd->val_max - sd->val_min));
    if (pos < 0.0) pos = 0.0;
-   else if (pos > 1.0) pos = 1.0;
-   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider",
-                                   pos, pos);
+   else if (pos > 1.0)
+     pos = 1.0;
+   edje_object_part_drag_value_set
+     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.dragable.slider", pos, pos);
 }
 
 static void
-_drag(void *data, Evas_Object *_obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_drag_cb(void *data,
+         Evas_Object *_obj __UNUSED__,
+         const char *emission __UNUSED__,
+         const char *source __UNUSED__)
 {
-   Evas_Object *obj = data;
-   Widget_Data *wd = elm_widget_data_get(obj);
    double pos = 0.0, offset, delta;
-   if (!wd) return;
-   if (wd->entry_visible) return;
-   edje_object_part_drag_value_get(wd->spinner, "elm.dragable.slider",
-                                   &pos, NULL);
+   Evas_Object *obj = data;
 
-   offset = wd->step * _elm_config->scale;
-   delta = (pos - wd->drag_start_pos) * offset;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (sd->entry_visible) return;
+   edje_object_part_drag_value_get
+     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.dragable.slider", &pos, NULL);
+
+   offset = sd->step * _elm_config->scale;
+   delta = (pos - sd->drag_start_pos) * offset;
    /* If we are on rtl mode, change the delta to be negative on such changes */
    if (elm_widget_mirrored_get(obj)) delta *= -1;
-   if (_value_set(data, wd->drag_start_pos + delta)) _write_label(data);
-   wd->dragging = 1;
+   if (_value_set(data, sd->drag_start_pos + delta)) _label_write(data);
+   sd->dragging = 1;
 }
 
 static void
-_drag_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_drag_start_cb(void *data,
+               Evas_Object *obj __UNUSED__,
+               const char *emission __UNUSED__,
+               const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
    double pos;
-   if (!wd) return;
-   edje_object_part_drag_value_get(wd->spinner, "elm.dragable.slider",
-                                   &pos, NULL);
-   wd->drag_start_pos = pos;
+
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   edje_object_part_drag_value_get
+     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.dragable.slider", &pos, NULL);
+   sd->drag_start_pos = pos;
 }
 
 static void
-_drag_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_drag_stop_cb(void *data,
+              Evas_Object *obj __UNUSED__,
+              const char *emission __UNUSED__,
+              const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   wd->drag_start_pos = 0;
-   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider", 0.0, 0.0);
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   sd->drag_start_pos = 0;
+   edje_object_part_drag_value_set
+     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.dragable.slider", 0.0, 0.0);
 }
 
 static void
-_hide_entry(Evas_Object *obj)
+_entry_hide(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   edje_object_signal_emit(wd->spinner, "elm,state,inactive", "elm");
-   wd->entry_visible = 0;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   elm_layout_signal_emit(obj, "elm,state,inactive", "elm");
+   sd->entry_visible = EINA_FALSE;
 }
 
 static void
 _reset_value(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _hide_entry(obj);
-   elm_spinner_value_set(obj, wd->orig_val);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   _entry_hide(obj);
+   elm_spinner_value_set(obj, sd->orig_val);
 }
 
 static void
-_apply_entry_value(Evas_Object *obj)
+_entry_value_apply(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
    const char *str;
-   char *end;
    double val;
+   char *end;
 
-   if (!wd) return;
-   _hide_entry(obj);
-   str = elm_object_text_get(wd->ent);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   _entry_hide(obj);
+   str = elm_object_text_get(sd->ent);
    if (!str) return;
    val = strtod(str, &end);
    if ((*end != '\0') && (!isspace(*end))) return;
@@ -377,92 +295,99 @@ _apply_entry_value(Evas_Object *obj)
 }
 
 static void
-_toggle_entry(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_entry_toggle_cb(void *data,
+                 Evas_Object *obj __UNUSED__,
+                 const char *emission __UNUSED__,
+                 const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if (wd->dragging)
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   if (sd->dragging)
      {
-        wd->dragging = 0;
+        sd->dragging = 0;
         return;
      }
    if (elm_widget_disabled_get(data)) return;
-   if (!wd->editable) return;
-   if (wd->entry_visible) _apply_entry_value(data);
+   if (!sd->editable) return;
+   if (sd->entry_visible) _entry_value_apply(data);
    else
      {
-        wd->orig_val = wd->val;
-        edje_object_signal_emit(wd->spinner, "elm,state,active", "elm");
-        _entry_show(wd);
-        elm_entry_select_all(wd->ent);
-        elm_widget_focus_set(wd->ent, 1);
-        wd->entry_visible = 1;
+        sd->orig_val = sd->val;
+        elm_layout_signal_emit(data, "elm,state,active", "elm");
+        _entry_show(sd);
+        elm_entry_select_all(sd->ent);
+        elm_widget_focus_set(sd->ent, 1);
+        sd->entry_visible = EINA_TRUE;
      }
 }
 
 static Eina_Bool
 _spin_value(void *data)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return ECORE_CALLBACK_CANCEL;
-   if (_value_set(data, wd->val + wd->spin_speed)) _write_label(data);
-   wd->interval = wd->interval / 1.05;
-   ecore_timer_interval_set(wd->spin, wd->interval);
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   if (_value_set(data, sd->val + sd->spin_speed)) _label_write(data);
+   sd->interval = sd->interval / 1.05;
+   ecore_timer_interval_set(sd->spin, sd->interval);
+
    return ECORE_CALLBACK_RENEW;
 }
 
 static void
 _val_inc_start(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->interval = wd->first_interval;
-   wd->spin_speed = wd->step;
-   if (wd->spin) ecore_timer_del(wd->spin);
-   wd->spin = ecore_timer_add(wd->interval, _spin_value, obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->interval = sd->first_interval;
+   sd->spin_speed = sd->step;
+   if (sd->spin) ecore_timer_del(sd->spin);
+   sd->spin = ecore_timer_add(sd->interval, _spin_value, obj);
    _spin_value(obj);
 }
 
 static void
 _val_inc_stop(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->interval = wd->first_interval;
-   wd->spin_speed = 0;
-   if (wd->spin) ecore_timer_del(wd->spin);
-   wd->spin = NULL;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->interval = sd->first_interval;
+   sd->spin_speed = 0;
+   if (sd->spin) ecore_timer_del(sd->spin);
+   sd->spin = NULL;
 }
 
 static void
 _val_dec_start(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->interval = wd->first_interval;
-   wd->spin_speed = -wd->step;
-   if (wd->spin) ecore_timer_del(wd->spin);
-   wd->spin = ecore_timer_add(wd->interval, _spin_value, obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->interval = sd->first_interval;
+   sd->spin_speed = -sd->step;
+   if (sd->spin) ecore_timer_del(sd->spin);
+   sd->spin = ecore_timer_add(sd->interval, _spin_value, obj);
    _spin_value(obj);
 }
 
 static void
 _val_dec_stop(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->interval = wd->first_interval;
-   wd->spin_speed = 0;
-   if (wd->spin) ecore_timer_del(wd->spin);
-   wd->spin = NULL;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->interval = sd->first_interval;
+   sd->spin_speed = 0;
+   if (sd->spin) ecore_timer_del(sd->spin);
+   sd->spin = NULL;
 }
 
 static void
-_button_inc_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_button_inc_start_cb(void *data,
+                     Evas_Object *obj __UNUSED__,
+                     const char *emission __UNUSED__,
+                     const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if (wd->entry_visible)
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   if (sd->entry_visible)
      {
         _reset_value(data);
         return;
@@ -471,19 +396,23 @@ _button_inc_start(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 }
 
 static void
-_button_inc_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_button_inc_stop_cb(void *data,
+                    Evas_Object *obj __UNUSED__,
+                    const char *emission __UNUSED__,
+                    const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
    _val_inc_stop(data);
 }
 
 static void
-_button_dec_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_button_dec_start_cb(void *data,
+                     Evas_Object *obj __UNUSED__,
+                     const char *emission __UNUSED__,
+                     const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   if (wd->entry_visible)
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   if (sd->entry_visible)
      {
         _reset_value(data);
         return;
@@ -492,33 +421,53 @@ _button_dec_start(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 }
 
 static void
-_button_dec_stop(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_button_dec_stop_cb(void *data,
+                    Evas_Object *obj __UNUSED__,
+                    const char *emission __UNUSED__,
+                    const char *source __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
    _val_dec_stop(data);
 }
 
 static void
-_entry_activated(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_entry_activated_cb(void *data,
+                    Evas_Object *obj __UNUSED__,
+                    void *event_info __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
-   _apply_entry_value(data);
+   ELM_SPINNER_DATA_GET(data, sd);
+
+   _entry_value_apply(data);
    evas_object_smart_callback_call(data, SIG_CHANGED, NULL);
-   if (wd->delay) ecore_timer_del(wd->delay);
-   wd->delay = ecore_timer_add(0.2, _delay_change, data);
+   if (sd->delay) ecore_timer_del(sd->delay);
+   sd->delay = ecore_timer_add(0.2, _delay_change, data);
+}
+
+static void
+_elm_spinner_smart_sizing_eval(Evas_Object *obj)
+{
+   Evas_Coord minw = -1, minh = -1;
+
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc
+     (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh, minw, minh);
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static Eina_Bool
-_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+_elm_spinner_smart_event(Evas_Object *obj,
+                         Evas_Object *src __UNUSED__,
+                         Evas_Callback_Type type,
+                         void *event_info)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
    if (type == EVAS_CALLBACK_KEY_DOWN)
      {
         Evas_Event_Key_Down *ev = event_info;
+
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         else if (!strcmp(ev->keyname, "Left") ||
                  ((!strcmp(ev->keyname, "KP_Left")) && (!ev->string)) ||
@@ -526,7 +475,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
                  ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
           {
              _val_dec_start(obj);
-             edje_object_signal_emit(wd->spinner, "elm,left,anim,activate", "elm");
+             elm_layout_signal_emit(obj, "elm,left,anim,activate", "elm");
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
           }
@@ -536,7 +485,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
                  ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
           {
              _val_inc_start(obj);
-             edje_object_signal_emit(wd->spinner, "elm,right,anim,activate", "elm");
+             elm_layout_signal_emit(obj, "elm,right,anim,activate", "elm");
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
              return EINA_TRUE;
           }
@@ -544,6 +493,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    else if (type == EVAS_CALLBACK_KEY_UP)
      {
         Evas_Event_Key_Down *ev = event_info;
+
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
         if (!strcmp(ev->keyname, "Right") ||
             ((!strcmp(ev->keyname, "KP_Right")) && (!ev->string)) ||
@@ -555,276 +505,327 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
                  !strcmp(ev->keyname, "Down") ||
                  ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
           _val_dec_stop(obj);
-        else  return EINA_FALSE;
+        else return EINA_FALSE;
+
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+
         return EINA_TRUE;
      }
+
    return EINA_FALSE;
+}
+
+static void
+_elm_spinner_smart_add(Evas_Object *obj)
+{
+   EVAS_SMART_DATA_ALLOC(obj, Elm_Spinner_Smart_Data);
+
+   ELM_WIDGET_CLASS(_elm_spinner_parent_sc)->base.add(obj);
+
+   priv->val = 0.0;
+   priv->val_min = 0.0;
+   priv->val_max = 100.0;
+   priv->wrap = 0;
+   priv->step = 1.0;
+   priv->first_interval = 0.85;
+   priv->entry_visible = EINA_FALSE;
+   priv->editable = EINA_TRUE;
+
+   elm_layout_theme_set(obj, "spinner", "base", elm_widget_style_get(obj));
+   elm_layout_signal_callback_add(obj, "drag", "*", _drag_cb, obj);
+   elm_layout_signal_callback_add(obj, "drag,start", "*", _drag_start_cb, obj);
+   elm_layout_signal_callback_add(obj, "drag,stop", "*", _drag_stop_cb, obj);
+   elm_layout_signal_callback_add(obj, "drag,step", "*", _drag_stop_cb, obj);
+   elm_layout_signal_callback_add(obj, "drag,page", "*", _drag_stop_cb, obj);
+
+   elm_layout_signal_callback_add
+     (obj, "elm,action,increment,start", "*", _button_inc_start_cb, obj);
+   elm_layout_signal_callback_add
+     (obj, "elm,action,increment,stop", "*", _button_inc_stop_cb, obj);
+   elm_layout_signal_callback_add
+     (obj, "elm,action,decrement,start", "*", _button_dec_start_cb, obj);
+   elm_layout_signal_callback_add
+     (obj, "elm,action,decrement,stop", "*", _button_dec_stop_cb, obj);
+
+   edje_object_part_drag_value_set
+     (ELM_WIDGET_DATA(priv)->resize_obj, "elm.dragable.slider", 0.0, 0.0);
+
+   priv->ent = elm_entry_add(obj);
+   elm_entry_single_line_set(priv->ent, EINA_TRUE);
+   evas_object_smart_callback_add
+     (priv->ent, "activated", _entry_activated_cb, obj);
+
+   elm_layout_content_set(obj, "elm.swallow.entry", priv->ent);
+   elm_layout_signal_callback_add
+     (obj, "elm,action,entry,toggle", "*", _entry_toggle_cb, obj);
+
+   _label_write(obj);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   elm_layout_sizing_eval(obj);
+}
+
+static void
+_elm_spinner_smart_del(Evas_Object *obj)
+{
+   Elm_Spinner_Special_Value *sv;
+
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (sd->label) eina_stringshare_del(sd->label);
+   if (sd->delay) ecore_timer_del(sd->delay);
+   if (sd->spin) ecore_timer_del(sd->spin);
+   if (sd->special_values)
+     {
+        EINA_LIST_FREE (sd->special_values, sv)
+          {
+             eina_stringshare_del(sv->label);
+             free(sv);
+          }
+     }
+
+   ELM_WIDGET_CLASS(_elm_spinner_parent_sc)->base.del(obj);
+}
+
+static void
+_elm_spinner_smart_set_user(Elm_Layout_Smart_Class *sc)
+{
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_spinner_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_spinner_smart_del;
+
+   ELM_WIDGET_CLASS(sc)->focus_next = NULL; /* not 'focus chain manager' */
+   ELM_WIDGET_CLASS(sc)->event = _elm_spinner_smart_event;
+
+   sc->sizing_eval = _elm_spinner_smart_sizing_eval;
 }
 
 EAPI Evas_Object *
 elm_spinner_add(Evas_Object *parent)
 {
-   Evas_Object *obj;
    Evas *e;
-   Widget_Data *wd;
+   Evas_Object *obj;
 
-   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   ELM_SET_WIDTYPE(widtype, "spinner");
-   elm_widget_type_set(obj, "spinner");
-   elm_widget_sub_object_add(parent, obj);
-   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
-   elm_widget_data_set(obj, wd);
-   elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
-   elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_disable_hook_set(obj, _disable_hook);
-   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
-   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
-   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_event_hook_set(obj, _event_hook);
+   e = evas_object_evas_get(parent);
+   if (!e) return NULL;
 
-   wd->val = 0.0;
-   wd->val_min = 0.0;
-   wd->val_max = 100.0;
-   wd->wrap = 0;
-   wd->step = 1.0;
-   wd->first_interval = 0.85;
-   wd->entry_visible = 0;
-   wd->editable = EINA_TRUE;
+   obj = evas_object_smart_add(e, _elm_spinner_smart_class_new());
 
-   wd->spinner = edje_object_add(e);
-   _elm_theme_object_set(obj, wd->spinner, "spinner", "base", "default");
-   elm_widget_resize_object_set(obj, wd->spinner);
-   edje_object_signal_callback_add(wd->spinner, "drag", "*", _drag, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,start", "*",
-                                   _drag_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,stop", "*",
-                                   _drag_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,step", "*",
-                                   _drag_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "drag,page", "*",
-                                   _drag_stop, obj);
+   if (!elm_widget_sub_object_add(parent, obj))
+     ERR("could not add %p as sub object of %p", obj, parent);
 
-   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,start",
-                                   "*", _button_inc_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,increment,stop",
-                                   "*", _button_inc_stop, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,start",
-                                   "*", _button_dec_start, obj);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,decrement,stop",
-                                   "*", _button_dec_stop, obj);
-   edje_object_part_drag_value_set(wd->spinner, "elm.dragable.slider",
-                                   0.0, 0.0);
+   elm_layout_sizing_eval(obj);
 
-   wd->ent = elm_entry_add(obj);
-   elm_entry_single_line_set(wd->ent, 1);
-   evas_object_smart_callback_add(wd->ent, "activated", _entry_activated, obj);
-   edje_object_part_swallow(wd->spinner, "elm.swallow.entry", wd->ent);
-   edje_object_signal_callback_add(wd->spinner, "elm,action,entry,toggle",
-                                   "*", _toggle_entry, obj);
-
-   evas_object_smart_callbacks_descriptions_set(obj, _signals);
-
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
-   _write_label(obj);
-   _sizing_eval(obj);
    return obj;
 }
 
 EAPI void
-elm_spinner_label_format_set(Evas_Object *obj, const char *fmt)
+elm_spinner_label_format_set(Evas_Object *obj,
+                             const char *fmt)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   eina_stringshare_replace(&wd->label, fmt);
-   _write_label(obj);
-   _sizing_eval(obj);
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   eina_stringshare_replace(&sd->label, fmt);
+   _label_write(obj);
+   elm_layout_sizing_eval(obj);
 }
 
 EAPI const char *
 elm_spinner_label_format_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->label;
+   ELM_SPINNER_CHECK(obj) NULL;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return sd->label;
 }
 
 EAPI void
-elm_spinner_min_max_set(Evas_Object *obj, double min, double max)
+elm_spinner_min_max_set(Evas_Object *obj,
+                        double min,
+                        double max)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if ((wd->val_min == min) && (wd->val_max == max)) return;
-   wd->val_min = min;
-   wd->val_max = max;
-   if (wd->val < wd->val_min) wd->val = wd->val_min;
-   if (wd->val > wd->val_max) wd->val = wd->val_max;
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if ((sd->val_min == min) && (sd->val_max == max)) return;
+   sd->val_min = min;
+   sd->val_max = max;
+   if (sd->val < sd->val_min) sd->val = sd->val_min;
+   if (sd->val > sd->val_max) sd->val = sd->val_max;
    _val_set(obj);
-   _write_label(obj);
+   _label_write(obj);
 }
 
 EAPI void
-elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max)
+elm_spinner_min_max_get(const Evas_Object *obj,
+                        double *min,
+                        double *max)
 {
    if (min) *min = 0.0;
    if (max) *max = 0.0;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (min) *min = wd->val_min;
-   if (max) *max = wd->val_max;
+
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (min) *min = sd->val_min;
+   if (max) *max = sd->val_max;
 }
 
 EAPI void
-elm_spinner_step_set(Evas_Object *obj, double step)
+elm_spinner_step_set(Evas_Object *obj,
+                     double step)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->step = step;
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->step = step;
 }
 
 EAPI double
 elm_spinner_step_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0.0;
-   return wd->step;
+   ELM_SPINNER_CHECK(obj) 0.0;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return sd->step;
 }
 
 EAPI void
-elm_spinner_value_set(Evas_Object *obj, double val)
+elm_spinner_value_set(Evas_Object *obj,
+                      double val)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->val == val) return;
-   wd->val = val;
-   if (wd->val < wd->val_min) wd->val = wd->val_min;
-   if (wd->val > wd->val_max) wd->val = wd->val_max;
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (sd->val == val) return;
+   sd->val = val;
+   if (sd->val < sd->val_min) sd->val = sd->val_min;
+   if (sd->val > sd->val_max) sd->val = sd->val_max;
    _val_set(obj);
-   _write_label(obj);
+   _label_write(obj);
 }
 
 EAPI double
 elm_spinner_value_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0.0;
-   return wd->val;
+   ELM_SPINNER_CHECK(obj) 0.0;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return sd->val;
 }
 
 EAPI void
-elm_spinner_wrap_set(Evas_Object *obj, Eina_Bool wrap)
+elm_spinner_wrap_set(Evas_Object *obj,
+                     Eina_Bool wrap)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->wrap = wrap;
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->wrap = wrap;
 }
 
 EAPI Eina_Bool
 elm_spinner_wrap_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->wrap;
+   ELM_SPINNER_CHECK(obj) EINA_FALSE;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return sd->wrap;
 }
 
 EAPI void
-elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label)
+elm_spinner_special_value_add(Evas_Object *obj,
+                              double value,
+                              const char *label)
 {
    Elm_Spinner_Special_Value *sv;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
 
    sv = calloc(1, sizeof(*sv));
    if (!sv) return;
    sv->value = value;
    sv->label = eina_stringshare_add(label);
 
-   wd->special_values = eina_list_append(wd->special_values, sv);
-   _write_label(obj);
+   sd->special_values = eina_list_append(sd->special_values, sv);
+   _label_write(obj);
 }
 
 EAPI void
-elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable)
+elm_spinner_editable_set(Evas_Object *obj,
+                         Eina_Bool editable)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->editable = editable;
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->editable = editable;
 }
 
 EAPI Eina_Bool
 elm_spinner_editable_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->editable;
+   ELM_SPINNER_CHECK(obj) EINA_FALSE;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return sd->editable;
 }
 
 EAPI void
-elm_spinner_interval_set(Evas_Object *obj, double interval)
+elm_spinner_interval_set(Evas_Object *obj,
+                         double interval)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->first_interval = interval;
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->first_interval = interval;
 }
 
 EAPI double
 elm_spinner_interval_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0.0;
-   return wd->first_interval;
+   ELM_SPINNER_CHECK(obj) 0.0;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return sd->first_interval;
 }
 
 EAPI void
-elm_spinner_base_set(Evas_Object *obj, double base)
+elm_spinner_base_set(Evas_Object *obj,
+                     double base)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->base = base;
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->val_base = base;
 }
 
 EAPI double
 elm_spinner_base_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0.0;
-   return wd->base;
+   ELM_SPINNER_CHECK(obj) 0.0;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return sd->val_base;
 }
 
 EAPI void
-elm_spinner_round_set(Evas_Object *obj, int rnd)
+elm_spinner_round_set(Evas_Object *obj,
+                      int rnd)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->round = rnd;
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   sd->round = rnd;
 }
 
 EAPI int
 elm_spinner_round_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return 0;
-   return wd->round;
+   ELM_SPINNER_CHECK(obj) 0;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   return sd->round;
 }
