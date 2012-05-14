@@ -681,9 +681,10 @@ EAPI const Eina_List *elm_config_font_overlay_list_get(void);
  *
  * @ingroup Fonts
  *
- * @p font has to be in the format returned by
- * elm_font_fontconfig_name_get(). @see elm_config_font_overlay_list_get()
- * and elm_config_font_overlay_unset().
+ * @p font has to be in the format returned by elm_font_fontconfig_name_get().
+ * @see elm_config_font_overlay_list_get()
+ * @see elm_config_font_overlay_unset()
+ * @see edje_object_text_class_set()
  */
 EAPI void             elm_config_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
 
