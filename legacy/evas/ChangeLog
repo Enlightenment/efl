@@ -731,3 +731,9 @@
 	* Add CServe2 and image cache2 that makes use of it. Several changes
 	in the buffer and software engines to use the right cache if CServe2
 	is requested for the application.
+        
+2012-05-14  Carsten Haitzler (The Rasterman)
+
+        * Fix pixman rendering support if you set alpha flag AFTER
+        setting image size for custom image data.
+

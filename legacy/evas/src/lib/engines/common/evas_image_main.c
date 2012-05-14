@@ -777,6 +777,16 @@ evas_common_image_colorspace_dirty(RGBA_Image *im)
 {
    im->cs.dirty = 1;
    evas_common_rgba_image_scalecache_dirty(&im->cache_entry);
+#ifdef HAVE_PIXMAN
+# ifdef PIXMAN_IMAGE   
+   if (im->pixman.im)
+     {
+        pixman_image_unref(im->pixman.im);
+        im->pixman.im = NULL;
+     }
+   _evas_common_rgba_image_post_surface((Image_Entry *)im);
+# endif   
+#endif
 }
 
 EAPI void
