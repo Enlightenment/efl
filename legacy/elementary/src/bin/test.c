@@ -123,6 +123,7 @@ void test_icon_animated(void *data, Evas_Object *obj, void *event_info);
 void test_notify(void *data, Evas_Object *obj, void *event_info);
 void test_slideshow(void *data, Evas_Object *obj, void *event_info);
 void test_menu(void *data, Evas_Object *obj, void *event_info);
+void test_menu2(void *data, Evas_Object *obj, void *event_info);
 void test_panel(void *data, Evas_Object *obj, void *event_info);
 void test_panes(void *data, Evas_Object *obj, void *event_info);
 void test_calendar(void *data, Evas_Object *obj, void *event_info);
@@ -585,6 +586,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "File Selector Button", test_fileselector_button);
    ADD_TEST(NULL, "Selectors", "Actionslider", test_actionslider);
    ADD_TEST(NULL, "Selectors", "Menu", test_menu);
+   ADD_TEST(NULL, "Selectors", "Menu 2", test_menu2);
    ADD_TEST(NULL, "Selectors", "Disk Selector", test_diskselector);
    ADD_TEST(NULL, "Selectors", "Color Selector", test_colorselector);
    ADD_TEST(NULL, "Selectors", "Segment Control", test_segment_control);

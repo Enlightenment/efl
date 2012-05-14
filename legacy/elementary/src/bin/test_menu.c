@@ -124,4 +124,171 @@ test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    evas_object_show(win);
 }
 
+static void
+_parent_set_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *mn = data;
+   if (!mn) return;
+
+   Evas_Object *parent = evas_object_data_get(mn, "parent_1");
+   if (elm_menu_parent_get(mn) == parent)
+     {
+        parent = evas_object_data_get(mn, "parent_2");
+     }
+
+   elm_menu_parent_set(mn, parent);
+}
+
+static void
+_icon_set_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Object_Item *menu_it = data;
+   const char *icon_name = NULL;
+   if (!menu_it) return;
+
+   icon_name = elm_menu_item_icon_name_get(menu_it);
+   if ((icon_name) && !strcmp(icon_name, "home"))
+     {
+        elm_menu_item_icon_name_set(menu_it, "file");
+        return;
+     }
+   elm_menu_item_icon_name_set(menu_it, "home");
+}
+
+static void
+_item_select_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Object_Item *menu_it = data;
+   if (!menu_it) return;
+
+   elm_menu_item_selected_set(menu_it, !elm_menu_item_selected_get(menu_it));
+}
+
+static void
+_separators_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   const Eina_List *sis = NULL;
+   const Eina_List *l = NULL;
+   Elm_Object_Item *si;
+   int separators = 0;
+
+   Elm_Object_Item *menu_it = data;
+   if (!menu_it) return;
+
+   sis = elm_menu_item_subitems_get(menu_it);
+
+   EINA_LIST_FOREACH(sis, l, si)
+     if (elm_menu_item_is_separator(si)) separators++;
+
+   printf("The number of separators: %d\n", separators);
+}
+
+static void
+_open_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *mn = data;
+   if (!mn) return;
+
+   evas_object_show(mn);
+}
+
+static void
+_close_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *mn = data;
+   if (!mn) return;
+
+   elm_menu_close(mn);
+}
+
+void
+test_menu2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bx, *o_bg, *rect, *rect2, *mn, *bt, *vbx;
+   Elm_Object_Item *menu_it, *menu_it2;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("menu2", "Menu 2");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   o_bg = elm_bg_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/twofish.jpg", elm_app_data_dir_get());
+   elm_bg_file_set(o_bg, buf, NULL);
+   evas_object_size_hint_weight_set(o_bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(o_bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, o_bg);
+   evas_object_show(o_bg);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_move(rect, 0, 0);
+   evas_object_resize(rect, 124, 320);
+   evas_object_color_set(rect, 0, 0, 0, 0);
+   evas_object_show(rect);
+
+   rect2 = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_move(rect2, 124, 0);
+   evas_object_resize(rect2, 124, 320);
+   evas_object_color_set(rect2, 0, 0, 0, 0);
+   evas_object_show(rect2);
+
+   mn = elm_menu_add(rect);
+   elm_menu_item_add(mn, NULL, NULL, "first item", NULL, NULL);
+   menu_it = elm_menu_item_add(mn, NULL, NULL, "second item", NULL, NULL);
+   elm_menu_item_add(mn, menu_it, NULL, "item 1", NULL, NULL);
+   elm_menu_item_separator_add(mn, menu_it);
+   elm_menu_item_add(mn, menu_it, NULL, "item 2", NULL, NULL);
+   menu_it2 = elm_menu_item_add(mn, NULL, NULL, "thrid item", NULL, NULL);
+   evas_object_data_set(mn, "parent_1", rect);
+   evas_object_data_set(mn, "parent_2", rect2);
+
+   vbx = elm_box_add(win);
+   evas_object_show(vbx);
+   elm_box_pack_end(bx, vbx);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Menu Open");
+   elm_box_pack_end(vbx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _open_bt_clicked, mn);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Icon Set");
+   elm_box_pack_end(vbx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _icon_set_bt_clicked, menu_it);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Parent Set");
+   elm_box_pack_end(vbx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _parent_set_bt_clicked, mn);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Item Select");
+   elm_box_pack_end(vbx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _item_select_bt_clicked, menu_it2);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Separators");
+   elm_box_pack_end(vbx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _separators_bt_clicked, menu_it);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Menu Close");
+   elm_box_pack_end(vbx, bt);
+   evas_object_smart_callback_add(bt, "clicked", _close_bt_clicked, mn);
+   evas_object_show(bt);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
+
 #endif
