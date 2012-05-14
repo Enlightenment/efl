@@ -11,6 +11,19 @@ struct _Edje_Table_Items
    unsigned short rowspan;
 };
 
+typedef struct _Edje_Drag_Items Edje_Drag_Items;
+struct _Edje_Drag_Items
+{
+   const char *part;
+   FLOAT_T x, y, w, h;
+   struct {
+      FLOAT_T x, y;
+   } step;
+   struct {
+      FLOAT_T x, y;
+   } page;
+};
+
 #ifdef EDJE_PROGRAM_CACHE
 static Eina_Bool  _edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 #endif
@@ -20,6 +33,7 @@ static void _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, 
 static Eina_List *_edje_swallows_collect(Edje *ed);
 static Eina_List *_edje_box_items_collect(Edje *ed);
 static Eina_List *_edje_table_items_collect(Edje *ed);
+static Eina_List *_edje_drag_collect(Edje *ed);
 
 /************************** API Routines **************************/
 
@@ -296,6 +310,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    Eina_List *old_swallows;
    Eina_List *old_table_items;
    Eina_List *old_box_items;
+   Eina_List *old_drag;
    unsigned int n;
    Eina_List *parts = NULL;
    int group_path_started = 0;
@@ -321,6 +336,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    old_swallows = _edje_swallows_collect(ed);
    old_table_items = _edje_table_items_collect(ed);
    old_box_items = _edje_box_items_collect(ed);
+   old_drag = _edje_drag_collect(ed);
 
    if (_edje_script_only(ed)) _edje_script_only_shutdown(ed);
    if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
@@ -894,6 +910,37 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                     }
                }
 
+             if (old_drag)
+               {
+                  Edje_Drag_Items *drag;
+
+                  EINA_LIST_FREE(old_drag, drag)
+                    {
+                       Edje_Real_Part *drp;
+
+                       fprintf(stderr, "trying to restore drag on '%s'\n", drag->part);
+                       drp = _edje_real_part_recursive_get(ed, drag->part);
+                       if (!drp || !drp->drag) goto next;
+
+                       fprintf(stderr, "VAL [%f, %f]\n", drag->x, drag->y);
+                       drp->drag->val.x = drag->x;
+                       drp->drag->val.y = drag->y;
+                       drp->drag->size.x = drag->w;
+                       drp->drag->size.y = drag->h;
+                       /* drp->drag->step.x = drag->step.x; */
+                       /* drp->drag->step.y = drag->step.y; */
+                       drp->drag->page.x = drag->page.x;
+                       drp->drag->page.y = drag->page.y;
+
+                       _edje_dragable_pos_set(drp->edje, drp, drp->drag->val.x, drp->drag->val.y);
+                       _edje_emit(drp->edje, "drag,set", drp->part->name);
+
+                    next:
+                       eina_stringshare_del(drag->part);
+                       free(drag);
+                    }
+               }
+
 	     _edje_recalc(ed);
 	     _edje_thaw(ed);
 	     _edje_unblock(ed);
@@ -1050,6 +1097,40 @@ _edje_box_items_collect(Edje *ed)
                                         child);
                _edje_real_part_box_remove(rp, child);
             }
+     }
+
+   return items;
+}
+
+static Eina_List *
+_edje_drag_collect(Edje *ed)
+{
+   Eina_List *items = NULL;
+   unsigned int i;
+
+   if (!ed->file || !ed->table_parts) return NULL;
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp;
+        Edje_Drag_Items *drag;
+
+        rp = ed->table_parts[i];        
+        if (!rp->drag) continue ;
+
+        drag = calloc(1, sizeof (Edje_Drag_Items));
+        if (!drag) continue;
+
+        drag->part = eina_stringshare_add(rp->part->name);
+        drag->x = rp->drag->val.x;
+        drag->y = rp->drag->val.y;
+        drag->w = rp->drag->size.x;
+        drag->h = rp->drag->size.y;
+        drag->step.x = rp->drag->step.x;
+        drag->step.y = rp->drag->step.y;
+        drag->page.x = rp->drag->page.x;
+        drag->page.y = rp->drag->page.y;
+
+        items = eina_list_append(items, drag);
      }
 
    return items;

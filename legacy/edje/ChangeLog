@@ -439,9 +439,12 @@
 
 	* Preserve user box and table items during call of edje_object_file_set.
 
-2012-04-30  Rajeev Ranjan (Rajeev)
+2012-05-12  Rajeev Ranjan (Rajeev)
 
 	* Add edje_cc optimization to remove alpha channel flag from images
         with absolutely no alpha in them if marked as havin alpha in the
         originals
 
+2012-05-14  Cedric Bail
+
+	* Preserve drag informations during call of edje_object_file_set.
