@@ -15,7 +15,6 @@ static Eo_Class **_eo_classes;
 static Eo_Class_Id _eo_classes_last_id;
 static Eina_Bool _eo_init_count = 0;
 
-static void _eo_callback_remove_all(Eo *obj);
 static void _eo_constructor(Eo *obj, const Eo_Class *klass);
 static void _eo_destructor(Eo *obj, const Eo_Class *klass);
 static void eo_constructor_error_unset(Eo *obj);
@@ -23,38 +22,11 @@ static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
 static inline Eo *_eo_ref(Eo *obj);
 static inline void _eo_unref(Eo *obj);
 
-typedef struct _Eo_Callback_Description Eo_Callback_Description;
-
 typedef struct
 {
    Eo_Op op;
    const Eo_Class **kls_itr;
 } Eo_Kls_Itr;
-
-#define EO_EINA_MAGIC 0xa186bc32 /* Nothing magical about this number. */
-#define EO_EINA_MAGIC_STR "Eo"
-#define EO_DELETED_EINA_MAGIC 0xa186bb32 /* Nothing magical about this number. */
-#define EO_DELETED_EINA_MAGIC_STR "Eo - Deleted object"
-#define EO_CLASS_EINA_MAGIC 0xa186ba32 /* Nothing magical about this number. */
-#define EO_CLASS_EINA_MAGIC_STR "Eo Class"
-
-#define EO_MAGIC_RETURN_VAL(d, magic, ret) \
-   do { \
-        if (!EINA_MAGIC_CHECK(d, magic)) \
-          { \
-             EINA_MAGIC_FAIL(d, magic); \
-             return ret; \
-          } \
-   } while (0)
-
-#define EO_MAGIC_RETURN(d, magic) \
-   do { \
-        if (!EINA_MAGIC_CHECK(d, magic)) \
-          { \
-             EINA_MAGIC_FAIL(d, magic); \
-             return; \
-          } \
-   } while (0)
 
 struct _Eo {
      EINA_MAGIC
@@ -66,9 +38,6 @@ struct _Eo {
 #endif
 
      Eina_List *composite_objects;
-
-     Eina_Inlist *callbacks;
-     int walking_list;
 
      Eo_Kls_Itr mro_itr;
 
@@ -1058,8 +1027,9 @@ _eo_ref(Eo *obj)
 }
 
 EAPI Eo *
-eo_ref(Eo *obj)
+eo_ref(const Eo *_obj)
 {
+   Eo *obj = (Eo *) _obj;
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, obj);
 
    return _eo_ref(obj);
@@ -1073,7 +1043,7 @@ _eo_del_internal(Eo *obj)
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
-   eo_event_callback_call(obj, EO_EV_DEL, NULL);
+   eo_do(obj, eo_event_callback_call(EO_EV_DEL, NULL, NULL));
    obj->del = EINA_TRUE;
 
    const Eo_Class *klass = eo_class_get(obj);
@@ -1122,16 +1092,15 @@ _eo_unref(Eo *obj)
      }
 #endif
 
-        _eo_callback_remove_all(obj);
-
         EINA_MAGIC_SET(obj, EO_DELETED_EINA_MAGIC);
         free(obj);
      }
 }
 
 EAPI void
-eo_unref(Eo *obj)
+eo_unref(const Eo *_obj)
 {
+   Eo *obj = (Eo *) _obj;
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
 
    _eo_unref(obj);
@@ -1396,207 +1365,4 @@ eo_composite_is(Eo *emb_obj)
    return EINA_FALSE;
 }
 
-/* Callbacks */
-struct _Eo_Callback_Description
-{
-   EINA_INLIST;
-   const Eo_Event_Description *event;
-   Eo_Event_Cb func;
-   void *func_data;
-   Eo_Callback_Priority priority;
-   Eina_Bool delete_me : 1;
-};
-
-/* Actually remove, doesn't care about walking list, or delete_me */
-static void
-_eo_callback_remove(Eo *obj, Eo_Callback_Description *cb)
-{
-   obj->callbacks = eina_inlist_remove(obj->callbacks,
-         EINA_INLIST_GET(cb));
-   free(cb);
-}
-
-/* Actually remove, doesn't care about walking list, or delete_me */
-static void
-_eo_callback_remove_all(Eo *obj)
-{
-   Eina_Inlist *initr;
-   Eo_Callback_Description *cb = NULL;
-   EINA_INLIST_FOREACH_SAFE(obj->callbacks, initr, cb)
-     {
-        _eo_callback_remove(obj, cb);
-     }
-}
-
-static void
-_eo_callbacks_clear(Eo *obj)
-{
-   Eina_Inlist *itn;
-   Eo_Callback_Description *cb = NULL;
-
-   /* Abort if we are currently walking the list. */
-   if (obj->walking_list > 0)
-      return;
-
-   EINA_INLIST_FOREACH_SAFE(obj->callbacks, itn, cb)
-     {
-        if (cb->delete_me)
-          {
-             _eo_callback_remove(obj, cb);
-          }
-     }
-}
-
-static int
-_callback_priority_cmp(const void *_a, const void *_b)
-{
-   const Eo_Callback_Description *a, *b;
-   a = (const Eo_Callback_Description *) _a;
-   b = (const Eo_Callback_Description *) _b;
-   if (a->priority < b->priority)
-      return -1;
-   else
-      return 1;
-}
-
-EAPI Eina_Bool
-eo_event_callback_priority_add(Eo *obj,
-      const Eo_Event_Description *desc,
-      Eo_Callback_Priority priority,
-      Eo_Event_Cb func,
-      const void *data)
-{
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
-
-   Eo_Callback_Description *cb = calloc(1, sizeof(*cb));
-   cb->event = desc;
-   cb->func = func;
-   cb->func_data = (void *) data;
-   cb->priority = priority;
-   obj->callbacks = eina_inlist_sorted_insert(obj->callbacks,
-         EINA_INLIST_GET(cb), _callback_priority_cmp);
-
-   eo_event_callback_call(obj, EO_EV_CALLBACK_ADD, desc);
-
-   return EINA_TRUE;
-}
-
-EAPI void *
-eo_event_callback_del_lazy(Eo *obj, const Eo_Event_Description *desc, Eo_Event_Cb func)
-{
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, NULL);
-
-   void *ret = NULL;
-   Eo_Callback_Description *cb;
-   EINA_INLIST_FOREACH(obj->callbacks, cb)
-     {
-        if ((cb->event == desc) && (cb->func == func))
-          {
-             void *data;
-
-             data = cb->func_data;
-             cb->delete_me = EINA_TRUE;
-             _eo_callbacks_clear(obj);
-             ret = data;
-             goto found;
-          }
-     }
-
-   return NULL;
-
-found:
-   eo_event_callback_call(obj, EO_EV_CALLBACK_DEL, desc);
-   return ret;
-}
-
-EAPI void *
-eo_event_callback_del(Eo *obj, const Eo_Event_Description *desc, Eo_Event_Cb func, const void *user_data)
-{
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, NULL);
-
-   void *ret = NULL;
-   Eo_Callback_Description *cb;
-   EINA_INLIST_FOREACH(obj->callbacks, cb)
-     {
-        if ((cb->event == desc) && (cb->func == func) &&
-              (cb->func_data == user_data))
-          {
-             void *data;
-
-             data = cb->func_data;
-             cb->delete_me = EINA_TRUE;
-             _eo_callbacks_clear(obj);
-             ret = data;
-             goto found;
-          }
-     }
-
-   return NULL;
-
-found:
-   eo_event_callback_call(obj, EO_EV_CALLBACK_DEL, desc);
-   return ret;
-}
-
-EAPI Eina_Bool
-eo_event_callback_call(Eo *obj, const Eo_Event_Description *desc,
-      const void *event_info)
-{
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
-
-   Eina_Bool ret = EINA_TRUE;
-   Eo_Callback_Description *cb;
-
-   _eo_ref(obj);
-   obj->walking_list++;
-
-   EINA_INLIST_FOREACH(obj->callbacks, cb)
-     {
-        if (!cb->delete_me && (cb->event == desc))
-          {
-             /* Abort callback calling if the func says so. */
-             if (!cb->func((void *) cb->func_data, obj, desc,
-                      (void *) event_info))
-               {
-                  ret = EINA_FALSE;
-                  break;
-               }
-          }
-        if (obj->del)
-          break;
-     }
-   obj->walking_list--;
-   _eo_callbacks_clear(obj);
-   _eo_unref(obj);
-
-   return ret;
-}
-
-static Eina_Bool
-_eo_event_forwarder_callback(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
-{
-   (void) obj;
-   Eo *new_obj = (Eo *) data;
-   return eo_event_callback_call(new_obj, desc, event_info);
-}
-
-/* FIXME: Change default priority? Maybe call later? */
-EAPI Eina_Bool
-eo_event_callback_forwarder_add(Eo *obj, const Eo_Event_Description *desc, Eo *new_obj)
-{
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
-   EO_MAGIC_RETURN_VAL(new_obj, EO_EINA_MAGIC, EINA_FALSE);
-
-   return eo_event_callback_add(obj, desc, _eo_event_forwarder_callback, new_obj);
-}
-
-EAPI Eina_Bool
-eo_event_callback_forwarder_del(Eo *obj, const Eo_Event_Description *desc, Eo *new_obj)
-{
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
-   EO_MAGIC_RETURN_VAL(new_obj, EO_EINA_MAGIC, EINA_FALSE);
-
-   eo_event_callback_del(obj, desc, _eo_event_forwarder_callback, new_obj);
-   return EINA_TRUE;
-}
 

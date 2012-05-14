@@ -11,6 +11,9 @@ typedef struct
 {
    Eina_Inlist *generic_data;
    Eo ***wrefs;
+
+   Eina_Inlist *callbacks;
+   int walking_list;
 } Private_Data;
 
 typedef struct
@@ -222,6 +225,209 @@ _wref_destruct(Private_Data *pd)
 
 /* EOF Weak reference. */
 
+/* Event callbacks */
+
+/* Callbacks */
+
+typedef struct
+{
+   EINA_INLIST;
+   const Eo_Event_Description *event;
+   Eo_Event_Cb func;
+   void *func_data;
+   Eo_Callback_Priority priority;
+   Eina_Bool delete_me : 1;
+} Eo_Callback_Description;
+
+/* Actually remove, doesn't care about walking list, or delete_me */
+static void
+_eo_callback_remove(Private_Data *pd, Eo_Callback_Description *cb)
+{
+   pd->callbacks = eina_inlist_remove(pd->callbacks,
+         EINA_INLIST_GET(cb));
+   free(cb);
+}
+
+/* Actually remove, doesn't care about walking list, or delete_me */
+static void
+_eo_callback_remove_all(Private_Data *pd)
+{
+   Eina_Inlist *initr;
+   Eo_Callback_Description *cb = NULL;
+   EINA_INLIST_FOREACH_SAFE(pd->callbacks, initr, cb)
+     {
+        _eo_callback_remove(pd, cb);
+     }
+}
+
+static void
+_eo_callbacks_clear(Private_Data *pd)
+{
+   Eina_Inlist *itn;
+   Eo_Callback_Description *cb = NULL;
+
+   /* Abort if we are currently walking the list. */
+   if (pd->walking_list > 0)
+      return;
+
+   EINA_INLIST_FOREACH_SAFE(pd->callbacks, itn, cb)
+     {
+        if (cb->delete_me)
+          {
+             _eo_callback_remove(pd, cb);
+          }
+     }
+}
+
+static int
+_callback_priority_cmp(const void *_a, const void *_b)
+{
+   const Eo_Callback_Description *a, *b;
+   a = (const Eo_Callback_Description *) _a;
+   b = (const Eo_Callback_Description *) _b;
+   if (a->priority < b->priority)
+      return -1;
+   else
+      return 1;
+}
+
+static void
+_ev_cb_priority_add(Eo *obj, void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
+   Eo_Callback_Priority priority = va_arg(*list, int);
+   Eo_Event_Cb func = va_arg(*list, Eo_Event_Cb);
+   const void *data = va_arg(*list, const void *);
+
+   Eo_Callback_Description *cb = calloc(1, sizeof(*cb));
+   cb->event = desc;
+   cb->func = func;
+   cb->func_data = (void *) data;
+   cb->priority = priority;
+   pd->callbacks = eina_inlist_sorted_insert(pd->callbacks,
+         EINA_INLIST_GET(cb), _callback_priority_cmp);
+
+   eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_ADD, desc, NULL));
+}
+
+static void
+_ev_cb_del_lazy(Eo *obj, void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
+   Eo_Event_Cb func = va_arg(*list, Eo_Event_Cb);
+   void **ret = va_arg(*list, void **);
+
+   Eo_Callback_Description *cb;
+   EINA_INLIST_FOREACH(pd->callbacks, cb)
+     {
+        if ((cb->event == desc) && (cb->func == func))
+          {
+             void *data;
+
+             data = cb->func_data;
+             cb->delete_me = EINA_TRUE;
+             _eo_callbacks_clear(pd);
+             if (ret) *ret = data;
+             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, desc, NULL));
+             return;
+          }
+     }
+
+   if (ret) *ret = NULL;
+}
+
+static void
+_ev_cb_del(Eo *obj, void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
+   Eo_Event_Cb func = va_arg(*list, Eo_Event_Cb);
+   void *user_data = va_arg(*list, void *);
+
+   Eo_Callback_Description *cb;
+   EINA_INLIST_FOREACH(pd->callbacks, cb)
+     {
+        if ((cb->event == desc) && (cb->func == func) &&
+              (cb->func_data == user_data))
+          {
+             cb->delete_me = EINA_TRUE;
+             _eo_callbacks_clear(pd);
+             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, desc, NULL));
+             return;
+          }
+     }
+}
+
+static void
+_ev_cb_call(const Eo *_obj, const void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   Eo *obj = (Eo *) _obj;
+   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
+   void *event_info = va_arg(*list, void *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   Eo_Callback_Description *cb;
+
+   if (ret) *ret = EINA_TRUE;
+
+   /* FIXME: Change eo_ref to _eo_ref and unref. */
+   eo_ref(obj);
+   pd->walking_list++;
+
+   EINA_INLIST_FOREACH(pd->callbacks, cb)
+     {
+        if (!cb->delete_me && (cb->event == desc))
+          {
+             /* Abort callback calling if the func says so. */
+             if (!cb->func((void *) cb->func_data, obj, desc,
+                      (void *) event_info))
+               {
+                  if (ret) *ret = EINA_FALSE;
+                  break;
+               }
+          }
+     }
+   pd->walking_list--;
+   _eo_callbacks_clear(pd);
+   eo_unref(obj);
+}
+
+static Eina_Bool
+_eo_event_forwarder_callback(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)
+{
+   (void) obj;
+   Eo *new_obj = (Eo *) data;
+   Eina_Bool ret;
+   eo_do(new_obj, eo_event_callback_call(desc, event_info, &ret));
+   return ret;
+}
+
+/* FIXME: Change default priority? Maybe call later? */
+static void
+_ev_cb_forwarder_add(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+{
+   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
+   Eo *new_obj = va_arg(*list, Eo *);
+   /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
+
+   eo_do(obj, eo_event_callback_add(desc, _eo_event_forwarder_callback, new_obj));
+}
+
+static void
+_ev_cb_forwarder_del(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
+{
+   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
+   Eo *new_obj = va_arg(*list, Eo *);
+   /* FIXME: Add it EO_MAGIC_RETURN(new_obj, EO_EINA_MAGIC); */
+
+   eo_do(obj, eo_event_callback_del(desc, _eo_event_forwarder_callback, new_obj));
+}
+
+/* EOF event callbacks */
+
 
 /* EO_BASE_CLASS stuff */
 #define MY_CLASS EO_BASE_CLASS
@@ -247,6 +453,7 @@ _destructor(Eo *obj, void *class_data)
 
    _eo_generic_data_del_all(class_data);
    _wref_destruct(class_data);
+   _eo_callback_remove_all(class_data);
 }
 
 static void
@@ -258,6 +465,12 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_DEL), _data_del),
         EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_WREF_ADD), _wref_add),
         EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), _wref_del),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), _ev_cb_priority_add),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), _ev_cb_del),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL_LAZY), _ev_cb_del_lazy),
+        EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), _ev_cb_call),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), _ev_cb_forwarder_add),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), _ev_cb_forwarder_del),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -270,12 +483,16 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_DEL, "?", "Del key."),
      EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_ADD, "?", "Add a weak ref to the object."),
      EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_DEL, "?", "Delete the weak ref."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD, "?", "Add an event callback with a priority."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL, "?", "Delete an event callback"),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL_LAZY, "?", "Delete an event callback in a lazy way."),
+     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "?", "Call the event callbacks for an event."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD, "?", "Add an event forwarder."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL, "?", "Delete an event forwarder."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
 static const Eo_Event_Description *event_desc[] = {
-     EO_EV_CALLBACK_ADD,
-     EO_EV_CALLBACK_DEL,
      EO_EV_DEL,
      NULL
 };

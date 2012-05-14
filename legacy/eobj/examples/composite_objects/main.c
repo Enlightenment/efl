@@ -27,7 +27,7 @@ main(int argc, char *argv[])
    eo_init();
 
    Eo *obj = eo_add(COMP_CLASS, NULL);
-   eo_event_callback_add(obj, EV_A_CHANGED, _a_changed_cb, NULL);
+   eo_do(obj, eo_event_callback_add(EV_A_CHANGED, _a_changed_cb, NULL));
 
    int a;
    eo_do(obj, simple_a_set(1));
@@ -40,7 +40,7 @@ main(int argc, char *argv[])
    Eo *simple;
    eo_do(obj, eo_base_data_get("simple-obj", (void **) &simple));
    eo_ref(simple);
-   eo_event_callback_forwarder_del(simple, EV_A_CHANGED, obj);
+   eo_do(simple, eo_event_callback_forwarder_del(EV_A_CHANGED, obj));
 
    cb_called = EINA_FALSE;
    eo_do(obj, simple_a_set(2));

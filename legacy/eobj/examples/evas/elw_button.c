@@ -44,7 +44,7 @@ _btn_clicked(void *data, Evas_Object *evas_obj, void *event_info)
    (void) evas_obj;
    (void) event_info;
    Eo *obj = data;
-   eo_event_callback_call(obj, EV_CLICKED, NULL);
+   eo_do(obj, eo_event_callback_call(EV_CLICKED, NULL, NULL));
 }
 
 static void

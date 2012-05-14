@@ -369,15 +369,8 @@ START_TEST(eo_magic_checks)
    eo_composite_object_detach(obj, (Eo *) buf);
    eo_composite_is((Eo *) buf);
 
-   fail_if(eo_event_callback_add((Eo *) buf, NULL, NULL, NULL));
-   fail_if(eo_event_callback_del_lazy((Eo *) buf, NULL, NULL));
-   fail_if(eo_event_callback_del((Eo *) buf, NULL, NULL, NULL));
-   fail_if(eo_event_callback_call((Eo *) buf, NULL, NULL));
-
-   fail_if(eo_event_callback_forwarder_add((Eo *) buf, NULL, obj));
-   fail_if(eo_event_callback_forwarder_add(obj, NULL, (Eo *) buf));
-   fail_if(eo_event_callback_forwarder_del((Eo *) buf, NULL, obj));
-   fail_if(eo_event_callback_forwarder_del(obj, NULL, (Eo *) buf));
+   eo_do(obj, eo_event_callback_forwarder_add(NULL, (Eo *) buf));
+   eo_do(obj, eo_event_callback_forwarder_del(NULL, (Eo *) buf));
 
    eo_unref(obj);
 

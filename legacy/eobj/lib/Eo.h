@@ -555,7 +555,7 @@ EAPI void *eo_data_get(const Eo *obj, const Eo_Class *klass);
  * @see eo_unref()
  * @see eo_ref_get()
  */
-EAPI Eo *eo_ref(Eo *obj);
+EAPI Eo *eo_ref(const Eo *obj);
 
 /**
  * @brief Decrement the object's reference count by 1 and free it if needed.
@@ -564,7 +564,7 @@ EAPI Eo *eo_ref(Eo *obj);
  * @see eo_ref()
  * @see eo_ref_get()
  */
-EAPI void eo_unref(Eo *obj);
+EAPI void eo_unref(const Eo *obj);
 
 /**
  * @brief Return the ref count of the object passed.
@@ -660,156 +660,6 @@ EAPI Eina_Bool eo_composite_is(Eo *comp_obj);
  */
 
 /**
- * @addtogroup Eo_Events Eo's Event Handling
- * @{
- */
-
-/**
- * @def EO_CALLBACK_PRIORITY_BEFORE
- * Slightly more prioritized than default.
- */
-#define EO_CALLBACK_PRIORITY_BEFORE -100
-/**
- * @def EO_CALLBACK_PRIORITY_DEFAULT
- * Default callback priority level
- */
-#define EO_CALLBACK_PRIORITY_DEFAULT 0
-/**
- * @def EO_CALLBACK_PRIORITY_AFTER
- * Slightly less prioritized than default.
- */
-#define EO_CALLBACK_PRIORITY_AFTER 100
-
-/**
- * @typedef Eo_Callback_Priority
- *
- * Callback priority value. Range is -32k - 32k. The lower the number, the
- * higher the priority.
- *
- * @see EO_CALLBACK_PRIORITY_AFTER
- * @see EO_CALLBACK_PRIORITY_BEFORE
- * @see EO_CALLBACK_PRIORITY_DEFAULT
- */
-typedef short Eo_Callback_Priority;
-
-/**
- * @def EO_CALLBACK_STOP
- * Stop calling callbacks for the even of which the callback was called for.
- * @see EO_CALLBACK_CONTINUE
- */
-#define EO_CALLBACK_STOP EINA_FALSE
-
-/**
- * @def EO_CALLBACK_CONTINUE
- * Continue calling callbacks for the even of which the callback was called for.
- * @see EO_CALLBACK_STOP
- */
-#define EO_CALLBACK_CONTINUE EINA_TRUE
-
-/**
- * @typedef Eo_Event_Cb
- *
- * An event callback prototype.
- *
- * @param data The user data registered with the callback.
- * @param obj The object which initiated the event.
- * @param desc The event's description.
- * @param event_info additional data passed with the event.
- * @return #EO_CALLBACK_STOP to stop calling additional callbacks for the event, #EO_CALLBACK_CONTINUE to continue.
- */
-typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
-
-/**
- * @brief Add an event callback forwarder for an event and an object.
- * @param obj The object to listen to events on.
- * @param desc The description of the event to listen to.
- * @param new_obj The object to emit events from.
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see eo_event_callback_forwarder_del()
- */
-EAPI Eina_Bool eo_event_callback_forwarder_add(Eo *obj, const Eo_Event_Description *desc, Eo *new_obj);
-
-/**
- * @brief Remove an event callback forwarder for an event and an object.
- * @param obj The object to listen to events on.
- * @param desc The description of the event to listen to.
- * @param new_obj The object to emit events from.
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * @see eo_event_callback_forwarder_add()
- */
-EAPI Eina_Bool eo_event_callback_forwarder_del(Eo *obj, const Eo_Event_Description *desc, Eo *new_obj);
-
-/**
- * @def eo_event_callback_add(obj, desc, cb, data)
- * Add a callback for an event.
- * @param obj The object to listen to events on.
- * @param desc The description of the event to listen to.
- * @param cb the callback to call.
- * @param data additional data to pass to the callback.
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * callbacks of the same priority are called in reverse order of creation.
- *
- * @see eo_event_callback_priority_add()
- */
-#define eo_event_callback_add(obj, desc, cb, data) \
-   eo_event_callback_priority_add(obj, desc, \
-         EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
-
-/**
- * @brief Add a callback for an event with a specific priority.
- * @param obj The object to listen to events on.
- * @param desc The description of the event to listen to.
- * @param priority The priority of the callback.
- * @param cb the callback to call.
- * @param data additional data to pass to the callback.
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise.
- *
- * callbacks of the same priority are called in reverse order of creation.
- *
- * @see #eo_event_callback_add
- */
-EAPI Eina_Bool eo_event_callback_priority_add(Eo *obj, const Eo_Event_Description *desc, Eo_Callback_Priority priority, Eo_Event_Cb cb, const void *data);
-
-/**
- * @brief Del a callback for an event
- * @param obj The object to listen to delete from.
- * @param desc The description of the event to listen to.
- * @param func the callback to delete.
- * @return The additional data that was set to be passed to the callback.
- *
- * @see eo_event_callback_del()
- */
-EAPI void *eo_event_callback_del_lazy(Eo *obj, const Eo_Event_Description *desc, Eo_Event_Cb func);
-
-/**
- * @brief Del a callback with a specific data associated to it for an event.
- * @param obj The object to listen to delete from.
- * @param desc The description of the event to listen to.
- * @param func the callback to delete.
- * @param user_data The data to compare.
- * @return The additional data that was set to be passed to the callback.
- *
- * @see eo_event_callback_del_lazy()
- */
-EAPI void *eo_event_callback_del(Eo *obj, const Eo_Event_Description *desc, Eo_Event_Cb func, const void *user_data);
-
-/**
- * @brief Call the callbacks for an event of an object.
- * @param obj The object to work on.
- * @param desc The description of the event to call.
- * @param event_info Extra event info to pass to the callbacks.
- * @return @c EINA_FALSE if one of the callbacks aborted the callback calls or @c EINA_TRUE otherwise.
- */
-EAPI Eina_Bool eo_event_callback_call(Eo *obj, const Eo_Event_Description *desc, const void *event_info);
-
-/**
- * @}
- */
-
-/**
  * @addtogroup Eo_Class_Base Eo's Base class.
  * @{
  */
@@ -843,6 +693,12 @@ enum {
      EO_BASE_SUB_ID_DATA_DEL,
      EO_BASE_SUB_ID_WREF_ADD,
      EO_BASE_SUB_ID_WREF_DEL,
+     EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD,
+     EO_BASE_SUB_ID_EVENT_CALLBACK_DEL,
+     EO_BASE_SUB_ID_EVENT_CALLBACK_DEL_LAZY,
+     EO_BASE_SUB_ID_EVENT_CALLBACK_CALL,
+     EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD,
+     EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL,
      EO_BASE_SUB_ID_LAST
 };
 
@@ -923,6 +779,145 @@ enum {
    do { \
         if (*wref) eo_do(*wref, eo_wref_del(wref)); \
    } while (0)
+
+/**
+ * @addtogroup Eo_Events Eo's Event Handling
+ * @{
+ */
+
+/**
+ * @def EO_CALLBACK_PRIORITY_BEFORE
+ * Slightly more prioritized than default.
+ */
+#define EO_CALLBACK_PRIORITY_BEFORE -100
+/**
+ * @def EO_CALLBACK_PRIORITY_DEFAULT
+ * Default callback priority level
+ */
+#define EO_CALLBACK_PRIORITY_DEFAULT 0
+/**
+ * @def EO_CALLBACK_PRIORITY_AFTER
+ * Slightly less prioritized than default.
+ */
+#define EO_CALLBACK_PRIORITY_AFTER 100
+
+/**
+ * @typedef Eo_Callback_Priority
+ *
+ * Callback priority value. Range is -32k - 32k. The lower the number, the
+ * higher the priority.
+ *
+ * @see EO_CALLBACK_PRIORITY_AFTER
+ * @see EO_CALLBACK_PRIORITY_BEFORE
+ * @see EO_CALLBACK_PRIORITY_DEFAULT
+ */
+typedef short Eo_Callback_Priority;
+
+/**
+ * @def EO_CALLBACK_STOP
+ * Stop calling callbacks for the even of which the callback was called for.
+ * @see EO_CALLBACK_CONTINUE
+ */
+#define EO_CALLBACK_STOP EINA_FALSE
+
+/**
+ * @def EO_CALLBACK_CONTINUE
+ * Continue calling callbacks for the even of which the callback was called for.
+ * @see EO_CALLBACK_STOP
+ */
+#define EO_CALLBACK_CONTINUE EINA_TRUE
+
+/**
+ * @typedef Eo_Event_Cb
+ *
+ * An event callback prototype.
+ *
+ * @param data The user data registered with the callback.
+ * @param obj The object which initiated the event.
+ * @param desc The event's description.
+ * @param event_info additional data passed with the event.
+ * @return #EO_CALLBACK_STOP to stop calling additional callbacks for the event, #EO_CALLBACK_CONTINUE to continue.
+ */
+typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info);
+
+/**
+ * @brief Add an event callback forwarder for an event and an object.
+ * @param desc[in] The description of the event to listen to.
+ * @param new_obj[in] The object to emit events from.
+ *
+ * @see eo_event_callback_forwarder_del()
+ */
+#define eo_event_callback_forwarder_add(desc, new_obj) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo *, new_obj)
+
+/**
+ * @brief Remove an event callback forwarder for an event and an object.
+ * @param desc[in] The description of the event to listen to.
+ * @param new_obj[in] The object to emit events from.
+ *
+ * @see eo_event_callback_forwarder_add()
+ */
+#define eo_event_callback_forwarder_del(desc, new_obj) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo *, new_obj)
+
+/**
+ * @def eo_event_callback_add(obj, desc, cb, data)
+ * Add a callback for an event.
+ * @param desc[in] The description of the event to listen to.
+ * @param cb[in] the callback to call.
+ * @param data[in] additional data to pass to the callback.
+ *
+ * callbacks of the same priority are called in reverse order of creation.
+ *
+ * @see eo_event_callback_priority_add()
+ */
+#define eo_event_callback_add(desc, cb, data) \
+   eo_event_callback_priority_add(desc, \
+         EO_CALLBACK_PRIORITY_DEFAULT, cb, data)
+
+/**
+ * @brief Add a callback for an event with a specific priority.
+ * @param desc[in] The description of the event to listen to.
+ * @param priority[in] The priority of the callback.
+ * @param cb[in] the callback to call.
+ * @param data[in] additional data to pass to the callback.
+ *
+ * callbacks of the same priority are called in reverse order of creation.
+ *
+ * @see #eo_event_callback_add
+ */
+#define eo_event_callback_priority_add(desc, priority, cb, data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Callback_Priority, priority), EO_TYPECHECK(Eo_Event_Cb, cb), EO_TYPECHECK(const void *, data)
+
+
+/**
+ * @brief Del a callback for an event
+ * @param desc[in] The description of the event to listen to.
+ * @param func[in] the callback to delete.
+ * @param user_data[out] The user data associated with the callback func.
+ *
+ * @see eo_event_callback_del()
+ */
+#define eo_event_callback_del_lazy(desc, func, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL_LAZY), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Event_Cb, func), EO_TYPECHECK(void **, user_data)
+
+/**
+ * @brief Del a callback with a specific data associated to it for an event.
+ * @param desc[in] The description of the event to listen to.
+ * @param func[in] the callback to delete.
+ * @param user_data[in] The data to compare.
+ *
+ * @see eo_event_callback_del_lazy()
+ */
+#define eo_event_callback_del(desc, func, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Event_Cb, func), EO_TYPECHECK(const void *, user_data)
+
+/**
+ * @brief Call the callbacks for an event of an object.
+ * @param desc[in] The description of the event to call.
+ * @param event_info[in] Extra event info to pass to the callbacks.
+ * @param aborted[out] @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise.
+ */
+#define eo_event_callback_call(desc, event_info, aborted) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(const void *, event_info), EO_TYPECHECK(Eina_Bool *, aborted)
+
+/**
+ * @}
+ */
 
 /**
  * @var _EO_EV_CALLBACK_ADD

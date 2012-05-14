@@ -38,7 +38,7 @@ main(int argc, char *argv[])
          evas_obj_color_set(255, 0, 0, 255),
          elw_button_text_set("Click"),
          evas_obj_visibility_set(EINA_TRUE));
-   eo_event_callback_add(bt, EV_CLICKED, _btn_clicked_cb, "btn");
+   eo_do(bt, eo_event_callback_add(EV_CLICKED, _btn_clicked_cb, "btn"));
 
    int r, g, b, a;
    eo_do(bt, evas_obj_color_get(&r, &g, &b, &a));
@@ -50,7 +50,7 @@ main(int argc, char *argv[])
          evas_obj_color_set(0, 0, 255, 255),
          elw_button_text_set("Click2"),
          evas_obj_visibility_set(EINA_TRUE));
-   eo_event_callback_add(bx, EV_CLICKED, _btn_clicked_cb, "bxedbtn");
+   eo_do(bx, eo_event_callback_add(EV_CLICKED, _btn_clicked_cb, "bxedbtn"));
 
    elm_run();
 

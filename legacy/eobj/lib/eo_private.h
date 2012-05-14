@@ -1,6 +1,32 @@
 #ifndef _EO_PRIVATE_H
 #define _EO_PRIVATE_H
 
+#define EO_EINA_MAGIC 0xa186bc32 /* Nothing magical about this number. */
+#define EO_EINA_MAGIC_STR "Eo"
+#define EO_DELETED_EINA_MAGIC 0xa186bb32 /* Nothing magical about this number. */
+#define EO_DELETED_EINA_MAGIC_STR "Eo - Deleted object"
+#define EO_CLASS_EINA_MAGIC 0xa186ba32 /* Nothing magical about this number. */
+#define EO_CLASS_EINA_MAGIC_STR "Eo Class"
+
+#define EO_MAGIC_RETURN_VAL(d, magic, ret) \
+   do { \
+        if (!EINA_MAGIC_CHECK(d, magic)) \
+          { \
+             EINA_MAGIC_FAIL(d, magic); \
+             return ret; \
+          } \
+   } while (0)
+
+#define EO_MAGIC_RETURN(d, magic) \
+   do { \
+        if (!EINA_MAGIC_CHECK(d, magic)) \
+          { \
+             EINA_MAGIC_FAIL(d, magic); \
+             return; \
+          } \
+   } while (0)
+
+
 extern int _eo_log_dom;
 
 #ifdef CRITICAL

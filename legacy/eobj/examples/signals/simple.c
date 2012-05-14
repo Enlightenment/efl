@@ -25,7 +25,7 @@ _a_set(Eo *obj, void *class_data, va_list *list)
    pd->a = a;
    printf("%s %d\n", __func__, pd->a);
 
-   eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
+   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a, NULL));
 }
 
 Eina_Bool
@@ -67,8 +67,8 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 {
    eo_constructor_super(obj);
 
-   eo_event_callback_add(obj, EO_EV_CALLBACK_ADD, _cb_added, NULL);
-   eo_event_callback_add(obj, EO_EV_CALLBACK_DEL, _cb_deled, NULL);
+   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, NULL));
+   eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, NULL));
 
    eo_do(obj, eo_base_data_set("cb_count", (intptr_t) 0, NULL));
 }

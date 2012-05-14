@@ -19,7 +19,7 @@ _a_set(Eo *obj, void *class_data, va_list *list)
    printf("%s %d\n", eo_class_name_get(MY_CLASS), a);
    pd->a = a;
 
-   eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
+   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a, NULL));
 }
 
 static void

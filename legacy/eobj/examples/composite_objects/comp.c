@@ -25,7 +25,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 
    Eo *simple = eo_add(SIMPLE_CLASS, obj);
    eo_composite_object_attach(obj, simple);
-   eo_event_callback_forwarder_add(simple, EV_A_CHANGED, obj);
+   eo_do(simple, eo_event_callback_forwarder_add(EV_A_CHANGED, obj));
 
    fail_if(eo_composite_is(obj));
    fail_if(!eo_composite_is(simple));

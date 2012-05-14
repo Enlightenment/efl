@@ -27,7 +27,7 @@ _a_set(Eo *obj, void *class_data, va_list *list)
    pd->protected.protected_x1 = a + 1;
    pd->protected.public.public_x2 = a + 2;
 
-   eo_event_callback_call(obj, EV_A_CHANGED, &pd->a);
+   eo_do(obj, eo_event_callback_call(EV_A_CHANGED, &pd->a, NULL));
 }
 
 static void
