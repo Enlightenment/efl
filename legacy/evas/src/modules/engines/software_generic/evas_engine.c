@@ -1274,7 +1274,7 @@ eng_font_run_font_end_get(void *data __UNUSED__, Evas_Font_Set *font, Evas_Font_
 }
 
 static void
-eng_font_draw(void *data __UNUSED__, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
+eng_font_draw(void *data __UNUSED__, void *context, void *surface, Evas_Font_Set *font __UNUSED__, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
 {
 #ifdef BUILD_PIPE_RENDER
    if ((cpunum > 1))
