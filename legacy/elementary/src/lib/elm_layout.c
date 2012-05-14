@@ -721,18 +721,16 @@ _elm_layout_smart_content_set(Evas_Object *obj,
 
    if (content)
      {
+        if (!elm_widget_sub_object_add(obj, content))
+          {
+             ERR("could not add %p as sub object of %p", content, obj);
+             return EINA_FALSE;
+          }
+
         if (!edje_object_part_swallow
               (ELM_WIDGET_DATA(sd)->resize_obj, part, content))
           {
              ERR("could not swallow %p into part '%s'", content, part);
-             return EINA_FALSE;
-          }
-
-        if (!elm_widget_sub_object_add(obj, content))
-          {
-             ERR("could not add %p as sub object of %p", content, obj);
-             edje_object_part_unswallow
-               (ELM_WIDGET_DATA(sd)->resize_obj, content);
              return EINA_FALSE;
           }
 
