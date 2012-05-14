@@ -854,7 +854,7 @@ int
 cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid)
 {
    unsigned int file_id;
-   File_Data *entry;
+   Entry *entry;
    Reference *ref;
    File_Watch *fw;
    char buf[4906];
