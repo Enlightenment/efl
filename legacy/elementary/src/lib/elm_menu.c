@@ -789,7 +789,11 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Object_Item *parent)
    /* don't add a separator as the first item */
    if (!wd->items) return NULL;
    /* don't allow adding more than one separator in a row */
-   if (p_item) subitem = eina_list_last(p_item->submenu.items)->data;
+   if (p_item)
+     {
+        if (!p_item->submenu.items) return NULL;
+        subitem = eina_list_last(p_item->submenu.items)->data;
+     }
    else subitem = eina_list_last(wd->items)->data;
    if (subitem->separator) return NULL;
 
