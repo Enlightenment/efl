@@ -224,7 +224,8 @@ els_pan.h \
 els_scroller.c \
 els_scroller.h \
 els_tooltip.c \
-elu_ews_wm.c
+elu_ews_wm.c \
+elm_widget_button.h
 
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = \
