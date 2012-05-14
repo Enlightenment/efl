@@ -147,6 +147,10 @@ _dich_copy_all(Eo_Class *dst, const Eo_Class *src)
           {
              size_t j;
              const Eo_Class *op_klass = ID_CLASS_GET(i + 1);
+             /* Can be NULL because of future static classes. */
+             if (!op_klass)
+                continue;
+
              size_t num_ops = op_klass->desc->ops.count;
              _dich_chain_alloc(dc1, num_ops);
 
