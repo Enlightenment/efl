@@ -151,8 +151,6 @@ _activate(Evas_Object *obj)
 
    if (elm_widget_disabled_get(obj)) return;
 
-   printf("creating hover!!\n");
-
    sd->hover = elm_hover_add(sd->hover_parent);
    elm_widget_mirrored_automatic_set(sd->hover, EINA_FALSE);
 
@@ -395,7 +393,6 @@ elm_hoversel_hover_end(Evas_Object *obj)
 
    sd->expanded = EINA_FALSE;
 
-   printf("deleting hover!!\n");
    evas_object_del(sd->hover);
    sd->hover = NULL;
 
