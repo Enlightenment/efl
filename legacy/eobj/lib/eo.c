@@ -268,48 +268,48 @@ _eo_op_id_name_get(Eo_Op op)
 }
 
 static inline void
-_eo_kls_itr_init(Eo *obj, Eo_Op op, Eo_Kls_Itr *prev_state)
+_eo_kls_itr_init(const Eo_Class *obj_klass, Eo_Kls_Itr *cur, Eo_Op op, Eo_Kls_Itr *prev_state)
 {
-   prev_state->op = obj->mro_itr.op;
-   prev_state->kls_itr = obj->mro_itr.kls_itr;
+   prev_state->op = cur->op;
+   prev_state->kls_itr = cur->kls_itr;
 
    /* If we are in a constructor/destructor or we changed an op - init. */
-   if ((op == EO_NOOP) || (obj->mro_itr.op != op))
+   if ((op == EO_NOOP) || (cur->op != op))
      {
-        obj->mro_itr.op = op;
-        obj->mro_itr.kls_itr = obj->klass->mro;
+        cur->op = op;
+        cur->kls_itr = obj_klass->mro;
      }
 }
 
 static inline void
-_eo_kls_itr_end(Eo *obj, Eo_Kls_Itr *prev_state)
+_eo_kls_itr_end(Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state)
 {
-   if (obj->mro_itr.op != prev_state->op)
+   if (cur->op != prev_state->op)
      {
-        obj->mro_itr.op = prev_state->op;
-        obj->mro_itr.kls_itr = prev_state->kls_itr;
+        cur->op = prev_state->op;
+        cur->kls_itr = prev_state->kls_itr;
      }
 }
 
 static inline const Eo_Class *
-_eo_kls_itr_get(Eo *obj)
+_eo_kls_itr_get(Eo_Kls_Itr *cur)
 {
-   return (obj->mro_itr.kls_itr) ? *(obj->mro_itr.kls_itr) : NULL;
+   return (cur->kls_itr) ? *(cur->kls_itr) : NULL;
 }
 
 static inline const Eo_Class *
-_eo_kls_itr_next(Eo *obj, Eo_Op op)
+_eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Op op)
 {
-   if (obj->mro_itr.op != op)
+   if (cur->op != op)
      {
-        Eo_Op node_op = obj->mro_itr.op;
+        Eo_Op node_op = cur->op;
         ERR("Called with op %d ('%s') while expecting: %d ('%s'). This probaly means you called eo_*_super functions from a wrong place.",
               op, _eo_op_id_name_get(op),
               node_op, _eo_op_id_name_get(node_op));
         return NULL;
      }
 
-   const Eo_Class **kls_itr = obj->mro_itr.kls_itr;
+   const Eo_Class **kls_itr = cur->kls_itr;
    if (*kls_itr)
      {
         if (op != EO_NOOP)
@@ -324,7 +324,7 @@ _eo_kls_itr_next(Eo *obj, Eo_Op op)
              kls_itr++;
           }
 
-        obj->mro_itr.kls_itr = kls_itr;
+        cur->kls_itr = kls_itr;
         return *kls_itr;
      }
    else
@@ -334,9 +334,9 @@ _eo_kls_itr_next(Eo *obj, Eo_Op op)
 }
 
 static inline Eina_Bool
-_eo_kls_itr_reached_end(const Eo *obj)
+_eo_kls_itr_reached_end(const Eo_Kls_Itr *cur)
 {
-   const Eo_Class **kls_itr = obj->mro_itr.kls_itr;
+   const Eo_Class **kls_itr = cur->kls_itr;
    return !(*kls_itr && *(kls_itr + 1));
 }
 
@@ -356,8 +356,8 @@ _eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
      }
 
    Eo_Kls_Itr prev_state;
-   _eo_kls_itr_init(obj, op, &prev_state);
-   klass = _eo_kls_itr_get(obj);
+   _eo_kls_itr_init(obj->klass, &obj->mro_itr, op, &prev_state);
+   klass = _eo_kls_itr_get(&obj->mro_itr);
    if (klass)
      {
         const op_type_funcs *func = _dich_func_get(klass, op);
@@ -385,7 +385,7 @@ _eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
      }
 
 end:
-   _eo_kls_itr_end(obj, &prev_state);
+   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    return ret;
 }
 
@@ -433,7 +433,7 @@ eo_do_super_internal(Eo *obj, Eina_Bool constant, Eo_Op op, ...)
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
    /* Advance the kls itr. */
-   obj_klass = _eo_kls_itr_next(obj, op);
+   obj_klass = _eo_kls_itr_next(&obj->mro_itr, op);
 
    if (obj->mro_itr.op != op)
       return EINA_FALSE;
@@ -933,7 +933,7 @@ eo_add(const Eo_Class *klass, Eo *parent)
 
    Eo_Kls_Itr prev_state;
 
-   _eo_kls_itr_init(obj, EO_NOOP, &prev_state);
+   _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
    _eo_error_unset(obj);
 
    EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
@@ -946,18 +946,18 @@ eo_add(const Eo_Class *klass, Eo *parent)
         goto fail;
      }
 
-   if (EINA_UNLIKELY(!_eo_kls_itr_reached_end(obj)))
+   if (EINA_UNLIKELY(!_eo_kls_itr_reached_end(&obj->mro_itr)))
      {
         ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
      }
-   _eo_kls_itr_end(obj, &prev_state);
+   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    _eo_unref(obj);
 
    return obj;
 
 fail:
-   _eo_kls_itr_end(obj, &prev_state);
+   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    /* Unref twice, once for the ref above, and once for the basic object ref. */
    _eo_unref(obj);
    _eo_unref(obj);
@@ -1054,7 +1054,7 @@ _eo_del_internal(Eo *obj)
    const Eo_Class *klass = eo_class_get(obj);
    Eo_Kls_Itr prev_state;
 
-   _eo_kls_itr_init(obj, EO_NOOP, &prev_state);
+   _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
    _eo_error_unset(obj);
    _eo_destructor(obj, klass);
    if (_eo_error_get(obj))
@@ -1062,11 +1062,11 @@ _eo_del_internal(Eo *obj)
         ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
      }
 
-   if (!_eo_kls_itr_reached_end(obj))
+   if (!_eo_kls_itr_reached_end(&obj->mro_itr))
      {
         ERR("Type '%s' - Not all of the object destructors have been executed.", klass->desc->name);
      }
-   _eo_kls_itr_end(obj, &prev_state);
+   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
 
    Eina_List *itr, *itr_n;
@@ -1205,7 +1205,7 @@ eo_constructor_super(Eo *obj)
 {
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
 
-   _eo_constructor(obj, _eo_kls_itr_next(obj, EO_NOOP));
+   _eo_constructor(obj, _eo_kls_itr_next(&obj->mro_itr, EO_NOOP));
 }
 
 EAPI void
@@ -1213,7 +1213,7 @@ eo_destructor_super(Eo *obj)
 {
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
 
-   _eo_destructor(obj, _eo_kls_itr_next(obj, EO_NOOP));
+   _eo_destructor(obj, _eo_kls_itr_next(&obj->mro_itr, EO_NOOP));
 }
 
 static inline void *
