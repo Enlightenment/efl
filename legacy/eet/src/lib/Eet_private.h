@@ -125,6 +125,8 @@ struct _Eet_File_Node
    unsigned int      size;
    unsigned int      data_size;
 
+   unsigned char     compression_type;
+   
    unsigned char     free_name : 1;
    unsigned char     compression : 1;
    unsigned char     ciphered : 1;

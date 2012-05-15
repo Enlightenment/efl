@@ -40,6 +40,9 @@ void *alloca(size_t);
 #include "Eet.h"
 #include "Eet_private.h"
 
+#include "lz4.h"
+#include "lz4hc.h"
+
 /*---*/
 
 typedef struct _JPEG_error_mgr *emptr;
@@ -742,55 +745,68 @@ eet_data_image_lossless_compressed_convert(int         *size,
      }
 
    {
-      unsigned char *d;
-      unsigned char *comp;
-      int *header;
-      int ret;
-      uLongf buflen;
-
-      d = malloc((w * h * 4) + (8 * 4));
-      if (!d)
-        return NULL;
+      unsigned char *d, *comp;
+      int *header, ret, ok = 1;
+      uLongf buflen = 0;
 
       buflen = (((w * h * 101) / 100) + 3) * 4;
+      ret = LZ4_compressBound((w * h * 4));
+      if ((ret > 0) && ((uLongf)ret > buflen)) buflen = ret;
+      
       comp = malloc(buflen);
-      if (!comp)
+      if (!comp) return NULL;
+
+      switch (compression)
         {
-           free(d);
+         case EET_COMPRESSION_VERYFAST:
+           ret = LZ4_compressHC((const char *)data, (char *)comp,
+                                (w * h * 4));
+           if (ret <= 0) ok = 0;
+           buflen = ret;
+           break;
+         case EET_COMPRESSION_SUPERFAST:
+           ret = LZ4_compress((const char *)data, (char *)comp,
+                              (w * h * 4));
+           if (ret <= 0) ok = 0;
+           buflen = ret;
+           break;
+         default: /* zlib etc. */
+           ret = compress2((Bytef *)comp, &buflen, (Bytef *)(data),
+                           (uLong)(w * h * 4), compression);
+           if (ret != Z_OK) ok = 0;
+           break;
+        }
+      if ((!ok) || (buflen > (w * h * 4)))
+        {
+           free(comp);
+           *size = -1;
+           return NULL;
+        }
+
+      d = malloc((8 * sizeof(int)) + buflen);
+      if (!d)
+        {
+           free(comp);
            return NULL;
         }
 
       header = (int *)d;
-      memset(d, 0, 32);
-
+      memset(d, 0, 8 * sizeof(int));
       header[0] = 0xac1dfeed;
       header[1] = w;
       header[2] = h;
       header[3] = alpha;
       header[4] = compression;
-      memcpy(d + 32, data, w * h * 4);
 
       if (_eet_image_words_bigendian)
         {
            unsigned int i;
-
+           
            for (i = 0; i < ((w * h) + 8); i++) SWAP32(header[i]);
         }
 
-      ret = compress2((Bytef *)comp, &buflen,
-                      (Bytef *)(d + 32),
-                      (uLong)(w * h * 4),
-                      compression);
-      if (ret != Z_OK || buflen > (w * h * 4))
-        {
-           free(comp);
-           free(d);
-           *size = -1;
-           return NULL;
-        }
-
-      memcpy(d + 32, comp, buflen);
-      *size = (8 * 4) + buflen;
+      memcpy(d + (8 * sizeof(int)), comp, buflen);
+      *size = (8 * sizeof(int)) + buflen;
       free(comp);
       return d;
    }
@@ -1577,35 +1593,75 @@ _eet_data_image_decode_inside(const void   *data,
                                       w, h, row_stride);
         else
           {
-             if (src_h == h && src_w == w && row_stride == src_w * 4)
+             if ((src_h == h) && (src_w == w) && (row_stride == src_w * 4))
                {
-                  uLongf dlen;
-
-                  dlen = w * h * 4;
-                  uncompress((Bytef *)d, &dlen, (Bytef *)body,
-                             (uLongf)(size - 32));
+                  switch (comp)
+                    {
+                     case EET_COMPRESSION_VERYFAST:
+                     case EET_COMPRESSION_SUPERFAST:
+                       if (LZ4_uncompress((const char *)body,
+                                          (char *)d, w * h * 4)
+                           != (size - 32)) return 0;
+                       break;
+                     default:
+                         {
+                            uLongf dlen = w * h * 4;
+                            
+                            if (uncompress((Bytef *)d, &dlen, (Bytef *)body,
+                                           (uLongf)(size - 32)) != Z_OK)
+                              return 0;
+                         }
+                       break;
+                    }
                }
              else
                {
-                  Bytef *dtmp;
-                  uLongf dlen = src_w * src_h * 4;
-
-     /* FIXME: This could create a huge alloc. So compressed
-        data and tile could not always work. */
-                  dtmp = malloc(dlen);
-                  if (!dtmp)
-                    return 0;
-
-                  uncompress(dtmp, &dlen, (Bytef *)body, (uLongf)(size - 32));
-
-                  _eet_data_image_copy_buffer((unsigned int *)dtmp,
-                                              src_x, src_y, src_w, d,
-                                              w, h, row_stride);
-
-                  free(dtmp);
+                  switch (comp)
+                    {
+                     case EET_COMPRESSION_VERYFAST:
+                     case EET_COMPRESSION_SUPERFAST:
+                         {
+                            char *dtmp;
+                            
+                            dtmp = malloc(src_w * src_h * 4);
+                            if (!dtmp) return 0;
+                            if (LZ4_uncompress((const char *)body,
+                                               dtmp, w * h * 4)
+                                != (size - 32))
+                              {
+                                 free(dtmp);
+                                 return 0;
+                              }
+                            _eet_data_image_copy_buffer((unsigned int *)dtmp,
+                                                        src_x, src_y, src_w, d,
+                                                        w, h, row_stride);
+                            free(dtmp);
+                         }
+                       break;
+                     default:
+                         {
+                            Bytef *dtmp;
+                            uLongf dlen = src_w * src_h * 4;
+                  
+                            /* FIXME: This could create a huge alloc. So
+                             compressed data and tile could not always work.*/
+                            dtmp = malloc(dlen);
+                            if (!dtmp) return 0;
+                  
+                            if (uncompress(dtmp, &dlen, (Bytef *)body,
+                                           (uLongf)(size - 32)) != Z_OK)
+                              {
+                                 free(dtmp);
+                                 return 0;
+                              }
+                            _eet_data_image_copy_buffer((unsigned int *)dtmp,
+                                                        src_x, src_y, src_w, d,
+                                                        w, h, row_stride);
+                            free(dtmp);
+                         }
+                    }
                }
           }
-
         /* Fix swapiness. */
         if (_eet_image_words_bigendian)
           {

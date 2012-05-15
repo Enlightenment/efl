@@ -72,23 +72,6 @@ want_signature="yes"
 
 requirement_eet=""
 
-
-### Additional options to configure
-
-# Amalgamation
-
-AC_ARG_ENABLE([amalgamation],
-   [AC_HELP_STRING([--enable-amalgamation], [enable generation of one single file with all source code in it, helps compiler optimizations.])],
-   [if test "x${enableval}" = "xyes"; then
-       do_amalgamation="yes"
-    else
-       do_amalgamation="no"
-    fi
-   ],
-   [do_amalgamation="no"]
-)
-AM_CONDITIONAL(EET_AMALGAMATION, test "x${do_amalgamation}" = "xyes")
-
 EFL_ENABLE_BIN([eet])
 
 # Old eet file format support
@@ -516,7 +499,6 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
-echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Secure layer.........: ${secure_layer}"
 if test "x${have_gnutls}" = "xyes" || test "x${have_openssl}" = "xyes" ; then
    echo "    Cipher support.....: ${have_cipher}"
