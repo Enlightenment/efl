@@ -1739,6 +1739,7 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    sd->frame_obj = edje_object_add(sd->evas);
    elm_widget_theme_object_set
      (ELM_WIDGET_DATA(sd)->obj, sd->frame_obj, "border", "base", style);
+
    evas_object_is_frame_object_set(sd->frame_obj, EINA_TRUE);
    evas_object_move(sd->frame_obj, 0, 0);
    evas_object_resize(sd->frame_obj, 1, 1);
@@ -2088,10 +2089,6 @@ elm_win_add(Evas_Object *parent,
          (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
 #endif
 
-   else if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
-     _elm_win_frame_add(sd, "default");
-   else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
-     _elm_win_frame_add(sd, "default");
    else if (!strncmp(_elm_preferred_engine, "shot:", 5))
      _shot_init(sd);
 
@@ -2123,11 +2120,11 @@ elm_win_add(Evas_Object *parent,
    evas_object_layer_set(obj, 50);
    evas_object_pass_events_set(obj, EINA_TRUE);
 
-   if (sd->frame_obj)
-     {
-        evas_object_clip_set(obj, sd->frame_obj);
-        evas_object_stack_below(sd->frame_obj, obj);
-     }
+   /* if (sd->frame_obj) */
+   /*   { */
+   /*      evas_object_clip_set(obj, sd->frame_obj); */
+   /*      evas_object_stack_below(sd->frame_obj, obj); */
+   /*   } */
 
    if (type == ELM_WIN_INLINED_IMAGE)
      elm_widget_parent2_set(obj, parent);
@@ -2175,6 +2172,11 @@ elm_win_add(Evas_Object *parent,
      {
         ecore_evas_fullscreen_set(sd->ee, 1);
      }
+   else if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
+     _elm_win_frame_add(sd, "default");
+   else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
+     _elm_win_frame_add(sd, "default");
+
 #undef ENGINE_COMPARE
 
    if (_elm_config->focus_highlight_enable)
@@ -2487,10 +2489,7 @@ elm_win_alpha_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 
-   if (sd->frame_obj)
-     {
-     }
-   else if (sd->img_obj)
+   if (sd->img_obj)
      {
         evas_object_image_alpha_set(sd->img_obj, alpha);
         ecore_evas_alpha_set(sd->ee, alpha);
@@ -2523,10 +2522,7 @@ elm_win_alpha_get(const Evas_Object *obj)
    ELM_WIN_CHECK(obj) EINA_FALSE;
    ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
 
-   if (sd->frame_obj)
-     {
-     }
-   else if (sd->img_obj)
+   if (sd->img_obj)
      {
         return evas_object_image_alpha_get(sd->img_obj);
      }
