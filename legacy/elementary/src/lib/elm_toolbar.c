@@ -1035,7 +1035,6 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
                                   _resize_item, obj);
    if ((!wd->items) && (wd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
      _item_select(it);
-   wd->item_count++;
    return it;
 }
 
@@ -1318,6 +1317,7 @@ elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, E
 
    _theme_hook_item(obj, it, scale, wd->icon_size);
    _sizing_eval(obj);
+   wd->item_count++;
 
    return (Elm_Object_Item *)it;
 }
@@ -1338,6 +1338,7 @@ elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, 
    evas_object_show(VIEW(it));
    _theme_hook_item(obj, it, scale, wd->icon_size);
    _sizing_eval(obj);
+   wd->item_count++;
 
    return (Elm_Object_Item *)it;
 }
@@ -1363,6 +1364,7 @@ elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const 
    evas_object_show(VIEW(it));
    _theme_hook_item(obj, it, scale, wd->icon_size);
    _sizing_eval(obj);
+   wd->item_count++;
 
    return (Elm_Object_Item *)it;
 }
@@ -1388,6 +1390,7 @@ elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const ch
    evas_object_show(VIEW(it));
    _theme_hook_item(obj, it, scale, wd->icon_size);
    _sizing_eval(obj);
+   wd->item_count++;
 
    return (Elm_Object_Item *)it;
 }
