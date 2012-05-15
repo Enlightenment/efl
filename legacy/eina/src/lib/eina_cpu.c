@@ -58,7 +58,7 @@
 /* We save ebx and restore it to be PIC compatible */
 static inline void _x86_cpuid(int op, int *a, int *b, int *c, int *d)
 {
-   asm volatile (
+   __asm__ volatile (
 #if defined(__x86_64__)
       "pushq %%rbx      \n\t" /* save %ebx */
 #else
