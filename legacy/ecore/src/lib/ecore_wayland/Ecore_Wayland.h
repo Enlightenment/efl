@@ -9,6 +9,7 @@
 
 # include <Eina.h>
 # include <wayland-client.h>
+# include <xkbcommon/xkbcommon.h>
 
 # ifdef EAPI
 #  undef EAPI
@@ -49,6 +50,7 @@ typedef struct _Ecore_Wl_Event_Interfaces_Bound Ecore_Wl_Event_Interfaces_Bound;
 
 enum _Ecore_Wl_Window_Type
 {
+   ECORE_WL_WINDOW_TYPE_NONE,
    ECORE_WL_WINDOW_TYPE_TOPLEVEL,
    ECORE_WL_WINDOW_TYPE_FULLSCREEN,
    ECORE_WL_WINDOW_TYPE_MAXIMIZED,
@@ -84,7 +86,16 @@ struct _Ecore_Wl_Display
    struct wl_list inputs;
    struct wl_list outputs;
 
-   struct xkb_desc *xkb;
+   struct 
+     {
+        struct xkb_rule_names names;
+        struct xkb_context *context;
+        struct xkb_keymap *keymap;
+        struct xkb_state *state;
+        xkb_mod_mask_t control_mask;
+        xkb_mod_mask_t alt_mask;
+        xkb_mod_mask_t shift_mask;
+     } xkb;
 
    Ecore_Wl_Output *output;
    Ecore_Wl_Input *input;

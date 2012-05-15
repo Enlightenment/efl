@@ -34,7 +34,7 @@ _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device, uns
 }
 
 void 
-_ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, struct wl_surface *surface, int x, int y, struct wl_data_offer *offer)
+_ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
 {
    Ecore_Wl_Event_Dnd_Enter *event;
    Ecore_Wl_Input *input;
@@ -57,8 +57,8 @@ _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, u
 
    event->win = win->id;
    event->source = input->drag_source->input->keyboard_focus->id;
-   event->position.x = x;
-   event->position.y = y;
+   event->position.x = wl_fixed_to_int(x);
+   event->position.y = wl_fixed_to_int(y);
    event->num_types = input->drag_source->types.size;
    event->types = input->drag_source->types.data;
 
@@ -81,7 +81,7 @@ _ecore_wl_dnd_leave(void *data, struct wl_data_device *data_device __UNUSED__)
 }
 
 void 
-_ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, int x, int y)
+_ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, wl_fixed_t x, wl_fixed_t y)
 {
    Ecore_Wl_Event_Dnd_Position *event;
    Ecore_Wl_Input *input;
@@ -90,15 +90,15 @@ _ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device __UNUSED__, 
 
    if (!(input = data)) return;
 
-   input->sx = x;
-   input->sy = y;
+   input->sx = wl_fixed_to_int(x);
+   input->sy = wl_fixed_to_int(y);
 
    if (!(event = calloc(1, sizeof(Ecore_Wl_Event_Dnd_Position)))) return;
 
    event->win = input->drag_source->input->pointer_focus->id;
    event->source = input->drag_source->input->keyboard_focus->id;
-   event->position.x = x;
-   event->position.y = y;
+   event->position.x = input->sx;
+   event->position.y = input->sy;
 
    ecore_event_add(ECORE_WL_EVENT_DND_POSITION, event, NULL, NULL);
 }

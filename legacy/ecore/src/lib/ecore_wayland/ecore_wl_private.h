@@ -2,13 +2,12 @@
 # define _ECORE_WAYLAND_PRIVATE_H
 
 # include <limits.h>
-# include <xkbcommon/xkbcommon.h>
 
 # include "Ecore.h"
 # include "Ecore_Input.h"
 # include "Ecore_Wayland.h"
 
-//# define LOGFNS 1
+# define LOGFNS 1
 
 # ifdef LOGFNS
 #  include <stdio.h>
