@@ -576,7 +576,7 @@ _toolbar_item_prio_compare_cb(const void *i1, const void *i2)
 static void
 _fix_items_visibility(Widget_Data *wd, Evas_Coord *iw, Evas_Coord vw)
 {
-   Elm_Toolbar_Item *it;
+   Elm_Toolbar_Item *it, *prev;
    Eina_List *sorted = NULL;
    Evas_Coord ciw = 0, cih = 0;
 
@@ -597,7 +597,13 @@ _fix_items_visibility(Widget_Data *wd, Evas_Coord *iw, Evas_Coord vw)
         evas_object_geometry_get(VIEW(it), NULL, NULL, &ciw, &cih);
         if (wd->vertical) *iw += cih;
         else              *iw += ciw;
-        it->prio.visible = (*iw <= vw);
+        if (!it->separator)
+          it->prio.visible = (*iw <= vw);
+        else
+          {
+             prev = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
+             it->prio.visible = prev->prio.visible;
+          }
      }
 }
 
