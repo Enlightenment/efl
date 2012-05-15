@@ -337,15 +337,10 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
              LKU(fi->ft_mutex);
              continue;
           }
-        if ((!fg->glyph_out) && (!evas_common_font_int_cache_glyph_render(fg)))
-          {
-             LKU(fi->ft_mutex);
-             continue;
-          }
         LKU(fi->ft_mutex);
 
-        gl_itr->x_bear = fg->glyph_out->left;
-        gl_itr->width = fg->glyph_out->bitmap.width;
+        gl_itr->x_bear = fg->x_bear;
+        gl_itr->width = fg->width;
         /* text_props->info->glyph[char_index].advance =
          * text_props->info->glyph[char_index].index =
          * already done by the ot function */
@@ -435,8 +430,6 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
 
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg) continue;
-        if ((!fg->glyph_out) && (!evas_common_font_int_cache_glyph_render(fg)))
-          continue;
         kern = 0;
 
         if ((use_kerning) && (prev_index) && (idx) &&
@@ -453,9 +446,9 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
         pface = fi->src->ft.face;
 
         gl_itr->index = idx;
-        gl_itr->x_bear = fg->glyph_out->left;
+        gl_itr->x_bear = fg->x_bear;
         adv = fg->glyph->advance.x >> 10;
-        gl_itr->width = fg->glyph_out->bitmap.width;
+        gl_itr->width = fg->width;
 
         if (EVAS_FONT_CHARACTER_IS_INVISIBLE(_gl))
           {
