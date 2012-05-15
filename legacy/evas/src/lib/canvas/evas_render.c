@@ -252,7 +252,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                    Eina_Array *restack_objects,
                                    Eina_Array *delete_objects,
                                    Eina_Array *render_objects,
-                                   int restack, int map,
+                                   int restack,
                                    int *redraw_all
 #ifdef REND_DGB
                                    , int level
@@ -262,7 +262,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    Eina_Bool clean_them = EINA_FALSE;
    Evas_Object *obj2;
    int is_active;
-   Eina_Bool hmap;
+   Eina_Bool map, hmap;
 
    obj->rect_del = 0;
    obj->render_pre = 0;
@@ -375,7 +375,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                                      delete_objects,
                                                      render_objects,
                                                      obj->restack,
-                                                     map,
                                                      redraw_all
 #ifdef REND_DGB
                                                      , level + 1
@@ -429,7 +428,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                                              restack_objects,
                                                              delete_objects,
                                                              render_objects,
-                                                             restack, map,
+                                                             restack,
                                                              redraw_all
 #ifdef REND_DGB
                                                              , level + 1
@@ -476,7 +475,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
            restack_objects,
            delete_objects,
            render_objects,
-           restack, map,
+           restack,
            redraw_all
 #ifdef REND_DGB
 , level + 1
@@ -512,7 +511,7 @@ _evas_render_phase1_process(Evas *e,
           {
              clean_them |= _evas_render_phase1_object_process
                 (e, obj, active_objects, restack_objects, delete_objects,
-                 render_objects, 0, 0, redraw_all
+                 render_objects, 0, redraw_all
 #ifdef REND_DGB
                  , 1
 #endif
