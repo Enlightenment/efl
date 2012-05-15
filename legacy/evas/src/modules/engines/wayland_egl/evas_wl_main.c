@@ -144,8 +144,8 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
-            (unsigned int)gw->win, eglGetError());
+        ERR("eglCreateWindowSurface() fail for %p. code=%#x",
+            gw->win, eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
@@ -297,8 +297,8 @@ eng_window_resurf(Evas_GL_Wl_Window *gw)
 
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
-            (unsigned int)gw->win, eglGetError());
+        ERR("eglCreateWindowSurface() fail for %p. code=%#x",
+            gw->win, eglGetError());
         return;
      }
    if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0],

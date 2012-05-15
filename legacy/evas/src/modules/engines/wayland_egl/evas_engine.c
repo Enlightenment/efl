@@ -1911,7 +1911,7 @@ eng_image_stride_get(void *data __UNUSED__, void *image, int *stride)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *intl_props)
+eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font __UNUSED__, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *intl_props)
 {
    Render_Engine *re;
 
@@ -2900,7 +2900,7 @@ module_open(Evas_Module *em)
    if (_evas_engine_wl_egl_log_dom < 0)
      {
         _evas_engine_wl_egl_log_dom = 
-          eina_log_domain_register("evas-gl_x11", EVAS_DEFAULT_LOG_COLOR);
+          eina_log_domain_register("evas-wayland_egl", EVAS_DEFAULT_LOG_COLOR);
      }
 
    if (_evas_engine_wl_egl_log_dom < 0)
@@ -3022,10 +3022,10 @@ static Evas_Module_Api evas_modapi =
    EVAS_MODULE_API_VERSION, "wayland_egl", "none", {module_open, module_close}
 };
 
-EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, gl_x11);
+EVAS_MODULE_DEFINE(EVAS_MODULE_TYPE_ENGINE, engine, wayland_egl);
 
-#ifndef EVAS_STATIC_BUILD_GL_XLIB
-EVAS_EINA_MODULE_DEFINE(engine, gl_x11);
+#ifndef EVAS_STATIC_BUILD_WAYLAND_EGL
+EVAS_EINA_MODULE_DEFINE(engine, wayland_egl);
 #endif
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
