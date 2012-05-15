@@ -64,7 +64,8 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
         if (ed->all[current].len == len)
           {
              if (ed->all[current].str &&
-                 (ed->all[current].str == string || strcmp(ed->all[current].str, string) == 0))
+                 ((ed->all[current].str == string) ||
+                     (!strcmp(ed->all[current].str, string))))
                {
                   found = EINA_TRUE;
                   break;
@@ -75,7 +76,7 @@ _eet_dictionary_lookup(Eet_Dictionary *ed,
         current = ed->all[current].next;
      }
 
-   if (current == -1 && found)
+   if ((current == -1) && found)
      return prev;
 
    return current;
@@ -90,6 +91,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    int hash;
    int idx;
    int len;
+   int cnt;
 
    if (!ed)
      return -1;
@@ -103,7 +105,9 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
    if (idx != -1)
      {
-        if (ed->all[idx].str && (ed->all[idx].str == string || strcmp(ed->all[idx].str, string) == 0))
+        if (ed->all[idx].str && 
+            ((ed->all[idx].str == string) ||
+                (!strcmp(ed->all[idx].str, string))))
 	  {
 	    eina_lock_release(&ed->mutex);
 	    return idx;
@@ -156,8 +160,10 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
           ed->hash[hash] = ed->count;
      }
 
+   ed->count++;
+   cnt = ed->count;
    eina_lock_release(&ed->mutex);
-   return ed->count++;
+   return cnt;
 
  on_error:
    eina_lock_release(&ed->mutex);
