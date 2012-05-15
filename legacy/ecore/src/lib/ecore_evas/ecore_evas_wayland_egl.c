@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-//#define LOGFNS 1
+#define LOGFNS 1
 
 #ifdef LOGFNS
 # include <stdio.h>
@@ -240,7 +240,7 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.display = ecore_wl_display_get();
-        einfo->info.destination_alpha = EINA_FALSE;
+        einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
@@ -269,8 +269,8 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
         evas_object_move(ee->engine.wl.frame, 0, 0);
      }
 
-   ecore_evas_input_event_register(ee);
    _ecore_evas_register(ee);
+   ecore_evas_input_event_register(ee);
 
    ecore_event_window_register(ee->prop.window, ee, ee->evas, 
                                (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process, 
@@ -278,7 +278,7 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
                                (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process, 
                                (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
 
-   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+   /* evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL); */
 
    return ee;
 }
@@ -429,10 +429,14 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
    if (!ee) return;
    ee->req.x = x;
    ee->req.y = y;
-   ee->x = x;
-   ee->y = y;
-   if (ee->engine.wl.win) ecore_wl_window_move(ee->engine.wl.win, x, y);
-   if (ee->func.fn_move) ee->func.fn_move(ee);
+   if ((ee->x != x) || (ee->y != y))
+     {
+        ee->x = x;
+        ee->y = y;
+        if (ee->engine.wl.win) 
+          ecore_wl_window_update_location(ee->engine.wl.win, x, y);
+        if (ee->func.fn_move) ee->func.fn_move(ee);
+     }
 }
 
 static void 
@@ -443,7 +447,6 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    if (!ee) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-//   if ((ee->w == w) && (ee->h == h)) return;
 
    if (ee->prop.min.w > w) w = ee->prop.min.w;
    else if (w > ee->prop.max.w) w = ee->prop.max.w;
@@ -455,25 +458,47 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
 //   ecore_wl_window_damage(ee->engine.wl.win, 0, 0, ee->w, ee->h);
 
-   ee->w = w;
-   ee->h = h;
+   if ((ee->w != w) || (ee->h != h))
+     {
+        ee->w = w;
+        ee->h = h;
 
-   /* change evas output & viewport sizes */
-   evas_output_size_set(ee->evas, ee->w, ee->h);
-   evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-   if (ee->engine.wl.frame)
-     evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
+        if ((ee->rotation == 90) || (ee->rotation == 270))
+          {
+             evas_output_size_set(ee->evas, h, w);
+             evas_output_viewport_set(ee->evas, 0, 0, h, w);
+          }
+        else 
+          {
+             evas_output_size_set(ee->evas, w, h);
+             evas_output_viewport_set(ee->evas, 0, 0, w, h);
+          }
 
-   /* set new engine destination */
-   /* evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
+        if (ee->prop.avoid_damage)
+          {
+             int pdam = 0;
 
-   /* ecore_wl_window_damage(ee->engine.wl.win, 0, 0, ee->w, ee->h); */
-   ecore_wl_flush();
+             pdam = ecore_evas_avoid_damage_get(ee);
+             ecore_evas_avoid_damage_set(ee, 0);
+             ecore_evas_avoid_damage_set(ee, pdam);
+          }
 
-   ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
+        if (ee->engine.wl.frame)
+          evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
 
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);
+        /* set new engine destination */
+        /* evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo); */
+
+        /* ecore_wl_window_damage(ee->engine.wl.win, 0, 0, ee->w, ee->h); */
+
+        // WAS ACTIVE
+        /* ecore_wl_flush(); */
+
+        if (ee->engine.wl.win)
+          ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
+
+        if (ee->func.fn_resize) ee->func.fn_resize(ee);
+     }
 }
 
 static void 
@@ -488,23 +513,37 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    if (ee->engine.wl.win)
      {
         ecore_wl_window_show(ee->engine.wl.win);
-        ecore_wl_flush();
-     }
+        ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
+        /* ecore_wl_sync(); */
 
-   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
-   if (!einfo)
-     {
-        ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
-        return;
+        if ((ee->prop.clas) && (ee->engine.wl.win->shell_surface))
+          wl_shell_surface_set_class(ee->engine.wl.win->shell_surface, 
+                                     ee->prop.clas);
+        if ((ee->prop.title) && (ee->engine.wl.win->shell_surface))
+          wl_shell_surface_set_title(ee->engine.wl.win->shell_surface, 
+                                     ee->prop.title);
      }
-
-   einfo->info.surface = ecore_wl_window_surface_get(ee->engine.wl.win);
-   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
    if (ee->engine.wl.frame)
      {
         evas_object_show(ee->engine.wl.frame);
         evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
+     }
+
+   if (ee->engine.wl.win)
+     {
+        einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+        if (!einfo)
+          {
+             ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
+             return;
+          }
+
+        einfo->info.surface = ecore_wl_window_surface_get(ee->engine.wl.win);
+        /* if (einfo->info.surface) */
+        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        /* else */
+        /*   printf("Failed to get a Surface from Ecore_Wl\n"); */
      }
 
    /* ecore_wl_window_buffer_attach(ee->engine.wl.win, ee->engine.wl.buffer, 0, 0); */
@@ -522,18 +561,15 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
 
    if ((!ee) || (!ee->visible)) return;
 
-   if (ee->engine.wl.win) 
-     {
-        ecore_wl_window_hide(ee->engine.wl.win);
-        ecore_wl_flush();
-     }
-
    einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
         einfo->info.surface = NULL;
         evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
+
+   if (ee->engine.wl.win) 
+     ecore_wl_window_hide(ee->engine.wl.win);
 
    ee->visible = 0;
    ee->should_be_visible = 0;
@@ -566,6 +602,10 @@ _ecore_evas_wl_title_set(Ecore_Evas *ee, const char *title)
         if (!(sd = evas_object_smart_data_get(ee->engine.wl.frame))) return;
         evas_object_text_text_set(sd->text, ee->prop.title);
      }
+
+   if ((ee->prop.title) && (ee->engine.wl.win->shell_surface))
+     wl_shell_surface_set_title(ee->engine.wl.win->shell_surface, 
+                                ee->prop.title);
 }
 
 static void 
@@ -580,7 +620,10 @@ _ecore_evas_wl_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
    ee->prop.clas = NULL;
    if (n) ee->prop.name = strdup(n);
    if (c) ee->prop.clas = strdup(c);
-   /* FIXME: Forward these changes to Wayland somehow */
+
+   if ((ee->prop.clas) && (ee->engine.wl.win->shell_surface))
+     wl_shell_surface_set_class(ee->engine.wl.win->shell_surface, 
+                                ee->prop.clas);
 }
 
 static void 

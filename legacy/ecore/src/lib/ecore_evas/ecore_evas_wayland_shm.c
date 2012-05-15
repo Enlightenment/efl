@@ -630,6 +630,13 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         ecore_wl_window_buffer_attach(ee->engine.wl.win, 
                                       ee->engine.wl.buffer, 0, 0);
         ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
+
+        if ((ee->prop.clas) && (ee->engine.wl.win->shell_surface))
+          wl_shell_surface_set_class(ee->engine.wl.win->shell_surface, 
+                                     ee->prop.clas);
+        if ((ee->prop.title) && (ee->engine.wl.win->shell_surface))
+          wl_shell_surface_set_title(ee->engine.wl.win->shell_surface, 
+                                     ee->prop.title);
      }
 
    if (ee->engine.wl.frame)
@@ -696,6 +703,10 @@ _ecore_evas_wl_title_set(Ecore_Evas *ee, const char *title)
         if (!(sd = evas_object_smart_data_get(ee->engine.wl.frame))) return;
         evas_object_text_text_set(sd->text, ee->prop.title);
      }
+
+   if ((ee->prop.title) && (ee->engine.wl.win->shell_surface))
+     wl_shell_surface_set_title(ee->engine.wl.win->shell_surface, 
+                                ee->prop.title);
 }
 
 static void 
@@ -710,7 +721,10 @@ _ecore_evas_wl_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
    ee->prop.clas = NULL;
    if (n) ee->prop.name = strdup(n);
    if (c) ee->prop.clas = strdup(c);
-   /* FIXME: Forward these changes to Wayland somehow */
+
+   if ((ee->prop.clas) && (ee->engine.wl.win->shell_surface))
+     wl_shell_surface_set_class(ee->engine.wl.win->shell_surface, 
+                                ee->prop.clas);
 }
 
 static void 
@@ -887,14 +901,15 @@ _ecore_evas_wl_render(Ecore_Evas *ee)
 
         if ((updates = evas_render_updates(ee->evas))) 
           {
-             Eina_List *l = NULL;
-             Eina_Rectangle *r;
+             /* Eina_List *l = NULL; */
+             /* Eina_Rectangle *r; */
 
              LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-             EINA_LIST_FOREACH(updates, l, r) 
-               ecore_wl_window_damage(ee->engine.wl.win, 
-                                      r->x, r->y, r->w, r->h);
+             ecore_wl_window_damage(ee->engine.wl.win, 0, 0, ee->w, ee->h);
+             /* EINA_LIST_FOREACH(updates, l, r)  */
+             /*   ecore_wl_window_damage(ee->engine.wl.win,  */
+             /*                          r->x, r->y, r->w, r->h); */
 
              ecore_wl_flush();
 
