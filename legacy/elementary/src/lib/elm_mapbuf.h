@@ -13,7 +13,7 @@
  * children).
  *
  * This widget inherits from @ref elm-container-class, so that the
- * functions meant to act on it will wor work for mapbuf objects:
+ * functions meant to act on it will work for mapbuf objects:
  *
  * @li @ref elm_object_part_content_set
  * @li @ref elm_object_part_content_get

@@ -23,7 +23,9 @@
  * @li "front" - A front content of the flip
  * @li "back" - A back content of the flip
  *
- * Supported elm_object common APIs.
+ * This widget inherits from @ref elm-container-class, so that the
+ * functions meant to act on it will work for mapbuf objects:
+ *
  * @li @ref elm_object_part_content_set
  * @li @ref elm_object_part_content_get
  * @li @ref elm_object_part_content_unset
