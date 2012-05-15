@@ -41,6 +41,7 @@ struct _Eet_Dictionary
 {
    Eet_String *all;
    Eina_Hash  *converts;
+   Eina_Lock   mutex;
 
    int         size;
    int         offset;

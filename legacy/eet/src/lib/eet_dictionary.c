@@ -21,6 +21,7 @@ eet_dictionary_add(void)
      return NULL;
 
    memset(new->hash, -1, sizeof (int) * 256);
+   eina_lock_new(&new->mutex);
 
    return new;
 }
@@ -31,6 +32,8 @@ eet_dictionary_free(Eet_Dictionary *ed)
    int i;
 
    if (!ed) return;
+
+   eina_lock_free(&ed->mutex);
 
    for (i = 0; i < ed->count; ++i)
      if (ed->all[i].allocated)
@@ -94,12 +97,17 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    hash = _eet_hash_gen(string, 8);
    len = strlen(string) + 1;
 
+   eina_lock_take(&ed->mutex);
+
    idx = _eet_dictionary_lookup(ed, string, len, hash);
 
    if (idx != -1)
      {
         if (ed->all[idx].str && (ed->all[idx].str == string || strcmp(ed->all[idx].str, string) == 0))
-          return idx;
+	  {
+	    eina_lock_release(&ed->mutex);
+	    return idx;
+	  }
      }
 
    if (ed->total == ed->count)
@@ -110,16 +118,14 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
         total = ed->total + 8;
 
         new = realloc(ed->all, total * sizeof(Eet_String));
-        if (!new)
-          return -1;
+        if (!new) goto on_error;
 
         ed->all = new;
         ed->total = total;
      }
 
    str = eina_stringshare_add(string);
-   if (!str)
-     return -1;
+   if (!str) goto on_error;
 
    current = ed->all + ed->count;
 
@@ -150,23 +156,33 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
           ed->hash[hash] = ed->count;
      }
 
+   eina_lock_release(&ed->mutex);
    return ed->count++;
+
+ on_error:
+   eina_lock_release(&ed->mutex);
+   return -1;
 }
 
 int
 eet_dictionary_string_get_size(const Eet_Dictionary *ed,
                                int                   idx)
 {
-   if (!ed)
-     return 0;
+   int length = 0;
 
-   if (idx < 0)
-     return 0;
+   if (!ed) goto done;
+
+   if (idx < 0) goto done;
+
+   eina_lock_take((Eina_Lock*) &ed->mutex);
 
    if (idx < ed->count)
-     return ed->all[idx].len;
+     length = ed->all[idx].len;
 
-   return 0;
+   eina_lock_release((Eina_Lock*) &ed->mutex);
+
+ done:
+   return length;
 }
 
 EAPI int
@@ -179,27 +195,34 @@ int
 eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
                                int                   idx)
 {
-   if (!ed)
-     return -1;
+   int hash = -1;
 
-   if (idx < 0)
-     return -1;
+   if (!ed) goto done;
+
+   if (idx < 0) goto done;
+
+   eina_lock_take((Eina_Lock*) &ed->mutex);
 
    if (idx < ed->count)
-     return ed->all[idx].hash;
+     hash = ed->all[idx].hash;
 
-   return -1;
+   eina_lock_release((Eina_Lock*) &ed->mutex);
+
+ done:
+   return hash;
 }
 
 const char *
 eet_dictionary_string_get_char(const Eet_Dictionary *ed,
                                int                   idx)
 {
-   if (!ed)
-     return NULL;
+   const char *s = NULL;
 
-   if (idx < 0)
-     return NULL;
+   if (!ed) goto done;
+
+   if (idx < 0) goto done;
+
+   eina_lock_take((Eina_Lock*) &ed->mutex);
 
    if (idx < ed->count)
      {
@@ -211,10 +234,13 @@ eet_dictionary_string_get_char(const Eet_Dictionary *ed,
              ed->all[idx].allocated = EINA_TRUE;
           }
 #endif /* ifdef _WIN32 */
-        return ed->all[idx].str;
+        s = ed->all[idx].str;
      }
 
-   return NULL;
+   eina_lock_release((Eina_Lock*) &ed->mutex);
+
+ done:
+   return s;
 }
 
 static inline Eina_Bool
@@ -281,19 +307,25 @@ _eet_dictionary_test(const Eet_Dictionary *ed,
                      int                   idx,
                      void                 *result)
 {
-   if (!result)
-     return EINA_FALSE;
+   Eina_Bool limit = EINA_FALSE;
 
-   if (!ed)
-     return EINA_FALSE;
+   if (!result) goto done;
 
-   if (idx < 0)
-     return EINA_FALSE;
+   if (!ed) goto done;
 
-   if (!(idx < ed->count))
-     return EINA_FALSE;
+   if (idx < 0) goto done;
 
-   return EINA_TRUE;
+   eina_lock_take((Eina_Lock*) &ed->mutex);
+
+   if (!(idx < ed->count)) goto unlock_done;
+
+   limit = EINA_TRUE;
+
+ unlock_done:
+   eina_lock_release((Eina_Lock*) &ed->mutex);
+
+ done:
+   return limit;
 }
 
 static Eet_Convert *
@@ -302,6 +334,8 @@ eet_dictionary_convert_get(const Eet_Dictionary *ed,
                            const char          **str)
 {
    Eet_Convert *result;
+
+   eina_lock_take((Eina_Lock*) &ed->mutex);
 
    *str = ed->all[idx].str;
 
@@ -313,12 +347,16 @@ eet_dictionary_convert_get(const Eet_Dictionary *ed,
      }
 
    result = eina_hash_find(ed->converts, &idx);
-   if (result) return result;
+   if (result) goto done;
 
-add_convert:
+ add_convert:
    result = calloc(1, sizeof (Eet_Convert));
 
    eina_hash_add(ed->converts, &idx, result);
+
+ done:
+   eina_lock_release((Eina_Lock*) &ed->mutex);
+
    return result;
 }
 
@@ -338,6 +376,7 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed,
 
    if (!(convert->type & EET_D_FLOAT))
      {
+        eina_lock_take((Eina_Lock*) &ed->mutex);
         if (!_eet_dictionary_string_get_float_cache(str, ed->all[idx].len,
                                                     &convert->f))
           {
@@ -346,10 +385,14 @@ eet_dictionary_string_get_float(const Eet_Dictionary *ed,
 
              if (eina_convert_atod(str, ed->all[idx].len, &mantisse,
                                    &exponent) == EINA_FALSE)
-               return EINA_FALSE;
+               {
+                  eina_lock_release((Eina_Lock*) &ed->mutex);
+                  return EINA_FALSE;
+               }
 
              convert->f = ldexpf((float)mantisse, exponent);
           }
+        eina_lock_release((Eina_Lock*) &ed->mutex);
 
         convert->type |= EET_D_FLOAT;
      }
@@ -374,6 +417,8 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed,
 
    if (!(convert->type & EET_D_DOUBLE))
      {
+        eina_lock_take((Eina_Lock*) &ed->mutex);
+
         if (!_eet_dictionary_string_get_double_cache(str, ed->all[idx].len,
                                                      &convert->d))
           {
@@ -382,10 +427,14 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed,
 
              if (eina_convert_atod(str, ed->all[idx].len, &mantisse,
                                    &exponent) == EINA_FALSE)
-               return EINA_FALSE;
+               {
+                  eina_lock_release((Eina_Lock*) &ed->mutex);
+                  return EINA_FALSE;
+               }
 
              convert->d = ldexp((double)mantisse, exponent);
           }
+        eina_lock_release((Eina_Lock*) &ed->mutex);
 
         convert->type |= EET_D_DOUBLE;
      }
@@ -412,8 +461,13 @@ eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
      {
         Eina_F32p32 fp;
 
+        eina_lock_take((Eina_Lock*) &ed->mutex);
         if (!eina_convert_atofp(str, ed->all[idx].len, &fp))
-          return EINA_FALSE;
+          {
+             eina_lock_release((Eina_Lock*) &ed->mutex);
+             return EINA_FALSE;
+          }
+        eina_lock_release((Eina_Lock*) &ed->mutex);
 
         convert->fp = fp;
         convert->type |= EET_D_FIXED_POINT;
@@ -427,18 +481,29 @@ EAPI int
 eet_dictionary_string_check(Eet_Dictionary *ed,
                             const char     *string)
 {
+   int res = 0;
    int i;
 
    if ((!ed) || (!string))
      return 0;
 
+   eina_lock_take(&ed->mutex);
+
    if ((ed->start <= string) && (string < ed->end))
-     return 1;
+     res = 1;
 
-   for (i = 0; i < ed->count; ++i)
-     if ((ed->all[i].allocated) && ed->all[i].str == string)
-       return 1;
+   if (!res)
+     {
+        for (i = 0; i < ed->count; ++i)
+          if ((ed->all[i].allocated) && ed->all[i].str == string)
+            {
+               res = 1;
+               break;
+            }
+     }
 
-   return 0;
+   eina_lock_release(&ed->mutex);
+
+   return res;
 }
 

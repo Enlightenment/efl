@@ -586,3 +586,7 @@
 2012-05-11  Cedric Bail
 
 	* Force destruction of all pending file when shuting down eet.
+
+2012-05-15  Cedric Bail
+
+	* Make eet_dictionary thread safe.
