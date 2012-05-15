@@ -359,15 +359,16 @@ _eo_kls_itr_func_get(const Eo_Class *klass, Eo_Kls_Itr *mro_itr, Eo_Op op, Eo_Kl
    return NULL;
 }
 
-static void
-_eo_op_err_no_op_print(Eo_Op op, const Eo_Class *klass)
-{
-   const Eo_Class *op_klass = OP_CLASS_GET(op);
-   const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
-   ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.",
-         op, _eo_op_id_name_get(op), _dom_name,
-         (klass) ? klass->desc->name : NULL);
-}
+#define _EO_OP_ERR_NO_OP_PRINT(op, klass) \
+   do \
+      { \
+         const Eo_Class *op_klass = OP_CLASS_GET(op); \
+         const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL; \
+         ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.", \
+               op, _eo_op_id_name_get(op), _dom_name, \
+               (klass) ? klass->desc->name : NULL); \
+      } \
+   while (0)
 
 static Eina_Bool
 _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
@@ -441,7 +442,7 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
      {
         if (!_eo_op_internal(obj, op_type, op, &p_list))
           {
-             _eo_op_err_no_op_print(op, obj->klass);
+             _EO_OP_ERR_NO_OP_PRINT(op, obj->klass);
              ret = EINA_FALSE;
              break;
           }
@@ -471,7 +472,7 @@ eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...)
    va_start(p_list, op);
    if (!_eo_op_internal(obj, op_type, op, &p_list))
      {
-        _eo_op_err_no_op_print(op, nklass);
+        _EO_OP_ERR_NO_OP_PRINT(op, nklass);
         ret = EINA_FALSE;
      }
    va_end(p_list);
@@ -529,7 +530,7 @@ eo_class_do_internal(const Eo_Class *klass, ...)
      {
         if (!_eo_class_op_internal((Eo_Class *) klass, op, &p_list))
           {
-             _eo_op_err_no_op_print(op, klass);
+             _EO_OP_ERR_NO_OP_PRINT(op, klass);
              ret = EINA_FALSE;
              break;
           }
@@ -558,7 +559,7 @@ eo_class_do_super_internal(const Eo_Class *klass, Eo_Op op, ...)
    va_start(p_list, op);
    if (!_eo_class_op_internal((Eo_Class *) klass, op, &p_list))
      {
-        _eo_op_err_no_op_print(op, nklass);
+        _EO_OP_ERR_NO_OP_PRINT(op, nklass);
         ret = EINA_FALSE;
      }
    va_end(p_list);
