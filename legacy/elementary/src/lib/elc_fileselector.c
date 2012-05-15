@@ -337,47 +337,16 @@ _anchors_do(Evas_Object *obj,
 #ifdef HAVE_EIO
 static Eina_Bool
 _ls_filter_cb(void *data,
-              Eio_File *handler,
+              Eio_File *handler __UNUSED__,
               const Eina_File_Direct_Info *info)
 {
    Listing_Request *lreq = data;
-   const char *filename;
 
    if (info->path[info->name_start] == '.')
      return EINA_FALSE;
 
    if (lreq->sd->only_folder && info->type != EINA_FILE_DIR)
       return EINA_FALSE;
-   
-   filename = eina_stringshare_add(info->path);
-   eio_file_associate_direct_add
-     (handler, "filename", filename, EINA_FREE_CB(eina_stringshare_del));
-
-   if (info->type == EINA_FILE_DIR)
-     {
-        eio_file_associate_direct_add
-          (handler, "type/grid", grid_itc[ELM_DIRECTORY], NULL);
-        eio_file_associate_direct_add
-          (handler, "type/list", list_itc[ELM_DIRECTORY], NULL);
-     }
-   else
-     {
-        if (evas_object_image_extension_can_load_get
-              (info->path + info->name_start))
-          {
-             eio_file_associate_direct_add
-               (handler, "type/grid", grid_itc[ELM_FILE_IMAGE], NULL);
-             eio_file_associate_direct_add
-               (handler, "type/list", list_itc[ELM_FILE_IMAGE], NULL);
-          }
-        else
-          {
-             eio_file_associate_direct_add
-               (handler, "type/grid", grid_itc[ELM_FILE_UNKNOW], NULL);
-             eio_file_associate_direct_add
-               (handler, "type/list", list_itc[ELM_FILE_UNKNOW], NULL);
-          }
-     }
 
    return EINA_TRUE;
 }
@@ -451,9 +420,10 @@ _signal_first(Listing_Request *lreq)
 static void
 _ls_main_cb(void *data,
             Eio_File *handler,
-            const Eina_File_Direct_Info *info __UNUSED__)
+            const Eina_File_Direct_Info *info)
 {
    Listing_Request *lreq = data;
+   int itcn = ELM_FILE_UNKNOW;
 
    if (eio_file_check(handler)) return;
 
@@ -466,23 +436,22 @@ _ls_main_cb(void *data,
 
    _signal_first(lreq);
 
-   if (lreq->sd->mode == ELM_FILESELECTOR_LIST)
-     {
-        Eina_Bool is_dir = (eio_file_associate_find(handler, "type/list")
-                            == list_itc[ELM_DIRECTORY]);
+   if (info->type == EINA_FILE_DIR)
+     itcn = ELM_DIRECTORY;
+   else
+     if (evas_object_image_extension_can_load_get(info->path + info->name_start))
+       itcn = ELM_FILE_IMAGE;
 
-        elm_genlist_item_sorted_insert
-          (lreq->sd->files_list, eio_file_associate_find(handler, "type/list"),
-          eina_stringshare_ref(eio_file_associate_find
-                                 (handler, "filename")),
-          lreq->parent_it, lreq->sd->expand && is_dir ? ELM_GENLIST_ITEM_TREE
-          : ELM_GENLIST_ITEM_NONE, _file_list_cmp, NULL, NULL);
-     }
+   if (lreq->sd->mode == ELM_FILESELECTOR_LIST)
+     elm_genlist_item_sorted_insert(lreq->sd->files_list, list_itc[itcn],
+                                    eina_stringshare_add(info->path),
+                                    lreq->parent_it,
+                                    lreq->sd->expand && ELM_GENLIST_ITEM_TREE,
+                                    _file_list_cmp, NULL, NULL);
    else if (lreq->sd->mode == ELM_FILESELECTOR_GRID)
-     elm_gengrid_item_sorted_insert
-       (lreq->sd->files_grid, eio_file_associate_find(handler, "type/grid"),
-       eina_stringshare_ref(eio_file_associate_find(handler, "filename")),
-       _file_grid_cmp, NULL, NULL);
+     elm_gengrid_item_sorted_insert(lreq->sd->files_grid, grid_itc[itcn],
+                                    eina_stringshare_add(info->path),
+                                    _file_grid_cmp, NULL, NULL);
 }
 
 static void
