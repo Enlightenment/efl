@@ -301,7 +301,11 @@ _field_list_arrange(Evas_Object *obj)
         snprintf(buf, sizeof(buf), EDC_PART_FIELD_STR, field->location);
 
         if (field->visible && field->fmt_exist)
-          elm_layout_content_set(obj, buf, field->item_obj);
+          {
+             if (elm_layout_content_get(obj, buf))
+               elm_layout_content_unset(obj, buf);
+             elm_layout_content_set(obj, buf, field->item_obj);
+          }
         else
           evas_object_hide(elm_layout_content_unset(obj, buf));
      }
