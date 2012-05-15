@@ -791,6 +791,12 @@ enum {
      EO_BASE_SUB_ID_EVENT_CALLBACK_CALL,
      EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD,
      EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL,
+     EO_BASE_SUB_ID_EVENT_FREEZE,
+     EO_BASE_SUB_ID_EVENT_THAW,
+     EO_BASE_SUB_ID_EVENT_FREEZE_GET,
+     EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE,
+     EO_BASE_SUB_ID_EVENT_GLOBAL_THAW,
+     EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET,
      EO_BASE_SUB_ID_LAST
 };
 
@@ -951,6 +957,75 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
  * @see eo_event_callback_forwarder_add()
  */
 #define eo_event_callback_forwarder_del(desc, new_obj) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo *, new_obj)
+
+/**
+ * @def eo_event_freeze
+ * @brief freeze events of object.
+ *
+ * Prevents event callbacks from being called for the object.
+ *
+ * @see #eo_event_thaw
+ */
+#define eo_event_freeze() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE)
+
+/**
+ * @def eo_event_thaw
+ * @brief thaw events of object.
+ *
+ * Lets event callbacks be called for the object.
+ *
+ * @see #eo_event_freeze
+ */
+#define eo_event_thaw() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW)
+
+/**
+ * @def eo_event_freeze_get
+ * @brief return freeze events of object.
+ *
+ * @param fcount[out] The event freeze count of the object.
+ *
+ * Return event freeze count.
+ *
+ * @see #eo_event_freeze
+ * @see #eo_event_thaw
+ */
+#define eo_event_freeze_get(fcount) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), EO_TYPECHECK(int *, fcount)
+
+/**
+ * @def eo_event_global_freeze
+ * @brief freeze events of object.
+ *
+ * Prevents event callbacks from being called for the object.
+ *
+ * @see #eo_event_freeze
+ * @see #eo_event_global_thaw
+ */
+#define eo_event_global_freeze() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE)
+
+/**
+ * @def eo_event_global_thaw
+ * @brief thaw events of object.
+ *
+ * Lets event callbacks be called for the object.
+ *
+ * @see #eo_event_thaw
+ * @see #eo_event_global_freeze
+ */
+#define eo_event_global_thaw() EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW)
+
+/**
+ * @def eo_event_global_freeze_get
+ * @brief return freeze events of object.
+ *
+ * @param fcount[out] The event freeze count of the object.
+ *
+ * Return event freeze count.
+ *
+ * @see #eo_event_freeze_get
+ * @see #eo_event_global_freeze
+ * @see #eo_event_global_thaw
+ */
+#define eo_event_global_freeze_get(fcount) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET), EO_TYPECHECK(int *, fcount)
 
 /**
  * @def eo_event_callback_add(obj, desc, cb, data)

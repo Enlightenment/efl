@@ -7,6 +7,8 @@
 
 EAPI Eo_Op EO_BASE_BASE_ID = EO_NOOP;
 
+static int event_freeze_count = 0;
+
 typedef struct
 {
    Eina_Inlist *generic_data;
@@ -14,6 +16,7 @@ typedef struct
 
    Eina_Inlist *callbacks;
    int walking_list;
+   int event_freeze_count;
 } Private_Data;
 
 typedef struct
@@ -373,6 +376,9 @@ _ev_cb_call(const Eo *_obj, const void *class_data, va_list *list)
 
    if (ret) *ret = EINA_TRUE;
 
+   if (event_freeze_count || pd->event_freeze_count)
+      return;
+
    /* FIXME: Change eo_ref to _eo_ref and unref. */
    eo_ref(obj);
    pd->walking_list++;
@@ -426,6 +432,62 @@ _ev_cb_forwarder_del(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
    eo_do(obj, eo_event_callback_del(desc, _eo_event_forwarder_callback, new_obj));
 }
 
+static void
+_ev_freeze(Eo *obj EINA_UNUSED, void *class_data, va_list *list EINA_UNUSED)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   pd->event_freeze_count++;
+}
+
+static void
+_ev_thaw(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   if (pd->event_freeze_count > 0)
+     {
+        pd->event_freeze_count--;
+     }
+   else
+     {
+        ERR("Events for object %p have already been thawed.", obj);
+     }
+}
+
+static void
+_ev_freeze_get(const Eo *obj EINA_UNUSED, const void *class_data, va_list *list)
+{
+   Private_Data *pd = (Private_Data *) class_data;
+   int *ret = va_arg(*list, int *);
+   *ret = pd->event_freeze_count;
+}
+
+static void
+_ev_global_freeze(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   event_freeze_count++;
+}
+
+static void
+_ev_global_thaw(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   if (event_freeze_count > 0)
+     {
+        event_freeze_count--;
+     }
+   else
+     {
+        ERR("Global events have already been thawed.");
+     }
+}
+
+static void
+_ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   *ret = event_freeze_count;
+}
+
+
 /* EOF event callbacks */
 
 
@@ -459,6 +521,8 @@ _destructor(Eo *obj, void *class_data)
 static void
 _class_constructor(Eo_Class *klass)
 {
+   event_freeze_count = 0;
+
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), _data_set),
         EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), _data_get),
@@ -471,6 +535,12 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), _ev_cb_call),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), _ev_cb_forwarder_add),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), _ev_cb_forwarder_del),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE), _ev_freeze),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW), _ev_thaw),
+        EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), _ev_freeze_get),
+        EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE), _ev_global_freeze),
+        EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW), _ev_global_thaw),
+        EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET), _ev_global_freeze_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -489,6 +559,12 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "?", "Call the event callbacks for an event."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD, "?", "Add an event forwarder."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL, "?", "Delete an event forwarder."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_FREEZE, "?", "Freezes events."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_THAW, "?", "Thaws events."),
+     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_FREEZE_GET, "?", "Get event freeze counter."),
+     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE, "?", "Freezes events globally."),
+     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW, "?", "Thaws events globally."),
+     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET, "?", "Get global event freeze counter."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

@@ -67,6 +67,112 @@ main(int argc, char *argv[])
    fail_if(ret);
    fail_if(pd->cb_count != 0);
 
+
+   /* Freeze/thaw. */
+   int fcount = 0;
+   cb_count = 0;
+   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1));
+   fail_if(pd->cb_count != 1);
+
+   eo_do(obj, eo_event_freeze_get(&fcount));
+   fail_if(fcount != 0);
+
+   eo_do(obj, eo_event_freeze());
+   eo_do(obj, eo_event_freeze_get(&fcount));
+   fail_if(fcount != 1);
+
+   eo_do(obj, eo_event_freeze());
+   eo_do(obj, eo_event_freeze_get(&fcount));
+   fail_if(fcount != 2);
+
+   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
+   fail_if(pd->cb_count != 1);
+
+   eo_do(obj, simple_a_set(2));
+   fail_if(cb_count != 0);
+   eo_do(obj, eo_event_thaw());
+   eo_do(obj, eo_event_freeze_get(&fcount));
+   fail_if(fcount != 1);
+
+   eo_do(obj, eo_event_thaw());
+   eo_do(obj, eo_event_freeze_get(&fcount));
+   fail_if(fcount != 0);
+
+   eo_do(obj, simple_a_set(3));
+   fail_if(cb_count != 2);
+
+   cb_count = 0;
+   eo_do(obj, eo_event_thaw());
+   eo_do(obj, eo_event_freeze_get(&fcount));
+   fail_if(fcount != 0);
+
+   eo_do(obj, eo_event_freeze());
+   eo_do(obj, eo_event_freeze_get(&fcount));
+   fail_if(fcount != 1);
+
+   eo_do(obj, simple_a_set(2));
+   fail_if(cb_count != 0);
+   eo_do(obj, eo_event_thaw());
+   eo_do(obj, eo_event_freeze_get(&fcount));
+   fail_if(fcount != 0);
+
+   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
+   fail_if(!ret);
+   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
+   fail_if(!ret);
+   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
+   fail_if(ret);
+
+   /* Global Freeze/thaw. */
+   fcount = 0;
+   cb_count = 0;
+   pd->cb_count = 0;
+   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 1));
+   fail_if(pd->cb_count != 1);
+
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze_get(&fcount));
+   fail_if(fcount != 0);
+
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze());
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze_get(&fcount));
+   fail_if(fcount != 1);
+
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze());
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze_get(&fcount));
+   fail_if(fcount != 2);
+
+   eo_do(obj, eo_event_callback_priority_add(EV_A_CHANGED, EO_CALLBACK_PRIORITY_BEFORE, _a_changed_cb, (void *) 2));
+   fail_if(pd->cb_count != 1);
+
+   eo_do(obj, simple_a_set(2));
+   fail_if(cb_count != 0);
+   eo_class_do(EO_BASE_CLASS, eo_event_global_thaw());
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze_get(&fcount));
+   fail_if(fcount != 1);
+
+   eo_class_do(EO_BASE_CLASS, eo_event_global_thaw());
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze_get(&fcount));
+   fail_if(fcount != 0);
+
+   eo_do(obj, simple_a_set(3));
+   fail_if(cb_count != 2);
+
+   cb_count = 0;
+   eo_class_do(EO_BASE_CLASS, eo_event_global_thaw());
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze_get(&fcount));
+   fail_if(fcount != 0);
+
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze());
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze_get(&fcount));
+   fail_if(fcount != 1);
+
+   eo_do(obj, simple_a_set(2));
+   fail_if(cb_count != 0);
+   eo_class_do(EO_BASE_CLASS, eo_event_global_thaw());
+   eo_class_do(EO_BASE_CLASS, eo_event_global_freeze_get(&fcount));
+   fail_if(fcount != 0);
+
+
    eo_unref(obj);
    eo_shutdown();
    return 0;
