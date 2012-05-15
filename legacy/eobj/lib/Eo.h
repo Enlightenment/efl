@@ -941,8 +941,8 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
 /**
  * @def eo_event_callback_forwarder_add
  * @brief Add an event callback forwarder for an event and an object.
- * @param desc[in] The description of the event to listen to.
- * @param new_obj[in] The object to emit events from.
+ * @param[in] desc The description of the event to listen to.
+ * @param[in] new_obj The object to emit events from.
  *
  * @see eo_event_callback_forwarder_del()
  */
@@ -951,8 +951,8 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
 /**
  * @def eo_event_callback_forwarder_del
  * @brief Remove an event callback forwarder for an event and an object.
- * @param desc[in] The description of the event to listen to.
- * @param new_obj[in] The object to emit events from.
+ * @param[in] desc The description of the event to listen to.
+ * @param[in] new_obj The object to emit events from.
  *
  * @see eo_event_callback_forwarder_add()
  */
@@ -982,7 +982,7 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
  * @def eo_event_freeze_get
  * @brief return freeze events of object.
  *
- * @param fcount[out] The event freeze count of the object.
+ * @param[out] fcount The event freeze count of the object.
  *
  * Return event freeze count.
  *
@@ -1017,7 +1017,7 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
  * @def eo_event_global_freeze_get
  * @brief return freeze events of object.
  *
- * @param fcount[out] The event freeze count of the object.
+ * @param[out] fcount The event freeze count of the object.
  *
  * Return event freeze count.
  *
@@ -1030,9 +1030,9 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
 /**
  * @def eo_event_callback_add(obj, desc, cb, data)
  * Add a callback for an event.
- * @param desc[in] The description of the event to listen to.
- * @param cb[in] the callback to call.
- * @param data[in] additional data to pass to the callback.
+ * @param[in] desc The description of the event to listen to.
+ * @param[in] cb the callback to call.
+ * @param[in] data additional data to pass to the callback.
  *
  * callbacks of the same priority are called in reverse order of creation.
  *
@@ -1045,10 +1045,10 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
 /**
  * @def eo_event_callback_priority_add
  * @brief Add a callback for an event with a specific priority.
- * @param desc[in] The description of the event to listen to.
- * @param priority[in] The priority of the callback.
- * @param cb[in] the callback to call.
- * @param data[in] additional data to pass to the callback.
+ * @param[in] desc The description of the event to listen to.
+ * @param[in] priority The priority of the callback.
+ * @param[in] cb the callback to call.
+ * @param[in] data additional data to pass to the callback.
  *
  * callbacks of the same priority are called in reverse order of creation.
  *
@@ -1060,9 +1060,9 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
 /**
  * @def eo_event_callback_del_lazy
  * @brief Del a callback for an event
- * @param desc[in] The description of the event to listen to.
- * @param func[in] the callback to delete.
- * @param user_data[out] The user data associated with the callback func.
+ * @param[in] desc The description of the event to listen to.
+ * @param[in] func the callback to delete.
+ * @param[out] user_data The user data associated with the callback func.
  *
  * @see eo_event_callback_del()
  */
@@ -1071,9 +1071,9 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
 /**
  * @def eo_event_callback_del
  * @brief Del a callback with a specific data associated to it for an event.
- * @param desc[in] The description of the event to listen to.
- * @param func[in] the callback to delete.
- * @param user_data[in] The data to compare.
+ * @param[in] desc The description of the event to listen to.
+ * @param[in] func the callback to delete.
+ * @param[in] user_data The data to compare.
  *
  * @see eo_event_callback_del_lazy()
  */
@@ -1082,9 +1082,9 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
 /**
  * @def eo_event_callback_call
  * @brief Call the callbacks for an event of an object.
- * @param desc[in] The description of the event to call.
- * @param event_info[in] Extra event info to pass to the callbacks.
- * @param aborted[out] @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise.
+ * @param[in] desc The description of the event to call.
+ * @param[in] event_info Extra event info to pass to the callbacks.
+ * @param[out] aborted @c EINA_TRUE if one of the callbacks aborted the call, @c EINA_FALSE otherwise.
  */
 #define eo_event_callback_call(desc, event_info, aborted) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(const void *, event_info), EO_TYPECHECK(Eina_Bool *, aborted)
 
