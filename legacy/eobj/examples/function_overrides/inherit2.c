@@ -38,12 +38,22 @@ _print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UN
 }
 
 static void
+_class_print(const Eo_Class *klass, va_list *list)
+{
+   (void) list;
+   printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
+   fail_if(!eo_class_do_super(klass, simple_class_print()));
+   fail_if(eo_class_do_super(klass, simple_class_print2()));
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
         EO_OP_FUNC(INHERIT2_ID(INHERIT2_SUB_ID_PRINT), _print),
         EO_OP_FUNC(INHERIT2_ID(INHERIT2_SUB_ID_PRINT2), _print2),
+        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_PRINT), _class_print),
         EO_OP_FUNC_SENTINEL
    };
 

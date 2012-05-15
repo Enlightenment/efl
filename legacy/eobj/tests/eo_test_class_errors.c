@@ -310,18 +310,28 @@ _const_ops_a_print(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *l
 }
 
 static void
+_const_ops_class_hi_print(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   _const_ops_counter++;
+}
+
+static void
 _const_ops_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _const_ops_a_set),
-        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), _const_ops_a_print),
+        EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), (eo_op_func_type_const) _const_ops_a_set),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), (eo_op_func_type) _const_ops_a_print),
+        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), (eo_op_func_type_class) _const_ops_a_set),
+        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), (eo_op_func_type_class) _const_ops_a_print),
+        EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), (eo_op_func_type_const) _const_ops_class_hi_print),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), (eo_op_func_type) _const_ops_class_hi_print),
         EO_OP_FUNC_SENTINEL
    };
 
    eo_class_funcs_set(klass, func_desc);
 }
 
-START_TEST(eo_const_ops)
+START_TEST(eo_op_types)
 {
    eo_init();
 
@@ -343,7 +353,7 @@ START_TEST(eo_const_ops)
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
-   eo_do(obj, simple_a_set(7), simple_a_print());
+   eo_do(obj, simple_a_set(7), simple_a_print(), simple_class_hi_print());
    fail_if(_const_ops_counter != 0);
 
    eo_unref(obj);
@@ -358,5 +368,5 @@ void eo_test_class_errors(TCase *tc)
    tcase_add_test(tc, eo_inherit_errors);
    tcase_add_test(tc, eo_inconsistent_mro);
    tcase_add_test(tc, eo_bad_interface);
-   tcase_add_test(tc, eo_const_ops);
+   tcase_add_test(tc, eo_op_types);
 }

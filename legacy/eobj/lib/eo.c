@@ -113,6 +113,7 @@ struct _Eo_Class
    size_t extn_data_size;
 
    const Eo_Class **mro;
+   Eo_Kls_Itr mro_itr;
 
    size_t data_offset; /* < Offset of the data within object data. */
 
@@ -340,29 +341,62 @@ _eo_kls_itr_reached_end(const Eo_Kls_Itr *cur)
    return !(*kls_itr && *(kls_itr + 1));
 }
 
-static Eina_Bool
-_eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
+static inline const op_type_funcs *
+_eo_kls_itr_func_get(const Eo_Class *klass, Eo_Kls_Itr *mro_itr, Eo_Op op, Eo_Kls_Itr *prev_state)
 {
-   const Eo_Class *klass;
-   Eina_Bool ret = EINA_FALSE;
-
-   const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
-
-   if (op_desc &&
-         ((constant == EINA_TRUE) && (op_desc->constant == EINA_FALSE)))
-     {
-        ERR("Tried calling non-const or non-existant op '%s' (%d) from a const (query) function.", (op_desc) ? op_desc->name : NULL, op);
-        return EINA_FALSE;
-     }
-
-   Eo_Kls_Itr prev_state;
-   _eo_kls_itr_init(obj->klass, &obj->mro_itr, op, &prev_state);
-   klass = _eo_kls_itr_get(&obj->mro_itr);
+   _eo_kls_itr_init(klass, mro_itr, op, prev_state);
+   klass = _eo_kls_itr_get(mro_itr);
    if (klass)
      {
         const op_type_funcs *func = _dich_func_get(klass, op);
 
         if (func && func->func)
+          {
+             return func;
+          }
+     }
+
+   return NULL;
+}
+
+static void
+_eo_op_err_no_op_print(Eo_Op op, const Eo_Class *klass)
+{
+   const Eo_Class *op_klass = OP_CLASS_GET(op);
+   const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
+   ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.",
+         op, _eo_op_id_name_get(op), _dom_name,
+         (klass) ? klass->desc->name : NULL);
+}
+
+static Eina_Bool
+_eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
+
+   if (op_desc)
+     {
+        if (op_desc->op_type == EO_OP_TYPE_CLASS)
+          {
+             ERR("Tried calling a class op '%s' (%d) from a non-class context.", (op_desc) ? op_desc->name : NULL, op);
+             return EINA_FALSE;
+          }
+        else if ((op_type == EO_OP_TYPE_CONST) &&
+              (op_desc->op_type != EO_OP_TYPE_CONST))
+          {
+             ERR("Tried calling non-const or non-existant op '%s' (%d) from a const (query) function.", (op_desc) ? op_desc->name : NULL, op);
+             return EINA_FALSE;
+          }
+     }
+
+   Eo_Kls_Itr prev_state;
+
+     {
+        const op_type_funcs *func =
+           _eo_kls_itr_func_get(obj->klass, &obj->mro_itr, op, &prev_state);
+        if (func)
           {
              func->func(obj, _eo_data_get(obj, func->src), p_list);
              ret = EINA_TRUE;
@@ -376,7 +410,7 @@ _eo_op_internal(Eo *obj, Eina_Bool constant, Eo_Op op, va_list *p_list)
         Eo *emb_obj;
         EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj)
           {
-             if (_eo_op_internal(emb_obj, constant, op, p_list))
+             if (_eo_op_internal(emb_obj, op_type, op, p_list))
                {
                   ret = EINA_TRUE;
                   goto end;
@@ -390,7 +424,7 @@ end:
 }
 
 EAPI Eina_Bool
-eo_do_internal(Eo *obj, Eina_Bool constant, ...)
+eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Op op = EO_NOOP;
@@ -400,18 +434,14 @@ eo_do_internal(Eo *obj, Eina_Bool constant, ...)
 
    _eo_ref(obj);
 
-   va_start(p_list, constant);
+   va_start(p_list, op_type);
 
    op = va_arg(p_list, Eo_Op);
    while (op)
      {
-        if (!_eo_op_internal(obj, constant, op, &p_list))
+        if (!_eo_op_internal(obj, op_type, op, &p_list))
           {
-             const Eo_Class *op_klass = OP_CLASS_GET(op);
-             const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
-             ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.",
-                   op, _eo_op_id_name_get(op), _dom_name,
-                   obj->klass->desc->name);
+             _eo_op_err_no_op_print(op, obj->klass);
              ret = EINA_FALSE;
              break;
           }
@@ -425,27 +455,110 @@ eo_do_internal(Eo *obj, Eina_Bool constant, ...)
 }
 
 EAPI Eina_Bool
-eo_do_super_internal(Eo *obj, Eina_Bool constant, Eo_Op op, ...)
+eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...)
 {
-   const Eo_Class *obj_klass;
+   const Eo_Class *nklass;
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
    /* Advance the kls itr. */
-   obj_klass = _eo_kls_itr_next(&obj->mro_itr, op);
+   nklass = _eo_kls_itr_next(&obj->mro_itr, op);
 
    if (obj->mro_itr.op != op)
       return EINA_FALSE;
 
    va_start(p_list, op);
-   if (!_eo_op_internal(obj, constant, op, &p_list))
+   if (!_eo_op_internal(obj, op_type, op, &p_list))
      {
-        const Eo_Class *op_klass = OP_CLASS_GET(op);
-        const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL;
-        ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.",
-              op, _eo_op_id_name_get(op), _dom_name,
-              (obj_klass) ? obj_klass->desc->name : NULL);
+        _eo_op_err_no_op_print(op, nklass);
+        ret = EINA_FALSE;
+     }
+   va_end(p_list);
+
+   return ret;
+}
+
+static Eina_Bool
+_eo_class_op_internal(Eo_Class *klass, Eo_Op op, va_list *p_list)
+{
+   Eina_Bool ret = EINA_FALSE;
+
+   const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
+
+   if (op_desc)
+     {
+        if (op_desc->op_type != EO_OP_TYPE_CLASS)
+          {
+             ERR("Tried calling an instant op '%s' (%d) from a class context.", (op_desc) ? op_desc->name : NULL, op);
+             return EINA_FALSE;
+          }
+     }
+
+   Eo_Kls_Itr prev_state;
+
+     {
+        const op_type_funcs *func =
+           _eo_kls_itr_func_get(klass, &klass->mro_itr, op, &prev_state);
+        if (func)
+          {
+             ((eo_op_func_type_class) func->func)(klass, p_list);
+             ret = EINA_TRUE;
+             goto end;
+          }
+     }
+
+end:
+   _eo_kls_itr_end(&klass->mro_itr, &prev_state);
+   return ret;
+}
+
+EAPI Eina_Bool
+eo_class_do_internal(const Eo_Class *klass, ...)
+{
+   Eina_Bool ret = EINA_TRUE;
+   Eo_Op op = EO_NOOP;
+   va_list p_list;
+
+   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+
+   va_start(p_list, klass);
+
+   op = va_arg(p_list, Eo_Op);
+   while (op)
+     {
+        if (!_eo_class_op_internal((Eo_Class *) klass, op, &p_list))
+          {
+             _eo_op_err_no_op_print(op, klass);
+             ret = EINA_FALSE;
+             break;
+          }
+        op = va_arg(p_list, Eo_Op);
+     }
+
+   va_end(p_list);
+
+   return ret;
+}
+
+EAPI Eina_Bool
+eo_class_do_super_internal(const Eo_Class *klass, Eo_Op op, ...)
+{
+   const Eo_Class *nklass;
+   Eina_Bool ret = EINA_TRUE;
+   va_list p_list;
+   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+
+   /* Advance the kls itr. */
+   nklass = _eo_kls_itr_next(&((Eo_Class *) klass)->mro_itr, op);
+
+   if (klass->mro_itr.op != op)
+      return EINA_FALSE;
+
+   va_start(p_list, op);
+   if (!_eo_class_op_internal((Eo_Class *) klass, op, &p_list))
+     {
+        _eo_op_err_no_op_print(op, nklass);
         ret = EINA_FALSE;
      }
    va_end(p_list);
@@ -635,13 +748,13 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
           {
              const Eo_Op_Description *op_desc = _eo_op_id_desc_get(itr->op);
 
-             if (EINA_LIKELY(!op_desc || (itr->constant == op_desc->constant)))
+             if (EINA_LIKELY(!op_desc || (itr->op_type == op_desc->op_type)))
                {
                   _dich_func_set(klass, itr->op, itr->func);
                }
              else
                {
-                  ERR("Set function's constant property (%d) is different than the one in the op description (%d) for op '%s' in class '%s'.", itr->constant, op_desc->constant, op_desc->name, klass->desc->name);
+                  ERR("Set function's op type (%d) is different than the one in the op description (%d) for op '%s' in class '%s'.", itr->op_type, op_desc->op_type, op_desc->name, klass->desc->name);
                }
           }
      }

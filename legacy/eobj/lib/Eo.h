@@ -42,6 +42,24 @@
 EAPI extern Eina_Lock _eo_class_creation_lock;
 
 /**
+ * @internal
+ * An enum representing the possible types of an Op.
+ */
+enum _Eo_Op_Type
+{
+   EO_OP_TYPE_REGULAR = 0, /**< Regular op. */
+   EO_OP_TYPE_CONST, /**< Const op - object should not change. */
+   EO_OP_TYPE_CLASS, /**< Class op - a class op. Like static in Java/C++. */
+};
+
+/**
+ * @internal
+ * @typedef Eo_Op_Type
+ * A convenience typedef for #_Eo_Op_Type.
+ */
+typedef enum _Eo_Op_Type Eo_Op_Type;
+
+/**
  * @defgroup Eo Eo Generic Object System
  *
  * The Eo generic object system. It was designed to be the base object
@@ -76,6 +94,13 @@ typedef struct _Eo Eo;
 typedef unsigned int Eo_Op;
 
 /**
+ * @typedef Eo_Class
+ * The basic Object class type.
+ * @ingroup Eo_Class
+ */
+typedef struct _Eo_Class Eo_Class;
+
+/**
  * @def EO_NOOP
  * A special #Eo_Op meaning "No operation".
  */
@@ -99,6 +124,16 @@ typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
  * @see eo_op_func_type
  */
 typedef void (*eo_op_func_type_const)(const Eo *, const void *class_data, va_list *list);
+
+/**
+ * @typedef eo_op_func_type_class
+ * The type of the class Op functions. This is the same as #eo_op_func_type,\
+ * exepct that it's for usage with class functions, and not with object
+ * functions.
+ *
+ * @see eo_op_func_type
+ */
+typedef void (*eo_op_func_type_class)(const Eo_Class *, va_list *list);
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling
@@ -140,12 +175,6 @@ typedef struct _Eo_Event_Description Eo_Event_Description;
  * @addtogroup Eo_Class Eo Class
  * @{
  */
-
-/**
- * @typedef Eo_Class
- * The basic Object class type.
- */
-typedef struct _Eo_Class Eo_Class;
 
 /**
  * @def EO_DEFINE_CLASS(class_get_func_name, class_desc, parent_class, ...)
@@ -218,7 +247,7 @@ struct _Eo_Op_Func_Description
 {
    Eo_Op op; /**< The op */
    eo_op_func_type func; /**< The function to call for the op. */
-   Eina_Bool constant; /**< @c EINA_TRUE if this function is a const. */
+   Eo_Op_Type op_type; /**< The type of the op */
 };
 
 /**
@@ -234,7 +263,7 @@ typedef struct _Eo_Op_Func_Description Eo_Op_Func_Description;
  *
  * @see EO_OP_FUNC_CONST
  */
-#define EO_OP_FUNC(op, func) { op, EO_TYPECHECK(eo_op_func_type, func), EINA_FALSE }
+#define EO_OP_FUNC(op, func) { op, EO_TYPECHECK(eo_op_func_type, func), EO_OP_TYPE_REGULAR }
 
 /**
  * @def EO_OP_FUNC_CONST(op, func)
@@ -244,7 +273,17 @@ typedef struct _Eo_Op_Func_Description Eo_Op_Func_Description;
  *
  * @see EO_OP_FUNC
  */
-#define EO_OP_FUNC_CONST(op, func) { op, (eo_op_func_type) EO_TYPECHECK(eo_op_func_type_const, func), EINA_TRUE }
+#define EO_OP_FUNC_CONST(op, func) { op, (eo_op_func_type) EO_TYPECHECK(eo_op_func_type_const, func), EO_OP_TYPE_CONST }
+
+/**
+ * @def EO_OP_FUNC_CLASS(op, func)
+ * A convenience macro to be used when populating the #Eo_Op_Func_Description
+ * array.
+ * The same as #EO_OP_FUNC but for class functions.
+ *
+ * @see EO_OP_FUNC
+ */
+#define EO_OP_FUNC_CLASS(op, func) { op, (eo_op_func_type) EO_TYPECHECK(eo_op_func_type_class, func), EO_OP_TYPE_CLASS }
 
 /**
  * @def EO_OP_FUNC_SENTINEL
@@ -263,7 +302,7 @@ struct _Eo_Op_Description
    const char *name; /**< The name of the op. */
    const char *type; /**< descripbes the Op's function signature. */
    const char *doc; /**< Explanation about the Op. */
-   Eina_Bool constant; /**< @c EINA_TRUE if this op's implementation should not change the obj. */
+   Eo_Op_Type op_type; /**< The type of the Op. */
 };
 
 /**
@@ -317,10 +356,11 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  * @param type The type string for the op.
  * @param doc Additional doc for the op.
  * @see Eo_Op_Description
+ * @see EO_OP_DESCRIPTION_CLASS
  * @see EO_OP_DESCRIPTION_CONST
  * @see EO_OP_DESCRIPTION_SENTINEL
  */
-#define EO_OP_DESCRIPTION(sub_id, type, doc) { sub_id, #sub_id, type, doc, EINA_FALSE }
+#define EO_OP_DESCRIPTION(sub_id, type, doc) { sub_id, #sub_id, type, doc, EO_OP_TYPE_REGULAR }
 
 /**
  * @def EO_OP_DESCRIPTION_CONST(op, type, doc)
@@ -334,7 +374,21 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  * @see EO_OP_DESCRIPTION
  * @see EO_OP_DESCRIPTION_SENTINEL
  */
-#define EO_OP_DESCRIPTION_CONST(sub_id, type, doc) { sub_id, #sub_id, type, doc, EINA_TRUE }
+#define EO_OP_DESCRIPTION_CONST(sub_id, type, doc) { sub_id, #sub_id, type, doc, EO_OP_TYPE_CONST }
+
+/**
+ * @def EO_OP_DESCRIPTION_CLASS(op, type, doc)
+ * An helper macro to help populating #Eo_Op_Description
+ * This macro is the same as EO_OP_DESCRIPTION but indicates that the op's
+ * implementation is of type CLASS.
+ * @param sub_id The sub id of the op being described.
+ * @param type The type string for the op.
+ * @param doc Additional doc for the op.
+ * @see Eo_Op_Description
+ * @see EO_OP_DESCRIPTION
+ * @see EO_OP_DESCRIPTION_SENTINEL
+ */
+#define EO_OP_DESCRIPTION_CLASS(sub_id, type, doc) { sub_id, #sub_id, type, doc, EO_OP_TYPE_CLASS }
 
 /**
  * @def EO_OP_DESCRIPTION_SENTINEL
@@ -412,9 +466,16 @@ EAPI Eina_Bool eo_shutdown(void);
 #define eo_query(obj, ...) eo_do_internal((Eo *) EO_TYPECHECK(const Eo *, obj), EINA_TRUE, __VA_ARGS__, EO_NOOP)
 
 /**
- * @brief Issues ops on an object.
+ * @def eo_class_do
+ * A convenience wrapper around eo_class_do_internal()
+ * @see eo_class_do_internal
+ */
+#define eo_class_do(klass, ...) eo_class_do_internal(klass, __VA_ARGS__, EO_NOOP)
+
+/**
+ * @brief Calls op functions of an object
  * @param obj The object to work on
- * @param constant @c EINA_TRUE if this call is on a constant object.
+ * @param op_type The type of the ops that are passed.
  * @param ... NULL terminated list of OPs and parameters.
  * @return @c EINA_TRUE on success.
  *
@@ -423,7 +484,20 @@ EAPI Eina_Bool eo_shutdown(void);
  *
  * @see #eo_do
  */
-EAPI Eina_Bool eo_do_internal(Eo *obj, Eina_Bool constant, ...);
+EAPI Eina_Bool eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...);
+
+/**
+ * @brief Calls op functions of a class.
+ * @param klass The class to work on
+ * @param ... NULL terminated list of OPs and parameters.
+ * @return @c EINA_TRUE on success.
+ *
+ * Use the helper macros, don't pass the parameters manually.
+ * Use #eo_do instead of this function.
+ *
+ * @see #eo_class_do
+ */
+EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
 
 /**
  * @brief Calls the super function for the specific op.
@@ -457,8 +531,20 @@ EAPI Eina_Bool eo_do_internal(Eo *obj, Eina_Bool constant, ...);
 
 /**
  * @brief Calls the super function for the specific op.
+ * @param klass The klass to work on
+ * @param ... list of parameters.
+ * @return @c EINA_TRUE on success.
+ *
+ * Unlike eo_class_do(), this function only accepts one op.
+ *
+ * @see #eo_class_do
+ */
+#define eo_class_do_super(klass, ...) eo_class_do_super_internal(klass, __VA_ARGS__)
+
+/**
+ * @brief Calls the super function for the specific op.
  * @param obj The object to work on
- * @param constant @c EINA_TRUE if this call is on a constant object.
+ * @param op_type The type of the ops that are passed.
  * @param op The wanted op.
  * @param ... list of parameters.
  * @return @c EINA_TRUE on success.
@@ -469,7 +555,21 @@ EAPI Eina_Bool eo_do_internal(Eo *obj, Eina_Bool constant, ...);
  * @see #eo_do_super
  * @see #eo_query_super
  */
-EAPI Eina_Bool eo_do_super_internal(Eo *obj, Eina_Bool constant, Eo_Op op, ...);
+EAPI Eina_Bool eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...);
+
+/**
+ * @brief Calls the super function for the specific op.
+ * @param klass The klass to work on
+ * @param op The wanted op.
+ * @param ... list of parameters.
+ * @return @c EINA_TRUE on success.
+ *
+ * Don't use this function, use the wrapping macros instead.
+ *
+ * @see #eo_class_do
+ * @see #eo_class_do_super
+ */
+EAPI Eina_Bool eo_class_do_super_internal(const Eo_Class *klass, Eo_Op op, ...);
 
 /**
  * @brief Gets the class of the object.

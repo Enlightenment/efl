@@ -26,11 +26,19 @@ _a_print(const Eo *obj EINA_UNUSED, const void *class_data, va_list *list)
 }
 
 static void
+_class_hi_print(const Eo_Class *klass, va_list *list)
+{
+   (void) list;
+   printf("Hi Print %s\n", eo_class_name_get(klass));
+}
+
+static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
         EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), _a_print),
+        EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), _class_hi_print),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -40,6 +48,7 @@ _class_constructor(Eo_Class *klass)
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
      EO_OP_DESCRIPTION_CONST(SIMPLE_SUB_ID_A_PRINT, "", "Print property A"),
+     EO_OP_DESCRIPTION_CLASS(SIMPLE_SUB_ID_CLASS_HI_PRINT, "", "Print Hi"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 
