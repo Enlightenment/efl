@@ -160,8 +160,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
           ed->hash[hash] = ed->count;
      }
 
-   ed->count++;
-   cnt = ed->count;
+   cnt = ed->count++;
    eina_lock_release(&ed->mutex);
    return cnt;
 
