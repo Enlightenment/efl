@@ -12,8 +12,8 @@ evas_object_was_visible(Evas_Object *obj)
 {
    if ((obj->prev.visible) &&
        ((obj->prev.cache.clip.visible) || (obj->smart.smart)) &&
-       ((obj->prev.cache.clip.a > 0) && (obj->prev.render_op == EVAS_RENDER_BLEND))
-      )
+       ((obj->prev.cache.clip.a > 0 && obj->prev.render_op == EVAS_RENDER_BLEND)
+       || obj->prev.render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->was_visible)
           return obj->func->was_visible(obj);
@@ -101,8 +101,8 @@ evas_object_is_visible(Evas_Object *obj)
 {                        /* post 1.0 -> enable? */
    if ((obj->cur.visible)/* && (obj->cur.color.a > 0)*/ &&
        ((obj->cur.cache.clip.visible) || (obj->smart.smart)) &&
-       ((obj->cur.cache.clip.a > 0) && (obj->cur.render_op == EVAS_RENDER_BLEND))
-       )
+       ((obj->cur.cache.clip.a > 0 && obj->cur.render_op == EVAS_RENDER_BLEND)
+       || obj->cur.render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->is_visible)
           return obj->func->is_visible(obj);
