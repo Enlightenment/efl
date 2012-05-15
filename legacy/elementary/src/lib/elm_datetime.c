@@ -302,8 +302,7 @@ _field_list_arrange(Evas_Object *obj)
 
         if (field->visible && field->fmt_exist)
           {
-             if (elm_layout_content_get(obj, buf))
-               elm_layout_content_unset(obj, buf);
+             elm_layout_content_unset(obj, buf);
              elm_layout_content_set(obj, buf, field->item_obj);
           }
         else
