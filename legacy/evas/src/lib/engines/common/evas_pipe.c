@@ -719,7 +719,6 @@ evas_common_pipe_init(void)
 
 	cpunum = eina_cpu_count();
 	thread_num = cpunum;
-	fprintf(stderr, "number of cpu: %i\n", cpunum);
 // on  single cpu we still want this initted.. otherwise we block forever
 // waiting onm pthread barriers for async rendering on a single core!
 //	if (thread_num == 1) return EINA_FALSE;
