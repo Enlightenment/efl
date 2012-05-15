@@ -264,8 +264,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    int is_active;
    Eina_Bool map, hmap;
 
-   obj->rect_del = 0;
-   obj->render_pre = 0;
+   obj->rect_del = EINA_FALSE;
+   obj->render_pre = EINA_FALSE;
 
    if (obj->delete_me == 2)
      eina_array_push(delete_objects, obj);
@@ -299,9 +299,9 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         if (!obj->changed)
           {
              eina_array_push(&e->pending_objects, obj);
-             obj->changed = 1;
+             obj->changed = EINA_TRUE;
           }
-        obj->restack = 1;
+        obj->restack = EINA_TRUE;
         clean_them = EINA_TRUE;
      }
 
@@ -311,27 +311,16 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         RD("      obj mapped\n");
         if (obj->changed)
           {
-             if (map != hmap)
-               {
-                  *redraw_all = 1;
-               }
+             if (map != hmap) *redraw_all = 1;
              evas_object_clip_recalc(obj);
-             if ((obj->restack) &&
-                 (is_active) && (!obj->clip.clipees) &&
+
+             if ((is_active) && (!obj->clip.clipees) &&
                  ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
                   (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
                {
                   eina_array_push(render_objects, obj);
                   _evas_render_prev_cur_clip_cache_add(e, obj);
-                  obj->render_pre = 1;
-               }
-             else if ((is_active) && (!obj->clip.clipees) &&
-                      ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
-                       (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
-               {
-                  eina_array_push(render_objects, obj);
-                  _evas_render_prev_cur_clip_cache_add(e, obj);
-                  obj->render_pre = 1;
+                  obj->render_pre = EINA_TRUE;
                }
           }
         return clean_them;
@@ -348,7 +337,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                {
                   if (!map)
                     {
-                       if ((obj->cur.map) && (obj->cur.usemap)) map = 1;
+                       if ((obj->cur.map) && (obj->cur.usemap)) map = EINA_TRUE;
                     }
                }
              if (map != hmap)
@@ -366,7 +355,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
              RDI(level);
              RD("      changed + smart - render ok\n");
              eina_array_push(render_objects, obj);
-             obj->render_pre = 1;
+             obj->render_pre = EINA_TRUE;
              EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
                {
                   _evas_render_phase1_object_process(e, obj2,
@@ -394,7 +383,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                   else
                     {
                        eina_array_push(render_objects, obj);
-                       obj->render_pre = 1;
+                       obj->render_pre = EINA_TRUE;
                     }
                }
              else
@@ -444,14 +433,14 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                        RDI(level);
                        RD("      opaque + visible\n");
                        eina_array_push(render_objects, obj);
-                       obj->rect_del = 1;
+                       obj->rect_del = EINA_TRUE;
                     }
                   else if (evas_object_is_visible(obj))
                     {
                        RDI(level);
                        RD("      visible\n");
                        eina_array_push(render_objects, obj);
-                       obj->render_pre = 1;
+                       obj->render_pre = EINA_TRUE;
                     }
                   else
                     {
@@ -485,7 +474,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
 }
          */
 }
-if (!is_active) obj->restack = 0;
+if (!is_active) obj->restack = EINA_FALSE;
 RDI(level);
 RD("    ---]\n");
 return clean_them;
