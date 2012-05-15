@@ -448,3 +448,12 @@
 2012-05-14  Cedric Bail
 
 	* Preserve drag informations during call of edje_object_file_set.
+
+2012-05-15  Carsten Haitzler (The Rasterman)
+
+        * Optimize edje_cc to be multi-threaded and compress in parallel
+        * Remove O(n2) algorithms for O(1) in the parser in edje_cc
+        * Add options for the new compression modes in Eet. (fastcomp
+        and fastdecomp - LZ4 and LZ4HC).
+        * Overall sped up edje_cc by 4x faster (if you use fastcomp)
+        and about 4.5x faster with old zlib compression.

@@ -111,6 +111,20 @@ struct _Code_Lookup
    Eina_Bool set;
 };
 
+typedef struct _Script_Compile
+{
+   Eet_File *ef;
+   Code *cd;
+   int i;
+   Ecore_Exe *exe;
+   int tmpn_fd, tmpo_fd;
+   char tmpn[PATH_MAX];
+   char tmpo[PATH_MAX];
+   char *errstr;
+} Script_Compile;
+
+static int pending_threads = 0;
+
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
 
 Edje_File *edje_file = NULL;
@@ -157,11 +171,11 @@ data_setup(void)
 }
 
 static void
-check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
-                       Edje_Part_Description_Image *epd, Eet_File *ef)
+check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
+                      Edje_Part_Description_Image *epd, Eet_File *ef)
 {
    unsigned int i;
-
+   
 #if 0 /* FIXME: This check sounds like not a useful one */
    if (epd->image.id == -1)
      ERR(ef, "Collection %s(%i): image attributes missing for "
@@ -205,7 +219,7 @@ check_nameless_state(Edje_Part_Collection *pc, Edje_Part *ep, Edje_Part_Descript
 }
 
 static void
-check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
+check_part(Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    unsigned int i;
    /* FIXME: check image set and sort them. */
@@ -229,7 +243,7 @@ check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 }
 
 static void
-check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
+check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 {
    switch (ep->action)
      {
@@ -247,10 +261,18 @@ check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
      }
 }
 
-static int
-data_write_header(Eet_File *ef)
+typedef struct _Head_Write
 {
+   Eet_File *ef;
+   char *errstr;
+} Head_Write;
+
+static void
+data_thread_head(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Head_Write *hw = data;
    int bytes = 0;
+   char buf[PATH_MAX];
 
    if (edje_file)
      {
@@ -258,149 +280,228 @@ data_write_header(Eet_File *ef)
 	  {
 	     Edje_Part_Collection_Directory_Entry *ce;
 
-	     /* copy aliases into collection directory */
 	     EINA_LIST_FREE(aliases, ce)
 	       {
 		  Edje_Part_Collection_Directory_Entry *sce;
 		  Eina_Iterator *it;
 
 		  if (!ce->entry)
-		    error_and_abort(ef, "Collection %i: name missing.\n", ce->id);
+                    {
+                       snprintf(buf, sizeof(buf),
+                                "Collection %i: name missing.\n", ce->id);
+                       hw->errstr = strdup(buf);
+                       return;
+                    }
 
 		  it = eina_hash_iterator_data_new(edje_file->collection);
 
 		  EINA_ITERATOR_FOREACH(it, sce)
-		    if (ce->id == sce->id)
-		      {
-			 memcpy(&ce->count, &sce->count, sizeof (ce->count));
-			 break;
-		      }
+                    {
+                       if (ce->id == sce->id)
+                         {
+                            memcpy(&ce->count, &sce->count, sizeof (ce->count));
+                            break;
+                         }
+                    }
 
 		  if (!sce)
-		    error_and_abort(ef, "Collection %s (%i) can't find an correct alias.\n", ce->entry, ce->id);
-
+                    {
+                       snprintf(buf, sizeof(buf),
+                                "Collection %s (%i) can't find an correct alias.\n",
+                                ce->entry, ce->id);
+                       hw->errstr = strdup(buf);
+                       return;
+                    }
 		  eina_iterator_free(it);
-
 		  eina_hash_direct_add(edje_file->collection, ce->entry, ce);
 	       }
 	  }
-	bytes = eet_data_write(ef, edd_edje_file, "edje/file", edje_file, 1);
+	bytes = eet_data_write(hw->ef, edd_edje_file, "edje/file", edje_file,
+                               compress_mode);
 	if (bytes <= 0)
-	  error_and_abort(ef, "Unable to write \"edje_file\" entry to \"%s\" \n",
-			  file_out);
+          {
+             snprintf(buf, sizeof(buf),
+                      "Unable to write \"edje_file\" entry to \"%s\" \n",
+                      file_out);
+             hw->errstr = strdup(buf);
+             return;
+          }
      }
 
    if (verbose)
-     {
-	printf("%s: Wrote %9i bytes (%4iKb) for \"edje_file\" header\n",
-	       progname, bytes, (bytes + 512) / 1024);
-     }
-
-   return bytes;
+     printf("%s: Wrote %9i bytes (%4iKb) for \"edje_file\" header\n",
+            progname, bytes, (bytes + 512) / 1024);
 }
 
-static int
-data_write_fonts(Eet_File *ef, int *font_num, int *input_bytes, int *input_raw_bytes)
+static void
+data_thread_head_end(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Head_Write *hw = data;
+   
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (hw->errstr)
+     {
+        error_and_abort(hw->ef, hw->errstr);
+        free(hw->errstr);
+     }
+   free(hw);
+}
+
+static void
+data_write_header(Eet_File *ef)
+{
+   Head_Write  *hw;
+   
+   hw = calloc(1, sizeof(Head_Write));
+   hw->ef = ef;
+   pending_threads++;
+   ecore_thread_run(data_thread_head, data_thread_head_end,
+                    NULL, hw);
+}
+
+typedef struct _Fonts_Compile
+{
+   Eet_File *ef;
+   Font *fn;
+   char *errstr;
+} Fonts_Compile;
+
+static void
+data_thread_fonts(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Fonts_Compile *fc = data;
+   void *fdata = NULL;
+   int fsize = 0;
+   Eina_List *ll;
+   FILE *f;
+   int bytes = 0;
+   char buf[PATH_MAX];
+   char buf2[PATH_MAX];
+   
+   f = fopen(fc->fn->file, "rb");
+   if (f)
+     {
+        long pos;
+        
+        using_file(fc->fn->file);
+        fseek(f, 0, SEEK_END);
+        pos = ftell(f);
+        rewind(f);
+        fdata = malloc(pos);
+        if (fdata)
+          {
+             if (fread(fdata, pos, 1, f) != 1)
+               {
+                  snprintf(buf, sizeof(buf),
+                           "Unable to read all of font file \"%s\"\n",
+                           fc->fn->file);
+                  fc->errstr = strdup(buf);
+                  return;
+               }
+             fsize = pos;
+          }
+        fclose(f);
+     }
+   else
+     {
+        char *dat;
+        
+        EINA_LIST_FOREACH(fnt_dirs, ll, dat)
+          {
+             snprintf(buf, sizeof(buf), "%s/%s", dat, fc->fn->file);
+             f = fopen(buf, "rb");
+             if (f)
+               {
+                  long pos;
+                  
+                  using_file(buf);
+                  fseek(f, 0, SEEK_END);
+                  pos = ftell(f);
+                  rewind(f);
+                  fdata = malloc(pos);
+                  if (fdata)
+                    {
+                       if (fread(fdata, pos, 1, f) != 1)
+                         {
+                            snprintf(buf2, sizeof(buf2),
+                                     "Unable to read all of font file \"%s\"\n",
+                                     buf);
+                            fc->errstr = strdup(buf2);
+                            return;
+                         }
+                       fsize = pos;
+                    }
+                  fclose(f);
+                  if (fdata) break;
+               }
+          }
+     }
+   if (!fdata)
+     {
+        snprintf(buf, sizeof(buf),
+                 "Unable to load font part \"%s\" entry to %s \n",
+                 fc->fn->file, file_out);
+        fc->errstr = strdup(buf);
+        return;
+     }
+   else
+     {
+        snprintf(buf, sizeof(buf), "edje/fonts/%s", fc->fn->name);
+        bytes = eet_write(fc->ef, buf, fdata, fsize, compress_mode);
+        if (bytes <= 0)
+          {
+             snprintf(buf2, sizeof(buf2),
+                      "Unable to write font part \"%s\" as \"%s\" "
+                      "part entry to %s \n", fc->fn->file, buf, file_out);
+             fc->errstr = strdup(buf2);
+             return;
+          }
+        if (verbose)
+          printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" font entry \"%s\" compress: [real: %2.1f%%]\n",
+                 progname, bytes, (bytes + 512) / 1024, buf, fc->fn->file,
+                 100 - (100 * (double)bytes) / ((double)(fsize))
+                );
+        free(fdata);
+     }
+}
+
+static void
+data_thread_fonts_end(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Fonts_Compile *fc = data;
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (fc->errstr)
+     {
+        error_and_abort(fc->ef, fc->errstr);
+        free(fc->errstr);
+     }
+   free(fc);
+}
+
+static void
+data_write_fonts(Eet_File *ef, int *font_num)
 {
    Eina_Iterator *it;
-   int bytes = 0;
-   int total_bytes = 0;
    Font *fn;
 
-   if (!edje_file->fonts)
-     return 0;
+   if (!edje_file->fonts) return;
 
    it = eina_hash_iterator_data_new(edje_file->fonts);
    EINA_ITERATOR_FOREACH(it, fn)
      {
-	void *fdata = NULL;
-	int fsize = 0;
-	Eina_List *ll;
-	FILE *f;
-
-	f = fopen(fn->file, "rb");
-	if (f)
-	  {
-	     long pos;
-
-	     using_file(fn->file);
-	     fseek(f, 0, SEEK_END);
-	     pos = ftell(f);
-	     rewind(f);
-	     fdata = malloc(pos);
-	     if (fdata)
-	       {
-		  if (fread(fdata, pos, 1, f) != 1)
-		    error_and_abort(ef, "Unable to read all of font "
-				    "file \"%s\"\n", fn->file);
-		  fsize = pos;
-	       }
-	     fclose(f);
-	  }
-	else
-	  {
-	     char *data;
-
-	     EINA_LIST_FOREACH(fnt_dirs, ll, data)
-	       {
-		  char buf[4096];
-
-		  snprintf(buf, sizeof(buf), "%s/%s", data, fn->file);
-		  f = fopen(buf, "rb");
-		  if (f)
-		    {
-		       long pos;
-
-		       using_file(buf);
-		       fseek(f, 0, SEEK_END);
-		       pos = ftell(f);
-		       rewind(f);
-		       fdata = malloc(pos);
-		       if (fdata)
-			 {
-			    if (fread(fdata, pos, 1, f) != 1)
-			      error_and_abort(ef, "Unable to read all of font "
-					      "file \"%s\"\n", buf);
-			    fsize = pos;
-			 }
-		       fclose(f);
-		       if (fdata) break;
-		    }
-	       }
-	  }
-	if (!fdata)
-	  {
-	     error_and_abort(ef, "Unable to load font part \"%s\" entry "
-			     "to %s \n", fn->file, file_out);
-	  }
-	else
-	  {
-	     char buf[4096];
-
-	     snprintf(buf, sizeof(buf), "edje/fonts/%s", fn->name);
-	     bytes = eet_write(ef, buf, fdata, fsize, 1);
-	     if (bytes <= 0)
-	       error_and_abort(ef, "Unable to write font part \"%s\" as \"%s\" "
-			       "part entry to %s \n", fn->file, buf, file_out);
-
-	     *font_num += 1;
-	     total_bytes += bytes;
-	     *input_bytes += fsize;
-	     *input_raw_bytes += fsize;
-
-	     if (verbose)
-	       {
-		  printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" font entry \"%s\" compress: [real: %2.1f%%]\n",
-			 progname, bytes, (bytes + 512) / 1024, buf, fn->file,
-			 100 - (100 * (double)bytes) / ((double)(fsize))
-			 );
-	       }
-	     free(fdata);
-	  }
+        Fonts_Compile *fc;
+        
+        fc = calloc(1, sizeof(Fonts_Compile));
+        if (!fc) continue;
+        fc->ef = ef;
+        fc->fn = fn;
+        ecore_thread_run(data_thread_fonts, data_thread_fonts_end,
+                         NULL, fc);
+        *font_num += 1;
      }
    eina_iterator_free(it);
-
-   return total_bytes;
 }
 
 static void
@@ -485,314 +586,370 @@ error_and_abort_image_load_error(Eet_File *ef, const char *file, int error)
       file, file_out, errmsg, hint);
 }
 
-static int
-data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw_bytes)
+typedef struct _Image_Write
 {
-   unsigned int i;
+   Eet_File *ef;
+   Edje_Image_Directory_Entry *img;
+   Evas_Object *im;
+   int w, h;
+   int alpha;
+   unsigned int *data;
+   char *errstr;
+} Image_Write;
+
+static void
+data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Image_Write *iw = data;
+   char buf[PATH_MAX];
+   unsigned int *start, *end;
+   Eina_Bool opaque = EINA_TRUE;
    int bytes = 0;
-   int total_bytes = 0;
 
-   if ((edje_file) && (edje_file->image_dir))
+   if ((iw->data) && (iw->w > 0) && (iw->h > 0))
      {
-	Ecore_Evas *ee;
-	Evas *evas;
-	Edje_Image_Directory_Entry *img;
-
-	ecore_init();
-	ecore_evas_init();
-
-	ee = ecore_evas_buffer_new(1, 1);
-	if (!ee)
-	  error_and_abort(ef, "Cannot create buffer engine canvas for image "
-			  "load.\n");
-
-	evas = ecore_evas_get(ee);
-	for (i = 0; i < edje_file->image_dir->entries_count; i++)
-	  {
-	     img = &edje_file->image_dir->entries[i];
-
-	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL
-                 || img->entry == NULL)
-	       {
-	       }
-	     else
-	       {
-		  Evas_Object *im;
-		  Eina_List *ll;
-		  char *data;
-		  int load_err = EVAS_LOAD_ERROR_NONE;
-
-		  im = NULL;
-		  EINA_LIST_FOREACH(img_dirs, ll, data)
-		    {
-		       char buf[4096];
-
-		       snprintf(buf, sizeof(buf), "%s/%s",
-				data, img->entry);
-		       im = evas_object_image_add(evas);
-		       if (im)
-			 {
-			    evas_object_image_file_set(im, buf, NULL);
-			    load_err = evas_object_image_load_error_get(im);
-			    if (load_err == EVAS_LOAD_ERROR_NONE)
-			      {
-                                 using_file(buf);
-                                 break;
-			      }
-			    evas_object_del(im);
-			    im = NULL;
-			    if (load_err != EVAS_LOAD_ERROR_DOES_NOT_EXIST)
-			      break;
-			 }
-		    }
-		  if ((!im) && (load_err == EVAS_LOAD_ERROR_DOES_NOT_EXIST))
-		    {
-		       im = evas_object_image_add(evas);
-		       if (im)
-			 {
-			    evas_object_image_file_set(im, img->entry, NULL);
-			    load_err = evas_object_image_load_error_get(im);
-			    if (load_err != EVAS_LOAD_ERROR_NONE)
-			      {
-				 evas_object_del(im);
-				 im = NULL;
-			      }
-                            if (im) using_file(img->entry);
-			 }
-		    }
-		  if (im)
-		    {
-		       void *im_data;
-		       int  im_w, im_h;
-		       int  im_alpha;
-		       char buf[256];
-		       unsigned int  *start, *end;
-		       Eina_Bool opaque = EINA_TRUE;
-
-		       evas_object_image_size_get(im, &im_w, &im_h);
-		       im_alpha = evas_object_image_alpha_get(im);
-		       im_data = evas_object_image_data_get(im, 0);
-		       if ((im_data) && (im_w > 0) && (im_h > 0))
-			 {
-			    int mode, qual;
-
-			    snprintf(buf, sizeof(buf), "edje/images/%i", img->id);
-			    qual = 80;
-			    if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
-				(img->source_param == 0))
-			      mode = 0; /* RAW */
-			    else if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
-				     (img->source_param == 1))
-			      mode = 1; /* COMPRESS */
-			    else
-			      mode = 2; /* LOSSY */
-			    if ((mode == 0) && (no_raw))
-			      {
-				 mode = 1; /* promote compression */
-				 img->source_param = 95;
-			      }
-			    if ((mode == 2) && (no_lossy)) mode = 1; /* demote compression */
-			    if ((mode == 1) && (no_comp))
-			      {
-				 if (no_lossy) mode = 0; /* demote compression */
-				 else if (no_raw)
-				   {
-				      img->source_param = 90;
-				      mode = 2; /* no choice. lossy */
-				   }
-			      }
-			    if (mode == 2)
-			      {
-				 qual = img->source_param;
-				 if (qual < min_quality) qual = min_quality;
-				 if (qual > max_quality) qual = max_quality;
-			      }
-			    if (im_alpha)
-			      {
-			         start = (unsigned int *) im_data;
-			         end = start + (im_w * im_h);
-			         while (start < end)
-			           {
-			              if ((*start & 0xff000000) != 0xff000000)
-			                {
-			                   opaque = EINA_FALSE;
-			                   break;
-			                }
-			              start++;
-			           }
-			         if (opaque) im_alpha = 0;
-			      }
-			    if (mode == 0)
-			      bytes = eet_data_image_write(ef, buf,
-							   im_data, im_w, im_h,
-							   im_alpha,
-							   0, 0, 0);
-			    else if (mode == 1)
-			      bytes = eet_data_image_write(ef, buf,
-							   im_data, im_w, im_h,
-							   im_alpha,
-							   1, 0, 0);
-			    else if (mode == 2)
-			      bytes = eet_data_image_write(ef, buf,
-							   im_data, im_w, im_h,
-							   im_alpha,
-							   0, qual, 1);
-			    if (bytes <= 0)
-			      error_and_abort(ef, "Unable to write image part "
-					      "\"%s\" as \"%s\" part entry to "
-					      "%s\n", img->entry, buf,
-					      file_out);
-
-			    *image_num += 1;
-			    total_bytes += bytes;
-			 }
-		       else
-			 {
-			    error_and_abort_image_load_error
-			      (ef, img->entry, load_err);
-			 }
-
-		       if (verbose)
-			 {
-			    struct stat st;
-			    const char *file = NULL;
-
-			    evas_object_image_file_get(im, &file, NULL);
-			    if (!file || (stat(file, &st) != 0))
-			      st.st_size = 0;
-			    *input_bytes += st.st_size;
-			    *input_raw_bytes += im_w * im_h * 4;
-			    printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
-				   progname, bytes, (bytes + 512) / 1024, buf, img->entry,
-				   100 - (100 * (double)bytes) / ((double)(im_w * im_h * 4)),
-				   100 - (100 * (double)bytes) / ((double)(st.st_size))
-				   );
-			 }
-		       evas_object_del(im);
-		    }
-		  else
-		    {
-		       error_and_abort_image_load_error
-			 (ef, img->entry, load_err);
-		    }
-	       }
-	  }
-	ecore_evas_free(ee);
-	ecore_evas_shutdown();
-	ecore_shutdown();
+        int mode, qual;
+        
+        snprintf(buf, sizeof(buf), "edje/images/%i", iw->img->id);
+        qual = 80;
+        if ((iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
+            (iw->img->source_param == 0))
+          mode = 0; /* RAW */
+        else if ((iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
+                 (iw->img->source_param == 1))
+          mode = 1; /* COMPRESS */
+        else
+          mode = 2; /* LOSSY */
+        if ((mode == 0) && (no_raw))
+          {
+             mode = 1; /* promote compression */
+             iw->img->source_param = 95;
+          }
+        if ((mode == 2) && (no_lossy)) mode = 1; /* demote compression */
+        if ((mode == 1) && (no_comp))
+          {
+             if (no_lossy) mode = 0; /* demote compression */
+             else if (no_raw)
+               {
+                  iw->img->source_param = 90;
+                  mode = 2; /* no choice. lossy */
+               }
+          }
+        if (mode == 2)
+          {
+             qual = iw->img->source_param;
+             if (qual < min_quality) qual = min_quality;
+             if (qual > max_quality) qual = max_quality;
+          }
+        if (iw->alpha)
+          {
+             start = (unsigned int *) iw->data;
+             end = start + (iw->w * iw->h);
+             while (start < end)
+               {
+                  if ((*start & 0xff000000) != 0xff000000)
+                    {
+                       opaque = EINA_FALSE;
+                       break;
+                    }
+                  start++;
+               }
+             if (opaque) iw->alpha = 0;
+          }
+        if (mode == 0)
+          bytes = eet_data_image_write(iw->ef, buf,
+                                       iw->data, iw->w, iw->h,
+                                       iw->alpha,
+                                       0, 0, 0);
+        else if (mode == 1)
+          bytes = eet_data_image_write(iw->ef, buf,
+                                       iw->data, iw->w, iw->h,
+                                       iw->alpha,
+                                       compress_mode,
+                                       0, 0);
+        else if (mode == 2)
+          bytes = eet_data_image_write(iw->ef, buf,
+                                       iw->data, iw->w, iw->h,
+                                       iw->alpha,
+                                       0, qual, 1);
+        if (bytes <= 0)
+          {
+             snprintf(buf, sizeof(buf),
+                      "Unable to write image part "
+                      "\"%s\" as \"%s\" part entry to "
+                      "%s\n", iw->img->entry, buf,
+                      file_out);
+             iw->errstr = strdup(buf);
+             return;
+          }
+        
      }
-
-   return total_bytes;
+   else
+     {
+        snprintf(buf, sizeof(buf),
+                 "Unable to load image part "
+                 "\"%s\" as \"%s\" part entry to "
+                 "%s\n", iw->img->entry, buf,
+                 file_out);
+        iw->errstr = strdup(buf);
+        return;
+     }
+   
+   if (verbose)
+     {
+        struct stat st;
+        const char *file = NULL;
+/*        
+        evas_object_image_file_get(im, &file, NULL);
+        if (!file || (stat(file, &st) != 0))
+          st.st_size = 0;
+        printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
+               progname, bytes, (bytes + 512) / 1024, buf, img->entry,
+               100 - (100 * (double)bytes) / ((double)(im_w * im_h * 4)),
+               100 - (100 * (double)bytes) / ((double)(st.st_size))
+              );
+ */
+     }
 }
 
-static int
-data_write_sounds(Eet_File * ef, int *sound_num, int *input_bytes, int *input_raw_bytes)
+static void
+data_thread_image_end(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Image_Write *iw = data;
+         
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (iw->errstr)
+     {
+        error_and_abort(iw->ef, iw->errstr);
+        free(iw->errstr);
+     }
+   evas_object_del(iw->im);
+   free(iw);
+}
+
+static void
+data_image_preload_done(void *data, Evas *e __UNUSED__, Evas_Object *o, void *event_info __UNUSED__)
+{
+   Image_Write *iw = data;
+
+   evas_object_image_size_get(o, &iw->w, &iw->h);
+   iw->alpha = evas_object_image_alpha_get(o);
+   iw->data = evas_object_image_data_get(o, 0);
+   ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw);
+}
+
+// WARNING - uses evas to LOAD image... this can't be done in threads! :(
+static void
+data_write_images(Eet_File *ef, int *image_num)
+{
+   int i;
+   Ecore_Evas *ee;
+   Evas *evas;
+   
+   if (!((edje_file) && (edje_file->image_dir))) return;
+
+   ecore_evas_init();
+   ee = ecore_evas_buffer_new(1, 1);
+   if (!ee)
+     error_and_abort(ef, "Cannot create buffer engine canvas for image "
+                     "load.\n");
+   evas = ecore_evas_get(ee);
+   
+   for (i = 0; i < edje_file->image_dir->entries_count; i++)
+     {
+        Edje_Image_Directory_Entry *img;
+        
+        img = &edje_file->image_dir->entries[i];
+        if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) ||
+            (img->entry == NULL))
+          {
+          }
+        else
+          {
+             Evas_Object *im;
+             Eina_List *ll;
+             char *s;
+             int load_err = EVAS_LOAD_ERROR_NONE;
+             Image_Write *iw;
+             
+             iw = calloc(1, sizeof(Image_Write));
+             iw->ef = ef;
+             iw->img = img;
+             iw->im = im = evas_object_image_add(evas);
+             evas_object_event_callback_add(im,
+                                            EVAS_CALLBACK_IMAGE_PRELOADED,
+                                            data_image_preload_done,
+                                            iw);
+             EINA_LIST_FOREACH(img_dirs, ll, s)
+               {
+                  char buf[PATH_MAX];
+                  
+                  snprintf(buf, sizeof(buf), "%s/%s", s, img->entry);
+                  evas_object_image_file_set(im, buf, NULL);
+                  load_err = evas_object_image_load_error_get(im);
+                  if (load_err == EVAS_LOAD_ERROR_NONE)
+                    {
+                       pending_threads++;
+                       evas_object_image_preload(im, 0);
+                       using_file(buf);
+                       break;
+                    }
+               }
+             if (load_err != EVAS_LOAD_ERROR_NONE)
+               {
+                  evas_object_image_file_set(im, img->entry, NULL);
+                  load_err = evas_object_image_load_error_get(im);
+                  if (load_err == EVAS_LOAD_ERROR_NONE)
+                    {
+                       pending_threads++;
+                       evas_object_image_preload(im, 0);
+                       using_file(img->entry);
+                    }
+                  else
+                    error_and_abort_image_load_error
+                    (ef, img->entry, load_err);
+               }
+	  }
+     }
+}
+
+typedef struct _Sound_Write
+{
+   Eet_File *ef;
+   Edje_Sound_Sample *sample;
+   int i;
+} Sound_Write;
+
+static void
+data_thread_sounds(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Sound_Write *sw = data;
+   Eina_List *ll;
+#ifdef HAVE_LIBSNDFILE
+   Edje_Sound_Encode *enc_info;
+#endif
+   char *dir_path = NULL;
+   char snd_path[PATH_MAX];
+   char sndid_str[15];
+   void *fdata;
+   FILE *fp = NULL;
+   struct stat st;
+   int size = 0;
+   int bytes = 0;
+
+   memset(&st, 0, sizeof(struct stat));
+   // Search the Sound file in all the -sd ( sound directory )
+   EINA_LIST_FOREACH(snd_dirs, ll, dir_path)
+     {
+        snprintf((char *)snd_path, sizeof(snd_path), "%s/%s", dir_path,
+                 sw->sample->snd_src);
+        stat(snd_path, &st);
+        if (st.st_size) break;
+     }
+   if (!st.st_size)
+     {
+        snprintf((char *)snd_path, sizeof(snd_path), "%s",
+                 sw->sample->snd_src);
+        stat(snd_path, &st);
+     }
+   size = st.st_size;
+   if (!size)
+     {
+        ERR("%s: Error. Unable to load sound source file : %s",
+            progname, sw->sample->snd_src);
+        exit(-1);
+     }
+#ifdef HAVE_LIBSNDFILE
+   enc_info = _edje_multisense_encode(snd_path, sw->sample,
+                                      sw->sample->quality);
+   stat(enc_info->file, &st);
+   size = st.st_size;
+   fp = fopen(enc_info->file, "rb");
+   if (fp) using_file(enc_info->file);
+#else
+   fp = fopen(snd_path, "rb");
+   if (fp) using_file(snd_path);
+#endif
+   if (!fp)
+     {
+        ERR("%s: Error: Unable to load sound data of: %s",
+            progname, sw->sample->name);
+        exit(-1);
+     }
+   
+   snprintf(sndid_str, sizeof(sndid_str), "edje/sounds/%i", sw->sample->id);
+   fdata = malloc(size);
+   if (!fdata)
+     {
+        ERR("%s: Error. %s:%i while allocating memory to load file \"%s\"",
+            progname, file_in, line, snd_path);
+        exit(-1);
+     }
+   if (fread(fdata, size, 1, fp))
+     bytes = eet_write(sw->ef, sndid_str, fdata, size,
+                       EET_COMPRESSION_NONE);
+   free(fdata);
+   fclose(fp);
+   
+#ifdef HAVE_LIBSNDFILE
+   //If encoded temporary file, delete it.
+   if (enc_info->encoded) unlink(enc_info->file);
+#endif
+   if (verbose)
+     {
+#ifdef HAVE_LIBSNDFILE
+        printf ("%s: Wrote %9i bytes (%4iKb) for \"%s\" %s sound entry"
+                "\"%s\" \n", progname, bytes, (bytes + 512) / 1024,
+                sndid_str, enc_info->comp_type, sw->sample->name);
+#else
+        printf ("%s: Wrote %9i bytes (%4iKb) for \"%s\" %s sound entry"
+                "\"%s\" \n", progname, bytes, (bytes + 512) / 1024,
+                sndid_str, "RAW PCM", sw->sample->name);
+#endif
+     }
+#ifdef HAVE_LIBSNDFILE
+   if ((enc_info->file) && (!enc_info->encoded))
+     eina_stringshare_del(enc_info->file);
+   if (enc_info) free(enc_info);
+   enc_info = NULL;
+#endif
+}
+
+static void
+data_thread_sounds_end(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Sound_Write *sw = data;
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   free(sw);
+}
+
+static void
+data_write_sounds(Eet_File *ef, int *sound_num)
 {
    int bytes = 0;
    int total_bytes = 0;
    
    if ((edje_file) && (edje_file->sound_dir))
      {
-        Eina_List *ll;
-        Edje_Sound_Sample *sample;
-#ifdef HAVE_LIBSNDFILE
-        Edje_Sound_Encode *enc_info;
-#endif
-        char *dir_path = NULL;
-        char snd_path[PATH_MAX];
-        char sndid_str[15];
-        void *fdata;
-        FILE *fp = NULL;
-        struct stat st;
-        int size = 0;
         int i;
 
         for (i = 0; i < (int)edje_file->sound_dir->samples_count; i++)
           {
-             sample = &edje_file->sound_dir->samples[i];
-             memset(&st, 0, sizeof(struct stat));
+             Sound_Write *sw;
              
-             // Search the Sound file in all the -sd ( sound directory )
-             EINA_LIST_FOREACH(snd_dirs, ll, dir_path)
-               {
-                  snprintf((char *)snd_path, sizeof(snd_path), "%s/%s", dir_path,
-                           sample->snd_src);
-                  stat(snd_path, &st);
-                  if (st.st_size) break;
-               }
-             if (!st.st_size)
-               {
-                  snprintf((char *)snd_path, sizeof(snd_path), "%s",
-                           sample->snd_src);
-                  stat(snd_path, &st);
-               }
-             size = st.st_size;
-             if (!size)
-               {
-                  ERR("%s: Error. Unable to load sound source file : %s",
-                      progname, sample->snd_src);
-                  exit(-1);
-               }
-#ifdef HAVE_LIBSNDFILE
-             enc_info = _edje_multisense_encode(snd_path, sample, sample->quality);
-             
-             stat(enc_info->file, &st);
-             size = st.st_size;
-             fp = fopen(enc_info->file, "rb");
-	     if (fp) using_file(enc_info->file);
-#else
-             fp = fopen(snd_path, "rb");
-	     if (fp) using_file(snd_path);
-#endif
-             if (!fp)
-               {
-                  ERR("%s: Error: Unable to load sound data of: %s",
-                      progname, sample->name);
-                  exit(-1);
-               }
-             
-             snprintf(sndid_str, sizeof(sndid_str), "edje/sounds/%i", sample->id);
-             fdata = malloc(size);
-             if (!fdata)
-               {
-                  ERR("%s: Error. %s:%i while allocating memory to load file \"%s\"",
-                      progname, file_in, line, snd_path);
-                  exit(-1);
-               }
-             if (fread(fdata, size, 1, fp))
-               bytes = eet_write(ef, sndid_str, fdata, size, EINA_FALSE);
-             free(fdata);
-             fclose(fp);
-             
-#ifdef HAVE_LIBSNDFILE
-             //If encoded temporary file, delete it.
-             if (enc_info->encoded) unlink(enc_info->file);
-#endif
+             sw = calloc(1, sizeof(Sound_Write));
+             if (!sw) continue;
+             sw->ef = ef;
+             sw->sample = &edje_file->sound_dir->samples[i];
+             sw->i = i;
              *sound_num += 1;
-             total_bytes += bytes;
-             *input_bytes += size;
-             *input_raw_bytes += size;
-
-             if (verbose)
-               {
-#ifdef HAVE_LIBSNDFILE
-                  printf ("%s: Wrote %9i bytes (%4iKb) for \"%s\" %s sound entry"
-                          "\"%s\" \n", progname, bytes, (bytes + 512) / 1024,
-                          sndid_str, enc_info->comp_type, sample->name);
-#else
-                  printf ("%s: Wrote %9i bytes (%4iKb) for \"%s\" %s sound entry"
-                          "\"%s\" \n", progname, bytes, (bytes + 512) / 1024,
-                          sndid_str, "RAW PCM", sample->name);
-#endif
-               }
-#ifdef HAVE_LIBSNDFILE
-             if ((enc_info->file) && (!enc_info->encoded)) eina_stringshare_del(enc_info->file);
-             if (enc_info) free(enc_info);
-             enc_info = NULL;
-#endif
+             pending_threads++;
+             ecore_thread_run(data_thread_sounds, data_thread_sounds_end,
+                              NULL, sw);
           }
      }
-   return total_bytes;
 }
 
 static void
@@ -821,35 +978,77 @@ check_groups(Eet_File *ef)
      }
 }
 
-static int
+typedef struct _Group_Write
+{
+   Eet_File *ef;
+   Edje_Part_Collection *pc;
+   char *errstr;
+} Group_Write;
+
+static void
+data_thread_group(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Group_Write *gw = data;
+   int bytes;
+   char buf[PATH_MAX];
+   char buf2[PATH_MAX];
+
+   snprintf(buf, sizeof(buf), "edje/collections/%i", gw->pc->id);
+   bytes = eet_data_write(gw->ef, edd_edje_part_collection, buf, gw->pc,
+                          compress_mode);
+   return;
+   if (bytes <= 0)
+     {
+        snprintf(buf2, sizeof(buf2),
+                 "Error. Unable to write \"%s\" part entry to %s\n",
+                 buf, file_out);
+        gw->errstr = strdup(buf2);
+        return;
+     }
+   
+   if (verbose)
+     printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" aka \"%s\" collection entry\n",
+            progname, bytes, (bytes + 512) / 1024, buf, gw->pc->part);
+}
+
+static void
+data_thread_group_end(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Group_Write *gw = data;
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (gw->errstr)
+     {
+        error_and_abort(gw->ef, gw->errstr);
+        free(gw->errstr);
+     }
+   free(gw);
+}
+
+static void
 data_write_groups(Eet_File *ef, int *collection_num)
 {
    Eina_List *l;
    Edje_Part_Collection *pc;
-   int bytes = 0;
-   int total_bytes = 0;
 
    EINA_LIST_FOREACH(edje_collections, l, pc)
      {
-	char buf[4096];
+        Group_Write *gw;
 
-	snprintf(buf, sizeof(buf), "edje/collections/%i", pc->id);
-	bytes = eet_data_write(ef, edd_edje_part_collection, buf, pc, 1);
-	if (bytes <= 0)
-	  error_and_abort(ef, "Error. Unable to write \"%s\" part entry "
-			  "to %s\n", buf, file_out);
-
-	*collection_num += 1;
-	total_bytes += bytes;
-
-	if (verbose)
-	  {
-	     printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" aka \"%s\" collection entry\n",
-		    progname, bytes, (bytes + 512) / 1024, buf, pc->part);
-	  }
+        gw = calloc(1, sizeof(Group_Write));
+        if (!gw)
+          {
+             error_and_abort(ef,
+                             "Error. Cannot allocate memory for group writer\n");
+             return;
+          }
+        gw->ef = ef;
+        gw->pc = pc;
+        pending_threads++;
+        ecore_thread_run(data_thread_group, data_thread_group_end,
+                         NULL, gw);
+        *collection_num += 1;
      }
-
-   return total_bytes;
 }
 
 static void
@@ -931,48 +1130,114 @@ create_script_file(Eet_File *ef, const char *filename, const Code *cd, int fd)
 }
 
 static void
-compile_script_file(Eet_File *ef, const char *source, const char *output,
-		    int script_num, int fd)
+data_thread_script(void *data, Ecore_Thread *thread __UNUSED__)
 {
+   Script_Compile *sc = data;
    FILE *f;
-   char buf[4096];
-   int ret;
+   int size;
+   char buf[PATH_MAX];
 
-   snprintf(buf, sizeof(buf),
-	    "embryo_cc -i %s/include -o %s %s",
-	    eina_prefix_data_get(pfx), output, source);
-   ret = system(buf);
-
-   /* accept warnings in the embryo code */
-   if (ret < 0 || ret > 1)
-     error_and_abort(ef, "Compiling script code not clean.\n");
-
-   f = fdopen(fd, "rb");
+   f = fdopen(sc->tmpo_fd, "rb");
    if (!f)
-     error_and_abort(ef, "Unable to open script object \"%s\" for reading.\n",
-		     output);
+     {
+        snprintf(buf, sizeof(buf),
+                 "Unable to open script object \"%s\" for reading.\n",
+                 sc->tmpo);
+        sc->errstr = strdup(buf);
+        return;
+     }
 
    fseek(f, 0, SEEK_END);
-   int size = ftell(f);
+   size = ftell(f);
    rewind(f);
 
    if (size > 0)
      {
-	void *data = malloc(size);
+	void *dat = malloc(size);
 
-	if (data)
+	if (dat)
 	  {
-	     if (fread(data, size, 1, f) != 1)
-	       error_and_abort(ef, "Unable to read all of script object "
-			       "\"%s\"\n", output);
-
-	     snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i", script_num);
-	     eet_write(ef, buf, data, size, 1);
-	     free(data);
+	     if (fread(dat, size, 1, f) != 1)
+               {
+                  snprintf(buf, sizeof(buf),
+                           "Unable to read all of script object \"%s\"\n",
+                           sc->tmpo);
+                  sc->errstr = strdup(buf);
+                  return;
+               }
+	     snprintf(buf, sizeof(buf), "edje/scripts/embryo/compiled/%i",
+                      sc->i);
+	     eet_write(sc->ef, buf, dat, size, compress_mode);
+	     free(dat);
 	  }
+        else
+          {
+             snprintf(buf, sizeof(buf),
+                      "Alloc failed for %lu bytes\n", (unsigned long)size);
+             sc->errstr = strdup(buf);
+             return;
+          }
      }
-
    fclose(f);
+
+   if (!no_save)
+     {
+        Eina_List *ll;
+        Code_Program *cp;
+        
+        if (sc->cd->original)
+          {
+             snprintf(buf, PATH_MAX, "edje/scripts/embryo/source/%i", sc->i);
+             eet_write(sc->ef, buf, sc->cd->original,
+                       strlen(sc->cd->original) + 1, compress_mode);
+          }
+        EINA_LIST_FOREACH(sc->cd->programs, ll, cp)
+          {
+             if (!cp->original) continue;
+             snprintf(buf, PATH_MAX, "edje/scripts/embryo/source/%i/%i",
+                      sc->i, cp->id);
+             eet_write(sc->ef, buf, cp->original,
+                       strlen(cp->original) + 1, compress_mode);
+          }
+     }
+   
+   unlink(sc->tmpn);
+   unlink(sc->tmpo);
+   close(sc->tmpn_fd);
+   close(sc->tmpo_fd);
+}
+
+static void
+data_thread_script_end(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Script_Compile *sc = data;
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (sc->errstr)
+     {
+        error_and_abort(sc->ef, sc->errstr);
+        free(sc->errstr);
+     }
+   free(sc);
+}
+
+static Eina_Bool
+data_scripts_exe_del_cb(void *data __UNUSED__, int evtype __UNUSED__, void *evinfo)
+{
+   Script_Compile *sc = data;
+   Ecore_Exe_Event_Del *ev = evinfo;
+   
+   if (!ev->exe) return ECORE_CALLBACK_RENEW;
+   if (ecore_exe_data_get(ev->exe) != sc) return ECORE_CALLBACK_RENEW;
+   if (ev->exit_code != 0)
+     {
+        error_and_abort(sc->ef, "Compiling script code not clean.\n");
+        return ECORE_CALLBACK_CANCEL;
+     }
+   pending_threads++;
+   ecore_thread_run(data_thread_script, data_thread_script_end,
+                    NULL, sc);
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -990,57 +1255,41 @@ data_write_scripts(Eet_File *ef)
 
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
-	char tmpn[PATH_MAX];
-	char tmpo[PATH_MAX];
-	int fd;
 	Code *cd = eina_list_data_get(l);
+        Script_Compile *sc;
+        char buf[PATH_MAX];
 
 	if (cd->is_lua)
 	  continue;
 	if ((!cd->shared) && (!cd->programs))
 	  continue;
-
-	snprintf(tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmp_dir);
-	fd = mkstemp(tmpn);
-	if (fd < 0)
-	  error_and_abort(ef, "Unable to open temp file \"%s\" for script "
-			  "compilation.\n", tmpn);
-
-	create_script_file(ef, tmpn, cd, fd);
-
-	snprintf(tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmp_dir);
-	fd = mkstemp(tmpo);
-	if (fd < 0)
-	  {
-	     unlink(tmpn);
-	     error_and_abort(ef, "Unable to open temp file \"%s\" for script "
-			     "compilation.\n", tmpn);
-	  }
-	compile_script_file(ef, tmpn, tmpo, i, fd);
-
-	unlink(tmpn);
-	unlink(tmpo);
-
-        if (!no_save)
+        sc = calloc(1, sizeof(Script_Compile));
+        sc->ef = ef;
+        sc->cd = cd;
+        sc->i = i;
+        // XXX: from here
+        snprintf(sc->tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmp_dir);
+        sc->tmpn_fd = mkstemp(sc->tmpn);
+        if (sc->tmpn_fd < 0)
+          error_and_abort(ef, "Unable to open temp file \"%s\" for script "
+                          "compilation.\n", sc->tmpn);
+        snprintf(sc->tmpo, PATH_MAX, "%s/edje_cc.amx-tmp-XXXXXX", tmp_dir);
+        sc->tmpo_fd = mkstemp(sc->tmpo);
+        if (sc->tmpo_fd < 0)
           {
-             char buf[PATH_MAX];
-             Eina_List *ll;
-             Code_Program *cp;
-
-             if (cd->original)
-               {
-                  snprintf(buf, PATH_MAX, "edje/scripts/embryo/source/%i", i);
-                  eet_write(ef, buf, cd->original, strlen(cd->original) + 1, 1);
-               }
-             EINA_LIST_FOREACH(cd->programs, ll, cp)
-               {
-                  if (!cp->original)
-                    continue;
-                  snprintf(buf, PATH_MAX, "edje/scripts/embryo/source/%i/%i", i,
-                           cp->id);
-                  eet_write(ef, buf, cp->original, strlen(cp->original) + 1, 1);
-               }
+             unlink(sc->tmpn);
+             error_and_abort(ef, "Unable to open temp file \"%s\" for script "
+                             "compilation.\n", sc->tmpn);
           }
+        create_script_file(ef, sc->tmpn, cd, sc->tmpn_fd);
+        // XXX; to here -> can make set of threads that report back and then
+        // spawn
+        snprintf(buf, sizeof(buf),
+                 "embryo_cc -i %s/include -o %s %s",
+                 eina_prefix_data_get(pfx), sc->tmpo, sc->tmpn);
+        sc->exe = ecore_exe_run(buf, sc);
+        ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
+                                data_scripts_exe_del_cb, sc);
      }
 }
 
@@ -1061,11 +1310,10 @@ _edje_lua_script_writer(lua_State *L __UNUSED__, const void *chunk_buf, size_t c
 
    data = (Edje_Lua_Script_Writer_Struct *)_data;
    old = data->buf;
-   data->buf = malloc (data->size + chunk_size);
-   memcpy (data->buf, old, data->size);
-   memcpy (&((data->buf)[data->size]), chunk_buf, chunk_size);
-   if (old)
-     free (old);
+   data->buf = malloc(data->size + chunk_size);
+   memcpy(data->buf, old, data->size);
+   memcpy(&((data->buf)[data->size]), chunk_buf, chunk_size);
+   if (old) free(old);
    data->size += chunk_size;
 
    return 0;
@@ -1073,140 +1321,209 @@ _edje_lua_script_writer(lua_State *L __UNUSED__, const void *chunk_buf, size_t c
 #endif
 
 void
-_edje_lua_error_and_abort(lua_State * L, int err_code, Eet_File *ef)
+_edje_lua_error_and_abort(lua_State *L, int err_code, Script_Compile *sc)
 {
+   char buf[PATH_MAX];
    char *err_type;
-
+   
    switch (err_code)
      {
-     case LUA_ERRRUN:
+      case LUA_ERRRUN:
 	err_type = "runtime";
 	break;
-     case LUA_ERRSYNTAX:
+      case LUA_ERRSYNTAX:
 	err_type = "syntax";
 	break;
-     case LUA_ERRMEM:
+      case LUA_ERRMEM:
 	err_type = "memory allocation";
 	break;
-     case LUA_ERRERR:
+      case LUA_ERRERR:
 	err_type = "error handler";
 	break;
-     default:
+      default:
 	err_type = "unknown";
 	break;
      }
-   error_and_abort(ef, "Lua %s error: %s\n", err_type, lua_tostring(L, -1));
+   snprintf(buf, sizeof(buf),
+            "Lua %s error: %s\n", err_type, lua_tostring(L, -1));
+   sc->errstr = strdup(buf);
 }
 
+static void
+data_thread_lua_script(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Script_Compile *sc = data;
+   char buf[PATH_MAX];
+   lua_State *L;
+   int ln = 1;
+   luaL_Buffer b;
+   Edje_Lua_Script_Writer_Struct dat;
+   Eina_List *ll;
+   Code_Program *cp;
+#ifdef LUA_BINARY
+   int err_code;
+#endif
+   
+   L = luaL_newstate();
+   if (!L)
+     {
+        snprintf(buf, sizeof(buf),
+                 "Lua error: Lua state could not be initialized\n");
+        sc->errstr = strdup(buf);
+        return;
+     }
+   
+   luaL_buffinit(L, &b);
+   
+   dat.buf = NULL;
+   dat.size = 0;
+   if (sc->cd->shared)
+     {
+        while (ln < (sc->cd->l1 - 1))
+          {
+             luaL_addchar(&b, '\n');
+             ln++;
+          }
+        luaL_addstring(&b, sc->cd->shared);
+        ln += sc->cd->l2 - sc->cd->l1;
+     }
+   
+   EINA_LIST_FOREACH(sc->cd->programs, ll, cp)
+     {
+        if (cp->script)
+          {
+             while (ln < (cp->l1 - 1))
+               {
+                  luaL_addchar(&b, '\n');
+                  ln++;
+               }
+             luaL_addstring(&b, "_G[");
+             lua_pushnumber(L, cp->id);
+             luaL_addvalue(&b);
+             luaL_addstring(&b, "] = function (ed, signal, source)");
+             luaL_addstring(&b, cp->script);
+             luaL_addstring(&b, "end\n");
+             ln += cp->l2 - cp->l1 + 1;
+          }
+     }
+   luaL_pushresult(&b);
+#ifdef LUA_BINARY
+   if (err_code = luaL_loadstring(L, lua_tostring (L, -1)))
+     {
+        _edje_lua_error_and_abort(L, err_code, sc);
+        return;
+     }
+   lua_dump(L, _edje_lua_script_writer, &dat);
+#else // LUA_PLAIN_TEXT
+   dat.buf = (char *)lua_tostring(L, -1);
+   dat.size = strlen(dat.buf);
+#endif
+   //printf("lua chunk size: %d\n", dat.size);
+   
+   /* 
+    * TODO load and test Lua chunk
+    */
+   
+   /*
+    if (luaL_loadbuffer(L, globbuf, globbufsize, "edje_lua_script"))
+    printf("lua load error: %s\n", lua_tostring (L, -1));
+    if (lua_pcall(L, 0, 0, 0))
+    printf("lua call error: %s\n", lua_tostring (L, -1));
+    */
+   
+   snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", sc->i);
+   if (eet_write(sc->ef, buf, dat.buf, dat.size, compress_mode) <= 0)
+     {
+        snprintf(buf, sizeof(buf),
+                 "Unable to write script %i\n", sc->i);
+        sc->errstr = strdup(buf);
+        return;
+     }
+#ifdef LUA_BINARY
+   free(dat.buf);
+#endif
+   lua_close(L);
+}
+
+static void
+data_thread_lua_script_end(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Script_Compile *sc = data;
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+   if (sc->errstr)
+     {
+        error_and_abort(sc->ef, sc->errstr);
+        free(sc->errstr);
+     }
+   free(sc);
+}
 
 static void
 data_write_lua_scripts(Eet_File *ef)
 {
    Eina_List *l;
-   Eina_List *ll;
-   Code_Program *cp;
    int i;
 
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
-	char buf[4096];
-	Code *cd;
-	lua_State *L;
-	int ln = 1;
-	luaL_Buffer b;
-	Edje_Lua_Script_Writer_Struct data;
-#ifdef LUA_BINARY
-	int err_code;
-#endif
-
-	cd = (Code *)eina_list_data_get(l);
-	if (!cd->is_lua)
-	  continue;
-	if ((!cd->shared) && (!cd->programs))
-	  continue;
-	
-	L = luaL_newstate();
-	if (!L)
-	  error_and_abort(ef, "Lua error: Lua state could not be initialized\n");
-
-	luaL_buffinit(L, &b);
-
-	data.buf = NULL;
-	data.size = 0;
-	if (cd->shared)
-	  {
-	     while (ln < (cd->l1 - 1))
-	       {
-		  luaL_addchar(&b, '\n');
-		  ln++;
-	       }
-	     luaL_addstring(&b, cd->shared);
-	     ln += cd->l2 - cd->l1;
-	  }
-
-	EINA_LIST_FOREACH(cd->programs, ll, cp)
-	  {
-	     if (cp->script)
-	       {
-		  while (ln < (cp->l1 - 1))
-		    {
-		       luaL_addchar(&b, '\n');
-		       ln++;
-		    }
-		  luaL_addstring(&b, "_G[");
-		  lua_pushnumber(L, cp->id);
-		  luaL_addvalue(&b);
-		  luaL_addstring(&b, "] = function (ed, signal, source)");
-		  luaL_addstring(&b, cp->script);
-		  luaL_addstring(&b, "end\n");
-		  ln += cp->l2 - cp->l1 + 1;
-	       }
-	  }
-	luaL_pushresult(&b);
-#ifdef LUA_BINARY
-	if (err_code = luaL_loadstring(L, lua_tostring (L, -1)))
-	  _edje_lua_error_and_abort(L, err_code, ef);
-	lua_dump(L, _edje_lua_script_writer, &data);
-#else // LUA_PLAIN_TEXT
-	data.buf = (char *)lua_tostring(L, -1);
-	data.size = strlen(data.buf);
-#endif
-	//printf("lua chunk size: %d\n", data.size);
-
-	/* 
-	 * TODO load and test Lua chunk
-	 */
-
-	/*
-	   if (luaL_loadbuffer(L, globbuf, globbufsize, "edje_lua_script"))
-	   printf("lua load error: %s\n", lua_tostring (L, -1));
-	   if (lua_pcall(L, 0, 0, 0))
-	   printf("lua call error: %s\n", lua_tostring (L, -1));
-	 */
-	
-	snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", i);
-	eet_write(ef, buf, data.buf, data.size, 1);
-#ifdef LUA_BINARY
-	free(data.buf);
-#endif
-	lua_close(L);
+        Code *cd;
+        Script_Compile *sc;
+        
+        cd = (Code *)eina_list_data_get(l);
+        if (!cd->is_lua)
+          continue;
+        if ((!cd->shared) && (!cd->programs))
+          continue;
+        
+        sc = calloc(1, sizeof(Script_Compile));
+        sc->ef = ef;
+        sc->cd = cd;
+        sc->i = i;
+        pending_threads++;
+        ecore_thread_run(data_thread_lua_script, data_thread_lua_script_end,
+                         NULL, sc);
      }
+}
+
+static void
+data_thread_source(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Eet_File *ef = data;
+   source_append(ef);
+}
+
+static void
+data_thread_source_end(void *data __UNUSED__, Ecore_Thread *thread __UNUSED__)
+{
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
+}
+
+static void
+data_thread_fontmap(void *data, Ecore_Thread *thread __UNUSED__)
+{
+   Eet_File *ef = data;
+   source_fontmap_save(ef, fonts);
+}
+
+static void
+data_thread_fontmap_end(void *data __UNUSED__, Ecore_Thread *thread __UNUSED__)
+{
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
 }
 
 void
 data_write(void)
 {
    Eet_File *ef;
-   int input_bytes = 0;
-   int total_bytes = 0;
-   int src_bytes = 0;
-   int fmap_bytes = 0;
-   int input_raw_bytes = 0;
    int image_num = 0;
    int sound_num = 0;
    int font_num = 0;
    int collection_num = 0;
-
+   double t;
+   
    if (!edje_file)
      {
 	ERR("%s: Error. No data to put in \"%s\"",
@@ -1224,66 +1541,76 @@ data_write(void)
 
    check_groups(ef);
 
-   total_bytes += data_write_header(ef);
-   total_bytes += data_write_fonts(ef, &font_num, &input_bytes,
-				   &input_raw_bytes);
-   total_bytes += data_write_images(ef, &image_num, &input_bytes,
-				    &input_raw_bytes);
-   total_bytes += data_write_sounds(ef, &sound_num, &input_bytes,
-                &input_raw_bytes);
-
-   total_bytes += data_write_groups(ef, &collection_num);
+   ecore_thread_max_set(ecore_thread_max_get() * 2);
+   
+   t = ecore_time_get();
+   data_write_header(ef);
+   if (verbose)
+     {
+        printf("header: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
+   data_write_groups(ef, &collection_num);
+   if (verbose)
+     {
+        printf("groups: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
    data_write_scripts(ef);
+   if (verbose)
+     {
+        printf("scripts: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
    data_write_lua_scripts(ef);
+   if (verbose)
+     {
+        printf("lua scripts: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
+   pending_threads++;
+   ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef);
+   if (verbose)
+     {
+        printf("source: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
+   pending_threads++;
+   ecore_thread_run(data_thread_fontmap, data_thread_fontmap_end, NULL, ef);
+   if (verbose)
+     {
+        printf("fontmap: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
+   data_write_images(ef, &image_num);
+   if (verbose)
+     {
+        printf("images: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
+   data_write_fonts(ef, &font_num);
+   if (verbose)
+     {
+        printf("fonts: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
+   data_write_sounds(ef, &sound_num);
+   if (verbose)
+     {
+        printf("sounds: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
 
-   src_bytes = source_append(ef);
-   total_bytes += src_bytes;
-   fmap_bytes = source_fontmap_save(ef, fonts);
-   total_bytes += fmap_bytes;
-
+   ecore_main_loop_begin();
+   if (verbose)
+     {
+        printf("THREADS: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
+     }
+   
    eet_close(ef);
 
    if (verbose)
-     {
-	struct stat st;
-
-	if (stat(file_in, &st) != 0)
-	  st.st_size = 0;
-	input_bytes += st.st_size;
-	input_raw_bytes += st.st_size;
-	printf("Summary:\n"
-	       "  Wrote %i collections\n"
-	       "  Wrote %i images\n"
-          "  Wrote %i sounds\n"
-	       "  Wrote %i fonts\n"
-	       "  Wrote %i bytes (%iKb) of original source data\n"
-	       "  Wrote %i bytes (%iKb) of original source font map\n"
-	       "Conservative compression summary:\n"
-	       "  Wrote total %i bytes (%iKb) from %i (%iKb) input data\n"
-	       "  Output file is %3.1f%% the size of the input data\n"
-	       "  Saved %i bytes (%iKb)\n"
-	       "Raw compression summary:\n"
-	       "  Wrote total %i bytes (%iKb) from %i (%iKb) raw input data\n"
-	       "  Output file is %3.1f%% the size of the raw input data\n"
-	       "  Saved %i bytes (%iKb)\n"
-	       ,
-	       collection_num,
-	       image_num,
-          sound_num,
-	       font_num,
-	       src_bytes, (src_bytes + 512) / 1024,
-	       fmap_bytes, (fmap_bytes + 512) / 1024,
-	       total_bytes, (total_bytes + 512) / 1024,
-	       input_bytes, (input_bytes + 512) / 1024,
-	       (100.0 * (double)total_bytes) / (double)input_bytes,
-	       input_bytes - total_bytes,
-	       (input_bytes - total_bytes + 512) / 1024,
-	       total_bytes, (total_bytes + 512) / 1024,
-	       input_raw_bytes, (input_raw_bytes + 512) / 1024,
-	       (100.0 * (double)total_bytes) / (double)input_raw_bytes,
-	       input_raw_bytes - total_bytes,
-	       (input_raw_bytes - total_bytes + 512) / 1024);
-     }
+     printf("Summary:\n"
+            "  Wrote %i collections\n"
+            "  Wrote %i images\n"
+            "  Wrote %i sounds\n"
+            "  Wrote %i fonts\n"
+            ,
+            collection_num,
+            image_num,
+            sound_num,
+            font_num);
 }
 
 void
@@ -1419,46 +1746,74 @@ data_queue_group_lookup(const char *name, Edje_Part *part)
    gl->part = part;
 }
 
+static Eina_Hash *_part_lookups_hash = NULL;
+static Eina_Hash *_part_lookups_dest_hash = NULL;
+
 void
 data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
+   Part_Lookup *pl = NULL;
+   char buf[256];
    Eina_List *l;
-   Part_Lookup *pl;
-
-   EINA_LIST_FOREACH(part_lookups, l, pl)
+   
+   snprintf(buf, sizeof(buf), "%lu-%lu", 
+            (unsigned long)name, (unsigned long)dest);
+   if (_part_lookups_hash) pl = eina_hash_find(_part_lookups_hash, buf);
+   if (pl)
      {
-        if ((pl->pc == pc) && (pl->dest == dest))
+        free(pl->name);
+        if (name[0])
+          pl->name = mem_strdup(name);
+        else
           {
-             free(pl->name);
-             if (name[0])
-               pl->name = mem_strdup(name);
-             else
-               {
-                  part_lookups = eina_list_remove(part_lookups, pl);
-                  free(pl);
-               }
-             return;
+             eina_hash_del(_part_lookups_hash, buf, pl);
+             snprintf(buf, sizeof(buf), "%lu", (unsigned long)dest);
+             eina_hash_del(_part_lookups_dest_hash, buf, pl);
+             part_lookups = eina_list_remove(part_lookups, pl);
+             free(pl);
           }
+        return;
      }
    if (!name[0]) return;
 
    pl = mem_alloc(SZ(Part_Lookup));
-   part_lookups = eina_list_append(part_lookups, pl);
+   part_lookups = eina_list_prepend(part_lookups, pl);
    pl->pc = pc;
    pl->name = mem_strdup(name);
    pl->dest = dest;
+   if (!_part_lookups_hash)
+     _part_lookups_hash = eina_hash_string_superfast_new(NULL);
+   eina_hash_add(_part_lookups_hash, buf, pl);
+   
+   snprintf(buf, sizeof(buf), "%lu", (unsigned long)dest);
+   if (!_part_lookups_dest_hash)
+     _part_lookups_dest_hash = eina_hash_string_superfast_new(NULL);
+   l = eina_hash_find(_part_lookups_dest_hash, buf);
+   if (l)
+     {
+        l = eina_list_append(l, pl);
+        eina_hash_modify(_part_lookups_dest_hash, buf, l);
+     }
+   else
+     {
+        l = eina_list_append(l, pl);
+        eina_hash_add(_part_lookups_dest_hash, buf, l);
+     }
 }
 
 void
 data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 {
-   Eina_List *l;
+   Eina_List *l, *list;
    Part_Lookup *pl;
+   char buf[256];
 
-   EINA_LIST_FOREACH(part_lookups, l, pl)
+   if (!_part_lookups_dest_hash) return;
+   snprintf(buf, sizeof(buf), "%lu", (unsigned long)src);
+   list = eina_hash_find(_part_lookups_dest_hash, buf);
+   EINA_LIST_FOREACH(list, l, pl)
      {
-        if (pl->dest == src)
-          data_queue_part_lookup(pc, pl->name, dest);
+        data_queue_part_lookup(pc, pl->name, dest);
      }
 }
 
@@ -2196,11 +2551,12 @@ data_process_script_lookups(void)
 void
 using_file(const char *filename)
 {
-  FILE *f;
+   FILE *f;
 
-  f = fopen(watchfile, "a");
-  if (!f) return ;
-  fputs(filename, f);
-  fputc('\n', f);
-  fclose(f);
+   if (!watchfile) return;
+   f = fopen(watchfile, "a");
+   if (!f) return ;
+   fputs(filename, f);
+   fputc('\n', f);
+   fclose(f);
 }

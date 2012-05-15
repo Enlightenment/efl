@@ -22,6 +22,7 @@ int _edje_cc_log_dom = -1;
 char *progname = NULL;
 char *file_in = NULL;
 char *file_out = NULL;
+int compress_mode = EET_COMPRESSION_DEFAULT;
 
 Edje_File *edje_file = NULL;
 SrcFile_List *srcfiles = NULL;

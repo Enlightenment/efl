@@ -228,7 +228,8 @@ source_fetch(void)
 int
 source_append(Eet_File *ef)
 {
-   return eet_data_write(ef, _srcfile_list_edd, "edje_sources", &srcfiles, 1);
+   return eet_data_write(ef, _srcfile_list_edd, "edje_sources", &srcfiles,
+                         compress_mode);
 }
 
 SrcFile_List *
@@ -246,7 +247,8 @@ source_fontmap_save(Eet_File *ef, Eina_List *font_list)
    Font_List fl;
 
    fl.list = font_list;
-   return eet_data_write(ef, _font_list_edd, "edje_source_fontmap", &fl, 1);
+   return eet_data_write(ef, _font_list_edd, "edje_source_fontmap", &fl,
+                         compress_mode);
 }
 
 Font_List *

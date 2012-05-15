@@ -29,6 +29,7 @@ int        no_raw = 0;
 int        no_save = 0;
 int        min_quality = 0;
 int        max_quality = 100;
+int        compress_mode = EET_COMPRESSION_DEFAULT;
 
 static void
 main_help(void)
@@ -52,6 +53,8 @@ main_help(void)
       "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)\n"
       "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)\n"
       "-Ddefine_val=to          CPP style define to define input macro definitions to the .edc source\n"
+      "-fastcomp                Use a faster compression algorithm (LZ4) (mutually exclusive with -fastdecomp)\n"
+      "-fastdecomp              Use a faster decompression algorithm (LZ4HC) (mutually exclusive with -fastcomp)\n"
       ,progname);
 }
 
@@ -143,6 +146,14 @@ main(int argc, char **argv)
 	     max_quality = atoi(argv[i]);
 	     if (max_quality < 0) max_quality = 0;
 	     if (max_quality > 100) max_quality = 100;
+	  }
+	else if ((!strcmp(argv[i], "-fastcomp")) && (i < (argc - 1)))
+	  {
+             compress_mode = EET_COMPRESSION_SUPERFAST;
+	  }
+	else if ((!strcmp(argv[i], "-fastdecomp")) && (i < (argc - 1)))
+	  {
+             compress_mode = EET_COMPRESSION_VERYFAST;
 	  }
 	else if (!strncmp(argv[i], "-D", 2))
 	  {
