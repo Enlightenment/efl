@@ -85,6 +85,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
 
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg) continue;
+        if ((!fg->glyph_out) && (!evas_common_font_int_cache_glyph_render(fg)))
+          continue;
 
         if (dc->font_ext.func.gl_new)
           {
@@ -291,6 +293,8 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
         idx = EVAS_FONT_WALK_INDEX;
 
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
+        if (!fg) continue;
+        if (!fg->glyph_out) evas_common_font_int_cache_glyph_render(fg);
      }
    EVAS_FONT_WALK_TEXT_END();
 

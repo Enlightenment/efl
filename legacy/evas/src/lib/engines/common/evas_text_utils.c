@@ -337,6 +337,11 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
              LKU(fi->ft_mutex);
              continue;
           }
+        if ((!fg->glyph_out) && (!evas_common_font_int_cache_glyph_render(fg)))
+          {
+             LKU(fi->ft_mutex);
+             continue;
+          }
         LKU(fi->ft_mutex);
 
         gl_itr->x_bear = fg->glyph_out->left;
@@ -430,6 +435,8 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
 
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg) continue;
+        if ((!fg->glyph_out) && (!evas_common_font_int_cache_glyph_render(fg)))
+          continue;
         kern = 0;
 
         if ((use_kerning) && (prev_index) && (idx) &&

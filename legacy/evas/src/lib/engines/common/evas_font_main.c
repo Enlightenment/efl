@@ -337,9 +337,7 @@ EAPI RGBA_Font_Glyph *
 evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
 {
    RGBA_Font_Glyph *fg;
-   FT_UInt hindex;
    FT_Error error;
-   int size;
    const FT_Int32 hintflags[3] =
      { FT_LOAD_NO_HINTING, FT_LOAD_FORCE_AUTOHINT, FT_LOAD_NO_AUTOHINT };
    static FT_Matrix transform = {0x10000, 0x05000, 0x0000, 0x10000}; // about 12 degree.
@@ -351,8 +349,6 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
         if (fg == (void *)(-1)) return NULL;
         else if (fg) return fg;
      }
-
-   hindex = idx + (fi->hinting * 500000000);
 
 //   fg = eina_hash_find(fi->glyphs, &hindex);
 //   if (fg) return fg;
@@ -393,6 +389,22 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
         return NULL;
      }
 
+   fg->index = idx;
+   fg->fi = fi;
+
+   if (!fi->fash) fi->fash = _fash_gl_new();
+   if (fi->fash) _fash_gl_add(fi->fash, idx, fg);
+
+//   eina_hash_direct_add(fi->glyphs, &fg->index, fg);
+   return fg;
+}
+
+EAPI Eina_Bool
+evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
+{
+   int size;
+   FT_Error error;
+   RGBA_Font_Int *fi = fg->fi;
    FTLOCK();
    error = FT_Glyph_To_Bitmap(&(fg->glyph), FT_RENDER_MODE_NORMAL, 0, 1);
    if (error)
@@ -401,17 +413,12 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
         FTUNLOCK();
         free(fg);
         if (!fi->fash) fi->fash = _fash_gl_new();
-        if (fi->fash) _fash_gl_add(fi->fash, idx, (void *)(-1));
-        return NULL;
+        if (fi->fash) _fash_gl_add(fi->fash, fg->index, (void *)(-1));
+        return EINA_FALSE;
      }
    FTUNLOCK();
 
    fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
-   fg->index = hindex;
-   fg->fi = fi;
-
-   if (!fi->fash) fi->fash = _fash_gl_new();
-   if (fi->fash) _fash_gl_add(fi->fash, idx, fg);
    /* This '+ 200' is just an estimation of how much memory freetype will use
     * on it's size. This value is not really used anywhere in code - it's
     * only for statistics. */
@@ -420,8 +427,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
    fi->usage += size;
    if (fi->inuse) evas_common_font_int_use_increase(size);
 
-//   eina_hash_direct_add(fi->glyphs, &fg->index, fg);
-   return fg;
+   return EINA_TRUE;
 }
 
 typedef struct _Font_Char_Index Font_Char_Index;
