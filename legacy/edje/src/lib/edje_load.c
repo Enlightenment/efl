@@ -918,11 +918,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                     {
                        Edje_Real_Part *drp;
 
-                       fprintf(stderr, "trying to restore drag on '%s'\n", drag->part);
                        drp = _edje_real_part_recursive_get(ed, drag->part);
                        if (!drp || !drp->drag) goto next;
 
-                       fprintf(stderr, "VAL [%f, %f]\n", drag->x, drag->y);
                        drp->drag->val.x = drag->x;
                        drp->drag->val.y = drag->y;
                        drp->drag->size.x = drag->w;
