@@ -901,15 +901,14 @@ _ecore_evas_wl_render(Ecore_Evas *ee)
 
         if ((updates = evas_render_updates(ee->evas))) 
           {
-             /* Eina_List *l = NULL; */
-             /* Eina_Rectangle *r; */
+             Eina_List *l = NULL;
+             Eina_Rectangle *r;
 
              LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-             ecore_wl_window_damage(ee->engine.wl.win, 0, 0, ee->w, ee->h);
-             /* EINA_LIST_FOREACH(updates, l, r)  */
-             /*   ecore_wl_window_damage(ee->engine.wl.win,  */
-             /*                          r->x, r->y, r->w, r->h); */
+             EINA_LIST_FOREACH(updates, l, r) 
+               ecore_wl_window_damage(ee->engine.wl.win, 
+                                      r->x, r->y, r->w, r->h);
 
              ecore_wl_flush();
 
