@@ -402,7 +402,7 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
 					FROM_DOUBLE(0.5))));
 	if (image_num > (image_count - 1))
 	  image_num = image_count - 1;
-	if (image_num == 0)
+	if (image_num <= 0)
 	  {
 	    image_id = _edje_image_find(ep->object, ed,
 					&ep->param1.set,
@@ -1173,7 +1173,7 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   if (*maxh < *minh) *maxh = *minh;
 	       }
 	  }
-        evas_object_textblock_valign_set(ep->object, chosen_desc->text.align.y);
+        evas_object_textblock_valign_set(ep->object, TO_DOUBLE(chosen_desc->text.align.y));
      }
 }
 
@@ -2410,6 +2410,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 	return;
      }
 
+   pos = ep->description_pos;
+
    if (ep->part->type == EDJE_PART_TYPE_PROXY)
      {
         Edje_Real_Part *pp;
@@ -2534,10 +2536,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #endif
  	  }
 
-  	pos = ep->description_pos;
-        pos2 = pos;
-        if (pos2 < ZERO) pos2 = ZERO;
-        else if (pos2 > FROM_INT(1)) pos2 = FROM_INT(1);
+	pos2 = pos;
+	if (pos2 < ZERO) pos2 = ZERO;
+	else if (pos2 > FROM_INT(1)) pos2 = FROM_INT(1);
   	beginning_pos = (pos < FROM_DOUBLE(0.5));
   	part_type = ep->part->type;
 

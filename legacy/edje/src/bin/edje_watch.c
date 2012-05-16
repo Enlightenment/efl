@@ -50,10 +50,14 @@ read_watch_file(const char *file)
 Eina_Bool
 rebuild(void *data __UNUSED__)
 {
+   double start, end;
+
+   start = ecore_time_get();
    fprintf(stderr, "SYSTEM('%s')\n", edje_cc_command);
    if (system(edje_cc_command) == 0)
      read_watch_file(watchfile);
-   fprintf(stderr, "DONE\n");
+   end = ecore_time_get();
+   fprintf(stderr, "DONE IN %f\n", end - start);
 
    timeout = NULL;
    return EINA_FALSE;
@@ -76,6 +80,7 @@ main(int argc, char **argv)
 {
    char *watchout;
    Eina_Strbuf *buf;
+   double start, end;
    int tfd;
    int i;
 
@@ -105,7 +110,7 @@ main(int argc, char **argv)
    buf = eina_strbuf_new();
    if (!buf) return -1;
 
-   eina_strbuf_append_printf(buf, "%s/edje_cc -w %s ", PACKAGE_BIN_DIR, watchfile);
+   eina_strbuf_append_printf(buf, "%s/edje_cc -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
    for (i = 1; i < argc; ++i)
      eina_strbuf_append_printf(buf, "%s ", argv[i]);
 
@@ -113,10 +118,12 @@ main(int argc, char **argv)
 
    eina_strbuf_free(buf);
 
+   start = ecore_time_get();
    fprintf(stderr, "SYSTEM('%s')\n", edje_cc_command);
    system(edje_cc_command);
    read_watch_file(watchfile);
-   fprintf(stderr, "DONE\n");
+   end = ecore_time_get();
+   fprintf(stderr, "DONE %f\n", end - start);
 
    ecore_main_loop_begin();
 

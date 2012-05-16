@@ -1625,8 +1625,8 @@ _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it)
    evas_object_size_hint_request_set(obj, it->prefer.w, it->prefer.h);
    evas_object_size_hint_max_set(obj, it->max.w, it->max.h);
    evas_object_size_hint_padding_set(obj, it->padding.l, it->padding.r, it->padding.t, it->padding.b);
-   evas_object_size_hint_align_set(obj, it->align.x, it->align.y);
-   evas_object_size_hint_weight_set(obj, it->weight.x, it->weight.y);
+   evas_object_size_hint_align_set(obj, TO_DOUBLE(it->align.x), TO_DOUBLE(it->align.y));
+   evas_object_size_hint_weight_set(obj, TO_DOUBLE(it->weight.x), TO_DOUBLE(it->weight.y));
    evas_object_size_hint_aspect_set(obj, it->aspect.mode, it->aspect.w, it->aspect.h);
 
    evas_object_resize(obj, w, h);

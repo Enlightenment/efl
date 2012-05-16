@@ -457,3 +457,8 @@
         and fastdecomp - LZ4 and LZ4HC).
         * Overall sped up edje_cc by 4x faster (if you use fastcomp)
         and about 4.5x faster with old zlib compression.
+
+2012-05-16  Cedric Bail
+
+	* Fix table and text when fixed point is turned on.
+	* Clamp image tween to never underflow also.

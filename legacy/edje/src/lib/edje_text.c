@@ -587,17 +587,17 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    part_get_geometry(ep, &tw, &th);
    /* Handle alignment */
      {
-        double align_x;
-        if (params->type.text.align.x < 0.0)
+        FLOAT_T align_x;
+        if (params->type.text.align.x < FROM_INT(0))
           {
              if (evas_object_text_direction_get(ep->object) ==
                    EVAS_BIDI_DIRECTION_RTL)
                {
-                  align_x = 1.0;
+                  align_x = FROM_INT(1);
                }
              else
                {
-                  align_x = 0.0;
+                  align_x = FROM_INT(0);
                }
           }
         else

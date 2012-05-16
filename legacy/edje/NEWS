@@ -16,6 +16,8 @@ Fixes:
     * Prevent crash when running nested edje_object_signal_emit with edje_object_signal_callback_{add,del}.
     * Do actually verify that the file on disk is different from the file we have loaded.
     * Preserve user drag, box and table information during call of edje_object_file_set.
+    * Fix table and text when fixed point is turned on.
+    * Clamp image tween to never underflow also.
 
 Edje 1.2.0
 
