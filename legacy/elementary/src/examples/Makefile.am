@@ -24,6 +24,7 @@ AM_CPPFLAGS = \
 LDADD = \
 @ELEMENTARY_LIBS@ \
 @ELEMENTARY_ETHUMB_LIBS@ \
+@ELEMENTARY_EMAP_LIBS@ \
 @ELEMENTARY_X_LIBS@ \
 $(top_builddir)/src/lib/libelementary.la
 
