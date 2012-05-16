@@ -617,9 +617,14 @@ _tap_gestures_test_reset(Gesture_Info *gesture)
      return;
 
    Widget_Data *wd = elm_widget_data_get(gesture->obj);
-   wd->dbl_timeout = NULL;
    Eina_List *data;
    Pointer_Event *pe;
+
+   if (wd->dbl_timeout)
+     {
+        ecore_timer_del(wd->dbl_timeout);
+        wd->dbl_timeout = NULL;
+     }
 
    if (!gesture->data)
      return;
@@ -1164,17 +1169,16 @@ _record_pointer_event(Taps_Type *st, Eina_List *pe_list, Pointer_Event *pe,
 /**
  * @internal
  *
- * This function sets state a tap-gesture to END or ABORT
+ * This function checks if the tap gesture is done.
  *
  * @param data gesture info pointer
+ * @return EINA_TRUE if it is done.
  *
  * @ingroup Elm_Gesture_Layer
  */
-static void
-_tap_gesture_finish(void *data)
-{  /* This function will test each tap gesture when timer expires */
-   Gesture_Info *gesture = data;
-   Elm_Gesture_State s = ELM_GESTURE_STATE_END;
+static Eina_Bool
+_tap_gesture_check_finish(Gesture_Info *gesture)
+{
    /* Here we check if taps-gesture was completed successfuly */
    /* Count how many taps were recieved on each device then   */
    /* determine if it matches n_taps_needed defined on START  */
@@ -1185,10 +1189,31 @@ _tap_gesture_finish(void *data)
      {
         if (eina_list_count(pe_list) != st->n_taps_needed)
           {  /* No match taps number on device, ABORT */
-             s = ELM_GESTURE_STATE_ABORT;
-             break;
+             return EINA_FALSE;
           }
      }
+
+   return EINA_TRUE;
+}
+
+/**
+ * @internal
+ *
+ * This function sets state a tap-gesture to END or ABORT
+ *
+ * @param data gesture info pointer
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static void
+_tap_gesture_finish(void *data)
+{  /* This function will test each tap gesture when timer expires */
+   Elm_Gesture_State s = ELM_GESTURE_STATE_END;
+   Gesture_Info *gesture = data;
+   Taps_Type *st = gesture->data;
+
+   if (!_tap_gesture_check_finish(data))
+      s = ELM_GESTURE_STATE_ABORT;
 
    st->info.n = eina_list_count(st->l);
    _set_state(gesture, s, gesture->info, EINA_FALSE);
@@ -1212,13 +1237,13 @@ _multi_tap_timeout(void *data)
    if (!wd) return EINA_FALSE;
 
    if (IS_TESTED(ELM_GESTURE_N_TAPS))
-     _tap_gesture_finish(wd->gesture[ELM_GESTURE_N_TAPS]);
+      _tap_gesture_finish(wd->gesture[ELM_GESTURE_N_TAPS]);
 
    if (IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS))
-   _tap_gesture_finish(wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS]);
+      _tap_gesture_finish(wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS]);
 
    if (IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS))
-   _tap_gesture_finish(wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS]);
+      _tap_gesture_finish(wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS]);
 
    _clear_if_finished(data);
    wd->dbl_timeout = NULL;
@@ -1319,6 +1344,20 @@ _tap_gesture_start(Widget_Data *wd, Pointer_Event *pe,
            return EINA_FALSE;
 
          pe_list = _record_pointer_event(st, pe_list, pe, wd, event_info, event_type);
+
+         if (((gesture->g_type == ELM_GESTURE_N_TAPS) &&
+                  !IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS) &&
+                  !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)) ||
+               ((gesture->g_type == ELM_GESTURE_N_DOUBLE_TAPS) &&
+                !IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS)))
+           {
+              if (_tap_gesture_check_finish(gesture))
+                {
+                   _tap_gesture_finish(gesture);
+                   return EINA_FALSE;
+                }
+           }
+
          break;
 
       case EVAS_CALLBACK_MULTI_MOVE:
