@@ -465,68 +465,22 @@ eina_f32p32_cos(Eina_F32p32 a)
                                             (Eina_F32p32)eina_f32p32_fracc_get(
                                                interpol)));
 
-   if (0 <= remainder_2PI && remainder_2PI < F32P32_PI2)
-      return result;
-   else if (F32P32_PI2 <= remainder_2PI && remainder_2PI < EINA_F32P32_PI)
-      return -result;
-   else if (EINA_F32P32_PI <= remainder_2PI && remainder_2PI < F32P32_3PI2)
-      return -result;
-   else /*  if (F32P32_3PI2 <= remainder_2PI) */
-      return result;
+   if (F32P32_PI2 < remainder_2PI && remainder_2PI < F32P32_3PI2)
+     result *= -1;
+
+   return result;
 }
 
 EAPI Eina_F32p32
 eina_f32p32_sin(Eina_F32p32 a)
 {
-   Eina_F32p32 F32P32_2PI;
    Eina_F32p32 F32P32_PI2;
-   Eina_F32p32 F32P32_3PI2;
-   Eina_F32p32 remainder_2PI;
-   Eina_F32p32 remainder_PI;
-   Eina_F32p32 interpol;
-   Eina_F32p32 result;
-   int idx;
-   int index2;
 
-   F32P32_2PI = EINA_F32P32_PI << 1;
    F32P32_PI2 = EINA_F32P32_PI >> 1;
-   F32P32_3PI2 = EINA_F32P32_PI + F32P32_PI2;
 
    /* We only have a table for cosinus, but sin(a) = cos(pi / 2 - a) */
    a = eina_f32p32_sub(F32P32_PI2, a);
 
-   /* Take advantage of cosinus symetrie. */
-   a = eina_fp32p32_llabs(a);
-
-   /* Find table entry in 0 to PI / 2 */
-   remainder_PI = a - (a / EINA_F32P32_PI) * EINA_F32P32_PI;
-
-   /* Find which case from 0 to 2 * PI */
-   remainder_2PI = a - (a / F32P32_2PI) * F32P32_2PI;
-
-   interpol = eina_f32p32_div(eina_f32p32_scale(remainder_PI, (MAX_PREC - 1) * 2),
-                              EINA_F32P32_PI);
-   idx = eina_f32p32_int_to(interpol);
-   if (idx >= MAX_PREC)
-     idx = 2 * MAX_PREC - (idx + 1);
-
-   index2 = idx + 1;
-   if (index2 == MAX_PREC)
-     index2 = idx - 1;
-
-   result = eina_f32p32_add(eina_trigo[idx],
-                            eina_f32p32_mul(eina_f32p32_sub(eina_trigo[idx],
-                                                            eina_trigo[index2]),
-                                            (Eina_F32p32)eina_f32p32_fracc_get(
-                                               interpol)));
-
-   if (0 <= remainder_2PI && remainder_2PI < F32P32_PI2)
-      return result;
-   else if (F32P32_PI2 <= remainder_2PI && remainder_2PI < EINA_F32P32_PI)
-      return -result;
-   else if (EINA_F32P32_PI <= remainder_2PI && remainder_2PI < F32P32_3PI2)
-      return -result;
-   else /* if (F32P32_3PI2 <= remainder_2PI) */
-      return result;
+   return eina_f32p32_cos(a);
 }
 
