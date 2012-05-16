@@ -1866,6 +1866,7 @@ _elm_flip_smart_add(Evas_Object *obj)
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb, obj);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _on_resize, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _on_move, NULL);
 
    priv->state = EINA_TRUE;
    priv->intmode = ELM_FLIP_INTERACTION_NONE;

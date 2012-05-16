@@ -6,13 +6,13 @@ typedef struct _Elm_Params_Segment_Control
 } Elm_Params_Segment_Control;
 
 static void
-external_segment_control_state_set(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const void *from_params, const void *to_params, float pos __UNUSED__)
+external_segment_control_state_set(void *data __UNUSED__,
+                                   Evas_Object *obj __UNUSED__,
+                                   const void *from_params __UNUSED__,
+                                   const void *to_params __UNUSED__,
+                                   float pos __UNUSED__)
 {
-   const Elm_Params_Segment_Control *p;
-
-   if (to_params) p = to_params;
-   else if (from_params) p = from_params;
-   else return;
+   /* FIXME: no params, no setting */
 }
 
 static Eina_Bool

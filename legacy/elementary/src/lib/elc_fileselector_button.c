@@ -107,7 +107,7 @@ _selection_done(void *data,
    evas_object_del(del);
 
    evas_object_smart_callback_call
-     (ELM_WIDGET_DATA(sd)->obj, SIG_FILE_CHOSEN, file);
+     (ELM_WIDGET_DATA(sd)->obj, SIG_FILE_CHOSEN, (void *)file);
 }
 
 static Evas_Object *

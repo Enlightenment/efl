@@ -198,6 +198,8 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
    _print_current_dir(ctxpopup);
+
+   (void)it;
 }
 
 

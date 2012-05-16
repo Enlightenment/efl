@@ -1,6 +1,5 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
 
 static const char THUMB_SMART_NAME[] = "elm_thumb";
 
