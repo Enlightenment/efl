@@ -593,33 +593,12 @@ pending_change(void *data, void *gdata __UNUSED__)
      {
         RD("  OBJ [%p] pending change %i -> 0, pre %i\n", obj, obj->changed, obj->pre_render_done);
         obj->pre_render_done = 0;
-        //// FIXME: this wipes out changes
-        obj->changed = 0;
-        obj->changed_move_only = 0;
-        obj->changed_nomove = 0;
-        obj->changed_move = 0;
-        obj->changed_map = 0;
-        obj->changed_pchange = 0;
+        evas_object_change_reset(obj);
      }
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
+
 /*
-   static void
-   unchange(Evas_Object *obj)
-   {
-   Evas_Object *obj2;
-
-   if (!obj->changed) return;
-   obj->changed = 0;
-   obj->changed_move_only = 0;
-   obj->changed_nomove = 0;
-   obj->changed_move = 0;
-   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
-   {
-   unchange(obj2);
-   }
-   }
-
    static int
    chlist(Evas_Object *obj, int i)
    {
@@ -968,34 +947,18 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                   if (!evas_object_is_visible(o2) &&
                       !evas_object_was_visible(o2))
                     {
-                       o2->changed = 0;
-                       o2->changed_move_only = 0;
-                       o2->changed_nomove = 0;
-                       o2->changed_move = 0;
-                       o2->changed_map = 0;
-                       o2->changed_pchange = 0;
+                       evas_object_change_reset(o2);
                        continue;
                     }
                   if (o2->changed)
                     {
                        //                       chlist(o2, 0);
                        changed = 1;
-                       o2->changed = 0;
-                       o2->changed_move_only = 0;
-                       o2->changed_nomove = 0;
-                       o2->changed_move = 0;
-                       o2->changed_map = 0;
-                       o2->changed_pchange = 0;
+                       evas_object_change_reset(o2);
                        break;
                     }
                }
-             //             unchange(obj);
-             obj->changed = 0;
-             obj->changed_move_only = 0;
-             obj->changed_nomove = 0;
-             obj->changed_move = 0;
-             obj->changed_map = 0;
-             obj->changed_pchange = 0;
+             evas_object_change_reset(obj);
           }
         else
           {
@@ -1003,12 +966,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                {
                   if ((obj->changed_pchange) && (obj->changed_map))
                     changed = 1;
-                  obj->changed = 0;
-                  obj->changed_move_only = 0;
-                  obj->changed_nomove = 0;
-                  obj->changed_move = 0;
-                  obj->changed_map = 0;
-                  obj->changed_pchange = 0;
+                  evas_object_change_reset(obj);
                }
           }
 
@@ -1641,12 +1599,7 @@ evas_render_updates_internal(Evas *e,
              RD("    OBJ [%p] post... func1\n", obj);
              obj->func->render_post(obj);
              obj->restack = 0;
-             obj->changed = 0;
-             obj->changed_move_only = 0;
-             obj->changed_nomove = 0;
-             obj->changed_move = 0;
-             obj->changed_map = 0;
-             obj->changed_pchange = 0;
+             evas_object_change_reset(obj);
           }
         else if ((obj->cur.map != obj->prev.map) ||
                  (obj->cur.usemap != obj->prev.usemap))
@@ -1654,12 +1607,7 @@ evas_render_updates_internal(Evas *e,
              RD("    OBJ [%p] post... func2\n", obj);
              obj->func->render_post(obj);
              obj->restack = 0;
-             obj->changed = 0;
-             obj->changed_move_only = 0;
-             obj->changed_nomove = 0;
-             obj->changed_move = 0;
-             obj->changed_map = 0;
-             obj->changed_pchange = 0;
+             evas_object_change_reset(obj);
           }
         /* moved to other pre-process phase 1
            if (obj->delete_me == 2)

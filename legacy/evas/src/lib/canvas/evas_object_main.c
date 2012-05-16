@@ -31,6 +31,17 @@ evas_object_new(Evas *e __UNUSED__)
 }
 
 void
+evas_object_change_reset(Evas_Object *obj)
+{
+   obj->changed = EINA_FALSE;
+   obj->changed_move_only = EINA_FALSE;
+   obj->changed_nomove = EINA_FALSE;
+   obj->changed_move = EINA_FALSE;
+   obj->changed_map = EINA_FALSE;
+   obj->changed_pchange = EINA_FALSE;
+}
+
+void
 evas_object_free(Evas_Object *obj, int clean_layer)
 {
    int was_smart_child = 0;
