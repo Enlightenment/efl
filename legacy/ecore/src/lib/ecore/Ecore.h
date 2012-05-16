@@ -352,7 +352,7 @@ sudo make install
 
 #ifdef _WIN32
 # include <winsock2.h>
-#elif (defined (__FreeBSD__) && (__FreeBSD_version >= 420001)) || defined (__OpenBSD__)
+#elif defined (__FreeBSD__) || defined (__OpenBSD__)
 # include <sys/select.h>
 # include <signal.h>
 #else
