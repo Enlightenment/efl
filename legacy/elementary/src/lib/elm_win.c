@@ -154,7 +154,7 @@ EVAS_SMART_SUBCLASS_NEW
 Eina_List *_elm_win_list = NULL;
 int _elm_win_deferred_free = 0;
 
-// exmaple shot spec (wait 0.1 sec then save as my-window.png):
+// example shot spec (wait 0.1 sec then save as my-window.png):
 // ELM_ENGINE="shot:delay=0.1:file=my-window.png"
 
 static double
