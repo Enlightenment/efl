@@ -2988,6 +2988,8 @@ _set_gl_surface_cap(Render_Engine *re)
    w = h = 2;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   int max_samples = 0;
+
    glGetIntegerv(GL_MAX_SAMPLES_IMG, &max_samples);
 
    // Check if msaa_support is supported
@@ -3011,8 +3013,8 @@ _set_gl_surface_cap(Render_Engine *re)
      }
 
 #endif
-   glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &re->gl_cap.max_rb_size);
 
+   glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &re->gl_cap.max_rb_size);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    count = (re->gl_cap.msaa_support) ? 4 : 1;
@@ -3032,7 +3034,7 @@ _set_gl_surface_cap(Render_Engine *re)
         re->gl_cap.stencil_8[i] = _check_gl_surface_format(0, 0, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX8, re->gl_cap.msaa_samples[i]);
      }
 
-  #else
+#else
    count = (re->gl_cap.msaa_support) ? 4 : 1;
 
    for (i = 0; i < count; i++)
