@@ -185,13 +185,15 @@
  *
  * In general to indicate how the genlist should expand items horizontally to
  * fill the list area, use elm_genlist_mode_set(). Valid modes are
- * ELM_LIST_LIMIT and ELM_LIST_SCROLL. The default is ELM_LIST_SCROLL. This
- * mode means that if items are too wide to fit, the scroller will scroll
- * horizontally. Otherwise items are expanded to fill the width of the
- * viewport of the scroller. If it is ELM_LIST_LIMIT, items will be expanded
- * to the viewport width and limited to that size. This can be combined with
- * a different style that uses edjes' ellipsis feature (cutting text off like
- * this: "tex...").
+ * ELM_LIST_LIMIT, ELM_LIST_COMPRESS and ELM_LIST_SCROLL. The default is
+ * ELM_LIST_SCROLL. This mode means that if items are too wide to fit, the
+ * scroller will scroll horizontally. Otherwise items are expanded to
+ * fill the width of the viewport of the scroller. If it is
+ * ELM_LIST_LIMIT, items will be expanded to the viewport width
+ * if larger than the item, but genlist widget with is
+ * limited to the largest item. D not use ELM_LIST_LIMIT mode with homogenous
+ * mode turned on. ELM_LIST_COMPRESS can be combined with a different style
+ * that uses edjes' ellipsis feature (cutting text off like this: "tex...").
  *
  * Items will only call their selection func and callback when first becoming
  * selected. Any further clicks will do nothing, unless you enable always

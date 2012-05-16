@@ -60,3 +60,11 @@
 2012-05-15  Dave Andreoli
 
 	* Fileselector: honor folder_only when using EIO
+
+2012-05-16 Carsten Haitzler (The Rasterman)
+
+	* Fix genlist ELM_LIST_LIMIT mode to do what it originally did.
+        Documentation was wrong too and code had a slight bug stopping
+        genlist from contracting to min size.
+        * Optimize the case of COMPRESS + homogeneous mode to avoid
+        queue entirely and use existing known item sizes.

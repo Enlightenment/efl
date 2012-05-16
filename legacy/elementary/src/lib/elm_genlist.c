@@ -674,7 +674,7 @@ _sizing_eval(Evas_Object *obj)
    else if (wd->mode == ELM_LIST_LIMIT)
      {
         maxw = -1;
-        minw = vmw + minw;
+        minw = vmw + wd->realminw;
      }
    else
      {
@@ -2336,8 +2336,25 @@ _item_block_recalc(Item_Block *itb,
                }
              else
                {
-                  _item_realize(it, in, EINA_TRUE);
-                  _elm_genlist_item_unrealize(it, EINA_TRUE);
+                  if ((itb->wd->homogeneous) && 
+                      (itb->wd->mode == ELM_LIST_COMPRESS))
+                    {
+                       if (it->group)
+                         {
+                            it->item->w = it->item->minw = it->wd->group_item_width;
+                            it->item->h = it->item->minh = it->wd->group_item_height;
+                         }
+                       else
+                         {
+                            it->item->w = it->item->minw = it->wd->item_width;
+                            it->item->h = it->item->minh = it->wd->item_height;
+                         }
+                    }
+                  else
+                    {
+                       _item_realize(it, in, EINA_TRUE);
+                       _elm_genlist_item_unrealize(it, EINA_TRUE);
+                    }
                }
           }
         else
@@ -4072,10 +4089,38 @@ newblock:
 }
 
 static int
+_item_process(Widget_Data *wd, Elm_Gen_Item *it)
+{
+   if (!_item_block_add(wd, it)) return 1;
+   if (!wd->blocks)
+     _item_block_realize(it->item->block);
+   return 0;
+}
+
+static void
+_item_process_post(Widget_Data *wd, Elm_Gen_Item *it, Eina_Bool qadd)
+{
+   Eina_Bool showme = EINA_FALSE;
+   
+   if (it->item->block->changed)
+     {
+        showme = _item_block_recalc(it->item->block, it->item->block->num, qadd);
+        it->item->block->changed = 0;
+        if (wd->pan_changed)
+          {
+             if (wd->calc_job) ecore_job_del(wd->calc_job);
+             wd->calc_job = NULL;
+             _calc_job(wd);
+             wd->pan_changed = EINA_FALSE;
+          }
+     }
+   if (showme) it->item->block->showme = EINA_TRUE;
+}
+
+static int
 _queue_process(Widget_Data *wd)
 {
    int n;
-   Eina_Bool showme = EINA_FALSE;
    double t0, t;
 
    t0 = ecore_loop_time_get();
@@ -4087,23 +4132,9 @@ _queue_process(Widget_Data *wd)
         it = eina_list_data_get(wd->queue);
         wd->queue = eina_list_remove_list(wd->queue, wd->queue);
         it->item->queued = EINA_FALSE;
-        if (!_item_block_add(wd, it)) continue;
-        if (!wd->blocks)
-          _item_block_realize(it->item->block);
+        if (_item_process(wd, it)) continue;
         t = ecore_time_get();
-        if (it->item->block->changed)
-          {
-             showme = _item_block_recalc(it->item->block, it->item->block->num, EINA_TRUE);
-             it->item->block->changed = 0;
-             if (wd->pan_changed)
-               {
-                  if (wd->calc_job) ecore_job_del(wd->calc_job);
-                  wd->calc_job = NULL;
-                  _calc_job(wd);
-                  wd->pan_changed = EINA_FALSE;
-               }
-          }
-        if (showme) it->item->block->showme = EINA_TRUE;
+        _item_process_post(wd, it, EINA_TRUE);
         /* same as eina_inlist_count > 1 */
         if (wd->blocks && wd->blocks->next)
           {
@@ -4158,6 +4189,12 @@ _item_queue(Widget_Data    *wd,
             Eina_Compare_Cb cb)
 {
    if (it->item->queued) return;
+   if ((wd->blocks) && (wd->homogeneous) && (wd->mode == ELM_LIST_COMPRESS))
+     {
+        if (!_item_process(wd, it))
+          _item_process_post(wd, it, EINA_FALSE);
+        return;
+     }
    it->item->queued = EINA_TRUE;
    if (cb && !wd->requeued)
      wd->queue = eina_list_sorted_insert(wd->queue, cb, it);
@@ -5338,8 +5375,6 @@ elm_genlist_mode_set(Evas_Object  *obj,
    if (!wd) return;
    if (wd->mode == mode) return;
    wd->mode = mode;
-   if (wd->mode == ELM_LIST_COMPRESS)
-     elm_genlist_homogeneous_set(obj, EINA_FALSE);
    _sizing_eval(obj);
 }
 
