@@ -739,7 +739,11 @@
 
 2012-05-14 Sanghee Park
 
-	* Add Multisample Anti-Anliased surface format for Evas GL. 
+	* Add Multisample Anti-Anliased surface format for Evas GL.
         The formats are divided into High, Med, Low, None, where High represent
         max number of samples.  Currently, this feature is only supported in GLES2
         environment with GL_IMG_multisampled_render_to_texture extension supported.
+
+2012-05-16 Vincent Torri
+
+	* Use Esvg for svg rendering. If not found, librsvg is still used.
