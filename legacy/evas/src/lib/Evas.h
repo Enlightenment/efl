@@ -9329,16 +9329,16 @@ struct _Evas_Smart_Class
    int         version;
    void  (*add)         (Evas_Object *o); /**< code to be run when adding object to a canvas */
    void  (*del)         (Evas_Object *o); /**< code to be run when removing object to a canvas */
-   void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y); /**< code to be run when moving object on a canvas */
-   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h); /**< code to be run when resizing object on a canvas */
+   void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y); /**< code to be run when moving object on a canvas. @a x and @a y will be new coordinates one applied to the object. use evas_object_geometry_get() if you need the old values, during this call. after that, the old values will be lost. */
+   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h); /**< code to be run when resizing object on a canvas. @a w and @a h will be new dimensions one applied to the object. use evas_object_geometry_get() if you need the old values, during this call. after that, the old values will be lost. */
    void  (*show)        (Evas_Object *o); /**< code to be run when showing object on a canvas */
    void  (*hide)        (Evas_Object *o); /**< code to be run when hiding object on a canvas */
-   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a); /**< code to be run when setting color of object on a canvas */
-   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip); /**< code to be run when setting clipper of object on a canvas */
-   void  (*clip_unset)  (Evas_Object *o); /**< code to be run when unsetting clipper of object on a canvas */
+   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a); /**< code to be run when setting color of object on a canvas. @a r, @a g, @a b and @a y will be new color components one applied to the object. use evas_object_color_get() if you need the old values, during this call. after that, the old values will be lost. */
+   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip); /**< code to be run when setting clipper of object on a canvas. @a clip will be new clipper one applied to the object. use evas_object_clip_get() if you need the old one, during this call. after that, the old (object pointer) value will be lost. */
+   void  (*clip_unset)  (Evas_Object *o); /**< code to be run when unsetting clipper of object on a canvas. if you need the pointer to a previous set clipper, during this call, use evas_object_clip_get(). after that, the old (object pointer) value will be lost. */
    void  (*calculate)   (Evas_Object *o); /**< code to be run when object has rendering updates on a canvas */
-   void  (*member_add)  (Evas_Object *o, Evas_Object *child); /**< code to be run when child member is added to object */
-   void  (*member_del)  (Evas_Object *o, Evas_Object *child); /**< code to be run when child member is removed from object */
+   void  (*member_add)  (Evas_Object *o, Evas_Object *child); /**< code to be run when a child member is added to object */
+   void  (*member_del)  (Evas_Object *o, Evas_Object *child); /**< code to be run when a child member is removed from object */
 
    const Evas_Smart_Class          *parent; /**< this class inherits from this parent */
    const Evas_Smart_Cb_Description *callbacks; /**< callbacks at this level, @c NULL terminated */
