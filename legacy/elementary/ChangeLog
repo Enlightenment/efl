@@ -72,3 +72,8 @@
 2012-05-16  Dave Andreoli
 
 	* Fileselector: Add a wheel spinner that show/spin while EIO is working
+
+2012-05-16  Tom Hacohen (TAsn)
+
+	* Fix fileselector selection done bug and pass the right string.
+
