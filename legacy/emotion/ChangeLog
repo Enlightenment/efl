@@ -1,35 +1,3 @@
-2007-09-01  Vincent Torri  <doursse at users dot sf dot net>
-
-	* src/modules/emotion_gstreamer.c: (em_file_open):
-	* src/modules/emotion_gstreamer_pipeline.c: (cb_handoff),
-	(emotion_pipeline_dvd_build), (emotion_pipeline_uri_build),
-	(emotion_pipeline_file_build), (_emotion_streams_sinks_get),
-	(_emotion_video_sink_fill), (_emotion_audio_sink_fill):
-	* src/modules/emotion_gstreamer_pipeline.h:
-	add the support of URI playback. Minor fixes.
-	Fix bug #114
-
-2007-10-31  Vincent Torri  <doursse at users dot sf dot net>
-
-	* configure.in:
-	* src/bin/emotion_test_main.c:
-	* src/lib/Makefile.am:
-	* src/lib/emotion_private.h:
-	* src/lib/emotion_smart.c:
-	* src/modules/Makefile.am:
-	* src/modules/emotion_gstreamer.c:
-	Use ecore_plugin instead of dlfcn
-	The modules names are now "xine" and "gstreamer" (it's useless to add
-	the extension, as ecore_plugin does not need it).
-	Look for the modules in path that is pointed by the env variable
-	EMOTION_MODULES_DIR first.
-	Fix a leak in the gstreamer module
-	Remove some trailing spaces
-	Fix bug #223
-
-	add the support of URI playback. Minor fixes.
-	Fix bug #114
-
 2012-04-26 Carsten Haitzler (The Rasterman)
 
 	* 1.0.0 release
@@ -37,3 +5,8 @@
 2012-04-30 Jérôme Pinot
 
 	* Fix build out of tree.
+
+2012-05-16 Carsten Haitzler (The Rasterman)
+
+	* Fix emotion video overlay support to detect correct engine name.
+

@@ -1033,9 +1033,20 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 #if defined HAVE_ECORE_X && defined HAVE_XOVERLAY_H
    if (window_manager_video)
      {
-       engines = evas_render_method_list();
+        Eina_List *l;
+        const char *ename;
+        
+        engines = evas_render_method_list();
 
-       engine = eina_list_nth(engines, evas_output_method_get(evas_object_evas_get(obj)) - 1);
+        EINA_LIST_FOREACH(engines, l, ename)
+          {
+             if (evas_render_method_lookup(ename) == 
+                 evas_output_method_get(evas_object_evas_get(obj)))
+               {
+                  engine = ename;
+                  break;
+               }
+          }
 
        if (ev->priority && engine && strstr(engine, "_x11") != NULL)
 	 {

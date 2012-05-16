@@ -185,33 +185,6 @@ if test "x$want_ecore_x" = "xyes" && test "x$have_ecore_x" = "xno" ; then
     AC_MSG_ERROR([ecore-x support requested, but not found by pkg-config.])
 fi
 
-# Check if gstreamer X Overlay is available
-build_xoverlay="no"
-if test "x${enable_gstreamer}" = "xyes" ; then
-   PKG_CHECK_MODULES([GSTREAMER_INTERFACE],
-      [gstreamer-interfaces-0.10 >= 0.10.34],
-      [build_xoverlay="yes"],
-      [build_xoverlay="no"])
-   if test "x${build_xoverlay}" = "xyes" ; then
-      save_CPPFLAGS=$CPPFLAGS
-      CPPFLAGS="$CPPFLAGS ${GSTREAMER_CFLAGS} ${GSTREAMER_INTERFACE_CFLAGS}"
-      AC_CHECK_HEADER([gst/interfaces/xoverlay.h],
-         [
-          AC_DEFINE(HAVE_XOVERLAY_H, 1, [Build with Gstreamer Xoverlay support])
-          build_xoverlay="yes"
-         ],
-         [build_xoverlay="no"])
-      CPPFLAGS=$save_CPPFLAGS
-
-      save_LDFLAGS=${LDFLAGS}
-      LDFLAGS="${LDFLAGS} ${GSTREAMER_INTERFACES}"
-      AC_CHECK_LIB([gstinterfaces-0.10],
-         [gst_x_overlay_set_window_handle],
-         [AC_DEFINE([HAVE_X_OVERLAY_SET], [1], [Use gst_x_overlay_set_window_handle instead of old deprecated gst_x_overlay_set_xwindow_id])])
-      LDFLAGS=$sava_LDFLAGS
-   fi
-fi
-
 ### Checks for header files
 
 AC_CHECK_HEADERS([unistd.h])
@@ -289,6 +262,32 @@ if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno" && test
    AC_MSG_ERROR([Xine, Gstreamer or Generic backends must be selected to build Emotion])
 fi
 
+# Check if gstreamer X Overlay is available
+build_xoverlay="no"
+if test "x${enable_gstreamer}" = "xyes" ; then
+   PKG_CHECK_MODULES([GSTREAMER_INTERFACE],
+      [gstreamer-interfaces-0.10 >= 0.10.34],
+      [build_xoverlay="yes"],
+      [build_xoverlay="no"])
+   if test "x${build_xoverlay}" = "xyes" ; then
+      save_CPPFLAGS=$CPPFLAGS
+      CPPFLAGS="$CPPFLAGS ${GSTREAMER_CFLAGS} ${GSTREAMER_INTERFACE_CFLAGS}"
+      AC_CHECK_HEADER([gst/interfaces/xoverlay.h],
+         [
+          AC_DEFINE(HAVE_XOVERLAY_H, 1, [Build with Gstreamer Xoverlay support])
+          build_xoverlay="yes"
+         ],
+         [build_xoverlay="no"])
+      CPPFLAGS=$save_CPPFLAGS
+
+      save_LDFLAGS=${LDFLAGS}
+      LDFLAGS="${LDFLAGS} ${GSTREAMER_INTERFACES}"
+      AC_CHECK_LIB([gstinterfaces-0.10],
+         [gst_x_overlay_set_window_handle],
+         [AC_DEFINE([HAVE_X_OVERLAY_SET], [1], [Use gst_x_overlay_set_window_handle instead of old deprecated gst_x_overlay_set_xwindow_id])])
+      LDFLAGS=$sava_LDFLAGS
+   fi
+fi
 
 ### install and build examples
 
