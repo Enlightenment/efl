@@ -473,6 +473,8 @@ _elm_thumb_smart_show(Evas_Object *obj)
 
 #ifdef ELM_ETHUMB
    _thumb_show(sd);
+#else
+   (void)sd;
 #endif
 }
 
