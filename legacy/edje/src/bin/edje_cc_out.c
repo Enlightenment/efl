@@ -178,6 +178,7 @@ struct _Group_Write
 };
 
 static int pending_threads = 0;
+int threads = 1;
 
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
 
@@ -404,8 +405,13 @@ data_write_header(Eet_File *ef)
    hw = calloc(1, sizeof(Head_Write));
    hw->ef = ef;
    pending_threads++;
-   ecore_thread_run(data_thread_head, data_thread_head_end,
-                    NULL, hw);
+   if (threads)
+     ecore_thread_run(data_thread_head, data_thread_head_end, NULL, hw);
+   else
+     {
+        data_thread_head(hw, NULL);
+        data_thread_head_end(hw, NULL);
+     }
 }
 
 static void
@@ -538,8 +544,14 @@ data_write_fonts(Eet_File *ef, int *font_num)
         if (!fc) continue;
         fc->ef = ef;
         fc->fn = fn;
-        ecore_thread_run(data_thread_fonts, data_thread_fonts_end,
-                         NULL, fc);
+        pending_threads++;
+        if (threads)
+          ecore_thread_run(data_thread_fonts, data_thread_fonts_end, NULL, fc);
+        else
+          {
+             data_thread_fonts(fc, NULL);
+             data_thread_fonts_end(fc, NULL);
+          }
         *font_num += 1;
      }
    eina_iterator_free(it);
@@ -764,7 +776,13 @@ data_image_preload_done(void *data, Evas *e __UNUSED__, Evas_Object *o, void *ev
    evas_object_image_size_get(o, &iw->w, &iw->h);
    iw->alpha = evas_object_image_alpha_get(o);
    iw->data = evas_object_image_data_get(o, 0);
-   ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw);
+   if (threads)
+     ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw);
+   else
+     {
+        data_thread_image(iw, NULL);
+        data_thread_image_end(iw, NULL);
+     }
 }
 
 static void
@@ -967,8 +985,13 @@ data_write_sounds(Eet_File *ef, int *sound_num)
              sw->i = i;
              *sound_num += 1;
              pending_threads++;
-             ecore_thread_run(data_thread_sounds, data_thread_sounds_end,
-                              NULL, sw);
+             if (threads)
+               ecore_thread_run(data_thread_sounds, data_thread_sounds_end, NULL, sw);
+             else
+               {
+                  data_thread_sounds(sw, NULL);
+                  data_thread_sounds_end(sw, NULL);
+               }
           }
      }
 }
@@ -1059,8 +1082,13 @@ data_write_groups(Eet_File *ef, int *collection_num)
         gw->ef = ef;
         gw->pc = pc;
         pending_threads++;
-        ecore_thread_run(data_thread_group, data_thread_group_end,
-                         NULL, gw);
+        if (threads)
+          ecore_thread_run(data_thread_group, data_thread_group_end, NULL, gw);
+        else
+          {
+             data_thread_group(gw, NULL);
+             data_thread_group_end(gw, NULL);
+          }
         *collection_num += 1;
      }
 }
@@ -1249,8 +1277,13 @@ data_scripts_exe_del_cb(void *data __UNUSED__, int evtype __UNUSED__, void *evin
         return ECORE_CALLBACK_CANCEL;
      }
    pending_threads++;
-   ecore_thread_run(data_thread_script, data_thread_script_end,
-                    NULL, sc);
+   if (threads)
+     ecore_thread_run(data_thread_script, data_thread_script_end, NULL, sc);
+   else
+     {
+        data_thread_script(sc, NULL);
+        data_thread_script_end(sc, NULL);
+     }
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1487,8 +1520,13 @@ data_write_lua_scripts(Eet_File *ef)
         sc->cd = cd;
         sc->i = i;
         pending_threads++;
-        ecore_thread_run(data_thread_lua_script, data_thread_lua_script_end,
-                         NULL, sc);
+        if (threads)
+          ecore_thread_run(data_thread_lua_script, data_thread_lua_script_end, NULL, sc);
+        else
+          {
+             data_thread_lua_script(sc, NULL);
+             data_thread_lua_script_end(sc, NULL);
+          }
      }
 }
 
@@ -1571,13 +1609,25 @@ data_write(void)
         printf("lua scripts: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
      }
    pending_threads++;
-   ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef);
+   if (threads)
+     ecore_thread_run(data_thread_source, data_thread_source_end, NULL, ef);
+   else
+     {
+        data_thread_source(ef, NULL);
+        data_thread_source_end(ef, NULL);
+     }
    if (verbose)
      {
         printf("source: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
      }
    pending_threads++;
-   ecore_thread_run(data_thread_fontmap, data_thread_fontmap_end, NULL, ef);
+   if (threads)
+     ecore_thread_run(data_thread_fontmap, data_thread_fontmap_end, NULL, ef);
+   else
+     {
+        data_thread_fontmap(ef, NULL);
+        data_thread_fontmap_end(ef, NULL);
+     }
    if (verbose)
      {
         printf("fontmap: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
@@ -1597,13 +1647,18 @@ data_write(void)
      {
         printf("sounds: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
      }
-
-   ecore_main_loop_begin();
+   if (pending_threads > 0) ecore_main_loop_begin();
+   // XXX: workaround ecore thread bug where it creates an internal worker
+   // thread task we don't know about and it is STILL active at this point
+   // and in the middle of shutting down, so if we get to exit the process
+   // it's still busy and will crash accessing stuff
+   while ((ecore_thread_active_get() + ecore_thread_pending_get()) > 0)
+     ecore_main_loop_iterate();
    if (verbose)
      {
         printf("THREADS: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
      }
-   
+
    eet_close(ef);
 
    if (verbose)
