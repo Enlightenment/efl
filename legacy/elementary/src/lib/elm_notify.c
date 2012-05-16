@@ -487,6 +487,25 @@ _elm_notify_smart_focus_next(const Evas_Object *obj,
 }
 
 static Eina_Bool
+_elm_notify_smart_focus_direction(const Evas_Object *obj,
+                                  const Evas_Object *base,
+                                  double degree,
+                                  Evas_Object **direction,
+                                  double *weight)
+{
+   Evas_Object *cur;
+
+   ELM_NOTIFY_DATA_GET(obj, sd);
+
+   if (!sd->content)
+     return EINA_FALSE;
+
+   cur = sd->content;
+
+   return elm_widget_focus_direction_get(cur, base, degree, direction, weight);
+}
+
+static Eina_Bool
 _elm_notify_smart_content_set(Evas_Object *obj,
                               const char *part,
                               Evas_Object *content)
@@ -591,6 +610,7 @@ _elm_notify_smart_set_user(Elm_Container_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_notify_smart_theme;
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_notify_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->focus_direction = _elm_notify_smart_focus_direction;
 
    ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_notify_smart_sub_object_del;
 
