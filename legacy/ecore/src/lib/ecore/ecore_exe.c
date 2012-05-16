@@ -368,6 +368,10 @@ ecore_exe_run_priority_get(void)
  * Spawns a child process.
  *
  * This is now just a thin wrapper around ecore_exe_pipe_run()
+ * @note When you use this function you will have no permissions
+ * to write or read on the pipe that connects you with the spwaned process.
+ * If you need to do that use ecore_exe_pipe_run() with the
+ * appropriated flags.
  *
  * @param   exe_cmd The command to run with @c /bin/sh.
  * @param   data    Data to attach to the returned process handle.
