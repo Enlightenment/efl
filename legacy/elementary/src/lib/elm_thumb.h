@@ -1,40 +1,46 @@
 /**
- * @defgroup Thumb Thumb
+ * @defgroup Thumb Thumbnail
  * @ingroup Elementary
  *
  * @image html img/widget/thumb/preview-00.png
  * @image latex img/widget/thumb/preview-00.eps
  *
- * A thumb object is used for displaying the thumbnail of an image or video.
- * You must have compiled Elementary with Ethumb_Client support and the DBus
- * service must be present and auto-activated in order to have thumbnails to
- * be generated. You must also have a Session bus, not System bus.
+ * A thumbnail object is used for displaying the thumbnail of an image
+ * or video. You must have compiled Elementary with @c Ethumb_Client
+ * support. Also, Ethumb's DBus service must be present and
+ * auto-activated in order to have thumbnails generated. You must also
+ * have a @b session bus, not a @b system one.
  *
- * Once the thumbnail object becomes visible, it will check if there is a
- * previously generated thumbnail image for the file set on it. If not, it
- * will start generating this thumbnail.
+ * Once the thumbnail object becomes visible, it will check if there
+ * is a previously generated thumbnail image for the file set on
+ * it. If not, it will start generating this thumbnail.
  *
- * Different config settings will cause different thumbnails to be generated
- * even on the same file.
+ * Different configuration settings will cause different thumbnails to
+ * be generated even on the same file.
  *
- * Generated thumbnails are stored under @c $HOME/.thumbnails/. Check the
- * Ethumb documentation to change this path, and to see other configuration
- * options.
+ * Generated thumbnails are stored under @c $HOME/.thumbnails/. Check
+ * Ethumb's documentation to change this path, and to see other
+ * configuration options.
  *
- * Signals that you can add callbacks for are:
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for thumbnail objects.
  *
- * - "clicked" - This is called when a user has clicked the thumb without dragging
- *             around.
- * - "clicked,double" - This is called when a user has double-clicked the thumb.
- * - "press" - This is called when a user has pressed down the thumb.
- * - "generate,start" - The thumbnail generation started.
- * - "generate,stop" - The generation process stopped.
- * - "generate,error" - The generation failed.
- * - "load,error" - The thumbnail image loading failed.
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * - @c "clicked" - This is called when a user has clicked the
+ *                  thumbnail object without dragging it around.
+ * - @c "clicked,double" - This is called when a user has double-clicked
+ *                         the thumbnail object.
+ * - @c "press" - This is called when a user has pressed down over the
+ *                thumbnail object.
+ * - @c "generate,start" - The thumbnail generation has started.
+ * - @c "generate,stop" - The generation process has stopped.
+ * - @c "generate,error" - The thumbnail generation failed.
+ * - @c "load,error" - The thumbnail image loading failed.
  *
- * available styles:
- * - default
- * - noframe
+ * Available styles:
+ * - @c "default"
+ * - @c "noframe"
  *
  * An example of use of thumbnail:
  *
@@ -94,15 +100,19 @@ EAPI Evas_Object                *elm_thumb_add(Evas_Object *parent);
 EAPI void                        elm_thumb_reload(Evas_Object *obj);
 
 /**
- * Set the file that will be used as thumbnail.
+ * Set the file that will be used as thumbnail @b source.
  *
  * @param obj The thumb object.
- * @param file The path to file that will be used as thumb.
+ * @param file The path to file that will be used as thumbnail source.
  * @param key The key used in case of an EET file.
  *
- * The file can be an image or a video (in that case, acceptable extensions are:
- * avi, mp4, ogv, mov, mpg and wmv). To start the video animation, use the
- * function elm_thumb_animate().
+ * The file can be an image or a video (in that case, acceptable
+ * extensions are: avi, mp4, ogv, mov, mpg and wmv). To start the
+ * video animation, use the function elm_thumb_animate().
+ *
+ * @warning Not to be confused with elm_layout_file_set(), which sets
+ * the file giving the thumbnail objcet's @b decoration, not the
+ * thumbnail image's source.
  *
  * @see elm_thumb_file_get()
  * @see elm_thumb_reload()
