@@ -111,7 +111,22 @@ struct _Code_Lookup
    Eina_Bool set;
 };
 
-typedef struct _Script_Compile
+typedef struct _Script_Lua_Writer Script_Lua_Writer;
+
+struct _Script_Lua_Writer
+{
+   char *buf;
+   int size;
+};
+
+typedef struct _Script_Write Script_Write;;
+typedef struct _Head_Write Head_Write;
+typedef struct _Fonts_Write Fonts_Write;
+typedef struct _Image_Write Image_Write;
+typedef struct _Sound_Write Sound_Write;
+typedef struct _Group_Write Group_Write;
+
+struct _Script_Write
 {
    Eet_File *ef;
    Code *cd;
@@ -121,7 +136,46 @@ typedef struct _Script_Compile
    char tmpn[PATH_MAX];
    char tmpo[PATH_MAX];
    char *errstr;
-} Script_Compile;
+};
+
+struct _Head_Write
+{
+   Eet_File *ef;
+   char *errstr;
+};
+
+struct _Fonts_Write
+{
+   Eet_File *ef;
+   Font *fn;
+   char *errstr;
+};
+
+struct _Image_Write
+{
+   Eet_File *ef;
+   Edje_Image_Directory_Entry *img;
+   Evas_Object *im;
+   int w, h;
+   int alpha;
+   unsigned int *data;
+   char *path;
+   char *errstr;
+};
+
+struct _Sound_Write
+{
+   Eet_File *ef;
+   Edje_Sound_Sample *sample;
+   int i;
+};
+
+struct _Group_Write
+{
+   Eet_File *ef;
+   Edje_Part_Collection *pc;
+   char *errstr;
+};
 
 static int pending_threads = 0;
 
@@ -261,12 +315,6 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
      }
 }
 
-typedef struct _Head_Write
-{
-   Eet_File *ef;
-   char *errstr;
-} Head_Write;
-
 static void
 data_thread_head(void *data, Ecore_Thread *thread __UNUSED__)
 {
@@ -360,17 +408,10 @@ data_write_header(Eet_File *ef)
                     NULL, hw);
 }
 
-typedef struct _Fonts_Compile
-{
-   Eet_File *ef;
-   Font *fn;
-   char *errstr;
-} Fonts_Compile;
-
 static void
 data_thread_fonts(void *data, Ecore_Thread *thread __UNUSED__)
 {
-   Fonts_Compile *fc = data;
+   Fonts_Write *fc = data;
    void *fdata = NULL;
    int fsize = 0;
    Eina_List *ll;
@@ -469,7 +510,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread __UNUSED__)
 static void
 data_thread_fonts_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
-   Fonts_Compile *fc = data;
+   Fonts_Write *fc = data;
    pending_threads--;
    if (pending_threads <= 0) ecore_main_loop_quit();
    if (fc->errstr)
@@ -491,9 +532,9 @@ data_write_fonts(Eet_File *ef, int *font_num)
    it = eina_hash_iterator_data_new(edje_file->fonts);
    EINA_ITERATOR_FOREACH(it, fn)
      {
-        Fonts_Compile *fc;
+        Fonts_Write *fc;
         
-        fc = calloc(1, sizeof(Fonts_Compile));
+        fc = calloc(1, sizeof(Fonts_Write));
         if (!fc) continue;
         fc->ef = ef;
         fc->fn = fn;
@@ -548,6 +589,9 @@ error_and_abort_image_load_error(Eet_File *ef, const char *file, int error)
 	  "pgm",
 	  "ppm",
 	  "pnm",
+	  "bmp",
+	  "ico",
+	  "tga",
 	  NULL
 	};
 
@@ -585,17 +629,6 @@ error_and_abort_image_load_error(Eet_File *ef, const char *file, int error)
      (ef, "Unable to load image \"%s\" used by file \"%s\": %s.%s\n",
       file, file_out, errmsg, hint);
 }
-
-typedef struct _Image_Write
-{
-   Eet_File *ef;
-   Edje_Image_Directory_Entry *img;
-   Evas_Object *im;
-   int w, h;
-   int alpha;
-   unsigned int *data;
-   char *errstr;
-} Image_Write;
 
 static void
 data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
@@ -677,8 +710,7 @@ data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
              snprintf(buf, sizeof(buf),
                       "Unable to write image part "
                       "\"%s\" as \"%s\" part entry to "
-                      "%s\n", iw->img->entry, buf,
-                      file_out);
+                      "%s\n", iw->img->entry, buf, file_out);
              iw->errstr = strdup(buf);
              return;
           }
@@ -689,8 +721,7 @@ data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
         snprintf(buf, sizeof(buf),
                  "Unable to load image part "
                  "\"%s\" as \"%s\" part entry to "
-                 "%s\n", iw->img->entry, buf,
-                 file_out);
+                 "%s\n", iw->img->entry, buf, file_out);
         iw->errstr = strdup(buf);
         return;
      }
@@ -698,17 +729,13 @@ data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
    if (verbose)
      {
         struct stat st;
-        const char *file = NULL;
-/*        
-        evas_object_image_file_get(im, &file, NULL);
-        if (!file || (stat(file, &st) != 0))
-          st.st_size = 0;
+
+        if (!iw->path || (!stat(iw->path, &st))) st.st_size = 0;
         printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
-               progname, bytes, (bytes + 512) / 1024, buf, img->entry,
-               100 - (100 * (double)bytes) / ((double)(im_w * im_h * 4)),
+               progname, bytes, (bytes + 512) / 1024, buf, iw->img->entry,
+               100 - (100 * (double)bytes) / ((double)(iw->w * iw->h * 4)),
                100 - (100 * (double)bytes) / ((double)(st.st_size))
               );
- */
      }
 }
 
@@ -724,6 +751,7 @@ data_thread_image_end(void *data, Ecore_Thread *thread __UNUSED__)
         error_and_abort(iw->ef, iw->errstr);
         free(iw->errstr);
      }
+   if (iw->path) free(iw->path);
    evas_object_del(iw->im);
    free(iw);
 }
@@ -739,7 +767,6 @@ data_image_preload_done(void *data, Evas *e __UNUSED__, Evas_Object *o, void *ev
    ecore_thread_run(data_thread_image, data_thread_image_end, NULL, iw);
 }
 
-// WARNING - uses evas to LOAD image... this can't be done in threads! :(
 static void
 data_write_images(Eet_File *ef, int *image_num)
 {
@@ -756,7 +783,7 @@ data_write_images(Eet_File *ef, int *image_num)
                      "load.\n");
    evas = ecore_evas_get(ee);
    
-   for (i = 0; i < edje_file->image_dir->entries_count; i++)
+   for (i = 0; i < (int)edje_file->image_dir->entries_count; i++)
      {
         Edje_Image_Directory_Entry *img;
         
@@ -790,6 +817,8 @@ data_write_images(Eet_File *ef, int *image_num)
                   load_err = evas_object_image_load_error_get(im);
                   if (load_err == EVAS_LOAD_ERROR_NONE)
                     {
+                       *image_num += 1;
+                       iw->path = strdup(buf);
                        pending_threads++;
                        evas_object_image_preload(im, 0);
                        using_file(buf);
@@ -802,6 +831,8 @@ data_write_images(Eet_File *ef, int *image_num)
                   load_err = evas_object_image_load_error_get(im);
                   if (load_err == EVAS_LOAD_ERROR_NONE)
                     {
+                       *image_num += 1;
+                       iw->path = strdup(img->entry);
                        pending_threads++;
                        evas_object_image_preload(im, 0);
                        using_file(img->entry);
@@ -813,13 +844,6 @@ data_write_images(Eet_File *ef, int *image_num)
 	  }
      }
 }
-
-typedef struct _Sound_Write
-{
-   Eet_File *ef;
-   Edje_Sound_Sample *sample;
-   int i;
-} Sound_Write;
 
 static void
 data_thread_sounds(void *data, Ecore_Thread *thread __UNUSED__)
@@ -928,9 +952,6 @@ data_thread_sounds_end(void *data, Ecore_Thread *thread __UNUSED__)
 static void
 data_write_sounds(Eet_File *ef, int *sound_num)
 {
-   int bytes = 0;
-   int total_bytes = 0;
-   
    if ((edje_file) && (edje_file->sound_dir))
      {
         int i;
@@ -977,13 +998,6 @@ check_groups(Eet_File *ef)
 	CHECK_PROGRAM(nocmp, pc, i);
      }
 }
-
-typedef struct _Group_Write
-{
-   Eet_File *ef;
-   Edje_Part_Collection *pc;
-   char *errstr;
-} Group_Write;
 
 static void
 data_thread_group(void *data, Ecore_Thread *thread __UNUSED__)
@@ -1132,7 +1146,7 @@ create_script_file(Eet_File *ef, const char *filename, const Code *cd, int fd)
 static void
 data_thread_script(void *data, Ecore_Thread *thread __UNUSED__)
 {
-   Script_Compile *sc = data;
+   Script_Write *sc = data;
    FILE *f;
    int size;
    char buf[PATH_MAX];
@@ -1210,7 +1224,7 @@ data_thread_script(void *data, Ecore_Thread *thread __UNUSED__)
 static void
 data_thread_script_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
-   Script_Compile *sc = data;
+   Script_Write *sc = data;
    pending_threads--;
    if (pending_threads <= 0) ecore_main_loop_quit();
    if (sc->errstr)
@@ -1224,7 +1238,7 @@ data_thread_script_end(void *data, Ecore_Thread *thread __UNUSED__)
 static Eina_Bool
 data_scripts_exe_del_cb(void *data __UNUSED__, int evtype __UNUSED__, void *evinfo)
 {
-   Script_Compile *sc = data;
+   Script_Write *sc = data;
    Ecore_Exe_Event_Del *ev = evinfo;
    
    if (!ev->exe) return ECORE_CALLBACK_RENEW;
@@ -1256,14 +1270,14 @@ data_write_scripts(Eet_File *ef)
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
 	Code *cd = eina_list_data_get(l);
-        Script_Compile *sc;
+        Script_Write *sc;
         char buf[PATH_MAX];
 
 	if (cd->is_lua)
 	  continue;
 	if ((!cd->shared) && (!cd->programs))
 	  continue;
-        sc = calloc(1, sizeof(Script_Compile));
+        sc = calloc(1, sizeof(Script_Write));
         sc->ef = ef;
         sc->cd = cd;
         sc->i = i;
@@ -1293,22 +1307,14 @@ data_write_scripts(Eet_File *ef)
      }
 }
 
-typedef struct _Edje_Lua_Script_Writer_Struct Edje_Lua_Script_Writer_Struct;
-
-struct _Edje_Lua_Script_Writer_Struct
-{
-   char *buf;
-   int size;
-};
-
 #ifdef LUA_BINARY
 static int
 _edje_lua_script_writer(lua_State *L __UNUSED__, const void *chunk_buf, size_t chunk_size, void *_data)
 {
-   Edje_Lua_Script_Writer_Struct *data;
+   Script_Lua_Writer *data;
    void *old;
 
-   data = (Edje_Lua_Script_Writer_Struct *)_data;
+   data = (Script_Lua_Writer *)_data;
    old = data->buf;
    data->buf = malloc(data->size + chunk_size);
    memcpy(data->buf, old, data->size);
@@ -1321,7 +1327,7 @@ _edje_lua_script_writer(lua_State *L __UNUSED__, const void *chunk_buf, size_t c
 #endif
 
 void
-_edje_lua_error_and_abort(lua_State *L, int err_code, Script_Compile *sc)
+_edje_lua_error_and_abort(lua_State *L, int err_code, Script_Write *sc)
 {
    char buf[PATH_MAX];
    char *err_type;
@@ -1352,12 +1358,12 @@ _edje_lua_error_and_abort(lua_State *L, int err_code, Script_Compile *sc)
 static void
 data_thread_lua_script(void *data, Ecore_Thread *thread __UNUSED__)
 {
-   Script_Compile *sc = data;
+   Script_Write *sc = data;
    char buf[PATH_MAX];
    lua_State *L;
    int ln = 1;
    luaL_Buffer b;
-   Edje_Lua_Script_Writer_Struct dat;
+   Script_Lua_Writer dat;
    Eina_List *ll;
    Code_Program *cp;
 #ifdef LUA_BINARY
@@ -1448,7 +1454,7 @@ data_thread_lua_script(void *data, Ecore_Thread *thread __UNUSED__)
 static void
 data_thread_lua_script_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
-   Script_Compile *sc = data;
+   Script_Write *sc = data;
    pending_threads--;
    if (pending_threads <= 0) ecore_main_loop_quit();
    if (sc->errstr)
@@ -1468,7 +1474,7 @@ data_write_lua_scripts(Eet_File *ef)
    for (i = 0, l = codes; l; l = eina_list_next(l), i++)
      {
         Code *cd;
-        Script_Compile *sc;
+        Script_Write *sc;
         
         cd = (Code *)eina_list_data_get(l);
         if (!cd->is_lua)
@@ -1476,7 +1482,7 @@ data_write_lua_scripts(Eet_File *ef)
         if ((!cd->shared) && (!cd->programs))
           continue;
         
-        sc = calloc(1, sizeof(Script_Compile));
+        sc = calloc(1, sizeof(Script_Write));
         sc->ef = ef;
         sc->cd = cd;
         sc->i = i;
