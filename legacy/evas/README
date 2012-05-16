@@ -27,7 +27,7 @@ Recommended:
   liblinebreak
 
 Optional:
-  XCB SDL OpenGL librsvg libtiff libgif edb DirectFB evas_generic_loaders
+  XCB SDL OpenGL esvg/librsvg libtiff libgif edb DirectFB evas_generic_loaders
 
 Evas is a clean display canvas API for several target display systems
 that can draw anti-aliased text, smooth super and sub-sampled scaled
@@ -506,11 +506,24 @@ bitmap data in binary or ascii format
 
 --enable-image-loader-svg[=static]
 
-this loader can load svg files via librsvg (thus it is a dependency).
-this loader supports load options to set the dpi to decode the svg at
-etc. which can then be used to create scalable images that scale to
-any size without becoming blocky or blurry, if the source is an svg
-file.
+this loader can load svg files via esvg or librsvg (thus it is a
+dependency). This loader supports load options to set the dpi to
+decode the svg at etc. which can then be used to create scalable
+images that scale to any size without becoming blocky or blurry, if
+the source is an svg file.
+
+Esvg can be found here:
+
+http://code.google.com/p/enesim/
+
+Install (in that order):
+
+enesim
+emage
+etex
+ender
+etch
+egueb
 
 
 --enable-image-loader-tiff[=static]

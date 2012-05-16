@@ -228,15 +228,21 @@ AC_DEFUN([EVAS_CHECK_LOADER_DEP_SVG],
 [
 
 requirement=""
-have_dep="no"
+have_esvg="no"
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
 
-PKG_CHECK_MODULES([SVG], [librsvg-2.0 >= 2.14.0
-                          cairo >= 1.0.0],
-   [have_dep="yes" requirement="librsvg-2.0 cairo"],
-   [have_svg="no"]
-)
+PKG_CHECK_MODULES([SVG],
+   [esvg >= 0.0.16],
+   [have_dep="yes" have_esvg="yes" requirement="esvg"],
+   [have_dep="no"])
+
+if test "x${have_dep}" = "xno" ; then
+   PKG_CHECK_MODULES([SVG],
+      [librsvg-2.0 >= 2.14.0 cairo >= 1.0.0],
+      [have_dep="yes" requirement="librsvg-2.0 cairo"],
+      [have_dep="no"])
+fi
 
 if test "x${have_dep}" = "xyes" ; then
    evas_image_loader_[]$1[]_cflags="${SVG_CFLAGS}"
@@ -249,6 +255,8 @@ AC_SUBST([evas_image_loader_$1_libs])
 if test "x$2" = "xstatic" ; then
    requirement_evas="${requirement} ${requirement_evas}"
 fi
+
+AM_CONDITIONAL(BUILD_LOADER_SVG_ESVG, [test "x${have_esvg}" = "xyes"])
 
 if test "x${have_dep}" = "xyes" ; then
   m4_default([$3], [:])
