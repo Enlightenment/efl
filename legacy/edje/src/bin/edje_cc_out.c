@@ -1566,6 +1566,7 @@ data_write(void)
    int sound_num = 0;
    int font_num = 0;
    int collection_num = 0;
+   int i;
    double t;
    
    if (!edje_file)
@@ -1652,8 +1653,14 @@ data_write(void)
    // thread task we don't know about and it is STILL active at this point
    // and in the middle of shutting down, so if we get to exit the process
    // it's still busy and will crash accessing stuff
+   i = 0;
    while ((ecore_thread_active_get() + ecore_thread_pending_get()) > 0)
-     ecore_main_loop_iterate();
+     {
+        ecore_main_loop_iterate();
+        usleep(1);
+        i++;
+        if (i > 100) break;
+     }
    if (verbose)
      {
         printf("THREADS: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
