@@ -142,6 +142,12 @@
  * @li @ref elm_object_part_content_get
  * @li @ref elm_object_part_content_unset
  *
+ * @section layout-signals Emitted signals
+ *
+ * This widget emits the following signals:
+ *
+ * @li "theme,changed": The theme was changed.
+ *
  * @section secExamples Examples
  *
  * Some examples of the Layout widget can be found here:
