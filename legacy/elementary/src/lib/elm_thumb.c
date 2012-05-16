@@ -8,7 +8,7 @@ typedef struct _Elm_Thumb_Smart_Data Elm_Thumb_Smart_Data;
 
 struct _Elm_Thumb_Smart_Data
 {
-   Elm_Layout_Smart_Data base;
+   Elm_Widget_Smart_Data base;
 
    Evas_Object          *view;  /* actual thumbnail, to be swallowed
                                  * at the thumb frame */
@@ -103,11 +103,9 @@ EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
   if (!obj || !elm_widget_type_check((obj), THUMB_SMART_NAME, __func__)) \
     return
 
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (THUMB_SMART_NAME, _elm_thumb, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
+  (THUMB_SMART_NAME, _elm_thumb, Elm_Widget_Smart_Class,
+  Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
 static void
@@ -164,7 +162,7 @@ _thumb_ready_inform(Elm_Thumb_Smart_Data *sd,
    evas_object_size_hint_aspect_set
      (sd->view, EVAS_ASPECT_CONTROL_BOTH, aw, ah);
    elm_layout_content_set
-     (ELM_WIDGET_DATA(sd)->obj, "elm.swallow.content", sd->view);
+     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.swallow.content", sd->view);
    edje_object_size_min_get(ELM_WIDGET_DATA(sd)->resize_obj, &mw, &mh);
    edje_object_size_min_restricted_calc
      (ELM_WIDGET_DATA(sd)->resize_obj, &mw, &mh, mw, mh);
@@ -172,9 +170,9 @@ _thumb_ready_inform(Elm_Thumb_Smart_Data *sd,
    eina_stringshare_replace(&(sd->thumb.file), thumb_path);
    eina_stringshare_replace(&(sd->thumb.key), thumb_key);
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->obj, EDJE_SIGNAL_PULSE_STOP, "elm");
+     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_PULSE_STOP, "elm");
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
+     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
    evas_object_smart_callback_call
      (ELM_WIDGET_DATA(sd)->obj, SIG_GENERATE_STOP, NULL);
 }
@@ -352,7 +350,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
           sd->view = NULL;
 
           elm_layout_signal_emit
-            (ELM_WIDGET_DATA(sd)->obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
+            (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
           evas_object_smart_callback_call
             (ELM_WIDGET_DATA(sd)->obj, SIG_LOAD_ERROR, NULL);
        }
@@ -361,7 +359,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
 
 err:
    elm_layout_signal_emit
-     (ELM_WIDGET_DATA(sd)->obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
+     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_LOAD_ERROR, "elm");
    evas_object_smart_callback_call
      (ELM_WIDGET_DATA(sd)->obj, SIG_LOAD_ERROR, NULL);
 }
@@ -405,7 +403,7 @@ _on_ethumb_thumb_error(Ethumb_Client *client __UNUSED__,
        sd->thumb.file, sd->thumb.key ? sd->thumb.key : "");
 
    elm_layout_signal_emit
-       (ELM_WIDGET_DATA(sd)->obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
+     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_GENERATE_ERROR, "elm");
    evas_object_smart_callback_call
      (ELM_WIDGET_DATA(sd)->obj, SIG_GENERATE_ERROR, NULL);
 }
@@ -427,9 +425,9 @@ _thumb_start(Elm_Thumb_Smart_Data *sd)
    if (!sd->file) return;
 
    elm_layout_signal_emit
-       (ELM_WIDGET_DATA(sd)->obj, EDJE_SIGNAL_PULSE_START, "elm");
+     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_PULSE_START, "elm");
    elm_layout_signal_emit
-       (ELM_WIDGET_DATA(sd)->obj, EDJE_SIGNAL_GENERATE_START, "elm");
+     (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_GENERATE_START, "elm");
    evas_object_smart_callback_call
      (ELM_WIDGET_DATA(sd)->obj, SIG_GENERATE_START, NULL);
 
@@ -494,7 +492,8 @@ _elm_thumb_smart_hide(Evas_Object *obj)
         ethumb_client_thumb_async_cancel(_elm_ethumb_client, sd->thumb.request);
         sd->thumb.request = NULL;
 
-        elm_layout_signal_emit(obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
+        elm_layout_signal_emit
+          (ELM_WIDGET_DATA(sd)->resize_obj, EDJE_SIGNAL_GENERATE_STOP, "elm");
         evas_object_smart_callback_call
           (ELM_WIDGET_DATA(sd)->obj, SIG_GENERATE_STOP, NULL);
      }
@@ -542,6 +541,7 @@ _on_die_cb(void *data __UNUSED__,
    _elm_ethumb_connected = EINA_FALSE;
    _elm_ethumb_client = ethumb_client_connect(_connect_cb, NULL, NULL);
 }
+
 #endif
 
 void
@@ -589,8 +589,6 @@ _elm_thumb_smart_add(Evas_Object *obj)
    EVAS_SMART_DATA_ALLOC(obj, Elm_Thumb_Smart_Data);
 
    ELM_WIDGET_CLASS(_elm_thumb_parent_sc)->base.add(obj);
-
-   elm_layout_theme_set(obj, "thumb", "base", elm_widget_style_get(obj));
 
    priv->view = NULL;
    priv->file = NULL;
@@ -643,7 +641,7 @@ _elm_thumb_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_thumb_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_thumb_smart_set_user(Elm_Widget_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_thumb_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_thumb_smart_del;
@@ -667,6 +665,14 @@ elm_thumb_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
+
+   ELM_THUMB_DATA_GET(obj, sd);
+
+   elm_widget_resize_object_set(obj, elm_layout_add(obj));
+
+   elm_layout_theme_set
+     (ELM_WIDGET_DATA(sd)->resize_obj, "thumb", "base",
+     elm_widget_style_get(obj));
 
    return obj;
 }

@@ -22,11 +22,7 @@
  * Ethumb's documentation to change this path, and to see other
  * configuration options.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for thumbnail objects.
- *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * This widget emits the following signals:
  * - @c "clicked" - This is called when a user has clicked the
  *                  thumbnail object without dragging it around.
  * - @c "clicked,double" - This is called when a user has double-clicked
@@ -109,10 +105,6 @@ EAPI void                        elm_thumb_reload(Evas_Object *obj);
  * The file can be an image or a video (in that case, acceptable
  * extensions are: avi, mp4, ogv, mov, mpg and wmv). To start the
  * video animation, use the function elm_thumb_animate().
- *
- * @warning Not to be confused with elm_layout_file_set(), which sets
- * the file giving the thumbnail objcet's @b decoration, not the
- * thumbnail image's source.
  *
  * @see elm_thumb_file_get()
  * @see elm_thumb_reload()
