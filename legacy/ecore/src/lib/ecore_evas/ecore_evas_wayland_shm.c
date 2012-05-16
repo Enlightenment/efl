@@ -72,6 +72,7 @@ static void _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
+static void _ecore_evas_wl_ensure_pool_size(Ecore_Evas *ee, int w, int h);
 static struct wl_shm_pool *_ecore_evas_wl_shm_pool_create(int size, void **data);
 
 static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, struct wl_shm_pool *pool);
@@ -458,11 +459,13 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
 static void 
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 {
+   Evas_Engine_Info_Wayland_Shm *einfo;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!ee) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (ee->prop.min.w > w) w = ee->prop.min.w;
    else if (w > ee->prop.max.w) w = ee->prop.max.w;
@@ -503,56 +506,20 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
         if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
         ee->engine.wl.buffer = NULL;
 
-   Evas_Engine_Info_Wayland_Shm *einfo;
-   struct wl_shm_pool *pool = NULL;
-   int stride = 0;
-   size_t len = 0;
-   void *data;
-
-   stride = ee->w * sizeof(int);
-   len = stride * ee->h;
-
-   if ((ee->engine.wl.pool) && (len < ee->engine.wl.pool_size))
-     {
-        pool = ee->engine.wl.pool;
-        data = ee->engine.wl.pool_data;
-     }
-   else
-     {
-        int w = 0, size = 0;
-
-        ecore_wl_screen_size_get(&w, NULL);
-
-        if (w == 0) w = 1024;
-
-        size = (6 * w * w);
-        pool = 
-          _ecore_evas_wl_shm_pool_create(size, &data);
-        ee->engine.wl.pool_size = size;
-     }
-
-   if (data != ee->engine.wl.pool_data)
-     {
-        if (ee->engine.wl.pool)
-          wl_shm_pool_destroy(ee->engine.wl.pool);
-
-        ee->engine.wl.pool = pool;
-        ee->engine.wl.pool_data = data;
-     }
-
+        _ecore_evas_wl_ensure_pool_size(ee, w, h);
 
         if (ee->engine.wl.pool)
           _ecore_evas_wl_buffer_new(ee, ee->engine.wl.pool);
 
-   einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
-   if (!einfo)
-     {
-        ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
-        return;
-     }
+        einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
+        if (!einfo)
+          {
+            ERR("Failed to get Evas Engine Info for '%s'", ee->driver);
+            return;
+          }
 
-   einfo->info.dest = data;
-   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+        einfo->info.dest = ee->engine.wl.pool_data;
+        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
         if (ee->engine.wl.win)
           {
@@ -565,52 +532,52 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
      }
 }
 
-static void 
+static void
+_ecore_evas_wl_ensure_pool_size(Ecore_Evas *ee, int w, int h)
+{
+   int stride = 0;
+   size_t len = 0;
+
+   stride = w * sizeof(int);
+   len = stride * h;
+
+   if ((ee->engine.wl.pool) && (len < ee->engine.wl.pool_size))
+     return;
+   else
+     {
+        struct wl_shm_pool *pool = NULL;
+        void *data;
+        int size;
+
+        if (ee->engine.wl.pool)
+          wl_shm_pool_destroy(ee->engine.wl.pool);
+
+        /*
+         * Make the pool 1.5 times the current requirement to allow growth
+         * without requiring a new pool allocation
+         */
+        size = 1.5 * len;
+        pool = _ecore_evas_wl_shm_pool_create(size, &data);
+
+        ee->engine.wl.pool = pool;
+        ee->engine.wl.pool_size = size;
+        ee->engine.wl.pool_data = data;
+     }
+}
+
+static void
 _ecore_evas_wl_show(Ecore_Evas *ee)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
-   struct wl_shm_pool *pool = NULL;
-   int stride = 0;
-   size_t len = 0;
-   void *data;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if ((!ee) || (ee->visible)) return;
 
-   stride = ee->w * sizeof(int);
-   len = stride * ee->h;
+   _ecore_evas_wl_ensure_pool_size(ee, ee->w, ee->h);
 
-   if ((ee->engine.wl.pool) && (len < ee->engine.wl.pool_size))
-     {
-        pool = ee->engine.wl.pool;
-        data = ee->engine.wl.pool_data;
-     }
-   else
-     {
-        int w = 0, size = 0;
-
-        ecore_wl_screen_size_get(&w, NULL);
-
-        /* set a default width */
-        if (w == 0) w = 1024;
-
-        size = (6 * w * w);
-        pool = 
-          _ecore_evas_wl_shm_pool_create(size, &data);
-        ee->engine.wl.pool_size = size;
-     }
-
-   if (data != ee->engine.wl.pool_data)
-     {
-        if (ee->engine.wl.pool)
-          wl_shm_pool_destroy(ee->engine.wl.pool);
-
-        ee->engine.wl.pool = pool;
-        ee->engine.wl.pool_data = data;
-     }
-
-   _ecore_evas_wl_buffer_new(ee, pool);
+   if (ee->engine.wl.pool)
+     _ecore_evas_wl_buffer_new(ee, ee->engine.wl.pool);
 
    einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
    if (!einfo)
@@ -619,7 +586,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         return;
      }
 
-   einfo->info.dest = data;
+   einfo->info.dest = ee->engine.wl.pool_data;
    evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
    /* ecore_wl_flush(); */
