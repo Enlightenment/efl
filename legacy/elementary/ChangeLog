@@ -68,3 +68,7 @@
         genlist from contracting to min size.
         * Optimize the case of COMPRESS + homogeneous mode to avoid
         queue entirely and use existing known item sizes.
+
+2012-05-16  Dave Andreoli
+
+	* Fileselector: Add a wheel spinner that show/spin while EIO is working

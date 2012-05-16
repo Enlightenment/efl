@@ -47,6 +47,29 @@ group { name: "elm/fileselector/base/default";
             }
          }
       }
+      part { name: "elm.spinner.clip";
+         type: RECT;
+         description { state: "default" 0.0;
+            rel1.to: "elm.swallow.spinner";
+            rel2.to: "elm.swallow.spinner";
+            color: 255 255 255 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 255;
+         }
+      }
+      part { name: "elm.swallow.spinner";
+         type: SWALLOW;
+         clip_to: "elm.spinner.clip";
+         description { state: "default" 0.0;
+            align: 1.0 0.0;
+            min: 10 10;
+            fixed: 1 1;
+            rel1.relative: 1.0 0.0;
+            rel2.relative: 1.0 0.0;
+         }
+      }
       part { name: "elm.swallow.files";
          type: SWALLOW;
          description { state: "default" 0.0;
@@ -126,6 +149,30 @@ group { name: "elm/fileselector/base/default";
                offset: -1 -1;
             }
          }
+      }
+   }
+   programs {
+      program { name: "spinner_show";
+         signal: "elm,action,spinner,show";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         transition: LINEAR 0.2;
+         target: "elm.spinner.clip";
+      }
+      program { name: "spinner_hide";
+         signal: "elm,action,spinner,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         transition: LINEAR 0.2 CURRENT;
+         target: "elm.spinner.clip";
+      }
+      program { name: "save_on";
+         signal: "elm,state,save,on";
+         source: "elm";
+      }
+      program { name: "save_off";
+         signal: "elm,state,save,off";
+         source: "elm";
       }
    }
 }

@@ -34,6 +34,7 @@ struct _Elm_Fileselector_Smart_Data
    Evas_Object          *files_grid;
    Evas_Object          *up_button;
    Evas_Object          *home_button;
+   Evas_Object          *spinner;
    Evas_Object          *ok_button;
    Evas_Object          *cancel_button;
 
@@ -190,6 +191,8 @@ _elm_fileselector_smart_theme(Evas_Object *obj)
 
    SWALLOW("elm.swallow.up", sd->up_button);
    SWALLOW("elm.swallow.home", sd->home_button);
+   SWALLOW("elm.swallow.spinner", sd->spinner);
+   elm_object_style_set(sd->spinner, "wheel");
 
    if (sd->mode == ELM_FILESELECTOR_LIST)
      {
@@ -469,6 +472,8 @@ _ls_done_cb(void *data, Eio_File *handler __UNUSED__)
    Listing_Request *lreq = data;
 
    _signal_first(lreq);
+   elm_progressbar_pulse(lreq->sd->spinner, EINA_FALSE);
+   elm_layout_signal_emit(lreq->obj, "elm,action,spinner,hide", "elm");
 
    lreq->sd->current = NULL;
    _listing_request_cleanup(lreq);
@@ -478,6 +483,9 @@ static void
 _ls_error_cb(void *data, Eio_File *handler, int error __UNUSED__)
 {
    Listing_Request *lreq = data;
+
+   elm_progressbar_pulse(lreq->sd->spinner, EINA_FALSE);
+   elm_layout_signal_emit(lreq->obj, "elm,action,spinner,hide", "elm");
 
    if (lreq->sd->current == handler)
      lreq->sd->current = NULL;
@@ -587,6 +595,8 @@ _populate(Evas_Object *obj,
 
    sd->current = eio_file_stat_ls(path, _ls_filter_cb, _ls_main_cb,
                                   _ls_done_cb, _ls_error_cb, lreq);
+   elm_progressbar_pulse(sd->spinner, EINA_TRUE);
+   elm_layout_signal_emit(lreq->obj, "elm,action,spinner,show", "elm");
 #endif
 }
 
@@ -797,7 +807,7 @@ _anchor_clicked(void *data,
 static void
 _elm_fileselector_smart_add(Evas_Object *obj)
 {
-   Evas_Object *ic, *bt, *li, *en, *grid;
+   Evas_Object *ic, *bt, *li, *en, *grid, *pb;
    unsigned int i;
    int s;
 
@@ -842,6 +852,11 @@ _elm_fileselector_smart_add(Evas_Object *obj)
    elm_widget_sub_object_add(obj, bt);
    priv->home_button = bt;
 
+   // spinner
+   pb = elm_progressbar_add(obj);
+   elm_widget_sub_object_add(obj, pb);
+   priv->spinner = pb;
+
    for (i = 0; i < ELM_FILE_LAST; ++i)
      {
         list_itc[i] = elm_genlist_item_class_new();
@@ -885,7 +900,6 @@ _elm_fileselector_smart_add(Evas_Object *obj)
      (li, "contract,request", _on_list_contract_req, obj);
    evas_object_smart_callback_add(li, "expanded", _on_list_expanded, obj);
    evas_object_smart_callback_add(li, "contracted", _on_list_contracted, obj);
-
    evas_object_smart_callback_add(grid, "selected", _on_item_selected, obj);
 
    elm_widget_sub_object_add(obj, li);
