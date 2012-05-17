@@ -99,9 +99,9 @@ START_TEST(eina_value_test_simple)
    eina_value_flush(value);
 
    fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_ULONG));
-   fail_unless(eina_value_set(value, 3000000001U));
+   fail_unless(eina_value_set(value, 3000000001UL));
    fail_unless(eina_value_get(value, &ul));
-   fail_unless(ul == 3000000001U);
+   fail_unless(ul == 3000000001UL);
    eina_value_flush(value);
 
    fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_UINT64));
@@ -540,10 +540,10 @@ START_TEST(eina_value_test_pvariant)
    eina_value_flush(value);
 
    fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_ULONG));
-   in_ul = 3000000001U;
+   in_ul = 3000000001UL;
    fail_unless(eina_value_pset(value, &in_ul));
    fail_unless(eina_value_pget(value, &ul));
-   fail_unless(ul == 3000000001U);
+   fail_unless(ul == 3000000001UL);
    eina_value_flush(value);
 
    fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_UINT64));
@@ -713,10 +713,10 @@ START_TEST(eina_value_test_to_string)
    eina_value_flush(value);
 
    fail_unless(eina_value_setup(value, EINA_VALUE_TYPE_ULONG));
-   in_ul = 3000000001U;
+   in_ul = 3000000001UL;
    fail_unless(eina_value_pset(value, &in_ul));
    fail_unless(eina_value_pget(value, &ul));
-   fail_unless(ul == 3000000001U);
+   fail_unless(ul == 3000000001UL);
    snprintf(buf, sizeof(buf), "%lu", in_ul);
    out = eina_value_to_string(value);
    fail_unless(out != NULL);

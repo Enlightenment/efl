@@ -12,6 +12,8 @@ Fixes:
     * Rounding issue with eina_f32p32_cos and eina_f32p32_sin when getting close to 1.0.
     * Portability issue with Eina_Value when char are not signed by default (case on ARM
     and PPC).
+    * Portability issue with Eina_Value test suite when unsigned where not promoted to
+    unsigned long (case on Itanium).
 
 Eina 1.2.0
 

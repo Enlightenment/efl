@@ -278,3 +278,5 @@
 2012-05-17  Albin Tonnerre
 
 	* Fix portability issue of Eina_Value on ARM and PPC.
+	* Fix portability issue of Eina_Value test on Itanium.
+
