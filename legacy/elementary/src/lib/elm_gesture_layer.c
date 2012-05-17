@@ -656,6 +656,12 @@ _n_long_tap_test_reset(Gesture_Info *gesture)
    Long_Tap_Type *st = gesture->data;
    Eina_List *l;
    Pointer_Event *p;
+
+   /* We do not clear a long-tap gesture if fingers still on surface */
+   /* and gesture timer still pending to test gesture state          */
+   if ((eina_list_count(st->touched)) && (st->timeout))
+      return;
+
    EINA_LIST_FOREACH(st->touched, l, p)
      free(p);
 
@@ -946,15 +952,7 @@ _event_history_clear(Evas_Object *obj)
    _reset_states(wd); /* we are ready to start testing for gestures again */
 
    /* Clear all gestures intermediate data */
-   if (IS_TESTED(ELM_GESTURE_N_LONG_TAPS))
-     {  /* We do not clear a long-tap gesture if fingers still on surface */
-        /* and gesture timer still pending to test gesture state          */
-        Long_Tap_Type *st = wd->gesture[ELM_GESTURE_N_LONG_TAPS]->data;
-        if ((st) &&  /* st not allocated if clear occurs before 1st input */
-              ((!eina_list_count(st->touched)) || (!st->timeout)))
-          _n_long_tap_test_reset(wd->gesture[ELM_GESTURE_N_LONG_TAPS]);
-     }
-
+   _n_long_tap_test_reset(wd->gesture[ELM_GESTURE_N_LONG_TAPS]);
    _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_TAPS]);
    _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS]);
    _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS]);
