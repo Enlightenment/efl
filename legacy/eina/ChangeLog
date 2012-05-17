@@ -274,3 +274,7 @@
 2012-05-08  Cedric Bail
 
 	* Add eina_file_map_lines to iterate on lines of a mapped file.
+
+2012-05-17  Albin Tonnerre
+
+	* Fix portability issue of Eina_Value on ARM and PPC.

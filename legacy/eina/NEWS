@@ -10,6 +10,8 @@ Additions:
 Fixes:
     * Add missing files in the tarball.
     * Rounding issue with eina_f32p32_cos and eina_f32p32_sin when getting close to 1.0.
+    * Portability issue with Eina_Value when char are not signed by default (case on ARM
+    and PPC).
 
 Eina 1.2.0
 

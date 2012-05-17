@@ -230,7 +230,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_CHAR)
      {
-        char *ta = (char *) pa, *tb = (char *) pb;
+        signed char *ta = (signed char *) pa, *tb = (signed char *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -376,7 +376,7 @@ eina_value_vset(Eina_Value *value, va_list args)
      }
    else if (type == EINA_VALUE_TYPE_CHAR)
      {
-        char *tmem = (char *) mem;
+        signed char *tmem = (signed char *) mem;
         *tmem = va_arg(args, int); /* promoted by va_arg */
         return EINA_TRUE;
      }

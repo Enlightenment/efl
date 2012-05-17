@@ -86,7 +86,7 @@ static int _eina_value_log_dom = -1;
 
 static const unsigned char eina_value_uchar_max = 255U;
 static const char eina_value_char_max =  127;
-static const char eina_value_char_min = -127 - 1;
+static const signed char eina_value_char_min = -127 - 1;
 
 static const unsigned short eina_value_ushort_max = 65535U;
 static const short eina_value_short_max =  32767;
@@ -179,7 +179,7 @@ _eina_value_type_uchar_convert_to(const Eina_Value_Type *type __UNUSED__, const 
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v > (unsigned char)eina_value_char_max))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -328,7 +328,7 @@ _eina_value_type_ushort_convert_to(const Eina_Value_Type *type __UNUSED__, const
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v > (unsigned char)eina_value_char_max))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -481,7 +481,7 @@ _eina_value_type_uint_convert_to(const Eina_Value_Type *type __UNUSED__, const E
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v > (unsigned char)eina_value_char_max))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -638,7 +638,7 @@ _eina_value_type_ulong_convert_to(const Eina_Value_Type *type __UNUSED__, const 
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v > (unsigned char)eina_value_char_max))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -800,7 +800,7 @@ _eina_value_type_uint64_convert_to(const Eina_Value_Type *type __UNUSED__, const
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v > (unsigned char)eina_value_char_max))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -965,7 +965,7 @@ _eina_value_type_char_convert_to(const Eina_Value_Type *type __UNUSED__, const E
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
    else if (convert == EINA_VALUE_TYPE_SHORT)
@@ -1122,7 +1122,7 @@ _eina_value_type_short_convert_to(const Eina_Value_Type *type __UNUSED__, const 
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_char_min))
           return EINA_FALSE;
         if (EINA_UNLIKELY(v > eina_value_char_max))
@@ -1285,7 +1285,7 @@ _eina_value_type_int_convert_to(const Eina_Value_Type *type __UNUSED__, const Ei
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_char_min))
           return EINA_FALSE;
         if (EINA_UNLIKELY(v > eina_value_char_max))
@@ -1454,7 +1454,7 @@ _eina_value_type_long_convert_to(const Eina_Value_Type *type __UNUSED__, const E
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_char_min))
           return EINA_FALSE;
         if (EINA_UNLIKELY(v > eina_value_char_max))
@@ -1630,7 +1630,7 @@ _eina_value_type_int64_convert_to(const Eina_Value_Type *type __UNUSED__, const 
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_char_min))
           return EINA_FALSE;
         if (EINA_UNLIKELY(v > eina_value_char_max))
@@ -1812,7 +1812,7 @@ _eina_value_type_float_convert_to(const Eina_Value_Type *type __UNUSED__, const 
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_char_min))
           return EINA_FALSE;
         if (EINA_UNLIKELY(v > eina_value_char_max))
@@ -1996,7 +1996,7 @@ _eina_value_type_double_convert_to(const Eina_Value_Type *type __UNUSED__, const
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v;
+        signed char other_mem = v;
         if (EINA_UNLIKELY(v < eina_value_char_min))
           return EINA_FALSE;
         if (EINA_UNLIKELY(v > eina_value_char_max))
@@ -2165,7 +2165,7 @@ _eina_value_type_string_common_convert_to(const Eina_Value_Type *type __UNUSED__
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem;
+        signed char other_mem;
         if ((sscanf(v, "%hhd", &other_mem) != 1) &&
             (sscanf(v, "%hhx", &other_mem) != 1) &&
             (sscanf(v, "%hho", &other_mem) != 1))
@@ -3503,7 +3503,7 @@ _eina_value_type_timeval_convert_to(const Eina_Value_Type *type __UNUSED__, cons
      }
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
-        char other_mem = v.tv_sec;
+        signed char other_mem = v.tv_sec;
         if (EINA_UNLIKELY(v.tv_sec < eina_value_char_min))
           return EINA_FALSE;
         if (EINA_UNLIKELY(v.tv_sec > eina_value_char_max))
