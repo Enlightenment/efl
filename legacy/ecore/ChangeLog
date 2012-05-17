@@ -645,3 +645,7 @@
 
         * Fix ecore-x randr issues with memory access when building
         output arrays which are memory segv bugs waiting to crash.
+
+2012-05-17 Vincent Torri
+
+        * Add transparent support in ecore_evas on Windows (GDI engine only)

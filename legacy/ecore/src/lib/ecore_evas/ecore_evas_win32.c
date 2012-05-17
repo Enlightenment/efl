@@ -945,6 +945,83 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
      }
 #endif /* BUILD_ECORE_EVAS_DIRECT3D */
 }
+static void
+_ecore_evas_win32_alpha_set(Ecore_Evas *ee, int alpha)
+{
+   alpha = !!alpha;
+   if ((ee->alpha == alpha)) return;
+
+   if (!strcmp(ee->driver, "software_gdi"))
+     {
+#ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
+        Evas_Engine_Info_Software_Gdi *einfo;
+
+        einfo = (Evas_Engine_Info_Software_Gdi *)evas_engine_info_get(ee->evas);
+        if (!einfo) return;
+
+        ee->shaped = 0;
+        ee->alpha = alpha;
+        /* ecore_win32_window_free(ee->prop.window); */
+        /* ecore_event_window_unregister(ee->prop.window); */
+        /* if (ee->alpha) */
+        /*   { */
+        /*      if (ee->prop.override) */
+        /*        ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h); */
+        /*      else */
+        /*        ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h); */
+        /*      if (!ee->engine.x.mask) */
+        /*        ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1); */
+        /*   } */
+        /* else */
+        /*   { */
+        /*      if (ee->prop.override) */
+        /*        ee->prop.window = ecore_win32_window_override_new(ee->engine.win32.win_root, */
+        /*                                                          ee->req.x, */
+        /*                                                          ee->req.y, */
+        /*                                                          ee->req.w, */
+        /*                                                          ee->req.h); */
+        /*      else */
+        /*        ee->prop.window = ecore_win32_window_new(ee->engine.win32.win_root, */
+        /*                                                 ee->req.x, */
+        /*                                                 ee->req.y, */
+        /*                                                 ee->req.w, */
+        /*                                                 ee->req.h); */
+        /*      if (ee->engine.win32.mask) ecore_x_pixmap_free(ee->engine.x.mask); */
+        /*      ee->engine.win32.mask = 0; */
+        /*      ecore_win32_window_shape_input_mask_set(ee->prop.window, 0); */
+        /*   } */
+
+        /* einfo->info.destination_alpha = alpha; */
+        einfo->info.region = alpha;
+
+//        if (ee->engine.x.mask) ecore_x_pixmap_free(ee->engine.x.mask);
+//        ee->engine.x.mask = 0;
+        /* einfo->info.mask = ee->engine.win32.mask; */
+        /* einfo->info.drawable = ee->prop.window; */
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          {
+             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+          }
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->req.w, ee->req.h);
+        /* ecore_win32_window_shape_mask_set(ee->prop.window, 0); */
+        /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */
+        /*                             (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process, */
+        /*                             (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process, */
+        /*                             (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process, */
+        /*                             (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process); */
+        if (ee->prop.borderless)
+          ecore_win32_window_borderless_set((struct _Ecore_Win32_Window *)ee->prop.window, ee->prop.borderless);
+        if (ee->visible) ecore_win32_window_show((struct _Ecore_Win32_Window *)ee->prop.window);
+        if (ee->prop.focused) ecore_win32_window_focus((struct _Ecore_Win32_Window *)ee->prop.window);
+        if (ee->prop.title)
+          {
+             ecore_win32_window_title_set((struct _Ecore_Win32_Window *)ee->prop.window, ee->prop.title);
+             /* ecore_win32_name_set(ee->prop.window, ee->prop.title); */
+          }
+        ecore_win32_window_type_set((struct _Ecore_Win32_Window *)ee->prop.window, ECORE_WIN32_WINDOW_TYPE_NORMAL);
+#endif /* BUILD_ECORE_EVAS_SOFTWARE_GDI */
+     }
+}
 
 
 static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
@@ -993,7 +1070,7 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      NULL, /* _ecore_evas_x_withdrawn_set */
      NULL, /* _ecore_evas_x_sticky_set */
      NULL, /* _ecore_evas_x_ignore_events_set */
-     NULL,  /* _ecore_evas_x_alpha_set */
+     _ecore_evas_win32_alpha_set,
      NULL, //transparent
 
      NULL,
