@@ -38,6 +38,7 @@ Additions:
    * EVAS_GL_OPTIONS_DIRECT.
    * evas_object_textblock_style_user_pop/push.
    * evas_object_ref_get
+   * Evas_GL_Multisample_Bits MSAA surface config option for supported devices.
 
 Fixes:
 
