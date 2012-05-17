@@ -1288,12 +1288,34 @@ _long_tap_timeout(void *data)
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_tap_gesture_test(Widget_Data *wd, Pointer_Event *pe,
+_tap_gesture_test(Evas_Object *obj, Pointer_Event *pe,
       void *event_info, Evas_Callback_Type event_type,
-      Gesture_Info *gesture, int taps)
+      Elm_Gesture_Type g_type)
 {  /* Here we fill Tap struct */
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
    if (!pe)
       return;
+
+   Gesture_Info *gesture = wd->gesture[g_type];
+   if (!gesture) return;
+
+   int taps = 0;
+   switch (g_type)
+     {
+      case ELM_GESTURE_N_TAPS:
+         taps = 1;
+         break;
+      case ELM_GESTURE_N_DOUBLE_TAPS:
+         taps = 2;
+         break;
+      case ELM_GESTURE_N_TRIPLE_TAPS:
+         taps = 3;
+         break;
+      default:
+         taps = 0;
+         break;
+     }
 
    Taps_Type *st = gesture->data;
    if (!st)
@@ -1729,7 +1751,7 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    Gesture_Info *gesture = wd->gesture[g_type];
-   if (!gesture ) return;
+   if (!gesture) return;
 
    /* When continues enable = TRUE a gesture may START on MOVE event */
    /* We don't allow this to happen with the if-statement below.     */
@@ -3207,42 +3229,42 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
      pe = &_pe;
 
    if (IS_TESTED(ELM_GESTURE_N_LONG_TAPS))
-     _n_long_tap_test(data, pe, event_info, event_type,
-           ELM_GESTURE_N_LONG_TAPS);
+      _n_long_tap_test(data, pe, event_info, event_type,
+            ELM_GESTURE_N_LONG_TAPS);
 
    if (IS_TESTED(ELM_GESTURE_N_TAPS))
-      _tap_gesture_test(wd, pe, event_info, event_type,
-            wd->gesture[ELM_GESTURE_N_TAPS], 1);
+      _tap_gesture_test(data, pe, event_info, event_type,
+            ELM_GESTURE_N_TAPS);
 
    if (IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS))
-      _tap_gesture_test(wd, pe, event_info, event_type,
-            wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS], 2);
+      _tap_gesture_test(data, pe, event_info, event_type,
+            ELM_GESTURE_N_DOUBLE_TAPS);
 
    if (IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS))
-      _tap_gesture_test(wd, pe, event_info, event_type,
-            wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS], 3);
+      _tap_gesture_test(data, pe, event_info, event_type,
+            ELM_GESTURE_N_TRIPLE_TAPS);
 
    if (IS_TESTED(ELM_GESTURE_MOMENTUM))
-     _momentum_test(data, pe, event_info, event_type,
-           ELM_GESTURE_MOMENTUM);
+      _momentum_test(data, pe, event_info, event_type,
+            ELM_GESTURE_MOMENTUM);
 
    if (IS_TESTED(ELM_GESTURE_N_LINES))
-     _n_line_test(data, pe, event_info, event_type, ELM_GESTURE_N_LINES);
+      _n_line_test(data, pe, event_info, event_type, ELM_GESTURE_N_LINES);
 
    if (IS_TESTED(ELM_GESTURE_N_FLICKS))
-     _n_line_test(data, pe, event_info, event_type, ELM_GESTURE_N_FLICKS);
+      _n_line_test(data, pe, event_info, event_type, ELM_GESTURE_N_FLICKS);
 
    if (_elm_config->glayer_zoom_finger_enable && IS_TESTED(ELM_GESTURE_ZOOM))
-     _zoom_test(data, pe, event_info, event_type, ELM_GESTURE_ZOOM);
+      _zoom_test(data, pe, event_info, event_type, ELM_GESTURE_ZOOM);
 
    if (IS_TESTED(ELM_GESTURE_ZOOM))
-     _zoom_with_wheel_test(data, event_info, event_type, ELM_GESTURE_ZOOM);
+      _zoom_with_wheel_test(data, event_info, event_type, ELM_GESTURE_ZOOM);
 
    if (_elm_config->glayer_rotate_finger_enable && IS_TESTED(ELM_GESTURE_ROTATE))
-     _rotate_test(data, pe, event_info, event_type, ELM_GESTURE_ROTATE);
+      _rotate_test(data, pe, event_info, event_type, ELM_GESTURE_ROTATE);
 
    if (_get_event_flag(event_info, event_type) & EVAS_EVENT_FLAG_ON_HOLD)
-     _event_history_add(data, event_info, event_type);
+      _event_history_add(data, event_info, event_type);
 
    /* we maintain list of touched devices              */
    /* We also use move to track current device x.y pos */
