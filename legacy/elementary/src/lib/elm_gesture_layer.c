@@ -257,9 +257,11 @@ struct _Widget_Data
    double rotate_step;
 
    Gesture_Info *gesture[ELM_GESTURE_LAST];
-   Ecore_Timer *dbl_timeout; /* When this expires, dbl click/taps ABORTed  */
    Eina_List *pending; /* List of devices need to refeed *UP event */
    Eina_List *touched;  /* Information  of touched devices   */
+
+   /* Taps Gestures */
+   Ecore_Timer *gest_taps_timeout; /* When this expires, dbl click/taps ABORTed  */
 
    Eina_Bool repeat_events : 1;
 };
@@ -622,10 +624,10 @@ _tap_gestures_test_reset(Gesture_Info *gesture)
    Eina_List *data;
    Pointer_Event *pe;
 
-   if (wd->dbl_timeout)
+   if (wd->gest_taps_timeout)
      {
-        ecore_timer_del(wd->dbl_timeout);
-        wd->dbl_timeout = NULL;
+        ecore_timer_del(wd->gest_taps_timeout);
+        wd->gest_taps_timeout = NULL;
      }
 
    if (!gesture->data)
@@ -953,12 +955,6 @@ _event_history_clear(Evas_Object *obj)
           _n_long_tap_test_reset(wd->gesture[ELM_GESTURE_N_LONG_TAPS]);
      }
 
-   if (wd->dbl_timeout)
-     {
-        ecore_timer_del(wd->dbl_timeout);
-        wd->dbl_timeout = NULL;
-     }
-
    _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_TAPS]);
    _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS]);
    _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS]);
@@ -1251,7 +1247,7 @@ _multi_tap_timeout(void *data)
       _tap_gesture_finish(wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS]);
 
    _clear_if_finished(data);
-   wd->dbl_timeout = NULL;
+   wd->gest_taps_timeout = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1330,14 +1326,14 @@ _tap_gesture_test(Widget_Data *wd, Pointer_Event *pe,
            }
 
          pe_list = _record_pointer_event(st, pe_list, pe, wd, event_info, event_type);
-         if (!wd->dbl_timeout)
+         if (!wd->gest_taps_timeout)
            {
-              wd->dbl_timeout = ecore_timer_add(ELM_GESTURE_TAP_TIMEOUT,
+              wd->gest_taps_timeout = ecore_timer_add(ELM_GESTURE_TAP_TIMEOUT,
                     _multi_tap_timeout, gesture->obj);
            }
          else
            {
-              ecore_timer_reset(wd->dbl_timeout);
+              ecore_timer_reset(wd->gest_taps_timeout);
            }
 
          if ((pe->device == 0) && (eina_list_count(pe_list) == 1))
