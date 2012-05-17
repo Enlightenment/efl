@@ -476,6 +476,8 @@ static Eina_Bool
 _quit_idler(void *data)
 {
    evas_object_del(data);
+
+   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
