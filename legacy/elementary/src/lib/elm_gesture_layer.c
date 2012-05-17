@@ -11,6 +11,8 @@
 #define ELM_GESTURE_MULTI_TIMEOUT 50
 #define ELM_GESTURE_MINIMUM_MOMENTUM 0.001
 
+#define ELM_GESTURE_TAP_TIMEOUT 0.2
+
 /* Some Trigo values */
 #define RAD_90DEG  M_PI_2
 #define RAD_180DEG M_PI
@@ -1209,12 +1211,14 @@ _tap_gesture_check_finish(Gesture_Info *gesture)
 static void
 _tap_gesture_finish(void *data)
 {  /* This function will test each tap gesture when timer expires */
-   Elm_Gesture_State s = ELM_GESTURE_STATE_END;
+   Elm_Gesture_State s = ELM_GESTURE_STATE_ABORT;
    Gesture_Info *gesture = data;
    Taps_Type *st = gesture->data;
 
-   if (!_tap_gesture_check_finish(data))
-      s = ELM_GESTURE_STATE_ABORT;
+   if (_tap_gesture_check_finish(gesture))
+     {
+        s = ELM_GESTURE_STATE_END;
+     }
 
    st->info.n = eina_list_count(st->l);
    _set_state(gesture, s, gesture->info, EINA_FALSE);
@@ -1278,7 +1282,7 @@ _long_tap_timeout(void *data)
 /**
  * @internal
  *
- * This function checks if a tap gesture should start
+ * This function checks the state of a tap gesture.
  *
  * @param wd Gesture Layer Widget Data.
  * @param pe The recent input event as stored in pe struct.
@@ -1287,15 +1291,16 @@ _long_tap_timeout(void *data)
  * @param gesture what gesture is tested
  * @param how many taps for this gesture (1, 2 or 3)
  *
- * @return Flag to determine if we need to set a timer for finish
- *
  * @ingroup Elm_Gesture_Layer
  */
-static Eina_Bool
-_tap_gesture_start(Widget_Data *wd, Pointer_Event *pe,
+static void
+_tap_gesture_test(Widget_Data *wd, Pointer_Event *pe,
       void *event_info, Evas_Callback_Type event_type,
       Gesture_Info *gesture, int taps)
 {  /* Here we fill Tap struct */
+   if (!pe)
+      return;
+
    Taps_Type *st = gesture->data;
    if (!st)
      {  /* Allocated once on first time */
@@ -1321,10 +1326,20 @@ _tap_gesture_start(Widget_Data *wd, Pointer_Event *pe,
                     &st->info, EINA_FALSE);
               consume_event(wd, event_info, event_type, ev_flag);
 
-              return EINA_FALSE;
+              return;
            }
 
          pe_list = _record_pointer_event(st, pe_list, pe, wd, event_info, event_type);
+         if (!wd->dbl_timeout)
+           {
+              wd->dbl_timeout = ecore_timer_add(ELM_GESTURE_TAP_TIMEOUT,
+                    _multi_tap_timeout, gesture->obj);
+           }
+         else
+           {
+              ecore_timer_reset(wd->dbl_timeout);
+           }
+
          if ((pe->device == 0) && (eina_list_count(pe_list) == 1))
            {  /* This is the first mouse down we got */
               ev_flag = _set_state(gesture, ELM_GESTURE_STATE_START,
@@ -1333,7 +1348,13 @@ _tap_gesture_start(Widget_Data *wd, Pointer_Event *pe,
 
               st->n_taps_needed = taps * 2; /* count DOWN and UP */
 
-              return EINA_TRUE;
+              return;
+           }
+         else if (eina_list_count(pe_list) > st->n_taps_needed)
+           {
+              /* If we arleady got too many touches for this gesture. */
+              ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT,
+                    &st->info, EINA_FALSE);
            }
 
          break;
@@ -1342,7 +1363,7 @@ _tap_gesture_start(Widget_Data *wd, Pointer_Event *pe,
       case EVAS_CALLBACK_MOUSE_UP:
          pe_list = eina_list_search_unsorted(st->l, compare_pe_device, pe);
          if (!pe_list)
-           return EINA_FALSE;
+           return;
 
          pe_list = _record_pointer_event(st, pe_list, pe, wd, event_info, event_type);
 
@@ -1355,7 +1376,7 @@ _tap_gesture_start(Widget_Data *wd, Pointer_Event *pe,
               if (_tap_gesture_check_finish(gesture))
                 {
                    _tap_gesture_finish(gesture);
-                   return EINA_FALSE;
+                   return;
                 }
            }
 
@@ -1379,52 +1400,7 @@ _tap_gesture_start(Widget_Data *wd, Pointer_Event *pe,
          break;
 
       default:
-         return EINA_FALSE;
-     }
-
-   return EINA_FALSE;
-}
-
-
-/**
- * @internal
- *
- * This function checks all click/tap and double/triple taps
- *
- * @param obj The gesture-layer object.
- * @param pe The recent input event as stored in pe struct.
- * @param event_info Original input event pointer.
- * @param event_type Type of original input event.
- *
- * @ingroup Elm_Gesture_Layer
- */
-static void
-_tap_gestures_test(Evas_Object *obj, Pointer_Event *pe,
-      void *event_info, Evas_Callback_Type event_type)
-{  /* Here we fill Recent_Taps struct and fire-up click/tap timers */
-   Eina_Bool need_timer = EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   if (!pe)   /* this happens when unhandled event arrived */
-     return;  /* see _make_pointer_event function */
-
-   if (IS_TESTED(ELM_GESTURE_N_TAPS))
-     need_timer |= _tap_gesture_start(wd, pe, event_info, event_type,
-           wd->gesture[ELM_GESTURE_N_TAPS], 1);
-
-   if (IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS))
-     need_timer |= _tap_gesture_start(wd, pe, event_info, event_type,
-           wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS], 2);
-
-   if (IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS))
-     need_timer |= _tap_gesture_start(wd, pe, event_info, event_type,
-           wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS], 3);
-
-   if ((need_timer) && (!wd->dbl_timeout))
-     {  /* Set a timer to finish these gestures */
-        wd->dbl_timeout = ecore_timer_add(0.4, _multi_tap_timeout,
-              obj);
+         return ;
      }
 }
 
@@ -3240,8 +3216,17 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
      _n_long_tap_test(data, pe, event_info, event_type,
            ELM_GESTURE_N_LONG_TAPS);
 
-   /* This takes care of single, double and tripple tap */
-   _tap_gestures_test(data, pe, event_info, event_type);
+   if (IS_TESTED(ELM_GESTURE_N_TAPS))
+      _tap_gesture_test(wd, pe, event_info, event_type,
+            wd->gesture[ELM_GESTURE_N_TAPS], 1);
+
+   if (IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS))
+      _tap_gesture_test(wd, pe, event_info, event_type,
+            wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS], 2);
+
+   if (IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS))
+      _tap_gesture_test(wd, pe, event_info, event_type,
+            wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS], 3);
 
    if (IS_TESTED(ELM_GESTURE_MOMENTUM))
      _momentum_test(data, pe, event_info, event_type,
