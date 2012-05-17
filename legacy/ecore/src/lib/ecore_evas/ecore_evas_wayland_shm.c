@@ -219,6 +219,7 @@ ecore_evas_wayland_shm_new(const char *disp_name, unsigned int parent, int x, in
    ee->prop.request_pos = 0;
    ee->prop.sticky = 0;
    ee->prop.draw_frame = frame;
+   ee->alpha = EINA_FALSE;
 
    ee->evas = evas_new();
    evas_data_attach_set(ee->evas, ee);
@@ -242,6 +243,8 @@ ecore_evas_wayland_shm_new(const char *disp_name, unsigned int parent, int x, in
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
+        einfo->info.rotation = ee->rotation;
+        einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
         einfo->info.debug = EINA_FALSE;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
@@ -339,21 +342,10 @@ _ecore_evas_wl_shutdown(void)
 static void 
 _ecore_evas_wl_pre_free(Ecore_Evas *ee)
 {
-   /* Evas_Engine_Info_Wayland_Shm *einfo; */
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!ee) return;
    if (ee->engine.wl.frame) evas_object_del(ee->engine.wl.frame);
-
-   /* FIXME: remove the shm pool */
-   /* einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas); */
-   /* if ((einfo) && (einfo->info.dest)) */
-   /*   { */
-   /*      int ret = 0; */
-
-   /*      ret = munmap(einfo->info.dest, ((ee->w * sizeof(int)) * ee->h)); */
-   /*      if (!ret) ERR("Failed to unmap engine destination: %m"); */
-   /*   } */
 }
 
 static void 
