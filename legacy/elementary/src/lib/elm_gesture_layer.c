@@ -38,7 +38,35 @@ _glayer_bufdup(void *buf, size_t size)
    P->test = P->fn[ELM_GESTURE_STATE_START].cb || P->fn[ELM_GESTURE_STATE_MOVE].cb || P->fn[ELM_GESTURE_STATE_END].cb || P->fn[ELM_GESTURE_STATE_ABORT].cb; \
 } while (0)
 
+#define IS_TESTED_GESTURE(gesture) ((gesture) ? (gesture)->test : EINA_FALSE)
 #define IS_TESTED(T) ((wd->gesture[T]) ? wd->gesture[T]->test : EINA_FALSE)
+
+/**
+ * @internal
+ *
+ * @struct _Pointer_Event
+ * Struct holds pointer-event info
+ * This is a generic pointer event structure
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+struct _Pointer_Event
+{
+   Evas_Coord x, y;
+   unsigned int timestamp;
+   int device;
+   Evas_Callback_Type event_type;
+};
+
+/**
+ * @internal
+ *
+ * @typedef Pointer_Event
+ * Type for generic pointer event structure
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+typedef struct _Pointer_Event Pointer_Event;
 
 /**
  * @internal
@@ -93,6 +121,42 @@ struct _Gesture_Info
  */
 typedef struct _Gesture_Info Gesture_Info;
 
+typedef struct
+{
+   void (*test)(Evas_Object *obj, Pointer_Event *pe,
+         void *event_info, Evas_Callback_Type event_type,
+         Elm_Gesture_Type g_type);
+   void (*reset)(Gesture_Info *gesture);
+} Tests_Array_Funcs;
+
+static void _tap_gesture_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Type g_type);
+static void _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Type g_type);
+static void _momentum_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Type g_type);
+static void _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Type g_type);
+static void _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Type g_type);
+static void _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Type g_type);
+static void _tap_gestures_test_reset(Gesture_Info *gesture);
+static void _n_long_tap_test_reset(Gesture_Info *gesture);
+static void _momentum_test_reset(Gesture_Info *gesture);
+static void _line_test_reset(Gesture_Info *gesture);
+static void _zoom_test_reset(Gesture_Info *gesture);
+static void _rotate_test_reset(Gesture_Info *gesture);
+
+/* Should be the same order as _Elm_Gesture_Type */
+static Tests_Array_Funcs _glayer_tests_array[] ={
+       { NULL, NULL }, /** Because someone made an awful mistake. */
+       { _tap_gesture_test, _tap_gestures_test_reset }, /* ELM_GESTURE_N_TAPS */
+       { _n_long_tap_test, _n_long_tap_test_reset }, /* ELM_GESTURE_N_LONG_TAPS */
+       { _tap_gesture_test, _tap_gestures_test_reset }, /* ELM_GESTURE_N_DOUBLE_TAPS */
+       { _tap_gesture_test, _tap_gestures_test_reset }, /* ELM_GESTURE_N_TRIPLE_TAPS */
+       { _momentum_test, _momentum_test_reset }, /* ELM_GESTURE_MOMENTUM */
+       { _n_line_test, _line_test_reset }, /* ELM_GESTURE_N_LINES */
+       { _n_line_test, _line_test_reset }, /* ELM_GESTURE_N_FLICKS */
+       { _zoom_test, _zoom_test_reset }, /* ELM_GESTURE_ZOOM */
+       { _rotate_test, _rotate_test_reset }, /* ELM_GESTURE_ROTATE */
+       { NULL, NULL } /** Because someone made an awful mistake. */
+};
+
 /**
  * @internal
  *
@@ -118,33 +182,6 @@ struct _Event_History
  * @ingroup Elm_Gesture_Layer
  */
 typedef struct _Event_History Event_History;
-
-/**
- * @internal
- *
- * @struct _Pointer_Event
- * Struct holds pointer-event info
- * This is a generic pointer event structure
- *
- * @ingroup Elm_Gesture_Layer
- */
-struct _Pointer_Event
-{
-   Evas_Coord x, y;
-   unsigned int timestamp;
-   int device;
-   Evas_Callback_Type event_type;
-};
-
-/**
- * @internal
- *
- * @typedef Pointer_Event
- * Type for generic pointer event structure
- *
- * @ingroup Elm_Gesture_Layer
- */
-typedef struct _Pointer_Event Pointer_Event;
 
 /* All *Type structs hold result for the user in 'info' field
  * The rest is gesture processing intermediate data.
@@ -952,15 +989,16 @@ _event_history_clear(Evas_Object *obj)
    _reset_states(wd); /* we are ready to start testing for gestures again */
 
    /* Clear all gestures intermediate data */
-   _n_long_tap_test_reset(wd->gesture[ELM_GESTURE_N_LONG_TAPS]);
-   _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_TAPS]);
-   _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_DOUBLE_TAPS]);
-   _tap_gestures_test_reset(wd->gesture[ELM_GESTURE_N_TRIPLE_TAPS]);
-   _momentum_test_reset(wd->gesture[ELM_GESTURE_MOMENTUM]);
-   _line_test_reset(wd->gesture[ELM_GESTURE_N_LINES]);
-   _line_test_reset(wd->gesture[ELM_GESTURE_N_FLICKS]);
-   _zoom_test_reset(wd->gesture[ELM_GESTURE_ZOOM]);
-   _rotate_test_reset(wd->gesture[ELM_GESTURE_ROTATE]);
+     {
+        /* FIXME: +1 because of the mistake in the enum. */
+        Gesture_Info **gitr = wd->gesture + 1;
+        Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
+        for ( ; fitr->reset ; fitr++, gitr++)
+          {
+             if (IS_TESTED_GESTURE(*gitr))
+                fitr->reset(*gitr);
+          }
+     }
 
    /* Disable gesture layer so refeeded events won't be consumed by it */
    _unregister_callbacks(obj);
@@ -2663,6 +2701,12 @@ static void
 _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
       Evas_Callback_Type event_type, Elm_Gesture_Type g_type)
 {
+   /* Test for wheel zoom. */
+   _zoom_with_wheel_test(obj, event_info, event_type, ELM_GESTURE_ZOOM);
+
+   if (!_elm_config->glayer_zoom_finger_enable)
+      return;
+
    if (!pe)
      return;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2886,6 +2930,9 @@ static void
 _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
       Evas_Callback_Type event_type, Elm_Gesture_Type g_type)
 {
+   if (!_elm_config->glayer_rotate_finger_enable)
+      return;
+
    if (!pe)
      return;
 
@@ -3228,40 +3275,17 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    if (_make_pointer_event(data, event_info, event_type, &_pe))
      pe = &_pe;
 
-   if (IS_TESTED(ELM_GESTURE_N_LONG_TAPS))
-      _n_long_tap_test(data, pe, event_info, event_type,
-            ELM_GESTURE_N_LONG_TAPS);
-
-   if (IS_TESTED(ELM_GESTURE_N_TAPS))
-      _tap_gesture_test(data, pe, event_info, event_type,
-            ELM_GESTURE_N_TAPS);
-
-   if (IS_TESTED(ELM_GESTURE_N_DOUBLE_TAPS))
-      _tap_gesture_test(data, pe, event_info, event_type,
-            ELM_GESTURE_N_DOUBLE_TAPS);
-
-   if (IS_TESTED(ELM_GESTURE_N_TRIPLE_TAPS))
-      _tap_gesture_test(data, pe, event_info, event_type,
-            ELM_GESTURE_N_TRIPLE_TAPS);
-
-   if (IS_TESTED(ELM_GESTURE_MOMENTUM))
-      _momentum_test(data, pe, event_info, event_type,
-            ELM_GESTURE_MOMENTUM);
-
-   if (IS_TESTED(ELM_GESTURE_N_LINES))
-      _n_line_test(data, pe, event_info, event_type, ELM_GESTURE_N_LINES);
-
-   if (IS_TESTED(ELM_GESTURE_N_FLICKS))
-      _n_line_test(data, pe, event_info, event_type, ELM_GESTURE_N_FLICKS);
-
-   if (_elm_config->glayer_zoom_finger_enable && IS_TESTED(ELM_GESTURE_ZOOM))
-      _zoom_test(data, pe, event_info, event_type, ELM_GESTURE_ZOOM);
-
-   if (IS_TESTED(ELM_GESTURE_ZOOM))
-      _zoom_with_wheel_test(data, event_info, event_type, ELM_GESTURE_ZOOM);
-
-   if (_elm_config->glayer_rotate_finger_enable && IS_TESTED(ELM_GESTURE_ROTATE))
-      _rotate_test(data, pe, event_info, event_type, ELM_GESTURE_ROTATE);
+   /* Test all the gestures */
+     {
+        /* FIXME: +1 because of the mistake in the enum. */
+        Gesture_Info **gitr = wd->gesture + 1;
+        Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
+        for ( ; fitr->test ; fitr++, gitr++)
+          {
+             if (IS_TESTED_GESTURE(*gitr))
+                fitr->test(data, pe, event_info, event_type, (*gitr)->g_type);
+          }
+     }
 
    if (_get_event_flag(event_info, event_type) & EVAS_EVENT_FLAG_ON_HOLD)
       _event_history_add(data, event_info, event_type);
