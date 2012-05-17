@@ -65,7 +65,7 @@ _unfind_gdiob(Gdi_Output_Buffer *gdiob)
    gdipool = eina_list_prepend(gdipool, gdiob);
    gdisize += gdiob->psize * (gdiob->depth >> 3);
    while ((gdisize > (gdimemlimit)) ||
-          (eina_list_count(gdipool) > gdicountlimit))
+          ((int)eina_list_count(gdipool) > gdicountlimit))
      {
         Eina_List *xl;
 
@@ -420,7 +420,7 @@ evas_software_gdi_outbuf_push_updated_region(Outbuf     *buf,
         RECT  rect;
         POINT pt = { 0, 0 };
         HRGN region;
-        int *tmp;
+        DATA32 *tmp;
         int i;
         int j;
         int ww;
