@@ -30,6 +30,10 @@
 # endif
 #endif /* ! _WIN32 */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @var _eo_class_creation_lock
  * This variable is used for locking purposes in the class_get function
@@ -1137,5 +1141,9 @@ EAPI extern const Eo_Event_Description _EO_EV_DEL;
 /**
  * @}
  */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
