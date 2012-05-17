@@ -472,10 +472,18 @@ _anim(void *data)
    return EINA_TRUE;
 }
 
-static void
-_on_done(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+static Eina_Bool
+_quit_idler(void *data)
 {
-   evas_object_del((Evas_Object*)data);
+   evas_object_del(data);
+}
+
+static void
+_on_done(void *data,
+         Evas_Object *obj __UNUSED__,
+         void *event_info __UNUSED__)
+{
+   ecore_idler_add(_quit_idler, data);
 }
 
 static void
