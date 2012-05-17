@@ -34,8 +34,6 @@ void
 evas_object_change_reset(Evas_Object *obj)
 {
    obj->changed = EINA_FALSE;
-   obj->changed_move_only = EINA_FALSE;
-   obj->changed_nomove = EINA_FALSE;
    obj->changed_move = EINA_FALSE;
    obj->changed_map = EINA_FALSE;
    obj->changed_pchange = EINA_FALSE;
@@ -83,30 +81,20 @@ evas_object_change(Evas_Object *obj)
 {
    Eina_List *l;
    Evas_Object *obj2;
-   Eina_Bool movch = 0;
+   Eina_Bool movch = EINA_FALSE;
 
-   if (obj->layer->evas->nochange)
-     {
-//        printf("nochange %p\n", obj);
-        return;
-     }
-//   else
-//      printf("ch %p\n", obj);
-   obj->layer->evas->changed = 1;
+   if (obj->layer->evas->nochange) return;
+   obj->layer->evas->changed = EINA_TRUE;
+
    if (obj->changed_move)
      {
-        movch = 1;
+        movch = EINA_TRUE;
         obj->changed_move = EINA_FALSE;
-        if (!obj->changed_nomove) obj->changed_move_only = EINA_TRUE;
-        if (obj->changed) return;
      }
-   else
-     {
-        obj->changed_move_only = EINA_FALSE;
-        obj->changed_nomove = EINA_TRUE;
-        if (obj->changed) return;
-     }
-//   obj->changed = 1;
+
+     if (obj->changed) return;
+
+//   obj->changed = EINA_TRUE;
    evas_render_object_recalc(obj);
    /* set changed flag on all objects this one clips too */
    if (!((movch) && (obj->is_static_clip)))

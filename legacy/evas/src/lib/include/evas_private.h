@@ -616,8 +616,6 @@ struct _Evas_Object
 
    Eina_Bool                   changed : 1;
    Eina_Bool                   changed_move : 1;
-   Eina_Bool                   changed_move_only : 1;
-   Eina_Bool                   changed_nomove : 1;
    Eina_Bool                   changed_map : 1;
    Eina_Bool                   changed_pchange : 1;
    Eina_Bool                   del_ref : 1;
