@@ -600,34 +600,6 @@ pending_change(void *data, void *gdata __UNUSED__)
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
 
-/*
-   static int
-   chlist(Evas_Object *obj, int i)
-   {
-   Evas_Object *obj2;
-   int j;
-   int ret = 0;
-
-   if (!obj->changed) return 0;
-   for (j = 0; j < i; j++) printf(" ");
-   printf("ch2 %p %s %i [%i %i %ix%i] v %i/%i [r%i] %p\n", obj,
-   obj->type,
-   obj->changed_move_only,
-   obj->cur.geometry.x,
-   obj->cur.geometry.y,
-   obj->cur.geometry.w,
-   obj->cur.geometry.h,
-   obj->cur.visible,
-   obj->prev.visible,
-   obj->restack,
-   obj->clip.clipees);
-   EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
-   {
-   if (obj2->changed)
-   ret |= chlist(obj2, i + 1);
-   }
-   }
- */
 static Eina_Bool
 _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
 {
@@ -954,7 +926,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                     }
                   if (o2->changed)
                     {
-                       //                       chlist(o2, 0);
                        changed = EINA_TRUE;
                        evas_object_change_reset(o2);
                        break;
