@@ -38,16 +38,16 @@ eina_str_01.c \
 eina_strbuf_01.c \
 eina_stringshare_01.c \
 eina_tiler_01.c \
-eina_magic_01.c \
-eina_model_01.c \
-eina_model_02.c \
-eina_model_03.c \
 eina_simple_xml_parser_01.c \
 eina_value_01.c \
 eina_value_02.c \
 eina_value_03.c \
 eina_inarray_01.c \
 eina_inarray_02.c
+#eina_magic_01.c \
+#eina_model_01.c \
+#eina_model_02.c \
+#eina_model_03.c
 
 examples_PROGRAMS =
 
@@ -86,29 +86,29 @@ eina_str_01 \
 eina_strbuf_01 \
 eina_stringshare_01 \
 eina_magic_01 \
-eina_model_01 \
-eina_model_02 \
-eina_model_03 \
-eina_model_04 \
 eina_simple_xml_parser_01 \
 eina_value_01 \
 eina_value_02 \
 eina_value_03 \
 eina_inarray_01 \
 eina_inarray_02
+#eina_model_01 \
+#eina_model_02 \
+#eina_model_03 \
+#eina_model_04
 
-eina_model_04_SOURCES = \
-eina_model_04_animal.c \
-eina_model_04_child.c \
-eina_model_04_human.c \
-eina_model_04_main.c \
-eina_model_04_parrot.c \
-eina_model_04_whistler.c \
-eina_model_04_animal.h \
-eina_model_04_child.h \
-eina_model_04_human.h \
-eina_model_04_parrot.h \
-eina_model_04_whistler.h
+#eina_model_04_SOURCES = \
+#eina_model_04_animal.c \
+#eina_model_04_child.c \
+#eina_model_04_human.c \
+#eina_model_04_main.c \
+#eina_model_04_parrot.c \
+#eina_model_04_whistler.c \
+#eina_model_04_animal.h \
+#eina_model_04_child.h \
+#eina_model_04_human.h \
+#eina_model_04_parrot.h \
+#eina_model_04_whistler.h
 
 
 if BUILD_TILER_EXAMPLE
