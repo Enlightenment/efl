@@ -25,6 +25,8 @@ struct _Evas_Text_Props
    Evas_Text_Props_Info *info;
    void *font_instance;
 
+   Eina_Binbuf *bin;
+
    int generation;
    Eina_Bool changed : 1;
 };

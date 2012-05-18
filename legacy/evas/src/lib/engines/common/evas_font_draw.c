@@ -36,6 +36,15 @@ struct cinfo
      } bm;
 };
 
+typedef struct _Evas_Glyph Evas_Glyph;
+struct _Evas_Glyph
+{
+   RGBA_Font_Glyph *fg;
+   void *data;
+   Eina_Rectangle coord;
+   FT_UInt idx;
+   int j;
+};
 
 EAPI void
 evas_common_font_draw_init(void)
@@ -54,39 +63,22 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
                                int ext_h, int im_w, int im_h __UNUSED__)
 {
    DATA32 *im;
-   RGBA_Font_Int *fi;
-   EVAS_FONT_WALK_TEXT_INIT();
-
-   fi = text_props->font_instance;
-   if (!fi) return;
-
-   evas_common_font_int_reload(fi);
-
-   if (fi->src->current_size != fi->size)
-     {
-        FTLOCK();
-        FT_Activate_Size(fi->ft.size);
-        FTUNLOCK();
-        fi->src->current_size = fi->size;
-     }
-
+   Evas_Glyph *glyphs;
+   unsigned int length;
+   unsigned int it;
 
    im = dst->image.data;
 
-   EVAS_FONT_WALK_TEXT_START()
+   glyphs = (void*) eina_binbuf_string_get(text_props->bin);
+   length = eina_binbuf_length_get(text_props->bin) / sizeof (Evas_Glyph);
+   for (it = 0; it < length; ++it)
      {
         FT_UInt idx;
         RGBA_Font_Glyph *fg;
         int chr_x, chr_y;
 
-        if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
-
-        idx = EVAS_FONT_WALK_INDEX;
-
-        fg = evas_common_font_int_cache_glyph_get(fi, idx);
-        if (!fg) continue;
-        if ((!fg->glyph_out) && (!evas_common_font_int_cache_glyph_render(fg)))
-          continue;
+        fg = glyphs[it].fg;
+        idx = glyphs[it].idx;
 
         if (dc->font_ext.func.gl_new)
           {
@@ -95,19 +87,19 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
              fg->ext_dat_free = dc->font_ext.func.gl_free;
           }
 
-        chr_x = x + EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
-        chr_y = y + EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
+        chr_x = x + glyphs[it].coord.x/* EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR */;
+        chr_y = y + glyphs[it].coord.y/* EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR */;
 
         if (chr_x < (ext_x + ext_w))
           {
              DATA8 *data;
              int i, j, w, h;
 
-             data = fg->glyph_out->bitmap.buffer;
-             j = fg->glyph_out->bitmap.pitch;
-             w = fg->glyph_out->bitmap.width;
+             data = glyphs[it].data;
+             j = glyphs[it].j;
+             w = glyphs[it].coord.w;
              if (j < w) j = w;
-             h = fg->glyph_out->bitmap.rows;
+             h = glyphs[it].coord.h;
              /*
               if ((fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays)
               && (fg->glyph_out->bitmap.num_grays == 256)
@@ -260,8 +252,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
         else
           break;
      }
-   EVAS_FONT_WALK_TEXT_END();
-  evas_common_font_int_use_trim();
 }
 
 EAPI void
@@ -273,11 +263,17 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    fi = text_props->font_instance;
    if (!fi) return;
 
+   if (!text_props->changed && text_props->generation == fi->generation && text_props->bin)
+     return ;
+
+   if (!text_props->bin) text_props->bin = eina_binbuf_new();
+   else eina_binbuf_reset(text_props->bin);
+
    evas_common_font_int_reload(fi);
 
    if (fi->src->current_size != fi->size)
      {
-
+        evas_common_font_source_reload(fi->src);
         FTLOCK();
         FT_Activate_Size(fi->ft.size);
         FTUNLOCK();
@@ -286,8 +282,9 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 
    EVAS_FONT_WALK_TEXT_START()
      {
-        FT_UInt idx;
+        Evas_Glyph glyph;
         RGBA_Font_Glyph *fg;
+        FT_UInt idx;
 
         if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
         idx = EVAS_FONT_WALK_INDEX;
@@ -295,6 +292,17 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
         if (!fg) continue;
         if (!fg->glyph_out) evas_common_font_int_cache_glyph_render(fg);
+
+        glyph.fg = fg;
+        glyph.coord.x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
+        glyph.coord.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
+        glyph.coord.w = fg->glyph_out->bitmap.width;
+        glyph.coord.h = fg->glyph_out->bitmap.rows;
+        glyph.j = fg->glyph_out->bitmap.pitch;
+        glyph.idx = idx;
+        glyph.data = fg->glyph_out->bitmap.buffer;
+
+        eina_binbuf_append_length(text_props->bin, (void*) &glyph, sizeof (Evas_Glyph));
      }
    EVAS_FONT_WALK_TEXT_END();
 

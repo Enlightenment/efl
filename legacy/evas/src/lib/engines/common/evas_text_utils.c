@@ -58,6 +58,12 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
 
    if (--(props->info->refcount) == 0)
      {
+        if (props->bin)
+          {
+             eina_binbuf_free(props->bin);
+             props->bin = NULL;
+          }
+
         if (props->info->glyph)
           free(props->info->glyph);
 #ifdef OT_SUPPORT
@@ -469,6 +475,7 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
       free(base_str);
 # endif
 #endif
+
    text_props->text_len = len;
    text_props->info->refcount = 1;
    return EINA_TRUE;

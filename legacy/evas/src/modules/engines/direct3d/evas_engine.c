@@ -389,7 +389,7 @@ eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 }
 
 static void
-eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, const Evas_Text_Props *intl_props)
+eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int x, int y, int w, int h, int ow, int oh, Evas_Text_Props *intl_props)
 {
    Render_Engine *re = (Render_Engine *)data;
 	RGBA_Image im;
@@ -403,6 +403,7 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int
       evas_direct3d_font_texture_new,
       evas_direct3d_font_texture_free,
       evas_direct3d_font_texture_draw);
+   evas_common_font_draw_prepare(intl_props);
    evas_common_font_draw(&im, context, x, y, intl_props);
    evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
 }

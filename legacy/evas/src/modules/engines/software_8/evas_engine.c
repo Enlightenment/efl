@@ -343,6 +343,7 @@ eng_font_draw(void *data __UNUSED__, void *context, void *surface,
       Evas_Font_Set *font, int x, int y, int w __UNUSED__, int h __UNUSED__,
       int ow __UNUSED__, int oh __UNUSED__, const Evas_Text_Props *text_props)
 {
+   evas_common_font_draw_prepare(text_props);
    evas_common_font_draw(surface, context, x, y, text_props);
    evas_common_draw_context_font_ext_set(context, NULL, NULL, NULL, NULL);
 }

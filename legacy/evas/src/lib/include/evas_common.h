@@ -741,7 +741,7 @@ struct _RGBA_Pipe_Op
       } poly;
       struct {
 	 int                 x, y;
-         Evas_Text_Props     intl_props;
+         Evas_Text_Props    *intl_props;
       } text;
       struct {
 	 RGBA_Image         *src;

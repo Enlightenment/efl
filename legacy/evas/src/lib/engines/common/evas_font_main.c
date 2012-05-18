@@ -3,6 +3,8 @@
 
 #include "evas_font_private.h"
 
+#include <assert.h>
+
 #include FT_OUTLINE_H
 
 FT_Library      evas_ft_lib = 0;
