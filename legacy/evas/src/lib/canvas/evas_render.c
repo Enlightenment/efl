@@ -931,16 +931,15 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                        break;
                     }
                }
+             if (obj->changed_color) changed = EINA_TRUE;
              evas_object_change_reset(obj);
           }
-        else
+        else if (obj->changed)
           {
-             if (obj->changed)
-               {
-                  if ((obj->changed_pchange) && (obj->changed_map))
-                    changed = EINA_TRUE;
-                  evas_object_change_reset(obj);
-               }
+             if (((obj->changed_pchange) && (obj->changed_map)) ||
+                 (obj->changed_color))
+               changed = EINA_TRUE;
+             evas_object_change_reset(obj);
           }
 
         // clear surface before re-render

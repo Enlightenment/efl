@@ -35,6 +35,7 @@ evas_object_change_reset(Evas_Object *obj)
 {
    obj->changed = EINA_FALSE;
    obj->changed_move = EINA_FALSE;
+   obj->changed_color = EINA_FALSE;
    obj->changed_map = EINA_FALSE;
    obj->changed_pchange = EINA_FALSE;
 }
@@ -94,7 +95,6 @@ evas_object_change(Evas_Object *obj)
 
      if (obj->changed) return;
 
-//   obj->changed = EINA_TRUE;
    evas_render_object_recalc(obj);
    /* set changed flag on all objects this one clips too */
    if (!((movch) && (obj->is_static_clip)))
@@ -1264,8 +1264,10 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
    obj->cur.color.g = g;
    obj->cur.color.b = b;
    evas_object_clip_dirty(obj);
+
    if ((obj->cur.color.a == 0) && (a == 0) && (obj->cur.render_op == EVAS_RENDER_BLEND)) return;
    obj->cur.color.a = a;
+   obj->changed_color = EINA_TRUE;
    evas_object_change(obj);
 }
 
