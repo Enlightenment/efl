@@ -1042,6 +1042,10 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
    ep->tween.time = ep2->tween.time;
    ep->tween.v1 = ep2->tween.v1;
    ep->tween.v2 = ep2->tween.v2;
+   ep->sample_name = STRDUP(ep2->sample_name);
+   ep->tone_name = STRDUP(ep2->tone_name);
+   ep->duration = ep2->duration;
+   ep->speed = ep2->speed;
 
    EINA_LIST_FOREACH(ep2->targets, l, et2)
      {
