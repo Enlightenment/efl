@@ -752,3 +752,7 @@
 
 	* Remove librsvg svg loader as it is a massive source of crash in e17. If
 	you still want to use it, use the evas_generic_loader librsvg binary.
+
+2012-05-18  ChunEon Park (Hermet)
+
+	* Update mapped objects rendering when their color is changed
