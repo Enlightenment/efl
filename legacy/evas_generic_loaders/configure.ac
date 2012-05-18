@@ -66,6 +66,8 @@ PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
 
 PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"], [have_raw="no"])
 
+PKG_CHECK_MODULES([SVG],  [librsvg-2.0 >= 2.14.0 cairo >= 1.0.0], [have_svg="yes"], [have_svg="no"])
+
 GST_REQS=0.10.13
 GSTPLUG_REQS=0.10.13
 GST_MAJORMINOR=0.10
@@ -81,6 +83,7 @@ AM_CONDITIONAL(HAVE_GST, test "x${have_gst}" = "xyes")
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS], [test "x${have_ps}" = "xyes"])
 AM_CONDITIONAL(HAVE_RAW, [test "x${have_raw}" = "xyes"])
+AM_CONDITIONAL([HAVE_SVG], [test "x${have_svg}" = "xyes"])
 
 ### Checks for header files
 
@@ -137,6 +140,7 @@ src/bin/pdf/Makefile
 src/bin/ps/Makefile
 src/bin/raw/Makefile
 src/bin/xcf/Makefile
+src/bin/svg/Makefile
 ])
 
 AC_OUTPUT
@@ -160,6 +164,7 @@ echo "  Gstreamer............: ${have_gst}"
 echo "  PDF..................: ${have_poppler}"
 echo "  PS...................: ${have_ps}"
 echo "  RAW..................: ${have_raw}"
+echo "  SVG..................: ${have_svg}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

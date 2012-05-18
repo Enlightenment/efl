@@ -13,3 +13,8 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
         1.2.0 release
+
+2012-05-18  Cedric Bail
+
+	* Make rsvg backend use the generic backend as it is our main
+	source of crash in e17.

@@ -19,3 +19,6 @@ if HAVE_RAW
 SUBDIRS += raw
 endif
 
+if HAVE_SVG
+SUBDIRS += svg
+endif
