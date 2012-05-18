@@ -1575,7 +1575,7 @@ evas_render_updates_internal(Evas *e,
              evas_object_change_reset(obj);
           }
         else if ((obj->cur.map != obj->prev.map) ||
-                 (obj->cur.usemap != obj->prev.usemap))
+                 (obj->cur.usemap != obj->prev.usemap) || clean_them)
           {
              RD("    OBJ [%p] post... func2\n", obj);
              obj->func->render_post(obj);
