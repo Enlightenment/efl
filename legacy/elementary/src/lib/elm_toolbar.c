@@ -1627,7 +1627,6 @@ elm_toolbar_item_separator_set(Elm_Object_Item *it, Eina_Bool separator)
    item->separator = separator;
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
    _theme_hook_item(obj, item, scale, wd->icon_size);
-   wd->item_count--;
 }
 
 EAPI Eina_Bool
