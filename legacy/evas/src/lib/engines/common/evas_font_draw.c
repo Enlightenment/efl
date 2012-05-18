@@ -69,6 +69,8 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
 
    im = dst->image.data;
 
+   if (!text_props->bin) return ;
+
    glyphs = (void*) eina_binbuf_string_get(text_props->bin);
    length = eina_binbuf_length_get(text_props->bin) / sizeof (Evas_Glyph);
    for (it = 0; it < length; ++it)
