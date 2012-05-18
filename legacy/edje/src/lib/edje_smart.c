@@ -112,6 +112,7 @@ _edje_smart_add(Evas_Object *obj)
    ed->is_rtl = EINA_FALSE;
    ed->have_objects = 1;
    ed->references = 1;
+   ed->user_defined = NULL;
 
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;

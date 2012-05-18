@@ -1159,6 +1159,8 @@ struct _Edje
       void                  *data;
    } item_provider;
 
+   Eina_List            *user_defined;
+
    int                   walking_callbacks;
 
    unsigned int          dirty : 1;
@@ -1545,6 +1547,52 @@ struct _Edje_Patterns
    size_t          patterns_size;
    size_t          max_length;
    size_t          finals[];
+};
+
+typedef enum _Edje_User_Defined_Type 
+{
+   EDJE_USER_SWALLOW,
+   EDJE_USER_BOX_PACK,
+   EDJE_USER_TABLE_PACK,
+   EDJE_USER_STRING,
+   EDJE_USER_DRAG_STEP,
+   EDJE_USER_DRAG_PAGE,
+   EDJE_USER_DRAG_VALUE,
+   EDJE_USER_DRAG_SIZE
+} Edje_User_Defined_Type;
+
+typedef struct _Edje_User_Defined Edje_User_Defined;
+struct _Edje_User_Defined
+{
+   Edje_User_Defined_Type type;
+   const char *part;
+   Edje *ed;
+
+   union {
+      struct {
+         const char *text;
+      } string;
+      struct {
+         Evas_Object *child;
+      } swallow;
+      struct {
+         Evas_Object *child;
+         int index;
+      } box;
+      struct {
+         Evas_Object *child;
+         unsigned short col;
+         unsigned short row;
+         unsigned short colspan;
+         unsigned short rowspan;
+      } table;
+      struct {
+         double x, y;
+      } drag_position;
+      struct {
+         double w, h;
+      } drag_size;
+   } u;
 };
 
 Edje_Patterns   *edje_match_collection_dir_init(const Eina_List *lst);
@@ -2072,6 +2120,8 @@ Eina_Bool _edje_multisense_internal_sound_sample_play(Edje *ed, const char *samp
 Eina_Bool _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const double duration);
 
 void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state);
+
+void _edje_user_definition_free(Edje_User_Defined *eud);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>
