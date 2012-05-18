@@ -1219,7 +1219,7 @@ _tap_gesture_check_finish(Gesture_Info *gesture)
    Taps_Type *st = gesture->data;
    Eina_List *l;
    Eina_List *pe_list;
-   if (!st || !st->l) return EINA_FALSE;
+   if (!st->l) return EINA_FALSE;
    EINA_LIST_FOREACH(st->l, l, pe_list)
      {
         if (eina_list_count(pe_list) != st->n_taps_needed)
