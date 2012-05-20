@@ -18,7 +18,6 @@
 #define RAD_180DEG M_PI
 #define RAD_270DEG (M_PI_2 * 3)
 #define RAD_360DEG (M_PI * 2)
-/* #define DEBUG_GESTURE_LAYER 1 */
 
 #define RAD2DEG(x) ((x) * 57.295779513)
 #define DEG2RAD(x) ((x) / 57.295779513)
@@ -504,10 +503,6 @@ consume_event(Widget_Data *wd, void *event_info,
 static Evas_Event_Flags
 _report_state(Gesture_Info *gesture, void *info)
 {  /* We report current state (START, MOVE, END, ABORT), once */
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s reporting gesture=<%d> state=<%d>\n" , __func__, gesture->g_type,
-         gesture->state);
-#endif
    if ((gesture->state != ELM_GESTURE_STATE_UNDEFINED) &&
          (gesture->fn[gesture->state].cb))
      {  /* Fill state-info struct and send ptr to user callback */
@@ -1607,9 +1602,6 @@ _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
 
              _compute_taps_center(st, &x, &y, pe);
              /* ABORT if user moved fingers out of tap area */
-#if defined(DEBUG_GESTURE_LAYER)
-             printf("%s x,y=(%d,%d) st->info.x,st->info.y=(%d,%d)\n",__func__,x,y,st->info.x,st->info.y);
-#endif
              if (!_inside(x, y, st->center_x, st->center_y))
                state_to_report = ELM_GESTURE_STATE_ABORT;
 
@@ -2131,9 +2123,6 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
              double a = fabs(angle - line->line_angle);
 
              double d = (tan(DEG2RAD(a))) * line->line_length; /* Distance from line */
-#if defined(DEBUG_GESTURE_LAYER)
-             printf("%s a=<%f> d=<%f>\n", __func__, a, d);
-#endif
              if ((d > wd->line_distance_tolerance) || (a > wd->line_angular_tolerance))
                {  /* Broke tolerance: abort line and start a new one */
                   ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT,
@@ -2353,9 +2342,6 @@ rotation_broke_tolerance(Rotate_Type *st)
           t -= 180;
      }
 
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("%s angle=<%f> low=<%f> high=<%f>\n", __func__, t, low, high);
-#endif
    if ((t < low) || (t > high))
      {  /* This marks that roation action has started */
         st->rotate_angular_tolerance = ELM_GESTURE_NEGATIVE_ANGLE;
@@ -2407,9 +2393,6 @@ get_finger_gap_length(Evas_Coord xx1, Evas_Coord yy1,
    if (((int)xx) && ((int)yy))
      {
         double A = atan((yy / xx));
-#if defined(DEBUG_GESTURE_LAYER)
-        printf("xx=<%f> yy=<%f> A=<%f>\n", xx, yy, A);
-#endif
         a = (Evas_Coord) ((gap / 2) * sin(A));
         b = (Evas_Coord) ((gap / 2) * cos(A));
         *x = (Evas_Coord) ((xx2 > xx1) ? (xx1 + b) : (xx2 + b));
@@ -2419,18 +2402,12 @@ get_finger_gap_length(Evas_Coord xx1, Evas_Coord yy1,
      {
         if ((int)xx)
           {  /* horiz line, take half width */
-#if defined(DEBUG_GESTURE_LAYER)
-             printf("==== HORIZ ====\n");
-#endif
              *x = (Evas_Coord) ((xx1 + xx2) / 2);
              *y = (Evas_Coord) (yy1);
           }
 
         if ((int)yy)
           {  /* vert line, take half width */
-#if defined(DEBUG_GESTURE_LAYER)
-             printf("==== VERT ====\n");
-#endif
              *x = (Evas_Coord) (xx1);
              *y = (Evas_Coord) ((yy1 + yy2) / 2);
           }
@@ -3227,18 +3204,6 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    Pointer_Event *pe = NULL;
    Widget_Data *wd = elm_widget_data_get(data);
 
-#if defined(DEBUG_GESTURE_LAYER)
-   int i;
-   Gesture_Info *g;
-   printf("Gesture | State | is tested\n");
-   for (i = ELM_GESTURE_N_TAPS; i < ELM_GESTURE_LAST; i++)
-     {
-        g = wd->gesture[i];
-        if (g)
-          printf("   %d       %d       %d\n", i, g->state, g->test);
-     }
-#endif
-
    /* Start testing candidate gesture from here */
    if (_make_pointer_event(data, event_info, event_type, &_pe))
      pe = &_pe;
@@ -3535,10 +3500,6 @@ elm_gesture_layer_add(Evas_Object *parent)
    wd->repeat_events = EINA_TRUE;
    wd->glayer_continues_enable = _elm_config->glayer_continues_enable;
 
-#if defined(DEBUG_GESTURE_LAYER)
-   printf("size of Gestures = <%d>\n", sizeof(wd->gesture));
-   printf("initial values:\n\tzoom_finger_factor=<%f>\n\tzoom_distance_tolerance=<%d>\n\tline_min_length=<%d>\n\tline_distance_tolerance=<%d>\n\tzoom_wheel_factor=<%f>\n\trotate_angular_tolerance=<%f>\n\twd->line_angular_tolerance=<%f>\n\twd->flick_time_limit_ms=<%d>\n\twd->long_tap_start_timeout=<%f>\n\twd->zoom_step=<%f>\n\twd->rotate_step=<%f>\n\twd->glayer_continues_enable=<%d>\n ", wd->zoom_finger_factor, wd->zoom_distance_tolerance, wd->line_min_length, wd->line_distance_tolerance, wd->zoom_wheel_factor, wd->rotate_angular_tolerance, wd->line_angular_tolerance, wd->flick_time_limit_ms, wd->long_tap_start_timeout, wd->zoom_step, wd->rotate_step, wd->glayer_continues_enable);
-#endif
    memset(wd->gesture, 0, sizeof(wd->gesture));
 
    return obj;
