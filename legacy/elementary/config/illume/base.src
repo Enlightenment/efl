@@ -55,6 +55,7 @@ group "Elm_Config" struct {
   value "glayer_line_angular_tolerance" double: 20.0
   value "glayer_flick_time_limit_ms" uint: 100; /* ms to finish flick */
   value "glayer_long_tap_start_timeout" double: 1.2; /* sec to start long-tap */
+  value "glayer_double_tap_timeout" double: 0.2; /* Timeout between two mouse dows when doing double click (and more). */
   value "glayer_continues_enable" uchar: 1;          /* Continues gesture enabled */
   value "week_start" int: 1;
   value "weekend_start" int: 6;

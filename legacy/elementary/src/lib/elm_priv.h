@@ -167,6 +167,7 @@ struct _Elm_Config
    double        glayer_line_angular_tolerance;
    unsigned int  glayer_flick_time_limit_ms;
    double        glayer_long_tap_start_timeout;
+   double        glayer_double_tap_timeout;
    int           access_mode;
    Eina_Bool     glayer_continues_enable;
    int           week_start;

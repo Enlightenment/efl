@@ -11,8 +11,6 @@
 #define ELM_GESTURE_MULTI_TIMEOUT 50
 #define ELM_GESTURE_MINIMUM_MOMENTUM 0.001
 
-#define ELM_GESTURE_TAP_TIMEOUT 0.2
-
 /* Some Trigo values */
 #define RAD_90DEG  M_PI_2
 #define RAD_180DEG M_PI
@@ -1384,7 +1382,8 @@ _tap_gesture_test(Evas_Object *obj, Pointer_Event *pe,
          pe_list = _record_pointer_event(st, pe_list, pe, wd, event_info, event_type);
          if (!wd->gest_taps_timeout)
            {
-              wd->gest_taps_timeout = ecore_timer_add(ELM_GESTURE_TAP_TIMEOUT,
+              wd->gest_taps_timeout =
+                 ecore_timer_add(_elm_config->glayer_double_tap_timeout,
                     _multi_tap_timeout, gesture->obj);
            }
          else
@@ -3501,6 +3500,10 @@ elm_gesture_layer_add(Evas_Object *parent)
    wd->long_tap_start_timeout = _elm_config->glayer_long_tap_start_timeout;
    wd->repeat_events = EINA_TRUE;
    wd->glayer_continues_enable = _elm_config->glayer_continues_enable;
+
+   /* FIXME: Hack to get around old configs - if too small, enlarge. */
+   if (_elm_config->glayer_double_tap_timeout < 0.00001)
+      _elm_config->glayer_double_tap_timeout = 0.2;
 
    memset(wd->gesture, 0, sizeof(wd->gesture));
 
