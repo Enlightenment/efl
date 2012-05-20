@@ -58,8 +58,10 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
+m4_define([gettext_version], [m4_esyscmd([gettext --version | grep -Eo '[0-9]*\.[0-9]*\.[0-9]*'])])
+
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
-AM_GNU_GETTEXT_VERSION([0.17])
+AM_GNU_GETTEXT_VERSION([gettext_version])
 ])
 
 m4_ifdef([AM_GNU_GETTEXT], [
