@@ -883,7 +883,7 @@ _unregister_callbacks(Evas_Object *obj)
  * @ingroup Elm_Gesture_Layer
  */
 static int
-device_in_pending_list(const void *data1, const void *data2)
+_device_in_pending_cmp(const void *data1, const void *data2)
 {  /* Compare the two device numbers */
    return (((intptr_t) data1) - ((intptr_t) data2));
 }
@@ -909,10 +909,10 @@ _add_device_pending(Eina_List *list, void *event, Evas_Callback_Type event_type)
          return list;
      }
 
-   if (!eina_list_search_unsorted_list(list, device_in_pending_list,
-                                       (void *)(intptr_t)device))
+   if (!eina_list_search_unsorted_list(list, _device_in_pending_cmp,
+                                       (void *)(intptr_t) device))
      {
-        return eina_list_append(list, (void *)(intptr_t)device);
+        return eina_list_append(list, (void *)(intptr_t) device);
      }
 
    return list;
@@ -939,8 +939,8 @@ _device_is_pending(Eina_List *list, void *event, Evas_Callback_Type event_type)
         return NULL;
      }
 
-   return eina_list_search_unsorted_list(list, device_in_pending_list,
-                                         (void *)(intptr_t)device);
+   return eina_list_search_unsorted_list(list, _device_in_pending_cmp,
+                                         (void *)(intptr_t) device);
 }
 
 /**
@@ -973,7 +973,9 @@ _event_history_clear(Evas_Object *obj)
         if (p)
           {
              if (p->state == ELM_GESTURE_STATE_END)
-               gesture_found = EINA_TRUE;
+               {
+                  gesture_found = EINA_TRUE;
+               }
              else
                {  /* Report ABORT to all gestures that still not finished */
                   _set_state(p, ELM_GESTURE_STATE_ABORT, wd->gesture[i]->info,
