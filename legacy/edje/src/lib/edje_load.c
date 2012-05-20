@@ -899,7 +899,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                              eina_stringshare_del(eud->u.string.text);
                              break;
                          }
-                       _edje_user_definition_free(eud);
+                       if (eud) _edje_user_definition_free(eud);
                     }
 
                   boxes = eina_list_sort(boxes, -1, _sort_defined_boxes);
