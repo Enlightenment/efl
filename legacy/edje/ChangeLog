@@ -462,3 +462,7 @@
 
 	* Fix table and text when fixed point is turned on.
 	* Clamp image tween to never underflow also.
+
+2012-05-20  Cedric Bail
+
+	* Use Eina_File instead of fopen when possible in edje_cc.

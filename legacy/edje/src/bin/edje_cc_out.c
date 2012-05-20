@@ -418,99 +418,68 @@ static void
 data_thread_fonts(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Fonts_Write *fc = data;
-   void *fdata = NULL;
-   int fsize = 0;
    Eina_List *ll;
-   FILE *f;
+   Eina_File *f = NULL;
+   void *m = NULL;
    int bytes = 0;
    char buf[PATH_MAX];
    char buf2[PATH_MAX];
-   
-   f = fopen(fc->fn->file, "rb");
+
+   f = eina_file_open(fc->fn->file, 0);
    if (f)
      {
-        long pos;
-        
         using_file(fc->fn->file);
-        fseek(f, 0, SEEK_END);
-        pos = ftell(f);
-        rewind(f);
-        fdata = malloc(pos);
-        if (fdata)
-          {
-             if (fread(fdata, pos, 1, f) != 1)
-               {
-                  snprintf(buf, sizeof(buf),
-                           "Unable to read all of font file \"%s\"\n",
-                           fc->fn->file);
-                  fc->errstr = strdup(buf);
-                  return;
-               }
-             fsize = pos;
-          }
-        fclose(f);
+        m = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
      }
    else
      {
         char *dat;
-        
+
         EINA_LIST_FOREACH(fnt_dirs, ll, dat)
           {
              snprintf(buf, sizeof(buf), "%s/%s", dat, fc->fn->file);
-             f = fopen(buf, "rb");
+             f = eina_file_open(buf, 0);
              if (f)
                {
-                  long pos;
-                  
                   using_file(buf);
-                  fseek(f, 0, SEEK_END);
-                  pos = ftell(f);
-                  rewind(f);
-                  fdata = malloc(pos);
-                  if (fdata)
-                    {
-                       if (fread(fdata, pos, 1, f) != 1)
-                         {
-                            snprintf(buf2, sizeof(buf2),
-                                     "Unable to read all of font file \"%s\"\n",
-                                     buf);
-                            fc->errstr = strdup(buf2);
-                            return;
-                         }
-                       fsize = pos;
-                    }
-                  fclose(f);
-                  if (fdata) break;
+                  m = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+                  if (m) break;
+                  eina_file_close(f);
+                  f = NULL;
                }
           }
      }
-   if (!fdata)
+   if (!m)
      {
+        if (f) eina_file_close(f);
         snprintf(buf, sizeof(buf),
                  "Unable to load font part \"%s\" entry to %s \n",
                  fc->fn->file, file_out);
         fc->errstr = strdup(buf);
         return;
      }
-   else
+
+   snprintf(buf, sizeof(buf), "edje/fonts/%s", fc->fn->name);
+   bytes = eet_write(fc->ef, buf, m, eina_file_size_get(f), compress_mode);
+
+   if (bytes <= 0 || eina_file_map_faulted(f, m))
      {
-        snprintf(buf, sizeof(buf), "edje/fonts/%s", fc->fn->name);
-        bytes = eet_write(fc->ef, buf, fdata, fsize, compress_mode);
-        if (bytes <= 0)
-          {
-             snprintf(buf2, sizeof(buf2),
-                      "Unable to write font part \"%s\" as \"%s\" "
-                      "part entry to %s \n", fc->fn->file, buf, file_out);
-             fc->errstr = strdup(buf2);
-             return;
-          }
-        if (verbose)
-          printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" font entry \"%s\" compress: [real: %2.1f%%]\n",
-                 progname, bytes, (bytes + 512) / 1024, buf, fc->fn->file,
-                 100 - (100 * (double)bytes) / ((double)(fsize))
-                );
-        free(fdata);
+        eina_file_map_free(f, m);
+        eina_file_close(f);
+        snprintf(buf2, sizeof(buf2),
+                 "Unable to write font part \"%s\" as \"%s\" "
+                 "part entry to %s \n", fc->fn->file, buf, file_out);
+        fc->errstr = strdup(buf2);
+        return;
      }
+
+   if (verbose)
+     printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" font entry \"%s\" compress: [real: %2.1f%%]\n",
+            progname, bytes, (bytes + 512) / 1024, buf, fc->fn->file,
+            100 - (100 * (double)bytes) / ((double)(eina_file_size_get(f)))
+            );
+   eina_file_map_free(f, m);
+   eina_file_close(f);
 }
 
 static void
@@ -539,7 +508,7 @@ data_write_fonts(Eet_File *ef, int *font_num)
    EINA_ITERATOR_FOREACH(it, fn)
      {
         Fonts_Write *fc;
-        
+
         fc = calloc(1, sizeof(Fonts_Write));
         if (!fc) continue;
         fc->ef = ef;
@@ -654,7 +623,7 @@ data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
    if ((iw->data) && (iw->w > 0) && (iw->h > 0))
      {
         int mode, qual;
-        
+
         snprintf(buf, sizeof(buf), "edje/images/%i", iw->img->id);
         qual = 80;
         if ((iw->img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
@@ -726,7 +695,6 @@ data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
              iw->errstr = strdup(buf);
              return;
           }
-        
      }
    else
      {
@@ -737,12 +705,12 @@ data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
         iw->errstr = strdup(buf);
         return;
      }
-   
+
    if (verbose)
      {
         struct stat st;
 
-        if (!iw->path || (!stat(iw->path, &st))) st.st_size = 0;
+        if (!iw->path || (stat(iw->path, &st))) st.st_size = 0;
         printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
                progname, bytes, (bytes + 512) / 1024, buf, iw->img->entry,
                100 - (100 * (double)bytes) / ((double)(iw->w * iw->h * 4)),
@@ -874,66 +842,56 @@ data_thread_sounds(void *data, Ecore_Thread *thread __UNUSED__)
    char *dir_path = NULL;
    char snd_path[PATH_MAX];
    char sndid_str[15];
-   void *fdata;
-   FILE *fp = NULL;
-   struct stat st;
-   int size = 0;
+   Eina_File *f = NULL;
+   void *m = NULL;
    int bytes = 0;
 
-   memset(&st, 0, sizeof(struct stat));
    // Search the Sound file in all the -sd ( sound directory )
    EINA_LIST_FOREACH(snd_dirs, ll, dir_path)
      {
         snprintf((char *)snd_path, sizeof(snd_path), "%s/%s", dir_path,
                  sw->sample->snd_src);
-        stat(snd_path, &st);
-        if (st.st_size) break;
+        f = eina_file_open(snd_path, 0);
+        if (f) break;
      }
-   if (!st.st_size)
+   if (!f)
      {
         snprintf((char *)snd_path, sizeof(snd_path), "%s",
                  sw->sample->snd_src);
-        stat(snd_path, &st);
-     }
-   size = st.st_size;
-   if (!size)
-     {
-        ERR("%s: Error. Unable to load sound source file : %s",
-            progname, sw->sample->snd_src);
-        exit(-1);
+        f = eina_file_open(snd_path, 0);
      }
 #ifdef HAVE_LIBSNDFILE
+   if (f) eina_file_close(f);
    enc_info = _edje_multisense_encode(snd_path, sw->sample,
                                       sw->sample->quality);
-   stat(enc_info->file, &st);
-   size = st.st_size;
-   fp = fopen(enc_info->file, "rb");
-   if (fp) using_file(enc_info->file);
+   f = eina_file_open(enc_info->file, 0);
+   if (f) using_file(enc_info->file);
 #else
-   fp = fopen(snd_path, "rb");
-   if (fp) using_file(snd_path);
+   if (f) using_file(snd_path);
 #endif
-   if (!fp)
+   if (!f)
      {
         ERR("%s: Error: Unable to load sound data of: %s",
             progname, sw->sample->name);
         exit(-1);
      }
-   
+
    snprintf(sndid_str, sizeof(sndid_str), "edje/sounds/%i", sw->sample->id);
-   fdata = malloc(size);
-   if (!fdata)
+   m = eina_file_map_all(f, EINA_FILE_WILLNEED);
+   if (m)
      {
-        ERR("%s: Error. %s:%i while allocating memory to load file \"%s\"",
-            progname, file_in, line, snd_path);
-        exit(-1);
+        bytes = eet_write(sw->ef, sndid_str, m, eina_file_size_get(f),
+                          EET_COMPRESSION_NONE);
+        if (eina_file_map_faulted(f, m))
+          {
+             ERR("%s: Error: File access error when reading '%s'",
+                 progname, eina_file_filename_get(f));
+             exit(-1);
+          }
+        eina_file_map_free(f, m);
      }
-   if (fread(fdata, size, 1, fp))
-     bytes = eet_write(sw->ef, sndid_str, fdata, size,
-                       EET_COMPRESSION_NONE);
-   free(fdata);
-   fclose(fp);
-   
+   eina_file_close(f);
+
 #ifdef HAVE_LIBSNDFILE
    //If encoded temporary file, delete it.
    if (enc_info->encoded) unlink(enc_info->file);
@@ -1587,7 +1545,7 @@ data_write(void)
    check_groups(ef);
 
    ecore_thread_max_set(ecore_thread_max_get() * 2);
-   
+
    t = ecore_time_get();
    data_write_header(ef);
    if (verbose)
