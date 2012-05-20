@@ -127,6 +127,7 @@ typedef struct
          void *event_info, Evas_Callback_Type event_type,
          Elm_Gesture_Type g_type);
    void (*reset)(Gesture_Info *gesture);
+   void (*cont_reset)(Gesture_Info *gesture); /* Can be NULL. */
 } Tests_Array_Funcs;
 
 static void _tap_gesture_test(Evas_Object *obj, Pointer_Event *pe, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Type g_type);
@@ -144,17 +145,17 @@ static void _rotate_test_reset(Gesture_Info *gesture);
 
 /* Should be the same order as _Elm_Gesture_Type */
 static Tests_Array_Funcs _glayer_tests_array[] ={
-       { NULL, NULL }, /** Because someone made an awful mistake. */
-       { _tap_gesture_test, _tap_gestures_test_reset }, /* ELM_GESTURE_N_TAPS */
-       { _n_long_tap_test, _n_long_tap_test_reset }, /* ELM_GESTURE_N_LONG_TAPS */
-       { _tap_gesture_test, _tap_gestures_test_reset }, /* ELM_GESTURE_N_DOUBLE_TAPS */
-       { _tap_gesture_test, _tap_gestures_test_reset }, /* ELM_GESTURE_N_TRIPLE_TAPS */
-       { _momentum_test, _momentum_test_reset }, /* ELM_GESTURE_MOMENTUM */
-       { _n_line_test, _line_test_reset }, /* ELM_GESTURE_N_LINES */
-       { _n_line_test, _line_test_reset }, /* ELM_GESTURE_N_FLICKS */
-       { _zoom_test, _zoom_test_reset }, /* ELM_GESTURE_ZOOM */
-       { _rotate_test, _rotate_test_reset }, /* ELM_GESTURE_ROTATE */
-       { NULL, NULL } /** Because someone made an awful mistake. */
+       { NULL, NULL, NULL }, /** Because someone made an awful mistake. */
+       { _tap_gesture_test, _tap_gestures_test_reset, NULL }, /* ELM_GESTURE_N_TAPS */
+       { _n_long_tap_test, _n_long_tap_test_reset, NULL }, /* ELM_GESTURE_N_LONG_TAPS */
+       { _tap_gesture_test, _tap_gestures_test_reset, NULL }, /* ELM_GESTURE_N_DOUBLE_TAPS */
+       { _tap_gesture_test, _tap_gestures_test_reset, NULL }, /* ELM_GESTURE_N_TRIPLE_TAPS */
+       { _momentum_test, _momentum_test_reset, _momentum_test_reset }, /* ELM_GESTURE_MOMENTUM */
+       { _n_line_test, _line_test_reset, _line_test_reset }, /* ELM_GESTURE_N_LINES */
+       { _n_line_test, _line_test_reset, _line_test_reset }, /* ELM_GESTURE_N_FLICKS */
+       { _zoom_test, _zoom_test_reset, _zoom_test_reset }, /* ELM_GESTURE_ZOOM */
+       { _rotate_test, _rotate_test_reset, _rotate_test_reset }, /* ELM_GESTURE_ROTATE */
+       { NULL, NULL, NULL }
 };
 
 /**
@@ -3173,58 +3174,25 @@ continues_gestures_restart(void *data, Eina_Bool states_reset)
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
-   /* Run through events to restart gestures */
-   Gesture_Info *g;
-   Eina_Bool n_momentum, n_lines, n_flicks, zoom, rotate;
-   /* We turn-on flag for finished, aborted, not-started gestures */
-   g = wd->gesture[ELM_GESTURE_MOMENTUM];
-   n_momentum = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (n_momentum)
+   /* Test all the gestures */
      {
-        _momentum_test_reset(wd->gesture[ELM_GESTURE_MOMENTUM]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
-     }
+        /* FIXME: +1 because of the mistake in the enum. */
+        Gesture_Info **gitr = wd->gesture + 1;
+        Tests_Array_Funcs *fitr = _glayer_tests_array + 1;
+        for ( ; fitr->test ; fitr++, gitr++)
+          {
+             Gesture_Info *g = *gitr;
+             Eina_Bool tmp = (g) ?
+                ((states_reset) || ((g->state != ELM_GESTURE_STATE_START)
+                   && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
+             if (tmp && fitr->cont_reset)
+               {
 
-   g = wd->gesture[ELM_GESTURE_N_LINES];
-   n_lines = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (n_lines)
-     {
-        _line_test_reset(wd->gesture[ELM_GESTURE_N_LINES]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
-     }
-
-   g = wd->gesture[ELM_GESTURE_N_FLICKS];
-   n_flicks = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (n_flicks)
-     {
-        _line_test_reset(wd->gesture[ELM_GESTURE_N_FLICKS]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
-     }
-
-   g = wd->gesture[ELM_GESTURE_ZOOM];
-   zoom = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (zoom)
-     {
-        _zoom_test_reset(wd->gesture[ELM_GESTURE_ZOOM]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
-     }
-
-   g = wd->gesture[ELM_GESTURE_ROTATE];
-   rotate = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
-         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
-   if (rotate)
-     {
-        _rotate_test_reset(wd->gesture[ELM_GESTURE_ROTATE]);
-        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
-        SET_TEST_BIT(g);
+                  fitr->cont_reset(g);
+                  _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
+                  SET_TEST_BIT(g);
+               }
+          }
      }
 }
 
