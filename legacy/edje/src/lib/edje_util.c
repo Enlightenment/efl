@@ -191,7 +191,6 @@ edje_freeze(void)
 {
 #ifdef FASTFREEZE
    _edje_freeze_val++;
-   INF("fr ++ ->%i", _edje_freeze_val);
 #else
 // FIXME: could just have a global freeze instead of per object
 // above i tried.. but this broke some things. notable e17's menus. why?
@@ -231,7 +230,6 @@ edje_thaw(void)
 {
 #ifdef FASTFREEZE
    _edje_freeze_val--;
-   INF("fr -- ->%i", _edje_freeze_val);
    if ((_edje_freeze_val <= 0) && (_edje_freeze_calc_count > 0))
      {
         Edje *ed;
