@@ -386,67 +386,75 @@ END_TEST
 
 START_TEST(eo_magic_checks)
 {
-   char buf[sizeof(long)]; /* Just enough to hold eina magic + a bit more. */
+   char _buf[sizeof(long)]; /* Just enough to hold eina magic + a bit more. */
+   char *buf = _buf;
    eo_init();
 
-   memset(buf, 1, sizeof(buf));
-   Eo *obj = eo_add((Eo_Class *) buf, NULL);
+   memset(_buf, 1, sizeof(_buf));
+
+   Eo *obj = eo_add(SIMPLE_CLASS, (Eo *) buf);
    fail_if(obj);
 
-   obj = eo_add(SIMPLE_CLASS, (Eo *) buf);
-   fail_if(obj);
+   while (1)
+     {
+        obj = eo_add((Eo_Class *) buf, NULL);
+        fail_if(obj);
 
-   obj = eo_add(SIMPLE_CLASS, NULL);
-   fail_if(!obj);
+        obj = eo_add(SIMPLE_CLASS, NULL);
+        fail_if(!obj);
 
-   fail_if(eo_do((Eo *) buf, EO_NOOP));
-   fail_if(eo_do_super((Eo *) buf, EO_NOOP));
-   fail_if(eo_class_get((Eo *) buf));
-   fail_if(eo_class_name_get((Eo_Class*) buf));
-   eo_class_funcs_set((Eo_Class *) buf, NULL);
+        fail_if(eo_do((Eo *) buf, EO_NOOP));
+        fail_if(eo_do_super((Eo *) buf, EO_NOOP));
+        fail_if(eo_class_get((Eo *) buf));
+        fail_if(eo_class_name_get((Eo_Class*) buf));
+        eo_class_funcs_set((Eo_Class *) buf, NULL);
 
-   fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
+        fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
 
-   eo_xref(obj, (Eo *) buf);
-   eo_xunref(obj, (Eo *) buf);
-   eo_xref((Eo *) buf, obj);
-   eo_xunref((Eo *) buf, obj);
+        eo_xref(obj, (Eo *) buf);
+        eo_xunref(obj, (Eo *) buf);
+        eo_xref((Eo *) buf, obj);
+        eo_xunref((Eo *) buf, obj);
 
-   eo_ref((Eo *) buf);
-   eo_unref((Eo *) buf);
+        eo_ref((Eo *) buf);
+        eo_unref((Eo *) buf);
 
-   fail_if(0 != eo_ref_get((Eo *) buf));
+        fail_if(0 != eo_ref_get((Eo *) buf));
 
-   Eo *wref = NULL;
-   eo_do((Eo *) buf, eo_wref_add(&wref));
-   fail_if(wref);
+        Eo *wref = NULL;
+        eo_do((Eo *) buf, eo_wref_add(&wref));
+        fail_if(wref);
 
-   eo_del((Eo *) buf);
+        eo_del((Eo *) buf);
 
-   fail_if(eo_parent_get((Eo *) buf));
+        fail_if(eo_parent_get((Eo *) buf));
 
-   eo_error_set((Eo *) buf);
+        eo_error_set((Eo *) buf);
 
-   eo_constructor_super((Eo *) buf);
-   eo_destructor_super((Eo *) buf);
+        eo_constructor_super((Eo *) buf);
+        eo_destructor_super((Eo *) buf);
 
-   fail_if(eo_data_get((Eo *) buf, SIMPLE_CLASS));
+        fail_if(eo_data_get((Eo *) buf, SIMPLE_CLASS));
 
-   eo_composite_object_attach((Eo *) buf, obj);
-   eo_composite_object_attach(obj, (Eo *) buf);
-   eo_composite_object_detach((Eo *) buf, obj);
-   eo_composite_object_detach(obj, (Eo *) buf);
-   eo_composite_is((Eo *) buf);
+        eo_composite_object_attach((Eo *) buf, obj);
+        eo_composite_object_attach(obj, (Eo *) buf);
+        eo_composite_object_detach((Eo *) buf, obj);
+        eo_composite_object_detach(obj, (Eo *) buf);
+        eo_composite_is((Eo *) buf);
 
-   eo_do(obj, eo_event_callback_forwarder_add(NULL, (Eo *) buf));
-   eo_do(obj, eo_event_callback_forwarder_del(NULL, (Eo *) buf));
+        eo_do(obj, eo_event_callback_forwarder_add(NULL, (Eo *) buf));
+        eo_do(obj, eo_event_callback_forwarder_del(NULL, (Eo *) buf));
 
-   eo_manual_free_set((Eo *) buf, EINA_TRUE);
-   eo_manual_free((Eo *) buf);
-   eo_manual_free_set(NULL, EINA_TRUE);
-   eo_manual_free(NULL);
+        eo_manual_free_set((Eo *) buf, EINA_TRUE);
+        eo_manual_free((Eo *) buf);
 
-   eo_unref(obj);
+        eo_unref(obj);
+
+        if (!buf)
+           break;
+        else
+           buf = NULL;
+     }
 
    eo_shutdown();
 }
