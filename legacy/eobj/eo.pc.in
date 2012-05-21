@@ -8,6 +8,7 @@ Description: EFL's generic object system library.
 Version: @PACKAGE_VERSION@
 Libs: -L${libdir} -leo
 Libs.private:
-Cflags: -I${includedir}/eo-@VMAJ@
+Cflags: -I${includedir} -I${includedir}/eo-@VMAJ@
+
 
 ~                                                                           
