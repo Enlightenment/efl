@@ -183,6 +183,10 @@ _check_string(void *data)
      {
         Evas_Coord x, w;
         int len;
+
+        if (it->icon && !it->label)
+          continue;
+
         evas_object_geometry_get(VIEW(it), &x, NULL, &w, NULL);
         /* item not visible */
         if ((x + w <= ox) || (x >= ox + ow))
@@ -354,11 +358,11 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
 
    it->label = eina_stringshare_add(label);
-   it->icon = icon;
    it->func = func;
    it->base.data = data;
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
    _elm_theme_object_set(obj, VIEW(it), "diskselector", "item", style);
+
    evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL,
@@ -370,13 +374,9 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
         edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
         edje_object_signal_callback_add(VIEW(it), "elm,action,click", "", _item_click_cb, it);
      }
-   if (it->icon)
+   if (icon)
      {
-        evas_object_size_hint_min_set(it->icon, 24, 24);
-        evas_object_size_hint_max_set(it->icon, 40, 40);
-        edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
-        evas_object_show(it->icon);
-        elm_widget_sub_object_add(obj, it->icon);
+        _item_content_set_hook((Elm_Object_Item *)it, "icon", icon);
      }
    return it;
 }
@@ -926,6 +926,10 @@ _item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
    it->icon = icon;
    if (VIEW(it))
      {
+        // if the label is NULL, the icon should position at center of the item
+        if (it->icon && (!it->label))
+          edje_object_signal_emit(VIEW(it), "elm,state,icon,only", "elm");
+
         evas_object_size_hint_min_set(it->icon, 24, 24);
         evas_object_size_hint_max_set(it->icon, 40, 40);
         edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
@@ -992,6 +996,10 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
    item = (Elm_Diskselector_Item *)it;
    eina_stringshare_replace(&item->label, label);
    edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
+
+   // if the label is NULL, the icon should position at center of the item
+   if (item->icon && (!item->label))
+     edje_object_signal_emit(VIEW(item), "elm,state,icon,only", "elm");
 }
 
 static const char *

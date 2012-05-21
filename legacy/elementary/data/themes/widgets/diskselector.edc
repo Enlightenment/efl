@@ -109,6 +109,12 @@ group { name: "elm/diskselector/item/default";
             rel2.relative: 0.4 0.8;
             color: 255 255 255 160;
          }
+         description { state: "icon_only" 0.0;
+            inherit: "default" 0.0;
+            align: 0.5 0.5;
+            rel1.relative: 0 0;
+            rel2.relative: 1 1;
+         }
       }
       part { name: "elm.text";
          type: TEXT;
@@ -179,6 +185,12 @@ group { name: "elm/diskselector/item/default";
          source: "elm";
          action: STATE_SET "right_side" 0.0;
          target: "elm.text";
+         target: "elm.swallow.icon";
+      }
+      program { name: "icon_only";
+         signal: "elm,state,icon,only";
+         source: "elm";
+         action: STATE_SET "icon_only" 0.0;
          target: "elm.swallow.icon";
       }
    }
