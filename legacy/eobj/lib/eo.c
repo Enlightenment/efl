@@ -44,6 +44,7 @@ struct _Eo {
 
      Eina_Bool del:1;
      Eina_Bool construct_error:1;
+     Eina_Bool manual_free:1;
 };
 
 /* Start of Dich */
@@ -1194,6 +1195,13 @@ _eo_del_internal(Eo *obj)
 }
 
 static inline void
+_eo_free(Eo *obj)
+{
+   EINA_MAGIC_SET(obj, EO_DELETED_EINA_MAGIC);
+   free(obj);
+}
+
+static inline void
 _eo_unref(Eo *obj)
 {
    if (--(obj->refcount) == 0)
@@ -1201,18 +1209,17 @@ _eo_unref(Eo *obj)
         _eo_del_internal(obj);
 
 #ifndef NDEBUG
-   /* If for some reason it's not empty, clear it. */
-   while (obj->xrefs)
-     {
-        WRN("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
-        Eina_Inlist *nitr = obj->xrefs->next;
-        free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node));
-        obj->xrefs = nitr;
-     }
+        /* If for some reason it's not empty, clear it. */
+        while (obj->xrefs)
+          {
+             WRN("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
+             Eina_Inlist *nitr = obj->xrefs->next;
+             free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node));
+             obj->xrefs = nitr;
+          }
 #endif
 
-        EINA_MAGIC_SET(obj, EO_DELETED_EINA_MAGIC);
-        free(obj);
+        if (!obj->manual_free) _eo_free(obj);
      }
 }
 
@@ -1466,7 +1473,7 @@ eo_composite_object_detach(Eo *obj, Eo *emb_obj)
 }
 
 EAPI Eina_Bool
-eo_composite_is(Eo *emb_obj)
+eo_composite_is(const Eo *emb_obj)
 {
    if (!EINA_MAGIC_CHECK(emb_obj, EO_EINA_MAGIC))
      {
@@ -1490,4 +1497,30 @@ eo_composite_is(Eo *emb_obj)
    return EINA_FALSE;
 }
 
+EAPI void
+eo_manual_free_set(Eo *obj, Eina_Bool manual_free)
+{
+   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
+   obj->manual_free = manual_free;
+}
+
+EAPI void
+eo_manual_free(Eo *obj)
+{
+   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
+
+   if (EINA_FALSE == obj->manual_free)
+     {
+        ERR("Tried to free manually the object %p while the option has not been set; see eo_manual_free_set for more information.", obj);
+        return;
+     }
+
+   if (0 != obj->refcount)
+     {
+        ERR("Tried deleting the object %p while still referenced(%d).", obj, eo_ref_get(obj));
+        return;
+     }
+
+   _eo_free(obj);
+}
 

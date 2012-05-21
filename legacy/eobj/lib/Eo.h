@@ -749,7 +749,35 @@ EAPI void eo_composite_object_detach(Eo *obj, Eo *comp_obj);
  * @see eo_composite_object_attach()
  * @see eo_composite_object_detach()
  */
-EAPI Eina_Bool eo_composite_is(Eo *comp_obj);
+EAPI Eina_Bool eo_composite_is(const Eo *comp_obj);
+
+/**
+ * @brief Enable or disable the manual free feature.
+ * @param obj the object to work on.
+ * @param manual_free indicates if the free is manual (EINA_TRUE) or automatic (EINA_FALSE).
+ *
+ * The developer is in charge to call the function eo_manual_free to free the memory allocated for this object.
+ *
+ * Do not use, unless you really know what you are doing. It's used by Evas
+ * because evas wants to keep its private data available even after the object
+ * is deleted. Setting this to true makes Eo destruct the object but not free
+ * the private data or the object itself.
+ *
+ * @see eo_manual_free()
+ */
+EAPI void eo_manual_free_set(Eo *obj, Eina_Bool manual_free);
+
+/**
+ * @brief Frees the object.
+ * @param obj the object to work on.
+ * This function must be called by the developer if the function
+ * eo_manual_free_set has been called before with the parameter EINA_TRUE.
+ * An error will be printed if this function is called when the manual
+ * free option is not set to EINA_TRUE or the number of refs is not 0.
+ *
+ * @see eo_manual_free_set()
+ */
+EAPI void eo_manual_free(Eo *obj);
 
 /**
  * @}

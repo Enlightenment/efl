@@ -59,6 +59,76 @@ START_TEST(eo_data_fetch)
 }
 END_TEST
 
+static void
+_man_con(Eo *obj, void *data EINA_UNUSED)
+{
+   eo_manual_free_set(obj, EINA_TRUE);
+   eo_constructor_super(obj);
+}
+
+static void
+_man_des(Eo *obj, void *data EINA_UNUSED)
+{
+   eo_destructor_super(obj);
+   eo_manual_free_set(obj, EINA_FALSE);
+}
+
+START_TEST(eo_man_free)
+{
+   eo_init();
+
+   /* Usually should be const, not const only for the test... */
+   static Eo_Class_Description class_desc = {
+        "Simple2",
+        EO_CLASS_TYPE_REGULAR,
+        EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+        NULL,
+        10,
+        _man_con,
+        _man_des,
+        NULL,
+        NULL
+   };
+
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   fail_if(!klass);
+
+   Eo *obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   eo_unref(obj);
+
+   obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   eo_manual_free(obj);
+   eo_unref(obj);
+
+   class_desc.destructor = NULL;
+   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   fail_if(!klass);
+
+   obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   eo_manual_free(obj);
+   eo_unref(obj);
+
+   obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   eo_unref(obj);
+   eo_manual_free(obj);
+
+   class_desc.constructor = NULL;
+   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
+   fail_if(!klass);
+
+   obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   eo_manual_free(obj);
+   eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 START_TEST(eo_refs)
 {
    eo_init();
@@ -371,6 +441,11 @@ START_TEST(eo_magic_checks)
    eo_do(obj, eo_event_callback_forwarder_add(NULL, (Eo *) buf));
    eo_do(obj, eo_event_callback_forwarder_del(NULL, (Eo *) buf));
 
+   eo_manual_free_set((Eo *) buf, EINA_TRUE);
+   eo_manual_free((Eo *) buf);
+   eo_manual_free_set(NULL, EINA_TRUE);
+   eo_manual_free(NULL);
+
    eo_unref(obj);
 
    eo_shutdown();
@@ -386,4 +461,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_refs);
    tcase_add_test(tc, eo_magic_checks);
    tcase_add_test(tc, eo_data_fetch);
+   tcase_add_test(tc, eo_man_free);
 }
