@@ -1006,7 +1006,8 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
         for (  ; *mro_itr ; mro_itr++)
            ;
 
-        for ( mro_itr-- ; mro_itr >= klass->mro ; mro_itr--)
+        /* Skip ourselves. */
+        for ( mro_itr-- ; mro_itr > klass->mro ; mro_itr--)
           {
              _dich_copy_all(klass, *mro_itr);
           }
