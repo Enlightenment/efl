@@ -110,6 +110,7 @@ START_TEST(eo_man_free)
    fail_if(!obj);
    eo_manual_free(obj);
    eo_unref(obj);
+   eo_manual_free(obj);
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
@@ -305,6 +306,7 @@ START_TEST(eo_op_errors)
    fail_if(!eo_do(obj, simple_a_print()));
    fail_if(!eo_query(obj, simple_a_print()));
    fail_if(eo_query(obj, simple_a_set(1)));
+   eo_unref(obj);
 
    eo_shutdown();
 }
