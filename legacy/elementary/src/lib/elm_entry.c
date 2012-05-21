@@ -2303,7 +2303,6 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   evas_event_freeze(evas_object_evas_get(obj));
    if (!entry) entry = "";
    if (item)
      {
@@ -2311,11 +2310,10 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
           edje_object_part_text_set(wd->ent, "elm.guide", entry);
         else
           edje_object_part_text_set(wd->ent, item, entry);
-        evas_event_thaw(evas_object_evas_get(obj));
-        evas_event_thaw_eval(evas_object_evas_get(obj));
         return;
      }
 
+   evas_event_freeze(evas_object_evas_get(obj));
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
    wd->changed = EINA_TRUE;
