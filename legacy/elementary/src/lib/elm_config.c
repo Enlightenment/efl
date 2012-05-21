@@ -1033,7 +1033,7 @@ _config_load(void)
    _elm_config->glayer_line_angular_tolerance = 20.0; /* 20 DEG */
    _elm_config->glayer_flick_time_limit_ms = 120;              /* ms to finish flick */
    _elm_config->glayer_long_tap_start_timeout = 1.2;   /* 1.2 second to start long-tap */
-   _elm_config->glayer_double_tap_timeout = 0.2;   /* 0.2 seconds between 2 mouse downs of a tap. */
+   _elm_config->glayer_double_tap_timeout = 0.25;   /* 0.25 seconds between 2 mouse downs of a tap. */
    _elm_config->glayer_continues_enable = EINA_TRUE;      /* Continue gestures default */
    _elm_config->week_start = 1; /* monday */
    _elm_config->weekend_start = 6; /* saturday */

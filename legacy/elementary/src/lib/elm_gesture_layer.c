@@ -3503,7 +3503,7 @@ elm_gesture_layer_add(Evas_Object *parent)
 
    /* FIXME: Hack to get around old configs - if too small, enlarge. */
    if (_elm_config->glayer_double_tap_timeout < 0.00001)
-      _elm_config->glayer_double_tap_timeout = 0.2;
+      _elm_config->glayer_double_tap_timeout = 0.25;
 
    memset(wd->gesture, 0, sizeof(wd->gesture));
 
