@@ -408,6 +408,8 @@ START_TEST(eo_magic_checks)
         fail_if(eo_class_get((Eo *) buf));
         fail_if(eo_class_name_get((Eo_Class*) buf));
         eo_class_funcs_set((Eo_Class *) buf, NULL);
+        eo_class_do((Eo_Class *) buf, NULL);
+        eo_class_do_super((Eo_Class *) buf, EO_NOOP);
 
         fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
 
