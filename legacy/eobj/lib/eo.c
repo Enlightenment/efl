@@ -1384,10 +1384,12 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
 
    ret = _eo_data_get(obj, klass);
 
+#ifndef NDEBUG
    if (!ret && (klass->desc->data_size == 0))
      {
         ERR("Tried getting data of class '%s', but it has none..", klass->desc->name);
      }
+#endif
 
    return ret;
 }
