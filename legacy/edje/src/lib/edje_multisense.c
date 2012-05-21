@@ -85,17 +85,17 @@ init_multisense_environment(void)
      strncpy(ms_factory, ms_factory_env, BUF_LEN);
    else
      strcpy(ms_factory, "multisense_factory");
-   
+
    m = _edje_module_handle_load(ms_factory);
    if (!m) goto err;
-   
+
    msdata->msenv->remixenv = remix_init();
 
-   multisense_factory_init = 
+   multisense_factory_init =
      eina_module_symbol_get(m, "multisense_factory_init");
    if (multisense_factory_init) multisense_factory_init(msdata->msenv);
 
-   msdata->multisense_sound_player_get = 
+   msdata->multisense_sound_player_get =
      eina_module_symbol_get(m, "multisense_sound_player_get");
    if (!msdata->multisense_sound_player_get) goto err;
 
@@ -147,7 +147,7 @@ eet_sound_reader_get(Edje_Multisense_Env *msenv, const char *path, const char *s
              ERR ("Multisense EET Sound reader plugin NULL\n");
              return NULL;
           }
-        
+
         sf_path_key = remix_get_init_parameter_key(env, sf_plugin, "path");
         sf_sound_id_key = remix_get_init_parameter_key(env, sf_plugin, "sound_id");
         sf_speed_key = remix_get_init_parameter_key(env, sf_plugin, "speed");
@@ -156,7 +156,7 @@ eet_sound_reader_get(Edje_Multisense_Env *msenv, const char *path, const char *s
    sf_parms = cd_set_replace(env, sf_parms, sf_sound_id_key, CD_STRING(sound_id));
    sf_parms = cd_set_replace(env, sf_parms, sf_speed_key, CD_DOUBLE(speed));
    eet_snd_reader = remix_new(env, sf_plugin, sf_parms);
-   
+
    return eet_snd_reader;
 }
 
@@ -195,7 +195,7 @@ edje_remix_tone_create(Multisense_Data *msdata, Edje*ed, Edje_Tone_Action *actio
 
    if ((!ed) || (!ed->file) || (!ed->file->sound_dir))
      return NULL;
-   
+
    for (i = 0; i < ed->file->sound_dir->tones_count; i++)
      {
         tone = &ed->file->sound_dir->tones[i];
@@ -215,7 +215,7 @@ sound_command_handler(Multisense_Data *msdata)
    Edje_Multisense_Sound_Action command;
    RemixBase *base = NULL;
    RemixBase *sound;
-   
+
    if (read(command_pipe[0], &command, sizeof(command)) <= 0) return;
    switch (command.action)
      {
@@ -258,7 +258,7 @@ _msdata_free(void)
    remix_destroy(msdata->msenv->remixenv, msdata->player);
    remix_destroy(msdata->msenv->remixenv, msdata->deck);
    remix_purge(msdata->msenv->remixenv);
-   
+
    free(msdata->msenv);
    free(msdata);
    msdata = NULL;
@@ -270,9 +270,9 @@ _player_job(void *data __UNUSED__, Ecore_Thread *th)
    fd_set wait_fds;
    RemixBase *sound;
    RemixCount process_len;
-// disable and move outside of thread due to dlsym etc. thread issues   
+// disable and move outside of thread due to dlsym etc. thread issues
 //   Multisense_Data * msdata = init_multisense_environment();
-   
+
    if (!msdata) return;
 
    fcntl(command_pipe[0], F_SETFL, O_NONBLOCK);
@@ -337,8 +337,13 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
    ssize_t size = 0;
 #ifdef ENABLE_MULTISENSE
    Edje_Multisense_Sound_Action command;
-   
+
    if ((!pipe_initialized) && (!player_thread)) return EINA_FALSE;
+   if (!sample_name)
+     {
+        ERR("Given Sample Name is NULL\n");
+        return EINA_FALSE;
+     }
 
    command.action = EDJE_PLAY_SAMPLE;
    command.ed = ed;
@@ -360,14 +365,20 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
    ssize_t size = 0;
 #ifdef ENABLE_MULTISENSE
    Edje_Multisense_Sound_Action command;
-   
+
    if ((!pipe_initialized) && (!player_thread)) return EINA_FALSE;
+   if (!tone_name)
+     {
+        ERR("Given Tone Name is NULL\n");
+        return EINA_FALSE;
+     }
+
    command.action = EDJE_PLAY_TONE;
    command.ed = ed;
    strncpy(command.type.tone.tone_name, tone_name, BUF_LEN);
    command.type.tone.duration = duration;
    size = write(command_pipe[1], &command, sizeof(command));
-#else   
+#else
    // warning shh
    (void) ed;
    (void) duration;
@@ -387,7 +398,7 @@ _edje_multisense_init(void)
 
    // init msdata outside of thread due to thread issues in dlsym etc.
    if (!msdata) msdata = init_multisense_environment();
-   
+
    if (!player_thread)
      player_thread = ecore_thread_run(_player_job, _player_end, _player_cancel, NULL);
 #endif
