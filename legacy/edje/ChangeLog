@@ -466,3 +466,8 @@
 2012-05-20  Cedric Bail
 
 	* Use Eina_File instead of fopen when possible in edje_cc.
+
+2012-05-21 Shilpa Onkar Singh
+
+        * Fix patch for edje draggable jump issue when external event
+        area is used for the dragable.

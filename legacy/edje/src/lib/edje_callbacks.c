@@ -109,64 +109,12 @@ _edje_mouse_down_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
 
    if (rp->events_to)
      {
-	int x = 0, y = 0;
-	Edje_Real_Part *events;
-
-	events = rp->events_to;
-	evas_object_geometry_get(rp->object, &x, &y, NULL, NULL);
-
-	if ((events->part->dragable.x) || (events->part->dragable.y))
-	  {
-	     if (events->part->dragable.x)
-	       {
-		  events->drag->down.x = ev->canvas.x;
-		  events->drag->tmp.x = 0;
-	       }
-	     if (events->part->dragable.y)
-	       {
-		  events->drag->down.y = ev->canvas.y;
-		  events->drag->tmp.y = 0;
-	       }
-
-	     if (!ignored)
-	       {
-		  snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
-		  _edje_emit(ed, buf, events->part->name);
-	       }
-	     ed->dirty = 1;
-             ed->recalc_call = 1;
-#ifdef EDJE_CALC_CACHE
-	     rp->invalidate = 1;
-#endif
-	  }
-	_edje_recalc_do(ed);
-	/*
-	  _edje_thaw(ed);
-	  _edje_unref(ed);
-	  _edje_ref(ed);
-	  _edje_freeze(ed);
-	*/
-	rp = events;
-	{
-	   FLOAT_T dx = ZERO, dy = ZERO;
-
-	   _edje_part_dragable_calc(ed, rp, &dx, &dy);
-
-	   if ((dx != rp->drag->val.x) || (dy != rp->drag->val.y))
-	     {
-		rp->drag->val.x = dx;
-		rp->drag->val.y = dy;
-		if (!ignored)
-		  _edje_emit(ed, "drag", rp->part->name);
-                ed->recalc_call = 1;
-		ed->dirty = 1;
-#ifdef EDJE_CALC_CACHE
-		rp->invalidate = 1;
-#endif
-		rp->drag->need_reset = 1;
-		_edje_recalc_do(ed);
-	     }
-	}
+        rp = rp->events_to;
+        if (!ignored)
+          {
+             snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+             _edje_emit(ed, buf, rp->part->name);
+          }
      }
 
    if (rp->drag)
