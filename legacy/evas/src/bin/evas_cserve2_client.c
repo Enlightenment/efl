@@ -14,6 +14,11 @@
 static const char *SOCK_PATH = "/tmp/cserve2.socket";
 static unsigned int _rid_count = 0;
 
+static struct sockaddr_un socket_local;
+#ifndef UNIX_PATH_MAX
+#define UNIX_PATH_MAX sizeof(socket_local.sun_path)
+#endif
+
 static void
 debug_msg(const void *buf, int size)
 {
@@ -323,7 +328,7 @@ int main(void)
 {
    int s, t, len, skip_cmd = 0;
    struct sockaddr_un remote;
-   char msgbuf[4096];
+   char msgbuf[4096], buf[UNIX_PATH_MAX], *env;
 
    if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
      {
@@ -334,7 +339,14 @@ int main(void)
    printf("Trying to connect...\n");
 
    remote.sun_family = AF_UNIX;
-   strcpy(remote.sun_path, SOCK_PATH);
+   env = getenv("EVAS_CSERVE2_SOCKET");
+   if (!env)
+     {
+        snprintf(buf, sizeof(buf), "/tmp/.evas-cserve2-%x.socket",
+                 (int)getuid());
+        env = buf;
+     }
+   strncpy(remote.sun_path, env, UNIX_PATH_MAX - 1);
    len = strlen(remote.sun_path) + sizeof(remote.sun_family);
    if (connect(s, (struct sockaddr *)&remote, len) == -1)
      {
