@@ -594,6 +594,7 @@ _elm_widget_focus_chain_manager_is(const Evas_Object *obj)
    API_ENTRY return EINA_FALSE;
 
    if (_elm_legacy_is(obj)) return !!COMPAT_SMART_DATA(sd)->focus_next;
+   if (!sd->api) return EINA_FALSE;
    return sd->api->focus_next &&
           (sd->api->focus_next != _elm_widget_focus_next_func_unimplemented);
 }
@@ -604,6 +605,7 @@ _elm_widget_focus_direction_manager_is(const Evas_Object *obj)
    API_ENTRY return EINA_FALSE;
 
    if (_elm_legacy_is(obj)) return !!COMPAT_SMART_DATA(sd)->focus_direction;
+   if (!sd->api) return EINA_FALSE;
    return sd->api->focus_direction &&
           (sd->api->focus_direction !=
            _elm_widget_focus_direction_func_unimplemented);
@@ -813,6 +815,7 @@ _parent_focus(Evas_Object *obj)
 
    focus_order++;
    sd->focus_order = focus_order;
+   if (!sd->api) return;
    if (sd->top_win_focused)
      {
         sd->focused = EINA_TRUE;
@@ -1183,6 +1186,8 @@ elm_widget_theme(Evas_Object *obj)
    EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
 
+   if (!sd->api) return EINA_FALSE;
+   
    ret &= sd->api->theme(obj);
 
    return ret;
@@ -1226,6 +1231,7 @@ elm_widget_theme_specific(Evas_Object *obj,
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
+   if (!sd->api) return;
    sd->api->theme(obj);
 }
 
@@ -1480,6 +1486,7 @@ elm_widget_sub_object_add(Evas_Object *obj,
    API_ENTRY return EINA_FALSE;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
+   if (!sd->api) return EINA_FALSE;
    if (!_elm_legacy_is(obj)) return sd->api->sub_object_add(obj, sobj);
 
    /* this part will go away once all widgets are migrated to the new schema */
@@ -1543,6 +1550,7 @@ elm_widget_sub_object_del(Evas_Object *obj,
 
    if (!sobj) return EINA_FALSE;
 
+   if (!sd->api) return EINA_FALSE;
    if (!_elm_legacy_is(obj)) return sd->api->sub_object_del(obj, sobj);
 
    /* this part will go away once all widgets are migrated to the new schema */
@@ -1996,6 +2004,7 @@ elm_widget_event_propagate(Evas_Object       *obj,
         sd = evas_object_smart_data_get(parent);
         if ((!sd) || (!_elm_widget_is(obj)))
           return EINA_FALSE; //Not Elm Widget
+        if (!sd->api) return EINA_FALSE;
 
         if (sd->api->event(parent, obj, type, event_info))
           return EINA_TRUE;
@@ -2260,6 +2269,8 @@ elm_widget_focus_direction_get(const Evas_Object *obj,
        || (elm_widget_tree_unfocusable_get(obj)))
      return EINA_FALSE;
 
+   if (!sd->api) return EINA_FALSE;
+   
    /* Try use hook */
    if (_elm_widget_focus_direction_manager_is(obj))
      return sd->api->focus_direction(obj, base, degree, direction, weight);
@@ -2373,6 +2384,8 @@ elm_widget_focus_next_get(const Evas_Object  *obj,
        || (elm_widget_tree_unfocusable_get(obj)))
      return EINA_FALSE;
 
+   if (!sd->api) return EINA_FALSE;
+   
    /* Try use hook */
    if (_elm_widget_focus_chain_manager_is(obj))
      return sd->api->focus_next(obj, dir, next);
@@ -2598,6 +2611,8 @@ elm_widget_focus_set(Evas_Object *obj,
 {
    API_ENTRY return;
 
+   if (!sd->api) return;
+   
    if (!sd->focused)
      {
         focus_order++;
@@ -2672,6 +2687,8 @@ elm_widget_focused_object_clear(Evas_Object *obj)
 {
    API_ENTRY return;
 
+   if (!sd->api) return;
+   
    if (!sd->focused) return;
    if (sd->resize_obj && elm_widget_focus_get(sd->resize_obj))
      elm_widget_focused_object_clear(sd->resize_obj);
@@ -2815,6 +2832,7 @@ elm_widget_disabled_set(Evas_Object *obj,
    if (sd->disabled == disabled) return;
    sd->disabled = !!disabled;
    elm_widget_focus_disabled_handle(obj);
+   if (!sd->api) return;
    sd->api->disable(obj);
 }
 
@@ -3145,6 +3163,7 @@ elm_widget_translate(Evas_Object *obj)
    EINA_LIST_FOREACH(sd->subobjs, l, child) elm_widget_translate(child);
    if (sd->resize_obj) elm_widget_translate(sd->resize_obj);
    if (sd->hover_obj) elm_widget_translate(sd->hover_obj);
+   if (!sd->api) return;
    sd->api->translate(obj);
 
 #ifdef HAVE_GETTEXT
@@ -3161,6 +3180,7 @@ elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *con
 {
    API_ENTRY return;
 
+   if (!sd->api) return;
    if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_set)
      COMPAT_SMART_DATA(sd)->content_set(obj, part, content);
    else if (evas_object_smart_type_check(obj, "elm_container"))
@@ -3172,6 +3192,8 @@ elm_widget_content_part_get(const Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
+   if (!sd->api) return NULL;
+   
    if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_get)
      return COMPAT_SMART_DATA(sd)->content_get(obj, part);
    else if (evas_object_smart_type_check(obj, "elm_container"))
@@ -3185,6 +3207,7 @@ elm_widget_content_part_unset(Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
+   if (!sd->api) return NULL;
    if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_unset)
      return COMPAT_SMART_DATA(sd)->content_unset(obj, part);
    else if (evas_object_smart_type_check(obj, "elm_container"))
