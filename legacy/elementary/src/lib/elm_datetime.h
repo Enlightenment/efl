@@ -396,7 +396,7 @@ EAPI void elm_datetime_format_set(Evas_Object *obj, const char *fmt);
   *
   * @param obj The datetime object
   * @param maxtime Time structure containing the maximum time value.
-  * @return int The maximum value of the field.
+  * @return EINA_TRUE if maximum value is returned successfully.
   *
   * @see elm_datetime_value_max_set()
   * @ingroup Datetime
