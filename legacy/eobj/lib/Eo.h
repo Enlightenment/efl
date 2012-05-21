@@ -460,14 +460,14 @@ EAPI Eina_Bool eo_shutdown(void);
  * A convenience wrapper around eo_do_internal()
  * @see eo_do_internal
  */
-#define eo_do(obj, ...) eo_do_internal(obj, EINA_FALSE, __VA_ARGS__, EO_NOOP)
+#define eo_do(obj, ...) eo_do_internal(obj, EO_OP_TYPE_REGULAR, __VA_ARGS__, EO_NOOP)
 
 /**
  * @def eo_query
  * Same as #eo_do but only for const ops.
  * @see eo_do
  */
-#define eo_query(obj, ...) eo_do_internal((Eo *) EO_TYPECHECK(const Eo *, obj), EINA_TRUE, __VA_ARGS__, EO_NOOP)
+#define eo_query(obj, ...) eo_do_internal((Eo *) EO_TYPECHECK(const Eo *, obj), EO_OP_TYPE_CONST, __VA_ARGS__, EO_NOOP)
 
 /**
  * @def eo_class_do
@@ -518,7 +518,7 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  * @see #eo_query
  * @see eo_do_super()
  */
-#define eo_query_super(obj, ...) eo_do_super_internal((Eo *) EO_TYPECHECK(const Eo *, obj), EINA_TRUE, __VA_ARGS__)
+#define eo_query_super(obj, ...) eo_do_super_internal((Eo *) EO_TYPECHECK(const Eo *, obj), EO_OP_TYPE_CONST, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
@@ -531,7 +531,7 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  * @see #eo_do
  * @see eo_query_super()
  */
-#define eo_do_super(obj, ...) eo_do_super_internal(obj, EINA_FALSE, __VA_ARGS__)
+#define eo_do_super(obj, ...) eo_do_super_internal(obj, EO_OP_TYPE_REGULAR, __VA_ARGS__)
 
 /**
  * @brief Calls the super function for the specific op.
