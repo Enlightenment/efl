@@ -622,6 +622,9 @@ _elm_menu_smart_del(Evas_Object *obj)
    EINA_LIST_FREE (sd->items, item)
      _item_del(item);
 
+   evas_object_event_callback_del_full
+      (sd->bx, EVAS_CALLBACK_RESIZE, _menu_resize_cb, obj);
+
    if (sd->hv) evas_object_del(sd->hv);
    if (sd->location) evas_object_del(sd->location);
 
