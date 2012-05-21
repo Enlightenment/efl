@@ -1038,6 +1038,17 @@ typedef signed long int  GLsizeiptr;   // Changed khronos_ssize_t
 
 #define GL_INVALID_FRAMEBUFFER_OPERATION  0x0506
 
+#else
+# ifndef EVAS_GL_NO_GL_H_CHECK
+#  error "You may only include either Evas_GL.h OR use your native OpenGL's headers. If you use Evas to do GL, then you cannot use the native gl headers."
+# endif
+#endif
+
+
+#if !defined(__glext_h_) && !defined(__gl2ext_h_)
+# define __glext_h_
+# define __gl2ext_h_
+
 //---------------------------//
 // GLES extension defines
 
