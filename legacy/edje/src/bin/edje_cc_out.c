@@ -201,7 +201,6 @@ static Eina_List *part_slave_lookups = NULL;
 static Eina_List *image_slave_lookups= NULL;
 
 #define ABORT_WRITE(eet_file, file) \
-   eet_close(eet_file); \
    unlink(file); \
    exit(-1);
 
