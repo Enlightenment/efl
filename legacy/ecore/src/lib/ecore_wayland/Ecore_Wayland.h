@@ -119,7 +119,11 @@ struct _Ecore_Wl_Output
 struct _Ecore_Wl_Input
 {
    Ecore_Wl_Display *display;
-   struct wl_input_device *input_device;
+   struct wl_seat *seat;
+   struct wl_pointer *pointer;
+   struct wl_keyboard *keyboard;
+   struct wl_touch *touch;
+
    struct wl_data_device *data_device;
 
    Ecore_Wl_Window *pointer_focus;

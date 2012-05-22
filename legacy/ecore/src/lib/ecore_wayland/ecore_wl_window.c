@@ -173,9 +173,9 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
                }
           }
 
-        if ((!input) || (!input->input_device)) return;
+        if ((!input) || (!input->seat)) return;
 
-        wl_shell_surface_move(win->shell_surface, input->input_device,
+        wl_shell_surface_move(win->shell_surface, input->seat,
                               input->display->serial);
      }
 }
@@ -233,9 +233,9 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
                }
           }
 
-        if ((!input) || (!input->input_device)) return;
+        if ((!input) || (!input->seat)) return;
 
-        wl_shell_surface_resize(win->shell_surface, input->input_device, 
+        wl_shell_surface_resize(win->shell_surface, input->seat, 
                                 input->display->serial, location);
      }
 }
@@ -338,7 +338,7 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         break;
       case ECORE_WL_WINDOW_TYPE_MENU:
         wl_shell_surface_set_popup(win->shell_surface, 
-                                   _ecore_wl_disp->input->input_device,
+                                   _ecore_wl_disp->input->seat,
                                    _ecore_wl_disp->serial,
                                    /* win->parent->pointer_device->input_device,  */
                                    /* win->parent->pointer_device->timestamp, */ 
@@ -549,9 +549,8 @@ ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int 
 
    if (!win) return;
 
-   input = _ecore_wl_disp->input;
-   wl_input_device_attach(input->input_device, timestamp, 
-                          buffer, hot_x, hot_y);
+   if ((input = _ecore_wl_disp->input))
+     wl_pointer_attach(input->pointer, timestamp, buffer, hot_x, hot_y);
 }
 
 /* @since 1.2 */
