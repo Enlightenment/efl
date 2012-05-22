@@ -1559,7 +1559,7 @@ _elm_win_client_message(void *data,
    if (e->format != 32) return ECORE_CALLBACK_PASS_ON;
    if (e->message_type == ECORE_X_ATOM_E_COMP_FLUSH)
      {
-        if ((unsigned)e->data.l[0] == sd->xwin)
+        if ((unsigned int)e->data.l[0] == sd->xwin)
           {
              Evas *evas = evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj);
              if (evas)
@@ -1573,7 +1573,7 @@ _elm_win_client_message(void *data,
      }
    else if (e->message_type == ECORE_X_ATOM_E_COMP_DUMP)
      {
-        if ((unsigned)e->data.l[0] == sd->xwin)
+        if ((unsigned int)e->data.l[0] == sd->xwin)
           {
              Evas *evas = evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj);
              if (evas)
@@ -1583,6 +1583,42 @@ _elm_win_client_message(void *data,
                   evas_image_cache_flush(evas);
                   evas_font_cache_flush(evas);
                   evas_render_dump(evas);
+               }
+          }
+     }
+   else if (e->message_type == ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL)
+     {
+        if ((unsigned int)e->data.l[0] == sd->xwin)
+          {
+             if ((unsigned int)e->data.l[1] ==
+                 ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_NEXT)
+               {
+                  // XXX: call right access func
+               }
+             else if ((unsigned int)e->data.l[1] ==
+                      ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_PREV)
+               {
+                  // XXX: call right access func
+               }
+             else if ((unsigned int)e->data.l[1] == 
+                      ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE)
+               {
+                  // XXX: call right access func
+               }
+             else if ((unsigned int)e->data.l[1] ==
+                      ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ)
+               {
+                  // XXX: call right access func
+               }
+             else if ((unsigned int)e->data.l[1] == 
+                      ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ_NEXT)
+               {
+                  // XXX: call right access func
+               }
+             else if ((unsigned int)e->data.l[1] == 
+                      ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ_PREV)
+               {
+                  // XXX: call right access func
                }
           }
      }
@@ -2077,16 +2113,16 @@ elm_win_add(Evas_Object *parent,
 #ifdef HAVE_ELEMENTARY_X
    else if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      sd->client_message_handler = ecore_event_handler_add
-         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+     (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
      sd->client_message_handler = ecore_event_handler_add
-         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+     (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
      sd->client_message_handler = ecore_event_handler_add
-         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+     (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_OPENGL_X11))
      sd->client_message_handler = ecore_event_handler_add
-         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+     (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
 #endif
 
    else if (!strncmp(_elm_preferred_engine, "shot:", 5))
