@@ -2028,7 +2028,7 @@ evas_object_box_children_get(const Evas_Object *o)
 }
 
 EAPI const char *
-evas_object_box_option_property_name_get(Evas_Object *o, int property)
+evas_object_box_option_property_name_get(const Evas_Object *o, int property)
 {
    const Evas_Object_Box_Api *api;
 
@@ -2045,7 +2045,7 @@ evas_object_box_option_property_name_get(Evas_Object *o, int property)
 }
 
 EAPI int
-evas_object_box_option_property_id_get(Evas_Object *o, const char *name)
+evas_object_box_option_property_id_get(const Evas_Object *o, const char *name)
 {
    const Evas_Object_Box_Api *api;
 
@@ -2096,7 +2096,7 @@ evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt
 }
 
 EAPI Eina_Bool
-evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
+evas_object_box_option_property_get(const Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...)
 {
    Eina_Bool ret;
    va_list args;
@@ -2109,7 +2109,7 @@ evas_object_box_option_property_get(Evas_Object *o, Evas_Object_Box_Option *opt,
 }
 
 EAPI Eina_Bool
-evas_object_box_option_property_vget(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
+evas_object_box_option_property_vget(const Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    const Evas_Object_Box_Api *api;
 

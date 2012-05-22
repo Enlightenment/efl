@@ -10539,9 +10539,9 @@ EAPI const Evas_Smart_Class *evas_object_smart_clipped_class_get     (void) EINA
       Evas_Object            *(*remove)           (Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child); /**< Smart function to remove a child element from boxes */
       Evas_Object            *(*remove_at)        (Evas_Object *o, Evas_Object_Box_Data *priv, unsigned int pos); /**< Smart function to remove a child element from boxes, by its position */
       Eina_Bool               (*property_set)     (Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args); /**< Smart function to set a custom property on a box child */
-      Eina_Bool               (*property_get)     (Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args); /**< Smart function to retrieve a custom property from a box child */
-      const char             *(*property_name_get)(Evas_Object *o, int property); /**< Smart function to get the name of a custom property of box children */
-      int                     (*property_id_get)  (Evas_Object *o, const char *name); /**< Smart function to get the numerical ID of a custom property of box children */
+      Eina_Bool               (*property_get)     (const Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args); /**< Smart function to retrieve a custom property from a box child */
+      const char             *(*property_name_get)(const Evas_Object *o, int property); /**< Smart function to get the name of a custom property of box children */
+      int                     (*property_id_get)  (const Evas_Object *o, const char *name); /**< Smart function to get the numerical ID of a custom property of box children */
       Evas_Object_Box_Option *(*option_new)       (Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object *child); /**< Smart function to create a new box option struct */
       void                    (*option_free)      (Evas_Object *o, Evas_Object_Box_Data *priv, Evas_Object_Box_Option *opt); /**< Smart function to delete a box option struct */
    };
@@ -11265,7 +11265,7 @@ EAPI Eina_List                 *evas_object_box_children_get                    
  * _Evas_Object_Box_Api::property_name_get smart class function of the
  * box, which is originally set to @c NULL.
  */
-EAPI const char                *evas_object_box_option_property_name_get              (Evas_Object *o, int property) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI const char                *evas_object_box_option_property_name_get              (const Evas_Object *o, int property) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * Get the numerical identifier of the property of the child elements
@@ -11284,7 +11284,7 @@ EAPI const char                *evas_object_box_option_property_name_get        
  * _Evas_Object_Box_Api::property_id_get smart class function of the
  * box, which is originally set to @c NULL.
  */
-EAPI int                        evas_object_box_option_property_id_get                (Evas_Object *o, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
+EAPI int                        evas_object_box_option_property_id_get                (const Evas_Object *o, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
 /**
  * Set a property value (by its given numerical identifier), on a
@@ -11357,7 +11357,7 @@ EAPI Eina_Bool                  evas_object_box_option_property_vset            
  * evas_object_box_option_property_vget() with this list and the same
  * previous arguments.
  */
-EAPI Eina_Bool                  evas_object_box_option_property_get                   (Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool                  evas_object_box_option_property_get                   (const Evas_Object *o, Evas_Object_Box_Option *opt, int property, ...) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Get a property's value (by its given numerical identifier), on a
@@ -11376,7 +11376,7 @@ EAPI Eina_Bool                  evas_object_box_option_property_get             
  * evas_object_box_option_property_get(). See its documentation for
  * more details.
  */
-EAPI Eina_Bool                  evas_object_box_option_property_vget                  (Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool                  evas_object_box_option_property_vget                  (const Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @}
