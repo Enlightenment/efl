@@ -83,3 +83,8 @@
         When it is the ELM_TOOLBAR_SHRINK_EXPAND mode and the max item is set,
         the items over max number are located in more panel.
         The APIs are added for this feature.(elm_toolbar_more_item_get, elm_toolbar_items_max_set/get)
+
+2012-05-22 Carsten Haitzler (The Rasterman)
+
+	* Add skeleton for handling remote commands access controls.
+
