@@ -641,11 +641,15 @@
 
 	* Send mouse move event before mouse down event in ecore_extn
 
-2012-05-13 Carsten Haitzler (The Rasterman)
+2012-05-13  Carsten Haitzler (The Rasterman)
 
         * Fix ecore-x randr issues with memory access when building
         output arrays which are memory segv bugs waiting to crash.
 
-2012-05-17 Vincent Torri
+2012-05-17  Vincent Torri
 
         * Add transparent support in ecore_evas on Windows (GDI engine only)
+
+2012-05-22  Cedric Bail
+
+	* Reduce race condition on Ecore_Thread shutdown.
