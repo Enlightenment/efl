@@ -419,6 +419,11 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
           {
              // selbuf is actual image data, not text/string
              sel->selbuf = malloc(buflen);
+             if (!sel->selbuf)
+               {
+                  elm_object_cnp_selection_clear(obj, selection);
+                  return EINA_FALSE;
+               }
              memcpy(sel->selbuf, selbuf, buflen);
           }
         else
@@ -634,6 +639,7 @@ targets_converter(char *target __UNUSED__, void *data, int size, void **data_ret
      }
 
    aret = malloc(sizeof(Ecore_X_Atom) * count);
+   if (!aret) return EINA_FALSE;
    for (i = 0, count = 0; i < CNP_N_ATOMS; i++)
      {
         if (seltype & atoms[i].formats) aret[count ++] = atoms[i].atom;
@@ -835,6 +841,7 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    else
      {
         stripstr = p = malloc(data->length * sizeof(char) + 1);
+        if (!stripstr) return 0;
         memcpy(stripstr, data->data, data->length);
         stripstr[data->length] = 0;
      }
@@ -979,7 +986,7 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    cnp_debug("Got some HTML: Checking encoding is useful\n");
    data = notify->data;
    char *stripstr = malloc(sizeof(char) * (data->length + 1));
-   if (!stripstr) return;
+   if (!stripstr) return 0;
    strncpy(stripstr, (char *)data->data, data->length);
    stripstr[data->length] = '\0';
 
@@ -1012,6 +1019,7 @@ text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, i
         if (data_ret)
           {
              *data_ret = malloc(size * sizeof(char) + 1);
+             if (!*data_ret) return EINA_FALSE;
              memcpy(*data_ret, data, size);
              ((char**)(data_ret))[0][size] = 0;
           }
@@ -1053,6 +1061,7 @@ general_converter(char *target __UNUSED__, void *data, int size, void **data_ret
         if (data_ret)
           {
              *data_ret = malloc(size * sizeof(char) + 1);
+             if (!*data_ret) return EINA_FALSE;
              memcpy(*data_ret, data, size);
              ((char**)(data_ret))[0][size] = 0;
           }
