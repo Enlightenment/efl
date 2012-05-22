@@ -576,7 +576,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _item_menu_create(Widget_Data *wd, Elm_Toolbar_Item *item)
 {
-   item->o_menu = elm_menu_add(VIEW(item));
+   item->o_menu = elm_menu_add(WIDGET(item));
    item->menu = EINA_TRUE;
    if (wd->menu_parent)
      elm_menu_parent_set(item->o_menu, wd->menu_parent);
