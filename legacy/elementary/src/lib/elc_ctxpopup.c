@@ -215,7 +215,7 @@ static void
 _parent_cut_off(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->parent) return;
+   if (!wd) return;
 
    evas_object_event_callback_del_full(wd->parent,
                                        EVAS_CALLBACK_DEL,
