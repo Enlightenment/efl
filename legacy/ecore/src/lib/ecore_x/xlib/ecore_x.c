@@ -1957,6 +1957,66 @@ ecore_x_mouse_up_send(Ecore_X_Window win,
    return XSendEvent(_ecore_x_disp, win, True, ButtonReleaseMask, &xev) ? EINA_TRUE : EINA_FALSE;
 }
 
+EAPI Eina_Bool
+ecore_x_mouse_in_send(Ecore_X_Window win,
+                      int x,
+                      int y)
+{
+   XEvent xev;
+   XWindowAttributes att;
+   Window tw;
+   int rx, ry;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   XGetWindowAttributes(_ecore_x_disp, win, &att);
+   XTranslateCoordinates(_ecore_x_disp, win, att.root, x, y, &rx, &ry, &tw);
+   xev.xcrossing.type = EnterNotify;
+   xev.xcrossing.window = win;
+   xev.xcrossing.root = att.root;
+   xev.xcrossing.subwindow = win;
+   xev.xcrossing.time = _ecore_x_event_last_time;
+   xev.xcrossing.x = x;
+   xev.xcrossing.y = y;
+   xev.xcrossing.x_root = rx;
+   xev.xcrossing.y_root = ry;
+   xev.xcrossing.mode = NotifyNormal;
+   xev.xcrossing.detail = NotifyNonlinear;
+   xev.xcrossing.same_screen = 1;
+   xev.xcrossing.focus = 0;
+   xev.xcrossing.state = 0;
+   return XSendEvent(_ecore_x_disp, win, True, EnterWindowMask, &xev) ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ecore_x_mouse_out_send(Ecore_X_Window win,
+                      int x,
+                      int y)
+{
+   XEvent xev;
+   XWindowAttributes att;
+   Window tw;
+   int rx, ry;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   XGetWindowAttributes(_ecore_x_disp, win, &att);
+   XTranslateCoordinates(_ecore_x_disp, win, att.root, x, y, &rx, &ry, &tw);
+   xev.xcrossing.type = LeaveNotify;
+   xev.xcrossing.window = win;
+   xev.xcrossing.root = att.root;
+   xev.xcrossing.subwindow = win;
+   xev.xcrossing.time = _ecore_x_event_last_time;
+   xev.xcrossing.x = x;
+   xev.xcrossing.y = y;
+   xev.xcrossing.x_root = rx;
+   xev.xcrossing.y_root = ry;
+   xev.xcrossing.mode = NotifyNormal;
+   xev.xcrossing.detail = NotifyNonlinear;
+   xev.xcrossing.same_screen = 1;
+   xev.xcrossing.focus = 0;
+   xev.xcrossing.state = 0;
+   return XSendEvent(_ecore_x_disp, win, True, LeaveWindowMask, &xev) ? EINA_TRUE : EINA_FALSE;
+}
+
 EAPI void
 ecore_x_focus_reset(void)
 {

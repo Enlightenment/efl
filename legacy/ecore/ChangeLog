@@ -653,3 +653,8 @@
 2012-05-22  Cedric Bail
 
 	* Reduce race condition on Ecore_Thread shutdown.
+
+2012-05-22 Carsten Haitzler (The Rasterman)
+
+        * Add ecore_x_mouse_in_send() and ecore_x_mouse_out_send()
+        * Add ecore_x illume access control/action atoms+api's

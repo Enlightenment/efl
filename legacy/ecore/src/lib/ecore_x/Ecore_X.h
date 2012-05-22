@@ -1807,7 +1807,11 @@ ecore_x_mouse_up_send(Ecore_X_Window win,
                       int x,
                       int y,
                       int b);
-
+EAPI Eina_Bool
+ecore_x_mouse_in_send(Ecore_X_Window win, int x, int y);
+EAPI Eina_Bool
+ecore_x_mouse_out_send(Ecore_X_Window win, int x, int y);
+       
 EAPI void
 ecore_x_drawable_geometry_get(Ecore_X_Drawable d,
                               int *x,
@@ -2348,6 +2352,19 @@ EAPI void
  ecore_x_e_illume_home_new_send(Ecore_X_Window win);
 EAPI void
  ecore_x_e_illume_home_del_send(Ecore_X_Window win);
+EAPI void
+ ecore_x_e_illume_access_action_next_send(Ecore_X_Window win);
+EAPI void
+ ecore_x_e_illume_access_action_prev_send(Ecore_X_Window win);
+EAPI void
+ ecore_x_e_illume_access_action_activate_send(Ecore_X_Window win);
+EAPI void
+ ecore_x_e_illume_access_action_read_send(Ecore_X_Window win);
+EAPI void
+ ecore_x_e_illume_access_action_read_next_send(Ecore_X_Window win);
+EAPI void
+ ecore_x_e_illume_access_action_read_prev_send(Ecore_X_Window win);
+       
 EAPI void
  ecore_x_e_illume_drag_set(Ecore_X_Window win,
                           unsigned int drag);

@@ -652,6 +652,106 @@ ecore_x_mouse_move_send(Ecore_X_Window win, int x, int y)
 }
 
 EAPI Eina_Bool
+ecore_x_mouse_in_send(Ecore_X_Window win, int x, int y)
+{
+   xcb_translate_coordinates_cookie_t cookie;
+   xcb_translate_coordinates_reply_t *reply;
+   xcb_motion_notify_event_t ev;
+   xcb_void_cookie_t vcookie;
+   xcb_generic_error_t *err;
+   Ecore_X_Window root = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+   root = ecore_x_window_root_get(win);
+   cookie = xcb_translate_coordinates(_ecore_xcb_conn, win, root, x, y);
+   reply = xcb_translate_coordinates_reply(_ecore_xcb_conn, cookie, NULL);
+   if (!reply) return EINA_FALSE;
+
+   memset(&ev, 0, sizeof(xcb_motion_notify_event_t));
+
+   ev.response_type = XCB_ENTER_NOTIFY;
+   ev.event = win;
+   ev.child = win;
+   ev.root = root;
+   ev.event_x = x;
+   ev.event_y = y;
+   ev.same_screen = 1;
+   ev.mode = XCB_NOTIFY_MODE_NORMAL;
+   ev.detail = XCB_NOTIFY_DETAIL_NONLINEAR;
+   ev.focus = 0;
+   ev.state = 0;
+   ev.root_x = reply->dst_x;
+   ev.root_y = reply->dst_y;
+   ev.time = ecore_x_current_time_get();
+   free(reply);
+
+   vcookie = xcb_send_event(_ecore_xcb_conn, 1, win,
+                            XCB_EVENT_MASK_ENTER_WINDOW, (const char *)&ev);
+
+   err = xcb_request_check(_ecore_xcb_conn, vcookie);
+   if (err)
+     {
+        _ecore_xcb_error_handle(err);
+        free(err);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+ecore_x_mouse_out_send(Ecore_X_Window win, int x, int y)
+{
+   xcb_translate_coordinates_cookie_t cookie;
+   xcb_translate_coordinates_reply_t *reply;
+   xcb_motion_notify_event_t ev;
+   xcb_void_cookie_t vcookie;
+   xcb_generic_error_t *err;
+   Ecore_X_Window root = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+   root = ecore_x_window_root_get(win);
+   cookie = xcb_translate_coordinates(_ecore_xcb_conn, win, root, x, y);
+   reply = xcb_translate_coordinates_reply(_ecore_xcb_conn, cookie, NULL);
+   if (!reply) return EINA_FALSE;
+
+   memset(&ev, 0, sizeof(xcb_motion_notify_event_t));
+
+   ev.response_type = XCB_LEAVE_NOTIFY;
+   ev.event = win;
+   ev.child = win;
+   ev.root = root;
+   ev.event_x = x;
+   ev.event_y = y;
+   ev.same_screen = 1;
+   ev.mode = XCB_NOTIFY_MODE_NORMAL;
+   ev.detail = XCB_NOTIFY_DETAIL_NONLINEAR;
+   ev.focus = 0;
+   ev.state = 0;
+   ev.root_x = reply->dst_x;
+   ev.root_y = reply->dst_y;
+   ev.time = ecore_x_current_time_get();
+   free(reply);
+
+   vcookie = xcb_send_event(_ecore_xcb_conn, 1, win,
+                            XCB_EVENT_MASK_LEAVE_WINDOW, (const char *)&ev);
+
+   err = xcb_request_check(_ecore_xcb_conn, vcookie);
+   if (err)
+     {
+        _ecore_xcb_error_handle(err);
+        free(err);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 ecore_x_keyboard_grab(Ecore_X_Window win)
 {
    xcb_grab_keyboard_cookie_t cookie;
