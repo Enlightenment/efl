@@ -215,8 +215,7 @@ static void
 _parent_cut_off(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return;
+   if (!wd || !wd->parent) return;
 
    evas_object_event_callback_del_full(wd->parent,
                                        EVAS_CALLBACK_DEL,
@@ -1230,21 +1229,18 @@ elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 
    _parent_cut_off(obj);
 
-   if (parent)
-     {
-        evas_object_event_callback_add(parent,
-                                       EVAS_CALLBACK_DEL,
-                                       _parent_del,
-                                       obj);
-        evas_object_event_callback_add(parent,
-                                       EVAS_CALLBACK_MOVE,
-                                       _parent_move,
-                                       obj);
-        evas_object_event_callback_add(parent,
-                                       EVAS_CALLBACK_RESIZE,
-                                       _parent_resize,
-                                       obj);
-     }
+   evas_object_event_callback_add(parent,
+                                  EVAS_CALLBACK_DEL,
+                                  _parent_del,
+                                  obj);
+   evas_object_event_callback_add(parent,
+                                  EVAS_CALLBACK_MOVE,
+                                  _parent_move,
+                                  obj);
+   evas_object_event_callback_add(parent,
+                                  EVAS_CALLBACK_RESIZE,
+                                  _parent_resize,
+                                  obj);
 
    elm_widget_sub_object_add(parent, obj);
    wd->parent = parent;
