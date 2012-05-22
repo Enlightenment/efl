@@ -229,8 +229,6 @@ _parent_cut_off(Evas_Object *obj)
                                        EVAS_CALLBACK_RESIZE,
                                        _parent_resize,
                                        obj);
-
-   elm_widget_sub_object_del(wd->parent, obj);
 }
 
 static void
