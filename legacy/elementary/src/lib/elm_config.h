@@ -751,6 +751,10 @@ EAPI int       elm_config_cache_flush_interval_get(void);
  * This sets the globally configured cache flush interval time, in ticks
  *
  * @param size The cache flush interval time
+ *
+ * @note The @c size must greater than 0. if not, the cache flush will be
+ * ignored.
+ *
  * @ingroup Caches
  *
  * @see elm_cache_all_flush()
