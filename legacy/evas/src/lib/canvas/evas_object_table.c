@@ -1044,7 +1044,7 @@ evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas
 }
 
 EAPI Eina_Bool
-evas_object_table_pack_get(Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan)
+evas_object_table_pack_get(const Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan)
 {
    Evas_Object_Table_Option *opt;
 

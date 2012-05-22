@@ -365,7 +365,7 @@ evas_object_grid_clear(Evas_Object *o, Eina_Bool clear)
 }
 
 EAPI Eina_Bool
-evas_object_grid_pack_get(Evas_Object *o, Evas_Object *child, int *x, int *y, int *w, int *h)
+evas_object_grid_pack_get(const Evas_Object *o, Evas_Object *child, int *x, int *y, int *w, int *h)
 {
    Evas_Object_Grid_Option *opt;
 

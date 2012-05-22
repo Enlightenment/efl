@@ -11517,7 +11517,7 @@ EAPI Eina_Bool                           evas_object_table_mirrored_get    (cons
  * @return 1 on success, 0 on failure.
  * @since 1.1.0
  */
-EAPI Eina_Bool                           evas_object_table_pack_get(Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
+EAPI Eina_Bool                           evas_object_table_pack_get(const Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan);
 
 /**
  * Add a new child to a table object or set its current packing.
@@ -11720,7 +11720,7 @@ EAPI void                                evas_object_grid_clear           (Evas_
  * @return 1 on success, 0 on failure.
  * @since 1.1.0
  */
-EAPI Eina_Bool                           evas_object_grid_pack_get        (Evas_Object *o, Evas_Object *child, int *x, int *y, int *w, int *h);
+EAPI Eina_Bool                           evas_object_grid_pack_get        (const Evas_Object *o, Evas_Object *child, int *x, int *y, int *w, int *h);
 
 /**
  * Get an iterator to walk the list of children for the grid.
