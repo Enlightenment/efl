@@ -453,9 +453,7 @@ _parent_del_cb(void *data,
                Evas_Object *obj __UNUSED__,
                void *event_info __UNUSED__)
 {
-   ELM_NOTIFY_DATA_GET(data, sd);
-
-   sd->parent = NULL;
+   elm_notify_parent_set(data, NULL);
    evas_object_hide(data);
 }
 
