@@ -131,6 +131,175 @@ group { name: "elm/toolbar/base/default";
    }
 }
 
+group { name: "elm/toolbar/more/default";
+   images {
+      image: "toolbar_separator_h.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         mouse_events: 1;
+         description { state: "default" 0.0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
+            image.middle: SOLID;
+         }
+         description { state: "open" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "open2" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 2.0;
+         }
+      }
+      part { name: "clipper";
+         type: RECT;
+         mouse_events: 0;
+         description {
+            state: "default" 0.0;
+            fixed: 1 1;
+            rel1 {
+               to: "base";
+            }
+            rel2 {
+               to: "base";
+            }
+         }
+         description { state: "open" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+         description { state: "open2" 0.0;
+            inherit: "default" 0.0;
+            rel2.relative: 1.0 0.5;
+         }
+      }
+      part { name: "clipper2";
+         type: RECT;
+         mouse_events: 0;
+         description {
+            state: "default" 0.0;
+            fixed: 1 1;
+            rel1 {
+               relative: 0.0 0.5;
+               to: "base";
+            }
+            rel2 {
+               to: "base";
+            }
+         }
+         description { state: "open" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 1.0;
+         }
+         description { state: "open2" 0.0;
+            inherit: "default" 0.0;
+            rel1.relative: 0.0 0.5;
+         }
+      }
+      part { name: "elm.swallow.content";
+         clip_to: "clipper";
+         type: SWALLOW;
+         description {
+            state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "clipper";
+            rel2.to: "clipper";
+         }
+      }
+      part { name: "elm.swallow.content2";
+         clip_to: "clipper2";
+         type: SWALLOW;
+         description {
+            state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "clipper2";
+            rel2.to: "clipper2";
+         }
+      }
+      part { name: "separator2";
+         clip_to: "clipper2";
+         description { state: "default" 0.0;
+            min: 2 3;
+            max: 9999 3;
+            fixed: 1 1;
+            rel1 {
+                relative: 0.0 0.0;
+                offset: 0 0;
+                to: "clipper2";
+            }
+            rel2 {
+                relative: 1.0 0.0;
+                offset: -1 3;
+                to: "clipper2";
+            }
+            image {
+               normal: "toolbar_separator_h.png";
+               border: 1 1 1 1;
+            }
+            fill {
+               smooth: 0;
+            }
+         }
+      }
+      part { name: "over2";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            image {
+               normal: "bt_dis_shine.png";
+               border: 4 4 4 4;
+            }
+         }
+      }
+      part { name: "over1";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            rel1.to: "base";
+            rel2.to: "base";
+            rel2.relative: 1.0 0.5;
+            image {
+               normal: "bt_dis_hilight.png";
+               border: 4 4 4 0;
+            }
+            color: 255 255 255 128;
+         }
+      }
+   }
+   programs {
+      program { name: "open";
+         signal:  "elm,state,open";
+         source:  "elm";
+         action:  STATE_SET "open" 0.0;
+         target:  "base";
+         target:  "clipper";
+         target:  "clipper2";
+         transition: LINEAR 0.2;
+      }
+      program { name: "open2";
+         signal:  "elm,state,open2";
+         source:  "elm";
+         action:  STATE_SET "open2" 0.0;
+         target:  "base";
+         target:  "clipper";
+         target:  "clipper2";
+         transition: LINEAR 0.2;
+      }
+      program { name: "close";
+         signal:  "elm,state,close";
+         source:  "elm";
+         action:  STATE_SET "default" 0.0;
+         target:  "base";
+         transition: LINEAR 0.2;
+      }
+   }
+}
+
 group { name: "elm/toolbar/item/default";
    images {
       image: "toolbar_sel.png" COMP;

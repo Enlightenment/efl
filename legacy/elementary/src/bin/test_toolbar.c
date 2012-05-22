@@ -61,6 +61,23 @@ tb_5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_photo_file_set(data, NULL);
 }
 
+static void
+toolbar_clicked_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Object_Item *it = elm_toolbar_more_item_get(obj);
+
+   if (!strcmp(elm_object_item_text_get(it), "Open") && (it == elm_toolbar_selected_item_get(obj)))
+     {
+        elm_toolbar_item_icon_set(it, "arrow_up");
+        elm_object_item_text_set(it, "Close");
+     }
+   else if (!strcmp(elm_object_item_text_get(it), "Close"))
+     {
+        elm_toolbar_item_icon_set(it, "arrow_down");
+        elm_object_item_text_set(it, "Open");
+     }
+}
+
 void
 test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -798,10 +815,9 @@ test_toolbar7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bx, *tb, *ph, *sl, *menu;
+   Evas_Object *win, *bx, *tb, *ph, *sl;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *item;
-   Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("toolbar8", "Toolbar 8");
@@ -815,6 +831,7 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    tb = elm_toolbar_add(win);
    elm_toolbar_homogeneous_set(tb, EINA_FALSE);
    elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_EXPAND);
+   elm_toolbar_items_max_set(tb, 9);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -827,33 +844,63 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_object_item_disabled_set(item, EINA_TRUE);
    elm_toolbar_item_priority_set(item, -100);
 
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
    item = elm_toolbar_item_append(tb, "folder-new", "World", tb_2, ph1);
    elm_toolbar_item_priority_set(item, 100);
 
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
    item = elm_toolbar_item_append(tb, "object-rotate-right", "H", tb_3, ph4);
    elm_toolbar_item_priority_set(item, -150);
+
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
 
    sl = elm_slider_add(win);
    evas_object_size_hint_min_set(sl, 100, 50);
    item = elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL);
    elm_object_item_part_content_set(item, "object", sl);
 
+   elm_toolbar_item_priority_set(item, 500);
+
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
    item = elm_toolbar_item_append(tb, "mail-send", "Comes", tb_4, ph4);
    elm_toolbar_item_priority_set(item, -200);
 
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
+   item = elm_toolbar_item_append(tb, "edit-cut", "Shrink", tb_4, ph4);
+   elm_toolbar_item_priority_set(item, -200);
+
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
+   item = elm_toolbar_item_append(tb, "edit-copy", "Mode", tb_4, ph4);
+   elm_toolbar_item_priority_set(item, -200);
+
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
+   item = elm_toolbar_item_append(tb, "edit-paste", "is set to", tb_4, ph4);
+   elm_toolbar_item_priority_set(item, -200);
+
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
+   item = elm_toolbar_item_append(tb, "edit-delete", "Menu", tb_4, ph4);
+   elm_toolbar_item_priority_set(item, 200);
+
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
+   item = elm_toolbar_item_append(tb, "mail-send", "Comes", tb_4, ph4);
+   elm_toolbar_item_priority_set(item, 200);
+
+   elm_toolbar_item_separator_set(elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL), EINA_TRUE);
+
    item = elm_toolbar_item_append(tb, "clock", "Elementary", tb_5, ph4);
-   elm_toolbar_item_priority_set(item, 0);
+   elm_toolbar_item_priority_set(item, -300);
 
-   item = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
-   elm_toolbar_item_menu_set(item, EINA_TRUE);
-   elm_toolbar_item_priority_set(item, -999999);
-   elm_toolbar_menu_parent_set(tb, win);
-   menu = elm_toolbar_item_menu_get(item);
+   elm_object_item_text_set(elm_toolbar_more_item_get(tb), "Open");
 
-   elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", tb_3, ph4);
-   menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
-   elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", tb_4, ph4);
-   elm_menu_item_add(menu, NULL, "edit-delete", "Scroll", tb_5, ph4);
+   evas_object_smart_callback_add(tb, "clicked", toolbar_clicked_cb, NULL);
 
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
@@ -863,7 +910,7 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    ph = ph1;
-   elm_photo_size_set(ph, 40);
+   elm_photo_size_set(ph, 80);
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    elm_photo_file_set(ph, buf);
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -872,14 +919,14 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ph);
 
    ph = ph2;
-   elm_photo_size_set(ph, 80);
+   elm_photo_size_set(ph, 160);
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ph, 0.5, 0.5);
    elm_table_pack(tb, ph, 1, 0, 1, 1);
    evas_object_show(ph);
 
    ph = ph3;
-   elm_photo_size_set(ph, 20);
+   elm_photo_size_set(ph, 40);
    snprintf(buf, sizeof(buf), "%s/images/sky_01.jpg", elm_app_data_dir_get());
    elm_photo_file_set(ph, buf);
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -888,7 +935,7 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ph);
 
    ph = ph4;
-   elm_photo_size_set(ph, 60);
+   elm_photo_size_set(ph, 120);
    snprintf(buf, sizeof(buf), "%s/images/sky_02.jpg", elm_app_data_dir_get());
    elm_photo_file_set(ph, buf);
    evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

@@ -438,6 +438,19 @@ EAPI void                         elm_toolbar_item_selected_set(Elm_Object_Item 
 EAPI Elm_Object_Item             *elm_toolbar_selected_item_get(const Evas_Object *obj);
 
 /**
+ * Get the more item.
+ *
+ * @param obj The toolbar object.
+ * @return The toolbar more item.
+ *
+ * The more item can be changed with function
+ * elm_object_item_text_set() and elm_object_item_content_set.
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Object_Item             *elm_toolbar_more_item_get(const Evas_Object *obj);
+
+/**
  * Set the icon associated with @p item.
  *
  * @param it The toolbar item.
@@ -831,7 +844,6 @@ EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_next(Elm_Object_Item *i
  */
 EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_prev(Elm_Object_Item *it);
 
-
 /**
  * Change a toolbar's orientation
  * @param obj The toolbar object
@@ -857,6 +869,31 @@ EAPI Eina_Bool                    elm_toolbar_horizontal_get(const Evas_Object *
  * @ingroup Toolbar
  */
 EAPI unsigned int                 elm_toolbar_items_count(const Evas_Object *obj);
+
+/**
+ * Set the max number of visible items in a toolbar
+ * @param obj The toolbar object
+ * @param max The max number of visible items
+ *
+ * When it is the ELM_TOOLBAR_SHRINK_EXPAND mode, the items are shown only up to max number.
+ * The other items are located in more panel. The more panel can be shown when the more item is clicked.
+ *
+ * @see elm_toolbar_items_max_get()
+ *
+ * @ingroup Toolbar
+ */
+EAPI void                         elm_toolbar_items_max_set(Evas_Object *obj, unsigned int max);
+
+/**
+ * Get the max number of visible items in a toolbar
+ * @param obj The toolbar object
+ * @return The max number of items in @p obj toolbar
+ *
+ * @see elm_toolbar_items_max_set()
+ *
+ * @ingroup Toolbar
+ */
+EAPI unsigned int                 elm_toolbar_items_max_get(const Evas_Object *obj);
 
 /**
  * Set the toolbar select mode.
