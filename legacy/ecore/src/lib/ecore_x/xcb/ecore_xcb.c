@@ -669,7 +669,7 @@ ecore_x_mouse_in_send(Ecore_X_Window win, int x, int y)
    reply = xcb_translate_coordinates_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
 
-   memset(&ev, 0, sizeof(xcb_motion_notify_event_t));
+   memset(&ev, 0, sizeof(xcb_enter_notify_event_t));
 
    ev.response_type = XCB_ENTER_NOTIFY;
    ev.event = win;
@@ -719,7 +719,7 @@ ecore_x_mouse_out_send(Ecore_X_Window win, int x, int y)
    reply = xcb_translate_coordinates_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
 
-   memset(&ev, 0, sizeof(xcb_motion_notify_event_t));
+   memset(&ev, 0, sizeof(xcb_leave_notify_event_t));
 
    ev.response_type = XCB_LEAVE_NOTIFY;
    ev.event = win;
