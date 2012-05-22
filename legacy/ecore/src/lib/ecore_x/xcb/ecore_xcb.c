@@ -656,7 +656,7 @@ ecore_x_mouse_in_send(Ecore_X_Window win, int x, int y)
 {
    xcb_translate_coordinates_cookie_t cookie;
    xcb_translate_coordinates_reply_t *reply;
-   xcb_motion_notify_event_t ev;
+   xcb_enter_notify_event_t ev;
    xcb_void_cookie_t vcookie;
    xcb_generic_error_t *err;
    Ecore_X_Window root = 0;
@@ -677,10 +677,10 @@ ecore_x_mouse_in_send(Ecore_X_Window win, int x, int y)
    ev.root = root;
    ev.event_x = x;
    ev.event_y = y;
-   ev.same_screen = 1;
+   ev.same_screen_focus = 1;
    ev.mode = XCB_NOTIFY_MODE_NORMAL;
    ev.detail = XCB_NOTIFY_DETAIL_NONLINEAR;
-   ev.focus = 0;
+   /* ev.focus = 0; */
    ev.state = 0;
    ev.root_x = reply->dst_x;
    ev.root_y = reply->dst_y;
@@ -706,7 +706,7 @@ ecore_x_mouse_out_send(Ecore_X_Window win, int x, int y)
 {
    xcb_translate_coordinates_cookie_t cookie;
    xcb_translate_coordinates_reply_t *reply;
-   xcb_motion_notify_event_t ev;
+   xcb_leave_notify_event_t ev;
    xcb_void_cookie_t vcookie;
    xcb_generic_error_t *err;
    Ecore_X_Window root = 0;
@@ -727,10 +727,10 @@ ecore_x_mouse_out_send(Ecore_X_Window win, int x, int y)
    ev.root = root;
    ev.event_x = x;
    ev.event_y = y;
-   ev.same_screen = 1;
+   ev.same_screen_focus = 1;
    ev.mode = XCB_NOTIFY_MODE_NORMAL;
    ev.detail = XCB_NOTIFY_DETAIL_NONLINEAR;
-   ev.focus = 0;
+   /* ev.focus = 0; */
    ev.state = 0;
    ev.root_x = reply->dst_x;
    ev.root_y = reply->dst_y;
