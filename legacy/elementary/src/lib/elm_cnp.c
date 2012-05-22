@@ -978,21 +978,21 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 
    cnp_debug("Got some HTML: Checking encoding is useful\n");
    data = notify->data;
+   char *stripstr = malloc(sizeof(char) * (data->length + 1));
+   strncpy(stripstr, (char *)data->data, data->length);
+   stripstr[data->length] = '\0';
 
    if (sel->datacb)
      {
         Elm_Selection_Data ddata;
         ddata.x = ddata.y = 0;
         ddata.format = ELM_SEL_FORMAT_HTML;
-        ddata.data = data->data;
+        ddata.data = stripstr;
         ddata.len = data->length;
         sel->datacb(sel->udata, sel->widget, &ddata);
         return 0;
      }
 
-   char *stripstr = malloc(sizeof(char) * (data->length + 1));
-   strncpy(stripstr, (char *)data->data, data->length);
-   stripstr[data->length] = '\0';
    cnp_debug("String is %s (%d bytes)\n", stripstr, data->length);
    _elm_entry_entry_paste(sel->requestwidget, stripstr);
    free(stripstr);
