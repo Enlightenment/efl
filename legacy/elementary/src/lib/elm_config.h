@@ -752,8 +752,8 @@ EAPI int       elm_config_cache_flush_interval_get(void);
  *
  * @param size The cache flush interval time
  *
- * @note The @c size must greater than 0. if not, the cache flush will be
- * ignored.
+ * @note The @p size must greater than 0. if not, the cache flush will be
+ *       ignored.
  *
  * @ingroup Caches
  *
