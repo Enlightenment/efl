@@ -785,7 +785,7 @@ notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    char *mkupstr;
 
    data = notify->data;
-   str = malloc(sizeof(char) * (data->length + 1));
+   str = malloc((data->length + 1));
    if (!str) return 0;
    strncpy(str, (char *)data->data, data->length);
    str[data->length] = '\0';
@@ -840,7 +840,7 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      }
    else
      {
-        stripstr = p = malloc(data->length * sizeof(char) + 1);
+        stripstr = p = malloc(data->length + 1);
         if (!stripstr) return 0;
         memcpy(stripstr, data->data, data->length);
         stripstr[data->length] = 0;
@@ -985,7 +985,7 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 
    cnp_debug("Got some HTML: Checking encoding is useful\n");
    data = notify->data;
-   char *stripstr = malloc(sizeof(char) * (data->length + 1));
+   char *stripstr = malloc(data->length + 1);
    if (!stripstr) return 0;
    strncpy(stripstr, (char *)data->data, data->length);
    stripstr[data->length] = '\0';
