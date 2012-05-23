@@ -10,10 +10,15 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-struct _Slave_Proc
+typedef enum
 {
-   pid_t pid;
-   const char *name;
+   SLAVE_PROCESS,
+   SLAVE_THREAD
+} Slave_Type;
+
+struct _Slave
+{
+   Slave_Type type;
    int write_fd;
    int read_fd;
    Slave_Read_Cb read_cb;
@@ -27,26 +32,34 @@ struct _Slave_Proc
       Slave_Command cmd;
       char *buf;
    } read;
+};
 
+struct _Slave_Proc
+{
+   Slave base;
+   pid_t pid;
+   const char *name;
    Eina_Bool killed : 1;
 };
 
-static Eina_List *slaves;
+typedef struct _Slave_Proc Slave_Proc;
+
+static Eina_List *slave_procs;
 
 static Slave_Proc *
-_child_find(pid_t pid)
+_slave_proc_find(pid_t pid)
 {
    Eina_List *l;
    Slave_Proc *s;
 
-   EINA_LIST_FOREACH(slaves, l, s)
+   EINA_LIST_FOREACH(slave_procs, l, s)
       if (s->pid == pid)
         return s;
    return NULL;
 }
 
 static void
-_slave_free(Slave_Proc *s)
+_slave_free(Slave *s)
 {
    if (s->write_fd)
      close(s->write_fd);
@@ -64,30 +77,37 @@ _slave_free(Slave_Proc *s)
    if (s->dead_cb)
      s->dead_cb(s, (void *)s->data);
 
+}
+
+static void
+_slave_proc_free(Slave_Proc *s)
+{
+   _slave_free((Slave *)s);
+
    eina_stringshare_del(s->name);
 
    free(s);
 }
 
 static void
-_slave_dead_cb(int pid, int status __UNUSED__)
+_slave_proc_dead_cb(int pid, int status __UNUSED__)
 {
    Slave_Proc *s;
 
    DBG("Child dead with pid '%d'.", pid);
-   s = _child_find(pid);
+   s = _slave_proc_find(pid);
    if (!s)
      {
         ERR("Unknown child dead '%d'.", pid);
         return;
      }
 
-   slaves = eina_list_remove(slaves, s);
-   _slave_free(s);
+   slave_procs = eina_list_remove(slave_procs, s);
+   _slave_proc_free(s);
 }
 
 static size_t
-_slave_write(Slave_Proc *s, const char *data, size_t size)
+_slave_write(Slave *s, const char *data, size_t size)
 {
    size_t sent = 0;
 
@@ -115,7 +135,7 @@ _slave_write(Slave_Proc *s, const char *data, size_t size)
 static void
 _slave_write_cb(int fd __UNUSED__, Fd_Flags flags __UNUSED__, void *data)
 {
-   Slave_Proc *s = data;
+   Slave *s = data;
    size_t sent;
    size_t size;
    const char *str;
@@ -135,7 +155,7 @@ _slave_write_cb(int fd __UNUSED__, Fd_Flags flags __UNUSED__, void *data)
 }
 
 static void
-_slave_read_clear(Slave_Proc *s)
+_slave_read_clear(Slave *s)
 {
    s->read.buf = NULL;
    s->read.cmd = 0;
@@ -145,7 +165,7 @@ _slave_read_clear(Slave_Proc *s)
 static void
 _slave_read_cb(int fd, Fd_Flags flags, void *data)
 {
-   Slave_Proc *s = data;
+   Slave *s = data;
    Eina_Bool done = EINA_FALSE;
 
    /* handle error */
@@ -199,7 +219,7 @@ _slave_read_cb(int fd, Fd_Flags flags, void *data)
 Eina_Bool
 cserve2_slaves_init(void)
 {
-   cserve2_on_child_dead_set(_slave_dead_cb);
+   cserve2_on_child_dead_set(_slave_proc_dead_cb);
    return EINA_TRUE;
 }
 
@@ -210,21 +230,21 @@ cserve2_slaves_shutdown(void)
 
    cserve2_on_child_dead_set(NULL);
 
-   if (!slaves)
+   if (!slave_procs)
      return;
 
    DBG("Shutting down slaves subsystem with %d slaves alive!",
-       eina_list_count(slaves));
+       eina_list_count(slave_procs));
 
-   EINA_LIST_FREE(slaves, s)
+   EINA_LIST_FREE(slave_procs, s)
      {
         kill(s->pid, SIGKILL);
-        _slave_free(s);
+        _slave_proc_free(s);
      }
 }
 
 static const char *
-_slave_path_get(const char *name)
+_slave_proc_path_get(const char *name)
 {
    char buf[PATH_MAX], cwd[PATH_MAX];
 
@@ -247,16 +267,17 @@ _slave_path_get(const char *name)
    return NULL;
 }
 
-Slave_Proc *
-cserve2_slave_run(const char *exe, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb, const void *data)
+static Slave *
+_cserve2_slave_proc_run(const char *exe, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb, const void *data)
 {
    Slave_Proc *s;
+   Slave *sb;
    pid_t pid;
    int child[2], parent[2];
    int flags;
    const char *name;
 
-   name = _slave_path_get(exe);
+   name = _slave_proc_path_get(exe);
    if (!name)
      {
         ERR("Cannot execute slave '%s'. Not found or not executable.", exe);
@@ -271,6 +292,8 @@ cserve2_slave_run(const char *exe, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb,
         eina_stringshare_del(name);
         return NULL;
      }
+
+   sb = (Slave *)s;
 
    if (pipe(child))
      {
@@ -325,29 +348,36 @@ cserve2_slave_run(const char *exe, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb,
 
    s->pid = pid;
    s->name = name;
-   s->write_fd = child[1];
-   flags = fcntl(s->write_fd, F_GETFL);
+   sb->type = SLAVE_PROCESS;
+   sb->write_fd = child[1];
+   flags = fcntl(sb->write_fd, F_GETFL);
    flags |= O_NONBLOCK;
-   fcntl(s->write_fd, F_SETFL, flags);
-   s->read_fd = parent[0];
-   flags = fcntl(s->read_fd, F_GETFL);
+   fcntl(sb->write_fd, F_SETFL, flags);
+   sb->read_fd = parent[0];
+   flags = fcntl(sb->read_fd, F_GETFL);
    flags |= O_NONBLOCK;
-   fcntl(s->read_fd, F_SETFL, flags);
-   s->read_cb = read_cb;
-   s->dead_cb = dead_cb;
-   s->data = data;
-   cserve2_fd_watch_add(s->read_fd, FD_READ, _slave_read_cb, s);
+   fcntl(sb->read_fd, F_SETFL, flags);
+   sb->read_cb = read_cb;
+   sb->dead_cb = dead_cb;
+   sb->data = data;
+   cserve2_fd_watch_add(sb->read_fd, FD_READ, _slave_read_cb, sb);
 
    close(child[0]);
    close(parent[1]);
 
-   slaves = eina_list_append(slaves, s);
+   slave_procs = eina_list_append(slave_procs, s);
 
-   return s;
+   return sb;
+}
+
+Slave *
+cserve2_slave_run(const char *name, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb, const void *data)
+{
+   return _cserve2_slave_proc_run(name, read_cb, dead_cb, data);
 }
 
 static void
-_slave_send_aux(Slave_Proc *s, const char *data, size_t size)
+_slave_send_aux(Slave *s, const char *data, size_t size)
 {
    size_t sent;
 
@@ -368,7 +398,7 @@ _slave_send_aux(Slave_Proc *s, const char *data, size_t size)
 }
 
 void
-cserve2_slave_send(Slave_Proc *s, Slave_Command cmd, const char *data, size_t size)
+cserve2_slave_send(Slave *s, Slave_Command cmd, const char *data, size_t size)
 {
    int ints[2];
 
@@ -379,8 +409,8 @@ cserve2_slave_send(Slave_Proc *s, Slave_Command cmd, const char *data, size_t si
      _slave_send_aux(s, (char *)data, size);
 }
 
-void
-cserve2_slave_kill(Slave_Proc *s)
+static void
+_cserve2_slave_proc_kill(Slave_Proc *s)
 {
    if (s->killed)
      {
@@ -391,4 +421,10 @@ cserve2_slave_kill(Slave_Proc *s)
 
    s->killed = EINA_TRUE;
    kill(s->pid, SIGTERM);
+}
+
+void
+cserve2_slave_kill(Slave *s)
+{
+   _cserve2_slave_proc_kill((Slave_Proc *)s);
 }

@@ -18,7 +18,7 @@
 struct _Slave_Worker {
    EINA_INLIST;
    void *data;
-   Slave_Proc *slave;
+   Slave *slave;
    Eina_Binbuf *ret;
    int ret_size;
    Eina_Bool done;
@@ -73,7 +73,7 @@ _cserve2_client_image_setoptsed(Client *client, unsigned int rid)
 }
 
 static void
-_slave_dead_cb(Slave_Proc *s __UNUSED__, void *data)
+_slave_dead_cb(Slave *s __UNUSED__, void *data)
 {
    Slave_Worker *sw = data;
 
@@ -101,7 +101,7 @@ _slave_dead_cb(Slave_Proc *s __UNUSED__, void *data)
 }
 
 static void
-_slave_read_cb(Slave_Proc *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
+_slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
 {
    Slave_Worker *sw = data;
 
