@@ -270,15 +270,18 @@ static void
 _cserve2_client_font_load(Client *client)
 {
    Msg_Font_Load *msg = (Msg_Font_Load *)client->msg.buf;
-   char fontpath[PATH_MAX];
+   char name[PATH_MAX];
 
-   memcpy(fontpath, msg + 1, msg->pathlen);
+   memcpy(name, msg + 1, msg->pathlen);
 
    INF("Received %s command: RID=%d",
        (msg->base.type == CSERVE2_FONT_LOAD) ? "FONT_LOAD" : "FONT_UNLOAD",
        msg->base.rid);
    INF("Font: %s, rend_flags: %d, hint: %d, size: %d, dpi: %d",
-       fontpath, msg->rend_flags, msg->hint, msg->size, msg->dpi);
+       name, msg->rend_flags, msg->hint, msg->size, msg->dpi);
+
+   cserve2_cache_font_load(client, name, msg->pathlen, msg->rend_flags,
+                           msg->hint, msg->size, msg->dpi, msg->base.rid);
 }
 
 static void

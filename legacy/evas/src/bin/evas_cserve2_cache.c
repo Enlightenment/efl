@@ -233,6 +233,22 @@ _image_preloaded_send(Client *client, unsigned int rid)
    cserve2_client_send(client, &msg, size);
 }
 
+static void
+_font_loaded_send(Client *client, Font_Entry *fe __UNUSED__, unsigned int rid)
+{
+   int size;
+   Msg_Font_Loaded msg;
+
+   DBG("Sending FONT_LOADED reply for RID: %d.", rid);
+   memset(&msg, 0, sizeof(msg));
+   msg.base.rid = rid;
+   msg.base.type = CSERVE2_FONT_LOADED;
+
+   size = sizeof(msg);
+   cserve2_client_send(client, &size, sizeof(size));
+   cserve2_client_send(client, &msg, size);
+}
+
 static void *
 _open_request_build(File_Data *f, int *bufsize)
 {
@@ -893,6 +909,11 @@ _entry_reference_del(Entry *entry, Reference *ref)
         else
           _entry_unused_push(ientry);
      }
+   else if (entry->type == CSERVE2_FONT_ENTRY)
+     {
+        Font_Entry *fe = (Font_Entry *)entry;
+        eina_hash_del_by_key(font_entries, fe);
+     }
    else
      ERR("Wrong type of entry.");
 
@@ -930,20 +951,36 @@ _entry_free_cb(void *data)
    _entry_reference_del(entry, ref);
 }
 
+static void
+_font_entry_reference_del(Client *client, Reference *ref)
+{
+   Entry *entry = ref->entry;
+
+   _entry_reference_del(entry, ref);
+}
+
 void
 cserve2_cache_client_new(Client *client)
 {
    client->files.referencing = eina_hash_int32_new(_entry_free_cb);
    client->images.referencing = eina_hash_int32_new(_entry_free_cb);
+   client->fonts.referencing = NULL;
 }
 
 void
 cserve2_cache_client_del(Client *client)
 {
+   Reference *ref;
+
    // will call _entry_free_cb() for every entry
    eina_hash_free(client->images.referencing);
    // will call _entry_free_cb() for every entry
    eina_hash_free(client->files.referencing);
+
+   EINA_LIST_FREE(client->fonts.referencing, ref)
+     {
+        _font_entry_reference_del(client, ref);
+     }
 }
 
 static Image_Data *
@@ -1029,6 +1066,26 @@ _file_changed_cb(const char *path __UNUSED__, Eina_Bool deleted __UNUSED__, void
      }
 
    eina_hash_del_by_key(file_watch, fw->path);
+}
+
+static Font_Entry *
+_cserve2_font_entry_find(const char *name, unsigned int namelen, unsigned int size, unsigned int rend_flags, unsigned int hint, unsigned int dpi)
+{
+   Font_Entry tmp_fe;
+   Font_Source tmp_fs;
+   Font_Entry *fe;
+
+   tmp_fs.name = eina_stringshare_add_length(name, namelen);
+   tmp_fe.src = &tmp_fs;
+   tmp_fe.size = size;
+   tmp_fe.rend_flags = rend_flags;
+   tmp_fe.hint = hint;
+   tmp_fe.dpi = dpi;
+
+   fe = eina_hash_find(font_entries, &tmp_fe);
+   eina_stringshare_del(tmp_fs.name);
+
+   return fe;
 }
 
 int
@@ -1319,6 +1376,29 @@ cserve2_cache_image_unload(Client *client, unsigned int client_image_id)
    if (ref->count <= 0)
      // will call _entry_free_cb() for this entry
      eina_hash_del_by_key(client->images.referencing, &client_image_id);
+}
+
+int
+cserve2_cache_font_load(Client *client, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int rid)
+{
+   Reference *ref;
+   Font_Entry *fe = _cserve2_font_entry_find(name, namelen, size,
+                                             rend_flags, hint, dpi);
+
+   if (fe)
+     {
+        DBG("found font entry %s, rendflags: %d, hint: %d, size: %d, dpi: %d",
+            name, rend_flags, hint, size, dpi);
+
+        ref = _entry_reference_add((Entry *)fe, client, 0);
+        client->fonts.referencing = eina_list_append(
+           client->fonts.referencing, ref);
+
+        _font_loaded_send(client, fe, rid);
+        return 0;
+     }
+
+   return -1;
 }
 
 void

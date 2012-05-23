@@ -47,6 +47,9 @@ struct _Client {
     struct {
        Eina_Hash *referencing; // indexed by client image id
     } images;
+    struct {
+       Eina_List *referencing;
+    } fonts;
 };
 
 typedef struct _Client Client;
@@ -170,6 +173,8 @@ int cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg);
 void cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned int rid);
 void cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsigned int rid);
 void cserve2_cache_image_unload(Client *client, unsigned int client_image_id);
+
+int cserve2_cache_font_load(Client *client, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int rid);
 
 void cserve2_cache_requests_process(void);
 void cserve2_cache_requests_response(Slave_Command type, void *msg, void *data);
