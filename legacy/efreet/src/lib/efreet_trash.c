@@ -163,7 +163,9 @@ efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete)
     time_t now;
     FILE *f;
 
-    if (!uri || !uri->path || !ecore_file_can_write(uri->path)) return 0;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(uri, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(uri->path, 0);
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(ecore_file_can_write(uri->path), 0);
 
     fname = ecore_file_file_get(uri->path);
 

@@ -152,7 +152,8 @@ efreet_desktop_command_local_get(Efreet_Desktop *desktop, Eina_List *files)
     char *file;
     Eina_List *execs, *l;
 
-    if (!desktop || !desktop->exec) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop->exec, NULL);
 
     command = NEW(Efreet_Desktop_Command, 1);
     if (!command) return 0;
@@ -195,7 +196,9 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
     char *file;
     void *ret = NULL;
 
-    if (!desktop || !cb_command || !desktop->exec) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop->exec, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(cb_command, NULL);
 
     command = NEW(Efreet_Desktop_Command, 1);
     if (!command) return NULL;
@@ -283,7 +286,7 @@ efreet_desktop_command_flags_get(Efreet_Desktop *desktop)
 
         p = strchr(p, '%');
     }
-#ifdef SLOPPY_SPEC   
+#ifdef SLOPPY_SPEC
     /* NON-SPEC!!! this is to work around LOTS of 'broken' .desktop files that
      * do not specify %U/%u, %F/F etc. etc. at all. just a command. this is
      * unlikely to be fixed in distributions etc. in the long run as gnome/kde
@@ -310,7 +313,7 @@ efreet_desktop_command_execs_process(Efreet_Desktop_Command *command, Eina_List 
     char *exec;
     int num;
     void *ret = NULL;
-   
+
     num = eina_list_count(execs);
     EINA_LIST_FOREACH(execs, l, exec)
     {
@@ -429,7 +432,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
             p++;
         }
 
-#ifdef SLOPPY_SPEC       
+#ifdef SLOPPY_SPEC
         /* NON-SPEC!!! this is to work around LOTS of 'broken' .desktop files that
          * do not specify %U/%u, %F/F etc. etc. at all. just a command. this is
          * unlikely to be fixed in distributions etc. in the long run as gnome/kde

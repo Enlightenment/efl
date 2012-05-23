@@ -523,11 +523,8 @@ efreet_menu_new(const char *name)
 {
     Efreet_Menu *menu;
 
-    if (!name)
-    {
-        ERR("Efreet_menu: Error creating a new menu, name is missing");
-        return NULL;
-    }
+    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+
     menu = efreet_menu_entry_new();
     menu->type = EFREET_MENU_ENTRY_MENU;
     menu->name = eina_stringshare_add(name);
@@ -583,6 +580,8 @@ efreet_menu_parse(const char *path)
     Efreet_Xml *xml;
     Efreet_Menu_Internal *internal = NULL;
     Efreet_Menu *entry = NULL;
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
     xml = efreet_xml_new(path);
     if (!xml) return NULL;
@@ -654,6 +653,9 @@ efreet_menu_save(Efreet_Menu *menu, const char *path)
 {
     FILE *f;
     int ret;
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(path, 0);
 
     f = fopen(path, "w");
     if (!f) return 0;
@@ -769,7 +771,9 @@ efreet_menu_desktop_insert(Efreet_Menu *menu, Efreet_Desktop *desktop, int pos)
     Efreet_Menu *entry;
     const char *id;
 
-    if (!desktop || !menu) return 0;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, 0);
+
     id = efreet_util_path_to_file_id(desktop->orig_path);
     if (!id) return 0;
 
@@ -796,7 +800,8 @@ efreet_menu_desktop_remove(Efreet_Menu *menu, Efreet_Desktop *desktop)
 {
     Efreet_Menu *entry;
 
-    if (!desktop || !menu) return 0;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(menu, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(desktop, 0);
 
     entry = eina_list_search_unsorted(menu->entries,
                                       EINA_COMPARE_CB(efreet_menu_cb_entry_compare_desktop),
@@ -814,6 +819,9 @@ EAPI void
 efreet_menu_dump(Efreet_Menu *menu, const char *indent)
 {
     Eina_List *l;
+
+    EINA_SAFETY_ON_NULL_RETURN(menu);
+    EINA_SAFETY_ON_NULL_RETURN(indent);
 
     INF("%s%s: ", indent, menu->name);
     INF("%s", (menu->icon ? menu->icon : "No icon"));
@@ -863,6 +871,9 @@ efreet_default_dirs_get(const char *user_dir, Eina_List *system_dirs,
     char dir[PATH_MAX];
     Eina_List *list = NULL;
     Eina_List *l;
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(user_dir, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(suffix, NULL);
 
     snprintf(dir, sizeof(dir), "%s/%s", user_dir, suffix);
     list = eina_list_append(list, eina_stringshare_add(dir));
@@ -1540,7 +1551,7 @@ efreet_menu_merge(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char *pat
     }
 
     /* don't merge the same path twice */
-    if (eina_hash_find(efreet_merged_menus, rp)) 
+    if (eina_hash_find(efreet_merged_menus, rp))
     {
         return 1;
     }
@@ -2459,6 +2470,8 @@ efreet_menu_free(Efreet_Menu *entry)
 {
     Efreet_Menu *sub;
 
+    if (!entry) return;
+
     IF_RELEASE(entry->name);
     IF_RELEASE(entry->icon);
     EINA_LIST_FREE(entry->entries, sub)
@@ -2815,7 +2828,7 @@ efreet_menu_filter_not_matches(Efreet_Menu_Filter_Op *op, Efreet_Menu_Desktop *m
         if ((eina_list_count(op->categories) > 0) && !md->desktop->categories)
             return 1;
 
-        EINA_LIST_FOREACH(op->categories, l, t) 
+        EINA_LIST_FOREACH(op->categories, l, t)
         {
             if (eina_list_search_unsorted(md->desktop->categories,
                                           EINA_COMPARE_CB(strcmp), t))

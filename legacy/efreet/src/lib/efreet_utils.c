@@ -105,7 +105,8 @@ efreet_util_path_to_file_id(const char *path)
     char *base;
     const char *file_id;
 
-    if (!path) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
+
     file_id = eina_hash_find(file_id_by_desktop_path, path);
     if (file_id) return file_id;
 
@@ -142,12 +143,14 @@ efreet_util_path_to_file_id(const char *path)
 EAPI Eina_List *
 efreet_util_desktop_mime_list(const char *mime)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(mime, NULL);
     return efreet_util_cache_list("mime_types", mime);
 }
 
 EAPI Efreet_Desktop *
 efreet_util_desktop_wm_class_find(const char *wmname, const char *wmclass)
 {
+    EINA_SAFETY_ON_TRUE_RETURN_VAL((!wmname) && (!wmclass), NULL);
     return efreet_util_cache_find("startup_wm_class", wmname, wmclass);
 }
 
@@ -158,7 +161,7 @@ efreet_util_desktop_file_id_find(const char *file_id)
     Efreet_Desktop *ret = NULL;
     const char *str;
 
-    if (!file_id) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(file_id, NULL);
 
     hash = efreet_cache_util_hash_string("file_id");
     if (!hash) return NULL;
@@ -176,7 +179,7 @@ efreet_util_desktop_exec_find(const char *exec)
     Efreet_Cache_Array_String *names = NULL;
     unsigned int i;
 
-    if (!exec) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(exec, NULL);
 
     names = efreet_cache_util_names("exec_list");
     if (!names) return NULL;
@@ -216,18 +219,21 @@ efreet_util_desktop_exec_find(const char *exec)
 EAPI Efreet_Desktop *
 efreet_util_desktop_name_find(const char *name)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
     return efreet_util_cache_find("name", name, NULL);
 }
 
 EAPI Efreet_Desktop *
 efreet_util_desktop_generic_name_find(const char *generic_name)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(generic_name, NULL);
     return efreet_util_cache_find("generic_name", generic_name, NULL);
 }
 
 EAPI Eina_List *
 efreet_util_desktop_name_glob_list(const char *glob)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(glob, NULL);
     return efreet_util_cache_glob_list("name", glob);
 }
 
@@ -239,7 +245,8 @@ efreet_util_desktop_exec_glob_list(const char *glob)
     Efreet_Cache_Array_String *names = NULL;
     unsigned int i;
 
-    if (!glob) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(glob, NULL);
+
     if (!strcmp(glob, "*"))
         glob = NULL;
 
@@ -280,12 +287,14 @@ efreet_util_desktop_exec_glob_list(const char *glob)
 EAPI Eina_List *
 efreet_util_desktop_generic_name_glob_list(const char *glob)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(glob, NULL);
     return efreet_util_cache_glob_list("generic_name", glob);
 }
 
 EAPI Eina_List *
 efreet_util_desktop_comment_glob_list(const char *glob)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(glob, NULL);
     return efreet_util_cache_glob_list("comment", glob);
 }
 
@@ -306,6 +315,7 @@ efreet_util_desktop_categories_list(void)
 EAPI Eina_List *
 efreet_util_desktop_category_list(const char *category)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(category, NULL);
     return efreet_util_cache_list("categories", category);
 }
 

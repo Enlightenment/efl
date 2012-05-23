@@ -122,7 +122,7 @@ efreet_ini_parse(const char *file)
     left = file_stat.st_size;
     /* let's make mmap safe and just get 0 pages for IO erro */
     eina_mmap_safety_enabled_set(EINA_TRUE);
-   
+
     buffer = mmap(NULL, left, PROT_READ, MAP_SHARED, fileno(f), 0);
     if (buffer == MAP_FAILED)
     {
@@ -298,7 +298,10 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
 {
     char *dir;
     FILE *f;
-    if (!ini || !ini->data) return 0;
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini->data, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(file, 0);
 
     dir = ecore_file_dir_get(file);
     if (!ecore_file_mkpath(dir))
@@ -318,7 +321,9 @@ efreet_ini_save(Efreet_Ini *ini, const char *file)
 EAPI int
 efreet_ini_section_set(Efreet_Ini *ini, const char *section)
 {
-    if (!ini || !ini->data || !section) return 0;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini->data, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(section, 0);
 
     ini->section = eina_hash_find(ini->data, section);
     return (ini->section ? 1 : 0);
@@ -329,7 +334,8 @@ efreet_ini_section_add(Efreet_Ini *ini, const char *section)
 {
     Eina_Hash *hash;
 
-    if (!ini || !section) return;
+    EINA_SAFETY_ON_NULL_RETURN(ini);
+    EINA_SAFETY_ON_NULL_RETURN(section);
 
     if (!ini->data)
         ini->data = eina_hash_string_small_new(EINA_FREE_CB(eina_hash_free));
@@ -342,7 +348,9 @@ efreet_ini_section_add(Efreet_Ini *ini, const char *section)
 EAPI const char *
 efreet_ini_string_get(Efreet_Ini *ini, const char *key)
 {
-    if (!ini || !key || !ini->section) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini->section, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
 
     return eina_hash_find(ini->section, key);
 }
@@ -350,7 +358,9 @@ efreet_ini_string_get(Efreet_Ini *ini, const char *key)
 EAPI void
 efreet_ini_string_set(Efreet_Ini *ini, const char *key, const char *value)
 {
-    if (!ini || !key || !ini->section) return;
+    EINA_SAFETY_ON_NULL_RETURN(ini);
+    EINA_SAFETY_ON_NULL_RETURN(ini->section);
+    EINA_SAFETY_ON_NULL_RETURN(key);
 
     eina_hash_del_by_key(ini->section, key);
     eina_hash_add(ini->section, key, eina_stringshare_add(value));
@@ -361,7 +371,9 @@ efreet_ini_int_get(Efreet_Ini *ini, const char *key)
 {
     const char *str;
 
-    if (!ini || !key || !ini->section) return -1;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini, -1);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini->section, -1);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(key, -1);
 
     str = efreet_ini_string_get(ini, key);
     if (str) return atoi(str);
@@ -374,7 +386,9 @@ efreet_ini_int_set(Efreet_Ini *ini, const char *key, int value)
 {
     char str[12];
 
-    if (!ini || !key || !ini->section) return;
+    EINA_SAFETY_ON_NULL_RETURN(ini);
+    EINA_SAFETY_ON_NULL_RETURN(ini->section);
+    EINA_SAFETY_ON_NULL_RETURN(key);
 
     snprintf(str, 12, "%d", value);
     efreet_ini_string_set(ini, key, str);
@@ -385,7 +399,9 @@ efreet_ini_double_get(Efreet_Ini *ini, const char *key)
 {
     const char *str;
 
-    if (!ini || !key || !ini->section) return -1;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini, -1);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini->section, -1);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(key, -1);
 
     str = efreet_ini_string_get(ini, key);
     if (str) return atof(str);
@@ -399,7 +415,9 @@ efreet_ini_double_set(Efreet_Ini *ini, const char *key, double value)
     char str[512];
     size_t len;
 
-    if (!ini || !key || !ini->section) return;
+    EINA_SAFETY_ON_NULL_RETURN(ini);
+    EINA_SAFETY_ON_NULL_RETURN(ini->section);
+    EINA_SAFETY_ON_NULL_RETURN(key);
 
     snprintf(str, 512, "%.6f", value);
     len = strlen(str) - 1;
@@ -413,7 +431,9 @@ efreet_ini_boolean_get(Efreet_Ini *ini, const char *key)
 {
     const char *str;
 
-    if (!ini || !key || !ini->section) return 0;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini->section, 0);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(key, 0);
 
     str = efreet_ini_string_get(ini, key);
     if (str && !strcmp("true", str)) return 1;
@@ -424,7 +444,9 @@ efreet_ini_boolean_get(Efreet_Ini *ini, const char *key)
 EAPI void
 efreet_ini_boolean_set(Efreet_Ini *ini, const char *key, unsigned int value)
 {
-    if (!ini || !key || !ini->section) return;
+    EINA_SAFETY_ON_NULL_RETURN(ini);
+    EINA_SAFETY_ON_NULL_RETURN(ini->section);
+    EINA_SAFETY_ON_NULL_RETURN(key);
 
     if (value) efreet_ini_string_set(ini, key, "true");
     else efreet_ini_string_set(ini, key, "false");
@@ -439,7 +461,9 @@ efreet_ini_localestring_get(Efreet_Ini *ini, const char *key)
     int maxlen = 5; /* _, @, [, ] and \0 */
     int found = 0;
 
-    if (!ini || !key || !ini->section) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(ini->section, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
 
     lang = efreet_lang_get();
     country = efreet_lang_country_get();
@@ -493,7 +517,9 @@ efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
     char *buf;
     int maxlen = 5; /* _, @, [, ] and \0 */
 
-    if (!ini || !key || !ini->section) return;
+    EINA_SAFETY_ON_NULL_RETURN(ini);
+    EINA_SAFETY_ON_NULL_RETURN(ini->section);
+    EINA_SAFETY_ON_NULL_RETURN(key);
 
     lang = efreet_lang_get();
     country = efreet_lang_country_get();
@@ -523,7 +549,9 @@ efreet_ini_localestring_set(Efreet_Ini *ini, const char *key, const char *value)
 EAPI void
 efreet_ini_key_unset(Efreet_Ini *ini, const char *key)
 {
-    if (!ini || !key || !ini->section) return;
+    EINA_SAFETY_ON_NULL_RETURN(ini);
+    EINA_SAFETY_ON_NULL_RETURN(ini->section);
+    EINA_SAFETY_ON_NULL_RETURN(key);
 
     eina_hash_del_by_key(ini->section, key);
 }

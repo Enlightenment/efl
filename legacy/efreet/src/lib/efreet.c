@@ -312,6 +312,8 @@ efreet_fsetowner(int fd)
 EAPI void
 efreet_setowner(const char *path)
 {
+    EINA_SAFETY_ON_NULL_RETURN(path);
+
     int fd;
 
     fd = open(path, O_RDONLY);

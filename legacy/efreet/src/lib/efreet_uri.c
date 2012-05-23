@@ -27,6 +27,8 @@ efreet_uri_decode(const char *full_uri)
     char protocol[64], hostname[_POSIX_HOST_NAME_MAX], path[PATH_MAX];
     int i = 0;
 
+    EINA_SAFETY_ON_NULL_RETURN_VAL(full_uri, NULL);
+
     /* An uri should be in the form <protocol>://<hostname>/<path> */
     if (!strstr(full_uri, "://")) return NULL;
 
@@ -83,7 +85,10 @@ efreet_uri_encode(Efreet_Uri *uri)
     const char *p;
     int i;
 
-    if (!uri || !uri->path || !uri->protocol) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(uri, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(uri->path, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(uri->protocol, NULL);
+
     memset(dest, 0, PATH_MAX * 3 + 4);
     snprintf(dest, strlen(uri->protocol) + 4, "%s://", uri->protocol);
 
@@ -106,6 +111,7 @@ EAPI void
 efreet_uri_free(Efreet_Uri *uri)
 {
     if (!uri) return;
+
     IF_RELEASE(uri->protocol);
     IF_RELEASE(uri->path);
     IF_RELEASE(uri->hostname);

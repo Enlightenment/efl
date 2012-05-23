@@ -155,6 +155,8 @@ efreet_icon_extension_add(const char *ext)
 {
     Eina_List *l;
 
+    EINA_SAFETY_ON_NULL_RETURN(ext);
+
     ext = eina_stringshare_add(ext);
 
     if ((l = eina_list_data_find_list(efreet_icon_extensions, ext)))
@@ -235,6 +237,8 @@ efreet_icon_path_find(const char *theme_name, const char *icon, unsigned int siz
     const char *value = NULL;
     Efreet_Icon_Theme *theme;
 
+    EINA_SAFETY_ON_NULL_RETURN_VAL(icon, NULL);
+
     theme = efreet_icon_theme_find(theme_name);
 
 #ifdef SLOPPY_SPEC
@@ -280,6 +284,8 @@ efreet_icon_list_find(const char *theme_name, Eina_List *icons,
     const char *value = NULL;
     char *data;
     Efreet_Icon_Theme *theme;
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(icons, NULL);
 
     theme = efreet_icon_theme_find(theme_name);
 
@@ -349,6 +355,8 @@ EAPI Efreet_Icon *
 efreet_icon_find(const char *theme_name, const char *icon, unsigned int size)
 {
     const char *path;
+
+    EINA_SAFETY_ON_NULL_RETURN_VAL(icon, NULL);
 
     path = efreet_icon_path_find(theme_name, icon, size);
     if (path)

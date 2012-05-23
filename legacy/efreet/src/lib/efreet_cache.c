@@ -265,6 +265,8 @@ efreet_icon_cache_file(const char *theme)
     static char cache_file[PATH_MAX] = { '\0' };
     const char *cache;
 
+    EINA_SAFETY_ON_NULL_RETURN_VAL(theme, NULL);
+
     cache = efreet_cache_home_get();
 
     snprintf(cache_file, sizeof(cache_file), "%s/efreet/icons_%s_%s.eet", cache, theme, efreet_hostname_get());

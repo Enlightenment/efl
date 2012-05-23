@@ -272,8 +272,7 @@ efreet_mime_type_get(const char *file)
 {
     const char *type = NULL;
 
-    if (!file)
-      return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
     if ((type = efreet_mime_special_check(file)))
         return type;
@@ -304,8 +303,8 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size
     char buf[PATH_MAX];
     const char *cache;
 
-    if (!mime || !theme || !size)
-        return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(mime, NULL);
+    EINA_SAFETY_ON_NULL_RETURN_VAL(theme, NULL);
 
     mime = eina_stringshare_add(mime);
     theme = eina_stringshare_add(theme);
@@ -393,6 +392,7 @@ efreet_mime_type_cache_flush(void)
 EAPI const char *
 efreet_mime_magic_type_get(const char *file)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
     return efreet_mime_magic_check_priority(file, 0, 0);
 }
 
@@ -405,9 +405,9 @@ efreet_mime_globs_type_get(const char *file)
     const char *s;
     char *ext, *mime;
 
-    /* Check in the extension hash for the type */
-    if (!file) return NULL;
+    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
+    /* Check in the extension hash for the type */
     ext = strchr(file, '.');
     if (ext)
     {
@@ -444,12 +444,14 @@ efreet_mime_globs_type_get(const char *file)
 EAPI const char *
 efreet_mime_special_type_get(const char *file)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
     return efreet_mime_special_check(file);
 }
 
 EAPI const char *
 efreet_mime_fallback_type_get(const char *file)
 {
+    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
     return efreet_mime_fallback_check(file);
 }
 
@@ -1015,7 +1017,7 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
 
     /* let's make mmap safe and just get 0 pages for IO erro */
     eina_mmap_safety_enabled_set(EINA_TRUE);
-   
+
     data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
     if (data == MAP_FAILED)
     {
