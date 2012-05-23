@@ -33,6 +33,13 @@ static Eina_Hash *client_list = NULL;
 static Eina_Inlist *slaves_idle = NULL;
 static Eina_Inlist *slaves_working = NULL;
 
+struct _Glyph_Request {
+   unsigned int index;
+   unsigned int offset;
+};
+
+typedef struct _Glyph_Request Glyph_Request;
+
 void
 cserve2_client_error_send(Client *client, unsigned int rid, int error_code)
 {
@@ -259,6 +266,53 @@ _cserve2_client_open(Client *client)
    cserve2_cache_requests_process();
 }
 
+static void
+_cserve2_client_font_load(Client *client)
+{
+   Msg_Font_Load *msg = (Msg_Font_Load *)client->msg.buf;
+   char fontpath[PATH_MAX];
+
+   memcpy(fontpath, msg + 1, msg->pathlen);
+
+   INF("Received %s command: RID=%d",
+       (msg->base.type == CSERVE2_FONT_LOAD) ? "FONT_LOAD" : "FONT_UNLOAD",
+       msg->base.rid);
+   INF("Font: %s, rend_flags: %d, hint: %d, size: %d, dpi: %d",
+       fontpath, msg->rend_flags, msg->hint, msg->size, msg->dpi);
+}
+
+static void
+_cserve2_client_font_glyphs_request(Client *client)
+{
+   Msg_Font_Glyphs_Request *msg = (Msg_Font_Glyphs_Request *)client->msg.buf;
+   char fontpath[PATH_MAX];
+   Glyph_Request *glyphs;
+   unsigned int i;
+   const char *bufpos = client->msg.buf;
+
+   memcpy(fontpath, msg + 1, msg->pathlen);
+
+   bufpos = bufpos + sizeof(msg) + msg->pathlen;
+   glyphs = malloc(sizeof(*glyphs) * msg->nglyphs);
+
+   for (i = 0; i < msg->nglyphs; i++)
+     {
+        memcpy(&glyphs[i], bufpos, sizeof(*glyphs));
+        bufpos += sizeof(*glyphs);
+     }
+
+   if (msg->base.type == CSERVE2_FONT_GLYPHS_LOAD)
+     {
+        INF("Received CSERVE2_FONT_GLYPHS_LOAD command: RID=%d",
+            msg->base.rid);
+     }
+   else
+     {
+        INF("Received CSERVE2_FONT_GLYPHS_USED command: RID=%d",
+            msg->base.rid);
+     }
+}
+
 void
 cserve2_command_run(Client *client, Message_Type type)
 {
@@ -281,6 +335,14 @@ cserve2_command_run(Client *client, Message_Type type)
          break;
       case CSERVE2_CLOSE:
          _cserve2_client_close(client);
+         break;
+      case CSERVE2_FONT_LOAD:
+      case CSERVE2_FONT_UNLOAD:
+         _cserve2_client_font_load(client);
+         break;
+      case CSERVE2_FONT_GLYPHS_LOAD:
+      case CSERVE2_FONT_GLYPHS_USED:
+         _cserve2_client_font_glyphs_request(client);
          break;
       default:
          WRN("Unhandled message");
