@@ -935,7 +935,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (!file)
      {
-        n = malloc(sizeof (Eina_File) + strlen(filename) + 1);
+        n = malloc(sizeof(Eina_File) + strlen(filename) + 1);
         if (!n)
           {
              eina_lock_release(&_eina_file_lock_cache);
