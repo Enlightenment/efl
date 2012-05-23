@@ -178,7 +178,7 @@ typedef enum _Elm_Map_Overlay_Type
 typedef struct _Elm_Map_Marker       Elm_Map_Marker;       /**< A marker to be shown in a specific point of the map. Can be created with elm_map_marker_add() and deleted with elm_map_marker_remove(). */
 typedef struct _Elm_Map_Marker_Class Elm_Map_Marker_Class; /**< Each marker must be associated to a class. It's required to add a mark. The class defines the style of the marker when a marker is displayed alone (not grouped). A new class can be created with elm_map_marker_class_new(). */
 typedef struct _Elm_Map_Group_Class  Elm_Map_Group_Class;  /**< Each marker must be associated to a group class. It's required to add a mark. The group class defines the style of the marker when a marker is grouped to other markers. Markers with the same group are grouped if they are close. A new group class can be created with elm_map_marker_group_class_new(). */
-typedef struct _Elm_Map_Route        Elm_Map_Route;        /**< A route to be shown in the map. Can be created with elm_map_route_add() and deleted with elm_map_route_remove(). */
+typedef struct _Elm_Map_Route        Elm_Map_Route;        /**< A route to be shown in the map. Can be created with elm_map_route_add() and deleted with elm_map_route_del(). */
 typedef struct _Elm_Map_Name         Elm_Map_Name;         /**< A handle for specific coordinates. */
 typedef struct _Elm_Map_Overlay      Elm_Map_Overlay;      /**< A overlay to be shown in a specific point of the map. This can be created by elm_map_overlay_add() and similar functions and deleted by elm_map_overlay_del(). */
 
@@ -588,6 +588,19 @@ EAPI const char           *elm_map_user_agent_get(const Evas_Object *obj);
 EAPI Elm_Map_Overlay *     elm_map_overlay_add(Evas_Object *obj, double lon, double lat);
 
 /**
+ * Return all overlays in the map object.
+ *
+ * @param obj The map object to return overlays.
+ * @return The list of all overlays or @c NULL upon failure.
+ *
+ * This list includes group overlays also.
+ * So this can be changed dynamically while zooming and panning.
+ *
+ * @ingroup Map
+ */
+EAPI EAPI Eina_List *      elm_map_overlays_get(Evas_Object *obj);
+
+/**
  * Delete a overlay from the map. This function can delete all types
  * of overlays.
  *
@@ -731,6 +744,20 @@ EAPI void                  elm_map_overlay_paused_set(Elm_Map_Overlay *overlay, 
  * @ingroup Map
  */
 EAPI Eina_Bool             elm_map_overlay_paused_get(const Elm_Map_Overlay *overlay);
+
+/**
+ * Get a value whether the overlay is visible or not.
+ *
+ * @param overlay The overlay to return visible state.
+ * @return @c EINA_TRUE means overlay is visible. @c EINA_FALSE indicates
+ * it is not.
+ *
+ * The visible of the overlay can not be set.
+ * This value can be changed dynamically while zooming and panning
+ *
+ * @ingroup Map
+ */
+EAPI Eina_Bool             elm_map_overlay_visible_get(const Elm_Map_Overlay *overlay);
 
 /**
  * Set the content object of the overlay.
@@ -1354,10 +1381,10 @@ EAPI const char           *elm_map_source_get(const Evas_Object *obj, Elm_Map_So
  * of #ELM_MAP_ROUTE_METHOD_SHORTEST or #ELM_MAP_ROUTE_METHOD_FASTEST.
  *
  * Routes created with this method can be deleted with
- * elm_map_route_remove(),
+ * elm_map_route_del(),
  * and distance can be get with elm_map_route_distance_get().
  *
- * @see elm_map_route_remove()
+ * @see elm_map_route_del()
  * @see elm_map_route_distance_get()
  * @see elm_map_source_set()
  *

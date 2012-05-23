@@ -8,6 +8,7 @@ Additions:
    * Focus can be moved in all directions by elm_widget_focus_go function.
    * Reload theme when it change on disk.
    * Fileselector: Add a wheel spinner that show/spin while EIO is working
+   * Add elm_map_overlays_get & elm_map_overlay_visible_get functions.
 
 Fixes:
 

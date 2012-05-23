@@ -88,3 +88,7 @@
 
 	* Add skeleton for handling remote commands access controls.
 
+2012-05-23  Tae-Hwan Kim (Bluezery)
+
+	* Map: Add elm_map_overlays_get & elm_map_overlay_visible_get functions.
+
