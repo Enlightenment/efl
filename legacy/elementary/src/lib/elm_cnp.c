@@ -998,7 +998,7 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
         ddata.data = stripstr;
         ddata.len = data->length;
         sel->datacb(sel->udata, sel->widget, &ddata);
-        free(stripstr)
+        free(stripstr);
         return 0;
      }
 
