@@ -116,9 +116,17 @@ _ecore_con_client_kill(Ecore_Con_Client *cl)
      }
    INF("Lost client %s", (cl->ip) ? cl->ip : "");
    if (cl->fd_handler)
-     ecore_main_fd_handler_del(cl->fd_handler);
-
-   cl->fd_handler = NULL;
+     {
+        ecore_main_fd_handler_del(cl->fd_handler);
+        cl->fd_handler = NULL;
+     }
+   if (cl->host_server)
+     {
+        _ecore_con_client_free(cl);
+        cl->host_server->clients = 
+          eina_list_remove(cl->host_server->clients, cl);
+        cl->host_server = NULL;
+     }
 }
 
 void
