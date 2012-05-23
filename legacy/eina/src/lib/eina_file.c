@@ -1021,6 +1021,7 @@ eina_file_open(const char *path, Eina_Bool shared)
         n->fd = fd;
         n->shared = shared;
         n->delete_me = EINA_FALSE;
+        n->global_faulty = EINA_FALSE;
         eina_lock_new(&n->lock);
         eina_hash_direct_add(_eina_file_cache, n->filename, n);
      }
