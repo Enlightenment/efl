@@ -40,7 +40,8 @@ struct _Request {
 
 typedef enum {
    CSERVE2_IMAGE_FILE,
-   CSERVE2_IMAGE_DATA
+   CSERVE2_IMAGE_DATA,
+   CSERVE2_FONT_ENTRY
 } Entry_Type;
 
 struct _Entry {
@@ -90,6 +91,7 @@ struct _Font_Source {
 };
 
 struct _Font_Entry {
+   Entry *base;
    unsigned int rend_flags;
    unsigned int hint;
    unsigned int size;
@@ -277,6 +279,8 @@ _request_failed(Entry *e, Error_Type type)
           hash = ref->client->files.referencing;
         else if (e->type == CSERVE2_IMAGE_DATA)
           hash = ref->client->images.referencing;
+        else
+          continue;
 
         eina_hash_del_by_key(hash, &(ref->client_entry_id));
      }
@@ -912,7 +916,7 @@ _entry_free_cb(void *data)
         if (entry->type == CSERVE2_IMAGE_FILE)
           _request_answer_del(&open_requests, entry->request, ref->client,
                               CSERVE2_REQUEST_CANCEL);
-        else
+        else if (entry->type == CSERVE2_IMAGE_DATA)
           {
              if (((Image_Data *)entry)->doload)
                _request_answer_del(&load_requests, entry->request,
