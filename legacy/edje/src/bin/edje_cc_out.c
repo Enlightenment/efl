@@ -1771,6 +1771,7 @@ data_queue_group_lookup(const char *name, Edje_Part *part)
    gl->part = part;
 }
 
+//#define NEWPARTLOOKUP 1
 static Eina_Hash *_part_lookups_hash = NULL;
 static Eina_Hash *_part_lookups_dest_hash = NULL;
 
@@ -1780,7 +1781,8 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    Part_Lookup *pl = NULL;
    char buf[256];
    Eina_List *l;
-   
+
+#ifdef NEWPARTLOOKUP  
    snprintf(buf, sizeof(buf), "%lu-%lu", 
             (unsigned long)name, (unsigned long)dest);
    if (_part_lookups_hash) pl = eina_hash_find(_part_lookups_hash, buf);
@@ -1799,6 +1801,23 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
           }
         return;
      }
+#else
+   EINA_LIST_FOREACH(part_lookups, l, pl)
+     {
+        if ((pl->pc == pc) && (pl->dest == dest))
+          {
+             free(pl->name);
+             if (name[0])
+               pl->name = mem_strdup(name);
+             else
+               {
+                  part_lookups = eina_list_remove(part_lookups, pl);
+                  free(pl);
+               }
+             return;
+          }
+     }
+#endif   
    if (!name[0]) return;
 
    pl = mem_alloc(SZ(Part_Lookup));
@@ -1806,6 +1825,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    pl->pc = pc;
    pl->name = mem_strdup(name);
    pl->dest = dest;
+#ifdef NEWPARTLOOKUP  
    if (!_part_lookups_hash)
      _part_lookups_hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(_part_lookups_hash, buf, pl);
@@ -1824,6 +1844,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
         l = eina_list_append(l, pl);
         eina_hash_add(_part_lookups_dest_hash, buf, l);
      }
+#endif   
 }
 
 void
@@ -1833,6 +1854,7 @@ data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
    Part_Lookup *pl;
    char buf[256];
 
+#ifdef NEWPARTLOOKUP
    if (!_part_lookups_dest_hash) return;
    snprintf(buf, sizeof(buf), "%lu", (unsigned long)src);
    list = eina_hash_find(_part_lookups_dest_hash, buf);
@@ -1840,6 +1862,13 @@ data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
      {
         data_queue_part_lookup(pc, pl->name, dest);
      }
+#else   
+   EINA_LIST_FOREACH(part_lookups, l, pl)
+     {
+        if (pl->dest == src)
+          data_queue_part_lookup(pc, pl->name, dest);
+     }
+#endif
 }
 
 void
