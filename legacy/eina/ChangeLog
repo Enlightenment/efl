@@ -280,3 +280,8 @@
 	* Fix portability issue of Eina_Value on ARM and PPC.
 	* Fix portability issue of Eina_Value test on Itanium.
 
+2012-05-23 Carsten Haitzler (The Rasterman)
+
+        * Fix global_faulty faulty flag in eina_file to be set to 0
+        initially rather than be random memory garbage.
+
