@@ -46,7 +46,7 @@
  *
  * This function creates a new cursor of size @p width and @p
  * height. They must be valid size. To determine the valid size of a
- * cursor, useecore_win32_cursor_size_get(). @p pixels_and is an array
+ * cursor, use ecore_win32_cursor_size_get(). @p pixels_and is an array
  * of bytes (unsigned char) containing the bits of the cursor that
  * will be visible. @p pixels_xor is similar but will allow the cursor
  * to have a shape. Here is the truth table for the masks:
@@ -114,8 +114,7 @@
  * 0xFF, 0xFF, 0xFF, 0xFF    // line 32
  * };
  *
- * unsigned char pixels_xor[] =
- * {
+ * unsigned char pixels_xor[] = {
  * 0x00, 0x00, 0x00, 0x00,   // line 1
  * 0x00, 0x03, 0xC0, 0x00,   // line 2
  * 0x00, 0x3F, 0x00, 0x00,   // line 3
@@ -157,7 +156,7 @@
  * 0x00, 0x00, 0x00, 0x00    // line 32
  * };
  *
- * Ecore_Win32_Cursor cursor = ecore_win32_cursor_new(pixels_and, pixels_xor, 32, 32, 19, 2);
+ * Ecore_Win32_Cursor *cursor = ecore_win32_cursor_new(pixels_and, pixels_xor, 32, 32, 19, 2);
  * @endcode
  */
 EAPI Ecore_Win32_Cursor *
