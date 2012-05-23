@@ -942,6 +942,7 @@ eina_file_open(const char *path, Eina_Bool shared)
              goto close_fm;
           }
 
+        memset(n, 0, sizeof(Eina_File));
         n->filename = (char*) (n + 1);
         strcpy((char*) n->filename, filename);
         n->map = eina_hash_new(EINA_KEY_LENGTH(_eina_file_map_key_length),
@@ -951,14 +952,11 @@ eina_file_open(const char *path, Eina_Bool shared)
                                3);
         n->rmap = eina_hash_pointer_new(NULL);
         n->global_map = MAP_FAILED;
-        n->global_refcount = 0;
         n->length = length.QuadPart;
         n->mtime = mtime.QuadPart;
-        n->refcount = 0;
         n->handle = handle;
         n->fm = fm;
         n->shared = shared;
-        n->delete_me = EINA_FALSE;
         eina_lock_new(&n->lock);
         eina_hash_direct_add(_eina_file_cache, n->filename, n);
      }

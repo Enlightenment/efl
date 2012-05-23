@@ -990,13 +990,14 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (!file)
      {
-        n = malloc(sizeof (Eina_File) + strlen(filename) + 1);
+        n = malloc(sizeof(Eina_File) + strlen(filename) + 1);
         if (!n)
 	  {
              eina_lock_release(&_eina_file_lock_cache);
              goto on_error;
 	  }
 
+        memset(n, 0, sizeof(Eina_File));
         n->filename = (char*) (n + 1);
         strcpy((char*) n->filename, filename);
         n->map = eina_hash_new(EINA_KEY_LENGTH(_eina_file_map_key_length),
@@ -1006,7 +1007,6 @@ eina_file_open(const char *path, Eina_Bool shared)
                                3);
         n->rmap = eina_hash_pointer_new(NULL);
         n->global_map = MAP_FAILED;
-	n->global_refcount = 0;
         n->length = file_stat.st_size;
         n->mtime = file_stat.st_mtime;
 #ifdef _STAT_VER_LINUX
@@ -1017,11 +1017,8 @@ eina_file_open(const char *path, Eina_Bool shared)
 # endif
 #endif
         n->inode = file_stat.st_ino;
-        n->refcount = 0;
         n->fd = fd;
         n->shared = shared;
-        n->delete_me = EINA_FALSE;
-        n->global_faulty = EINA_FALSE;
         eina_lock_new(&n->lock);
         eina_hash_direct_add(_eina_file_cache, n->filename, n);
      }
