@@ -444,12 +444,12 @@ _elm_layout_smart_sub_object_del(Evas_Object *obj,
 
    ELM_LAYOUT_DATA_GET(obj, sd);
 
-   if (!ELM_WIDGET_CLASS(_elm_layout_parent_sc)->sub_object_del(obj, sobj))
-     return EINA_FALSE;
-
    evas_object_event_callback_del_full
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
      _on_sub_object_size_hint_change, obj);
+
+   if (!ELM_WIDGET_CLASS(_elm_layout_parent_sc)->sub_object_del(obj, sobj))
+     return EINA_FALSE;
 
    EINA_LIST_FOREACH (sd->subs, l, sub_d)
      {
