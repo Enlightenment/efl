@@ -461,7 +461,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread __UNUSED__)
    snprintf(buf, sizeof(buf), "edje/fonts/%s", fc->fn->name);
    bytes = eet_write(fc->ef, buf, m, eina_file_size_get(f), compress_mode);
 
-   if (bytes <= 0 || eina_file_map_faulted(f, m))
+   if ((bytes <= 0) || eina_file_map_faulted(f, m))
      {
         eina_file_map_free(f, m);
         eina_file_close(f);
