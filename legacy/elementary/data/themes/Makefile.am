@@ -224,6 +224,7 @@ radio.png \
 radio2.png \
 separator_h.png \
 separator_v.png \
+toolbar_separator_h.png \
 toolbar_separator_v.png \
 sp_bt_l.png \
 sp_bt_r.png \
