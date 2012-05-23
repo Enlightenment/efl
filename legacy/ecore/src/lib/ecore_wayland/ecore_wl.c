@@ -407,7 +407,7 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
      ewd->wl.compositor = wl_display_bind(disp, id, &wl_compositor_interface);
    else if (!strcmp(interface, "wl_output"))
      _ecore_wl_output_add(ewd, id);
-   else if (!strcmp(interface, "wl_input_device"))
+   else if (!strcmp(interface, "wl_seat"))
      _ecore_wl_input_add(ewd, id);
    else if (!strcmp(interface, "wl_shell"))
      ewd->wl.shell = wl_display_bind(disp, id, &wl_shell_interface);
