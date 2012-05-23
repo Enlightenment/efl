@@ -523,9 +523,9 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_X_Event_Selection_Clear *ev = event;
    Cnp_Selection *sel;
-   int i;
+   unsigned int i;
 
-   for (i = 0; i <= ELM_SEL_TYPE_CLIPBOARD; i++)
+   for (i = ELM_SEL_TYPE_PRIMARY; i <= ELM_SEL_TYPE_CLIPBOARD; i++)
      {
         if (selections[i].ecore_sel == ev->selection) break;
      }
@@ -548,9 +548,9 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event)
 
 /*
  * Response to a selection notify:
- *	- So we have asked for the selection list.
- *	- If it's the targets list, parse it, and fire of what we want,
- *	else it's the data we want.
+ *  - So we have asked for the selection list.
+ *  - If it's the targets list, parse it, and fire of what we want,
+ *    else it's the data we want.
  */
 static Eina_Bool
 selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event)
@@ -603,7 +603,10 @@ _get_selection_type(void *data, int size)
 {
    if (size == sizeof(Elm_Sel_Type))
      {
-        Cnp_Selection *sel = selections + *((int *)data);
+        unsigned int seltype = *((unsigned int *)data);
+        if (seltype > ELM_SEL_TYPE_CLIPBOARD)
+          return ELM_SEL_FORMAT_NONE;
+        Cnp_Selection *sel = selections + seltype;
         if (sel->active &&
             (sel->format >= ELM_SEL_FORMAT_TARGETS) &&
             (sel->format <= ELM_SEL_FORMAT_HTML))
@@ -781,14 +784,13 @@ static int
 notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
-   char *str;
-   char *mkupstr;
+   char *stripstr, *mkupstr;
 
    data = notify->data;
-   str = malloc((data->length + 1));
-   if (!str) return 0;
-   strncpy(str, (char *)data->data, data->length);
-   str[data->length] = '\0';
+   stripstr = malloc(data->length + 1);
+   if (!stripstr) return 0;
+   strncpy(stripstr, (char *)data->data, data->length);
+   stripstr[data->length] = '\0';
 
    if (sel->datacb)
      {
@@ -799,16 +801,16 @@ notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
         ddata.data = data->data;
         ddata.len = data->length;
         sel->datacb(sel->udata, sel->widget, &ddata);
-        free(str);
+        free(stripstr);
         return 0;
      }
 
    cnp_debug("Notify handler text %d %d %p\n", data->format,
              data->length, data->data);
-   mkupstr = _elm_util_text_to_mkup((const char *)str);
-   cnp_debug("String is %s (from %s)\n", str, data->data);
+   mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
+   cnp_debug("String is %s (from %s)\n", stripstr, data->data);
    _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-   free(str);
+   free(stripstr);
    free(mkupstr);
    return 0;
 }
@@ -851,7 +853,7 @@ notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
         cnp_debug("Couldn't find a file\n");
         return 0;
      }
-   cnp_debug("Got %s\n",p);
+   cnp_debug("Got %s\n", p);
    if (strncmp(p, "file://", 7))
      {
         /* Try and continue if it looks sane */
