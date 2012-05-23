@@ -16,6 +16,12 @@ typedef enum {
    CSERVE2_PRELOADED,
    CSERVE2_UNLOAD,
    CSERVE2_CLOSE,
+   CSERVE2_FONT_LOAD,
+   CSERVE2_FONT_LOADED,
+   CSERVE2_FONT_UNLOAD,
+   CSERVE2_FONT_GLYPHS_LOAD,
+   CSERVE2_FONT_GLYPHS_LOADED,
+   CSERVE2_FONT_GLYPHS_USED,
    CSERVE2_ERROR
 } Message_Type;
 
@@ -112,6 +118,75 @@ struct _Msg_Close {
    unsigned int file_id;
 };
 
+/**
+ * @struct _Msg_Font_Load
+ *
+ * Message from client to request load or unload of a font.
+ *
+ * The path strings follow the struct inside the message.
+ */
+struct _Msg_Font_Load {
+   Msg_Base base;
+   unsigned int pathlen; // font id
+   unsigned int rend_flags; // font id
+   unsigned int hint; // font id
+   unsigned int size; // font id
+   unsigned int dpi; // font id
+};
+
+/**
+ * @struct _Msg_Font_Loaded
+ *
+ * Message from server to inform that a font was loaded.
+ */
+struct _Msg_Font_Loaded {
+   Msg_Base base;
+};
+
+/**
+ * @struct _Msg_Font_Glyphs_Request
+ *
+ * Message from client to request load of glyphs, of inform usage of them.
+ *
+ * The path strings follow the struct inside the message, as well as
+ * the list of glyphs to be loaded.
+ */
+struct _Msg_Font_Glyphs_Request {
+   Msg_Base base;
+   unsigned int pathlen; // font id
+   unsigned int rend_flags; // font id
+   unsigned int hint; // font id
+   unsigned int size; // font id
+   unsigned int dpi; // font id
+   unsigned int nglyphs;
+};
+
+/**
+ * @struct _Msg_Font_Glyphs_Loaded
+ *
+ * Message from server to inform that some glyphs were loaded.
+ *
+ * This message is quite complex: it contains the font id, representing for
+ * which font these glyphs should be loaded, and the number of caches on which
+ * the loaded glyphs are stored. Each cache is a SHM segment. The information
+ * about each SHM comes serialized just after this struct, and can be read in
+ * order as follows:
+ *
+ * shm name:
+ *  - unsigned int size;
+ *  - char name[];
+ * glyphs:
+ *  - unsigned int nglyphs;
+ *  - struct {
+ *      unsigned int index;
+ *      unsigned int offset;
+ *    } glarray[];
+ */
+struct _Msg_Font_Glyphs_Loaded {
+   Msg_Base base;
+   unsigned int ncaches;
+};
+
 struct _Msg_Error {
    Msg_Base base;
    int error;
@@ -127,6 +202,10 @@ typedef struct _Msg_Preload Msg_Preload;
 typedef struct _Msg_Preloaded Msg_Preloaded;
 typedef struct _Msg_Unload Msg_Unload;
 typedef struct _Msg_Close Msg_Close;
+typedef struct _Msg_Font_Load Msg_Font_Load;
+typedef struct _Msg_Font_Loaded Msg_Font_Loaded;
+typedef struct _Msg_Font_Glyphs_Request Msg_Font_Glyphs_Request;
+typedef struct _Msg_Font_Glyphs_Loaded Msg_Font_Glyphs_Loaded;
 typedef struct _Msg_Error Msg_Error;
 
 #endif
