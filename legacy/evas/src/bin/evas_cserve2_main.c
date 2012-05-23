@@ -87,18 +87,10 @@ _slave_dead_cb(Slave_Proc *s __UNUSED__, void *data)
 
    slaves_working = eina_inlist_remove(slaves_working, EINA_INLIST_GET(sw));
    if (!sw->done)
-     cserve2_cache_request_failed(sw->data, CSERVE2_LOADER_DIED);
+     cserve2_cache_requests_response(ERROR, (Error_Type[]){ CSERVE2_LOADER_DIED }, sw->data);
    if (sw->ret)
      eina_binbuf_free(sw->ret);
    free(sw);
-}
-
-static void
-_slave_read_error(Slave_Worker *sw, void *msg)
-{
-   Error_Type *error = msg;
-
-   cserve2_cache_request_failed(sw->data, *error);
 }
 
 static void
@@ -110,19 +102,15 @@ _slave_read_cb(Slave_Proc *s __UNUSED__, Slave_Command cmd, void *msg, void *dat
    switch (cmd)
      {
       case IMAGE_OPEN:
-         cserve2_cache_request_opened(msg, sw->data);
-         sw->done = EINA_TRUE;
-         break;
       case IMAGE_LOAD:
-         cserve2_cache_request_loaded(msg, sw->data);
          sw->done = EINA_TRUE;
          break;
       case ERROR:
-         _slave_read_error(sw, msg);
          break;
       default:
          ERR("Unrecognized command received from slave: %d", cmd);
      }
+   cserve2_cache_requests_response(cmd, msg, sw->data);
    free(msg);
 
    // slave finishes its work, put it back to idle list
@@ -175,7 +163,7 @@ cserve2_slave_cmd_dispatch(void *data, Slave_Command cmd, const void *msg, int s
    if (!sw->slave)
      {
         ERR("Could not launch slave process");
-        cserve2_cache_request_failed(data, CSERVE2_LOADER_EXEC_ERR);
+        cserve2_cache_requests_response(ERROR, (Error_Type[]){ CSERVE2_LOADER_EXEC_ERR }, sw->data);
         free(sw);
         return EINA_FALSE;
      }

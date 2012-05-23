@@ -172,9 +172,6 @@ void cserve2_cache_image_preload(Client *client, unsigned int client_image_id, u
 void cserve2_cache_image_unload(Client *client, unsigned int client_image_id);
 
 void cserve2_cache_requests_process(void);
-
-void cserve2_cache_request_opened(Slave_Msg_Image_Opened *resp, void *data);
-void cserve2_cache_request_loaded(Slave_Msg_Image_Loaded *resp, void *data);
-void cserve2_cache_request_failed(void *data, Error_Type error);
+void cserve2_cache_requests_response(Slave_Command type, void *msg, void *data);
 
 #endif /* _EVAS_CSERVE2_H */
