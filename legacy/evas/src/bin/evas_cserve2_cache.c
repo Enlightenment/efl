@@ -16,6 +16,7 @@ typedef struct _File_Data File_Data;
 typedef struct _Image_Data Image_Data;
 typedef struct _File_Watch File_Watch;
 
+typedef struct _Font_Source Font_Source;
 typedef struct _Font_Entry Font_Entry;
 typedef struct _Font_Cache Font_Cache;
 typedef struct _Glyph_Entry Glyph_Entry;
@@ -82,7 +83,18 @@ struct _Image_Data {
    Eina_Bool doload : 1;
 };
 
+struct _Font_Source {
+   const char *name;
+   const char *file;
+   int references;
+};
+
 struct _Font_Entry {
+   unsigned int rend_flags;
+   unsigned int hint;
+   unsigned int size;
+   unsigned int dpi;
+   Font_Source *src;
 };
 
 struct _Font_Cache {
@@ -133,6 +145,9 @@ static Eina_Hash *file_entries = NULL; // maps file_id --> entry
 
 static Eina_Hash *image_ids = NULL; // maps file id + load opts --> image id
 static Eina_Hash *image_entries = NULL; // maps image_id --> entry
+
+static Eina_Hash *font_sources = NULL; // font path --> font source
+static Eina_Hash *font_entries = NULL; // maps font path + options --> entry
 
 static Eina_Hash *file_watch = NULL;
 
@@ -540,6 +555,53 @@ _file_watch_free(void *data)
    free(fw);
 }
 
+static int
+_font_entry_cmp(const Font_Entry *k1, int k1_length __UNUSED__, const Font_Entry *k2, int k2_length __UNUSED__)
+{
+   if (k1->src->name == k2->src->name)
+     {
+        if (k1->size == k2->size)
+          {
+             if (k1->rend_flags == k2->rend_flags)
+               {
+                  if (k1->hint == k2->hint)
+                    return k1->dpi - k2->dpi;
+                  return k1->hint - k2->hint;
+               }
+             return k1->rend_flags - k2->rend_flags;
+          }
+        return k1->size - k2->size;
+     }
+   return strcmp(k1->src->name, k2->src->name);
+}
+
+static int
+_font_entry_key_hash(const Font_Entry *key, int key_length __UNUSED__)
+{
+   int hash;
+   hash = eina_hash_djb2(key->src->name, eina_stringshare_strlen(key->src->name) + 1);
+   hash ^= eina_hash_int32(&key->rend_flags, sizeof(int));
+   hash ^= eina_hash_int32(&key->size, sizeof(int));
+   hash ^= eina_hash_int32(&key->dpi, sizeof(int));
+
+   return hash;
+}
+
+static void
+_font_entry_free(Font_Entry *fe)
+{
+   free(fe);
+}
+
+static void
+_font_source_free(Font_Source *fs)
+{
+   if (fs->name) eina_stringshare_del(fs->name);
+   if (fs->file) eina_stringshare_del(fs->file);
+
+   free(fs);
+}
+
 void
 cserve2_cache_init(void)
 {
@@ -548,6 +610,13 @@ cserve2_cache_init(void)
    image_ids = eina_hash_string_superfast_new(NULL);
    image_entries = eina_hash_string_superfast_new(_hash_image_entry_free);
    file_watch = eina_hash_string_superfast_new(_file_watch_free);
+
+   font_sources = eina_hash_string_small_new(EINA_FREE_CB(_font_source_free));
+   font_entries = eina_hash_new(NULL,
+                                EINA_KEY_CMP(_font_entry_cmp),
+                                EINA_KEY_HASH(_font_entry_key_hash),
+                                EINA_FREE_CB(_font_entry_free),
+                                5);
 }
 
 void
@@ -558,6 +627,9 @@ cserve2_cache_shutdown(void)
    eina_hash_free(file_entries);
    eina_hash_free(file_ids);
    eina_hash_free(file_watch);
+
+   eina_hash_free(font_entries);
+   eina_hash_free(font_sources);
 }
 
 static void
