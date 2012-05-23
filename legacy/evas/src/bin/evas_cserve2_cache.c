@@ -16,6 +16,10 @@ typedef struct _File_Data File_Data;
 typedef struct _Image_Data Image_Data;
 typedef struct _File_Watch File_Watch;
 
+typedef struct _Font_Entry Font_Entry;
+typedef struct _Font_Cache Font_Cache;
+typedef struct _Glyph_Entry Glyph_Entry;
+
 typedef void *(*Request_Msg_Create)(Entry *e, int *size);
 typedef void (*Request_Response)(Entry *e, void *resp);
 typedef void (*Request_Error)(Entry *e, Error_Type error);
@@ -76,6 +80,28 @@ struct _Image_Data {
    Eina_Bool alpha_sparse : 1;
    Eina_Bool unused : 1;
    Eina_Bool doload : 1;
+};
+
+struct _Font_Entry {
+};
+
+struct _Font_Cache {
+   Font_Entry *fe;
+   struct {
+      const char *name;
+      void *data;
+      unsigned int size;
+      unsigned int usage;
+   } shm;
+   Eina_Inlist *glyphs;
+};
+
+struct _Glyph_Entry {
+   EINA_INLIST;
+   Font_Entry *fe;
+   Font_Cache *fi;
+   unsigned int index;
+   unsigned int offset;
 };
 
 struct _Reference {
