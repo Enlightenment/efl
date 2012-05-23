@@ -516,9 +516,11 @@ EAPI Eina_Bool                     elm_genlist_multi_select_get(const Evas_Objec
  * @note ELM_LIST_COMPRESS will make list resize slower as it will have to
  *       recalculate every item height again whenever the list width
  *       changes!
- * @note When ELM_LIST_COMPRESS mode is enabled, it also enables
- *       compress mode (see elm_genlist_mode_set()) and
- *       disables homogeneous (see elm_genlist_homogeneous_set()).
+ * @note Homogeneous mode is for that all items in the genlist same
+ *       width/height. With ELM_LIST_COMPRESS, it makes genlist items to fast
+ *       initializing. However there's no sub-objects in genlist which can be
+ *       on the flying resizable (such as TEXTBLOCK). If then, some dynamic
+ *       resizable objects in genlist would not diplayed properly.
  *
  * @see elm_genlist_mode_get()
  *
@@ -1326,8 +1328,7 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
  *
  * This will enable the homogeneous mode where items are of the same
  * height and width so that genlist may do the lazy-loading at its
- * maximum (which increases the performance for scrolling the list). This
- * implies 'compressed' mode.
+ * maximum (which increases the performance for scrolling the list).
  *
  * @see elm_genlist_mode_set()
  * @see elm_genlist_homogeneous_get()
