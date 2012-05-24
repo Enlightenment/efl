@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <a.hillel@partner.samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:2010
+#: src/lib/elm_config.c:2007
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-04-26 14:00+0900\n"
+"POT-Creation-Date: 2012-05-23 19:54+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -17,98 +17,98 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: src/lib/elc_fileselector.c:854
+#: src/lib/elc_fileselector.c:833
 msgid "Up"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:869
+#: src/lib/elc_fileselector.c:848
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1021 src/lib/elm_entry.c:1371
+#: src/lib/elc_fileselector.c:1060 src/lib/elm_entry.c:1373
 msgid "Cancel"
 msgstr "בטל"
 
-#: src/lib/elc_fileselector.c:1031
+#: src/lib/elc_fileselector.c:1070
 msgid "OK"
 msgstr "אשר"
 
-#: src/lib/elm_button.c:284
+#: src/lib/elm_button.c:85
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:405 src/lib/elm_check.c:390 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:891
+#: src/lib/elm_button.c:283 src/lib/elm_check.c:241 src/lib/elm_radio.c:287
+#: src/lib/elm_toolbar.c:1049
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elm_button.c:459
+#: src/lib/elm_button.c:307
 msgid "Button"
 msgstr ""
 
-#: src/lib/elm_calendar.c:161
+#: src/lib/elm_calendar.c:195
 msgid "%B %Y"
 msgstr ""
 
-#: src/lib/elm_check.c:307 src/lib/elm_check.c:310 src/lib/elm_check.c:401
-#: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
+#: src/lib/elm_check.c:88 src/lib/elm_check.c:91 src/lib/elm_check.c:254
+#: src/lib/elm_radio.c:130 src/lib/elm_radio.c:288
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:320 src/lib/elm_check.c:323 src/lib/elm_check.c:410
-#: src/lib/elm_radio.c:298
+#: src/lib/elm_check.c:101 src/lib/elm_check.c:104 src/lib/elm_check.c:266
+#: src/lib/elm_radio.c:290
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:397 src/lib/elm_check.c:407
+#: src/lib/elm_check.c:250 src/lib/elm_check.c:263
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:463
+#: src/lib/elm_check.c:330
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1486
+#: src/lib/elm_config.c:2023
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:1365
+#: src/lib/elm_entry.c:1367
 msgid "Copy"
 msgstr "העתק"
 
-#: src/lib/elm_entry.c:1368
+#: src/lib/elm_entry.c:1370
 msgid "Cut"
 msgstr "גזור"
 
-#: src/lib/elm_entry.c:1382
+#: src/lib/elm_entry.c:1384
 msgid "Select"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_entry.c:1388
+#: src/lib/elm_entry.c:1390
 msgid "Paste"
 msgstr "הדבק"
 
-#: src/lib/elm_radio.c:404
+#: src/lib/elm_radio.c:317
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:807
+#: src/lib/elm_toolbar.c:965
 #, fuzzy
 msgid "Selected"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_toolbar.c:889
+#: src/lib/elm_toolbar.c:1047
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:893
+#: src/lib/elm_toolbar.c:1051
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:895
+#: src/lib/elm_toolbar.c:1053
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:959
+#: src/lib/elm_toolbar.c:1117
 msgid "Tool Item"
 msgstr ""
