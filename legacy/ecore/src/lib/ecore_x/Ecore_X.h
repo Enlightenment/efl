@@ -349,6 +349,53 @@ typedef enum _Ecore_X_Randr_Property_Change
    ECORE_X_RANDR_PROPERTY_CHANGE_DEL
 } Ecore_X_Randr_Property_Change;
 
+/**
+ * @typedef _Ecore_X_Error_Code
+ * Defines the error codes of Ecore_X which wraps the X Window Systems 
+ * protocol's errors.
+ *
+ * @since 1.3.0
+ */
+typedef enum _Ecore_X_Error_Code
+{
+   /** Everything is okay. */
+   ECORE_X_ERROR_CODE_SUCCESS            = 0,
+   /** Bad request code */
+   ECORE_X_ERROR_CODE_BAD_REQUEST        = 1,
+   /** Int parameter out of range */
+   ECORE_X_ERROR_CODE_BAD_VALUE          = 2,
+   /** Parameter not a Window */
+   ECORE_X_ERROR_CODE_BAD_WINDOW         = 3,
+   /** Parameter not a Pixmap */
+   ECORE_X_ERROR_CODE_BAD_PIXMAP         = 4,
+   /** Parameter not an Atom */
+   ECORE_X_ERROR_CODE_BAD_ATOM           = 5,
+   /** Parameter not a Cursor */
+   ECORE_X_ERROR_CODE_BAD_CURSOR         = 6,
+   /** Parameter not a Font */
+   ECORE_X_ERROR_CODE_BAD_FONT           = 7,
+   /** Parameter mismatch */
+   ECORE_X_ERROR_CODE_BAD_MATCH          = 8,
+   /** Parameter not a Pixmap or Window */
+   ECORE_X_ERROR_CODE_BAD_DRAWABLE       = 9,
+   /** Bad access */
+   ECORE_X_ERROR_CODE_BAD_ACCESS         = 10,
+   /** Insufficient resources */
+   ECORE_X_ERROR_CODE_BAD_ALLOC          = 11,
+   /** No such colormap */
+   ECORE_X_ERROR_CODE_BAD_COLOR          = 12,
+   /** Parameter not a GC */
+   ECORE_X_ERROR_CODE_BAD_GC             = 13,
+   /** Choice not in range or already used */
+   ECORE_X_ERROR_CODE_BAD_ID_CHOICE      = 14,
+   /** Font or color name doesn't exist */
+   ECORE_X_ERROR_CODE_BAD_NAME           = 15,
+   /** Request length incorrect */
+   ECORE_X_ERROR_CODE_BAD_LENGTH         = 16,
+   /** Server is defective */
+   ECORE_X_ERROR_CODE_BAD_IMPLEMENTATION = 17,
+} Ecore_X_Error_Code;
+
 typedef struct _Ecore_X_Event_Mouse_In                     Ecore_X_Event_Mouse_In;
 typedef struct _Ecore_X_Event_Mouse_Out                    Ecore_X_Event_Mouse_Out;
 typedef struct _Ecore_X_Event_Window_Focus_In              Ecore_X_Event_Window_Focus_In;

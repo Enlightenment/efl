@@ -6,6 +6,8 @@ Changes since Ecore 1.2.0:
 Additions:
     * ecore_evas:
      - Add transparency support on Windows (GDI engine only)
+	* ecore_x:
+     - Add Ecore_X_Error_Code enumeration
 
 Fixes:
     * ecore
