@@ -659,6 +659,6 @@
         * Add ecore_x_mouse_in_send() and ecore_x_mouse_out_send()
         * Add ecore_x illume access control/action atoms+api's
 
-2012-05-23 Doyoun Kang
+2012-05-24 Doyoun Kang
 
         * Add Ecore_X_Error_Code enumeration in ecore_x
