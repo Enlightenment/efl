@@ -30,6 +30,7 @@ int        no_save = 0;
 int        min_quality = 0;
 int        max_quality = 100;
 int        compress_mode = EET_COMPRESSION_DEFAULT;
+int        threads = 0;
 
 static void
 main_help(void)
@@ -55,6 +56,7 @@ main_help(void)
       "-Ddefine_val=to          CPP style define to define input macro definitions to the .edc source\n"
       "-fastcomp                Use a faster compression algorithm (LZ4) (mutually exclusive with -fastdecomp)\n"
       "-fastdecomp              Use a faster decompression algorithm (LZ4HC) (mutually exclusive with -fastcomp)\n"
+      "-threads                 Compile the edje file using multiple parallel threads\n"
       ,progname);
 }
 
@@ -147,13 +149,17 @@ main(int argc, char **argv)
 	     if (max_quality < 0) max_quality = 0;
 	     if (max_quality > 100) max_quality = 100;
 	  }
-	else if ((!strcmp(argv[i], "-fastcomp")) && (i < (argc - 1)))
+	else if (!strcmp(argv[i], "-fastcomp"))
 	  {
              compress_mode = EET_COMPRESSION_SUPERFAST;
 	  }
-	else if ((!strcmp(argv[i], "-fastdecomp")) && (i < (argc - 1)))
+	else if (!strcmp(argv[i], "-fastdecomp"))
 	  {
              compress_mode = EET_COMPRESSION_VERYFAST;
+	  }
+	else if (!strcmp(argv[i], "-threads"))
+	  {
+             threads = 1;
 	  }
 	else if (!strncmp(argv[i], "-D", 2))
 	  {

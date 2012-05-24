@@ -178,7 +178,6 @@ struct _Group_Write
 };
 
 static int pending_threads = 0;
-int threads = 1;
 
 static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
 

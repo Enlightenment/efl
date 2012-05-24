@@ -228,5 +228,6 @@ extern Eina_List             *aliases;
 extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
 extern int                    compress_mode;
+extern int                    threads;
 
 #endif
