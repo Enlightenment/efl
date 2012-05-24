@@ -9328,7 +9328,7 @@ struct _Evas_Smart_Class
    const char *name; /**< the name string of the class */
    int         version;
    void  (*add)         (Evas_Object *o); /**< code to be run when adding object to a canvas */
-   void  (*del)         (Evas_Object *o); /**< code to be run when removing object to a canvas */
+   void  (*del)         (Evas_Object *o); /**< code to be run when removing object from a canvas */
    void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y); /**< code to be run when moving object on a canvas. @a x and @a y will be new coordinates one applied to the object. use evas_object_geometry_get() if you need the old values, during this call. after that, the old values will be lost. */
    void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h); /**< code to be run when resizing object on a canvas. @a w and @a h will be new dimensions one applied to the object. use evas_object_geometry_get() if you need the old values, during this call. after that, the old values will be lost. */
    void  (*show)        (Evas_Object *o); /**< code to be run when showing object on a canvas */
@@ -10398,14 +10398,14 @@ EAPI Evas_Object            *evas_object_smart_clipped_clipper_get   (Evas_Objec
  * clipped smart object are:
  * - @c add: creates a hidden clipper with "infinite" size, to clip
  *    any incoming members;
- *  - @c del: delete all children objects;
- *  - @c move: move all objects relative relatively;
- *  - @c resize: <b>not defined</b>;
- *  - @c show: if there are children objects, show clipper;
- *  - @c hide: hides clipper;
- *  - @c color_set: set the color of clipper;
- *  - @c clip_set: set clipper of clipper;
- *  - @c clip_unset: unset the clipper of clipper;
+ * - @c del: delete all children objects;
+ * - @c move: move all objects relative relatively;
+ * - @c resize: <b>not defined</b>;
+ * - @c show: if there are children objects, show clipper;
+ * - @c hide: hides clipper;
+ * - @c color_set: set the color of clipper;
+ * - @c clip_set: set clipper of clipper;
+ * - @c clip_unset: unset the clipper of clipper;
  *
  * @note There are other means of assigning parent smart classes to
  * child ones, like the #EVAS_SMART_SUBCLASS_NEW macro or the
