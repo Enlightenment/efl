@@ -230,7 +230,7 @@ _on_parent_del(void *data,
                Evas_Object *obj __UNUSED__,
                void *event_info __UNUSED__)
 {
-   elm_hoversel_hover_parent_set((Evas_Object *)data, NULL);
+   elm_hoversel_hover_parent_set(data, NULL);
 }
 
 static const char *
