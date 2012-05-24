@@ -2120,7 +2120,7 @@ EAPI int ecore_thread_max_get(void);
  * @param num The new maximum
  *
  * This sets a new value for the maximum number of concurrently running
- * Ecore_Thread's. It @b must an integer between 1 and (2 * @c x), where @c x
+ * Ecore_Thread's. It @b must an integer between 1 and (16 * @c x), where @c x
  * is the number for CPUs available.
  *
  * @see ecore_thread_max_get()

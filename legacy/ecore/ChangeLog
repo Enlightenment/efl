@@ -671,4 +671,7 @@
         accessind already deleted ecore-con clients. use client
         ref/unref to fix it. No backport of this fix as it requires a
         new feature.
-
+        * Fix ecore-thread scheduling issue where re-scheduled threads
+        will hold a loop busy and not allow feedback workers to run,
+        so now have fairer scheduling.
+        * Allow 16 * cpu num for worker threads (default still cpu num)
