@@ -1181,7 +1181,7 @@ ecore_thread_max_set(int num)
    EINA_MAIN_LOOP_CHECK_RETURN;
    if (num < 1) return;
    /* avoid doing something hilarious by blocking dumb users */
-   if (num >= (16 * eina_cpu_count())) num = 16 * eina_cpu_count();
+   if (num > (16 * eina_cpu_count())) num = 16 * eina_cpu_count();
 
    _ecore_thread_count_max = num;
 }
