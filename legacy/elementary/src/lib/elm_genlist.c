@@ -4955,18 +4955,17 @@ _elm_genlist_item_compute_coordinates(Elm_Object_Item               *it,
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
    Evas_Coord gith = 0;
    if (_it->generation < _it->wd->generation) return EINA_FALSE;
-   if ((_it->wd->homogeneous) &&
-       (_it->wd->mode == ELM_LIST_COMPRESS))
-     goto hm_shortcut;  /* homogenous genlist shortcut */
-   if ((_it->item->queued) || (!_it->item->mincalcd))
+   if (!((_it->wd->homogeneous) && (_it->wd->mode == ELM_LIST_COMPRESS)))
      {
-        _it->wd->show_item = _it;
-        _it->wd->bring_in = bring_in;
-        _it->wd->scrollto_type = type;
-        _it->item->showme = EINA_TRUE;
-        return EINA_FALSE;
+        if ((_it->item->queued) || (!_it->item->mincalcd))
+          {
+             _it->wd->show_item = _it;
+             _it->wd->bring_in = bring_in;
+             _it->wd->scrollto_type = type;
+             _it->item->showme = EINA_TRUE;
+             return EINA_FALSE;
+          }
      }
-hm_shortcut:
    if (_it->wd->show_item)
      {
         _it->wd->show_item->item->showme = EINA_FALSE;
