@@ -1224,7 +1224,7 @@ data_scripts_exe_del_cb(void *data __UNUSED__, int evtype __UNUSED__, void *evin
 {
    Script_Write *sc = data;
    Ecore_Exe_Event_Del *ev = evinfo;
-   
+
    if (!ev->exe) return ECORE_CALLBACK_RENEW;
    if (ecore_exe_data_get(ev->exe) != sc) return ECORE_CALLBACK_RENEW;
    if (ev->exit_code != 0)
@@ -1232,14 +1232,19 @@ data_scripts_exe_del_cb(void *data __UNUSED__, int evtype __UNUSED__, void *evin
         error_and_abort(sc->ef, "Compiling script code not clean.\n");
         return ECORE_CALLBACK_CANCEL;
      }
-   pending_threads++;
    if (threads)
-     ecore_thread_run(data_thread_script, data_thread_script_end, NULL, sc);
+     {
+        pending_threads++;
+        ecore_thread_run(data_thread_script, data_thread_script_end, NULL, sc);
+     }
    else
      {
+        pending_threads++;
         data_thread_script(sc, NULL);
         data_thread_script_end(sc, NULL);
      }
+   pending_threads--;
+   if (pending_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1290,6 +1295,7 @@ data_write_scripts(Eet_File *ef)
         snprintf(buf, sizeof(buf),
                  "embryo_cc -i %s/include -o %s %s",
                  eina_prefix_data_get(pfx), sc->tmpo, sc->tmpn);
+        pending_threads++;
         sc->exe = ecore_exe_run(buf, sc);
         ecore_event_handler_add(ECORE_EXE_EVENT_DEL,
                                 data_scripts_exe_del_cb, sc);
@@ -1544,6 +1550,7 @@ data_write(void)
 
    ecore_thread_max_set(ecore_thread_max_get() * 2);
 
+   pending_threads++;
    t = ecore_time_get();
    data_write_header(ef);
    if (verbose)
@@ -1604,6 +1611,7 @@ data_write(void)
      {
         printf("sounds: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
      }
+   pending_threads--;
    if (pending_threads > 0) ecore_main_loop_begin();
    // XXX: workaround ecore thread bug where it creates an internal worker
    // thread task we don't know about and it is STILL active at this point
