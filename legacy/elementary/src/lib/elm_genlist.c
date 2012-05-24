@@ -2336,7 +2336,7 @@ _item_block_recalc(Item_Block *itb,
                }
              else
                {
-                  if ((itb->wd->homogeneous) && 
+                  if ((itb->wd->homogeneous) &&
                       (itb->wd->mode == ELM_LIST_COMPRESS))
                     {
                        if (it->group)
@@ -3306,11 +3306,11 @@ _decorate_item_realize(Elm_Gen_Item *it)
    evas_object_event_callback_add(it->item->deco_it_view, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move, it);
 
-   /* text_get, content_get, state_get */
    /* FIXME: If you see that assert, please notify us and we
       will clean our mess */
    assert(eina_list_count(it->item->deco_it_content_objs) == 0);
 
+   /* text_get, content_get, state_get */
    _item_text_realize(it, it->item->deco_it_view, &it->item->deco_it_texts, NULL);
    if (!it->item->deco_it_contents)
      it->item->deco_it_contents =
@@ -3401,10 +3401,9 @@ _decorate_item_unset(Widget_Data *wd)
 
    snprintf(buf, sizeof(buf), "elm,state,%s,passive", wd->decorate_it_type);
    snprintf(buf2, sizeof(buf2), "elm,state,%s,passive,finished", wd->decorate_it_type);
-
    edje_object_signal_emit(it->item->deco_it_view, buf, "elm");
-   edje_object_signal_callback_add(it->item->deco_it_view, buf2, "elm", _decorate_item_finished_signal_cb, it);
-
+   edje_object_signal_callback_add(it->item->deco_it_view, buf2, "elm",
+                                   _decorate_item_finished_signal_cb, it);
    wd->mode_item = NULL;
 }
 
@@ -3459,14 +3458,17 @@ _decorate_all_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    _elm_genlist_item_odd_even_update(it);
    _elm_genlist_item_state_update(it, NULL);
 
-   if (effect_on) edje_object_signal_emit(it->deco_all_view, "elm,state,decorate,enabled,effect", "elm");
-   else edje_object_signal_emit(it->deco_all_view, "elm,state,decorate,enabled", "elm");
+   if (effect_on) edje_object_signal_emit(it->deco_all_view,
+                                          "elm,state,decorate,enabled,effect", "elm");
+   else edje_object_signal_emit(it->deco_all_view,
+                                "elm,state,decorate,enabled", "elm");
 
    _item_mouse_callbacks_del(it, VIEW(it));
    _item_mouse_callbacks_add(it, it->deco_all_view);
 
    _item_text_realize(it, it->deco_all_view, &it->item->deco_all_texts, NULL);
-   if (it->flipped) edje_object_signal_emit(it->deco_all_view, "elm,state,flip,enabled", "elm");
+   if (it->flipped) edje_object_signal_emit(it->deco_all_view,
+                                            "elm,state,flip,enabled", "elm");
    if (!it->item->deco_all_contents)
      it->item->deco_all_contents =
         elm_widget_stringlist_get(edje_object_data_get(it->deco_all_view, "contents"));
@@ -4101,7 +4103,7 @@ static void
 _item_process_post(Widget_Data *wd, Elm_Gen_Item *it, Eina_Bool qadd)
 {
    Eina_Bool showme = EINA_FALSE;
-   
+
    if (it->item->block->changed)
      {
         showme = _item_block_recalc(it->item->block, it->item->block->num, qadd);
@@ -4245,7 +4247,9 @@ _item_move_after(Elm_Gen_Item *it, Elm_Gen_Item *after)
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
    _item_block_del(it);
 
-   it->wd->items = eina_inlist_append_relative(it->wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(after));
+   it->wd->items = eina_inlist_append_relative(it->wd->items,
+                                               EINA_INLIST_GET(it),
+                                               EINA_INLIST_GET(after));
    it->item->rel = after;
    it->item->rel->relcount++;
    it->item->before = EINA_FALSE;
@@ -4264,7 +4268,9 @@ _item_move_before(Elm_Gen_Item *it, Elm_Gen_Item *before)
 
    it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
    _item_block_del(it);
-   it->wd->items = eina_inlist_prepend_relative(it->wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(before));
+   it->wd->items = eina_inlist_prepend_relative(it->wd->items,
+                                                EINA_INLIST_GET(it),
+                                                EINA_INLIST_GET(before));
    it->item->rel = before;
    it->item->rel->relcount++;
    it->item->before = EINA_TRUE;
