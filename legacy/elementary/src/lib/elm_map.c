@@ -410,6 +410,8 @@ struct _Widget_Data
    Ecore_Timer *zoom_timer;
    Ecore_Animator *zoom_animator;
 
+   Ecore_Timer *loaded_timer;
+
    int try_num;
    int finish_num;
    int download_num;
@@ -513,6 +515,7 @@ static const char SIG_SCROLL_ANIM_STOP[] =   "scroll,anim,stop";
 static const char SIG_ZOOM_START[] =         "zoom,start";
 static const char SIG_ZOOM_STOP[] =          "zoom,stop";
 static const char SIG_ZOOM_CHANGE[] =        "zoom,change";
+static const char SIG_LOADED[] =             "loaded";
 static const char SIG_TILE_LOAD[] =          "tile,load";
 static const char SIG_TILE_LOADED[] =        "tile,loaded";
 static const char SIG_TILE_LOADED_FAIL[] =   "tile,loaded,fail";
@@ -536,6 +539,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_ZOOM_START, ""},
        {SIG_ZOOM_STOP, ""},
        {SIG_ZOOM_CHANGE, ""},
+       {SIG_LOADED, ""},
        {SIG_TILE_LOAD, ""},
        {SIG_TILE_LOADED, ""},
        {SIG_TILE_LOADED_FAIL, ""},
@@ -735,6 +739,18 @@ _grid_item_in_viewport(Grid_Item *gi)
    return ELM_RECTS_INTERSECT(x, y, w, h, vx, vy, vw, vh);
 }
 
+static Eina_Bool
+_loaded_timeout(void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+   Widget_Data *wd = data;
+
+   wd->loaded_timer = NULL;
+   if (!(wd->download_num) && !(wd->download_idler))
+      evas_object_smart_callback_call(wd->obj, SIG_LOADED, NULL);
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static void
 _grid_item_update(Grid_Item *gi)
 {
@@ -761,6 +777,9 @@ _grid_item_update(Grid_Item *gi)
         _obj_rotate(gi->wd, gi->img);
         gi->file_have = EINA_TRUE;
      }
+
+   if (gi->wd->loaded_timer) ecore_timer_del(gi->wd->loaded_timer);
+   gi->wd->loaded_timer = ecore_timer_add(0.25, _loaded_timeout, gi->wd);
 }
 
 static void
@@ -3692,6 +3711,11 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN(wd);
 
+   if (wd->loaded_timer)
+     {
+        ecore_timer_del(wd->loaded_timer);
+        wd->loaded_timer = NULL;
+     }
    if (wd->map) evas_map_free(wd->map);
    free(wd);
 }

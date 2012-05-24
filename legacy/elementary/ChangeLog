@@ -97,3 +97,7 @@
 	* Add ability to use cnp helper code on non-elm widget objects by
         falling back to ecore-evas to get the window id.
 
+2012-05-24 Tae-Hwan Kim (Bluezery)
+
+	* Add "loaded" signal for elm_map.
+

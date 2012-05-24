@@ -365,6 +365,12 @@ _map_zoom_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 }
 
 static void
+_map_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("loaded\n");
+}
+
+static void
 _map_tile_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("tile,load\n");
@@ -1058,6 +1064,7 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_smart_callback_add(map, "zoom,start", _map_zoom_start, map);
         evas_object_smart_callback_add(map, "zoom,stop", _map_zoom_stop, map);
         evas_object_smart_callback_add(map, "zoom,change", _map_zoom_change, map);
+        evas_object_smart_callback_add(map, "loaded", _map_loaded, map);
         evas_object_smart_callback_add(map, "tile,load", _map_tile_load, map);
         evas_object_smart_callback_add(map, "tile,loaded", _map_tile_loaded, map);
         evas_object_smart_callback_add(map, "tile,loaded,fail", _map_tile_loaded_fail, map);
