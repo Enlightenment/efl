@@ -119,6 +119,7 @@ struct _Ecore_Con_Client
    SSL *ssl;
    int ssl_err;
 #endif
+   int ref;
    Ecore_Con_Ssl_State ssl_state;
    Eina_Bool handshaking : 1;
    Eina_Bool upgrade : 1; /* STARTTLS queued */
