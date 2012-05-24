@@ -1,7 +1,7 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-#define CSO_DATA_GET_OR_RETURN(obj, ptr)				 \
+#define CSO_DATA_GET_OR_RETURN(obj, ptr)                                 \
   Evas_Object_Smart_Clipped_Data *ptr = evas_object_smart_data_get(obj); \
   if (!ptr) return;
 
@@ -17,15 +17,15 @@ evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_C
    lst = evas_object_smart_members_get_direct(obj);
    EINA_INLIST_FOREACH(lst, child)
      {
-	Evas_Coord orig_x, orig_y;
+        Evas_Coord orig_x, orig_y;
 
-// shortcut as we are in evas        
-//	evas_object_geometry_get(child, &orig_x, &orig_y, NULL, NULL);
+        // shortcut as we are in evas        
+        // evas_object_geometry_get(child, &orig_x, &orig_y, NULL, NULL);
         if (child->delete_me) continue;
         if (child->is_static_clip) continue;
         orig_x = child->cur.geometry.x;
         orig_y = child->cur.geometry.y;
-	evas_object_move(child, orig_x + dx, orig_y + dy);
+        evas_object_move(child, orig_x + dx, orig_y + dy);
      }
 }
 
@@ -71,9 +71,9 @@ evas_object_smart_clipped_smart_del(Evas_Object *obj)
 
    if (cso->clipper)
      {
-	Evas_Object *clipper = cso->clipper;
-	cso->clipper = NULL;
-	evas_object_del(clipper);
+        Evas_Object *clipper = cso->clipper;
+        cso->clipper = NULL;
+        evas_object_del(clipper);
      }
 
    _evas_object_smart_members_all_del(obj);
