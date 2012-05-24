@@ -57,6 +57,9 @@
  * @author Mikael Sans <sans.mikael@@gmail.com>
  * @author Doyoun Kang <doyoun.kang@@samsung.com>
  * @author M.V.K. Sumanth <sumanth.m@@samsung.com> <mvksumanth@@gmail.com>
+ * @author Jérôme Pinot <ngc891@@gmail.com>
+ * @author Davide Andreoli (davemds) <dave@@gurumeditation.it>
+ * @author Michal Pakula vel Rutka <m.pakula@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
