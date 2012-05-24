@@ -230,9 +230,7 @@ _on_parent_del(void *data,
                Evas_Object *obj __UNUSED__,
                void *event_info __UNUSED__)
 {
-   ELM_HOVERSEL_DATA_GET(data, sd);
-
-   sd->hover_parent = NULL;
+   elm_hoversel_hover_parent_set((Evas_Object*)data, NULL);
 }
 
 static const char *
@@ -289,6 +287,7 @@ _elm_hoversel_smart_del(Evas_Object *obj)
         eina_stringshare_del(item->icon_group);
         elm_widget_item_free(item);
      }
+   elm_hoversel_hover_parent_set(obj, NULL);
 
    ELM_WIDGET_CLASS(_elm_hoversel_parent_sc)->base.del(obj);
 }
