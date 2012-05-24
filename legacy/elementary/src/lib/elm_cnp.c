@@ -400,6 +400,16 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
 
    if (top) xwin = elm_win_xwindow_get(top);
    else xwin = elm_win_xwindow_get(obj);
+
+   if (!xwin)
+     {
+        Evas *evas = evas_object_evas_get(obj);
+        if (!evas) return EINA_FALSE;
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas);
+        if (!ee) return EINA_FALSE;
+        xwin = (Ecore_X_Window) ecore_evas_window_get(ee);
+     }
+
    if ((!xwin) || (selection > ELM_SEL_TYPE_CLIPBOARD))
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
@@ -474,6 +484,7 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top;
+   Ecore_X_Window xwin;
    Cnp_Selection *sel;
 
    if (selection > ELM_SEL_TYPE_CLIPBOARD)
@@ -482,11 +493,21 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
 
    sel = selections + selection;
    top = elm_widget_top_get(obj);
-   if (!top) return EINA_FALSE;
+   if (top) xwin = elm_win_xwindow_get(top);
+   else
+     {
+        Evas *evas = evas_object_evas_get(obj);
+        if (!evas) return EINA_FALSE;
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas);
+        if (!ee) return EINA_FALSE;
+        xwin = (Ecore_X_Window) ecore_evas_window_get(ee);
+     }
+
+   if (!xwin) return EINA_FALSE;
 
    sel->requestformat = format;
    sel->requestwidget = obj;
-   sel->request(elm_win_xwindow_get(top), ECORE_X_SELECTION_TARGET_TARGETS);
+   sel->request(xwin, ECORE_X_SELECTION_TARGET_TARGETS);
    sel->datacb = datacb;
    sel->udata = udata;
 

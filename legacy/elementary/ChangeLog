@@ -92,3 +92,8 @@
 
 	* Map: Add elm_map_overlays_get & elm_map_overlay_visible_get functions.
 
+2012-05-24 Michal Pakula vel Rutka
+
+	* Add ability to use cnp helper code on non-elm widget objects by
+        falling back to ecore-evas to get the window id.
+
