@@ -116,17 +116,9 @@ _ecore_con_client_kill(Ecore_Con_Client *cl)
      }
    INF("Lost client %s", (cl->ip) ? cl->ip : "");
    if (cl->fd_handler)
-     {
-        ecore_main_fd_handler_del(cl->fd_handler);
-        cl->fd_handler = NULL;
-     }
-   if (cl->host_server)
-     {
-        _ecore_con_client_free(cl);
-        cl->host_server->clients = 
-          eina_list_remove(cl->host_server->clients, cl);
-        cl->host_server = NULL;
-     }
+     ecore_main_fd_handler_del(cl->fd_handler);
+
+   cl->fd_handler = NULL;
 }
 
 void
@@ -1323,6 +1315,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
              break;
           }
      }
+   cl->host_server->clients = eina_list_remove(cl->host_server->clients, cl);
 
 #ifdef _WIN32
    ecore_con_local_win32_client_del(cl);
@@ -2390,7 +2383,7 @@ _ecore_con_event_client_del_free(Ecore_Con_Server *svr,
                _ecore_con_server_free(svr);
           }
         if (!e->client->event_count)
-          ecore_con_client_del(e->client);
+          _ecore_con_client_free(e->client);
      }
    ecore_con_event_client_del_free(e);
    _ecore_con_event_count--;
