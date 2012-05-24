@@ -1736,6 +1736,7 @@ elm_config_cache_flush_interval_get(void)
 EAPI void
 elm_config_cache_flush_interval_set(int size)
 {
+   EINA_SAFETY_ON_FALSE_RETURN(size > 0);
    if (_elm_config->cache_flush_poll_interval == size) return;
    _elm_config->cache_flush_poll_interval = size;
 
