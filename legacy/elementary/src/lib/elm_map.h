@@ -42,7 +42,7 @@
  * - "name,loaded" - Name request ends.
  * - "name,loaded,fail" - Name request fails.
  * - "overlay,clicked" - A overlay is clicked.
- * - "loaded" - when a map is finally loaded.
+ * - "loaded" - when a map is finally loaded (since 1.1).
  *
  * Available style for map widget:
  * - @c "default"
