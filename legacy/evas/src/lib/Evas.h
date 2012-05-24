@@ -308,6 +308,7 @@ Recommended reading:
 @author Rafal Krypa <r.krypa@@samsung.com>
 @author Hyoyoung Chang <hyoyoung@@gmail.com>
 @author Jérôme Pinot <ngc891@@gmail.com>
+@author Rafael Antognolli <antognolli@@profusion.mobi>
 
 Please contact <enlightenment-devel@lists.sourceforge.net> to get in
 contact with the developers and maintainers.
