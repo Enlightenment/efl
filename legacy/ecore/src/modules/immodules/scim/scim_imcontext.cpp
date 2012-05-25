@@ -403,7 +403,7 @@ analyze_surrounding_text(Ecore_IMF_Context *ctx)
    plain_str = evas_textblock_text_markup_to_utf8(NULL, markup_str);
    if (!plain_str) goto done;
 
-   // Convert string from utf8 to unicode
+   // Convert string from UTF-8 to unicode
    ustr = eina_unicode_utf8_to_unicode(plain_str, NULL);
    if (!ustr) goto done;
 
@@ -418,7 +418,7 @@ analyze_surrounding_text(Ecore_IMF_Context *ctx)
                }
           }
 
-        // Check paragraph separator <PS> and carrage return  <br>
+        // Check paragraph separator <PS> and carriage return  <br>
         if ((ustr[cursor_pos-1] == 0x2029) || (ustr[cursor_pos-1] == '\n'))
           {
              ret = EINA_TRUE;
@@ -570,7 +570,7 @@ isf_imf_context_new(void)
 }
 
 /**
- * isf_imf_shutdown
+ * isf_imf_context_shutdown
  *
  * It will be called when the scim im module is unloaded by ecore. It will do some
  * cleanup job.
