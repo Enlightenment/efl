@@ -1,6 +1,6 @@
 # Elementary translation file for Left To Right languages.
 # This file is distributed under the same license as the Elementary package.
-# FIRST AUTHOR <tom.hacohen@partner.samsung.com>, 2010.
+# FIRST AUTHOR <tom.hacohen@samsung.com>, 2010.
 #
 #: src/lib/elm_config.c:2007
 msgid ""
@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2012-05-23 19:54+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
-"Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
+"Last-Translator: Tom Hacohen <tom.hacohen@samsung.com>\n"
 "Language-Team: General\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
