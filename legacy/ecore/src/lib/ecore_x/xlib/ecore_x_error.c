@@ -69,7 +69,7 @@ ecore_x_error_request_get(void)
  *
  * Return the error code from the last X error
  */
-EAPI int
+EAPI Ecore_X_Error_Code
 ecore_x_error_code_get(void)
 {
    return _error_code;
