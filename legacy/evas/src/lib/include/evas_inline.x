@@ -186,14 +186,17 @@ evas_object_coords_recalc(Evas_Object *obj)
 static inline void
 evas_object_clip_recalc(Evas_Object *obj)
 {
-   int cx, cy, cw, ch, cvis, cr, cg, cb, ca;
-   int nx, ny, nw, nh, nvis, nr, ng, nb, na;
+   int cx, cy, cw, ch, cr, cg, cb, ca;
+   int nx, ny, nw, nh, nr, ng, nb, na;
+   Eina_Bool cvis, nvis;
 
    if ((!obj->cur.cache.clip.dirty) &&
-       !(!obj->cur.clipper || obj->cur.clipper->cur.cache.clip.dirty))
-     return;
+       !(!obj->cur.clipper || obj->cur.clipper->cur.cache.clip.dirty)) return;
+
    if (obj->layer->evas->events_frozen > 0) return;
+
    evas_object_coords_recalc(obj);
+
    if ((obj->cur.map) && (obj->cur.usemap))
      {
         cx = obj->cur.map->normal_geometry.x;
@@ -208,21 +211,23 @@ evas_object_clip_recalc(Evas_Object *obj)
         cw = obj->cur.geometry.w;
         ch = obj->cur.geometry.h;
      }
-////   cx = obj->cur.cache.geometry.x; cy = obj->cur.cache.geometry.y;
-////   cw = obj->cur.cache.geometry.w; ch = obj->cur.cache.geometry.h;
-   if (obj->cur.color.a == 0 && obj->cur.render_op == EVAS_RENDER_BLEND) cvis = 0;
+
+   if (obj->cur.color.a == 0 && obj->cur.render_op == EVAS_RENDER_BLEND)
+     cvis = EINA_FALSE;
    else cvis = obj->cur.visible;
+
    cr = obj->cur.color.r; cg = obj->cur.color.g;
    cb = obj->cur.color.b; ca = obj->cur.color.a;
+
    if (obj->cur.clipper)
      {
-// this causes problems... hmmm ?????
+        // this causes problems... hmmm ?????
         if (obj->cur.clipper->cur.cache.clip.dirty)
           evas_object_clip_recalc(obj->cur.clipper);
 
         // I don't know why this test was here in the first place. As I have
         // no issue showing up due to this, I keep it and move color out of it.
-// breaks cliping of mapped images!!!
+        // breaks cliping of mapped images!!!
         if (obj->cur.clipper->cur.map_parent == obj->cur.map_parent)
           {
              nx = obj->cur.clipper->cur.cache.clip.x;
@@ -237,13 +242,14 @@ evas_object_clip_recalc(Evas_Object *obj)
         ng = obj->cur.clipper->cur.cache.clip.g;
         nb = obj->cur.clipper->cur.cache.clip.b;
         na = obj->cur.clipper->cur.cache.clip.a;
-        cvis = cvis * nvis;
+        cvis = (cvis & nvis);
         cr = (cr * (nr + 1)) >> 8;
         cg = (cg * (ng + 1)) >> 8;
         cb = (cb * (nb + 1)) >> 8;
         ca = (ca * (na + 1)) >> 8;
      }
-   if ((ca == 0 && obj->cur.render_op == EVAS_RENDER_BLEND) || (cw <= 0) || (ch <= 0)) cvis = 0;
+   if ((ca == 0 && obj->cur.render_op == EVAS_RENDER_BLEND) ||
+       (cw <= 0) || (ch <= 0)) cvis = EINA_FALSE;
    obj->cur.cache.clip.x = cx;
    obj->cur.cache.clip.y = cy;
    obj->cur.cache.clip.w = cw;
@@ -253,7 +259,7 @@ evas_object_clip_recalc(Evas_Object *obj)
    obj->cur.cache.clip.g = cg;
    obj->cur.cache.clip.b = cb;
    obj->cur.cache.clip.a = ca;
-   obj->cur.cache.clip.dirty = 0;
+   obj->cur.cache.clip.dirty = EINA_FALSE;
 }
 
 #endif
