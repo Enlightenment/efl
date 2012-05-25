@@ -37,7 +37,7 @@
  * @author Jihoon Kim <jihoon48.kim@@samsung.com>
  * @author Jeonghyun Yun (arosis) <jh0506.yun@@samsung.com>
  * @author Tom Hacohen <tom@@stosb.com>
- * @author Aharon Hillel <a.hillel@@partner.samsung.com>
+ * @author Aharon Hillel <a.hillel@@samsung.com>
  * @author Jonathan Atton (Watchwolf) <jonathan.atton@@gmail.com>
  * @author Shinwoo Kim <kimcinoo@@gmail.com>
  * @author Govindaraju SM <govi.sm@@samsung.com> <govism@@gmail.com>
