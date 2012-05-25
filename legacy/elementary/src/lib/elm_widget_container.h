@@ -31,7 +31,7 @@
   * Use this macro to cast whichever subclass of
   * #Elm_Container_Smart_Class into it, so to acess its fields.
   *
-  * @ingroup Container
+  * @ingroup Widget
   */
  #define ELM_CONTAINER_CLASS(x) ((Elm_Container_Smart_Class *) x)
 
@@ -102,13 +102,8 @@
 
 /**
  * Elementary container base smart class. This inherits directly from
- * #Elm_Widget_Smart_Class and is meant to build widgets relying on an
- * Edje container as a building block of its visuals.
- *
- * For instance, the elm_container @b widget itself is just a realization
- * of this smart class (see the code for elm_container_add()). All of the
- * functions listed on @ref Container namespace will work for objects
- * deriving from #Elm_Container_Smart_Class.
+ * #Elm_Widget_Smart_Class and is meant to build widgets exposing
+ * "parts" to hold child elements at.
  */
 
 typedef struct _Elm_Container_Smart_Class

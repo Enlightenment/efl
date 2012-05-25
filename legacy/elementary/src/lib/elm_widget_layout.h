@@ -234,7 +234,7 @@ typedef struct _Elm_Layout_Smart_Class
 } Elm_Layout_Smart_Class;
 
 /**
- * Base widget smart data extended with layout widget data.
+ * Base widget smart data extended with layout instance data.
  */
 typedef struct _Elm_Layout_Smart_Data
 {

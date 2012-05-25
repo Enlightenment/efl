@@ -21,7 +21,7 @@
  * Use this macro to cast whichever subclass of
  * #Elm_Button_Smart_Class into it, so to acess its fields.
  *
- * @ingroup Button
+ * @ingroup Widget
  */
 #define ELM_BUTTON_CLASS(x) ((Elm_Button_Smart_Class *) x)
 
@@ -31,7 +31,7 @@
  * Use this macro to cast whichever subdata of
  * #Elm_Button_Smart_Data into it, so to acess its fields.
  *
- * @ingroup Button
+ * @ingroup Widget
  */
 #define ELM_BUTTON_DATA(x) ((Elm_Button_Smart_Data *) x)
 
@@ -118,7 +118,7 @@ typedef struct _Elm_Button_Smart_Class
 } Elm_Button_Smart_Class;
 
 /**
- * Base widget smart data extended with button widget data.
+ * Base widget smart data extended with button instance data.
  */
 typedef struct _Elm_Button_Smart_Data
 {

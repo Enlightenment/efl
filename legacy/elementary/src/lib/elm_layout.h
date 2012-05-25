@@ -8,6 +8,8 @@
  * @image html img/layout-predefined.png
  * @image latex img/layout-predefined.eps width=\textwidth
  *
+ * A Layout is a direct realization of @ref elm-layout-class.
+ *
  * This is a container widget that takes a standard Edje design file and
  * wraps it very thinly in a widget.
  *
