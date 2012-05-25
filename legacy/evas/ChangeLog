@@ -756,3 +756,7 @@
 2012-05-18  ChunEon Park (Hermet)
 
 	* Update mapped objects rendering when their color is changed
+
+2012-05-24  Carsten Haitzler (The Rasterman)
+
+        * Fix evas_object_image_memfile_set() on non-linux systems.
