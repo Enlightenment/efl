@@ -1383,8 +1383,7 @@ evas_render_updates_internal(Evas *e,
     * NB: This is for the wayland engine(s). If we do not do this, then 
     * objects will draw outside the viewport and potentially onto the frame 
     * itself */
-   if ((!strcmp(e->engine.module->definition->name, "wayland_shm")) ||
-       (!strcmp(e->engine.module->definition->name, "wayland_egl")))
+   if (!strncmp(e->engine.module->definition->name, "wayland", 7))
      {
         Eina_Rectangle clip_rect;
 
