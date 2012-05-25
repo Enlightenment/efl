@@ -78,8 +78,8 @@ test_win_plug(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *plug;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "window-inline", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Window Inline");
+   win = elm_win_add(NULL, "window-plug", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Window Plug");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
