@@ -660,7 +660,7 @@ _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
 
         /* This doesn't cover the area of the video object, so don't bother with that object */
         if (!eina_rectangles_intersect(&zone, &self))
-          continue ;
+          continue;
 
         xc1 = current->cur.cache.clip.x;
         yc1 = current->cur.cache.clip.y;
@@ -1346,18 +1346,6 @@ evas_render_updates_internal(Evas *e,
      }
 
    /* phase 4. framespace, output & viewport changes */
-   if (e->framespace.changed)
-     {
-        int fx, fy, fw, fh;
-
-        fx = e->viewport.x - e->framespace.x;
-        fy = e->viewport.y - e->framespace.y;
-        fw = e->viewport.w + e->framespace.w;
-        fh = e->viewport.h + e->framespace.h;
-        e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                fx, fy, fw, fh);
-     }
-
    if (e->viewport.changed)
      {
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
@@ -1376,10 +1364,90 @@ evas_render_updates_internal(Evas *e,
      {
         ERR("viewport size != output size!");
      }
+
+   if (e->framespace.changed)
+     {
+        int fx, fy, fw, fh;
+
+        fx = e->viewport.x - e->framespace.x;
+        fy = e->viewport.y - e->framespace.y;
+        fw = e->viewport.w + e->framespace.w;
+        fh = e->viewport.h + e->framespace.h;
+        e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                fx, fy, fw, fh);
+     }
+
+   /* phase 4.5: check if object is not in framespace. if not, we need to clip 
+    * it to the 'master' clip.
+    * 
+    * NB: This is for the wayland engine(s). If we do not do this, then 
+    * objects will draw outside the viewport and potentially onto the frame 
+    * itself */
+   if ((!strcmp(e->engine.module->definition->name, "wayland_shm")) ||
+       (!strcmp(e->engine.module->definition->name, "wayland_egl")))
+     {
+        Eina_Rectangle clip_rect;
+
+        /* see if the master clip has been added yet, if not, then create */
+        if (!e->framespace.clip)
+          {
+             e->framespace.clip = evas_object_rectangle_add(e);
+             evas_object_color_set(e->framespace.clip, 255, 255, 255, 255);
+             evas_object_move(e->framespace.clip, 
+                              e->framespace.x, e->viewport.y);
+             evas_object_resize(e->framespace.clip, 
+                                e->viewport.w - e->framespace.w, e->viewport.h);
+             evas_object_show(e->framespace.clip);
+          }
+        else
+          {
+             /* master clip is already present. check for size changes in the 
+              * viewport, and update master clip size if needed */
+             if ((e->viewport.changed) || (e->output.changed))
+               evas_object_resize(e->framespace.clip, 
+                                  e->viewport.w - e->framespace.w, 
+                                  e->viewport.h);
+          }
+
+        EINA_RECTANGLE_SET(&clip_rect, 
+                           e->framespace.clip->cur.geometry.x,
+                           e->framespace.clip->cur.geometry.y,
+                           e->framespace.clip->cur.geometry.w,
+                           e->framespace.clip->cur.geometry.h)
+
+        /* With the master clip all setup, we need to loop the objects on this 
+         * canvas and determine if the object is in the viewport space. If it 
+         * is in the viewport space (and not in framespace), then we need to 
+         * clip the object to the master clip so that it does not draw on top 
+         * of the frame (eg: elm 3d test) */
+        for (i = 0; i < e->render_objects.count; ++i)
+          {
+             Eina_Rectangle obj_rect;
+             Evas_Object *pclip;
+
+             obj = eina_array_data_get(&e->render_objects, i);
+             if (evas_object_is_frame_object_get(obj)) 
+               continue;
+
+             EINA_RECTANGLE_SET(&obj_rect, 
+                                obj->cur.geometry.x, obj->cur.geometry.y,
+                                obj->cur.geometry.w, obj->cur.geometry.h);
+
+             /* if the object does not intersect our clip rect, ignore it */
+             if (!eina_rectangles_intersect(&clip_rect, &obj_rect))
+               continue;
+
+             if (!(pclip = evas_object_clip_get(obj)))
+               {
+                  /* clip this object so it does not draw on the window frame */
+                  evas_object_clip_set(obj, e->framespace.clip);
+               }
+          }
+     }
+
    if (redraw_all)
      {
-        e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                0, 0,
+        e->engine.func->output_redraws_rect_add(e->engine.data.output, 0, 0,
                                                 e->output.w, e->output.h);
      }
 
