@@ -675,3 +675,11 @@
         will hold a loop busy and not allow feedback workers to run,
         so now have fairer scheduling.
         * Allow 16 * cpu num for worker threads (default still cpu num)
+
+2012-05-25 Carsten Haitzler (The Rasterman)
+
+        * Fix ecore mainloop issue if you begin the mainloop, keep a
+        timer around, quit mainloop, then start it again expecting the timer
+        to keep ticking off. also happens to be an issuw with
+        iterating the mainloop.
+        
