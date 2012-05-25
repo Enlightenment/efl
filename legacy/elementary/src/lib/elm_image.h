@@ -4,22 +4,28 @@
  *
  * @image html img/widget/image/preview-00.png
  * @image latex img/widget/image/preview-00.eps
-
  *
- * An object that allows one to load an image file to it. It can be used
- * anywhere like any other elementary widget.
+ * An Elementary image object is a direct realization of
+ * @ref elm-image-class, and it allows one to load and display an @b image
+ * file on it, be it from a disk file or from a memory
+ * region. Exceptionally, one may also load an Edje group as the
+ * contents of the image. In this case, though, most of the functions
+ * of the image API will act as a no-op.
  *
- * This widget provides most of the functionality provided from @ref Bg or @ref
- * Icon, but with a slightly different API (use the one that fits better your
- * needs).
+ * One can tune various properties of the image, like:
+ * - pre-scaling,
+ * - smooth scaling,
+ * - orientation,
+ * - aspect ratio during resizes, etc.
  *
- * The features not provided by those two other image widgets are:
- * @li allowing to get the basic @c Evas_Object with elm_image_object_get();
- * @li change the object orientation with elm_image_orient_set();
- * @li and turning the image editable with elm_image_editable_set().
+ * An image object may also be made valid source and destination for
+ * drag and drop actions, through the elm_image_editable_set() call.
  *
  * Signals that you can add callbacks for are:
  *
+ * @li @c "drop" - This is called when a user has dropped an image
+ *                 typed object onto the object in question -- the
+ *                 event info argument is the path to that image file
  * @li @c "clicked" - This is called when a user has clicked the image
  *
  * An example of usage for this API follows:
@@ -65,16 +71,49 @@ typedef enum
 EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
 
 /**
- * Set the file that will be used as image.
+ * Set a location in memory to be used as an image object's source
+ * bitmap.
  *
  * @param obj The image object
- * @param file The path to file that will be used as image
- * @param group The group that the image belongs in edje file (if it's an
- * edje image)
+ * @param img The binary data that will be used as image source
+ * @param size The size of binary data blob @p img
+ * @param format (Optional) expected format of @p img bytes
+ * @param key Optional indexing key of @p img to be passed to the
+ *            image loader (eg. if @p img is a memory-mapped EET file)
+ *
+ * This function is handy when the contents of an image file are
+ * mapped in memory, for example.
+ *
+ * The @p format string should be something like @c "png", @c "jpg",
+ * @c "tga", @c "tiff", @c "bmp" etc, when provided (@c NULL, on the
+ * contrary). This improves the loader performance as it tries the
+ * "correct" loader first, before trying a range of other possible
+ * loaders until one succeeds.
+ *
+ * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
+ *
+ * @since 1.1
+ *
+ * @ingroup Image
+ */
+EAPI Eina_Bool             elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
+
+/**
+ * Set the file that will be used as the image's source.
+ *
+ * @param obj The image object
+ * @param file The path to file that will be used as image source
+ * @param group The group that the image belongs to, in case it's an
+ *              EET (including Edje case) file
  *
  * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
  *
  * @see elm_image_file_get()
+ *
+ * @note This function will trigger the Edje file case based on the
+ * extension of the @a file string (expects @c ".edj", for this
+ * case). If one wants to force this type of file independently of the
+ * extension, elm_image_file_edje_set() must be used, instead.
  *
  * @ingroup Image
  */

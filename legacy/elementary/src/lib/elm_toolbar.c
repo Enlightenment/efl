@@ -2,7 +2,6 @@
 #include "elm_priv.h"
 #include "els_scroller.h"
 #include "els_box.h"
-#include "els_icon.h"
 
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
@@ -576,7 +575,7 @@ _sizing_eval(Evas_Object *obj)
 static void
 _item_menu_create(Widget_Data *wd, Elm_Toolbar_Item *item)
 {
-   item->o_menu = elm_menu_add(WIDGET(item));
+   item->o_menu = elm_menu_add(elm_widget_parent_get(WIDGET(item)));
    item->menu = EINA_TRUE;
    if (wd->menu_parent)
      elm_menu_parent_set(item->o_menu, wd->menu_parent);
@@ -1089,6 +1088,7 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    icon_obj = elm_icon_add(obj);
    elm_icon_order_lookup_set(icon_obj, wd->lookup_order);
    if (!icon_obj) return NULL;
+
    it = elm_widget_item_new(obj, Elm_Toolbar_Item);
    if (!it)
      {
@@ -1747,9 +1747,9 @@ elm_toolbar_item_icon_memfile_set(Elm_Object_Item *it, const void *img, size_t s
 
    if (img && size)
      {
-        icon_obj = _els_smart_icon_add(evas_object_evas_get(obj));
+        icon_obj = elm_icon_add(obj);
         evas_object_repeat_events_set(icon_obj, EINA_TRUE);
-        ret = _els_smart_icon_memfile_set(icon_obj, img, size, format, key);
+        ret = elm_icon_memfile_set(icon_obj, img, size, format, key);
         if (!ret)
           {
              evas_object_del(icon_obj);
@@ -1780,9 +1780,9 @@ elm_toolbar_item_icon_file_set(Elm_Object_Item *it, const char *file, const char
 
    if (file)
      {
-        icon_obj = _els_smart_icon_add(evas_object_evas_get(obj));
+        icon_obj = elm_icon_add(obj);
         evas_object_repeat_events_set(icon_obj, EINA_TRUE);
-        ret = _els_smart_icon_file_key_set(icon_obj, file, key);
+        ret = elm_icon_file_set(icon_obj, file, key);
         if (!ret)
           {
              evas_object_del(icon_obj);

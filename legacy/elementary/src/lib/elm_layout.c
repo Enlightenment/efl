@@ -86,24 +86,6 @@ struct _Elm_Layout_Sub_Object_Cursor
    Eina_Bool    engine_only : 1;
 };
 
-/* FIXME: get rid of Edje_Signal_Data after the last compat widget is
- * migrated */
-
-/* this is here in order to hide the layout's inner Edje object
- * (unless the user wants to bypass it and call elm_layout_edje_get())
- * as much as possible. so, when registering signal callbacks on it,
- * we call back passing the actual widget as object, not the Edje
- * object, for example */
-typedef struct _Layout_Signal_Data Layout_Signal_Data;
-struct _Layout_Signal_Data
-{
-   Evas_Object   *obj;
-   Edje_Signal_Cb func;
-   const char    *emission;
-   const char    *source;
-   void          *data;
-};
-
 /* layout's sizing evaluation is deferred. evaluation requests are
  * queued up and only flag the object as 'changed'. when it comes to
  * Evas's rendering phase, it will be addressed, finally (see
@@ -515,9 +497,9 @@ _edje_signal_callback(void *data,
                       const char *emission,
                       const char *source)
 {
-   Layout_Signal_Data *lsd = data;
+   Edje_Signal_Data *esd = data;
 
-   lsd->func(lsd->data, lsd->obj, emission, source);
+   esd->func(esd->data, esd->obj, emission, source);
 }
 
 static void
@@ -527,23 +509,23 @@ _elm_layout_smart_callback_add(Evas_Object *obj,
                                Edje_Signal_Cb func_cb,
                                void *data)
 {
-   Layout_Signal_Data *lsd;
+   Edje_Signal_Data *esd;
 
    ELM_LAYOUT_DATA_GET(obj, sd);
 
-   lsd = ELM_NEW(Layout_Signal_Data);
-   if (!lsd) return;
+   esd = ELM_NEW(Edje_Signal_Data);
+   if (!esd) return;
 
-   lsd->obj = obj;
-   lsd->func = func_cb;
-   lsd->emission = eina_stringshare_add(emission);
-   lsd->source = eina_stringshare_add(source);
-   lsd->data = data;
-   sd->edje_signals = eina_list_append(sd->edje_signals, lsd);
+   esd->obj = obj;
+   esd->func = func_cb;
+   esd->emission = eina_stringshare_add(emission);
+   esd->source = eina_stringshare_add(source);
+   esd->data = data;
+   sd->edje_signals = eina_list_append(sd->edje_signals, esd);
 
    edje_object_signal_callback_add
      (ELM_WIDGET_DATA(sd)->resize_obj, emission, source,
-     _edje_signal_callback, lsd);
+     _edje_signal_callback, esd);
 }
 
 static void *
@@ -552,26 +534,26 @@ _elm_layout_smart_callback_del(Evas_Object *obj,
                                const char *source,
                                Edje_Signal_Cb func_cb)
 {
-   Layout_Signal_Data *lsd = NULL;
+   Edje_Signal_Data *esd = NULL;
    void *data = NULL;
    Eina_List *l;
 
    ELM_LAYOUT_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->edje_signals, l, lsd)
+   EINA_LIST_FOREACH (sd->edje_signals, l, esd)
      {
-        if ((lsd->func == func_cb) && (!strcmp(lsd->emission, emission)) &&
-            (!strcmp(lsd->source, source)))
+        if ((esd->func == func_cb) && (!strcmp(esd->emission, emission)) &&
+            (!strcmp(esd->source, source)))
           {
              sd->edje_signals = eina_list_remove_list(sd->edje_signals, l);
-             eina_stringshare_del(lsd->emission);
-             eina_stringshare_del(lsd->source);
-             data = lsd->data;
-             free(lsd);
+             eina_stringshare_del(esd->emission);
+             eina_stringshare_del(esd->source);
+             data = esd->data;
+             free(esd);
 
              edje_object_signal_callback_del_full
                (ELM_WIDGET_DATA(sd)->resize_obj, emission, source,
-               _edje_signal_callback, lsd);
+               _edje_signal_callback, esd);
 
              return data; /* stop at 1st match */
           }
@@ -1216,7 +1198,7 @@ _elm_layout_smart_del(Evas_Object *obj)
 {
    Elm_Layout_Sub_Object_Data *sub_d;
    Elm_Layout_Sub_Object_Cursor *pc;
-   Layout_Signal_Data *lsd;
+   Edje_Signal_Data *esd;
    Evas_Object *child;
    Eina_List *l;
 
@@ -1235,11 +1217,11 @@ _elm_layout_smart_del(Evas_Object *obj)
    EINA_LIST_FREE (sd->parts_cursors, pc)
      _part_cursor_free(pc);
 
-   EINA_LIST_FREE (sd->edje_signals, lsd)
+   EINA_LIST_FREE (sd->edje_signals, esd)
      {
-        eina_stringshare_del(lsd->emission);
-        eina_stringshare_del(lsd->source);
-        free(lsd);
+        eina_stringshare_del(esd->emission);
+        eina_stringshare_del(esd->source);
+        free(esd);
      }
 
    eina_stringshare_del(sd->klass);
@@ -1456,7 +1438,8 @@ elm_layout_text_set(Evas_Object *obj,
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
    ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
 
-   return ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->text_set(obj, part, text);
+   return ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->text_set
+            (obj, part, text);
 }
 
 EAPI const char *

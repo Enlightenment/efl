@@ -1,6 +1,5 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "els_icon.h"
 
 static Elm_Theme theme_default =
 {
@@ -242,11 +241,14 @@ _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, con
    return _elm_theme_set(th, o, clas, group, style);
 }
 
+/* only issued by elm_icon.c */
 Eina_Bool
-_elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *group, const char *style)
+_elm_theme_object_icon_set(Evas_Object *o,
+                           const char *group,
+                           const char *style)
 {
-   Elm_Theme *th = NULL;
-   if (parent) th = elm_widget_theme_get(parent);
+   Elm_Theme *th = elm_widget_theme_get(o);
+
    return _elm_theme_icon_set(th, o, group, style);
 }
 
@@ -280,7 +282,10 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
 }
 
 Eina_Bool
-_elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char *style)
+_elm_theme_icon_set(Elm_Theme *th,
+                    Evas_Object *o,
+                    const char *group,
+                    const char *style)
 {
    const char *file;
    char buf2[1024];
@@ -291,16 +296,19 @@ _elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char
    file = _elm_theme_group_file_find(th, buf2);
    if (file)
      {
-        _els_smart_icon_file_edje_set(o, file, buf2);
-        _els_smart_icon_size_get(o, &w, &h);
+        elm_icon_file_set(o, file, buf2);
+        elm_icon_size_get(o, &w, &h);
         if (w > 0) return EINA_TRUE;
      }
    snprintf(buf2, sizeof(buf2), "elm/icon/%s/default", group);
    file = _elm_theme_group_file_find(th, buf2);
+
    if (!file) return EINA_FALSE;
-   _els_smart_icon_file_edje_set(o, file, buf2);
-   _els_smart_icon_size_get(o, &w, &h);
-   return (w > 0);
+
+   elm_icon_file_set(o, file, buf2);
+   elm_icon_size_get(o, &w, &h);
+
+   return w > 0;
 }
 
 Eina_Bool

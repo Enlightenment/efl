@@ -42,7 +42,9 @@ includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
 elm_widget.h \
+elm_widget_button.h \
 elm_widget_container.h \
+elm_widget_image.h \
 elm_widget_layout.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
@@ -217,15 +219,12 @@ elm_win.c \
 els_box.c \
 els_box.h \
 els_cursor.c \
-els_icon.c \
-els_icon.h \
 els_pan.c \
 els_pan.h \
 els_scroller.c \
 els_scroller.h \
 els_tooltip.c \
-elu_ews_wm.c \
-elm_widget_button.h
+elu_ews_wm.c
 
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = \

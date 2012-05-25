@@ -3002,6 +3002,7 @@ _status_config_full(Evas_Object *win,
    evas_object_show(tb);
 
    naviframe = elm_naviframe_add(win);
+   elm_naviframe_event_enabled_set(naviframe, EINA_TRUE);
    evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_data_set(win, "naviframe", naviframe);

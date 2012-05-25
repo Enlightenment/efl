@@ -5,64 +5,73 @@
  * @image html img/widget/icon/preview-00.png
  * @image latex img/widget/icon/preview-00.eps
  *
- * An object that provides standard icon images (delete, edit, arrows, etc.)
- * or a custom file (PNG, JPG, EDJE, etc.) used for an icon.
+ * An icon object is used to display standard icon images ("delete",
+ * "edit", "arrows", etc.) or images coming from a custom file (PNG,
+ * JPG, EDJE, etc.), on icon contexts.
  *
- * The icon image requested can be in the elementary theme, or in the
- * freedesktop.org paths. It's possible to set the order of preference from
- * where the image will be used.
+ * The icon image requested can be in the Elementary theme in use, or
+ * in the @c freedesktop.org theme paths. It's possible to set the
+ * order of preference from where an image will be fetched.
  *
- * This API is very similar to @ref Image, but with ready to use images.
+ * This widget inherits from the @ref Image one, so that all the
+ * functions acting on it also work for icon objects.
  *
- * Default images provided by the theme are described below.
+ * Besides, its API is very similar to the one of its parent object,
+ * so that similar calls exist here just wrapping their counterparts
+ * on @ref Image.
  *
- * The first list contains icons that were first intended to be used in
+ * Default images provided by Elementary's default theme are described
+ * below.
+ *
+ * These are names for icons that were first intended to be used in
  * toolbars, but can be used in many other places too:
- * @li home
- * @li close
- * @li apps
- * @li arrow_up
- * @li arrow_down
- * @li arrow_left
- * @li arrow_right
- * @li chat
- * @li clock
- * @li delete
- * @li edit
- * @li refresh
- * @li folder
- * @li file
+ * @li @c "home"
+ * @li @c "close"
+ * @li @c "apps"
+ * @li @c "arrow_up"
+ * @li @c "arrow_down"
+ * @li @c "arrow_left"
+ * @li @c "arrow_right"
+ * @li @c "chat"
+ * @li @c "clock"
+ * @li @c "delete"
+ * @li @c "edit"
+ * @li @c "refresh"
+ * @li @c "folder"
+ * @li @c "file"
  *
- * Now some icons that were designed to be used in menus (but again, you can
- * use them anywhere else):
- * @li menu/home
- * @li menu/close
- * @li menu/apps
- * @li menu/arrow_up
- * @li menu/arrow_down
- * @li menu/arrow_left
- * @li menu/arrow_right
- * @li menu/chat
- * @li menu/clock
- * @li menu/delete
- * @li menu/edit
- * @li menu/refresh
- * @li menu/folder
- * @li menu/file
+ * These are names for icons that were designed to be used in menus
+ * (but again, you can use them anywhere else):
+ * @li @c "menu/home"
+ * @li @c "menu/close"
+ * @li @c "menu/apps"
+ * @li @c "menu/arrow_up"
+ * @li @c "menu/arrow_down"
+ * @li @c "menu/arrow_left"
+ * @li @c "menu/arrow_right"
+ * @li @c "menu/chat"
+ * @li @c "menu/clock"
+ * @li @c "menu/delete"
+ * @li @c "menu/edit"
+ * @li @c "menu/refresh"
+ * @li @c "menu/folder"
+ * @li @c "menu/file"
  *
- * And here we have some media player specific icons:
- * @li media_player/forward
- * @li media_player/info
- * @li media_player/next
- * @li media_player/pause
- * @li media_player/play
- * @li media_player/prev
- * @li media_player/rewind
- * @li media_player/stop
+ * And these are names for some media player specific icons:
+ * @li @c "media_player/forward"
+ * @li @c "media_player/info"
+ * @li @c "media_player/next"
+ * @li @c "media_player/pause"
+ * @li @c "media_player/play"
+ * @li @c "media_player/prev"
+ * @li @c "media_player/rewind"
+ * @li @c "media_player/stop"
  *
- * Signals that you can add callbacks for are:
- *
- * "clicked" - This is called when a user has clicked the icon
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Image:
+ * - @c "thumb,done" - elm_icon_thumb_set() has completed with success
+ *                     (@since 1.1)
+ * - @c "thumb,error" - elm_icon_thumb_set() has failed (@since 1.1)
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_signal_emit

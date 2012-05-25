@@ -2,14 +2,20 @@
  * @defgroup Photo Photo
  * @ingroup Elementary
  *
- * For displaying a photo, for ex., a person (contact). Simple, yet
- * with a very specific purpose.
+ * An Elementary photo widget is intended for displaying a photo, for
+ * ex., a person's image (contact). Simple, yet with a very specific
+ * purpose. It has a decorative frame around the inner image itself,
+ * on the default theme.
+ *
+ * This widget relies on an internal @ref Icon, so that the APIs of
+ * these two widgets are similar (drag and drop is also possible here,
+ * for example).
  *
  * Signals that you can add callbacks for are:
- *
- * "clicked" - This is called when a user has clicked the photo
- * "drag,start" - dragging the image out of the photo object
- * "drag,end" - Drop the dragged item
+ * - @c "clicked" - This is called when a user has clicked the photo
+ * - @c "drag,start" - One has started dragging the inner image out of the
+ *                     photo's frame
+ * - @c "drag,end" - One has dropped the dragged image somewhere
  *
  * @{
  */

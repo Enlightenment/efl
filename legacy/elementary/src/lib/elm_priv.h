@@ -45,9 +45,19 @@
 #endif
 #define N_(string) (string)
 
+typedef struct _Edje_Signal_Data Edje_Signal_Data;
 typedef struct _Elm_Config Elm_Config;
 typedef struct _Elm_Module Elm_Module;
 typedef struct _Elm_Datetime_Module_Data Elm_Datetime_Module_Data;
+
+struct _Edje_Signal_Data
+{
+   Evas_Object   *obj;
+   Edje_Signal_Cb func;
+   const char    *emission;
+   const char    *source;
+   void          *data;
+};
 
 struct _Elm_Theme
 {
@@ -214,7 +224,7 @@ void                 _elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme);
 void                 _elm_win_translate(void);
 
 Eina_Bool            _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
-Eina_Bool            _elm_theme_object_icon_set(Evas_Object *parent, Evas_Object *o, const char *group, const char *style);
+Eina_Bool            _elm_theme_object_icon_set(Evas_Object *o, const char *group, const char *style);
 Eina_Bool            _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style);
 Eina_Bool            _elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char *style);
 Eina_Bool            _elm_theme_parse(Elm_Theme *th, const char *theme);

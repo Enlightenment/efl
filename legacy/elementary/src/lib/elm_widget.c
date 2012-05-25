@@ -1,6 +1,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_container.h"
+#include "elm_widget_image.h"
 
 static const char SMART_NAME[] = "elm_widget";
 static const char SMART_NAME_COMPAT[] = "elm_widget_compat";
@@ -145,18 +146,8 @@ typedef struct _Elm_Widget_Compat_Smart_Class
  * @}
  */
 
-typedef struct _Edje_Signal_Data  Edje_Signal_Data;
 typedef struct _Elm_Event_Cb_Data Elm_Event_Cb_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
-
-struct _Edje_Signal_Data
-{
-   Evas_Object   *obj;
-   Edje_Signal_Cb func;
-   const char    *emission;
-   const char    *source;
-   void          *data;
-};
 
 struct _Elm_Event_Cb_Data
 {
@@ -1300,15 +1291,18 @@ elm_widget_mirrored_get(const Evas_Object *obj)
  */
 EAPI void
 elm_widget_mirrored_set(Evas_Object *obj,
-                        Eina_Bool    mirrored)
+                        Eina_Bool mirrored)
 {
    API_ENTRY return;
-   if (sd->is_mirrored != mirrored)
-     {
-        sd->is_mirrored = mirrored;
-        elm_widget_theme(obj);
-     }
+
+   mirrored = !!mirrored;
+
+   if (sd->is_mirrored == mirrored) return;
+
+   sd->is_mirrored = mirrored;
+   elm_widget_theme(obj);
 }
+
 
 /**
  * @internal
@@ -2515,6 +2509,8 @@ elm_widget_signal_emit(Evas_Object *obj,
      COMPAT_SMART_DATA(sd)->signal(obj, emission, source);
    else if (evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_emit(obj, emission, source);
+   else if (evas_object_smart_type_check(obj, "elm_image"))
+     ELM_IMAGE_CLASS(sd->api)->signal(obj, emission, source);
 }
 
 static void
@@ -2539,12 +2535,10 @@ elm_widget_signal_callback_add(Evas_Object   *obj,
 
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   if (_elm_legacy_is(obj) && !COMPAT_SMART_DATA(sd)->callback_add) return;
-   else if (!evas_object_smart_type_check(obj, "elm_layout"))
-     return;
-
    if (_elm_legacy_is(obj))
      {
+        if (!COMPAT_SMART_DATA(sd)->callback_add) return;
+
         esd = ELM_NEW(Edje_Signal_Data);
         if (!esd) return;
 
@@ -2559,8 +2553,11 @@ elm_widget_signal_callback_add(Evas_Object   *obj,
         COMPAT_SMART_DATA(sd)->callback_add
           (obj, emission, source, _edje_signal_callback, esd);
      }
-   else
+
+   else if (!evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_callback_add(obj, emission, source, func, data);
+   else if (evas_object_smart_type_check(obj, "elm_image"))
+     ELM_IMAGE_CLASS(sd->api)->callback_add(obj, emission, source, func, data);
 }
 
 EAPI void *
@@ -2574,13 +2571,10 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
    void *data = NULL;
    API_ENTRY return NULL;
 
-   if (_elm_legacy_is(obj) && !COMPAT_SMART_DATA(sd)->callback_del)
-     return NULL;
-   else if (!evas_object_smart_type_check(obj, "elm_layout"))
-     return NULL;
-
    if (_elm_legacy_is(obj))
      {
+        if (!COMPAT_SMART_DATA(sd)->callback_del) return NULL;
+
         EINA_LIST_FOREACH (COMPAT_SMART_DATA(sd)->edje_signals, l, esd)
           {
              if ((esd->func == func) && (!strcmp(esd->emission, emission)) &&
@@ -2599,8 +2593,11 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
         COMPAT_SMART_DATA(sd)->callback_del
           (obj, emission, source, _edje_signal_callback, esd);
      }
-   else
+
+   else if (!evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_callback_del(obj, emission, source, func);
+   else if (evas_object_smart_type_check(obj, "elm_image"))
+     ELM_IMAGE_CLASS(sd->api)->callback_del(obj, emission, source, func);
 
    return data;
 }

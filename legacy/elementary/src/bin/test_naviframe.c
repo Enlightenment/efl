@@ -235,6 +235,7 @@ test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_win_autodel_set(win, EINA_TRUE);
 
    nf = elm_naviframe_add(win);
+   elm_naviframe_event_enabled_set(nf, EINA_TRUE);
    evas_object_size_hint_weight_set(nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, nf);
    evas_object_show(nf);
