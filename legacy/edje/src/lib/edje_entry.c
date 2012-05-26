@@ -2751,8 +2751,13 @@ _edje_entry_input_panel_language_get(Edje_Real_Part *rp)
    return en->input_panel_lang;
 }
 
+#ifdef HAVE_ECORE_IMF
 void
 _edje_entry_input_panel_imdata_set(Edje_Real_Part *rp, const void *data, int len)
+#else
+void
+_edje_entry_input_panel_imdata_set(Edje_Real_Part *rp, const void *data __UNUSED__, int len __UNUSED__)
+#endif
 {
    Entry *en = rp->entry_data;
    if (!en) return;
@@ -2762,8 +2767,13 @@ _edje_entry_input_panel_imdata_set(Edje_Real_Part *rp, const void *data, int len
 #endif
 }
 
+#ifdef HAVE_ECORE_IMF
 void
 _edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data, int *len)
+#else
+void
+_edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data __UNUSED__, int *len __UNUSED__)
+#endif
 {
    Entry *en = rp->entry_data;
    if (!en) return;
@@ -2773,8 +2783,13 @@ _edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data, int *len)
 #endif
 }
 
+#ifdef HAVE_ECORE_IMF
 void
 _edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel_Return_Key_Type return_key_type)
+#else
+void
+_edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel_Return_Key_Type return_key_type __UNUSED__)
+#endif
 {
    Entry *en = rp->entry_data;
    if (!en) return;
@@ -2796,8 +2811,13 @@ _edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp)
    return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
 }
 
+#ifdef HAVE_ECORE_IMF
 void
 _edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled)
+#else
+void
+_edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled __UNUSED__)
+#endif
 {
    Entry *en = rp->entry_data;
    if (!en) return;
