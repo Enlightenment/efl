@@ -113,14 +113,14 @@ static void          xim_destroy_callback(XIM xim,
 static unsigned int
 utf8_offset_to_index(const char *str, int offset)
 {
-   int index = 0;
+   int idx = 0;
    int i;
    for (i = 0; i < offset; i++)
      {
-        eina_unicode_utf8_get_next(str, &index);
+        eina_unicode_utf8_get_next(str, &idx);
      }
 
-   return index;
+   return idx;
 }
 
 #endif
