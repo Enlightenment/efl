@@ -199,12 +199,8 @@ static Eina_List *image_lookups = NULL;
 static Eina_List *part_slave_lookups = NULL;
 static Eina_List *image_slave_lookups= NULL;
 
-#define ABORT_WRITE(eet_file, file) \
-   unlink(file); \
-   exit(-1);
-
 void
-error_and_abort(Eet_File *ef, const char *fmt, ...)
+error_and_abort(Eet_File *ef __UNUSED__, const char *fmt, ...)
 {
    va_list ap;
 
@@ -213,7 +209,8 @@ error_and_abort(Eet_File *ef, const char *fmt, ...)
    va_start(ap, fmt);
    vfprintf(stderr, fmt, ap);
    va_end(ap);
-   ABORT_WRITE(ef, file_out);
+   unlink(file_out);
+   exit(-1);
 }
 
 void
@@ -1779,15 +1776,19 @@ data_queue_group_lookup(const char *name, Edje_Part *part)
 }
 
 //#define NEWPARTLOOKUP 1
+#ifdef NEWPARTLOOKUP
 static Eina_Hash *_part_lookups_hash = NULL;
 static Eina_Hash *_part_lookups_dest_hash = NULL;
+#endif
 
 void
 data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
    Part_Lookup *pl = NULL;
-   char buf[256];
    Eina_List *l;
+#ifdef NEWPARTLOOKUP
+   char buf[256];
+#endif
 
 #ifdef NEWPARTLOOKUP  
    snprintf(buf, sizeof(buf), "%lu-%lu", 
@@ -1857,9 +1858,12 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 void
 data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 {
-   Eina_List *l, *list;
+   Eina_List *l;
    Part_Lookup *pl;
+#ifdef NEWPARTLOOKUP
+   Eina_List *list;
    char buf[256];
+#endif
 
 #ifdef NEWPARTLOOKUP
    if (!_part_lookups_dest_hash) return;
