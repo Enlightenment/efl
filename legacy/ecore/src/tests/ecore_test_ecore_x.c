@@ -49,7 +49,7 @@ END_TEST
 
 #endif
 
-void ecore_test_ecore_x(TCase *tc)
+void ecore_test_ecore_x(TCase *tc __UNUSED__)
 {
 
 /* TODO: change to HAVE_ECORE_X when xcb implementation is done */

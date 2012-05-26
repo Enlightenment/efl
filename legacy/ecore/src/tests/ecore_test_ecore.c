@@ -298,7 +298,6 @@ _timer_quit_recursive(void *data __UNUSED__)
 static Eina_Bool
 _event_recursive_cb(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-   Ecore_Event *e;
    static int guard = 0;
 
    /* If we enter this callback more than once, it's wrong! */
