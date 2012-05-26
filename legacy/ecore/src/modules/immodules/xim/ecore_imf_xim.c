@@ -67,11 +67,11 @@ Ecore_IMF_Context_Data *imf_context_data_new();
 void                    imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data);
 
 #ifdef ENABLE_XIM
-static void             add_feedback_attr(Eina_List **attrs,
-                                          const char *str,
-                                          XIMFeedback feedback,
-                                          int start_pos,
-                                          int end_pos);
+static void          add_feedback_attr(Eina_List **attrs,
+                                       const char *str,
+                                       XIMFeedback feedback,
+                                       int start_pos,
+                                       int end_pos);
 
 static void          reinitialize_ic(Ecore_IMF_Context *ctx);
 static void          reinitialize_all_ics(XIM_Im_Info *info);
@@ -593,12 +593,9 @@ _keycode_get(Ecore_X_Display *dsp,
 
    // EINA_LOG_DBG("keyname:%s keysym:%lu", keyname, XStringToKeysym(keyname));
    if (strcmp(keyname, "Keycode-0") == 0)
-     {
-        keycode = 0;
-     }
-   else {
-        keycode = XKeysymToKeycode(dsp, XStringToKeysym(keyname));
-     }
+     keycode = 0;
+   else
+     keycode = XKeysymToKeycode(dsp, XStringToKeysym(keyname));
 
    return keycode;
 }
@@ -679,9 +676,7 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
                {
                   tmp = malloc(sizeof (char) * (val + 1));
                   if (!tmp)
-                    {
-                       return EINA_FALSE;
-                    }
+                    return EINA_FALSE;
 
                   compose = tmp;
 
@@ -724,7 +719,8 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
 #endif /* ifdef X_HAVE_UTF8_STRING */
                }
           }
-        else {
+        else
+          {
              XComposeStatus status;
              val = XLookupString(&xev,
                                  compose_buffer,
@@ -845,7 +841,8 @@ void
 ecore_imf_xim_shutdown(void)
 {
 #ifdef ENABLE_XIM
-   while (open_ims) {
+   while (open_ims)
+     {
         XIM_Im_Info *info = open_ims->data;
         Ecore_X_Display *display = ecore_x_display_get();
 
@@ -980,7 +977,8 @@ xim_text_to_utf8(Ecore_IMF_Context *ctx __UNUSED__,
                   EINA_LOG_WARN("Size mismatch when converting text from input method: supplied length = %d\n, result length = %d", xim_text->length, text_length);
                }
           }
-        else {
+        else
+          {
              EINA_LOG_WARN("Error converting text from IM to UCS-4");
              *text = NULL;
              return 0;
@@ -989,7 +987,8 @@ xim_text_to_utf8(Ecore_IMF_Context *ctx __UNUSED__,
         *text = result;
         return text_length;
      }
-   else {
+   else
+     {
         *text = NULL;
         return 0;
      }
@@ -1048,7 +1047,8 @@ preedit_draw_callback(XIC xic __UNUSED__,
                                     new_text_length, call_data->chg_first);
         if (ret == EINA_FALSE) goto done;
      }
-   else {
+   else
+     {
         ret = EINA_FALSE;
      }
 
@@ -1325,14 +1325,16 @@ get_im(Ecore_X_Window window,
    Eina_List *l;
    XIM_Im_Info *im_info = NULL;
    XIM_Im_Info *info = NULL;
-   EINA_LIST_FOREACH (open_ims, l, im_info) {
+   EINA_LIST_FOREACH (open_ims, l, im_info)
+     {
         if (strcmp(im_info->locale, locale) == 0)
           {
              if (im_info->im)
                {
                   return im_info;
                }
-             else {
+             else
+               {
                   info = im_info;
                   break;
                }
@@ -1398,7 +1400,8 @@ xim_info_display_closed(Ecore_X_Display *display __UNUSED__,
    EINA_LIST_FOREACH (ics, tmp_list, ctx)
      set_ic_client_window(ctx, 0);
 
-   EINA_LIST_FREE (ics, ctx) {
+   EINA_LIST_FREE (ics, ctx)
+     {
         Ecore_IMF_Context_Data *imf_context_data;
         imf_context_data = ecore_imf_context_data_get(ctx);
         imf_context_data_destroy(imf_context_data);
