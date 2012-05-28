@@ -1301,7 +1301,7 @@ _fix_items(Evas_Object *obj)
      }
 
    if ((minw[0] != wd->minw[0]) || (minw[1] != wd->minw[1]) ||
-       (minw[0] != wd->minh[0]) || (minh[1] != wd->minh[1]))
+       (minh[0] != wd->minh[0]) || (minh[1] != wd->minh[1]))
      {
         wd->minw[0] = minw[0];
         wd->minw[1] = minw[1];

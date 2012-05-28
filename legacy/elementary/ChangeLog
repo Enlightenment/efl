@@ -106,3 +106,6 @@
 	* Refactor X11 specific code to use ecore_evas_*_window_get functions
 	so that the driver for the Ecore_Evas will be checked.
 
+2012-05-28 Mike Blumenkrantz
+
+        * Fix sizing calc error in list item homogenizing
