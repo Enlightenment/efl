@@ -125,7 +125,7 @@ _icon_move_resize_cb(void *data,
    if (sd->fill_inside)
      {
         Edje_Message_Int_Set *msg;
-        Evas_Object *img = elm_icon_object_get(sd->icon);
+        Evas_Object *img = elm_image_object_get(sd->icon);
 
         evas_object_geometry_get(img, NULL, NULL, &w, &h);
         msg = alloca(sizeof(Edje_Message_Int_Set) + (sizeof(int)));
@@ -193,7 +193,7 @@ _long_press_cb(void *obj)
    evas_object_event_callback_del
      (sd->icon, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move);
 
-   img = elm_icon_object_get(sd->icon);
+   img = elm_image_object_get(sd->icon);
    file = NULL;
    evas_object_image_file_get(img, &file, NULL);
    if (file)
@@ -251,7 +251,7 @@ _icon_size_min_get(Evas_Object *icon)
 {
    int size;
 
-   elm_icon_size_get(icon, &size, NULL);
+   elm_image_object_size_get(icon, &size, NULL);
 
    return (size < 32) ? 32 : size;
 }
@@ -263,7 +263,7 @@ _elm_photo_internal_image_follow(Evas_Object *obj)
 
    ELM_PHOTO_DATA_GET(obj, sd);
 
-   img = elm_icon_object_get(sd->icon);
+   img = elm_image_object_get(sd->icon);
 
    evas_object_event_callback_add
      (img, EVAS_CALLBACK_MOVE, _icon_move_resize_cb, obj);
@@ -291,10 +291,10 @@ _elm_photo_smart_add(Evas_Object *obj)
    priv->icon = elm_icon_add(obj);
    evas_object_repeat_events_set(priv->icon, EINA_TRUE);
 
-   elm_icon_resizable_set(priv->icon, EINA_TRUE, EINA_TRUE);
-   elm_icon_smooth_set(priv->icon, EINA_TRUE);
+   elm_image_resizable_set(priv->icon, EINA_TRUE, EINA_TRUE);
+   elm_image_smooth_set(priv->icon, EINA_TRUE);
    elm_icon_fill_outside_set(priv->icon, !priv->fill_inside);
-   elm_icon_prescale_set(priv->icon, 0);
+   elm_image_prescale_set(priv->icon, 0);
 
    elm_object_scale_set(priv->icon, elm_widget_scale_get(obj));
 
@@ -371,7 +371,7 @@ elm_photo_file_set(Evas_Object *obj,
    ELM_PHOTO_CHECK(obj) EINA_FALSE;
    ELM_PHOTO_DATA_GET(obj, sd);
 
-   if (!elm_icon_file_set(sd->icon, file, NULL))
+   if (!elm_image_file_set(sd->icon, file, NULL))
      return EINA_FALSE;
 
    _sizing_eval(obj);
@@ -444,7 +444,7 @@ elm_photo_aspect_fixed_set(Evas_Object *obj,
    ELM_PHOTO_CHECK(obj);
    ELM_PHOTO_DATA_GET(obj, sd);
 
-   return elm_icon_aspect_fixed_set(sd->icon, fixed);
+   return elm_image_aspect_fixed_set(sd->icon, fixed);
 }
 
 EAPI Eina_Bool
@@ -453,5 +453,5 @@ elm_photo_aspect_fixed_get(const Evas_Object *obj)
    ELM_PHOTO_CHECK(obj) EINA_FALSE;
    ELM_PHOTO_DATA_GET(obj, sd);
 
-   return elm_icon_aspect_fixed_get(sd->icon);
+   return elm_image_aspect_fixed_get(sd->icon);
 }

@@ -317,25 +317,25 @@ test_list(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 1, 1);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 1, 1);
    list_it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
    elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, 0, 0);
    elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, 0, 0);
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
-   elm_icon_resizable_set(ic2, 0, 0);
+   elm_image_resizable_set(ic2, 0, 0);
    list_it2 = elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx = elm_box_add(win);
@@ -343,24 +343,24 @@ test_list(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
@@ -459,41 +459,41 @@ test_list_horizontal(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 1, 1);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 1, 1);
    list_it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
    elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, 0, 0);
    elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, 0, 0);
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
-   elm_icon_resizable_set(ic2, 0, 0);
+   elm_image_resizable_set(ic2, 0, 0);
    list_it2 = elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx = elm_box_add(win);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
@@ -613,25 +613,25 @@ test_list2(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    list_it = elm_list_item_append(li, "Hello", ic, NULL, my_li2_sel, NULL);
    elm_list_item_selected_set(list_it, EINA_TRUE);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
    elm_list_item_append(li, "world", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, 0, 0);
    elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, 0, 0);
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
-   elm_icon_resizable_set(ic2, 0, 0);
+   elm_image_resizable_set(ic2, 0, 0);
    elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx2 = elm_box_add(win);
@@ -639,16 +639,16 @@ test_list2(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx2, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx2, ic);
    evas_object_show(ic);
@@ -739,8 +739,8 @@ test_list3(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
    ic2 = elm_button_add(win);
    elm_object_text_set(ic2, "Click me");
    evas_object_smart_callback_add(ic2, "clicked", _bt_clicked, NULL);
@@ -749,8 +749,8 @@ test_list3(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
    ic2 = elm_button_add(win);
    elm_object_text_set(ic2, "Click me");
    evas_object_smart_callback_add(ic2, "clicked", _bt_clicked, NULL);
@@ -758,15 +758,15 @@ test_list3(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "edit");
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, 0, 0);
    elm_list_item_append(li, ".", ic, NULL, NULL, NULL);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "delete");
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_resizable_set(ic, 0, 0);
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
-   elm_icon_resizable_set(ic2, 0, 0);
+   elm_image_resizable_set(ic2, 0, 0);
    elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx = elm_box_add(win);
@@ -774,24 +774,24 @@ test_list3(void        *data __UNUSED__,
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
@@ -915,8 +915,8 @@ test_list4(void        *data __UNUSED__,
                            "conceptalbums The Dark Side of the Moon, Wish You Were Here, Animals, and The Wall.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/mystrale.jpg", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
    elm_list_item_append(li, "Pink Floyd", ic, NULL, NULL, &pf_data);
 
    static char ds_data[] = "Dire Straits were a British rock band, formed by Mark Knopfler "                          \
@@ -932,8 +932,8 @@ test_list4(void        *data __UNUSED__,
                            "their first album going multi-platinum globally.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/mystrale_2.jpg", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
    elm_list_item_append(li, "Dire Straits", ic, NULL, NULL, &ds_data);
 
    static char uh_data[] = "Uriah Heep are an English hard rock band. The band released several "                       \
@@ -944,8 +944,8 @@ test_list4(void        *data __UNUSED__,
                            "perform at stadium-sized venues.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_17.png", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 1, 1);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 1, 1);
+   elm_image_file_set(ic, buf, NULL);
    elm_list_item_append(li, "Uriah Heep", ic, NULL, NULL, &uh_data);
 
    static char r_data[] = "Rush is a Canadian rock band formed in August 1968, in the Willowdale "                       \
@@ -956,11 +956,11 @@ test_list4(void        *data __UNUSED__,
                           "two weeks before the group's first United States tour.";
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_21.png", elm_app_data_dir_get());
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
-   elm_icon_resizable_set(ic2, 0, 0);
+   elm_image_resizable_set(ic2, 0, 0);
    elm_list_item_append(li, "Rush", ic, ic2, NULL, &r_data);
 
    elm_list_go(li);

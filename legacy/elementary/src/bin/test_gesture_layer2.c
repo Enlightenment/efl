@@ -166,7 +166,7 @@ _color_and_icon_set(infra_data *infra, char *name, int n, int max,
 
         snprintf(infra->buf, sizeof(infra->buf),
               "%s/images/g_layer/%s_%d.png", elm_app_data_dir_get(), i->name, nn);
-        elm_icon_file_set(i->icon, infra->buf, NULL);
+        elm_image_file_set(i->icon, infra->buf, NULL);
         _icon_color_set(i, r, g, b, a);
      }
 }
@@ -501,8 +501,8 @@ Evas_Object *create_gesture_box(Evas_Object *win, icon_properties *icons,
    icons[idx].name = name;
    snprintf(buf, sizeof(buf), "%s/images/g_layer/%s_1.png",
          elm_app_data_dir_get(), icons[idx].name);
-   elm_icon_file_set(icons[idx].icon, buf, NULL);
-   elm_icon_resizable_set(icons[idx].icon, 0, 0);
+   elm_image_file_set(icons[idx].icon, buf, NULL);
+   elm_image_resizable_set(icons[idx].icon, 0, 0);
    evas_object_size_hint_align_set(icons[idx].icon, 0.5, 0.5);
    _icon_color_set(&icons[idx], INI_R, INI_G, INI_B, INI_A);
    elm_box_pack_end(bx, icons[idx].icon);

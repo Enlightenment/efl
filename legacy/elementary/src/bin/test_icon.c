@@ -8,7 +8,7 @@ static void
 aspect_fixed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ic = (Evas_Object *)data;
-   elm_icon_aspect_fixed_set(ic, elm_check_state_get(obj));
+   elm_image_aspect_fixed_set(ic, elm_check_state_get(obj));
 }
 
 static void
@@ -22,7 +22,7 @@ static void
 smooth_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ic = (Evas_Object *)data;
-   elm_icon_smooth_set(ic, elm_check_state_get(obj));
+   elm_image_smooth_set(ic, elm_check_state_get(obj));
 }
 
 static void
@@ -38,14 +38,14 @@ bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_win_resize_object_add(win, ic);
    snprintf(buf, sizeof(buf), "%s/images/insanely_huge_test_image.jpg",
             elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
 
    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_icon_resizable_set(ic, EINA_TRUE, EINA_TRUE);
-   elm_icon_aspect_fixed_set(ic, EINA_FALSE);
-   elm_icon_preload_disabled_set(ic, EINA_TRUE);
-   elm_icon_prescale_set(ic, EINA_TRUE);
+   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
+   elm_image_aspect_fixed_set(ic, EINA_FALSE);
+   elm_image_preload_disabled_set(ic, EINA_TRUE);
+   elm_image_prescale_set(ic, EINA_TRUE);
    evas_object_show(ic);
 
    evas_object_resize(win, 350, 350);
@@ -76,8 +76,8 @@ test_icon(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    Evas_Object *ic = elm_icon_add(win);
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, EINA_TRUE, EINA_TRUE);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -144,9 +144,9 @@ test_icon_transparent(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
-   elm_icon_no_scale_set(ic, 1);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
+   elm_image_no_scale_set(ic, 1);
    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(ic, 0.5, 0.5);
    elm_win_resize_object_add(win, ic);

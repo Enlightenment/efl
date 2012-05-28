@@ -278,7 +278,7 @@ _menu_create(const char *option_str)
           {
              ic = elm_icon_add(win);
              snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), t->icon);
-             elm_icon_file_set(ic, buf, NULL);
+             elm_image_file_set(ic, buf, NULL);
              elm_object_part_content_set(bt, "icon", ic);
              evas_object_show(ic);
           }

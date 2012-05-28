@@ -380,7 +380,7 @@ _icon_freedesktop_set(Evas_Object * obj __UNUSED__,
    if (sd->freedesktop.use)
      {
         sd->freedesktop.requested_size = size;
-        elm_icon_file_set(obj, path, NULL);
+        elm_image_file_set(obj, path, NULL);
         return EINA_TRUE;
      }
 #endif
@@ -556,7 +556,7 @@ _icon_file_set(Elm_Icon_Smart_Data * sd __UNUSED__,
                const char *path)
 #endif
 {
-   if (elm_icon_file_set(obj, path, NULL))
+   if (elm_image_file_set(obj, path, NULL))
      {
 #ifdef ELM_EFREET
         /* TODO: elm_unneed_efreet() */

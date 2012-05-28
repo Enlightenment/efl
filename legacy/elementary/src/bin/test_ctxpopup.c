@@ -81,7 +81,7 @@ _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
      {                                                                        \
         ic = elm_icon_add(obj);                                               \
         elm_icon_standard_set(ic, _icon);                                     \
-        elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);                   \
+        elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);                   \
      }                                                                        \
    else                                                                       \
       ic = NULL;                                                              \

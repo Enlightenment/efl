@@ -128,7 +128,7 @@ Evas_Object *gl_content_get(void *data __UNUSED__, Evas_Object *obj, const char 
      snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
    else
      snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
 }
@@ -649,7 +649,7 @@ Evas_Object *gl2_content_get(void *data, Evas_Object *obj, const char *part)
           snprintf(buf, sizeof(buf), "%s/images/panel_01.jpg", elm_app_data_dir_get());
         else if ((tit->mode & 0x3) == 3)
           snprintf(buf, sizeof(buf), "%s/images/rock_01.jpg", elm_app_data_dir_get());
-        elm_icon_file_set(ic, buf, NULL);
+        elm_image_file_set(ic, buf, NULL);
      }
    else if (!strcmp(part, "elm.swallow.end"))
      {
@@ -661,7 +661,7 @@ Evas_Object *gl2_content_get(void *data, Evas_Object *obj, const char *part)
           snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", elm_app_data_dir_get());
         else if ((tit->mode & 0x3) == 3)
           snprintf(buf, sizeof(buf), "%s/images/sky_04.jpg", elm_app_data_dir_get());
-        elm_icon_file_set(ic, buf, NULL);
+        elm_image_file_set(ic, buf, NULL);
      }
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
@@ -942,13 +942,13 @@ Evas_Object *gl5_content_get(void *data, Evas_Object *obj, const char *part)
         elm_box_horizontal_set(bx, EINA_TRUE);
         ic = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-        elm_icon_file_set(ic, buf, NULL);
-        elm_icon_resizable_set(ic, 0, 0);
+        elm_image_file_set(ic, buf, NULL);
+        elm_image_resizable_set(ic, 0, 0);
         evas_object_show(ic);
         elm_box_pack_end(bx, ic);
         ic = elm_icon_add(obj);
-        elm_icon_file_set(ic, buf, NULL);
-        elm_icon_resizable_set(ic, 0, 0);
+        elm_image_file_set(ic, buf, NULL);
+        elm_image_resizable_set(ic, 0, 0);
         evas_object_show(ic);
         elm_box_pack_end(bx, ic);
         elm_box_horizontal_set(bx, EINA_TRUE);
@@ -1195,7 +1195,7 @@ Evas_Object *gl4_content_get(void *data __UNUSED__, Evas_Object *obj, const char
      {
         Evas_Object *ic = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-        elm_icon_file_set(ic, buf, NULL);
+        elm_image_file_set(ic, buf, NULL);
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         evas_object_show(ic);
         return ic;
@@ -1772,7 +1772,7 @@ Evas_Object *gl10_content_get(void *data __UNUSED__, Evas_Object *obj, const cha
      snprintf(buf, sizeof(buf), "%s/images/bubble.png", elm_app_data_dir_get());
    else
      snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    return ic;
 }
@@ -2397,7 +2397,7 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *ic = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
-        elm_icon_file_set(ic, buf, NULL);
+        elm_image_file_set(ic, buf, NULL);
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         return ic;
      }
@@ -2414,7 +2414,7 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *icn = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/icon_06.png", PACKAGE_DATA_DIR);
-        elm_icon_file_set(icn, buf, NULL);
+        elm_image_file_set(icn, buf, NULL);
         evas_object_propagate_events_set(icn, EINA_FALSE);
         evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         evas_object_smart_callback_add(icn, "clicked", _edit_icon_clicked_cb, (void *)tit->item);
@@ -2563,7 +2563,7 @@ Evas_Object *gl16_content_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *icn = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/icon_04.png", PACKAGE_DATA_DIR);
-        elm_icon_file_set(icn, buf, NULL);
+        elm_image_file_set(icn, buf, NULL);
         evas_object_propagate_events_set(icn, EINA_FALSE);
         evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         return icn;
@@ -2572,7 +2572,7 @@ Evas_Object *gl16_content_get(void *data, Evas_Object *obj, const char *part)
      {
         Evas_Object *icn = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/icon_09.png", PACKAGE_DATA_DIR);
-        elm_icon_file_set(icn, buf, NULL);
+        elm_image_file_set(icn, buf, NULL);
         evas_object_propagate_events_set(icn, EINA_FALSE);
         evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
         evas_object_smart_callback_add(icn, "clicked", _flip_icon_clicked_cb, (void *)tit);

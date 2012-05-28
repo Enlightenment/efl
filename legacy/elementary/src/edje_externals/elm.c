@@ -236,7 +236,7 @@ external_common_param_icon_get(Evas_Object *obj, const Edje_External_Param *p)
      parent_widget = edje;
    icon = elm_icon_add(parent_widget);
 
-   if (elm_icon_file_set(icon, file, p->s))
+   if (elm_image_file_set(icon, file, p->s))
      return icon;
    if (elm_icon_standard_set(icon, p->s))
      return icon;

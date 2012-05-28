@@ -139,7 +139,7 @@ _popup_bottom_title_text_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    icon = elm_icon_add(popup);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",
             elm_app_data_dir_get());
-   elm_icon_file_set(icon, buf, NULL);
+   elm_image_file_set(icon, buf, NULL);
    elm_object_part_content_set(popup, "title,icon", icon);
    btn1 = elm_button_add(popup);
    elm_object_text_set(btn1, "OK");
@@ -171,7 +171,7 @@ _popup_center_title_content_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    icon = elm_icon_add(btn);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",
             elm_app_data_dir_get());
-   elm_icon_file_set(icon, buf, NULL);
+   elm_image_file_set(icon, buf, NULL);
    elm_object_content_set(btn, icon);
    elm_object_content_set(popup, btn);
    elm_object_part_text_set(popup, "title,text", "Title");
@@ -204,7 +204,7 @@ _popup_center_title_item_3button_cb(void *data, Evas_Object *obj __UNUSED__,
    elm_object_part_text_set(popup, "title,text", "Title");
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",
             elm_app_data_dir_get());
-   elm_icon_file_set(icon1, buf, NULL);
+   elm_image_file_set(icon1, buf, NULL);
    for (i = 0; i < 10; i++)
      {
         snprintf(buf, sizeof(buf), "Item%u", i+1);

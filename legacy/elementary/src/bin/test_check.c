@@ -37,7 +37,7 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    ck = elm_check_add(win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -53,8 +53,8 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    ck = elm_check_add(win);
    elm_object_text_set(ck, "Icon not resizable");
    elm_object_part_content_set(ck, "icon", ic);
@@ -83,7 +83,7 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    ck = elm_check_add(win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -98,8 +98,8 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    ck = elm_check_add(win);
    elm_object_part_content_set(ck, "icon", ic);
    elm_box_pack_end(bx, ck);
@@ -125,7 +125,7 @@ test_check_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    tg = elm_check_add(win);
@@ -143,8 +143,8 @@ test_check_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
@@ -156,8 +156,8 @@ test_check_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
@@ -178,8 +178,8 @@ test_check_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");

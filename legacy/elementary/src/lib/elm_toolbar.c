@@ -1749,7 +1749,7 @@ elm_toolbar_item_icon_memfile_set(Elm_Object_Item *it, const void *img, size_t s
      {
         icon_obj = elm_icon_add(obj);
         evas_object_repeat_events_set(icon_obj, EINA_TRUE);
-        ret = elm_icon_memfile_set(icon_obj, img, size, format, key);
+        ret = elm_image_memfile_set(icon_obj, img, size, format, key);
         if (!ret)
           {
              evas_object_del(icon_obj);
@@ -1782,7 +1782,7 @@ elm_toolbar_item_icon_file_set(Elm_Object_Item *it, const char *file, const char
      {
         icon_obj = elm_icon_add(obj);
         evas_object_repeat_events_set(icon_obj, EINA_TRUE);
-        ret = elm_icon_file_set(icon_obj, file, key);
+        ret = elm_image_file_set(icon_obj, file, key);
         if (!ret)
           {
              evas_object_del(icon_obj);

@@ -27,7 +27,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    sl = elm_slider_add(win);
@@ -45,7 +45,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    /* horizontal disable state */
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    sl = elm_slider_add(win);
@@ -64,7 +64,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    sl = elm_slider_add(win);
@@ -86,7 +86,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    /* label2 disable */
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    sl = elm_slider_add(win);
@@ -130,7 +130,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    sl = elm_slider_add(win);
@@ -168,7 +168,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    /* vertical disable state */
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    sl = elm_slider_add(win);

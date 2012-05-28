@@ -189,7 +189,7 @@ test_hoversel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/sky_03.jpg", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    elm_object_part_content_set(bt, "icon", ic);
    evas_object_show(ic);
 

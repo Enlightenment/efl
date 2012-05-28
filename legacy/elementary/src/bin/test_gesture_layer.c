@@ -301,7 +301,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon, Evas_Co
    else
      {
         po->ic = elm_icon_add(parent);
-        elm_icon_file_set(po->ic, icon, NULL);
+        elm_image_file_set(po->ic, icon, NULL);
      }
 
    po->bx = x;
@@ -313,7 +313,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon, Evas_Co
      {
         po->shadow = elm_icon_add(po->ic);
         snprintf(buf, sizeof(buf), "%s/images/pol_shadow.png", elm_app_data_dir_get());
-        elm_icon_file_set(po->shadow, buf, NULL);
+        elm_image_file_set(po->shadow, buf, NULL);
         evas_object_resize(po->shadow, SHADOW_W, SHADOW_H);
         evas_object_show(po->shadow);
      }

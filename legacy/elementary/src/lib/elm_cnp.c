@@ -1524,7 +1524,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
 
    /* FIXME: Images only */
    icon = elm_icon_add(dragwin);
-   elm_icon_file_set(icon, data + 7, NULL); /* 7!? "file://" */
+   elm_image_file_set(icon, data + 7, NULL); /* 7!? "file://" */
    elm_win_resize_object_add(dragwin, icon);
    evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);

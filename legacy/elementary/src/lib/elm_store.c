@@ -329,9 +329,9 @@ _store_item_content_get(void *data, Evas_Object *obj, const char *part)
                                                     EVAS_ASPECT_CONTROL_VERTICAL,
                                                     m->details.icon.w,
                                                     m->details.icon.h);
-                   elm_icon_smooth_set(ic, m->details.icon.smooth);
-                   elm_icon_no_scale_set(ic, m->details.icon.no_scale);
-                   elm_icon_resizable_set(ic,
+                   elm_image_smooth_set(ic, m->details.icon.smooth);
+                   elm_image_no_scale_set(ic, m->details.icon.no_scale);
+                   elm_image_resizable_set(ic,
                                       m->details.icon.scale_up,
                                       m->details.icon.scale_down);
                    if (s)
@@ -339,7 +339,7 @@ _store_item_content_get(void *data, Evas_Object *obj, const char *part)
                         if (m->details.icon.standard_name)
                           elm_icon_standard_set(ic, s);
                         else
-                          elm_icon_file_set(ic, s, NULL);
+                          elm_image_file_set(ic, s, NULL);
                      }
                    break;
                 case ELM_STORE_ITEM_MAPPING_PHOTO:

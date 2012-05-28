@@ -19,7 +19,7 @@ test_radio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    rd = elm_radio_add(win);
@@ -35,8 +35,8 @@ test_radio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
 
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, 1);
@@ -64,8 +64,8 @@ test_radio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
 
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, 4);
@@ -77,8 +77,8 @@ test_radio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
 
    rd = elm_radio_add(win);
    elm_radio_state_value_set(rd, 5);

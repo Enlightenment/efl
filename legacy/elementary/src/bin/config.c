@@ -2248,8 +2248,8 @@ _profiles_list_fill(Evas_Object *l_widget,
         ext = strrchr(buf, '.');
         if (ext)
           {
-             if (!strcmp(ext, ".edj")) elm_icon_file_set(ic, buf, "icon");
-             else elm_icon_file_set(ic, buf, NULL);
+             if (!strcmp(ext, ".edj")) elm_image_file_set(ic, buf, "icon");
+             else elm_image_file_set(ic, buf, NULL);
           }
 
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL,

@@ -54,7 +54,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Icon sized to button");
@@ -67,8 +67,8 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(bx);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Icon no scale");
    elm_object_part_content_set(bt, "icon", ic);
@@ -80,7 +80,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Disabled Button");
@@ -94,7 +94,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_part_content_set(bt, "icon", ic);
@@ -118,8 +118,8 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    bt = elm_button_add(win);
    elm_object_part_content_set(bt, "icon", ic);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)6);
@@ -138,7 +138,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_style_set(bt, "anchor");
@@ -151,7 +151,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_access_info_set(bt, "This is some custom text describing this widget");

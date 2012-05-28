@@ -296,8 +296,8 @@ _elm_theme_icon_set(Elm_Theme *th,
    file = _elm_theme_group_file_find(th, buf2);
    if (file)
      {
-        elm_icon_file_set(o, file, buf2);
-        elm_icon_size_get(o, &w, &h);
+        elm_image_file_set(o, file, buf2);
+        elm_image_object_size_get(o, &w, &h);
         if (w > 0) return EINA_TRUE;
      }
    snprintf(buf2, sizeof(buf2), "elm/icon/%s/default", group);
@@ -305,8 +305,8 @@ _elm_theme_icon_set(Elm_Theme *th,
 
    if (!file) return EINA_FALSE;
 
-   elm_icon_file_set(o, file, buf2);
-   elm_icon_size_get(o, &w, &h);
+   elm_image_file_set(o, file, buf2);
+   elm_image_object_size_get(o, &w, &h);
 
    return w > 0;
 }

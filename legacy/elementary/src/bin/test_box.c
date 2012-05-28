@@ -158,24 +158,24 @@ test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_01.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_02.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.0, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_03.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, EVAS_HINT_EXPAND, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
@@ -282,24 +282,24 @@ test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_01.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_02.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_03.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
@@ -354,7 +354,7 @@ _radio_new(Evas_Object *obj)
    ic = elm_icon_add(obj);
    snprintf(buf, sizeof(buf), "%s/images/icon_%02d.png",
             elm_app_data_dir_get(), idx);
-   elm_icon_file_set(ic, buf, NULL);
+   elm_image_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    rd = elm_radio_add(obj);

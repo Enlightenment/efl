@@ -56,8 +56,8 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
 
@@ -139,8 +139,8 @@ test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic, buf, NULL);
-   elm_icon_resizable_set(ic, 0, 0);
+   elm_image_file_set(ic, buf, NULL);
+   elm_image_resizable_set(ic, 0, 0);
    elm_box_pack_end(bx, ic);
    evas_object_show(ic);
    bt = elm_button_add(win);

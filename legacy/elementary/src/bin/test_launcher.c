@@ -264,8 +264,8 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                   ic = elm_icon_add(win);
                   elm_object_scale_set(ic, 0.5);
                   snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", elm_app_data_dir_get(), n);
-                  elm_icon_file_set(ic, buf, NULL);
-                  elm_icon_resizable_set(ic, 0, 0);
+                  elm_image_file_set(ic, buf, NULL);
+                  elm_image_resizable_set(ic, 0, 0);
                   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
                   evas_object_size_hint_align_set(ic, 0.5, 0.5);
                   elm_table_pack(tb, ic, 1 + i, 1 + (j * 2), 1, 1);
@@ -808,8 +808,8 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
                   ic = elm_icon_add(win);
                   elm_object_scale_set(ic, 0.5);
                   snprintf(buf, sizeof(buf), "%s/images/icon_%02i.png", elm_app_data_dir_get(), n);
-                  elm_icon_file_set(ic, buf, NULL);
-                  elm_icon_resizable_set(ic, 0, 0);
+                  elm_image_file_set(ic, buf, NULL);
+                  elm_image_resizable_set(ic, 0, 0);
                   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
                   evas_object_size_hint_align_set(ic, 0.5, 0.5);
                   elm_object_part_content_set(ly2, "slot", ic);
