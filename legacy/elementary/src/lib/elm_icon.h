@@ -153,7 +153,7 @@ EAPI Evas_Object          *elm_icon_add(Evas_Object *parent);
  *
  * @ingroup Icon
  */
-EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file, const char *group);
 
 /**
  * Set a location in memory to be used as an icon
@@ -178,7 +178,7 @@ EAPI Eina_Bool             elm_icon_file_set(Evas_Object *obj, const char *file,
  *
  * @ingroup Icon
  */
-EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);
 
 /**
  * Get the file that will be used as icon.
@@ -193,7 +193,7 @@ EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj, const void *im
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group);
+EINA_DEPRECATED EAPI void                  elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group);
 
 /**
  * Set the file that will be used, but use a generated thumbnail.
@@ -277,7 +277,7 @@ EAPI const char           *elm_icon_standard_get(const Evas_Object *obj);
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth);
+EINA_DEPRECATED EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smooth);
 
 /**
  * Get whether smooth scaling is enabled for an icon object.
@@ -291,7 +291,7 @@ EAPI void                  elm_icon_smooth_set(Evas_Object *obj, Eina_Bool smoot
  *
  * @ingroup Icon
  */
-EAPI Eina_Bool             elm_icon_smooth_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_smooth_get(const Evas_Object *obj);
 
 /**
  * Disable scaling of this object.
@@ -313,7 +313,7 @@ EAPI Eina_Bool             elm_icon_smooth_get(const Evas_Object *obj);
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
+EINA_DEPRECATED EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
 
 /**
  * Get whether scaling is disabled on the object.
@@ -327,7 +327,7 @@ EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_
  *
  * @ingroup Icon
  */
-EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
 
 /**
  * Set if the object is (up/down) resizable.
@@ -348,7 +348,7 @@ EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_resizable_set(Evas_Object *obj, Eina_Bool size_up, Eina_Bool size_down);
+EINA_DEPRECATED EAPI void                  elm_icon_resizable_set(Evas_Object *obj, Eina_Bool size_up, Eina_Bool size_down);
 
 /**
  * Get if the object is (up/down) resizable.
@@ -363,7 +363,7 @@ EAPI void                  elm_icon_resizable_set(Evas_Object *obj, Eina_Bool si
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *size_down);
+EINA_DEPRECATED EAPI void                  elm_icon_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *size_down);
 
 /**
  * Get the object's image size
@@ -376,7 +376,7 @@ EAPI void                  elm_icon_resizable_get(const Evas_Object *obj, Eina_B
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_size_get(const Evas_Object *obj, int *w, int *h);
+EINA_DEPRECATED EAPI void                  elm_icon_size_get(const Evas_Object *obj, int *w, int *h);
 
 /**
  * Set if the icon fill the entire object area.
@@ -417,7 +417,7 @@ EAPI void                  elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool
  *
  * @ingroup Icon
  */
-EAPI Eina_Bool             elm_icon_fill_outside_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool             elm_icon_fill_outside_get(const Evas_Object *obj);
 
 /**
  * Set the prescale size for the icon.
@@ -443,7 +443,7 @@ EAPI Eina_Bool             elm_icon_fill_outside_get(const Evas_Object *obj);
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_prescale_set(Evas_Object *obj, int size);
+EINA_DEPRECATED EAPI void                  elm_icon_prescale_set(Evas_Object *obj, int size);
 
 /**
  * Get the prescale size for the icon.
@@ -457,7 +457,7 @@ EAPI void                  elm_icon_prescale_set(Evas_Object *obj, int size);
  *
  * @ingroup Icon
  */
-EAPI int                   elm_icon_prescale_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI int                   elm_icon_prescale_get(const Evas_Object *obj);
 
 /**
  * Gets the image object of the icon. DO NOT MODIFY THIS.
@@ -469,7 +469,7 @@ EAPI int                   elm_icon_prescale_get(const Evas_Object *obj);
  *
  * @ingroup Icon
  */
-EAPI Evas_Object          *elm_icon_object_get(Evas_Object *obj);
+EINA_DEPRECATED EAPI Evas_Object          *elm_icon_object_get(Evas_Object *obj);
 
 /**
  * Sets the icon lookup order used by elm_icon_standard_set().
@@ -509,7 +509,7 @@ EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj);
  * @deprecated Use elm_image_preload_disabled_set() instead.
  *
  */
-EAPI void                  elm_icon_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+EINA_DEPRECATED EAPI void  elm_icon_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * Get if the icon supports animation or not.
@@ -526,7 +526,7 @@ EAPI void                  elm_icon_preload_disabled_set(Evas_Object *obj, Eina_
  * @deprecated Use elm_image_animated_available_get() instead.
  *
  */
-EAPI Eina_Bool             elm_icon_animated_available_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_available_get(const Evas_Object *obj);
 
 /**
  * Set animation mode of the icon.
@@ -545,7 +545,7 @@ EAPI Eina_Bool             elm_icon_animated_available_get(const Evas_Object *ob
  * @deprecated Use elm_image_animated_set() instead.
  *
  */
-EAPI void                  elm_icon_animated_set(Evas_Object *obj, Eina_Bool animated);
+EINA_DEPRECATED EAPI void  elm_icon_animated_set(Evas_Object *obj, Eina_Bool animated);
 
 /**
  * Get animation mode of the icon.
@@ -558,7 +558,7 @@ EAPI void                  elm_icon_animated_set(Evas_Object *obj, Eina_Bool ani
  * @deprecated Use elm_image_animated_get() instead.
  *
  */
-EAPI Eina_Bool             elm_icon_animated_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_get(const Evas_Object *obj);
 
 /**
  * Set animation play mode of the icon.
@@ -583,7 +583,7 @@ EAPI Eina_Bool             elm_icon_animated_get(const Evas_Object *obj);
  * @deprecated Use elm_image_animated_play_set() instead.
  *
  */
-EAPI void                  elm_icon_animated_play_set(Evas_Object *obj, Eina_Bool play);
+EINA_DEPRECATED EAPI void  elm_icon_animated_play_set(Evas_Object *obj, Eina_Bool play);
 
 /**
  * Get animation play mode of the icon.
@@ -597,7 +597,7 @@ EAPI void                  elm_icon_animated_play_set(Evas_Object *obj, Eina_Boo
  * @deprecated Use elm_image_animated_play_get() instead.
  *
  */
-EAPI Eina_Bool             elm_icon_animated_play_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool elm_icon_animated_play_get(const Evas_Object *obj);
 
 /**
  * Set whether the original aspect ratio of the icon should be kept on resize.
@@ -619,7 +619,7 @@ EAPI Eina_Bool             elm_icon_animated_play_get(const Evas_Object *obj);
  * @deprecated Use elm_image_aspect_fixed_set() instead.
  *
  */
-EAPI void                  elm_icon_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
+EINA_DEPRECATED EAPI void  elm_icon_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
 
 /**
  * Get if the object retains the original aspect ratio.
@@ -632,7 +632,7 @@ EAPI void                  elm_icon_aspect_fixed_set(Evas_Object *obj, Eina_Bool
  *
  * @ingroup Icon
  */
-EAPI Eina_Bool             elm_icon_aspect_fixed_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Eina_Bool elm_icon_aspect_fixed_get(const Evas_Object *obj);
 
 /**
  * @}
