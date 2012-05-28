@@ -422,9 +422,10 @@ elm_photo_thumb_set(const Evas_Object *obj,
                     const char *group)
 {
    ELM_PHOTO_CHECK(obj);
-   ELM_PHOTO_DATA_GET(obj, sd);
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
+   ELM_PHOTO_DATA_GET(obj, sd);
+
    eina_stringshare_replace(&sd->thumb.file.path, file);
    eina_stringshare_replace(&sd->thumb.file.key, group);
 
