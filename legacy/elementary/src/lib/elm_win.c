@@ -1252,19 +1252,19 @@ _elm_win_delete_request(Ecore_Evas *ee)
    evas_object_unref(obj);
 }
 
-#ifdef HAVE_ELEMENTARY_X
-static void
-_elm_win_xwindow_get(Elm_Win_Smart_Data *sd)
+static Ecore_X_Window
+_elm_ee_xwin_get(const Ecore_Evas *ee)
 {
-   sd->xwin = 0;
+   Ecore_X_Window xwin;
 
+   if (!ee) return 0;
+#ifdef HAVE_ELEMENTARY_X
 #define ENGINE_COMPARE(name) (!strcmp(_elm_preferred_engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      {
-        if (sd->ee) sd->xwin = ecore_evas_software_x11_window_get(sd->ee);
+        if (ee) xwin = ecore_evas_software_x11_window_get(ee);
      }
-   else if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
-            ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
+   else if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
             ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE) ||
             ENGINE_COMPARE(ELM_SOFTWARE_SDL) ||
             ENGINE_COMPARE(ELM_SOFTWARE_16_SDL) ||
@@ -1274,21 +1274,32 @@ _elm_win_xwindow_get(Elm_Win_Smart_Data *sd)
      }
    else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
      {
-        if (sd->ee) sd->xwin = ecore_evas_software_x11_16_window_get(sd->ee);
+        if (ee) xwin = ecore_evas_software_x11_16_window_get(ee);
      }
    else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
      {
-        if (sd->ee) sd->xwin = ecore_evas_software_x11_8_window_get(sd->ee);
+        if (ee) xwin = ecore_evas_software_x11_8_window_get(ee);
      }
    else if (ENGINE_COMPARE(ELM_OPENGL_X11))
      {
-        if (sd->ee) sd->xwin = ecore_evas_gl_x11_window_get(sd->ee);
+        if (ee) xwin = ecore_evas_gl_x11_window_get(ee);
      }
    else if (ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
      {
-        if (sd->ee) sd->xwin = (long)ecore_evas_win32_window_get(sd->ee);
+        if (ee) xwin = (long)ecore_evas_win32_window_get(ee);
      }
+   return xwin;
+
 #undef ENGINE_COMPARE
+#endif
+   return 0;
+}
+
+#ifdef HAVE_ELEMENTARY_X
+static void
+_elm_win_xwindow_get(Elm_Win_Smart_Data *sd)
+{
+   sd->xwin = _elm_ee_xwin_get(sd->ee);
 }
 
 #endif
@@ -3353,24 +3364,16 @@ elm_win_socket_listen(Evas_Object *obj,
 
 /* windowing specific calls - shall we do this differently? */
 
-static Ecore_X_Window
-_elm_ee_win_get(const Evas_Object *obj)
-{
-   if (!obj) return 0;
-#ifdef HAVE_ELEMENTARY_X
-   Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-   if (ee) return (Ecore_X_Window)ecore_evas_window_get(ee);
-#endif
-   return 0;
-}
-
 EAPI Ecore_X_Window
 elm_win_xwindow_get(const Evas_Object *obj)
 {
    if (!obj) return 0;
 
    if (!evas_object_smart_type_check_ptr(obj, WIN_SMART_NAME))
-     return _elm_ee_win_get(obj);
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        return _elm_ee_xwin_get(ee);
+     }
 
    ELM_WIN_CHECK(obj) 0;
    ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
