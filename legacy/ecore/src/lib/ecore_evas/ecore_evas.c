@@ -2779,6 +2779,9 @@ ecore_evas_wayland_type_set(Ecore_Evas *ee, int type)
 EAPI Ecore_Wl_Window *
 ecore_evas_wayland_window_get(const Ecore_Evas *ee)
 {
+   if (!(!strncmp(ee->driver, "wayland", 7)))
+     return NULL;
+
    return ee->engine.wl.win;
 }
 
