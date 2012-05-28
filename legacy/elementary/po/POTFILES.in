@@ -147,7 +147,6 @@
 ./src/lib/elm_win.c
 ./src/lib/els_box.c
 ./src/lib/els_cursor.c
-./src/lib/els_icon.c
 ./src/lib/els_pan.c
 ./src/lib/els_scroller.c
 ./src/lib/els_tooltip.c
