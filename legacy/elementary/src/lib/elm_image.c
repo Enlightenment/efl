@@ -989,42 +989,6 @@ _elm_image_smart_aspect_fixed_get(const Evas_Object *obj)
 }
 
 static void
-_unimplemented_smart_callback_add(Evas_Object *obj,
-                                  const char *emission __UNUSED__,
-                                  const char *source __UNUSED__,
-                                  Edje_Signal_Cb func __UNUSED__,
-                                  void *data __UNUSED__)
-{
-   WRN("The %s widget does not implement the \"callback_add()\" function.",
-       elm_widget_type_get(obj));
-
-   return;
-}
-
-static void *
-_unimplemented_smart_callback_del(Evas_Object *obj,
-                                  const char *emission __UNUSED__,
-                                  const char *source __UNUSED__,
-                                  Edje_Signal_Cb func __UNUSED__)
-{
-   WRN("The %s widget does not implement the \"callback_del()\" function.",
-       elm_widget_type_get(obj));
-
-   return NULL;
-}
-
-static void
-_unimplemented_smart_signal(Evas_Object *obj,
-                            const char *emission __UNUSED__,
-                            const char *source __UNUSED__)
-{
-   WRN("The %s widunadd does not implement the \"signal()\" function.",
-       elm_widget_type_get(obj));
-
-   return;
-}
-
-static void
 _elm_image_smart_set_user(Elm_Image_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_image_smart_add;
@@ -1064,10 +1028,6 @@ _elm_image_smart_set_user(Elm_Image_Smart_Class *sc)
    sc->sizing_eval = _elm_image_smart_sizing_eval;
    sc->smooth_scale_get = _elm_image_smart_smooth_scale_get;
    sc->smooth_scale_set = _elm_image_smart_smooth_scale_set;
-
-   sc->signal = _unimplemented_smart_signal;
-   sc->callback_add = _unimplemented_smart_callback_add;
-   sc->callback_del = _unimplemented_smart_callback_del;
 }
 
 EAPI const Elm_Image_Smart_Class *

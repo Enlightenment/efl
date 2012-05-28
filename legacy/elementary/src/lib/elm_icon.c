@@ -45,9 +45,12 @@ struct _Elm_Icon_Smart_Data
    } freedesktop;
 #endif
 
-   int          in_eval;
+   int        in_eval;
 
-   Eina_Bool    is_video : 1;
+   /* WARNING: to be deprecated */
+   Eina_List *edje_signals;
+
+   Eina_Bool  is_video : 1;
 };
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
@@ -420,7 +423,7 @@ _edje_signals_free(Elm_Icon_Smart_Data *sd)
 {
    Edje_Signal_Data *esd;
 
-   EINA_LIST_FREE (ELM_IMAGE_DATA(sd)->edje_signals, esd)
+   EINA_LIST_FREE (sd->edje_signals, esd)
      {
         eina_stringshare_del(esd->emission);
         eina_stringshare_del(esd->source);
@@ -698,10 +701,11 @@ _elm_icon_smart_del(Evas_Object *obj)
    ELM_WIDGET_CLASS(_elm_icon_parent_sc)->base.del(obj);
 }
 
-static void
-_elm_icon_smart_signal(Evas_Object *obj,
-                       const char *emission,
-                       const char *source)
+/* WARNING: to be deprecated */
+void
+_elm_icon_signal_emit(Evas_Object *obj,
+                      const char *emission,
+                      const char *source)
 {
    ELM_ICON_DATA_GET(obj, sd);
 
@@ -721,12 +725,13 @@ _edje_signal_callback(void *data,
    esd->func(esd->data, esd->obj, emission, source);
 }
 
-static void
-_elm_icon_smart_callback_add(Evas_Object *obj,
-                             const char *emission,
-                             const char *source,
-                             Edje_Signal_Cb func_cb,
-                             void *data)
+/* WARNING: to be deprecated */
+void
+_elm_icon_signal_callback_add(Evas_Object *obj,
+                              const char *emission,
+                              const char *source,
+                              Edje_Signal_Cb func_cb,
+                              void *data)
 {
    Edje_Signal_Data *esd;
 
@@ -742,18 +747,19 @@ _elm_icon_smart_callback_add(Evas_Object *obj,
    esd->emission = eina_stringshare_add(emission);
    esd->source = eina_stringshare_add(source);
    esd->data = data;
-   ELM_IMAGE_DATA(sd)->edje_signals =
-     eina_list_append(ELM_IMAGE_DATA(sd)->edje_signals, esd);
+   sd->edje_signals =
+     eina_list_append(sd->edje_signals, esd);
 
    edje_object_signal_callback_add
      (ELM_IMAGE_DATA(sd)->img, emission, source, _edje_signal_callback, esd);
 }
 
-static void *
-_elm_icon_smart_callback_del(Evas_Object *obj,
-                             const char *emission,
-                             const char *source,
-                             Edje_Signal_Cb func_cb)
+/* WARNING: to be deprecated */
+void *
+_elm_icon_signal_callback_del(Evas_Object *obj,
+                              const char *emission,
+                              const char *source,
+                              Edje_Signal_Cb func_cb)
 {
    Edje_Signal_Data *esd = NULL;
    void *data = NULL;
@@ -763,13 +769,12 @@ _elm_icon_smart_callback_del(Evas_Object *obj,
 
    if (!ELM_IMAGE_DATA(sd)->edje) return NULL;
 
-   EINA_LIST_FOREACH (ELM_IMAGE_DATA(sd)->edje_signals, l, esd)
+   EINA_LIST_FOREACH (sd->edje_signals, l, esd)
      {
         if ((esd->func == func_cb) && (!strcmp(esd->emission, emission)) &&
             (!strcmp(esd->source, source)))
           {
-             ELM_IMAGE_DATA(sd)->edje_signals =
-               eina_list_remove_list(ELM_IMAGE_DATA(sd)->edje_signals, l);
+             sd->edje_signals = eina_list_remove_list(sd->edje_signals, l);
              eina_stringshare_del(esd->emission);
              eina_stringshare_del(esd->source);
              data = esd->data;
@@ -793,10 +798,6 @@ _elm_icon_smart_set_user(Elm_Image_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->base.del = _elm_icon_smart_del;
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_icon_smart_theme;
-
-   sc->callback_add = _elm_icon_smart_callback_add;
-   sc->callback_del = _elm_icon_smart_callback_del;
-   sc->signal = _elm_icon_smart_signal;
 
    sc->file_set = _elm_icon_smart_file_set;
    sc->memfile_set = _elm_icon_smart_memfile_set;
@@ -898,7 +899,7 @@ elm_icon_animated_available_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
 
-   return evas_object_image_animated_get(elm_image_object_get(obj));
+   return elm_image_animated_available_get(obj);
 }
 
 EAPI void

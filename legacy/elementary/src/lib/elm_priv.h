@@ -299,6 +299,21 @@ Eina_List           *_elm_config_color_list_get(const char *palette_name);
 void                 _elm_config_color_set(const char *palette_name, int r, int g, int b, int a);
 void                 _elm_config_colors_free(const char *palette_name);
 
+/* DEPRECATED, will be removed on next release */
+void                 _elm_icon_signal_emit(Evas_Object *obj,
+                                           const char *emission,
+                                           const char *source);
+void                 _elm_icon_signal_callback_add(Evas_Object *obj,
+                                                   const char *emission,
+                                                   const char *source,
+                                                   Edje_Signal_Cb func_cb,
+                                                   void *data);
+void                *_elm_icon_signal_callback_del(Evas_Object *obj,
+                                                   const char *emission,
+                                                   const char *source,
+                                                   Edje_Signal_Cb func_cb);
+/* end of DEPRECATED */
+
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;
 extern const char *_elm_data_dir;

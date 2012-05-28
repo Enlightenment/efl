@@ -1,7 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_container.h"
-#include "elm_widget_image.h"
 
 static const char SMART_NAME[] = "elm_widget";
 static const char SMART_NAME_COMPAT[] = "elm_widget_compat";
@@ -2509,8 +2508,12 @@ elm_widget_signal_emit(Evas_Object *obj,
      COMPAT_SMART_DATA(sd)->signal(obj, emission, source);
    else if (evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_emit(obj, emission, source);
-   else if (evas_object_smart_type_check(obj, "elm_image"))
-     ELM_IMAGE_CLASS(sd->api)->signal(obj, emission, source);
+   else if (evas_object_smart_type_check(obj, "elm_icon"))
+     {
+        WRN("Deprecated function. This functionality on icon objects"
+            " will be dropped on a next release.");
+        _elm_icon_signal_emit(obj, emission, source);
+     }
 }
 
 static void
@@ -2556,8 +2559,13 @@ elm_widget_signal_callback_add(Evas_Object   *obj,
 
    else if (!evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_callback_add(obj, emission, source, func, data);
-   else if (evas_object_smart_type_check(obj, "elm_image"))
-     ELM_IMAGE_CLASS(sd->api)->callback_add(obj, emission, source, func, data);
+   else if (evas_object_smart_type_check(obj, "elm_icon"))
+     {
+        WRN("Deprecated function. This functionality on icon objects"
+            " will be dropped on a next release.");
+
+        _elm_icon_signal_callback_add(obj, emission, source, func, data);
+     }
 }
 
 EAPI void *
@@ -2593,11 +2601,15 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
         COMPAT_SMART_DATA(sd)->callback_del
           (obj, emission, source, _edje_signal_callback, esd);
      }
-
    else if (!evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_callback_del(obj, emission, source, func);
-   else if (evas_object_smart_type_check(obj, "elm_image"))
-     ELM_IMAGE_CLASS(sd->api)->callback_del(obj, emission, source, func);
+   else if (evas_object_smart_type_check(obj, "elm_icon"))
+     {
+        WRN("Deprecated function. This functionality on icon objects"
+            " will be dropped on a next release.");
+
+        _elm_icon_signal_callback_del(obj, emission, source, func);
+     }
 
    return data;
 }

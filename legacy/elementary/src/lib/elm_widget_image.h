@@ -69,7 +69,7 @@
 #define ELM_IMAGE_SMART_CLASS_INIT(smart_class_init)                        \
   {smart_class_init, ELM_IMAGE_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, \
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,  \
-   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 
 /**
  * @def ELM_IMAGE_SMART_CLASS_INIT_NULL
@@ -120,18 +120,6 @@ typedef struct _Elm_Image_Smart_Class
    int                    version; /**< Version of this smart class definition */
 
    void                 (*sizing_eval)(Evas_Object *obj); /* 'Virtual' function on evalutating the object's final geometry */
-   void                 (*signal)(Evas_Object *obj,
-                                  const char *emission,
-                                  const char *source); /* 'Virtual' function on emitting an (Edje) signal to the object, acting on its internal layout */
-   void                 (*callback_add)(Evas_Object *obj,
-                                        const char *emission,
-                                        const char *source,
-                                        Edje_Signal_Cb func,
-                                        void *data); /* 'Virtual' function on adding an (Edje) signal callback to the object, proxyed from its internal layout */
-   void                *(*callback_del)(Evas_Object * obj,
-                                        const char *emission,
-                                        const char *source,
-                                        Edje_Signal_Cb func); /* 'Virtual' function on deleting an (Edje) signal callback on the object, proxyed from its internal layout */
    Eina_Bool            (*memfile_set)(Evas_Object *obj,
                                        const void *img,
                                        size_t size,
@@ -203,8 +191,6 @@ struct _Elm_Image_Smart_Data
    int                   load_size;
    double                scale;
    Elm_Image_Orient      orient;
-
-   Eina_List            *edje_signals;
 
    int                   frame_count;
    int                   cur_frame;
