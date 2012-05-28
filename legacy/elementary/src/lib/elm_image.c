@@ -72,6 +72,28 @@ _on_mouse_up(void *data,
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
+static Eina_Bool
+_elm_image_animate_cb(void *data)
+{
+   Elm_Image_Smart_Data *sd = data;
+
+   if (!sd->anim) return ECORE_CALLBACK_CANCEL;
+
+   sd->cur_frame++;
+   if (sd->cur_frame > sd->frame_count)
+     sd->cur_frame = sd->cur_frame % sd->frame_count;
+
+   evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
+
+   sd->frame_duration = evas_object_image_animated_frame_duration_get
+       (sd->img, sd->cur_frame, 0);
+
+   if (sd->frame_duration > 0)
+     ecore_timer_interval_set(sd->anim_timer, sd->frame_duration);
+
+   return ECORE_CALLBACK_RENEW;
+}
+
 static Evas_Object *
 _img_new(Evas_Object *obj)
 {
@@ -573,7 +595,8 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
    if (ELM_IMAGE_CLASS(ELM_WIDGET_DATA(sd)->api)->file_set
          (obj, drop->data, NULL))
      {
-         printf("dnd: %s, %s, %s", elm_widget_type_get(elm_obj), SIG_DND, drop->data);
+        printf("dnd: %s, %s, %s", elm_widget_type_get(elm_obj),
+               SIG_DND, (char *)drop->data);
 
         evas_object_smart_callback_call(elm_obj, SIG_DND, drop->data);
         return EINA_TRUE;
@@ -611,6 +634,9 @@ static void
 _elm_image_smart_del(Evas_Object *obj)
 {
    ELM_IMAGE_DATA_GET(obj, sd);
+
+   if (sd->anim_timer)
+     ecore_timer_del(sd->anim_timer);
 
    evas_object_del(sd->img);
    if (sd->prev_img) evas_object_del(sd->prev_img);
@@ -1325,4 +1351,96 @@ elm_image_aspect_fixed_get(const Evas_Object *obj)
    ELM_IMAGE_DATA_GET(obj, sd);
 
    return ELM_IMAGE_CLASS(ELM_WIDGET_DATA(sd)->api)->aspect_fixed_get(obj);
+}
+
+EAPI Eina_Bool
+elm_image_animated_available_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   if (sd->edje) return EINA_FALSE;
+
+   return evas_object_image_animated_get(elm_image_object_get(obj));
+}
+
+EAPI void
+elm_image_animated_set(Evas_Object *obj,
+                       Eina_Bool anim)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   anim = !!anim;
+   if (sd->anim == anim) return;
+
+   if (sd->edje) return;
+
+   sd->img = elm_image_object_get(obj);
+   if (!evas_object_image_animated_get(sd->img)) return;
+
+   if (anim)
+     {
+        sd->frame_count = evas_object_image_animated_frame_count_get(sd->img);
+        sd->cur_frame = 1;
+        sd->frame_duration =
+          evas_object_image_animated_frame_duration_get
+            (sd->img, sd->cur_frame, 0);
+        evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
+     }
+   else
+     {
+        sd->frame_count = -1;
+        sd->cur_frame = -1;
+        sd->frame_duration = -1;
+     }
+   sd->anim = anim;
+
+   return;
+}
+
+EAPI Eina_Bool
+elm_image_animated_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   return sd->anim;
+}
+
+EAPI void
+elm_image_animated_play_set(Evas_Object *obj,
+                            Eina_Bool play)
+{
+   ELM_IMAGE_CHECK(obj);
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   if (!sd->anim) return;
+   if (sd->play == play) return;
+
+   if (sd->edje) return;
+
+   if (play)
+     {
+        sd->anim_timer = ecore_timer_add
+            (sd->frame_duration, _elm_image_animate_cb, sd);
+     }
+   else
+     {
+        if (sd->anim_timer)
+          {
+             ecore_timer_del(sd->anim_timer);
+             sd->anim_timer = NULL;
+          }
+     }
+   sd->play = play;
+}
+
+EAPI Eina_Bool
+elm_image_animated_play_get(const Evas_Object *obj)
+{
+   ELM_IMAGE_CHECK(obj) EINA_FALSE;
+   ELM_IMAGE_DATA_GET(obj, sd);
+
+   return sd->play;
 }

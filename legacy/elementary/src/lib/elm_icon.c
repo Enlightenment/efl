@@ -47,14 +47,6 @@ struct _Elm_Icon_Smart_Data
 
    int          in_eval;
 
-   /* for animation feature */
-   Ecore_Timer *timer;
-   int          frame_count;
-   int          cur_frame;
-   double       duration;
-
-   Eina_Bool    anim : 1;
-   Eina_Bool    play : 1;
    Eina_Bool    is_video : 1;
 };
 
@@ -533,31 +525,6 @@ _elm_icon_smart_theme(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_icon_animate_cb(void *data)
-{
-   Elm_Icon_Smart_Data *sd = data;
-   Evas_Object *img_obj;
-
-   if (!sd->anim) return ECORE_CALLBACK_CANCEL;
-
-   img_obj = elm_image_object_get(ELM_WIDGET_DATA(sd)->obj);
-
-   sd->cur_frame++;
-   if (sd->cur_frame > sd->frame_count)
-     sd->cur_frame = sd->cur_frame % sd->frame_count;
-
-   evas_object_image_animated_frame_set(img_obj, sd->cur_frame);
-
-   sd->duration = evas_object_image_animated_frame_duration_get
-       (img_obj, sd->cur_frame, 0);
-
-   if (sd->duration > 0)
-     ecore_timer_interval_set(sd->timer, sd->duration);
-
-   return ECORE_CALLBACK_RENEW;
-}
-
-static Eina_Bool
 _icon_standard_set(Evas_Object *obj,
                    const char *name)
 {
@@ -725,9 +692,6 @@ _elm_icon_smart_del(Evas_Object *obj)
    if (sd->thumb.eeh)
      ecore_event_handler_del(sd->thumb.eeh);
 #endif
-
-   if (sd->timer)
-     ecore_timer_del(sd->timer);
 
    _edje_signals_free(sd);
 
@@ -938,45 +902,20 @@ elm_icon_animated_available_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_icon_animated_set(Evas_Object *obj, Eina_Bool anim)
+elm_icon_animated_set(Evas_Object *obj,
+                      Eina_Bool anim)
 {
-   Evas_Object *img_obj;
-
    ELM_ICON_CHECK(obj);
-   ELM_ICON_DATA_GET(obj, sd);
 
-   anim = !!anim;
-   if (sd->anim == anim) return;
-
-   img_obj = elm_image_object_get(obj);
-   if (!evas_object_image_animated_get(img_obj)) return;
-
-   if (anim)
-     {
-        sd->frame_count = evas_object_image_animated_frame_count_get(img_obj);
-        sd->cur_frame = 1;
-        sd->duration = evas_object_image_animated_frame_duration_get
-            (img_obj, sd->cur_frame, 0);
-        evas_object_image_animated_frame_set(img_obj, sd->cur_frame);
-     }
-   else
-     {
-        sd->frame_count = -1;
-        sd->cur_frame = -1;
-        sd->duration = -1;
-     }
-   sd->anim = anim;
-
-   return;
+   return elm_image_animated_set(obj, anim);
 }
 
 EAPI Eina_Bool
 elm_icon_animated_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
-   ELM_ICON_DATA_GET(obj, sd);
 
-   return sd->anim;
+   return elm_image_animated_get(obj);
 }
 
 EAPI void
@@ -984,33 +923,16 @@ elm_icon_animated_play_set(Evas_Object *obj,
                            Eina_Bool play)
 {
    ELM_ICON_CHECK(obj);
-   ELM_ICON_DATA_GET(obj, sd);
 
-   if (!sd->anim) return;
-   if (sd->play == play) return;
-
-   if (play)
-     {
-        sd->timer = ecore_timer_add(sd->duration, _elm_icon_animate_cb, sd);
-     }
-   else
-     {
-        if (sd->timer)
-          {
-             ecore_timer_del(sd->timer);
-             sd->timer = NULL;
-          }
-     }
-   sd->play = play;
+   elm_image_animated_play_set(obj, play);
 }
 
 EAPI Eina_Bool
 elm_icon_animated_play_get(const Evas_Object *obj)
 {
    ELM_ICON_CHECK(obj) EINA_FALSE;
-   ELM_ICON_DATA_GET(obj, sd);
 
-   return sd->play;
+   return elm_image_animated_play_get(obj);
 }
 
 EAPI Eina_Bool

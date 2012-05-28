@@ -206,6 +206,10 @@ struct _Elm_Image_Smart_Data
 
    Eina_List            *edje_signals;
 
+   int                   frame_count;
+   int                   cur_frame;
+   double                frame_duration;
+
    Eina_Bool             aspect_fixed : 1;
    Eina_Bool             fill_inside : 1;
    Eina_Bool             scale_down : 1;
@@ -216,6 +220,10 @@ struct _Elm_Image_Smart_Data
    Eina_Bool             show : 1;
    Eina_Bool             edit : 1;
    Eina_Bool             edje : 1;
+   Eina_Bool             anim : 1;
+   Eina_Bool             play : 1;
+
+   Ecore_Timer          *anim_timer;
 };
 
 /**
