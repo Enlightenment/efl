@@ -101,3 +101,8 @@
 
 	* Add "loaded" signal for elm_map.
 
+2012-05-25 Rob Bradford
+
+	* Refactor X11 specific code to use ecore_evas_*_window_get functions
+	so that the driver for the Ecore_Evas will be checked.
+
