@@ -56,8 +56,8 @@ typedef void *Eina_Semaphore;
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function creates a new #Eina_Lock object and stores it in the
- * @p mutex buffer. On success, this function returns #EINA_TRUE and
- * #EINA_FALSE otherwise. To free the resources allocated by this
+ * @p mutex buffer. On success, this function returns #EINA_TRUE
+ * and #EINA_FALSE otherwise. To free the resources allocated by this
  * function, use eina_lock_free(). For performance reasons, no check
  * is done on @p mutex.
  */
@@ -88,8 +88,8 @@ eina_lock_free(Eina_Lock *mutex EINA_UNUSED)
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function locks @p mutex. @p mutex must have been created by
- * eina_lock_new(). On success, this function returns #EINA_TRUE and
- * #EINA_FALSE otherwise. For performance reasons, no check is done on
+ * eina_lock_new(). On success, this function returns #EINA_TRUE
+ * and #EINA_FALSE otherwise. For performance reasons, no check is done on
  * @p mutex.
  */
 static inline Eina_Lock_Result
@@ -105,8 +105,8 @@ eina_lock_take(Eina_Lock *mutex EINA_UNUSED)
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function tries to lock @p mutex. @p mutex must have been created by
- * eina_lock_new(). If @p mutex can be locked, this function returns
- * #EINA_TRUE; if @p mutex can not be locked, or is already locked, it
+ * eina_lock_new(). If @p mutex can be locked, this function returns #EINA_TRUE;
+ * if @p mutex can not be locked, or is already locked, it
  * returns #EINA_FALSE. This function does not block and returns
  * immediately. For performance reasons, no check is done on
  * @p mutex.
@@ -126,9 +126,9 @@ eina_lock_take_try(Eina_Lock *mutex EINA_UNUSED)
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function unlocks @p mutex. @p mutex must have been created by
- * eina_lock_new(). On success, this function returns #EINA_TRUE and
- * #EINA_FALSE otherwise. For performance reasons, no check is done on
- * @p mutex.
+ * eina_lock_new(). On success, this function returns #EINA_TRUE
+ * and #EINA_FALSE otherwise. For performance reasons, no check is
+ * done on @p mutex.
  */
 static inline Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex EINA_UNUSED)

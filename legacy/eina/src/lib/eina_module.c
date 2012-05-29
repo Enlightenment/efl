@@ -229,8 +229,7 @@ EAPI Eina_Error EINA_ERROR_MODULE_INIT_FAILED = 0;
  * called by eina_init().
  *
  * This function sets up the module module of Eina. It also registers
- * the errors #EINA_ERROR_WRONG_MODULE and
- * #EINA_ERROR_MODULE_INIT_FAILED.
+ * the errors #EINA_ERROR_WRONG_MODULE and #EINA_ERROR_MODULE_INIT_FAILED.
  *
  * @see eina_init()
  */

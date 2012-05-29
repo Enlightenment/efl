@@ -115,8 +115,8 @@ EAPI Eina_Bool eina_binbuf_append_length(Eina_Binbuf *buf, const unsigned char *
  * @param c The char to append.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function inserts @p c to @p buf. If it can not insert it,
- * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ * This function inserts @p c to @p buf. If it can not insert it, #EINA_FALSE
+ * is returned, otherwise #EINA_TRUE is returned.
  */
 EAPI Eina_Bool eina_binbuf_append_char(Eina_Binbuf *buf, unsigned char c) EINA_ARG_NONNULL(1);
 

@@ -115,8 +115,8 @@ EAPI void eina_ustrbuf_reset(Eina_UStrbuf *buf) EINA_ARG_NONNULL(1);
  * This function appends @p str to @p buf. It computes the length of
  * @p str, so is slightly slower than eina_ustrbuf_append_length(). If
  * the length is known beforehand, consider using that variant. If
- * @p buf can't append it, #EINA_FALSE is returned, otherwise
- * #EINA_TRUE is returned.
+ * @p buf can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
  *
  * @see eina_ustrbuf_append()
  * @see eina_ustrbuf_append_length()
@@ -131,8 +131,8 @@ EAPI Eina_Bool eina_ustrbuf_append(Eina_UStrbuf *buf, const Eina_Unicode *str) E
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This function appends the escaped string @p str to @p buf. If @p
- * str can not be appended, #EINA_FALSE is returned, otherwise,
- * #EINA_TRUE is returned.
+ * str can not be appended, #EINA_FALSE is returned, otherwise, #EINA_TRUE is
+ * returned.
  */
 EAPI Eina_Bool eina_ustrbuf_append_escaped(Eina_UStrbuf *buf, const Eina_Unicode *str) EINA_ARG_NONNULL(1, 2);
 
@@ -188,8 +188,8 @@ EAPI Eina_Bool eina_ustrbuf_append_length(Eina_UStrbuf *buf, const Eina_Unicode 
  * @param c The char to append.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function inserts @p c to @p buf. If it can not insert it,
- * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ * This function inserts @p c to @p buf. If it can not insert it, #EINA_FALSE
+ * is returned, otherwise #EINA_TRUE is returned.
  */
 EAPI Eina_Bool eina_ustrbuf_append_char(Eina_UStrbuf *buf, Eina_Unicode c) EINA_ARG_NONNULL(1);
 
@@ -304,8 +304,8 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This macro is calling eina_ustrbuf_insert_escaped() at position 0. If
- * @p buf can't prepend it, #EINA_FALSE is returned, otherwise
- * #EINA_TRUE is returned.
+ * @p buf can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
  */
 #define eina_ustrbuf_prepend_escaped(buf, str)        eina_ustrbuf_insert_escaped(buf, str, 0)
 
@@ -319,8 +319,8 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This macro is calling eina_ustrbuf_insert_n() at position 0. If
- * @p buf can't prepend it, #EINA_FALSE is returned, otherwise
- * #EINA_TRUE is returned.
+ * @p buf can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
  */
 #define eina_ustrbuf_prepend_n(buf, str, maxlen)      eina_ustrbuf_insert_n(buf, str, maxlen, 0)
 
@@ -334,8 +334,8 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This macro is calling eina_ustrbuf_insert_length() at position 0. If
- * @p buf can't prepend it, #EINA_FALSE is returned, otherwise
- * #EINA_TRUE is returned.
+ * @p buf can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
  */
 #define eina_ustrbuf_prepend_length(buf, str, length) eina_ustrbuf_insert_length(buf, str, length, 0)
 
@@ -348,8 +348,8 @@ EAPI Eina_Bool eina_ustrbuf_insert_char(Eina_UStrbuf *buf, Eina_Unicode c, size_
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This macro is calling eina_ustrbuf_insert_Eina_Unicode *() at position 0. If
- * @p buf can't prepend it, #EINA_FALSE is returned, otherwise
- * #EINA_TRUE is returned.
+ * @p buf can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
  */
 #define eina_ustrbuf_prepend_char(buf, c) eina_ustrbuf_insert_char(buf, c, 0)
 

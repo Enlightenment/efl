@@ -476,8 +476,8 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRING;
  * pointer to an #Eina_Value_Array.  For your convenience, use
  * eina_value_array_setup().
  *
- * eina_value_get() and eina_value_pget() takes a pointer to
- * #Eina_Value_Array, it's an exact copy of the current structure in
+ * eina_value_get() and eina_value_pget() takes a pointer
+ * to #Eina_Value_Array, it's an exact copy of the current structure in
  * use by value, no copies are done.
  *
  * @since 1.2
@@ -495,13 +495,12 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY;
  * eina_value_set() takes an #Eina_Value_List where just @c subtype is
  * used. If there is an @c list, it will be copied (including each
  * item) and its contents must be properly configurable as @c
- * subtype expects. eina_value_pset() takes a pointer to an
- * #Eina_Value_List.  For your convenience, use
- * eina_value_list_setup().
+ * subtype expects. eina_value_pset() takes a pointer to an #Eina_Value_List.
+ * For your convenience, use eina_value_list_setup().
  *
- * eina_value_get() and eina_value_pget() takes a pointer to
- * #Eina_Value_List, it's an exact copy of the current structure in
- * use by value, no copies are done.
+ * eina_value_get() and eina_value_pget() takes a pointer to #Eina_Value_List,
+ * it's an exact copy of the current structure in use by value, no copies are
+ * done.
  *
  * @since 1.2
  */
@@ -522,9 +521,9 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_LIST;
  * takes a pointer to an #Eina_Value_Hash.  For your convenience, use
  * eina_value_hash_setup().
  *
- * eina_value_get() and eina_value_pget() takes a pointer to
- * #Eina_Value_Hash, it's an exact copy of the current structure in
- * use by value, no copies are done.
+ * eina_value_get() and eina_value_pget() takes a pointer to #Eina_Value_Hash,
+ * it's an exact copy of the current structure in use by value, no copies are
+ * done.
  *
  * @note be aware that hash data is always an allocated memory of size
  *       defined by @c subtype->value_size. If your @c subtype is an
@@ -557,9 +556,8 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL;
  * eina_value_set() takes an #Eina_Value_Blob
  * eina_value_pset() takes a pointer to #Eina_Value_Blob.
  *
- * eina_value_get() and eina_value_pget() takes a pointer to
- * #Eina_Value_Blob and it's an exact copy of value, no allocations
- * are made.
+ * eina_value_get() and eina_value_pget() takes a pointer to #Eina_Value_Blob
+ * and it's an exact copy of value, no allocations are made.
  *
  * Memory is untouched unless you provide @c ops (operations) pointer.
  *
@@ -578,12 +576,11 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BLOB;
  * eina_value_set() takes an #Eina_Value_Struct where just @c desc is
  * used. If there is an @c memory, it will be copied (including each
  * member) and its contents must be properly configurable as @c desc
- * expects. eina_value_pset() takes a pointer to an
- * #Eina_Value_Struct.  For your convenience, use
- * eina_value_struct_setup().
+ * expects. eina_value_pset() takes a pointer to an #Eina_Value_Struct. For
+ * your convenience, use eina_value_struct_setup().
  *
- * eina_value_get() and eina_value_pget() takes a pointer to
- * #Eina_Value_Struct, it's an exact copy of the current structure in
+ * eina_value_get() and eina_value_pget() takes a pointer
+ * to #Eina_Value_Struct, it's an exact copy of the current structure in
  * use by value, no copies are done.
  *
  * @since 1.2
@@ -628,8 +625,8 @@ struct _Eina_Value
  * eg. #EINA_VALUE_TYPE_ARRAY uses eina_value_array_set(),
  * eina_value_array_get() and so on.
  *
- * On failure, @c NULL is returned and either #EINA_ERROR_OUT_OF_MEMORY or
- * #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned and either #EINA_ERROR_OUT_OF_MEMORY
+ * or #EINA_ERROR_VALUE_FAILED is set.
  *
  * @note this calls creates from mempool and then uses
  *       eina_value_setup(). Consider using eina_value_flush() and
@@ -661,9 +658,8 @@ EAPI void eina_value_free(Eina_Value *value) EINA_ARG_NONNULL(1);
  * Initializes existing generic value storage. The members are managed using the
  * description specified by @a type.
  *
- * Some types may specify more operations, as an example
- * #EINA_VALUE_TYPE_ARRAY uses eina_value_array_set(),
- * eina_value_array_get() and so on.
+ * Some types may specify more operations, as an example #EINA_VALUE_TYPE_ARRAY
+ * uses eina_value_array_set(), eina_value_array_get() and so on.
  *
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
@@ -1107,8 +1103,8 @@ struct _Eina_Value_Array
  * Create a new generic value storage of type array. The members are
  * managed using the description specified by @a subtype.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
- * #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY
+ * or #EINA_ERROR_VALUE_FAILED is set.
  *
  * @note this creates from mempool and then uses
  *       eina_value_array_setup().  @see eina_value_free() @see
@@ -1129,9 +1125,9 @@ EAPI Eina_Value *eina_value_array_new(const Eina_Value_Type *subtype,
  * Initializes new generic value storage of type array with the given
  * @a subtype.
  *
- * This is the same as calling eina_value_set() with
- * #EINA_VALUE_TYPE_ARRAY followed by eina_value_pset() with the
- * #Eina_Value_Array description configured.
+ * This is the same as calling eina_value_set()
+ * with #EINA_VALUE_TYPE_ARRAY followed by eina_value_pset() with
+ * the #Eina_Value_Array description configured.
  *
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
@@ -1757,8 +1753,8 @@ struct _Eina_Value_List
  * Create a new generic value storage of type list. The members are
  * managed using the description specified by @a subtype.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
- * #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY
+ * or #EINA_ERROR_VALUE_FAILED is set.
  *
  * @note this creates from mempool and then uses
  *       eina_value_list_setup().
@@ -1779,9 +1775,9 @@ EAPI Eina_Value *eina_value_list_new(const Eina_Value_Type *subtype) EINA_ARG_NO
  * Initializes new generic value storage of type list with the given
  * @a subtype.
  *
- * This is the same as calling eina_value_set() with
- * #EINA_VALUE_TYPE_LIST followed by eina_value_pset() with the
- * #Eina_Value_List description configured.
+ * This is the same as calling eina_value_set()
+ * with #EINA_VALUE_TYPE_LIST followed by eina_value_pset() with
+ * the #Eina_Value_List description configured.
  *
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
@@ -2383,8 +2379,8 @@ struct _Eina_Value_Hash
  * Create a new generic value storage of type hash. The members are
  * managed using the description specified by @a subtype.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
- * #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY
+ * or #EINA_ERROR_VALUE_FAILED is set.
  *
  * @note this creates from mempool and then uses
  *       eina_value_hash_setup().
@@ -2407,9 +2403,9 @@ EAPI Eina_Value *eina_value_hash_new(const Eina_Value_Type *subtype, unsigned in
  * Initializes new generic value storage of type hash with the given
  * @a subtype.
  *
- * This is the same as calling eina_value_set() with
- * #EINA_VALUE_TYPE_HASH followed by eina_value_pset() with the
- * #Eina_Value_Hash description configured.
+ * This is the same as calling eina_value_set()
+ * with #EINA_VALUE_TYPE_HASH followed by eina_value_pset() with
+ * the #Eina_Value_Hash description configured.
  *
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
@@ -2864,9 +2860,8 @@ EAPI extern const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STR
  * specified as _Eina_Value_Struct_Operations::find_member(). For
  * structures with huge number of members, consider using a better
  * find_member function to quickly finding it! There are two helper
- * operations provided to help this:
- * #EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH and
- * #EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE, both depend on properly
+ * operations provided to help this: #EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH
+ * and #EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE, both depend on properly
  * set #_Eina_Value_Struct_Desc and #_Eina_Value_Struct_Member.
  *
  * @see #EINA_VALUE_STRUCT_MEMBER
@@ -2947,8 +2942,8 @@ struct _Eina_Value_Struct
  * Create a new generic value storage of type struct. The members are
  * managed using the description specified by @a desc.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
- * #EINA_ERROR_VALUE_FAILED is set.
+ * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY
+ * or #EINA_ERROR_VALUE_FAILED is set.
  *
  * @note this creates from mempool and then uses
  *       eina_value_struct_setup().
@@ -2969,9 +2964,9 @@ EAPI Eina_Value *eina_value_struct_new(const Eina_Value_Struct_Desc *desc) EINA_
  * Initializes new generic value storage of type struct with the given
  * @a desc.
  *
- * This is the same as calling eina_value_set() with
- * #EINA_VALUE_TYPE_STRUCT followed by eina_value_pset() with the
- * #Eina_Value_Struct description configured.
+ * This is the same as calling eina_value_set()
+ * with #EINA_VALUE_TYPE_STRUCT followed by eina_value_pset() with
+ * the #Eina_Value_Struct description configured.
  *
  * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.

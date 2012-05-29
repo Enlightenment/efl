@@ -558,10 +558,9 @@ EAPI int eina_inarray_search_sorted(const Eina_Inarray *array,
  *
  * Call @a function for every given data in @a array.
  *
- * Safe way to iterate over an array. @p function should return
- * #EINA_TRUE as long as you want the function to continue iterating,
- * by returning #EINA_FALSE it will stop and return #EINA_FALSE as a
- * result.
+ * Safe way to iterate over an array. @p function should return #EINA_TRUE
+ * as long as you want the function to continue iterating, by
+ * returning #EINA_FALSE it will stop and return #EINA_FALSE as a result.
  *
  * The data given to @a function are the pointer to member memory
  * itself.
@@ -607,8 +606,8 @@ EAPI unsigned int eina_inarray_count(const Eina_Inarray *array) EINA_ARG_NONNULL
  * This function returns a newly allocated iterator associated to
  * @p array.
  *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * If the memory can not be allocated, NULL is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
  * returned.
  *
  * @warning if the array structure changes then the iterator becomes
@@ -629,8 +628,8 @@ EAPI Eina_Iterator *eina_inarray_iterator_new(const Eina_Inarray *array) EINA_MA
  *
  * Unlike eina_inarray_iterator_new(), this will walk the array backwards.
  *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * If the memory can not be allocated, NULL is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
  * returned.
  *
  * @warning if the array structure changes then the iterator becomes
@@ -649,8 +648,8 @@ EAPI Eina_Iterator *eina_inarray_iterator_reversed_new(const Eina_Inarray *array
  * This function returns a newly allocated accessor associated to
  * @p array.
  *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid accessor is
+ * If the memory can not be allocated, NULL is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid accessor is
  * returned.
  *
  * @since 1.2

@@ -202,8 +202,8 @@ static inline Eina_Rbtree *eina_rbtree_inline_lookup(const Eina_Rbtree *root, co
  * NULL, this function still returns a valid iterator that will always
  * return false on eina_iterator_next(), thus keeping API sane.
  *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * If the memory can not be allocated, @c NULL is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
  * returned.
  *
  * @warning if the rbtree structure changes then the iterator becomes
@@ -223,8 +223,8 @@ EAPI Eina_Iterator        *eina_rbtree_iterator_prefix(const Eina_Rbtree *root) 
  * NULL, this function still returns a valid iterator that will always
  * return false on eina_iterator_next(), thus keeping API sane.
  *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * If the memory can not be allocated, @c NULL is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
  * returned.
  *
  * @warning if the rbtree structure changes then the iterator becomes
@@ -244,8 +244,8 @@ EAPI Eina_Iterator        *eina_rbtree_iterator_infix(const Eina_Rbtree *root) E
  * NULL, this function still returns a valid iterator that will always
  * return false on eina_iterator_next(), thus keeping API sane.
  *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
+ * If the memory can not be allocated, @c NULL is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
  * returned.
  *
  * @warning if the rbtree structure changes then the iterator becomes

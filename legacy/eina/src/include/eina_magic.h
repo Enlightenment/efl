@@ -232,8 +232,8 @@ EAPI extern Eina_Error EINA_ERROR_MAGIC_FAILED;
 /**
  * @def EINA_MAGIC_SET(d, m)
  * Set the magic number of @p d to @p m. @p d must be a valid pointer
- * to a structure holding an Eina magic number declaration. Use
- * #EINA_MAGIC to add such declaration.
+ * to a structure holding an Eina magic number declaration.
+ * Use #EINA_MAGIC to add such declaration.
  *
  * If the magic feature of Eina is disabled, #EINA_MAGIC_CHECK is just
  * the value @c 0.

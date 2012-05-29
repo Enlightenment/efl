@@ -203,8 +203,8 @@ EAPI void      eina_accessor_free(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
  *
  * This function retrieves the data of the element pointed by
  * @p accessor at the porition @p position, and stores it in
- * @p data. If @p accessor is @c NULL or if an error occurred,
- * #EINA_FALSE is returned, otherwise EINA_TRUE is returned.
+ * @p data. If @p accessor is @c NULL or if an error occurred, #EINA_FALSE
+ * is returned, otherwise #EINA_TRUE is returned.
  */
 EAPI Eina_Bool eina_accessor_data_get(Eina_Accessor *accessor,
                                       unsigned int   position,

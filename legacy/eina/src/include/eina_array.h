@@ -253,8 +253,8 @@ struct _Eina_Array
  * another element will increase the buffer by @p step elements again.
  *
  * This function return a valid array on success, or @c NULL if memory
- * allocation fails. In that case, the error is set to
- * #EINA_ERROR_OUT_OF_MEMORY.
+ * allocation fails. In that case, the error is set
+ * to #EINA_ERROR_OUT_OF_MEMORY.
  */
 EAPI Eina_Array *eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
@@ -265,8 +265,8 @@ EAPI Eina_Array *eina_array_new(unsigned int step) EINA_WARN_UNUSED_RESULT EINA_
  *
  * This function frees @p array. It calls first eina_array_flush() then
  * free the memory of the pointer. It does not free the memory
- * allocated for the elements of @p array. To free them, use
- * #EINA_ARRAY_ITER_NEXT. For performance reasons, there is no check
+ * allocated for the elements of @p array. To free them,
+ * use #EINA_ARRAY_ITER_NEXT. For performance reasons, there is no check
  * of @p array.
  */
 EAPI void        eina_array_free(Eina_Array *array) EINA_ARG_NONNULL(1);

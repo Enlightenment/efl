@@ -36,8 +36,8 @@
  * @param l2 The length of the second span.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * This function returns #EINA_TRUE if the  given spans intersect,
- * #EINA_FALSE otherwise.
+ * This function returns #EINA_TRUE if the  given spans intersect, #EINA_FALSE
+ * otherwise.
  */
 static inline int
 eina_spans_intersect(int c1, int l1, int c2, int l2)
@@ -90,9 +90,9 @@ eina_rectangle_coords_from(Eina_Rectangle *r, int x, int y, int w, int h)
  * @param r2 The second rectangle.
  * @return #EINA_TRUE if the rectangles intersect, #EINA_FALSE otherwise.
  *
- * This function returns #EINA_TRUE if @p r1 and @p r2 intersect,
- * #EINA_FALSE otherwise. No check is done on @p r1 and @p r2, so they
- * must be valid rectangles.
+ * This function returns #EINA_TRUE if @p r1 and @p r2 intersect, #EINA_FALSE
+ * otherwise. No check is done on @p r1 and @p r2, so they must be valid
+ * rectangles.
  */
 static inline Eina_Bool
 eina_rectangles_intersect(const Eina_Rectangle *r1, const Eina_Rectangle *r2)

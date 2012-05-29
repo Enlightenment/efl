@@ -113,9 +113,8 @@ static const char EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH_STR[] =
  * eina_init().
  *
  * This function sets up the error module of Eina and registers the
- * errors #EINA_ERROR_CONVERT_0X_NOT_FOUND,
- * #EINA_ERROR_CONVERT_P_NOT_FOUND and
- * #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH.
+ * errors #EINA_ERROR_CONVERT_0X_NOT_FOUND, #EINA_ERROR_CONVERT_P_NOT_FOUND
+ * and #EINA_ERROR_CONVERT_OUTRUN_STRING_LENGTH.
  *
  * @see eina_init()
  */

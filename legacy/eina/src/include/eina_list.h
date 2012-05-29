@@ -1292,9 +1292,9 @@ static inline unsigned int eina_list_count(const Eina_List *list) EINA_PURE;
  * will always return false on eina_iterator_next(), thus keeping API
  * sane.
  *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
- * returned.
+ * If the memory can not be allocated, NULL is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator
+ * is returned.
  *
  * @warning @p list must be a pointer to the first element of the list.
  *
@@ -1319,9 +1319,9 @@ EAPI Eina_Iterator        *eina_list_iterator_new(const Eina_List *list) EINA_MA
  *
  * Unlike eina_list_iterator_new(), this will walk the list backwards.
  *
- * If the memory can not be allocated, NULL is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
- * returned.
+ * If the memory can not be allocated, NULL is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator
+ * is returned.
  *
  * @warning @p list must be a pointer to the first element of the list.
  *

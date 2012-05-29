@@ -352,8 +352,8 @@ eina_strbuf_common_reset(size_t csize, Eina_Strbuf *buf)
  * This function appends @p str to @p buf. It computes the length of
  * @p str, so is slightly slower than eina_strbuf_common_append_length(). If
  * the length is known beforehand, consider using that variant. If
- * @p buf can't append it, #EINA_FALSE is returned, otherwise
- * #EINA_TRUE is returned.
+ * @p buf can't append it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
+ * returned.
  *
  * @see eina_strbuf_common_append()
  * @see eina_strbuf_common_append_length()
@@ -565,8 +565,8 @@ eina_strbuf_common_insert_length(size_t csize,
  * @param c The char to append.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This function inserts @p c to @p buf. If it can not insert it,
- * #EINA_FALSE is returned, otherwise #EINA_TRUE is returned.
+ * This function inserts @p c to @p buf. If it can not insert it, #EINA_FALSE
+ * is returned, otherwise #EINA_TRUE is returned.
  */
 Eina_Bool
 eina_strbuf_common_append_char(size_t csize, Eina_Strbuf *buf, const void *c)

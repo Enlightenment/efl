@@ -254,8 +254,7 @@ EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
  *
  * The region defined by @a x, @a y, @a w, @a h will be divided in to a grid of
  * tiles of width @a tile_w and height @p tile_h, the returned iterator will
- * iterate over every tile in the grid having as its data a
- * #Eina_Tile_Grid_Info.
+ * iterate over every tile in the grid having as its data a #Eina_Tile_Grid_Info.
  *
  * @note This is a convenience function, iterating over the returned iterator is
  * equivalent to calling eina_tile_grid_slicer_setup() and calling

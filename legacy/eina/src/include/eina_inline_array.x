@@ -51,8 +51,8 @@ EAPI Eina_Bool eina_array_grow(Eina_Array *array);
  * This function appends @p data to @p array. For performance
  * reasons, there is no check of @p array. If it is @c NULL or
  * invalid, the program may crash. If @p data is @c NULL, or if an
- * allocation is necessary and fails, #EINA_FALSE is returned and
- * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, #EINA_TRUE is
+ * allocation is necessary and fails, #EINA_FALSE is returned
+ * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, #EINA_TRUE is
  * returned.
  */
 
