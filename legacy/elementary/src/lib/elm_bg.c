@@ -22,9 +22,9 @@ struct _Elm_Bg_Smart_Data
                                          * to give life to "img" */
    Elm_Bg_Option         option;
    struct
-   {
-      Evas_Coord w, h;
-   } load_opts;
+     {
+        Evas_Coord w, h;
+     } load_opts;
 };
 
 #define ELM_BG_DATA_GET(o, sd) \
@@ -191,7 +191,7 @@ elm_bg_add(Evas_Object *parent)
 
 static void
 _elm_bg_file_reload(void *data, Evas_Object *obj,
-		    const char *emission __UNUSED__, const char *source __UNUSED__)
+                    const char *emission __UNUSED__, const char *source __UNUSED__)
 {
   Evas_Object *bg = data;
   const char *file;
@@ -232,8 +232,8 @@ elm_bg_file_set(Evas_Object *obj,
         sd->img = edje_object_add
             (evas_object_evas_get(ELM_WIDGET_DATA(sd)->resize_obj));
         ret = edje_object_file_set(sd->img, file, group);
-	edje_object_signal_callback_del(sd->img, "edje,change,file", "edje", _elm_bg_file_reload);
-	edje_object_signal_callback_add(sd->img, "edje,change,file", "edje", _elm_bg_file_reload, obj);
+        edje_object_signal_callback_del(sd->img, "edje,change,file", "edje", _elm_bg_file_reload);
+        edje_object_signal_callback_add(sd->img, "edje,change,file", "edje", _elm_bg_file_reload, obj);
      }
    else
      {
