@@ -119,3 +119,4 @@
 
         * Prepending items to a genlist no longer causes the selected item to
           scroll out of the viewport
+        * Collapsing tree items in genlist now animate properly

@@ -6209,7 +6209,7 @@ _tree_effect_animator_cb(void *data)
                }
              else if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
                {
-                  if (expanded_next_it->item->scrl_y >= expanded_next_it->item->old_scrl_y) //did not calculate next item position
+                  if (expanded_next_it->item->scrl_y > expanded_next_it->item->old_scrl_y) //did not calculate next item position
                      expanded_next_it->item->old_scrl_y = cvy + cvh;
 
                   if (expanded_next_it->item->old_scrl_y > (cvy + cvh))
