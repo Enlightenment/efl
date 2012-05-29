@@ -5447,6 +5447,7 @@ elm_genlist_block_count_set(Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (count < 1) return;
    wd->max_items_per_block = count;
    wd->item_cache_max = wd->max_items_per_block * 2;
    _item_cache_clean(wd);
