@@ -23,6 +23,7 @@ includesdir = $(includedir)/eet-@VMAJ@
 lib_LTLIBRARIES = libeet.la
 
 libeet_la_SOURCES = \
+Eet_private.h \
 eet_alloc.c \
 eet_lib.c \
 eet_data.c \
@@ -41,7 +42,7 @@ libeet_la_CFLAGS = @EET_CFLAGS@ @DEBUG_CFLAGS@
 libeet_la_LIBADD = @GNUTLS_LIBS@ @OPENSSL_LIBS@ @EFL_COVERAGE_LIBS@ @EET_LIBS@ @EINA_LIBS@ @EVIL_LIBS@ -lz -ljpeg -lm
 libeet_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
-EXTRA_DIST = Eet_private.h
+EXTRA_DIST = lz4/README
 
 clean-local:
 	@rm -rf *.gcno eet_amalgamation.c
