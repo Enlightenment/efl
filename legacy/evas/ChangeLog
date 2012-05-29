@@ -760,3 +760,10 @@
 2012-05-24  Carsten Haitzler (The Rasterman)
 
         * Fix evas_object_image_memfile_set() on non-linux systems.
+
+2012-05-29  ChunEon Park (Hermet)
+
+	* Fixed to clean up when map actually changed. Now rendering updates will be
+     correct after evas_map acutally disabled for the smart object.
+
+

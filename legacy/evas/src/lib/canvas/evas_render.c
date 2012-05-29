@@ -1199,6 +1199,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              obj->func->render(obj, e->engine.data.output, context, surface,
                                off_x, off_y);
           }
+        if (obj->changed_map) clean_them = EINA_TRUE;
      }
    RDI(level);
    RD("      }\n");
