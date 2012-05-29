@@ -609,13 +609,14 @@ elm_box_clear(Evas_Object *obj)
 }
 
 EAPI void
-elm_box_unpack(Evas_Object *obj, Evas_Object *subobj)
+elm_box_unpack(Evas_Object *obj,
+               Evas_Object *subobj)
 {
    ELM_BOX_CHECK(obj);
    ELM_BOX_DATA_GET(obj, sd);
 
-   elm_widget_sub_object_del(obj, subobj);
-   evas_object_box_remove(ELM_WIDGET_DATA(sd)->resize_obj, subobj);
+   if (evas_object_box_remove(ELM_WIDGET_DATA(sd)->resize_obj, subobj))
+     elm_widget_sub_object_del(obj, subobj);
 }
 
 EAPI void
