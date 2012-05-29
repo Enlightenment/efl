@@ -119,7 +119,7 @@
  * @dontinclude bg_example_01.c
  *
  * The full code for this example can be found at @ref bg_example_01_c,
- * in the function @c test_bg_plain. It's part of the @c elementar_test
+ * in the function @c test_bg_plain. It's part of the @c elementary_test
  * suite, and thus has the code for the three examples referenced by this
  * documentation.
  *
@@ -160,7 +160,7 @@
  * @dontinclude bg_example_02.c
  *
  * The full code for this example can be found at @ref bg_example_02_c,
- * in the function @c test_bg_image. It's part of the @c elementar_test
+ * in the function @c test_bg_image. It's part of the @c elementary_test
  * suite, and thus has the code for the three examples referenced by this
  * documentation.
  *
@@ -229,7 +229,7 @@
  * The full code for this example can be found at @ref bg_example_03_c, in the
  * function @c test_bg_options, with the callbacks @c _cb_overlay_changed, @c
  * _cb_color_changed and @c _cb_radio_changed defined in the beginning of the
- * file. It's part of the @c elementar_test suite, and thus has the code for
+ * file. It's part of the @c elementary_test suite, and thus has the code for
  * the three examples referenced by this documentation.
  *
  * This example will show the properties available for the background object,
@@ -379,7 +379,7 @@
  * label magnetic(except if it's the center label):
  * @until }
  *
- * This callback enables or disables the magnetic propertty of the center
+ * This callback enables or disables the magnetic property of the center
  * label:
  * @until }
  *
@@ -407,7 +407,7 @@
  * do this all three positions would be enabled:
  * @until RIGHT
  *
- * Having the the enabled positions we now add a smart callback to change
+ * Having the enabled positions we now add a smart callback to change
  * which position is magnetic, so that only the last selected position is
  * magnetic:
  * @until NULL
@@ -424,7 +424,7 @@
  * @until object_show
  *
  * And another actionslider, in this one the indicator starts on the left.
- * It has labels only in the center and right, and both bositions are
+ * It has labels only in the center and right, and both positions are
  * magnetic. Because the left doesn't have a label and is not magnetic once
  * the indicator leaves it can't return:
  * @skipline actionslider_add
@@ -614,7 +614,7 @@
  * quick launch, so this first call can't be avoided.
  *
  * If you ran this example from your "bindir" installation
- * directiory, no output will emerge from these both attempts -- it
+ * directory, no output will emerge from these both attempts -- it
  * will find the "magic" file there registered and set the prefixes
  * silently. Otherwise, you could get something like:
  @verbatim
@@ -647,7 +647,7 @@
  * @skip by using this policy
  * @until elm_win_autodel_set
  * we demonstrate the use of Elementary policies. The policy defining
- * under which circunstances our application should quit automatically
+ * under which circumstances our application should quit automatically
  * is set to when its last window is closed (this one has just one
  * window, though). This will save us from having to set a callback
  * ourselves on the window, like done in @ref bg_example_01_c "this"
@@ -756,7 +756,7 @@
  * when it can't find them in the default theme. Another way to do this
  * is to set the theme search order using elm_theme_set(), but this requires
  * that the developer is careful not to override any user configuration.
- * That can be helped by adding our theme to the end of whatver is already
+ * That can be helped by adding our theme to the end of whatever is already
  * set, like in the following snippet.
  * @code
  * char buf[4096];
@@ -1145,7 +1145,7 @@
  * @skip static void
  * @until }
  *
- * The main function doesn't have antyhing special. Creation of box, initial
+ * The main function doesn't have anything special. Creation of box, initial
  * buttons and some callback setting. The only part worth mentioning is the
  * initialization of our application data.
  * @skip tdata.box
@@ -1259,12 +1259,12 @@
  * This example explains how to set max and min year to be displayed
  * by a calendar object. This means that user won't be able to
  * see or select a date before and after selected years.
- * By default, limits are 1902 and maximun value will depends
+ * By default, limits are 1902 and maximum value will depends
  * on platform architecture (year 2037 for 32 bits); You can
  * read more about time functions on @c ctime manpage.
  *
  * Straigh to the point, to set it is enough to call
- * elm_calendar_min_max_year_set(). First value is minimun year, second
+ * elm_calendar_min_max_year_set(). First value is minimum year, second
  * is maximum. If first value is negative, it won't apply limit for min
  * year, if the second one is negative, won't apply for max year.
  * Setting both to negative value will clear limits (default state):
@@ -1373,7 +1373,7 @@
  * @li mark periodicity
  *
  * Style defines the kind of mark will be displayed over marked day,
- * on caledar. Default theme supports @b holiday and @b checked.
+ * on calendar. Default theme supports @b holiday and @b checked.
  * If more is required, is possible to set a new theme to calendar
  * widget using elm_object_style_set(), and use
  * the signal that will be used by such marks.
@@ -1942,7 +1942,7 @@
  *
  * It's enough to display a world map inside our window. But usually you'll
  * need to let user interact with the map. We need to place some buttons,
- * so the user could control the map. It's done on the followin code.
+ * so the user could control the map. It's done on the following code.
  * If you don't know about boxes, or buttons, check their examples,
  * @ref box_example_01 "Box Example 1" and
  * @ref button_example_01 "Button Example 1".
@@ -2039,7 +2039,7 @@
  * @skipline elm_map_overlay_class_add
  * @until elm_map_overlay_icon_set
  *
- * Next we'll create some overlays representing cities and coutries.
+ * Next we'll create some overlays representing cities and countries.
  * We set the data for the overlay so that can be used later when 
  * clicked callback is called.
  * We'll append them into city class to be grouped.
@@ -2158,7 +2158,7 @@
  * util functions, so we could get coordinates for this address. These
  * functions return an #Elm_Map_Name handle for us.
  * Function elm_map_name_geo_request() will do this job for us,
- * but it's an assyncronous function, since it requires this
+ * but it's an asynchronous function, since it requires this
  * information from the server.
  *
  * That's the reason we need to wait for
@@ -2173,7 +2173,7 @@
  *
  * To trace a route we need to know how the user will go through the path.
  * Let's suppose he'll be walking, but doesn't like to walk, so we
- * need to choose the shortest path intead of the route that would
+ * need to choose the shortest path instead of the route that would
  * made him spend less time. Coordinates of the point from where he will
  * start and of the destination point need to be passed as well.
  *
@@ -2213,7 +2213,7 @@
  * @li The first added item remains centeres, i.e., it's the selected item.
  *
  * To add items, we are just appending it on a loop, using function
- * elm_diskselector_item_append(), that will be better exaplained on
+ * elm_diskselector_item_append(), that will be better explained on
  * items management example.
  *
  * For a circular diskselector, check the second widget. A circular
@@ -2292,7 +2292,7 @@
  * @until }
  *
  * All items are included on diskselector after last one. You @b can't
- * preprend items.
+ * prepend items.
  *
  * The first parameter of elm_diskselector_item_append() is the diskselector
  * object, that we are receiving as data on our callback function.
@@ -2305,7 +2305,7 @@
  * @skipline _add_ic_cb
  * @until }
  *
- * If an icon is required, you can pass it as third paramenter on our
+ * If an icon is required, you can pass it as third parameter on our
  * elm_diskselector_item_append() function. It will be place on the
  * left side of item's label, that will be shifted to right a bit.
  *
@@ -2319,7 +2319,7 @@
  *
  * To set a callback function that will be called every time an item is
  * selected, i.e., everytime the diskselector stops with this item in
- * center position, just pass the function as fourth paramenter.
+ * center position, just pass the function as fourth parameter.
  *
  * <b> Appending an item with callback function for selected with data: </b>
  * @dontinclude diskselector_example_02.c
@@ -2527,7 +2527,7 @@
  * @skipline _prepend_cb
  * @until }
  *
- * The item will be placed on the begining of the list,
+ * The item will be placed on the beginning of the list,
  * i.e. it will be the first one.
  *
  * The first parameter of elm_list_item_prepend() is the list
@@ -2548,7 +2548,7 @@
  * @skipline _add_ic_cb
  * @until }
  *
- * If an icon is required, you can pass it as third paramenter on our
+ * If an icon is required, you can pass it as third parameter on our
  * elm_list_item_append() function. It will be place on the
  * left side of item's label. If an icon is wanted on the right side,
  * it should be passed as fourth parameter.
@@ -2564,7 +2564,7 @@
  *
  * To set a callback function that will be called every time an item is
  * selected, i.e., everytime the list stops with this item in
- * center position, just pass the function as fifth paramenter.
+ * center position, just pass the function as fifth parameter.
  *
  * <b> Appending an item with callback function for selected with data: </b>
  * @dontinclude list_example_03.c
@@ -2832,7 +2832,7 @@
  *
  * But, if you need to add some items that can have or not a label, but
  * want that all of them looks the same way, with icon at left, just add
- * an empty string label. It's done on our example to ilustrate that:
+ * an empty string label. It's done on our example to illustrate that:
  * @skipline icon_add
  * @until item_add
  *
@@ -3161,7 +3161,7 @@
  * @page layout_example_01 Layout - Content, Table and Box
  *
  * This example shows how one can use the @ref Layout widget to create a
- * customized distribution of widgets on the screen, controled by an Edje theme.
+ * customized distribution of widgets on the screen, controlled by an Edje theme.
  * The full source code for this example can be found at @ref
  * layout_example_01_c.
  *
@@ -3218,7 +3218,7 @@
  * Notice that we just set size hints for every object, and call the function
  * elm_layout_table_pack(), which does all the work. It will place the elements
  * in the specified row/column, with row and column span if required, and then
- * the object's size and position will be controled by the layout widget. It
+ * the object's size and position will be controlled by the layout widget. It
  * will also respect size hints, alignments and weight properties set to these
  * widgets. The resulting distribution on the screen depends on the table
  * properties (described in the theme), the size hints set on each widget, and
@@ -3238,7 +3238,7 @@
  * also described in the Edje documentation.
  *
  * This box area is similar to the @ref Box widget of elementary, with the
- * difference that its position and properties are controled by the theme of the
+ * difference that its position and properties are controlled by the theme of the
  * layout. It also contains more than one API to add items to it, since the
  * items position now is defined in terms of a list of items, not a matrix.
  * There's the first position (can have items added to it with
@@ -3361,7 +3361,7 @@
  * code for this example can be found at @ref layout_example_03_c.
  *
  * In this exmaple we will use another group from the same layout theme file
- * used in @ref layout_example_01. Its instanciation and loading happens in the
+ * used in @ref layout_example_01. Its instantiation and loading happens in the
  * following lines:
  *
  * @dontinclude layout_example_03.c
@@ -3493,7 +3493,7 @@
   * will use all of them:
   * @until RIGHT
   *
-  * We are also going to set the hitsize to the entire flip(in all directions)
+  * We are also going to set the hintsize to the entire flip(in all directions)
   * to make our flip very easy to interact with:
   * @until RIGHT
   *
@@ -3504,7 +3504,7 @@
   * interaction mode and animates the flip is called:
   * @until }
   * @note The elm_flip_go() call here serves no purpose other than to
-  * ilustrate that it's possible to animate the flip programmatically.
+  * illustrate that it's possible to animate the flip programmatically.
   *
   * Our example will look like this:
   *
@@ -4204,7 +4204,7 @@
  * @until Item;
  *
  * That path will be used to index an image, to be swallowed into one
- * of the item's icon spots. The imagens themselves are distributed
+ * of the item's icon spots. The images themselves are distributed
  * with Elementary:
  * @dontinclude gengrid_example.c
  * @skip static const char *imgs
@@ -5083,7 +5083,7 @@
  * @page progressbar_example Progress bar widget example
  *
  * This application is a thorough example of the progress bar widget,
- * consisting of a window with varios progress bars, each with a given
+ * consisting of a window with various progress bars, each with a given
  * look/style one can give to those widgets. With two auxiliary
  * buttons, one can start or stop a timer which will fill in the bars
  * in synchrony, simulating an underlying task being completed.
@@ -5179,7 +5179,7 @@
  *
  * In this example we will have 3 notifys in 3 different positions. The first of
  * which will dissapear after 5 seconds or when a click outside it occurs, the
- * second and third will not dissapear and differ from each other only in
+ * second and third will not disappear and differ from each other only in
  * position.
  *
  * We start our example with the usual stuff you've seen in other examples:
@@ -5327,7 +5327,7 @@
  * @dontinclude check_example_01.c
  *
  * This example will show 2 checkboxes, one with just a label and the second
- * one with both a label and an icon. This example also ilustrates how to
+ * one with both a label and an icon. This example also illustrates how to
  * have the checkbox change the value of a variable and how to react to those
  * changes.
  *
@@ -5495,7 +5495,7 @@
  * we use a spinner widget. We set it to the initial value of 3
  * (seconds), which will be probed by the next knob -- a button
  * starting the slideshow, de facto. Note that changing the transition
- * time while a slideshow is already happening will ajust its
+ * time while a slideshow is already happening will adjust its
  * transition time:
  * @dontinclude slideshow_example.c
  * @skip spin = elm_spinner_add
