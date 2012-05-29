@@ -1255,11 +1255,9 @@ EAPI void
 ecore_x_io_error_handler_set(void (*func)(void *data),
                              const void *data);
 EAPI int
-ecore_x_error_request_get(void);
-
-EAPI Ecore_X_Error_Code
-ecore_x_error_code_get(void);
-
+ ecore_x_error_request_get(void);
+EAPI int
+ ecore_x_error_code_get(void);
 EAPI Ecore_X_ID
 ecore_x_error_resource_id_get(void);
 

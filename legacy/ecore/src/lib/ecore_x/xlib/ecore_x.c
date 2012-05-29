@@ -1228,7 +1228,7 @@ static void
 _ecore_x_window_manage_error(void *data __UNUSED__)
 {
    if ((ecore_x_error_request_get() == X_ChangeWindowAttributes) &&
-       (ecore_x_error_code_get() == ECORE_X_ERROR_CODE_BAD_ACCESS))
+       (ecore_x_error_code_get() == BadAccess))
      _ecore_x_window_manage_failed = 1;
 }
 

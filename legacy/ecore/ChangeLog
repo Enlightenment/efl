@@ -683,11 +683,6 @@
         to keep ticking off. also happens to be an issue with
         iterating the mainloop.
 
-2012-05-25 ChunEon Park (Hermet)
-
-        * Changed ecore_x_error_get() return type to Ecore_X_Error_Code from
-        int 
-
 2012-05-25 Rob Bradford
 
         * Make ecore_{software_x11, software_x11_8, software_x11_16, wayland,
