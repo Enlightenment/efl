@@ -602,7 +602,7 @@ _elm_image_drag_n_drop_cb(void *elm_obj,
         return EINA_TRUE;
      }
 
-   return FALSE;
+   return EINA_FALSE;
 }
 
 static void
