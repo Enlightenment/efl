@@ -72,8 +72,8 @@
  * object itself, while the @c part one is the name string of one
  * of the existing text parts in the Edje group implementing the
  * item's theme. This function @b must return a strdup'()ed string,
- * as the caller will free() it when done. See
- * #Elm_Gengrid_Item_Text_Get_Cb.
+ * as the caller will free() it when done.
+ * See #Elm_Gengrid_Item_Text_Get_Cb.
  * - @c func.content_get - This function is called when an item object
  * is actually created. The @c data parameter will point to the
  * same data passed to elm_gengrid_item_append() and related item
@@ -117,8 +117,8 @@
  * If an item changes (internal (boolean) state, text or content
  * changes), then use elm_gengrid_item_update() to have gengrid
  * update the item with the new state. A gengrid will re-"realize"
- * the item, thus calling the functions in the
- * #Elm_Gengrid_Item_Class set for that item.
+ * the item, thus calling the functions in the #Elm_Gengrid_Item_Class
+ * set for that item.
  *
  * To programmatically (un)select an item, use
  * elm_gengrid_item_selected_set(). To get its selected state use
@@ -635,11 +635,10 @@ EAPI Elm_Object_Item             *elm_gengrid_last_item_get(const Evas_Object *o
  *
  * This sets the scrollbar visibility policy for the given gengrid
  * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is
- * made visible if it is needed, and otherwise kept hidden.
- * #ELM_SCROLLER_POLICY_ON turns it on all the time, and
- * #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
- * respectively for the horizontal and vertical scrollbars. Default is
- * #ELM_SCROLLER_POLICY_AUTO
+ * made visible if it is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON
+ * turns it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
+ * This applies respectively for the horizontal and vertical scrollbars.
+ * Default is #ELM_SCROLLER_POLICY_AUTO
  *
  * @see elm_gengrid_scroller_policy_get()
  *

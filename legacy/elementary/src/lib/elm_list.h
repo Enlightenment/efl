@@ -156,8 +156,7 @@ EAPI Eina_Bool                    elm_list_multi_select_get(const Evas_Object *o
  * Set which mode to use for the list object.
  *
  * @param obj The list object
- * @param mode One of #Elm_List_Mode: #ELM_LIST_COMPRESS, #ELM_LIST_SCROLL,
- * #ELM_LIST_LIMIT or #ELM_LIST_EXPAND.
+ * @param mode One of #Elm_List_Mode: #ELM_LIST_COMPRESS, #ELM_LIST_SCROLL, #ELM_LIST_LIMIT or #ELM_LIST_EXPAND.
  *
  * Set list's resize behavior, transverse axis scroll and
  * items cropping. See each mode's description for more details.
@@ -177,8 +176,7 @@ EAPI void                         elm_list_mode_set(Evas_Object *obj, Elm_List_M
  * Get the mode the list is at.
  *
  * @param obj The list object
- * @return One of #Elm_List_Mode: #ELM_LIST_COMPRESS, #ELM_LIST_SCROLL,
- * #ELM_LIST_LIMIT, #ELM_LIST_EXPAND or #ELM_LIST_LAST on errors.
+ * @return One of #Elm_List_Mode: #ELM_LIST_COMPRESS, #ELM_LIST_SCROLL, #ELM_LIST_LIMIT, #ELM_LIST_EXPAND or #ELM_LIST_LAST on errors.
  *
  * @note see elm_list_mode_set() for more information.
  *
@@ -299,14 +297,12 @@ EAPI void                         elm_list_bounce_get(const Evas_Object *obj, Ei
  * @param policy_h Horizontal scrollbar policy.
  * @param policy_v Vertical scrollbar policy.
  *
- * This sets the scrollbar visibility policy for the given scroller.
- * #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it
- * is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns
- * it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
- * This applies respectively for the horizontal and vertical scrollbars.
+ * This sets the scrollbar visibility policy for the given scroller. #ELM_SCROLLER_POLICY_AUTO
+ * means the scrollbar is made visible if it is needed, and otherwise kept
+ * hidden. #ELM_SCROLLER_POLICY_ON turns it on all the time, and #ELM_SCROLLER_POLICY_OFF
+ * always keeps it off. This applies respectively for the horizontal and vertical scrollbars.
  *
- * The both are disabled by default, i.e., are set to
- * #ELM_SCROLLER_POLICY_OFF.
+ * The both are disabled by default, i.e., are set to #ELM_SCROLLER_POLICY_OFF.
  *
  * @ingroup List
  */

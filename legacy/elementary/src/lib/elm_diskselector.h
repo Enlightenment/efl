@@ -215,14 +215,13 @@ EAPI void                   elm_diskselector_scroller_policy_get(const Evas_Obje
  * @param policy_h Horizontal scrollbar policy.
  * @param policy_v Vertical scrollbar policy.
  *
- * This sets the scrollbar visibility policy for the given scroller.
- * #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it
- * is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns
+ * This sets the scrollbar visibility policy for the given
+ * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if
+ * it is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns
  * it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
  * This applies respectively for the horizontal and vertical scrollbars.
  *
- * The both are disabled by default, i.e., are set to
- * #ELM_SCROLLER_POLICY_OFF.
+ * The both are disabled by default, i.e., are set to #ELM_SCROLLER_POLICY_OFF.
  *
  * @ingroup Diskselector
  */

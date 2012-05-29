@@ -2420,10 +2420,10 @@
  * We are just adding the list, so as you can see, defaults for it are:
  * @li Items are displayed vertically.
  * @li Only one item can be selected.
- * @li The list doesn't bouce.
+ * @li The list doesn't bounce.
  *
  * To add items, we are just appending it on a loop, using function
- * elm_list_item_append(), that will be better exaplained on
+ * elm_list_item_append(), that will be better explained on
  * items management example.
  * @dontinclude list_example_01.c
  * @skipline lbl[]

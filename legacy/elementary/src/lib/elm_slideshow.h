@@ -29,8 +29,8 @@
  * - @c func.get - When an item is displayed, this function is
  *   called, and it's where one should create the item object, de
  *   facto. For example, the object can be a pure Evas image object
- *   or an Elementary @ref Photocam "photocam" widget. See
- *   #SlideshowItemGetFunc.
+ *   or an Elementary @ref Photocam "photocam" widget.
+ *   See #SlideshowItemGetFunc.
  * - @c func.del - When an item is no more displayed, this function
  *   is called, where the user must delete any data associated to
  *   the item. See #SlideshowItemDelFunc.
@@ -82,7 +82,7 @@ struct _Elm_Slideshow_Item_Class
         SlideshowItemGetFunc get;
         SlideshowItemDelFunc del;
      } func;
-};   /**< #Elm_Slideshow_Item_Class member definitions */
+};   /**< member definitions of #Elm_Slideshow_Item_Class */
 
 /**
  * Add a new slideshow widget to the given parent Elementary

@@ -110,7 +110,7 @@ EAPI Evas_Coord                  elm_label_wrap_width_get(const Evas_Object *obj
  * will be shown at the end of the widget.
  *
  * @warning This doesn't work with slide(elm_label_slide_set()) or if the
- * chosen wrap method was ELM_WRAP_WORD.
+ * chosen wrap method was #ELM_WRAP_WORD.
  *
  * @ingroup Label
  */
@@ -157,7 +157,7 @@ EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool
 EAPI Eina_Bool                   elm_label_slide_get(const Evas_Object *obj);
 
 /**
- * @brief Set the slide duration(speed) of the label
+ * @brief Set the slide duration (speed) of the label
  *
  * @param obj The label object
  * @param duration The duration in seconds in moving text from slide begin position

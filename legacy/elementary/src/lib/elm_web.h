@@ -233,19 +233,17 @@ typedef enum
 /**
  * Callback type for the create_window hook.
  *
- * The function parameters are:
- * @li @p data User data pointer set when setting the hook function
- * @li @p obj The elm_web object requesting the new window
- * @li @p js Set to @c EINA_TRUE if the request was originated from
+ * @param data User data pointer set when setting the hook function.
+ * @param obj The elm_web object requesting the new window.
+ * @param js Set to @c EINA_TRUE if the request was originated from
  * JavaScript. @c EINA_FALSE otherwise.
- * @li @p window_features A pointer of #Elm_Web_Window_Features indicating
+ * @param window_features A pointer of #Elm_Web_Window_Features indicating
  * the features requested for the new window.
  *
- * The returned value of the function should be the @c elm_web widget where
- * the request will be loaded. That is, if a new window or tab is created,
- * the elm_web widget in it should be returned, and @b NOT the window
- * object.
- * Returning @c NULL should cancel the request.
+ * @return The @c elm_web widget where the request will be loaded. That is,
+ * if a new window or tab is created, the elm_web widget in it should be
+ * returned, and @b NOT the window object. Returning @c NULL should cancel
+ * the request.
  *
  * @see elm_web_window_create_hook_set()
  *
@@ -256,12 +254,11 @@ typedef Evas_Object *(*Elm_Web_Window_Open)(void *data, Evas_Object *obj, Eina_B
 /**
  * Callback type for the JS alert hook.
  *
- * The function parameters are:
- * @li @p data User data pointer set when setting the hook function
- * @li @p obj The elm_web object requesting the new window
- * @li @p message The message to show in the alert dialog
+ * @param data User data pointer set when setting the hook function.
+ * @param obj The elm_web object requesting the new window.
+ * @param message The message to show in the alert dialog.
  *
- * The function should return the object representing the alert dialog.
+ * @return The object representing the alert dialog.
  * Elm_Web will run a second main loop to handle the dialog and normal
  * flow of the application will be restored when the object is deleted, so
  * the user should handle the popup properly in order to delete the object
@@ -277,14 +274,13 @@ typedef Evas_Object *(*Elm_Web_Dialog_Alert)(void *data, Evas_Object *obj, const
 /**
  * Callback type for the JS confirm hook.
  *
- * The function parameters are:
- * @li @p data User data pointer set when setting the hook function
- * @li @p obj The elm_web object requesting the new window
- * @li @p message The message to show in the confirm dialog
- * @li @p ret Pointer to store the user selection. @c EINA_TRUE if
+ * @param data User data pointer set when setting the hook function.
+ * @param obj The elm_web object requesting the new window.
+ * @param message The message to show in the confirm dialog.
+ * @param ret Pointer to store the user selection. @c EINA_TRUE if
  * the user selected @c Ok, @c EINA_FALSE otherwise.
  *
- * The function should return the object representing the confirm dialog.
+ * @return The object representing the confirm dialog.
  * Elm_Web will run a second main loop to handle the dialog and normal
  * flow of the application will be restored when the object is deleted, so
  * the user should handle the popup properly in order to delete the object
@@ -300,17 +296,16 @@ typedef Evas_Object *(*Elm_Web_Dialog_Confirm)(void *data, Evas_Object *obj, con
 /**
  * Callback type for the JS prompt hook.
  *
- * The function parameters are:
- * @li @p data User data pointer set when setting the hook function
- * @li @p obj The elm_web object requesting the new window
- * @li @p message The message to show in the prompt dialog
- * @li @p def_value The default value to present the user in the entry
- * @li @p value Pointer to store the value given by the user. Must
+ * @param data User data pointer set when setting the hook function.
+ * @param obj The elm_web object requesting the new window.
+ * @param message The message to show in the prompt dialog.
+ * @param def_value The default value to present the user in the entry
+ * @param value Pointer to store the value given by the user. Must
  * be a malloc'ed string or @c NULL if the user canceled the popup.
- * @li @p ret Pointer to store the user selection. @c EINA_TRUE if
+ * @param ret Pointer to store the user selection. @c EINA_TRUE if
  * the user selected @c Ok, @c EINA_FALSE otherwise.
  *
- * The function should return the object representing the prompt dialog.
+ * @return The object representing the prompt dialog.
  * Elm_Web will run a second main loop to handle the dialog and normal
  * flow of the application will be restored when the object is deleted, so
  * the user should handle the popup properly in order to delete the object
@@ -326,19 +321,17 @@ typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, cons
 /**
  * Callback type for the JS file selector hook.
  *
- * The function parameters are:
- * @li @p data User data pointer set when setting the hook function
- * @li @p obj The elm_web object requesting the new window
- * @li @p allows_multiple @c EINA_TRUE if multiple files can be selected.
- * @li @p accept_types Mime types accepted
- * @li @p selected Pointer to store the list of malloc'ed strings
+ * @param data User data pointer set when setting the hook function.
+ * @param obj The elm_web object requesting the new window.
+ * @param allows_multiple @c EINA_TRUE if multiple files can be selected.
+ * @param accept_types Mime types accepted.
+ * @param selected Pointer to store the list of malloc'ed strings
  * containing the path to each file selected. Must be @c NULL if the file
- * dialog is canceled
- * @li @p ret Pointer to store the user selection. @c EINA_TRUE if
+ * dialog is canceled.
+ * @param ret Pointer to store the user selection. @c EINA_TRUE if
  * the user selected @c Ok, @c EINA_FALSE otherwise.
  *
- * The function should return the object representing the file selector
- * dialog.
+ * @return The object representing the file selector dialog.
  * Elm_Web will run a second main loop to handle the dialog and normal
  * flow of the application will be restored when the object is deleted, so
  * the user should handle the popup properly in order to delete the object
@@ -358,12 +351,11 @@ typedef Evas_Object *(*Elm_Web_Dialog_File_Selector)(void *data, Evas_Object *ob
  * console message hook will be called for the user to handle. There is no
  * default implementation of this hook.
  *
- * The function parameters are:
- * @li @p data User data pointer set when setting the hook function
- * @li @p obj The elm_web object that originated the message
- * @li @p message The message sent
- * @li @p line_number The line number
- * @li @p source_id Source id
+ * @param data User data pointer set when setting the hook function.
+ * @param obj The elm_web object that originated the message.
+ * @param message The message sent.
+ * @param line_number The line number.
+ * @param source_id Source id.
  *
  * @see elm_web_console_message_hook_set()
  *
@@ -375,7 +367,7 @@ typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char
  * Add a new web object to the parent.
  *
  * @param parent The parent object.
- * @return The new object or NULL if it cannot be created.
+ * @return The new object or @c NULL if it cannot be created.
  *
  * @see elm_web_uri_set()
  * @see elm_web_webkit_view_get()
@@ -413,7 +405,7 @@ EAPI const char* elm_web_useragent_get(const Evas_Object *obj);
  * interfere with elm_web behavior.
  *
  * @param obj The web object.
- * @return The internal ewk_view object or NULL if it does not
+ * @return The internal ewk_view object or @c NULL if it does not
  *         exist. (Failure to create or Elementary compiled without
  *         ewebkit)
  *
@@ -527,7 +519,7 @@ EAPI void              elm_web_console_message_hook_set(Evas_Object *obj, Elm_We
  * Gets the status of the tab propagation
  *
  * @param obj The web object to query
- * @return EINA_TRUE if tab propagation is enabled, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if tab propagation is enabled, @c EINA_FALSE otherwise
  *
  * @see elm_web_tab_propagate_set()
  *
@@ -559,7 +551,7 @@ EAPI void              elm_web_tab_propagate_set(Evas_Object *obj, Eina_Bool pro
  *
  * @param obj The web object
  * @param uri The URI to set
- * @return EINA_TRUE if the URI could be set, EINA_FALSE if an error occurred
+ * @return @c EINA_TRUE if the URI could be set, @c EINA_FALSE if an error occurred.
  *
  * @ingroup Web
  */
@@ -572,7 +564,7 @@ EAPI Eina_Bool         elm_web_uri_set(Evas_Object *obj, const char *uri);
  * stringshared.
  *
  * @param obj The web object
- * @return A stringshared internal string with the current URI, or NULL on
+ * @return A stringshared internal string with the current URI, or @c NULL on
  * failure
  *
  * @ingroup Web
@@ -586,7 +578,7 @@ EAPI const char       *elm_web_uri_get(const Evas_Object *obj);
  * stringshared.
  *
  * @param obj The web object
- * @return A stringshared internal string with the current title, or NULL on
+ * @return A stringshared internal string with the current title, or @c NULL on
  * failure
  *
  * @ingroup Web
@@ -631,7 +623,7 @@ EAPI void              elm_web_bg_color_get(const Evas_Object *obj, int *r, int 
  * The string returned must be freed by the user when it's done with it.
  *
  * @param obj The web object
- * @return A newly allocated string, or NULL if nothing is selected or an
+ * @return A newly allocated string, or @c NULL if nothing is selected or an
  * error occurred
  * 
  * @ingroup Web
@@ -663,7 +655,7 @@ EAPI void              elm_web_popup_selected_set(Evas_Object *obj, int index);
  * any memory and objects related to this popup can be freed.
  *
  * @param obj The web object
- * @return EINA_TRUE if the menu was successfully destroyed, or EINA_FALSE
+ * @return @c EINA_TRUE if the menu was successfully destroyed, or @c EINA_FALSE
  * if there was no menu to destroy
  * 
  * @ingroup Web
@@ -706,7 +698,7 @@ EAPI unsigned int      elm_web_text_matches_mark(Evas_Object *obj, const char *s
  *
  * @param obj The web object
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  * 
  * @ingroup Web
  */
@@ -721,7 +713,7 @@ EAPI Eina_Bool         elm_web_text_matches_unmark_all(Evas_Object *obj);
  * @param obj The web object
  * @param highlight Whether to highlight the marks or not
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  * 
  * @ingroup Web
  */
@@ -732,7 +724,7 @@ EAPI Eina_Bool         elm_web_text_matches_highlight_set(Evas_Object *obj, Eina
  *
  * @param obj The web object
  *
- * @return EINA_TRUE is marks are set to be highlighted, EINA_FALSE
+ * @return @c EINA_TRUE is marks are set to be highlighted, @c EINA_FALSE
  * otherwise
  * 
  * @ingroup Web
@@ -760,11 +752,11 @@ EAPI double            elm_web_load_progress_get(const Evas_Object *obj);
  *
  * Cancels the loading of the current page in the web object. This will
  * cause a "load,error" signal to be emitted, with the is_cancellation
- * flag set to EINA_TRUE.
+ * flag set to @c EINA_TRUE.
  *
  * @param obj The web object
  *
- * @return EINA_TRUE if the cancel was successful, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if the cancel was successful, @c EINA_FALSE otherwise
  * 
  * @ingroup Web
  */
@@ -775,7 +767,7 @@ EAPI Eina_Bool         elm_web_stop(Evas_Object *obj);
  *
  * @param obj The web object
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  * 
  * @ingroup Web
  */
@@ -786,7 +778,7 @@ EAPI Eina_Bool         elm_web_reload(Evas_Object *obj);
  *
  * @param obj The web object
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  * 
  * @ingroup Web
  */
@@ -799,7 +791,7 @@ EAPI Eina_Bool         elm_web_reload_full(Evas_Object *obj);
  *
  * @param obj The web object
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * @see elm_web_history_enabled_set()
  * @see elm_web_back_possible()
@@ -817,7 +809,7 @@ EAPI Eina_Bool         elm_web_back(Evas_Object *obj);
  *
  * @param obj The web object
  *
- * @return EINA_TRUE on success, EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * @see elm_web_history_enabled_set()
  * @see elm_web_forward_possible_get()
@@ -837,7 +829,7 @@ EAPI Eina_Bool         elm_web_forward(Evas_Object *obj);
  * @param obj The web object
  * @param steps The number of steps to jump
  *
- * @return EINA_TRUE on success, EINA_FALSE on error or if not enough
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on error or if not enough
  * history exists to jump the given number of steps
  *
  * @see elm_web_history_enabled_set()
@@ -853,7 +845,7 @@ EAPI Eina_Bool         elm_web_navigate(Evas_Object *obj, int steps);
  *
  * @param obj The web object
  *
- * @return EINA_TRUE if it's possible to back in history, EINA_FALSE
+ * @return @c EINA_TRUE if it's possible to back in history, @c EINA_FALSE
  * otherwise
  *
  * @ingroup Web
@@ -865,7 +857,7 @@ EAPI Eina_Bool         elm_web_back_possible_get(Evas_Object *obj);
  *
  * @param obj The web object
  *
- * @return EINA_TRUE if it's possible to forward in history, EINA_FALSE
+ * @return @c EINA_TRUE if it's possible to forward in history, @c EINA_FALSE
  * otherwise
  *
  * @ingroup Web
@@ -881,8 +873,8 @@ EAPI Eina_Bool         elm_web_forward_possible_get(Evas_Object *obj);
  * @param obj The web object
  * @param steps The number of steps to check for
  *
- * @return EINA_TRUE if enough history exists to perform the given jump,
- * EINA_FALSE otherwise
+ * @return @c EINA_TRUE if enough history exists to perform the given jump,
+ * @c EINA_FALSE otherwise
  *
  * @ingroup Web
  */
@@ -893,7 +885,7 @@ EAPI Eina_Bool         elm_web_navigate_possible_get(Evas_Object *obj, int steps
  *
  * @param obj The web object
  *
- * @return EINA_TRUE if history is enabled, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if history is enabled, @c EINA_FALSE otherwise
  *
  * @ingroup Web
  */
@@ -967,8 +959,8 @@ EAPI void              elm_web_zoom_mode_set(Evas_Object *obj, Elm_Web_Zoom_Mode
  *
  * @param obj The web object
  *
- * @return The current zoom mode set for the object, or
- * ::ELM_WEB_ZOOM_MODE_LAST on error
+ * @return The current zoom mode set for the object,
+ * or ::ELM_WEB_ZOOM_MODE_LAST on error
  *
  * @ingroup Web
  */
@@ -1011,7 +1003,7 @@ EAPI void              elm_web_region_bring_in(Evas_Object *obj, int x, int y, i
  * normal separated window.
  *
  * @param obj The web object
- * @param value EINA_TRUE to use Inwin, EINA_FALSE to use a normal window
+ * @param value @c EINA_TRUE to use Inwin, @c EINA_FALSE to use a normal window
  *
  * @ingroup Web
  */
@@ -1022,7 +1014,7 @@ EAPI void              elm_web_inwin_mode_set(Evas_Object *obj, Eina_Bool value)
  *
  * @param obj The web object
  *
- * @return EINA_TRUE if Inwin mode is set, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if Inwin mode is set, @c EINA_FALSE otherwise
  *
  * @ingroup Web
  */
@@ -1038,7 +1030,7 @@ EAPI void              elm_web_window_features_unref(Elm_Web_Window_Features *wf
  * @param wf The web window features object
  * @param flag The web window feature flag whose value is required.
  *
- * @return EINA_TRUE if the flag is set, EINA_FALSE otherwise
+ * @return @c EINA_TRUE if the flag is set, @c EINA_FALSE otherwise
  *
  * @ingroup Web
  */

@@ -276,11 +276,10 @@ EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj)
  * (layout) file system entries in its view
  *
  * @param obj The file selector object
- * @param mode The mode of the fileselector, being it one of
- * #ELM_FILESELECTOR_LIST (default) or #ELM_FILESELECTOR_GRID. The
- * first one, naturally, will display the files in a list. The
- * latter will make the widget to display its entries in a grid
- * form.
+ * @param mode The mode of the fileselector, being it one of #ELM_FILESELECTOR_LIST
+ * (default) or #ELM_FILESELECTOR_GRID. The first one, naturally, will display
+ * the files in a list. The latter will make the widget to display its entries
+ * in a grid form.
  *
  * @note By using elm_fileselector_expandable_set(), the user may
  * trigger a tree view for that list.

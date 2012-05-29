@@ -53,7 +53,7 @@ typedef enum
  * Add a new background to the parent
  *
  * @param parent The parent object
- * @return The new object or NULL if it cannot be created
+ * @return The new object or @c NULL if it cannot be created
  *
  * @ingroup Bg
  */
@@ -77,7 +77,7 @@ EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent);
  * elm_bg_option_set().
  *
  * @note Once the image of @p obj is set, a previously set one will be
- * deleted, even if @p file is NULL.
+ * deleted, even if @p file is @c NULL.
  *
  * @note This will only affect the contents of one of the background's
  * swallow spots, namely @c "elm.swallow.background". If you want to
@@ -125,8 +125,8 @@ EAPI void                         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Opt
  * Get the mode of display for a given background widget's image
  *
  * @param obj The background object handle
- * @return The image displaying mode in use for @a obj or
- * #ELM_BG_OPTION_LAST, on errors.
+ * @return The image displaying mode in use for @a obj or #ELM_BG_OPTION_LAST,
+ * on errors.
  *
  * @see elm_bg_option_set() for more details
  *

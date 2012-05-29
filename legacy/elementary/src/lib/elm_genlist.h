@@ -57,8 +57,8 @@
  *   existing (content) swallow parts in the Edje group implementing the item's
  *   theme. It must return @c NULL, when no content is desired, or a valid
  *   object handle, otherwise.  The object will be deleted by the genlist on
- *   its deletion or when the item is "unrealized".  See
- *   #Elm_Genlist_Item_Content_Get_Cb.
+ *   its deletion or when the item is "unrealized".
+ *   See #Elm_Genlist_Item_Content_Get_Cb.
  * - @c func.state_get - The @c part parameter is the name string of one of
  *   the state parts in the Edje group implementing the item's theme. Return
  *   @c EINA_FALSE for false/off or @c EINA_TRUE for true/on. Genlists will
@@ -120,15 +120,14 @@
  * the applications internal data (eg. the struct with the original item
  * data). The parent parameter is the parent genlist item this belongs to if
  * it is a tree or an indexed group, and NULL if there is no parent. The
- * flags can be a bitmask of #ELM_GENLIST_ITEM_NONE,
- * #ELM_GENLIST_ITEM_TREE and #ELM_GENLIST_ITEM_GROUP. If
- * #ELM_GENLIST_ITEM_TREE is set then this item is displayed as an item
- * that is able to expand and have child items.  If ELM_GENLIST_ITEM_GROUP
- * is set then this item is group index item that is displayed at the top
- * until the next group comes. The func parameter is a convenience callback
- * that is called when the item is selected and the data parameter will be
- * the func_data parameter, obj be the genlist object and event_info will be
- * the genlist item.
+ * flags can be a bitmask of #ELM_GENLIST_ITEM_NONE, #ELM_GENLIST_ITEM_TREE
+ * and #ELM_GENLIST_ITEM_GROUP. If #ELM_GENLIST_ITEM_TREE is set then this
+ * item is displayed as an item that is able to expand and have child items.
+ * If #ELM_GENLIST_ITEM_GROUP is set then this item is group index item that
+ * is displayed at the top until the next group comes. The func parameter is
+ * a convenience callback that is called when the item is selected and the
+ * data parameter will be the func_data parameter, @c obj be the genlist
+ * object and event_info will be the genlist item.
  *
  * elm_genlist_item_append() adds an item to the end of the list, or if
  * there is a parent, to the end of all the child items of the parent.
@@ -792,11 +791,10 @@ EAPI Elm_Object_Item             *elm_genlist_last_item_get(const Evas_Object *o
  *
  * This sets the scrollbar visibility policy for the given genlist
  * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is
- * made visible if it is needed, and otherwise kept hidden.
- * #ELM_SCROLLER_POLICY_ON turns it on all the time, and
- * #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
- * respectively for the horizontal and vertical scrollbars. Default is
- * #ELM_SCROLLER_POLICY_AUTO
+ * made visible if it is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON
+ * turns it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
+ * This applies respectively for the horizontal and vertical scrollbars.
+ * Default is #ELM_SCROLLER_POLICY_AUTO
  *
  * @see elm_genlist_scroller_policy_get()
  *

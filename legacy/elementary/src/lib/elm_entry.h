@@ -1639,14 +1639,13 @@ typedef enum {
  * Control pasting of text and images for the widget.
  *
  * Normally the entry allows both text and images to be pasted.
- * By setting cnp_mode to be ELM_CNP_MODE_NO_IMAGE, this prevents images from being copy or past.
- * By setting cnp_mode to be ELM_CNP_MODE_PLAINTEXT, this remove all tags in text .
+ * By setting cnp_mode to be #ELM_CNP_MODE_NO_IMAGE, this prevents images from being copy or past.
+ * By setting cnp_mode to be #ELM_CNP_MODE_PLAINTEXT, this remove all tags in text .
  *
  * @note this only changes the behaviour of text.
  *
  * @param obj The entry object
- * @param cnp_mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP,
- * #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
+ * @param cnp_mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
  *
  * @ingroup Entry
  */
@@ -1659,8 +1658,7 @@ EAPI void         elm_entry_cnp_mode_set(Evas_Object *obj, Elm_Cnp_Mode cnp_mode
  * This gets the copy & paste mode of the entry.
  *
  * @param obj The entry object
- * @return mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP,
- * #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
+ * @return mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP, #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
  *
  * @ingroup Entry
  */
@@ -1699,7 +1697,7 @@ EAPI Evas_Object                *elm_entry_anchor_hover_parent_get(const Evas_Ob
  * When creating the popup hover, entry will request that it's
  * themed according to @p style.
  *
- * Setting style no NULL means disabling automatic hover.
+ * Setting style no @c NULL means disabling automatic hover.
  *
  * @param obj The entry object
  * @param style The style to use for the underlying hover
@@ -1716,7 +1714,7 @@ EAPI void                        elm_entry_anchor_hover_style_set(Evas_Object *o
  * Get the style, the hover created by entry will use.
  *
  * @param obj The entry object
- * @return The style to use by the hover. NULL means the default is used.
+ * @return The style to use by the hover. @c NULL means the default is used.
  *
  * @see elm_object_style_set()
  *

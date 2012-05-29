@@ -346,8 +346,8 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prev_get(const Elm_Object_Ite
  * @param it The toolbar item.
  * @param priority The item priority. The default is zero.
  *
- * This is used only when the toolbar shrink mode is set to
- * #ELM_TOOLBAR_SHRINK_MENU or #ELM_TOOLBAR_SHRINK_HIDE.
+ * This is used only when the toolbar shrink mode is set
+ * to #ELM_TOOLBAR_SHRINK_MENU or #ELM_TOOLBAR_SHRINK_HIDE.
  * When space is less than required, items with low priority
  * will be removed from the toolbar and added to a dynamically-created menu,
  * while items with higher priority will remain on the toolbar,

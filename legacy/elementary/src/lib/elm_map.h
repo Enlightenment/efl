@@ -131,7 +131,7 @@ typedef enum
 typedef enum
 {
    ELM_MAP_ROUTE_METHOD_FASTEST,  /**< Route should prioritize time. */
-   ELM_MAP_ROUTE_METHOD_SHORTEST, /**< Route should prioritized distance. */
+   ELM_MAP_ROUTE_METHOD_SHORTEST, /**< Route should prioritize distance. */
    ELM_MAP_ROUTE_METHOD_LAST
 } Elm_Map_Route_Method;
 
@@ -217,9 +217,8 @@ EAPI Evas_Object          *elm_map_add(Evas_Object *parent);
  *
  * By default these values are 0 (world map) and 18 (maximum zoom).
  *
- * This function should be used when zoom mode is set to
- * #ELM_MAP_ZOOM_MODE_MANUAL. This is the default mode, and can be set
- * with elm_map_zoom_mode_set().
+ * This function should be used when zoom mode is set to #ELM_MAP_ZOOM_MODE_MANUAL.
+ * This is the default mode, and can be set with elm_map_zoom_mode_set().
  *
  * @see elm_map_zoom_mode_set()
  * @see elm_map_zoom_get()
@@ -250,9 +249,8 @@ EAPI int                   elm_map_zoom_get(const Evas_Object *obj);
  * Set the zoom mode used by the map object.
  *
  * @param obj The map object.
- * @param mode The zoom mode of the map, being it one of
- * #ELM_MAP_ZOOM_MODE_MANUAL (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT,
- * or #ELM_MAP_ZOOM_MODE_AUTO_FILL.
+ * @param mode The zoom mode of the map, being it one of #ELM_MAP_ZOOM_MODE_MANUAL
+ * (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT, or #ELM_MAP_ZOOM_MODE_AUTO_FILL.
  *
  * This sets the zoom mode to manual or one of the automatic levels.
  * Manual (#ELM_MAP_ZOOM_MODE_MANUAL) means that zoom is set manually by
@@ -277,9 +275,8 @@ EAPI void                  elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_
  * Get the zoom mode used by the map object.
  *
  * @param obj The map object.
- * @return The zoom mode of the map, being it one of
- * #ELM_MAP_ZOOM_MODE_MANUAL (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT,
- * or #ELM_MAP_ZOOM_MODE_AUTO_FILL.
+ * @return The zoom mode of the map, being it one of #ELM_MAP_ZOOM_MODE_MANUAL
+ * (default), #ELM_MAP_ZOOM_MODE_AUTO_FIT, or #ELM_MAP_ZOOM_MODE_AUTO_FILL.
  *
  * This function returns the current zoom mode used by the map object.
  *
@@ -993,7 +990,7 @@ EAPI void elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_G
  *
  * You can change the state (hidden, paused, etc.) or set the content
  * or icon of the group overlays by chaning the state of the class overlay.
- * Do not modifty the group overlay itself.
+ * Do not modify the group overlay itself.
  *
  * Also these changes have a influence on the overlays in the same class
  * even if each overlay is alone and is not grouped.
@@ -1181,7 +1178,7 @@ EAPI Elm_Map_Overlay *     elm_map_overlay_route_add(Evas_Object *obj, const Elm
  * @param tlon The destination longitude.
  * @param tlat The destination latitude.
  * @return The created overlay or @c NULL upon failure.
-  *
+ *
  * Overlay created with this method can be deleted with elm_map_overlay_del().
  *
  * @see elm_map_overlay_del()
@@ -1374,8 +1371,8 @@ EAPI const char           *elm_map_source_get(const Evas_Object *obj, Elm_Map_So
  *
  * It will take @p type on consideration to define the route,
  * depending if the user will be walking or driving, the route may vary.
- * One of #ELM_MAP_ROUTE_TYPE_MOTOCAR, #ELM_MAP_ROUTE_TYPE_BICYCLE, or
- * #ELM_MAP_ROUTE_TYPE_FOOT need to be used.
+ * One of #ELM_MAP_ROUTE_TYPE_MOTOCAR, #ELM_MAP_ROUTE_TYPE_BICYCLE,
+ * or #ELM_MAP_ROUTE_TYPE_FOOT need to be used.
  *
  * Another parameter is what the route should prioritize, the minor distance
  * or the less time to be spend on the route. So @p method should be one
@@ -1447,7 +1444,7 @@ EAPI const char           *elm_map_route_waypoint_get(const Elm_Map_Route *route
  * @return name A #Elm_Map_Name handle for this coordinate.
  *
  * If you want to get address from geographic coordinates, set input @p address
- * as NULL and set @p lon, @p lat as you want to convert.
+ * as @c NULL and set @p lon, @p lat as you want to convert.
  * If address is set except NULL, @p lon and @p lat are checked.
  *
  * To get the string for this address, elm_map_name_address_get()

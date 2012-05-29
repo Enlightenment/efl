@@ -219,8 +219,28 @@ _parts_text_fix(Elm_Layout_Smart_Data *sd)
    EINA_LIST_FOREACH (sd->subs, l, sub_d)
      {
         if (sub_d->type == TEXT)
-          edje_object_part_text_escaped_set
-            (ELM_WIDGET_DATA(sd)->resize_obj, sub_d->part, sub_d->p.text.text);
+	  {
+             edje_object_part_text_escaped_set
+               (ELM_WIDGET_DATA(sd)->resize_obj, sub_d->part, sub_d->p.text.text);
+	  }
+     }
+}
+
+static void
+_parts_table_fix(Elm_Layout_Smart_Data *sd)
+{
+   const Eina_List *l;
+   Elm_Layout_Sub_Object_Data *sub_d;
+
+   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+     {
+        if (sub_d->type == TABLE_PACK)
+          {
+             edje_object_part_table_pack
+               (ELM_WIDGET_DATA(sd)->resize_obj, sub_d->part, sub_d->obj,
+                sub_d->p.table.col, sub_d->p.table.row,
+                sub_d->p.table.colspan, sub_d->p.table.rowspan);
+          }
      }
 }
 
@@ -284,8 +304,9 @@ static void
 _visuals_refresh(Evas_Object *obj,
                  Elm_Layout_Smart_Data *sd)
 {
-   _parts_signals_emit(sd);
+   _parts_table_fix(sd);
    _parts_text_fix(sd);
+   _parts_signals_emit(sd);
    _parts_cursors_apply(sd);
 
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);

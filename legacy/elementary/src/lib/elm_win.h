@@ -227,11 +227,11 @@ typedef enum
  * @param name The name of the window
  * @param type The window type, one of #Elm_Win_Type.
  *
- * The @p parent parameter can be @c NULL for every window @p type except
- * #ELM_WIN_INLINED_IMAGE, which needs a parent to retrieve the canvas on
- * which the image object will be created.
+ * The @p parent parameter can be @c NULL for every window @p type
+ * except #ELM_WIN_INLINED_IMAGE, which needs a parent to retrieve the
+ * canvas on which the image object will be created.
  *
- * @return The created object, or NULL on failure
+ * @return The created object, or @c NULL on failure
  *
  * @ingroup Win
  */
@@ -245,10 +245,10 @@ EAPI Evas_Object          *elm_win_add(Evas_Object *parent, const char *name, El
  *
  * This creates a window like elm_win_add() but also puts in a standard
  * background with elm_bg_add(), as well as setting the window title to
- * @p title. The window type created is of type ELM_WIN_BASIC, with NULL
+ * @p title. The window type created is of type ELM_WIN_BASIC, with @c NULL
  * as the parent widget.
  *
- * @return The created object, or NULL on failure
+ * @return The created object, or @c NULL on failure
  *
  * @see elm_win_add()
  *

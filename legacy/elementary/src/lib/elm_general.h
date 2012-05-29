@@ -274,9 +274,9 @@ EAPI char     *elm_quicklaunch_exe_path_get(const char *exe);
  * @return @c EINA_TRUE on success or @c EINA_FALSE, on error.
  *
  * Elementary policies define applications' behavior,
- * somehow. These behaviors are divided in policy groups (see
- * #Elm_Policy enumeration). This call will emit the Ecore event
- * #ELM_EVENT_POLICY_CHANGED, which can be hooked at with
+ * somehow. These behaviors are divided in policy groups
+ * (see #Elm_Policy enumeration). This call will emit the Ecore
+ * event #ELM_EVENT_POLICY_CHANGED, which can be hooked at with
  * handlers. An #Elm_Event_Policy_Changed struct will be passed,
  * then.
  *
