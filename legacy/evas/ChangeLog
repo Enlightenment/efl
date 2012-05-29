@@ -768,5 +768,6 @@
 
 2012-05-29  Tom Hacohen (TAsn)
 
+	* Text: Fixed an issue with text object sizing.
 	* Font: Fixed run-time italic.
 
