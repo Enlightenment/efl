@@ -64,10 +64,10 @@
 2012-05-16 Carsten Haitzler (The Rasterman)
 
 	* Fix genlist ELM_LIST_LIMIT mode to do what it originally did.
-        Documentation was wrong too and code had a slight bug stopping
-        genlist from contracting to min size.
-        * Optimize the case of COMPRESS + homogeneous mode to avoid
-        queue entirely and use existing known item sizes.
+	  Documentation was wrong too and code had a slight bug stopping
+	  genlist from contracting to min size.
+	* Optimize the case of COMPRESS + homogeneous mode to avoid
+	  queue entirely and use existing known item sizes.
 
 2012-05-16  Dave Andreoli
 
@@ -80,9 +80,9 @@
 2012-05-22  Jaehwan Kim
 
 	* Toolbar: Add the more panel feature in toolbar.
-        When it is the ELM_TOOLBAR_SHRINK_EXPAND mode and the max item is set,
-        the items over max number are located in more panel.
-        The APIs are added for this feature.(elm_toolbar_more_item_get, elm_toolbar_items_max_set/get)
+	  When it is the ELM_TOOLBAR_SHRINK_EXPAND mode and the max item is set,
+	  the items over max number are located in more panel.
+	  The APIs are added for this feature.(elm_toolbar_more_item_get, elm_toolbar_items_max_set/get)
 
 2012-05-22 Carsten Haitzler (The Rasterman)
 
@@ -95,7 +95,7 @@
 2012-05-24 Michal Pakula vel Rutka
 
 	* Add ability to use cnp helper code on non-elm widget objects by
-        falling back to ecore-evas to get the window id.
+	  falling back to ecore-evas to get the window id.
 
 2012-05-24 Tae-Hwan Kim (Bluezery)
 
@@ -108,10 +108,10 @@
 
 2012-05-28 Mike Blumenkrantz
 
-        * Fix sizing calc error in list item homogenizing
+	* Fix sizing calc error in list item homogenizing
 
 2012-05-28 Carsten Haitzler (The Rasterman)
 
 	* Made elm_object_focus_set() fall back to evbas_object_focus_set()
-        if the object is not an elm widget.
+	  if the object is not an elm widget.
 
