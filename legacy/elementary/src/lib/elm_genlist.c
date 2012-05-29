@@ -768,6 +768,21 @@ _item_position_update(Eina_List *list, int idx)
 }
 
 static void
+_item_block_merge(Item_Block *left, Item_Block *right)
+{
+   Eina_List *l;
+   Elm_Gen_Item *it2;
+
+   EINA_LIST_FOREACH(right->items, l, it2)
+     {
+        it2->item->block = left;
+        left->count++;
+        left->changed = EINA_TRUE;
+     }
+   left->items = eina_list_merge(left->items, right->items);
+}
+
+static void
 _item_block_del(Elm_Gen_Item *it)
 {
    Eina_Inlist *il;
@@ -800,17 +815,10 @@ _item_block_del(Elm_Gen_Item *it)
              il = EINA_INLIST_GET(itb);
              Item_Block *itbp = (Item_Block *)(il->prev);
              Item_Block *itbn = (Item_Block *)(il->next);
+             /* merge block with previous */
              if ((itbp) && ((itbp->count + itb->count) < itb->wd->max_items_per_block + itb->wd->max_items_per_block/2))
                {
-                  Elm_Gen_Item *it2;
-
-                  EINA_LIST_FREE(itb->items, it2)
-                    {
-                       it2->item->block = itbp;
-                       itbp->items = eina_list_append(itbp->items, it2);
-                       itbp->count++;
-                       itbp->changed = EINA_TRUE;
-                    }
+                  _item_block_merge(itbp, itb);
                   _item_block_position_update(EINA_INLIST_GET(itb)->next,
                                               itb->position);
                   it->wd->blocks = eina_inlist_remove(it->wd->blocks,
@@ -818,24 +826,15 @@ _item_block_del(Elm_Gen_Item *it)
                   free(itb);
                   block_changed = EINA_TRUE;
                }
+             /* merge block with next */
              else if ((itbn) && ((itbn->count + itb->count) < itb->wd->max_items_per_block + itb->wd->max_items_per_block/2))
                {
-                  while (itb->items)
-                    {
-                       Eina_List *last = eina_list_last(itb->items);
-                       Elm_Gen_Item *it2 = last->data;
-
-                       it2->item->block = itbn;
-                       itb->items = eina_list_remove_list(itb->items, last);
-                       itbn->items = eina_list_prepend(itbn->items, it2);
-                       itbn->count++;
-                       itbn->changed = EINA_TRUE;
-                    }
-                  _item_block_position_update(EINA_INLIST_GET(itb)->next,
-                                              itb->position);
+                  _item_block_merge(itb, itbn);
+                  _item_block_position_update(EINA_INLIST_GET(itbn)->next,
+                                              itbn->position);
                   it->wd->blocks =
-                    eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
-                  free(itb);
+                    eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itbn));
+                  free(itbn);
                   block_changed = EINA_TRUE;
                }
           }
