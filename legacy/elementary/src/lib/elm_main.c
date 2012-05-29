@@ -1048,12 +1048,19 @@ elm_object_focus_set(Evas_Object *obj,
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
 
-   if (focus == elm_widget_focus_get(obj)) return;
-
-   if (focus)
-     elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+   if (elm_widget_is(obj))
+     {
+        if (focus == elm_widget_focus_get(obj)) return;
+        
+        if (focus)
+          elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
+        else
+          elm_widget_focused_object_clear(obj);
+     }
    else
-     elm_widget_focused_object_clear(obj);
+     {
+        evas_object_focus_set(obj, focus);
+     }
 }
 
 EAPI void

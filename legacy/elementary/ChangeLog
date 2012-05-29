@@ -109,3 +109,9 @@
 2012-05-28 Mike Blumenkrantz
 
         * Fix sizing calc error in list item homogenizing
+
+2012-05-28 Carsten Haitzler (The Rasterman)
+
+	* Made elm_object_focus_set() fall back to evbas_object_focus_set()
+        if the object is not an elm widget.
+
