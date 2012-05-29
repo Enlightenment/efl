@@ -766,4 +766,7 @@
 	* Fixed to clean up when map actually changed. Now rendering updates will be
      correct after evas_map acutally disabled for the smart object.
 
+2012-05-29  Tom Hacohen (TAsn)
+
+	* Font: Fixed run-time italic.
 

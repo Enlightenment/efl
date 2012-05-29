@@ -390,10 +390,13 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
         if (fi->fash) _fash_gl_add(fi->fash, idx, (void *)(-1));
         return NULL;
      }
-   fg->width = EVAS_FONT_ROUND_26_6_TO_INT(
-       fi->src->ft.face->glyph->metrics.width);
-   fg->x_bear = EVAS_FONT_ROUND_26_6_TO_INT(
-       fi->src->ft.face->glyph->metrics.horiBearingX);
+
+     {
+        FT_BBox outbox;
+        FT_Outline_Get_CBox(&fi->src->ft.face->glyph->outline, &outbox);
+        fg->width = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMax - outbox.xMin);
+        fg->x_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMin);
+     }
 
    fg->index = idx;
    fg->fi = fi;
