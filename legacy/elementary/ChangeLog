@@ -115,3 +115,7 @@
 	* Made elm_object_focus_set() fall back to evbas_object_focus_set()
 	  if the object is not an elm widget.
 
+2012-05-29 Mike Blumenkrantz
+
+        * Prepending items to a genlist no longer causes the selected item to
+          scroll out of the viewport
