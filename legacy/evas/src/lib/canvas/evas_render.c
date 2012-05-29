@@ -1692,8 +1692,6 @@ evas_render_updates_internal(Evas *e,
         eina_array_clean(&e->active_objects);
         eina_array_clean(&e->render_objects);
         eina_array_clean(&e->restack_objects);
-        eina_array_clean(&e->delete_objects);
-        eina_array_clean(&e->obscuring_objects);
         eina_array_clean(&e->temporary_objects);
         eina_array_clean(&e->clip_changes);
 /* we should flush here and have a mempool system for this        
