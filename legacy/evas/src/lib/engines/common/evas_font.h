@@ -2,7 +2,8 @@
 #define _EVAS_FONT_H
 #include "evas_text_utils.h"
 
-
+/* The tangent of the slant angle we do on runtime. */
+#define _EVAS_FONT_SLANT_TAN 0.221694663
 /* main */
 
 EAPI void              evas_common_font_init                 (void);

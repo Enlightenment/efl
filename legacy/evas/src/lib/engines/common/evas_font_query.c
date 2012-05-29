@@ -331,11 +331,24 @@ evas_common_font_query_advance(RGBA_Font *fn, const Evas_Text_Props *text_props,
    Evas_Coord ret_adv = 0;
    if (text_props->len > 0)
      {
+        RGBA_Font_Int *fi = text_props->font_instance;
         const Evas_Font_Glyph_Info *glyph = text_props->info->glyph +
            text_props->start;
-        ret_adv = glyph[text_props->len - 1].pen_after;
+        const Evas_Font_Glyph_Info *last_glyph = glyph + text_props->len - 1;
+        ret_adv = last_glyph->pen_after;
         if (text_props->start > 0)
            ret_adv -= glyph[-1].pen_after;
+
+#if 0
+        /* Runtime slant adjustment. */
+        if (fi->runtime_rend & FONT_REND_SLANT)
+          {
+             RGBA_Font_Glyph *fg =
+                evas_common_font_int_cache_glyph_get(fi, last_glyph->index);
+             if (!fg->glyph_out) evas_common_font_int_cache_glyph_render(fg);
+             ret_adv += fg->glyph_out->bitmap.rows * _EVAS_FONT_SLANT_TAN;
+          }
+#endif
      }
 
    if (h_adv) *h_adv = ret_adv;

@@ -342,7 +342,8 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
    FT_Error error;
    const FT_Int32 hintflags[3] =
      { FT_LOAD_NO_HINTING, FT_LOAD_FORCE_AUTOHINT, FT_LOAD_NO_AUTOHINT };
-   static FT_Matrix transform = {0x10000, 0x05000, 0x0000, 0x10000}; // about 12 degree.
+   static FT_Matrix transform = {0x10000, _EVAS_FONT_SLANT_TAN * 0x10000,
+        0x00000, 0x10000};
 
    evas_common_font_int_promote(fi);
    if (fi->fash)
