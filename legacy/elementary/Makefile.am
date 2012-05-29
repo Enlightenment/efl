@@ -13,8 +13,9 @@ ABOUT-NLS \
 Makefile.in \
 aclocal.m4 \
 config.guess \
-elementary_config.h.in \
+elementary_config.h.in* \
 config.sub \
+config.rpath \
 configure \
 depcomp \
 install-sh \
