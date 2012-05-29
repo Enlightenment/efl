@@ -290,4 +290,6 @@
         * remove --disable-posix-threads and --disable-win32-threads
 	from configure options, and detect automatically the threading
 	support.
+	Fix bug in the XML parser when a tag was in a comment or a
+	cdata
 

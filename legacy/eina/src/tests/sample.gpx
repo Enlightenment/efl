@@ -21,4 +21,6 @@
       <trkpt lon="5.62314" lat="53.010303"/>
     </trkseg>
   </trk>
+  <!-- <foo>bar</foo> -->
+  <![CDATA[ <foo>bar</foo> ]]>
 </gpx>

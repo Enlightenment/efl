@@ -159,6 +159,28 @@ _eina_simple_xml_tag_end_find(const char *itr, const char *itr_end)
    return NULL;
 }
 
+static inline const char *
+_eina_simple_xml_tag_comment_end_find(const char *itr, const char *itr_end)
+{
+   for (; itr < itr_end; itr++)
+     if ((*itr == '-') &&
+         ((itr + 1 < itr_end) && (*(itr + 1) == '-')) &&
+         ((itr + 2 < itr_end) && (*(itr + 2) == '>')))
+       return itr + 2;
+   return NULL;
+}
+
+static inline const char *
+_eina_simple_xml_tag_cdata_end_find(const char *itr, const char *itr_end)
+{
+   for (; itr < itr_end; itr++)
+     if ((*itr == ']') &&
+         ((itr + 1 < itr_end) && (*(itr + 1) == ']')) &&
+         ((itr + 2 < itr_end) && (*(itr + 2) == '>')))
+       return itr + 2;
+   return NULL;
+}
+
 /**
  * @endcond
  */
@@ -342,21 +364,17 @@ eina_simple_xml_parse(const char *buf, unsigned buflen, Eina_Bool strip, Eina_Si
                        toff = 0;
                     }
 
-                  p = _eina_simple_xml_tag_end_find(itr + 1 + toff, itr_end);
-                  if (p)
-                    {
-                       if (type == EINA_SIMPLE_XML_CDATA)
-                         {
-                            /* must end with ]]> */
-                            while ((p) && (memcmp(p - 2, "]]>", 3)))
-                              p = _eina_simple_xml_tag_end_find(p + 1, itr_end);
-                         }
+                  if (type == EINA_SIMPLE_XML_CDATA)
+                    p = _eina_simple_xml_tag_cdata_end_find(itr + 1 + toff, itr_end);
+                  else if (type == EINA_SIMPLE_XML_COMMENT)
+                    p = _eina_simple_xml_tag_comment_end_find(itr + 1 + toff, itr_end);
+                  else
+                    p = _eina_simple_xml_tag_end_find(itr + 1 + toff, itr_end);
 
-                       if ((p) && (*p == '<'))
-                         {
-                            type = EINA_SIMPLE_XML_ERROR;
-                            toff = 0;
-                         }
+                  if ((p) && (*p == '<'))
+                    {
+                       type = EINA_SIMPLE_XML_ERROR;
+                       toff = 0;
                     }
 
                   if (p)
