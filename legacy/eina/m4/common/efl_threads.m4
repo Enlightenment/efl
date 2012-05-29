@@ -12,92 +12,35 @@ dnl Defines EFL_HAVE_POSIX_THREADS or EFL_HAVE_WIN32_THREADS, and EFL_HAVE_THREA
 AC_DEFUN([EFL_CHECK_THREADS],
 [
 
-dnl configure option
+EFL_PTHREAD_CFLAGS=""
+EFL_PTHREAD_LIBS=""
 
-AC_ARG_ENABLE([posix-threads],
-   [AC_HELP_STRING([--disable-posix-threads], [enable POSIX threads code @<:@default=auto@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       _efl_enable_posix_threads="yes"
-    else
-       _efl_enable_posix_threads="no"
-    fi
-   ],
-   [_efl_enable_posix_threads="auto"])
-
-AC_MSG_CHECKING([whether to build POSIX threads code])
-AC_MSG_RESULT([${_efl_enable_posix_threads}])
-
-AC_ARG_ENABLE([win32-threads],
-   [AC_HELP_STRING([--disable-win32-threads], [enable Win32 threads code @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       _efl_enable_win32_threads="yes"
-    else
-       _efl_enable_win32_threads="no"
-    fi
-   ],
-   [_efl_enable_win32_threads="no"])
-
-AC_MSG_CHECKING([whether to build Windows threads code])
-AC_MSG_RESULT([${_efl_enable_win32_threads}])
-
-dnl
-dnl * no  + no
-dnl * yes + no  : win32: error,    other : pthread
-dnl * yes + yes : win32 : wthread, other : pthread
-dnl * no  + yes : win32 : wthread, other : error
-
-if  test "x${_efl_enable_posix_threads}" = "xyes" && test "x${_efl_enable_win32_threads}" = "xyes" ; then
-   case "$host_os" in
-      mingw*)
-         _efl_enable_posix_threads=no
-         ;;
-      *)
-         _efl_enable_win32_threads=no
-         ;;
-   esac
-fi
-
-if  test "x${_efl_enable_win32_threads}" = "xyes" ; then
-   case "$host_os" in
-      mingw*)
-         ;;
-      *)
-         AC_MSG_ERROR([Win32 threads support requested but non Windows system found.])
-         ;;
-   esac
-fi
-
-if  test "x${_efl_enable_posix_threads}" = "xyes" ; then
-   case "$host_os" in
-      mingw*)
-         AC_MSG_ERROR([POSIX threads support requested but Windows system found.])
-         ;;
-      *)
-         ;;
-   esac
-fi
-
-dnl check if the compiler supports POSIX threads
+_efl_enable_posix_threads="no"
+_efl_have_posix_threads="no"
+_efl_have_win32_threads="no"
 
 case "$host_os" in
    mingw*)
+      _efl_have_win32_threads="yes"
+      AC_DEFINE([EFL_HAVE_WIN32_THREADS], [1], [Define to mention that Win32 threads are supported])
+      AC_DEFINE([EFL_HAVE_THREADS], [1], [Define to mention that POSIX or Win32 threads are supported])
       ;;
    solaris*)
+      _efl_enable_posix_threads="yes"
       _efl_threads_cflags="-mt"
       _efl_threads_libs="-mt"
       ;;
    *)
+      _efl_enable_posix_threads="yes"
       _efl_threads_cflags="-pthread"
       _efl_threads_libs="-pthread"
       ;;
 esac
 
-_efl_have_posix_threads="no"
-_efl_have_win32_threads="no"
+dnl check if the compiler supports POSIX threads
 
-if test "x${_efl_enable_posix_threads}" = "xyes" || test "x${_efl_enable_posix_threads}" = "xauto" ; then
+
+if test "x${_efl_enable_posix_threads}" = "xyes" ; then
 
    SAVE_CFLAGS=${CFLAGS}
    CFLAGS="${CFLAGS} ${_efl_threads_cflags}"
@@ -111,25 +54,30 @@ if test "x${_efl_enable_posix_threads}" = "xyes" || test "x${_efl_enable_posix_t
 pthread_t id;
 id = pthread_self();
                        ]])],
-      [_efl_have_posix_threads="yes"],
+      [
+       _efl_have_posix_threads="yes"
+       AC_DEFINE([EFL_HAVE_POSIX_THREADS], [1], [Define to mention that POSIX threads are supported])
+       AC_DEFINE([EFL_HAVE_THREADS], [1], [Define to mention that POSIX or Win32 threads are supported])
+       EFL_PTHREAD_CFLAGS=${_efl_threads_cflags}
+       EFL_PTHREAD_LIBS=${_efl_threads_libs}
+      ],
       [_efl_have_posix_threads="no"])
    CFLAGS=${SAVE_CFLAGS}
    LIBS=${SAVE_LIBS}
 
 fi
 
-AC_MSG_CHECKING([whether system support POSIX threads])
-AC_MSG_RESULT([${_efl_have_posix_threads}])
-if test "$x{_efl_enable_posix_threads}" = "xyes" && test "x${_efl_have_posix_threads}" = "xno"; then
-   AC_MSG_ERROR([POSIX threads support requested but not found.])
-fi
-
-EFL_PTHREAD_CFLAGS=""
-EFL_PTHREAD_LIBS=""
+AC_MSG_CHECKING([which threads API is used])
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
-   EFL_PTHREAD_CFLAGS=${_efl_threads_cflags}
-   EFL_PTHREAD_LIBS=${_efl_threads_libs}
+   have_threads="POSIX"
+else
+   if test "x${_efl_have_win32_threads}" = "xyes" ; then
+      have_threads="Windows"
+   else
+      have_threads="none"
+   fi
 fi
+AC_MSG_RESULT([${have_threads}])
 
 AC_SUBST(EFL_PTHREAD_CFLAGS)
 AC_SUBST(EFL_PTHREAD_LIBS)
@@ -153,22 +101,9 @@ AC_ARG_ENABLE([debug-threads],
    [_efl_enable_debug_threads="${enableval}"])
 
 have_debug_threads="no"
-if test "x${_efl_have_posix_threads}" = "xyes" -a "x${_efl_enable_debug_threads}" = "xyes"; then
+if test "x${_efl_have_posix_threads}" = "xyes" && test "x${_efl_enable_debug_threads}" = "xyes"; then
    have_debug_threads="yes"
    AC_DEFINE([EFL_DEBUG_THREADS], [1], [Assert when forgot to call eina_threads_init])
-fi
-
-if test "x${_efl_have_posix_threads}" = "xyes" ; then
-   AC_DEFINE([EFL_HAVE_POSIX_THREADS], [1], [Define to mention that POSIX threads are supported])
-fi
-
-if test "x${_efl_enable_win32_threads}" = "xyes" ; then
-   _efl_have_win32_threads="yes"
-   AC_DEFINE([EFL_HAVE_WIN32_THREADS], [1], [Define to mention that Win32 threads are supported])
-fi
-
-if test "x${_efl_have_posix_threads}" = "xyes" || test "x${_efl_have_win32_threads}" = "xyes" ; then
-   AC_DEFINE([EFL_HAVE_THREADS], [1], [Define to mention that POSIX or Win32 threads are supported])
 fi
 
 AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"], [$1], [$2])

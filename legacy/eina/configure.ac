@@ -95,19 +95,7 @@ EFL_CHECK_CPU_SSE([have_sse="yes"], [have_sse="no"])
 EFL_CHECK_CPU_SSE2([have_sse2="yes"], [have_sse2="no"])
 EFL_CHECK_CPU_ALTIVEC([have_altivec="yes"], [have_altivec="no"])
 
-EFL_CHECK_THREADS(
-   [
-    if test "x${_efl_have_posix_threads}" = "xyes" ; then
-       have_threads="POSIX"
-    else
-       if test "x${_efl_have_win32_threads}" = "xyes" ; then
-          have_threads="Win32"
-       else
-          have_threads="no"
-       fi
-    fi
-   ],
-   [have_threads="no"])
+EFL_CHECK_THREADS
 EFL_CHECK_SPINLOCK([have_posix_threads_spinlock="yes"], [have_posix_threads_spinlock="no"])
 
 if ! test "x${have_threads}" = "xno" ; then

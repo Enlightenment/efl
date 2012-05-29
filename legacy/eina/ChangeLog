@@ -285,3 +285,9 @@
         * Fix global_faulty faulty flag in eina_file to be set to 0
         initially rather than be random memory garbage.
 
+2012-05-29 Vincent Torri
+
+        * remove --disable-posix-threads and --disable-win32-threads
+	from configure options, and detect automatically the threading
+	support.
+
