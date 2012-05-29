@@ -24,7 +24,7 @@
  *
  * configure.ac:
  *
- * @verbatim
+ * @code
  * AC_INIT(myapp, 0.0.0, myname@mydomain.com)
  * AC_PREREQ(2.52)
  * AC_CONFIG_SRCDIR(configure.ac)
@@ -33,11 +33,11 @@
  * AM_INIT_AUTOMAKE(1.6 dist-bzip2)
  * PKG_CHECK_MODULES([ELEMENTARY], elementary)
  * AC_OUTPUT(Makefile)
- * @endverbatim
+ * @endcode
  *
  * Makefile.am:
  *
- * @verbatim
+ * @code
  * AUTOMAKE_OPTIONS = 1.4 foreign
  * MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.h.in configure depcomp install-sh missing
  *
@@ -48,53 +48,53 @@
  * myapp_SOURCES = main.c
  * myapp_LDADD = @ELEMENTARY_LIBS@
  * myapp_CFLAGS = @ELEMENTARY_CFLAGS@
- * @endverbatim
+ * @endcode
  *
  * autogen.sh:
  *
- * @verbatim
+ * @code
  *#!/bin/sh
  * echo "Running aclocal..." ; aclocal $ACLOCAL_FLAGS || exit 1
  * echo "Running autoheader..." ; autoheader || exit 1
  * echo "Running autoconf..." ; autoconf || exit 1
  * echo "Running automake..." ; automake --add-missing --copy --gnu || exit 1
  * ./configure "$@"
- * @endverbatim
+ * @endcode
  *
  * To generate all the things needed to bootstrap just run:
  *
- * @verbatim
+ * @code
  * ./autogen.sh
- * @endverbatim
+ * @endcode
  *
  * This will generate Makefile.in's, the configure script and everything else.
  * After this it works like all normal autotools projects:
- * @verbatim
+ * @code
  * ./configure
  * make
  * sudo make install
- * @endverbatim
+ * @endcode
  *
  * Note sudo was assumed to get root permissions, as this would install in
  * /usr/local which is system-owned. Use any way you like to gain root, or
  * specify a different prefix with configure:
  *
- * @verbatim
+ * @code
  * ./configure --prefix=$HOME/mysoftware
- * @endverbatim
+ * @endcode
  *
  * Also remember that autotools buys you some useful commands like:
- * @verbatim
+ * @code
  * make uninstall
- * @endverbatim
+ * @endcode
  *
  * This uninstalls the software after it was installed with "make install".
  * It is very useful to clear up what you built if you wish to clean the
  * system.
  *
- * @verbatim
+ * @code
  * make distcheck
- * @endverbatim
+ * @endcode
  *
  * This firstly checks if your build tree is "clean" and ready for
  * distribution. It also builds a tarball (myapp-0.0.0.tar.gz) that is
@@ -108,21 +108,21 @@
  * build-generated files, so the tarball is clean, and no need to worry
  * about cleaning up your tree before packaging.
  *
- * @verbatim
+ * @code
  * make clean
- * @endverbatim
+ * @endcode
  *
  * This cleans up all build files (binaries, objects etc.) from the tree.
  *
- * @verbatim
+ * @code
  * make distclean
- * @endverbatim
+ * @endcode
  *
  * This cleans out all files from the build and from configure's output too.
  *
- * @verbatim
+ * @code
  * make maintainer-clean
- * @endverbatim
+ * @endcode
  *
  * This deletes all the files autogen.sh will produce so the tree is clean
  * to be put into a revision-control system (like CVS, SVN or GIT for example).
