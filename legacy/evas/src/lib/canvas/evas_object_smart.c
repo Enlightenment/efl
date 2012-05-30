@@ -929,12 +929,9 @@ evas_object_smart_render_pre(Evas_Object *obj)
      }
    if ((obj->cur.map != obj->prev.map) ||
        (obj->cur.usemap != obj->prev.usemap))
-     {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
-     }
-done:
-   obj->pre_render_done = 1;
+     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+
+   obj->pre_render_done = EINA_TRUE;
 }
 
 static void
