@@ -2,6 +2,7 @@
 # include "config.h"
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -29,6 +30,11 @@ embryo_init(void)
 EAPI int
 embryo_shutdown(void)
 {
+   if (_embryo_init_count <= 0)
+     {
+        printf("%s:%i Init count not greater than 0 in shutdown.", __FUNCTION__, __LINE__);
+        return 0;
+     }
    if (--_embryo_init_count != 0)
      return _embryo_init_count;
 

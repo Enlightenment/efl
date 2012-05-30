@@ -82,6 +82,11 @@ eina_fail:
 EAPI int
 eeze_shutdown(void)
 {
+   if (_eeze_init_count <= 0)
+     {
+        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
    if (--_eeze_init_count != 0)
      return _eeze_init_count;
 

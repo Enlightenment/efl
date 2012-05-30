@@ -383,6 +383,11 @@ emotion_shutdown(void)
 {
    Emotion_Webcam *ew;
 
+   if (_emotion_webcams_count <= 0)
+     {
+        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        return EINA_FALSE;
+     }
    if (--_emotion_webcams_count) return EINA_TRUE;
 
    EINA_LIST_FREE(_emotion_webcams->webcams, ew)

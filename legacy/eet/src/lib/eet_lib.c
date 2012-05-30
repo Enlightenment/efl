@@ -633,6 +633,11 @@ shutdown_eina:
 EAPI int
 eet_shutdown(void)
 {
+   if (eet_init_count <= 0)
+     {
+        ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
    if (--eet_init_count != 0)
      return eet_init_count;
 

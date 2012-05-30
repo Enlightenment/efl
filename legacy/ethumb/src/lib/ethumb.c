@@ -202,6 +202,11 @@ ethumb_init(void)
 EAPI int
 ethumb_shutdown(void)
 {
+   if (initcount <= 0)
+     {
+        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
    initcount--;
    if (initcount == 0)
      {

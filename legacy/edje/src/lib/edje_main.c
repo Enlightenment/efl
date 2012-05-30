@@ -170,6 +170,11 @@ _edje_lib_unref(void)
 EAPI int
 edje_shutdown(void)
 {
+   if (_edje_init_count <= 0)
+     {
+        ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
    if (--_edje_init_count != 0)
      return _edje_init_count;
 

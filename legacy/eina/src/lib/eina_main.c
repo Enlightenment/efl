@@ -307,6 +307,11 @@ eina_init(void)
 EAPI int
 eina_shutdown(void)
 {
+   if (_eina_main_count <= 0)
+     {
+        ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
    _eina_main_count--;
    if (EINA_UNLIKELY(_eina_main_count == 0))
      {

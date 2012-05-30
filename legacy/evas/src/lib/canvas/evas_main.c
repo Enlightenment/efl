@@ -77,6 +77,11 @@ evas_init(void)
 EAPI int
 evas_shutdown(void)
 {
+   if (_evas_init_count <= 0)
+     {
+        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
    if (--_evas_init_count != 0)
      return _evas_init_count;
 

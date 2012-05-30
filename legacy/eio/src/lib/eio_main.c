@@ -236,6 +236,11 @@ eio_shutdown(void)
    Eio_Progress *pg;
    Eio_File_Associate *asso;
 
+   if (_eio_count <= 0)
+     {
+        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
    _eio_count--;
 
    if (_eio_count > 0) return _eio_count;
