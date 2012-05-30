@@ -621,8 +621,8 @@
 2012-01-06  Sung W. Park (sung_)
 
         * Add EvasGL support to software backend using OSMesa.  Requires OSMesa
-          library.  Due to caveats in OSMesa, surface config stays with a 
-          context rather than with a surface.  So for now, the config of a 
+          library.  Due to caveats in OSMesa, surface config stays with a
+          context rather than with a surface.  So for now, the config of a
           surface remains with the first context that it binds to.  May need
           to come up with a different solution in the near future.
 
@@ -650,14 +650,14 @@
 
 2012-01-20  Sung W. Park (sung_)
 
-	* Add Direct Rendering to Evas' window optimization for Evas_GL.  This 
+	* Add Direct Rendering to Evas' window optimization for Evas_GL.  This
           optimization can be significant since it avoids and extra copy from
           an offscreen buffer.  Normally, Evas_GL will render to a render
-          target using an FBO. This can be enabled by giving 
-          EVAS_GL_OPTIONS_DIRECT hint in the config options_bits. Direct 
-          rendering is actually done if the following conditions are met - 
-          1) All GL rendering is done in the pixel_getter callback 2) No 
-          rotation on the image object 3) Corresponding image 
+          target using an FBO. This can be enabled by giving
+          EVAS_GL_OPTIONS_DIRECT hint in the config options_bits. Direct
+          rendering is actually done if the following conditions are met -
+          1) All GL rendering is done in the pixel_getter callback 2) No
+          rotation on the image object 3) Corresponding image
           object has alpha disabled.
 
 2012-01-23  Tom Hacohen (TAsn)
@@ -769,6 +769,9 @@
 2012-05-30  ChunEon Park (Hermet)
 
 	* Fixed to clean up when map actually changed. Now rendering updates will be
-     correct after evas_map acutally disabled/enabled for the smart object.
+	correct after evas_map acutally disabled/enabled for the smart object.
 
+2012-05-30  Cedric Bail
+
+	* Don't wake up prepare thread if there is nothing to prepare.
 

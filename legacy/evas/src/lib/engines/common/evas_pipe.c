@@ -700,6 +700,8 @@ static void
 evas_common_pipe_load_do(void)
 {
 #ifdef BUILD_PTHREAD
+  if (!im_task && !text_task) return ;
+
   /* Notify worker thread. */
   pthread_barrier_wait(&(task_thbarrier[0]));
 
