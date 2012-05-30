@@ -168,7 +168,7 @@ struct _Ecore_Pthread_Worker
 
    const void     *data;
 
-   volatile int cancel;
+   int cancel;
 
 #ifdef EFL_HAVE_THREADS
    LK(cancel_mutex);
@@ -280,7 +280,7 @@ _ecore_thread_data_free(void *data)
 static void
 _ecore_thread_join(PH(thread))
 {
-  PHJ(thread);
+   PHJ(thread);
 }
 
 static void
@@ -674,6 +674,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
                  const void     *data)
 {
    Ecore_Pthread_Worker *work;
+   Eina_Bool tried = EINA_FALSE;
 #ifdef EFL_HAVE_THREADS
    PH(thread);
 #endif
@@ -721,17 +722,20 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
 
    LKL(_ecore_pending_job_threads_mutex);
 
+ retry:
    if (PHC(thread, _ecore_thread_worker, NULL) == 0)
      {
         _ecore_thread_count++;
 	LKU(_ecore_pending_job_threads_mutex);
         return (Ecore_Thread *)work;
      }
-   LKU(_ecore_pending_job_threads_mutex);
+   if (!tried)
+     {
+       _ecore_main_call_flush();
+       tried = EINA_TRUE;
+       goto retry;
+     }
 
-   eina_threads_shutdown();
-
-   LKL(_ecore_pending_job_threads_mutex);
    if (_ecore_thread_count == 0)
      {
         _ecore_pending_job_threads = eina_list_remove(_ecore_pending_job_threads, work);
@@ -746,6 +750,9 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
         work = NULL;
      }
    LKU(_ecore_pending_job_threads_mutex);
+
+   eina_threads_shutdown();
+
    return (Ecore_Thread *)work;
 #else
    /*
@@ -882,6 +889,7 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
 {
 #ifdef EFL_HAVE_THREADS
    Ecore_Pthread_Worker *worker;
+   Eina_Bool tried = EINA_FALSE;
    PH(thread);
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
@@ -918,8 +926,15 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
 
         eina_threads_init();
 
+     retry_direct:
         if (PHC(t, _ecore_direct_worker, worker) == 0)
           return (Ecore_Thread *)worker;
+	if (!tried)
+	  {
+	     _ecore_main_call_flush();
+	     tried = EINA_TRUE;
+	     goto retry_direct;
+	  }
 
         if (worker->u.feedback_run.direct_worker)
           {
@@ -947,11 +962,18 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
    eina_threads_init();
 
    LKL(_ecore_pending_job_threads_mutex);
+ retry:
    if (PHC(thread, _ecore_thread_worker, NULL) == 0)
      {
         _ecore_thread_count++;
 	LKU(_ecore_pending_job_threads_mutex);
         return (Ecore_Thread *)worker;
+     }
+   if (!tried)
+     {
+        _ecore_main_call_flush();
+	tried = EINA_TRUE;
+	goto retry;
      }
    LKU(_ecore_pending_job_threads_mutex);
 

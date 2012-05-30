@@ -16,6 +16,7 @@ Fixes:
      - Send mouse move event before mouse down event in ecore_extn
      - Reduce race condition on shutdown of Ecore_Thread.
      - Force cancel of all running Ecore_Thread on shutdown.
+     - Make Ecore_Thread work reliably when called without a running main loop.
 
 Ecore 1.2.0
 

@@ -709,10 +709,8 @@ _thread_safe_cleanup(void *data)
    eina_lock_free(&call->m);
 }
 
-static void
-_thread_callback(void        *data __UNUSED__,
-                 void        *buffer __UNUSED__,
-                 unsigned int nbyte __UNUSED__)
+void
+_ecore_main_call_flush(void)
 {
    Ecore_Safe_Call *call;
    Eina_List *callback;
@@ -760,5 +758,13 @@ _thread_callback(void        *data __UNUSED__,
              free(call);
           }
      }
+}
+
+static void
+_thread_callback(void        *data __UNUSED__,
+                 void        *buffer __UNUSED__,
+                 unsigned int nbyte __UNUSED__)
+{
+   _ecore_main_call_flush();
 }
 

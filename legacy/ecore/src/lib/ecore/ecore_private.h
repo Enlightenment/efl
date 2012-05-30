@@ -224,6 +224,8 @@ void _ecore_main_loop_shutdown(void);
 
 void _ecore_throttle(void);
 
+void _ecore_main_call_flush(void);
+
 extern int _ecore_main_lock_count;
 extern Eina_Lock _ecore_main_loop_lock;
 

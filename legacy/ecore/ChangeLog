@@ -692,6 +692,7 @@
 2012-05-30  Cedric Bail
 
 	* Force cancel of all running Ecore_Thread on shutdown.
+	* Make Ecore_Thread work reliabily when main loop isn't running.
 
 2012-05-30  Mariusz Grzegorczyk
 
