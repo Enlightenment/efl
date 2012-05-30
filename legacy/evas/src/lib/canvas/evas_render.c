@@ -518,13 +518,15 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
 
    for (i = 0; i < pending_objects->count; ++i)
      {
-        Evas_Object *obj;
+        Evas_Object *obj, *parent;
         int is_active;
         Eina_Bool ok = EINA_FALSE;
-
         obj = eina_array_data_get(pending_objects, i);
-
         if (!obj->layer) goto clean_stuff;
+
+        parent = evas_object_smart_parent_get(obj);
+        if (parent && _evas_render_has_map(parent))
+          goto clean_stuff;
 
         evas_object_clip_recalc(obj);
         is_active = evas_object_is_active(obj);

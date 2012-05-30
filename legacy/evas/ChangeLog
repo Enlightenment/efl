@@ -761,13 +761,14 @@
 
         * Fix evas_object_image_memfile_set() on non-linux systems.
 
-2012-05-29  ChunEon Park (Hermet)
-
-	* Fixed to clean up when map actually changed. Now rendering updates will be
-     correct after evas_map acutally disabled for the smart object.
-
 2012-05-29  Tom Hacohen (TAsn)
 
 	* Text: Fixed an issue with text object sizing.
 	* Font: Fixed run-time italic.
+
+2012-05-30  ChunEon Park (Hermet)
+
+	* Fixed to clean up when map actually changed. Now rendering updates will be
+     correct after evas_map acutally disabled/enabled for the smart object.
+
 
