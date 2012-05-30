@@ -306,6 +306,7 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
    evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {
+        evas_common_font_source_reload(fi->src);
         FTLOCK();
         FT_Activate_Size(fi->ft.size);
         FTUNLOCK();

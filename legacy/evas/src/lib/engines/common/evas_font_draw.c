@@ -273,7 +273,7 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 
    evas_common_font_int_reload(fi);
 
-   if (fi->src->current_size != fi->size && text_props->generation == fi->generation)
+   if (fi->src->current_size != fi->size)
      {
         evas_common_font_source_reload(fi->src);
         FTLOCK();
