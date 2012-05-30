@@ -10,6 +10,7 @@
  */
 
 #include <Elementary.h>
+#include <assert.h>
 
 struct example_data
 {
@@ -24,71 +25,67 @@ static const char *dict[] = \
 };
 
 static void
-_index_item_del(void        *data,
+_index_item_del(void *data,
                 Evas_Object *obj,
-                void        *event_info)
+                void *event_info)
 {
-   fprintf(stdout, "Deleting associated list node (%s). Comparing index "
+   fprintf(stdout, "Deleting index node (%s). Comparing index "
                    "item data reported via callback with the one returned by "
                    "index's API on items: %s.\n",
-           elm_object_item_text_get(data),
+           elm_index_item_letter_get(event_info),
            data == elm_object_item_data_get(event_info) ? "OK" :
            "FAIL, something went wrong");
-
-   elm_object_item_del(data);
 }
 
 /* delete an index item */
 static void
-_item_del(void        *data,
+_item_del(void *data,
           Evas_Object *obj,
-          void        *event_info)
+          void *event_info)
 {
-   Elm_Object_Item *iit;
-   Elm_Object_Item *lit = elm_index_selected_item_get(d.index, 0);
-
-   iit = elm_index_item_find(d.index, lit);
+   Elm_Object_Item *iit = elm_index_selected_item_get(d.index, 0);
 
    if (!iit) return;
 
    fprintf(stdout, "Deleting last selected index item, which had letter"
-           " %s (pointing to %s)\n", elm_index_item_letter_get(iit),
-           elm_object_item_text_get(lit));
+                   " %s (pointing to %p)\n", elm_index_item_letter_get(iit),
+           elm_object_item_data_get(iit));
 
-   elm_object_item_del(lit);
+   elm_object_item_del(iit);
 }
 
 static void
-_item_del_all(void        *data,
+_item_del_all(void *data,
               Evas_Object *obj,
-              void        *event_info)
+              void *event_info)
 {
    elm_index_item_clear(d.index);
 }
 
 static void
-_active_set(void        *data,
+_active_set(void *data,
             Evas_Object *obj,
-            void        *event_info)
+            void *event_info)
 {
-   elm_index_autohide_disabled_set(d.index, !elm_index_autohide_disabled_get(d.index));
+   elm_index_autohide_disabled_set
+     (d.index, !elm_index_autohide_disabled_get(d.index));
 
    fprintf(stdout, "Toggling index programmatically.\n");
 }
 
 /* "delay,changed" hook */
 static void
-_index_changed(void        *data,
+_index_changed(void *data,
                Evas_Object *obj,
-               void        *event_info)
+               void *event_info)
 {
-   elm_list_item_bring_in(event_info);
+   elm_list_item_bring_in(elm_object_item_data_get(event_info));
 }
 
 static void
-_index_selected(void        *data,
+_index_selected(void *data,
                 Evas_Object *obj,
-                void        *event_info)
+                void *event_info)
 {
    Elm_Object_Item *lit = event_info;
 
@@ -99,15 +96,15 @@ _index_selected(void        *data,
 }
 
 static void
-_on_done(void        *data,
+_on_done(void *data,
          Evas_Object *obj,
-         void        *event_info)
+         void *event_info)
 {
    elm_exit();
 }
 
 EAPI_MAIN int
-elm_main(int    argc,
+elm_main(int argc,
          char **argv)
 {
    Evas_Object *win, *bg, *hbox, *vbox, *bt, *sep;
@@ -149,15 +146,18 @@ elm_main(int    argc,
 
         if (curr != dict[i][0])
           {
-             Elm_Object_Item *index_it;
+             Elm_Object_Item *index_it, *it;
              char buf[32];
 
              curr = dict[i][0];
              /* indexing by first letters */
 
              snprintf(buf, sizeof(buf), "%c", curr);
-             elm_index_item_append(d.index, buf, NULL, lit);
-             index_it = elm_index_item_find(d.index, lit);
+             index_it = elm_index_item_append(d.index, buf, NULL, lit);
+
+             /* this is here just to demostrate the API call */
+             it = elm_index_item_find(d.index, lit);
+             assert(it == index_it);
 
              elm_object_item_del_cb_set(index_it, _index_item_del);
           }
@@ -206,4 +206,5 @@ elm_main(int    argc,
 
    return 0;
 }
+
 ELM_MAIN()
