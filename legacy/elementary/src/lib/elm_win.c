@@ -1255,10 +1255,10 @@ _elm_win_delete_request(Ecore_Evas *ee)
 static Ecore_X_Window
 _elm_ee_xwin_get(const Ecore_Evas *ee)
 {
-   Ecore_X_Window xwin;
+#ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window xwin = 0;
 
    if (!ee) return 0;
-#ifdef HAVE_ELEMENTARY_X
 #define ENGINE_COMPARE(name) (!strcmp(_elm_preferred_engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      {
