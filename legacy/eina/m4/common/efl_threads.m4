@@ -12,6 +12,8 @@ dnl Defines EFL_HAVE_POSIX_THREADS or EFL_HAVE_WIN32_THREADS, and EFL_HAVE_THREA
 AC_DEFUN([EFL_CHECK_THREADS],
 [
 
+dnl Generic thread detection
+
 EFL_PTHREAD_CFLAGS=""
 EFL_PTHREAD_LIBS=""
 
@@ -69,54 +71,22 @@ fi
 
 AC_MSG_CHECKING([which threads API is used])
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
-   have_threads="POSIX"
+   efl_have_threads="POSIX"
 else
    if test "x${_efl_have_win32_threads}" = "xyes" ; then
-      have_threads="Windows"
+      efl_have_threads="Windows"
    else
-      have_threads="none"
+      efl_have_threads="no"
    fi
 fi
-AC_MSG_RESULT([${have_threads}])
+AC_MSG_RESULT([${efl_have_threads}])
 
 AC_SUBST(EFL_PTHREAD_CFLAGS)
 AC_SUBST(EFL_PTHREAD_LIBS)
 
-_efl_enable_on_off_threads="no"
-AC_ARG_ENABLE([on-off-threads],
-   [AC_HELP_STRING([--enable-on-off-threads], [only turn this on if you know what you are doing, and don't complain if the world freeze])],
-   [_efl_enable_on_off_threads="${enableval}"])
-
-have_on_off_threads="no"
-if test "x${_efl_enable_on_off_threads}" = "xyes"; then
-   have_on_off_threads="yes"
-   AC_DEFINE([EFL_ON_OFF_THREADS], [1], [make it possible to disable all locks])
-fi
-AC_MSG_CHECKING([whether to turn on/off threads lock on demand])
-AC_MSG_RESULT([${_efl_enable_on_off_threads}])
-
-_efl_enable_debug_threads="no"
-AC_ARG_ENABLE([debug-threads],
-   [AC_HELP_STRING([--enable-debug-threads], [disable assert when you forgot to call eina_threads_init])],
-   [_efl_enable_debug_threads="${enableval}"])
-
-have_debug_threads="no"
-if test "x${_efl_have_posix_threads}" = "xyes" && test "x${_efl_enable_debug_threads}" = "xyes"; then
-   have_debug_threads="yes"
-   AC_DEFINE([EFL_DEBUG_THREADS], [1], [Assert when forgot to call eina_threads_init])
-fi
-
-AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"], [$1], [$2])
-])
-
-dnl Usage: EFL_CHECK_SPINLOCK(ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND])
-dnl Defines EFL_HAVE_POSIX_THREADS_SPINLOCK
-AC_DEFUN([EFL_CHECK_SPINLOCK],
-[
-
 dnl check if the compiler supports pthreads spinlock
 
-_efl_have_posix_threads_spinlock="no"
+efl_have_posix_threads_spinlock="no"
 
 if test "x${_efl_have_posix_threads}" = "xyes" ; then
 
@@ -133,22 +103,47 @@ pthread_spinlock_t lock;
 int res;
 res = pthread_spin_init(&lock, PTHREAD_PROCESS_PRIVATE);
                        ]])],
-      [_efl_have_posix_threads_spinlock="yes"],
-      [_efl_have_posix_threads_spinlock="no"])
+      [efl_have_posix_threads_spinlock="yes"],
+      [efl_have_posix_threads_spinlock="no"])
    CFLAGS=${SAVE_CFLAGS}
    LIBS=${SAVE_LIBS}
 
 fi
 
 AC_MSG_CHECKING([whether to build POSIX threads spinlock code])
-AC_MSG_RESULT([${_efl_have_posix_threads_spinlock}])
-if test "x${_efl_enable_posix_threads}" = "xyes" && test "x${_efl_have_posix_threads_spinlock}" = "xno" ; then
-   AC_MSG_WARN([POSIX threads support requested but spinlocks are not supported])
-fi
+AC_MSG_RESULT([${efl_have_posix_threads_spinlock}])
 
-if test "x${_efl_have_posix_threads_spinlock}" = "xyes" ; then
+if test "x${efl_have_posix_threads_spinlock}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_POSIX_THREADS_SPINLOCK], [1], [Define to mention that POSIX threads spinlocks are supported])
 fi
-AS_IF([test "x$_efl_have_posix_threads_spinlock" = "xyes"], [$1], [$2])
-])
 
+dnl Check ON-OFF threads
+
+_efl_enable_on_off_threads="no"
+AC_ARG_ENABLE([on-off-threads],
+   [AC_HELP_STRING([--enable-on-off-threads], [only turn this on if you know what you are doing, and do not complain if the world freeze])],
+   [_efl_enable_on_off_threads="${enableval}"])
+
+efl_have_on_off_threads="no"
+if test "x${_efl_have_posix_threads}" = "xyes" && test "x${_efl_enable_on_off_threads}" = "xyes"; then
+   efl_have_on_off_threads="yes"
+   AC_DEFINE([EFL_ON_OFF_THREADS], [1], [make it possible to disable all locks])
+fi
+AC_MSG_CHECKING([whether to turn on/off threads lock on demand])
+AC_MSG_RESULT([${efl_have_on_off_threads}])
+
+dnl Check debug threads
+
+_efl_enable_debug_threads="no"
+AC_ARG_ENABLE([debug-threads],
+   [AC_HELP_STRING([--enable-debug-threads], [disable assert when you forgot to call eina_threads_init])],
+   [_efl_enable_debug_threads="${enableval}"])
+
+efl_have_debug_threads="no"
+if test "x${_efl_have_posix_threads}" = "xyes" && test "x${_efl_enable_debug_threads}" = "xyes"; then
+   efl_have_debug_threads="yes"
+   AC_DEFINE([EFL_DEBUG_THREADS], [1], [Assert when forgot to call eina_threads_init])
+fi
+
+AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"], [$1], [$2])
+])

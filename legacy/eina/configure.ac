@@ -96,25 +96,24 @@ EFL_CHECK_CPU_SSE2([have_sse2="yes"], [have_sse2="no"])
 EFL_CHECK_CPU_ALTIVEC([have_altivec="yes"], [have_altivec="no"])
 
 EFL_CHECK_THREADS
-EFL_CHECK_SPINLOCK([have_posix_threads_spinlock="yes"], [have_posix_threads_spinlock="no"])
 
-if ! test "x${have_threads}" = "xno" ; then
+if ! test "x${efl_have_threads}" = "xno" ; then
    EINA_CONFIGURE_HAVE_THREADS="#define EINA_HAVE_THREADS"
 fi
 AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
-AM_CONDITIONAL([EINA_HAVE_THREADS], [! test "x${have_threads}" = "xno"])
+AM_CONDITIONAL([EINA_HAVE_THREADS], [! test "x${efl_have_threads}" = "xno"])
 
-if ! test "x${have_debug_threads}" = "xno"; then
+if ! test "x${efl_have_debug_threads}" = "xno"; then
    EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_HAVE_DEBUG_THREADS"
 fi
 AC_SUBST(EINA_CONFIGURE_HAVE_DEBUG_THREADS)
-AM_CONDITIONAL([EINA_DEBUG_THREADS], [! test "x${have_debug_threads}" = "xno"])
+AM_CONDITIONAL([EINA_DEBUG_THREADS], [! test "x${efl_have_debug_threads}" = "xno"])
 
-if ! test "x${have_on_off_threads}" = "xno"; then
+if ! test "x${efl_have_on_off_threads}" = "xno"; then
    EINA_CONFIGURE_HAVE_ON_OFF_THREADS="#define EINA_HAVE_ON_OFF_THREADS"
 fi
 AC_SUBST(EINA_CONFIGURE_HAVE_ON_OFF_THREADS)
-AM_CONDITIONAL([EINA_ON_OFF_THREADS], [! test "x${have_on_off_threads}" = "xno"])
+AM_CONDITIONAL([EINA_ON_OFF_THREADS], [! test "x${efl_have_on_off_threads}" = "xno"])
 
 ### Additional options to configure
 
@@ -769,11 +768,11 @@ echo "  Report string usage..: ${have_stringshare_usage}"
 echo "  Valgrind support.....: ${have_valgrind}"
 echo "  Default mempool......: ${have_default_mempool}"
 echo "  Log support..........: ${enable_log}"
-echo "  Thread Support.......: ${have_threads}"
-if test "${have_threads}" = "POSIX" ; then
-echo "    spinlock...........: ${have_posix_threads_spinlock}"
-echo "    debug usage........: ${have_debug_threads}"
-echo "    on/off support.....: ${have_on_off_threads}"
+echo "  Thread Support.......: ${efl_have_threads}"
+if test "${efl_have_threads}" = "POSIX" ; then
+echo "    spinlock...........: ${efl_have_posix_threads_spinlock}"
+echo "    debug usage........: ${efl_have_debug_threads}"
+echo "    on/off support.....: ${efl_have_on_off_threads}"
 fi
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"
