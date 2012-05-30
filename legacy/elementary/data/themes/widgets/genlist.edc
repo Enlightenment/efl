@@ -702,13 +702,13 @@ group { name: "elm/genlist/item_compress/message/default";
    }
    styles {
       style { name: "genlist_textblock_style";
-         base: "font=Sans font_size=10 color=#000 wrap=none text_class=list_item";
+         base: "font=Sans font_size=10 color=#000 wrap=char text_class=list_item";
          tag:  "br" "\n";
          tag:  "ps" "ps";
          tag:  "tab" "\t";
       }
       style { name: "genlist_textblock_style2";
-         base: "font=Sans font_size=10 color=#fff wrap=none text_class=list_item";
+         base: "font=Sans font_size=10 color=#fff wrap=char text_class=list_item";
          tag:  "br" "\n";
          tag:  "ps" "ps";
          tag:  "tab" "\t";
