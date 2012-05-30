@@ -1848,6 +1848,8 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window                   root,
 
       case ECORE_X_RANDR_OUTPUT_POLICY_NONE:
         break;
+      default:
+        return EINA_FALSE;
      }
 
    if ((xn == r1.x) && (yn == r1.x)) return EINA_TRUE;

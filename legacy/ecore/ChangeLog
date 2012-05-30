@@ -699,3 +699,6 @@
 	* Small fix to ecore-evas buffer engine on resize to make the
         right kind of buffer cavas (ARGB32 vs RGB32).
 
+2012-05-30 Leif Middelschulte (T_UNIX)
+
+        * Add ECORE_X_RANDR_OUTPUT_POLICY_ASK

@@ -18,6 +18,11 @@ Fixes:
      - Force cancel of all running Ecore_Thread on shutdown.
      - Make Ecore_Thread work reliably when called without a running main loop.
 
+Additions:
+
+    * ecore_x:
+     - ECORE_X_RANDR_OUTPUT_POLICY_ASK
+
 Ecore 1.2.0
 
 Changes since Ecore 1.1.0:

@@ -1498,6 +1498,8 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
        */
       case ECORE_X_RANDR_OUTPUT_POLICY_NONE:
         break;
+      default:
+        return EINA_FALSE;
      }
    if ((x_n == r1_geo.x) && (y_n == r1_geo.x))
      return EINA_TRUE;

@@ -197,7 +197,8 @@ typedef enum _Ecore_X_Randr_Output_Policy
    ECORE_X_RANDR_OUTPUT_POLICY_BELOW = 3,
    ECORE_X_RANDR_OUTPUT_POLICY_LEFT = 4,
    ECORE_X_RANDR_OUTPUT_POLICY_CLONE = 5,
-   ECORE_X_RANDR_OUTPUT_POLICY_NONE = 6
+   ECORE_X_RANDR_OUTPUT_POLICY_NONE = 6,
+   ECORE_X_RANDR_OUTPUT_POLICY_ASK = 7
 } Ecore_X_Randr_Output_Policy;
 
 typedef enum _Ecore_X_Randr_Relative_Alignment
