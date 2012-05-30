@@ -77,7 +77,10 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-        einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+        if (ee->alpha)
+          einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+        else
+          einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_RGB32;
         einfo->info.dest_buffer = ee->engine.buffer.pixels;
         einfo->info.dest_buffer_row_bytes = stride;
         einfo->info.use_color_key = 0;
