@@ -2056,6 +2056,20 @@ _item_state_realize(Elm_Gen_Item *it,
 }
 
 static void
+_item_order_update(const Eina_Inlist *l, int start)
+{
+   Elm_Gen_Item *it, *it2;
+
+   for (it = ELM_GEN_ITEM_FROM_INLIST(l); l; l = l->next, it = ELM_GEN_ITEM_FROM_INLIST(l))
+     {
+        it->item->order_num_in = start++;
+        _elm_genlist_item_odd_even_update(it);
+        it2 = ELM_GEN_ITEM_FROM_INLIST(l->next);
+        if (it2 && (it->item->order_num_in != it2->item->order_num_in)) return;
+     }
+}
+
+static void
 _item_realize(Elm_Gen_Item *it,
               int           in,
               Eina_Bool     calc)
@@ -2071,8 +2085,7 @@ _item_realize(Elm_Gen_Item *it,
      {
         if (it->item->order_num_in != in)
           {
-             it->item->order_num_in = in;
-             _elm_genlist_item_odd_even_update(it);
+             _item_order_update(EINA_INLIST_GET(it), in);
              _elm_genlist_item_state_update(it, NULL);
              _elm_genlist_item_index_update(it);
           }
@@ -2125,7 +2138,7 @@ _item_realize(Elm_Gen_Item *it,
                                  elm_widget_mirrored_get(WIDGET(it)));
      }
 
-   _elm_genlist_item_odd_even_update(it);
+   _item_order_update(EINA_INLIST_GET(it), in);
 
    treesize = edje_object_data_get(VIEW(it), "treesize");
    if (treesize) tsize = atoi(treesize);

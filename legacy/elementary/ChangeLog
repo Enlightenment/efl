@@ -120,3 +120,7 @@
         * Prepending items to a genlist no longer causes the selected item to
           scroll out of the viewport
         * Collapsing tree items in genlist now animate properly
+
+2012-05-30 Mike Blumenkrantz
+
+        * Fix even/odd signals for genlist items
