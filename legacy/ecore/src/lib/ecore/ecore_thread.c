@@ -260,6 +260,7 @@ _ecore_thread_worker_free(Ecore_Pthread_Worker *worker)
 
    if (_ecore_thread_worker_count > ((_ecore_thread_count_max + 1) * 16))
      {
+        _ecore_thread_worker_count--;
         free(worker);
         return;
      }
@@ -566,8 +567,11 @@ _ecore_thread_worker_new(void)
 
    result = eina_trash_pop(&_ecore_thread_worker_trash);
 
-   if (!result) result = calloc(1, sizeof(Ecore_Pthread_Worker));
-   else _ecore_thread_worker_count--;
+   if (!result) 
+     {
+       result = calloc(1, sizeof(Ecore_Pthread_Worker));
+       _ecore_thread_worker_count++;
+     }
 
    LKI(result->cancel_mutex);
    LKI(result->mutex);
