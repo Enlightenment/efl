@@ -204,28 +204,19 @@ _evas_render_phase1_direct(Evas *e,
                     }
                }
              else if (obj->proxy.redraw)
+               _evas_render_prev_cur_clip_cache_add(e, obj);
+
+             RD("      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
+                obj->smart.smart,
+                evas_object_smart_members_get_direct(obj),
+                obj->cur.map, obj->cur.usemap,
+                obj->prev.map, obj->prev.usemap,
+                _evas_render_has_map(obj),
+                _evas_render_had_map(obj));
+             if ((obj->smart.smart) &&
+                 (_evas_render_has_map(obj)))
                {
-                  _evas_render_prev_cur_clip_cache_add(e, obj);
-               }
-             if (obj->pre_render_done)
-               {
-                  RD("      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
-                     obj->smart.smart,
-                     evas_object_smart_members_get_direct(obj),
-                     obj->cur.map, obj->cur.usemap,
-                     obj->prev.map, obj->prev.usemap,
-                     _evas_render_has_map(obj),
-                     _evas_render_had_map(obj));
-                  if ((obj->smart.smart) &&
-                      (_evas_render_has_map(obj)))
-                    {
-                       RD("      has map + smart\n");
-                       _evas_render_prev_cur_clip_cache_add(e, obj);
-                    }
-               }
-             else if (_evas_render_had_map(obj))
-               {
-                  RD("      no pre-render done\n");
+                  RD("      has map + smart\n");
                   _evas_render_prev_cur_clip_cache_add(e, obj);
                }
           }
