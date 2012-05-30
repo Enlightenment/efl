@@ -4116,6 +4116,7 @@ _item_process_post(Widget_Data *wd, Elm_Gen_Item *it, Eina_Bool qadd)
           }
      }
    if (showme) it->item->block->showme = EINA_TRUE;
+
    /* when prepending, move the scroller along with the first selected item to
     * create the illusion that we're watching the selected item
     * this prevents the selected item being scrolled off the viewport
@@ -4126,7 +4127,11 @@ _item_process_post(Widget_Data *wd, Elm_Gen_Item *it, Eina_Bool qadd)
         it = wd->selected->data;
         elm_smart_scroller_child_pos_get(wd->scr, NULL, &y);
         evas_object_geometry_get(wd->pan_smart, NULL, NULL, NULL, &h);
-        elm_smart_scroller_child_region_show(wd->scr, it->x + it->item->block->x, y + it->item->h, it->item->block->w, h);
+        elm_smart_scroller_child_region_show(wd->scr,
+                                             it->x + it->item->block->x,
+                                             y + it->item->h,
+                                             it->item->block->w,
+                                             h);
      }
 }
 
