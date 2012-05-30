@@ -43,6 +43,7 @@ void test_layout2(void *data, Evas_Object *obj, void *event_info);
 void test_hover(void *data, Evas_Object *obj, void *event_info);
 void test_hover2(void *data, Evas_Object *obj, void *event_info);
 void test_entry(void *data, Evas_Object *obj, void *event_info);
+void test_entry_style_user(void *data, Evas_Object *obj, void *event_info);
 void test_entry_scrolled(void *data, Evas_Object *obj, void *event_info);
 void test_entry3(void *data, Evas_Object *obj, void *event_info);
 void test_entry4(void *data, Evas_Object *obj, void *event_info);
@@ -484,6 +485,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Entries", "Entry", test_entry);
+   ADD_TEST(NULL, "Entries", "Entry Style", test_entry_style_user);
    ADD_TEST(NULL, "Entries", "Entry Scrolled", test_entry_scrolled);
    ADD_TEST(NULL, "Entries", "Entry 3", test_entry3);
    ADD_TEST(NULL, "Entries", "Entry 4", test_entry4);

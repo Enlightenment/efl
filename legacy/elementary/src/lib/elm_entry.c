@@ -2551,6 +2551,35 @@ elm_entry_add(Evas_Object *parent)
 }
 
 EAPI void
+elm_entry_text_style_user_push(Evas_Object *obj, const char *style)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_part_text_style_user_push(wd->ent, "elm.text", style);
+   _theme_hook(obj);
+}
+
+EAPI void
+elm_entry_text_style_user_pop(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_part_text_style_user_pop(wd->ent, "elm.text");
+   _theme_hook(obj);
+}
+
+EAPI const char*
+elm_entry_text_style_user_peek(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return edje_object_part_text_style_user_peek(wd->ent, "elm.text");
+}
+
+EAPI void
 elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);

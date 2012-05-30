@@ -124,3 +124,8 @@
 2012-05-30 Mike Blumenkrantz
 
         * Fix even/odd signals for genlist items
+
+2012-05-30 Thiep Ha
+
+       * Entry: Add 3 APIs which are elm_entry_text_style_user_push/pop/peek
+       and test functions for these APIs.

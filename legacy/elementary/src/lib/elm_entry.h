@@ -470,6 +470,36 @@ typedef Edje_Entry_Change_Info Elm_Entry_Change_Info;
 EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
 
 /**
+ * Push the style to the top of user style stack.
+ * If there is styles in the user style stack, the properties in the top style
+ * of user style stack will replace the properties in current theme.
+ * The input style is specified in format tag='property=value' (i.e. DEFAULT='font=Sans font_size=60'hilight=' + font_weight=Bold').
+ *
+ * @param obj The entry object
+ * @param style The style user to push
+ */
+EAPI void      elm_entry_text_style_user_push(Evas_Object *obj, const char *style);
+
+/**
+ * Remove the style in the top of user style stack.
+ *
+ * @param  obj The entry object
+ *
+ * @see elm_entry_text_style_user_push()
+ */
+EAPI void     elm_entry_text_style_user_pop(Evas_Object *obj);
+
+/**
+ * Retrieve the style on the top of user style stack.
+ *
+ * @param obj The entry object
+ * @return style on the top of user style stack if exist, otherwise NULL.
+ *
+ * @see elm_entry_text_style_user_push()
+ */
+EAPI const char*      elm_entry_text_style_user_peek(const Evas_Object *obj);
+
+/**
  * Sets the entry to single line mode.
  *
  * In single line mode, entries don't ever wrap when the text reaches the

@@ -702,6 +702,79 @@ my_ent_bt_pas(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    elm_entry_selection_paste(en);
 }
 
+static void
+ent_bt_style_user_peek(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+	Evas_Object *en = data;
+	const char* cur_style = elm_entry_text_style_user_peek(en);
+	if (cur_style)
+		printf("Current style user: %s\n", cur_style);
+	else
+		printf("Style user stack is empty.\n");
+}
+
+static void
+ent_bt_style_user_pop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+	Evas_Object *en = data;
+	elm_entry_text_style_user_pop(en);
+	printf("Style user popped\n");
+}
+
+void
+test_entry_style_user(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bx, *en, *bt, *bt2;
+
+   win = elm_win_util_standard_add("entry-style", "Entry Style");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_resize(win, 300, 300);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+
+   en = elm_entry_add(win);
+   elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
+
+   elm_entry_text_style_user_push(en, "DEFAULT='font_size=40 color=#FF0000'");
+   elm_object_text_set(en, "Testing Text");
+
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, en);
+   evas_object_resize(en, 200, 200);
+   evas_object_show(en);
+
+   bt = elm_button_add(win);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_text_set(bt, "Peek");
+   evas_object_smart_callback_add(bt, "clicked", ent_bt_style_user_peek, en);
+   evas_object_size_hint_weight_set(bt, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, bt);
+   evas_object_propagate_events_set(bt, 0);
+   elm_object_focus_allow_set(bt, 0);
+   evas_object_show(bt);
+
+   bt2 = elm_button_add(win);
+   evas_object_size_hint_weight_set(bt2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_text_set(bt2, "Pop");
+   evas_object_smart_callback_add(bt2, "clicked", ent_bt_style_user_pop, en);
+   evas_object_size_hint_weight_set(bt2, 0.0, 0.0);
+   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, bt2);
+   evas_object_propagate_events_set(bt2, 0);
+   elm_object_focus_allow_set(bt2, 0);
+   evas_object_show(bt2);
+
+   elm_object_focus_set(en, EINA_TRUE);
+   evas_object_show(win);
+}
+
+
 void
 test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
