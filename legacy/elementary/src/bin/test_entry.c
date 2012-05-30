@@ -705,20 +705,20 @@ my_ent_bt_pas(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 static void
 ent_bt_style_user_peek(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *en = data;
-	const char* cur_style = elm_entry_text_style_user_peek(en);
-	if (cur_style)
-		printf("Current style user: %s\n", cur_style);
-	else
-		printf("Style user stack is empty.\n");
+   Evas_Object *en = data;
+   const char* cur_style = elm_entry_text_style_user_peek(en);
+   if (cur_style)
+     printf("Current style user: %s\n", cur_style);
+   else
+     printf("Style user stack is empty.\n");
 }
 
 static void
 ent_bt_style_user_pop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-	Evas_Object *en = data;
-	elm_entry_text_style_user_pop(en);
-	printf("Style user popped\n");
+   Evas_Object *en = data;
+   elm_entry_text_style_user_pop(en);
+   printf("Style user popped\n");
 }
 
 void
@@ -773,7 +773,6 @@ test_entry_style_user(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
    elm_object_focus_set(en, EINA_TRUE);
    evas_object_show(win);
 }
-
 
 void
 test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
