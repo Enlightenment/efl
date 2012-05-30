@@ -775,3 +775,8 @@
 
 	* Don't wake up prepare thread if there is nothing to prepare.
 
+2012-05-30  Daniel Zaoui
+
+	* Fix evas_free callback deletion to not sometimes abort evas freeing
+        in some situations, thus leaking.
+
