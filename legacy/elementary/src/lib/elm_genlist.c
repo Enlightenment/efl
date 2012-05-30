@@ -1846,14 +1846,15 @@ _item_mode_content_realize(Elm_Gen_Item *it,
      {
         const Eina_List *l;
         const char *key;
+        Evas_Object *ic;
 
         EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
 
-             Evas_Object *ic = it->itc->func.content_get
-                ((void *)it->base.data, WIDGET(it), l->data);
+             ic = it->itc->func.content_get
+               ((void *)it->base.data, WIDGET(it), key);
 
              if (ic)
                {
@@ -1861,11 +1862,8 @@ _item_mode_content_realize(Elm_Gen_Item *it,
                   edje_object_part_swallow(target, key, ic);
                   evas_object_show(ic);
                   elm_widget_sub_object_add(WIDGET(it), ic);
-                  if (it->item->deco_it_view || it->wd->decorate_all_mode)
-                    {
-                       if (elm_widget_item_disabled_get(it))
-                         elm_widget_disabled_set(ic, EINA_TRUE);
-                    }
+                  if (elm_widget_item_disabled_get(it))
+                    elm_widget_disabled_set(ic, EINA_TRUE);
                }
           }
      }
