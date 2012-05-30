@@ -185,6 +185,11 @@ elm_init(int    argc,
 EAPI int
 elm_shutdown(void)
 {
+   if (_elm_init_count <= 0)
+     {
+        ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
    _elm_init_count--;
    if (_elm_init_count > 0) return _elm_init_count;
    _elm_win_shutdown();
