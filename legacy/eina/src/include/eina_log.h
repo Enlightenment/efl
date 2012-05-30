@@ -631,8 +631,8 @@ EAPI void               eina_log_abort_on_critical_level_set(int critical_level)
  * @brief Get level that triggers abort if abort-on-critical is set.
  *
  * @return critical level equal or smaller than value will trigger
- *        program abortion if eina_log_abort_on_critical_get() returns
- *        #EINA_TRUE.
+ *        program abortion if eina_log_abort_on_critical_get()
+ *        returns #EINA_TRUE.
  *
  * @see eina_log_abort_on_critical_level_set()
  * @see eina_log_abort_on_critical_get()

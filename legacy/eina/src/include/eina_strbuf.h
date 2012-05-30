@@ -447,7 +447,7 @@ EAPI Eina_Bool eina_strbuf_insert_vprintf(Eina_Strbuf *buf, const char *fmt, siz
  * @param fmt The string to prepend.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
- * This macro is calling eina_strbuf_insert_printf() at position 0.If @p buf
+ * This macro is calling eina_strbuf_insert_printf() at position 0. If @p buf
  * can't prepend it, #EINA_FALSE is returned, otherwise #EINA_TRUE is
  * returned.
  */
@@ -577,7 +577,7 @@ EAPI Eina_Bool eina_strbuf_replace(Eina_Strbuf *buf, const char *str, const char
  *
  * This function replaces all the occurrences of @p str in @p buf with
  * the string @p with. This function returns the number of times @p str
- * has been replaced. On failure, it returns 0.
+ * has been replaced. On failure, it returns @c 0.
  */
 EAPI int eina_strbuf_replace_all(Eina_Strbuf *buf, const char *str, const char *with) EINA_ARG_NONNULL(1, 2, 3);
 

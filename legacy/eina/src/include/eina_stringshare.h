@@ -196,7 +196,7 @@ EAPI Eina_Stringshare  *eina_stringshare_add_length(const char *str, unsigned in
 /**
  * @brief Retrieve an instance of a string for use in a program.
  *
- * @param   str The NULL terminated string to retrieve an instance of.
+ * @param   str The NULL-terminated string to retrieve an instance of.
  * @return  A pointer to an instance of the string on success.
  *          @c NULL on failure.
  *
@@ -217,7 +217,7 @@ EAPI Eina_Stringshare  *eina_stringshare_add(const char *str) EINA_WARN_UNUSED_R
  * @brief Retrieve an instance of a string for use in a program
  * from a format string.
  *
- * @param   fmt The NULL terminated format string to retrieve an instance of.
+ * @param   fmt The NULL-terminated format string to retrieve an instance of.
  * @return  A pointer to an instance of the string on success.
  *          @c NULL on failure.
  *
@@ -226,7 +226,7 @@ EAPI Eina_Stringshare  *eina_stringshare_add(const char *str) EINA_WARN_UNUSED_R
  * is just returned and its reference counter is increased. Otherwise
  * a duplicated string is returned.
  *
- * The format string @p fmt must be NULL terminated ('@\0') and its full
+ * The format string @p fmt must be NULL-terminated ('@\0') and its full
  * length will be used. To use part of the format string or non-null
  * terminated, use eina_stringshare_nprintf() instead.
  *
@@ -238,7 +238,7 @@ EAPI Eina_Stringshare  *eina_stringshare_printf(const char *fmt, ...) EINA_WARN_
  * @brief Retrieve an instance of a string for use in a program
  * from a format string.
  *
- * @param   fmt The NULL terminated format string to retrieve an instance of.
+ * @param   fmt The NULL-terminated format string to retrieve an instance of.
  * @param   args The va_args for @p fmt
  * @return  A pointer to an instance of the string on success.
  *          @c NULL on failure.
@@ -248,7 +248,7 @@ EAPI Eina_Stringshare  *eina_stringshare_printf(const char *fmt, ...) EINA_WARN_
  * is just returned and its reference counter is increased. Otherwise
  * a duplicated string is returned.
  *
- * The format string @p fmt must be NULL terminated ('@\0') and its full
+ * The format string @p fmt must be NULL-terminated ('@\0') and its full
  * length will be used. To use part of the format string or non-null
  * terminated, use eina_stringshare_nprintf() instead.
  *
@@ -299,7 +299,7 @@ EAPI Eina_Stringshare  *eina_stringshare_ref(Eina_Stringshare *str);
  *
  * This function decreases the reference counter associated to @p str
  * if it exists. If that counter reaches 0, the memory associated to
- * @p str is freed. If @p str is NULL, the function returns
+ * @p str is freed. If @p str is @c NULL, the function returns
  * immediately.
  *
  * Note that if the given pointer is not shared or NULL, bad things
@@ -311,7 +311,7 @@ EAPI void               eina_stringshare_del(Eina_Stringshare *str);
  * @brief Note that the given string @b must be shared.
  *
  * @param str the shared string to know the length. It is safe to
- *        give NULL, in that case -1 is returned.
+ *        give @c NULL, in that case @c -1 is returned.
  * @return The length of a shared string.
  *
  * This function is a cheap way to known the length of a shared

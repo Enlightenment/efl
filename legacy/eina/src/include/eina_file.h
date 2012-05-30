@@ -229,9 +229,9 @@ struct _Eina_File_Lines
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function calls @p cb for each file that is in @p dir. To have @p cb
- * called on files that are in subdirectories of @p dir @p recursive should be
- * EINA_TRUE. In other words if @p recursive is EINA_FALSE, only direct children
- * of @p dir will be operated on, if @p recursive is EINA_TRUE the entire tree
+ * called on files that are in subdirectories of @p dir @p recursive should
+ * be #EINA_TRUE. In other words if @p recursive is #EINA_FALSE, only direct children
+ * of @p dir will be operated on, if @p recursive is #EINA_TRUE the entire tree
  * of files that is below @p dir will be operated on.
  *
  * If @p cb or @p dir are @c NULL, or if @p dir is a string of size 0,
@@ -261,7 +261,7 @@ EAPI Eina_Array    *eina_file_split(char *path) EINA_WARN_UNUSED_RESULT EINA_ARG
  *
  * @param  dir The name of the directory to list
  * @return Return an Eina_Iterator that will walk over the files and directories
- *         in @p dir. On failure it will return NULL.
+ *         in @p dir. On failure it will return @c NULL.
  *
  * Returns an iterator for shared strings, the name of each file in @p dir will
  * only be fetched when advancing the iterator, which means there is very little
@@ -313,7 +313,7 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  * @param container The container returned by the Eina_Iterator using eina_iterator_container_get().
  * @param info The content of the current Eina_File_Direct_Info provided by the Eina_Iterator
  * @param buf Where to put the result of the stat
- * @return On success 0 is returned, On error -1 is returned and errno is set appropriately.
+ * @return On success @c 0 is returned, On error @c -1 is returned and errno is set appropriately.
  *
  * This function calls fstatat or stat depending on what your system supports. This makes it efficient and simple
  * to use on your side without complex detection already done inside Eina on what the system can do.
@@ -332,7 +332,7 @@ EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Sta
  *
  * @return Return an Eina_Iterator that will walk over the files and
  *         directory in the pointed directory. On failure it will
- *         return NULL.
+ *         return @c NULL.
  *
  * Returns an iterator for Eina_File_Direct_Info, the name of each file in @p
  * dir will only be fetched when advancing the iterator, which means there is
@@ -378,8 +378,8 @@ EAPI char *eina_file_path_sanitize(const char *path);
  * @return Eina_File handle to the file
  *
  * Opens a file in read-only mode. @p name should be an absolute path. An
- * Eina_File handle can be shared among multiple instances if @p shared is
- * EINA_TRUE.
+ * Eina_File handle can be shared among multiple instances if @p shared
+ * is #EINA_TRUE.
  *
  * @since 1.1
  */

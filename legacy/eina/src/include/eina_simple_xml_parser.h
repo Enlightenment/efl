@@ -230,10 +230,10 @@ typedef Eina_Bool (*Eina_Simple_XML_Attribute_Cb)(void *data, const char *key, c
  *        content is located inside @a buf (does not include tag
  *        start, for instance "<!DOCTYPE value>" the offset points at
  *        "value"), the fifth is the size of the content. Whenever this
- *        function return EINA_FALSE the parser will abort.  @param
+ *        function return #EINA_FALSE the parser will abort.  @param
  *        data what to give as context to @a func.
  *
- * @return EINA_TRUE on success or EINA_FALSE if it was aborted by user or
+ * @return #EINA_TRUE on success or #EINA_FALSE if it was aborted by user or
  *         parsing error.
  */
 EAPI Eina_Bool eina_simple_xml_parse(const char *buf, unsigned buflen,
@@ -247,7 +247,7 @@ EAPI Eina_Bool eina_simple_xml_parse(const char *buf, unsigned buflen,
  * @param buf the input string. May not contain \0 terminator.
  * @param buflen the input string size.
  * @return pointer to the start of attributes, it can be used
- *         to feed eina_simple_xml_attributes_parse(). NULL is returned
+ *         to feed eina_simple_xml_attributes_parse(). @c NULL is returned
  *         if no attributes were found.
  *
  * The tag contents is returned by eina_simple_xml_parse() when
@@ -268,7 +268,7 @@ EAPI const char * eina_simple_xml_tag_attributes_find(const char *buf, unsigned 
  *        reference is just valid until the function return.
  * @param data data to pass to the callback function.
  *
- * @return EINA_TRUE on success or EINA_FALSE if it was aborted by user or
+ * @return #EINA_TRUE on success or #EINA_FALSE if it was aborted by user or
  *         parsing error.
  */
 EAPI Eina_Bool eina_simple_xml_attributes_parse(const char *buf, unsigned buflen,
@@ -279,10 +279,10 @@ EAPI Eina_Bool eina_simple_xml_attributes_parse(const char *buf, unsigned buflen
  *
  * @param parent if provided, will be set in the resulting structure
  *        as well as the attribute will be appended to attributes list.
- * @param key null-terminated string. Must not be NULL.
- * @param value null-terminated string. If NULL, the empty string will be used.
+ * @param key Null-terminated string. Must not be @c NULL.
+ * @param value Null-terminated string. If @c NULL, the empty string will be used.
  *
- * @return newly allocated memory or NULL on error. This memory should be
+ * @return Newly allocated memory or @c NULL on error. This memory should be
  *         released with eina_simple_xml_attribute_free() or indirectly
  *         with eina_simple_xml_node_tag_free().
  */
@@ -301,9 +301,9 @@ EAPI void eina_simple_xml_attribute_free(Eina_Simple_XML_Attribute *attr);
  *
  * @param parent if provided, will be set in the resulting structure
  *        as well as the tag will be appended to children list.
- * @param name null-terminated string. Must not be NULL.
+ * @param name Null-terminated string. Must not be @c NULL.
  *
- * @return newly allocated memory or NULL on error. This memory should be
+ * @return Newly allocated memory or @c NULL on error. This memory should be
  *         released with eina_simple_xml_node_tag_free() or indirectly
  *         with eina_simple_xml_node_tag_free() of the parent.
  */
@@ -322,10 +322,10 @@ EAPI void eina_simple_xml_node_tag_free(Eina_Simple_XML_Node_Tag *tag);
  *
  * @param parent if provided, will be set in the resulting structure
  *        as well as the data will be appended to children list.
- * @param contents string to be used. Must not be NULL.
+ * @param contents String to be used. Must not be @c NULL.
  * @param length size in bytes of @a contents.
  *
- * @return newly allocated memory or NULL on error. This memory should be
+ * @return Newly allocated memory or NULL on error. This memory should be
  *         released with eina_simple_xml_node_data_free() or indirectly
  *         with eina_simple_xml_node_tag_free() of the parent.
  */
@@ -344,10 +344,10 @@ EAPI void eina_simple_xml_node_data_free(Eina_Simple_XML_Node_Data *node);
  *
  * @param parent if provided, will be set in the resulting structure
  *        as well as the cdata will be appended to children list.
- * @param contents string to be used. Must not be NULL.
+ * @param contents String to be used. Must not be @c NULL.
  * @param length size in bytes of @a content.
  *
- * @return newly allocated memory or NULL on error. This memory should be
+ * @return Newly allocated memory or @c NULL on error. This memory should be
  *         released with eina_simple_xml_node_cdata_free() or indirectly
  *         with eina_simple_xml_node_tag_free() of the parent.
  */
@@ -366,10 +366,10 @@ EAPI void eina_simple_xml_node_cdata_free(Eina_Simple_XML_Node_Data *node);
  *
  * @param parent if provided, will be set in the resulting structure
  *        as well as the processing will be appended to children list.
- * @param contents string to be used. Must not be NULL.
+ * @param contents String to be used. Must not be @c NULL.
  * @param length size in bytes of @a contents.
  *
- * @return newly allocated memory or NULL on error. This memory should be
+ * @return Newly allocated memory or @c NULL on error. This memory should be
  *         released with eina_simple_xml_node_processing_free() or indirectly
  *         with eina_simple_xml_node_tag_free() of the parent.
  */
@@ -388,10 +388,10 @@ EAPI void eina_simple_xml_node_processing_free(Eina_Simple_XML_Node_Data *node);
  *
  * @param parent if provided, will be set in the resulting structure
  *        as well as the doctype will be appended to children list.
- * @param contents string to be used. Must not be NULL.
+ * @param contents String to be used. Must not be @c NULL.
  * @param length size in bytes of @a contents.
  *
- * @return newly allocated memory or NULL on error. This memory should be
+ * @return Newly allocated memory or @c NULL on error. This memory should be
  *         released with eina_simple_xml_node_doctype_free() or indirectly
  *         with eina_simple_xml_node_tag_free() of the parent.
  */
@@ -410,10 +410,10 @@ EAPI void eina_simple_xml_node_doctype_free(Eina_Simple_XML_Node_Data *node);
  *
  * @param parent if provided, will be set in the resulting structure
  *        as well as the comment will be appended to children list.
- * @param contents string to be used. Must not be NULL.
+ * @param contents String to be used. Must not be @c NULL.
  * @param length size in bytes of @a contents.
  *
- * @return newly allocated memory or NULL on error. This memory should be
+ * @return Newly allocated memory or @c NULL on error. This memory should be
  *         released with eina_simple_xml_node_comment_free() or indirectly
  *         with eina_simple_xml_node_tag_free() of the parent.
  */
@@ -435,8 +435,8 @@ EAPI void eina_simple_xml_node_comment_free(Eina_Simple_XML_Node_Data *node);
  * @param strip whenever this parser should strip leading and trailing
  *        whitespace.
  *
- * @return document root with children tags, or NULL on errors.
- *         Document with errors may return partial tree instead of NULL,
+ * @return Document root with children tags, or @c NULL on errors.
+ *         Document with errors may return partial tree instead of @c NULL,
  *         we'll do our best to avoid returning nothing.
  */
 EAPI Eina_Simple_XML_Node_Root * eina_simple_xml_node_load(const char *buf, unsigned buflen, Eina_Bool strip);
@@ -452,9 +452,9 @@ EAPI void eina_simple_xml_node_root_free(Eina_Simple_XML_Node_Root *root);
  * Converts the node tree under the given element to a XML string.
  *
  * @param node the base node to convert.
- * @param indent indentation string, or NULL to disable it.
+ * @param indent Indentation string, or @c NULL to disable it.
  *
- * @return NULL on errors or a newly allocated string on success.
+ * @return @c NULL on errors or a newly allocated string on success.
  */
 EAPI char * eina_simple_xml_node_dump(Eina_Simple_XML_Node *node, const char *indent);
 

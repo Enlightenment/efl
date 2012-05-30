@@ -91,13 +91,13 @@
  * @return The length of the source string.
  *
  * This function copies up to @p siz - 1 characters from the
- * NUL-terminated string @p src to @p dst, NUL-terminating the result
+ * NULL-terminated string @p src to @p dst, NULL-terminating the result
  * (unless @p siz is equal to 0). The returned value is the length of
  * @p src. If the returned value is greater than @p siz, truncation
  * occurred.
  *
  * @note The main difference between eina_strlcpy and strncpy is that this
- * ensures @p dst is NULL terminated even if no NULL byte is found in the first
+ * ensures @p dst is NULL-terminated even if no @c NULL byte is found in the first
  * @p siz bytes of src.
  */
 EAPI size_t          eina_strlcpy(char *dst, const char *src, size_t siz) EINA_ARG_NONNULL(1, 2);
@@ -112,7 +112,7 @@ EAPI size_t          eina_strlcpy(char *dst, const char *src, size_t siz) EINA_A
  *
  * This function appends @p src to @p dst of size @p siz (unlike
  * strncat, @p siz is the full size of @p dst, not space left).  At
- * most @p siz - 1 characters will be copied.  Always NUL terminates
+ * most @p siz - 1 characters will be copied.  Always NULL-terminates
  * (unless @p siz <= strlen(dst)). This function returns strlen(src) +
  * MIN(siz, strlen(initial dst)). If the returned value is greater or
  * equal than @p siz, truncation occurred.
@@ -164,7 +164,7 @@ EAPI Eina_Bool       eina_str_has_extension(const char *str, const char *ext) EI
  * @param string The string to split.
  * @param delimiter The string which specifies the places at which to split the string.
  * @param max_tokens The maximum number of strings to split string into.
- * @return A newly-allocated NULL-terminated array of strings or NULL if it
+ * @return A newly-allocated NULL-terminated array of strings or @c NULL if it
  * fails to allocate the array.
  *
  * This functin splits @p string into a maximum of @p max_tokens pieces,
@@ -173,7 +173,7 @@ EAPI Eina_Bool       eina_str_has_extension(const char *str, const char *ext) EI
  * @p max_tokens is less than @c 1, the string is splitted completely. If
  * @p max_tokens is reached, the last string in the returned string
  * array contains the remainder of string. The returned value is a
- * newly allocated NULL-terminated array of strings or NULL if it fails to
+ * newly allocated NULL-terminated array of strings or @c NULL if it fails to
  * allocate the array. To free it, free the first element of the array and the
  * array itself.
  *
@@ -190,7 +190,7 @@ EAPI char          **eina_str_split(const char *string, const char *delimiter, i
  * @param max_tokens The maximum number of strings to split string into.
  * @param elements Where to return the number of elements in returned
  *        array (not counting the terminating @c NULL). May be @c NULL.
- * @return A newly-allocated NULL-terminated array of strings or NULL if it
+ * @return A newly-allocated NULL-terminated array of strings or @c NULL if it
  * fails to allocate the array.
  *
  * This function splits @p string into a maximum of @p max_tokens pieces,
@@ -199,7 +199,7 @@ EAPI char          **eina_str_split(const char *string, const char *delimiter, i
  * @p max_tokens is less than @c 1, the string is splitted completely. If
  * @p max_tokens is reached, the last string in the returned string
  * array contains the remainder of string. The returned value is a
- * newly allocated NULL-terminated array of strings or NULL if it fails to
+ * newly allocated NULL-terminated array of strings or @c NULL if it fails to
  * allocate the array. To free it, free the first element of the array and the
  * array itself.
  *

@@ -258,7 +258,7 @@ EAPI Eina_Iterator     *eina_tiler_iterator_new(const Eina_Tiler *t);
  *
  * @note This is a convenience function, iterating over the returned iterator is
  * equivalent to calling eina_tile_grid_slicer_setup() and calling
- * eina_tile_grid_slicer_next() untill it returns EINA_FALSE.
+ * eina_tile_grid_slicer_next() untill it returns #EINA_FALSE.
  */
 EAPI Eina_Iterator     *eina_tile_grid_slicer_iterator_new(int x, int y, int w, int h, int tile_w, int tile_h);
 /**
@@ -266,13 +266,12 @@ EAPI Eina_Iterator     *eina_tile_grid_slicer_iterator_new(int x, int y, int w, 
  *
  * @param   slc Pointer to an Eina_Tile_Grid_Slicer struct.
  * @param   rect Pointer to a struct Eina_Tile_Grid_Info *.
- * @return  @c EINA_TRUE if the current rect is valid.
- *          @c EINA_FALSE if there is no more rects to iterate over (and
- *             thus the current one isn't valid).
+ * @return  #EINA_TRUE if the current rect is valid. #EINA_FALSE if there
+ * is no more rects to iterate over (and thus the current one isn't valid).
  *
  * This functions iterates over each Eina_Tile_Grid_Info *rect of the grid.
  * eina_tile_grid_slicer_setup() must be called first, and *rect is only valid
- * if this function returns EINA_TRUE. Its content shouldn't be modified.
+ * if this function returns #EINA_TRUE. Its content shouldn't be modified.
  *
  * @note Consider using eina_tile_grid_slicer_iterator_new() instead.
  */

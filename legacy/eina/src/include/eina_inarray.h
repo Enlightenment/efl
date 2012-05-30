@@ -251,7 +251,7 @@ EAPI void eina_inarray_free(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  * @param step when resizing the array, do this using the following
  *        extra amount.
  *
- * Initialize array. If the @a step is 0, then a safe default is
+ * Initialize array. If the @a step is @c 0, then a safe default is
  * chosen.
  *
  * This is useful for arrays inlined into other structures or
@@ -296,7 +296,7 @@ EAPI int eina_inarray_push(Eina_Inarray *array,
  * @param array array object
  * @param data data to be copied
  * @param compare compare function
- * @return the index of the new member or -1 on errors.
+ * @return the index of the new member or @c -1 on errors.
  *
  * Copies the given pointer contents at the array position defined by
  * given @a compare function. The pointer is not referenced, instead
@@ -321,7 +321,7 @@ EAPI int eina_inarray_insert(Eina_Inarray *array,
  * @param array array object
  * @param data data to be copied
  * @param compare compare function
- * @return the index of the new member or -1 on errors.
+ * @return the index of the new member or @c -1 on errors.
  *
  * Copies the given pointer contents at the array position defined by
  * given @a compare function. The pointer is not referenced, instead
@@ -346,7 +346,7 @@ EAPI int eina_inarray_insert_sorted(Eina_Inarray *array,
  * @brief Find data and remove matching member
  * @param array array object
  * @param data data to be found and removed
- * @return the index of the removed member or -1 on errors.
+ * @return the index of the removed member or @c -1 on errors.
  *
  * Find data in the array and remove it. Data may be an existing
  * member of array (then optimized) or the contents will be matched
@@ -536,7 +536,7 @@ EAPI int eina_inarray_search(const Eina_Inarray *array,
  * @param array array object
  * @param data member to search using @a compare function.
  * @param compare compare function
- * @return the member index or -1 if not found.
+ * @return the member index or @c -1 if not found.
  *
  * Uses binary search for given data as compared by @a compare function.
  *
@@ -606,7 +606,7 @@ EAPI unsigned int eina_inarray_count(const Eina_Inarray *array) EINA_ARG_NONNULL
  * This function returns a newly allocated iterator associated to
  * @p array.
  *
- * If the memory can not be allocated, NULL is returned
+ * If the memory can not be allocated, @c NULL is returned
  * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
  * returned.
  *
@@ -628,7 +628,7 @@ EAPI Eina_Iterator *eina_inarray_iterator_new(const Eina_Inarray *array) EINA_MA
  *
  * Unlike eina_inarray_iterator_new(), this will walk the array backwards.
  *
- * If the memory can not be allocated, NULL is returned
+ * If the memory can not be allocated, @c NULL is returned
  * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
  * returned.
  *
@@ -648,7 +648,7 @@ EAPI Eina_Iterator *eina_inarray_iterator_reversed_new(const Eina_Inarray *array
  * This function returns a newly allocated accessor associated to
  * @p array.
  *
- * If the memory can not be allocated, NULL is returned
+ * If the memory can not be allocated, @c NULL is returned
  * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid accessor is
  * returned.
  *

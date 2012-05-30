@@ -253,7 +253,7 @@ EAPI void  eina_accessor_over(Eina_Accessor *accessor,
  * container is locked calling eina_accessor_over() on it will return
  * immediately. If @p accessor is @c NULL or if a problem occurred, #EINA_FALSE
  * is returned, otherwise #EINA_TRUE is returned. If the container isn't
- * lockable, it will return EINA_TRUE.
+ * lockable, it will return #EINA_TRUE.
  *
  * @warning None of the existing eina data structures are lockable.
  */
@@ -268,8 +268,8 @@ EAPI Eina_Bool eina_accessor_lock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
  * If the container of the @p accessor permits it and was previously
  * locked, it will be unlocked. If @p accessor is @c NULL or if a
  * problem occurred, #EINA_FALSE is returned, otherwise #EINA_TRUE
- * is returned. If the container is not lockable, it will return
- * EINA_TRUE.
+ * is returned. If the container is not lockable, it will
+ * return #EINA_TRUE.
  *
  * @warning None of the existing eina data structures are lockable.
  */

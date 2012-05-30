@@ -435,8 +435,8 @@ struct _Eina_Inlist
  *       check of @a new_l prev and next pointers is done, so it's safe
  *       to have them uninitialized.
  *
- * @param in_list existing list head or NULL to create a new list.
- * @param in_item new list node, must not be NULL.
+ * @param in_list existing list head or @c NULL to create a new list.
+ * @param in_item new list node, must not be @c NULL.
  *
  * @return the new list head. Use it and not @a in_list anymore.
  */
@@ -454,8 +454,8 @@ EAPI Eina_Inlist *eina_inlist_append(Eina_Inlist *in_list,
  *       check of @a new_l prev and next pointers is done, so it's safe
  *       to have them uninitialized.
  *
- * @param in_list existing list head or NULL to create a new list.
- * @param in_item new list node, must not be NULL.
+ * @param in_list existing list head or @c NULL to create a new list.
+ * @param in_item new list node, must not be @c NULL.
  *
  * @return the new list head. Use it and not @a in_list anymore.
  */
@@ -478,8 +478,8 @@ EAPI Eina_Inlist *eina_inlist_prepend(Eina_Inlist *in_list,
  *       will lead to problems. Giving NULL @a in_relative is the same as
  *       eina_list_append().
  *
- * @param in_list existing list head or NULL to create a new list.
- * @param in_item new list node, must not be NULL.
+ * @param in_list existing list head or @c NULL to create a new list.
+ * @param in_item new list node, must not be @c NULL.
  * @param in_relative reference node, @a in_item will be added after it.
  *
  * @return the new list head. Use it and not @a list anymore.
@@ -504,8 +504,8 @@ EAPI Eina_Inlist *eina_inlist_append_relative(Eina_Inlist *in_list,
  *       will lead to problems. Giving NULL @a in_relative is the same as
  *       eina_list_prepend().
  *
- * @param in_list existing list head or NULL to create a new list.
- * @param in_item new list node, must not be NULL.
+ * @param in_list existing list head or @c NULL to create a new list.
+ * @param in_item new list node, must not be @c NULL.
  * @param in_relative reference node, @a in_item will be added before it.
  *
  * @return the new list head. Use it and not @a in_list anymore.
@@ -526,8 +526,8 @@ EAPI Eina_Inlist *eina_inlist_prepend_relative(Eina_Inlist *in_list,
  *       it will be different from @a list and the wrong new head will
  *       be returned.
  *
- * @param in_list existing list head, must not be NULL.
- * @param in_item existing list node, must not be NULL.
+ * @param in_list existing list head, must not be @c NULL.
+ * @param in_item existing list node, must not be @c NULL.
  *
  * @return the new list head. Use it and not @a list anymore.
  */
@@ -540,10 +540,10 @@ EAPI Eina_Inlist   *eina_inlist_remove(Eina_Inlist *in_list,
  * @warning this is an expensive call and has O(n) cost, possibly
  *    walking the whole list.
  *
- * @param in_list existing list to search @a in_item in, must not be NULL.
- * @param in_item what to search for, must not be NULL.
+ * @param in_list existing list to search @a in_item in, must not be @c NULL.
+ * @param in_item what to search for, must not be @c NULL.
  *
- * @return @a in_item if found, NULL if not.
+ * @return @a in_item if found, @c NULL if not.
  */
 EAPI Eina_Inlist   *eina_inlist_find(Eina_Inlist *in_list,
                                      Eina_Inlist *in_item) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
@@ -558,8 +558,8 @@ EAPI Eina_Inlist   *eina_inlist_find(Eina_Inlist *in_list,
  *       done to confirm this, and giving nodes from different lists
  *       will lead to problems.
  *
- * @param list existing list head or NULL to create a new list.
- * @param item list node to move to beginning (head), must not be NULL.
+ * @param list existing list head or @c NULL to create a new list.
+ * @param item list node to move to beginning (head), must not be @c NULL.
  *
  * @return the new list head. Use it and not @a list anymore.
  */
@@ -576,8 +576,8 @@ EAPI Eina_Inlist   *eina_inlist_promote(Eina_Inlist *list,
  *       done to confirm this, and giving nodes from different lists
  *       will lead to problems.
  *
- * @param list existing list head or NULL to create a new list.
- * @param item list node to move to end (tail), must not be NULL.
+ * @param list existing list head or @c NULL to create a new list.
+ * @param item list node to move to end (tail), must not be @c NULL.
  *
  * @return the new list head. Use it and not @a list anymore.
  */
@@ -591,7 +591,7 @@ EAPI Eina_Inlist   *eina_inlist_demote(Eina_Inlist *list,
  * @return The number of members in the list.
  *
  * This function returns how many members @p list contains. If the
- * list is @c NULL, 0 is returned.
+ * list is @c NULL, @c 0 is returned.
  *
  * @warning This is an order-N operation and so the time will depend
  *    on the number of elements on the list, so, it might become
@@ -630,7 +630,7 @@ EAPI Eina_Iterator *eina_inlist_iterator_new(const Eina_Inlist *in_list) EINA_MA
  *
  * This function returns a newly allocated accessor associated to
  * @p in_list. If @p in_list is @c NULL or the count member of @p in_list is
- * less or equal than 0, this function returns @c NULL. If the memory can
+ * less or equal than @c 0, this function returns @c NULL. If the memory can
  * not be allocated, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY is
  * set. Otherwise, a valid accessor is returned.
  */
@@ -640,7 +640,7 @@ EAPI Eina_Accessor *eina_inlist_accessor_new(const Eina_Inlist *in_list) EINA_MA
  * @brief Insert a new node into a sorted list.
  *
  * @param list The given linked list, @b must be sorted.
- * @param item list node to insert, must not be NULL.
+ * @param item list node to insert, must not be @c NULL.
  * @param func The function called for the sort.
  * @return A list pointer.
  * @since 1.1.0
@@ -697,7 +697,7 @@ EAPI void eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state);
  * @brief Insert a new node into a sorted list.
  *
  * @param list The given linked list, @b must be sorted.
- * @param item list node to insert, must not be NULL.
+ * @param item list node to insert, must not be @c NULL.
  * @param func The function called for the sort.
  * @param state The current array for initial dichotomic search
  * @return A list pointer.

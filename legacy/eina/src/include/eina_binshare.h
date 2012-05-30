@@ -132,7 +132,7 @@ EAPI const void *eina_binshare_ref(const void *obj);
  *
  * This function decreases the reference counter associated to @p obj
  * if it exists. If that counter reaches 0, the memory associated to
- * @p obj is freed. If @p obj is NULL, the function returns
+ * @p obj is freed. If @p obj is @c NULL, the function returns
  * immediately.
  *
  * Note that if the given pointer is not shared or NULL, bad things
@@ -144,7 +144,7 @@ EAPI void        eina_binshare_del(const void *obj);
  * @brief Note that the given object @b must be shared.
  *
  * @param obj the shared object to know the length. It is safe to
- *        give NULL, in that case -1 is returned.
+ *        give @c NULL, in that case @c -1 is returned.
  * @return The length of the shared object.
  *
  * This function is a cheap way to known the length of a shared

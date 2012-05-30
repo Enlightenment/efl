@@ -157,7 +157,7 @@ typedef void (*Eina_Rbtree_Free_Cb)(Eina_Rbtree *node, void *data);
  * @param data Private data to help the compare function.
  * @return The new root of the red black tree.
  *
- * This function insert a new node in a valid red black tree. NULL is
+ * This function insert a new node in a valid red black tree. @c NULL is
  * an empty valid red black tree. The resulting new tree is a valid red
  * black tree. This function doesn't allocate any data.
  */
@@ -173,7 +173,7 @@ EAPI Eina_Rbtree          *eina_rbtree_inline_insert(Eina_Rbtree *root, Eina_Rbt
  * @return The new root of the red black tree.
  *
  * This function remove a new node in a valid red black tree that should
- * contain the node that you are removing. This function will return NULL
+ * contain the node that you are removing. This function will return @c NULL
  * when the red black tree got empty. This function doesn't free any data.
  */
 EAPI Eina_Rbtree          *eina_rbtree_inline_remove(Eina_Rbtree *root, Eina_Rbtree *node, Eina_Rbtree_Cmp_Node_Cb cmp, const void *data) EINA_ARG_NONNULL(2, 3) EINA_WARN_UNUSED_RESULT;

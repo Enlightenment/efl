@@ -108,7 +108,7 @@ EAPI Eina_Iterator *eina_xattr_value_fd_ls(int fd);
  * @param size The size of the retrieved extended attribute.
  * @return the allocated data that hold the extended attribute value.
  *
- * It will return NULL and *size will be @c 0 if it fails.
+ * It will return @c NULL and *size will be @c 0 if it fails.
  *
  * @since 1.1
  */
@@ -122,7 +122,7 @@ EAPI void *eina_xattr_get(const char *file, const char *attribute, ssize_t *size
  * @param data The data to set.
  * @param length The length of the data to set.
  * @param flags Define the set policy.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.1
  */
@@ -133,7 +133,7 @@ EAPI Eina_Bool eina_xattr_set(const char *file, const char *attribute, const voi
  *
  * @param file The file to set the string to.
  * @param attribute The attribute to set.
- * @param data The NULL terminated string to set.
+ * @param data The NULL-terminated string to set.
  * @param flags Define the set policy.
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
@@ -146,7 +146,7 @@ EAPI Eina_Bool eina_xattr_string_set(const char *file, const char *attribute, co
  *
  * @param file The file to get the string from.
  * @param attribute The attribute to get.
- * @return a valid string on success, NULL otherwise.
+ * @return A valid string on success, @c NULL otherwise.
  *
  * This call check that the string is properly NULL-terminated before returning it.
  *
@@ -159,9 +159,9 @@ EAPI char *eina_xattr_string_get(const char *file, const char *attribute);
  *
  * @param file The file to set the double to.
  * @param attribute The attribute to set.
- * @param value The NULL terminated double to set.
+ * @param value The NULL-terminated double to set.
  * @param flags Define the set policy.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.1
  */
@@ -173,7 +173,7 @@ EAPI Eina_Bool eina_xattr_double_set(const char *file, const char *attribute, do
  * @param file The file to get the string from.
  * @param attribute The attribute to get.
  * @param value Where to put the extracted value
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This call check that the double is correctly set.
  *
@@ -186,9 +186,9 @@ EAPI Eina_Bool eina_xattr_double_get(const char *file, const char *attribute, do
  *
  * @param file The file to set the int to.
  * @param attribute The attribute to set.
- * @param value The NULL terminated int to set.
+ * @param value The NULL-terminated int to set.
  * @param flags Define the set policy.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @since 1.1
  */
@@ -200,7 +200,7 @@ EAPI Eina_Bool eina_xattr_int_set(const char *file, const char *attribute, int v
  * @param file The file to get the string from.
  * @param attribute The attribute to get.
  * @param value Where to put the extracted value
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This call check that the int is correctly set.
  *

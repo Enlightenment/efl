@@ -371,7 +371,7 @@ typedef struct _Eina_Model_Event_Description Eina_Model_Event_Description;
 /**
  * @brief Creates a new model of type @a Type.
  * @param type The type of the model to create.
- * @return If successfull pointer to model, NULL otherwise.
+ * @return If successfull pointer to model, @c NULL otherwise.
  *
  * @see _Eina_Model_Type
  * @see eina_model_del()
@@ -402,7 +402,7 @@ EAPI const Eina_Model_Type *eina_model_type_get(const Eina_Model *model) EINA_AR
  * @brief Returns the interface named @a name of @a model.
  * @param model The model instance.
  * @param name Name of interface to get.
- * @return If successfull requested interface, NULL otherwise.
+ * @return If successfull requested interface, @c NULL otherwise.
  *
  * The name of every interface of @a model will be compared to @a name, the
  * first one to match will be returned.
@@ -418,7 +418,7 @@ EAPI const Eina_Model_Interface *eina_model_interface_get(const Eina_Model *mode
  * @brief Increases the refcount of @a model.
  * @param model The model to increase reference.
  * @return The @a model with reference increased.
- * @return If successfull pointer to model, NULL otherwise.
+ * @return If successfull pointer to model, @c NULL otherwise.
  *
  * @see eina_model_new()
  * @see eina_model_unref()
@@ -481,7 +481,7 @@ EAPI Eina_Model *eina_model_xref(Eina_Model *model,
 /**
  * @brief Decreases the refcount of @a model.
  * @param model The model to decrease reference.
- * @return If successfull pointer to model, NULL otherwise.
+ * @return If successfull pointer to model, @c NULL otherwise.
  *
  * After this function returns, consider @a model pointer invalid.
  *
@@ -495,7 +495,7 @@ EAPI void eina_model_unref(Eina_Model *model) EINA_ARG_NONNULL(1);
  * @brief Decreases the refcount of @a model, informs reference identifier.
  * @param model The model to decrease reference.
  * @param id An identifier to mark this reference.
- * @return If successfull pointer to model, NULL otherwise.
+ * @return If successfull pointer to model, @c NULL otherwise.
  *
  * This function will match eina_model_xref() and the @a id must match
  * a previously call, otherwise it will produce an error if @c
@@ -567,7 +567,7 @@ typedef void (*Eina_Model_Event_Cb)(void *data, Eina_Model *model, const Eina_Mo
  * @param model The model instance.
  * @param event_name The name of event for which @a cb will be called.
  * @param cb The function to be called.
- * @param data Data @a cb will be called with. May be NULL.
+ * @param data Data @a cb will be called with. May be @c NULL.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_model_event_callback_del()
@@ -582,7 +582,7 @@ EAPI Eina_Bool eina_model_event_callback_add(Eina_Model *model,
  * @param model The model instance.
  * @param event_name The name of event for which to delete callback.
  * @param cb The function given to eina_model_event_callback_add().
- * @param data Data given to eina_model_event_callback_add(). A NULL value means
+ * @param data Data given to eina_model_event_callback_add(). A @c NULL value means
  * every @a data will not be compared.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
@@ -630,7 +630,7 @@ EAPI void eina_model_event_names_list_free(Eina_List *list);
  * event_info.
  * @param model The model instance.
  * @param name The event whose callbacks will be called.
- * @param event_info The data given to the callback as event_info. May be NULL.
+ * @param event_info The data given to the callback as event_info. May be @c NULL.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_model_event_callback_add()
@@ -728,8 +728,8 @@ EAPI int eina_model_compare(const Eina_Model *a, const Eina_Model *b) EINA_WARN_
  * by user defined types can be given.
  *
  * @note The types provided by Eina_Model don't implement this method.
- * @note Calling this function on a model that doesn't implement it returns @c
- * EINA_TRUE without any effect on @a model.
+ * @note Calling this function on a model that doesn't implement it
+ * returns #EINA_TRUE without any effect on @a model.
  *
  * @see eina_model_unload()
  * @since 1.2
@@ -950,7 +950,7 @@ EAPI Eina_Bool eina_model_child_insert_at(Eina_Model *model,
  * @brief Appends @a child in @a model.
  * @param model The model instance.
  * @param child The child to be appended.
- * @return The position of the added child, or -1 on failure.
+ * @return The position of the added child, or @c -1 on failure.
  *
  * @warning This increments the reference count of the child being inserted, if
  * it will no longer be used by the inserting code it should call
@@ -968,7 +968,7 @@ EAPI int eina_model_child_append(Eina_Model *model,
  * @param model The parent model whose children will be searched.
  * @param start_position The first children to be compared with @a other.
  * @param other The model whose position is desired.
- * @return The position of the searched for child, or -1 if not found.
+ * @return The position of the searched for child, or @c -1 if not found.
  *
  * @since 1.2
  */
@@ -982,11 +982,11 @@ EAPI int eina_model_child_find(const Eina_Model *model,
  * @param start_position The position of the first child to be checked.
  * @param match The function used to check if a child matches the criteria.
  * @param data Data given the to the @a match function.
- * @return The position of the first child to match the criteria or -1 if no
+ * @return The position of the first child to match the criteria or @c -1 if no
  * child matches it.
  *
  * Returns the position of the first(from @a start_position) child of @a model
- * to which @a match returns EINA_TRUE.
+ * to which @a match returns #EINA_TRUE.
  *
  * @since 1.2
  */
@@ -1239,7 +1239,7 @@ EAPI Eina_Iterator *eina_model_child_filtered_iterator_get(Eina_Model *model,
  * @param data Data passed to the @a match function.
  * @return Newly created iterator instance on success or @c NULL on failure.
  *
- * @note Only children for whom @a match returns EINA_TRUE will be included in
+ * @note Only children for whom @a match returns #EINA_TRUE will be included in
  * the iterator.
  *
  * @note Each iteration(call to eina_iterator_next()) gives an integer index!
@@ -1498,7 +1498,7 @@ struct _Eina_Model_Type
    }
 /**
  * @def EINA_MODEL_TYPE_INIT_NULL
- * @brief NULL value eina model type.
+ * @brief @c NULL value eina model type.
  */
 #define EINA_MODEL_TYPE_INIT_NULL                                   \
   {0,                                                               \
@@ -1772,7 +1772,7 @@ EAPI int eina_model_type_child_count(const Eina_Model_Type *type,
  * @param type The type whose child get method will be called.
  * @param model The model instance.
  * @param position The position of the child to get.
- * @return The child model, or NULL on failure.
+ * @return The child model, or @c NULL on failure.
  *
  * @warning If model doesn't inherit from (or is of) @a type does nothing and
  * returns #EINA_FALSE.
@@ -1793,7 +1793,7 @@ EAPI Eina_Model *eina_model_type_child_get(const Eina_Model_Type *type,
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @warning If model doesn't inherit from (or is of) @a type does nothing and
- * returns EINA_FALSE.
+ * returns #EINA_FALSE.
  *
  * @see eina_model_child_set()
  * @see _Eina_Model_Type
@@ -1864,7 +1864,7 @@ EAPI int eina_model_type_child_find(const Eina_Model_Type *type,
  * @param model The model instance.
  * @param start_position The first position to be checked.
  * @param match The function used to determine if a child matches the criteria.
- * @param data Data given to the @a match function. May be NULL.
+ * @param data Data given to the @a match function. May be @c NULL.
  * @return The position of the first child to match the criteria or -1 if no
  * child matches it.
  *
@@ -1962,7 +1962,7 @@ EAPI Eina_Iterator *eina_model_type_child_sorted_iterator_get(const Eina_Model_T
  * @param start The first child to be a part of the iterator.
  * @param count Number of children to be checked for inclusion in the iterator.
  * @param match Function used to check if child will be included in the iterator.
- * @param data Data given to the @a match function. May be NULL.
+ * @param data Data given to the @a match function. May be @c NULL.
  * @return Newly created iterator instance on success or @c NULL on failure.
  *
  * @warning If model doesn't inherit from (or is of) @a type does nothing and
@@ -2813,7 +2813,7 @@ EAPI Eina_Bool eina_model_interface_children_insert_at(const Eina_Model_Interfac
  * @param compare Function used to compare children.
  *
  * @warning If either model doesn't implement @a iface will do nothing and
- * return -1.
+ * return @c -1.
  *
  * @see eina_model_child_sort().
  * @since 1.2

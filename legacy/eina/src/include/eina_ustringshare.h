@@ -114,7 +114,7 @@ EAPI const Eina_Unicode *eina_ustringshare_add_length(const Eina_Unicode *str, u
 /**
  * @brief Retrieve an instance of a string for use in a program.
  *
- * @param   str The NULL terminated string to retrieve an instance of.
+ * @param   str The NULL-terminated string to retrieve an instance of.
  * @return  A pointer to an instance of the string on success.
  *          @c NULL on failure.
  *
@@ -124,7 +124,7 @@ EAPI const Eina_Unicode *eina_ustringshare_add_length(const Eina_Unicode *str, u
  * it is added to the strings to be searched and a duplicated string
  * of @p str is returned.
  *
- * The string @p str must be NULL terminated ('@\0') and its full
+ * The string @p str must be NULL-terminated ('@\0') and its full
  * length will be used. To use part of the string or non-null
  * terminated, use eina_stringshare_add_length() instead.
  *
@@ -155,10 +155,10 @@ EAPI const Eina_Unicode *eina_ustringshare_ref(const Eina_Unicode *str);
  *
  * This function decreases the reference counter associated to @p str
  * if it exists. If that counter reaches 0, the memory associated to
- * @p str is freed. If @p str is NULL, the function returns
+ * @p str is freed. If @p str is @c NULL, the function returns
  * immediately.
  *
- * Note that if the given pointer is not shared or NULL, bad things
+ * Note that if the given pointer is not shared or @c NULL, bad things
  * will happen, likely a segmentation fault.
  */
 EAPI void                eina_ustringshare_del(const Eina_Unicode *str);
@@ -167,7 +167,7 @@ EAPI void                eina_ustringshare_del(const Eina_Unicode *str);
  * @brief Note that the given string @b must be shared.
  *
  * @param str the shared string to know the length. It is safe to
- *        give NULL, in that case -1 is returned.
+ *        give @c NULL, in that case @c -1 is returned.
  *
  * This function is a cheap way to known the length of a shared
  * string. Note that if the given pointer is not shared, bad

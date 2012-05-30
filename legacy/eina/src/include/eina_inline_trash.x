@@ -27,7 +27,7 @@
  * This function just set to zero the trash to correctly
  * initialize it.
  *
- * @note You can just set *trash to NULL and you will have
+ * @note You can just set *trash to @c NULL and you will have
  * the same result.
  */
 static inline void

@@ -214,7 +214,7 @@ static inline void eina_clist_remove(Eina_Clist *elem);
  * @param list The list
  * @param elem An element
  * @pre @a elem is in @a list
- * @return The element after @a elem in @a list  or @c NULL if @a elem is last in @a list
+ * @return The element after @a elem in @a list or @c NULL if @a elem is last in @a list.
  * @since 1.1.0
  */
 static inline Eina_Clist *eina_clist_next(const Eina_Clist *list, const Eina_Clist *elem);
@@ -225,7 +225,7 @@ static inline Eina_Clist *eina_clist_next(const Eina_Clist *list, const Eina_Cli
  * @param list The list
  * @param elem An element
  *
- * @return The element before @a elem or NULL if @a elem is the first in the list
+ * @return The element before @a elem or @c NULL if @a elem is the first in the list.
  * @since 1.1.0
  */
 static inline Eina_Clist *eina_clist_prev(const Eina_Clist *list, const Eina_Clist *elem);
@@ -234,7 +234,7 @@ static inline Eina_Clist *eina_clist_prev(const Eina_Clist *list, const Eina_Cli
  * Get the first element.
  *
  * @param list The list
- * @returns The first element in @a list or NULL if @a list is empty
+ * @returns The first element in @a list or @c NULL if @a list is empty.
  * @since 1.1.0
  */
 static inline Eina_Clist *eina_clist_head(const Eina_Clist *list);
@@ -243,7 +243,7 @@ static inline Eina_Clist *eina_clist_head(const Eina_Clist *list);
  * Get the last element.
  *
  * @param list The list
- * @returns The last element in @a list or NULL if @a list is empty
+ * @returns The last element in @a list or @c NULL if @a list is empty.
  * @since 1.1.0
  */
 static inline Eina_Clist *eina_clist_tail(const Eina_Clist *list);

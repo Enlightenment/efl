@@ -636,7 +636,7 @@ EAPI void *eina_hash_set(Eina_Hash  *hash,
  * @param hash    The given hash table.
  * @param old_key The current key associated with the data
  * @param new_key The new key to associate data with
- * @return EINA_FALSE in any case but success, EINA_TRUE on success.
+ * @return #EINA_FALSE in any case but success, #EINA_TRUE on success.
  *
  * This function allows for the move of data from one key to another,
  * but does not call the Eina_Free_Cb associated with the hash table
@@ -691,7 +691,7 @@ EAPI void      eina_hash_free_buckets(Eina_Hash *hash) EINA_ARG_NONNULL(1);
  * @return The number of entries in the hash table.
  *
  * This function returns the number of entries in @p hash, or 0 on
- * error. If @p hash is @c NULL, 0 is returned.
+ * error. If @p hash is @c NULL, @c 0 is returned.
  */
 EAPI int       eina_hash_population(const Eina_Hash *hash) EINA_ARG_NONNULL(1);
 
@@ -968,7 +968,7 @@ EAPI Eina_Iterator *eina_hash_iterator_data_new(const Eina_Hash *hash) EINA_MALL
  * valid iterator that will always return false on
  * eina_iterator_next(), thus keeping API sane.
  *
- * If the memory can not be allocated, NULL is returned
+ * If the memory can not be allocated, @c NULL is returned
  * and #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid iterator is
  * returned.
  *
@@ -990,9 +990,9 @@ EAPI Eina_Iterator *eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MAL
  *
  * This function goes through every entry in the hash table @p hash and calls
  * the function @p func on each member. The function should @b not modify the
- * hash table contents if it returns 1. @b If the hash table contents are
+ * hash table contents if it returns @c 1. @b If the hash table contents are
  * modified by this function or the function wishes to stop processing it must
- * return 0, otherwise return 1 to keep processing.
+ * return @c 0, otherwise return @c 1 to keep processing.
  *
  * Example:
  * @code

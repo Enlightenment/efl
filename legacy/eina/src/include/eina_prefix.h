@@ -26,16 +26,17 @@ typedef struct _Eina_Prefix Eina_Prefix;
 /**
  * @brief Create a new prefix handle given some input information
  *
- * @param argv0 If this is an executable this is argv[0] of the binary, or NULL if it is used from a shared library
- * @param symbol This is a symbol (function for example) inside the binary or library to find the source location of. Provide NULL if not used
+ * @param argv0 If this is an executable this is argv[0] of the binary, or @c NULL if it is used from a shared library
+ * @param symbol This is a symbol (function for example) inside the binary or library to find the source location of. Provide @c NULL if not used
  * @param envprefix This is the prefix to any environment variables that may override prefix detection and give the exact location of the software
  * @param sharedir This is the directory inside the standard share or data dir where the software will store data files
- * @param magicsharefile This is a magic file to check existence of to determine the prefix find was correct, and it must be located in the data dir under the share dir provided above, or NULL if the check is not to be done
+ * @param magicsharefile This is a magic file to check existence of to determine the prefix find was correct, and it must be located in the data
+ * dir under the share dir provided above, or @c NULL if the check is not to be done.
  * @param pkg_bin This is the compile-time binary install dir
  * @param pkg_lib This is the compile-time library install dir
  * @param pkg_data This is the compile-time share/data install dir
  * @param pkg_locale This is the compile-time locale install dir
- * @return The prefix handle, or NULL on failure
+ * @return The prefix handle, or @c NULL on failure.
  *
  * Applications and libraries are most often not just single executables nor
  * single shared library binaries, but also come with extra modules they
@@ -67,7 +68,7 @@ typedef struct _Eina_Prefix Eina_Prefix;
  * to look in absolute directories, relative paths and PATH to see if it
  * finds the right executable to determine just where the actual binary is
  * installed and being run from. If you develop a share library, just pass
- * NULL as argv0
+ * @c NULL as argv0
  *
  * It would prefer to use the @p symbol function to determine location as
  * that function will be unique inside the application and try and trace

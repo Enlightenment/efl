@@ -138,11 +138,11 @@ EAPI Eina_Module *
  * @brief Delete a module.
  *
  * @param module The module to delete.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function calls eina_module_unload() if @p module has been previously
  * loaded and frees the allocated memory. On success this function
- * returns EINA_TRUE and EINA_FALSE otherwise. If @p module is @c NULL, the
+ * returns #EINA_TRUE and #EINA_FALSE otherwise. If @p module is @c NULL, the
  * function returns immediately.
  */
 EAPI Eina_Bool
@@ -152,7 +152,7 @@ EAPI Eina_Bool
  * @brief Load a module.
  *
  * @param module The module to load.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function load the shared file object passed in
  * eina_module_new(). If it is a internal Eina module (like the
@@ -174,7 +174,7 @@ EAPI Eina_Bool
  * @brief Unload a module.
  *
  * @param module The module to load.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * This function unload the module @p module that has been previously
  * loaded by eina_module_load(). If the reference counter of @p module is
@@ -281,7 +281,7 @@ EAPI Eina_Array *
  * @p path. If @p recursive is #EINA_TRUE, then recursive search is
  * done. The callback @p cb is called on each module found, and @p data
  * is passed to @p cb. If @p path is @c NULL, the function returns
- * immediately @p array. If the returned value of @p cb is 0, the
+ * immediately @p array. If the returned value of @p cb is @c 0, the
  * module will not be added to the list, otherwise it will be added.
  * @p array can be @c NULL. In that case, it is created with 4
  * elements. @p cb can be @c NULL.

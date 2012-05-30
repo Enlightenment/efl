@@ -41,8 +41,8 @@
  *        stringshare handle.
  * @param news new string to be stringshared, may be @c NULL.
  *
- * @return #EINA_TRUE if the strings were different and thus replaced,
- *         #EINA_FALSE if the strings were the same after shared.
+ * @return #EINA_TRUE if the strings were different and thus replaced, #EINA_FALSE
+ * if the strings were the same after shared.
  */
 static inline Eina_Bool
 eina_ustringshare_replace(const Eina_Unicode **p_str, const Eina_Unicode *news)
@@ -70,8 +70,8 @@ eina_ustringshare_replace(const Eina_Unicode **p_str, const Eina_Unicode *news)
  * @param news new string to be stringshared, may be @c NULL.
  * @param slen The string size (<= strlen(str)).
  *
- * @return #EINA_TRUE if the strings were different and thus replaced,
- *         #EINA_FALSE if the strings were the same after shared.
+ * @return #EINA_TRUE if the strings were different and thus replaced, #EINA_FALSE
+ * if the strings were the same after shared.
  */
 static inline Eina_Bool
 eina_ustringshare_replace_length(const Eina_Unicode **p_str, const Eina_Unicode *news, unsigned int slen)

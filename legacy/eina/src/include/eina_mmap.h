@@ -14,7 +14,7 @@
 /**
  * @brief Enable or disable safe mmaped IO handling
  *
- * @param enabled The enabled state (to enable, pass EINA_TRUE)
+ * @param enabled The enabled state (to enable, pass #EINA_TRUE)
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This enables (if possible on your platform) a signal handler for
@@ -44,7 +44,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled);
 /**
  * @brief Get the enabled state of mmap safety.
  *
- * @return The safety state (EINA_TRUE if enabled)
+ * @return The safety state (#EINA_TRUE if enabled)
  *
  * This returns the mmap safety state set by eina_mmap_safety_enabled_set().
  * See eina_mmap_safety_enabled_set() for more information.

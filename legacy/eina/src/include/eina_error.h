@@ -131,7 +131,7 @@ EAPI Eina_Error  eina_error_msg_static_register(const char *msg) EINA_ARG_NONNUL
  * @param msg The description of the error. This string will be
  * duplicated only if the error was registered with @ref eina_error_msg_register
  * otherwise it must remain intact for the duration.
- * @return EINA_TRUE if successful, EINA_FALSE on error
+ * @return #EINA_TRUE if successful, #EINA_FALSE on error.
  *
  * This function modifies the message associated with @p error and changes
  * it to @p msg.  If the error was previously registered by @ref eina_error_msg_static_register
