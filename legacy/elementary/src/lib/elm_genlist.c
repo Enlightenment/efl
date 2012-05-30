@@ -4139,14 +4139,23 @@ _item_process_post(Widget_Data *wd, Elm_Gen_Item *it, Eina_Bool qadd)
    if (wd->selected && it->item->before)
      {
         int y, h;
-        it = wd->selected->data;
+        Elm_Gen_Item *it2;
+        it2 = wd->selected->data;
         elm_smart_scroller_child_pos_get(wd->scr, NULL, &y);
         evas_object_geometry_get(wd->pan_smart, NULL, NULL, NULL, &h);
-        elm_smart_scroller_child_region_show(wd->scr,
-                                             it->x + it->item->block->x,
-                                             y + it->item->h,
-                                             it->item->block->w,
-                                             h);
+        if ((it->y + it->item->block->y > y + h) || (it->y + it->item->block->y + it->item->h < y))
+          /* offscreen, just update */
+          elm_smart_scroller_child_region_show(wd->scr,
+                                               it2->x + it2->item->block->x,
+                                               y,
+                                               it2->item->block->w,
+                                               h);
+        else
+          elm_smart_scroller_child_region_show(wd->scr,
+                                               it->x + it->item->block->x,
+                                               y + it->item->h,
+                                               it->item->block->w,
+                                               h);
      }
 }
 
