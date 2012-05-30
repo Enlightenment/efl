@@ -138,7 +138,7 @@ efreet_shutdown(void)
 {
     if (_efreet_init_count <= 0)
       {
-         ERR("Init count not greater than 0 in shutdown.");
+         EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
          return 0;
       }
     if (--_efreet_init_count != 0)
