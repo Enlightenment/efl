@@ -37,7 +37,6 @@ _evas_post_event_callback_free(Evas *e)
      {
         EVAS_MEMPOOL_FREE(_mp_pc, pc);
      }
-   _evas_unwalk(e);
 }
 
 void
