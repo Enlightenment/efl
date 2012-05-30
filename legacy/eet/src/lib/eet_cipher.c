@@ -1219,7 +1219,7 @@ eet_decipher(const void   *data,
    /* Get the decrypted data size */
    tmp = *ret;
    tmp = ntohl(tmp);
-   if (tmp > tmp_len)
+   if (tmp > tmp_len || tmp <= 0)
      goto on_error;
 
    /* Update the return values */

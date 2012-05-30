@@ -594,3 +594,7 @@
 2012-05-15  Cedric Bail
 
 	* Make eet_dictionary thread safe.
+
+2012-05-30  Cedric Bail
+
+	* Check that gnutls and openssl don't return below zero size during decipher.

@@ -6,6 +6,7 @@ Changes since Eet 1.6.0:
 Fixes:
     * Force destruction of all pending file when shuting down eet.
     * Make eet_dictionary thread safe.
+    * Check that gnutls and openssl don't return below zero size during decipher.
 
 Eet 1.6.0
 
