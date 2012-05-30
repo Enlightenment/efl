@@ -484,15 +484,15 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
                   obj->cur.map->surface = NULL;
                }
              obj->prev.geometry = obj->cur.map->normal_geometry;
+             _evas_map_free(obj, obj->cur.map);
+             obj->cur.map = NULL;
+
              if (!obj->prev.map)
                {
-                  _evas_map_free(obj, obj->cur.map);
-                  obj->cur.map = NULL;
                   evas_object_mapped_clip_across_mark(obj);
                   return;
                }
-             _evas_map_free(obj, obj->cur.map);
-             obj->cur.map = NULL;
+
              if (!obj->cur.usemap) _evas_map_calc_geom_change(obj);
              else _evas_map_calc_map_geometry(obj);
              if (obj->cur.usemap)
