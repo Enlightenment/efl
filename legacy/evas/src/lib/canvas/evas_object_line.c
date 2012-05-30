@@ -310,10 +310,10 @@ evas_object_line_render_pre(Evas_Object *obj)
 	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 	goto done;
      }
-   if ((obj->cur.map != obj->prev.map) ||
-       (obj->cur.usemap != obj->prev.usemap))
+   if (obj->changed_map)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+                                            obj);
         goto done;
      }
    /* it's not visible - we accounted for it appearing or not so just abort */

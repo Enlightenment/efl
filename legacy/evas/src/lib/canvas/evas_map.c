@@ -408,14 +408,6 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
           {
              _evas_map_calc_geom_change(obj);
              evas_object_mapped_clip_across_mark(obj);
-             //FIXME: Since the last frame is not updated when map is
-             //disabled, afterimage problem is happened in s/w rendering.
-             //Need to find out the fundamental reason then fix it.
-             evas_damage_rectangle_add(obj->layer->evas,
-                                       0,
-                                       0,
-                                       obj->layer->evas->output.w,
-                                       obj->layer->evas->output.h);
           }
      }
    _evas_map_calc_map_geometry(obj);
@@ -476,6 +468,8 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
      {
         if (obj->cur.map)
           {
+             obj->changed_map = EINA_TRUE;
+
              if (obj->cur.map->surface)
                {
                   obj->layer->evas->engine.func->image_map_surface_free
@@ -496,28 +490,14 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
              if (!obj->cur.usemap) _evas_map_calc_geom_change(obj);
              else _evas_map_calc_map_geometry(obj);
              if (obj->cur.usemap)
-               {
-                  evas_object_mapped_clip_across_mark(obj);
-                  //FIXME: Since the last frame is not updated when map is
-                  //disabled, afterimage problem is happened in s/w
-                  //rendering. Need to find out the fundamental reason
-                  //then fix it.
-                  evas_damage_rectangle_add(obj->layer->evas,
-                                            0,
-                                            0,
-                                            obj->layer->evas->output.w,
-                                            obj->layer->evas->output.h);
-               }
+               evas_object_mapped_clip_across_mark(obj);
           }
         return;
      }
 
+   // We do have the same exact count of point in this map, so just copy it
    if ((obj->cur.map) && (obj->cur.map->count == map->count))
-     {
-        /* We do have the same exact count of point in this map, so just copy it */
-        _evas_map_copy(obj->cur.map, map);
-	if (obj->prev.map == obj->cur.map) obj->prev.map = NULL;
-     }
+     _evas_map_copy(obj->cur.map, map);
    else
      {
         if (obj->cur.map) evas_map_free(obj->cur.map);
@@ -525,6 +505,8 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
         if (obj->cur.usemap)
            evas_object_mapped_clip_across_mark(obj);
      }
+   obj->changed_map = EINA_TRUE;
+
    _evas_map_calc_map_geometry(obj);
 }
 
