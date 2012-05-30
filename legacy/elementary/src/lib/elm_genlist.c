@@ -810,13 +810,15 @@ _item_block_del(Elm_Gen_Item *it)
      }
    else
      {
-        if (itb->count < itb->wd->max_items_per_block/2)
+        if (itb->count < (itb->wd->max_items_per_block / 2))
           {
              il = EINA_INLIST_GET(itb);
              Item_Block *itbp = (Item_Block *)(il->prev);
              Item_Block *itbn = (Item_Block *)(il->next);
              /* merge block with previous */
-             if ((itbp) && ((itbp->count + itb->count) < itb->wd->max_items_per_block + itb->wd->max_items_per_block/2))
+             if ((itbp) &&
+                 ((itbp->count + itb->count) <
+                  (itb->wd->max_items_per_block + (itb->wd->max_items_per_block / 2))))
                {
                   _item_block_merge(itbp, itb);
                   _item_block_position_update(EINA_INLIST_GET(itb)->next,
@@ -827,7 +829,9 @@ _item_block_del(Elm_Gen_Item *it)
                   block_changed = EINA_TRUE;
                }
              /* merge block with next */
-             else if ((itbn) && ((itbn->count + itb->count) < itb->wd->max_items_per_block + itb->wd->max_items_per_block/2))
+             else if ((itbn) &&
+                      ((itbn->count + itb->count) <
+                       (itb->wd->max_items_per_block + (itb->wd->max_items_per_block / 2))))
                {
                   _item_block_merge(itb, itbn);
                   _item_block_position_update(EINA_INLIST_GET(itbn)->next,
