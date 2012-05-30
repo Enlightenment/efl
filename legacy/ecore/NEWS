@@ -15,6 +15,7 @@ Fixes:
      - Reduce rounding error in ecore_animator_pos_map.
      - Send mouse move event before mouse down event in ecore_extn
      - Reduce race condition on shutdown of Ecore_Thread.
+     - Force cancel of all running Ecore_Thread on shutdown.
 
 Ecore 1.2.0
 

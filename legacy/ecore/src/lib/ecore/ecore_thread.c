@@ -217,6 +217,7 @@ static void _ecore_thread_handler(void *data);
 
 static int _ecore_thread_count = 0;
 
+static Eina_List *_ecore_running_job = NULL;
 static Eina_List *_ecore_pending_job_threads = NULL;
 static Eina_List *_ecore_pending_job_threads_feedback = NULL;
 static LK(_ecore_pending_job_threads_mutex);
@@ -412,7 +413,7 @@ _ecore_short_job(PH(thread))
    work = eina_list_data_get(_ecore_pending_job_threads);
    _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads,
                                                       _ecore_pending_job_threads);
-   
+   _ecore_running_job = eina_list_append(_ecore_running_job, work);
    LKU(_ecore_pending_job_threads_mutex);
    
    LKL(work->cancel_mutex);
@@ -421,6 +422,10 @@ _ecore_short_job(PH(thread))
    work->self = thread;
    if (!cancel)
      work->u.short_run.func_blocking((void *) work->data, (Ecore_Thread*) work);
+
+   LKL(_ecore_pending_job_threads_mutex);
+   _ecore_running_job = eina_list_remove(_ecore_running_job, work);
+   LKU(_ecore_pending_job_threads_mutex);
    
    if (work->reschedule)
      {
@@ -453,7 +458,7 @@ _ecore_feedback_job(PH(thread))
    work = eina_list_data_get(_ecore_pending_job_threads_feedback);
    _ecore_pending_job_threads_feedback = eina_list_remove_list(_ecore_pending_job_threads_feedback,
                                                                _ecore_pending_job_threads_feedback);
-   
+   _ecore_running_job = eina_list_append(_ecore_running_job, work);
    LKU(_ecore_pending_job_threads_mutex);
    
    LKL(work->cancel_mutex);
@@ -462,7 +467,11 @@ _ecore_feedback_job(PH(thread))
    work->self = thread;
    if (!cancel)
      work->u.feedback_run.func_heavy((void *) work->data, (Ecore_Thread *) work);
-   
+
+   LKL(_ecore_pending_job_threads_mutex);
+   _ecore_running_job = eina_list_remove(_ecore_running_job, work);
+   LKU(_ecore_pending_job_threads_mutex);
+
    if (work->reschedule)
      {
         work->reschedule = EINA_FALSE;
@@ -539,10 +548,10 @@ restart:
         goto restart;
      }
    _ecore_thread_count--;
-   LKU(_ecore_pending_job_threads_mutex);
 
    ecore_main_loop_thread_safe_call_async((Ecore_Cb) _ecore_thread_join,
 					  (void*) PHS());
+   LKU(_ecore_pending_job_threads_mutex);
 
    return NULL;
 }
@@ -591,6 +600,9 @@ _ecore_thread_shutdown(void)
    /* FIXME: If function are still running in the background, should we kill them ? */
 #ifdef EFL_HAVE_THREADS
     Ecore_Pthread_Worker *work;
+    Eina_List *l;
+    Eina_Bool test;
+    int iteration = 0;
 
     LKL(_ecore_pending_job_threads_mutex);
 
@@ -608,9 +620,33 @@ _ecore_thread_shutdown(void)
          free(work);
       }
 
+    EINA_LIST_FOREACH(_ecore_running_job, l, work)
+      ecore_thread_cancel((Ecore_Thread*) work);
+
     LKU(_ecore_pending_job_threads_mutex);
 
-    /* FIXME: Improve emergency shutdown, now that we use async call, we can do something */
+    do
+      {
+	 LKL(_ecore_pending_job_threads_mutex);
+	 if (_ecore_thread_count > 0)
+	   {
+	      test = EINA_TRUE;
+	   }
+	 else
+	   {
+	      test = EINA_FALSE;
+	   }
+	 LKU(_ecore_pending_job_threads_mutex);
+	 iteration++;
+	 if (test) usleep(50000);
+      }
+    while (test == EINA_TRUE && iteration < 20);
+
+    if (iteration == 20 && _ecore_thread_count > 0)
+      {
+	 ERR("%i of the child thread are still running after 1s. This can lead to a segv. Sorry.", _ecore_thread_count);
+      }
+
     if (_ecore_thread_global_hash)
       eina_hash_free(_ecore_thread_global_hash);
     have_main_loop_thread = 0;
