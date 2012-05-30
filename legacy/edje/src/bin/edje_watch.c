@@ -110,7 +110,7 @@ main(int argc, char **argv)
    buf = eina_strbuf_new();
    if (!buf) return -1;
 
-   eina_strbuf_append_printf(buf, "%s/edje_cc -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
+   eina_strbuf_append_printf(buf, "%s/edje_cc -threads -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
    for (i = 1; i < argc; ++i)
      eina_strbuf_append_printf(buf, "%s ", argv[i]);
 
