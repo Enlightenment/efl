@@ -31,6 +31,15 @@ struct _Font_Source_Info
 typedef struct _Font_Info Font_Info;
 typedef struct _Font_Source_Info Font_Source_Info;
 
+static void *
+_font_slave_error_send(Error_Type error)
+{
+   Error_Type *e = calloc(1, sizeof(*e));
+   *e = error;
+
+   return e;
+}
+
 static Font_Source_Info *
 _font_slave_source_load(const char *file)
 {
@@ -105,7 +114,12 @@ _font_slave_int_load(const Slave_Msg_Font_Load *msg, Font_Source_Info *fsi)
         error = FT_Set_Pixel_Sizes(fsi->face, chosen_width, fi->real_size);
 
         if (error)
-          ERR("Could not choose the font size.");
+          {
+             ERR("Could not choose the font size for font: '%s'.", msg->name);
+             FT_Done_Size(fi->size);
+             free(fi);
+             return NULL;
+          }
      }
 
    fi->max_h = 0;
@@ -153,9 +167,18 @@ _font_slave_load(const void *cmddata, void *data __UNUSED__)
 
    // FIXME: Return correct error message
    if (!fsi)
-     return NULL;
+     {
+        ERR("Could not load font source: '%s'", msg->file);
+        return NULL;
+     }
 
    fi = _font_slave_int_load(msg, fsi);
+   if (!fi)
+     {
+        FT_Done_Face(fsi->face);
+        free(fsi);
+        return NULL;
+     }
 
    response = calloc(1, sizeof(*response));
    response->ftdata1 = fsi;
@@ -165,20 +188,28 @@ _font_slave_load(const void *cmddata, void *data __UNUSED__)
 }
 
 void *
-cserve2_font_slave_cb(Slave_Thread_Data *sd __UNUSED__, Slave_Command cmd, const void *cmddata, void *data)
+cserve2_font_slave_cb(Slave_Thread_Data *sd __UNUSED__, Slave_Command *cmd, const void *cmddata, void *data)
 {
    void *response = NULL;
 
-   switch (cmd)
+   switch (*cmd)
      {
       case FONT_LOAD:
-         _font_slave_load(cmddata, data);
+         response = _font_slave_load(cmddata, data);
          break;
       case FONT_GLYPHS_LOAD:
          // command for FONT_GLYPHS_LOAD
          break;
       default:
-         ERR("Invalid command for font slave: %d", cmd);
+         ERR("Invalid command for font slave: %d", *cmd);
+         *cmd = ERROR;
+         return _font_slave_error_send(CSERVE2_INVALID_COMMAND);
+     }
+
+   if (!response)
+     {
+        *cmd = ERROR;
+        return _font_slave_error_send(CSERVE2_GENERIC);
      }
 
    return response;

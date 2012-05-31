@@ -474,7 +474,7 @@ _slave_thread_cb(void *data)
                  n);
              continue;
           }
-        sd->cmdanswer = sd->cb(sd, cmd, sd->cmddata, sd->cb_data);
+        sd->cmdanswer = sd->cb(sd, &cmd, sd->cmddata, sd->cb_data);
         write(sd->write_fd, &cmd, sizeof(cmd));
 
         n = read(sd->read_fd, &cmd, sizeof(cmd));

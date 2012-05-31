@@ -166,7 +166,7 @@ typedef void (*Timeout_Cb)(void); /* void* for compat? */
 typedef void (*Main_Loop_Child_Dead_Cb)(int pid, int status); /* void* for compat? */
 typedef void (*Slave_Dead_Cb)(Slave *slave, void *data);
 typedef void (*Slave_Read_Cb)(Slave *slave, Slave_Command cmd, void *msg, void *data);
-typedef void *(*Slave_Thread_Cb)(Slave_Thread_Data *sd, Slave_Command cmd, const void *cmddata, void *userdata);
+typedef void *(*Slave_Thread_Cb)(Slave_Thread_Data *sd, Slave_Command *cmd, const void *cmddata, void *userdata);
 typedef void (*File_Change_Cb)(const char *path, Eina_Bool deleted, void *data);
 
 void cserve2_client_accept(int fd);
@@ -239,6 +239,6 @@ void cserve2_cache_requests_response(Slave_Command type, void *msg, void *data);
 
 void cserve2_font_init(void);
 void cserve2_font_shutdown(void);
-void *cserve2_font_slave_cb(Slave_Thread_Data *sd, Slave_Command cmd, const void *cmddata, void *data);
+void *cserve2_font_slave_cb(Slave_Thread_Data *sd, Slave_Command *cmd, const void *cmddata, void *data);
 
 #endif /* _EVAS_CSERVE2_H */

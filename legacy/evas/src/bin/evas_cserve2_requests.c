@@ -205,7 +205,7 @@ _cserve2_request_failed(Font_Request *req, Error_Type type)
 }
 
 static void
-_slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd __UNUSED__, void *msg, void *data)
+_slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
 {
    Slave_Worker *sw = data;
    Font_Request *req = sw->data;
@@ -214,7 +214,13 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd __UNUSED__, void *msg, voi
 
    EINA_LIST_FREE(req->waiters, w)
      {
-        req->funcs->response(w->client, req->data, msg, w->rid);
+        if (cmd == ERROR)
+          {
+             Error_Type *err = msg;
+             req->funcs->error(w->client, req->data, *err, w->rid);
+          }
+        else
+          req->funcs->response(w->client, req->data, msg, w->rid);
         free(w);
      }
 
