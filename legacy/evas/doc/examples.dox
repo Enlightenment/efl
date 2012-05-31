@@ -800,7 +800,7 @@
  * built-in smart object, the "clipped smart object", which implements
  * a behavior mostly desired by many other smart object implementors:
  * it will clip its children to its area and move them along with it,
- * on evas_object_resize() calls. Then, our example smart object will
+ * on evas_object_move() calls. Then, our example smart object will
  * get that behavior for free.
  *
  * The first argument to the macro,
