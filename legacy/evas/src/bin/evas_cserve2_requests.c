@@ -15,6 +15,7 @@ typedef enum
 
 struct _Slave_Worker
 {
+   Slave_Type type;
    void *data;
    Slave *slave;
    Eina_Binbuf *ret;
@@ -189,13 +190,56 @@ cserve2_requests_shutdown(void)
 }
 
 static void
-_image_slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd __UNUSED__, void *msg __UNUSED__, void *data __UNUSED__)
+_cserve2_request_failed(Font_Request *req, Error_Type type)
 {
+   Waiter *w;
+
+   EINA_LIST_FREE(req->waiters, w)
+     {
+        req->funcs->error(w->client, req->data, type, w->rid);
+        free(w);
+     }
+
+   req->funcs->msg_free(req->msg);
+   free(req);
 }
 
 static void
-_image_slave_dead_cb(Slave *s __UNUSED__, void *data __UNUSED__)
+_slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd __UNUSED__, void *msg, void *data)
 {
+   Slave_Worker *sw = data;
+   Font_Request *req = sw->data;
+   Eina_List **working, **idle;
+   Waiter *w;
+
+   EINA_LIST_FREE(req->waiters, w)
+     {
+        req->response(w->client, req->data, msg, w->rid);
+        free(w);
+     }
+
+   req->funcs->msg_free(req->msg);
+   free(req);
+   sw->data = NULL;
+
+   working = &_workers[sw->type].working;
+   idle = &_workers[sw->type].idle;
+   *working = eina_list_remove(*working, sw);
+   *idle = eina_list_append(*idle, sw);
+}
+
+static void
+_slave_dead_cb(Slave *s __UNUSED__, void *data)
+{
+   Slave_Worker *sw = data;
+   Font_Request *req = sw->data;
+   Eina_List **working = &_workers[sw->type].working;
+
+   if (req)
+     _cserve2_request_failed(req, CSERVE2_LOADER_DIED);
+
+   *working = eina_list_remove(*working, sw);
+   free(sw);
 }
 
 static Slave *
@@ -207,8 +251,8 @@ _create_image_slave(void *data)
    exe = getenv("EVAS_CSERVE2_SLAVE");
    if (!exe) exe = "evas_cserve2_slave";
 
-   slave = cserve2_slave_run(exe, _image_slave_read_cb,
-                             _image_slave_dead_cb, data);
+   slave = cserve2_slave_run(exe, _slave_read_cb,
+                             _slave_dead_cb, data);
 
    return slave;
 }
@@ -237,6 +281,7 @@ _slave_for_request_create(Slave_Type type)
      }
 
    sw->slave = slave;
+   sw->type = type;
    _workers[type].idle = eina_list_append(_workers[type].idle, sw);
 
    return sw;
@@ -260,21 +305,6 @@ _cserve2_request_dispatch(Slave_Worker *sw, Slave_Command ctype, Font_Request *r
    req->processing = EINA_TRUE;
 
    return EINA_TRUE;
-}
-
-static void
-_cserve2_request_failed(Font_Request *req, Error_Type type)
-{
-   Waiter *w;
-
-   EINA_LIST_FREE(req->waiters, w)
-     {
-        req->funcs->error(w->client, req->data, type, w->rid);
-        free(w);
-     }
-
-   req->funcs->msg_free(req->msg);
-   free(req);
 }
 
 void

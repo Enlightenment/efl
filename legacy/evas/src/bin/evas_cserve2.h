@@ -116,7 +116,7 @@ typedef struct _Slave_Msg_Image_Load Slave_Msg_Image_Load;
 typedef struct _Slave_Msg_Image_Loaded Slave_Msg_Image_Loaded;
 
 typedef void *(*Font_Request_Msg_Create)(void *data, int *size);
-typedef void *(*Font_Request_Msg_Free)(void *data);
+typedef void (*Font_Request_Msg_Free)(void *data);
 typedef void (*Font_Request_Response)(Client *c, void *data, void *resp, unsigned int rid);
 typedef void (*Font_Request_Error)(Client *c, void *data, Error_Type error, unsigned int rid);
 
