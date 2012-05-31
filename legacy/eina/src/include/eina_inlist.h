@@ -340,11 +340,6 @@
  * eina_inlist_count() is order-N, while @ref eina_list_count() is order-1 (constant
  * time).
  *
- * For the same reasons, @ref eina_inlist_sort() is slower than @ref
- * eina_list_sort() . If the list is intended to have faster access, be
- * sorted/merged frequently, or needs to have other complex operations, consider
- * using @ref Eina_List instead.
- *
  * @section inlist_advanced Advanced Usage
  *
  * The basic usage considers a struct that will have the user data, and also
@@ -740,10 +735,9 @@ EAPI Eina_Inlist *eina_inlist_sorted_state_insert(Eina_Inlist *list,
  * @note @b in-place: this will change the given list, so you should
  * now point to the new list head that is returned by this function.
  *
- * @note worst case is O(n * log2(n)) comparisons (calls to func()),
- * O(n) comparisons average case. That means that for 1,000,000 list
- * elements, sort will usually do 1,000,000 comparisons, but may do up
- * to 20,000,000.
+ * @note Worst case is O(n * log2(n)) comparisons (calls to func()).
+ * That means that for 1,000,000 list  elements, sort will do 20,000,000
+ * comparisons.
  *
  * Example:
  * @code
