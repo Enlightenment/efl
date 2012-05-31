@@ -39,7 +39,7 @@ static struct _Request_Match
 } _request_match[] =
 {
    { CSERVE2_REQ_FONT_LOAD, SLAVE_FONT, FONT_LOAD },
-   { CSERVE2_REQ_FONT_GLYPHS_LOAD, SLAVE_FONT, GLYPHS_LOAD },
+   { CSERVE2_REQ_FONT_GLYPHS_LOAD, SLAVE_FONT, FONT_GLYPHS_LOAD },
    { CSERVE2_REQ_LAST, 0 }
 };
 
@@ -214,7 +214,7 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd __UNUSED__, void *msg, voi
 
    EINA_LIST_FREE(req->waiters, w)
      {
-        req->response(w->client, req->data, msg, w->rid);
+        req->funcs->response(w->client, req->data, msg, w->rid);
         free(w);
      }
 
