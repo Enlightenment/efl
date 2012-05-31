@@ -304,7 +304,7 @@
  * @def ELM_WIDGET_CLASS
  *
  * Use this macro to cast whichever subclass of
- * #Elm_Widget_Smart_Class into it, so to acess its fields.
+ * #Elm_Widget_Smart_Class into it, so to access its fields.
  *
  * @ingroup Widget
  */
@@ -314,7 +314,7 @@
  * @def ELM_WIDGET_DATA
  *
  * Use this macro to cast whichever subdata of
- * #Elm_Widget_Smart_Data into it, so to acess its fields.
+ * #Elm_Widget_Smart_Data into it, so to access its fields.
  *
  * @ingroup Widget
  */

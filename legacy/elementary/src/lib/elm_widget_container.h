@@ -29,7 +29,7 @@
   * @def ELM_CONTAINER_CLASS
   *
   * Use this macro to cast whichever subclass of
-  * #Elm_Container_Smart_Class into it, so to acess its fields.
+  * #Elm_Container_Smart_Class into it, so to access its fields.
   *
   * @ingroup Widget
   */

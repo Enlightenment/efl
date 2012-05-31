@@ -42,7 +42,7 @@
  * @def ELM_LAYOUT_CLASS
  *
  * Use this macro to cast whichever subclass of
- * #Elm_Layout_Smart_Class into it, so to acess its fields.
+ * #Elm_Layout_Smart_Class into it, so to access its fields.
  *
  * @ingroup Widget
  */
@@ -52,7 +52,7 @@
  * @def ELM_LAYOUT_DATA
  *
  * Use this macro to cast whichever subdata of
- * #Elm_Layout_Smart_Data into it, so to acess its fields.
+ * #Elm_Layout_Smart_Data into it, so to access its fields.
  *
  * @ingroup Widget
  */
