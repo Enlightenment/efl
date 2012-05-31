@@ -77,8 +77,16 @@ struct _Waiter
 
 typedef struct _Waiter Waiter;
 
-static Eina_List **requests = NULL;
-static Eina_List *processing = NULL;
+struct _Request_Queue
+{
+   Eina_List *waiting;
+   Eina_List *processing;
+};
+
+typedef struct _Request_Queue Request_Queue;
+
+static Request_Queue *requests = NULL;
+// static Eina_List *processing = NULL;
 
 static void
 _request_waiter_add(Font_Request *req, Client *client, unsigned int rid)
@@ -101,7 +109,7 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
 
    req = NULL;
 
-   EINA_LIST_FOREACH(processing, l, r)
+   EINA_LIST_FOREACH(requests[type].processing, l, r)
      {
         if (r->data == data)
           continue;
@@ -112,7 +120,7 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
 
    if (!req)
      {
-        EINA_LIST_FOREACH(requests[type], l, r)
+        EINA_LIST_FOREACH(requests[type].waiting, l, r)
           {
              if (r->data != data)
                continue;
@@ -129,7 +137,8 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
         req->data = data;
         req->waiters = NULL;
         req->processing = EINA_FALSE;
-        requests[type] = eina_list_append(requests[type], req);
+        requests[type].waiting = eina_list_append(requests[type].waiting,
+                                                  req);
      }
 
    _request_waiter_add(req, client, rid);
@@ -160,8 +169,10 @@ cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
    // so we need a flag or something else to make things still load.
    if (!req->waiters)
      {
-        Eina_List **reqlist = &requests[req->type];
+        Eina_List **reqlist = &requests[req->type].waiting;
         *reqlist = eina_list_remove(*reqlist, req);
+        // TODO: If the request is being processed, it can't be deleted. Must
+        // be marked as delete_me instead.
         req->funcs->msg_free(req->msg);
         free(req);
      }
@@ -184,7 +195,8 @@ cserve2_request_cancel_all(Font_Request *req, Error_Type err)
         free(w);
      }
 
-   requests[req->type] = eina_list_remove(requests[req->type], req);
+   requests[req->type].waiting = eina_list_remove(requests[req->type].waiting,
+                                                  req);
    req->funcs->msg_free(req->msg);
    free(req);
 }
@@ -193,7 +205,7 @@ void
 cserve2_requests_init(void)
 {
    DBG("Initializing requests.");
-   requests = calloc(CSERVE2_REQ_LAST, sizeof(Eina_List *));
+   requests = calloc(CSERVE2_REQ_LAST, sizeof(*requests));
 }
 
 void
@@ -215,7 +227,8 @@ _cserve2_request_failed(Font_Request *req, Error_Type type)
      }
 
    req->funcs->msg_free(req->msg);
-   processing = eina_list_remove(processing, req);
+   requests[req->type].processing = eina_list_remove(
+      requests[req->type].processing, req);
    free(req);
 }
 
@@ -243,7 +256,8 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
    // FIXME: We shouldn't free this message directly, it must be freed by a
    // callback.
    free(msg);
-   processing = eina_list_remove(processing, req);
+   requests[req->type].processing = eina_list_remove(
+      requests[req->type].processing, req);
    free(req);
    sw->data = NULL;
 
@@ -263,7 +277,6 @@ _slave_dead_cb(Slave *s __UNUSED__, void *data)
    if (req)
      _cserve2_request_failed(req, CSERVE2_LOADER_DIED);
 
-   processing = eina_list_remove(processing, req);
    *working = eina_list_remove(*working, sw);
    free(sw);
 }
@@ -364,7 +377,7 @@ cserve2_requests_process(void)
          if (type == SLAVE_NONE)
            continue;
 
-         if (!requests[rtype])
+         if (!requests[rtype].waiting)
            continue;
 
          /* Now we have the worker type to use (image or font), and the list
@@ -374,14 +387,16 @@ cserve2_requests_process(void)
          idle = &_workers[type].idle;
          working = &_workers[type].working;
 
-         while (requests[j] &&
+         while (requests[j].waiting &&
                 (eina_list_count(*working) < max_workers))
            {
               Slave_Worker *sw;
-              Font_Request *req = eina_list_data_get(requests[rtype]);
-              requests[rtype] = eina_list_remove_list(requests[rtype],
-                                                      requests[rtype]);
-              processing = eina_list_append(processing, req);
+              Font_Request *req = eina_list_data_get(requests[rtype].waiting);
+
+              requests[rtype].waiting = eina_list_remove_list(
+                 requests[rtype].waiting, requests[rtype].waiting);
+              requests[rtype].processing = eina_list_append(
+                 requests[rtype].processing, req);
 
               if (!(*idle))
                 sw = _slave_for_request_create(type);
