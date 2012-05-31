@@ -113,12 +113,14 @@ typedef struct _Slave_Msg_Image_Opened Slave_Msg_Image_Opened;
 typedef struct _Slave_Msg_Image_Load Slave_Msg_Image_Load;
 typedef struct _Slave_Msg_Image_Loaded Slave_Msg_Image_Loaded;
 
-typedef void *(*Font_Request_Msg_Create)(Client *c, void *data, int *size);
-typedef void (*Font_Request_Response)(Client *c, void *data, void *resp);
-typedef void (*Font_Request_Error)(Client *c, void *data, Error_Type error);
+typedef void *(*Font_Request_Msg_Create)(void *data, int *size);
+typedef void *(*Font_Request_Msg_Free)(void *data);
+typedef void (*Font_Request_Response)(Client *c, void *data, void *resp, unsigned int rid);
+typedef void (*Font_Request_Error)(Client *c, void *data, Error_Type error, unsigned int rid);
 
 struct _Font_Request_Funcs {
    Font_Request_Msg_Create msg_create;
+   Font_Request_Msg_Free msg_free;
    Font_Request_Response response;
    Font_Request_Error error;
 };
