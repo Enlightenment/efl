@@ -42,9 +42,26 @@ struct _Slave_Proc
    Eina_Bool killed : 1;
 };
 
+typedef struct _Slave_Thread Slave_Thread;
 typedef struct _Slave_Proc Slave_Proc;
 
+struct _Slave_Thread
+{
+   Slave base;
+   pthread_t tid;
+   Slave_Thread_Data *tdata;
+};
+
+struct _Slave_Thread_Data {
+   int write_fd;
+   int read_fd;
+   Slave_Thread_Cb cb;
+   void *cb_data;
+};
+
 static Eina_List *slave_procs;
+static Eina_List *slave_threads;
+static pthread_attr_t slave_thread_attr;
 
 static Slave_Proc *
 _slave_proc_find(pid_t pid)
@@ -85,6 +102,21 @@ _slave_proc_free(Slave_Proc *s)
    _slave_free((Slave *)s);
 
    eina_stringshare_del(s->name);
+
+   free(s);
+}
+
+static void
+_slave_thread_free(Slave_Thread *s)
+{
+   Slave_Thread_Data *sd = s->tdata;
+
+   close(sd->write_fd);
+   close(sd->read_fd);
+
+   free(sd);
+
+   _slave_free((Slave *)s);
 
    free(s);
 }
@@ -220,26 +252,44 @@ Eina_Bool
 cserve2_slaves_init(void)
 {
    cserve2_on_child_dead_set(_slave_proc_dead_cb);
+
+   if (pthread_attr_init(&slave_thread_attr))
+     {
+        ERR("Could not initialize attributes for thread.");
+        cserve2_on_child_dead_set(NULL);
+        return EINA_FALSE;
+     }
    return EINA_TRUE;
 }
 
 void
 cserve2_slaves_shutdown(void)
 {
-   Slave_Proc *s;
+   Slave_Proc *sp;
+   Slave_Thread *st;
+   Eina_List *l;
 
    cserve2_on_child_dead_set(NULL);
 
-   if (!slave_procs)
+   if (!slave_procs && !slave_threads)
      return;
 
    DBG("Shutting down slaves subsystem with %d slaves alive!",
        eina_list_count(slave_procs));
 
-   EINA_LIST_FREE(slave_procs, s)
+   EINA_LIST_FREE(slave_procs, sp)
      {
-        kill(s->pid, SIGKILL);
-        _slave_proc_free(s);
+        kill(sp->pid, SIGKILL);
+        _slave_proc_free(sp);
+     }
+
+   EINA_LIST_FOREACH(slave_threads, l, st)
+      pthread_cancel(st->tid);
+
+   EINA_LIST_FREE(slave_threads, st)
+     {
+        pthread_join(st->tid, NULL);
+        _slave_thread_free(st);
      }
 }
 
@@ -374,6 +424,106 @@ Slave *
 cserve2_slave_run(const char *name, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb, const void *data)
 {
    return _cserve2_slave_proc_run(name, read_cb, dead_cb, data);
+}
+
+static void *
+_slave_thread_cb(void *data)
+{
+   Slave_Thread_Data *sd = data;
+
+   sd->cb(sd, sd->cb_data);
+
+   return NULL;
+}
+
+Slave *
+cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb, const void *data)
+{
+   Slave_Thread_Data *sd;
+   Slave_Thread *s;
+   Slave *sb;
+   pthread_t tid;
+   int child[2], parent[2];
+   int flags;
+
+   s = calloc(1, sizeof(Slave_Thread));
+   if (!s)
+     {
+        ERR("Could not create Slave_Thread handler.");
+        return NULL;
+     }
+
+   sb = (Slave *)s;
+
+   sd = calloc(1, sizeof(Slave_Thread_Data));
+   if (!sd)
+     {
+        ERR("Could not create Slave_Thread_Data.");
+        return NULL;
+     }
+
+   if (pipe(child))
+     {
+        ERR("Could not create pipes for child.");
+        free(s);
+        free(sd);
+        return NULL;
+     }
+
+   if (pipe(parent))
+     {
+        ERR("Could not create pipes for parent.");
+        free(s);
+        free(sd);
+        close(child[0]);
+        close(child[1]);
+        return NULL;
+     }
+
+   /* Setting data for slave thread */
+   sd->read_fd = child[0];
+   flags = fcntl(sd->read_fd, F_GETFL);
+   flags |= O_NONBLOCK;
+   fcntl(sd->read_fd, F_SETFL, flags);
+   sd->write_fd = parent[1];
+   flags = fcntl(sd->write_fd, F_GETFL);
+   flags |= O_NONBLOCK;
+   fcntl(sd->write_fd, F_SETFL, flags);
+
+   sd->cb = thread_cb;
+   sd->cb_data = thread_data;
+
+   if (pthread_create(&tid, &slave_thread_attr, _slave_thread_cb, sd))
+     {
+        ERR("Could not start slave thread.");
+        free(s);
+        free(sd);
+        close(child[0]);
+        close(child[1]);
+        close(parent[0]);
+        close(parent[1]);
+        return NULL;
+     }
+
+   s->tid = tid;
+   s->tdata = sd;
+   sb->type = SLAVE_THREAD;
+   sb->write_fd = child[1];
+   flags = fcntl(sb->write_fd, F_GETFL);
+   flags |= O_NONBLOCK;
+   fcntl(sb->write_fd, F_SETFL, flags);
+   sb->read_fd = parent[0];
+   flags = fcntl(sb->read_fd, F_GETFL);
+   flags |= O_NONBLOCK;
+   fcntl(sb->read_fd, F_SETFL, flags);
+   sb->read_cb = read_cb;
+   sb->dead_cb = dead_cb;
+   sb->data = data;
+   cserve2_fd_watch_add(sb->read_fd, FD_READ, _slave_read_cb, sb);
+
+   slave_threads = eina_list_append(slave_threads, s);
+
+   return sb;
 }
 
 static void

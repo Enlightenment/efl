@@ -24,6 +24,7 @@
 extern int _evas_cserve2_bin_log_dom;
 
 typedef struct _Slave Slave;
+typedef struct _Slave_Thread_Data Slave_Thread_Data;
 typedef struct _Shm_Handle Shm_Handle;
 
 typedef enum {
@@ -117,6 +118,7 @@ typedef void (*Timeout_Cb)(void); /* void* for compat? */
 typedef void (*Main_Loop_Child_Dead_Cb)(int pid, int status); /* void* for compat? */
 typedef void (*Slave_Dead_Cb)(Slave *slave, void *data);
 typedef void (*Slave_Read_Cb)(Slave *slave, Slave_Command cmd, void *msg, void *data);
+typedef void (*Slave_Thread_Cb)(Slave_Thread_Data *sd, void *data);
 typedef void (*File_Change_Cb)(const char *path, Eina_Bool deleted, void *data);
 
 void cserve2_client_accept(int fd);
@@ -148,6 +150,7 @@ void cserve2_slaves_shutdown(void);
 int cserve2_slave_available_get(void);
 Eina_Bool cserve2_slave_cmd_dispatch(void *data, Slave_Command cmd, const void *msg, int size);
 Slave *cserve2_slave_run(const char *exe, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb, const void *data);
+Slave *cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb, const void *data);
 void cserve2_slave_send(Slave *s, Slave_Command cmd, const char *data, size_t size);
 void cserve2_slave_kill(Slave *s);
 
