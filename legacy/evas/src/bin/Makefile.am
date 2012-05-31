@@ -65,6 +65,7 @@ evas_cserve2_slaves.c \
 evas_cserve2_messages.c \
 evas_cserve2_shm.c \
 evas_cserve2_cache.c \
+evas_cserve2_requests.c \
 evas_cserve2_main_loop_linux.c
 
 evas_cserve2_LDADD = \

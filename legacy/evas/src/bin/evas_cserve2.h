@@ -113,6 +113,25 @@ typedef struct _Slave_Msg_Image_Opened Slave_Msg_Image_Opened;
 typedef struct _Slave_Msg_Image_Load Slave_Msg_Image_Load;
 typedef struct _Slave_Msg_Image_Loaded Slave_Msg_Image_Loaded;
 
+typedef void *(*Font_Request_Msg_Create)(Client *c, void *data, int *size);
+typedef void (*Font_Request_Response)(Client *c, void *data, void *resp);
+typedef void (*Font_Request_Error)(Client *c, void *data, Error_Type error);
+
+struct _Font_Request_Funcs {
+   Font_Request_Msg_Create msg_create;
+   Font_Request_Response response;
+   Font_Request_Error error;
+};
+
+typedef struct _Font_Request Font_Request;
+typedef struct _Font_Request_Funcs Font_Request_Funcs;
+
+typedef enum {
+   CSERVE2_REQ_FONT_LOAD = 0,
+   CSERVE2_REQ_FONT_GLYPHS_LOAD,
+   CSERVE2_REQ_LAST
+} Font_Request_Type;
+
 typedef void (*Fd_Watch_Cb)(int fd, Fd_Flags flags, void *data);
 typedef void (*Timeout_Cb)(void); /* void* for compat? */
 typedef void (*Main_Loop_Child_Dead_Cb)(int pid, int status); /* void* for compat? */
@@ -178,6 +197,13 @@ void cserve2_cache_image_preload(Client *client, unsigned int client_image_id, u
 void cserve2_cache_image_unload(Client *client, unsigned int client_image_id);
 
 int cserve2_cache_font_load(Client *client, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int rid);
+
+
+Font_Request *cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request_Funcs *funcs, void *data);
+void cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err);
+void cserve2_request_cancel_all(Font_Request *req, Error_Type err);
+void cserve2_requests_init(void);
+void cserve2_requests_shutdown(void);
 
 void cserve2_cache_requests_process(void);
 void cserve2_cache_requests_response(Slave_Command type, void *msg, void *data);

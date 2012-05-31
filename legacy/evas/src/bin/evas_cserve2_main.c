@@ -481,6 +481,8 @@ main(int argc __UNUSED__, const char *argv[] __UNUSED__)
         goto error;
      }
 
+   cserve2_requests_init();
+
    cserve2_cache_init();
 
    _clients_setup();
@@ -492,6 +494,8 @@ main(int argc __UNUSED__, const char *argv[] __UNUSED__)
    _clients_finish();
 
    cserve2_cache_shutdown();
+
+   cserve2_requests_shutdown();
 
    _slaves_restart();
    cserve2_slaves_shutdown();
