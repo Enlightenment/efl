@@ -782,7 +782,7 @@
  * @skip add a new example smart object to a canvas
  * @until }
  *
- * Smart objects are define by <b>smart classes</b>, which are structs
+ * Smart objects are defined by <b>smart classes</b>, which are structs
  * defining their interfaces, or <b>smart functions</b> (see
  * #Evas_Smart_Class, the base class for any smart object).  As you
  * see, one has to use the evas_object_smart_add() function to
