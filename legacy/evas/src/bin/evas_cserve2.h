@@ -118,7 +118,7 @@ typedef void (*Timeout_Cb)(void); /* void* for compat? */
 typedef void (*Main_Loop_Child_Dead_Cb)(int pid, int status); /* void* for compat? */
 typedef void (*Slave_Dead_Cb)(Slave *slave, void *data);
 typedef void (*Slave_Read_Cb)(Slave *slave, Slave_Command cmd, void *msg, void *data);
-typedef void (*Slave_Thread_Cb)(Slave_Thread_Data *sd, void *data);
+typedef void *(*Slave_Thread_Cb)(Slave_Thread_Data *sd, Slave_Command cmd, const void *cmddata, void *userdata);
 typedef void (*File_Change_Cb)(const char *path, Eina_Bool deleted, void *data);
 
 void cserve2_client_accept(int fd);

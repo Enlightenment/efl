@@ -57,6 +57,8 @@ struct _Slave_Thread_Data {
    int read_fd;
    Slave_Thread_Cb cb;
    void *cb_data;
+   const void *cmddata;
+   void *cmdanswer;
 };
 
 static Eina_List *slave_procs;
@@ -195,7 +197,7 @@ _slave_read_clear(Slave *s)
 }
 
 static void
-_slave_read_cb(int fd, Fd_Flags flags, void *data)
+_slave_proc_read_cb(int fd, Fd_Flags flags, void *data)
 {
    Slave *s = data;
    Eina_Bool done = EINA_FALSE;
@@ -246,6 +248,27 @@ _slave_read_cb(int fd, Fd_Flags flags, void *data)
         s->read_cb(s, s->read.cmd, s->read.buf, (void *)s->data);
         _slave_read_clear(s);
      }
+}
+
+static void
+_slave_thread_read_cb(int fd, Fd_Flags flags, void *data)
+{
+   Slave_Thread *s = data;
+   Slave_Thread_Data *sd = s->tdata;
+
+   if (!(flags & FD_READ))
+     return;
+
+   Slave_Command cmd;
+   ssize_t ret;
+
+   ret = read(fd, (char *)&cmd, sizeof(cmd));
+   if (ret < (int)sizeof(int))
+     {
+        return;
+     }
+
+   s->base.read_cb((Slave *)s, cmd, sd->cmdanswer, (void *)s->base.data);
 }
 
 Eina_Bool
@@ -410,7 +433,7 @@ _cserve2_slave_proc_run(const char *exe, Slave_Read_Cb read_cb, Slave_Dead_Cb de
    sb->read_cb = read_cb;
    sb->dead_cb = dead_cb;
    sb->data = data;
-   cserve2_fd_watch_add(sb->read_fd, FD_READ, _slave_read_cb, sb);
+   cserve2_fd_watch_add(sb->read_fd, FD_READ, _slave_proc_read_cb, sb);
 
    close(child[0]);
    close(parent[1]);
@@ -429,9 +452,35 @@ cserve2_slave_run(const char *name, Slave_Read_Cb read_cb, Slave_Dead_Cb dead_cb
 static void *
 _slave_thread_cb(void *data)
 {
+   ssize_t n;
+   Slave_Command cmd;
+
    Slave_Thread_Data *sd = data;
 
-   sd->cb(sd, sd->cb_data);
+   n = read(sd->read_fd, &cmd, sizeof(cmd));
+   while (n != 0)
+     {
+        /* EINTR means we were interrupted by a signal before anything
+         * was sent, and if we are back here it means that signal was
+         * not meant for us to die. Any other error here is fatal and
+         * should result in the slave terminating.
+         */
+        if (errno == EINTR)
+          continue;
+
+        if (n != sizeof(cmd))
+          {
+             ERR("Slave thread read invalid size of command from server: %d",
+                 n);
+             continue;
+          }
+        sd->cmdanswer = sd->cb(sd, cmd, sd->cmddata, sd->cb_data);
+        write(sd->write_fd, &cmd, sizeof(cmd));
+
+        n = read(sd->read_fd, &cmd, sizeof(cmd));
+     }
+
+   ERR("Pipe was closed on the side. Slave thread exiting...");
 
    return NULL;
 }
@@ -482,13 +531,7 @@ cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Rea
 
    /* Setting data for slave thread */
    sd->read_fd = child[0];
-   flags = fcntl(sd->read_fd, F_GETFL);
-   flags |= O_NONBLOCK;
-   fcntl(sd->read_fd, F_SETFL, flags);
    sd->write_fd = parent[1];
-   flags = fcntl(sd->write_fd, F_GETFL);
-   flags |= O_NONBLOCK;
-   fcntl(sd->write_fd, F_SETFL, flags);
 
    sd->cb = thread_cb;
    sd->cb_data = thread_data;
@@ -519,7 +562,7 @@ cserve2_slave_thread_run(Slave_Thread_Cb thread_cb, void *thread_data, Slave_Rea
    sb->read_cb = read_cb;
    sb->dead_cb = dead_cb;
    sb->data = data;
-   cserve2_fd_watch_add(sb->read_fd, FD_READ, _slave_read_cb, sb);
+   cserve2_fd_watch_add(sb->read_fd, FD_READ, _slave_thread_read_cb, sb);
 
    slave_threads = eina_list_append(slave_threads, s);
 
@@ -548,7 +591,7 @@ _slave_send_aux(Slave *s, const char *data, size_t size)
 }
 
 void
-cserve2_slave_send(Slave *s, Slave_Command cmd, const char *data, size_t size)
+_cserve2_slave_proc_send(Slave *s, Slave_Command cmd, const char *data, size_t size)
 {
    int ints[2];
 
@@ -557,6 +600,23 @@ cserve2_slave_send(Slave *s, Slave_Command cmd, const char *data, size_t size)
    _slave_send_aux(s, (char *)ints, sizeof(int) * 2);
    if (size)
      _slave_send_aux(s, (char *)data, size);
+}
+
+void
+_cserve2_slave_thread_send(Slave_Thread *s, Slave_Command cmd, const char *data)
+{
+   s->tdata->cmddata = data;
+
+   _slave_send_aux((Slave *)s, (char *)&cmd, sizeof(cmd));
+}
+
+void
+cserve2_slave_send(Slave *s, Slave_Command cmd, const char *data, size_t size)
+{
+   if (s->type == SLAVE_PROCESS)
+     _cserve2_slave_proc_send(s, cmd, data, size);
+   else
+     _cserve2_slave_thread_send((Slave_Thread *)s, cmd, data);
 }
 
 static void
