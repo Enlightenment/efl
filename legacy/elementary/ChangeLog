@@ -129,3 +129,9 @@
 
        * Entry: Add 3 APIs which are elm_entry_text_style_user_push/pop/peek
        and test functions for these APIs.
+
+2012-05-31 WooHyun Jung
+
+       * child_can_focus should be EINA_FALSE only when all children in the object
+         tree are not focusable. Before this fix, it was EINA_FALSE when all sub
+         objects were not focusable. (i.e. didn't check whole object tree)
