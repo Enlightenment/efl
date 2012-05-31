@@ -1308,14 +1308,14 @@ ecore_x_screen_index_get(const Ecore_X_Screen *screen)
 /**
  * Retrieves the screen based on index number.
  *
- * @param index The index that will be used to retrieve the screen.
+ * @param idx The index that will be used to retrieve the screen.
  * @return  The Ecore_X_Screen at this index.
  * @ingroup Ecore_X_Display_Attr_Group
  *
  * @since 1.1
  */
 EAPI Ecore_X_Screen *
-ecore_x_screen_get(int index)
+ecore_x_screen_get(int idx)
 {
    xcb_screen_iterator_t iter;
    int i = 0;
@@ -1325,7 +1325,7 @@ ecore_x_screen_get(int index)
    iter =
      xcb_setup_roots_iterator(xcb_get_setup(_ecore_xcb_conn));
    for (i = 0; iter.rem; xcb_screen_next(&iter), i++)
-     if (i == index) return iter.data;
+     if (i == idx) return iter.data;
 
    return NULL;
 }

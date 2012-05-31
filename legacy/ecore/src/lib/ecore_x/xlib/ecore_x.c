@@ -813,7 +813,7 @@ ecore_x_screen_index_get(const Ecore_X_Screen *screen)
 /**
  * Retrieves the screen based on index number.
  *
- * @param index The index that will be used to retrieve the screen.
+ * @param idx The index that will be used to retrieve the screen.
  * @return  The Ecore_X_Screen at this index.
  * @ingroup Ecore_X_Display_Attr_Group
  *

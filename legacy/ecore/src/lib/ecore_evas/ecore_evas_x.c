@@ -3189,7 +3189,7 @@ ecore_evas_software_x11_new(const char *disp_name __UNUSED__, Ecore_X_Window par
 
 /**
  * @brief Get the window from Ecore_Evas using software x11.
- * @note If ecore is not compiled with support for x11 or if @ee was not
+ * @note If ecore is not compiled with support for x11 or if @p ee was not
  * created with ecore_evas_software_x11_new() then nothing is done and
  * 0 is returned.
  * @param ee The Ecore_Evas from which to get the window.
@@ -3439,7 +3439,7 @@ ecore_evas_gl_x11_options_new(const char *disp_name __UNUSED__, Ecore_X_Window p
 
 /**
  * @brief Get the window from Ecore_Evas using opengl x11.
- * @note If ecore is not compiled with support for x11 or if @ee was not
+ * @note If ecore is not compiled with support for x11 or if @p ee was not
  * created with ecore_evas_gl_x11_new() then nothing is done and
  * 0 is returned.
  * @param ee The Ecore_Evas from which to get the window.
@@ -3747,7 +3747,7 @@ ecore_evas_software_x11_16_new(const char *disp_name __UNUSED__, Ecore_X_Window 
 
 /**
  * @brief Get the window from Ecore_Evas using software 16 x11.
- * @note If ecore is not compiled with support for x11 or if @ee was not
+ * @note If ecore is not compiled with support for x11 or if @p ee was not
  * created with ecore_evas_software_x11_16_new() then nothing is done and
  * 0 is returned.
  * @param ee The Ecore_Evas from which to get the window.
@@ -4079,7 +4079,7 @@ ecore_evas_software_x11_8_new(const char *disp_name, Ecore_X_Window parent,
 
 /**
  * @brief Get window from Ecore_Evas using software 8 x11.
- * @note If ecore is not compiled with support for x11 or if @ee was not
+ * @note If ecore is not compiled with support for x11 or if @p ee was not
  * created with ecore_evas_software_x11_8_new() then nothing is done and
  * 0 is returned.
  * @param ee The Ecore_Evas from which to get the window.
@@ -4099,7 +4099,7 @@ ecore_evas_software_x11_8_window_get(const Ecore_Evas *ee)
 
 /**
  * @brief Get subwindow from Ecore_Evas using software 8 x11.
- * @note If ecore is not compiled with support for x11 or if @ee was not
+ * @note If ecore is not compiled with support for x11 or if @p ee was not
  * created with ecore_evas_software_x11_8_new() then nothing is done and
  * 0 is returned.
  * @param ee The Ecore_Evas from which to get the subwindow.

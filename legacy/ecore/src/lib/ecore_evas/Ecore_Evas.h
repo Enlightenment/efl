@@ -216,6 +216,8 @@ EAPI Eina_Bool   ecore_evas_app_comp_sync_get(void);
 EAPI Eina_List  *ecore_evas_engines_get(void);
 /**
  * @brief Free list returned by ecore_evas_engines_get()
+ *
+ * @param engines list with engines names
  */
 EAPI void        ecore_evas_engines_free(Eina_List *engines);
 /**
