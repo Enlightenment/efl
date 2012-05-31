@@ -9641,6 +9641,7 @@ group { name: "elm/genlist/tree/tree_effect/default";
        source: "elm/genlist/tree/effect_parts/default";
        repeat_events: 1;
        description {
+         min: 16 28;
          state: "default" 0.0;
        }
        GENLIST_PART_MAP_START(-90.0, 0, 0)
