@@ -14,7 +14,7 @@
  * other widgets which are, basically, a certain layout with some more
  * logic on top.
  *
- * The idea is make the creation of that widgets as easy as possible,
+ * The idea is to make the creation of that widgets as easy as possible,
  * factorizing code on this common base. For example, a button is a
  * layout (that looks like push button) that happens to react on
  * clicks and keyboard events in a special manner, calling its user
@@ -26,7 +26,7 @@
  * #Elm_Container_Smart_Class. Container parts, here, map directly to
  * Edje parts from the layout's Edje group. Besides that, there's a whole
  * infrastructure around Edje files:
- * - intefacing by signals,
+ * - interfacing by signals,
  * - setting/retrieving text part values,
  * - dealing with table and box parts directly,
  * - etc.

@@ -239,7 +239,7 @@
  * 'virtual' because, as in object-oriented languages, one is supposed
  * here to override them on inheriting classes. On most of
  * inheritances you'll probably want to call the parent's version of
- * the class function too: you must analise each case to tell.
+ * the class function too: you must analyse each case to tell.
  *
  * Take a look at #Elm_Widget_Smart_Data. That's private data bound to
  * each Elementary object @b instance. It aggregates data needed for
