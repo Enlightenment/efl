@@ -395,26 +395,29 @@ _elm_widget_sub_object_add_func(Evas_Object *obj,
      {
         ELM_WIDGET_DATA_GET(sobj, sdc);
 
-        if (sdc)
+        if (sdc->parent_obj == obj) return EINA_TRUE;
+        if (sdc->parent_obj)
           {
-             if (sdc->parent_obj == obj) return EINA_TRUE;
-             if (sdc->parent_obj)
+             if (!elm_widget_sub_object_del(sdc->parent_obj, sobj))
+               return EINA_FALSE;
+          }
+        sdc->parent_obj = obj;
+        _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
+
+        /* update child focusable-ness on self and parents, now that a
+         * focusable child got in */
+        if (!sd->child_can_focus && (_is_focusable(sobj)))
+          {
+             Elm_Widget_Smart_Data *sdp = sd;
+
+             sdp->child_can_focus = EINA_TRUE;
+             while (sdp->parent_obj)
                {
-                  if (!elm_widget_sub_object_del(sdc->parent_obj, sobj))
-                    return EINA_FALSE;
-               }
-             sdc->parent_obj = obj;
-             _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
-             if (!sd->child_can_focus && (_is_focusable(sobj)))
-               {
-                  Elm_Widget_Smart_Data *sdt = evas_object_smart_data_get(obj);
-                  sdt->child_can_focus = EINA_TRUE;
-                  while (sdt->parent_obj)
-                    {
-                       sdt = evas_object_smart_data_get(sdt->parent_obj);
-                       if (sdt->child_can_focus) break;
-                       sdt->child_can_focus = EINA_TRUE;
-                    }
+                  sdp = evas_object_smart_data_get(sdp->parent_obj);
+
+                  if (sdp->child_can_focus) break;
+
+                  sdp->child_can_focus = EINA_TRUE;
                }
           }
      }
@@ -450,7 +453,6 @@ _elm_widget_sub_object_add_func(Evas_Object *obj,
 
    return EINA_TRUE;
 }
-
 
 static Eina_Bool
 _elm_widget_sub_object_del_func(Evas_Object *obj,
@@ -492,23 +494,31 @@ _elm_widget_sub_object_del_func(Evas_Object *obj,
           }
         if ((sd->child_can_focus) && (_is_focusable(sobj)))
           {
-             Evas_Object *subobj;
-             const Eina_List *l;
-             Elm_Widget_Smart_Data *sdt = evas_object_smart_data_get(obj);
-             while (1)
+             Evas_Object *parent = obj;
+
+             /* update child focusable-ness on self and parents, now that a
+              * focusable child is gone */
+             while (parent)
                {
-                  sdt->child_can_focus = EINA_FALSE;
-                  EINA_LIST_FOREACH(sdt->subobjs, l, subobj)
+                  const Eina_List *l;
+                  Evas_Object *subobj;
+
+                  ELM_WIDGET_DATA_GET(parent, sdp);
+
+                  sdp->child_can_focus = EINA_FALSE;
+                  EINA_LIST_FOREACH (sdp->subobjs, l, subobj)
                     {
                        if ((subobj != sobj) && (_is_focusable(subobj)))
                          {
-                            sdt->child_can_focus = EINA_TRUE;
+                            sdp->child_can_focus = EINA_TRUE;
                             break;
                          }
                     }
-                  if (sdt->child_can_focus) break;
-                  if (!sdt->parent_obj) break;
-                  sdt = evas_object_smart_data_get(sdt->parent_obj);
+
+                  /* break again, child_can_focus went back to
+                   * original value */
+                  if (sdp->child_can_focus) break;
+                  parent = sdp->parent_obj;
                }
           }
 
