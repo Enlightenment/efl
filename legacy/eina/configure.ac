@@ -103,11 +103,11 @@ fi
 AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
 AM_CONDITIONAL([EINA_HAVE_THREADS], [! test "x${efl_have_threads}" = "xno"])
 
-if ! test "x${efl_have_debug_threads}" = "xno"; then
+if test "x${efl_have_debug_threads}" = "xyes"; then
    EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_HAVE_DEBUG_THREADS"
 fi
 AC_SUBST(EINA_CONFIGURE_HAVE_DEBUG_THREADS)
-AM_CONDITIONAL([EINA_DEBUG_THREADS], [! test "x${efl_have_debug_threads}" = "xno"])
+AM_CONDITIONAL([EINA_DEBUG_THREADS], [test "x${efl_have_debug_threads}" = "xyes"])
 
 if ! test "x${efl_have_on_off_threads}" = "xno"; then
    EINA_CONFIGURE_HAVE_ON_OFF_THREADS="#define EINA_HAVE_ON_OFF_THREADS"
