@@ -248,6 +248,8 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
+   using_file(file_in);
+
    if (!edje_init())
      exit(-1);
 
