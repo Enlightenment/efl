@@ -34,11 +34,11 @@ static struct _Request_Match
 {
    Font_Request_Type rtype;
    Slave_Type stype;
-   Message_Type mtype;
+   Slave_Command ctype;
 } _request_match[] =
 {
-   { CSERVE2_REQ_FONT_LOAD, SLAVE_FONT, CSERVE2_FONT_LOAD },
-   { CSERVE2_REQ_FONT_GLYPHS_LOAD, SLAVE_FONT, CSERVE2_FONT_GLYPHS_LOAD },
+   { CSERVE2_REQ_FONT_LOAD, SLAVE_FONT, FONT_LOAD },
+   { CSERVE2_REQ_FONT_GLYPHS_LOAD, SLAVE_FONT, GLYPHS_LOAD },
    { CSERVE2_REQ_LAST, 0 }
 };
 
@@ -243,7 +243,7 @@ _slave_for_request_create(Slave_Type type)
 }
 
 static Eina_Bool
-_cserve2_request_dispatch(Slave_Worker *sw, Message_Type mtype, Font_Request *req)
+_cserve2_request_dispatch(Slave_Worker *sw, Slave_Command ctype, Font_Request *req)
 {
    int size;
    char *slave_msg = req->funcs->msg_create(req->data, &size);
@@ -256,7 +256,7 @@ _cserve2_request_dispatch(Slave_Worker *sw, Message_Type mtype, Font_Request *re
 
    req->msg = slave_msg;
    sw->data = req;
-   cserve2_slave_send(sw->slave, mtype, slave_msg, size);
+   cserve2_slave_send(sw->slave, ctype, slave_msg, size);
    req->processing = EINA_TRUE;
 
    return EINA_TRUE;
@@ -285,7 +285,7 @@ cserve2_requests_process(void)
     for (rtype = 0; rtype < CSERVE2_REQ_LAST; rtype++)
       {
          Slave_Type type = SLAVE_NONE;
-         Message_Type mtype;
+         Slave_Command ctype;
          unsigned int max_workers;
          Eina_List **idle, **working;
 
@@ -294,7 +294,7 @@ cserve2_requests_process(void)
               if (_request_match[j].rtype == j)
                 {
                    type = _request_match[j].stype;
-                   mtype = _request_match[j].mtype;
+                   ctype = _request_match[j].ctype;
                    break;
                 }
            }
@@ -332,7 +332,7 @@ cserve2_requests_process(void)
                 }
 
               sw = eina_list_data_get(*idle);
-              if (!_cserve2_request_dispatch(sw, mtype, req))
+              if (!_cserve2_request_dispatch(sw, ctype, req))
                 {
                    ERR("Could not dispatch request.");
                    _cserve2_request_failed(req, CSERVE2_GENERIC);

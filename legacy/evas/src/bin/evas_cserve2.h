@@ -68,6 +68,8 @@ typedef struct _Image_Load_Opts Image_Load_Opts;
 typedef enum {
    IMAGE_OPEN,
    IMAGE_LOAD,
+   FONT_LOAD,
+   FONT_GLYPHS_LOAD,
    SLAVE_QUIT,
    ERROR
 } Slave_Command;
