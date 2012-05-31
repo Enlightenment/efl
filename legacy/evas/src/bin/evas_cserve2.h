@@ -115,6 +115,25 @@ typedef struct _Slave_Msg_Image_Opened Slave_Msg_Image_Opened;
 typedef struct _Slave_Msg_Image_Load Slave_Msg_Image_Load;
 typedef struct _Slave_Msg_Image_Loaded Slave_Msg_Image_Loaded;
 
+struct _Slave_Msg_Font_Load {
+   void *ftdata1; // Freetype file source info comes here
+   void *ftdata2; // Freetype font info comes here
+   unsigned int rend_flags;
+   unsigned int hint;
+   unsigned int size;
+   unsigned int dpi;
+   const char *name;
+   const char *file;
+};
+
+struct _Slave_Msg_Font_Loaded {
+   void *ftdata1;
+   void *ftdata2;
+};
+
+typedef struct _Slave_Msg_Font_Load Slave_Msg_Font_Load;
+typedef struct _Slave_Msg_Font_Loaded Slave_Msg_Font_Loaded;
+
 typedef void *(*Font_Request_Msg_Create)(void *data, int *size);
 typedef void (*Font_Request_Msg_Free)(void *data);
 typedef void (*Font_Request_Response)(Client *c, void *data, void *resp, unsigned int rid);
@@ -129,6 +148,12 @@ struct _Font_Request_Funcs {
 
 typedef struct _Font_Request Font_Request;
 typedef struct _Font_Request_Funcs Font_Request_Funcs;
+
+typedef enum {
+   FONT_REND_REGULAR = 1,
+   FONT_REND_SLANT = 1 << 1,
+   FONT_REND_WEIGHT = 1 << 2
+} Font_Rend_Flags;
 
 typedef enum {
    CSERVE2_REQ_FONT_LOAD = 0,
@@ -211,5 +236,9 @@ void cserve2_requests_shutdown(void);
 
 void cserve2_cache_requests_process(void);
 void cserve2_cache_requests_response(Slave_Command type, void *msg, void *data);
+
+void cserve2_font_init(void);
+void cserve2_font_shutdown(void);
+void *cserve2_font_slave_cb(Slave_Thread_Data *sd, Slave_Command cmd, const void *cmddata, void *data);
 
 #endif /* _EVAS_CSERVE2_H */

@@ -219,6 +219,9 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd __UNUSED__, void *msg, voi
      }
 
    req->funcs->msg_free(req->msg);
+   // FIXME: We shouldn't free this message directly, it must be freed by a
+   // callback.
+   free(msg);
    free(req);
    sw->data = NULL;
 
@@ -258,9 +261,15 @@ _create_image_slave(void *data)
 }
 
 static Slave *
-_create_font_slave(void *data __UNUSED__)
+_create_font_slave(void *data)
 {
-   return NULL;
+   Slave *slave;
+
+   slave = cserve2_slave_thread_run(cserve2_font_slave_cb, NULL,
+                                    _slave_read_cb, _slave_dead_cb,
+                                    data);
+
+   return slave;
 }
 
 static Slave_Worker *

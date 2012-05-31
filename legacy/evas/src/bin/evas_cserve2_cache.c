@@ -88,15 +88,18 @@ struct _Font_Source {
    const char *name;
    const char *file;
    int references;
+   void *ft;
 };
 
 struct _Font_Entry {
-   Entry *base;
+   Entry base;
+   Font_Request *request;
    unsigned int rend_flags;
    unsigned int hint;
    unsigned int size;
    unsigned int dpi;
    Font_Source *src;
+   void *ft;
 };
 
 struct _Font_Cache {
@@ -1068,6 +1071,16 @@ _file_changed_cb(const char *path __UNUSED__, Eina_Bool deleted __UNUSED__, void
    eina_hash_del_by_key(file_watch, fw->path);
 }
 
+static Font_Source *
+_cserve2_font_source_find(const char *name)
+{
+   Font_Source *fs;
+
+   fs = eina_hash_find(font_sources, name);
+
+   return fs;
+}
+
 static Font_Entry *
 _cserve2_font_entry_find(const char *name, unsigned int namelen, unsigned int size, unsigned int rend_flags, unsigned int hint, unsigned int dpi)
 {
@@ -1087,6 +1100,59 @@ _cserve2_font_entry_find(const char *name, unsigned int namelen, unsigned int si
 
    return fe;
 }
+
+static void *
+_font_load_request_build(void *data, int *size)
+{
+   Font_Entry *fe = data;
+   Slave_Msg_Font_Load *msg = calloc(1, sizeof(*msg));
+
+   msg->ftdata1 = fe->src->ft;
+   msg->ftdata2 = fe->ft;
+   msg->rend_flags = fe->rend_flags;
+   msg->hint = fe->hint;
+   msg->size = fe->size;
+   msg->dpi = fe->dpi;
+   msg->name = fe->src->name;
+   msg->file = fe->src->file;
+
+   *size = 0;
+
+   return msg;
+}
+
+static void
+_font_load_request_free(void *data)
+{
+   free(data);
+}
+
+static void
+_font_load_request_response(Client *client, void *data, void *resp, unsigned int rid)
+{
+   Slave_Msg_Font_Loaded *msg = resp;
+   Font_Entry *fe = data;
+
+   if (!fe->src->ft)
+     fe->src->ft = msg->ftdata1;
+
+   if (!fe->ft)
+     fe->ft = msg->ftdata2;
+
+   if (fe->request) fe->request = NULL;
+}
+
+static void
+_font_load_request_failed(Client *client, void *data, Error_Type error, unsigned int rid)
+{
+}
+
+static Font_Request_Funcs _font_load_funcs = {
+   .msg_create = (Font_Request_Msg_Create)_font_load_request_build,
+   .msg_free = (Font_Request_Msg_Free)_font_load_request_free,
+   .response = (Font_Request_Response)_font_load_request_response,
+   .error = (Font_Request_Error)_font_load_request_failed
+};
 
 int
 cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid)
@@ -1382,6 +1448,7 @@ int
 cserve2_cache_font_load(Client *client, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int rid)
 {
    Reference *ref;
+   Font_Source *fs;
    Font_Entry *fe = _cserve2_font_entry_find(name, namelen, size,
                                              rend_flags, hint, dpi);
 
@@ -1398,7 +1465,31 @@ cserve2_cache_font_load(Client *client, const char *name, unsigned int namelen, 
         return 0;
      }
 
-   return -1;
+   fe = calloc(1, sizeof(*fe));
+   fe->rend_flags = rend_flags;
+   fe->hint = hint;
+   fe->size = size;
+   fe->dpi = dpi;
+   fe->base.type = CSERVE2_FONT_ENTRY;
+
+   fs = _cserve2_font_source_find(name);
+   if (!fs)
+     {
+        fs = calloc(1, sizeof(*fs));
+        fs->name = eina_stringshare_add_length(name, namelen);
+        fs->file = eina_stringshare_ref(fs->name);
+        eina_hash_direct_add(font_sources, fs->name, fs);
+     }
+
+
+   fe->src = fs;
+   fs->references++;
+   fe->request = cserve2_request_add(CSERVE2_REQ_FONT_LOAD, rid,
+                                     client, &_font_load_funcs, fe);
+
+   eina_hash_direct_add(font_entries, fe, fe);
+
+   return 0;
 }
 
 void

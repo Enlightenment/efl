@@ -55,6 +55,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_LIBEXEC_DIR=\"$(libexecdir)\" \
+@FREETYPE_CFLAGS@ \
 @EINA_CFLAGS@
 
 evas_cserve2_SOURCES = \
@@ -66,9 +67,11 @@ evas_cserve2_messages.c \
 evas_cserve2_shm.c \
 evas_cserve2_cache.c \
 evas_cserve2_requests.c \
+evas_cserve2_fonts.c \
 evas_cserve2_main_loop_linux.c
 
 evas_cserve2_LDADD = \
+@FREETYPE_LIBS@ \
 @EINA_LIBS@ \
 @EFL_SHM_OPEN_LIBS@
 

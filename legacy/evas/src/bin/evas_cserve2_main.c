@@ -483,6 +483,8 @@ main(int argc __UNUSED__, const char *argv[] __UNUSED__)
 
    cserve2_requests_init();
 
+   cserve2_font_init();
+
    cserve2_cache_init();
 
    _clients_setup();
@@ -494,6 +496,8 @@ main(int argc __UNUSED__, const char *argv[] __UNUSED__)
    _clients_finish();
 
    cserve2_cache_shutdown();
+
+   cserve2_font_shutdown();
 
    cserve2_requests_shutdown();
 
