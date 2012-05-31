@@ -78,6 +78,7 @@ struct _Waiter
 typedef struct _Waiter Waiter;
 
 static Eina_List **requests = NULL;
+static Eina_List *processing = NULL;
 
 static void
 _request_waiter_add(Font_Request *req, Client *client, unsigned int rid)
@@ -99,13 +100,26 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
    Eina_List *l;
 
    req = NULL;
-   EINA_LIST_FOREACH(requests[type], l, r)
+
+   EINA_LIST_FOREACH(processing, l, r)
      {
-        if (r->data != data)
+        if (r->data == data)
           continue;
 
         req = r;
         break;
+     }
+
+   if (!req)
+     {
+        EINA_LIST_FOREACH(requests[type], l, r)
+          {
+             if (r->data != data)
+               continue;
+
+             req = r;
+             break;
+          }
      }
 
    if (!req)
@@ -201,6 +215,7 @@ _cserve2_request_failed(Font_Request *req, Error_Type type)
      }
 
    req->funcs->msg_free(req->msg);
+   processing = eina_list_remove(processing, req);
    free(req);
 }
 
@@ -228,6 +243,7 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
    // FIXME: We shouldn't free this message directly, it must be freed by a
    // callback.
    free(msg);
+   processing = eina_list_remove(processing, req);
    free(req);
    sw->data = NULL;
 
@@ -247,6 +263,7 @@ _slave_dead_cb(Slave *s __UNUSED__, void *data)
    if (req)
      _cserve2_request_failed(req, CSERVE2_LOADER_DIED);
 
+   processing = eina_list_remove(processing, req);
    *working = eina_list_remove(*working, sw);
    free(sw);
 }
@@ -364,6 +381,7 @@ cserve2_requests_process(void)
               Font_Request *req = eina_list_data_get(requests[rtype]);
               requests[rtype] = eina_list_remove_list(requests[rtype],
                                                       requests[rtype]);
+              processing = eina_list_append(processing, req);
 
               if (!(*idle))
                 sw = _slave_for_request_create(type);
