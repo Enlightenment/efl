@@ -145,6 +145,7 @@ _ecore_signal_call(void)
 {
    volatile sig_atomic_t n;
    sigset_t oldset, newset;
+   int tot;
 
    if (sig_count == 0) return;
    sigemptyset(&newset);
@@ -164,6 +165,19 @@ _ecore_signal_call(void)
    if (sigchld_count > MAXSIGQ)
      WRN("%i SIGCHLD in queue. max queue size %i. losing "
          "siginfo for extra signals.", sigchld_count, MAXSIGQ);
+   tot = sigchld_count + sigusr1_count + sigusr2_count +
+     sighup_count + sigquit_count + sigint_count + sigterm_count
+#ifdef SIGPWR
+     + sigpwr_count
+#endif
+     ;
+   
+   if (sig_count != tot)
+     {
+        ERR("sig_count (%i) != actual totals (%i) ", sig_count, tot);
+        sig_count = tot;
+     }
+   
    for (n = 0; n < sigchld_count; n++)
      {
         pid_t pid;
@@ -391,7 +405,8 @@ _ecore_signal_call(void)
      }
    sigpwr_count = 0;
 #endif
-
+   sig_count = 0;
+   
    sigprocmask(SIG_SETMASK, &oldset, NULL);
 }
 
