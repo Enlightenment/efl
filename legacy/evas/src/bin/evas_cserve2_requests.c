@@ -61,6 +61,7 @@ static struct _Worker
 
 struct _Font_Request
 {
+   EINA_INLIST;
    Font_Request_Type type;
    void *data;
    void *msg;
@@ -79,8 +80,8 @@ typedef struct _Waiter Waiter;
 
 struct _Request_Queue
 {
-   Eina_List *waiting;
-   Eina_List *processing;
+   Eina_Inlist *waiting;
+   Eina_Inlist *processing;
 };
 
 typedef struct _Request_Queue Request_Queue;
@@ -105,11 +106,10 @@ Font_Request *
 cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request_Funcs *funcs, void *data)
 {
    Font_Request *req, *r;
-   Eina_List *l;
 
    req = NULL;
 
-   EINA_LIST_FOREACH(requests[type].processing, l, r)
+   EINA_INLIST_FOREACH(requests[type].processing, r)
      {
         if (r->data == data)
           continue;
@@ -120,7 +120,7 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
 
    if (!req)
      {
-        EINA_LIST_FOREACH(requests[type].waiting, l, r)
+        EINA_INLIST_FOREACH(requests[type].waiting, r)
           {
              if (r->data != data)
                continue;
@@ -137,8 +137,8 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
         req->data = data;
         req->waiters = NULL;
         req->processing = EINA_FALSE;
-        requests[type].waiting = eina_list_append(requests[type].waiting,
-                                                  req);
+        requests[type].waiting = eina_inlist_append(requests[type].waiting,
+                                                    EINA_INLIST_GET(req));
      }
 
    _request_waiter_add(req, client, rid);
@@ -169,8 +169,8 @@ cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
    // so we need a flag or something else to make things still load.
    if (!req->waiters)
      {
-        Eina_List **reqlist = &requests[req->type].waiting;
-        *reqlist = eina_list_remove(*reqlist, req);
+        Eina_Inlist **reqlist = &requests[req->type].waiting;
+        *reqlist = eina_inlist_remove(*reqlist, EINA_INLIST_GET(req));
         // TODO: If the request is being processed, it can't be deleted. Must
         // be marked as delete_me instead.
         req->funcs->msg_free(req->msg);
@@ -195,8 +195,8 @@ cserve2_request_cancel_all(Font_Request *req, Error_Type err)
         free(w);
      }
 
-   requests[req->type].waiting = eina_list_remove(requests[req->type].waiting,
-                                                  req);
+   requests[req->type].waiting = eina_inlist_remove(
+      requests[req->type].waiting, EINA_INLIST_GET(req));
    req->funcs->msg_free(req->msg);
    free(req);
 }
@@ -227,8 +227,8 @@ _cserve2_request_failed(Font_Request *req, Error_Type type)
      }
 
    req->funcs->msg_free(req->msg);
-   requests[req->type].processing = eina_list_remove(
-      requests[req->type].processing, req);
+   requests[req->type].processing = eina_inlist_remove(
+      requests[req->type].processing, EINA_INLIST_GET(req));
    free(req);
 }
 
@@ -256,8 +256,8 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
    // FIXME: We shouldn't free this message directly, it must be freed by a
    // callback.
    free(msg);
-   requests[req->type].processing = eina_list_remove(
-      requests[req->type].processing, req);
+   requests[req->type].processing = eina_inlist_remove(
+      requests[req->type].processing, EINA_INLIST_GET(req));
    free(req);
    sw->data = NULL;
 
@@ -391,12 +391,13 @@ cserve2_requests_process(void)
                 (eina_list_count(*working) < max_workers))
            {
               Slave_Worker *sw;
-              Font_Request *req = eina_list_data_get(requests[rtype].waiting);
+              Font_Request *req = EINA_INLIST_CONTAINER_GET(
+                 requests[rtype].waiting, Font_Request);
 
-              requests[rtype].waiting = eina_list_remove_list(
+              requests[rtype].waiting = eina_inlist_remove(
                  requests[rtype].waiting, requests[rtype].waiting);
-              requests[rtype].processing = eina_list_append(
-                 requests[rtype].processing, req);
+              requests[rtype].processing = eina_inlist_append(
+                 requests[rtype].processing, EINA_INLIST_GET(req));
 
               if (!(*idle))
                 sw = _slave_for_request_create(type);
