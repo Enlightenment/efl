@@ -34,7 +34,7 @@
  * declares two parts (blue and green rectangles) and an item data:
  * @include basic.edc
  *
- * We start by trying to acces an @b unexistant group in the file, so
+ * We start by trying to access an @b unexistant group in the file, so
  * that you can see the usefulness of edje_object_load_error_get() and
  * edje_load_error_str(). Check that the error message will tell you
  * just that -- a group which didn't exist in the file was called for:
@@ -88,7 +88,7 @@
  * @until min. size is
  *
  * The next two calls are to make <b>size calculations</b> on our
- * object. Because of the minumim size declared for @c "part_one" part's
+ * object. Because of the minimum size declared for @c "part_one" part's
  * default state description, that will be our exact minimum
  * size calculated for the group (remember the @c "min" declaration at
  * group level is just a @b hint, not an enforcement). We then
@@ -819,10 +819,10 @@
  *
  * This example shows how to manipulate and change Color classes. In this example
  * we will create two surfaces to show what happens when you change the color
- * class at the proccess and object level.
+ * class at the process and object level.
  *
  * It's a very simple example, there are two surfaces created from the same EDC,
- * but just in one of them we will set a specific color class, althoug both will be
+ * but just in one of them we will set a specific color class, although both will be
  * affected by color class set at the process level as you will see.
  *
  * It's important you know that all colors has the format R G B A. Just to be easier
@@ -1116,9 +1116,9 @@
  * Signals are software interruption, this means that when it happens and if the program is sensitive to it
  * the program will stop whatever it is doing and handle the signal.
  *
- * In this example we are only sensitive to the "mouve,move" signal so we need to register a callback to it.
+ * In this example we are only sensitive to the "mouse,move" signal so we need to register a callback to it.
  * To do this we will add a signal callback to our edje object that will detect "mouse,move" signal
- * comming from the part "part_image" and when this happens we will call the fuction _on_mouse_over passing
+ * coming from the part "part_image" and when this happens we will call the function _on_mouse_over passing
  * the evas pointer as a parameter. The evas pointer is passed as a parameter because we need to know
  * where is the mouse pointer in the screen.
  *
@@ -1133,7 +1133,7 @@
  * we need to now where is the ball and where is the mouse and we can easily discovery these things using
  * this:
  *
- * For the the object position in the canvas:
+ * For the object position in the canvas:
  * @dontinclude signals2.c
  * @skipline evas_object_geometry
  *
@@ -1146,7 +1146,7 @@
  * @until y -= (
  *
  * You can change the formula above if you like. Because we are changing the object's position
- * we need to do something if the new position is beyound the canvas size. So here it is:
+ * we need to do something if the new position is beyond the canvas size. So here it is:
  *
  * @skip if
  * @until y = 0
