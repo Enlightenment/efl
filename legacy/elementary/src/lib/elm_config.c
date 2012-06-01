@@ -1534,6 +1534,8 @@ elm_config_mirrored_get(void)
 EAPI void
 elm_config_mirrored_set(Eina_Bool mirrored)
 {
+   mirrored = !!mirrored;
+   if (_elm_config->is_mirrored == mirrored) return;
    _elm_config->is_mirrored = mirrored;
    _elm_rescale();
 }
