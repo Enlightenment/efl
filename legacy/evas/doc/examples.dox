@@ -76,7 +76,7 @@
  * those switches until you get the idea of evas_object_fill_set().
  *
  * The 'f' command will toggle that image's "filled" property, which
- * is wheter it should track its size and set the fill one to fit the
+ * is whether it should track its size and set the fill one to fit the
  * object's boundaries perfectly (stretching). Note that this command
  * and the four above it will conflict: in real usage one would use
  * one or other ways of setting an image object's viewport with regard
@@ -99,7 +99,7 @@
  *
  * While you have the border in 'blending mode', test the command 'm':
  * it will set whether to use or not smooth scaling on the border's
- * source image. Since the image is small originallly (30 x 30), we're
+ * source image. Since the image is small originally (30 x 30), we're
  * obviously up-scaling it (except the border pixels, do you
  * remember?). With this last switch, you'll either see the
  * transparent shape in the middle flat (no smoothing) or blurry
@@ -227,7 +227,7 @@
  * @skip bg = evas_object_rectangle_add
  * @until focus_set
  *
- * Still exempliflying events and callbacks, we register a callback on
+ * Still exemplifying events and callbacks, we register a callback on
  * the canvas event of an object being focused:
  * @dontinclude evas-events.c
  * @skip add(d.canvas, EVAS_CALLBACK_CANVAS_OBJECT_FOCUS
@@ -407,7 +407,7 @@
  * different layout on the box object.
  *
  * The initial layout the box starts at is the one triggered by the
- * key @c '1' -- the horizontal layout. Thus, the initial appearence
+ * key @c '1' -- the horizontal layout. Thus, the initial appearance
  * of this program, demonstrating this layout, is something like:
  *
  * @image html evas-box-example-00.png
@@ -579,7 +579,7 @@
  * @image rtf evas-stacking-example-04.png
  * @image latex evas-stacking-example-04.eps
  * Like said above, we have two layers used at the beginning of the
- * example: the default one (0) and the one imeddiately below it (-1),
+ * example: the default one (0) and the one immediately below it (-1),
  * for the white background. Let's change this setup by issuing the
  * 'l' command, which will change the background's layer to 1, i.e., a
  * layer @b above the one holding the other rectangles:
@@ -635,7 +635,7 @@
  *
  * The full code can be found @ref evas-map-utils.c "here".
  *
- * To show how some funtions work, this example listens to keys pressed to
+ * To show how some functions work, this example listens to keys pressed to
  * toggle several options.
  * @skip typedef
  * @until App_Data
@@ -652,7 +652,7 @@
  * set a color for each vertex or apply one for all of them at once
  * @until evas_map_util_points_color_set
  *
- * For the first object, we'll have a plain rectangle. At its cration, this
+ * For the first object, we'll have a plain rectangle. At its creation, this
  * rectangle was set to be semi-transparent, but whether its own alpha is
  * used will be defined by the map's alpha setting. If the map's alpha is
  * disabled, then the object will be completely opaque. The map's own color,
@@ -835,7 +835,7 @@
  * mentioned function. Note how to tell Evas the border will be
  * managed by our smart object from that time on:
  * <code>evas_object_smart_member_add(priv->border, o);</code>.
- * The counterpart of this function is exemplifyed on the smart
+ * The counterpart of this function is exemplified on the smart
  * object's interface function to remove children:
  * @skip remove a child element
  * @until set to
@@ -866,7 +866,7 @@
  * @until "no"
  * The evas_object_smart_type_check() one will assure we have the
  * string naming our smart class really set to the live object. The
- * evas_object_smart_clipped_clipper_get() exemplifyes usage of
+ * evas_object_smart_clipped_clipper_get() exemplifies usage of
  * "static clippers" -- clipped smart objects have their global
  * clippers flagged static.
  *
@@ -943,7 +943,7 @@
  *
  * Then, we set the text string itself, on it, with
  * evas_object_text_text_set(). We set an explicit size of 30 points
- * for our font, as you could see, what we check back with the the
+ * for our font, as you could see, what we check back with the
  * getter evas_object_text_font_get().
  *
  * Look at how it translates to code:
