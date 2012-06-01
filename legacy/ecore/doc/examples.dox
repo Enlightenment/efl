@@ -22,6 +22,7 @@
  * @li @ref Ecore_Evas_Buffer_Example_01_c
  * @li @ref Ecore_Evas_Buffer_Example_02_c
  * @li @ref Ecore_exe_simple_example_c
+ * @li @ref ecore_imf_example_c
  */
 
 /**
@@ -1666,4 +1667,26 @@
  * And that's it, after all it's not complicated to create a process and
  * communicate with it.
  *
+ */
+
+/**
+ * @page ecore_imf_example_c ecore_imf - How to handle preedit and commit string from Input Method Framework
+ *
+ * This example demonstrates how to connect input method framework and handle preedit and commit string from input method framework.
+ *
+ * To input Chinese, Japanese, Korean and other complex languages, the editor should be connected with input method framework.
+ * 
+ * How to initialize and shutdown ecore imf module
+ * @li ecore_imf_init() should be called to initialize and load immodule.
+ * @li ecore_imf_shutdown() is used for shutdowning and unloading immodule.
+ *
+ * How to create input context and register pre-edit and commit event handler
+ *
+ * Each entry should have each input context to connect with input service framework. 
+ * Key event is processed by input method engine. 
+ * The result is notified to application through ECORE_IMF_CALLBACK_PREEDIT_CHANGED and ECORE_IMF_CALLBACK_COMMIT event.
+ *
+ * The full example follows. 
+ *
+ * @include ecore_imf_example.c
  */
