@@ -297,43 +297,15 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
        (!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
      ecore_imf_context_reset(en->imf_context);
 
-   if (!strcmp(ev->key, "Escape"))
-     {
-        // dead keys here. Escape for now (should emit these)
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-     }
-   else if (!strcmp(ev->key, "Up") || !strcmp(ev->key, "KP_Up"))
-     {
-        // FILLME
-     }
-   else if (!strcmp(ev->key, "Down") || !strcmp(ev->key, "KP_Down"))
-     {
-        // FILLME
-     }
-   else if (!strcmp(ev->key, "Left") || !strcmp(ev->key, "KP_Left"))
-     {
-        // FILLME
-     }
-   else if (!strcmp(ev->key, "Right") || !strcmp(ev->key, "KP_Right"))
-     {
-        // FILLME
-     }
-   else if (!strcmp(ev->key, "BackSpace"))
+   if (!strcmp(ev->key, "BackSpace"))
      {
         if (evas_textblock_cursor_char_prev(en->cursor))
           evas_textblock_cursor_char_delete(en->cursor);
 
         return;
      }
-   else if (!strcmp(ev->key, "Delete") || !strcmp(ev->key, "KP_Delete"))
-     {
-        // FILLME
-     }
-   else if (!strcmp(ev->key, "Home") || !strcmp(ev->key, "KP_Home"))
-     {
-        // FILLME
-     }
-   else if (!strcmp(ev->key, "End") || !strcmp(ev->key, "KP_End"))
+   else if (!strcmp(ev->key, "Delete") || 
+		    (!strcmp(ev->key, "KP_Delete") && !ev->string))
      {
         // FILLME
      }
@@ -360,6 +332,7 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    else if ((control) && ((!strcmp(ev->key, "x") || (!strcmp(ev->key, "m")))))
      {
         // ctrl + x
+        // FILLME
      }
    else if ((control) && (!strcmp(ev->key, "z")))
      {
@@ -368,24 +341,7 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      }
    else if ((control) && (!strcmp(ev->key, "y")))
      {
-
         // ctrl + y (redo)
-        // FILLME
-     }
-   else if (!strcmp(ev->key, "Tab"))
-     {
-        // FILLME
-     }
-   else if ((!strcmp(ev->key, "ISO_Left_Tab")) && (multiline))
-     {
-        // remove a tab
-     }
-   else if (!strcmp(ev->key, "Prior") || !strcmp(ev->key, "KP_Prior"))
-     {
-        // FILLME
-     }
-   else if (!strcmp(ev->key, "Next") || !strcmp(ev->key, "KP_Next"))
-     {
         // FILLME
      }
    else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
@@ -431,7 +387,6 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
 
    /* Create background for text input field */
    en->rect = evas_object_rectangle_add(evas);
-   evas_object_size_hint_weight_set(en->rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_color_set(en->rect, 150, 150, 150, 255); /* gray */
    evas_object_move(en->rect, x, y);
    evas_object_resize(en->rect, w, h);
@@ -458,11 +413,11 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    en->cursor = evas_object_textblock_cursor_new(en->txt_obj);
 
    /* Create input context */
-   const char* defaultContextID = ecore_imf_context_default_id_get();
-   if (!defaultContextID)
+   const char* default_id = ecore_imf_context_default_id_get();
+   if (!default_id)
      return;
 
-   en->imf_context = ecore_imf_context_add(defaultContextID);
+   en->imf_context = ecore_imf_context_add(default_id);
    ecore_imf_context_client_window_set(en->imf_context, (void *)ecore_evas_window_get(ecore_evas_ecore_evas_get(evas)));
    ecore_imf_context_client_canvas_set(en->imf_context, evas);
 
@@ -477,7 +432,6 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    en->preedit_end = NULL;
 
    /* register retrieve surrounding callback */
-   /* This is used for autocapital or autoperiod */
    ecore_imf_context_retrieve_surrounding_callback_set(en->imf_context, _ecore_imf_retrieve_surrounding_cb, en);
 
    /* register commit event callback */
@@ -487,7 +441,6 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _ecore_imf_event_preedit_changed_cb, en);
 
    /* register surrounding delete event callback */
-   /* This is used for autocapital or autoperiod */
    ecore_imf_context_event_callback_add(en->imf_context, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, _ecore_imf_event_delete_surrounding_cb, en);
 }
 
@@ -555,7 +508,7 @@ int main(int argc, char *argv[])
    ee = ecore_evas_new(NULL, 0, 0, 480, 800, NULL);
 
    if (!ee) {
-        fprintf(stderr, "something went wrong... :(\n");
+        fprintf(stderr, "failed to call ecore_evas_new\n");
         return EXIT_FAILURE;
    }
 
@@ -564,13 +517,12 @@ int main(int argc, char *argv[])
    // Get the canvas off just-created window
    evas = ecore_evas_get(ee);
    if (!evas) {
-        fprintf(stderr, "something went wrong... :(\n");
+        fprintf(stderr, "failed to ccall ecore_evas_get\n");
         return EXIT_FAILURE;
    }
 
    // Create input field rectangle
    Evas_Object* bg = evas_object_rectangle_add(evas);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_move(bg, 0, 0);
    evas_object_resize(bg, 480, 800);
    evas_object_color_set(bg, 255, 255, 255, 255);
