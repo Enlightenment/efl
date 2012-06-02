@@ -2187,6 +2187,8 @@ echo
 echo "  Tests................: ${enable_tests}"
 echo "  Maximum log level....: ${with_max_log_level}"
 echo "Documentation..........: ${build_doc}"
+echo "Examples...............: ${enable_build_examples}"
+echo "Examples installed.....: ${enable_install_examples}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

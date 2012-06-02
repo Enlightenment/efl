@@ -517,9 +517,7 @@ if test "x${build_doc}" = "xyes" ; then
    echo "    Building...........: make doc"
 fi
 echo "  Examples.............: ${build_examples}"
-if test "x${build_examples}" = "xyes" ; then
-   echo "    Install............: ${install_examples}"
-fi
+echo "  Examples installed...: ${install_examples}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
