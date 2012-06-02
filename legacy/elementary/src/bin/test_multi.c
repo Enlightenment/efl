@@ -82,8 +82,8 @@ test_multi(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    Evas_Object *win, *bg, *r, *bx, *bt;
    int i;
 
-   win = elm_win_add(NULL, "bg-plain", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Bg Plain");
+   win = elm_win_add(NULL, "multi-touch", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Multi touch");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);

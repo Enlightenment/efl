@@ -566,8 +566,8 @@ test_gesture_layer3(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    w = 480;
    h = 800;
 
-   win = elm_win_add(NULL, "gesture-layer", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Gesture Layer");
+   win = elm_win_add(NULL, "gesture-layer3", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Gesture Layer 3");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, w, h);
 

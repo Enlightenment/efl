@@ -529,7 +529,7 @@ test_gesture_layer2(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 
    infra_data *infra = _infra_data_alloc();
 
-   win = elm_win_util_standard_add("table", "Table");
+   win = elm_win_util_standard_add("gesture-layer2", "Gesture Layer 2");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_smart_callback_add(win, "delete,request", my_win_del, infra);
 
