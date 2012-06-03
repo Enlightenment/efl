@@ -15,6 +15,7 @@ typedef struct
    Eina_Inlist *callbacks;
    int walking_list;
    int event_freeze_count;
+   Eina_Bool deletions_waiting : 1;
 } Private_Data;
 
 typedef struct
@@ -271,6 +272,12 @@ _eo_callbacks_clear(Private_Data *pd)
    if (pd->walking_list > 0)
       return;
 
+   /* If there are no deletions waiting. */
+   if (!pd->deletions_waiting)
+      return;
+
+   pd->deletions_waiting = EINA_FALSE;
+
    EINA_INLIST_FOREACH_SAFE(pd->callbacks, itn, cb)
      {
         if (cb->delete_me)
@@ -327,6 +334,7 @@ _ev_cb_del(Eo *obj, void *class_data, va_list *list)
               (cb->func_data == user_data))
           {
              cb->delete_me = EINA_TRUE;
+             pd->deletions_waiting = EINA_TRUE;
              _eo_callbacks_clear(pd);
              eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, desc, NULL));
              return;
