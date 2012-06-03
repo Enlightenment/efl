@@ -332,6 +332,8 @@ _ev_cb_del(Eo *obj, void *class_data, va_list *list)
              return;
           }
      }
+
+   ERR("Callback of object %p with function %p and data %p not found.", obj, func, user_data);
 }
 
 static void
