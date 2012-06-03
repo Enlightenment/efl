@@ -1156,7 +1156,7 @@ eo_ref(const Eo *_obj)
    return _eo_ref(obj);
 }
 
-static void
+static inline void
 _eo_del_internal(Eo *obj)
 {
    if (obj->del)
@@ -1239,15 +1239,6 @@ eo_ref_get(const Eo *obj)
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, 0);
 
    return obj->refcount;
-}
-
-EAPI void
-eo_del(Eo *obj)
-{
-   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
-
-   _eo_del_internal(obj);
-   _eo_unref(obj);
 }
 
 EAPI Eo *

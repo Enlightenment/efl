@@ -709,14 +709,6 @@ EAPI Eo *eo_xref_internal(Eo *obj, const Eo *ref_obj, const char *file, int line
 EAPI void eo_xunref(Eo *obj, const Eo *ref_obj);
 
 /**
- * @brief Delete the object passed (disregarding ref count).
- * @param obj the object to work on.
- *
- * @see eo_unref()
- */
-EAPI void eo_del(Eo *obj);
-
-/**
  * @addtogroup Eo_Composite_Objects Composite Objects.
  * @{
  */

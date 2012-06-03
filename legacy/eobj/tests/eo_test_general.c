@@ -168,8 +168,8 @@ START_TEST(eo_refs)
    /* Just check it doesn't seg atm. */
    obj = eo_add(SIMPLE_CLASS, NULL);
    eo_ref(obj);
-   eo_del(obj);
-   eo_del(obj);
+   eo_unref(obj);
+   eo_unref(obj);
 
    eo_shutdown();
 }
@@ -194,8 +194,8 @@ START_TEST(eo_weak_reference)
    eo_ref(obj);
    fail_if(!wref);
 
-   eo_del(obj);
-   fail_if(wref);
+   eo_unref(obj);
+   fail_if(!wref);
 
    eo_unref(obj);
    fail_if(wref);
@@ -428,8 +428,6 @@ START_TEST(eo_magic_checks)
         Eo *wref = NULL;
         eo_do((Eo *) buf, eo_wref_add(&wref));
         fail_if(wref);
-
-        eo_del((Eo *) buf);
 
         fail_if(eo_parent_get((Eo *) buf));
 
