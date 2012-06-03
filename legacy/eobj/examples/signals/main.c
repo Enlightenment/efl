@@ -105,7 +105,9 @@ main(int argc, char *argv[])
    fail_if(fcount != 0);
 
    eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 1));
+   fail_if(pd->cb_count != 0);
    eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 2));
+   fail_if(pd->cb_count != -1);
 
    /* Global Freeze/thaw. */
    fcount = 0;
