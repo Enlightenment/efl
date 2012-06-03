@@ -29,7 +29,10 @@
  *
  * Immodule is plugin to connect your application and input method framework such as SCIM, ibus, and so on.@n
  * ecore_imf_init() should be called to initialize and load immodule.@n
- * ecore_imf_shutdown() is used for shutdowning and unloading immodule. 
+ * ecore_imf_shutdown() is used for shutdowning and unloading immodule.
+ *
+ * An example of usage of these functions can be found at:
+ * @li @ref ecore_imf_example_c
  */
 
 /**
