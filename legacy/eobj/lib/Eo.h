@@ -857,7 +857,6 @@ enum {
      EO_BASE_SUB_ID_WREF_DEL,
      EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD,
      EO_BASE_SUB_ID_EVENT_CALLBACK_DEL,
-     EO_BASE_SUB_ID_EVENT_CALLBACK_DEL_LAZY,
      EO_BASE_SUB_ID_EVENT_CALLBACK_CALL,
      EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD,
      EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL,
@@ -1128,24 +1127,12 @@ typedef Eina_Bool (*Eo_Event_Cb)(void *data, Eo *obj, const Eo_Event_Description
 
 
 /**
- * @def eo_event_callback_del_lazy
- * @brief Del a callback for an event
- * @param[in] desc The description of the event to listen to.
- * @param[in] func the callback to delete.
- * @param[out] user_data The user data associated with the callback func.
- *
- * @see eo_event_callback_del()
- */
-#define eo_event_callback_del_lazy(desc, func, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL_LAZY), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Event_Cb, func), EO_TYPECHECK(void **, user_data)
-
-/**
  * @def eo_event_callback_del
  * @brief Del a callback with a specific data associated to it for an event.
  * @param[in] desc The description of the event to listen to.
  * @param[in] func the callback to delete.
  * @param[in] user_data The data to compare.
  *
- * @see eo_event_callback_del_lazy()
  */
 #define eo_event_callback_del(desc, func, user_data) EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), EO_TYPECHECK(const Eo_Event_Description *, desc), EO_TYPECHECK(Eo_Event_Cb, func), EO_TYPECHECK(const void *, user_data)
 

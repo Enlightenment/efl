@@ -49,24 +49,12 @@ main(int argc, char *argv[])
 
    eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 4));
    fail_if(pd->cb_count != 2);
-   void *ret;
 
-   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
+   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 2));
    fail_if(pd->cb_count != 1);
 
-   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, NULL, &ret));
-   fail_if(ret);
-   fail_if(pd->cb_count != 1);
-   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, NULL, 0));
-   fail_if(pd->cb_count != 1);
-
-   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
+   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 1));
    fail_if(pd->cb_count != 0);
-
-   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
-   fail_if(ret);
-   fail_if(pd->cb_count != 0);
-
 
    /* Freeze/thaw. */
    int fcount = 0;
@@ -116,12 +104,8 @@ main(int argc, char *argv[])
    eo_do(obj, eo_event_freeze_get(&fcount));
    fail_if(fcount != 0);
 
-   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
-   fail_if(!ret);
-   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
-   fail_if(!ret);
-   eo_do(obj, eo_event_callback_del_lazy(EV_A_CHANGED, _a_changed_cb, &ret));
-   fail_if(ret);
+   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 1));
+   eo_do(obj, eo_event_callback_del(EV_A_CHANGED, _a_changed_cb, (void *) 2));
 
    /* Global Freeze/thaw. */
    fcount = 0;

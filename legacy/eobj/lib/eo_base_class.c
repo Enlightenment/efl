@@ -313,33 +313,6 @@ _ev_cb_priority_add(Eo *obj, void *class_data, va_list *list)
 }
 
 static void
-_ev_cb_del_lazy(Eo *obj, void *class_data, va_list *list)
-{
-   Private_Data *pd = (Private_Data *) class_data;
-   const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
-   Eo_Event_Cb func = va_arg(*list, Eo_Event_Cb);
-   void **ret = va_arg(*list, void **);
-
-   Eo_Callback_Description *cb;
-   EINA_INLIST_FOREACH(pd->callbacks, cb)
-     {
-        if ((cb->event == desc) && (cb->func == func))
-          {
-             void *data;
-
-             data = cb->func_data;
-             cb->delete_me = EINA_TRUE;
-             _eo_callbacks_clear(pd);
-             if (ret) *ret = data;
-             eo_do(obj, eo_event_callback_call(EO_EV_CALLBACK_DEL, desc, NULL));
-             return;
-          }
-     }
-
-   if (ret) *ret = NULL;
-}
-
-static void
 _ev_cb_del(Eo *obj, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
@@ -529,7 +502,6 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), _wref_del),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), _ev_cb_priority_add),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), _ev_cb_del),
-        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL_LAZY), _ev_cb_del_lazy),
         EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), _ev_cb_call),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), _ev_cb_forwarder_add),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), _ev_cb_forwarder_del),
@@ -553,7 +525,6 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_DEL, "?", "Delete the weak ref."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD, "?", "Add an event callback with a priority."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL, "?", "Delete an event callback"),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL_LAZY, "?", "Delete an event callback in a lazy way."),
      EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "?", "Call the event callbacks for an event."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD, "?", "Add an event forwarder."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL, "?", "Delete an event forwarder."),
