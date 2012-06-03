@@ -81,11 +81,11 @@ _imf_cursor_info_set(Entry *en)
 
    if (!en) return;
 
-   // Get cursor geometry
+   // get cursor geometry
    evas_object_geometry_get(en->txt_obj, &x, &y, &w, &h);
    evas_textblock_cursor_geometry_get(en->cursor, &cx, &cy, &cw, &ch, NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE);
 
-   // Get cursor position
+   // get cursor position
    cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
 
    ecore_imf_context_cursor_position_set(en->imf_context, cursor_pos);
@@ -132,7 +132,7 @@ _ecore_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx, char **te
    str = evas_object_textblock_text_markup_get(en->txt_obj);
    *text = str ? strdup(str) : strdup("");
 
-   /* Get the current position of cursor */
+   /* get the current position of cursor */
    if (cursor_pos)
      *cursor_pos = evas_textblock_cursor_pos_get(en->cursor);
 
@@ -171,7 +171,7 @@ static void _ecore_imf_event_commit_cb (void *data, Ecore_IMF_Context *ctx, void
    char *commit_str = (char *)event_info;
    if (!en) return;
 
-   /* Delete preedit string */
+   /* delete preedit string */
    _preedit_del(en);
    _preedit_clear(en);
 
@@ -179,7 +179,7 @@ static void _ecore_imf_event_commit_cb (void *data, Ecore_IMF_Context *ctx, void
 
    evas_object_textblock_text_markup_prepend(en->cursor, commit_str);
 
-   /* Notify cursor information */
+   /* notify cursor information */
    _imf_cursor_info_set(en);
 
    return;
@@ -201,7 +201,7 @@ static void _ecore_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *c
 
    if (!en) return;
 
-   /* Get preedit string, attributes */
+   /* get preedit string, attributes */
    ecore_imf_context_preedit_string_with_attributes_get(imf_context, &preedit_string, &attrs, &cursor_pos);
    printf("preedit string : %s\n", preedit_string);
 
@@ -260,7 +260,7 @@ static void _ecore_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *c
         evas_textblock_cursor_pos_set(en->cursor, preedit_start_pos + cursor_pos);
      }
 
-   /* Notify cursor information */
+   /* notify cursor information */
    _imf_cursor_info_set(en);
 
    EINA_LIST_FREE(attrs, attr) free(attr);
@@ -350,13 +350,14 @@ _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      }
    else
      {
-        if (ev->string) {
+        if (ev->string) 
+          {
              printf("key down string : %s\n", ev->string);
              evas_object_textblock_text_markup_prepend(en->cursor, ev->string);
-        }
+          }
      }
 
-   /* Notify cursor information */
+   /* notify cursor information */
    _imf_cursor_info_set(en);
 }
 
@@ -385,14 +386,14 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
 {
    if (!en) return;
 
-   /* Create background for text input field */
+   /* create background for text input field */
    en->rect = evas_object_rectangle_add(evas);
    evas_object_color_set(en->rect, 150, 150, 150, 255); /* gray */
    evas_object_move(en->rect, x, y);
    evas_object_resize(en->rect, w, h);
    evas_object_show(en->rect);
 
-   /* Create text object for displaying text */
+   /* create text object for displaying text */
    en->txt_obj = evas_object_textblock_add(evas);
    evas_object_color_set(en->txt_obj, 0, 0, 0, 255);
    evas_object_pass_events_set(en->txt_obj, EINA_TRUE);
@@ -400,7 +401,7 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    evas_object_resize(en->txt_obj, w, h);
    evas_object_show(en->txt_obj);
 
-   /* Set style on textblock */
+   /* set style on textblock */
    static const char *style_buf =
       "DEFAULT='font=Sans font_size=30 color=#000 text_class=entry'"
       "newline='br'"
@@ -409,10 +410,10 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    evas_textblock_style_set(en->txt_style, style_buf);
    evas_object_textblock_style_set(en->txt_obj, en->txt_style);
 
-   /* Create cursor */
+   /* create cursor */
    en->cursor = evas_object_textblock_cursor_new(en->txt_obj);
 
-   /* Create input context */
+   /* create input context */
    const char* default_id = ecore_imf_context_default_id_get();
    if (!default_id)
      return;
@@ -498,30 +499,34 @@ int main(int argc, char *argv[])
    Evas* evas;
    Entry en1, en2;
 
-   if (!ecore_evas_init()) {
+   if (!ecore_evas_init()) 
+     {
         fprintf(stderr, "failed to call ecore_evas_init()\n");
         return EXIT_FAILURE;
-   }
+     }
 
    ecore_imf_init();
-   // Create a new window, with size=480x800 and default engine
+
+   // create a new window, with size=480x800 and default engine
    ee = ecore_evas_new(NULL, 0, 0, 480, 800, NULL);
 
-   if (!ee) {
+   if (!ee) 
+     {
         fprintf(stderr, "failed to call ecore_evas_new\n");
         return EXIT_FAILURE;
-   }
+     }
 
    ecore_evas_show(ee);
 
-   // Get the canvas off just-created window
+   // get the canvas off just-created window
    evas = ecore_evas_get(ee);
-   if (!evas) {
+   if (!evas) 
+     {
         fprintf(stderr, "failed to ccall ecore_evas_get\n");
         return EXIT_FAILURE;
-   }
+     }
 
-   // Create input field rectangle
+   // create input field rectangle
    Evas_Object* bg = evas_object_rectangle_add(evas);
    evas_object_move(bg, 0, 0);
    evas_object_resize(bg, 480, 800);
@@ -537,7 +542,7 @@ int main(int argc, char *argv[])
    // create input field 2
    create_input_field(evas, &en2, 40, 180, 400, 80);
 
-   // Give focus to input field 1
+   // give focus to input field 1
    evas_object_focus_set(en1.rect, EINA_TRUE);
 
    ecore_main_loop_begin(); // begin mainloop
