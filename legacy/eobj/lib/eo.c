@@ -5,7 +5,8 @@
 
 #include "config.h"
 
-typedef size_t Eo_Class_Id;
+/* The last id that should be reserved for statically allocated classes. */
+#define EO_STATIC_IDS_LAST 10
 
 /* Used inside the class_get functions of classes, see #EO_DEFINE_CLASS */
 EAPI Eina_Lock _eo_class_creation_lock;
@@ -55,8 +56,7 @@ struct _Eo {
 #define DICH_CHAIN1(x) (((x) >> 16) & DICH_CHAIN1_MASK)
 #define DICH_CHAIN_LAST(x) ((x) & DICH_CHAIN_LAST_MASK)
 
-#define OP_CLASS_OFFSET 16
-#define OP_CLASS_OFFSET_GET(x) (((x) >> OP_CLASS_OFFSET) & 0xffff)
+#define OP_CLASS_OFFSET_GET(x) (((x) >> EO_OP_CLASS_OFFSET) & 0xffff)
 #define OP_CLASS_GET(op) ({ \
       Eo_Class_Id tmp = OP_CLASS_OFFSET_GET(op); \
       ID_CLASS_GET(tmp); \
@@ -591,8 +591,7 @@ _eo_class_base_op_init(Eo_Class *klass)
    if (!desc || !desc->ops.base_op_id)
       return;
 
-   /* FIXME: Depends on values defined above! */
-   *(desc->ops.base_op_id) = klass->class_id << OP_CLASS_OFFSET;
+   *(desc->ops.base_op_id) = EO_CLASS_ID_TO_BASE_ID(klass->class_id);
 }
 
 #ifndef NDEBUG
@@ -793,7 +792,7 @@ eo_class_free(Eo_Class *klass)
 
 /* DEVCHECK */
 static Eina_Bool
-_eo_class_check_op_descs(const Eo_Class *klass)
+_eo_class_check_op_descs(const Eo_Class *klass, Eo_Class_Id id)
 {
    const Eo_Class_Description *desc = klass->desc;
    const Eo_Op_Description *itr;
@@ -801,7 +800,7 @@ _eo_class_check_op_descs(const Eo_Class *klass)
 
    if (desc->ops.count > 0)
      {
-        if (!desc->ops.base_op_id)
+        if (((id == 0) || (id > EO_STATIC_IDS_LAST)) && !desc->ops.base_op_id)
           {
              ERR("Class '%s' has a non-zero ops count, but base_id is NULL.",
                    desc->name);
@@ -843,7 +842,7 @@ _eo_class_check_op_descs(const Eo_Class *klass)
 }
 
 EAPI const Eo_Class *
-eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
+eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *parent, ...)
 {
    Eo_Class *klass;
    va_list p_list;
@@ -851,6 +850,12 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
    if (parent && !EINA_MAGIC_CHECK(parent, EO_CLASS_EINA_MAGIC))
      {
         EINA_MAGIC_FAIL(parent, EO_CLASS_EINA_MAGIC);
+        return NULL;
+     }
+
+   if (id > EO_STATIC_IDS_LAST)
+     {
+        ERR("Tried creating a class with the static id %d while the maximum static id is %d. Aborting.", id, EO_STATIC_IDS_LAST);
         return NULL;
      }
 
@@ -936,7 +941,7 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
            EO_ALIGN_SIZE(klass->parent->desc->data_size);
      }
 
-   if (!_eo_class_check_op_descs(klass))
+   if (!_eo_class_check_op_descs(klass, id))
      {
         goto cleanup;
      }
@@ -988,11 +993,36 @@ eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
      }
 
    eina_lock_take(&_eo_class_creation_lock);
-   klass->class_id = ++_eo_classes_last_id;
+
+   if (id == 0)
+     {
+        klass->class_id = ++_eo_classes_last_id;
+     }
+   else
+     {
+#ifndef NDEBUG
+        if (_eo_classes && _eo_classes[id - 1])
+          {
+             ERR("A class with id %d was already defined (%s). Aborting.", id,
+                   _eo_classes[id - 1]->desc->name);
+             eina_lock_release(&_eo_class_creation_lock);
+             goto cleanup;
+          }
+#endif
+        klass->class_id = id;
+     }
+
+
      {
         /* FIXME: Handle errors. */
+        size_t arrsize = _eo_classes_last_id * sizeof(*_eo_classes);
         Eo_Class **tmp;
-        tmp = realloc(_eo_classes, _eo_classes_last_id * sizeof(*_eo_classes));
+        tmp = realloc(_eo_classes, arrsize);
+
+        /* If it's the first allocation, memset. */
+        if (!_eo_classes)
+           memset(tmp, 0, arrsize);
+
         _eo_classes = tmp;
         _eo_classes[klass->class_id - 1] = klass;
      }
@@ -1396,7 +1426,7 @@ eo_init(void)
    eina_init();
 
    _eo_classes = NULL;
-   _eo_classes_last_id = 0;
+   _eo_classes_last_id = EO_STATIC_IDS_LAST;
    _eo_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_LIGHTBLUE);
    if (_eo_log_dom < 0)
      {

@@ -35,6 +35,20 @@ extern "C" {
 #endif
 
 /**
+ * @def EO_OP_CLASS_OFFSET
+ * The bit offset of the class inside the ops.
+ * @internal
+ */
+#define EO_OP_CLASS_OFFSET 16
+
+/**
+ * @def EO_CLASS_ID_TO_BASE_ID(class_id)
+ * Translates a class id to an op base id.
+ * @internal
+ */
+#define EO_CLASS_ID_TO_BASE_ID(class_id) ((class_id) << EO_OP_CLASS_OFFSET)
+
+/**
  * @var _eo_class_creation_lock
  * This variable is used for locking purposes in the class_get function
  * defined in #EO_DEFINE_CLASS.
@@ -103,6 +117,13 @@ typedef unsigned int Eo_Op;
  * @ingroup Eo_Class
  */
 typedef struct _Eo_Class Eo_Class;
+
+/**
+ * @typedef Eo_Class_Id
+ * An Id of a class.
+ * @ingroup Eo_Class
+ */
+typedef size_t Eo_Class_Id;
 
 /**
  * @def EO_NOOP
@@ -193,6 +214,24 @@ typedef struct _Eo_Event_Description Eo_Event_Description;
  * You must use this macro if you want thread safety in class creation.
  */
 #define EO_DEFINE_CLASS(class_get_func_name, class_desc, parent_class, ...) \
+   EO_DEFINE_CLASS_STATIC(class_get_func_name, 0, class_desc, parent_class, __VA_ARGS__)
+
+/**
+ * @def EO_DEFINE_CLASS_STATIC(class_get_func_name, id, class_desc, parent_class, ...)
+ * *** DO NOT USE UNLESS YOU REALLY KNOW WHAT YOU ARE DOING ***
+ * @param id a positive number to serve as the id of the class. 0 means dynamic. See eo_class_new() for details.
+ * @param class_get_func_name the name of the wanted class_get function name.
+ * @param class_desc the class description.
+ * @param parent_class The parent class for the function. Look at eo_class_new() for more information.
+ * @param ... List of etxensions. Look at eo_class_new() for more information.
+ *
+ * This macro should only be used if you know what you are doing and you want
+ * to create a class with a static id.
+ * Use #EO_DEFINE_CLASS instead.
+ *
+ * @see #EO_DEFINE_CLASS
+ */
+#define EO_DEFINE_CLASS_STATIC(class_get_func_name, id, class_desc, parent_class, ...) \
 EAPI const Eo_Class * \
 class_get_func_name(void) \
 { \
@@ -214,7 +253,7 @@ class_get_func_name(void) \
         return _my_class; \
      } \
    eina_lock_release(&_eo_class_creation_lock); \
-   _my_class = eo_class_new(class_desc, parent_class, __VA_ARGS__); \
+   _my_class = eo_class_new(class_desc, id, parent_class, __VA_ARGS__); \
    eina_lock_release(&_my_lock); \
    \
    eina_lock_take(&_eo_class_creation_lock); \
@@ -406,6 +445,7 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
 /**
  * @brief Create a new class.
  * @param desc the class description to create the class with.
+ * @param id a positive number to serve as the id of the class. 0 means dynamic allocation. The number of static Ids is limited and regular users should not use static ids.
  * @param parent the class to inherit from.
  * @param ... A NULL terminated list of extensions (interfaces, mixins and the classes of any composite objects).
  * @return The new class's handle on success, or NULL otherwise.
@@ -415,7 +455,7 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  *
  * @see #EO_DEFINE_CLASS
  */
-EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...);
+EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *parent, ...);
 
 /**
  * @brief Sets the OP functions for a class.
@@ -798,10 +838,16 @@ EAPI const Eo_Class *eo_base_class_get(void) EINA_CONST;
 typedef void (*eo_base_data_free_func)(void *);
 
 /**
- * @var EO_BASE_BASE_ID
+ * @def EO_BASE_CLASS_ID
+ * #EO_BASE_CLASS 's class id.
+ */
+#define EO_BASE_CLASS_ID 1
+
+/**
+ * @def EO_BASE_BASE_ID
  * #EO_BASE_CLASS 's base id.
  */
-extern EAPI Eo_Op EO_BASE_BASE_ID;
+#define EO_BASE_BASE_ID EO_CLASS_ID_TO_BASE_ID(EO_BASE_CLASS_ID)
 
 enum {
      EO_BASE_SUB_ID_DATA_SET,
@@ -829,7 +875,7 @@ enum {
  * Helper macro to get the full Op ID out of the sub_id for EO_BASE.
  * @param sub_id the sub id inside EO_BASE.
  */
-#define EO_BASE_ID(sub_id) (EO_BASE_BASE_ID + sub_id)
+#define EO_BASE_ID(sub_id) (EO_BASE_BASE_ID + (sub_id))
 
 /**
  * @def eo_base_data_set(key, data, free_func)
