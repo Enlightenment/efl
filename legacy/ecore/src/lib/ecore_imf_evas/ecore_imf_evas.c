@@ -8,6 +8,10 @@
  * @defgroup Ecore_IMF_Evas_Group Ecore Input Method Context Evas Helper Functions
  *
  * Helper functions to make it easy to use Evas with Ecore_IMF.
+ * Converts each event from Evas to the corresponding event of Ecore_IMF.
+ *
+ * An example of usage of these functions can be found at:
+ * @li @ref ecore_imf_example_c
  */
 
 static const char *_ecore_imf_evas_event_empty = "";
