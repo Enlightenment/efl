@@ -44,7 +44,7 @@
  * Naviframe items can have different styles, which affect the
  * transition between views, for example. On the default theme, two of
  * them are supported:
- * - @c "default" - views are switched sliding horizontally, one after
+ * - @c "basic"   - views are switched sliding horizontally, one after
  *                  the other
  * - @c "overlap" - like the previous one, but the previous view stays
  *                  at its place and is ovelapped by the new
