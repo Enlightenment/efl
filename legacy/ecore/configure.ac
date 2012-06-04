@@ -1488,6 +1488,7 @@ if test "x${have_ecore_con}" = "xyes" ; then
    if test "x${have_ipv6}" = "xyes" ; then
       AC_DEFINE(HAVE_IPV6, 1, [Define if IPV6 is supported])
    fi
+   AM_CONDITIONAL([HAVE_IPV6], [test "x${have_ipv6}" = "xyes"])
 
    ECORE_CHECK_CURL([${want_curl}],
       [
@@ -2067,7 +2068,13 @@ fi
 if test "x$want_ecore_con_local_sockets" = "xyes" ; then
   echo "      Abstract Sockets.........: $want_ecore_con_abstract_sockets"
 fi
-  echo "    c-ares.....................: $have_cares"
+if test "x$have_cares" = "xyes" ; then
+  echo "    Resolver...................: c-ares"
+elif test "x$have_ipv6" = "xyes" ; then
+  echo "    Resolver...................: dns.c"
+else
+  echo "    Resolver...................: fork"
+fi
 fi
 echo "  Ecore_Ipc....................: $have_ecore_ipc"
 if test "x$have_ecore_ipc" = "xyes" ; then

@@ -706,3 +706,5 @@
 2012-06-04 Mike Blumenkrantz
 
         * ECORE_{CON,IPC}_NO_PROXY now available for disabling proxying on certain connections
+        * Added new resolver method: dns.c -- This is used by default now when ipv6 is enabled
+          and c-ares support is disabled.

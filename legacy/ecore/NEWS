@@ -12,6 +12,7 @@ Additions:
      - ECORE_X_RANDR_OUTPUT_POLICY_ASK
     * ecore_con:
      - ECORE_{CON,IPC}_NO_PROXY now available for disabling proxying on certain connections
+     - New dns.c resolver backend for faster dns lookups
 
 Fixes:
     * ecore
