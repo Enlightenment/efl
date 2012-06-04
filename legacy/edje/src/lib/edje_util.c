@@ -3994,9 +3994,33 @@ _edje_real_part_box_remove_all(Edje_Real_Part *rp, Eina_Bool clear)
 }
 
 static void
-_edje_table_child_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *child __UNUSED__, void *einfo __UNUSED__)
+_edje_table_child_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *child, void *einfo __UNUSED__)
 {
+   Edje_User_Defined *eud;
+   Eina_List *l;
    Edje_Real_Part *rp = data;
+
+   EINA_LIST_FOREACH(rp->edje->user_defined, l, eud)
+     if (rp->part->type == EDJE_PART_TYPE_BOX)
+       {
+          if (eud->type == EDJE_USER_BOX_PACK &&
+              eud->u.box.child == child &&
+              !strcmp(rp->part->name, eud->part))
+            {
+               _edje_user_definition_free(eud);
+               break;
+            }
+       }
+     else if (rp->part->type == EDJE_PART_TYPE_TABLE)
+       {
+          if (eud->type == EDJE_USER_TABLE_PACK &&
+              eud->u.table.child == child &&
+              !strcmp(rp->part->name, eud->part))
+            {
+               _edje_user_definition_free(eud);
+               break;
+            }
+       }
 
    rp->edje->dirty = 1;
    rp->edje->recalc_call = 1;
@@ -4066,7 +4090,6 @@ edje_object_part_table_pack(Evas_Object *obj, const char *part, Evas_Object *chi
    if (rp->part->type != EDJE_PART_TYPE_TABLE) return EINA_FALSE;
 
    r = _edje_real_part_table_pack(rp, child_obj, col, row, colspan, rowspan);
-
    if (r)
      {
         eud = _edje_user_definition_new(EDJE_USER_TABLE_PACK, part, ed);
