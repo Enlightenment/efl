@@ -278,8 +278,8 @@ _ecore_key_press(int event,
    int val;
 
    _ecore_x_last_event_mouse_move = 0;
-   keyname = XKeysymToString(XKeycodeToKeysym(xevent->display,
-                                              xevent->keycode, 0));
+   keyname = XKeysymToString(_ecore_x_XKeycodeToKeysym(xevent->display,
+                                                       xevent->keycode, 0));
    if (!keyname)
      {
         snprintf(keyname_buffer,

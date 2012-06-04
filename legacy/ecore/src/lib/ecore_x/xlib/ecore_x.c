@@ -211,6 +211,16 @@ _XReply(Display *disp,
 
 #endif /* ifdef LOGRT */
 
+/* wrapper to use XkbKeycodeToKeysym when possible */
+KeySym
+_ecore_x_XKeycodeToKeysym(Display *display, KeyCode keycode, int index)
+{
+#ifdef ECORE_XKB
+   return XkbKeycodeToKeysym(display, keycode, 0, index);
+#endif
+   return XKeycodeToKeysym(display, keycode, index);
+}
+
 void
 _ecore_x_modifiers_get(void)
 {
@@ -1056,7 +1066,8 @@ _ecore_x_key_mask_get(KeySym sym)
        {
           for (j = 0; j < 8; j++)
             {
-               sym2 = XKeycodeToKeysym(_ecore_x_disp, mod->modifiermap[i], j);
+               sym2 = _ecore_x_XKeycodeToKeysym(_ecore_x_disp,
+                                                mod->modifiermap[i], j);
                if (sym2 != 0)
                  break;
             }

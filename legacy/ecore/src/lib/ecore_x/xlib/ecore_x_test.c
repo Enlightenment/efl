@@ -98,9 +98,9 @@ ecore_x_test_fake_key_press(const char *key __UNUSED__)
           return EINA_FALSE;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
-        if (XKeycodeToKeysym(_ecore_x_disp, keycode, 0) != keysym)
+        if (_ecore_x_XKeycodeToKeysym(_ecore_x_disp, keycode, 0) != keysym)
           {
-             if (XKeycodeToKeysym(_ecore_x_disp, keycode, 1) == keysym)
+             if (_ecore_x_XKeycodeToKeysym(_ecore_x_disp, keycode, 1) == keysym)
                shift = 1;
              else
                keycode = 0;
