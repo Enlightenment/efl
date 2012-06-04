@@ -443,7 +443,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                     _edje_part_description_find(ed, rp, "default", 0.0);
 		  rp->chosen_description = rp->param1.description;
 		  if (!rp->param1.description)
-		    ERR("no default part description!");
+		    ERR("no default part description for '%s'!",
+                        rp->part->name);
 
 		  switch (ep->type)
 		    {
@@ -487,6 +488,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		     case EDJE_PART_TYPE_GRADIENT:
 			ERR("SPANK ! SPANK ! SPANK ! YOU ARE USING GRADIENT IN PART %s FROM GROUP %s INSIDE FILE %s !! THEY ARE NOW REMOVED !",
 			    ep->name, group, file);
+			break;
+		     case EDJE_PART_TYPE_VIRTUAL:
+                        rp->object = NULL;
+                        break;
 		     default:
 			ERR("wrong part type %i!", ep->type);
 			break;
@@ -551,7 +556,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       if (rp->part->clip_to_id >= 0)
 			 {
 			    rp->clip_to = ed->table_parts[rp->part->clip_to_id % ed->table_parts_size];
-			    if (rp->clip_to)
+			    if (rp->clip_to &&
+                                rp->clip_to->object &&
+                                rp->object)
 			      {
 				 evas_object_pass_events_set(rp->clip_to->object, 1);
 				 evas_object_pointer_mode_set(rp->clip_to->object, EVAS_OBJECT_POINTER_MODE_NOGRAB);

@@ -63,6 +63,7 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    INIT_EMP_BOTH(BOX, Edje_Part_Description_Box, ce);
    INIT_EMP_BOTH(TABLE, Edje_Part_Description_Table, ce);
    INIT_EMP_BOTH(EXTERNAL, Edje_Part_Description_External, ce);
+   INIT_EMP_BOTH(VIRTUAL, Edje_Part_Description_Common, ce);
    INIT_EMP(part, Edje_Part, ce);
 
    snprintf(buf, sizeof(buf), "edje/collections/%i", id);

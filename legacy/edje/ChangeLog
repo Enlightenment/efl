@@ -467,7 +467,11 @@
 
 	* Use Eina_File instead of fopen when possible in edje_cc.
 
-2012-05-21 Shilpa Onkar Singh
+2012-05-21  Shilpa Onkar Singh
 
         * Fix patch for edje draggable jump issue when external event
         area is used for the dragable.
+
+2012-06-04  Cedric Bail
+
+	* Add VIRTUAL part to reduce the load on the canvas (lighter and faster theme).

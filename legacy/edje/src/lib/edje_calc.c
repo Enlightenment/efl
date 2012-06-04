@@ -232,6 +232,12 @@ _edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src
 	 ce->count.GROUP++;
          memsize = sizeof(Edje_Part_Description_Common);
          break;
+     case EDJE_PART_TYPE_VIRTUAL:
+         desc_rtl = eina_mempool_malloc(ce->mp_rtl.VIRTUAL,
+               sizeof (Edje_Part_Description_Common));
+         ce->count.VIRTUAL++;
+         memsize = sizeof(Edje_Part_Description_Common);
+         break;
 	 EDIT_ALLOC_POOL_RTL(TEXT, Text, text);
 	 EDIT_ALLOC_POOL_RTL(TEXTBLOCK, Text, text);
 	 EDIT_ALLOC_POOL_RTL(IMAGE, Image, image);
@@ -241,7 +247,7 @@ _edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src
 	 EDIT_ALLOC_POOL_RTL(EXTERNAL, External, external_params);
      }
 
-   if(desc_rtl)
+   if (desc_rtl)
       memcpy(desc_rtl, src, memsize);
 
    _edje_part_make_rtl(desc_rtl);
@@ -2015,23 +2021,26 @@ _edje_part_recalc_single(Edje *ed,
    else if (ep->part->type == EDJE_PART_TYPE_PROXY)
      _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Proxy *)desc)->proxy.fill, params);
 
-   /* colors */
-   if ((desc->color_class) && (*desc->color_class))
-     cc = _edje_color_class_find(ed, desc->color_class);
+   if (ep->part->type != EDJE_PART_TYPE_VIRTUAL)
+     {
+        /* colors */
+        if ((desc->color_class) && (*desc->color_class))
+          cc = _edje_color_class_find(ed, desc->color_class);
 
-   if (cc)
-     {
-	params->color.r = (((int)cc->r + 1) * desc->color.r) >> 8;
-	params->color.g = (((int)cc->g + 1) * desc->color.g) >> 8;
-	params->color.b = (((int)cc->b + 1) * desc->color.b) >> 8;
-	params->color.a = (((int)cc->a + 1) * desc->color.a) >> 8;
-     }
-   else
-     {
-	params->color.r = desc->color.r;
-	params->color.g = desc->color.g;
-	params->color.b = desc->color.b;
-	params->color.a = desc->color.a;
+        if (cc)
+          {
+             params->color.r = (((int)cc->r + 1) * desc->color.r) >> 8;
+             params->color.g = (((int)cc->g + 1) * desc->color.g) >> 8;
+             params->color.b = (((int)cc->b + 1) * desc->color.b) >> 8;
+             params->color.a = (((int)cc->a + 1) * desc->color.a) >> 8;
+          }
+        else
+          {
+             params->color.r = desc->color.r;
+             params->color.g = desc->color.g;
+             params->color.b = desc->color.b;
+             params->color.a = desc->color.a;
+          }
      }
 
    /* visible */
@@ -2087,6 +2096,7 @@ _edje_part_recalc_single(Edje *ed,
 
 	   break;
 	}
+      case EDJE_PART_TYPE_VIRTUAL:
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_BOX:
       case EDJE_PART_TYPE_TABLE:
@@ -2157,6 +2167,9 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_EXTERNAL:
          evas_object_image_source_set(ep->object, pp->swallowed_object);
+         break;
+      case EDJE_PART_TYPE_VIRTUAL:
+         /* FIXME: detect that at compile time and prevent it */
          break;
      }
 
@@ -2785,6 +2798,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 	      /* FIXME: definitivly remove this code when we switch to new format. */
 	      abort();
 	      break;
+           case EDJE_PART_TYPE_VIRTUAL:
+              /* We really should do nothing on VIRTUAL part */
+              break;
 	  }
 
 	/* Some object need special recalc. */
@@ -2816,6 +2832,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 	      /* FIXME: definitivly remove this code when we switch to new format. */
 	      abort();
 	      break;
+           case EDJE_PART_TYPE_VIRTUAL:
+              /* We really should do nothing on VIRTUAL part */
+              break;
 	  }
 
 	if (ep->swallowed_object)
@@ -2839,7 +2858,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              mo = ep->swallowed_object;
 	  }
         else mo = ep->object;
-        if (chosen_desc->map.on)
+        if (chosen_desc->map.on && ep->part->type != EDJE_PART_TYPE_VIRTUAL)
           {
              static Evas_Map *map = NULL;
 
@@ -2922,5 +2941,4 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 	ep->invalidate = 0;
      }
 #endif
-
 }

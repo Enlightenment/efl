@@ -675,6 +675,7 @@ struct _Edje_Limit
       TYPE      GROUP;            \
       TYPE      BOX;              \
       TYPE      TABLE;            \
+      TYPE      VIRTUAL;	  \
       TYPE      EXTERNAL;
 
 struct _Edje_Part_Collection_Directory_Entry
@@ -1667,6 +1668,7 @@ extern Eina_Mempool *_emp_GROUP;
 extern Eina_Mempool *_emp_BOX;
 extern Eina_Mempool *_emp_TABLE;
 extern Eina_Mempool *_emp_EXTERNAL;
+extern Eina_Mempool *_emp_VIRTUAL;
 extern Eina_Mempool *_emp_part;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2);
