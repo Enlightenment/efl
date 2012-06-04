@@ -12,17 +12,16 @@ struct _Evas_Object_Line
    DATA32            magic;
    struct {
       struct {
-         int         x1, y1, x2, y2;
+         Evas_Coord    x1, y1, x2, y2;
          struct {
             Evas_Coord w, h;
          } object;
       } cache;
-      Evas_Coord         x1, y1, x2, y2;
+      Evas_Coord     x1, y1, x2, y2;
    } cur, prev;
 
    void             *engine_data;
-
-   char              changed : 1;
+   Eina_Bool         changed : 1;
 };
 
 /* private methods for line objects */
@@ -142,7 +141,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    o->cur.y1 = y1 - min_y;
    o->cur.x2 = x2 - min_x;
    o->cur.y2 = y2 - min_y;
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
    evas_object_clip_dirty(obj);
@@ -382,7 +381,7 @@ evas_object_line_render_post(Evas_Object *obj)
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
    o->prev = o->cur;
-   o->changed = 0;
+   o->changed = EINA_FALSE;
 }
 
 static unsigned int evas_object_line_id_get(Evas_Object *obj)
