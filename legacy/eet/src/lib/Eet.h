@@ -5,7 +5,7 @@
 
    @mainpage Eet Library Documentation
 
-   @version 1.5.0
+   @version 1.6.0
    @date 2000-2012
 
    Please see the @ref authors page for contact details.

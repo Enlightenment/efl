@@ -4,7 +4,7 @@
 These routines are used for Edje.
 
 @mainpage Edje Library Documentation
-@version 1.1
+@version 1.2
 @date 2003-2012
 
 Please see the @ref authors page for contact details.
@@ -197,7 +197,7 @@ part of Edje's API:
 @author Davide Andreoli <dave@@gurumeditation.it>
 @author Sebastian Dransfeld <sd@@tango.flipp.net>
 @author Tom Hacohen <tom@@stosb.com>
-@author Aharon Hillel <a.hillel@@partner.samsung.com>
+@author Aharon Hillel <a.hillel@@samsung.com>
 @author Shilpa Singh <shilpa.singh@samsung.com> <shilpasingh.o@gmail.com>
 @author Mike Blumenkrantz <michael.blumenkrantz@gmail.com
 @author Jaehwan Kim <jae.hwan.kim@samsung.com>
