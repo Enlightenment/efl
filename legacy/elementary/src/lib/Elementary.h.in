@@ -1,6 +1,6 @@
 /* This is the primary Elementary header file that includes all other useful
  * headers.
- * 
+ *
  * Elementary is distributed under the LGPLv2 license. Please see the COPYING
  * file that was distributed with this source.
  */
@@ -130,9 +130,9 @@ extern "C"
 #endif
 
 /* docs */
-#include <elm_intro.h> // OK
-#include <elm_getting_started.h> // OK
-#include <elm_authors.h> // OK
+#include <elm_intro.h>
+#include <elm_getting_started.h>
+#include <elm_authors.h>
 
 #define ELM_VERSION_MAJOR @VMAJ@
 #define ELM_VERSION_MINOR @VMIN@
@@ -148,108 +148,102 @@ typedef struct _Elm_Version
 EAPI extern Elm_Version *elm_version;
 
 /* include these first for general used definitions */
-#include <elm_general.h> // OK
-#include <elm_tooltip.h> // OK
-#include <elm_object_item.h> // OK
+#include <elm_general.h>
+#include <elm_tooltip.h>
+#include <elm_object_item.h>
 
 /* special widgets - types used elsewhere */
-#include <elm_icon.h> // OK
-#include <elm_scroller.h> // OK
-#include <elm_entry.h> // OK
-#include <elm_list.h> // OK
+#include <elm_icon.h>
+#include <elm_scroller.h>
+#include <elm_entry.h>
+#include <elm_list.h>
 
 /* other includes */
-// Tom Hacohen
-#include <elc_ctxpopup.h> // OK
-#include <elm_dayselector.h> // OK
-#include <elc_fileselector_button.h> // OK
-#include <elc_fileselector_entry.h> // OK
-#include <elc_fileselector.h> // OK
-#include <elc_hoversel.h> // OK
-#include <elc_multibuttonentry.h> // OK
-#include <elc_naviframe.h> // OK
-#include <elc_popup.h> // OK
-#include <elm_actionslider.h> // OK
-#include <elm_app.h> // OK
-#include <elm_bg.h> // OK
-#include <elm_box.h> // OK
+#include <elc_ctxpopup.h>
+#include <elm_dayselector.h>
+#include <elc_fileselector_button.h>
+#include <elc_fileselector_entry.h>
+#include <elc_fileselector.h>
+#include <elc_hoversel.h>
+#include <elc_multibuttonentry.h>
+#include <elc_naviframe.h>
+#include <elc_popup.h>
+#include <elm_actionslider.h>
+#include <elm_app.h>
+#include <elm_bg.h>
+#include <elm_box.h>
 
-// Daniel Juyung Seo
-#include <elm_bubble.h> // OK
-#include <elm_button.h> // OK
-#include <elm_cache.h> // OK
-#include <elm_calendar.h> // OK
-#include <elm_check.h> // OK
-#include <elm_clock.h> // OK
-#include <elm_cnp.h> // OK
-#include <elm_colorselector.h> // OK
-#include <elm_config.h> // OK
-#include <elm_conform.h> // OK
-#include <elm_cursor.h> // OK
-#include <elm_datetime.h> // OK
-#include <elm_debug.h> // OK
-#include <elm_diskselector.h> // OK
+#include <elm_bubble.h>
+#include <elm_button.h>
+#include <elm_cache.h>
+#include <elm_calendar.h>
+#include <elm_check.h>
+#include <elm_clock.h>
+#include <elm_cnp.h>
+#include <elm_colorselector.h>
+#include <elm_config.h>
+#include <elm_conform.h>
+#include <elm_cursor.h>
+#include <elm_datetime.h>
+#include <elm_debug.h>
+#include <elm_diskselector.h>
 
-// Chuneon Park
-//#include <elm_factory.h>  // OK
-#include <elm_finger.h> // OK
-#include <elm_flip.h> // OK
-#include <elm_flipselector.h> // OK
-#include <elm_focus.h>  // OK
-#include <elm_font.h> // OK
-#include <elm_frame.h> // OK
-#include <elm_gen.h> // OK
-#include <elm_gengrid.h> // OK
-#include <elm_genlist.h> // OK
-#include <elm_gesture_layer.h> // OK
-#include <elm_glview.h> // OK
-#include <elm_grid.h> // OK
+//#include <elm_factory.h>
+#include <elm_finger.h>
+#include <elm_flip.h>
+#include <elm_flipselector.h>
+#include <elm_focus.h>
+#include <elm_font.h>
+#include <elm_frame.h>
+#include <elm_gen.h>
+#include <elm_gengrid.h>
+#include <elm_genlist.h>
+#include <elm_gesture_layer.h>
+#include <elm_glview.h>
+#include <elm_grid.h>
 
-// Woohyun Jung
-#include <elm_hover.h> // OK
-#include <elm_image.h> // OK
-#include <elm_index.h> // OK
-#include <elm_label.h> // OK
-#include <elm_layout.h> // OK
-#include <elm_macros.h> // OK
-#include <elm_mapbuf.h> // OK
-#include <elm_map.h> // OK
-#include <elm_menu.h> // OK
-#include <elm_mirroring.h> // OK
-#include <elm_need.h> // OK
-#include <elm_notify.h> // OK
-#include <elm_object.h> // OK
+#include <elm_hover.h>
+#include <elm_image.h>
+#include <elm_index.h>
+#include <elm_label.h>
+#include <elm_layout.h>
+#include <elm_macros.h>
+#include <elm_mapbuf.h>
+#include <elm_map.h>
+#include <elm_menu.h>
+#include <elm_mirroring.h>
+#include <elm_need.h>
+#include <elm_notify.h>
+#include <elm_object.h>
 
-// SanjeevBA
-#include <elm_panel.h> // OK
-#include <elm_panes.h> // OK
-#include <elm_photocam.h> // OK
-#include <elm_photo.h> // OK
-#include <elm_plug.h> // OK
-#include <elm_progressbar.h> // OK
-#include <elm_radio.h> // OK
-#include <elm_route.h> // OK
-#include <elm_scale.h> // OK
-#include <elm_scroll.h> // OK
-#include <elm_segment_control.h> // OK
+#include <elm_panel.h>
+#include <elm_panes.h>
+#include <elm_photocam.h>
+#include <elm_photo.h>
+#include <elm_plug.h>
+#include <elm_progressbar.h>
+#include <elm_radio.h>
+#include <elm_route.h>
+#include <elm_scale.h>
+#include <elm_scroll.h>
+#include <elm_segment_control.h>
 
-// Carsten Haitzler
-#include <elm_separator.h> // OK
-#include <elm_slider.h> // OK
-#include <elm_slideshow.h> // OK
-#include <elm_spinner.h> // OK
-#include <elm_store.h> // OK
-#include <elm_table.h> // OK
-#include <elm_theme.h> // OK
-#include <elm_thumb.h> // OK
-#include <elm_toolbar.h> // OK
-#include <elm_transit.h> // OK
-#include <elm_video.h> // OK
+#include <elm_separator.h>
+#include <elm_slider.h>
+#include <elm_slideshow.h>
+#include <elm_spinner.h>
+#include <elm_store.h>
+#include <elm_table.h>
+#include <elm_theme.h>
+#include <elm_thumb.h>
+#include <elm_toolbar.h>
+#include <elm_transit.h>
+#include <elm_video.h>
 #include <elm_web.h>
-#include <elm_win.h> // OK
+#include <elm_win.h>
 
 /* include deprecated calls last of all */
-#include <elm_deprecated.h> // OK
+#include <elm_deprecated.h>
 
 #ifdef __cplusplus
 }
