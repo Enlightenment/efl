@@ -2,10 +2,11 @@
  * @defgroup Photo Photo
  * @ingroup Elementary
  *
- * An Elementary photo widget is intended for displaying a photo, for
+ * The Elementary photo widget is intended for displaying a photo, for
  * ex., a person's image (contact). Simple, yet with a very specific
  * purpose. It has a decorative frame around the inner image itself,
- * on the default theme.
+ * on the default theme. If and while no photo is set on it, it
+ * displays a person icon, indicating it's a photo placeholder.
  *
  * This widget relies on an internal @ref Icon, so that the APIs of
  * these two widgets are similar (drag and drop is also possible here,
@@ -31,12 +32,15 @@
 EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
 
 /**
- * Set the file that will be used as photo
+ * Set the file that will be used as the photo widget's image.
  *
  * @param obj The photo object
- * @param file The path to file that will be used as photo
+ * @param file The path to file that will be used as @a obj's image.
  *
- * @return (1 = success, 0 = error)
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ *
+ * @note Use @c NULL on @a file to set the photo widget back to it's
+ * initial state, which indicates "no photo".
  *
  * @ingroup Photo
  */

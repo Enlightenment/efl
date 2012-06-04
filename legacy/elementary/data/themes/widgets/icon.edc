@@ -31,6 +31,8 @@ GROUP_ALIAS_ICON("edit", "toolbar/edit", "icon_edit.png", 32, 0);
 GROUP_ALIAS_ICON("refresh", "toolbar/refresh", "icon_refresh.png", 32, 0);
 GROUP_ALIAS_ICON("folder", "toolbar/folder", "icon_folder.png", 32, 0);
 GROUP_ALIAS_ICON("file", "toolbar/file", "icon_file.png", 32, 0);
+GROUP_ALIAS_ICON("no_photo", "photo/no_photo", "head.png", 32, 0);
+
 ///////////////////////////////////////////////////////////////////////////////
 GROUP_ICON("menu/home", "icon_home.png", 24, 24);
 GROUP_ICON("menu/close", "icon_close.png", 24, 24);

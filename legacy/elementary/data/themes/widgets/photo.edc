@@ -3,7 +3,6 @@ group { name: "elm/photo/base/default";
       image: "frame_1.png" COMP;
       image: "frame_2.png" COMP;
       image: "dia_grad.png" COMP;
-      image: "head.png" COMP;
    }
    parts {
       part { name: "base0";
@@ -30,16 +29,6 @@ group { name: "elm/photo/base/default";
                middle: 0;
             }
             fill.smooth : 0;
-         }
-      }
-      part { name: "head";
-         mouse_events:  0;
-         description { state:    "default" 0.0;
-            rel1.offset: 4 4;
-            rel2.offset: -5 -5;
-            aspect: 1.0 1.0;
-            aspect_preference: BOTH;
-            image.normal: "head.png";
          }
       }
       part { name: "clip";

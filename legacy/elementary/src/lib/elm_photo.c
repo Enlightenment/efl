@@ -361,6 +361,8 @@ elm_photo_add(Evas_Object *parent)
    edje_object_part_swallow
      (ELM_WIDGET_DATA(sd)->resize_obj, "elm.swallow.content", sd->icon);
 
+   elm_photo_file_set(obj, NULL);
+
    return obj;
 }
 
@@ -371,8 +373,16 @@ elm_photo_file_set(Evas_Object *obj,
    ELM_PHOTO_CHECK(obj) EINA_FALSE;
    ELM_PHOTO_DATA_GET(obj, sd);
 
-   if (!elm_image_file_set(sd->icon, file, NULL))
-     return EINA_FALSE;
+   if (!file)
+     {
+        if (!elm_icon_standard_set(sd->icon, "no_photo"))
+          return EINA_FALSE;
+     }
+   else
+     {
+        if (!elm_image_file_set(sd->icon, file, NULL))
+          return EINA_FALSE;
+     }
 
    _sizing_eval(obj);
 
