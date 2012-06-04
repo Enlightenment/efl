@@ -9,7 +9,8 @@
 #define ECORE_MAGIC_CON_URL                0x77074255
 
 #define ECORE_CON_TYPE 0x0f
-#define ECORE_CON_SSL  0xf00
+#define ECORE_CON_SSL  0xf0
+#define ECORE_CON_SUPER_SSL  0xf00
 
 #if USE_GNUTLS
 # include <gnutls/gnutls.h>

@@ -448,7 +448,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->data = (void *)data;
    svr->created = EINA_FALSE;
    svr->use_cert = (compl_type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
-   svr->disable_proxy = (compl_type & ECORE_CON_SSL & ECORE_CON_NO_PROXY) == ECORE_CON_NO_PROXY;
+   svr->disable_proxy = (compl_type & ECORE_CON_SUPER_SSL & ECORE_CON_NO_PROXY) == ECORE_CON_NO_PROXY;
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
