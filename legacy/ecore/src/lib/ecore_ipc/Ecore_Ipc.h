@@ -1,6 +1,8 @@
 #ifndef _ECORE_IPC_H
 #define _ECORE_IPC_H
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
