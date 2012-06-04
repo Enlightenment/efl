@@ -139,17 +139,20 @@ elm_win.h
 includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \
+elm_gen_common.h \
 elm_priv.h \
+els_box.h \
+els_pan.h \
+els_scroller.h \
 elc_ctxpopup.c \
-elm_dayselector.c \
-elc_popup.c \
-elc_fileselector_button.c \
 elc_fileselector.c \
+elc_fileselector_button.c \
 elc_fileselector_entry.c \
 elc_hoversel.c \
-elc_naviframe.c \
 elc_multibuttonentry.c \
+elc_naviframe.c \
 elc_player.c \
+elc_popup.c \
 elc_scrolled_entry.c \
 elm_access.c \
 elm_actionslider.c \
@@ -166,6 +169,7 @@ elm_config.c \
 elm_conform.c \
 elm_container.c \
 elm_datetime.c \
+elm_dayselector.c \
 elm_diskselector.c \
 elm_entry.c \
 elm_flip.c \
@@ -174,21 +178,20 @@ elm_font.c \
 elm_frame.c \
 elm_gengrid.c \
 elm_genlist.c \
-elm_gen_common.h \
 elm_gesture_layer.c \
 elm_glview.c \
 elm_grid.c \
 elm_hover.c \
 elm_icon.c \
 elm_image.c \
-elm_plug.c \
 elm_index.c \
+elm_inwin.c \
 elm_label.c \
 elm_layout.c \
 elm_list.c \
 elm_main.c \
-elm_mapbuf.c \
 elm_map.c \
+elm_mapbuf.c \
 elm_menu.c \
 elm_module.c \
 elm_notify.c \
@@ -196,6 +199,7 @@ elm_panel.c \
 elm_panes.c \
 elm_photo.c \
 elm_photocam.c \
+elm_plug.c \
 elm_progressbar.c \
 elm_radio.c \
 elm_route.c \
@@ -217,12 +221,9 @@ elm_web.c \
 elm_widget.c \
 elm_win.c \
 els_box.c \
-els_box.h \
 els_cursor.c \
 els_pan.c \
-els_pan.h \
 els_scroller.c \
-els_scroller.h \
 els_tooltip.c \
 elu_ews_wm.c
 
