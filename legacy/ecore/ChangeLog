@@ -702,3 +702,7 @@
 2012-05-30 Leif Middelschulte (T_UNIX)
 
         * Add ECORE_X_RANDR_OUTPUT_POLICY_ASK
+
+2012-06-04 Mike Blumenkrantz
+
+        * ECORE_{CON,IPC}_NO_PROXY now available for disabling proxying on certain connections

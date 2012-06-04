@@ -412,12 +412,16 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
    Ecore_Ipc_Server *svr;
    Ecore_Ipc_Type type;
    Ecore_Con_Type extra = 0;
+   int features;
 
    svr = calloc(1, sizeof(Ecore_Ipc_Server));
    if (!svr) return NULL;
-   type = compl_type;
-   type &= ~ECORE_IPC_USE_SSL;
-   if (compl_type & ECORE_IPC_USE_SSL) extra = ECORE_CON_USE_SSL;
+   type = compl_type & ECORE_IPC_TYPE;
+   features = compl_type & ECORE_IPC_SSL;
+   if ((features & ECORE_IPC_USE_SSL) == ECORE_IPC_USE_SSL)
+     extra |= ECORE_CON_USE_SSL;
+   if ((features & ECORE_IPC_NO_PROXY) == ECORE_IPC_NO_PROXY)
+     extra |= ECORE_CON_NO_PROXY;
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:

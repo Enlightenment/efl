@@ -9,7 +9,7 @@
 #define ECORE_MAGIC_CON_URL                0x77074255
 
 #define ECORE_CON_TYPE 0x0f
-#define ECORE_CON_SSL  0xf0
+#define ECORE_CON_SSL  0xf00
 
 #if USE_GNUTLS
 # include <gnutls/gnutls.h>
@@ -179,6 +179,7 @@ struct _Ecore_Con_Server
    Eina_Bool connecting : 1; /* @c EINA_FALSE if just initialized or connected */
    Eina_Bool handshaking : 1; /* @c EINA_TRUE if server is ssl handshaking */
    Eina_Bool upgrade : 1;  /* STARTTLS queued */
+   Eina_Bool disable_proxy : 1; /* proxy should never be used with this connection */
    Eina_Bool ssl_prepared : 1;
    Eina_Bool use_cert : 1; /* @c EINA_TRUE if using certificate auth */
    Ecore_Con_Ssl_State ssl_state; /* current state of ssl handshake on the server */

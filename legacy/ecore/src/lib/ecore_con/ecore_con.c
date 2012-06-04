@@ -448,13 +448,14 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->data = (void *)data;
    svr->created = EINA_FALSE;
    svr->use_cert = (compl_type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
+   svr->disable_proxy = (compl_type & ECORE_CON_SSL & ECORE_CON_NO_PROXY) == ECORE_CON_NO_PROXY;
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
 
    type = compl_type & ECORE_CON_TYPE;
 
-   if (type > ECORE_CON_LOCAL_ABSTRACT)
+   if ((!svr->disable_proxy) && (type > ECORE_CON_LOCAL_ABSTRACT))
      {
         /* never use proxies on local connections */
         if (_ecore_con_proxy_once)
