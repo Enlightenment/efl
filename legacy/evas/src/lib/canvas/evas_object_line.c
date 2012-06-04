@@ -46,26 +46,26 @@ static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
    evas_object_line_free,
-     evas_object_line_render,
-     evas_object_line_render_pre,
-     evas_object_line_render_post,
-     evas_object_line_id_get,
-     evas_object_line_visual_id_get,
-     evas_object_line_engine_data_get,
+   evas_object_line_render,
+   evas_object_line_render_pre,
+   evas_object_line_render_post,
+   evas_object_line_id_get,
+   evas_object_line_visual_id_get,
+   evas_object_line_engine_data_get,
    /* these are optional. NULL = nothing */
-     NULL,
-     NULL,
-     NULL,
-     NULL,
-     evas_object_line_is_opaque,
-     evas_object_line_was_opaque,
-     evas_object_line_is_inside,
-     evas_object_line_was_inside,
-     evas_object_line_coords_recalc,
-     NULL,
-     NULL,
-     NULL,
-     NULL
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   evas_object_line_is_opaque,
+   evas_object_line_was_opaque,
+   evas_object_line_is_inside,
+   evas_object_line_was_inside,
+   evas_object_line_coords_recalc,
+   NULL,
+   NULL,
+   NULL,
+   NULL
 };
 
 /* the actual api call to add a rect */
@@ -207,7 +207,7 @@ evas_object_line_init(Evas_Object *obj)
    obj->cur.geometry.w = 0;
    obj->cur.geometry.h = 0;
    obj->cur.layer = 0;
-   obj->cur.anti_alias = 1;
+   obj->cur.anti_alias = EINA_TRUE;
    obj->cur.render_op = EVAS_RENDER_BLEND;
    /* set up object-specific settings */
    obj->prev = obj->cur;
@@ -283,10 +283,11 @@ evas_object_line_render_pre(Evas_Object *obj)
 {
    Evas_Object_Line *o;
    int is_v, was_v;
+   Eina_Bool changed_color = EINA_FALSE;
 
    /* dont pre-render the obj twice! */
    if (obj->pre_render_done) return;
-   obj->pre_render_done = 1;
+   obj->pre_render_done = EINA_TRUE;
    /* pre-render phase. this does anything an object needs to do just before */
    /* rendering. this could mean loading the image data, retrieving it from */
    /* elsewhere, decoding video etc. */
@@ -306,7 +307,8 @@ evas_object_line_render_pre(Evas_Object *obj)
    was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
-        evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
+        evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes,
+                                              obj, is_v, was_v);
         goto done;
      }
    if (obj->changed_map)
@@ -319,33 +321,28 @@ evas_object_line_render_pre(Evas_Object *obj)
    if (!is_v) goto done;
    /* clipper changed this is in addition to anything else for obj */
    evas_object_render_pre_clipper_change(&obj->layer->evas->clip_changes, obj);
-   /* if we restacked (layer or just within a layer) */
-   if (obj->restack)
-     {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
-     }
-   /* if it changed anti_alias */
-   if (obj->cur.anti_alias != obj->prev.anti_alias)
-     {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
-     }
-   /* if it changed render op */
-   if (obj->cur.render_op != obj->prev.render_op)
-     {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
-     }
-   /* if it changed color */
+
    if ((obj->cur.color.r != obj->prev.color.r) ||
        (obj->cur.color.g != obj->prev.color.g) ||
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
+     changed_color = EINA_TRUE;
+
+   /* if we restacked (layer or just within a layer) */
+   /* or if it changed anti_alias */
+   /* or if ii changed render op */
+   /* or if it changed color */
+   if ((obj->restack) ||
+       (obj->cur.anti_alias != obj->prev.anti_alias) ||
+       (obj->cur.render_op != obj->prev.render_op) ||
+       (changed_color)
+      )
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+                                            obj);
         goto done;
      }
+
    /* if it changed geometry - and obviously not visibility or color */
    /* calculate differences since we have a constant color fill */
    /* we really only need to update the differences */
@@ -360,11 +357,14 @@ evas_object_line_render_pre(Evas_Object *obj)
          (o->cur.y2 != o->prev.y2)))
       )
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
+                                            obj);
         goto done;
      }
+
 done:
-   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
+   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj,
+                                         is_v, was_v);
 }
 
 static void
