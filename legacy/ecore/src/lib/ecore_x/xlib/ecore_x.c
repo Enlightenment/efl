@@ -213,12 +213,12 @@ _XReply(Display *disp,
 
 /* wrapper to use XkbKeycodeToKeysym when possible */
 KeySym
-_ecore_x_XKeycodeToKeysym(Display *display, KeyCode keycode, int index)
+_ecore_x_XKeycodeToKeysym(Display *display, KeyCode keycode, int idx)
 {
 #ifdef ECORE_XKB
-   return XkbKeycodeToKeysym(display, keycode, 0, index);
+   return XkbKeycodeToKeysym(display, keycode, 0, idx);
 #endif
-   return XKeycodeToKeysym(display, keycode, index);
+   return XKeycodeToKeysym(display, keycode, idx);
 }
 
 void
