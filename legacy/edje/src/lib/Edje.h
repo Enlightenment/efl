@@ -382,7 +382,7 @@ typedef enum _Edje_Part_Type
    EDJE_PART_TYPE_TABLE     = 9,
    EDJE_PART_TYPE_EXTERNAL  = 10,
    EDJE_PART_TYPE_PROXY     = 11,
-   EDJE_PART_TYPE_VIRTUAL   = 12,
+   EDJE_PART_TYPE_VIRTUAL   = 12, /**< @since 1.3 */
    EDJE_PART_TYPE_LAST      = 13
 } Edje_Part_Type;
 
