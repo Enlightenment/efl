@@ -1,11 +1,11 @@
 #ifndef _EO_PRIVATE_H
 #define _EO_PRIVATE_H
 
-#define EO_EINA_MAGIC 0xa186bc32 /* Nothing magical about this number. */
+#define EO_EINA_MAGIC 0xa186bc32
 #define EO_EINA_MAGIC_STR "Eo"
-#define EO_DELETED_EINA_MAGIC 0xa186bb32 /* Nothing magical about this number. */
-#define EO_DELETED_EINA_MAGIC_STR "Eo - Deleted object"
-#define EO_CLASS_EINA_MAGIC 0xa186ba32 /* Nothing magical about this number. */
+#define EO_FREED_EINA_MAGIC 0xa186bb32
+#define EO_FREED_EINA_MAGIC_STR "Eo - Freed object"
+#define EO_CLASS_EINA_MAGIC 0xa186ba32
 #define EO_CLASS_EINA_MAGIC_STR "Eo Class"
 
 #define EO_MAGIC_RETURN_VAL(d, magic, ret) \

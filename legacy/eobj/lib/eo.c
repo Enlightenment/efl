@@ -1189,13 +1189,10 @@ eo_ref(const Eo *_obj)
 static inline void
 _eo_del_internal(Eo *obj)
 {
-   if (obj->del)
-      return;
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
    eo_do(obj, eo_event_callback_call(EO_EV_DEL, NULL, NULL));
-   obj->del = EINA_TRUE;
 
    const Eo_Class *klass = eo_class_get(obj);
    Eo_Kls_Itr prev_state;
@@ -1222,13 +1219,14 @@ _eo_del_internal(Eo *obj)
         eo_composite_object_detach(obj, emb_obj);
      }
 
+   obj->del = EINA_TRUE;
    obj->refcount--;
 }
 
 static inline void
 _eo_free(Eo *obj)
 {
-   EINA_MAGIC_SET(obj, EO_DELETED_EINA_MAGIC);
+   EINA_MAGIC_SET(obj, EO_FREED_EINA_MAGIC);
    free(obj);
 }
 
@@ -1441,8 +1439,8 @@ eo_init(void)
      }
 
    eina_magic_string_static_set(EO_EINA_MAGIC, EO_EINA_MAGIC_STR);
-   eina_magic_string_static_set(EO_DELETED_EINA_MAGIC,
-         EO_DELETED_EINA_MAGIC_STR);
+   eina_magic_string_static_set(EO_FREED_EINA_MAGIC,
+         EO_FREED_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_CLASS_EINA_MAGIC,
          EO_CLASS_EINA_MAGIC_STR);
 
