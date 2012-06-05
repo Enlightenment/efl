@@ -1535,7 +1535,7 @@ eo_manual_free(Eo *obj)
 
    if (EINA_FALSE == obj->manual_free)
      {
-        ERR("Tried to free manually the object %p while the option has not been set; see eo_manual_free_set for more information.", obj);
+        ERR("Tried manually free the object %p while the option has not been set; see eo_manual_free_set for more information.", obj);
         return;
      }
 
