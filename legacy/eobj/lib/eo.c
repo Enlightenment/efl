@@ -376,6 +376,7 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
 {
    Eina_Bool ret = EINA_FALSE;
 
+#ifndef NDEBUG
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
 
    if (op_desc)
@@ -392,6 +393,7 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
              return EINA_FALSE;
           }
      }
+#endif
 
    Eo_Kls_Itr prev_state;
 
@@ -486,6 +488,7 @@ _eo_class_op_internal(Eo_Class *klass, Eo_Op op, va_list *p_list)
 {
    Eina_Bool ret = EINA_FALSE;
 
+#ifndef NDEBUG
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
 
    if (op_desc)
@@ -496,6 +499,7 @@ _eo_class_op_internal(Eo_Class *klass, Eo_Op op, va_list *p_list)
              return EINA_FALSE;
           }
      }
+#endif
 
    Eo_Kls_Itr prev_state;
 
