@@ -4991,7 +4991,9 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
           }
         return;
      }
+
    evas_textblock_cursor_paragraph_first(o->cursor);
+   evas_textblock_cursor_text_append(o->cursor, "");
 
    evas_object_textblock_text_markup_prepend(o->cursor, text);
    /* Point all the cursors to the starrt */
@@ -9288,6 +9290,8 @@ evas_object_textblock_init(Evas_Object *obj)
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    o->cursor->obj = obj;
+   evas_object_textblock_text_markup_set(obj, "");
+
    o->legacy_newline = EINA_TRUE;
    evas_object_event_callback_priority_add(obj, EVAS_CALLBACK_RESIZE, -1000,
          _workaround_object_coords_recalc, NULL);
