@@ -75,9 +75,8 @@ _ecore_con_dns_check(Ecore_Con_DNS *dns)
 {
    struct addrinfo *ent = NULL;
    int error = 0;
-   char addr[NI_MAXHOST + 1];
  
-     error = dns_ai_nextent(&ent, dns->ai);
+   error = dns_ai_nextent(&ent, dns->ai);
 
    switch (error)
      {
@@ -91,15 +90,14 @@ _ecore_con_dns_check(Ecore_Con_DNS *dns)
      }
 
    {
-      Ecore_Con_Info result;
+      Ecore_Con_Info result = {0, .ip = {0}, .service = {0}};
 #if 0
       char pretty[512];
       dns_ai_print(pretty, sizeof(pretty), ent, dns->ai);
       printf("%s\n", pretty);
 #endif
-      dns_inet_ntop(dns_sa_family(ent->ai_addr), dns_sa_addr(dns_sa_family(ent->ai_addr), ent->ai_addr), addr, sizeof(addr));
       result.size = 0;
-      strncpy(result.ip, addr, sizeof(result.ip));
+      dns_inet_ntop(dns_sa_family(ent->ai_addr), dns_sa_addr(dns_sa_family(ent->ai_addr), ent->ai_addr), result.ip, sizeof(result.ip));
       snprintf(result.service, sizeof(result.service), "%u", ntohs(*dns_sa_port(dns_sa_family(ent->ai_addr), ent->ai_addr)));
       memcpy(&result.info, ent, sizeof(result.info));
       if (dns->fdh) ecore_main_fd_handler_del(dns->fdh);
@@ -153,8 +151,6 @@ ecore_con_info_init(void)
         resconf = NULL;
         return 0;
      }
-   dns_hosts_acquire(hosts);
-   dns_resconf_acquire(resconf);
    /* this is super slow don't do it */
    //resconf->options.recurse = 1;
    return ++_ecore_con_dns_init;
@@ -165,9 +161,9 @@ ecore_con_info_shutdown(void)
 {
    if (!_ecore_con_dns_init) return 0;
    if (--_ecore_con_dns_init) return _ecore_con_dns_init;
-   dns_resconf_close(dns_resconf_mortal(resconf));
+   dns_resconf_close(resconf);
    resconf = NULL;
-   dns_hosts_close(dns_hosts_mortal(hosts));
+   dns_hosts_close(hosts);
    hosts = NULL;
    return 0;
 }
