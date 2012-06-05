@@ -10,10 +10,10 @@
 # define MAX(a, b) ((a) < (b)) ? (b) : (a)
 #endif
 
-static const char CONFORM_SMART_NAME[] = "elm_conform";
+static const char CONFORMANT_SMART_NAME[] = "elm_conformant";
 
-typedef struct _Elm_Conform_Smart_Data Elm_Conform_Smart_Data;
-struct _Elm_Conform_Smart_Data
+typedef struct _Elm_Conformant_Smart_Data Elm_Conformant_Smart_Data;
+struct _Elm_Conformant_Smart_Data
 {
    Elm_Layout_Smart_Data          base;
 
@@ -40,10 +40,10 @@ struct _Elm_Conform_Smart_Data
 typedef enum _Conformant_Part_Type Conformant_Part_Type;
 enum _Conformant_Part_Type
 {
-   ELM_CONFORM_INDICATOR_PART      = 1,
-   ELM_CONFORM_SOFTKEY_PART        = 2,
-   ELM_CONFORM_VIRTUAL_KEYPAD_PART = 4,
-   ELM_CONFORM_CLIPBOARD_PART    = 8
+   ELM_CONFORMANT_INDICATOR_PART      = 1,
+   ELM_CONFORMANT_SOFTKEY_PART        = 2,
+   ELM_CONFORMANT_VIRTUAL_KEYPAD_PART = 4,
+   ELM_CONFORMANT_CLIPBOARD_PART    = 8
 };
 
 #ifdef HAVE_ELEMENTARY_X
@@ -61,14 +61,14 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (CONFORM_SMART_NAME, _elm_conform, Elm_Layout_Smart_Class,
+  (CONFORMANT_SMART_NAME, _elm_conformant, Elm_Layout_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
 
-#define ELM_CONFORM_DATA_GET(o, sd) \
-  Elm_Conform_Smart_Data * sd = evas_object_smart_data_get(o)
+#define ELM_CONFORMANT_DATA_GET(o, sd) \
+  Elm_Conformant_Smart_Data * sd = evas_object_smart_data_get(o)
 
-#define ELM_CONFORM_DATA_GET_OR_RETURN(o, ptr)       \
-  ELM_CONFORM_DATA_GET(o, ptr);                      \
+#define ELM_CONFORMANT_DATA_GET_OR_RETURN(o, ptr)       \
+  ELM_CONFORMANT_DATA_GET(o, ptr);                      \
   if (!ptr)                                          \
     {                                                \
        CRITICAL("No widget data for object %p (%s)", \
@@ -76,8 +76,8 @@ EVAS_SMART_SUBCLASS_NEW
        return;                                       \
     }
 
-#define ELM_CONFORM_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_CONFORM_DATA_GET(o, ptr);                         \
+#define ELM_CONFORMANT_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  ELM_CONFORMANT_DATA_GET(o, ptr);                         \
   if (!ptr)                                             \
     {                                                   \
        CRITICAL("No widget data for object %p (%s)",    \
@@ -85,8 +85,8 @@ EVAS_SMART_SUBCLASS_NEW
        return val;                                      \
     }
 
-#define ELM_CONFORM_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), CONFORM_SMART_NAME, __func__)) \
+#define ELM_CONFORMANT_CHECK(obj)                                             \
+  if (!obj || !elm_widget_type_check((obj), CONFORMANT_SMART_NAME, __func__)) \
     return
 
 /* Example of env vars:
@@ -170,7 +170,7 @@ _conformant_part_sizing_eval(Evas_Object *obj,
    int sx = -1, sy = -1, sw = -1, sh = -1;
    Ecore_X_Window xwin;
 
-   ELM_CONFORM_DATA_GET(obj, sd);
+   ELM_CONFORMANT_DATA_GET(obj, sd);
 
 #ifdef HAVE_ELEMENTARY_X
    top = elm_widget_top_get(obj);
@@ -180,7 +180,7 @@ _conformant_part_sizing_eval(Evas_Object *obj,
      zone = ecore_x_e_illume_zone_get(xwin);
 #endif
 
-   if (part_type & ELM_CONFORM_INDICATOR_PART)
+   if (part_type & ELM_CONFORMANT_INDICATOR_PART)
      {
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_IND", &sx, &sy, &sw, &sh)) && (xwin))
@@ -197,7 +197,7 @@ _conformant_part_sizing_eval(Evas_Object *obj,
         _conformant_part_size_hints_set(obj, sd->indicator, sx, sy, sw, sh);
      }
 
-   if (part_type & ELM_CONFORM_VIRTUAL_KEYPAD_PART)
+   if (part_type & ELM_CONFORMANT_VIRTUAL_KEYPAD_PART)
      {
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_KBD", &sx, &sy, &sw, &sh)) && (xwin))
@@ -215,7 +215,7 @@ _conformant_part_sizing_eval(Evas_Object *obj,
           (obj, sd->virtualkeypad, sx, sy, sw, sh);
      }
 
-   if (part_type & ELM_CONFORM_SOFTKEY_PART)
+   if (part_type & ELM_CONFORMANT_SOFTKEY_PART)
      {
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_STK", &sx, &sy, &sw, &sh)) && (xwin))
@@ -231,7 +231,7 @@ _conformant_part_sizing_eval(Evas_Object *obj,
           }
         _conformant_part_size_hints_set(obj, sd->softkey, sx, sy, sw, sh);
      }
-   if (part_type & ELM_CONFORM_CLIPBOARD_PART)
+   if (part_type & ELM_CONFORMANT_CLIPBOARD_PART)
      {
         if ((!_conformant_part_geometry_get_from_env
                ("ILLUME_CB", &sx, &sy, &sw, &sh)) && (xwin))
@@ -254,7 +254,7 @@ _conformant_parts_swallow(Evas_Object *obj)
 {
    Evas *e;
 
-   ELM_CONFORM_DATA_GET(obj, sd);
+   ELM_CONFORMANT_DATA_GET(obj, sd);
 
    e = evas_object_evas_get(obj);
 
@@ -268,7 +268,7 @@ _conformant_parts_swallow(Evas_Object *obj)
         evas_object_size_hint_max_set(sd->indicator, -1, 0);
      }
    else
-     _conformant_part_sizing_eval(obj, ELM_CONFORM_INDICATOR_PART);
+     _conformant_part_sizing_eval(obj, ELM_CONFORMANT_INDICATOR_PART);
 
    evas_object_color_set(sd->indicator, 0, 0, 0, 0);
    elm_layout_content_set(obj, "elm.swallow.indicator", sd->indicator);
@@ -281,7 +281,7 @@ _conformant_parts_swallow(Evas_Object *obj)
         evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
      }
    else
-     _conformant_part_sizing_eval(obj, ELM_CONFORM_VIRTUAL_KEYPAD_PART);
+     _conformant_part_sizing_eval(obj, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
 
    evas_object_color_set(sd->virtualkeypad, 0, 0, 0, 0);
    elm_layout_content_set(obj, "elm.swallow.virtualkeypad", sd->virtualkeypad);
@@ -294,7 +294,7 @@ _conformant_parts_swallow(Evas_Object *obj)
         evas_object_size_hint_max_set(sd->clipboard, -1, 0);
      }
    else
-     _conformant_part_sizing_eval(obj, ELM_CONFORM_CLIPBOARD_PART);
+     _conformant_part_sizing_eval(obj, ELM_CONFORMANT_CLIPBOARD_PART);
 
    evas_object_color_set(sd->clipboard, 0, 0, 0, 0);
    elm_layout_content_set(obj, "elm.swallow.clipboard", sd->clipboard);
@@ -307,16 +307,16 @@ _conformant_parts_swallow(Evas_Object *obj)
         evas_object_size_hint_max_set(sd->softkey, -1, 0);
      }
    else
-     _conformant_part_sizing_eval(obj, ELM_CONFORM_SOFTKEY_PART);
+     _conformant_part_sizing_eval(obj, ELM_CONFORMANT_SOFTKEY_PART);
 
    evas_object_color_set(sd->softkey, 0, 0, 0, 0);
    elm_layout_content_set(obj, "elm.swallow.softkey", sd->softkey);
 }
 
 static Eina_Bool
-_elm_conform_smart_theme(Evas_Object *obj)
+_elm_conformant_smart_theme(Evas_Object *obj)
 {
-   if (!ELM_WIDGET_CLASS(_elm_conform_parent_sc)->theme(obj))
+   if (!ELM_WIDGET_CLASS(_elm_conformant_parent_sc)->theme(obj))
      return EINA_FALSE;
 
    _conformant_parts_swallow(obj);
@@ -386,10 +386,10 @@ _move_resize_cb(void *data __UNUSED__,
 {
    Conformant_Part_Type part_type;
 
-   part_type = (ELM_CONFORM_INDICATOR_PART |
-                ELM_CONFORM_SOFTKEY_PART |
-                ELM_CONFORM_VIRTUAL_KEYPAD_PART |
-                ELM_CONFORM_CLIPBOARD_PART);
+   part_type = (ELM_CONFORMANT_INDICATOR_PART |
+                ELM_CONFORMANT_SOFTKEY_PART |
+                ELM_CONFORMANT_VIRTUAL_KEYPAD_PART |
+                ELM_CONFORMANT_CLIPBOARD_PART);
 
    _conformant_part_sizing_eval(obj, part_type);
 }
@@ -399,7 +399,7 @@ _show_region_job(void *data)
 {
    Evas_Object *focus_obj;
 
-   ELM_CONFORM_DATA_GET(data, sd);
+   ELM_CONFORMANT_DATA_GET(data, sd);
 
    focus_obj = elm_widget_focused_object_get(data);
    if (focus_obj)
@@ -425,7 +425,7 @@ _on_content_resize(void *data,
                    Evas_Object *obj __UNUSED__,
                    void *event_info __UNUSED__)
 {
-   ELM_CONFORM_DATA_GET(data, sd);
+   ELM_CONFORMANT_DATA_GET(data, sd);
 
    if (sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF) return;
 
@@ -443,7 +443,7 @@ _autoscroll_objects_update(void *data)
    const char *type;
    Evas_Object *sub, *top_scroller = NULL;
 
-   ELM_CONFORM_DATA_GET(data, sd);
+   ELM_CONFORMANT_DATA_GET(data, sd);
 
    sub = elm_widget_focused_object_get(data);
    //Look up for top most scroller in the focus object hierarchy
@@ -452,7 +452,7 @@ _autoscroll_objects_update(void *data)
    while (sub)
      {
         type = elm_widget_type_get(sub);
-        if (!strcmp(type, CONFORM_SMART_NAME)) break;
+        if (!strcmp(type, CONFORMANT_SMART_NAME)) break;
 
         for (i = 0; i < SUB_TYPE_COUNT; i++)
           if (!strcmp(type, sub_type[i]))
@@ -484,27 +484,27 @@ _on_prop_change(void *data,
 {
    Ecore_X_Event_Window_Property *ev = event;
 
-   ELM_CONFORM_DATA_GET(data, sd);
+   ELM_CONFORMANT_DATA_GET(data, sd);
 
    if (ev->atom == ECORE_X_ATOM_E_ILLUME_ZONE)
      {
         Conformant_Part_Type part_type;
 
-        part_type = (ELM_CONFORM_INDICATOR_PART |
-                     ELM_CONFORM_SOFTKEY_PART |
-                     ELM_CONFORM_VIRTUAL_KEYPAD_PART |
-                     ELM_CONFORM_CLIPBOARD_PART);
+        part_type = (ELM_CONFORMANT_INDICATOR_PART |
+                     ELM_CONFORMANT_SOFTKEY_PART |
+                     ELM_CONFORMANT_VIRTUAL_KEYPAD_PART |
+                     ELM_CONFORMANT_CLIPBOARD_PART);
 
         _conformant_part_sizing_eval(data, part_type);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY)
-     _conformant_part_sizing_eval(data, ELM_CONFORM_INDICATOR_PART);
+     _conformant_part_sizing_eval(data, ELM_CONFORMANT_INDICATOR_PART);
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_SOFTKEY_GEOMETRY)
-     _conformant_part_sizing_eval(data, ELM_CONFORM_SOFTKEY_PART);
+     _conformant_part_sizing_eval(data, ELM_CONFORMANT_SOFTKEY_PART);
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY)
-     _conformant_part_sizing_eval(data, ELM_CONFORM_VIRTUAL_KEYPAD_PART);
+     _conformant_part_sizing_eval(data, ELM_CONFORMANT_VIRTUAL_KEYPAD_PART);
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY)
-     _conformant_part_sizing_eval(data, ELM_CONFORM_CLIPBOARD_PART);
+     _conformant_part_sizing_eval(data, ELM_CONFORMANT_CLIPBOARD_PART);
    else if (ev->atom == ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE)
      {
         Ecore_X_Window zone;
@@ -541,11 +541,11 @@ _on_prop_change(void *data,
 #endif
 
 static void
-_elm_conform_smart_add(Evas_Object *obj)
+_elm_conformant_smart_add(Evas_Object *obj)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Conform_Smart_Data);
+   EVAS_SMART_DATA_ALLOC(obj, Elm_Conformant_Smart_Data);
 
-   ELM_WIDGET_CLASS(_elm_conform_parent_sc)->base.add(obj);
+   ELM_WIDGET_CLASS(_elm_conformant_parent_sc)->base.add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -555,9 +555,9 @@ _elm_conform_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_conform_smart_del(Evas_Object *obj)
+_elm_conformant_smart_del(Evas_Object *obj)
 {
-   ELM_CONFORM_DATA_GET(obj, sd);
+   ELM_CONFORMANT_DATA_GET(obj, sd);
 
 #ifdef HAVE_ELEMENTARY_X
    if (sd->prop_hdl) ecore_event_handler_del(sd->prop_hdl);
@@ -565,16 +565,16 @@ _elm_conform_smart_del(Evas_Object *obj)
 
    if (sd->show_region_job) ecore_job_del(sd->show_region_job);
 
-   ELM_WIDGET_CLASS(_elm_conform_parent_sc)->base.del(obj);
+   ELM_WIDGET_CLASS(_elm_conformant_parent_sc)->base.del(obj);
 }
 
 static void
-_elm_conform_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_conformant_smart_set_user(Elm_Layout_Smart_Class *sc)
 {
-   ELM_WIDGET_CLASS(sc)->base.add = _elm_conform_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _elm_conform_smart_del;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_conformant_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_conformant_smart_del;
 
-   ELM_WIDGET_CLASS(sc)->theme = _elm_conform_smart_theme;
+   ELM_WIDGET_CLASS(sc)->theme = _elm_conformant_smart_theme;
 
    /* not a 'focus chain manager' */
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
@@ -594,7 +594,7 @@ elm_conformant_add(Evas_Object *parent)
    e = evas_object_evas_get(parent);
    if (!e) return NULL;
 
-   obj = evas_object_smart_add(e, _elm_conform_smart_class_new());
+   obj = evas_object_smart_add(e, _elm_conformant_smart_class_new());
 
    /* NB: we got to sub-object-add before we probe for the top widget */
    if (!elm_widget_sub_object_add(parent, obj))
@@ -606,7 +606,7 @@ elm_conformant_add(Evas_Object *parent)
 
    if ((xwin) && (!elm_win_inlined_image_object_get(top)))
      {
-        ELM_CONFORM_DATA_GET(obj, sd);
+        ELM_CONFORMANT_DATA_GET(obj, sd);
 
         sd->prop_hdl = ecore_event_handler_add
             (ECORE_X_EVENT_WINDOW_PROPERTY, _on_prop_change, obj);
