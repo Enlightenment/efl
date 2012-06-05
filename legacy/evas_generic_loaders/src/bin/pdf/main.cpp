@@ -157,14 +157,26 @@ void poppler_load_image(int size_w, int size_h)
    if (!output_dev)
      return;
 
+#ifdef HAVE_POPPLER_020
+   output_dev->startDoc(pdfdoc);
+#else
    output_dev->startDoc(pdfdoc->getXRef());
+#endif
 
    if (dpi <= 0.0) dpi = DEF_DPI;
 
+
+#ifdef HAVE_POPPLER_020
+   page->displaySlice(output_dev, dpi, dpi, 
+                      0, false, false,
+                      0, 0, width, height,
+                      false, NULL, NULL);
+#else
    page->displaySlice(output_dev, dpi, dpi, 
                       0, false, false,
                       0, 0, width, height,
                       false, pdfdoc->getCatalog());
+#endif
    color_ptr = output_dev->getBitmap()->getDataPtr();
 
    shm_alloc(crop_width * crop_height * sizeof(DATA32));

@@ -60,7 +60,14 @@ PKG_PROG_PKG_CONFIG
 # Eina library
 PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
 
+have_poppler="no"
 PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12 poppler < 0.20], [have_poppler="yes"], [have_poppler="no"])
+PKG_CHECK_MODULES([POPPLER2], [poppler >= 0.20],
+			      [
+			       have_poppler="yes"
+			       AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
+			      ],
+			      [have_poppler="${have_poppler}"])
 
 PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
 

@@ -6,6 +6,7 @@ Changes since Evas Generic Loaders 1.2.0:
 Additions:
 
    * Add a librsvg generic loader.
+   * Add support for poppler 0.20
 
 Evas Generic Loaders 1.2.0
 

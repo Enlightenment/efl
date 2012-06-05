@@ -18,3 +18,7 @@
 
 	* Make rsvg backend use the generic backend as it is our main
 	source of crash in e17.
+
+2012-05-06  Fanina Cristian
+
+	* Add support for Poppler 0.20.
