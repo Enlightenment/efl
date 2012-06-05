@@ -205,11 +205,12 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_hover.h>
 #include <elm_image.h>
 #include <elm_index.h>
+#include <elm_inwin.h>
 #include <elm_label.h>
 #include <elm_layout.h>
 #include <elm_macros.h>
-#include <elm_mapbuf.h>
 #include <elm_map.h>
+#include <elm_mapbuf.h>
 #include <elm_menu.h>
 #include <elm_mirroring.h>
 #include <elm_need.h>

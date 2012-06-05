@@ -96,6 +96,7 @@ elm_grid.h \
 elm_hover.h \
 elm_icon.h \
 elm_image.h \
+elm_inwin.h \
 elm_plug.h \
 elm_index.h \
 elm_intro.h \
