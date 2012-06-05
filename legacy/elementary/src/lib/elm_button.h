@@ -2,6 +2,9 @@
  * @defgroup Button Button
  * @ingroup Elementary
  *
+ * @image html button_inheritance_tree.png
+ * @image latex button_inheritance_tree.eps
+ *
  * @image html img/widget/button/preview-00.png
  * @image latex img/widget/button/preview-00.eps
  * @image html img/widget/button/preview-01.png

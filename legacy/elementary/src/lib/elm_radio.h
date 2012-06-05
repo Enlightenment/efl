@@ -2,6 +2,9 @@
  * @defgroup Radio Radio
  * @ingroup Elementary
  *
+ * @image html radio_inheritance_tree.png
+ * @image latex radio_inheritance_tree.eps
+ *
  * @image html img/widget/radio/preview-00.png
  * @image latex img/widget/radio/preview-00.eps
  *

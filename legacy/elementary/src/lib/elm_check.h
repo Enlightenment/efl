@@ -2,6 +2,9 @@
  * @defgroup Check Check
  * @ingroup Elementary
  *
+ * @image html check_inheritance_tree.png
+ * @image latex check_inheritance_tree.eps
+ *
  * @image html img/widget/check/preview-00.png
  * @image latex img/widget/check/preview-00.eps
  * @image html img/widget/check/preview-01.png

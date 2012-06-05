@@ -2,6 +2,9 @@
  * @defgroup File_Selector_Button File Selector Button
  * @ingroup Elementary
  *
+ * @image html fileselector_button_inheritance_tree.png
+ * @image latex fileselector_button_inheritance_tree.eps
+ *
  * @image html img/widget/fileselector_button/preview-00.png
  * @image latex img/widget/fileselector_button/preview-00.eps
  * @image html img/widget/fileselector_button/preview-01.png

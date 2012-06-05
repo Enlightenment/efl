@@ -2,6 +2,9 @@
  * @defgroup Spinner Spinner
  * @ingroup Elementary
  *
+ * @image html spinner_inheritance_tree.png
+ * @image latex spinner_inheritance_tree.eps
+ *
  * @image html img/widget/spinner/preview-00.png
  * @image latex img/widget/spinner/preview-00.eps
  *

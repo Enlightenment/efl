@@ -5,6 +5,12 @@
  * @addtogroup Video
  * @{
  *
+ * @image html video_inheritance_tree.png
+ * @image latex video_inheritance_tree.eps
+ *
+ * @image html player_inheritance_tree.png
+ * @image latex player_inheritance_tree.eps
+ *
  * Elementary comes with two object that help design application that need
  * to display video.
  *

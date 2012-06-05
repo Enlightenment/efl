@@ -2,6 +2,9 @@
  * @defgroup Slideshow Slideshow
  * @ingroup Elementary
  *
+ * @image html slideshow_inheritance_tree.png
+ * @image latex slideshow_inheritance_tree.eps
+ *
  * @image html img/widget/slideshow/preview-00.png
  * @image latex img/widget/slideshow/preview-00.eps
  *

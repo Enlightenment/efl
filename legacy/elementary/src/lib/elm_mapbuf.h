@@ -2,6 +2,9 @@
  * @defgroup Mapbuf Mapbuf
  * @ingroup Elementary
  *
+ * @image html mapbuf_inheritance_tree.png
+ * @image latex mapbuf_inheritance_tree.eps
+ *
  * @image html img/widget/mapbuf/preview-00.png
  * @image latex img/widget/mapbuf/preview-00.eps width=\textwidth
  *

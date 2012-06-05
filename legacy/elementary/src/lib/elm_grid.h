@@ -2,6 +2,9 @@
  * @defgroup Grid Grid
  * @ingroup Elementary
  *
+ * @image html grid_inheritance_tree.png
+ * @image latex grid_inheritance_tree.eps
+ *
  * The grid is a grid layout widget that lays out a series of children as a
  * fixed "grid" of widgets using a given percentage of the grid width and
  * height each using the child object.

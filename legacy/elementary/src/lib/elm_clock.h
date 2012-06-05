@@ -2,6 +2,9 @@
  * @defgroup Clock Clock
  * @ingroup Elementary
  *
+ * @image html clock_inheritance_tree.png
+ * @image latex clock_inheritance_tree.eps
+ *
  * @image html img/widget/clock/preview-00.png
  * @image latex img/widget/clock/preview-00.eps
  *

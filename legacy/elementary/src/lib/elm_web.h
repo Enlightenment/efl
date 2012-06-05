@@ -2,6 +2,9 @@
  * @defgroup Web Web
  * @ingroup Elementary
  *
+ * @image html web_inheritance_tree.png
+ * @image latex web_inheritance_tree.eps
+ *
  * @image html img/widget/web/preview-00.png
  * @image latex img/widget/web/preview-00.eps
  *

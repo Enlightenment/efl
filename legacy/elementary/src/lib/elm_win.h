@@ -2,6 +2,9 @@
  * @defgroup Win Win
  * @ingroup Elementary
  *
+ * @image html win_inheritance_tree.png
+ * @image latex win_inheritance_tree.eps
+ *
  * @image html img/widget/win/preview-00.png
  * @image latex img/widget/win/preview-00.eps
  *

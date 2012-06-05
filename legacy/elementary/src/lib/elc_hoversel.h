@@ -2,6 +2,9 @@
  * @defgroup Hoversel Hoversel
  * @ingroup Elementary
  *
+ * @image html hoversel_inheritance_tree.png
+ * @image latex hoversel_inheritance_tree.eps
+ *
  * @image html img/widget/hoversel/preview-00.png
  * @image latex img/widget/hoversel/preview-00.eps
  *

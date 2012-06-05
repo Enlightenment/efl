@@ -2,6 +2,9 @@
  * @defgroup Notify Notify
  * @ingroup Elementary
  *
+ * @image html notify_inheritance_tree.png
+ * @image latex notify_inheritance_tree.eps
+ *
  * @image html img/widget/notify/preview-00.png
  * @image latex img/widget/notify/preview-00.eps
  *

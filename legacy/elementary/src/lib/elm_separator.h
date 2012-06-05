@@ -2,6 +2,9 @@
  * @defgroup Separator Separator
  * @ingroup Elementary
  *
+ * @image html separator_inheritance_tree.png
+ * @image latex separator_inheritance_tree.eps
+ *
  * @brief Separator is a very thin object used to separate other objects.
  *
  * A separator can be vertical or horizontal.

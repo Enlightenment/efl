@@ -2,6 +2,9 @@
  * @defgroup Label Label
  * @ingroup Elementary
  *
+ * @image html label_inheritance_tree.png
+ * @image latex label_inheritance_tree.eps
+ *
  * @image html img/widget/label/preview-00.png
  * @image latex img/widget/label/preview-00.eps
  *

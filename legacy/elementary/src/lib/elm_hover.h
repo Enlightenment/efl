@@ -2,6 +2,9 @@
  * @defgroup Hover Hover
  * @ingroup Elementary
  *
+ * @image html hover_inheritance_tree.png
+ * @image latex hover_inheritance_tree.eps
+ *
  * @image html img/widget/hover/preview-00.png
  * @image latex img/widget/hover/preview-00.eps
  *

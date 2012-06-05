@@ -2,6 +2,9 @@
  * @defgroup Image Image
  * @ingroup Elementary
  *
+ * @image html image_inheritance_tree.png
+ * @image latex image_inheritance_tree.eps
+ *
  * @image html img/widget/image/preview-00.png
  * @image latex img/widget/image/preview-00.eps
  *

@@ -2,6 +2,9 @@
  * @defgroup Fileselector File Selector
  * @ingroup Elementary
  *
+ * @image html fileselector_inheritance_tree.png
+ * @image latex fileselector_inheritance_tree.eps
+ *
  * @image html img/widget/fileselector/preview-00.png
  * @image latex img/widget/fileselector/preview-00.eps
  *

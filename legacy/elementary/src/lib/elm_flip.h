@@ -2,6 +2,9 @@
  * @defgroup Flip Flip
  * @ingroup Elementary
  *
+ * @image html flip_inheritance_tree.png
+ * @image latex flip_inheritance_tree.eps
+ *
  * @image html img/widget/flip/preview-00.png
  * @image latex img/widget/flip/preview-00.eps
  *

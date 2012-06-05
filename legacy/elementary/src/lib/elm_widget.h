@@ -255,8 +255,6 @@
  * type of the private data of the second class (its parent), direct
  * child of #Elm_Widget_Smart_Class.
  *
- * [image here later, explaining process]
- *
  * It is from the base private data, #Elm_Widget_Smart_Data, that we
  * reach an object's class functions, by the given object
  * instance. This is the reason of the first field of that struct: a
@@ -293,6 +291,15 @@
  * @image html elm-widget-hierarchy.png
  * @image rtf elm-widget-hierarchy.png
  * @image latex elm-widget-hierarchy.eps
+ *
+ * @section elm-hierarchy-tree Elementary Widgets Hierarchy Tree
+ *
+ * The following figure illustrates the current state on the
+ * Elementary widget inheriting tree.
+ *
+ * @image html elm-widget-tree.png
+ * @image rtf elm-widget-tree.png
+ * @image latex elm-widget-tree.eps
  */
 
 /**

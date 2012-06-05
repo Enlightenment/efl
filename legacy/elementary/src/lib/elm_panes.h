@@ -2,6 +2,9 @@
  * @defgroup Panes Panes
  * @ingroup Elementary
  *
+ * @image html panes_inheritance_tree.png
+ * @image latex panes_inheritance_tree.eps
+ *
  * @image html img/widget/panes/preview-00.png
  * @image latex img/widget/panes/preview-00.eps width=\textwidth
  *

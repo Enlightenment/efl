@@ -2,6 +2,9 @@
  * @defgroup Bg Background
  * @ingroup Elementary
  *
+ * @image html bg_inheritance_tree.png
+ * @image latex bg_inheritance_tree.eps
+ *
  * @image html img/widget/bg/preview-00.png
  * @image latex img/widget/bg/preview-00.eps
  *

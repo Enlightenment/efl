@@ -2,6 +2,9 @@
  * @defgroup Table Table
  * @ingroup Elementary
  *
+ * @image html table_inheritance_tree.png
+ * @image latex table_inheritance_tree.eps
+ *
  * A container widget to arrange other widgets in a table where items can
  * span multiple columns or rows - even overlap (and then be raised or
  * lowered accordingly to adjust stacking if they do overlap).

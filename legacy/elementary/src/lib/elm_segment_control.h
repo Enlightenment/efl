@@ -2,6 +2,9 @@
  * @defgroup SegmentControl SegmentControl
  * @ingroup Elementary
  *
+ * @image html segment_control_inheritance_tree.png
+ * @image latex segment_control_inheritance_tree.eps
+ *
  * @image html img/widget/segment_control/preview-00.png
  * @image latex img/widget/segment_control/preview-00.eps width=\textwidth
  *

@@ -2,6 +2,9 @@
  * @defgroup Slider Slider
  * @ingroup Elementary
  *
+ * @image html slider_inheritance_tree.png
+ * @image latex slider_inheritance_tree.eps
+ *
  * @image html img/widget/slider/preview-00.png
  * @image latex img/widget/slider/preview-00.eps width=\textwidth
  *

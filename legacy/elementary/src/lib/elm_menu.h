@@ -2,6 +2,9 @@
  * @defgroup Menu Menu
  * @ingroup Elementary
  *
+ * @image html menu_inheritance_tree.png
+ * @image latex menu_inheritance_tree.eps
+ *
  * @image html img/widget/menu/preview-00.png
  * @image latex img/widget/menu/preview-00.eps
  *

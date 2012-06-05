@@ -2,6 +2,9 @@
  * @defgroup GLView GLView
  * @ingroup Elementary
  *
+ * @image html glview_inheritance_tree.png
+ * @image latex glview_inheritance_tree.eps
+ *
  * A GLView widget allows for simple GL rendering in elementary environment.
  * GLView hides all the complicated evas_gl details so that the user only
  * has to deal with registering a few callback functions for rendering

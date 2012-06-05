@@ -2,6 +2,9 @@
  * @defgroup Elm_Gesture_Layer Gesture Layer
  * @ingroup Elementary
  *
+ * @image html gesture_layer_inheritance_tree.png
+ * @image latex gesture_layer_inheritance_tree.eps
+ *
  * Gesture Layer Usage:
  *
  * Use Gesture Layer to detect gestures.

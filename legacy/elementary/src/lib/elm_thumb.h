@@ -2,6 +2,9 @@
  * @defgroup Thumb Thumbnail
  * @ingroup Elementary
  *
+ * @image html thumb_inheritance_tree.png
+ * @image latex thumb_inheritance_tree.eps
+ *
  * @image html img/widget/thumb/preview-00.png
  * @image latex img/widget/thumb/preview-00.eps
  *

@@ -2,8 +2,8 @@
  * @defgroup Inwin Inwin
  * @ingroup Win
  *
- * @image html img/inwin_inheritance_tree.png
- * @image latex img/inwin_inheritance_tree.eps
+ * @image html inwin_inheritance_tree.png
+ * @image latex inwin_inheritance_tree.eps
  *
  * @image html img/widget/inwin/preview-00.png
  * @image latex img/widget/inwin/preview-00.eps

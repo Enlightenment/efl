@@ -2,6 +2,9 @@
  * @defgroup Colorselector Colorselector
  * @ingroup Elementary
  *
+ * @image html colorselector_inheritance_tree.png
+ * @image latex colorselector_inheritance_tree.eps
+ *
  * @image html img/widget/colorselector/preview-00.png
  * @image latex img/widget/colorselector/preview-00.eps
  *

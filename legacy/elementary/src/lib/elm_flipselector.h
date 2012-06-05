@@ -2,6 +2,9 @@
  * @defgroup Flipselector Flip Selector
  * @ingroup Elementary
  *
+ * @image html flipselector_inheritance_tree.png
+ * @image latex flipselector_inheritance_tree.eps
+ *
  * @image html img/widget/flipselector/preview-00.png
  * @image latex img/widget/flipselector/preview-00.eps
  *

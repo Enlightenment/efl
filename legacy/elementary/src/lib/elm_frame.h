@@ -2,6 +2,9 @@
  * @defgroup Frame Frame
  * @ingroup Elementary
  *
+ * @image html frame_inheritance_tree.png
+ * @image latex frame_inheritance_tree.eps
+ *
  * @image html img/widget/frame/preview-00.png
  * @image latex img/widget/frame/preview-00.eps
  *

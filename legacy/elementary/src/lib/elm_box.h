@@ -2,6 +2,9 @@
  * @defgroup Box Box
  * @ingroup Elementary
  *
+ * @image html box_inheritance_tree.png
+ * @image latex box_inheritance_tree.eps
+ *
  * @image html img/widget/box/preview-00.png
  * @image latex img/widget/box/preview-00.eps width=\textwidth
  *

@@ -2,6 +2,9 @@
  * @defgroup Bubble Bubble
  * @ingroup Elementary
  *
+ * @image html bubble_inheritance_tree.png
+ * @image latex bubble_inheritance_tree.eps
+ *
  * @image html img/widget/bubble/preview-00.png
  * @image latex img/widget/bubble/preview-00.eps
  * @image html img/widget/bubble/preview-01.png

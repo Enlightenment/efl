@@ -7,6 +7,9 @@
  *
  * @section elm-container-class The Elementary Container Class
  *
+ * @image html container_inheritance_tree.png
+ * @image latex container_inheritance_tree.eps
+ *
  * This class defines a common interface for objects acting like
  * containers, i.e. objects parenting others and displaying their
  * childs "inside" of them somehow.

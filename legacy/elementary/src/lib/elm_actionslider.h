@@ -2,6 +2,9 @@
  * @addtogroup Actionslider Actionslider
  * @ingroup Elementary
  *
+ * @image html actionslider_inheritance_tree.png
+ * @image latex actionslider_inheritance_tree.eps
+ *
  * @image html img/widget/actionslider/preview-00.png
  * @image latex img/widget/actionslider/preview-00.eps
  *
@@ -17,7 +20,8 @@
  *
  * Magnets can be set on the above positions.
  *
- * When the indicator is released, it will move to its nearest "enabled and magnetized" position.
+ * When the indicator is released, it will move to its nearest
+ * "enabled and magnetized" position.
  *
  * @note By default all positions are set as enabled.
  *

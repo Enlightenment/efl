@@ -2,6 +2,9 @@
  * @defgroup Plug Plug
  * @ingroup Elementary
  *
+ * @image html plug_inheritance_tree.png
+ * @image latex plug_inheritance_tree.eps
+ *
  * An object that allows one to show an image which other process created.
  * It can be used anywhere like any other elementary widget.
  *

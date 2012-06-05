@@ -2,6 +2,9 @@
  * @defgroup Conformant Conformant
  * @ingroup Elementary
  *
+ * @image html conformant_inheritance_tree.png
+ * @image latex conformant_inheritance_tree.eps
+ *
  * @image html img/widget/conformant/preview-00.png
  * @image latex img/widget/conformant/preview-00.eps width=\textwidth
  *

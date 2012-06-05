@@ -2,6 +2,9 @@
  * @defgroup Photo Photo
  * @ingroup Elementary
  *
+ * @image html photo_inheritance_tree.png
+ * @image latex photo_inheritance_tree.eps
+ *
  * The Elementary photo widget is intended for displaying a photo, for
  * ex., a person's image (contact). Simple, yet with a very specific
  * purpose. It has a decorative frame around the inner image itself,

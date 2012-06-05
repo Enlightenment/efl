@@ -2,6 +2,9 @@
  * @defgroup Index Index
  * @ingroup Elementary
  *
+ * @image html index_inheritance_tree.png
+ * @image latex index_inheritance_tree.eps
+ *
  * @image html img/widget/index/preview-00.png
  * @image latex img/widget/index/preview-00.eps
  *

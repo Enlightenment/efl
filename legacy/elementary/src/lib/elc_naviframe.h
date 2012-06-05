@@ -2,6 +2,9 @@
  * @defgroup Naviframe Naviframe
  * @ingroup Elementary
  *
+ * @image html naviframe_inheritance_tree.png
+ * @image latex naviframe_inheritance_tree.eps
+ *
  * @brief Naviframe stands for navigation frame. It's a views manager
  * for applications.
  *

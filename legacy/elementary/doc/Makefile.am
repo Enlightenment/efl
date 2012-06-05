@@ -84,6 +84,61 @@ WGT_PREVIEW = \
 	web:preview-00.png:widget_preview_web:300:300 \
 	win:preview-00.png:widget_preview_win:200:200
 
+# put in here every elm widget, so that it gets its hierarchy tree built
+# then, make a reference to the generated image, in the form
+# @image html <WGTNAME>_inheritance_tree.{png,eps}
+WGT_TREE = \
+	actionslider \
+	bg \
+	box \
+	bubble \
+	button \
+	calendar \
+	check \
+	clock \
+	colorselector \
+	conformant \
+	container \
+	datetime \
+	dayselector \
+	fileselector \
+	fileselector_button \
+	flip \
+	flipselector \
+	frame \
+	gesture_layer \
+	glview \
+	grid \
+	hover \
+	hoversel \
+	icon \
+	image \
+	index \
+	inwin \
+	label \
+	layout \
+	mapbuf \
+	menu \
+	naviframe \
+	notify \
+	panes \
+	photo \
+	player \
+	plug \
+	progressbar \
+	radio \
+	route \
+	segment_control \
+	separator \
+	slider \
+	slideshow \
+	spinner \
+	table \
+	thumb \
+	video \
+	web \
+	win
+
 widget-build:
 	@$(MAKE) -C widgets
 
@@ -95,10 +150,25 @@ widget-preview: widget-build
 		BIN=$${ENTRY[2]} ; \
 		X=$${ENTRY[3]} ; \
 		Y=$${ENTRY[4]} ; \
-		echo "generating widget preview image" $${SS} "for widget" $${DIR}; \
+		echo "Generating widget preview image" $${SS} "for widget" $${DIR}; \
 		$(top_srcdir)/doc/shot.sh $(top_builddir)/doc/html/img/widget/$${DIR} $${SS} $(top_builddir)/doc/widgets/$${BIN} $${X} $${Y} ; \
 		mkdir -p $(top_builddir)/doc/latex/img/widget/$${DIR} ; \
 		convert $(top_builddir)/doc/html/img/widget/$${DIR}/$${SS} $(top_builddir)/doc/latex/img/widget/$${DIR}/$${SS/.png/.eps} ; \
+	done
+
+widget-tree-figures: widget-build
+	$(srcdir)/widget_hierarchy.py --scan -d $(top_srcdir)/src/lib -o $(builddir)/widget_tree.p;
+	$(srcdir)/widget_hierarchy.py --tree -i $(builddir)/widget_tree.p > $(builddir)/widgets_tree.dot;
+	dot -Tpng -o $(top_srcdir)/doc/img/elm-widget-tree.png $(top_builddir)/doc/widgets_tree.dot;
+	convert $(top_srcdir)/doc/img/elm-widget-tree.png $(top_srcdir)/doc/img/"widgets_tree.eps";
+	@for wgt in $(WGT_TREE); do \
+		WGT_FILE_NAME="WNAME_inheritance_tree.dot"; \
+		WGT_FILE_NAME=$${WGT_FILE_NAME/WNAME/$${wgt}}; \
+		echo "Generating widget inheritance tree image for widget" $${wgt}; \
+		$(srcdir)/widget_hierarchy.py --widget=$${wgt} -i $(top_builddir)/doc/widget_tree.p > $(top_builddir)/doc/$${WGT_FILE_NAME}; \
+		dot -Tpng -o $(top_srcdir)/doc/img/$${WGT_FILE_NAME/.dot/.png} $(top_builddir)/doc/$${WGT_FILE_NAME}; \
+		convert $(top_srcdir)/doc/img/$${WGT_FILE_NAME/.dot/.png} $(top_srcdir)/doc/img/$${WGT_FILE_NAME/.dot/.eps}; \
+		rm $${WGT_FILE_NAME}; \
 	done
 
 doc-clean:
@@ -109,8 +179,10 @@ gen-doc:
 	cp -r $(srcdir)/img/* html/
 	cp -r $(srcdir)/img/* latex/
 
-doc: all doc-clean widget-preview gen-doc
-	@echo "entering src/examples/"
+#run the last rule whenever the elm widget tree changes
+#commit the changed pictures, then. depends on python and graphviz
+doc: all doc-clean widget-preview gen-doc #widget-tree-figures
+	@echo "Entering src/examples/"
 	$(MAKE) -C $(top_builddir)/src/examples screenshots
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc

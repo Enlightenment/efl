@@ -2,6 +2,9 @@
  * @defgroup Calendar Calendar
  * @ingroup Elementary
  *
+ * @image html calendar_inheritance_tree.png
+ * @image latex calendar_inheritance_tree.eps
+ *
  * This is a calendar widget. It helps applications to flexibly
  * display a calender with day of the week, date, year and
  * month. Applications are able to set specific dates to be reported

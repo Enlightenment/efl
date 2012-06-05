@@ -2,6 +2,8 @@
  * @defgroup Datetime Datetime
  * @ingroup Elementary
  *
+ * @image html datetime_inheritance_tree.png
+ * @image latex datetime_inheritance_tree.eps
  *
  * @image html img/widget/datetime/preview-00.png
  * @image latex img/widget/datetime/preview-00.eps

@@ -2,6 +2,9 @@
  * @defgroup Icon Icon
  * @ingroup Elementary
  *
+ * @image html icon_inheritance_tree.png
+ * @image latex icon_inheritance_tree.eps
+ *
  * @image html img/widget/icon/preview-00.png
  * @image latex img/widget/icon/preview-00.eps
  *

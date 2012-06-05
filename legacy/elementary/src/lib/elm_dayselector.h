@@ -2,6 +2,9 @@
  * @defgroup Dayselector Dayselector
  * @ingroup Elementary
  *
+ * @image html dayselector_inheritance_tree.png
+ * @image latex dayselector_inheritance_tree.eps
+ *
  * @image html img/widget/dayselector/preview-00.png
  * @image latex img/widget/dayselector/preview-00.eps
  *

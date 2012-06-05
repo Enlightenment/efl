@@ -2,6 +2,9 @@
  * @defgroup Progressbar Progress bar
  * @ingroup Elementary
  *
+ * @image html progressbar_inheritance_tree.png
+ * @image latex progressbar_inheritance_tree.eps
+ *
  * The progress bar is a widget for visually representing the
  * progress status of a given job/task.
  *
