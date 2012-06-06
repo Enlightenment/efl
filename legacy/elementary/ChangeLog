@@ -126,6 +126,18 @@
 	* Move X related window items into their own substruct of
 	_Elm_Win_Smart_Data to allow grouping based on engine.
 
+2012-05-29 Rob Bradford
+	* Move X related cursor items into their own substruct of Elm_Cursor
+	to make supporting cursors on other platforms cleaner.
+
+2012-05-30 Rob Bradford
+	* Add support for setting the cursor under Wayland:
+	* Introduce a configure option and #define to as per other engines
+	* Add always-built API function to allow identification of running
+	under Wayland (like for X11)
+	* Call into Ecore to set the cursor when the mouse enters the desired
+	widget.
+
 2012-05-30 Mike Blumenkrantz
 
         * Fix even/odd signals for genlist items

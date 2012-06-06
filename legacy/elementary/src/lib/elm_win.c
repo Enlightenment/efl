@@ -50,6 +50,13 @@ struct _Elm_Win_Smart_Data
       Ecore_Event_Handler           *client_message_handler;
    } x;
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   struct
+   {
+     Ecore_Wl_Window             *win;
+   } wl;
+#endif
+
    Ecore_Job                     *deferred_resize_job;
    Ecore_Job                     *deferred_child_eval_job;
 
@@ -2146,6 +2153,10 @@ elm_win_add(Evas_Object *parent,
    _elm_win_xwindow_get(sd);
 #endif
 
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   sd->wl.win = ecore_evas_wayland_window_get(sd->ee);
+#endif
+
    if ((_elm_config->bgpixmap) && (!_elm_config->compositing))
      ecore_evas_avoid_damage_set(sd->ee, ECORE_EVAS_AVOID_DAMAGE_EXPOSE);
    // bg pixmap done by x - has other issues like can be redrawn by x before it
@@ -3384,3 +3395,24 @@ elm_win_xwindow_get(const Evas_Object *obj)
 #endif
    return 0;
 }
+
+EAPI Ecore_Wl_Window *
+elm_win_wl_window_get(const Evas_Object *obj)
+{
+   if (!obj) return NULL;
+
+   if (!evas_object_smart_type_check_ptr(obj, WIN_SMART_NAME))
+     {
+        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+        return ecore_evas_wayland_window_get(ee);
+     }
+
+   ELM_WIN_CHECK(obj) NULL;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, NULL);
+#if HAVE_ELEMENTARY_WAYLAND
+   if (sd->wl.win) return sd->wl.win;
+   if (sd->parent) return elm_win_wl_window_get(sd->parent);
+#endif
+   return NULL;
+}
+

@@ -135,9 +135,17 @@ struct _Elm_Cursor
    Ecore_Evas *ee;
    Evas *evas;
 #ifdef HAVE_ELEMENTARY_X
-   Ecore_X_Cursor cursor;
-   Ecore_X_Window win;
+   struct {
+     Ecore_X_Cursor cursor;
+     Ecore_X_Window win;
+   } x;
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   struct {
+     Ecore_Wl_Window *win;
+   } wl;
+#endif
+
    Eina_Bool visible:1;
    Eina_Bool use_engine:1;
    Eina_Bool engine_only:1;
@@ -215,8 +223,12 @@ _elm_cursor_mouse_in(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSE
    else
      {
 #ifdef HAVE_ELEMENTARY_X
-        if (cur->win)
-          ecore_x_window_cursor_set(cur->win, cur->cursor);
+        if (cur->x.win)
+          ecore_x_window_cursor_set(cur->x.win, cur->x.cursor);
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        if (cur->wl.win)
+          ecore_wl_window_cursor_from_name_set(cur->wl.win, cur->cursor_name);
 #endif
      }
    evas_event_thaw(cur->evas);
@@ -255,8 +267,12 @@ _elm_cursor_mouse_out(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUS
    else
      {
 #ifdef HAVE_ELEMENTARY_X
-        if (cur->win)
-          ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
+        if (cur->x.win)
+          ecore_x_window_cursor_set(cur->x.win, ECORE_X_CURSOR_X);
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        if (cur->wl.win)
+          ecore_wl_window_cursor_default_restore(cur->wl.win);
 #endif
      }
    evas_event_thaw(cur->evas);
@@ -301,23 +317,26 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
    if (cur->use_engine)
      {
 #ifdef HAVE_ELEMENTARY_X
-        struct _Cursor_Id *cur_id;
-
-        cur_id = bsearch(&(cur->cursor_name), _cursors, _cursors_count,
-                         sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
-
-        cur->win = elm_win_xwindow_get(cur->eventarea);
-        if (cur->win)
+        cur->x.win = elm_win_xwindow_get(cur->eventarea);
+        if (cur->x.win)
           {
+             struct _Cursor_Id *cur_id;
+
+             cur_id = bsearch(&(cur->cursor_name), _cursors, _cursors_count,
+                              sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
+
              if (!cur_id)
                {
                   INF("X cursor couldn't be found: %s. Using default.",
                       cur->cursor_name);
-                  cur->cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_X);
+                  cur->x.cursor = ecore_x_cursor_shape_get(ECORE_X_CURSOR_X);
                }
              else
-                cur->cursor = ecore_x_cursor_shape_get(cur_id->id);
+                cur->x.cursor = ecore_x_cursor_shape_get(cur_id->id);
           }
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+        cur->wl.win = elm_win_wl_window_get(cur->eventarea);
 #endif
      }
 }
@@ -425,8 +444,8 @@ elm_object_cursor_unset(Evas_Object *obj)
           ecore_evas_object_cursor_set(cur->ee, NULL, ELM_OBJECT_LAYER_CURSOR,
                                        cur->hot_x, cur->hot_y);
 #ifdef HAVE_ELEMENTARY_X
-        else if (cur->win)
-          ecore_x_window_cursor_set(cur->win, ECORE_X_CURSOR_X);
+        else if (cur->x.win)
+          ecore_x_window_cursor_set(cur->x.win, ECORE_X_CURSOR_X);
 #endif
      }
 

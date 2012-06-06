@@ -12,6 +12,9 @@
 #ifdef HAVE_ELEMENTARY_WINCE
 #include <Ecore_WinCE.h>
 #endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+#include <Ecore_Wayland.h>
+#endif
 
 #include "elm_widget.h"
 

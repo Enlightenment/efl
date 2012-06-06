@@ -444,6 +444,29 @@ if test "x$want_elementary_wince" = "xyes" -a "x$have_elementary_wince" = "xno";
     AC_MSG_ERROR([ecore-wince support requested, but not found by pkg-config.])
 fi
 
+have_elementary_wayland="no"
+want_elementary_wayland="auto"
+AC_ARG_ENABLE([ecore-x],
+   [AC_HELP_STRING([--disable-ecore-wayland], [disable ecore-wayland support. @<:@default=detect@:>@])],
+   [want_elementary_wayland=$enableval], [])
+
+if test "x$want_elementary_wayland" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_WAYLAND],
+      [ecore-wayland],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_WAYLAND, 1, [Wayland support for Elementary])
+       have_elementary_wayland="yes"
+       requirement_elm="ecore-wayland ${requirement_elm}"
+      ],
+      [have_elementary_wayland="no"]
+   )
+else
+    have_elementary_wayland="no"
+fi
+if test "x$want_elementary_wayland" = "xyes" -a "x$have_elementary_wayland" = "xno"; then
+    AC_MSG_ERROR([ecore-x support requested, but not found by pkg-config.])
+fi
+
 ELM_EDBUS_DEF="#undef"
 have_elementary_edbus="no"
 want_elementary_edbus="auto"
@@ -752,6 +775,7 @@ echo "    SDL....................: ${have_elementary_sdl}"
 echo "    Cocoa..................: ${have_elementary_cocoa}"
 echo "    Windows XP.............: ${have_elementary_win32}"
 echo "    Windows CE.............: ${have_elementary_wince}"
+echo "    Wayland...............:. ${have_elementary_wayland}"
 echo
 echo "  Features:"
 echo "    Ecore_IMF..............: ${have_ecore_imf}"
