@@ -717,3 +717,17 @@
         * ECORE_{CON,IPC}_NO_PROXY now available for disabling proxying on certain connections
         * Added new resolver method: dns.c -- This is used by default now when ipv6 is enabled
           and c-ares support is disabled.
+
+2012-06-06 Rob Bradford
+
+        * Ecore_Wayland: Enhance the keyboard input handling
+        * Associate the keymap with the input device rather than the display
+        since you could could have different keymaps associated with different
+        devices.
+        * Increase the size of character arrays used for the string
+        representations of the keyname, keysym and for the string
+        representing the key.
+        * Re-enable the code that converts the keysym to a printable definition
+        - this is required where the keysym is not the same as the printable
+        definition
+
