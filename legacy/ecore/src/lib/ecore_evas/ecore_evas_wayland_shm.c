@@ -232,8 +232,7 @@ ecore_evas_wayland_shm_new(const char *disp_name, unsigned int parent, int x, in
    if (ee->prop.draw_frame)
      evas_output_framespace_set(ee->evas, 4, 18, 8, 22);
 
-   if (parent)
-     p = ecore_wl_window_find(parent);
+   if (parent) p = ecore_wl_window_find(parent);
 
    /* FIXME: Get if parent is alpha, and set */
 
@@ -1007,7 +1006,7 @@ _ecore_evas_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *eve
         if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
         ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
         evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
-        _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
+//        _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
         ee->in = EINA_TRUE;
      }
    return ECORE_CALLBACK_PASS_ON;
@@ -1028,7 +1027,7 @@ _ecore_evas_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *ev
    if (ee->in)
      {
         ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
-        _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
+//        _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
         evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
         if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
         if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
