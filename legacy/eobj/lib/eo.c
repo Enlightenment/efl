@@ -1291,7 +1291,10 @@ _eo_unref(Eo *obj)
           }
 #endif
 
-        if (!obj->manual_free) _eo_free(obj);
+        if (!obj->manual_free)
+           _eo_free(obj);
+        else
+           _eo_ref(obj); /* If we manual free, we keep a phantom ref. */
      }
 }
 
@@ -1580,7 +1583,7 @@ eo_manual_free(Eo *obj)
         return;
      }
 
-   if (0 != obj->refcount)
+   if (!obj->del)
      {
         ERR("Tried deleting the object %p while still referenced(%d).", obj, eo_ref_get(obj));
         return;
