@@ -1053,7 +1053,7 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
 EAPI Evas_Object *
 elm_naviframe_item_pop(Evas_Object *obj)
 {
-   Elm_Naviframe_Item *it, *prev_it;
+   Elm_Naviframe_Item *it, *prev_it = NULL;
    Evas_Object *content = NULL;
 
    ELM_NAVIFRAME_CHECK(obj) NULL;
