@@ -8,17 +8,17 @@ Evas_Object *ctxpopup = elm_ctxpopup_add(o);
 
 Evas_Object *ic = elm_icon_add(ctxpopup);
 elm_icon_standard_set(ic, "home");
-elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 elm_ctxpopup_item_append(ctxpopup, "Go to home folder", ic, NULL, NULL);
 
 ic = elm_icon_add(ctxpopup);
 elm_icon_standard_set(ic, "delete");
-elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 elm_ctxpopup_item_append(ctxpopup, "Delete file", ic, NULL, NULL);
 
 ic = elm_icon_add(ctxpopup);
 elm_icon_standard_set(ic, "folder");
-elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 Elm_Object_Item *it = elm_ctxpopup_item_append(ctxpopup, "Navigate to folder", ic, NULL, NULL);
 elm_object_item_disabled_set(it, EINA_TRUE);
 

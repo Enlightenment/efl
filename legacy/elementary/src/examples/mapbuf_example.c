@@ -76,7 +76,7 @@ elm_main(int argc, char **argv)
           {
              ic = elm_icon_add(win);
              elm_icon_standard_set(ic, "home");
-             elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+             elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
              evas_object_show(ic);
              elm_table_pack(tb, ic, i, j, 1, 1);
           }

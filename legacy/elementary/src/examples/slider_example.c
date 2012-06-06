@@ -79,12 +79,12 @@ elm_main(int argc, char **argv)
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "home");
-   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    elm_object_part_content_set(sl, "icon", ic);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "folder");
-   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    elm_object_part_content_set(sl, "end", ic);
 
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);

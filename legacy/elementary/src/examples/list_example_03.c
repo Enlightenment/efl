@@ -57,7 +57,7 @@ _add_ic_cb(void *data, Evas_Object *obj, void *event_info)
    snprintf(label, sizeof(label), "Item %i", counter++);
    ic = elm_icon_add(li);
    elm_icon_standard_set(ic, "home");
-   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_image_resizable_set(ic, EINA_FALSE, EINA_FALSE);
 
    list_it = elm_list_item_append(li, label, ic,  NULL, NULL, NULL);
    if (!list_it)
