@@ -44,8 +44,11 @@ struct _Elm_Win_Smart_Data
                                                 * *multiple* resize
                                                 * objects */
 #ifdef HAVE_ELEMENTARY_X
-   Ecore_X_Window                 xwin;
-   Ecore_Event_Handler           *client_message_handler;
+   struct
+   {
+      Ecore_X_Window                 xwin;
+      Ecore_Event_Handler           *client_message_handler;
+   } x;
 #endif
    Ecore_Job                     *deferred_resize_job;
    Ecore_Job                     *deferred_child_eval_job;
@@ -1076,8 +1079,8 @@ _elm_win_smart_del(Evas_Object *obj)
    if (sd->shot.timer) ecore_timer_del(sd->shot.timer);
 
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->client_message_handler)
-     ecore_event_handler_del(sd->client_message_handler);
+   if (sd->x.client_message_handler)
+     ecore_event_handler_del(sd->x.client_message_handler);
 #endif
 
    if (sd->img_obj)
@@ -1298,9 +1301,8 @@ _elm_ee_xwin_get(const Ecore_Evas *ee)
 static void
 _elm_win_xwindow_get(Elm_Win_Smart_Data *sd)
 {
-   sd->xwin = _elm_ee_xwin_get(sd->ee);
+   sd->x.xwin = _elm_ee_xwin_get(sd->ee);
 }
-
 #endif
 
 #ifdef HAVE_ELEMENTARY_X
@@ -1315,22 +1317,22 @@ _elm_win_xwin_update(Elm_Win_Smart_Data *sd)
         ELM_WIN_DATA_GET(sd->parent, sdp);
         if (sdp)
           {
-             if (sd->xwin)
-               ecore_x_icccm_transient_for_set(sd->xwin, sdp->xwin);
+             if (sd->x.xwin)
+               ecore_x_icccm_transient_for_set(sd->x.xwin, sdp->x.xwin);
           }
      }
 
-   if (!sd->xwin) return;  /* nothing more to do */
+   if (!sd->x.xwin) return;  /* nothing more to do */
 
    s = sd->title;
    if (!s) s = _elm_appname;
    if (!s) s = "";
    if (sd->icon_name) s = sd->icon_name;
-   ecore_x_icccm_icon_name_set(sd->xwin, s);
-   ecore_x_netwm_icon_name_set(sd->xwin, s);
+   ecore_x_icccm_icon_name_set(sd->x.xwin, s);
+   ecore_x_netwm_icon_name_set(sd->x.xwin, s);
 
    s = sd->role;
-   if (s) ecore_x_icccm_window_role_set(sd->xwin, s);
+   if (s) ecore_x_icccm_window_role_set(sd->x.xwin, s);
 
    // set window icon
    if (sd->icon)
@@ -1368,7 +1370,7 @@ _elm_win_xwin_update(Elm_Win_Smart_Data *sd)
                               }
                             p += (stride - (w * sizeof(unsigned int)));
                          }
-                       ecore_x_netwm_icons_set(sd->xwin, &ic, 1);
+                       ecore_x_netwm_icons_set(sd->x.xwin, &ic, 1);
                        free(ic.data);
                     }
                }
@@ -1379,77 +1381,76 @@ _elm_win_xwin_update(Elm_Win_Smart_Data *sd)
    switch (sd->type)
      {
       case ELM_WIN_BASIC:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_NORMAL);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_NORMAL);
         break;
 
       case ELM_WIN_DIALOG_BASIC:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_DIALOG);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_DIALOG);
         break;
 
       case ELM_WIN_DESKTOP:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_DESKTOP);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_DESKTOP);
         break;
 
       case ELM_WIN_DOCK:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_DOCK);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_DOCK);
         break;
 
       case ELM_WIN_TOOLBAR:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_TOOLBAR);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_TOOLBAR);
         break;
 
       case ELM_WIN_MENU:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_MENU);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_MENU);
         break;
 
       case ELM_WIN_UTILITY:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_UTILITY);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_UTILITY);
         break;
 
       case ELM_WIN_SPLASH:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_SPLASH);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_SPLASH);
         break;
 
       case ELM_WIN_DROPDOWN_MENU:
         ecore_x_netwm_window_type_set
-          (sd->xwin, ECORE_X_WINDOW_TYPE_DROPDOWN_MENU);
+          (sd->x.xwin, ECORE_X_WINDOW_TYPE_DROPDOWN_MENU);
         break;
 
       case ELM_WIN_POPUP_MENU:
         ecore_x_netwm_window_type_set
-          (sd->xwin, ECORE_X_WINDOW_TYPE_POPUP_MENU);
+          (sd->x.xwin, ECORE_X_WINDOW_TYPE_POPUP_MENU);
         break;
 
       case ELM_WIN_TOOLTIP:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_TOOLTIP);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_TOOLTIP);
         break;
 
       case ELM_WIN_NOTIFICATION:
         ecore_x_netwm_window_type_set
-          (sd->xwin, ECORE_X_WINDOW_TYPE_NOTIFICATION);
+          (sd->x.xwin, ECORE_X_WINDOW_TYPE_NOTIFICATION);
         break;
 
       case ELM_WIN_COMBO:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_COMBO);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_COMBO);
         break;
 
       case ELM_WIN_DND:
-        ecore_x_netwm_window_type_set(sd->xwin, ECORE_X_WINDOW_TYPE_DND);
+        ecore_x_netwm_window_type_set(sd->x.xwin, ECORE_X_WINDOW_TYPE_DND);
         break;
 
       default:
         break;
      }
    ecore_x_e_virtual_keyboard_state_set
-     (sd->xwin, (Ecore_X_Virtual_Keyboard_State)sd->kbdmode);
+     (sd->x.xwin, (Ecore_X_Virtual_Keyboard_State)sd->kbdmode);
    if (sd->indmode == ELM_WIN_INDICATOR_SHOW)
      ecore_x_e_illume_indicator_state_set
-       (sd->xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
+       (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
    else if (sd->indmode == ELM_WIN_INDICATOR_HIDE)
      ecore_x_e_illume_indicator_state_set
-       (sd->xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
+       (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
 }
-
 #endif
 
 static void
@@ -1569,7 +1570,7 @@ _elm_win_client_message(void *data,
    if (e->format != 32) return ECORE_CALLBACK_PASS_ON;
    if (e->message_type == ECORE_X_ATOM_E_COMP_FLUSH)
      {
-        if ((unsigned int)e->data.l[0] == sd->xwin)
+        if ((unsigned int)e->data.l[0] == sd->x.xwin)
           {
              Evas *evas = evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj);
              if (evas)
@@ -1583,7 +1584,7 @@ _elm_win_client_message(void *data,
      }
    else if (e->message_type == ECORE_X_ATOM_E_COMP_DUMP)
      {
-        if ((unsigned int)e->data.l[0] == sd->xwin)
+        if ((unsigned int)e->data.l[0] == sd->x.xwin)
           {
              Evas *evas = evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj);
              if (evas)
@@ -1598,7 +1599,7 @@ _elm_win_client_message(void *data,
      }
    else if (e->message_type == ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL)
      {
-        if ((unsigned int)e->data.l[0] == sd->xwin)
+        if ((unsigned int)e->data.l[0] == sd->x.xwin)
           {
              if ((unsigned int)e->data.l[1] ==
                  ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_NEXT)
@@ -2122,16 +2123,16 @@ elm_win_add(Evas_Object *parent,
 
 #ifdef HAVE_ELEMENTARY_X
    else if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
-     sd->client_message_handler = ecore_event_handler_add
+     sd->x.client_message_handler = ecore_event_handler_add
      (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
-     sd->client_message_handler = ecore_event_handler_add
+     sd->x.client_message_handler = ecore_event_handler_add
      (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
-     sd->client_message_handler = ecore_event_handler_add
+     sd->x.client_message_handler = ecore_event_handler_add
      (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_OPENGL_X11))
-     sd->client_message_handler = ecore_event_handler_add
+     sd->x.client_message_handler = ecore_event_handler_add
      (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
 #endif
 
@@ -2543,7 +2544,7 @@ elm_win_alpha_set(Evas_Object *obj,
    else
      {
 #ifdef HAVE_ELEMENTARY_X
-        if (sd->xwin)
+        if (sd->x.xwin)
           {
              if (alpha)
                {
@@ -2909,9 +2910,9 @@ elm_win_keyboard_mode_set(Evas_Object *obj,
 #endif
    sd->kbdmode = mode;
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->xwin)
+   if (sd->x.xwin)
      ecore_x_e_virtual_keyboard_state_set
-       (sd->xwin, (Ecore_X_Virtual_Keyboard_State)sd->kbdmode);
+       (sd->x.xwin, (Ecore_X_Virtual_Keyboard_State)sd->kbdmode);
 #endif
 }
 
@@ -2933,8 +2934,8 @@ elm_win_keyboard_win_set(Evas_Object *obj,
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     ecore_x_e_virtual_keyboard_set(sd->xwin, is_keyboard);
+   if (sd->x.xwin)
+     ecore_x_e_virtual_keyboard_set(sd->x.xwin, is_keyboard);
 #else
    (void)is_keyboard;
 #endif
@@ -2948,8 +2949,8 @@ elm_win_keyboard_win_get(const Evas_Object *obj)
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     return ecore_x_e_virtual_keyboard_get(sd->xwin);
+   if (sd->x.xwin)
+     return ecore_x_e_virtual_keyboard_get(sd->x.xwin);
 #endif
    return EINA_FALSE;
 }
@@ -2967,14 +2968,14 @@ elm_win_indicator_mode_set(Evas_Object *obj,
 #endif
    sd->indmode = mode;
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->xwin)
+   if (sd->x.xwin)
      {
         if (sd->indmode == ELM_WIN_INDICATOR_SHOW)
           ecore_x_e_illume_indicator_state_set
-            (sd->xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
         else if (sd->indmode == ELM_WIN_INDICATOR_HIDE)
           ecore_x_e_illume_indicator_state_set
-            (sd->xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
      }
 #endif
 }
@@ -2999,17 +3000,17 @@ elm_win_indicator_opacity_set(Evas_Object *obj,
    sd->ind_o_mode = mode;
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
+   if (sd->x.xwin)
      {
         if (sd->ind_o_mode == ELM_WIN_INDICATOR_OPAQUE)
           ecore_x_e_illume_indicator_opacity_set
-            (sd->xwin, ECORE_X_ILLUME_INDICATOR_OPAQUE);
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_OPAQUE);
         else if (sd->ind_o_mode == ELM_WIN_INDICATOR_TRANSLUCENT)
           ecore_x_e_illume_indicator_opacity_set
-            (sd->xwin, ECORE_X_ILLUME_INDICATOR_TRANSLUCENT);
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSLUCENT);
         else if (sd->ind_o_mode == ELM_WIN_INDICATOR_TRANSPARENT)
           ecore_x_e_illume_indicator_opacity_set
-            (sd->xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
+            (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
      }
 #endif
 }
@@ -3085,8 +3086,8 @@ elm_win_conformant_set(Evas_Object *obj,
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     ecore_x_e_illume_conformant_set(sd->xwin, conformant);
+   if (sd->x.xwin)
+     ecore_x_e_illume_conformant_set(sd->x.xwin, conformant);
 #else
    (void)conformant;
 #endif
@@ -3100,8 +3101,8 @@ elm_win_conformant_get(const Evas_Object *obj)
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     return ecore_x_e_illume_conformant_get(sd->xwin);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_conformant_get(sd->x.xwin);
 #endif
    return EINA_FALSE;
 }
@@ -3114,17 +3115,17 @@ elm_win_quickpanel_set(Evas_Object *obj,
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
+   if (sd->x.xwin)
      {
-        ecore_x_e_illume_quickpanel_set(sd->xwin, quickpanel);
+        ecore_x_e_illume_quickpanel_set(sd->x.xwin, quickpanel);
         if (quickpanel)
           {
              Ecore_X_Window_State states[2];
 
              states[0] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
              states[1] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
-             ecore_x_netwm_window_state_set(sd->xwin, states, 2);
-             ecore_x_icccm_hints_set(sd->xwin, 0, 0, 0, 0, 0, 0, 0);
+             ecore_x_netwm_window_state_set(sd->x.xwin, states, 2);
+             ecore_x_icccm_hints_set(sd->x.xwin, 0, 0, 0, 0, 0, 0, 0);
           }
      }
 #else
@@ -3140,8 +3141,8 @@ elm_win_quickpanel_get(const Evas_Object *obj)
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     return ecore_x_e_illume_quickpanel_get(sd->xwin);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_quickpanel_get(sd->x.xwin);
 #endif
    return EINA_FALSE;
 }
@@ -3155,8 +3156,8 @@ elm_win_quickpanel_priority_major_set(Evas_Object *obj,
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     ecore_x_e_illume_quickpanel_priority_major_set(sd->xwin, priority);
+   if (sd->x.xwin)
+     ecore_x_e_illume_quickpanel_priority_major_set(sd->x.xwin, priority);
 #else
    (void)priority;
 #endif
@@ -3170,8 +3171,8 @@ elm_win_quickpanel_priority_major_get(const Evas_Object *obj)
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     return ecore_x_e_illume_quickpanel_priority_major_get(sd->xwin);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_quickpanel_priority_major_get(sd->x.xwin);
 #endif
    return -1;
 }
@@ -3185,8 +3186,8 @@ elm_win_quickpanel_priority_minor_set(Evas_Object *obj,
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     ecore_x_e_illume_quickpanel_priority_minor_set(sd->xwin, priority);
+   if (sd->x.xwin)
+     ecore_x_e_illume_quickpanel_priority_minor_set(sd->x.xwin, priority);
 #else
    (void)priority;
 #endif
@@ -3200,8 +3201,8 @@ elm_win_quickpanel_priority_minor_get(const Evas_Object *obj)
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     return ecore_x_e_illume_quickpanel_priority_minor_get(sd->xwin);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_quickpanel_priority_minor_get(sd->x.xwin);
 #endif
    return -1;
 }
@@ -3215,8 +3216,8 @@ elm_win_quickpanel_zone_set(Evas_Object *obj,
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     ecore_x_e_illume_quickpanel_zone_set(sd->xwin, zone);
+   if (sd->x.xwin)
+     ecore_x_e_illume_quickpanel_zone_set(sd->x.xwin, zone);
 #else
    (void)zone;
 #endif
@@ -3230,8 +3231,8 @@ elm_win_quickpanel_zone_get(const Evas_Object *obj)
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
-     return ecore_x_e_illume_quickpanel_zone_get(sd->xwin);
+   if (sd->x.xwin)
+     return ecore_x_e_illume_quickpanel_zone_get(sd->x.xwin);
 #endif
    return 0;
 }
@@ -3257,24 +3258,24 @@ elm_win_illume_command_send(Evas_Object *obj,
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
-   if (sd->xwin)
+   if (sd->x.xwin)
      {
         switch (command)
           {
            case ELM_ILLUME_COMMAND_FOCUS_BACK:
-             ecore_x_e_illume_focus_back_send(sd->xwin);
+             ecore_x_e_illume_focus_back_send(sd->x.xwin);
              break;
 
            case ELM_ILLUME_COMMAND_FOCUS_FORWARD:
-             ecore_x_e_illume_focus_forward_send(sd->xwin);
+             ecore_x_e_illume_focus_forward_send(sd->x.xwin);
              break;
 
            case ELM_ILLUME_COMMAND_FOCUS_HOME:
-             ecore_x_e_illume_focus_home_send(sd->xwin);
+             ecore_x_e_illume_focus_home_send(sd->x.xwin);
              break;
 
            case ELM_ILLUME_COMMAND_CLOSE:
-             ecore_x_e_illume_close_send(sd->xwin);
+             ecore_x_e_illume_close_send(sd->x.xwin);
              break;
 
            default:
@@ -3378,7 +3379,7 @@ elm_win_xwindow_get(const Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0);
 
 #ifdef HAVE_ELEMENTARY_X
-   if (sd->xwin) return sd->xwin;
+   if (sd->x.xwin) return sd->x.xwin;
    if (sd->parent) return elm_win_xwindow_get(sd->parent);
 #endif
    return 0;
