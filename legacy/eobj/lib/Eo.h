@@ -669,6 +669,14 @@ EAPI Eo *eo_add(const Eo_Class *klass, Eo *parent);
 EAPI Eo *eo_parent_get(const Eo *obj);
 
 /**
+ * @brief Set the parent of an object
+ * @param obj the object to get the parent of.
+ * @param parent the new parent.
+ * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
+ */
+EAPI Eina_Bool eo_parent_set(Eo *obj, const Eo *parent);
+
+/**
  * @brief Get a pointer to the data of an object for a specific class.
  * @param obj the object to work on.
  * @param klass the klass associated with the data.

@@ -32,7 +32,9 @@ typedef struct
 
 struct _Eo {
      EINA_MAGIC
+     EINA_INLIST;
      Eo *parent;
+     Eina_Inlist *children;
      const Eo_Class *klass;
      int refcount;
 #ifndef NDEBUG
@@ -1060,6 +1062,35 @@ cleanup:
    return NULL;
 }
 
+EAPI Eina_Bool
+eo_parent_set(Eo *obj, const Eo *parent)
+{
+   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
+   if (parent)
+      EO_MAGIC_RETURN_VAL(parent, EO_EINA_MAGIC, EINA_FALSE);
+
+   _eo_ref(obj);
+
+   if (obj->parent)
+     {
+        obj->parent->children =
+           eina_inlist_remove(obj->parent->children, EINA_INLIST_GET(obj));
+//        eo_xunref(obj, obj->parent);
+     }
+
+   obj->parent = (Eo *) parent;
+   if (obj->parent)
+     {
+        obj->parent->children =
+           eina_inlist_append(obj->parent->children, EINA_INLIST_GET(obj));
+//        eo_xref(obj, obj->parent);
+     }
+
+   _eo_unref(obj);
+
+   return EINA_TRUE;
+}
+
 EAPI Eo *
 eo_add(const Eo_Class *klass, Eo *parent)
 {
@@ -1076,17 +1107,17 @@ eo_add(const Eo_Class *klass, Eo *parent)
    Eo *obj = calloc(1, EO_ALIGN_SIZE(sizeof(*obj)) +
          (klass->data_offset + EO_ALIGN_SIZE(klass->desc->data_size)) +
          klass->extn_data_size);
-   obj->klass = klass;
-   obj->parent = parent;
-
+   EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
    obj->refcount++;
+   obj->klass = klass;
+
+   eo_parent_set(obj, parent);
 
    Eo_Kls_Itr prev_state;
 
    _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
    _eo_error_unset(obj);
 
-   EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
    _eo_ref(obj);
    _eo_constructor(obj, klass);
 
@@ -1216,11 +1247,19 @@ _eo_del_internal(Eo *obj)
    _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
 
-   Eina_List *itr, *itr_n;
-   Eo *emb_obj;
-   EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
      {
-        eo_composite_object_detach(obj, emb_obj);
+        Eina_List *itr, *itr_n;
+        Eo *emb_obj;
+        EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
+          {
+             eo_composite_object_detach(obj, emb_obj);
+          }
+     }
+
+   eo_parent_set(obj, NULL);
+   while (obj->children)
+     {
+        eo_parent_set(EINA_INLIST_CONTAINER_GET(obj->children, Eo), NULL);
      }
 
    obj->del = EINA_TRUE;
