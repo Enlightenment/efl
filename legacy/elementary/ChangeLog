@@ -121,6 +121,11 @@
           scroll out of the viewport
         * Collapsing tree items in genlist now animate properly
 
+2012-05-29 Rob Bradford
+
+	* Move X related window items into their own substruct of
+	_Elm_Win_Smart_Data to allow grouping based on engine.
+
 2012-05-30 Mike Blumenkrantz
 
         * Fix even/odd signals for genlist items
