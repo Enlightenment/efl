@@ -60,32 +60,80 @@ PKG_PROG_PKG_CONFIG
 # Eina library
 PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
 
-have_poppler="no"
-PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12 poppler < 0.20], [have_poppler="yes"], [have_poppler="no"])
-PKG_CHECK_MODULES([POPPLER2], [poppler >= 0.20],
-			      [
-			       have_poppler="yes"
-			       AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
-			      ],
-			      [have_poppler="${have_poppler}"])
+want_poppler=yes
+AC_ARG_ENABLE([poppler],
+   [AC_HELP_STRING([--disable-poppler], [disable poppler support  @<:@default==enabled@:>@])],
+   [want_poppler=$enableval]
+)
 
-PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
+if test "x$want_poppler" = "xyes" ; then
+   PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12 poppler < 0.20], [have_poppler="yes"], [have_poppler="no"])
+   PKG_CHECK_MODULES([POPPLER2], [poppler >= 0.20],
+   			      [
+   			       have_poppler="yes"
+   			       AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
+   			      ],
+   			      [have_poppler="${have_poppler}"])
+else
+   have_poppler=no
+fi
 
-PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"], [have_raw="no"])
+want_spectre=yes
+AC_ARG_ENABLE([spectre],
+   [AC_HELP_STRING([--disable-spectre], [disable spectre support  @<:@default==enabled@:>@])],
+   [want_spectre=$enableval]
+)
 
-PKG_CHECK_MODULES([SVG],  [librsvg-2.0 >= 2.14.0 cairo >= 1.0.0], [have_svg="yes"], [have_svg="no"])
+if test "x$want_spectre" = "xyes" ; then
+   PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
+else
+   have_ps=no
+fi
 
+
+want_libraw=yes
+AC_ARG_ENABLE([libraw],
+   [AC_HELP_STRING([--disable-libraw], [disable libraw support  @<:@default==enabled@:>@])],
+   [want_libraw=$enableval]
+)
+
+if test "x$want_libraw" = "xyes" ; then
+   PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"], [have_raw="no"])
+else
+   have_raw=no
+fi
+
+want_svg=yes
+AC_ARG_ENABLE([svg],
+   [AC_HELP_STRING([--disable-svg], [disable svg support  @<:@default==enabled@:>@])],
+   [want_svg=$enableval]
+)
+
+if test "x$want_svg" = "xyes" ; then
+   PKG_CHECK_MODULES([SVG],  [librsvg-2.0 >= 2.14.0 cairo >= 1.0.0], [have_svg="yes"], [have_svg="no"])
+else
+   have_svg=no
+fi
 GST_REQS=0.10.13
 GSTPLUG_REQS=0.10.13
 GST_MAJORMINOR=0.10
 
-PKG_CHECK_MODULES([GSTREAMER],
-   [gstreamer-$GST_MAJORMINOR >= $GST_REQS
-    gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS
-   ],
-   [have_gst="yes"],
-   [have_gst="no"])
+want_gst=yes
+AC_ARG_ENABLE([gstreamer],
+   [AC_HELP_STRING([--disable-gstreamer], [disable gstreamer support  @<:@default==enabled@:>@])],
+   [want_gstreamer=$enableval]
+)
 
+if test "x$want_gstreamer" = "xyes" ; then
+   PKG_CHECK_MODULES([GSTREAMER],
+      [gstreamer-$GST_MAJORMINOR >= $GST_REQS
+       gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS
+      ],
+      [have_gst="yes"],
+      [have_gst="no"])
+else
+   have_gst=no
+fi
 AM_CONDITIONAL(HAVE_GST, test "x${have_gst}" = "xyes")
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
 AM_CONDITIONAL([HAVE_PS], [test "x${have_ps}" = "xyes"])
