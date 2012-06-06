@@ -689,6 +689,21 @@
         directfb}_window_get return 0 if the Ecore_Evas was not created with
         the appropriate constructor.
 
+2012-05-29 Rob Bradford
+
+        * Initial cursor support for Wayland:
+        * Add api to the ecore_wl_input_ namespace to allow setting the buffer
+        to use for the pointer and for loading a named cursor from a cursor
+        theme. Under the Wayland protocol the cursor is associated with the
+        input device.
+        * Add helper functions to ecore_wl_window to set the cursor based on
+        the active pointer input device for the window.
+        * Load the cursor theme when the SHM interface is ready and provide an
+        API call to provide a wl_cursor for a given name.
+        * Add API to restore to the default cursor and then use that when the
+        pointer enters the surface to ensure compliance with the Wayland
+        protocol.
+
 2012-05-30  Cedric Bail
 
 	* Force cancel of all running Ecore_Thread on shutdown.

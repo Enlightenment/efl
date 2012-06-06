@@ -1916,7 +1916,7 @@ ECORE_EVAS_CHECK_MODULE([psl1ght],
 ecore_wayland_deps="no"
 have_wayland="no"
 if test "x${want_ecore_wayland}" = "xyes" ; then
-  PKG_CHECK_MODULES([WAYLAND], [wayland-client xkbcommon], [have_wayland="yes"], [have_wayland="no"])
+  PKG_CHECK_MODULES([WAYLAND], [wayland-client wayland-cursor xkbcommon], [have_wayland="yes"], [have_wayland="no"])
 fi
 if test "x${have_ecore_input}" = "xyes" -a "x${have_wayland}" = "xyes" ; then
   ecore_wayland_deps="yes"
