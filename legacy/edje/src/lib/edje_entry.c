@@ -3366,6 +3366,10 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx __UN
                     }
                }
           }
+        else
+          {
+             eina_strbuf_append(buf, preedit_string);
+          }
         if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
             _edje_password_show_last)
           {
