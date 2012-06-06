@@ -2,6 +2,7 @@
 # define _ECORE_WAYLAND_PRIVATE_H
 
 # include <limits.h>
+# include <unistd.h>
 
 # include "Ecore.h"
 # include "Ecore_Input.h"

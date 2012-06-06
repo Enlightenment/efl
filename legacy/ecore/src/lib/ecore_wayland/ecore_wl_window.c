@@ -11,6 +11,7 @@ static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *
 static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output);
 static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, unsigned int timestamp);
+static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 
 /* local variables */
 static Eina_Hash *_windows = NULL;
@@ -33,7 +34,8 @@ static const struct wl_shell_surface_listener _ecore_wl_shell_surface_listener =
 void 
 _ecore_wl_window_init(void)
 {
-   if (!_windows) _windows = eina_hash_pointer_new(free);
+   if (!_windows) 
+     _windows = eina_hash_string_superfast_new(NULL);
 }
 
 void 
@@ -89,11 +91,12 @@ ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buf
    win->allocation.h = h;
    win->saved_allocation = win->allocation;
    win->transparent = EINA_FALSE;
+   /* win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL; */
    win->type = ECORE_WL_WINDOW_TYPE_NONE;
    win->buffer_type = buffer_type;
    win->id = _win_id++;
 
-   eina_hash_add(_windows, &win->id, win);
+   eina_hash_add(_windows, _ecore_wl_window_id_str_get(win->id), win);
    return win;
 }
 
@@ -114,7 +117,7 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
 
    if (!win) return;
 
-   eina_hash_del(_windows, &win->id, NULL);
+   eina_hash_del(_windows, _ecore_wl_window_id_str_get(win->id), win);
 
    wl_list_for_each(input, &_ecore_wl_disp->inputs, link)
      {
@@ -134,7 +137,8 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
    if (win->surface) wl_surface_destroy(win->surface);
    win->surface = NULL;
 
-//   free(win);
+   /* HMMM, why was this disabled ? */
+   free(win);
 }
 
 /**
@@ -340,8 +344,6 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         wl_shell_surface_set_popup(win->shell_surface, 
                                    _ecore_wl_disp->input->seat,
                                    _ecore_wl_disp->serial,
-                                   /* win->parent->pointer_device->input_device,  */
-                                   /* win->parent->pointer_device->timestamp, */ 
                                    win->parent->shell_surface, 
                                    win->allocation.x, win->allocation.y, 0);
         break;
@@ -523,12 +525,10 @@ ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win)
 EAPI Ecore_Wl_Window *
 ecore_wl_window_find(unsigned int id)
 {
-   Ecore_Wl_Window *win;
+   Ecore_Wl_Window *win = NULL;
 
-   if (!id) return NULL;
-   win = eina_hash_find(_windows, &id);
-   if (win) return win;
-   return NULL;
+   win = eina_hash_find(_windows, _ecore_wl_window_id_str_get(id));
+   return win;
 }
 
 EAPI void 
@@ -541,7 +541,7 @@ ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type)
 }
 
 EAPI void 
-ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int hot_x, int hot_y, unsigned int timestamp)
+ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int hot_x, int hot_y)
 {
    Ecore_Wl_Input *input;
 
@@ -549,8 +549,34 @@ ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int 
 
    if (!win) return;
 
-   if ((input = _ecore_wl_disp->input))
-     wl_pointer_attach(input->pointer, timestamp, buffer, hot_x, hot_y);
+   if ((input = win->pointer_device))
+     ecore_wl_input_pointer_set(input, buffer, hot_x, hot_y);
+}
+
+EAPI void
+ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name)
+{
+   Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+
+   if ((input = win->pointer_device))
+     ecore_wl_input_cursor_from_name_set(input, cursor_name);
+}
+
+EAPI void
+ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win)
+{
+   Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!win) return;
+
+   if ((input = win->pointer_device))
+     ecore_wl_input_cursor_default_restore(input);
 }
 
 /* @since 1.2 */
@@ -640,4 +666,25 @@ _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, unsigned int
    ev->h = h;
    ev->timestamp = timestamp;
    ecore_event_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
+}
+
+static char *
+_ecore_wl_window_id_str_get(unsigned int win_id)
+{
+   const char *vals = "qWeRtYuIoP5$&<~";
+   static char id[9];
+   unsigned int val;
+
+   val = win_id;
+   id[0] = vals[(val >> 28) & 0xf];
+   id[1] = vals[(val >> 24) & 0xf];
+   id[2] = vals[(val >> 20) & 0xf];
+   id[3] = vals[(val >> 16) & 0xf];
+   id[4] = vals[(val >> 12) & 0xf];
+   id[5] = vals[(val >> 8) & 0xf];
+   id[6] = vals[(val >> 4) & 0xf];
+   id[7] = vals[(val) & 0xf];
+   id[8] = 0;
+
+   return id;
 }

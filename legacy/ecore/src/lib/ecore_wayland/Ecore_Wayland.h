@@ -9,6 +9,7 @@
 
 # include <Eina.h>
 # include <wayland-client.h>
+# include <wayland-cursor.h>
 # include <xkbcommon/xkbcommon.h>
 
 # ifdef EAPI
@@ -96,6 +97,8 @@ struct _Ecore_Wl_Display
         xkb_mod_mask_t alt_mask;
         xkb_mod_mask_t shift_mask;
      } xkb;
+
+   struct wl_cursor_theme *cursor_theme;
 
    Ecore_Wl_Output *output;
    Ecore_Wl_Input *input;
@@ -303,9 +306,13 @@ EAPI void ecore_wl_screen_size_get(int *w, int *h);
 EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
 EAPI int ecore_wl_dpi_get(void);
 EAPI void ecore_wl_display_iterate(void);
+EAPI struct wl_cursor *ecore_wl_cursor_get(const char *cursor_name);
 
 EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
 EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input);
+EAPI void ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_buffer *buffer, int hot_x, int hot_y);
+EAPI void ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_name);
+EAPI void ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input);
 
 EAPI struct wl_list ecore_wl_outputs_get(void);
 
@@ -327,7 +334,9 @@ EAPI struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);
 EAPI struct wl_shell_surface *ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win);
 EAPI Ecore_Wl_Window *ecore_wl_window_find(unsigned int id);
 EAPI void ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type);
-EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int hot_x, int hot_y, unsigned int timestamp);
+EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int hot_x, int hot_y);
+EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
+EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
 
 #endif

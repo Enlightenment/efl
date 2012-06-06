@@ -18,6 +18,7 @@
  **/
 
 #include "ecore_wl_private.h"
+#include <sys/mman.h>
 
 /* FIXME: This gives BTN_LEFT/RIGHT/MIDDLE for linux systems ... 
  *        What about other OSs ?? */
@@ -48,9 +49,11 @@ static void _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *poin
 static void _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, wl_fixed_t sx, wl_fixed_t sy);
 static void _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state);
 static void _ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, unsigned int axis, int value);
+static void _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int format, int fd, unsigned int size);
 static void _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, struct wl_surface *surface, struct wl_array *keys __UNUSED__);
 static void _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, struct wl_surface *surface);
 static void _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int key, unsigned int state);
+static void _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial __UNUSED__, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group);
 static void _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch __UNUSED__, unsigned int serial, unsigned int timestamp, struct wl_surface *surface __UNUSED__, int id __UNUSED__, wl_fixed_t x, wl_fixed_t y);
 static void _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch __UNUSED__, unsigned int serial, unsigned int timestamp, int id __UNUSED__);
 static void _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch __UNUSED__, unsigned int timestamp, int id __UNUSED__, wl_fixed_t x, wl_fixed_t y);
@@ -81,14 +84,16 @@ static const struct wl_pointer_listener pointer_listener =
    _ecore_wl_input_cb_pointer_leave,
    _ecore_wl_input_cb_pointer_motion,
    _ecore_wl_input_cb_pointer_button,
-   _ecore_wl_input_cb_pointer_axis
+   _ecore_wl_input_cb_pointer_axis,
 };
 
 static const struct wl_keyboard_listener keyboard_listener = 
 {
+   _ecore_wl_input_cb_keyboard_keymap,
    _ecore_wl_input_cb_keyboard_enter,
    _ecore_wl_input_cb_keyboard_leave,
-   _ecore_wl_input_cb_keyboard_key
+   _ecore_wl_input_cb_keyboard_key,
+   _ecore_wl_input_cb_keyboard_modifiers,
 };
 
 static const struct wl_touch_listener touch_listener = 
@@ -124,6 +129,7 @@ ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int bu
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!input) return;
    input->grab = win;
    input->grab_button = button;
 }
@@ -133,8 +139,60 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!input) return;
    input->grab = NULL;
    input->grab_button = 0;
+}
+
+EAPI void
+ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_buffer *buffer, int hot_x, int hot_y)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (input)
+     wl_pointer_attach(input->pointer, input->timestamp, buffer, hot_x, hot_y);
+}
+
+EAPI void
+ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_name)
+{
+   struct wl_cursor_image *cursor_image;
+   struct wl_buffer *buffer;
+   struct wl_cursor *cursor;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!input) return;
+
+   /* No cursor */
+   if (!cursor_name)
+     {
+        ecore_wl_input_pointer_set(input, NULL, 0, 0);
+        return;
+     }
+
+   if (!(cursor = ecore_wl_cursor_get(cursor_name)))
+     return;
+
+   if ((!cursor->images) || (!cursor->images[0]))
+     return;
+
+   cursor_image = cursor->images[0];
+   if ((buffer = wl_cursor_image_get_buffer(cursor_image)))
+     ecore_wl_input_pointer_set(input, buffer,
+                                cursor_image->hotspot_x,
+                                cursor_image->hotspot_y);
+}
+
+EAPI void
+ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!input) return;
+
+   /* Restore to default wayland cursor */
+   ecore_wl_input_cursor_from_name_set(input, "left_ptr");
 }
 
 void 
@@ -241,15 +299,12 @@ _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSE
 {
    Ecore_Wl_Input *input;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
 
    if (!(input = data)) return;
 
-   _pointer_x = sx;
-   _pointer_y = sy;
-
-   input->sx = wl_fixed_to_int(sx);
-   input->sy = wl_fixed_to_int(sy);
+   _pointer_x = input->sx = wl_fixed_to_int(sx);
+   _pointer_y = input->sy = wl_fixed_to_int(sy);
 
    input->timestamp = timestamp;
 
@@ -270,7 +325,7 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer __UNUSE
    input->timestamp = timestamp;
    input->display->serial = serial;
 
-//   _ecore_wl_input_mouse_move_send(input, timestamp);
+//   _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp);
 
    if (state)
      {
@@ -303,6 +358,56 @@ _ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer __UNUSED_
 
    if (!(input = data)) return;
    _ecore_wl_input_mouse_wheel_send(input, axis, value, timestamp);
+}
+
+static void 
+_ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int format, int fd, unsigned int size)
+{
+   Ecore_Wl_Input *input;
+   char *map = NULL;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data))
+     {
+        close(fd);
+        return;
+     }
+
+   if (format != WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1)
+     {
+        close(fd);
+        return;
+     }
+
+   map = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
+   if (map == MAP_FAILED)
+     {
+        close(fd);
+        return;
+     }
+
+   input->display->xkb.keymap = 
+     xkb_map_new_from_string(input->display->xkb.context, map, 
+                             XKB_KEYMAP_FORMAT_TEXT_V1, 0);
+
+   munmap(map, size);
+   close(fd);
+
+   if (!(input->display->xkb.keymap)) return;
+   if (!(input->display->xkb.state = xkb_state_new(input->display->xkb.keymap)))
+     {
+        xkb_map_unref(input->display->xkb.keymap);
+        input->display->xkb.keymap = NULL;
+        return;
+     }
+
+   input->display->xkb.control_mask = 
+     1 << xkb_map_mod_get_index(input->display->xkb.keymap, "Control");
+   input->display->xkb.alt_mask = 
+     1 << xkb_map_mod_get_index(input->display->xkb.keymap, "Mod1");
+   input->display->xkb.shift_mask = 
+     1 << xkb_map_mod_get_index(input->display->xkb.keymap, "Shift");
 }
 
 /*
@@ -436,6 +541,18 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
 }
 
 static void 
+_ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial __UNUSED__, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group)
+{
+   Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data)) return;
+   xkb_state_update_mask(input->display->xkb.state, depressed, latched, 
+                         locked, 0, 0, group);
+}
+
+static void 
 _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy)
 {
    Ecore_Wl_Input *input;
@@ -463,8 +580,11 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer __UNUSED
    win->pointer_device = input;
    input->pointer_focus = win;
 
-   _ecore_wl_input_mouse_move_send(input, win, input->timestamp);
+   /* _ecore_wl_input_mouse_move_send(input, win, input->timestamp); */
    _ecore_wl_input_mouse_in_send(input, win, input->timestamp);
+
+   /* The cursor on the surface is undefined until we set it */
+   ecore_wl_window_cursor_default_restore(win);
 
    /* NB: This whole 'if' below is a major HACK due to wayland's stupidness 
     * of not sending a mouse_up (or any notification at all for that matter) 
@@ -518,7 +638,7 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer __UNUSED
    win->pointer_device = NULL;
    input->pointer_focus = NULL;
 
-   _ecore_wl_input_mouse_move_send(input, win, input->timestamp);
+   /* _ecore_wl_input_mouse_move_send(input, win, input->timestamp); */
    _ecore_wl_input_mouse_out_send(input, win, input->timestamp);
 
    if (input->grab)
@@ -554,7 +674,6 @@ _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *keyboard __UNU
    win->keyboard_device = input;
    input->keyboard_focus = win;
 
-   /* FIXME: NB: This may need to be 'serial' */
    _ecore_wl_input_focus_in_send(input, win, input->timestamp);
 }
 
@@ -824,7 +943,7 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    ev->y = input->sy;
    /* ev->root.x = input->sx; */
    /* ev->root.y = input->sy; */
-   printf("Input Modifiers: %d\n", input->modifiers);
+   /* printf("Input Modifiers: %d\n", input->modifiers); */
    ev->modifiers = input->modifiers;
 
    /* FIXME: Need to get these from wayland somehow */
