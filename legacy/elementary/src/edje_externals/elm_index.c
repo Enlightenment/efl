@@ -74,7 +74,6 @@ external_index_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
              mem->active = !!param->i;
              mem->active_exists = EINA_TRUE;
           }
-
      }
 
    return mem;
@@ -83,8 +82,8 @@ external_index_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__, 
 static Evas_Object *external_index_content_get(void *data __UNUSED__,
 		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
-	ERR("No content.");
-	return NULL;
+   ERR("No content.");
+   return NULL;
 }
 
 static void
