@@ -1251,7 +1251,7 @@ ecore_thread_max_set(int num)
 EAPI void
 ecore_thread_max_reset(void)
 {
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
+   EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_thread_count_max = eina_cpu_count();
 }
 
