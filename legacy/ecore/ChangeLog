@@ -665,12 +665,6 @@
 
 2012-05-24  Carsten Haitzler (The Rasterman)
 
-        * Add ecore_con_client_ref() and ecore_con_client_unref()
-        * Fix ecore_con to obey reference counting for con clients
-        * Fix lurking bug in ecore_ipc that had it be able to crash in
-        accessind already deleted ecore-con clients. use client
-        ref/unref to fix it. No backport of this fix as it requires a
-        new feature.
         * Fix ecore-thread scheduling issue where re-scheduled threads
         will hold a loop busy and not allow feedback workers to run,
         so now have fairer scheduling.

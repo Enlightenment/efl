@@ -116,12 +116,9 @@ _ecore_con_client_kill(Ecore_Con_Client *cl)
      }
    INF("Lost client %s", (cl->ip) ? cl->ip : "");
    if (cl->fd_handler)
-     {
-        ecore_main_fd_handler_del(cl->fd_handler);
-        cl->fd_handler = NULL;
-     }
-   if (cl->ref <= 0)
-     _ecore_con_client_free(cl);
+     ecore_main_fd_handler_del(cl->fd_handler);
+
+   cl->fd_handler = NULL;
 }
 
 void
@@ -133,10 +130,9 @@ _ecore_con_server_kill(Ecore_Con_Server *svr)
      ecore_con_event_server_del(svr);
 
    if (svr->fd_handler)
-     {
-        ecore_main_fd_handler_del(svr->fd_handler);
-        svr->fd_handler = NULL;
-     }
+     ecore_main_fd_handler_del(svr->fd_handler);
+
+   svr->fd_handler = NULL;
 }
 
 #define _ecore_con_server_kill(svr) do { \
@@ -872,32 +868,9 @@ ecore_con_client_del(Ecore_Con_Client *cl)
         ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_del");
         return NULL;
      }
-   ecore_con_client_unref(cl);
+
+   _ecore_con_client_kill(cl);
    return cl->data;
-}
-
-EAPI void
-ecore_con_client_ref(Ecore_Con_Client *cl)
-{
-   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
-     {
-        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_ref");
-        return;
-     }
-   cl->ref++;
-}
-
-EAPI void
-ecore_con_client_unref(Ecore_Con_Client *cl)
-{
-   if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
-     {
-        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_unref");
-        return;
-     }
-   cl->ref--;
-   if (cl->ref <= 0)
-     _ecore_con_client_kill(cl);
 }
 
 EAPI void
@@ -1862,7 +1835,6 @@ _ecore_con_svr_tcp_handler(void                        *data,
         return ECORE_CALLBACK_RENEW;
      }
    cl->host_server = svr;
-   cl->ref = 1;
 
    client_addr_len = sizeof(client_addr);
    memset(&client_addr, 0, client_addr_len);
@@ -2412,7 +2384,7 @@ _ecore_con_event_client_del_free(Ecore_Con_Server *svr,
                _ecore_con_server_free(svr);
           }
         if (!e->client->event_count)
-          ecore_con_client_del(e->client);
+          _ecore_con_client_free(e->client);
      }
    ecore_con_event_client_del_free(e);
    _ecore_con_event_count--;

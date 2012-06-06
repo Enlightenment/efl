@@ -1245,27 +1245,7 @@ EAPI Eina_Bool         ecore_con_client_connected_get(Ecore_Con_Client *cl);
  * Use this function to return the port on which a given client has connected.
  */
 EAPI int               ecore_con_client_port_get(Ecore_Con_Client *cl);
-/**
- * @brief increment the references on a connection client
- *
- * @param cl The client
- * This increases the references on the given client to keep it alive in
- * memory for longer until all references are release by
- * ecore_con_client_unref().
- * @since 1.3
- */
-EAPI void              ecore_con_client_ref(Ecore_Con_Client *cl);
-/**
- * @brief decrement the references on a connection client
- *
- * @param cl The client
- * This decrements the references on the given client and once references hit
- * 0, the client is deleted. ecore_con_client_del() does the same thing as
- * ecore_con_client_unref(). All con clients start with a reference count of
- * 1.
- * @since 1.3
- */
-EAPI void              ecore_con_client_unref(Ecore_Con_Client *cl);
+
 
 
 /**

@@ -70,6 +70,7 @@ struct _Ecore_Ipc_Client
 {
    ECORE_MAGIC;
    Ecore_Con_Client  *client;
+   Ecore_Ipc_Server  *svr;
    void              *data;
    unsigned char     *buf;
    int                buf_size;
