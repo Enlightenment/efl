@@ -242,6 +242,7 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
         einfo->info.display = ecore_wl_display_get();
         einfo->info.destination_alpha = ee->alpha;
         einfo->info.rotation = ee->rotation;
+        einfo->info.depth = 32;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           {
              ERR("Failed to set Evas Engine Info for '%s'", ee->driver);

@@ -731,3 +731,7 @@
         - this is required where the keysym is not the same as the printable
         definition
 
+2012-06-06 Rob Bradford
+
+	* Ecore_Wayland: Update to protocol change - axis events are now fixed point numbers
+

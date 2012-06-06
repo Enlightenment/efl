@@ -45,7 +45,7 @@ static void _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *poin
 static void _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int serial, struct wl_surface *surface);
 static void _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, wl_fixed_t sx, wl_fixed_t sy);
 static void _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state);
-static void _ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, unsigned int axis, int value);
+static void _ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, unsigned int axis, wl_fixed_t value);
 static void _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int format, int fd, unsigned int size);
 static void _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, struct wl_surface *surface, struct wl_array *keys __UNUSED__);
 static void _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, struct wl_surface *surface);
@@ -351,14 +351,15 @@ _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer __UNUSE
 }
 
 static void 
-_ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, unsigned int axis, int value)
+_ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, unsigned int axis, wl_fixed_t value)
 {
    Ecore_Wl_Input *input;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
-   _ecore_wl_input_mouse_wheel_send(input, axis, value, timestamp);
+   _ecore_wl_input_mouse_wheel_send(input, axis, wl_fixed_to_int(value), 
+                                    timestamp);
 }
 
 static void 
