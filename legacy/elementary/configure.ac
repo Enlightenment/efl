@@ -446,7 +446,7 @@ fi
 
 have_elementary_wayland="no"
 want_elementary_wayland="auto"
-AC_ARG_ENABLE([ecore-x],
+AC_ARG_ENABLE([ecore-wayland],
    [AC_HELP_STRING([--disable-ecore-wayland], [disable ecore-wayland support. @<:@default=detect@:>@])],
    [want_elementary_wayland=$enableval], [])
 
@@ -464,7 +464,7 @@ else
     have_elementary_wayland="no"
 fi
 if test "x$want_elementary_wayland" = "xyes" -a "x$have_elementary_wayland" = "xno"; then
-    AC_MSG_ERROR([ecore-x support requested, but not found by pkg-config.])
+    AC_MSG_ERROR([ecore-wayland support requested, but not found by pkg-config.])
 fi
 
 ELM_EDBUS_DEF="#undef"
