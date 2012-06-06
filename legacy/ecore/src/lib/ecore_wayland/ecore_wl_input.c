@@ -150,7 +150,8 @@ ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_buffer *buffer, int 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (input)
-     wl_pointer_attach(input->pointer, input->timestamp, buffer, hot_x, hot_y);
+     wl_pointer_attach(input->pointer, input->pointer_enter_serial, 
+                       buffer, hot_x, hot_y);
 }
 
 EAPI void
@@ -481,8 +482,10 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    if ((!win) || (win->keyboard_device != input)) return;
 
    num = xkb_key_get_syms(input->display->xkb.state, code, &syms);
+
    xkb_state_update_key(input->display->xkb.state, code, 
                         (state ? XKB_KEY_DOWN : XKB_KEY_UP));
+
    mask = xkb_state_serialize_mods(input->display->xkb.state, 
                                    (XKB_STATE_DEPRESSED | XKB_STATE_LATCHED));
    input->modifiers = 0;
