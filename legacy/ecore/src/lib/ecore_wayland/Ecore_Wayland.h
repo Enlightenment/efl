@@ -87,15 +87,9 @@ struct _Ecore_Wl_Display
    struct wl_list inputs;
    struct wl_list outputs;
 
-   struct 
+   struct
      {
-        struct xkb_rule_names names;
         struct xkb_context *context;
-        struct xkb_keymap *keymap;
-        struct xkb_state *state;
-        xkb_mod_mask_t control_mask;
-        xkb_mod_mask_t alt_mask;
-        xkb_mod_mask_t shift_mask;
      } xkb;
 
    struct wl_cursor_theme *cursor_theme;
@@ -145,6 +139,15 @@ struct _Ecore_Wl_Input
 
    Ecore_Wl_Dnd_Source *drag_source;
    Ecore_Wl_Dnd_Source *selection_source;
+
+   struct
+     {
+        struct xkb_keymap *keymap;
+        struct xkb_state *state;
+        xkb_mod_mask_t control_mask;
+        xkb_mod_mask_t alt_mask;
+        xkb_mod_mask_t shift_mask;
+     } xkb;
 };
 
 struct _Ecore_Wl_Window

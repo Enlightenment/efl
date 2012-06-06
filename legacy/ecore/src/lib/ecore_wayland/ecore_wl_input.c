@@ -34,9 +34,6 @@
 # define BTN_BACK 0x116
 #endif
 
-/* Required for keysym names - in the future available in libxkbcommon */
-//#include <X11/keysym.h>
-
 #define MOD_SHIFT_MASK 0x01
 #define MOD_ALT_MASK 0x02
 #define MOD_CONTROL_MASK 0x04
@@ -240,6 +237,9 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
    if (input->data_device) wl_data_device_destroy(input->data_device);
    if (input->seat) wl_seat_destroy(input->seat);
    wl_list_remove(&input->link);
+
+   xkb_state_unref(input->xkb.state);
+   xkb_map_unref(input->xkb.keymap);
    free(input);
 }
 
@@ -388,27 +388,27 @@ _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard __UN
         return;
      }
 
-   input->display->xkb.keymap = 
+   input->xkb.keymap = 
      xkb_map_new_from_string(input->display->xkb.context, map, 
                              XKB_KEYMAP_FORMAT_TEXT_V1, 0);
 
    munmap(map, size);
    close(fd);
 
-   if (!(input->display->xkb.keymap)) return;
-   if (!(input->display->xkb.state = xkb_state_new(input->display->xkb.keymap)))
+   if (!(input->xkb.keymap)) return;
+   if (!(input->xkb.state = xkb_state_new(input->xkb.keymap)))
      {
-        xkb_map_unref(input->display->xkb.keymap);
-        input->display->xkb.keymap = NULL;
+        xkb_map_unref(input->xkb.keymap);
+        input->xkb.keymap = NULL;
         return;
      }
 
-   input->display->xkb.control_mask = 
-     1 << xkb_map_mod_get_index(input->display->xkb.keymap, "Control");
-   input->display->xkb.alt_mask = 
-     1 << xkb_map_mod_get_index(input->display->xkb.keymap, "Mod1");
-   input->display->xkb.shift_mask = 
-     1 << xkb_map_mod_get_index(input->display->xkb.keymap, "Shift");
+   input->xkb.control_mask = 
+     1 << xkb_map_mod_get_index(input->xkb.keymap, "Control");
+   input->xkb.alt_mask = 
+     1 << xkb_map_mod_get_index(input->xkb.keymap, "Mod1");
+   input->xkb.shift_mask = 
+     1 << xkb_map_mod_get_index(input->xkb.keymap, "Shift");
 }
 
 /*
@@ -427,38 +427,39 @@ _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard __UN
  *       Copyright 1985, 1987, 1998  The Open Group
  *
  */
-/* static int  */
-/* _ecore_wl_input_keysym_to_string(unsigned int symbol, char *buffer, int len) */
-/* { */
-/*   unsigned long high_bytes; */
-/*   unsigned char c; */
+static int
+_ecore_wl_input_keysym_to_string(unsigned int symbol, char *buffer, int len)
+{
+  unsigned long high_bytes;
+  unsigned char c;
 
-/*    high_bytes = symbol >> 8; */
-/*    if (!(len && */
-/*          ((high_bytes == 0) || */
-/*              ((high_bytes == 0xFF) && */
-/*                  (((symbol >= XK_BackSpace) && */
-/*                    (symbol <= XK_Clear)) || */
-/*                      (symbol == XK_Return) || */
-/*                      (symbol == XK_Escape) || */
-/*                      (symbol == XK_KP_Space) || */
-/*                      (symbol == XK_KP_Tab) || */
-/*                      (symbol == XK_KP_Enter) || */
-/*                      ((symbol >= XK_KP_Multiply) && */
-/*                          (symbol <= XK_KP_9)) || */
-/*                      (symbol == XK_KP_Equal) || */
-/*                      (symbol == XK_Delete)))))) */
-/*      return 0; */
+   high_bytes = symbol >> 8;
+   if (!(len &&
+         ((high_bytes == 0) ||
+             ((high_bytes == 0xFF) &&
+                 (((symbol >= XKB_KEY_BackSpace) &&
+                   (symbol <= XKB_KEY_Clear)) ||
+                     (symbol == XKB_KEY_Return) ||
+                     (symbol == XKB_KEY_Escape) ||
+                     (symbol == XKB_KEY_KP_Space) ||
+                     (symbol == XKB_KEY_KP_Tab) ||
+                     (symbol == XKB_KEY_KP_Enter) ||
+                     ((symbol >= XKB_KEY_KP_Multiply) &&
+                         (symbol <= XKB_KEY_KP_9)) ||
+                     (symbol == XKB_KEY_KP_Equal) ||
+                     (symbol == XKB_KEY_Delete))))))
+     return 0;
 
-/*    if (symbol == XK_KP_Space) */
-/*    else if (high_bytes == 0xFF) */
-/*      c = symbol & 0x7F; */
-/*    else */
-/*      c = symbol & 0xFF; */
+   if (symbol == XKB_KEY_KP_Space)
+     c = ' ';
+   else if (high_bytes == 0xFF)
+     c = symbol & 0x7F;
+   else
+     c = symbol & 0xFF;
 
-/*    buffer[0] = c; */
-/*    return 1; */
-/* } */
+   buffer[0] = c;
+   return 1;
+}
 
 static void 
 _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state)
@@ -468,8 +469,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    unsigned int code, num;
    const xkb_keysym_t *syms;
    xkb_keysym_t sym;
-   xkb_mod_mask_t mask;
-   char string[8], key[8], keyname[8];
+   char string[32], key[32], keyname[32];
    Ecore_Event_Key *e;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -481,20 +481,20 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    win = input->keyboard_focus;
    if ((!win) || (win->keyboard_device != input)) return;
 
-   num = xkb_key_get_syms(input->display->xkb.state, code, &syms);
+   num = xkb_key_get_syms(input->xkb.state, code, &syms);
 
-   xkb_state_update_key(input->display->xkb.state, code, 
+   xkb_state_update_key(input->xkb.state, code, 
                         (state ? XKB_KEY_DOWN : XKB_KEY_UP));
 
-   mask = xkb_state_serialize_mods(input->display->xkb.state, 
-                                   (XKB_STATE_DEPRESSED | XKB_STATE_LATCHED));
-   input->modifiers = 0;
-   if (mask & input->display->xkb.control_mask)
-     input->modifiers |= MOD_CONTROL_MASK;
-   if (mask & input->display->xkb.alt_mask)
-     input->modifiers |= MOD_ALT_MASK;
-   if (mask & input->display->xkb.shift_mask)
-     input->modifiers |= MOD_SHIFT_MASK;
+   /* mask = xkb_state_serialize_mods(input->display->xkb.state,  */
+   /*                                 (XKB_STATE_DEPRESSED | XKB_STATE_LATCHED)); */
+   /* input->modifiers = 0; */
+   /* if (mask & input->display->xkb.control_mask) */
+   /*   input->modifiers |= MOD_CONTROL_MASK; */
+   /* if (mask & input->display->xkb.alt_mask) */
+   /*   input->modifiers |= MOD_ALT_MASK; */
+   /* if (mask & input->display->xkb.shift_mask) */
+   /*   input->modifiers |= MOD_SHIFT_MASK; */
 
    if (num == 1) sym = syms[0];
    else sym = XKB_KEY_NoSymbol;
@@ -504,12 +504,11 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    memset(string, 0, sizeof(string));
 
    /* TODO: Switch over to the libxkbcommon API when it is available */
-   /* if (!_ecore_wl_input_keysym_to_string(sym, string, sizeof(string))) */
-   /*   string[0] = '\0'; */
+   if (!_ecore_wl_input_keysym_to_string(sym, string, sizeof(string)))
+     string[0] = '\0';
 
    xkb_keysym_get_name(sym, key, sizeof(key));
    xkb_keysym_get_name(sym, keyname, sizeof(keyname));
-   xkb_keysym_get_name(sym, string, sizeof(string));
 
    e = malloc(sizeof(Ecore_Event_Key) + strlen(keyname) + strlen(key) +
               strlen(string) + 3);
@@ -520,7 +519,6 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    e->compose = e->string;
 
    strcpy((char *)e->keyname, keyname);
-
    strcpy((char *)e->key, key);
    if (strlen (string))
      strcpy((char *)e->string, string);
@@ -528,31 +526,37 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    e->window = win->id;
    e->event_window = win->id;
    e->timestamp = timestamp;
-
-   /* The Ecore_Event_Modifiers don't quite match the X mask bits */
    e->modifiers = input->modifiers;
 
    if (state)
      ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
    else
      ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
-
-   /* if (state) */
-   /*   input->modifiers |= _ecore_wl_disp->xkb->map->modmap[keycode]; */
-   /* else */
-   /*   input->modifiers &= ~_ecore_wl_disp->xkb->map->modmap[keycode]; */
 }
 
 static void 
 _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial __UNUSED__, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group)
 {
    Ecore_Wl_Input *input;
+   xkb_mod_mask_t mask;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
-   xkb_state_update_mask(input->display->xkb.state, depressed, latched, 
+   xkb_state_update_mask(input->xkb.state, depressed, latched, 
                          locked, 0, 0, group);
+
+   mask = xkb_state_serialize_mods(input->xkb.state, 
+                                   (XKB_STATE_DEPRESSED | XKB_STATE_LATCHED));
+   input->modifiers = 0;
+
+   /* The Ecore_Event_Modifiers don't quite match the X mask bits */
+   if (mask & input->xkb.control_mask)
+     input->modifiers |= MOD_CONTROL_MASK;
+   if (mask & input->xkb.alt_mask)
+     input->modifiers |= MOD_ALT_MASK;
+   if (mask & input->xkb.shift_mask)
+     input->modifiers |= MOD_SHIFT_MASK;
 }
 
 static void 

@@ -460,33 +460,10 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
 static Eina_Bool 
 _ecore_wl_xkb_init(Ecore_Wl_Display *ewd)
 {
-   struct xkb_rule_names names;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(ewd->xkb.context = xkb_context_new(0)))
      return EINA_FALSE;
-
-   memset(&names, 0, sizeof(names));
-
-   ewd->xkb.names = names;
-   ewd->xkb.names.rules = strdup("evdev");
-   ewd->xkb.names.model = strdup("pc105");
-   ewd->xkb.names.layout = strdup("us");
-
-   ewd->xkb.keymap = 
-     xkb_map_new_from_names(ewd->xkb.context, &ewd->xkb.names, 0);
-   if (!ewd->xkb.keymap) return EINA_FALSE;
-
-   if (!(ewd->xkb.state = xkb_state_new(ewd->xkb.keymap)))
-     return EINA_FALSE;
-
-   ewd->xkb.control_mask = 
-     1 << xkb_map_mod_get_index(ewd->xkb.keymap, "Control");
-   ewd->xkb.alt_mask = 
-     1 << xkb_map_mod_get_index(ewd->xkb.keymap, "Mod1");
-   ewd->xkb.shift_mask = 
-     1 << xkb_map_mod_get_index(ewd->xkb.keymap, "Shift");
 
    return EINA_TRUE;
 }
@@ -496,15 +473,7 @@ _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   xkb_state_unref(ewd->xkb.state);
-   xkb_map_unref(ewd->xkb.keymap);
    xkb_context_unref(ewd->xkb.context);
-
-   free((char *)ewd->xkb.names.rules);
-   free((char *)ewd->xkb.names.model);
-   free((char *)ewd->xkb.names.layout);
-   free((char *)ewd->xkb.names.variant);
-   free((char *)ewd->xkb.names.options);
 
    return EINA_TRUE;
 }
