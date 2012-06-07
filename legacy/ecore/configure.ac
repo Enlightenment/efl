@@ -1527,6 +1527,10 @@ if test "x${have_ecore_con}" = "xyes" ; then
 fi
 
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
+if test "x${have_cares}" != "xyes" ; then
+   C99="$ac_cv_prog_cc_c99"
+   AC_SUBST(C99)
+fi
 
 # ecore_ipc
 ECORE_CHECK_MODULE([ipc], [${want_ecore_ipc}], [Ipc], [${have_ecore_con}],
