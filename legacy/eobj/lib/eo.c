@@ -1078,7 +1078,7 @@ eo_parent_set(Eo *obj, const Eo *parent)
      {
         obj->parent->children =
            eina_inlist_remove(obj->parent->children, EINA_INLIST_GET(obj));
-//        eo_xunref(obj, obj->parent);
+        eo_xunref(obj, obj->parent);
      }
 
    obj->parent = (Eo *) parent;
@@ -1086,7 +1086,7 @@ eo_parent_set(Eo *obj, const Eo *parent)
      {
         obj->parent->children =
            eina_inlist_append(obj->parent->children, EINA_INLIST_GET(obj));
-//        eo_xref(obj, obj->parent);
+        eo_xref(obj, obj->parent);
      }
 
    _eo_unref(obj);
@@ -1307,6 +1307,13 @@ eo_unref(const Eo *_obj)
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
 
    _eo_unref(obj);
+}
+
+EAPI void
+eo_del(const Eo *obj)
+{
+   eo_parent_set((Eo *) obj, NULL);
+   eo_unref(obj);
 }
 
 EAPI int

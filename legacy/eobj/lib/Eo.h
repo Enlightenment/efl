@@ -721,6 +721,15 @@ EAPI void eo_unref(const Eo *obj);
 EAPI int eo_ref_get(const Eo *obj);
 
 /**
+ * @brief Unrefs the object and reparents it to NULL.
+ * @param obj the object to work on.
+ *
+ * @see eo_unref()
+ * @see eo_parent_set()
+ */
+EAPI void eo_del(const Eo *obj);
+
+/**
  * @def eo_xref(obj, ref_obj)
  * Convenience macro around eo_xref_internal()
  * @see eo_xref()

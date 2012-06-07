@@ -206,6 +206,13 @@ START_TEST(eo_refs)
    eo_unref(obj);
    eo_unref(obj);
 
+   obj = eo_add(SIMPLE_CLASS, NULL);
+   obj2 = eo_add(SIMPLE_CLASS, obj);
+   eo_unref(obj2);
+   eo_ref(obj2);
+   eo_del(obj2);
+   eo_unref(obj);
+
    eo_shutdown();
 }
 END_TEST
@@ -457,6 +464,7 @@ START_TEST(eo_magic_checks)
 
         eo_ref((Eo *) buf);
         eo_unref((Eo *) buf);
+        eo_del((Eo *) buf);
 
         fail_if(0 != eo_ref_get((Eo *) buf));
 
