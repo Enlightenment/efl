@@ -45,6 +45,7 @@ struct _Eo {
 
      Eo_Kls_Itr mro_itr;
 
+     Eina_Bool composite:1;
      Eina_Bool del:1;
      Eina_Bool construct_error:1;
      Eina_Bool manual_free:1;
@@ -1074,6 +1075,11 @@ eo_parent_set(Eo *obj, const Eo *parent)
 
    _eo_ref(obj);
 
+   if (eo_composite_is(obj))
+     {
+        eo_composite_object_detach(obj->parent, obj);
+     }
+
    if (obj->parent)
      {
         obj->parent->children =
@@ -1534,7 +1540,8 @@ eo_composite_object_attach(Eo *obj, Eo *emb_obj)
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
    EO_MAGIC_RETURN(emb_obj, EO_EINA_MAGIC);
 
-   eo_xref(emb_obj, obj);
+   emb_obj->composite = EINA_TRUE;
+   eo_parent_set(emb_obj, obj);
    obj->composite_objects = eina_list_prepend(obj->composite_objects, emb_obj);
 }
 
@@ -1544,8 +1551,9 @@ eo_composite_object_detach(Eo *obj, Eo *emb_obj)
    EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
    EO_MAGIC_RETURN(emb_obj, EO_EINA_MAGIC);
 
+   emb_obj->composite = EINA_FALSE;
    obj->composite_objects = eina_list_remove(obj->composite_objects, emb_obj);
-   eo_xunref(emb_obj, obj);
+   eo_parent_set(emb_obj, NULL);
 }
 
 EAPI Eina_Bool
@@ -1557,20 +1565,7 @@ eo_composite_is(const Eo *emb_obj)
         return EINA_FALSE;
      }
 
-   Eo *obj = eo_parent_get(emb_obj);
-   Eina_List *itr;
-   Eo *tmp;
-
-   if (!obj)
-      return EINA_FALSE;
-
-   EINA_LIST_FOREACH(obj->composite_objects, itr, tmp)
-     {
-        if (tmp == emb_obj)
-           return EINA_TRUE;
-     }
-
-   return EINA_FALSE;
+   return emb_obj->composite;
 }
 
 EAPI void

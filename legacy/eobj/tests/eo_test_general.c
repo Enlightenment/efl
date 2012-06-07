@@ -59,6 +59,26 @@ START_TEST(eo_data_fetch)
 }
 END_TEST
 
+START_TEST(eo_composite_tests)
+{
+   eo_init();
+
+   Eo *obj = eo_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj2);
+
+   eo_composite_object_attach(obj, obj2);
+   eo_parent_set(obj2, NULL);
+   fail_if(eo_composite_is(obj2));
+
+   eo_unref(obj2);
+   eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 START_TEST(eo_static_classes)
 {
    eo_init();
@@ -516,4 +536,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_data_fetch);
    tcase_add_test(tc, eo_man_free);
    tcase_add_test(tc, eo_static_classes);
+   tcase_add_test(tc, eo_composite_tests);
 }
