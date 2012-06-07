@@ -35,6 +35,13 @@ EAPI Eina_List *efreet_data_dirs_get(void);
 EAPI const char *efreet_config_home_get(void);
 
 /**
+ * @return Returns the XDG Desktop directory
+ * @brief Retrieves the XDG Desktop directory
+ * @since 1.3
+ */
+EAPI const char *efreet_desktop_dir_get(void);
+
+/**
  * @return Returns the Eina_List of preference ordered extra config directories
  * @brief Returns the Eina_List of preference ordered extra config
  * directories

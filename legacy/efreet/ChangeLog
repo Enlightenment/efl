@@ -119,3 +119,7 @@
 
 	* Faster loading of mime type.
 
+
+2012-06-07  Mike Blumenkrantz
+
+        * Support XDG_DESKTOP_DIR

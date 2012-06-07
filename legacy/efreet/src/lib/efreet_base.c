@@ -114,6 +114,14 @@ efreet_home_dir_get(void)
 }
 
 EAPI const char *
+efreet_desktop_dir_get(void)
+{
+    if (xdg_desktop_dir) return xdg_desktop_dir;
+    xdg_desktop_dir = efreet_dir_get("XDG_DESKTOP_DIR", "/Desktop");
+    return xdg_desktop_dir;
+}
+
+EAPI const char *
 efreet_data_home_get(void)
 {
     if (xdg_data_home) return xdg_data_home;

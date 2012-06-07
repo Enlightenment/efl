@@ -7,6 +7,11 @@ Improvements:
 
     * Faster mime type loading.
 
+
+Additions:
+
+    * Support XDG_DESKTOP_DIR
+
 Efreet 1.2.0
 
 Changes since Efreet 1.1.0:
