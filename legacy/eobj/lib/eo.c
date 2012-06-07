@@ -1258,7 +1258,6 @@ _eo_del_internal(Eo *obj)
           }
      }
 
-   eo_parent_set(obj, NULL);
    while (obj->children)
      {
         eo_parent_set(EINA_INLIST_CONTAINER_GET(obj->children, Eo), NULL);
