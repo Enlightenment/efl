@@ -132,7 +132,7 @@ typedef enum
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  *
- * @see elm_icon_file_set()
+ * @see elm_image_file_set()
  *
  * @ingroup Icon
  */
@@ -190,7 +190,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj
  * @param file The path to file that will be used as the icon image
  * @param group The group that the icon belongs to, in edje file
  *
- * @see elm_icon_file_set()
+ * @see elm_image_file_set()
  *
  * @deprecated Use elm_image_file_get() instead.
  *
@@ -205,13 +205,13 @@ EINA_DEPRECATED EAPI void                  elm_icon_file_get(const Evas_Object *
  * @param file The path to file that will be used as icon image
  * @param group The group that the icon belongs to an edje file
  *
- * This functions like elm_icon_file_set() but requires the Ethumb library
+ * This functions like elm_image_file_set() but requires the Ethumb library
  * support to be enabled successfully with elm_need_ethumb(). When set
  * the file indicated has a thumbnail generated and cached on disk for
  * future use or will directly use an existing cached thumbnail if it
  * is valid.
  *
- * @see elm_icon_file_set()
+ * @see elm_image_file_set()
  *
  * @ingroup Icon
  */
@@ -235,10 +235,10 @@ EAPI void                  elm_icon_thumb_set(Evas_Object *obj, const char *file
  * absolute path of an image file, this image will be used.
  *
  * @note The icon image set by this function can be changed by
- * elm_icon_file_set().
+ * elm_image_file_set().
  *
  * @see elm_icon_standard_get()
- * @see elm_icon_file_set()
+ * @see elm_image_file_set()
  *
  * @ingroup Icon
  */
@@ -250,7 +250,7 @@ EAPI Eina_Bool             elm_icon_standard_set(Evas_Object *obj, const char *n
  * @param obj The icon object
  * @return The icon name
  *
- * If the icon image was set using elm_icon_file_set() instead of
+ * If the icon image was set using elm_image_file_set() instead of
  * elm_icon_standard_set(), then this function will return @c NULL.
  *
  * @see elm_icon_standard_set()

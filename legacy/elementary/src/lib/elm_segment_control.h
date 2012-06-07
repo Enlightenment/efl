@@ -102,7 +102,7 @@ EAPI Evas_Object      *elm_segment_control_add(Evas_Object *parent);
  * @code
  * sc = elm_segment_control_add(win);
  * ic = elm_icon_add(win);
- * elm_icon_file_set(ic, "path/to/image", NULL);
+ * elm_image_file_set(ic, "path/to/image", NULL);
  * elm_icon_resizable_set(ic, EINA_TRUE, EINA_TRUE);
  * elm_segment_control_item_add(sc, ic, "label");
  * evas_object_show(sc);

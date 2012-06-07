@@ -290,7 +290,7 @@ EAPI const Eina_List       *elm_diskselector_items_get(const Evas_Object *obj);
  * @code
  * disk = elm_diskselector_add(win);
  * ic = elm_icon_add(win);
- * elm_icon_file_set(ic, "path/to/image", NULL);
+ * elm_image_file_set(ic, "path/to/image", NULL);
  * elm_icon_resizable_set(ic, EINA_TRUE, EINA_TRUE);
  * elm_diskselector_item_append(disk, "label", ic, NULL, NULL);
  * @endcode
