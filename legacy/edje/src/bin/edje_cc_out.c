@@ -1525,9 +1525,8 @@ data_write(void)
    int sound_num = 0;
    int font_num = 0;
    int collection_num = 0;
-   int i;
    double t;
-   
+
    if (!edje_file)
      {
 	ERR("%s: Error. No data to put in \"%s\"",
