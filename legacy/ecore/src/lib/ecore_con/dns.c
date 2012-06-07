@@ -7108,8 +7108,9 @@ static int parse_packet(int argc, char *argv[]) {
 	struct dns_rr rrset[32];
 	struct dns_rr_i *rri	= dns_rr_i_new(Q, .name = dns_d_new("ns8.yahoo.com", DNS_D_ANCHOR), .sort = MAIN.sort);
 	unsigned rrcount	= dns_rr_grep(rrset, lengthof(rrset), rri, Q, &error);
+	unsigned i;
 
-	for (unsigned i = 0; i < rrcount; i++) {
+	for (i = 0; i < rrcount; i++) {
 		rr	= rrset[i];
 #endif
 		if (section != rr.section)
