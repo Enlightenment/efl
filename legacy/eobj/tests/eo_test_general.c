@@ -216,9 +216,29 @@ START_TEST(eo_refs)
    fail_if(eo_ref_get(obj) != 1);
 #endif
 
+   /* Check we don't seg if there's an extra xref. */
+   eo_xref(obj, obj2);
+   eo_unref(obj);
+
    eo_unref(obj);
    eo_unref(obj2);
    eo_unref(obj3);
+
+   /* Check hierarchy */
+   obj = eo_add(SIMPLE_CLASS, NULL);
+   obj2 = eo_add(SIMPLE_CLASS, obj);
+
+   Eo *wref;
+   eo_do(obj2, eo_wref_add(&wref));
+   fail_if(!wref);
+
+   eo_unref(obj2);
+
+   fail_if(!wref); /* Parent is still holding a reference. */
+
+   eo_unref(obj);
+
+   fail_if(wref);
 
    /* Just check it doesn't seg atm. */
    obj = eo_add(SIMPLE_CLASS, NULL);
