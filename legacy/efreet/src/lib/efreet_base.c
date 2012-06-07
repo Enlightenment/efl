@@ -44,6 +44,7 @@ static const char *xdg_config_home = NULL;
 static const char *xdg_cache_home = NULL;
 static Eina_List  *xdg_data_dirs = NULL;
 static Eina_List  *xdg_config_dirs = NULL;
+static const char *xdg_desktop_dir = NULL;
 static const char *hostname = NULL;
 
 static const char *efreet_dir_get(const char *key, const char *fallback);
@@ -77,6 +78,7 @@ void
 efreet_base_shutdown(void)
 {
     IF_RELEASE(efreet_home_dir);
+    IF_RELEASE(xdg_desktop_dir);
     IF_RELEASE(xdg_data_home);
     IF_RELEASE(xdg_config_home);
     IF_RELEASE(xdg_cache_home);
