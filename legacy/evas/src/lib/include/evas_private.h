@@ -956,6 +956,8 @@ void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *othe
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void _evas_object_smart_members_all_del(Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
+void evas_object_smart_bouding_box_update(Evas_Object *obj);
+void evas_object_smart_need_bounding_box_update(Evas_Object *obj);
 void *evas_mem_calloc(int size);
 void _evas_post_event_callback_call(Evas *e);
 void _evas_post_event_callback_free(Evas *e);

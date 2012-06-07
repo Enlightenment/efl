@@ -16,6 +16,7 @@ struct _Evas_Object_Smart
    int               member_count;
    Eina_Bool         deletions_waiting : 1;
    Eina_Bool         need_recalculate : 1;
+   Eina_Bool         update_boundingbox_needed : 1;
 };
 
 struct _Evas_Smart_Callback
@@ -848,6 +849,107 @@ evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *other)
    o = (Evas_Object_Smart *)(member->smart.parent->object_data);
    o->contained = eina_inlist_remove(o->contained, EINA_INLIST_GET(member));
    o->contained = eina_inlist_prepend_relative(o->contained, EINA_INLIST_GET(member), EINA_INLIST_GET(other));
+}
+
+void
+evas_object_smart_need_bounding_box_update(Evas_Object *obj)
+{
+   Evas_Object_Smart *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Smart *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return;
+   MAGIC_CHECK_END();
+
+   if (o->update_boundingbox_needed) return ;
+   o->update_boundingbox_needed = EINA_TRUE;
+
+   if (obj->smart.parent) evas_object_smart_need_bounding_box_update(obj->smart.parent);
+}
+
+void
+evas_object_smart_bouding_box_update(Evas_Object *obj)
+{
+   Eina_Inlist *list;
+   Evas_Object *o;
+   Evas_Object_Smart *os;
+   Evas_Coord minx;
+   Evas_Coord miny;
+   Evas_Coord maxw = 0;
+   Evas_Coord maxh = 0;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   os = (Evas_Object_Smart *)(obj->object_data);
+   MAGIC_CHECK(os, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return;
+   MAGIC_CHECK_END();
+
+   if (!os->update_boundingbox_needed) return ;
+   os->update_boundingbox_needed = EINA_FALSE;
+
+   minx = obj->layer->evas->output.w;
+   miny = obj->layer->evas->output.h;
+
+   list = os->contained;
+   EINA_INLIST_FOREACH(list, o)
+     {
+        Evas_Coord tx;
+        Evas_Coord ty;
+        Evas_Coord tw;
+        Evas_Coord th;
+
+        if (o == obj) continue ;
+        /* if (o->clip.clipees || o->is_static_clip) continue ; */
+
+        if (o->smart.smart)
+          {
+             evas_object_smart_bouding_box_update(o);
+
+             tx = o->cur.bounding_box.x;
+             ty = o->cur.bounding_box.y;
+             tw = o->cur.bounding_box.x + o->cur.bounding_box.w;
+             th = o->cur.bounding_box.y + o->cur.bounding_box.h;
+          }
+        else
+          {
+             tx = o->cur.geometry.x;
+             ty = o->cur.geometry.y;
+             tw = o->cur.geometry.x + o->cur.geometry.w;
+             th = o->cur.geometry.y + o->cur.geometry.h;
+          }
+
+        if (tx < minx) minx = tx;
+        if (ty < miny) miny = ty;
+        if (tw > maxw) maxw = tw;
+        if (th > maxh) maxh = th;
+     }
+
+   if (minx != obj->cur.bounding_box.x)
+     {
+        obj->cur.bounding_box.w += obj->cur.bounding_box.x - minx;
+        obj->cur.bounding_box.x = minx;
+     }
+
+   if (miny != obj->cur.bounding_box.y)
+     {
+        obj->cur.bounding_box.h += obj->cur.bounding_box.y - miny;
+        obj->cur.bounding_box.y = miny;
+     }
+
+   if (maxw != obj->cur.bounding_box.x + obj->cur.bounding_box.w)
+     {
+        obj->cur.bounding_box.w = maxw - obj->cur.bounding_box.x;
+     }
+
+   if (maxh != obj->cur.bounding_box.y + obj->cur.bounding_box.h)
+     {
+        obj->cur.bounding_box.h = maxh - obj->cur.bounding_box.y;
+     }
 }
 
 /* all nice and private */
