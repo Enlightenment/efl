@@ -65,6 +65,7 @@ EAPI extern Eina_Lock _eo_class_creation_lock;
  */
 enum _Eo_Op_Type
 {
+   EO_OP_TYPE_INVALID = -1, /**< Invalid op. */
    EO_OP_TYPE_REGULAR = 0, /**< Regular op. */
    EO_OP_TYPE_CONST, /**< Const op - object should not change. */
    EO_OP_TYPE_CLASS, /**< Class op - a class op. Like static in Java/C++. */
@@ -333,7 +334,7 @@ typedef struct _Eo_Op_Func_Description Eo_Op_Func_Description;
  * A convenience macro to be used when populating the #Eo_Op_Func_Description
  * array. It must appear at the end of the ARRAY.
  */
-#define EO_OP_FUNC_SENTINEL { 0, NULL, EINA_FALSE }
+#define EO_OP_FUNC_SENTINEL { 0, NULL, EO_OP_TYPE_INVALID }
 
 /**
  * @struct _Eo_Op_Description

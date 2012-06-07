@@ -752,7 +752,7 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
    itr = func_descs;
    if (itr)
      {
-        for ( ; itr->op != 0 ; itr++)
+        for ( ; itr->op_type != EO_OP_TYPE_INVALID ; itr++)
           {
              const Eo_Op_Description *op_desc = _eo_op_id_desc_get(itr->op);
 
