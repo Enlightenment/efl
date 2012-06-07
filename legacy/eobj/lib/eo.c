@@ -756,13 +756,21 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
           {
              const Eo_Op_Description *op_desc = _eo_op_id_desc_get(itr->op);
 
-             if (EINA_LIKELY(!op_desc || (itr->op_type == op_desc->op_type)))
+             if (EINA_LIKELY(op_desc && (itr->op_type == op_desc->op_type)))
                {
                   _dich_func_set(klass, itr->op, itr->func);
                }
              else
                {
-                  ERR("Set function's op type (%d) is different than the one in the op description (%d) for op '%s' in class '%s'.", itr->op_type, op_desc->op_type, op_desc->name, klass->desc->name);
+                  Eo_Op_Type desc_type = EO_OP_TYPE_REGULAR;
+                  const char *desc_name = NULL;
+                  if (op_desc)
+                    {
+                       desc_type = op_desc->op_type;
+                       desc_name = op_desc->name;
+                    }
+
+                  ERR("Set function's op type (%d) is different than the one in the op description (%d) for op '%s' in class '%s'.", itr->op_type, desc_type, desc_name, klass->desc->name);
                }
           }
      }
