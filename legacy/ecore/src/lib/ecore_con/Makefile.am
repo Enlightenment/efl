@@ -35,7 +35,6 @@ if HAVE_CARES
 libecore_con_la_SOURCES += ecore_con_ares.c
 else
 if HAVE_IPV6
-AM_CPPFLAGS += -Wno-override-init $(C99)
 libecore_con_la_SOURCES += ecore_con_dns.c dns.c dns.h
 else
 libecore_con_la_SOURCES += ecore_con_info.c
