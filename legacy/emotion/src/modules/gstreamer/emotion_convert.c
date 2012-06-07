@@ -78,45 +78,57 @@ _evas_video_bgra(unsigned char *evas_data, const unsigned char *gst_data, unsign
 }
 
 static void
-_evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h __UNUSED__, unsigned int output_height)
+_evas_video_i420(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
 {
    const unsigned char **rows;
    unsigned int i, j;
    unsigned int rh;
+   unsigned int stride_y, stride_uv;
 
    rh = output_height;
 
    rows = (const unsigned char **)evas_data;
 
+   stride_y = GST_ROUND_UP_4(w);
+   stride_uv = GST_ROUND_UP_8(w) / 2;
+
    for (i = 0; i < rh; i++)
-     rows[i] = &gst_data[i * w];
+     rows[i] = &gst_data[i * stride_y];
 
    for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * w + j * (w / 2)];
+     rows[i] = &gst_data[h * stride_y + j * stride_uv];
 
    for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * w + rh * (w / 4) + j * (w / 2)];
+     rows[i] = &gst_data[h * stride_y +
+			 (rh / 2) * stride_uv +
+			 j * stride_uv];
 }
 
 static void
-_evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h __UNUSED__, unsigned int output_height)
+_evas_video_yv12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height)
 {
    const unsigned char **rows;
    unsigned int i, j;
    unsigned int rh;
+   unsigned int stride_y, stride_uv;
 
    rh = output_height;
 
    rows = (const unsigned char **)evas_data;
 
+   stride_y = GST_ROUND_UP_4(w);
+   stride_uv = GST_ROUND_UP_8(w) / 2;
+
    for (i = 0; i < rh; i++)
-     rows[i] = &gst_data[i * w];
+     rows[i] = &gst_data[i * stride_y];
 
    for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * w + rh * (w / 4) + j * (w / 2)];
+     rows[i] = &gst_data[h * stride_y +
+			 (rh / 2) * stride_uv +
+			 j * stride_uv];
 
    for (j = 0; j < (rh / 2); j++, i++)
-     rows[i] = &gst_data[h * w + j * (w / 2)];
+     rows[i] = &gst_data[h * stride_y + j * stride_uv];
 }
 
 static void
@@ -124,11 +136,14 @@ _evas_video_yuy2(unsigned char *evas_data, const unsigned char *gst_data, unsign
 {
    const unsigned char **rows;
    unsigned int i;
+   unsigned int stride;
 
    rows = (const unsigned char **)evas_data;
 
+   stride = GST_ROUND_UP_4(w * 2);
+
    for (i = 0; i < output_height; i++)
-     rows[i] = &gst_data[i * w * 2];
+     rows[i] = &gst_data[i * stride];
 }
 
 static void

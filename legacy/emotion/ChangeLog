@@ -1,12 +1,15 @@
-2012-04-26 Carsten Haitzler (The Rasterman)
+2012-04-26  Carsten Haitzler (The Rasterman)
 
 	* 1.0.0 release
 
-2012-04-30 Jérôme Pinot
+2012-04-30  Jérôme Pinot
 
 	* Fix build out of tree.
 
-2012-05-16 Carsten Haitzler (The Rasterman)
+2012-05-16  Carsten Haitzler (The Rasterman)
 
 	* Fix emotion video overlay support to detect correct engine name.
 
+2012-06-07  Cedric Bail
+
+	* Fix stride for all YUV video stream.
