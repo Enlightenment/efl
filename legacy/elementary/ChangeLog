@@ -157,8 +157,8 @@
 
         * Re-setting the current mirrored mode state no longer causes a full recalc
 
-012-06-01 Mike Blumenkrantz
+2012-06-07 Jaehwan Kim
 
-	* Toolbar: Remove the APIs elm_toolbar_items_max_set/get.
+        * Toolbar: Remove the APIs elm_toolbar_items_max_set/get.
 	  Instead of them, add the APIs elm_toolbar_standard_priority_set/get.
 	  The items which are lower than standard priority are located in more menu or panel.
