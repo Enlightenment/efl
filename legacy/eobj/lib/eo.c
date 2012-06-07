@@ -308,7 +308,7 @@ _eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Op op)
    if (cur->op != op)
      {
         Eo_Op node_op = cur->op;
-        ERR("Called with op %d ('%s') while expecting: %d ('%s'). This probaly means you called eo_*_super functions from a wrong place.",
+        ERR("Called with op %x ('%s') while expecting: %x ('%s'). This probaly means you called eo_*_super functions from a wrong place.",
               op, _eo_op_id_name_get(op),
               node_op, _eo_op_id_name_get(node_op));
         return NULL;
@@ -386,13 +386,13 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
      {
         if (op_desc->op_type == EO_OP_TYPE_CLASS)
           {
-             ERR("Tried calling a class op '%s' (%d) from a non-class context.", (op_desc) ? op_desc->name : NULL, op);
+             ERR("Tried calling a class op '%s' (%x) from a non-class context.", (op_desc) ? op_desc->name : NULL, op);
              return EINA_FALSE;
           }
         else if ((op_type == EO_OP_TYPE_CONST) &&
               (op_desc->op_type != EO_OP_TYPE_CONST))
           {
-             ERR("Tried calling non-const or non-existant op '%s' (%d) from a const (query) function.", (op_desc) ? op_desc->name : NULL, op);
+             ERR("Tried calling non-const or non-existant op '%s' (%x) from a const (query) function.", (op_desc) ? op_desc->name : NULL, op);
              return EINA_FALSE;
           }
      }
@@ -498,7 +498,7 @@ _eo_class_op_internal(Eo_Class *klass, Eo_Op op, va_list *p_list)
      {
         if (op_desc->op_type != EO_OP_TYPE_CLASS)
           {
-             ERR("Tried calling an instant op '%s' (%d) from a class context.", (op_desc) ? op_desc->name : NULL, op);
+             ERR("Tried calling an instance op '%s' (%x) from a class context.", (op_desc) ? op_desc->name : NULL, op);
              return EINA_FALSE;
           }
      }
@@ -766,7 +766,7 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
                }
              else
                {
-                  ERR("Set function's op type (%d) is different than the one in the op description (%d) for op '%s' in class '%s'. Func index: %d",
+                  ERR("Set function's op type (%x) is different than the one in the op description (%d) for op '%s' in class '%s'. Func index: %d",
                         itr->op_type,
                         (op_desc) ? op_desc->op_type : EO_OP_TYPE_REGULAR,
                         (op_desc) ? op_desc->name : NULL,
@@ -838,11 +838,11 @@ _eo_class_check_op_descs(const Eo_Class *klass, Eo_Class_Id id)
           {
              if (itr->name)
                {
-                  ERR("Wrong order in Ops description for class '%s'. Expected %d and got %d", desc->name, i, itr->sub_op);
+                  ERR("Wrong order in Ops description for class '%s'. Expected %x and got %x", desc->name, i, itr->sub_op);
                }
              else
                {
-                  ERR("Found too few Ops description for class '%s'. Expected %d descriptions, but found %d.", desc->name, desc->ops.count, i);
+                  ERR("Found too few Ops description for class '%s'. Expected %x descriptions, but found %x.", desc->name, desc->ops.count, i);
                }
              return EINA_FALSE;
           }
