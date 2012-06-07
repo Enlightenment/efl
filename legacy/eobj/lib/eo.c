@@ -1069,6 +1069,9 @@ eo_parent_set(Eo *obj, const Eo *parent)
    if (parent)
       EO_MAGIC_RETURN_VAL(parent, EO_EINA_MAGIC, EINA_FALSE);
 
+   if (obj->parent == parent)
+      return EINA_TRUE;
+
    _eo_ref(obj);
 
    if (obj->parent)
@@ -1166,7 +1169,6 @@ eo_xref_internal(Eo *obj, const Eo *ref_obj, const char *file, int line)
    xref->file = file;
    xref->line = line;
 
-   /* FIXME: Make it sorted. */
    obj->xrefs = eina_inlist_prepend(obj->xrefs, EINA_INLIST_GET(xref));
 #else
    (void) ref_obj;
