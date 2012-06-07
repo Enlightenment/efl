@@ -665,6 +665,8 @@ EAPI Eo *eo_add(const Eo_Class *klass, Eo *parent);
  * @brief Get the parent of an object
  * @param obj the object to get the parent of.
  * @return a pointer to the parent object.
+ *
+ * @see eo_parent_set()
  */
 EAPI Eo *eo_parent_get(const Eo *obj);
 
@@ -673,6 +675,13 @@ EAPI Eo *eo_parent_get(const Eo *obj);
  * @param obj the object to get the parent of.
  * @param parent the new parent.
  * @return @c EINA_TRUE on success, @c EINA_FALSE on failure.
+ *
+ * Parents keep references to their children so in order to delete objects
+ * that have parents you need to set parent to NULL or use eo_del() that
+ * does that for you (and also unrefs the object).
+ *
+ * @see eo_del()
+ * @see eo_parent_get()
  */
 EAPI Eina_Bool eo_parent_set(Eo *obj, const Eo *parent);
 
@@ -723,6 +732,9 @@ EAPI int eo_ref_get(const Eo *obj);
 /**
  * @brief Unrefs the object and reparents it to NULL.
  * @param obj the object to work on.
+ *
+ * Because eo_del() unrefs and reparents to NULL, it doesn't really delete the
+ * object.
  *
  * @see eo_unref()
  * @see eo_parent_set()
