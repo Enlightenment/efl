@@ -856,13 +856,7 @@ evas_object_smart_need_bounding_box_update(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
 
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
    o = (Evas_Object_Smart *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return;
-   MAGIC_CHECK_END();
 
    if (o->update_boundingbox_needed) return ;
    o->update_boundingbox_needed = EINA_TRUE;
@@ -881,13 +875,7 @@ evas_object_smart_bouding_box_update(Evas_Object *obj)
    Evas_Coord maxw = 0;
    Evas_Coord maxh = 0;
 
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
    os = (Evas_Object_Smart *)(obj->object_data);
-   MAGIC_CHECK(os, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return;
-   MAGIC_CHECK_END();
 
    if (!os->update_boundingbox_needed) return ;
    os->update_boundingbox_needed = EINA_FALSE;
