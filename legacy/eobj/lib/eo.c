@@ -756,16 +756,22 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
           {
              const Eo_Op_Description *op_desc = _eo_op_id_desc_get(itr->op);
 
-             if (EINA_LIKELY(op_desc && (itr->op_type == op_desc->op_type)))
+             if (EINA_UNLIKELY(!op_desc || (itr->op == EO_NOOP)))
+               {
+                  ERR("Setting implementation for non-existent op %x for class '%s'. Func index: %d", itr->op, klass->desc->name, itr - func_descs);
+               }
+             else if (EINA_LIKELY(itr->op_type == op_desc->op_type))
                {
                   _dich_func_set(klass, itr->op, itr->func);
                }
              else
                {
-                  ERR("Set function's op type (%d) is different than the one in the op description (%d) for op '%s' in class '%s'.", itr->op_type,
+                  ERR("Set function's op type (%d) is different than the one in the op description (%d) for op '%s' in class '%s'. Func index: %d",
+                        itr->op_type,
                         (op_desc) ? op_desc->op_type : EO_OP_TYPE_REGULAR,
                         (op_desc) ? op_desc->name : NULL,
-                        klass->desc->name);
+                        klass->desc->name,
+                        itr - func_descs);
                }
           }
      }
