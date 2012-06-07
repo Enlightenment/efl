@@ -787,7 +787,7 @@ evas_common_pipe_image_load(RGBA_Image *im)
       && !evas_cache_image_is_loaded(&(im->cache_entry)))
     goto add_task;
 
-  if ((!im->cs.data) || ((!im->cs.dirty) && (!(im->flags & RGBA_IMAGE_IS_DIRTY))))
+  if (!((!im->cs.data) || ((!im->cs.dirty) && (!(im->flags & RGBA_IMAGE_IS_DIRTY)))))
     goto add_task;
 
   return ;
