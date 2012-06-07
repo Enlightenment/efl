@@ -15,8 +15,8 @@ struct _Widget_Data
    Elm_Toolbar_Shrink_Mode shrink_mode;
    Elm_Icon_Lookup_Order lookup_order;
    int icon_size;
+   int standard_priority;
    unsigned int item_count;
-   unsigned int item_max;
    double align;
    Elm_Object_Select_Mode select_mode;
    Eina_Bool homogeneous : 1;
@@ -612,45 +612,13 @@ _toolbar_item_prio_compare_cb(const void *i1, const void *i2)
 }
 
 static void
-_fix_items_visibility(Widget_Data *wd, Evas_Coord *iw, Evas_Coord vw)
+_fix_items_visibility(Widget_Data *wd, Evas_Coord *iw, Evas_Coord vw, Eina_Bool *more)
 {
    Elm_Toolbar_Item *it, *prev;
    Eina_List *sorted = NULL;
    Evas_Coord ciw = 0, cih = 0;
-
-   EINA_INLIST_FOREACH(wd->items, it)
-     {
-        sorted = eina_list_sorted_insert(sorted,
-                                         _toolbar_item_prio_compare_cb, it);
-     }
-
-   if (wd->more_item)
-     {
-        evas_object_geometry_get(wd->VIEW(more_item), NULL, NULL, &ciw, &cih);
-        if (wd->vertical) *iw += cih;
-        else              *iw += ciw;
-     }
-   EINA_LIST_FREE(sorted, it)
-     {
-        evas_object_geometry_get(VIEW(it), NULL, NULL, &ciw, &cih);
-        if (wd->vertical) *iw += cih;
-        else              *iw += ciw;
-        if (!it->separator)
-          it->prio.visible = (*iw <= vw);
-        else
-          {
-             prev = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
-             it->prio.visible = prev->prio.visible;
-          }
-     }
-}
-
-static void
-_fix_items_visibility_by_number(Widget_Data *wd, unsigned int *count)
-{
-   Elm_Toolbar_Item *it, *prev, *next, *max = NULL;
-   Eina_List *sorted = NULL;
-   *count = 0;
+   int count = 0, i = 0;
+   *more = EINA_FALSE;
 
    EINA_INLIST_FOREACH(wd->items, it)
      {
@@ -667,37 +635,33 @@ _fix_items_visibility_by_number(Widget_Data *wd, unsigned int *count)
                                          _toolbar_item_prio_compare_cb, it);
      }
 
+   if (wd->more_item)
+     {
+        evas_object_geometry_get(wd->VIEW(more_item), NULL, NULL, &ciw, &cih);
+        if (wd->vertical) *iw += cih;
+        else              *iw += ciw;
+     }
+
    EINA_LIST_FREE(sorted, it)
      {
-        *count += 1;
-        if(*count <= wd->item_max)
+        if (it->prio.priority > wd->standard_priority)
           {
-             it->prio.visible = EINA_TRUE;
+             evas_object_geometry_get(VIEW(it), NULL, NULL, &ciw, &cih);
+             if (wd->vertical) *iw += cih;
+             else              *iw += ciw;
+             it->prio.visible = (*iw <= vw);
              it->in_box = wd->bx;
-             if (*count == wd->item_max)
-               max = it;
+             if (!it->separator) count++;
           }
         else
           {
              it->prio.visible = EINA_FALSE;
-             if (wd->item_count < (wd->item_max * 2) ||
-                 *count <= (wd->item_count + wd->item_max) / 2)
+             if (!it->separator) i++;
+             if (i <= (count + 1))
                it->in_box = wd->bx_more;
              else
                it->in_box = wd->bx_more2;
-
-             if (max)
-               {
-                  max->prio.visible = EINA_FALSE;
-                  max->in_box = wd->bx_more;
-                  next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(max)->next);
-                  if (next && next->separator)
-                    {
-                       next->prio.visible = max->prio.visible;
-                       next->in_box = max->in_box;
-                    }
-                  max = NULL;
-               }
+             *more = EINA_TRUE;
           }
      }
 }
@@ -717,6 +681,7 @@ _resize_job(void *data)
    Evas_Coord mw, mh, vw = 0, vh = 0, w = 0, h = 0;
    Elm_Toolbar_Item *it;
    Eina_List *list;
+   Eina_Bool more;
 
    if (!wd) return;
    wd->resize_job = NULL;
@@ -730,12 +695,12 @@ _resize_job(void *data)
         if (wd->vertical)
           {
              evas_object_resize(wd->bx, w, vh);
-             _fix_items_visibility(wd, &ih, vh);
+             _fix_items_visibility(wd, &ih, vh, &more);
           }
         else
           {
              evas_object_resize(wd->bx, vw, h);
-             _fix_items_visibility(wd, &iw, vw);
+             _fix_items_visibility(wd, &iw, vw, &more);
           }
         evas_object_geometry_get(wd->VIEW(more_item), NULL, NULL,
                                  &more_w, &more_h);
@@ -752,7 +717,7 @@ _resize_job(void *data)
          * items won't trigger a resize. Items are be readded below. */
         evas_object_box_remove_all(wd->bx, EINA_FALSE);
         if (((wd->vertical)  && (ih > vh)) ||
-            ((!wd->vertical) && (iw > vw)))
+            ((!wd->vertical) && (iw > vw)) || more)
           {
              Evas_Object *menu;
 
@@ -806,16 +771,16 @@ _resize_job(void *data)
         if (wd->vertical)
           {
              evas_object_resize(wd->bx, w, vh);
-             _fix_items_visibility(wd, &ih, vh);
+             _fix_items_visibility(wd, &ih, vh, &more);
           }
         else
           {
              evas_object_resize(wd->bx, vw, h);
-             _fix_items_visibility(wd, &iw, vw);
+             _fix_items_visibility(wd, &iw, vw, &more);
           }
         evas_object_box_remove_all(wd->bx, EINA_FALSE);
         if (((wd->vertical)  && (ih > vh)) ||
-            ((!wd->vertical) && (iw > vw)))
+            ((!wd->vertical) && (iw > vw)) || more)
           {
              EINA_INLIST_FOREACH(wd->items, it)
                {
@@ -840,14 +805,18 @@ _resize_job(void *data)
      }
    else if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
      {
-        unsigned int count;
+        Evas_Coord iw = 0, ih = 0;
         if ((vw >= mw) && (vh >= mh))
           evas_object_resize(wd->bx, vw, vh);
         else if (vw < mw)
           evas_object_resize(wd->bx, mw, vh);
         else if (vh < mh)
           evas_object_resize(wd->bx, vw, mh);
-        _fix_items_visibility_by_number(wd, &count);
+
+        if (wd->vertical)
+          _fix_items_visibility(wd, &ih, vh, &more);
+        else
+          _fix_items_visibility(wd, &iw, vw, &more);
 
         evas_object_box_remove_all(wd->bx, EINA_FALSE);
         evas_object_box_remove_all(wd->bx_more, EINA_FALSE);
@@ -860,7 +829,7 @@ _resize_job(void *data)
                   evas_object_show(VIEW(it));
                }
           }
-        if (count > wd->item_max)
+        if (more)
           {
              evas_object_box_append(wd->bx, wd->VIEW(more_item));
              evas_object_show(wd->VIEW(more_item));
@@ -896,6 +865,7 @@ _resize_job(void *data)
             (VIEW(it) == eina_list_nth(list, eina_list_count(list)-1))))
           {
              evas_object_box_remove(wd->bx_more, VIEW(it));
+             evas_object_move(VIEW(it), -9999, -9999);
              evas_object_hide(VIEW(it));
           }
      }
@@ -906,6 +876,7 @@ _resize_job(void *data)
             (VIEW(it) == eina_list_nth(list, eina_list_count(list)-1))))
           {
              evas_object_box_remove(wd->bx_more2, VIEW(it));
+             evas_object_move(VIEW(it), -9999, -9999);
              evas_object_hide(VIEW(it));
           }
      }
@@ -1396,7 +1367,7 @@ elm_toolbar_add(Evas_Object *parent)
 
    wd->more_item = NULL;
    wd->selected_item = NULL;
-   wd->item_max = 9999;
+   wd->standard_priority = -99999;
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", "default");
@@ -2231,21 +2202,22 @@ elm_toolbar_items_count(const Evas_Object *obj)
 }
 
 EAPI void
-elm_toolbar_items_max_set(Evas_Object *obj, unsigned int max)
+elm_toolbar_standard_priority_set(Evas_Object *obj, int priority)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->item_max = max;
+   wd->standard_priority = priority;
+   _resize(obj, NULL, NULL, NULL);
 }
 
-EAPI unsigned int
-elm_toolbar_items_max_get(const Evas_Object *obj)
+EAPI int
+elm_toolbar_standard_priority_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
-   return wd->item_max;
+   return wd->standard_priority;
 }
 
 EAPI void

@@ -124,7 +124,7 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    tb_it = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
-   elm_toolbar_item_priority_set(tb_it, -999999);
+   elm_toolbar_item_priority_set(tb_it, -9999);
    elm_toolbar_menu_parent_set(tb, win);
    menu = elm_toolbar_item_menu_get(tb_it);
 
@@ -228,7 +228,7 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    item = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(item, EINA_TRUE);
-   elm_toolbar_item_priority_set(item, -999999);
+   elm_toolbar_item_priority_set(item, -9999);
    elm_toolbar_menu_parent_set(tb, win);
    menu = elm_toolbar_item_menu_get(item);
 
@@ -332,7 +332,7 @@ test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb_it = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
-   elm_toolbar_item_priority_set(tb_it, 999999);
+   elm_toolbar_item_priority_set(tb_it, 9999);
    elm_toolbar_menu_parent_set(tb, win);
    menu = elm_toolbar_item_menu_get(tb_it);
 
@@ -436,7 +436,7 @@ test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb_it = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
-   elm_toolbar_item_priority_set(tb_it, -999999);
+   elm_toolbar_item_priority_set(tb_it, -9999);
    elm_toolbar_menu_parent_set(tb, win);
    menu = elm_toolbar_item_menu_get(tb_it);
 
@@ -545,7 +545,7 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb_it = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
-   elm_toolbar_item_priority_set(tb_it, -999999);
+   elm_toolbar_item_priority_set(tb_it, -9999);
    elm_toolbar_menu_parent_set(tb, win);
    menu = elm_toolbar_item_menu_get(tb_it);
 
@@ -650,7 +650,7 @@ test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb_it = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
-   elm_toolbar_item_priority_set(tb_it, -999999);
+   elm_toolbar_item_priority_set(tb_it, -9999);
    elm_toolbar_menu_parent_set(tb, win);
    menu = elm_toolbar_item_menu_get(tb_it);
 
@@ -754,7 +754,7 @@ test_toolbar7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb_it = elm_toolbar_item_append(tb, "refresh", "Menu", NULL, NULL);
    elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
-   elm_toolbar_item_priority_set(tb_it, -999999);
+   elm_toolbar_item_priority_set(tb_it, -9999);
    elm_toolbar_menu_parent_set(tb, win);
    menu = elm_toolbar_item_menu_get(tb_it);
 
@@ -831,7 +831,7 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    tb = elm_toolbar_add(win);
    elm_toolbar_homogeneous_set(tb, EINA_FALSE);
    elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_EXPAND);
-   elm_toolbar_items_max_set(tb, 9);
+   elm_toolbar_standard_priority_set(tb, 0);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

@@ -871,29 +871,29 @@ EAPI Eina_Bool                    elm_toolbar_horizontal_get(const Evas_Object *
 EAPI unsigned int                 elm_toolbar_items_count(const Evas_Object *obj);
 
 /**
- * Set the max number of visible items in a toolbar
+ * Set the standard priority of visible items in a toolbar
  * @param obj The toolbar object
- * @param max The max number of visible items
+ * @param priority The standard_priority of visible items
  *
- * When it is the ELM_TOOLBAR_SHRINK_EXPAND mode, the items are shown only up to max number.
+ * When it is the ELM_TOOLBAR_SHRINK_EXPAND mode, the items are shown only up to standard priority.
  * The other items are located in more panel. The more panel can be shown when the more item is clicked.
  *
- * @see elm_toolbar_items_max_get()
+ * @see elm_toolbar_standard_priority_get()
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_items_max_set(Evas_Object *obj, unsigned int max);
+EAPI void                         elm_toolbar_standard_priority_set(Evas_Object *obj, int priority);
 
 /**
- * Get the max number of visible items in a toolbar
+ * Get the standard_priority of visible items in a toolbar
  * @param obj The toolbar object
- * @return The max number of items in @p obj toolbar
+ * @return The standard priority of items in @p obj toolbar
  *
- * @see elm_toolbar_items_max_set()
+ * @see elm_toolbar_standard_priority_set()
  *
  * @ingroup Toolbar
  */
-EAPI unsigned int                 elm_toolbar_items_max_get(const Evas_Object *obj);
+EAPI int                          elm_toolbar_standard_priority_get(const Evas_Object *obj);
 
 /**
  * Set the toolbar select mode.
