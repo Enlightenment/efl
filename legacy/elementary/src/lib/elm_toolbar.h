@@ -880,6 +880,7 @@ EAPI unsigned int                 elm_toolbar_items_count(const Evas_Object *obj
  *
  * @see elm_toolbar_standard_priority_get()
  *
+ * @since 1.1.0
  * @ingroup Toolbar
  */
 EAPI void                         elm_toolbar_standard_priority_set(Evas_Object *obj, int priority);
@@ -891,6 +892,7 @@ EAPI void                         elm_toolbar_standard_priority_set(Evas_Object 
  *
  * @see elm_toolbar_standard_priority_set()
  *
+ * @since 1.1.0
  * @ingroup Toolbar
  */
 EAPI int                          elm_toolbar_standard_priority_get(const Evas_Object *obj);
