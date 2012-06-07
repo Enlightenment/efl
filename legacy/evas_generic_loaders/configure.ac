@@ -60,29 +60,42 @@ PKG_PROG_PKG_CONFIG
 # Eina library
 PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
 
-want_poppler=yes
 AC_ARG_ENABLE([poppler],
    [AC_HELP_STRING([--disable-poppler], [disable poppler support  @<:@default==enabled@:>@])],
-   [want_poppler=$enableval]
-)
+   [want_poppler=$enableval],
+   [want_poppler="yes"])
 
-if test "x$want_poppler" = "xyes" ; then
-   PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12 poppler < 0.20], [have_poppler="yes"], [have_poppler="no"])
-   PKG_CHECK_MODULES([POPPLER2], [poppler >= 0.20],
-   			      [
-   			       have_poppler="yes"
-   			       AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
-   			      ],
-   			      [have_poppler="${have_poppler}"])
+if test "x${want_poppler}" = "xyes" ; then
+   PKG_CHECK_EXISTS([poppler >= 0.12 poppler < 0.20],
+      [
+       poppler_pc="poppler >= 0.12 poppler < 0.20"
+       have_poppler="yes"
+      ],
+      [have_poppler="no"])
+
+   if test "x${have_poppler}" = "xno" ; then
+      PKG_CHECK_EXISTS([poppler >= 0.20],
+         [
+          poppler_pc="poppler >= 0.20"
+          AC_DEFINE(HAVE_POPPLER_020, 1, [Have poppler 0.20])
+          have_poppler="yes"
+         ],
+         [have_poppler="no"])
+   fi
+
+   if test "x${have_poppler}" = "xyes" ; then
+      PKG_CHECK_MODULES([POPPLER], [${poppler_pc}],
+         [have_poppler="yes"],
+         [have_poppler="no"])
+   fi
 else
-   have_poppler=no
+   have_poppler="no"
 fi
 
-want_spectre=yes
 AC_ARG_ENABLE([spectre],
    [AC_HELP_STRING([--disable-spectre], [disable spectre support  @<:@default==enabled@:>@])],
-   [want_spectre=$enableval]
-)
+   [want_spectre=$enableval],
+   [want_spectre="yes"])
 
 if test "x$want_spectre" = "xyes" ; then
    PKG_CHECK_MODULES([SPECTRE], [libspectre], [have_ps="yes"], [have_ps="no"])
@@ -91,11 +104,10 @@ else
 fi
 
 
-want_libraw=yes
 AC_ARG_ENABLE([libraw],
    [AC_HELP_STRING([--disable-libraw], [disable libraw support  @<:@default==enabled@:>@])],
-   [want_libraw=$enableval]
-)
+   [want_libraw=$enableval],
+   [want_libraw="yes"])
 
 if test "x$want_libraw" = "xyes" ; then
    PKG_CHECK_MODULES([LIBRAW], [libraw], [have_raw="yes"], [have_raw="no"])
@@ -103,10 +115,10 @@ else
    have_raw=no
 fi
 
-want_svg=yes
 AC_ARG_ENABLE([svg],
    [AC_HELP_STRING([--disable-svg], [disable svg support  @<:@default==enabled@:>@])],
-   [want_svg=$enableval]
+   [want_svg=$enableval],
+   [want_svg="yes"]
 )
 
 if test "x$want_svg" = "xyes" ; then
@@ -118,11 +130,10 @@ GST_REQS=0.10.13
 GSTPLUG_REQS=0.10.13
 GST_MAJORMINOR=0.10
 
-want_gst=yes
 AC_ARG_ENABLE([gstreamer],
    [AC_HELP_STRING([--disable-gstreamer], [disable gstreamer support  @<:@default==enabled@:>@])],
-   [want_gstreamer=$enableval]
-)
+   [want_gstreamer=$enableval],
+   [want_gstreamer="yes"])
 
 if test "x$want_gstreamer" = "xyes" ; then
    PKG_CHECK_MODULES([GSTREAMER],
@@ -134,10 +145,10 @@ if test "x$want_gstreamer" = "xyes" ; then
 else
    have_gst=no
 fi
-AM_CONDITIONAL(HAVE_GST, test "x${have_gst}" = "xyes")
+AM_CONDITIONAL([HAVE_GST], [test "x${have_gst}" = "xyes"])
 AM_CONDITIONAL([HAVE_PDF], [test "x${have_poppler}" = "xyes"])
-AM_CONDITIONAL([HAVE_PS], [test "x${have_ps}" = "xyes"])
-AM_CONDITIONAL(HAVE_RAW, [test "x${have_raw}" = "xyes"])
+AM_CONDITIONAL([HAVE_PS],  [test "x${have_ps}" = "xyes"])
+AM_CONDITIONAL([HAVE_RAW], [test "x${have_raw}" = "xyes"])
 AM_CONDITIONAL([HAVE_SVG], [test "x${have_svg}" = "xyes"])
 
 ### Checks for header files
@@ -176,14 +187,11 @@ AC_SUBST(SHM_OPEN_LIBS)
 
 ### Checks for compiler characteristics
 AM_PROG_CC_C_O
-AC_C_CONST
 AC_C_INLINE
-AC_PROG_CC_STDC
 AC_C_BIGENDIAN
 AC_C___ATTRIBUTE__
 
 ### Checks for library functions
-AC_ISC_POSIX
 
 AC_CONFIG_FILES([
 Makefile
