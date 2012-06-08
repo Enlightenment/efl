@@ -474,6 +474,16 @@ _volume_set(struct _App *app)
 }
 
 static void
+_spu_track_set(struct _App *app)
+{
+   int track;
+
+   _em_read_safe(app->em_read, &track, sizeof(track));
+
+   libvlc_video_set_spu(app->mp, track);
+}
+
+static void
 _audio_track_set(struct _App *app)
 {
    int track;
@@ -595,6 +605,9 @@ _process_emotion_commands(struct _App *app)
 	 break;
       case EM_CMD_VOLUME_SET:
 	 _volume_set(app);
+	 break;
+      case EM_CMD_SPU_TRACK_SET:
+	 _spu_track_set(app);
 	 break;
       case EM_CMD_AUDIO_TRACK_SET:
 	 _audio_track_set(app);

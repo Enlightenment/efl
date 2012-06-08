@@ -17,3 +17,7 @@
 2012-06-08  Pierre Le Magourou
 
 	* Add support for "playback_started" callback to generic player.
+
+2012-06-08  Hugo Camboulive
+
+	* Implement SPU switch for generic/vlc.
