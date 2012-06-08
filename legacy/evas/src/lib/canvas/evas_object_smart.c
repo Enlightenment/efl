@@ -892,7 +892,7 @@ evas_object_smart_bouding_box_update(Evas_Object *obj)
         Evas_Coord th;
 
         if (o == obj) continue ;
-        /* if (o->clip.clipees || o->is_static_clip) continue ; */
+        if (o->clip.clipees || o->is_static_clip) continue ;
 
         if (o->smart.smart)
           {
