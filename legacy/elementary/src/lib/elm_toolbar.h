@@ -875,8 +875,8 @@ EAPI unsigned int                 elm_toolbar_items_count(const Evas_Object *obj
  * @param obj The toolbar object
  * @param priority The standard_priority of visible items
  *
- * When it is the ELM_TOOLBAR_SHRINK_EXPAND mode, the items are shown only up to standard priority.
- * The other items are located in more panel. The more panel can be shown when the more item is clicked.
+ * If the priority of the item is up to standard priority, it is shown in basic panel.
+ * The other items are located in more menu or panel. The more menu or panel can be shown when the more item is clicked.
  *
  * @see elm_toolbar_standard_priority_get()
  *
