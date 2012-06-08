@@ -145,15 +145,6 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root,
 #endif /* ifdef ECORE_XRANDR */
 }
 
-/*
- * @brief get the current set size of a given screen's primary output
- * @param root window which's primary output will be queried
- * @param w the current size's width
- * @param h the current size's height
- * @param w_mm the current size's width in mm
- * @param h_mm the current size's height in mm
- * @param size_index of current set size to be used with ecore_x_randr_primary_output_size_set()
- */
 EAPI void
 ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root,
                                                      int *w,
