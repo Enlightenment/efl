@@ -293,3 +293,6 @@
 	Fix bug in the XML parser when a tag was in a comment or a
 	cdata
 
+2012-06-08 Mike Blumenkrantz
+
+        * Prevent negative max_token count for eina_str_split functions

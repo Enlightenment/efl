@@ -76,6 +76,7 @@ eina_str_split_full_helper(const char *str,
    size_t len, dlen;
    unsigned int tokens;
 
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(max_tokens < 1, NULL);
    dlen = strlen(delim);
    if (dlen == 0)
      {
