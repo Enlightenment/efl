@@ -295,4 +295,4 @@
 
 2012-06-08 Mike Blumenkrantz
 
-        * Prevent negative max_token count for eina_str_split functions
+        * Fixed eina_str_split_full() to behave properly and be much faster

@@ -35,7 +35,7 @@
 
 #include "eina_private.h"
 #include "eina_str.h"
-#include "eina_safety_checks.h"
+
 /*============================================================================*
 *                                  Local                                     *
 *============================================================================*/
@@ -71,12 +71,38 @@ eina_str_split_full_helper(const char *str,
                            int max_tokens,
                            unsigned int *elements)
 {
-   char *s, **str_array;
+   char *s, *pos, **str_array;
    const char *src;
    size_t len, dlen;
-   unsigned int tokens;
+   unsigned int tokens = 0, x;
+   const char *idx[256] = {NULL};
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(max_tokens < 0, NULL);
+   if (max_tokens < 0) max_tokens = 0;
+   if (max_tokens == 1)
+     {
+        str_array = malloc(sizeof(char *) * 2);
+        if (!str_array)
+          {
+             if (elements)
+                *elements = 0;
+
+             return NULL;
+          }
+
+        s = strdup(str);
+        if (!s)
+          {
+             free(str_array);
+             if (elements)
+                *elements = 0;
+
+             return NULL;
+          }
+        if (elements)
+          *elements = 1;
+        str_array[0] = s;
+        return str_array;
+     }
    dlen = strlen(delim);
    if (dlen == 0)
      {
@@ -86,7 +112,6 @@ eina_str_split_full_helper(const char *str,
         return NULL;
      }
 
-   tokens = 0;
    src = str;
    /* count tokens and check strlen(str) */
    while (*src != '\0')
@@ -101,15 +126,18 @@ eina_str_split_full_helper(const char *str,
         if (EINA_UNLIKELY(d == d_end))
           {
              src = tmp;
+             if (tokens < (sizeof(idx) / sizeof(idx[0])))
+               {
+                  idx[tokens] = tmp;
+                  //printf("token %d='%s'\n", tokens + 1, idx[tokens]);
+               }
              tokens++;
+             if (tokens && (tokens == (unsigned int)max_tokens)) break;
           }
         else
            src++;
      }
-   len = src - str;
-
-   if ((max_tokens > 0) && (tokens > (unsigned int)max_tokens))
-      tokens = max_tokens;
+   len = src - str + strlen(src);
 
    str_array = malloc(sizeof(char *) * (tokens + 2));
    if (!str_array)
@@ -118,6 +146,24 @@ eina_str_split_full_helper(const char *str,
            *elements = 0;
 
         return NULL;
+     }
+
+   if (!tokens)
+     {
+        s = strdup(str);
+        if (!s)
+          {
+             free(str_array);
+             if (elements)
+                *elements = 0;
+
+             return NULL;
+          }
+        str_array[0] = s;
+        str_array[1] = NULL;
+        if (elements)
+          *elements = 2;
+        return str_array;
      }
 
    s = malloc(len + 1);
@@ -130,38 +176,118 @@ eina_str_split_full_helper(const char *str,
         return NULL;
      }
 
-   /* copy tokens and string */
-   tokens = 0;
    str_array[0] = s;
-   src = str;
-   while (*src != '\0')
+
+   if (len == tokens * dlen)
      {
-        const char *d = delim, *d_end = d + dlen;
-        const char *tmp = src;
-        for (; (d < d_end) && (*tmp != '\0'); d++, tmp++)
+        /* someone's having a laugh somewhere */
+        memset(s, 0, len + 1);
+        for (x = 1; x < tokens + 1; x++)
+          str_array[x] = s + x;
+        str_array[x] = NULL;
+        if (elements)
+          *elements = x + 1;
+        return str_array;
+     }
+   /* copy tokens and string */
+   if (idx[0] - str - dlen > len)
+     {
+        /* FIXME: don't think this can happen but putting this here just in case */
+        abort();
+     }
+   pos = s;
+   for (x = 0; x < MIN(tokens, (sizeof(idx) / sizeof(idx[0]))); x++)
+     {
+        if (x + 1 < (sizeof(idx) / sizeof(idx[0])))
           {
-             if (EINA_LIKELY(*d != *tmp))
-                break;
+             /* first one is special */
+             if (!x)
+               {
+                  eina_strlcpy(pos, str, idx[x] - str - dlen + 1);
+                  str_array[x] = pos;
+                  //printf("str_array[%d] = '%s'\n", x, str_array[x]);
+                  pos += idx[x] - str - dlen + 1;
+                  if ((tokens == 1) && (idx[0]))
+                    {
+                       eina_strlcpy(pos, idx[x], len + 1 - (pos - s));
+                       x++, tokens++;
+                       str_array[x] = pos;
+                    }
+               }
+             /* more tokens */
+             else if (idx[x + 1])
+               {
+                  eina_strlcpy(pos, idx[x - 1], idx[x] - idx[x - 1] - dlen + 1);
+                  str_array[x] = pos;
+                  //printf("str_array[%d] = '%s'\n", x, str_array[x]);
+                  pos += idx[x] - idx[x - 1] - dlen + 1;
+               }
+             /* last token */
+             else
+               {
+                  if (max_tokens && ((unsigned int)max_tokens < tokens + 1))
+                    eina_strlcpy(pos, idx[x - 1], len + 1 - (pos - s));
+                  else
+                    {
+                       //printf("diff: %d\n", len + 1 - (pos - s));
+                       eina_strlcpy(pos, idx[x - 1], idx[x] - idx[x - 1] - dlen + 1);
+                       str_array[x] = pos;
+                       //printf("str_array[%d] = '%s'\n", x, str_array[x]);
+                       pos += idx[x] - idx[x - 1] - dlen + 1;
+                       x++, tokens++;
+                       eina_strlcpy(pos, idx[x - 1], len + 1 - (pos - s));
+                    }
+                  str_array[x] = pos;
+                  //printf("str_array[%d] = '%s'\n", x, str_array[x]);
+               }
           }
-        if (EINA_UNLIKELY(d == d_end))
-          {
-             src = tmp;
-             *s = '\0';
-             s += dlen;
-             tokens++;
-             str_array[tokens] = s;
-          }
+        /* no more tokens saved after this one */
         else
           {
-             *s = *src;
-             s++;
-             src++;
+             eina_strlcpy(pos, idx[x - 1], idx[x] - idx[x - 1] - dlen + 1);
+             str_array[x] = pos;
+             //printf("str_array[%d] = '%s'\n", x, str_array[x]);
+             pos += idx[x] - idx[x - 1] - dlen + 1;
+             src = idx[x];
+             x++, tokens++;
+             str_array[x] = s = pos;
+             break;
           }
      }
-   *s = '\0';
-   str_array[tokens + 1] = NULL;
+   if ((x != tokens) && ((!max_tokens) || (x < tokens)))
+     {
+        while (*src != '\0')
+          {
+             const char *d = delim, *d_end = d + dlen;
+             const char *tmp = src;
+             for (; (d < d_end) && (*tmp != '\0'); d++, tmp++)
+               {
+                  if (EINA_LIKELY(*d != *tmp))
+                     break;
+               }
+             if (((!max_tokens) || (((tokens == (unsigned int)max_tokens) || x < tokens - 2))) && (EINA_UNLIKELY(d == d_end)))
+               {
+                  src = tmp;
+                  *s = '\0';
+                  s++, x++;
+                  //printf("str_array[%d] = '%s'\n", x, str_array[x - 1]);
+                  str_array[x] = s;
+               }
+             else
+               {
+                  *s = *src;
+                  s++, src++;
+               }
+          }
+        *s = 0;
+     }
+   str_array[tokens] = NULL;
    if (elements)
-      *elements = (tokens + 1);
+     {
+        *elements = tokens;
+        if ((!max_tokens) || (tokens == (unsigned int)max_tokens))
+          (*elements)++;
+     }
 
    return str_array;
 }
