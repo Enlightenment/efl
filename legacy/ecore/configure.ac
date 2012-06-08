@@ -1526,6 +1526,10 @@ if test "x${have_ecore_con}" = "xyes" ; then
 
 fi
 
+if test "x${have_cares}" != "xyes" -a "x${have_ipv6}" = "xyes" ; then
+   EFL_CHECK_COMPILER_FLAGS([ECORE_CON], [-Wno-override-init -Wno-initializer-overrides])
+fi
+
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
 
 # ecore_ipc
