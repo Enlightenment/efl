@@ -13,3 +13,7 @@
 2012-06-07  Cedric Bail
 
 	* Fix stride for all YUV video stream.
+
+2012-06-08  Pierre Le Magourou
+
+	* Add support for "playback_started" callback to generic player.

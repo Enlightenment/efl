@@ -4,6 +4,7 @@ Changes since Emotion 1.0.0:
 -------------------------
 
 Additions:
+	- Add support for "playback_started" callback to generic player.
 
 Fixes:
 	- build out of tree.

@@ -557,6 +557,9 @@ _player_cmd_process(Emotion_Generic_Video *ev)
       case EM_RESULT_FILE_CLOSE:
 	 _player_file_closed(ev);
 	 break;
+      case EM_RESULT_PLAYBACK_STARTED:
+	 _emotion_playback_started(ev->obj);
+	 break;
       case EM_RESULT_PLAYBACK_STOPPED:
 	 _emotion_playback_finished(ev->obj);
 	 break;
@@ -774,6 +777,7 @@ _player_cmd_read(Emotion_Generic_Video *ev)
    switch (ev->cmd.type) {
       case EM_RESULT_INIT:
       case EM_RESULT_FILE_SET:
+      case EM_RESULT_PLAYBACK_STARTED:
       case EM_RESULT_PLAYBACK_STOPPED:
       case EM_RESULT_FILE_CLOSE:
       case EM_RESULT_FRAME_NEW:

@@ -23,6 +23,7 @@
 
 enum _Thread_Events {
      EM_THREAD_POSITION_CHANGED,
+     EM_THREAD_PLAYBACK_STARTED,
      EM_THREAD_PLAYBACK_STOPPED,
      EM_THREAD_LAST
 };
@@ -363,6 +364,8 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
 	 break;
       case libvlc_MediaPlayerPlaying:
 	 _send_resize(app, app->w, app->h);
+	 thread_event = EM_THREAD_PLAYBACK_STARTED;
+	 write(app->fd_write, &thread_event, sizeof(thread_event));
 	 break;
       case libvlc_MediaPlayerStopped:
 	 _send_file_set(app);
@@ -719,6 +722,9 @@ _process_thread_events(struct _App *app)
    switch (event) {
       case EM_THREAD_POSITION_CHANGED:
 	 _position_changed(app);
+	 break;
+      case EM_THREAD_PLAYBACK_STARTED:
+	 _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
 	 break;
       case EM_THREAD_PLAYBACK_STOPPED:
          libvlc_media_player_stop(app->mp);

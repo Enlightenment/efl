@@ -43,6 +43,7 @@ enum _Emotion_Generic_Result
    EM_RESULT_INIT = 0, // param: none
    EM_RESULT_FILE_SET, // param: none
    EM_RESULT_FILE_SET_DONE, // param: success (int)
+   EM_RESULT_PLAYBACK_STARTED, // param: none
    EM_RESULT_PLAYBACK_STOPPED, // param: none
    EM_RESULT_FILE_CLOSE, // param: none
    EM_RESULT_FRAME_NEW, // param: none
