@@ -54,7 +54,8 @@ main(void)
 
    while (inlist)
      {
-        Eina_Inlist *aux = inlist;
+        struct my_struct *aux = EINA_INLIST_CONTAINER_GET(inlist,
+                                                          struct my_struct);
         inlist = eina_inlist_remove(inlist, inlist);
         free(aux);
      }

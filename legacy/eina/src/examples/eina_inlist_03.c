@@ -63,7 +63,8 @@ main(void)
 
    while (list)
      {
-        Eina_Inlist *aux = list;
+        struct my_struct *aux = EINA_INLIST_CONTAINER_GET(list,
+                                                          struct my_struct);
         list = eina_inlist_remove(list, list);
         free(aux);
      }
