@@ -10,6 +10,7 @@ Additions:
    * Fileselector: Add a wheel spinner that show/spin while EIO is working
    * Add elm_map_overlays_get & elm_map_overlay_visible_get functions.
    * Toolbar: Add elm_toolbar_standard_priority_set/get APIs.
+   * Add elm_object_scroll_hold/freeze_get.
 
 Fixes:
 

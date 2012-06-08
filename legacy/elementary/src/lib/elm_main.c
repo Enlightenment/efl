@@ -1169,11 +1169,32 @@ elm_object_scroll_hold_pop(Evas_Object *obj)
    elm_widget_scroll_hold_pop(obj);
 }
 
+EAPI int
+elm_object_scroll_hold_get(const Evas_Object *obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
+   elm_widget_scroll_hold_get(obj);
+}
+
 EAPI void
 elm_object_scroll_freeze_push(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_scroll_freeze_push(obj);
+}
+
+EAPI void
+elm_object_scroll_freeze_pop(Evas_Object *obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_scroll_freeze_pop(obj);
+}
+
+EAPI int
+elm_object_scroll_freeze_get(const Evas_Object *obj)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
+   elm_widget_scroll_freeze_get(obj);
 }
 
 EAPI void
@@ -1204,13 +1225,6 @@ elm_object_scroll_lock_y_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    return elm_widget_drag_lock_y_get(obj);
-}
-
-EAPI void
-elm_object_scroll_freeze_pop(Evas_Object *obj)
-{
-   EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_scroll_freeze_pop(obj);
 }
 
 EAPI Eina_Bool

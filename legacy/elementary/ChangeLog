@@ -162,3 +162,7 @@
         * Toolbar: Remove the APIs elm_toolbar_items_max_set/get.
 	  Instead of them, add the APIs elm_toolbar_standard_priority_set/get.
 	  The items which are lower than standard priority are located in more menu or panel.
+
+2012-06-08 Jaehwan Kim
+
+        * Add elm_object_scroll_hold/freeze_get. 

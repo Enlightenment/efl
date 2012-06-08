@@ -42,6 +42,18 @@ EAPI void      elm_object_scroll_hold_push(Evas_Object *obj);
 EAPI void      elm_object_scroll_hold_pop(Evas_Object *obj);
 
 /**
+ * Get the scroll hold by 1
+ *
+ * This gets the scroll hold count by one.
+ *
+ * @param obj The object
+ * @return The scroll hold count
+ * @since 1.1.0
+ * @ingroup Scrollhints
+ */
+EAPI int       elm_object_scroll_hold_get(const Evas_Object *obj);
+
+/**
  * Push the scroll freeze by 1
  *
  * This increments the scroll freeze count by one. If it is more
@@ -64,6 +76,18 @@ EAPI void      elm_object_scroll_freeze_push(Evas_Object *obj);
  * @ingroup Scrollhints
  */
 EAPI void      elm_object_scroll_freeze_pop(Evas_Object *obj);
+
+/**
+ * Get the scroll freeze by 1
+ *
+ * This gets the scroll freeze count by one.
+ *
+ * @param obj The object
+ * @return The scroll freeze count
+ * @since 1.1.0
+ * @ingroup Scrollhints
+ */
+EAPI int       elm_object_scroll_freeze_get(const Evas_Object *obj);
 
 /**
  * Lock the scrolling of the given widget (and thus all parents)
