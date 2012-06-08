@@ -1323,15 +1323,15 @@ elm_object_tree_dot_dump(const Evas_Object *top,
 }
 
 EAPI void
-elm_coords_finger_size_adjust(int         times_w,
+elm_coords_finger_size_adjust(int times_w,
                               Evas_Coord *w,
-                              int         times_h,
+                              int times_h,
                               Evas_Coord *h)
 {
-   if ((w) && (*w < (_elm_config->finger_size * times_w)))
-     *w = _elm_config->finger_size * times_w;
-   if ((h) && (*h < (_elm_config->finger_size * times_h)))
-     *h = _elm_config->finger_size * times_h;
+   if ((w) && (*w < (elm_config_finger_size_get() * times_w)))
+     *w = elm_config_finger_size_get() * times_w;
+   if ((h) && (*h < (elm_config_finger_size_get() * times_h)))
+     *h = elm_config_finger_size_get() * times_h;
 }
 
 EAPI Evas_Object *
