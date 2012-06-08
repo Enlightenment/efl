@@ -370,7 +370,10 @@ m4_ifndef([am__fastdepOBJC], [
 ])
 
 AC_PROG_CXX
-AC_PROG_CC
+AC_PROG_CC_C99
+if test "x${ac_cv_prog_cc_c99}" = "xno" ; then
+   AC_MSG_ERROR([ecore requires a c99-capable compiler])
+fi
 
 have_gnu_objc=${ac_cv_objc_compiler_gnu}
 
