@@ -1223,7 +1223,7 @@ _ecore_main_shutdown(void)
    if (in_main_loop)
      {
         ERR("\n"
-            "*** ECORE WARINING: Calling ecore_shutdown() while still in the main loop.\n"
+            "*** ECORE WARNING: Calling ecore_shutdown() while still in the main loop.\n"
             "***                 Program may crash or behave strangely now.");
         return;
      }
