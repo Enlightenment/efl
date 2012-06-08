@@ -342,10 +342,12 @@ elm_button_smart_class_get(void)
    static Elm_Button_Smart_Class _sc =
      ELM_BUTTON_SMART_CLASS_INIT_NAME_VERSION(BUTTON_SMART_NAME);
    static const Elm_Button_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
 
    if (class) return class;
 
    _elm_button_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
    class = &_sc;
 
    return class;

@@ -133,11 +133,13 @@ elm_layout_smart_class_get(void)
    static Elm_Layout_Smart_Class _sc =
      ELM_LAYOUT_SMART_CLASS_INIT_NAME_VERSION(LAYOUT_SMART_NAME);
    static const Elm_Layout_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
 
    if (class)
      return class;
 
    _elm_layout_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
    class = &_sc;
 
    return class;
