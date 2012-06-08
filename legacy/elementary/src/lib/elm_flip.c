@@ -1521,7 +1521,7 @@ _event_anim(void *data,
 
       case ELM_FLIP_INTERACTION_PAGE:
         sd->pageflip = EINA_TRUE;
-        _configure(data);
+        _configure(ELM_WIDGET_DATA(sd)->obj);
         _state_update(sd);
         break;
 
@@ -1570,7 +1570,7 @@ _update_job(void *data)
 
       case ELM_FLIP_INTERACTION_PAGE:
         sd->pageflip = EINA_TRUE;
-        _configure(data);
+        _configure(ELM_WIDGET_DATA(sd)->obj);
         _state_update(sd);
         break;
 
@@ -1722,7 +1722,7 @@ _move_cb(void *data,
 //             evas_object_resize(sd->front.content, 0, 0);
 //             evas_object_resize(sd->back.content, 0, 0);
              evas_smart_objects_calculate(evas_object_evas_get(data));
-             _configure(obj);
+             _configure(fl);
              // FIXME: end hack
              evas_object_smart_callback_call(obj, SIG_ANIMATE_BEGIN, NULL);
           }
