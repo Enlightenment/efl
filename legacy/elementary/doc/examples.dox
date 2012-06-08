@@ -5820,8 +5820,8 @@
  * We'll have a bit more than the usual includes here, since part of the
  * example requires some low level fiddling.
  * @dontinclude win_example.c
- * @skip Elementary.h
- * @until Ecore_X.h
+ * @skip ifdef
+ * @until Elementary.h
  *
  * The program then, consists of one window with two lists of buttons, each
  * of which operates on another two windows. One of them is a normal window,
