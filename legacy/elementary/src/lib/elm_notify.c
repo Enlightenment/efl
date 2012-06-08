@@ -396,6 +396,7 @@ _timer_cb(void *data)
 {
    Evas_Object *obj = data;
 
+   if (!evas_object_visible_get(obj)) return ECORE_CALLBACK_CANCEL;
    ELM_NOTIFY_DATA_GET(obj, sd);
 
    sd->timer = NULL;
@@ -414,7 +415,7 @@ _timer_init(Evas_Object *obj,
         ecore_timer_del(sd->timer);
         sd->timer = NULL;
      }
-   if ((evas_object_visible_get(obj)) && (sd->timeout > 0.0))
+   if (sd->timeout > 0.0)
      sd->timer = ecore_timer_add(sd->timeout, _timer_cb, obj);
 }
 
