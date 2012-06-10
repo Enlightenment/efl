@@ -16,8 +16,7 @@ static Eo_Class **_eo_classes;
 static Eo_Class_Id _eo_classes_last_id;
 static Eina_Bool _eo_init_count = 0;
 
-static void _eo_constructor(Eo *obj, const Eo_Class *klass);
-static void _eo_destructor(Eo *obj, const Eo_Class *klass);
+static void _eo_condtor_reset(Eo *obj);
 static inline Eina_Bool _eo_error_get(const Eo *obj);
 static inline void _eo_error_unset(Eo *obj);
 static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
@@ -45,9 +44,11 @@ struct _Eo {
 
      Eo_Kls_Itr mro_itr;
 
+     Eina_Bool construct_error:1;
+     Eina_Bool condtor_done:1;
+
      Eina_Bool composite:1;
      Eina_Bool del:1;
-     Eina_Bool construct_error:1;
      Eina_Bool manual_free:1;
 };
 
@@ -279,7 +280,7 @@ _eo_kls_itr_init(const Eo_Class *obj_klass, Eo_Kls_Itr *cur, Eo_Op op, Eo_Kls_It
    prev_state->kls_itr = cur->kls_itr;
 
    /* If we are in a constructor/destructor or we changed an op - init. */
-   if ((op == EO_NOOP) || (cur->op != op))
+   if ((cur->op == EO_NOOP) || (cur->op != op))
      {
         cur->op = op;
         cur->kls_itr = obj_klass->mro;
@@ -317,17 +318,10 @@ _eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Op op)
    const Eo_Class **kls_itr = cur->kls_itr;
    if (*kls_itr)
      {
-        if (op != EO_NOOP)
-          {
-             const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
+        const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
 
-             while (*kls_itr && (*(kls_itr++) != fsrc->src))
-                ;
-          }
-        else
-          {
-             kls_itr++;
-          }
+        while (*kls_itr && (*(kls_itr++) != fsrc->src))
+           ;
 
         cur->kls_itr = kls_itr;
         return *kls_itr;
@@ -336,13 +330,6 @@ _eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Op op)
      {
         return NULL;
      }
-}
-
-static inline Eina_Bool
-_eo_kls_itr_reached_end(const Eo_Kls_Itr *cur)
-{
-   const Eo_Class **kls_itr = cur->kls_itr;
-   return !(*kls_itr && *(kls_itr + 1));
 }
 
 static inline const op_type_funcs *
@@ -883,8 +870,6 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
    /* Check restrictions on Interface types. */
    if (desc->type == EO_CLASS_TYPE_INTERFACE)
      {
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->constructor, NULL);
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->destructor, NULL);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->class_constructor, NULL);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->class_destructor, NULL);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->data_size, NULL);
@@ -1135,9 +1120,10 @@ eo_add(const Eo_Class *klass, Eo *parent)
 
    _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
    _eo_error_unset(obj);
+   _eo_condtor_reset(obj);
 
    _eo_ref(obj);
-   _eo_constructor(obj, klass);
+   eo_do(obj, eo_constructor());
 
    if (EINA_UNLIKELY(_eo_error_get(obj)))
      {
@@ -1145,7 +1131,7 @@ eo_add(const Eo_Class *klass, Eo *parent)
         goto fail;
      }
 
-   if (EINA_UNLIKELY(!_eo_kls_itr_reached_end(&obj->mro_itr)))
+   if (!obj->condtor_done)
      {
         const Eo_Class *cur_klass = _eo_kls_itr_get(&obj->mro_itr);
         ERR("Object of class '%s' - Not all of the object constructors have been executed, last destructor was of class: '%s'", klass->desc->name, cur_klass->desc->name);
@@ -1252,13 +1238,15 @@ _eo_del_internal(Eo *obj)
 
    _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
    _eo_error_unset(obj);
-   _eo_destructor(obj, klass);
+   _eo_condtor_reset(obj);
+
+   eo_do(obj, eo_destructor());
    if (_eo_error_get(obj))
      {
         ERR("Object of class '%s' - One of the object destructors have failed.", klass->desc->name);
      }
 
-   if (!_eo_kls_itr_reached_end(&obj->mro_itr))
+   if (!obj->condtor_done)
      {
         const Eo_Class *cur_klass = _eo_kls_itr_get(&obj->mro_itr);
         ERR("Object of class '%s' - Not all of the object destructors have been executed, last destructor was of class: '%s'", klass->desc->name, cur_klass->desc->name);
@@ -1370,6 +1358,18 @@ _eo_error_unset(Eo *obj)
    obj->construct_error = EINA_FALSE;
 }
 
+void
+_eo_condtor_done(Eo *obj)
+{
+   obj->condtor_done = EINA_TRUE;
+}
+
+static void
+_eo_condtor_reset(Eo *obj)
+{
+   obj->condtor_done = EINA_FALSE;
+}
+
 /**
  * @internal
  * @brief Check if there was an error when constructing, destructing or calling a function of the object.
@@ -1380,58 +1380,6 @@ static inline Eina_Bool
 _eo_error_get(const Eo *obj)
 {
    return obj->construct_error;
-}
-
-static inline void
-_eo_constructor_default(Eo *obj)
-{
-   eo_constructor_super(obj);
-}
-
-static inline void
-_eo_destructor_default(Eo *obj)
-{
-   eo_destructor_super(obj);
-}
-
-static void
-_eo_constructor(Eo *obj, const Eo_Class *klass)
-{
-   if (!klass)
-      return;
-
-   if (klass->desc->constructor)
-      klass->desc->constructor(obj, _eo_data_get(obj, klass));
-   else
-      _eo_constructor_default(obj);
-}
-
-static void
-_eo_destructor(Eo *obj, const Eo_Class *klass)
-{
-   if (!klass)
-      return;
-
-   if (klass->desc->destructor)
-      klass->desc->destructor(obj, _eo_data_get(obj, klass));
-   else
-      _eo_destructor_default(obj);
-}
-
-EAPI void
-eo_constructor_super(Eo *obj)
-{
-   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
-
-   _eo_constructor(obj, _eo_kls_itr_next(&obj->mro_itr, EO_NOOP));
-}
-
-EAPI void
-eo_destructor_super(Eo *obj)
-{
-   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
-
-   _eo_destructor(obj, _eo_kls_itr_next(&obj->mro_itr, EO_NOOP));
 }
 
 static inline void *

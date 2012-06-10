@@ -28,7 +28,7 @@ _pack_end(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 static void
 _constructor(Eo *obj, void *class_data)
 {
-   eo_constructor_super(obj);
+   eo_do_super(obj, eo_constructor());
 
    Widget_Data *wd = class_data;
 

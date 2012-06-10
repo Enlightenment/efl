@@ -63,9 +63,9 @@ _cb_deled(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_inf
 }
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_constructor_super(obj);
+   eo_do_super(obj, eo_constructor());
 
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_ADD, _cb_added, NULL));
    eo_do(obj, eo_event_callback_add(EO_EV_CALLBACK_DEL, _cb_deled, NULL));
@@ -77,6 +77,7 @@ static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
         EO_OP_FUNC_SENTINEL
    };
@@ -100,8 +101,6 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
      event_desc,
      sizeof(Private_Data),
-     _constructor,
-     NULL,
      _class_constructor,
      NULL
 };

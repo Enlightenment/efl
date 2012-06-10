@@ -67,8 +67,6 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),
      NULL,
      sizeof(Private_Data),
-     NULL,
-     NULL,
      _class_constructor,
      NULL
 };

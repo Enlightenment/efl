@@ -20,17 +20,17 @@ _add_and_print_set(const Eo *obj, const void *class_data EINA_UNUSED, va_list *l
 extern int my_init_count;
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_constructor_super(obj);
+   eo_do_super(obj, eo_constructor());
 
    my_init_count++;
 }
 
 static void
-_destructor(Eo *obj, void *class_data EINA_UNUSED)
+_destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_destructor_super(obj);
+   eo_do_super(obj, eo_destructor());
 
    my_init_count--;
 }
@@ -39,6 +39,8 @@ static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC_CONST(MIXIN_ID(MIXIN_SUB_ID_ADD_AND_SET), _add_and_print_set),
         EO_OP_FUNC_SENTINEL
    };
@@ -57,8 +59,6 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(&MIXIN_BASE_ID, op_desc, MIXIN_SUB_ID_LAST),
      NULL,
      0,
-     _constructor,
-     _destructor,
      _class_constructor,
      NULL
 };

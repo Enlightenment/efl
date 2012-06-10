@@ -34,8 +34,6 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
      0,
-     NULL,
-     NULL,
      _class_constructor,
      NULL
 };

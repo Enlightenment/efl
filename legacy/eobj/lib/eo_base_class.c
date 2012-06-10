@@ -484,19 +484,23 @@ EAPI const Eo_Event_Description _EO_EV_DEL =
    EO_EVENT_DESCRIPTION("del", "Obj is being deleted.");
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
+
+   _eo_condtor_done(obj);
 }
 
 static void
-_destructor(Eo *obj, void *class_data)
+_destructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    DBG("%p - %s.", obj, eo_class_name_get(MY_CLASS));
 
    _eo_generic_data_del_all(class_data);
    _wref_destruct(class_data);
    _eo_callback_remove_all(class_data);
+
+   _eo_condtor_done(obj);
 }
 
 static void
@@ -505,6 +509,8 @@ _class_constructor(Eo_Class *klass)
    event_freeze_count = 0;
 
    const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), _data_set),
         EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), _data_get),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_DEL), _data_del),
@@ -528,6 +534,8 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_CONSTRUCTOR, "Constructor"),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DESTRUCTOR, "Destructor"),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_SET, "Set data for key."),
      EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_DATA_GET, "Get data for key."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_DEL, "Del key."),
@@ -560,8 +568,6 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(NULL, op_desc, EO_BASE_SUB_ID_LAST),
      event_desc,
      sizeof(Private_Data),
-     _constructor,
-     _destructor,
      _class_constructor,
      NULL
 };

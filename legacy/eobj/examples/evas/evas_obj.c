@@ -78,9 +78,9 @@ _child_add(Eo *obj, void *class_data, va_list *list)
 }
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_constructor_super(obj);
+   eo_do_super(obj, eo_constructor());
 
    /* Add type check. */
    Eo *parent = eo_parent_get(obj);
@@ -91,7 +91,7 @@ _constructor(Eo *obj, void *class_data EINA_UNUSED)
 static void
 _destructor(Eo *obj, void *class_data)
 {
-   eo_destructor_super(obj);
+   eo_do_super(obj, eo_destructor());
 
    Widget_Data *wd = class_data;
 

@@ -40,8 +40,6 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(&INHERIT_BASE_ID, op_desc, INHERIT_SUB_ID_LAST),
      NULL,
      0,
-     NULL,
-     NULL,
      _class_constructor,
      NULL
 };

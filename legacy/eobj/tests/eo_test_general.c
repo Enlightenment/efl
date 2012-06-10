@@ -31,8 +31,6 @@ START_TEST(eo_data_fetch)
         NULL,
         10,
         NULL,
-        NULL,
-        NULL,
         NULL
    };
 
@@ -96,8 +94,6 @@ START_TEST(eo_static_classes)
         NULL,
         0,
         NULL,
-        NULL,
-        NULL,
         NULL
    };
 
@@ -114,18 +110,36 @@ START_TEST(eo_static_classes)
 }
 END_TEST
 
+static Eina_Bool _man_should_con = EINA_TRUE;
+static Eina_Bool _man_should_des = EINA_TRUE;
+
 static void
-_man_con(Eo *obj, void *data EINA_UNUSED)
+_man_con(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_manual_free_set(obj, EINA_TRUE);
-   eo_constructor_super(obj);
+   if (_man_should_con)
+      eo_manual_free_set(obj, EINA_TRUE);
+   eo_do_super(obj, eo_constructor());
 }
 
 static void
-_man_des(Eo *obj, void *data EINA_UNUSED)
+_man_des(Eo *obj, void *data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_destructor_super(obj);
-   eo_manual_free_set(obj, EINA_FALSE);
+   eo_do_super(obj, eo_destructor());
+   if (_man_should_des)
+      eo_manual_free_set(obj, EINA_FALSE);
+}
+
+
+static void
+_man_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _man_con),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _man_des),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
 }
 
 START_TEST(eo_man_free)
@@ -139,9 +153,7 @@ START_TEST(eo_man_free)
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
         10,
-        _man_con,
-        _man_des,
-        NULL,
+        _man_class_constructor,
         NULL
    };
 
@@ -157,7 +169,7 @@ START_TEST(eo_man_free)
    eo_manual_free(obj);
    eo_unref(obj);
 
-   class_desc.destructor = NULL;
+   _man_should_des = EINA_FALSE;
    klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
@@ -172,7 +184,7 @@ START_TEST(eo_man_free)
    eo_unref(obj);
    eo_manual_free(obj);
 
-   class_desc.constructor = NULL;
+   _man_should_con = EINA_FALSE;
    klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
@@ -360,8 +372,6 @@ START_TEST(eo_op_errors)
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
         0,
-        NULL,
-        NULL,
         _op_errors_class_constructor,
         NULL
    };
@@ -524,9 +534,6 @@ START_TEST(eo_magic_checks)
         fail_if(eo_parent_get((Eo *) buf));
 
         eo_error_set((Eo *) buf);
-
-        eo_constructor_super((Eo *) buf);
-        eo_destructor_super((Eo *) buf);
 
         fail_if(eo_data_get((Eo *) buf, SIMPLE_CLASS));
 

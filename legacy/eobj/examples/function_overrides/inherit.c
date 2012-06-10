@@ -12,8 +12,6 @@ static const Eo_Class_Description class_desc = {
      NULL,
      0,
      NULL,
-     NULL,
-     NULL,
      NULL
 };
 

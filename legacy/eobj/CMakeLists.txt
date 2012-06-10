@@ -39,7 +39,7 @@ configure_file (
 include(EFLCheck)
 
 add_subdirectory(lib)
-add_subdirectory(examples/evas)
+#add_subdirectory(examples/evas)
 add_subdirectory(examples/mixin)
 add_subdirectory(examples/signals)
 add_subdirectory(examples/access)

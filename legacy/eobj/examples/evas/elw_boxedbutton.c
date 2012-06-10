@@ -16,9 +16,9 @@ typedef struct
 #define MY_CLASS ELW_BOXEDBUTTON_CLASS
 
 static void
-_constructor(Eo *obj, void *class_data EINA_UNUSED)
+_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_constructor_super(obj);
+   eo_do_super(obj, eo_constructor());
 
    Eo *bt = eo_add(ELW_BUTTON_CLASS, obj);
    eo_composite_object_attach(obj, bt);

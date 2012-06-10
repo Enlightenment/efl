@@ -47,8 +47,8 @@ main(int argc, char *argv[])
 
    fail_if(eo_class_do(SIMPLE_CLASS, simple_a_print()));
 
-   eo_constructor_super(obj);
-   eo_destructor_super(obj);
+   eo_do_super(obj, eo_constructor());
+   eo_do_super(obj, eo_destructor());
 
    eo_unref(obj);
 

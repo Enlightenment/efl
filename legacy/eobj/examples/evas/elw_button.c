@@ -50,7 +50,7 @@ _btn_clicked(void *data, Evas_Object *evas_obj, void *event_info)
 static void
 _constructor(Eo *obj, void *class_data)
 {
-   eo_constructor_super(obj);
+   eo_do_super(obj, eo_constructor());
 
    Widget_Data *wd = class_data;
 
@@ -64,9 +64,9 @@ _constructor(Eo *obj, void *class_data)
 }
 
 static void
-_destructor(Eo *obj, void *class_data EINA_UNUSED)
+_destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   eo_destructor_super(obj);
+   eo_do_super(obj, eo_destructor());
 
    //Widget_Data *wd = class_data;
    /* FIXME: Commented out because it's automatically done because our tree

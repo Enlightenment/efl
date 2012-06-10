@@ -252,6 +252,7 @@ class_get_func_name(void) \
         return _my_class; \
      } \
    eina_lock_release(&_eo_class_creation_lock); \
+   (void) parent_class; \
    _my_class = eo_class_new(class_desc, id, parent_class, __VA_ARGS__); \
    eina_lock_release(&_my_lock); \
    \
@@ -369,8 +370,6 @@ struct _Eo_Class_Description
    } ops; /**< The ops description, should be filled using #EO_CLASS_DESCRIPTION_OPS */
    const Eo_Event_Description **events; /**< The event descriptions for this class. */
    size_t data_size; /**< The size of data (private + protected + public) this class needs per object. */
-   void (*constructor)(Eo *obj, void *class_data); /**< The constructor of the object. */
-   void (*destructor)(Eo *obj, void *class_data); /**< The destructor of the object. */
    void (*class_constructor)(Eo_Class *klass); /**< The constructor of the class. */
    void (*class_destructor)(Eo_Class *klass); /**< The destructor of the class. */
 };
@@ -620,22 +619,6 @@ EAPI Eina_Bool eo_class_do_super_internal(const Eo_Class *klass, Eo_Op op, ...);
 EAPI const Eo_Class *eo_class_get(const Eo *obj);
 
 /**
- * @brief Calls the super constructor of the object passed.
- * @param obj the object to work on.
- *
- * @see eo_destructor_super()
- */
-EAPI void eo_constructor_super(Eo *obj);
-
-/**
- * @brief Calls the super destructor of the object passed.
- * @param obj the object to work on.
- *
- * @see eo_constructor_super()
- */
-EAPI void eo_destructor_super(Eo *obj);
-
-/**
  * @def eo_error_set
  * @brief Notify eo that there was an error when constructing, destructing or calling a function of the object.
  * @param obj the object to work on.
@@ -853,7 +836,7 @@ EAPI void eo_manual_free(Eo *obj);
  * @brief Use #EO_BASE_CLASS
  * @internal
  * */
-EAPI const Eo_Class *eo_base_class_get(void) EINA_CONST;
+EAPI const Eo_Class *eo_base_class_get(void);
 
 /**
  * @typedef eo_base_data_free_func
@@ -874,6 +857,8 @@ typedef void (*eo_base_data_free_func)(void *);
 #define EO_BASE_BASE_ID EO_CLASS_ID_TO_BASE_ID(EO_BASE_CLASS_ID)
 
 enum {
+     EO_BASE_SUB_ID_CONSTRUCTOR,
+     EO_BASE_SUB_ID_DESTRUCTOR,
      EO_BASE_SUB_ID_DATA_SET,
      EO_BASE_SUB_ID_DATA_GET,
      EO_BASE_SUB_ID_DATA_DEL,
@@ -970,6 +955,26 @@ enum {
    do { \
         if (*wref) eo_do(*wref, eo_wref_del(wref)); \
    } while (0)
+
+/**
+ * @def eo_constructor
+ * @brief Call the object's constructor.
+ *
+ * Should not be used with #eo_do. Only use it with #eo_do_super.
+ *
+ * @see #eo_destructor
+ */
+#define eo_constructor() EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR)
+
+/**
+ * @def eo_destructor
+ * @brief Call the object's destructor.
+ *
+ * Should not be used with #eo_do. Only use it with #eo_do_super.
+ *
+ * @see #eo_constructor
+ */
+#define eo_destructor() EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR)
 
 /**
  * @addtogroup Eo_Events Eo's Event Handling

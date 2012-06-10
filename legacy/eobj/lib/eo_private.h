@@ -54,5 +54,7 @@ extern int _eo_log_dom;
 #endif
 #define DBG(...) EINA_LOG_DOM_DBG(_eo_log_dom, __VA_ARGS__)
 
+void _eo_condtor_done(Eo *obj);
+
 #endif
 

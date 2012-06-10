@@ -7,9 +7,20 @@
 #define MY_CLASS SIMPLE5_CLASS
 
 static void
-_destructor(Eo *obj, void *class_data EINA_UNUSED)
+_destructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    (void) obj;
+}
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
 }
 
 static const Eo_Class_Description class_desc = {
@@ -18,9 +29,7 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
      0,
-     NULL,
-     _destructor,
-     NULL,
+     _class_constructor,
      NULL
 };
 

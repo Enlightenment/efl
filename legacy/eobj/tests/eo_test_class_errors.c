@@ -40,8 +40,6 @@ START_TEST(eo_incomplete_desc)
         NULL,
         0,
         NULL,
-        NULL,
-        NULL,
         NULL
    };
 
@@ -108,8 +106,6 @@ START_TEST(eo_inherit_errors)
         NULL,
         0,
         NULL,
-        NULL,
-        NULL,
         NULL
    };
 
@@ -120,8 +116,6 @@ START_TEST(eo_inherit_errors)
         NULL,
         0,
         NULL,
-        NULL,
-        NULL,
         NULL
    };
 
@@ -131,8 +125,6 @@ START_TEST(eo_inherit_errors)
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
         0,
-        NULL,
-        NULL,
         NULL,
         NULL
    };
@@ -173,8 +165,6 @@ START_TEST(eo_inconsistent_mro)
         NULL,
         0,
         NULL,
-        NULL,
-        NULL,
         NULL
    };
 
@@ -184,8 +174,6 @@ START_TEST(eo_inconsistent_mro)
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
         0,
-        NULL,
-        NULL,
         NULL,
         NULL
    };
@@ -197,8 +185,6 @@ START_TEST(eo_inconsistent_mro)
         NULL,
         0,
         NULL,
-        NULL,
-        NULL,
         NULL
    };
 
@@ -208,8 +194,6 @@ START_TEST(eo_inconsistent_mro)
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
         0,
-        NULL,
-        NULL,
         NULL,
         NULL
    };
@@ -236,7 +220,6 @@ START_TEST(eo_inconsistent_mro)
 }
 END_TEST
 
-static void _stub_constructor(Eo *obj EINA_UNUSED, void *data EINA_UNUSED) {}
 static void _stub_class_constructor(Eo_Class *klass EINA_UNUSED) {}
 
 START_TEST(eo_bad_interface)
@@ -252,8 +235,6 @@ START_TEST(eo_bad_interface)
         NULL,
         10,
         NULL,
-        NULL,
-        NULL,
         NULL
    };
 
@@ -261,18 +242,6 @@ START_TEST(eo_bad_interface)
    fail_if(klass);
 
    class_desc.data_size = 0;
-   class_desc.constructor = _stub_constructor;
-
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
-   fail_if(klass);
-
-   class_desc.constructor = NULL;
-   class_desc.destructor = _stub_constructor;
-
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
-   fail_if(klass);
-
-   class_desc.destructor = NULL;
    class_desc.class_constructor = _stub_class_constructor;
 
    klass = eo_class_new(&class_desc, 0, NULL, NULL);
@@ -343,8 +312,6 @@ START_TEST(eo_op_types)
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
         NULL,
         0,
-        NULL,
-        NULL,
         _const_ops_class_constructor,
         NULL
    };
