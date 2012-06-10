@@ -1134,7 +1134,7 @@ eo_add(const Eo_Class *klass, Eo *parent)
    if (!obj->condtor_done)
      {
         const Eo_Class *cur_klass = _eo_kls_itr_get(&obj->mro_itr);
-        ERR("Object of class '%s' - Not all of the object constructors have been executed, last destructor was of class: '%s'", klass->desc->name, cur_klass->desc->name);
+        ERR("Object of class '%s' - Not all of the object constructors have been executed, last constructor was of class: '%s'", klass->desc->name, cur_klass->desc->name);
         goto fail;
      }
    _eo_kls_itr_end(&obj->mro_itr, &prev_state);
