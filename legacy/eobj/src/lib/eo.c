@@ -1071,7 +1071,7 @@ eo_parent_set(Eo *obj, const Eo *parent)
 
    if (eo_composite_is(obj))
      {
-        eo_composite_detach(obj->parent, obj);
+        eo_composite_detach(obj, obj->parent);
      }
 
    if (obj->parent)
@@ -1259,7 +1259,7 @@ _eo_del_internal(Eo *obj)
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             eo_composite_detach(obj, emb_obj);
+             eo_composite_detach(emb_obj, obj);
           }
      }
 
