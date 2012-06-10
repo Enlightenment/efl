@@ -1361,6 +1361,12 @@ _eo_error_unset(Eo *obj)
 void
 _eo_condtor_done(Eo *obj)
 {
+   if (obj->condtor_done)
+     {
+        ERR("Object %p is already constructed at this point.", obj);
+        return;
+     }
+
    obj->condtor_done = EINA_TRUE;
 }
 

@@ -15,6 +15,12 @@ START_TEST(eo_simple)
    Eo *obj = eo_add(EO_BASE_CLASS, NULL);
    fail_if(obj);
 
+   obj = eo_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   eo_do(obj, eo_constructor());
+   eo_do(obj, eo_destructor());
+   eo_unref(obj);
+
    eo_shutdown();
 }
 END_TEST
