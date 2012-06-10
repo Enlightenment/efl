@@ -1141,13 +1141,14 @@ eo_add(const Eo_Class *klass, Eo *parent)
 
    if (EINA_UNLIKELY(_eo_error_get(obj)))
      {
-        ERR("Type '%s' - One of the object constructors have failed.", klass->desc->name);
+        ERR("Object of class '%s' - One of the object constructors have failed.", klass->desc->name);
         goto fail;
      }
 
    if (EINA_UNLIKELY(!_eo_kls_itr_reached_end(&obj->mro_itr)))
      {
-        ERR("Type '%s' - Not all of the object constructors have been executed.", klass->desc->name);
+        const Eo_Class *cur_klass = _eo_kls_itr_get(&obj->mro_itr);
+        ERR("Object of class '%s' - Not all of the object constructors have been executed, last destructor was of class: '%s'", klass->desc->name, cur_klass->desc->name);
         goto fail;
      }
    _eo_kls_itr_end(&obj->mro_itr, &prev_state);
@@ -1254,12 +1255,13 @@ _eo_del_internal(Eo *obj)
    _eo_destructor(obj, klass);
    if (_eo_error_get(obj))
      {
-        ERR("Type '%s' - One of the object destructors have failed.", klass->desc->name);
+        ERR("Object of class '%s' - One of the object destructors have failed.", klass->desc->name);
      }
 
    if (!_eo_kls_itr_reached_end(&obj->mro_itr))
      {
-        ERR("Type '%s' - Not all of the object destructors have been executed.", klass->desc->name);
+        const Eo_Class *cur_klass = _eo_kls_itr_get(&obj->mro_itr);
+        ERR("Object of class '%s' - Not all of the object destructors have been executed, last destructor was of class: '%s'", klass->desc->name, cur_klass->desc->name);
      }
    _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
