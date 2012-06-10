@@ -48,7 +48,7 @@ _btn_clicked(void *data, Evas_Object *evas_obj, void *event_info)
 }
 
 static void
-_constructor(Eo *obj, void *class_data)
+_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, eo_constructor());
 
@@ -78,6 +78,8 @@ static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC(ELW_BUTTON_ID(ELW_BUTTON_SUB_ID_TEXT_SET), _text_set),
         EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
         EO_OP_FUNC_SENTINEL
@@ -102,8 +104,6 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(&ELW_BUTTON_BASE_ID, op_desc, ELW_BUTTON_SUB_ID_LAST),
      event_desc,
      sizeof(Widget_Data),
-     _constructor,
-     _destructor,
      _class_constructor,
      NULL
 };

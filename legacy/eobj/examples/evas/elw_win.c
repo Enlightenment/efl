@@ -23,7 +23,7 @@ my_win_del(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_constructor(Eo *obj, void *class_data)
+_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, eo_constructor());
 
@@ -43,15 +43,24 @@ _constructor(Eo *obj, void *class_data)
    eo_evas_object_set(obj, wd->win);
 }
 
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
+}
+
 static const Eo_Class_Description class_desc = {
      "Elw Win",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
      NULL,
      sizeof(Widget_Data),
-     _constructor,
-     NULL,
-     NULL,
+     _class_constructor,
      NULL
 };
 

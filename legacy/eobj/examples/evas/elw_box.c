@@ -26,7 +26,7 @@ _pack_end(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 }
 
 static void
-_constructor(Eo *obj, void *class_data)
+_constructor(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, eo_constructor());
 
@@ -44,6 +44,7 @@ static void
 _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(ELW_BOX_ID(ELW_BOX_SUB_ID_PACK_END), _pack_end),
         EO_OP_FUNC_SENTINEL
    };
@@ -62,8 +63,6 @@ static const Eo_Class_Description class_desc = {
      EO_CLASS_DESCRIPTION_OPS(&ELW_BOX_BASE_ID, op_desc, ELW_BOX_SUB_ID_LAST),
      NULL,
      sizeof(Widget_Data),
-     _constructor,
-     NULL,
      _class_constructor,
      NULL
 };
