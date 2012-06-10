@@ -72,7 +72,7 @@ START_TEST(eo_composite_tests)
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj2);
 
-   eo_composite_object_attach(obj, obj2);
+   eo_composite_object_attach(obj2, obj);
    eo_parent_set(obj2, NULL);
    fail_if(eo_composite_is(obj2));
 

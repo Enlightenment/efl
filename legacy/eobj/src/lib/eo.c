@@ -1506,37 +1506,37 @@ eo_shutdown(void)
 }
 
 EAPI void
-eo_composite_object_attach(Eo *obj, Eo *emb_obj)
+eo_composite_object_attach(Eo *comp_obj, Eo *parent)
 {
-   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
-   EO_MAGIC_RETURN(emb_obj, EO_EINA_MAGIC);
+   EO_MAGIC_RETURN(comp_obj, EO_EINA_MAGIC);
+   EO_MAGIC_RETURN(parent, EO_EINA_MAGIC);
 
-   emb_obj->composite = EINA_TRUE;
-   eo_parent_set(emb_obj, obj);
-   obj->composite_objects = eina_list_prepend(obj->composite_objects, emb_obj);
+   comp_obj->composite = EINA_TRUE;
+   eo_parent_set(comp_obj, parent);
+   parent->composite_objects = eina_list_prepend(parent->composite_objects, comp_obj);
 }
 
 EAPI void
-eo_composite_object_detach(Eo *obj, Eo *emb_obj)
+eo_composite_object_detach(Eo *comp_obj, Eo *parent)
 {
-   EO_MAGIC_RETURN(obj, EO_EINA_MAGIC);
-   EO_MAGIC_RETURN(emb_obj, EO_EINA_MAGIC);
+   EO_MAGIC_RETURN(comp_obj, EO_EINA_MAGIC);
+   EO_MAGIC_RETURN(parent, EO_EINA_MAGIC);
 
-   emb_obj->composite = EINA_FALSE;
-   obj->composite_objects = eina_list_remove(obj->composite_objects, emb_obj);
-   eo_parent_set(emb_obj, NULL);
+   comp_obj->composite = EINA_FALSE;
+   parent->composite_objects = eina_list_remove(parent->composite_objects, comp_obj);
+   eo_parent_set(comp_obj, NULL);
 }
 
 EAPI Eina_Bool
-eo_composite_is(const Eo *emb_obj)
+eo_composite_is(const Eo *comp_obj)
 {
-   if (!EINA_MAGIC_CHECK(emb_obj, EO_EINA_MAGIC))
+   if (!EINA_MAGIC_CHECK(comp_obj, EO_EINA_MAGIC))
      {
-        EINA_MAGIC_FAIL(emb_obj, EO_EINA_MAGIC);
+        EINA_MAGIC_FAIL(comp_obj, EO_EINA_MAGIC);
         return EINA_FALSE;
      }
 
-   return emb_obj->composite;
+   return comp_obj->composite;
 }
 
 EAPI void

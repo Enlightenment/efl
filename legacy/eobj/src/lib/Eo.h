@@ -790,23 +790,27 @@ EAPI void eo_manual_free(Eo *obj);
 
 /**
  * @brief Make an object a composite object of another.
- * @param obj the "parent" object.
- * @param comp_obj the object that will be used to composite obj.
+ * @param comp_obj the object that will be used to composite parent.
+ * @param parent the "parent" object.
+ *
+ * This functions also sets the parent of comp_obj to parent.
  *
  * @see eo_composite_object_detach()
  * @see eo_composite_is()
  */
-EAPI void eo_composite_object_attach(Eo *obj, Eo *comp_obj);
+EAPI void eo_composite_object_attach(Eo *comp_obj, Eo *parent);
 
 /**
  * @brief Detach a composite object from another object.
- * @param obj the "parent" object.
- * @param comp_obj the object attached to obj.
+ * @param comp_obj the object attached to parent.
+ * @param parent the "parent" object.
+ *
+ * This functions also sets the parent of comp_obj to @c NULL.
  *
  * @see eo_composite_object_attach()
  * @see eo_composite_is()
  */
-EAPI void eo_composite_object_detach(Eo *obj, Eo *comp_obj);
+EAPI void eo_composite_object_detach(Eo *comp_obj, Eo *parent);
 
 /**
  * @brief Check if an object is a composite object.
