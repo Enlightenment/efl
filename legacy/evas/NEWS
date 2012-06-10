@@ -7,6 +7,7 @@ Improvements:
    * Lock less font rendering.
    * Reduce cost of propagating event by limiting the object we explore by using a bouncing box.
    * Don't wake up prepare thread if there is nothing to prepare.
+   * Limit the updated region to fit in CPU cache for Pipe rendering.
 
 Fixes:
    * Add missing files in the tarball.

@@ -726,7 +726,7 @@ struct _RGBA_Draw_Context
 struct _RGBA_Pipe_Op
 {
    RGBA_Draw_Context         context;
-   void                    (*op_func) (RGBA_Image *dst, RGBA_Pipe_Op *op, RGBA_Pipe_Thread_Info *info);
+   void                    (*op_func) (RGBA_Image *dst, const RGBA_Pipe_Op *op, const RGBA_Pipe_Thread_Info *info);
    void                    (*free_func) (RGBA_Pipe_Op *op);
 
    union {
@@ -770,6 +770,7 @@ struct _RGBA_Pipe
 
 struct _RGBA_Pipe_Thread_Info
 {
+   EINA_INLIST;
    RGBA_Image *im;
    int         x, y, w, h;
 };

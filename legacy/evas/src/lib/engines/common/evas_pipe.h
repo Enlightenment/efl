@@ -10,7 +10,7 @@ typedef struct _Thinfo
    int                    thread_num;
    pthread_t              thread_id;
    pthread_barrier_t     *barrier;
-   RGBA_Pipe_Thread_Info *info;
+   const Eina_Inlist     *tasks;
 } Thinfo;
 #endif
 

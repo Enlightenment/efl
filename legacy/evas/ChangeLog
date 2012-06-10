@@ -788,3 +788,6 @@
         fixes 1 rounding error in text objects that placed ascent in the wrong
         place by 1 pixel for even ascents.
 
+2012-06-10  Cedric Bail
+
+	* Limit the updated region to fit in CPU cache for Pipe rendering.
