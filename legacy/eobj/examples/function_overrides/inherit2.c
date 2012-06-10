@@ -61,8 +61,8 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(INHERIT2_SUB_ID_PRINT, "", "Print hey"),
-     EO_OP_DESCRIPTION(INHERIT2_SUB_ID_PRINT2, "", "Print hey2"),
+     EO_OP_DESCRIPTION(INHERIT2_SUB_ID_PRINT, "Print hey"),
+     EO_OP_DESCRIPTION(INHERIT2_SUB_ID_PRINT2, "Print hey2"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

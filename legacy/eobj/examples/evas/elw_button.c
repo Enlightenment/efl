@@ -9,7 +9,7 @@
 EAPI Eo_Op ELW_BUTTON_BASE_ID = 0;
 
 EAPI const Eo_Event_Description _EV_CLICKED =
-        EO_EVENT_DESCRIPTION("clicked", "", "Called when there was a click.");
+        EO_EVENT_DESCRIPTION("clicked", "Called when there was a click.");
 
 typedef struct
 {
@@ -87,7 +87,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELW_BUTTON_SUB_ID_TEXT_SET, "s", "Text of a text supporting evas object."), // FIXME: This ID sholudn't really be defined here...
+     EO_OP_DESCRIPTION(ELW_BUTTON_SUB_ID_TEXT_SET, "Text of a text supporting evas object."), // FIXME: This ID sholudn't really be defined here...
      EO_OP_DESCRIPTION_SENTINEL
 };
 

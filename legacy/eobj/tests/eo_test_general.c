@@ -84,7 +84,7 @@ START_TEST(eo_static_classes)
    eo_init();
 
    static const Eo_Op_Description op_desc[] = {
-        EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
+        EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
         EO_OP_DESCRIPTION_SENTINEL
    };
 

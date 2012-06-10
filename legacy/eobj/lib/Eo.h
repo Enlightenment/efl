@@ -173,7 +173,6 @@ typedef void (*eo_op_func_type_class)(const Eo_Class *, va_list *list);
 struct _Eo_Event_Description
 {
    const char *name; /**< name of the event. */
-   const char *type; /**< describes the data passed in event_info */
    const char *doc; /**< Explanation about the event. */
 };
 
@@ -184,14 +183,13 @@ struct _Eo_Event_Description
 typedef struct _Eo_Event_Description Eo_Event_Description;
 
 /**
- * @def EO_EVENT_DESCRIPTION(name, type, doc)
+ * @def EO_EVENT_DESCRIPTION(name, doc)
  * An helper macro to help populating #Eo_Event_Description
  * @param name The name of the event.
- * @param type The type string of the event.
  * @param doc Additional doc for the event.
  * @see Eo_Event_Description
  */
-#define EO_EVENT_DESCRIPTION(name, type, doc) { name, type, doc }
+#define EO_EVENT_DESCRIPTION(name, doc) { name, doc }
 
 /**
  * @}
@@ -344,7 +342,6 @@ struct _Eo_Op_Description
 {
    Eo_Op sub_op; /**< The sub_id of the op in it's class. */
    const char *name; /**< The name of the op. */
-   const char *type; /**< descripbes the Op's function signature. */
    const char *doc; /**< Explanation about the Op. */
    Eo_Op_Type op_type; /**< The type of the Op. */
 };
@@ -394,45 +391,42 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
 #define EO_CLASS_DESCRIPTION_OPS(base_op_id, op_descs, count) { base_op_id, op_descs, count }
 
 /**
- * @def EO_OP_DESCRIPTION(op, type, doc)
+ * @def EO_OP_DESCRIPTION(op, doc)
  * An helper macro to help populating #Eo_Op_Description
  * @param sub_id The sub id of the op being described.
- * @param type The type string for the op.
  * @param doc Additional doc for the op.
  * @see Eo_Op_Description
  * @see EO_OP_DESCRIPTION_CLASS
  * @see EO_OP_DESCRIPTION_CONST
  * @see EO_OP_DESCRIPTION_SENTINEL
  */
-#define EO_OP_DESCRIPTION(sub_id, type, doc) { sub_id, #sub_id, type, doc, EO_OP_TYPE_REGULAR }
+#define EO_OP_DESCRIPTION(sub_id, doc) { sub_id, #sub_id, doc, EO_OP_TYPE_REGULAR }
 
 /**
- * @def EO_OP_DESCRIPTION_CONST(op, type, doc)
+ * @def EO_OP_DESCRIPTION_CONST(op, doc)
  * An helper macro to help populating #Eo_Op_Description
  * This macro is the same as EO_OP_DESCRIPTION but indicates that the op's
  * implementation should not change the object.
  * @param sub_id The sub id of the op being described.
- * @param type The type string for the op.
  * @param doc Additional doc for the op.
  * @see Eo_Op_Description
  * @see EO_OP_DESCRIPTION
  * @see EO_OP_DESCRIPTION_SENTINEL
  */
-#define EO_OP_DESCRIPTION_CONST(sub_id, type, doc) { sub_id, #sub_id, type, doc, EO_OP_TYPE_CONST }
+#define EO_OP_DESCRIPTION_CONST(sub_id, doc) { sub_id, #sub_id, doc, EO_OP_TYPE_CONST }
 
 /**
- * @def EO_OP_DESCRIPTION_CLASS(op, type, doc)
+ * @def EO_OP_DESCRIPTION_CLASS(op, doc)
  * An helper macro to help populating #Eo_Op_Description
  * This macro is the same as EO_OP_DESCRIPTION but indicates that the op's
  * implementation is of type CLASS.
  * @param sub_id The sub id of the op being described.
- * @param type The type string for the op.
  * @param doc Additional doc for the op.
  * @see Eo_Op_Description
  * @see EO_OP_DESCRIPTION
  * @see EO_OP_DESCRIPTION_SENTINEL
  */
-#define EO_OP_DESCRIPTION_CLASS(sub_id, type, doc) { sub_id, #sub_id, type, doc, EO_OP_TYPE_CLASS }
+#define EO_OP_DESCRIPTION_CLASS(sub_id, doc) { sub_id, #sub_id, doc, EO_OP_TYPE_CLASS }
 
 /**
  * @def EO_OP_DESCRIPTION_SENTINEL
@@ -441,7 +435,7 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  * @see Eo_Op_Description
  * @see EO_OP_DESCRIPTION
  */
-#define EO_OP_DESCRIPTION_SENTINEL { 0, NULL, NULL, NULL, EINA_FALSE }
+#define EO_OP_DESCRIPTION_SENTINEL { 0, NULL, NULL, EO_OP_TYPE_INVALID }
 
 /**
  * @brief Create a new class.

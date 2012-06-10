@@ -477,11 +477,11 @@ _ev_global_freeze_get(const Eo_Class *klass EINA_UNUSED, va_list *list)
 
 /* FIXME: Set proper type descriptions. */
 EAPI const Eo_Event_Description _EO_EV_CALLBACK_ADD =
-   EO_EVENT_DESCRIPTION("callback,add", "?", "A callback was added.");
+   EO_EVENT_DESCRIPTION("callback,add", "A callback was added.");
 EAPI const Eo_Event_Description _EO_EV_CALLBACK_DEL =
-   EO_EVENT_DESCRIPTION("callback,del", "?", "A callback was deleted.");
+   EO_EVENT_DESCRIPTION("callback,del", "A callback was deleted.");
 EAPI const Eo_Event_Description _EO_EV_DEL =
-   EO_EVENT_DESCRIPTION("del", "", "Obj is being deleted.");
+   EO_EVENT_DESCRIPTION("del", "Obj is being deleted.");
 
 static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED)
@@ -528,22 +528,22 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_SET, "?", "Set data for key."),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_DATA_GET, "?", "Get data for key."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_DEL, "?", "Del key."),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_ADD, "?", "Add a weak ref to the object."),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_DEL, "?", "Delete the weak ref."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD, "?", "Add an event callback with a priority."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL, "?", "Delete an event callback"),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "?", "Call the event callbacks for an event."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD, "?", "Add an event forwarder."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL, "?", "Delete an event forwarder."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_FREEZE, "?", "Freezes events."),
-     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_THAW, "?", "Thaws events."),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_FREEZE_GET, "?", "Get event freeze counter."),
-     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE, "?", "Freezes events globally."),
-     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW, "?", "Thaws events globally."),
-     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET, "?", "Get global event freeze counter."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_SET, "Set data for key."),
+     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_DATA_GET, "Get data for key."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_DEL, "Del key."),
+     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_ADD, "Add a weak ref to the object."),
+     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_DEL, "Delete the weak ref."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD, "Add an event callback with a priority."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL, "Delete an event callback"),
+     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "Call the event callbacks for an event."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD, "Add an event forwarder."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL, "Delete an event forwarder."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_FREEZE, "Freezes events."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_THAW, "Thaws events."),
+     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_FREEZE_GET, "Get event freeze counter."),
+     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE, "Freezes events globally."),
+     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW, "Thaws events globally."),
+     EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET, "Get global event freeze counter."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

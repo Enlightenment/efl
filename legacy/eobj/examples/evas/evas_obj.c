@@ -119,12 +119,12 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POSITION_SET, "ii", "Position of an evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_SET, "ii", "Size of an evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_SET, "iiii", "Color of an evas object."),
-     EO_OP_DESCRIPTION_CONST(EVAS_OBJ_SUB_ID_COLOR_GET, "iiii", "Color of an evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_VISIBILITY_SET, "b", "Visibility of an evas object."),
-     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CHILD_ADD, "o", "Add a child eo."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_POSITION_SET, "Position of an evas object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_SIZE_SET, "Size of an evas object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_COLOR_SET, "Color of an evas object."),
+     EO_OP_DESCRIPTION_CONST(EVAS_OBJ_SUB_ID_COLOR_GET, "Color of an evas object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_VISIBILITY_SET, "Visibility of an evas object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_SUB_ID_CHILD_ADD, "Add a child eo."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

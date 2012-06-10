@@ -52,7 +52,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(ELW_BOX_SUB_ID_PACK_END, "o", "Pack obj at the end of box."),
+     EO_OP_DESCRIPTION(ELW_BOX_SUB_ID_PACK_END, "Pack obj at the end of box."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

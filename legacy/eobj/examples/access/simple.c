@@ -11,7 +11,7 @@ typedef struct
 } Private_Data;
 
 EAPI const Eo_Event_Description _EV_A_CHANGED =
-        EO_EVENT_DESCRIPTION("a,changed", "i", "Called when a has changed.");
+        EO_EVENT_DESCRIPTION("a,changed", "Called when a has changed.");
 
 #define MY_CLASS SIMPLE_CLASS
 
@@ -42,7 +42,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

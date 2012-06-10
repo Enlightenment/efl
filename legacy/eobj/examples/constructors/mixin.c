@@ -47,7 +47,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION_CONST(MIXIN_SUB_ID_ADD_AND_SET, "i", "Add A + B + param and print it"),
+     EO_OP_DESCRIPTION_CONST(MIXIN_SUB_ID_ADD_AND_SET, "Add A + B + param and print it"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

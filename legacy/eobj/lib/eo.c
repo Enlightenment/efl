@@ -248,7 +248,7 @@ _dich_func_clean_all(Eo_Class *klass)
 /* END OF DICH */
 
 static const Eo_Op_Description noop_desc =
-        EO_OP_DESCRIPTION(EO_NOOP, "", "No operation.");
+        EO_OP_DESCRIPTION(EO_NOOP, "No operation.");
 
 static const Eo_Op_Description *
 _eo_op_id_desc_get(Eo_Op op)

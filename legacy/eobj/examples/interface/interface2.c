@@ -10,7 +10,7 @@ EAPI Eo_Op INTERFACE2_BASE_ID = 0;
 #define MY_CLASS INTERFACE2_CLASS
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION_CONST(INTERFACE2_SUB_ID_AB_SUM_GET2, "i", "Print the sum of a and b."),
+     EO_OP_DESCRIPTION_CONST(INTERFACE2_SUB_ID_AB_SUM_GET2, "Print the sum of a and b."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

@@ -30,7 +30,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION_CONST(INHERIT_SUB_ID_PROT_PRINT, "", "Print protected var x1."),
+     EO_OP_DESCRIPTION_CONST(INHERIT_SUB_ID_PROT_PRINT, "Print protected var x1."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

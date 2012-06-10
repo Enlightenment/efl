@@ -80,10 +80,10 @@ _class_destructor(Eo_Class *klass EINA_UNUSED)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "i", "Set property A"),
-     EO_OP_DESCRIPTION_CONST(SIMPLE_SUB_ID_A_GET, "i", "Get property A"),
-     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_SET, "i", "Set property B"),
-     EO_OP_DESCRIPTION_CONST(SIMPLE_SUB_ID_B_GET, "i", "Get property B"),
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
+     EO_OP_DESCRIPTION_CONST(SIMPLE_SUB_ID_A_GET, "Get property A"),
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_SET, "Set property B"),
+     EO_OP_DESCRIPTION_CONST(SIMPLE_SUB_ID_B_GET, "Get property B"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

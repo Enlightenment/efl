@@ -44,7 +44,7 @@ _class_constructor(Eo_Class *klass)
 
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION_CONST(MIXIN_SUB_ID_AB_SUM_GET, "i", "Get the sum of a and b."),
+     EO_OP_DESCRIPTION_CONST(MIXIN_SUB_ID_AB_SUM_GET, "Get the sum of a and b."),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

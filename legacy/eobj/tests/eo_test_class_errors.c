@@ -21,14 +21,14 @@ START_TEST(eo_incomplete_desc)
    };
 
    static const Eo_Op_Description op_desc[] = {
-        EO_OP_DESCRIPTION(TEST_SUB_ID_FOO, "i", "Foo"),
-        EO_OP_DESCRIPTION(TEST_SUB_ID_FOO2, "i", "Foo2"),
+        EO_OP_DESCRIPTION(TEST_SUB_ID_FOO, "Foo"),
+        EO_OP_DESCRIPTION(TEST_SUB_ID_FOO2, "Foo2"),
         EO_OP_DESCRIPTION_SENTINEL
    };
 
    static const Eo_Op_Description op_desc_wrong[] = {
-        EO_OP_DESCRIPTION(TEST_SUB_ID_FOO2, "i", "Foo2"),
-        EO_OP_DESCRIPTION(TEST_SUB_ID_FOO, "i", "Foo"),
+        EO_OP_DESCRIPTION(TEST_SUB_ID_FOO2, "Foo2"),
+        EO_OP_DESCRIPTION(TEST_SUB_ID_FOO, "Foo"),
         EO_OP_DESCRIPTION_SENTINEL
    };
 
