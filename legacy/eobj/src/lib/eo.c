@@ -1071,7 +1071,7 @@ eo_parent_set(Eo *obj, const Eo *parent)
 
    if (eo_composite_is(obj))
      {
-        eo_composite_object_detach(obj->parent, obj);
+        eo_composite_detach(obj->parent, obj);
      }
 
    if (obj->parent)
@@ -1259,7 +1259,7 @@ _eo_del_internal(Eo *obj)
         Eo *emb_obj;
         EINA_LIST_FOREACH_SAFE(obj->composite_objects, itr, itr_n, emb_obj)
           {
-             eo_composite_object_detach(obj, emb_obj);
+             eo_composite_detach(obj, emb_obj);
           }
      }
 
@@ -1506,7 +1506,7 @@ eo_shutdown(void)
 }
 
 EAPI void
-eo_composite_object_attach(Eo *comp_obj, Eo *parent)
+eo_composite_attach(Eo *comp_obj, Eo *parent)
 {
    EO_MAGIC_RETURN(comp_obj, EO_EINA_MAGIC);
    EO_MAGIC_RETURN(parent, EO_EINA_MAGIC);
@@ -1517,7 +1517,7 @@ eo_composite_object_attach(Eo *comp_obj, Eo *parent)
 }
 
 EAPI void
-eo_composite_object_detach(Eo *comp_obj, Eo *parent)
+eo_composite_detach(Eo *comp_obj, Eo *parent)
 {
    EO_MAGIC_RETURN(comp_obj, EO_EINA_MAGIC);
    EO_MAGIC_RETURN(parent, EO_EINA_MAGIC);

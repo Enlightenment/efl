@@ -795,10 +795,10 @@ EAPI void eo_manual_free(Eo *obj);
  *
  * This functions also sets the parent of comp_obj to parent.
  *
- * @see eo_composite_object_detach()
+ * @see eo_composite_detach()
  * @see eo_composite_is()
  */
-EAPI void eo_composite_object_attach(Eo *comp_obj, Eo *parent);
+EAPI void eo_composite_attach(Eo *comp_obj, Eo *parent);
 
 /**
  * @brief Detach a composite object from another object.
@@ -807,18 +807,18 @@ EAPI void eo_composite_object_attach(Eo *comp_obj, Eo *parent);
  *
  * This functions also sets the parent of comp_obj to @c NULL.
  *
- * @see eo_composite_object_attach()
+ * @see eo_composite_attach()
  * @see eo_composite_is()
  */
-EAPI void eo_composite_object_detach(Eo *comp_obj, Eo *parent);
+EAPI void eo_composite_detach(Eo *comp_obj, Eo *parent);
 
 /**
  * @brief Check if an object is a composite object.
  * @param comp_obj the object to be checked.
  * @return @c EINA_TRUE if it is, @c EINA_FALSE otherwise.
  *
- * @see eo_composite_object_attach()
- * @see eo_composite_object_detach()
+ * @see eo_composite_attach()
+ * @see eo_composite_detach()
  */
 EAPI Eina_Bool eo_composite_is(const Eo *comp_obj);
 

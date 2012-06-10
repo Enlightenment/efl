@@ -72,7 +72,7 @@ START_TEST(eo_composite_tests)
    Eo *obj2 = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!obj2);
 
-   eo_composite_object_attach(obj2, obj);
+   eo_composite_attach(obj2, obj);
    eo_parent_set(obj2, NULL);
    fail_if(eo_composite_is(obj2));
 
@@ -543,10 +543,10 @@ START_TEST(eo_magic_checks)
 
         fail_if(eo_data_get((Eo *) buf, SIMPLE_CLASS));
 
-        eo_composite_object_attach((Eo *) buf, obj);
-        eo_composite_object_attach(obj, (Eo *) buf);
-        eo_composite_object_detach((Eo *) buf, obj);
-        eo_composite_object_detach(obj, (Eo *) buf);
+        eo_composite_attach((Eo *) buf, obj);
+        eo_composite_attach(obj, (Eo *) buf);
+        eo_composite_detach((Eo *) buf, obj);
+        eo_composite_detach(obj, (Eo *) buf);
         eo_composite_is((Eo *) buf);
 
         eo_do(obj, eo_event_callback_forwarder_add(NULL, (Eo *) buf));

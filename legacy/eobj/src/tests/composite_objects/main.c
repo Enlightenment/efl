@@ -47,9 +47,9 @@ main(int argc, char *argv[])
    fail_if(cb_called);
 
    fail_if(!eo_composite_is(simple));
-   eo_composite_object_detach(simple, obj);
+   eo_composite_detach(simple, obj);
    fail_if(eo_composite_is(simple));
-   eo_composite_object_attach(simple, obj);
+   eo_composite_attach(simple, obj);
    fail_if(!eo_composite_is(simple));
 
    eo_unref(simple);
