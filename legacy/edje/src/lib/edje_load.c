@@ -1444,6 +1444,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    eina_mempool_del(ce->mp.BOX);
    eina_mempool_del(ce->mp.TABLE);
    eina_mempool_del(ce->mp.EXTERNAL);
+   eina_mempool_del(ce->mp.VIRTUAL);
    eina_mempool_del(ce->mp.part);
    memset(&ce->mp, 0, sizeof (ce->mp));
 
@@ -1457,6 +1458,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    eina_mempool_del(ce->mp_rtl.BOX);
    eina_mempool_del(ce->mp_rtl.TABLE);
    eina_mempool_del(ce->mp_rtl.EXTERNAL);
+   eina_mempool_del(ce->mp_rtl.VIRTUAL);
    memset(&ce->mp_rtl, 0, sizeof (ce->mp_rtl));
    free(ec);
    ce->ref = NULL;
