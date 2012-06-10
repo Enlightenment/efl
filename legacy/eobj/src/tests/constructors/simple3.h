@@ -4,6 +4,6 @@
 #include "Eo.h"
 
 #define SIMPLE3_CLASS simple3_class_get()
-const Eo_Class *simple3_class_get(void) EINA_CONST;
+const Eo_Class *simple3_class_get(void);
 
 #endif

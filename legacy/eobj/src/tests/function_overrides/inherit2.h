@@ -17,6 +17,6 @@ enum {
 #define inherit2_print2() INHERIT2_ID(INHERIT2_SUB_ID_PRINT2)
 
 #define INHERIT2_CLASS inherit2_class_get()
-const Eo_Class *inherit2_class_get(void) EINA_CONST;
+const Eo_Class *inherit2_class_get(void);
 
 #endif

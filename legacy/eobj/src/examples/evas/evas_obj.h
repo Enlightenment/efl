@@ -68,7 +68,7 @@ enum {
 #define evas_obj_child_add(child) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CHILD_ADD), EO_TYPECHECK(Eo *, child)
 
 #define EVAS_OBJ_CLASS evas_object_class_get()
-const Eo_Class *evas_object_class_get(void) EINA_CONST;
+const Eo_Class *evas_object_class_get(void);
 
 #define EVAS_OBJ_STR "Evas_Obj"
 /* FIXME: Hack in the meanwhile. */

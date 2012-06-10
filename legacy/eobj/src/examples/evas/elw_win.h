@@ -4,6 +4,6 @@
 #include "Eo.h"
 
 #define ELW_WIN_CLASS elw_win_class_get()
-const Eo_Class *elw_win_class_get(void) EINA_CONST;
+const Eo_Class *elw_win_class_get(void);
 
 #endif

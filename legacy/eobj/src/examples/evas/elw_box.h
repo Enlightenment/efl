@@ -20,6 +20,6 @@ enum {
 #define elw_box_pack_end(obj) ELW_BOX_ID(ELW_BOX_SUB_ID_PACK_END), EO_TYPECHECK(Eo *, obj)
 
 #define ELW_BOX_CLASS elw_box_class_get()
-const Eo_Class *elw_box_class_get(void) EINA_CONST;
+const Eo_Class *elw_box_class_get(void);
 
 #endif

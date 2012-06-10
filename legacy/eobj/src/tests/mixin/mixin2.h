@@ -9,6 +9,6 @@ typedef struct
 } Mixin2_Public_Data;
 
 #define MIXIN2_CLASS mixin2_class_get()
-const Eo_Class *mixin2_class_get(void) EINA_CONST;
+const Eo_Class *mixin2_class_get(void);
 
 #endif

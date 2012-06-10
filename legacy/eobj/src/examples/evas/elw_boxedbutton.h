@@ -4,6 +4,6 @@
 #include "Eo.h"
 
 #define ELW_BOXEDBUTTON_CLASS elw_boxedbutton_class_get()
-const Eo_Class *elw_boxedbutton_class_get(void) EINA_CONST;
+const Eo_Class *elw_boxedbutton_class_get(void);
 
 #endif

@@ -24,6 +24,6 @@ extern const Eo_Event_Description _EV_CLICKED;
 #define EV_CLICKED (&(_EV_CLICKED))
 
 #define ELW_BUTTON_CLASS elw_button_class_get()
-const Eo_Class *elw_button_class_get(void) EINA_CONST;
+const Eo_Class *elw_button_class_get(void);
 
 #endif
