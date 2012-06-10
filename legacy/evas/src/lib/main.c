@@ -6,7 +6,11 @@ EAPI Evas_Version *evas_version = &_version;
 
 int _evas_alloc_error = 0;
 static int _evas_debug_init = 0;
-static int _evas_debug_show = 0;
+static enum {
+     _EVAS_DEBUG_DEFAULT,
+     _EVAS_DEBUG_HIDE,
+     _EVAS_DEBUG_SHOW
+} _evas_debug_show = _EVAS_DEBUG_DEFAULT;
 static int _evas_debug_abort = 0;
 
 EAPI Evas_Alloc_Error
@@ -45,16 +49,27 @@ evas_mem_calloc(int size)
    return NULL;
 }
 
+static void
+_evas_debug_init_from_env()
+{
+   const char *tmp = getenv("EVAS_DEBUG_SHOW");
+   if (tmp)
+     {
+        int dbgshow = atoi(tmp);
+        _evas_debug_show = (dbgshow) ? _EVAS_DEBUG_SHOW : _EVAS_DEBUG_HIDE;
+     }
+   if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
+   _evas_debug_init = 1;
+}
+
 void
 evas_debug_error(void)
 {
    if (!_evas_debug_init)
      {
-	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
-	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
-	_evas_debug_init = 1;
+        _evas_debug_init_from_env();
      }
-   if (_evas_debug_show)
+   if (_evas_debug_show == _EVAS_DEBUG_SHOW)
      CRIT("Evas Magic Check Failed!!!");
 }
 
@@ -63,11 +78,9 @@ evas_debug_input_null(void)
 {
    if (!_evas_debug_init)
      {
-	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
-	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
-	_evas_debug_init = 1;
+        _evas_debug_init_from_env();
      }
-   if (_evas_debug_show)
+   if (_evas_debug_show == _EVAS_DEBUG_SHOW)
      CRIT("Input object pointer is NULL!");
    if (_evas_debug_abort) abort();
 }
@@ -77,11 +90,10 @@ evas_debug_magic_null(void)
 {
    if (!_evas_debug_init)
      {
-	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
-	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
-	_evas_debug_init = 1;
+        _evas_debug_init_from_env();
      }
-   if (_evas_debug_show)
+   if ((_evas_debug_show == _EVAS_DEBUG_SHOW) ||
+         (_evas_debug_show == _EVAS_DEBUG_DEFAULT))
      CRIT("Input object is zero'ed out (maybe a freed object or zero-filled RAM)!");
    if (_evas_debug_abort) abort();
 }
@@ -91,11 +103,10 @@ evas_debug_magic_wrong(DATA32 expected, DATA32 supplied)
 {
    if (!_evas_debug_init)
      {
-	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
-	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
-	_evas_debug_init = 1;
+        _evas_debug_init_from_env();
      }
-   if (_evas_debug_show)
+   if ((_evas_debug_show == _EVAS_DEBUG_SHOW) ||
+         (_evas_debug_show == _EVAS_DEBUG_DEFAULT))
      CRIT("Input object is wrong type\n"
 	  "    Expected: %08x - %s\n"
 	  "    Supplied: %08x - %s",
@@ -109,11 +120,10 @@ evas_debug_generic(const char *str)
 {
    if (!_evas_debug_init)
      {
-	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
-	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
-	_evas_debug_init = 1;
+        _evas_debug_init_from_env();
      }
-   if (_evas_debug_show)
+   if ((_evas_debug_show == _EVAS_DEBUG_SHOW) ||
+         (_evas_debug_show == _EVAS_DEBUG_DEFAULT))
      CRIT("%s", str);
    if (_evas_debug_abort) abort();
 }
