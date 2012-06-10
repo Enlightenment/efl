@@ -1294,6 +1294,12 @@ _eo_unref(Eo *obj)
 {
    if (--(obj->refcount) == 0)
      {
+        if (obj->del)
+          {
+             ERR("Object %p already deleted.", obj);
+             return;
+          }
+
         _eo_del_internal(obj);
 
 #ifndef NDEBUG
