@@ -12,7 +12,7 @@ if (CHECK_ENABLED)
 
    include_directories(
       ${EINA_INCLUDE_DIRS}
-      ${CMAKE_SOURCE_DIR}/lib
+      ${CMAKE_SOURCE_DIR}/src/lib
       ${CHECK_INCLUDE_DIRS}
       )
 

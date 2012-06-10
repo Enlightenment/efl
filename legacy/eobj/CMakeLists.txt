@@ -38,17 +38,18 @@ configure_file (
 
 include(EFLCheck)
 
-add_subdirectory(lib)
-add_subdirectory(examples/evas)
-add_subdirectory(examples/mixin)
-add_subdirectory(examples/signals)
-add_subdirectory(examples/access)
-add_subdirectory(examples/constructors)
-add_subdirectory(examples/function_overrides)
-add_subdirectory(examples/composite_objects)
-add_subdirectory(examples/interface)
+add_subdirectory(src/lib)
+add_subdirectory(src/examples/evas)
 
-add_subdirectory(tests EXCLUDE_FROM_ALL)
+add_subdirectory(src/tests/mixin)
+add_subdirectory(src/tests/signals)
+add_subdirectory(src/tests/access)
+add_subdirectory(src/tests/constructors)
+add_subdirectory(src/tests/function_overrides)
+add_subdirectory(src/tests/composite_objects)
+add_subdirectory(src/tests/interface)
+
+add_subdirectory(src/tests/eo_suite EXCLUDE_FROM_ALL)
 
 add_subdirectory(doc)
 

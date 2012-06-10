@@ -9,7 +9,7 @@ LIST(APPEND MIXIN_CC_SOURCES
 include_directories(
    ${EINA_INCLUDE_DIRS}
    ${EVAS_INCLUDE_DIRS}
-   ${CMAKE_SOURCE_DIR}/lib
+   ${CMAKE_SOURCE_DIR}/src/lib
    )
 
 add_executable(mixin ${MIXIN_CC_SOURCES})
