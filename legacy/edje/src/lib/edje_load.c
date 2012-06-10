@@ -1234,7 +1234,7 @@ _edje_file_del(Edje *ed)
      }
 
    if (ed->L) _edje_lua2_script_shutdown(ed);
-   while (ed->subobjs) evas_object_del(ed->subobjs->data);
+   while (ed->subobjs) _edje_subobj_unregister(ed, ed->subobjs->data);
    if (ed->table_parts) free(ed->table_parts);
    ed->table_parts = NULL;
    ed->table_parts_size = 0;

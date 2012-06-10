@@ -2115,6 +2115,7 @@ void _edje_lib_ref(void);
 void _edje_lib_unref(void);
 
 void _edje_subobj_register(Edje *ed, Evas_Object *ob);
+void _edje_subobj_unregister(Edje *ed, Evas_Object *ob);
 
 void _edje_multisense_init(void);
 void _edje_multisense_shutdown(void);

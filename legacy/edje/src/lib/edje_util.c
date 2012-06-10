@@ -5225,9 +5225,7 @@ static void
 _cb_subobj_del(void *data, __UNUSED__ Evas *e, Evas_Object *obj, __UNUSED__ void *event_info)
 {
    Edje *ed = data;
-   ed->subobjs = eina_list_remove(ed->subobjs, obj);
-   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
-                                       _cb_subobj_del, ed);
+   _edje_subobj_unregister(ed, obj);
 }
 
 void
@@ -5236,6 +5234,14 @@ _edje_subobj_register(Edje *ed, Evas_Object *ob)
    ed->subobjs = eina_list_append(ed->subobjs, ob);
    evas_object_event_callback_add(ob, EVAS_CALLBACK_DEL,
                                   _cb_subobj_del, ed);
+}
+
+void
+_edje_subobj_unregister(Edje *ed, Evas_Object *obj)
+{
+   ed->subobjs = eina_list_remove(ed->subobjs, obj);
+   evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
+                                       _cb_subobj_del, ed);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-2f0^-2{2(0W1st0 :*/
