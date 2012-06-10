@@ -423,7 +423,14 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
         dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
         ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
      }
-   else ret = val;
+   else
+     {
+        if ((fi->src->ft.face->bbox.yMax == 0) &&
+            (fi->src->ft.face->bbox.yMin == 0))
+          ret = (int)fi->ft.size->metrics.ascender / 64;
+        else
+          ret = val;
+     }
    fi->max_h += ret;
    val = -(int)fi->src->ft.face->bbox.yMin;
    if (fi->src->ft.face->units_per_EM != 0)
@@ -431,7 +438,14 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
         dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
         ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
      }
-   else ret = val;
+   else
+     {
+        if ((fi->src->ft.face->bbox.yMax == 0) &&
+            (fi->src->ft.face->bbox.yMin == 0))
+          ret = -(int)fi->ft.size->metrics.descender / 64;
+        else
+          ret = val;
+     }
    fi->max_h += ret;
 
    /* If the loaded font doesn't match with wanted_rend value requested by

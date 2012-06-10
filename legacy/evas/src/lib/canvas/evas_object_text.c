@@ -1507,7 +1507,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 		     obj->cur.geometry.x + x + sl + ox + it->x, \
 		     obj->cur.geometry.y + y + st + oy + \
 		     (int) \
-		     (((o->max_ascent * obj->cur.geometry.h) / obj->cur.geometry.h) - 0.5), \
+		     (((o->max_ascent * obj->cur.geometry.h) / obj->cur.geometry.h)), \
 		     obj->cur.geometry.w, \
 		     obj->cur.geometry.h, \
 		     obj->cur.geometry.w, \

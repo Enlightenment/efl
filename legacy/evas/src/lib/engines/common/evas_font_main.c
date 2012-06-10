@@ -158,7 +158,12 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
-   val = (int)fi->src->ft.face->bbox.yMax;
+   if ((fi->src->ft.face->bbox.yMax == 0) &&
+       (fi->src->ft.face->bbox.yMin == 0) &&
+       (fi->src->ft.face->units_per_EM == 0))
+     val = (int)fi->src->ft.face->size->metrics.ascender / 64;
+   else
+     val = (int)fi->src->ft.face->bbox.yMax;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
@@ -183,7 +188,12 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
         FTUNLOCK();
         fi->src->current_size = fi->size;
      }
-   val = -(int)fi->src->ft.face->bbox.yMin;
+   if ((fi->src->ft.face->bbox.yMax == 0) &&
+       (fi->src->ft.face->bbox.yMin == 0) &&
+       (fi->src->ft.face->units_per_EM == 0))
+     val = -(int)fi->src->ft.face->size->metrics.descender / 64;
+   else
+     val = -(int)fi->src->ft.face->bbox.yMin;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;

@@ -780,3 +780,11 @@
 	* Fix evas_free callback deletion to not sometimes abort evas freeing
         in some situations, thus leaking.
 
+2012-06-10  Carsten Haitzler (The Rasterman)
+
+        * Fix evas font handling so bitmap fonts work again like they
+        once did. This ifxes max height, and max ascent/descent
+        calculation for 0 em fonts with 0 bbox size (bitmap case), and
+        fixes 1 rounding error in text objects that placed ascent in the wrong
+        place by 1 pixel for even ascents.
+
