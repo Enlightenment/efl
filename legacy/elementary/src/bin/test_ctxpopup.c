@@ -239,7 +239,8 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ctxpopup);
    _print_current_dir(ctxpopup);
 
-   evas_object_smart_callback_add(btn, "clicked", _btn_clicked, "list_item_5");
+   evas_object_data_set(ctxpopup, "id", "list_item_5");
+   evas_object_smart_callback_add(btn, "clicked", _btn_clicked, ctxpopup);
 }
 
 static void
