@@ -739,3 +739,8 @@
 
 	* Ecore_Wayland: Add missing null pointer checks on input device
 	deletion (ticket #1031). Not all devices are keyboards.
+
+2012-06-11  Jihoon Kim (jihoon)
+
+        * ibus-immodule: Add immodule for supporting ibus.
+

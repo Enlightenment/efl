@@ -13,6 +13,8 @@ Additions:
     * ecore_con:
      - ECORE_{CON,IPC}_NO_PROXY now available for disabling proxying on certain connections
      - New dns.c resolver backend for faster dns lookups
+    * immodule:
+     - Add immodule for supporing ibus
 
 Fixes:
     * ecore
