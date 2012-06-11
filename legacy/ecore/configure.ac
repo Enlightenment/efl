@@ -179,6 +179,7 @@ want_ecore_evas_wayland_egl="no"
 # ecore_imf modules
 want_ecore_imf_xim="no"
 want_ecore_imf_scim="no"
+want_ecore_imf_ibus="no"
 
 case "$host_os" in
    mingw32ce*)
@@ -243,6 +244,7 @@ case "$host_os" in
       want_ecore_evas_wayland_egl="yes"
       want_ecore_imf_xim="yes"
       want_ecore_imf_scim="yes"
+      want_ecore_imf_ibus="yes"
       ;;
 esac
 
@@ -271,6 +273,7 @@ requirements_ecore_win32=""
 requirements_ecore_wince=""
 requirements_ecore_imf_xim=""
 requirements_ecore_imf_scim=""
+requirements_ecore_imf_ibus=""
 requirements_ecore_wayland=""
 
 ### Additional options to configure
@@ -1626,6 +1629,23 @@ fi
 ECORE_CHECK_MODULE([imf-scim], [${want_ecore_imf}], [Imf_SCIM], [${ecore_imf_scim_deps}],
    [requirements_ecore_imf_scim="ecore-imf >= 1.2.0 ecore-x >= 1.2.0 ecore-input >= 1.2.0 ${requirements_ecore_imf_scim}"])
 
+# ecore_imf_ibus
+PKG_CHECK_MODULES([IBUS], [ibus-1.0 >= 1.3.99], [have_ibus="yes"], [have_ibus="no"])
+
+AM_CONDITIONAL(BUILD_ECORE_IMF_IBUS, false)
+ecore_imf_ibus_deps="no"
+echo "have_ecore_x_xlib: ${have_ecore_x_xlib}"
+if test    "x${have_ecore_imf}" = "xyes" \
+        -a "x${have_glib}" =  "xyes" \
+        -a "x${have_ibus}" =  "xyes" \
+        -a "x${have_ecore_input}" = "xyes" ; then
+   ecore_imf_ibus_deps="yes"
+   AC_DEFINE(BUILD_ECORE_IMF_IBUS, 1, [Ecore Imf IBUS Support])
+fi
+
+ECORE_CHECK_MODULE([imf-ibus], [${want_ecore_imf}], [Imf_IBUS], [${ecore_imf_ibus_deps}],
+   [requirements_ecore_imf_ibus="ecore-imf >= 1.2.0 ecore-x >= 1.2.0 ecore-input >= 1.2.0 ${requirements_ecore_imf_ibus}"])
+
 ## Graphic systems
 
 # ecore_x{cb}
@@ -1982,6 +2002,7 @@ AC_SUBST(requirements_ecore_win32)
 AC_SUBST(requirements_ecore_wince)
 AC_SUBST(requirements_ecore_imf_xim)
 AC_SUBST(requirements_ecore_imf_scim)
+AC_SUBST(requirements_ecore_imf_ibus)
 AC_SUBST(requirements_ecore_wayland)
 
 AC_CONFIG_FILES([
@@ -2039,6 +2060,7 @@ src/modules/Makefile
 src/modules/immodules/Makefile
 src/modules/immodules/xim/Makefile
 src/modules/immodules/scim/Makefile
+src/modules/immodules/ibus/Makefile
 ecore.spec
 $po_makefile_in
 ])
@@ -2104,6 +2126,7 @@ fi
 echo "  Ecore_IMF....................: $have_ecore_imf"
 echo "    XIM........................: $have_ecore_imf_xim"
 echo "    SCIM.......................: $have_ecore_imf_scim"
+echo "    IBUS.......................: $have_ecore_imf_ibus"
 echo "  Ecore_IMF_Evas...............: $have_ecore_imf_evas"
 echo "  Ecore_Input..................: $have_ecore_input"
 echo "  Ecore_Input_Evas.............: $have_ecore_input_evas"

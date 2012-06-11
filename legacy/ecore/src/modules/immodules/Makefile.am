@@ -9,3 +9,7 @@ endif
 if BUILD_ECORE_IMF_SCIM
 SUBDIRS += scim
 endif
+
+if BUILD_ECORE_IMF_IBUS
+SUBDIRS += ibus
+endif
