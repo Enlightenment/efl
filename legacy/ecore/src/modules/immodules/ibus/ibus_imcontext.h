@@ -33,5 +33,4 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
 
 IBusIMContext
         *ibus_im_context_new      (void);
-void     ibus_im_context_shutdown (void);
 #endif
