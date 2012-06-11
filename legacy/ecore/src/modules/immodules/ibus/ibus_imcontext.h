@@ -4,8 +4,6 @@
 #include <Ecore_IMF.h>
 
 typedef struct _IBusIMContext IBusIMContext;
-typedef struct _IBusIMContextClass IBusIMContextClass;
-typedef struct _IBusIMContextPrivate IBusIMContextPrivate;
 
 EAPI void ibus_im_context_add     (Ecore_IMF_Context *ctx);
 EAPI void ibus_im_context_del     (Ecore_IMF_Context *ctx);
@@ -35,29 +33,5 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
 
 IBusIMContext
         *ibus_im_context_new      (void);
-void     ibus_im_context_register_type
-                                  (GTypeModule    *type_module);
-void     ibus_im_context_shutdown
-                                  (void);
-
-const gchar
-        *ibus_im_context_get_ic   (IBusIMContext  *context);
-void     ibus_im_context_set_ic   (IBusIMContext  *context,
-                                   const gchar    *ic);
-void     ibus_im_context_enable   (IBusIMContext  *context);
-void     ibus_im_context_disable  (IBusIMContext  *context);
-void     ibus_im_context_commit_string
-                                  (IBusIMContext  *context,
-                                   const gchar    *string);
-void     ibus_im_context_update_preedit
-                                  (IBusIMContext  *context,
-                                   const gchar    *string,
-                                   Eina_List     **attrs,
-                                   gint            cursor_pos,
-                                   gboolean        visible);
-void     ibus_im_context_show_preedit
-                                  (IBusIMContext *context);
-void     ibus_im_context_hide_preedit
-                                  (IBusIMContext *context);
+void     ibus_im_context_shutdown (void);
 #endif
-
