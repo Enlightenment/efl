@@ -301,7 +301,10 @@ _evas_object_smart_members_all_del(Evas_Object *obj)
 {
    Evas_Object_Smart *o = (Evas_Object_Smart *)(obj->object_data);
    while (o->contained)
-     evas_object_del((Evas_Object *)(o->contained));
+     {
+        evas_object_smart_member_del(
+              EINA_INLIST_CONTAINER_GET(o->contained, Evas_Object));
+     }
 }
 
 EAPI Evas_Object *
