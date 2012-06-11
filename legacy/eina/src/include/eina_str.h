@@ -163,14 +163,16 @@ EAPI Eina_Bool       eina_str_has_extension(const char *str, const char *ext) EI
  *
  * @param string The string to split.
  * @param delimiter The string which specifies the places at which to split the string.
- * @param max_tokens The maximum number of strings to split string into.
+ * @param max_tokens The maximum number of strings to split string into, or a number less
+ *                   than 1 to split as many times as possible. This parameter
+ *                   IGNORES the added @c NULL terminator.
  * @return A newly-allocated NULL-terminated array of strings or @c NULL if it
  * fails to allocate the array.
  *
- * This functin splits @p string into a maximum of @p max_tokens pieces,
+ * This function splits @p string into a maximum of @p max_tokens pieces,
  * using the given delimiter @p delimiter. @p delimiter is not included in any
  * of the resulting strings, unless @p max_tokens is reached. If
- * @p max_tokens is less than @c 1, the string is splitted completely. If
+ * @p max_tokens is less than @c 1, the string is splitted as many times as possible. If
  * @p max_tokens is reached, the last string in the returned string
  * array contains the remainder of string. The returned value is a
  * newly allocated NULL-terminated array of strings or @c NULL if it fails to
@@ -187,7 +189,8 @@ EAPI char          **eina_str_split(const char *string, const char *delimiter, i
  *
  * @param string The string to split.
  * @param delimiter The string which specifies the places at which to split the string.
- * @param max_tokens The maximum number of strings to split string into. This parameter
+ * @param max_tokens The maximum number of strings to split string into, or a number less
+ *                   than 1 to split as many times as possible. This parameter
  *                   IGNORES the added @c NULL terminator.
  * @param elements Where to return the number of elements in returned
  *        array. This array is guaranteed to be no greater than @p max_tokens, and
@@ -198,7 +201,7 @@ EAPI char          **eina_str_split(const char *string, const char *delimiter, i
  * This function splits @p string into a maximum of @p max_tokens pieces,
  * using the given delimiter @p delimiter. @p delimiter is not included in any
  * of the resulting strings, unless @p max_tokens is reached. If
- * @p max_tokens is less than @c 1, the string is splitted completely. If
+ * @p max_tokens is less than @c 1, the string is splitted as many times as possible. If
  * @p max_tokens is reached, the last string in the returned string
  * array contains the remainder of string. The returned value is a
  * newly allocated NULL-terminated array of strings or @c NULL if it fails to
