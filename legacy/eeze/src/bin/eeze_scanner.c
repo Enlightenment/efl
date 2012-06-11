@@ -460,7 +460,7 @@ main(void)
 
    svr = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, buf, 0, NULL);
    EINA_SAFETY_ON_NULL_GOTO(svr, error);
-   if (chmod(buf2, S_IROTH))
+   if (chmod(buf2, S_IRWXU | S_IRWXG | S_IRWXO))
      {
         ERR("Could not chmod socket (%s)! \"%s\"", buf, strerror(errno));
         goto error;
