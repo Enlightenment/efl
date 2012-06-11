@@ -82,7 +82,7 @@ START_TEST(eo_incomplete_desc)
    fail_if(klass);
 
    /* Should create a class. */
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    (void) klass;
@@ -132,7 +132,7 @@ START_TEST(eo_inherit_errors)
    klass_mixin = eo_class_new(&class_desc_mixin, 0, NULL, NULL);
    fail_if(!klass_mixin);
 
-   klass_simple = eo_class_new(&class_desc_simple, 0, NULL, NULL);
+   klass_simple = eo_class_new(&class_desc_simple, 0, EO_BASE_CLASS, NULL);
    fail_if(!klass_simple);
 
    klass = eo_class_new(&class_desc, 0, klass_simple, NULL);

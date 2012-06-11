@@ -941,6 +941,23 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
         klass->data_offset = klass->parent->data_offset +
            EO_ALIGN_SIZE(klass->parent->desc->data_size);
      }
+   /* EO_BASE_CLASS is allowed not to have a parent. */
+   else if (id != EO_BASE_CLASS_ID)
+     {
+        /* No parent. */
+        switch (klass->desc->type)
+          {
+           case EO_CLASS_TYPE_REGULAR:
+           case EO_CLASS_TYPE_REGULAR_NO_INSTANT:
+              ERR("Regular classes ('%s') must inherit from EO_BASE_CLASS.", klass->desc->name);
+              goto cleanup;
+              break;
+           case EO_CLASS_TYPE_INTERFACE:
+           case EO_CLASS_TYPE_MIXIN:
+              /* Do nothing. */
+              break;
+          }
+     }
 
    if (!_eo_class_check_op_descs(klass, id))
      {
