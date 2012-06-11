@@ -5551,7 +5551,7 @@ elm_map_overlay_polygon_add(Evas_Object *obj)
    overlay->c.r = 0xdc;
    overlay->c.g = 0x14;
    overlay->c.b = 0x3c;
-   overlay->c.a = 200;
+   overlay->c.a = 220;
    overlay->ovl =  _overlay_polygon_new(wd, overlay->c);
    overlay->grp = _overlay_group_new(wd);
    wd->overlays = eina_list_append(wd->overlays, overlay);

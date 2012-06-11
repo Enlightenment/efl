@@ -344,9 +344,47 @@ _ls_filter_cb(void *data,
               const Eina_File_Direct_Info *info)
 {
    Listing_Request *lreq = data;
+   struct stat st;
 
    if (info->path[info->name_start] == '.')
      return EINA_FALSE;
+
+   if (info->type == EINA_FILE_LNK)
+   {
+      printf("LINK: %s\n", info->path);
+
+      //int ret = eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf)
+
+      if (stat(info->path, &st))
+      {
+         printf("stat error\n");
+         return EINA_FALSE; // RIGHT ???? broken link ??
+      }
+      
+      if (S_ISDIR(st.st_mode))
+      {
+         char linkto[PATH_MAX];
+         int len;
+         
+         //readlink(info->path, &linkto, sizeof(linkto));
+         strncpy(&linkto, info->path, info->name_start);
+         if ((len = readlink(info->path,
+                             linkto + info->name_start,
+                             sizeof(linkto) - info->name_start - 1)) != -1)
+         {
+            linkto[info->name_start + len] = '\0';
+            printf("link to dir: %s\n", linkto);
+         }
+      }
+      else
+      {
+         printf("link to file~: %s\n", info->path);
+      }
+
+      
+      printf("LINK DONE\n");
+      return EINA_FALSE;
+   }
 
    if (lreq->sd->only_folder && info->type != EINA_FILE_DIR)
       return EINA_FALSE;
@@ -439,6 +477,7 @@ _ls_main_cb(void *data,
 
    _signal_first(lreq);
 
+   printf("%d %s\n", info->type, info->path + info->name_start);
    if (info->type == EINA_FILE_DIR)
      itcn = ELM_DIRECTORY;
    else
