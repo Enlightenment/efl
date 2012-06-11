@@ -52,7 +52,7 @@ static Eina_Bool
 im_module_init(void)
 {
     ecore_main_loop_glib_integrate();
-    g_type_init();
+    ibus_init();
     ecore_imf_module_register(&ibus_im_info, im_module_create, im_module_exit);
 
     return EINA_TRUE;
