@@ -706,10 +706,10 @@ efreet_desktop_application_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini
     val = efreet_ini_string_get(ini, "StartupWMClass");
     if (val) desktop->startup_wm_class = strdup(val);
 
-    desktop->categories = efreet_desktop_string_list_parse(
-                                efreet_ini_string_get(ini, "Categories"));
-    desktop->mime_types = efreet_desktop_string_list_parse(
-                                efreet_ini_string_get(ini, "MimeType"));
+    val = efreet_ini_string_get(ini, "Categories");
+    desktop->categories = efreet_desktop_string_list_parse(val);
+    val = efreet_ini_string_get(ini, "MimeType");
+    if (val) desktop->mime_types = efreet_desktop_string_list_parse(val);
 
     desktop->terminal = efreet_ini_boolean_get(ini, "Terminal");
     desktop->startup_notify = efreet_ini_boolean_get(ini, "StartupNotify");
