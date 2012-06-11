@@ -143,7 +143,10 @@ ecore_con_local_connect(Ecore_Con_Server *svr,
 
    if (connect(svr->fd, (struct sockaddr *)&socket_unix,
                socket_unix_len) < 0)
-     return 0;
+     {
+        ERR("local connection failed: %s", strerror(errno));
+        return 0;
+     }
 
    svr->path = strdup(buf);
    if (!svr->path)
