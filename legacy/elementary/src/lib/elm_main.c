@@ -1173,7 +1173,7 @@ EAPI int
 elm_object_scroll_hold_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
-   elm_widget_scroll_hold_get(obj);
+   return elm_widget_scroll_hold_get(obj);
 }
 
 EAPI void
@@ -1194,7 +1194,7 @@ EAPI int
 elm_object_scroll_freeze_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, 0);
-   elm_widget_scroll_freeze_get(obj);
+   return elm_widget_scroll_freeze_get(obj);
 }
 
 EAPI void
