@@ -5599,7 +5599,7 @@ elm_map_overlay_circle_add(Evas_Object *obj, double lon, double lat, double radi
    overlay->c.r = 0xdc;
    overlay->c.g = 0x14;
    overlay->c.b = 0x3c;
-   overlay->c.a = 200;
+   overlay->c.a = 220;
    overlay->ovl = _overlay_circle_new(wd, lon, lat, radius, overlay->c);
    overlay->grp = _overlay_group_new(wd);
    wd->overlays = eina_list_append(wd->overlays, overlay);
