@@ -65,5 +65,5 @@ static const Eo_Class_Description class_desc = {
 };
 
 
-EO_DEFINE_CLASS(elw_win_class_get, &class_desc, EVAS_OBJ_CLASS, NULL)
+EO_DEFINE_CLASS(elw_win_class_get, &class_desc, EXEVAS_OBJ_CLASS, NULL)
 

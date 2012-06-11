@@ -26,7 +26,7 @@ _position_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
    x = va_arg(*list, Evas_Coord);
    y = va_arg(*list, Evas_Coord);
    printf("But set position %d,%d\n", x, y);
-   eo_do_super(obj, evas_obj_position_set(x, y));
+   eo_do_super(obj, exevas_obj_position_set(x, y));
 }
 
 static void
@@ -81,7 +81,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC(ELW_BUTTON_ID(ELW_BUTTON_SUB_ID_TEXT_SET), _text_set),
-        EO_OP_FUNC(EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
+        EO_OP_FUNC(EXEVAS_OBJ_ID(EXEVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -108,5 +108,5 @@ static const Eo_Class_Description class_desc = {
      NULL
 };
 
-EO_DEFINE_CLASS(elw_button_class_get, &class_desc, EVAS_OBJ_CLASS, NULL)
+EO_DEFINE_CLASS(elw_button_class_get, &class_desc, EXEVAS_OBJ_CLASS, NULL)
 
