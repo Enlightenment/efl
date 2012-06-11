@@ -162,7 +162,7 @@ eina_str_split_full_helper(const char *str,
         str_array[0] = s;
         str_array[1] = NULL;
         if (elements)
-          *elements = 2;
+          *elements = 1;
         return str_array;
      }
 
@@ -186,7 +186,7 @@ eina_str_split_full_helper(const char *str,
           str_array[x] = s + x;
         str_array[x] = NULL;
         if (elements)
-          *elements = x + 1;
+          *elements = x;
         return str_array;
      }
    /* copy tokens and string */
@@ -283,11 +283,7 @@ eina_str_split_full_helper(const char *str,
      }
    str_array[tokens] = NULL;
    if (elements)
-     {
-        *elements = tokens;
-        if ((!max_tokens) || (tokens == (unsigned int)max_tokens))
-          (*elements)++;
-     }
+     *elements = tokens;
 
    return str_array;
 }
