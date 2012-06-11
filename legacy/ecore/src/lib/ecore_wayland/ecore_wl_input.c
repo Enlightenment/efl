@@ -238,8 +238,10 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
    if (input->seat) wl_seat_destroy(input->seat);
    wl_list_remove(&input->link);
 
-   xkb_state_unref(input->xkb.state);
-   xkb_map_unref(input->xkb.keymap);
+   if (input->xkb.state)
+     xkb_state_unref(input->xkb.state);
+   if (input->xkb.keymap)
+     xkb_map_unref(input->xkb.keymap);
    free(input);
 }
 

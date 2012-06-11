@@ -735,3 +735,7 @@
 
 	* Ecore_Wayland: Update to protocol change - axis events are now fixed point numbers
 
+2012-06-11 Rob Bradford
+
+	* Ecore_Wayland: Add missing null pointer checks on input device
+	deletion (ticket #1031). Not all devices are keyboards.
