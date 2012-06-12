@@ -218,14 +218,6 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    evas_object_show(ctx_mod->ctxpopup);
 }
 
-static void
-_del_pre_hook(Evas_Object *obj)
-{
-   evas_object_event_callback_del(elm_widget_top_get(obj),
-                                  EVAS_CALLBACK_RESIZE,
-                                  _ctxpopup_parent_resize_cb);
-}
-
 // module fucns for the specific module type
 EAPI void
 field_value_display(Elm_Datetime_Module_Data *module_data, Evas_Object *obj)
@@ -291,7 +283,6 @@ obj_hook(Evas_Object *obj)
    evas_object_size_hint_align_set(ctx_mod->ctxpopup, EVAS_HINT_FILL, 0.5);
    evas_object_smart_callback_add(ctx_mod->ctxpopup, "dismissed",
                                   _ctxpopup_dismissed_cb, ctx_mod);
-   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
 
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
                                   _datetime_resize_cb, ctx_mod);
@@ -311,6 +302,9 @@ obj_unhook(Elm_Datetime_Module_Data *module_data)
    ctx_mod = (Ctxpopup_Module_Data *)module_data;
    if (!ctx_mod) return;
 
+   evas_object_event_callback_del_full(elm_widget_top_get(module_data->base),
+                                       EVAS_CALLBACK_RESIZE,
+                                       _ctxpopup_parent_resize_cb, ctx_mod);
    if (ctx_mod->ctxpopup)
      evas_object_del(ctx_mod->ctxpopup);
 
