@@ -1712,7 +1712,6 @@ static int _elua_color(lua_State *L);
 
 static int _elua_obj_map(lua_State *L);
 static int _elua_obj_map_enable(lua_State *L);
-static int _elua_obj_map_source(lua_State *L);
 
 static const char *_elua_evas_api = "evas";
 static const struct luaL_reg _elua_evas_funcs [] =
@@ -1759,7 +1758,6 @@ static const struct luaL_reg _elua_evas_funcs [] =
    // map api here
      {"map",           _elua_obj_map},
      {"map_enable",    _elua_obj_map_enable},
-     {"map_source",    _elua_obj_map_source},
 
      {NULL, NULL} // end
 };
@@ -2489,48 +2487,6 @@ _elua_obj_map_enable(lua_State *L)                              // Stack usage [
      }
    lua_pushboolean(L, evas_object_map_enable_get(elo->evas_obj));
                                                                 // Stack usage [-0, +1, -]
-   return 1;
-}
-
-/**
-@page luaref
-@subsubsection evas_map_source evas_object:map_source(object)
-
-Sets the object as the map source for this object.
-
-Wraps evas_object_map_source_set().
-
-@param object The map source object.
-
-@return A userdata reference to the current map source object.
-
-@since 1.1.0
-*/
-static int
-_elua_obj_map_source(lua_State *L)                                  // Stack usage [-3, +4, -]
-{
-   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);        // Stack usage [-0, +0, -]
-   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
-   Evas_Object *o;
-   Edje_Lua_Evas_Object *elo2;
-   int n;
-
-   if (!_elua_isa(obj, _elua_evas_meta)) return 0;
-
-   n = lua_gettop(L);                                               // Stack usage [-0, +0, -]
-   if (n == 2)
-     {
-        Edje_Lua_Obj *obj2 = (Edje_Lua_Obj *)lua_touserdata(L, 2);  // Stack usage [-0, +0, -]
-        const Edje_Lua_Evas_Object *source = (Edje_Lua_Evas_Object *)obj2;
-
-        if (!_elua_isa(obj2, _elua_evas_meta)) return 0;
-        evas_object_map_source_set(elo->evas_obj, source->evas_obj);
-     }
-
-   if (!(o = evas_object_map_source_get(elo->evas_obj))) return 0;
-   if (!(elo2 = evas_object_data_get(o, ELO))) return 0;
-   _elua_ref_get(L, elo2);                                          // Stack usage [-3, +4, -]
-
    return 1;
 }
 
