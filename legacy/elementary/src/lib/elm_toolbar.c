@@ -170,13 +170,13 @@ _item_select(Elm_Toolbar_Item *it)
    Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    Evas_Object *obj2;
    Eina_Bool sel;
-   Evas_Coord w, h;
+   Evas_Coord w = 0, h = 0;
 
    if (!wd) return;
    if (elm_widget_item_disabled_get(it) || (it->separator) || (it->object)) return;
    sel = it->selected;
 
-   evas_object_geometry_get(it->object, NULL, NULL, &w, &h);
+   if (it->object) evas_object_geometry_get(it->object, NULL, NULL, &w, &h);
 
    if (wd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
      {
