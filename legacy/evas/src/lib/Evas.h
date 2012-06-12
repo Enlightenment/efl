@@ -3174,8 +3174,7 @@ EAPI Eina_Bool         evas_object_focus_get             (const Evas_Object *obj
 
 
 /**
- * Sets the layer of the its canvas that the given object will be part
- * of.
+ * Sets the layer of its canvas that the given object will be part of.
  *
  * @param   obj The given Evas object.
  * @param   l   The number of the layer to place the object on.
@@ -3202,7 +3201,7 @@ EAPI void              evas_object_layer_set             (Evas_Object *obj, shor
  * Retrieves the layer of its canvas that the given object is part of.
  *
  * @param   obj The given Evas object to query layer from
- * @return  Number of the its layer
+ * @return  Number of its layer
  *
  * @see evas_object_layer_set()
  */
