@@ -84,3 +84,7 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
         1.2.0 release
+
+2012-06-11 Mike Blumenkrantz
+
+        * eeze_scanner socket is now readable by anyone
