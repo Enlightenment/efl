@@ -4,12 +4,12 @@
 # This file is distributed under the same license as the elementary package.
 # Fabian Nowak <timystery@arcor.de>, 2011.
 #
-#: src/lib/elm_config.c:2007
+#: src/lib/elm_config.c:2008
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-05-23 19:54+0900\n"
+"POT-Creation-Date: 2012-05-30 16:50+0900\n"
 "PO-Revision-Date: 2011-06-19 16:41+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team: Dutch <vistausss@gmail.com>\n"
@@ -42,7 +42,7 @@ msgid "Clicked"
 msgstr ""
 
 #: src/lib/elm_button.c:283 src/lib/elm_check.c:241 src/lib/elm_radio.c:287
-#: src/lib/elm_toolbar.c:1049
+#: src/lib/elm_toolbar.c:1048
 msgid "State: Disabled"
 msgstr ""
 
@@ -72,7 +72,7 @@ msgstr ""
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:2023
+#: src/lib/elm_config.c:2024
 msgid "default:LTR"
 msgstr "Standaard: LTR"
 
@@ -96,20 +96,20 @@ msgstr "Plakken"
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:965
+#: src/lib/elm_toolbar.c:964
 #, fuzzy
 msgid "Selected"
 msgstr "Selecteren"
 
-#: src/lib/elm_toolbar.c:1047
+#: src/lib/elm_toolbar.c:1046
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1051
+#: src/lib/elm_toolbar.c:1050
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1053
+#: src/lib/elm_toolbar.c:1052
 msgid "Has menu"
 msgstr ""
 

@@ -3,12 +3,12 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:2007
+#: src/lib/elm_config.c:2008
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-05-23 19:54+0900\n"
+"POT-Creation-Date: 2012-05-30 16:50+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -42,7 +42,7 @@ msgid "Clicked"
 msgstr "Cliqué"
 
 #: src/lib/elm_button.c:283 src/lib/elm_check.c:241 src/lib/elm_radio.c:287
-#: src/lib/elm_toolbar.c:1049
+#: src/lib/elm_toolbar.c:1048
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -72,7 +72,7 @@ msgstr "État"
 msgid "Check"
 msgstr "À cocher"
 
-#: src/lib/elm_config.c:2023
+#: src/lib/elm_config.c:2024
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
@@ -96,19 +96,19 @@ msgstr "Coller"
 msgid "Radio"
 msgstr "Radio"
 
-#: src/lib/elm_toolbar.c:965
+#: src/lib/elm_toolbar.c:964
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:1047
+#: src/lib/elm_toolbar.c:1046
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:1051
+#: src/lib/elm_toolbar.c:1050
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
-#: src/lib/elm_toolbar.c:1053
+#: src/lib/elm_toolbar.c:1052
 msgid "Has menu"
 msgstr "Possède un menu"
 

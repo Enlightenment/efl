@@ -1,12 +1,12 @@
 # Header entry was created by Lokalize.
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
-#: src/lib/elm_config.c:2007
+#: src/lib/elm_config.c:2008
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-05-23 19:54+0900\n"
+"POT-Creation-Date: 2012-05-30 16:50+0900\n"
 "PO-Revision-Date: 2011-10-23 01:31+0100\n"
 "Last-Translator: Daniel Kolesa <quaker66@gmail.com>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -38,7 +38,7 @@ msgid "Clicked"
 msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:283 src/lib/elm_check.c:241 src/lib/elm_radio.c:287
-#: src/lib/elm_toolbar.c:1049
+#: src/lib/elm_toolbar.c:1048
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -68,7 +68,7 @@ msgstr "Stav"
 msgid "Check"
 msgstr "Ověřit"
 
-#: src/lib/elm_config.c:2023
+#: src/lib/elm_config.c:2024
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
@@ -92,19 +92,19 @@ msgstr "Vložit"
 msgid "Radio"
 msgstr "Přepínač"
 
-#: src/lib/elm_toolbar.c:965
+#: src/lib/elm_toolbar.c:964
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:1047
+#: src/lib/elm_toolbar.c:1046
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:1051
+#: src/lib/elm_toolbar.c:1050
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
-#: src/lib/elm_toolbar.c:1053
+#: src/lib/elm_toolbar.c:1052
 msgid "Has menu"
 msgstr "Má nabídku"
 
