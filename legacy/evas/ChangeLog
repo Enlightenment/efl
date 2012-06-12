@@ -792,7 +792,11 @@
 
 	* Limit the updated region to fit in CPU cache for Pipe rendering.
 
-2012-06-12  ChunEon Park
+2012-06-12  ChunEon Park (Hermet)
 
  	* Fixed simple line drawing on s/w backened. Unmatched loop scope caused the
   	destination buffer pointer march in place.
+
+2012-06-12  ChunEon Park (Hermet)
+
+ 	* Removed empty evas_object_map_source_set/get APIs. Will Not be implemented.

@@ -4551,29 +4551,6 @@ EAPI void              evas_object_map_enable_set        (Evas_Object *obj, Eina
 EAPI Eina_Bool         evas_object_map_enable_get        (const Evas_Object *obj);
 
 /**
- * Set the map source object
- *
- * This sets the object from which the map is taken - can be any object that
- * has map enabled on it.
- *
- * Currently not implemented. for future use.
- *
- * @param obj object to set the map source of
- * @param src the source object from which the map is taken
- */
-EAPI void              evas_object_map_source_set        (Evas_Object *obj, Evas_Object *src);
-
-/**
- * Get the map source object
- *
- * @param obj object to set the map source of
- * @return the object set as the source
- *
- * @see evas_object_map_source_set()
- */
-EAPI Evas_Object      *evas_object_map_source_get        (const Evas_Object *obj);
-
-/**
  * Set current object transformation map.
  *
  * This sets the map on a given object. It is copied from the @p map pointer,

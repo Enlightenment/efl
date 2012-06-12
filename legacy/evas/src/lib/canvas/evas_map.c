@@ -438,25 +438,6 @@ evas_object_map_enable_get(const Evas_Object *obj)
    return obj->cur.usemap;
 }
 
-
-EAPI void
-evas_object_map_source_set(Evas_Object *obj, Evas_Object *src)
-{
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   (void)src; /* method still needs to be implemented. */
-}
-
-EAPI Evas_Object *
-evas_object_map_source_get(const Evas_Object *obj)
-{
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   return NULL;
-}
-
 EAPI void
 evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
 {
