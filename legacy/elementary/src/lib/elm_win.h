@@ -777,10 +777,64 @@ EAPI void                  elm_win_aspect_set(Evas_Object *obj, double aspect);
  */
 EAPI double                elm_win_aspect_get(const Evas_Object *obj);
 
+/**
+ * Set the base window size used with stepping calculation
+ *
+ * Base size + stepping is what is calculated for window sizing restrictions.
+ * 
+ * @param obj The window object
+ * @param w The base width
+ * @param h The base height
+ *
+ * @ingroup Win
+ * @see elm_win_size_step_set
+ * @see elm_win_size_base_get
+ * @since 1.1
+ */
 EAPI void                  elm_win_size_base_set(Evas_Object *obj, int w, int h);
+
+/**
+ * Get the base size of a window.
+ *
+ * @param obj The window object
+ * @param w Pointer in which to store returned base width
+ * @param h Pointer in which to store returned base height
+ *
+ * @ingroup Win
+ * @see elm_win_size_base_set
+ * @see elm_win_size_step_set
+ * @since 1.1
+ */
 EAPI void                  elm_win_size_base_get(Evas_Object *obj, int *w, int *h);
 
+/**
+ * Set the window stepping used with sizing calculation
+ *
+ * Base size + stepping is what is calculated for window sizing restrictions.
+ * 
+ * @param obj The window object
+ * @param w The stepping width (0 disables)
+ * @param h The stepping height (0 disables)
+ *
+ * @ingroup Win
+ * @see elm_win_size_step_get
+ * @see elm_win_size_base_set
+ * @since 1.1
+ */
 EAPI void                  elm_win_size_step_set(Evas_Object *obj, int w, int h);
+
+/**
+ * Get the stepping of a window.
+ *
+ * @param obj The window object
+ * @param w Pointer in which to store returned stepping width
+ * @param h Pointer in which to store returned stepping height
+ *
+ * @ingroup Win
+ * @see elm_win_size_base_set
+ * @see elm_win_size_step_set
+ * @since 1.1
+ */
 EAPI void                  elm_win_size_step_get(Evas_Object *obj, int *w, int *h);
 
 /**
