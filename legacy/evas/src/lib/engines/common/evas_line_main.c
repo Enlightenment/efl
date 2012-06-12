@@ -150,7 +150,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
    pixman_op_t op = PIXMAN_OP_SRC; // _EVAS_RENDER_COPY
    if (dc->render_op == _EVAS_RENDER_BLEND)
      op = PIXMAN_OP_OVER;
-# endif   
+# endif
 #endif
 
    dstw = dst->cache_entry.w;
@@ -193,7 +193,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
              p = dst->image.data + (dstw * y0) + x0;
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE                  
-             if ((dst->pixman.im) && (dc->col.pixman_color_image) && 
+             if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
                  (!dc->mask.mask))
                pixman_image_composite(op, dc->col.pixman_color_image,
                                       NULL, dst->pixman.im,
@@ -205,7 +205,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
                                       dst->pixman.im,
                                       x0, y0, 0, 0, x0, y0, len, 1);
              else
-# endif                    
+# endif
 #endif
                {
                   sfunc = evas_common_gfx_func_composite_color_span_get(color, dst, len, dc->render_op);
@@ -221,13 +221,13 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 
    if (dx == 0)
      {
-	if ((x0 >= lx) && (x0 <= rx))
-	  {
-	     if (y0 < ty) y0 = ty;
-	     if (y1 > by) y1 = by;
+        if ((x0 >= lx) && (x0 <= rx))
+          {
+             if (y0 < ty) y0 = ty;
+             if (y1 > by) y1 = by;
 
-	     len = y1 - y0 + 1;
-	     p = dst->image.data + (dstw * y0) + x0;
+             len = y1 - y0 + 1;
+             p = dst->image.data + (dstw * y0) + x0;
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE             
              if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
@@ -241,7 +241,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
                                       dc->mask.mask->pixman.im, dst->pixman.im,
                                       x0, y0, 0, 0, x0, y0, 1, len);
              else
-# endif               
+# endif
 #endif
                {
                   while (len--)
@@ -251,95 +251,93 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
                     }
                }
           }
-	return;
+        return;
      }
 
    if ((dy == dx) || (dy == -dx))
      {
-	int   p0_in, p1_in;
+        int   p0_in, p1_in;
 
-	p0_in = (IN_RECT(x0, y0, clx, cly, clw, clh) ? 1 : 0);
-	p1_in = (IN_RECT(x1, y1, clx, cly, clw, clh) ? 1 : 0);
+        p0_in = (IN_RECT(x0, y0, clx, cly, clw, clh) ? 1 : 0);
+        p1_in = (IN_RECT(x1, y1, clx, cly, clw, clh) ? 1 : 0);
 
-	if (dy > 0)
-	  {
-	    if (!p0_in)
-	      {
-		x0 = x0 + (ty - y0);
-		y0 = ty;
-		if (x0 > rx) return;
-		if (x0 < lx)
-		  {
-		    y0 = y0 + (lx - x0);
-		    x0 = lx;
-		    if ((y0 < ty) || (y0 > by)) return;
-		  }
-	      }
-	    if (!p1_in)
-	      {
-		x1 = x0 + (by - y0);
-		y1 = by;
-		if (x1 < lx) return;
-		if (x1 > rx)
-		  {
-		    y1 = y0 + (rx - x0);
-		    x1 = rx;
-		    if ((y1 < ty) || (y1 > by)) return;
-		  }
-	      }
-	  }
-	else
-	  {
-	    if (!p0_in)
-	      {
-		x0 = x0 - (by - y0);
-		y0 = by;
-		if (x0 > rx) return;
-		if (x0 < lx)
-		  {
-		    y0 = y0 - (lx - x0);
-		    x0 = lx;
-		    if ((y0 < ty) || (y0 > by)) return;
-		  }
-	      }
-	    if (!p1_in)
-	      {
-		x1 = x0 - (ty - y0);
-		y1 = ty;
-		if (x1 < lx) return;
-		if (x1 > rx)
-		  {
-		    y1 = y0 - (rx - x0);
-		    x1 = rx;
-		    if ((y1 < ty) || (y1 > by)) return;
-		  }
-	      }
-	  }
-	if (y1 > y0)
-	  {
-	     p = dst->image.data + (dstw * y0) + x0;
-	     len = y1 - y0 + 1;
-	     if (dx > 0)  dstw++;
-	     else  dstw--;
-	  }
-	else
-	  {
-	     len = y0 - y1 + 1;
-	     p = dst->image.data + (dstw * y1) + x1;
-	     if (dx > 0)  dstw--;
-	     else  dstw++;
-	  }
+        if (dy > 0)
+          {
+             if (!p0_in)
+               {
+                  x0 = x0 + (ty - y0);
+                  y0 = ty;
+                  if (x0 > rx) return;
+                  if (x0 < lx)
+                    {
+                       y0 = y0 + (lx - x0);
+                       x0 = lx;
+                       if ((y0 < ty) || (y0 > by)) return;
+                    }
+               }
+             if (!p1_in)
+               {
+                  x1 = x0 + (by - y0);
+                  y1 = by;
+                  if (x1 < lx) return;
+                  if (x1 > rx)
+                    {
+                       y1 = y0 + (rx - x0);
+                       x1 = rx;
+                       if ((y1 < ty) || (y1 > by)) return;
+                    }
+               }
+          }
+        else
+          {
+             if (!p0_in)
+               {
+                  x0 = x0 - (by - y0);
+                  y0 = by;
+                  if (x0 > rx) return;
+                  if (x0 < lx)
+                    {
+                       y0 = y0 - (lx - x0);
+                       x0 = lx;
+                       if ((y0 < ty) || (y0 > by)) return;
+                    }
+               }
+             if (!p1_in)
+               {
+                  x1 = x0 - (ty - y0);
+                  y1 = ty;
+                  if (x1 < lx) return;
+                  if (x1 > rx)
+                    {
+                       y1 = y0 - (rx - x0);
+                       x1 = rx;
+                       if ((y1 < ty) || (y1 > by)) return;
+                    }
+               }
+          }
+        if (y1 > y0)
+          {
+             p = dst->image.data + (dstw * y0) + x0;
+             len = y1 - y0 + 1;
+             if (dx > 0)  dstw++;
+             else  dstw--;
+          }
+        else
+          {
+             len = y0 - y1 + 1;
+             p = dst->image.data + (dstw * y1) + x1;
+             if (dx > 0)  dstw--;
+             else  dstw++;
+          }
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE        
         int pixman_x_position = x0;
         int pixman_y_position = y0;
         int x_unit = dstw - dst->cache_entry.w;
-# endif        
+# endif
 #endif
-        
-        
-	while (len--)
-	  {
+        while (len--)
+          {
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE                  
              if ((dst->pixman.im) && (dc->col.pixman_color_image) &&
@@ -360,7 +358,7 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
                                       pixman_x_position,
                                       pixman_y_position, 1, 1);
              else
-# endif                    
+# endif
 #endif
                pfunc(0, 255, color, p);
           }
@@ -368,12 +366,11 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 # ifdef PIXMAN_LINE             
         pixman_x_position += x_unit;
         pixman_y_position += 1;
-# endif             
+# endif
 #endif
         p += dstw;
      }
 }
-
 
 #define SETUP_LINE_SHALLOW                                              \
   if (x0 > x1)                                                          \
