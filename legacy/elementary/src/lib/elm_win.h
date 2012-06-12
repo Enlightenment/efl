@@ -378,17 +378,26 @@ EAPI void                  elm_win_role_set(Evas_Object *obj, const char *role);
 EAPI const char           *elm_win_role_get(const Evas_Object *obj);
 
 /**
- * Set the object to represent the window icon
+ * Set a window object's icon
  *
- * This sets an object that will be used as the icon for the window. The exact
- * pixel dimensions of the object (not object size) will be used, and the
- * image pixels will be used as-is when this function is called. If the
- * image object has been updated, then call this function again to source
- * the image pixels and put them on the window's icon. This has limitations
- * as only image objects allowed at this stage. This may be lifted in future.
+ * This sets an image to be used as the icon for the given window, in
+ * the window manager decoration part. The exact pixel dimensions of
+ * the object (not object size) will be used, and the image pixels
+ * will be used as-is when this function is called. If the image
+ * object has been updated, then call this function again to source
+ * the image pixels and put them on the window's icon. Note that
+ * <b>only Evas image objects are allowed</b>, for
  *
- * @param obj The window object
- * @param icon The object to use for an icon
+ * @param obj The window object to get an icon
+ * @param icon The Evas image object to use for an icon
+ *
+ * Example of usage:
+ * @code
+ *  icon = evas_object_image_add(evas_object_evas_get(elm_window));
+ *  evas_object_image_file_set(icon, "/path/to/the/icon", NULL);
+ *  elm_win_icon_object_set(elm_window, icon);
+ *  evas_object_show(icon);
+ * @endcode
  *
  * @ingroup Win
  */
