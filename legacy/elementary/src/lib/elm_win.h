@@ -777,6 +777,12 @@ EAPI void                  elm_win_aspect_set(Evas_Object *obj, double aspect);
  */
 EAPI double                elm_win_aspect_get(const Evas_Object *obj);
 
+EAPI void                  elm_win_size_base_set(Evas_Object *obj, int w, int h);
+EAPI void                  elm_win_size_base_get(Evas_Object *obj, int *w, int *h);
+
+EAPI void                  elm_win_size_step_set(Evas_Object *obj, int w, int h);
+EAPI void                  elm_win_size_step_get(Evas_Object *obj, int *w, int *h);
+
 /**
  * Set the layer of the window.
  *

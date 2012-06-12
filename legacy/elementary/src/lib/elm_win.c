@@ -111,6 +111,8 @@ struct _Elm_Win_Smart_Data
    const char  *role;
 
    double       aspect;
+   int          size_base_w, size_base_h;
+   int          size_step_w, size_step_h;
    Eina_Bool    urgent : 1;
    Eina_Bool    modal : 1;
    Eina_Bool    demand_attention : 1;
@@ -2811,10 +2813,54 @@ elm_win_aspect_set(Evas_Object *obj,
 EAPI double
 elm_win_aspect_get(const Evas_Object *obj)
 {
-   ELM_WIN_CHECK(obj) EINA_FALSE;
-   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+   ELM_WIN_CHECK(obj) 0.0;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, 0.0);
 
    return sd->aspect;
+}
+
+EAPI void
+elm_win_size_base_set(Evas_Object *obj, int w, int h)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   sd->size_base_w = w;
+   sd->size_base_h = h;
+   ecore_evas_size_base_set(sd->ee, w, h);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI void
+elm_win_size_base_get(Evas_Object *obj, int *w, int *h)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   if (w) *w = sd->size_base_w;
+   if (w) *h = sd->size_base_h;
+}
+
+EAPI void
+elm_win_size_step_set(Evas_Object *obj, int w, int h)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   sd->size_step_w = w;
+   sd->size_step_h = h;
+   ecore_evas_size_step_set(sd->ee, w, h);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(sd);
+#endif
+}
+
+EAPI void
+elm_win_size_step_get(Evas_Object *obj, int *w, int *h)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   if (w) *w = sd->size_step_w;
+   if (w) *h = sd->size_step_h;
 }
 
 EAPI void
