@@ -1080,9 +1080,11 @@ void
 _edje_file_del(Edje *ed)
 {
    Edje_User_Defined *eud;
-   Evas *tev = evas_object_evas_get(ed->obj);
+   Evas *tev = NULL;
+   
+   if (ed->obj) tev = evas_object_evas_get(ed->obj);
 
-   evas_event_freeze(tev);
+   if (tev) evas_event_freeze(tev);
    if (ed->freeze_calc)
      {
         _edje_freeze_calc_list = eina_list_remove(_edje_freeze_calc_list, ed);
@@ -1101,8 +1103,11 @@ _edje_file_del(Edje *ed)
 
    if (!((ed->file) && (ed->collection)))
      {
-        evas_event_thaw(tev);
-        evas_event_thaw_eval(tev);
+        if (tev)
+          {
+             evas_event_thaw(tev);
+             evas_event_thaw_eval(tev);
+          }
         return;
      }
    if (ed->table_parts)
@@ -1242,8 +1247,11 @@ _edje_file_del(Edje *ed)
    ed->table_programs = NULL;
    ed->table_programs_size = 0;
    ed->focused_part = NULL;
-   evas_event_thaw(tev);
-   evas_event_thaw_eval(tev);
+   if (tev)
+     {
+        evas_event_thaw(tev);
+        evas_event_thaw_eval(tev);
+     }
 }
 
 void
