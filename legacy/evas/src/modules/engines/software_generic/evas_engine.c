@@ -1241,10 +1241,10 @@ eng_font_pen_coords_get(void *data __UNUSED__, Evas_Font_Set *font, const Evas_T
 }
 
 static Eina_Bool
-eng_font_text_props_info_create(void *data __UNUSED__, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t par_pos, size_t len)
+eng_font_text_props_info_create(void *data __UNUSED__, Evas_Font_Instance *fi, const Eina_Unicode *text, Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props, size_t par_pos, size_t len, Evas_Text_Props_Mode mode)
 {
    return evas_common_text_props_content_create((RGBA_Font_Int *) fi, text,
-         text_props, par_props, par_pos, len);
+         text_props, par_props, par_pos, len, mode);
 }
 
 static int

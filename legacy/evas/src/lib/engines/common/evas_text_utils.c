@@ -283,46 +283,16 @@ evas_common_text_props_merge(Evas_Text_Props *item1,
    PROPS_CHANGE(item1);
 }
 
-EAPI Eina_Bool
-evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
-      Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
-      size_t par_pos, int len)
-{
-   RGBA_Font_Int *fi = (RGBA_Font_Int *) _fi;
-
-   if (text_props->info)
-     {
-        evas_common_text_props_content_unref(text_props);
-     }
-   if (len == 0)
-     {
-        text_props->info = NULL;
-        text_props->start = text_props->len = text_props->text_offset = 0;
-     }
-   text_props->info = calloc(1, sizeof(Evas_Text_Props_Info));
-
-   text_props->font_instance = fi;
-
-   evas_common_font_int_reload(fi);
-   if (fi->src->current_size != fi->size)
-     {
-        evas_common_font_source_reload(fi->src);
-        FTLOCK();
-        FT_Activate_Size(fi->ft.size);
-        FTUNLOCK();
-        fi->src->current_size = fi->size;
-     }
-
-   text_props->changed = EINA_TRUE;
-
 #ifdef OT_SUPPORT
+static inline void
+_content_create_ot(RGBA_Font_Int *fi, const Eina_Unicode *text,
+      Evas_Text_Props *text_props, int len, Evas_Text_Props_Mode mode)
+{
    size_t char_index;
    Evas_Font_Glyph_Info *gl_itr;
    Evas_Coord pen_x = 0, adjust_x = 0;
-   (void) par_props;
-   (void) par_pos;
 
-   evas_common_font_ot_populate_text_props(text, text_props, len);
+   evas_common_font_ot_populate_text_props(text, text_props, len, mode);
 
    gl_itr = text_props->info->glyph;
    for (char_index = 0 ; char_index < text_props->len ; char_index++)
@@ -380,7 +350,14 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
         fi = text_props->font_instance;
         gl_itr++;
      }
-#else
+}
+#endif
+
+static inline void
+_content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
+      Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
+      size_t par_pos, int len, Evas_Text_Props_Mode mode)
+{
    /* We are walking the string in visual ordering */
    Evas_Font_Glyph_Info *gl_itr;
    Eina_Bool use_kerning;
@@ -390,12 +367,16 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
    int adv_d, i;
 #if !defined(OT_SUPPORT) && defined(BIDI_SUPPORT)
    Eina_Unicode *base_str = NULL;
-   if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+   if (mode == EVAS_TEXT_PROPS_MODE_SHAPE)
      {
-        text = base_str = eina_unicode_strndup(text, len);
-        evas_bidi_shape_string(base_str, par_props, par_pos, len);
+        if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
+          {
+             text = base_str = eina_unicode_strndup(text, len);
+             evas_bidi_shape_string(base_str, par_props, par_pos, len);
+          }
      }
 #else
+   (void) mode;
    (void) par_props;
    (void) par_pos;
 #endif
@@ -475,6 +456,46 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
    if (base_str)
       free(base_str);
 # endif
+}
+
+EAPI Eina_Bool
+evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
+      Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
+      size_t par_pos, int len, Evas_Text_Props_Mode mode)
+{
+   RGBA_Font_Int *fi = (RGBA_Font_Int *) _fi;
+
+   if (text_props->info)
+     {
+        evas_common_text_props_content_unref(text_props);
+     }
+   if (len == 0)
+     {
+        text_props->info = NULL;
+        text_props->start = text_props->len = text_props->text_offset = 0;
+     }
+   text_props->info = calloc(1, sizeof(Evas_Text_Props_Info));
+
+   text_props->font_instance = fi;
+
+   evas_common_font_int_reload(fi);
+   if (fi->src->current_size != fi->size)
+     {
+        evas_common_font_source_reload(fi->src);
+        FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
+        fi->src->current_size = fi->size;
+     }
+
+   text_props->changed = EINA_TRUE;
+
+#ifdef OT_SUPPORT
+   (void) par_props;
+   (void) par_pos;
+   _content_create_ot(fi, text, text_props, len, mode);
+#else
+   _content_create_regular(fi, text, text_props, par_props, par_pos, len, mode);
 #endif
 
    text_props->text_len = len;

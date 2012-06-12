@@ -3004,7 +3004,7 @@ skip:
                {
                   c->ENFN->font_text_props_info_create(c->ENDT,
                         cur_fi, str, &ti->text_props, c->par->bidi_props,
-                        ti->parent.text_pos, run_len);
+                        ti->parent.text_pos, run_len, EVAS_TEXT_PROPS_MODE_SHAPE);
                }
              str += run_len;
              script_len -= run_len;
@@ -3508,7 +3508,7 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 
         c->ENFN->font_text_props_info_create(c->ENDT,
               cur_fi, _ellip_str, &ellip_ti->text_props,
-              c->par->bidi_props, ellip_ti->parent.text_pos, len);
+              c->par->bidi_props, ellip_ti->parent.text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE);
      }
 
    _text_item_update_sizes(c, ellip_ti);

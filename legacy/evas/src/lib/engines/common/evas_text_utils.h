@@ -53,6 +53,12 @@ struct _Evas_Font_Glyph_Info
    Evas_Coord pen_after;
 };
 
+typedef enum
+{
+   EVAS_TEXT_PROPS_MODE_NONE = 0,
+   EVAS_TEXT_PROPS_MODE_SHAPE
+} Evas_Text_Props_Mode;
+
 
 void
 evas_common_text_props_bidi_set(Evas_Text_Props *props,
@@ -64,7 +70,7 @@ evas_common_text_props_script_set(Evas_Text_Props *props, Evas_Script_Type scr);
 EAPI Eina_Bool
 evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
       Evas_Text_Props *text_props, const Evas_BiDi_Paragraph_Props *par_props,
-      size_t par_pos, int len);
+      size_t par_pos, int len, Evas_Text_Props_Mode mode);
 
 void
 evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,

@@ -450,7 +450,7 @@ _evas_object_text_item_new(Evas_Object *obj, Evas_Object_Text *o,
      {
         ENFN->font_text_props_info_create(ENDT,
               fi, str + pos, &it->text_props,
-              o->bidi_par_props, it->text_pos, len);
+              o->bidi_par_props, it->text_pos, len, EVAS_TEXT_PROPS_MODE_SHAPE);
 
         ENFN->font_string_size_get(ENDT,
               o->font,

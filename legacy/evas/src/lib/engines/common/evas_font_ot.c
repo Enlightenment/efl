@@ -243,7 +243,7 @@ _evas_common_font_ot_unicode_funcs_get(void)
 }
 
 static void
-_evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi)
+_evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi, Evas_Text_Props_Mode mode)
 {
    /* Create hb_font if not previously created */
    if (!fi->ft.hb_font)
@@ -258,12 +258,20 @@ _evas_common_font_ot_shape(hb_buffer_t *buffer, RGBA_Font_Int *fi)
               _evas_common_font_ot_font_funcs_get(), fi, NULL);
      }
 
-   hb_shape(fi->ft.hb_font, buffer, NULL, 0);
+   if (mode == EVAS_TEXT_PROPS_MODE_SHAPE)
+     {
+        hb_shape(fi->ft.hb_font, buffer, NULL, 0);
+     }
+   else
+     {
+        const char *shaper_list[] = { "fallback", NULL };
+        hb_shape_full(fi->ft.hb_font, buffer, NULL, 0, shaper_list);
+     }
 }
 
 EAPI Eina_Bool
 evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
-      Evas_Text_Props *props, int len)
+      Evas_Text_Props *props, int len, Evas_Text_Props_Mode mode)
 {
    RGBA_Font_Int *fi;
    hb_buffer_t *buffer;
@@ -297,7 +305,7 @@ evas_common_font_ot_populate_text_props(const Eina_Unicode *text,
    /* FIXME: add run-time conversions if needed, which is very unlikely */
    hb_buffer_add_utf32(buffer, (const uint32_t *) text, slen, 0, slen);
 
-   _evas_common_font_ot_shape(buffer, fi);
+   _evas_common_font_ot_shape(buffer, fi, mode);
 
    props->len = hb_buffer_get_length(buffer);
    props->info->ot = calloc(props->len,
