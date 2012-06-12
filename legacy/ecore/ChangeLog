@@ -744,3 +744,7 @@
 
         * ibus-immodule: Add immodule for supporting ibus.
 
+2012-06-12  Mike Blumenkrantz
+
+        * Fixed bug in ecore-file monitoring with inotify where watching a file
+          that was deleted broke the world.

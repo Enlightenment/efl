@@ -274,7 +274,7 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
          * else delete it */
         if (ecore_file_exists(em->path))
           {
-             if (!_ecore_file_monitor_inotify_monitor(em, em->path))
+             if (_ecore_file_monitor_inotify_monitor(em, em->path))
                em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
           }
         else
@@ -301,7 +301,7 @@ _ecore_file_monitor_inotify_monitor(Ecore_File_Monitor *em, const char *path)
       inotify_add_watch(ecore_main_fd_handler_fd_get(_fdh), path, mask);
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
      {
-        ERR("inotify_add_watch error");
+        INF("inotify_add_watch failed, file was deleted");
         ecore_file_monitor_inotify_del(em);
         return 0;
      }
