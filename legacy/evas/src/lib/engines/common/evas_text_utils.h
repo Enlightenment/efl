@@ -5,6 +5,12 @@ typedef struct _Evas_Text_Props Evas_Text_Props;
 typedef struct _Evas_Text_Props_Info Evas_Text_Props_Info;
 typedef struct _Evas_Font_Glyph_Info Evas_Font_Glyph_Info;
 
+typedef enum
+{
+   EVAS_TEXT_PROPS_MODE_NONE = 0,
+   EVAS_TEXT_PROPS_MODE_SHAPE
+} Evas_Text_Props_Mode;
+
 # include "evas_font_ot.h"
 # include "language/evas_bidi_utils.h"
 # include "language/evas_language_utils.h"
@@ -52,13 +58,6 @@ struct _Evas_Font_Glyph_Info
    Evas_Coord width;
    Evas_Coord pen_after;
 };
-
-typedef enum
-{
-   EVAS_TEXT_PROPS_MODE_NONE = 0,
-   EVAS_TEXT_PROPS_MODE_SHAPE
-} Evas_Text_Props_Mode;
-
 
 void
 evas_common_text_props_bidi_set(Evas_Text_Props *props,
