@@ -361,14 +361,14 @@ _evas_draw_simple_line(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, i
 # endif
 #endif
                pfunc(0, 255, color, p);
-          }
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_LINE             
-        pixman_x_position += x_unit;
-        pixman_y_position += 1;
+             pixman_x_position += x_unit;
+             pixman_y_position += 1;
 # endif
 #endif
-        p += dstw;
+             p += dstw;
+          }
      }
 }
 

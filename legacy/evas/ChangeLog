@@ -791,3 +791,8 @@
 2012-06-10  Cedric Bail
 
 	* Limit the updated region to fit in CPU cache for Pipe rendering.
+
+2012-06-12  ChunEon Park
+
+ 	* Fixed simple line drawing on s/w backened. Unmatched loop scope caused the
+  	destination buffer pointer march in place.
