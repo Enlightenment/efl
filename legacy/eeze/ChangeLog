@@ -88,3 +88,7 @@
 2012-06-11 Mike Blumenkrantz
 
         * eeze_scanner socket is now readable by anyone
+
+2012-06-12 Mike Blumenkrantz
+
+        * Add fallback mount using device name if a disk has no uuid
