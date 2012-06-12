@@ -96,9 +96,7 @@ evas_object_smart_data_get(const Evas_Object *obj)
    MAGIC_CHECK_END();
    o = (Evas_Object_Smart *)(obj->object_data);
    if (!o) return NULL;
-   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return NULL;
-   MAGIC_CHECK_END();
+   if (o->magic != MAGIC_OBJ_SMART) return NULL;
    return o->data;
 }
 
