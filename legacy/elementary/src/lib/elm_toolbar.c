@@ -335,7 +335,7 @@ static void
 _mirrored_set_item(Evas_Object *obj __UNUSED__, Elm_Toolbar_Item *it, Eina_Bool mirrored)
 {
    edje_object_mirrored_set(VIEW(it), mirrored);
-   elm_widget_mirrored_set(it->o_menu, mirrored);
+   if (it->o_menu) elm_widget_mirrored_set(it->o_menu, mirrored);
 }
 
 static void
