@@ -171,3 +171,8 @@
 
         * Fixed Transit wipe effect flickering.
 
+2012-06-19 Carsten Haitzler (The Rasterman)
+
+	* Add elm_win_size_base_set/get, elm_win_size_step_set/get for hinting
+        sizing of windows. Useful for terminals.
+
