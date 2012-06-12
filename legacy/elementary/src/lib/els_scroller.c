@@ -2763,6 +2763,7 @@ _smart_scrollbar_bar_visibility_adjust(Smart_Data *sd)
 static void
 _smart_scrollbar_size_adjust(Smart_Data *sd)
 {
+   if (!sd->pan_obj) return;
    if ((sd->child_obj) || (sd->extern_pan))
      {
         Evas_Coord x, y, w, h, mx = 0, my = 0, vw = 0, vh = 0, px, py, minx = 0, miny = 0;
