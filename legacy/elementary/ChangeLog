@@ -176,3 +176,6 @@
 	* Add elm_win_size_base_set/get, elm_win_size_step_set/get for hinting
         sizing of windows. Useful for terminals.
 
+2012-06-12 Mike Blumenkrantz
+
+        * Map no longer saves its files to directories outside of the user's home directory

@@ -52,7 +52,7 @@ typedef char                      *(*Elm_Map_Module_Name_Url_Func)(const Evas_Ob
 #define MARER_MAX_NUMBER        30
 #define OVERLAY_GROUPING_SCALE 2
 
-#define CACHE_ROOT          "/tmp/elm_map"
+#define CACHE_ROOT          "/elm_map"
 #define CACHE_TILE_ROOT     CACHE_ROOT"/%d/%d/%d"
 #define CACHE_TILE_PATH     "%s/%d.png"
 #define CACHE_ROUTE_ROOT    CACHE_ROOT"/route"
@@ -839,7 +839,16 @@ _grid_item_create(Grid *g, Evas_Coord x, Evas_Coord y)
    evas_object_pass_events_set(gi->img, EINA_TRUE);
    evas_object_stack_below(gi->img, g->wd->sep_maps_overlays);
 
-   snprintf(buf, sizeof(buf), CACHE_TILE_ROOT, g->wd->id, g->zoom, x);
+   {
+      const char *cachedir;
+#ifdef ELM_EFREET
+      snprintf(buf, sizeof(buf), "%s" CACHE_TILE_ROOT, efreet_cache_home_get(), g->wd->id, g->zoom, x);
+      (void)cachedir;
+#else
+      cachedir = getenv("XDG_CACHE_HOME");
+      snprintf(buf, sizeof(buf), "%s/%s" CACHE_TILE_ROOT, getenv("HOME"), cachedir ?: "/.config", g->wd->id, g->zoom, x);
+#endif
+   }
    snprintf(buf2, sizeof(buf2), CACHE_TILE_PATH, buf, y);
    if (!ecore_file_exists(buf)) ecore_file_mkpath(buf);
 
@@ -2973,9 +2982,20 @@ _name_request(const Evas_Object *obj, int method, const char *address, double lo
 
 
    char *url;
-   char fname[PATH_MAX];
+   char fname[PATH_MAX], fname2[PATH_MAX];
 
-   if (!ecore_file_exists(CACHE_NAME_ROOT)) ecore_file_mkpath(CACHE_NAME_ROOT);
+
+   {
+      const char *cachedir;
+#ifdef ELM_EFREET
+      snprintf(fname, sizeof(fname), "%s" CACHE_NAME_ROOT, efreet_cache_home_get());
+      (void)cachedir;
+#else
+      cachedir = getenv("XDG_CACHE_HOME");
+      snprintf(fname, sizeof(fname), "%s/%s" CACHE_NAME_ROOT, getenv("HOME"), cachedir ?: "/.config");
+#endif
+      if (!ecore_file_exists(fname)) ecore_file_mkpath(fname);
+   }
 
    url = wd->src_name->url_cb(wd->obj, method, address, lon, lat);
    if (!url)
@@ -2986,8 +3006,8 @@ _name_request(const Evas_Object *obj, int method, const char *address, double lo
 
    Elm_Map_Name *name = ELM_NEW(Elm_Map_Name);
    name->wd = wd;
-   snprintf(fname, sizeof(fname), CACHE_NAME_ROOT"/%d", rand());
-   name->fname = strdup(fname);
+   snprintf(fname2, sizeof(fname2), "%s/%d", fname, rand());
+   name->fname = strdup(fname2);
    name->method = method;
    if (method == ELM_MAP_NAME_METHOD_SEARCH) name->address = strdup(address);
    else if (method == ELM_MAP_NAME_METHOD_REVERSE)
@@ -3766,8 +3786,20 @@ _del_pre_hook(Evas_Object *obj)
 
    _source_all_unload(wd);
 
-   if (!ecore_file_recursive_rm(CACHE_ROOT))
-      ERR("Deletion of %s failed", CACHE_ROOT);
+   {
+      char buf[4096];
+      const char *cachedir;
+
+#ifdef ELM_EFREET
+      snprintf(buf, sizeof(buf), "%s" CACHE_ROOT, efreet_cache_home_get());
+      (void)cachedir;
+#else
+      cachedir = getenv("XDG_CACHE_HOME");
+      snprintf(buf, sizeof(buf), "%s/%s" CACHE_ROOT, getenv("HOME"), cachedir ?: "/.config");
+#endif
+      if (!ecore_file_recursive_rm(buf))
+         ERR("Deletion of %s failed", buf);
+   }
 }
 
 static void
@@ -4472,10 +4504,19 @@ elm_map_route_add(Evas_Object *obj, Elm_Map_Route_Type type, Elm_Map_Route_Metho
 
    char *type_name;
    char *url;
-   char fname[PATH_MAX];
+   char fname[PATH_MAX], fname2[PATH_MAX];
 
-   if (!ecore_file_exists(CACHE_ROUTE_ROOT))
-      ecore_file_mkpath(CACHE_ROUTE_ROOT);
+   {
+      const char *cachedir;
+#ifdef ELM_EFREET
+      snprintf(fname, sizeof(fname), "%s" CACHE_ROUTE_ROOT, efreet_cache_home_get());
+      (void)cachedir;
+#else
+      cachedir = getenv("XDG_CACHE_HOME");
+      snprintf(fname, sizeof(fname), "%s/%s" CACHE_ROUTE_ROOT, getenv("HOME"), cachedir ?: "/.config");
+#endif
+      if (!ecore_file_exists(fname)) ecore_file_mkpath(fname);
+   }
 
    if (type == ELM_MAP_ROUTE_TYPE_MOTOCAR)
       type_name = strdup(ROUTE_TYPE_MOTORCAR);
@@ -4496,8 +4537,8 @@ elm_map_route_add(Evas_Object *obj, Elm_Map_Route_Type type, Elm_Map_Route_Metho
 
    Elm_Map_Route *route = ELM_NEW(Elm_Map_Route);
    route->wd = wd;
-   snprintf(fname, sizeof(fname), CACHE_ROUTE_ROOT"/%d", rand());
-   route->fname = strdup(fname);
+   snprintf(fname2, sizeof(fname2), "%s/%d", fname, rand());
+   route->fname = strdup(fname2);
    route->type = type;
    route->method = method;
    route->flon = flon;
