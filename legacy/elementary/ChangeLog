@@ -166,3 +166,8 @@
 2012-06-08 Jaehwan Kim
 
         * Add elm_object_scroll_hold/freeze_get. 
+
+2012-06-12 ChunEon Park(Hermet)
+
+        * Fixed Transit wipe effect flickering.
+
