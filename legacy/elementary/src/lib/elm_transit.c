@@ -1541,9 +1541,9 @@ struct _Elm_Transit_Effect_Wipe
 };
 
 static void
-_elm_fx_wipe_hide(Evas_Map * map, Elm_Transit_Effect_Wipe_Dir dir, float x, float y, float w, float h, float progress)
+_elm_fx_wipe_hide(Evas_Map * map, Elm_Transit_Effect_Wipe_Dir dir, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float progress)
 {
-   float w2, h2;
+   Evas_Coord w2, h2;
 
    switch (dir)
      {
@@ -1602,9 +1602,9 @@ _elm_fx_wipe_hide(Evas_Map * map, Elm_Transit_Effect_Wipe_Dir dir, float x, floa
 }
 
 static void
-_elm_fx_wipe_show(Evas_Map *map, Elm_Transit_Effect_Wipe_Dir dir, float x, float y, float w, float h, float progress)
+_elm_fx_wipe_show(Evas_Map *map, Elm_Transit_Effect_Wipe_Dir dir, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, float progress)
 {
-   float w2, h2;
+   Evas_Coord w2, h2;
 
    switch (dir)
      {
