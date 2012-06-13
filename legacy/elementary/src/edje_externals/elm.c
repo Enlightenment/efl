@@ -19,7 +19,7 @@ external_elm_init(void)
 }
 
 static Eina_Bool
-_shutdown_idler(void *data)
+_shutdown_idler(void *data __UNUSED__)
 {
    elm_shutdown();
 
