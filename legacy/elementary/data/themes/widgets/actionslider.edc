@@ -38,7 +38,7 @@ group { name: "elm/actionslider/base/default";
          }
       }
       part { name: "icon.dragable.area";
-         type: VIRTUAL;
+         type: SPACER;
          description { state: "default" 0.0;
             rel1.to: "base";
             rel2.to: "base";
@@ -244,7 +244,7 @@ group { name: "elm/actionslider/base/bar";
          }
       }
       part { name: "icon.dragable.area";
-         type: VIRTUAL;
+         type: SPACER;
          description { state: "default" 0.0;
             rel1.to: "base";
             rel2.to: "base";
