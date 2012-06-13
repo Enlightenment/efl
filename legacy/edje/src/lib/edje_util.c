@@ -80,9 +80,7 @@ _edje_user_definition_free(Edje_User_Defined *eud)
      {
       case EDJE_USER_SWALLOW:
 	child = eud->u.swallow.child;
-	rp = _edje_real_part_recursive_get(eud->ed, eud->part);
-	_edje_real_part_swallow_clear(rp);
-        rp->swallowed_object = NULL;
+	edje_object_part_unswallow(eud->ed->obj, child);
 	break;
       case EDJE_USER_BOX_PACK:
 	child = eud->u.box.child;
@@ -2816,7 +2814,7 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 	evas_object_event_callback_del_full(rp->swallowed_object,
                                             EVAS_CALLBACK_FREE,
                                             _edje_object_part_swallow_free_cb,
-                                            rp);
+                                            rp->edje->obj);
 	evas_object_event_callback_del_full(rp->swallowed_object,
                                             EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _edje_object_part_swallow_changed_hints_cb,
@@ -4920,12 +4918,10 @@ _edje_block_violate(Edje *ed)
 void
 _edje_object_part_swallow_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Edje_Real_Part *rp;
+   Evas_Object *edje_obj;
 
-   rp = data;
-   _edje_real_part_swallow_clear(rp);
-   rp->swallowed_object = NULL;
-
+   edje_obj = data;
+   edje_object_part_unswallow(edje_obj, obj);
    return;
 }
 
@@ -5056,7 +5052,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
    evas_object_event_callback_add(rp->swallowed_object,
                                   EVAS_CALLBACK_DEL,
 				  _edje_object_part_swallow_free_cb,
-				  rp);
+				  rp->edje->obj);
    evas_object_event_callback_add(rp->swallowed_object,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _edje_object_part_swallow_changed_hints_cb,
@@ -5094,7 +5090,7 @@ _edje_real_part_swallow_clear(Edje_Real_Part *rp)
    evas_object_event_callback_del_full(rp->swallowed_object,
                                        EVAS_CALLBACK_FREE,
                                        _edje_object_part_swallow_free_cb,
-                                       rp);
+                                       rp->edje->obj);
    evas_object_event_callback_del_full(rp->swallowed_object,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _edje_object_part_swallow_changed_hints_cb,
