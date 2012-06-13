@@ -378,41 +378,46 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
    fi->real_size = fi->size * 64;
    error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi, font_dpi);
    if (error)
-     {
-	fi->real_size = fi->size;
-	error = FT_Set_Pixel_Sizes(fi->src->ft.face, 0, fi->real_size);
-     }
+     error = FT_Set_Pixel_Sizes(fi->src->ft.face, 0, fi->real_size);
    FTUNLOCK();
    if (error)
      {
-	int i;
+	int i, maxd = 0x7fffffff;
 	int chosen_size = 0;
-	int chosen_width = 0;
+	int chosen_size2 = 0;
 
 	for (i = 0; i < fi->src->ft.face->num_fixed_sizes; i++)
 	  {
-	     int s;
-	     int d, cd;
-
-	     s = fi->src->ft.face->available_sizes[i].height;
-	     cd = chosen_size - fi->size;
+	     int s, cd;
+             
+	     s = fi->src->ft.face->available_sizes[i].size;
+	     cd = chosen_size - fi->real_size;
 	     if (cd < 0) cd = -cd;
-	     d = s - fi->size;
-	     if (d < 0) d = -d;
-	     if (d < cd)
-	       {
-		  chosen_width = fi->src->ft.face->available_sizes[i].width;
+             if (cd < maxd)
+               {
+                  maxd = cd;
 		  chosen_size = s;
+		  chosen_size2 = fi->src->ft.face->available_sizes[i].y_ppem;
+                  if (maxd == 0) break;
 	       }
-	     if (d == 0) break;
 	  }
 	fi->real_size = chosen_size;
         FTLOCK();
-	error = FT_Set_Pixel_Sizes(fi->src->ft.face, chosen_width, fi->real_size);
+	error = FT_Set_Pixel_Sizes(fi->src->ft.face, 0, fi->real_size);
         FTUNLOCK();
 	if (error)
 	  {
-	     /* couldn't choose the size anyway... what now? */
+             error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi, font_dpi);
+             if (error)
+               {
+                  /* hack around broken fonts */
+                  fi->real_size = (chosen_size2 / 64) * 60;
+                  error = FT_Set_Char_Size(fi->src->ft.face, 0, fi->real_size, font_dpi, font_dpi);
+                  if (error)
+                    {
+                       /* couldn't choose the size anyway... what now? */
+                    }
+               }
 	  }
      }
    fi->src->current_size = 0;
