@@ -474,4 +474,4 @@
 
 2012-06-04  Cedric Bail
 
-	* Add VIRTUAL part to reduce the load on the canvas (lighter and faster theme).
+	* Add SPACER part to reduce the load on the canvas (lighter and faster theme).

@@ -875,7 +875,7 @@ _edje_part_description_alloc(unsigned char type, const char *collection, const c
 
    switch (type)
      {
-      case EDJE_PART_TYPE_VIRTUAL:
+      case EDJE_PART_TYPE_SPACER:
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
@@ -3024,7 +3024,7 @@ st_collections_group_parts_part_name(void)
             @li TABLE
             @li EXTERNAL
 	    @li PROXY
-	    @li VIRTUAL
+	    @li SPACER
     @endproperty
 */
 static void
@@ -3046,7 +3046,7 @@ st_collections_group_parts_part_type(void)
                      "TABLE", EDJE_PART_TYPE_TABLE,
                      "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
                      "PROXY", EDJE_PART_TYPE_PROXY,
-		     "VIRTUAL", EDJE_PART_TYPE_VIRTUAL,
+		     "SPACER", EDJE_PART_TYPE_SPACER,
                      NULL);
 
    /* handle type change of inherited part */
@@ -4382,7 +4382,7 @@ st_collections_group_parts_part_description_inherit(void)
    ed->color_class = STRDUP(ed->color_class);
    switch (ep->type)
      {
-      case EDJE_PART_TYPE_VIRTUAL:
+      case EDJE_PART_TYPE_SPACER:
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
@@ -4615,10 +4615,10 @@ st_collections_group_parts_part_description_visible(void)
 {
    check_arg_count(1);
 
-   if (current_part->type == EDJE_PART_TYPE_VIRTUAL)
+   if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
        ERR("%s: Error. parse error %s:%i. "
-	   "VIRTUAL part can't have a visibility defined",
+	   "SPACER part can't have a visibility defined",
 	   progname, file_in, line - 1);
        exit(-1);
      }
@@ -4855,10 +4855,10 @@ st_collections_group_parts_part_description_color_class(void)
 {
    check_arg_count(1);
 
-   if (current_part->type == EDJE_PART_TYPE_VIRTUAL)
+   if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
        ERR("%s: Error. parse error %s:%i. "
-	   "VIRTUAL part can't have a color defined",
+	   "SPACER part can't have a color defined",
 	   progname, file_in, line - 1);
        exit(-1);
      }
@@ -4881,10 +4881,10 @@ st_collections_group_parts_part_description_color(void)
 {
    check_arg_count(4);
 
-   if (current_part->type == EDJE_PART_TYPE_VIRTUAL)
+   if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
        ERR("%s: Error. parse error %s:%i. "
-	   "VIRTUAL part can't have a color defined",
+	   "SPACER part can't have a color defined",
 	   progname, file_in, line - 1);
        exit(-1);
      }
@@ -4910,10 +4910,10 @@ st_collections_group_parts_part_description_color2(void)
 {
    check_arg_count(4);
 
-   if (current_part->type == EDJE_PART_TYPE_VIRTUAL)
+   if (current_part->type == EDJE_PART_TYPE_SPACER)
      {
        ERR("%s: Error. parse error %s:%i. "
-	   "VIRTUAL part can't have a color defined",
+	   "SPACER part can't have a color defined",
 	   progname, file_in, line - 1);
        exit(-1);
      }

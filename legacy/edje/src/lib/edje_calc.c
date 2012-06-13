@@ -232,10 +232,10 @@ _edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src
 	 ce->count.GROUP++;
          memsize = sizeof(Edje_Part_Description_Common);
          break;
-     case EDJE_PART_TYPE_VIRTUAL:
-         desc_rtl = eina_mempool_malloc(ce->mp_rtl.VIRTUAL,
+     case EDJE_PART_TYPE_SPACER:
+         desc_rtl = eina_mempool_malloc(ce->mp_rtl.SPACER,
                sizeof (Edje_Part_Description_Common));
-         ce->count.VIRTUAL++;
+         ce->count.SPACER++;
          memsize = sizeof(Edje_Part_Description_Common);
          break;
 	 EDIT_ALLOC_POOL_RTL(TEXT, Text, text);
@@ -2021,7 +2021,7 @@ _edje_part_recalc_single(Edje *ed,
    else if (ep->part->type == EDJE_PART_TYPE_PROXY)
      _edje_part_recalc_single_fill(ep, &((Edje_Part_Description_Proxy *)desc)->proxy.fill, params);
 
-   if (ep->part->type != EDJE_PART_TYPE_VIRTUAL)
+   if (ep->part->type != EDJE_PART_TYPE_SPACER)
      {
         /* colors */
         if ((desc->color_class) && (*desc->color_class))
@@ -2096,7 +2096,7 @@ _edje_part_recalc_single(Edje *ed,
 
 	   break;
 	}
-      case EDJE_PART_TYPE_VIRTUAL:
+      case EDJE_PART_TYPE_SPACER:
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_BOX:
       case EDJE_PART_TYPE_TABLE:
@@ -2168,7 +2168,7 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
       case EDJE_PART_TYPE_EXTERNAL:
          evas_object_image_source_set(ep->object, pp->swallowed_object);
          break;
-      case EDJE_PART_TYPE_VIRTUAL:
+      case EDJE_PART_TYPE_SPACER:
          /* FIXME: detect that at compile time and prevent it */
          break;
      }
@@ -2798,8 +2798,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 	      /* FIXME: definitivly remove this code when we switch to new format. */
 	      abort();
 	      break;
-           case EDJE_PART_TYPE_VIRTUAL:
-              /* We really should do nothing on VIRTUAL part */
+           case EDJE_PART_TYPE_SPACER:
+              /* We really should do nothing on SPACER part */
               break;
 	  }
 
@@ -2832,8 +2832,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 	      /* FIXME: definitivly remove this code when we switch to new format. */
 	      abort();
 	      break;
-           case EDJE_PART_TYPE_VIRTUAL:
-              /* We really should do nothing on VIRTUAL part */
+           case EDJE_PART_TYPE_SPACER:
+              /* We really should do nothing on SPACER part */
               break;
 	  }
 
@@ -2858,7 +2858,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              mo = ep->swallowed_object;
 	  }
         else mo = ep->object;
-        if (chosen_desc->map.on && ep->part->type != EDJE_PART_TYPE_VIRTUAL)
+        if (chosen_desc->map.on && ep->part->type != EDJE_PART_TYPE_SPACER)
           {
              static Evas_Map *map = NULL;
 

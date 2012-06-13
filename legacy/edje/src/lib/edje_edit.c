@@ -1032,6 +1032,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    EDIT_EMN(BOX, Edje_Part_Description_Box, de);
    EDIT_EMN(TABLE, Edje_Part_Description_Table, de);
    EDIT_EMN(EXTERNAL, Edje_Part_Description_External, de);
+   EDIT_EMN(SPACER, Edje_Part_Description_Common, de);
    EDIT_EMN(part, Edje_Part, de);
 
    ed->file->collection_cache = eina_list_prepend(ed->file->collection_cache, pc);
@@ -2118,7 +2119,7 @@ _edje_edit_real_part_add(Evas_Object *obj, const char *name, Edje_Part_Type type
      }
    else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
      rp->object = evas_object_textblock_add(ed->base.evas);
-   else
+   else if (ep->type != EDJE_PART_TYPE_SPACER)
      ERR("wrong part type %i!", ep->type);
    if (rp->object)
      {
@@ -2968,6 +2969,10 @@ _edje_edit_state_alloc(int type, Edje *ed)
       case EDJE_PART_TYPE_RECTANGLE:
 	 pd = eina_mempool_malloc(ce->mp.RECTANGLE, sizeof (Edje_Part_Description_Common));
 	 ce->count.RECTANGLE++;
+	 break;
+      case EDJE_PART_TYPE_SPACER:
+	 pd = eina_mempool_malloc(ce->mp.SPACER, sizeof (Edje_Part_Description_Common));
+	 ce->count.SPACER++;
 	 break;
       case EDJE_PART_TYPE_SWALLOW:
 	 pd = eina_mempool_malloc(ce->mp.SWALLOW, sizeof (Edje_Part_Description_Common));
@@ -6572,7 +6577,7 @@ edje_edit_script_error_list_get(Evas_Object *obj)
 #define BUF_APPENDF(FMT, ...) \
    ret &= eina_strbuf_append_printf(buf, FMT, ##__VA_ARGS__)
 
-static const char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL"};
+static const char *types[] = {"NONE", "RECT", "TEXT", "IMAGE", "SWALLOW", "TEXTBLOCK", "GRADIENT", "GROUP", "BOX", "TABLE", "EXTERNAL", "SPACER"};
 static const char *effects[] = {"NONE", "PLAIN", "OUTLINE", "SOFT_OUTLINE", "SHADOW", "SOFT_SHADOW", "OUTLINE_SHADOW", "OUTLINE_SOFT_SHADOW ", "FAR_SHADOW ", "FAR_SOFT_SHADOW", "GLOW"};
 static const char *prefers[] = {"NONE", "VERTICAL", "HORIZONTAL", "BOTH"};
 

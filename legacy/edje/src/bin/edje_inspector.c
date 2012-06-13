@@ -204,6 +204,8 @@ part_type_name_get(Edje_Part_Type t)
          return "TABLE";
       case EDJE_PART_TYPE_EXTERNAL:
          return "EXTERNAL";
+      case EDJE_PART_TYPE_SPACER:
+         return "SPACER";
 
       case EDJE_PART_TYPE_NONE:
       case EDJE_PART_TYPE_LAST:
