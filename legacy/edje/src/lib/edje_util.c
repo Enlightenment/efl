@@ -47,6 +47,8 @@ static Eina_Bool _edje_text_class_list_foreach(const Eina_Hash *hash, const void
 static void _edje_object_image_preload_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _edje_object_signal_preload_cb(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _edje_user_def_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *child __UNUSED__, void *einfo __UNUSED__);
+static void _edje_table_child_remove(Edje_Real_Part *rp, Evas_Object *child);
+static void _edje_box_child_remove(Edje_Real_Part *rp, Evas_Object *child);
 
 Edje_Real_Part *_edje_real_part_recursive_get_helper(const Edje *ed, char **path);
 
@@ -70,11 +72,26 @@ void
 _edje_user_definition_free(Edje_User_Defined *eud)
 {
    Evas_Object *child = NULL;
+   Edje_Real_Part *rp;
+
+   eud->ed->user_defined = eina_list_remove(eud->ed->user_defined, eud);
+
    switch (eud->type)
      {
-      case EDJE_USER_SWALLOW: child = eud->u.swallow.child; break;
-      case EDJE_USER_BOX_PACK: child = eud->u.box.child; break;
-      case EDJE_USER_TABLE_PACK: child = eud->u.table.child; break;
+      case EDJE_USER_SWALLOW:
+	child = eud->u.swallow.child;
+	edje_object_part_unswallow(eud->ed->obj, child);
+	break;
+      case EDJE_USER_BOX_PACK:
+	child = eud->u.box.child;
+	rp = _edje_real_part_recursive_get(eud->ed, eud->part);
+	_edje_box_child_remove(rp, child);
+	break;
+      case EDJE_USER_TABLE_PACK:
+	child = eud->u.table.child;
+	rp = _edje_real_part_recursive_get(eud->ed, eud->part);
+	_edje_table_child_remove(rp, child);
+	break;
       case EDJE_USER_STRING:
       case EDJE_USER_DRAG_STEP:
       case EDJE_USER_DRAG_PAGE:
@@ -82,8 +99,8 @@ _edje_user_definition_free(Edje_User_Defined *eud)
       case EDJE_USER_DRAG_SIZE:
          break;
      }
+
    if (child) evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
-   eud->ed->user_defined = eina_list_remove(eud->ed->user_defined, eud);
    eina_stringshare_del(eud->part);
    free(eud);
 }

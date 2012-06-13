@@ -1110,6 +1110,13 @@ _edje_file_del(Edje *ed)
           }
         return;
      }
+
+   while (ed->user_defined)
+     {
+        eud = eina_list_data_get(ed->user_defined);
+        _edje_user_definition_free(eud);
+     }
+
    if (ed->table_parts)
      {
 	unsigned int i;
@@ -1230,12 +1237,6 @@ _edje_file_del(Edje *ed)
 	     ecore_timer_del(pp->timer);
 	     free(pp);
 	  }
-     }
-
-   while (ed->user_defined)
-     {
-        eud = eina_list_data_get(ed->user_defined);
-        _edje_user_definition_free(eud);
      }
 
    if (ed->L) _edje_lua2_script_shutdown(ed);
