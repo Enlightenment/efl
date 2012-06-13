@@ -452,6 +452,16 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
 EAPI const Eo_Class *eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *parent, ...);
 
 /**
+ * @brief Check if an object "is a" klass.
+ * @param obj The object to check
+ * @param klass The klass to check against.
+ * @return @c EINA_TRUE if obj implements klass, @c EINA_FALSE otherwise.
+ *
+ * Notice: This function does not support composite objects.
+ */
+EAPI Eina_Bool eo_isa(const Eo *obj, const Eo_Class *klass);
+
+/**
  * @brief Sets the OP functions for a class.
  * @param klass the class to set the functions to.
  * @param func_descs a NULL terminated array of #Eo_Op_Func_Description

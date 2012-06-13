@@ -123,7 +123,7 @@ _dich_chain_alloc(Dich_Chain1 *chain1, size_t num_ops)
 {
    if (!chain1->funcs)
      {
-        chain1->funcs = calloc(num_ops, sizeof(*(chain1->funcs)));
+        chain1->funcs = calloc(num_ops + 1, sizeof(*(chain1->funcs)));
      }
 }
 
@@ -155,7 +155,7 @@ _dich_copy_all(Eo_Class *dst, const Eo_Class *src)
 
              const op_type_funcs *sf = sc1->funcs;
              op_type_funcs *df = dc1->funcs;
-             for (j = 0 ; j < num_ops ; j++, df++, sf++)
+             for (j = 0 ; j <= num_ops ; j++, df++, sf++)
                {
                   if (sf->func)
                     {
@@ -167,7 +167,7 @@ _dich_copy_all(Eo_Class *dst, const Eo_Class *src)
 }
 
 static inline const op_type_funcs *
-_dich_func_get(const Eo_Class *klass, Eo_Op op)
+_dich_func_get(const Eo_Class *klass, Eo_Op op, Eina_Bool allow_last)
 {
    if (!klass->chain) return NULL;
 
@@ -179,14 +179,16 @@ _dich_func_get(const Eo_Class *klass, Eo_Op op)
    size_t idxl = DICH_CHAIN_LAST(op);
    /* num_ops is calculated from the class. */
    const Eo_Class *op_klass = ID_CLASS_GET(idx1 + 1);
-   if (!op_klass || (idxl >= op_klass->desc->ops.count))
+   if (!op_klass ||
+         (idxl > op_klass->desc->ops.count) ||
+         (!allow_last && (idxl == op_klass->desc->ops.count)))
       return NULL;
 
    return &chain1->funcs[idxl];
 }
 
 static inline void
-_dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
+_dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func, Eina_Bool allow_last)
 {
    const Eo_Class *op_klass = OP_CLASS_GET(op);
    size_t num_ops;
@@ -196,7 +198,8 @@ _dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
      {
         /* num_ops is calculated from the class. */
         num_ops = op_klass->desc->ops.count;
-        if (DICH_CHAIN_LAST(op) >= num_ops)
+        if ((DICH_CHAIN_LAST(op) > num_ops) ||
+              (!allow_last && (DICH_CHAIN_LAST(op) == num_ops)))
           {
              ERR("OP %x is too big for the domain '%s', expected value < %x.",
                    op, op_klass->desc->name, op_klass->desc->ops.count);
@@ -311,7 +314,7 @@ _eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Op op)
    const Eo_Class **kls_itr = cur->kls_itr;
    if (*kls_itr)
      {
-        const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
+        const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op, EINA_FALSE);
 
         while (*kls_itr && (*(kls_itr++) != fsrc->src))
            ;
@@ -332,7 +335,7 @@ _eo_kls_itr_func_get(const Eo_Class *klass, Eo_Kls_Itr *mro_itr, Eo_Op op, Eo_Kl
    klass = _eo_kls_itr_get(mro_itr);
    if (klass)
      {
-        const op_type_funcs *func = _dich_func_get(klass, op);
+        const op_type_funcs *func = _dich_func_get(klass, op, EINA_FALSE);
 
         if (func && func->func)
           {
@@ -589,23 +592,6 @@ _eo_class_base_op_init(Eo_Class *klass)
    *(desc->ops.base_op_id) = EO_CLASS_ID_TO_BASE_ID(klass->class_id);
 }
 
-#ifndef NDEBUG
-static Eina_Bool
-_eo_class_mro_has(const Eo_Class *klass, const Eo_Class *find)
-{
-   const Eo_Class **itr;
-   for (itr = klass->mro ; *itr ; itr++)
-     {
-        if (*itr == find)
-          {
-             return EINA_TRUE;
-          }
-     }
-
-   return EINA_FALSE;
-}
-#endif
-
 static Eina_List *
 _eo_class_mro_add(Eina_List *mro, const Eo_Class *klass)
 {
@@ -761,7 +747,7 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
                }
              else if (EINA_LIKELY(itr->op_type == op_desc->op_type))
                {
-                  _dich_func_set(klass, itr->op, itr->func);
+                  _dich_func_set(klass, itr->op, itr->func, EINA_FALSE);
                }
              else
                {
@@ -847,6 +833,13 @@ _eo_class_check_op_descs(const Eo_Class *klass, Eo_Class_Id id)
      }
 
    return EINA_TRUE;
+}
+
+/* Not really called, just used for the ptr... */
+static void
+_eo_class_isa_func(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   /* Do nonthing. */
 }
 
 EAPI const Eo_Class *
@@ -1055,6 +1048,32 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
           }
      }
 
+   /* Mark which classes we implement */
+     {
+        const Eo_Class **extn_itr;
+
+        for (extn_itr = klass->extensions ; *extn_itr ; extn_itr++)
+          {
+             const Eo_Class *extn = *extn_itr;
+             /* Set it in the dich. */
+             _dich_func_set(klass, EO_CLASS_ID_TO_BASE_ID(extn->class_id) +
+                   extn->desc->ops.count, _eo_class_isa_func,
+                   EINA_TRUE);
+          }
+
+        _dich_func_set(klass, EO_CLASS_ID_TO_BASE_ID(klass->class_id) +
+              klass->desc->ops.count, _eo_class_isa_func,
+              EINA_TRUE);
+
+        if (klass->parent)
+          {
+             _dich_func_set(klass,
+                   EO_CLASS_ID_TO_BASE_ID(klass->parent->class_id) +
+                   klass->parent->desc->ops.count, _eo_class_isa_func,
+                   EINA_TRUE);
+          }
+     }
+
    _eo_class_base_op_init(klass);
 
    _eo_class_constructor(klass);
@@ -1066,6 +1085,20 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
 cleanup:
    eo_class_free(klass);
    return NULL;
+}
+
+EAPI Eina_Bool
+eo_isa(const Eo *obj, const Eo_Class *klass)
+{
+   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
+   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+   const op_type_funcs *func = _dich_func_get(obj->klass,
+         EO_CLASS_ID_TO_BASE_ID(klass->class_id) + klass->desc->ops.count,
+         EINA_TRUE);
+
+   /* Currently implemented by reusing the LAST op id. Just marking it with
+    * _eo_class_isa_func. */
+   return (func && (func->func == _eo_class_isa_func));
 }
 
 EAPI Eina_Bool
@@ -1417,9 +1450,10 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
 {
    void *ret;
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, NULL);
+   EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
 
 #ifndef NDEBUG
-   if (!_eo_class_mro_has(obj->klass, klass))
+   if ((klass->desc->type == EO_CLASS_TYPE_INTERFACE) || !eo_isa(obj, klass))
      {
         ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
         return NULL;
