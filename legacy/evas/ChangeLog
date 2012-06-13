@@ -805,8 +805,3 @@
 
         * Fix crash in evas_object_image_add() when called prior to setting an engine
           for the given canvas.
-
-2012-06-13  ChunEon Park (Hermet)
-
-	* Fixed incorrect events passing. Now child's repeat events does not affect to the parent's level.
-
