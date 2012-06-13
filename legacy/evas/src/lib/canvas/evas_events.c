@@ -43,14 +43,13 @@ _evas_event_object_list_raw_in_get(Evas *e, Eina_List *in,
             (!obj->clip.clipees) &&
             (evas_object_clippers_is_visible(obj)))
           {
+             inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
+
              if (obj->smart.smart)
                {
-                  int norep = 0;
-
                   if ((obj->cur.usemap) && (obj->cur.map) &&
                       (obj->cur.map->count == 4))
                     {
-                       inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
                        if (inside)
                          {
                             if (!evas_map_coords_get(obj->cur.map, x, y,
@@ -67,7 +66,7 @@ _evas_event_object_list_raw_in_get(Evas *e, Eina_List *in,
                                      stop,
                                      obj->cur.geometry.x + obj->cur.map->mx,
                                      obj->cur.geometry.y + obj->cur.map->my,
-                                     &norep);
+                                     no_rep);
                               }
                          }
                     }
@@ -86,33 +85,32 @@ _evas_event_object_list_raw_in_get(Evas *e, Eina_List *in,
                             obj->cur.geometry.y + obj->cur.geometry.h >= y))
                          in = _evas_event_object_list_in_get
                             (e, in, evas_object_smart_members_get_direct(obj),
-                            stop, x, y, &norep);
+                            stop, x, y, no_rep);
                     }
-                  if (norep)
-                    {
-                       if (!obj->repeat_events)
-                         {
-                            *no_rep = 1;
-                            return in;
-                         }
-                    }
+
+                  if (inside && ((!obj->precise_is_inside) ||
+                                 (evas_object_is_inside(obj, x, y))))
+                    if (!obj->repeat_events)
+                      {
+                         *no_rep = 1;
+                         return in;
+                      }
                }
              else
                {
-                  inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
-
-                  if ((obj->cur.usemap) && (obj->cur.map) &&
-                      (obj->cur.map->count == 4))
+                  if (inside)
                     {
-                       if ((inside) &&
-                           (!evas_map_coords_get(obj->cur.map, x, y,
-                                                 &(obj->cur.map->mx),
-                                                 &(obj->cur.map->my), 0)))
+                       if ((obj->cur.usemap) && (obj->cur.map) &&
+                           (obj->cur.map->count == 4))
                          {
-                            inside = 0;
+                            if (!evas_map_coords_get(obj->cur.map, x, y,
+                                                     &(obj->cur.map->mx),
+                                                     &(obj->cur.map->my), 0))
+                              {
+                                 inside = 0;
+                              }
                          }
                     }
-
                   if (inside && ((!obj->precise_is_inside) ||
                                  (evas_object_is_inside(obj, x, y))))
                     {
