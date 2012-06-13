@@ -310,23 +310,30 @@ EAPI void         elm_gesture_layer_rotate_step_set(Evas_Object *obj, double ste
 EAPI double       elm_gesture_layer_rotate_step_get(const Evas_Object *obj);
 
 /**
- * This function called to attach gesture-layer to an Evas_Object.
- * @param obj gesture-layer.
- * @param target Pointer to underlying object (AKA Target)
+ * Attach a given gesture layer widget to an Evas object, thus setting
+ * the widget's @b target.
  *
- * @return TRUE, FALSE on success, failure.
+ * @param obj A gesture layer to attach an object to.
+ * @param target Object to attach to @a obj (target)
+ *
+ * A gesture layer target may be whichever Evas object one
+ * chooses. This will be object @a obj will listen all mouse and key
+ * events from, to report the gestures made upon it back.
+ *
+ * @return @c EINA_TRUE, on success, @c EINA_FALSE otherwise.
  *
  */
 EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *target);
 
 /**
  * Call this function to construct a new gesture-layer object.
+ *
+ * @param parent The gesture layer's parent widget.
+ *
+ * @return A new gesture layer object.
+ *
  * This does not activate the gesture layer. You have to
- * call elm_gesture_layer_attach in order to 'activate' gesture-layer.
- *
- * @param parent the parent object.
- *
- * @return new gesture-layer object.
+ * call elm_gesture_layer_attach() in order to 'activate' gesture-layer.
  *
  */
 EAPI Evas_Object *elm_gesture_layer_add(Evas_Object *parent);
