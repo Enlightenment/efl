@@ -82,7 +82,6 @@ _edje_user_definition_free(Edje_User_Defined *eud)
 	child = eud->u.swallow.child;
 	rp = _edje_real_part_recursive_get(eud->ed, eud->part);
 	_edje_real_part_swallow_clear(rp);
-        rp->swallowed_object = NULL;
 	break;
       case EDJE_USER_BOX_PACK:
 	child = eud->u.box.child;
@@ -2812,21 +2811,7 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
                }
           }
 
-	evas_object_smart_member_del(rp->swallowed_object);
-	evas_object_event_callback_del_full(rp->swallowed_object,
-                                            EVAS_CALLBACK_FREE,
-                                            _edje_object_part_swallow_free_cb,
-                                            rp);
-	evas_object_event_callback_del_full(rp->swallowed_object,
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                            _edje_object_part_swallow_changed_hints_cb,
-                                            rp);
-	evas_object_clip_unset(rp->swallowed_object);
-	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
-
-	if (rp->part->mouse_events)
-	  _edje_callbacks_del(rp->swallowed_object, rp->edje);
-	_edje_callbacks_focus_del(rp->swallowed_object, rp->edje);
+	_edje_real_part_swallow_clear(rp);
 
 	rp->swallowed_object = NULL;
 	rp->swallow_params.min.w = 0;
@@ -4921,8 +4906,18 @@ void
 _edje_object_part_swallow_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Edje_Real_Part *rp;
+   Edje_User_Defined *eud;
+   Eina_List *l;
 
    rp = data;
+
+   EINA_LIST_FOREACH(rp->edje->user_defined, l, eud)
+     if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj)
+       {
+          _edje_user_definition_free(eud);
+          break;
+       }
+
    _edje_real_part_swallow_clear(rp);
    rp->swallowed_object = NULL;
 
@@ -5092,7 +5087,7 @@ _edje_real_part_swallow_clear(Edje_Real_Part *rp)
 {
    evas_object_smart_member_del(rp->swallowed_object);
    evas_object_event_callback_del_full(rp->swallowed_object,
-                                       EVAS_CALLBACK_FREE,
+                                       EVAS_CALLBACK_DEL,
                                        _edje_object_part_swallow_free_cb,
                                        rp);
    evas_object_event_callback_del_full(rp->swallowed_object,
