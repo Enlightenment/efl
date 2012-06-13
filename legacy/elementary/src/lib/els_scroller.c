@@ -2081,7 +2081,8 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                                  oy = -sd->down.dy;
                                  if (!_smart_do_page(sd))
                                    {
-                                      if ((!sd->down.momentum_animator) && (!sd->momentum_animator_disabled))
+                                      if ((!sd->down.momentum_animator) && (!sd->momentum_animator_disabled) &&
+                                          (sd->widget) && (!elm_widget_drag_child_locked_y_get(sd->widget)))
                                         {
                                            sd->down.momentum_animator = ecore_animator_add(_smart_momentum_animator, sd);
                                            ev->event_flags |= EVAS_EVENT_FLAG_ON_SCROLL;
