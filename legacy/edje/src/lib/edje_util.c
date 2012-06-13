@@ -4918,7 +4918,7 @@ _edje_block_violate(Edje *ed)
 }
 
 void
-_edje_object_part_swallow_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_edje_object_part_swallow_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Edje_Real_Part *rp;
 
