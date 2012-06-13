@@ -301,10 +301,11 @@ void
 _evas_object_smart_members_all_del(Evas_Object *obj)
 {
    Evas_Object_Smart *o = (Evas_Object_Smart *)(obj->object_data);
-   while (o->contained)
+   Evas_Object *memobj;
+   Eina_Inlist *itrn;
+   EINA_INLIST_FOREACH_SAFE(o->contained, itrn, memobj)
      {
-        evas_object_smart_member_del(
-              EINA_INLIST_CONTAINER_GET(o->contained, Evas_Object));
+        evas_object_del((Evas_Object *) memobj);
      }
 }
 
