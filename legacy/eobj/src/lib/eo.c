@@ -17,8 +17,6 @@ static Eo_Class_Id _eo_classes_last_id;
 static Eina_Bool _eo_init_count = 0;
 
 static void _eo_condtor_reset(Eo *obj);
-static inline Eina_Bool _eo_error_get(const Eo *obj);
-static inline void _eo_error_unset(Eo *obj);
 static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
 static inline Eo *_eo_ref(Eo *obj);
 static inline void _eo_unref(Eo *obj);
@@ -44,7 +42,7 @@ struct _Eo {
 
      Eo_Kls_Itr mro_itr;
 
-     Eina_Bool construct_error:1;
+     Eina_Bool do_error:1;
      Eina_Bool condtor_done:1;
 
      Eina_Bool composite:1;
@@ -420,12 +418,14 @@ end:
 EAPI Eina_Bool
 eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 {
+   Eina_Bool prev_error;
    Eina_Bool ret = EINA_TRUE;
    Eo_Op op = EO_NOOP;
    va_list p_list;
 
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
+   prev_error = obj->do_error;
    _eo_ref(obj);
 
    va_start(p_list, op_type);
@@ -445,6 +445,12 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
    va_end(p_list);
 
    _eo_unref(obj);
+
+   if (obj->do_error)
+      ret = EINA_FALSE;
+
+   obj->do_error = prev_error;
+
    return ret;
 }
 
@@ -1097,6 +1103,7 @@ eo_parent_set(Eo *obj, const Eo *parent)
 EAPI Eo *
 eo_add(const Eo_Class *klass, Eo *parent)
 {
+   Eina_Bool do_err;
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
 
    if (parent) EO_MAGIC_RETURN_VAL(parent, EO_EINA_MAGIC, NULL);
@@ -1119,13 +1126,12 @@ eo_add(const Eo_Class *klass, Eo *parent)
    Eo_Kls_Itr prev_state;
 
    _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
-   _eo_error_unset(obj);
    _eo_condtor_reset(obj);
 
    _eo_ref(obj);
-   eo_do(obj, eo_constructor());
+   do_err = !eo_do(obj, eo_constructor());
 
-   if (EINA_UNLIKELY(_eo_error_get(obj)))
+   if (EINA_UNLIKELY(do_err))
      {
         ERR("Object of class '%s' - One of the object constructors have failed.", klass->desc->name);
         goto fail;
@@ -1228,6 +1234,7 @@ eo_ref(const Eo *_obj)
 static inline void
 _eo_del_internal(Eo *obj)
 {
+   Eina_Bool do_err;
    /* We need that for the event callbacks that may ref/unref. */
    obj->refcount++;
 
@@ -1237,11 +1244,10 @@ _eo_del_internal(Eo *obj)
    Eo_Kls_Itr prev_state;
 
    _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
-   _eo_error_unset(obj);
    _eo_condtor_reset(obj);
 
-   eo_do(obj, eo_destructor());
-   if (_eo_error_get(obj))
+   do_err = eo_do(obj, eo_destructor());
+   if (EINA_UNLIKELY(!do_err))
      {
         ERR("Object of class '%s' - One of the object destructors have failed.", klass->desc->name);
      }
@@ -1349,13 +1355,7 @@ eo_error_set_internal(const Eo *obj, const char *file, int line)
 
    ERR("Error with obj '%p' at %s:%d", obj, file, line);
 
-   ((Eo *) obj)->construct_error = EINA_TRUE;
-}
-
-static inline void
-_eo_error_unset(Eo *obj)
-{
-   obj->construct_error = EINA_FALSE;
+   ((Eo *) obj)->do_error = EINA_TRUE;
 }
 
 void
@@ -1374,18 +1374,6 @@ static void
 _eo_condtor_reset(Eo *obj)
 {
    obj->condtor_done = EINA_FALSE;
-}
-
-/**
- * @internal
- * @brief Check if there was an error when constructing, destructing or calling a function of the object.
- * @param obj the object to work on.
- * @return @c EINA_TRUE if there was an error.
- */
-static inline Eina_Bool
-_eo_error_get(const Eo *obj)
-{
-   return obj->construct_error;
 }
 
 static inline void *
