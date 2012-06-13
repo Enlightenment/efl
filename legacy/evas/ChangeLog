@@ -800,3 +800,8 @@
 2012-06-12  ChunEon Park (Hermet)
 
  	* Removed empty evas_object_map_source_set/get APIs. Will Not be implemented.
+
+2012-06-13  Mike Blumenkrantz
+
+        * Fix crash in evas_object_image_add() when called prior to setting an engine
+          for the given canvas.
