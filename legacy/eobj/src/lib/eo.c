@@ -93,12 +93,6 @@ struct _Dich_Chain1
 
 typedef struct
 {
-     EINA_INLIST;
-     const Eo_Class *klass;
-} Eo_Extension_Node;
-
-typedef struct
-{
      const Eo_Class *klass;
      size_t offset;
 } Eo_Extension_Data_Offset;
@@ -110,7 +104,8 @@ struct _Eo_Class
    const Eo_Class *parent;
    const Eo_Class_Description *desc;
    Dich_Chain1 *chain; /**< The size is class_id */
-   Eina_Inlist *extensions;
+
+   const Eo_Class **extensions;
 
    Eo_Extension_Data_Offset *extn_data_off;
    size_t extn_data_size;
@@ -621,12 +616,19 @@ _eo_class_mro_add(Eina_List *mro, const Eo_Class *klass)
 
    mro = eina_list_append(mro, klass);
 
+   /* ONLY ADD MIXINS! */
+
    /* Recursively add extenions. */
      {
-        Eo_Extension_Node *extn;
-        EINA_INLIST_FOREACH(klass->extensions, extn)
+        const Eo_Class **extn_itr;
+
+        for (extn_itr = klass->extensions ; *extn_itr ; extn_itr++)
           {
-             mro = _eo_class_mro_add(mro, extn->klass);
+             const Eo_Class *extn = *extn_itr;
+             if (extn->desc->type != EO_CLASS_TYPE_MIXIN)
+                continue;
+
+             mro = _eo_class_mro_add(mro, extn);
              /* Not possible: if (!mro) return NULL; */
 
              if (check_consistency)
@@ -640,19 +642,23 @@ _eo_class_mro_add(Eina_List *mro, const Eo_Class *klass)
     * we are working on (i.e no parents). */
    if (check_consistency)
      {
-        Eo_Extension_Node *extn;
+        const Eo_Class **extn_itr;
 
         Eina_List *itr = extn_pos;
-        EINA_INLIST_FOREACH(klass->extensions, extn)
+        for (extn_itr = klass->extensions ; *extn_itr ; extn_itr++)
           {
+             const Eo_Class *extn = *extn_itr;
+             if (extn->desc->type != EO_CLASS_TYPE_MIXIN)
+                continue;
+
              /* Get the first one after the extension. */
              Eina_List *extn_list = eina_list_next(eina_list_data_get(itr));
 
              /* If we found the extension again. */
-             if (eina_list_data_find_list(extn_list, extn->klass))
+             if (eina_list_data_find_list(extn_list, extn))
                {
                   eina_list_free(mro);
-                  ERR("Cannot create a consistent method resolution order for class '%s' because of '%s'.", klass->desc->name, extn->klass->desc->name);
+                  ERR("Cannot create a consistent method resolution order for class '%s' because of '%s'.", klass->desc->name, extn->desc->name);
                   return NULL;
                }
 
@@ -781,14 +787,7 @@ eo_class_free(Eo_Class *klass)
         _dich_func_clean_all(klass);
      }
 
-     {
-        Eina_Inlist *itrn;
-        Eo_Extension_Node *extn = NULL;
-        EINA_INLIST_FOREACH_SAFE(klass->extensions, itrn, extn)
-          {
-             free(extn);
-          }
-     }
+   free(klass->extensions);
 
    if (klass->mro)
       free(klass->mro);
@@ -886,7 +885,9 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
 
    /* Handle class extensions */
      {
-        Eo_Class *extn = NULL;
+        Eina_List *extn_list = NULL;
+        const Eo_Class *extn = NULL;
+        const Eo_Class **extn_itr = NULL;
 
         extn = va_arg(p_list, Eo_Class *);
         while (extn)
@@ -895,21 +896,25 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
                {
                 case EO_CLASS_TYPE_REGULAR:
                 case EO_CLASS_TYPE_REGULAR_NO_INSTANT:
-                   /* Use it like an interface. */
-                case EO_CLASS_TYPE_INTERFACE:
+                   /* Ignore regular classes ATM. */
                    break;
+
+                case EO_CLASS_TYPE_INTERFACE:
                 case EO_CLASS_TYPE_MIXIN:
-                     {
-                        Eo_Extension_Node *node = calloc(1, sizeof(*node));
-                        node->klass = extn;
-                        klass->extensions =
-                           eina_inlist_append(klass->extensions,
-                                 EINA_INLIST_GET(node));
-                     }
+                   extn_list = eina_list_append(extn_list, extn);
                    break;
                }
 
              extn = va_arg(p_list, Eo_Class *);
+          }
+
+        klass->extensions = calloc(sizeof(*klass->extensions),
+              eina_list_count(extn_list) + 1);
+
+        extn_itr = klass->extensions;
+        EINA_LIST_FREE(extn_list, extn)
+          {
+             *(extn_itr++) = extn;
           }
      }
 
