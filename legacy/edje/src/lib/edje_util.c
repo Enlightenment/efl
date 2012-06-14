@@ -69,6 +69,16 @@ _edje_user_definition_new(Edje_User_Defined_Type type, const char *part, Edje *e
 }
 
 void
+_edje_user_definition_remove(Edje_User_Defined *eud, Evas_Object *child)
+{
+   eud->ed->user_defined = eina_list_remove(eud->ed->user_defined, eud);
+
+   if (child) evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
+   eina_stringshare_del(eud->part);
+   free(eud);
+}
+
+void
 _edje_user_definition_free(Edje_User_Defined *eud)
 {
    Evas_Object *child = NULL;
@@ -80,7 +90,8 @@ _edje_user_definition_free(Edje_User_Defined *eud)
      {
       case EDJE_USER_SWALLOW:
 	child = eud->u.swallow.child;
-	edje_object_part_unswallow(eud->ed->obj, child);
+	rp = _edje_real_part_recursive_get(eud->ed, eud->part);
+	_edje_real_part_swallow_clear(rp);
 	break;
       case EDJE_USER_BOX_PACK:
 	child = eud->u.box.child;
@@ -100,9 +111,7 @@ _edje_user_definition_free(Edje_User_Defined *eud)
          break;
      }
 
-   if (child) evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
-   eina_stringshare_del(eud->part);
-   free(eud);
+   _edje_user_definition_remove(eud, child);
 }
 
 static void
@@ -2810,21 +2819,7 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
                }
           }
 
-	evas_object_smart_member_del(rp->swallowed_object);
-	evas_object_event_callback_del_full(rp->swallowed_object,
-                                            EVAS_CALLBACK_FREE,
-                                            _edje_object_part_swallow_free_cb,
-                                            rp->edje->obj);
-	evas_object_event_callback_del_full(rp->swallowed_object,
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                            _edje_object_part_swallow_changed_hints_cb,
-                                            rp);
-	evas_object_clip_unset(rp->swallowed_object);
-	evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
-
-	if (rp->part->mouse_events)
-	  _edje_callbacks_del(rp->swallowed_object, rp->edje);
-	_edje_callbacks_focus_del(rp->swallowed_object, rp->edje);
+        _edje_real_part_swallow_clear(rp);
 
 	rp->swallowed_object = NULL;
 	rp->swallow_params.min.w = 0;
@@ -4918,10 +4913,22 @@ _edje_block_violate(Edje *ed)
 void
 _edje_object_part_swallow_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *edje_obj;
+   Edje_Real_Part *rp;
+   Edje_User_Defined *eud;
+   Eina_List *l;
 
-   edje_obj = data;
-   edje_object_part_unswallow(edje_obj, obj);
+   rp = data;
+
+   EINA_LIST_FOREACH(rp->edje->user_defined, l, eud)
+     if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj)
+       {
+          _edje_user_definition_free(eud);
+          break;
+       }
+
+   _edje_real_part_swallow_clear(rp);
+   rp->swallowed_object = NULL;
+
    return;
 }
 
@@ -5050,9 +5057,9 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
    else evas_object_clip_set(rp->swallowed_object, rp->edje->base.clipper);
    evas_object_stack_above(rp->swallowed_object, rp->object);
    evas_object_event_callback_add(rp->swallowed_object,
-                                  EVAS_CALLBACK_DEL,
+                                  EVAS_CALLBACK_FREE,
 				  _edje_object_part_swallow_free_cb,
-				  rp->edje->obj);
+				  rp);
    evas_object_event_callback_add(rp->swallowed_object,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
 				  _edje_object_part_swallow_changed_hints_cb,
@@ -5090,7 +5097,7 @@ _edje_real_part_swallow_clear(Edje_Real_Part *rp)
    evas_object_event_callback_del_full(rp->swallowed_object,
                                        EVAS_CALLBACK_FREE,
                                        _edje_object_part_swallow_free_cb,
-                                       rp->edje->obj);
+                                       rp);
    evas_object_event_callback_del_full(rp->swallowed_object,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _edje_object_part_swallow_changed_hints_cb,

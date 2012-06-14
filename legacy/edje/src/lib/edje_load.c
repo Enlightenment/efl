@@ -867,10 +867,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
                   EINA_LIST_FREE(collect, eud)
                     {
+                       Evas_Object *child = NULL;
+
                        switch (eud->type)
                          {
                           case EDJE_USER_SWALLOW:
                              edje_object_part_swallow(obj, eud->part, eud->u.swallow.child);
+                             child = eud->u.swallow.child;
                              break;
                           case EDJE_USER_BOX_PACK:
                              boxes = eina_list_append(boxes, eud);
@@ -880,6 +883,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                              edje_object_part_table_pack(obj, eud->part, eud->u.table.child,
                                                          eud->u.table.col, eud->u.table.row,
                                                          eud->u.table.colspan, eud->u.table.rowspan);
+                             child = eud->u.table.child;
                              break;
                           case EDJE_USER_DRAG_STEP:
                              edje_object_part_drag_step_set(obj, eud->part,
@@ -906,14 +910,14 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                              eina_stringshare_del(eud->u.string.text);
                              break;
                          }
-                       if (eud) _edje_user_definition_free(eud);
+                       if (eud) _edje_user_definition_remove(eud, child);
                     }
 
                   boxes = eina_list_sort(boxes, -1, _sort_defined_boxes);
                   EINA_LIST_FREE(boxes, eud)
                     {
                        edje_object_part_box_append(obj, eud->part, eud->u.box.child);
-                       _edje_user_definition_free(eud);
+                       _edje_user_definition_remove(eud, eud->u.box.child);
                     }
                }
 

@@ -2124,6 +2124,7 @@ Eina_Bool _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_n
 
 void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state);
 
+void _edje_user_definition_remove(Edje_User_Defined *eud, Evas_Object *child);
 void _edje_user_definition_free(Edje_User_Defined *eud);
 
 #ifdef HAVE_LIBREMIX
