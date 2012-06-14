@@ -3006,7 +3006,7 @@ static void
 _set_gl_surface_cap(Render_Engine *re)
 {
    GLuint fbo, tex, depth, stencil;
-   int w, h, max_samples;
+   int w, h;
 
    int i, ret, count;
 
