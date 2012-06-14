@@ -3143,6 +3143,13 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
               cfg->depth_bits   = EVAS_GL_DEPTH_BIT_24;
               break;
            }
+         else if (re->gl_cap.depth_24_stencil_8[0])
+           {
+              sfc->rb_depth_stencil_fmt = re->gl_cap.depth_24_stencil_8[0];
+              sfc->rb_depth_fmt         = re->gl_cap.depth_24_stencil_8[0];
+              cfg->depth_bits           = EVAS_GL_DEPTH_BIT_24;
+              break;
+           }
       case EVAS_GL_DEPTH_BIT_32:
          if (re->gl_cap.depth_32[0])
            {
