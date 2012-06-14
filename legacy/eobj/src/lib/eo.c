@@ -592,6 +592,22 @@ _eo_class_base_op_init(Eo_Class *klass)
    *(desc->ops.base_op_id) = EO_CLASS_ID_TO_BASE_ID(klass->class_id);
 }
 
+#ifndef NDEBUG
+static Eina_Bool
+_eo_class_mro_has(const Eo_Class *klass, const Eo_Class *find)
+{
+   const Eo_Class **itr;
+   for (itr = klass->mro ; *itr ; itr++)
+     {
+        if (*itr == find)
+          {
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+#endif
+
 static Eina_List *
 _eo_class_mro_add(Eina_List *mro, const Eo_Class *klass)
 {
@@ -889,9 +905,6 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
                {
                 case EO_CLASS_TYPE_REGULAR:
                 case EO_CLASS_TYPE_REGULAR_NO_INSTANT:
-                   /* Ignore regular classes ATM. */
-                   break;
-
                 case EO_CLASS_TYPE_INTERFACE:
                 case EO_CLASS_TYPE_MIXIN:
                    extn_list = eina_list_append(extn_list, extn);
@@ -1453,7 +1466,7 @@ eo_data_get(const Eo *obj, const Eo_Class *klass)
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
 
 #ifndef NDEBUG
-   if ((klass->desc->type == EO_CLASS_TYPE_INTERFACE) || !eo_isa(obj, klass))
+   if (!_eo_class_mro_has(obj->klass, klass))
      {
         ERR("Tried getting data of class '%s' from object of class '%s', but the former is not a direct inheritance of the latter.", klass->desc->name, obj->klass->desc->name);
         return NULL;

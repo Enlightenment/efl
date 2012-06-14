@@ -63,6 +63,83 @@ START_TEST(eo_data_fetch)
 }
 END_TEST
 
+START_TEST(eo_isa_tests)
+{
+   eo_init();
+
+   const Eo_Class *klass, *iface, *mixin;
+
+     {
+        /* Usually should be const, not const only for the test... */
+        static Eo_Class_Description class_desc = {
+             "Iface",
+             EO_CLASS_TYPE_INTERFACE,
+             EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+             NULL,
+             0,
+             NULL,
+             NULL
+        };
+
+        iface = eo_class_new(&class_desc, 0, NULL, NULL);
+        fail_if(!iface);
+     }
+
+     {
+        /* Usually should be const, not const only for the test... */
+        static Eo_Class_Description class_desc = {
+             "Mixin",
+             EO_CLASS_TYPE_MIXIN,
+             EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+             NULL,
+             0,
+             NULL,
+             NULL
+        };
+
+        mixin = eo_class_new(&class_desc, 0, NULL, NULL);
+        fail_if(!mixin);
+     }
+
+     {
+        /* Usually should be const, not const only for the test... */
+        static Eo_Class_Description class_desc = {
+             "Simple2",
+             EO_CLASS_TYPE_REGULAR,
+             EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+             NULL,
+             10,
+             NULL,
+             NULL
+        };
+
+        klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, iface, mixin, NULL);
+        fail_if(!klass);
+     }
+
+   Eo *obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   fail_if(eo_isa(obj, SIMPLE_CLASS));
+   fail_if(!eo_isa(obj, iface));
+   fail_if(!eo_isa(obj, mixin));
+   fail_if(!eo_isa(obj, klass));
+   fail_if(!eo_isa(obj, EO_BASE_CLASS));
+   eo_unref(obj);
+
+   obj = eo_add(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   fail_if(eo_isa(obj, klass));
+   fail_if(eo_isa(obj, iface));
+   fail_if(eo_isa(obj, mixin));
+   fail_if(!eo_isa(obj, SIMPLE_CLASS));
+   fail_if(!eo_isa(obj, EO_BASE_CLASS));
+   eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
+
 START_TEST(eo_composite_tests)
 {
    eo_init();
@@ -531,6 +608,9 @@ START_TEST(eo_magic_checks)
         eo_unref((Eo *) buf);
         eo_del((Eo *) buf);
 
+        eo_isa((Eo *) buf, SIMPLE_CLASS);
+        eo_isa(obj, (Eo_Class *) buf);
+
         fail_if(0 != eo_ref_get((Eo *) buf));
 
         Eo *wref = NULL;
@@ -579,4 +659,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_man_free);
    tcase_add_test(tc, eo_static_classes);
    tcase_add_test(tc, eo_composite_tests);
+   tcase_add_test(tc, eo_isa_tests);
 }
