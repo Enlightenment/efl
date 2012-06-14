@@ -35,3 +35,9 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
         1.2.0 release
+
+2012-06-14 Carsten Haitzler (The Rasterman)
+
+        * Fix divide by 0 possibilities in the fp support so no FPE is
+        produced (bad).
+

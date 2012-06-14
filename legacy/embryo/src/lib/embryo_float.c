@@ -48,6 +48,9 @@
 #include "embryo_private.h"
 
 #define PI  3.1415926535897932384626433832795f
+#ifndef MAXFLOAT
+#define MAXFLOAT 3.40282347e+38f
+#endif
 
 /* internally useful calls */
 
@@ -114,10 +117,21 @@ _embryo_fp_div(Embryo_Program *ep __UNUSED__, Embryo_Cell *params)
 {
    /* params[1] = float dividend (top) */
    /* params[2] = float divisor (bottom) */
-   float f;
+   float f, ff;
 
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
-   f = EMBRYO_CELL_TO_FLOAT(params[1]) / EMBRYO_CELL_TO_FLOAT(params[2]);
+   f = EMBRYO_CELL_TO_FLOAT(params[1]);
+   ff = EMBRYO_CELL_TO_FLOAT(params[2]);
+   if (ff == 0.0)
+     {
+        if (f == 0.0)
+          return EMBRYO_FLOAT_TO_CELL(0.0f);
+        else if (f < 0.0)
+          return EMBRYO_FLOAT_TO_CELL(-MAXFLOAT);
+        else
+          return EMBRYO_FLOAT_TO_CELL(MAXFLOAT);
+     }
+   f = f / ff;
    return EMBRYO_FLOAT_TO_CELL(f);
 }
 
@@ -238,7 +252,7 @@ _embryo_fp_log(Embryo_Program *ep, Embryo_Cell *params)
 {
    /* params[1] = float operand 1 (value) */
    /* params[2] = float operand 2 (base) */
-   float f, ff;
+   float f, ff, tf;
 
    if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
    f = EMBRYO_CELL_TO_FLOAT(params[1]);
@@ -250,7 +264,12 @@ _embryo_fp_log(Embryo_Program *ep, Embryo_Cell *params)
      }
     if (ff == 10.0) f = log10f(f);
     else if (ff == 2.0) f = log2f(f);
-    else f = (logf(f) / logf(ff));
+    else
+     {
+        tf = logf(ff);
+        if (tf == 0.0) f = 0.0;
+        else f = (logf(f) / tf);
+     }
     return EMBRYO_FLOAT_TO_CELL(f);
 }
 
