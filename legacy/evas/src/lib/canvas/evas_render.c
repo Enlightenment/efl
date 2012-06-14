@@ -92,14 +92,6 @@ evas_obscured_clear(Evas *e)
 }
 
 static Eina_Bool
-_evas_render_has_map(Evas_Object *obj)
-{
-   return ((!((obj->func->can_map) && (obj->func->can_map(obj)))) &&
-           ((obj->cur.map) && (obj->cur.usemap)));
-   //   return ((obj->cur.map) && (obj->cur.usemap));
-}
-
-static Eina_Bool
 _evas_render_had_map(Evas_Object *obj)
 {
    return ((obj->prev.map) && (obj->prev.usemap));
@@ -830,8 +822,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
       _evas_render_has_map(obj));
    if (_evas_render_has_map(obj))
      {
-        const Evas_Map_Point *p, *p_end;
-        RGBA_Map_Point pts[4], *pt;
+	RGBA_Map_Point *pts;
         int sw, sh;
         Eina_Bool changed = EINA_FALSE, rendered = EINA_FALSE;
 
@@ -848,36 +839,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              return clean_them;
           }
 
-        pts[0].px = obj->cur.map->persp.px << FP;
-        pts[0].py = obj->cur.map->persp.py << FP;
-        pts[0].foc = obj->cur.map->persp.foc << FP;
-        pts[0].z0 = obj->cur.map->persp.z0 << FP;
-
-        p = obj->cur.map->points;
-        p_end = p + obj->cur.map->count;
-        pt = pts;
-        for (; p < p_end; p++, pt++)
-          {
-             pt->x = (lround(p->x) + off_x) * FP1;
-             pt->y = (lround(p->y) + off_y) * FP1;
-             pt->z = (lround(p->z)        ) * FP1;
-             pt->fx = p->px;
-             pt->fy = p->py;
-             pt->fz = p->z;
-             pt->u = lround(p->u) * FP1;
-             pt->v = lround(p->v) * FP1;
-             if      (pt->u < 0) pt->u = 0;
-             else if (pt->u > (sw * FP1)) pt->u = (sw * FP1);
-             if      (pt->v < 0) pt->v = 0;
-             else if (pt->v > (sh * FP1)) pt->v = (sh * FP1);
-             pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
-          }
-        /* Copy last for software engine */
-        if (obj->cur.map->count & 0x1)
-          {
-             pts[obj->cur.map->count] = pts[obj->cur.map->count - 1];
-          }
-
+	evas_object_map_update(obj, off_x, off_y, sw, sh, sw, sh);
+	pts = obj->spans->pts;
 
         if (obj->cur.map->surface)
           {
@@ -1080,6 +1043,11 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
      }
    else
      {
+        if (0 && obj->cur.cached_surface)
+          fprintf(stderr, "We should cache '%s' [%i, %i, %i, %i]\n",
+                  evas_object_type_get(obj),
+                  obj->cur.bounding_box.x, obj->cur.bounding_box.x,
+                  obj->cur.bounding_box.w, obj->cur.bounding_box.h);
         if (mapped)
           {
              RDI(level);

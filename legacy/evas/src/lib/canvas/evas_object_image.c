@@ -2933,38 +2933,10 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	  }
         if ((obj->cur.map) && (obj->cur.map->count > 3) && (obj->cur.usemap))
           {
-	     const Evas_Map_Point *p, *p_end;
-             RGBA_Map_Point pts[obj->cur.map->count], *pt;
+             RGBA_Map_Point *pts;
 
-	     p = obj->cur.map->points;
-	     p_end = p + obj->cur.map->count;
-	     pt = pts;
-             
-             pts[0].px = obj->cur.map->persp.px << FP;
-             pts[0].py = obj->cur.map->persp.py << FP;
-             pts[0].foc = obj->cur.map->persp.foc << FP;
-             pts[0].z0 = obj->cur.map->persp.z0 << FP;
-             // draw geom +x +y
-             for (; p < p_end; p++, pt++)
-               {
-                  pt->x = (lround(p->x) + x) * FP1;
-                  pt->y = (lround(p->y) + y) * FP1;
-                  pt->z = (lround(p->z)    ) * FP1;
-                  pt->fx = p->px;
-                  pt->fy = p->py;
-                  pt->fz = p->z;
-                  pt->u = ((lround(p->u) * imagew) / uvw) * FP1;
-                  pt->v = ((lround(p->v) * imageh) / uvh) * FP1;
-                  if      (pt->u < 0) pt->u = 0;
-                  else if (pt->u > (imagew * FP1)) pt->u = (imagew * FP1);
-                  if      (pt->v < 0) pt->v = 0;
-                  else if (pt->v > (imageh * FP1)) pt->v = (imageh * FP1);
-                  pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
-              }
-	     if (obj->cur.map->count & 0x1)
-	       {
-		  pts[obj->cur.map->count] = pts[obj->cur.map->count -1];
-	       }
+             evas_object_map_update(obj, x, y, imagew, imageh, uvw, uvh);
+             pts = obj->spans->pts;
 
              obj->layer->evas->engine.func->image_map_draw
                (output, context, surface, pixels, obj->cur.map->count,

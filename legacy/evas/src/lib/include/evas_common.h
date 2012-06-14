@@ -395,6 +395,7 @@ typedef struct _RGBA_Image_Span       RGBA_Image_Span;
 typedef struct _RGBA_Draw_Context     RGBA_Draw_Context;
 typedef struct _RGBA_Polygon_Point    RGBA_Polygon_Point;
 typedef struct _RGBA_Map_Point        RGBA_Map_Point;
+typedef struct _RGBA_Map              RGBA_Map;
 typedef struct _RGBA_Font             RGBA_Font;
 typedef struct _RGBA_Font_Int         RGBA_Font_Int;
 typedef struct _RGBA_Font_Source      RGBA_Font_Source;
@@ -850,6 +851,20 @@ struct _RGBA_Map_Point
    DATA32 col; // color at this point
    // for perspective correctness - only point 0 has relevant info
    FPc px, py, z0, foc;
+};
+
+struct _RGBA_Map
+{
+   void *engine_data;
+
+   struct {
+      int w, h;
+   } image, uv;
+
+   int x, y;
+   int count;
+
+   RGBA_Map_Point pts[1];
 };
 
 #if 0 // filtering disabled

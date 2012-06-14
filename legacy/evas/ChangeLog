@@ -805,3 +805,7 @@
 
         * Fix crash in evas_object_image_add() when called prior to setting an engine
           for the given canvas.
+
+2012-06-14  Cedric Bail
+
+	* Cache convertion from Evas_Map to RGBA_Map.

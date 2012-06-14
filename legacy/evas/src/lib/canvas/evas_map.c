@@ -174,6 +174,13 @@ _evas_map_free(Evas_Object *obj, Evas_Map *m)
      }
    m->magic = 0;
    free(m);
+
+   if (obj->spans)
+     {
+        // FIXME: destroy engine side spans
+        free(obj->spans);
+        obj->spans = NULL;
+     }      
 }
 
 /****************************************************************************/
@@ -1020,4 +1027,85 @@ evas_map_util_clockwise_get(Evas_Map *m)
      }
    if (count > 0) return EINA_TRUE;
    return EINA_FALSE;
+}
+
+void
+evas_object_map_update(Evas_Object *obj,
+                       int x, int y,
+                       int imagew, int imageh,
+                       int uvw, int uvh)
+{
+   const Evas_Map_Point *p, *p_end;
+   RGBA_Map_Point *pts, *pt;
+
+   if (obj->spans)
+     {
+        if (obj->spans->x != x || obj->spans->y != y ||
+            obj->spans->image.w != imagew || obj->spans->image.h != imageh ||
+            obj->spans->uv.w != uvw || obj->spans->uv.h != uvh)
+          obj->changed_map = EINA_TRUE;
+     }
+
+   if (!obj->changed_map) return ;
+
+   if (obj->cur.map && obj->spans && obj->cur.map->count != obj->spans->count)
+     {
+        if (obj->spans)
+          {
+             // Destroy engine side spans
+             free(obj->spans);
+          }
+        obj->spans = NULL;
+     }
+
+   if (!((obj->cur.map) && (obj->cur.map->count > 3) && (obj->cur.usemap)))
+     return ;
+
+   if (!obj->spans)
+     obj->spans = calloc(1, sizeof (RGBA_Map) +
+                         sizeof (RGBA_Map_Point) * (obj->cur.map->count - 1));
+
+   if (!obj->spans) return ;
+
+   obj->spans->count = obj->cur.map->count;
+   obj->spans->x = x;
+   obj->spans->y = y;
+   obj->spans->uv.w = uvw;
+   obj->spans->uv.h = uvh;
+   obj->spans->image.w = imagew;
+   obj->spans->image.h = imageh;
+
+   pts = obj->spans->pts;
+
+   p = obj->cur.map->points;
+   p_end = p + obj->cur.map->count;
+   pt = pts;
+             
+   pts[0].px = obj->cur.map->persp.px << FP;
+   pts[0].py = obj->cur.map->persp.py << FP;
+   pts[0].foc = obj->cur.map->persp.foc << FP;
+   pts[0].z0 = obj->cur.map->persp.z0 << FP;
+   // draw geom +x +y
+   for (; p < p_end; p++, pt++)
+     {
+        pt->x = (lround(p->x) + x) * FP1;
+        pt->y = (lround(p->y) + y) * FP1;
+        pt->z = (lround(p->z)    ) * FP1;
+        pt->fx = p->px;
+        pt->fy = p->py;
+        pt->fz = p->z;
+        pt->u = ((lround(p->u) * imagew) / uvw) * FP1;
+        pt->v = ((lround(p->v) * imageh) / uvh) * FP1;
+        if      (pt->u < 0) pt->u = 0;
+        else if (pt->u > (imagew * FP1)) pt->u = (imagew * FP1);
+        if      (pt->v < 0) pt->v = 0;
+        else if (pt->v > (imageh * FP1)) pt->v = (imageh * FP1);
+        pt->col = ARGB_JOIN(p->a, p->r, p->g, p->b);
+     }
+   if (obj->cur.map->count & 0x1)
+     {
+        pts[obj->cur.map->count] = pts[obj->cur.map->count -1];
+     }
+
+   // Request engine to update it's point
 }

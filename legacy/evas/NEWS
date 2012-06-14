@@ -8,6 +8,7 @@ Improvements:
    * Reduce cost of propagating event by limiting the object we explore by using a bouncing box.
    * Don't wake up prepare thread if there is nothing to prepare.
    * Limit the updated region to fit in CPU cache for Pipe rendering.
+   * Cache convertion from Evas_Map to RGBA_Map.
 
 Fixes:
    * Add missing files in the tarball.
