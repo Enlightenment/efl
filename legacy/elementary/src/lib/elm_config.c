@@ -1713,6 +1713,7 @@ EAPI void
 elm_config_font_overlay_apply(void)
 {
    _elm_config_font_overlay_apply();
+   _elm_rescale();
 }
 
 EAPI Evas_Coord

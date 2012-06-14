@@ -179,3 +179,8 @@
 2012-06-12 Mike Blumenkrantz
 
         * Map no longer saves its files to directories outside of the user's home directory
+
+2012-06-14 Seunggyun Kim
+
+        * Fix elm_config_font_overlay_apply() to also apply rescaling properly.
+
