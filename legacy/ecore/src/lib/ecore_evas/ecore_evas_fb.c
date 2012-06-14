@@ -639,7 +639,7 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
      }
 
    einfo = (Evas_Engine_Info_FB *)evas_engine_info_get(ee->evas);
-   if (einfo)
+   if (einfo && disp_name)
      {
         einfo->info.virtual_terminal = 0;
         einfo->info.device_number = strtol(disp_name, NULL, 10);
