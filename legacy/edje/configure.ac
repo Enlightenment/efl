@@ -396,7 +396,7 @@ fi
 ##alsa library
 have_alsa_lib="no"
 want_alsa_lib="auto"
-AC_ARG_ENABLE([flac],
+AC_ARG_ENABLE([alsa],
    [AC_HELP_STRING([--disable-alsa], [disable alsa support. @<:@default=detect@:>@])],
    [want_alsa_lib=$enableval], [])
 

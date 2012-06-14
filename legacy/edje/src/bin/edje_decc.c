@@ -393,7 +393,7 @@ output(void)
              sound_data = (void *)eet_read_direct(tef, out, &sound_data_size);
              if (sound_data)
                {
-                  snprintf(out1, sizeof(out1), "%s/%s", outdir, sample->name);
+                  snprintf(out1, sizeof(out1), "%s/%s", outdir, sample->snd_src);
                   pp = strdup(out1);
                   p = strrchr(pp, '/');
                   *p = 0;
@@ -413,7 +413,6 @@ output(void)
                   if (fwrite(sound_data, sound_data_size, 1, f) != 1)
                     ERR("Could not write sound: %s", strerror(errno));
                   fclose(f);
-                  free(sound_data);
               }
           }
 

@@ -475,3 +475,10 @@
 2012-06-04  Cedric Bail
 
 	* Add SPACER part to reduce the load on the canvas (lighter and faster theme).
+
+2012-06-04  Prince Kumar Dubey
+
+	* Fix decompile of sound samples to use sound source file, not name
+	* Fix decompile of sound samples not double-free
+        * Fix alsa configure option to be alsa, not flac.
+
