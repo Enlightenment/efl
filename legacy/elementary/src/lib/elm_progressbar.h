@@ -33,8 +33,7 @@
  * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for progress bar objects.
  *
- * This widget emits the following signals, besides the ones sent from
- * @ref Layout:
+ * This widget has the following styles:
  * - @c "default"
  * - @c "wheel" (simple style, no text, no progression, only
  *      "pulse" effect is available)
