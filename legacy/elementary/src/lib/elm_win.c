@@ -2091,7 +2091,7 @@ elm_win_add(Evas_Object *parent,
           {
              tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
           }
-        else if (!strncmp(_elm_preferred_engine, "shot:", 5))
+        else if (_elm_preferred_engine && !strncmp(_elm_preferred_engine, "shot:", 5))
           {
              tmp_sd.ee = ecore_evas_buffer_new(1, 1);
              ecore_evas_manual_render_set(tmp_sd.ee, EINA_TRUE);
@@ -2145,7 +2145,7 @@ elm_win_add(Evas_Object *parent,
      (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
 #endif
 
-   else if (!strncmp(_elm_preferred_engine, "shot:", 5))
+   else if (_elm_preferred_engine && !strncmp(_elm_preferred_engine, "shot:", 5))
      _shot_init(sd);
 
    sd->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
