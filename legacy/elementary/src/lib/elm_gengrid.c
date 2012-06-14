@@ -1830,9 +1830,19 @@ static int
 _elm_gengrid_item_compare(const void *data, const void *data1)
 {
    Elm_Gen_Item *it, *item1;
+   Eina_Compare_Cb cb = NULL;
+   ptrdiff_t d;
    it = ELM_GEN_ITEM_FROM_INLIST(data);
    item1 = ELM_GEN_ITEM_FROM_INLIST(data1);
-   return it->wd->item_compare_cb(it, item1);
+   if (it && it->wd && it->wd->item_compare_cb)
+     cb = it->wd->item_compare_cb;
+   else if (item1 && item1->wd && item1->wd->item_compare_cb)
+     cb = item1->wd->item_compare_cb;
+   if (cb && it && item1) return cb(it, item1);
+   d = data - data1;
+   if (d < 0) return -1;
+   if (!d) return 0;
+   return 1;
 }
 
 static void
@@ -2195,7 +2205,10 @@ elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
    if (!it) return NULL;
 
    if (!wd->state)
-     wd->state = eina_inlist_sorted_state_new();
+     {
+        wd->state = eina_inlist_sorted_state_new();
+        eina_inlist_sorted_state_init(wd->state, wd->items);
+     }
 
    wd->item_compare_cb = comp;
    wd->items = eina_inlist_sorted_state_insert(wd->items, EINA_INLIST_GET(it),
