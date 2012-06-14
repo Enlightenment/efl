@@ -70,30 +70,27 @@ struct _Render_Engine
 
 struct _Render_Engine_GL_Surface
 {
-   int         initialized;
-   int         fbo_attached;
-   int         w, h;
+   int      initialized;
+   int      fbo_attached;
+   int      w, h;
+   int      depth_bits;
+   int      stencil_bits;
 
-   // Surface Config
-   int         depth_bits;
-   int         stencil_bits;
-   int         direct_fb_opt;
+   int      direct_fb_opt;
    int         multiample_bits;
 
    // Render target Texture/Buffers
    GLint       rt_msaa_samples;
 
-   GLuint      rt_tex;
-   GLuint      rb_depth;
-   GLuint      rb_stencil;
-   GLuint      rb_depth_stencil;
-
-   GLenum      rt_fmt;
-   GLint       rt_internal_fmt;
-
-   GLenum      rb_depth_fmt;
-   GLenum      rb_stencil_fmt;
-   GLenum      rb_depth_stencil_fmt;
+   GLuint   rt_tex;
+   GLint    rt_internal_fmt;
+   GLenum   rt_fmt;
+   GLuint   rb_depth;
+   GLenum   rb_depth_fmt;
+   GLuint   rb_stencil;
+   GLenum   rb_stencil_fmt;
+   GLuint   rb_depth_stencil;
+   GLenum   rb_depth_stencil_fmt;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    EGLSurface  direct_sfc;
@@ -236,8 +233,8 @@ unsigned char 	(*glsym_glTestFenceNV) (GLuint fence) = NULL;
 void 	(*glsym_glGetFenceivNV) (GLuint fence, GLenum pname, GLint* params) = NULL;
 void 	(*glsym_glFinishFenceNV) (GLuint fence) = NULL;
 void 	(*glsym_glSetFenceNV) (GLuint, GLenum) = NULL;
-void    (*glsym_glRenderbufferStorageMultisampleIMG) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) = NULL;
-void    (*glsym_glFramebufferTexture2DMultisampleIMG) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples) = NULL;
+void    (*glsym_glRenderbufferStorageMultisample) (GLenum target, GLsizei samples, GLenum internalformat, GLsizei width, GLsizei height) = NULL;
+void    (*glsym_glFramebufferTexture2DMultisample) (GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level, GLsizei samples) = NULL;
 void 	(*glsym_glGetDriverControlsQCOM) (GLint* num, GLsizei size, GLuint* driverControls) = NULL;
 void 	(*glsym_glGetDriverControlStringQCOM) (GLuint driverControl, GLsizei bufSize, GLsizei* length, char* driverControlString) = NULL;
 void 	(*glsym_glEnableDriverControlQCOM) (GLuint driverControl) = NULL;
@@ -607,13 +604,10 @@ _gl_ext_sym_init(void)
    if (glsym_glExtGetShadersQCOM) _gl_ext_entries[9].supported = 1;
 
    /* GL_IMG_multisampled_render_to_texture */
-   FINDSYM(glsym_glRenderbufferStorageMultisampleIMG, "glRenderbufferStorageMultisampleIMG", glsym_func_void);
-   FINDSYM(glsym_glRenderbufferStorageMultisampleIMG, "glRenderbufferStorageMultisampleEXT", glsym_func_void);
-   FINDSYM(glsym_glFramebufferTexture2DMultisampleIMG, "glFramebufferTexture2DMultisampleIMG", glsym_func_void);
-   FINDSYM(glsym_glFramebufferTexture2DMultisampleIMG, "glFramebufferTexture2DMultisampleEXT", glsym_func_void);
-
-   if (glsym_glRenderbufferStorageMultisampleIMG) _gl_ext_entries[10].supported = 1;
-
+   FINDSYM(glsym_glRenderbufferStorageMultisample, "glRenderbufferStorageMultisampleIMG", glsym_func_void);
+   FINDSYM(glsym_glRenderbufferStorageMultisample, "glRenderbufferStorageMultisampleEXT", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture2DMultisample, "glFramebufferTexture2DMultisampleIMG", glsym_func_void);
+   FINDSYM(glsym_glFramebufferTexture2DMultisample, "glFramebufferTexture2DMultisampleEXT", glsym_func_void);
 
 }
 
@@ -2877,7 +2871,7 @@ eng_canvas_alpha_get(void *data, void *info __UNUSED__)
 static int
 _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum attach_fmt, int mult_samples)
 {
-   GLuint fbo, tex, rb;
+   GLuint fbo, tex, rb, ds_tex;
    int w, h, fb_status;
 
    // Width/Heith for test purposes
@@ -2900,7 +2894,7 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
         glBindTexture(GL_TEXTURE_2D, 0);
 
         if (mult_samples)
-           glsym_glFramebufferTexture2DMultisampleIMG(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0, mult_samples);
+           glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0, mult_samples);
         else
            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex, 0);
      }
@@ -2908,14 +2902,47 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
    // Render Target Attachment (Stencil or Depth)
    if (attachment)
      {
-        glGenRenderbuffers(1, &rb);
-        glBindRenderbuffer(GL_RENDERBUFFER, rb);
-        if (mult_samples)
-           glsym_glRenderbufferStorageMultisampleIMG(GL_RENDERBUFFER, mult_samples, attach_fmt, w, h);
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        // This is a little hacky but this is how we'll have to do for now.
+        if (attach_fmt == GL_DEPTH_STENCIL_OES)
+          {
+             glGenTextures(1, &ds_tex);
+             glBindTexture(GL_TEXTURE_2D, ds_tex);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+             glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, w, h,
+                          0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, NULL);
+             if (mult_samples)
+               {
+                  glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                                          GL_TEXTURE_2D, ds_tex, 0, mult_samples);
+                  glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                                          GL_TEXTURE_2D, ds_tex, 0, mult_samples);
+               }
+             else
+               {
+                  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                         GL_TEXTURE_2D, ds_tex, 0);
+                  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                         GL_TEXTURE_2D, ds_tex, 0);
+               }
+             glBindTexture(GL_TEXTURE_2D, 0);
+          }
         else
-           glRenderbufferStorage(GL_RENDERBUFFER, attach_fmt, w, h);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, rb);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+#endif
+          {
+             glGenRenderbuffers(1, &rb);
+             glBindRenderbuffer(GL_RENDERBUFFER, rb);
+             if (mult_samples)
+                glsym_glRenderbufferStorageMultisample(GL_RENDERBUFFER, mult_samples, attach_fmt, w, h);
+             else
+                glRenderbufferStorage(GL_RENDERBUFFER, attach_fmt, w, h);
+             glFramebufferRenderbuffer(GL_FRAMEBUFFER, attachment, GL_RENDERBUFFER, rb);
+             glBindRenderbuffer(GL_RENDERBUFFER, 0);
+          }
+
      }
 
    // Check FBO for completeness
@@ -2926,13 +2953,14 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
    glDeleteFramebuffers(1, &fbo);
    if (tex) glDeleteTextures(1, &tex);
+   if (ds_tex) glDeleteTextures(1, &ds_tex);
    if (rb) glDeleteRenderbuffers(1, &rb);
 
    if (fb_status != GL_FRAMEBUFFER_COMPLETE)
       return 0;
    else
      {
-        if ((attachment) && (!mult_samples)) 
+        if ((attachment) && (!mult_samples))
            return attach_fmt;
         else
            return 1;
@@ -2977,10 +3005,10 @@ _print_gl_surface_cap(Render_Engine *re, int error)
 static void
 _set_gl_surface_cap(Render_Engine *re)
 {
-   GLuint depth;
-   int w, h;
-   
-   int i, count;
+   GLuint fbo, tex, depth, stencil;
+   int w, h, max_samples;
+
+   int i, ret, count;
 
    if (!re) return;
    if (re->gl_cap_initted) return;
@@ -2995,8 +3023,8 @@ _set_gl_surface_cap(Render_Engine *re)
 
    // Check if msaa_support is supported
    if (max_samples &&
-       (glsym_glFramebufferTexture2DMultisampleIMG) &&
-       (glsym_glRenderbufferStorageMultisampleIMG))
+       (glsym_glFramebufferTexture2DMultisample) &&
+       (glsym_glRenderbufferStorageMultisample))
      {
         re->gl_cap.msaa_support = 1;
 
@@ -3025,14 +3053,16 @@ _set_gl_surface_cap(Render_Engine *re)
         re->gl_cap.rgb_888[i]   = _check_gl_surface_format(GL_RGB, GL_RGB, 0, 0, re->gl_cap.msaa_samples[i]);
         re->gl_cap.rgba_8888[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, 0, 0, re->gl_cap.msaa_samples[i]);
 
-        re->gl_cap.depth_8[i]   = _check_gl_surface_format(0, 0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.depth_16[i]  = _check_gl_surface_format(0, 0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.depth_24[i]  = _check_gl_surface_format(0, 0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24_OES, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.depth_32[i]  = _check_gl_surface_format(0, 0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT32_OES, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_8[i]   = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_16[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_24[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24_OES, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_32[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT32_OES, re->gl_cap.msaa_samples[i]);
 
-        re->gl_cap.stencil_1[i] = _check_gl_surface_format(0, 0, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX1_OES, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.stencil_4[i] = _check_gl_surface_format(0, 0, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX4_OES, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.stencil_8[i] = _check_gl_surface_format(0, 0, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX8, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.stencil_1[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX1_OES, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.stencil_4[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX4_OES, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.stencil_8[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX8, re->gl_cap.msaa_samples[i]);
+
+        re->gl_cap.depth_24_stencil_8[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_STENCIL_OES, GL_DEPTH_STENCIL_OES, re->gl_cap.msaa_samples[i]);
      }
 
 #else
@@ -3043,16 +3073,16 @@ _set_gl_surface_cap(Render_Engine *re)
         re->gl_cap.rgb_888[i]   = _check_gl_surface_format(GL_RGB, GL_RGB, 0, 0, re->gl_cap.msaa_samples[i]);
         re->gl_cap.rgba_8888[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, 0, 0, re->gl_cap.msaa_samples[i]);
 
-        re->gl_cap.depth_8[i]   = _check_gl_surface_format(0, 0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.depth_16[i]  = _check_gl_surface_format(0, 0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.depth_24[i]  = _check_gl_surface_format(0, 0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.depth_32[i]  = _check_gl_surface_format(0, 0, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT32, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_8[i]   = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_16[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT16, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_24[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT24, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_32[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_ATTACHMENT, GL_DEPTH_COMPONENT32, re->gl_cap.msaa_samples[i]);
 
-        re->gl_cap.stencil_1[i] = _check_gl_surface_format(0, 0, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX1, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.stencil_4[i] = _check_gl_surface_format(0, 0, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX4, re->gl_cap.msaa_samples[i]);
-        re->gl_cap.stencil_8[i] = _check_gl_surface_format(0, 0, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX8, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.stencil_1[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX1, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.stencil_4[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX4, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.stencil_8[i] = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_STENCIL_ATTACHMENT, GL_STENCIL_INDEX8, re->gl_cap.msaa_samples[i]);
 
-        re->gl_cap.depth_24_stencil_8[i]  = _check_gl_surface_format(0, 0, GL_DEPTH_STENCIL_ATTACHMENT, GL_DEPTH24_STENCIL8, re->gl_cap.msaa_samples[i]);
+        re->gl_cap.depth_24_stencil_8[i]  = _check_gl_surface_format(GL_RGBA, GL_RGBA, GL_DEPTH_STENCIL_ATTACHMENT, GL_DEPTH24_STENCIL8, re->gl_cap.msaa_samples[i]);
      }
 #endif
 
@@ -3083,7 +3113,7 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
               break;
            }
       default:
-         ERR("Color Format Not Supported!");
+         ERR("Color Format Not Supported: %d", cfg->color_format);
          _print_gl_surface_cap(re, 1);
          return 0;
      }
@@ -3121,7 +3151,7 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
               break;
            }
       default:
-         ERR("Unsupported Depth Bits Format!");
+         ERR("Unsupported Depth Bits Format: %d", cfg->depth_bits);
          _print_gl_surface_cap(re, 1);
          return 0;
      }
@@ -3152,11 +3182,12 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
               break;
            }
       case EVAS_GL_STENCIL_BIT_8:
-         if ((sfc->rb_depth_fmt == re->gl_cap.depth_24[0]) && (re->gl_cap.depth_24_stencil_8[0]))
+         if ((sfc->rb_depth_fmt == re->gl_cap.depth_24_stencil_8[0]) ||
+             (!(re->gl_cap.stencil_8[0]) && (re->gl_cap.depth_24_stencil_8[0])))
            {
               sfc->rb_depth_stencil_fmt = re->gl_cap.depth_24_stencil_8[0];
-              sfc->rb_stencil_fmt = re->gl_cap.stencil_8[0];
-              cfg->stencil_bits = EVAS_GL_STENCIL_BIT_8;
+              sfc->rb_stencil_fmt       = re->gl_cap.depth_24_stencil_8[0];
+              cfg->stencil_bits         = EVAS_GL_STENCIL_BIT_8;
               break;
            }
          else if (re->gl_cap.stencil_8[0])
@@ -3173,7 +3204,7 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
               break;
            }
       default:
-         ERR("Unsupported Stencil Bits Format!");
+         ERR("Unsupported Stencil Bits Format: %d", cfg->stencil_bits);
          _print_gl_surface_cap(re, 1);
          return 0;
      }
@@ -3222,7 +3253,11 @@ _create_rt_buffers(Render_Engine *data __UNUSED__,
    // First check if packed buffer is to be used.
    if (sfc->rb_depth_stencil_fmt)
      {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        glGenTextures(1, &sfc->rb_depth_stencil);
+#else
         glGenRenderbuffers(1, &sfc->rb_depth_stencil);
+#endif
         return;
      }
 
@@ -3257,25 +3292,41 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
         glBindTexture(GL_TEXTURE_2D, 0);
 
         if (sfc->rt_msaa_samples)
-           glsym_glFramebufferTexture2DMultisampleIMG(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sfc->rt_tex, 0, sfc->rt_msaa_samples);
+           glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sfc->rt_tex, 0, sfc->rt_msaa_samples);
         else
            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                               GL_TEXTURE_2D, sfc->rt_tex, 0);
+                                  GL_TEXTURE_2D, sfc->rt_tex, 0);
      }
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-#else
+
+
+
    // Depth Stencil RenderBuffer - Attach it to FBO
    if (sfc->rb_depth_stencil)
      {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        glBindTexture(GL_TEXTURE_2D, sfc->rb_depth_stencil);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, sfc->w, sfc->h,
+                     0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, NULL);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                               GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                               GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+#else
         glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_depth_stencil);
         glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_depth_stencil_fmt,
                               sfc->w, sfc->h);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
                                   GL_RENDERBUFFER, sfc->rb_depth_stencil);
         glBindRenderbuffer(GL_RENDERBUFFER, 0);
-     }
 #endif
+     }
 
    // Depth RenderBuffer - Attach it to FBO
    if (sfc->rb_depth)
@@ -3283,10 +3334,10 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
         glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_depth);
 
         if (sfc->rt_msaa_samples)
-           glsym_glRenderbufferStorageMultisampleIMG(GL_RENDERBUFFER,
-                                                     sfc->rt_msaa_samples,
-                                                     sfc->rb_depth_fmt,
-                                                     sfc->w, sfc->h);
+           glsym_glRenderbufferStorageMultisample(GL_RENDERBUFFER,
+                                                  sfc->rt_msaa_samples,
+                                                  sfc->rb_depth_fmt,
+                                                  sfc->w, sfc->h);
         else
            glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_depth_fmt,
                                  sfc->w, sfc->h);
@@ -3301,10 +3352,10 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
         glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_stencil);
 
         if (sfc->rt_msaa_samples)
-           glsym_glRenderbufferStorageMultisampleIMG(GL_RENDERBUFFER,
-                                                     sfc->rt_msaa_samples,
-                                                     sfc->rb_stencil_fmt,
-                                                     sfc->w, sfc->h);
+           glsym_glRenderbufferStorageMultisample(GL_RENDERBUFFER,
+                                                  sfc->rt_msaa_samples,
+                                                  sfc->rb_stencil_fmt,
+                                                  sfc->w, sfc->h);
         else
            glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_stencil_fmt,
                                  sfc->w, sfc->h);
@@ -3479,7 +3530,13 @@ eng_gl_surface_destroy(void *data, void *surface)
       glDeleteRenderbuffers(1, &sfc->rb_stencil);
 
    if (sfc->rb_depth_stencil)
-      glDeleteRenderbuffers(1, &sfc->rb_depth_stencil);
+     {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        glDeleteTextures(1, &sfc->rb_depth_stencil);
+#else
+        glDeleteRenderbuffers(1, &sfc->rb_depth_stencil);
+#endif
+     }
 
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
