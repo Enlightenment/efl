@@ -11,6 +11,7 @@ Additions:
    * Add elm_map_overlays_get & elm_map_overlay_visible_get functions.
    * Toolbar: Add elm_toolbar_standard_priority_set/get APIs.
    * Add elm_object_scroll_hold/freeze_get.
+   * Add ELM_CALENDAR_LAST_DAY_OF_MONTH enum type
 
 Fixes:
 

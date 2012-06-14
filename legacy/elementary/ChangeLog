@@ -188,3 +188,7 @@
 
         * Toolbar : Add the reorder feature when the more panel is shown.
           After the item is long-pressed, it can be moved.
+	
+2012-06-14 Michael Bouchaud
+	* Add an enum to Elm_Calendar_Mark_Repeat_Type:
+	ELM_CALENDAR_LAST_DAY_OF_MONTH
