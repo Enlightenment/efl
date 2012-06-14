@@ -425,6 +425,12 @@ _populate(Evas_Object *obj)
                  (mtime->tm_mday <= maxdays))
                _cit_mark(obj, mday_it, mark->mark_type);
              break;
+
+           case ELM_CALENDAR_LAST_DAY_OF_MONTH:
+             if (((mtime->tm_year < year) ||
+                  ((mtime->tm_year == year) && (mtime->tm_mon <= month))))
+               _cit_mark(obj, maxdays + sd->first_day_it - 1, mark->mark_type);
+             break;
           }
      }
 }

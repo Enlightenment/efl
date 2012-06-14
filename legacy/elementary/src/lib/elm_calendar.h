@@ -49,7 +49,8 @@ typedef enum
    ELM_CALENDAR_DAILY, /**< Marks will be displayed every day after event day (inclusive). */
    ELM_CALENDAR_WEEKLY, /**< Marks will be displayed every week after event day (inclusive) - i.e. each seven days. */
    ELM_CALENDAR_MONTHLY, /**< Marks will be displayed every month day that coincides to event day. E.g.: if an event is set to 30th Jan, no marks will be displayed on Feb, but will be displayed on 30th Mar*/
-   ELM_CALENDAR_ANNUALLY /**< Marks will be displayed every year that coincides to event day (and month). E.g. an event added to 30th Jan 2012 will be repeated on 30th Jan 2013. */
+   ELM_CALENDAR_ANNUALLY, /**< Marks will be displayed every year that coincides to event day (and month). E.g. an event added to 30th Jan 2012 will be repeated on 30th Jan 2013. */
+   ELM_CALENDAR_LAST_DAY_OF_MONTH /**< Marks will be displayed every last day of month after event day (inclusive).  @since 1.1.0 */
 } _Elm_Calendar_Mark_Repeat_Type;
 
 /**
