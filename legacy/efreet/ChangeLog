@@ -123,3 +123,7 @@
 2012-06-07  Mike Blumenkrantz
 
         * Support XDG_DESKTOP_DIR
+
+2012-06-14  Mike Blumenkrantz
+
+        * Added efreet_dirs_reset() to delete cached env variable information
