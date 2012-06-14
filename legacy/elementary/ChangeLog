@@ -184,3 +184,7 @@
 
         * Fix elm_config_font_overlay_apply() to also apply rescaling properly.
 
+2012-06-14 Jaehwan Kim
+
+        * Toolbar : Add the reorder feature when the more panel is shown.
+          After the item is long-pressed, it can be moved.

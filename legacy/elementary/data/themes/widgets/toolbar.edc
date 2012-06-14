@@ -402,6 +402,11 @@ group { name: "elm/toolbar/item/default";
             visible: 0;
             color: 255 255 255 0;
          }
+         description { state: "moving" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 100;
+         }
       }
       part { name: "elm.swallow.icon";
          type: SWALLOW;
@@ -604,6 +609,12 @@ group { name: "elm/toolbar/item/default";
          target:  "elm.text_new";
          target:  "label2_new";
          transition: LINEAR 0.1;
+      }
+      program { name: "moving";
+         signal: "elm,state,moving";
+         source: "elm";
+         action: STATE_SET "moving" 0.0;
+         target: "bg";
       }
       program { name: "go";
          signal:  "mouse,clicked,1";
