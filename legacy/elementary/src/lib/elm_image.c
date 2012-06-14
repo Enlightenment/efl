@@ -270,7 +270,7 @@ _elm_image_smart_size_get(const Evas_Object *obj,
                           int *h)
 {
    int tw, th;
-   int cw, ch;
+   int cw = 0, ch = 0;
    const char *type;
 
    ELM_IMAGE_DATA_GET(obj, sd);
@@ -283,7 +283,9 @@ _elm_image_smart_size_get(const Evas_Object *obj,
    else
      evas_object_image_size_get(sd->img, &tw, &th);
 
-   evas_object_geometry_get(sd->img, NULL, NULL, &cw, &ch);
+   if ((sd->scale_up) || (sd->scale_down))
+     evas_object_geometry_get(sd->img, NULL, NULL, &cw, &ch);
+
    tw = tw > cw ? tw : cw;
    th = th > ch ? th : ch;
    tw = ((double)tw) * sd->scale;
@@ -766,6 +768,7 @@ _elm_image_smart_sizing_eval(Evas_Object *obj)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    int w, h;
+   double ts;
 
    ELM_IMAGE_DATA_GET(obj, sd);
 
@@ -780,19 +783,40 @@ _elm_image_smart_sizing_eval(Evas_Object *obj)
      ELM_IMAGE_CLASS(ELM_WIDGET_DATA(sd)->api)->scale_set
        (obj, elm_widget_scale_get(obj) * elm_config_scale_get());
 
+   ts = sd->scale;
+   sd->scale = 1.0;
    ELM_IMAGE_CLASS(ELM_WIDGET_DATA(sd)->api)->size_get(obj, &w, &h);
+   sd->scale = ts;
 
-   if (!sd->scale_down)
+   if (sd->no_scale)
      {
-        minw = w;
-        minh = h;
+        maxw = minw = w;
+        maxh = minh = h;
+        if ((sd->scale > 1.0) && (sd->scale_up))
+          {
+             maxw = minw = w * sd->scale;
+             maxh = minh = h * sd->scale;
+          }
+        else if ((sd->scale < 1.0) && (sd->scale_down))
+          {
+             maxw = minw = w * sd->scale;
+             maxh = minh = h * sd->scale;
+          }
      }
-   if (!sd->scale_up)
+   else
      {
-        maxw = w;
-        maxh = h;
+        if (!sd->scale_down)
+          {
+             minw = w * sd->scale;
+             minh = h * sd->scale;
+          }
+        if (!sd->scale_up)
+          {
+             maxw = w * sd->scale;
+             maxh = h * sd->scale;
+          }
      }
-
+   
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }

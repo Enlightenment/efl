@@ -633,7 +633,7 @@ _theme_hook(Evas_Object *obj)
 
         elm_smart_scroller_object_theme_set(obj, wd->scr, "list", "base",
                                             elm_widget_style_get(obj));
-        //        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
+        edje_object_scale_set(wd->scr, elm_widget_scale_get(obj) * _elm_config->scale);
         edj = elm_smart_scroller_edje_object_get(wd->scr);
         str = edje_object_data_get(edj, "focus_highlight");
         if ((str) && (!strcmp(str, "on")))
@@ -1309,6 +1309,7 @@ _fix_items(Evas_Object *obj)
         wd->minh[1] = minh[1];
         redo = 1;
      }
+
    i = 0;
    EINA_LIST_FOREACH(wd->items, l, it)
      {
