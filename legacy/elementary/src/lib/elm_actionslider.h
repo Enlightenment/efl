@@ -31,7 +31,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * @li @c "selected" - when user selects an enabled position (the
- *              label is passed as event info)".
+ *              label is passed as event info).
  * @li @c "pos_changed" - when the indicator reaches any of the
  *                 positions("left", "right" or "center").
  *
