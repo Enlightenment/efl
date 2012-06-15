@@ -227,7 +227,7 @@ EAPI void                         elm_slider_indicator_format_function_set(Evas_
  * @param func The units format function.
  * @param free_func The freeing function for the format string.
  *
- * Set the callback function to format the indicator string.
+ * Set the callback function to format the units string.
  *
  * @see elm_slider_units_format_set() for more info on how this works.
  *
