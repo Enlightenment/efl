@@ -156,7 +156,7 @@ widget-preview: widget-build
 		convert $(top_builddir)/doc/html/img/widget/$${DIR}/$${SS} $(top_builddir)/doc/latex/img/widget/$${DIR}/$${SS/.png/.eps} ; \
 	done
 
-widget-tree-figures: widget-build
+widget-tree-figures: doc
 	$(srcdir)/widget_hierarchy.py --scan -d $(top_srcdir)/src/lib -o $(builddir)/widget_tree.p;
 	$(srcdir)/widget_hierarchy.py --tree -i $(builddir)/widget_tree.p > $(builddir)/widgets_tree.dot;
 	dot -Tpng -o $(top_srcdir)/doc/img/elm-widget-tree.png $(top_builddir)/doc/widgets_tree.dot;
@@ -181,7 +181,7 @@ gen-doc:
 
 #run the last rule whenever the elm widget tree changes
 #commit the changed pictures, then. depends on python and graphviz
-doc: all doc-clean widget-preview gen-doc #widget-tree-figures
+doc: all doc-clean widget-preview gen-doc
 	@echo "Entering src/examples/"
 	$(MAKE) -C $(top_builddir)/src/examples screenshots
 	rm -rf $(PACKAGE_DOCNAME).tar*
