@@ -28,6 +28,9 @@ static const char WIN_SMART_NAME[] = "elm_win";
   if (!obj || !elm_widget_type_check((obj), WIN_SMART_NAME, __func__)) \
     return
 
+#define ENGINE_COMPARE(name) \
+  (_elm_preferred_engine && !strcmp(_elm_preferred_engine, name))
+
 typedef struct _Elm_Win_Smart_Data Elm_Win_Smart_Data;
 
 struct _Elm_Win_Smart_Data
@@ -1270,7 +1273,6 @@ _elm_ee_xwin_get(const Ecore_Evas *ee)
    Ecore_X_Window xwin = 0;
 
    if (!ee) return 0;
-#define ENGINE_COMPARE(name) (_elm_preferred_engine && !strcmp(_elm_preferred_engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      {
         if (ee) xwin = ecore_evas_software_x11_window_get(ee);
@@ -1301,7 +1303,6 @@ _elm_ee_xwin_get(const Ecore_Evas *ee)
      }
    return xwin;
 
-#undef ENGINE_COMPARE
 #endif
    return 0;
 }
@@ -1963,9 +1964,6 @@ elm_win_add(Evas_Object *parent,
              (ecore_evas_engine_name_get(tmp_sd.ee));                 \
       } while (0)
 
-#define ENGINE_COMPARE(name) \
-  (_elm_preferred_engine && !strcmp(_elm_preferred_engine, name))
-
    switch (type)
      {
       case ELM_WIN_INLINED_IMAGE:
@@ -2236,8 +2234,6 @@ elm_win_add(Evas_Object *parent,
      _elm_win_frame_add(sd, "default");
    else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
      _elm_win_frame_add(sd, "default");
-
-#undef ENGINE_COMPARE
 
    if (_elm_config->focus_highlight_enable)
      elm_win_focus_highlight_enabled_set(obj, EINA_TRUE);
@@ -2619,7 +2615,6 @@ elm_win_fullscreen_set(Evas_Object *obj,
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
    // YYY: handle if sd->img_obj
-#define ENGINE_COMPARE(name) (_elm_preferred_engine && !strcmp(_elm_preferred_engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
      {
@@ -2634,7 +2629,6 @@ elm_win_fullscreen_set(Evas_Object *obj,
         _elm_win_xwin_update(sd);
 #endif
      }
-#undef ENGINE_COMPARE
 }
 
 EAPI Eina_Bool
@@ -2643,7 +2637,6 @@ elm_win_fullscreen_get(const Evas_Object *obj)
    ELM_WIN_CHECK(obj) EINA_FALSE;
    ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
 
-#define ENGINE_COMPARE(name) (_elm_preferred_engine && !strcmp(_elm_preferred_engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
      {
@@ -2654,7 +2647,6 @@ elm_win_fullscreen_get(const Evas_Object *obj)
      {
         return sd->fullscreen;
      }
-#undef ENGINE_COMPARE
 }
 
 EAPI void
