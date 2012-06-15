@@ -92,6 +92,17 @@ _edje_user_definition_free(Edje_User_Defined *eud)
 	child = eud->u.swallow.child;
 	rp = _edje_real_part_recursive_get(eud->ed, eud->part);
 	_edje_real_part_swallow_clear(rp);
+	rp->swallowed_object = NULL;
+	rp->swallow_params.min.w = 0;
+	rp->swallow_params.min.h = 0;
+	rp->swallow_params.max.w = 0; 
+	rp->swallow_params.max.h = 0;     
+	rp->edje->dirty = 1;
+	rp->edje->recalc_call = 1;        
+#ifdef EDJE_CALC_CACHE
+	rp->invalidate = 1;  
+#endif
+	_edje_recalc(rp->edje);
 	break;
       case EDJE_USER_BOX_PACK:
 	child = eud->u.box.child;
@@ -2820,7 +2831,6 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
           }
 
         _edje_real_part_swallow_clear(rp);
-
 	rp->swallowed_object = NULL;
 	rp->swallow_params.min.w = 0;
 	rp->swallow_params.min.h = 0;
@@ -4925,9 +4935,6 @@ _edje_object_part_swallow_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
           _edje_user_definition_free(eud);
           break;
        }
-
-   _edje_real_part_swallow_clear(rp);
-   rp->swallowed_object = NULL;
 
    return;
 }
