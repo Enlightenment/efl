@@ -101,18 +101,19 @@ _evas_event_object_list_raw_in_get(Evas *e, Eina_List *in,
                {
                   inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
 
-                  if ((obj->cur.usemap) && (obj->cur.map) &&
-                      (obj->cur.map->count == 4))
+                  if (inside)
                     {
-                       if ((inside) &&
-                           (!evas_map_coords_get(obj->cur.map, x, y,
-                                                 &(obj->cur.map->mx),
-                                                 &(obj->cur.map->my), 0)))
+                       if ((obj->cur.usemap) && (obj->cur.map) &&
+                           (obj->cur.map->count == 4))
                          {
-                            inside = 0;
+                            if (!evas_map_coords_get(obj->cur.map, x, y,
+                                                     &(obj->cur.map->mx),
+                                                     &(obj->cur.map->my), 0))
+                              {
+                                 inside = 0;
+                              }
                          }
                     }
-
                   if (inside && ((!obj->precise_is_inside) ||
                                  (evas_object_is_inside(obj, x, y))))
                     {
