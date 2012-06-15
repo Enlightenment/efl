@@ -822,7 +822,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
       _evas_render_has_map(obj));
    if (_evas_render_has_map(obj))
      {
-	RGBA_Map_Point *pts;
+        RGBA_Map_Point *pts;
         int sw, sh;
         Eina_Bool changed = EINA_FALSE, rendered = EINA_FALSE;
 
@@ -839,8 +839,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              return clean_them;
           }
 
-	evas_object_map_update(obj, off_x, off_y, sw, sh, sw, sh);
-	pts = obj->spans->pts;
+        evas_object_map_update(obj, off_x, off_y, sw, sh, sw, sh);
+        pts = obj->spans->pts;
 
         if (obj->cur.map->surface)
           {
@@ -1354,9 +1354,9 @@ evas_render_updates_internal(Evas *e,
           {
              e->framespace.clip = evas_object_rectangle_add(e);
              evas_object_color_set(e->framespace.clip, 255, 255, 255, 255);
-             evas_object_move(e->framespace.clip, 
+             evas_object_move(e->framespace.clip,
                               e->framespace.x, e->viewport.y);
-             evas_object_resize(e->framespace.clip, 
+             evas_object_resize(e->framespace.clip,
                                 e->viewport.w - e->framespace.w, e->viewport.h);
              evas_object_show(e->framespace.clip);
           }
@@ -1365,12 +1365,12 @@ evas_render_updates_internal(Evas *e,
              /* master clip is already present. check for size changes in the 
               * viewport, and update master clip size if needed */
              if ((e->viewport.changed) || (e->output.changed))
-               evas_object_resize(e->framespace.clip, 
-                                  e->viewport.w - e->framespace.w, 
+               evas_object_resize(e->framespace.clip,
+                                  e->viewport.w - e->framespace.w,
                                   e->viewport.h);
           }
 
-        EINA_RECTANGLE_SET(&clip_rect, 
+        EINA_RECTANGLE_SET(&clip_rect,
                            e->framespace.clip->cur.geometry.x,
                            e->framespace.clip->cur.geometry.y,
                            e->framespace.clip->cur.geometry.w,
@@ -1387,10 +1387,10 @@ evas_render_updates_internal(Evas *e,
              Evas_Object *pclip;
 
              obj = eina_array_data_get(&e->render_objects, i);
-             if (evas_object_is_frame_object_get(obj)) 
+             if (evas_object_is_frame_object_get(obj))
                continue;
 
-             EINA_RECTANGLE_SET(&obj_rect, 
+             EINA_RECTANGLE_SET(&obj_rect,
                                 obj->cur.geometry.x, obj->cur.geometry.y,
                                 obj->cur.geometry.w, obj->cur.geometry.h);
 
