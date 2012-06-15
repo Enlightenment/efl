@@ -507,9 +507,9 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
         obj = eina_array_data_get(pending_objects, i);
         if (!obj->layer) goto clean_stuff;
 
-        parent = evas_object_smart_parent_get(obj);
-        if (parent && _evas_render_has_map(parent))
-          goto clean_stuff;
+       //If the children are in active objects, They should be cleaned up.
+       if (obj->changed_map && _evas_render_has_map(obj))
+         goto clean_stuff;
 
         evas_object_clip_recalc(obj);
         is_active = evas_object_is_active(obj);
