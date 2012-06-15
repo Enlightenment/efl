@@ -9122,6 +9122,328 @@ EAPI void                                     evas_object_textblock_size_formatt
  */
 EAPI void                                     evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
 EAPI void                                     evas_object_textblock_style_insets_get(const Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b) EINA_ARG_NONNULL(1);
+
+/**
+ * @}
+ */
+
+
+/**
+ * @defgroup Evas_Object_Textgrid Textgrid Object Functions
+ *
+ * @todo put here some usage examples
+ *
+ * @since 1.3
+ *
+ * @ingroup Evas_Object_Specific
+ *
+ * @{
+ */
+
+/**
+ * @typedef Evas_Textgrid_Palette
+ *
+ * The palette to use for the forgraound and background colors.
+ *
+ * @since 1.3
+ */
+typedef enum
+{
+   EVAS_TEXTGRID_PALETTE_NONE,     /**< No palette is used */
+   EVAS_TEXTGRID_PALETTE_STANDARD, /**< standard palette (around 16 colors) */
+   EVAS_TEXTGRID_PALETTE_EXTENDED, /**< extended palette (at max 256 colors) */
+   EVAS_TEXTGRID_PALETTE_LAST      /**< ignore it */
+} Evas_Textgrid_Palette;
+
+/**
+ * @typedef Evas_Textgrid_Font_Style
+ *
+ * The style to give to each character of the grid.
+ *
+ * @since 1.3
+ */
+typedef enum
+{
+   EVAS_TEXTGRID_FONT_STYLE_NORMAL = (1 << 0), /**< Normal style */
+   EVAS_TEXTGRID_FONT_STYLE_BOLD   = (1 << 1), /**< Bold style */
+   EVAS_TEXTGRID_FONT_STYLE_ITALIC = (1 << 2)  /**< Oblique style */
+} Evas_Textgrid_Font_Style;
+
+/**
+ * @typedef Evas_Textgrid_Cell
+ *
+ * The values that describes each cell.
+ *
+ * @since 1.3
+ */
+typedef struct _Evas_Textgrid_Cell Evas_Textgrid_Cell;
+
+/**
+ * @struct _Evas_Textgrid_Cell
+ *
+ * The values that describes each cell.
+ *
+ * @since 1.3
+ */
+struct _Evas_Textgrid_Cell
+{
+   Eina_Unicode   codepoint;         /**< the UNICODE value of the character */
+   unsigned char  fg;                /**< the index of the palette for the foreground color */
+   unsigned char  bg;                /**< the index of the palette for the background color */
+   unsigned short bold          : 1; /**< whether the character is bold */
+   unsigned short italic        : 1; /**< whether the character is oblique */
+   unsigned short underline     : 1; /**< whether the character is underlined */
+   unsigned short strikethrough : 1; /**< whether the character is strikethrough'ed */
+   unsigned short fg_extended   : 1; /**< whether the extended palette is used for the foreground color */
+   unsigned short bg_extended   : 1; /**< whether the extended palette is used for the background color */
+};
+
+/**
+ * @brief Add a textgrid to the given Evas.
+ *
+ * @param e The given evas.
+ * @return The new textgrid object.
+ *
+ * This function adds a new textgrid object to the Evas @p e and returns the object.
+ *
+ * @since 1.3
+ */
+EAPI Evas_Object *evas_object_textgrid_add(Evas *e);
+
+/**
+ * @brief Set the size of the textgrid object.
+ *
+ * @param obj The textgrid object.
+ * @param nbr_lines The number of lines of the grid.
+ * @param nbr_columns The number of columns of the grid.
+ *
+ * This function sets the number of lines @p nbr_lines and the number
+ * of columns @p nbr_columns to the textgrid object @p obj. If
+ * @p nbr_lines or @p nbr_columns are less or equal than 0, this
+ * functiond does nothing.
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_size_set(Evas_Object *obj, int nbr_lines, int nbr_columns);
+
+/**
+ * @brief Get the size of the textgrid object.
+ *
+ * @param obj The textgrid object.
+ * @param nbr_lines The number of lines of the grid.
+ * @param nbr_columns The number of columns of the grid.
+ *
+ * This function retrieves the number of lines in the buffer @p
+ * nbr_lines and the number of columns in the buffer @p nbr_columns of
+ * the textgrid object @p obj. @p nbr_lines or @p nbr_columns can be
+ * @c NULL. On error, their value is 0.
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_size_get(Evas_Object *obj, int *nbr_lines, int *nbr_columns);
+
+/**
+ * @brief Set the font (source) file to be used on a given textgrid object.
+ *
+ * @param obj The textgrid object to set font for.
+ * @param font_source The font file's path.
+ *
+ * This function allows the font file @p font_source to be explicitly
+ * set for the textgrid object @p obj, overriding system lookup, which
+ * will first occur in the given file's contents. If @font_source is
+ * @c NULL or is an empty string, or the same font_source has already
+ * been set, or on error, this function does nothing.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_font_source_set(Evas_Object *obj, const char *font_source);
+
+/**
+ * @brief Get the font file's path which is being used on a given textgrid object.
+ *
+ * @param obj The textgrid object to set font for.
+ * @return The font file's path.
+ *
+ * This function returns the font source path of the textgrid object
+ * @p obj. If the font source path has not been set, or on error,
+ * @c NULL is returned.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_set()
+ *
+ * @since 1.3
+ */
+EAPI const char *evas_object_textgrid_font_source_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the font family and size on a given textgrid object.
+ *
+ * @param obj The textgrid object to set font for.
+ * @param font_name The font (family) name.
+ * @param font_size The font size, in points.
+ *
+ * This function allows the font name @p font_name and size
+ * @p font_size of the textgrid object @p obj to be set. The @p font_name
+ * string has to follow fontconfig's convention on naming fonts, as
+ * it's the underlying library used to query system fonts by Evas (see
+ * the @c fc-list command's output, on your system, to get an
+ * idea). It also has to be a monospace font. If @p font_name is
+ * @c NULL, or if it is an empty string, or if @p font_size is less or
+ * equal than 0, or on error, this function does nothing.
+ *
+ * @see evas_object_textgrid_font_get()
+ * @see evas_object_textgrid_font_source_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font_Size font_size);
+
+/**
+ * @brief Retrieve the font family and size in use on a given textgrid object.
+ *
+ * @param obj The textgrid object to query for font information.
+ * @param font_name A pointer to the location to store the font name in.
+ * @param font_size A pointer to the location to store the font size in.
+ *
+ * This function allows the font name and size of a textgrid object
+ * @p obj to be queried and stored respectively in the buffers
+ * @p font_name and @p font_size. Be aware that the font name string is
+ * still owned by Evas and should @b not have free() called on it by
+ * the caller of the function. On error, the font name is the empty
+ * string and the font size is 0. @p font_name and @p font_source can
+ * be @c NULL.
+ *
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_font_source_set()
+ * @see evas_object_textgrid_font_source_get()
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_font_get(const Evas_Object *obj, const char **font_name, Evas_Font_Size *font_size);
+
+/**
+ * @brief Retrieve the size of a cell of the given textgrid object in pixels.
+ *
+ * @param obj The textgrid object to query for font information.
+ * @param width A pointer to the location to store the width in pixels of a cell.
+ * @param height A pointer to the location to store the height in
+ * pixels of a cell.
+ *
+ * This functions retrieves the width and height, in pixels, of a cell
+ * of the textgrid object @p obj and store them respectively in the
+ * buffers @p width and @p height. Their value depends on the
+ * monospace font used for the textgrid object, as well as the
+ * style. @p width and @p height can be @c NULL. On error, they are
+ * set to 0.
+ *
+ * @see evas_object_textgrid_font_set()
+ * @see evas_object_textgrid_supported_font_styles_set()
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_cell_size_get(Evas_Object *obj, int *width, int *height);
+
+/**
+ * @brief The set color to the given palette at the given index of the given textgrid object.
+ *
+ * @param obj The textgrid object to query for font information.
+ * @param pal The type of the palette to set the color.
+ * @param idx The index of the paletter to wich the color is stored.
+ * @param r The red component of the color.
+ * @param g The green component of the color.
+ * @param b The blue component of the color.
+ * @param a The alpha component of the color.
+ *
+ * This function sets the color for the palette of type @p pal at the
+ * index @p idx of the textgrid object @p obj. The ARGB components are
+ * given by @p r, @p g, @p b and @p a. This color can be used when
+ * setting the #Evas_Textgrid_Cell structure. The components must set
+ * a pre-multiplied color. If pal is #EVAS_TEXTGRID_PALETTE_NONE or
+ * #EVAS_TEXTGRID_PALETTE_LAST, or if @p idx is not between 0 and 255,
+ * or on error, this function does nothing. The color components are
+ * clamped between 0 and 255. If @p idx is greater than the latest set
+ * color, the colors between this last index and @p idx - 1 are set to
+ * black (0, 0, 0, 0).
+ *
+ * @see evas_object_textgrid_palette_get()
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_palette_set(Evas_Object *obj, Evas_Textgrid_Palette pal, int idx, int r, int g, int b, int a);
+
+/**
+ * @brief The retrieve color to the given palette at the given index of the given textgrid object.
+ *
+ * @param obj The textgrid object to query for font information.
+ * @param pal The type of the palette to set the color.
+ * @param idx The index of the paletter to wich the color is stored.
+ * @param r A pointer to the red component of the color.
+ * @param g A pointer to the green component of the color.
+ * @param b A pointer to the blue component of the color.
+ * @param a A pointer to the alpha component of the color.
+ *
+ * This function retrieves the color for the palette of type @p pal at the
+ * index @p idx of the textgrid object @p obj. The ARGB components are
+ * stored in the buffers @p r, @p g, @p b and @p a. If @p idx is not
+ * between 0 and the index of the latest set color, or if @p pal is
+ * #EVAS_TEXTGRID_PALETTE_NONE or #EVAS_TEXTGRID_PALETTE_LAST, the
+ * values of the components are 0. @p r, @p g, @pb and @p a can be
+ * @c NULL.
+ *
+ * @see evas_object_textgrid_palette_set()
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_palette_get(Evas_Object *obj, Evas_Textgrid_Palette pal, int idx, int *r, int *g, int *b, int *a);
+
+EAPI void evas_object_textgrid_supported_font_styles_set(Evas_Object *obj, Evas_Textgrid_Font_Style styles);
+
+EAPI Evas_Textgrid_Font_Style evas_object_textgrid_supported_font_styles_get(Evas_Object *obj);
+
+/**
+ * @brief Set the string at the given row of the given textgrid object.
+ *
+ * @param obj The textgrid object to query for font information.
+ * @param y The row index of the grid.
+ * @param The string as a sequence of #Evas_Textgrid_Cell.
+ *
+ * This function sets the characters of the textgrid object @p obj at
+ * the row @p y. The string is stored in the array @p row. This array
+ * must have the number of columns of the grid. If @p row id @c NULL
+ * or if @p y is not between 0 and the number of lines of the grid -
+ * 1, this function does nothing.
+ *
+ * @see evas_object_textgrid_cellrow_get()
+ * @see evas_object_textgrid_size_set()
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_cellrow_set(Evas_Object *obj, int y, const Evas_Textgrid_Cell *row);
+
+/**
+ * @brief Get the string at the given row of the given textgrid object.
+ *
+ * @param obj The textgrid object to query for font information.
+ * @param y The row index of the grid.
+ * @return A pointer to the first cell of the given row.
+ *
+ * This function returns a pointer to the first cell of the line @p y
+ * of the textgrid object @p obj. If @p y is not between 0 and the
+ * number of lines of the grid - 1, or on error, this function return @c NULL.
+ *
+ * @see evas_object_textgrid_cellrow_set()
+ * @see evas_object_textgrid_size_set()
+ *
+ * @since 1.3
+ */
+EAPI Evas_Textgrid_Cell *evas_object_textgrid_cellrow_get(Evas_Object *obj, int y);
+
 /**
  * @}
  */

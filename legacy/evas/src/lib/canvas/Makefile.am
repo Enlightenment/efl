@@ -44,6 +44,7 @@ evas_object_box.c \
 evas_object_table.c \
 evas_object_text.c \
 evas_object_textblock.c \
+evas_object_textgrid.c \
 evas_object_grid.c \
 evas_font_dir.c \
 evas_rectangle.c \

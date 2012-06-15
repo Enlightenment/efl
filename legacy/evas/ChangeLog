@@ -809,3 +809,8 @@
 2012-06-14  Cedric Bail
 
 	* Cache convertion from Evas_Map to RGBA_Map.
+
+
+2012-06-15  Vincent Torri
+
+	* Add Textgrid object.

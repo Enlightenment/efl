@@ -3,6 +3,10 @@ Evas 1.3.0
 Changes since Evas 1.2.0:
 -------------------------
 
+Additions:
+
+   * Textgrid object.
+
 Improvements:
    * Lock less font rendering.
    * Reduce cost of propagating event by limiting the object we explore by using a bouncing box.
