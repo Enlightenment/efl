@@ -270,6 +270,7 @@ evas_object_smart_members_get(const Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!obj->smart.smart) return NULL;
    o = (Evas_Object_Smart *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
    return NULL;
@@ -290,6 +291,7 @@ evas_object_smart_members_get_direct(const Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!obj->smart.smart) return NULL;
    o = (Evas_Object_Smart *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
    return NULL;
