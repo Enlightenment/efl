@@ -621,16 +621,15 @@ em_pos_set(void   *video,
            double  pos)
 {
    Emotion_Gstreamer_Video *ev;
-   gboolean res;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
    if (!ev->pipeline) return ;
 
    if (ev->play)
-     res = gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
+     gst_element_set_state(ev->pipeline, GST_STATE_PAUSED);
 
-   res = gst_element_seek(ev->pipeline, 1.0,
+   gst_element_seek(ev->pipeline, 1.0,
                           GST_FORMAT_TIME,
                           GST_SEEK_FLAG_ACCURATE | GST_SEEK_FLAG_FLUSH,
                           GST_SEEK_TYPE_SET,
@@ -638,7 +637,7 @@ em_pos_set(void   *video,
                           GST_SEEK_TYPE_NONE, -1);
 
    if (ev->play)
-     res = gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
+     gst_element_set_state(ev->pipeline, GST_STATE_PLAYING);
 }
 
 static double
