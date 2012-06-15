@@ -229,6 +229,23 @@ EAPI void                         elm_progressbar_unit_format_set(Evas_Object *o
 EAPI const char                  *elm_progressbar_unit_format_get(const Evas_Object *obj);
 
 /**
+ * Set the format function pointer for the units label
+ *
+ * @param obj The progress bar object
+ * @param func The unit format function
+ * @param free_func The freeing function for the format string.
+ *
+ * Set the callback function to format the unit string.
+ *
+ * @see elm_progressbar_unit_format_set() for more info on how this works.
+ *
+ * @since 1.1.0
+ *
+ * @ingroup Progressbar
+ */
+EAPI void                         elm_progressbar_unit_format_function_set(Evas_Object *obj, char *(func)(double), void (*free_func) (char *));
+
+/**
  * Set the orientation of a given progress bar widget
  *
  * @param obj The progress bar object

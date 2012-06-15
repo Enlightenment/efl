@@ -192,3 +192,7 @@
 2012-06-14 Michael Bouchaud
 	* Add an enum to Elm_Calendar_Mark_Repeat_Type:
 	ELM_CALENDAR_LAST_DAY_OF_MONTH
+
+2012-06-15 Michael Bouchaud
+	* elm_progressbar: elm_progressbar_format_function_set to add a callback
+	function to format the unit string.

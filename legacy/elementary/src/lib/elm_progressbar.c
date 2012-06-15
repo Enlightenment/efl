@@ -23,6 +23,9 @@ struct _Elm_Progressbar_Smart_Data
    Eina_Bool             inverted : 1;
    Eina_Bool             pulse : 1;
    Eina_Bool             pulse_state : 1;
+
+   char                 *(*unit_format_func)(double val);
+   void                  (*unit_format_free)(char *str);
 };
 
 #define ELM_PROGRESSBAR_DATA_GET(o, sd) \
@@ -74,7 +77,15 @@ _units_set(Evas_Object *obj)
 {
    ELM_PROGRESSBAR_DATA_GET(obj, sd);
 
-   if (sd->units)
+   if (sd->unit_format_func)
+     {
+        char *buf;
+
+        buf = sd->unit_format_func(sd->val);
+        elm_layout_text_set(obj, "elm.text.status", buf);
+        if (sd->unit_format_free) sd->unit_format_free(buf);
+     }
+   else if (sd->units)
      {
         char buf[1024];
 
@@ -426,6 +437,19 @@ elm_progressbar_unit_format_get(const Evas_Object *obj)
    ELM_PROGRESSBAR_DATA_GET(obj, sd);
 
    return sd->units;
+}
+
+EAPI void
+elm_progressbar_unit_format_function_set(Evas_Object *obj, char *(func)(double), void (*free_func) (char *))
+{
+   ELM_PROGRESSBAR_CHECK(obj);
+   ELM_PROGRESSBAR_DATA_GET(obj, sd);
+
+   sd->unit_format_func = func;
+   sd->unit_format_free = free_func;
+
+   _units_set(obj);
+   elm_layout_sizing_eval(obj);
 }
 
 EAPI void
