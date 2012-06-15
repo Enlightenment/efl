@@ -794,7 +794,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
 
    evas_object_clip_recalc(obj);
    RDI(level);
-   RD("      { evas_render_mapped(%p, %p,   %p, %p,   %i, %i,   %i,   %i)\n", e, obj, context, surface, off_x, off_y, mapped, level);
+   RD("      { evas_render_mapped(%p, %p,   %p, %p,   %i, %i,   %i)\n", e, obj, context, surface, off_x, off_y, mapped);
    if (mapped)
      {
         if ((!evas_object_is_visible(obj)) || (obj->clip.clipees) ||
