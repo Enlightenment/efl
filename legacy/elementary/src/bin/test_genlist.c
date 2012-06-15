@@ -904,8 +904,8 @@ test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(win);
 }
 
-
 /*************/
+
 static void
 my_gl_item_check_changed2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -2013,6 +2013,8 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(win);
 }
 
+/*************/
+
 char *gl12_text_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    return strdup("Enlightenment is not just a window manager for Linux/X11 and others, but also a whole suite of libraries to help you create beautiful user interfaces with much less work than doing it the old fashioned way and fighting with traditional toolkits, not to mention a traditional window manager. It covers uses from small mobile devices like phones all the way to powerful multi-core desktops (which are the primary development environment).");
@@ -2060,6 +2062,8 @@ test_genlist12(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(win, 400, 500);
    evas_object_show(win);
 }
+
+/*************/
 
 static int
 gl13_cmp(const void *pa, const void *pb)
@@ -2145,6 +2149,8 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
+
+/*************/
 
 static void
 my_gl_insert_before_rel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -2368,6 +2374,8 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(win);
 }
 
+/*************/
+
 static void _edit_icon_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Object_Item *item = (Elm_Object_Item *)data;
@@ -2525,6 +2533,8 @@ test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(win, 520, 520);
    evas_object_show(win);
 }
+
+/*************/
 
 static void _flip_icon_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
