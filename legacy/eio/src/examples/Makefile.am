@@ -1,0 +1,29 @@
+MAINTAINERCLEANFILES = Makefile.in
+
+examplesdir = $(datadir)/$(PACKAGE)/examples
+
+filesdir = $(datadir)/$(PACKAGE)/examples
+files_DATA =
+
+AM_CPPFLAGS = \
+-I. \
+-I$(top_srcdir)/src/lib/ \
+@EIO_CFLAGS@ @EFL_EIO_BUILD@
+
+ECOREBASELDADD = \
+	$(top_builddir)/src/lib/libeio.la
+
+
+LDADD = \
+	$(ECOREBASELDADD)
+
+SRCS = \
+	eio_file_ls.c
+
+examples_PROGRAMS =
+
+if EFL_BUILD_EXAMPLES
+examples_PROGRAMS += \
+	eio_file_ls
+
+endif

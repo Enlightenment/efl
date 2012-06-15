@@ -257,6 +257,8 @@ EIO_CHECK_NOTIFY_WIN32([${want_notify_win32}], [have_notify_win32="yes"], [have_
 
 AM_CONDITIONAL([EIO_HAVE_INOTIFY], [test "x$have_inotify" = "xyes"])
 AM_CONDITIONAL([EIO_HAVE_WINCHANGE], [test "x$have_notify_win32" = "xyes"])
+EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
+EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
 
 
 AC_OUTPUT([
@@ -268,6 +270,7 @@ doc/eio.dox
 doc/Doxyfile
 src/Makefile
 src/lib/Makefile
+src/examples/Makefile
 ])
 
 echo
@@ -285,6 +288,8 @@ echo "  Inotify..............: ${have_inotify}"
 echo "  Windows notification.: ${have_notify_win32}"
 echo
 echo "  Documentation........: ${build_doc}"
+echo "  Examples...............: ${enable_build_examples}"
+echo "  Examples installed.....: ${enable_install_examples}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

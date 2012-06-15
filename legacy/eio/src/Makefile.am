@@ -1,3 +1,4 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib
+SUBDIRS = lib \
+          examples
