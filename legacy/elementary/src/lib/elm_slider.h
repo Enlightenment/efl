@@ -229,7 +229,7 @@ EAPI void                         elm_slider_indicator_format_function_set(Evas_
  *
  * Set the callback function to format the units string.
  *
- * @see elm_slider_units_format_set() for more info on how this works.
+ * @see elm_slider_unit_format_set() for more info on how this works.
  *
  * @ingroup Slider
  */
