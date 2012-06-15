@@ -342,9 +342,7 @@ START_TEST(eina_test_list_split)
 {
   Eina_List *left = NULL, *right = NULL ;
   Eina_List *list = NULL;
-  Eina_List *l;
-  void *list_data;
-  int i;
+  unsigned int i;
 
   eina_init();
 
