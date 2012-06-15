@@ -2640,4 +2640,174 @@ test_genlist16(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(win, 520, 520);
    evas_object_show(win);
 }
+
+/*************/
+
+static Elm_Genlist_Item_Class *itc17;
+
+char *
+gl17_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
+{
+   const Testitem *tit = data;
+   char buf[256];
+   if (!strcmp(part, "elm.text.mode"))
+     snprintf(buf, sizeof(buf), "Mode # %i", tit->mode);
+   else
+     snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
+   return strdup(buf);
+}
+
+Evas_Object *
+_decorate_item_mode_frame_new(Evas_Object *win, Evas_Object **rdg)
+{
+   Evas_Object *fr, *bx, *rd;
+
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Decorate Item Mode Type");
+   evas_object_show(fr);
+
+   bx = elm_box_add(win);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   rd = elm_radio_add(win);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_radio_state_value_set(rd, 0);
+   elm_object_text_set(rd, "Slide : Sweep genlist items to the right.");
+   evas_object_show(rd);
+   elm_box_pack_end(bx, rd);
+   *rdg = rd;
+
+   rd = elm_radio_add(win);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_radio_state_value_set(rd, 1);
+   elm_object_text_set(rd, "Rotate : Click each item.");
+   elm_radio_group_add(rd, *rdg);
+   evas_object_show(rd);
+   elm_box_pack_end(bx, rd);
+
+   return fr;
+}
+
+void
+_decorate_all_set_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Object_Item *it;
+   Evas_Object *gl;
+   int v;
+   if (!data) return;
+
+   gl = evas_object_data_get(obj, "gl");
+   if (!gl) return;
+
+   v = elm_radio_value_get(data);
+   it = (Elm_Object_Item *)elm_genlist_decorated_item_get(gl);
+
+   elm_genlist_decorate_mode_set(gl, EINA_TRUE);
+}
+
+void
+_decorate_all_unset_btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_genlist_decorate_mode_set(data, EINA_FALSE);
+}
+
+Evas_Object *
+_decorate_all_mode_frame_new(Evas_Object *win, Evas_Object *rdg, Evas_Object *gl)
+{
+   Evas_Object *fr, *bx, *btn;
+
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(fr, "Decorate All Mode Type");
+   evas_object_show(fr);
+
+   bx = elm_box_add(win);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   btn = elm_button_add(win);
+   evas_object_data_set(btn, "gl", gl);
+   elm_object_text_set(btn, "Set Decorate All Mode");
+   evas_object_smart_callback_add(btn, "clicked", _decorate_all_set_btn_clicked_cb, rdg);
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   btn = elm_button_add(win);
+   elm_object_text_set(btn, "Unset Decorate All Mode");
+   evas_object_smart_callback_add(btn, "clicked", _decorate_all_unset_btn_clicked_cb, gl);
+   elm_box_pack_end(bx, btn);
+   evas_object_show(btn);
+
+   return fr;
+}
+
+void
+test_genlist17(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *fr1, *fr2, *bx, *bx2, *rdg = NULL, *gl;
+   int i;
+   static Testitem tit[50];
+
+   win = elm_win_util_standard_add("genlist-decorate-modes", "Genlist Decorate Modes");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   bx2 = elm_box_add(win);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   fr1 = _decorate_item_mode_frame_new(win, &rdg);
+   elm_box_pack_end(bx2, fr1);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(gl, "drag,start,right", _my_gl_mode_right, rdg);
+   evas_object_smart_callback_add(gl, "drag,start,left", _my_gl_mode_left, rdg);
+   evas_object_smart_callback_add(gl, "drag,start,up", _my_gl_mode_cancel, rdg);
+   evas_object_smart_callback_add(gl, "drag,start,down", _my_gl_mode_cancel, rdg);
+   evas_object_show(gl);
+
+   itc17 = elm_genlist_item_class_new();
+   itc17->item_style     = "default";
+   itc17->decorate_item_style = "mode";
+   itc17->func.text_get = gl10_text_get;
+   itc17->func.content_get  = gl15_content_get;
+   itc17->func.state_get = gl_state_get;
+   itc17->func.del       = NULL;
+   itc17->decorate_all_item_style = "edit";
+
+   for (i = 0; i < 50; i++)
+     {
+        tit[i].checked = EINA_FALSE;
+        tit[i].mode = i;
+        tit[i].item = elm_genlist_item_append(gl,
+                                              itc17,
+                                              &(tit[i])/* item data */,
+                                              NULL/* parent */,
+                                              ELM_GENLIST_ITEM_NONE/* flags */,
+                                              NULL/* select func */,
+                                              NULL/* func data */);
+     }
+
+   elm_genlist_item_class_free(itc17);
+   elm_box_pack_end(bx, gl);
+
+   fr2 = _decorate_all_mode_frame_new(win, rdg, gl);
+   elm_box_pack_end(bx2, fr2);
+
+   evas_object_resize(win, 520, 520);
+   evas_object_show(win);
+}
+
 #endif
