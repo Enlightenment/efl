@@ -216,7 +216,7 @@ _pos_map_accel_factor(double pos,
                       double v1)
 {
    int i, fact = (int)v1;
-   double p, o1 = pos, o2 = pos, v;
+   double p, o1 = pos, o2, v;
    p = 1.0 - _pos_map_sin((M_PI / 2.0) + ((pos * M_PI) / 2.0));
    o2 = p;
    for (i = 0; i < fact; i++)
