@@ -5643,6 +5643,7 @@ elm_genlist_decorate_mode_set(Evas_Object *obj, Eina_Bool decorated)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Eina_List *list, *l;
    Elm_Gen_Item *it;
+   Elm_Object_Item *deco_it;
 
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -5662,6 +5663,16 @@ elm_genlist_decorate_mode_set(Evas_Object *obj, Eina_Bool decorated)
      }
    else
      {
+        // unset decorated item
+        deco_it = (Elm_Object_Item *)elm_genlist_decorated_item_get(obj);
+        if (deco_it)
+          {
+             elm_genlist_item_decorate_mode_set(deco_it,
+                                                elm_genlist_item_decorate_mode_get(deco_it),
+                                                EINA_FALSE);
+             _decorate_item_finished_signal_cb(deco_it, obj, NULL, NULL);
+          }
+
         EINA_LIST_FOREACH(list, l, it)
           {
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
