@@ -482,3 +482,6 @@
 	* Fix decompile of sound samples not double-free
         * Fix alsa configure option to be alsa, not flac.
 
+2012-06-06  Jihoon Kim
+
+	* edje_entry: display preedit string even though there is no attribute
