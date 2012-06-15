@@ -766,15 +766,13 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
         Evas_Font_Instance *cur_fi = NULL;
         Evas_Text_Props text_props;
         Evas_Script_Type script;
-        int run_len;
+        int run_len, inset, adv;
 
         script = evas_common_language_script_type_get((const Eina_Unicode *)W, 1);
         run_len = TG_ENFN->font_run_end_get(TG_ENDT,
                                             o->font,
                                             &script_fi, &cur_fi,
                                             script, W, 1);
-        printf("run_len : %d\n", run_len);
-
         memset(&text_props, 0, sizeof(Evas_Text_Props));
         evas_common_text_props_script_set(&text_props,
                                           script);
@@ -792,12 +790,14 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
                                       &text_props,
                                       &o->cur.char_width,
                                       &o->cur.char_height);
+        adv = TG_ENFN->font_h_advance_get(TG_ENDT, o->font, &text_props);
+        inset = TG_ENFN->font_inset_get(TG_ENDT, o->font, &text_props);
+        if ((inset + adv) > o->cur.char_width)
+          o->cur.char_width = inset + adv;
         o->max_ascent = TG_ENFN->font_max_ascent_get(TG_ENDT, o->font);
-        printf("size of W : %dx%d\n", o->cur.char_width, o->cur.char_height);
      }
    else
      {
-        printf ("no font\n");
         obj->cur.geometry.w = 0;
         obj->cur.geometry.h = 0;
         o->max_ascent = 0;
