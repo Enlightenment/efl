@@ -10111,6 +10111,8 @@ EAPI void         evas_object_smart_member_del(Evas_Object *obj) EINA_ARG_NONNUL
  * The returned list should be freed with @c eina_list_free() when you
  * no longer need it.
  *
+ * @since 1.3 This function will return @c NULL when a non-smart object is passed.
+ *
  * @see evas_object_smart_member_add()
  * @see evas_object_smart_member_del()
  */

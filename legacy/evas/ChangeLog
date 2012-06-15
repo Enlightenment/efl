@@ -810,7 +810,10 @@
 
 	* Cache convertion from Evas_Map to RGBA_Map.
 
-
 2012-06-15  Vincent Torri
 
 	* Add Textgrid object.
+
+2012-06-15  Mike Blumenkrantz
+
+        * evas_object_smart_members_get() now returns NULL on non-smart objects
