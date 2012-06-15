@@ -87,107 +87,109 @@
 #define PATH_MAX 4096
 #endif
 
-#define MAX_ID 2000000
+#define MAX_ID   2000000
 
 static int _log_dom = -1;
-#define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
-#define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
-#define WRN(...) EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
-#define ERR(...) EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
+#define INF(...)      EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)
+#define WRN(...)      EINA_LOG_DOM_WARN(_log_dom, __VA_ARGS__)
+#define ERR(...)      EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_log_dom, __VA_ARGS__)
 
 struct _Ethumb_Client
 {
-   Ethumb *ethumb;
-   int id_count;
+   Ethumb                *ethumb;
+   int                    id_count;
 
-   Ethumb *old_ethumb_conf;
-   E_DBus_Connection *conn;
+   Ethumb                *old_ethumb_conf;
+   E_DBus_Connection     *conn;
    E_DBus_Signal_Handler *name_owner_changed_handler;
    E_DBus_Signal_Handler *generated_signal;
-   DBusPendingCall *pending_get_name_owner;
-   DBusPendingCall *pending_start_service_by_name;
-   const char *unique_name;
-   DBusPendingCall *pending_new;
-   struct {
+   DBusPendingCall       *pending_get_name_owner;
+   DBusPendingCall       *pending_start_service_by_name;
+   const char            *unique_name;
+   DBusPendingCall       *pending_new;
+   struct
+   {
       Ethumb_Client_Connect_Cb cb;
-      void *data;
-      Eina_Free_Cb free_data;
+      void                    *data;
+      Eina_Free_Cb             free_data;
    } connect;
-   Eina_List *pending_add;
-   Eina_List *pending_remove;
-   Eina_List *pending_gen;
-   DBusPendingCall *pending_clear;
-   DBusPendingCall *pending_setup;
-   struct {
+   Eina_List             *pending_add;
+   Eina_List             *pending_remove;
+   Eina_List             *pending_gen;
+   DBusPendingCall       *pending_clear;
+   DBusPendingCall       *pending_setup;
+   struct
+   {
       Ethumb_Client_Die_Cb cb;
-      void *data;
-      Eina_Free_Cb free_data;
+      void                *data;
+      Eina_Free_Cb         free_data;
    } die;
-   const char *object_path;
+   const char            *object_path;
 
    EINA_REFCOUNT;
 
-   Eina_Bool connected : 1;
-   Eina_Bool server_started : 1;
+   Eina_Bool              connected : 1;
+   Eina_Bool              server_started : 1;
 };
 
 struct _ethumb_pending_add
 {
-   dbus_int32_t id;
-   const char *file;
-   const char *key;
-   const char *thumb;
-   const char *thumb_key;
+   dbus_int32_t              id;
+   const char               *file;
+   const char               *key;
+   const char               *thumb;
+   const char               *thumb_key;
    Ethumb_Client_Generate_Cb generated_cb;
-   void *data;
-   Eina_Free_Cb free_data;
-   DBusPendingCall *pending_call;
-   Ethumb_Client *client;
+   void                     *data;
+   Eina_Free_Cb              free_data;
+   DBusPendingCall          *pending_call;
+   Ethumb_Client            *client;
 };
 
 struct _ethumb_pending_remove
 {
-   dbus_int32_t id;
+   dbus_int32_t                     id;
    Ethumb_Client_Generate_Cancel_Cb cancel_cb;
-   void *data;
-   Eina_Free_Cb free_data;
-   DBusPendingCall *pending_call;
-   Ethumb_Client *client;
+   void                            *data;
+   Eina_Free_Cb                     free_data;
+   DBusPendingCall                 *pending_call;
+   Ethumb_Client                   *client;
 };
 
 struct _ethumb_pending_gen
 {
-   dbus_int32_t id;
-   const char *file;
-   const char *key;
-   const char *thumb;
-   const char *thumb_key;
+   dbus_int32_t              id;
+   const char               *file;
+   const char               *key;
+   const char               *thumb;
+   const char               *thumb_key;
    Ethumb_Client_Generate_Cb generated_cb;
-   void *data;
-   Eina_Free_Cb free_data;
+   void                     *data;
+   Eina_Free_Cb              free_data;
 };
 
 typedef struct _Ethumb_Async_Exists Ethumb_Async_Exists;
 
 struct _Ethumb_Async_Exists
 {
-   const char *path;
+   const char   *path;
 
-   Ethumb *dup; /* We will work on that one to prevent race and lock */
+   Ethumb       *dup; /* We will work on that one to prevent race and lock */
 
-   Eina_List *callbacks;
+   Eina_List    *callbacks;
    Ecore_Thread *thread;
 };
 
 struct _Ethumb_Exists
 {
-   Ethumb_Async_Exists *parent;
-   Ethumb_Client *client;
-   Ethumb *dup; /* We don't want to loose parameters so keep them around */
+   Ethumb_Async_Exists          *parent;
+   Ethumb_Client                *client;
+   Ethumb                       *dup; /* We don't want to loose parameters so keep them around */
 
    Ethumb_Client_Thumb_Exists_Cb exists_cb;
-   const void *data;
+   const void                   *data;
 };
 
 static const char _ethumb_dbus_bus_name[] = "org.enlightenment.Ethumb";
@@ -209,30 +211,30 @@ __dbus_callback_check_and_init(const char *file, int line, const char *function,
 {
    if (!msg)
      {
-	ERR("%s:%d:%s() callback without message arguments!",
-		file, line, function);
+        ERR("%s:%d:%s() callback without message arguments!",
+            file, line, function);
 
-	if (err)
-	  ERR("%s:%d:%s() an error was reported by server: "
-		  "name=\"%s\", message=\"%s\"",
-		  file, line, function, err->name, err->message);
+        if (err)
+          ERR("%s:%d:%s() an error was reported by server: "
+              "name=\"%s\", message=\"%s\"",
+              file, line, function, err->name, err->message);
 
-	return 0;
+        return 0;
      }
 
    if (!dbus_message_iter_init(msg, itr))
      {
-	ERR("%s:%d:%s() could not init iterator.",
-		file, line, function);
-	return 0;
+        ERR("%s:%d:%s() could not init iterator.",
+            file, line, function);
+        return 0;
      }
 
    return 1;
 }
 
-#define _dbus_callback_check_and_init(msg, itr, err)			\
-  __dbus_callback_check_and_init(__FILE__, __LINE__, __FUNCTION__,	\
-				 msg, itr, err)
+#define _dbus_callback_check_and_init(msg, itr, err)               \
+  __dbus_callback_check_and_init(__FILE__, __LINE__, __FUNCTION__, \
+                                 msg, itr, err)
 
 static inline bool
 __dbus_iter_type_check(int type, int expected, const char *expected_name)
@@ -241,21 +243,22 @@ __dbus_iter_type_check(int type, int expected, const char *expected_name)
      return 1;
 
    ERR("expected type %s (%c) but got %c instead!",
-	   expected_name, expected, type);
+       expected_name, expected, type);
 
    return 0;
 }
+
 #define _dbus_iter_type_check(t, e) __dbus_iter_type_check(t, e, #e)
 
-#define CHECK_NULL_RETURN(ptr, ...)					\
-  do									\
-    {									\
-       if ((ptr) == NULL)						\
-	 {								\
-	    CRITICAL("%s == NULL!", #ptr);				\
-	    return __VA_ARGS__;						\
-	 }								\
-    }									\
+#define CHECK_NULL_RETURN(ptr, ...)        \
+  do                                       \
+    {                                      \
+       if ((ptr) == NULL)                  \
+         {                                 \
+            CRITICAL("%s == NULL!", #ptr); \
+            return __VA_ARGS__;            \
+         }                                 \
+    }                                      \
   while (0)
 
 static void
@@ -268,44 +271,44 @@ _ethumb_client_free(Ethumb_Client *client)
 
    EINA_LIST_FREE(client->pending_add, data)
      {
-	struct _ethumb_pending_add *pending = data;
-	eina_stringshare_del(pending->file);
-	eina_stringshare_del(pending->key);
-	eina_stringshare_del(pending->thumb);
-	eina_stringshare_del(pending->thumb_key);
-	dbus_pending_call_cancel(pending->pending_call);
-	dbus_pending_call_unref(pending->pending_call);
-	if (pending->free_data)
-	  pending->free_data(pending->data);
-	free(pending);
+        struct _ethumb_pending_add *pending = data;
+        eina_stringshare_del(pending->file);
+        eina_stringshare_del(pending->key);
+        eina_stringshare_del(pending->thumb);
+        eina_stringshare_del(pending->thumb_key);
+        dbus_pending_call_cancel(pending->pending_call);
+        dbus_pending_call_unref(pending->pending_call);
+        if (pending->free_data)
+          pending->free_data(pending->data);
+        free(pending);
      }
 
    EINA_LIST_FREE(client->pending_gen, data)
      {
-	struct _ethumb_pending_gen *pending = data;
-	eina_stringshare_del(pending->file);
-	eina_stringshare_del(pending->key);
-	eina_stringshare_del(pending->thumb);
-	eina_stringshare_del(pending->thumb_key);
-	if (pending->free_data)
-	  pending->free_data(pending->data);
-	free(pending);
+        struct _ethumb_pending_gen *pending = data;
+        eina_stringshare_del(pending->file);
+        eina_stringshare_del(pending->key);
+        eina_stringshare_del(pending->thumb);
+        eina_stringshare_del(pending->thumb_key);
+        if (pending->free_data)
+          pending->free_data(pending->data);
+        free(pending);
      }
 
    EINA_LIST_FREE(client->pending_remove, data)
      {
-	struct _ethumb_pending_remove *pending = data;
-	dbus_pending_call_cancel(pending->pending_call);
-	dbus_pending_call_unref(pending->pending_call);
-	if (pending->free_data)
-	  pending->free_data(pending->data);
-	free(pending);
+        struct _ethumb_pending_remove *pending = data;
+        dbus_pending_call_cancel(pending->pending_call);
+        dbus_pending_call_unref(pending->pending_call);
+        if (pending->free_data)
+          pending->free_data(pending->data);
+        free(pending);
      }
 
    if (client->pending_clear)
      {
-	dbus_pending_call_cancel(client->pending_clear);
-	dbus_pending_call_unref(client->pending_clear);
+        dbus_pending_call_cancel(client->pending_clear);
+        dbus_pending_call_unref(client->pending_clear);
      }
 
 end_connection:
@@ -325,7 +328,7 @@ end_connection:
      dbus_pending_call_cancel(client->pending_start_service_by_name);
 
    if (client->old_ethumb_conf)
-       ethumb_free(client->old_ethumb_conf);
+     ethumb_free(client->old_ethumb_conf);
 
    ethumb_free(client->ethumb);
 
@@ -365,19 +368,19 @@ _ethumb_client_name_owner_changed(void *data, DBusMessage *msg)
 
    dbus_error_init(&err);
    if (!dbus_message_get_args(msg, &err,
-       DBUS_TYPE_STRING, &name,
-       DBUS_TYPE_STRING, &from,
-       DBUS_TYPE_STRING, &to,
-       DBUS_TYPE_INVALID))
+                              DBUS_TYPE_STRING, &name,
+                              DBUS_TYPE_STRING, &from,
+                              DBUS_TYPE_STRING, &to,
+                              DBUS_TYPE_INVALID))
      {
-	ERR("could not get NameOwnerChanged arguments: %s: %s",
-	    err.name, err.message);
-	dbus_error_free(&err);
-	return;
+        ERR("could not get NameOwnerChanged arguments: %s: %s",
+            err.name, err.message);
+        dbus_error_free(&err);
+        return;
      }
 
-   if(!from || !name)
-       return ;
+   if (!from || !name)
+     return;
    if (strcmp(name, _ethumb_dbus_bus_name) != 0)
      return;
 
@@ -385,25 +388,25 @@ _ethumb_client_name_owner_changed(void *data, DBusMessage *msg)
 
    if (from[0] != '\0' && to[0] == '\0')
      {
-	DBG("exit ethumbd at %s", from);
-	if (client->unique_name && strcmp(client->unique_name, from) != 0)
-	  WRN("%s was not the known name %s, ignored.",
-	       from, client->unique_name);
-	else if(client->unique_name)
-	  {
-	     ERR("server exit!!!");
-	     if (client->die.cb)
-	       {
-		  client->die.cb(client->die.data, client);
-		  client->die.cb = NULL;
-	       }
-	     if (client->die.free_data)
-	       {
-		  client->die.free_data(client->die.data);
-		  client->die.free_data = NULL;
-		  client->die.data = NULL;
-	       }
-	  }
+        DBG("exit ethumbd at %s", from);
+        if (client->unique_name && strcmp(client->unique_name, from) != 0)
+          WRN("%s was not the known name %s, ignored.",
+              from, client->unique_name);
+        else if (client->unique_name)
+          {
+             ERR("server exit!!!");
+             if (client->die.cb)
+               {
+                  client->die.cb(client->die.data, client);
+                  client->die.cb = NULL;
+               }
+             if (client->die.free_data)
+               {
+                  client->die.free_data(client->die.data);
+                  client->die.free_data = NULL;
+                  client->die.data = NULL;
+               }
+          }
      }
    else
      DBG("unknown change from %s to %s", from, to);
@@ -414,15 +417,15 @@ _ethumb_client_report_connect(Ethumb_Client *client, Eina_Bool success)
 {
    if (!client->connect.cb)
      {
-	ERR("already called?!");
-	return;
+        ERR("already called?!");
+        return;
      }
 
    client->connect.cb(client->connect.data, client, success);
    if (client->connect.free_data)
      {
-	client->connect.free_data(client->connect.data);
-	client->connect.free_data = NULL;
+        client->connect.free_data(client->connect.data);
+        client->connect.free_data = NULL;
      }
    client->connect.cb = NULL;
    client->connect.data = NULL;
@@ -451,9 +454,9 @@ _ethumb_client_new_cb(void *data, DBusMessage *msg, DBusError *error)
    client->object_path = eina_stringshare_add(opath);
 
    client->generated_signal = e_dbus_signal_handler_add(
-      client->conn, _ethumb_dbus_bus_name, opath,
-      _ethumb_dbus_objects_interface, "generated",
-      _ethumb_client_generated_cb, client);
+       client->conn, _ethumb_dbus_bus_name, opath,
+       _ethumb_dbus_objects_interface, "generated",
+       _ethumb_client_generated_cb, client);
 
    _ethumb_client_report_connect(client, 1);
    return;
@@ -468,10 +471,10 @@ _ethumb_client_call_new(Ethumb_Client *client)
    DBusMessage *msg;
 
    msg = dbus_message_new_method_call(_ethumb_dbus_bus_name, _ethumb_dbus_path,
-				      _ethumb_dbus_interface, "new");
+                                      _ethumb_dbus_interface, "new");
    client->pending_new = e_dbus_message_send(client->conn, msg,
-					     _ethumb_client_new_cb, -1,
-					     client);
+                                             _ethumb_client_new_cb, -1,
+                                             client);
    dbus_message_unref(msg);
 }
 
@@ -495,9 +498,9 @@ _ethumb_client_start_server_cb(void *data, DBusMessage *msg, DBusError *err)
    dbus_message_iter_get_basic(&iter, &ret);
    if ((ret != 1) && (ret != 2))
      {
-	ERR("Error starting Ethumbd DBus service by its name: retcode %u",
-	    ret);
-	goto error;
+        ERR("Error starting Ethumbd DBus service by its name: retcode %u",
+            ret);
+        goto error;
      }
 
    client->server_started = 1;
@@ -506,22 +509,22 @@ _ethumb_client_start_server_cb(void *data, DBusMessage *msg, DBusError *err)
 
    if (client->pending_get_name_owner)
      {
-	DBG("already requesting name owner, cancel and try again");
-	dbus_pending_call_cancel(client->pending_get_name_owner);
+        DBG("already requesting name owner, cancel and try again");
+        dbus_pending_call_cancel(client->pending_get_name_owner);
      }
 
    client->pending_get_name_owner = e_dbus_get_name_owner
-     (client->conn, _ethumb_dbus_bus_name, _ethumb_client_get_name_owner,
-      client);
+       (client->conn, _ethumb_dbus_bus_name, _ethumb_client_get_name_owner,
+       client);
    if (!client->pending_get_name_owner)
      {
-	ERR("could not create a get_name_owner request.");
-	goto error;
+        ERR("could not create a get_name_owner request.");
+        goto error;
      }
 
    return;
 
- error:
+error:
    ERR("failed to start Ethumbd DBus service by its name.");
    _ethumb_client_report_connect(client, 0);
 }
@@ -531,18 +534,18 @@ _ethumb_client_start_server(Ethumb_Client *client)
 {
    if (client->pending_start_service_by_name)
      {
-	DBG("already pending start service by name.");
-	return;
+        DBG("already pending start service by name.");
+        return;
      }
 
    client->server_started = 0;
    client->pending_start_service_by_name = e_dbus_start_service_by_name
-     (client->conn, _ethumb_dbus_bus_name, 0, _ethumb_client_start_server_cb,
-      client);
+       (client->conn, _ethumb_dbus_bus_name, 0, _ethumb_client_start_server_cb,
+       client);
    if (!client->pending_start_service_by_name)
      {
-	ERR("could not start service by name!");
-	_ethumb_client_report_connect(client, 0);
+        ERR("could not start service by name!");
+        _ethumb_client_report_connect(client, 0);
      }
 }
 
@@ -558,9 +561,9 @@ _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err)
 
    if (dbus_error_is_set(err) && (!client->server_started))
      {
-	DBG("could not find server (%s), try to start it...", err->message);
-	_ethumb_client_start_server(client);
-	return;
+        DBG("could not find server (%s), try to start it...", err->message);
+        _ethumb_client_start_server(client);
+        return;
      }
 
    if (!_dbus_callback_check_and_init(msg, &iter, err))
@@ -573,8 +576,8 @@ _ethumb_client_get_name_owner(void *data, DBusMessage *msg, DBusError *err)
    dbus_message_iter_get_basic(&iter, &uid);
    if (!uid)
      {
-	ERR("no name owner!");
-	goto error;
+        ERR("no name owner!");
+        goto error;
      }
 
    DBG("unique name = %s", uid);
@@ -610,13 +613,13 @@ _ethumb_client_exists_end(void *data, Ecore_Thread *thread __UNUSED__)
         tmp = cb->client->ethumb;
         cb->client->ethumb = cb->dup;
 
-        cb->exists_cb((void*) cb->data,
+        cb->exists_cb((void *)cb->data,
                       cb->client, cb,
                       ethumb_exists(cb->client->ethumb));
 
         cb->client->ethumb = tmp;
         EINA_REFCOUNT_UNREF(cb->client)
-          _ethumb_client_free(cb->client);
+        _ethumb_client_free(cb->client);
         ethumb_free(cb->dup);
         free(cb);
      }
@@ -655,15 +658,15 @@ ethumb_client_init(void)
 
    if (!eina_init())
      {
-	fprintf(stderr, "ERROR: Could not initialize log module.\n");
-	return 0;
+        fprintf(stderr, "ERROR: Could not initialize log module.\n");
+        return 0;
      }
    _log_dom = eina_log_domain_register("ethumb_client", EINA_COLOR_YELLOW);
    if (_log_dom < 0)
      {
-	EINA_LOG_ERR("Could not register log domain: ethumb_client");
-	eina_shutdown();
-	return 0;
+        EINA_LOG_ERR("Could not register log domain: ethumb_client");
+        eina_shutdown();
+        return 0;
      }
 
    ethumb_init();
@@ -757,8 +760,8 @@ ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Ein
    eclient = calloc(1, sizeof(*eclient));
    if (!eclient)
      {
-	ERR("could not allocate Ethumb_Client structure.");
-	goto err;
+        ERR("could not allocate Ethumb_Client structure.");
+        goto err;
      }
 
    eclient->old_ethumb_conf = NULL;
@@ -769,28 +772,28 @@ ethumb_client_connect(Ethumb_Client_Connect_Cb connect_cb, const void *data, Ein
    eclient->ethumb = ethumb_new();
    if (!eclient->ethumb)
      {
-	ERR("could not create ethumb handler.");
-	goto ethumb_new_err;
+        ERR("could not create ethumb handler.");
+        goto ethumb_new_err;
      }
 
    eclient->conn = e_dbus_bus_get(DBUS_BUS_SESSION);
    if (!eclient->conn)
      {
-	ERR("could not connect to session bus.");
-	goto connection_err;
+        ERR("could not connect to session bus.");
+        goto connection_err;
      }
 
    eclient->name_owner_changed_handler = e_dbus_signal_handler_add(
-	 eclient->conn, fdo_bus_name, fdo_path, fdo_interface,
-	 "NameOwnerChanged", _ethumb_client_name_owner_changed, eclient);
+       eclient->conn, fdo_bus_name, fdo_path, fdo_interface,
+       "NameOwnerChanged", _ethumb_client_name_owner_changed, eclient);
 
    eclient->pending_get_name_owner = e_dbus_get_name_owner(
-	 eclient->conn, _ethumb_dbus_bus_name, _ethumb_client_get_name_owner,
-	 eclient);
+       eclient->conn, _ethumb_dbus_bus_name, _ethumb_client_get_name_owner,
+       eclient);
    if (!eclient->pending_get_name_owner)
      {
-	ERR("could not create a get_name_owner request.");
-	goto connection_err;
+        ERR("could not create a get_name_owner request.");
+        goto connection_err;
      }
 
    EINA_REFCOUNT_INIT(eclient);
@@ -823,7 +826,7 @@ ethumb_client_disconnect(Ethumb_Client *client)
    EINA_SAFETY_ON_NULL_RETURN(client);
 
    EINA_REFCOUNT_UNREF(client)
-     _ethumb_client_free(client);
+   _ethumb_client_free(client);
 }
 
 /**
@@ -895,8 +898,8 @@ _ethumb_client_dbus_get_bytearray(DBusMessageIter *iter)
    el_type = dbus_message_iter_get_element_type(iter);
    if (el_type != DBUS_TYPE_BYTE)
      {
-	ERR("not an byte array element.");
-	return NULL;
+        ERR("not an byte array element.");
+        return NULL;
      }
 
    dbus_message_iter_recurse(iter, &riter);
@@ -918,7 +921,7 @@ _ethumb_client_dbus_append_bytearray(DBusMessageIter *iter, const char *string)
 
    dbus_message_iter_open_container(iter, DBUS_TYPE_ARRAY, "y", &viter);
    dbus_message_iter_append_fixed_array(&viter, DBUS_TYPE_BYTE, &string,
-					strlen(string) + 1);
+                                        strlen(string) + 1);
    dbus_message_iter_close_container(iter, &viter);
 }
 
@@ -954,25 +957,25 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    EINA_SAFETY_ON_FALSE_RETURN(client->connected);
 
    msg = dbus_message_new_method_call(_ethumb_dbus_bus_name,
-				      client->object_path,
-				      _ethumb_dbus_objects_interface,
-				      "ethumb_setup");
+                                      client->object_path,
+                                      _ethumb_dbus_objects_interface,
+                                      "ethumb_setup");
    dbus_message_iter_init_append(msg, &iter);
    dbus_message_iter_open_container(&iter, DBUS_TYPE_ARRAY, "{sv}", &aiter);
 
 /**
  * @cond LOCAL
  */
-#define _open_variant_iter(str_entry, str_type, end_iter)		   \
-   entry = str_entry;							   \
-   dbus_message_iter_open_container(&aiter, DBUS_TYPE_DICT_ENTRY, NULL, &diter); \
-   dbus_message_iter_append_basic(&diter, DBUS_TYPE_STRING, &entry);   \
-   dbus_message_iter_open_container(&diter, DBUS_TYPE_VARIANT, str_type,   \
-				    &end_iter);
+#define _open_variant_iter(str_entry, str_type, end_iter)                       \
+  entry = str_entry;                                                            \
+  dbus_message_iter_open_container(&aiter, DBUS_TYPE_DICT_ENTRY, NULL, &diter); \
+  dbus_message_iter_append_basic(&diter, DBUS_TYPE_STRING, &entry);             \
+  dbus_message_iter_open_container(&diter, DBUS_TYPE_VARIANT, str_type,         \
+                                   &end_iter);
 
-#define _close_variant_iter(end_iter)					   \
-   dbus_message_iter_close_container(&diter, &end_iter);		   \
-   dbus_message_iter_close_container(&aiter, &diter);
+#define _close_variant_iter(end_iter)                   \
+  dbus_message_iter_close_container(&diter, &end_iter); \
+  dbus_message_iter_close_container(&aiter, &diter);
 /**
  * @endcond
  */
@@ -1077,8 +1080,8 @@ ethumb_client_ethumb_setup(Ethumb_Client *client)
    dbus_message_iter_close_container(&iter, &aiter);
 
    client->pending_setup = e_dbus_message_send(client->conn, msg,
-					       _ethumb_client_ethumb_setup_cb,
-					       -1, client);
+                                               _ethumb_client_ethumb_setup_cb,
+                                               -1, client);
    dbus_message_unref(msg);
 }
 
@@ -1129,30 +1132,30 @@ _ethumb_client_generated_cb(void *data, DBusMessage *msg)
    l = client->pending_gen;
    while (l)
      {
-	pending = l->data;
-	if (pending->id == id)
-	  {
-	     found = 1;
-	     break;
-	  }
-	l = l->next;
+        pending = l->data;
+        if (pending->id == id)
+          {
+             found = 1;
+             break;
+          }
+        l = l->next;
      }
 
    if (found)
      {
-	client->pending_gen = eina_list_remove_list(client->pending_gen, l);
+        client->pending_gen = eina_list_remove_list(client->pending_gen, l);
         if (pending->generated_cb)
           pending->generated_cb(pending->data, client, id,
                                 pending->file, pending->key,
                                 pending->thumb, pending->thumb_key,
                                 success);
         if (pending->free_data)
-	  pending->free_data(pending->data);
-	eina_stringshare_del(pending->file);
-	eina_stringshare_del(pending->key);
-	eina_stringshare_del(pending->thumb);
-	eina_stringshare_del(pending->thumb_key);
-	free(pending);
+          pending->free_data(pending->data);
+        eina_stringshare_del(pending->file);
+        eina_stringshare_del(pending->key);
+        eina_stringshare_del(pending->thumb);
+        eina_stringshare_del(pending->thumb_key);
+        free(pending);
      }
 
 end:
@@ -1217,9 +1220,9 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    client->id_count = (client->id_count + 1) % MAX_ID;
 
    msg = dbus_message_new_method_call(_ethumb_dbus_bus_name,
-				      client->object_path,
-				      _ethumb_dbus_objects_interface,
-				      "queue_add");
+                                      client->object_path,
+                                      _ethumb_dbus_objects_interface,
+                                      "queue_add");
 
    dbus_message_iter_init_append(msg, &iter);
    dbus_message_iter_append_basic(&iter, DBUS_TYPE_INT32, &pending->id);
@@ -1229,8 +1232,8 @@ _ethumb_client_queue_add(Ethumb_Client *client, const char *file, const char *ke
    _ethumb_client_dbus_append_bytearray(&iter, thumb_key);
 
    pending->pending_call = e_dbus_message_send(client->conn, msg,
-					       _ethumb_client_queue_add_cb,
-					       -1, pending);
+                                               _ethumb_client_queue_add_cb,
+                                               -1, pending);
    client->pending_add = eina_list_append(client->pending_add, pending);
    dbus_message_unref(msg);
 
@@ -1264,6 +1267,7 @@ end:
      pending->free_data(pending->data);
    free(pending);
 }
+
 /**
  * @endcond
  */
@@ -1302,38 +1306,38 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
    pending->client = client;
 
    msg = dbus_message_new_method_call(_ethumb_dbus_bus_name,
-				      client->object_path,
-				      _ethumb_dbus_objects_interface,
-				      "queue_remove");
+                                      client->object_path,
+                                      _ethumb_dbus_objects_interface,
+                                      "queue_remove");
 
    dbus_message_append_args(msg, DBUS_TYPE_INT32, &id32, DBUS_TYPE_INVALID);
    pending->pending_call = e_dbus_message_send(client->conn, msg,
-					       _ethumb_client_queue_remove_cb,
-					       -1, pending);
+                                               _ethumb_client_queue_remove_cb,
+                                               -1, pending);
    client->pending_remove = eina_list_append(client->pending_remove, pending);
 
    found = 0;
    l = client->pending_add;
    while (l)
      {
-	struct _ethumb_pending_add *pending_add = l->data;
-	if (pending_add->id != id32)
-	  {
-	     l = l->next;
-	     continue;
-	  }
-	client->pending_add = eina_list_remove_list(client->pending_add, l);
-	eina_stringshare_del(pending_add->file);
-	eina_stringshare_del(pending_add->key);
-	eina_stringshare_del(pending_add->thumb);
-	eina_stringshare_del(pending_add->thumb_key);
-	dbus_pending_call_cancel(pending_add->pending_call);
-	dbus_pending_call_unref(pending_add->pending_call);
-	if (pending_add->free_data)
-	  pending_add->free_data(pending_add->data);
-	free(pending_add);
-	found = 1;
-	break;
+        struct _ethumb_pending_add *pending_add = l->data;
+        if (pending_add->id != id32)
+          {
+             l = l->next;
+             continue;
+          }
+        client->pending_add = eina_list_remove_list(client->pending_add, l);
+        eina_stringshare_del(pending_add->file);
+        eina_stringshare_del(pending_add->key);
+        eina_stringshare_del(pending_add->thumb);
+        eina_stringshare_del(pending_add->thumb_key);
+        dbus_pending_call_cancel(pending_add->pending_call);
+        dbus_pending_call_unref(pending_add->pending_call);
+        if (pending_add->free_data)
+          pending_add->free_data(pending_add->data);
+        free(pending_add);
+        found = 1;
+        break;
      }
 
    if (found)
@@ -1342,21 +1346,21 @@ ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Gener
    l = client->pending_gen;
    while (l)
      {
-	struct _ethumb_pending_gen *pending_gen = l->data;
-	if (pending_gen->id != id32)
-	  {
-	     l = l->next;
-	     continue;
-	  }
-	client->pending_gen = eina_list_remove_list(client->pending_gen, l);
-	eina_stringshare_del(pending_gen->file);
-	eina_stringshare_del(pending_gen->key);
-	eina_stringshare_del(pending_gen->thumb);
-	eina_stringshare_del(pending_gen->thumb_key);
-	if (pending_gen->free_data)
-	  pending_gen->free_data(pending_gen->data);
-	free(pending_gen);
-	break;
+        struct _ethumb_pending_gen *pending_gen = l->data;
+        if (pending_gen->id != id32)
+          {
+             l = l->next;
+             continue;
+          }
+        client->pending_gen = eina_list_remove_list(client->pending_gen, l);
+        eina_stringshare_del(pending_gen->file);
+        eina_stringshare_del(pending_gen->key);
+        eina_stringshare_del(pending_gen->thumb);
+        eina_stringshare_del(pending_gen->thumb_key);
+        if (pending_gen->free_data)
+          pending_gen->free_data(pending_gen->data);
+        free(pending_gen);
+        break;
      }
 
 end:
@@ -1373,6 +1377,7 @@ _ethumb_client_queue_clear_cb(void *data, DBusMessage *msg __UNUSED__, DBusError
 
    client->pending_clear = NULL;
 }
+
 /**
  * @endcond
  */
@@ -1397,38 +1402,38 @@ ethumb_client_generate_cancel_all(Ethumb_Client *client)
 
    EINA_LIST_FREE(client->pending_add, data)
      {
-	struct _ethumb_pending_add *pending = data;
-	eina_stringshare_del(pending->file);
-	eina_stringshare_del(pending->key);
-	eina_stringshare_del(pending->thumb);
-	eina_stringshare_del(pending->thumb_key);
-	dbus_pending_call_cancel(pending->pending_call);
-	dbus_pending_call_unref(pending->pending_call);
-	if (pending->free_data)
-	  pending->free_data(pending->data);
-	free(pending);
+        struct _ethumb_pending_add *pending = data;
+        eina_stringshare_del(pending->file);
+        eina_stringshare_del(pending->key);
+        eina_stringshare_del(pending->thumb);
+        eina_stringshare_del(pending->thumb_key);
+        dbus_pending_call_cancel(pending->pending_call);
+        dbus_pending_call_unref(pending->pending_call);
+        if (pending->free_data)
+          pending->free_data(pending->data);
+        free(pending);
      }
 
    EINA_LIST_FREE(client->pending_gen, data)
      {
-	struct _ethumb_pending_gen *pending = data;
-	eina_stringshare_del(pending->file);
-	eina_stringshare_del(pending->key);
-	eina_stringshare_del(pending->thumb);
-	eina_stringshare_del(pending->thumb_key);
-	if (pending->free_data)
-	  pending->free_data(pending->data);
-	free(pending);
+        struct _ethumb_pending_gen *pending = data;
+        eina_stringshare_del(pending->file);
+        eina_stringshare_del(pending->key);
+        eina_stringshare_del(pending->thumb);
+        eina_stringshare_del(pending->thumb_key);
+        if (pending->free_data)
+          pending->free_data(pending->data);
+        free(pending);
      }
 
    msg = dbus_message_new_method_call(_ethumb_dbus_bus_name,
-				      client->object_path,
-				      _ethumb_dbus_objects_interface,
-				      "queue_clear");
+                                      client->object_path,
+                                      _ethumb_dbus_objects_interface,
+                                      "queue_clear");
 
    client->pending_clear = e_dbus_message_send(client->conn, msg,
-					       _ethumb_client_queue_clear_cb,
-					       -1, client);
+                                               _ethumb_client_queue_clear_cb,
+                                               -1, client);
 
    dbus_message_unref(msg);
 }
@@ -2230,8 +2235,8 @@ ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb 
 
    return cb;
 
- on_error:
-   exists_cb((void*) data, client, NULL, EINA_FALSE);
+on_error:
+   exists_cb((void *)data, client, NULL, EINA_FALSE);
 
    if (async)
      {
@@ -2258,7 +2263,7 @@ ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists)
 
    ethumb_free(exists->dup);
    EINA_REFCOUNT_UNREF(exists->client)
-     _ethumb_client_free(exists->client);
+   _ethumb_client_free(exists->client);
    free(exists);
 }
 
@@ -2325,8 +2330,8 @@ ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generate
    ethumb_file_get(client->ethumb, &file, &key);
    if (!file)
      {
-	ERR("no file set.");
-	return -1;
+        ERR("no file set.");
+        return -1;
      }
 
    ethumb_thumb_path_get(client->ethumb, &thumb, &thumb_key);
@@ -2334,27 +2339,27 @@ ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generate
    if (client->old_ethumb_conf &&
        ethumb_cmp(client->old_ethumb_conf, client->ethumb))
      {
-       ethumb_client_ethumb_setup(client);
-       ethumb_free(client->old_ethumb_conf);
-       client->old_ethumb_conf = NULL;
+        ethumb_client_ethumb_setup(client);
+        ethumb_free(client->old_ethumb_conf);
+        client->old_ethumb_conf = NULL;
      }
    id = _ethumb_client_queue_add(client, file, key, thumb, thumb_key,
-				 generated_cb, data, free_data);
+                                 generated_cb, data, free_data);
 
    return id;
 }
 
 struct _Ethumb_Client_Async
 {
-   Ethumb_Exists *exists;
-   Ethumb_Client *client;
-   Ethumb *dup;
+   Ethumb_Exists               *exists;
+   Ethumb_Client               *client;
+   Ethumb                      *dup;
 
-   Ethumb_Client_Async_Done_Cb done;
+   Ethumb_Client_Async_Done_Cb  done;
    Ethumb_Client_Async_Error_Cb error;
-   const void *data;
+   const void                  *data;
 
-   int id;
+   int                          id;
 };
 
 static Ecore_Idler *idler[2] = { NULL, NULL };
@@ -2365,7 +2370,7 @@ static void
 _ethumb_client_async_free(Ethumb_Client_Async *async)
 {
    EINA_REFCOUNT_UNREF(async->client)
-     _ethumb_client_free(async->client);
+   _ethumb_client_free(async->client);
    ethumb_free(async->dup);
    free(async);
 }
@@ -2383,11 +2388,11 @@ _ethumb_client_thumb_finish(void *data,
 
    if (success)
      {
-        async->done(client, thumb_path, thumb_key, (void*) async->data);
+        async->done(client, thumb_path, thumb_key, (void *)async->data);
      }
    else
      {
-        async->error(client, (void*) async->data);
+        async->error(client, (void *)async->data);
      }
 
    pending = eina_list_remove(pending, async);
@@ -2400,7 +2405,7 @@ _ethumb_client_thumb_generate_idler(void *data __UNUSED__)
    Ethumb_Client_Async *async;
    Eina_List *l1, *l2;
 
-   EINA_LIST_FOREACH_SAFE(idle_tasks[1], l1, l2, async)
+   EINA_LIST_FOREACH_SAFE (idle_tasks[1], l1, l2, async)
      {
         Ethumb *tmp;
 
@@ -2412,7 +2417,7 @@ _ethumb_client_thumb_generate_idler(void *data __UNUSED__)
         async->id = ethumb_client_generate(async->client, _ethumb_client_thumb_finish, async, NULL);
         if (async->id == -1)
           {
-             async->error(async->client, (void*) async->data);
+             async->error(async->client, (void *)async->data);
              async->client->ethumb = tmp;
              _ethumb_client_async_free(async);
           }
@@ -2437,7 +2442,7 @@ _ethumb_client_thumb_exists(void *data, Ethumb_Client *client, Ethumb_Exists *re
    Ethumb_Client_Async *async = data;
 
    if (request == NULL)
-     return ;
+     return;
 
    assert(async->exists == request);
 
@@ -2450,7 +2455,7 @@ _ethumb_client_thumb_exists(void *data, Ethumb_Client *client, Ethumb_Exists *re
         const char *thumb_key;
 
         ethumb_client_thumb_path_get(client, &thumb_path, &thumb_key);
-        async->done(client, thumb_path, thumb_key, (void*) async->data);
+        async->done(client, thumb_path, thumb_key, (void *)async->data);
         _ethumb_client_async_free(async);
      }
    else
@@ -2468,7 +2473,7 @@ _ethumb_client_thumb_exists_idler(void *data __UNUSED__)
    Ethumb_Client_Async *async;
    Eina_List *l1, *l2;
 
-   EINA_LIST_FOREACH_SAFE(idle_tasks[0], l1, l2, async)
+   EINA_LIST_FOREACH_SAFE (idle_tasks[0], l1, l2, async)
      {
         Ethumb *tmp;
 
@@ -2480,10 +2485,10 @@ _ethumb_client_thumb_exists_idler(void *data __UNUSED__)
         async->exists = ethumb_client_thumb_exists(async->client, _ethumb_client_thumb_exists, async);
         if (!async->exists)
           {
-             async->error(async->client, (void*) async->data);
+             async->error(async->client, (void *)async->data);
              async->client->ethumb = tmp;
              _ethumb_client_async_free(async);
-             continue ;
+             continue;
           }
 
         async->client->ethumb = tmp;
@@ -2511,7 +2516,7 @@ ethumb_client_thumb_async_get(Ethumb_Client *client,
    async = malloc(sizeof (Ethumb_Client_Async));
    if (!async)
      {
-        error(client, (void*) data);
+        error(client, (void *)data);
         return NULL;
      }
 
@@ -2568,3 +2573,4 @@ ethumb_client_thumb_async_cancel(Ethumb_Client *client, Ethumb_Client_Async *req
 
    _ethumb_client_async_free(request);
 }
+
