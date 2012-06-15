@@ -171,16 +171,15 @@ _evas_map_free(Evas_Object *obj, Evas_Map *m)
         if (m->surface)
           obj->layer->evas->engine.func->image_map_surface_free
           (obj->layer->evas->engine.data.output, m->surface);
+        if (obj->spans)
+          {
+             // FIXME: destroy engine side spans
+             free(obj->spans);
+             obj->spans = NULL;
+          }      
      }
    m->magic = 0;
    free(m);
-
-   if (obj->spans)
-     {
-        // FIXME: destroy engine side spans
-        free(obj->spans);
-        obj->spans = NULL;
-     }      
 }
 
 /****************************************************************************/
