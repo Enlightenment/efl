@@ -227,8 +227,8 @@ evas_object_textgrid_render(Evas_Object *obj, void *output, void *context, void 
                Evas_Script_Type script;
                int run_len;
 
-               printf("cell %dx%d: %c\n", j, i, (char)cells->codepoint);
-               if (!cells->codepoint) continue;
+//               if (cells->codepoint)
+//                 printf("cell %dx%d: [%i] %c\n", j, i, cells->codepoint, (char)cells->codepoint);
 
                /* background */
                if (cells->bg_extended)
@@ -240,15 +240,19 @@ evas_object_textgrid_render(Evas_Object *obj, void *output, void *context, void 
                if (!c)
                  continue;
 
-               TG_ENFN->context_color_set(output, context, c->r, c->g, c->b, c->a);
-               TG_ENFN->rectangle_draw(output,
-                                       context,
-                                       surface,
-                                       obj->cur.geometry.x + x + j * o->cur.char_width,
-                                       obj->cur.geometry.y + y + i * o->cur.char_height,
-                                       o->cur.char_width,
-                                       o->cur.char_height);
+               if (c->a > 0)
+                 {
+                    TG_ENFN->context_color_set(output, context, c->r, c->g, c->b, c->a);
+                    TG_ENFN->rectangle_draw(output,
+                                            context,
+                                            surface,
+                                            obj->cur.geometry.x + x + j * o->cur.char_width,
+                                            obj->cur.geometry.y + y + i * o->cur.char_height,
+                                            o->cur.char_width,
+                                            o->cur.char_height);
+                 }
 
+               if (!cells->codepoint) continue;
                /* foreground */
                if (cells->fg_extended)
                  palette = o->cur.palette_extended;
@@ -258,7 +262,8 @@ evas_object_textgrid_render(Evas_Object *obj, void *output, void *context, void 
                c = eina_array_data_get(palette, cells->fg);
                if (!c)
                  continue;
-
+               
+               if (c->a == 0) continue;
                /* FIXME: manage attributes */
                script = evas_common_language_script_type_get((const Eina_Unicode *)&cells->codepoint, 1);
                run_len = TG_ENFN->font_run_end_get(TG_ENDT,
@@ -421,6 +426,10 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
 
    if (o->changed)
      {
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        goto done;
+     }
+/*   
         Evas_Textgrid_Cell *cell_cur;
         Evas_Textgrid_Cell *cell_prev;
         unsigned int i;
@@ -438,7 +447,7 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
 						 obj);
 	     goto done;
 	  }
-        /* if it changed palettes */
+        // if it changed palettes
         if (eina_array_count(o->cur.palette_standard) != eina_array_count(o->prev.palette_standard))
           {
              evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
@@ -482,7 +491,7 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
                }
           }
 
-        /* if it changed a cell */
+        // if it changed a cell
         for (i = 0, cell_cur = o->cur.cells, cell_prev = o->prev.cells; i < o->cur.nbr_lines; i++)
           for (j = 0; j < o->cur.nbr_columns; j++, cell_cur++, cell_prev++)
             {
@@ -501,6 +510,7 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
                  }
             }
      }
+ */
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
 }
@@ -676,6 +686,7 @@ evas_object_textgrid_font_source_set(Evas_Object *obj, const char *font_source)
 
    eina_stringshare_replace(&o->cur.font_source, font_source);
    o->changed = 1;
+   evas_object_change(obj);
 }
 
 EAPI const char *
@@ -757,7 +768,7 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
         Evas_Script_Type script;
         int run_len;
 
-        script = evas_common_language_script_type_get((const Eina_Unicode *)&W, 1);
+        script = evas_common_language_script_type_get((const Eina_Unicode *)W, 1);
         run_len = TG_ENFN->font_run_end_get(TG_ENDT,
                                             o->font,
                                             &script_fi, &cur_fi,
@@ -814,6 +825,7 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
      }
    evas_object_inform_call_resize(obj);
    o->changed = 1;
+   evas_object_change(obj);
 }
 
 EAPI void
@@ -945,6 +957,7 @@ evas_object_textgrid_palette_set(Evas_Object *obj, Evas_Textgrid_Palette pal, in
         eina_array_push(palette, color);
      }
    o->changed = 1;
+   evas_object_change(obj);
 }
 
 EAPI void
@@ -1014,6 +1027,7 @@ evas_object_textgrid_supported_font_styles_set(Evas_Object *obj, Evas_Textgrid_F
 
    /* FIXME: to do */
    o->changed = 1;
+   evas_object_change(obj);
 }
 
 EAPI Evas_Textgrid_Font_Style
@@ -1051,8 +1065,9 @@ evas_object_textgrid_cellrow_set(Evas_Object *obj, int y, const Evas_Textgrid_Ce
    if ((y < 0) || (y >= o->cur.nbr_lines))
      return;
 
-   memcpy(o->cur.cells + y * o->cur.nbr_columns, row, o->cur.nbr_columns * sizeof(Evas_Textgrid_Cell));
+//   memcpy(o->cur.cells + y * o->cur.nbr_columns, row, o->cur.nbr_columns * sizeof(Evas_Textgrid_Cell));
    o->changed = 1;
+   evas_object_change(obj);
 }
 
 EAPI Evas_Textgrid_Cell *
