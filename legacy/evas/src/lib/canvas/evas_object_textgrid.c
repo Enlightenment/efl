@@ -756,8 +756,8 @@ evas_object_textgrid_size_set(Evas_Object *obj, int w, int h)
    return;
    MAGIC_CHECK_END();
 
-   if ((o->cur.w == w) || (o->cur.h == h)) return;
-   
+   if ((o->cur.w == w) && (o->cur.h == h)) return;
+
    evas_object_textgrid_rows_clear(obj);
    if (o->cur.cells)
      {
@@ -1202,6 +1202,7 @@ evas_object_textgrid_cellrow_get(const Evas_Object *obj, int y)
    MAGIC_CHECK_END();
 
    if ((y < 0) || (y >= o->cur.h)) return NULL;
+
    return o->cur.cells + (y * o->cur.w);
 }
 
