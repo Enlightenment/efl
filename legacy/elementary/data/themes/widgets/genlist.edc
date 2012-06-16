@@ -1029,9 +1029,13 @@ group { name: "elm/genlist/item_compress/default/default";
    parts {
       part { name: "elm.text";
          description { state: "default" 0.0;
-            text {
-               min: 0 1;
-            }
+            text.min: 0 1;
+         }
+         description { state: "selected" 0.0;
+            text.min: 0 1;
+         }
+         description { state: "flip_enabled" 0.0;
+            text.min: 0 1;
          }
       }
    }
