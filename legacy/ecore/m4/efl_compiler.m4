@@ -12,11 +12,14 @@ dnl AM_CONDITIONAL : EFL_HAVE_FLAG (FLAG being replaced by its value)
 
 AC_DEFUN([EFL_CHECK_COMPILER_FLAG],
 [
-m4_pushdef([UPEFL], m4_translit([$1], [-a-z], [_A-Z]))dnl
-m4_pushdef([UP], m4_translit([$2], [-a-z], [_A-Z]))dnl
+m4_pushdef([UPEFL], m4_translit([[$1]], [-a-z], [_A-Z]))
+m4_pushdef([UP], m4_translit([[$2]], [-a-z], [_A-Z]))
+
+dnl store in options -Wfoo if -Wno-foo is passed
+option=m4_bpatsubst([[$2]], [no-])
 
 CFLAGS_save="${CFLAGS}"
-CFLAGS="${CFLAGS} $2"
+CFLAGS="${CFLAGS} ${option}"
 
 AC_LANG_PUSH([C])
 AC_MSG_CHECKING([whether the compiler supports $2])
@@ -34,7 +37,7 @@ UPEFL[_CFLAGS]="${UPEFL[_CFLAGS]} [$2]"
 AC_ARG_VAR(UPEFL[_CFLAGS], [preprocessor flags for $2])
 AC_SUBST(UPEFL[_CFLAGS])
 
-AM_CONDITIONAL([EFL_HAVE_]UPEFL, [test "x${have_flag}" = "xyes"])
+AM_CONDITIONAL([EFL_HAVE]UP, [test "x${have_flag}" = "xyes"])
 
 m4_popdef([UP])
 m4_popdef([UPEFL])
@@ -47,5 +50,5 @@ dnl EFL_CHECK_COMPILER_FLAGS(EFL, FLAGS)
 
 AC_DEFUN([EFL_CHECK_COMPILER_FLAGS],
 [
-m4_foreach_w([flag], [$2], [EFL_CHECK_COMPILER_FLAG($1, m4_defn([flag]))])
+m4_foreach_w([flag], [$2], [EFL_CHECK_COMPILER_FLAG([$1], m4_defn([flag]))])
 ])
