@@ -203,9 +203,11 @@ evas_object_textgrid_rows_clear(Evas_Object *obj)
    o = (Evas_Object_Textgrid *)(obj->object_data);
    if (!o->cur.rows) return;
    for (i = 0; i < o->cur.h; i++)
-     evas_object_textgrid_row_clear(&(o->cur.rows[i]));
-   free(o->cur.rows);
-   o->cur.rows = NULL;
+     {
+        evas_object_textgrid_row_clear(&(o->cur.rows[i]));
+        o->cur.rows[i].ch1 = 0;
+        o->cur.rows[i].ch2 = o->cur.w - 1;
+     }
 }
 
 static void
@@ -222,6 +224,7 @@ evas_object_textgrid_free(Evas_Object *obj)
 
    /* free obj */
    evas_object_textgrid_rows_clear(obj);
+   if (o->cur.rows) free(o->cur.rows);
    if (o->cur.font_name) eina_stringshare_del(o->cur.font_name);
    if (o->cur.font_source) eina_stringshare_del(o->cur.font_source);
    if (o->cur.font_description) evas_font_desc_unref(o->cur.font_description);
@@ -759,6 +762,11 @@ evas_object_textgrid_size_set(Evas_Object *obj, int w, int h)
    if ((o->cur.w == w) && (o->cur.h == h)) return;
 
    evas_object_textgrid_rows_clear(obj);
+   if (o->cur.rows)
+     {
+        free(o->cur.rows);
+        o->cur.rows = NULL;
+     }
    if (o->cur.cells)
      {
         free(o->cur.cells);
@@ -853,7 +861,7 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
    int is, was = 0, pass = 0, freeze = 0;
    Evas_Font_Description *font_description;
    
-   if ((!font_name) || (!*font_name) ||(font_size <= 0))
+   if ((!font_name) || (!*font_name) || (font_size <= 0))
      return;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -959,6 +967,8 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
    evas_object_inform_call_resize(obj);
    o->changed = 1;
    o->core_change = 1;
+   printf("ROWS CLR\n");
+   evas_object_textgrid_rows_clear(obj);
    evas_object_change(obj);
 }
 
@@ -1081,6 +1091,7 @@ evas_object_textgrid_palette_set(Evas_Object *obj, Evas_Textgrid_Palette pal, in
      }
    o->changed = 1;
    o->pal_change = 1;
+   evas_object_textgrid_rows_clear(obj);
    evas_object_change(obj);
 }
 
