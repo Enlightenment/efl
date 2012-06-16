@@ -196,3 +196,7 @@
 2012-06-15 Michael Bouchaud
 	* elm_progressbar: elm_progressbar_format_function_set to add a callback
 	function to format the unit string.
+
+2012-06-16 Davide Andreoli
+	* elm_map: add elm_map_overlay_del_cb_set to be notify when
+	an overlay is deleted.

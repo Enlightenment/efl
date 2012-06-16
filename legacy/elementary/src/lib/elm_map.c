@@ -253,6 +253,9 @@ struct _Elm_Map_Overlay
    Elm_Map_Overlay_Get_Cb cb;
    void *cb_data;
 
+   Elm_Map_Overlay_Del_Cb delcb;
+   void *delcb_data;
+
    // These are not used if overlay type is class or group
    Overlay_Group *grp;
 };
@@ -526,6 +529,7 @@ static const char SIG_NAME_LOAD[] =          "name,load";
 static const char SIG_NAME_LOADED[] =        "name,loaded";
 static const char SIG_NAME_LOADED_FAIL[] =   "name,loaded,fail";
 static const char SIG_OVERLAY_CLICKED[] =    "overlay,clicked";
+static const char SIG_OVERLAY_DEL[] =        "overlay,del";
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CLICKED, ""},
        {SIG_CLICKED_DOUBLE, ""},
@@ -550,6 +554,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_NAME_LOADED, ""},
        {SIG_NAME_LOADED_FAIL, ""},
        {SIG_OVERLAY_CLICKED, ""},
+       {SIG_OVERLAY_DEL, ""},
        {NULL, NULL}
 };
 
@@ -4794,6 +4799,10 @@ elm_map_overlay_del(Elm_Map_Overlay *overlay)
    EINA_SAFETY_ON_NULL_RETURN(overlay->wd);
    ELM_CHECK_WIDTYPE(overlay->wd->obj, widtype);
 
+   evas_object_smart_callback_call(overlay->wd->obj, SIG_OVERLAY_DEL, overlay);
+   if (overlay->delcb) overlay->delcb(overlay->delcb_data, overlay->wd->obj,
+                                overlay);
+
    if (overlay->grp)
      {
         if (overlay->grp->clas)
@@ -5282,6 +5291,23 @@ elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Get_Cb get_
 #else
    (void) overlay;
    (void) get_cb;
+   (void) data;
+#endif
+}
+
+EAPI void
+elm_map_overlay_del_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Del_Cb del_cb, void *data)
+{
+#ifdef HAVE_ELEMENTARY_ECORE_CON
+   EINA_SAFETY_ON_NULL_RETURN(overlay);
+   EINA_SAFETY_ON_NULL_RETURN(overlay->wd);
+   ELM_CHECK_WIDTYPE(overlay->wd->obj, widtype);
+
+   overlay->delcb = del_cb;
+   overlay->delcb_data = data;
+#else
+   (void) overlay;
+   (void) del_cb;
    (void) data;
 #endif
 }

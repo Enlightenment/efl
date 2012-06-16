@@ -189,6 +189,7 @@ typedef Evas_Object               *(*Elm_Map_Marker_Icon_Get_Func)(Evas_Object *
 typedef Evas_Object               *(*Elm_Map_Group_Icon_Get_Func)(Evas_Object *obj, void *data); /**< Icon fetching class function for markers group classes. */
 
 typedef void                       (*Elm_Map_Overlay_Get_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Get callback function for the overlay. */
+typedef void                       (*Elm_Map_Overlay_Del_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Det callback function for the overlay. */
 typedef void                       (*Elm_Map_Name_Cb)(void *data, Evas_Object *map, Elm_Map_Name *name);                /**< Async-callback function for the name request. */
 typedef void                       (*Elm_Map_Route_Cb)(void *data, Evas_Object *map, Elm_Map_Route *route);             /**< Async-callback function for the route request. */
 
@@ -970,11 +971,28 @@ EAPI void                  elm_map_overlays_show(Eina_List *overlays);
  * is clicked, callback will be called and return a virtual group overlays.
  *
  * You can delete this callback function by setting @c NULL.
- *
+ * 
  * @ingroup Map
  */
-EAPI void elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Get_Cb get_cb, void *data);
+EAPI void                  elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Get_Cb get_cb, void *data);
 
+/**
+ * Set the get callback function to call when the overlay is deleted.
+ *
+ * @param overlay The overlay to own the del callback function.
+ * @param get_cb The callback function.
+ * @param data The user callback data.
+ *
+ * If the overlay is deleted, the callback wll be called.
+ * The deleted overlay is returned by callback.
+ *
+ * You can delete this callback function by setting @c NULL.
+ *
+ * @since 1.1.0
+ * 
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_del_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Del_Cb del_cb, void *data);
 
 /**
  * Add a new class overlay to the map object.
