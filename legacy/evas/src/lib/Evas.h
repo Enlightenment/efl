@@ -9214,33 +9214,33 @@ EAPI Evas_Object *evas_object_textgrid_add(Evas *e);
  * @brief Set the size of the textgrid object.
  *
  * @param obj The textgrid object.
- * @param nbr_lines The number of lines of the grid.
- * @param nbr_columns The number of columns of the grid.
+ * @param w The number of columns (width in cells) of the grid.
+ * @param h The number of rows (height in cells) of the grid.
  *
- * This function sets the number of lines @p nbr_lines and the number
- * of columns @p nbr_columns to the textgrid object @p obj. If
- * @p nbr_lines or @p nbr_columns are less or equal than 0, this
+ * This function sets the number of lines @p h and the number
+ * of columns @p w to the textgrid object @p obj. If
+ * @p w or @p h are less or equal than 0, this
  * functiond does nothing.
  *
  * @since 1.3
  */
-EAPI void evas_object_textgrid_size_set(Evas_Object *obj, int nbr_lines, int nbr_columns);
+EAPI void evas_object_textgrid_size_set(Evas_Object *obj, int w, int h);
 
 /**
  * @brief Get the size of the textgrid object.
  *
  * @param obj The textgrid object.
- * @param nbr_lines The number of lines of the grid.
- * @param nbr_columns The number of columns of the grid.
+ * @param w The number of columns of the grid.
+ * @param h The number of rows of the grid.
  *
  * This function retrieves the number of lines in the buffer @p
- * nbr_lines and the number of columns in the buffer @p nbr_columns of
- * the textgrid object @p obj. @p nbr_lines or @p nbr_columns can be
+ * h and the number of columns in the buffer @p w of
+ * the textgrid object @p obj. @p w or @p h can be
  * @c NULL. On error, their value is 0.
  *
  * @since 1.3
  */
-EAPI void evas_object_textgrid_size_get(Evas_Object *obj, int *nbr_lines, int *nbr_columns);
+EAPI void evas_object_textgrid_size_get(const Evas_Object *obj, int *w, int *h);
 
 /**
  * @brief Set the font (source) file to be used on a given textgrid object.
@@ -9347,7 +9347,7 @@ EAPI void evas_object_textgrid_font_get(const Evas_Object *obj, const char **fon
  *
  * @since 1.3
  */
-EAPI void evas_object_textgrid_cell_size_get(Evas_Object *obj, int *width, int *height);
+EAPI void evas_object_textgrid_cell_size_get(const Evas_Object *obj, int *width, int *height);
 
 /**
  * @brief The set color to the given palette at the given index of the given textgrid object.
@@ -9400,11 +9400,10 @@ EAPI void evas_object_textgrid_palette_set(Evas_Object *obj, Evas_Textgrid_Palet
  *
  * @since 1.3
  */
-EAPI void evas_object_textgrid_palette_get(Evas_Object *obj, Evas_Textgrid_Palette pal, int idx, int *r, int *g, int *b, int *a);
+EAPI void evas_object_textgrid_palette_get(const Evas_Object *obj, Evas_Textgrid_Palette pal, int idx, int *r, int *g, int *b, int *a);
 
 EAPI void evas_object_textgrid_supported_font_styles_set(Evas_Object *obj, Evas_Textgrid_Font_Style styles);
-
-EAPI Evas_Textgrid_Font_Style evas_object_textgrid_supported_font_styles_get(Evas_Object *obj);
+EAPI Evas_Textgrid_Font_Style evas_object_textgrid_supported_font_styles_get(const Evas_Object *obj);
 
 /**
  * @brief Set the string at the given row of the given textgrid object.
@@ -9413,14 +9412,14 @@ EAPI Evas_Textgrid_Font_Style evas_object_textgrid_supported_font_styles_get(Eva
  * @param y The row index of the grid.
  * @param The string as a sequence of #Evas_Textgrid_Cell.
  *
- * This function sets the characters of the textgrid object @p obj at
- * the row @p y. The string is stored in the array @p row. This array
- * must have the number of columns of the grid. If @p row id @c NULL
- * or if @p y is not between 0 and the number of lines of the grid -
- * 1, this function does nothing.
+ * This function returns cells to the textgrid taken by
+ * evas_object_textgrid_cellrow_get(). The row pointer @p row should be the
+ * same row pointer returned by evas_object_textgrid_cellrow_get() for the
+ * same row @p y.
  *
  * @see evas_object_textgrid_cellrow_get()
  * @see evas_object_textgrid_size_set()
+ * @see evas_object_textgrid_update_add()
  *
  * @since 1.3
  */
@@ -9439,10 +9438,42 @@ EAPI void evas_object_textgrid_cellrow_set(Evas_Object *obj, int y, const Evas_T
  *
  * @see evas_object_textgrid_cellrow_set()
  * @see evas_object_textgrid_size_set()
+ * @see evas_object_textgrid_update_add()
  *
  * @since 1.3
  */
-EAPI Evas_Textgrid_Cell *evas_object_textgrid_cellrow_get(Evas_Object *obj, int y);
+EAPI Evas_Textgrid_Cell *evas_object_textgrid_cellrow_get(const Evas_Object *obj, int y);
+
+/**
+ * @brief Get the string at the given row of the given textgrid object.
+ *
+ * @param obj The textgrid object to query for font information.
+ * @param x The rect region of cells top-left x (column)
+ * @param y The rect region of cells top-left y (row)
+ * @param w The rect region size in number of cells (columns)
+ * @param h The rect region size in number of cells (rows)
+ *
+ * This function delcares to evas that a region of cells was updated by
+ * code and needs refreshing. An application should modify cells like this
+ * as an example:
+ * 
+ * @code
+ * Evas_Textgrid_Cell *cells;
+ * int i;
+ * 
+ * cells = evas_object_textgrid_cellrow_get(obj, row);
+ * for (i = 0; i < width; i++) cells[i].codepoint = 'E';
+ * evas_object_textgrid_cellrow_set(obj, row, cells);
+ * evas_object_textgrid_update_add(obj, 0, row, width, 1);
+ * @endcode
+ *
+ * @see evas_object_textgrid_cellrow_set()
+ * @see evas_object_textgrid_cellrow_get()
+ * @see evas_object_textgrid_size_set()
+ *
+ * @since 1.3
+ */
+EAPI void evas_object_textgrid_update_add(Evas_Object *obj, int x, int y, int w, int h);
 
 /**
  * @}
