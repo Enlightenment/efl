@@ -2652,6 +2652,7 @@ _group_items_recalc(void *data)
              if (!git->realized)
                _item_realize(git, 0, EINA_FALSE);
              evas_object_resize(VIEW(git), wd->minw, git->item->h);
+             // XXX: not quite right - makes headers not stick in place.
              git->item->scrl_x = git->item->block->x + git->x - git->wd->pan_x + ox;
              git->item->scrl_y = git->item->block->y + git->y - git->wd->pan_y + oy;
              evas_object_move(VIEW(git), git->item->scrl_x, git->item->scrl_y);
