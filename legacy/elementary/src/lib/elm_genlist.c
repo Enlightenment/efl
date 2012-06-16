@@ -5618,7 +5618,7 @@ elm_genlist_item_decorate_mode_get(const Elm_Object_Item *it)
    return _it->wd->decorate_it_type;
 }
 
-EAPI const Elm_Object_Item *
+EAPI Elm_Object_Item *
 elm_genlist_decorated_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;

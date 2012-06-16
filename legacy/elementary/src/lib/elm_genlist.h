@@ -1642,7 +1642,7 @@ EAPI const char                   *elm_genlist_item_decorate_mode_get(const Elm_
  *
  * @ingroup Genlist
  */
-EAPI const Elm_Object_Item       *elm_genlist_decorated_item_get(const Evas_Object *obj);
+EAPI Elm_Object_Item              *elm_genlist_decorated_item_get(const Evas_Object *obj);
 
 /**
  * Set reorder mode
