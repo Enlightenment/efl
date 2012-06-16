@@ -1810,7 +1810,7 @@ _my_gl_mode_cancel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    fprintf(stderr, "drag\n");
    if (!data) return;
    int v = elm_radio_value_get(data);
-   Elm_Object_Item *glit = (Elm_Object_Item *) elm_genlist_decorated_item_get(obj);
+   Elm_Object_Item *glit = elm_genlist_decorated_item_get(obj);
    if (glit) elm_genlist_item_decorate_mode_set(glit, mode_type[v], EINA_FALSE);
 }
 
@@ -2703,7 +2703,7 @@ _decorate_all_set_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info 
    if (!gl) return;
 
    v = elm_radio_value_get(data);
-   it = (Elm_Object_Item *)elm_genlist_decorated_item_get(gl);
+   it = elm_genlist_decorated_item_get(gl);
 
    elm_genlist_decorate_mode_set(gl, EINA_TRUE);
 }
