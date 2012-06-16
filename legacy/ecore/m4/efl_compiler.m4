@@ -34,7 +34,7 @@ UPEFL[_CFLAGS]="${UPEFL[_CFLAGS]} [$2]"
 AC_ARG_VAR(UPEFL[_CFLAGS], [preprocessor flags for $2])
 AC_SUBST(UPEFL[_CFLAGS])
 
-AM_CONDITIONAL([EFL_HAVE]UPEFL, [test "x${have_flag}" = "xyes"])
+AM_CONDITIONAL([EFL_HAVE_]UPEFL, [test "x${have_flag}" = "xyes"])
 
 m4_popdef([UP])
 m4_popdef([UPEFL])
