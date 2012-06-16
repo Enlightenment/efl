@@ -967,7 +967,6 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
    evas_object_inform_call_resize(obj);
    o->changed = 1;
    o->core_change = 1;
-   printf("ROWS CLR\n");
    evas_object_textgrid_rows_clear(obj);
    evas_object_change(obj);
 }
