@@ -17,7 +17,6 @@ group { name: "elm/genlist/item/default/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -429,7 +428,6 @@ group { name: "elm/genlist/item/group_index/default";
       part {
          name: "event";
          type: RECT;
-         repeat_events: 0;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -718,7 +716,6 @@ group { name: "elm/genlist/item_compress/message/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -1061,7 +1058,6 @@ group { name: "elm/genlist/tree/default/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -1489,7 +1485,6 @@ group { name: "elm/genlist/tree_compress/default/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -1892,7 +1887,6 @@ group { name: "elm/genlist/item/default_style/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -2162,7 +2156,6 @@ group { name: "elm/genlist/item_odd/default_style/default";
    parts {
       part { name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -2413,7 +2406,6 @@ group { name: "elm/genlist/tree/default_style/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -2731,7 +2723,6 @@ group { name: "elm/genlist/tree_odd/default_style/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -3027,7 +3018,6 @@ group { name: "elm/genlist/item/double_label/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -3339,7 +3329,6 @@ group { name: "elm/genlist/item_compress/double_label/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -3649,7 +3638,6 @@ group { name: "elm/genlist/item_odd/double_label/default";
    parts {
       part { name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -3935,7 +3923,6 @@ group { name: "elm/genlist/item_compress_odd/double_label/default";
    parts {
       part { name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -4226,7 +4213,6 @@ group { name: "elm/genlist/tree/double_label/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -4584,7 +4570,6 @@ group { name: "elm/genlist/tree_compress/double_label/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -4941,7 +4926,6 @@ group { name: "elm/genlist/tree_odd/double_label/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -5274,7 +5258,6 @@ group { name: "elm/genlist/item/icon_top_text_bottom/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -5528,7 +5511,6 @@ group { name: "elm/genlist/item_odd/icon_top_text_bottom/default";
    parts {
       part { name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -5763,7 +5745,6 @@ group { name: "elm/genlist/tree/icon_top_text_bottom/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -6063,7 +6044,6 @@ group { name: "elm/genlist/tree_odd/icon_top_text_bottom/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -6342,7 +6322,6 @@ group { name: "elm/genlist/tree_compress_odd/double_label/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -6673,7 +6652,6 @@ group { name: "elm/genlist/item_compress/media/default";
       part {
          name:           "event";
          type:           RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -6935,7 +6913,6 @@ group { name: "elm/genlist/item_compress_odd/media/default";
    parts {
       part { name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -7180,7 +7157,6 @@ group { name: "elm/genlist/item_compress/media-album/default";
       part {
          name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -7556,7 +7532,6 @@ group { name: "elm/genlist/item_compress_odd/media-album/default";
    parts {
       part { name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -7908,7 +7883,6 @@ group { name: "elm/genlist/item_compress/media-preview/default";
       part {
          name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -8193,7 +8167,6 @@ group { name: "elm/genlist/item_compress_odd/media-preview/default";
    parts {
       part { name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -8459,7 +8432,6 @@ group { name: "elm/genlist/item/mode/default";
       part {
          name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -8856,7 +8828,6 @@ group { name: "elm/genlist/item_odd/mode/default";
       part {
          name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -9175,7 +9146,6 @@ group { name: "elm/genlist/item/edit/default";
       part {
          name: "event";
          type: RECT;
-         repeat_events: 1;
          description {
             state: "default" 0.0;
             color: 0 0 0 0;
@@ -9630,7 +9600,6 @@ group { name: "elm/genlist/tree/tree_effect/default";
      part {
         name:           "event";
         type:           RECT;
-        repeat_events: 1;
         description {
            state: "default" 0.0;
            color: 0 0 0 0;
@@ -9639,7 +9608,6 @@ group { name: "elm/genlist/tree/tree_effect/default";
      part { name: "group";
        type: GROUP;
        source: "elm/genlist/tree/effect_parts/default";
-       repeat_events: 1;
        description {
          min: 16 28;
          state: "default" 0.0;
