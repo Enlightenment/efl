@@ -18,7 +18,7 @@
  * eina:
  * @until eina_init
  *
- * It's frequentely necessary to split a string into its constituent parts,
+ * It's frequently necessary to split a string into its constituent parts,
  * eina_str_split() make's it easy to do so:
  * @until printf
  *

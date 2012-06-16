@@ -36,14 +36,14 @@
  *
  * To create a basic benchmark, you have to follow these steps:
  *
- * @li Create a new bechmark
- * @li Write the functions that wraps the the functions you want to
- * bechmark.
+ * @li Create a new benchmark
+ * @li Write the functions that wraps the functions you want to
+ * benchmark.
  * @li Register these wrappers functions.
  * @li Run the benchmark.
  * @li Free the memory.
  *
- * Here is a basic example of bechmark which creates two functions
+ * Here is a basic example of benchmark which creates two functions
  * that will be run. These functions just print a message.
  *
  * @code
@@ -403,7 +403,7 @@ EAPI void            eina_benchmark_free(Eina_Benchmark *bench);
  * increasing by @p count_step from @p count_start to @p count_end is passed to @p
  * bench_cb when eina_benchmark_run() is called.
  *
- * If @p bench is @c NULL, this function returns imediatly. If the
+ * If @p bench is @c NULL, this function returns immediately. If the
  * allocation of the memory of the test to add fails, the error is set
  * to #EINA_ERROR_OUT_OF_MEMORY. This function returns #EINA_FALSE
  * on failure, #EINA_TRUE otherwise.

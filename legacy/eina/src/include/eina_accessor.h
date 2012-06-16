@@ -320,7 +320,7 @@ EAPI Eina_Bool eina_accessor_unlock(Eina_Accessor *accessor) EINA_ARG_NONNULL(1)
  * @warning unless explicitly stated in functions returning accessors,
  *    do not modify the accessed object while you walk it, in this
  *    example using lists, do not remove list nodes or you might
- *    crash!  This is not a limitiation of accessors themselves,
+ *    crash!  This is not a limitation of accessors themselves,
  *    rather in the accessors implementations to keep them as simple
  *    and fast as possible.
  */

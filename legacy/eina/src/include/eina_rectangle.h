@@ -138,7 +138,7 @@ EAPI void                 eina_rectangle_pool_data_set(Eina_Rectangle_Pool *pool
  * @param pool The pool to free.
  *
  * This function frees the allocated data of @p pool. If @p pool is
- * @c NULL, ths function returned immediately.
+ * @c NULL, this function returned immediately.
  */
 EAPI void                 eina_rectangle_pool_free(Eina_Rectangle_Pool *pool) EINA_ARG_NONNULL(1);
 
@@ -175,7 +175,7 @@ EAPI Eina_Rectangle      *eina_rectangle_pool_request(Eina_Rectangle_Pool *pool,
  * @param rect The rectangle to remove from the pool.
  *
  * This function removes @p rect from the pool. If @p rect is
- * @c NULL, the function returns immediately. Otherwise it remoes @p
+ * @c NULL, the function returns immediately. Otherwise it removes @p
  * rect from the pool.
  */
 EAPI void                 eina_rectangle_pool_release(Eina_Rectangle *rect) EINA_ARG_NONNULL(1);

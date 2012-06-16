@@ -31,7 +31,7 @@
  *
  * Each Eina_Object is in fact only an ID and a generation count. This
  * make it possible to check if the ID is allocated by checking that it
- * is inside the boudary limit of the allocated range. The generation
+ * is inside the boundary limit of the allocated range. The generation
  * count, give the possibility to check that we use a valid alive pointer
  * as generation is increased each time an object is allocated/destroyed.
  * And finally it provide type checking against Eina_Class.

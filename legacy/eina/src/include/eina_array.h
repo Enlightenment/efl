@@ -69,7 +69,7 @@
  * And now we call a function on every member of our array to print it:
  * @until foreach
  *
- * One of the strenghts of @ref Eina_Array over @ref Eina_List is that it has
+ * One of the strengths of @ref Eina_Array over @ref Eina_List is that it has
  * very fast random access to elements, so this is very efficient:
  * @until printf
  *
@@ -339,7 +339,7 @@ static inline void     *eina_array_data_get(const Eina_Array *array,
  * @brief Set the data at a given position in an array.
  *
  * @param array The array.
- * @param idx The potition of the data to set.
+ * @param idx The position of the data to set.
  * @param data The data to set.
  *
  * This function sets the data at the position @p idx in @p
@@ -401,7 +401,7 @@ static inline Eina_Bool    eina_array_foreach(Eina_Array  *array,
  * @brief Macro to iterate over an array easily.
  *
  * @param array The array to iterate over.
- * @param index The integer number that is increased while itareting.
+ * @param index The integer number that is increased while iterating.
  * @param item The data
  * @param iterator The iterator
  *
