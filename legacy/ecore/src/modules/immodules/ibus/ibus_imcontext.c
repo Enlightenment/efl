@@ -17,12 +17,6 @@
 #include <ibus.h>
 #include "ibus_imcontext.h"
 
-#if (ENABLE_DEBUG)
-#define IDEBUG(x, a...) fprintf (stderr,  __FILE__ ",%d,%s: " x "\n", __LINE__, __func__, ##a)
-#else
-#define IDEBUG(x, a...) do {} while (0)
-#endif
-
 struct _IBusIMContext {
      /* instance members */
      Ecore_IMF_Context *ctx;
@@ -113,7 +107,7 @@ _ecore_imf_modifier_to_ibus_modifier(unsigned int modifier)
 IBusIMContext *
 ibus_im_context_new(void)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
 
    IBusIMContext *context = calloc(1, sizeof(IBusIMContext));
 
@@ -136,7 +130,7 @@ ibus_im_context_new(void)
 EAPI void
 ibus_im_context_add(Ecore_IMF_Context *ctx)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
 
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
    if (!ibusimcontext) return;
@@ -172,7 +166,7 @@ ibus_im_context_add(Ecore_IMF_Context *ctx)
 EAPI void
 ibus_im_context_del(Ecore_IMF_Context *ctx)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
 
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
 
@@ -194,7 +188,7 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
    if (type != ECORE_IMF_EVENT_KEY_UP && type != ECORE_IMF_EVENT_KEY_DOWN)
      return EINA_FALSE;
 
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
 
    if (G_LIKELY(ibusimcontext->ibuscontext && ibusimcontext->has_focus))
      {
@@ -249,7 +243,7 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
 EAPI void
 ibus_im_context_focus_in(Ecore_IMF_Context *ctx)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("ctx : %p", ctx);
 
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
 
@@ -270,7 +264,7 @@ ibus_im_context_focus_in(Ecore_IMF_Context *ctx)
 EAPI void
 ibus_im_context_focus_out(Ecore_IMF_Context *ctx)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("ctx : %p", ctx);
 
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
 
@@ -299,8 +293,6 @@ ibus_im_context_preedit_string_get(Ecore_IMF_Context *ctx,
                                    char          **str,
                                    int            *cursor_pos)
 {
-   IDEBUG("%s", __FUNCTION__);
-
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
 
    if (ibusimcontext->enable && ibusimcontext->preedit_visible)
@@ -319,7 +311,7 @@ ibus_im_context_preedit_string_get(Ecore_IMF_Context *ctx,
         if (cursor_pos)
           *cursor_pos = 0;
      }
-   IDEBUG("str=%s", *str);
+   EINA_LOG_DBG("str : %s, cursor_pos : %d", *str, *cursor_pos);
 }
 
 EAPI void
@@ -328,7 +320,6 @@ ibus_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context   *ctx,
                                                    Eina_List     **attr __UNUSED__,
                                                    int            *cursor_pos)
 {
-   IDEBUG("%s", __FUNCTION__);
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
 
    if (ibusimcontext->enable && ibusimcontext->preedit_visible)
@@ -347,12 +338,13 @@ ibus_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context   *ctx,
         if (cursor_pos)
           *cursor_pos = 0;
      }
+   EINA_LOG_DBG("str : %s, cursor_pos : %d", *str, *cursor_pos);
 }
 
 EAPI void
 ibus_im_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("canvas : %p", window);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
 
    if (window != NULL)
@@ -362,7 +354,7 @@ ibus_im_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 EAPI void
 ibus_im_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("canvas : %p", canvas);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
 
    if (canvas != NULL)
@@ -404,7 +396,7 @@ _set_cursor_location_internal(Ecore_IMF_Context *ctx)
 EAPI void
 ibus_im_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w, int h)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("x : %d, y : %d, w, %d, h :%d", x, y, w, h);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
 
    if (ibusimcontext->cursor_x != x ||
@@ -424,7 +416,7 @@ ibus_im_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w,
 EAPI void
 ibus_im_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("preedit : %d", use_preedit);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
 
    if (ibusimcontext->ibuscontext)
@@ -442,7 +434,7 @@ static void
 _bus_connected_cb(IBusBus          *bus __UNUSED__,
                   IBusIMContext    *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("ibus is connected");
 
    if (ibusimcontext)
      _create_input_context(ibusimcontext);
@@ -453,9 +445,10 @@ _ibus_context_commit_text_cb(IBusInputContext *ibuscontext __UNUSED__,
                              IBusText         *text,
                              IBusIMContext    *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
    if (!ibusimcontext || !text) return;
    char *commit_str = text->text ? text->text : "";
+
+   EINA_LOG_DBG("commit string : %s", commit_str);
 
    if (ibusimcontext->ctx)
      {
@@ -497,7 +490,7 @@ _ibus_context_forward_key_event_cb(IBusInputContext  *ibuscontext __UNUSED__,
                                    guint              state,
                                    IBusIMContext     *ibusimcontext __UNUSED__)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("keyval : %d, state : %d", keyval, state);
 
    // Find the window which has the current keyboard focus.
    Window winFocus = 0;
@@ -525,7 +518,6 @@ _ibus_context_update_preedit_text_cb(IBusInputContext  *ibuscontext __UNUSED__,
                                      gboolean           visible,
                                      IBusIMContext     *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
    if (!ibusimcontext || !text) return;
 
    const char *str;
@@ -542,6 +534,8 @@ _ibus_context_update_preedit_text_cb(IBusInputContext  *ibuscontext __UNUSED__,
      ibusimcontext->preedit_string = strdup("");
 
    ibusimcontext->preedit_cursor_pos = cursor_pos;
+
+   EINA_LOG_DBG("string : %s, cursor : %d",ibusimcontext->preedit_string, ibusimcontext->preedit_cursor_pos);
 
    flag = ibusimcontext->preedit_visible != visible;
    ibusimcontext->preedit_visible = visible;
@@ -574,7 +568,7 @@ static void
 _ibus_context_show_preedit_text_cb(IBusInputContext   *ibuscontext __UNUSED__,
                                    IBusIMContext      *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("preedit visible : %d", ibusimcontext->preedit_visible);
 
    if (ibusimcontext->preedit_visible == EINA_TRUE)
      return;
@@ -594,7 +588,7 @@ static void
 _ibus_context_hide_preedit_text_cb(IBusInputContext *ibuscontext __UNUSED__,
                                    IBusIMContext    *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
    if (!ibusimcontext) return;
 
    if (ibusimcontext->preedit_visible == EINA_FALSE)
@@ -615,7 +609,7 @@ static void
 _ibus_context_enabled_cb(IBusInputContext *ibuscontext __UNUSED__,
                          IBusIMContext    *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
    if (!ibusimcontext) return;
 
    ibusimcontext->enable = EINA_TRUE;
@@ -625,7 +619,7 @@ static void
 _ibus_context_disabled_cb(IBusInputContext *ibuscontext __UNUSED__,
                           IBusIMContext    *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
    if (!ibusimcontext) return;
 
    ibusimcontext->enable = EINA_FALSE;
@@ -649,7 +643,7 @@ static void
 _ibus_context_destroy_cb(IBusInputContext *ibuscontext __UNUSED__,
                          IBusIMContext    *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
    if (!ibusimcontext) return;
 
    ibusimcontext->ibuscontext = NULL;
@@ -673,7 +667,7 @@ _ibus_context_destroy_cb(IBusInputContext *ibuscontext __UNUSED__,
 static void
 _create_input_context(IBusIMContext *ibusimcontext)
 {
-   IDEBUG("%s", __FUNCTION__);
+   EINA_LOG_DBG("%s", __FUNCTION__);
    if (!ibusimcontext) return;
 
    ibusimcontext->ibuscontext = ibus_bus_create_input_context(_bus, "ecore");
