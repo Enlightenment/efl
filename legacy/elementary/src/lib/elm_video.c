@@ -369,7 +369,7 @@ elm_video_file_set(Evas_Object *obj,
    sd->stop = EINA_FALSE;
    if (!emotion_object_file_set(sd->emotion, filename)) return EINA_FALSE;
 
-   if ((!strncmp(filename, "file://", 7)) || (!strstr(filename, "://")))
+   if (filename && ((!strncmp(filename, "file://", 7)) || (!strstr(filename, "://"))))
      emotion_object_last_position_load(sd->emotion);
 
    elm_layout_signal_emit(obj, "elm,video,load", "elm");
