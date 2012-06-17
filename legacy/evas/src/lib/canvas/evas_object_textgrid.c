@@ -631,7 +631,7 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
                                   obj->cur.geometry.x + 
                                   (r->ch1 * o->cur.char_width),
                                   obj->cur.geometry.y + 
-                                  i * o->cur.char_height,
+                                  (i * o->cur.char_height),
                                   (r->ch2 - r->ch1 + 1) * o->cur.char_width,
                                   o->cur.char_height);
                }
