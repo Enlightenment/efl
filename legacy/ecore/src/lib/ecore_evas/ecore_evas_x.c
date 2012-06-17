@@ -1970,6 +1970,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
+        _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
         if ((id = getenv("DESKTOP_STARTUP_ID")))
           {
@@ -2086,6 +2087,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
+        _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
         if ((id = getenv("DESKTOP_STARTUP_ID")))
           {
@@ -2165,6 +2167,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
+        _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
         if ((id = getenv("DESKTOP_STARTUP_ID")))
           {
@@ -2244,6 +2247,7 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         ecore_x_window_defaults_set(ee->prop.window);
         _ecore_evas_x_protocols_set(ee);
         _ecore_evas_x_sync_set(ee);
+        _ecore_evas_x_size_pos_hints_update(ee);
 
         if ((id = getenv("DESKTOP_STARTUP_ID")))
           {
