@@ -1021,7 +1021,7 @@ edje_edit_group_add(Evas_Object *obj, const char *name)
    //cd = _alloc(sizeof(Code));
    //codes = eina_list_append(codes, cd);
 #define EDIT_EMN(Tp, Sz, Ce)							\
-   Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 10);
+   Ce->mp.Tp = eina_mempool_add("chained_mempool", #Tp, NULL, sizeof (Sz), 8);
 
    EDIT_EMN(RECTANGLE, Edje_Part_Description_Common, de);
    EDIT_EMN(TEXT, Edje_Part_Description_Text, de);

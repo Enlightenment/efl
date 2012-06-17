@@ -70,7 +70,7 @@ edje_init(void)
 
    _edje_real_part_mp = eina_mempool_add("chained_mempool",
 					 "Edje_Real_Part", NULL,
-					 sizeof (Edje_Real_Part), 128);
+					 sizeof (Edje_Real_Part), 32);
    if (!_edje_real_part_mp)
      {
 	ERR("Mempool for Edje_Real_Part cannot be allocated.");
@@ -79,7 +79,7 @@ edje_init(void)
 
    _edje_real_part_state_mp = eina_mempool_add("chained_mempool",
 					       "Edje_Real_Part_State", NULL,
-					       sizeof (Edje_Real_Part_State), 256);
+					       sizeof (Edje_Real_Part_State), 32);
    if (!_edje_real_part_state_mp)
      {
 	ERR("Mempool for Edje_Real_Part_State cannot be allocated.");
