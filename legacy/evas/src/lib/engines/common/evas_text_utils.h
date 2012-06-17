@@ -35,6 +35,7 @@ struct _Evas_Text_Props
 
    int generation;
    Eina_Bool changed : 1;
+   Eina_Bool prepare : 1;
 };
 
 struct _Evas_Text_Props_Info

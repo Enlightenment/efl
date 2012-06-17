@@ -619,6 +619,7 @@ evas_common_pipe_load(void *data)
 		  {
                      evas_common_font_draw_prepare(text_props);
                      text_props->changed = EINA_FALSE;
+		     text_props->prepare = EINA_FALSE;
 		  }
                 LKU(fi->ft_mutex);
              }
@@ -738,11 +739,9 @@ evas_common_pipe_image_load(RGBA_Image *im)
 }
 
 EAPI void
-evas_common_pipe_text_prepare(const Evas_Text_Props *text_props)
+evas_common_pipe_text_prepare(Evas_Text_Props *text_props)
 {
    RGBA_Font_Int *fi;
-   const Evas_Text_Props *tmp_props;
-   const Eina_List *l;
 
    fi = text_props->font_instance;
    if (!fi) return ;
@@ -750,22 +749,17 @@ evas_common_pipe_text_prepare(const Evas_Text_Props *text_props)
    if (!text_props->changed && text_props->generation == fi->generation && text_props->bin)
      return ;
 
-   fi = text_props->font_instance;
-   if (!fi) return ;
-
    LKL(fi->ft_mutex);
 
-   if (!fi->task) 
+   if (!fi->task)
      {
        LKL(text_task_mutex);
        text_task = eina_list_append(text_task, fi);
        LKU(text_task_mutex);
      }
 
-   EINA_LIST_FOREACH(fi->task, l, tmp_props)
-     if (tmp_props == text_props)
-       goto end;
-
+   if (text_props->prepare) goto end;
+   text_props->prepare = EINA_TRUE;
    fi->task = eina_list_append(fi->task, text_props);
 
  end:
