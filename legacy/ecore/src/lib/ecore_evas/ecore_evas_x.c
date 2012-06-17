@@ -1965,6 +1965,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
              ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
              ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
           }
+        if (ee->prop.name)
+          ecore_x_icccm_name_class_set(ee->prop.window,
+                                       ee->prop.name, ee->prop.clas);
         _ecore_evas_x_hints_update(ee);
         _ecore_evas_x_group_leader_update(ee);
         ecore_x_window_defaults_set(ee->prop.window);
@@ -2082,6 +2085,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
              ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
              ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
           }
+        if (ee->prop.name)
+          ecore_x_icccm_name_class_set(ee->prop.window,
+                                       ee->prop.name, ee->prop.clas);
         _ecore_evas_x_hints_update(ee);
         _ecore_evas_x_group_leader_update(ee);
         ecore_x_window_defaults_set(ee->prop.window);
@@ -2162,6 +2168,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
              ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
              ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
           }
+        if (ee->prop.name)
+          ecore_x_icccm_name_class_set(ee->prop.window,
+                                       ee->prop.name, ee->prop.clas);
         _ecore_evas_x_hints_update(ee);
         _ecore_evas_x_group_leader_update(ee);
         ecore_x_window_defaults_set(ee->prop.window);
@@ -2242,6 +2251,9 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
              ecore_x_icccm_title_set(ee->prop.window, ee->prop.title);
              ecore_x_netwm_name_set(ee->prop.window, ee->prop.title);
           }
+        if (ee->prop.name)
+          ecore_x_icccm_name_class_set(ee->prop.window,
+                                       ee->prop.name, ee->prop.clas);
         _ecore_evas_x_hints_update(ee);
         _ecore_evas_x_group_leader_update(ee);
         ecore_x_window_defaults_set(ee->prop.window);
