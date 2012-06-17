@@ -817,3 +817,8 @@
 2012-06-15  Mike Blumenkrantz
 
         * evas_object_smart_members_get() now returns NULL on non-smart objects
+
+2012-04-26  Carsten Haitzler (The Rasterman)
+
+        * Fix GL engine bitmap font handling
+
