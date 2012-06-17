@@ -783,7 +783,7 @@ eet_node_init(void)
      choice = tmp;
 
    _eet_node_mp =
-     eina_mempool_add(choice, "eet-node-alloc", NULL, sizeof(Eet_Node), 1024);
+     eina_mempool_add(choice, "eet-node-alloc", NULL, sizeof(Eet_Node), 32);
 
    return _eet_node_mp ? 1 : 0;
 }

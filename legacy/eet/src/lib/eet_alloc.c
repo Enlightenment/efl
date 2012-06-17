@@ -61,7 +61,7 @@ eet_mempool_init(void)
    for (i = 0; i < sizeof (mempool_array) / sizeof (mempool_array[0]); ++i)
      {
      retry:
-        mempool_array[i]->mp = eina_mempool_add(choice, mempool_array[i]->name, NULL, mempool_array[i]->size, 64);
+        mempool_array[i]->mp = eina_mempool_add(choice, mempool_array[i]->name, NULL, mempool_array[i]->size, 16);
         if (!mempool_array[i]->mp)
           {
              if (!strcmp(choice, "pass_through"))
