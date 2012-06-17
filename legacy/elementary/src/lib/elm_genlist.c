@@ -2581,6 +2581,7 @@ _item_block_position(Item_Block *itb,
                               git->item->scrl_y = oy;
                             if ((git->item->scrl_y + git->item->h) > (it->item->scrl_y + it->item->h))
                               git->item->scrl_y = (it->item->scrl_y + it->item->h) - git->item->h;
+                            git->item->scrl_x = it->item->scrl_x;
                             git->item->want_realize = EINA_TRUE;
                          }
                        if ((it->wd->reorder_it) && (it->item->old_scrl_y != it->item->scrl_y))
@@ -2641,10 +2642,8 @@ _group_items_recalc(void *data)
    Widget_Data *wd = data;
    Eina_List *l;
    Elm_Gen_Item *git;
-   Evas_Coord ox, oy;
 
    evas_event_freeze(evas_object_evas_get(wd->obj));
-   evas_object_geometry_get(wd->pan_smart, &ox, &oy, NULL, NULL);
    EINA_LIST_FOREACH(wd->group_items, l, git)
      {
         if (git->item->want_realize)
@@ -2652,9 +2651,6 @@ _group_items_recalc(void *data)
              if (!git->realized)
                _item_realize(git, 0, EINA_FALSE);
              evas_object_resize(VIEW(git), wd->minw, git->item->h);
-             // XXX: not quite right - makes headers not stick in place.
-             git->item->scrl_x = git->item->block->x + git->x - git->wd->pan_x + ox;
-             git->item->scrl_y = git->item->block->y + git->y - git->wd->pan_y + oy;
              evas_object_move(VIEW(git), git->item->scrl_x, git->item->scrl_y);
              evas_object_show(VIEW(git));
              evas_object_raise(VIEW(git));
