@@ -4852,7 +4852,7 @@ _eina_value_inner_mp_get(int size)
    imp->references = 0;
 
    imp->mempool = eina_mempool_add(_eina_value_mp_choice,
-                                   "Eina_Value_Inner_Mp", NULL, size, 128);
+                                   "Eina_Value_Inner_Mp", NULL, size, 16);
    if (!imp->mempool)
      {
         free(imp);
@@ -4962,7 +4962,7 @@ eina_value_init(void)
    _eina_value_mp_choice = strdup(choice);
 
    _eina_value_mp = eina_mempool_add
-      (_eina_value_mp_choice, "value", NULL, sizeof(Eina_Value), 320);
+      (_eina_value_mp_choice, "value", NULL, sizeof(Eina_Value), 32);
    if (!_eina_value_mp)
      {
         ERR("Mempool for value cannot be allocated in value init.");

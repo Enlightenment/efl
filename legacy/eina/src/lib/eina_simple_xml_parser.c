@@ -225,7 +225,7 @@ eina_simple_xml_init(void)
 
    _eina_simple_xml_tag_mp = eina_mempool_add
          (choice, "simple_xml_tag", NULL,
-          sizeof(Eina_Simple_XML_Node_Tag), 320);
+          sizeof(Eina_Simple_XML_Node_Tag), 32);
    if (!_eina_simple_xml_tag_mp)
      {
         ERR("Mempool for simple_xml_tag cannot be allocated in init.");
@@ -234,7 +234,7 @@ eina_simple_xml_init(void)
 
    _eina_simple_xml_attribute_mp = eina_mempool_add
          (choice, "simple_xml_attribute", NULL,
-          sizeof(Eina_Simple_XML_Attribute), 80);
+          sizeof(Eina_Simple_XML_Attribute), 8);
    if (!_eina_simple_xml_attribute_mp)
      {
         ERR("Mempool for simple_xml_attribute cannot be allocated in init.");

@@ -467,7 +467,7 @@ eina_object_init(void)
     }
 
   _eina_class_mp = eina_mempool_add("chained_mempool", "class", 
-				    NULL, sizeof (Eina_Class), 64);
+				    NULL, sizeof (Eina_Class), 16);
   if (!_eina_class_mp)
     {
       ERR("ERROR: Mempool for Eina_Class cannot be allocated in object init.");
@@ -475,7 +475,7 @@ eina_object_init(void)
     }
 
   _eina_top_mp = eina_mempool_add("chained_mempool", "top",
-				  NULL, sizeof (Eina_Class_Top), 64);
+				  NULL, sizeof (Eina_Class_Top), 16);
   if (!_eina_top_mp)
     {
       ERR("ERROR: Mempool for Eina_Class_Top cannot be allocated in object init.");
@@ -483,7 +483,7 @@ eina_object_init(void)
     }
 
   _eina_range_mp = eina_mempool_add("chained_mempool", "range",
-				    NULL, sizeof (Eina_Range), 64);
+				    NULL, sizeof (Eina_Range), 16);
   if (!_eina_range_mp)
     {
       ERR("ERROR: Mempool for Eina_Class_Top cannot be allocated in object init.");

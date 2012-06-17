@@ -870,7 +870,7 @@ eina_matrixsparse_init(void)
          "matrixsparse_cell",
          NULL,
          sizeof (Eina_Matrixsparse_Cell),
-         120);
+         32);
    if (!_eina_matrixsparse_cell_mp)
      {
         ERR(
@@ -879,7 +879,7 @@ eina_matrixsparse_init(void)
      }
 
    _eina_matrixsparse_row_mp = eina_mempool_add
-         (choice, "matrixsparse_row", NULL, sizeof (Eina_Matrixsparse_Row), 120);
+         (choice, "matrixsparse_row", NULL, sizeof (Eina_Matrixsparse_Row), 32);
    if (!_eina_matrixsparse_row_mp)
      {
         ERR(

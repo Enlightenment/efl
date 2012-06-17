@@ -468,7 +468,7 @@ eina_list_init(void)
      choice = tmp;
 
    _eina_list_mp = eina_mempool_add
-      (choice, "list", NULL, sizeof(Eina_List), 320);
+      (choice, "list", NULL, sizeof(Eina_List), 128);
    if (!_eina_list_mp)
      {
         ERR("ERROR: Mempool for list cannot be allocated in list init.");
@@ -476,7 +476,7 @@ eina_list_init(void)
      }
 
    _eina_list_accounting_mp = eina_mempool_add
-      (choice, "list_accounting", NULL, sizeof(Eina_List_Accounting), 80);
+      (choice, "list_accounting", NULL, sizeof(Eina_List_Accounting), 16);
    if (!_eina_list_accounting_mp)
      {
         ERR(

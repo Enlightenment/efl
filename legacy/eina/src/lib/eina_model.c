@@ -211,7 +211,7 @@ _eina_model_inner_mp_get(int size)
    imp->refcount = 0;
 
    imp->mempool = eina_mempool_add(_eina_model_mp_choice,
-                                   "Eina_Model_Inner_Mp", NULL, size, 128);
+                                   "Eina_Model_Inner_Mp", NULL, size, 16);
    if (!imp->mempool)
      {
         free(imp);
@@ -3014,7 +3014,7 @@ eina_model_init(void)
      _eina_model_mp_choice = strdup(choice);
 
    _eina_model_mp = eina_mempool_add
-     (_eina_model_mp_choice, "model", NULL, sizeof(Eina_Model), 320);
+     (_eina_model_mp_choice, "model", NULL, sizeof(Eina_Model), 32);
    if (!_eina_model_mp)
      {
         ERR("Mempool for model cannot be allocated in model init.");
