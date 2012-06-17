@@ -920,7 +920,6 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
         Evas_Font_Instance *cur_fi = NULL;
         Evas_Text_Props text_props;
         Evas_Script_Type script;
-        int inset, adv;
         
         script = evas_common_language_script_type_get(W, 1);
         ENFN->font_run_end_get(ENDT, o->font, &script_fi, &cur_fi,
@@ -932,10 +931,6 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
                                           EVAS_TEXT_PROPS_MODE_NONE);
         ENFN->font_string_size_get(ENDT, o->font, &text_props,
                                    &o->cur.char_width, &o->cur.char_height);
-        adv = ENFN->font_h_advance_get(ENDT, o->font, &text_props);
-        inset = ENFN->font_inset_get(ENDT, o->font, &text_props);
-        if ((inset + adv) > o->cur.char_width)
-          o->cur.char_width = inset + adv;
         o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->font);
         evas_common_text_props_content_unref(&text_props);
      }
