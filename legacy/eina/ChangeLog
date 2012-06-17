@@ -296,3 +296,9 @@
 2012-06-08 Mike Blumenkrantz
 
         * Fixed eina_str_split_full() to behave properly and be much faster
+
+2012-06-17 Carsten Haitzler (The Rasterman)
+
+        * Add env var EINA_MEMPOOL_PASS to force mempool to try use
+        passthrough to malloc for debgging purposes and memory footrpint
+        comparisons at runtime.
