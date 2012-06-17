@@ -404,7 +404,8 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
 
      {
         FT_BBox outbox;
-        FT_Outline_Get_CBox(&fi->src->ft.face->glyph->outline, &outbox);
+        FT_Glyph_Get_CBox(fg->glyph, FT_GLYPH_BBOX_UNSCALED,
+              &outbox);
         fg->width = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMax - outbox.xMin);
         fg->x_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMin);
      }

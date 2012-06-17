@@ -502,3 +502,4 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
    text_props->info->refcount = 1;
    return EINA_TRUE;
 }
+
