@@ -501,7 +501,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
 
    for (i = 0; i < pending_objects->count; ++i)
      {
-        Evas_Object *obj, *parent;
+        Evas_Object *obj;
         int is_active;
         Eina_Bool ok = EINA_FALSE;
         obj = eina_array_data_get(pending_objects, i);
