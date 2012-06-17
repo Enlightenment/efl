@@ -82,6 +82,22 @@ _progressbar_example_stop(void        *data,
      }
 }
 
+static char *
+_progress_format_cb(double val)
+{
+   static char buf[30];
+   int files = (1-val)*14000;
+   if (snprintf(buf, 30, "%i files left", files) > 0)
+     return strdup(buf);
+   return NULL;
+}
+
+static void
+_progress_format_free(char *str)
+{
+   free(fstr);
+}
+
 static void
 _on_done(void        *data,
          Evas_Object *obj,
@@ -136,12 +152,13 @@ elm_main(int    argc,
    elm_icon_file_set(ic1, buf, NULL);
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
-   /* pb with label, icon, custom unit label and span size set */
+   /* pb with label, icon, custom unit label function and span size set */
    pb = elm_progressbar_add(win);
    elm_object_text_set(pb, "Label");
    elm_object_part_content_set(pb, "icon", ic1);
    elm_progressbar_inverted_set(pb, EINA_TRUE);
-   elm_progressbar_unit_format_set(pb, "%1.1f units");
+   elm_progressbar_unit_format_function_set(pb, _progress_format_cb,
+                                            _progress_format_free);
    elm_progressbar_span_size_set(pb, 200);
    evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

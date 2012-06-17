@@ -68,6 +68,18 @@ my_progressbar_destroy(void *data __UNUSED__, Evas_Object *obj, void *event_info
    evas_object_del(obj);
 }
 
+static char *
+my_progressbar_format_cb(double val)
+{
+   char buf[1024];
+   int files;
+
+   files = (1-val)*14000;
+   if(snprintf(buf, 30, "%i files left", files) > 0)
+     return strdup(buf);
+   return NULL;
+}
+
 void
 test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -89,7 +101,8 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_box_pack_end(bx, pb);
 //   elm_progressbar_horizontal_set(pb, EINA_TRUE);
 //   elm_object_text_set(pb, "Progression %");
-//   elm_progressbar_unit_format_set(pb, NULL);
+   elm_progressbar_unit_format_function_set(pb, my_progressbar_format_cb,
+                                            (void (*)(char *)) free);
    evas_object_show(pb);
    _test_progressbar.pb1 = pb;
 
