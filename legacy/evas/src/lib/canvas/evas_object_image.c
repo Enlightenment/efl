@@ -2679,7 +2679,7 @@ evas_object_image_new(void)
    Evas_Object_Image *o;
 
    /* alloc obj private data */
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_image", Evas_Object_Image, 256, NULL);
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_image", Evas_Object_Image, 16, NULL);
    o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Image);
    if (!o) return NULL;
    EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Image);

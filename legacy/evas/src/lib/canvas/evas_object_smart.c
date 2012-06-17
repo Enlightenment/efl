@@ -371,7 +371,7 @@ evas_object_smart_callback_priority_add(Evas_Object *obj, const char *event, Eva
    MAGIC_CHECK_END();
    if (!event) return;
    if (!func) return;
-   EVAS_MEMPOOL_INIT(_mp_cb, "evas_smart_callback", Evas_Smart_Callback, 512, );
+   EVAS_MEMPOOL_INIT(_mp_cb, "evas_smart_callback", Evas_Smart_Callback, 32, );
    cb = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Smart_Callback);
    if (!cb) return;
    EVAS_MEMPOOL_PREP(_mp_cb, cb, Evas_Smart_Callback);
@@ -975,7 +975,7 @@ evas_object_smart_new(void)
    Evas_Object_Smart *o;
 
    /* alloc obj private data */
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_smart", Evas_Object_Smart, 256, NULL);
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_smart", Evas_Object_Smart, 32, NULL);
    o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Smart);
    if (!o) return NULL;
    EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Smart);

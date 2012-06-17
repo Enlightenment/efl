@@ -222,7 +222,7 @@ evas_object_line_new(void)
    Evas_Object_Line *o;
 
    /* alloc obj private data */
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_line", Evas_Object_Line, 16, NULL);
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_line", Evas_Object_Line, 4, NULL);
    o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Line);
    if (!o) return NULL;
    EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Line);

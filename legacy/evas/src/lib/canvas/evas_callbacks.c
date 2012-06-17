@@ -297,13 +297,13 @@ evas_object_event_callback_priority_add(Evas_Object *obj, Evas_Callback_Type typ
 
    if (!obj->callbacks)
      {
-        EVAS_MEMPOOL_INIT(_mp_cb, "evas_callbacks", Evas_Callbacks, 512, );
+        EVAS_MEMPOOL_INIT(_mp_cb, "evas_callbacks", Evas_Callbacks, 64, );
         obj->callbacks = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Callbacks);
         if (!obj->callbacks) return;
         EVAS_MEMPOOL_PREP(_mp_cb, obj->callbacks, Evas_Callbacks);
      }
 
-   EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 2048, );
+   EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 128, );
    fn = EVAS_MEMPOOL_ALLOC(_mp_fn, Evas_Func_Node);
    if (!fn) return;
    EVAS_MEMPOOL_PREP(_mp_fn, fn, Evas_Func_Node);
@@ -400,13 +400,13 @@ evas_event_callback_priority_add(Evas *e, Evas_Callback_Type type, Evas_Callback
 
    if (!e->callbacks)
      {
-        EVAS_MEMPOOL_INIT(_mp_cb, "evas_callbacks", Evas_Callbacks, 512, );
+        EVAS_MEMPOOL_INIT(_mp_cb, "evas_callbacks", Evas_Callbacks, 64, );
         e->callbacks = EVAS_MEMPOOL_ALLOC(_mp_cb, Evas_Callbacks);
         if (!e->callbacks) return;
         EVAS_MEMPOOL_PREP(_mp_cb, e->callbacks, Evas_Callbacks);
      }
 
-   EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 2048, );
+   EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 128, );
    fn = EVAS_MEMPOOL_ALLOC(_mp_fn, Evas_Func_Node);
    if (!fn) return;
    EVAS_MEMPOOL_PREP(_mp_fn, fn, Evas_Func_Node);

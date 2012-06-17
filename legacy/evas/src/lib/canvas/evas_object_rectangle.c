@@ -114,7 +114,7 @@ evas_object_rectangle_new(void)
    Evas_Object_Rectangle *o;
 
    /* alloc obj private data */
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_rectangle", Evas_Object_Rectangle, 256, NULL);
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_rectangle", Evas_Object_Rectangle, 16, NULL);
    o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Rectangle);
    if (!o) return NULL;
    EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Rectangle);

@@ -17,7 +17,7 @@ evas_object_new(Evas *e __UNUSED__)
 {
    Evas_Object *obj;
 
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object", Evas_Object, 512, NULL);
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object", Evas_Object, 32, NULL);
    obj = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object);
    if (!obj) return NULL;
    EVAS_MEMPOOL_PREP(_mp_obj, obj, Evas_Object);
@@ -765,7 +765,7 @@ _evas_object_size_hint_alloc(Evas_Object *obj)
 {
    if (obj->size_hints) return;
 
-   EVAS_MEMPOOL_INIT(_mp_sh, "evas_size_hints", Evas_Size_Hints, 512, );
+   EVAS_MEMPOOL_INIT(_mp_sh, "evas_size_hints", Evas_Size_Hints, 32, );
    obj->size_hints = EVAS_MEMPOOL_ALLOC(_mp_sh, Evas_Size_Hints);
    if (!obj->size_hints) return;
    EVAS_MEMPOOL_PREP(_mp_sh, obj->size_hints, Evas_Size_Hints);

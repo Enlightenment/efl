@@ -9339,7 +9339,7 @@ evas_object_textblock_new(void)
    Evas_Object_Textblock *o;
 
    /* alloc obj private data */
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_textblock", Evas_Object_Textblock, 64, NULL);
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_textblock", Evas_Object_Textblock, 8, NULL);
    o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Textblock);
    if (!o) return NULL;
    EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Textblock);

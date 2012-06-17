@@ -125,6 +125,8 @@ static const Evas_Object_Func object_func =
    NULL
 };
 
+EVAS_MEMPOOL(_mp_obj);
+
 /* all nice and private */
 static void
 evas_object_textgrid_init(Evas_Object *obj)
@@ -154,9 +156,9 @@ evas_object_textgrid_new(void)
    Evas_Object_Textgrid *o;
 
    /* FIXME: using evas mempool like text ? */
-
-   /* alloc obj private data */
-   o = calloc(1, sizeof(Evas_Object_Textgrid));
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_textgrid", Evas_Object_Textgrid, 4, NULL);
+   o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Textgrid);
+   EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Textgrid);
    o->magic = MAGIC_OBJ_TEXTGRID;
    o->prev = o->cur;
    o->cur.palette_standard = eina_array_new(16);
@@ -238,7 +240,7 @@ evas_object_textgrid_free(Evas_Object *obj)
    eina_array_free(o->cur.palette_extended);
    o->magic = 0;
    /* FIXME: using evas mempool like text ? */
-   free(o);
+   EVAS_MEMPOOL_FREE(_mp_obj, o);
 }
 
 

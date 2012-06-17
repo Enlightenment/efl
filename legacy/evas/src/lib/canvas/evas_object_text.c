@@ -1387,7 +1387,7 @@ evas_object_text_new(void)
    Evas_Object_Text *o;
 
    /* alloc obj private data */
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_text", Evas_Object_Text, 128, NULL);
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_text", Evas_Object_Text, 8, NULL);
    o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Text);
    if (!o) return NULL;
    EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Text);

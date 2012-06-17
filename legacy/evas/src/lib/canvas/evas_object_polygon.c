@@ -261,7 +261,7 @@ evas_object_polygon_new(void)
    Evas_Object_Polygon *o;
 
    /* alloc obj private data */
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_polygon", Evas_Object_Polygon, 32, NULL);
+   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_polygon", Evas_Object_Polygon, 4, NULL);
    o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Polygon);
    if (!o) return NULL;
    EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Polygon);
