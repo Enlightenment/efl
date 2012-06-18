@@ -1482,6 +1482,24 @@ START_TEST(evas_textblock_editing)
    evas_textblock_cursor_paragraph_first(cur);
    fail_if(evas_textblock_cursor_paragraph_next(cur));
 
+     {
+        /* Limit to 1000 iterations so we'll never get into an infinite loop,
+         * even if broken */
+        int limit = 1000;
+        evas_object_textblock_text_markup_set(tb, "this is a test eauoeuaou<ps/>this is a test1<ps/>this is a test 3");
+        evas_textblock_cursor_paragraph_last(cur);
+        while (evas_textblock_cursor_pos_get(cur) > 0)
+          {
+             limit--;
+             fail_if(limit <= 0);
+             evas_textblock_cursor_copy(cur, main_cur);
+             evas_textblock_cursor_char_prev(cur);
+             evas_textblock_cursor_word_start(cur);
+             evas_textblock_cursor_range_delete(cur, main_cur);
+          }
+     }
+
+
    /* Insert illegal characters inside the format. */
      {
         const char *content;

@@ -7666,8 +7666,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 
    if (n1 == n2)
      {
-        Evas_Object_Textblock_Node_Format *remove_format = NULL;
-        Evas_Object_Textblock_Node_Text *merge_node = NULL;
         if ((cur1->pos == 0) &&
               (cur2->pos == eina_ustrbuf_length_get(n1->unicode)))
           {
@@ -7681,12 +7679,8 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
              else
                {
                   n = _NODE_TEXT(EINA_INLIST_GET(n1)->prev);
-                  if (n)
-                    {
-                       merge_node = n;
-                       remove_format = merge_node->format_node;
-                    }
-                  else
+                  /* Short path */
+                  if (!n)
                     {
                        /* Clear the whole textblock - do it nicer. */
                        evas_object_textblock_text_markup_set(cur1->obj, "");
@@ -7701,13 +7695,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
           }
         eina_ustrbuf_remove(n1->unicode, cur1->pos, cur2->pos);
         _evas_textblock_cursors_update_offset(cur1, cur1->node, cur1->pos, - (cur2->pos - cur1->pos));
-        if (merge_node)
-          {
-             _evas_textblock_node_text_adjust_offsets_to_start(o, n1,
-                   0, -1);
-             _evas_textblock_nodes_merge(o, merge_node);
-             evas_textblock_cursor_set_at_format(cur1, remove_format);
-          }
      }
    else
      {
