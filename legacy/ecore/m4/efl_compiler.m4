@@ -16,7 +16,7 @@ m4_pushdef([UPEFL], m4_translit([[$1]], [-a-z], [_A-Z]))
 m4_pushdef([UP], m4_translit([[$2]], [-a-z], [_A-Z]))
 
 dnl store in options -Wfoo if -Wno-foo is passed
-option=m4_bpatsubst([[$2]], [no-])
+option=m4_bpatsubst([[$2]], [-Wno-], [-W])
 
 CFLAGS_save="${CFLAGS}"
 CFLAGS="${CFLAGS} ${option}"
