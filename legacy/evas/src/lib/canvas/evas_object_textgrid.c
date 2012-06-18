@@ -375,7 +375,8 @@ evas_object_textgrid_render(Evas_Object *obj, void *output, void *context, void 
           {
              if (cells->bg_extended) palette = o->cur.palette_extended;
              else palette = o->cur.palette_standard;
-             c = eina_array_data_get(palette, cells->bg);
+             if (cells->bg >= eina_array_count(palette)) c = NULL;
+             else c = eina_array_data_get(palette, cells->bg);
              if ((c) && (c->a > 0))
                {
                   if (!run)
@@ -412,7 +413,8 @@ evas_object_textgrid_render(Evas_Object *obj, void *output, void *context, void 
                {
                   if (cells->fg_extended) palette = o->cur.palette_extended;
                   else palette = o->cur.palette_standard;
-                  c = eina_array_data_get(palette, cells->fg);
+                  if (cells->fg >= eina_array_count(palette)) c = NULL;
+                  else c = eina_array_data_get(palette, cells->fg);
                   if ((c) && (c->a > 0))
                     {
                        evas_object_textgrid_row_text_append(row, obj, o, xp,
