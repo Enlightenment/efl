@@ -370,7 +370,7 @@ evas_object_textgrid_render(Evas_Object *obj, void *output, void *context, void 
         row->ch1 = -1;
         row->ch2 = 0;
         run = 0;
-        xp = obj->cur.geometry.x;
+        xp = 0;
         for (xx = 0; xx < o->cur.w; xx++, cells++)
           {
              if (cells->bg_extended) palette = o->cur.palette_extended;
