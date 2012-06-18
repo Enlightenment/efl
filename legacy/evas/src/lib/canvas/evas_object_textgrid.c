@@ -423,13 +423,13 @@ evas_object_textgrid_render(Evas_Object *obj, void *output, void *context, void 
                        // XXX: underlines and strikethroughs dont get
                        // merghed into horizontal runs like bg rects above
                        if (cells->underline)
-                         evas_object_textgrid_row_line_append(row, rx, rw,
+                         evas_object_textgrid_row_line_append(row, xp, w,
                                                               o->max_ascent + 1,
-                                                              rr, rg, rb, ra);
+                                                              c->r, c->g, c->b, c->a);
                        if (cells->strikethrough)
-                         evas_object_textgrid_row_line_append(row, rx, rw,
+                         evas_object_textgrid_row_line_append(row, xp, w,
                                                               ((3 * o->max_ascent) / 4),
-                                                              rr, rg, rb, ra);
+                                                              c->r, c->g, c->b, c->a);
                     }
                }
              xp += w;
@@ -473,7 +473,7 @@ evas_object_textgrid_render(Evas_Object *obj, void *output, void *context, void 
                                      row->lines[xx].b, row->lines[xx].a); 
              ENFN->rectangle_draw(output, context, surface,
                                   xp + row->lines[xx].x, yp + row->lines[xx].y,
-                                  row->lines[xx].w, h);
+                                  row->lines[xx].w, 1);
           }
         yp += h;
      }
