@@ -6,7 +6,7 @@
 # endif
 
 # ifdef HAVE_HARFBUZZ
-//#  define OT_SUPPORT
+#  define OT_SUPPORT
 #  define USE_HARFBUZZ
 # endif
 
