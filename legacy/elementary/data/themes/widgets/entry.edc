@@ -703,7 +703,7 @@ group { name: "elm/entry/base/default";
    styles
    {
       style { name: "entry_textblock_style";
-         base: "font=Sans font_size=10 color=#000 wrap=word text_class=entry left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#000 wrap=word text_class=entry left_margin=2 right_margin=2";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
@@ -711,7 +711,7 @@ group { name: "elm/entry/base/default";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_disabled_style";
-         base: "font=Sans font_size=10 color=#00000080 wrap=word text_class=entry left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#00000080 wrap=word text_class=entry left_margin=2 right_margin=2";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
@@ -719,7 +719,7 @@ group { name: "elm/entry/base/default";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_guide_style";
-         base: "font=Sans font_size=10 color=#00000040 wrap=word text_class=entry left_margin=4 right_margin=4 ellipsis=0.0";
+         base: "font=Sans font_size=10 color=#00000040 wrap=word text_class=entry left_margin=2 right_margin=2 ellipsis=0.0";
          tag:  "em" "+ font_style=Oblique";
          tag:  "hilight" "+ font_weight=Bold";
       }
@@ -816,7 +816,7 @@ group { name: "elm/entry/base-mixedwrap/default";
    styles
    {
       style { name: "entry_textblock_style_mixedwrap";
-         base: "font=Sans font_size=10 color=#000 wrap=mixed text_class=entry left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#000 wrap=mixed text_class=entry left_margin=2 right_margin=2";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
@@ -824,7 +824,7 @@ group { name: "elm/entry/base-mixedwrap/default";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_disabled_style_mixedwrap";
-         base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry left_margin=2 right_margin=2";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
@@ -832,7 +832,7 @@ group { name: "elm/entry/base-mixedwrap/default";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_guide_style_mixedwrap";
-         base: "font=Sans font_size=10 color=#00000040 wrap=mixed text_class=entry left_margin=4 right_margin=4 ellipsis=0.0";
+         base: "font=Sans font_size=10 color=#00000040 wrap=mixed text_class=entry left_margin=2 right_margin=2 ellipsis=0.0";
          tag:  "em" "+ font_style=Oblique";
          tag:  "hilight" "+ font_weight=Bold";
       }
@@ -881,7 +881,7 @@ group { name: "elm/entry/base-charwrap/default";
    styles
    {
       style { name: "entry_textblock_style_charwrap";
-         base: "font=Sans font_size=10 color=#000 wrap=char text_class=entry left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#000 wrap=char text_class=entry left_margin=2 right_margin=2";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
@@ -889,7 +889,7 @@ group { name: "elm/entry/base-charwrap/default";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_disabled_style_charwrap";
-         base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry left_margin=2 right_margin=2";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
@@ -897,7 +897,7 @@ group { name: "elm/entry/base-charwrap/default";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_guide_style_charwrap";
-         base: "font=Sans font_size=10 color=#00000040 wrap=char text_class=entry left_margin=4 right_margin=4 ellipsis=0.0";
+         base: "font=Sans font_size=10 color=#00000040 wrap=char text_class=entry left_margin=2 right_margin=2 ellipsis=0.0";
          tag:  "em" "+ font_style=Oblique";
          tag:  "hilight" "+ font_weight=Bold";
       }
@@ -986,7 +986,7 @@ group { name: "elm/entry/base-single/default";
    styles
    {
       style { name: "entry_single_textblock_style";
-         base: "font=Sans font_size=10 color=#000 wrap=none text_class=entry left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#000 wrap=none text_class=entry left_margin=2 right_margin=2";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
@@ -994,7 +994,7 @@ group { name: "elm/entry/base-single/default";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_single_textblock_disabled_style";
-         base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry left_margin=2 right_margin=2";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
@@ -1002,7 +1002,7 @@ group { name: "elm/entry/base-single/default";
          tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_single_textblock_guide_style";
-         base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry left_margin=4 right_margin=4 ellipsis=0.0";
+         base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry left_margin=2 right_margin=2 ellipsis=0.0";
          tag:  "em" "+ font_style=Oblique";
          tag:  "hilight" "+ font_weight=Bold";
       }

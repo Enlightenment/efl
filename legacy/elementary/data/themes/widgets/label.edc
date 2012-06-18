@@ -6,7 +6,7 @@ group { name: "elm/label/base/default";
    data.item: "max_font_size" "60";
    styles {
       style { name: "textblock_style";
-         base: "font=Sans font_size=10 color=#000 text_class=label left_margin=4 right_margin=4";
+         base: "font=Sans font_size=10 color=#000 text_class=label left_margin=2 right_margin=2";
          tag:  "hilight" "+ font_weight=Bold";
          tag:  "b" "+ font_weight=Bold";
       }
@@ -39,7 +39,7 @@ group { name: "elm/label/base/marker";
    data.item: "max_font_size" "60";
    styles {
       style { name: "textblock_style2";
-         base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word text_class=label left_margin=4 right_margin=4";
+         base: "font=Sans:style=Bold font_size=10 align=center color=#fff wrap=word text_class=label left_margin=2 right_margin=2";
          tag:  "hilight" "+ color=#ffff";
          tag:  "b" "+ color=#ffff";
       }
