@@ -92,6 +92,10 @@
  * @image html img/widget/genlist/preview-03.png
  * @image latex img/widget/genlist/preview-03.eps
  *
+ * - one_icon - Only 1 icon (left) @since 1.1
+ * - end_icon - Only 1 icon (at end/right) @since 1.1
+ * - no_icon - No icon (at end/right) @since 1.1
+ * 
  * @section Genlist_Items Structure of items
  *
  * An item in a genlist can have 0 or more texts (they can be regular
