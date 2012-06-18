@@ -810,7 +810,9 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
     const char *not_show_in = NULL, *only_show_in = NULL;
 
     val = efreet_ini_localestring_get(ini, "Name");
+#ifndef STRICT_SPEC
     if (!val) val = efreet_ini_localestring_get(ini, "_Name");
+#endif
     if (val) desktop->name = strdup(val);
     else
     {
@@ -822,7 +824,9 @@ efreet_desktop_generic_fields_parse(Efreet_Desktop *desktop, Efreet_Ini *ini)
     if (val) desktop->generic_name = strdup(val);
 
     val = efreet_ini_localestring_get(ini, "Comment");
+#ifndef STRICT_SPEC
     if (!val) val = efreet_ini_localestring_get(ini, "_Comment");
+#endif
     if (val) desktop->comment = strdup(val);
 
     val = efreet_ini_localestring_get(ini, "Icon");
