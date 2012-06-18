@@ -2167,7 +2167,8 @@ _item_realize(Elm_Gen_Item *it,
         _item_mouse_callbacks_add(it, VIEW(it));
 
         if ((it->wd->decorate_all_mode) && (!it->deco_all_view) &&
-            (it->item->type != ELM_GENLIST_ITEM_GROUP) && (it->itc->decorate_all_item_style))
+            (it->item->type != ELM_GENLIST_ITEM_GROUP) && 
+            (it->itc->decorate_all_item_style))
           _decorate_all_item_realize(it, EINA_FALSE);
 
         _elm_genlist_item_state_update(it, itc);
@@ -2277,7 +2278,8 @@ _item_realize(Elm_Gen_Item *it,
      {
         if (it->itc->decorate_all_item_style)
           {
-             if (!it->deco_all_view) _decorate_all_item_realize(it, EINA_FALSE);
+             if (!it->deco_all_view)
+               _decorate_all_item_realize(it, EINA_FALSE);
              edje_object_message_signal_process(it->deco_all_view);
           }
      }
@@ -2648,8 +2650,7 @@ _group_items_recalc(void *data)
      {
         if (git->item->want_realize)
           {
-             if (!git->realized)
-               _item_realize(git, 0, EINA_FALSE);
+             if (!git->realized) _item_realize(git, 0, EINA_FALSE);
              evas_object_resize(VIEW(git), wd->minw, git->item->h);
              evas_object_move(VIEW(git), git->item->scrl_x, git->item->scrl_y);
              evas_object_show(VIEW(git));
@@ -4232,12 +4233,14 @@ _item_queue(Widget_Data    *wd,
             Eina_Compare_Cb cb)
 {
    if (it->item->queued) return;
+/*   
    if ((wd->blocks) && (wd->homogeneous) && (wd->mode == ELM_LIST_COMPRESS))
      {
         if (!_item_process(wd, it))
           _item_process_post(wd, it, EINA_FALSE);
         return;
      }
+ */
    it->item->queued = EINA_TRUE;
    if (cb && !wd->requeued)
      wd->queue = eina_list_sorted_insert(wd->queue, cb, it);
@@ -4255,6 +4258,17 @@ _item_queue(Widget_Data    *wd,
           }
         _queue_process(wd);
      }
+   while ((wd->queue) &&(wd->blocks) &&
+          (wd->homogeneous) && (wd->mode == ELM_LIST_COMPRESS))
+     {
+        if (wd->queue_idle_enterer)
+          {
+             ecore_idle_enterer_del(wd->queue_idle_enterer);
+             wd->queue_idle_enterer = NULL;
+          }
+        _queue_process(wd);
+     }
+   
 //   evas_event_thaw(evas_object_evas_get(wd->obj));
 //   evas_event_thaw_eval(evas_object_evas_get(wd->obj));
    if (!wd->queue_idle_enterer)
@@ -5130,7 +5144,9 @@ elm_genlist_item_fields_update(Elm_Object_Item            *it,
    if (_it->generation < _it->wd->generation) return;
 
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_TEXT))
-     _item_text_realize(_it, VIEW(_it), &_it->texts, parts);
+     {
+        _item_text_realize(_it, VIEW(_it), &_it->texts, parts);
+     }
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
      {
         _it->content_objs = _item_content_unrealize(_it, VIEW(_it),
