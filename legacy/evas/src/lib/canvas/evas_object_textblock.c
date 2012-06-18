@@ -9101,6 +9101,12 @@ evas_object_textblock_clear(Evas_Object *obj)
 	cur->pos = 0;
 
      }
+
+   /* Force recreation of everything for textblock.
+    * FIXME: We have the same thing in other places, merge it... */
+   evas_textblock_cursor_paragraph_first(o->cursor);
+   evas_textblock_cursor_text_append(o->cursor, "");
+
    _evas_textblock_changed(o, obj);
 }
 
