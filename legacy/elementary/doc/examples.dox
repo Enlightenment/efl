@@ -4089,7 +4089,7 @@
  * outside the group don't affect the group.
  *
  * We'll start with the usual includes:
- * @until #endif
+ * @skipline #include
  *
  * And move right to declaring a static variable(the one whose value the radios
  * will change):
