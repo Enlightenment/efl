@@ -1226,7 +1226,48 @@ get_ic(Ecore_IMF_Context *ctx)
              im_style |= XIMStatusNothing;
           }
 
-        if (im_info->im)
+        if (!im_info->xim_styles)
+          {
+             EINA_LOG_WARN("No XIM styles supported! Wanted %#llx",
+                           (unsigned long long)im_style);
+             im_style = 0;
+          }
+        else
+          {
+             XIMStyle fallback = 0;
+             int i;
+
+             for (i = 0; i < im_info->xim_styles->count_styles; i++)
+               {
+                  XIMStyle cur = im_info->xim_styles->supported_styles[i];
+                  if (cur == im_style)
+                    break;
+                  else if (cur == (XIMPreeditNothing | XIMStatusNothing))
+                    /* TODO: fallback is just that or the anyone? */
+                    fallback = cur;
+               }
+
+             if (i == im_info->xim_styles->count_styles)
+               {
+                  if (fallback)
+                    {
+                       EINA_LOG_WARN("Wanted XIM style %#llx not found, "
+                                     "using fallback %#llx instead.",
+                                     (unsigned long long)im_style,
+                                     (unsigned long long)fallback);
+                       im_style = fallback;
+                    }
+                  else
+                    {
+                       EINA_LOG_WARN("Wanted XIM style %#llx not found, "
+                                     "no fallback supported.",
+                                     (unsigned long long)im_style);
+                       im_style = 0;
+                    }
+               }
+          }
+
+        if ((im_info->im) && (im_style))
           {
              ic = XCreateIC(im_info->im,
                             XNInputStyle, im_style,
