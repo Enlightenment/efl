@@ -748,3 +748,18 @@
 
         * Fixed bug in ecore-file monitoring with inotify where watching a file
           that was deleted broke the world.
+
+2012-06-15 Rob Bradford
+
+	* Ecore_Wayland: Port to latest Wayland protocol. The cursor for a
+	pointer is now a surface rather than a buffer.
+
+2012-06-15 Rob Bradford
+
+	* Ecore_Wayland: Drop unused timestamp from configure event. Rationale:
+	- timestamp isn't used by the handler for this event
+	- configure event we receive from the compositor doesn't have a timestamp
+	- ecore_wl_window_maximized_set and ecore_wl_window_fullscreen_set had
+	  an implicit requirement that the window had keyboard focus to retrieve
+	  a timestamp that wasn't used. This removes that requirement and fixes
+	  ticket #1030.

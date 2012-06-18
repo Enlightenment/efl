@@ -121,6 +121,8 @@ struct _Ecore_Wl_Input
    struct wl_keyboard *keyboard;
    struct wl_touch *touch;
 
+   struct wl_surface *cursor_surface;
+
    struct wl_data_device *data_device;
 
    Ecore_Wl_Window *pointer_focus;
@@ -230,7 +232,6 @@ struct _Ecore_Wl_Event_Window_Configure
    unsigned int win;
    unsigned int event_win;
    int x, y, w, h;
-   unsigned int timestamp;
 };
 
 struct _Ecore_Wl_Event_Dnd_Enter
@@ -313,7 +314,7 @@ EAPI struct wl_cursor *ecore_wl_cursor_get(const char *cursor_name);
 
 EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
 EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input);
-EAPI void ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_buffer *buffer, int hot_x, int hot_y);
+EAPI void ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, int hot_x, int hot_y);
 EAPI void ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_name);
 EAPI void ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input);
 
@@ -337,7 +338,7 @@ EAPI struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);
 EAPI struct wl_shell_surface *ecore_wl_window_shell_surface_get(Ecore_Wl_Window *win);
 EAPI Ecore_Wl_Window *ecore_wl_window_find(unsigned int id);
 EAPI void ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type);
-EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int hot_x, int hot_y);
+EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *surface, int hot_x, int hot_y);
 EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);

@@ -10,7 +10,7 @@ static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *s
 static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface __UNUSED__);
 static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output);
 static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output);
-static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, unsigned int timestamp);
+static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 
 /* local variables */
@@ -430,16 +430,12 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
      }
    else
      {
-        Ecore_Wl_Input *input;
-
-        input = win->keyboard_device;
-
         if (win->shell_surface) 
           wl_shell_surface_set_toplevel(win->shell_surface);
         win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
         win->allocation = win->saved_allocation;
         _ecore_wl_window_configure_send(win, win->allocation.w, 
-                                        win->allocation.h, input->timestamp);
+                                        win->allocation.h);
      }
 }
 
@@ -461,16 +457,12 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
      }
    else 
      {
-        Ecore_Wl_Input *input;
-
-        input = win->keyboard_device;
-
         if (win->shell_surface)
           wl_shell_surface_set_toplevel(win->shell_surface);
         win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
         win->allocation = win->saved_allocation;
         _ecore_wl_window_configure_send(win, win->allocation.w, 
-                                        win->allocation.h, input->timestamp);
+                                        win->allocation.h);
      }
 }
 
@@ -541,7 +533,7 @@ ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type)
 }
 
 EAPI void 
-ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int hot_x, int hot_y)
+ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *surface, int hot_x, int hot_y)
 {
    Ecore_Wl_Input *input;
 
@@ -550,7 +542,7 @@ ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int 
    if (!win) return;
 
    if ((input = win->pointer_device))
-     ecore_wl_input_pointer_set(input, buffer, hot_x, hot_y);
+     ecore_wl_input_pointer_set(input, surface, hot_x, hot_y);
 }
 
 EAPI void
@@ -614,8 +606,7 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
         if (win->region.opaque) wl_region_destroy(win->region.opaque);
         win->region.opaque = NULL;
 
-        /* FIXME: 0 timestamp here may not work. need to test */
-        _ecore_wl_window_configure_send(win, w, h, 0);
+        _ecore_wl_window_configure_send(win, w, h);
      }
 }
 
@@ -651,7 +642,7 @@ _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct
 }
 
 static void 
-_ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, unsigned int timestamp)
+_ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h)
 {
    Ecore_Wl_Event_Window_Configure *ev;
 
@@ -664,7 +655,6 @@ _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h, unsigned int
    ev->y = win->allocation.y;
    ev->w = w;
    ev->h = h;
-   ev->timestamp = timestamp;
    ecore_event_add(ECORE_WL_EVENT_WINDOW_CONFIGURE, ev, NULL, NULL);
 }
 

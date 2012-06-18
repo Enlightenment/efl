@@ -142,13 +142,13 @@ ecore_wl_input_ungrab(Ecore_Wl_Input *input)
 }
 
 EAPI void
-ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_buffer *buffer, int hot_x, int hot_y)
+ecore_wl_input_pointer_set(Ecore_Wl_Input *input, struct wl_surface *surface, int hot_x, int hot_y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (input)
-     wl_pointer_attach(input->pointer, input->pointer_enter_serial, 
-                       buffer, hot_x, hot_y);
+     wl_pointer_set_cursor(input->pointer, input->pointer_enter_serial, 
+                           surface, hot_x, hot_y);
 }
 
 EAPI void
@@ -177,9 +177,14 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
 
    cursor_image = cursor->images[0];
    if ((buffer = wl_cursor_image_get_buffer(cursor_image)))
-     ecore_wl_input_pointer_set(input, buffer,
-                                cursor_image->hotspot_x,
-                                cursor_image->hotspot_y);
+     {
+        ecore_wl_input_pointer_set(input, input->cursor_surface, 
+                                   cursor_image->hotspot_x, 
+                                   cursor_image->hotspot_y);
+        wl_surface_attach(input->cursor_surface, buffer, 0, 0);
+        wl_surface_damage(input->cursor_surface, 0, 0, 
+                          cursor_image->width, cursor_image->height);
+     }
 }
 
 EAPI void
@@ -220,6 +225,9 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
                                             input->seat);
    wl_data_device_add_listener(input->data_device, 
                                &_ecore_wl_data_listener, input);
+   input->cursor_surface = 
+     wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
+
    ewd->input = input;
 }
 
@@ -242,6 +250,9 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
      xkb_state_unref(input->xkb.state);
    if (input->xkb.keymap)
      xkb_map_unref(input->xkb.keymap);
+   if (input->cursor_surface)
+     wl_surface_destroy(input->cursor_surface);
+
    free(input);
 }
 
@@ -541,16 +552,21 @@ static void
 _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial __UNUSED__, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group)
 {
    Ecore_Wl_Input *input;
-   xkb_mod_mask_t mask;
+   xkb_mod_mask_t mask = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
-   xkb_state_update_mask(input->xkb.state, depressed, latched, 
-                         locked, 0, 0, group);
+   if (input->xkb.state)
+     {
+        xkb_state_update_mask(input->xkb.state, depressed, latched, 
+                              locked, 0, 0, group);
 
-   mask = xkb_state_serialize_mods(input->xkb.state, 
+        mask = 
+          xkb_state_serialize_mods(input->xkb.state, 
                                    (XKB_STATE_DEPRESSED | XKB_STATE_LATCHED));
+     }
+
    input->modifiers = 0;
 
    /* The Ecore_Event_Modifiers don't quite match the X mask bits */
