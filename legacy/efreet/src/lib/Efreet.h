@@ -80,14 +80,14 @@ extern "C" {
 #include "efreet_uri.h"
 
 /**
- * @return Returns > 0 if the initialization was successful, 0 otherwise
+ * @return Value > @c 0 if the initialization was successful, @c 0 otherwise.
  * @brief Initializes the Efreet system
  */
 EAPI int efreet_init(void);
 
 /**
- * @return Returns the number of times the init function as been called
- * minus the corresponding init call.
+ * @return The number of times the init function has been called minus the
+ * corresponding init call.
  * @brief Shuts down Efreet if a balanced number of init/shutdown calls have
  * been made
  */

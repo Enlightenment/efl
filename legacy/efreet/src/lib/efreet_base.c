@@ -53,7 +53,7 @@ static Eina_List  *efreet_dirs_get(const char *key,
 
 /**
  * @internal
- * @return Returns 1 on success or 0 on failure
+ * @return Returns @c 1 on success or @c 0 on failure
  * @brief Initializes the efreet base settings
  */
 int
@@ -205,10 +205,10 @@ efreet_dirs_reset(void)
 
 /**
  * @internal
- * @param key The environemnt key to lookup
+ * @param key The environment key to lookup
  * @param fallback The fallback value to use
  * @return Returns the directory related to the given key or the fallback
- * @brief This trys to determine the correct directory name given the
+ * @brief This tries to determine the correct directory name given the
  * environment key @a key and fallbacks @a fallback.
  */
 static const char *

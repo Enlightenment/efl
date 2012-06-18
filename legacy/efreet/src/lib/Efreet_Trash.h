@@ -41,52 +41,52 @@ extern "C" {
  */
 
 /**
- * @return Returns 1 on success or 0 on failure
+ * @return @c 1 on success or @c 0 on failure.
  * @brief Initializes the efreet trash system
  */
 EAPI int         efreet_trash_init(void);
 
 /**
- * @return Returns no value
+ * @return No value.
  * @brief Cleans up the efreet trash system
  */
 EAPI int         efreet_trash_shutdown(void);
 
 /**
- * @return Returns the XDG Trash local directory or NULL on errors
- * return value must be freed with eina_stringshare_del.
+ * @return The XDG Trash local directory or @c NULL on errors.
+ * Return value must be freed with eina_stringshare_del.
  * @brief Retrieves the XDG Trash local directory
  */
 EAPI const char *efreet_trash_dir_get(const char *for_file);
 
 /**
  * @param uri The local uri to move in the trash
- * @param force_delete If you set this to 1 than files on different filesystems
+ * @param force_delete If you set this to @c 1 than files on different filesystems
  * will be deleted permanently
- * @return Return 1 on success, 0 on failure or -1 in case the uri is not on the
- * same filesystem and force_delete is not set.
+ * @return @c 1 on success, @c 0 on failure or @c -1 in case the uri is not on
+ * the same filesystem and force_delete is not set.
  * @brief This function try to move the given uri to the trash. Files on 
  * different filesystem can't be moved to trash. If force_delete
- * is 0 than non-local files will be ignored and -1 is returned, if you set
- * force_delete to 1 non-local files will be deleted without asking.
+ * is @c 0 than non-local files will be ignored and @c -1 is returned, if you set
+ * force_delete to @c 1 non-local files will be deleted without asking.
  */
 EAPI int         efreet_trash_delete_uri(Efreet_Uri *uri, int force_delete);
 
 /**
- * @return Return a list of strings with filename (remember to free the list
- * when you don't need anymore)
+ * @return A list of strings with filename (remember to free the list
+ * when you don't need anymore).
  * @brief List all the files and directory currently inside the trash.
  */
 EAPI Eina_List  *efreet_trash_ls(void);
 
 /**
- * @return Return 1 if the trash is empty or 0 if some file are in.
+ * @return @c 1 if the trash is empty or @c 0 if some file are in.
  * @brief Check if the trash is currently empty
  */
 EAPI int         efreet_trash_is_empty(void);
 
 /**
- * @return Return 1 on success or 0 on failure
+ * @return @c 1 on success or @c 0 on failure.
  * @brief Delete all the files inside the trash.
  */
 EAPI int         efreet_trash_empty_trash(void);
