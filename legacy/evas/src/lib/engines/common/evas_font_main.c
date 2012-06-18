@@ -45,16 +45,16 @@ evas_common_font_shutdown(void)
    initialised--;
    if (initialised != 0) return;
 
-   LKD(lock_font_draw);
-   LKD(lock_bidi);
-   LKD(lock_ot);
-
    evas_common_font_load_shutdown();
    evas_common_font_cache_set(0);
    evas_common_font_flush();
 
    FT_Done_FreeType(evas_ft_lib);
    evas_ft_lib = 0;
+
+   LKD(lock_font_draw);
+   LKD(lock_bidi);
+   LKD(lock_ot);
 }
 
 EAPI void
