@@ -33,7 +33,9 @@ AC_MSG_RESULT([${have_flag}])
 CFLAGS="${CFLAGS_save}"
 AC_LANG_POP([C])
 
-UPEFL[_CFLAGS]="${UPEFL[_CFLAGS]} [$2]"
+if test "x${have_flag}" = "xyes" ; then
+   UPEFL[_CFLAGS]="${UPEFL[_CFLAGS]} [$2]"
+fi
 AC_ARG_VAR(UPEFL[_CFLAGS], [preprocessor flags for $2])
 AC_SUBST(UPEFL[_CFLAGS])
 
