@@ -1532,7 +1532,6 @@ if test "x${have_ecore_con}" = "xyes" ; then
 
 fi
 
-AM_CONDITIONAL([EFL_HAVE_ECORE_CON], [true])
 EFL_CHECK_COMPILER_FLAGS([ECORE_CON], [-Wno-override-init -Wno-initializer-overrides])
 
 AM_CONDITIONAL([HAVE_CARES], [test "x${have_cares}" = "xyes"])
