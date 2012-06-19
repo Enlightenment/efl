@@ -17,9 +17,10 @@ typedef struct Progressbar_Example
    Evas_Object *pb2; /* pulsing */
    Evas_Object *pb3;
    Evas_Object *pb4;
-   Evas_Object *pb5; /* pulsing */
-   Evas_Object *pb6;
-   Evas_Object *pb7; /* pulsing */
+   Evas_Object *pb5;
+   Evas_Object *pb6; /* pulsing */
+   Evas_Object *pb7;
+   Evas_Object *pb8; /* pulsing */
 
    Eina_Bool    run;
    Ecore_Timer *timer;
@@ -40,7 +41,8 @@ _progressbar_example_value_set(void *data)
    elm_progressbar_value_set(example_data.pb1, progress);
    elm_progressbar_value_set(example_data.pb3, progress);
    elm_progressbar_value_set(example_data.pb4, progress);
-   elm_progressbar_value_set(example_data.pb6, progress);
+   elm_progressbar_value_set(example_data.pb5, progress);
+   elm_progressbar_value_set(example_data.pb7, progress);
 
    if (progress < 1.0) return ECORE_CALLBACK_RENEW;
 
@@ -54,8 +56,8 @@ _progressbar_example_start(void        *data,
                            void        *event_info)
 {
    elm_progressbar_pulse(example_data.pb2, EINA_TRUE);
-   elm_progressbar_pulse(example_data.pb5, EINA_TRUE);
-   elm_progressbar_pulse(example_data.pb7, EINA_TRUE);
+   elm_progressbar_pulse(example_data.pb6, EINA_TRUE);
+   elm_progressbar_pulse(example_data.pb8, EINA_TRUE);
 
    if (!example_data.run)
      {
@@ -72,8 +74,8 @@ _progressbar_example_stop(void        *data,
                           void        *event_info)
 {
    elm_progressbar_pulse(example_data.pb2, EINA_FALSE);
-   elm_progressbar_pulse(example_data.pb5, EINA_FALSE);
-   elm_progressbar_pulse(example_data.pb7, EINA_FALSE);
+   elm_progressbar_pulse(example_data.pb6, EINA_FALSE);
+   elm_progressbar_pulse(example_data.pb8, EINA_FALSE);
 
    if (example_data.run)
      {
@@ -96,6 +98,21 @@ static void
 _progress_format_free(char *str)
 {
    free(fstr);
+}
+
+static void
+_on_changed(void *data, Evas_Object *obj, void *event_info)
+{
+   double progress;
+   int files;
+   char text[30];
+
+   /* Count down from 3 minutes */
+   progress = elm_progressbar_value_get(obj);
+   files = (1-progress) * 12000;
+   snprintf(text, 29, "%i files remaining", files);
+
+   elm_progressbar_unit_format_set(obj, text);
 }
 
 static void
@@ -167,6 +184,17 @@ elm_main(int    argc,
    evas_object_show(pb);
    example_data.pb3 = pb;
 
+   /* pb with callback function */
+   pb = elm_progressbar_add(win);
+   elm_progressbar_unit_format_set(pb, NULL);
+   evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, 0.5);
+   evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx, pb);
+   evas_object_show(ic1);
+   evas_object_show(pb);
+   evas_object_smart_callback_add(pb, "changed", _on_changed, NULL);
+   example_data.pb4 = pb;
+
    hbx = elm_box_add(win);
    elm_box_horizontal_set(hbx, EINA_TRUE);
    evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -182,7 +210,7 @@ elm_main(int    argc,
    elm_box_pack_end(hbx, pb);
    elm_object_text_set(pb, "percent");
    evas_object_show(pb);
-   example_data.pb4 = pb;
+   example_data.pb5 = pb;
 
    /* vertical pb, with pulse and custom (small) span size */
    pb = elm_progressbar_add(win);
@@ -195,7 +223,7 @@ elm_main(int    argc,
    elm_object_text_set(pb, "Infinite bounce");
    elm_box_pack_end(hbx, pb);
    evas_object_show(pb);
-   example_data.pb5 = pb;
+   example_data.pb6 = pb;
 
    ic2 = elm_icon_add(win);
    elm_icon_file_set(ic2, buf, NULL);
@@ -214,7 +242,7 @@ elm_main(int    argc,
    elm_box_pack_end(hbx, pb);
    evas_object_show(ic2);
    evas_object_show(pb);
-   example_data.pb6 = pb;
+   example_data.pb7 = pb;
 
    /* "wheel" style progress bar */
    pb = elm_progressbar_add(win);
@@ -224,7 +252,7 @@ elm_main(int    argc,
    evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bx, pb);
    evas_object_show(pb);
-   example_data.pb7 = pb;
+   example_data.pb8 = pb;
 
    bt_bx = elm_box_add(win);
    elm_box_horizontal_set(bt_bx, EINA_TRUE);
