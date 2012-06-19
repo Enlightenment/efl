@@ -1339,7 +1339,7 @@ _dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 /**
  * Add a widget as drop target.
  */
-Eina_Bool
+EAPI Eina_Bool
 elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, void *cbdata)
 {
    Dropable *drop;
@@ -1409,7 +1409,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, v
    return EINA_TRUE;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 elm_drop_target_del(Evas_Object *obj)
 {
    Dropable *drop,*del;
@@ -1478,7 +1478,7 @@ _drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos)
 }
 
 
-Eina_Bool
+EAPI Eina_Bool
 elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (*dragdone) (void *data, Evas_Object *), void *donecbdata)
 {
    Ecore_X_Window xwin;
