@@ -4715,6 +4715,7 @@ _smart_del(Evas_Object *obj)
 {
    Evas_Object *sobj;
    Elm_Translate_String_Data *ts;
+   Elm_Event_Cb_Data *ecb;
 
    ELM_WIDGET_DATA_GET(obj, sd);
 
@@ -4756,7 +4757,10 @@ _smart_del(Evas_Object *obj)
         eina_stringshare_del(ts->string);
         free(ts);
      }
-   sd->event_cb = eina_list_free(sd->event_cb); /* should be empty anyway */
+
+   EINA_LIST_FREE(sd->event_cb, ecb)
+         free(ecb);
+
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->theme) elm_theme_free(sd->theme);
    _if_focused_revert(obj, EINA_TRUE);
