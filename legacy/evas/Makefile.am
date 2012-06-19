@@ -40,7 +40,6 @@ evas-software-16-x11.pc.in \
 evas-software-8-x11.pc.in \
 evas-software-gdi.pc.in \
 evas-software-ddraw.pc.in \
-evas-software-16-ddraw.pc.in \
 evas-direct3d.pc.in \
 evas-software-16-wince.pc.in \
 evas-psl1ght.pc.in \
@@ -107,10 +106,6 @@ endif
 
 if BUILD_ENGINE_SOFTWARE_DDRAW
 pkgconfig_DATA += evas-software-ddraw.pc
-endif
-
-if BUILD_ENGINE_SOFTWARE_16_DDRAW
-pkgconfig_DATA += evas-software-16-ddraw.pc
 endif
 
 if BUILD_ENGINE_DIRECT3D

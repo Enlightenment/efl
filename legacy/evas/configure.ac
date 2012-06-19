@@ -101,7 +101,6 @@ want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
 want_evas_engine_software_8_x11="no"
 want_evas_engine_software_16_x11="no"
-want_evas_engine_software_16_ddraw="no"
 want_evas_engine_software_16_wince="no"
 want_evas_engine_software_16_sdl="no"
 want_evas_engine_gl_xlib="no"
@@ -146,7 +145,6 @@ case "$host_os" in
       want_evas_engine_software_gdi="yes"
       want_evas_engine_software_ddraw="yes"
       want_evas_engine_direct3d="yes"
-      want_evas_engine_software_16_ddraw="yes"
       want_evas_image_loader_edb="no"
       want_evas_image_loader_svg="no"
       ;;
@@ -766,8 +764,6 @@ EVAS_CHECK_ENGINE([software-8-x11], [${want_evas_engine_software_8_x11}], [no], 
 
 EVAS_CHECK_ENGINE([software-16-x11], [${want_evas_engine_software_16_x11}], [no], [Software X11 16 bits])
 
-EVAS_CHECK_ENGINE([software-16-ddraw], [${want_evas_engine_software_16_ddraw}], [no], [Software DirectDraw 16 bits])
-
 EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], [no], [Software Windows CE 16 bits])
 
 EVAS_CHECK_ENGINE([software-16-sdl], [${want_evas_engine_software_16_sdl}], [no], [Software SDL 16 bits])
@@ -975,9 +971,6 @@ if test "x$have_evas_engine_software_16_x11" = "xyes" -o "x$have_evas_engine_sof
    have_evas_engine_software_16="yes"
 fi
 if test "x$have_evas_engine_software_16_sdl" = "xyes" -o "x$have_evas_engine_software_16_sdl" = "xstatic"; then
-   have_evas_engine_software_16="yes"
-fi
-if test "x$have_evas_engine_software_16_ddraw" = "xyes" -o "x$have_evas_engine_software_16_ddraw" = "xstatic"; then
    have_evas_engine_software_16="yes"
 fi
 if test "x$have_evas_engine_software_16_wince" = "xyes" -o "x$have_evas_engine_software_16_wince" = "xstatic"; then
@@ -1890,7 +1883,6 @@ evas-software-8-x11.pc
 evas-software-16-x11.pc
 evas-software-gdi.pc
 evas-software-ddraw.pc
-evas-software-16-ddraw.pc
 evas-direct3d.pc
 evas-software-16-wince.pc
 evas-software-sdl.pc
@@ -1952,7 +1944,6 @@ src/modules/engines/software_8/Makefile
 src/modules/engines/software_8_x11/Makefile
 src/modules/engines/software_16/Makefile
 src/modules/engines/software_16_x11/Makefile
-src/modules/engines/software_16_ddraw/Makefile
 src/modules/engines/software_16_sdl/Makefile
 src/modules/engines/wayland_shm/Makefile
 src/modules/engines/wayland_egl/Makefile
@@ -2048,7 +2039,6 @@ echo "  Software 8bit grayscale....: $have_evas_engine_software_8"
 # FIXME: kill software 16bit
 echo "  Software 16bit ............: $have_evas_engine_software_16"
 echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11"
-echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
 echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince"
 echo "  Software 16bit SDL.........: $have_evas_engine_software_16_sdl (primitive: $sdl_primitive)"
 echo "  Wayland Shm................: $have_evas_engine_wayland_shm"

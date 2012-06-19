@@ -822,3 +822,7 @@
 
         * Fix GL engine bitmap font handling
 
+2012-06-19  Vincent Torri
+
+	* Remove uselesss software DirectDraw 16 bits engine
+

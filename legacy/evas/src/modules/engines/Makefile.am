@@ -44,9 +44,6 @@ endif
 if !EVAS_STATIC_BUILD_SOFTWARE_16
 SUBDIRS += software_16
 endif
-if !EVAS_STATIC_BUILD_SOFTWARE_16_DDRAW
-SUBDIRS += software_16_ddraw
-endif
 if !EVAS_STATIC_BUILD_SOFTWARE_16_WINCE
 SUBDIRS += software_16_wince
 endif

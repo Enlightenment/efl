@@ -52,11 +52,6 @@ if EVAS_STATIC_BUILD_SOFTWARE_16
 SUBDIRS += ../modules/engines/software_16/
 EVAS_STATIC_MODULE += ../modules/engines/software_16/libevas_engine_software_16.la
 endif
-if EVAS_STATIC_BUILD_SOFTWARE_16_DDRAW
-SUBDIRS += ../modules/engines/software_16_ddraw/
-EVAS_STATIC_MODULE += ../modules/engines/software_16_ddraw/libevas_engine_software_16_ddraw.la
-EVAS_STATIC_LIBADD += @evas_engine_software_16_ddraw_libs@
-endif
 if EVAS_STATIC_BUILD_SOFTWARE_16_WINCE
 SUBDIRS += ../modules/engines/software_16_wince/
 EVAS_STATIC_MODULE += ../modules/engines/software_16_wince/libevas_engine_software_16_wince.la
