@@ -278,11 +278,11 @@ group { name: "elm/slider/horizontal/default";
             visible: 0;
             rel1 {
                to_x: "limits";
-               offset: 0 5;
+               offset: 0 3;
             }
             rel2 {
                to_x: "limits";
-               offset: 5 -3;
+               offset: 5 -1;
             }
             image {
                normal: "sl_units.png";
