@@ -21,3 +21,7 @@
 2012-06-08  Hugo Camboulive
 
 	* Implement SPU switch for generic/vlc.
+
+2012-06-19  Cedric Bail
+
+	* Sync rendering with Ecore_Animator.

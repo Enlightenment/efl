@@ -111,6 +111,8 @@ struct _Smart_Data
    Emotion_Suspend state;
    Emotion_Aspect aspect;
 
+   Ecore_Animator *anim;
+
    Eina_Bool open : 1;
    Eina_Bool play : 1;
    Eina_Bool remember_play : 1;
@@ -234,6 +236,7 @@ _smart_data_free(Smart_Data *sd)
    eina_stringshare_del(sd->file);
    free(sd->module_name);
    if (sd->job) ecore_job_del(sd->job);
+   if (sd->anim) ecore_animator_del(sd->anim);
    free(sd->progress.info);
    free(sd->ref.file);
    free(sd);
@@ -410,6 +413,9 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    sd->len = 0;
    sd->remember_play = 0;
 
+   if (sd->anim) ecore_animator_del(sd->anim);
+   sd->anim = NULL;
+
    _emotion_module_close(sd->module, sd->video_data);
    sd->module = NULL;
    sd->video_data = NULL;
@@ -467,6 +473,9 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	  }
         eina_stringshare_replace(&sd->file, NULL);
      }
+
+   if (sd->anim) ecore_animator_del(sd->anim);
+   sd->anim = NULL;
 
 #ifdef HAVE_EIO
    /* Only cancel the load_xattr or we will loose ref to time_seek stringshare */
@@ -1349,7 +1358,7 @@ _eio_load_xattr_done(void *data, Eio_File *handler, double xattr_double)
    Smart_Data *sd = data;
 
    emotion_object_position_set(evas_object_smart_parent_get(sd->obj), xattr_double);
-   evas_object_smart_callback_call(sd->obj, SIG_POSITION_LOAD_SUCCEED, NULL);
+   evas_object_smart_callback_call(evas_object_smart_parent_get(sd->obj), SIG_POSITION_LOAD_SUCCEED, NULL);
    _eio_load_xattr_cleanup(sd, handler);
 }
 
@@ -1495,6 +1504,21 @@ _emotion_video_get(const Evas_Object *obj)
    return sd->video_data;
 }
 
+static Eina_Bool
+_emotion_frame_anim(void *data)
+{
+   Evas_Object *obj = data;
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, EINA_FALSE);
+
+   evas_object_image_pixels_dirty_set(sd->obj, 1);
+   evas_object_smart_callback_call(obj, SIG_FRAME_DECODE, NULL);
+   sd->anim = NULL;
+
+   return EINA_FALSE;
+}
+
 EAPI void
 _emotion_frame_new(Evas_Object *obj)
 {
@@ -1502,9 +1526,7 @@ _emotion_frame_new(Evas_Object *obj)
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
 
-//   printf("pix get set 1 %p\n", sd->obj);
-   evas_object_image_pixels_dirty_set(sd->obj, 1);
-   evas_object_smart_callback_call(obj, SIG_FRAME_DECODE, NULL);
+   if (!sd->anim) sd->anim = ecore_animator_add(_emotion_frame_anim, obj);
 }
 
 EAPI void
