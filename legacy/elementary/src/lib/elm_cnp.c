@@ -8,11 +8,41 @@
 # include <sys/mman.h>
 #endif
 
+/*
+
+  TODO: MUST FIX BUGS
+
+  elm_cnp must detect the environment of each engine the window is
+  running, maybe associate it more with the elm_win code.
+
+  It should only call X11 code for X11 windows! Right now it will call
+  them whenever Elementary is compiled with Ecore_X, but it's not in
+  use! The recommendation is to make a "engine" structure with
+  function pointers on what to do for each engine (X11, Wayland,
+  DirectFB...) and call only those. Splitting different CNP engines to
+  different files should help detect problems.
+
+  At least for X11 it's handled per xwin. We have a single xwin per
+  window (as opposed of GTK that have (had?) it per widget. But our
+  high-level code is mapped to widget/objects, then we must
+  reference-count the actions we enable-disable per window
+  (dnd-aware), as well as operate on sets (add/del) of supported
+  formats. It should be possible to have a single window with
+  different widgets being drop-target, one just for text, one for
+  image. It should be possible to start-drag from this window without
+  breaking drop later.
+
+  And the dispatch should be abstracted! Right now it's assuming
+  elm_entry :-(
+
+ */
+
+
 #ifdef HAVE_ELEMENTARY_X
 
 #define ARRAYINIT(foo)  [foo] =
 
-//#define DEBUGON 1
+#define DEBUGON 1
 
 #ifdef DEBUGON
 # define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
@@ -75,6 +105,7 @@ struct _Cnp_Selection
 
    Elm_Sel_Format     format;
    Ecore_X_Selection  ecore_sel;
+   Ecore_X_Window     xwin;
 
    Eina_Bool          active : 1;
 };
@@ -356,6 +387,7 @@ static Cnp_Selection selections[ELM_SEL_TYPE_CLIPBOARD + 1] = {
 /* Data for DND in progress */
 static Saved_Type savedtypes =  { NULL, NULL, 0, 0, 0, EINA_FALSE };
 
+/* TODO BUG: should NEVER have these as globals! They should be per context (window). */
 static void (*dragdonecb) (void *data, Evas_Object *obj) = NULL;
 static void *dragdonedata = NULL;
 
@@ -389,26 +421,39 @@ elm_selection_selection_has_owner(void)
 #endif
 }
 
+#ifdef HAVE_ELEMENTARY_X
+static Ecore_X_Window
+_elm_widget_xwin_get(const Evas_Object *obj)
+{
+   Evas_Object *top;
+   Ecore_X_Window xwin = 0;
+
+   top = elm_widget_top_get(obj);
+   if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
+
+   if (top) xwin = elm_win_xwindow_get(top);
+
+   if (!xwin)
+     {
+        Ecore_Evas *ee;
+        Evas *evas = evas_object_evas_get(obj);
+        if (!evas) return 0;
+        ee = ecore_evas_ecore_evas_get(evas);
+        if (!ee) return 0;
+        xwin = (Ecore_X_Window)ecore_evas_window_get(ee);
+     }
+
+   return xwin;
+}
+#endif
+
 EAPI Eina_Bool
 elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, const void *selbuf, size_t buflen)
 {
 #ifdef HAVE_ELEMENTARY_X
-   Evas_Object *top = elm_widget_top_get(obj);
-   Ecore_X_Window xwin;
+   Ecore_X_Window xwin = _elm_widget_xwin_get(obj);
    Cnp_Selection *sel;
-
-   if (top) xwin = elm_win_xwindow_get(top);
-   else xwin = elm_win_xwindow_get(obj);
-
-   if (!xwin)
-     {
-        Evas *evas = evas_object_evas_get(obj);
-        if (!evas) return EINA_FALSE;
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas);
-        if (!ee) return EINA_FALSE;
-        xwin = (Ecore_X_Window) ecore_evas_window_get(ee);
-     }
 
    if ((!xwin) || (selection > ELM_SEL_TYPE_CLIPBOARD))
      return EINA_FALSE;
@@ -420,6 +465,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
 
    sel->active = EINA_TRUE;
    sel->widget = obj;
+   sel->xwin = xwin;
    sel->set(xwin, &selection, sizeof(Elm_Sel_Type));
    sel->format = format;
 
@@ -483,8 +529,7 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
 {
 #ifdef HAVE_ELEMENTARY_X
-   Evas_Object *top;
-   Ecore_X_Window xwin;
+   Ecore_X_Window xwin = _elm_widget_xwin_get(obj);
    Cnp_Selection *sel;
 
    if (selection > ELM_SEL_TYPE_CLIPBOARD)
@@ -492,21 +537,11 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
    sel = selections + selection;
-   top = elm_widget_top_get(obj);
-   if (top) xwin = elm_win_xwindow_get(top);
-   else
-     {
-        Evas *evas = evas_object_evas_get(obj);
-        if (!evas) return EINA_FALSE;
-        Ecore_Evas *ee = ecore_evas_ecore_evas_get(evas);
-        if (!ee) return EINA_FALSE;
-        xwin = (Ecore_X_Window) ecore_evas_window_get(ee);
-     }
-
    if (!xwin) return EINA_FALSE;
 
    sel->requestformat = format;
    sel->requestwidget = obj;
+   sel->xwin = xwin;
    sel->request(xwin, ECORE_X_SELECTION_TARGET_TARGETS);
    sel->datacb = datacb;
    sel->udata = udata;
@@ -729,7 +764,6 @@ notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
 {
    Ecore_X_Selection_Data_Targets *targets;
    Ecore_X_Atom *atomlist;
-   Evas_Object *top;
    int i, j;
 
    targets = notify->data;
@@ -758,10 +792,9 @@ notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notif
    return ECORE_CALLBACK_PASS_ON;
 
 done:
-   top = elm_widget_top_get(sel->requestwidget);
-   if (!top) top = sel->requestwidget;
-   cnp_debug("Sending request for %s\n", atoms[j].name);
-   sel->request(elm_win_xwindow_get(top), atoms[j].name);
+   cnp_debug("Sending request for %s, xwin=%#llx\n",
+             atoms[j].name, (unsigned long long)sel->xwin);
+   sel->request(sel->xwin, atoms[j].name);
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -771,7 +804,6 @@ response_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *not
 {
    Ecore_X_Selection_Data_Targets *targets;
    Ecore_X_Atom *atomlist;
-   Evas_Object *top;
    int i,j;
 
    targets = notify->data;
@@ -793,10 +825,7 @@ response_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *not
    return 0;
 
 found:
-   top = elm_widget_top_get(sel->requestwidget);
-   if (!top) return 0;
-
-   sel->request(elm_win_xwindow_get(top), atoms[j].name);
+   sel->request(sel->xwin, atoms[j].name);
    return 0;
 }
 
@@ -830,6 +859,8 @@ notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
              data->length, data->data);
    mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
    cnp_debug("String is %s (from %s)\n", stripstr, data->data);
+
+   /* TODO BUG: should never NEVER assume it's an elm_entry! */
    _elm_entry_entry_paste(sel->requestwidget, mkupstr);
    free(stripstr);
    free(mkupstr);
@@ -1026,6 +1057,7 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      }
 
    cnp_debug("String is %s (%d bytes)\n", stripstr, data->length);
+   /* TODO BUG: should never NEVER assume it's an elm_entry! */
    _elm_entry_entry_paste(sel->requestwidget, stripstr);
    free(stripstr);
    return 0;
@@ -1105,6 +1137,7 @@ pasteimage_append(char *file, Evas_Object *entry)
 {
    char *entrytag;
    int len;
+   /* TODO BUG: shouldn't define absize=240x180. Prefer data:// instead of href:// -- may need support for evas. See  http://dataurl.net/ */
    static const char *tagstring = "<item absize=240x180 href=file://%s></item>";
 
    if ((!file) || (!entry)) return EINA_FALSE;
@@ -1113,6 +1146,7 @@ pasteimage_append(char *file, Evas_Object *entry)
 
    entrytag = alloca(len + 1);
    snprintf(entrytag, len + 1, tagstring, file);
+   /* TODO BUG: should never NEVER assume it's an elm_entry! */
    _elm_entry_entry_paste(entry, entrytag);
 
    return EINA_TRUE;
@@ -1125,6 +1159,8 @@ _dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    int i;
 
    /* Skip it */
+   cnp_debug("enter %p\n", enter);
+   cnp_debug("enter types=%p (%d)\n", enter->types, enter->num_types);
    if ((!enter) || (!enter->num_types) || (!enter->types)) return EINA_TRUE;
 
    cnp_debug("Types\n");
@@ -1167,6 +1203,8 @@ _dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 
    drop = ev;
 
+   cnp_debug("drops %p (%d)\n", drops, eina_list_count(drops));
+
    // check we still have something to drop
    if (!drops) return EINA_TRUE;
 
@@ -1174,9 +1212,7 @@ _dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
    for (l = drops; l; l = l->next)
      {
         dropable = l->data;
-        xwin = (Ecore_X_Window)ecore_evas_window_get
-           (ecore_evas_ecore_evas_get(evas_object_evas_get
-                                      (dropable->obj)));
+        xwin = _elm_widget_xwin_get(dropable->obj);
         if (xwin == drop->win) break;
      }
    /* didn't find a window */
@@ -1284,6 +1320,7 @@ found:
      }
 
    cnp_debug("doing a request then\n");
+   selections[ELM_SEL_TYPE_XDND].xwin = xwin;
    selections[ELM_SEL_TYPE_XDND].requestwidget = dropable->obj;
    selections[ELM_SEL_TYPE_XDND].requestformat = ELM_SEL_FORMAT_MARKUP;
    selections[ELM_SEL_TYPE_XDND].active = EINA_TRUE;
@@ -1346,12 +1383,13 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, v
    Ecore_X_Window xwin;
    Eina_List *item;
    int first;
-   Evas_Object *top;
 
    if (!obj) return EINA_FALSE;
-   top = elm_widget_top_get(obj);
-   if (!top || !elm_win_xwindow_get(top)) return EINA_FALSE;
+   xwin = _elm_widget_xwin_get(obj);
+   if (!xwin) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
+
+   /* TODO: check if obj is already a drop target. Do not add twice! */
 
    /* Is this the first? */
    first = (!drops) ? 1 : 0;
@@ -1390,15 +1428,14 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, v
                                   obj);
    /* FIXME: Handle resizes */
 
+   /* TODO BUG: should handle dnd-aware per window, not just the first window that requested it! */
+
    /* If not the first: We're done */
    if (!first) return EINA_TRUE;
 
-   xwin = (Ecore_X_Window)ecore_evas_window_get
-      (ecore_evas_ecore_evas_get(evas_object_evas_get(obj)));
-
    ecore_x_dnd_aware_set(xwin, EINA_TRUE);
 
-   cnp_debug("Adding drop target calls\n");
+   cnp_debug("Adding drop target calls xwin=%#llx\n", (unsigned long long)xwin);
    handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
                                            _dnd_enter, NULL);
    handler_pos = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION,
@@ -1431,12 +1468,14 @@ elm_drop_target_del(Evas_Object *obj)
    evas_object_event_callback_del(obj, EVAS_CALLBACK_FREE,
                                   (Evas_Object_Event_Cb)elm_drop_target_del);
    free(drop);
+
+   /* TODO BUG: we should handle dnd-aware per window, not just the last that reelased it */
+
    /* If still drops there: All fine.. continue */
    if (drops) return EINA_TRUE;
 
    cnp_debug("Disabling DND\n");
-   xwin = (Ecore_X_Window)ecore_evas_window_get
-      (ecore_evas_ecore_evas_get(evas_object_evas_get(obj)));
+   xwin = _elm_widget_xwin_get(obj);
    ecore_x_dnd_aware_set(xwin, EINA_FALSE);
 
    ecore_event_handler_del(handler_pos);
@@ -1456,6 +1495,10 @@ _drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *
    Ecore_X_Window xwin = *((Ecore_X_Window *)data);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _drag_mouse_up);
    ecore_x_dnd_drop();
+
+   cnp_debug("mouse up, xwin=%#llx\n", (unsigned long long)xwin);
+
+   /* TODO BUG: should not revert to FALSE if xwin is a drop target! */
    ecore_x_dnd_aware_set(xwin, EINA_FALSE);
    if (dragdonecb)
      {
@@ -1491,7 +1534,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
 
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
-   xwin = elm_win_xwindow_get(obj);
+   xwin = _elm_widget_xwin_get(obj);
 
    cnp_debug("starting drag...\n");
 
@@ -1507,9 +1550,12 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
    sel->widget = obj;
    sel->format = format;
    sel->selbuf = data ? strdup(data) : NULL;
+
+   /* TODO BUG: should NEVER have these as globals! They should be per context (window). */
    dragdonecb = dragdone;
    dragdonedata = donecbdata;
 
+   /* TODO BUG: should increase dnd-awareness, in case it's drop target as well. See _drag_mouse_up() */
    ecore_x_dnd_aware_set(xwin, EINA_TRUE);
    ecore_x_dnd_callback_pos_update_set(_drag_move, NULL);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(Elm_Sel_Type));
@@ -1549,6 +1595,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
    return EINA_TRUE;
 }
 
+/* TODO: this should not be an actual tempfile, but rather encode the object as http://dataurl.net/ if it's an image or similar. Evas should support decoding it as memfile. */
 static Tmp_Info *
 elm_cnp_tempfile_create(int size)
 {
