@@ -97,7 +97,7 @@ _progress_format_cb(double val)
 static void
 _progress_format_free(char *str)
 {
-   free(fstr);
+   free(str);
 }
 
 static void
