@@ -42,9 +42,21 @@ _elm_module_init(void)
 void
 _elm_module_shutdown(void)
 {
-   // FIXME: unload all modules
-   if (modules) eina_hash_free(modules);
-   modules = NULL;
+   Eina_Iterator *it;
+   Elm_Module *m;
+
+   if (modules)
+     {
+        it = eina_hash_iterator_data_new(modules);
+
+        EINA_ITERATOR_FOREACH(it, m)
+           _elm_module_del(m);
+
+        eina_iterator_free(it);
+        eina_hash_free(modules);
+        modules = NULL;
+     }
+
    if (modules_as) eina_hash_free(modules_as);
    modules_as = NULL;
 }
