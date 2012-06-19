@@ -270,6 +270,7 @@ _signal_mouse_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    _view_update(data);
 
    elm_entry_input_panel_show(wd->entry);
+   elm_object_focus_set(wd->entry, EINA_TRUE);
 
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
@@ -1115,17 +1116,14 @@ static void
 _entry_resized_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Coord en_x, en_y, en_w, en_h;
-   Evas_Coord bx_x, bx_y;
 
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
 
    evas_object_geometry_get(wd->entry, &en_x, &en_y, &en_w, &en_h);
-   evas_object_geometry_get(wd->box, &bx_x, &bx_y, NULL, NULL);
 
    if (wd->focused)
-     elm_widget_show_region_set(wd->box, en_x - bx_x, en_y - bx_y, en_w,
-                                en_h, EINA_TRUE);
+     elm_widget_show_region_set(wd->entry, en_x, en_y, en_w, en_h, EINA_TRUE);
 }
 
 static void
