@@ -2694,16 +2694,11 @@ _decorate_item_mode_frame_new(Evas_Object *win, Evas_Object **rdg)
 void
 _decorate_all_set_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Elm_Object_Item *it;
-   Evas_Object *gl;
-   int v;
    if (!data) return;
 
+   Evas_Object *gl;
    gl = evas_object_data_get(obj, "gl");
    if (!gl) return;
-
-   v = elm_radio_value_get(data);
-   it = elm_genlist_decorated_item_get(gl);
 
    elm_genlist_decorate_mode_set(gl, EINA_TRUE);
 }
