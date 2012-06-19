@@ -537,7 +537,10 @@ elm_slideshow_item_show(Elm_Object_Item *it)
    _item_realize(next);
    elm_layout_content_set(WIDGET(item), "elm.swallow.2", VIEW(next));
 
-   snprintf(buf, sizeof(buf), "%s,next", sd->transition);
+   if (!sd->transition)
+     sprintf(buf,"none,next");
+   else
+     snprintf(buf, sizeof(buf), "%s,next", sd->transition);
    elm_layout_signal_emit(WIDGET(item), buf, "slideshow");
 
    sd->previous = sd->current;
@@ -569,7 +572,10 @@ elm_slideshow_next(Evas_Object *obj)
 
    elm_layout_content_set(obj, "elm.swallow.2", VIEW(next));
 
-   snprintf(buf, sizeof(buf), "%s,next", sd->transition);
+   if (!sd->transition)
+     sprintf(buf,"none,next");
+   else
+     snprintf(buf, sizeof(buf), "%s,next", sd->transition);
    elm_layout_signal_emit(obj, buf, "slideshow");
 
    sd->previous = sd->current;
@@ -601,7 +607,10 @@ elm_slideshow_previous(Evas_Object *obj)
 
    elm_layout_content_set(obj, "elm.swallow.2", VIEW(prev));
 
-   snprintf(buf, 1024, "%s,previous", sd->transition);
+   if (!sd->transition)
+     sprintf(buf,"none,previous");
+   else
+     snprintf(buf, 1024, "%s,previous", sd->transition);
    elm_layout_signal_emit(obj, buf, "slideshow");
 
    sd->previous = sd->current;

@@ -47,10 +47,10 @@ _mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 }
 
 static void
-_hv_select(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_hv_select(void *data, Evas_Object *obj, void *event_info)
 {
    elm_slideshow_transition_set(slideshow, data);
-   elm_object_text_set(obj, data);
+   elm_object_text_set(obj, elm_object_item_text_get(event_info));
 }
 
 static void
@@ -171,6 +171,7 @@ test_slideshow(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_hoversel_hover_parent_set(hv, win);
    EINA_LIST_FOREACH(elm_slideshow_transitions_get(slideshow), l, transition)
       elm_hoversel_item_add(hv, transition, NULL, 0, _hv_select, transition);
+   elm_hoversel_item_add(hv, "None", NULL, 0, _hv_select, NULL);
    elm_object_text_set(hv, eina_list_data_get(elm_slideshow_transitions_get(slideshow)));
    evas_object_show(hv);
 

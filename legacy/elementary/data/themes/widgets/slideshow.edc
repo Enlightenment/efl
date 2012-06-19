@@ -380,6 +380,22 @@ group { name: "elm/slideshow/base/default";
          target: "image_2_whole";
          after: "square_next_2";
       }
+      program { name: "next";
+         signal: "none,next";
+         source: "slideshow";
+         action: STATE_SET "fade_prev_next" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "end";
+      }
+      program { name: "previous";
+         signal: "none,previous";
+         source: "slideshow";
+         action: STATE_SET "fade_prev_next" 0.0;
+         target: "image_1_whole";
+         target: "image_2_whole";
+         after: "end";
+      }
       program { name: "end";
          action: SIGNAL_EMIT "end" "slideshow";
       }
