@@ -595,6 +595,8 @@ EAPI Elm_Map_Overlay *     elm_map_overlay_add(Evas_Object *obj, double lon, dou
  * This list includes group overlays also.
  * So this can be changed dynamically while zooming and panning.
  *
+ * @since 1.1
+ *
  * @ingroup Map
  */
 EAPI EAPI Eina_List *      elm_map_overlays_get(Evas_Object *obj);
@@ -753,6 +755,8 @@ EAPI Eina_Bool             elm_map_overlay_paused_get(const Elm_Map_Overlay *ove
  *
  * The visible of the overlay can not be set.
  * This value can be changed dynamically while zooming and panning
+ *
+ * @since 1.1
  *
  * @ingroup Map
  */
