@@ -1124,7 +1124,7 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
         Evas_Font_Instance *cur_fi = NULL;
         Evas_Text_Props text_props;
         Evas_Script_Type script;
-        int inset, advance, vadvance;
+        int advance, vadvance;
         
         script = evas_common_language_script_type_get(W, 1);
         ENFN->font_run_end_get(ENDT, o->font, &script_fi, &cur_fi,
@@ -1137,13 +1137,9 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
         ENFN->font_string_size_get(ENDT, o->font, &text_props,
                                    &o->cur.char_width, &o->cur.char_height);
         o->max_ascent = ENFN->font_max_ascent_get(ENDT, o->font);
-        inset = ENFN->font_inset_get(ENDT, o->font, &text_props);
+//        inset = ENFN->font_inset_get(ENDT, o->font, &text_props);
         advance = ENFN->font_h_advance_get(ENDT, o->font, &text_props);
         vadvance = ENFN->font_v_advance_get(ENDT, o->font, &text_props);
-        printf("%ix%i | %i %i | %i\n",
-               o->cur.char_width, o->cur.char_height,
-               inset, advance,
-               vadvance);
         if (advance > o->cur.char_width) o->cur.char_width = advance;
         if (vadvance > o->cur.char_height) o->cur.char_height = vadvance;
         evas_common_text_props_content_unref(&text_props);
