@@ -218,7 +218,11 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
         fi->src->current_size = fi->size;
      }
    val = (int)fi->src->ft.face->size->metrics.height;
-   if (fi->src->ft.face->units_per_EM == 0)
+   if ((fi->src->ft.face->bbox.yMax == 0) &&
+       (fi->src->ft.face->bbox.yMin == 0) &&
+       (fi->src->ft.face->units_per_EM == 0))
+     return val >> 6;
+   else if (fi->src->ft.face->units_per_EM == 0)
      return val;
    return val >> 6;
 //   dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
