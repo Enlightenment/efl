@@ -1175,6 +1175,27 @@ evas_object_textgrid_font_set(Evas_Object *obj, const char *font_name, Evas_Font
    o->core_change = 1;
    evas_object_textgrid_rows_clear(obj);
    evas_object_change(obj);
+
+   /* Force destroy of all cached Evas_Text_Props */
+   while (eina_array_count(&o->glyphs_cleanup) > 0)
+     {
+        Evas_Text_Props *prop;
+        unsigned int props_index;
+
+        props_index = (unsigned int) (intptr_t) eina_array_pop(&o->glyphs_cleanup);
+        prop = &(o->glyphs[props_index >> 8].props[props_index & 0xFF]);
+        
+        evas_common_text_props_content_unref(prop);
+        if (!prop->info)
+          {
+             o->glyphs_used[props_index >> 8]--;
+
+             if (!o->glyphs_used[props_index >> 8])
+               {
+                  /* FIXME: cleanup the master tree */
+               }
+          }
+     }
 }
 
 EAPI void
