@@ -6,6 +6,7 @@ LIST(APPEND CONSTRUCTORS_CC_SOURCES
    simple4.c
    simple5.c
    simple6.c
+   simple7.c
    mixin.c
    )
 

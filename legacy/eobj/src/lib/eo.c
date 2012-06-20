@@ -474,6 +474,9 @@ eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...)
      }
    va_end(p_list);
 
+   if (obj->do_error)
+      ret = EINA_FALSE;
+
    return ret;
 }
 

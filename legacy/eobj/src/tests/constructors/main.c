@@ -5,6 +5,7 @@
 #include "simple4.h"
 #include "simple5.h"
 #include "simple6.h"
+#include "simple7.h"
 #include "mixin.h"
 
 #include "../eunit_tests.h"
@@ -48,10 +49,15 @@ main(int argc, char *argv[])
    fail_if(my_init_count != 0);
 
    obj = eo_add(SIMPLE5_CLASS, NULL);
+   fail_if(!obj);
    eo_unref(obj);
 
    obj = eo_add(SIMPLE6_CLASS, NULL);
+   fail_if(!obj);
    eo_unref(obj);
+
+   obj = eo_add(SIMPLE7_CLASS, NULL);
+   fail_if(obj);
 
    eo_shutdown();
    return ret;
