@@ -849,6 +849,7 @@ struct _Edje_Part
    unsigned char          select_mode;
    unsigned char          cursor_mode;
    unsigned char          multiline;
+   unsigned char          access; /* it will be used accessibility feature */
    Edje_Part_Api          api;
 };
 

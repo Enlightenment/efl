@@ -485,3 +485,7 @@
 2012-06-06  Jihoon Kim
 
 	* edje_entry: display preedit string even though there is no attribute
+
+2012-06-20  Kim Shinwoo
+
+	* Add edje_object_access_part_list_get and acess flags in edc file.

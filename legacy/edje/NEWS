@@ -9,6 +9,7 @@ Additions:
     * edje_player will automatically reload the file when it change on disk.
     * Add SPACER part. This part are not putting anything into the canvas. So lighter and faster to
     process (Use it to replace RECT part that are never visible and never catch any event).
+    * Add accessibility flags and API to retrieve the relevant part.
 
 Improvements:
     * Allocate once and reuse Evas_Map.

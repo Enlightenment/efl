@@ -3623,6 +3623,15 @@ EAPI Evas_Object *edje_object_part_box_remove_at          (Evas_Object *obj, con
 EAPI Eina_Bool    edje_object_part_box_remove_all         (Evas_Object *obj, const char *part, Eina_Bool clear);
 
 /**
+ * @brief Retrieve a list all accessibility part names
+ *
+ * @param obj A valid Evas_Object handle
+ * @return A list all accessibility part names on @p obj
+ * @since 1.3.0
+ */
+EAPI Eina_List * edje_object_access_part_list_get         (const Evas_Object *obj);
+
+/**
  * @brief Retrieve a child from a table
  *
  * @param obj A valid Evas_Object handle

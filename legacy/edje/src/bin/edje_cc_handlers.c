@@ -142,6 +142,7 @@ static void st_collections_group_parts_part_entry_mode(void);
 static void st_collections_group_parts_part_select_mode(void);
 static void st_collections_group_parts_part_cursor_mode(void);
 static void st_collections_group_parts_part_multiline(void);
+static void st_collections_group_parts_part_access(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
@@ -387,6 +388,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.select_mode", st_collections_group_parts_part_select_mode},
      {"collections.group.parts.part.cursor_mode", st_collections_group_parts_part_cursor_mode},
      {"collections.group.parts.part.multiline", st_collections_group_parts_part_multiline},
+     {"collections.group.parts.part.access", st_collections_group_parts_part_access},
      {"collections.group.parts.part.image", st_images_image}, /* dup */
      {"collections.group.parts.part.set.name", st_images_set_name},
      {"collections.group.parts.part.set.image.image", st_images_set_image_image},
@@ -2343,6 +2345,7 @@ st_collections_group_inherit(void)
         ep->select_mode = ep2->select_mode;
         ep->cursor_mode = ep2->cursor_mode;
         ep->multiline = ep2->multiline;
+        ep->access = ep2->access;
         ep->dragable.x = ep2->dragable.x;
         ep->dragable.step_x = ep2->dragable.step_x;
         ep->dragable.count_x = ep2->dragable.count_x;
@@ -2935,6 +2938,7 @@ ob_collections_group_parts_part(void)
    ep->pointer_mode = EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    ep->precise_is_inside = 0;
    ep->use_alternate_font_metrics = 0;
+   ep->access = 0;
    ep->clip_to_id = -1;
    ep->dragable.confine_id = -1;
    ep->dragable.event_id = -1;
@@ -3615,6 +3619,25 @@ st_collections_group_parts_part_multiline(void)
    check_arg_count(1);
 
    current_part->multiline = parse_bool(0);
+}
+
+/**
+    @page edcref
+    @property
+        access 
+    @parameters
+        [1 or 0]
+    @effect
+        Specifies whether the part will use accessibility feature (1),
+        or not (0). It's set to 0 by default.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_access(void)
+{
+   check_arg_count(1);
+
+   current_part->access = parse_bool(0);
 }
 
 /**

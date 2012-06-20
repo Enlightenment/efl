@@ -3844,6 +3844,27 @@ edje_object_part_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool cl
    return r;
 }
 
+EAPI Eina_List *
+edje_object_access_part_list_get(const Evas_Object *obj)
+{
+   Edje *ed;
+   Eina_List *access_parts = NULL;
+
+   ed = _edje_fetch(obj);
+   if ((!ed)) return NULL;
+
+   unsigned int i;
+   for (i = 0; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp;
+        rp = ed->table_parts[i];
+        if (rp->part->access)
+          access_parts = eina_list_append(access_parts, rp->part->name);
+     }
+
+   return access_parts;
+}
+
 static void
 _edje_box_child_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *child __UNUSED__, void *einfo __UNUSED__)
 {
