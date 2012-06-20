@@ -696,8 +696,10 @@ _ecore_xcb_selection_converter_text(char         *target,
      style = XcbCompoundTextStyle;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_STRING))
      style = XcbStringStyle;
+#ifdef HAVE_ICONV
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_UTF8_STRING))
      style = XcbUTF8StringStyle;
+#endif
    else
      return EINA_FALSE;
 
@@ -734,8 +736,6 @@ _ecore_xcb_selection_converter_text(char         *target,
 #endif
    else
      return EINA_TRUE;
-
-   return EINA_FALSE;
 }
 
 static void *
@@ -958,14 +958,8 @@ _ecore_xcb_selection_data_targets_free(void *data)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(sel = data)) return 0;
-   if (sel->targets)
-     {
-        int i = 0;
-
-        for (i = 0; i < sel->num_targets; i++)
-          if (sel->targets[i]) free(sel->targets[i]);
-        if (sel->targets) free(sel->targets);
-     }
+   if (sel->targets) free(sel->targets);
+   free(ECORE_XCB_SELECTION_DATA(sel)->data);
    free(sel);
    return 1;
 }
