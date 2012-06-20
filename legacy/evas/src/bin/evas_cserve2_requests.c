@@ -366,7 +366,7 @@ cserve2_requests_process(void)
 
          for (j = 0; _request_match[j].rtype != CSERVE2_REQ_LAST; j++)
            {
-              if (_request_match[j].rtype == j)
+              if (_request_match[j].rtype == (unsigned int)j)
                 {
                    type = _request_match[j].stype;
                    ctype = _request_match[j].ctype;
