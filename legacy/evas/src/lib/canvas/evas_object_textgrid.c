@@ -187,7 +187,6 @@ evas_object_textgrid_textprop_get(Evas_Object *obj, Evas_Object_Textgrid *o, Ein
 static int
 evas_object_textgrid_textprop_ref(Evas_Object *obj, Evas_Object_Textgrid *o, Eina_Unicode codepoint)
 {
-   Evas_Textgrid_Hash_Master *master;
    unsigned int mask = 0xF0000000;
    unsigned int shift = 28;
    unsigned int offset = 0;
@@ -195,12 +194,11 @@ evas_object_textgrid_textprop_ref(Evas_Object *obj, Evas_Object_Textgrid *o, Ein
 
    if (o->last_glyphs)
      {
-        if ((o->last_mask & codepoint) == o->last_mask)
+        if (o->last_mask && (o->last_mask & codepoint) == o->last_mask)
           goto end;
      }
 
-   master = o->master;
-   if (!master)
+   if (!o->master)
      {
         o->master = calloc(6, sizeof (Evas_Textgrid_Hash_Master));
         o->master_used = calloc(6, sizeof (unsigned char));
@@ -238,9 +236,9 @@ evas_object_textgrid_textprop_ref(Evas_Object *obj, Evas_Object_Textgrid *o, Ein
      }
 
    while (shift > 8
-          && master[offset].next[(codepoint & mask) >> shift] != 0)
+          && o->master[offset].next[(codepoint & mask) >> shift] != 0)
      {
-        offset = master[offset].next[(codepoint & mask) >> shift];
+        offset = o->master[offset].next[(codepoint & mask) >> shift];
         mask >>= 4;
         shift -= 4;
      }
@@ -257,7 +255,7 @@ evas_object_textgrid_textprop_ref(Evas_Object *obj, Evas_Object_Textgrid *o, Ein
         master_count = o->master_length + count;
 
         /* FIXME: find empty entry */
-        tmp = realloc(master, master_count * sizeof (Evas_Textgrid_Hash_Master));
+        tmp = realloc(o->master, master_count * sizeof (Evas_Textgrid_Hash_Master));
         if (!tmp) return 0xFFFFFFFF;
         o->master = tmp;
         tmp_used = realloc(o->master_used, master_count);
@@ -278,8 +276,9 @@ evas_object_textgrid_textprop_ref(Evas_Object *obj, Evas_Object_Textgrid *o, Ein
              shift -= 4;
              mask >>= 4;
           }
+        offset--;
      }
-   if (master[offset].next[(codepoint & mask) >> shift] == 0)
+   if (o->master[offset].next[(codepoint & mask) >> shift] == 0)
      {
         Evas_Textgrid_Hash_Glyphs *tmp;
         unsigned char *tmp_used;
@@ -294,14 +293,14 @@ evas_object_textgrid_textprop_ref(Evas_Object *obj, Evas_Object_Textgrid *o, Ein
         if (!tmp_used) return 0xFFFFFFFF;
         o->glyphs_used = tmp_used;
 
-        master[offset].next[(codepoint & mask) >> shift] = o->glyphs_length + 0xFF000000;
+        o->master[offset].next[(codepoint & mask) >> shift] = o->glyphs_length + 0xFF000000;
 
-        memset(o->glyphs + count, 0, sizeof (Evas_Textgrid_Hash_Glyphs));
-        o->glyphs_used[count] = 0;
+        memset(o->glyphs + o->glyphs_length, 0, sizeof (Evas_Textgrid_Hash_Glyphs));
+        o->glyphs_used[o->glyphs_length] = 0;
         o->glyphs_length = count;
      }
 
-   o->last_glyphs = o->glyphs + (master[offset].next[(codepoint & mask) >> shift] & 0xFFFFFF);
+   o->last_glyphs = o->glyphs + (o->master[offset].next[(codepoint & mask) >> shift] & 0xFFFFFF);
    o->last_mask = codepoint & 0xFFFFFF00;
 
  end:
