@@ -133,7 +133,7 @@ ibus_im_context_add(Ecore_IMF_Context *ctx)
    EINA_LOG_DBG("%s", __FUNCTION__);
 
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
-   if (!ibusimcontext) return;
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    ibusimcontext->client_window = 0;
 
@@ -169,7 +169,8 @@ ibus_im_context_del(Ecore_IMF_Context *ctx)
    EINA_LOG_DBG("%s", __FUNCTION__);
 
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    g_signal_handlers_disconnect_by_func(_bus, G_CALLBACK(_bus_connected_cb), ctx);
 
    if (ibusimcontext->ibuscontext)
@@ -184,7 +185,8 @@ EAPI Eina_Bool
 ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event)
 {
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ibusimcontext, EINA_FALSE);
+   
    if (type != ECORE_IMF_EVENT_KEY_UP && type != ECORE_IMF_EVENT_KEY_DOWN)
      return EINA_FALSE;
 
@@ -246,7 +248,8 @@ ibus_im_context_focus_in(Ecore_IMF_Context *ctx)
    EINA_LOG_DBG("ctx : %p", ctx);
 
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (ibusimcontext->has_focus)
      return;
 
@@ -267,7 +270,8 @@ ibus_im_context_focus_out(Ecore_IMF_Context *ctx)
    EINA_LOG_DBG("ctx : %p", ctx);
 
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (ibusimcontext->has_focus == EINA_FALSE)
      return;
 
@@ -283,6 +287,7 @@ EAPI void
 ibus_im_context_reset(Ecore_IMF_Context *ctx)
 {
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);   
 
    if (ibusimcontext->ibuscontext)
      ibus_input_context_reset(ibusimcontext->ibuscontext);
@@ -294,7 +299,8 @@ ibus_im_context_preedit_string_get(Ecore_IMF_Context *ctx,
                                    int            *cursor_pos)
 {
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (ibusimcontext->enable && ibusimcontext->preedit_visible)
      {
         if (str)
@@ -321,7 +327,8 @@ ibus_im_context_preedit_string_with_attributes_get(Ecore_IMF_Context   *ctx,
                                                    int            *cursor_pos)
 {
    IBusIMContext *ibusimcontext = (IBusIMContext*)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (ibusimcontext->enable && ibusimcontext->preedit_visible)
      {
         if (str)
@@ -346,7 +353,8 @@ ibus_im_context_client_window_set(Ecore_IMF_Context *ctx, void *window)
 {
    EINA_LOG_DBG("canvas : %p", window);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (window != NULL)
      ibusimcontext->client_window = (Ecore_X_Window)(Ecore_Window)window;
 }
@@ -356,7 +364,8 @@ ibus_im_context_client_canvas_set(Ecore_IMF_Context *ctx, void *canvas)
 {
    EINA_LOG_DBG("canvas : %p", canvas);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (canvas != NULL)
      ibusimcontext->client_canvas = canvas;
 }
@@ -368,6 +377,8 @@ _set_cursor_location_internal(Ecore_IMF_Context *ctx)
    Ecore_Evas *ee;
    int canvas_x, canvas_y;
 
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (ibusimcontext->ibuscontext == NULL)
      return;
 
@@ -398,7 +409,8 @@ ibus_im_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int w,
 {
    EINA_LOG_DBG("x : %d, y : %d, w, %d, h :%d", x, y, w, h);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (ibusimcontext->cursor_x != x ||
        ibusimcontext->cursor_y != y ||
        ibusimcontext->cursor_w != w ||
@@ -418,7 +430,8 @@ ibus_im_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
 {
    EINA_LOG_DBG("preedit : %d", use_preedit);
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
-
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
+   
    if (ibusimcontext->ibuscontext)
      {
         if (use_preedit)
@@ -569,6 +582,7 @@ _ibus_context_show_preedit_text_cb(IBusInputContext   *ibuscontext __UNUSED__,
                                    IBusIMContext      *ibusimcontext)
 {
    EINA_LOG_DBG("preedit visible : %d", ibusimcontext->preedit_visible);
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);   
 
    if (ibusimcontext->preedit_visible == EINA_TRUE)
      return;
@@ -589,7 +603,7 @@ _ibus_context_hide_preedit_text_cb(IBusInputContext *ibuscontext __UNUSED__,
                                    IBusIMContext    *ibusimcontext)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
-   if (!ibusimcontext) return;
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    if (ibusimcontext->preedit_visible == EINA_FALSE)
      return;
@@ -610,7 +624,7 @@ _ibus_context_enabled_cb(IBusInputContext *ibuscontext __UNUSED__,
                          IBusIMContext    *ibusimcontext)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
-   if (!ibusimcontext) return;
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    ibusimcontext->enable = EINA_TRUE;
 }
@@ -620,7 +634,7 @@ _ibus_context_disabled_cb(IBusInputContext *ibuscontext __UNUSED__,
                           IBusIMContext    *ibusimcontext)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
-   if (!ibusimcontext) return;
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    ibusimcontext->enable = EINA_FALSE;
 
@@ -644,7 +658,7 @@ _ibus_context_destroy_cb(IBusInputContext *ibuscontext __UNUSED__,
                          IBusIMContext    *ibusimcontext)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
-   if (!ibusimcontext) return;
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    ibusimcontext->ibuscontext = NULL;
    ibusimcontext->enable = EINA_FALSE;
@@ -668,7 +682,7 @@ static void
 _create_input_context(IBusIMContext *ibusimcontext)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
-   if (!ibusimcontext) return;
+   EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
    ibusimcontext->ibuscontext = ibus_bus_create_input_context(_bus, "ecore");
 
