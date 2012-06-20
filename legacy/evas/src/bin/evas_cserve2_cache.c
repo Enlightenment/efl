@@ -955,7 +955,7 @@ _entry_free_cb(void *data)
 }
 
 static void
-_font_entry_reference_del(Client *client, Reference *ref)
+_font_entry_reference_del(Client *client __UNUSED__, Reference *ref)
 {
    Entry *entry = ref->entry;
 
@@ -1128,7 +1128,7 @@ _font_load_request_free(void *data)
 }
 
 static void
-_font_load_request_response(Client *client, void *data, void *resp, unsigned int rid)
+_font_load_request_response(Client *client __UNUSED__, void *data, void *resp, unsigned int rid __UNUSED__)
 {
    Slave_Msg_Font_Loaded *msg = resp;
    Font_Entry *fe = data;
@@ -1143,7 +1143,7 @@ _font_load_request_response(Client *client, void *data, void *resp, unsigned int
 }
 
 static void
-_font_load_request_failed(Client *client, void *data, Error_Type error, unsigned int rid)
+_font_load_request_failed(Client *client __UNUSED__, void *data __UNUSED__, Error_Type error __UNUSED__, unsigned int rid __UNUSED__)
 {
 }
 

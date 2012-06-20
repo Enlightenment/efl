@@ -103,7 +103,7 @@ _request_waiter_add(Font_Request *req, Client *client, unsigned int rid)
 }
 
 Font_Request *
-cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request_Funcs *funcs, void *data)
+cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request_Funcs *funcs __UNUSED__, void *data)
 {
    Font_Request *req, *r;
 
