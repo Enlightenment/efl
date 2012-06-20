@@ -929,7 +929,7 @@ eio_dir_unlink(const char *path,
 
 EAPI Eio_File *
 eio_dir_stat_ls(const char *dir,
-                Eio_Filter_Dir_Cb filter_cb,
+                Eio_Filter_Direct_Cb filter_cb,
                 Eio_Main_Direct_Cb main_cb,
                 Eio_Done_Cb done_cb,
                 Eio_Error_Cb error_cb,
@@ -945,7 +945,12 @@ eio_dir_stat_ls(const char *dir,
    async = malloc(sizeof(Eio_File_Dir_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
-   async->filter_cb = filter_cb;
+   /* Eio_Filter_Direct_Cb must be casted to Eio_Filter_Dir_Cb here
+    * because we keep the Eio_File_Dir_Ls pointing to that variant
+    * where info can be modified, but in our case it's already doing
+    * stat() then it shouldn't be needed!
+    */
+   async->filter_cb = (Eio_Filter_Dir_Cb)filter_cb;
    async->main_cb = main_cb;
    async->ls.directory = eina_stringshare_add(dir);
 

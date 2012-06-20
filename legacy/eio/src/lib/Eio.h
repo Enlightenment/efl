@@ -260,7 +260,7 @@ EAPI Eio_File *eio_file_stat_ls(const char *dir,
  * ignore it.
  */
 EAPI Eio_File *eio_dir_stat_ls(const char *dir,
-                               Eio_Filter_Dir_Cb filter_cb,
+                               Eio_Filter_Direct_Cb filter_cb,
                                Eio_Main_Direct_Cb main_cb,
                                Eio_Done_Cb done_cb,
                                Eio_Error_Cb error_cb,
