@@ -133,7 +133,7 @@ _ecore_imf_context_xim_add(Ecore_IMF_Context *ctx)
    Ecore_IMF_Context_Data *imf_context_data = NULL;
 
    imf_context_data = imf_context_data_new();
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    imf_context_data->use_preedit = EINA_TRUE;
    imf_context_data->finalizing = EINA_FALSE;
@@ -153,7 +153,7 @@ _ecore_imf_context_xim_del(Ecore_IMF_Context *ctx)
 #ifdef ENABLE_XIM
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    imf_context_data->finalizing = EINA_TRUE;
    if (imf_context_data->im_info && !imf_context_data->im_info->ics->next)
@@ -210,7 +210,7 @@ _ecore_imf_context_xim_preedit_string_get(Ecore_IMF_Context *ctx,
    char *utf8;
    int len;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->preedit_chars)
      {
@@ -295,7 +295,7 @@ _ecore_imf_context_xim_focus_in(Ecore_IMF_Context *ctx)
    XIC ic;
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    ic = imf_context_data->ic;
    imf_context_data->has_focus = EINA_TRUE;
@@ -329,7 +329,7 @@ _ecore_imf_context_xim_focus_out(Ecore_IMF_Context *ctx)
    XIC ic;
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->has_focus == EINA_TRUE)
      {
@@ -361,7 +361,7 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
    Eina_Bool have_preedit_state = EINA_FALSE;
 
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    ic = imf_context_data->ic;
    if (!ic)
@@ -433,7 +433,7 @@ _ecore_imf_context_xim_use_preedit_set(Ecore_IMF_Context *ctx,
 #ifdef ENABLE_XIM
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    use_preedit = use_preedit != EINA_FALSE;
 
@@ -494,7 +494,7 @@ _ecore_imf_context_xim_cursor_location_set(Ecore_IMF_Context *ctx,
    XPoint spot;
 
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
    ic = imf_context_data->ic;
    if (!ic)
      return;
@@ -527,7 +527,7 @@ _ecore_imf_context_xim_input_panel_show(Ecore_IMF_Context *ctx)
 #ifdef ENABLE_XIM
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    ecore_x_e_virtual_keyboard_state_set
         (imf_context_data->win, ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
@@ -544,7 +544,7 @@ _ecore_imf_context_xim_input_panel_hide(Ecore_IMF_Context *ctx)
 #ifdef ENABLE_XIM
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    ecore_x_e_virtual_keyboard_state_set
         (imf_context_data->win, ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF);
@@ -885,7 +885,7 @@ imf_context_data_new()
    if (!XSupportsLocale()) return NULL;
 
    imf_context_data = calloc(1, sizeof(Ecore_IMF_Context_Data));
-   if (!imf_context_data) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(imf_context_data, NULL);
 
    imf_context_data->locale = strdup(locale);
    if (!imf_context_data->locale) goto error;
@@ -945,7 +945,7 @@ preedit_done_callback(XIC xic __UNUSED__,
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->preedit_length)
      {
@@ -1024,7 +1024,7 @@ preedit_draw_callback(XIC xic __UNUSED__,
    int new_text_length;
    int i = 0;
 
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    preedit_bufs = eina_ustrbuf_new();
    if (imf_context_data->preedit_chars)
@@ -1108,7 +1108,7 @@ preedit_caret_callback(XIC xic __UNUSED__,
    Ecore_IMF_Context *ctx = (Ecore_IMF_Context *)client_data;
    Ecore_IMF_Context_Data *imf_context_data;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (call_data->direction == XIMAbsolutePosition)
      {
@@ -1158,7 +1158,7 @@ get_ic(Ecore_IMF_Context *ctx)
    Ecore_IMF_Context_Data *imf_context_data;
    XIC ic;
    imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(imf_context_data, NULL);
 
    ic = imf_context_data->ic;
    if (!ic)
@@ -1316,7 +1316,7 @@ static void
 reinitialize_ic(Ecore_IMF_Context *ctx)
 {
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    XIC ic = imf_context_data->ic;
    if (ic)
@@ -1352,7 +1352,7 @@ set_ic_client_window(Ecore_IMF_Context *ctx,
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
    Ecore_X_Window old_win;
 
-   if (!imf_context_data) return;
+   EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    /* reinitialize IC */
    reinitialize_ic(ctx);
