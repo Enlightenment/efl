@@ -414,16 +414,18 @@ eio_file_direct_stat(const char *path,
    s->path = eina_stringshare_add(path);
    s->done_cb = done_cb;
 
-   if (!eio_file_set(&s->common,
+   if (eio_file_set(&s->common,
 		      NULL,
 		      error_cb,
 		      data,
 		      _eio_file_stat,
 		      _eio_file_stat_done,
 		      _eio_file_stat_error))
-     return NULL;
+     return &s->common;
 
-   return &s->common;
+   eina_stringshare_del(path);
+   free(s);
+   return NULL;
 }
 
 EAPI Eio_File *
@@ -444,16 +446,18 @@ eio_file_direct_lstat(const char *path,
    s->path = eina_stringshare_add(path);
    s->done_cb = done_cb;
 
-   if (!eio_file_set(&s->common,
+   if (eio_file_set(&s->common,
 		      NULL,
 		      error_cb,
 		      data,
 		      _eio_file_lstat,
 		      _eio_file_stat_done,
 		      _eio_file_stat_error))
-     return NULL;
+     return &s->common;
 
-   return &s->common;
+   eina_stringshare_del(path);
+   free(s);
+   return NULL;
 #else
    return eio_file_direct_stat(path, done_cb, error_cb, data);
 #endif
@@ -475,16 +479,18 @@ eio_file_unlink(const char *path,
 
    l->path = eina_stringshare_add(path);
 
-   if (!eio_file_set(&l->common,
+   if (eio_file_set(&l->common,
 		      done_cb,
 		      error_cb,
 		      data,
 		      _eio_file_unlink,
 		      _eio_file_unlink_done,
 		      _eio_file_unlink_error))
-     return NULL;
+     return &l->common;
 
-   return &l->common;
+   eina_stringshare_del(path);
+   free(l);
+   return NULL;
 }
 
 EAPI Eio_File *
@@ -505,16 +511,18 @@ eio_file_mkdir(const char *path,
    r->path = eina_stringshare_add(path);
    r->mode = mode;
 
-   if (!eio_file_set(&r->common,
+   if (eio_file_set(&r->common,
 		     done_cb,
 		     error_cb,
 		      data,
 		     _eio_file_mkdir,
 		     _eio_file_mkdir_done,
 		     _eio_file_mkdir_error))
-     return NULL;
+     return &r->common;
 
-   return &r->common;
+   eina_stringshare_del(path);
+   free(r);
+   return NULL;
 }
 
 EAPI Eio_File *
@@ -535,16 +543,18 @@ eio_file_chmod(const char *path,
    r->path = eina_stringshare_add(path);
    r->mode = mode;
 
-   if (!eio_file_set(&r->common,
+   if (eio_file_set(&r->common,
 		     done_cb,
 		     error_cb,
 		      data,
 		     _eio_file_chmod,
 		     _eio_file_mkdir_done,
 		     _eio_file_mkdir_error))
-     return NULL;
+     return &r->common;
 
-   return &r->common;
+   eina_stringshare_del(path);
+   free(r);
+   return NULL;
 }
 
 EAPI Eio_File *
@@ -567,14 +577,19 @@ eio_file_chown(const char *path,
    c->user = eina_stringshare_add(user);
    c->group = eina_stringshare_add(group);
 
-   if (!eio_file_set(&c->common,
+   if (eio_file_set(&c->common,
 		     done_cb,
 		     error_cb,
 		      data,
 		     _eio_file_chown,
 		     _eio_file_chown_done,
 		     _eio_file_chown_error))
-     return NULL;
+     return &c->common;
 
-   return &c->common;
+   eina_stringshare_del(path);
+   eina_stringshare_del(user);
+   eina_stringshare_del(group);
+   free(c);
+
+   return NULL;
 }

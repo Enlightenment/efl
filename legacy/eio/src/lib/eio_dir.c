@@ -313,6 +313,7 @@ _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
      {
         /* destroy in reverse order so that we don't prevent change of lower dir */
         dir = eina_list_data_get(eina_list_last(order->dirs));
+        if (!dir) continue;
         order->dirs = eina_list_remove_list(order->dirs, eina_list_last(order->dirs));
 
         /* build target dir path */
