@@ -2958,7 +2958,7 @@ test_genlist18(void        *data __UNUSED__,
 
    /* normal item */
    itc18 = elm_genlist_item_class_new();
-   itc18->item_style     = "default";
+   itc18->item_style     = "tree_effect"; /* item/tree_effect */
    itc18->func.text_get = gl4_text_get;
    itc18->func.content_get  = gl15_content_get;
    itc18->func.state_get = gl4_state_get;
@@ -2967,7 +2967,7 @@ test_genlist18(void        *data __UNUSED__,
 
    /* expandable item */
    itc18_tree = elm_genlist_item_class_new();
-   itc18_tree->item_style     = "tree_effect";
+   itc18_tree->item_style     = "tree_effect"; /* tree/tree_effect */
    itc18_tree->func.text_get = gl4_text_get;
    itc18_tree->func.content_get  = gl15_content_get;
    itc18_tree->func.state_get = gl4_state_get;
