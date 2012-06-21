@@ -2119,9 +2119,13 @@ _item_realize(Elm_Gen_Item *it,
         elm_widget_sub_object_add(WIDGET(it), VIEW(it));
 
         if (it->item->type & ELM_GENLIST_ITEM_TREE)
-          snprintf(buf, sizeof(buf), "tree%s/%s", it->wd->mode == ELM_LIST_COMPRESS ? "_compress" : "", it->itc->item_style ?: "default");
+          snprintf(buf, sizeof(buf), "tree%s/%s",
+                   it->wd->mode == ELM_LIST_COMPRESS ? "_compress" : "",
+                   it->itc->item_style ?: "default");
         else
-          snprintf(buf, sizeof(buf), "item%s/%s", it->wd->mode == ELM_LIST_COMPRESS ? "_compress" : "", it->itc->item_style ?: "default");
+          snprintf(buf, sizeof(buf), "item%s/%s",
+                   it->wd->mode == ELM_LIST_COMPRESS ? "_compress" : "",
+                   it->itc->item_style ?: "default");
 
         _elm_theme_object_set(WIDGET(it), VIEW(it), "genlist", buf,
                               elm_widget_style_get(WIDGET(it)));
@@ -2167,7 +2171,7 @@ _item_realize(Elm_Gen_Item *it,
         _item_mouse_callbacks_add(it, VIEW(it));
 
         if ((it->wd->decorate_all_mode) && (!it->deco_all_view) &&
-            (it->item->type != ELM_GENLIST_ITEM_GROUP) && 
+            (it->item->type != ELM_GENLIST_ITEM_GROUP) &&
             (it->itc->decorate_all_item_style))
           _decorate_all_item_realize(it, EINA_FALSE);
 
@@ -4233,7 +4237,7 @@ _item_queue(Widget_Data    *wd,
             Eina_Compare_Cb cb)
 {
    if (it->item->queued) return;
-/*   
+/*
    if ((wd->blocks) && (wd->homogeneous) && (wd->mode == ELM_LIST_COMPRESS))
      {
         if (!_item_process(wd, it))
@@ -4268,7 +4272,7 @@ _item_queue(Widget_Data    *wd,
           }
         _queue_process(wd);
      }
-   
+
 //   evas_event_thaw(evas_object_evas_get(wd->obj));
 //   evas_event_thaw_eval(evas_object_evas_get(wd->obj));
    if (!wd->queue_idle_enterer)
@@ -5909,9 +5913,10 @@ _elm_genlist_page_relative_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   elm_smart_scroller_paging_get(wd->scr, NULL, NULL, &pagesize_h, &pagesize_v);
-   elm_smart_scroller_paging_set(wd->scr, h_pagerel, v_pagerel, pagesize_h,
-                                 pagesize_v);
+   elm_smart_scroller_paging_get(wd->scr, NULL, NULL,
+                                 &pagesize_h, &pagesize_v);
+   elm_smart_scroller_paging_set(wd->scr, h_pagerel, v_pagerel,
+                                 pagesize_h, pagesize_v);
 }
 
 /* for gengrid as of now */
