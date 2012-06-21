@@ -2869,12 +2869,11 @@ gl18_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    Evas_Object *gl = elm_object_item_widget_get(glit);
-   int val = (int)(long) elm_object_item_data_get(glit);
-   int i, j;
-   Testitem *tit = NULL;
+   Testitem *tit = elm_object_item_data_get(glit);
+   int i, j, val;
 
-   val *= 10;
-   for (i = 0; i < 5; i++)
+   val = tit->mode * 10;
+   for (i = 0; i < 100; i++)
      {
         tit = calloc(1, sizeof(Testitem));
         tit->mode = val + i;
@@ -2959,18 +2958,18 @@ test_genlist18(void        *data __UNUSED__,
    /* normal item */
    itc18 = elm_genlist_item_class_new();
    itc18->item_style     = "tree_effect"; /* item/tree_effect */
-   itc18->func.text_get = gl4_text_get;
+   itc18->func.text_get = gl15_text_get;
    itc18->func.content_get  = gl15_content_get;
-   itc18->func.state_get = gl4_state_get;
-   itc18->func.del       = gl4_del;
+   itc18->func.state_get = gl_state_get;
+   itc18->func.del       = gl18_del;
    itc18->decorate_all_item_style = "edit";
 
    /* expandable item */
    itc18_tree = elm_genlist_item_class_new();
    itc18_tree->item_style     = "tree_effect"; /* tree/tree_effect */
-   itc18_tree->func.text_get = gl4_text_get;
+   itc18_tree->func.text_get = gl15_text_get;
    itc18_tree->func.content_get  = gl15_content_get;
-   itc18_tree->func.state_get = gl4_state_get;
+   itc18_tree->func.state_get = gl_state_get;
    itc18_tree->func.del       = gl18_del;
    itc18_tree->decorate_all_item_style = "edit";
 
