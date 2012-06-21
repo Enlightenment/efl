@@ -1731,6 +1731,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
    emsg.sig = sig;
    emsg.src = alias ? alias : new_src;
    emsg.data = NULL;
-   _edje_message_send(ed_parent, EDJE_QUEUE_SCRIPT, 
-                      EDJE_MESSAGE_SIGNAL, 0, &emsg);
+   if (ed_parent)
+     _edje_message_send(ed_parent, EDJE_QUEUE_SCRIPT, 
+                        EDJE_MESSAGE_SIGNAL, 0, &emsg);
 }
