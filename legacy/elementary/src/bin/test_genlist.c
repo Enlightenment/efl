@@ -2700,12 +2700,16 @@ _decorate_all_set_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info 
    gl = evas_object_data_get(obj, "gl");
    if (!gl) return;
 
+   if (evas_object_data_get(gl, "tree_effect"))
+     elm_genlist_tree_effect_enabled_set(gl, EINA_FALSE);
    elm_genlist_decorate_mode_set(gl, EINA_TRUE);
 }
 
 void
 _decorate_all_unset_btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
+   if (evas_object_data_get(data, "tree_effect"))
+     elm_genlist_tree_effect_enabled_set(data, EINA_TRUE);
    elm_genlist_decorate_mode_set(data, EINA_FALSE);
 }
 
@@ -2802,6 +2806,218 @@ test_genlist17(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx2, fr2);
 
    evas_object_resize(win, 520, 520);
+   evas_object_show(win);
+}
+
+/*************/
+
+Elm_Genlist_Item_Class *itc18, *itc18_tree;
+Evas_Object *
+_tree_effect_frame_new(Evas_Object *win, Evas_Object **rdg, Evas_Object *gl)
+{
+   Evas_Object *fr, *bx, *rd;
+
+   fr = elm_frame_add(win);
+   elm_object_text_set(fr, "Genlist Tree Effect");
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(fr);
+
+   bx = elm_box_add(win);
+   elm_box_homogeneous_set(bx, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(fr, bx);
+   evas_object_show(bx);
+
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 0);
+   elm_object_text_set(rd, "Enable");
+   evas_object_smart_callback_add(rd, "changed", _tree_effect_enable_cb, gl);
+   evas_object_show(rd);
+   elm_box_pack_end(bx, rd);
+   *rdg = rd;
+
+   rd = elm_radio_add(win);
+   elm_radio_state_value_set(rd, 1);
+   elm_radio_group_add(rd, *rdg);
+   elm_object_text_set(rd, "Disable");
+   evas_object_smart_callback_add(rd, "changed", _tree_effect_disable_cb, gl);
+   evas_object_show(rd);
+   elm_box_pack_end(bx, rd);
+
+
+   return fr;
+}
+
+static void
+gl18_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   int depth = elm_genlist_item_expanded_depth_get(glit);
+   printf("expanded depth for selected item is %d\n", depth);
+}
+
+static void
+gl18_del(void *data, Evas_Object *obj __UNUSED__)
+{
+   free(data);
+}
+
+static void
+gl18_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   Evas_Object *gl = elm_object_item_widget_get(glit);
+   int val = (int)(long) elm_object_item_data_get(glit);
+   int i, j;
+   Testitem *tit = NULL;
+
+   val *= 10;
+   for (i = 0; i < 5; i++)
+     {
+        tit = calloc(1, sizeof(Testitem));
+        tit->mode = val + i;
+        tit->item = elm_genlist_item_append(gl,
+                                            itc18_tree,
+                                            tit/* item data */,
+                                            glit/* parent */,
+                                            ELM_GENLIST_ITEM_TREE,
+                                            gl18_sel/* func */,
+                                            NULL/* func data */);
+     }
+   for (j = 0; j < 3; j++)
+     {
+        tit = calloc(1, sizeof(Testitem));
+        tit->mode = i;
+        tit->item = elm_genlist_item_append(gl,
+                                            itc18,
+                                            tit/* item data */,
+                                            glit/* parent */,
+                                            ELM_GENLIST_ITEM_NONE,
+                                            gl18_sel/* func */,
+                                            NULL/* func data */);
+        i++;
+     }
+}
+
+static void
+gl18_con(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_subitems_clear(glit);
+}
+
+static void
+gl18_exp_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+             void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_expanded_set(glit, EINA_TRUE);
+}
+
+static void
+gl18_con_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+             void *event_info)
+{
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_expanded_set(glit, EINA_FALSE);
+}
+
+void
+test_genlist18(void        *data __UNUSED__,
+               Evas_Object *obj __UNUSED__,
+               void        *event_info __UNUSED__)
+{
+   Evas_Object *win, *gl, *bx, *fr1, *fr2, *bx2, *rdg;
+   Testitem *tit = NULL;
+   int i, j;
+
+   win = elm_win_util_standard_add("genlist-tree-decorate-all",
+                                   "Genlist Tree and Decorate All Mode");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   bx2 = elm_box_add(win);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gl);
+
+   elm_genlist_tree_effect_enabled_set(gl, EINA_TRUE);
+   evas_object_data_set(gl, "tree_effect", "true");
+
+   /* normal item */
+   itc18 = elm_genlist_item_class_new();
+   itc18->item_style     = "default";
+   itc18->func.text_get = gl4_text_get;
+   itc18->func.content_get  = gl15_content_get;
+   itc18->func.state_get = gl4_state_get;
+   itc18->func.del       = gl4_del;
+   itc18->decorate_all_item_style = "edit";
+
+   /* expandable item */
+   itc18_tree = elm_genlist_item_class_new();
+   itc18_tree->item_style     = "tree_effect";
+   itc18_tree->func.text_get = gl4_text_get;
+   itc18_tree->func.content_get  = gl15_content_get;
+   itc18_tree->func.state_get = gl4_state_get;
+   itc18_tree->func.del       = gl18_del;
+   itc18_tree->decorate_all_item_style = "edit";
+
+   for (i = 0; i < 5; i++)
+     {
+        tit = calloc(1, sizeof(Testitem));
+        tit->mode = i;
+        tit->item = elm_genlist_item_append(gl,
+                                            itc18_tree,
+                                            tit/* item data */,
+                                            NULL/* parent */,
+                                            ELM_GENLIST_ITEM_TREE,
+                                            gl18_sel/* func */,
+                                            NULL/* func data */);
+     }
+
+   for (j = 0; j < 3; j++)
+     {
+        tit = calloc(1, sizeof(Testitem));
+        tit->mode = i;
+        tit->item = elm_genlist_item_append(gl,
+                                            itc18,
+                                            tit/* item data */,
+                                            NULL/* parent */,
+                                            ELM_GENLIST_ITEM_NONE,
+                                            gl18_sel/* func */,
+                                            NULL/* func data */);
+        i++;
+     }
+
+   elm_genlist_item_class_free(itc18);
+   elm_genlist_item_class_free(itc18_tree);
+
+   evas_object_smart_callback_add(gl, "expand,request", gl18_exp_req, gl);
+   evas_object_smart_callback_add(gl, "contract,request", gl18_con_req, gl);
+   evas_object_smart_callback_add(gl, "expanded", gl18_exp, gl);
+   evas_object_smart_callback_add(gl, "contracted", gl18_con, gl);
+
+   elm_box_pack_end(bx, gl);
+
+   fr1 = _tree_effect_frame_new(win, &rdg, gl);
+   elm_box_pack_end(bx2, fr1);
+
+   fr2 = _decorate_all_mode_frame_new(win, rdg, gl);
+   elm_box_pack_end(bx2, fr2);
+
+   evas_object_resize(win, 400, 800);
    evas_object_show(win);
 }
 
