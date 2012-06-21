@@ -9,7 +9,10 @@ MAINTAINERCLEANFILES = \
 	depcomp \
 	install-sh \
 	ltmain.sh \
-	missing
+	missing \
+	$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
+	$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
+	$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2
 
 EXTRA_DIST = \
 autogen.sh  \
