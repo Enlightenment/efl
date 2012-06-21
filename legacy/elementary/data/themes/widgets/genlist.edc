@@ -11268,6 +11268,7 @@ group { name: "elm/genlist/item/tree_effect/default";
    data.item: "flips" "elm.text.flip";
    broadcast_signal: 1;
    parts {
+      alias: "elm.swallow.pad" "group:elm.swallow.pad";
       alias: "elm.swallow.icon" "group:elm.swallow.icon";
       alias: "elm.swallow.end" "group:elm.swallow.end";
       alias: "elm.text" "group:elm.text";
