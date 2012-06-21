@@ -1839,7 +1839,7 @@ _elm_gengrid_item_compare(const void *data, const void *data1)
    else if (item1 && item1->wd && item1->wd->item_compare_cb)
      cb = item1->wd->item_compare_cb;
    if (cb && it && item1) return cb(it, item1);
-   d = data - data1;
+   d = (char *) data - (char *) data1;
    if (d < 0) return -1;
    if (!d) return 0;
    return 1;
