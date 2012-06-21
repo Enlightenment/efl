@@ -10846,9 +10846,9 @@ group { name: "elm/genlist/tree/tree_effect/default";
          target: "group";
       }
       program {
-      	 name: "expand";
-	 signal: "mouse,up,1";
-	 source: "group:arrow";
+         name: "expand";
+         signal: "mouse,up,1";
+         source: "group:arrow";
          action:  SIGNAL_EMIT "elm,action,expand,toggle" "elm";
       }
    }
