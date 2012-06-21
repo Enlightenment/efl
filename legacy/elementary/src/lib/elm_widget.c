@@ -2597,7 +2597,7 @@ elm_widget_signal_callback_add(Evas_Object   *obj,
           (obj, emission, source, _edje_signal_callback, esd);
      }
 
-   else if (!evas_object_smart_type_check(obj, "elm_layout"))
+   else if (evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_callback_add(obj, emission, source, func, data);
    else if (evas_object_smart_type_check(obj, "elm_icon"))
      {
@@ -2641,7 +2641,7 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
         COMPAT_SMART_DATA(sd)->callback_del
           (obj, emission, source, _edje_signal_callback, esd);
      }
-   else if (!evas_object_smart_type_check(obj, "elm_layout"))
+   else if (evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_callback_del(obj, emission, source, func);
    else if (evas_object_smart_type_check(obj, "elm_icon"))
      {
