@@ -1272,7 +1272,6 @@ data_write_scripts(Eet_File *ef)
         sc->ef = ef;
         sc->cd = cd;
         sc->i = i;
-        // XXX: from here
         snprintf(sc->tmpn, PATH_MAX, "%s/edje_cc.sma-tmp-XXXXXX", tmp_dir);
         sc->tmpn_fd = mkstemp(sc->tmpn);
         if (sc->tmpn_fd < 0)
@@ -1287,11 +1286,11 @@ data_write_scripts(Eet_File *ef)
                              "compilation.\n", sc->tmpn);
           }
         create_script_file(ef, sc->tmpn, cd, sc->tmpn_fd);
-        // XXX; to here -> can make set of threads that report back and then
-        // spawn
         snprintf(buf, sizeof(buf),
-                 "embryo_cc -i %s/include -o %s %s",
-                 eina_prefix_data_get(pfx), sc->tmpo, sc->tmpn);
+                 "%s/embryo_cc -i %s/include -o %s %s",
+                 eina_prefix_bin_get(pfx), 
+                 eina_prefix_data_get(pfx),
+                 sc->tmpo, sc->tmpn);
         pending_threads++;
         sc->exe = ecore_exe_run(buf, sc);
         ecore_event_handler_add(ECORE_EXE_EVENT_DEL,

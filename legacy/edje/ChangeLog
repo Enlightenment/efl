@@ -489,3 +489,10 @@
 2012-06-20  Kim Shinwoo
 
 	* Add edje_object_access_part_list_get and acess flags in edc file.
+
+2012-05-21 Carsten Haitzler (The Rasterman)
+
+        * Improve edje_cc slightly to use prefix for full path to
+        embryo_cc. this still like before requires embryo and edje to share
+        the same install prefix for edje_cc to work.
+
