@@ -10308,6 +10308,7 @@ group { name: "elm/genlist/item_odd/mode/default";
    }
 }
 group { name: "elm/genlist/item/edit/default";
+   alias: "elm/genlist/tree/edit/default";
    data.item: "contents" "elm.edit.icon.1 elm.edit.icon.2";
    data.item: "stacking" "above";
    data.item: "selectraise" "on";
