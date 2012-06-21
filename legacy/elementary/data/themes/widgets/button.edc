@@ -13,7 +13,7 @@ group { name: "elm/button/base/default";
       part { name: "button_image";
          mouse_events: 1;
          description { state: "default" 0.0;
-            min: 15 15;
+            min: 12 12;
             image {
                normal: "bt_base2.png";
                border: 7 7 7 7;
@@ -38,8 +38,8 @@ group { name: "elm/button/base/default";
             fixed: 1 0;
             visible: 0;
             align: 0.0 0.5;
-            rel1.offset: 4 4;
-            rel2.offset: 3 -5;
+            rel1.offset: 2 2;
+            rel2.offset: 1 -3;
             rel2.relative: 0.0 1.0;
          }
          description { state: "visible" 0.0;
@@ -48,7 +48,7 @@ group { name: "elm/button/base/default";
             visible: 1;
             aspect: 1.0 1.0;
                     //               aspect_preference: VERTICAL;
-            rel2.offset: 4 -5;
+            rel2.offset: 2 -3;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -56,7 +56,7 @@ group { name: "elm/button/base/default";
             visible: 1;
             align: 0.5 0.5;
                    //               aspect: 1.0 1.0;
-            rel2.offset: -5 -5;
+            rel2.offset: -3 -3;
             rel2.relative: 1.0 1.0;
             //               aspect_preference: VERTICAL;
          }
@@ -71,8 +71,8 @@ group { name: "elm/button/base/default";
             visible: 0;
             rel1.to_x: "elm.swallow.content";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 0 4;
-            rel2.offset: -5 -5;
+            rel1.offset: 0 2;
+            rel2.offset: -3 -3;
             color: 224 224 224 255;
             color3: 0 0 0 64;
             text {
@@ -353,8 +353,8 @@ group { name: "elm/button/base/hoversel_vertical/default";
             image.normal: "updown.png";
             aspect: 0.6666666666 0.6666666666;
             aspect_preference: VERTICAL;
-            rel1.offset: 6 7;
-            rel2.offset: 6 -7;
+            rel1.offset: 3 4;
+            rel2.offset: 3 -4;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.5;
          }
@@ -367,12 +367,12 @@ group { name: "elm/button/base/hoversel_vertical/default";
             align: 0.0 0.5;
             rel1 {
                to_x: "arrow";
-               offset: 2 4;
+               offset: 1 2;
                relative: 1.0 0.0;
             }
             rel2 {
                to_x: "arrow";
-               offset: 1 -5;
+               offset: 0 -3;
                relative: 1.0 1.0;
             }
          }
@@ -392,7 +392,7 @@ group { name: "elm/button/base/hoversel_vertical/default";
             aspect: 1.0 1.0;
             rel1 {
                to_x: "button_image";
-               offset: -5 -5;
+               offset: -3 -3;
                relative: 1.0 1.0;
             }
             aspect_preference: VERTICAL;
@@ -408,8 +408,8 @@ group { name: "elm/button/base/hoversel_vertical/default";
             visible: 0;
             rel1.to_x: "elm.swallow.content";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 0 4;
-            rel2.offset: -5 -5;
+            rel1.offset: 0 2;
+            rel2.offset: -3 -3;
             color: 224 224 224 255;
             color3: 0 0 0 64;
             text {
@@ -649,8 +649,8 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          description { state: "default" 0.0;
             visible: 0;
             align: 0.0 0.5;
-            rel1.offset: 4 4;
-            rel2.offset: 3 -5;
+            rel1.offset: 2 2;
+            rel2.offset: 1 -3;
             rel2.relative: 0.0 1.0;
          }
          description { state: "visible" 0.0;
@@ -658,7 +658,7 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
             visible: 1;
             aspect: 1.0 1.0;
             aspect_preference: VERTICAL;
-            rel2.offset: 4 -5;
+            rel2.offset: 0 -3;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -690,8 +690,8 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          description { state: "default" 0.0;
             rel1.to_x: "elm.swallow.content";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 0 4;
-            rel2.offset: -5 -5;
+            rel1.offset: 0 2;
+            rel2.offset: -3 -3;
             color: 224 224 224 255;
             color3: 0 0 0 64;
             text {
@@ -806,7 +806,7 @@ group { name: "elm/button/base/anchor";
       part { name: "button_image";
          mouse_events: 1;
          description { state: "default" 0.0;
-            min: 15 15;
+            min: 12 12;
             color: 255 255 255 0;
             image {
                normal: "bt_base2.png";
@@ -839,8 +839,8 @@ group { name: "elm/button/base/anchor";
             fixed: 1 0;
             visible: 0;
             align: 0.0 0.5;
-            rel1.offset: 4 4;
-            rel2.offset: 3 -5;
+            rel1.offset: 2 2;
+            rel2.offset: 1 -3;
             rel2.relative: 0.0 1.0;
          }
          description { state: "visible" 0.0;
@@ -849,7 +849,7 @@ group { name: "elm/button/base/anchor";
             visible: 1;
             aspect: 1.0 1.0;
             aspect_preference: VERTICAL;
-            rel2.offset: 4 -5;
+            rel2.offset: 2 -3;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
@@ -857,7 +857,7 @@ group { name: "elm/button/base/anchor";
             visible: 1;
             align: 0.5 0.5;
             aspect: 1.0 1.0;
-            rel2.offset: -5 -5;
+            rel2.offset: -3 -3;
             rel2.relative: 1.0 1.0;
             aspect_preference: VERTICAL;
          }
@@ -872,8 +872,8 @@ group { name: "elm/button/base/anchor";
             visible: 0;
             rel1.to_x: "elm.swallow.content";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 0 4;
-            rel2.offset: -5 -5;
+            rel1.offset: 0 2;
+            rel2.offset: -3 -3;
             color: 224 224 224 255;
             color3: 0 0 0 64;
             text {
@@ -1116,7 +1116,7 @@ group { name: "elm/button/base/naviframe/back_btn/default";
       part { name: "button_image";
          mouse_events: 1;
          description { state: "default" 0.0;
-            min: 15 15;
+            min: 12 12;
             image {
                normal: "bt_base2.png";
                border: 7 7 7 7;
@@ -1139,8 +1139,8 @@ group { name: "elm/button/base/naviframe/back_btn/default";
          type: IMAGE;
          scale: 1;
          description { state: "default" 0.0;
-            min: 30 30;
-            max: 30 30;
+            min: 15 15;
+            max: 15 15;
             fixed: 1 1;
             align: 0.5 0.5;
             image.normal: "icon_left_arrow.png";
@@ -1304,7 +1304,7 @@ group { name: "elm/button/base/colorselector/left/default";
       part { name: "button_image";
          mouse_events: 1;
          description { state: "default" 0.0;
-            min: 15 15;
+            min: 12 12;
             image {
                normal: "bt_base2.png";
                border: 7 7 7 7;
@@ -1492,7 +1492,7 @@ group { name: "elm/button/base/colorselector/right/default";
       part { name: "button_image";
          mouse_events: 1;
          description { state: "default" 0.0;
-            min: 15 15;
+            min: 12 12;
             image {
                normal: "bt_base2.png";
                border: 7 7 7 7;
