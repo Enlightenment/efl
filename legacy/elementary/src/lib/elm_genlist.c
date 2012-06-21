@@ -5672,6 +5672,13 @@ elm_genlist_decorate_mode_set(Evas_Object *obj, Eina_Bool decorated)
    if (wd->decorate_all_mode == decorated) return;
    wd->decorate_all_mode = decorated;
 
+   if (wd->tree_effect_animator)
+     {
+        ecore_animator_del(wd->tree_effect_animator);
+        wd->tree_effect_animator = NULL;
+     }
+   wd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
+
    list = elm_genlist_realized_items_get(obj);
    if (!wd->decorate_all_mode)
      {
