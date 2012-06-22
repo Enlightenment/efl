@@ -803,9 +803,9 @@ struct _Evas_Func
    int  (*image_cache_get)                 (void *data);
 
    Evas_Font_Set *(*font_load)             (void *data, const char *name, int size, Font_Rend_Flags wanted_rend);
-   Evas_Font_Set *(*font_memory_load)      (void *data, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_memory_load)      (void *data, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
    Evas_Font_Set *(*font_add)              (void *data, Evas_Font_Set *font, const char *name, int size, Font_Rend_Flags wanted_rend);
-   Evas_Font_Set *(*font_memory_add)       (void *data, Evas_Font_Set *font, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
+   Evas_Font_Set *(*font_memory_add)       (void *data, Evas_Font_Set *font, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend);
    void (*font_free)                       (void *data, Evas_Font_Set *font);
    int  (*font_ascent_get)                 (void *data, Evas_Font_Set *font);
    int  (*font_descent_get)                (void *data, Evas_Font_Set *font);

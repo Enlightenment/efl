@@ -317,6 +317,7 @@ _content_create_ot(RGBA_Font_Int *fi, const Eina_Unicode *text,
         LKU(fi->ft_mutex);
 
         gl_itr->x_bear = fg->x_bear;
+        gl_itr->y_bear = fg->y_bear;
         gl_itr->width = fg->width;
         /* text_props->info->glyph[char_index].advance =
          * text_props->info->glyph[char_index].index =
@@ -435,6 +436,7 @@ _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
 
         gl_itr->index = idx;
         gl_itr->x_bear = fg->x_bear;
+        gl_itr->y_bear = fg->y_bear;
         adv = fg->glyph->advance.x >> 10;
         gl_itr->width = fg->width;
 

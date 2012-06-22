@@ -6,6 +6,10 @@
 #include "evas_font_private.h" /* for Frame-Queuing support */
 #include "evas_font_ot.h"
 
+#ifdef EVAS_CSERVE2
+# include "../../cserve2/evas_cs2_private.h"
+#endif
+
 #ifdef USE_HARFBUZZ
 # include <hb.h>
 # include <hb-ft.h>
@@ -85,6 +89,9 @@ _evas_common_font_int_free(RGBA_Font_Int *fi)
       fonts_use_usage -= fi->usage;
       fi->usage = 0;
     }
+#ifdef EVAS_CSERVE2
+   evas_cserve2_font_free(fi->cs2_handler);
+#endif
    free(fi);
 }
 
@@ -303,26 +310,43 @@ _evas_common_font_int_cache_init(RGBA_Font_Int *fi)
 }
 
 EAPI RGBA_Font_Int *
-evas_common_font_int_memory_load(const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend)
+evas_common_font_int_memory_load(const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend)
 {
    RGBA_Font_Int *fi;
+   char *fake_name;
 
-   fi = evas_common_font_int_find(name, size, wanted_rend);
-   if (fi) return fi;
+   fake_name = evas_file_path_join(source, name);
+   fi = evas_common_font_int_find(fake_name, size, wanted_rend);
+   if (fi)
+     {
+        free(fake_name);
+        return fi;
+     }
    fi = calloc(1, sizeof(RGBA_Font_Int));
-   if (!fi) return NULL;
-   fi->src = evas_common_font_source_find(name);
+   if (!fi)
+     {
+        free(fake_name);
+        return NULL;
+     }
+   fi->src = evas_common_font_source_find(fake_name);
    if (!fi->src)
-    fi->src = evas_common_font_source_memory_load(name, data, data_size);
+    fi->src = evas_common_font_source_memory_load(fake_name, data, data_size);
    if (!fi->src)
      {
 	free(fi);
+        free(fake_name);
 	return NULL;
      }
    fi->size = size;
    _evas_common_font_int_cache_init(fi);
    fi = evas_common_font_int_load_init(fi);
    evas_common_font_int_load_complete(fi);
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     fi->cs2_handler = evas_cserve2_font_load(source, name, size, font_dpi,
+                                              wanted_rend);
+#endif
+   free(fake_name);
    return fi;
 }
 
@@ -349,6 +373,11 @@ evas_common_font_int_load(const char *name, int size,
    fi->wanted_rend = wanted_rend;
    _evas_common_font_int_cache_init(fi);
    fi = evas_common_font_int_load_init(fi);
+#ifdef EVAS_CSERVE2
+   if (evas_cserve2_use_get())
+     fi->cs2_handler = evas_cserve2_font_load(NULL, name, size, font_dpi,
+                                              wanted_rend);
+#endif
 //   evas_common_font_int_load_complete(fi);
    return fi;
 }
@@ -469,12 +498,12 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
 }
 
 EAPI RGBA_Font *
-evas_common_font_memory_load(const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend)
+evas_common_font_memory_load(const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend)
 {
    RGBA_Font *fn;
    RGBA_Font_Int *fi;
 
-   fi = evas_common_font_int_memory_load(name, size, data, data_size,
+   fi = evas_common_font_int_memory_load(source, name, size, data, data_size,
                                          wanted_rend);
    if (!fi) return NULL;
    fn = calloc(1, sizeof(RGBA_Font));
@@ -585,13 +614,13 @@ evas_common_font_add(RGBA_Font *fn, const char *name, int size, Font_Rend_Flags 
 }
 
 EAPI RGBA_Font *
-evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend)
+evas_common_font_memory_add(RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend)
 {
    RGBA_Font_Int *fi;
 
    if (!fn)
       return NULL;
-   fi = evas_common_font_int_memory_load(name, size, data, data_size, wanted_rend);
+   fi = evas_common_font_int_memory_load(source, name, size, data, data_size, wanted_rend);
    if (fi)
      {
 	fn->fonts = eina_list_append(fn->fonts, fi);
@@ -681,11 +710,11 @@ evas_common_hinting_available(Font_Hint_Flags hinting)
 }
 
 EAPI RGBA_Font *
-evas_common_font_memory_hinting_load(const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend)
+evas_common_font_memory_hinting_load(const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend)
 {
    RGBA_Font *fn;
 
-   fn = evas_common_font_memory_load(name, size, data, data_size, wanted_rend);
+   fn = evas_common_font_memory_load(source, name, size, data, data_size, wanted_rend);
    if (fn) evas_common_font_hinting_set(fn, hinting);
    return fn;
 }
@@ -709,9 +738,9 @@ evas_common_font_hinting_add(RGBA_Font *fn, const char *name, int size, Font_Hin
 }
 
 EAPI RGBA_Font *
-evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend)
+evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend)
 {
-   fn = evas_common_font_memory_add(fn, name, size, data, data_size,
+   fn = evas_common_font_memory_add(fn, source, name, size, data, data_size,
                                     wanted_rend);
    if (fn) evas_common_font_hinting_set(fn, hinting);
    return fn;
@@ -749,6 +778,7 @@ _evas_common_font_int_clear(RGBA_Font_Int *fi)
                               FT_Done_Glyph(fg->glyph);
                               /* extension calls */
                               if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
+                              if (fg->glyph_out_free) fg->glyph_out_free(fg->glyph_out);
                               free(fg);
                               fmap->item[i] = NULL;
                             }

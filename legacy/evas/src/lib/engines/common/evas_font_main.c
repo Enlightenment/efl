@@ -3,6 +3,10 @@
 
 #include "evas_font_private.h"
 
+#ifdef EVAS_CSERVE2
+# include "../../cserve2/evas_cs2_private.h"
+#endif
+
 #include <assert.h>
 
 #include FT_OUTLINE_H
@@ -364,7 +368,15 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
      {
         fg = _fash_gl_find(fi->fash, idx);
         if (fg == (void *)(-1)) return NULL;
-        else if (fg) return fg;
+        else if (fg)
+          {
+#ifdef EVAS_CSERVE2
+             if (fi->cs2_handler)
+               evas_cserve2_font_glyph_used(fi->cs2_handler, idx,
+                                            fi->hinting);
+#endif
+             return fg;
+          }
      }
 //   fg = eina_hash_find(fi->glyphs, &hindex);
 //   if (fg) return fg;
@@ -413,6 +425,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
               &outbox);
         fg->width = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMax - outbox.xMin);
         fg->x_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.xMin);
+        fg->y_bear = EVAS_FONT_ROUND_26_6_TO_INT(outbox.yMax);
      }
 
    fg->index = idx;
@@ -420,6 +433,11 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
 
    if (!fi->fash) fi->fash = _fash_gl_new();
    if (fi->fash) _fash_gl_add(fi->fash, idx, fg);
+
+#ifdef EVAS_CSERVE2
+   if (fi->cs2_handler)
+     evas_cserve2_font_glyph_request(fi->cs2_handler, idx, fi->hinting);
+#endif
 
 //   eina_hash_direct_add(fi->glyphs, &fg->index, fg);
    return fg;
@@ -431,6 +449,20 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
    int size;
    FT_Error error;
    RGBA_Font_Int *fi = fg->fi;
+   FT_BitmapGlyph fbg;
+
+#ifdef EVAS_CSERVE2
+   if (fi->cs2_handler)
+     {
+        fg->glyph_out = evas_cserve2_font_glyph_bitmap_get(fi->cs2_handler,
+                                                           fg->index,
+                                                           fg->fi->hinting);
+        if (fg->glyph_out)
+          return EINA_TRUE;
+     }
+#endif
+
+   /* no cserve2 case */
    FTLOCK();
    error = FT_Glyph_To_Bitmap(&(fg->glyph), FT_RENDER_MODE_NORMAL, 0, 1);
    if (error)
@@ -444,7 +476,17 @@ evas_common_font_int_cache_glyph_render(RGBA_Font_Glyph *fg)
      }
    FTUNLOCK();
 
-   fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
+   fbg = (FT_BitmapGlyph)fg->glyph;
+
+   fg->glyph_out = malloc(sizeof(RGBA_Font_Glyph_Out));
+   fg->glyph_out->bitmap.rows = fbg->bitmap.rows;
+   fg->glyph_out->bitmap.width = fbg->bitmap.width;
+   fg->glyph_out->bitmap.pitch = fbg->bitmap.pitch;
+   fg->glyph_out->bitmap.buffer = fbg->bitmap.buffer;
+   fg->glyph_out->bitmap.num_grays = fbg->bitmap.num_grays;
+   fg->glyph_out->bitmap.pixel_mode = fbg->bitmap.pixel_mode;
+
+   fg->glyph_out_free = free;
    /* This '+ 200' is just an estimation of how much memory freetype will use
     * on it's size. This value is not really used anywhere in code - it's
     * only for statistics. */

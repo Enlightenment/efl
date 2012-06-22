@@ -18,6 +18,7 @@ struct _Data_Entry {
 };
 
 typedef struct _Data_Entry Data_Entry;
+typedef struct _Font_Entry Font_Entry;
 
 int evas_cserve2_init(void);
 int evas_cserve2_shutdown(void);
@@ -32,4 +33,10 @@ Eina_Bool evas_cserve2_image_preload(Image_Entry *ie, void (*preloaded_cb)(void 
 void evas_cserve2_dispatch(void);
 
 void *evas_cserve2_image_data_get(Image_Entry *ie);
+
+Font_Entry *evas_cserve2_font_load(const char *source, const char *name, int size, int dpi, Font_Rend_Flags wanted_rend);
+void evas_cserve2_font_free(Font_Entry *fe);
+Eina_Bool evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
+Eina_Bool evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
+RGBA_Font_Glyph_Out *evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints);
 #endif

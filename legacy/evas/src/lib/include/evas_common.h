@@ -400,6 +400,7 @@ typedef struct _RGBA_Font             RGBA_Font;
 typedef struct _RGBA_Font_Int         RGBA_Font_Int;
 typedef struct _RGBA_Font_Source      RGBA_Font_Source;
 typedef struct _RGBA_Font_Glyph       RGBA_Font_Glyph;
+typedef struct _RGBA_Font_Glyph_Out   RGBA_Font_Glyph_Out;
 typedef struct _RGBA_Gfx_Compositor   RGBA_Gfx_Compositor;
 
 typedef struct _Cutout_Rect           Cutout_Rect;
@@ -957,6 +958,9 @@ struct _RGBA_Font_Int
                                      in order to comply with the wanted_rend. */
 
    Eina_List       *task;
+#ifdef EVAS_CSERVE2
+   void            *cs2_handler;
+#endif
 
    int              generation;
 
@@ -978,13 +982,32 @@ struct _RGBA_Font_Source
    } ft;
 };
 
+/*
+ * laziness wins for now. The parts used from the freetpye struct are
+ * kept intact to avoid changing the code using it until we know exactly
+ * what needs to be changed
+ */
+struct _RGBA_Font_Glyph_Out
+{
+   struct {
+      int rows;
+      int width;
+      int pitch;
+      unsigned char *buffer;
+      short num_grays;
+      char pixel_mode;
+   } bitmap;
+};
+
 struct _RGBA_Font_Glyph
 {
    FT_UInt         index;
    Evas_Coord      width;
    Evas_Coord      x_bear;
+   Evas_Coord      y_bear;
    FT_Glyph        glyph;
-   FT_BitmapGlyph  glyph_out;
+   RGBA_Font_Glyph_Out *glyph_out;
+   void            (*glyph_out_free)(void *);
    /* this is a problem - only 1 engine at a time can extend such a font... grrr */
    void           *ext_dat;
    void           (*ext_dat_free) (void *ext_dat);

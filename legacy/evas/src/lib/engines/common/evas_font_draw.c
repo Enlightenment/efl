@@ -7,35 +7,6 @@
 
 #include "evas_font_ot.h"
 
-struct prword
-{
-   EINA_INLIST;
-   struct cinfo *cinfo;
-   Evas_Text_Props text_props;
-   DATA8 *im;
-   int roww;
-   int width;
-   int height;
-   int baseline;
-};
-
-struct cinfo
-{
-   FT_UInt index;
-   struct
-     {
-        int x, y;
-     } pos;
-   int posx;
-   RGBA_Font_Glyph *fg;
-   struct
-     {
-        int w,h;
-        int rows;
-        unsigned char *data;
-     } bm;
-};
-
 typedef struct _Evas_Glyph Evas_Glyph;
 struct _Evas_Glyph
 {
@@ -82,6 +53,11 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
         fg = glyphs[it].fg;
         idx = glyphs[it].idx;
 
+        glyphs[it].coord.w = fg->glyph_out->bitmap.width;
+        glyphs[it].coord.h = fg->glyph_out->bitmap.rows;
+        glyphs[it].j = fg->glyph_out->bitmap.pitch;
+        glyphs[it].data = fg->glyph_out->bitmap.buffer;
+
         if (dc->font_ext.func.gl_new)
           {
              /* extension calls */
@@ -102,11 +78,6 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
              w = glyphs[it].coord.w;
              if (j < w) j = w;
              h = glyphs[it].coord.h;
-             /*
-              if ((fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays)
-              && (fg->glyph_out->bitmap.num_grays == 256)
-              )
-              */
 
 #ifdef HAVE_PIXMAN
 # ifdef PIXMAN_FONT             
@@ -260,6 +231,7 @@ EAPI void
 evas_common_font_draw_prepare(Evas_Text_Props *text_props)
 {
    RGBA_Font_Int *fi;
+   RGBA_Font_Glyph *fg;
    EVAS_FONT_WALK_TEXT_INIT();
 
    fi = text_props->font_instance;
@@ -285,7 +257,6 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
    EVAS_FONT_WALK_TEXT_START()
      {
         Evas_Glyph glyph;
-        RGBA_Font_Glyph *fg;
         FT_UInt idx;
 
         if (!EVAS_FONT_WALK_IS_VISIBLE) continue;
@@ -298,15 +269,15 @@ evas_common_font_draw_prepare(Evas_Text_Props *text_props)
         glyph.fg = fg;
         glyph.coord.x = EVAS_FONT_WALK_PEN_X + EVAS_FONT_WALK_X_OFF + EVAS_FONT_WALK_X_BEAR;
         glyph.coord.y = EVAS_FONT_WALK_PEN_Y + EVAS_FONT_WALK_Y_OFF + EVAS_FONT_WALK_Y_BEAR;
-        glyph.coord.w = fg->glyph_out->bitmap.width;
-        glyph.coord.h = fg->glyph_out->bitmap.rows;
-        glyph.j = fg->glyph_out->bitmap.pitch;
         glyph.idx = idx;
-        glyph.data = fg->glyph_out->bitmap.buffer;
 
         eina_binbuf_append_length(text_props->bin, (void*) &glyph, sizeof (Evas_Glyph));
      }
    EVAS_FONT_WALK_TEXT_END();
+
+   /* check if there's a request queue in fi, if so ask cserve2 to render
+    * those glyphs
+    */
 
    text_props->generation = fi->generation;
 }

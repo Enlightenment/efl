@@ -1148,10 +1148,10 @@ eng_font_load(void *data __UNUSED__, const char *name, int size,
 }
 
 static Evas_Font_Set *
-eng_font_memory_load(void *data __UNUSED__, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
+eng_font_memory_load(void *data __UNUSED__, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
 {
-   return (Evas_Font_Set *) evas_common_font_memory_load(name, size, fdata,
-         fdata_size, wanted_rend);
+   return (Evas_Font_Set *) evas_common_font_memory_load(source, name, size,
+         fdata, fdata_size, wanted_rend);
 }
 
 static Evas_Font_Set *
@@ -1162,10 +1162,10 @@ eng_font_add(void *data __UNUSED__, Evas_Font_Set *font, const char *name, int s
 }
 
 static Evas_Font_Set *
-eng_font_memory_add(void *data __UNUSED__, Evas_Font_Set *font, char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
+eng_font_memory_add(void *data __UNUSED__, Evas_Font_Set *font, const char *source, const char *name, int size, const void *fdata, int fdata_size, Font_Rend_Flags wanted_rend)
 {
    return (Evas_Font_Set *) evas_common_font_memory_add((RGBA_Font *) font,
-         name, size, fdata, fdata_size, wanted_rend);
+         source, name, size, fdata, fdata_size, wanted_rend);
 }
 
 static void
