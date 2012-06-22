@@ -1309,7 +1309,7 @@ _font_load_request_build(void *data, int *size)
 }
 
 static void
-_font_load_request_free(void *msg, void *data)
+_font_load_request_free(void *msg, void *data __UNUSED__)
 {
    free(msg);
 }
@@ -1359,7 +1359,7 @@ static Font_Request_Funcs _font_load_funcs = {
 static Eina_Bool
 _glyphs_request_check(Glyphs_Request *req)
 {
-   int i;
+   unsigned int i;
    Font_Entry *fe = req->fe;
 
    req->answer = malloc(sizeof(*req->answer) * req->nglyphs);
@@ -1390,7 +1390,7 @@ static Eina_List *
 _glyphs_group_create(Glyphs_Request *req)
 {
    Eina_List *groups = NULL;
-   int i;
+   unsigned int i;
 
    for (i = 0; i < req->nanswer; i++)
      {
@@ -1592,7 +1592,7 @@ _glyphs_request_free(Glyphs_Request *req)
 static void
 _glyphs_load_request_prepare(Glyphs_Request *req)
 {
-   int i, max;
+   unsigned int i, max;
    req->nrender = 0;
    Font_Entry *fe = req->fe;
 
@@ -1621,7 +1621,7 @@ _glyphs_load_request_prepare(Glyphs_Request *req)
 }
 
 static void *
-_glyphs_load_request_build(void *data, int *size)
+_glyphs_load_request_build(void *data, int *size __UNUSED__)
 {
    Glyphs_Request *req = data;
    Slave_Msg_Font_Glyphs_Load *msg = NULL;
@@ -1663,20 +1663,20 @@ _glyphs_load_request_free(void *msg, void *data)
 }
 
 static void
-_glyphs_load_request_response(Client *client, void *data, void *resp, unsigned int rid)
+_glyphs_load_request_response(Client *client __UNUSED__, void *data, void *resp, unsigned int rid)
 {
    Glyphs_Request *req = data;
    Slave_Msg_Font_Glyphs_Loaded *msg = resp;
    Font_Entry *fe = req->fe;
    Font_Cache *fc = NULL;
-   int i = 0;
+   unsigned int i = 0;
 
    if (fe->last_cache && fe->last_cache->shm == msg->caches[0]->shm)
      fc = fe->last_cache;
 
    while (i < msg->ncaches)
      {
-        int j;
+        unsigned int j;
         Slave_Msg_Font_Cache *c = msg->caches[i++];
 
         if (!fc)
@@ -1732,7 +1732,7 @@ _glyphs_load_request_response(Client *client, void *data, void *resp, unsigned i
 }
 
 static void
-_glyphs_load_request_failed(Client *client, void *data, Error_Type error, unsigned int rid)
+_glyphs_load_request_failed(Client *client __UNUSED__, void *data __UNUSED__, Error_Type error __UNUSED__, unsigned int rid __UNUSED__)
 {
 }
 
@@ -1787,7 +1787,7 @@ _font_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
 }
 
 static void
-_cserve2_cache_image_stats_get(Msg_Stats *msg)
+_cserve2_cache_image_stats_get(Msg_Stats *msg __UNUSED__)
 {
 }
 
@@ -2374,7 +2374,7 @@ cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcel
 }
 
 int
-cserve2_cache_font_unload(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid)
+cserve2_cache_font_unload(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid __UNUSED__)
 {
    Font_Entry *fe;
    char *fullname;

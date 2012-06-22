@@ -156,12 +156,12 @@ static Eina_Bool
 _server_send(const void *buf, int size, Op_Callback cb, void *data)
 {
    const Msg_Base *msg;
-   if (_server_safe_send(socketfd, &size, sizeof(size)) == -1)
+   if (!_server_safe_send(socketfd, &size, sizeof(size)))
      {
         ERR("Couldn't send message size to server.");
         return EINA_FALSE;
      }
-   if (_server_safe_send(socketfd, buf, size) == -1)
+   if (!_server_safe_send(socketfd, buf, size))
      {
         ERR("Couldn't send message body to server.");
         return EINA_FALSE;
@@ -978,7 +978,7 @@ _glyph_request_cb(void *data, const void *msg)
    const Msg_Font_Glyphs_Loaded *resp = msg;
    Glyph_Request_Data *grd = data;
    Font_Entry *fe = grd->fe;
-   int ncaches = 0;
+   unsigned int ncaches = 0;
    const char *buf;
 
    if (resp->base.type == CSERVE2_ERROR)

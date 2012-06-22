@@ -40,7 +40,7 @@ static struct _Request_Match
 {
    { CSERVE2_REQ_FONT_LOAD, SLAVE_FONT, FONT_LOAD },
    { CSERVE2_REQ_FONT_GLYPHS_LOAD, SLAVE_FONT, FONT_GLYPHS_LOAD },
-   { CSERVE2_REQ_LAST, 0 }
+   { CSERVE2_REQ_LAST, 0, 0 }
 };
 
 static Slave *_create_image_slave(void *data);
@@ -377,7 +377,7 @@ _cserve2_request_dispatch(Slave_Worker *sw, Slave_Command ctype, Font_Request *r
 static void
 _cserve2_requests_process(void)
 {
-    int rtype, j;
+    unsigned int rtype, j;
 
     for (rtype = 0; rtype < CSERVE2_REQ_LAST; rtype++)
       {
