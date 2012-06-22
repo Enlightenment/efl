@@ -46,12 +46,10 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, in
    length = eina_binbuf_length_get(text_props->bin) / sizeof (Evas_Glyph);
    for (it = 0; it < length; ++it)
      {
-        FT_UInt idx;
         RGBA_Font_Glyph *fg;
         int chr_x, chr_y;
 
         fg = glyphs[it].fg;
-        idx = glyphs[it].idx;
 
         glyphs[it].coord.w = fg->glyph_out->bitmap.width;
         glyphs[it].coord.h = fg->glyph_out->bitmap.rows;
