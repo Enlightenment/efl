@@ -109,7 +109,7 @@ struct {
   { EDJE_PART_TYPE_TABLE,     "table" },
   { EDJE_PART_TYPE_EXTERNAL,  "external" },
   { EDJE_PART_TYPE_PROXY,     "proxy" },
-  { EDJE_PART_TYPE_SPACER,   "spacer" }
+  { EDJE_PART_TYPE_SPACER,    "spacer" }
 };
 
 static const char *
@@ -740,6 +740,7 @@ _edje_edd_init(void)
    EDJE_DATA_DESCRIPTOR_DESCRIPTION_COMMON_SUB(_edje_edd_edje_part_description_external, Edje_Part_Description_External, common);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_description_external, Edje_Part_Description_External, "external_params", external_params, _edje_edd_edje_external_param);
 
+   EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_spacer);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_rectangle);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_swallow);
    EDJE_DEFINE_POINTER_TYPE(Part_Description_Common, part_description_group);
