@@ -23,14 +23,14 @@ struct _Fash_Glyph_Map2
    Fash_Glyph_Map *bucket[256];
 };
 
-struct _Fash_Glyph
+struct _Fash_Glyph2
 {
    Fash_Glyph_Map2 *bucket[256];
    void (*free_cb)(void *glyph);
 };
 
 static void
-_fash_item_free(Fash_Glyph *fash, Fash_Glyph_Map *map)
+_fash_item_free(Fash_Glyph2 *fash, Fash_Glyph_Map *map)
 {
    int i;
 
@@ -42,7 +42,7 @@ _fash_item_free(Fash_Glyph *fash, Fash_Glyph_Map *map)
 }
 
 static void
-_fash_gl2_free(Fash_Glyph *fash, Fash_Glyph_Map2 *fash2)
+_fash_gl2_free(Fash_Glyph2 *fash, Fash_Glyph_Map2 *fash2)
 {
    int i;
 
@@ -52,7 +52,7 @@ _fash_gl2_free(Fash_Glyph *fash, Fash_Glyph_Map2 *fash2)
 }
 
 void
-fash_gl_free(Fash_Glyph *fash)
+fash_gl_free(Fash_Glyph2 *fash)
 {
    int i;
 
@@ -61,16 +61,16 @@ fash_gl_free(Fash_Glyph *fash)
    free(fash);
 }
 
-Fash_Glyph *
+Fash_Glyph2 *
 fash_gl_new(void (*free_cb)(void *glyph))
 {
-   Fash_Glyph *fash = calloc(1, sizeof(Fash_Glyph));
+   Fash_Glyph2 *fash = calloc(1, sizeof(Fash_Glyph2));
    fash->free_cb = free_cb;
    return fash;
 }
 
 void *
-fash_gl_find(Fash_Glyph *fash, int item)
+fash_gl_find(Fash_Glyph2 *fash, int item)
 {
    int grp, maj, min;
 
@@ -84,7 +84,7 @@ fash_gl_find(Fash_Glyph *fash, int item)
 }
 
 void
-fash_gl_add(Fash_Glyph *fash, int item, void *glyph)
+fash_gl_add(Fash_Glyph2 *fash, int item, void *glyph)
 {
    int grp, maj, min;
 
@@ -102,7 +102,7 @@ fash_gl_add(Fash_Glyph *fash, int item, void *glyph)
 }
 
 void
-fash_gl_del(Fash_Glyph *fash, int item)
+fash_gl_del(Fash_Glyph2 *fash, int item)
 {
    int grp, maj, min;
    void *data;

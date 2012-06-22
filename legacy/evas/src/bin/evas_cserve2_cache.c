@@ -108,7 +108,7 @@ struct _Font_Entry {
    unsigned int dpi;
    Font_Source *src;
    void *ft;
-   Fash_Glyph *glyphs;
+   Fash_Glyph2 *glyphs;
    Eina_Inlist *caches;
    Font_Cache *last_cache;
    Eina_Bool unused : 1;

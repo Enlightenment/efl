@@ -792,7 +792,7 @@ struct _Font_Entry
    unsigned int rid; // open
 
    Eina_Hash *glyphs_maps;
-   Fash_Glyph *fash[3]; // one per hinting value
+   Fash_Glyph2 *fash[3]; // one per hinting value
 
    Eina_Clist glyphs_queue;
    int glyphs_queue_count;
@@ -1163,7 +1163,7 @@ _glyph_request_server_send(Font_Entry *fe, Font_Hint_Flags hints, Eina_Bool used
 Eina_Bool
 evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints)
 {
-   Fash_Glyph *fash;
+   Fash_Glyph2 *fash;
    CS_Glyph_Out *glyph;
 
    if (fe->rid)
@@ -1208,7 +1208,7 @@ evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flag
 Eina_Bool
 evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints)
 {
-   Fash_Glyph *fash;
+   Fash_Glyph2 *fash;
    CS_Glyph_Out *glyph;
 
    if (fe->rid)
@@ -1244,7 +1244,7 @@ evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags h
 RGBA_Font_Glyph_Out *
 evas_cserve2_font_glyph_bitmap_get(Font_Entry *fe, unsigned int idx, Font_Hint_Flags hints)
 {
-   Fash_Glyph *fash;
+   Fash_Glyph2 *fash;
    CS_Glyph_Out *out;
 
    if (fe->failed)
