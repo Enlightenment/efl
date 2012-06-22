@@ -197,11 +197,13 @@ _usage_msg_read(void)
    printf("Printing server usage.\n");
    printf("======================\n\n");
    printf("Font Usage Statistics:\n");
-   printf("Requested usage: %d bytes\n", msg->fonts.requested_usage);
-   printf("Real usage: %d bytes\n", msg->fonts.real_usage);
-   printf("Fonts load time: %dus\n", msg->fonts.fonts_load);
-   printf("Fonts used load time: %dus\n", msg->fonts.fonts_used_load);
-   printf("Glyphs load time: %dus\n", msg->fonts.glyphs_load);
+   printf("----------------------\n\n");
+   printf("Requested usage: %d bytes\n", msg->fonts.requested_size);
+   printf("Real usage: %d bytes\n", msg->fonts.real_size);
+   printf("Unused size: %d bytes\n", msg->fonts.unused_size);
+   printf("Fonts load time: %dus\n", msg->fonts.fonts_load_time);
+   printf("Fonts used load time: %dus\n", msg->fonts.fonts_used_load_time);
+   printf("Glyphs load time: %dus\n", msg->fonts.glyphs_load_time);
 
    printf("\n");
 }

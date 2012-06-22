@@ -1752,27 +1752,35 @@ _font_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
    int load_time;
    int nrefs = eina_list_count(fe->base.references);
 
+   msg->fonts.fonts_loaded++;
+   if (fe->unused) msg->fonts.fonts_unused++;
+
    // accounting size
    EINA_INLIST_FOREACH(fe->caches, fc)
      {
+        unsigned int fc_usage, shmsize;
         /* This is not real requested usage, but an approximation. We don't
          * know how many times each glyph would be used by each client, but
          * assume that a similar set of glyphs from a given font would be used
          * by each client, thus counting them one time per client referencing
          * them.
          */
-        msg->fonts.requested_usage += fc->usage * nrefs;
-        msg->fonts.real_usage += cserve2_shm_size_get(fc->shm);
+        fc_usage = fc->usage * nrefs;
+        shmsize = cserve2_shm_size_get(fc->shm);
+
+        msg->fonts.requested_size += fc_usage;
+        msg->fonts.real_size += shmsize;
+        if (fe->unused) msg->fonts.unused_size += shmsize;
      }
 
 #ifdef DEBUG_LOAD_TIME
    // accounting fonts load time
    load_time = _timeval_sub(&fe->base.load_finish, &fe->base.load_start);
-   msg->fonts.fonts_load += load_time;
-   if (fe->caches) msg->fonts.fonts_used_load += load_time;
+   msg->fonts.fonts_load_time += load_time;
+   if (fe->caches) msg->fonts.fonts_used_load_time += load_time;
 
    // accounting glyphs load time
-   msg->fonts.glyphs_load += fe->gl_load_time;
+   msg->fonts.glyphs_load_time += fe->gl_load_time;
 #endif
 
    return EINA_TRUE;

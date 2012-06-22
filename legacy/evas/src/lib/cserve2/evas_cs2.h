@@ -199,12 +199,17 @@ struct _Msg_Font_Glyphs_Loaded {
 struct _Msg_Stats {
    Msg_Base base;
    struct {
-      unsigned int requested_usage;
-      unsigned int real_usage;
-      int fonts_load; // total time spent loading fonts
-      int fonts_used_load; // total time spent loading fonts that are
-                           // really used
-      int glyphs_load; // total time spent loading glyphs
+      unsigned int requested_size;
+      unsigned int real_size;
+      unsigned int unused_size;
+      unsigned int fonts_loaded; /* number of loaded fonts */
+      unsigned int fonts_unused; /* number of loaded fonts without reference
+                                  * from any clients */
+      int fonts_load_time; /* total time spent loading fonts */
+      int fonts_used_load_time; /* total time spent loading fonts that are
+                                 * really used, i.e. fonts that have glyphs
+                                 * rendered */
+      int glyphs_load_time; /* total time spent loading glyphs */
    } fonts;
 };
 
