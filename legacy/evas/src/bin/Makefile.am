@@ -45,7 +45,7 @@ if EVAS_CSERVE2
 SUBDIRS = loaders
 
 libexec_PROGRAMS = evas_cserve2 evas_cserve2_slave dummy_slave
-bin_PROGRAMS = evas_cserve2_client evas_cserve2_usage
+bin_PROGRAMS = evas_cserve2_client evas_cserve2_usage evas_cserve2_debug
 
 AM_CPPFLAGS = \
 -I. \
@@ -86,7 +86,13 @@ evas_cserve2_client.c
 evas_cserve2_usage_SOURCES = \
 evas_cserve2_usage.c
 
+evas_cserve2_debug_SOURCES = \
+evas_cserve2_debug.c
+
 evas_cserve2_usage_LDADD = \
+@EINA_LIBS@
+
+evas_cserve2_debug_LDADD = \
 @EINA_LIBS@
 
 evas_cserve2_slave_SOURCES = \
