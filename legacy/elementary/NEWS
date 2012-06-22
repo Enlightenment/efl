@@ -14,6 +14,7 @@ Additions:
    * Add ELM_CALENDAR_LAST_DAY_OF_MONTH enum type
    * Add elm_progressbar_format_function_set API function
    * Add elm_map_overlay_del_cb_set API function
+   * Add "changed" signal to the progressbar widgets
 
 Fixes:
 

@@ -127,10 +127,12 @@
 	_Elm_Win_Smart_Data to allow grouping based on engine.
 
 2012-05-29 Rob Bradford
+
 	* Move X related cursor items into their own substruct of Elm_Cursor
 	to make supporting cursors on other platforms cleaner.
 
 2012-05-30 Rob Bradford
+
 	* Add support for setting the cursor under Wayland:
 	* Introduce a configure option and #define to as per other engines
 	* Add always-built API function to allow identification of running
@@ -190,13 +192,21 @@
           After the item is long-pressed, it can be moved.
 
 2012-06-14 Michael Bouchaud
+
 	* Add an enum to Elm_Calendar_Mark_Repeat_Type:
 	ELM_CALENDAR_LAST_DAY_OF_MONTH
 
 2012-06-15 Michael Bouchaud
+
 	* elm_progressbar: elm_progressbar_format_function_set to add a callback
 	function to format the unit string.
 
 2012-06-16 Davide Andreoli
+
 	* elm_map: add elm_map_overlay_del_cb_set to be notify when
 	an overlay is deleted.
+
+2012-06-23 Daniel Willmann
+
+        * elm_progressbar: Add "changed" signal to be emitted when the value
+        is changed.

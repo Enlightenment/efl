@@ -4,6 +4,8 @@
 
 static const char PROGRESSBAR_SMART_NAME[] = "elm_progressbar";
 
+static const char SIG_CHANGED[] = "changed";
+
 #define MIN_RATIO_LVL 0.0
 #define MAX_RATIO_LVL 1.0
 
@@ -54,11 +56,18 @@ struct _Elm_Progressbar_Smart_Data
         ((obj), PROGRESSBAR_SMART_NAME, __func__)) \
     return
 
+/* smart callbacks coming from elm progressbar objects (besides the
+ * ones coming from elm layout): */
+static const Evas_Smart_Cb_Description _smart_callbacks[] = {
+   {SIG_CHANGED, ""},
+   {NULL, NULL}
+};
+
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
   (PROGRESSBAR_SMART_NAME, _elm_progressbar, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
+  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -364,6 +373,7 @@ elm_progressbar_value_set(Evas_Object *obj,
 
    _val_set(obj);
    _units_set(obj);
+   evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
 }
 
 EAPI double
