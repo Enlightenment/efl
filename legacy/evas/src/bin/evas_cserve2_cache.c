@@ -4,7 +4,12 @@
 
 #include <string.h>
 
+#ifdef DEBUG_LOAD_TIME
+   #include <sys/time.h>
+#endif
+
 #include "evas_cserve2.h"
+#include "evas_cs2_utils.h"
 
 typedef struct _Request_Funcs Request_Funcs;
 typedef struct _Request Request;
@@ -19,7 +24,6 @@ typedef struct _File_Watch File_Watch;
 typedef struct _Font_Source Font_Source;
 typedef struct _Font_Entry Font_Entry;
 typedef struct _Font_Cache Font_Cache;
-typedef struct _Glyph_Entry Glyph_Entry;
 
 typedef void *(*Request_Msg_Create)(Entry *e, int *size);
 typedef void (*Request_Response)(Entry *e, void *resp);
@@ -49,6 +53,10 @@ struct _Entry {
    Eina_List *references;
    Request *request;
    Entry_Type type;
+#ifdef DEBUG_LOAD_TIME
+   struct timeval load_start;
+   struct timeval load_finish;
+#endif
 };
 
 struct _File_Data {
@@ -85,6 +93,7 @@ struct _Image_Data {
 };
 
 struct _Font_Source {
+   const char *key;
    const char *name;
    const char *file;
    int references;
@@ -95,31 +104,66 @@ struct _Font_Entry {
    Entry base;
    Font_Request *request;
    unsigned int rend_flags;
-   unsigned int hint;
    unsigned int size;
    unsigned int dpi;
    Font_Source *src;
    void *ft;
+   Fash_Glyph *glyphs;
+   Eina_Inlist *caches;
+   Font_Cache *last_cache;
+   Eina_Bool unused : 1;
+#ifdef DEBUG_LOAD_TIME
+   struct timeval load_start;
+   struct timeval load_finish;
+   int gl_load_time;
+#endif
 };
 
 struct _Font_Cache {
+   EINA_INLIST;
    Font_Entry *fe;
-   struct {
-      const char *name;
-      void *data;
-      unsigned int size;
-      unsigned int usage;
-   } shm;
+   Shm_Handle *shm;
+   unsigned int usage;
+   int inuse;
    Eina_Inlist *glyphs;
+   unsigned int nglyphs;
 };
 
 struct _Glyph_Entry {
    EINA_INLIST;
    Font_Entry *fe;
-   Font_Cache *fi;
+   Font_Cache *fc;
    unsigned int index;
    unsigned int offset;
+   unsigned int size;
+   unsigned int rows;
+   unsigned int width;
+   unsigned int pitch;
+   unsigned int num_grays;
+   unsigned int pixel_mode;
 };
+
+struct _Glyphs_Request {
+   Client *client;
+   Font_Entry *fe;
+   unsigned int current;
+   unsigned int nglyphs;
+   unsigned int *glyphs;
+   unsigned int nrender;
+   unsigned int *render;
+   unsigned int nanswer;
+   Glyph_Entry **answer;
+   unsigned int hint;
+};
+
+typedef struct _Glyphs_Request Glyphs_Request;
+
+struct _Glyphs_Group {
+   Font_Cache *fc;
+   Eina_List *glyphs;
+};
+
+typedef struct _Glyphs_Group Glyphs_Group;
 
 struct _Reference {
    Client *client;
@@ -158,8 +202,39 @@ static Eina_Hash *file_watch = NULL;
 
 static Eina_List *image_entries_lru = NULL;
 
+static Eina_List *font_shm_lru = NULL;
+
 static int max_unused_mem_usage = 5 * 1024; /* in kbytes */
 static int unused_mem_usage = 0;
+static int max_font_usage = 10 * 4 * 1024; /* in kbytes */
+static int font_mem_usage = 0;
+
+static inline void
+_entry_load_start(Entry *e)
+{
+#ifdef DEBUG_LOAD_TIME
+   gettimeofday(&e->load_start, NULL);
+#endif
+}
+
+static inline void
+_entry_load_finish(Entry *e)
+{
+#ifdef DEBUG_LOAD_TIME
+   gettimeofday(&e->load_finish, NULL);
+#endif
+}
+
+static int
+_timeval_sub(const struct timeval *tv2, const struct timeval *tv1)
+{
+    int t1, t2;
+
+    t1 = tv1->tv_usec + tv1->tv_sec * 1000000;
+    t2 = tv2->tv_usec + tv2->tv_sec * 1000000;
+
+    return t2 - t1;
+}
 
 static void
 _image_opened_send(Client *client, File_Data *entry, unsigned int rid)
@@ -237,13 +312,15 @@ _image_preloaded_send(Client *client, unsigned int rid)
 }
 
 static void
-_font_loaded_send(Client *client, Font_Entry *fe __UNUSED__, unsigned int rid)
+_font_loaded_send(Client *client, unsigned int rid)
 {
    int size;
    Msg_Font_Loaded msg;
 
    DBG("Sending FONT_LOADED reply for RID: %d.", rid);
-   memset(&msg, 0, sizeof(msg));
+
+   size = sizeof(msg);
+   memset(&msg, 0, size);
    msg.base.rid = rid;
    msg.base.type = CSERVE2_FONT_LOADED;
 
@@ -272,6 +349,9 @@ _open_request_build(File_Data *f, int *bufsize)
    memcpy(buf + sizeof(msg) + pathlen, f->key, keylen);
 
    *bufsize = size;
+
+   _entry_load_start(&f->base);
+
    return buf;
 }
 
@@ -310,6 +390,7 @@ _open_request_response(File_Data *e, Slave_Msg_Image_Opened *resp)
 {
    Waiter *w;
 
+   _entry_load_finish(&e->base);
    e->w = resp->w;
    e->h = resp->h;
    e->frame_count = resp->frame_count;
@@ -397,6 +478,9 @@ _load_request_build(Image_Data *i, int *bufsize)
    memcpy(ptr, i->file->loader_data, loaderlen);
 
    *bufsize = size;
+
+   _entry_load_start(&i->base);
+
    return buf;
 }
 
@@ -404,6 +488,8 @@ static void
 _load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp)
 {
    Waiter *w;
+
+   _entry_load_start(&e->base);
 
    e->alpha_sparse = resp->alpha_sparse;
    if (!e->doload)
@@ -581,28 +667,24 @@ _file_watch_free(void *data)
 static int
 _font_entry_cmp(const Font_Entry *k1, int k1_length __UNUSED__, const Font_Entry *k2, int k2_length __UNUSED__)
 {
-   if (k1->src->name == k2->src->name)
+   if (k1->src->key == k2->src->key)
      {
         if (k1->size == k2->size)
           {
              if (k1->rend_flags == k2->rend_flags)
-               {
-                  if (k1->hint == k2->hint)
-                    return k1->dpi - k2->dpi;
-                  return k1->hint - k2->hint;
-               }
+               return k1->dpi - k2->dpi;
              return k1->rend_flags - k2->rend_flags;
           }
         return k1->size - k2->size;
      }
-   return strcmp(k1->src->name, k2->src->name);
+   return strcmp(k1->src->key, k2->src->key);
 }
 
 static int
 _font_entry_key_hash(const Font_Entry *key, int key_length __UNUSED__)
 {
    int hash;
-   hash = eina_hash_djb2(key->src->name, eina_stringshare_strlen(key->src->name) + 1);
+   hash = eina_hash_djb2(key->src->key, eina_stringshare_strlen(key->src->key) + 1);
    hash ^= eina_hash_int32(&key->rend_flags, sizeof(int));
    hash ^= eina_hash_int32(&key->size, sizeof(int));
    hash ^= eina_hash_int32(&key->dpi, sizeof(int));
@@ -613,16 +695,98 @@ _font_entry_key_hash(const Font_Entry *key, int key_length __UNUSED__)
 static void
 _font_entry_free(Font_Entry *fe)
 {
+   fash_gl_free(fe->glyphs);
+   fe->src->references--;
+   if (fe->ft) cserve2_font_ft_free(fe->ft);
+   if (fe->src->references <= 0)
+     eina_hash_del_by_key(font_sources, fe->src->key);
    free(fe);
+}
+
+static void
+_glyph_free_cb(void *data)
+{
+   Glyph_Entry *gl = data;
+   free(gl);
 }
 
 static void
 _font_source_free(Font_Source *fs)
 {
-   if (fs->name) eina_stringshare_del(fs->name);
-   if (fs->file) eina_stringshare_del(fs->file);
+   eina_stringshare_del(fs->key);
+   eina_stringshare_del(fs->name);
+   eina_stringshare_del(fs->file);
+   if (fs->ft) cserve2_font_source_ft_free(fs->ft);
 
    free(fs);
+}
+
+static void
+_font_shm_promote(Font_Cache *fc)
+{
+   Eina_List *l;
+   l = eina_list_data_find_list(font_shm_lru, fc);
+   font_shm_lru = eina_list_demote_list(font_shm_lru, l);
+}
+
+static int
+_font_shm_size_get(Font_Cache *fc)
+{
+   int size;
+
+   size = sizeof(*fc) + cserve2_shm_size_get(fc->shm);
+
+   return size;
+}
+
+static void
+_font_shm_free(Font_Cache *fc)
+{
+   Font_Entry *fe = fc->fe;
+   fe->caches = eina_inlist_remove(fe->caches, EINA_INLIST_GET(fc));
+   if (fc == fe->last_cache)
+     fe->last_cache = NULL;
+
+   while (fc->glyphs)
+     {
+        Glyph_Entry *gl = EINA_INLIST_CONTAINER_GET(fc->glyphs, Glyph_Entry);
+        fc->glyphs = eina_inlist_remove(fc->glyphs, fc->glyphs);
+        fash_gl_del(fe->glyphs, gl->index);
+     }
+
+   cserve2_shm_unref(fc->shm);
+   free(fc);
+
+   if (!fe->caches)
+     eina_hash_del_by_key(font_entries, fe);
+}
+
+static void
+_font_shm_lru_flush(void)
+{
+   Eina_List *l, *l_next;
+
+   l = font_shm_lru;
+   l_next = eina_list_next(l);
+
+   while (l && font_mem_usage > max_font_usage)
+     {
+        int size;
+        Font_Cache *fc;
+
+        fc = eina_list_data_get(l);
+        if (fc->fe->unused && fc->inuse == 0)
+          {
+             font_shm_lru = eina_list_remove_list(font_shm_lru, l);
+             size = _font_shm_size_get(fc);
+             size += fc->nglyphs * sizeof(Glyph_Entry);
+             _font_shm_free(fc);
+             font_mem_usage -= size;
+          }
+
+        l = l_next;
+        l_next = eina_list_next(l);
+     }
 }
 
 void
@@ -645,6 +809,11 @@ cserve2_cache_init(void)
 void
 cserve2_cache_shutdown(void)
 {
+   Font_Cache *fc;
+
+   EINA_LIST_FREE(font_shm_lru, fc)
+     _font_shm_free(fc);
+
    eina_hash_free(image_entries);
    eina_hash_free(image_ids);
    eina_hash_free(file_entries);
@@ -915,7 +1084,9 @@ _entry_reference_del(Entry *entry, Reference *ref)
    else if (entry->type == CSERVE2_FONT_ENTRY)
      {
         Font_Entry *fe = (Font_Entry *)entry;
-        eina_hash_del_by_key(font_entries, fe);
+        fe->unused = EINA_TRUE;
+        if (!fe->caches)
+          eina_hash_del_by_key(font_entries, fe);
      }
    else
      ERR("Wrong type of entry.");
@@ -955,11 +1126,25 @@ _entry_free_cb(void *data)
 }
 
 static void
-_font_entry_reference_del(Client *client __UNUSED__, Reference *ref)
+_font_entry_reference_del(Client *client, Font_Entry *fe)
 {
-   Entry *entry = ref->entry;
+   Eina_List *l;
+   Reference *ref;
 
-   _entry_reference_del(entry, ref);
+   EINA_LIST_FOREACH(client->fonts.referencing, l, ref)
+     {
+        if (ref->entry == (Entry *)fe)
+          {
+             ref->count--;
+             if (ref->count > 0)
+               break;
+
+             client->fonts.referencing = eina_list_remove_list(
+                 client->fonts.referencing, l);
+             _entry_reference_del(&fe->base, ref);
+             return;
+          }
+     }
 }
 
 void
@@ -982,7 +1167,7 @@ cserve2_cache_client_del(Client *client)
 
    EINA_LIST_FREE(client->fonts.referencing, ref)
      {
-        _font_entry_reference_del(client, ref);
+        _entry_reference_del(ref->entry, ref);
      }
 }
 
@@ -1082,21 +1267,20 @@ _cserve2_font_source_find(const char *name)
 }
 
 static Font_Entry *
-_cserve2_font_entry_find(const char *name, unsigned int namelen, unsigned int size, unsigned int rend_flags, unsigned int hint, unsigned int dpi)
+_cserve2_font_entry_find(const char *name, unsigned int namelen, unsigned int size, unsigned int rend_flags, unsigned int dpi)
 {
    Font_Entry tmp_fe;
    Font_Source tmp_fs;
    Font_Entry *fe;
 
-   tmp_fs.name = eina_stringshare_add_length(name, namelen);
+   tmp_fs.key = eina_stringshare_add_length(name, namelen);
    tmp_fe.src = &tmp_fs;
    tmp_fe.size = size;
    tmp_fe.rend_flags = rend_flags;
-   tmp_fe.hint = hint;
    tmp_fe.dpi = dpi;
 
    fe = eina_hash_find(font_entries, &tmp_fe);
-   eina_stringshare_del(tmp_fs.name);
+   eina_stringshare_del(tmp_fs.key);
 
    return fe;
 }
@@ -1110,7 +1294,6 @@ _font_load_request_build(void *data, int *size)
    msg->ftdata1 = fe->src->ft;
    msg->ftdata2 = fe->ft;
    msg->rend_flags = fe->rend_flags;
-   msg->hint = fe->hint;
    msg->size = fe->size;
    msg->dpi = fe->dpi;
    msg->name = fe->src->name;
@@ -1118,13 +1301,15 @@ _font_load_request_build(void *data, int *size)
 
    *size = 0;
 
+   _entry_load_start(&fe->base);
+
    return msg;
 }
 
 static void
-_font_load_request_free(void *data)
+_font_load_request_free(void *msg, void *data)
 {
-   free(data);
+   free(msg);
 }
 
 static void
@@ -1133,18 +1318,33 @@ _font_load_request_response(Client *client __UNUSED__, void *data, void *resp, u
    Slave_Msg_Font_Loaded *msg = resp;
    Font_Entry *fe = data;
 
+   DBG("request %d answered.", rid);
+
    if (!fe->src->ft)
      fe->src->ft = msg->ftdata1;
 
    if (!fe->ft)
-     fe->ft = msg->ftdata2;
+     {
+        fe->ft = msg->ftdata2;
+        _entry_load_finish(&fe->base);
+     }
 
    if (fe->request) fe->request = NULL;
+
+   _font_loaded_send(client, rid);
 }
 
 static void
 _font_load_request_failed(Client *client __UNUSED__, void *data __UNUSED__, Error_Type error __UNUSED__, unsigned int rid __UNUSED__)
 {
+   Font_Entry *fe = data;
+   DBG("request %d error answered.", rid);
+
+   cserve2_client_error_send(client, rid, error);
+
+   if (fe->request) fe->request = NULL;
+
+   _font_entry_reference_del(client, fe);
 }
 
 static Font_Request_Funcs _font_load_funcs = {
@@ -1153,6 +1353,648 @@ static Font_Request_Funcs _font_load_funcs = {
    .response = (Font_Request_Response)_font_load_request_response,
    .error = (Font_Request_Error)_font_load_request_failed
 };
+
+static Eina_Bool
+_glyphs_request_check(Glyphs_Request *req)
+{
+   int i;
+   Font_Entry *fe = req->fe;
+
+   req->answer = malloc(sizeof(*req->answer) * req->nglyphs);
+   req->nanswer = 0;
+
+   for (i = req->current; i < req->nglyphs; i++)
+     {
+        Glyph_Entry *ge;
+        ge = fash_gl_find(fe->glyphs, req->glyphs[i]);
+        if (ge)
+          {
+             req->answer[req->nanswer++] = ge;
+             ge->fc->inuse++;
+          }
+        else
+          break;
+     }
+
+   req->current = i;
+
+   // No glyphs need to be rendered.
+   return (req->nanswer == req->nglyphs);
+}
+
+/* organize answer (cache1{gl1, gl2,}, cache2{gl3,gl4,gl5}, cache3{gl6})
+ */
+static Eina_List *
+_glyphs_group_create(Glyphs_Request *req)
+{
+   Eina_List *groups = NULL;
+   int i;
+
+   for (i = 0; i < req->nanswer; i++)
+     {
+        Eina_List *l;
+        Glyphs_Group *iter, *gg = NULL;
+        Font_Cache *fc = req->answer[i]->fc;
+
+        EINA_LIST_FOREACH(groups, l, iter)
+          {
+             if (iter->fc == fc)
+               {
+                  gg = iter;
+                  break;
+               }
+          }
+
+        if (!gg)
+          {
+             gg = calloc(1, sizeof(*gg));
+             gg->fc = fc;
+             groups = eina_list_append(groups, gg);
+          }
+        gg->glyphs = eina_list_append(gg->glyphs, req->answer[i]);
+     }
+
+   return groups;
+}
+
+static void
+_glyphs_loaded_send(Glyphs_Request *req, unsigned int rid)
+{
+   Msg_Font_Glyphs_Loaded msg;
+   unsigned int size;
+   Eina_List *ll, *answers = NULL;
+   const char *shmname;
+   unsigned int shmsize;
+   unsigned int intsize;
+   char *resp, *buf;
+   Glyphs_Group *iter;
+
+   memset(&msg, 0, sizeof(msg));
+   msg.base.rid = rid;
+   msg.base.type = CSERVE2_FONT_GLYPHS_LOADED;
+
+   answers = _glyphs_group_create(req);
+   msg.ncaches = eina_list_count(answers);
+   size = sizeof(msg);
+
+   // calculate size of message
+   // ncaches * sizeof(cache) + nglyphs1 * sizeof(glyph) +
+   //   nglyphs2 * sizeof(glyph)...
+
+   intsize = sizeof(unsigned int);
+
+   EINA_LIST_FOREACH(answers, ll, iter)
+     {
+        shmname = cserve2_shm_name_get(iter->fc->shm);
+        shmsize = eina_stringshare_strlen(shmname) + 1;
+        // shm namelen + name
+        size += intsize + shmsize;
+
+        // nglyphs
+        size += intsize;
+        // nglyphs * (index + offset + size + rows + width + pitch +
+        //            num_grays + pixel_mode)
+        size += eina_list_count(iter->glyphs) * 8 * intsize;
+     }
+
+   resp = malloc(size);
+   memcpy(resp, &msg, sizeof(msg));
+   buf = resp + sizeof(msg);
+
+   EINA_LIST_FREE(answers, iter)
+     {
+        Glyph_Entry *gl;
+        unsigned int nglyphs;
+
+        shmname = cserve2_shm_name_get(iter->fc->shm);
+        shmsize = eina_stringshare_strlen(shmname) + 1;
+        memcpy(buf, &shmsize, intsize);
+        buf += intsize;
+        memcpy(buf, shmname, shmsize);
+        buf += shmsize;
+
+        nglyphs = eina_list_count(iter->glyphs);
+        memcpy(buf, &nglyphs, intsize);
+        buf += intsize;
+
+        iter->fc->inuse -= eina_list_count(iter->glyphs);
+
+        EINA_LIST_FREE(iter->glyphs, gl)
+          {
+             memcpy(buf, &gl->index, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->offset, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->size, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->rows, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->width, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->pitch, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->num_grays, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->pixel_mode, intsize);
+             buf += intsize;
+          }
+
+        /* We are removing SHMs from the beginning of the list, so this
+         * gives a higher priority to them */
+        _font_shm_promote(iter->fc);
+        eina_list_free(iter->glyphs);
+        free(iter);
+     }
+
+   cserve2_client_send(req->client, &size, sizeof(size));
+   cserve2_client_send(req->client, resp, size);
+
+   free(resp);
+}
+
+/*
+ * taken from evas_path.c. It would be good to clean up those utils to
+ * have cserve link against them easily without dragging unneeded dependencies
+ */
+#ifdef _WIN32
+# define EVAS_PATH_SEPARATOR "\\"
+#else
+# define EVAS_PATH_SEPARATOR "/"
+#endif
+
+static char *
+_file_path_join(const char *path, const char *end)
+{
+   char *res = NULL;
+   size_t len;
+
+   if ((!path) && (!end)) return NULL;
+   if (!path) return strdup(end);
+   if (!end) return strdup(path);
+   len = strlen(path);
+   len += strlen(end);
+   len += strlen(EVAS_PATH_SEPARATOR);
+   res = malloc(len + 1);
+   if (!res) return NULL;
+   strcpy(res, path);
+   strcat(res, EVAS_PATH_SEPARATOR);
+   strcat(res, end);
+   return res;
+}
+
+static Glyphs_Request *
+_glyphs_request_create(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs)
+{
+   char *fullname;
+   Glyphs_Request *req = calloc(1, sizeof(*req));
+
+   if (sourcelen == 0)
+     source = NULL;
+   if (namelen == 0)
+     name = NULL;
+
+   fullname = _file_path_join(source, name);
+   req->fe = _cserve2_font_entry_find(fullname, strlen(fullname) + 1, size,
+                                      rend_flags, dpi);
+   free(fullname);
+   if (!req->fe)
+     {
+        ERR("No font entry found: source %s, name %s, rendflags: %d, hint: %d,"
+            " size: %d, dpi: %d", source, name, rend_flags, hint, size, dpi);
+        free(req);
+        return NULL;
+     }
+
+   req->client = client;
+
+   req->nglyphs = nglyphs;
+   req->current = 0;
+   req->glyphs = glyphs;
+   req->hint = hint;
+
+   return req;
+}
+
+static void
+_glyphs_request_free(Glyphs_Request *req)
+{
+   free(req->glyphs);
+   free(req->render);
+   free(req->answer);
+   free(req);
+}
+
+/* add glyphs that are already in cache to the "answers" array, and the ones
+ * that are not cached to the "render" array.
+ */
+static void
+_glyphs_load_request_prepare(Glyphs_Request *req)
+{
+   int i, max;
+   req->nrender = 0;
+   Font_Entry *fe = req->fe;
+
+   if (!fe)
+     {
+        ERR("No font entry for this request.");
+        return;
+     }
+
+   // Won't render more than this number of glyphs
+   max = req->nglyphs - req->nanswer;
+   req->render = malloc(sizeof(*req->render) * max);
+
+   for (i = req->current; i < req->nglyphs; i++)
+     {
+        Glyph_Entry *ge;
+        ge = fash_gl_find(fe->glyphs, req->glyphs[i]);
+        if (ge)
+          {
+             req->answer[req->nanswer++] = ge;
+             ge->fc->inuse++;
+          }
+        else
+          req->render[req->nrender++] = req->glyphs[i];
+     }
+}
+
+static void *
+_glyphs_load_request_build(void *data, int *size)
+{
+   Glyphs_Request *req = data;
+   Slave_Msg_Font_Glyphs_Load *msg = NULL;
+   Font_Entry *fe = req->fe;
+   Font_Cache *fc;
+
+   _glyphs_load_request_prepare(req);
+
+   msg = calloc(1, sizeof(*msg));
+
+   msg->font.ftdata1 = fe->src->ft;
+   msg->font.ftdata2 = fe->ft;
+   msg->font.hint = req->hint;
+   msg->font.rend_flags = fe->rend_flags;
+   msg->glyphs.nglyphs = req->nrender;
+   msg->glyphs.glyphs = req->render;
+
+   // Trying to reuse last filled cache.
+   fc = fe->last_cache;
+   if (fc)
+     {
+        msg->cache.shm = fc->shm;
+        msg->cache.usage = fc->usage;
+        msg->cache.nglyphs = fc->nglyphs;
+     }
+
+#ifdef DEBUG_LOAD_TIME
+   gettimeofday(&fe->load_start, NULL);
+#endif
+
+   return msg;
+}
+
+static void
+_glyphs_load_request_free(void *msg, void *data)
+{
+   _glyphs_request_free(data);
+   free(msg);
+}
+
+static void
+_glyphs_load_request_response(Client *client, void *data, void *resp, unsigned int rid)
+{
+   Glyphs_Request *req = data;
+   Slave_Msg_Font_Glyphs_Loaded *msg = resp;
+   Font_Entry *fe = req->fe;
+   Font_Cache *fc = NULL;
+   int i = 0;
+
+   if (fe->last_cache && fe->last_cache->shm == msg->caches[0]->shm)
+     fc = fe->last_cache;
+
+   while (i < msg->ncaches)
+     {
+        int j;
+        Slave_Msg_Font_Cache *c = msg->caches[i++];
+
+        if (!fc)
+          {
+             fc = malloc(sizeof(*fc));
+             fe->caches = eina_inlist_append(fe->caches, EINA_INLIST_GET(fc));
+             fe->last_cache = fc;
+             fc->fe = fe;
+             fc->shm = c->shm;
+             fc->glyphs = NULL;
+             fc->nglyphs = 0;
+             fc->inuse = 0;
+             font_shm_lru = eina_list_append(font_shm_lru, fc);
+             font_mem_usage += _font_shm_size_get(fc);
+          }
+        fc->usage = c->usage;
+        for (j = 0; j < c->nglyphs; j++)
+          {
+             Glyph_Entry *gl = malloc(sizeof(*gl));
+             gl->fe = fe;
+             gl->fc = fc;
+             gl->index = c->glyphs[j].index;
+             gl->offset = c->glyphs[j].offset;
+             gl->size = c->glyphs[j].size;
+             gl->rows = c->glyphs[j].rows;
+             gl->width = c->glyphs[j].width;
+             gl->pitch = c->glyphs[j].pitch;
+             gl->num_grays = c->glyphs[j].num_grays;
+             gl->pixel_mode = c->glyphs[j].pixel_mode;
+             font_mem_usage += sizeof(*gl);
+             fc->glyphs = eina_inlist_append(fc->glyphs, EINA_INLIST_GET(gl));
+             fc->nglyphs++;
+             fash_gl_add(fe->glyphs, gl->index, gl);
+             req->answer[req->nanswer++] = gl;
+             gl->fc->inuse++;
+          }
+
+        free(c); // FIXME: We are freeing this here because we only do a
+                 // simple free on the response message. Later we need to
+                 // setup a free callback for the slave response.
+        fc = NULL;
+     }
+
+#ifdef DEBUG_LOAD_TIME
+   int load_time;
+   gettimeofday(&fe->load_finish, NULL);
+   load_time = _timeval_sub(&fe->load_finish, &fe->load_start);
+   fe->gl_load_time += load_time;
+#endif
+
+   _glyphs_loaded_send(req, rid);
+   _font_shm_lru_flush();
+}
+
+static void
+_glyphs_load_request_failed(Client *client, void *data, Error_Type error, unsigned int rid)
+{
+}
+
+static Font_Request_Funcs _glyphs_load_funcs = {
+   .msg_create = (Font_Request_Msg_Create)_glyphs_load_request_build,
+   .msg_free = (Font_Request_Msg_Free)_glyphs_load_request_free,
+   .response = (Font_Request_Response)_glyphs_load_request_response,
+   .error = (Font_Request_Error)_glyphs_load_request_failed
+};
+
+static Eina_Bool
+_font_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+{
+   Font_Entry *fe = data;
+   Msg_Stats *msg = fdata;
+   Font_Cache *fc;
+   int load_time;
+   int nrefs = eina_list_count(fe->base.references);
+
+   // accounting size
+   EINA_INLIST_FOREACH(fe->caches, fc)
+     {
+        /* This is not real requested usage, but an approximation. We don't
+         * know how many times each glyph would be used by each client, but
+         * assume that a similar set of glyphs from a given font would be used
+         * by each client, thus counting them one time per client referencing
+         * them.
+         */
+        msg->fonts.requested_usage += fc->usage * nrefs;
+        msg->fonts.real_usage += cserve2_shm_size_get(fc->shm);
+     }
+
+#ifdef DEBUG_LOAD_TIME
+   // accounting fonts load time
+   load_time = _timeval_sub(&fe->base.load_finish, &fe->base.load_start);
+   msg->fonts.fonts_load += load_time;
+   if (fe->caches) msg->fonts.fonts_used_load += load_time;
+
+   // accounting glyphs load time
+   msg->fonts.glyphs_load += fe->gl_load_time;
+#endif
+
+   return EINA_TRUE;
+}
+
+static void
+_cserve2_cache_image_stats_get(Msg_Stats *msg)
+{
+}
+
+static void
+_cserve2_cache_font_stats_get(Msg_Stats *msg)
+{
+   eina_hash_foreach(font_entries, _font_entry_stats_cb, msg);
+}
+
+struct _debug_info
+{
+   unsigned int size;
+   unsigned int nfonts;
+};
+
+static Eina_Bool
+_font_entry_debug_size_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+{
+   struct _debug_info *di = fdata;
+   unsigned int size = di->size;
+   Font_Entry *fe = data;
+   Font_Cache *fc;
+   unsigned int intsize = sizeof(unsigned int);
+
+   // filelen
+   size += intsize;
+
+   // file
+   if (fe->src->file)
+     size += strlen(fe->src->file) + 1;
+
+   // namelen
+   size += intsize;
+
+   // name
+   if (fe->src->name)
+     size += strlen(fe->src->name) + 1;
+
+   // rend_flags, size, dpi
+   size += 3 * intsize;
+
+   // unused
+   size += intsize;
+
+   // ncaches
+   size += intsize;
+
+   EINA_INLIST_FOREACH(fe->caches, fc)
+     {
+        Glyph_Entry *gl;
+
+        // shmnamelen + shmname
+        size += intsize;
+        size += strlen(cserve2_shm_name_get(fc->shm)) + 1;
+
+        // size + usage
+        size += 2 * intsize;
+
+        // nglyphs
+        size += intsize;
+
+        EINA_INLIST_FOREACH(fc->glyphs, gl)
+          {
+             // index, offset, size
+             size += 3 * intsize;
+
+             // rows, width, pitch
+             size += 3 * intsize;
+
+             // num_grays, pixel_mode
+             size += 2 * intsize;
+          }
+     }
+
+   di->size = size;
+   di->nfonts++;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_font_entry_debug_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+{
+   char *buf = fdata;
+   Font_Entry *fe = data;
+   Font_Cache *fc;
+   unsigned int len;
+   unsigned int unused;
+   unsigned int ncaches;
+   unsigned int intsize = sizeof(unsigned int);
+
+   // filelen + file
+   len = 0;
+   if (fe->src->file)
+     len = strlen(fe->src->file) + 1;
+   memcpy(buf, &len, intsize);
+   buf += intsize;
+   memcpy(buf, fe->src->file, len);
+   buf += len;
+
+   // namelen + name
+   len = 0;
+   if (fe->src->name)
+     len = strlen(fe->src->name) + 1;
+   memcpy(buf, &len, intsize);
+   buf += intsize;
+   memcpy(buf, fe->src->name, len);
+   buf += len;
+
+   // rend_flags, size, dpi
+   memcpy(buf, &fe->rend_flags, intsize);
+   buf += intsize;
+   memcpy(buf, &fe->size, intsize);
+   buf += intsize;
+   memcpy(buf, &fe->dpi, intsize);
+   buf += intsize;
+
+   // unused
+   unused = fe->unused;
+   memcpy(buf, &unused, intsize);
+   buf += intsize;
+
+   // ncaches
+   ncaches = eina_inlist_count(fe->caches);
+   memcpy(buf, &ncaches, intsize);
+   buf += intsize;
+
+   EINA_INLIST_FOREACH(fe->caches, fc)
+     {
+        Glyph_Entry *gl;
+        const char *shmname;
+        unsigned int shmsize;
+
+        // shmnamelen + shmname
+        shmname = cserve2_shm_name_get(fc->shm);
+        len = strlen(shmname) + 1;
+        memcpy(buf, &len, intsize);
+        buf += intsize;
+        memcpy(buf, shmname, len);
+        buf += len;
+
+        // size, usage, nglyphs
+        shmsize = cserve2_shm_size_get(fc->shm);
+        memcpy(buf, &shmsize, intsize);
+        buf += intsize;
+        memcpy(buf, &fc->usage, intsize);
+        buf += intsize;
+        memcpy(buf, &fc->nglyphs, intsize);
+        buf += intsize;
+
+        EINA_INLIST_FOREACH(fc->glyphs, gl)
+          {
+             // index, offset, size
+             memcpy(buf, &gl->index, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->offset, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->size, intsize);
+             buf += intsize;
+
+             // rows, width, pitch
+             memcpy(buf, &gl->rows, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->width, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->pitch, intsize);
+             buf += intsize;
+
+             // num_grays, pixel_mode
+             memcpy(buf, &gl->num_grays, intsize);
+             buf += intsize;
+             memcpy(buf, &gl->pixel_mode, intsize);
+             buf += intsize;
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+static void *
+_cserve2_cache_font_debug(unsigned int rid, unsigned int *size)
+{
+   Msg_Font_Debug msg;
+   char *buf, *pos;
+   struct _debug_info di;
+   di.size = sizeof(msg);
+
+   memset(&msg, 0, sizeof(msg));
+
+   msg.base.type = CSERVE2_FONT_DEBUG;
+   msg.base.rid = rid;
+
+   // First calculate how much size is needed for this message:
+
+   // nfonts
+   di.size += sizeof(unsigned int);
+
+   // size needed for each font entry
+   eina_hash_foreach(font_entries, _font_entry_debug_size_cb, &di);
+
+   // Now really create the message
+   buf = malloc(di.size);
+   pos = buf;
+
+   // msg base
+   memcpy(buf, &msg, sizeof(msg));
+   pos += sizeof(msg);
+
+   // nfonts
+   memcpy(pos, &di.nfonts, sizeof(unsigned int));
+   pos += sizeof(unsigned int);
+
+   eina_hash_foreach(font_entries, _font_entry_debug_cb, pos);
+
+   *size = di.size;
+   return buf;
+}
 
 int
 cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char *path, const char *key, unsigned int rid)
@@ -1445,50 +2287,165 @@ cserve2_cache_image_unload(Client *client, unsigned int client_image_id)
 }
 
 int
-cserve2_cache_font_load(Client *client, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int rid)
+cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid)
 {
    Reference *ref;
    Font_Source *fs;
-   Font_Entry *fe = _cserve2_font_entry_find(name, namelen, size,
-                                             rend_flags, hint, dpi);
+   Font_Entry *fe;
+   char *fullname;
 
+   if (sourcelen == 0)
+     source = NULL;
+   if (namelen == 0)
+     name = NULL;
+
+   fullname = _file_path_join(source, name);
+   fe = _cserve2_font_entry_find(fullname, strlen(fullname) + 1, size,
+                                 rend_flags, dpi);
    if (fe)
      {
-        DBG("found font entry %s, rendflags: %d, hint: %d, size: %d, dpi: %d",
-            name, rend_flags, hint, size, dpi);
+        DBG("found font entry %s, rendflags: %d, size: %d, dpi: %d",
+            name, rend_flags, size, dpi);
 
         ref = _entry_reference_add((Entry *)fe, client, 0);
         client->fonts.referencing = eina_list_append(
            client->fonts.referencing, ref);
 
-        _font_loaded_send(client, fe, rid);
+        fe->unused = EINA_FALSE;
+
+        if (fe->request)
+          cserve2_request_waiter_add(fe->request, rid, client);
+        else
+          _font_loaded_send(client, rid);
+        free(fullname);
         return 0;
      }
 
    fe = calloc(1, sizeof(*fe));
    fe->rend_flags = rend_flags;
-   fe->hint = hint;
    fe->size = size;
    fe->dpi = dpi;
    fe->base.type = CSERVE2_FONT_ENTRY;
+   fe->glyphs = fash_gl_new(_glyph_free_cb);
+   ref = _entry_reference_add((Entry *)fe, client, 0);
+   client->fonts.referencing = eina_list_append(
+      client->fonts.referencing, ref);
+   fe->unused = EINA_FALSE;
 
-   fs = _cserve2_font_source_find(name);
+   fs = _cserve2_font_source_find(fullname);
    if (!fs)
      {
         fs = calloc(1, sizeof(*fs));
-        fs->name = eina_stringshare_add_length(name, namelen);
-        fs->file = eina_stringshare_ref(fs->name);
-        eina_hash_direct_add(font_sources, fs->name, fs);
+        if (source)
+          {
+             fs->key = eina_stringshare_add(fullname);
+             fs->name = eina_stringshare_add_length(name, namelen);
+             fs->file = eina_stringshare_add_length(source, sourcelen);
+          }
+        else
+          {
+             fs->file = eina_stringshare_add_length(name, namelen);
+             fs->key = eina_stringshare_ref(fs->file);
+          }
+        eina_hash_direct_add(font_sources, fs->key, fs);
      }
-
 
    fe->src = fs;
    fs->references++;
+   DBG("adding FONT_LOAD '%s' request.", fs->name);
    fe->request = cserve2_request_add(CSERVE2_REQ_FONT_LOAD, rid,
                                      client, &_font_load_funcs, fe);
 
    eina_hash_direct_add(font_entries, fe, fe);
 
+   free(fullname);
+
+   return 0;
+}
+
+int
+cserve2_cache_font_unload(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid)
+{
+   Font_Entry *fe;
+   char *fullname;
+
+   if (sourcelen == 0)
+     source = NULL;
+   if (namelen == 0)
+     name = NULL;
+
+   fullname = _file_path_join(source, name);
+   fe = _cserve2_font_entry_find(fullname, strlen(fullname) + 1, size,
+                                 rend_flags, dpi);
+   free(fullname);
+
+   if (!fe)
+     {
+        ERR("Unreferencing font not found: '%s:%s'.", source, name);
+        return -1;
+     }
+
+   _font_entry_reference_del(client, fe);
+
+   return 0;
+}
+
+int
+cserve2_cache_font_glyphs_load(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid)
+{
+   Glyphs_Request *req;
+
+   req = _glyphs_request_create(client, source, sourcelen, name, namelen,
+                                hint, rend_flags, size, dpi, glyphs, nglyphs);
+   if (!req)
+     {
+        free(glyphs);
+        return -1;
+     }
+
+   if (_glyphs_request_check(req))
+     {
+        INF("Glyphs already loaded. Sending answer.");
+        _glyphs_loaded_send(req, rid);
+        _glyphs_request_free(req);
+     }
+   else
+     {
+        cserve2_request_add(CSERVE2_REQ_FONT_GLYPHS_LOAD, rid,
+                            client, &_glyphs_load_funcs, req);
+     }
+   return 0;
+}
+
+int
+cserve2_cache_font_glyphs_used(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid __UNUSED__)
+{
+   Glyphs_Group *gg;
+   Eina_List *groups;
+   Glyphs_Request *req;
+
+   DBG("Received report of used glyphs from client %d", client->id);
+   req = _glyphs_request_create(client, source, sourcelen, name, namelen,
+                                hint, rend_flags, size, dpi, glyphs, nglyphs);
+   if (!req)
+     {
+        free(glyphs);
+        return 0;
+     }
+
+   _glyphs_load_request_prepare(req);
+   groups = _glyphs_group_create(req);
+
+   // Promote SHMs which are still cached and in use
+   // TODO: We can use later the information from request_prepare to preload
+   // glyphs which are not cached anymore, but are in use on the client.
+   EINA_LIST_FREE(groups, gg)
+     {
+        _font_shm_promote(gg->fc);
+        eina_list_free(gg->glyphs);
+     }
+
+   _glyphs_request_free(req);
    return 0;
 }
 
@@ -1521,4 +2478,37 @@ cserve2_cache_requests_response(Slave_Command type, void *msg, void *data)
    if (req->entry)
      req->entry->request = NULL;
    free(req);
+}
+
+void
+cserve2_cache_stats_get(Client *client, unsigned int rid)
+{
+   Msg_Stats msg;
+   int size;
+
+   memset(&msg, 0, sizeof(msg));
+
+   msg.base.type = CSERVE2_STATS;
+   msg.base.rid = rid;
+
+   _cserve2_cache_image_stats_get(&msg);
+   _cserve2_cache_font_stats_get(&msg);
+
+   size = sizeof(msg);
+   cserve2_client_send(client, &size, sizeof(size));
+   cserve2_client_send(client, &msg, size);
+}
+
+void
+cserve2_cache_font_debug(Client *client, unsigned int rid)
+{
+   void *msg;
+   unsigned int size;
+
+   msg = _cserve2_cache_font_debug(rid, &size);
+
+   cserve2_client_send(client, &size, sizeof(size));
+   cserve2_client_send(client, msg, size);
+
+   free(msg);
 }

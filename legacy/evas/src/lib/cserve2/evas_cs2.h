@@ -22,6 +22,8 @@ typedef enum {
    CSERVE2_FONT_GLYPHS_LOAD,
    CSERVE2_FONT_GLYPHS_LOADED,
    CSERVE2_FONT_GLYPHS_USED,
+   CSERVE2_STATS,
+   CSERVE2_FONT_DEBUG,
    CSERVE2_ERROR
 } Message_Type;
 
@@ -127,9 +129,9 @@ struct _Msg_Close {
  */
 struct _Msg_Font_Load {
    Msg_Base base;
+   unsigned int sourcelen; // font id
    unsigned int pathlen; // font id
    unsigned int rend_flags; // font id
-   unsigned int hint; // font id
    unsigned int size; // font id
    unsigned int dpi; // font id
 };
@@ -146,18 +148,19 @@ struct _Msg_Font_Loaded {
 /**
  * @struct _Msg_Font_Glyphs_Request
  *
- * Message from client to request load of glyphs, of inform usage of them.
+ * Message from client to request load of glyphs, or inform usage of them.
  *
  * The path strings follow the struct inside the message, as well as
  * the list of glyphs to be loaded.
  */
 struct _Msg_Font_Glyphs_Request {
    Msg_Base base;
+   unsigned int sourcelen; // font id
    unsigned int pathlen; // font id
    unsigned int rend_flags; // font id
-   unsigned int hint; // font id
    unsigned int size; // font id
    unsigned int dpi; // font id
+   unsigned int hint;
    unsigned int nglyphs;
 };
 
@@ -180,11 +183,67 @@ struct _Msg_Font_Glyphs_Request {
  *  - struct {
  *      unsigned int index;
  *      unsigned int offset;
+ *      unsigned int size;
+ *      unsigned int rows;
+ *      unsigned int width;
+ *      unsigned int pitch;
+ *      unsigned int num_grays;
+ *      unsigned int pixel_mode;
  *    } glarray[];
  */
 struct _Msg_Font_Glyphs_Loaded {
    Msg_Base base;
    unsigned int ncaches;
+};
+
+struct _Msg_Stats {
+   Msg_Base base;
+   struct {
+      unsigned int requested_usage;
+      unsigned int real_usage;
+      int fonts_load; // total time spent loading fonts
+      int fonts_used_load; // total time spent loading fonts that are
+                           // really used
+      int glyphs_load; // total time spent loading glyphs
+   } fonts;
+};
+
+/*
+ * @struct _Msg_Font_Debug
+ *
+ * Message from server containing all font cache info.
+ *
+ * Content of the message follows:
+ *
+ * * number of font entries;
+ * * each font entry:
+ *   - unsigned int filelen
+ *   - const char file
+ *   - unsigned int namelen
+ *   - const char name
+ *   - unsigned int rend_flags;
+ *   - unsigned int size;
+ *   - unsigned int dpi;
+ *   - unsigned int unused;
+ *   - ncaches:
+ *   - each cache:
+ *     * usigned int shmnamelen;
+ *     * const char shmname;
+ *     * unsigned int size;
+ *     * unsigned int usage;
+ *     * unsigned int nglyphs;
+ *     * each glyph:
+ *       - unsigned int index;
+ *       - unsigned int offset;
+ *       - unsigned int size;
+ *       - unsigned int rows;
+ *       - unsigned int width;
+ *       - unsigned int pitch;
+ *       - unsigned int num_grays;
+ *       - unsigned int pixel_mode;
+ */
+struct _Msg_Font_Debug {
+    Msg_Base base;
 };
 
 struct _Msg_Error {
@@ -206,6 +265,8 @@ typedef struct _Msg_Font_Load Msg_Font_Load;
 typedef struct _Msg_Font_Loaded Msg_Font_Loaded;
 typedef struct _Msg_Font_Glyphs_Request Msg_Font_Glyphs_Request;
 typedef struct _Msg_Font_Glyphs_Loaded Msg_Font_Glyphs_Loaded;
+typedef struct _Msg_Stats Msg_Stats;
+typedef struct _Msg_Font_Debug Msg_Font_Debug;
 typedef struct _Msg_Error Msg_Error;
 
 #endif

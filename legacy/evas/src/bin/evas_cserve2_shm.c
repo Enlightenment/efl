@@ -27,9 +27,29 @@ struct _Shm_Handle
    off_t image_offset;
    size_t map_size;
    size_t image_size;
+   int refcount;
+   void *data;
 };
 
 static int id = 0;
+
+size_t
+cserve2_shm_size_normalize(size_t size)
+{
+   long pagesize;
+   size_t normalized;
+
+   pagesize = sysconf(_SC_PAGESIZE);
+   if (pagesize < 1)
+     {
+        ERR("sysconf() reported weird value for PAGESIZE, assuming 4096.");
+        pagesize = 4096;
+     }
+
+   normalized = ((size + pagesize - 1) / pagesize) * pagesize;
+
+   return normalized;
+}
 
 Shm_Handle *
 cserve2_shm_request(size_t size)
@@ -38,7 +58,6 @@ cserve2_shm_request(size_t size)
    Shm_Handle *shm;
    char shmname[NAME_MAX];
    size_t map_size;
-   long pagesize;
    int fd;
 
    map = calloc(1, sizeof(Shm_Mapping));
@@ -59,14 +78,7 @@ cserve2_shm_request(size_t size)
           }
    } while (fd == -1);
 
-   pagesize = sysconf(_SC_PAGESIZE);
-   if (pagesize < 1)
-     {
-        ERR("sysconf() reported weird value for PAGESIZE, assuming 4096.");
-        pagesize = 4096;
-     }
-
-   map_size = ((size + pagesize - 1) / pagesize) * pagesize;
+   map_size = cserve2_shm_size_normalize(size);
 
    if (ftruncate(fd, map_size) == -1)
      {
@@ -106,6 +118,9 @@ cserve2_shm_unref(Shm_Handle *shm)
    Shm_Mapping *map = shm->mapping;
 
    map->segments = eina_inlist_remove(map->segments, EINA_INLIST_GET(shm));
+
+   if (shm->data)
+     munmap(shm->data, shm->image_size);
    free(shm);
 
    if (map->segments)
@@ -144,4 +159,37 @@ size_t
 cserve2_shm_size_get(const Shm_Handle *shm)
 {
    return shm->image_size;
+}
+
+void *
+cserve2_shm_map(Shm_Handle *shm)
+{
+   int fd;
+   const char *name;
+
+   if (shm->refcount++)
+     return shm->data;
+
+   name = cserve2_shm_name_get(shm);
+
+   fd = shm_open(name, O_RDWR, S_IWUSR);
+   if (fd == -1)
+     return MAP_FAILED;
+
+   shm->data = mmap(NULL, shm->image_size, PROT_WRITE, MAP_SHARED,
+                    fd, shm->image_offset);
+
+   close(fd);
+
+   return shm->data;
+}
+
+void
+cserve2_shm_unmap(Shm_Handle *shm)
+{
+   if (--shm->refcount)
+     return;
+
+   munmap(shm->data, shm->image_size);
+   shm->data = NULL;
 }

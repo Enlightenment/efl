@@ -89,8 +89,8 @@ error_send(int fd, Error_Type err)
    return response_send(fd, ERROR, &err, sizeof(Error_Type));
 }
 
-void *
-cserve2_shm_map(const char *name, size_t length, off_t offset)
+static void *
+_cserve2_shm_map(const char *name, size_t length, off_t offset)
 {
    void *map;
    int fd;
@@ -106,11 +106,13 @@ cserve2_shm_map(const char *name, size_t length, off_t offset)
    return map;
 }
 
-void
-cserve2_shm_unmap(void *map, size_t length)
+/*
+static void
+_cserve2_shm_unmap(void *map, size_t length)
 {
    munmap(map, length);
 }
+*/
 
 static Error_Type
 image_open(const char *file __UNUSED__, const char *key __UNUSED__, Slave_Msg_Image_Opened *result)
@@ -128,8 +130,8 @@ image_open(const char *file __UNUSED__, const char *key __UNUSED__, Slave_Msg_Im
 static Error_Type
 image_load(const char *shmfile, Slave_Msg_Image_Load *params)
 {
-   char *map = cserve2_shm_map(shmfile, params->shm.mmap_size,
-                               params->shm.mmap_offset);
+   char *map = _cserve2_shm_map(shmfile, params->shm.mmap_size,
+                                params->shm.mmap_offset);
    if (map == MAP_FAILED)
      return CSERVE2_RESOURCE_ALLOCATION_FAILED;
 

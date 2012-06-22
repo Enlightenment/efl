@@ -45,7 +45,7 @@ if EVAS_CSERVE2
 SUBDIRS = loaders
 
 libexec_PROGRAMS = evas_cserve2 evas_cserve2_slave dummy_slave
-bin_PROGRAMS = evas_cserve2_client
+bin_PROGRAMS = evas_cserve2_client evas_cserve2_usage
 
 AM_CPPFLAGS = \
 -I. \
@@ -56,7 +56,8 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_LIBEXEC_DIR=\"$(libexecdir)\" \
 @FREETYPE_CFLAGS@ \
-@EINA_CFLAGS@
+@EINA_CFLAGS@ \
+@EET_CFLAGS@
 
 evas_cserve2_SOURCES = \
 evas_cserve2.h \
@@ -70,13 +71,23 @@ evas_cserve2_requests.c \
 evas_cserve2_fonts.c \
 evas_cserve2_main_loop_linux.c
 
+libevas_cserve2_utils_la = $(top_builddir)/src/lib/cserve2/libevas_cserve2_utils.la
+
 evas_cserve2_LDADD = \
 @FREETYPE_LIBS@ \
 @EINA_LIBS@ \
-@EFL_SHM_OPEN_LIBS@
+@EFL_SHM_OPEN_LIBS@ \
+@EET_LIBS@ \
+$(libevas_cserve2_utils_la)
 
 evas_cserve2_client_SOURCES = \
 evas_cserve2_client.c
+
+evas_cserve2_usage_SOURCES = \
+evas_cserve2_usage.c
+
+evas_cserve2_usage_LDADD = \
+@EINA_LIBS@
 
 evas_cserve2_slave_SOURCES = \
 evas_cserve2_slave.c \

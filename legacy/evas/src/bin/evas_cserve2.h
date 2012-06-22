@@ -21,6 +21,8 @@
 #endif
 #define INF(...) EINA_LOG_DOM_INFO(_evas_cserve2_bin_log_dom, __VA_ARGS__)
 
+#define DEBUG_LOAD_TIME 1
+
 extern int _evas_cserve2_bin_log_dom;
 
 typedef struct _Slave Slave;
@@ -119,11 +121,12 @@ struct _Slave_Msg_Font_Load {
    void *ftdata1; // Freetype file source info comes here
    void *ftdata2; // Freetype font info comes here
    unsigned int rend_flags;
-   unsigned int hint;
    unsigned int size;
    unsigned int dpi;
    const char *name;
    const char *file;
+   void *data;
+   int datasize;
 };
 
 struct _Slave_Msg_Font_Loaded {
@@ -131,11 +134,58 @@ struct _Slave_Msg_Font_Loaded {
    void *ftdata2;
 };
 
+struct _Slave_Msg_Font_Glyphs_Load {
+   struct {
+      void *ftdata1;
+      void *ftdata2;
+      unsigned int rend_flags;
+      unsigned int hint;
+   } font;
+   struct {
+      unsigned int nglyphs;
+      unsigned int *glyphs;
+   } glyphs;
+   struct {
+      Shm_Handle *shm;
+      unsigned int usage;
+      unsigned int nglyphs;
+   } cache;
+};
+
+struct _Slave_Msg_Glyph {
+   unsigned int index;
+   unsigned int offset;
+   unsigned int size;
+   unsigned int rows;
+   unsigned int width;
+   unsigned int pitch;
+   unsigned int num_grays;
+   unsigned int pixel_mode;
+};
+
+typedef struct _Slave_Msg_Glyph Slave_Msg_Glyph;
+
+struct _Slave_Msg_Font_Cache {
+   unsigned int nglyphs;
+   Slave_Msg_Glyph *glyphs;
+   Shm_Handle *shm;
+   unsigned int usage;
+};
+
+typedef struct _Slave_Msg_Font_Cache Slave_Msg_Font_Cache;
+
+struct _Slave_Msg_Font_Glyphs_Loaded {
+   unsigned int ncaches;
+   Slave_Msg_Font_Cache **caches;
+};
+
 typedef struct _Slave_Msg_Font_Load Slave_Msg_Font_Load;
 typedef struct _Slave_Msg_Font_Loaded Slave_Msg_Font_Loaded;
+typedef struct _Slave_Msg_Font_Glyphs_Load Slave_Msg_Font_Glyphs_Load;
+typedef struct _Slave_Msg_Font_Glyphs_Loaded Slave_Msg_Font_Glyphs_Loaded;
 
 typedef void *(*Font_Request_Msg_Create)(void *data, int *size);
-typedef void (*Font_Request_Msg_Free)(void *data);
+typedef void (*Font_Request_Msg_Free)(void *msg, void *data);
 typedef void (*Font_Request_Response)(Client *c, void *data, void *resp, unsigned int rid);
 typedef void (*Font_Request_Error)(Client *c, void *data, Error_Type error, unsigned int rid);
 
@@ -160,6 +210,8 @@ typedef enum {
    CSERVE2_REQ_FONT_GLYPHS_LOAD,
    CSERVE2_REQ_LAST
 } Font_Request_Type;
+
+typedef struct _Glyph_Entry Glyph_Entry;
 
 typedef void (*Fd_Watch_Cb)(int fd, Fd_Flags flags, void *data);
 typedef void (*Timeout_Cb)(void); /* void* for compat? */
@@ -211,6 +263,9 @@ off_t cserve2_shm_map_offset_get(const Shm_Handle *shm);
 off_t cserve2_shm_offset_get(const Shm_Handle *shm);
 size_t cserve2_shm_map_size_get(const Shm_Handle *shm);
 size_t cserve2_shm_size_get(const Shm_Handle *shm);
+void *cserve2_shm_map(Shm_Handle *shm);
+void cserve2_shm_unmap(Shm_Handle *shm);
+size_t cserve2_shm_size_normalize(size_t size);
 
 void cserve2_command_run(Client *client, Message_Type type);
 
@@ -225,10 +280,16 @@ void cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsi
 void cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsigned int rid);
 void cserve2_cache_image_unload(Client *client, unsigned int client_image_id);
 
-int cserve2_cache_font_load(Client *client, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int rid);
+int cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid);
+int cserve2_cache_font_unload(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int rid);
+int cserve2_cache_font_glyphs_load(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int rend_flags, unsigned int hint, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid);
+int cserve2_cache_font_glyphs_used(Client *client, const char *source, unsigned int sourcelen, const char *name, unsigned int namelen, unsigned int hint, unsigned int rend_flags, unsigned int size, unsigned int dpi, unsigned int *glyphs, unsigned int nglyphs, unsigned int rid);
+void cserve2_cache_stats_get(Client *client, unsigned int rid);
+void cserve2_cache_font_debug(Client *client, unsigned int rid);
 
 
 Font_Request *cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request_Funcs *funcs, void *data);
+void cserve2_request_waiter_add(Font_Request *req, unsigned int rid, Client *client);
 void cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err);
 void cserve2_request_cancel_all(Font_Request *req, Error_Type err);
 void cserve2_requests_init(void);
@@ -240,5 +301,7 @@ void cserve2_cache_requests_response(Slave_Command type, void *msg, void *data);
 void cserve2_font_init(void);
 void cserve2_font_shutdown(void);
 void *cserve2_font_slave_cb(Slave_Thread_Data *sd, Slave_Command *cmd, const void *cmddata, void *data);
+void cserve2_font_source_ft_free(void *fontsource);
+void cserve2_font_ft_free(void *fontinfo);
 
 #endif /* _EVAS_CSERVE2_H */

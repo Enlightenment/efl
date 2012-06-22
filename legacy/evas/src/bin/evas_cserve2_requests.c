@@ -81,13 +81,15 @@ typedef struct _Waiter Waiter;
 struct _Request_Queue
 {
    Eina_Inlist *waiting;
-   Eina_Inlist *processing;
+   Eina_Inlist *processing; // TODO: Check if is there any use for this list.
 };
 
 typedef struct _Request_Queue Request_Queue;
 
 static Request_Queue *requests = NULL;
 // static Eina_List *processing = NULL;
+
+static void _cserve2_requests_process(void);
 
 static void
 _request_waiter_add(Font_Request *req, Client *client, unsigned int rid)
@@ -109,15 +111,17 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
 
    req = NULL;
 
+   /* Check if this request was already being processed. */
    EINA_INLIST_FOREACH(requests[type].processing, r)
      {
-        if (r->data == data)
+        if (r->data != data)
           continue;
 
         req = r;
         break;
      }
 
+   /* Check if this request was already waiting to be processed. */
    if (!req)
      {
         EINA_INLIST_FOREACH(requests[type].waiting, r)
@@ -130,20 +134,31 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
           }
      }
 
+   /* create new request */
    if (!req)
      {
         DBG("Add request for rid: %d", rid);
         req = malloc(sizeof(*req));
+        req->type = type;
         req->data = data;
         req->waiters = NULL;
         req->processing = EINA_FALSE;
+        req->funcs = funcs;
         requests[type].waiting = eina_inlist_append(requests[type].waiting,
                                                     EINA_INLIST_GET(req));
      }
 
    _request_waiter_add(req, client, rid);
 
+   _cserve2_requests_process();
+
    return req;
+}
+
+void
+cserve2_request_waiter_add(Font_Request *req, unsigned int rid, Client *client)
+{
+   _request_waiter_add(req, client, rid);
 }
 
 void
@@ -167,13 +182,13 @@ cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
 
    // TODO: When we have speculative preload, there may be no waiters,
    // so we need a flag or something else to make things still load.
-   if (!req->waiters)
+   if ((!req->waiters) && (!req->processing))
      {
         Eina_Inlist **reqlist = &requests[req->type].waiting;
         *reqlist = eina_inlist_remove(*reqlist, EINA_INLIST_GET(req));
         // TODO: If the request is being processed, it can't be deleted. Must
         // be marked as delete_me instead.
-        req->funcs->msg_free(req->msg);
+        req->funcs->msg_free(req->msg, req->data);
         free(req);
      }
 
@@ -195,9 +210,12 @@ cserve2_request_cancel_all(Font_Request *req, Error_Type err)
         free(w);
      }
 
+   if (req->processing)
+     return;
+
    requests[req->type].waiting = eina_inlist_remove(
       requests[req->type].waiting, EINA_INLIST_GET(req));
-   req->funcs->msg_free(req->msg);
+   req->funcs->msg_free(req->msg, req->data);
    free(req);
 }
 
@@ -226,7 +244,7 @@ _cserve2_request_failed(Font_Request *req, Error_Type type)
         free(w);
      }
 
-   req->funcs->msg_free(req->msg);
+   req->funcs->msg_free(req->msg, req->data);
    requests[req->type].processing = eina_inlist_remove(
       requests[req->type].processing, EINA_INLIST_GET(req));
    free(req);
@@ -252,7 +270,7 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
         free(w);
      }
 
-   req->funcs->msg_free(req->msg);
+   req->funcs->msg_free(req->msg, req->data);
    // FIXME: We shouldn't free this message directly, it must be freed by a
    // callback.
    free(msg);
@@ -265,6 +283,8 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
    idle = &_workers[sw->type].idle;
    *working = eina_list_remove(*working, sw);
    *idle = eina_list_append(*idle, sw);
+
+   _cserve2_requests_process();
 }
 
 static void
@@ -338,6 +358,8 @@ _cserve2_request_dispatch(Slave_Worker *sw, Slave_Command ctype, Font_Request *r
    int size;
    char *slave_msg = req->funcs->msg_create(req->data, &size);
 
+
+   DBG("dispatching message of type %d to slave.", req->type);
    if (!slave_msg)
      {
         ERR("Could not create slave message for request type %d.", req->type);
@@ -352,8 +374,8 @@ _cserve2_request_dispatch(Slave_Worker *sw, Slave_Command ctype, Font_Request *r
    return EINA_TRUE;
 }
 
-void
-cserve2_requests_process(void)
+static void
+_cserve2_requests_process(void)
 {
     int rtype, j;
 
@@ -366,7 +388,7 @@ cserve2_requests_process(void)
 
          for (j = 0; _request_match[j].rtype != CSERVE2_REQ_LAST; j++)
            {
-              if (_request_match[j].rtype == (unsigned int)j)
+              if (_request_match[j].rtype == rtype)
                 {
                    type = _request_match[j].stype;
                    ctype = _request_match[j].ctype;
@@ -387,7 +409,7 @@ cserve2_requests_process(void)
          idle = &_workers[type].idle;
          working = &_workers[type].working;
 
-         while (requests[j].waiting &&
+         while (requests[rtype].waiting &&
                 (eina_list_count(*working) < max_workers))
            {
               Slave_Worker *sw;
