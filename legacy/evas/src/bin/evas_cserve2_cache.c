@@ -1871,7 +1871,8 @@ _font_entry_debug_size_cb(const Eina_Hash *hash __UNUSED__, const void *key __UN
 static Eina_Bool
 _font_entry_debug_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
 {
-   char *buf = fdata;
+   char **pos = fdata;
+   char *buf = *pos;
    Font_Entry *fe = data;
    Font_Cache *fc;
    unsigned int len;
@@ -1964,6 +1965,7 @@ _font_entry_debug_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
           }
      }
 
+   *pos = buf;
    return EINA_TRUE;
 }
 
@@ -1974,6 +1976,7 @@ _cserve2_cache_font_debug(unsigned int rid, unsigned int *size)
    char *buf, *pos;
    struct _debug_info di;
    di.size = sizeof(msg);
+   di.nfonts = 0;
 
    memset(&msg, 0, sizeof(msg));
 
@@ -2000,7 +2003,7 @@ _cserve2_cache_font_debug(unsigned int rid, unsigned int *size)
    memcpy(pos, &di.nfonts, sizeof(unsigned int));
    pos += sizeof(unsigned int);
 
-   eina_hash_foreach(font_entries, _font_entry_debug_cb, pos);
+   eina_hash_foreach(font_entries, _font_entry_debug_cb, &pos);
 
    *size = di.size;
    return buf;
