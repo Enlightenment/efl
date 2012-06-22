@@ -225,6 +225,7 @@ _entry_load_finish(Entry *e)
 #endif
 }
 
+#ifdef DEBUG_LOAD_TIME
 static int
 _timeval_sub(const struct timeval *tv2, const struct timeval *tv1)
 {
@@ -235,6 +236,7 @@ _timeval_sub(const struct timeval *tv2, const struct timeval *tv1)
 
     return t2 - t1;
 }
+#endif
 
 static void
 _image_opened_send(Client *client, File_Data *entry, unsigned int rid)
