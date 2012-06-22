@@ -204,7 +204,7 @@ ecore_con_init(void)
 
 
    eina_magic_string_set(ECORE_MAGIC_CON_SERVER, "Ecore_Con_Server");
-   eina_magic_string_set(ECORE_MAGIC_CON_CLIENT, "Ecore_Con_Server");
+   eina_magic_string_set(ECORE_MAGIC_CON_CLIENT, "Ecore_Con_Client");
    eina_magic_string_set(ECORE_MAGIC_CON_URL, "Ecore_Con_Url");
 
    /* TODO Remember return value, if it fails, use gethostbyname() */
