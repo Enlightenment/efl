@@ -14,7 +14,7 @@ AM_CPPFLAGS = \
 
 if EVAS_CSERVE2
 
-noinst_LTLIBRARIES = libevas_cserve2.la
+noinst_LTLIBRARIES = libevas_cserve2.la libevas_cserve2_utils.la
 
 libevas_cserve2_la_SOURCES = \
 evas_cs2.h \
@@ -22,6 +22,10 @@ evas_cs2_private.h \
 evas_cs2_image_data.c \
 evas_cs2_client.c
 
-libevas_cserve2_la_LIBADD = @EINA_LIBS@
+libevas_cserve2_utils_la_SOURCES = \
+evas_cs2_utils.h \
+evas_cs2_utils.c
+
+libevas_cserve2_la_LIBADD = @EINA_LIBS@ libevas_cserve2_utils.la
 
 endif
