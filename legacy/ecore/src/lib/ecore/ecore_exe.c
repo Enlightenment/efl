@@ -2,11 +2,6 @@
 # include <config.h>
 #endif
 
-#if defined (__FreeBSD__) || defined (__OpenBSD__) || defined (__NetBSD__)
-# include <sys/time.h>
-# include <sys/resource.h>
-#endif
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -14,6 +9,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #ifdef HAVE_SYS_PRCTL_H
 # include <sys/prctl.h>

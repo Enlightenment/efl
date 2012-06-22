@@ -763,3 +763,7 @@
 	  an implicit requirement that the window had keyboard focus to retrieve
 	  a timestamp that wasn't used. This removes that requirement and fixes
 	  ticket #1030.
+
+2012-06-22 Vincent Torri
+
+	* ecore_exe: fix compilation on fedora 18.
