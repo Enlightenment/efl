@@ -27,6 +27,7 @@
 # include "config.h"
 #endif
 
+#if !defined(__FreeBSD__)
 #ifndef _XOPEN_SOURCE
 #define _XOPEN_SOURCE	600
 #endif
@@ -36,6 +37,10 @@
 
 #undef _DARWIN_C_SOURCE
 #define _DARWIN_C_SOURCE
+
+#undef _NETBSD_SOURCE
+#define _NETBSD_SOURCE
+#endif
 
 #include <stddef.h>		/* offsetof() */
 #include <stdint.h>		/* uint32_t */
