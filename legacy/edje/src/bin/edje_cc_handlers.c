@@ -2291,21 +2291,46 @@ st_collections_group_inherit(void)
 
    if (pc2->data)
      {
-        char *key;
+        char *key, *data;
 
         memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
         eina_hash_foreach(pc2->data,
                      _edje_data_item_list_foreach, &fdata);
 
-        if (!pc->data)
-          pc->data = eina_hash_string_small_new(free);
-
-
+        if (!pc->data) pc->data = eina_hash_string_small_new(free);
         EINA_LIST_FREE(fdata.list, key)
           {
-             es = mem_alloc(SZ(Edje_String));
-             es = (Edje_String *)eina_hash_find(pc2->data, key);
-             eina_hash_direct_add(pc->data, key, es);
+             data = eina_hash_find(pc2->data, key);
+             eina_hash_direct_add(pc->data, key, data);
+          }
+     }
+
+   if (pc2->alias)
+     {
+        char *key, *alias;
+
+        memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
+        eina_hash_foreach(pc2->alias,
+                     _edje_data_item_list_foreach, &fdata);
+        if (!pc->alias) pc->alias = eina_hash_string_small_new(free);
+        EINA_LIST_FREE(fdata.list, key)
+          {
+             alias = eina_hash_find(pc2->alias, key);
+             eina_hash_direct_add(pc->alias, key, alias);
+          }
+     }
+   if (pc2->aliased)
+     {
+        char *key, *aliased;
+
+        memset(&fdata, 0, sizeof(Edje_List_Foreach_Data));
+        eina_hash_foreach(pc2->aliased,
+                          _edje_data_item_list_foreach, &fdata);
+        if (!pc->aliased) pc->aliased = eina_hash_string_small_new(free);
+        EINA_LIST_FREE(fdata.list, key)
+          {
+             aliased = eina_hash_find(pc2->aliased, key);
+             eina_hash_direct_add(pc->aliased, key, aliased);
           }
      }
 

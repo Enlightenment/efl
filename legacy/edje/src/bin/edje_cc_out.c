@@ -2144,11 +2144,15 @@ data_process_lookups(void)
           }
         else
           {
+             char *aliased;
+             aliased = eina_hash_find(part->pc->aliased, part->name);
+             if (!aliased)
+               aliased = part->name;
              for (i = 0; i < part->pc->parts_count; ++i)
                {
                   ep = part->pc->parts[i];
 
-                  if ((ep->name) && (!strcmp(ep->name, part->name)))
+                  if ((ep->name) && (!strcmp(ep->name, aliased)))
                     {
                        handle_slave_lookup(part_slave_lookups, part->dest, ep->id);
                        *(part->dest) = ep->id;

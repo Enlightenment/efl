@@ -496,3 +496,8 @@
         embryo_cc. this still like before requires embryo and edje to share
         the same install prefix for edje_cc to work.
 
+2012-06-12 Michael Bouchaud (yoz)
+
+	* The aliases are now inherited from the targeted group
+	* Aliases can be usable with edje programs, if the part is in the
+	group
