@@ -508,41 +508,39 @@ struct _Font_Char_Index
 EAPI FT_UInt
 evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
 {
-   static const Eina_Unicode mapfix[] =
+   static const unsigned short mapfix[] =
      {
-        0x25c6, 0x1,
-        0x2592, 0x2,
-        0x2409, 0x3,
-        0x240c, 0x4,
-        0x240d, 0x5,
-        0x240a, 0x6,
         0x00b0, 0x7,
         0x00b1, 0x8,
-        0x2424, 0x9,
-        0x240b, 0xa,
-        0x2518, 0xb,
-        0x2510, 0xc,
-        0x250c, 0xd,
-        0x2514, 0xe,
-        0x253c, 0xf,
-        0x23ba, 0x10,
-        0x23bb, 0x11,
-        0x2500, 0x12,
-        0x23bc, 0x13,
-        0x23bd, 0x14,
-        0x251c, 0x15,
-        0x2524, 0x16,
-        0x2534, 0x17,
-        0x252c, 0x18,
-        0x2502, 0x19,
+        0x00b7, 0x1f,
+        0x03c0, 0x1c,
+        0x20a4, 0xa3,
+        0x2260, 0x1d,
         0x2264, 0x1a,
         0x2265, 0x1b,
-        0x03c0, 0x1c,
-        0x2260, 0x1d,
-        0x00a3, 0xa3,
-        0x00b7, 0x1f,
-        0x20a4, 0xa3,
-        0x0000, 0x0
+        0x23ba, 0x10,
+        0x23bb, 0x11,
+        0x23bc, 0x13,
+        0x23bd, 0x14,
+        0x2409, 0x3,
+        0x240a, 0x6,
+        0x240b, 0xa,
+        0x240c, 0x4,
+        0x240d, 0x5,
+        0x2424, 0x9,
+        0x2500, 0x12,
+        0x2502, 0x19,
+        0x250c, 0xd,
+        0x2510, 0xc,
+        0x2514, 0xe,
+        0x2518, 0xb,
+        0x251c, 0x15,
+        0x2524, 0x16,
+        0x252c, 0x18,
+        0x2534, 0x17,
+        0x253c, 0xf,
+        0x2592, 0x2,
+        0x25c6, 0x1,
      };
    Font_Char_Index result;
    //FT_UInt ret;
@@ -575,19 +573,47 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
 #ifdef HAVE_PTHREAD
 //   pthread_mutex_unlock(&fi->ft_mutex);
 #endif
-   if (result.index <= 0)
+   // this is a workaround freetype bugs where for a bitmap old style font
+   // even if it has unicode information and mappings, they are not used
+   // to find terminal line/drawing chars, so do this by hand with a table
+   if ((result.index <= 0) && (fi->src->ft.face->num_fixed_sizes == 1) &&
+      (fi->src->ft.face->num_glyphs < 512))
      {
-        int i;
-        
-        for (i = 0; mapfix[i]; i += 2)
+        int i, min = 0, max;
+
+        // binary search through sorted table of codepoints to new
+        // codepoints with a guess that bitmap font is playing the old
+        // game of putting line drawing chars in specific ranges
+        max = sizeof(mapfix) / (sizeof(mapfix[0]) * 2);
+        i = (min + max) / 2;                                          
+        for (;;)
           {
-             if (gl == mapfix[i])
+             unsigned short v;
+             
+             v = mapfix[i << 1];
+             if (gl == v)
                {
-                  gl = mapfix[i + 1];
+                  gl = mapfix[(i << 1) + 1];
                   FTLOCK();
                   result.index = FT_Get_Char_Index(fi->src->ft.face, gl);
                   FTUNLOCK();
                   break;
+               }
+             // failure to find at all
+             if ((max - min) <= 2) break;
+             // if glyph above out position...
+             if (gl > v)
+               {
+                  min = i;
+                  if ((max - min) == 2) i = max;
+                  else i = (min + max) / 2;
+               }
+             // if glyph below out position
+             else if (gl < v)
+               {
+                  max = i;
+                  if ((max - min) == 2) i = min;
+                  else i = (min + max) / 2;
                }
           }
      }
