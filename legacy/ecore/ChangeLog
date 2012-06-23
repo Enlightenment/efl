@@ -767,3 +767,9 @@
 2012-06-22 Vincent Torri
 
 	* ecore_exe: fix compilation on fedora 18.
+
+2012-06-23  Carsten Haitzler (The Rasterman)
+
+        * Fix small problem with xim module and if xim input context is
+        destroyed. causes crashes next focus. track ic and set to NULL.
+

@@ -27,9 +27,13 @@ static Eina_List *open_ims = NULL;
 #define FEEDBACK_MASK (XIMReverse | XIMUnderline | XIMHighlight)
 
 typedef struct _XIM_Im_Info XIM_Im_Info;
+
+typedef struct _Ecore_IMF_Context_Data Ecore_IMF_Context_Data;
+
 struct _XIM_Im_Info
 {
    Ecore_X_Window win;
+   Ecore_IMF_Context_Data *user;
    char          *locale;
    XIM            im;
    Eina_List     *ics;
@@ -39,7 +43,6 @@ struct _XIM_Im_Info
    Eina_Bool      supports_cursor : 1;
 };
 
-typedef struct _Ecore_IMF_Context_Data Ecore_IMF_Context_Data;
 struct _Ecore_IMF_Context_Data
 {
    Ecore_X_Window win;
@@ -56,6 +59,8 @@ struct _Ecore_IMF_Context_Data
    Eina_Bool      in_toplevel;
    XIMFeedback   *feedbacks;
 
+   XIMCallback    destroy_cb;
+   
    XIMCallback    preedit_start_cb;
    XIMCallback    preedit_done_cb;
    XIMCallback    preedit_draw_cb;
@@ -74,7 +79,6 @@ static void          add_feedback_attr(Eina_List **attrs,
                                        int end_pos);
 
 static void          reinitialize_ic(Ecore_IMF_Context *ctx);
-static void          reinitialize_all_ics(XIM_Im_Info *info);
 static void          set_ic_client_window(Ecore_IMF_Context *ctx,
                                           Ecore_X_Window window);
 static int           preedit_start_callback(XIC xic,
@@ -1335,16 +1339,6 @@ reinitialize_ic(Ecore_IMF_Context *ctx)
 }
 
 static void
-reinitialize_all_ics(XIM_Im_Info *info)
-{
-   Eina_List *tmp_list;
-   Ecore_IMF_Context *ctx;
-
-   EINA_LIST_FOREACH (info->ics, tmp_list, ctx)
-     reinitialize_ic(ctx);
-}
-
-static void
 set_ic_client_window(Ecore_IMF_Context *ctx,
                      Ecore_X_Window window)
 {
@@ -1364,6 +1358,8 @@ set_ic_client_window(Ecore_IMF_Context *ctx,
         XIM_Im_Info *info;
         info = imf_context_data->im_info;
         info->ics = eina_list_remove(info->ics, imf_context_data);
+        if (imf_context_data->im_info)
+          imf_context_data->im_info->user = NULL;
         imf_context_data->im_info = NULL;
      }
 
@@ -1377,6 +1373,8 @@ set_ic_client_window(Ecore_IMF_Context *ctx,
         imf_context_data->im_info->ics =
           eina_list_prepend(imf_context_data->im_info->ics,
                             imf_context_data);
+        if (imf_context_data->im_info)
+          imf_context_data->im_info->user = imf_context_data;
      }
 }
 
@@ -1555,9 +1553,12 @@ xim_destroy_callback(XIM xim __UNUSED__,
                      XPointer call_data __UNUSED__)
 {
    XIM_Im_Info *info = (XIM_Im_Info *)client_data;
-   info->im = NULL;
+   Eina_List *tmp_list;
+   Ecore_IMF_Context *ctx;
 
-   reinitialize_all_ics(info);
+   if (info->user) info->user->ic = NULL;
+   info->im = NULL;
+//   reinitialize_ic(ctx);
    xim_info_try_im(info);
 
    return;
