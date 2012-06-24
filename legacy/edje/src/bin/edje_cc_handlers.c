@@ -4686,6 +4686,7 @@ st_collections_group_parts_part_description_visible(void)
 	('limit,width,over', 'limit,width,zero'). By default no signal are
 	emitted.
     @endproperty
+    @since 1.7.0
 */
 static void
 st_collections_group_parts_part_description_limit(void)
