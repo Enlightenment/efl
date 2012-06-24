@@ -293,18 +293,11 @@ _ecore_evas_x_render(Ecore_Evas *ee)
                                               r->x, r->y, r->w, r->h);
                   if (ee->shaped)
                     {
-#ifdef EVAS_FRAME_QUEUING
-                       evas_sync(ee->evas);
-#endif
                        ecore_x_window_shape_mask_set(ee->prop.window,
                                                      ee->engine.x.mask);
                     }
                   if (ee->alpha)
                     {
-#ifdef EVAS_FRAME_QUEUING
-                       /* wait until ee->engine.x.mask being updated */
-//                     evas_sync(ee->evas);
-#endif
 //                     ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
                     }
                   evas_render_updates_free(updates);
@@ -419,18 +412,11 @@ _ecore_evas_x_render(Ecore_Evas *ee)
           {
              if (ee->shaped)
                {
-#ifdef EVAS_FRAME_QUEUING
-                  evas_sync(ee->evas);
-#endif
                   ecore_x_window_shape_mask_set(ee->prop.window,
                                                 ee->engine.x.mask);
                }
              if (ee->alpha)
                {
-#ifdef EVAS_FRAME_QUEUING
-                  /* wait until ee->engine.x.mask being updated */
-//                evas_sync(ee->evas);
-#endif
 //                ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
                }
              evas_render_updates_free(updates);
@@ -3136,16 +3122,6 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
         einfo->info.screen = NULL;
 # endif
         einfo->info.drawable = ee->prop.window;
-
-# ifdef EVAS_FRAME_QUEUING
-          {
-             char *render_mode;
-
-             render_mode = getenv("EVAS_RENDER_MODE");
-             if ((render_mode) && (!strcmp(render_mode, "non-blocking")))
-               einfo->render_mode = EVAS_RENDER_MODE_NONBLOCKING;
-          }
-# endif
 
         if (argb)
           {
