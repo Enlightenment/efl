@@ -1,6 +1,9 @@
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src doc
+if HAVE_PO
+SUBDIRS += po
+endif
 
 MAINTAINERCLEANFILES = \
 Makefile.in \

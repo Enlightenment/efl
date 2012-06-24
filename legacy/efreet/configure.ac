@@ -57,6 +57,23 @@ AC_SUBST(release_info)
 VMAJ=v_maj
 AC_SUBST(VMAJ)
 
+AM_GNU_GETTEXT_VERSION(0.17)
+
+m4_ifdef([AM_GNU_GETTEXT], [
+AM_GNU_GETTEXT([external])
+po_makefile_in=po/Makefile.in
+have_po="yes"
+],[
+have_po="no"
+])
+AC_SUBST(LTLIBINTL)
+
+if test "x${POSUB}" = "x" ; then
+   have_po="no"
+fi
+
+AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
+
 ### Needed information
 
 AC_CANONICAL_BUILD
@@ -231,6 +248,7 @@ src/tests/Makefile
 src/tests/data/Makefile
 src/tests/data/sub/Makefile
 src/tests/compare/Makefile
+$po_makefile_in
 ])
 
 

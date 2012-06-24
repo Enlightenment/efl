@@ -119,7 +119,7 @@ EAPI const char *
 efreet_desktop_dir_get(void)
 {
     if (xdg_desktop_dir) return xdg_desktop_dir;
-    xdg_desktop_dir = efreet_dir_get("XDG_DESKTOP_DIR", "/Desktop");
+    xdg_desktop_dir = efreet_dir_get("XDG_DESKTOP_DIR", _("/Desktop"));
     return xdg_desktop_dir;
 }
 
