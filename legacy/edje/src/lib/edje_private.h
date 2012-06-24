@@ -195,7 +195,7 @@ struct _Edje_Smart_Api
 /* increment this when you add new feature to edje file format without
  * breaking backward compatibility.
  */
-#define EDJE_FILE_MINOR 3
+#define EDJE_FILE_MINOR 4
 
 /* FIXME:
  *
@@ -321,6 +321,7 @@ typedef struct _Edje_Part_Description_Spec_Box       Edje_Part_Description_Spec_
 typedef struct _Edje_Part_Description_Spec_Table     Edje_Part_Description_Spec_Table;
 typedef struct _Edje_Patterns                        Edje_Patterns;
 typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
+typedef struct _Edje_Part_Limit                      Edje_Part_Limit;
 
 typedef struct _Edje Edje;
 typedef struct _Edje_Real_Part_State Edje_Real_Part_State;
@@ -726,6 +727,14 @@ struct _Edje_Pack_Element
    unsigned short   colspan, rowspan;
 };
 
+struct _Edje_Part_Limit
+{
+   int part;
+
+   signed char width; /* -1, 0 or 1 */
+   signed char height; /* -1, 0, or 1 */
+};
+
 /*----------*/
 
 struct _Edje_Part_Collection
@@ -753,6 +762,9 @@ struct _Edje_Part_Collection
 
       Edje_Limit **horizontal;
       unsigned int horizontal_count;
+
+      Edje_Part_Limit *parts;
+      unsigned int parts_count;
    } limits;
 
    Edje_Part **parts; /* an array of Edje_Part */
@@ -914,6 +926,7 @@ struct _Edje_Part_Description_Common
    } persp;
 
    unsigned char     visible; /* is it shown */
+   unsigned char     limit; /* 0 == no, 1 = width, 2 = height, 3 = both */
 };
 
 struct _Edje_Part_Description_Spec_Fill

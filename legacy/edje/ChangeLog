@@ -490,14 +490,18 @@
 
 	* Add edje_object_access_part_list_get and acess flags in edc file.
 
-2012-05-21 Carsten Haitzler (The Rasterman)
+2012-06-21  Carsten Haitzler (The Rasterman)
 
         * Improve edje_cc slightly to use prefix for full path to
         embryo_cc. this still like before requires embryo and edje to share
         the same install prefix for edje_cc to work.
 
-2012-06-12 Michael Bouchaud (yoz)
+2012-06-12  Michael Bouchaud (yoz)
 
 	* The aliases are now inherited from the targeted group
 	* Aliases can be usable with edje programs, if the part is in the
 	group
+
+2012-06-24  Cedric Bail
+
+	* Emit signal for flagged part when their size get to zero.

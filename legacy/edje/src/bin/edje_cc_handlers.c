@@ -171,6 +171,7 @@ static void st_collections_group_parts_part_description_inherit(void);
 static void st_collections_group_parts_part_description_source(void);
 static void st_collections_group_parts_part_description_state(void);
 static void st_collections_group_parts_part_description_visible(void);
+static void st_collections_group_parts_part_description_limit(void);
 static void st_collections_group_parts_part_description_align(void);
 static void st_collections_group_parts_part_description_fixed(void);
 static void st_collections_group_parts_part_description_min(void);
@@ -436,6 +437,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.source", st_collections_group_parts_part_description_source},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
+     {"collections.group.parts.part.description.limit", st_collections_group_parts_part_description_limit},
      {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
      {"collections.group.parts.part.description.fixed", st_collections_group_parts_part_description_fixed},
      {"collections.group.parts.part.description.min", st_collections_group_parts_part_description_min},
@@ -2258,7 +2260,6 @@ st_collections_group_inherit(void)
    Edje_Pack_Element_Parser *pitem;
    Edje_Part_Description_Common *ed, *ed2;
    Edje_List_Foreach_Data fdata;
-   Edje_String *es;
    Eina_List *l;
    char *parent_name;
    unsigned int i, j;
@@ -4260,6 +4261,7 @@ ob_collections_group_parts_part_description(void)
      }
 
    ed->visible = 1;
+   ed->limit = 0;
    ed->align.x = FROM_DOUBLE(0.5);
    ed->align.y = FROM_DOUBLE(0.5);
    ed->min.w = 0;
@@ -4672,6 +4674,42 @@ st_collections_group_parts_part_description_visible(void)
      }
 
    current_desc->visible = parse_bool(0);
+}
+/**
+    @page edcref
+    @property
+        limit
+    @parameters
+        [NONE, WIDTH, HEIGHT or BOTH]
+    @effect
+	Emit a signal when the part size change from zero or to a zero size
+	('limit,width,over', 'limit,width,zero'). By default no signal are
+	emitted.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_limit(void)
+{
+   check_arg_count(1);
+
+   current_desc->limit = parse_enum(0,
+				    "NONE", 0,
+				    "WIDTH", 1,
+				    "HEIGHT", 2,
+				    "BOTH", 3);
+
+   if (current_desc->limit)
+     {
+        Edje_Part_Collection *pc;
+        int count;
+
+        pc = eina_list_data_get(eina_list_last(edje_collections));
+        count = pc->limits.parts_count++;
+        pc->limits.parts = realloc(pc->limits.parts,
+                                   pc->limits.parts_count * sizeof (Edje_Part_Limit));
+        data_queue_part_lookup(pc, current_part->name,
+                               &(pc->limits.parts[count].part));
+     }
 }
 
 /**

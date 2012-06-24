@@ -667,6 +667,79 @@ _edje_recalc_do(Edje *ed)
         edje_object_size_min_calc(ed->obj, &w, &h);
         evas_object_size_hint_min_set(ed->obj, w, h);
      }
+
+   if (!ed->collection) return ;
+
+   for (i = 0; i < ed->collection->limits.parts_count; i++)
+     {
+        const char *name;
+        unsigned char limit;
+        int part;
+
+        name = ed->collection->parts[i]->name;
+        part = ed->collection->limits.parts[i].part;
+        limit = ed->table_parts[part]->chosen_description->limit;
+        switch (limit)
+          {
+           case 0:
+              ed->collection->limits.parts[i].width = 2;
+              ed->collection->limits.parts[i].height = 2;
+              break;
+           case 1:
+              ed->collection->limits.parts[i].height = 2;
+              break;
+           case 2:
+              ed->collection->limits.parts[i].width = 2;
+              break;
+           case 3:
+              break;
+          }
+
+        if (limit | 1)
+          {
+             if (ed->table_parts[part]->w > 0 &&
+                 (ed->collection->limits.parts[i].width <= 0 ||
+                  ed->collection->limits.parts[i].width == 2))
+               {
+                  ed->collection->limits.parts[i].width = 1;
+                  _edje_emit(ed, "limit,width,over", name);
+               }
+             else if (ed->table_parts[part]->w < 0 &&
+                      ed->collection->limits.parts[i].width >= 0)
+               {
+                  ed->collection->limits.parts[i].width = -1;
+                  _edje_emit(ed, "limit,width,below", name);
+               }
+             else if (ed->table_parts[part]->w == 0 &&
+                      ed->collection->limits.parts[i].width != 0)
+               {
+                  ed->collection->limits.parts[i].width = 0;
+                  _edje_emit(ed, "limit,width,zero", name);
+               }
+          }
+        if (limit | 2)
+          {
+             if (ed->table_parts[part]->h > 0 &&
+                 (ed->collection->limits.parts[i].height <= 0 ||
+                  ed->collection->limits.parts[i].height == 2))
+               {
+                  ed->collection->limits.parts[i].height = 1;
+                  _edje_emit(ed, "limit,height,over", name);
+               }
+             else if (ed->table_parts[part]->h < 0 &&
+                      ed->collection->limits.parts[i].height >= 0)
+               {
+                  ed->collection->limits.parts[i].height = -1;
+                  _edje_emit(ed, "limit,height,beloh", name);
+               }
+             else if (ed->table_parts[part]->h == 0 &&
+                      ed->collection->limits.parts[i].height != 0)
+               {
+                  ed->collection->limits.parts[i].height = 0;
+                  _edje_emit(ed, "limit,height,zero", name);
+               }
+          }
+     }
 }
 
 void
