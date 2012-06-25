@@ -44,6 +44,7 @@ eng_window_new(Display *disp,
 #endif
    XVisualInfo *vi_use;
    const GLubyte *vendor, *renderer, *version;
+   int blacklist = 0;
 
    if (!_evas_gl_x11_vi) return NULL;
 
@@ -227,6 +228,23 @@ eng_window_new(Display *disp,
         fprintf(stderr, "renderer: %s\n", renderer);
         fprintf(stderr, "version: %s\n", version);
      }
+
+   if (strstr((const char *)vendor, "Mesa Project"))
+     {
+        if (strstr((const char *)renderer, "Software Rasterizer"))
+          blacklist = 1;
+     }
+   if (strstr((const char *)renderer, "softpipe"))
+     blacklist = 1;
+   if (blacklist)
+     {
+        ERR("OpenGL Driver blacklisted:");
+        ERR("Vendor: %s", (const char *)vendor);
+        ERR("Renderer: %s", (const char *)renderer);
+        ERR("Version: %s", (const char *)version);
+        eng_window_free(gw);
+        return NULL;
+     }
 // GLX
 #else
    if (!context)
@@ -284,7 +302,6 @@ eng_window_new(Display *disp,
      {
         int i, j,  num;
         GLXFBConfig *fbc;
-        int blacklist = 0;
 
         if (gw->glxwin)
           {
