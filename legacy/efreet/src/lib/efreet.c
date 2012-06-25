@@ -175,7 +175,7 @@ efreet_lang_reset(void)
     efreet_parsed_locale = 0;  /* reset this in case they init efreet again */
 
     efreet_dirs_reset();
-    efreet_cache_desktop_reset();
+    efreet_cache_desktop_update();
 }
 
  /**

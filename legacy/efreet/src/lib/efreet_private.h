@@ -203,7 +203,6 @@ Efreet_Desktop *efreet_cache_desktop_find(const char *file);
 void efreet_cache_desktop_free(Efreet_Desktop *desktop);
 void efreet_cache_desktop_add(Efreet_Desktop *desktop);
 Efreet_Cache_Array_String *efreet_cache_desktop_dirs(void);
-void efreet_cache_desktop_reset(void);
 
 Efreet_Cache_Icon *efreet_cache_icon_find(Efreet_Icon_Theme *theme, const char *icon);
 Efreet_Cache_Fallback_Icon *efreet_cache_icon_fallback_find(const char *icon);
