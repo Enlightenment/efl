@@ -11,7 +11,7 @@ Improvements:
 Additions:
 
     * Support XDG_DESKTOP_DIR
-    * efreet_dirs_reset() for refreshing env vars after locale switches
+    * efreet_lang_reset() for refreshing language variables and caches after locale switches
 
 Efreet 1.2.0
 

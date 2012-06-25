@@ -124,6 +124,6 @@
 
         * Support XDG_DESKTOP_DIR
 
-2012-06-14  Mike Blumenkrantz
+2012-06-25  Sebastian Dransfeld
 
-        * Added efreet_dirs_reset() to delete cached env variable information
+        * Added efreet_lang_reset() to reset language dependent variables and caches
