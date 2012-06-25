@@ -206,6 +206,12 @@
 	* elm_map: add elm_map_overlay_del_cb_set to be notify when
 	an overlay is deleted.
 
+2012-06-21 Daniel Juyung Seo (SeoZ)
+
+	* Genlist: Fixed a bug with decorate all mode + tree effect. Delete tree
+	effect animator and set the effect mode to none when decorate all mode is
+	set.
+
 2012-06-23 Daniel Willmann
 
         * elm_progressbar: Add "changed" signal to be emitted when the value
