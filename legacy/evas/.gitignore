@@ -43,7 +43,9 @@ src/bin/evas_cserve
 src/bin/evas_cserve_tool
 src/bin/evas_cserve2
 src/bin/evas_cserve2_slave
+src/bin/evas_cserve2_debug
 src/bin/evas_cserve2_client
+src/bin/evas_cserve2_usage
 src/bin/dummy_slave
 *.gcno
 *.gcov
