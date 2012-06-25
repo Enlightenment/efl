@@ -1376,7 +1376,7 @@ static Font_Request_Funcs _font_load_funcs = {
 };
 
 static Eina_Bool
-_glyphs_request_check(Glyphs_Request *req)
+_glyphs_request_check(Glyphs_Request *req, Eina_Bool report_load)
 {
    unsigned int i;
    Font_Entry *fe = req->fe;
@@ -1393,8 +1393,9 @@ _glyphs_request_check(Glyphs_Request *req)
              req->answer[req->nanswer++] = ge;
 #ifdef DEBUG_LOAD_TIME
              // calculate average time saved when loading glyphs
-             fe->gl_saved_time +=
-                (fe->gl_load_time / fe->nglyphs);
+             if (report_load)
+               fe->gl_saved_time +=
+                  (fe->gl_load_time / fe->nglyphs);
 #endif
              ge->fc->inuse++;
           }
@@ -2508,7 +2509,7 @@ cserve2_cache_font_glyphs_load(Client *client, const char *source, unsigned int 
         return -1;
      }
 
-   if (_glyphs_request_check(req))
+   if (_glyphs_request_check(req, EINA_TRUE))
      {
         INF("Glyphs already loaded. Sending answer.");
         _glyphs_loaded_send(req, rid);
@@ -2538,7 +2539,7 @@ cserve2_cache_font_glyphs_used(Client *client, const char *source, unsigned int 
         return 0;
      }
 
-   _glyphs_request_check(req);
+   _glyphs_request_check(req, EINA_FALSE);
    groups = _glyphs_group_create(req);
 
    // Promote SHMs which are still cached and in use
