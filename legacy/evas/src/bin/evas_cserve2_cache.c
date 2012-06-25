@@ -596,7 +596,11 @@ _image_entry_free(Image_Data *entry)
      }
 
    if (fentry)
-     fentry->images = eina_list_remove(fentry->images, entry);
+     {
+        fentry->images = eina_list_remove(fentry->images, entry);
+        if (!fentry->images && !fentry->base.references)
+          eina_hash_del_by_key(file_entries, &fentry->base.id);
+     }
    if (entry->shm)
      cserve2_shm_unref(entry->shm);
    free(entry);
@@ -1069,13 +1073,10 @@ _entry_reference_del(Entry *entry, Reference *ref)
 
         if (fentry->invalid)
           _file_entry_free(fentry);
-        else
-          {
-             Image_Data *ie;
-             EINA_LIST_FREE(fentry->images, ie)
-                ie->file = NULL;
-             eina_hash_del_by_key(file_entries, &entry->id);
-          }
+        else if (!fentry->images)
+          eina_hash_del_by_key(file_entries, &entry->id);
+        /* don't free file entries that have images attached to it, they will
+         * be freed when the last unused image is freed */
      }
    else if (entry->type == CSERVE2_IMAGE_DATA)
      {
