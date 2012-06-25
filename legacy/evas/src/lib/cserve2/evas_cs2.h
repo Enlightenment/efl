@@ -209,6 +209,7 @@ struct _Msg_Stats {
       int fonts_used_load_time; /* total time spent loading fonts that are
                                  * really used, i.e. fonts that have glyphs
                                  * rendered */
+      int fonts_used_saved_time;
       int glyphs_load_time; /* total time spent loading glyphs */
    } fonts;
    struct {
@@ -223,7 +224,9 @@ struct _Msg_Stats {
       unsigned int unused_size; /* memory usage from image data */
 
       int files_load_time;
+      int files_saved_time;
       int images_load_time;
+      int images_saved_time;
    } images;
 };
 

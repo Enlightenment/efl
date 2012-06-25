@@ -56,6 +56,8 @@ struct _Entry {
 #ifdef DEBUG_LOAD_TIME
    struct timeval load_start;
    struct timeval load_finish;
+   int load_time;
+   int saved_time;
 #endif
 };
 
@@ -209,22 +211,6 @@ static int unused_mem_usage = 0;
 static int max_font_usage = 10 * 4 * 1024; /* in kbytes */
 static int font_mem_usage = 0;
 
-static inline void
-_entry_load_start(Entry *e)
-{
-#ifdef DEBUG_LOAD_TIME
-   gettimeofday(&e->load_start, NULL);
-#endif
-}
-
-static inline void
-_entry_load_finish(Entry *e)
-{
-#ifdef DEBUG_LOAD_TIME
-   gettimeofday(&e->load_finish, NULL);
-#endif
-}
-
 #ifdef DEBUG_LOAD_TIME
 static int
 _timeval_sub(const struct timeval *tv2, const struct timeval *tv1)
@@ -242,6 +228,31 @@ _timeval_sub(const struct timeval *tv2, const struct timeval *tv1)
     return 0;
 }
 #endif
+
+static inline void
+_entry_load_start(Entry *e)
+{
+#ifdef DEBUG_LOAD_TIME
+   gettimeofday(&e->load_start, NULL);
+#endif
+}
+
+static inline void
+_entry_load_finish(Entry *e)
+{
+#ifdef DEBUG_LOAD_TIME
+   gettimeofday(&e->load_finish, NULL);
+   e->load_time = _timeval_sub(&e->load_finish, &e->load_start);
+#endif
+}
+
+static inline void
+_entry_load_reused(Entry *e)
+{
+#ifdef DEBUG_LOAD_TIME
+   e->saved_time += e->load_time;
+#endif
+}
 
 static void
 _image_opened_send(Client *client, File_Data *entry, unsigned int rid)
@@ -496,7 +507,7 @@ _load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp)
 {
    Waiter *w;
 
-   _entry_load_start(&e->base);
+   _entry_load_finish(&e->base);
 
    e->alpha_sparse = resp->alpha_sparse;
    if (!e->doload)
@@ -1755,7 +1766,6 @@ _font_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
    Font_Entry *fe = data;
    Msg_Stats *msg = fdata;
    Font_Cache *fc;
-   int load_time;
    int nrefs = eina_list_count(fe->base.references);
 
    msg->fonts.fonts_loaded++;
@@ -1781,9 +1791,12 @@ _font_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
 
 #ifdef DEBUG_LOAD_TIME
    // accounting fonts load time
-   load_time = _timeval_sub(&fe->base.load_finish, &fe->base.load_start);
-   msg->fonts.fonts_load_time += load_time;
-   if (fe->caches) msg->fonts.fonts_used_load_time += load_time;
+   msg->fonts.fonts_load_time += fe->base.load_time;
+   if (fe->caches)
+     {
+        msg->fonts.fonts_used_load_time += fe->base.load_time;
+        msg->fonts.fonts_used_saved_time += fe->base.saved_time;
+     }
 
    // accounting glyphs load time
    msg->fonts.glyphs_load_time += fe->gl_load_time;
@@ -1808,10 +1821,9 @@ _image_file_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __U
          (sizeof(Request) + sizeof(Eina_List *));
 
 #ifdef DEBUG_LOAD_TIME
-   int load_time;
    // accounting file entries load time
-   load_time = _timeval_sub(&fd->base.load_finish, &fd->base.load_start);
-   msg->images.files_load_time += load_time;
+   msg->images.files_load_time += fd->base.load_time;
+   msg->images.files_saved_time += fd->base.saved_time;
 #endif
 
    return EINA_TRUE;
@@ -1837,11 +1849,9 @@ _image_data_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __U
       (image_size * eina_list_count(id->base.references));
 
 #ifdef DEBUG_LOAD_TIME
-   int load_time;
    // accounting image entries load time
-   load_time = _timeval_sub(&id->base.load_finish, &id->base.load_start);
-   if (load_time > 0)
-     msg->images.images_load_time += load_time;
+   msg->images.images_load_time += id->base.load_time;
+   msg->images.images_saved_time += id->base.saved_time;
 #endif
 
    return EINA_TRUE;
@@ -2086,6 +2096,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
    if (ref)
      {
         entry = (File_Data *)ref->entry;
+        _entry_load_reused(ref->entry);
 
         if (entry->invalid)
           {
@@ -2120,6 +2131,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
              return -1;
           }
         ref = _entry_reference_add((Entry *)entry, client, client_file_id);
+        _entry_load_reused(ref->entry);
         eina_hash_add(client->files.referencing, &client_file_id, ref);
         if (entry->base.request)
           _request_answer_add(entry->base.request, ref, rid, CSERVE2_OPEN);
@@ -2218,6 +2230,7 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
              image_entries_lru = eina_list_remove(image_entries_lru, entry);
              unused_mem_usage -= _image_entry_size_get(entry);
           }
+        _entry_load_reused(&entry->base);
 
         if (oldref && (oldref->entry->id == image_id))
           return 0;
@@ -2387,6 +2400,7 @@ cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcel
         client->fonts.referencing = eina_list_append(
            client->fonts.referencing, ref);
 
+        _entry_load_reused(&fe->base);
         fe->unused = EINA_FALSE;
 
         if (fe->request)
