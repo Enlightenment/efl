@@ -34,6 +34,10 @@
 extern "C" {
 #endif
 
+/**
+ * @enum Eeze_Disk_Type
+ * All disk types known to Eeze.
+ */
 typedef enum
 {
    EEZE_DISK_TYPE_UNKNOWN = 0, /**< type could not be determined */
