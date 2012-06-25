@@ -36,6 +36,8 @@ extern "C" {
 
 /**
  * @enum Eeze_Disk_Type
+ * @since 1.1
+ *
  * All disk types known to Eeze.
  */
 typedef enum
@@ -49,6 +51,8 @@ typedef enum
 
 /**
  * @enum Eeze_Mount_Opts
+ * @since 1.1
+ *
  * All mount options known to Eeze.
  */
 typedef enum
@@ -74,6 +78,8 @@ typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Eject;
 
 /**
  * @typedef Eeze_Disk
+ * @since 1.1
+ *
  * Handle for an Eeze Disk.
  */
 typedef struct _Eeze_Disk Eeze_Disk;
@@ -85,6 +91,8 @@ struct _Eeze_Event_Disk
 
 /**
  * @typedef Eeze_Event_Disk_Error
+ * @since 1.1
+ *
  * Contains the human readable error message.
  */
 typedef struct _Eeze_Event_Disk_Error Eeze_Event_Disk_Error;
