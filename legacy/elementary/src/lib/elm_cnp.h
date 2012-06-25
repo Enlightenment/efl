@@ -97,6 +97,15 @@ typedef struct _Elm_Selection_Data Elm_Selection_Data;
  */
 typedef Eina_Bool (*Elm_Drop_Cb)(void *data, Evas_Object *obj, Elm_Selection_Data *ev);
 
+/**
+ * Callback invoked in when the selection ownership for a given selection is lost.
+ *
+ * @param data Application specific data
+ * @param selection The selection that is lost
+ * @since 1.1
+ */
+typedef void (*Elm_Selection_Loss_Cb)(void *data, Elm_Sel_Type selection);
+
 
 /**
  * @brief Set copy data for a widget.
@@ -157,6 +166,37 @@ EAPI Eina_Bool elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
  */
 EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
                                               Elm_Sel_Type selection);
+
+
+/**
+ * @brief Set a function to be called when a selection is lost
+ *
+ * The function @p func is set of be called when selection @p selection is lost
+ * to another process or when elm_cnp_selection_set() is called. If @p func
+ * is NULL then it is not called. @p data is passed as the data parameter to
+ * the callback functions and selection is passed in as the selection that
+ * has been lost.
+ * 
+ * elm_cnp_selection_set() and elm_object_cnp_selection_clear() automatically
+ * set this los callback to NULL when called. If you wish to take the selection
+ * and then be notified of loss please do this (for example):
+ * 
+ * @code
+ * elm_cnp_selection_set(obj, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_TEXT, "hello", strlen(hello));
+ * elm_cnp_selection_loss_callback_set(ELM_SEL_TYPE_PRIMARY, loss_cb, NULL);
+ * @endcode
+ *
+ * @see also elm_cnp_selection_set()
+ *
+ * @param selection Selection to be notified of for loss
+ * @param func The function to call
+ * @param data The data pointer passed to the function.
+ *
+ * @ingroup CopyPaste
+ *
+ * @since 1.1
+ */
+EAPI void elm_cnp_selection_loss_callback_set(Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
 
 /**
  * @}

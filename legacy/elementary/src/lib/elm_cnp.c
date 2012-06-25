@@ -42,7 +42,7 @@
 
 #define ARRAYINIT(foo)  [foo] =
 
-#define DEBUGON 1
+//#define DEBUGON 1
 
 #ifdef DEBUGON
 # define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
@@ -102,6 +102,8 @@ struct _Cnp_Selection
    Eina_Bool        (*set)     (Ecore_X_Window, const void *data, int size);
    Eina_Bool        (*clear)   (void);
    void             (*request) (Ecore_X_Window, const char *target);
+   Elm_Selection_Loss_Cb  loss_cb;
+   void                  *loss_data;
 
    Elm_Sel_Format     format;
    Ecore_X_Selection  ecore_sel;
@@ -179,209 +181,209 @@ static int vcard_receive(Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *not
 static Eina_Bool pasteimage_append(char *file, Evas_Object *entry);
 
 static Cnp_Atom atoms[CNP_N_ATOMS] = {
-     [CNP_ATOM_TARGETS] = {
-          "TARGETS",
-          ELM_SEL_FORMAT_TARGETS,
-          targets_converter,
-          response_handler_targets,
-          notify_handler_targets,
-          0
-     },
-     [CNP_ATOM_ATOM] = {
-          "ATOM", // for opera browser
-          ELM_SEL_FORMAT_TARGETS,
-          targets_converter,
-          response_handler_targets,
-          notify_handler_targets,
-          0
-     },
-     [CNP_ATOM_XELM] =  {
-          "application/x-elementary-markup",
-          ELM_SEL_FORMAT_MARKUP,
-          general_converter,
-          NULL,
-          NULL,
-          0
-     },
-     [CNP_ATOM_text_uri] = {
-          "text/uri",
-          ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
-          general_converter,
-          NULL,
-          notify_handler_uri,
-          0
-     },
-     [CNP_ATOM_text_urilist] = {
-          "text/uri-list",
-          ELM_SEL_FORMAT_IMAGE,
-          general_converter,
-          NULL,
-          notify_handler_uri,
-          0
-     },
-     [CNP_ATOM_text_x_vcard] = {
-          "text/x-vcard",
-          ELM_SEL_FORMAT_VCARD,
-          vcard_send, NULL,
-          vcard_receive, 0
-     },
-     [CNP_ATOM_image_png] = {
-          "image/png",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,
-          0
-     },
-     [CNP_ATOM_image_jpeg] = {
-          "image/jpeg",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,/* Raw image data is the same */
-          0
-     },
-     [CNP_ATOM_image_bmp] = {
-          "image/x-ms-bmp",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,/* Raw image data is the same */
-          0
-     },
-     [CNP_ATOM_image_gif] = {
-          "image/gif",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,/* Raw image data is the same */
-          0
-     },
-     [CNP_ATOM_image_tiff] = {
-          "image/tiff",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,/* Raw image data is the same */
-          0
-     },
-     [CNP_ATOM_image_svg] = {
-          "image/svg+xml",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,/* Raw image data is the same */
-          0
-     },
-     [CNP_ATOM_image_xpm] = {
-          "image/x-xpixmap",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,/* Raw image data is the same */
-          0
-     },
-     [CNP_ATOM_image_tga] = {
-          "image/x-tga",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,/* Raw image data is the same */
-          0
-     },
-     [CNP_ATOM_image_ppm] = {
-          "image/x-portable-pixmap",
-          ELM_SEL_FORMAT_IMAGE,
-          image_converter,
-          NULL,
-          notify_handler_image,/* Raw image data is the same */
-          0
-     },
-     [CNP_ATOM_text_html_utf8] = {
-          "text/html;charset=utf-8",
-          ELM_SEL_FORMAT_HTML,
-          general_converter,
-          NULL,
-          notify_handler_html,
-          0
-     },
-     [CNP_ATOM_text_html] = {
-          "text/html",
-          ELM_SEL_FORMAT_HTML,
-          general_converter,
-          NULL,
-          notify_handler_html, /* No encoding: Webkit only */
-          0
-     },
-     [CNP_ATOM_UTF8STRING] = {
-          "UTF8_STRING",
-          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-          text_converter,
-          NULL,
-          notify_handler_text,
-          0
-     },
-     [CNP_ATOM_STRING] = {
-          "STRING",
-          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-          text_converter,
-          NULL,
-          notify_handler_text,
-          0
-     },
-     [CNP_ATOM_TEXT] = {
-          "TEXT",
-          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-          text_converter,
-          NULL,
-          NULL,
-          0
-     },
-     [CNP_ATOM_text_plain_utf8] = {
-          "text/plain;charset=utf-8",
-          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-          text_converter,
-          NULL,
-          NULL,
-          0
-     },
-     [CNP_ATOM_text_plain] = {
-          "text/plain",
-          ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
-          text_converter,
-          NULL,
-          NULL,
-          0
-     },
+   [CNP_ATOM_TARGETS] = {
+      "TARGETS",
+      ELM_SEL_FORMAT_TARGETS,
+      targets_converter,
+      response_handler_targets,
+      notify_handler_targets,
+      0
+   },
+   [CNP_ATOM_ATOM] = {
+      "ATOM", // for opera browser
+      ELM_SEL_FORMAT_TARGETS,
+      targets_converter,
+      response_handler_targets,
+      notify_handler_targets,
+      0
+   },
+   [CNP_ATOM_XELM] =  {
+      "application/x-elementary-markup",
+      ELM_SEL_FORMAT_MARKUP,
+      general_converter,
+      NULL,
+      NULL,
+      0
+   },
+   [CNP_ATOM_text_uri] = {
+      "text/uri",
+      ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_IMAGE, /* Either images or entries */
+      general_converter,
+      NULL,
+      notify_handler_uri,
+      0
+   },
+   [CNP_ATOM_text_urilist] = {
+      "text/uri-list",
+      ELM_SEL_FORMAT_IMAGE,
+      general_converter,
+      NULL,
+      notify_handler_uri,
+      0
+   },
+   [CNP_ATOM_text_x_vcard] = {
+      "text/x-vcard",
+      ELM_SEL_FORMAT_VCARD,
+      vcard_send, NULL,
+      vcard_receive, 0
+   },
+   [CNP_ATOM_image_png] = {
+      "image/png",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,
+      0
+   },
+   [CNP_ATOM_image_jpeg] = {
+      "image/jpeg",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,/* Raw image data is the same */
+      0
+   },
+   [CNP_ATOM_image_bmp] = {
+      "image/x-ms-bmp",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,/* Raw image data is the same */
+      0
+   },
+   [CNP_ATOM_image_gif] = {
+      "image/gif",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,/* Raw image data is the same */
+      0
+   },
+   [CNP_ATOM_image_tiff] = {
+      "image/tiff",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,/* Raw image data is the same */
+      0
+   },
+   [CNP_ATOM_image_svg] = {
+      "image/svg+xml",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,/* Raw image data is the same */
+      0
+   },
+   [CNP_ATOM_image_xpm] = {
+      "image/x-xpixmap",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,/* Raw image data is the same */
+      0
+   },
+   [CNP_ATOM_image_tga] = {
+      "image/x-tga",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,/* Raw image data is the same */
+      0
+   },
+   [CNP_ATOM_image_ppm] = {
+      "image/x-portable-pixmap",
+      ELM_SEL_FORMAT_IMAGE,
+      image_converter,
+      NULL,
+      notify_handler_image,/* Raw image data is the same */
+      0
+   },
+   [CNP_ATOM_text_html_utf8] = {
+      "text/html;charset=utf-8",
+      ELM_SEL_FORMAT_HTML,
+      general_converter,
+      NULL,
+      notify_handler_html,
+      0
+   },
+   [CNP_ATOM_text_html] = {
+      "text/html",
+      ELM_SEL_FORMAT_HTML,
+      general_converter,
+      NULL,
+      notify_handler_html, /* No encoding: Webkit only */
+      0
+   },
+   [CNP_ATOM_UTF8STRING] = {
+      "UTF8_STRING",
+      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+      text_converter,
+      NULL,
+      notify_handler_text,
+      0
+   },
+   [CNP_ATOM_STRING] = {
+      "STRING",
+      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+      text_converter,
+      NULL,
+      notify_handler_text,
+      0
+   },
+   [CNP_ATOM_TEXT] = {
+      "TEXT",
+      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+      text_converter,
+      NULL,
+      NULL,
+      0
+   },
+   [CNP_ATOM_text_plain_utf8] = {
+      "text/plain;charset=utf-8",
+      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+      text_converter,
+      NULL,
+      NULL,
+      0
+   },
+   [CNP_ATOM_text_plain] = {
+      "text/plain",
+      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+      text_converter,
+      NULL,
+      NULL,
+      0
+   },
 };
 
 static Cnp_Selection selections[ELM_SEL_TYPE_CLIPBOARD + 1] = {
-     ARRAYINIT(ELM_SEL_TYPE_PRIMARY) {
-          .debug = "Primary",
-          .ecore_sel = ECORE_X_SELECTION_PRIMARY,
-          .set = ecore_x_selection_primary_set,
-          .clear = ecore_x_selection_primary_clear,
-          .request = ecore_x_selection_primary_request,
-     },
-     ARRAYINIT(ELM_SEL_TYPE_SECONDARY) {
-          .debug = "Secondary",
-          .ecore_sel = ECORE_X_SELECTION_SECONDARY,
-          .set = ecore_x_selection_secondary_set,
-          .clear = ecore_x_selection_secondary_clear,
-          .request = ecore_x_selection_secondary_request,
-     },
-     ARRAYINIT(ELM_SEL_TYPE_XDND) {
-          .debug = "XDnD",
-          .ecore_sel = ECORE_X_SELECTION_XDND,
-          .request = ecore_x_selection_xdnd_request,
-     },
-     ARRAYINIT(ELM_SEL_TYPE_CLIPBOARD) {
-          .debug = "Clipboard",
-          .ecore_sel = ECORE_X_SELECTION_CLIPBOARD,
-          .set = ecore_x_selection_clipboard_set,
-          .clear = ecore_x_selection_clipboard_clear,
-          .request = ecore_x_selection_clipboard_request,
-     },
+   ARRAYINIT(ELM_SEL_TYPE_PRIMARY) {
+      .debug = "Primary",
+        .ecore_sel = ECORE_X_SELECTION_PRIMARY,
+        .set = ecore_x_selection_primary_set,
+        .clear = ecore_x_selection_primary_clear,
+        .request = ecore_x_selection_primary_request,
+   },
+   ARRAYINIT(ELM_SEL_TYPE_SECONDARY) {
+      .debug = "Secondary",
+        .ecore_sel = ECORE_X_SELECTION_SECONDARY,
+        .set = ecore_x_selection_secondary_set,
+        .clear = ecore_x_selection_secondary_clear,
+        .request = ecore_x_selection_secondary_request,
+   },
+   ARRAYINIT(ELM_SEL_TYPE_XDND) {
+      .debug = "XDnD",
+        .ecore_sel = ECORE_X_SELECTION_XDND,
+        .request = ecore_x_selection_xdnd_request,
+   },
+   ARRAYINIT(ELM_SEL_TYPE_CLIPBOARD) {
+      .debug = "Clipboard",
+        .ecore_sel = ECORE_X_SELECTION_CLIPBOARD,
+        .set = ecore_x_selection_clipboard_set,
+        .clear = ecore_x_selection_clipboard_clear,
+        .request = ecore_x_selection_clipboard_request,
+   },
 };
 
 /* Data for DND in progress */
@@ -427,12 +429,12 @@ _elm_widget_xwin_get(const Evas_Object *obj)
 {
    Evas_Object *top;
    Ecore_X_Window xwin = 0;
-
+   
    top = elm_widget_top_get(obj);
    if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
-
+   
    if (top) xwin = elm_win_xwindow_get(top);
-
+   
    if (!xwin)
      {
         Ecore_Evas *ee;
@@ -447,6 +449,22 @@ _elm_widget_xwin_get(const Evas_Object *obj)
 }
 #endif
 
+#ifdef HAVE_ELEMENTARY_X
+static void
+_sel_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Cnp_Selection *sel = data;
+   if (sel->widget == obj) sel->widget = NULL;
+}
+
+static void
+_sel_obj_del2(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Cnp_Selection *sel = data;
+   if (sel->requestwidget == obj) sel->requestwidget = NULL;
+}
+#endif
+
 EAPI Eina_Bool
 elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, const void *selbuf, size_t buflen)
@@ -454,7 +472,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
 #ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin = _elm_widget_xwin_get(obj);
    Cnp_Selection *sel;
-
+   
    if ((!xwin) || (selection > ELM_SEL_TYPE_CLIPBOARD))
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
@@ -463,12 +481,24 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
 
    sel = selections + selection;
 
+   if (sel->loss_cb) sel->loss_cb(sel->loss_data, selection);
+   
+   if (sel->widget)
+     evas_object_event_callback_del_full(sel->widget, EVAS_CALLBACK_DEL,
+                                         _sel_obj_del, sel);
+   sel->widget = NULL;
+   
    sel->active = EINA_TRUE;
    sel->widget = obj;
    sel->xwin = xwin;
    sel->set(xwin, &selection, sizeof(Elm_Sel_Type));
    sel->format = format;
+   sel->loss_cb = NULL;
+   sel->loss_data = NULL;
 
+   evas_object_event_callback_add
+     (sel->widget, EVAS_CALLBACK_DEL, _sel_obj_del, sel);
+   
    if (selbuf)
      {
         if (format == ELM_SEL_FORMAT_IMAGE)
@@ -494,6 +524,19 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
 #endif
 }
 
+EAPI void
+elm_cnp_selection_loss_callback_set(Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data)
+{
+#ifdef HAVE_ELEMENTARY_X
+   Cnp_Selection *sel;
+   if (selection > ELM_SEL_TYPE_CLIPBOARD) return;
+   
+   sel = selections + selection;
+   sel->loss_cb = func;
+   sel->loss_data = (void *)data;
+#endif   
+}
+
 EAPI Eina_Bool
 elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 {
@@ -509,8 +552,18 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
    /* No longer this selection: Consider it gone! */
    if ((!sel->active) || (sel->widget != obj)) return EINA_TRUE;
 
-   sel->active = EINA_FALSE;
+   if (sel->widget)
+     evas_object_event_callback_del_full(sel->widget, EVAS_CALLBACK_DEL,
+                                         _sel_obj_del, sel);
+   if (sel->requestwidget)
+     evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
+                                         _sel_obj_del2, sel);
    sel->widget = NULL;
+   sel->requestwidget = NULL;
+   sel->loss_cb = NULL;
+   sel->loss_data = NULL;
+   
+   sel->active = EINA_FALSE;
    if (sel->selbuf)
      {
         free(sel->selbuf);
@@ -539,6 +592,11 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
    sel = selections + selection;
    if (!xwin) return EINA_FALSE;
 
+   if (sel->requestwidget)
+     evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
+                                         _sel_obj_del2, sel);
+   sel->requestwidget = NULL;
+   
    sel->requestformat = format;
    sel->requestwidget = obj;
    sel->xwin = xwin;
@@ -546,6 +604,9 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
    sel->datacb = datacb;
    sel->udata = udata;
 
+   evas_object_event_callback_add
+     (sel->requestwidget, EVAS_CALLBACK_DEL, _sel_obj_del2, sel);
+   
    return EINA_TRUE;
 #else
    return EINA_FALSE;
@@ -590,6 +651,18 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event)
    if (i > ELM_SEL_TYPE_CLIPBOARD) return ECORE_CALLBACK_PASS_ON;
 
    sel = selections + i;
+   
+   if (sel->loss_cb) sel->loss_cb(sel->loss_data, i);
+   
+   if (sel->widget)
+     evas_object_event_callback_del_full(sel->widget, EVAS_CALLBACK_DEL,
+                                         _sel_obj_del, sel);
+   if (sel->requestwidget)
+     evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
+                                         _sel_obj_del2, sel);
+   sel->widget = NULL;
+   sel->requestwidget = NULL;
+   
    sel->active = EINA_FALSE;
    sel->widget = NULL;
    if (sel->selbuf)

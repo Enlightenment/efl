@@ -215,3 +215,10 @@
 
 	* Genlist: Fixed tree expand bug. Check item type when an item is requested
 	to be expanded/contracted.
+
+2012-06-25 Carsten Haitzler (The Rasterman)
+
+	* add elm_cnp_selection_loss_callback_set() so you know when you
+        lose a selection as a client
+        * improve robustness of cnp to track target object deletions.
+
