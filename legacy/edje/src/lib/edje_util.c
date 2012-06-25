@@ -2458,7 +2458,6 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    Edje *ed;
    Edje_Real_Part *rp;
    Edje_User_Defined *eud = NULL;
-   Eina_List *l;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!part)) return EINA_FALSE;
