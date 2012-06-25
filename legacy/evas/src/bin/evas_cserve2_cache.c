@@ -234,7 +234,12 @@ _timeval_sub(const struct timeval *tv2, const struct timeval *tv1)
     t1 = tv1->tv_usec + tv1->tv_sec * 1000000;
     t2 = tv2->tv_usec + tv2->tv_sec * 1000000;
 
-    return t2 - t1;
+    // Make sure that we don't add negative values. Some images may have
+    // been not loaded yet, so it would mess with the stats.
+    if (t2 > t1)
+      return t2 - t1;
+
+    return 0;
 }
 #endif
 
@@ -1786,9 +1791,66 @@ _font_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
    return EINA_TRUE;
 }
 
-static void
-_cserve2_cache_image_stats_get(Msg_Stats *msg __UNUSED__)
+static Eina_Bool
+_image_file_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
 {
+   Msg_Stats *msg = fdata;
+   File_Data *fd = data;
+
+   // accounting numbers
+   msg->images.files_loaded++;
+
+   // accounting size
+   msg->images.files_size += sizeof(File_Data) +
+      eina_list_count(fd->images) * sizeof(Eina_List *) +
+      eina_list_count(fd->base.references) *
+         (sizeof(Request) + sizeof(Eina_List *));
+
+#ifdef DEBUG_LOAD_TIME
+   int load_time;
+   // accounting file entries load time
+   load_time = _timeval_sub(&fd->base.load_finish, &fd->base.load_start);
+   msg->images.files_load_time += load_time;
+#endif
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_image_data_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata)
+{
+   Msg_Stats *msg = fdata;
+   Image_Data *id = data;
+   unsigned int image_size;
+
+   // accounting numbers
+   msg->images.images_loaded++;
+   if (id->unused) msg->images.images_unused++;
+
+   // accounting size
+   msg->images.images_size += _image_entry_size_get(id) * 1024;
+   if (id->unused) msg->images.unused_size += _image_entry_size_get(id) * 1024;
+
+   image_size = id->file->w * id->file->h * 4;
+   msg->images.requested_size +=
+      (image_size * eina_list_count(id->base.references));
+
+#ifdef DEBUG_LOAD_TIME
+   int load_time;
+   // accounting image entries load time
+   load_time = _timeval_sub(&id->base.load_finish, &id->base.load_start);
+   if (load_time > 0)
+     msg->images.images_load_time += load_time;
+#endif
+
+   return EINA_TRUE;
+}
+
+static void
+_cserve2_cache_image_stats_get(Msg_Stats *msg)
+{
+   eina_hash_foreach(file_entries, _image_file_entry_stats_cb, msg);
+   eina_hash_foreach(image_entries, _image_data_entry_stats_cb, msg);
 }
 
 static void

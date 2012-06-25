@@ -196,7 +196,16 @@ _usage_msg_read(void)
 
    printf("Printing server usage.\n");
    printf("======================\n\n");
-   printf("Font Usage Statistics:\n");
+   printf("\nImage Usage Statistics:\n");
+   printf("----------------------\n\n");
+   printf("Image headers usage: %d bytes\n", msg->images.files_size);
+   printf("Image data requested: %d kbytes\n", msg->images.requested_size / 1024);
+   printf("Image data usage: %d kbytes\n", msg->images.images_size / 1024);
+   printf("Image data unused: %d kbytes\n", msg->images.unused_size / 1024);
+   printf("Image headers load time: %dus\n", msg->images.files_load_time);
+   printf("Image data load time: %dus\n", msg->images.images_load_time);
+   printf("Glyphs load time: %dus\n", msg->fonts.glyphs_load_time);
+   printf("\nFont Usage Statistics:\n");
    printf("----------------------\n\n");
    printf("Requested usage: %d bytes\n", msg->fonts.requested_size);
    printf("Real usage: %d bytes\n", msg->fonts.real_size);
