@@ -942,6 +942,49 @@ efreet_cache_desktop_dirs(void)
 }
 
 void
+efreet_cache_desktop_reset(void)
+{
+    Eina_List *l = NULL;
+    Efreet_Event_Cache_Update *ev = NULL;
+    Efreet_Old_Cache *d = NULL;
+
+    IF_RELEASE(util_cache_names_key);
+    IF_RELEASE(util_cache_hash_key);
+
+    if ((desktop_cache) && (desktop_cache != NON_EXISTING))
+    {
+        d = NEW(Efreet_Old_Cache, 1);
+        if (!d) goto error;
+        d->hash = desktops;
+        d->ef = desktop_cache;
+        old_desktop_caches = eina_list_append(old_desktop_caches, d);
+
+        desktops = eina_hash_string_superfast_new(NULL);
+    }
+    desktop_cache = NULL;
+
+    efreet_cache_array_string_free(util_cache_names);
+    util_cache_names = NULL;
+
+    if (util_cache_hash)
+    {
+        eina_hash_free(util_cache_hash->hash);
+        free(util_cache_hash);
+        util_cache_hash = NULL;
+    }
+
+    util_cache = efreet_cache_close(util_cache);
+
+    ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
+    return;
+error:
+    IF_FREE(ev);
+    IF_FREE(d);
+    EINA_LIST_FREE(l, d)
+        free(d);
+}
+
+void
 efreet_cache_desktop_update(void)
 {
     if (!efreet_cache_update) return;
@@ -1117,34 +1160,7 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
         if (!ev) goto error;
         if (cache_check_change(path))
         {
-            IF_RELEASE(util_cache_names_key);
-            IF_RELEASE(util_cache_hash_key);
-
-            if ((desktop_cache) && (desktop_cache != NON_EXISTING))
-            {
-                d = NEW(Efreet_Old_Cache, 1);
-                if (!d) goto error;
-                d->hash = desktops;
-                d->ef = desktop_cache;
-                old_desktop_caches = eina_list_append(old_desktop_caches, d);
-
-                desktops = eina_hash_string_superfast_new(NULL);
-            }
-            desktop_cache = NULL;
-
-            efreet_cache_array_string_free(util_cache_names);
-            util_cache_names = NULL;
-
-            if (util_cache_hash)
-            {
-                eina_hash_free(util_cache_hash->hash);
-                free(util_cache_hash);
-                util_cache_hash = NULL;
-            }
-
-            util_cache = efreet_cache_close(util_cache);
-
-            ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_UPDATE, ev, desktop_cache_update_free, d);
+            efreet_cache_desktop_reset();
         }
         ecore_event_add(EFREET_EVENT_DESKTOP_CACHE_BUILD, NULL, NULL, NULL);
         /* TODO: Check if desktop_dirs_add exists, and rebuild cache if */

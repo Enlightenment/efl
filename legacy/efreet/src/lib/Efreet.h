@@ -93,6 +93,13 @@ EAPI int efreet_init(void);
  */
 EAPI int efreet_shutdown(void);
 
+/**
+ * @brief Resets language dependent variables and resets language dependent
+ * caches This must be called whenever the locale is changed.
+ * @since 1.3
+ */
+EAPI void efreet_lang_reset(void);
+
 #ifdef __cplusplus
 }
 #endif

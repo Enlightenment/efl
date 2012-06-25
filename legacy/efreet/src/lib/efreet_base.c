@@ -187,20 +187,10 @@ efreet_hostname_get(void)
     return hostname;
 }
 
-EAPI void
+void
 efreet_dirs_reset(void)
 {
-   const char *s;
-   eina_stringshare_replace(&hostname, NULL);
-   eina_stringshare_replace(&xdg_desktop_dir, NULL);
-   eina_stringshare_replace(&xdg_cache_home, NULL);
-   eina_stringshare_replace(&xdg_config_home, NULL);
-   eina_stringshare_replace(&xdg_data_home, NULL);
-   eina_stringshare_replace(&efreet_home_dir, NULL);
-   EINA_LIST_FREE(xdg_data_dirs, s)
-     eina_stringshare_del(s);
-   EINA_LIST_FREE(xdg_config_dirs, s)
-     eina_stringshare_del(s);
+    eina_stringshare_replace(&xdg_desktop_dir, NULL);
 }
 
 /**

@@ -147,5 +147,6 @@ src/tests/efreet_test
 /po/quot.sed
 /po/remove-potcdate.sed
 /po/remove-potcdate.sin
+/po/*.gmo
 /po/stamp-po
 /stamp-h1

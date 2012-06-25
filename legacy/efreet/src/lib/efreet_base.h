@@ -66,13 +66,6 @@ EAPI const char *efreet_cache_home_get(void);
 EAPI const char *efreet_hostname_get(void);
 
 /**
- * @brief Resets all the stored env variables. This must be called whenever the
- * locale is changed.
- * @since 1.3
- */
-EAPI void efreet_dirs_reset(void);
-
-/**
  * Efreet_Event_Cache_Update
  */
 typedef struct _Efreet_Event_Cache_Update Efreet_Event_Cache_Update;

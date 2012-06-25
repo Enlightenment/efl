@@ -166,7 +166,19 @@ efreet_shutdown(void)
     return _efreet_init_count;
 }
 
-/**
+EAPI void
+efreet_lang_reset(void)
+{
+    IF_RELEASE(efreet_lang);
+    IF_RELEASE(efreet_lang_country);
+    IF_RELEASE(efreet_lang_modifier);
+    efreet_parsed_locale = 0;  /* reset this in case they init efreet again */
+
+    efreet_dirs_reset();
+    efreet_cache_desktop_reset();
+}
+
+ /**
  * @internal
  * @return Returns the current users language setting or NULL if none set
  * @brief Retrieves the current language setting
@@ -220,13 +232,13 @@ efreet_parse_locale(void)
 {
     efreet_parsed_locale = 1;
 
+    if (efreet_parse_locale_setting("LANG"))
+        return;
+
     if (efreet_parse_locale_setting("LC_ALL"))
         return;
 
-    if (efreet_parse_locale_setting("LC_MESSAGES"))
-        return;
-
-    efreet_parse_locale_setting("LANG");
+    efreet_parse_locale_setting("LC_MESSAGES");
 }
 
 /**
