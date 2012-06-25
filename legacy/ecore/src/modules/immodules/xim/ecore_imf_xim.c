@@ -1553,8 +1553,6 @@ xim_destroy_callback(XIM xim __UNUSED__,
                      XPointer call_data __UNUSED__)
 {
    XIM_Im_Info *info = (XIM_Im_Info *)client_data;
-   Eina_List *tmp_list;
-   Ecore_IMF_Context *ctx;
 
    if (info->user) info->user->ic = NULL;
    info->im = NULL;
