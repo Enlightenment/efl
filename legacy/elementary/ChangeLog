@@ -210,3 +210,8 @@
 
         * elm_progressbar: Add "changed" signal to be emitted when the value
         is changed.
+
+2012-06-25 Daniel Juyung Seo (SeoZ)
+
+	* Genlist: Fixed tree expand bug. Check item type when an item is requested
+	to be expanded/contracted.

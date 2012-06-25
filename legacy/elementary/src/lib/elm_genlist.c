@@ -4969,6 +4969,7 @@ elm_genlist_item_expanded_set(Elm_Object_Item *it,
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
    expanded = !!expanded;
    if (_it->item->expanded == expanded) return;
+   if (_it->item->type != ELM_GENLIST_ITEM_TREE) return;
    _it->item->expanded = expanded;
    _it->wd->expanded_item = _it;
    _elm_genlist_move_items_set(_it);
