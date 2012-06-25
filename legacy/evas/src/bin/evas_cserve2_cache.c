@@ -111,6 +111,7 @@ struct _Font_Entry {
    Font_Source *src;
    void *ft;
    Fash_Glyph2 *glyphs;
+   unsigned int nglyphs;
    Eina_Inlist *caches;
    Font_Cache *last_cache;
    Eina_Bool unused : 1;
@@ -118,6 +119,7 @@ struct _Font_Entry {
    struct timeval load_start;
    struct timeval load_finish;
    int gl_load_time;
+   int gl_saved_time;
 #endif
 };
 
@@ -1389,6 +1391,11 @@ _glyphs_request_check(Glyphs_Request *req)
         if (ge)
           {
              req->answer[req->nanswer++] = ge;
+#ifdef DEBUG_LOAD_TIME
+             // calculate average time saved when loading glyphs
+             fe->gl_saved_time +=
+                (fe->gl_load_time / fe->nglyphs);
+#endif
              ge->fc->inuse++;
           }
         else
@@ -1630,6 +1637,12 @@ _glyphs_load_request_prepare(Glyphs_Request *req)
         if (ge)
           {
              req->answer[req->nanswer++] = ge;
+
+#ifdef DEBUG_LOAD_TIME
+             // calculate average time saved when loading glyphs
+             fe->gl_saved_time +=
+                (fe->gl_load_time / fe->nglyphs);
+#endif
              ge->fc->inuse++;
           }
         else
@@ -1726,6 +1739,7 @@ _glyphs_load_request_response(Client *client __UNUSED__, void *data, void *resp,
              font_mem_usage += sizeof(*gl);
              fc->glyphs = eina_inlist_append(fc->glyphs, EINA_INLIST_GET(gl));
              fc->nglyphs++;
+             fe->nglyphs++;
              fash_gl_add(fe->glyphs, gl->index, gl);
              req->answer[req->nanswer++] = gl;
              gl->fc->inuse++;
@@ -1800,6 +1814,7 @@ _font_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
 
    // accounting glyphs load time
    msg->fonts.glyphs_load_time += fe->gl_load_time;
+   msg->fonts.glyphs_saved_time += fe->gl_saved_time;
 #endif
 
    return EINA_TRUE;

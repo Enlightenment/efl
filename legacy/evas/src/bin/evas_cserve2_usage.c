@@ -215,6 +215,7 @@ _usage_msg_read(void)
    printf("Fonts used load time: %dus\n", msg->fonts.fonts_used_load_time);
    printf("Fonts used saved time: %dus\n", msg->fonts.fonts_used_saved_time);
    printf("Glyphs load time: %dus\n", msg->fonts.glyphs_load_time);
+   printf("Glyphs saved time: %dus\n", msg->fonts.glyphs_saved_time);
 
    printf("\n");
 }

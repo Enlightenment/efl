@@ -211,6 +211,7 @@ struct _Msg_Stats {
                                  * rendered */
       int fonts_used_saved_time;
       int glyphs_load_time; /* total time spent loading glyphs */
+      int glyphs_saved_time; /* total time spent loading glyphs */
    } fonts;
    struct {
       unsigned int files_loaded; /* number of file headers loaded */
