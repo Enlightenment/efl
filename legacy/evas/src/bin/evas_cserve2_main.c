@@ -316,13 +316,11 @@ _cserve2_client_font_glyphs_request(Client *client)
      {
         INF("Received CSERVE2_FONT_GLYPHS_USED command: RID=%d",
             msg->base.rid);
-        /*
         cserve2_cache_font_glyphs_used(client, source, msg->sourcelen,
                                        fontpath, msg->pathlen,
                                        msg->hint, msg->rend_flags, msg->size,
                                        msg->dpi, glyphs, msg->nglyphs,
                                        msg->base.rid);
-                                       */
      }
 }
 

@@ -2508,7 +2508,7 @@ cserve2_cache_font_glyphs_used(Client *client, const char *source, unsigned int 
         return 0;
      }
 
-   _glyphs_load_request_prepare(req);
+   _glyphs_request_check(req);
    groups = _glyphs_group_create(req);
 
    // Promote SHMs which are still cached and in use
@@ -2518,6 +2518,7 @@ cserve2_cache_font_glyphs_used(Client *client, const char *source, unsigned int 
      {
         _font_shm_promote(gg->fc);
         eina_list_free(gg->glyphs);
+        free(gg);
      }
 
    _glyphs_request_free(req);
