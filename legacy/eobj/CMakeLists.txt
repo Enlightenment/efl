@@ -41,6 +41,7 @@ include(EFLCheck)
 add_subdirectory(src/lib)
 add_subdirectory(src/examples/evas)
 add_subdirectory(src/examples/simple)
+add_subdirectory(src/examples/eo_isa)
 
 add_subdirectory(src/tests/mixin)
 add_subdirectory(src/tests/signals)
