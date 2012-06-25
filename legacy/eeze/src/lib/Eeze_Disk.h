@@ -47,6 +47,10 @@ typedef enum
    EEZE_DISK_TYPE_FLASH = (1 << 3) /**< flash disk */
 } Eeze_Disk_Type;
 
+/**
+ * @enum Eeze_Mount_Opts
+ * All mount options known to Eeze.
+ */
 typedef enum
 {
 #define EEZE_DISK_MOUNTOPT_DEFAULTS (EEZE_DISK_MOUNTOPT_UTF8 | EEZE_DISK_MOUNTOPT_NOEXEC | EEZE_DISK_MOUNTOPT_NOSUID)
@@ -67,6 +71,11 @@ EAPI extern int EEZE_EVENT_DISK_ERROR;
 typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Mount;
 typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Unmount;
 typedef struct _Eeze_Event_Disk Eeze_Event_Disk_Eject;
+
+/**
+ * @typedef Eeze_Disk
+ * Handle for an Eeze Disk.
+ */
 typedef struct _Eeze_Disk Eeze_Disk;
 
 struct _Eeze_Event_Disk
@@ -74,6 +83,10 @@ struct _Eeze_Event_Disk
    Eeze_Disk *disk;
 };
 
+/**
+ * @typedef Eeze_Event_Disk_Error
+ * Contains the human readable error message.
+ */
 typedef struct _Eeze_Event_Disk_Error Eeze_Event_Disk_Error;
 
 struct _Eeze_Event_Disk_Error
