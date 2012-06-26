@@ -470,7 +470,7 @@ _slave_thread_cb(void *data)
 
         if (n != sizeof(cmd))
           {
-             ERR("Slave thread read invalid size of command from server: %d",
+             ERR("Slave thread read invalid size of command from server: %zu",
                  n);
              continue;
           }
