@@ -1,0 +1,49 @@
+   images {
+      image: "collisionL.png" COMP;
+   }
+
+   group {
+      name: "impact";
+
+      parts {
+
+         part {
+            name: "impact";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "collisionL.png";
+               color: 255 255 255 0;
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+
+      }
+
+      programs {
+
+         program {
+            name: "impact,show";
+            source: "ephysics_test";
+            signal: "impact,show";
+            action: STATE_SET "visible" 0.0;
+            transition: LINEAR 0.2;
+            target: "impact";
+            after: "impact,show2";
+         }
+
+         program {
+            name: "impact,show2";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 0.2;
+            target: "impact";
+         }
+
+      }
+
+   }

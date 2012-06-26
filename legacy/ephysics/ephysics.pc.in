@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+vmaj=@VMAJ@
+
+Name: ephysics
+Description: EPhysics is a wrapper for physics engine.
+@pkgconfig_requires_private@: @requirement_ephysics@
+Version: @VERSION@
+Libs: -L${libdir} -lephysics
+Cflags: -I${includedir}/ephysics-@VMAJ@

@@ -1,0 +1,17 @@
+* collision filters
+* receive collision point on collision cb
+* valgrind supp
+* EPhysics_Constants
+* Sandbox tools to try different materials / properties
+* camera
+* create shape from image
+* simple game using ephysics
+* set best shape based on evas object
+* optimize collision shapes usage
+* deform objects
+* improve docs
+* run simulation on other thread
+
+FAR FAR FUTURE:
+* support Box2d backend
+* support Chipmunk backend

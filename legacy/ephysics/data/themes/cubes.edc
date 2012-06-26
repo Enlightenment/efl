@@ -1,0 +1,42 @@
+   images {
+      image: "cube-blue.png" COMP;
+      image: "cube-purple.png" COMP;
+   }
+
+   group {
+      name: "blue-cube";
+
+      parts {
+
+         part {
+            name: "cube";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "cube-blue.png";
+            }
+         }
+
+      }
+
+   }
+
+   group {
+      name: "purple-cube";
+
+      parts {
+
+         part {
+            name: "cube";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "cube-purple.png";
+            }
+         }
+
+      }
+
+   }

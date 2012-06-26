@@ -1,0 +1,116 @@
+   images {
+      image: "arrows.png" COMP;
+      image: "background.jpg" COMP;
+   }
+
+   group {
+      name: "frame";
+
+      parts {
+
+         part {
+            name: "bg";
+            type: IMAGE;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               min: 512 384;
+               max: 512 384;
+               image.normal: "background.jpg";
+            }
+         }
+
+         part {
+            name: "arrows";
+            type: IMAGE;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               min: 326 241;
+               max: 326 241;
+               rel1.offset: -18 10;
+               color: 255 255 255 0;
+               image.normal: "arrows.png";
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 255 255 255 255;
+            }
+         }
+
+         part {
+            name: "arrows_msg";
+            type: TEXT;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               color: 232 224 215 0;
+               rel1.relative: 0.08 0.96;
+               rel2.relative: 0.92 1.0;
+               text {
+                  font: "Sans";
+                  size: 12;
+                  text: "Press the arrows on the keyboard to give impulse to the object.";
+               }
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 95 56 19 255;
+            }
+         }
+
+         part {
+            name: "restart_button";
+            type: EXTERNAL;
+            source: "elm/button";
+            mouse_events: 1;
+            description {
+               state: "default" 0.0;
+               rel1.relative: 1 0.08;
+               rel2.relative: 1 0.08;
+               fixed: 1 1;
+               align: 1 0.5;
+               params {
+                  string: "style" "ephysics-test-restart";
+               }
+            }
+         }
+
+         part {
+            name: "extra_button";
+            type: SWALLOW;
+            mouse_events: 1;
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0 0.08;
+               rel2.relative: 0 0.08;
+               fixed: 1 1;
+               align: 0 0.5;
+            }
+         }
+
+      }
+
+      programs {
+
+          program {
+            name: "restart_clicked";
+            source: "restart_button";
+            signal: "clicked";
+            action: SIGNAL_EMIT "restart" "test-theme";
+          }
+
+          program {
+            name: "arrows,show";
+            source: "ephysics_test";
+            signal: "arrows,show";
+            action: STATE_SET "visible" 0.0;
+            target: "arrows";
+            target: "arrows_msg";
+          }
+
+      }
+
+   }

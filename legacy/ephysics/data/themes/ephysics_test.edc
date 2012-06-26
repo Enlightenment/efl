@@ -1,0 +1,13 @@
+externals {
+   external: "elm";
+}
+
+collections {
+#include "balls.edc"
+#include "buttons.edc"
+#include "cubes.edc"
+#include "effects.edc"
+#include "frame.edc"
+#include "list.edc"
+#include "shadows.edc"
+}
