@@ -319,7 +319,7 @@ evas_object_textgrid_textprop_unref(Evas_Object_Textgrid *o, unsigned int props_
    if (props->info)
      {
         if (props->info->refcount == 1)
-          eina_array_push(&o->glyphs_cleanup, (intptr_t*)(long) props_index);
+          eina_array_push(&o->glyphs_cleanup, (intptr_t*)(int64_t) props_index);
         else
           evas_common_text_props_content_unref(props);
      }
