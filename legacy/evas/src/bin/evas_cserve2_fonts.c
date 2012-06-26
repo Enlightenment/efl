@@ -287,7 +287,7 @@ _font_slave_memory_alloc(Font_Info *fi)
  * or get the glyph using FT_Get_Glyph().
  */
 static Eina_Bool
-_font_slave_glyph_load(Font_Info *fi, unsigned int index, unsigned int hint)
+_font_slave_glyph_load(Font_Info *fi, unsigned int idx, unsigned int hint)
 {
    Font_Source_Info *fsi = fi->fsi;
    FT_Error error;
@@ -296,12 +296,12 @@ _font_slave_glyph_load(Font_Info *fi, unsigned int index, unsigned int hint)
    static FT_Matrix transform = {0x10000, _EVAS_FONT_SLANT_TAN * 0x10000,
         0x00000, 0x10000};
 
-   error = FT_Load_Glyph(fsi->face, index,
+   error = FT_Load_Glyph(fsi->face, idx,
                          FT_LOAD_DEFAULT | FT_LOAD_NO_BITMAP |
                          hintflags[hint]);
    if (error)
      {
-        ERR("Could not load glyph %d", index);
+        ERR("Could not load glyph %d", idx);
         return EINA_FALSE;
      }
 
@@ -321,7 +321,7 @@ _font_slave_glyph_load(Font_Info *fi, unsigned int index, unsigned int hint)
  * given Font Cache.
  */
 static Eina_Bool
-_font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Cache *c, unsigned int index)
+_font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Cache *c, unsigned int idx)
 {
    Font_Source_Info *fsi = fi->fsi;
    unsigned int glyphsize;
@@ -344,7 +344,7 @@ _font_slave_glyph_render(Font_Info *fi, Slave_Msg_Font_Cache *c, unsigned int in
    memcpy(cachedata + c->usage, bglyph->bitmap.buffer, glyphsize);
 
    // TODO: Check if we have problems with alignment
-   c->glyphs[c->nglyphs].index = index;
+   c->glyphs[c->nglyphs].index = idx;
    c->glyphs[c->nglyphs].offset = c->usage;
    c->glyphs[c->nglyphs].size = glyphsize;
    c->glyphs[c->nglyphs].rows = bglyph->bitmap.rows;
