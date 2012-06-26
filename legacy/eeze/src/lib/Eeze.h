@@ -220,6 +220,12 @@ typedef enum
 /**@}*/
 
 struct Eeze_Udev_Watch;
+
+/**
+ * @addtogroup watch
+ * @typedef Eeze_Udev_Watch Eeze_Udev_Watch
+ * @brief Opaque structure to hold data for a udev watch
+ */
 typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 
 #define EEZE_VERSION_MAJOR 1
@@ -237,6 +243,7 @@ typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 
 /**
  * @addtogroup watch
+ * @typedef Eeze_Udev_Watch_Cb Eeze_Udev_Watch_Cb
  * @brief Callback type for use with #Eeze_Udev_Watch
  */
 typedef void(*Eeze_Udev_Watch_Cb)(const char *, Eeze_Udev_Event, void *, Eeze_Udev_Watch *);
