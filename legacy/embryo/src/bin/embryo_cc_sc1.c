@@ -3010,7 +3010,7 @@ destructsymbols(symbol * root, int level)
 
 static constvalue  *
 insert_constval(constvalue * prev, constvalue * next, char *name,
-		cell val, short index)
+		cell val, short idx)
 {
    constvalue         *cur;
 
@@ -3019,14 +3019,14 @@ insert_constval(constvalue * prev, constvalue * next, char *name,
    memset(cur, 0, sizeof(constvalue));
    strcpy(cur->name, name);
    cur->value = val;
-   cur->index = index;
+   cur->index = idx;
    cur->next = next;
    prev->next = cur;
    return cur;
 }
 
 constvalue *
-append_constval(constvalue * table, char *name, cell val, short index)
+append_constval(constvalue * table, char *name, cell val, short idx)
 {
    constvalue         *cur, *prev;
 
@@ -3034,17 +3034,17 @@ append_constval(constvalue * table, char *name, cell val, short index)
    for (prev = table, cur = table->next; cur;
 	prev = cur, cur = cur->next)
       /* nothing */ ;
-   return insert_constval(prev, NULL, name, val, index);
+   return insert_constval(prev, NULL, name, val, idx);
 }
 
 constvalue *
-find_constval(constvalue * table, char *name, short index)
+find_constval(constvalue * table, char *name, short idx)
 {
    constvalue         *ptr = table->next;
 
    while (ptr)
      {
-	if (strcmp(name, ptr->name) == 0 && ptr->index == index)
+	if (strcmp(name, ptr->name) == 0 && ptr->index == idx)
 	   return ptr;
 	ptr = ptr->next;
      }				/* while */
@@ -3326,7 +3326,7 @@ static void
 doexpr(int comma, int chkeffect, int allowarray, int mark_endexpr,
        int *tag, int chkfuncresult)
 {
-   int                 constant, index, ident;
+   int                 constant, idx, ident;
    int                 localstaging = FALSE;
    cell                val;
 
@@ -3336,12 +3336,12 @@ doexpr(int comma, int chkeffect, int allowarray, int mark_endexpr,
 	localstaging = TRUE;
 	assert(stgidx == 0);
      }				/* if */
-   index = stgidx;
+   idx = stgidx;
    errorset(sEXPRMARK);
    do
      {
 	/* on second round through, mark the end of the previous expression */
-	if (index != stgidx)
+	if (idx != stgidx)
 	   endexpr(TRUE);
 	sideeffect = FALSE;
 	ident = expression(&constant, &val, tag, chkfuncresult);
@@ -3356,7 +3356,7 @@ doexpr(int comma, int chkeffect, int allowarray, int mark_endexpr,
    errorset(sEXPRRELEASE);
    if (localstaging)
      {
-	stgout(index);
+	stgout(idx);
 	stgset(FALSE);		/* stop staging */
      }				/* if */
 }
@@ -3366,14 +3366,14 @@ doexpr(int comma, int chkeffect, int allowarray, int mark_endexpr,
 int
 constexpr(cell * val, int *tag)
 {
-   int                 constant, index;
+   int                 constant, idx;
    cell                cidx;
 
    stgset(TRUE);		/* start stage-buffering */
-   stgget(&index, &cidx);	/* mark position in code generator */
+   stgget(&idx, &cidx);	/* mark position in code generator */
    errorset(sEXPRMARK);
    expression(&constant, val, tag, FALSE);
-   stgdel(index, cidx);		/* scratch generated code */
+   stgdel(idx, cidx);		/* scratch generated code */
    stgset(FALSE);		/* stop stage-buffering */
    if (constant == 0)
       error(8);			/* must be constant expression */
@@ -3395,7 +3395,7 @@ constexpr(cell * val, int *tag)
 static void
 test(int label, int parens, int invert)
 {
-   int                 index, tok;
+   int                 idx, tok;
    cell                cidx;
    value               lval = { NULL, 0, 0, 0, 0, NULL };
    int                 localstaging = FALSE;
@@ -3405,9 +3405,9 @@ test(int label, int parens, int invert)
 	stgset(TRUE);		/* start staging */
 	localstaging = TRUE;
 #if !defined NDEBUG
-	stgget(&index, &cidx);	/* should start at zero if started
+	stgget(&idx, &cidx);	/* should start at zero if started
 				 * locally */
-	assert(index == 0);
+	assert(idx == 0);
 #endif
      }				/* if */
 
@@ -3417,7 +3417,7 @@ test(int label, int parens, int invert)
       needtoken('(');
    do
      {
-	stgget(&index, &cidx);	/* mark position (of last expression) in
+	stgget(&idx, &cidx);	/* mark position (of last expression) in
 				 * code generator */
 	if (hier14(&lval))
 	   rvalue(&lval);
@@ -3437,7 +3437,7 @@ test(int label, int parens, int invert)
    if (lval.ident == iCONSTEXPR)
      {				/* constant expression */
 	intest = (int)(long)popstk();	/* restore stack */
-	stgdel(index, cidx);
+	stgdel(idx, cidx);
 	if (lval.constval)
 	  {			/* code always executed */
 	     error(206);	/* redundant test: always non-zero */
@@ -3549,7 +3549,7 @@ dofor(void)
 {
    int                 wq[wqSIZE], skiplab;
    cell                save_decl;
-   int                 save_nestlevel, index;
+   int                 save_nestlevel, idx;
    int                *ptr;
 
    save_decl = declared;
@@ -3595,7 +3595,7 @@ dofor(void)
    assert(!staging);
    stgset(TRUE);		/* start staging */
    assert(stgidx == 0);
-   index = stgidx;
+   idx = stgidx;
    stgmark(sSTARTREORDER);
    stgmark((char)(sEXPRSTART + 0));	/* mark start of 2nd expression
 					 * in stage */
@@ -3614,7 +3614,7 @@ dofor(void)
 	needtoken(')');
      }				/* if */
    stgmark(sENDREORDER);	/* mark end of reversed evaluation */
-   stgout(index);
+   stgout(idx);
    stgset(FALSE);		/* stop staging */
    statement(NULL, FALSE);
    jumplabel(wq[wqLOOP]);
@@ -3807,7 +3807,7 @@ doswitch(void)
 static void
 doassert(void)
 {
-   int                 flab1, index;
+   int                 flab1, idx;
    cell                cidx;
    value               lval = { NULL, 0, 0, 0, 0, NULL };
 
@@ -3824,12 +3824,12 @@ doassert(void)
    else
      {
 	stgset(TRUE);		/* start staging */
-	stgget(&index, &cidx);	/* mark position in code generator */
+	stgget(&idx, &cidx);	/* mark position in code generator */
 	do
 	  {
 	     if (hier14(&lval))
 		rvalue(&lval);
-	     stgdel(index, cidx);	/* just scrap the code */
+	     stgdel(idx, cidx);	/* just scrap the code */
 	  }
 	while (matchtoken(','));
 	stgset(FALSE);		/* stop staging */

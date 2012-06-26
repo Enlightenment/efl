@@ -721,7 +721,7 @@ static int
 preproc_expr(cell * val, int *tag)
 {
    int                 result;
-   int                 index;
+   int                 idx;
    cell                code_index;
    char               *term;
 
@@ -730,7 +730,7 @@ preproc_expr(cell * val, int *tag)
     * compilations. Reset the staging index, but keep the code
     * index.
     */
-   if (stgget(&index, &code_index))
+   if (stgget(&idx, &code_index))
      {
 	error(57);		/* unfinished expression */
 	stgdel(0, code_index);
@@ -819,7 +819,7 @@ command(void)
    int                 tok, ret;
    cell                val;
    char               *str;
-   int                 index;
+   int                 idx;
    cell                code_index;
 
    while (*lptr <= ' ' && *lptr != '\0')
@@ -834,7 +834,7 @@ command(void)
    /* on a pending expression, force to return a silent ';' token and force to
     * re-read the line
     */
-   if (!sc_needsemicolon && stgget(&index, &code_index))
+   if (!sc_needsemicolon && stgget(&idx, &code_index))
      {
 	lptr = term_expr;
 	return CMD_TERM;

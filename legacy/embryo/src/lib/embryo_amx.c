@@ -43,9 +43,9 @@
 static void _embryo_byte_swap_16 (unsigned short *v);
 static void _embryo_byte_swap_32 (unsigned int *v);
 #endif
-static int  _embryo_native_call  (Embryo_Program *ep, Embryo_Cell index, Embryo_Cell *result, Embryo_Cell *params);
-static int  _embryo_func_get     (Embryo_Program *ep, int index, char *funcname);
-static int  _embryo_var_get      (Embryo_Program *ep, int index, char *varname, Embryo_Cell *ep_addr);
+static int  _embryo_native_call  (Embryo_Program *ep, Embryo_Cell idx, Embryo_Cell *result, Embryo_Cell *params);
+static int  _embryo_func_get     (Embryo_Program *ep, int idx, char *funcname);
+static int  _embryo_var_get      (Embryo_Program *ep, int idx, char *varname, Embryo_Cell *ep_addr);
 static int  _embryo_program_init (Embryo_Program *ep, void *code);
 
 #ifdef WORDS_BIGENDIAN
@@ -70,14 +70,14 @@ _embryo_byte_swap_32(unsigned int *v)
 #endif
 
 static int
-_embryo_native_call(Embryo_Program *ep, Embryo_Cell index, Embryo_Cell *result, Embryo_Cell *params)
+_embryo_native_call(Embryo_Program *ep, Embryo_Cell idx, Embryo_Cell *result, Embryo_Cell *params)
 {
    Embryo_Header    *hdr;
    Embryo_Func_Stub *func_entry;
    Embryo_Native     f;
 
    hdr = (Embryo_Header *)ep->base;
-   func_entry = GETENTRY(hdr, natives, index);
+   func_entry = GETENTRY(hdr, natives, idx);
    if ((func_entry->address <= 0) ||
        (func_entry->address > ep->native_calls_size))
      {
@@ -96,32 +96,32 @@ _embryo_native_call(Embryo_Program *ep, Embryo_Cell index, Embryo_Cell *result, 
 }
 
 static int
-_embryo_func_get(Embryo_Program *ep, int index, char *funcname)
+_embryo_func_get(Embryo_Program *ep, int idx, char *funcname)
 {
    Embryo_Header    *hdr;
    Embryo_Func_Stub *func;
 
    hdr = (Embryo_Header *)ep->code;
-   if (index >= (Embryo_Cell)NUMENTRIES(hdr, publics, natives))
+   if (idx >= (Embryo_Cell)NUMENTRIES(hdr, publics, natives))
      return EMBRYO_ERROR_INDEX;
 
-   func = GETENTRY(hdr, publics, index);
+   func = GETENTRY(hdr, publics, idx);
    strcpy(funcname, GETENTRYNAME(hdr, func));
    return EMBRYO_ERROR_NONE;
 }
 
 static int
-_embryo_var_get(Embryo_Program *ep, int index, char *varname, Embryo_Cell *ep_addr)
+_embryo_var_get(Embryo_Program *ep, int idx, char *varname, Embryo_Cell *ep_addr)
 {
 
   Embryo_Header    *hdr;
   Embryo_Func_Stub *var;
 
   hdr=(Embryo_Header *)ep->base;
-  if (index >= (Embryo_Cell)NUMENTRIES(hdr, pubvars, tags))
+  if (idx >= (Embryo_Cell)NUMENTRIES(hdr, pubvars, tags))
      return EMBRYO_ERROR_INDEX;
 
-  var = GETENTRY(hdr, pubvars, index);
+  var = GETENTRY(hdr, pubvars, idx);
   strcpy(varname, GETENTRYNAME(hdr, var));
   *ep_addr = var->address;
   return EMBRYO_ERROR_NONE;
