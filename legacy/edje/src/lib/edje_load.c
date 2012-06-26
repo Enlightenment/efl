@@ -1139,7 +1139,6 @@ _edje_file_del(Edje *ed)
 	       }
 	     if (rp->swallowed_object)
 	       {
-                  _edje_real_part_swallow_clear(rp);
                   /* Objects swallowed by the app do not get deleted,
                    but those internally swallowed (GROUP type) do. */
 		  switch (rp->part->type)
@@ -1153,6 +1152,7 @@ _edje_file_del(Edje *ed)
 		     default:
 			break;
 		    }
+                  _edje_real_part_swallow_clear(rp);
 		  rp->swallowed_object = NULL;
 	       }
 	     if (rp->items)
