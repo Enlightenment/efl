@@ -85,7 +85,7 @@ ecore_x_xinerama_screen_geometry_get(int screen,
    if (h)
      *h = DisplayHeight(_ecore_x_disp, 0);
 
-   screen __EINA_UNUSED__;
    return EINA_FALSE;
+   screen = 0;
 }
 
