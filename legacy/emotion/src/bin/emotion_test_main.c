@@ -306,8 +306,6 @@ video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 
    pos = emotion_object_position_get(obj);
    len = emotion_object_play_length_get(obj);
-   bsize = emotion_object_buffer_size_get(obj);
-   // printf("%3.3f, %3.3f [%.2f]\n", pos, len, bsize);
    scale = (len > 0.0) ? pos / len : 0.0;
    edje_object_part_drag_value_set(edje, "video_progress", scale, 0.0);
    lh = len / 3600;
