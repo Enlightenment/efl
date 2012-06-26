@@ -9196,6 +9196,7 @@ struct _Evas_Textgrid_Cell
    unsigned short strikethrough : 1; /**< whether the character is strikethrough'ed */
    unsigned short fg_extended   : 1; /**< whether the extended palette is used for the foreground color */
    unsigned short bg_extended   : 1; /**< whether the extended palette is used for the background color */
+   unsigned short double_width  : 1; /**< if the codepoint is merged with the following cell to the right visually (cells must be in pairs with 2nd cell being a duplicate in all ways except codepoint is 0) */
 };
 
 /**
