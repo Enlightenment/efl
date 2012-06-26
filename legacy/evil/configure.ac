@@ -105,6 +105,7 @@ EFL_ATTRIBUTE_UNUSED
 
 win32_cppflags="-DEFL_EVIL_BUILD"
 win32_cflags="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls"
+win32_cflags="${win32_cflags} -mms-bitfields"
 win32_cxxflags=""
 have_wince="no"
 case "$host_os" in
