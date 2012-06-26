@@ -1181,8 +1181,10 @@ elm_fileselector_selected_get(const Evas_Object *obj)
         const char *name;
         char *dir, *s;
 
-        dir = sd->only_folder ? ecore_file_dir_get(sd->path)
-          : strdup(sd->path);
+        if (ecore_file_is_dir(sd->path))
+          dir = strdup(sd->path);
+        else
+          dir = ecore_file_dir_get(sd->path);
         name = elm_object_text_get(sd->filename_entry);
         if (name)
           {
@@ -1196,9 +1198,7 @@ elm_fileselector_selected_get(const Evas_Object *obj)
           }
         else snprintf(buf, sizeof(buf), "%s", dir);
 
-        if (sd->only_folder && !ecore_file_is_dir(buf))
-          eina_stringshare_replace(&sd->selection, ecore_file_dir_get(buf));
-        else eina_stringshare_replace(&sd->selection, buf);
+        eina_stringshare_replace(&sd->selection, buf);
 
         if (dir) free(dir);
         return sd->selection;
