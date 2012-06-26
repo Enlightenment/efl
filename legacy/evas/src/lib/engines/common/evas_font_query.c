@@ -331,7 +331,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const Evas_Text_Props *text_props,
    Evas_Coord ret_adv = 0;
    if (text_props->len > 0)
      {
-        RGBA_Font_Int *fi = text_props->font_instance;
+//        RGBA_Font_Int *fi = text_props->font_instance;
         const Evas_Font_Glyph_Info *glyph = text_props->info->glyph +
            text_props->start;
         const Evas_Font_Glyph_Info *last_glyph = glyph + text_props->len - 1;
