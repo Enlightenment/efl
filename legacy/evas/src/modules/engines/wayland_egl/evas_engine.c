@@ -667,7 +667,7 @@ eng_setup(Evas *e, void *in)
                   /* if we already have a window surface, check for NULL input surface.
                    * this will mean we are hiding the window and should destroy 
                    * things properly */
-                  if ((re->win->surface) && (re->info->info.surface = NULL))
+                  if ((re->win->surface) && (re->info->info.surface == NULL))
                     {
                        if (re->win)
                          {
