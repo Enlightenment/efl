@@ -1425,8 +1425,9 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
    Evas_Object *old_icon = edje_object_part_swallow_get(VIEW(item),
                                                         "elm.swallow.icon");
    elm_widget_sub_object_del(VIEW(item), old_icon);
-   evas_object_hide(old_icon);
+   /* edje_object_part_unswallow(VIEW(item), old_icon); */
    edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
+   evas_object_hide(old_icon);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);

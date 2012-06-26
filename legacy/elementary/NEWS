@@ -15,6 +15,7 @@ Additions:
    * Add elm_progressbar_format_function_set API function
    * Add elm_map_overlay_del_cb_set API function
    * Add "changed" signal to the progressbar widgets
+   * Use Edje to enable accessibility on TEXTBLOCK.
 
 Fixes:
 

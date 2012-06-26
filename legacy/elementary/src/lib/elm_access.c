@@ -1,6 +1,44 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+static const char ACCESS_SMART_NAME[] = "elm_access";
+
+EVAS_SMART_SUBCLASS_NEW
+  (ACCESS_SMART_NAME, _elm_access, Elm_Widget_Smart_Class,
+  Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
+
+static Evas_Object * _elm_access_add(Evas_Object *parent);
+
+static void
+_elm_access_smart_add(Evas_Object *obj)
+{
+   EVAS_SMART_DATA_ALLOC(obj, Elm_Widget_Smart_Data);
+   ELM_WIDGET_CLASS(_elm_access_parent_sc)->base.add(obj);
+
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+}
+
+static Eina_Bool
+_elm_access_smart_on_focus(Evas_Object *obj)
+{
+   evas_object_focus_set(obj, elm_widget_focus_get(obj));
+
+   return EINA_TRUE;
+}
+
+static void
+_elm_access_smart_set_user(Elm_Widget_Smart_Class *sc)
+{
+   sc->base.add = _elm_access_smart_add;
+
+   /* not a 'focus chain manager' */
+   sc->focus_next = NULL;
+   sc->focus_direction = NULL;
+   sc->on_focus = _elm_access_smart_on_focus;
+
+   return;
+}
+
 typedef struct _Mod_Api Mod_Api;
 
 struct _Mod_Api
@@ -197,6 +235,11 @@ _access_obj_hilight_resize_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Ob
 
 
 //-------------------------------------------------------------------------//
+EAPI void
+_elm_access_highlight_set(Evas_Object* obj)
+{
+   _access_obj_over_timeout_cb(obj);
+}
 
 EAPI void
 _elm_access_clear(Elm_Access_Info *ac)
@@ -383,6 +426,92 @@ _elm_access_object_unhilight(Evas_Object *obj)
      }
 }
 
+static void
+_content_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj,
+                void *event_info __UNUSED__)
+{
+   Evas_Object *accessobj;
+   Evas_Coord w, h;
+
+   accessobj = data;
+   if (!accessobj) return;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(accessobj, w, h);
+}
+
+static void
+_content_move(void *data, Evas *e __UNUSED__, Evas_Object *obj,
+              void *event_info __UNUSED__)
+{
+   Evas_Object *accessobj;
+   Evas_Coord x, y;
+
+   accessobj = data;
+   if (!accessobj) return;
+
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   evas_object_move(accessobj, x, y);
+}
+
+static char *
+_part_access_info_cb(void *data, Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   Evas_Object *eobj = data;
+   if (!eobj) return NULL;
+
+   const char *part = evas_object_data_get(obj, "_elm_access_part");
+   const char *txt = edje_object_part_text_get(eobj, part);
+   if (txt) return strdup(txt);
+   return NULL;
+}
+
+static void
+_access_obj_del(void *data __UNUSED__, Evas *e __UNUSED__,
+                Evas_Object *obj, void *event_info __UNUSED__)
+{
+   char *part = evas_object_data_get(obj, "_elm_access_part");
+   evas_object_data_del(obj, "_elm_access_part");
+   if (part) free(part);
+}
+
+EAPI Evas_Object *
+_elm_access_edje_object_part_object_register(Evas_Object* obj,
+                                             const Evas_Object *eobj,
+                                             const char* part)
+{
+   Evas_Object *ao;
+   Evas_Object *po = (Evas_Object *)edje_object_part_object_get(eobj, part);
+   Evas_Coord x, y, w, h;
+
+   if (!obj || !po) return NULL;
+
+   // create access object
+   ao = _elm_access_add(obj);
+   evas_object_event_callback_add(po, EVAS_CALLBACK_RESIZE,
+                                  _content_resize, ao);
+   evas_object_event_callback_add(po, EVAS_CALLBACK_MOVE,
+                                  _content_move, ao);
+
+   evas_object_geometry_get(po, &x, &y, &w, &h);
+   evas_object_move(ao, x, y);
+   evas_object_resize(ao, w, h);
+   evas_object_show(ao);
+
+   // register access object
+   _elm_access_object_register(ao, po);
+   _elm_access_text_set(_elm_access_object_get(ao),
+                        ELM_ACCESS_TYPE, evas_object_type_get(po));
+   evas_object_data_set(ao, "_elm_access_part", strdup(part));
+   evas_object_event_callback_add(ao, EVAS_CALLBACK_DEL,
+                                  _access_obj_del, NULL);
+   _elm_access_callback_set(_elm_access_object_get(ao),
+                            ELM_ACCESS_INFO,
+                            _part_access_info_cb, eobj);
+   return ao;
+}
+
 EAPI void
 _elm_access_object_hilight_disable(Evas *e)
 {
@@ -533,4 +662,23 @@ _elm_access_2nd_click_timeout(Evas_Object *obj)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   _access_2nd_click_del_cb, NULL);
    return EINA_FALSE;
+}
+
+static Evas_Object *
+_elm_access_add(Evas_Object *parent)
+{
+   Evas *e;
+   Evas_Object *obj;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+
+   e = evas_object_evas_get(parent);
+   if (!e) return NULL;
+
+   obj = evas_object_smart_add(e, _elm_access_smart_class_new());
+
+   if (!elm_widget_sub_object_add(parent, obj))
+     ERR("could not add %p as sub object of %p", obj, parent);
+
+   return obj;
 }

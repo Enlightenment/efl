@@ -84,7 +84,7 @@
 	  the items over max number are located in more panel.
 	  The APIs are added for this feature.(elm_toolbar_more_item_get, elm_toolbar_items_max_set/get)
 
-2012-05-22 Carsten Haitzler (The Rasterman)
+2012-05-22  Carsten Haitzler (The Rasterman)
 
 	* Add skeleton for handling remote commands access controls.
 
@@ -92,46 +92,46 @@
 
 	* Map: Add elm_map_overlays_get & elm_map_overlay_visible_get functions.
 
-2012-05-24 Michal Pakula vel Rutka
+2012-05-24  Michal Pakula vel Rutka
 
 	* Add ability to use cnp helper code on non-elm widget objects by
 	  falling back to ecore-evas to get the window id.
 
-2012-05-24 Tae-Hwan Kim (Bluezery)
+2012-05-24  Tae-Hwan Kim (Bluezery)
 
 	* Add "loaded" signal for elm_map.
 
-2012-05-25 Rob Bradford
+2012-05-25  Rob Bradford
 
 	* Refactor X11 specific code to use ecore_evas_*_window_get functions
 	so that the driver for the Ecore_Evas will be checked.
 
-2012-05-28 Mike Blumenkrantz
+2012-05-28  Mike Blumenkrantz
 
 	* Fix sizing calc error in list item homogenizing
 
-2012-05-28 Carsten Haitzler (The Rasterman)
+2012-05-28  Carsten Haitzler (The Rasterman)
 
 	* Made elm_object_focus_set() fall back to evbas_object_focus_set()
 	  if the object is not an elm widget.
 
-2012-05-29 Mike Blumenkrantz
+2012-05-29  Mike Blumenkrantz
 
         * Prepending items to a genlist no longer causes the selected item to
           scroll out of the viewport
         * Collapsing tree items in genlist now animate properly
 
-2012-05-29 Rob Bradford
+2012-05-29  Rob Bradford
 
 	* Move X related window items into their own substruct of
 	_Elm_Win_Smart_Data to allow grouping based on engine.
 
-2012-05-29 Rob Bradford
+2012-05-29  Rob Bradford
 
 	* Move X related cursor items into their own substruct of Elm_Cursor
 	to make supporting cursors on other platforms cleaner.
 
-2012-05-30 Rob Bradford
+2012-05-30  Rob Bradford
 
 	* Add support for setting the cursor under Wayland:
 	* Introduce a configure option and #define to as per other engines
@@ -140,91 +140,94 @@
 	* Call into Ecore to set the cursor when the mouse enters the desired
 	widget.
 
-2012-05-30 Mike Blumenkrantz
+2012-05-30  Mike Blumenkrantz
 
         * Fix even/odd signals for genlist items
 
-2012-05-30 Thiep Ha
+2012-05-30  Thiep Ha
 
        * Entry: Add 3 APIs which are elm_entry_text_style_user_push/pop/peek
        and test functions for these APIs.
 
-2012-05-31 WooHyun Jung
+2012-05-31  WooHyun Jung
 
        * child_can_focus should be EINA_FALSE only when all children in the object
          tree are not focusable. Before this fix, it was EINA_FALSE when all sub
          objects were not focusable. (i.e. didn't check whole object tree)
 
-2012-06-01 Mike Blumenkrantz
+2012-06-01  Mike Blumenkrantz
 
         * Re-setting the current mirrored mode state no longer causes a full recalc
 
-2012-06-07 Jaehwan Kim
+2012-06-07  Jaehwan Kim
 
         * Toolbar: Remove the APIs elm_toolbar_items_max_set/get.
 	  Instead of them, add the APIs elm_toolbar_standard_priority_set/get.
 	  The items which are lower than standard priority are located in more menu or panel.
 
-2012-06-08 Jaehwan Kim
+2012-06-08  Jaehwan Kim
 
-        * Add elm_object_scroll_hold/freeze_get. 
+        * Add elm_object_scroll_hold/freeze_get.
 
-2012-06-12 ChunEon Park(Hermet)
+2012-06-12  ChunEon Park (Hermet)
 
         * Fixed Transit wipe effect flickering.
 
-2012-06-12 Carsten Haitzler (The Rasterman)
+2012-06-12  Carsten Haitzler (The Rasterman)
 
 	* Add elm_win_size_base_set/get, elm_win_size_step_set/get for hinting
         sizing of windows. Useful for terminals.
 
-2012-06-12 Mike Blumenkrantz
+2012-06-12  Mike Blumenkrantz
 
         * Map no longer saves its files to directories outside of the user's home directory
 
-2012-06-14 Seunggyun Kim
+2012-06-14  Seunggyun Kim
 
         * Fix elm_config_font_overlay_apply() to also apply rescaling properly.
 
-2012-06-14 Jaehwan Kim
+2012-06-14  Jaehwan Kim
 
         * Toolbar : Add the reorder feature when the more panel is shown.
           After the item is long-pressed, it can be moved.
 
-2012-06-14 Michael Bouchaud
+2012-06-14  Michael Bouchaud
 
 	* Add an enum to Elm_Calendar_Mark_Repeat_Type:
 	ELM_CALENDAR_LAST_DAY_OF_MONTH
 
-2012-06-15 Michael Bouchaud
+2012-06-15  Michael Bouchaud
 
 	* elm_progressbar: elm_progressbar_format_function_set to add a callback
 	function to format the unit string.
 
-2012-06-16 Davide Andreoli
+2012-06-16  Davide Andreoli
 
 	* elm_map: add elm_map_overlay_del_cb_set to be notify when
 	an overlay is deleted.
 
-2012-06-21 Daniel Juyung Seo (SeoZ)
+2012-06-21  Daniel Juyung Seo (SeoZ)
 
 	* Genlist: Fixed a bug with decorate all mode + tree effect. Delete tree
 	effect animator and set the effect mode to none when decorate all mode is
 	set.
 
-2012-06-23 Daniel Willmann
+2012-06-23  Daniel Willmann
 
         * elm_progressbar: Add "changed" signal to be emitted when the value
         is changed.
 
-2012-06-25 Daniel Juyung Seo (SeoZ)
+2012-06-25  Daniel Juyung Seo (SeoZ)
 
 	* Genlist: Fixed tree expand bug. Check item type when an item is requested
 	to be expanded/contracted.
 
-2012-06-25 Carsten Haitzler (The Rasterman)
+2012-06-25  Carsten Haitzler (The Rasterman)
 
 	* add elm_cnp_selection_loss_callback_set() so you know when you
         lose a selection as a client
         * improve robustness of cnp to track target object deletions.
 
+2012-06-26  Shinwoo Kim (kimcinoo)
+
+	* Use Edje to enable accessibility on TEXTBLOCK.

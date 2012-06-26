@@ -839,6 +839,9 @@ _parent_focus(Evas_Object *obj)
         _elm_widget_focus_region_show(obj);
      }
    sd->focus_order_on_calc = EINA_FALSE;
+
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     _elm_access_highlight_set(obj);
 }
 
 static void

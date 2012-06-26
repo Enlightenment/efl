@@ -657,6 +657,10 @@ _elm_layout_smart_text_set(Evas_Object *obj,
 
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON && !(sub_d->obj))
+     sub_d->obj = _elm_access_edje_object_part_object_register
+                         (obj, elm_layout_edje_get(obj), part);
+
    return EINA_TRUE;
 }
 

@@ -551,6 +551,8 @@ EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object 
 EAPI void             _elm_access_item_unregister(Elm_Widget_Item *item);
 EAPI void             _elm_access_item_register(Elm_Widget_Item *item, Evas_Object *hoverobj);
 EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
+EAPI void             _elm_access_highlight_set(Evas_Object* obj);
+EAPI Evas_Object *    _elm_access_edje_object_part_object_register(Evas_Object *obj, const Evas_Object *partobj, const char* part);
 
 /**< put this as the first member in your widget item struct */
 #define ELM_WIDGET_ITEM       Elm_Widget_Item base
