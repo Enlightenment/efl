@@ -53,7 +53,7 @@ struct _Elm_Flipselector_Smart_Data
    double                interval, first_interval;
 
    int                   walking;
-   Eina_Bool             evaling : 1;
+   Eina_Bool             evaluating : 1;
 };
 
 #define ELM_FLIPSELECTOR_DATA_GET(o, sd) \
@@ -114,36 +114,35 @@ _elm_flipselector_smart_sizing_eval(Evas_Object *obj)
 
    ELM_FLIPSELECTOR_DATA_GET(obj, sd);
 
+   if (sd->evaluating) return;
+
    elm_coords_finger_size_adjust(1, &minw, 2, &minh);
 
-   if (sd->evaling)
+   sd->evaluating = EINA_TRUE;
+
+   if (sd->sentinel)
      {
-        sd->evaling = EINA_TRUE;
-        
-        if (sd->sentinel)
-          {
-             const char *label = elm_object_item_text_get(DATA_GET(sd->sentinel));
-             
-             tmp = strdup(elm_layout_text_get(obj, "elm.top"));
-             elm_layout_text_set(obj, "elm.top", label);
-          }
-        
-        edje_object_size_min_restricted_calc
-          (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh, minw, minh);
-        elm_coords_finger_size_adjust(1, &minw, 2, &minh);
-        evas_object_size_hint_min_get(obj, &w, &h);
-        
-        if (sd->sentinel)
-          {
-             elm_layout_text_set(obj, "elm.top", tmp);
-             free(tmp);
-          }
-        
-        if (w > minw) minw = w;
-        if (h > minh) minh = h;
-        
-        sd->evaling = EINA_FALSE;
+        const char *label = elm_object_item_text_get(DATA_GET(sd->sentinel));
+
+        tmp = strdup(elm_layout_text_get(obj, "elm.top"));
+        elm_layout_text_set(obj, "elm.top", label);
      }
+
+   edje_object_size_min_restricted_calc
+     (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh, minw, minh);
+   elm_coords_finger_size_adjust(1, &minw, 2, &minh);
+   evas_object_size_hint_min_get(obj, &w, &h);
+
+   if (sd->sentinel)
+     {
+        elm_layout_text_set(obj, "elm.top", tmp);
+        free(tmp);
+     }
+
+   if (w > minw) minw = w;
+   if (h > minh) minh = h;
+
+   sd->evaluating = EINA_FALSE;
 
    evas_object_size_hint_min_set(obj, minw, minh);
 }
@@ -621,6 +620,7 @@ _elm_flipselector_smart_add(Evas_Object *obj)
      (obj, "elm,action,down,stop", "", _signal_val_change_stop, obj);
 
    priv->first_interval = FLIP_FIRST_INTERVAL;
+   priv->evaluating = EINA_FALSE;
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -735,7 +735,7 @@ elm_flipselector_item_append(Evas_Object *obj,
         elm_layout_sizing_eval(obj);
      }
 
-   if (eina_list_count(sd->items) >= 2)
+   if (eina_list_count(sd->items) > 1)
      elm_layout_signal_emit(obj, "elm,state,button,visible", "elm");
 
    return (Elm_Object_Item *)item;
