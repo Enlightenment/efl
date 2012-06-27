@@ -275,7 +275,6 @@ _eo_kls_itr_init(const Eo_Class *obj_klass, Eo_Kls_Itr *cur, Eo_Op op, Eo_Kls_It
    prev_state->op = cur->op;
    prev_state->kls_itr = cur->kls_itr;
 
-   /* If we are in a constructor/destructor or we changed an op - init. */
    if ((cur->op == EO_NOOP) || (cur->op != op))
      {
         cur->op = op;
@@ -1177,9 +1176,6 @@ eo_add(const Eo_Class *klass, Eo *parent)
 
    eo_parent_set(obj, parent);
 
-   Eo_Kls_Itr prev_state;
-
-   _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
    _eo_condtor_reset(obj);
 
    _eo_ref(obj);
@@ -1193,17 +1189,14 @@ eo_add(const Eo_Class *klass, Eo *parent)
 
    if (!obj->condtor_done)
      {
-        const Eo_Class *cur_klass = _eo_kls_itr_get(&obj->mro_itr);
-        ERR("Object of class '%s' - Not all of the object constructors have been executed, last constructor was of class: '%s'", klass->desc->name, cur_klass->desc->name);
+        ERR("Object of class '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
      }
-   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    _eo_unref(obj);
 
    return obj;
 
 fail:
-   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    /* Unref twice, once for the ref above, and once for the basic object ref. */
    _eo_unref(obj);
    _eo_unref(obj);
@@ -1295,9 +1288,7 @@ _eo_del_internal(Eo *obj)
    eo_do(obj, eo_event_callback_call(EO_EV_DEL, NULL, NULL));
 
    const Eo_Class *klass = eo_class_get(obj);
-   Eo_Kls_Itr prev_state;
 
-   _eo_kls_itr_init(klass, &obj->mro_itr, EO_NOOP, &prev_state);
    _eo_condtor_reset(obj);
 
    do_err = eo_do(obj, eo_destructor());
@@ -1308,10 +1299,8 @@ _eo_del_internal(Eo *obj)
 
    if (!obj->condtor_done)
      {
-        const Eo_Class *cur_klass = _eo_kls_itr_get(&obj->mro_itr);
-        ERR("Object of class '%s' - Not all of the object destructors have been executed, last destructor was of class: '%s'", klass->desc->name, cur_klass->desc->name);
+        ERR("Object of class '%s' - Not all of the object destructors have been executed.", klass->desc->name);
      }
-   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    /*FIXME: add eo_class_unref(klass) ? - just to clear the caches. */
 
      {
