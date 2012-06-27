@@ -1486,6 +1486,10 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
+   // Use homogeneous mode for group index + homogeneous test.
+   // Homogeneous is not mandatory for group index.
+   elm_genlist_homogeneous_set(gl, EINA_TRUE);
+
    itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "default";
    itc1->func.text_get = gl_text_get;
