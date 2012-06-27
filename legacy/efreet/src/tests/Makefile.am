@@ -54,7 +54,7 @@ efreet_suite.c \
 efreet_test_efreet.c \
 efreet_test_efreet_cache.c
 
-efreet_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libefreet.la
+efreet_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libefreet.la @EFREET_LIBS@
 
 endif
 
