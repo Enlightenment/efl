@@ -918,6 +918,9 @@ _multi_down_cb(void *data,
                Evas_Object *obj __UNUSED__,
                void *event_info)
 {
+   /* Skip the mouse duplicates. */
+   if (((Evas_Event_Multi_Down *) event_info)->device == 0) return;
+
    _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_DOWN);
 }
 
@@ -927,6 +930,9 @@ _multi_move_cb(void *data,
                Evas_Object *obj __UNUSED__,
                void *event_info)
 {
+   /* Skip the mouse duplicates. */
+   if (((Evas_Event_Multi_Move *) event_info)->device == 0) return;
+
    _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_MOVE);
 }
 
@@ -936,6 +942,9 @@ _multi_up_cb(void *data,
              Evas_Object *obj __UNUSED__,
              void *event_info)
 {
+   /* Skip the mouse duplicates. */
+   if (((Evas_Event_Multi_Up *) event_info)->device == 0) return;
+
    _event_process(data, obj, event_info, EVAS_CALLBACK_MULTI_UP);
 }
 
