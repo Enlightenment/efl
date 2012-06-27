@@ -147,6 +147,7 @@ cserve2_slave_cmd_dispatch(void *data, Slave_Command cmd, const void *msg, int s
                                             EINA_INLIST_GET(sw));
 
         sw->data = data;
+        sw->done = EINA_FALSE;
         DBG("Dispatching command '%d' to slave '%p'", cmd, sw->slave);
         cserve2_slave_send(sw->slave, cmd, msg, size);
         return EINA_TRUE;
