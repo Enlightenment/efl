@@ -37,7 +37,7 @@ efreet_test_SOURCES += \
 ef_locale.c
 endif
 
-efreet_spec_test_LDADD = $(top_builddir)/src/lib/libefreet.la @EINA_LIBS@
+efreet_spec_test_LDADD = $(top_builddir)/src/lib/libefreet.la @EFREET_LIBS@
 efreet_spec_test_SOURCES = \
 efreet_spec_test.c
 
