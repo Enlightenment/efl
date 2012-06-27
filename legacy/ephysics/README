@@ -12,12 +12,12 @@ Requirements:
 
 Must:
   libc
-  ecore (at least 1.1.0)
-  ecore-evas (at least 1.1.0)
-  evas (at least 1.1.0)
+  ecore (at least 1.2.99)
+  ecore-evas (at least 1.2.99)
+  evas (at least 1.2.99)
   bullet (at least 2.80)
 Optional:
-  elementary (at least 1.0.0, required to build ephysics_test)
+  elementary (at least 1.0.99, required to build ephysics_test)
 
 EPhysics is a library that manages Ecore, Evas and Bullet Physics into
 an easy to use way. It's a kind of wrapper, a glue, between these libraries.

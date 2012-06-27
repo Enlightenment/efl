@@ -135,13 +135,13 @@ AC_SUBST(EFL_EPHYSICS_BUILD)
 
 PKG_CHECK_MODULES([EPHYSICS],
    [
-    eina >= 1.2.0
-    evas >= 1.2.0
-    ecore >= 1.2.0
+    eina >= 1.2.99
+    evas >= 1.2.99
+    ecore >= 1.2.99
     bullet >= 2.79
    ])
 
-requirement_ephysics="bullet >= 2.79 ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0 ${requirement_ephysics}"
+requirement_ephysics="bullet >= 2.79 ecore >= 1.2.99 evas >= 1.2.99 eina >= 1.2.99 ${requirement_ephysics}"
 
 ### Checks for header files
 AC_CHECK_HEADERS([locale.h sys/resource.h])
@@ -175,7 +175,7 @@ esac
 AC_SUBST(lt_enable_auto_import)
 
 ## Tests
-PKG_CHECK_MODULES([ELEMENTARY], [elementary >= 1.0.0], [build_tests="yes"], [build_tests="no"])
+PKG_CHECK_MODULES([ELEMENTARY], [elementary >= 1.0.99], [build_tests="yes"], [build_tests="no"])
 AC_ARG_ENABLE([build-tests],
    AC_HELP_STRING([--disable-build-tests],
                   [Disable building tests. It is enabled by default unless
@@ -184,7 +184,7 @@ AC_ARG_ENABLE([build-tests],
     if test "x${enableval}" = "xno" ; then
        build_tests="no"
     else
-       requirement_ephysics="elementary >= 1.0.0 ${requirement_ephysics}"
+       requirement_ephysics="elementary >= 1.0.99 ${requirement_ephysics}"
     fi
    ],
    [])
@@ -193,10 +193,10 @@ AM_CONDITIONAL([BUILD_TESTS], [test "x${build_tests}" = "xyes"])
 if test "${build_tests}" = "yes" ; then
 PKG_CHECK_MODULES([EPHYSICS_TEST],
    [
-    eina >= 1.2.0
-    evas >= 1.2.0
-    ecore >= 1.2.0
-    elementary >= 1.0.0
+    eina >= 1.2.99
+    evas >= 1.2.99
+    ecore >= 1.2.99
+    elementary >= 1.0.99
     bullet >= 2.79
    ])
 fi
