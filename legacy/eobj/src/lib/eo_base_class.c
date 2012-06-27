@@ -73,7 +73,7 @@ _data_set(Eo *obj, void *class_data, va_list *list)
 }
 
 static void
-_data_get(const Eo *obj EINA_UNUSED, const void *class_data, va_list *list)
+_data_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    /* We don't really change it... */
    Private_Data *pd = (Private_Data *) class_data;
@@ -137,7 +137,7 @@ _wref_count(Private_Data *pd)
 }
 
 static void
-_wref_add(const Eo *obj, const void *class_data, va_list *list)
+_wref_add(Eo *obj, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
    size_t count;
@@ -150,11 +150,11 @@ _wref_add(const Eo *obj, const void *class_data, va_list *list)
 
    pd->wrefs[count - 1] = wref;
    pd->wrefs[count] = NULL;
-   *wref = (Eo *) obj;
+   *wref = obj;
 }
 
 static void
-_wref_del(const Eo *obj, const void *class_data, va_list *list)
+_wref_del(Eo *obj, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
    size_t count;
@@ -345,10 +345,9 @@ _ev_cb_del(Eo *obj, void *class_data, va_list *list)
 }
 
 static void
-_ev_cb_call(const Eo *_obj, const void *class_data, va_list *list)
+_ev_cb_call(Eo *obj, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
-   Eo *obj = (Eo *) _obj;
    const Eo_Event_Description *desc = va_arg(*list, const Eo_Event_Description *);
    void *event_info = va_arg(*list, void *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
@@ -435,7 +434,7 @@ _ev_thaw(Eo *obj, void *class_data, va_list *list EINA_UNUSED)
 }
 
 static void
-_ev_freeze_get(const Eo *obj EINA_UNUSED, const void *class_data, va_list *list)
+_ev_freeze_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list)
 {
    Private_Data *pd = (Private_Data *) class_data;
    int *ret = va_arg(*list, int *);
@@ -512,18 +511,18 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_SET), _data_set),
-        EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), _data_get),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_GET), _data_get),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DATA_DEL), _data_del),
-        EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_WREF_ADD), _wref_add),
-        EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), _wref_del),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_WREF_ADD), _wref_add),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_WREF_DEL), _wref_del),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD), _ev_cb_priority_add),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL), _ev_cb_del),
-        EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), _ev_cb_call),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL), _ev_cb_call),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD), _ev_cb_forwarder_add),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL), _ev_cb_forwarder_del),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE), _ev_freeze),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_THAW), _ev_thaw),
-        EO_OP_FUNC_CONST(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), _ev_freeze_get),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_FREEZE_GET), _ev_freeze_get),
         EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE), _ev_global_freeze),
         EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW), _ev_global_thaw),
         EO_OP_FUNC_CLASS(EO_BASE_ID(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET), _ev_global_freeze_get),
@@ -537,18 +536,18 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_CONSTRUCTOR, "Constructor"),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DESTRUCTOR, "Destructor"),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_SET, "Set data for key."),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_DATA_GET, "Get data for key."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_GET, "Get data for key."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_DATA_DEL, "Del key."),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_ADD, "Add a weak ref to the object."),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_WREF_DEL, "Delete the weak ref."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_WREF_ADD, "Add a weak ref to the object."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_WREF_DEL, "Delete the weak ref."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_PRIORITY_ADD, "Add an event callback with a priority."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_DEL, "Delete an event callback"),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "Call the event callbacks for an event."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_CALL, "Call the event callbacks for an event."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_ADD, "Add an event forwarder."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_CALLBACK_FORWARDER_DEL, "Delete an event forwarder."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_FREEZE, "Freezes events."),
      EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_THAW, "Thaws events."),
-     EO_OP_DESCRIPTION_CONST(EO_BASE_SUB_ID_EVENT_FREEZE_GET, "Get event freeze counter."),
+     EO_OP_DESCRIPTION(EO_BASE_SUB_ID_EVENT_FREEZE_GET, "Get event freeze counter."),
      EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE, "Freezes events globally."),
      EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_THAW, "Thaws events globally."),
      EO_OP_DESCRIPTION_CLASS(EO_BASE_SUB_ID_EVENT_GLOBAL_FREEZE_GET, "Get global event freeze counter."),

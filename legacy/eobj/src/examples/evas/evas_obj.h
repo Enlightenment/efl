@@ -76,7 +76,7 @@ static inline Evas_Object *
 eo_evas_object_get(const Eo *obj)
 {
    void *data;
-   eo_query(obj, eo_base_data_get(EXEVAS_OBJ_STR, &data));
+   eo_do((Eo *) obj, eo_base_data_get(EXEVAS_OBJ_STR, &data));
    return data;
 }
 

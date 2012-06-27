@@ -11,11 +11,11 @@ EAPI Eo_Op COMP_BASE_ID = 0;
 #define MY_CLASS COMP_CLASS
 
 static void
-_a_get(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
+_a_get(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    int *a;
    a = va_arg(*list, int *);
-   eo_query_super(obj, simple_a_get(a));
+   eo_do_super(obj, simple_a_get(a));
 }
 
 static void
@@ -40,7 +40,7 @@ _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
-        EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
         EO_OP_FUNC_SENTINEL
    };
 

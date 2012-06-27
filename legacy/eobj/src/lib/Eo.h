@@ -67,7 +67,6 @@ enum _Eo_Op_Type
 {
    EO_OP_TYPE_INVALID = -1, /**< Invalid op. */
    EO_OP_TYPE_REGULAR = 0, /**< Regular op. */
-   EO_OP_TYPE_CONST, /**< Const op - object should not change. */
    EO_OP_TYPE_CLASS, /**< Class op - a class op. Like static in Java/C++. */
 };
 
@@ -137,19 +136,9 @@ typedef size_t Eo_Class_Id;
  * The type of the Op functions. This is the type of the functions used by
  * Eo.
  *
- * @see eo_op_func_type_const
+ * @see eo_op_func_type_class
  */
 typedef void (*eo_op_func_type)(Eo *, void *class_data, va_list *list);
-
-/**
- * @typedef eo_op_func_type_const
- * The type of the const Op functions. This is the type of the functions used
- * by Eo. This is the same as #eo_op_func_type, except that this should
- * be used with functions that don't modify the data.
- *
- * @see eo_op_func_type
- */
-typedef void (*eo_op_func_type_const)(const Eo *, const void *class_data, va_list *list);
 
 /**
  * @typedef eo_op_func_type_class
@@ -303,20 +292,8 @@ typedef struct _Eo_Op_Func_Description Eo_Op_Func_Description;
  * @def EO_OP_FUNC(op, func)
  * A convenience macro to be used when populating the #Eo_Op_Func_Description
  * array.
- *
- * @see EO_OP_FUNC_CONST
  */
 #define EO_OP_FUNC(op, func) { op, EO_TYPECHECK(eo_op_func_type, func), EO_OP_TYPE_REGULAR }
-
-/**
- * @def EO_OP_FUNC_CONST(op, func)
- * A convenience macro to be used when populating the #Eo_Op_Func_Description
- * array.
- * The same as #EO_OP_FUNC but for const functions.
- *
- * @see EO_OP_FUNC
- */
-#define EO_OP_FUNC_CONST(op, func) { op, (eo_op_func_type) EO_TYPECHECK(eo_op_func_type_const, func), EO_OP_TYPE_CONST }
 
 /**
  * @def EO_OP_FUNC_CLASS(op, func)
@@ -396,23 +373,9 @@ typedef struct _Eo_Class_Description Eo_Class_Description;
  * @param doc Additional doc for the op.
  * @see Eo_Op_Description
  * @see EO_OP_DESCRIPTION_CLASS
- * @see EO_OP_DESCRIPTION_CONST
  * @see EO_OP_DESCRIPTION_SENTINEL
  */
 #define EO_OP_DESCRIPTION(sub_id, doc) { sub_id, #sub_id, doc, EO_OP_TYPE_REGULAR }
-
-/**
- * @def EO_OP_DESCRIPTION_CONST(op, doc)
- * An helper macro to help populating #Eo_Op_Description
- * This macro is the same as EO_OP_DESCRIPTION but indicates that the op's
- * implementation should not change the object.
- * @param sub_id The sub id of the op being described.
- * @param doc Additional doc for the op.
- * @see Eo_Op_Description
- * @see EO_OP_DESCRIPTION
- * @see EO_OP_DESCRIPTION_SENTINEL
- */
-#define EO_OP_DESCRIPTION_CONST(sub_id, doc) { sub_id, #sub_id, doc, EO_OP_TYPE_CONST }
 
 /**
  * @def EO_OP_DESCRIPTION_CLASS(op, doc)
@@ -507,13 +470,6 @@ EAPI Eina_Bool eo_shutdown(void);
 #define eo_do(obj, ...) eo_do_internal(obj, EO_OP_TYPE_REGULAR, __VA_ARGS__, EO_NOOP)
 
 /**
- * @def eo_query
- * Same as #eo_do but only for const ops.
- * @see eo_do
- */
-#define eo_query(obj, ...) eo_do_internal((Eo *) EO_TYPECHECK(const Eo *, obj), EO_OP_TYPE_CONST, __VA_ARGS__, EO_NOOP)
-
-/**
  * @def eo_class_do
  * A convenience wrapper around eo_class_do_internal()
  * @see eo_class_do_internal
@@ -553,27 +509,9 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  * @param ... list of parameters.
  * @return @c EINA_TRUE on success.
  *
- * Unlike eo_do() and eo_query(), this function only accepts one op.
- *
- * Use the helper macros, don't pass the parameters manually.
- *
- * Same as eo_do_super() just for const objects.
- *
- * @see #eo_query
- * @see eo_do_super()
- */
-#define eo_query_super(obj, ...) eo_do_super_internal((Eo *) EO_TYPECHECK(const Eo *, obj), EO_OP_TYPE_CONST, __VA_ARGS__)
-
-/**
- * @brief Calls the super function for the specific op.
- * @param obj The object to work on
- * @param ... list of parameters.
- * @return @c EINA_TRUE on success.
- *
- * Unlike eo_do() and eo_query(), this function only accepts one op.
+ * Unlike eo_do(), this function only accepts one op.
  *
  * @see #eo_do
- * @see eo_query_super()
  */
 #define eo_do_super(obj, ...) eo_do_super_internal(obj, EO_OP_TYPE_REGULAR, __VA_ARGS__)
 
@@ -601,7 +539,6 @@ EAPI Eina_Bool eo_class_do_internal(const Eo_Class *klass, ...);
  *
  * @see #eo_do
  * @see #eo_do_super
- * @see #eo_query_super
  */
 EAPI Eina_Bool eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...);
 

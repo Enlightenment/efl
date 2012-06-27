@@ -18,7 +18,7 @@ typedef struct
 
 #define _GET_SET_FUNC(name) \
 static void \
-_##name##_get(const Eo *obj EINA_UNUSED, const void *class_data, va_list *list) \
+_##name##_get(Eo *obj EINA_UNUSED, void *class_data, va_list *list) \
 { \
    const Private_Data *pd = class_data; \
    int *name; \
@@ -44,9 +44,9 @@ _class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
-        EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_SET), _b_set),
-        EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_B_GET), _b_get),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_GET), _b_get),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -55,9 +55,9 @@ _class_constructor(Eo_Class *klass)
 
 static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
-     EO_OP_DESCRIPTION_CONST(SIMPLE_SUB_ID_A_GET, "Get property A"),
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "Get property A"),
      EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_SET, "Set property B"),
-     EO_OP_DESCRIPTION_CONST(SIMPLE_SUB_ID_B_GET, "Get property B"),
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_GET, "Get property B"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

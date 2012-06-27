@@ -47,7 +47,7 @@ _color_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 }
 
 static void
-_color_get(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
+_color_get(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    Evas_Object *evas_obj = eo_evas_object_get(obj);
    int *r, *g, *b, *a;
@@ -111,7 +111,7 @@ _class_constructor(Eo_Class *klass)
         EO_OP_FUNC(EXEVAS_OBJ_ID(EXEVAS_OBJ_SUB_ID_POSITION_SET), _position_set),
         EO_OP_FUNC(EXEVAS_OBJ_ID(EXEVAS_OBJ_SUB_ID_SIZE_SET), _size_set),
         EO_OP_FUNC(EXEVAS_OBJ_ID(EXEVAS_OBJ_SUB_ID_COLOR_SET), _color_set),
-        EO_OP_FUNC_CONST(EXEVAS_OBJ_ID(EXEVAS_OBJ_SUB_ID_COLOR_GET), _color_get),
+        EO_OP_FUNC(EXEVAS_OBJ_ID(EXEVAS_OBJ_SUB_ID_COLOR_GET), _color_get),
         EO_OP_FUNC(EXEVAS_OBJ_ID(EXEVAS_OBJ_SUB_ID_VISIBILITY_SET), _visibility_set),
         EO_OP_FUNC(EXEVAS_OBJ_ID(EXEVAS_OBJ_SUB_ID_CHILD_ADD), _child_add),
         EO_OP_FUNC_SENTINEL
@@ -124,7 +124,7 @@ static const Eo_Op_Description op_desc[] = {
      EO_OP_DESCRIPTION(EXEVAS_OBJ_SUB_ID_POSITION_SET, "Position of an evas object."),
      EO_OP_DESCRIPTION(EXEVAS_OBJ_SUB_ID_SIZE_SET, "Size of an evas object."),
      EO_OP_DESCRIPTION(EXEVAS_OBJ_SUB_ID_COLOR_SET, "Color of an evas object."),
-     EO_OP_DESCRIPTION_CONST(EXEVAS_OBJ_SUB_ID_COLOR_GET, "Color of an evas object."),
+     EO_OP_DESCRIPTION(EXEVAS_OBJ_SUB_ID_COLOR_GET, "Color of an evas object."),
      EO_OP_DESCRIPTION(EXEVAS_OBJ_SUB_ID_VISIBILITY_SET, "Visibility of an evas object."),
      EO_OP_DESCRIPTION(EXEVAS_OBJ_SUB_ID_CHILD_ADD, "Add a child eo."),
      EO_OP_DESCRIPTION_SENTINEL

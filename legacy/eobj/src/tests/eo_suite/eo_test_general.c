@@ -488,8 +488,8 @@ START_TEST(eo_op_errors)
 
    obj = eo_add(SIMPLE_CLASS, NULL);
    fail_if(!eo_do(obj, simple_a_print()));
-   fail_if(!eo_query(obj, simple_a_print()));
-   fail_if(eo_query(obj, simple_a_set(1)));
+   fail_if(!eo_do(obj, simple_a_print()));
+   fail_if(!eo_do(obj, simple_a_set(1)));
    eo_unref(obj);
 
    eo_shutdown();

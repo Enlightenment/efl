@@ -265,7 +265,7 @@ END_TEST
 static int _const_ops_counter = 0;
 
 static void
-_const_ops_a_set(const Eo *obj EINA_UNUSED, const void *class_data EINA_UNUSED, va_list *list)
+_const_ops_a_set(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list)
 {
    int a = va_arg(*list, int);
    (void) a;
@@ -288,11 +288,11 @@ static void
 _const_ops_class_constructor(Eo_Class *klass)
 {
    const Eo_Op_Func_Description func_desc[] = {
-        EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), (eo_op_func_type_const) _const_ops_a_set),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), (eo_op_func_type) _const_ops_a_set),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), (eo_op_func_type) _const_ops_a_print),
         EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), (eo_op_func_type_class) _const_ops_a_set),
         EO_OP_FUNC_CLASS(SIMPLE_ID(SIMPLE_SUB_ID_A_PRINT), (eo_op_func_type_class) _const_ops_a_print),
-        EO_OP_FUNC_CONST(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), (eo_op_func_type_const) _const_ops_class_hi_print),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), (eo_op_func_type) _const_ops_class_hi_print),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CLASS_HI_PRINT), (eo_op_func_type) _const_ops_class_hi_print),
         EO_OP_FUNC_SENTINEL
    };
@@ -319,9 +319,9 @@ START_TEST(eo_op_types)
    klass = eo_class_new(&class_desc, 0, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
+   /* Add class checks here... */
    Eo *obj = eo_add(klass, NULL);
    eo_do(obj, simple_a_set(7), simple_a_print(), simple_class_hi_print());
-   fail_if(_const_ops_counter != 0);
 
    eo_unref(obj);
 

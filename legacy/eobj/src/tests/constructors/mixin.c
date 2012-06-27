@@ -9,10 +9,10 @@ EAPI Eo_Op MIXIN_BASE_ID = 0;
 #define MY_CLASS MIXIN_CLASS
 
 static void
-_add_and_print_set(const Eo *obj, const void *class_data EINA_UNUSED, va_list *list)
+_add_and_print_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
 {
    int a, b, x;
-   eo_query(obj, simple_a_get(&a), simple_b_get(&b));
+   eo_do(obj, simple_a_get(&a), simple_b_get(&b));
    x = va_arg(*list, const int);
    printf("%s %d\n", __func__, a + b + x);
 }
@@ -41,7 +41,7 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
-        EO_OP_FUNC_CONST(MIXIN_ID(MIXIN_SUB_ID_ADD_AND_SET), _add_and_print_set),
+        EO_OP_FUNC(MIXIN_ID(MIXIN_SUB_ID_ADD_AND_SET), _add_and_print_set),
         EO_OP_FUNC_SENTINEL
    };
 
@@ -49,7 +49,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Op_Description op_desc[] = {
-     EO_OP_DESCRIPTION_CONST(MIXIN_SUB_ID_ADD_AND_SET, "Add A + B + param and print it"),
+     EO_OP_DESCRIPTION(MIXIN_SUB_ID_ADD_AND_SET, "Add A + B + param and print it"),
      EO_OP_DESCRIPTION_SENTINEL
 };
 

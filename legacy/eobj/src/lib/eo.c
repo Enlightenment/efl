@@ -371,12 +371,6 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
              ERR("Tried calling a class op '%s' (%x) from a non-class context.", (op_desc) ? op_desc->name : NULL, op);
              return EINA_FALSE;
           }
-        else if ((op_type == EO_OP_TYPE_CONST) &&
-              (op_desc->op_type != EO_OP_TYPE_CONST))
-          {
-             ERR("Tried calling non-const or non-existant op '%s' (%x) from a const (query) function.", (op_desc) ? op_desc->name : NULL, op);
-             return EINA_FALSE;
-          }
      }
 #endif
 
