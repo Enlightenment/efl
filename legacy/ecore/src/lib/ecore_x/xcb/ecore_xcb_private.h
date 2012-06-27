@@ -213,6 +213,7 @@ extern int ECORE_X_MODIFIER_SHIFT;
 extern int ECORE_X_MODIFIER_CTRL;
 extern int ECORE_X_MODIFIER_ALT;
 extern int ECORE_X_MODIFIER_WIN;
+extern int ECORE_X_MODIFIER_MODE;
 extern int ECORE_X_LOCK_SCROLL;
 extern int ECORE_X_LOCK_NUM;
 extern int ECORE_X_LOCK_CAPS;

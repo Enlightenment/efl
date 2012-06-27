@@ -55,6 +55,10 @@ ecore_event_evas_modifier_lock_update(Evas *e, unsigned int modifiers)
         evas_key_modifier_off(e, "Hyper");
      }
 
+   if (modifiers & ECORE_EVENT_MODIFIER_MODE)
+     evas_key_modifier_on(e, "Mode");
+   else evas_key_modifier_off(e, "Mode");
+
    if (modifiers & ECORE_EVENT_LOCK_SCROLL)
      evas_key_lock_on(e, "Scroll_Lock");
    else evas_key_lock_off(e, "Scroll_Lock");
@@ -100,6 +104,7 @@ ecore_event_window_register(Ecore_Window id, void *window, Evas *evas,
    evas_key_modifier_add(evas, "Meta");
    evas_key_modifier_add(evas, "Hyper");
    evas_key_modifier_add(evas, "Super");
+   evas_key_modifier_add(evas, "Mode");
    evas_key_lock_add(evas, "Caps_Lock");
    evas_key_lock_add(evas, "Num_Lock");
    evas_key_lock_add(evas, "Scroll_Lock");

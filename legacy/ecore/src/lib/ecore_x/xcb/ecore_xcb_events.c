@@ -550,6 +550,8 @@ _ecore_xcb_events_modifiers_get(unsigned int state)
      modifiers |= ECORE_EVENT_MODIFIER_ALT;
    if (state & ECORE_X_MODIFIER_WIN)
      modifiers |= ECORE_EVENT_MODIFIER_WIN;
+   if (state & ECORE_X_MODIFIER_MODE)
+     modifiers |= ECORE_EVENT_MODIFIER_MODE;
    if (state & ECORE_X_LOCK_SCROLL)
      modifiers |= ECORE_EVENT_LOCK_SCROLL;
    if (state & ECORE_X_LOCK_CAPS)

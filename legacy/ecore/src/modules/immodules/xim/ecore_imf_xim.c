@@ -575,8 +575,12 @@ _ecore_x_event_reverse_modifiers(unsigned int state)
    if (state & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT)
      modifiers |= ShiftMask;
 
-   /**< "Win" (between "Ctrl" and "A */
+   /**< "Win" (between "Ctrl" and "Alt") is pressed */
    if (state & ECORE_IMF_KEYBOARD_MODIFIER_WIN)
+     modifiers |= Mod4Mask;
+
+   /**< "AltGr" is pressed */
+   if (state & ECORE_IMF_KEYBOARD_MODIFIER_MODE)
      modifiers |= Mod5Mask;
 
    return modifiers;

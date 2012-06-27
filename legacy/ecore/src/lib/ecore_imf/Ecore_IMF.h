@@ -116,7 +116,8 @@ typedef enum
    ECORE_IMF_KEYBOARD_MODIFIER_CTRL  = 1 << 0, /**< "Control" is pressed */
    ECORE_IMF_KEYBOARD_MODIFIER_ALT   = 1 << 1, /**< "Alt" is pressed */
    ECORE_IMF_KEYBOARD_MODIFIER_SHIFT = 1 << 2, /**< "Shift" is pressed */
-   ECORE_IMF_KEYBOARD_MODIFIER_WIN   = 1 << 3  /**< "Win" (between "Ctrl" and "Alt") is pressed */
+   ECORE_IMF_KEYBOARD_MODIFIER_WIN   = 1 << 3, /**< "Win" (between "Ctrl" and "Alt") is pressed */
+   ECORE_IMF_KEYBOARD_MODIFIER_MODE  = 1 << 4  /**< "AltGr" is pressed @since 1.3 */
 } Ecore_IMF_Keyboard_Modifiers;
 
 /**

@@ -57,6 +57,7 @@ extern "C" {
 #define ECORE_EVENT_LOCK_NUM            0x0100
 #define ECORE_EVENT_LOCK_CAPS           0x0200
 #define ECORE_EVENT_LOCK_SHIFT          0x0300
+#define ECORE_EVENT_MODIFIER_MODE       0x0400 /**< @since 1.3 */
 
    typedef uintptr_t                        Ecore_Window;
    typedef struct _Ecore_Event_Key          Ecore_Event_Key;
@@ -75,6 +76,7 @@ extern "C" {
         ECORE_WIN,
         ECORE_SCROLL,
         ECORE_CAPS,
+        ECORE_MODE, /**< @since 1.3 */
         ECORE_LAST
      } Ecore_Event_Modifier;
 

@@ -88,6 +88,7 @@ static const Ecore_Event_Modifier_Match matchs[] = {
   { "Caps_Lock", ECORE_CAPS, ECORE_EVENT_MODIFIER_CAPS },
   { "Super_L", ECORE_WIN, ECORE_EVENT_MODIFIER_WIN },
   { "Super_R", ECORE_WIN, ECORE_EVENT_MODIFIER_WIN },
+  { "ISO_Level3_Shift", ECORE_MODE, ECORE_EVENT_MODIFIER_MODE },
   { "Scroll_Lock", ECORE_SCROLL, ECORE_EVENT_MODIFIER_SCROLL }
 };
 
