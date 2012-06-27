@@ -10,7 +10,6 @@
 #include <X11/Xlib.h>
 #include <X11/Xlocale.h>
 #include <X11/Xutil.h>
-#include <X11/keysym.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -565,23 +564,23 @@ _ecore_x_event_reverse_modifiers(unsigned int state)
 
    /**< "Control" is pressed */
    if (state & ECORE_IMF_KEYBOARD_MODIFIER_CTRL)
-     modifiers |= ControlMask;
+     modifiers |= ECORE_X_MODIFIER_CTRL;
 
    /**< "Alt" is pressed */
    if (state & ECORE_IMF_KEYBOARD_MODIFIER_ALT)
-     modifiers |= Mod1Mask;
+     modifiers |= ECORE_X_MODIFIER_ALT;
 
    /**< "Shift" is pressed */
    if (state & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT)
-     modifiers |= ShiftMask;
+     modifiers |= ECORE_X_MODIFIER_SHIFT;
 
    /**< "Win" (between "Ctrl" and "Alt") is pressed */
    if (state & ECORE_IMF_KEYBOARD_MODIFIER_WIN)
-     modifiers |= Mod4Mask;
+     modifiers |= ECORE_X_MODIFIER_WIN;
 
    /**< "AltGr" is pressed */
    if (state & ECORE_IMF_KEYBOARD_MODIFIER_MODE)
-     modifiers |= Mod5Mask;
+     modifiers |= ECORE_X_MODIFIER_MODE;
 
    return modifiers;
 }
@@ -593,14 +592,14 @@ _ecore_x_event_reverse_locks(unsigned int state)
 
    /**< "Num" lock is active */
    if (state & ECORE_IMF_KEYBOARD_LOCK_NUM)
-     locks |= Mod3Mask;
+     locks |= ECORE_X_LOCK_NUM;
 
    if (state & ECORE_IMF_KEYBOARD_LOCK_CAPS)
-     locks |= LockMask;
+     locks |= ECORE_X_LOCK_CAPS;
 
 #if 0 /* FIXME: add mask. */
    if (state & ECORE_IMF_KEYBOARD_LOCK_SCROLL)
-     ;
+     locks |= ECORE_X_LOCK_SCROLL;
 #endif
 
    return locks;
