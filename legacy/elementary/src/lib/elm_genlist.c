@@ -2179,25 +2179,21 @@ _item_realize(Elm_Gen_Item *it,
         _elm_genlist_item_index_update(it);
      }
 
-   if ((calc) && (it->wd->homogeneous) &&
-       ((it->wd->item_width) ||
-        ((it->wd->item_width) && (it->wd->group_item_width))))
+   /* homogenous genlist shortcut */
+   if ((calc) && (it->wd->homogeneous) && (!it->item->mincalcd) &&
+       ((it->group && it->wd->group_item_width) || (!it->group && it->wd->item_width)))
      {
-        /* homogenous genlist shortcut */
-        if (!it->item->mincalcd)
+        if (it->group)
           {
-             if (it->group)
-               {
-                  it->item->w = it->item->minw = it->wd->group_item_width;
-                  it->item->h = it->item->minh = it->wd->group_item_height;
-               }
-             else
-               {
-                  it->item->w = it->item->minw = it->wd->item_width;
-                  it->item->h = it->item->minh = it->wd->item_height;
-               }
-             it->item->mincalcd = EINA_TRUE;
+             it->item->w = it->item->minw = it->wd->group_item_width;
+             it->item->h = it->item->minh = it->wd->group_item_height;
           }
+        else
+          {
+             it->item->w = it->item->minw = it->wd->item_width;
+             it->item->h = it->item->minh = it->wd->item_height;
+          }
+        it->item->mincalcd = EINA_TRUE;
      }
    else
      {
@@ -5896,6 +5892,15 @@ elm_genlist_item_select_mode_set(Elm_Object_Item       *it,
         if (_it->item->block) _it->item->block->updateme = EINA_TRUE;
         if (_it->wd->update_job) ecore_job_del(_it->wd->update_job);
         _it->wd->update_job = ecore_job_add(_update_job, _it->wd);
+
+        // reset homogeneous item size
+        if (_it->wd->homogeneous)
+          {
+             if (_it->group)
+               _it->wd->group_item_width = _it->wd->group_item_height = 0;
+             else
+               _it->wd->item_width = _it->wd->item_height = 0;
+          }
      }
 }
 
