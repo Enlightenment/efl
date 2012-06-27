@@ -125,7 +125,7 @@ elm_main(int argc, char **argv)
    elm_object_text_set(obj, "Transformed object!");
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_07.png", elm_app_data_dir_get());
-   elm_icon_file_set(icon, buf, NULL);
+   elm_image_file_set(icon, buf, NULL);
    elm_object_part_content_set(obj, "icon", icon);
    evas_object_move(obj, 160, 60);
    evas_object_resize(obj, 250, 100);
@@ -138,7 +138,7 @@ elm_main(int argc, char **argv)
    elm_object_text_set(obj, "Another object!");
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_08.png", elm_app_data_dir_get());
-   elm_icon_file_set(icon, buf, NULL);
+   elm_image_file_set(icon, buf, NULL);
    elm_object_part_content_set(obj, "icon", icon);
    evas_object_move(obj, 160, 60);
    evas_object_resize(obj, 250, 100);

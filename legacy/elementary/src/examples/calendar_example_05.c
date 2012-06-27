@@ -25,7 +25,7 @@ _print_cal_info_cb(void *data, Evas_Object *obj, void *event_info)
 
    interval = elm_calendar_interval_get(obj);
    elm_calendar_min_max_year_get(obj, &year_min, &year_max);
-   sel_enabled = !elm_calendar_day_selection_disabled_get(obj);
+   sel_enabled = (elm_calendar_select_mode_get(obj) != ELM_CALENDAR_SELECT_MODE_NONE);
    wds = elm_calendar_weekdays_names_get(obj);
 
    printf("Day: %i, Mon: %i, Year %i, WeekDay: %i<br>\n"

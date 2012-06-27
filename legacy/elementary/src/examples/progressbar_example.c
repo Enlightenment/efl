@@ -149,7 +149,7 @@ elm_main(int    argc,
 
    ic1 = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(ic1, buf, NULL);
+   elm_image_file_set(ic1, buf, NULL);
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    /* pb with label, icon, custom unit label function and span size set */
@@ -198,7 +198,7 @@ elm_main(int    argc,
    example_data.pb5 = pb;
 
    ic2 = elm_icon_add(win);
-   elm_icon_file_set(ic2, buf, NULL);
+   elm_image_file_set(ic2, buf, NULL);
    evas_object_size_hint_aspect_set(ic2, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    /* vertical pb, inverted, with custom unit format and icon*/

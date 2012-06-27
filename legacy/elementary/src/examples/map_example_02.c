@@ -30,7 +30,7 @@ static Evas_Object *
 _icon_get(Evas_Object *obj, const char *file)
 {
    Evas_Object *icon = elm_icon_add(obj);
-   elm_icon_file_set(icon, file, NULL);
+   elm_image_file_set(icon, file, NULL);
    evas_object_show(icon);
    return icon;
 }

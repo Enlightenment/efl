@@ -39,7 +39,7 @@ elm_main(int argc, char **argv)
    cal = elm_calendar_add(win);
    evas_object_size_hint_weight_set(cal, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(cal, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_calendar_day_selection_disabled_set(cal, EINA_TRUE);
+   elm_calendar_select_mode_set(cal, ELM_CALENDAR_SELECT_MODE_NONE);
    evas_object_show(cal);
    elm_box_pack_end(bx, cal);
 

@@ -27,13 +27,13 @@ elm_main(int argc, char **argv)
    path = NULL;
    group = NULL;
    name = NULL;
-   elm_icon_file_get(icon, &path, &group);
+   elm_image_file_get(icon, &path, &group);
    name = elm_icon_standard_get(icon);
    printf("path = %s, group = %s, name = %s\n", path, group, name);
 
-   elm_icon_no_scale_set(icon, EINA_TRUE);
+   elm_image_no_scale_set(icon, EINA_TRUE);
    elm_image_resizable_set(icon, EINA_FALSE, EINA_TRUE);
-   elm_icon_smooth_set(icon, EINA_FALSE);
+   elm_image_smooth_set(icon, EINA_FALSE);
    elm_icon_fill_outside_set(icon, EINA_TRUE);
 
    evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

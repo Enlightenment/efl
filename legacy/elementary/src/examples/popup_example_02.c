@@ -35,7 +35,7 @@ elm_main(int argc, char **argv)
 
    icon1 = elm_icon_add(popup);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_icon_file_set(icon1, buf, NULL);
+   elm_image_file_set(icon1, buf, NULL);
    //Setting popup title-icon
    elm_object_part_content_set(popup, "title,icon", icon1);
 
