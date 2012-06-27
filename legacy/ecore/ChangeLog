@@ -773,3 +773,7 @@
         * Fix small problem with xim module and if xim input context is
         destroyed. causes crashes next focus. track ic and set to NULL.
 
+2012-06-27 Sebastian Dransfeld
+
+	* Fix xim module to pass of Windows key as Mod4, not Mod5
+	* Add support for AltGr key in X
