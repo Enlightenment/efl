@@ -209,16 +209,6 @@ extern int _ecore_xcb_event_xfixes;
 extern int _ecore_xcb_event_input;
 extern int _ecore_xcb_event_gesture;
 
-extern int ECORE_X_MODIFIER_SHIFT;
-extern int ECORE_X_MODIFIER_CTRL;
-extern int ECORE_X_MODIFIER_ALT;
-extern int ECORE_X_MODIFIER_WIN;
-extern int ECORE_X_MODIFIER_MODE;
-extern int ECORE_X_LOCK_SCROLL;
-extern int ECORE_X_LOCK_NUM;
-extern int ECORE_X_LOCK_CAPS;
-extern int ECORE_X_LOCK_SHIFT;
-
 extern Ecore_X_Atom _ecore_xcb_atoms_wm_protocol[ECORE_X_WM_PROTOCOL_NUM];
 
 extern int _ecore_xcb_button_grabs_num;
