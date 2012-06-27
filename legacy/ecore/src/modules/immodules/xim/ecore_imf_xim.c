@@ -699,14 +699,14 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
 
 #ifdef X_HAVE_UTF8_STRING
                   val = Xutf8LookupString(ic,
-                                          (XKeyEvent *)&xev,
+                                          &xev,
                                           tmp,
                                           val,
                                           &sym,
                                           &mbstatus);
 #else /* ifdef X_HAVE_UTF8_STRING */
                   val = XmbLookupString(ic,
-                                        (XKeyEvent *)&xev,
+                                        &xev,
                                         tmp,
                                         val,
                                         &sym,
