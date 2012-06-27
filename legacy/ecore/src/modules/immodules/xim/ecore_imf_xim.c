@@ -597,10 +597,8 @@ _ecore_x_event_reverse_locks(unsigned int state)
    if (state & ECORE_IMF_KEYBOARD_LOCK_CAPS)
      locks |= ECORE_X_LOCK_CAPS;
 
-#if 0 /* FIXME: add mask. */
    if (state & ECORE_IMF_KEYBOARD_LOCK_SCROLL)
      locks |= ECORE_X_LOCK_SCROLL;
-#endif
 
    return locks;
 }
