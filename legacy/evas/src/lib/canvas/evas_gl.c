@@ -100,6 +100,12 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
         return NULL;
      }
 
+   if ( (width <= 0) || (height <= 0))
+     {
+        ERR("Invalid surface dimensions: %d, %d", width, height);
+        return NULL;
+     }
+
    surf = calloc(1, sizeof(Evas_GL_Surface));
 
    if (!surf) return NULL;
@@ -220,11 +226,16 @@ evas_gl_make_current(Evas_GL *evas_gl, Evas_GL_Surface *surf, Evas_GL_Context *c
    MAGIC_CHECK(evas_gl, Evas_GL, MAGIC_EVAS_GL);
    return EINA_FALSE;
    MAGIC_CHECK_END();
-
-   if ((!surf) || (!ctx))
+   
+   if ((surf) && (ctx))
+     ret = (Eina_Bool)evas_gl->evas->engine.func->gl_make_current(evas_gl->evas->engine.data.output, surf->data, ctx->data);
+   else if ((!surf) && (!ctx))
      ret = (Eina_Bool)evas_gl->evas->engine.func->gl_make_current(evas_gl->evas->engine.data.output, NULL, NULL);
    else
-     ret = (Eina_Bool)evas_gl->evas->engine.func->gl_make_current(evas_gl->evas->engine.data.output, surf->data, ctx->data);
+     {
+        ERR("Bad match between surface: %p and context: %p", surf, ctx);
+        return EINA_FALSE;
+     }
 
    return ret;
 }

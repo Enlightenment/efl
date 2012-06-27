@@ -77,10 +77,10 @@ struct _Render_Engine_GL_Surface
    int      stencil_bits;
 
    int      direct_fb_opt;
-   int         multiample_bits;
+   int      multisample_bits;
 
    // Render target Texture/Buffers
-   GLint       rt_msaa_samples;
+   GLint    rt_msaa_samples;
 
    GLuint   rt_tex;
    GLint    rt_internal_fmt;
@@ -146,8 +146,9 @@ static Render_Engine_GL_Context *current_evgl_ctx = NULL;
 static Render_Engine *current_engine = NULL;
 static Evas_Object *gl_direct_img_obj = NULL;
 
-static char _gl_ext_string[1024];
-static char _evasgl_ext_string[1024];
+static int  _ext_initted = 0;
+static char *_gl_ext_string = NULL;
+static char *_evasgl_ext_string = NULL;
 
 // Resource context/surface per Thread in TLS for evasgl use
 static Eina_TLS   resource_key;
@@ -464,7 +465,6 @@ _gl_ext_sym_init(void)
    //----------- GLES 2.0 Extensions ------------//
    // If the symbol's not found, they get set to NULL
    // If one of the functions in the extension exists, the extension in supported
-
    /* GL_OES_get_program_binary */
    FINDSYM(glsym_glGetProgramBinaryOES, "glGetProgramBinary", glsym_func_void);
    FINDSYM(glsym_glGetProgramBinaryOES, "glGetProgramBinaryEXT", glsym_func_void);
@@ -614,14 +614,25 @@ _gl_ext_sym_init(void)
 static void
 _gl_ext_init(Render_Engine *re)
 {
-   int i;
+   int i, ext_len = 0;
    const char *glexts, *evasglexts;
-
-   memset(_gl_ext_string, 0, 1024);
-   memset(_evasgl_ext_string, 0, 1024);
 
    // GLES 2.0 Extensions
    glexts = (const char*)glGetString(GL_EXTENSIONS);
+
+   ext_len = strlen(glexts);
+   if (!ext_len) 
+     {
+        DBG("GL Get Extension string NULL: No extensions supported");
+        return;
+     }
+
+   _gl_ext_string = calloc(1, sizeof(char) * ext_len * 2);
+   if (!_gl_ext_string) 
+     {
+        ERR("Error allocating _gl_ext_string.");
+        return;
+     }
 
    DBG("--------GLES 2.0 Extensions--------");
    for (i = 0; _gl_ext_entries[i].name != NULL; i++)
@@ -649,6 +660,20 @@ _gl_ext_init(Render_Engine *re)
         evasglexts = glXQueryExtensionsString(re->info->info.display,
                                               re->info->info.screen);
 #endif
+        ext_len = strlen(evasglexts);
+
+        if (!ext_len) 
+          {
+             DBG("GL Get Extension string NULL: No extensions supported");
+             return;
+          }
+
+        _evasgl_ext_string = calloc(1, sizeof(char) * ext_len * 2);
+        if (!_evasgl_ext_string) 
+          {
+             ERR("Error allocating _evasgl_ext_string.");
+             return;
+          }
 
         DBG("--------EvasGL Supported Extensions----------");
         for (i = 0; _evasgl_ext_entries[i].name != NULL; i++)
@@ -899,6 +924,19 @@ _destroy_internal_glue_resources(void *data)
    eina_tls_free(resource_key);
 #endif
 
+   // Free the extension strings
+   if (_ext_initted)
+     {
+        if (_gl_ext_string) 
+           free(_gl_ext_string);
+        if (_evasgl_ext_string) 
+           free(_evasgl_ext_string);
+
+        _gl_ext_string = NULL;
+        _evasgl_ext_string = NULL;
+        _ext_initted = 0;
+     }
+
    return 1;
 }
 
@@ -1111,8 +1149,13 @@ eng_setup(Evas *e, void *in)
    eng_window_use(re->win);
 
    re->vsync = 0;
-   _gl_ext_sym_init();
-   _gl_ext_init(re);
+
+   if (!_ext_initted)
+     {
+        _gl_ext_sym_init();
+        _gl_ext_init(re);
+        _ext_initted = 1 ;
+     }
 
    return 1;
 }
@@ -2874,6 +2917,9 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
    GLuint fbo, tex, rb, ds_tex;
    int w, h, fb_status;
 
+   // Initialize Variables
+   fbo = tex = rb = ds_tex = 0;
+
    // Width/Heith for test purposes
    w = h = 2;
 
@@ -2951,7 +2997,7 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
 
    // Delete Created Resources
    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-   glDeleteFramebuffers(1, &fbo);
+   if (fbo) glDeleteFramebuffers(1, &fbo);
    if (tex) glDeleteTextures(1, &tex);
    if (ds_tex) glDeleteTextures(1, &ds_tex);
    if (rb) glDeleteRenderbuffers(1, &rb);
@@ -2965,6 +3011,42 @@ _check_gl_surface_format(GLint int_fmt, GLenum fmt, GLenum attachment, GLenum at
         else
            return 1;
      }
+}
+
+static void
+_print_gl_surface_info(Render_Engine_GL_Surface *sfc, int error)
+{
+#define PRINT_LOG(...) \
+   if (error) \
+      ERR(__VA_ARGS__); \
+   else \
+      DBG(__VA_ARGS__);
+
+   PRINT_LOG("----------Surface Info------------"); 
+   PRINT_LOG("     [Surface] %x", (unsigned int)sfc);
+   PRINT_LOG("         Width:  %d", sfc->w);
+   PRINT_LOG("         Height: %d", sfc->h);
+   PRINT_LOG("         Direct Surface: %x", (unsigned int)sfc->direct_sfc);
+   PRINT_LOG("         Current Context: %x", (unsigned int)sfc->current_ctx);
+   PRINT_LOG("         [-------Config-------]");
+   PRINT_LOG("            Depth Bits      : %d", sfc->depth_bits);
+   PRINT_LOG("            Stencil Bits    : %d", sfc->stencil_bits);
+   PRINT_LOG("            Direct FB Opt   : %d", sfc->direct_fb_opt);
+   PRINT_LOG("            Multisample Bits: %d", sfc->multisample_bits);
+   PRINT_LOG("            MSAA Samples    : %d", sfc->rt_msaa_samples);
+   PRINT_LOG("         [-------Internal-----]");
+   PRINT_LOG("            RenderTarget Texture             : %d", sfc->rt_tex);
+   PRINT_LOG("            RenderTarget Internal Format     : %x", sfc->rt_internal_fmt);
+   PRINT_LOG("            RenderTaret Format               : %x", sfc->rt_fmt);
+   PRINT_LOG("            RenderBuffer Depth               : %x", sfc->rb_depth);
+   PRINT_LOG("            RenderBuffer Depth Format        : %x", sfc->rb_depth_fmt);
+   PRINT_LOG("            RenderBuffer Stencil             : %d", sfc->rb_stencil);
+   PRINT_LOG("            RenderBuffer Stencil Format      : %x", sfc->rb_stencil_fmt);
+   PRINT_LOG("            RenderBuffer Depth Stencil       : %x", sfc->rb_depth_stencil);
+   PRINT_LOG("            RenderBuffer Depth Stencil Format: %x", sfc->rb_depth_stencil_fmt);
+   PRINT_LOG("--------------------------------------"); 
+
+#undef PRINT_LOG
 }
 
 static void
@@ -3008,7 +3090,7 @@ _set_gl_surface_cap(Render_Engine *re)
    GLuint fbo, tex, depth, stencil;
    int w, h;
 
-   int i, ret, count;
+   int i, count;
 
    if (!re) return;
    if (re->gl_cap_initted) return;
@@ -3022,7 +3104,7 @@ _set_gl_surface_cap(Render_Engine *re)
    glGetIntegerv(GL_MAX_SAMPLES_IMG, &max_samples);
 
    // Check if msaa_support is supported
-   if (max_samples &&
+   if ((max_samples) &&
        (glsym_glFramebufferTexture2DMultisample) &&
        (glsym_glRenderbufferStorageMultisample))
      {
@@ -3190,6 +3272,7 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
            }
       case EVAS_GL_STENCIL_BIT_8:
          if ((sfc->rb_depth_fmt == re->gl_cap.depth_24_stencil_8[0]) ||
+             (sfc->rb_depth_fmt == re->gl_cap.depth_24[0]) ||
              (!(re->gl_cap.stencil_8[0]) && (re->gl_cap.depth_24_stencil_8[0])))
            {
               sfc->rb_depth_stencil_fmt = re->gl_cap.depth_24_stencil_8[0];
@@ -3247,10 +3330,143 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
    return 1;
 }
 
-static void
+static int
+_attach_fbo_surface(Render_Engine *data __UNUSED__,
+                    Render_Engine_GL_Surface *sfc,
+                    int fbo)
+{
+   int fb_status, curr_tex, curr_rb;
+
+   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+
+   // Detach any previously attached buffers
+   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, 0, 0);
+   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+   glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+#else
+   glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+#endif
+
+
+   // Render Target Texture
+   if (sfc->rt_tex)
+     {
+        curr_tex = 0;
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &curr_tex);
+        glBindTexture(GL_TEXTURE_2D, sfc->rt_tex );
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sfc->w, sfc->h, 0,
+                     GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+        glBindTexture(GL_TEXTURE_2D, curr_tex);
+
+        // Attach texture to FBO
+        if (sfc->rt_msaa_samples)
+           glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sfc->rt_tex, 0, sfc->rt_msaa_samples);
+        else
+           glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                                  GL_TEXTURE_2D, sfc->rt_tex, 0);
+     }
+
+
+   // Depth Stencil RenderBuffer - Attach it to FBO
+   if (sfc->rb_depth_stencil)
+     {
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+        curr_tex = 0;
+        glGetIntegerv(GL_TEXTURE_BINDING_2D, &curr_tex);
+        glBindTexture(GL_TEXTURE_2D, sfc->rb_depth_stencil);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, sfc->w, sfc->h,
+                     0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, NULL);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                               GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                               GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
+        glBindTexture(GL_TEXTURE_2D, curr_tex);
+
+#else
+        curr_rb = 0;
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, &curr_rb);
+        glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_depth_stencil);
+        glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_depth_stencil_fmt,
+                              sfc->w, sfc->h);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
+                                  GL_RENDERBUFFER, sfc->rb_depth_stencil);
+        glBindRenderbuffer(GL_RENDERBUFFER, curr_rb);
+#endif
+     }
+
+   // Depth RenderBuffer - Attach it to FBO
+   if (sfc->rb_depth)
+     {
+        curr_rb = 0;
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, &curr_rb);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_depth);
+
+        if (sfc->rt_msaa_samples)
+           glsym_glRenderbufferStorageMultisample(GL_RENDERBUFFER,
+                                                  sfc->rt_msaa_samples,
+                                                  sfc->rb_depth_fmt,
+                                                  sfc->w, sfc->h);
+        else
+           glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_depth_fmt,
+                                 sfc->w, sfc->h);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                  GL_RENDERBUFFER, sfc->rb_depth);
+        glBindRenderbuffer(GL_RENDERBUFFER, curr_rb);
+     }
+
+   // Stencil RenderBuffer - Attach it to FBO
+   if (sfc->rb_stencil)
+     {
+        curr_rb = 0;
+        glGetIntegerv(GL_RENDERBUFFER_BINDING, &curr_rb);
+
+        glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_stencil);
+
+        if (sfc->rt_msaa_samples)
+           glsym_glRenderbufferStorageMultisample(GL_RENDERBUFFER,
+                                                  sfc->rt_msaa_samples,
+                                                  sfc->rb_stencil_fmt,
+                                                  sfc->w, sfc->h);
+        else
+           glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_stencil_fmt,
+                                 sfc->w, sfc->h);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                  GL_RENDERBUFFER, sfc->rb_stencil);
+        glBindRenderbuffer(GL_RENDERBUFFER, curr_rb);
+     }
+
+   // Check FBO for completeness
+   fb_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+   if (fb_status != GL_FRAMEBUFFER_COMPLETE)
+     {
+        ERR("FBO not complete. Error Code: %x!", fb_status);
+        _print_gl_surface_info(sfc, 1);
+        return 0;
+     }
+
+   return 1;
+}
+
+static int
 _create_rt_buffers(Render_Engine *data __UNUSED__,
                    Render_Engine_GL_Surface *sfc)
 {
+   int ret = 0;
+   GLuint fbo = 0, curr_fbo = 0;
+
+   //------------------------------------//
    // Render Target texture
    if (sfc->rt_fmt)
      {
@@ -3265,121 +3481,42 @@ _create_rt_buffers(Render_Engine *data __UNUSED__,
 #else
         glGenRenderbuffers(1, &sfc->rb_depth_stencil);
 #endif
-        return;
      }
-
-   // Depth RenderBuffer - Create storage here...
-   if (sfc->rb_depth_fmt)
-      glGenRenderbuffers(1, &sfc->rb_depth);
-
-   // Stencil RenderBuffer - Create Storage here...
-   if (sfc->rb_stencil_fmt)
-      glGenRenderbuffers(1, &sfc->rb_stencil);
-}
-
-static int
-_attach_fbo_surface(Render_Engine *data __UNUSED__,
-                    Render_Engine_GL_Surface *sfc,
-                    Render_Engine_GL_Context *ctx)
-{
-   int fb_status;
-
-   glBindFramebuffer(GL_FRAMEBUFFER, ctx->context_fbo);
-
-   // Render Target Texture
-   if (sfc->rt_tex)
+   else
      {
-        glBindTexture(GL_TEXTURE_2D, sfc->rt_tex );
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sfc->w, sfc->h, 0,
-                     GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        // Depth RenderBuffer - Create storage here...
+        if (sfc->rb_depth_fmt)
+           glGenRenderbuffers(1, &sfc->rb_depth);
 
-        if (sfc->rt_msaa_samples)
-           glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sfc->rt_tex, 0, sfc->rt_msaa_samples);
-        else
-           glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                                  GL_TEXTURE_2D, sfc->rt_tex, 0);
+        // Stencil RenderBuffer - Create Storage here...
+        if (sfc->rb_stencil_fmt)
+           glGenRenderbuffers(1, &sfc->rb_stencil);
      }
+   //------------------------------------//
+   // Try attaching the given configuration
+   glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curr_fbo);
+   glGenFramebuffers(1 ,&fbo);
 
+   ret = _attach_fbo_surface(NULL, sfc, fbo);
 
+   if (fbo) glDeleteFramebuffers(1, &fbo);
+   glBindFramebuffer(GL_FRAMEBUFFER, curr_fbo);
 
-
-   // Depth Stencil RenderBuffer - Attach it to FBO
-   if (sfc->rb_depth_stencil)
+   if (!ret)
      {
+        if (sfc->rt_tex) glDeleteTextures(1, &sfc->rt_tex);
+        if (sfc->rb_depth) glDeleteRenderbuffers(1, &sfc->rb_depth);
+        if (sfc->rb_stencil) glDeleteRenderbuffers(1, &sfc->rb_stencil);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        glBindTexture(GL_TEXTURE_2D, sfc->rb_depth_stencil);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, sfc->w, sfc->h,
-                     0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, NULL);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                               GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                               GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
-        glBindTexture(GL_TEXTURE_2D, 0);
-
+        if (sfc->rb_depth_stencil) glDeleteTextures(1, &sfc->rb_depth_stencil);
 #else
-        glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_depth_stencil);
-        glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_depth_stencil_fmt,
-                              sfc->w, sfc->h);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT,
-                                  GL_RENDERBUFFER, sfc->rb_depth_stencil);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        if (sfc->rb_depth_stencil) glDeleteRenderbuffers(1, &sfc->rb_depth_stencil);
 #endif
-     }
-
-   // Depth RenderBuffer - Attach it to FBO
-   if (sfc->rb_depth)
-     {
-        glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_depth);
-
-        if (sfc->rt_msaa_samples)
-           glsym_glRenderbufferStorageMultisample(GL_RENDERBUFFER,
-                                                  sfc->rt_msaa_samples,
-                                                  sfc->rb_depth_fmt,
-                                                  sfc->w, sfc->h);
-        else
-           glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_depth_fmt,
-                                 sfc->w, sfc->h);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                                  GL_RENDERBUFFER, sfc->rb_depth);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-     }
-
-   // Stencil RenderBuffer - Attach it to FBO
-   if (sfc->rb_stencil)
-     {
-        glBindRenderbuffer(GL_RENDERBUFFER, sfc->rb_stencil);
-
-        if (sfc->rt_msaa_samples)
-           glsym_glRenderbufferStorageMultisample(GL_RENDERBUFFER,
-                                                  sfc->rt_msaa_samples,
-                                                  sfc->rb_stencil_fmt,
-                                                  sfc->w, sfc->h);
-        else
-           glRenderbufferStorage(GL_RENDERBUFFER, sfc->rb_stencil_fmt,
-                                 sfc->w, sfc->h);
-        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                                  GL_RENDERBUFFER, sfc->rb_stencil);
-        glBindRenderbuffer(GL_RENDERBUFFER, 0);
-     }
-
-   // Check FBO for completeness
-   fb_status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-   if (fb_status != GL_FRAMEBUFFER_COMPLETE)
-     {
-        ERR("FBO not complete!");
+        ERR("_attach_fbo_surface() failed.");
         return 0;
      }
-
-   return 1;
+   else 
+      return 1;
 }
 
 
@@ -3465,7 +3602,15 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
      }
 
    // Create Render texture
-   _create_rt_buffers(re, sfc);
+   if (!_create_rt_buffers(re, sfc))
+     {
+        ERR("Unable Create Specificed Surfaces.  Unsupported format!");
+        goto finish;
+     };
+
+   ret = sfc;
+
+finish:
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    res = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
@@ -3474,13 +3619,8 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
 #endif
    if (!res)
      {
-        ERR("xxxMakeCurrent() finish!");
-        goto finish;
+        ERR("xxxMakeCurrent() (NULL, NULL) Error!");
      }
-
-   ret = sfc;
-
-finish:
 
    if (!ret)
      {
@@ -3868,9 +4008,10 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
         // Attach FBO if it hasn't been attached or if surface changed
         if ((!sfc->fbo_attached) || (ctx->current_sfc != sfc))
           {
-             if (!_attach_fbo_surface(re, sfc, ctx))
+             if (!_attach_fbo_surface(re, sfc, ctx->context_fbo))
                {
                   ERR("_attach_fbo_surface() failed.");
+                  _print_gl_surface_info(sfc, 1);
                   return 0;
                }
 
