@@ -231,3 +231,7 @@
 2012-06-26  Shinwoo Kim (kimcinoo)
 
 	* Use Edje to enable accessibility on TEXTBLOCK.
+
+2012-06-27 Daniel Juyung Seo (SeoZ)
+
+	* Genlist: Fixed homogeneous mode bug with ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY item. Now it calculates display only item size correctly.
