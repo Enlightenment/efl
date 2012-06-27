@@ -23,8 +23,9 @@ static Eet_File *util_ef = NULL;
 
 static Eina_Hash *desktops = NULL;
 
-static Eina_Hash *file_ids = NULL;
-static Eina_Hash *paths = NULL;
+static Eina_Hash         *file_ids = NULL;
+static Efreet_Cache_Hash *old_file_ids = NULL;
+static Eina_Hash         *paths = NULL;
 
 static Eina_Hash *mime_types = NULL;
 static Eina_Hash *categories = NULL;
@@ -69,6 +70,11 @@ cache_add(const char *path, const char *file_id, int priority __UNUSED__, int *c
         else      INF("  NO UNCACHED");
     }
     if (!desk) return 1;
+    if (file_id && old_file_ids && !eina_hash_find(old_file_ids->hash, file_id))
+    {
+        *changed = 1;
+        INF("  NOT IN UTILS");
+    }
     if (!eina_hash_find(paths, desk->orig_path))
     {
         if (!eet_data_write(ef, edd, desk->orig_path, desk, 0))
@@ -281,6 +287,13 @@ main(int argc, char **argv)
         eet_close(ef);
     }
 
+    ef = eet_open(efreet_desktop_util_cache_file(), EET_FILE_MODE_READ);
+    if (ef)
+    {
+        old_file_ids = eet_data_read(ef, efreet_hash_string_edd(), "file_id");
+        eet_close(ef);
+    }
+
     /* create cache */
     snprintf(file, sizeof(file), "%s.XXXXXX", efreet_desktop_cache_file());
     tmpfd = mkstemp(file);
@@ -367,10 +380,7 @@ main(int argc, char **argv)
     }
 
     if (user_dirs)
-    {
-        IF_FREE(user_dirs->array);
-        free(user_dirs);
-    }
+        efreet_cache_array_string_free(user_dirs);
 
     /* store user dirs */
     if (store_dirs)
@@ -427,6 +437,12 @@ main(int argc, char **argv)
     eina_hash_free(generic_name);
     eina_hash_free(comment);
     eina_hash_free(exec);
+
+    if (old_file_ids)
+    {
+        eina_hash_free(old_file_ids->hash);
+        free(old_file_ids);
+    }
 
     eina_hash_free(file_ids);
     eina_hash_free(paths);
@@ -501,6 +517,11 @@ error:
     IF_FREE(dir);
 edd_error:
     if (user_dirs) efreet_cache_array_string_free(user_dirs);
+    if (old_file_ids)
+    {
+        eina_hash_free(old_file_ids->hash);
+        free(old_file_ids);
+    }
     efreet_shutdown();
 efreet_error:
     ecore_shutdown();
