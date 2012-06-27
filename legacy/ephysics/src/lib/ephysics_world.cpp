@@ -4,7 +4,6 @@
 
 #include "ephysics_private.h"
 #include <Ecore.h>
-#include <Ecore_Evas.h>
 #include <Evas.h>
 
 #ifdef  __cplusplus

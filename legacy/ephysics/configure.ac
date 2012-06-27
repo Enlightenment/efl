@@ -138,11 +138,10 @@ PKG_CHECK_MODULES([EPHYSICS],
     eina >= 1.2.0
     evas >= 1.2.0
     ecore >= 1.2.0
-    ecore-evas >= 1.2.0
     bullet >= 2.79
    ])
 
-requirement_ephysics="bullet >= 2.79 ecore-evas >= 1.2.0 ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0 ${requirement_ephysics}"
+requirement_ephysics="bullet >= 2.79 ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0 ${requirement_ephysics}"
 
 ### Checks for header files
 AC_CHECK_HEADERS([locale.h sys/resource.h])
@@ -197,7 +196,6 @@ PKG_CHECK_MODULES([EPHYSICS_TEST],
     eina >= 1.2.0
     evas >= 1.2.0
     ecore >= 1.2.0
-    ecore-evas >= 1.2.0
     elementary >= 1.0.0
     bullet >= 2.79
    ])

@@ -2,7 +2,6 @@
 # include <config.h>
 #endif
 
-#include <Ecore_Evas.h>
 #include <Evas.h>
 
 #include "ephysics_private.h"
