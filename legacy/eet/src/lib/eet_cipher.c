@@ -968,7 +968,7 @@ eet_cipher(const void   *data,
 # else /* ifdef HAVE_GNUTLS */
    /* Openssl declarations*/
    EVP_CIPHER_CTX ctx;
-   unsigned int *buffer;
+   unsigned int *buffer = NULL;
    int tmp_len;
 # endif /* ifdef HAVE_GNUTLS */
 
@@ -1043,7 +1043,8 @@ eet_cipher(const void   *data,
    /* Gcrypt close the cipher */
    gcry_cipher_close(cipher);
 # else /* ifdef HAVE_GNUTLS */
-   buffer = alloca(crypted_length);
+   buffer = malloc(crypted_length);
+   if (!buffer) goto on_error;
    *buffer = tmp;
 
    memcpy(buffer + 1, data, size);
@@ -1071,6 +1072,7 @@ eet_cipher(const void   *data,
      goto on_error;
 
    EVP_CIPHER_CTX_cleanup(&ctx);
+   free(buffer);
 # endif /* ifdef HAVE_GNUTLS */
 
    /* Set return values */
@@ -1098,6 +1100,8 @@ on_error:
    if (opened)
      EVP_CIPHER_CTX_cleanup(&ctx);
 
+   free(buffer);
+   
 # endif /* ifdef HAVE_GNUTLS */
    /* General error */
    free(ret);

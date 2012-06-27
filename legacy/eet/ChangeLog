@@ -598,3 +598,7 @@
 2012-05-30  Cedric Bail
 
 	* Check that gnutls and openssl don't return below zero size during decipher.
+
+2012-06-27  Leandro Sansilva
+
+	* Fix crash when cyphering huge amount of data.
