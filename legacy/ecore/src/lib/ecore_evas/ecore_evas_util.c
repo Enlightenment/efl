@@ -197,7 +197,7 @@ _ecore_evas_pre_free(Ecore_Evas *ee)
 }
 
 static int
-_ecore_evas_object_evas_check(const char *function, const Ecore_Evas *ee, const Evas_Object *obj)
+_ecore_evas_object_evas_check(const char *function __UNUSED__, const Ecore_Evas *ee, const Evas_Object *obj)
 {
    const char *name, *type;
    Evas *e;

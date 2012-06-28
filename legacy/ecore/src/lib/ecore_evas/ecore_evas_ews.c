@@ -269,7 +269,7 @@ _ecore_evas_ews_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 }
 
 static void
-_ecore_evas_ews_rotation_set(Ecore_Evas *ee, int rot, int resize)
+_ecore_evas_ews_rotation_set(Ecore_Evas *ee, int rot, int resize __UNUSED__)
 {
    if (ee->rotation == rot) return;
    ee->rotation = rot;

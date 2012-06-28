@@ -187,8 +187,8 @@ static int _ecore_exe_check_errno(int         result,
 
 static int
 _ecore_exe_check_errno(int         result,
-                       const char *file,
-                       int         line)
+                       const char *file __UNUSED__,
+                       int         line __UNUSED__)
 {
    int saved_errno = errno;
 
