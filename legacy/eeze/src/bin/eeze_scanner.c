@@ -431,8 +431,8 @@ main(void)
 
    sigs_setup();
    es_log_dom = eina_log_domain_register("eeze_scanner", EINA_COLOR_CYAN);
-   eina_log_domain_level_set("eeze_scanner", EINA_LOG_LEVEL_DBG);
-   eina_log_domain_level_set("eeze", EINA_LOG_LEVEL_DBG);
+   eina_log_domain_level_set("eeze_scanner", EINA_LOG_LEVEL_ERR);
+   eina_log_domain_level_set("eeze", EINA_LOG_LEVEL_ERR);
 
    tmp = getenv("TMPDIR");
    if (!tmp) tmp = "/tmp";
