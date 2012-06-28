@@ -1252,6 +1252,32 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                   if (*maxh < *minh) *maxh = *minh;
 	       }
 	  }
+        if ((chosen_desc->text.fit_x) || (chosen_desc->text.fit_y))
+          {
+             double s = 1.0;
+             
+             if (ep->part->scale) s = TO_DOUBLE(sc);
+             evas_object_scale_set(ep->object, s);
+             evas_object_textblock_size_formatted_get(ep->object, &tw, &th);
+             if (chosen_desc->text.fit_x)
+               {
+                  if ((tw > 0) && (tw > params->w))
+                    {
+                       s = (s * params->w) / (double)tw;
+                       evas_object_scale_set(ep->object, s);
+                       evas_object_textblock_size_formatted_get(ep->object, &tw, &th);
+                    }
+               }
+             if (chosen_desc->text.fit_y)
+               {
+                  if ((th > 0) && (th > params->h))
+                    {
+                       s = (s * params->h) / (double)th;
+                       evas_object_scale_set(ep->object, s);
+                       evas_object_textblock_size_formatted_get(ep->object, &tw, &th);
+                    }
+               }
+          }
         evas_object_textblock_valign_set(ep->object, TO_DOUBLE(chosen_desc->text.align.y));
      }
 }
