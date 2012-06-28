@@ -3667,7 +3667,7 @@
   * algorithm used to scale the icon to the new object size is going to be
   * faster, but with a lower quality.
   *
-  * elm_icon_fill_outside_set() is used to ensure that the icon will fill the
+  * elm_image_fill_outside_set() is used to ensure that the icon will fill the
   * entire area available to it, even if keeping the aspect ratio. The icon
   * will overflow its width or height (any of them that is necessary) to the
   * object area, instead of resizing the icon down until it can fit entirely in

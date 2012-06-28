@@ -285,7 +285,7 @@ EAPI Eina_Bool        elm_image_fill_outside_get(const Evas_Object *obj);
  *
  * @param obj The image object
  * @param disabled If EINA_TRUE, preloading will be disabled
- * @ingroup Icon
+ * @ingroup Image
  */
 EAPI void                  elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 

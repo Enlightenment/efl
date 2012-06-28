@@ -34,7 +34,7 @@ elm_main(int argc, char **argv)
    elm_image_no_scale_set(icon, EINA_TRUE);
    elm_image_resizable_set(icon, EINA_FALSE, EINA_TRUE);
    elm_image_smooth_set(icon, EINA_FALSE);
-   elm_icon_fill_outside_set(icon, EINA_TRUE);
+   elm_image_fill_outside_set(icon, EINA_TRUE);
 
    evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, icon);

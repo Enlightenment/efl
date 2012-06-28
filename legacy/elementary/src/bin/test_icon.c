@@ -15,7 +15,7 @@ static void
 fill_outside_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ic = (Evas_Object *)data;
-   elm_icon_fill_outside_set(ic, elm_check_state_get(obj));
+   elm_image_fill_outside_set(ic, elm_check_state_get(obj));
 }
 
 static void

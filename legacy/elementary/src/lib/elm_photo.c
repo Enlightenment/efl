@@ -293,7 +293,7 @@ _elm_photo_smart_add(Evas_Object *obj)
 
    elm_image_resizable_set(priv->icon, EINA_TRUE, EINA_TRUE);
    elm_image_smooth_set(priv->icon, EINA_TRUE);
-   elm_icon_fill_outside_set(priv->icon, !priv->fill_inside);
+   elm_image_fill_outside_set(priv->icon, !priv->fill_inside);
    elm_image_prescale_set(priv->icon, 0);
 
    elm_object_scale_set(priv->icon, elm_widget_scale_get(obj));
@@ -410,7 +410,7 @@ elm_photo_fill_inside_set(Evas_Object *obj,
    ELM_PHOTO_CHECK(obj);
    ELM_PHOTO_DATA_GET(obj, sd);
 
-   elm_icon_fill_outside_set(sd->icon, !fill);
+   elm_image_fill_outside_set(sd->icon, !fill);
    sd->fill_inside = !!fill;
 
    _sizing_eval(obj);

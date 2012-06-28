@@ -64,7 +64,7 @@ _content_image_new(Evas_Object *parent, const char *img)
 
    ic = elm_icon_add(parent);
    elm_image_file_set(ic, img, NULL);
-   elm_icon_fill_outside_set(ic, EINA_FALSE);
+   elm_image_fill_outside_set(ic, EINA_FALSE);
    return ic;
 }
 

@@ -1459,7 +1459,7 @@ _icon_dup(const Evas_Object *icon, Evas_Object *parent)
    elm_image_no_scale_set(dupp, elm_image_no_scale_get(icon));
    elm_image_resizable_get(icon, &size_up, &size_down);
    elm_image_resizable_set(dupp, size_up, size_down);
-   elm_icon_fill_outside_set(dupp, elm_image_fill_outside_get(icon));
+   elm_image_fill_outside_set(dupp, elm_image_fill_outside_get(icon));
    elm_image_prescale_set(dupp, elm_image_prescale_get(icon));
    elm_image_aspect_fixed_set(dupp, elm_image_aspect_fixed_get(icon));
    return dupp;

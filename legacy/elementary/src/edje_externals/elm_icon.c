@@ -71,7 +71,7 @@ external_icon_state_set(void *data __UNUSED__, Evas_Object *obj,
      }
    if (p->fill_outside_exists)
      {
-        elm_icon_fill_outside_set(obj, p->fill_outside);
+        elm_image_fill_outside_set(obj, p->fill_outside);
         param_icon->fill_outside = p->fill_outside;
      }
    if (p->prescale_size_exists)
@@ -135,7 +135,7 @@ external_icon_param_set(void *data __UNUSED__, Evas_Object *obj,
    else if (!strcmp(param->name, "fill outside")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        elm_icon_fill_outside_set(obj, param->i);
+        elm_image_fill_outside_set(obj, param->i);
         param_icon->fill_outside = param->i;
         return EINA_TRUE;
      }

@@ -401,11 +401,12 @@ EINA_DEPRECATED EAPI void                  elm_icon_size_get(const Evas_Object *
  * original aspect ratio.
  *
  * @see elm_icon_fill_outside_get()
- * @see elm_image_fill_outside_set()
+ *
+ * @deprecated Use elm_image_fill_outside_set() instead.
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
+EINA_DEPRECATED EAPI void                  elm_icon_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
 
 /**
  * Get if the object is filled outside.
