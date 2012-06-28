@@ -348,7 +348,7 @@ int fd;
 fd = shm_open("/dev/null", O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
        ]])],
    [
-    m4_defn([UPEFL])[]_LIBS="$ m4_defn([UPEFL])[]_LIBS $2"
+    m4_defn([UPEFL])[]_LIBS="$m4_defn([UPEFL])[]_LIBS $2"
     requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} $2"
     _efl_have_fct="yes"
    ],
