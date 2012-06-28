@@ -28,3 +28,5 @@ files_DATA = \
 	logo_shadow-S1.png \
 	logo_shadow-S2.png \
 	logo_shadow-Y.png
+
+EXTRA_DIST = $(files_DATA)

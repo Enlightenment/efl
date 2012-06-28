@@ -32,8 +32,6 @@ COPYING \
 COPYING_ARTS \
 autogen.sh \
 ephysics.pc.in \
-ephysics.spec \
-ephysics.spec.in \
 README
 
 pkgconfigdir = $(libdir)/pkgconfig
