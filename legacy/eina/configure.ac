@@ -66,7 +66,7 @@ AC_SUBST(VMAJ)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
-requirement_eina=""
+requirements_pc_eina=""
 
 case "$host_os" in
    mingw32ce*)
@@ -283,7 +283,7 @@ if test "x${want_valgrind}" = "xyes" || test "x${want_valgrind}" = "xauto"; then
    PKG_CHECK_MODULES([VALGRIND],
       [valgrind >= 2.4.0],
       [
-       requirement_eina="valgrind ${requirement_eina}"
+       requirements_pc_eina="valgrind ${requirements_pc_eina}"
        have_valgrind="yes"
       ],
       [
@@ -304,7 +304,7 @@ case "$host_os" in
    mingw*)
       PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if evil package is installed])
-      requirement_eina="${requirement_eina} evil"
+      requirements_pc_eina="${requirements_pc_eina} evil"
       EFL_EINA_BUILD="-DEFL_EINA_BUILD"
    ;;
 esac
@@ -318,7 +318,7 @@ PKG_CHECK_MODULES([EXOTIC],
    [enable_exotic="no"])
 
 if test "x${enable_exotic}" = "xyes"; then
-    requirement_eina="exotic ${requirement_eina}"
+    requirements_pc_eina="exotic ${requirements_pc_eina}"
     EINA_CFLAGS="${EINA_CFLAGS} ${EXOTIC_CFLAGS}"
     EINA_LIBS="${EXOTIC_LIBS}"
 
@@ -332,7 +332,7 @@ case "$host_vendor" in
   ps3*)
       PKG_CHECK_MODULES([ESCAPE], [escape])
       AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if Escape package is installed])
-      requirement_eina="${requirement_eina} escape"
+      requirements_pc_eina="${requirements_pc_eina} escape"
       EINA_CFLAGS="${ESCAPE_CFLAGS} ${EINA_CFLAGS}"
     ;;
 esac
@@ -472,33 +472,10 @@ EFL_LINKER_FLAG([-fno-strict-aliasing])
 
 ### Checks for library functions
 AC_FUNC_ALLOCA
+
 AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp backtrace backtrace_symbols malloc_usable_size mtrace])
 
-AC_MSG_CHECKING([for dirfd])
-AC_LINK_IFELSE(
-   [
-    AC_LANG_PROGRAM(
-       [[
-#ifdef HAVE_DIRENT_H
-# include <dirent.h>
-#endif
-       ]],
-       [[
-int main(void)
-{
-  DIR *dirp;
-  return dirfd(dirp);
-}
-       ]])
-   ],
-   [have_dirfd="yes"],
-   [have_dirfd="no"])
-
-AC_MSG_RESULT([${have_dirfd}])
-
-if test "x${have_dirfd}" = "xyes" ; then
-   AC_DEFINE([HAVE_DIRFD], [1], [ Define to 1 if you have the `dirfd' function or macro.])
-fi
+EFL_CHECK_FUNCS([eina], [dirfd dlopen dladdr fnmatch iconv shm_open setxattr])
 
 want_debug_malloc="no"
 AC_ARG_ENABLE([debug-malloc],
@@ -515,14 +492,6 @@ if test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_mall
    AC_DEFINE([EINA_DEBUG_MALLOC], [1], [Turn on debugging overhead in mempool])
 fi
 
-# dlopen and dladdr
-EFL_CHECK_DLOPEN
-EFL_CHECK_DLADDR
-
-have_log="yes"
-EFL_CHECK_FNMATCH([have_log="yes"], [have_log="no"])
-
-want_log="yes"
 AC_ARG_ENABLE([log],
    [AC_HELP_STRING([--disable-log], [disable Eina_Log infrastructure completly @<:@default=enabled@:>@])],
    [
@@ -535,7 +504,7 @@ AC_ARG_ENABLE([log],
    [want_log="yes"])
 
 enable_log="no"
-if test "x${have_log}" = xyes -a "x${want_log}" = xyes; then
+if test "x${efl_func_fnmatch}" = "xyes" && test "x${want_log}" = "xyes" ; then
    enable_log="yes"
 fi
 
@@ -548,134 +517,6 @@ if test "x${enable_log}" = "xyes"; then
 fi
 AC_SUBST([EINA_CONFIGURE_ENABLE_LOG])
 
-
-# iconv library
-have_iconv="no"
-AC_ARG_WITH([iconv-link],
-   AC_HELP_STRING([--with-iconv-link=ICONV_LINK], [explicitly specify an iconv link option]),
-   [
-    LIBS="$withval $LIBS"
-    have_iconv="yes"
-    iconv_libs=$withval
-   ])
-
-AC_MSG_CHECKING(for explicit iconv link options)
-if test "x${iconv_libs}" = "x" ; then
-   AC_MSG_RESULT([no explicit iconv link option])
-else
-   AC_MSG_RESULT([$iconv_libs])
-fi
-
-if test "x${have_iconv}" = "xno" ; then
-   AC_CHECK_HEADERS([iconv.h], [have_iconv="yes"])
-
-   if test "x${have_iconv}" = "xyes" ; then
-      AC_MSG_CHECKING([whether iconv() is in libc])
-
-      AC_LINK_IFELSE(
-         [AC_LANG_PROGRAM(
-             [[
-#include <stdlib.h>
-#include <iconv.h>
-             ]],
-             [[
-iconv_t ic;
-size_t count = iconv(ic, NULL, NULL, NULL, NULL);
-             ]])],
-         [have_iconv="yes"],
-         [have_iconv="no"])
-
-      AC_MSG_RESULT([${have_iconv}])
-   fi
-
-   if test "x${have_iconv}" = "xno" ; then
-      AC_MSG_CHECKING([whether iconv() is in libiconv.a])
-
-      LIBS_save="${LIBS}"
-      LIBS="-liconv $LIBS"
-      AC_LINK_IFELSE(
-         [AC_LANG_PROGRAM(
-             [[
-#include <stdlib.h>
-#include <iconv.h>
-             ]],
-             [[
-iconv_t ic;
-size_t count;
-count = iconv(ic, NULL, NULL, NULL, NULL);
-             ]])],
-         [
-          have_iconv="yes"
-          iconv_libs="-liconv"
-         ],
-         [
-          have_iconv="no"
-          LIBS=${LIBS_save}
-         ])
-
-      AC_MSG_RESULT([${have_iconv}])
-   fi
-
-   if test "x${have_iconv}" = "xno" ; then
-      AC_MSG_CHECKING([whether iconv() is in libiconv_plug.a])
-
-      LIBS_save="${LIBS}"
-      LIBS="-liconv_plug $LIBS"
-      AC_LINK_IFELSE(
-         [AC_LANG_PROGRAM(
-             [[
-#include <stdlib.h>
-#include <iconv.h>
-             ]],
-             [[
-iconv_t ic;
-size_t count = iconv(ic, NULL, NULL, NULL, NULL);
-             ]])],
-         [
-          have_iconv="yes"
-          iconv_libs="-liconv_plug"
-         ],
-         [
-          have_iconv="no"
-          LIBS=${LIBS_save}
-         ])
-
-      AC_MSG_RESULT([${have_iconv}])
-   fi
-fi
-
-AC_SUBST([iconv_libs])
-
-if test "x${have_iconv}" = "xyes" ; then
-   AC_DEFINE([HAVE_ICONV], [1], [Set to 1 if iconv library is installed])
-fi
-
-# shm_open
-EFL_CHECK_SHM_OPEN([have_shm_open="yes"], [have_shm_open="no"])
-
-# extended attribute
-
-AC_MSG_CHECKING([for extended attributes])
-
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/xattr.h>
-       ]],
-       [[
-size_t tmp = listxattr("/", NULL, 0);
-tmp = getxattr("/", "user.ethumb.md5", NULL, 0);
-setxattr("/", "user.ethumb.md5", NULL, 0, 0);
-       ]])],
-   [
-    AC_DEFINE([HAVE_XATTR], [1], [Define to 1 if you have the `listxattr', `setxattr' and `getxattr' functions.])
-    have_xattr="yes"
-   ],
-   [have_xattr="no"])
-
-AC_MSG_RESULT([${have_xattr}])
 
 ### Modules
 
@@ -717,7 +558,8 @@ if test -n "$CXX" && test "x$enable_benchmark" = "xyes" ; then
 fi
 AM_CONDITIONAL([CITYHASH_BENCH], [test -n "$CXX" && test "x$enable_benchmark" = "xyes"])
 
-AC_SUBST([requirement_eina])
+AC_SUBST([requirements_pc_eina])
+AC_SUBST([requirements_libs_eina])
 
 ### Build and install examples
 EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
@@ -775,10 +617,10 @@ echo "    debug usage........: ${efl_have_debug_threads}"
 echo "    on/off support.....: ${efl_have_on_off_threads}"
 fi
 echo "  Amalgamation.........: ${do_amalgamation}"
-echo "  Iconv support........: ${have_iconv}"
-echo "  File dirfd...........: ${have_dirfd}"
-echo "  File xattr...........: ${have_xattr}"
-echo "  shm_open.............: ${have_shm_open}"
+echo "  Iconv support........: ${efl_func_iconv}"
+echo "  File dirfd...........: ${efl_func_dirfd}"
+echo "  File xattr...........: ${efl_func_setxattr}"
+echo "  shm_open.............: ${efl_func_shm_open}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"
