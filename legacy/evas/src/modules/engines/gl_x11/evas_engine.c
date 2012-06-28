@@ -3367,7 +3367,10 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
 
         // Attach texture to FBO
         if (sfc->rt_msaa_samples)
-           glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, sfc->rt_tex, 0, sfc->rt_msaa_samples);
+           glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, 
+                                                   GL_COLOR_ATTACHMENT0, 
+                                                   GL_TEXTURE_2D, sfc->rt_tex, 
+                                                   0, sfc->rt_msaa_samples);
         else
            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                                   GL_TEXTURE_2D, sfc->rt_tex, 0);
@@ -3387,10 +3390,26 @@ _attach_fbo_surface(Render_Engine *data __UNUSED__,
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL_OES, sfc->w, sfc->h,
                      0, GL_DEPTH_STENCIL_OES, GL_UNSIGNED_INT_24_8_OES, NULL);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
-                               GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
-                               GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
+        if (sfc->rt_msaa_samples)
+          {
+             glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, 
+                                                     GL_DEPTH_ATTACHMENT,
+                                                     GL_TEXTURE_2D, 
+                                                     sfc->rb_depth_stencil, 
+                                                     0, sfc->rt_msaa_samples);
+             glsym_glFramebufferTexture2DMultisample(GL_FRAMEBUFFER, 
+                                                     GL_STENCIL_ATTACHMENT,
+                                                     GL_TEXTURE_2D, 
+                                                     sfc->rb_depth_stencil, 
+                                                     0, sfc->rt_msaa_samples);
+          }
+        else
+          {
+             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
+                                    GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
+             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT,
+                                    GL_TEXTURE_2D, sfc->rb_depth_stencil, 0);
+          }
         glBindTexture(GL_TEXTURE_2D, curr_tex);
 
 #else
