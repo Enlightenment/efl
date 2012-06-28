@@ -12,7 +12,9 @@ includes_HEADERS = Ecore_Input.h
 includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_input_la_SOURCES = \
-ecore_input.c
+ecore_input.c \
+ecore_input_compose.c \
+ecore_input_compose.h
 
 libecore_input_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \

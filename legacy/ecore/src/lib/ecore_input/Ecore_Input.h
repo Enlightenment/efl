@@ -92,6 +92,13 @@ extern "C" {
         ECORE_OUT
      } Ecore_Event_IO;
 
+   typedef enum _Ecore_Compose_State
+     {   
+        ECORE_COMPOSE_NONE,
+        ECORE_COMPOSE_MIDDLE,
+        ECORE_COMPOSE_DONE
+     } Ecore_Compose_State;
+
    struct _Ecore_Event_Key
      {
         const char      *keyname;
@@ -215,6 +222,8 @@ extern "C" {
    EAPI unsigned int         ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
    EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
 
+   EAPI Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
+   
 #ifdef __cplusplus
 }
 #endif

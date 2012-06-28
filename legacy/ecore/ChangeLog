@@ -777,3 +777,10 @@
 
 	* Fix xim module to pass of Windows key as Mod4, not Mod5
 	* Add support for AltGr key in X
+
+2012-06-28  Carsten Haitzler (The Rasterman)
+
+        * Add compose sequence handling to ecore_input to be able to
+        query a sequence of keysyms for a final compose string (utf8)
+        that you free if you get it.
+
