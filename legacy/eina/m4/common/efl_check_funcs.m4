@@ -216,8 +216,13 @@ case "$host_os" in
       _efl_have_fct="yes"
    ;;
    *)
+dnl Check is fnmatch is in libc
+      _EFL_CHECK_FUNC_FNMATCH_PRIV([$1], [], [_efl_have_fct="yes"], [_efl_have_fct="no"])
+
 dnl Check is fnmatch is in libfnmatch
-      _EFL_CHECK_FUNC_FNMATCH_PRIV([$1], [-lfnmatch], [_efl_have_fct="yes"], [_efl_have_fct="no"])
+      if test "x${_efl_have_fct}" = "xno" ; then
+         _EFL_CHECK_FUNC_FNMATCH_PRIV([$1], [-lfnmatch], [_efl_have_fct="yes"], [_efl_have_fct="no"])
+      fi
 
 dnl Check is fnmatch is in libiberty
       if test "x${_efl_have_fct}" = "xno" ; then
