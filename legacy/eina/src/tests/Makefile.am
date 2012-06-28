@@ -12,6 +12,7 @@ AM_CPPFLAGS = 					\
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" 	\
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" 	\
 @CHECK_CFLAGS@					\
+@EINA_CFLAGS@					\
 @GLIB_CFLAGS@
 
 if EINA_HAVE_GLIB
@@ -122,9 +123,9 @@ noinst_LTLIBRARIES = libcity.la
 libcity_la_SOURCES = city.cc
 
 nodist_EXTRA_eina_bench_SOURCES = dummy.cc
-eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la libcity.la
+eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la libcity.la @EINA_LIBS@
 else
-eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la
+eina_bench_LDADD = @GLIB_LIBS@ $(top_builddir)/src/lib/libeina.la @EINA_LIBS@
 
 endif
 
