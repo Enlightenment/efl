@@ -468,27 +468,23 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
                svr->ecs_state = ECORE_CON_PROXY_STATE_RESOLVED;
           }
      }
-   if (ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL))
-     goto error;
+   EINA_SAFETY_ON_TRUE_GOTO(ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL), error);
 
-   if (((type == ECORE_CON_REMOTE_TCP) ||
+   EINA_SAFETY_ON_TRUE_GOTO(((type == ECORE_CON_REMOTE_TCP) ||
         (type == ECORE_CON_REMOTE_NODELAY) ||
         (type == ECORE_CON_REMOTE_CORK) ||
         (type == ECORE_CON_REMOTE_UDP) ||
         (type == ECORE_CON_REMOTE_BROADCAST)) &&
-       (port < 0))
-     goto error;
+       (port < 0), error);
 
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM) ||
        (type == ECORE_CON_LOCAL_ABSTRACT))
      /* Local */
 #ifdef _WIN32
-     if (!ecore_con_local_connect(svr, _ecore_con_cl_handler))
-       goto error;
+     EINA_SAFETY_ON_FALSE_GOTO(ecore_con_local_connect(svr, _ecore_con_cl_handler), error);
 #else
-     if (!ecore_con_local_connect(svr, _ecore_con_cl_handler, svr))
-       goto error;
+     EINA_SAFETY_ON_FALSE_GOTO(ecore_con_local_connect(svr, _ecore_con_cl_handler, svr), error);
 #endif
 
    if ((type == ECORE_CON_REMOTE_TCP) ||
@@ -496,16 +492,11 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
        (type == ECORE_CON_REMOTE_CORK))
      {
         /* TCP */
-         if (!ecore_con_info_tcp_connect(svr, _ecore_con_cb_tcp_connect,
-                                         svr))
-           goto error;
+         EINA_SAFETY_ON_FALSE_GOTO(ecore_con_info_tcp_connect(svr, _ecore_con_cb_tcp_connect, svr), error);
      }
-   else if ((type == ECORE_CON_REMOTE_UDP) ||
-            (type == ECORE_CON_REMOTE_BROADCAST))
+   else if ((type == ECORE_CON_REMOTE_UDP) || (type == ECORE_CON_REMOTE_BROADCAST))
      /* UDP and MCAST */
-     if (!ecore_con_info_udp_connect(svr, _ecore_con_cb_udp_connect,
-                                     svr))
-       goto error;
+     EINA_SAFETY_ON_FALSE_GOTO(ecore_con_info_udp_connect(svr, _ecore_con_cb_udp_connect, svr), error);
 
    servers = eina_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);
