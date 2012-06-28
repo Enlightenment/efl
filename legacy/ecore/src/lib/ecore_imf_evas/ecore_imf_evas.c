@@ -33,8 +33,8 @@ _ecore_imf_evas_event_modifiers_wrap(Evas_Modifier *evas_modifiers,
      *imf_keyboard_modifiers |= ECORE_IMF_KEYBOARD_MODIFIER_SHIFT;
    if (evas_key_modifier_is_set(evas_modifiers, "Super") || evas_key_modifier_is_set(evas_modifiers, "Hyper"))
      *imf_keyboard_modifiers |= ECORE_IMF_KEYBOARD_MODIFIER_WIN;
-   if (evas_key_modifier_is_set(evas_modifiers, "Mode"))
-     *imf_keyboard_modifiers |= ECORE_IMF_KEYBOARD_MODIFIER_MODE;
+   if (evas_key_modifier_is_set(evas_modifiers, "AltGr"))
+     *imf_keyboard_modifiers |= ECORE_IMF_KEYBOARD_MODIFIER_ALTGR;
 }
 
 /* Converts the Evas locks to Ecore_IMF keyboard locks */

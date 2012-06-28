@@ -2186,8 +2186,8 @@ _ecore_xcb_window_modifiers_get(unsigned int state)
      xmodifiers |= ECORE_X_MODIFIER_ALT;
    if (state & ECORE_EVENT_MODIFIER_WIN)
      xmodifiers |= ECORE_X_MODIFIER_WIN;
-   if (state & ECORE_EVENT_MODIFIER_MODE)
-     xmodifiers |= ECORE_X_MODIFIER_MODE;
+   if (state & ECORE_EVENT_MODIFIER_ALTGR)
+     xmodifiers |= ECORE_X_MODIFIER_ALTGR;
    if (state & ECORE_EVENT_LOCK_SCROLL)
      xmodifiers |= ECORE_X_LOCK_SCROLL;
    if (state & ECORE_EVENT_LOCK_NUM)

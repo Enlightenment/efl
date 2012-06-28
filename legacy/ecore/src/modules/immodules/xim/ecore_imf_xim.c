@@ -579,8 +579,8 @@ _ecore_x_event_reverse_modifiers(unsigned int state)
      modifiers |= ECORE_X_MODIFIER_WIN;
 
    /**< "AltGr" is pressed */
-   if (state & ECORE_IMF_KEYBOARD_MODIFIER_MODE)
-     modifiers |= ECORE_X_MODIFIER_MODE;
+   if (state & ECORE_IMF_KEYBOARD_MODIFIER_ALTGR)
+     modifiers |= ECORE_X_MODIFIER_ALTGR;
 
    return modifiers;
 }

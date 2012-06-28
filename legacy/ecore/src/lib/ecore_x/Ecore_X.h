@@ -989,7 +989,7 @@ EAPI extern int ECORE_X_MODIFIER_SHIFT; /**< @since 1.3 */
 EAPI extern int ECORE_X_MODIFIER_CTRL;  /**< @since 1.3 */
 EAPI extern int ECORE_X_MODIFIER_ALT;   /**< @since 1.3 */
 EAPI extern int ECORE_X_MODIFIER_WIN;   /**< @since 1.3 */
-EAPI extern int ECORE_X_MODIFIER_MODE;  /**< @since 1.3 */
+EAPI extern int ECORE_X_MODIFIER_ALTGR; /**< @since 1.3 */
 
 EAPI extern int ECORE_X_LOCK_SCROLL;
 EAPI extern int ECORE_X_LOCK_NUM;

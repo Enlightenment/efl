@@ -183,8 +183,8 @@ _ecore_x_event_modifiers(unsigned int state)
    if (state & ECORE_X_MODIFIER_WIN)
      modifiers |= ECORE_EVENT_MODIFIER_WIN;
 
-   if (state & ECORE_X_MODIFIER_MODE)
-     modifiers |= ECORE_EVENT_MODIFIER_MODE;
+   if (state & ECORE_X_MODIFIER_ALTGR)
+     modifiers |= ECORE_EVENT_MODIFIER_ALTGR;
 
    if (state & ECORE_X_LOCK_SCROLL)
      modifiers |= ECORE_EVENT_LOCK_SCROLL;
