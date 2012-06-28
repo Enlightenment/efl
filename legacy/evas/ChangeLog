@@ -832,3 +832,8 @@
         * Handled evas_gl_make_current to return error when either surface 
         or context is NULL.  Before, when that was the case, it just did 
         make_current(NULL, NULL) internally. 
+
+2012-04-28  Carsten Haitzler (The Rasterman)
+
+        * Fix font instance refcounting for textprops that hang around.
+

@@ -47,6 +47,8 @@ evas_common_text_props_content_ref(Evas_Text_Props *props)
       return;
 
    props->info->refcount++;
+   if (props->font_instance) 
+     ((RGBA_Font_Int *)props->font_instance)->references++;
 }
 
 void
@@ -56,6 +58,12 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
    if (!props->info)
       return;
 
+   if (props->font_instance)
+     {
+        evas_common_font_int_unref(props->font_instance);
+        props->font_instance = NULL;
+     }
+   
    if (--(props->info->refcount) == 0)
      {
         if (props->bin)
@@ -478,8 +486,14 @@ evas_common_text_props_content_create(void *_fi, const Eina_Unicode *text,
      }
    text_props->info = calloc(1, sizeof(Evas_Text_Props_Info));
 
-   text_props->font_instance = fi;
-
+   if (text_props->font_instance != fi)
+     {
+        if (text_props->font_instance)
+          evas_common_font_int_unref(text_props->font_instance);
+        text_props->font_instance = fi;
+        fi->references++;
+     }
+   
    evas_common_font_int_reload(fi);
    if (fi->src->current_size != fi->size)
      {

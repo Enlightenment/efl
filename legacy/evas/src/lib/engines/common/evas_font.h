@@ -42,6 +42,7 @@ EAPI RGBA_Font        *evas_common_font_load                 (const char *name, 
 EAPI RGBA_Font        *evas_common_font_add                  (RGBA_Font *fn, const char *name, int size, Font_Rend_Flags wanted_rend);
 EAPI RGBA_Font        *evas_common_font_memory_add           (RGBA_Font *fn, const char *source, const char *name, int size, const void *data, int data_size, Font_Rend_Flags wanted_rend);
 EAPI void              evas_common_font_free                 (RGBA_Font *fn);
+EAPI void              evas_common_font_int_unref            (RGBA_Font_Int *fi);
 EAPI void              evas_common_font_hinting_set          (RGBA_Font *fn, Font_Hint_Flags hinting);
 EAPI Eina_Bool         evas_common_hinting_available         (Font_Hint_Flags hinting);
 EAPI RGBA_Font        *evas_common_font_memory_hinting_load  (const char *source, const char *name, int size, const void *data, int data_size, Font_Hint_Flags hinting, Font_Rend_Flags wanted_rend);

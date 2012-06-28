@@ -80,7 +80,7 @@ _evas_common_font_int_free(RGBA_Font_Int *fi)
    hb_font_destroy(fi->ft.hb_font);
 #endif
    evas_common_font_source_free(fi->src);
-   if (fi->references == 0) fonts_lru = eina_list_remove(fonts_lru, fi);
+   if (fi->references <= 0) fonts_lru = eina_list_remove(fonts_lru, fi);
    if (fi->fash) fi->fash->freeme(fi->fash);
    if (fi->inuse)
     {
@@ -509,13 +509,7 @@ evas_common_font_memory_load(const char *source, const char *name, int size, con
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
      {
-	fi->references--;
-	if (fi->references == 0)
-	  {
-	     fonts_lru = eina_list_prepend(fonts_lru, fi);
-	     evas_common_font_int_modify_cache_by(fi, 1);
-	     evas_common_font_flush();
-	  }
+        evas_common_font_int_unref(fi);
 	return NULL;
      }
    fn->fonts = eina_list_append(fn->fonts, fi);
@@ -552,13 +546,7 @@ evas_common_font_load(const char *name, int size, Font_Rend_Flags wanted_rend)
 	  {
 	     if (evas_common_font_source_load_complete(fi->src))
 	       {
-		  fi->references--;
-		  if (fi->references == 0)
-		    {
-		       fonts_lru = eina_list_prepend(fonts_lru, fi);
-		       evas_common_font_int_modify_cache_by(fi, 1);
-		       evas_common_font_flush();
-		    }
+                  evas_common_font_int_unref(fi);
 		  return NULL;
 	       }
 	  }
@@ -567,13 +555,7 @@ evas_common_font_load(const char *name, int size, Font_Rend_Flags wanted_rend)
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
      {
-	fi->references--;
-	if (fi->references == 0)
-	  {
-	     fonts_lru = eina_list_prepend(fonts_lru, fi);
-	     evas_common_font_int_modify_cache_by(fi, 1);
-	     evas_common_font_flush();
-	  }
+        evas_common_font_int_unref(fi);
 	return NULL;
      }
 
@@ -637,6 +619,18 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *source, const char *name,
 }
 
 EAPI void
+evas_common_font_int_unref(RGBA_Font_Int *fi)
+{
+   fi->references--;
+   if (fi->references == 0)
+     {
+        fonts_lru = eina_list_append(fonts_lru, fi);
+        evas_common_font_int_modify_cache_by(fi, 1);
+        evas_common_font_flush();
+     }
+}
+
+EAPI void
 evas_common_font_free(RGBA_Font *fn)
 {
    Eina_List *l;
@@ -646,14 +640,7 @@ evas_common_font_free(RGBA_Font *fn)
    fn->references--;
    if (fn->references > 0) return;
    EINA_LIST_FOREACH(fn->fonts, l, fi)
-     {
-	fi->references--;
-	if (fi->references == 0)
-	  {
-	     fonts_lru = eina_list_append(fonts_lru, fi);
-	     evas_common_font_int_modify_cache_by(fi, 1);
-	  }
-     }
+     evas_common_font_int_unref(fi);
    evas_common_font_flush();
    eina_list_free(fn->fonts);
    if (fn->fash) fn->fash->freeme(fn->fash);
@@ -758,37 +745,40 @@ _evas_common_font_int_clear(RGBA_Font_Int *fi)
         return;
      }
    evas_common_font_int_modify_cache_by(fi, -1);
-  if (fi->fash)
-    {
-      for (k = 0; k <= 0xff; k++) // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
-        {
-          Fash_Glyph_Map2 *fmap2 = fi->fash->bucket[k];
-          if (fmap2)
-            {
-              for (j = 0; j <= 0xff; j++) // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
-                {
-                  Fash_Glyph_Map *fmap = fmap2->bucket[j];
-                  if (fmap)
+   if (fi->references <= 1)
+     {
+        if (fi->fash)
+          {
+             for (k = 0; k <= 0xff; k++) // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+               {
+                  Fash_Glyph_Map2 *fmap2 = fi->fash->bucket[k];
+                  if (fmap2)
                     {
-                      for (i = 0; i <= 0xff; i++)
-                        {
-                          RGBA_Font_Glyph *fg = fmap->item[i];
-                          if ((fg) && (fg != (void *)(-1)))
-                            {
-                              FT_Done_Glyph(fg->glyph);
-                              /* extension calls */
-                              if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
-                              if (fg->glyph_out_free) fg->glyph_out_free(fg->glyph_out);
-                              free(fg);
-                              fmap->item[i] = NULL;
-                            }
-                        }
+                       for (j = 0; j <= 0xff; j++) // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+                         {
+                            Fash_Glyph_Map *fmap = fmap2->bucket[j];
+                            if (fmap)
+                              {
+                                 for (i = 0; i <= 0xff; i++)
+                                   {
+                                      RGBA_Font_Glyph *fg = fmap->item[i];
+                                      if ((fg) && (fg != (void *)(-1)))
+                                        {
+                                           FT_Done_Glyph(fg->glyph);
+                                           /* extension calls */
+                                           if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
+                                           if (fg->glyph_out_free) fg->glyph_out_free(fg->glyph_out);
+                                           free(fg);
+                                           fmap->item[i] = NULL;
+                                        }
+                                   }
+                              }
+                         }
                     }
-                }
-            }
-        }
-      fi->fash->freeme(fi->fash);
-      fi->fash = NULL;
+               }
+             fi->fash->freeme(fi->fash);
+             fi->fash = NULL;
+          }
      }
    if (fi->inuse) fonts_use_usage -= fi->usage;
    fi->usage = 0;
