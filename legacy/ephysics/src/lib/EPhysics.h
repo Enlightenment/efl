@@ -103,7 +103,7 @@ typedef enum _EPhysics_Callback_Type
 {
    /*
     * The following events are only for use with EPhysics world objects, with
-    * ephysics_world_event_callback_add():
+    * @ref ephysics_world_event_callback_add():
     */
    EPHYSICS_CALLBACK_WORLD_FIRST, /**< kept as sentinel, not really an event */
    EPHYSICS_CALLBACK_WORLD_DEL, /**< World being deleted (called before free) */
@@ -112,7 +112,7 @@ typedef enum _EPhysics_Callback_Type
 
    /*
     * The following events are only for use with EPhysics body objects, with
-    * ephysics_body_event_callback_add():
+    * @ref ephysics_body_event_callback_add():
     */
    EPHYSICS_CALLBACK_BODY_FIRST, /**< kept as sentinel, not really an event */
    EPHYSICS_CALLBACK_BODY_UPDATE, /**< Body being updated */
@@ -164,14 +164,15 @@ EAPI int ephysics_shutdown(void);
  * A camera defines the region of the physics world that will be rendered
  * on the canvas. It sets the point of view.
  *
- * Every world has a camera, that can be get with ephysics_world_camera_get().
- * Its position can be set with ephysics_camera_position_set() and zoom
- * in / zoom out can be done with ephysics_camera_zoom_set().
+ * Every world has a camera, that can be get with
+ * @ref ephysics_world_camera_get().
+ * Its position can be set with @ref ephysics_camera_position_set() and zoom
+ * in / zoom out can be done with @ref ephysics_camera_zoom_set().
  *
  * @note WIP: IT'S NOT WORKING YET!!
  */
 
-typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to zoom in / out a scene, or change the frame position to be rendered. Every world have a camera that can be get with ephysics_world_camera_get(). */
+typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to zoom in / out a scene, or change the frame position to be rendered. Every world have a camera that can be get with @ref ephysics_world_camera_get(). */
 
 /**
  * @brief
@@ -277,14 +278,14 @@ EAPI double ephysics_camera_zoom_get(const EPhysics_Camera *camera);
  * broadphase interface and a dispatcher to dispatch calculations
  * for overlapping pairs.
  *
- * A new world can be created with ephysics_world_new() and deleted with
- * ephysics_world_del(). It can have its gravity changed with
- * ephysics_world_gravity_set() and play / paused with
- * ephysics_world_running_set(). When running, the simulation will be gradually
- * stepped.
+ * A new world can be created with @ref ephysics_world_new() and deleted with
+ * @ref ephysics_world_del(). It can have its gravity changed with
+ * @ref ephysics_world_gravity_set() and play / paused with
+ * @ref ephysics_world_running_set(). When running, the simulation will be
+ * gradually stepped.
  */
 
-typedef struct _EPhysics_World EPhysics_World; /**< World handle, most basic type of EPhysics. Created with ephysics_world_new() and deleted with ephysics_world_del(). */
+typedef struct _EPhysics_World EPhysics_World; /**< World handle, most basic type of EPhysics. Created with @ref ephysics_world_new() and deleted with @ref ephysics_world_del(). */
 
 /**
  * @typedef EPhysics_World_Event_Cb
@@ -311,14 +312,14 @@ typedef void (*EPhysics_World_Event_Cb)(void *data, EPhysics_World *world, void 
  * A new world will be created with set collision configuration,
  * constraint solver, broadphase interface and dispatcher.
  *
- * It can be paused / unpaused with ephysics_world_running_set() and its
- * gravity can be changed with ephysics_world_gravity_set().
+ * It can be paused / unpaused with @ref ephysics_world_running_set() and its
+ * gravity can be changed with @ref ephysics_world_gravity_set().
  *
  * By default it starts with gravity y = -9.81 and playing.
  *
  * If default updates between physics bodies and evas objects will be used
  * it's mandatory to set the size of the area to be rendered with
- * ephysics_world_geometry_size_set().
+ * @ref ephysics_world_render_geometry_set().
  *
  * @return A new world or @c NULL, on errors.
  *
@@ -335,10 +336,10 @@ EAPI EPhysics_World *ephysics_world_new(void);
  * By default it starts with null x, y, width and height.
  *
  * The physics world won't be limited, but boundaries can be added with:
- * @li ephysics_world_top_boundary_add(),
- * @li ephysics_world_bottom_boundary_add(),
- * @li ephysics_world_left_boundary_add(),
- * @li ephysics_world_right_boundary_add().
+ * @li @ref ephysics_body_top_boundary_add(),
+ * @li @ref ephysics_body_bottom_boundary_add(),
+ * @li @ref ephysics_body_left_boundary_add(),
+ * @li @ref ephysics_body_right_boundary_add().
  *
  * @param world the world to be configured.
  * @param x Coordinate x of the top left point of rendered area, in pixels.
@@ -577,35 +578,36 @@ EAPI void *ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Cal
  * A body is a representation of an object inside a physics world.
  *
  * Bodies can have different shapes that can be created with:
- * @li ephysics_body_circle_add();
- * @li or ephysics_body_box_add().
+ * @li @ref ephysics_body_circle_add();
+ * @li or @ref ephysics_body_box_add().
  *
  * They can collide and have customizable properties, like:
- * @li mass, set with ephysics_body_mass_set();
- * @li coefficient of restitution, set with ephysics_body_restitution_set();
- * @li and friction, set with ephysics_body_friction_set().
+ * @li mass, set with @ref ephysics_body_mass_set();
+ * @li coefficient of restitution, set with
+ * @ref ephysics_body_restitution_set();
+ * @li and friction, set with @ref ephysics_body_friction_set().
  *
  * Bodies can have its position and size directly set by
- * ephysics_body_geometry_set().
+ * @ref ephysics_body_geometry_set().
  *
  * Also, they can have an associated evas object, done with
- * ephysics_body_evas_object_set() function, being responsible for updating
+ * @ref ephysics_body_evas_object_set() function, being responsible for updating
  * its position and rotation, or letting a user callback be set
- * for this task with ephysics_body_event_callback_add().
+ * for this task with @ref ephysics_body_event_callback_add().
  *
  * Also, bodies can have impulses applied over them, and will be affected
  * by gravity. Impulses can be applied with:
- * @li ephysics_body_central_impulse_apply();
- * @li ephysics_body_torque_impulse_apply().
+ * @li @ref ephysics_body_central_impulse_apply();
+ * @li @ref ephysics_body_torque_impulse_apply().
  *
  * Bodies can be removed from the world being directly deleted with
- * ephysics_body_del() or when the world is deleted, case when all the
+ * @ref ephysics_body_del() or when the world is deleted, case when all the
  * bodies belonging to it will be deleted as well. Evas objects associated
  * to these bodies won't be affected in any way, but they will stop being
  * moved or rotated.
  */
 
-typedef struct _EPhysics_Body EPhysics_Body; /**< Body handle, represents an object on EPhysics world. Created with ephysics_body_circle_add() or ephysics_body_box_add() and deleted with ephysics_body_del(). */
+typedef struct _EPhysics_Body EPhysics_Body; /**< Body handle, represents an object on EPhysics world. Created with @ref ephysics_body_circle_add() or @ref ephysics_body_box_add() and deleted with @ref ephysics_body_del(). */
 
 /**
  * @typedef EPhysics_Body_Event_Cb
@@ -630,9 +632,10 @@ typedef void (*EPhysics_Body_Event_Cb)(void *data, EPhysics_Body *body, void *ev
  * Create a new circle physics body.
  *
  * Its collision shape will be a circle of diameter 1. To change it's size
- * ephysics_body_geometry_set() should be used, so it can be deformed
+ * @ref ephysics_body_geometry_set() should be used, so it can be deformed
  * on x and y axises.
- * Any evas object can be associated to it with ephysics_body_evas_object_set(),
+ * Any evas object can be associated to it with
+ * @ref ephysics_body_evas_object_set(),
  * and it will collide as a circle (even if you have an evas rectangle).
  *
  * Actually, since we're using a 3D backend, it will be a cylinder on
@@ -652,7 +655,7 @@ EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
  * Create a new box physics body.
  *
  * Its collision shape will be a box of dimensions 1 on all the axises.
- * To change it's size ephysics_body_geometry_set() should be used,
+ * To change it's size @ref ephysics_body_geometry_set() should be used,
  * so it can be deformed on x and y axises.
  *
  * @param world The world this body will belongs to.
@@ -670,7 +673,8 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  * Create a physic top boundary.
  *
  * A physic top boundary will limit the bodies area and placed on top edge of
- * worlds render geometry - defined with ephysics_world_render_geometry_set().
+ * worlds render geometry - defined with
+ * @ref ephysics_world_render_geometry_set().
  *
  * @param world The world this body will belong to.
  * @return a new body or @c NULL, on erros.
@@ -686,7 +690,7 @@ EAPI EPhysics_Body *ephysics_body_top_boundary_add(EPhysics_World *world);
  *
  * A physic bottom boundary will limit the bodies area and placed on bottom
  * edge of worlds render geometry - defined with
- * ephysics_world_render_geometry_set().
+ * @ref ephysics_world_render_geometry_set().
  *
  * @param world The world this body will belong to.
  * @return a new body or @c NULL, on erros.
@@ -702,7 +706,7 @@ EAPI EPhysics_Body *ephysics_body_bottom_boundary_add(EPhysics_World *world);
  *
  * A physic left boundary will limit the bodies area and placed right o the
  * left edge of worlds render geometry - defined with
- * ephysics_world_render_geometry_set().
+ * @ref ephysics_world_render_geometry_set().
  *
  * @param world The world this body will belong to.
  * @return a new body or @c NULL, on erros.
@@ -718,7 +722,7 @@ EAPI EPhysics_Body *ephysics_body_left_boundary_add(EPhysics_World *world);
  *
  * A physic right boundary will limit the bodies area and placed right o the
  * right edge of worlds render geometry - defined with
- * ephysics_world_render_geometry_set().
+ * @ref ephysics_world_render_geometry_set().
  *
  * @param world The world this body will belong to.
  * @return a new body or @c NULL, on erros.
@@ -734,7 +738,7 @@ EAPI EPhysics_Body *ephysics_body_right_boundary_add(EPhysics_World *world);
  *
  * This function will remove this body from its world and will
  * free all the memory used. It won't delete or modify an associated evas
- * object, what can be done with ephysics_body_evas_object_set(). So after
+ * object, what can be done with @ref ephysics_body_evas_object_set(). So after
  * it is removed the evas object will stop being updated, but will continue
  * to be rendered on canvas.
  *
@@ -771,7 +775,7 @@ EAPI EPhysics_World *ephysics_body_world_get(const EPhysics_Body *body);
  * This association should be 1:1. You can have physics bodies without evas
  * objects, but you can't have more than an evas object directly associated
  * to this body. If you want more, you can use
- * ephysics_body_event_callback_add() to register a callback that
+ * @ref ephysics_body_event_callback_add() to register a callback that
  * will update the other evas objects. This function can be used to disable
  * updates of associated evas objects, or complement updates, like changing
  * evas objects properties under certain conditions of position or rotation.
@@ -829,8 +833,9 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
  * on all the axises.
  *
  * There are two direct ways of modifying this geometry:
- * @li With ephysics_body_geometry_set();
- * @li When associating an evas object with ephysics_body_evas_object_set().
+ * @li With @ref ephysics_body_geometry_set();
+ * @li When associating an evas object with
+ * @ref ephysics_body_evas_object_set().
  *
  * When the world is simulated forces will be applied on objects
  * with mass and position will be modified too.
@@ -904,12 +909,13 @@ EAPI double ephysics_body_mass_get(const EPhysics_Body *body);
  * Update the evas object associated to the body.
  *
  * This function should be called to update position and rotation of
- * the evas object associated to the body with ephysics_body_evas_object_set().
+ * the evas object associated to the body with
+ * @ref ephysics_body_evas_object_set().
  * It will take rate between pixels and meters set with
- * ephysics_world_rate_set() in account.
+ * @ref ephysics_world_rate_set() in account.
  *
  * If an update callback wasn't set with
- * ephysics_body_event_callback_add(), this function will be executed
+ * @ref ephysics_body_event_callback_add(), this function will be executed
  * after each physics simulation tick. If a callback was set, it won't be
  * called automatically. So inside this callback it could be called, or
  * a customized update could be implemented.
@@ -926,9 +932,9 @@ EAPI void ephysics_body_evas_object_update(EPhysics_Body *body);
  *
  * The registered callback will receives the body and extra user data that
  * can be passed. From body it's possible to get the world it belongs to
- * with ephysics_body_world_get(), the rate between pixels and meters
- * with ephysics_world_rate_get() and the associated evas object with
- * ephysics_body_evas_object_get().
+ * with @ref ephysics_body_world_get(), the rate between pixels and meters
+ * with @ref ephysics_world_rate_get() and the associated evas object with
+ * @ref ephysics_body_evas_object_get().
  *
  * So it's enough to do customized updates or fix pointers in your program.
  *
@@ -944,11 +950,11 @@ EAPI void ephysics_body_evas_object_update(EPhysics_Body *body);
  *
  * If no callback is registered, the evas object associated to physics body
  * will be automatically moved and rotated, taking rate between meters and
- * pixels on account. This rate is set by ephysics_world_rate_set().
+ * pixels on account. This rate is set by @ref ephysics_world_rate_set().
  *
  * If callbacks are registered, these function will be called and will
  * be responsible for updating the evas object. If the default update
- * is wanted, function ephysics_body_evas_object_update() can be called
+ * is wanted, function @ref ephysics_body_evas_object_update() can be called
  * inside the callback. So you could make changes before and after
  * the evas object is updated.
  *
@@ -1089,7 +1095,7 @@ EAPI double ephysics_body_friction_get(const EPhysics_Body *body);
  * When a impulse is applied over a body it will has its velocity changed.
  * This impulse will be applied on body's center, so it won't implies in
  * rotating the body. For that is possible to apply a torque impulse with
- * ephysics_body_torque_impulse_apply().
+ * @ref ephysics_body_torque_impulse_apply().
  *
  * @note Impulse is measured in Ns (Newton seconds).
  *
@@ -1178,12 +1184,12 @@ EAPI double ephysics_body_rotation_get(EPhysics_Body *body);
  * between bodies and the world. Constraints can limit movement angle,
  * translation, or work like a motor.
  *
- * Constraints can be created with ephysics_constraint_add() and removed with
- * ephysics_constraint_del(). Can be applied between two bodies or between
- * a body and the world.
+ * Constraints can be created with @ref ephysics_constraint_add() and removed
+ * with @ref ephysics_constraint_del().
+ * Can be applied between two bodies or between a body and the world.
  */
 
-typedef struct _EPhysics_Constraint EPhysics_Constraint; /**< Constraint handle, used to limit bodies movements. Created with ephysics_constraint_add() and deleted with ephysics_constraint_del(). */
+typedef struct _EPhysics_Constraint EPhysics_Constraint; /**< Constraint handle, used to limit bodies movements. Created with @ref ephysics_constraint_add() and deleted with @ref ephysics_constraint_del(). */
 
 /**
  * @brief
