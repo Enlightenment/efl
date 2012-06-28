@@ -222,6 +222,9 @@ extern "C" {
    EAPI unsigned int         ecore_event_modifier_mask(Ecore_Event_Modifier modifier);
    EAPI Ecore_Event_Modifier ecore_event_update_modifier(const char *key, Ecore_Event_Modifiers *modifiers, int inc);
 
+   /**
+    * @since 1.3
+    */
    EAPI Ecore_Compose_State  ecore_compose_get(const Eina_List *seq, char **seqstr_ret);
    
 #ifdef __cplusplus
