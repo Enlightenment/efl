@@ -67,6 +67,8 @@ have_po="yes"
 have_po="no"
 ])
 AC_SUBST(LTLIBINTL)
+LOCALE_DIR="${localedir}"
+AC_SUBST(LOCALE_DIR)
 
 if test "x${POSUB}" = "x" ; then
    have_po="no"

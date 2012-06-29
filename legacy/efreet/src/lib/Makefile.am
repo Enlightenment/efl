@@ -3,6 +3,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 lib_LTLIBRARIES = libefreet.la libefreet_mime.la libefreet_trash.la
 
+INCLUDES = \
+-DLOCALE_DIR=\"@LOCALE_DIR@\"
+
 EFREETHEADERS = \
 Efreet.h \
 efreet_base.h \

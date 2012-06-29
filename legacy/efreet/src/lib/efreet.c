@@ -105,6 +105,11 @@ efreet_init(void)
     if (!efreet_util_init())
         goto shutdown_efreet_menu;
 
+#ifdef ENABLE_NLS
+    bindtextdomain(PACKAGE, LOCALE_DIR);
+    bind_textdomain_codeset(PACKAGE, "UTF-8");
+#endif
+
     return _efreet_init_count;
 
 shutdown_efreet_menu:
