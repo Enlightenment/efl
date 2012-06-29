@@ -52,8 +52,6 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
 
    world = (EPhysics_World *) dynamics_world->getWorldUserInfo();
 
-   DBG("Tick");
-
    for (int i = 0; i < objects.size(); i++)
      {
         EPhysics_Body *body;
