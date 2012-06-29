@@ -204,6 +204,7 @@ struct _Eina_File_Lines
   struct {
     const char *start;
     const char *end;
+    unsigned int index;
   } line;
   unsigned long long length;
 };

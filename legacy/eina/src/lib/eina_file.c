@@ -1175,13 +1175,20 @@ static Eina_Bool
 _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
 {
    const char *eol;
+   unsigned char match;
 
    if (it->current.line.end >= it->end)
      return EINA_FALSE;
 
+   match = *it->current.line.end;
    while ((*it->current.line.end == '\n' || *it->current.line.end == '\r')
           && it->current.line.end < it->end)
-     it->current.line.end++;
+     {
+        if (match == *it->current.line.end)
+          it->current.line.index++;
+        it->current.line.end++;
+     }
+   it->current.line.index++;
 
    if (it->current.line.end == it->end)
      return EINA_FALSE;
@@ -1246,6 +1253,7 @@ eina_file_map_lines(Eina_File *file)
    it->boundary = 4096;
    it->current.line.start = it->map;
    it->current.line.end = it->current.line.start;
+   it->current.line.index = 0;
    it->current.length = 0;
    it->end = it->map + it->fp->length;
 
