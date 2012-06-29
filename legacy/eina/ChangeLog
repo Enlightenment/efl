@@ -302,3 +302,8 @@
         * Add env var EINA_MEMPOOL_PASS to force mempool to try use
         passthrough to malloc for debgging purposes and memory footrpint
         comparisons at runtime.
+
+2012-06-29 Sebastian Dransfeld
+
+	* Fix eina_file_map_lines. The function would not return the last line
+	of a file.

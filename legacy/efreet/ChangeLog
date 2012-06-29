@@ -115,15 +115,14 @@
 
         1.2.0 release
 
-2012-05-11  Cedric Bail
+2012-05-11 Cedric Bail
 
 	* Faster loading of mime type.
 
-
-2012-06-07  Mike Blumenkrantz
-
-        * Support XDG_DESKTOP_DIR
-
-2012-06-25  Sebastian Dransfeld
+2012-06-25 Sebastian Dransfeld
 
         * Added efreet_lang_reset() to reset language dependent variables and caches
+
+2012-06-25 Sebastian Dransfeld
+
+        * Support XDG_DESKTOP_DIR and read user-dirs.dirs
