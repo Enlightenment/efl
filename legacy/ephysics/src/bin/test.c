@@ -165,6 +165,14 @@ elm_main(int argc, char **argv)
    Eina_Bool test_win_only = EINA_FALSE;
    char *autorun = NULL;
 
+   _ephysics_test_log_dom = eina_log_domain_register(
+      "ephysics-test", EPHYSICS_TEST_LOG_COLOR);
+   if (_ephysics_test_log_dom < 0)
+     {
+        EINA_LOG_CRIT("Could not register log domain: ephysics-test");
+        return -1;
+     }
+
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
@@ -185,13 +193,15 @@ elm_main(int argc, char **argv)
           }
      }
 
-   _ephysics_test_log_dom = eina_log_domain_register(
-      "ephysics-test", EPHYSICS_TEST_LOG_COLOR);
-
    elm_theme_extension_add(NULL,
                            PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj");
    _main_win_add(autorun, test_win_only);
+
    elm_run();
+
+   eina_log_domain_unregister(_ephysics_test_log_dom);
+   _ephysics_test_log_dom = -1;
+
    elm_shutdown();
    return 0;
 }
