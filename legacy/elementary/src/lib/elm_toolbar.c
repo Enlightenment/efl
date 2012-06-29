@@ -288,8 +288,13 @@ _item_del(Elm_Toolbar_Item *it)
         free(it_state);
      }
    eina_stringshare_del(it->label);
+   if (it->label) edje_object_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
    eina_stringshare_del(it->icon_str);
-   if (it->icon) evas_object_del(it->icon);
+   if (it->icon)
+     {
+        edje_object_signal_emit(VIEW(it), "elm,state,icon,hidden", "elm");
+        evas_object_del(it->icon);
+     }
    if (it->object) evas_object_del(it->object);
    //TODO: See if checking for wd->menu_parent is necessary before deleting menu
    if (it->o_menu) evas_object_del(it->o_menu);
@@ -499,7 +504,7 @@ _item_content_unset_hook(Elm_Object_Item *it, const char *part)
    Elm_Toolbar_Item *item = (Elm_Toolbar_Item *) it;
    Evas_Object *obj = WIDGET(item);
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   
    edje_object_part_unswallow(VIEW(it), item->object);
    elm_widget_sub_object_del(obj, item->object);
    o = item->object;
@@ -1066,6 +1071,7 @@ _item_reorder_start(Elm_Toolbar_Item *item)
         evas_object_size_hint_min_set(it->icon, ms, ms);
         evas_object_size_hint_max_set(it->icon, ms, ms);
         edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
+        edje_object_signal_emit(VIEW(it), "elm,state,icon,visible", "elm"); //!!
         evas_object_show(it->icon);
         elm_widget_sub_object_add(obj, it->icon);
      }
@@ -1309,10 +1315,15 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
         evas_object_size_hint_min_set(it->icon, ms, ms);
         evas_object_size_hint_max_set(it->icon, ms, ms);
         edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
+        edje_object_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
         evas_object_show(it->icon);
         elm_widget_sub_object_add(obj, it->icon);
      }
-   edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
+   if (it->label)
+     {
+        edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
+        edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+     }
    mw = mh = -1;
    if (!it->separator && !it->object)
      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
@@ -1352,6 +1363,7 @@ _elm_toolbar_item_label_update(Elm_Toolbar_Item *item)
    Evas_Coord mw = -1, mh = -1, minw = -1, minh = -1;
    Widget_Data *wd = elm_widget_data_get(WIDGET(item));
    edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
+   edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
 
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);

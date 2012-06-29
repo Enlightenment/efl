@@ -235,3 +235,9 @@
 2012-06-27 Daniel Juyung Seo (SeoZ)
 
 	* Genlist: Fixed homogeneous mode bug with ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY item. Now it calculates display only item size correctly.
+
+2012-06-29 Artem Popov
+
+	* Add support for a new toolbar style with icon and text
+        aligned in center. "item_centered".
+

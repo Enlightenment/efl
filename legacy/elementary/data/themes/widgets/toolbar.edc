@@ -1,3 +1,8 @@
+#define ITEM_STATE_ENABLED 0
+#define ITEM_STATE_DISABLED 1
+
+#define BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC 32 32
+
 group { name: "elm/toolbar/base/default";
    images {
       image: "bt_dis_base.png" COMP;
@@ -829,6 +834,699 @@ group { name: "elm/toolbar/item/item_horizontal";
             color3: 0 0 0 0;
             visible: 1;
             text.min: 1 1;
+         }
+      }
+   }
+}
+
+group { name: "elm/toolbar/item/item_centered";
+   images {
+      image: "toolbar_sel.png" COMP;
+   }
+   data.item: "transition_animation_on" "1";
+   script {
+      public item_state = ITEM_STATE_ENABLED;
+   }
+   parts {
+      part { name: "label2";
+         type: TEXT;
+         mouse_events:  0;
+         scale: 1;
+         clip_to: "elm.text.clipper";
+         description { state: "default" 0.0;
+            align: 0.5 0.5;
+            fixed: 0 1;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+            color: 0 0 0 255;
+            text {
+               font: "Sans";
+               text_source: "elm.text";
+               size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+            visible: 1;
+            text.min: 1 1;
+         }
+      }
+      part { name: "label2_new";
+         type: TEXT;
+         mouse_events:  0;
+         scale: 1;
+         clip_to: "elm.text_new.clipper";
+         description { state: "default" 0.0;
+            align: 0.5 0.5;
+            fixed: 0 1;
+            rel1.to: "elm.text_new";
+            rel2.to: "elm.text_new";
+            color: 0 0 0 255;
+            text {
+               font: "Sans";
+               text_source: "elm.text_new";
+               size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+            visible: 1;
+            text.min: 1 1;
+         }
+      }
+      part { name: "bg";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 0;
+            color: 255 255 255 0;
+            rel1 {
+               relative: 0.0 0.0;
+               offset: 2 2;
+            }
+            rel2 {
+               relative: 1.0 1.0;
+               offset: -2 -3;
+            }
+            image {
+               normal: "toolbar_sel.png";
+               border: 3 3 3 3;
+            }
+            image.middle: SOLID;
+            fill.smooth: 0;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+            color: 255 255 255 0;
+         }
+      }
+      part { name: "padding_left_top";
+         type: RECT;
+         scale: 1;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            align: 0.0 0.0;
+            rel2.relative: 0.0 0.0;
+            min: 10 8;
+            fixed: 1 1;
+            visible: 1;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "padding_right_bottom";
+         type: RECT;
+         scale: 1;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            align: 1.0 1.0;
+            rel1.relative: 1.0 1.0;
+            min: 10 5;
+            fixed: 1 1;
+            visible: 1;
+            color: 0 0 0 0;
+         }
+      }
+      part {
+         name: "icon_rect";
+         type: RECT;
+         scale: 1;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            min: 0 0;
+            fixed: 0 1;
+            rel1 {
+               relative: 1.0 1.0;
+               to: "padding_left_top";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to_x: "padding_right_bottom";
+               to_y: "padding_left_top";
+            }
+            align: 0.5 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "visible" 0.0;
+            min: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            fixed: 0 1;
+            rel1 {
+               relative: 1.0 1.0;
+               to: "padding_left_top";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to_x: "padding_right_bottom";
+               to_y: "padding_left_top";
+            }
+            align: 0.5 0.0;
+            color: 0 0 0 0;
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "padding_after_icon";
+         type: RECT;
+         scale: 1;
+         mouse_events: 0;
+         description { state: "default" 0.0; //when only icon or no icon is there
+            align: 0.0 0.0;
+            rel1 {
+               relative: 0.0 1.0;
+               to: "icon_rect";
+            }
+            rel2.to: "icon_rect";
+            fixed: 0 1;
+            min: 0 0;
+            color: 0 0 0 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "icononly" 0.0;
+            inherit: "default" 0.0;
+         }
+      }
+      part { name: "padding_before_text";
+         type: RECT;
+         scale: 1;
+         mouse_events: 0;
+         description { state: "default" 0.0; //when only icon or no icon is there
+            align: 0.5 1.0;
+            rel1 {
+               relative: 1.0 0.0;
+               to_x: "padding_left_top";
+               to_y: "elm.text";
+            }
+            rel2 {
+               relative: 0.0 0.0;
+               to_x: "padding_right_bottom";
+               to_y: "elm.text";
+            }
+            fixed: 0 1;
+            min: 0 0;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.swallow.icon";
+         type: SWALLOW;
+         scale: 1;
+         clip_to: "elm.icon.clipper";
+         description { state: "default" 0.0;
+            visible: 0;
+            align: 0.5 0.5;
+            rel1 {
+               relative: 1.0 1.0;
+               to: "padding_left_top";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to_x: "padding_right_bottom";
+               to_y: "padding_left_top";
+            }
+         //   fixed: 1 1;
+         }
+         description { state: "visible" 0.0;
+         //   fixed: 1 1;
+            min: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            max: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            rel1 {
+               relative: 1.0 1.0;
+               to: "padding_left_top";
+               offset: 0 -3;
+            }
+            rel2 {
+               relative: 0.0 0.0;
+               to: "padding_right_bottom";
+               offset: 0 -10; 
+            }
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+         }
+         description { state: "icononly" 0.0;
+            min: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            max: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            rel1 {
+               relative: 1.0 1.0;
+               to: "padding_left_top";
+            }
+            rel2 {
+               relative: 0.0 0.0;
+               to: "padding_right_bottom";
+            }
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+         }
+      }
+      part { name: "elm.swallow.icon_new";
+         type: SWALLOW;
+         scale: 1;
+         clip_to: "elm.icon_new.clipper";
+         description { state: "default" 0.0;
+            visible: 0;
+            align: 0.5 0.5;
+            rel1 {
+               relative: 1.0 1.0;
+               to: "padding_left_top";
+            }
+            rel2 {
+               relative: 0.0 1.0;
+               to_x: "padding_right_bottom";
+               to_y: "padding_left_top";
+            }
+         //   fixed: 1 1;
+         }
+         description { state: "visible" 0.0;
+        //    fixed: 1 1;
+            min: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            max: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            rel1 {
+               relative: 1.0 1.0;
+               to: "padding_left_top";
+               offset: 0 -3;
+            }
+            rel2 {
+               relative: 0.0 0.0;
+               to: "padding_right_bottom";
+               offset: 0 -10;
+            }
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+         }
+         description { state: "icononly" 0.0;
+            min: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            max: BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC;
+            rel1 {
+               relative: 1.0 1.0;
+               to: "padding_left_top";
+            }
+            rel2 {
+               relative: 0.0 0.0;
+               to: "padding_right_bottom";
+            }
+            aspect: 1.0 1.0;
+            aspect_preference: BOTH;
+         }
+      }
+      part { name: "elm.text";
+         type: TEXT;
+         effect: SOFT_SHADOW;
+         mouse_events:  0;
+         scale: 1;
+         clip_to: "elm.text.clipper";
+         description { state: "default" 0.0;
+            align: 0.5 0.5;
+            fixed: 0 1;
+            rel1 {
+               relative: 1.0 1.0;
+               to_x: "padding_left_top";
+               to_y: "padding_after_icon";
+               offset: 0 -3;
+            }
+            rel2 {
+               relative: 0.0 0.0;
+               to: "padding_right_bottom";
+               offset: 0 -3;
+            }
+            visible: 0;
+            color: 224 224 224 255;
+            color3: 0 0 0 32;
+            text {
+               font: "Sans:style=Bold";
+               size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            text.min: 1 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+            visible: 1;
+            text.min: 1 1;
+         }
+      }
+      part { name: "elm.text_new";
+         type: TEXT;
+         effect: SOFT_SHADOW;
+         mouse_events:  0;
+         clip_to: "elm.text_new.clipper";
+         scale: 1;
+         description { state: "default" 0.0;
+            align: 0.5 0.5;
+            fixed: 0 1;
+            rel1 {
+               relative: 1.0 1.0;
+               to_x: "padding_left_top";
+               to_y: "padding_after_icon";
+               offset: 0 -3;
+            }
+            rel2 {
+               relative: 0.0 0.0;
+               to: "padding_right_bottom";
+               offset: 0 -3;
+            }
+            visible: 0;
+            color: 224 224 224 255;
+            color3: 0 0 0 32;
+            text {
+               font: "Sans:style=Bold";
+               size: 10;
+               min: 1 1;
+               align: 0.5 0.5;
+               text_class: "toolbar_item";
+            }
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            text.min: 1 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+            visible: 1;
+            text.min: 1 1;
+         }
+      }
+      part { name: "elm.text.clipper";
+         type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "animation" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "disabled" 0.0;
+            color: 255 255 255 153;
+         }
+      }
+      part { name: "elm.text_new.clipper";
+         type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "animation" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            color: 255 255 255 153;
+         }
+      }
+      part { name: "elm.icon.clipper";
+         type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "animation" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "disabled" 0.0;
+            color: 255 255 255 153;
+         }
+      }
+      part { name: "elm.icon_new.clipper";
+         type: RECT;
+         description { state: "default" 0.0;
+            color: 255 255 255 0;
+         }
+         description { state: "animation" 0.0;
+            color: 255 255 255 255;
+         }
+         description { state: "disabled" 0.0;
+            color: 255 255 255 153;
+         }
+      }
+      part { name: "event";
+         type: RECT;
+         mouse_events: 1;
+         ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "event2";
+         type: RECT;
+         mouse_events: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+   }
+   programs {
+      program { name: "pressed";
+         signal:  "mouse,down,1";
+         source:  "event";
+         script {
+            if (get_int(item_state) != ITEM_STATE_DISABLED)
+              {
+                 set_state(PART:"elm.text", "visible", 0.0);
+                 set_state(PART:"elm.text_new", "visible", 0.0);
+                 set_state(PART:"bg", "selected", 0.0);
+              }
+         }
+         transition: LINEAR 0.2;
+      }
+      program { name: "unpressed";
+         signal:  "mouse,up,1";
+         source:  "event2";
+         action:  STATE_SET "default" 0.0;
+         target:  "bg";
+         target:  "elm.text";
+         target:  "elm.text_new";
+         transition: LINEAR 0.1;
+      }
+      program { name: "go";
+         signal:  "mouse,up,1";
+         source:  "event";
+         action:  SIGNAL_EMIT "elm,action,click" "elm";
+      }
+      program { name: "mouse,in";
+         signal:  "mouse,in";
+         source:  "event";
+         action:  SIGNAL_EMIT "elm,mouse,in" "elm";
+      }
+      program { name: "mouse,out";
+         signal:  "mouse,out";
+         source:  "event";
+         action:  SIGNAL_EMIT "elm,mouse,out" "elm";
+      }
+      program { name: "disable";
+         signal: "elm,state,disabled";
+         source: "elm";
+         script {
+            set_int(item_state, ITEM_STATE_DISABLED);
+            set_state(PART:"bg", "disabled", 0.0);
+            set_state(PART:"elm.text.clipper", "disabled", 0.0);
+            set_state(PART:"elm.icon.clipper", "disabled", 0.0);
+            run_program(PROGRAM:"label_set,animation,done");
+            run_program(PROGRAM:"icon_set,animation,done");
+         }
+      }
+      program { name: "enable";
+         signal: "elm,state,enabled";
+         source: "elm";
+         script {
+            set_int(item_state, ITEM_STATE_ENABLED);
+            set_state(PART:"bg", "default", 0.0);
+            set_state(PART:"elm.text.clipper", "default", 0.0);
+            set_state(PART:"elm.icon.clipper", "default", 0.0);
+            run_program(PROGRAM:"label_set,animation,done");
+            run_program(PROGRAM:"icon_set,animation,done");
+         }
+      }
+      program { name: "label_set,animation,forward";
+         signal: "elm,state,label_set,forward";
+         source: "elm";
+         after: "label_set,animation";
+      }
+      program { name: "label_set,animation,backward";
+         signal: "elm,state,label_set,backward";
+         source: "elm";
+         after: "label_set,animation";
+      }
+      program { name: "label_set,animation";
+         signal: "elm,state,label_set";
+         source: "elm";
+         action: STATE_SET "animation" 0.0;
+         target: "elm.text.clipper";
+         target: "elm.text_new.clipper";
+         transition: LINEAR 0.2;
+         after: "label_set,animation,done";
+      }
+      program { name: "label_set,animation,done";
+         action: SIGNAL_EMIT "elm,state,label_set,done" "elm";
+      }
+      program { name: "label,reset";
+         signal: "elm,state,label,reset";
+         source: "elm";
+         script {
+            set_state(PART:"elm.text_new.clipper", "default", 0.0);
+            if (get_int(item_state) != ITEM_STATE_DISABLED)
+              set_state(PART:"elm.text.clipper", "default", 0.0);
+            else
+              set_state(PART:"elm.text.clipper", "disabled", 0.0);
+         }
+      }
+      program { name: "icon_set,animation,forward";
+         signal: "elm,state,icon_set,forward";
+         source: "elm";
+         after: "icon_set,animation";
+      }
+      program { name: "icon_set,animation,backward";
+         signal: "elm,state,icon_set,backward";
+         source: "elm";
+         after: "icon_set,animation";
+      }
+      program { name: "icon_set,animation";
+         signal: "elm,state,icon_set";
+         source: "elm";
+         action: STATE_SET "animation" 0.0;
+         target: "elm.icon.clipper";
+         target: "elm.icon_new.clipper";
+         transition: LINEAR 0.2;
+         after: "icon_set,animation,done";
+      }
+      program { name: "icon_set,animation,done";
+         action: SIGNAL_EMIT "elm,state,icon_set,done" "elm";
+      }
+      program { name: "icon,reset";
+         signal: "elm,state,icon,reset";
+         source: "elm";
+         script {
+            set_state(PART:"elm.icon_new.clipper", "default", 0.0);
+            if (get_int(item_state) != ITEM_STATE_DISABLED)
+              set_state(PART:"elm.icon.clipper", "default", 0.0);
+            else
+              set_state(PART:"elm.icon.clipper", "disabled", 0.0);
+         }
+      }
+      program { name: "text_show";
+         signal: "elm,state,text,visible";
+         source: "elm";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.icon", st, 30, vl);
+            if (!strcmp(st, "icononly"))
+              {
+                 set_state(PART:"elm.swallow.icon", "visible", 0.0);
+                 set_state(PART:"icon_rect", "visible", 0.0);
+                 set_state(PART:"padding_after_icon", "visible", 0.0);
+              }
+            set_state(PART:"label2", "visible", 0.0);
+         }
+      }
+      program { name: "text_hide";
+         signal: "elm,state,text,hidden";
+         source: "elm";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.icon", st, 30, vl);
+            if (!strcmp(st, "visible"))
+              {
+                 set_state(PART:"elm.swallow.icon", "icononly", 0.0);
+                 set_state(PART:"icon_rect", "icononly", 0.0);
+                 set_state(PART:"padding_after_icon", "icononly", 0.0);
+              }
+            set_state(PART:"label2", "default", 0.0);
+         }
+      }
+      program { name: "icon_show";
+         signal: "elm,state,icon,visible";
+         source: "elm";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.text", st, 30, vl);
+            if (!strcmp(st, "visible"))
+              {
+                 set_state(PART:"elm.swallow.icon", "visible", 0.0);
+                 set_state(PART:"icon_rect", "visible", 0.0);
+                 set_state(PART:"padding_after_icon", "visible", 0.0);
+              }
+            else
+              {
+                 set_state(PART:"elm.swallow.icon", "icononly", 0.0);
+                 set_state(PART:"icon_rect", "icononly", 0.0);
+                 set_state(PART:"padding_after_icon", "icononly", 0.0);
+              }
+         }
+      }
+      program { name: "icon_hide";
+         signal: "elm,state,icon,hidden";
+         source: "elm";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.text", st, 30, vl);
+            if (!strcmp(st, "visible"))
+              {
+                 set_state(PART:"label2", "visible", 0.0);
+              }
+              set_state(PART:"elm.swallow.icon", "default", 0.0);
+              set_state(PART:"icon_rect", "default", 0.0);
+              set_state(PART:"padding_after_icon", "default", 0.0);
          }
       }
    }
