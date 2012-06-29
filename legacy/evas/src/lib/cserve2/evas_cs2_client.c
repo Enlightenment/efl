@@ -1167,7 +1167,9 @@ evas_cserve2_font_glyph_request(Font_Entry *fe, unsigned int idx, Font_Hint_Flag
    CS_Glyph_Out *glyph;
 
    if (fe->rid)
-     _server_dispatch_until(fe->rid);
+     _server_dispatch_until(0); /* dispatch anything pending just to avoid
+                                   requesting glyphs for a font we may already
+                                   know it failed loading, but don't block */
 
    if (fe->failed)
      return EINA_FALSE;
@@ -1212,7 +1214,9 @@ evas_cserve2_font_glyph_used(Font_Entry *fe, unsigned int idx, Font_Hint_Flags h
    CS_Glyph_Out *glyph;
 
    if (fe->rid)
-     _server_dispatch_until(fe->rid);
+     _server_dispatch_until(0); /* dispatch anything pending just to avoid
+                                   requesting glyphs for a font we may already
+                                   know it failed loading, but don't block */
 
    if (fe->failed)
      return EINA_FALSE;
