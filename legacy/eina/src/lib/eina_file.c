@@ -1190,6 +1190,9 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
      }
    it->current.line.index++;
 
+   if (it->current.line.end == it->end)
+     return EINA_FALSE;
+
    eol = _eina_fine_eol(it->current.line.end,
                         it->boundary,
                         it->end);
