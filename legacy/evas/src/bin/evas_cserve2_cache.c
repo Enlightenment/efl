@@ -2460,7 +2460,7 @@ cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcel
    fs->references++;
    DBG("adding FONT_LOAD '%s' request.", fs->name);
    fe->request = cserve2_request_add(CSERVE2_REQ_FONT_LOAD, rid,
-                                     client, &_font_load_funcs, fe);
+                                     client, NULL, &_font_load_funcs, fe);
 
    eina_hash_direct_add(font_entries, fe, fe);
 
@@ -2518,7 +2518,7 @@ cserve2_cache_font_glyphs_load(Client *client, const char *source, unsigned int 
    else
      {
         cserve2_request_add(CSERVE2_REQ_FONT_GLYPHS_LOAD, rid,
-                            client, &_glyphs_load_funcs, req);
+                            client, req->fe->request, &_glyphs_load_funcs, req);
      }
    return 0;
 }

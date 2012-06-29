@@ -288,7 +288,7 @@ void cserve2_cache_stats_get(Client *client, unsigned int rid);
 void cserve2_cache_font_debug(Client *client, unsigned int rid);
 
 
-Font_Request *cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request_Funcs *funcs, void *data);
+Font_Request *cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request *dep, Font_Request_Funcs *funcs, void *data);
 void cserve2_request_waiter_add(Font_Request *req, unsigned int rid, Client *client);
 void cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err);
 void cserve2_request_cancel_all(Font_Request *req, Error_Type err);

@@ -68,6 +68,9 @@ struct _Font_Request
    Eina_List *waiters;
    Eina_Bool processing;
    Font_Request_Funcs *funcs;
+   Font_Request *dependency;
+   Eina_List *dependents; /* list of requests that depend on this one finishing */
+   Eina_Bool locked : 1; /* locked waiting for a dependency request to finish */
 };
 
 struct _Waiter
@@ -105,7 +108,7 @@ _request_waiter_add(Font_Request *req, Client *client, unsigned int rid)
 }
 
 Font_Request *
-cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request_Funcs *funcs __UNUSED__, void *data)
+cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request *dep, Font_Request_Funcs *funcs, void *data)
 {
    Font_Request *req, *r;
 
@@ -138,7 +141,7 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
    if (!req)
      {
         DBG("Add request for rid: %d", rid);
-        req = malloc(sizeof(*req));
+        req = calloc(1, sizeof(*req));
         req->type = type;
         req->data = data;
         req->waiters = NULL;
@@ -146,6 +149,13 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
         req->funcs = funcs;
         requests[type].waiting = eina_inlist_append(requests[type].waiting,
                                                     EINA_INLIST_GET(req));
+     }
+
+   if (dep && !req->dependency)
+     {
+        req->locked = EINA_TRUE;
+        dep->dependents = eina_list_append(dep->dependents, req);
+        req->dependency = dep;
      }
 
    _request_waiter_add(req, client, rid);
@@ -159,6 +169,21 @@ void
 cserve2_request_waiter_add(Font_Request *req, unsigned int rid, Client *client)
 {
    _request_waiter_add(req, client, rid);
+}
+
+static void
+_request_dependents_cancel(Font_Request *req, Error_Type err)
+{
+   Font_Request *dep;
+
+   EINA_LIST_FREE(req->dependents, dep)
+     {
+        dep->locked = EINA_FALSE;
+        dep->dependency = NULL;
+        /* Maybe we need a better way to inform the creator of the request
+         * that it was cancelled because its dependency failed? */
+        cserve2_request_cancel_all(dep, err);
+     }
 }
 
 void
@@ -179,6 +204,12 @@ cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
              free(w);
           }
      }
+
+   if (req->dependency)
+     req->dependency->dependents = eina_list_remove(
+        req->dependency->dependents, req);
+
+   _request_dependents_cancel(req, err);
 
    // TODO: When we have speculative preload, there may be no waiters,
    // so we need a flag or something else to make things still load.
@@ -210,8 +241,14 @@ cserve2_request_cancel_all(Font_Request *req, Error_Type err)
         free(w);
      }
 
+   _request_dependents_cancel(req, err);
+
    if (req->processing)
      return;
+
+   if (req->dependency)
+     req->dependency->dependents = eina_list_remove(
+        req->dependency->dependents, req);
 
    requests[req->type].waiting = eina_inlist_remove(
       requests[req->type].waiting, EINA_INLIST_GET(req));
@@ -247,6 +284,9 @@ _cserve2_request_failed(Font_Request *req, Error_Type type)
    req->funcs->msg_free(req->msg, req->data);
    requests[req->type].processing = eina_inlist_remove(
       requests[req->type].processing, EINA_INLIST_GET(req));
+
+   _request_dependents_cancel(req, type);
+
    free(req);
 }
 
@@ -254,7 +294,7 @@ static void
 _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
 {
    Slave_Worker *sw = data;
-   Font_Request *req = sw->data;
+   Font_Request *dep, *req = sw->data;
    Eina_List **working, **idle;
    Waiter *w;
 
@@ -276,6 +316,13 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
    free(msg);
    requests[req->type].processing = eina_inlist_remove(
       requests[req->type].processing, EINA_INLIST_GET(req));
+
+   EINA_LIST_FREE(req->dependents, dep)
+     {
+        dep->locked = EINA_FALSE;
+        dep->dependency = NULL;
+     }
+
    free(req);
    sw->data = NULL;
 
@@ -415,6 +462,9 @@ _cserve2_requests_process(void)
               Slave_Worker *sw;
               Font_Request *req = EINA_INLIST_CONTAINER_GET(
                  requests[rtype].waiting, Font_Request);
+
+              if (req->locked)
+                continue;
 
               requests[rtype].waiting = eina_inlist_remove(
                  requests[rtype].waiting, requests[rtype].waiting);
