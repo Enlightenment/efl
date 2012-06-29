@@ -28,7 +28,8 @@
          @li @ref watch Functions that watch for events
          @li @ref syspath Functions that accept a device /sys/ path
          @li @ref find Functions which find types of devices
-
+ @li @ref disk Disk functions
+ @li @ref net Net functions
  @verbatim
  Pants
  @endverbatim
