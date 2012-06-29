@@ -28,9 +28,27 @@ my_bt_go_900_900(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 void
+my_bt_freeze_toggle(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   if (elm_check_state_get(obj))
+     elm_object_scroll_freeze_push((Evas_Object *)data);
+   else
+     elm_object_scroll_freeze_pop((Evas_Object *)data);
+}
+
+void
+my_bt_hold_toggle(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   if (elm_check_state_get(obj))
+     elm_object_scroll_hold_push((Evas_Object *)data);
+   else
+     elm_object_scroll_hold_pop((Evas_Object *)data);
+}
+
+void
 test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt;
+   Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt, *ck;
    int i, j, n;
    char buf[PATH_MAX];
    const char *img[9] =
@@ -98,7 +116,7 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_900_300, sc);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.1);
-   elm_table_pack(tb2, bt, 1, 0, 1, 1);
+   elm_table_pack(tb2, bt, 2, 0, 1, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -106,7 +124,7 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_300_900, sc);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.1, 0.9);
-   elm_table_pack(tb2, bt, 0, 1, 1, 1);
+   elm_table_pack(tb2, bt, 0, 2, 1, 1);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
@@ -114,8 +132,20 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_smart_callback_add(bt, "clicked", my_bt_go_900_900, sc);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.9);
-   elm_table_pack(tb2, bt, 1, 1, 1, 1);
+   elm_table_pack(tb2, bt, 2, 2, 1, 1);
    evas_object_show(bt);
+   
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Freeze");
+   elm_table_pack(tb2, ck, 2, 1, 1, 1);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "changed", my_bt_freeze_toggle, tb);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Hold");
+   elm_table_pack(tb2, ck, 0, 1, 1, 1);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "changed", my_bt_hold_toggle, tb);
 
    evas_object_show(tb2);
 
