@@ -469,7 +469,7 @@ _cserve2_requests_process(void)
                 continue;
 
               requests[rtype].waiting = eina_inlist_remove(
-                 requests[rtype].waiting, requests[rtype].waiting);
+                 requests[rtype].waiting, EINA_INLIST_GET(req));
               requests[rtype].processing = eina_inlist_append(
                  requests[rtype].processing, EINA_INLIST_GET(req));
 
