@@ -4,8 +4,8 @@
  @mainpage Eeze
  @image html  eeze.png
  @version 1.2.0
- @author Mike Blumenkrantz (zmike/discomfitor) <mike@@zentific.com>
- @date 2010-2011
+ @author Mike Blumenkrantz (zmike/discomfitor) <michael.blumenkrantz@@gmail.com>
+ @date 2010-2012
 
  @section intro What is Eeze?
 
