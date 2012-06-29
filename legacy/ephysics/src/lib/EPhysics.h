@@ -566,6 +566,41 @@ EAPI void ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Call
 EAPI void *ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_Type type, EPhysics_World_Event_Cb func);
 
 /**
+ * @brief
+ * Set linear slop to be used by world.
+ *
+ * Constraint solver can be configured using some advanced settings, like
+ * the solver slop factor.
+ *
+ * The default value is set to 0 with a small value results in a smoother
+ * stabilization for stacking bodies.
+ *
+ * Linear slop on sequencial impulse constraint solver is used as a factor
+ * for penetration. The penetration will the manifold distance + linear slop.
+ *
+ * @param world The physics world.
+ * @param linear_slop New linear slop value to be used by constraint solver
+ * of physics engine.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_linear_slop_set(EPhysics_World *world, double linear_slop);
+
+/**
+ * @brief
+ * Get linear slop used by world.
+ *
+ * @param world The physics world.
+ * @return Linear slop value used by constraint solver of physics engine or 0
+ * on failure.
+ *
+ * @see ephysics_world_linear_slop_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI double ephysics_world_linear_slop_get(EPhysics_World *world);
+
+/**
  * @}
  */
 

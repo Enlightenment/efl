@@ -642,6 +642,30 @@ ephysics_world_render_geometry_get(EPhysics_World *world, Evas_Coord *x, Evas_Co
    if (h) *h = world->h;
 }
 
+EAPI void
+ephysics_world_linear_slop_set(EPhysics_World *world, double linear_slop)
+{
+   if (!world)
+     {
+        ERR("Can't set linear slop, world is null.");
+        return;
+     }
+
+   world->dynamics_world->getSolverInfo().m_linearSlop = btScalar(linear_slop);
+}
+
+EAPI double
+ephysics_world_linear_slop_get(EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get linear slop, world is null.");
+        return 0;
+     }
+
+   return world->dynamics_world->getSolverInfo().m_linearSlop;
+}
+
 #ifdef  __cplusplus
 }
 #endif
