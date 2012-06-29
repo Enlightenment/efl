@@ -432,6 +432,8 @@ _cserve2_requests_process(void)
          Slave_Command ctype;
          unsigned int max_workers;
          Eina_List **idle, **working;
+         Eina_Inlist *itr;
+         Font_Request *req;
 
          for (j = 0; _request_match[j].rtype != CSERVE2_REQ_LAST; j++)
            {
@@ -456,12 +458,12 @@ _cserve2_requests_process(void)
          idle = &_workers[type].idle;
          working = &_workers[type].working;
 
-         while (requests[rtype].waiting &&
-                (eina_list_count(*working) < max_workers))
+         EINA_INLIST_FOREACH_SAFE(requests[rtype].waiting, itr, req)
            {
               Slave_Worker *sw;
-              Font_Request *req = EINA_INLIST_CONTAINER_GET(
-                 requests[rtype].waiting, Font_Request);
+
+              if (eina_list_count(*working) >= max_workers)
+                break;
 
               if (req->locked)
                 continue;
