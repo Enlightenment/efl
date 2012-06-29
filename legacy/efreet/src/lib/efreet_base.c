@@ -215,12 +215,10 @@ efreet_dir_get(const char *key, const char *fallback)
 
         user = efreet_home_dir_get();
         len = strlen(user) + strlen(fallback) + 1;
-        dir = malloc(len);
-        if (!dir) return NULL;
+        dir = alloca(len);
         snprintf(dir, len, "%s%s", user, fallback);
 
         t = eina_stringshare_add(dir);
-        FREE(dir);
     }
     else t = eina_stringshare_add(dir);
 
