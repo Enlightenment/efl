@@ -92,3 +92,7 @@
 2012-06-12 Mike Blumenkrantz
 
         * Add fallback mount using device name if a disk has no uuid
+
+2012-06-29 Mike Blumenkrantz
+
+        * Fix crash in eeze_net_free()

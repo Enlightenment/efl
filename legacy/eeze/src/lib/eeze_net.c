@@ -102,6 +102,7 @@ eeze_net_free(Eeze_Net *net)
 
    EINA_REFCOUNT_UNREF(net)
      {
+        eina_hash_del_by_key(eeze_nets, net->name);
         udev_device_unref(net->device);
         eina_stringshare_del(net->syspath);
         eina_stringshare_del(net->name);
