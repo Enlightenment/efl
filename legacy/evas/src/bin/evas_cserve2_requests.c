@@ -492,7 +492,6 @@ _cserve2_requests_process(void)
 
               *idle = eina_list_remove_list(*idle, *idle);
               *working = eina_list_append(*working, sw);
-
            }
       }
 }
