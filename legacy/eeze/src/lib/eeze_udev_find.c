@@ -188,6 +188,13 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
 #endif
         break;
 
+      case EEZE_UDEV_TYPE_JOYSTICK:
+        udev_enumerate_add_match_subsystem(en, "input");
+#ifndef OLD_UDEV_RRRRRRRRRRRRRR
+        udev_enumerate_add_match_property(en, "ID_INPUT_JOYSTICK", "1");
+#endif
+        break;
+
       case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
         udev_enumerate_add_match_subsystem(en, "block");
         udev_enumerate_add_match_property(en, "ID_FS_USAGE", "filesystem");

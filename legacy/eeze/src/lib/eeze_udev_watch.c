@@ -166,6 +166,24 @@ _get_syspath_from_watch(void             *data,
 
         break;
 
+      case EEZE_UDEV_TYPE_JOYSTICK:
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+        if ((!(test = udev_device_get_subsystem(device)))
+            || (strcmp(test, "input")))
+          goto error;
+
+        test = udev_device_get_property_value(device, "ID_CLASS");
+
+        if ((test) && (!strcmp(test, "joystick")))
+          break;
+
+        goto error;
+#endif
+        if (!udev_device_get_property_value(device, "ID_INPUT_JOYSTICK"))
+          goto error;
+
+        break;
+
       case EEZE_UDEV_TYPE_DRIVE_MOUNTABLE:
 #ifdef OLD_UDEV_RRRRRRRRRRRRRR
         if ((!(test = udev_device_get_subsystem(device)))
@@ -319,14 +337,9 @@ eeze_udev_watch_add(Eeze_Udev_Type     type,
 
    switch (type)
      {
+      case EEZE_UDEV_TYPE_JOYSTICK:
       case EEZE_UDEV_TYPE_KEYBOARD:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
-        break;
-
       case EEZE_UDEV_TYPE_MOUSE:
-        udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
-        break;
-
       case EEZE_UDEV_TYPE_TOUCHPAD:
         udev_monitor_filter_add_match_subsystem_devtype(mon, "input", NULL);
         break;

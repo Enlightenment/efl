@@ -96,3 +96,7 @@
 2012-06-29 Mike Blumenkrantz
 
         * Fix crash in eeze_net_free()
+
+2012-06-29 Christophe Dumez (christophe.dumez@intel.com)
+
+        * Added joystick detection

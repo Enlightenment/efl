@@ -236,6 +236,34 @@ eeze_udev_syspath_is_touchpad(const char *syspath)
    return touchpad;
 }
 
+EAPI Eina_Bool
+eeze_udev_syspath_is_joystick(const char *syspath)
+{
+   _udev_device *device = NULL;
+   Eina_Bool joystick = EINA_FALSE;
+   const char *test;
+
+   if (!syspath)
+     return EINA_FALSE;
+
+   if (!(device = _new_device(syspath)))
+     return EINA_FALSE;
+#ifdef OLD_UDEV_RRRRRRRRRRRRRR
+   test = udev_device_get_property_value(device, "ID_CLASS");
+
+   if ((test) && (!strcmp(test, "joystick")))
+     joystick = EINA_TRUE;
+#else
+   test = udev_device_get_property_value(device, "ID_INPUT_JOYSTICK");
+
+   if (test && (test[0] == '1'))
+     joystick = EINA_TRUE;
+
+#endif
+   udev_device_unref(device);
+   return joystick;
+}
+
 EAPI const char *
 eeze_udev_devpath_get_syspath(const char *devpath)
 {

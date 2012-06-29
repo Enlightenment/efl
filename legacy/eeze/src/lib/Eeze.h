@@ -216,7 +216,11 @@ typedef enum
    /** - WebCam */
    EEZE_UDEV_TYPE_V4L,
    /** - Bluetooth */
-   EEZE_UDEV_TYPE_BLUETOOTH
+   EEZE_UDEV_TYPE_BLUETOOTH,
+   /** - Joystick
+    * @since 1.3
+    */
+   EEZE_UDEV_TYPE_JOYSTICK
 } Eeze_Udev_Type;
 /**@}*/
 
@@ -456,6 +460,15 @@ EAPI Eina_Bool        eeze_udev_syspath_is_kbd(const char *syspath);
  * @return If true, the device is a touchpad
  */
 EAPI Eina_Bool        eeze_udev_syspath_is_touchpad(const char *syspath);
+
+/**
+ * Checks whether the device is a joystick.
+ *
+ * @param syspath The /sys/ path with or without the /sys/
+ * @return If true, the device is a joystick
+ * @since 1.3
+ */
+EAPI Eina_Bool        eeze_udev_syspath_is_joystick(const char *syspath);
    /**
     * @}
     */
