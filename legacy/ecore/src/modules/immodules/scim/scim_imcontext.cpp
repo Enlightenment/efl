@@ -1389,6 +1389,7 @@ isf_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
         if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT) key.mask |=SCIM_KEY_ShiftMask;
         if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_CTRL) key.mask |=SCIM_KEY_ControlMask;
         if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALT) key.mask |=SCIM_KEY_AltMask;
+        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALTGR) key.mask |=SCIM_KEY_Mod5Mask;
         if (ev->locks & ECORE_IMF_KEYBOARD_LOCK_CAPS) key.mask |=SCIM_KEY_CapsLockMask;
         if (ev->locks & ECORE_IMF_KEYBOARD_LOCK_NUM) key.mask |=SCIM_KEY_NumLockMask;
      }
@@ -1400,6 +1401,7 @@ isf_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
         if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT) key.mask |=SCIM_KEY_ShiftMask;
         if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_CTRL) key.mask |=SCIM_KEY_ControlMask;
         if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALT) key.mask |=SCIM_KEY_AltMask;
+        if (ev->modifiers & ECORE_IMF_KEYBOARD_MODIFIER_ALTGR) key.mask |=SCIM_KEY_Mod5Mask;
         if (ev->locks & ECORE_IMF_KEYBOARD_LOCK_CAPS) key.mask |=SCIM_KEY_CapsLockMask;
         if (ev->locks & ECORE_IMF_KEYBOARD_LOCK_NUM) key.mask |=SCIM_KEY_NumLockMask;
      }
