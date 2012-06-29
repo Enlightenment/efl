@@ -1289,7 +1289,7 @@
  * If isn't required that users could select a day on calendar,
  * only interacting going through months, disabling days selection
  * could be a good idea to avoid confusion. For that:
- * @skipline elm_calendar_day_selection_disabled_set
+ * @skipline elm_calendar_select_mode_set
  *
  * Also, regarding days selection, you could be interested to set a
  * date to be highlighted on calendar from your code, maybe when
@@ -2010,7 +2010,7 @@
  * This code places a Elementary map widget on a window,
  * to exemplify part of the widget's API, related to overlays.
  *
- * We'll start this example in the same way
+ * We'll start this example in the same way as
  * @ref map_example_01 "Map Example 1". Adding a map with buttons to control
  * zoom, so if you didn't read it yet, just do it now.
  * @dontinclude map_example_02.c
@@ -3594,7 +3594,7 @@
   * elm_image_resizable_set() is used to allow the image to be resized to a size
   * smaller than the original one, but not to a size bigger than it.
   *
-  * elm_elm_image_smooth_set() will disable the smooth scaling, so the scale
+  * elm_image_smooth_set() will disable the smooth scaling, so the scale
   * algorithm used to scale the image to the new object size is going to be
   * faster, but with a lower quality.
   *
@@ -3657,13 +3657,13 @@
   *
   * We can now go setting our options.
   *
-  * elm_icon_no_scale_set() is used just to set this value to true (we
+  * elm_image_no_scale_set() is used just to set this value to true (we
   * don't want to scale our icon anyway, just resize it).
   *
-  * elm_icon_resizable_set() is used to allow the icon to be resized to a size
+  * elm_image_resizable_set() is used to allow the icon to be resized to a size
   * smaller than the original one, but not to a size bigger than it.
   *
-  * elm_elm_icon_smooth_set() will disable the smooth scaling, so the scale
+  * elm_image_smooth_set() will disable the smooth scaling, so the scale
   * algorithm used to scale the icon to the new object size is going to be
   * faster, but with a lower quality.
   *
@@ -5131,7 +5131,7 @@
  * hardcoded span size:
  * @dontinclude progressbar_example.c
  * @skip vertical pb, with pulse
- * @until pb5
+ * @until pb6
  *
  * We end the widget demonstration by showing a progress bar with the
  * special @b "wheel" progress bar style. One does @b not need to set
@@ -5139,7 +5139,7 @@
  * its theme does not take it in account:
  * @dontinclude progressbar_example.c
  * @skip "wheel"
- * @until pb7
+ * @until pb8
  *
  * The two buttons exercising the bars, the facto, follow:
  * @dontinclude progressbar_example.c
