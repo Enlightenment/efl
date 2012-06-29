@@ -68,27 +68,30 @@ AC_CANONICAL_HOST
 
 requirements_pc_eina=""
 
+have_wince="no"
+have_win32="no"
 case "$host_os" in
    mingw32ce*)
+      have_win32="yes"
+      have_wince="yes"
       MODULE_ARCH="$host_os-$host_cpu"
+      MODULE_EXT=".dll"
       ;;
-   *)
-      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
-      ;;
-esac
-AC_SUBST(MODULE_ARCH)
-AC_DEFINE_UNQUOTED(MODULE_ARCH, "${MODULE_ARCH}", "Module architecture")
-
-case "$host_os" in
    mingw*)
+      have_win32="yes"
+      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       MODULE_EXT=".dll"
       ;;
    *)
+      MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       MODULE_EXT=".so"
       ;;
 esac
-
-AC_DEFINE_UNQUOTED(SHARED_LIB_SUFFIX, "${MODULE_EXT}", [Suffix for shared objects])
+AM_CONDITIONAL([EINA_HAVE_WINCE], [test "x$have_wince" = "xyes"])
+AM_CONDITIONAL([EINA_HAVE_WIN32], [test "x$have_win32" = "xyes"])
+AC_SUBST([MODULE_ARCH])
+AC_DEFINE_UNQUOTED([MODULE_ARCH], ["${MODULE_ARCH}"], ["Module architecture"])
+AC_DEFINE_UNQUOTED([SHARED_LIB_SUFFIX], ["${MODULE_EXT}"], [Suffix for shared objects])
 
 EFL_CHECK_CPU_MMX([have_mmx="yes"], [have_mmx="no"])
 EFL_CHECK_CPU_SSE([have_sse="yes"], [have_sse="no"])
@@ -268,25 +271,75 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
+## Compatibility layers
+
+# Evil library for compilation on Windows
+
+EFL_EINA_BUILD=""
+case "$host_os" in
+   mingw*)
+      PKG_CHECK_EXISTS([evil >= 1.1.0])
+      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
+      requirements_pc_eina="${requirements_pc_eina} evil"
+      EFL_EINA_BUILD="-DEFL_EINA_BUILD"
+   ;;
+esac
+AC_SUBST([EFL_EINA_BUILD])
+
+# Escape library for compilation on Playstation 3
+
+case "$host_vendor" in
+  ps3*)
+      PKG_CHECK_EXISTS([escape])
+      AC_DEFINE([HAVE_ESCAPE], [1], [Set to 1 if Escape package is installed])
+      requirements_pc_eina="${requirements_pc_eina} escape"
+    ;;
+esac
+
+# Exotic library for copilation on Coyote
+
+PKG_CHECK_EXISTS([exotic],
+   [
+    enable_exotic="yes"
+    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
+    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
+    requirements_pc_eina="exotic ${requirements_pc_eina}"
+   ],
+   [enable_exotic="no"])
+
+AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
+AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
+
+if ! test "x${requirements_pc_eina}" = "x" ; then
+   PKG_CHECK_MODULES([EINA], [${requirements_pc_eina}])
+fi
+
+## Options
+
 # Valgrind
-want_valgrind="auto"
-have_valgrind="no"
 
 AC_ARG_ENABLE([valgrind],
-  [AC_HELP_STRING([--enable-valgrind], [improve valgrind support by hinting it of our memory usages, having it to report proper mempool leaks.])],
-  [want_valgrind=$enableval])
+   [AC_HELP_STRING([--enable-valgrind], [improve valgrind support by hinting it of our memory usages, having it to report proper mempool leaks.])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_valgrind="yes"
+    else
+       want_valgrind="no"
+    fi
+   ],
+   [want_valgrind="auto"])
 
 AC_MSG_CHECKING([whether to enable build with valgrind])
 AC_MSG_RESULT([${want_valgrind}])
 
 if test "x${want_valgrind}" = "xyes" || test "x${want_valgrind}" = "xauto"; then
-   PKG_CHECK_MODULES([VALGRIND],
-      [valgrind >= 2.4.0],
+   PKG_CHECK_MODULES([VALGRIND], [valgrind >= 2.4.0],
       [
-       requirements_pc_eina="valgrind ${requirements_pc_eina}"
        have_valgrind="yes"
+       requirements_pc_eina="valgrind ${requirements_pc_eina}"
       ],
       [
+       have_valgrind="no"
        AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
        if test "x${want_valgrind}" = "xyes"; then
           AC_MSG_ERROR([Valgrind >= 2.4.0 is required])
@@ -296,48 +349,7 @@ else
     AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
 fi
 
-
-# Evil library for compilation on Windows
-
-EFL_EINA_BUILD=""
-case "$host_os" in
-   mingw*)
-      PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
-      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if evil package is installed])
-      requirements_pc_eina="${requirements_pc_eina} evil"
-      EFL_EINA_BUILD="-DEFL_EINA_BUILD"
-   ;;
-esac
-AC_SUBST([EFL_EINA_BUILD])
-
-# Checks for portability layer
-
-PKG_CHECK_MODULES([EXOTIC],
-   [exotic],
-   [enable_exotic="yes"],
-   [enable_exotic="no"])
-
-if test "x${enable_exotic}" = "xyes"; then
-    requirements_pc_eina="exotic ${requirements_pc_eina}"
-    EINA_CFLAGS="${EINA_CFLAGS} ${EXOTIC_CFLAGS}"
-    EINA_LIBS="${EXOTIC_LIBS}"
-
-    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
-    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
-fi
-AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
-AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
-
-case "$host_vendor" in
-  ps3*)
-      PKG_CHECK_MODULES([ESCAPE], [escape])
-      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if Escape package is installed])
-      requirements_pc_eina="${requirements_pc_eina} escape"
-      EINA_CFLAGS="${ESCAPE_CFLAGS} ${EINA_CFLAGS}"
-    ;;
-esac
-
-AC_SUBST([EINA_CFLAGS])
+## Modules
 
 # Check ememoa memory pool library
 
@@ -353,7 +365,7 @@ AC_ARG_ENABLE([ememoa],
    [enable_ememoa="yes"])
 
 AC_MSG_CHECKING([whether to use ememoa for memory pool])
-AC_MSG_RESULT([$enable_ememoa])
+AC_MSG_RESULT([${enable_ememoa}])
 
 if test "x${enable_ememoa}" = "xyes" ; then
    PKG_CHECK_MODULES([EMEMOA],
@@ -361,6 +373,8 @@ if test "x${enable_ememoa}" = "xyes" ; then
       [enable_ememoa="yes"],
       [enable_ememoa="no"])
 fi
+
+## Examples
 
 PKG_CHECK_MODULES([ECORE_EVAS],
    [ecore-evas ecore evas],
@@ -424,22 +438,6 @@ AC_C_INLINE
 AC_PROG_CC_STDC
 EFL_ATTRIBUTE_UNUSED
 
-have_wince="no"
-have_win32="no"
-case "$host_os" in
-   mingw32ce*)
-      EINA_CFLAGS="${EVIL_CFLAGS}"
-      have_win32="yes"
-      have_wince="yes"
-      ;;
-   mingw*)
-      EINA_CFLAGS="${EVIL_CFLAGS}"
-      have_win32="yes"
-      ;;
-esac
-AM_CONDITIONAL([EINA_HAVE_WINCE], [test "x$have_wince" = "xyes"])
-AM_CONDITIONAL([EINA_HAVE_WIN32], [test "x$have_win32" = "xyes"])
-
 m4_ifdef([v_mic],
    [
     EFL_COMPILER_FLAG([-Wall])
@@ -451,21 +449,12 @@ EFL_COMPILER_FLAG([-Wshadow])
 EFL_CHECK_PATH_MAX
 
 ### Checks for linker characteristics
-EINA_LIBS=
 lt_enable_auto_import=""
 case "${host_os}" in
    mingw*)
-      EINA_LIBS="${EINA_LIBS} ${EVIL_LIBS}"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
 esac
-case "$host_vendor" in
-  ps3*)
-      # Escape had already been checked to exist
-      EINA_LIBS="${ESCAPE_LIBS}"
-    ;;
-esac
-AC_SUBST([EINA_LIBS])
 AC_SUBST([lt_enable_auto_import])
 
 EFL_LINKER_FLAG([-fno-strict-aliasing])
