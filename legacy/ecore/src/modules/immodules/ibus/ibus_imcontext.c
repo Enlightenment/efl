@@ -97,9 +97,13 @@ _ecore_imf_modifier_to_ibus_modifier(unsigned int modifier)
    if (modifier & ECORE_IMF_KEYBOARD_MODIFIER_SHIFT)
      state |= IBUS_SHIFT_MASK;
 
-   /**< "Win" (between "Ctrl" and "A */
+   /**< "Win" (between "Ctrl" and "Alt") */
    if (modifier & ECORE_IMF_KEYBOARD_MODIFIER_WIN)
      state |= IBUS_SUPER_MASK;
+
+   /**< "AltGr" is pressed */
+   if (modifier & ECORE_IMF_KEYBOARD_MODIFIER_ALTGR)
+     state |= IBUS_MOD5_MASK;
 
    return state;
 }
