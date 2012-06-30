@@ -22,3 +22,9 @@
 2012-05-06  Fanina Cristian
 
 	* Add support for Poppler 0.20.
+
+2012-06-30 Carsten Haitzler (The Rasterman)
+
+        * Add timeout (default 5 seconds) for gstreamer loader in case
+        gst hangs.
+

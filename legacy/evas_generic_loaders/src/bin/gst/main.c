@@ -4,6 +4,8 @@
 
 #include <sys/mman.h>
 #include <fcntl.h>
+#include <unistd.h>
+#include <signal.h>
 
 #include <gst/gst.h>
 
@@ -20,6 +22,8 @@
 #else
 #define D(fmt, args...)
 #endif
+
+#define TIMEOUT 5
 
 #define CAPS "video/x-raw-rgb,bpp=(int)32,depth=(int)32,endianness=(int)4321,red_mask=(int)0x0000ff00, green_mask=(int)0x00ff0000, blue_mask=(int)0xff000000"
 
@@ -168,6 +172,13 @@ _gst_load_image(int size_w, int size_h)
    memcpy(data, GST_BUFFER_DATA(buffer), GST_BUFFER_SIZE(buffer));
 }
 
+static void
+timeout(int val)
+{
+   // error - timeout :(
+   exit(-7);
+}
+
 int
 main(int argc, char **argv)
 {
@@ -209,6 +220,10 @@ main(int argc, char **argv)
           }
      }
 
+   // timeout: if we can't manage to get this done in TIMEOUT seconds, give up.
+   signal(SIGALRM, timeout);
+   alarm(TIMEOUT);
+   
    D("_gst_init_file\n");
 
    if (!_gst_init(file))
