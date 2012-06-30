@@ -521,6 +521,7 @@ typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 #define ELM_ACCESS_CANCEL  -2   // stop reading immediately
 
 typedef char *(*Elm_Access_Content_Cb)(void *data, Evas_Object *obj, Elm_Widget_Item *item);
+typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
 
 struct _Elm_Access_Item
 {
@@ -531,9 +532,11 @@ struct _Elm_Access_Item
 
 struct _Elm_Access_Info
 {
-   Evas_Object *hoverobj;
-   Eina_List   *items;
-   Ecore_Timer *delay_timer;
+   Evas_Object               *hoverobj;
+   Eina_List                 *items;
+   Ecore_Timer               *delay_timer;
+   void                      *on_highlight_data;
+   Elm_Access_On_Highlight_Cb on_highlight;
 };
 
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
@@ -553,6 +556,8 @@ EAPI void             _elm_access_item_register(Elm_Widget_Item *item, Evas_Obje
 EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 EAPI void             _elm_access_highlight_set(Evas_Object* obj);
 EAPI Evas_Object *    _elm_access_edje_object_part_object_register(Evas_Object *obj, const Evas_Object *partobj, const char* part);
+EAPI void             _elm_access_widget_item_register(Elm_Widget_Item *item);
+EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
 
 /**< put this as the first member in your widget item struct */
 #define ELM_WIDGET_ITEM       Elm_Widget_Item base
@@ -583,6 +588,7 @@ struct _Elm_Widget_Item
    Elm_Widget_Text_Get_Cb         text_get_func;
    Elm_Widget_Signal_Emit_Cb      signal_emit_func;
    Elm_Widget_Disable_Cb          disable_func;
+   Evas_Object                   *access_obj;
    Elm_Access_Info               *access;
    const char                    *access_info;
 

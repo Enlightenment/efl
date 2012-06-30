@@ -1179,6 +1179,39 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
+static char *
+_access_info_cb(void *data, Evas_Object *obj __UNUSED__, Elm_Widget_Item *item __UNUSED__)
+{
+   const char *txt = NULL;
+   Elm_List_Item *it = (Elm_List_Item *)data;
+   if (!it) return NULL;
+
+   if (!txt) txt = it->label;
+   if (txt) return strdup(txt);
+   return NULL;
+}
+
+static char *
+_access_state_cb(void *data, Evas_Object *obj __UNUSED__, Elm_Widget_Item *item __UNUSED__)
+{
+   Elm_List_Item *it = (Elm_List_Item *)data;
+   if (!it) return NULL;
+
+   if (it->base.disabled)
+      return strdup(E_("State: Disabled"));
+
+   return NULL;
+}
+
+static void
+_access_on_highlight_cb(void *data)
+{
+   Elm_Object_Item *it = (Elm_Object_Item *)data;
+   if (!it) return;
+
+   elm_list_item_bring_in(it);
+}
+
 static Elm_List_Item *
 _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
@@ -1194,6 +1227,21 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
    it->func = func;
    it->base.data = data;
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
+
+   // ACCESS
+   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+
+   _elm_access_text_set(_elm_access_object_get(it->base.access_obj),
+                        ELM_ACCESS_TYPE, E_("List Item"));
+   _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
+                            ELM_ACCESS_INFO,
+                            _access_info_cb, it);
+   _elm_access_callback_set(_elm_access_object_get(it->base.access_obj),
+                            ELM_ACCESS_STATE,
+                            _access_state_cb, it);
+   _elm_access_on_highlight_hook_set(_elm_access_object_get(it->base.access_obj),
+                                     _access_on_highlight_cb, it);
+
    edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(obj));
    evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, it);
@@ -1469,6 +1517,29 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    _sizing_eval(data);
 }
 
+static Eina_Bool
+_focus_next_hook(const Evas_Object *obj,
+                 Elm_Focus_Direction dir,
+                 Evas_Object **next)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   Eina_List *items = NULL;
+   Eina_List *elist = NULL;
+   Elm_List_Item *it;
+   EINA_LIST_FOREACH(wd->items, elist, it)
+     {
+        items = eina_list_append(items, it->base.access_obj);
+        if (it->icon) items = eina_list_append(items, it->icon);
+        if (it->end) items = eina_list_append(items, it->end);
+     }
+
+   return elm_widget_focus_list_next_get
+            (obj, items, eina_list_data_get, dir, next);
+}
+
 EAPI Evas_Object *
 elm_list_add(Evas_Object *parent)
 {
@@ -1483,6 +1554,11 @@ elm_list_add(Evas_Object *parent)
    elm_widget_type_set(obj, "list");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
+
+   // TODO: dynamic setting should be exist.
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     elm_widget_focus_next_hook_set(obj, _focus_next_hook);
+
    elm_widget_data_set(obj, wd);
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);

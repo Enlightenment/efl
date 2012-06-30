@@ -106,6 +106,7 @@ _access_obj_over_timeout_cb(void *data)
    if (!ac) return EINA_FALSE;
    if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
      {
+        if (ac->on_highlight) ac->on_highlight(ac->on_highlight_data);
         _elm_access_object_hilight(data);
         _elm_access_read(ac, ELM_ACCESS_CANCEL, data, NULL);
         _elm_access_read(ac, ELM_ACCESS_TYPE,   data, NULL);
@@ -277,6 +278,16 @@ _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Content_Cb fu
    if (!ai) return;
    ai->func = func;
    ai->data = data;
+}
+
+EAPI void
+_elm_access_on_highlight_hook_set(Elm_Access_Info           *ac,
+                                  Elm_Access_On_Highlight_Cb func,
+                                  void                      *data)
+{
+    if (!ac) return;
+    ac->on_highlight = func;
+    ac->on_highlight_data = data;
 }
 
 EAPI char *
@@ -625,6 +636,33 @@ static void
 _access_item_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _elm_access_item_unregister((Elm_Widget_Item *)data);
+}
+
+EAPI void
+_elm_access_widget_item_register(Elm_Widget_Item *item)
+{
+   Evas_Object *ao;
+   Evas_Object *ho = item->view;
+   Evas_Coord x, y, w, h;
+
+   if (!item) return;
+
+   // create access object
+   ao = _elm_access_add(item->widget);
+   evas_object_event_callback_add(ho, EVAS_CALLBACK_RESIZE,
+                                  _content_resize, ao);
+   evas_object_event_callback_add(ho, EVAS_CALLBACK_MOVE,
+                                  _content_move, ao);
+
+   evas_object_geometry_get(ho, &x, &y, &w, &h);
+   evas_object_move(ao, x, y);
+   evas_object_resize(ao, w, h);
+   evas_object_show(ao);
+
+   // register access object
+   _elm_access_object_register(ao, ho);
+
+   item->access_obj = ao;
 }
 
 EAPI void
