@@ -224,6 +224,7 @@ void                 _elm_ews_wm_rescale(Elm_Theme *th, Eina_Bool use_theme);
 
 void                 _elm_win_shutdown(void);
 void                 _elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme);
+void                 _elm_win_access(Eina_Bool is_access);
 void                 _elm_win_translate(void);
 
 Eina_Bool            _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
@@ -277,6 +278,9 @@ void                 _elm_config_font_overlay_remove(const char *text_class);
 void                 _elm_config_font_overlay_apply(void);
 Eina_List           *_elm_config_text_classes_get(void);
 void                 _elm_config_text_classes_free(Eina_List *l);
+
+Eina_Bool            _elm_config_access_get(void);
+void                 _elm_config_access_set(Eina_Bool is_access);
 
 Elm_Font_Properties *_elm_font_properties_get(Eina_Hash **font_hash, const char *font);
 Eina_Hash           *_elm_font_available_hash_add(Eina_Hash *font_hash, const char *full_name);

@@ -689,6 +689,36 @@ EAPI const Eina_List *elm_config_font_overlay_list_get(void);
 EAPI void             elm_config_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
+ * Get access mode
+ *
+ * @return the access mode bouncing state
+ *
+ * @since 1.1
+ *
+ * @ingroup Access 
+ *
+ * @see elm_config_access_set()
+ */
+EAPI Eina_Bool        elm_config_access_get(void);
+
+/**
+ * Set access mode
+ *
+ * @param is_accesss If EINA_TRUE enables access mode
+ *
+ * @note Elementary objects may have information (e.g. label on the elm_button)
+ * to be read. This information is read by access module when an object
+ * receives EVAS_CALLBACK_MOUSE_IN event
+ *
+ * @since 1.1
+ *
+ * @ingroup Access 
+ *
+ * @see elm_config_access_get()
+ */
+EAPI void             elm_config_access_set(Eina_Bool is_access);
+
+/**
  * Unset a font overlay for a given Elementary text class.
  *
  * @param text_class Text class name

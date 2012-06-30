@@ -241,3 +241,8 @@
 	* Add support for a new toolbar style with icon and text
         aligned in center. "item_centered".
 
+2012-06-30  Shinwoo Kim (kimcinoo)
+
+	* Add elm_config_access_set/get() to allow for a config tool to enable
+        ot diasbale access mode.
+

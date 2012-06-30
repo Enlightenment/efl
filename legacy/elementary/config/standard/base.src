@@ -30,7 +30,7 @@ group "Elm_Config" struct {
   value "finger_size" int: 5;
   value "fps" double: 60.0;
   value "theme" string: "default-desktop";
-  value "modules" string: "datetime_input_ctxpopup>datetime/api";
+  value "modules" string: "access_output>access/api:datetime_input_ctxpopup>datetime/api";
   value "tooltip_delay" double: 1.0;
   value "cursor_engine_only" uchar: 1;
   value "focus_highlight_enable" uchar: 0;

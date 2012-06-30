@@ -526,6 +526,18 @@ _elm_config_font_overlays_list(void)
    return _elm_config->font_overlays;
 }
 
+Eina_Bool _elm_config_access_get(void)
+{
+   return _elm_config->access_mode;
+}
+
+void _elm_config_access_set(Eina_Bool is_access)
+{
+   is_access = !!is_access;
+   if (_elm_config->access_mode == is_access) return;
+   _elm_config->access_mode = is_access;
+}
+
 void
 _elm_config_font_overlay_set(const char    *text_class,
                              const char    *font,
@@ -1035,6 +1047,7 @@ _config_load(void)
    _elm_config->glayer_long_tap_start_timeout = 1.2;   /* 1.2 second to start long-tap */
    _elm_config->glayer_double_tap_timeout = 0.25;   /* 0.25 seconds between 2 mouse downs of a tap. */
    _elm_config->glayer_continues_enable = EINA_TRUE;      /* Continue gestures default */
+   _elm_config->access_mode = ELM_ACCESS_MODE_OFF;
    _elm_config->week_start = 1; /* monday */
    _elm_config->weekend_start = 6; /* saturday */
    _elm_config->weekend_len = 2;
@@ -1691,6 +1704,18 @@ EAPI const Eina_List *
 elm_config_font_overlay_list_get(void)
 {
    return _elm_config_font_overlays_list();
+}
+
+EAPI Eina_Bool
+elm_config_access_get(void)
+{
+   return _elm_config_access_get();
+}
+
+EAPI void
+elm_config_access_set(Eina_Bool is_access)
+{
+   _elm_config_access_set(is_access);
 }
 
 EAPI void
