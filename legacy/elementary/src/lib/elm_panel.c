@@ -51,6 +51,7 @@ _theme_hook(Evas_Object *obj)
      {
         Evas_Object *edj;
         const char *str;
+        //   double scale;
 
         _mirrored_set(obj, elm_widget_mirrored_get(obj));
         elm_smart_scroller_object_theme_set(obj, wd->scr, "panel", "base",
@@ -141,15 +142,27 @@ _sizing_eval(Evas_Object *obj)
    if (w < mw) w = mw;
    if (h < mh) h = mh;
    evas_object_resize(wd->scr, w, h);
-
    evas_object_size_hint_min_get(wd->bx, &mw, &mh);
-   if (w > mw) mw = w;
-   if (h > mh) mh = h;
-   evas_object_resize(wd->bx, mw, mh);
+/*
+   if (w > mw) mw = w; // when scale resized panel then minweight = resized weight
+   if (h > mh) mh = h; // when scale resized panel then minheight = resized height
+   evas_object_resize(wd->bx, mw, mh);*/
 
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
-   mw = mw + (w - vw);
-   mh = mh + (h - vh);
+   if ((wd->orient == ELM_PANEL_ORIENT_LEFT) || (wd->orient == ELM_PANEL_ORIENT_RIGHT))  
+     {
+        //  if (w > mw) mw = w; // when scale resized panel then minweight = resized weight
+        if (w > vw) vw = w;
+        mw = mw + (w - vw); 
+        mh = mh + (h - vh);
+     }
+     else if ((wd->orient == ELM_PANEL_ORIENT_TOP) || (wd->orient == ELM_PANEL_ORIENT_BOTTOM))  
+       {
+          mw = mw + (w - vw);
+          mh = mh + (h - vh);
+       }
+
+   evas_object_resize(wd->bx, mw, mh);
    evas_object_size_hint_min_set(obj, mw, mh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }

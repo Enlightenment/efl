@@ -246,3 +246,8 @@
 	* Add elm_config_access_set/get() to allow for a config tool to enable
         to diasbale access mode.
         * Add access highlight infra
+
+2012-06-30 Artem Popov
+
+	* Fix panel theme_hook handling for scaling
+
