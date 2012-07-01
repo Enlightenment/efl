@@ -6,7 +6,11 @@
 #  EVAS_DEFINITIONS - Compiler switches required for using evas
 
 find_package(PkgConfig)
-pkg_check_modules(PC_LIBEVAS QUIET evas)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBEVAS ${_QUIET} evas)
 set(EVAS_DEFINITIONS ${PC_LIBEVAS_CFLAGS_OTHER})
 
 find_path(EVAS_INCLUDE_DIR Evas.h

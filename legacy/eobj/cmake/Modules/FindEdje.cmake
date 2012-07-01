@@ -6,7 +6,11 @@
 #  EDJE_DEFINITIONS - Compiler switches required for using edje
 
 find_package(PkgConfig)
-pkg_check_modules(PC_LIBEDJE QUIET edje)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBEDJE ${_QUIET} edje)
 set(EDJE_DEFINITIONS ${PC_LIBEDJE_CFLAGS_OTHER})
 
 find_path(EDJE_INCLUDE_DIR Edje.h

@@ -14,7 +14,11 @@ IF( Ecore_FIND_COMPONENTS )
 ENDIF( Ecore_FIND_COMPONENTS )
 
 find_package(PkgConfig)
-pkg_check_modules(PC_LIBECORE QUIET ecore)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBECORE ${_QUIET} ecore)
 set(ECORE_DEFINITIONS ${PC_LIBECORE_CFLAGS_OTHER})
 
 find_path(ECORE_INCLUDE_DIR Ecore.h
@@ -36,7 +40,7 @@ find_package_handle_standard_args(ecore  DEFAULT_MSG
 mark_as_advanced( ECORE_INCLUDE_DIR ECORE_LIBRARY )
 
 if (ECORE_USE_ECORE-X)
-   pkg_check_modules(PC_LIBECORE_X QUIET ecore-x)
+   pkg_check_modules(PC_LIBECORE_X ${_QUIET} ecore-x)
    set(ECORE_X_DEFINITIONS ${PC_LIBECORE_X_CFLAGS_OTHER})
 
    find_path(ECORE_X_INCLUDE_DIR Ecore_X.h

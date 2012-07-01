@@ -6,7 +6,11 @@
 #  EET_DEFINITIONS - Compiler switches required for using eet
 
 find_package(PkgConfig)
-pkg_check_modules(PC_LIBEET QUIET eet)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBEET ${_QUIET} eet)
 set(EET_DEFINITIONS ${PC_LIBEET_CFLAGS_OTHER})
 
 find_path(EET_INCLUDE_DIR Eet.h

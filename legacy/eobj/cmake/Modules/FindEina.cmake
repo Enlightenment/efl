@@ -7,7 +7,11 @@
 #  EINA_DEFINITIONS - Compiler switches required for using eina
 
 find_package(PkgConfig)
-pkg_check_modules(PC_LIBEINA QUIET eina)
+if ("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER "2.8.1")
+   # "QUIET" was introduced in 2.8.2
+   set(_QUIET QUIET)
+endif ()
+pkg_check_modules(PC_LIBEINA ${_QUIET} eina)
 set(EINA_DEFINITIONS ${PC_LIBEINA_CFLAGS_OTHER})
 set(EINA_LDFLAGS_OTHER ${PC_LIBEINA_LDFLAGS_OTHER})
 
