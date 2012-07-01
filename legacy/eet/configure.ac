@@ -487,6 +487,9 @@ EFL_CHECK_TESTS([eet], [enable_tests="yes"], [enable_tests="no"])
 AC_SUBST([requirements_pc_eet])
 AC_SUBST([requirements_libs_eet])
 
+DEBUG_CFLAGS=""
+AC_SUBST([DEBUG_CFLAGS])
+
 AC_OUTPUT([
 Makefile
 eet.pc
