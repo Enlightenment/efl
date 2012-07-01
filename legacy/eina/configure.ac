@@ -531,14 +531,7 @@ EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 
 ### Unit tests, coverage and benchmarking
 
-EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
-
-EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
-EINA_CFLAGS="${EINA_CFLAGS} ${EFL_COVERAGE_CFLAGS}"
-EINA_LIBS="${EINA_LIBS} ${EFL_COVERAGE_LIBS}"
-if test "x$enable_coverage" = "xyes" ; then
-   EINA_CFLAGS="${EINA_CFLAGS} ${EFL_DEBUG_CFLAGS}"
-fi
+EFL_CHECK_TESTS([eina], [enable_tests="yes"], [enable_tests="no"])
 
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
 EINA_BENCH_MODULE([glib], [${enable_benchmark}], [glib-2.0], [enable_benchmark_glib="yes"], [enable_benchmark_glib="no"])
@@ -612,8 +605,7 @@ echo "  File xattr...........: ${efl_func_setxattr}"
 echo "  shm_open.............: ${efl_func_shm_open}"
 echo
 echo "  Documentation........: ${build_doc}"
-echo "  Tests................: ${enable_tests}"
-echo "  Coverage.............: ${enable_coverage}"
+echo "  Tests................: ${enable_tests} (Coverage: ${efl_enable_coverage})"
 echo "  Examples.............: ${enable_build_examples}"
 echo "  Tiler Example........: ${build_tiler_example}"
 echo "  Examples installed...: ${enable_install_examples}"

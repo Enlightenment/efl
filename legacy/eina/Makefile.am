@@ -42,7 +42,6 @@ m4/common/efl_attribute.m4 \
 m4/common/efl_benchmark.m4 \
 m4/common/efl_check_funcs.m4 \
 m4/common/efl_compiler_flag.m4 \
-m4/common/efl_coverage.m4 \
 m4/common/efl_cpu.m4 \
 m4/common/efl_doxygen.m4 \
 m4/common/efl_examples.m4 \
@@ -53,7 +52,7 @@ m4/common/efl_voltron.m4 \
 m4/eina/eina_bench.m4 \
 m4/eina/eina_check.m4
 
-.PHONY: doc coverage benchmark
+.PHONY: doc benchmark
 
 # Documentation
 
@@ -65,19 +64,6 @@ doc:
 
 if EFL_ENABLE_TESTS
 
-check-local:
-	@./src/tests/eina_suite
-
-else
-
-check-local:
-	@echo "reconfigure with --enable-tests"
-
-endif
-
-# Coverage report
-
-if EFL_ENABLE_COVERAGE
 lcov-reset:
 	@rm -rf $(top_builddir)/coverage
 	@find $(top_builddir) -name "*.gcda" -delete
@@ -90,19 +76,22 @@ lcov-report:
 	genhtml -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned.info
 	@echo "Coverage Report at $(top_builddir)/coverage/html"
 
-coverage:
+check-local:
 	@$(MAKE) lcov-reset
-	@$(MAKE) check
+	@./src/tests/eina_suite
 	@$(MAKE) lcov-report
+
 else
+
 lcov-reset:
-	@echo "reconfigure with --enable-coverage"
+	@echo "reconfigure with --enable-tests"
 
 lcov-report:
-	@echo "reconfigure with --enable-coverage"
+	@echo "reconfigure with --enable-tests"
 
-coverage:
-	@echo "reconfigure with --enable-tests --enable-coverage"
+check-local:
+	@echo "reconfigure with --enable-tests"
+
 endif
 
 if EFL_ENABLE_BENCHMARK
