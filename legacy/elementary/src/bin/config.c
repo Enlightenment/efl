@@ -3061,8 +3061,8 @@ _status_config_full(Evas_Object *win,
    _status_config_rendering(win, naviframe);
    _status_config_scrolling(win, naviframe);
    _status_config_caches(win, naviframe);
-   _status_config_sizing(win, naviframe);
    _status_config_access(win, naviframe);
+   _status_config_sizing(win, naviframe); // Note: call this at the end.
 
    // FIXME uncomment after flip style fix, please
    //elm_object_style_set(naviframe, "flip");
