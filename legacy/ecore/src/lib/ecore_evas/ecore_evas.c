@@ -28,7 +28,7 @@
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
-Eina_Bool _ecore_evas_app_comp_sync = 0;
+Eina_Bool _ecore_evas_app_comp_sync = 1;
 int _ecore_evas_log_dom = -1;
 static int _ecore_evas_init_count = 0;
 static Ecore_Fd_Handler *_ecore_evas_async_events_fd = NULL;
