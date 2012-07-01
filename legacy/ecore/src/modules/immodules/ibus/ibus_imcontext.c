@@ -17,31 +17,32 @@
 #include <ibus.h>
 #include "ibus_imcontext.h"
 
-struct _IBusIMContext {
-     /* instance members */
-     Ecore_IMF_Context *ctx;
+struct _IBusIMContext 
+{
+   /* instance members */
+   Ecore_IMF_Context *ctx;
 
-     /* enabled */
-     Eina_Bool        enable;
-     IBusInputContext *ibuscontext;
+   /* enabled */
+   Eina_Bool        enable;
+   IBusInputContext *ibuscontext;
 
-     /* preedit status */
-     char            *preedit_string;
-     Eina_List       *preedit_attrs;
-     int              preedit_cursor_pos;
-     Eina_Bool        preedit_visible;
+   /* preedit status */
+   char            *preedit_string;
+   Eina_List       *preedit_attrs;
+   int              preedit_cursor_pos;
+   Eina_Bool        preedit_visible;
 
-     int              cursor_x;
-     int              cursor_y;
-     int              cursor_w;
-     int              cursor_h;
+   int              cursor_x;
+   int              cursor_y;
+   int              cursor_w;
+   int              cursor_h;
 
-     Eina_Bool        has_focus;
+   Eina_Bool        has_focus;
 
-     Ecore_X_Window   client_window;
-     Evas            *client_canvas;
+   Ecore_X_Window   client_window;
+   Evas            *client_canvas;
 
-     int              caps;
+   int              caps;
 };
 
 static Ecore_IMF_Context *_focus_im_context = NULL;
@@ -54,7 +55,6 @@ static void     _set_cursor_location_internal
 (Ecore_IMF_Context  *ctx);
 static void     _bus_connected_cb           (IBusBus            *bus,
                                              IBusIMContext      *context);
-
 
 static void
 _window_to_screen_geometry_get(Ecore_X_Window client_win, int *x, int *y)
@@ -215,10 +215,10 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
              keycode = ecore_x_keysym_keycode_get(ev->key);
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) | IBUS_RELEASE_MASK;
-             retval = ibus_input_context_process_key_event (ibusimcontext->ibuscontext,
-                                                            keysym,
-                                                            keycode - 8,
-                                                            state);
+             retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
+                                                           keysym,
+                                                           keycode - 8,
+                                                           state);
           }
         else if (type == ECORE_IMF_EVENT_KEY_DOWN)
           {
@@ -229,10 +229,10 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
              keycode = ecore_x_keysym_keycode_get(ev->key);
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers);
-             retval = ibus_input_context_process_key_event (ibusimcontext->ibuscontext,
-                                                            keysym,
-                                                            keycode - 8,
-                                                            state);
+             retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
+                                                           keysym,
+                                                           keycode - 8,
+                                                           state);
           }
         else
           retval = EINA_FALSE;
@@ -308,7 +308,7 @@ ibus_im_context_preedit_string_get(Ecore_IMF_Context *ctx,
    if (ibusimcontext->enable && ibusimcontext->preedit_visible)
      {
         if (str)
-          *str = strdup (ibusimcontext->preedit_string ? ibusimcontext->preedit_string: "");
+          *str = strdup(ibusimcontext->preedit_string ? ibusimcontext->preedit_string: "");
 
         if (cursor_pos)
           *cursor_pos = ibusimcontext->preedit_cursor_pos;
@@ -552,7 +552,7 @@ _ibus_context_update_preedit_text_cb(IBusInputContext  *ibuscontext __UNUSED__,
 
    ibusimcontext->preedit_cursor_pos = cursor_pos;
 
-   EINA_LOG_DBG("string : %s, cursor : %d",ibusimcontext->preedit_string, ibusimcontext->preedit_cursor_pos);
+   EINA_LOG_DBG("string : %s, cursor : %d", ibusimcontext->preedit_string, ibusimcontext->preedit_cursor_pos);
 
    flag = ibusimcontext->preedit_visible != visible;
    ibusimcontext->preedit_visible = visible;
@@ -582,8 +582,8 @@ _ibus_context_update_preedit_text_cb(IBusInputContext  *ibuscontext __UNUSED__,
 }
 
 static void
-_ibus_context_show_preedit_text_cb(IBusInputContext   *ibuscontext __UNUSED__,
-                                   IBusIMContext      *ibusimcontext)
+_ibus_context_show_preedit_text_cb(IBusInputContext *ibuscontext __UNUSED__,
+                                   IBusIMContext    *ibusimcontext)
 {
    EINA_LOG_DBG("preedit visible : %d", ibusimcontext->preedit_visible);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
