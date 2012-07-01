@@ -36,7 +36,6 @@ m4/ac_path_generic.m4 \
 m4/efl_binary.m4 \
 m4/efl_check_funcs.m4 \
 m4/efl_check_libs.m4 \
-m4/efl_coverage.m4 \
 m4/efl_doxygen.m4 \
 m4/efl_tests.m4 \
 m4/efl_path_max.m4
@@ -44,7 +43,7 @@ m4/efl_path_max.m4
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = eet.pc
 
-.PHONY: doc coverage
+.PHONY: doc
 
 # Documentation
 
@@ -56,19 +55,6 @@ doc:
 
 if EFL_ENABLE_TESTS
 
-check-local:
-	@./src/tests/eet_suite
-
-else
-
-check-local:
-	@echo "reconfigure with --enable-tests"
-
-endif
-
-# Coverage report
-
-if EFL_ENABLE_COVERAGE
 lcov-reset:
 	@rm -rf $(top_builddir)/coverage
 	@find $(top_builddir) -name "*.gcda" -delete
@@ -81,20 +67,23 @@ lcov-report:
 	genhtml -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned.info
 	@echo "Coverage Report at $(top_builddir)/coverage/html"
 
-coverage:
+check-local:
 	@$(MAKE) lcov-reset
-	@$(MAKE) check
+	@./src/tests/eet_suite
 	@$(MAKE) lcov-report
+
+else
+
+lcov-reset:
+	@echo "reconfigure with --enable-tests"
+
+lcov-report:
+	@echo "reconfigure with --enable-tests"
+
+check-local:
+	@echo "reconfigure with --enable-tests"
+
+endif
 
 clean-local:
 	@rm -rf coverage
-else
-lcov-reset:
-	@echo "reconfigure with --enable-coverage"
-
-lcov-report:
-	@echo "reconfigure with --enable-coverage"
-
-coverage:
-	@echo "reconfigure with --enable-tests --enable-coverage"
-endif

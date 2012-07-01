@@ -186,19 +186,6 @@ AC_ARG_ENABLE([build-examples],
    [build_examples="no"])
 AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
 
-# Unit tests, coverage and benchmarking
-
-EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
-EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
-
-if test "x${prefer_assert}" = "xno"; then
-   DEBUG_CFLAGS="-DNDEBUG"
-else
-# use debug symbols and set DEBUG if coverage support is enabled
-   DEBUG_CFLAGS="${EFL_DEBUG_CFLAGS}"
-fi
-AC_SUBST(DEBUG_CFLAGS)
-
 
 ### Checks for programs
 AC_PROG_CC
@@ -492,6 +479,11 @@ AC_CHECK_FUNCS(fmemopen open_memstream realpath)
 EFL_CHECK_FUNCS([eet], [fnmatch])
 
 
+### Unit tests, coverage and benchmarking
+
+EFL_CHECK_TESTS([eet], [enable_tests="yes"], [enable_tests="no"])
+
+
 AC_SUBST([requirements_pc_eet])
 AC_SUBST([requirements_libs_eet])
 
@@ -530,8 +522,7 @@ fi
 echo
 echo "  Old eet file format..: ${old_eet_file_format}"
 echo
-echo "  Tests................: ${enable_tests}"
-echo "  Coverage.............: ${enable_coverage}"
+echo "  Tests................: ${enable_tests} (Coverage: ${efl_enable_coverage})"
 echo
 echo "  Build eet............: $have_eet"
 echo
