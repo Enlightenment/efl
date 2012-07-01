@@ -54,14 +54,14 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    const char *img[9] =
      {
         "panel_01.jpg",
-          "plant_01.jpg",
-          "rock_01.jpg",
-          "rock_02.jpg",
-          "sky_01.jpg",
-          "sky_02.jpg",
-          "sky_03.jpg",
-          "sky_04.jpg",
-          "wood_01.jpg"
+        "plant_01.jpg",
+        "rock_01.jpg",
+        "rock_02.jpg",
+        "sky_01.jpg",
+        "sky_02.jpg",
+        "sky_03.jpg",
+        "sky_04.jpg",
+        "wood_01.jpg"
      };
 
    win = elm_win_util_standard_add("scroller", "Scroller");
@@ -134,7 +134,7 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(bt, 0.9, 0.9);
    elm_table_pack(tb2, bt, 2, 2, 1, 1);
    evas_object_show(bt);
-   
+
    ck = elm_check_add(win);
    elm_object_text_set(ck, "Freeze");
    elm_table_pack(tb2, ck, 2, 1, 1, 1);
