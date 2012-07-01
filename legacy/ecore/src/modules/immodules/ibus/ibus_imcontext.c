@@ -45,8 +45,18 @@ struct _IBusIMContext
    int              caps;
 };
 
+typedef struct _KeyEvent KeyEvent;
+
+struct _KeyEvent
+{
+   int keysym;
+   int state;
+};
+
+static Eina_Bool _use_sync_mode = EINA_FALSE;
+
 static Ecore_IMF_Context *_focus_im_context = NULL;
-static IBusBus              *_bus = NULL;
+static IBusBus           *_bus = NULL;
 
 /* functions prototype */
 /* static methods*/
@@ -55,6 +65,7 @@ static void     _set_cursor_location_internal
 (Ecore_IMF_Context  *ctx);
 static void     _bus_connected_cb           (IBusBus            *bus,
                                              IBusIMContext      *context);
+static XKeyEvent createXKeyEvent            (Window win, Eina_Bool press, int keysym, int modifiers);
 
 static void
 _window_to_screen_geometry_get(Ecore_X_Window client_win, int *x, int *y)
@@ -108,6 +119,38 @@ _ecore_imf_modifier_to_ibus_modifier(unsigned int modifier)
    return state;
 }
 
+static void
+key_event_put(int keysym, int state)
+{
+   // Find the window which has the current keyboard focus.
+   Window winFocus = 0;
+   int revert = RevertToParent;
+
+   XGetInputFocus(ecore_x_display_get(), &winFocus, &revert);
+
+   XKeyEvent event;
+   if (state & IBUS_RELEASE_MASK)
+     {
+        event = createXKeyEvent(winFocus, EINA_FALSE, keysym, state);
+        XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
+     }
+   else
+     {
+        event = createXKeyEvent(winFocus, EINA_TRUE, keysym, state);
+        XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
+     }
+}
+
+static KeyEvent *
+key_event_copy(int keysym, int state)
+{
+   KeyEvent *kev = calloc(1, sizeof(KeyEvent));
+   kev->keysym = keysym;
+   kev->state = state;
+
+   return kev;
+}
+
 IBusIMContext *
 ibus_im_context_new(void)
 {
@@ -131,11 +174,39 @@ ibus_im_context_new(void)
    return context;
 }
 
+static void
+_process_key_event_done (GObject      *object,
+                         GAsyncResult *res,
+                         gpointer      user_data)
+{
+    IBusInputContext *context = (IBusInputContext *)object;
+    KeyEvent *event = (KeyEvent *)user_data;
+
+    GError *error = NULL;
+    Eina_Bool retval = ibus_input_context_process_key_event_async_finish (
+       context,
+       res,
+       &error);
+
+    if (error != NULL) 
+      {
+         g_warning ("Process Key Event failed: %s.", error->message);
+         g_error_free (error);
+      }
+
+    if (retval == EINA_FALSE) 
+      {
+         key_event_put (event->keysym, event->state);
+      }
+    free(event);
+}
+
 EAPI void
 ibus_im_context_add(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DBG("%s", __FUNCTION__);
 
+   char *s = NULL;
    IBusIMContext *ibusimcontext = (IBusIMContext *)ecore_imf_context_data_get(ctx);
    EINA_SAFETY_ON_NULL_RETURN(ibusimcontext);
 
@@ -160,6 +231,10 @@ ibus_im_context_add(Ecore_IMF_Context *ctx)
    ibusimcontext->has_focus = EINA_FALSE;
    ibusimcontext->caps = IBUS_CAP_PREEDIT_TEXT | IBUS_CAP_FOCUS | IBUS_CAP_SURROUNDING_TEXT;
    ibusimcontext->ctx = ctx;
+
+   s = getenv("IBUS_ENABLE_SYNC_MODE");
+   if (s)
+     _use_sync_mode = !!atoi(s);
 
    if (ibus_bus_is_connected(_bus))
      _create_input_context (ibusimcontext);
@@ -215,10 +290,26 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
              keycode = ecore_x_keysym_keycode_get(ev->key);
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) | IBUS_RELEASE_MASK;
-             retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
-                                                           keysym,
-                                                           keycode - 8,
-                                                           state);
+
+             if (_use_sync_mode) 
+               {
+                  retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
+                                                                keysym,
+                                                                keycode - 8,
+                                                                state);
+               }
+             else
+               {
+                  ibus_input_context_process_key_event_async(ibusimcontext->ibuscontext,
+                                                             keysym,
+                                                             keycode - 8,
+                                                             state,
+                                                             -1,
+                                                             NULL,
+                                                             _process_key_event_done,
+                                                             key_event_copy(keysym, state));
+                  retval = EINA_TRUE;
+               }
           }
         else if (type == ECORE_IMF_EVENT_KEY_DOWN)
           {
@@ -229,10 +320,26 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
              keycode = ecore_x_keysym_keycode_get(ev->key);
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers);
-             retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
-                                                           keysym,
-                                                           keycode - 8,
-                                                           state);
+             if (_use_sync_mode) 
+               {
+                  retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
+                                                                keysym,
+                                                                keycode - 8,
+                                                                state);
+               }
+             else
+               {
+
+                  ibus_input_context_process_key_event_async(ibusimcontext->ibuscontext,
+                                                             keysym,
+                                                             keycode - 8,
+                                                             state,
+                                                             -1,
+                                                             NULL,
+                                                             _process_key_event_done,
+                                                             key_event_copy(keysym, state));
+                  retval = EINA_TRUE;
+               }
           }
         else
           retval = EINA_FALSE;
@@ -509,23 +616,7 @@ _ibus_context_forward_key_event_cb(IBusInputContext  *ibuscontext __UNUSED__,
 {
    EINA_LOG_DBG("keyval : %d, state : %d", keyval, state);
 
-   // Find the window which has the current keyboard focus.
-   Window winFocus = 0;
-   int revert = RevertToParent;
-
-   XGetInputFocus(ecore_x_display_get(), &winFocus, &revert);
-
-   XKeyEvent event;
-   if (state & IBUS_RELEASE_MASK)
-     {
-        event = createXKeyEvent(winFocus, EINA_FALSE, keyval, state);
-        XSendEvent(event.display, event.window, True, KeyReleaseMask, (XEvent *)&event);
-     }
-   else
-     {
-        event = createXKeyEvent(winFocus, EINA_TRUE, keyval, state);
-        XSendEvent(event.display, event.window, True, KeyPressMask, (XEvent *)&event);
-     }
+   key_event_put(keyval, state);
 }
 
 static void
