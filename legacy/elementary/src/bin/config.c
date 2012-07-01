@@ -605,7 +605,7 @@ _status_basic(Evas_Object *win,
    Evas_Object *lb, *fr;
 
    fr = elm_frame_add(win);
-   evas_object_size_hint_weight_set(fr, 1.0, 1.0);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_text_set(fr, "Information");
    elm_box_pack_end(bx0, fr);
    evas_object_show(fr);
@@ -1273,29 +1273,29 @@ _sample_theme_new(Evas_Object *win)
    Evas_Object *base, *bg, *bt, *ck, *rd, *rdg, *sl, *fr, *li, *rc, *sp;
 
    base = elm_table_add(win);
-   evas_object_size_hint_weight_set(base, 1.0, 1.0);
+   evas_object_size_hint_weight_set(base, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(base, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(base, bg, 0, 0, 2, 5);
    evas_object_show(bg);
 
    bt = elm_button_add(win);
-   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_object_text_set(bt, "Button");
    elm_table_pack(base, bt, 0, 0, 1, 1);
    evas_object_show(bt);
 
    ck = elm_check_add(win);
-   evas_object_size_hint_weight_set(ck, 1.0, 0.0);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    elm_object_text_set(ck, "Check");
    elm_table_pack(base, ck, 0, 1, 1, 1);
    evas_object_show(ck);
 
    rd = elm_radio_add(win);
-   evas_object_size_hint_weight_set(rd, 1.0, 0.0);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    elm_radio_state_value_set(rd, 0);
    elm_object_text_set(rd, "Radio 1");
    elm_table_pack(base, rd, 1, 0, 1, 1);
@@ -1303,7 +1303,7 @@ _sample_theme_new(Evas_Object *win)
    rdg = rd;
 
    rd = elm_radio_add(win);
-   evas_object_size_hint_weight_set(rd, 1.0, 0.0);
+   evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, 0.0);
    elm_radio_state_value_set(rd, 1);
    elm_object_text_set(rd, "Radio 2");
    elm_radio_group_add(rd, rdg);
@@ -1312,7 +1312,7 @@ _sample_theme_new(Evas_Object *win)
 
    sp = elm_separator_add(win);
    elm_separator_horizontal_set(sp, EINA_TRUE);
-   evas_object_size_hint_weight_set(sp, 1.0, 0.0);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_table_pack(base, sp, 0, 2, 2, 1);
    evas_object_show(sp);
@@ -1322,7 +1322,7 @@ _sample_theme_new(Evas_Object *win)
    elm_slider_span_size_set(sl, 120);
    elm_slider_min_max_set(sl, 1, 10);
    elm_slider_value_set(sl, 4);
-   evas_object_size_hint_weight_set(sl, 1.0, 0.0);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(base, sl, 0, 3, 2, 1);
    evas_object_show(sl);
@@ -1330,12 +1330,12 @@ _sample_theme_new(Evas_Object *win)
    fr = elm_frame_add(win);
    elm_object_text_set(fr, "Frame");
    elm_table_pack(base, fr, 0, 4, 2, 1);
-   evas_object_size_hint_weight_set(fr, 1.0, 1.0);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(fr);
 
    li = elm_list_add(win);
-   evas_object_size_hint_weight_set(li, 1.0, 1.0);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(fr, li);
    evas_object_show(li);
@@ -1346,7 +1346,7 @@ _sample_theme_new(Evas_Object *win)
    elm_list_go(li);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_weight_set(rc, 1.0, 1.0);
+   evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_min_set(rc, 160, 120);
    elm_table_pack(base, rc, 0, 4, 2, 1);
 
@@ -1366,16 +1366,16 @@ _status_config_themes(Evas_Object *win,
    unsigned int x;
 
    tb = elm_table_add(win);
-   evas_object_size_hint_weight_set(tb, 1.0, 1.0);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_weight_set(rc, 1.0, 1.0);
+   evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_min_set(rc, 0, 130);
    elm_table_pack(tb, rc, 0, 0, 1, 1);
 
    rc = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_size_hint_weight_set(rc, 1.0, 1.0);
+   evas_object_size_hint_weight_set(rc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_min_set(rc, 0, 200);
    elm_table_pack(tb, rc, 0, 1, 1, 1);
 
@@ -1383,14 +1383,14 @@ _status_config_themes(Evas_Object *win,
 
    pd = elm_frame_add(win);
    elm_object_style_set(pd, "pad_medium");
-   evas_object_size_hint_weight_set(pd, 1.0, 1.0);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, pd, 0, 0, 1, 1);
    evas_object_show(pd);
 
    li = elm_list_add(win);
    elm_list_multi_select_set(li, EINA_TRUE);
-   evas_object_size_hint_weight_set(li, 1.0, 1.0);
+   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(pd, li);
    evas_object_show(li);
@@ -1466,7 +1466,7 @@ _status_config_themes(Evas_Object *win,
 
    pd = elm_frame_add(win);
    elm_object_style_set(pd, "pad_medium");
-   evas_object_size_hint_weight_set(pd, 1.0, 1.0);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pd, 0.9, 0.9);
    elm_table_pack(tb, pd, 0, 0, 1, 1);
    evas_object_show(pd);
@@ -1475,28 +1475,28 @@ _status_config_themes(Evas_Object *win,
       bt = elm_button_add(win);
       evas_object_smart_callback_add(bt, "clicked", _theme_browse, win);
       elm_object_text_set(bt, "Browse...");
-      evas_object_size_hint_weight_set(bt, 1.0, 1.0);
+      evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
       evas_object_size_hint_align_set(bt, 0.9, 0.9);
       elm_object_content_set(pd, bt);
       evas_object_show(bt);
     */
    pd = elm_frame_add(win);
    elm_object_style_set(pd, "pad_medium");
-   evas_object_size_hint_weight_set(pd, 1.0, 0.0);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pd, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_table_pack(tb, pd, 0, 1, 1, 1);
    evas_object_show(pd);
 
    fr = elm_frame_add(win);
    elm_object_text_set(fr, "Preview");
-   evas_object_size_hint_weight_set(fr, 1.0, 1.0);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(pd, fr);
    evas_object_show(fr);
 
    sc = elm_scroller_add(win);
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_FALSE);
-   evas_object_size_hint_weight_set(sc, 1.0, 1.0);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(fr, sc);
    evas_object_show(sc);
@@ -1509,14 +1509,14 @@ _status_config_themes(Evas_Object *win,
    /////////////////////////////////////////////
    sp = elm_separator_add(win);
    elm_separator_horizontal_set(sp, EINA_TRUE);
-   evas_object_size_hint_weight_set(sp, 1.0, 0.0);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_table_pack(tb, sp, 0, 2, 1, 1);
    evas_object_show(sp);
 
    pd = elm_frame_add(win);
    elm_object_style_set(pd, "pad_medium");
-   evas_object_size_hint_weight_set(pd, 1.0, 0.0);
+   evas_object_size_hint_weight_set(pd, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(pd, 0.5, 0.5);
    elm_table_pack(tb, pd, 0, 3, 1, 1);
    evas_object_show(pd);
@@ -1524,7 +1524,7 @@ _status_config_themes(Evas_Object *win,
    bt = elm_button_add(win);
    evas_object_smart_callback_add(bt, "clicked", _theme_use, win);
    elm_object_text_set(bt, "Use Theme");
-   evas_object_size_hint_weight_set(bt, 1.0, 0.0);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bt, 0.5, 0.5);
    elm_object_content_set(pd, bt);
    evas_object_show(bt);
@@ -3023,7 +3023,7 @@ _status_config_full(Evas_Object *win,
    elm_toolbar_select_mode_set(tb, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_toolbar_menu_parent_set(tb, win);
    elm_toolbar_homogeneous_set(tb, EINA_FALSE);
-   evas_object_size_hint_weight_set(tb, 1.0, 0.0);
+   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    tb_sizing = elm_toolbar_item_append(tb, "zoom-fit-best", "Sizing",
@@ -3082,7 +3082,7 @@ win_create(void)
    evas_object_smart_callback_add(win, "delete,request", config_exit, NULL);
 
    bx0 = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx0, 1.0, 1.0);
+   evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bx0);
    evas_object_show(bx0);
 
