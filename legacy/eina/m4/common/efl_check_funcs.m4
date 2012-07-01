@@ -425,8 +425,8 @@ m4_popdef([DOWN])
 m4_popdef([UP])
 ])
 
-dnl Macro that iterates over a sequence of space separated function
-dnl and that call EFL_CHECK_FUNC() for each of these functions
+dnl Macro that iterates over a sequence of space separated functions
+dnl and that calls EFL_CHECK_FUNC() for each of these functions
 dnl
 dnl EFL_CHECK_FUNCS(EFL, FUNCTIONS)
 
