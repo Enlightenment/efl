@@ -46,11 +46,28 @@ my_bt_hold_toggle(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 void
+_sc_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Coord x = 0, y = 0;
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   evas_object_move(data, x, y);
+}
+
+void
+_sc_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Coord w = 0, h = 0;
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(data, w, h);
+}
+
+void
 test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt, *ck;
+   Evas_Object *win, *bg2, *tb, *tb2, *sc, *bt, *ck1, *ck2, *bx, *bx2, *fr;
    int i, j, n;
    char buf[PATH_MAX];
+   Evas_Coord x = 0, y = 0, w = 0, h = 0;
    const char *img[9] =
      {
         "panel_01.jpg",
@@ -67,8 +84,39 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_util_standard_add("scroller", "Scroller");
    elm_win_autodel_set(win, EINA_TRUE);
 
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fr = elm_frame_add(win);
+   evas_object_size_hint_weight_set(fr, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(fr, EVAS_HINT_FILL, 0.0);
+   elm_object_text_set(fr, "Options");
+   elm_box_pack_end(bx, fr);
+   evas_object_show(fr);
+
+   bx2 = elm_box_add(win);
+   elm_object_content_set(fr, bx2);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   evas_object_show(bx2);
+
+   ck1 = elm_check_add(win);
+   elm_object_text_set(ck1, "Freeze");
+   elm_box_pack_end(bx2, ck1);
+   evas_object_show(ck1);
+
+   ck2 = elm_check_add(win);
+   elm_object_text_set(ck2, "Hold");
+   elm_box_pack_end(bx2, ck2);
+   evas_object_show(ck2);
+
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, sc);
+
    tb = elm_table_add(win);
-   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    n = 0;
    for (j = 0; j < 12; j++)
@@ -89,19 +137,16 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
           }
      }
 
-   sc = elm_scroller_add(win);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, sc);
-
    elm_object_content_set(sc, tb);
    evas_object_show(tb);
 
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
    evas_object_show(sc);
 
+   evas_object_smart_callback_add(ck1, "changed", my_bt_freeze_toggle, tb);
+   evas_object_smart_callback_add(ck2, "changed", my_bt_hold_toggle, tb);
+
    tb2 = elm_table_add(win);
-   evas_object_size_hint_weight_set(tb2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, tb2);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "to 300 300");
@@ -135,21 +180,14 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_table_pack(tb2, bt, 2, 2, 1, 1);
    evas_object_show(bt);
 
-   ck = elm_check_add(win);
-   elm_object_text_set(ck, "Freeze");
-   elm_table_pack(tb2, ck, 2, 1, 1, 1);
-   evas_object_show(ck);
-   evas_object_smart_callback_add(ck, "changed", my_bt_freeze_toggle, tb);
-
-   ck = elm_check_add(win);
-   elm_object_text_set(ck, "Hold");
-   elm_table_pack(tb2, ck, 0, 1, 1, 1);
-   evas_object_show(ck);
-   evas_object_smart_callback_add(ck, "changed", my_bt_hold_toggle, tb);
-
+   evas_object_event_callback_add(sc, EVAS_CALLBACK_MOVE, _sc_move_cb, tb2);
+   evas_object_event_callback_add(sc, EVAS_CALLBACK_RESIZE, _sc_resize_cb, tb2);
+   evas_object_geometry_get(sc, &x, &y, &w, &h);
+   evas_object_move(tb2, x, y);
+   evas_object_resize(tb2, w, h);
    evas_object_show(tb2);
 
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 320, 420);
    evas_object_show(win);
 }
 
