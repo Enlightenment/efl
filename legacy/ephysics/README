@@ -15,7 +15,7 @@ Must:
   ecore (at least 1.2.99)
   ecore-evas (at least 1.2.99)
   evas (at least 1.2.99)
-  bullet (at least 2.80)
+  bullet (at least 2.79)
 Optional:
   elementary (at least 1.0.99, required to build ephysics_test)
 
