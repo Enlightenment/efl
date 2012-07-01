@@ -44,16 +44,16 @@ if test "x${_efl_enable_tests}" = "xyes" ; then
       m4_defn([UPEFL])[]_CFLAGS="${m4_defn([UPEFL])[]_CFLAGS} -fprofile-arcs -ftest-coverage"
       m4_defn([UPEFL])[]_LIBS="${m4_defn([UPEFL])[]_LIBS} -lgcov"
 # remove any optimisation flag and force debug symbols
-      m4_defn([UPEFL])[]_CFLAGS="${m4_defn([UPEFL])[]_CFLAGS} -g -O0 -DDEBUG"
+      if test "x${prefer_assert}" = "xno"; then
+         m4_defn([UPEFL])[]_CFLAGS="${m4_defn([UPEFL])[]_CFLAGS} -DNDEBUG"
+      else
+         m4_defn([UPEFL])[]_CFLAGS="${m4_defn([UPEFL])[]_CFLAGS} -g -O0 -DDEBUG"
+      fi
       efl_enable_coverage="yes"
    else
       AC_MSG_WARN([lcov is not found, disable profiling instrumentation])
    fi
 fi
-
-dnl Substitution
-AC_SUBST(EFL_COVERAGE_CFLAGS)
-AC_SUBST(EFL_COVERAGE_LIBS)
 
 AM_CONDITIONAL(EFL_ENABLE_TESTS, test "x${_efl_enable_tests}" = "xyes")
 

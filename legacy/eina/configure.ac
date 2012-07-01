@@ -229,6 +229,19 @@ if test "x${have_stringshare_usage}" = "xyes"; then
    AC_DEFINE(EINA_STRINGSHARE_USAGE, 1, [Report Eina stringshare usage pattern])
 fi
 
+# Assert or fail.
+
+AC_ARG_ENABLE([assert],
+   [AC_HELP_STRING([--enable-assert], [enable assert, @<:@default=no@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       prefer_assert="yes"
+    else
+       prefer_assert="no"
+    fi
+   ],
+   [prefer_assert="no"])
+
 # Check if we want to benchmark on real data
 enable_benchmark_e17="no"
 AC_ARG_ENABLE([e17],
