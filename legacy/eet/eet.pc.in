@@ -5,9 +5,8 @@ includedir=@includedir@
 
 Name: eet
 Description: Library for speedy data storage, retrieval, and compression
-@pkgconfig_requires_private@: @requirement_eet@
 Version: @VERSION@
+@pkgconfig_requires_private@: @requirements_pc_eet@
 Libs: -L${libdir} -leet
-Libs.private: @EET_LIBS@ @EFL_FNMATCH_LIBS@ @LIBGCRYPT_LIBS@ -ljpeg -lz -lm
+Libs.private: @requirements_libs_eet@ -lm
 Cflags: -I${includedir}/eet-@VMAJ@
-Cflags.private: @LIBGCRYPT_CFLAGS@

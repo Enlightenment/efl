@@ -34,9 +34,10 @@ eet.spec \
 m4/ac_attribute.m4 \
 m4/ac_path_generic.m4 \
 m4/efl_binary.m4 \
+m4/efl_check_funcs.m4 \
+m4/efl_check_libs.m4 \
 m4/efl_coverage.m4 \
 m4/efl_doxygen.m4 \
-m4/efl_fnmatch.m4 \
 m4/efl_tests.m4 \
 m4/efl_path_max.m4
 

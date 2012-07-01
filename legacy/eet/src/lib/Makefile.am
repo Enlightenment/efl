@@ -9,13 +9,9 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EVIL_CFLAGS@ \
-@EINA_CFLAGS@ \
-@EET_CPPFLAGS@ \
+@EET_CFLAGS@ \
 @EFL_EET_BUILD@ \
-@EFL_COVERAGE_CFLAGS@ \
-@OPENSSL_CFLAGS@ \
-@GNUTLS_CFLAGS@
+@EFL_COVERAGE_CFLAGS@
 
 includes_HEADERS = Eet.h
 includesdir = $(includedir)/eet-@VMAJ@
@@ -38,8 +34,8 @@ lz4/lz4.h \
 lz4/lz4hc.c \
 lz4/lz4hc.h
 
-libeet_la_CFLAGS = @EET_CFLAGS@ @DEBUG_CFLAGS@
-libeet_la_LIBADD = @GNUTLS_LIBS@ @OPENSSL_LIBS@ @EFL_COVERAGE_LIBS@ @EET_LIBS@ @EINA_LIBS@ @EVIL_LIBS@ -lz -ljpeg -lm
+libeet_la_CFLAGS = @DEBUG_CFLAGS@
+libeet_la_LIBADD = @EFL_COVERAGE_LIBS@ @EET_LIBS@ -lm
 libeet_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 EXTRA_DIST = lz4/README
