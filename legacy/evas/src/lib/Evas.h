@@ -9348,7 +9348,7 @@ EAPI void evas_object_textgrid_font_get(const Evas_Object *obj, const char **fon
  *
  * @since 1.3
  */
-EAPI void evas_object_textgrid_cell_size_get(const Evas_Object *obj, int *width, int *height);
+EAPI void evas_object_textgrid_cell_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
 /**
  * @brief The set color to the given palette at the given index of the given textgrid object.

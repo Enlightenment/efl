@@ -319,7 +319,7 @@ evas_object_textgrid_textprop_unref(Evas_Object_Textgrid *o, unsigned int props_
    if (props->info)
      {
         if (props->info->refcount == 1)
-          eina_array_push(&o->glyphs_cleanup, (intptr_t*)(int64_t) props_index);
+          eina_array_push(&o->glyphs_cleanup, (intptr_t *)props_index);
         else
           evas_common_text_props_content_unref(props);
      }
@@ -1220,24 +1220,24 @@ evas_object_textgrid_font_get(const Evas_Object *obj, const char **font_name, Ev
 }
 
 EAPI void
-evas_object_textgrid_cell_size_get(const Evas_Object *obj, int *width, int *height)
+evas_object_textgrid_cell_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Textgrid *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   if (width) *width = 0;
-   if (height) *height = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
    o = (Evas_Object_Textgrid *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Textgrid, MAGIC_OBJ_TEXTGRID);
-   if (width) *width = 0;
-   if (height) *height = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
 
-   if (width) *width = o->cur.char_width;
-   if (height) *height = o->cur.char_height;
+   if (w) *w = o->cur.char_width;
+   if (h) *h = o->cur.char_height;
 }
 
 EAPI void
