@@ -1337,7 +1337,7 @@ elm_coords_finger_size_adjust(int times_w,
 EAPI Evas_Object *
 elm_object_item_widget_get(const Elm_Object_Item *it)
 {
-   return WIDGET(it);
+   return elm_widget_item_widget_get(it);
 }
 
 EAPI void

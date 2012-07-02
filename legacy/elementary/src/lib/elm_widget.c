@@ -3787,6 +3787,22 @@ _elm_widget_item_del_cb_set(Elm_Widget_Item *item,
 /**
  * @internal
  *
+ * Retrieves owner widget of this item.
+ *
+ * @param item a valid #Elm_Widget_Item to get data from.
+ * @return owner widget of this item.
+ * @ingroup Widget
+ */
+EAPI Evas_Object *
+_elm_widget_item_widget_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
+   return item->widget;
+}
+
+/**
+ * @internal
+ *
  * Set user-data in this item.
  *
  * User data may be used to identify this item or just store any

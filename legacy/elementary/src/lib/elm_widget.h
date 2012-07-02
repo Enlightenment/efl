@@ -756,6 +756,7 @@ EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *t
 EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_free(Elm_Widget_Item *item);
+EAPI Evas_Object     *_elm_widget_item_widget_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_del(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_pre_notify_del(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb);
@@ -833,6 +834,13 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_del_cb_set(item, del_cb) \
   _elm_widget_item_del_cb_set((Elm_Widget_Item *)item, del_cb)
+
+/**
+ * Get item's owner widget
+ * @see _elm_widget_item_widget_get()
+ */
+#define elm_widget_item_widget_get(item) \
+  _elm_widget_item_widget_get((const Elm_Widget_Item *)item)
 
 /**
  * Set item's data

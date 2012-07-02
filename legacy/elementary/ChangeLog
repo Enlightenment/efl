@@ -251,3 +251,6 @@
 
 	* Fix panel theme_hook handling for scaling
 
+2012-07-01 Gustavo Sverzut Barbieri (k-s)
+
+	* Add and use elm_widget_item_widget_get()
