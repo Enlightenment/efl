@@ -279,6 +279,51 @@ efreet_dirs_get(const char *key, const char *fallback)
     return dirs;
 }
 
+static const char *
+efreet_env_expand(const char *in)
+{
+   Eina_Strbuf *sb;
+   const char *ret, *p, *e1 = NULL, *e2 = NULL, *val;
+   char *env;
+
+   if (!in) return NULL;
+   sb = eina_strbuf_new();
+   if (!sb) return NULL;
+   
+   /* maximum length of any env var is the input string */
+   env = alloca(strlen(in) + 1);
+   for (p = in; *p; p++)
+     {
+        if (!e1)
+          {
+             if (*p == '$') e1 = p + 1;
+             else eina_strbuf_append_char(sb, *p);
+          }
+        else if (!(((*p >= 'a') && (*p <= 'z')) ||
+                   ((*p >= 'A') && (*p <= 'Z')) ||
+                   ((*p >= '0') && (*p <= '9')) ||
+                   (*p == '_')))
+          {
+             size_t len;
+             
+             e2 = p;
+             len = (size_t)(e2 - e1);
+             if (len > 0)
+               {
+                  memcpy(env, e1, len);
+                  env[len] = 0;
+                  val = getenv(env);
+                  if (val) eina_strbuf_append(sb, val);
+               }
+             e1 = NULL;
+             eina_strbuf_append_char(sb, *p);
+          }
+     }
+   ret = eina_stringshare_add(eina_strbuf_string_get(sb));
+   eina_strbuf_free(sb);
+   return ret;
+}
+
 /**
  * @internal
  * @param key The user-dirs key to lookup
@@ -334,5 +379,5 @@ fallback:
         ret = alloca(strlen(home) + strlen(fallback) + 2);
         sprintf(ret, "%s/%s", home, fallback);
      }
-   return eina_stringshare_add(ret);
+   return efreet_env_expand(ret);
 }
