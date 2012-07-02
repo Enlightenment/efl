@@ -126,3 +126,7 @@
 2012-06-25 Sebastian Dransfeld
 
         * Support XDG_DESKTOP_DIR and read user-dirs.dirs
+
+2012-07-02 Sebastian Dransfeld
+
+	* Fix minor memory leak in cache update handler

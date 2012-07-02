@@ -1113,10 +1113,11 @@ cache_update_cb(void *data __UNUSED__, Ecore_File_Monitor *em __UNUSED__,
     if (!file) return;
     if (!strcmp(file, "desktop_data.update"))
     {
-        ev = NEW(Efreet_Event_Cache_Update, 1);
-        if (!ev) goto error;
         if (cache_check_change(path))
         {
+            ev = NEW(Efreet_Event_Cache_Update, 1);
+            if (!ev) goto error;
+
             IF_RELEASE(util_cache_names_key);
             IF_RELEASE(util_cache_hash_key);
 
