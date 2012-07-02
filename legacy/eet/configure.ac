@@ -223,6 +223,9 @@ case "$host_os" in
 esac
 AC_SUBST(EFL_EET_BUILD)
 
+PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
+requirement_eet="eina >= 1.2.0 ${requirement_eet}"
+
 # Exotic library for copilation on Coyote
 
 PKG_CHECK_EXISTS([exotic],
