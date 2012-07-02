@@ -784,3 +784,7 @@
         query a sequence of keysyms for a final compose string (utf8)
         that you free if you get it.
 
+2012-07-02  Mike Blumenkrantz
+
+        * Fix crash which occurred in ecore-con when dns resolution failed
+          immediately due to lack of connectivity
