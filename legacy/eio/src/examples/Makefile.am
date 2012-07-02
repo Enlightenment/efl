@@ -11,7 +11,8 @@ AM_CPPFLAGS = \
 @EIO_CFLAGS@ @EFL_EIO_BUILD@
 
 ECOREBASELDADD = \
-	$(top_builddir)/src/lib/libeio.la
+	$(top_builddir)/src/lib/libeio.la \
+	@EIO_LIBS@
 
 
 LDADD = \
