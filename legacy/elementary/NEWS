@@ -23,6 +23,7 @@ Fixes:
    * Genlist : Realize move items during tree effect only when the item is not in the queue.
    * Add missing files in the tarball.
    * Fileselector : honor the folder_only option when using EIO
+   * Segment Selector : do not abuse user object item data.
 
 Improvements:
 

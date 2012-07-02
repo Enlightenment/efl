@@ -99,12 +99,7 @@ _elm_segment_control_smart_sizing_eval(Evas_Object *obj)
 static void
 _item_free(Elm_Segment_Item *it)
 {
-   Elm_Segment_Control_Smart_Data *sd;
-
-   if (!it) return;
-
-   sd = elm_widget_item_data_get(it);
-   if (!sd) return;
+   ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    if (sd->selected_item == it) sd->selected_item = NULL;
    if (sd->items) sd->items = eina_list_remove(sd->items, it);
@@ -335,12 +330,7 @@ _elm_segment_control_smart_focus_next(const Evas_Object *obj,
 static void
 _segment_off(Elm_Segment_Item *it)
 {
-   Elm_Segment_Control_Smart_Data *sd;
-
-   if (!it) return;
-
-   sd = elm_widget_item_data_get(it);
-   if (!sd) return;
+   ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    edje_object_signal_emit(VIEW(it), "elm,state,segment,normal", "elm");
 
@@ -350,12 +340,7 @@ _segment_off(Elm_Segment_Item *it)
 static void
 _segment_on(Elm_Segment_Item *it)
 {
-   Elm_Segment_Control_Smart_Data *sd;
-
-   if (!it) return;
-
-   sd = elm_widget_item_data_get(it);
-   if (!sd) return;
+   ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    if (it == sd->selected_item) return;
 
@@ -383,16 +368,12 @@ _on_mouse_up(void *data,
              Evas_Object *obj __UNUSED__,
              void *event_info)
 {
-   Elm_Segment_Control_Smart_Data *sd;
    Elm_Segment_Item *it;
    Evas_Event_Mouse_Up *ev;
    Evas_Coord x, y, w, h;
 
    it = data;
-   if (!it) return;
-
-   sd = elm_widget_item_data_get(it);
-   if (!sd) return;
+   ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    if (elm_widget_disabled_get(ELM_WIDGET_DATA(sd)->obj)) return;
 
@@ -414,14 +395,10 @@ _on_mouse_down(void *data,
                Evas_Object *obj __UNUSED__,
                void *event_info __UNUSED__)
 {
-   Elm_Segment_Control_Smart_Data *sd;
    Elm_Segment_Item *it;
 
    it = data;
-   if (!it) return;
-
-   sd = elm_widget_item_data_get(it);
-   if (!sd) return;
+   ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    if (elm_widget_disabled_get(ELM_WIDGET_DATA(sd)->obj)) return;
 
@@ -447,15 +424,11 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *part,
                     const char *label)
 {
-   Elm_Segment_Control_Smart_Data *sd;
    Elm_Segment_Item *item;
 
    if (part && strcmp(part, "default")) return;
 
    item = (Elm_Segment_Item *)it;
-   sd = elm_widget_item_data_get(item);
-   if (!sd) return;
-
    eina_stringshare_replace(&item->label, label);
    if (item->label)
      edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
@@ -512,11 +485,8 @@ _item_content_get_hook(const Elm_Object_Item *it,
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   Elm_Segment_Control_Smart_Data *sd;
    Elm_Segment_Item *item = (Elm_Segment_Item *)it;
-
-   sd = elm_widget_item_data_get(item);
-   if (!sd) return EINA_FALSE;
+   ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    _item_free(item);
    _update_list(sd);
@@ -531,12 +501,9 @@ _item_new(Evas_Object *obj,
 {
    Elm_Segment_Item *it;
 
-   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
-
    it = elm_widget_item_new(obj, Elm_Segment_Item);
    if (!it) return NULL;
 
-   elm_widget_item_data_set(it, sd);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
@@ -759,13 +726,10 @@ EAPI void
 elm_segment_control_item_selected_set(Elm_Object_Item *it,
                                       Eina_Bool selected)
 {
-   Elm_Segment_Control_Smart_Data *sd;
    Elm_Segment_Item *item = (Elm_Segment_Item *)it;
 
    ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it);
-
-   sd = elm_widget_item_data_get(item);
-   if (!sd) return;
+   ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
 
    if (item == sd->selected_item)
      {

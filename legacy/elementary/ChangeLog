@@ -254,3 +254,4 @@
 2012-07-01 Gustavo Sverzut Barbieri (k-s)
 
 	* Add and use elm_widget_item_widget_get()
+	* Fix elm_segment_control to not abuse user's data from item.
