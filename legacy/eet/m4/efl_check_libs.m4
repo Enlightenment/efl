@@ -53,7 +53,6 @@ PKG_CHECK_EXISTS([zlib],
     requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_[]m4_defn([DOWNEFL])} zlib"
    ],
    [
-    AC_MSG_ERROR(["Cannot find zlib.PC. Make sure your PKG_CONFIG_PATH environment variable contains include lines for the location of this file"])
     _efl_have_lib="no"
    ])
 
