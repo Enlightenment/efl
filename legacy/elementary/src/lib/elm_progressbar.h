@@ -36,6 +36,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * @li @c "changed" - when the value is changed
+ * @since 1.1
  *
  * This widget has the following styles:
  * - @c "default"
