@@ -1628,7 +1628,7 @@ ECORE_CHECK_MODULE([imf-scim], [${want_ecore_imf}], [Imf_SCIM], [${ecore_imf_sci
    [requirements_ecore_imf_scim="ecore-imf >= 1.2.0 ecore-x >= 1.2.0 ecore-input >= 1.2.0 ${requirements_ecore_imf_scim}"])
 
 # ecore_imf_ibus
-PKG_CHECK_MODULES([IBUS], [ibus-1.0 >= 1.3.99], [have_ibus="yes"], [have_ibus="no"])
+PKG_CHECK_MODULES([IBUS], [ibus-1.0 >= 1.4], [have_ibus="yes"], [have_ibus="no"])
 
 AM_CONDITIONAL(BUILD_ECORE_IMF_IBUS, false)
 ecore_imf_ibus_deps="no"
