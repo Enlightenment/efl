@@ -4,6 +4,13 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+static void
+cb_changed(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event)
+{
+   Elm_Object_Item *it = event;
+   printf("item %p %s\n", it, elm_object_item_text_get(it));
+}
+
 void
 test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -46,6 +53,7 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    elm_segment_control_item_add(segment1, ic1, "Text_Icon_test");
    elm_segment_control_item_add(segment1, NULL, "Seg4");
    elm_segment_control_item_add(segment1, NULL, "Seg5");
+   evas_object_smart_callback_add(segment1, "changed", cb_changed, NULL);
 
    segment2 = elm_segment_control_add(win);
    elm_segment_control_item_add(segment2, NULL, "SegmentItem");
@@ -53,6 +61,7 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
    elm_segment_control_item_add(segment2, NULL, "SegmentControlItem");
    elm_segment_control_item_add(segment2, NULL, "SegmentItem");
+   evas_object_smart_callback_add(segment2, "changed", cb_changed, NULL);
 
    ic2 = elm_icon_add(in_layout);
    snprintf(buf3, sizeof(buf3), "%s/images/logo.png", elm_app_data_dir_get());
@@ -74,6 +83,7 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    seg_it = elm_segment_control_item_add(segment3, ic3, NULL);
    elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
    elm_segment_control_item_add(segment3, ic4, NULL);
+   evas_object_smart_callback_add(segment3, "changed", cb_changed, NULL);
 
    ic5 = elm_icon_add(in_layout);
    snprintf(buf6, sizeof(buf6), "%s/images/logo.png", elm_app_data_dir_get());
@@ -86,6 +96,7 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
    elm_segment_control_item_add(segment4, NULL, "Disabled");
    elm_object_disabled_set(segment4, EINA_TRUE);
+   evas_object_smart_callback_add(segment4, "changed", cb_changed, NULL);
 
    elm_object_part_content_set(in_layout, "segment1", segment1);
    elm_object_part_content_set(in_layout, "segment2", segment2);
