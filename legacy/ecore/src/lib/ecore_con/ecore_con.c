@@ -1432,7 +1432,10 @@ _ecore_con_cb_tcp_listen(void           *data,
 
    errno = 0;
    if (!net_info) /* error message has already been handled */
-     goto error;
+     {
+        svr->delete_me = EINA_TRUE;
+        goto error;
+     }
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
@@ -1499,7 +1502,10 @@ _ecore_con_cb_udp_listen(void           *data,
 
    errno = 0;
    if (!net_info) /* error message has already been handled */
-     goto error;
+     {
+        svr->delete_me = EINA_TRUE;
+        goto error;
+     }
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
@@ -1572,7 +1578,10 @@ _ecore_con_cb_tcp_connect(void           *data,
 
    errno = 0;
    if (!net_info) /* error message has already been handled */
-     goto error;
+     {
+        svr->delete_me = EINA_TRUE;
+        goto error;
+     }
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
@@ -1662,7 +1671,10 @@ _ecore_con_cb_udp_connect(void           *data,
 
    errno = 0;
    if (!net_info) /* error message has already been handled */
-     goto error;
+     {
+        svr->delete_me = EINA_TRUE;
+        goto error;
+     }
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
