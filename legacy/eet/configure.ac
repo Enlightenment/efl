@@ -389,7 +389,10 @@ AC_MSG_CHECKING([whether to activate signature support in eet])
 AC_MSG_RESULT([${have_signature}])
 
 # libjpeg and zlib
-EFL_CHECK_LIBS([eet], [libjpeg zlib])
+EFL_CHECK_LIBS([eet], [libjpeg])
+AC_CHECK_HEADER([zlib.h],
+   [dummy="yes"],
+   [AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file")])
 
 # Eina library
 
