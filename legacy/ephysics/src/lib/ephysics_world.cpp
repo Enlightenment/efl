@@ -592,6 +592,32 @@ ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_Type 
    return NULL;
 }
 
+EAPI void *
+ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_Type type, EPhysics_World_Event_Cb func, void *data)
+{
+   EPhysics_World_Callback *cb;
+   void *cb_data;
+
+   if (!world)
+     {
+        ERR("Can't delete world event callback, world is null.");
+        return NULL;
+     }
+
+   EINA_INLIST_FOREACH(world->callbacks, cb)
+     {
+        if ((cb->type == type) && (cb->func == func) && (cb->data == data)) {
+             cb_data = cb->data;
+             world->callbacks = eina_inlist_remove(world->callbacks,
+                                                  EINA_INLIST_GET(cb));
+             free(cb);
+             return cb_data;
+        }
+     }
+
+   return NULL;
+}
+
 EAPI const Eina_List *
 ephysics_world_bodies_get(const EPhysics_World *world)
 {
