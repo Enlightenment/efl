@@ -298,7 +298,8 @@ typedef void (*EPhysics_World_Event_Cb)(void *data, EPhysics_World *world, void 
  * It can be paused / unpaused with @ref ephysics_world_running_set() and its
  * gravity can be changed with @ref ephysics_world_gravity_set().
  *
- * By default it starts with gravity y = -9.81 and playing.
+ * By default it starts with gravity y = 294 Evas coordinates per second ^ 2
+ * and playing.
  *
  * If default updates between physics bodies and evas objects will be used
  * it's mandatory to set the size of the area to be rendered with
@@ -329,6 +330,8 @@ EAPI EPhysics_World *ephysics_world_new(void);
  * @param y Coordinate y of the top left point of rendered area, in pixels.
  * @param w rendered area width, in pixels.
  * @param h rendered area height, in pixels.
+ *
+ * @note The unit used for geometry is Evas coordinates.
  *
  * @see ephysics_body_event_callback_add() for more info.
  * @see ephysics_world_rate_get().
@@ -420,13 +423,20 @@ EAPI Eina_Bool ephysics_world_running_get(const EPhysics_World *world);
  *
  * Gravity will act over bodies with mass over all the time.
  *
- * By default values are 0, -9.81.
+ * By default values are 0, 294 Evas Coordinates per second ^ 2
+ * (9.8 m/s^2, since we've a default rate of 30 pixels).
+ *
+ * If you change the rate but wants to keep 9.8 m/s^2, you well need
+ * to set world gravity with: 9.8 * new_rate.
  *
  * @param world The world object.
  * @param gx Gravity on x axis.
  * @param gy Gravity on y axis.
  *
+ * @note The unit used for acceleration is Evas coordinates per second ^ 2.
+ *
  * @see ephysics_world_gravity_get().
+ * @see ephysics_world_rate_set().
  *
  * @ingroup EPhysics_World
  */
@@ -453,7 +463,11 @@ EAPI void ephysics_world_gravity_get(const EPhysics_World *world, double *gx, do
  * It will be used by automatic updates of evas objects associated to
  * physics bodies.
  *
- * By default its value is 20 pixel per meter.
+ * By default its value is 20 Evas coordinates (pixels) per meter.
+ *
+ * If you change the rate but wants to keep gravity as (0, 9.8 m/s^2),
+ * you well need to set world gravity with: 9.8 * new_rate.
+ * For this, use @ref ephysics_world_gravity_set();
  *
  * @param world The world object.
  * @param rate Rate between pixels and meters. Value must be > 0.
@@ -843,8 +857,6 @@ EAPI EPhysics_World *ephysics_body_world_get(const EPhysics_Body *body);
  * will update the other evas objects. This function can be used to disable
  * updates of associated evas objects, or complement updates, like changing
  * evas objects properties under certain conditions of position or rotation.
- *
- * @note The unit used for positions or sizes on EPhysics is meter.
  *
  * @param body The body to associate to an evas object.
  * @param evas_obj The evas object that will be associated to this @p body.

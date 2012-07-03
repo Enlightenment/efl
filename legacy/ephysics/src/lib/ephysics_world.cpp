@@ -287,7 +287,7 @@ ephysics_world_new(void)
         goto no_list;
      }
 
-   world->dynamics_world->setGravity(btVector3(0, -9.81, 0));
+   world->dynamics_world->setGravity(btVector3(0, -9.8, 0));
    world->rate = 30;
    world->dynamics_world->setInternalTickCallback(_ephysics_world_tick_cb,
                                                   (void *) world);
@@ -463,7 +463,8 @@ ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
         return;
      }
 
-   world->dynamics_world->setGravity(btVector3(gx, gy, 0));
+   world->dynamics_world->setGravity(btVector3(gx / world->rate,
+                                               -gy / world->rate, 0));
    DBG("World gravity set to X:%lf, Y:%lf.", gx, gy);
 }
 
@@ -480,8 +481,8 @@ ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy)
 
    vector = world->dynamics_world->getGravity();
 
-   if (gx) *gx = vector.x();
-   if (gy) *gy = vector.y();
+   if (gx) *gx = vector.x() * world->rate;
+   if (gy) *gy = -vector.y() * world->rate;
 }
 
 EAPI void
