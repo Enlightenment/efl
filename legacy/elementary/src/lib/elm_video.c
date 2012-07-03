@@ -343,6 +343,8 @@ elm_video_add(Evas_Object *parent)
    e = evas_object_evas_get(parent);
    if (!e) return NULL;
 
+   _elm_emotion_init();
+
    obj = evas_object_smart_add(e, _elm_video_smart_class_new());
 
    if (!elm_widget_sub_object_add(parent, obj))

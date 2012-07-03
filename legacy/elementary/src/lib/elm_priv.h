@@ -218,6 +218,9 @@ struct _Elm_Datetime_Module_Data
    const char *(*field_format_get)(Evas_Object * obj, Elm_Datetime_Field_Type  field_type);
 };
 
+void		     _elm_emotion_init(void);
+void		     _elm_emotion_shutdown(void);
+
 int                  _elm_ews_wm_init(void);
 void                 _elm_ews_wm_shutdown(void);
 void                 _elm_ews_wm_rescale(Elm_Theme *th, Eina_Bool use_theme);

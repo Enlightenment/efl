@@ -14,6 +14,10 @@
 # include <Evil.h>
 #endif
 
+#ifdef HAVE_EMOTION
+# include <Emotion.h>
+#endif
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -82,6 +86,30 @@ _elm_rescale(void)
    edje_scale_set(_elm_config->scale);
    _elm_win_rescale(NULL, EINA_FALSE);
    _elm_ews_wm_rescale(NULL, EINA_FALSE);
+}
+
+static Eina_Bool _emotion_inited = EINA_FALSE;
+
+void
+_elm_emotion_init(void)
+{
+   if (_emotion_inited) return ;
+
+#if HAVE_EMOTION
+   emotion_init();
+   _emotion_inited = EINA_TRUE;
+#endif
+}
+
+void
+_elm_emotion_shutdown(void)
+{
+   if (!_emotion_inited) return ;
+
+#if HAVE_EMOTION
+   emotion_shutdown();
+   _emotion_inited = EINA_FALSE;
+#endif
 }
 
 static void *app_mainfunc = NULL;
@@ -522,6 +550,9 @@ elm_quicklaunch_shutdown(void)
 
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_shutdown();
+#endif
+#ifdef HAVE_EMOTION
+   _elm_emotion_shutdown();
 #endif
 
    ecore_shutdown();

@@ -16,6 +16,7 @@ Additions:
    * Add elm_map_overlay_del_cb_set API function
    * Add "changed" signal to the progressbar widgets
    * Use Edje to enable accessibility on TEXTBLOCK.
+   * Initialize Emotion when necessary.
 
 Fixes:
 
