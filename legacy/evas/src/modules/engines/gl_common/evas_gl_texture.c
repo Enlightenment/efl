@@ -116,12 +116,19 @@ _tex_2d(int intfmt, int w, int h, int fmt, int type)
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_TEXTURE_INTERNAL_FORMAT
 // this is not in opengles!!! hrrrm   
-   glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, 
-                            GL_TEXTURE_INTERNAL_FORMAT, &intfmtret);
-   if (intfmtret != intfmt)
+   if (glGetTexLevelParameteriv)
      {
-        ERR("Fail tex alloc %ix%i", w, h);
-//        XXX send async err to evas
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0,
+                                 GL_TEXTURE_INTERNAL_FORMAT, &intfmtret);
+        if (intfmtret != intfmt)
+          {
+             ERR("Fail tex alloc %ix%i", w, h);
+             //        XXX send async err to evas
+          }
+     }
+   else
+     {
+        ERR("GL_TEXTURE_INTERNAL_FORMAT defined but no symbol loaded.");
      }
 #endif   
 }

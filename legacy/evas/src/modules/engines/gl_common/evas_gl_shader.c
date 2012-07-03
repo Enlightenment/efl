@@ -933,6 +933,15 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
 
    p->prog = glCreateProgram();
 
+#if 1
+   // TODO: invalid rendering error occurs when attempting to use a 
+   // glProgramBinary. in order to render correctly we should create a dummy 
+   // vertex shader.
+   p->vert = glCreateShader(GL_VERTEX_SHADER);
+   glAttachShader(p->prog, p->vert);
+   p->frag = glCreateShader(GL_FRAGMENT_SHADER);
+   glAttachShader(p->prog, p->frag);
+#endif
    glsym_glProgramBinary(p->prog, formats[0], data, length);
 
    glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
