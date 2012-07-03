@@ -142,7 +142,6 @@ test_collision(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    Collision_Data *collision_data;
    EPhysics_Body *boundary;
    EPhysics_World *world;
-   Evas_Object *edje;
 
    if (!ephysics_init())
      return;
@@ -158,10 +157,8 @@ test_collision(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    test_win_add((Test_Data *)collision_data, "Collision Detection", EINA_FALSE);
    evas_object_smart_callback_add(collision_data->base.win,
                                   "delete,request", _win_del, collision_data);
-
-   edje = elm_layout_edje_get(collision_data->base.layout);
-   edje_object_signal_callback_add(edje, "restart", "test-theme", _restart,
-                                   collision_data);
+   elm_layout_signal_callback_add(collision_data->base.layout, "restart",
+                                  "test-theme", _restart, collision_data);
 
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);

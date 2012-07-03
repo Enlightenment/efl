@@ -100,7 +100,6 @@ test_velocity(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    EPhysics_Body *boundary;
    EPhysics_World *world;
    Test_Data *test_data;
-   Evas_Object *edje;
 
    if (!ephysics_init())
      return;
@@ -108,10 +107,8 @@ test_velocity(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    test_data = test_data_new();
    test_win_add(test_data, "Velocity Getters", EINA_TRUE);
 
-   edje = elm_layout_edje_get(test_data->layout);
-   edje_object_signal_callback_add(edje, "restart", "test-theme", _restart,
-                                   test_data);
-
+   elm_layout_signal_callback_add(test_data->layout, "restart", "test-theme",
+                                  _restart, test_data);
    elm_layout_text_set(test_data->layout, "linear_vel",
                        "Linear velocity: 0, 0");
    elm_layout_text_set(test_data->layout, "angular_vel", "Angular velocity: 0");
