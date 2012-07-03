@@ -41,31 +41,31 @@ extern "C" {
 /* ecore_imf_context_input_panel_event_callback_add() flag */
 typedef enum
 {
-   ECORE_IMF_INPUT_PANEL_STATE_EVENT,              /**< called when the state of the input panel is changed. */
-   ECORE_IMF_INPUT_PANEL_LANGUAGE_EVENT,           /**< called when the language of the input panel is changed. */
-   ECORE_IMF_INPUT_PANEL_SHIFT_MODE_EVENT,         /**< called when the shift key state of the input panel is changed */
-   ECORE_IMF_INPUT_PANEL_GEOMETRY_EVENT,           /**< called when the size of the input panel is changed. */
-   ECORE_IMF_CANDIDATE_PANEL_STATE_EVENT,          /**< called when the state of the candidate word panel is changed. */
-   ECORE_IMF_CANDIDATE_PANEL_GEOMETRY_EVENT        /**< called when the size of the candidate word panel is changed. */
+   ECORE_IMF_INPUT_PANEL_STATE_EVENT,              /**< called when the state of the input panel is changed. @since 1.3 */
+   ECORE_IMF_INPUT_PANEL_LANGUAGE_EVENT,           /**< called when the language of the input panel is changed. @since 1.3 */
+   ECORE_IMF_INPUT_PANEL_SHIFT_MODE_EVENT,         /**< called when the shift key state of the input panel is changed @since 1.3 */
+   ECORE_IMF_INPUT_PANEL_GEOMETRY_EVENT,           /**< called when the size of the input panel is changed. @since 1.3 */
+   ECORE_IMF_CANDIDATE_PANEL_STATE_EVENT,          /**< called when the state of the candidate word panel is changed. @since 1.3 */
+   ECORE_IMF_CANDIDATE_PANEL_GEOMETRY_EVENT        /**< called when the size of the candidate word panel is changed. @since 1.3 */
 } Ecore_IMF_Input_Panel_Event;
 
 typedef enum
 {
-   ECORE_IMF_INPUT_PANEL_STATE_SHOW,        /**< Notification after the display of the input panel */
-   ECORE_IMF_INPUT_PANEL_STATE_HIDE,        /**< Notification prior to the dismissal of the input panel */
-   ECORE_IMF_INPUT_PANEL_STATE_WILL_SHOW    /**< Notification prior to the display of the input panel */
+   ECORE_IMF_INPUT_PANEL_STATE_SHOW,        /**< Notification after the display of the input panel @since 1.3 */
+   ECORE_IMF_INPUT_PANEL_STATE_HIDE,        /**< Notification prior to the dismissal of the input panel @since 1.3 */
+   ECORE_IMF_INPUT_PANEL_STATE_WILL_SHOW    /**< Notification prior to the display of the input panel @since 1.3 */
 } Ecore_IMF_Input_Panel_State;
 
 typedef enum
 {
-    ECORE_IMF_INPUT_PANEL_SHIFT_MODE_OFF,
-    ECORE_IMF_INPUT_PANEL_SHIFT_MODE_ON
+    ECORE_IMF_INPUT_PANEL_SHIFT_MODE_OFF, /**< @since 1.3 */
+    ECORE_IMF_INPUT_PANEL_SHIFT_MODE_ON   /**< @since 1.3 */ 
 } Ecore_IMF_Input_Panel_Shift_Mode;
 
 typedef enum
 {
-   ECORE_IMF_CANDIDATE_PANEL_SHOW,        /**< Notification after the display of the candidate word panel */
-   ECORE_IMF_CANDIDATE_PANEL_HIDE         /**< Notification prior to the dismissal of the candidate word panel */
+   ECORE_IMF_CANDIDATE_PANEL_SHOW,        /**< Notification after the display of the candidate word panel @since 1.3 */
+   ECORE_IMF_CANDIDATE_PANEL_HIDE         /**< Notification prior to the dismissal of the candidate word panel @since 1.3 */
 } Ecore_IMF_Candidate_Panel_State;
 
 /* Events sent by the Input Method */

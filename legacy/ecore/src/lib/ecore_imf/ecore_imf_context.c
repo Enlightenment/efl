@@ -1745,7 +1745,7 @@ ecore_imf_context_input_panel_caps_lock_mode_get(Ecore_IMF_Context *ctx)
  * @param w width of the input panel
  * @param h height of the input panel
  * @ingroup Ecore_IMF_Context_Group
- * @since 1.2.0
+ * @since 1.3
  */
 EAPI void
 ecore_imf_context_input_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h)
@@ -1767,7 +1767,7 @@ ecore_imf_context_input_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *
  * @param ctx An #Ecore_IMF_Context.
  * @param The state of input panel.
  * @ingroup Ecore_IMF_Context_Group
- * @since 1.2.0
+ * @since 1.3
  */
 EAPI Ecore_IMF_Input_Panel_State
 ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx)
@@ -1796,7 +1796,7 @@ ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx)
  * @param func the callback function
  * @param data application-input panel specific data.
  * @ingroup Ecore_IMF_Context_Group
- * @since 1.2.0
+ * @since 1.3
  */
 EAPI void
 ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
@@ -1822,7 +1822,7 @@ ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
  * @param func the callback function
  * @param data application-input panel specific data.
  * @ingroup Ecore_IMF_Context_Group
- * @since 1.2.0
+ * @since 1.3
  */
 EAPI void
 ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
@@ -1849,6 +1849,7 @@ ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
  * @param lang Location to store the retrieved language string. The
  *             string retrieved must be freed with free().
  * @ingroup Ecore_IMF_Context_Group
+ * @since 1.3
  */
 EAPI void
 ecore_imf_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx, char **lang)
@@ -1877,6 +1878,7 @@ ecore_imf_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx, char *
  * @param w width of the candidate panel
  * @param h height of the candidate panel
  * @ingroup Ecore_IMF_Context_Group
+ * @since 1.3
  */
 EAPI void
 ecore_imf_context_candidate_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h)
