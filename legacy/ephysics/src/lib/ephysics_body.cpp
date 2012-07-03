@@ -623,6 +623,32 @@ ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Type typ
    return NULL;
 }
 
+EAPI void *
+ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func, void *data)
+{
+   EPhysics_Body_Callback *cb;
+   void *cb_data;
+
+   if (!body)
+     {
+        ERR("Can't delete body event callback, body is null.");
+        return NULL;
+     }
+
+   EINA_INLIST_FOREACH(body->callbacks, cb)
+     {
+        if ((cb->type == type) && (cb->func == func) && (cb->data == data)) {
+             cb_data = cb->data;
+             body->callbacks = eina_inlist_remove(body->callbacks,
+                                                  EINA_INLIST_GET(cb));
+             free(cb);
+             return cb_data;
+        }
+     }
+
+   return NULL;
+}
+
 EAPI void
 ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
 {

@@ -1065,10 +1065,34 @@ EAPI void ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callbac
  * on error.
  *
  * @see ephysics_body_event_callback_add() for details.
+ * @see ephysics_body_event_callback_del_full() if you need to match data
+ * pointer.
  *
  * @ingroup EPhysics_Body
  */
 EAPI void *ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func);
+
+/**
+ * @brief
+ * Unregister an ephysics body event callback matching data pointer.
+ *
+ * A previously added callback that match @p body, @p type, @p func
+ * and @p data will be deleted.
+ *
+ * @param body The physics body.
+ * @param type The type of callback to be unregistered.
+ * @param func The callback function to be unregistered.
+ * @param data The data pointer that was passed to the callback.
+ * @return The user data passed when the callback was registered, or @c NULL
+ * on error.
+ *
+ * @see ephysics_body_event_callback_add() for details.
+ * @see ephysics_body_event_callback_del() if you don't need to match data
+ * pointer.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void *ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func, void *data);
 
 /**
  * @brief
