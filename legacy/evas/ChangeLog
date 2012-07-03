@@ -842,3 +842,13 @@
 	* upstream merge
 	* Merge remote-tracking branch 'remotes/origin/upstream'
 
+2012-07-03 Christopher Michael
+
+	* Merge Tizen changes to upstream EFL.
+	* Support gif scaling in evas gif loader.
+	* Create vertex & fragment shader(s) in the gl_common engine.
+	* Don't call glGetTexLevelParameteriv unless it is supported.
+	* Support evas_cserve2 in the wayland_shm engine.
+	* When freeing a gl_x11 window, make sure to call eglMakeCurrent with a null surface
+		to inform EGL that this window is no longer valid.
+
