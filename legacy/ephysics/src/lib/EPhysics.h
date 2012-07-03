@@ -89,42 +89,6 @@ extern "C" {
  */
 
 /**
- * @enum _EPhysics_Callback_Type
- * @typedef EPhysics_Callback_Type
- *
- * Identifier of callbacks to be set for EPhysics bodies and worlds.
- *
- * @see ephysics_body_event_callback_add()
- * @see ephysics_world_event_callback_add()
- *
- * @ingroup EPhysics
- */
-typedef enum _EPhysics_Callback_Type
-{
-   /*
-    * The following events are only for use with EPhysics world objects, with
-    * @ref ephysics_world_event_callback_add():
-    */
-   EPHYSICS_CALLBACK_WORLD_FIRST, /**< kept as sentinel, not really an event */
-   EPHYSICS_CALLBACK_WORLD_DEL, /**< World being deleted (called before free) */
-   EPHYSICS_CALLBACK_WORLD_STOPPED, /**< no objects are moving any more */
-   EPHYSICS_CALLBACK_WORLD_LAST, /**< kept as sentinel, not really an event */
-
-   /*
-    * The following events are only for use with EPhysics body objects, with
-    * @ref ephysics_body_event_callback_add():
-    */
-   EPHYSICS_CALLBACK_BODY_FIRST, /**< kept as sentinel, not really an event */
-   EPHYSICS_CALLBACK_BODY_UPDATE, /**< Body being updated */
-   EPHYSICS_CALLBACK_BODY_COLLISION, /**< Body collided with other body */
-   EPHYSICS_CALLBACK_BODY_DEL, /**< Body being deleted (called before free) */
-   EPHYSICS_CALLBACK_BODY_STOPPED, /**< Body is not moving any more */
-   EPHYSICS_CALLBACK_BODY_LAST, /**< kept as sentinel, not really an event */
-
-   EPHYSICS_CALLBACK_LAST /**< kept as sentinel, not really an event */
-} EPhysics_Callback_Type; /**< The types of events triggering a callback */
-
-/**
  * Initialize EPhysics
  *
  * Initializes Bullet physics engine.
@@ -286,6 +250,25 @@ EAPI double ephysics_camera_zoom_get(const EPhysics_Camera *camera);
  */
 
 typedef struct _EPhysics_World EPhysics_World; /**< World handle, most basic type of EPhysics. Created with @ref ephysics_world_new() and deleted with @ref ephysics_world_del(). */
+
+/**
+ * @enum _EPhysics_Callback_World_Type
+ * @typedef EPhysics_Callback_World_Type
+ *
+ * Identifier of callbacks to be set for EPhysics worlds.
+ *
+ * @see ephysics_world_event_callback_add()
+ * @see ephysics_world_event_callback_del()
+ * @see ephysics_world_event_callback_del_full()
+ *
+ * @ingroup EPhysics_World
+ */
+typedef enum _EPhysics_Callback_World_Type
+{
+   EPHYSICS_CALLBACK_WORLD_DEL, /**< World being deleted (called before free) */
+   EPHYSICS_CALLBACK_WORLD_STOPPED, /**< no objects are moving any more */
+   EPHYSICS_CALLBACK_WORLD_LAST, /**< kept as sentinel, not really an event */
+} EPhysics_Callback_World_Type;
 
 /**
  * @typedef EPhysics_World_Event_Cb
@@ -544,7 +527,7 @@ EAPI EPhysics_Camera *ephysics_world_camera_get(const EPhysics_World *world);
  *
  * @ingroup EPhysics_World
  */
-EAPI void ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_Type type, EPhysics_World_Event_Cb func, const void *data);
+EAPI void ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func, const void *data);
 
 /**
  * @brief
@@ -565,7 +548,7 @@ EAPI void ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Call
  *
  * @ingroup EPhysics_World
  */
-EAPI void *ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_Type type, EPhysics_World_Event_Cb func);
+EAPI void *ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func);
 
 /**
  * @brief
@@ -587,7 +570,7 @@ EAPI void *ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Cal
  *
  * @ingroup EPhysics_World
  */
-EAPI void *ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_Type type, EPhysics_World_Event_Cb func, void *data);
+EAPI void *ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func, void *data);
 
 /**
  * @brief
@@ -667,6 +650,28 @@ EAPI double ephysics_world_linear_slop_get(EPhysics_World *world);
  */
 
 typedef struct _EPhysics_Body EPhysics_Body; /**< Body handle, represents an object on EPhysics world. Created with @ref ephysics_body_circle_add() or @ref ephysics_body_box_add() and deleted with @ref ephysics_body_del(). */
+
+/**
+ * @enum _EPhysics_Callback_Body_Type
+ * @typedef EPhysics_Callback_Body_Type
+ *
+ * Identifier of callbacks to be set for EPhysics bodies.
+ *
+ * @see ephysics_body_event_callback_add()
+ * @see ephysics_body_event_callback_del()
+ * @see ephysics_body_event_callback_del_full()
+ *
+ * @ingroup EPhysics_Body
+ */
+typedef enum _EPhysics_Callback_Body_Type
+{
+   EPHYSICS_CALLBACK_BODY_UPDATE, /**< Body being updated */
+   EPHYSICS_CALLBACK_BODY_COLLISION, /**< Body collided with other body */
+   EPHYSICS_CALLBACK_BODY_DEL, /**< Body being deleted (called before free) */
+   EPHYSICS_CALLBACK_BODY_STOPPED, /**< Body is not moving any more */
+   EPHYSICS_CALLBACK_BODY_LAST, /**< kept as sentinel, not really an event */
+} EPhysics_Callback_Body_Type; /**< The types of events triggering a callback */
+
 
 /**
  * @typedef EPhysics_Body_Event_Cb
@@ -1049,7 +1054,7 @@ EAPI void ephysics_body_evas_object_update(EPhysics_Body *body);
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func, const void *data);
+EAPI void ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, const void *data);
 
 /**
  * @brief
@@ -1070,7 +1075,7 @@ EAPI void ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callbac
  *
  * @ingroup EPhysics_Body
  */
-EAPI void *ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func);
+EAPI void *ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func);
 
 /**
  * @brief
@@ -1092,7 +1097,7 @@ EAPI void *ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callba
  *
  * @ingroup EPhysics_Body
  */
-EAPI void *ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func, void *data);
+EAPI void *ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, void *data);
 
 /**
  * @brief

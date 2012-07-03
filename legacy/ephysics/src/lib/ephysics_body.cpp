@@ -18,7 +18,7 @@ struct _EPhysics_Body_Callback {
      EINA_INLIST;
      void (*func) (void *data, EPhysics_Body *body, void *event_info);
      void *data;
-     EPhysics_Callback_Type type;
+     EPhysics_Callback_Body_Type type;
 };
 
 struct _EPhysics_Body {
@@ -560,7 +560,7 @@ ephysics_body_evas_object_update(EPhysics_Body *body)
 }
 
 EAPI void
-ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func, const void *data)
+ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, const void *data)
 {
    EPhysics_Body_Callback *cb;
 
@@ -576,8 +576,7 @@ ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Type typ
         return;
      }
 
-   if ((type <= EPHYSICS_CALLBACK_BODY_FIRST) ||
-       (type >= EPHYSICS_CALLBACK_BODY_LAST))
+   if ((type < 0) || (type >= EPHYSICS_CALLBACK_BODY_LAST))
      {
         ERR("Can't set body event callback, callback type is wrong.");
         return;
@@ -598,7 +597,7 @@ ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Type typ
 }
 
 EAPI void *
-ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func)
+ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func)
 {
    EPhysics_Body_Callback *cb;
    void *cb_data;
@@ -624,7 +623,7 @@ ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Type typ
 }
 
 EAPI void *
-ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Type type, EPhysics_Body_Event_Cb func, void *data)
+ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, void *data)
 {
    EPhysics_Body_Callback *cb;
    void *cb_data;

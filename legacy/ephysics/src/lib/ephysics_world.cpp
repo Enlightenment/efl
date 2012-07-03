@@ -16,7 +16,7 @@ struct _EPhysics_World_Callback {
      EINA_INLIST;
      void (*func) (void *data, EPhysics_World *world, void *event_info);
      void *data;
-     EPhysics_Callback_Type type;
+     EPhysics_Callback_World_Type type;
 };
 
 struct _EPhysics_World {
@@ -529,7 +529,7 @@ ephysics_world_camera_get(const EPhysics_World *world)
 }
 
 EAPI void
-ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_Type type, EPhysics_World_Event_Cb func, const void *data)
+ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func, const void *data)
 {
    EPhysics_World_Callback *cb;
 
@@ -545,8 +545,7 @@ ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_Type 
         return;
      }
 
-   if ((type <= EPHYSICS_CALLBACK_WORLD_FIRST) ||
-       (type >= EPHYSICS_CALLBACK_WORLD_LAST))
+   if ((type < 0) || (type >= EPHYSICS_CALLBACK_WORLD_LAST))
      {
         ERR("Can't set world event callback, callback type is wrong.");
         return;
@@ -567,7 +566,7 @@ ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_Type 
 }
 
 EAPI void *
-ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_Type type, EPhysics_World_Event_Cb func)
+ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func)
 {
    EPhysics_World_Callback *cb;
    void *cb_data;
@@ -593,7 +592,7 @@ ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_Type 
 }
 
 EAPI void *
-ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_Type type, EPhysics_World_Event_Cb func, void *data)
+ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func, void *data)
 {
    EPhysics_World_Callback *cb;
    void *cb_data;
