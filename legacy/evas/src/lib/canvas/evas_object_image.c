@@ -860,6 +860,7 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
 {
    Evas_Object_Image *o;
    DATA32 *data;
+   void* result = NULL;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -880,14 +881,20 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
      o->video.update_pixels(o->video.data, obj, &o->video);
    if (o->cur.cspace == to_cspace) return NULL;
    data = NULL;
-   o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
-								  o->engine_data,
-								  0,
-								  &data,
-                                                                  &o->load_error);
-   return evas_object_image_data_convert_internal(o, data, to_cspace);
-}
+   o->engine_data = 
+     obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
+                                                   o->engine_data, 0, &data,
+                                                   &o->load_error);
+   result = evas_object_image_data_convert_internal(o, data, to_cspace);
+   if (o->engine_data)
+     {
+        o->engine_data = 
+          obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
+                                                        o->engine_data, data);
+     }
 
+  return result;
+}
 EAPI void
 evas_object_image_data_set(Evas_Object *obj, void *data)
 {
@@ -906,16 +913,22 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
    if (data)
      {
 	if (o->engine_data)
-	  o->engine_data = obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
-									 o->engine_data,
-									 data);
+          {
+             o->engine_data = 
+               obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
+                                                             o->engine_data,
+                                                             data);
+          }
 	else
-	  o->engine_data = obj->layer->evas->engine.func->image_new_from_data(obj->layer->evas->engine.data.output,
-									      o->cur.image.w,
-									      o->cur.image.h,
-									      data,
-									      o->cur.has_alpha,
-									      o->cur.cspace);
+          {
+             o->engine_data = 
+               obj->layer->evas->engine.func->image_new_from_data(obj->layer->evas->engine.data.output,
+                                                                  o->cur.image.w,
+                                                                  o->cur.image.h,
+                                                                  data,
+                                                                  o->cur.has_alpha,
+                                                                  o->cur.cspace);
+          }
         if (o->engine_data)
           {
              int stride = 0;
@@ -988,11 +1001,11 @@ evas_object_image_data_get(const Evas_Object *obj, Eina_Bool for_writing)
       obj->layer->evas->engine.func->image_content_hint_set
       (obj->layer->evas->engine.data.output,
           o->engine_data, o->content_hint);
-   o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
-								  o->engine_data,
-								  for_writing,
-								  &data,
-                                                                  &o->load_error);
+   o->engine_data = 
+     obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
+                                                   o->engine_data,
+                                                   for_writing, &data,
+                                                   &o->load_error);
 
    /* if we fail to get engine_data, we have to return NULL */
    if (!o->engine_data) return NULL;
@@ -1079,19 +1092,21 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
    if (o->engine_data)
      obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
 					       o->engine_data);
-   o->engine_data = obj->layer->evas->engine.func->image_new_from_copied_data(obj->layer->evas->engine.data.output,
-									      o->cur.image.w,
-									      o->cur.image.h,
-									      data,
-									      o->cur.has_alpha,
-									      o->cur.cspace);
+   o->engine_data = 
+     obj->layer->evas->engine.func->image_new_from_copied_data(obj->layer->evas->engine.data.output,
+                                                               o->cur.image.w,
+                                                               o->cur.image.h,
+                                                               data,
+                                                               o->cur.has_alpha,
+                                                               o->cur.cspace);
    if (o->engine_data)
      {
         int stride = 0;
 
-        o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
-                                                                        o->engine_data,
-                                                                        o->cur.has_alpha);
+        o->engine_data = 
+          obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
+                                                         o->engine_data,
+                                                         o->cur.has_alpha);
         if (obj->layer->evas->engine.func->image_scale_hint_set)
            obj->layer->evas->engine.func->image_scale_hint_set
            (obj->layer->evas->engine.data.output,
@@ -1160,9 +1175,10 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
      {
         int stride = 0;
 
-        o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
-								     o->engine_data,
-								     o->cur.has_alpha);
+        o->engine_data = 
+          obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
+                                                         o->engine_data,
+                                                         o->cur.has_alpha);
         if (obj->layer->evas->engine.func->image_scale_hint_set)
            obj->layer->evas->engine.func->image_scale_hint_set
            (obj->layer->evas->engine.data.output,
@@ -1330,6 +1346,9 @@ evas_object_image_save(const Evas_Object *obj, const char *file, const char *key
 
 	evas_cache_image_drop(&im->cache_entry);
      }
+   o->engine_data = obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
+                                                                  o->engine_data,
+                                                                  data);
    return ok;
 }
 
@@ -3591,6 +3610,7 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    DATA32 *data;
    int w, h, stride, iw, ih;
    int a;
+   int return_value;
 
    o = (Evas_Object_Image *)(obj->object_data);
 
@@ -3694,8 +3714,12 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
           0,
           &data,
           &o->load_error);
+
    if (!data)
-     return 0;
+     {
+        return_value = 0;
+        goto finish;
+     }
 
    switch (o->cur.cspace)
      {
@@ -3709,11 +3733,20 @@ evas_object_image_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
         a = (*((DATA8*)(data))) & 0x1f;
         break;
      default:
-        return 1;
+        return_value = 1;
+        goto finish;
         break;
      }
 
-   return (a != 0);
+   return_value = (a != 0);
+   goto finish;
+
+   finish:
+
+   obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
+                                  o->engine_data,
+                                  data);
+   return return_value;
 }
 
 static int
