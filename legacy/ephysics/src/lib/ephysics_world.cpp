@@ -35,6 +35,11 @@ struct _EPhysics_World {
      double rate;
      Eina_Bool running:1;
      Eina_Bool active:1;
+     Eina_Bool outside_autodel:1;
+     Eina_Bool outside_top:1;
+     Eina_Bool outside_bottom:1;
+     Eina_Bool outside_left:1;
+     Eina_Bool outside_right:1;
 };
 
 static int _ephysics_world_init_count = 0;
@@ -690,6 +695,122 @@ ephysics_world_linear_slop_get(EPhysics_World *world)
      }
 
    return world->dynamics_world->getSolverInfo().m_linearSlop;
+}
+
+EAPI void
+ephysics_world_bodies_outside_top_autodel_set(EPhysics_World *world, Eina_Bool autodel)
+{
+   if (!world)
+     {
+        ERR("Can't set autodelete mode, world is null.");
+        return;
+     }
+
+   world->outside_top = !!autodel;
+   world->outside_autodel = world->outside_top || world->outside_bottom ||
+      world->outside_left || world->outside_right;
+}
+
+EAPI Eina_Bool
+ephysics_world_bodies_outside_top_autodel_get(EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get autodelete mode, world is null.");
+        return EINA_FALSE;
+     }
+
+   return world->outside_top;
+}
+
+EAPI void
+ephysics_world_bodies_outside_bottom_autodel_set(EPhysics_World *world, Eina_Bool autodel)
+{
+   if (!world)
+     {
+        ERR("Can't set autodelete mode, world is null.");
+        return;
+     }
+
+   world->outside_bottom = !!autodel;
+   world->outside_autodel = world->outside_top || world->outside_bottom ||
+      world->outside_left || world->outside_right;
+}
+
+EAPI Eina_Bool
+ephysics_world_bodies_outside_bottom_autodel_get(EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get autodelete mode, world is null.");
+        return EINA_FALSE;
+     }
+
+   return world->outside_bottom;
+}
+
+EAPI void
+ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, Eina_Bool autodel)
+{
+   if (!world)
+     {
+        ERR("Can't set autodelete mode, world is null.");
+        return;
+     }
+
+   world->outside_left = !!autodel;
+   world->outside_autodel = world->outside_top || world->outside_bottom ||
+      world->outside_left || world->outside_right;
+}
+
+EAPI Eina_Bool
+ephysics_world_bodies_outside_left_autodel_get(EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get autodelete mode, world is null.");
+        return EINA_FALSE;
+     }
+
+   return world->outside_left;
+}
+
+EAPI void
+ephysics_world_bodies_outside_right_autodel_set(EPhysics_World *world, Eina_Bool autodel)
+{
+   if (!world)
+     {
+        ERR("Can't set autodelete mode, world is null.");
+        return;
+     }
+
+   world->outside_right = !!autodel;
+   world->outside_autodel = world->outside_top || world->outside_bottom ||
+      world->outside_left || world->outside_right;
+}
+
+EAPI Eina_Bool
+ephysics_world_bodies_outside_right_autodel_get(EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get autodelete mode, world is null.");
+        return EINA_FALSE;
+     }
+
+   return world->outside_right;
+}
+
+Eina_Bool
+ephysics_world_bodies_outside_autodel_get(EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get autodelete mode, world is null.");
+        return EINA_FALSE;
+     }
+
+   return world->outside_autodel;
 }
 
 #ifdef  __cplusplus

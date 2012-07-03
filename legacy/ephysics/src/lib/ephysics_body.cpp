@@ -186,6 +186,30 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
    evas_map_free(map);
 }
 
+static void
+_ephysics_body_outside_render_area_check(EPhysics_Body *body)
+{
+   int wx, wy, ww, wh, bx, by, bw, bh;
+
+   ephysics_world_render_geometry_get(body->world, &wx, &wy, &ww, &wh);
+   ephysics_body_geometry_get(body, &bx, &by, &bw, &bh);
+
+   // FIXME: check what should be done regarding rotated bodies
+   if (((ephysics_world_bodies_outside_top_autodel_get(body->world)) &&
+        (by + bh < wy)) ||
+       ((ephysics_world_bodies_outside_bottom_autodel_get(body->world)) &&
+        (by > wy + wh)) ||
+       ((ephysics_world_bodies_outside_left_autodel_get(body->world)) &&
+        (bx + bh < wx)) ||
+       ((ephysics_world_bodies_outside_right_autodel_get(body->world)) &&
+        (bx > wx + ww)))
+     {
+        ephysics_world_body_del(body->world, body, body->rigid_body);
+        ephysics_orphan_body_del(body);
+        DBG("Body %p deleted. Out of render area", body);
+     }
+}
+
 void
 ephysics_body_evas_object_update_select(EPhysics_Body *body)
 {
@@ -205,6 +229,9 @@ ephysics_body_evas_object_update_select(EPhysics_Body *body)
 
    if (!callback_called)
      _ephysics_body_evas_object_default_update(body);
+
+   if (ephysics_world_bodies_outside_autodel_get(body->world))
+     _ephysics_body_outside_render_area_check(body);
 }
 
 void

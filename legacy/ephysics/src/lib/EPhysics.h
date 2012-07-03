@@ -622,6 +622,150 @@ EAPI void ephysics_world_linear_slop_set(EPhysics_World *world, double linear_sl
 EAPI double ephysics_world_linear_slop_get(EPhysics_World *world);
 
 /**
+ * @brief
+ * Set world autodeleting bodies mode when they're outside of render area
+ * by the top.
+ *
+ * It's useful when you don't care about bodies leaving the render
+ * area set with @ref ephysics_world_render_area_set(), and don't think
+ * they could / should return. So you can safely delete them and save resources.
+ *
+ * Also, it's useful if you have only a bottom border set with
+ * @ref ephysics_body_top_boundary_add() and gravity set,
+ * and want to listen for @ref EPHYSICS_CALLBACK_WORLD_STOPPED event.
+ * If a body goes out of the render area, they will be acting by gravity
+ * and won't collide to anything, so they could be moving forever and
+ * world would never stop. For this case, enabling autodel for left and right
+ * borders seems to be a good idea.
+ *
+ * @param world The physics world.
+ * @param autodel If @c EINA_TRUE delete bodies when they are outside render
+ * area, otherwise, don't delete.
+ *
+ * @see ephysics_world_bodies_outside_top_autodel_get().
+ * @see ephysics_world_bodies_outside_bottom_autodel_set().
+ * @see ephysics_world_bodies_outside_left_autodel_set().
+ * @see ephysics_world_bodies_outside_right_autodel_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_bodies_outside_top_autodel_set(EPhysics_World *world, Eina_Bool autodel);
+
+/**
+ * @brief
+ * Get world autodeleting bodies mode when they're outside of render area by
+ * the top.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if bodies will be deleted or @c EINA_FALSE if they
+ * won't, or on error.
+ *
+ * @see ephysics_world_bodies_outside_top_autodel_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_bodies_outside_top_autodel_get(EPhysics_World *world);
+
+/**
+ * @brief
+ * Set world autodeleting bodies mode when they're outside of render area
+ * by the bottom.
+ *
+ * @param world The physics world.
+ * @param autodel If @c EINA_TRUE delete bodies when they are outside render
+ * area, otherwise, don't delete.
+ *
+ * @see ephysics_world_bodies_outside_top_autodel_set() for more details.
+ * @see ephysics_world_bodies_outside_bottom_autodel_get().
+ * @see ephysics_world_bodies_outside_left_autodel_set().
+ * @see ephysics_world_bodies_outside_right_autodel_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_bodies_outside_bottom_autodel_set(EPhysics_World *world, Eina_Bool autodel);
+
+/**
+ * @brief
+ * Get world autodeleting bodies mode when they're outside of render area by
+ * the bottom.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if bodies will be deleted or @c EINA_FALSE if they
+ * won't, or on error.
+ *
+ * @see ephysics_world_bodies_outside_bottom_autodel_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_bodies_outside_bottom_autodel_get(EPhysics_World *world);
+
+/**
+ * @brief
+ * Set world autodeleting bodies mode when they're outside of render area
+ * by the right.
+ *
+ * @param world The physics world.
+ * @param autodel If @c EINA_TRUE delete bodies when they are outside render
+ * area, otherwise, don't delete.
+ *
+ * @see ephysics_world_bodies_outside_top_autodel_set() for more details.
+ * @see ephysics_world_bodies_outside_right_autodel_get().
+ * @see ephysics_world_bodies_outside_bottom_autodel_set().
+ * @see ephysics_world_bodies_outside_left_autodel_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_bodies_outside_right_autodel_set(EPhysics_World *world, Eina_Bool autodel);
+
+/**
+ * @brief
+ * Get world autodeleting bodies mode when they're outside of render area by
+ * the right.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if bodies will be deleted or @c EINA_FALSE if they
+ * won't, or on error.
+ *
+ * @see ephysics_world_bodies_outside_right_autodel_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_bodies_outside_right_autodel_get(EPhysics_World *world);
+
+/**
+ * @brief
+ * Set world autodeleting bodies mode when they're outside of render area
+ * by the left.
+ *
+ * @param world The physics world.
+ * @param autodel If @c EINA_TRUE delete bodies when they are outside render
+ * area, otherwise, don't delete.
+ *
+ * @see ephysics_world_bodies_outside_top_autodel_set() for more details.
+ * @see ephysics_world_bodies_outside_left_autodel_get().
+ * @see ephysics_world_bodies_outside_bottom_autodel_set().
+ * @see ephysics_world_bodies_outside_right_autodel_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, Eina_Bool autodel);
+
+/**
+ * @brief
+ * Get world autodeleting bodies mode when they're outside of render area by
+ * the left.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if bodies will be deleted or @c EINA_FALSE if they
+ * won't, or on error.
+ *
+ * @see ephysics_world_bodies_outside_left_autodel_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_bodies_outside_left_autodel_get(EPhysics_World *world);
+
+/**
  * @}
  */
 
