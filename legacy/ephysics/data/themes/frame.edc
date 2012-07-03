@@ -133,6 +133,17 @@
             }
          }
 
+         part {
+            name: "extra_input";
+            type: SWALLOW;
+            mouse_events: 1;
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0.2 0.0;
+               rel2.relative: 0.8 0.1;
+            }
+         }
+
       }
 
       programs {

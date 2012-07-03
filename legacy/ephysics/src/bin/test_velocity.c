@@ -106,7 +106,7 @@ test_velocity(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
      return;
 
    test_data = test_data_new();
-   test_win_add(test_data, "Bouncing Ball", EINA_TRUE);
+   test_win_add(test_data, "Velocity Getters", EINA_TRUE);
 
    edje = elm_layout_edje_get(test_data->layout);
    edje_object_signal_callback_add(edje, "restart", "test-theme", _restart,

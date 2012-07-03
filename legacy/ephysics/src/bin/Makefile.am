@@ -20,6 +20,7 @@ test_bouncing_ball.c \
 test_bouncing_text.c \
 test_colliding_balls.c \
 test_collision_detection.c \
+test_collision_speed.c \
 test_constraint.c \
 test_falling_letters.c \
 test_jumping_balls.c \
