@@ -837,3 +837,8 @@
 
         * Fix font instance refcounting for textprops that hang around.
 
+2012-06-29  Jiyoun Park
+
+	* upstream merge
+	* Merge remote-tracking branch 'remotes/origin/upstream'
+
