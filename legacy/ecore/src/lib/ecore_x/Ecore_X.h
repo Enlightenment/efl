@@ -337,6 +337,20 @@ typedef enum _Ecore_X_Randr_Property_Change
    ECORE_X_RANDR_PROPERTY_CHANGE_DEL
 } Ecore_X_Randr_Property_Change;
 
+typedef enum _Ecore_X_Netwm_Direction
+{
+   ECORE_X_NETWM_DIRECTION_SIZE_TL = 0,
+   ECORE_X_NETWM_DIRECTION_SIZE_T = 1,
+   ECORE_X_NETWM_DIRECTION_SIZE_TR = 2,
+   ECORE_X_NETWM_DIRECTION_SIZE_R = 3,
+   ECORE_X_NETWM_DIRECTION_SIZE_BR = 4,
+   ECORE_X_NETWM_DIRECTION_SIZE_B = 5,
+   ECORE_X_NETWM_DIRECTION_SIZE_BL = 6,
+   ECORE_X_NETWM_DIRECTION_SIZE_L = 7,
+   ECORE_X_NETWM_DIRECTION_MOVE = 8,
+   ECORE_X_NETWM_DIRECTION_CANCEL = 11,
+} Ecore_X_Netwm_Direction;
+
 /**
  * @typedef _Ecore_X_Error_Code
  * Defines the error codes of Ecore_X which wraps the X Window Systems
@@ -866,6 +880,63 @@ struct _Ecore_X_Event_Window_Delete_Request
    Ecore_X_Time   time;
 };
 
+struct _Ecore_X_Event_Window_Prop_Title_Change
+{
+   Ecore_X_Window win;
+   char          *title;
+   Ecore_X_Time   time;
+};
+
+struct _Ecore_X_Event_Window_Prop_Visible_Title_Change
+{
+   Ecore_X_Window win;
+   char          *title;
+   Ecore_X_Time   time;
+};
+
+struct _Ecore_X_Event_Window_Prop_Icon_Name_Change
+{
+   Ecore_X_Window win;
+   char          *name;
+   Ecore_X_Time   time;
+};
+
+struct _Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change
+{
+   Ecore_X_Window win;
+   char          *name;
+   Ecore_X_Time   time;
+};
+
+struct _Ecore_X_Event_Window_Prop_Client_Machine_Change
+{
+   Ecore_X_Window win;
+   char          *name;
+   Ecore_X_Time   time;
+};
+
+struct _Ecore_X_Event_Window_Prop_Name_Class_Change
+{
+   Ecore_X_Window win;
+   char          *name;
+   char          *clas;
+   Ecore_X_Time   time;
+};
+
+struct _Ecore_X_Event_Window_Prop_Pid_Change
+{
+   Ecore_X_Window win;
+   pid_t          pid;
+   Ecore_X_Time   time;
+};
+
+struct _Ecore_X_Event_Window_Prop_Desktop_Change
+{
+   Ecore_X_Window win;
+   long           desktop;
+   Ecore_X_Time   time;
+};
+
 struct _Ecore_X_Event_Startup_Sequence
 {
    Ecore_X_Window win;
@@ -1156,6 +1227,12 @@ typedef enum _Ecore_X_Illume_Indicator_Opacity_Mode
    ECORE_X_ILLUME_INDICATOR_TRANSLUCENT,
    ECORE_X_ILLUME_INDICATOR_TRANSPARENT
 } Ecore_X_Illume_Indicator_Opacity_Mode;
+
+typedef enum _Ecore_X_Illume_Window_State
+{
+   ECORE_X_ILLUME_WINDOW_STATE_NORMAL = 0,
+   ECORE_X_ILLUME_WINDOW_STATE_FLOATING
+} Ecore_X_Illume_Window_State;
 
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW  2
@@ -2287,6 +2364,13 @@ EAPI void                                  ecore_x_e_illume_indicator_opacity_se
 EAPI Ecore_X_Illume_Indicator_Opacity_Mode ecore_x_e_illume_indicator_opacity_get(Ecore_X_Window win);
 
 EAPI void                                  ecore_x_e_illume_indicator_opacity_send(Ecore_X_Window win, Ecore_X_Illume_Indicator_Opacity_Mode mode);
+
+EAPI void
+ecore_x_e_illume_window_state_set(Ecore_X_Window win,
+                                  Ecore_X_Illume_Window_State state);
+
+EAPI Ecore_X_Illume_Window_State
+ecore_x_e_illume_window_state_get(Ecore_X_Window win);
 
 #ifdef __cplusplus
 }

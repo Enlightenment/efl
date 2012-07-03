@@ -794,6 +794,35 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win,
 }
 
 EAPI void
+ecore_x_netwm_moveresize_request_send(Ecore_X_Window win,
+                                      int x,
+                                      int y,
+                                      Ecore_X_Netwm_Direction direction,
+                                      unsigned int button)
+{
+   xcb_client_message_event_t ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+   memset(&ev, 0, sizeof(xcb_client_message_event_t));
+
+   ev.response_type = XCB_CLIENT_MESSAGE;
+   ev.format = 32;
+   ev.window = win;
+   ev.type = ECORE_X_ATOM_NET_WM_MOVERESIZE;
+   ev.data.data32[0] = x;
+   ev.data.data32[1] = y;
+   ev.data.data32[2] = direction;
+   ev.data.data32[3] = button;
+   ev.data.data32[4] = 1;
+
+   xcb_send_event(_ecore_xcb_conn, 0, win,
+                  (XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT |
+                   XCB_EVENT_MASK_SUBSTRUCTURE_NOTIFY), (const char *)&ev);
+}
+
+EAPI void
 ecore_x_netwm_handled_icons_set(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);

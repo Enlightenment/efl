@@ -1605,6 +1605,33 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win,
               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
 }
 
+EAPI void
+ecore_x_netwm_moveresize_request_send(Ecore_X_Window win,
+                                      int x,
+                                      int y,
+                                      Ecore_X_Netwm_Direction direction,
+                                      unsigned int button)
+{
+   XEvent xev;
+
+   if (!win)
+     return;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   xev.xclient.window = win;
+   xev.xclient.type = ClientMessage;
+   xev.xclient.message_type = ECORE_X_ATOM_NET_WM_MOVERESIZE;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = x;
+   xev.xclient.data.l[1] = y;
+   xev.xclient.data.l[2] = direction;
+   xev.xclient.data.l[3] = button;
+   xev.xclient.data.l[4] = 1;
+
+   XSendEvent(_ecore_x_disp, win, False,
+              SubstructureNotifyMask | SubstructureRedirectMask, &xev);
+}
+
 int
 _ecore_x_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__,
                                   char *data __UNUSED__)

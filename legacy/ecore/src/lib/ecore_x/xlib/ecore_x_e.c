@@ -927,6 +927,83 @@ ecore_x_e_illume_clipboard_geometry_get(Ecore_X_Window win,
    return EINA_TRUE;
 }
 
+/* for sliding window */
+EAPI void 
+ecore_x_e_illume_sliding_win_state_set(Ecore_X_Window win,
+                                       unsigned int   is_visible)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ecore_x_window_prop_card32_set(win, 
+                                  ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE, 
+                                  &is_visible, 1);
+} /* ecore_x_e_illume_sliding_win_state_set */
+
+EAPI int 
+ecore_x_e_illume_sliding_win_state_get(Ecore_X_Window win)
+{
+   unsigned int is_visible = 0;
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!ecore_x_window_prop_card32_get(win,
+                                       ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_STATE, 
+                                       &is_visible, 1))
+      return 0;
+
+   return is_visible;
+}
+
+EAPI void
+ecore_x_e_illume_sliding_win_geometry_set(Ecore_X_Window win,
+                                          int            x,
+                                          int            y,
+                                          int            w,
+                                          int            h)
+{
+   unsigned int geom[4];
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   geom[0] = x;
+   geom[1] = y;
+   geom[2] = w;
+   geom[3] = h;
+   ecore_x_window_prop_card32_set(win,
+                                  ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY, 
+                                  geom, 4);
+} /* ecore_x_e_illume_sliding_win_geometry_set */
+
+EAPI int 
+ecore_x_e_illume_sliding_win_geometry_get(Ecore_X_Window win,
+                                          int           *x,
+                                          int           *y,
+                                          int           *w,
+                                          int           *h)
+{
+   int ret = 0;
+   unsigned int geom[4];
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ret = 
+     ecore_x_window_prop_card32_get(win, 
+                                    ECORE_X_ATOM_E_ILLUME_SLIDING_WIN_GEOMETRY, 
+                                    geom, 4);
+   if (ret != 4)
+      return 0;
+   
+   if (x)
+      *x = geom[0];
+   
+   if (y)
+      *y = geom[1];
+   
+   if (w)
+      *w = geom[2];
+   
+   if (h)
+      *h = geom[3];
+   
+   return 1;
+}/* ecore_x_e_illume_sliding_win_geometry_get */
+
 EAPI void
 ecore_x_e_comp_sync_counter_set(Ecore_X_Window win,
                                 Ecore_X_Sync_Counter counter)
@@ -1009,6 +1086,124 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureRedirectMask | SubstructureNotifyMask,
               &xev);
+}
+
+EAPI void
+ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
+                                  const char    **profiles,
+                                  unsigned int    num_profiles)
+{
+   Ecore_X_Atom *atoms;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!win)
+     return;
+
+   if (!num_profiles)
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_PROFILE_LIST);
+   else
+     {
+        atoms = alloca(num_profiles * sizeof(Ecore_X_Atom));
+        ecore_x_atoms_get(profiles, num_profiles, atoms);
+        ecore_x_window_prop_property_set(win,
+                                         ECORE_X_ATOM_E_PROFILE_LIST,
+                                         XA_ATOM, 32, (void *)atoms,
+                                         num_profiles);
+     }
+}
+
+EAPI Eina_Bool
+ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
+                                  const char    ***profiles,
+                                  int             *ret_num)
+{
+   unsigned char *data;
+   Ecore_X_Atom *atoms;
+   int num, i;
+
+   if (ret_num)
+     *ret_num = 0;
+
+   if (profiles)
+     *profiles = NULL;
+
+   if (!win)
+     return EINA_FALSE;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!ecore_x_window_prop_property_get(win,
+                                         ECORE_X_ATOM_E_PROFILE_LIST,
+                                         XA_ATOM, 32, &data, &num))
+     return EINA_FALSE;
+
+   if (ret_num)
+     *ret_num = num;
+
+   if (profiles)
+     {
+        (*profiles) = calloc(num, sizeof(char *));
+        if (!(*profiles))
+          {
+             if (ret_num)
+               *ret_num = 0;
+
+             if (data)
+               free(data);
+
+             return EINA_FALSE;
+          }
+
+        atoms = (Ecore_X_Atom *)data;
+        for (i = 0; i < num; i++)
+           (*profiles)[i] = ecore_x_atom_name_get(atoms[i]);
+     }
+
+   if (data)
+     XFree(data);
+
+   return EINA_TRUE;
+}
+
+EAPI void
+ecore_x_e_window_profile_set(Ecore_X_Window win,
+                             const char    *profile)
+{
+   Ecore_X_Atom atom;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!win)
+     return;
+
+   if (!profile)
+     ecore_x_window_prop_property_del(win, ECORE_X_ATOM_E_PROFILE);
+   else
+     {
+        atom = ecore_x_atom_get(profile);
+        ecore_x_window_prop_property_set(win, ECORE_X_ATOM_E_PROFILE,
+                                         XA_ATOM, 32, (void *)&atom, 1);
+     }
+}
+
+EAPI char *
+ecore_x_e_window_profile_get(Ecore_X_Window win)
+{
+   Ecore_X_Atom *atom = NULL;
+   unsigned char *data;
+   char *profile = NULL;
+   int num;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_E_PROFILE,
+                                         XA_ATOM, 32, &data, &num))
+     return NULL;
+
+   if (data)
+     atom = (Ecore_X_Atom *)data;
+
+   if (atom)
+     profile = ecore_x_atom_name_get(atom[0]);
+
+   return profile;
 }
 
 EAPI void
@@ -1355,5 +1550,60 @@ ecore_x_e_illume_indicator_opacity_send(Ecore_X_Window win,
                                  ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
                                  _ecore_x_e_indicator_opacity_atom_get(mode),
                                  0, 0, 0, 0);
+}
+
+static Ecore_X_Atom
+_ecore_x_e_illume_window_state_atom_get(Ecore_X_Illume_Window_State state)
+{
+   switch (state)
+     {
+      case ECORE_X_ILLUME_WINDOW_STATE_NORMAL:
+        return ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_NORMAL;
+
+      case ECORE_X_ILLUME_WINDOW_STATE_FLOATING:
+        return ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_FLOATING;
+
+      default:
+        break;
+     }
+   return 0;
+}
+
+static Ecore_X_Illume_Window_State
+_ecore_x_e_illume_window_state_get(Ecore_X_Atom atom)
+{
+   if (atom == ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_NORMAL)
+     return ECORE_X_ILLUME_WINDOW_STATE_NORMAL;
+
+   if (atom == ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_FLOATING)
+     return ECORE_X_ILLUME_WINDOW_STATE_FLOATING;
+
+   return ECORE_X_ILLUME_WINDOW_STATE_NORMAL;
+}
+
+EAPI void
+ecore_x_e_illume_window_state_set(Ecore_X_Window win,
+                                  Ecore_X_Illume_Window_State state)
+{
+   Ecore_X_Atom atom = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   atom = _ecore_x_e_illume_window_state_atom_get(state);
+   ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_ILLUME_WINDOW_STATE,
+                                &atom, 1);
+}
+
+EAPI Ecore_X_Illume_Window_State
+ecore_x_e_illume_window_state_get(Ecore_X_Window win)
+{
+   Ecore_X_Atom atom;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!ecore_x_window_prop_atom_get(win,
+                                     ECORE_X_ATOM_E_ILLUME_WINDOW_STATE,
+                                     &atom, 1))
+     return ECORE_X_ILLUME_WINDOW_STATE_NORMAL;
+
+   return _ecore_x_e_illume_window_state_get(atom);
 }
 
