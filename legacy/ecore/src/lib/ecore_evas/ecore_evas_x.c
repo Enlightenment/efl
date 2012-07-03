@@ -102,6 +102,8 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
 static void
 _ecore_evas_x_sync_set(Ecore_Evas *ee)
 {
+   Ecore_X_Sync_Counter sync_counter = ee->engine.x.sync_counter;
+
    if (((ee->should_be_visible) || (ee->visible)) &&
        ((ecore_x_e_comp_sync_supported_get(ee->engine.x.win_root)) &&
            (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync)))
@@ -112,9 +114,13 @@ _ecore_evas_x_sync_set(Ecore_Evas *ee)
    else
      {
         if (ee->engine.x.sync_counter)
+          {
            ecore_x_sync_counter_free(ee->engine.x.sync_counter);
+             ee->engine.x.sync_val = 0;
+          }
         ee->engine.x.sync_counter = 0;
      }
+   if (sync_counter != ee->engine.x.sync_counter)
    ecore_x_e_comp_sync_counter_set(ee->prop.window, ee->engine.x.sync_counter);
 }
 
@@ -123,6 +129,7 @@ _ecore_evas_x_sync_clear(Ecore_Evas *ee)
 {
    if (!ee->engine.x.sync_counter) return;
    ecore_x_sync_counter_free(ee->engine.x.sync_counter);
+   ee->engine.x.sync_val = 0;
    ee->engine.x.sync_counter = 0;
 }
 
@@ -709,6 +716,34 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
              break;
           }
      }
+   else if (e->atom == ECORE_X_ATOM_E_PROFILE)
+     {
+        char *p = ecore_x_e_window_profile_get(e->win);
+        if ((p) && (ee->prop.profile))
+          {
+             if (strcmp(p, ee->prop.profile) != 0)
+               {
+                  free(ee->prop.profile);
+                  ee->prop.profile = strdup(p);
+                  state_change = 1;
+               }
+          }
+        else if ((!p) && (ee->prop.profile))
+          {
+             free(ee->prop.profile);
+             ee->prop.profile = NULL;
+             state_change = 1;
+          }
+        else if ((p) && (!ee->prop.profile))
+          {
+             ee->prop.profile = strdup(p);
+             state_change = 1;
+          }
+
+        if (p)
+          free(p);
+     }
+
    if (state_change)
      {
         if (ee->func.fn_state_change) ee->func.fn_state_change(ee);
@@ -1115,6 +1150,17 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
    ee = ecore_event_window_match(e->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   /* some GL drivers are doing buffer copy in a separate thread.
+    * we need to check whether GL driver sends SYNC_DRAW_DONE msg afger copying
+    * that are required in order to exactly render. - added by gl77.lee
+    */
+   if (ee->gl_sync_draw_done < 0)
+     {
+        if (getenv("ECORE_EVAS_GL_SYNC_DRAW_DONE"))
+           ee->gl_sync_draw_done = atoi(getenv("ECORE_EVAS_GL_SYNC_DRAW_DONE"));
+        else
+           ee->gl_sync_draw_done = 0;
+     }
    if (first_map_bug < 0)
      {
         char *bug = NULL;
@@ -1671,14 +1717,41 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
      }
 }
 
+#define _USE_WIN_ROT_EFFECT 1
+
+#if _USE_WIN_ROT_EFFECT
+static void _ecore_evas_x_flush_pre(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__);
+
+typedef struct _Ecore_Evas_X_Rotation_Effect Ecore_Evas_X_Rotation_Effect;
+struct _Ecore_Evas_X_Rotation_Effect
+{
+   Eina_Bool    wait_for_comp_reply;
+};
+
+static Ecore_Evas_X_Rotation_Effect _rot_effect =
+{
+   EINA_FALSE
+};
+
+static void
+_ecore_evas_x_rotation_effect_setup(void)
+{
+   _rot_effect.wait_for_comp_reply = EINA_TRUE;
+}
+#endif /* end of _USE_WIN_ROT_EFFECT */
+
 static void
 _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
+   if (ee->rotation == rotation) return;
+   if (!strcmp(ee->driver, "xrender_x11")) return;
+
+#if _USE_WIN_ROT_EFFECT
    int angles[2];
    angles[0] = rotation;
    angles[1] = ee->rotation;
+#endif /* end of _USE_WIN_ROT_EFFECT */
 
-   if (ee->rotation == rotation) return;
    if (!strcmp(ee->driver, "opengl_x11"))
      {
 #ifdef BUILD_ECORE_EVAS_OPENGL_X11
@@ -1689,9 +1762,15 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         einfo->info.rotation = rotation;
         _ecore_evas_x_rotation_set_internal(ee, rotation, resize,
                                             (Evas_Engine_Info *)einfo);
+# if _USE_WIN_ROT_EFFECT
         ecore_x_window_prop_property_set(ee->prop.window,
                                          ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
                                          ECORE_X_ATOM_CARDINAL, 32, &angles, 2);
+# else
+        ecore_x_window_prop_property_set(ee->prop.window,
+                                         ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
+                                         ECORE_X_ATOM_CARDINAL, 32, &rotation, 1);
+# endif
 #endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
      }
    else if (!strcmp(ee->driver, "software_x11"))
@@ -1704,9 +1783,15 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         einfo->info.rotation = rotation;
         _ecore_evas_x_rotation_set_internal(ee, rotation, resize,
                                             (Evas_Engine_Info *)einfo);
+# if _USE_WIN_ROT_EFFECT
         ecore_x_window_prop_property_set(ee->prop.window,
                                          ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
                                          ECORE_X_ATOM_CARDINAL, 32, &angles, 2);
+# else
+        ecore_x_window_prop_property_set(ee->prop.window,
+                                         ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
+                                         ECORE_X_ATOM_CARDINAL, 32, &rotation, 1);
+# endif
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
      }
    else if (!strcmp(ee->driver,  "software_16_x11"))
@@ -1719,9 +1804,15 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         einfo->info.rotation = rotation;
         _ecore_evas_x_rotation_set_internal(ee, rotation, resize,
                                             (Evas_Engine_Info *)einfo);
+# if _USE_WIN_ROT_EFFECT
         ecore_x_window_prop_property_set(ee->prop.window,
                                          ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
                                          ECORE_X_ATOM_CARDINAL, 32, &angles, 2);
+# else
+        ecore_x_window_prop_property_set(ee->prop.window,
+                                         ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
+                                         ECORE_X_ATOM_CARDINAL, 32, &rotation, 1);
+# endif
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
    else if (!strcmp(ee->driver,  "software_8_x11"))
@@ -1734,11 +1825,29 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         einfo->info.rotation = rotation;
         _ecore_evas_x_rotation_set_internal(ee, rotation, resize,
                                             (Evas_Engine_Info *)einfo);
+# if _USE_WIN_ROT_EFFECT
         ecore_x_window_prop_property_set(ee->prop.window,
                                          ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
                                          ECORE_X_ATOM_CARDINAL, 32, &angles, 2);
+# else
+        ecore_x_window_prop_property_set(ee->prop.window,
+                                         ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
+                                         ECORE_X_ATOM_CARDINAL, 32, &rotation, 1);
+# endif
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_8_X11 */
      }
+
+#if _USE_WIN_ROT_EFFECT
+   if ((ee->visible) &&
+       ((ecore_x_e_comp_sync_supported_get(ee->engine.x.win_root)) &&
+        (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync)) &&
+        (ee->engine.x.sync_counter) &&
+        (ee->engine.x.sync_val > 0))
+     {
+        _ecore_evas_x_rotation_effect_setup();
+        _ecore_evas_x_flush_pre(ee, NULL, NULL);
+     }
+#endif /* end of _USE_WIN_ROT_EFFECT */
 }
 
 static void
@@ -2664,6 +2773,13 @@ _ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
 }
 
 static void
+_ecore_evas_x_profiles_set(Ecore_Evas *ee, const char **plist, int n)
+{
+   /* Ecore_Evas's profile will be updated when WM sets the E_PROFILE. */
+   ecore_x_e_window_profile_list_set(ee->prop.window, plist, n);
+}
+
+static void
 _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 {
    if (ee->prop.avoid_damage == on) return;
@@ -2910,6 +3026,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_ignore_events_set,
      _ecore_evas_x_alpha_set,
      _ecore_evas_x_transparent_set,
+     _ecore_evas_x_profiles_set,
    
      _ecore_evas_x_window_group_set,
      _ecore_evas_x_aspect_set,
@@ -2956,7 +3073,8 @@ _ecore_evas_x_flush_post(void *data, Evas *e __UNUSED__, void *event_info __UNUS
 {
    Ecore_Evas *ee = data;
 
-   if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync))
+   if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync) &&
+       (!ee->gl_sync_draw_done)) // added by gl77.lee
      {
         if (ee->engine.x.sync_counter)
           {
@@ -3326,14 +3444,20 @@ ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent,
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
+   ee->gl_sync_draw_done = -1; // added by gl77.lee
+
    _ecore_evas_x_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
 
    ee->driver = "opengl_x11";
+#if 1
+   ee->semi_sync = 0; // gl engine doesn't need to sync - its whole swaps
+#else
    if (!getenv("ECORE_EVAS_COMP_NOSEMISYNC"))
       ee->semi_sync = 1; // gl engine doesn't need to sync - its whole swaps
 //   ee->no_comp_sync = 1; // gl engine doesn't need to sync - its whole swaps
+#endif
    if (disp_name) ee->name = strdup(disp_name);
 
    if (w < 1) w = 1;

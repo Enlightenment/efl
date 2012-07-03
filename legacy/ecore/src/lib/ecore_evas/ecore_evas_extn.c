@@ -2003,6 +2003,7 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    NULL,
    _ecore_evas_extn_socket_alpha_set,
    NULL, //transparent
+   NULL, // profiles_set
 
    NULL,
    NULL,

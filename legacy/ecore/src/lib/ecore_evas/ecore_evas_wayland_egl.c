@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-#define LOGFNS 1
+//#define LOGFNS 1
 
 #ifdef LOGFNS
 # include <stdio.h>
@@ -143,6 +143,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_ignore_events_set,
    _ecore_evas_wl_alpha_set,
    _ecore_evas_wl_transparent_set,
+   NULL, // func profiles set
    NULL,
    NULL,
    NULL,

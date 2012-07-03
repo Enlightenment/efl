@@ -489,6 +489,7 @@ static Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,                              /* ignore events */
      NULL,                              /* alpha */
      NULL, //transparent
+     NULL, // profiles_set
 
      NULL,
      NULL,
