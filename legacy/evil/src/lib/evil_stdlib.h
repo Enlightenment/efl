@@ -175,6 +175,14 @@ EAPI int mkstemp(char *__template);
  * That function can be used to obtain the absolute path name for
  * relative paths (relPath) that include "./" or "../" in their names.
  *
+ * On Windows XP, errno is set in the following cases:
+ *
+ * @li EACCESS: if @p file_name can not be accessed.
+ * @li EINVAL: if @p file_name is @c NULL.
+ * @li ENAMETOOLONG: if the path name is too long.
+ * @li ENOENT: @p file_name does not exist
+ * @li ENOMEM: if memory allocation fails.
+ *
  * Conformity: None.
  *
  * Supported OS: Windows XP, Windows CE.

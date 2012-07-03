@@ -1,3 +1,10 @@
+2012-07-03  Vincent Torri  <doursse at users dot sf dot net>
+
+	* AUTHORS:
+	* src/lib/evil_stdlib.c:
+	* src/lib/evil_stdlib.h:
+	Update realpath() code, based on Keith Marshall's implementation.
+
 2012-04-26  Vincent Torri  <doursse at users dot sf dot net>
 
 	* NEWS:
