@@ -792,3 +792,13 @@
 2012-07-03  Cedric Bail
 
 	* Fix unitialized use of Ecore_X_Atom.
+
+2012-07-03 Christopher Michael
+
+	* Merge Tizen EFL changes to upsteam.
+	* Add ecore_evas functions to get/set profiles
+	* Fix GL buffer. some GL drivers are doing buffer copy in a separate thread.
+		we need to check whether GL driver sends SYNC_DRAW_DONE msg afger copying
+		that are required in order to exactly render. - added by gl77.lee
+	* Add Ecore_X atoms for Illume Rotate Window
+
