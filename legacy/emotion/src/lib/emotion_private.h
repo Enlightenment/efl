@@ -128,4 +128,7 @@ EAPI Eina_Bool _emotion_module_unregister(const char *name);
 
 EAPI const char *emotion_webcam_custom_get(const char *device);
 
+EAPI void _emotion_pending_object_ref(void);
+EAPI void _emotion_pending_object_unref(void);
+
 #endif

@@ -25,3 +25,7 @@
 2012-06-19  Cedric Bail
 
 	* Sync rendering with Ecore_Animator.
+
+2012-06-03  Cedric Bail
+
+	* Track pending object for proper shutdown.

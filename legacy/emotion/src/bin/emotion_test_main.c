@@ -719,6 +719,8 @@ main(int argc, char **argv)
    evas_font_cache_set(evas, 1 * 1024 * 1024);
    evas_font_path_append(evas, PACKAGE_DATA_DIR"/data/fonts");
 
+   emotion_init();
+
    bg_setup();
 
    for (; args < argc; args++)
@@ -729,6 +731,8 @@ main(int argc, char **argv)
    ecore_main_loop_begin();
 
    main_signal_exit(NULL, 0, NULL);
+
+   emotion_shutdown();
    ecore_evas_free(ecore_evas);
    ecore_evas_shutdown();
    edje_shutdown();

@@ -49,6 +49,7 @@ void *alloca (size_t);
 #include "emotion_private.h"
 
 static Emotion_Version _version = { VMAJ, VMIN, VMIC, VREV };
+static int emotion_pending_objects = 0;
 EAPI Emotion_Version *emotion_version = &_version;
 
 EAPI int EMOTION_WEBCAM_UPDATE = 0;
@@ -343,6 +344,8 @@ emotion_init(void)
 
    if (_emotion_webcams_count++) return EINA_TRUE;
 
+   ecore_init();
+
    snprintf(buffer, 4096, "%s/emotion.cfg", PACKAGE_DATA_DIR);
    _emotion_webcams_file = eet_open(buffer, EET_FILE_MODE_READ);
    if (_emotion_webcams_file)
@@ -382,6 +385,7 @@ EAPI Eina_Bool
 emotion_shutdown(void)
 {
    Emotion_Webcam *ew;
+   double start;
 
    if (_emotion_webcams_count <= 0)
      {
@@ -414,6 +418,17 @@ emotion_shutdown(void)
 
    eeze_shutdown();
 #endif
+
+   start = ecore_time_get();
+   while (emotion_pending_objects && ecore_time_get() - start < 0.5)
+     ecore_main_loop_iterate();
+
+   if (emotion_pending_objects)
+     {
+        EINA_LOG_ERR("There is still %i Emotion pipeline running", emotion_pending_objects);
+     }
+
+   ecore_shutdown();
 
    return EINA_TRUE;
 }
@@ -454,4 +469,16 @@ emotion_webcam_custom_get(const char *device)
      }
 
    return NULL;
+}
+
+EAPI void
+_emotion_pending_object_ref(void)
+{
+   emotion_pending_objects++;
+}
+
+EAPI void
+_emotion_pending_object_unref(void)
+{
+   emotion_pending_objects--;
 }
