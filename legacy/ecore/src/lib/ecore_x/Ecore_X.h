@@ -1673,6 +1673,11 @@ EAPI void                            ecore_x_e_comp_dump_send(Ecore_X_Window win
 EAPI void                            ecore_x_e_comp_pixmap_set(Ecore_X_Window win, Ecore_X_Pixmap pixmap);
 EAPI Ecore_X_Pixmap                  ecore_x_e_comp_pixmap_get(Ecore_X_Window win);
 
+EAPI char                            *ecore_x_e_window_profile_get(Ecore_X_Window win);
+EAPI void                             ecore_x_e_window_profile_set(Ecore_X_Window win, const char *profile);
+EAPI void                             ecore_x_e_window_profile_list_set(Ecore_X_Window  win, const char **profiles, unsigned int num_profiles);
+EAPI Eina_Bool                        ecore_x_e_window_profile_list_get(Ecore_X_Window win, const char ***profiles, int *ret_num);
+
 EAPI Ecore_X_Sync_Alarm              ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
 EAPI Eina_Bool                       ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);
 EAPI Eina_Bool                       ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter, unsigned int *val);
