@@ -1088,6 +1088,10 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
               &xev);
 }
 
+/*
+ * @since 1.3
+ * 
+ */
 EAPI void
 ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
                                   const char    **profiles,
@@ -1112,6 +1116,9 @@ ecore_x_e_window_profile_list_set(Ecore_X_Window  win,
      }
 }
 
+/*
+ * @since 1.3
+ */
 EAPI Eina_Bool
 ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
                                   const char    ***profiles,
@@ -1164,6 +1171,9 @@ ecore_x_e_window_profile_list_get(Ecore_X_Window   win,
    return EINA_TRUE;
 }
 
+/*
+ * @since 1.3
+ */
 EAPI void
 ecore_x_e_window_profile_set(Ecore_X_Window win,
                              const char    *profile)
@@ -1184,6 +1194,9 @@ ecore_x_e_window_profile_set(Ecore_X_Window win,
      }
 }
 
+/*
+ * @since 1.3 
+ */
 EAPI char *
 ecore_x_e_window_profile_get(Ecore_X_Window win)
 {
