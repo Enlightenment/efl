@@ -32,8 +32,10 @@ _update_vel_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
    Test_Data *test_data = data;
    double vx, vy, vaz;
 
+   vaz = ephysics_body_angular_velocity_get(body);
    ephysics_body_linear_velocity_get(body, &vx, &vy);
-   ephysics_body_angular_velocity_get(body, &vaz);
+   vx = (vx > 0 || vx <= -0.01) ? vx : 0;
+   vy = (vy > 0 || vy <= -0.01) ? vy : 0;
 
    snprintf(linear_vel, sizeof(linear_vel),
             "Linear velocity: x = %.2f, y = %.2f", vx, vy);

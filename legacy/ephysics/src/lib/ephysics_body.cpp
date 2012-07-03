@@ -550,26 +550,28 @@ ephysics_body_mass_get(const EPhysics_Body *body)
 EAPI void
 ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y)
 {
-    if (!body)
+   double rate;
+   if (!body)
      {
         ERR("Can't get body linear velocity, body is null.");
         return;
      }
 
-   if (x) *x = body->rigid_body->getLinearVelocity().getX();
-   if (y) *y = body->rigid_body->getLinearVelocity().getY();
+   rate = ephysics_world_rate_get(body->world);
+   if (x) *x = body->rigid_body->getLinearVelocity().getX() * rate;
+   if (y) *y = -body->rigid_body->getLinearVelocity().getY() * rate;
 }
 
-EAPI void
-ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *z)
+EAPI double
+ephysics_body_angular_velocity_get(const EPhysics_Body *body)
 {
-    if (!body)
+   if (!body)
      {
         ERR("Can't get body linear velocity, body is null.");
-        return;
+        return 0;
      }
 
-   if (z) *z = body->rigid_body->getAngularVelocity().getZ();
+   return -body->rigid_body->getAngularVelocity().getZ() * RAD_TO_DEG;
 }
 
 EAPI void
