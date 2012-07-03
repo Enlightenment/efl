@@ -149,8 +149,8 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 
    body->rigid_body->getMotionState()->setWorldTransform(trans);
 
-   DBG("Body position changed to %lf, %lf.", mx, my);
-   DBG("Body scale changed to %lf, %lf.", sx, sy);
+   DBG("Body %p position changed to %lf, %lf.", body, mx, my);
+   DBG("Body %p scale changed to %lf, %lf.", body, sx, sy);
 }
 
 static void
@@ -283,7 +283,7 @@ ephysics_body_circle_add(EPhysics_World *world)
         return NULL;
      }
 
-   INF("Circle body added.");
+   INF("Circle body added: %p.", body);
    return body;
 }
 
@@ -315,7 +315,7 @@ ephysics_body_box_add(EPhysics_World *world)
         return NULL;
      }
 
-   INF("Box body added.");
+   INF("Box body added: %p.", body);
    return body;
 }
 
@@ -432,7 +432,7 @@ ephysics_body_del(EPhysics_Body *body)
    ephysics_world_body_del(body->world, body, body->rigid_body);
    ephysics_orphan_body_del(body);
 
-   INF("Body deleted.");
+   INF("Body %p deleted.", body);
 }
 
 EAPI void
@@ -559,7 +559,7 @@ ephysics_body_mass_set(EPhysics_Body *body, double mass)
    body->rigid_body->setMassProps(mass, inertia);
    body->rigid_body->updateInertiaTensor();
 
-   DBG("Body mass changed to %lf.", mass);
+   DBG("Body %p mass changed to %lf.", body, mass);
 }
 
 EAPI double

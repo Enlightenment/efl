@@ -91,8 +91,6 @@ _simulate_worlds(void *data)
    double time_now;
    void *ldata;
 
-   DBG("Step");
-
    EINA_LIST_FOREACH(lworlds, l, ldata)
      {
         double time_now, delta;
@@ -303,7 +301,7 @@ ephysics_world_new(void)
    if (!_anim_simulate)
      _anim_simulate = ecore_animator_add(_simulate_worlds, _worlds);
 
-   INF("World added.");
+   INF("World %p added.", world);
    return world;
 
 no_list:
@@ -357,7 +355,7 @@ ephysics_world_serialize(const EPhysics_World *world, const char *path)
    fclose(file);
    delete serializer;
 
-   INF("Serialization written to file: %s.", path);
+   INF("Serialization of world %p written to file: %s.", world, path);
 
    return EINA_TRUE;
 }
@@ -403,7 +401,7 @@ ephysics_world_del(EPhysics_World *world)
    delete world->broadphase;
 
    free(world);
-   INF("World deleted.");
+   INF("World %p deleted.", world);
 }
 
 EAPI void
@@ -470,7 +468,7 @@ ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
 
    world->dynamics_world->setGravity(btVector3(gx / world->rate,
                                                -gy / world->rate, 0));
-   DBG("World gravity set to X:%lf, Y:%lf.", gx, gy);
+   DBG("World %p gravity set to X:%lf, Y:%lf.", world, gx, gy);
 }
 
 EAPI void
