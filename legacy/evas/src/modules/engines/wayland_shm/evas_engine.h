@@ -46,7 +46,13 @@ struct _Outbuf
    struct 
      {
         void *dest;
+
         RGBA_Image *buffer;
+        Eina_List *buffer_regions;
+
+        Eina_List *pending_writes;
+        Eina_List *prev_pending_writes;
+
         Eina_Bool destination_alpha : 1;
      } priv;
 };
