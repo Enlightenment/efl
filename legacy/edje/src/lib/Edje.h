@@ -3640,7 +3640,7 @@ EAPI Eina_List * edje_object_access_part_list_get         (const Evas_Object *ob
  * @param row The row of the child to get
  * @return The child Evas_Object
  */
-EAPI Evas_Object *edje_object_part_table_child_get        (Evas_Object *obj, const char *part, unsigned int col, unsigned int row);
+EAPI Evas_Object *edje_object_part_table_child_get        (const Evas_Object *obj, const char *part, unsigned int col, unsigned int row);
 
 /**
  * @brief Packs an object into the table.

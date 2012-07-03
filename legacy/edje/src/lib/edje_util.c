@@ -4087,7 +4087,7 @@ _edje_table_child_remove(Edje_Real_Part *rp, Evas_Object *child)
 }
 
 EAPI Evas_Object *
-edje_object_part_table_child_get(Evas_Object *obj, const char *part, unsigned int col, unsigned int row)
+edje_object_part_table_child_get(const Evas_Object *obj, const char *part, unsigned int col, unsigned int row)
 {
    Edje *ed;
    Edje_Real_Part *rp;
