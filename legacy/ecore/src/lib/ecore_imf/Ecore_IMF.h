@@ -110,11 +110,11 @@ typedef void (*Ecore_IMF_Event_Cb) (void *data, Ecore_IMF_Context *ctx, void *ev
  */
 typedef enum
 {
-   ECORE_IMF_CALLBACK_PREEDIT_START,      /**< "PREEDIT_START" is called when a new preediting sequence starts. */
-   ECORE_IMF_CALLBACK_PREEDIT_END,        /**< "PREEDIT_END" is called when a preediting sequence has been completed or canceled. */
-   ECORE_IMF_CALLBACK_PREEDIT_CHANGED,    /**< "PREEDIT_CHANGED" is called whenever the preedit sequence currently being entered has changed. */
-   ECORE_IMF_CALLBACK_COMMIT,             /**< "COMMIT" is called when a complete input sequence has been entered by the user */
-   ECORE_IMF_CALLBACK_DELETE_SURROUNDING  /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor */
+   ECORE_IMF_CALLBACK_PREEDIT_START,      /**< "PREEDIT_START" is called when a new preediting sequence starts. @since 1.2 */
+   ECORE_IMF_CALLBACK_PREEDIT_END,        /**< "PREEDIT_END" is called when a preediting sequence has been completed or canceled. @since 1.2 */
+   ECORE_IMF_CALLBACK_PREEDIT_CHANGED,    /**< "PREEDIT_CHANGED" is called whenever the preedit sequence currently being entered has changed. @since 1.2 */
+   ECORE_IMF_CALLBACK_COMMIT,             /**< "COMMIT" is called when a complete input sequence has been entered by the user @since 1.2 */
+   ECORE_IMF_CALLBACK_DELETE_SURROUNDING  /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor @since 1.2 */
 } Ecore_IMF_Callback_Type;
 
 /**
@@ -160,6 +160,7 @@ typedef enum
    ECORE_IMF_KEYBOARD_LOCK_CAPS      = 1 << 1, /**< "Caps" lock is active */
    ECORE_IMF_KEYBOARD_LOCK_SCROLL    = 1 << 2  /**< "Scroll" lock is active */
 } Ecore_IMF_Keyboard_Locks;
+
 /**
  * @typedef Ecore_IMF_Mouse_Flags
  * Type for Ecore_IMF mouse flags
@@ -192,10 +193,10 @@ typedef enum
  */
 typedef enum
 {
-   ECORE_IMF_PREEDIT_TYPE_NONE, /**< None style */
-   ECORE_IMF_PREEDIT_TYPE_SUB1, /**< Substring style 1 */
-   ECORE_IMF_PREEDIT_TYPE_SUB2, /**< Substring style 2 */
-   ECORE_IMF_PREEDIT_TYPE_SUB3  /**< Substring style 3 */
+   ECORE_IMF_PREEDIT_TYPE_NONE, /**< None style @since 1.1 */
+   ECORE_IMF_PREEDIT_TYPE_SUB1, /**< Substring style 1 @since 1.1 */
+   ECORE_IMF_PREEDIT_TYPE_SUB2, /**< Substring style 2 @since 1.1 */
+   ECORE_IMF_PREEDIT_TYPE_SUB3  /**< Substring style 3 @since 1.1 */
 } Ecore_IMF_Preedit_Type;
 
 /**
@@ -207,10 +208,10 @@ typedef enum
  */
 typedef enum
 {
-   ECORE_IMF_AUTOCAPITAL_TYPE_NONE,         /**< No auto-capitalization when typing */
-   ECORE_IMF_AUTOCAPITAL_TYPE_WORD,         /**< Autocapitalize each word typed */
-   ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE,     /**< Autocapitalize the start of each sentence */
-   ECORE_IMF_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters */
+   ECORE_IMF_AUTOCAPITAL_TYPE_NONE,         /**< No auto-capitalization when typing @since 1.1 */
+   ECORE_IMF_AUTOCAPITAL_TYPE_WORD,         /**< Autocapitalize each word typed @since 1.1 */
+   ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE,     /**< Autocapitalize the start of each sentence @since 1.1 */
+   ECORE_IMF_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters @since 1.1 */
 } Ecore_IMF_Autocapital_Type;
 
 /**
