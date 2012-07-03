@@ -203,6 +203,7 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
    double              per_inc;
    ColorMapObject     *cmap;
    GifRowType         *rows;
+   GifPixelType       *tmp = NULL; /*for skip gif line */
    int                 intoffset[] = { 0, 4, 2, 1 };
    int                 intjump[] = { 8, 8, 4, 2 };
    size_t              siz;
@@ -214,6 +215,9 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
    int                 bg_val = 0;
    DATA32             *ptr;
    Gif_Frame          *gif_frame = NULL;
+   /* for scale down decoding */
+   int                 scale_ratio = 1;
+   int                 scale_w, scale_h, scale_x, scale_y;
 
    if ((!gif) || (!frame)) return EINA_FALSE;
 
@@ -225,22 +229,31 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
    cache_w = ie->w;
    cache_h = ie->h;
 
-   rows = malloc(h * sizeof(GifRowType *));
+   /* if user don't set scale down, default scale_ratio is 1 */
+   if (ie->load_opts.scale_down_by > 1) scale_ratio = ie->load_opts.scale_down_by;
+   scale_w = w / scale_ratio;
+   scale_h = h / scale_ratio;
+   scale_x = x / scale_ratio;
+   scale_y = y / scale_ratio;
+
+   rows = malloc(scale_h * sizeof(GifRowType *));
+
    if (!rows)
      {
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return EINA_FALSE;
      }
-   for (i = 0; i < h; i++)
+   for (i = 0; i < scale_h; i++)
      {
         rows[i] = NULL;
      }
-   for (i = 0; i < h; i++)
+   /* alloc memory according to scaled size */
+   for (i = 0; i < scale_h; i++)
      {
         rows[i] = malloc(w * sizeof(GifPixelType));
         if (!rows[i])
           {
-             for (i = 0; i < h; i++)
+             for (i = 0; i < scale_h; i++)
                {
                   if (rows[i])
                     {
@@ -252,26 +265,62 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
              return EINA_FALSE;
           }
      }
+   if (scale_ratio > 1)
+     {
+        tmp = malloc(w * sizeof(GifPixelType));
+        if (!tmp)
+          {
+             *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+             goto error;
+          }
+     }
+
    if (gif->Image.Interlace)
      {
+        Eina_Bool multiple;
+        int scale_j;
         for (i = 0; i < 4; i++)
           {
              for (j = intoffset[i]; j < h; j += intjump[i])
                {
-                  DGifGetLine(gif, rows[j], w);
+                  scale_j = j / scale_ratio;
+                  multiple = ((j % scale_ratio) ? EINA_FALSE : EINA_TRUE);
+
+                  if (multiple && (scale_j < scale_h))
+                    DGifGetLine(gif, rows[scale_j], w);
+                  else
+                    DGifGetLine(gif, tmp, w);
                }
           }
      }
    else
      {
-        for (i = 0; i < h; i++)
+        for (i = 0; i < scale_h; i++)
           {
              if (DGifGetLine(gif, rows[i], w) != GIF_OK)
                {
                   *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                   goto error;
               }
+             if (scale_ratio > 1)
+               {
+                  /* we use down sample method for scale down, so skip other line */
+                  for (j = 0; j < (scale_ratio - 1); j++)
+                    {
+                       if (DGifGetLine(gif, tmp, w) != GIF_OK)
+                         {
+                            *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                            goto error;
+                         }
+                    }
+               }
           }
+     }
+
+   if (scale_ratio > 1)
+     {
+        if (tmp) free(tmp);
+        tmp = NULL;
      }
    alpha = gif_frame->frame_info.transparent;
    siz = cache_w *cache_h * sizeof(DATA32);
@@ -288,7 +337,7 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
    if (!cmap)
      {
         DGifCloseFile(gif);
-        for (i = 0; i < h; i++)
+        for (i = 0; i < scale_h; i++)
           {
              free(rows[i]);
           }
@@ -305,8 +354,9 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
    bg_val =  ARGB_JOIN(0xff, r, g, b);
 
    per_inc = 100.0 / (((double)w) * h);
-   cur_h = h;
-   cur_w = w;
+   cur_h = scale_h;
+   cur_w = scale_w;
+
    if (cur_h > cache_h) cur_h = cache_h;
    if (cur_w > cache_w) cur_w = cache_w;
 
@@ -353,28 +403,28 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                {
                 case 1: /* Do not dispose. need previous frame*/
                   memcpy(ptr, ptr_src, siz);
-                  /* composite frames */
-                  ptr = ptr + cache_w * y;
+                  /* only decoding image descriptor's region */
+                  ptr = ptr + cache_w * scale_y;
                   
                   for (i = 0; i < cur_h; i++)
                     {
-                       ptr = ptr + x;
+                       ptr = ptr + scale_x;
                        for (j = 0; j < cur_w; j++)
                          {
-                            if (rows[i][j] == alpha)
+                            if (rows[i][j * scale_ratio] == alpha)
                               {
                                  ptr++ ;
                               }
                             else
                               {
-                                 r = cmap->Colors[rows[i][j]].Red;
-                                 g = cmap->Colors[rows[i][j]].Green;
-                                 b = cmap->Colors[rows[i][j]].Blue;
+                                 r = cmap->Colors[rows[i][j * scale_ratio]].Red;
+                                 g = cmap->Colors[rows[i][j * scale_ratio]].Green;
+                                 b = cmap->Colors[rows[i][j * scale_ratio]].Blue;
                                  *ptr++ = ARGB_JOIN(0xff, r, g, b);
                               }
                             per += per_inc;
                          }
-                       ptr = ptr + (cache_w - (x + cur_w));
+                       ptr = ptr + (cache_w - (scale_x + cur_w));
                     }
                   break;
                 case 2: /* Restore to background color */
@@ -382,7 +432,7 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                    /* composite frames */
                    for (i = 0; i < cache_h; i++)
                     {
-                       if ((i < y) || (i >= (y + cur_h)))
+                       if ((i < scale_y) || (i >= (scale_y + cur_h)))
                          {
                             for (j = 0; j < cache_w; j++)
                               {
@@ -393,21 +443,21 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                        else
                          {
                             int i1, j1;
-                            i1 = i -y;
+                            i1 = i - scale_y;
                             
                             for (j = 0; j < cache_w; j++)
                               {
-                                 j1 = j - x;
-                                 if ((j < x) || (j >= (x + cur_w)))
+                                 j1 = j - scale_x;
+                                 if ((j < scale_x) || (j >= (scale_x + cur_w)))
                                    {
                                       *ptr = bg_val;
                                       ptr++;
                                    }
                                  else
                                    {
-                                      r = cmap->Colors[rows[i1][j1]].Red;
-                                      g = cmap->Colors[rows[i1][j1]].Green;
-                                      b = cmap->Colors[rows[i1][j1]].Blue;
+                                      r = cmap->Colors[rows[i1][j1 * scale_ratio]].Red;
+                                      g = cmap->Colors[rows[i1][j1 * scale_ratio]].Green;
+                                      b = cmap->Colors[rows[i1][j1 * scale_ratio]].Blue;
                                       *ptr++ = ARGB_JOIN(0xff, r, g, b);
                                    }
                               }
@@ -419,7 +469,7 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                    memset(ptr, 0, siz);
                    for (i = 0; i < cache_h; i++)
                      {
-                        if ((i < y) || (i >= (y + cur_h)))
+                        if ((i < scale_y) || (i >= (scale_y + cur_h)))
                           {
                              for (j = 0; j < cache_w; j++)
                                {
@@ -430,21 +480,21 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                         else
                           {
                              int i1, j1;
-                             i1 = i -y;
+                             i1 = i - scale_y;
 
                              for (j = 0; j < cache_w; j++)
                                {
-                                  j1 = j - x;
-                                  if ((j < x) || (j >= (x + cur_w)))
+                                  j1 = j - scale_x;
+                                  if ((j < scale_x) || (j >= (scale_x + cur_w)))
                                     {
                                        *ptr = bg_val;
                                        ptr++;
                                     }
                                   else
                                     {
-                                       r = cmap->Colors[rows[i1][j1]].Red;
-                                       g = cmap->Colors[rows[i1][j1]].Green;
-                                       b = cmap->Colors[rows[i1][j1]].Blue;
+                                       r = cmap->Colors[rows[i1][j1 * scale_ratio]].Red;
+                                       g = cmap->Colors[rows[i1][j1 * scale_ratio]].Green;
+                                       b = cmap->Colors[rows[i1][j1 * scale_ratio]].Blue;
                                        *ptr++ = ARGB_JOIN(0xff, r, g, b);
                                     }
                                }
@@ -459,7 +509,8 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
         /* fill background color */
         for (i = 0; i < cache_h; i++)
           {
-             if ((i < y) || (i >= (y + cur_h)))
+             /* the row's of logical screen not overap with frame */
+             if ((i < scale_y) || (i >= (scale_y + cur_h)))
                {
                   for (j = 0; j < cache_w; j++)
                     {
@@ -470,12 +521,12 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
              else
                {
                   int i1, j1;
-                  i1 = i -y;
+                  i1 = i -scale_y;
 
                   for (j = 0; j < cache_w; j++)
                     {
-                       j1 = j - x;
-                       if ((j < x) || (j >= (x + cur_w)))
+                       j1 = j - scale_x;
+                       if ((j < scale_x) || (j >= (scale_x + cur_w)))
                          {
                             *ptr = bg_val;
                             ptr++;
@@ -484,7 +535,7 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                          {
                             if (rows[i1][j1] == alpha)
                               {
-                                 ptr++ ;
+                                 ptr++;
                               }
                             else
                               {
@@ -499,7 +550,7 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
           }
      }
 
-   for (i = 0; i < h; i++)
+   for (i = 0; i < scale_h; i++)
      {
         if (rows[i]) free(rows[i]);
      }
@@ -507,11 +558,12 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
    frame->loaded = EINA_TRUE;
    return EINA_TRUE;
 error:
-   for (i = 0; i < h; i++)
+   for (i = 0; i < scale_h; i++)
      {
         if (rows[i]) free(rows[i]);
      }
    if (rows) free(rows);
+   if (tmp) free(tmp);
    return EINA_FALSE;
 }
 
@@ -655,6 +707,12 @@ evas_image_load_file_head_gif(Image_Entry *ie, const char *file, const char *key
    /* check logical screen size */
    w = gif->SWidth;
    h = gif->SHeight;
+   /* support scale down feture in gif*/
+   if (ie->load_opts.scale_down_by > 1)
+     {
+        w /= ie->load_opts.scale_down_by;
+        h /= ie->load_opts.scale_down_by;
+     }
 
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
