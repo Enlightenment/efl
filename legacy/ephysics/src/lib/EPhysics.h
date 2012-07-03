@@ -970,6 +970,33 @@ EAPI double ephysics_body_mass_get(const EPhysics_Body *body);
 
 /**
  * @brief
+ * Get body's linear velocity on x and y axis.
+ *
+ * @param body The physics body.
+ * @param x The linear velocity on axis x.
+ * @param y The linear velocity on axis y.
+ *
+ * @see ephysics_body_angular_velocity_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y);
+
+/**
+ * @brief
+ * Get body's angular velocity on z axis.
+ *
+ * @param body The physics body.
+ * @param z The angular velocity on axis z.
+ *
+ * @see ephysics_body_linear_velocity_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *z);
+
+/**
+ * @brief
  * Update the evas object associated to the body.
  *
  * This function should be called to update position and rotation of
