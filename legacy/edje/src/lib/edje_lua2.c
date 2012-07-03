@@ -180,7 +180,7 @@ static const char *_elua_ecore_timer_meta = "ecore_timer_meta";
 
 static int _elua_obj_gc(lua_State *L);
 
-static const struct luaL_reg _elua_edje_gc_funcs [] =
+static const struct luaL_Reg _elua_edje_gc_funcs [] =
 {
      {"__gc", _elua_obj_gc}, // garbage collector func for edje objects
 
@@ -635,7 +635,7 @@ static int _elua_text(lua_State *L);
 //static int _elua_textblock(lua_State *L);  /* XXX: disabled until there are enough textblock functions implemented to make it actually useful
 
 static const char *_elua_edje_api = "edje";
-static const struct luaL_reg _elua_edje_funcs [] =
+static const struct luaL_Reg _elua_edje_funcs [] =
 {
    // add an echo too to make it more shelly
      {"echo",         _elua_echo}, // test func - echo (i know we have print. test)
@@ -1714,7 +1714,7 @@ static int _elua_obj_map(lua_State *L);
 static int _elua_obj_map_enable(lua_State *L);
 
 static const char *_elua_evas_api = "evas";
-static const struct luaL_reg _elua_evas_funcs [] =
+static const struct luaL_Reg _elua_evas_funcs [] =
 {
      {"del",          _elua_obj_del}, // generic del any object created for edje (evas objects, timers, animators, transitions... everything)
 
@@ -2504,7 +2504,7 @@ In the following, "animator_object" is a place holder for any lua variable that
 holds a reference to an ecore animator object.
 */
 static const char *_elua_ecore_animator_api = "ecore_animator";
-static const struct luaL_reg _elua_ecore_animator_funcs [] =
+static const struct luaL_Reg _elua_ecore_animator_funcs [] =
 {
      {NULL, NULL} // end
 };
@@ -2524,7 +2524,7 @@ holds a reference to an ecore timer object.
 */
 
 static const char *_elua_ecore_timer_api = "ecore_timer";
-static const struct luaL_reg _elua_ecore_timer_funcs [] =
+static const struct luaL_Reg _elua_ecore_timer_funcs [] =
 {
      {NULL, NULL} // end
 };
@@ -2550,7 +2550,7 @@ static int _elua_edje_file(lua_State *L);
 
 static const char *_elua_evas_edje_api = "evas_edje";
 static const char *_elua_evas_edje_parent = "evas_edje_parent";
-static const struct luaL_reg _elua_evas_edje_funcs [] =
+static const struct luaL_Reg _elua_evas_edje_funcs [] =
 {
      {"file",         _elua_edje_file}, // get or set edje file and group
 
@@ -2649,7 +2649,7 @@ static int _elua_image_image(lua_State *L);
 
 static const char *_elua_evas_image_api = "evas_image";
 static const char *_elua_evas_image_parent = "evas_image_parent";
-static const struct luaL_reg _elua_evas_image_funcs [] =
+static const struct luaL_Reg _elua_evas_image_funcs [] =
 {
      {"fill",         _elua_image_fill},   // get or set the fill parameters
      {"filled",       _elua_image_filled}, // get or set the filled state (overrides fill())
@@ -2851,7 +2851,7 @@ static int _elua_line_xy(lua_State *L);
 
 static const char *_elua_evas_line_api = "evas_line";
 static const char *_elua_evas_line_parent = "evas_line_parent";
-static const struct luaL_reg _elua_evas_line_funcs [] =
+static const struct luaL_Reg _elua_evas_line_funcs [] =
 {
      {"xy",         _elua_line_xy}, // get or set line coords
 
@@ -2933,7 +2933,7 @@ static int _elua_map_uv(lua_State *L);
 static int _elua_map_zoom(lua_State *L);
 
 static const char *_elua_evas_map_api = "ewas_map";
-static const struct luaL_reg _elua_evas_map_funcs [] =
+static const struct luaL_Reg _elua_evas_map_funcs [] =
 {
      {"alpha",         _elua_map_alpha},
 //     {"dup",           _elua_map_dup},  // not sure of proper api for this.
@@ -3496,7 +3496,7 @@ static int _elua_polygon_point(lua_State *L);
 
 static const char *_elua_evas_polygon_api = "evas_polygon";
 static const char *_elua_evas_polygon_parent = "evas_polygon_parent";
-static const struct luaL_reg _elua_evas_polygon_funcs [] =
+static const struct luaL_Reg _elua_evas_polygon_funcs [] =
 {
      {"clear",         _elua_polygon_clear}, // clear all polygon points
      {"point",         _elua_polygon_point}, // add a polygon point
@@ -3576,7 +3576,7 @@ static int _elua_text_text(lua_State *L);
 
 static const char *_elua_evas_text_api = "evas_text";
 static const char *_elua_evas_text_parent = "evas_text_parent";
-static const struct luaL_reg _elua_evas_text_funcs [] =
+static const struct luaL_Reg _elua_evas_text_funcs [] =
 {
      {"font",         _elua_text_font}, // get or set text font
      {"text",         _elua_text_text}, // get or set text
@@ -3703,7 +3703,7 @@ _elua_text_text(lua_State *L)                                   // Stack usage [
 static int _elua_bogan_nilfunc(lua_State *L);
 static int _elua_bogan_index(lua_State *L);
 
-static const struct luaL_reg _elua_bogan_funcs [] =
+static const struct luaL_Reg _elua_bogan_funcs [] =
 {
      {"nilfunc",         _elua_bogan_nilfunc}, // Just return a nil.
      {"__index",         _elua_bogan_index},   // Return the above func.
