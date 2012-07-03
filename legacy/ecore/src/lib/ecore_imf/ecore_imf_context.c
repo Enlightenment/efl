@@ -1736,3 +1736,159 @@ ecore_imf_context_input_panel_caps_lock_mode_get(Ecore_IMF_Context *ctx)
    return ctx->input_panel_caps_lock_mode;
 }
 
+/**
+ * Get the position of the current active input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param x top-left x co-ordinate of the input panel
+ * @param y top-left y co-ordinate of the input panel
+ * @param w width of the input panel
+ * @param h height of the input panel
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_input_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_geometry_get");
+        return;
+     }
+
+   if (ctx->klass->input_panel_geometry_get)
+     ctx->klass->input_panel_geometry_get(ctx, x, y, w, h);
+}
+
+/**
+ * Get state of current active input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param The state of input panel.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI Ecore_IMF_Input_Panel_State
+ecore_imf_context_input_panel_state_get(Ecore_IMF_Context *ctx)
+{
+   Ecore_IMF_Input_Panel_State state = ECORE_IMF_INPUT_PANEL_STATE_HIDE;
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_state_get");
+        return ECORE_IMF_INPUT_PANEL_STATE_HIDE;
+     }
+
+   if (ctx->klass->input_panel_state_get)
+     state = ctx->klass->input_panel_state_get(ctx);
+
+   return state;
+}
+
+/**
+ * Register a callback function which will be called if there is change in input panel state,language,mode etc.
+ * In order to deregister the callback function 
+ * Use @ref ecore_imf_context_input_panel_event_callback_del.
+ *
+ * @param ctx An #Ecore_IMF_Context
+ * @param type event type
+ * @param func the callback function
+ * @param data application-input panel specific data.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
+                                                 Ecore_IMF_Input_Panel_Event type,
+                                                 void (*func) (void *data, Ecore_IMF_Context *ctx, int value),
+                                                 const void *data)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_event_callback_add");
+        return;
+     }
+
+   if (ctx->klass->input_panel_event_callback_add)
+     ctx->klass->input_panel_event_callback_add(ctx, type, func, (void *)data);
+}
+
+/**
+ * Unregister a callback function which will be called if there is change in input panel state, language, mode etc.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param func the callback function
+ * @param data application-input panel specific data.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_input_panel_event_callback_del(Ecore_IMF_Context *ctx,
+                                                 Ecore_IMF_Input_Panel_Event type,
+                                                 void (*func) (void *data, Ecore_IMF_Context *ctx, int value))
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_event_callback_del");
+        return;
+     }
+
+   if (ctx->klass->input_panel_event_callback_del)
+     ctx->klass->input_panel_event_callback_del(ctx, type, func);
+}
+
+/**
+ * Get the current language locale of the input panel.
+ *
+ * ex) fr_FR
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param lang Location to store the retrieved language string. The
+ *             string retrieved must be freed with free().
+ * @ingroup Ecore_IMF_Context_Group
+ */
+EAPI void
+ecore_imf_context_input_panel_language_locale_get(Ecore_IMF_Context *ctx, char **lang)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_language_locale_get");
+        return;
+     }
+
+   if (ctx->klass->input_panel_language_locale_get)
+     ctx->klass->input_panel_language_locale_get(ctx, lang);
+   else
+     {
+        if (lang) *lang = strdup("");
+     }
+}
+
+/**
+ * Get the geometry information of the candidate panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param x top-left x co-ordinate of the candidate panel
+ * @param y top-left y co-ordinate of the candidate panel
+ * @param w width of the candidate panel
+ * @param h height of the candidate panel
+ * @ingroup Ecore_IMF_Context_Group
+ */
+EAPI void
+ecore_imf_context_candidate_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *y, int *w, int *h)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_candidate_panel_geometry_get");
+        return;
+     }
+
+   if (ctx->klass->candidate_panel_geometry_get)
+     ctx->klass->candidate_panel_geometry_get(ctx, x, y, w, h);
+}
+
