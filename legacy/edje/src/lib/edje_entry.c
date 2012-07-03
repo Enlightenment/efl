@@ -2589,6 +2589,7 @@ _edje_entry_user_insert(Edje_Real_Part *rp, const char *text)
      }
    info->change.insert.pos = evas_textblock_cursor_pos_get(en->cursor);
    _text_filter_markup_prepend(en, en->cursor, text);
+   _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
    _edje_emit_full(rp->edje, "entry,changed,user", rp->part->name,
                    info, _free_entry_change_info);

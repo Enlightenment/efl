@@ -505,3 +505,7 @@
 2012-06-24  Cedric Bail
 
 	* Emit signal for flagged part when their size get to zero.
+
+2012-07-03  Tom Hacohen (TAsn)
+
+	* Entry: Update anchors from user_insert as well.
