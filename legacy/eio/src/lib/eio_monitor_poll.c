@@ -182,7 +182,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
         if (ecore_thread_check(thread)) goto out;
      }
  out:
-   eina_iterator_free(it);
+   if (it) eina_iterator_free(it);
 
    if (backend->initialised && !ecore_thread_check(thread))
      {
