@@ -801,4 +801,6 @@
 		we need to check whether GL driver sends SYNC_DRAW_DONE msg afger copying
 		that are required in order to exactly render. - added by gl77.lee
 	* Add Ecore_X atoms for Illume Rotate Window
+	* Add event callbacks for Ecore_Imf Input Panel
+	* Add functions to retrieve input panel geometry & state from Ecore_Imf.
 
