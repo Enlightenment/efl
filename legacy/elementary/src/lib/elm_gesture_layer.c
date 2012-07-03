@@ -280,7 +280,6 @@ struct _Long_Tap_Type
    Elm_Gesture_Taps_Info info;
    Evas_Coord            center_x;
    Evas_Coord            center_y;
-   unsigned int          max_touched;
    Ecore_Timer          *timeout; /* When this expires, long tap STARTed */
    Eina_List            *touched;
 };
@@ -1431,11 +1430,6 @@ _n_long_tap_test_reset(Gesture_Info *gesture)
 
    st = gesture->data;
 
-   /* We do not clear a long-tap gesture if fingers still on surface */
-   /* and gesture timer still pending to test gesture state          */
-   if ((eina_list_count(st->touched)) && (st->timeout))
-     return;
-
    EINA_LIST_FOREACH (st->touched, l, p)
      free(p);
 
@@ -1705,13 +1699,11 @@ static Eina_Bool
 _long_tap_timeout(void *data)
 {
    Gesture_Info *gesture = data;
-   Long_Tap_Type *st = gesture->data;
-   st->timeout = NULL;
 
-   _state_set(gesture, ELM_GESTURE_STATE_START,
-              gesture->data, EINA_FALSE);
+   _state_set(gesture, ELM_GESTURE_STATE_MOVE,
+              gesture->data, EINA_TRUE);
 
-   return ECORE_CALLBACK_CANCEL;
+   return ECORE_CALLBACK_RENEW;
 }
 
 /**
@@ -1965,22 +1957,12 @@ _n_long_tap_test(Evas_Object *obj,
       case EVAS_CALLBACK_MOUSE_DOWN:
         st->touched = _touched_device_add(st->touched, pe);
         st->info.n = eina_list_count(st->touched);
-        if (st->info.n > st->max_touched)
-          st->max_touched = st->info.n;
-        else
-          {  /* User removed finger from touch, then put back - ABORT */
-            if ((gesture->state == ELM_GESTURE_STATE_START) ||
-                (gesture->state == ELM_GESTURE_STATE_MOVE))
-              {
-                 ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
-                                      &st->info, EINA_FALSE);
-                 _event_consume(sd, event_info, event_type, ev_flag);
-              }
-          }
 
         /* This is the first mouse down we got */
-        if ((pe->device == 0) && (eina_list_count(st->touched) == 1))
+        if (eina_list_count(st->touched) == 1)
           {
+             _state_set(gesture, ELM_GESTURE_STATE_START,
+                   gesture->data, EINA_FALSE);
              st->info.timestamp = pe->timestamp;
 
              /* To test long tap */
@@ -1989,6 +1971,12 @@ _n_long_tap_test(Evas_Object *obj,
                st->timeout = ecore_timer_add(sd->long_tap_start_timeout,
                                              _long_tap_timeout, gesture);
           }
+        else
+          {
+             if (st->timeout)
+                ecore_timer_reset(st->timeout);
+          }
+
 
         _event_consume(sd, event_info, event_type, ev_flag);
         _compute_taps_center(st, &st->info.x, &st->info.y, pe);
@@ -2000,27 +1988,25 @@ _n_long_tap_test(Evas_Object *obj,
       case EVAS_CALLBACK_MOUSE_UP:
         st->touched = _touched_device_remove(st->touched, pe);
         _compute_taps_center(st, &st->center_x, &st->center_y, pe);
-        if (st->info.n &&
-            ((gesture->state == ELM_GESTURE_STATE_START) ||
-             /* Report END only for gesture that STARTed */
-             (gesture->state == ELM_GESTURE_STATE_MOVE)))
+        if (st->info.n)
           {
-             if (eina_list_count(st->touched) == 0) /* Report END only
-                                                     * at last release
-                                                     * event */
+             if (gesture->state == ELM_GESTURE_STATE_MOVE)
                {
                   ev_flag = _state_set(gesture, ELM_GESTURE_STATE_END,
-                                       &st->info, EINA_FALSE);
-                  _event_consume(sd, event_info, event_type, ev_flag);
+                        &st->info, EINA_FALSE);
                }
-          }
-        else
-          {  /* Stop test, user lifts finger before long-start */
-            if (st->timeout) ecore_timer_del(st->timeout);
-            st->timeout = NULL;
-            ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
-                                 &st->info, EINA_FALSE);
-            _event_consume(sd, event_info, event_type, ev_flag);
+             else
+               {
+                  ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
+                        &st->info, EINA_FALSE);
+               }
+
+             if (st->timeout)
+               {
+                  ecore_timer_del(st->timeout);
+                  st->timeout = NULL;
+               }
+             _event_consume(sd, event_info, event_type, ev_flag);
           }
 
         break;
@@ -2034,16 +2020,22 @@ _n_long_tap_test(Evas_Object *obj,
           {
              Evas_Coord x = 0;
              Evas_Coord y = 0;
-             Elm_Gesture_State state_to_report = ELM_GESTURE_STATE_MOVE;
 
              _compute_taps_center(st, &x, &y, pe);
              /* ABORT if user moved fingers out of tap area */
              if (!_inside(x, y, st->center_x, st->center_y))
-               state_to_report = ELM_GESTURE_STATE_ABORT;
+               {
+                  if (st->timeout)
+                    {
+                       ecore_timer_del(st->timeout);
+                       st->timeout = NULL;
+                    }
 
-             /* Report MOVE if gesture started */
-             ev_flag = _state_set(gesture, state_to_report,
-                                  &st->info, EINA_TRUE);
+                  /* Report MOVE if gesture started */
+                  ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
+                        &st->info, EINA_FALSE);
+               }
+
              _event_consume(sd, event_info, event_type, ev_flag);
           }
         break;
