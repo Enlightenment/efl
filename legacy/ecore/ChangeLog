@@ -788,3 +788,7 @@
 
         * Fix crash which occurred in ecore-con when dns resolution failed
           immediately due to lack of connectivity
+
+2012-07-03  Cedric Bail
+
+	* Fix unitialized use of Ecore_X_Atom.

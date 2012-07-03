@@ -176,7 +176,7 @@ ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window win,
 EAPI Ecore_X_Virtual_Keyboard_State
 ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win)
 {
-   Ecore_X_Atom atom;
+   Ecore_X_Atom atom = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_atom_get(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE,
@@ -720,7 +720,7 @@ ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win,
 EAPI Ecore_X_Illume_Quickpanel_State
 ecore_x_e_illume_quickpanel_state_get(Ecore_X_Window win)
 {
-   Ecore_X_Atom atom;
+   Ecore_X_Atom atom = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_atom_get(win,
@@ -1261,7 +1261,7 @@ ecore_x_e_illume_indicator_state_set(Ecore_X_Window win,
 EAPI Ecore_X_Illume_Indicator_State
 ecore_x_e_illume_indicator_state_get(Ecore_X_Window win)
 {
-   Ecore_X_Atom atom;
+   Ecore_X_Atom atom = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_atom_get(win,
@@ -1334,7 +1334,7 @@ ecore_x_e_illume_indicator_opacity_set(Ecore_X_Window win,
 EAPI Ecore_X_Illume_Indicator_Opacity_Mode
 ecore_x_e_illume_indicator_opacity_get(Ecore_X_Window win)
 {
-   Ecore_X_Atom atom;
+   Ecore_X_Atom atom = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_window_prop_atom_get(win,

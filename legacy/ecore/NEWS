@@ -25,6 +25,9 @@ Fixes:
      - Force cancel of all running Ecore_Thread on shutdown.
      - Make Ecore_Thread work reliably when called without a running main loop.
 
+    * ecore_x
+     - Fix unitialized Ecore_X_Atom use.
+
 
 Ecore 1.2.0
 
