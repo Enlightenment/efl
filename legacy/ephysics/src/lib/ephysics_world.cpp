@@ -472,6 +472,30 @@ ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
 }
 
 EAPI void
+ephysics_world_constraint_solver_iterations_set(EPhysics_World *world, int iterations)
+{
+   if (!world)
+     {
+        ERR("Can't set constraint solver iterations, world is null.");
+        return;
+     }
+
+   world->dynamics_world->getSolverInfo().m_numIterations = iterations;
+}
+
+EAPI int
+ephysics_world_constraint_solver_iterations_get(EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get constraint solver iterations, world is null.");
+        return 0;
+     }
+
+   return world->dynamics_world->getSolverInfo().m_numIterations;
+}
+
+EAPI void
 ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy)
 {
    btVector3 vector;

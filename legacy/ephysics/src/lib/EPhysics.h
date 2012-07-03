@@ -444,6 +444,42 @@ EAPI void ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy
 
 /**
  * @brief
+ * Set the number of iterations the constraint solver will have for contact and
+ * joint constraints.
+ *
+ * The default value is set to 10. The greater number of iterations more
+ * quality and precise the result but with performance penalty.
+ *
+ * By default, the Projected Gauss Seidel constraint solver is used for contact
+ * and joint constraints. The algorithm is an iterative LCP solver, informally
+ * known as 'sequential impulse'.
+ *
+ * A reasonable range of iterations is from 4 (low quality, good performance)
+ * to 20 (good quality, less but still reasonable performance).
+ *
+ * @param world The world to be set.
+ * @param iterations The number of iterations to be set.
+ *
+ * @see ephysics_world_constraint_solver_iterations_get().
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_constraint_solver_iterations_set(EPhysics_World *world, int iterations);
+
+/**
+ * @brief
+ * Get the number of iterations the constraint solver will have for contact and
+ * joint constraints.
+ *
+ * @param world The world to get number of iterations from.
+ * @return the number of iterations set to @p world, or 0 on failure.
+ *
+ * @see ephysics_world_constraint_solver_iterations_set() for its meaning.
+ * @ingroup EPhysics_World
+ */
+EAPI int ephysics_world_constraint_solver_iterations_get(EPhysics_World *world);
+
+/**
+ * @brief
  * Get world gravity values for axis x and y.
  *
  * @param world The world object.
