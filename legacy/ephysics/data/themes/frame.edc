@@ -62,6 +62,48 @@
          }
 
          part {
+            name: "linear_vel";
+            type: TEXT;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               color: 232 224 215 0;
+               rel1.relative: 0.08 0.0;
+               rel2.relative: 0.92 0.04;
+               text {
+                  font: "Sans";
+                  size: 12;
+               }
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 95 56 19 255;
+            }
+         }
+
+         part {
+            name: "angular_vel";
+            type: TEXT;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               color: 232 224 215 0;
+               rel1.relative: 0.08 0.04;
+               rel2.relative: 0.92 0.08;
+               text {
+                  font: "Sans";
+                  size: 12;
+               }
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 95 56 19 255;
+            }
+         }
+
+         part {
             name: "restart_button";
             type: EXTERNAL;
             source: "elm/button";
@@ -109,6 +151,15 @@
             action: STATE_SET "visible" 0.0;
             target: "arrows";
             target: "arrows_msg";
+          }
+
+          program {
+            name: "velocity,show";
+            source: "ephysics_test";
+            signal: "velocity,show";
+            action: STATE_SET "visible" 0.0;
+            target: "linear_vel";
+            target: "angular_vel";
           }
 
       }

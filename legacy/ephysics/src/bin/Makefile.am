@@ -23,7 +23,8 @@ test_collision_detection.c \
 test_constraint.c \
 test_falling_letters.c \
 test_jumping_balls.c \
-test_rotate.c
+test_rotate.c \
+test_velocity.c
 
 ephysics_logo_SOURCES = \
 ephysics_logo.c
