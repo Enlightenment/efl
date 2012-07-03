@@ -86,6 +86,7 @@ _progressbar_example_stop(void        *data,
      }
 }
 
+/* Format callback */
 static char *
 _progress_format_cb(double val)
 {
@@ -102,6 +103,7 @@ _progress_format_free(char *str)
    free(str);
 }
 
+/* Callback for "changed" signal */
 static void
 _on_changed(void        *data,
             Evas_Object *obj,

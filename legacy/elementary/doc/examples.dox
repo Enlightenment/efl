@@ -5112,7 +5112,7 @@
  * @until pb2
  *
  * Next, comes a progress bar with an @b icon, a primary label and a
- * @b custom unit label set. It's also made to grow its bar in an
+ * unit label @b function set. It's also made to grow its bar in an
  * @b inverted manner, so check that out during the timer's progression:
  * @dontinclude progressbar_example.c
  * @skip ic1 =
@@ -5122,6 +5122,31 @@
  * minimum horizontal size to our whole window! We're not resizing it
  * manually, as you can see in the @ref progressbar_example_c
  * "complete code".
+ *
+ * The format callback is a simple function that gets passed the progress value
+ * and returns a string. A free function should be provided as well, if the
+ * format callback allocates memory.
+ * @dontinclude progressbar_example.c
+ * @skip Format callback
+ * @until }
+ * @until }
+ * 
+ * The last horizontal progress bar has a callback that gets called when its
+ * value is @b changed. This callback updates a label to provide an estimate
+ * when the operation finishes.
+ * @dontinclude progressbar_example.c
+ * @skip pb3
+ * @skip changed trigger
+ * @until pb4
+ *
+ * The "changed" signal is emitted every time the progressbar value is updated
+ * through @ref elm_progressbar_value_set(). This callback calculates and
+ * displays the ETA based on the progress and time that has passed.
+ * @dontinclude progressbar_example.c
+ * @skip Callback for "changed" signal
+ * @until }
+ * @until }
+ * @until }
  *
  * The next three progress bars are just variants on the ones already
  * shown, but now all being @b vertical. Another time we use one of
