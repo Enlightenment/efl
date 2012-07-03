@@ -314,5 +314,29 @@ EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Ob
 EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
+ * Sets if the multibuttonentry is to be editable or not.
+ *
+ * @param obj The multibuttonentry object
+ * @param editable If EINA_TRUE, user can add/delete item in multibuttonentry, if not, the multibuttonentry is non-editable.
+ *
+ * @ingroup Multibuttonentry
+ *
+ * @since 1.1
+ */
+EAPI void elm_multibuttonentry_editable_set(Evas_Object *obj, Eina_Bool editable);
+
+/**
+ * Gets whether the multibuttonentry is editable or not.
+ *
+ * @param obj The multibuttonentry object
+ * @return EINA_TRUE if the multibuttonentry is editable by the user. EINA_FALSE if not.
+ *
+ * @ingroup Multibuttonentry
+ *
+ * @since 1.1
+ */
+EAPI Eina_Bool elm_multibuttonentry_editable_get(const Evas_Object *obj);
+
+/**
  * @}
  */

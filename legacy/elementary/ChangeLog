@@ -259,3 +259,9 @@
 2012-07-3  Cedric Bail
 
 	* Initialize Emotion when necessary.
+
+2012-07-3  Minseok Kim
+
+	* Add elm_multibuttonentry_editable_set() and
+        elm_multibuttonentry_editable_get()
+
