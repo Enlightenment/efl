@@ -82,6 +82,7 @@ typedef struct _Elm_Widget_Compat_Smart_Data
    void (*activate)(Evas_Object *obj);
    void (*disable)(Evas_Object *obj);
    void (*theme)(Evas_Object *obj);
+   void (*access)(Evas_Object *obj, Eina_Bool is_access);
    void (*translate)(Evas_Object *obj);
    Eina_Bool (*event)(Evas_Object *obj,
                       Evas_Object *source,
@@ -1075,6 +1076,16 @@ elm_widget_theme_hook_set(Evas_Object *obj,
 }
 
 EAPI void
+elm_widget_access_hook_set(Evas_Object *obj,
+                           void       (*func)(Evas_Object *obj,
+                                              Eina_Bool is_access))
+{
+   API_ENTRY return;
+
+   COMPAT_SMART_DATA(sd)->access = func;
+}
+
+EAPI void
 elm_widget_translate_hook_set(Evas_Object *obj,
                               void       (*func)(Evas_Object *obj))
 {
@@ -1184,6 +1195,27 @@ elm_widget_signal_callback_del_hook_set(Evas_Object *obj,
    API_ENTRY return;
 
    COMPAT_SMART_DATA(sd)->callback_del = func;
+}
+
+EAPI Eina_Bool
+elm_widget_access(Evas_Object *obj, Eina_Bool is_access)
+{
+   const Eina_List *l;
+   Evas_Object *child;
+   Eina_Bool ret = EINA_TRUE;
+
+   API_ENTRY return EINA_FALSE;
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
+     ret &= elm_widget_access(child, is_access);
+
+   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->access)
+     COMPAT_SMART_DATA(sd)->access(obj, is_access);
+   else if (sd->api && sd->api->access)
+     sd->api->access(obj, is_access);
+   else
+     return EINA_FALSE;
+
+   return ret;
 }
 
 EAPI Eina_Bool

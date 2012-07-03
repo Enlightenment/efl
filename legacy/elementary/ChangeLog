@@ -265,3 +265,7 @@
 	* Add elm_multibuttonentry_editable_set() and
         elm_multibuttonentry_editable_get()
 
+2012-07-3  Shinwoo Kim (kimcinoo)
+
+	* Add access hook to widget infra.
+
