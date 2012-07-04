@@ -663,7 +663,7 @@ EAPI double ephysics_world_linear_slop_get(EPhysics_World *world);
  * by the top.
  *
  * It's useful when you don't care about bodies leaving the render
- * area set with @ref ephysics_world_render_area_set(), and don't think
+ * area set with @ref ephysics_world_render_geometry_set(), and don't think
  * they could / should return. So you can safely delete them and save resources.
  *
  * Also, it's useful if you have only a bottom border set with
@@ -1162,6 +1162,23 @@ EAPI double ephysics_body_mass_get(const EPhysics_Body *body);
 
 /**
  * @brief
+ * Set body's linear velocity on x and y axis.
+ *
+ * @param body The physics body.
+ * @param x The linear velocity on axis x.
+ * @param y The linear velocity on axis y.
+ *
+ * @note EPhysics unit for linear velocity is Evas coordinates per second.
+ *
+ * @see ephysics_body_linear_velocity_get().
+ * @see ephysics_body_angular_velocity_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y);
+
+/**
+ * @brief
  * Get body's linear velocity on x and y axis.
  *
  * @param body The physics body.
@@ -1170,11 +1187,28 @@ EAPI double ephysics_body_mass_get(const EPhysics_Body *body);
  *
  * @note EPhysics unit for linear velocity is Evas coordinates per second.
  *
+ * @see ephysics_body_linear_velocity_set().
  * @see ephysics_body_angular_velocity_get().
  *
  * @ingroup EPhysics_Body
  */
 EAPI void ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y);
+
+/**
+ * @brief
+ * Set body's angular velocity on z axis.
+ *
+ * @param body The physics body.
+ * @param z The angular velocity on axis z.
+ *
+ * @note EPhysics unit for angular velocity is degrees per second.
+ *
+ * @see ephysics_body_angular_velocity_set().
+ * @see ephysics_body_linear_velocity_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_angular_velocity_set(EPhysics_Body *body, double z);
 
 /**
  * @brief
@@ -1190,6 +1224,26 @@ EAPI void ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x
  * @ingroup EPhysics_Body
  */
 EAPI double ephysics_body_angular_velocity_get(const EPhysics_Body *body);
+
+/**
+ * @brief
+ * Stop angular and linear body movement.
+ *
+ * It's equivalent to set linear velocity to 0 on both axis and
+ * angular velocity to 0 as well.
+ *
+ * It's a momentary situation. If it receives impulse, directly or
+ * by collision, if gravity acts over this body,
+ * it will stop but it will accelerate again.
+ *
+ * @param body The physics body.
+ *
+ * @see ephysics_body_angular_velocity_set().
+ * @see ephysics_body_linear_velocity_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_stop(EPhysics_Body *body);
 
 /**
  * @brief

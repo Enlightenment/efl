@@ -575,12 +575,29 @@ ephysics_body_mass_get(const EPhysics_Body *body)
 }
 
 EAPI void
+ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y)
+{
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't set body linear velocity, body is null.");
+        return;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+   body->rigid_body->setLinearVelocity(btVector3(x / rate, y / rate, 0));
+   DBG("Linear velocity of body %p set to %lf, %lf", body, x, y);
+}
+
+EAPI void
 ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y)
 {
    double rate;
+
    if (!body)
      {
-        ERR("Can't get body linear velocity, body is null.");
+        ERR("Can't get linear velocity, body is null.");
         return;
      }
 
@@ -589,16 +606,44 @@ ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *
    if (y) *y = -body->rigid_body->getLinearVelocity().getY() * rate;
 }
 
+EAPI void
+ephysics_body_angular_velocity_set(EPhysics_Body *body, double z)
+{
+   if (!body)
+     {
+        ERR("Can't set angular velocity, body is null.");
+        return;
+     }
+
+   body->rigid_body->setAngularVelocity(btVector3(0, 0, -z/RAD_TO_DEG));
+   DBG("Angular velocity of body %p set to %lf", body, z);
+}
+
 EAPI double
 ephysics_body_angular_velocity_get(const EPhysics_Body *body)
 {
    if (!body)
      {
-        ERR("Can't get body linear velocity, body is null.");
+        ERR("Can't get angular velocity, body is null.");
         return 0;
      }
 
    return -body->rigid_body->getAngularVelocity().getZ() * RAD_TO_DEG;
+}
+
+EAPI void
+ephysics_body_stop(EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't stop a null body.");
+        return;
+     }
+
+   body->rigid_body->setLinearVelocity(btVector3(0, 0, 0));
+   body->rigid_body->setAngularVelocity(btVector3(0, 0, 0));
+
+   DBG("Body %p stopped", body);
 }
 
 EAPI void
