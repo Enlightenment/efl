@@ -22,6 +22,10 @@ void *alloca (size_t);
 
 #include <unistd.h>
 
+#ifdef _WIN32
+# include <winsock2.h>
+#endif
+
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM _efreet_base_log_dom
 static int _efreet_base_log_dom = -1;
