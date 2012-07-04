@@ -157,7 +157,7 @@ widget-preview: widget-build
 	done
 
 widget-tree-figures: doc
-	$(srcdir)/widget_hierarchy.py --scan -d $(top_srcdir)/src/lib -o $(builddir)/widget_tree.p;
+	$(srcdir)/widget_hierarchy.py --scan $(top_srcdir)/src/lib -o $(builddir)/widget_tree.p;
 	$(srcdir)/widget_hierarchy.py --tree -i $(builddir)/widget_tree.p > $(builddir)/widgets_tree.dot;
 	dot -Tpng -o $(top_srcdir)/doc/img/elm-widget-tree.png $(top_builddir)/doc/widgets_tree.dot;
 	convert $(top_srcdir)/doc/img/elm-widget-tree.png $(top_srcdir)/doc/img/"widgets_tree.eps";
