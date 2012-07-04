@@ -736,8 +736,6 @@ evas_common_font_memory_hinting_add(RGBA_Font *fn, const char *source, const cha
 static void
 _evas_common_font_int_clear(RGBA_Font_Int *fi)
 {
-   int i, j, k;
-
    LKL(fi->ft_mutex);
    if (!fi->fash)
      {
