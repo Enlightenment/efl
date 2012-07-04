@@ -2952,14 +2952,11 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	  }
         if ((obj->cur.map) && (obj->cur.map->count > 3) && (obj->cur.usemap))
           {
-             RGBA_Map_Point *pts;
-
              evas_object_map_update(obj, x, y, imagew, imageh, uvw, uvh);
-             pts = obj->spans->pts;
 
              obj->layer->evas->engine.func->image_map_draw
-               (output, context, surface, pixels, obj->cur.map->count,
-		pts, o->cur.smooth_scale | obj->cur.map->smooth, 0);
+               (output, context, surface, pixels, obj->spans,
+		o->cur.smooth_scale | obj->cur.map->smooth, 0);
           }
         else
           {

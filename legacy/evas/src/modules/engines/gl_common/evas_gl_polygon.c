@@ -122,7 +122,7 @@ polygon_edge_sorter(const void *a, const void *b)
 void
 evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int dx, int dy)
 {
-   Cutout_Rects *rects;
+   static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int c, cx, cy, cw, ch, cr, cg, cb, ca, i;
    int x = 0, y = 0, w = 0, h = 0;
@@ -272,7 +272,7 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
              /* our clip is 0 size.. abort */
              if ((gc->dc->clip.w > 0) && (gc->dc->clip.h > 0))
                {
-                  rects = evas_common_draw_context_apply_cutouts(gc->dc);
+		 rects = evas_common_draw_context_apply_cutouts(gc->dc, rects);
                   for (i = 0; i < rects->active; ++i)
                     {
                        r = rects->rects + i;
@@ -290,7 +290,6 @@ evas_gl_common_poly_draw(Evas_Engine_GL_Context *gc, Evas_GL_Polygon *poly, int 
                               }
                          }
                     }
-                  evas_common_draw_context_apply_clear_cutouts(rects);
                }
           }
         while (spans)

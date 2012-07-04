@@ -18,6 +18,8 @@ typedef enum
 /* Used for showing "malformed" or missing chars */
 #define REPLACEMENT_CHAR 0xFFFD
 
+typedef struct _Evas_Glyph Evas_Glyph;
+
 struct _Evas_Text_Props
 {
    /* Start and len represent the start offset and the length in the
@@ -31,7 +33,8 @@ struct _Evas_Text_Props
    Evas_Text_Props_Info *info;
    void *font_instance;
 
-   Eina_Binbuf *bin;
+   Evas_Glyph *glyphs;
+   int glyphs_length;
 
    int generation;
    Eina_Bool changed : 1;

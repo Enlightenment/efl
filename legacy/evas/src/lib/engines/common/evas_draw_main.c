@@ -14,6 +14,7 @@ evas_common_draw_context_cutouts_new(void)
 EAPI void
 evas_common_draw_context_cutouts_free(Cutout_Rects* rects)
 {
+   if (!rects) return ;
    rects->active = 0;
 }
 
@@ -90,7 +91,7 @@ evas_common_draw_context_free(RGBA_Draw_Context *dc)
 EAPI void
 evas_common_draw_context_clear_cutouts(RGBA_Draw_Context *dc)
 {
-   evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
+   evas_common_draw_context_cutouts_free(&dc->cutout);
 }
 
 EAPI void
@@ -557,9 +558,9 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int idx, Cutout_Rect *s
 }
 
 EAPI Cutout_Rects*
-evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
+evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc, Cutout_Rects *reuse)
 {
-   Cutout_Rects*        res, *res2;
+   Cutout_Rects*        res = NULL;
    int                  i;
    int                  j;
 
@@ -567,7 +568,15 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0)) return NULL;
 
 
-   res = evas_common_draw_context_cutouts_new();
+   if (!reuse)
+     {
+        res = evas_common_draw_context_cutouts_new();
+     }
+   else
+     {
+        evas_common_draw_context_cutouts_free(reuse);
+        res = reuse;
+     }
    evas_common_draw_context_cutouts_add(res, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
 
    for (i = 0; i < dc->cutout.active; ++i)
@@ -636,15 +645,18 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
                     }
                }
           }
-        res2 = evas_common_draw_context_cutouts_new();
+
+        /* Repack the cutout */
+        j = 0;
         for (i = 0; i < res->active; i++)
           {
              if (RI.w == 0) continue;
-             evas_common_draw_context_cutouts_add(res2, RI.x, RI.y, RI.w, RI.h);
+             if (i != j)
+               RJ = RI;
+             j++;
           }
-        free(res->rects);
-        free(res);
-        return res2;
+        res->active = j;
+        return res;
      }
    return res;
 }

@@ -144,7 +144,9 @@ _evas_map_copy(Evas_Map *dst, const Evas_Map *src)
         ERR("cannot copy map of different sizes: dst=%i, src=%i", dst->count, src->count);
         return EINA_FALSE;
      }
-   memcpy(dst->points, src->points, src->count * sizeof(Evas_Map_Point));
+   if (dst == src) return EINA_TRUE;
+   if (dst->points != src->points)
+     memcpy(dst->points, src->points, src->count * sizeof(Evas_Map_Point));
    dst->smooth = src->smooth;
    dst->alpha = src->alpha;
    dst->persp = src->persp;
@@ -170,10 +172,10 @@ _evas_map_free(Evas_Object *obj, Evas_Map *m)
      {
         if (m->surface)
           obj->layer->evas->engine.func->image_map_surface_free
-          (obj->layer->evas->engine.data.output, m->surface);
+            (obj->layer->evas->engine.data.output, m->surface);
         if (obj->spans)
           {
-             // FIXME: destroy engine side spans
+             obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->spans);
              free(obj->spans);
              obj->spans = NULL;
           }      
@@ -487,7 +489,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
      _evas_map_copy(obj->cur.map, map);
    else
      {
-        if (obj->cur.map) evas_map_free(obj->cur.map);
+        if (obj->cur.map) _evas_map_free(obj, obj->cur.map);
         obj->cur.map = _evas_map_dup(map);
         if (obj->cur.usemap)
            evas_object_mapped_clip_across_mark(obj);

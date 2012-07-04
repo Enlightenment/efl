@@ -690,12 +690,12 @@ evas_gl_common_image_map_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im,
 void
 evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth)
 {
+   static Cutout_Rects *rects = NULL;
    RGBA_Draw_Context *dc;
    Evas_GL_Image *imm;
    int r, g, b, a;
    double ssx, ssy, ssw, ssh;
    double mssx, mssy, mssw, mssh;
-   Cutout_Rects *rects;
    Cutout_Rect  *rct;
    int c, cx, cy, cw, ch;
    int i;
@@ -888,7 +888,7 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
         gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
         return;
      }
-   rects = evas_common_draw_context_apply_cutouts(dc);
+   rects = evas_common_draw_context_apply_cutouts(dc, rects);
    for (i = 0; i < rects->active; ++i)
      {
         int nx, ny, nw, nh;
@@ -962,7 +962,6 @@ evas_gl_common_image_draw(Evas_Engine_GL_Context *gc, Evas_GL_Image *im, int sx,
                                             r, g, b, a,
                                             smooth, im->tex_only);
      }
-   evas_common_draw_context_apply_clear_cutouts(rects);
    /* restore clip info */
    gc->dc->clip.use = c; gc->dc->clip.x = cx; gc->dc->clip.y = cy; gc->dc->clip.w = cw; gc->dc->clip.h = ch;
 }

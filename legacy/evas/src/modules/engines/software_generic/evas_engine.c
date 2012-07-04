@@ -939,41 +939,37 @@ image_loaded:
 }
 
 static void
-eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
+evas_software_image_map_draw(void *data, void *context, RGBA_Image *surface, RGBA_Image *im, RGBA_Map *m, int smooth, int level, int offset)
 {
-   RGBA_Image *im;
+   if (m->count - offset < 3) return;
 
-   if (!image) return;
-   if (npoints < 3) return;
-   im = image;
-
-   if ((p[0].x == p[3].x) &&
-       (p[1].x == p[2].x) &&
-       (p[0].y == p[1].y) &&
-       (p[3].y == p[2].y) &&
-       (p[0].x <= p[1].x) &&
-       (p[0].y <= p[2].y) &&
-       (p[0].u == 0) &&
-       (p[0].v == 0) &&
-       (p[1].u == (int)(im->cache_entry.w << FP)) &&
-       (p[1].v == 0) &&
-       (p[2].u == (int)(im->cache_entry.w << FP)) &&
-       (p[2].v == (int)(im->cache_entry.h << FP)) &&
-       (p[3].u == 0) &&
-       (p[3].v == (int)(im->cache_entry.h << FP)) &&
-       (p[0].col == 0xffffffff) &&
-       (p[1].col == 0xffffffff) &&
-       (p[2].col == 0xffffffff) &&
-       (p[3].col == 0xffffffff))
+   if ((m->pts[0 + offset].x == m->pts[3 + offset].x) &&
+       (m->pts[1 + offset].x == m->pts[2 + offset].x) &&
+       (m->pts[0 + offset].y == m->pts[1 + offset].y) &&
+       (m->pts[3 + offset].y == m->pts[2 + offset].y) &&
+       (m->pts[0 + offset].x <= m->pts[1 + offset].x) &&
+       (m->pts[0 + offset].y <= m->pts[2 + offset].y) &&
+       (m->pts[0 + offset].u == 0) &&
+       (m->pts[0 + offset].v == 0) &&
+       (m->pts[1 + offset].u == (int)(im->cache_entry.w << FP)) &&
+       (m->pts[1 + offset].v == 0) &&
+       (m->pts[2 + offset].u == (int)(im->cache_entry.w << FP)) &&
+       (m->pts[2 + offset].v == (int)(im->cache_entry.h << FP)) &&
+       (m->pts[3 + offset].u == 0) &&
+       (m->pts[3 + offset].v == (int)(im->cache_entry.h << FP)) &&
+       (m->pts[0 + offset].col == 0xffffffff) &&
+       (m->pts[1 + offset].col == 0xffffffff) &&
+       (m->pts[2 + offset].col == 0xffffffff) &&
+       (m->pts[3 + offset].col == 0xffffffff))
      {
         int dx, dy, dw, dh;
 
-        dx = p[0].x >> FP;
-        dy = p[0].y >> FP;
-        dw = (p[2].x >> FP) - dx;
-        dh = (p[2].y >> FP) - dy;
+        dx = m->pts[0 + offset].x >> FP;
+        dy = m->pts[0 + offset].y >> FP;
+        dw = (m->pts[2 + offset].x >> FP) - dx;
+        dh = (m->pts[2 + offset].y >> FP) - dy;
         eng_image_draw
-          (data, context, surface, image,
+          (data, context, surface, im,
            0, 0, im->cache_entry.w, im->cache_entry.h,
            dx, dy, dw, dh, smooth);
      }
@@ -981,18 +977,37 @@ eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *im
      {
 #ifdef BUILD_PIPE_RENDER
         if ((cpunum > 1))
-          evas_common_pipe_map_draw(im, surface, context, npoints, p, smooth, level);
+	  {
+             evas_common_pipe_map_draw(im, surface, context, m, smooth, level);
+             return ;
+          }
         else
 #endif
-          evas_common_map_rgba(im, surface, context, npoints, p, smooth, level);
+          {
+             evas_common_map_rgba(im, surface, context, m->count - offset, &m->pts[offset], smooth, level);
+          }
      }
    evas_common_cpu_end_opt();
 
-   if (npoints > 4)
+   if (m->count > 4)
      {
-        eng_image_map_draw(data, context, surface, image, npoints - 2, p + 2,
-                           smooth, level);
+        evas_software_image_map_draw(data, context, surface, im, m, smooth, level, offset + 2);
      }
+}
+
+static void
+eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level)
+{
+   if (!image) return;
+   if (m->count < 3) return;
+
+   evas_software_image_map_draw(data, context, surface, image, m, smooth, level, 0);
+}
+
+static void
+eng_image_map_clean(void *data __UNUSED__, RGBA_Map *m)
+{
+   evas_common_map_rgba_clean(m);
 }
 
 static void *
@@ -1843,6 +1858,7 @@ static Evas_Func func =
      eng_image_map_draw,
      eng_image_map_surface_new,
      eng_image_map_surface_free,
+     eng_image_map_clean,
      NULL, // eng_image_content_hint_set - software doesn't use it
      NULL, // eng_image_content_hint_get - software doesn't use it
      eng_font_pen_coords_get,
@@ -2873,6 +2889,7 @@ module_open(Evas_Module *em)
      }
 
    init_gl();
+   evas_common_pipe_init();
 
    em->functions = (void *)(&func);
    cpunum = eina_cpu_count();

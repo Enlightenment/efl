@@ -7,16 +7,21 @@
 #ifdef BUILD_PTHREAD
 typedef struct _Thinfo
 {
+   RGBA_Image            *im;
    int                    thread_num;
    pthread_t              thread_id;
    pthread_barrier_t     *barrier;
    const Eina_Inlist     *tasks;
+   Eina_Array             cutout_trash;
+   Eina_Array             rects_task;
 } Thinfo;
 #endif
 
 /* image rendering pipelines... new optional system - non-immediate and
  * threadable
  */
+
+EAPI Eina_Bool evas_common_pipe_init(void);
 
 EAPI void evas_common_pipe_free(RGBA_Image *im);
 EAPI void evas_common_pipe_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
@@ -28,8 +33,8 @@ EAPI void evas_common_pipe_image_load(RGBA_Image *im);
 EAPI void evas_common_pipe_image_draw(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int smooth, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 EAPI void evas_common_pipe_map_begin(RGBA_Image *root);
 EAPI void evas_common_pipe_map_draw(RGBA_Image *src, RGBA_Image *dst,
-				     RGBA_Draw_Context *dc, int npoints, RGBA_Map_Point *p,
-				     int smooth, int level);
+				    RGBA_Draw_Context *dc, RGBA_Map *m,
+				    int smooth, int level);
 EAPI void evas_common_pipe_flush(RGBA_Image *im);
 
 #endif /* _EVAS_PIPE_H */

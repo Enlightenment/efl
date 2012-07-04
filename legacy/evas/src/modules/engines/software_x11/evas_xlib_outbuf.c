@@ -181,6 +181,7 @@ evas_software_xlib_outbuf_free(Outbuf *buf)
    if (buf->priv.pal)
       evas_software_xlib_x_color_deallocate(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.cmap,
 					   buf->priv.x11.xlib.vis, buf->priv.pal);
+   eina_array_flush(&buf->priv.onebuf_regions);
    free(buf);
    _clear_xob(0);
 }
@@ -210,6 +211,8 @@ evas_software_xlib_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 
    buf->priv.mask_dither = shape_dither;
    buf->priv.destination_alpha = destination_alpha;
+
+   eina_array_step_set(&buf->priv.onebuf_regions, sizeof (Eina_Array), 8);
 
    {
       Gfx_Func_Convert    conv_func;
@@ -379,8 +382,7 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
              return NULL;
           }
 
-	buf->priv.onebuf_regions = eina_list_append(buf->priv.onebuf_regions, rect);
-	if (buf->priv.onebuf)
+        if (!eina_array_push(&buf->priv.onebuf_regions, rect))
 	  {
 	     *cx = x;
 	     *cy = y;
@@ -708,20 +710,20 @@ evas_software_xlib_outbuf_flush(Outbuf *buf)
    RGBA_Image *im;
    Outbuf_Region *obr;
 
-   if ((buf->priv.onebuf) && (buf->priv.onebuf_regions))
+   if ((buf->priv.onebuf) && eina_array_count(&buf->priv.onebuf_regions))
      {
+        Eina_Rectangle *rect;
+        Eina_Array_Iterator it;
+        unsigned int i;
 	Region tmpr;
 
 	im = buf->priv.onebuf;
 	obr = im->extended_info;
 	tmpr = XCreateRegion();
-	while (buf->priv.onebuf_regions)
+        EINA_ARRAY_ITER_NEXT(&buf->priv.onebuf_regions, i, rect, it)
 	  {
-	     Eina_Rectangle *rect;
 	     XRectangle xr;
 
-	     rect = buf->priv.onebuf_regions->data;
-	     buf->priv.onebuf_regions = eina_list_remove_list(buf->priv.onebuf_regions, buf->priv.onebuf_regions);
              if (buf->rot == 0)
                {
                   xr.x = rect->x;
@@ -756,6 +758,7 @@ evas_software_xlib_outbuf_flush(Outbuf *buf)
                                                      xr.x, xr.y, xr.width, xr.height);
 	     eina_rectangle_free(rect);
 	  }
+        eina_array_clean(&buf->priv.onebuf_regions);
 	XSetRegion(buf->priv.x11.xlib.disp, buf->priv.x11.xlib.gc, tmpr);
         if (obr->xob)
            evas_software_xlib_x_output_buffer_paste(obr->xob, buf->priv.x11.xlib.win,
@@ -1025,7 +1028,7 @@ evas_software_xlib_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, i
 #if 1
 #else
    /* XX async push */
-   if (!((buf->priv.onebuf) && (buf->priv.onebuf_regions)))
+   if (!((buf->priv.onebuf) && eina_array_count(&buf->priv.onebuf_regions)))
      {
 	if (buf->priv.debug)
 	  evas_software_xlib_outbuf_debug_show(buf, buf->priv.x11.xlib.win,
@@ -1076,7 +1079,7 @@ evas_software_xlib_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, i
 #if 1
 #else
 	/* XX async push */
-	if (!((buf->priv.onebuf) && (buf->priv.onebuf_regions)))
+	if (!((buf->priv.onebuf) && eina_array_count(&buf->priv.onebuf_regions)))
 	  evas_software_xlib_x_output_buffer_paste(obr->mxob,
 						  buf->priv.x11.xlib.mask,
 						  buf->priv.x11.xlib.gcm,

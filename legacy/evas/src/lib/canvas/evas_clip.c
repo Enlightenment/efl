@@ -179,11 +179,11 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    if (obj == clip) return;
    if (evas_object_intercept_call_clip_set(obj, clip)) return;
    // illegal to set anything but a rect as a clip
-   if (clip->type != o_rect_type)
-     {
-        ERR("For now a clip on other object than a rectangle is disabled");
-        return;
-     }
+   /* if (clip->type != o_rect_type) */
+   /*   { */
+   /*      ERR("For now a clip on other object than a rectangle is disabled"); */
+   /*      return; */
+   /*   } */
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->clip_set)
@@ -228,7 +228,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 
    /* If it's NOT a rectangle set the mask bits too */
    /* FIXME: Optmz ths chck */
-   if (strcmp(evas_object_type_get(clip),"rectangle") == 0)
+   if (clip->type == o_rect_type)
       obj->cur.mask = NULL;
    else
      {

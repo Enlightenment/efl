@@ -111,7 +111,7 @@ struct _Outbuf
 
         /* 1 big buffer for updates - flush on idle_flush */
         RGBA_Image *onebuf;
-        Eina_List *onebuf_regions;
+        Eina_Array  onebuf_regions;
 
         /* a list of pending regions to write to the target */
         Eina_List *pending_writes;

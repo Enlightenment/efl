@@ -47,6 +47,8 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, in
    int  clx, cly, clw, clh;
    int  cuse, cx, cy, cw, ch;
 
+   /* No cutout ? FIXME ? */
+
    if ((x0 == x1) && (y0 == y1))
      {
 	_evas_draw_point(dst, dc, x0, y0);

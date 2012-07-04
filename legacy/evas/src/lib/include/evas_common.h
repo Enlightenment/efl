@@ -728,8 +728,10 @@ struct _RGBA_Draw_Context
 struct _RGBA_Pipe_Op
 {
    RGBA_Draw_Context         context;
+   Eina_Bool               (*prepare_func) (void *data, RGBA_Image *dst, RGBA_Pipe_Op *op);
    void                    (*op_func) (RGBA_Image *dst, const RGBA_Pipe_Op *op, const RGBA_Pipe_Thread_Info *info);
    void                    (*free_func) (RGBA_Pipe_Op *op);
+   Cutout_Rects             *rects;
 
    union {
       struct {
@@ -739,11 +741,13 @@ struct _RGBA_Pipe_Op
 	 int                 x0, y0, x1, y1;
       } line;
       struct {
+         int                 x, y;
 	 RGBA_Polygon_Point *points;
       } poly;
       struct {
 	 int                 x, y;
          Evas_Text_Props    *intl_props;
+         RGBA_Gfx_Func       func;
       } text;
       struct {
 	 RGBA_Image         *src;
@@ -753,12 +757,14 @@ struct _RGBA_Pipe_Op
       } image;
       struct {
 	 RGBA_Image         *src;
-	 RGBA_Map_Point     *p;
+	 RGBA_Map	    *m;
 	 int                 npoints;
 	 int                 smooth;
 	 int                 level;
       } map;
    } op;
+
+   Eina_Bool                 render : 1;
 };
 
 #define PIPE_LEN 256
@@ -773,8 +779,7 @@ struct _RGBA_Pipe
 struct _RGBA_Pipe_Thread_Info
 {
    EINA_INLIST;
-   RGBA_Image *im;
-   int         x, y, w, h;
+   Eina_Rectangle area;
 };
 #endif
 

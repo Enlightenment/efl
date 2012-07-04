@@ -36,6 +36,8 @@ evas_common_text_props_content_copy_and_ref(Evas_Text_Props *dst,
       const Evas_Text_Props *src)
 {
    memcpy(dst, src, sizeof(Evas_Text_Props));
+   dst->glyphs = NULL;
+   dst->glyphs_length = 0;
    evas_common_text_props_content_ref(dst);
 }
 
@@ -66,11 +68,9 @@ evas_common_text_props_content_unref(Evas_Text_Props *props)
    
    if (--(props->info->refcount) == 0)
      {
-        if (props->bin)
-          {
-             eina_binbuf_free(props->bin);
-             props->bin = NULL;
-          }
+        free(props->glyphs);
+        props->glyphs = NULL;
+        props->glyphs_length = 0;
 
         if (props->info->glyph)
           free(props->info->glyph);

@@ -1,4 +1,5 @@
 #include "evas_common.h"
+#include "evas_private.h"
 #include "evas_blend_private.h"
 #ifdef EVAS_CSERVE2
 #include "evas_cs2_private.h"
@@ -33,7 +34,7 @@ struct _Line
    Span span[2];
 };
 
-static FPc
+static inline FPc
 _interp(int x1, int x2, int p, FPc u1, FPc u2)
 {
    FPc u;
@@ -46,7 +47,7 @@ _interp(int x1, int x2, int p, FPc u1, FPc u2)
    return u1 + u;
 }
 
-static DATA32
+static inline DATA32
 _interp_col(int x1, int x2, int p, DATA32 col1, DATA32 col2)
 {
    x2 -= x1;
@@ -56,7 +57,7 @@ _interp_col(int x1, int x2, int p, DATA32 col1, DATA32 col2)
    return INTERP_256(p, col2, col1);
 }
 
-static void
+static inline void
 _limit(Span *s, int c1, int c2, int nocol)
 {
    if (s->x1 < c1)
@@ -357,17 +358,293 @@ _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy
      }
 }
 
+/* FIXME: Account for 10% during pipe rendering, should be improved
+ * Could be computing the interpolation once somehow.
+ */
+static void
+_clip_spans(Line *spans, int ystart, int yend,
+            int cx, int cw, Eina_Bool nocol)
+{
+   int y, yp;
+
+   for (y = ystart, yp = 0; y <= yend; y++, yp++)
+     {
+        if (spans[yp].span[0].x1 > -1)
+          {
+             if ((spans[yp].span[0].x1 >= (cx + cw)) ||
+                 (spans[yp].span[0].x2 < cx))
+               {
+                  spans[yp].span[0].x1 = -1;
+               }
+             else
+               {
+                  _limit(&(spans[yp].span[0]), cx, cx + cw, nocol);
+
+                  if ((spans[yp].span[1].x1 >= (cx + cw)) ||
+                      (spans[yp].span[1].x2 < cx))
+                    {
+                       spans[yp].span[1].x1 = -1;
+                    }
+                  else
+                    {
+                       _limit(&(spans[yp].span[1]),
+                              spans[yp].span[0].x2,
+                              cx + cw, nocol);
+                    }
+               }
+          }
+     }
+}
+
+typedef struct _RGBA_Map_Spans RGBA_Map_Spans;
+typedef struct _RGBA_Map_Cutout RGBA_Map_Cutout;
+
+struct _RGBA_Map_Spans
+{
+   Line *spans;
+   int size;
+   int ystart;
+   int yend;
+
+   int havecol;
+   Eina_Bool nocol;
+   Eina_Bool havea;
+   Eina_Bool direct;
+};
+
+struct _RGBA_Map_Cutout
+{
+   int count;
+
+   Cutout_Rects *rects;
+   RGBA_Map_Spans spans[1];
+};
+
+EAPI void
+evas_common_map_rgba_clean(RGBA_Map *m)
+{
+   RGBA_Map_Cutout *spans = m->engine_data;
+
+   if (spans)
+     {
+        int i;
+
+        if (spans->rects)
+          evas_common_draw_context_apply_clear_cutouts(spans->rects);
+        for (i = 0; i < spans->count; i++)
+          free(spans->spans[i].spans);
+        free(spans);
+     }
+
+   m->engine_data = NULL;
+}
+
+static void
+_rgba_map_cutout_resize(RGBA_Map *m, int count)
+{
+   RGBA_Map_Cutout *old = m->engine_data;
+   RGBA_Map_Cutout *r;
+   int size;
+   int i;
+
+   if (count == 0)
+     goto empty;
+
+   if (old && old->count == count)
+     {
+        return ;
+     }
+
+   size = sizeof (RGBA_Map_Cutout) + sizeof (RGBA_Map_Spans) * (count - 1);
+
+   if (old)
+     {
+        for (i = 0; i < old->count; i++)
+          {
+             free(old->spans[i].spans);
+             old->spans[i].spans = NULL;
+          }
+     }
+
+   r = realloc(old, size);
+   if (!r)
+     goto empty;
+
+   memset(r, 0, size);
+   m->engine_data = r;
+   r->count = count;
+   return ;
+
+ empty:
+   evas_common_map_rgba_clean(m);
+   return ;
+}
+
+static void
+_evas_common_map_rgba_span(RGBA_Map_Spans *span,
+                           RGBA_Image *src, RGBA_Image *dst,
+                           RGBA_Draw_Context *dc,
+                           RGBA_Map_Point *p,
+                           int cx, int cy, int cw, int ch)
+{
+   int ytop, ybottom, sw;
+   unsigned int i;
+
+   span->havecol = 4;
+   span->havea = 0;
+   span->direct = 0;
+
+   // find y yop line and y bottom line
+   ytop = p[0].y;
+   if ((p[0].col >> 24) < 0xff) span->havea = 1;
+   if (p[0].col == 0xffffffff) span->havecol--;
+   for (i = 1; i < 4; i++)
+     {
+        if (p[i].y < ytop) ytop = p[i].y;
+        if ((p[i].col >> 24) < 0xff) span->havea = 1;
+        if (p[i].col == 0xffffffff) span->havecol--;
+     }
+
+   ybottom = p[0].y;
+   for (i = 1; i < 4; i++)
+     {
+        if (p[i].y > ybottom) ybottom = p[i].y;
+     }
+   
+   // convert to screen space from fixed point
+   ytop = ytop >> FP;
+   ybottom = ybottom >> FP;
+   
+   // if its outside the clip vertical bounds - don't bother
+   if ((ytop >= (cy + ch)) || (ybottom < cy)) return;
+   
+   // limit to the clip vertical bounds
+   if (ytop < cy) span->ystart = cy;
+   else span->ystart = ytop;
+   if (ybottom >= (cy + ch)) span->yend = (cy + ch) - 1;
+   else span->yend = ybottom;
+
+   // get some source image information
+   sw = src->cache_entry.w;
+
+   // limit u,v coords of points to be within the source image
+   for (i = 0; i < 4; i++)
+     {
+        if (p[i].u < 0) p[i].u = 0;
+        else if (p[i].u > (int)(sw << FP))
+          p[i].u = src->cache_entry.w << FP;
+        
+        if (p[i].v < 0) p[i].v = 0;
+        else if (p[i].v > (int)(sw << FP))
+          p[i].v = src->cache_entry.h << FP;
+     }
+   
+   // allocate some spans to hold out span list
+   if (span->size < (span->yend - span->ystart + 1))
+     {
+        free(span->spans);
+        span->size = (span->yend - span->ystart + 1);
+        span->spans = calloc(1, span->size * sizeof(Line));
+     }
+   if (!span->spans) return;
+
+   // calculate the spans list
+   _calc_spans(p, span->spans, span->ystart, span->yend, cx, cy, cw, ch);
+
+   // if operation is solid, bypass buf and draw func and draw direct to dst
+   if ((!src->cache_entry.flags.alpha) && (!dst->cache_entry.flags.alpha) &&
+       (!dc->mul.use) && (!span->havea))
+     {
+        span->direct = 1;
+     }
+}
+
+EAPI Eina_Bool
+evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
+                             RGBA_Draw_Context *dc,
+                             RGBA_Map *m)
+{
+   RGBA_Map_Cutout *spans;
+   Cutout_Rects *rects;
+   Cutout_Rect *r;
+   int i;
+
+   if ((!dc->cutout.rects) && (!dc->clip.use))
+     {
+	evas_common_draw_context_clip_clip(dc, 0, 0,
+                                           dst->cache_entry.w, dst->cache_entry.h);
+	if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
+	  {
+             _rgba_map_cutout_resize(m, 0);
+             return EINA_FALSE;
+	  }
+
+        _rgba_map_cutout_resize(m, 1);
+        if (!m->engine_data) return EINA_FALSE;
+
+        spans = m->engine_data;
+
+        _evas_common_map_rgba_span(&spans->spans[0], src, dst, dc, m->pts,
+                                   0, 0,
+                                   dst->cache_entry.w, dst->cache_entry.h);
+        return EINA_TRUE;
+     }
+
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
+   /* our clip is 0 size.. abort */
+   if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
+     {
+        _rgba_map_cutout_resize(m, 0);
+        return EINA_FALSE;
+     }
+
+   spans = m->engine_data;
+   if (spans)
+     {
+        rects = spans->rects;
+        spans->rects = NULL;
+     }
+   else
+     {
+        rects = evas_common_draw_context_cutouts_new();
+     }
+   rects = evas_common_draw_context_apply_cutouts(dc, rects);
+   _rgba_map_cutout_resize(m, rects->active);
+
+   spans = m->engine_data;
+   if (!spans)
+     {
+        evas_common_draw_context_apply_clear_cutouts(rects);
+        return EINA_FALSE;
+     }
+
+   spans->rects = rects;
+   for (i = 0; i < spans->rects->active; ++i)
+     {
+       r = spans->rects->rects + i;
+
+       _evas_common_map_rgba_span(&spans->spans[i], src, dst, dc, m->pts,
+				  r->x, r->y, r->w, r->h);
+     }
+
+   return EINA_TRUE;
+}
+
 #ifdef BUILD_SCALE_SMOOTH
 # ifdef BUILD_MMX
 #  undef FUNC_NAME
+#  undef FUNC_NAME_DO
 #  define FUNC_NAME evas_common_map_rgba_internal_mmx
+#  define FUNC_NAME_DO evas_common_map_rgba_internal_mmx_do
 #  undef SCALE_USING_MMX
 #  define SCALE_USING_MMX
 #  include "evas_map_image_internal.c"
 # endif
 # ifdef BUILD_C
 #  undef FUNC_NAME
+#  undef FUNC_NAME_DO
 #  define FUNC_NAME evas_common_map_rgba_internal
+#  define FUNC_NAME_DO evas_common_map_rgba_internal_do
 #  undef SCALE_USING_MMX
 #  include "evas_map_image_internal.c"
 # endif
@@ -382,7 +659,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
 #endif
-   Cutout_Rects *rects;
+   static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
@@ -422,7 +699,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
         dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
         return;
      }
-   rects = evas_common_draw_context_apply_cutouts(dc);
+   rects = evas_common_draw_context_apply_cutouts(dc, rects);
    for (i = 0; i < rects->active; ++i)
      {
         r = rects->rects + i;
@@ -436,7 +713,65 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
           evas_common_map_rgba_internal(src, dst, dc, p, smooth, level);
 #endif        
      }
-   evas_common_draw_context_apply_clear_cutouts(rects);
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+}
+
+EAPI void
+evas_common_map_rgba_do(const Eina_Rectangle *clip,
+                        RGBA_Image *src, RGBA_Image *dst,
+			RGBA_Draw_Context *dc,
+			const RGBA_Map *m,
+			int smooth, int level)
+{
+#ifdef BUILD_MMX
+   int mmx, sse, sse2;
+#endif
+   const Cutout_Rects *rects;
+   const RGBA_Map_Cutout *spans;
+   Eina_Rectangle area;
+   Cutout_Rect *r;
+   int i;
+
+#ifdef BUILD_MMX
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
+#endif   
+
+   spans = m->engine_data;
+   rects = spans->rects;
+   if (rects->active == 0 &&
+       spans->count == 1)
+     {
+        evas_common_draw_context_set_clip(dc, clip->x, clip->y, clip->w, clip->h);
+#ifdef BUILD_MMX
+        if (mmx)
+          evas_common_map_rgba_internal_mmx_do(src, dst, dc,
+                                               &spans->spans[0], smooth, level);
+        else
+#endif
+#ifdef BUILD_C
+          evas_common_map_rgba_internal_do(src, dst, dc,
+                                           &spans->spans[0], smooth, level);
+#endif
+        return ;                                         
+     }
+
+   for (i = 0; i < rects->active; ++i)
+     {
+        r = rects->rects + i;
+
+        EINA_RECTANGLE_SET(&area, r->x, r->y, r->w, r->h);
+        if (!eina_rectangle_intersection(&area, clip)) continue ;
+        evas_common_draw_context_set_clip(dc, area.x, area.y, area.w, area.h);
+#ifdef BUILD_MMX
+        if (mmx)
+          evas_common_map_rgba_internal_mmx_do(src, dst, dc,
+                                               &spans->spans[i], smooth, level);
+        else
+#endif
+#ifdef BUILD_C
+          evas_common_map_rgba_internal_do(src, dst, dc,
+                                           &spans->spans[i], smooth, level);
+#endif
+     }
 }

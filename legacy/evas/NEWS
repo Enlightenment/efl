@@ -13,7 +13,8 @@ Improvements:
    * Don't wake up prepare thread if there is nothing to prepare.
    * Limit the updated region to fit in CPU cache for Pipe rendering.
    * Cache convertion from Evas_Map to RGBA_Map.
-   * evas_object_smart_members_get() now returns NULL on non-smart objects
+   * evas_object_smart_members_get() now returns NULL on non-smart objects.
+   * Pipeline rendering use prepare stage more extensively.
 
 Fixes:
    * Add missing files in the tarball.

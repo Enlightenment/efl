@@ -523,8 +523,8 @@ evas_common_soft8_image_draw(Soft8_Image * src, Soft8_Image * dst,
                  int dst_region_w, int dst_region_h,
                  int smooth __UNUSED__)
 {
+   static Cutout_Rects *rects = NULL;
    Eina_Rectangle sr, dr;
-   Cutout_Rects *rects;
    Cutout_Rect *r;
    struct RGBA_Draw_Context_clip clip_bkp;
    int i;
@@ -569,14 +569,13 @@ evas_common_soft8_image_draw(Soft8_Image * src, Soft8_Image * dst,
         dc->clip = clip_bkp;
         return;
      }
-   rects = evas_common_draw_context_apply_cutouts(dc);
+   rects = evas_common_draw_context_apply_cutouts(dc, rects);
    for (i = 0; i < rects->active; i++)
      {
         r = rects->rects + i;
         evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
         _soft8_image_draw_sampled_int(src, dst, dc, sr, dr);
      }
-   evas_common_draw_context_apply_clear_cutouts(rects);
    dc->clip = clip_bkp;
 }
 

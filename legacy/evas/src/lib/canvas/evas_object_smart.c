@@ -1008,19 +1008,74 @@ static void
 evas_object_smart_render_pre(Evas_Object *obj)
 {
    if (obj->pre_render_done) return;
-   if (!obj->child_has_map)
+   if (!obj->child_has_map && !obj->cur.cached_surface)
      {
 #if 0
         Evas_Object_Smart *o;
 
+        fprintf(stderr, "");
         o = (Evas_Object_Smart *)(obj->object_data);
-        if (o->member_count > 1 &&
+        if (/* o->member_count > 1 && */
             obj->cur.bounding_box.w == obj->prev.bounding_box.w &&
             obj->cur.bounding_box.h == obj->prev.bounding_box.h &&
             (obj->cur.bounding_box.x != obj->prev.bounding_box.x ||
              obj->cur.bounding_box.y != obj->prev.bounding_box.y))
           {
-             fprintf(stderr, "Wouhou, I can detect moving smart object (%s, %p < %p)\n", evas_object_type_get(obj), obj, obj->smart.parent);
+             Eina_Bool cache_map = EINA_FALSE;
+
+             /* Check parent speed */
+             /* - same speed => do not map this object */
+             /* - different speed => map this object */
+             /* - if parent is mapped then map this object */
+
+             if (!obj->smart.parent || obj->smart.parent->child_has_map)
+               {
+                  cache_map = EINA_TRUE;
+               }
+             else
+               {
+                  if (_evas_render_has_map(obj->smart.parent))
+                    {
+                       cache_map = EINA_TRUE;
+                    }
+                  else
+                    {
+                       int speed_x, speed_y;
+                       int speed_px, speed_py;
+
+                       speed_x = obj->cur.geometry.x - obj->prev.geometry.x;
+                       speed_y = obj->cur.geometry.y - obj->prev.geometry.y;
+
+                       speed_px = obj->smart.parent->cur.geometry.x - obj->smart.parent->prev.geometry.x;
+                       speed_py = obj->smart.parent->cur.geometry.y - obj->smart.parent->prev.geometry.y;
+
+                       /* speed_x = obj->cur.bounding_box.x - obj->prev.bounding_box.x; */
+                       /* speed_y = obj->cur.bounding_box.y - obj->prev.bounding_box.y; */
+
+                       /* speed_px = obj->smart.parent->cur.bounding_box.x - obj->smart.parent->prev.bounding_box.x; */
+                       /* speed_py = obj->smart.parent->cur.bounding_box.y - obj->smart.parent->prev.bounding_box.y; */
+
+                       fprintf(stderr, "speed: '%s',%p (%i, %i) vs '%s',%p (%i, %i)\n",
+                               evas_object_type_get(obj), obj, speed_x, speed_y,
+                               evas_object_type_get(obj->smart.parent), obj->smart.parent, speed_px, speed_py);
+
+                       if (speed_x != speed_px || speed_y != speed_py)
+                         cache_map = EINA_TRUE;
+                    }
+               }
+
+             if (cache_map)
+               fprintf(stderr, "Wouhou, I can detect moving smart object (%s, %p [%i, %i, %i, %i] < %s, %p [%i, %i, %i, %i])\n",
+                       evas_object_type_get(obj), obj,
+                       obj->cur.bounding_box.x - obj->prev.bounding_box.x,
+                       obj->cur.bounding_box.y - obj->prev.bounding_box.y,
+                       obj->cur.bounding_box.w, obj->cur.bounding_box.h,
+                       evas_object_type_get(obj->smart.parent), obj->smart.parent,
+                       obj->smart.parent->cur.bounding_box.x - obj->smart.parent->prev.bounding_box.x,
+                       obj->smart.parent->cur.bounding_box.y - obj->smart.parent->prev.bounding_box.y,
+                       obj->smart.parent->cur.bounding_box.w, obj->smart.parent->cur.bounding_box.h);
+
+             obj->cur.cached_surface = cache_map;
           }
 #endif
      }

@@ -404,10 +404,10 @@ typedef void (*_cb_for_each_cutout_t)(IDirectFBSurface *surface, RGBA_Draw_Conte
 static void
 _dfb_surface_for_each_cutout(IDirectFBSurface *surface, RGBA_Draw_Context *dc, _cb_for_each_cutout_t cb, void *data)
 {
-   Cutout_Rects *rects;
+   static Cutout_Rects *rects = NULL;
    int i;
 
-   rects = evas_common_draw_context_apply_cutouts(dc);
+   rects = evas_common_draw_context_apply_cutouts(dc, rects);
    if (!rects)
      {
 	DFBRegion cr;
@@ -435,7 +435,6 @@ _dfb_surface_for_each_cutout(IDirectFBSurface *surface, RGBA_Draw_Context *dc, _
 	surface->SetClip(surface, &cr);
 	cb(surface, dc, &cr, data);
      }
-   evas_common_draw_context_apply_clear_cutouts(rects);
 }
 
 static void

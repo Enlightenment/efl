@@ -822,7 +822,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
       _evas_render_has_map(obj));
    if (_evas_render_has_map(obj))
      {
-        RGBA_Map_Point *pts;
         int sw, sh;
         Eina_Bool changed = EINA_FALSE, rendered = EINA_FALSE;
 
@@ -840,7 +839,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           }
 
         evas_object_map_update(obj, off_x, off_y, sw, sh, sw, sh);
-        pts = obj->spans->pts;
 
         if (obj->cur.map->surface)
           {
@@ -1032,7 +1030,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                (e->engine.data.output, e->engine.data.context);
              obj->layer->evas->engine.func->image_map_draw
                (e->engine.data.output, e->engine.data.context, surface,
-                   obj->cur.map->surface, obj->cur.map->count, pts,
+                   obj->cur.map->surface, obj->spans,
                    obj->cur.map->smooth, 0);
           }
         // FIXME: needs to cache these maps and

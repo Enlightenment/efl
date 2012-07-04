@@ -74,7 +74,6 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    
    // allocate some spans to hold out span list
    spans = alloca((yend - ystart + 1) * sizeof(Line));
-   if (!spans) return;
    memset(spans, 0, (yend - ystart + 1) * sizeof(Line));
 
    // calculate the spans list
@@ -94,9 +93,73 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
         int pa;
         
         buf = alloca(cw * sizeof(DATA32));
-        if (!buf) return;
         pa = src->cache_entry.flags.alpha;
         if (havea) src->cache_entry.flags.alpha = 1;
+        if (dc->mul.use)
+          func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, cw, dc->render_op);
+        else
+          func = evas_common_gfx_func_composite_pixel_span_get(src, dst, cw, dc->render_op);
+        src->cache_entry.flags.alpha = pa;
+     }
+    
+   if (!havecol)
+     {
+#undef COLMUL     
+#include "evas_map_image_core.c"
+     }
+   else
+     {
+#define COLMUL 1
+#include "evas_map_image_core.c"
+     }
+}
+
+static void
+FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
+             RGBA_Draw_Context *dc,
+             const RGBA_Map_Spans *ms,
+             int smooth, int level __UNUSED__) // level unused for now - for future use
+{
+   Line *spans;
+   DATA32 *buf = NULL, *sp;
+   RGBA_Gfx_Func func = NULL;
+   int cx, cy, cw, ch;
+   int ystart, yend, y, sw, shp, swp, direct;
+   int havecol;
+   int i;
+   
+   cx = dc->clip.x;
+   cy = dc->clip.y;
+   cw = dc->clip.w;
+   ch = dc->clip.h;
+
+   if (ms->ystart < cy) ystart = cy;
+   else ystart = ms->ystart;
+   if (ms->yend >= (cy + ch)) yend = (cy + ch) - 1;
+   else yend = ms->yend;
+
+   // get some source image information
+   sp = src->image.data;
+   sw = src->cache_entry.w;
+   swp = sw << (FP + FPI);
+   shp = src->cache_entry.h << (FP + FPI);
+   havecol = ms->havecol;
+   direct = ms->direct;
+
+   // allocate some s to hold out span list
+   spans = alloca((yend - ystart + 1) * sizeof(Line));
+   memcpy(spans, &ms->spans[ystart - ms->ystart],
+          (yend - ystart + 1) * sizeof(Line));
+   _clip_spans(spans, ystart, yend, cx, cw, ms->nocol);
+
+   // if operation is solid, bypass buf and draw func and draw direct to dst
+   if (!direct)
+     {
+        int pa;
+
+        buf = alloca(cw * sizeof(DATA32));
+        pa = src->cache_entry.flags.alpha;
+        if (ms->havea) src->cache_entry.flags.alpha = 1;
         if (dc->mul.use)
           func = evas_common_gfx_func_composite_pixel_color_span_get(src, dc->mul.col, dst, cw, dc->render_op);
         else

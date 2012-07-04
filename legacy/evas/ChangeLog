@@ -842,7 +842,7 @@
 	* upstream merge
 	* Merge remote-tracking branch 'remotes/origin/upstream'
 
-2012-07-03 Christopher Michael
+2012-07-03  Christopher Michael
 
 	* Merge Tizen changes to upstream EFL.
 	* Support gif scaling in evas gif loader.
@@ -852,3 +852,6 @@
 	* When freeing a gl_x11 window, make sure to call eglMakeCurrent with a null surface
 		to inform EGL that this window is no longer valid.
 
+2012-07-04  Cedric Bail
+
+	* Make pipeline rendering use more extensively the prepare stage.

@@ -3,7 +3,7 @@
 void
 evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
 {
-   Cutout_Rects *rects;
+   static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch, cr, cg, cb, ca, i;
 
@@ -37,7 +37,7 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
         /* our clip is 0 size.. abort */
         if ((gc->dc->clip.w > 0) && (gc->dc->clip.h > 0))
           {
-             rects = evas_common_draw_context_apply_cutouts(gc->dc);
+             rects = evas_common_draw_context_apply_cutouts(gc->dc, rects);
              for (i = 0; i < rects->active; ++i)
                {
                   r = rects->rects + i;
@@ -46,7 +46,6 @@ evas_gl_common_rect_draw(Evas_Engine_GL_Context *gc, int x, int y, int w, int h)
                        evas_gl_common_context_rectangle_push(gc, r->x, r->y, r->w, r->h, cr, cg, cb, ca);
                     }
                }
-             evas_common_draw_context_apply_clear_cutouts(rects);
           }
      }
    /* restore clip info */

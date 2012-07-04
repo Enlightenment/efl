@@ -1,4 +1,5 @@
 #include "evas_common.h"
+#include "evas_private.h"
 #include "evas_blend_private.h"
 
 static void rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
@@ -11,7 +12,7 @@ evas_common_rectangle_init(void)
 EAPI void
 evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
-   Cutout_Rects *rects;
+   static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
@@ -34,18 +35,65 @@ evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
 	/* our clip is 0 size.. abort */
 	if ((dc->clip.w > 0) && (dc->clip.h > 0))
 	  {
-	     rects = evas_common_draw_context_apply_cutouts(dc);
+             rects = evas_common_draw_context_apply_cutouts(dc, rects);
 	     for (i = 0; i < rects->active; ++i)
 	       {
 		  r = rects->rects + i;
 		  evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
 		  rectangle_draw_internal(dst, dc, x, y, w, h);
 	       }
-	     evas_common_draw_context_apply_clear_cutouts(rects);
 	  }
      }
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
+}
+
+EAPI Eina_Bool
+evas_common_rectangle_draw_prepare(Cutout_Rects *reuse, const RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h)
+{
+   if ((w <= 0) || (h <= 0)) return EINA_FALSE;
+   if (!(RECTS_INTERSECT(x, y, w, h, 0, 0, dst->cache_entry.w, dst->cache_entry.h)))
+     return EINA_FALSE;
+   /* save out clip info */
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
+   /* no cutouts - cut right to the chase */
+   if (dc->cutout.rects)
+     {
+       evas_common_draw_context_clip_clip(dc, x, y, w, h);
+       /* our clip is 0 size.. abort */
+       if ((dc->clip.w > 0) && (dc->clip.h > 0))
+	 reuse = evas_common_draw_context_apply_cutouts(dc, reuse);
+     }
+
+   return EINA_TRUE;
+}
+
+EAPI void
+evas_common_rectangle_draw_do(const Cutout_Rects *reuse,
+                              const Eina_Rectangle *clip,
+                              RGBA_Image *dst, RGBA_Draw_Context *dc,
+                              int x, int y, int w, int h)
+{
+   Eina_Rectangle area;
+   Cutout_Rect *r;
+   int i;
+
+   if (!reuse)
+     {
+        evas_common_draw_context_set_clip(dc, clip->x, clip->y, clip->w, clip->h);
+        rectangle_draw_internal(dst, dc, x, y, w, h);
+        return ;
+     }
+
+   for (i = 0; i < reuse->active; ++i)
+     {
+        r = reuse->rects + i;
+
+        EINA_RECTANGLE_SET(&area, r->x, r->y, r->w, r->h);
+        if (!eina_rectangle_intersection(&area, clip)) continue ;
+        evas_common_draw_context_set_clip(dc, area.x, area.y, area.w, area.h);
+        rectangle_draw_internal(dst, dc, x, y, w, h);
+     }
 }
 
 static void

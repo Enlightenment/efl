@@ -460,7 +460,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 # ifdef BUILD_MMX
    int mmx, sse, sse2;
 # endif
-   Cutout_Rects *rects;
+   static Cutout_Rects *rects = NULL;
    Cutout_Rect  *r;
    int          c, cx, cy, cw, ch;
    int          i;
@@ -503,7 +503,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 	dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 	return;
      }
-   rects = evas_common_draw_context_apply_cutouts(dc);
+   rects = evas_common_draw_context_apply_cutouts(dc, rects);
    for (i = 0; i < rects->active; ++i)
      {
 	r = rects->rects + i;
@@ -525,8 +525,76 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 					     dst_region_w, dst_region_h);
 # endif
      }
-   evas_common_draw_context_apply_clear_cutouts(rects);
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }
+
+EAPI void
+evas_common_scale_rgba_in_to_out_clip_smooth_do(const Cutout_Rects *reuse,
+						const Eina_Rectangle *clip,
+						RGBA_Image *src, RGBA_Image *dst,
+						RGBA_Draw_Context *dc,
+						int src_region_x, int src_region_y,
+						int src_region_w, int src_region_h,
+						int dst_region_x, int dst_region_y,
+						int dst_region_w, int dst_region_h)
+{
+# ifdef BUILD_MMX
+   int mmx, sse, sse2;
+# endif
+   Eina_Rectangle area;
+   Cutout_Rect *r;
+   int i;
+
+# ifdef BUILD_MMX
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
+# endif
+   if (!reuse)
+     {
+        evas_common_draw_context_set_clip(dc, clip->x, clip->y, clip->w, clip->h);
+# ifdef BUILD_MMX
+	if (mmx)
+	  evas_common_scale_rgba_in_to_out_clip_smooth_mmx(src, dst, dc,
+					       src_region_x, src_region_y,
+					       src_region_w, src_region_h,
+					       dst_region_x, dst_region_y,
+					       dst_region_w, dst_region_h);
+	else
+# endif
+# ifdef BUILD_C
+	  evas_common_scale_rgba_in_to_out_clip_smooth_c(src, dst, dc,
+					     src_region_x, src_region_y,
+					     src_region_w, src_region_h,
+					     dst_region_x, dst_region_y,
+					     dst_region_w, dst_region_h);
+# endif
+        return ;
+     }
+
+   for (i = 0; i < reuse->active; ++i)
+     {
+        r = reuse->rects + i;
+
+        EINA_RECTANGLE_SET(&area, r->x, r->y, r->w, r->h);
+        if (!eina_rectangle_intersection(&area, clip)) continue ;
+        evas_common_draw_context_set_clip(dc, area.x, area.y, area.w, area.h);
+# ifdef BUILD_MMX
+	if (mmx)
+	  evas_common_scale_rgba_in_to_out_clip_smooth_mmx(src, dst, dc,
+					       src_region_x, src_region_y,
+					       src_region_w, src_region_h,
+					       dst_region_x, dst_region_y,
+					       dst_region_w, dst_region_h);
+	else
+# endif
+# ifdef BUILD_C
+	  evas_common_scale_rgba_in_to_out_clip_smooth_c(src, dst, dc,
+					     src_region_x, src_region_y,
+					     src_region_w, src_region_h,
+					     dst_region_x, dst_region_y,
+					     dst_region_w, dst_region_h);
+# endif
+     }
+}
+
 #endif

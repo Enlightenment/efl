@@ -221,8 +221,7 @@ _sci_find(RGBA_Image *im,
           {
              if (im->cache.list != l)
                {
-                  im->cache.list = eina_list_remove_list(im->cache.list, l);
-                  im->cache.list = eina_list_prepend(im->cache.list, sci);
+                  im->cache.list = eina_list_promote_list(im->cache.list, l);
                }
              return sci;
           }

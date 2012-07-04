@@ -562,9 +562,14 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
 //     }
 
    evas_common_font_int_reload(fi);
-   FTLOCK();
+   /*
+    * There is no point in locking FreeType at this point as all caller
+    * are running in the main loop at a time where there is zero chance
+    * that something else try to use it.
+    */
+   /* FTLOCK(); */
    result.index = FT_Get_Char_Index(fi->src->ft.face, gl);
-   FTUNLOCK();
+   /* FTUNLOCK(); */
    result.gl = gl;
 
 //   eina_hash_direct_add(fi->indexes, &result->gl, result);
