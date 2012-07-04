@@ -1522,6 +1522,42 @@ EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(EPhysics_Body *body);
 
 /**
  * @brief
+ * Enable or disable body's movement on x and y axises.
+ *
+ * Enabled by default on both axises.
+ *
+ * @param body The physics body.
+ * @param enable_x If @c EINA_TRUE allow movement on x axis, if @c EINA_FALSE
+ * disallow it.
+ * @param enable_y If @c EINA_TRUE allow movement on y axis, if @c EINA_FALSE
+ * disallow it.
+ *
+ * @see ephysics_body_linear_movement_enable_set().
+ * @see ephysics_body_rotation_on_z_axis_enable_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y);
+
+/**
+ * @brief
+ * Get body's movement on x and y axises behavior.
+ *
+ * @param body The physics body.
+ * @param enable_x @c EINA_TRUE if movement on x axis is allowed, or
+ * @c EINA_FALSE if it's not.
+ * @param enable_y @c EINA_TRUE if movement on y axis is allowed, or
+ * @c EINA_FALSE if it's not.
+ *
+ * @see ephysics_body_linear_movement_enable_get().
+ * @see ephysics_body_rotation_on_z_axis_enable_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_linear_movement_enable_get(EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y);
+
+/**
+ * @brief
  * Return body's rotation on z axis.
  *
  * By default rotation is 0 degrees.

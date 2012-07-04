@@ -821,6 +821,31 @@ ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y)
 }
 
 EAPI void
+ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y)
+{
+   if (!body)
+     {
+        ERR("Can't set linear factor on a null body.");
+        return;
+     }
+
+   body->rigid_body->setLinearFactor(btVector3(!!enable_x, !!enable_y, 0));
+}
+
+EAPI void
+ephysics_body_linear_movement_enable_get(EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y)
+{
+   if (!body)
+     {
+        ERR("Can't check if linear factor is enabled, body is null.");
+        return;
+     }
+
+   if (enable_x) *enable_x = !!body->rigid_body->getLinearFactor().x();
+   if (enable_y) *enable_y = !!body->rigid_body->getLinearFactor().y();
+}
+
+EAPI void
 ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll)
 {
    if (!body)
