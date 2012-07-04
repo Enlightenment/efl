@@ -48,17 +48,22 @@ static const char *efreet_lang_modifier = NULL;
 static void efreet_parse_locale(void);
 static int efreet_parse_locale_setting(const char *env);
 
+#ifndef _WIN32
 static uid_t ruid;
 static uid_t rgid;
+#endif
 
 EAPI int
 efreet_init(void)
 {
+#ifndef _WIN32
     char *tmp;
+#endif
 
     if (++_efreet_init_count != 1)
         return _efreet_init_count;
 
+#ifndef _WIN32
     /* Find users real uid and gid */
     tmp = getenv("SUDO_UID");
     if (tmp)
@@ -71,6 +76,7 @@ efreet_init(void)
         rgid = strtoul(tmp, NULL, 10);
     else
         rgid = getgid();
+#endif
 
     if (!eina_init())
         return --_efreet_init_count;
@@ -319,6 +325,7 @@ efreet_array_cat(char *buffer, size_t size, const char *strs[])
     return n;
 }
 
+#ifndef _WIN32
 EAPI void
 efreet_fsetowner(int fd)
 {
@@ -330,7 +337,14 @@ efreet_fsetowner(int fd)
 
     if (fchown(fd, ruid, rgid) != 0) return;
 }
+#else
+EAPI void
+efreet_fsetowner(int fd __UNUSED__)
+{
+}
+#endif
 
+#ifndef _WIN32
 EAPI void
 efreet_setowner(const char *path)
 {
@@ -343,3 +357,9 @@ efreet_setowner(const char *path)
     efreet_fsetowner(fd);
     close(fd);
 }
+#else
+EAPI void
+efreet_setowner(const char *path __UNUSED__)
+{
+}
+#endif
