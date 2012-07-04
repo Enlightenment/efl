@@ -382,7 +382,7 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
 
    if (!reuse)
      {
-        evas_common_draw_context_set_clip(dc, area.x, area.y, area.w, area.h);
+        evas_common_draw_context_set_clip(dc, clip->x, clip->y, clip->w, clip->h);
         evas_common_font_draw_internal(dst, dc, x, y, text_props,
                                        func, clip->x, clip->y, clip->w, clip->h,
                                        im_w, im_h);
