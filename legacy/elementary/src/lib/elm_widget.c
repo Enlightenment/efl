@@ -114,11 +114,6 @@ typedef struct _Elm_Widget_Compat_Smart_Data
                     Evas_Object *obj);
    void (*on_change)(void *data,
                      Evas_Object *obj);
-   void (*focus_region)(Evas_Object *obj,
-                        Evas_Coord x,
-                        Evas_Coord y,
-                        Evas_Coord w,
-                        Evas_Coord h);
    void (*on_focus_region)(const Evas_Object *obj,
                            Evas_Coord *x,
                            Evas_Coord *y,
@@ -887,9 +882,9 @@ _elm_widget_focus_region_show(const Evas_Object *obj)
      {
         Evas_Coord px, py;
         sd2 = evas_object_smart_data_get(o);
-        if (_elm_legacy_is(o) && COMPAT_SMART_DATA(sd2)->focus_region)
+        if (_elm_legacy_is(o) && sd2->focus_region)
           {
-             COMPAT_SMART_DATA(sd2)->focus_region(o, x, y, w, h);
+             sd2->focus_region(o, x, y, w, h);
              elm_widget_focus_region_get(o, &x, &y, &w, &h);
           }
         else
@@ -1479,7 +1474,7 @@ elm_widget_focus_region_hook_set(Evas_Object *obj,
 {
    API_ENTRY return;
 
-   COMPAT_SMART_DATA(sd)->focus_region = func;
+   sd->focus_region = func;
 }
 
 /**

@@ -465,10 +465,16 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_List                    *focus_chain;
    Eina_List                    *event_cb;
 
-   /* subject to later analysis: to be changed by something different */
+   /* this block is subject to later analysis: to be changed by
+    * something different */
    void                         *on_show_region_data;
    void                        (*on_show_region)(void *data,
                                                  Evas_Object *obj);
+   void                        (*focus_region)(Evas_Object *obj,
+                                               Evas_Coord x,
+                                               Evas_Coord y,
+                                               Evas_Coord w,
+                                               Evas_Coord h);
 
    Eina_Bool                     drag_x_locked : 1;
    Eina_Bool                     drag_y_locked : 1;
