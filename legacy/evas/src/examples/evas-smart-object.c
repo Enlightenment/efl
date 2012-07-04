@@ -39,7 +39,9 @@ static const char *commands = \
   "\td - decrease smart object's size\n"
   "\ti - increase smart object's size\n"
   "\tc - change smart object's clipper color\n"
-  "\th - print help\n";
+  "\th - print help\n"
+  "\tq - quit\n"
+;
 
 #define WHITE {255, 255, 255, 255}
 #define RED   {255, 0, 0, 255}
@@ -84,7 +86,7 @@ _index_to_color(int i)
 static struct test_data d = {0};
 static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
 
-#define _evas_smart_example_type    "Evas_Smart_Example"
+#define _evas_smart_example_type "Evas_Smart_Example"
 #define EVT_CHILDREN_NUMBER_CHANGED "children,changed"
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
@@ -153,20 +155,20 @@ _canvas_resize_cb(Ecore_Evas *ee)
 }
 
 static void
-_on_child_del(void        *data,
-              Evas        *evas __UNUSED__,
+_on_child_del(void *data,
+              Evas *evas __UNUSED__,
               Evas_Object *o,
-              void        *einfo __UNUSED__)
+              void *einfo __UNUSED__)
 {
    Evas_Object *example_smart = data;
-   int index;
+   long idx;
 
    EVAS_SMART_EXAMPLE_DATA_GET(example_smart, priv);
 
-   index = (int)evas_object_data_get(o, "index");
-   index--;
+   idx = (long)evas_object_data_get(o, "index");
+   idx--;
 
-   priv->children[index] = NULL;
+   priv->children[idx] = NULL;
 
    evas_object_smart_member_del(o);
    evas_object_smart_changed(example_smart);
@@ -182,10 +184,10 @@ _evas_smart_example_child_callbacks_unregister(Evas_Object *obj)
 static void
 _evas_smart_example_child_callbacks_register(Evas_Object *o,
                                              Evas_Object *child,
-                                             int          index)
+                                             long idx)
 {
    evas_object_event_callback_add(child, EVAS_CALLBACK_FREE, _on_child_del, o);
-   evas_object_data_set(child, "index", (void *)(++index));
+   evas_object_data_set(child, "index", (void *)(++idx));
 }
 
 /* create and setup a new example smart object's internals */
@@ -251,8 +253,8 @@ _evas_smart_example_smart_hide(Evas_Object *o)
 
 static void
 _evas_smart_example_smart_resize(Evas_Object *o,
-                                 Evas_Coord   w,
-                                 Evas_Coord   h)
+                                 Evas_Coord w,
+                                 Evas_Coord h)
 {
    Evas_Coord ow, oh;
    evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
@@ -292,14 +294,14 @@ static void
 _evas_smart_example_smart_set_user(Evas_Smart_Class *sc)
 {
    /* specializing these two */
-    sc->add = _evas_smart_example_smart_add;
-    sc->del = _evas_smart_example_smart_del;
-    sc->show = _evas_smart_example_smart_show;
-    sc->hide = _evas_smart_example_smart_hide;
+   sc->add = _evas_smart_example_smart_add;
+   sc->del = _evas_smart_example_smart_del;
+   sc->show = _evas_smart_example_smart_show;
+   sc->hide = _evas_smart_example_smart_hide;
 
-    /* clipped smart object has no hook on resizes or calculations */
-    sc->resize = _evas_smart_example_smart_resize;
-    sc->calculate = _evas_smart_example_smart_calculate;
+   /* clipped smart object has no hook on resizes or calculations */
+   sc->resize = _evas_smart_example_smart_resize;
+   sc->calculate = _evas_smart_example_smart_calculate;
 }
 
 /* BEGINS example smart object's own interface */
@@ -313,10 +315,10 @@ evas_smart_example_add(Evas *evas)
 
 static void
 _evas_smart_example_remove_do(Evas_Smart_Example_Data *priv,
-                              Evas_Object             *child,
-                              int                      index)
+                              Evas_Object *child,
+                              int idx)
 {
-   priv->children[index] = NULL;
+   priv->children[idx] = NULL;
    priv->child_count--;
    _evas_smart_example_child_callbacks_unregister(child);
    evas_object_smart_member_del(child);
@@ -327,7 +329,7 @@ Evas_Object *
 evas_smart_example_remove(Evas_Object *o,
                           Evas_Object *child)
 {
-   int index;
+   long idx;
 
    EVAS_SMART_EXAMPLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
 
@@ -338,13 +340,13 @@ evas_smart_example_remove(Evas_Object *o,
         return NULL;
      }
 
-   index = (int)evas_object_data_get(child, "index");
-   index--;
+   idx = (long)evas_object_data_get(child, "index");
+   idx--;
 
-   _evas_smart_example_remove_do(priv, child, index);
+   _evas_smart_example_remove_do(priv, child, idx);
 
    evas_object_smart_callback_call(
-     o, EVT_CHILDREN_NUMBER_CHANGED, (void *)priv->child_count);
+     o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(long)priv->child_count);
    evas_object_smart_changed(o);
 
    return child;
@@ -388,7 +390,7 @@ evas_smart_example_set_left(Evas_Object *o,
    if (!ret)
      {
         evas_object_smart_callback_call(
-          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)priv->child_count);
+          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(long)priv->child_count);
      }
 
    return ret;
@@ -432,7 +434,7 @@ evas_smart_example_set_right(Evas_Object *o,
    if (!ret)
      {
         evas_object_smart_callback_call(
-          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)priv->child_count);
+          o, EVT_CHILDREN_NUMBER_CHANGED, (void *)(long)priv->child_count);
      }
 
    return ret;
@@ -441,12 +443,18 @@ evas_smart_example_set_right(Evas_Object *o,
 /* END OF example smart object's own interface */
 
 static void
-_on_keydown(void        *data __UNUSED__,
-            Evas        *evas __UNUSED__,
+_on_keydown(void *data __UNUSED__,
+            Evas *evas __UNUSED__,
             Evas_Object *o __UNUSED__,
-            void        *einfo)
+            void *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
+
+   if (strcmp(ev->keyname, "q") == 0) /* print help */
+     {
+        _on_destroy(NULL);
+        return;
+     }
 
    if (strcmp(ev->keyname, "h") == 0) /* print help */
      {
@@ -454,7 +462,8 @@ _on_keydown(void        *data __UNUSED__,
         return;
      }
 
-   if (strcmp(ev->keyname, "w") == 0) /* clear out smart object (WRT members) */
+   if (strcmp(ev->keyname, "w") == 0) /* clear out smart object (WRT
+                                       * members) */
      {
         if (d.rects[0])
           {
@@ -603,20 +612,21 @@ _on_keydown(void        *data __UNUSED__,
           d.clipper, clipper_colors[cur_color].r, clipper_colors[cur_color].g,
           clipper_colors[cur_color].b, clipper_colors[cur_color].a);
 
-        fprintf (stderr, "Changing clipper's color to %s\n",
-                 _index_to_color(cur_color));
+        fprintf(stderr, "Changing clipper's color to %s\n",
+                _index_to_color(cur_color));
 
         return;
      }
 }
 
-static void /* callback on number of member objects changed */
-_on_example_smart_object_child_num_change(void        *data __UNUSED__,
+static void
+/* callback on number of member objects changed */
+_on_example_smart_object_child_num_change(void *data __UNUSED__,
                                           Evas_Object *obj __UNUSED__,
-                                          void        *event_info)
+                                          void *event_info)
 {
    fprintf(stdout, "Number of child members on our example smart"
-                   " object changed to %d\n", (int)event_info);
+                   " object changed to %lu\n", (long)event_info);
 }
 
 int
