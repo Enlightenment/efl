@@ -100,6 +100,54 @@ evas_object_smart_data_get(const Evas_Object *obj)
    return o->data;
 }
 
+EAPI const void *
+evas_object_smart_interface_get(const Evas_Object *obj,
+                                const char *name)
+{
+   unsigned int i;
+   Evas_Smart *s;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   s = evas_object_smart_smart_get(obj);
+
+   for (i = 0; i < s->interfaces.size; i++)
+     {
+        const Evas_Smart_Interface *iface;
+
+        iface = s->interfaces.array[i];
+
+        if (iface->name == name)
+          return iface;
+     }
+
+   return NULL;
+}
+
+EAPI void *
+evas_object_smart_interface_data_get(const Evas_Object *obj,
+                                     const Evas_Smart_Interface *iface)
+{
+   unsigned int i;
+   Evas_Smart *s;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+
+   s = evas_object_smart_smart_get(obj);
+
+   for (i = 0; i < s->interfaces.size; i++)
+     {
+        if (iface == s->interfaces.array[i])
+          return obj->interface_privates[i];
+     }
+
+   return NULL;
+}
+
 EAPI Evas_Smart *
 evas_object_smart_smart_get(const Evas_Object *obj)
 {
@@ -311,10 +359,76 @@ _evas_object_smart_members_all_del(Evas_Object *obj)
      }
 }
 
+static void
+_evas_smart_class_ifaces_private_data_alloc(Evas_Object *obj,
+                                            Evas_Smart *s)
+{
+   unsigned int i, total_priv_sz = 0;
+   const Evas_Smart_Class *sc;
+   unsigned char *ptr;
+
+   /* get total size of interfaces private data */
+   for (sc = s->smart_class; sc; sc = sc->parent)
+     {
+        const Evas_Smart_Interface **ifaces_array = sc->interfaces;
+        if (!ifaces_array) continue;
+
+        while (*ifaces_array)
+          {
+             const Evas_Smart_Interface *iface = *ifaces_array;
+
+             if (!iface->name) break;
+
+             if (iface->private_size > 0)
+               {
+                  unsigned int size = iface->private_size;
+
+                  if (size % sizeof(void *) != 0)
+                    size += sizeof(void *) - (size % sizeof(void *));
+                  total_priv_sz += size;
+               }
+
+             ifaces_array++;
+          }
+     }
+
+   obj->interface_privates = malloc
+       (s->interfaces.size * sizeof(void *) + total_priv_sz);
+   if (!obj->interface_privates)
+     {
+        ERR("malloc failed!");
+        return;
+     }
+
+   /* make private data array ptrs point to right places, WHICH LIE ON
+    * THE SAME STRUCT, AFTER THE # OF INTERFACES COUNT */
+   ptr = (unsigned char *)(obj->interface_privates + s->interfaces.size);
+   for (i = 0; i < s->interfaces.size; i++)
+     {
+        unsigned int size;
+
+        size = s->interfaces.array[i]->private_size;
+
+        if (size == 0)
+          {
+             obj->interface_privates[i] = NULL;
+             continue;
+          }
+
+        obj->interface_privates[i] = ptr;
+        memset(ptr, 0, size);
+
+        if (size % sizeof(void *) != 0)
+          size += sizeof(void *) - (size % sizeof(void *));
+        ptr += size;
+     }
+}
+
 EAPI Evas_Object *
 evas_object_smart_add(Evas *e, Evas_Smart *s)
 {
    Evas_Object *obj;
+   unsigned int i;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -332,7 +446,25 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
 
    evas_object_smart_use(s);
 
+   _evas_smart_class_ifaces_private_data_alloc(obj, s);
+
    if (s->smart_class->add) s->smart_class->add(obj);
+
+   for (i = 0; i < s->interfaces.size; i++)
+     {
+        const Evas_Smart_Interface *iface;
+
+        iface = s->interfaces.array[i];
+        if (iface->add)
+          {
+             if (!iface->add(obj))
+               {
+                  ERR("failed to create interface %s\n", iface->name);
+                  evas_object_del(obj);
+                  return NULL;
+               }
+          }
+     }
 
    return obj;
 }
@@ -753,11 +885,25 @@ void
 evas_object_smart_del(Evas_Object *obj)
 {
    Evas_Smart *s;
+   unsigned int i;
 
    if (obj->delete_me) return;
    s = obj->smart.smart;
+
    if ((s) && (s->smart_class->del)) s->smart_class->del(obj);
    if (obj->smart.parent) evas_object_smart_member_del(obj);
+
+   for (i = 0; i < s->interfaces.size; i++)
+     {
+        const Evas_Smart_Interface *iface;
+
+        iface = s->interfaces.array[i];
+        if (iface->del) iface->del(obj);
+     }
+
+   free(obj->interface_privates);
+   obj->interface_privates = NULL;
+
    if (s) evas_object_smart_unuse(s);
 }
 

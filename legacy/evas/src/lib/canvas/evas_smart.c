@@ -3,6 +3,7 @@
 
 
 static void _evas_smart_class_callbacks_create(Evas_Smart *s);
+static void _evas_smart_class_interfaces_create(Evas_Smart *s);
 
 /* all public */
 
@@ -16,6 +17,8 @@ evas_smart_free(Evas_Smart *s)
    if (s->usage > 0) return;
    if (s->class_allocated) free((void *)s->smart_class);
    free(s->callbacks.array);
+   free(s->interfaces.array);
+
    free(s);
 }
 
@@ -36,6 +39,7 @@ evas_smart_class_new(const Evas_Smart_Class *sc)
 
    s->smart_class = sc;
    _evas_smart_class_callbacks_create(s);
+   _evas_smart_class_interfaces_create(s);
 
    return s;
 }
@@ -238,6 +242,7 @@ _evas_smart_class_callbacks_create(Evas_Smart *s)
 
    if (n == 0) return;
    if (!evas_smart_cb_descriptions_resize(&s->callbacks, n)) return;
+   s->callbacks.size = n;
    for (n = 0, sc = s->smart_class; sc; sc = sc->parent)
      {
         const Evas_Smart_Cb_Description *d;
@@ -245,6 +250,67 @@ _evas_smart_class_callbacks_create(Evas_Smart *s)
           s->callbacks.array[n++] = d;
      }
    evas_smart_cb_descriptions_fix(&s->callbacks);
+}
+
+static void
+_evas_smart_class_interfaces_create(Evas_Smart *s)
+{
+   unsigned int i, total_priv_sz;
+   const Evas_Smart_Class *sc;
+
+   /* get number of interfaces on the smart */
+   for (i = 0, sc = s->smart_class; sc; sc = sc->parent)
+     {
+        const Evas_Smart_Interface **ifaces_array = sc->interfaces;
+        if (!ifaces_array) continue;
+
+        while (*ifaces_array)
+          {
+             const Evas_Smart_Interface *iface = *ifaces_array;
+
+             if (!iface->name) break;
+
+             i++;
+
+             if (iface->private_size > 0)
+               {
+                  unsigned int size = iface->private_size;
+
+                  if (size % sizeof(void *) != 0)
+                    size += sizeof(void *) - (size % sizeof(void *));
+                  total_priv_sz += size;
+               }
+
+             ifaces_array++;
+          }
+     }
+
+   if (!i) return;
+
+   s->interfaces.array = malloc(i * sizeof(Evas_Smart_Interface *));
+   if (!s->interfaces.array)
+     {
+        ERR("malloc failed!");
+        return;
+     }
+
+   s->interfaces.size = i;
+
+   for (i = 0, sc = s->smart_class; sc; sc = sc->parent)
+     {
+        const Evas_Smart_Interface **ifaces_array = sc->interfaces;
+        if (!ifaces_array) continue;
+
+        while (*ifaces_array)
+          {
+             const Evas_Smart_Interface *iface = *ifaces_array;
+
+             if (!iface->name) break;
+
+             s->interfaces.array[i++] = iface;
+             ifaces_array++;
+          }
+     }
 }
 
 static int

@@ -574,6 +574,22 @@ typedef struct _Evas_Precision_Position    Evas_Precision_Position;   /**< assoc
 typedef struct _Evas_Smart_Class Evas_Smart_Class;
 
 /**
+ * @typedef Evas_Smart_Interface
+ *
+ * A smart object's @b base interface definition
+ *
+ * An Evas interface is exactly like the OO-concept: an 'contract' or
+ * API a given object is declared to support. A smart object may have
+ * more than one interface, thus extending the behavior it gets from
+ * sub-classing.
+ *
+ * @since 1.3
+ *
+ * @ingroup Evas_Smart_Group
+ */
+typedef struct _Evas_Smart_Interface         Evas_Smart_Interface;
+
+/**
  * @typedef Evas_Smart_Cb_Description
  *
  * A smart object callback description, used to provide introspection
@@ -9633,8 +9649,31 @@ struct _Evas_Smart_Class
 
    const Evas_Smart_Class          *parent; /**< this class inherits from this parent */
    const Evas_Smart_Cb_Description *callbacks; /**< callbacks at this level, @c NULL terminated */
-   void                            *interfaces; /**< to be used in a future near you */
+   const Evas_Smart_Interface     **interfaces; /**< #Evas_Smart_Interface pointers array, @c NULL terminated. These will be the interfaces supported at this level for an object (parents may have others) @since 1.3 */
    const void                      *data;
+};
+
+/**
+ * @struct _Evas_Smart_Interface
+ *
+ * A smart object's @b base interface definition
+ *
+ * Every Evas interface must have a name field, pointing to a global,
+ * constant string variable. This string pointer will be the only way
+ * of retrieving back a given interface from a smart object. Two
+ * function pointers must be defined, too, which will be called at
+ * object creation and deletion times.
+ *
+ * @since 1.3
+ *
+ * @ingroup Evas_Smart_Group
+ */
+struct _Evas_Smart_Interface
+{
+   const char *name; /**< Name of the given interface */
+   unsigned    private_size; /**< Size, in bytes, of the interface's private dada blob. This will be allocated and freed automatically for you. Get it with evas_object_smart_interface_data_get(). */
+   Eina_Bool   (*add)(Evas_Object *obj); /**< Function to be called at object creation time */
+   void        (*del)(Evas_Object *obj); /**< Function to be called at object deletion time */
 };
 
 /**
@@ -9844,6 +9883,96 @@ struct _Evas_Smart_Cb_Description
           smart = evas_smart_class_new(sc);                                                      \
        }                                                                                         \
      return smart;                                                                               \
+  }
+
+/**
+ * @def EVAS_SMART_SUBCLASS_IFACE_NEW
+ *
+ * @since 1.3
+ *
+ * Convenience macro to subclass a given Evas smart class. This is the
+ * same as #EVAS_SMART_SUBCLASS_NEW, but now <b>declaring smart
+ * interfaces</b> besides the smart callbacks.
+ *
+ * @param smart_name The name used for the smart class. e.g:
+ *                   @c "Evas_Object_Box".
+ * @param prefix Prefix used for all variables and functions defined
+ *               and referenced by this macro.
+ * @param api_type Type of the structure used as API for the smart
+ *                 class. Either #Evas_Smart_Class or something
+ *                 derived from it.
+ * @param parent_type Type of the parent class API.
+ * @param parent_func Function that gets the parent class. e.g:
+ *                    evas_object_box_smart_class_get().
+ * @param cb_desc Array of smart callback descriptions for this smart
+ *                class.
+ * @param ifaces Array of Evas smart interafaces for this smart
+ *               class.
+ *
+ * This macro saves some typing when writing a smart class derived
+ * from another one. In order to work, the user @b must provide some
+ * functions adhering to the following guidelines:
+ *  - @<prefix@>_smart_set_user(): the @b internal @c _smart_set
+ *    function (defined by this macro) will call this one, provided by
+ *    the user, after inheriting everything from the parent, which
+ *    should <b>take care of setting the right member functions for
+ *    the class</b>, both overrides and extensions, if any.
+ *  - If this new class should be subclassable as well, a @b public
+ *    @c _smart_set() function is desirable to fill in the class used as
+ *    parent by the children. It's up to the user to provide this
+ *    interface, which will most likely call @<prefix@>_smart_set() to
+ *    get the job done.
+ *
+ * After the macro's usage, the following will be defined for use:
+ *  - @<prefix@>_parent_sc: A pointer to the @b parent smart
+ *    class. When calling parent functions from overloaded ones, use
+ *    this global variable.
+ *  - @<prefix@>_smart_class_new(): this function returns the
+ *    #Evas_Smart needed to create smart objects with this class,
+ *    which should be passed to evas_object_smart_add().
+ *
+ * @warning @p smart_name has to be a pointer to a globally available
+ * string! The smart class created here will just have a pointer set
+ * to that, and all object instances will depend on it for smart class
+ * name lookup.
+ *
+ * @ingroup Evas_Smart_Group
+ */
+#define EVAS_SMART_SUBCLASS_IFACE_NEW(smart_name,          \
+                                      prefix,              \
+                                      api_type,            \
+                                      parent_type,         \
+                                      parent_func,         \
+                                      cb_desc,             \
+                                      ifaces)              \
+  static const parent_type * prefix##_parent_sc = NULL;    \
+  static void prefix##_smart_set_user(api_type * api);     \
+  static void prefix##_smart_set(api_type * api)           \
+  {                                                        \
+     Evas_Smart_Class *sc;                                 \
+     if (!(sc = (Evas_Smart_Class *)api))                  \
+       return;                                             \
+     if (!prefix##_parent_sc)                              \
+       prefix##_parent_sc = parent_func();                 \
+     evas_smart_class_inherit(sc, prefix##_parent_sc);     \
+     prefix##_smart_set_user(api);                         \
+  }                                                        \
+  static Evas_Smart *prefix##_smart_class_new(void)        \
+  {                                                        \
+     static Evas_Smart *smart = NULL;                      \
+     static api_type api;                                  \
+     if (!smart)                                           \
+       {                                                   \
+          Evas_Smart_Class *sc = (Evas_Smart_Class *)&api; \
+          memset(&api, 0, sizeof(api_type));               \
+          sc->version = EVAS_SMART_CLASS_VERSION;          \
+          sc->name = smart_name;                           \
+          sc->callbacks = cb_desc;                         \
+          sc->interfaces = ifaces;                         \
+          prefix##_smart_set(&api);                        \
+          smart = evas_smart_class_new(sc);                \
+       }                                                   \
+     return smart;                                         \
   }
 
 /**
@@ -10460,6 +10589,34 @@ EAPI void         evas_object_smart_callbacks_descriptions_get(const Evas_Object
  * @return reference to description if found, @c NULL if not found.
  */
 EAPI void         evas_object_smart_callback_description_find(const Evas_Object *obj, const char *name, const Evas_Smart_Cb_Description **class_description, const Evas_Smart_Cb_Description **instance_description) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * Retrieve an Evas smart object's interface, by name string pointer.
+ *
+ * @param obj An Evas smart object.
+ * @param name Name string of the desired interface, which must be the
+ *             same pointer used at the interface's declarion, when
+ *             creating the smart object @a obj.
+ *
+ * @since 1.3
+ *
+ * @return The interface's handle pointer, if found, @c NULL
+ * otherwise.
+ */
+const void       *evas_object_smart_interface_get(const Evas_Object *obj, const char *name);
+
+/**
+ * Retrieve an Evas smart object interface's <b>private data</b>.
+ *
+ * @param obj An Evas smart object.
+ * @param iface The given object's interface handle.
+ *
+ * @since 1.3
+ *
+ * @return The object interface's private data blob pointer, if found,
+ * @c NULL otherwise.
+ */
+void             *evas_object_smart_interface_data_get(const Evas_Object *obj, const Evas_Smart_Interface *iface);
 
 /**
  * Mark smart object as changed, dirty.
