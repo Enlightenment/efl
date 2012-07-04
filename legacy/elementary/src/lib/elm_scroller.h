@@ -2,43 +2,52 @@
  * @defgroup Scroller Scroller
  * @ingroup Elementary
  *
- * A scroller holds a single object and "scrolls it around". This means that
- * it allows the user to use a scrollbar (or a finger) to drag the viewable
- * region around, allowing to move through a much larger object that is
- * contained in the scroller. The scroller will always have a small minimum
- * size by default as it won't be limited by the contents of the scroller.
+ * @image html scroller_inheritance_tree.png
+ * @image latex scroller_inheritance_tree.eps
  *
- * Signals that you can add callbacks for are:
- * @li "edge,left" - the left edge of the content has been reached
- * @li "edge,right" - the right edge of the content has been reached
- * @li "edge,top" - the top edge of the content has been reached
- * @li "edge,bottom" - the bottom edge of the content has been reached
- * @li "scroll" - the content has been scrolled (moved)
- * @li "scroll,anim,start" - scrolling animation has started
- * @li "scroll,anim,stop" - scrolling animation has stopped
- * @li "scroll,drag,start" - dragging the contents around has started
- * @li "scroll,drag,stop" - dragging the contents around has stopped
- * @note The "scroll,anim,*" and "scroll,drag,*" signals are only emitted by
- * user intervention.
+ * A scroller holds (and clips) a single object and "scrolls it
+ * around". This means that it allows the user to use a scroll bar (or
+ * a finger) to drag the viewable region around, moving through a much
+ * larger object that is contained in the scroller. The scroller will
+ * always have a small minimum size by default as it won't be limited
+ * by the contents of the scroller.
  *
- * @note When Elementary is in embedded mode the scrollbars will not be
- * draggable, they appear merely as indicators of how much has been scrolled.
- * @note When Elementary is in desktop mode the thumbscroll(a.k.a.
- * fingerscroll) won't work.
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for scroller objects.
  *
- * Default content parts of the scroller widget that you can use for are:
- * @li "default" - A content of the scroller
+ * This widget emits the following signals, besides the ones sent from
+ * @li @c "edge,left" - the left edge of the content has been reached
+ * @li @c "edge,right" - the right edge of the content has been reached
+ * @li @c "edge,top" - the top edge of the content has been reached
+ * @li @c "edge,bottom" - the bottom edge of the content has been reached
+ * @li @c "scroll" - the content has been scrolled (moved)
+ * @li @c "scroll,anim,start" - scrolling animation has started
+ * @li @c "scroll,anim,stop" - scrolling animation has stopped
+ * @li @c "scroll,drag,start" - dragging the contents around has started
+ * @li @c "scroll,drag,stop" - dragging the contents around has stopped
  *
- * Supported elm_object common APIs.
- * @li @ref elm_object_signal_emit
- * @li @ref elm_object_signal_callback_add
- * @li @ref elm_object_signal_callback_del
- * @li @ref elm_object_part_content_set
- * @li @ref elm_object_part_content_get
- * @li @ref elm_object_part_content_unset
+ * This widget implements the @ref elm-scrollable-interface interface.
+ * Its (non-deprecated) API functions, except for elm_scroller_add(),
+ * which gives basic scroller objects, are meant to be a basis for all
+ * other scrollable widgets (i.e. widgets implementing @ref
+ * elm-scrollable-interface). So, they will work both on pristine
+ * scroller widgets and on other "specialized" scrollable widgets.
  *
- * In @ref tutorial_scroller you'll find an example of how to use most of
- * this API.
+ * @note The @c "scroll,anim,*" and @c "scroll,drag,*" signals are
+ * only emitted by user intervention.
+ *
+ * @note When Elementary is under its default profile and theme (meant
+ * for touch interfaces), scroll bars will @b not be draggable --
+ * their function is merely to indicate how much has been scrolled.
+ *
+ * @note When Elementary is under its desktop/standard profile and
+ * theme, the thumb scroll (a.k.a. finger scroll) won't work.
+ *
+ * Default content parts of the scroller widget that you can use are:
+ * @li @c "default" - Content of the scroller
+ *
+ * In @ref tutorial_scroller you'll find an example on how to use most
+ * of this API.
  * @{
  */
 
@@ -72,9 +81,11 @@ EAPI Evas_Object                 *elm_scroller_add(Evas_Object *parent);
  * @param widget The widget name to use (default is "scroller")
  * @param base The base name to use (default is "base")
  *
+ * @deprecated Use elm_layout_theme_set() instead.
+ *
  * @ingroup Scroller
  */
-EAPI void                         elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base);
+EINA_DEPRECATED EAPI void         elm_scroller_custom_widget_base_theme_set(Evas_Object *obj, const char *widget, const char *base);
 
 /**
  * @brief Make the scroller minimum size limited to the minimum size of the content
@@ -359,8 +370,9 @@ EAPI void                         elm_scroller_region_bring_in(Evas_Object *obj,
  * @param obj The scroller object
  * @param propagation If propagation is enabled or not
  *
- * This enables or disabled event propagation from the scroller content to
- * the scroller and its parent. By default event propagation is disabled.
+ * This enables or disables event propagation from the scroller
+ * content to the scroller and its parent. By default event
+ * propagation is @b enabled.
  *
  * @ingroup Scroller
  */
