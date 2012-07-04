@@ -9664,6 +9664,9 @@ struct _Evas_Smart_Class
  * function pointers must be defined, too, which will be called at
  * object creation and deletion times.
  *
+ * See also some @ref Example_Evas_Smart_Interfaces "examples" on
+ * smart interfaces.
+ *
  * @since 1.3
  *
  * @ingroup Evas_Smart_Group

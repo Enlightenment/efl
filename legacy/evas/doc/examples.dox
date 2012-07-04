@@ -928,6 +928,66 @@
  */
 
 /**
+ * @page Example_Evas_Smart_Interfaces Evas object smart interfaces
+ * @dontinclude evas-smart-interface.c
+ *
+ * In this example, we illustrate how to create and handle Evas smart
+ * @b interfaces. Note that we use the same code base of the @ref
+ * Example_Evas_Smart_Objects example, here. We just augment it with
+ * an interfaces demonstration.
+ *
+ * A smart interface is just a functions interface a given smart
+ * objcet is declaring to support and or use. In Evas, interfaces are
+ * very simple: no interface inheritance, no interface
+ * overriding. Their purpose is to extend an object's capabilities and
+ * behaviour beyound the sub-classing schema.
+ *
+ * Here, together with a custom smart object, we create and declare
+ * the object as using an Evas interface. It'll have a custom
+ * function, too, besides the @c add() and del() obligatory ones. To
+ * demonstrate interface data, which is bound to object @b instances,
+ * we'll have a string as this data.
+ *
+ * Here is where we declare our interface:
+ * @skip static const char iface1_data[]
+ * @until (Evas_Smart_Interface *)&iface1, NULL
+ * @until };
+ *
+ * Note that there's error checking for interfaces creation, by means of
+ * the @c add() method's return value (@c _iface1_add(), here).
+ *
+ * Now note that here we are filling in the interface's fields dinamically.
+ * Let's move on to that code region:
+ *
+ * @dontinclude evas-smart-interface.c
+ * @skip iface = (Evas_Smart_Example_Interface *)&iface1;
+ * @until d.smt = evas_smart_example_add(d.evas);
+ *
+ * As important as setting the function pointers, is declaring the @c
+ * private_size as to match exactly the size of the data blob we want
+ * to have allocated for us by Evas. This will happen automatically
+ * inside @c evas_smart_example_add().  Later, on this code, we deal
+ * exactly with that data blob, more specifically writing on it (as
+ * it's not done inside @c _iface1_add(), here:
+ *
+ * @dontinclude evas-smart-interface.c
+ * @skip iface = (Evas_Smart_Example_Interface *)evas_object_smart_interface_get
+ * @until }
+ *
+ * Before accessing the interface data, we exercise the interface
+ * fetching call evas_object_smart_interface_get(), with the name
+ * string we used to be interface's name. With that handle in hands,
+ * we issue evas_object_smart_interface_data_get() and write the
+ * string we want as data on that memory region. That will make up for
+ * the string you get on @c _iface1_del().
+ *
+ * The full example follows.
+ *
+ * @include evas-smart-interface.c
+ * @example evas-smart-interface.c
+ */
+
+/**
  * @page Example_Evas_Text Evas text object example
  *
  * In this example, we illustrate how to use text objects in various

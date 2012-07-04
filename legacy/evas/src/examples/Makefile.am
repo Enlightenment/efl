@@ -79,6 +79,10 @@ examples_PROGRAMS += evas_smart_object
 evas_smart_object_SOURCES = evas-smart-object.c
 evas_smart_object_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
 
+examples_PROGRAMS += evas_smart_interface
+evas_smart_interface_SOURCES = evas-smart-interface.c
+evas_smart_interface_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@
+
 examples_PROGRAMS += evas_box
 evas_box_SOURCES = evas-box.c
 evas_box_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@ @EINA_LIBS@
@@ -129,6 +133,7 @@ files_DATA += \
 	$(srcdir)/evas-map-utils.c \
 	$(srcdir)/evas-text.c \
 	$(srcdir)/evas-smart-object.c \
+	$(srcdir)/evas-smart-interface.c \
 	$(srcdir)/evas-box.c
 endif
 
@@ -146,6 +151,7 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/evas-map-utils.c \
 	$(srcdir)/evas-text.c \
 	$(srcdir)/evas-smart-object.c \
+	$(srcdir)/evas-smart-interface.c \
 	$(srcdir)/evas-box.c \
 	$(srcdir)/evas-table.c \
 	$(srcdir)/enlightenment.png \
