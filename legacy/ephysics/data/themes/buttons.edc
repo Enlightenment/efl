@@ -1,13 +1,11 @@
-   images {
-      image: "bt_jump.png" COMP;
-      image: "bt_jump_pressed.png" COMP;
-      image: "bt_restart.png" COMP;
-      image: "bt_restart_pressed.png" COMP;
-   }
-
 #define BUTTON_GROUP(_name) \
    group { \
       name: "elm/button/base/ephysics-test-"#_name; \
+ \
+      images { \
+         image: "bt_"##_name##".png" COMP; \
+         image: "bt_"##_name##"_pressed.png" COMP; \
+      } \
  \
       parts { \
  \
@@ -127,7 +125,8 @@
  \
    }
 
-BUTTON_GROUP(restart)
 BUTTON_GROUP(jump)
+BUTTON_GROUP(restart)
+BUTTON_GROUP(shoot)
 
 #undef BUTTON_GROUP
