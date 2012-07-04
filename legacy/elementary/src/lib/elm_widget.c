@@ -1,6 +1,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_container.h"
+#include "elm_interface_scrollable.h"
 
 static const char SMART_NAME[] = "elm_widget";
 static const char SMART_NAME_COMPAT[] = "elm_widget_compat";
@@ -219,6 +220,12 @@ static inline Eina_Bool
 _elm_legacy_is(const Evas_Object *obj)
 {
    return evas_object_smart_type_check_ptr(obj, SMART_NAME_COMPAT);
+}
+
+static inline Eina_Bool
+_elm_scrollable_is(const Evas_Object *obj)
+{
+   return !!evas_object_smart_interface_get(obj, ELM_SCROLLABLE_IFACE_NAME);
 }
 
 /* what follows are both basic (unimplemented) smart class functions
@@ -3038,7 +3045,16 @@ elm_widget_scroll_hold_push(Evas_Object *obj)
    API_ENTRY return;
    sd->scroll_hold++;
    if (sd->scroll_hold == 1)
-     evas_object_smart_callback_call(obj, "scroll-hold-on", obj);
+     {
+        if (_elm_scrollable_is(obj))
+          {
+             ELM_SCROLLABLE_IFACE_GET(obj, s_iface);
+             s_iface->hold_set(obj, EINA_TRUE);
+          }
+        else /* FIXME: this will vanish as soon as we don't have
+              * any legacy widget anymore */
+          evas_object_smart_callback_call(obj, "scroll-hold-on", obj);
+     }
    if (sd->parent_obj) elm_widget_scroll_hold_push(sd->parent_obj);
    // FIXME: on delete/reparent hold pop
 }
@@ -3049,7 +3065,16 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
    API_ENTRY return;
    sd->scroll_hold--;
    if (!sd->scroll_hold)
-     evas_object_smart_callback_call(obj, "scroll-hold-off", obj);
+     {
+        if (_elm_scrollable_is(obj))
+          {
+             ELM_SCROLLABLE_IFACE_GET(obj, s_iface);
+             s_iface->hold_set(obj, EINA_FALSE);
+          }
+        else /* FIXME: this will vanish as soon as we don't have
+              * any legacy widget anymore */
+          evas_object_smart_callback_call(obj, "scroll-hold-off", obj);
+     }
    if (sd->parent_obj) elm_widget_scroll_hold_pop(sd->parent_obj);
    if (sd->scroll_hold < 0) sd->scroll_hold = 0;
 }
@@ -3067,7 +3092,16 @@ elm_widget_scroll_freeze_push(Evas_Object *obj)
    API_ENTRY return;
    sd->scroll_freeze++;
    if (sd->scroll_freeze == 1)
-     evas_object_smart_callback_call(obj, "scroll-freeze-on", obj);
+     {
+        if (_elm_scrollable_is(obj))
+          {
+             ELM_SCROLLABLE_IFACE_GET(obj, s_iface);
+             s_iface->freeze_set(obj, EINA_TRUE);
+          }
+        else /* FIXME: this will vanish as soon as we don't have
+              * any legacy widget anymore */
+          evas_object_smart_callback_call(obj, "scroll-freeze-on", obj);
+     }
    if (sd->parent_obj) elm_widget_scroll_freeze_push(sd->parent_obj);
    // FIXME: on delete/reparent freeze pop
 }
@@ -3078,7 +3112,16 @@ elm_widget_scroll_freeze_pop(Evas_Object *obj)
    API_ENTRY return;
    sd->scroll_freeze--;
    if (!sd->scroll_freeze)
-     evas_object_smart_callback_call(obj, "scroll-freeze-off", obj);
+     {
+        if (_elm_scrollable_is(obj))
+          {
+             ELM_SCROLLABLE_IFACE_GET(obj, s_iface);
+             s_iface->freeze_set(obj, EINA_FALSE);
+          }
+        else /* FIXME: this will vanish as soon as we don't have
+              * any legacy widget anymore */
+          evas_object_smart_callback_call(obj, "scroll-freeze-off", obj);
+     }
    if (sd->parent_obj) elm_widget_scroll_freeze_pop(sd->parent_obj);
    if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
 }

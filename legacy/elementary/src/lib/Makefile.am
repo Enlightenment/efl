@@ -41,6 +41,7 @@ Elementary_Cursor.h
 includesdir = $(includedir)/elementary-@VMAJ@
 
 includesunstable_HEADERS = \
+elm_interface_scrollable.h \
 elm_widget.h \
 elm_widget_button.h \
 elm_widget_container.h \
@@ -186,6 +187,7 @@ elm_hover.c \
 elm_icon.c \
 elm_image.c \
 elm_index.c \
+elm_interface_scrollable.c \
 elm_inwin.c \
 elm_label.c \
 elm_layout.c \

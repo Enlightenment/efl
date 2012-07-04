@@ -1064,6 +1064,10 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 #define ELM_OBJ_ITEM_CHECK_OR_GOTO(it, label)      \
   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_GOTO(it, label);
 
+/* to be used by INTERNAL classes on Elementary, so that the widgets
+ * parsing script skips it */
+#define ELM_INTERNAL_SMART_SUBCLASS_NEW EVAS_SMART_SUBCLASS_NEW
+
 /**
  * The drag and drop API.
  * Currently experimental, and will change when it does dynamic type
