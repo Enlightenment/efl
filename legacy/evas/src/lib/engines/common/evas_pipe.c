@@ -350,6 +350,7 @@ evas_common_pipe_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    op->op_func = evas_common_pipe_line_draw_do;
    op->free_func = evas_common_pipe_op_free;
    op->prepare_func = NULL;
+   op->render = EINA_TRUE;
    evas_common_pipe_draw_context_copy(dc, op);
 }
 
@@ -357,9 +358,9 @@ evas_common_pipe_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
 static void
 evas_common_pipe_op_poly_free(RGBA_Pipe_Op *op)
 {
+#if 0
    RGBA_Polygon_Point *p;
 
-#if 0
    while (op->op.poly.points)
      {
         p = op->op.poly.points;
@@ -410,6 +411,7 @@ evas_common_pipe_poly_draw(RGBA_Image *dst, RGBA_Draw_Context *dc,
    op->op.poly.points = points/* pts */;
    op->op_func = evas_common_pipe_poly_draw_do;
    op->free_func = evas_common_pipe_op_poly_free;
+   op->render = EINA_TRUE;
    op->prepare_func = NULL; /* FIXME: If we really want to improve it, we should prepare span for it here */
    evas_common_pipe_draw_context_copy(dc, op);
 }
