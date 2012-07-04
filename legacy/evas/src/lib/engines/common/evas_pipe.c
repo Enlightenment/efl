@@ -775,75 +775,6 @@ evas_common_pipe_load_do(RGBA_Image *im)
 #endif
 }
 
-EAPI Eina_Bool
-evas_common_pipe_init(void)
-{
-#ifdef BUILD_PTHREAD
-   if (thread_num == 0)
-     {
-	int cpunum;
-	int i;
-
-	cpunum = eina_cpu_count();
-	thread_num = cpunum;
-// on  single cpu we still want this initted.. otherwise we block forever
-// waiting onm pthread barriers for async rendering on a single core!
-//	if (thread_num == 1) return EINA_FALSE;
-
-	eina_threads_init();
-
-        LKI(im_task_mutex);
-	LKI(text_task_mutex);
-
-	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
-	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
-	for (i = 0; i < thread_num; i++)
-	  {
-	     pthread_attr_t attr;
-	     cpu_set_t cpu;
-
-	     pthread_attr_init(&attr);
-	     CPU_ZERO(&cpu);
-	     CPU_SET(i % cpunum, &cpu);
-	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-	     thinfo[i].thread_num = i;
-	     thinfo[i].tasks = NULL;
-	     thinfo[i].barrier = thbarrier;
-	     /* setup initial locks */
-	     pthread_create(&(thinfo[i].thread_id), &attr,
-			    evas_common_pipe_thread, &(thinfo[i]));
-	     pthread_attr_destroy(&attr);
-	  }
-
-	pthread_barrier_init(&(task_thbarrier[0]), NULL, thread_num + 1);
-	pthread_barrier_init(&(task_thbarrier[1]), NULL, thread_num + 1);
-	for (i = 0; i < thread_num; i++)
-	  {
-	     pthread_attr_t attr;
-	     cpu_set_t cpu;
-
-	     pthread_attr_init(&attr);
-	     CPU_ZERO(&cpu);
-	     CPU_SET(i % cpunum, &cpu);
-	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
-	     task_thinfo[i].thread_num = i;
-	     task_thinfo[i].tasks = NULL;
-	     task_thinfo[i].barrier = task_thbarrier;
-             eina_array_step_set(&task_thinfo[i].cutout_trash, sizeof (Eina_Array), 8);
-             eina_array_step_set(&task_thinfo[i].rects_task, sizeof (Eina_Array), 8);
-	     /* setup initial locks */
-	     pthread_create(&(task_thinfo[i].thread_id), &attr,
-			    evas_common_pipe_load, &(task_thinfo[i]));
-	     pthread_attr_destroy(&attr);
-	  }
-     }
-
-   if (thread_num == 1) return EINA_FALSE;
-   return EINA_TRUE;
-#endif
-   return EINA_FALSE;
-}
-
 EAPI void
 evas_common_pipe_image_load(RGBA_Image *im)
 {
@@ -915,5 +846,73 @@ evas_common_pipe_map_begin(RGBA_Image *root)
 
   evas_common_pipe_map_render(root);
 }
-
 #endif
+
+EAPI Eina_Bool
+evas_common_pipe_init(void)
+{
+#ifdef BUILD_PTHREAD
+   if (thread_num == 0)
+     {
+	int cpunum;
+	int i;
+
+	cpunum = eina_cpu_count();
+	thread_num = cpunum;
+// on  single cpu we still want this initted.. otherwise we block forever
+// waiting onm pthread barriers for async rendering on a single core!
+//	if (thread_num == 1) return EINA_FALSE;
+
+	eina_threads_init();
+
+        LKI(im_task_mutex);
+	LKI(text_task_mutex);
+
+	pthread_barrier_init(&(thbarrier[0]), NULL, thread_num + 1);
+	pthread_barrier_init(&(thbarrier[1]), NULL, thread_num + 1);
+	for (i = 0; i < thread_num; i++)
+	  {
+	     pthread_attr_t attr;
+	     cpu_set_t cpu;
+
+	     pthread_attr_init(&attr);
+	     CPU_ZERO(&cpu);
+	     CPU_SET(i % cpunum, &cpu);
+	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+	     thinfo[i].thread_num = i;
+	     thinfo[i].tasks = NULL;
+	     thinfo[i].barrier = thbarrier;
+	     /* setup initial locks */
+	     pthread_create(&(thinfo[i].thread_id), &attr,
+			    evas_common_pipe_thread, &(thinfo[i]));
+	     pthread_attr_destroy(&attr);
+	  }
+
+	pthread_barrier_init(&(task_thbarrier[0]), NULL, thread_num + 1);
+	pthread_barrier_init(&(task_thbarrier[1]), NULL, thread_num + 1);
+	for (i = 0; i < thread_num; i++)
+	  {
+	     pthread_attr_t attr;
+	     cpu_set_t cpu;
+
+	     pthread_attr_init(&attr);
+	     CPU_ZERO(&cpu);
+	     CPU_SET(i % cpunum, &cpu);
+	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+	     task_thinfo[i].thread_num = i;
+	     task_thinfo[i].tasks = NULL;
+	     task_thinfo[i].barrier = task_thbarrier;
+             eina_array_step_set(&task_thinfo[i].cutout_trash, sizeof (Eina_Array), 8);
+             eina_array_step_set(&task_thinfo[i].rects_task, sizeof (Eina_Array), 8);
+	     /* setup initial locks */
+	     pthread_create(&(task_thinfo[i].thread_id), &attr,
+			    evas_common_pipe_load, &(task_thinfo[i]));
+	     pthread_attr_destroy(&attr);
+	  }
+     }
+
+   if (thread_num == 1) return EINA_FALSE;
+   return EINA_TRUE;
+#endif
+   return EINA_FALSE;
+}
