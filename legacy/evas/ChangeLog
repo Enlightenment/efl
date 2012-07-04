@@ -855,3 +855,7 @@
 2012-07-04  Cedric Bail
 
 	* Make pipeline rendering use more extensively the prepare stage.
+
+2012-07-04  Gustavo Lima Chaves
+
+	* Add simple interfaces support to Evas smart classes

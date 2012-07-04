@@ -6,6 +6,7 @@ Changes since Evas 1.2.0:
 Additions:
 
    * Textgrid object.
+   * Evas_Smart_Interface type, which brings simple interfaces support to smart objects.
 
 Improvements:
    * Lock less font rendering.
