@@ -296,11 +296,33 @@ _fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int idx)
 }
 
 static void
+_fash_glyph_free(Fash_Glyph_Map *fmap)
+{
+   int i;
+
+   for (i = 0; i <= 0xff; i++)
+     {
+        RGBA_Font_Glyph *fg = fmap->item[i];
+        if ((fg) && (fg != (void *)(-1)))
+          {
+             FT_Done_Glyph(fg->glyph);
+             /* extension calls */
+             if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
+             if (fg->glyph_out_free) fg->glyph_out_free(fg->glyph_out);
+             free(fg);
+             fmap->item[i] = NULL;
+          }
+     }
+  free(fmap);
+}
+
+static void
 _fash_gl2_free(Fash_Glyph_Map2 *fash)
 {
    int i;
 
-   for (i = 0; i < 256; i++) if (fash->bucket[i]) free(fash->bucket[i]);
+   // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+   for (i = 0; i < 256; i++) if (fash->bucket[i]) _fash_glyph_free(fash->bucket[i]);
    free(fash);
 }
 
@@ -309,6 +331,7 @@ _fash_gl_free(Fash_Glyph *fash)
 {
    int i;
 
+    // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    for (i = 0; i < 256; i++) if (fash->bucket[i]) _fash_gl2_free(fash->bucket[i]);
    free(fash);
 }

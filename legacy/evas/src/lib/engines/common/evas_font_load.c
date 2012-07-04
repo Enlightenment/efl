@@ -749,33 +749,6 @@ _evas_common_font_int_clear(RGBA_Font_Int *fi)
      {
         if (fi->fash)
           {
-             for (k = 0; k <= 0xff; k++) // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
-               {
-                  Fash_Glyph_Map2 *fmap2 = fi->fash->bucket[k];
-                  if (fmap2)
-                    {
-                       for (j = 0; j <= 0xff; j++) // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
-                         {
-                            Fash_Glyph_Map *fmap = fmap2->bucket[j];
-                            if (fmap)
-                              {
-                                 for (i = 0; i <= 0xff; i++)
-                                   {
-                                      RGBA_Font_Glyph *fg = fmap->item[i];
-                                      if ((fg) && (fg != (void *)(-1)))
-                                        {
-                                           FT_Done_Glyph(fg->glyph);
-                                           /* extension calls */
-                                           if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
-                                           if (fg->glyph_out_free) fg->glyph_out_free(fg->glyph_out);
-                                           free(fg);
-                                           fmap->item[i] = NULL;
-                                        }
-                                   }
-                              }
-                         }
-                    }
-               }
              fi->fash->freeme(fi->fash);
              fi->fash = NULL;
           }
