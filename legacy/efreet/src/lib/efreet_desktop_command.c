@@ -240,13 +240,14 @@ efreet_desktop_command_progress_get(Efreet_Desktop *desktop, Eina_List *files,
 }
 
 static void *
-efreet_desktop_exec_cb(void *data, Efreet_Desktop *desktop __UNUSED__,
-                                char *exec, int remaining __UNUSED__)
+efreet_desktop_exec_cb(void *data,
+                       Efreet_Desktop *desktop __UNUSED__,
+                       char *exec,
+                       int remaining __UNUSED__)
 {
-#ifndef _WIN32
     ecore_exe_run(exec, data);
     free(exec);
-#endif
+
     return NULL;
 }
 
