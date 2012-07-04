@@ -2,46 +2,53 @@
  * @defgroup List List
  * @ingroup Elementary
  *
+ * @image html list_inheritance_tree.png
+ * @image latex list_inheritance_tree.eps
+ *
  * @image html img/widget/list/preview-00.png
  * @image latex img/widget/list/preview-00.eps width=\textwidth
  *
  * @image html img/list.png
  * @image latex img/list.eps width=\textwidth
  *
- * A list widget is a container whose children are displayed vertically or
- * horizontally, in order, and can be selected.
- * The list can accept only one or multiple items selection. Also has many
+ * A list widget is a container whose children are displayed
+ * vertically or horizontally, in order, and can be selected. The list
+ * can accept only one or multiple item selections. Also has many
  * modes of items displaying.
  *
- * A list is a very simple type of list widget.  For more robust
- * lists, @ref Genlist should probably be used.
+ * A list is a very simple type of list widget. For more robust lists,
+ * @ref Genlist should probably be used.
  *
- * Smart callbacks one can listen to:
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for list objects.
+ *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
  * - @c "activated" - The user has double-clicked or pressed
  *   (enter|return|spacebar) on an item. The @c event_info parameter
  *   is the item that was activated.
  * - @c "clicked,double" - The user has double-clicked an item.
  *   The @c event_info parameter is the item that was double-clicked.
- * - "selected" - when the user selected an item
- * - "unselected" - when the user unselected an item
- * - "longpressed" - an item in the list is long-pressed
- * - "edge,top" - the list is scrolled until the top edge
- * - "edge,bottom" - the list is scrolled until the bottom edge
- * - "edge,left" - the list is scrolled until the left edge
- * - "edge,right" - the list is scrolled until the right edge
- * - "language,changed" - the program's language changed
+ * - @c "selected" - when the user selected an item
+ * - @c "unselected" - when the user unselected an item
+ * - @c "longpressed" - an item in the list is long-pressed
+ * - @c "edge,top" - the list is scrolled until the top edge
+ * - @c "edge,bottom" - the list is scrolled until the bottom edge
+ * - @c "edge,left" - the list is scrolled until the left edge
+ * - @c "edge,right" - the list is scrolled until the right edge
+ * - @c "language,changed" - the program's language changed
  *
- * Available styles for it:
+ * Available styles for it are:
  * - @c "default"
  *
- * Default content parts of the list items that you can use for are:
- * @li "start" - A start position object in the list item
- * @li "end" - A end position object in the list item
+ * Default content parts of the list items that you can use are:
+ * @li @c "start" - A start position object in the list item
+ * @li @c "end" - An end position object in the list item
  *
- * Default text parts of the list items that you can use for are:
- * @li "default" - label in the list item
+ * Default text parts of the list items that you can use are:
+ * @li @c "default" - label in the list item
  *
- * Supported elm_object_item common APIs.
+ * Supported @c elm_object_item common APIs.
  * @li @ref elm_object_item_disabled_set
  * @li @ref elm_object_item_disabled_get
  * @li @ref elm_object_item_part_text_set
@@ -49,6 +56,16 @@
  * @li @ref elm_object_item_part_content_set
  * @li @ref elm_object_item_part_content_get
  * @li @ref elm_object_item_part_content_unset
+ *
+ * This widget implements the @b @ref elm-scrollable-interface
+ * interface, so that all (non-deprecated) functions for the base @ref
+ * Scroller widget also work for lists.
+ *
+ * Some calls on the list's API are marked as @b deprecated, as they
+ * just wrap the scrollable widgets counterpart functions. Use the
+ * ones we point you to, for each case of deprecation here, instead --
+ * eventually the deprecated ones will be discarded (next major
+ * release).
  *
  * List of examples:
  * @li @ref list_example_01
@@ -65,12 +82,13 @@
  * @enum Elm_List_Mode
  * @typedef Elm_List_Mode
  *
- * Set list's resize behavior, transverse axis scroll and
- * items cropping. See each mode's description for more details.
+ * Set list's resizing behavior, transverse axis scrolling and items
+ * cropping. See each mode's description for more details.
  *
  * @note Default value is #ELM_LIST_SCROLL.
  *
- * Values <b> don't </b> work as bitmask, only one can be chosen.
+ * Values here @b don't work as bitmasks -- only one can be chosen at
+ * a time.
  *
  * @see elm_list_mode_set()
  * @see elm_list_mode_get()
@@ -79,10 +97,10 @@
  */
 typedef enum
 {
-   ELM_LIST_COMPRESS = 0, /**< Won't set any of its size hints to inform how a possible container should resize it. Then, if it's not created as a "resize object", it might end with zero dimensions. The list will respect the container's geometry and, if any of its items won't fit into its transverse axis, one won't be able to scroll it in that direction. */
-   ELM_LIST_SCROLL, /**< Default value. Won't set any of its size hints to inform how a possible container should resize it. Then, if it's not created as a "resize object", it might end with zero dimensions. The list will respect the container's geometry and, if any of its items won't fit into its transverse axis, one will be able to scroll it in that direction (large items will get cropped). */
-   ELM_LIST_LIMIT, /**< Set a minimum size hint on the list object, so that containers may respect it (and resize itself to fit the child properly). More specifically, a minimum size hint will be set for its transverse axis, so that the @b largest item in that direction fits well. Can have effects bounded by setting the list object's maximum size hints. */
-   ELM_LIST_EXPAND, /**< Besides setting a minimum size on the transverse axis, just like the previous mode, will set a minimum size on the longitudinal axis too, trying to reserve space to all its children to be visible at a time. Can have effects bounded by setting the list object's maximum size hints. */
+   ELM_LIST_COMPRESS = 0, /**< The list @b won't set any of its size hints to inform how a possible container should resize it. Then, if it's not created as a "resize object", it might end with zeroed dimensions. The list will respect the container's geometry and, if any of its items won't fit into its @b transverse axis, one won't be able to scroll it in that direction. */
+   ELM_LIST_SCROLL, /**< Default value. This is the same as #ELM_LIST_COMPRESS, with the exception that if any of its items won't fit into its transverse axis, one @b will be able to scroll it in that direction. */
+   ELM_LIST_LIMIT, /**< Sets a minimum size hint on the list object, so that containers may respect it (and resize itself to fit the child properly). More specifically, a @b minimum size hint will be set for its @b transverse axis, so that the @b largest item in that direction fits well. This is naturally bound by the list object's maximum size hints, set externally. */
+   ELM_LIST_EXPAND, /**< Besides setting a minimum size on the transverse axis, just like on #ELM_LIST_LIMIT, the list will set a minimum size on the @b longitudinal axis, trying to reserve space to all its children to be visible at a time. . This is naturally bound by the list object's maximum size hints, set externally. */
    ELM_LIST_LAST /**< Indicates error if returned by elm_list_mode_get() */
 } Elm_List_Mode;
 
@@ -156,15 +174,21 @@ EAPI Eina_Bool                    elm_list_multi_select_get(const Evas_Object *o
  * Set which mode to use for the list object.
  *
  * @param obj The list object
- * @param mode One of #Elm_List_Mode: #ELM_LIST_COMPRESS, #ELM_LIST_SCROLL, #ELM_LIST_LIMIT or #ELM_LIST_EXPAND.
+ * @param mode One of #Elm_List_Mode: #ELM_LIST_COMPRESS,
+ * #ELM_LIST_SCROLL, #ELM_LIST_LIMIT or #ELM_LIST_EXPAND.
  *
  * Set list's resize behavior, transverse axis scroll and
  * items cropping. See each mode's description for more details.
  *
  * @note Default value is #ELM_LIST_SCROLL.
  *
- * Only one can be set, if a previous one was set, it will be changed
- * by the new mode set. Bitmask won't work as well.
+ * Only one mode at a time can be set. If a previous one was set, it
+ * will be changed by the new mode after this call. Bitmasks won't
+ * work here as well.
+ *
+ * @warning This function's behavior will clash with those of
+ * elm_scroller_content_min_limit(), so use either one of them, but
+ * not both.
  *
  * @see elm_list_mode_get()
  *
@@ -265,11 +289,13 @@ elm_list_select_mode_get(const Evas_Object *obj);
  * @param h_bounce Whether to bounce or not in the horizontal axis.
  * @param v_bounce Whether to bounce or not in the vertical axis.
  *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
  * @see elm_scroller_bounce_set()
  *
  * @ingroup List
  */
-EAPI void                         elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+EINA_DEPRECATED EAPI void         elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * Get the bouncing behaviour of the internal scroller.
@@ -283,12 +309,14 @@ EAPI void                         elm_list_bounce_set(Evas_Object *obj, Eina_Boo
  * @param v_bounce Pointer to store the bounce state of the vertical
  * axis.
  *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
  * @see elm_scroller_bounce_get()
  * @see elm_list_bounce_set()
  *
  * @ingroup List
  */
-EAPI void                         elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+EINA_DEPRECATED EAPI void         elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * Set the scrollbar policy.
@@ -297,16 +325,21 @@ EAPI void                         elm_list_bounce_get(const Evas_Object *obj, Ei
  * @param policy_h Horizontal scrollbar policy.
  * @param policy_v Vertical scrollbar policy.
  *
- * This sets the scrollbar visibility policy for the given scroller. #ELM_SCROLLER_POLICY_AUTO
- * means the scrollbar is made visible if it is needed, and otherwise kept
- * hidden. #ELM_SCROLLER_POLICY_ON turns it on all the time, and #ELM_SCROLLER_POLICY_OFF
- * always keeps it off. This applies respectively for the horizontal and vertical scrollbars.
+ * This sets the scrollbar visibility policy for the given
+ * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made
+ * visible if it is needed, and otherwise kept
+ * hidden. #ELM_SCROLLER_POLICY_ON turns it on all the time, and
+ * #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
+ * respectively for the horizontal and vertical scrollbars.
  *
- * The both are disabled by default, i.e., are set to #ELM_SCROLLER_POLICY_OFF.
+ * The both are disabled by default, i.e., are set to
+ * #ELM_SCROLLER_POLICY_OFF.
+ *
+ * @deprecated Use elm_scroller_policy_set() instead.
  *
  * @ingroup List
  */
-EAPI void                         elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+EINA_DEPRECATED EAPI void         elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
 /**
  * Get the scrollbar policy.
@@ -317,9 +350,11 @@ EAPI void                         elm_list_scroller_policy_set(Evas_Object *obj,
  * @param policy_h Pointer to store horizontal scrollbar policy.
  * @param policy_v Pointer to store vertical scrollbar policy.
  *
+ * @deprecated Use elm_scroller_policy_get() instead.
+ *
  * @ingroup List
  */
-EAPI void                         elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+EINA_DEPRECATED EAPI void         elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Append a new item to the list object.

@@ -127,12 +127,12 @@ Scroll to end
          break;
 
       case SCROLLER_POLICY_SET_ON: /* 5 */
-         elm_list_bounce_set(li, EINA_TRUE, EINA_TRUE);
-         elm_list_scroller_policy_set(li, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+         elm_scroller_bounce_set(li, EINA_TRUE, EINA_TRUE);
+         elm_scroller_policy_set(li, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
          break;
 
       case SCROLLER_POLICY_SET_OFF: /* Back to AUTO next (6) */
-         elm_list_scroller_policy_set(li, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+         elm_scroller_policy_set(li, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
          break;
 
       case TOOLTIP_TEXT_SET: /* 7 */
@@ -142,7 +142,7 @@ Scroll to end
                 {
                   elm_object_item_tooltip_text_set(eina_list_data_get(eina_list_last(items)), "Tooltip set from API");
                 }
-              elm_list_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
+              elm_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
            }
          break;
 
@@ -205,7 +205,7 @@ Scroll to end
 
       case BOUNCE_SET: /* 16 */
          elm_list_horizontal_set(li, EINA_FALSE);
-         elm_list_bounce_set(li, EINA_TRUE, EINA_FALSE);
+         elm_scroller_bounce_set(li, EINA_TRUE, EINA_FALSE);
          break;
 
       case LIST_CLEAR: /* 17 */

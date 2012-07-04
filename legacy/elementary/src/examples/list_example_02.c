@@ -67,8 +67,8 @@ elm_main(int argc, char **argv)
    elm_list_select_mode_set(li, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
    /* set bounce and scroller policy */
-   elm_list_bounce_set(li, EINA_TRUE, EINA_TRUE);
-   elm_list_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO,
+   elm_scroller_bounce_set(li, EINA_TRUE, EINA_TRUE);
+   elm_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO,
                                 ELM_SCROLLER_POLICY_ON);
 
    elm_list_go(li);

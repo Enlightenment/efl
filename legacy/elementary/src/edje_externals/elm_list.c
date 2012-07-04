@@ -66,20 +66,20 @@ external_list_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fro
      {
         policy_h = _scroller_policy_choices_setting_get(p->policy_h);
         policy_v = _scroller_policy_choices_setting_get(p->policy_v);
-        elm_list_scroller_policy_set(obj, policy_h, policy_v);
+        elm_scroller_policy_set(obj, policy_h, policy_v);
      }
    else if ((p->policy_h) || (p->policy_v))
      {
-        elm_list_scroller_policy_get(obj, &policy_h, &policy_v);
+        elm_scroller_policy_get(obj, &policy_h, &policy_v);
         if (p->policy_h)
           {
              policy_h = _scroller_policy_choices_setting_get(p->policy_h);
-             elm_list_scroller_policy_set(obj, policy_h, policy_v);
+             elm_scroller_policy_set(obj, policy_h, policy_v);
           }
         else
           {
              policy_v = _scroller_policy_choices_setting_get(p->policy_v);
-             elm_list_scroller_policy_set(obj, policy_h, policy_v);
+             elm_scroller_policy_set(obj, policy_h, policy_v);
           }
      }
 
@@ -114,10 +114,10 @@ external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
           {
              Elm_Scroller_Policy h, v;
-             elm_list_scroller_policy_get(obj, &h, &v);
+             elm_scroller_policy_get(obj, &h, &v);
              h = _scroller_policy_choices_setting_get(param->s);
              if (h == ELM_SCROLLER_POLICY_LAST) return EINA_FALSE;
-             elm_list_scroller_policy_set(obj, h, v);
+             elm_scroller_policy_set(obj, h, v);
              return EINA_TRUE;
           }
      }
@@ -126,10 +126,10 @@ external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
           {
              Elm_Scroller_Policy h, v;
-             elm_list_scroller_policy_get(obj, &h, &v);
+             elm_scroller_policy_get(obj, &h, &v);
              v = _scroller_policy_choices_setting_get(param->s);
              if (v == ELM_SCROLLER_POLICY_LAST) return EINA_FALSE;
-             elm_list_scroller_policy_set(obj, h, v);
+             elm_scroller_policy_set(obj, h, v);
              return EINA_TRUE;
           }
      }
@@ -203,7 +203,7 @@ external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
           {
              Elm_Scroller_Policy h, v;
-             elm_list_scroller_policy_get(obj, &h, &v);
+             elm_scroller_policy_get(obj, &h, &v);
 
              param->s = scroller_policy_choices[h];
              return EINA_TRUE;
@@ -214,7 +214,7 @@ external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
           {
              Elm_Scroller_Policy h, v;
-             elm_list_scroller_policy_get(obj, &h, &v);
+             elm_scroller_policy_get(obj, &h, &v);
 
              param->s = scroller_policy_choices[v];
              return EINA_TRUE;

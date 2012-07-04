@@ -1091,7 +1091,7 @@ _ewk_view_popup_create_cb(void *data,
 
    list = elm_list_add(obj);
    elm_list_select_mode_set(data, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   elm_list_bounce_set(list, EINA_FALSE, EINA_FALSE);
+   elm_scroller_bounce_set(list, EINA_FALSE, EINA_FALSE);
    elm_list_mode_set(list, ELM_LIST_EXPAND);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
