@@ -2,37 +2,53 @@
  * @defgroup Photocam Photocam
  * @ingroup Elementary
  *
+ * @image html photocam_inheritance_tree.png
+ * @image latex photocam_inheritance_tree.eps
+ *
  * @image html img/widget/photocam/preview-00.png
  * @image latex img/widget/photocam/preview-00.eps
  *
- * This is a widget specifically for displaying high-resolution digital
- * camera photos giving speedy feedback (fast load), low memory footprint
- * and zooming and panning as well as fitting logic. It is entirely focused
- * on jpeg images, and takes advantage of properties of the jpeg format (via
- * evas loader features in the jpeg loader).
+ * Photocam is a widget meant specifically for displaying
+ * high-resolution digital camera photos, giving speedy feedback (fast
+ * load), zooming and panning as well as fitting logic, all with low
+ * memory footprint. It is entirely focused on @b jpeg images, and
+ * takes advantage of properties of the jpeg format (via Evas loader
+ * features in the jpeg loader).
  *
  * Signals that you can add callbacks for are:
- * @li "clicked" - This is called when a user has clicked the photo without
- *                 dragging around.
- * @li "press" - This is called when a user has pressed down on the photo.
- * @li "longpressed" - This is called when a user has pressed down on the
- *                     photo for a long time without dragging around.
- * @li "clicked,double" - This is called when a user has double-clicked the
- *                        photo.
- * @li "load" - Photo load begins.
- * @li "loaded" - This is called when the image file load is complete for the
- *                first view (low resolution blurry version).
- * @li "load,detail" - Photo detailed data load begins.
- * @li "loaded,detail" - This is called when the image file load is complete
- *                      for the detailed image data (full resolution needed).
- * @li "zoom,start" - Zoom animation started.
- * @li "zoom,stop" - Zoom animation stopped.
- * @li "zoom,change" - Zoom changed when using an auto zoom mode.
- * @li "scroll" - the content has been scrolled (moved)
- * @li "scroll,anim,start" - scrolling animation has started
- * @li "scroll,anim,stop" - scrolling animation has stopped
- * @li "scroll,drag,start" - dragging the contents around has started
- * @li "scroll,drag,stop" - dragging the contents around has stopped
+ * @li @c "clicked" - This is called when a user has clicked the photo
+ *        without dragging around.
+ * @li @c "press" - This is called when a user has pressed down on the
+ *        photo.
+ * @li @c "longpressed" - This is called when a user has pressed down
+ *        on the photo for a long time without dragging around.
+ * @li @c "clicked,double" - This is called when a user has
+ *        double-clicked the photo.
+ * @li @c "load" - Photo load begins.
+ * @li @c "loaded" - This is called when the image file load is
+ *        complete for the first view (low resolution blurry version).
+ * @li @c "load,detail" - Photo detailed data load begins.
+ * @li @c "loaded,detail" - This is called when the image file load is
+ *        complete for the detailed image data (full resolution
+ *        needed).
+ * @li @c "zoom,start" - Zoom animation started.
+ * @li @c "zoom,stop" - Zoom animation stopped.
+ * @li @c "zoom,change" - Zoom changed when using an auto zoom mode.
+ * @li @c "scroll" - the content has been scrolled (moved)
+ * @li @c "scroll,anim,start" - scrolling animation has started
+ * @li @c "scroll,anim,stop" - scrolling animation has stopped
+ * @li @c "scroll,drag,start" - dragging the contents around has started
+ * @li @c "scroll,drag,stop" - dragging the contents around has stopped
+ *
+ * This widget implements the @b @ref elm-scrollable-interface
+ * interface, so that all (non-deprecated) functions for the base @ref
+ * Scroller widget also work for photocam objects.
+ *
+ * Some calls on the photocam's API are marked as @b deprecated, as
+ * they just wrap the scrollable widgets counterpart functions. Use
+ * the ones we point you to, for each case of deprecation here,
+ * instead -- eventually the deprecated ones will be discarded (next
+ * major release).
  *
  * @ref tutorial_photocam shows the API in action.
  * @{
@@ -270,9 +286,11 @@ EAPI Evas_Object           *elm_photocam_internal_image_get(const Evas_Object *o
  * @param h_bounce set this to @c EINA_TRUE for horizontal bouncing
  * @param v_bounce set this to @c EINA_TRUE for vertical bouncing
  *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
  * @ingroup Photocam
  */
-EAPI void                   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+EINA_DEPRECATED EAPI void   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * @brief Get the photocam scrolling bouncing.
@@ -283,9 +301,11 @@ EAPI void                   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool 
  *
  * @see elm_photocam_bounce_set()
  *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
  * @ingroup Photocam
  */
-EAPI void                   elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+EINA_DEPRECATED EAPI void   elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * @brief Set the gesture state for photocam.

@@ -29,7 +29,7 @@ elm_main(int argc, char **argv)
    photocam = elm_photocam_add(win);
    snprintf(buf, sizeof(buf), "%s/images/insanely_huge_test_image.jpg", elm_app_data_dir_get());
    elm_photocam_file_set(photocam, buf);
-   elm_photocam_bounce_set(photocam, EINA_FALSE, EINA_TRUE);
+   elm_scroller_bounce_set(photocam, EINA_FALSE, EINA_TRUE);
    evas_object_smart_callback_add(photocam, "loaded,detail", _bring_in, NULL);
    evas_object_resize(photocam, 500, 400);
    evas_object_show(photocam);
