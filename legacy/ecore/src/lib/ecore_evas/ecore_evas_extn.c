@@ -1119,7 +1119,7 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL,
    NULL,
    NULL, //transparent
-
+   NULL, // profiles_set
    NULL,
    NULL,
    NULL,
