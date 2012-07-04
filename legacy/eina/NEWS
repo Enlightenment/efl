@@ -15,6 +15,11 @@ Fixes:
     * Portability issue with Eina_Value test suite when unsigned where not promoted to
     unsigned long (case on Itanium).
     * Fix issue in the XML parser when a tag was in a comment or a CDATA.
+    * Implement eina_file_map_lines() on Windows
+
+Removal:
+    * configure options: --disable-posix-threads, --disable-win32-threads,
+      --enable-coverage
 
 Eina 1.2.0
 

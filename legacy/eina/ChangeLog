@@ -303,3 +303,10 @@
         passthrough to malloc for debgging purposes and memory footrpint
         comparisons at runtime.
 
+2012-07-01 Vincent Torri
+
+        * remove --enable-coverage from configure options,
+
+2012-07-04 Vincent Torri
+
+        * implement eina_file_map_lines() on Windows
