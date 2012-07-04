@@ -7,7 +7,6 @@
 
 #include "evas_font_ot.h"
 
-typedef struct _Evas_Glyph Evas_Glyph;
 struct _Evas_Glyph
 {
    RGBA_Font_Glyph *fg;
