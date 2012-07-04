@@ -76,6 +76,9 @@ evas_software_xcb_outbuf_free(Outbuf *buf)
                                         buf->priv.x11.xcb.cmap, 
                                         buf->priv.x11.xcb.visual, 
                                         buf->priv.pal);
+
+   eina_array_flush(&buf->priv.onebuf_regions);
+
    free(buf);
    _clear_xcbob(EINA_FALSE);
 }
@@ -104,6 +107,8 @@ evas_software_xcb_outbuf_setup(int w, int h, int rot, Outbuf_Depth depth, xcb_co
    buf->priv.mask_dither = shape_dither;
    buf->priv.destination_alpha = alpha;
    buf->priv.x11.xcb.shm = evas_software_xcb_can_do_shm(conn, screen);
+
+   eina_array_step_set(&buf->priv.onebuf_regions, sizeof(Eina_Array), 8);
 
 #ifdef WORDS_BIGENDIAN
    if (setup->image_byte_order == XCB_IMAGE_ORDER_LSB_FIRST)
@@ -254,9 +259,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
              return NULL;
           }
 
-        buf->priv.onebuf_regions = 
-          eina_list_append(buf->priv.onebuf_regions, rect);
-        if (buf->priv.onebuf) 
+        if (!eina_array_push(&buf->priv.onebuf_regions, rect))
           {
              if (cx) *cx = x;
              if (cy) *cy = y;
@@ -553,21 +556,24 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
    RGBA_Image *im = NULL;
    Outbuf_Region *obr = NULL;
 
-   if ((buf->priv.onebuf) && (buf->priv.onebuf_regions)) 
+   if ((buf->priv.onebuf) && (eina_array_count(&buf->priv.onebuf_regions)))
      {
+        Eina_Array_Iterator it;
+        Eina_Rectangle *rect;
+        unsigned int i = 0;
         pixman_region16_t tmpr;
 
         im = buf->priv.onebuf;
         obr = im->extended_info;
         pixman_region_init(&tmpr);
-        while (buf->priv.onebuf_regions) 
+        EINA_ARRAY_ITER_NEXT(&buf->priv.onebuf_regions, i, rect, it)
           {
-             Eina_Rectangle *rect, xr = { 0, 0, 0, 0 };
+             Eina_Rectangle xr = { 0, 0, 0, 0 };
 
-             rect = buf->priv.onebuf_regions->data;
-             buf->priv.onebuf_regions = 
-               eina_list_remove_list(buf->priv.onebuf_regions, 
-                                     buf->priv.onebuf_regions);
+             /* rect = buf->priv.onebuf_regions->data; */
+             /* buf->priv.onebuf_regions =  */
+             /*   eina_list_remove_list(buf->priv.onebuf_regions,  */
+             /*                         buf->priv.onebuf_regions); */
              if (buf->rot == 0)
                {
                   xr.x = rect->x;
@@ -602,6 +608,7 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
                                                    xr.x, xr.y, xr.w, xr.h);
              eina_rectangle_free(rect);
           }
+        eina_array_clean(&buf->priv.onebuf_regions);
         xcb_set_clip_rectangles(buf->priv.x11.xcb.conn, 
                                 XCB_CLIP_ORDERING_YX_BANDED, 
                                 buf->priv.x11.xcb.gc, 0, 0, 
@@ -840,7 +847,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
 #if 1
 #else
    /* Async Push */
-   if (!((buf->priv.onebuf) && (buf->priv.onebuf_regions))) 
+   if (!((buf->priv.onebuf) && (eina_array_count(&buf->priv.onebuf_regions))))
      {
         if (buf->priv.debug)
           evas_software_xcb_outbuf_debug_show(buf, buf->priv.x11.xcb.win, 
@@ -885,7 +892,8 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf *buf, RGBA_Image *update, in
 #if 1
 #else
         /* Async Push */
-        if (!((buf->priv.onebuf) && (buf->priv.onebuf_regions))) 
+        if (!((buf->priv.onebuf) && 
+              (eina_array_count(&buf->priv.onebuf_regions))))
           evas_software_xcb_output_buffer_paste(obr->mask, 
                                                 buf->priv.x11.xcb.mask, 
                                                 buf->priv.x11.xcb.gcm, 
