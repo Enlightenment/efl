@@ -851,7 +851,7 @@ evas_common_pipe_map_begin(RGBA_Image *root)
 EAPI Eina_Bool
 evas_common_pipe_init(void)
 {
-#ifdef BUILD_PTHREAD
+#ifdef BUILD_PIPE_RENDER
    if (thread_num == 0)
      {
 	int cpunum;
