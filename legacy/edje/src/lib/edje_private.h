@@ -1220,6 +1220,7 @@ struct _Edje_Calc_Params
 	 union {
 	    struct {
 	       int           l, r, t, b; // 16
+               FLOAT_T       border_scale_by;
 	    } image; // 16
 	 } spec; // 16
       } common; // 40
