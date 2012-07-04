@@ -1166,39 +1166,6 @@ else
 fi
 
 #######################################
-## Async Renderer
-build_async_render="no"
-
-AC_MSG_CHECKING(whether to build Asynchronously Threaded Pipe Rendering support)
-AC_ARG_ENABLE(async-render,
- AC_HELP_STRING([--enable-async-render], [enable asynchronously threaded pipe rendering support]),
- [ build_async_render=$enableval ]
-)
-AC_MSG_RESULT($build_async_render)
-
-AC_MSG_CHECKING(whether we can build Asynchronously Threaded Pipe Rendering support)
-if test \( "x$build_async_render" = "xyes" \); then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(EVAS_FRAME_QUEUING, 1, [Build async render support])
-  build_async_render="yes"
-  AC_DEFINE(BUILD_PIPE_RENDER, 1, [Build pipe render support])
-  build_pipe_render="yes"
-  need_pthreads="yes"
-
-  PKG_CHECK_MODULES([XEXT],
-    [xext < 1.1.1],
-    [ build_avoid_libXext_bug=yes ],
-    [ build_avoid_libXext_bug=no ]
-  )
-  if test \( "x$build_avoid_libXext_bug" = "xyes" \); then
-    AC_DEFINE(LIBXEXT_VERSION_LOW, 1, [To avoid bug on old libXext version])
-  fi
-else
-  AC_MSG_RESULT(no)
-  build_async_render="no"
-fi
-
-#######################################
 ## Async events
 build_async_events="auto"
 AC_MSG_CHECKING(whether to build Async Events support)
@@ -1981,11 +1948,6 @@ evas.spec
 ## Sanity Checks
 
 if test "x$build_pthreads" = "xno" ; then
-  if test "x$build_async_render" = "xyes" ; then
-    echo "ERROR: PThreads off, but async rendering on. Async rendering"
-    echo "  needs thread support."
-    exit 1
-  fi
   if test "x$build_pipe_render" = "xyes" ; then
     echo "ERROR: PThreads off, but pipe rendering on. Pipe rendering"
     echo "  needs thread support."
@@ -2094,7 +2056,6 @@ dnl nasty bugs on both x86 and arm (tegra2 dual core tested), so just
 dnl disabling this for now until it can be fixed
 dnl 
 echo "  Threaded Pipe Rendering.: $build_pipe_render"
-echo "  Async Pipe Rendering....: $build_async_render"
 echo "  Async Events............: $build_async_events"
 echo "  Async Image Preload.....: $build_async_preload"
 echo
