@@ -125,10 +125,6 @@ evas_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update, int x, int y, in
 
    bytes = ((w * sizeof(int)) * h);
    dest = (DATA32 *)((DATA8 *)(ob->priv.dest) + (y * bytes) + (x * 4));
-   /* if (ob->func.new_update_region) */
-   /*   { */
-   /*      dest = ob->func.new_update_region(x, y, w, h, &bytes); */
-   /*   } */
 
    if (!ob->priv.buffer) 
      {
@@ -148,8 +144,6 @@ evas_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update, int x, int y, in
                }
           }
      }
-   /* if (ob->func.free_update_region) */
-   /*   ob->func.free_update_region(x, y, w, h, dest); */
 }
 
 void 
