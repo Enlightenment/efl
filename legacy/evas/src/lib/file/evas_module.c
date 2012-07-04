@@ -156,6 +156,12 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_SOFTWARE_16_X11
   EVAS_EINA_STATIC_MODULE_USE(engine, software_16_x11),
 #endif
+#ifdef EVAS_STATIC_BUILD_SOFTWARE_GDI
+  EVAS_EINA_STATIC_MODULE_USE(engine, software_gdi),
+#endif
+#ifdef EVAS_STATIC_BUILD_SOFTWARE_DDRAW
+  EVAS_EINA_STATIC_MODULE_USE(engine, software_ddraw),
+#endif
 #ifdef EVAS_STATIC_BUILD_SOFTWARE_8
   EVAS_EINA_STATIC_MODULE_USE(engine, software_8),
 #endif
