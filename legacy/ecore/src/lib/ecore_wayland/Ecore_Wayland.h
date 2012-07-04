@@ -122,6 +122,7 @@ struct _Ecore_Wl_Input
    struct wl_touch *touch;
 
    struct wl_surface *cursor_surface;
+   struct wl_callback *cursor_frame_cb;
 
    struct wl_data_device *data_device;
 

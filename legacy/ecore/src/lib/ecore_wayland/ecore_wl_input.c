@@ -46,6 +46,7 @@ static void _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *poin
 static void _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, wl_fixed_t sx, wl_fixed_t sy);
 static void _ecore_wl_input_cb_pointer_button(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int button, unsigned int state);
 static void _ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer __UNUSED__, unsigned int timestamp, unsigned int axis, wl_fixed_t value);
+static void _ecore_wl_input_cb_pointer_frame(void *data, struct wl_callback *callback, unsigned int timestamp __UNUSED__);
 static void _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int format, int fd, unsigned int size);
 static void _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, struct wl_surface *surface, struct wl_array *keys __UNUSED__);
 static void _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, struct wl_surface *surface);
@@ -56,7 +57,7 @@ static void _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch __UNU
 static void _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch __UNUSED__, unsigned int timestamp, int id __UNUSED__, wl_fixed_t x, wl_fixed_t y);
 static void _ecore_wl_input_cb_touch_frame(void *data __UNUSED__, struct wl_touch *touch __UNUSED__);
 static void _ecore_wl_input_cb_touch_cancel(void *data __UNUSED__, struct wl_touch *touch __UNUSED__);
-static void _ecore_wl_input_cb_data_offer(void *data, struct wl_data_device *data_device, unsigned int id);
+static void _ecore_wl_input_cb_data_offer(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer);
 static void _ecore_wl_input_cb_data_enter(void *data, struct wl_data_device *data_device, unsigned int timestamp, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer);
 static void _ecore_wl_input_cb_data_leave(void *data, struct wl_data_device *data_device);
 static void _ecore_wl_input_cb_data_motion(void *data, struct wl_data_device *data_device, unsigned int timestamp, wl_fixed_t x, wl_fixed_t y);
@@ -116,6 +117,11 @@ static const struct wl_data_device_listener _ecore_wl_data_listener =
    _ecore_wl_input_cb_data_motion,
    _ecore_wl_input_cb_data_drop,
    _ecore_wl_input_cb_data_selection
+};
+
+static const struct wl_callback_listener _ecore_wl_pointer_surface_listener = 
+{
+   _ecore_wl_input_cb_pointer_frame
 };
 
 /* local variables */
@@ -184,6 +190,9 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
         wl_surface_attach(input->cursor_surface, buffer, 0, 0);
         wl_surface_damage(input->cursor_surface, 0, 0, 
                           cursor_image->width, cursor_image->height);
+
+        if (!input->cursor_frame_cb)
+          _ecore_wl_input_cb_pointer_frame(input, NULL, 0);
      }
 }
 
@@ -243,15 +252,16 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
    input->selection_source = NULL;
 
    if (input->data_device) wl_data_device_destroy(input->data_device);
-   if (input->seat) wl_seat_destroy(input->seat);
-   wl_list_remove(&input->link);
-
    if (input->xkb.state)
      xkb_state_unref(input->xkb.state);
    if (input->xkb.keymap)
      xkb_map_unref(input->xkb.keymap);
+
    if (input->cursor_surface)
      wl_surface_destroy(input->cursor_surface);
+
+   wl_list_remove(&input->link);
+   if (input->seat) wl_seat_destroy(input->seat);
 
    free(input);
 }
@@ -322,9 +332,10 @@ _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSE
 
    input->timestamp = timestamp;
 
-   /* TODO: FIXME: NB: Weston window code has set pointer image here also */
    if (input->pointer_focus)
      _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp);
+
+   ecore_wl_input_cursor_default_restore(input);
 }
 
 static void 
@@ -373,6 +384,31 @@ _ecore_wl_input_cb_pointer_axis(void *data, struct wl_pointer *pointer __UNUSED_
    if (!(input = data)) return;
    _ecore_wl_input_mouse_wheel_send(input, axis, wl_fixed_to_int(value), 
                                     timestamp);
+}
+
+static void 
+_ecore_wl_input_cb_pointer_frame(void *data, struct wl_callback *callback, unsigned int timestamp __UNUSED__)
+{
+   Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data)) return;
+
+   if (callback)
+     {
+        if (callback != input->cursor_frame_cb) return;
+        wl_callback_destroy(callback);
+        input->cursor_frame_cb = NULL;
+     }
+
+   /* TODO: Finish me */
+   if (!input->cursor_frame_cb)
+     {
+        input->cursor_frame_cb = wl_surface_frame(input->cursor_surface);
+        wl_callback_add_listener(input->cursor_frame_cb, 
+                                 &_ecore_wl_pointer_surface_listener, input);
+     }
 }
 
 static void 
@@ -596,8 +632,8 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer __UNUSED
         input->timestamp = (tv.tv_sec * 1000 + tv.tv_usec / 1000);
      }
 
-   input->sx = wl_fixed_to_int(sx);
-   input->sy = wl_fixed_to_int(sy);
+   input->sx = wl_fixed_to_double(sx);
+   input->sy = wl_fixed_to_double(sy);
    input->display->serial = serial;
    input->pointer_enter_serial = serial;
 
@@ -799,11 +835,11 @@ _ecore_wl_input_cb_touch_cancel(void *data __UNUSED__, struct wl_touch *touch __
 }
 
 static void 
-_ecore_wl_input_cb_data_offer(void *data, struct wl_data_device *data_device, unsigned int id)
+_ecore_wl_input_cb_data_offer(void *data, struct wl_data_device *data_device, struct wl_data_offer *offer)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   _ecore_wl_dnd_add(data, data_device, id);
+   _ecore_wl_dnd_add(data, data_device, offer);
 }
 
 static void 

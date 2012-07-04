@@ -78,7 +78,7 @@ void _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id);
 void _ecore_wl_input_del(Ecore_Wl_Input *input);
 void _ecore_wl_input_pointer_xy_get(int *x, int *y);
 
-void _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device, unsigned int id);
+void _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device, struct wl_data_offer *offer);
 void _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, struct wl_surface *surface, int x, int y, struct wl_data_offer *offer);
 void _ecore_wl_dnd_leave(void *data, struct wl_data_device *data_device __UNUSED__);
 void _ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, int x, int y);

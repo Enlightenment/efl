@@ -15,7 +15,7 @@ static const struct wl_data_offer_listener _ecore_wl_data_offer_listener =
 };
 
 void 
-_ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device, unsigned int id)
+_ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device __UNUSED__, struct wl_data_offer *offer)
 {
    Ecore_Wl_Dnd_Source *source;
 
@@ -25,10 +25,7 @@ _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device, uns
    wl_array_init(&source->types);
    source->refcount = 1;
    source->input = input;
-   /* FIXME: Change this when wayland has typesafe wrapper for it */
-   source->offer = (struct wl_data_offer *)
-     wl_proxy_create_for_id((struct wl_proxy *)data_device, 
-                            id, &wl_data_offer_interface);
+   source->offer = offer;
    wl_data_offer_add_listener(source->offer, 
                               &_ecore_wl_data_offer_listener, source);
 }
