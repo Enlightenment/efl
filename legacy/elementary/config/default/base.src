@@ -62,6 +62,7 @@ group "Elm_Config" struct {
   value "weekend_len" int: 2;
   value "year_min" int: 2;
   value "year_max" int: 137;
+  value "softcursor_mode" uchar: 0;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";

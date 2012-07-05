@@ -60,6 +60,7 @@ group "Elm_Config" struct {
   value "week_start" int: 1;
   value "weekend_start" int: 6;
   value "weekend_len" int: 2;
+  value "softcursor_mode" uchar: 0;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";

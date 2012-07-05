@@ -421,6 +421,41 @@ EAPI double       elm_config_longpress_timeout_get(void);
  */
 EAPI void         elm_config_longpress_timeout_set(double longpress_timeout);
 
+typedef enum _Elm_Softcursor_Mode
+{
+   ELM_SOFTCURSOR_MODE_AUTO, /**< Auto-detect if a software cursor should be used (default) */
+   ELM_SOFTCURSOR_MODE_ON, /**< Always use a softcursor */
+   ELM_SOFTCURSOR_MODE_OFF /**< Never use a softcursor */
+} Elm_Softcursor_Mode; /**< @since 1.1 */
+
+/**
+ * Set the mode used for software provided mouse cursors inline in the window
+ * canvas.
+ * 
+ * A software rendered cursor can be provided for rendering inline inside the
+ * canvas windows in the event the native display system does not provide one
+ * or the native oneis not wanted.
+ *
+ * @param lonpress_timeout Timeout for long press event
+ * @ingroup Softcursor
+ * 
+ * @see elm_config_softcursor_mode_get()
+ * @since 1.1
+ */
+EAPI void         elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode);
+
+/**
+ * Get the software cursor mode
+ *
+ * @return The mode used for software cursors
+ * @ingroup Softcursor
+ * 
+ * @see elm_config_softcursor_mode_set()
+ * @since 1.1
+ */
+EAPI Elm_Softcursor_Mode elm_config_softcursor_mode_get(void);
+
+
 /**
  * Get the duration after which tooltip will be shown.
  *

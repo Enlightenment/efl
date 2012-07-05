@@ -189,6 +189,7 @@ struct _Elm_Config
    int           year_min;
    int           year_max;
    Eina_List    *color_palette;
+   unsigned char softcursor_mode;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

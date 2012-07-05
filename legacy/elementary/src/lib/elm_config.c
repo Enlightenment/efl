@@ -386,6 +386,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, year_min, T_INT);
    ELM_CONFIG_VAL(D, T, year_max, T_INT);
    ELM_CONFIG_LIST(D, T, color_palette, _config_color_palette_edd);
+   ELM_CONFIG_VAL(D, T, softcursor_mode, T_UCHAR);
 #undef T
 #undef D
 #undef T_INT
@@ -1053,6 +1054,7 @@ _config_load(void)
    _elm_config->weekend_len = 2;
    _elm_config->year_min = 2;
    _elm_config->year_max = 137;
+   _elm_config->softcursor_mode = 0; /* 0 = auto, 1 = on, 2 = off */
    _elm_config->color_palette = NULL;
 }
 
@@ -2020,6 +2022,18 @@ elm_config_longpress_timeout_get(void)
 }
 
 EAPI void
+elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode)
+{
+   _elm_config->softcursor_mode = mode;
+}
+
+EAPI Elm_Softcursor_Mode
+elm_config_softcursor_mode_get(void)
+{
+   return _elm_config->softcursor_mode;
+}
+
+EAPI void
 elm_config_all_flush(void)
 {
 #ifdef HAVE_ELEMENTARY_X
@@ -2104,40 +2118,40 @@ _elm_config_sub_init(void)
 #undef ENGINE_COMPARE
      {
 #ifdef HAVE_ELEMENTARY_X
-        if (!ecore_x_init(NULL))
+        if (ecore_x_init(NULL))
           {
-             ERR("Cannot connect to X11 display. check $DISPLAY variable");
-             exit(1);
-          }
-        _root_1st = ecore_x_window_root_first_get();
-
-        if (!ecore_x_screen_is_composited(0))
-          _elm_config->compositing = 0;
-
-        ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
-        ecore_x_event_mask_set(_root_1st,
-                               ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
-        _prop_change_handler = ecore_event_handler_add
-            (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
-        if (!getenv("ELM_PROFILE"))
-          {
-             char *s;
-
-             s = ecore_x_window_prop_string_get(_root_1st,
-                                                _atom[ATOM_E_PROFILE]);
-             if (s)
+             _root_1st = ecore_x_window_root_first_get();
+             
+             if (!ecore_x_screen_is_composited(0))
+               _elm_config->compositing = 0;
+             
+             ecore_x_atoms_get(_atom_names, ATOM_COUNT, _atom);
+             ecore_x_event_mask_set(_root_1st,
+                                    ECORE_X_EVENT_MASK_WINDOW_PROPERTY);
+             _prop_change_handler = ecore_event_handler_add
+               (ECORE_X_EVENT_WINDOW_PROPERTY, _prop_change, NULL);
+             if (!getenv("ELM_PROFILE"))
                {
-                  int changed = 0;
-
-                  if (_elm_profile)
+                  char *s;
+                  
+                  s = ecore_x_window_prop_string_get(_root_1st,
+                                                     _atom[ATOM_E_PROFILE]);
+                  if (s)
                     {
-                       if (strcmp(_elm_profile, s)) changed = 1;
-                       free(_elm_profile);
+                       int changed = 0;
+                       
+                       if (_elm_profile)
+                         {
+                            if (strcmp(_elm_profile, s)) changed = 1;
+                            free(_elm_profile);
+                         }
+                       _elm_profile = s;
+                       if (changed) _prop_config_get();
                     }
-                  _elm_profile = s;
-                  if (changed) _prop_config_get();
                }
           }
+        else
+          ERR("Cannot connect to X11 display. check $DISPLAY variable");
 #endif
      }
    _config_sub_apply();

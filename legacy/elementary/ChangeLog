@@ -269,3 +269,13 @@
 
 	* Add access hook to widget infra.
 
+2012-07-5  Carsten Haitzler (The Rasterman)
+
+	* Fix several FB related issues:
+          * Fallback to FB from X11 so it "just works"
+          * Config expected x11 and failed to start app if engine not
+            explicitly set to non-x11
+          * No mouse cursor displayed in fb when needed, so add a
+            softcursor mode defaulting to auto.
+        
+
