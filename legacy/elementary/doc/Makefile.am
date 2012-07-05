@@ -117,17 +117,20 @@ WGT_TREE = \
 	inwin \
 	label \
 	layout \
+	list \
 	mapbuf \
 	menu \
 	naviframe \
 	notify \
 	panes \
 	photo \
+	photocam \
 	player \
 	plug \
 	progressbar \
 	radio \
 	route \
+	scroller \
 	segment_control \
 	separator \
 	slider \
