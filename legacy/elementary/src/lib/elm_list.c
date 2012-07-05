@@ -1701,9 +1701,7 @@ elm_list_add(Evas_Object *parent)
 
    ELM_LIST_DATA_GET(obj, sd);
 
-   elm_widget_theme_object_set
-     (obj, ELM_WIDGET_DATA(sd)->resize_obj, "list", "base",
-     elm_widget_style_get(obj));
+   elm_layout_theme_set(obj, "list", "base", elm_widget_style_get(obj));
 
    sd->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(sd->hit_rect, obj);
@@ -1754,8 +1752,6 @@ elm_list_add(Evas_Object *parent)
    sd->s_iface->content_set(obj, sd->box);
    evas_object_event_callback_add
      (sd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb, obj);
-
-   _elm_list_smart_theme(obj);
 
    return obj;
 }

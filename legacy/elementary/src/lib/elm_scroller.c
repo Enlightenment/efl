@@ -695,9 +695,7 @@ elm_scroller_add(Evas_Object *parent)
 
    ELM_SCROLLER_DATA_GET(obj, sd);
 
-   elm_widget_theme_object_set
-     (obj, ELM_WIDGET_DATA(sd)->resize_obj, "scroller", "base",
-     elm_widget_style_get(obj));
+   elm_layout_theme_set(obj, "scroller", "base", elm_widget_style_get(obj));
 
    sd->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(sd->hit_rect, obj);
@@ -738,8 +736,6 @@ elm_scroller_add(Evas_Object *parent)
 
    sd->s_iface->content_min_limit_cb_set
      (obj, _elm_scroller_content_min_limit_cb);
-
-   _elm_scroller_smart_theme(obj);
 
    return obj;
 }
