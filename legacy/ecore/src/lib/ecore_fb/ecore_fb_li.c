@@ -148,6 +148,9 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         double current = ecore_loop_time_get();
 
         button = ((iev->code & 0x00F) + 1);
+        // swap 2 and 3 to make middle and right butotn work right.
+        if (button == 3) button = 2;
+        else if (button == 2) button = 3;
         if (iev->value)
           {
              dev->mouse.did_double = EINA_FALSE;

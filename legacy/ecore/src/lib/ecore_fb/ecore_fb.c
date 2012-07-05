@@ -17,6 +17,13 @@ static int _ecore_fb_console_h = 0;
  * @{
  */
 
+static sighandler_t oldhand = NULL;
+
+static void
+nosigint(int val __UNUSED__)
+{
+}
+
 /**
  * @brief Initialize the Ecore_Fb library.
  *
@@ -39,6 +46,11 @@ ecore_fb_init(const char *name __UNUSED__)
    if (!ecore_fb_vt_init())
       return --_ecore_fb_init_count;
 
+   if (!oldhand)
+     {
+        oldhand = signal(SIGINT, nosigint);
+     }
+   
    _ecore_fb_size_get(&_ecore_fb_console_w, &_ecore_fb_console_h);
 
    return _ecore_fb_init_count;
@@ -59,6 +71,12 @@ ecore_fb_shutdown(void)
    if (--_ecore_fb_init_count != 0)
       return _ecore_fb_init_count;
 
+   if (oldhand)
+     {
+        signal(SIGINT, oldhand);
+        oldhand = NULL;
+     }
+   
    ecore_fb_vt_shutdown();
 
    return _ecore_fb_init_count;

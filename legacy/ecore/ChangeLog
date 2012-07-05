@@ -811,4 +811,5 @@
           pos/size as it should.
         * Fix ecore-fb to use key repeat like x so apps dont break in fb
         * Fix ecore-fb string lookup table to include ctrl+keys
-
+        * Fix ecore-fb to trap sigint (ctrl+c) so it doesnt exit your fb app
+        * Fix ecore-fb mouse to swap button 2 and 3 ro work right.
