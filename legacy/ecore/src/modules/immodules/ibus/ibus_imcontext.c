@@ -17,7 +17,7 @@
 #include <ibus.h>
 #include "ibus_imcontext.h"
 
-struct _IBusIMContext 
+struct _IBusIMContext
 {
    /* instance members */
    Ecore_IMF_Context *ctx;
@@ -163,10 +163,10 @@ ibus_im_context_new(void)
      {
         char *display_name = NULL;
 
-        if ((display_name = getenv ("DISPLAY")))
-          ibus_set_display (display_name);
+        if ((display_name = getenv("DISPLAY")))
+          ibus_set_display(display_name);
         else
-          ibus_set_display (":0.0");
+          ibus_set_display(":0.0");
 
         _bus = ibus_bus_new();
      }
@@ -183,20 +183,19 @@ _process_key_event_done (GObject      *object,
     KeyEvent *event = (KeyEvent *)user_data;
 
     GError *error = NULL;
-    Eina_Bool retval = ibus_input_context_process_key_event_async_finish (
-       context,
-       res,
-       &error);
+    Eina_Bool retval = ibus_input_context_process_key_event_async_finish(context,
+                                                                         res,
+                                                                         &error);
 
-    if (error != NULL) 
+    if (error != NULL)
       {
-         g_warning ("Process Key Event failed: %s.", error->message);
-         g_error_free (error);
+         g_warning("Process Key Event failed: %s.", error->message);
+         g_error_free(error);
       }
 
-    if (retval == EINA_FALSE) 
+    if (retval == EINA_FALSE)
       {
-         key_event_put (event->keysym, event->state);
+         key_event_put(event->keysym, event->state);
       }
     free(event);
 }
@@ -291,7 +290,7 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers) | IBUS_RELEASE_MASK;
 
-             if (_use_sync_mode) 
+             if (_use_sync_mode)
                {
                   retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
                                                                 keysym,
@@ -320,7 +319,7 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
              keycode = ecore_x_keysym_keycode_get(ev->key);
              keysym = XStringToKeysym(ev->key);
              state = _ecore_imf_modifier_to_ibus_modifier(ev->modifiers);
-             if (_use_sync_mode) 
+             if (_use_sync_mode)
                {
                   retval = ibus_input_context_process_key_event(ibusimcontext->ibuscontext,
                                                                 keysym,
@@ -329,7 +328,6 @@ ibus_im_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
                }
              else
                {
-
                   ibus_input_context_process_key_event_async(ibusimcontext->ibuscontext,
                                                              keysym,
                                                              keycode - 8,
