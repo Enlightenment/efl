@@ -290,6 +290,8 @@ ephysics_world_new(void)
         goto no_list;
      }
 
+   world->dynamics_world->getSolverInfo().m_solverMode ^=
+      EPHYSICS_WORLD_SOLVER_SIMD;
    world->dynamics_world->setGravity(btVector3(0, -9.8, 0));
    world->rate = 30;
    world->dynamics_world->setInternalTickCallback(_ephysics_world_tick_cb,
@@ -493,6 +495,34 @@ ephysics_world_constraint_solver_iterations_get(EPhysics_World *world)
      }
 
    return world->dynamics_world->getSolverInfo().m_numIterations;
+}
+
+EAPI void
+ephysics_world_constraint_solver_mode_enable_set(EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode, Eina_Bool enable)
+{
+   int current_solver_mode;
+    if (!world)
+     {
+        ERR("Can't enable/disable constraint solver mode, world is null.");
+        return;
+     }
+
+   current_solver_mode = world->dynamics_world->getSolverInfo().m_solverMode;
+   if ((enable && !(current_solver_mode & solver_mode)) ||
+       (!enable && (current_solver_mode & solver_mode)))
+     world->dynamics_world->getSolverInfo().m_solverMode ^= solver_mode;
+}
+
+EAPI Eina_Bool
+ephysics_world_constraint_solver_mode_enable_get(EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode)
+{
+     if (!world)
+     {
+        ERR("Can't get constraint solver mode status, world is null.");
+        return EINA_FALSE;
+     }
+
+     return world->dynamics_world->getSolverInfo().m_solverMode & solver_mode;
 }
 
 EAPI void

@@ -271,6 +271,26 @@ typedef enum _EPhysics_Callback_World_Type
 } EPhysics_Callback_World_Type;
 
 /**
+ * @enum _EPhysics_World_Constraint_Solver_Mode
+ * typedef EPhysics_World_Constraint_Solver_Mode
+ *
+ * Identifies the worlds contact and joint constraint solver mode. By default
+ * EPHYSICS_WORLD_SOLVER_USE_WARMSTARTING is the only enabled solver mode.
+ *
+ * @see ephysics_world_constraint_solver_mode_enable_set()
+ * @see ephysics_world_constraint_solver_mode_enable_get()
+ *
+ * @ingroup EPhysics_World
+ */
+typedef enum _EPhysics_World_Constraint_Solver_Mode
+{
+   EPHYSICS_WORLD_SOLVER_RANDMIZE_ORDER = 1, /**< Randomize the order of solving the constraint rows*/
+   EPHYSICS_WORLD_SOLVER_USE_WARMSTARTING = 4, /**< The PGS is an iterative algorithm where each iteration is based on the solution of previous iteration, if no warmstarting is used, the initial solution for PGS is set to zero each frame (by default this mode is enabled, disabling this mode the user can face a better performance depending on the amount of objects in the simulation)*/
+   EPHYSICS_WORLD_SOLVER_USE_2_FRICTION_DIRECTIONS = 16, /**< While calculating a friction impulse consider this should be applied on both bodies (this mode cause a better stacking stabilization)*/
+   EPHYSICS_WORLD_SOLVER_SIMD = 256, /**< Use a SSE optimized innerloop, using assembly intrinsics, this is implemented and can be enabled/disabled for Windows and Mac OSX versions, single-precision floating point, 32bit(disabled by default)*/
+} EPhysics_World_Solver_Mode;
+
+/**
  * @typedef EPhysics_World_Event_Cb
  *
  * EPhysics world event callback function signature.
@@ -477,6 +497,33 @@ EAPI void ephysics_world_constraint_solver_iterations_set(EPhysics_World *world,
  * @ingroup EPhysics_World
  */
 EAPI int ephysics_world_constraint_solver_iterations_get(EPhysics_World *world);
+
+/**
+ * @brief
+ * Enable or disable a constraint solver mode to @p world. A world can operate
+ * on several constraint solver modes.
+ *
+ * @param world The world to be set.
+ * @param solver_mode The solver mode to set.
+ *
+ * @see EPhysics_World_Solver_Mode for supported solver modes.
+ * @see ephysics_world_constraint_solver_mode_enable_get()
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_constraint_solver_mode_enable_set(EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode, Eina_Bool enable);
+
+/**
+ * @brief
+ * Get the @p solver_mode status on @p world.
+ *
+ * @param world The world to be queried.
+ * @param solver_mode The solver mode of interest.
+ * @return EINA_TRUE if @p solver_mode is enabled, EINA_FALSE otherwise
+ *
+ * @see ephysics_world_constraint_solver_mode_enable_set()
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_constraint_solver_mode_enable_get(EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode);
 
 /**
  * @brief
