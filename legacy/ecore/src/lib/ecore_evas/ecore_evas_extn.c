@@ -1128,7 +1128,8 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL,
 
    NULL, // render
-   NULL  // screen_geometry_get
+   NULL, // screen_geometry_get
+   NULL  // screen_dpi_get
 };
 
 static Eina_Bool
@@ -2013,7 +2014,8 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    NULL,
    
    _ecore_evas_extn_socket_render, // render
-   NULL  // screen_geometry_get
+   NULL,  // screen_geometry_get
+   NULL,  // screen_dpi_get
 };
 
 #endif

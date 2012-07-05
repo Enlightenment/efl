@@ -525,7 +525,8 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
 
      _ecore_evas_buffer_render,
-     NULL  // screen_geometry_get
+     NULL, // screen_geometry_get
+     NULL  // screen_dpi_get
 };
 #endif
 

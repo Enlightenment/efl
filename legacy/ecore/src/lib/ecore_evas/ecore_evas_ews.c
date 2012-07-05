@@ -693,7 +693,8 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
      NULL,
 
      _ecore_evas_ews_render,
-     _ecore_evas_ews_screen_geometry_get
+     _ecore_evas_ews_screen_geometry_get,
+     NULL  // screen_dpi_get
 };
 
 void

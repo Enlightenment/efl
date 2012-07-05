@@ -188,6 +188,7 @@ struct _Ecore_Evas_Engine_Func
 
    int (*fn_render) (Ecore_Evas *ee);
    void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+   void (*fn_screen_dpi_get) (const Ecore_Evas *ee, int *xdpi, int *ydpi);
 };
 
 struct _Ecore_Evas_Engine

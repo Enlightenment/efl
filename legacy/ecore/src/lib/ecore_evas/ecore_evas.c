@@ -2294,6 +2294,22 @@ ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int
 }
 
 EAPI void
+ecore_evas_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
+{
+   if (xdpi) *xdpi = 0;
+   if (ydpi) *ydpi = 0;
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_screen_geometry_get");
+        return;
+     }
+
+   IFC(ee, fn_screen_dpi_get) (ee, xdpi, ydpi);
+   IFE;
+}
+
+EAPI void
 ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))

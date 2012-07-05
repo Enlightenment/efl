@@ -1082,7 +1082,8 @@ static Ecore_Evas_Engine_Func _ecore_win32_engine_func =
      NULL,
 
      NULL, // render
-     NULL  //screen_geometry_get
+     NULL, //screen_geometry_get
+     NULL  // screen_dpi_get
 };
 
 #endif /* BUILD_ECORE_EVAS_WIN32 */

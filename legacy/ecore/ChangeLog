@@ -804,3 +804,9 @@
 	* Add event callbacks for Ecore_Imf Input Panel
 	* Add functions to retrieve input panel geometry & state from Ecore_Imf.
 
+2012-07-05  Carsten Haitzler (The Rasterman)
+
+        * Add ecore_evas_screen_dpi_get()
+        * Fix ecore_evas_screen_geometry_get(0 for x11 to return zone
+          pos/size as it should.
+

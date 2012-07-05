@@ -782,7 +782,8 @@ static Ecore_Evas_Engine_Func _ecore_wince_engine_func =
    NULL,
 
    NULL, // render
-   NULL  // screen_geometry_get
+   NULL, // screen_geometry_get
+   NULL  // screen_dpi_get
 };
 
 /* API */

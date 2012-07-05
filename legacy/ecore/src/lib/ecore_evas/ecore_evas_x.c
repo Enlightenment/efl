@@ -2954,9 +2954,63 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 static void
 _ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h)
 {
-   if (x) *x = 0;
-   if (y) *y = 0;
-   ecore_x_screen_size_get(ecore_x_default_screen_get(), w, h);
+   int outnum = 0;
+   int px = 0, py = 0, pw = 0, ph = 0;
+   Ecore_X_Window root;
+   Ecore_X_Randr_Output *out = NULL;
+   Ecore_X_Randr_Crtc crtc;
+
+   root = ecore_x_window_root_get(ee->prop.window);
+   out = ecore_x_randr_window_outputs_get(ee->prop.window, &outnum);
+   if (!out)
+     {
+norandr:
+        if (out) free(out);
+        if (x) *x = 0;
+        if (y) *y = 0;
+        ecore_x_window_size_get(root, w, h);
+        return;
+     }
+   crtc = ecore_x_randr_output_crtc_get(root, out[0]);
+   if (!crtc) goto norandr;
+   ecore_x_randr_crtc_geometry_get(root, crtc, &px, &py, &pw, &ph);
+   if ((pw == 0) || (ph == 0)) goto norandr;
+   if (x) *x = px;
+   if (y) *y = py;
+   if (w) *w = pw;
+   if (h) *h = ph;
+   free(out);
+}
+
+static void
+_ecore_evas_x_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
+{
+   int scdpi, xmm = 0, ymm = 0, outnum = 0, w = 0, h = 0;
+   int px = 0, py = 0;
+   Ecore_X_Window root;
+   Ecore_X_Randr_Output *out = NULL;
+   Ecore_X_Randr_Crtc crtc;
+
+   root = ecore_x_window_root_get(ee->prop.window);
+   out = ecore_x_randr_window_outputs_get(ee->prop.window, &outnum);
+   if (!out)
+     {
+norandr:
+        if (out) free(out);
+        scdpi = ecore_x_dpi_get();
+        if (xdpi) *xdpi = scdpi;
+        if (ydpi) *ydpi = scdpi;
+        return;
+     }
+   crtc = ecore_x_randr_output_crtc_get(root, out[0]);
+   if (!crtc) goto norandr;
+   ecore_x_randr_crtc_geometry_get(root, crtc, &px, &py, &w, &h);
+   if ((w == 0) || (h == 0)) goto norandr;
+   ecore_x_randr_output_size_mm_get(root, out[0], &xmm, &ymm);
+   if ((xmm == 0) || (ymm == 0)) goto norandr;
+   if (xdpi) *xdpi = (w * 254) / (xmm * 10); // 25.4mm / inch
+   if (ydpi) *ydpi = (h * 254) / (ymm * 10); // 25.4mm / inch
+   free(out);
 }
 
 int
@@ -3036,7 +3090,8 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_focus_skip_set,
 
      NULL, // render
-     _ecore_evas_x_screen_geometry_get
+     _ecore_evas_x_screen_geometry_get,
+     _ecore_evas_x_screen_dpi_get
 };
 #endif /* BUILD_ECORE_EVAS_X11 */
 

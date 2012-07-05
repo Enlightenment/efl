@@ -1784,6 +1784,7 @@ EAPI void        ecore_evas_input_event_unregister(Ecore_Evas *ee);
 EAPI void        ecore_evas_manual_render(Ecore_Evas *ee);
 EAPI void        ecore_evas_comp_sync_set(Ecore_Evas *ee, Eina_Bool do_sync);
 EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
+
 /**
  * @brief Get geometry of screen associated with this Ecore_Evas.
  *
@@ -1796,6 +1797,17 @@ EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
  * @since 1.1
  */
 EAPI void        ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+
+/**
+ * @brief Get the dpi of the screen the Ecore_Evas is primarily on.
+ *
+ * @param ee The Ecore_Evas whose window's to query.
+ * @param xdpi Pointer to integer to store horizontal DPI. May be @c NULL.
+ * @param ydpi Pointer to integer to store vertical DPI. May be @c NULL.
+ *
+ * @since 1.3
+ */
+EAPI void        ecore_evas_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi);
 
 EAPI void        ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame);
 EAPI Eina_Bool   ecore_evas_draw_frame_get(const Ecore_Evas *ee);

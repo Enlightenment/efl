@@ -405,7 +405,8 @@ static Ecore_Evas_Engine_Func _ecore_psl1ght_engine_func =
    NULL,
 
    NULL, // render
-   _ecore_evas_screen_geometry_get  // screen_geometry_get
+   _ecore_evas_screen_geometry_get, // screen_geometry_get
+   NULL  // screen_dpi_get
 };
 
 EAPI Ecore_Evas *

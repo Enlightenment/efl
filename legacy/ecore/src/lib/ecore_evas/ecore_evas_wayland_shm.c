@@ -156,7 +156,8 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // demand attention set
    NULL, // focus skip set
    _ecore_evas_wl_render, 
-   _ecore_evas_wl_screen_geometry_get
+   _ecore_evas_wl_screen_geometry_get,
+   NULL  // screen_dpi_get
 };
 
 /* external variables */
