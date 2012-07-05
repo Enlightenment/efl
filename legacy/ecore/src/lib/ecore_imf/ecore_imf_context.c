@@ -1765,7 +1765,7 @@ ecore_imf_context_input_panel_geometry_get(Ecore_IMF_Context *ctx, int *x, int *
  * Get state of current active input panel.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @param The state of input panel.
+ * @return The state of input panel.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.3
  */
@@ -1819,8 +1819,8 @@ ecore_imf_context_input_panel_event_callback_add(Ecore_IMF_Context *ctx,
  * Unregister a callback function which will be called if there is change in input panel state, language, mode etc.
  *
  * @param ctx An #Ecore_IMF_Context.
+ * @param type An #Ecore_IMF_Input_Panel_Event.
  * @param func the callback function
- * @param data application-input panel specific data.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.3
  */
