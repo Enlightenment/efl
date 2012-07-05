@@ -2083,13 +2083,15 @@ EAPI Eina_Bool                                 ecore_x_randr_output_signal_forma
 EAPI Ecore_X_Randr_Signal_Property            *ecore_x_randr_output_signal_properties_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *num);
 EAPI int                                       ecore_x_randr_output_connector_number_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
 EAPI Ecore_X_Randr_Connector_Type              ecore_x_randr_output_connector_type_get(Ecore_X_Window root, Ecore_X_Randr_Output output);
+/* WTF - these dont exist in ecore-x!!!!   
 EAPI Eina_Rectangle                           *ecore_x_randr_crtc_panning_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h);
 EAPI Eina_Bool                                 ecore_x_randr_crtc_panning_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, const int y, const int w, const int h);
 EAPI Eina_Rectangle                           *ecore_x_randr_crtc_tracking_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int *x, int *y, int *w, int *h);
 EAPI Eina_Bool                                 ecore_x_randr_crtc_tracking_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int x, const int y, const int w, const int h);
 EAPI Eina_Rectangle                           *ecore_x_randr_crtc_border_area_get(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc);
 EAPI Eina_Bool                                 ecore_x_randr_crtc_border_area_set(Ecore_X_Window root, Ecore_X_Randr_Crtc crtc, int left, const int top, const int right, const int bottom);
-
+*/
+   
 /* XRender Support (horrendously incomplete) */
 typedef Ecore_X_ID Ecore_X_Picture;
 
