@@ -1,7 +1,7 @@
 static void _ecore_fb_event_free_key_down(void *data, void *ev);
 static void _ecore_fb_event_free_key_up(void *data, void *ev);
 
-static const char *_ecore_fb_kbd_syms[128 * 6] =
+static const char *_ecore_fb_kbd_syms[128 * 7] =
 {
 #include "ecore_fb_keytable.h"
 };
@@ -179,9 +179,9 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 
                   if (_ecore_fb_shift) add = 1;
                   else if (_ecore_fb_lock) add = 2;
-                  e->keyname = strdup(_ecore_fb_kbd_syms[(buf & 0x7f) * 6]);
-                  e->keysymbol = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + add]);
-                  e->key_compose = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + 3 + add]);
+                  e->keyname = strdup(_ecore_fb_kbd_syms[(buf & 0x7f) * 7]);
+                  e->keysymbol = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 7) + add]);
+                  e->key_compose = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 7) + 3 + add]);
                }
              else
                 e->keyname = strdup(_ecore_fb_btn_syms[buf & 0x7f]);
@@ -195,7 +195,6 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
              e->root_window = e->window; 
              e->same_screen = 1;
              e->timestamp = ecore_loop_time_get() * 1000.0;
-             ecore_event_add(ECORE_FB_EVENT_KEY_DOWN, e, _ecore_fb_event_free_key_down, NULL);
              if (!strcmp(e->keyname, "Control_L"))
                 _ecore_fb_ctrl++;
              else if (!strcmp(e->keyname, "Control_R"))
@@ -224,10 +223,22 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
              else if (!strcmp(e->keyname, "F12")) vt_switch = 11;
              if (_ecore_fb_ctrl > 2) _ecore_fb_ctrl = 2;
              if (_ecore_fb_alt > 2) _ecore_fb_alt = 2;
+             if ((_ecore_fb_kbd_fd == _ecore_fb_tty_fd) &&
+                 (_ecore_fb_ctrl))
+               {
+                  const char *ts = _ecore_fb_kbd_syms[(buf & 0x7f) + 3 + 3];
+                  
+                  if (ts)
+                    {
+                       if (e->key_compose) free(e->key_compose);
+                       e->key_compose = strdup(ts);
+                    }
+               }
              if ((vt_switch >= 0) &&
                  (_ecore_fb_ctrl) &&
                  (_ecore_fb_alt))
                 _ecore_fb_vt_switch(vt_switch);
+             ecore_event_add(ECORE_FB_EVENT_KEY_DOWN, e, _ecore_fb_event_free_key_down, NULL);
           }
         else
           {
@@ -242,9 +253,9 @@ _ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __U
 
                   if (_ecore_fb_shift) add = 1;
                   else if (_ecore_fb_lock) add = 2;
-                  e->keyname = strdup(_ecore_fb_kbd_syms[(buf & 0x7f) * 6]);
-                  e->keysymbol = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + add]);
-                  e->key_compose = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + 3 + add]);
+                  e->keyname = strdup(_ecore_fb_kbd_syms[(buf & 0x7f) * 7]);
+                  e->keysymbol = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 7) + add]);
+                  e->key_compose = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 7) + 3 + add]);
                }
              else
                 e->keyname = strdup(_ecore_fb_btn_syms[buf & 0x7f]);

@@ -11,7 +11,7 @@
 
 static Eina_List *_ecore_fb_li_devices = NULL;
 
-static const char *_ecore_fb_li_kbd_syms[128 * 6] =
+static const char *_ecore_fb_li_kbd_syms[128 * 7] =
 {
 #include "ecore_fb_keytable.h"
 };
@@ -46,31 +46,33 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
    if ((iev->code >= KEY_ESC) && (iev->code <= KEY_COMPOSE))
      {
         int offset = 0;
-        const char *keyname = _ecore_fb_li_kbd_syms[iev->code * 6];
+        const char *keyname = _ecore_fb_li_kbd_syms[iev->code * 7];
+        
         /* check the key table */
         if (iev->value)
           {
              /* its a repeated key, dont increment */
-             if (iev->value == 2)
-                return;
-             if (!strcmp(keyname, "Control_L"))
-                dev->keyboard.ctrl++;
-             else if (!strcmp(keyname, "Control_R"))
-                dev->keyboard.ctrl++;
-             else if (!strcmp(keyname, "Alt_L"))
-                dev->keyboard.alt++;
-             else if (!strcmp(keyname, "Alt_R"))
-                dev->keyboard.alt++;
-             else if (!strcmp(keyname, "Shift_L"))
-                dev->keyboard.shift++;
-             else if (!strcmp(keyname, "Shift_R"))
-                dev->keyboard.shift++;
-             else if (!strcmp(keyname, "Caps_Lock"))
-               dev->keyboard.lock = !dev->keyboard.lock;
-             if (dev->keyboard.ctrl > 2) dev->keyboard.ctrl = 2;
-             if (dev->keyboard.alt > 2) dev->keyboard.alt = 2;
-             if (dev->keyboard.shift > 2) dev->keyboard.shift = 2;
-             if (dev->keyboard.lock > 1) dev->keyboard.lock = 1;
+             if (iev->value != 2)
+               {
+                  if (!strcmp(keyname, "Control_L"))
+                    dev->keyboard.ctrl++;
+                  else if (!strcmp(keyname, "Control_R"))
+                    dev->keyboard.ctrl++;
+                  else if (!strcmp(keyname, "Alt_L"))
+                    dev->keyboard.alt++;
+                  else if (!strcmp(keyname, "Alt_R"))
+                    dev->keyboard.alt++;
+                  else if (!strcmp(keyname, "Shift_L"))
+                    dev->keyboard.shift++;
+                  else if (!strcmp(keyname, "Shift_R"))
+                    dev->keyboard.shift++;
+                  else if (!strcmp(keyname, "Caps_Lock"))
+                    dev->keyboard.lock = !dev->keyboard.lock;
+                  if (dev->keyboard.ctrl > 2) dev->keyboard.ctrl = 2;
+                  if (dev->keyboard.alt > 2) dev->keyboard.alt = 2;
+                  if (dev->keyboard.shift > 2) dev->keyboard.shift = 2;
+                  if (dev->keyboard.lock > 1) dev->keyboard.lock = 1;
+               }
           }
         else
           {
@@ -98,8 +100,15 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         if (dev->keyboard.shift) offset = 1;
         else if (dev->keyboard.lock) offset = 2;
 
-        const char *key = _ecore_fb_li_kbd_syms[(iev->code * 6) + offset];
-        const char *compose = _ecore_fb_li_kbd_syms[(iev->code * 6) + 3 + offset];
+        const char *key = _ecore_fb_li_kbd_syms[(iev->code * 7) + offset];
+        const char *compose = _ecore_fb_li_kbd_syms[(iev->code * 7) + 3 + offset];
+        
+        if (dev->keyboard.ctrl)
+          {
+             const char *ts = _ecore_fb_li_kbd_syms[(iev->code * 7) + 3 + 3];
+             
+             if (ts) compose = ts;
+          }
 
         e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) +
                    strlen(keyname) + (compose ? strlen(compose) : 0) + 3);
@@ -210,21 +219,21 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
      case REL_Y:
           {
              Ecore_Event_Mouse_Move *e;
-             if(iev->code == REL_X)
+             if (iev->code == REL_X)
                {
                   dev->mouse.x += iev->value;
-                  if(dev->mouse.x > dev->mouse.w - 1)
-                     dev->mouse.x = dev->mouse.w;
+                  if (dev->mouse.x > dev->mouse.w - 1)
+                    dev->mouse.x = dev->mouse.w;
                   else if(dev->mouse.x < 0)
-                     dev->mouse.x = 0;
+                    dev->mouse.x = 0;
                }
              else
                {
                   dev->mouse.y += iev->value;
-                  if(dev->mouse.y > dev->mouse.h - 1)
-                     dev->mouse.y = dev->mouse.h;
+                  if (dev->mouse.y > dev->mouse.h - 1)
+                    dev->mouse.y = dev->mouse.h;
                   else if(dev->mouse.y < 0)
-                     dev->mouse.y = 0;
+                    dev->mouse.y = 0;
                }
 
              e = calloc(1, sizeof(Ecore_Event_Mouse_Move));
@@ -314,7 +323,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
         break;
 
      case ABS_Y:
-        if(dev->mouse.h != 0)
+        if (dev->mouse.h != 0)
           {
              int tmp;
 
@@ -537,8 +546,8 @@ ecore_fb_input_device_open(const char *dev)
    /* set info */
    for (event_type = 0; event_type < EV_MAX; event_type++)
      {
-        if(!test_bit(event_type, event_type_bitmask))
-           continue;
+        if (!test_bit(event_type, event_type_bitmask))
+          continue;
         switch (event_type)
           {
           case EV_SYN:

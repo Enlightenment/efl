@@ -809,4 +809,6 @@
         * Add ecore_evas_screen_dpi_get()
         * Fix ecore_evas_screen_geometry_get(0 for x11 to return zone
           pos/size as it should.
+        * Fix ecore-fb to use key repeat like x so apps dont break in fb
+        * Fix ecore-fb string lookup table to include ctrl+keys
 
