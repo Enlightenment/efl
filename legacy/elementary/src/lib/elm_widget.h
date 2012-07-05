@@ -356,7 +356,7 @@
  */
 #define ELM_WIDGET_SMART_CLASS_INIT(smart_class_init)                        \
   {smart_class_init, ELM_WIDGET_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, \
-   NULL, NULL, NULL, NULL, NULL}
+   NULL, NULL, NULL, NULL, NULL, NULL}
 
 /**
  * @def ELM_WIDGET_SMART_CLASS_INIT_NULL
@@ -393,6 +393,9 @@
  */
 #define ELM_WIDGET_SMART_CLASS_INIT_NAME_VERSION(name) \
   ELM_WIDGET_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
+
+/* Please, ALWAYS update the ELM_WIDGET_SMART_CLASS_INIT macro
+ * whenever you change the following struct! */
 
 /**
  * Base widget smart class. It has the 'virtual' functions for all
