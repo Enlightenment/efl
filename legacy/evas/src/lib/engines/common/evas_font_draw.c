@@ -382,9 +382,13 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
 
    if (!reuse)
      {
-        evas_common_draw_context_set_clip(dc, clip->x, clip->y, clip->w, clip->h);
+        evas_common_draw_context_clip_clip(dc,
+                                           clip->x, clip->y,
+                                           clip->w, clip->h);
         evas_common_font_draw_internal(dst, dc, x, y, text_props,
-                                       func, clip->x, clip->y, clip->w, clip->h,
+                                       func,
+                                       dc->clip.x, dc->clip.y,
+                                       dc->clip.w, dc->clip.h,
                                        im_w, im_h);
         return ;
      }
@@ -393,7 +397,7 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
      {
         r = reuse->rects + i;
 
-        EINA_RECTANGLE_SET(&area, r->x, r->y, r->w, r->h);
+        EINA_RECTANGLE_SET(&area, r->x, r->y, r->w - 1, r->h - 1);
         if (!eina_rectangle_intersection(&area, clip)) continue ;
         evas_common_draw_context_set_clip(dc, area.x, area.y, area.w, area.h);
         evas_common_font_draw_internal(dst, dc, x, y, text_props,
@@ -405,7 +409,6 @@ evas_common_font_draw_do(const Cutout_Rects *reuse, const Eina_Rectangle *clip, 
 EAPI Eina_Bool
 evas_common_font_draw_prepare_cutout(Cutout_Rects *reuse, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Gfx_Func *func)
 {
-   int ext_x, ext_y, ext_w, ext_h;
    int im_w, im_h;
 
    im_w = dst->cache_entry.w;
@@ -413,43 +416,13 @@ evas_common_font_draw_prepare_cutout(Cutout_Rects *reuse, RGBA_Image *dst, RGBA_
 
    *func = evas_common_gfx_func_composite_mask_color_span_get(dc->col.col, dst, 1, dc->render_op);
 
-   ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
-   if (dc->clip.use)
-     {
-	ext_x = dc->clip.x;
-	ext_y = dc->clip.y;
-	ext_w = dc->clip.w;
-	ext_h = dc->clip.h;
-	if (ext_x < 0)
-	  {
-	     ext_w += ext_x;
-	     ext_x = 0;
-	  }
-	if (ext_y < 0)
-	  {
-	     ext_h += ext_y;
-	     ext_y = 0;
-	  }
-	if ((ext_x + ext_w) > im_w)
-	  ext_w = im_w - ext_x;
-	if ((ext_y + ext_h) > im_h)
-	  ext_h = im_h - ext_y;
-     }
-   if (ext_w <= 0) return EINA_FALSE;
-   if (ext_h <= 0) return EINA_FALSE;
+   evas_common_draw_context_clip_clip(dc, 0, 0, im_w, im_h);
+   if (dc->clip.w <= 0) return EINA_FALSE;
+   if (dc->clip.h <= 0) return EINA_FALSE;
 
    if (dc->cutout.rects)
      {
-        evas_common_draw_context_clip_clip(dc, 0, 0, dst->cache_entry.w, dst->cache_entry.h);
-        /* our clip is 0 size.. abort */
-        if ((dc->clip.w > 0) && (dc->clip.h > 0))
-          {
-             reuse = evas_common_draw_context_apply_cutouts(dc, reuse);
-          }
-	else
-	  {
-             return EINA_FALSE;
-	  }
+        reuse = evas_common_draw_context_apply_cutouts(dc, reuse);
      }
 
    return EINA_TRUE;

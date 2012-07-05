@@ -109,7 +109,7 @@ evas_common_scale_rgba_in_to_out_clip_sample_do(const Cutout_Rects *reuse,
 
    if (!reuse)
      {
-        evas_common_draw_context_set_clip(dc, clip->x, clip->y, clip->w, clip->h);
+        evas_common_draw_context_clip_clip(dc, clip->x, clip->y, clip->w, clip->h);
         scale_rgba_in_to_out_clip_sample_internal(src, dst, dc,
                                                   src_region_x, src_region_y,
                                                   src_region_w, src_region_h,

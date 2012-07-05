@@ -551,7 +551,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth_do(const Cutout_Rects *reuse,
 # endif
    if (!reuse)
      {
-        evas_common_draw_context_set_clip(dc, clip->x, clip->y, clip->w, clip->h);
+        evas_common_draw_context_clip_clip(dc, clip->x, clip->y, clip->w, clip->h);
 # ifdef BUILD_MMX
 	if (mmx)
 	  evas_common_scale_rgba_in_to_out_clip_smooth_mmx(src, dst, dc,

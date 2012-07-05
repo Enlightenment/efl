@@ -287,14 +287,12 @@ evas_common_pipe_rectangle_draw_do(RGBA_Image *dst, const RGBA_Pipe_Op *op, cons
 static Eina_Bool
 evas_common_pipe_rectangle_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op)
 {
-   RGBA_Draw_Context context;
    Cutout_Rects *recycle;
    Thinfo *info = data;
    Eina_Bool r;
 
    recycle = evas_pipe_cutout_rects_pop(info);
-   memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
-   r = evas_common_rectangle_draw_prepare(recycle, dst, &context,
+   r = evas_common_rectangle_draw_prepare(recycle, dst, &(op->context),
                                           op->op.rect.x, op->op.rect.y,
                                           op->op.rect.w, op->op.rect.h);
    if (recycle->active) op->rects = recycle;
@@ -436,14 +434,13 @@ evas_common_pipe_text_draw_do(RGBA_Image *dst, const RGBA_Pipe_Op *op, const RGB
 static Eina_Bool
 evas_common_pipe_text_draw_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op)
 {
-   RGBA_Draw_Context context;
    Cutout_Rects *recycle;
    Thinfo *info = data;
    Eina_Bool r;
 
    recycle = evas_pipe_cutout_rects_pop(info);
-   memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
-   r = evas_common_font_draw_prepare_cutout(recycle, dst, &context, &(op->op.text.func));
+   r = evas_common_font_draw_prepare_cutout(recycle, dst, &(op->context),
+					    &(op->op.text.func));
    if (recycle->active) op->rects = recycle;
    else evas_pipe_cutout_rects_push(info, recycle);
 
@@ -485,14 +482,14 @@ evas_common_pipe_op_image_free(RGBA_Pipe_Op *op)
 static Eina_Bool
 evas_common_pipe_op_image_prepare(void *data, RGBA_Image *dst, RGBA_Pipe_Op *op)
 {
-   RGBA_Draw_Context context;
    Cutout_Rects *recycle;
    Thinfo *info = data;
    Eina_Bool r;
 
    recycle = evas_pipe_cutout_rects_pop(info);
-   memcpy(&(context), &(op->context), sizeof(RGBA_Draw_Context));
-   r = evas_common_scale_rgba_in_to_out_clip_prepare(recycle, op->op.image.src, dst, &(context),
+   r = evas_common_scale_rgba_in_to_out_clip_prepare(recycle,
+						     op->op.image.src, dst,
+						     &(op->context),
                                                      op->op.image.dx, op->op.image.dy,
                                                      op->op.image.dw, op->op.image.dh);
    if (recycle->active) op->rects = recycle;
