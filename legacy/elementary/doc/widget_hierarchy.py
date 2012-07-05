@@ -16,23 +16,25 @@ def print_node(a, b, on_tree=False):
     if i_list:
         for iface in i_list:
             if_instance = a + iface
+            if_node_tuple = (if_instance, a) if on_tree else (a, if_instance)
 
             print '"%s" [label="",shape=circle,width=0.2]' % if_instance
             print '"%s" -> "%s" [label="%s", color=transparent]' \
                 % (if_instance, if_instance, iface)
             print '{rank="%s" "%s" -> "%s" [arrowhead="none"];}' \
-                % (rank, if_instance, a)
+                % ((rank,) + if_node_tuple)
 
     i_list = ifaces.get(b)
     if i_list:
         for iface in i_list:
             if_instance = b + iface
+            if_node_tuple = (if_instance, b) if on_tree else (b, if_instance)
 
             print '"%s" [label="",shape=circle,width=0.2]' % if_instance
             print '"%s" -> "%s" [label="%s", color=transparent]' \
                 % (if_instance, if_instance, iface)
             print '{rank="%s" "%s" -> "%s" [arrowhead="none"];}' \
-                % (rank, if_instance, b)
+                % ((rank,) + if_node_tuple)
 
     print '"%s" -> "%s"' % (a, b), '[arrowhead="empty"];' \
         if on_tree else '[arrowtail="empty",dir=back];'
