@@ -1140,13 +1140,24 @@ EAPI Eina_Bool             elm_win_screen_constrain_get(Evas_Object *obj);
  * Get screen geometry details for the screen that a window is on
  * @param obj The window to query
  * @param x where to return the horizontal offset value. May be NULL.
- * @param y	where to return the vertical offset value. May be NULL.
- * @param w	where to return the width value. May be NULL.
- * @param h	where to return the height value. May be NULL.
+ * @param y where to return the vertical offset value. May be NULL.
+ * @param w where to return the width value. May be NULL.
+ * @param h where to return the height value. May be NULL.
  *
  * @ingroup Win
  */
 EAPI void                  elm_win_screen_size_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
+
+/**
+ * Get screen dpi for the screen that a window is on
+ * @param obj The window to query
+ * @param xdpi Pointer to value to store return horizontal dpi. May be NULL.
+ * @param ydpi Pointer to value to store return vertical dpi. May be NULL.
+ *
+ * @ingroup Win
+ * @since 1.1
+ */
+EAPI void                  elm_win_screen_dpi_get(const Evas_Object *obj, int *xdpi, int *ydpi);
 
 /**
  * Set the enabled status for the focus highlight in a window

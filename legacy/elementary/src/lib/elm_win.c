@@ -3238,6 +3238,17 @@ elm_win_screen_size_get(const Evas_Object *obj,
 }
 
 EAPI void
+elm_win_screen_dpi_get(const Evas_Object *obj,
+                        int *xdpi,
+                        int *ydpi)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   ecore_evas_screen_dpi_get(sd->ee, xdpi, ydpi);
+}
+
+EAPI void
 elm_win_conformant_set(Evas_Object *obj,
                        Eina_Bool conformant)
 {
