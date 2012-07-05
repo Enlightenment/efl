@@ -2375,7 +2375,7 @@ _elm_entry_text_get(const Evas_Object *obj, const char *item)
      {
         char *tmpbuf;
         size_t tlen;
-        tlen = wd->append_text_position;
+        tlen = strlen(text);
         tmpbuf = malloc(wd->append_text_len + 1);
         if (!tmpbuf)
           {
@@ -2384,8 +2384,8 @@ _elm_entry_text_get(const Evas_Object *obj, const char *item)
           }
         memcpy(tmpbuf, text, tlen);
         if (wd->append_text_left)
-          memcpy(tmpbuf + tlen, wd->append_text_left + wd->append_text_position, wd->append_text_len - tlen);
-        tmpbuf[wd->append_text_len + 1] = '\0';
+          memcpy(tmpbuf + tlen, wd->append_text_left + wd->append_text_position, wd->append_text_len - wd->append_text_position);
+        tmpbuf[wd->append_text_len] = '\0';
         eina_stringshare_replace(&wd->text, tmpbuf);
         free(tmpbuf);
      }
