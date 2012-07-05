@@ -1127,6 +1127,9 @@ EAPI Eina_Tiler *eina_tiler_new(int w, int h)
 
 EAPI void eina_tiler_free(Eina_Tiler *t)
 {
+   if (!t)
+     return;
+
    EINA_MAGIC_CHECK_TILER(t);
    _splitter_del(t);
    free(t);

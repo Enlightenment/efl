@@ -971,6 +971,10 @@ eina_matrixsparse_free(Eina_Matrixsparse *m)
    void *user_data;
 
    Eina_Matrixsparse_Row *r;
+
+   if (!m)
+     return;
+
    EINA_MAGIC_CHECK_MATRIXSPARSE(m);
 
    free_func = m->free.func;

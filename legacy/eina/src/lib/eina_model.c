@@ -3527,6 +3527,9 @@ _eina_model_unref(Eina_Model *model)
 EAPI void
 eina_model_del(Eina_Model *model)
 {
+   if (!model)
+     return;
+
    EINA_MODEL_INSTANCE_CHECK(model);
    _eina_model_del(model);
    _eina_model_unref(model);

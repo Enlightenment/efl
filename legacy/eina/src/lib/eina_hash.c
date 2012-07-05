@@ -485,12 +485,9 @@ _eina_hash_del_by_key(Eina_Hash *hash, const void *key, const void *data)
 {
    int key_length, key_hash;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(hash, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
    EINA_MAGIC_CHECK_HASH(hash);
-   if (!hash)
-     return EINA_FALSE;
-
-   if (!key)
-     return EINA_FALSE;
 
    if (!hash->buckets)
      return EINA_FALSE;

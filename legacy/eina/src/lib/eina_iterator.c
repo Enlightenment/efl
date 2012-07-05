@@ -95,8 +95,10 @@ eina_iterator_shutdown(void)
 EAPI void
 eina_iterator_free(Eina_Iterator *iterator)
 {
+   if (!iterator)
+     return;
+
    EINA_MAGIC_CHECK_ITERATOR(iterator);
-   EINA_SAFETY_ON_NULL_RETURN(iterator);
    EINA_SAFETY_ON_NULL_RETURN(iterator->free);
    iterator->free(iterator);
 }
@@ -117,7 +119,6 @@ eina_iterator_next(Eina_Iterator *iterator, void **data)
      return EINA_FALSE;
 
    EINA_MAGIC_CHECK_ITERATOR(iterator);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(iterator,       EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(iterator->next, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(data,           EINA_FALSE);
    return iterator->next(iterator, data);
@@ -131,8 +132,10 @@ eina_iterator_foreach(Eina_Iterator *iterator,
    const void *container;
    void *data;
 
+   if (!iterator)
+     return;
+
    EINA_MAGIC_CHECK_ITERATOR(iterator);
-   EINA_SAFETY_ON_NULL_RETURN(iterator);
    EINA_SAFETY_ON_NULL_RETURN(iterator->get_container);
    EINA_SAFETY_ON_NULL_RETURN(iterator->next);
    EINA_SAFETY_ON_NULL_RETURN(cb);

@@ -280,12 +280,12 @@
 	* Fix portability issue of Eina_Value on ARM and PPC.
 	* Fix portability issue of Eina_Value test on Itanium.
 
-2012-05-23 Carsten Haitzler (The Rasterman)
+2012-05-23  Carsten Haitzler (The Rasterman)
 
         * Fix global_faulty faulty flag in eina_file to be set to 0
         initially rather than be random memory garbage.
 
-2012-05-29 Vincent Torri
+2012-05-29  Vincent Torri
 
         * remove --disable-posix-threads and --disable-win32-threads
 	from configure options, and detect automatically the threading
@@ -293,20 +293,24 @@
 	Fix bug in the XML parser when a tag was in a comment or a
 	cdata
 
-2012-06-08 Mike Blumenkrantz
+2012-06-08  Mike Blumenkrantz
 
         * Fixed eina_str_split_full() to behave properly and be much faster
 
-2012-06-17 Carsten Haitzler (The Rasterman)
+2012-06-17  Carsten Haitzler (The Rasterman)
 
         * Add env var EINA_MEMPOOL_PASS to force mempool to try use
         passthrough to malloc for debgging purposes and memory footrpint
         comparisons at runtime.
 
-2012-07-01 Vincent Torri
+2012-07-01  Vincent Torri
 
-        * remove --enable-coverage from configure options,
+        * Remove --enable-coverage from configure options,
 
-2012-07-04 Vincent Torri
+2012-07-04  Vincent Torri
 
-        * implement eina_file_map_lines() on Windows
+        * Implement eina_file_map_lines() on Windows.
+
+2012-07-05  Raphael Kubo da Costa
+
+	* Handle NULL in all eina_*_free function.

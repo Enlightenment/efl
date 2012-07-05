@@ -191,7 +191,7 @@ struct _Eina_Accessor
  *
  * This function frees @p accessor if it is not @c NULL;
  */
-EAPI void      eina_accessor_free(Eina_Accessor *accessor) EINA_ARG_NONNULL(1);
+EAPI void      eina_accessor_free(Eina_Accessor *accessor);
 
 /**
  * @brief Retrieve the data of an accessor at a given position.
@@ -241,7 +241,7 @@ EAPI void  eina_accessor_over(Eina_Accessor *accessor,
                               Eina_Each_Cb   cb,
                               unsigned int   start,
                               unsigned int   end,
-                              const void    *fdata) EINA_ARG_NONNULL(1, 2);
+                              const void    *fdata) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Lock the container of the accessor.

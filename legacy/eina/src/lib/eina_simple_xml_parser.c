@@ -585,6 +585,9 @@ eina_simple_xml_attribute_new(Eina_Simple_XML_Node_Tag *parent, const char *key,
 EAPI void
 eina_simple_xml_attribute_free(Eina_Simple_XML_Attribute *attr)
 {
+   if (!attr)
+     return;
+
    EINA_MAGIC_CHECK_ATTRIBUTE(attr);
 
    if (attr->parent)
@@ -669,6 +672,9 @@ _eina_simple_xml_node_tag_free(Eina_Simple_XML_Node_Tag *tag)
 EAPI void
 eina_simple_xml_node_tag_free(Eina_Simple_XML_Node_Tag *tag)
 {
+   if (!tag)
+     return;
+
    EINA_MAGIC_CHECK_TAG(&tag->base);
    if (tag->base.type != EINA_SIMPLE_XML_NODE_TAG)
      {
@@ -716,6 +722,9 @@ eina_simple_xml_node_data_new(Eina_Simple_XML_Node_Tag *parent, const char *cont
 EAPI void
 eina_simple_xml_node_data_free(Eina_Simple_XML_Node_Data *node)
 {
+   if (!node)
+     return;
+
    EINA_MAGIC_CHECK_DATA(&node->base);
    if (node->base.type != EINA_SIMPLE_XML_NODE_DATA)
      {
@@ -735,6 +744,9 @@ eina_simple_xml_node_cdata_new(Eina_Simple_XML_Node_Tag *parent, const char *con
 EAPI void
 eina_simple_xml_node_cdata_free(Eina_Simple_XML_Node_Data *node)
 {
+   if (!node)
+     return;
+
    EINA_MAGIC_CHECK_DATA(&node->base);
    if (node->base.type != EINA_SIMPLE_XML_NODE_CDATA)
      {
@@ -754,6 +766,9 @@ eina_simple_xml_node_processing_new(Eina_Simple_XML_Node_Tag *parent, const char
 EAPI void
 eina_simple_xml_node_processing_free(Eina_Simple_XML_Node_Data *node)
 {
+   if (!node)
+     return;
+
    EINA_MAGIC_CHECK_DATA(&node->base);
    if (node->base.type != EINA_SIMPLE_XML_NODE_PROCESSING)
      {
@@ -773,6 +788,9 @@ eina_simple_xml_node_doctype_new(Eina_Simple_XML_Node_Tag *parent, const char *c
 EAPI void
 eina_simple_xml_node_doctype_free(Eina_Simple_XML_Node_Data *node)
 {
+   if (!node)
+     return;
+
    EINA_MAGIC_CHECK_DATA(&node->base);
    if (node->base.type != EINA_SIMPLE_XML_NODE_DOCTYPE)
      {
@@ -792,6 +810,9 @@ eina_simple_xml_node_comment_new(Eina_Simple_XML_Node_Tag *parent, const char *c
 EAPI void
 eina_simple_xml_node_comment_free(Eina_Simple_XML_Node_Data *node)
 {
+   if (!node)
+     return;
+
    EINA_MAGIC_CHECK_DATA(&node->base);
    if (node->base.type != EINA_SIMPLE_XML_NODE_COMMENT)
      {

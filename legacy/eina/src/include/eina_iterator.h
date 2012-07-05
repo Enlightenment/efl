@@ -196,7 +196,7 @@ struct _Eina_Iterator
  *
  * This function frees @p iterator if it is not @c NULL;
  */
-EAPI void      eina_iterator_free(Eina_Iterator *iterator) EINA_ARG_NONNULL(1);
+EAPI void      eina_iterator_free(Eina_Iterator *iterator);
 
 
 /**
@@ -223,7 +223,7 @@ EAPI void     *eina_iterator_container_get(Eina_Iterator *iterator) EINA_ARG_NON
  * returned, otherwise #EINA_TRUE is returned.
  */
 EAPI Eina_Bool eina_iterator_next(Eina_Iterator *iterator,
-                                  void         **data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+                                  void         **data) EINA_ARG_NONNULL(2) EINA_WARN_UNUSED_RESULT;
 
 
 /**
@@ -242,7 +242,7 @@ EAPI Eina_Bool eina_iterator_next(Eina_Iterator *iterator,
  */
 EAPI void eina_iterator_foreach(Eina_Iterator *iterator,
                                 Eina_Each_Cb   callback,
-                                const void    *fdata) EINA_ARG_NONNULL(1, 2);
+                                const void    *fdata) EINA_ARG_NONNULL(2);
 
 
 /**

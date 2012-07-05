@@ -95,8 +95,10 @@ eina_accessor_shutdown(void)
 EAPI void
 eina_accessor_free(Eina_Accessor *accessor)
 {
+   if (!accessor)
+     return;
+
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
-   EINA_SAFETY_ON_NULL_RETURN(accessor);
    EINA_SAFETY_ON_NULL_RETURN(accessor->free);
    accessor->free(accessor);
 }
@@ -133,8 +135,9 @@ eina_accessor_over(Eina_Accessor *accessor,
    void *data;
    unsigned int i;
 
+   if (!accessor) return ;
+
    EINA_MAGIC_CHECK_ACCESSOR(accessor);
-   EINA_SAFETY_ON_NULL_RETURN(accessor);
    EINA_SAFETY_ON_NULL_RETURN(accessor->get_container);
    EINA_SAFETY_ON_NULL_RETURN(accessor->get_at);
    EINA_SAFETY_ON_NULL_RETURN(cb);

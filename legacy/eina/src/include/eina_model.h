@@ -385,7 +385,7 @@ EAPI Eina_Model *eina_model_new(const Eina_Model_Type *type);
  * @see eina_model_new()
  * @since 1.2
  */
-EAPI void eina_model_del(Eina_Model *model) EINA_ARG_NONNULL(1);
+EAPI void eina_model_del(Eina_Model *model);
 
 /**
  * @brief Returns the type of @a model.
