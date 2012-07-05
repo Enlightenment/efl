@@ -859,3 +859,8 @@
 2012-07-04  Gustavo Lima Chaves
 
 	* Add simple interfaces support to Evas smart classes
+
+2012-07-05  ChunEon Park(Hermet)
+
+	* Fixed Map pipe region issue. It caused the incorrect object rendering order
+  	on gl backened.
