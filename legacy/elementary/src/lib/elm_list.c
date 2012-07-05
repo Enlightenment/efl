@@ -1506,13 +1506,6 @@ _item_new(Evas_Object *obj,
    evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
    edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(obj));
 
-   evas_object_event_callback_add
-     (VIEW(it), EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, it);
-   evas_object_event_callback_add
-     (VIEW(it), EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, it);
-   evas_object_event_callback_add
-     (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, it);
-
    if (it->icon)
      {
         elm_widget_sub_object_add(obj, it->icon);
