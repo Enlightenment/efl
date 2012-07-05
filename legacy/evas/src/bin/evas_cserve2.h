@@ -176,6 +176,9 @@ typedef struct _Slave_Msg_Font_Cache Slave_Msg_Font_Cache;
 
 struct _Slave_Msg_Font_Glyphs_Loaded {
    unsigned int ncaches;
+   unsigned int gl_load_time;
+   unsigned int gl_render_time;
+   unsigned int gl_slave_time;
    Slave_Msg_Font_Cache **caches;
 };
 

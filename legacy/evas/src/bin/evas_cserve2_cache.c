@@ -116,9 +116,12 @@ struct _Font_Entry {
    Font_Cache *last_cache;
    Eina_Bool unused : 1;
 #ifdef DEBUG_LOAD_TIME
-   struct timeval load_start;
-   struct timeval load_finish;
+   struct timeval rstart; // start of the glyphs load request
+   struct timeval rfinish; // finish of the glyphs load request
+   int gl_request_time; // time spent to process glyph requests
    int gl_load_time;
+   int gl_render_time;
+   int gl_slave_time;
    int gl_saved_time;
 #endif
 };
@@ -1659,7 +1662,10 @@ _glyphs_load_request_build(void *data, int *size __UNUSED__)
    Font_Entry *fe = req->fe;
    Font_Cache *fc;
 
+#ifdef DEBUG_LOAD_TIME
+   gettimeofday(&fe->rstart, NULL);
    _glyphs_load_request_prepare(req);
+#endif
 
    msg = calloc(1, sizeof(*msg));
 
@@ -1678,10 +1684,6 @@ _glyphs_load_request_build(void *data, int *size __UNUSED__)
         msg->cache.usage = fc->usage;
         msg->cache.nglyphs = fc->nglyphs;
      }
-
-#ifdef DEBUG_LOAD_TIME
-   gettimeofday(&fe->load_start, NULL);
-#endif
 
    return msg;
 }
@@ -1753,10 +1755,11 @@ _glyphs_load_request_response(Client *client __UNUSED__, void *data, void *resp,
      }
 
 #ifdef DEBUG_LOAD_TIME
-   int load_time;
-   gettimeofday(&fe->load_finish, NULL);
-   load_time = _timeval_sub(&fe->load_finish, &fe->load_start);
-   fe->gl_load_time += load_time;
+   gettimeofday(&fe->rfinish, NULL);
+   fe->gl_request_time += _timeval_sub(&fe->rfinish, &fe->rstart);
+   fe->gl_load_time += msg->gl_load_time;
+   fe->gl_render_time += msg->gl_render_time;
+   fe->gl_slave_time += msg->gl_slave_time;
 #endif
 
    _glyphs_loaded_send(req, rid);
@@ -1815,7 +1818,10 @@ _font_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED_
 
    // accounting glyphs load time
    msg->fonts.glyphs_load_time += fe->gl_load_time;
+   msg->fonts.glyphs_render_time += fe->gl_render_time;
    msg->fonts.glyphs_saved_time += fe->gl_saved_time;
+   msg->fonts.glyphs_request_time += fe->gl_request_time;
+   msg->fonts.glyphs_slave_time += fe->gl_slave_time;
 #endif
 
    return EINA_TRUE;
