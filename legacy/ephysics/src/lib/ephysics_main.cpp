@@ -2,6 +2,9 @@
 # include <config.h>
 #endif
 
+#include "Ecore.h"
+#include "Eina.h"
+
 #include "ephysics_private.h"
 
 #ifdef  __cplusplus
@@ -17,24 +20,43 @@ ephysics_init()
    if (++_ephysics_init_count != 1)
      return _ephysics_init_count;
 
+   if (!eina_init())
+     {
+        EINA_LOG_CRIT("Couldn't init eina");
+        return --_ephysics_init_count;
+     }
+
+   if (!ecore_init())
+     {
+        EINA_LOG_CRIT("Couldn't init ecore");
+        goto no_ecore;
+     }
+
    _ephysics_log_dom = eina_log_domain_register("ephysics", EPHYSICS_LOG_COLOR);
    if (_ephysics_log_dom < 0)
      {
-	EINA_LOG_ERR("Couldn't create a log domain for ephysics");
-	return --_ephysics_init_count;
+        EINA_LOG_CRIT("Couldn't create a log domain for ephysics");
+        goto no_log;
      }
 
    if (!ephysics_world_init())
      {
-	ERR("Couldn't initialize worlds");
-	eina_log_domain_unregister(_ephysics_log_dom);
-	_ephysics_log_dom = -1;
-	return --_ephysics_init_count;
+        ERR("Couldn't initialize worlds");
+        goto no_world;
      }
 
    INF("EPhysics initialized");
 
    return _ephysics_init_count;
+
+no_world:
+   eina_log_domain_unregister(_ephysics_log_dom);
+   _ephysics_log_dom = -1;
+no_log:
+   ecore_shutdown();
+no_ecore:
+   eina_shutdown();
+   return --_ephysics_init_count;
 }
 
 EAPI int
@@ -49,6 +71,9 @@ ephysics_shutdown()
 
    eina_log_domain_unregister(_ephysics_log_dom);
    _ephysics_log_dom = -1;
+
+   ecore_shutdown();
+   eina_shutdown();
 
    return _ephysics_init_count;
 }
