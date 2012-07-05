@@ -25,6 +25,7 @@ Removal:
    * Remove EVAS_FRAME_QUEUING, EVAS_SLI, METRIC_CACHE and WORD_CACHE.
    * Remove librsvg svg loader (If you want to use it, use the evas_generic_loader variant).
    * Remove software DirectDraw 16 bits engine
+   * Pipe rendering now need a patch to be turned on.
 
 Evas 1.2.0
 

@@ -1147,23 +1147,27 @@ AC_ARG_ENABLE(pthreads,
 ## Pipe Renderer
 build_pipe_render="no"
 
-AC_MSG_CHECKING(whether to build Threaded Pipe Rendering support)
-AC_ARG_ENABLE(pipe-render,
-  AC_HELP_STRING([--enable-pipe-render], [enable threaded pipe rendering support]),
-  [ build_pipe_render=$enableval ]
-)
-AC_MSG_RESULT($build_pipe_render)
+# Let disable pipe render strongly as it doesn't massively improve performance, but
+# just hammer more watt for a few more percent. The code is kept as the understanding
+# is that with an async pipeline things will be better.
+#
+#AC_MSG_CHECKING(whether to build Threaded Pipe Rendering support)
+#AC_ARG_ENABLE(pipe-render,
+#  AC_HELP_STRING([--enable-pipe-render], [enable threaded pipe rendering support]),
+#  [ build_pipe_render=$enableval ]
+#)
+#AC_MSG_RESULT($build_pipe_render)
 
-AC_MSG_CHECKING(whether we can build Threaded Pipe Rendering support)
-if test \( "x$build_pipe_render" = "xyes" -o "x$build_pipe_render" = "xauto" \); then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(BUILD_PIPE_RENDER, 1, [Build pipe render support])
-  build_pipe_render="yes"
-  need_pthreads="yes"
-else
-  AC_MSG_RESULT(no)
-  build_pipe_render="no"
-fi
+#AC_MSG_CHECKING(whether we can build Threaded Pipe Rendering support)
+#if test \( "x$build_pipe_render" = "xyes" -o "x$build_pipe_render" = "xauto" \); then
+#  AC_MSG_RESULT(yes)
+#  AC_DEFINE(BUILD_PIPE_RENDER, 1, [Build pipe render support])
+#  build_pipe_render="yes"
+#  need_pthreads="yes"
+#else
+#  AC_MSG_RESULT(no)
+#  build_pipe_render="no"
+#fi
 
 #######################################
 ## Async events

@@ -864,3 +864,7 @@
 
 	* Fixed Map pipe region issue. It caused the incorrect object rendering order
   	on gl backened.
+
+2012-07-05  Cedric Bail
+
+	* Strongly disable Evas pipe rendering.
