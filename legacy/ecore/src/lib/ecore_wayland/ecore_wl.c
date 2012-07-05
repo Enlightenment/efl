@@ -287,8 +287,8 @@ ecore_wl_pointer_xy_get(int *x, int *y)
  * Return the screen DPI
  *
  * This is a simplistic call to get DPI. It does not account for differing
- * DPI in the x amd y axes nor does it accoutn for multihead or xinerama and
- * xrander where different parts of the screen may have differen DPI etc.
+ * DPI in the x and y axes nor does it account for multihead or xinerama and
+ * xrandr where different parts of the screen may have different DPI etc.
  *
  * @return the general screen DPI (dots/pixels per inch).
  * 
@@ -307,6 +307,8 @@ ecore_wl_dpi_get(void)
    if (mw <= 0) return 75;
 
    w = _ecore_wl_disp->output->allocation.w;
+   /* FIXME: NB: Hrrrmmm, need to verify this. xorg code is using a different 
+    * formula to calc this */
    return (((w * 254) / mw) + 5) / 10;
 }
 
