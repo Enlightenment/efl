@@ -2183,7 +2183,7 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
           {
              clip = 0; cx = 0; cy = 0; cw = 0; ch = 0;
           }
-        x = nx; y = nw; w = nw; h = nh;
+        x = nx; y = ny; w = nw; h = nh;
      }
 
    if (!flat)
