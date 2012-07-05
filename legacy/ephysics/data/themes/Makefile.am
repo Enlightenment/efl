@@ -34,6 +34,8 @@ EXTRA_DIST = \
 	images/bt_restart_pressed.png \
 	images/bt_shoot.png \
 	images/bt_shoot_pressed.png \
+	images/bt_stop.png \
+	images/bt_stop_pressed.png \
 	images/collisionL.png \
 	images/cube-blue.png \
 	images/cube-purple.png \

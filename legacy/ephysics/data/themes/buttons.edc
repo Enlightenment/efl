@@ -128,5 +128,6 @@
 BUTTON_GROUP(jump)
 BUTTON_GROUP(restart)
 BUTTON_GROUP(shoot)
+BUTTON_GROUP(stop)
 
 #undef BUTTON_GROUP
