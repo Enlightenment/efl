@@ -1247,6 +1247,37 @@ EAPI void ephysics_body_stop(EPhysics_Body *body);
 
 /**
  * @brief
+ * Set the angular and linear damping values.
+ *
+ * Damping(linear and angular) values are applied to body's linear and angular
+ * velocity.
+ *
+ * By applying a bodies damping factor the user will face a velocity reduction,
+ * with a force applied to it - like air resistance. The force is applied to
+ * slow it down. Different factors can be applied to angular and linear
+ * velocity to fine tune translation and rotation.
+ *
+ * The damping is a force synchronous with the velocity of the object but in
+ * opposite direction.
+ *
+ * Damping is specified as a value between 0 and 1, which is the proportion of
+ * velocity lost per second. If specified damping value - either for angular or
+ * linear - is greater or equal to 1, velocities are nulled(that means, will
+ * become 0 on every axis), resulting on a frozen body.
+ *
+ * Default linear damping is set to 0. The same is true for angular damping
+ * factor.
+ *
+ * @param body The physics body.
+ * @param linear_damping The linear damping force to apply on @p body.
+ * @param angular_damping The angular damping force to apply on @p body.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double angular_damping);
+
+/**
+ * @brief
  * Update the evas object associated to the body.
  *
  * This function should be called to update position and rotation of

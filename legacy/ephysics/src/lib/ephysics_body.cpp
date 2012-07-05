@@ -647,6 +647,19 @@ ephysics_body_stop(EPhysics_Body *body)
 }
 
 EAPI void
+ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double angular_damping)
+{
+    if (!body)
+     {
+        ERR("Can't set body damping, body is null.");
+        return;
+     }
+
+    body->rigid_body->setDamping(btScalar(linear_damping),
+                                 btScalar(angular_damping));
+}
+
+EAPI void
 ephysics_body_evas_object_update(EPhysics_Body *body)
 {
    if (!body)
