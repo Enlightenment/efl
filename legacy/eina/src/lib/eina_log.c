@@ -1138,9 +1138,6 @@ finish_register:
       if ((namelen == pending->namelen) && (strcmp(pending->name, name) == 0))
         {
            _log_domains[i].level = pending->level;
-           _pending_list =
-              eina_inlist_remove(_pending_list, EINA_INLIST_GET(pending));
-           free(pending);
            break;
         }
    }
