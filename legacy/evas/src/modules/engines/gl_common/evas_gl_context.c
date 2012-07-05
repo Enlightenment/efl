@@ -2058,8 +2058,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                       RGBA_Map_Point *p,
                                       int clip, int cx, int cy, int cw, int ch,
                                       int r, int g, int b, int a,
-				      Eina_Bool smooth, Eina_Bool tex_only,
-				      Evas_Colorspace cspace)
+                                      Eina_Bool smooth, Eina_Bool tex_only,
+                                      Evas_Colorspace cspace)
 {
    int pnum, nv, nc, nu, nu2, nu3, nt, i;
    const int points[6] = { 0, 1, 2, 0, 2, 3 };
@@ -2198,12 +2198,12 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
      }
 
    pn = _evas_gl_common_context_push(RTYPE_MAP,
-				     gc, tex, NULL,
-				     prog,
-				     x, y, w, h,
-				     blend,
-				     smooth,
-				     clip, cx, cy, cw, ch);
+                                     gc, tex, NULL,
+                                     prog,
+                                     x, y, w, h,
+                                     blend,
+                                     smooth,
+                                     clip, cx, cy, cw, ch);
    gc->pipe[pn].region.type = RTYPE_MAP;
    gc->pipe[pn].shader.cur_tex = tex->pt->texture;
    if (utexture)
