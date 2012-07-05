@@ -47,12 +47,15 @@ _elm_module_shutdown(void)
 
    if (modules)
      {
+        Eina_List *tl = NULL;
+        
         it = eina_hash_iterator_data_new(modules);
 
-        EINA_ITERATOR_FOREACH(it, m)
-           _elm_module_del(m);
-
+        EINA_ITERATOR_FOREACH(it, m) tl = eina_list_append(tl, m);
         eina_iterator_free(it);
+
+        EINA_LIST_FREE(tl, m) _elm_module_del(m);
+
         eina_hash_free(modules);
         modules = NULL;
      }
