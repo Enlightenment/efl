@@ -1316,12 +1316,31 @@ EAPI void ephysics_body_stop(EPhysics_Body *body);
  * factor.
  *
  * @param body The physics body.
- * @param linear_damping The linear damping force to apply on @p body.
- * @param angular_damping The angular damping force to apply on @p body.
+ * @param linear_damping The linear damping factor to apply on @p body.
+ * @param angular_damping The angular damping factor to apply on @p body.
+ *
+ * @see ephysics_body_damping_get().
  *
  * @ingroup EPhysics_Body
  */
 EAPI void ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double angular_damping);
+
+/**
+ * @brief
+ * Get the angular and linear damping values.
+ *
+ * Damping(linear and angular) values are applied to body's linear and angular
+ * velocity.
+ *
+ * @param body The physics body.
+ * @param linear_damping The linear damping factor applied over @p body.
+ * @param angular_damping The angular damping factor applied over @p body.
+ *
+ * @see ephysics_body_damping_set() for details.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_damping_get(EPhysics_Body *body, double *linear_damping, double *angular_damping);
 
 /**
  * @brief

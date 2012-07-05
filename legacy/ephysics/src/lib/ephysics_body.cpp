@@ -660,6 +660,20 @@ ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double ang
 }
 
 EAPI void
+ephysics_body_damping_get(EPhysics_Body *body, double *linear_damping, double *angular_damping)
+{
+    if (!body)
+     {
+        ERR("Can't get damping, body is null.");
+        return;
+     }
+
+    if (linear_damping) *linear_damping = body->rigid_body->getLinearDamping();
+    if (angular_damping) *angular_damping =
+      body->rigid_body->getAngularDamping();
+}
+
+EAPI void
 ephysics_body_evas_object_update(EPhysics_Body *body)
 {
    if (!body)
