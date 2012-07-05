@@ -72,7 +72,7 @@ static void _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha);
 static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
-
+static void _ecore_evas_wl_screen_dpi_get(const Ecore_Evas *ee __UNUSED__, int *xdpi, int *ydpi);
 static Eina_Bool _ecore_evas_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
@@ -831,6 +831,21 @@ _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int 
    ecore_wl_screen_size_get(w, h);
 }
 
+static void 
+_ecore_evas_wl_screen_dpi_get(const Ecore_Evas *ee __UNUSED__, int *xdpi, int *ydpi)
+{
+   int dpi = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (xdpi) *xdpi = 0;
+   if (ydpi) *ydpi = 0;
+   /* FIXME: Ideally this needs to get the DPI from a specific screen */
+   dpi = ecore_wl_dpi_get();
+   if (xdpi) *xdpi = dpi;
+   if (ydpi) *ydpi = dpi;
+}
+
 void 
 _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
 {
@@ -946,8 +961,8 @@ _ecore_evas_wl_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, v
    if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if ((ee->x != ev->x) || (ee->y != ev->y))
      {
-        ee->x = ev->x;
-        ee->y = ev->y;
+        /* ee->x = ev->x; */
+        /* ee->y = ev->y; */
         ee->req.x = ee->x;
         ee->req.y = ee->y;
         if (ee->func.fn_move) ee->func.fn_move(ee);
