@@ -355,7 +355,7 @@ eina_inarray_new(unsigned int member_size, unsigned int step)
 EAPI void
 eina_inarray_free(Eina_Inarray *array)
 {
-   if (!inarray)
+   if (!array)
      return;
 
    EINA_MAGIC_CHECK_INARRAY(array);
