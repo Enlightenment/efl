@@ -422,10 +422,15 @@ em_cleanup(Emotion_Gstreamer_Video *ev)
        ev->pipeline = NULL;
        ev->sink = NULL;
 
-       if (ev->teepad) gst_object_unref(ev->teepad);
-       ev->teepad = NULL;
+       if (ev->eteepad) gst_object_unref(ev->eteepad);
+       ev->eteepad = NULL;
+       if (ev->xvteepad) gst_object_unref(ev->xvteepad);
+       ev->xvteepad = NULL;
        if (ev->xvpad) gst_object_unref(ev->xvpad);
        ev->xvpad = NULL;
+
+       ev->src_width = 0;
+       ev->src_height = 0;
 
 #ifdef HAVE_ECORE_X
        fprintf(stderr, "destroying window: %i\n", ev->win);
@@ -1604,6 +1609,58 @@ _em_restart_stream(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static Eina_Bool
+_video_size_get(GstElement *elem, int *width, int *height)
+{
+   GstIterator *itr = NULL;
+   GstCaps *caps;
+   GstStructure *str;
+   gpointer pad;
+   Eina_Bool ret = EINA_FALSE;
+
+   itr = gst_element_iterate_src_pads(elem);
+   while(gst_iterator_next(itr, &pad) && !ret)
+     {
+        caps = gst_pad_get_caps(GST_PAD(pad));
+        str = gst_caps_get_structure(caps, 0);
+        if (g_strrstr(gst_structure_get_name(str), "video"))
+          {
+             if (gst_structure_get_int(str, "width", width) && gst_structure_get_int(str, "height", height))
+                ret = EINA_TRUE;
+          }
+        gst_caps_unref(caps);
+        gst_object_unref(pad);
+     }
+   gst_iterator_free(itr);
+
+   return ret;
+}
+
+static void
+_no_more_pads(GstElement *decodebin, gpointer data)
+{
+   GstIterator *itr = NULL;
+   gpointer elem;
+   Emotion_Gstreamer_Video *ev = data;
+
+   itr = gst_bin_iterate_elements(GST_BIN(decodebin));
+   while(gst_iterator_next(itr, &elem))
+     {
+        if(_video_size_get(GST_ELEMENT(elem), &ev->src_width, &ev->src_height))
+          {
+             double ratio;
+
+             ratio = (double)ev->src_width / (double)ev->src_height;
+             _emotion_frame_resize(ev->obj, ev->src_width, ev->src_height, ratio);
+
+             gst_object_unref(elem);
+             break;
+          }
+        gst_object_unref(elem);
+     }
+   gst_iterator_free(itr);
+}
+
 static void
 _eos_main_fct(void *data)
 {
@@ -1649,6 +1706,13 @@ _eos_main_fct(void *data)
          if (!ev->delete_me) _emotion_seek_done(ev->obj);
          break;
       case GST_MESSAGE_STREAM_STATUS:
+         break;
+      case GST_MESSAGE_STATE_CHANGED:
+         if (!ev->delete_me)
+           {
+              if (!g_signal_handlers_disconnect_by_func(msg->src, _no_more_pads, ev))
+                 g_signal_connect(msg->src, "no-more-pads", G_CALLBACK(_no_more_pads), ev);
+           }
          break;
       case GST_MESSAGE_ERROR:
          em_cleanup(ev);
@@ -1704,6 +1768,13 @@ _eos_sync_fct(GstBus *bus __UNUSED__, GstMessage *msg, gpointer data)
                GST_OBJECT_NAME(msg->src),
                gst_element_state_get_name(old_state),
                gst_element_state_get_name(new_state));
+
+           if (!strncmp(GST_OBJECT_NAME(msg->src), "decodebin", 9) && !strcmp(gst_element_state_get_name(new_state), "READY"))
+             {
+                send = emotion_gstreamer_message_alloc(ev, msg);
+
+                if (send) ecore_main_loop_thread_safe_call_async(_eos_main_fct, send);
+             }
            break;
         }
       case GST_MESSAGE_ERROR:

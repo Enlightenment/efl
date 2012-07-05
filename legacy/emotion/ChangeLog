@@ -29,3 +29,6 @@
 2012-07-03  Cedric Bail
 
 	* Track pending object for proper shutdown.
+2012-06-05 Sohyun Kim
+
+	* Add fimcconvert element to resize and convert color using fimc on device

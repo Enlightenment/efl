@@ -55,7 +55,10 @@ struct _Emotion_Gstreamer_Video
    GstElement       *esink;
    GstElement       *xvsink;
    GstElement       *tee;
-   GstPad           *teepad;
+   GstElement       *convert;
+
+   GstPad           *eteepad;
+   GstPad           *xvteepad;
    GstPad           *xvpad;
    Eina_List        *threads;
 
@@ -121,6 +124,9 @@ struct _Emotion_Gstreamer_Video
    Eina_Bool         kill_buffer  : 1;
    Eina_Bool         stream       : 1;
    Eina_Bool         priority     : 1;
+
+   int src_width;
+   int src_height;
 };
 
 struct _EvasVideoSink {

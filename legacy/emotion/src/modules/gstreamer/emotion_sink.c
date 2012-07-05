@@ -895,7 +895,7 @@ _block_pad_unlink_cb(GstPad *pad, gboolean blocked, gpointer user_data)
         Emotion_Gstreamer_Video *ev = user_data;
         GstEvent *gev;
 
-        gst_pad_unlink(ev->teepad, ev->xvpad);
+        gst_pad_unlink(ev->xvteepad, ev->xvpad);
         gev = gst_event_new_eos();
         gst_pad_send_event(ev->xvpad, gev);
         gst_pad_set_blocked_async(pad, FALSE, _block_pad_unlink_cb, NULL);
@@ -909,7 +909,7 @@ _block_pad_link_cb(GstPad *pad, gboolean blocked, gpointer user_data)
      {
         Emotion_Gstreamer_Video *ev = user_data;
 
-        gst_pad_link(ev->teepad, ev->xvpad);
+        gst_pad_link(ev->xvteepad, ev->xvpad);
         if (ev->play)
           gst_element_set_state(ev->xvsink, GST_STATE_PLAYING);
         else
@@ -928,7 +928,7 @@ _video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
    fprintf(stderr, "show xv\n");
    ecore_x_window_show(ev->win);
 #endif
-   /* gst_pad_set_blocked_async(ev->teepad, TRUE, _block_pad_link_cb, ev); */
+   /* gst_pad_set_blocked_async(ev->xvteepad, TRUE, _block_pad_link_cb, ev); */
 }
 
 static void
@@ -940,7 +940,7 @@ _video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
    fprintf(stderr, "hide xv\n");
    ecore_x_window_hide(ev->win);
 #endif
-   /* gst_pad_set_blocked_async(ev->teepad, TRUE, _block_pad_unlink_cb, ev); */
+   /* gst_pad_set_blocked_async(ev->xvteepad, TRUE, _block_pad_unlink_cb, ev); */
 }
 
 static void
@@ -955,6 +955,67 @@ _video_update_pixels(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_S
    send->force = EINA_TRUE;
    ev->send = NULL;
    evas_video_sink_main_render(send);
+}
+
+static void
+_image_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Emotion_Gstreamer_Video *ev = data;
+   Evas_Coord width, height;
+   int image_area, src_area;
+   double ratio;
+
+   evas_object_geometry_get(obj, NULL, NULL, &width, &height);
+   image_area = width * height;
+   src_area = ev->src_width * ev->src_height;
+   ratio = (double)image_area / (double)src_area;
+
+   // when an image is much smaller than original video size,
+   // add fimcconvert element to the pipeline
+   if (ratio < 0.8 && !ev->priority && !ev->convert)
+     {
+        GstElementFactory *cfactory = NULL;
+
+        cfactory = gst_element_factory_find("fimcconvert");
+        if (cfactory)
+          {
+             GstElement *convert = NULL;
+
+             convert = gst_element_factory_create(cfactory, NULL);
+             if (convert)
+               {
+                  GstElement *queue = NULL;
+                  GstPad *pad, *teepad;
+
+                  queue = gst_bin_get_by_name(GST_BIN(ev->sink), "equeue");
+                  gst_element_unlink(ev->tee, queue);
+                  gst_element_release_request_pad(ev->tee, ev->eteepad);
+                  gst_object_unref(ev->eteepad);
+
+                  gst_bin_add(GST_BIN(ev->sink), convert);
+                  gst_element_link_many(ev->tee, convert, queue, NULL);
+                  pad = gst_element_get_pad(convert, "sink");
+                  teepad = gst_element_get_request_pad(ev->tee, "src%d");
+                  gst_pad_link(teepad, pad);
+                  gst_object_unref(pad);
+
+                  g_object_set(G_OBJECT(convert), "src-width", width, NULL);
+                  g_object_set(G_OBJECT(convert), "src-height", height, NULL);
+                  g_object_set(G_OBJECT(convert), "qos", TRUE, NULL);
+                  gst_element_sync_state_with_parent(convert);
+
+                  ev->eteepad = teepad;
+                  ev->convert = convert;
+               }
+          }
+     }
+   // TODO: when an image is resized(e.g rotation), set size again to fimcconvert
+   // TODO: fimcconvert has an issue about resetting 
+   //else if (ev->convert)
+   //  {
+   //     g_object_set(G_OBJECT(ev->convert), "src-width", w, NULL);
+   //     g_object_set(G_OBJECT(ev->convert), "src-height", h, NULL);
+   //  }
 }
 
 GstElement *
@@ -1115,9 +1176,10 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    g_object_set(G_OBJECT(esink), "ev", ev, NULL);
 
    evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _image_resize, ev);
 
    /* We need queue to force each video sink to be in its own thread */
-   queue = gst_element_factory_make("queue", NULL);
+   queue = gst_element_factory_make("queue", "equeue");
    if (!queue)
      {
         ERR("Unable to create 'queue' GstElement.");
@@ -1132,13 +1194,14 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    teepad = gst_element_get_request_pad(tee, "src%d");
    gst_pad_link(teepad, pad);
    gst_object_unref(pad);
-   gst_object_unref(teepad);
+
+   ev->eteepad = teepad;
 
    if (xvsink)
      {
         GstElement *fakeeos;
 
-        queue = gst_element_factory_make("queue", NULL);
+        queue = gst_element_factory_make("queue", "xvqueue");
         fakeeos = GST_ELEMENT(GST_BIN(g_object_new(GST_TYPE_FAKEEOS_BIN, "name", "eosbin", NULL)));
         if (queue && fakeeos)
           {
@@ -1157,7 +1220,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 
              xvsink = fakeeos;
 
-             ev->teepad = teepad;
+             ev->xvteepad = teepad;
              ev->xvpad = pad;
 	  }
 	else

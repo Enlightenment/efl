@@ -8,6 +8,7 @@ Additions:
 	- Implement SPU switch for generic/vlc.
 	- Sync rendering with Ecore_Animator.
 	- Track pending object for proper shutdown.
+	- Start handling embedded hardware customization.
 
 Fixes:
 	- build out of tree.
