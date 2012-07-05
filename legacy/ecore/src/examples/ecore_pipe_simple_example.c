@@ -14,7 +14,7 @@ do_lengthy_task(Ecore_Pipe *pipe)
         sleep(1);
         buffer = malloc(sizeof(char) * i);
         for (j = 0; j < i; j++)
-           buffer[j] = 'a' + j;
+          buffer[j] = 'a' + j;
         ecore_pipe_write(pipe, buffer, i);
         free(buffer);
      }
@@ -28,7 +28,7 @@ handler(void *data, void *buf, unsigned int len)
    memcpy(str, buf, len);
    str[len] = '\0';
    printf("received %d bytes\n", len);
-   printf("content: %s\n", (const char*)str);
+   printf("content: %s\n", (const char *)str);
    free(str);
    if (len && !strncmp(buf, "close", len < 5 ? len : 5))
      {
@@ -38,7 +38,7 @@ handler(void *data, void *buf, unsigned int len)
 }
 
 int
-main (int argc, char *argv[])
+main(int argc, char *argv[])
 {
    Ecore_Pipe *pipe;
    pid_t child_pid;
@@ -64,3 +64,4 @@ main (int argc, char *argv[])
 
    return 0;
 }
+

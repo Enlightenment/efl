@@ -8,12 +8,13 @@ _poller_print_cb(void *data)
 {
    char *str = data;
    printf("Ecore Poller '%s' callback called after %0.3f seconds.\n",
-	  str, ecore_time_get() - _initial_time);
+          str, ecore_time_get() - _initial_time);
 
    return ECORE_CALLBACK_RENEW;
 }
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
    double interval = 0.3; // tick each 0.3 seconds
    Ecore_Poller *poller1, *poller2;
@@ -22,8 +23,8 @@ int main(int argc, char **argv)
 
    if (!ecore_init())
      {
-	printf("ERROR: Cannot init Ecore!\n");
-	return -1;
+        printf("ERROR: Cannot init Ecore!\n");
+        return -1;
      }
 
    _initial_time = ecore_time_get();
@@ -45,3 +46,4 @@ int main(int argc, char **argv)
 
    ecore_shutdown();
 }
+

@@ -23,7 +23,6 @@ _add(void *data, int type, Ecore_Con_Event_Server_Add *ev)
    return ECORE_CALLBACK_RENEW;
 }
 
-
 Eina_Bool
 _del(void *data, int type, Ecore_Con_Event_Server_Del *ev)
 {
@@ -47,7 +46,9 @@ _data(void *data, int type, Ecore_Con_Event_Server_Data *ev)
    printf(fmt, ev->data);
    return ECORE_CALLBACK_RENEW;
 }
-int main()
+
+int
+main()
 {
    Ecore_Con_Server *svr;
    Eina_Iterator *it;
@@ -72,7 +73,7 @@ int main()
      {
         if (!ecore_con_ssl_server_cafile_add(svr, ca))
           printf("Could not load CA: %s!\n", ca);
-        eina_stringshare_del(ca);   
+        eina_stringshare_del(ca);
      }
 
    eina_iterator_free(it);
@@ -88,3 +89,4 @@ int main()
 /* start client */
    ecore_main_loop_begin();
 }
+

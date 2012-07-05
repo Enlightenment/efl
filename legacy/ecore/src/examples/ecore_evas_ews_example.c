@@ -91,108 +91,123 @@ _stdin_cb(void *data, Ecore_Fd_Handler *handler)
      }
 
    switch (c) {
-    case 'h':
-       printf("hide all windows\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-         ecore_evas_hide(ee);
-       break;
-    case 's':
-       printf("show all windows\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-         ecore_evas_show(ee);
-       break;
-    case 'l':
-       printf("move all windows left\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-         {
-            int x, y;
-            ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-            ecore_evas_move(ee, x - 10, y);
-         }
-       break;
-    case 'r':
-       printf("move all windows right\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-         {
-            int x, y;
-            ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-            ecore_evas_move(ee, x + 10, y);
-         }
-       break;
-    case 't':
-       printf("move all windows top\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-         {
-            int x, y;
-            ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-            ecore_evas_move(ee, x, y - 10);
-         }
-       break;
-    case 'b':
-       printf("move all windows bottom\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-         {
-            int x, y;
-            ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
-            ecore_evas_move(ee, x, y + 10);
-         }
-       break;
-    case 'S':
-       printf("make all windows smaller\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-         {
-            int w, h;
-            ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-            ecore_evas_resize(ee, w - 10, h - 10);
-         }
-       break;
-    case 'B':
-       printf("make all windows bigger\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-         {
-            int w, h;
-            ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-            ecore_evas_resize(ee, w + 10, h + 10);
-         }
-       break;
-    case 'm':
-       printf("make all windows unmaximized\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-            ecore_evas_maximized_set(ee, EINA_FALSE);
-       break;
-    case 'M':
-       printf("make all windows maximized\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-            ecore_evas_maximized_set(ee, EINA_TRUE);
-       break;
-    case 'i':
-       printf("make all windows uniconified\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-            ecore_evas_iconified_set(ee, EINA_FALSE);
-       break;
-    case 'I':
-       printf("make all windows iconified\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-            ecore_evas_iconified_set(ee, EINA_TRUE);
-       break;
-    case 'f':
-       printf("make all windows unfullscreen\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-            ecore_evas_fullscreen_set(ee, EINA_FALSE);
-       break;
-    case 'F':
-       printf("make all windows fullscreen\n");
-       EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
-            ecore_evas_fullscreen_set(ee, EINA_TRUE);
-       break;
-    case 'q':
-       printf("quit\n");
-       ecore_main_loop_quit();
-       break;
-    default:
-       if (!isspace(c))
-         printf("Unknown command: %c\n", c);
-   }
+      case 'h':
+        printf("hide all windows\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          ecore_evas_hide(ee);
+        break;
+
+      case 's':
+        printf("show all windows\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          ecore_evas_show(ee);
+        break;
+
+      case 'l':
+        printf("move all windows left\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          {
+             int x, y;
+             ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
+             ecore_evas_move(ee, x - 10, y);
+          }
+        break;
+
+      case 'r':
+        printf("move all windows right\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          {
+             int x, y;
+             ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
+             ecore_evas_move(ee, x + 10, y);
+          }
+        break;
+
+      case 't':
+        printf("move all windows top\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          {
+             int x, y;
+             ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
+             ecore_evas_move(ee, x, y - 10);
+          }
+        break;
+
+      case 'b':
+        printf("move all windows bottom\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          {
+             int x, y;
+             ecore_evas_geometry_get(ee, &x, &y, NULL, NULL);
+             ecore_evas_move(ee, x, y + 10);
+          }
+        break;
+
+      case 'S':
+        printf("make all windows smaller\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          {
+             int w, h;
+             ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+             ecore_evas_resize(ee, w - 10, h - 10);
+          }
+        break;
+
+      case 'B':
+        printf("make all windows bigger\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          {
+             int w, h;
+             ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
+             ecore_evas_resize(ee, w + 10, h + 10);
+          }
+        break;
+
+      case 'm':
+        printf("make all windows unmaximized\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          ecore_evas_maximized_set(ee, EINA_FALSE);
+        break;
+
+      case 'M':
+        printf("make all windows maximized\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          ecore_evas_maximized_set(ee, EINA_TRUE);
+        break;
+
+      case 'i':
+        printf("make all windows uniconified\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          ecore_evas_iconified_set(ee, EINA_FALSE);
+        break;
+
+      case 'I':
+        printf("make all windows iconified\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          ecore_evas_iconified_set(ee, EINA_TRUE);
+        break;
+
+      case 'f':
+        printf("make all windows unfullscreen\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          ecore_evas_fullscreen_set(ee, EINA_FALSE);
+        break;
+
+      case 'F':
+        printf("make all windows fullscreen\n");
+        EINA_LIST_FOREACH(ecore_evas_ews_children_get(), l, ee)
+          ecore_evas_fullscreen_set(ee, EINA_TRUE);
+        break;
+
+      case 'q':
+        printf("quit\n");
+        ecore_main_loop_quit();
+        break;
+
+      default:
+        if (!isspace(c))
+          printf("Unknown command: %c\n", c);
+     }
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -211,7 +226,7 @@ main(void)
    Evas_Object *bg;
 
    if (ecore_evas_init() <= 0)
-      return 1;
+     return 1;
 
    optional_ews_setup();
    optional_ews_window_manager_setup();
@@ -228,7 +243,7 @@ main(void)
 
    canvas = ecore_evas_get(ee);
    if (ecore_evas_ecore_evas_get(canvas) == ee)
-      printf("Everything is sane!\n");
+     printf("Everything is sane!\n");
 
    bg = evas_object_rectangle_add(canvas);
    evas_object_color_set(bg, 0, 0, 255, 255);
@@ -240,9 +255,9 @@ main(void)
    ecore_evas_move(ee, 50, 50);
 
    ecore_main_fd_handler_add(STDIN_FILENO,
-              ECORE_FD_READ | ECORE_FD_ERROR,
-              _stdin_cb,
-              NULL, NULL, NULL);
+                             ECORE_FD_READ | ECORE_FD_ERROR,
+                             _stdin_cb,
+                             NULL, NULL, NULL);
 
    ecore_main_loop_begin();
 
@@ -251,3 +266,4 @@ main(void)
 
    return 0;
 }
+

@@ -10,17 +10,18 @@
 #endif
 
 static const char response_template[] =
-"HTTP/1.0 200 OK\r\n"
-"Server: Ecore_Con custom server\r\n"
-"Content-Length: %zd\r\n"
-"Content-Type: text/html; charset=UTF-8\r\n"
-"Set-Cookie: MYCOOKIE=1; path=/; expires=%s\r\n"
-"Set-Cookie: SESSIONCOOKIE=1; path=/\r\n"
-"\r\n"
-"%s";
+  "HTTP/1.0 200 OK\r\n"
+  "Server: Ecore_Con custom server\r\n"
+  "Content-Length: %zd\r\n"
+  "Content-Type: text/html; charset=UTF-8\r\n"
+  "Set-Cookie: MYCOOKIE=1; path=/; expires=%s\r\n"
+  "Set-Cookie: SESSIONCOOKIE=1; path=/\r\n"
+  "\r\n"
+  "%s";
 
-struct _Client {
-    int sdata;
+struct _Client
+{
+   int sdata;
 };
 
 Eina_Bool
@@ -33,9 +34,9 @@ _add(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Add *ev)
    time_t t;
 
    printf("Client with ip %s, port %d, connected = %d!\n",
-	  ecore_con_client_ip_get(ev->client),
-	  ecore_con_client_port_get(ev->client),
-	  ecore_con_client_connected_get(ev->client));
+          ecore_con_client_ip_get(ev->client),
+          ecore_con_client_port_get(ev->client),
+          ecore_con_client_connected_get(ev->client));
 
    ecore_con_client_data_set(ev->client, client);
 
@@ -46,10 +47,8 @@ _add(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Add *ev)
    ecore_con_client_send(ev->client, buf, strlen(buf));
    ecore_con_client_flush(ev->client);
 
-
    return ECORE_CALLBACK_RENEW;
 }
-
 
 Eina_Bool
 _del(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Del *ev)
@@ -64,7 +63,7 @@ _del(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Del *ev)
    printf("Lost client with ip %s!\n", ecore_con_client_ip_get(ev->client));
    printf("Total data received from this client: %d\n", client->sdata);
    printf("Client was connected for %0.3f seconds.\n",
-	  ecore_con_client_uptime_get(ev->client));
+          ecore_con_client_uptime_get(ev->client));
 
    if (client)
      free(client);
@@ -86,7 +85,7 @@ _data(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Data *e
             "%%.%is\n"
             ">>>>>\n\n",
             ev->size, ecore_con_client_ip_get(ev->client),
-	    ecore_con_client_port_get(ev->client), ev->size);
+            ecore_con_client_port_get(ev->client), ev->size);
 
    printf(fmt, ev->data);
 
@@ -95,7 +94,8 @@ _data(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Client_Data *e
    return ECORE_CALLBACK_RENEW;
 }
 
-int main(void)
+int
+main(void)
 {
    Ecore_Con_Server *svr;
    Ecore_Con_Client *cl;
@@ -120,8 +120,8 @@ int main(void)
           eina_list_count(clients));
    EINA_LIST_FOREACH(clients, l, cl)
      {
-	printf("%s\n", ecore_con_client_ip_get(cl));
-	free(ecore_con_client_data_get(cl));
+        printf("%s\n", ecore_con_client_ip_get(cl));
+        free(ecore_con_client_data_get(cl));
      }
 
    printf("Server was up for %0.3f seconds\n",
@@ -133,3 +133,4 @@ int main(void)
 
    return 0;
 }
+

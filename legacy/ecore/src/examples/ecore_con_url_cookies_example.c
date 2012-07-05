@@ -39,7 +39,7 @@ _url_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
 
    printf("response headers:\n");
    EINA_LIST_FOREACH(headers, l, str)
-      printf("header: %s", str);
+     printf("header: %s", str);
 
    ecore_con_url_cookies_jar_write(url_complete->url_con);
 
@@ -48,7 +48,8 @@ _url_complete_cb(void *data __UNUSED__, int type __UNUSED__, void *event_info)
    return EINA_TRUE;
 }
 
-int main(int argc, const char *argv[])
+int
+main(int argc, const char *argv[])
 {
    Ecore_Con_Url *ec_url = NULL;
    char cmd = '\0';
@@ -56,8 +57,8 @@ int main(int argc, const char *argv[])
 
    if (argc < 2)
      {
-	printf("need at least one parameter: <url> [command]\n");
-	return -1;
+        printf("need at least one parameter: <url> [command]\n");
+        return -1;
      }
 
    if (argc > 2)
@@ -70,8 +71,8 @@ int main(int argc, const char *argv[])
    ec_url = ecore_con_url_new(argv[1]);
    if (!ec_url)
      {
-	printf("error when creating ecore con url object.\n");
-	goto end;
+        printf("error when creating ecore con url object.\n");
+        goto end;
      }
 
    ecore_event_handler_add(ECORE_CON_EVENT_URL_DATA, _url_data_cb, NULL);
@@ -87,23 +88,25 @@ int main(int argc, const char *argv[])
    switch (cmd)
      {
       case 'c': // clear
-	 printf("Cleaning previously set cookies.\n");
-	 ecore_con_url_cookies_clear(ec_url);
-	 break;
+        printf("Cleaning previously set cookies.\n");
+        ecore_con_url_cookies_clear(ec_url);
+        break;
+
       case 's': // clear session
-	 printf("Cleaning previously set session cookies.\n");
-	 ecore_con_url_cookies_session_clear(ec_url);
-	 break;
+        printf("Cleaning previously set session cookies.\n");
+        ecore_con_url_cookies_session_clear(ec_url);
+        break;
+
       case 'i': // ignore session
-	 printf("Ignoring old session cookies.\n");
-	 ecore_con_url_cookies_ignore_old_session_set(ec_url, EINA_TRUE);
+        printf("Ignoring old session cookies.\n");
+        ecore_con_url_cookies_ignore_old_session_set(ec_url, EINA_TRUE);
      }
 
    r = ecore_con_url_get(ec_url);
    if (!r)
      {
-	printf("could not realize request.\n");
-	goto free_ec_url;
+        printf("could not realize request.\n");
+        goto free_ec_url;
      }
 
    ecore_main_loop_begin();
@@ -117,3 +120,4 @@ end:
 
    return 0;
 }
+

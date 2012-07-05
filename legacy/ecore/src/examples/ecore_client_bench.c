@@ -36,7 +36,7 @@ static void
 _spawn(void *data)
 {
    int x;
-   
+
    for (x = 0; x < NUM_CLIENTS; x++)
      {
 //        printf("Creating connection %i\n", x);
@@ -47,10 +47,11 @@ _spawn(void *data)
              exit(1);
           }
      }
-     printf("***Job done***\n");
+   printf("***Job done***\n");
 }
 
-int main(void)
+int
+main(void)
 {
    double done;
    eina_init();
@@ -75,3 +76,4 @@ int main(void)
    printf("\nTime elapsed for %i connections: %f seconds\n%s", NUM_CLIENTS, ecore_time_get() - done, eina_counter_dump(counter));
    return 0;
 }
+

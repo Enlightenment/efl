@@ -116,7 +116,7 @@ main(void)
    ecore_evas_callback_pre_free_set(ee, _pre_free);
    ecore_evas_callback_pre_render_set(ee, _pre_render);
    ecore_evas_callback_resize_set(ee, _resize);
-   ecore_evas_callback_show_set (ee, _show);
+   ecore_evas_callback_show_set(ee, _show);
 
    ecore_main_loop_begin();
 
@@ -125,3 +125,4 @@ main(void)
 
    return 0;
 }
+

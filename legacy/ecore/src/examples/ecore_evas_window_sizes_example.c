@@ -60,10 +60,10 @@ _on_destroy(Ecore_Evas *ee __UNUSED__)
 }
 
 static void
-_on_keydown(void        *data __UNUSED__,
-            Evas        *evas __UNUSED__,
+_on_keydown(void *data __UNUSED__,
+            Evas *evas __UNUSED__,
             Evas_Object *o __UNUSED__,
-            void        *einfo)
+            void *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
 

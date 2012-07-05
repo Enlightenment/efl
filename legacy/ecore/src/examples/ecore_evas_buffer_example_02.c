@@ -80,7 +80,7 @@ main(void)
    img = ecore_evas_object_image_new(ee);
    evas_object_image_filled_set(img, EINA_TRUE);
    evas_object_image_size_set(
-       img, ((2 * WIDTH) / 3) - 6, ((2 * HEIGHT) / 3) - 6);
+     img, ((2 * WIDTH) / 3) - 6, ((2 * HEIGHT) / 3) - 6);
    sub_ee = ecore_evas_object_ecore_evas_get(img);
    sub_canvas = ecore_evas_object_evas_get(img);
 

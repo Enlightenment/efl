@@ -5,8 +5,9 @@
 #include <Ecore.h>
 #include <Ecore_Con.h>
 
-struct _request {
-     long size;
+struct _request
+{
+   long size;
 };
 
 static Eina_Bool
@@ -17,12 +18,12 @@ _url_progress_cb(void *data, int type, void *event_info)
 
    if (url_progress->down.total > 0)
      {
-	struct _request *req = ecore_con_url_data_get(url_progress->url_con);
-	req->size = url_progress->down.now;
+        struct _request *req = ecore_con_url_data_get(url_progress->url_con);
+        req->size = url_progress->down.now;
 
-	percent = (url_progress->down.now / url_progress->down.total) * 100;
-	printf("Total of download complete: %0.1f (%0.0f)%%\n",
-	       percent, url_progress->down.now);
+        percent = (url_progress->down.now / url_progress->down.total) * 100;
+        printf("Total of download complete: %0.1f (%0.0f)%%\n",
+               percent, url_progress->down.now);
      }
 
    return EINA_TRUE;
@@ -40,13 +41,14 @@ _url_complete_cb(void *data, int type, void *event_info)
    printf("download completed with status code: %d\n", url_complete->status);
    printf("Total size of downloaded file: %ld bytes\n", req->size);
    printf("Total size of downloaded file: %ld bytes "
-	  "(from received_bytes_get)\n", nbytes);
+          "(from received_bytes_get)\n", nbytes);
    ecore_main_loop_quit();
 
    return EINA_TRUE;
 }
 
-int main(int argc, const char *argv[])
+int
+main(int argc, const char *argv[])
 {
    Ecore_Con_Url *ec_url = NULL;
    struct _request *req;
@@ -55,17 +57,17 @@ int main(int argc, const char *argv[])
 
    if (argc < 2)
      {
-	printf("need one parameter: <url>\n");
-	return -1;
+        printf("need one parameter: <url>\n");
+        return -1;
      }
 
-   fd = open(filename, O_CREAT|O_WRONLY|O_TRUNC, 0644);
+   fd = open(filename, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 
    if (fd == -1)
      {
-	printf("error: could not open file for writing: \"%s\"\n",
-	       filename);
-	return -1;
+        printf("error: could not open file for writing: \"%s\"\n",
+               filename);
+        return -1;
      }
 
    ecore_init();
@@ -75,8 +77,8 @@ int main(int argc, const char *argv[])
    ec_url = ecore_con_url_new(argv[1]);
    if (!ec_url)
      {
-	printf("error when creating ecore con url object.\n");
-	goto end;
+        printf("error when creating ecore con url object.\n");
+        goto end;
      }
 
    req = malloc(sizeof(*req));
@@ -90,8 +92,8 @@ int main(int argc, const char *argv[])
 
    if (!ecore_con_url_get(ec_url))
      {
-	printf("could not realize request.\n");
-	goto free_ec_url;
+        printf("could not realize request.\n");
+        goto free_ec_url;
      }
 
    ecore_main_loop_begin();
@@ -108,3 +110,4 @@ end:
 
    return 0;
 }
+

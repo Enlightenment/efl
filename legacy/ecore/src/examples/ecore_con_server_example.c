@@ -24,7 +24,6 @@ _add(void *data, int type, Ecore_Con_Event_Client_Add *ev)
    return ECORE_CALLBACK_RENEW;
 }
 
-
 Eina_Bool
 _del(void *data, int type, Ecore_Con_Event_Client_Del *ev)
 {
@@ -48,7 +47,9 @@ _data(void *data, int type, Ecore_Con_Event_Client_Data *ev)
    printf(fmt, ev->data);
    return ECORE_CALLBACK_RENEW;
 }
-int main()
+
+int
+main()
 {
    Ecore_Con_Server *svr;
    eina_init();
@@ -59,10 +60,8 @@ int main()
    gnutls_global_set_log_level(9);
    gnutls_global_set_log_function(tls_log_func);
 
-
 /* to use a PEM certificate with TLS and SSL3, uncomment the lines below */
    if (!(svr = ecore_con_server_add(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_TLS | ECORE_CON_USE_SSL3 | ECORE_CON_LOAD_CERT, "127.0.0.1", 8080, NULL)))
-
 /* to use simple tcp with ssl/tls, use this line */
 //   if (!ecore_con_server_add(ECORE_CON_REMOTE_TCP | ECORE_CON_USE_SSL3, "127.0.0.1", 8080, NULL))
      exit(1);
@@ -79,3 +78,4 @@ int main()
 /* start server */
    ecore_main_loop_begin();
 }
+

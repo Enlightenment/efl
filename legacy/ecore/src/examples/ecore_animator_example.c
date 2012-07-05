@@ -12,7 +12,7 @@ static Eina_Bool _freeze_third_anim(void *data);
 static Eina_Bool _thaw_third_anim(void *data);
 
 int
-main (int argc, char *argv[])
+main(int argc, char *argv[])
 {
    Evas_Object *rect, *bg, *rect2;
    Ecore_Evas *ee;
@@ -39,7 +39,7 @@ main (int argc, char *argv[])
    evas_object_resize(rect2, 50, 50);
    evas_object_show(rect2);
 
-   ecore_animator_frametime_set(1./50);
+   ecore_animator_frametime_set(1. / 50);
    ecore_animator_timeline_add(5, _advance_frame, rect);
 
    anim = ecore_animator_add(_advance_frame3, rect2);
@@ -72,7 +72,7 @@ _advance_frame(void *data, double pos)
 static Eina_Bool
 _start_second_anim(void *data)
 {
-   ecore_animator_frametime_set(1./10);
+   ecore_animator_frametime_set(1. / 10);
    ecore_animator_timeline_add(20, _advance_frame2, data);
    return EINA_FALSE;
 }
@@ -95,7 +95,7 @@ _advance_frame3(void *data)
    static int x = 0;
 
    if (x >= 250)
-      x = 0;
+     x = 0;
    evas_object_move(data, ++x, 350);
 
    return EINA_TRUE;
@@ -114,3 +114,4 @@ _thaw_third_anim(void *data)
    ecore_animator_thaw(data);
    return EINA_FALSE;
 }
+

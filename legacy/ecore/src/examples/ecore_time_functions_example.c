@@ -18,15 +18,17 @@ _timer_cb(void *data)
    return EINA_FALSE;
 }
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
    if (!ecore_init())
      {
-	printf("ERROR: Cannot init Ecore!\n");
-	return -1;
+        printf("ERROR: Cannot init Ecore!\n");
+        return -1;
      }
 
    ecore_timer_add(0.1, _timer_cb, NULL);
    ecore_main_loop_begin();
    ecore_shutdown();
 }
+

@@ -1,11 +1,10 @@
 /**
-  Compile with gcc -o ecore_exe_example_child ecore_exe_example_child.c `pkg-config --cflags --libs ecore`
-*/
+   Compile with gcc -o ecore_exe_example_child ecore_exe_example_child.c `pkg-config --cflags --libs ecore`
+ */
 
 #include <stdio.h>
 #include <unistd.h>
 #include <Ecore.h>
-
 
 #define BUFFER_SIZE 1024
 
@@ -38,14 +37,13 @@ _fd_handler_cb(void *data, Ecore_Fd_Handler
 int
 main(int argc, char **argv)
 {
-
    if (!ecore_init())
      goto error;
 
    ecore_main_fd_handler_add(STDIN_FILENO,
-                                ECORE_FD_READ,
-                                _fd_handler_cb,
-                                NULL, NULL, NULL);
+                             ECORE_FD_READ,
+                             _fd_handler_cb,
+                             NULL, NULL, NULL);
    ecore_main_loop_begin();
 
    ecore_shutdown();
@@ -55,3 +53,4 @@ main(int argc, char **argv)
 error:
    return EXIT_FAILURE;
 }
+

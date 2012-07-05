@@ -9,10 +9,10 @@
 
 typedef struct
 {
-   Ecore_Thread *thread_3;
-   int msgs_received;
-   int max_msgs;
-   Eina_Lock mutex;
+   Ecore_Thread  *thread_3;
+   int            msgs_received;
+   int            max_msgs;
+   Eina_Lock      mutex;
    Eina_Condition condition;
 } App_Data;
 
@@ -23,14 +23,14 @@ typedef struct
 
 typedef struct
 {
-   char *name;
-   char *base;
+   char     *name;
+   char     *base;
    Eina_Lock mutex;
 } Feedback_Thread_Data;
 
 typedef struct
 {
-   int all_done;
+   int        all_done;
    Eina_List *list;
 } App_Msg;
 
@@ -288,11 +288,11 @@ main(int argc, char *argv[])
    Eina_List *path_list = NULL;
    App_Data appdata;
    Ecore_Getopt_Value values[] = {
-        ECORE_GETOPT_VALUE_INT(max_threads),
-        ECORE_GETOPT_VALUE_INT(max_msgs),
-        ECORE_GETOPT_VALUE_LIST(path_list),
-        ECORE_GETOPT_VALUE_BOOL(opt_quit),
-        ECORE_GETOPT_VALUE_NONE
+      ECORE_GETOPT_VALUE_INT(max_threads),
+      ECORE_GETOPT_VALUE_INT(max_msgs),
+      ECORE_GETOPT_VALUE_LIST(path_list),
+      ECORE_GETOPT_VALUE_BOOL(opt_quit),
+      ECORE_GETOPT_VALUE_NONE
    };
 
    ecore_init();
@@ -392,3 +392,4 @@ main(int argc, char *argv[])
 
    return 0;
 }
+

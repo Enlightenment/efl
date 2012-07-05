@@ -8,8 +8,9 @@
 # define __UNUSED__
 #endif
 
-struct _Server {
-    int sdata;
+struct _Server
+{
+   int sdata;
 };
 
 Eina_Bool
@@ -21,25 +22,24 @@ _add(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Add *ev)
 
    ecore_con_server_data_set(ev->server, server);
    printf("Server with ip %s, name %s, port %d, connected = %d!\n",
-	  ecore_con_server_ip_get(ev->server),
-	  ecore_con_server_name_get(ev->server),
-	  ecore_con_server_port_get(ev->server),
-	  ecore_con_server_connected_get(ev->server));
+          ecore_con_server_ip_get(ev->server),
+          ecore_con_server_name_get(ev->server),
+          ecore_con_server_port_get(ev->server),
+          ecore_con_server_connected_get(ev->server));
    ecore_con_server_send(ev->server, welcome, sizeof(welcome));
    ecore_con_server_flush(ev->server);
 
    return ECORE_CALLBACK_RENEW;
 }
 
-
 Eina_Bool
 _del(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Del *ev)
 {
    if (!ev->server)
      {
-	printf("Failed to establish connection to the server.\nExiting.\n");
-	ecore_main_loop_quit();
-	return ECORE_CALLBACK_RENEW;
+        printf("Failed to establish connection to the server.\nExiting.\n");
+        ecore_main_loop_quit();
+        return ECORE_CALLBACK_RENEW;
      }
 
    struct _Server *server = ecore_con_server_data_get(ev->server);
@@ -48,8 +48,8 @@ _del(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Del *ev)
 
    if (server)
      {
-	printf("Total data received from this server: %d\n", server->sdata);
-	free(server);
+        printf("Total data received from this server: %d\n", server->sdata);
+        free(server);
      }
 
    ecore_con_server_del(ev->server);
@@ -77,7 +77,8 @@ _data(void *data __UNUSED__, int type __UNUSED__, Ecore_Con_Event_Server_Data *e
    return ECORE_CALLBACK_RENEW;
 }
 
-int main(int argc, const char *argv[])
+int
+main(int argc, const char *argv[])
 {
    Ecore_Con_Server *svr;
    const char *address;
@@ -85,9 +86,9 @@ int main(int argc, const char *argv[])
 
    if (argc < 2)
      {
-	printf("wrong usage. Command syntax is:\n");
-	printf("\tecore_con_client_simple_example <address> [port]\n");
-	exit (1);
+        printf("wrong usage. Command syntax is:\n");
+        printf("\tecore_con_client_simple_example <address> [port]\n");
+        exit(1);
      }
 
    address = argv[1];
@@ -101,9 +102,9 @@ int main(int argc, const char *argv[])
 
    if (!(svr = ecore_con_server_connect(ECORE_CON_REMOTE_TCP, address, port, NULL)))
      {
-	printf("could not connect to the server: %s, port %d.\n",
-	       address, port);
-	exit(2);
+        printf("could not connect to the server: %s, port %d.\n",
+               address, port);
+        exit(2);
      }
 
    /* set event handler for server connect */
@@ -122,3 +123,4 @@ int main(int argc, const char *argv[])
 
    return 0;
 }
+

@@ -1,13 +1,14 @@
 #include <Ecore.h>
 #include <unistd.h>
 
-struct context { // helper struct to give some context to the callbacks
-     int count;
-     Ecore_Idle_Enterer *enterer;
-     Ecore_Idler *idler;
-     Ecore_Idle_Exiter *exiter;
-     Ecore_Event_Handler *handler;
-     Ecore_Timer *timer;
+struct context   // helper struct to give some context to the callbacks
+{
+   int                  count;
+   Ecore_Idle_Enterer  *enterer;
+   Ecore_Idler         *idler;
+   Ecore_Idle_Exiter   *exiter;
+   Ecore_Event_Handler *handler;
+   Ecore_Timer         *timer;
 };
 
 static _event_type = 0; // a new type of event will be defined and stored here
@@ -53,21 +54,21 @@ _event_handler_cb(void *data, int type, void *event) // event callback
 
    if (ctxt->count > 100)
      {
-	ecore_idle_enterer_del(ctxt->enterer);
-	ecore_idle_exiter_del(ctxt->exiter);
-	ecore_idler_del(ctxt->idler);
+        ecore_idle_enterer_del(ctxt->enterer);
+        ecore_idle_exiter_del(ctxt->exiter);
+        ecore_idler_del(ctxt->idler);
 
-	ctxt->enterer = NULL;
-	ctxt->exiter = NULL;
-	ctxt->idler = NULL;
+        ctxt->enterer = NULL;
+        ctxt->exiter = NULL;
+        ctxt->idler = NULL;
 
-	if (ctxt->timer)
-	  {
-	     ecore_timer_del(ctxt->timer);
-	     ctxt->timer = NULL;
-	  }
+        if (ctxt->timer)
+          {
+             ecore_timer_del(ctxt->timer);
+             ctxt->timer = NULL;
+          }
 
-	ecore_main_loop_quit();
+        ecore_main_loop_quit();
      }
 
    return ECORE_CALLBACK_DONE; // same as EINA_FALSE
@@ -85,14 +86,15 @@ _timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL; // same as EINA_FALSE
 }
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
    struct context ctxt = {0};
 
    if (!ecore_init())
      {
-	printf("ERROR: Cannot init Ecore!\n");
-	return -1;
+        printf("ERROR: Cannot init Ecore!\n");
+        return -1;
      }
 
    _event_type = ecore_event_type_new();
@@ -101,8 +103,8 @@ int main(int argc, char **argv)
    ctxt.exiter = ecore_idle_exiter_add(_exiter_cb, &ctxt);
    ctxt.idler = ecore_idler_add(_idler_cb, &ctxt);
    ctxt.handler = ecore_event_handler_add(_event_type,
-					  _event_handler_cb,
-					  &ctxt);
+                                          _event_handler_cb,
+                                          &ctxt);
    ctxt.timer = ecore_timer_add(0.0005, _timer_cb, &ctxt);
 
    ecore_main_loop_begin();
@@ -110,3 +112,4 @@ int main(int argc, char **argv)
 
    return 0;
 }
+

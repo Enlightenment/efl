@@ -29,7 +29,7 @@ static Ecore_Evas *ee;
 
 /* support function to save scene as PPM image */
 static void
-_scene_save(Evas       *canvas,
+_scene_save(Evas *canvas,
             const char *dest)
 {
    const unsigned int *pixels, *pixels_end;

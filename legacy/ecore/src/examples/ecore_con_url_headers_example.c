@@ -28,14 +28,15 @@ _url_complete_cb(void *data, int type, void *event_info)
    headers = ecore_con_url_response_headers_get(url_complete->url_con);
 
    EINA_LIST_FOREACH(headers, l, str)
-      printf("header: %s\n", str);
+     printf("header: %s\n", str);
 
    ecore_main_loop_quit();
 
    return EINA_TRUE;
 }
 
-int main(int argc, const char *argv[])
+int
+main(int argc, const char *argv[])
 {
    Ecore_Con_Url *ec_url = NULL;
    const char *type;
@@ -43,16 +44,16 @@ int main(int argc, const char *argv[])
 
    if (argc < 3)
      {
-	printf("need at least two parameters: < POST|GET >  <url1>\n");
-	return -1;
+        printf("need at least two parameters: < POST|GET >  <url1>\n");
+        return -1;
      }
 
    type = argv[1];
 
    if (strcmp(type, "POST") && (strcmp(type, "GET")))
      {
-	printf("only POST or GET are supported by this example.\n");
-	return -1;
+        printf("only POST or GET are supported by this example.\n");
+        return -1;
      }
 
    ecore_init();
@@ -66,8 +67,8 @@ int main(int argc, const char *argv[])
    ec_url = ecore_con_url_custom_new(argv[2], type);
    if (!ec_url)
      {
-	printf("error when creating ecore con url object.\n");
-	goto end;
+        printf("error when creating ecore con url object.\n");
+        goto end;
      }
 
    ecore_event_handler_add(ECORE_CON_EVENT_URL_DATA, _url_data_cb, NULL);
@@ -87,8 +88,8 @@ int main(int argc, const char *argv[])
 
    if (!r)
      {
-	printf("could not realize request.\n");
-	goto free_ec_url;
+        printf("could not realize request.\n");
+        goto free_ec_url;
      }
 
    ecore_main_loop_begin();
@@ -102,3 +103,4 @@ end:
 
    return 0;
 }
+

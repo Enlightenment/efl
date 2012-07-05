@@ -3,7 +3,7 @@
 #include <Ecore.h>
 #include <Ecore_File.h>
 
-/* 
+/*
  * ecore_file_download() example
  *
  * compile with:
@@ -12,10 +12,9 @@
  *
  */
 
-#define URL "http://www.kernel.org/pub/linux/kernel/v1.0/linux-1.0.tar.gz"
-#define DST "linux-1.0.tar.gz"
+#define URL      "http://www.kernel.org/pub/linux/kernel/v1.0/linux-1.0.tar.gz"
+#define DST      "linux-1.0.tar.gz"
 #define DST_MIME "[x-gzip]linux-1.0.tar.gz"
-
 
 void
 completion_cb(void *data, const char *file, int status)
@@ -33,8 +32,8 @@ progress_cb(void *data, const char *file,
    return ECORE_FILE_PROGRESS_CONTINUE; //  continue the download
 }
 
-
-int main(void)
+int
+main(void)
 {
    double start;
    Eina_Hash *headers;
@@ -74,7 +73,7 @@ int main(void)
    else
      {
         printf("Error, can't start download\n");
-        goto done; 
+        goto done;
      }
 
 done:
@@ -84,3 +83,4 @@ done:
    eina_shutdown();
    return 0;
 }
+

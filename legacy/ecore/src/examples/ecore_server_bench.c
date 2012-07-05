@@ -29,7 +29,8 @@ _del(void *data, int type, Ecore_Con_Event_Client_Del *ev)
    return ECORE_CALLBACK_RENEW;
 }
 
-int main(int argc, const char *argv[])
+int
+main(int argc, const char *argv[])
 {
    ecore_init();
    ecore_con_init();
@@ -37,15 +38,14 @@ int main(int argc, const char *argv[])
    eina_log_domain_level_set("ecore_con", EINA_LOG_LEVEL_ERR);
    eina_log_domain_level_set("eina", EINA_LOG_LEVEL_ERR);
 
-
 /* to use a PEM certificate with TLS and SSL3, uncomment the lines below */
 //   if (!(svr = ecore_con_server_add(ECORE_CON_REMOTE_NODELAY | ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT, "127.0.0.1", 8080, NULL)))
 
 /* to use simple tcp with ssl/tls, use this line */
-   svr = ecore_con_server_add(ECORE_CON_REMOTE_NODELAY , "127.0.0.1", 8080, NULL);
+   svr = ecore_con_server_add(ECORE_CON_REMOTE_NODELAY, "127.0.0.1", 8080, NULL);
    if (!svr)
      exit(1);
-     
+
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD, (Ecore_Event_Handler_Cb)_add, NULL);
    ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL, (Ecore_Event_Handler_Cb)_del, NULL);
 
@@ -60,3 +60,4 @@ int main(int argc, const char *argv[])
      }
    return 0;
 }
+
