@@ -451,6 +451,7 @@ fi
 if test "x${want_multisense}" = "xyes" ; then
    AC_DEFINE([ENABLE_MULTISENSE], [1], [Use Multisense])
 fi
+AC_SUBST([want_multisense])
 
 # Dependencies for the binaries
 
