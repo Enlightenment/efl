@@ -871,7 +871,8 @@ _edje_embryo_fn_set_state(Embryo_Program *ep, Embryo_Cell *params)
    double value = 0.0;
    Edje_Real_Part *rp;
 
-   if (!HASNPARAMS(2) || !HASNPARAMS(3)) return -1;
+   if (!(HASNPARAMS(2) || HASNPARAMS(3))) return -1;
+
    ed = embryo_program_data_get(ep);
    GETSTR(state, params[2]);
    if ((!state)) return 0;
