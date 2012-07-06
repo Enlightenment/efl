@@ -62,12 +62,12 @@ void ephysics_world_constraint_del(EPhysics_World *world, btTypedConstraint *bt_
 void ephysics_body_world_boundaries_resize(EPhysics_World *world);
 void ephysics_world_boundary_set(EPhysics_World *world, EPhysics_World_Boundary boundary, EPhysics_Body *body);
 EPhysics_Body *ephysics_world_boundary_get(const EPhysics_World *world, EPhysics_World_Boundary boundary);
-Eina_Bool ephysics_world_bodies_outside_autodel_get(EPhysics_World *world);
+Eina_Bool ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world);
 
 void ephysics_body_evas_object_update_select(EPhysics_Body *body);
 void ephysics_orphan_body_del(EPhysics_Body *body);
 void ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body);
-btRigidBody *ephysics_body_rigid_body_get(EPhysics_Body *body);
+btRigidBody *ephysics_body_rigid_body_get(const EPhysics_Body *body);
 void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
 
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);

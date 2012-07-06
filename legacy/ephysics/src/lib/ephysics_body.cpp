@@ -250,7 +250,7 @@ ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body
 }
 
 btRigidBody *
-ephysics_body_rigid_body_get(EPhysics_Body *body)
+ephysics_body_rigid_body_get(const EPhysics_Body *body)
 {
    return body->rigid_body;
 }
@@ -660,7 +660,7 @@ ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double ang
 }
 
 EAPI void
-ephysics_body_damping_get(EPhysics_Body *body, double *linear_damping, double *angular_damping)
+ephysics_body_damping_get(const EPhysics_Body *body, double *linear_damping, double *angular_damping)
 {
     if (!body)
      {
@@ -860,7 +860,7 @@ ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x
 }
 
 EAPI void
-ephysics_body_linear_movement_enable_get(EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y)
+ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y)
 {
    if (!body)
      {
@@ -901,7 +901,7 @@ ephysics_body_rotation_on_z_axis_enable_set(EPhysics_Body *body, Eina_Bool enabl
 }
 
 EAPI Eina_Bool
-ephysics_body_rotation_on_z_axis_enable_get(EPhysics_Body *body)
+ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *body)
 {
    if (!body)
      {
@@ -913,7 +913,7 @@ ephysics_body_rotation_on_z_axis_enable_get(EPhysics_Body *body)
 }
 
 EAPI double
-ephysics_body_rotation_get(EPhysics_Body *body)
+ephysics_body_rotation_get(const EPhysics_Body *body)
 {
    btTransform trans;
    double rot;

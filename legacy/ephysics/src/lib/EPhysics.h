@@ -375,7 +375,7 @@ EAPI void ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x
  *
  * @ingroup EPhysics_World
  */
-EAPI void ephysics_world_render_geometry_get(EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI void ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 /**
  * @brief
@@ -496,7 +496,7 @@ EAPI void ephysics_world_constraint_solver_iterations_set(EPhysics_World *world,
  * @see ephysics_world_constraint_solver_iterations_set() for its meaning.
  * @ingroup EPhysics_World
  */
-EAPI int ephysics_world_constraint_solver_iterations_get(EPhysics_World *world);
+EAPI int ephysics_world_constraint_solver_iterations_get(const EPhysics_World *world);
 
 /**
  * @brief
@@ -505,6 +505,7 @@ EAPI int ephysics_world_constraint_solver_iterations_get(EPhysics_World *world);
  *
  * @param world The world to be set.
  * @param solver_mode The solver mode to set.
+ * @param enable If @c EINA_TRUE enable the mode, if EINA_FALSE, disable it.
  *
  * @see EPhysics_World_Solver_Mode for supported solver modes.
  * @see ephysics_world_constraint_solver_mode_enable_get()
@@ -518,12 +519,12 @@ EAPI void ephysics_world_constraint_solver_mode_enable_set(EPhysics_World *world
  *
  * @param world The world to be queried.
  * @param solver_mode The solver mode of interest.
- * @return EINA_TRUE if @p solver_mode is enabled, EINA_FALSE otherwise
+ * @return EINA_TRUE if @p solver_mode is enabled, EINA_FALSE otherwise.
  *
  * @see ephysics_world_constraint_solver_mode_enable_set()
  * @ingroup EPhysics_World
  */
-EAPI Eina_Bool ephysics_world_constraint_solver_mode_enable_get(EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode);
+EAPI Eina_Bool ephysics_world_constraint_solver_mode_enable_get(const EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode);
 
 /**
  * @brief
@@ -702,7 +703,7 @@ EAPI void ephysics_world_linear_slop_set(EPhysics_World *world, double linear_sl
  *
  * @ingroup EPhysics_World
  */
-EAPI double ephysics_world_linear_slop_get(EPhysics_World *world);
+EAPI double ephysics_world_linear_slop_get(const EPhysics_World *world);
 
 /**
  * @brief
@@ -747,7 +748,7 @@ EAPI void ephysics_world_bodies_outside_top_autodel_set(EPhysics_World *world, E
  *
  * @ingroup EPhysics_World
  */
-EAPI Eina_Bool ephysics_world_bodies_outside_top_autodel_get(EPhysics_World *world);
+EAPI Eina_Bool ephysics_world_bodies_outside_top_autodel_get(const EPhysics_World *world);
 
 /**
  * @brief
@@ -780,7 +781,7 @@ EAPI void ephysics_world_bodies_outside_bottom_autodel_set(EPhysics_World *world
  *
  * @ingroup EPhysics_World
  */
-EAPI Eina_Bool ephysics_world_bodies_outside_bottom_autodel_get(EPhysics_World *world);
+EAPI Eina_Bool ephysics_world_bodies_outside_bottom_autodel_get(const EPhysics_World *world);
 
 /**
  * @brief
@@ -813,7 +814,7 @@ EAPI void ephysics_world_bodies_outside_right_autodel_set(EPhysics_World *world,
  *
  * @ingroup EPhysics_World
  */
-EAPI Eina_Bool ephysics_world_bodies_outside_right_autodel_get(EPhysics_World *world);
+EAPI Eina_Bool ephysics_world_bodies_outside_right_autodel_get(const EPhysics_World *world);
 
 /**
  * @brief
@@ -846,7 +847,7 @@ EAPI void ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, 
  *
  * @ingroup EPhysics_World
  */
-EAPI Eina_Bool ephysics_world_bodies_outside_left_autodel_get(EPhysics_World *world);
+EAPI Eina_Bool ephysics_world_bodies_outside_left_autodel_get(const EPhysics_World *world);
 
 /**
  * @}
@@ -1340,7 +1341,7 @@ EAPI void ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, 
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_damping_get(EPhysics_Body *body, double *linear_damping, double *angular_damping);
+EAPI void ephysics_body_damping_get(const EPhysics_Body *body, double *linear_damping, double *angular_damping);
 
 /**
  * @brief
@@ -1615,7 +1616,7 @@ EAPI void ephysics_body_rotation_on_z_axis_enable_set(EPhysics_Body *body, Eina_
  *
  * @ingroup EPhysics_Body
  */
-EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(EPhysics_Body *body);
+EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *body);
 
 /**
  * @brief
@@ -1651,7 +1652,7 @@ EAPI void ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Boo
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_linear_movement_enable_get(EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y);
+EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y);
 
 /**
  * @brief
@@ -1666,7 +1667,7 @@ EAPI void ephysics_body_linear_movement_enable_get(EPhysics_Body *body, Eina_Boo
  *
  * @ingroup EPhysics_Body
  */
-EAPI double ephysics_body_rotation_get(EPhysics_Body *body);
+EAPI double ephysics_body_rotation_get(const EPhysics_Body *body);
 
 /**
  * @}

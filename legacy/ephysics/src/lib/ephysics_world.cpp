@@ -486,7 +486,7 @@ ephysics_world_constraint_solver_iterations_set(EPhysics_World *world, int itera
 }
 
 EAPI int
-ephysics_world_constraint_solver_iterations_get(EPhysics_World *world)
+ephysics_world_constraint_solver_iterations_get(const EPhysics_World *world)
 {
    if (!world)
      {
@@ -514,7 +514,7 @@ ephysics_world_constraint_solver_mode_enable_set(EPhysics_World *world, EPhysics
 }
 
 EAPI Eina_Bool
-ephysics_world_constraint_solver_mode_enable_get(EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode)
+ephysics_world_constraint_solver_mode_enable_get(const EPhysics_World *world, EPhysics_World_Solver_Mode solver_mode)
 {
      if (!world)
      {
@@ -711,7 +711,7 @@ ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coo
 }
 
 EAPI void
-ephysics_world_render_geometry_get(EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    if (!world)
      {
@@ -738,7 +738,7 @@ ephysics_world_linear_slop_set(EPhysics_World *world, double linear_slop)
 }
 
 EAPI double
-ephysics_world_linear_slop_get(EPhysics_World *world)
+ephysics_world_linear_slop_get(const EPhysics_World *world)
 {
    if (!world)
      {
@@ -764,7 +764,7 @@ ephysics_world_bodies_outside_top_autodel_set(EPhysics_World *world, Eina_Bool a
 }
 
 EAPI Eina_Bool
-ephysics_world_bodies_outside_top_autodel_get(EPhysics_World *world)
+ephysics_world_bodies_outside_top_autodel_get(const EPhysics_World *world)
 {
    if (!world)
      {
@@ -790,7 +790,7 @@ ephysics_world_bodies_outside_bottom_autodel_set(EPhysics_World *world, Eina_Boo
 }
 
 EAPI Eina_Bool
-ephysics_world_bodies_outside_bottom_autodel_get(EPhysics_World *world)
+ephysics_world_bodies_outside_bottom_autodel_get(const EPhysics_World *world)
 {
    if (!world)
      {
@@ -816,7 +816,7 @@ ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, Eina_Bool 
 }
 
 EAPI Eina_Bool
-ephysics_world_bodies_outside_left_autodel_get(EPhysics_World *world)
+ephysics_world_bodies_outside_left_autodel_get(const EPhysics_World *world)
 {
    if (!world)
      {
@@ -842,7 +842,7 @@ ephysics_world_bodies_outside_right_autodel_set(EPhysics_World *world, Eina_Bool
 }
 
 EAPI Eina_Bool
-ephysics_world_bodies_outside_right_autodel_get(EPhysics_World *world)
+ephysics_world_bodies_outside_right_autodel_get(const EPhysics_World *world)
 {
    if (!world)
      {
@@ -854,7 +854,7 @@ ephysics_world_bodies_outside_right_autodel_get(EPhysics_World *world)
 }
 
 Eina_Bool
-ephysics_world_bodies_outside_autodel_get(EPhysics_World *world)
+ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world)
 {
    if (!world)
      {
