@@ -846,6 +846,21 @@ _round_items_del(Widget_Data *wd)
    wd->over_items = eina_list_free(wd->over_items);
 }
 
+static Evas_Object *
+_duplicate_icon(Evas_Object *icon)
+{
+   Evas_Object *ic;
+   const char *file;
+   const char *group;
+
+   elm_image_file_get(icon, &file, &group);
+   ic = elm_icon_add(icon);
+   elm_image_file_set(ic, file,group);
+   elm_image_resizable_set(ic, 1, 1);
+
+   return ic;
+}
+
 static void
 _round_items_add(Widget_Data *wd)
 {
@@ -858,7 +873,7 @@ _round_items_add(Widget_Data *wd)
 
    if (!wd->first)
      {
-        wd->first = _item_new(WIDGET(it), it->icon, it->label, it->func,
+        wd->first = _item_new(WIDGET(it), _duplicate_icon(it->icon), it->label, it->func,
                               it->base.data);
         wd->first->node = it->node;
         wd->r_items = eina_list_append(wd->r_items, wd->first);
@@ -869,7 +884,7 @@ _round_items_add(Widget_Data *wd)
      it = dit;
    if (!wd->second)
      {
-        wd->second = _item_new(WIDGET(it), it->icon, it->label, it->func,
+        wd->second = _item_new(WIDGET(it), _duplicate_icon(it->icon), it->label, it->func,
                                it->base.data);
         wd->second->node = it->node;
         wd->r_items = eina_list_append(wd->r_items, wd->second);
@@ -880,7 +895,7 @@ _round_items_add(Widget_Data *wd)
      {
         it = eina_list_nth(wd->items, i);
         if (!it) it = dit;
-        temp_it = _item_new(WIDGET(it), it->icon, it->label, it->func, it->base.data);
+        temp_it = _item_new(WIDGET(it), _duplicate_icon(it->icon), it->label, it->func, it->base.data);
         wd->over_items = eina_list_append(wd->over_items, temp_it);
         wd->r_items = eina_list_append(wd->r_items, temp_it);
      }
@@ -890,7 +905,7 @@ _round_items_add(Widget_Data *wd)
      it = dit;
    if (!wd->last)
      {
-        wd->last = _item_new(WIDGET(it), it->icon, it->label, it->func,
+        wd->last = _item_new(WIDGET(it), _duplicate_icon(it->icon), it->label, it->func,
                              it->base.data);
         wd->last->node = it->node;
         wd->r_items = eina_list_prepend(wd->r_items, wd->last);
@@ -901,7 +916,7 @@ _round_items_add(Widget_Data *wd)
      it = dit;
    if (!wd->s_last)
      {
-        wd->s_last = _item_new(WIDGET(it), it->icon, it->label, it->func,
+        wd->s_last = _item_new(WIDGET(it), _duplicate_icon(it->icon), it->label, it->func,
                                it->base.data);
         wd->s_last->node = it->node;
         wd->r_items = eina_list_prepend(wd->r_items, wd->s_last);
@@ -912,7 +927,7 @@ _round_items_add(Widget_Data *wd)
      {
         it = eina_list_nth(wd->items, wd->item_count - i);
         if (!it) it = dit;
-        temp_it = _item_new(WIDGET(it), it->icon, it->label, it->func, it->base.data);
+        temp_it = _item_new(WIDGET(it), _duplicate_icon(it->icon), it->label, it->func, it->base.data);
         wd->under_items = eina_list_append(wd->under_items, temp_it);
         wd->r_items = eina_list_prepend(wd->r_items, temp_it);
      }
