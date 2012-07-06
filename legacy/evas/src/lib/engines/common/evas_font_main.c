@@ -633,14 +633,14 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
              if (gl > v)
                {
                   min = i;
-                  if ((max - min) == 2) i = max;
+                  if ((max - min) == 1) i = max;
                   else i = (min + max) / 2;
                }
              // if glyph below out position
              else if (gl < v)
                {
                   max = i;
-                  if ((max - min) == 2) i = min;
+                  if ((max - min) == 1) i = min;
                   else i = (min + max) / 2;
                }
           }
