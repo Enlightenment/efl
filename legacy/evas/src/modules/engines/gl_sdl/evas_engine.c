@@ -63,13 +63,17 @@ eng_output_free(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   evas_gl_common_context_free(re->gl_context);
-   free(re);
 
-   evas_common_font_shutdown();
-   evas_common_image_shutdown();
+   if (re)
+     {
+       evas_gl_common_context_free(re->gl_context);
+       free(re);
 
-   SDL_QuitSubSystem(SDL_INIT_VIDEO);
+       evas_common_font_shutdown();
+       evas_common_image_shutdown();
+
+       SDL_QuitSubSystem(SDL_INIT_VIDEO);
+     }
 }
 
 static void

@@ -643,7 +643,7 @@ ecore_evas_gl_sdl_new(const char* name, int w, int h, int fullscreen, int nofram
    if (!rmethod) return NULL;
 
    ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, 0, noframe, 0);
-   ee->driver = "gl_sdl";
+   if (ee) ee->driver = "gl_sdl";
    return ee;
 }
 #else
