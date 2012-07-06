@@ -453,7 +453,7 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
    return;
    MAGIC_CHECK_END();
 
-   if (!map)
+   if (!map || map->count < 4)
      {
         if (obj->cur.map)
           {
@@ -1058,9 +1058,6 @@ evas_object_map_update(Evas_Object *obj,
           }
         obj->spans = NULL;
      }
-
-   if (!((obj->cur.map) && (obj->cur.map->count > 3) && (obj->cur.usemap)))
-     return ;
 
    if (!obj->spans)
      obj->spans = calloc(1, sizeof (RGBA_Map) +

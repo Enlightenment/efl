@@ -868,3 +868,8 @@
 2012-07-05  Cedric Bail
 
 	* Strongly disable Evas pipe rendering.
+
+2012-07-05  Cedric Bail
+
+	* Don't let bad map sneek at render time and ban them as early as possible.
+
