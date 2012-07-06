@@ -4348,7 +4348,7 @@ st_collections_group_parts_part_description_inherit(void)
    parent = parent_desc;
    if (!parent)
      {
-        check_arg_count(2);
+        check_min_arg_count(1);
 
         /* inherit may not be used in the default description */
         if (!ep->other.desc_count)
@@ -4361,7 +4361,10 @@ st_collections_group_parts_part_description_inherit(void)
 
         /* find the description that we inherit from */
         parent_name = parse_str(0);
-        parent_val = parse_float_range(1, 0.0, 1.0);
+        if (get_arg_count() == 2)
+          parent_val = parse_float_range(1, 0.0, 1.0);
+        else
+          parent_val = 0.0;
 
         if (!strcmp (parent_name, "default") && parent_val == 0.0)
           parent = ep->default_desc;
@@ -4594,7 +4597,7 @@ st_collections_group_parts_part_description_state(void)
    Edje_Part_Description_Common *ed;
    char *s;
 
-   check_arg_count(2);
+   check_min_arg_count(1);
 
    ep = current_part;
 
@@ -4611,7 +4614,10 @@ st_collections_group_parts_part_description_state(void)
      }
 
    ed->state.name = s;
-   ed->state.value = parse_float_range(1, 0.0, 1.0);
+   if (get_arg_count() == 1)
+     ed->state.value = 0.0;
+   else
+     ed->state.value = parse_float_range(1, 0.0, 1.0);
 
    if (ed != ep->default_desc)
      {
@@ -7597,7 +7603,10 @@ st_collections_group_programs_program_action(void)
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
 	ep->state = parse_str(1);
-	ep->value = parse_float_range(2, 0.0, 1.0);
+	if (get_arg_count() == 1)
+	  ep->value = 0.0;
+	else
+	  ep->value = parse_float_range(2, 0.0, 1.0);
      }
    else if (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
      {

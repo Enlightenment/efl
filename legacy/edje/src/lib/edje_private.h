@@ -1893,6 +1893,7 @@ void _edje_cache_file_unref(Edje_File *edf);
 void _edje_embryo_globals_init(Edje *ed);
 
 #define CHKPARAM(n) if (params[0] != (sizeof(Embryo_Cell) * (n))) return -1;
+#define HASNPARAMS(n) (params[0] == (sizeof(Embryo_Cell) * (n)))
 #define GETSTR(str, par) { \
    Embryo_Cell *___cptr; \
    int ___l; \

@@ -15,6 +15,7 @@ Additions:
 Improvements:
     * Allocate once and reuse Evas_Map.
     * Make edje_cc faster by improving the parser, mapping file in memory and using threads.
+    * Made state index optional in EDC files and Embryo scripts.
 
 Fixes:
     * Add missing files in the tarballs.
