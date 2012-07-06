@@ -17,11 +17,6 @@
 
 //#define CACHEDUMP 1
 
-#ifdef EVAS_CSERVE2
-// FIXME: cache server and threaded preload clash badly atm - disable
-#undef BUILD_ASYNC_PRELOAD
-#endif
-
 #ifdef BUILD_ASYNC_PRELOAD
 typedef struct _Evas_Cache_Preload Evas_Cache_Preload;
 
