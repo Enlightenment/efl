@@ -394,12 +394,173 @@ static void _elm_scroll_content_pos_set(Evas_Object *,
                                         Evas_Coord,
                                         Evas_Coord);
 
-#define LEFT   0
-#define RIGHT  1
-#define UP     2
-#define DOWN   3
-#define EVTIME 1
+#define LEFT               0
+#define RIGHT              1
+#define UP                 2
+#define DOWN               3
+#define EVTIME             1
 //#define SCROLLDBG 1
+/* smoothness debug calls - for debugging how much smooth your app is */
+#define SMOOTHDBG          1
+
+#ifdef SMOOTHDBG
+#define SMOOTH_DEBUG_COUNT 100
+
+#define FPS                1 / 60
+typedef struct _smooth_debug_info smooth_debug_info;
+struct _smooth_debug_info
+{
+   double     t;
+   double     dt;
+   Evas_Coord pos;
+   Evas_Coord dpos;
+   double     vpos;
+};
+
+static smooth_debug_info smooth_x_history[SMOOTH_DEBUG_COUNT];
+static smooth_debug_info smooth_y_history[SMOOTH_DEBUG_COUNT];
+static int smooth_info_x_count = 0;
+static int smooth_info_y_count = 0;
+static double start_time = 0;
+static int _elm_scroll_smooth_debug = 0;
+
+void
+_elm_scroll_smooth_debug_init(void)
+{
+   start_time = ecore_time_get();
+   smooth_info_x_count = 0;
+   smooth_info_y_count = 0;
+
+   memset(&(smooth_x_history[0]), 0,
+          sizeof(smooth_x_history[0]) * SMOOTH_DEBUG_COUNT);
+   memset(&(smooth_y_history[0]), 0,
+          sizeof(smooth_y_history[0]) * SMOOTH_DEBUG_COUNT);
+
+   return;
+}
+
+void
+_elm_scroll_smooth_debug_shutdown(void)
+{
+   int i = 0;
+   int info_x_count = 0;
+   int info_y_count = 0;
+   double x_ave = 0, y_ave = 0;
+   double x_sum = 0, y_sum = 0;
+   double x_dev = 0, y_dev = 0;
+   double x_dev_sum = 0, y_dev_sum = 0;
+
+   if (smooth_info_x_count >= SMOOTH_DEBUG_COUNT)
+     info_x_count = SMOOTH_DEBUG_COUNT;
+   else
+     info_x_count = smooth_info_x_count;
+
+   if (smooth_info_y_count >= SMOOTH_DEBUG_COUNT)
+     info_y_count = SMOOTH_DEBUG_COUNT;
+   else
+     info_y_count = smooth_info_y_count;
+
+   DBG("\n\n<<< X-axis Smoothness >>>\n");
+   DBG("| Num  | t(time)  | dt       | x    | dx   |vx(dx/1fps) |\n");
+
+   for (i = info_x_count - 1; i >= 0; i--)
+     {
+        DBG("| %4d | %1.6f | %1.6f | %4d | %4d | %9.3f |\n", info_x_count - i,
+            smooth_x_history[i].t,
+            smooth_x_history[i].dt,
+            smooth_x_history[i].pos,
+            smooth_x_history[i].dpos,
+            smooth_x_history[i].vpos);
+        if (i == info_x_count - 1) continue;
+        x_sum += smooth_x_history[i].vpos;
+     }
+
+   x_ave = x_sum / (info_x_count - 1);
+   for (i = 0; i < info_x_count - 1; i++)
+     {
+        x_dev_sum += (smooth_x_history[i].vpos - x_ave) *
+          (smooth_x_history[i].vpos - x_ave);
+     }
+   x_dev = x_dev_sum / (info_x_count - 1);
+   DBG(" Standard deviation of X-axid velocity: %9.3f\n", sqrt(x_dev));
+
+   DBG("\n\n<<< Y-axis Smoothness >>>\n");
+   DBG("| Num  | t(time)  | dt       | y    |  dy  |vy(dy/1fps) |\n");
+   for (i = info_y_count - 1; i >= 0; i--)
+     {
+        DBG("| %4d | %1.6f | %1.6f | %4d | %4d | %9.3f |\n", info_y_count - i,
+            smooth_y_history[i].t,
+            smooth_y_history[i].dt,
+            smooth_y_history[i].pos,
+            smooth_y_history[i].dpos,
+            smooth_y_history[i].vpos);
+        if (i == info_y_count - 1) continue;
+        y_sum += smooth_y_history[i].vpos;
+     }
+   y_ave = y_sum / (info_y_count - 1);
+   for (i = 0; i < info_y_count - 1; i++)
+     {
+        y_dev_sum += (smooth_y_history[i].vpos - y_ave) *
+          (smooth_y_history[i].vpos - y_ave);
+     }
+   y_dev = y_dev_sum / (info_y_count - 1);
+
+   DBG(" Standard deviation of Y-axid velocity: %9.3f\n", sqrt(y_dev));
+}
+
+void
+_elm_scroll_smooth_debug_movetime_add(int x,
+                                      int y)
+{
+   double tim = 0;
+   static int bx = 0;
+   static int by = 0;
+
+   tim = ecore_time_get();
+
+   if (bx != x)
+     {
+        smooth_info_x_count++;
+        memmove(&(smooth_x_history[1]), &(smooth_x_history[0]),
+                sizeof(smooth_x_history[0]) * (SMOOTH_DEBUG_COUNT - 1));
+        smooth_x_history[0].t = tim - start_time;
+        smooth_x_history[0].dt = smooth_x_history[0].t - smooth_x_history[1].t;
+        smooth_x_history[0].pos = x;
+        smooth_x_history[0].dpos =
+          smooth_x_history[0].pos - smooth_x_history[1].pos;
+
+        if (smooth_x_history[0].dpos >= 0)
+          smooth_x_history[0].vpos = (double)(smooth_x_history[0].dpos) /
+            smooth_x_history[0].dt * FPS;
+        else
+          smooth_x_history[0].vpos = -((double)(smooth_x_history[0].dpos) /
+                                       smooth_x_history[0].dt * FPS);
+     }
+
+   if (by != y)
+     {
+        smooth_info_y_count++;
+        memmove(&(smooth_y_history[1]), &(smooth_y_history[0]),
+                sizeof(smooth_y_history[0]) * (SMOOTH_DEBUG_COUNT - 1));
+        smooth_y_history[0].t = tim - start_time;
+        smooth_y_history[0].dt = smooth_y_history[0].t - smooth_y_history[1].t;
+        smooth_y_history[0].pos = y;
+        smooth_y_history[0].dpos = smooth_y_history[0].pos -
+          smooth_y_history[1].pos;
+
+        if (smooth_y_history[0].dpos >= 0)
+          smooth_y_history[0].vpos = (double)(smooth_y_history[0].dpos) /
+            smooth_y_history[0].dt * FPS;
+        else
+          smooth_y_history[0].vpos = -((double)(smooth_y_history[0].dpos) /
+                                       smooth_y_history[0].dt * FPS);
+     }
+
+   bx = x;
+   by = y;
+}
+
+#endif
 
 static int
 _elm_scroll_scroll_bar_h_visibility_adjust(
@@ -1861,6 +2022,10 @@ _elm_scroll_mouse_up_event_cb(void *data,
 
    ELM_PAN_DATA_GET(sid->pan_obj, psd);
 
+#ifdef SMOOTHDBG
+   if (_elm_scroll_smooth_debug) _elm_scroll_smooth_debug_shutdown();
+#endif
+
    ev = event_info;
    sid->down.hold_parent = EINA_FALSE;
    sid->down.dx = 0;
@@ -2105,6 +2270,11 @@ _elm_scroll_mouse_down_event_cb(void *data,
 
    sid = data;
    ev = event_info;
+
+#ifdef SMOOTHDBG
+   if (getenv("ELS_SCROLLER_SMOOTH_DEBUG")) _elm_scroll_smooth_debug = 1;
+   if (_elm_scroll_smooth_debug) _elm_scroll_smooth_debug_init();
+#endif
 
    if (_elm_config->thumbscroll_enable)
      {
@@ -2357,87 +2527,75 @@ _elm_scroll_hold_animator(void *data)
 
    fx = sid->down.hold_x;
    fy = sid->down.hold_y;
-   if (_elm_config->scroll_smooth_amount > 0.0)
+   if ((!sid->hold) && (!sid->freeze) &&
+       _elm_config->scroll_smooth_amount > 0.0)
      {
-        int i, count = 0;
-        Evas_Coord basex = 0, basey = 0, x, y;
-        double dt, t, tdiff, tnow, twin;
+        int src_index = 0, dst_index = 0;
+        Evas_Coord x = 0, y = 0;
+        int xsum = 0, ysum = 0;
+        int queue_size = 10; /* for event queue size */
+        int i, count = 0; /* count for the real event number we have to
+                           * deal with */
+
         struct
         {
-           Evas_Coord x, y, dx, dy;
-           double     t, dt;
-        } pos[60];
+           Evas_Coord x, y;
+           double     t;
+        } pos[queue_size];
 
+        double tdiff, tnow;
+        double time_interval = _elm_config->scroll_smooth_time_interval;
+        // FIXME: assume server and client have the same "timezone"
+        // (0 timepoint) for now. this needs to be figured out in advance
+        // though.
         tdiff = sid->down.hist.est_timestamp_diff;
         tnow = ecore_time_get() - tdiff;
-        t = tnow;
-        twin = _elm_config->scroll_smooth_time_window;
-        for (i = 0; i < 60; i++)
+
+        for (i = 0; i < queue_size; i++)
           {
-             // oldest point is sid->down.history[i]
-             // newset is sid->down.history[0]
-             dt = t - sid->down.history[i].timestamp;
-             if (dt > twin)
-               {
-                  i--;
-                  break;
-               }
              x = sid->down.history[i].x;
              y = sid->down.history[i].y;
+
+             //if there is no history value, we don't deal with it if
+             //there is better wat to know existance of history value
+             //, I will modify this code to it
+             if ((x == 0) && (y == 0))
+               {
+                  break;
+               }
              _elm_scroll_down_coord_eval(sid, &x, &y);
+
+             pos[i].x = x;
+             pos[i].y = y;
+             pos[i].t = tnow - sid->down.history[i].timestamp;
+          }
+        count = --i;
+
+        // we only deal with smooth scroll there is enough history
+        for (i = 0; i < queue_size; i++)
+          {
+             if (src_index > count) break;
              if (i == 0)
                {
-                  basex = x;
-                  basey = y;
+                  xsum = pos[i].x;
+                  ysum = pos[i].y;
+                  dst_index++;
+                  continue;
                }
-             pos[i].x = x - basex;
-             pos[i].y = y - basey;
-             pos[i].t =
-               sid->down.history[i].timestamp - sid->down.history[0].timestamp;
-             count++;
-          }
-        count = i;
-        if (count >= 2)
-          {
-             double dtsum = 0.0, tadd, maxdt;
-             double dxsum = 0.0, dysum = 0.0, xsum = 0.0, ysum = 0.0;
-
-             for (i = 0; i < (count - 1); i++)
+             while ((pos[src_index].t < time_interval * i) &&
+                    (src_index <= count))
                {
-                  pos[i].dx = pos[i].x - pos[i + 1].x;
-                  pos[i].dy = pos[i].y - pos[i + 1].y;
-                  pos[i].dt = pos[i].t - pos[i + 1].t;
-                  dxsum += pos[i].dx;
-                  dysum += pos[i].dy;
-                  dtsum += pos[i].dt;
-                  xsum += pos[i].x;
-                  ysum += pos[i].y;
+                  src_index++;
                }
-             maxdt = pos[i].t;
-             dxsum /= (double)i;
-             dysum /= (double)i;
-             dtsum /= (double)i;
-             xsum /= (double)i;
-             ysum /= (double)i;
-             tadd = tnow - sid->down.history[0].timestamp +
-               _elm_config->scroll_smooth_future_time;
-             tadd = tadd - (maxdt / 2);
-#define WEIGHT(n, o, v) n = (((double)o * (1.0 - v)) + ((double)n * v))
-             WEIGHT(tadd, sid->down.hist.tadd,
-                    _elm_config->scroll_smooth_history_weight);
-             WEIGHT(dxsum, sid->down.hist.dxsum,
-                    _elm_config->scroll_smooth_history_weight);
-             WEIGHT(dysum, sid->down.hist.dysum,
-                    _elm_config->scroll_smooth_history_weight);
-             fx = basex + xsum + ((dxsum * tadd) / dtsum);
-             fy = basey + ysum + ((dysum * tadd) / dtsum);
-             sid->down.hist.tadd = tadd;
-             sid->down.hist.dxsum = dxsum;
-             sid->down.hist.dysum = dysum;
-             WEIGHT(fx, sid->down.hold_x, _elm_config->scroll_smooth_amount);
-             WEIGHT(fy, sid->down.hold_y, _elm_config->scroll_smooth_amount);
-#undef WEIGHT
+             if (src_index <= count)
+               {
+                  xsum += pos[src_index].x;
+                  ysum += pos[src_index].y;
+                  dst_index++;
+               }
           }
+        fx = xsum / dst_index;
+        fy = ysum / dst_index;
      }
 
    _elm_scroll_content_pos_get(sid->obj, &ox, &oy);
@@ -2454,7 +2612,13 @@ _elm_scroll_hold_animator(void *data)
           oy = fy;
      }
 
+#ifdef SMOOTHDBG
+   if (_elm_scroll_smooth_debug)
+     _elm_scroll_smooth_debug_movetime_add(ox, oy);
+#endif
+
    _elm_scroll_content_pos_set(sid->obj, ox, oy);
+
    return ECORE_CALLBACK_RENEW;
 }
 
