@@ -1046,6 +1046,10 @@ evas_object_map_update(Evas_Object *obj,
             obj->spans->uv.w != uvw || obj->spans->uv.h != uvh)
           obj->changed_map = EINA_TRUE;
      }
+   else
+     {
+        obj->changed_map = EINA_TRUE;
+     }
 
    if (!obj->changed_map) return ;
 
