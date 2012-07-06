@@ -495,6 +495,7 @@ typedef struct _Elm_Widget_Smart_Data
                                                           * TRUE by
                                                           * default */
    Eina_Bool                     still_in : 1;
+   Eina_Bool                     can_access : 1;
 } Elm_Widget_Smart_Data;
 
 /**

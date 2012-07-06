@@ -657,7 +657,8 @@ _elm_layout_smart_text_set(Evas_Object *obj,
 
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
-   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON && !(sub_d->obj))
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON &&
+       ELM_WIDGET_DATA(sd)->can_access && !(sub_d->obj))
      sub_d->obj = _elm_access_edje_object_part_object_register
                          (obj, elm_layout_edje_get(obj), part);
 
@@ -1776,6 +1777,25 @@ static void
 _elm_layout_widget_smart_set_user(Elm_Layout_Smart_Class *sc)
 {
    sc->text_aliases = _text_aliases;
+}
+
+EAPI Eina_Bool
+elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access)
+{
+   ELM_LAYOUT_CHECK(obj) EINA_FALSE;
+   ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   ELM_WIDGET_DATA(sd)->can_access = !!can_access;
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+elm_layout_edje_object_can_access_get(Evas_Object *obj)
+{
+   ELM_LAYOUT_CHECK(obj) EINA_FALSE;
+   ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   return ELM_WIDGET_DATA(sd)->can_access;
 }
 
 /* And now the basic layout widget itself */

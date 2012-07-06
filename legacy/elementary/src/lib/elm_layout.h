@@ -636,6 +636,41 @@ EAPI const char                  *elm_layout_part_cursor_style_get(const Evas_Ob
  */
 EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only);
 
+/*
+* Set accessibility to all texblock(text) parts in the layout object
+*
+* @param obj The layout object.
+* @param can_access makes all textblock(text) parts in the layout @p obj possible
+* to have accessibility. @c EINA_TRUE means textblock(text) parts can be accessible
+*
+* @return @c EINA_TRUE on success or @c EINA_FALSE on failure. If @p obj is not
+* a proper layout object, @c EINA_FALSE is returned.
+*
+* @since 1.1
+*
+* @ingroup Layout
+*/
+EAPI Eina_Bool
+elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access);
+
+/*
+* Get accessibility state of texblock(text) parts in the layout object
+*
+* @param obj The layout object.
+*
+* @return @c EINA_TRUE, if all textblock(text) parts in the layout can be accessible
+* @c EINA_FALSET if those cannot be accessible. If @p obj is not a proper layout
+* object, @c EINA_FALSE is returned.
+*
+* @see elm_layout_edje_object_access_set()
+*
+* @since 1.1
+*
+* @ingroup Layout
+*/
+EAPI Eina_Bool
+elm_layout_edje_object_can_access_get(Evas_Object *obj);
+
 /**
  * Gets a specific cursor engine_only for an edje part.
  *

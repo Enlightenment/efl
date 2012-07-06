@@ -278,4 +278,10 @@
           * No mouse cursor displayed in fb when needed, so add a
             softcursor mode defaulting to auto.
         * Add elm_win_screen_dpi_get()
+        
+2012-07-6  Shinwoo Kim (kimcinoo)
+
+	* Add layout access enable/disable api:
+          * elm_layout_edje_object_can_access_set/get()
+
 
