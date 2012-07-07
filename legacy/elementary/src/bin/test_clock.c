@@ -109,12 +109,12 @@ test_clock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bxx);
 
-   bx = elm_box_add(win);
-   elm_win_resize_object_add(win, bx);
+   bx = elm_box_add(bxx);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    api->box = bx;
    evas_object_show(bx);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bxx);
    elm_object_text_set(bt, "Next API function");
    evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
    elm_box_pack_end(bxx, bt);
@@ -123,36 +123,36 @@ test_clock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    elm_box_pack_end(bxx, bx);
 
-   ck = elm_clock_add(win);
+   ck = elm_clock_add(bx);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
-   ck = elm_clock_add(win);
+   ck = elm_clock_add(bx);
    elm_clock_show_am_pm_set(ck, EINA_TRUE);
    elm_box_pack_end(bx, ck);
    elm_clock_time_set(ck, 17, 25, 0);
    evas_object_show(ck);
 
-   ck = elm_clock_add(win);
+   ck = elm_clock_add(bx);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
-   ck = elm_clock_add(win);
+   ck = elm_clock_add(bx);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
    elm_clock_show_am_pm_set(ck, EINA_TRUE);
    elm_box_pack_end(bx, ck);
    elm_clock_time_set(ck, 11, 59, 57);
    evas_object_show(ck);
 
-   ck = elm_clock_add(win);
+   ck = elm_clock_add(bx);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
    elm_clock_show_am_pm_set(ck, EINA_FALSE);
    elm_clock_time_set(ck, 23, 59, 57);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
-   ck = elm_clock_add(win);
+   ck = elm_clock_add(bx);
    elm_clock_edit_set(ck, EINA_TRUE);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
    elm_clock_show_am_pm_set(ck, EINA_TRUE);
@@ -160,7 +160,7 @@ test_clock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
-   ck = elm_clock_add(win);
+   ck = elm_clock_add(bx);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
    elm_clock_edit_set(ck, EINA_TRUE);
    digedit = ELM_CLOCK_EDIT_HOUR_UNIT | ELM_CLOCK_EDIT_MIN_UNIT | ELM_CLOCK_EDIT_SEC_UNIT;
@@ -217,13 +217,12 @@ test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bxx);
 
-   bx = elm_box_add(win);
+   bx = elm_box_add(bxx);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
    api->box = bx;
    evas_object_show(bx);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(bxx);
    elm_object_text_set(bt, "Next API function");
    evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
    elm_box_pack_end(bxx, bt);
@@ -232,7 +231,7 @@ test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    elm_box_pack_end(bxx, bx);
 
-   ck = elm_clock_add(win);
+   ck = elm_clock_add(bx);
    elm_clock_time_set(ck, 0, 15, 3);
    elm_clock_edit_mode_set(ck, ELM_CLOCK_EDIT_DEFAULT);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
@@ -240,19 +239,19 @@ test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
-   hbx = elm_box_add(win);
+   hbx = elm_box_add(bx);
    evas_object_size_hint_weight_set(hbx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_horizontal_set(hbx, EINA_TRUE);
    elm_box_pack_end(bx, hbx);
    evas_object_show(hbx);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(hbx);
    elm_object_text_set(bt, "Edit");
    evas_object_smart_callback_add(bt, "clicked", _edit_bt_clicked, ck);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(hbx);
    elm_object_text_set(bt, "24h");
    evas_object_smart_callback_add(bt, "clicked", _hmode_bt_clicked, ck);
    elm_box_pack_end(hbx, bt);
