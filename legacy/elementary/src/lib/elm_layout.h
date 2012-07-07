@@ -650,8 +650,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_set(Evas_Ob
 *
 * @ingroup Layout
 */
-EAPI Eina_Bool
-elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access);
+EAPI Eina_Bool                    elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access);
 
 /*
 * Get accessibility state of texblock(text) parts in the layout object
@@ -668,8 +667,7 @@ elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access);
 *
 * @ingroup Layout
 */
-EAPI Eina_Bool
-elm_layout_edje_object_can_access_get(Evas_Object *obj);
+EAPI Eina_Bool                    elm_layout_edje_object_can_access_get(Evas_Object *obj);
 
 /**
  * Gets a specific cursor engine_only for an edje part.
