@@ -610,7 +610,7 @@ static void
 data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Image_Write *iw = data;
-   char buf[PATH_MAX];
+   char buf[PATH_MAX], buf2[PATH_MAX];
    unsigned int *start, *end;
    Eina_Bool opaque = EINA_TRUE;
    int bytes = 0;
@@ -683,21 +683,21 @@ data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
                                        0, qual, 1);
         if (bytes <= 0)
           {
-             snprintf(buf, sizeof(buf),
+             snprintf(buf2, sizeof(buf2),
                       "Unable to write image part "
                       "\"%s\" as \"%s\" part entry to "
                       "%s\n", iw->img->entry, buf, file_out);
-             iw->errstr = strdup(buf);
+             iw->errstr = strdup(buf2);
              return;
           }
      }
    else
      {
-        snprintf(buf, sizeof(buf),
+        snprintf(buf2, sizeof(buf2),
                  "Unable to load image part "
                  "\"%s\" as \"%s\" part entry to "
                  "%s\n", iw->img->entry, buf, file_out);
-        iw->errstr = strdup(buf);
+        iw->errstr = strdup(buf2);
         return;
      }
 
@@ -729,6 +729,7 @@ data_thread_image_end(void *data, Ecore_Thread *thread __UNUSED__)
    if (iw->path) free(iw->path);
    evas_object_del(iw->im);
    free(iw);
+   printf("@@@ IMAGE DONE: %i\n", pending_threads);
 }
 
 static void
@@ -785,10 +786,11 @@ data_write_images(Eet_File *ef, int *image_num)
              iw->ef = ef;
              iw->img = img;
              iw->im = im = evas_object_image_add(evas);
-             evas_object_event_callback_add(im,
-                                            EVAS_CALLBACK_IMAGE_PRELOADED,
-                                            data_image_preload_done,
-                                            iw);
+             if (threads)
+               evas_object_event_callback_add(im,
+                                              EVAS_CALLBACK_IMAGE_PRELOADED,
+                                              data_image_preload_done,
+                                              iw);
              EINA_LIST_FOREACH(img_dirs, ll, s)
                {
                   char buf[PATH_MAX];
@@ -801,8 +803,11 @@ data_write_images(Eet_File *ef, int *image_num)
                        *image_num += 1;
                        iw->path = strdup(buf);
                        pending_threads++;
-                       evas_object_image_preload(im, 0);
+                       if (threads)
+                         evas_object_image_preload(im, 0);
                        using_file(buf);
+                       if (!threads)
+                         data_image_preload_done(iw, evas, im, NULL);
                        break;
                     }
                }
@@ -815,8 +820,11 @@ data_write_images(Eet_File *ef, int *image_num)
                        *image_num += 1;
                        iw->path = strdup(img->entry);
                        pending_threads++;
-                       evas_object_image_preload(im, 0);
+                       if (threads)
+                         evas_object_image_preload(im, 0);
                        using_file(img->entry);
+                       if (!threads)
+                         data_image_preload_done(iw, evas, im, NULL);
                     }
                   else
                     error_and_abort_image_load_error
@@ -1241,6 +1249,7 @@ data_scripts_exe_del_cb(void *data __UNUSED__, int evtype __UNUSED__, void *evin
         data_thread_script_end(sc, NULL);
      }
    pending_threads--;
+   printf("@@@ SCRIPT DONE: %i\n", pending_threads);
    if (pending_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1607,6 +1616,7 @@ data_write(void)
         printf("sounds: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
      }
    pending_threads--;
+   printf("@@@ PENDING: %i\n", pending_threads);
    if (pending_threads > 0) ecore_main_loop_begin();
    if (verbose)
      {
