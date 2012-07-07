@@ -356,11 +356,22 @@ group { name: "elm/slider/horizontal/default";
             text.min: 1 1;
          }
       }
-      part { name: "elm.dragable.slider";
+      part { name: "button";
          type: GROUP;
          source: "elm/slider/horizontal/indicator/default";
-         mouse_events: 1;
-         repeat_events: 1;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.dragable.slider";
+         type: RECT;
          scale: 1;
          dragable {
             x: 1 1 0;
@@ -368,8 +379,8 @@ group { name: "elm/slider/horizontal/default";
             confine: "bg";
          }
          description { state: "default" 0.0;
-            min: 0 24;
-            max: 0 24;
+            min: 0 0;
+            max: 0 0;
             fixed: 1 1;
             rel1 {
                relative: 0.5 0.0;
@@ -379,7 +390,30 @@ group { name: "elm/slider/horizontal/default";
                relative: 0.5 1.0;
                to_x: "bg";
             }
-            color: 255 0 0 100;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "slideevent";
+         type: RECT;
+         mouse_events: 1;
+         scale: 1;
+         dragable.events: "elm.dragable.slider";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 24 24;
+            max: 24 24;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.track.slider";
+         type: SWALLOW;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            max: 0 0;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
          }
       }
       part { name: "disabler";
@@ -395,6 +429,38 @@ group { name: "elm/slider/horizontal/default";
       }
    }
    programs {
+      program { name: "indicator_show";
+         signal: "elm,state,indicator,show";
+         source: "elm";
+         action:  SIGNAL_EMIT "popup,show" "elm";
+         after: "popup_show2";
+      }
+      program { name: "indicator_hide";
+         signal: "elm,state,indicator,hide";
+         source: "elm";
+         action:  SIGNAL_EMIT "popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program { name: "popup_show";
+         signal: "mouse,down,1";
+         source: "slideevent";
+         action:  SIGNAL_EMIT "popup,show" "elm";
+         after: "popup_show2";
+      }
+      program { name: "popup_show2";
+         action:  STATE_SET "hidden" 0.0;
+         target: "button";
+      }
+      program { name: "popup_hide";
+         signal: "mouse,up,1";
+         source: "slideevent";
+         action:  SIGNAL_EMIT "popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program { name: "popup_hide2";
+         action:  STATE_SET "default" 0.0;
+         target: "button";
+      }
       program { name: "text_show";
          signal: "elm,state,text,visible";
          source: "elm";
@@ -854,11 +920,22 @@ group { name: "elm/slider/vertical/default";
             color3: 0 0 0 0;
          }
       }
-      part { name: "elm.dragable.slider";
+      part { name: "button";
          type: GROUP;
-         source: "elm/slider/vertical/indicator/default";
-         mouse_events: 1;
-         repeat_events: 1;
+         source: "elm/slider/horizontal/indicator/default";
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "elm.dragable.slider";
+         type: RECT;
          scale: 1;
          dragable {
             x: 0 0 0;
@@ -866,18 +943,41 @@ group { name: "elm/slider/vertical/default";
             confine: "bg";
          }
          description { state: "default" 0.0;
-            min: 24 0;
-            max: 24 0;
+            min: 0 0;
+            max: 0 0;
             fixed: 1 1;
             rel1 {
-               relative: 0.5  0.0;
-               to_y: "bg";
+               relative: 0.0 0.5;
+               to_x: "bg";
             }
             rel2 {
-               relative: 0.5  1.0;
-               to_y: "bg";
+               relative: 1.0 0.5;
+               to_x: "bg";
             }
             color: 0 0 0 0;
+         }
+      }
+      part { name: "slideevent";
+         type: RECT;
+         mouse_events: 1;
+         scale: 1;
+         dragable.events: "elm.dragable.slider";
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: 24 24;
+            max: 24 24;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.track.slider";
+         type: SWALLOW;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            max: 0 0;
+            rel1.to: "elm.dragable.slider";
+            rel2.to: "elm.dragable.slider";
          }
       }
       part { name: "disabler";
@@ -894,6 +994,38 @@ group { name: "elm/slider/vertical/default";
    }
 
    programs {
+      program { name: "indicator_show";
+         signal: "elm,state,indicator,show";
+         source: "elm";
+         action:  SIGNAL_EMIT "popup,show" "elm";
+         after: "popup_show2";
+      }
+      program { name: "indicator_hide";
+         signal: "elm,state,indicator,hide";
+         source: "elm";
+         action:  SIGNAL_EMIT "popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program { name: "popup_show";
+         signal: "mouse,down,1";
+         source: "slideevent";
+         action:  SIGNAL_EMIT "popup,show" "elm";
+         after: "popup_show2";
+      }
+      program { name: "popup_show2";
+         action:  STATE_SET "hidden" 0.0;
+         target: "button";
+      }
+      program { name: "popup_hide";
+         signal: "mouse,up,1";
+         source: "slideevent";
+         action:  SIGNAL_EMIT "popup,hide" "elm";
+         after: "popup_hide2";
+      }
+      program { name: "popup_hide2";
+         action:  STATE_SET "default" 0.0;
+         target: "button";
+      }
       program { name: "text_show";
          signal: "elm,state,text,visible";
          source: "elm";
@@ -1061,6 +1193,10 @@ group { name: "elm/slider/horizontal/indicator/default";
    alias: "elm/slider/horizontal/indicator/disabled";
    alias: "elm/slider/vertical/indicator/default";
    alias: "elm/slider/vertical/indicator/disabled";
+   
+   alias: "elm/slider/horizontal/popup/default";
+   alias: "elm/slider/vertical/popup/default";
+   
    images {
       image: "sl_bt_0.png" COMP;
       image: "sl_bt_1.png" COMP;
@@ -1323,6 +1459,25 @@ group { name: "elm/slider/horizontal/indicator/default";
       }
    }
    programs {
+      program { name: "popup_show";
+         signal: "popup,show";
+         source: "elm";
+         script {
+            thumb_down();
+         }
+      }
+      program { name: "popup_hide";
+         signal: "popup,hide";
+         source: "elm";
+         action:  SIGNAL_EMIT "popup,hide,done" "elm";
+      }
+      program { name: "popup_hide2";
+         signal: "popup,hide";
+         source: "elm";
+         script {
+            thumb_up();
+         }
+      }
       program { name: "set_val_show";
          signal: "elm,state,val,show";
          source: "elm";

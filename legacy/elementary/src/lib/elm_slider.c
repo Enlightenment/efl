@@ -10,7 +10,7 @@ struct _Elm_Slider_Smart_Data
 {
    Elm_Layout_Smart_Data base;
 
-   Evas_Object          *spacer;
+   Evas_Object          *spacer, *popup, *track;
    Ecore_Timer          *delay;
 
    const char           *units;
@@ -31,6 +31,7 @@ struct _Elm_Slider_Smart_Data
    Eina_Bool             indicator_show : 1;
    Eina_Bool             spacer_down : 1;
    Eina_Bool             frozen : 1;
+   Eina_Bool             popup_hiding : 1;
 };
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
@@ -111,7 +112,7 @@ _val_fetch(Evas_Object *obj)
    edje_object_part_drag_value_get
      (ELM_WIDGET_DATA(sd)->resize_obj, "elm.dragable.slider", &posx, &posy);
    if (sd->horizontal) pos = posx;
-   else pos = posy;
+    else pos = posy;
 
    rtl = elm_widget_mirrored_get(obj);
    if ((!rtl && sd->inverted) ||
@@ -189,7 +190,10 @@ _indicator_set(Evas_Object *obj)
         char *buf;
 
         buf = sd->indicator_format_func(sd->val);
+        elm_layout_text_set(obj, "elm.indicator", buf);
         elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", buf);
+        if (sd->popup)
+          edje_object_part_text_set(sd->popup, "elm.indicator", buf);
 
         if (sd->indicator_format_free) sd->indicator_format_free(buf);
      }
@@ -198,9 +202,18 @@ _indicator_set(Evas_Object *obj)
         char buf[1024];
 
         snprintf(buf, sizeof(buf), sd->indicator, sd->val);
+        elm_layout_text_set(obj, "elm.indicator", buf);
         elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", buf);
+        if (sd->popup)
+          edje_object_part_text_set(sd->popup, "elm.indicator", buf);
      }
-   else elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", NULL);
+   else
+     {
+        elm_layout_text_set(obj, "elm.indicator", NULL);
+        elm_layout_text_set(obj, "elm.dragable.slider:elm.indicator", NULL);
+        if (sd->popup)
+          edje_object_part_text_set(sd->popup, "elm.indicator", NULL);
+     }
 }
 
 static void
@@ -285,6 +298,68 @@ _drag_down(void *data,
 
    edje_object_part_drag_step
      (ELM_WIDGET_DATA(sd)->resize_obj, "elm.dragable.slider", step, step);
+}
+
+static void
+_popup_show(void *data,
+            Evas_Object *obj __UNUSED__,
+            const char *emission __UNUSED__,
+            const char *source __UNUSED__)
+{
+   ELM_SLIDER_DATA_GET(data, sd);
+   if (sd->popup)
+     {
+        evas_object_raise(sd->popup);
+        evas_object_show(sd->popup);
+        edje_object_signal_emit(sd->popup, "popup,show", "elm");
+     }
+}
+
+static void
+_popup_hide(void *data,
+            Evas_Object *obj __UNUSED__,
+            const char *emission __UNUSED__,
+            const char *source __UNUSED__)
+{
+   ELM_SLIDER_DATA_GET(data, sd);
+   if (sd->popup)
+     {
+        if (!sd->popup_hiding)
+          {
+             edje_object_signal_emit(sd->popup, "popup,hide", "elm");
+             sd->popup_hiding = EINA_TRUE;
+          }
+     }
+}
+
+static void
+_popup_hide_done(void *data,
+                 Evas_Object *obj __UNUSED__,
+                 const char *emission __UNUSED__,
+                 const char *source __UNUSED__)
+{
+   ELM_SLIDER_DATA_GET(data, sd);
+   if (sd->popup)
+     {
+        if (sd->popup_hiding)
+          {
+             evas_object_hide(sd->popup);
+             sd->popup_hiding = EINA_FALSE;
+          }
+     }
+}
+
+static void
+_popup_emit(void *data,
+            Evas_Object *obj __UNUSED__,
+            const char *emission,
+            const char *source)
+{
+   ELM_SLIDER_DATA_GET(data, sd);
+   if (sd->popup)
+     {
+        edje_object_signal_emit(sd->popup, emission, source);
+     }
 }
 
 static Eina_Bool
@@ -375,9 +450,21 @@ _elm_slider_smart_theme(Evas_Object *obj)
    ELM_SLIDER_DATA_GET(obj, sd);
 
    if (sd->horizontal)
-     eina_stringshare_replace(&ELM_LAYOUT_DATA(sd)->group, "horizontal");
+     {
+        eina_stringshare_replace(&ELM_LAYOUT_DATA(sd)->group, "horizontal");
+        if (sd->popup)
+          _elm_theme_set(NULL, sd->popup, 
+                         "slider", "horizontal/popup",
+                         elm_widget_style_get(obj));
+     }
    else
-     eina_stringshare_replace(&ELM_LAYOUT_DATA(sd)->group, "vertical");
+     {
+        eina_stringshare_replace(&ELM_LAYOUT_DATA(sd)->group, "vertical");
+        if (sd->popup)
+          _elm_theme_set(NULL, sd->popup, 
+                         "slider", "vertical/popup",
+                         elm_widget_style_get(obj));
+     }
 
    if (!ELM_WIDGET_CLASS(_elm_slider_parent_sc)->theme(obj)) return EINA_FALSE;
 
@@ -394,11 +481,17 @@ _elm_slider_smart_theme(Evas_Object *obj)
        elm_config_scale_get());
 
    if (sd->inverted)
-     elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+     {
+        elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,inverted,on", "elm");
+     }
 
    _visuals_refresh(obj);
 
    edje_object_message_signal_process(ELM_WIDGET_DATA(sd)->resize_obj);
+   if (sd->popup)
+     edje_object_message_signal_process(sd->popup);
 
    elm_layout_sizing_eval(obj);
 
@@ -545,6 +638,32 @@ _spacer_up_cb(void *data,
 }
 
 static void
+_track_move_cb(void *data,
+               Evas *e __UNUSED__,
+               Evas_Object *obj,
+               void *event_info __UNUSED__)
+{
+   Evas_Coord x, y;
+   
+   ELM_SLIDER_DATA_GET(data, sd);
+   evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+   evas_object_move(sd->popup, x, y);
+}
+
+static void
+_track_resize_cb(void *data,
+               Evas *e __UNUSED__,
+               Evas_Object *obj,
+               void *event_info __UNUSED__)
+{
+   Evas_Coord w, h;
+   
+   ELM_SLIDER_DATA_GET(data, sd);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_move(sd->popup, w, h);
+}
+
+static void
 _min_max_set(Evas_Object *obj)
 {
    char *buf_min = NULL;
@@ -599,6 +718,9 @@ _elm_slider_smart_add(Evas_Object *obj)
    elm_layout_signal_callback_add(obj, "drag,stop", "*", _drag_stop, obj);
    elm_layout_signal_callback_add(obj, "drag,step", "*", _drag_step, obj);
    elm_layout_signal_callback_add(obj, "drag,page", "*", _drag_stop, obj);
+   elm_layout_signal_callback_add(obj, "popup,show", "elm", _popup_show, obj);
+   elm_layout_signal_callback_add(obj, "popup,hide", "elm", _popup_hide, obj);
+   elm_layout_signal_callback_add(obj, "*", "popup,emit", _popup_emit, obj);
    edje_object_part_drag_value_set
      (ELM_WIDGET_DATA(priv)->resize_obj, "elm.dragable.slider", 0.0, 0.0);
 
@@ -606,6 +728,30 @@ _elm_slider_smart_add(Evas_Object *obj)
    evas_object_color_set(priv->spacer, 0, 0, 0, 0);
    evas_object_pass_events_set(priv->spacer, EINA_TRUE);
    elm_layout_content_set(obj, "elm.swallow.bar", priv->spacer);
+
+   /* if theme has an overlayed slider mode, then lets support it */
+   if (edje_object_part_exists(elm_layout_edje_get(obj),
+                               "elm.track.slider"))
+     {
+        // XXX popup needs to adapt to theme etc.
+        priv->popup = edje_object_add(evas_object_evas_get(obj));
+        _elm_theme_set(NULL, priv->popup, 
+                       "slider", "horizontal/popup",
+                       elm_widget_style_get(obj));
+        edje_object_signal_callback_add(priv->popup, "popup,hide,done", "elm",
+                                        _popup_hide_done, obj);
+        
+        /* create a rectangle to track position+size of the dragable */
+        priv->track = evas_object_rectangle_add(evas_object_evas_get(obj));
+        evas_object_event_callback_add
+          (priv->track, EVAS_CALLBACK_MOVE, _track_move_cb, obj);
+        evas_object_event_callback_add
+          (priv->track, EVAS_CALLBACK_RESIZE, _track_resize_cb, obj);
+        
+        evas_object_color_set(priv->track, 0, 0, 0, 0);
+        evas_object_pass_events_set(priv->track, EINA_TRUE);
+        elm_layout_content_set(obj, "elm.track.slider", priv->track);
+     }
 
    evas_object_event_callback_add
      (priv->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_down_cb, obj);
@@ -625,6 +771,8 @@ _elm_slider_smart_del(Evas_Object *obj)
    if (sd->indicator) eina_stringshare_del(sd->indicator);
    if (sd->units) eina_stringshare_del(sd->units);
    if (sd->delay) ecore_timer_del(sd->delay);
+   
+   if (sd->popup) evas_object_del(sd->popup);
 
    ELM_WIDGET_CLASS(_elm_slider_parent_sc)->base.del(obj);
 }
@@ -688,9 +836,17 @@ elm_slider_span_size_set(Evas_Object *obj,
        elm_config_scale_get());
 
    if (sd->indicator_show)
-     elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+     {
+        elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+     {
+        elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
+     }
 
    elm_layout_sizing_eval(obj);
 }
@@ -716,11 +872,15 @@ elm_slider_unit_format_set(Evas_Object *obj,
      {
         elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
         edje_object_message_signal_process(ELM_WIDGET_DATA(sd)->resize_obj);
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,units,visible", "elm");
      }
    else
      {
         elm_layout_signal_emit(obj, "elm,state,units,hidden", "elm");
         edje_object_message_signal_process(ELM_WIDGET_DATA(sd)->resize_obj);
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,units,hidden", "elm");
      }
 
    _min_max_set(obj);
@@ -852,9 +1012,17 @@ elm_slider_inverted_set(Evas_Object *obj,
    sd->inverted = inverted;
 
    if (sd->inverted)
-     elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+     {
+        elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,inverted,on", "elm");
+     }
    else
-     elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+     {
+        elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,inverted,off", "elm");
+     }
 
    edje_object_message_signal_process(ELM_WIDGET_DATA(sd)->resize_obj);
 
@@ -909,10 +1077,14 @@ elm_slider_indicator_show_set(Evas_Object *obj,
      {
         sd->indicator_show = EINA_TRUE;
         elm_layout_signal_emit(obj, "elm,state,val,show", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,show", "elm");
      }
    else {
         sd->indicator_show = EINA_FALSE;
         elm_layout_signal_emit(obj, "elm,state,val,hide", "elm");
+        if (sd->popup)
+          edje_object_signal_emit(sd->popup, "elm,state,val,hide", "elm");
      }
 
    elm_layout_sizing_eval(obj);

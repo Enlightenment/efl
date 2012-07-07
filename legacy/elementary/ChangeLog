@@ -256,20 +256,20 @@
 	* Add and use elm_widget_item_widget_get()
 	* Fix elm_segment_control to not abuse user's data from item.
 
-2012-07-3  Cedric Bail
+2012-07-03  Cedric Bail
 
 	* Initialize Emotion when necessary.
 
-2012-07-3  Minseok Kim
+2012-07-03  Minseok Kim
 
 	* Add elm_multibuttonentry_editable_set() and
         elm_multibuttonentry_editable_get()
 
-2012-07-3  Shinwoo Kim (kimcinoo)
+2012-07-03  Shinwoo Kim (kimcinoo)
 
 	* Add access hook to widget infra.
 
-2012-07-5  Carsten Haitzler (The Rasterman)
+2012-07-05  Carsten Haitzler (The Rasterman)
 
 	* Fix several FB related issues:
           * Fallback to FB from X11 so it "just works"
@@ -279,9 +279,13 @@
             softcursor mode defaulting to auto.
         * Add elm_win_screen_dpi_get()
         
-2012-07-6  Shinwoo Kim (kimcinoo)
+2012-07-06  Shinwoo Kim (kimcinoo)
 
 	* Add layout access enable/disable api:
           * elm_layout_edje_object_can_access_set/get()
 
+2012-07-07  Carsten Haitzler (The Rasterman)
 
+	* Add slider popup mode (based in idea originally proposed in
+          patches from Sumanth Krishna Mannam, but susbequently rejected
+          a few times as it didn't measure up to commitable standards).
