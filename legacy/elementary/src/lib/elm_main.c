@@ -886,6 +886,7 @@ elm_exit(void)
    ecore_main_loop_quit();
 }
 
+//FIXME: Use Elm_Policy Parameter when 2.0 is released.
 EAPI Eina_Bool
 elm_policy_set(unsigned int policy,
                int          value)
