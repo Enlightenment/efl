@@ -69,6 +69,7 @@ ecore_x_error_request_get(void)
  *
  * Return the error code from the last X error
  */
+//FIXME: Use Ecore_X_Error_Code type when 2.0 is released
 EAPI int
 ecore_x_error_code_get(void)
 {
