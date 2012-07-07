@@ -913,6 +913,7 @@ elm_policy_set(unsigned int policy,
    return EINA_TRUE;
 }
 
+//FIXME: Use Elm_Policy Parameter when 2.0 is released.
 EAPI int
 elm_policy_get(unsigned int policy)
 {
