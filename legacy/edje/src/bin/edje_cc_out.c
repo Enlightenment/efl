@@ -729,7 +729,6 @@ data_thread_image_end(void *data, Ecore_Thread *thread __UNUSED__)
    if (iw->path) free(iw->path);
    evas_object_del(iw->im);
    free(iw);
-   printf("@@@ IMAGE DONE: %i\n", pending_threads);
 }
 
 static void
@@ -1249,7 +1248,6 @@ data_scripts_exe_del_cb(void *data __UNUSED__, int evtype __UNUSED__, void *evin
         data_thread_script_end(sc, NULL);
      }
    pending_threads--;
-   printf("@@@ SCRIPT DONE: %i\n", pending_threads);
    if (pending_threads <= 0) ecore_main_loop_quit();
    return ECORE_CALLBACK_CANCEL;
 }
