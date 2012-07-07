@@ -1614,7 +1614,6 @@ data_write(void)
         printf("sounds: %3.5f\n", ecore_time_get() - t); t = ecore_time_get();
      }
    pending_threads--;
-   printf("@@@ PENDING: %i\n", pending_threads);
    if (pending_threads > 0) ecore_main_loop_begin();
    if (verbose)
      {
