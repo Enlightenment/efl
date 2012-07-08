@@ -1938,7 +1938,7 @@ ob_collections(void)
           source: "sound_file3.wav";
        }
        sample {
-          name: "sound_file4" AS-IS;
+          name: "sound_file4" AS_IS;
           source: "sound_file1.wav";
        }
     @description
