@@ -5348,7 +5348,8 @@ st_collections_group_parts_part_description_image_normal(void)
     @effect
         Name of an image to be used in an animation loop, an image block can
         have none, one or multiple tween declarations. Images are displayed in
-        the order they are listed.
+        the order they are listed, during the transition to the state they are
+        declared in; the "normal" image is the final state.
     @endproperty
 */
 static void
