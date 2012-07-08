@@ -2,7 +2,7 @@
 #include "elm_priv.h"
 
 #define SMART_NAME "elm_pan"
-#define API_ENTRY Smart_Data *sd; sd = evas_object_smart_data_get(obj); if ((!obj) || (!sd) || (evas_object_type_get(obj) && strcmp(evas_object_type_get(obj), SMART_NAME)))
+#define API_ENTRY Smart_Data *sd = NULL; if ((!obj) || (!(sd = evas_object_smart_data_get(obj))) || (evas_object_type_get(obj) && strcmp(evas_object_type_get(obj), SMART_NAME)))
 #define INTERNAL_ENTRY Smart_Data *sd; sd = evas_object_smart_data_get(obj); if (!sd) return;
 typedef struct _Smart_Data Smart_Data;
 
