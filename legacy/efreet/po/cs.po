@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efreet\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-06-29 23:57+0200\n"
+"POT-Creation-Date: 2012-07-09 19:13+0900\n"
 "PO-Revision-Date: 2012-06-24 17:10+0900\n"
 "Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
@@ -15,6 +15,6 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/efreet_base.c:123
+#: src/lib/efreet_base.c:127
 msgid "Desktop"
 msgstr "Plocha"
