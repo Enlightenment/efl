@@ -35,6 +35,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
+     EO_VERSION,
      "Inherit",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&INHERIT_BASE_ID, op_desc, INHERIT_SUB_ID_LAST),

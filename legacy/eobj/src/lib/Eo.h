@@ -331,6 +331,12 @@ struct _Eo_Op_Description
 typedef struct _Eo_Op_Description Eo_Op_Description;
 
 /**
+ * @def EO_VERSION
+ * The current version of EO.
+ */
+#define EO_VERSION 1
+
+/**
  * @struct _Eo_Class_Description
  * This struct holds the description of a class.
  * This description should be passed to eo_class_new.
@@ -338,6 +344,7 @@ typedef struct _Eo_Op_Description Eo_Op_Description;
  */
 struct _Eo_Class_Description
 {
+   unsigned int version; /**< The current version of eo, use #EO_VERSION */
    const char *name; /**< The name of the class. */
    Eo_Class_Type type; /**< The type of the class. */
    struct {

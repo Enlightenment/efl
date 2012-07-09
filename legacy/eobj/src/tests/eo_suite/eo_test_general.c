@@ -31,6 +31,7 @@ START_TEST(eo_data_fetch)
 
    /* Usually should be const, not const only for the test... */
    static Eo_Class_Description class_desc = {
+        EO_VERSION,
         "Simple2",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -72,6 +73,7 @@ START_TEST(eo_isa_tests)
      {
         /* Usually should be const, not const only for the test... */
         static Eo_Class_Description class_desc = {
+             EO_VERSION,
              "Iface",
              EO_CLASS_TYPE_INTERFACE,
              EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -88,6 +90,7 @@ START_TEST(eo_isa_tests)
      {
         /* Usually should be const, not const only for the test... */
         static Eo_Class_Description class_desc = {
+             EO_VERSION,
              "Mixin",
              EO_CLASS_TYPE_MIXIN,
              EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -104,6 +107,7 @@ START_TEST(eo_isa_tests)
      {
         /* Usually should be const, not const only for the test... */
         static Eo_Class_Description class_desc = {
+             EO_VERSION,
              "Simple2",
              EO_CLASS_TYPE_REGULAR,
              EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -171,6 +175,7 @@ START_TEST(eo_static_classes)
 
    /* Usually should be const, not const only for the test... */
    static Eo_Class_Description class_desc = {
+        EO_VERSION,
         "Simple2",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, op_desc, 1),
@@ -231,6 +236,7 @@ START_TEST(eo_man_free)
 
    /* Usually should be const, not const only for the test... */
    static Eo_Class_Description class_desc = {
+        EO_VERSION,
         "Simple2",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -450,6 +456,7 @@ START_TEST(eo_op_errors)
    eo_init();
 
    static const Eo_Class_Description class_desc = {
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),

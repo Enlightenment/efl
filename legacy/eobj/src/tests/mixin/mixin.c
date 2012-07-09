@@ -51,6 +51,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
+     EO_VERSION,
      "Mixin",
      EO_CLASS_TYPE_MIXIN,
      EO_CLASS_DESCRIPTION_OPS(&MIXIN_BASE_ID, op_desc, MIXIN_SUB_ID_LAST),

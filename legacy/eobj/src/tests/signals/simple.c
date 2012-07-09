@@ -96,6 +96,7 @@ static const Eo_Event_Description *event_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
+     EO_VERSION,
      "Simple",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&SIMPLE_BASE_ID, op_desc, SIMPLE_SUB_ID_LAST),

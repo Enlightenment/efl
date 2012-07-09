@@ -13,6 +13,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
+     EO_VERSION,
      "Interface",
      EO_CLASS_TYPE_INTERFACE,
      EO_CLASS_DESCRIPTION_OPS(&INTERFACE_BASE_ID, op_desc, INTERFACE_SUB_ID_LAST),

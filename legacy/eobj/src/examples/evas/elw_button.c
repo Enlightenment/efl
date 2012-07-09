@@ -99,6 +99,7 @@ static const Eo_Event_Description *event_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
+     EO_VERSION,
      "Elw Button",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(&ELW_BUTTON_BASE_ID, op_desc, ELW_BUTTON_SUB_ID_LAST),

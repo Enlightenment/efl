@@ -24,6 +24,7 @@ _class_constructor(Eo_Class *klass)
 }
 
 static const Eo_Class_Description class_desc = {
+     EO_VERSION,
      "Simple3",
      EO_CLASS_TYPE_REGULAR,
      EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),

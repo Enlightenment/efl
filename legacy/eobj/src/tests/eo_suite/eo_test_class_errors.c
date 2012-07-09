@@ -34,6 +34,7 @@ START_TEST(eo_incomplete_desc)
 
    /* XXX: In real life this should be const, this is just for testing. */
    static Eo_Class_Description class_desc = {
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, op_desc, 1),
@@ -100,6 +101,7 @@ START_TEST(eo_inherit_errors)
    const Eo_Class *klass_simple;
 
    static const Eo_Class_Description class_desc_simple = {
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -110,6 +112,7 @@ START_TEST(eo_inherit_errors)
    };
 
    static const Eo_Class_Description class_desc_mixin = {
+        EO_VERSION,
         "Mixin",
         EO_CLASS_TYPE_MIXIN,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -120,6 +123,7 @@ START_TEST(eo_inherit_errors)
    };
 
    static Eo_Class_Description class_desc = {
+        EO_VERSION,
         "General",
         EO_CLASS_TYPE_MIXIN,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -159,6 +163,7 @@ START_TEST(eo_inconsistent_mro)
    const Eo_Class *klass_mixin3;
 
    static const Eo_Class_Description class_desc_simple = {
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -169,6 +174,7 @@ START_TEST(eo_inconsistent_mro)
    };
 
    static const Eo_Class_Description class_desc_mixin = {
+        EO_VERSION,
         "Mixin",
         EO_CLASS_TYPE_MIXIN,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -179,6 +185,7 @@ START_TEST(eo_inconsistent_mro)
    };
 
    static const Eo_Class_Description class_desc_mixin2 = {
+        EO_VERSION,
         "Mixin2",
         EO_CLASS_TYPE_MIXIN,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -189,6 +196,7 @@ START_TEST(eo_inconsistent_mro)
    };
 
    static const Eo_Class_Description class_desc_mixin3 = {
+        EO_VERSION,
         "Mixin3",
         EO_CLASS_TYPE_MIXIN,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -229,6 +237,7 @@ START_TEST(eo_bad_interface)
    const Eo_Class *klass;
 
    static Eo_Class_Description class_desc = {
+        EO_VERSION,
         "Interface",
         EO_CLASS_TYPE_INTERFACE,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
@@ -307,6 +316,7 @@ START_TEST(eo_op_types)
    const Eo_Class *klass;
 
    static Eo_Class_Description class_desc = {
+        EO_VERSION,
         "Simple",
         EO_CLASS_TYPE_REGULAR,
         EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),

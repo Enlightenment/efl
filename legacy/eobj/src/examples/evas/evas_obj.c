@@ -131,6 +131,7 @@ static const Eo_Op_Description op_desc[] = {
 };
 
 static const Eo_Class_Description class_desc = {
+     EO_VERSION,
      "Evas Object",
      EO_CLASS_TYPE_REGULAR_NO_INSTANT,
      EO_CLASS_DESCRIPTION_OPS(&EXEVAS_OBJ_BASE_ID, op_desc, EXEVAS_OBJ_SUB_ID_LAST),
