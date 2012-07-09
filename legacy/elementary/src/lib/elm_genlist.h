@@ -92,9 +92,9 @@
  * @image html img/widget/genlist/preview-03.png
  * @image latex img/widget/genlist/preview-03.eps
  *
- * - one_icon - Only 1 icon (left) @since 1.1
- * - end_icon - Only 1 icon (at end/right) @since 1.1
- * - no_icon - No icon (at end/right) @since 1.1
+ * - one_icon - Only 1 icon (left) @since 1.7
+ * - end_icon - Only 1 icon (at end/right) @since 1.7
+ * - no_icon - No icon (at end/right) @since 1.7
  * 
  * @section Genlist_Items Structure of items
  *

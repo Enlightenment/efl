@@ -798,7 +798,7 @@ EAPI double                elm_win_aspect_get(const Evas_Object *obj);
  * @ingroup Win
  * @see elm_win_size_step_set
  * @see elm_win_size_base_get
- * @since 1.1
+ * @since 1.7
  */
 EAPI void                  elm_win_size_base_set(Evas_Object *obj, int w, int h);
 
@@ -812,7 +812,7 @@ EAPI void                  elm_win_size_base_set(Evas_Object *obj, int w, int h)
  * @ingroup Win
  * @see elm_win_size_base_set
  * @see elm_win_size_step_set
- * @since 1.1
+ * @since 1.7
  */
 EAPI void                  elm_win_size_base_get(Evas_Object *obj, int *w, int *h);
 
@@ -828,7 +828,7 @@ EAPI void                  elm_win_size_base_get(Evas_Object *obj, int *w, int *
  * @ingroup Win
  * @see elm_win_size_step_get
  * @see elm_win_size_base_set
- * @since 1.1
+ * @since 1.7
  */
 EAPI void                  elm_win_size_step_set(Evas_Object *obj, int w, int h);
 
@@ -842,7 +842,7 @@ EAPI void                  elm_win_size_step_set(Evas_Object *obj, int w, int h)
  * @ingroup Win
  * @see elm_win_size_base_set
  * @see elm_win_size_step_set
- * @since 1.1
+ * @since 1.7
  */
 EAPI void                  elm_win_size_step_get(Evas_Object *obj, int *w, int *h);
 
@@ -1155,7 +1155,7 @@ EAPI void                  elm_win_screen_size_get(const Evas_Object *obj, int *
  * @param ydpi Pointer to value to store return vertical dpi. May be NULL.
  *
  * @ingroup Win
- * @since 1.1
+ * @since 1.7
  */
 EAPI void                  elm_win_screen_dpi_get(const Evas_Object *obj, int *xdpi, int *ydpi);
 

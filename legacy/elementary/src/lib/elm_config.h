@@ -426,7 +426,7 @@ typedef enum _Elm_Softcursor_Mode
    ELM_SOFTCURSOR_MODE_AUTO, /**< Auto-detect if a software cursor should be used (default) */
    ELM_SOFTCURSOR_MODE_ON, /**< Always use a softcursor */
    ELM_SOFTCURSOR_MODE_OFF /**< Never use a softcursor */
-} Elm_Softcursor_Mode; /**< @since 1.1 */
+} Elm_Softcursor_Mode; /**< @since 1.7 */
 
 /**
  * Set the mode used for software provided mouse cursors inline in the window
@@ -440,7 +440,7 @@ typedef enum _Elm_Softcursor_Mode
  * @ingroup Softcursor
  * 
  * @see elm_config_softcursor_mode_get()
- * @since 1.1
+ * @since 1.7
  */
 EAPI void         elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode);
 
@@ -451,7 +451,7 @@ EAPI void         elm_config_softcursor_mode_set(Elm_Softcursor_Mode mode);
  * @ingroup Softcursor
  * 
  * @see elm_config_softcursor_mode_set()
- * @since 1.1
+ * @since 1.7
  */
 EAPI Elm_Softcursor_Mode elm_config_softcursor_mode_get(void);
 
@@ -728,7 +728,7 @@ EAPI void             elm_config_font_overlay_set(const char *text_class, const 
  *
  * @return the access mode bouncing state
  *
- * @since 1.1
+ * @since 1.7
  *
  * @ingroup Access 
  *
@@ -745,7 +745,7 @@ EAPI Eina_Bool        elm_config_access_get(void);
  * to be read. This information is read by access module when an object
  * receives EVAS_CALLBACK_MOUSE_IN event
  *
- * @since 1.1
+ * @since 1.7
  *
  * @ingroup Access 
  *

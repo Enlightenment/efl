@@ -95,7 +95,7 @@ EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
  *
  * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
  *
- * @since 1.1
+ * @since 1.7
  *
  * @ingroup Image
  */
@@ -442,7 +442,7 @@ EAPI Eina_Bool        elm_image_aspect_fixed_get(const Evas_Object *obj);
  * @see elm_image_animated_set()
  *
  * @ingroup Image
- * @since 1.1
+ * @since 1.7
  */
 EAPI Eina_Bool        elm_image_animated_available_get(const Evas_Object *obj);
 
@@ -465,7 +465,7 @@ EAPI Eina_Bool        elm_image_animated_available_get(const Evas_Object *obj);
  * @see elm_image_animated_play_set()
  *
  * @ingroup Image
- * @since 1.1
+ * @since 1.7
  */
 EAPI void             elm_image_animated_set(Evas_Object *obj, Eina_Bool animated);
 
@@ -480,7 +480,7 @@ EAPI void             elm_image_animated_set(Evas_Object *obj, Eina_Bool animate
  * @see elm_image_animated_set()
  *
  * @ingroup Image
- * @since 1.1
+ * @since 1.7
  */
 EAPI Eina_Bool        elm_image_animated_get(const Evas_Object *obj);
 
@@ -511,7 +511,7 @@ EAPI Eina_Bool        elm_image_animated_get(const Evas_Object *obj);
  * @see elm_image_animated_play_get()
  *
  * @ingroup Image
- * @since 1.1
+ * @since 1.7
  */
 EAPI void             elm_image_animated_play_set(Evas_Object *obj, Eina_Bool play);
 
@@ -525,7 +525,7 @@ EAPI void             elm_image_animated_play_set(Evas_Object *obj, Eina_Bool pl
  * @see elm_image_animated_play_get()
  *
  * @ingroup Image
- * @since 1.1
+ * @since 1.7
  */
 EAPI Eina_Bool        elm_image_animated_play_get(const Evas_Object *obj);
 

@@ -646,7 +646,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_set(Evas_Ob
 * @return @c EINA_TRUE on success or @c EINA_FALSE on failure. If @p obj is not
 * a proper layout object, @c EINA_FALSE is returned.
 *
-* @since 1.1
+* @since 1.7
 *
 * @ingroup Layout
 */
@@ -663,7 +663,7 @@ EAPI Eina_Bool                    elm_layout_edje_object_can_access_set(Evas_Obj
 *
 * @see elm_layout_edje_object_access_set()
 *
-* @since 1.1
+* @since 1.7
 *
 * @ingroup Layout
 */

@@ -42,7 +42,7 @@
  * - "name,loaded" - Name request ends.
  * - "name,loaded,fail" - Name request fails.
  * - "overlay,clicked" - A overlay is clicked.
- * - "loaded" - when a map is finally loaded (since 1.1).
+ * - "loaded" - when a map is finally loaded. @since 1.7
  *
  * Available style for map widget:
  * - @c "default"
@@ -189,7 +189,7 @@ typedef Evas_Object               *(*Elm_Map_Marker_Icon_Get_Func)(Evas_Object *
 typedef Evas_Object               *(*Elm_Map_Group_Icon_Get_Func)(Evas_Object *obj, void *data); /**< Icon fetching class function for markers group classes. */
 
 typedef void                       (*Elm_Map_Overlay_Get_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Get callback function for the overlay. */
-typedef void                       (*Elm_Map_Overlay_Del_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Det callback function for the overlay. @since 1.1 */
+typedef void                       (*Elm_Map_Overlay_Del_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Det callback function for the overlay. @since 1.7 */
 typedef void                       (*Elm_Map_Name_Cb)(void *data, Evas_Object *map, Elm_Map_Name *name);                /**< Async-callback function for the name request. */
 typedef void                       (*Elm_Map_Route_Cb)(void *data, Evas_Object *map, Elm_Map_Route *route);             /**< Async-callback function for the route request. */
 
@@ -595,7 +595,7 @@ EAPI Elm_Map_Overlay *     elm_map_overlay_add(Evas_Object *obj, double lon, dou
  * This list includes group overlays also.
  * So this can be changed dynamically while zooming and panning.
  *
- * @since 1.1
+ * @since 1.7
  *
  * @ingroup Map
  */
@@ -756,7 +756,7 @@ EAPI Eina_Bool             elm_map_overlay_paused_get(const Elm_Map_Overlay *ove
  * The visible of the overlay can not be set.
  * This value can be changed dynamically while zooming and panning
  *
- * @since 1.1
+ * @since 1.7
  *
  * @ingroup Map
  */
@@ -992,7 +992,7 @@ EAPI void                  elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, 
  *
  * You can delete this callback function by setting @c NULL.
  *
- * @since 1.1.0
+ * @since 1.7
  * 
  * @ingroup Map
  */

@@ -48,7 +48,7 @@ EAPI void      elm_object_scroll_hold_pop(Evas_Object *obj);
  *
  * @param obj The object
  * @return The scroll hold count
- * @since 1.1.0
+ * @since 1.7
  * @ingroup Scrollhints
  */
 EAPI int       elm_object_scroll_hold_get(const Evas_Object *obj);
@@ -84,7 +84,7 @@ EAPI void      elm_object_scroll_freeze_pop(Evas_Object *obj);
  *
  * @param obj The object
  * @return The scroll freeze count
- * @since 1.1.0
+ * @since 1.7
  * @ingroup Scrollhints
  */
 EAPI int       elm_object_scroll_freeze_get(const Evas_Object *obj);

@@ -36,7 +36,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * @li @c "changed" - when the value is changed
- * @since 1.1
+ * @since 1.7
  *
  * This widget has the following styles:
  * - @c "default"
@@ -244,7 +244,7 @@ EAPI const char                  *elm_progressbar_unit_format_get(const Evas_Obj
  *
  * @see elm_progressbar_unit_format_set() for more info on how this works.
  *
- * @since 1.1.0
+ * @since 1.7
  *
  * @ingroup Progressbar
  */

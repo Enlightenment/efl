@@ -81,8 +81,8 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Image:
  * - @c "thumb,done" - elm_icon_thumb_set() has completed with success
- *                     (@since 1.1)
- * - @c "thumb,error" - elm_icon_thumb_set() has failed (@since 1.1)
+ *                     (@since 1.7)
+ * - @c "thumb,error" - elm_icon_thumb_set() has failed (@since 1.7)
  *
  * Elementary icon objects support the following API calls:
  * @li elm_object_signal_emit()

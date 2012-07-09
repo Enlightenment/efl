@@ -321,7 +321,7 @@ EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Obj
  *
  * @ingroup Multibuttonentry
  *
- * @since 1.1
+ * @since 1.7
  */
 EAPI void elm_multibuttonentry_editable_set(Evas_Object *obj, Eina_Bool editable);
 
@@ -333,7 +333,7 @@ EAPI void elm_multibuttonentry_editable_set(Evas_Object *obj, Eina_Bool editable
  *
  * @ingroup Multibuttonentry
  *
- * @since 1.1
+ * @since 1.7
  */
 EAPI Eina_Bool elm_multibuttonentry_editable_get(const Evas_Object *obj);
 

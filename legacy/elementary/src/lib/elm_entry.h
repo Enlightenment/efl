@@ -478,7 +478,7 @@ EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
  * @param obj The entry object
  * @param style The style user to push
  *
- * @since 1.1
+ * @since 1.7
  */
 EAPI void      elm_entry_text_style_user_push(Evas_Object *obj, const char *style);
 
@@ -489,7 +489,7 @@ EAPI void      elm_entry_text_style_user_push(Evas_Object *obj, const char *styl
  *
  * @see elm_entry_text_style_user_push()
  *
- * @since 1.1
+ * @since 1.7
  */
 EAPI void     elm_entry_text_style_user_pop(Evas_Object *obj);
 
@@ -501,7 +501,7 @@ EAPI void     elm_entry_text_style_user_pop(Evas_Object *obj);
  *
  * @see elm_entry_text_style_user_push()
  *
- * @since 1.1
+ * @since 1.7
  */
 EAPI const char*      elm_entry_text_style_user_peek(const Evas_Object *obj);
 

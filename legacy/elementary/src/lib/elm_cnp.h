@@ -102,7 +102,7 @@ typedef Eina_Bool (*Elm_Drop_Cb)(void *data, Evas_Object *obj, Elm_Selection_Dat
  *
  * @param data Application specific data
  * @param selection The selection that is lost
- * @since 1.1
+ * @since 1.7
  */
 typedef void (*Elm_Selection_Loss_Cb)(void *data, Elm_Sel_Type selection);
 
@@ -194,7 +194,7 @@ EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
  *
  * @ingroup CopyPaste
  *
- * @since 1.1
+ * @since 1.7
  */
 EAPI void elm_cnp_selection_loss_callback_set(Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
 
