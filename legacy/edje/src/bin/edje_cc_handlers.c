@@ -1371,6 +1371,16 @@ st_images_set_name(void)
    edje_file->image_dir->sets[edje_file->image_dir->sets_count - 1].name = parse_str(0);
 }
 
+/**
+    @page edcref
+
+    @block
+        image
+    @description
+        The "image" block inside a "set" block define the characteristic of an image.
+	Every block will describe one image and the size rule to use it.
+    @endblock
+**/
 static void
 ob_images_set_image(void)
 {
@@ -1384,6 +1394,23 @@ ob_images_set_image(void)
    set->entries = eina_list_append(set->entries, entry);
 }
 
+/**
+    @page edcref
+
+    @property
+        image
+    @parameters
+        [image file] [compression method] (compression level)
+    @effect
+        Used to include each image file. The full path to the directory holding
+        the images can be defined later with edje_cc's "-id" option.
+        Compression methods:
+        @li RAW: Uncompressed.
+        @li COMP: Lossless compression.
+        @li LOSSY [0-100]: Lossy comression with quality from 0 to 100.
+        @li USER: Do not embed the file, refer to the external file instead.
+    @endproperty
+**/
 static void
 st_images_set_image_image(void)
 {
