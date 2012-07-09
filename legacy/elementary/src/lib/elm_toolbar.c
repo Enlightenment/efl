@@ -440,6 +440,7 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    _elm_widget_mirrored_reload(obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "toolbar", "base", elm_widget_style_get(obj));
+   elm_layout_theme_set(wd->more, "toolbar", "more", elm_widget_style_get(obj));
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_scale_set(wd->scr, scale);
