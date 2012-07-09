@@ -1,7 +1,7 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [2])
+m4_define([v_min], [6])
 m4_define([v_mic], [99])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v '\(export\|Unversioned directory\)' || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
@@ -58,7 +58,7 @@ AC_SUBST(VMAJ)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
-requirement_eeze="ecore >= 1.2.0 eina >= 1.2.0 libudev"
+requirement_eeze="ecore >= 1.6.99 eina >= 1.6.99 libudev"
 
 
 ### Checks for programs
@@ -111,9 +111,9 @@ if test "x$eeze_mount" = "xyes";then
   AC_ARG_WITH([eject], [AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@])], [with_eject=$withval], [with_eject="detect"])
   PKG_CHECK_MODULES([LIBMOUNT], [mount >= 2.18.0])
   mount_v=$(pkg-config --modversion mount)
-  PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.2.0])
-  PKG_CHECK_MODULES([EET], [eet >= 1.6.0])
-  PKG_CHECK_MODULES([ECORE_CON], [ecore-con >= 1.2.0])
+  PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.6.99])
+  PKG_CHECK_MODULES([EET], [eet >= 1.6.99])
+  PKG_CHECK_MODULES([ECORE_CON], [ecore-con >= 1.6.99])
 
   if test "x$with_mount" = "xdetect";then
     AC_PATH_PROG([with_mount], [mount], [])

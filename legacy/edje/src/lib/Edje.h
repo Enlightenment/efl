@@ -382,7 +382,7 @@ typedef enum _Edje_Part_Type
    EDJE_PART_TYPE_TABLE     = 9,
    EDJE_PART_TYPE_EXTERNAL  = 10,
    EDJE_PART_TYPE_PROXY     = 11,
-   EDJE_PART_TYPE_SPACER    = 12, /**< @since 1.3 */
+   EDJE_PART_TYPE_SPACER    = 12, /**< @since 1.7 */
    EDJE_PART_TYPE_LAST      = 13
 } Edje_Part_Type;
 
@@ -3627,7 +3627,7 @@ EAPI Eina_Bool    edje_object_part_box_remove_all         (Evas_Object *obj, con
  *
  * @param obj A valid Evas_Object handle
  * @return A list all accessibility part names on @p obj
- * @since 1.3.0
+ * @since 1.7.0
  */
 EAPI Eina_List * edje_object_access_part_list_get         (const Evas_Object *obj);
 

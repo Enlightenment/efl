@@ -1,7 +1,7 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [0])
+m4_define([v_min], [6])
 m4_define([v_mic], [99])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v '\(export\|Unversioned directory\)' || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
@@ -108,17 +108,17 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-requirement_emotion="ecore >= 1.2.0 evas >= 1.2.0 eet >= 1.6.0 eina >= 1.2.0"
+requirement_emotion="ecore >= 1.6.99 evas >= 1.6.99 eet >= 1.6.99 eina >= 1.6.99"
 PKG_CHECK_MODULES(EMOTION, [${requirement_emotion}])
 
 
 if test "x${have_emotion_test}" = "xyes" ; then
-   PKG_CHECK_MODULES(EMOTION_BIN, [eina >= 1.2.0 evas >= 1.2.0 ecore >= 1.2.0 ecore-evas >= 1.2.0 edje >= 1.2.0])
+   PKG_CHECK_MODULES(EMOTION_BIN, [eina >= 1.6.99 evas >= 1.6.99 ecore >= 1.6.99 ecore-evas >= 1.6.99 edje >= 1.6.99])
 fi
 
-PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 1.2.0 ecore-evas >= 1.2.0], [have_ecore_x="yes"], [have_ecore_x="no"])
+PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 1.6.99 ecore-evas >= 1.6.99], [have_ecore_x="yes"], [have_ecore_x="no"])
 
-PKG_CHECK_MODULES(ECORE_FB, [ecore-fb >= 1.2.0], [have_ecore_fb="yes"], [have_ecore_fb="no"])
+PKG_CHECK_MODULES(ECORE_FB, [ecore-fb >= 1.6.99], [have_ecore_fb="yes"], [have_ecore_fb="no"])
 
 if test "x${have_ecore_x}" = "xyes" ; then
    AC_DEFINE(EMOTION_HAVE_ECORE_X, 1, [Define to 1 if Ecore_X is enabled])
@@ -128,27 +128,27 @@ if test "x${have_ecore_fb}" = "xyes" ; then
    AC_DEFINE(EMOTION_HAVE_ECORE_FB, 1, [Define to 1 if Ecore_Fb is enabled])
 fi
 
-PKG_CHECK_EXISTS([evas-software-x11 >= 1.2.0], [AC_DEFINE(HAVE_EVAS_SOFWARE_X11, 1, [Evas Software Xlib Engine Support])])
+PKG_CHECK_EXISTS([evas-software-x11 >= 1.6.99], [AC_DEFINE(HAVE_EVAS_SOFWARE_X11, 1, [Evas Software Xlib Engine Support])])
 
-PKG_CHECK_EXISTS([evas-xrender-x11 >= 1.2.0], [AC_DEFINE(HAVE_EVAS_XRENDER_X11, 1, [Evas Software Xlib Engine Support])])
+PKG_CHECK_EXISTS([evas-xrender-x11 >= 1.6.99], [AC_DEFINE(HAVE_EVAS_XRENDER_X11, 1, [Evas Software Xlib Engine Support])])
 
-PKG_CHECK_EXISTS([evas-opengl-x11 >= 1.2.0], [AC_DEFINE(HAVE_EVAS_OPENGL_X11, 1, [Evas OpenGL Xlib Engine Support])])
+PKG_CHECK_EXISTS([evas-opengl-x11 >= 1.6.99], [AC_DEFINE(HAVE_EVAS_OPENGL_X11, 1, [Evas OpenGL Xlib Engine Support])])
 
-PKG_CHECK_EXISTS([evas-fb >= 1.2.0], [AC_DEFINE(HAVE_EVAS_FB, 1, [Evas Framebuffer Engine Support])])
+PKG_CHECK_EXISTS([evas-fb >= 1.6.99], [AC_DEFINE(HAVE_EVAS_FB, 1, [Evas Framebuffer Engine Support])])
 
 EFL_EDJE_EXTERNAL([have_edje_external="yes"], [have_edje_external="no"])
 
-PKG_CHECK_MODULES(EEZE, [eeze >= 1.0.99], [have_eeze="yes"], [have_eeze="no"])
+PKG_CHECK_MODULES(EEZE, [eeze >= 1.6.99], [have_eeze="yes"], [have_eeze="no"])
 
 if test "x${have_eeze}" = "xyes"; then
    AC_DEFINE(EMOTION_HAVE_EEZE, 1, [Define to 1 if Eeze is available])
-   requirement_emotion="${requirement_emotion} eeze >= 1.0.99"
+   requirement_emotion="${requirement_emotion} eeze >= 1.6.99"
 fi
 
-PKG_CHECK_MODULES([EIO], [eio >= 1.0.0], [have_eio="yes"], [have_eio="no"])
+PKG_CHECK_MODULES([EIO], [eio >= 1.6.99], [have_eio="yes"], [have_eio="no"])
 if test "x${have_eio}" = "xyes"; then
    AC_DEFINE(HAVE_EIO, 1, [Use EIO for asynchronous file access])
-   requirement_emotion="eio >= 1.0.0 ${requirement_emotion}"
+   requirement_emotion="eio >= 1.6.99 ${requirement_emotion}"
 fi
 
 AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
@@ -169,11 +169,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if ! test "x$want_ecore_x" = "xno" ; then
    PKG_CHECK_MODULES([ECORE_X],
-      [ecore-x >= 1.2.0],
+      [ecore-x >= 1.6.99],
       [
        AC_DEFINE(HAVE_ECORE_X, 1, [X11 support for Ecore])
        have_ecore_x="yes"
-       requirement_elm="ecore-x >= 1.2.0 ${requirement_elm}"
+       requirement_elm="ecore-x >= 1.6.99 ${requirement_elm}"
       ],
       [have_ecore_x="no"]
    )

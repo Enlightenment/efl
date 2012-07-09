@@ -1,7 +1,7 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [2])
+m4_define([v_min], [6])
 m4_define([v_mic], [99])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v '\(export\|Unversioned directory\)' || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
@@ -98,7 +98,7 @@ AC_SUBST(pkgconfig_requires_private)
 EFL_EMBRYO_BUILD=""
 case "$host_os" in
    mingw*)
-   PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
+   PKG_CHECK_MODULES([EVIL], [evil >= 1.6.99])
    AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
    requirement_embryo="evil ${requirement_embryo}"
    EFL_EMBRYO_BUILD="-DEFL_EMBRYO_BUILD"
@@ -107,7 +107,7 @@ esac
 AC_SUBST(EFL_EMBRYO_BUILD)
 
 # For embryo_cc_prefix.c
-PKG_CHECK_MODULES([EINA], [eina >= 1.2.0])
+PKG_CHECK_MODULES([EINA], [eina >= 1.6.99])
 
 ### Checks for portability layer
 

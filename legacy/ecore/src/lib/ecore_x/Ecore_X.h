@@ -356,7 +356,7 @@ typedef enum _Ecore_X_Netwm_Direction
  * Defines the error codes of Ecore_X which wraps the X Window Systems
  * protocol's errors.
  *
- * @since 1.3.0
+ * @since 1.7.0
  */
 typedef enum _Ecore_X_Error_Code
 {
@@ -1056,11 +1056,11 @@ EAPI extern int ECORE_X_EVENT_XDND_LEAVE;
 EAPI extern int ECORE_X_EVENT_XDND_DROP;
 EAPI extern int ECORE_X_EVENT_XDND_FINISHED;
 
-EAPI extern int ECORE_X_MODIFIER_SHIFT; /**< @since 1.3 */
-EAPI extern int ECORE_X_MODIFIER_CTRL;  /**< @since 1.3 */
-EAPI extern int ECORE_X_MODIFIER_ALT;   /**< @since 1.3 */
-EAPI extern int ECORE_X_MODIFIER_WIN;   /**< @since 1.3 */
-EAPI extern int ECORE_X_MODIFIER_ALTGR; /**< @since 1.3 */
+EAPI extern int ECORE_X_MODIFIER_SHIFT; /**< @since 1.7 */
+EAPI extern int ECORE_X_MODIFIER_CTRL;  /**< @since 1.7 */
+EAPI extern int ECORE_X_MODIFIER_ALT;   /**< @since 1.7 */
+EAPI extern int ECORE_X_MODIFIER_WIN;   /**< @since 1.7 */
+EAPI extern int ECORE_X_MODIFIER_ALTGR; /**< @since 1.7 */
 
 EAPI extern int ECORE_X_LOCK_SCROLL;
 EAPI extern int ECORE_X_LOCK_NUM;

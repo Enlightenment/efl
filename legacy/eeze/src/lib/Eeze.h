@@ -218,7 +218,7 @@ typedef enum
    /** - Bluetooth */
    EEZE_UDEV_TYPE_BLUETOOTH,
    /** - Joystick
-    * @since 1.3
+    * @since 1.7
     */
    EEZE_UDEV_TYPE_JOYSTICK
 } Eeze_Udev_Type;
@@ -466,7 +466,7 @@ EAPI Eina_Bool        eeze_udev_syspath_is_touchpad(const char *syspath);
  *
  * @param syspath The /sys/ path with or without the /sys/
  * @return If true, the device is a joystick
- * @since 1.3
+ * @since 1.7
  */
 EAPI Eina_Bool        eeze_udev_syspath_is_joystick(const char *syspath);
    /**

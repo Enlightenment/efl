@@ -419,7 +419,7 @@ typedef enum _Evas_GL_Stencil_Bits
 /**
  * Configuration Options.
  *
- * @since 1.1.0
+ * @since 1.1
  */
 typedef enum _Evas_GL_Options_Bits
 {
@@ -431,7 +431,7 @@ typedef enum _Evas_GL_Options_Bits
  * Configuration Option for Multisample Anti-aliased (MSAA) rendering surface.
  * Only works in supported device.
  *
- * @since 1.2.0
+ * @since 1.2
  */
 typedef enum _Evas_GL_Multisample_Bits
 {

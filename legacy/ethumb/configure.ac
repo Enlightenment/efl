@@ -1,7 +1,7 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [0])
+m4_define([v_min], [6])
 m4_define([v_mic], [99])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v '\(export\|Unversioned directory\)' || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
@@ -121,16 +121,16 @@ AC_SUBST(EFL_ETHUMB_BUILD)
 AC_SUBST(EFL_ETHUMB_CLIENT_BUILD)
 AC_SUBST(lt_enable_auto_import)
 
-PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
-PKG_CHECK_MODULES(EVAS, [evas >= 1.2.0])
-PKG_CHECK_MODULES(ECORE, [ecore >= 1.2.0])
-PKG_CHECK_MODULES(ECORE_EVAS, [ecore-evas >= 1.2.0])
-PKG_CHECK_MODULES(ECORE_FILE, [ecore-file >= 1.2.0 ])
-PKG_CHECK_MODULES(EDJE, [edje >= 1.2.0])
-PKG_CHECK_MODULES(EET, [eet >= 1.6.0])
+PKG_CHECK_MODULES(EINA, [eina >= 1.6.99])
+PKG_CHECK_MODULES(EVAS, [evas >= 1.6.99])
+PKG_CHECK_MODULES(ECORE, [ecore >= 1.6.99])
+PKG_CHECK_MODULES(ECORE_EVAS, [ecore-evas >= 1.6.99])
+PKG_CHECK_MODULES(ECORE_FILE, [ecore-file >= 1.6.99 ])
+PKG_CHECK_MODULES(EDJE, [edje >= 1.6.99])
+PKG_CHECK_MODULES(EET, [eet >= 1.6.99])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 
-requirement_ethumb="eina >= 1.2.0 evas >= 1.2.0 ecore >= 1.2.0 ecore-evas >= 1.2.0 ecore-file >= 1.2.0 edje >= 1.2.0"
+requirement_ethumb="eina >= 1.6.99 evas >= 1.6.99 ecore >= 1.6.99 ecore-evas >= 1.6.99 ecore-file >= 1.6.99 edje >= 1.6.99"
 requirement_ethumb_client=""
 
 AM_CONDITIONAL(HAVE_EMOTION, false)

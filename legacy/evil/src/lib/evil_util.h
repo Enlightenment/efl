@@ -125,7 +125,7 @@ EAPI const char *evil_homedir_get(void);
  * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
  * Windows XP, Windows CE.
  *
- * @since 1.1
+ * @since 1.7
  *
  * @ingroup Evil
  */
