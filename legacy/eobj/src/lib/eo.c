@@ -53,8 +53,8 @@ struct _Eo {
 };
 
 /* Start of Dich */
-/* Dich search, split to 0xff 0xff 0xffff */
 
+/* How we search and store the implementations in classes. */
 #define DICH_CHAIN_LAST_BITS 5
 #define DICH_CHAIN_LAST_SIZE (1 << DICH_CHAIN_LAST_BITS)
 #define DICH_CHAIN1(x) ((x) / DICH_CHAIN_LAST_SIZE)
@@ -69,11 +69,6 @@ struct _Eo {
 
 #define EO_ALIGN_SIZE(size) \
         ((size) + (sizeof(void *) - ((size) % sizeof(void *))))
-
-/* Structure of Eo_Op is:
- * 16bit: class
- * 16bit: op.
- */
 
 typedef struct _Dich_Chain1 Dich_Chain1;
 
@@ -90,8 +85,8 @@ struct _Dich_Chain1
 
 typedef struct
 {
-     const Eo_Class *klass;
-     size_t offset;
+   const Eo_Class *klass;
+   size_t offset;
 } Eo_Extension_Data_Offset;
 
 struct _Eo_Class
@@ -1404,14 +1399,14 @@ _eo_data_get(const Eo *obj, const Eo_Class *klass)
                {
                   if (doff_itr->klass == klass)
                      return ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj)) +
-                           doff_itr->offset;
+                        doff_itr->offset;
                   doff_itr++;
                }
           }
         else
           {
-          return ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj)) +
-             klass->data_offset;
+             return ((char *) obj) + EO_ALIGN_SIZE(sizeof(*obj)) +
+                klass->data_offset;
           }
      }
 
@@ -1475,6 +1470,12 @@ eo_init(void)
          EO_FREED_EINA_MAGIC_STR);
    eina_magic_string_static_set(EO_CLASS_EINA_MAGIC,
          EO_CLASS_EINA_MAGIC_STR);
+
+#ifndef NDEBUG
+   /* Call it just for coverage purposes. Ugly I know, but I like it better than
+    * casting everywhere else. */
+   _eo_class_isa_func(NULL, NULL, NULL);
+#endif
 
    return EINA_TRUE;
 }
