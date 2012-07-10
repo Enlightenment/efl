@@ -2711,7 +2711,6 @@ static void
 eng_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Render_Engine *re;
-
    re = (Render_Engine *)data;
    if (!image) return;
 
@@ -2889,14 +2888,15 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font __UN
 
         if (!im)
           im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
-        im->cache_entry.w = re->win->w;
-        im->cache_entry.h = re->win->h;
+        im->cache_entry.w = re->win->gl_context->shared->w;
+        im->cache_entry.h = re->win->gl_context->shared->h;
+
         evas_common_draw_context_font_ext_set(context,
                                               re->win->gl_context,
                                               evas_gl_font_texture_new,
                                               evas_gl_font_texture_free,
                                               evas_gl_font_texture_draw);
-	evas_common_font_draw_prepare(intl_props);
+        evas_common_font_draw_prepare(intl_props);
         evas_common_font_draw(im, context, x, y, intl_props);
         evas_common_draw_context_font_ext_set(context,
                                               NULL,

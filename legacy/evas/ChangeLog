@@ -873,3 +873,7 @@
 
 	* Don't let bad map sneek at render time and ban them as early as possible.
 
+2012-07-07  ChunEon Park(Hermet)
+
+	* Let Draw Text with viewport size instead of window size. When map is enabled then it should be rendered completely.
+
