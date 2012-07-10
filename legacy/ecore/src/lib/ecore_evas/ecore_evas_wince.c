@@ -724,6 +724,25 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
      }
 }
 
+static void
+_ecore_evas_wince_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
+{
+   HDC dc;
+
+   dc = GetDC(NULL);
+   if (!dc)
+     {
+        if (xdpi) *xdpi = 0;
+        if (ydpi) *ydpi = 0;
+        return;
+     }
+
+   if (xdpi) *xdpi = GetDeviceCaps(dc, LOGPIXELSX);
+   if (ydpi) *ydpi = GetDeviceCaps(dc, LOGPIXELSY);
+
+   ReleaseDC(NULL, dc);
+}
+
 static Ecore_Evas_Engine_Func _ecore_wince_engine_func =
 {
    _ecore_evas_wince_free,
@@ -783,7 +802,7 @@ static Ecore_Evas_Engine_Func _ecore_wince_engine_func =
 
    NULL, // render
    NULL, // screen_geometry_get
-   NULL  // screen_dpi_get
+   _ecore_evas_wince_screen_dpi_get
 };
 
 /* API */
