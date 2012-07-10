@@ -106,6 +106,7 @@ WGT_TREE = \
 	flip \
 	flipselector \
 	frame \
+	gengrid \
 	gesture_layer \
 	glview \
 	grid \
