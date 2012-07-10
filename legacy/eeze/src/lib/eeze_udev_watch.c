@@ -192,7 +192,15 @@ _get_syspath_from_watch(void             *data,
 #endif
         if (!(test = (udev_device_get_property_value(device, "ID_FS_USAGE"))) ||
             (strcmp("filesystem", test)))
-          goto error;
+        {
+           if (event & EEZE_UDEV_EVENT_CHANGE)
+             {
+                test = udev_device_get_sysname(device);
+                if (!test) goto error;
+                if (!strncmp(test, "loop", 4)) break;
+             }
+           goto error;
+        }
         {
            int devcheck;
 
@@ -210,7 +218,7 @@ _get_syspath_from_watch(void             *data,
         test = udev_device_get_property_value(device, "ID_BUS");
         if ((!test) || strcmp(test, "ata")) goto error;
         test = udev_device_get_property_value(device, "ID_TYPE");
-        if ((!test) || strcmp(test, "disk")) goto error;
+        if (!(event & EEZE_UDEV_EVENT_CHANGE) && ((!test) || strcmp(test, "disk"))) goto error;
         break;
 
       case EEZE_UDEV_TYPE_DRIVE_REMOVABLE:

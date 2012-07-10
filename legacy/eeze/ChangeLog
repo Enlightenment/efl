@@ -100,3 +100,8 @@
 2012-06-29 Christophe Dumez (christophe.dumez@intel.com)
 
         * Added joystick detection
+
+2012-07-10 Mike Blumenkrantz
+
+        * Add a check in event monitoring for disks which ensures that
+          device changes for loopback devices are picked up
