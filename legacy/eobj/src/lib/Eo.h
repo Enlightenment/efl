@@ -35,20 +35,6 @@ extern "C" {
 #endif
 
 /**
- * @def EO_OP_CLASS_OFFSET
- * The bit offset of the class inside the ops.
- * @internal
- */
-#define EO_OP_CLASS_OFFSET 16
-
-/**
- * @def EO_CLASS_ID_TO_BASE_ID(class_id)
- * Translates a class id to an op base id.
- * @internal
- */
-#define EO_CLASS_ID_TO_BASE_ID(class_id) ((class_id) << EO_OP_CLASS_OFFSET)
-
-/**
  * @var _eo_class_creation_lock
  * This variable is used for locking purposes in the class_get function
  * defined in #EO_DEFINE_CLASS.
@@ -812,7 +798,7 @@ typedef void (*eo_base_data_free_func)(void *);
  * @def EO_BASE_BASE_ID
  * #EO_BASE_CLASS 's base id.
  */
-#define EO_BASE_BASE_ID EO_CLASS_ID_TO_BASE_ID(EO_BASE_CLASS_ID)
+#define EO_BASE_BASE_ID EO_BASE_CLASS_ID // FIXME: Awful hack.
 
 enum {
      EO_BASE_SUB_ID_CONSTRUCTOR,

@@ -7,6 +7,7 @@
 
 /* The last id that should be reserved for statically allocated classes. */
 #define EO_STATIC_IDS_LAST 10
+#define EO_OP_IDS_FIRST 1
 
 /* Used inside the class_get functions of classes, see #EO_DEFINE_CLASS */
 EAPI Eina_Lock _eo_class_creation_lock;
@@ -15,6 +16,7 @@ int _eo_log_dom = -1;
 static Eo_Class **_eo_classes;
 static Eo_Class_Id _eo_classes_last_id;
 static Eina_Bool _eo_init_count = 0;
+static Eo_Op _eo_ops_last_id = 0;
 
 static void _eo_condtor_reset(Eo *obj);
 static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
@@ -53,17 +55,12 @@ struct _Eo {
 /* Start of Dich */
 /* Dich search, split to 0xff 0xff 0xffff */
 
-#define DICH_CHAIN1_MASK (0xffff)
-#define DICH_CHAIN_LAST_MASK (0xffff)
-#define DICH_CHAIN1(x) (((x) >> 16) & DICH_CHAIN1_MASK)
-#define DICH_CHAIN_LAST(x) ((x) & DICH_CHAIN_LAST_MASK)
+#define DICH_CHAIN_LAST_BITS 5
+#define DICH_CHAIN_LAST_SIZE (1 << DICH_CHAIN_LAST_BITS)
+#define DICH_CHAIN1(x) ((x) / DICH_CHAIN_LAST_SIZE)
+#define DICH_CHAIN_LAST(x) ((x) % DICH_CHAIN_LAST_SIZE)
 
 #define OP_CLASS_OFFSET_GET(x) (((x) >> EO_OP_CLASS_OFFSET) & 0xffff)
-#define OP_CLASS_GET(op) ({ \
-      Eo_Class_Id tmp = OP_CLASS_OFFSET_GET(op); \
-      ID_CLASS_GET(tmp); \
-      })
-#define OP_SUB_ID_GET(op) ((op) & 0xffff)
 
 #define ID_CLASS_GET(id) ({ \
       (Eo_Class *) ((id <= _eo_classes_last_id) && (id > 0)) ? \
@@ -104,6 +101,8 @@ struct _Eo_Class
    const Eo_Class *parent;
    const Eo_Class_Description *desc;
    Dich_Chain1 *chain; /**< The size is class_id */
+   size_t chain_size;
+   size_t base_id;
 
    const Eo_Class **extensions;
 
@@ -119,43 +118,31 @@ struct _Eo_Class
 };
 
 static inline void
-_dich_chain_alloc(Dich_Chain1 *chain1, size_t num_ops)
+_dich_chain_alloc(Dich_Chain1 *chain1)
 {
    if (!chain1->funcs)
      {
-        chain1->funcs = calloc(num_ops + 1, sizeof(*(chain1->funcs)));
+        chain1->funcs = calloc(DICH_CHAIN_LAST_SIZE, sizeof(*(chain1->funcs)));
      }
 }
 
 static inline void
 _dich_copy_all(Eo_Class *dst, const Eo_Class *src)
 {
-   if (!src->chain) return;
-
-   if (!dst->chain)
-     {
-        dst->chain = calloc(dst->class_id, sizeof(*dst->chain));
-     }
-
    Eo_Class_Id i;
    const Dich_Chain1 *sc1 = src->chain;
    Dich_Chain1 *dc1 = dst->chain;
-   for (i = 0 ; i < src->class_id ; i++, sc1++, dc1++)
+   for (i = 0 ; i <= DICH_CHAIN1(src->base_id) ; i++, sc1++, dc1++)
      {
         if (sc1->funcs)
           {
              size_t j;
-             const Eo_Class *op_klass = ID_CLASS_GET(i + 1);
-             /* Can be NULL because of future static classes. */
-             if (!op_klass)
-                continue;
 
-             size_t num_ops = op_klass->desc->ops.count;
-             _dich_chain_alloc(dc1, num_ops);
+             _dich_chain_alloc(dc1);
 
              const op_type_funcs *sf = sc1->funcs;
              op_type_funcs *df = dc1->funcs;
-             for (j = 0 ; j <= num_ops ; j++, df++, sf++)
+             for (j = 0 ; j < DICH_CHAIN_LAST_SIZE ; j++, df++, sf++)
                {
                   if (sf->func)
                     {
@@ -167,59 +154,23 @@ _dich_copy_all(Eo_Class *dst, const Eo_Class *src)
 }
 
 static inline const op_type_funcs *
-_dich_func_get(const Eo_Class *klass, Eo_Op op, Eina_Bool allow_last)
+_dich_func_get(const Eo_Class *klass, Eo_Op op)
 {
-   if (!klass->chain) return NULL;
-
-   size_t idx1 = DICH_CHAIN1(op) - 1;
-   if (idx1 >= klass->class_id) return NULL;
-   const Dich_Chain1 *chain1 = &klass->chain[idx1];
-   if (!chain1->funcs) return NULL;
-
-   size_t idxl = DICH_CHAIN_LAST(op);
-   /* num_ops is calculated from the class. */
-   const Eo_Class *op_klass = ID_CLASS_GET(idx1 + 1);
-   if (!op_klass ||
-         (idxl > op_klass->desc->ops.count) ||
-         (!allow_last && (idxl == op_klass->desc->ops.count)))
+   size_t idx1 = DICH_CHAIN1(op);
+   if (EINA_UNLIKELY(idx1 >= klass->chain_size))
       return NULL;
-
-   return &chain1->funcs[idxl];
+   Dich_Chain1 *chain1 = &klass->chain[idx1];
+   if (EINA_UNLIKELY(!chain1->funcs))
+      return NULL;
+   return &chain1->funcs[DICH_CHAIN_LAST(op)];
 }
 
 static inline void
-_dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func, Eina_Bool allow_last)
+_dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
 {
-   const Eo_Class *op_klass = OP_CLASS_GET(op);
-   size_t num_ops;
-
-   /* Verify op is valid. */
-   if (op_klass)
-     {
-        /* num_ops is calculated from the class. */
-        num_ops = op_klass->desc->ops.count;
-        if ((DICH_CHAIN_LAST(op) > num_ops) ||
-              (!allow_last && (DICH_CHAIN_LAST(op) == num_ops)))
-          {
-             ERR("OP %x is too big for the domain '%s', expected value < %x.",
-                   op, op_klass->desc->name, op_klass->desc->ops.count);
-             return;
-          }
-     }
-   else
-     {
-        ERR("OP %x is from an illegal class.", op);
-        return;
-     }
-
-   if (!klass->chain)
-     {
-        klass->chain = calloc(klass->class_id, sizeof(*klass->chain));
-     }
-
-   size_t idx1 = DICH_CHAIN1(op) - 1;
+   size_t idx1 = DICH_CHAIN1(op);
    Dich_Chain1 *chain1 = &klass->chain[idx1];
-   _dich_chain_alloc(chain1, num_ops);
+   _dich_chain_alloc(chain1);
    chain1->funcs[DICH_CHAIN_LAST(op)].func = func;
    chain1->funcs[DICH_CHAIN_LAST(op)].src = klass;
 }
@@ -230,10 +181,7 @@ _dich_func_clean_all(Eo_Class *klass)
    size_t i;
    Dich_Chain1 *chain1 = klass->chain;
 
-   if (!chain1)
-      return;
-
-   for (i = 0 ; i < klass->class_id ; i++, chain1++)
+   for (i = 0 ; i <= DICH_CHAIN1(klass->base_id) ; i++, chain1++)
      {
         if (chain1->funcs)
            free(chain1->funcs);
@@ -247,17 +195,42 @@ _dich_func_clean_all(Eo_Class *klass)
 static const Eo_Op_Description noop_desc =
         EO_OP_DESCRIPTION(EO_NOOP, "No operation.");
 
+static const Eo_Class *
+_eo_op_class_get(Eo_Op op)
+{
+   /* FIXME: Make it fast. */
+   const Eo_Class *klass = NULL;
+   Eo_Class **itr = _eo_classes;
+   Eo_Class_Id i;
+   for (i = 0 ; i < _eo_classes_last_id ; i++, itr++)
+     {
+        if (*itr && ((*itr)->base_id <= op) &&
+              (op <= (*itr)->base_id + (*itr)->desc->ops.count))
+          {
+             klass = *itr;
+             return klass;
+          }
+     }
+
+   return klass;
+}
+
 static const Eo_Op_Description *
 _eo_op_id_desc_get(Eo_Op op)
 {
-   const Eo_Class *klass = OP_CLASS_GET(op);
-   Eo_Op sub_id = OP_SUB_ID_GET(op);
+   const Eo_Class *klass;
 
    if (op == EO_NOOP)
       return &noop_desc;
 
-   if (klass && (sub_id < klass->desc->ops.count))
-      return klass->desc->ops.descs + sub_id;
+   klass = _eo_op_class_get(op);
+
+   if (klass)
+     {
+        Eo_Op sub_id = op - klass->base_id;
+       if (sub_id < klass->desc->ops.count)
+          return klass->desc->ops.descs + sub_id;
+     }
 
    return NULL;
 }
@@ -313,7 +286,7 @@ _eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Op op)
    const Eo_Class **kls_itr = cur->kls_itr;
    if (*kls_itr)
      {
-        const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op, EINA_FALSE);
+        const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
 
         while (*kls_itr && (*(kls_itr++) != fsrc->src))
            ;
@@ -334,7 +307,7 @@ _eo_kls_itr_func_get(const Eo_Class *klass, Eo_Kls_Itr *mro_itr, Eo_Op op, Eo_Kl
    klass = _eo_kls_itr_get(mro_itr);
    if (klass)
      {
-        const op_type_funcs *func = _dich_func_get(klass, op, EINA_FALSE);
+        const op_type_funcs *func = _dich_func_get(klass, op);
 
         if (func && func->func)
           {
@@ -348,7 +321,7 @@ _eo_kls_itr_func_get(const Eo_Class *klass, Eo_Kls_Itr *mro_itr, Eo_Op op, Eo_Kl
 #define _EO_OP_ERR_NO_OP_PRINT(op, klass) \
    do \
       { \
-         const Eo_Class *op_klass = OP_CLASS_GET(op); \
+         const Eo_Class *op_klass = _eo_op_class_get(op); \
          const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL; \
          ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.", \
                op, _eo_op_id_name_get(op), _dom_name, \
@@ -582,10 +555,16 @@ static void
 _eo_class_base_op_init(Eo_Class *klass)
 {
    const Eo_Class_Description *desc = klass->desc;
-   if (!desc || !desc->ops.base_op_id)
-      return;
 
-   *(desc->ops.base_op_id) = EO_CLASS_ID_TO_BASE_ID(klass->class_id);
+   klass->base_id = _eo_ops_last_id;
+
+   if (desc && desc->ops.base_op_id)
+      *(desc->ops.base_op_id) = klass->base_id;
+
+   _eo_ops_last_id += desc->ops.count + 1;
+
+   klass->chain_size = DICH_CHAIN1(_eo_ops_last_id) + 1;
+   klass->chain = calloc(klass->chain_size, sizeof(*klass->chain));
 }
 
 #ifndef NDEBUG
@@ -759,7 +738,7 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
                }
              else if (EINA_LIKELY(itr->op_type == op_desc->op_type))
                {
-                  _dich_func_set(klass, itr->op, itr->func, EINA_FALSE);
+                  _dich_func_set(klass, itr->op, itr->func);
                }
              else
                {
@@ -1044,6 +1023,7 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
 
    EINA_MAGIC_SET(klass, EO_CLASS_EINA_MAGIC);
 
+   _eo_class_base_op_init(klass);
    /* Flatten the function array */
      {
         const Eo_Class **mro_itr = klass->mro;
@@ -1065,25 +1045,20 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
           {
              const Eo_Class *extn = *extn_itr;
              /* Set it in the dich. */
-             _dich_func_set(klass, EO_CLASS_ID_TO_BASE_ID(extn->class_id) +
-                   extn->desc->ops.count, _eo_class_isa_func,
-                   EINA_TRUE);
+             _dich_func_set(klass, extn->base_id +
+                   extn->desc->ops.count, _eo_class_isa_func);
           }
 
-        _dich_func_set(klass, EO_CLASS_ID_TO_BASE_ID(klass->class_id) +
-              klass->desc->ops.count, _eo_class_isa_func,
-              EINA_TRUE);
+        _dich_func_set(klass, klass->base_id + klass->desc->ops.count,
+              _eo_class_isa_func);
 
         if (klass->parent)
           {
              _dich_func_set(klass,
-                   EO_CLASS_ID_TO_BASE_ID(klass->parent->class_id) +
-                   klass->parent->desc->ops.count, _eo_class_isa_func,
-                   EINA_TRUE);
+                   klass->parent->base_id + klass->parent->desc->ops.count,
+                   _eo_class_isa_func);
           }
      }
-
-   _eo_class_base_op_init(klass);
 
    _eo_class_constructor(klass);
 
@@ -1102,8 +1077,7 @@ eo_isa(const Eo *obj, const Eo_Class *klass)
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
    const op_type_funcs *func = _dich_func_get(obj->klass,
-         EO_CLASS_ID_TO_BASE_ID(klass->class_id) + klass->desc->ops.count,
-         EINA_TRUE);
+         klass->base_id + klass->desc->ops.count);
 
    /* Currently implemented by reusing the LAST op id. Just marking it with
     * _eo_class_isa_func. */
@@ -1482,6 +1456,7 @@ eo_init(void)
 
    _eo_classes = NULL;
    _eo_classes_last_id = EO_STATIC_IDS_LAST;
+   _eo_ops_last_id = EO_OP_IDS_FIRST;
    _eo_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_LIGHTBLUE);
    if (_eo_log_dom < 0)
      {
