@@ -1039,6 +1039,26 @@ _ecore_evas_win32_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi)
    if (xdpi) *xdpi = GetDeviceCaps(dc, LOGPIXELSX);
    if (ydpi) *ydpi = GetDeviceCaps(dc, LOGPIXELSY);
 
+   /*
+    * Alternative (to test)
+    int width_mm;
+    int height_mm;
+    int width_px;
+    int height_px;
+
+    width_mm = GetDeviceCaps(dc, HORZSIZE);
+    height_mm = GetDeviceCaps(dc, VERTSIZE);
+    width_px = GetDeviceCaps(dc, HORZRES);
+    height_px = GetDeviceCaps(dc, VERTRES);
+
+    *xdpi = (width_px * 254) / (width_mm * 10);
+    *ydpi = (height_px * 254) / (height_mm * 10);
+
+    code with LOGPIXELS gives 96x96
+    code with the computation gives 101x77
+
+    */
+
    ReleaseDC(NULL, dc);
 }
 
