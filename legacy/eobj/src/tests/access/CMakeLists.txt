@@ -20,5 +20,6 @@ target_link_libraries(access
    )
 
 add_dependencies(access eo)
+add_dependencies(check access)
 
-add_test(Example_access access)
+add_test(Test_access access)

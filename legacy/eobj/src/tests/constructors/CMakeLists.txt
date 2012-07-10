@@ -26,5 +26,6 @@ target_link_libraries(constructors
    )
 
 add_dependencies(constructors eo)
+add_dependencies(check constructors)
 
-add_test(Example_constructors constructors)
+add_test(Test_constructors constructors)

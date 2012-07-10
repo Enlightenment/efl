@@ -25,5 +25,6 @@ if (CHECK_ENABLED)
       )
 
    add_test(eo_suite eo_suite)
+   add_dependencies(eo_suite eo)
    add_dependencies(check eo_suite)
 endif (CHECK_ENABLED)

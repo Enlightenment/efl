@@ -22,5 +22,6 @@ target_link_libraries(function_overrides
    )
 
 add_dependencies(function_overrides eo)
+add_dependencies(check function_overrides)
 
-add_test(Example_function_overrides function_overrides)
+add_test(Test_function_overrides function_overrides)

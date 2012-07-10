@@ -22,5 +22,6 @@ target_link_libraries(mixin
    )
 
 add_dependencies(mixin eo)
+add_dependencies(check mixin)
 
-add_test(Example_mixin mixin)
+add_test(Test_mixin mixin)

@@ -21,5 +21,6 @@ target_link_libraries(interface
    )
 
 add_dependencies(interface eo)
+add_dependencies(check interface)
 
-add_test(Example_interface interface)
+add_test(Test_interface interface)

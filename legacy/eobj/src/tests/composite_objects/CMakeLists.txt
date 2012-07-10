@@ -20,5 +20,6 @@ target_link_libraries(composite_objects
    )
 
 add_dependencies(composite_objects eo)
+add_dependencies(check composite_objects)
 
-add_test(Example_composite_objects composite_objects)
+add_test(Test_composite_objects composite_objects)

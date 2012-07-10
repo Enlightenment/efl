@@ -19,5 +19,6 @@ target_link_libraries(signals
    )
 
 add_dependencies(signals eo)
+add_dependencies(check signals)
 
-add_test(Example_signals signals)
+add_test(Test_signals signals)
