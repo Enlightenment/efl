@@ -7778,7 +7778,7 @@ st_collections_group_programs_program_action(void)
         to linear interpolation. Note that DIVIS can exceed 1.0
         
         BOUNCE uses val 2 as the number of bounces (so its rounded down to
-        the nearest integer value), with val 2 determining how much the
+        the nearest integer value), with val 1 determining how much the
         bounce decays, with 0.0 giving linear decay per bounce, and higher
         values giving much more decay.
 
