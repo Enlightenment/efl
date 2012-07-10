@@ -16,6 +16,7 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 #define MAX_EPOLL_EVENTS 10
 #define MAX_INCOMING_CONN 10
@@ -186,12 +187,13 @@ _socketfd_handler(int fd __UNUSED__, Fd_Flags flags __UNUSED__, void *data __UNU
    int s;
 
    len = sizeof(struct sockaddr_un);
-   s = accept4(socket_fd, &remote, &len, SOCK_CLOEXEC);
+   s = accept(socket_fd, &remote, &len);
    if (s == -1)
      {
         ERR("Could not accept socket: \"%s\"", strerror(errno));
         return;
      }
+   fcntl(s, F_SETFD, FD_CLOEXEC);
 
    cserve2_client_accept(s);
 }
