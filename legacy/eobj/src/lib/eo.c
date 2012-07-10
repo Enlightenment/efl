@@ -25,7 +25,6 @@ static inline void _eo_unref(Eo *obj);
 
 typedef struct
 {
-   Eo_Op op;
    const Eo_Class **kls_itr;
 } Eo_Kls_Itr;
 
@@ -238,26 +237,16 @@ _eo_op_id_name_get(Eo_Op op)
 }
 
 static inline void
-_eo_kls_itr_init(const Eo_Class *obj_klass, Eo_Kls_Itr *cur, Eo_Op op, Eo_Kls_Itr *prev_state)
+_eo_kls_itr_init(const Eo_Class *obj_klass, Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state)
 {
-   prev_state->op = cur->op;
    prev_state->kls_itr = cur->kls_itr;
-
-   if (cur->op != op)
-     {
-        cur->op = op;
-        cur->kls_itr = obj_klass->mro;
-     }
+   cur->kls_itr = obj_klass->mro;
 }
 
 static inline void
 _eo_kls_itr_end(Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state)
 {
-   if (cur->op != prev_state->op)
-     {
-        cur->op = prev_state->op;
-        cur->kls_itr = prev_state->kls_itr;
-     }
+   cur->kls_itr = prev_state->kls_itr;
 }
 
 static inline const Eo_Class *
@@ -267,18 +256,10 @@ _eo_kls_itr_get(Eo_Kls_Itr *cur)
 }
 
 static inline const Eo_Class *
-_eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Op op)
+_eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state, Eo_Op op)
 {
-   if (cur->op != op)
-     {
-        Eo_Op node_op = cur->op;
-        ERR("Called with op %x ('%s') while expecting: %x ('%s'). This probaly means you called eo_*_super functions from a wrong place.",
-              op, _eo_op_id_name_get(op),
-              node_op, _eo_op_id_name_get(node_op));
-        return NULL;
-     }
-
    const Eo_Class **kls_itr = cur->kls_itr;
+   prev_state->kls_itr = cur->kls_itr;
    if (*kls_itr)
      {
         const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
@@ -296,10 +277,9 @@ _eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Op op)
 }
 
 static inline const op_type_funcs *
-_eo_kls_itr_func_get(const Eo_Class *klass, Eo_Kls_Itr *mro_itr, Eo_Op op, Eo_Kls_Itr *prev_state)
+_eo_kls_itr_func_get(Eo_Kls_Itr *mro_itr, Eo_Op op)
 {
-   _eo_kls_itr_init(klass, mro_itr, op, prev_state);
-   klass = _eo_kls_itr_get(mro_itr);
+   const Eo_Class *klass = _eo_kls_itr_get(mro_itr);
    if (klass)
      {
         const op_type_funcs *func = _dich_func_get(klass, op);
@@ -327,8 +307,6 @@ _eo_kls_itr_func_get(const Eo_Class *klass, Eo_Kls_Itr *mro_itr, Eo_Op op, Eo_Kl
 static Eina_Bool
 _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
 {
-   Eina_Bool ret = EINA_FALSE;
-
 #ifndef NDEBUG
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
 
@@ -342,16 +320,13 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
      }
 #endif
 
-   Eo_Kls_Itr prev_state;
-
      {
         const op_type_funcs *func =
-           _eo_kls_itr_func_get(obj->klass, &obj->mro_itr, op, &prev_state);
+           _eo_kls_itr_func_get(&obj->mro_itr, op);
         if (func)
           {
              func->func(obj, _eo_data_get(obj, func->src), p_list);
-             ret = EINA_TRUE;
-             goto end;
+             return EINA_TRUE;
           }
      }
 
@@ -363,15 +338,11 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
           {
              if (_eo_op_internal(emb_obj, op_type, op, p_list))
                {
-                  ret = EINA_TRUE;
-                  goto end;
+                  return EINA_TRUE;
                }
           }
      }
-
-end:
-   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
-   return ret;
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -380,12 +351,14 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
    Eina_Bool prev_error;
    Eina_Bool ret = EINA_TRUE;
    Eo_Op op = EO_NOOP;
+   Eo_Kls_Itr prev_state;
    va_list p_list;
 
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
    prev_error = obj->do_error;
    _eo_ref(obj);
+   _eo_kls_itr_init(obj->klass, &obj->mro_itr, &prev_state);
 
    va_start(p_list, op_type);
 
@@ -410,6 +383,7 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 
    obj->do_error = prev_error;
 
+   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    return ret;
 }
 
@@ -419,13 +393,11 @@ eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...)
    const Eo_Class *nklass;
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
+   Eo_Kls_Itr prev_state;
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
    /* Advance the kls itr. */
-   nklass = _eo_kls_itr_next(&obj->mro_itr, op);
-
-   if (obj->mro_itr.op != op)
-      return EINA_FALSE;
+   nklass = _eo_kls_itr_next(&obj->mro_itr, &prev_state, op);
 
    va_start(p_list, op);
    if (!_eo_op_internal(obj, op_type, op, &p_list))
@@ -438,14 +410,13 @@ eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...)
    if (obj->do_error)
       ret = EINA_FALSE;
 
+   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    return ret;
 }
 
 static Eina_Bool
 _eo_class_op_internal(Eo_Class *klass, Eo_Op op, va_list *p_list)
 {
-   Eina_Bool ret = EINA_FALSE;
-
 #ifndef NDEBUG
    const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
 
@@ -459,22 +430,17 @@ _eo_class_op_internal(Eo_Class *klass, Eo_Op op, va_list *p_list)
      }
 #endif
 
-   Eo_Kls_Itr prev_state;
-
      {
         const op_type_funcs *func =
-           _eo_kls_itr_func_get(klass, &klass->mro_itr, op, &prev_state);
+           _eo_kls_itr_func_get(&klass->mro_itr, op);
         if (func)
           {
              ((eo_op_func_type_class) func->func)(klass, p_list);
-             ret = EINA_TRUE;
-             goto end;
+             return EINA_TRUE;
           }
      }
 
-end:
-   _eo_kls_itr_end(&klass->mro_itr, &prev_state);
-   return ret;
+   return EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -482,9 +448,12 @@ eo_class_do_internal(const Eo_Class *klass, ...)
 {
    Eina_Bool ret = EINA_TRUE;
    Eo_Op op = EO_NOOP;
+   Eo_Kls_Itr prev_state;
    va_list p_list;
 
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
+
+   _eo_kls_itr_init(klass, &((Eo_Class *) klass)->mro_itr, &prev_state);
 
    va_start(p_list, klass);
 
@@ -502,6 +471,7 @@ eo_class_do_internal(const Eo_Class *klass, ...)
 
    va_end(p_list);
 
+   _eo_kls_itr_end(&((Eo_Class *) klass)->mro_itr, &prev_state);
    return ret;
 }
 
@@ -511,13 +481,11 @@ eo_class_do_super_internal(const Eo_Class *klass, Eo_Op op, ...)
    const Eo_Class *nklass;
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
+   Eo_Kls_Itr prev_state;
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
 
    /* Advance the kls itr. */
-   nklass = _eo_kls_itr_next(&((Eo_Class *) klass)->mro_itr, op);
-
-   if (klass->mro_itr.op != op)
-      return EINA_FALSE;
+   nklass = _eo_kls_itr_next(&((Eo_Class *) klass)->mro_itr, &prev_state, op);
 
    va_start(p_list, op);
    if (!_eo_class_op_internal((Eo_Class *) klass, op, &p_list))
@@ -527,6 +495,7 @@ eo_class_do_super_internal(const Eo_Class *klass, Eo_Op op, ...)
      }
    va_end(p_list);
 
+   _eo_kls_itr_end(&((Eo_Class *) klass)->mro_itr, &prev_state);
    return ret;
 }
 
@@ -1055,6 +1024,8 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
           }
      }
 
+   klass->mro_itr.kls_itr = klass->mro;
+
    _eo_class_constructor(klass);
 
    va_end(p_list);
@@ -1136,6 +1107,7 @@ eo_add(const Eo_Class *klass, Eo *parent)
    EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
    obj->refcount++;
    obj->klass = klass;
+   obj->mro_itr.kls_itr = obj->klass->mro;
 
    eo_parent_set(obj, parent);
 
