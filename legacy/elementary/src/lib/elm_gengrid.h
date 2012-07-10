@@ -2,6 +2,9 @@
  * @defgroup Gengrid Gengrid (Generic grid)
  * @ingroup Elementary
  *
+ * @image html gengrid_inheritance_tree.png
+ * @image latex gengrid_inheritance_tree.eps
+ *
  * This widget aims to position objects in a grid layout while
  * actually creating and rendering only the visible ones, using the
  * same idea as the @ref Genlist "genlist": the user defines a @b
@@ -12,6 +15,16 @@
  * clicking on the grid's viewport and swiping to pan the whole
  * view) or via the keyboard, navigating through item with the
  * arrow keys.
+ *
+ * This widget implements the @b @ref elm-scrollable-interface
+ * interface, so that all (non-deprecated) functions for the base @ref
+ * Scroller widget also work for gengrids.
+ *
+ * Some calls on the gengrid's API are marked as @b deprecated, as
+ * they just wrap the scrollable widgets counterpart functions. Use
+ * the ones we point you to, for each case of deprecation here,
+ * instead -- eventually the deprecated ones will be discarded (next
+ * major release).
  *
  * @section Gengrid_Layouts Gengrid layouts
  *
@@ -386,11 +399,13 @@ EAPI Eina_Bool                     elm_gengrid_horizontal_get(const Evas_Object 
  *
  * @note By default, gengrids have bouncing enabled on both axis
  *
- * @see elm_gengrid_bounce_get()
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
+ * @see elm_scroller_bounce_set()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+EINA_DEPRECATED EAPI void          elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * Get whether bouncing effects are enabled or disabled, for a
@@ -402,11 +417,13 @@ EAPI void                          elm_gengrid_bounce_set(Evas_Object *obj, Eina
  * @param v_bounce Pointer to a variable where to store the
  * vertical bouncing flag.
  *
- * @see elm_gengrid_bounce_set() for more details
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
+ * @see elm_scroller_bounce_get()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+EINA_DEPRECATED EAPI void          elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * Append a new item in a given gengrid widget.
@@ -634,17 +651,22 @@ EAPI Elm_Object_Item             *elm_gengrid_last_item_get(const Evas_Object *o
  * @param policy_v Vertical scrollbar policy.
  *
  * This sets the scrollbar visibility policy for the given gengrid
- * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is
- * made visible if it is needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON
- * turns it on all the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off.
- * This applies respectively for the horizontal and vertical scrollbars.
- * Default is #ELM_SCROLLER_POLICY_AUTO
+ * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made
+ * visible if it is needed, and otherwise kept
+ * hidden. #ELM_SCROLLER_POLICY_ON turns it on all the time, and
+ * #ELM_SCROLLER_POLICY_OFF always keeps it off.  This applies
+ * respectively for the horizontal and vertical scrollbars.  Default
+ * is #ELM_SCROLLER_POLICY_AUTO.
+ *
+ * @deprecated Use elm_scroller_policy_set() instead.
+ *
+ * @see elm_scroller_policy_set()
  *
  * @see elm_gengrid_scroller_policy_get()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
 /**
  * Get the scrollbar policy
@@ -653,11 +675,15 @@ EAPI void                          elm_gengrid_scroller_policy_set(Evas_Object *
  * @param policy_h Pointer to store the horizontal scrollbar policy.
  * @param policy_v Pointer to store the vertical scrollbar policy.
  *
+ * @deprecated Use elm_scroller_policy_get() instead.
+ *
+ * @see elm_scroller_policy_get()
+ *
  * @see elm_gengrid_scroller_policy_set()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+EINA_DEPRECATED EAPI void          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Get the @b next item in a gengrid widget's internal list of items,
@@ -1317,11 +1343,13 @@ EAPI Eina_Bool                     elm_gengrid_reorder_mode_get(const Evas_Objec
  * values, too -- elm_gengrid_page_size_set(). Naturally, its use
  * is mutually exclusive to this one.
  *
- * @see elm_gengrid_page_relative_get()
+ * @deprecated Use elm_scroller_page_relative_set() instead.
+ *
+ * @see elm_scroller_page_relative_set()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
+EINA_DEPRECATED EAPI void          elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
 
 /**
  * Get a given gengrid widget's scrolling page size, relative to
@@ -1333,11 +1361,13 @@ EAPI void                          elm_gengrid_page_relative_set(Evas_Object *ob
  * @param v_pagerel Pointer to a variable where to store the
  * vertical page (relative) size
  *
- * @see elm_gengrid_page_relative_set() for more details
+ * @deprecated Use elm_scroller_page_relative_get() instead.
+ *
+ * @see elm_scroller_page_relative_get()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
+EINA_DEPRECATED EAPI void          elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
 
 /**
  * Set a given gengrid widget's scrolling page size
@@ -1363,9 +1393,13 @@ EAPI void                          elm_gengrid_page_relative_get(const Evas_Obje
  * values, too -- elm_gengrid_page_relative_set(). Naturally, its
  * use is mutually exclusive to this one.
  *
+ * @deprecated Use elm_scroller_page_size_set() instead.
+ *
+ * @see elm_scroller_page_size_set()
+ *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
+EINA_DEPRECATED EAPI void          elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
 
 /**
  * @brief Get gengrid current page number.
@@ -1379,11 +1413,15 @@ EAPI void                          elm_gengrid_page_size_set(Evas_Object *obj, E
  * If there are two or more pages in the viewport, it returns the number of page
  * which meet the top-left of the viewport.
  *
+ * @deprecated Use elm_scroller_current_page_set() instead.
+ *
+ * @see elm_scroller_current_page_set()
+ *
  * @see elm_gengrid_last_page_get()
  * @see elm_gengrid_page_show()
  * @see elm_gengrid_page_bring_in()
  */
-EAPI void                          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
+EINA_DEPRECATED EAPI void          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
 /**
  * @brief Get gengrid last page number.
@@ -1395,11 +1433,15 @@ EAPI void                          elm_gengrid_current_page_get(const Evas_Objec
  * The page number starts from 0. 0 is the first page.
  * This returns the last page number among the pages.
  *
+ * @deprecated Use elm_scroller_last_page_set() instead.
+ *
+ * @see elm_scroller_last_page_set()
+ *
  * @see elm_gengrid_current_page_get()
  * @see elm_gengrid_page_show()
  * @see elm_gengrid_page_bring_in()
  */
-EAPI void                          elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
+EINA_DEPRECATED EAPI void          elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
 /**
  * Show a specific virtual region within the gengrid content object by page number.
@@ -1445,9 +1487,13 @@ EAPI void                          elm_gengrid_page_show(const Evas_Object *obj,
  * elm_gengrid_page_bring_in(sc, h_page, v_page);
  * @endcode
  *
+ * @deprecated Use elm_scroller_page_bring_in() instead.
+ *
+ * @see elm_scroller_page_bring_in()
+ *
  * @see elm_gengrid_page_show()
  */
-EAPI void                          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
+EINA_DEPRECATED EAPI void          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
 
 /**
  * Get a given gengrid item's position, relative to the whole

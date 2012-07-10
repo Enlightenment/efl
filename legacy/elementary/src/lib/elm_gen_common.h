@@ -27,6 +27,8 @@ struct Elm_Gen_Item
 {
    ELM_WIDGET_ITEM;
    EINA_INLIST;
+
+   //FIXME: remove it
    Widget_Data              *wd;
    Elm_Gen_Item_Type        *item;
    const Elm_Gen_Item_Class *itc;
@@ -66,6 +68,7 @@ struct Elm_Gen_Item
    Eina_Bool                 flipped : 1; /**< a flag that shows the flip status of the item. */
 };
 
+//FIXME: remove it
 typedef struct _Pan Pan;
 struct _Pan
 {
