@@ -862,6 +862,17 @@ elm_scroller_page_relative_set(Evas_Object *obj,
 }
 
 EAPI void
+elm_scroller_page_relative_get(const Evas_Object *obj,
+                               double *h_pagerel,
+                               double *v_pagerel)
+{
+   ELM_SCROLLER_CHECK(obj);
+   ELM_SCROLLER_DATA_GET(obj, sd);
+
+   sd->s_iface->paging_get(obj, h_pagerel, v_pagerel, NULL, NULL);
+}
+
+EAPI void
 elm_scroller_page_size_set(Evas_Object *obj,
                            Evas_Coord h_pagesize,
                            Evas_Coord v_pagesize)
@@ -874,6 +885,17 @@ elm_scroller_page_size_set(Evas_Object *obj,
 
    s_iface->paging_set
      (obj, pagerel_h, pagerel_v, h_pagesize, v_pagesize);
+}
+
+EAPI void
+elm_scroller_page_size_get(const Evas_Object *obj,
+                           Evas_Coord *h_pagesize,
+                           Evas_Coord *v_pagesize)
+{
+   ELM_SCROLLER_CHECK(obj);
+   ELM_SCROLLER_DATA_GET(obj, sd);
+
+   sd->s_iface->paging_get(obj, NULL, NULL, h_pagesize, v_pagesize);
 }
 
 EAPI void

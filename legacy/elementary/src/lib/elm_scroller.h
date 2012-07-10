@@ -236,6 +236,22 @@ EAPI void                         elm_scroller_bounce_get(const Evas_Object *obj
 EAPI void                         elm_scroller_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
 
 /**
+ * Get a given scroller widget's scrolling page size, relative to
+ * its viewport size.
+ *
+ * @param obj The scroller object
+ * @param h_pagerel Pointer to a variable where to store the
+ * horizontal page (relative) size
+ * @param v_pagerel Pointer to a variable where to store the
+ * vertical page (relative) size
+ *
+ * @see elm_scroller_page_relative_set() for more details
+ *
+ * @ingroup Scroller
+ */
+EAPI void                         elm_scroller_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
+
+/**
  * @brief Set scroll page size.
  *
  * @param obj The scroller object
@@ -246,10 +262,25 @@ EAPI void                         elm_scroller_page_relative_set(Evas_Object *ob
  * for that axis.
  *
  * @see elm_scroller_page_relative_set()
+ * @see elm_scroller_page_size_get()
  *
  * @ingroup Scroller
  */
 EAPI void                         elm_scroller_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
+
+/**
+ * @brief Retrieve a scroller widget's current page size.
+ *
+ * @param obj The scroller object
+ * @param h_pagesize Where to store its horizontal page size
+ * @param v_pagesize Where to store its vertical page size
+ *
+ * @see elm_scroller_page_size_set() for more details
+ * @see elm_scroller_page_relative_set()
+ *
+ * @ingroup Scroller
+ */
+EAPI void                         elm_scroller_page_size_get(const Evas_Object *obj, Evas_Coord *h_pagesize, Evas_Coord *v_pagesize);
 
 /**
  * @brief Get scroll current page number.
