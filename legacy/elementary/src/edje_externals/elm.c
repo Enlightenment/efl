@@ -57,7 +57,7 @@ external_signal(void *data __UNUSED__, Evas_Object *obj, const char *sig, const 
 
    if ((*p=='\0') || (*(p+1)!=':'))
      {
-        ERR("Invalid External Signal received: '%s' '%s'\n", sig, source);
+        ERR("Invalid External Signal received: '%s' '%s'", sig, source);
         free(_signal);
         return ;
      }
@@ -245,11 +245,13 @@ external_common_param_icon_get(Evas_Object *obj, const Edje_External_Param *p)
      parent_widget = edje;
    icon = elm_icon_add(parent_widget);
 
-   if (elm_image_file_set(icon, file, p->s))
+   if ((edje_file_group_exists(file, p->s)) &&
+       (elm_image_file_set(icon, file, p->s)))
      return icon;
    if (elm_icon_standard_set(icon, p->s))
      return icon;
 
+   ERR("Failed to set icon: '%s'", p->s);
    evas_object_del(icon);
    return NULL;
 }
