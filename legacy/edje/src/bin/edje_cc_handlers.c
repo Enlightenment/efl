@@ -40,7 +40,7 @@
 /**
  * @page edcref Edje Data Collection reference
  * An Edje Data Collection, it's a plain text file (normally identified with the
- * .edc extension),consisting of instructions for the Edje Compiler.
+ * .edc extension), consisting of instructions for the Edje Compiler.
  *
  * The syntax for the edje data collection files follows a simple structure of
  * "blocks { .. }" that can contain "properties: ..", more blocks, or both.
@@ -1226,7 +1226,7 @@ st_externals_external(void)
         Compression methods:
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
-        @li LOSSY [0-100]: Lossy comression with quality from 0 to 100.
+        @li LOSSY [0-100]: Lossy compression with quality from 0 to 100.
         @li USER: Do not embed the file, refer to the external file instead.
     @endproperty
  */
@@ -1407,7 +1407,7 @@ ob_images_set_image(void)
         Compression methods:
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
-        @li LOSSY [0-100]: Lossy comression with quality from 0 to 100.
+        @li LOSSY [0-100]: Lossy compression with quality from 0 to 100.
         @li USER: Do not embed the file, refer to the external file instead.
     @endproperty
 **/
@@ -1573,7 +1573,7 @@ st_data_item(void)
     @parameters
         [parameter name] [parameter filename]
     @effect
-        Defines a new parameter , the value will be the contents of the
+        Defines a new parameter, the value will be the contents of the
         specified file formated as a single string of text. This property only
         works with plain text files.
     @endproperty
@@ -1980,7 +1980,7 @@ ob_collections(void)
         the sounds can be defined later with edje_cc's "-sd" option.
         @li RAW: Uncompressed.
         @li COMP: Lossless compression.
-        @li LOSSY [-0.1  - 1.0]: Lossy comression with quality from 0 to 1.0.
+        @li LOSSY [-0.1  - 1.0]: Lossy compression with quality from 0 to 1.0.
         @li AS_IS: Check for re-encoding, no compression/encoding, just write the file information as it is.
     @endproperty
     @since 1.1.0
@@ -3331,7 +3331,7 @@ st_collections_group_parts_part_precise_is_inside(void)
     @effect
         Only affects text and textblock parts, when enabled Edje will use
         different size measurement functions. Disabled by default. (note from
-        the author: I don't know what this is exactlu useful for?)
+        the author: I don't know what this is exactly useful for?)
     @endproperty
 */
 static void
@@ -5916,7 +5916,7 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
     @parameters
         [width] [height]
     @effect
-        Takes a pair of decimal values that represent the a percentual value
+        Takes a pair of decimal values that represent the percentual value
         of the original size of the element. For example, "0.5 0.5" represents
         half the size, while "2.0 2.0" represents the double. The default
         value is "1.0 1.0".
@@ -7136,7 +7136,7 @@ st_collections_group_parts_part_description_map_rotation_x(void)
     @parameters
         [Y degrees]
     @effect
-        This sets the rotation around the u axis of the part considering
+        This sets the rotation around the y axis of the part considering
         the center set. In degrees.
     @endproperty
 */
@@ -7764,13 +7764,13 @@ st_collections_group_programs_program_action(void)
         ACCEL_FAC, DECEL_FAC and SIN_FAC need the extra optional
         "interp val 1" to determine the "factor" of curviness. 1.0 is the same
         as their non-factor counterparts, where 0.0 is equal to linear.
-        numbers higher than one make the curve angles steeper with a more
-        prnounced curve point.
+        Numbers higher than one make the curve angles steeper with a more
+        pronounced curve point.
         
         DIVIS, BOUNCE and SPRING also require "interp val 2" in addition
         to "interp val 1".
         
-        DIVIS uses val 1 as the initial graident start
+        DIVIS uses val 1 as the initial gradient start
         (0.0 is horizontal, 1.0 is diagonal (linear), 2.0 is twice the
         gradient of linear etc.). val 2 is interpreted as an integer factor
         defining how much the value swings "outside" the gradient only to come
