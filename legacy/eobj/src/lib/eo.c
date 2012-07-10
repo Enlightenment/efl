@@ -243,7 +243,7 @@ _eo_kls_itr_init(const Eo_Class *obj_klass, Eo_Kls_Itr *cur, Eo_Op op, Eo_Kls_It
    prev_state->op = cur->op;
    prev_state->kls_itr = cur->kls_itr;
 
-   if ((cur->op == EO_NOOP) || (cur->op != op))
+   if (cur->op != op)
      {
         cur->op = op;
         cur->kls_itr = obj_klass->mro;
@@ -263,7 +263,7 @@ _eo_kls_itr_end(Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state)
 static inline const Eo_Class *
 _eo_kls_itr_get(Eo_Kls_Itr *cur)
 {
-   return (cur->kls_itr) ? *(cur->kls_itr) : NULL;
+   return *(cur->kls_itr);
 }
 
 static inline const Eo_Class *
