@@ -26,6 +26,7 @@ static inline void _eo_unref(Eo *obj);
 typedef struct
 {
    const Eo_Class **kls_itr;
+   Eina_Bool insuper_context:1;
 } Eo_Kls_Itr;
 
 struct _Eo {
@@ -239,14 +240,20 @@ _eo_op_id_name_get(Eo_Op op)
 static inline void
 _eo_kls_itr_init(const Eo_Class *obj_klass, Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state)
 {
-   prev_state->kls_itr = cur->kls_itr;
-   cur->kls_itr = obj_klass->mro;
+   if (cur->insuper_context)
+     {
+        memcpy(prev_state, cur, sizeof(*cur));
+        cur->kls_itr = obj_klass->mro;
+     }
 }
 
 static inline void
 _eo_kls_itr_end(Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state)
 {
-   cur->kls_itr = prev_state->kls_itr;
+   if (cur->insuper_context)
+     {
+        memcpy(cur, prev_state, sizeof(*cur));
+     }
 }
 
 static inline const Eo_Class *
@@ -259,7 +266,8 @@ static inline const Eo_Class *
 _eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state, Eo_Op op)
 {
    const Eo_Class **kls_itr = cur->kls_itr;
-   prev_state->kls_itr = cur->kls_itr;
+   memcpy(prev_state, cur, sizeof(*cur));
+   cur->insuper_context = EINA_TRUE;
    if (*kls_itr)
      {
         const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
