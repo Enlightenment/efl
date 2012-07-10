@@ -323,7 +323,9 @@ cb_vol_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_U
               }
           volume_devices = eina_list_remove(volume_devices, device);
           eina_stringshare_del(device);
+          break;
         default:
+          INF("Changed volume '%s'", device);
           break;
      }
 }
@@ -374,7 +376,9 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_
               }
           storage_devices = eina_list_remove(storage_devices, device);
           eina_stringshare_del(device);
+          break;
         default:
+          INF("Changed device '%s'", device);
           break;
      }
 }
