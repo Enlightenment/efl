@@ -193,6 +193,9 @@ _socketfd_handler(int fd __UNUSED__, Fd_Flags flags __UNUSED__, void *data __UNU
         ERR("Could not accept socket: \"%s\"", strerror(errno));
         return;
      }
+   /* TODO: when porting to windows, do:
+    * SetHandleInformation(s, HANDLE_FLAG_INHERIT, 0)
+    */
    fcntl(s, F_SETFD, FD_CLOEXEC);
 
    cserve2_client_accept(s);
