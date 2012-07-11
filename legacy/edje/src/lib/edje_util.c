@@ -91,18 +91,21 @@ _edje_user_definition_free(Edje_User_Defined *eud)
       case EDJE_USER_SWALLOW:
 	child = eud->u.swallow.child;
 	rp = _edje_real_part_recursive_get(eud->ed, eud->part);
-	_edje_real_part_swallow_clear(rp);
-	rp->swallowed_object = NULL;
-	rp->swallow_params.min.w = 0;
-	rp->swallow_params.min.h = 0;
-	rp->swallow_params.max.w = 0;
-	rp->swallow_params.max.h = 0;
-	rp->edje->dirty = 1;
-	rp->edje->recalc_call = 1;
+	if (rp)
+	  {
+	    _edje_real_part_swallow_clear(rp);
+	    rp->swallowed_object = NULL;
+	    rp->swallow_params.min.w = 0;
+	    rp->swallow_params.min.h = 0;
+	    rp->swallow_params.max.w = 0;
+	    rp->swallow_params.max.h = 0;
+	    rp->edje->dirty = 1;
+	    rp->edje->recalc_call = 1;
 #ifdef EDJE_CALC_CACHE
-	rp->invalidate = 1;
+	    rp->invalidate = 1;
 #endif
-	_edje_recalc_do(rp->edje);
+	    _edje_recalc_do(rp->edje);
+	  }
 	break;
       case EDJE_USER_BOX_PACK:
 	child = eud->u.box.child;
