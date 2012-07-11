@@ -295,3 +295,11 @@
 	* Add elm_scroller_page_size_get() and
 	  elm_scroller_page_relative_get() for consistency (some scrolling
 	  widgets got these gettes before).
+
+2012-07-10  Rob Bradford
+
+	* Expose into private API a function for getting the X window from an
+	Ecore_Evas using the backend safe functions.
+	* Use this new API to replace a non backend safe call in the copy and
+	paste code
+
