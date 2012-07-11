@@ -2,6 +2,8 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
+pkgdatadir=@datadir@/elementary
+themes=${pkgdatadir}/themes
 
 Name: elementary
 Description: Mobile device touchscreen widget library
