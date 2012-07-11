@@ -442,7 +442,7 @@ _elm_widget_xwin_get(const Evas_Object *obj)
         if (!evas) return 0;
         ee = ecore_evas_ecore_evas_get(evas);
         if (!ee) return 0;
-        xwin = (Ecore_X_Window)ecore_evas_window_get(ee);
+        xwin = _elm_ee_xwin_get(ee);
      }
 
    return xwin;

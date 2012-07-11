@@ -1266,7 +1266,7 @@ _elm_win_delete_request(Ecore_Evas *ee)
    evas_object_unref(obj);
 }
 
-static Ecore_X_Window
+Ecore_X_Window
 _elm_ee_xwin_get(const Ecore_Evas *ee)
 {
 #ifdef HAVE_ELEMENTARY_X

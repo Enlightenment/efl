@@ -232,6 +232,8 @@ void                 _elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme);
 void                 _elm_win_access(Eina_Bool is_access);
 void                 _elm_win_translate(void);
 
+Ecore_X_Window       _elm_ee_xwin_get(const Ecore_Evas *ee);
+
 Eina_Bool            _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
 Eina_Bool            _elm_theme_object_icon_set(Evas_Object *o, const char *group, const char *style);
 Eina_Bool            _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style);
