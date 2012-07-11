@@ -289,3 +289,9 @@
 	* Add slider popup mode (based in idea originally proposed in
           patches from Sumanth Krishna Mannam, but susbequently rejected
           a few times as it didn't measure up to commitable standards).
+
+2012-07-10  Gustavo Lima Chaves
+
+	* Add elm_scroller_page_size_get() and
+	  elm_scroller_page_relative_get() for consistency (some scrolling
+	  widgets got these gettes before).

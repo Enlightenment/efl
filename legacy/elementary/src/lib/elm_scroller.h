@@ -247,6 +247,8 @@ EAPI void                         elm_scroller_page_relative_set(Evas_Object *ob
  *
  * @see elm_scroller_page_relative_set() for more details
  *
+ * @since 1.7
+ *
  * @ingroup Scroller
  */
 EAPI void                         elm_scroller_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
@@ -277,6 +279,8 @@ EAPI void                         elm_scroller_page_size_set(Evas_Object *obj, E
  *
  * @see elm_scroller_page_size_set() for more details
  * @see elm_scroller_page_relative_set()
+ *
+ * @since 1.7
  *
  * @ingroup Scroller
  */
