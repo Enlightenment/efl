@@ -443,7 +443,7 @@ main(void)
    snprintf(buf2, sizeof(buf), "%s/.ecore_service|eeze_scanner|0", tmp);
    if (!stat(buf2, &st))
      {
-        ERR("Socket file '%s' for scanner already exists! Refusing to start up!", buf);
+        ERR("Socket file '%s' for scanner already exists! Refusing to start up!", buf2);
         exit(1);
      }
    eet_setup();
