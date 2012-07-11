@@ -5614,7 +5614,10 @@ st_collections_group_parts_part_description_image_scale_hint(void)
         }
     @description
         The fill method is an optional block that defines the way an IMAGE part
-	is going to be displayed inside its container.
+        is going to be displayed inside its container.
+        It can be used for tiling (repeating the image) or displaying only
+        part of an image. See @ref evas_object_image_fill_set() documentation
+        for more details.
     @endblock
 
     @property
