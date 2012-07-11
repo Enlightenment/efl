@@ -1049,7 +1049,7 @@ vcard_receive(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      {
         Elm_Selection_Data ddata;
         ddata.x = ddata.y = 0;
-        ddata.format = ELM_SEL_FORMAT_IMAGE;
+        ddata.format = ELM_SEL_FORMAT_VCARD;
         ddata.data = data->data;
         ddata.len = data->length;
         sel->datacb(sel->udata, sel->widget, &ddata);
