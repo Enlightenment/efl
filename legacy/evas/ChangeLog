@@ -877,3 +877,6 @@
 
 	* Let Draw Text with viewport size instead of window size. When map is enabled then it should be rendered completely.
 
+2012-07-11  Tom Hacohen (TAsn)
+
+	* Fixed runtime emboldenment with bitmap fonts.

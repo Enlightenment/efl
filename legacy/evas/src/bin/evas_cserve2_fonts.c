@@ -314,9 +314,7 @@ _font_slave_glyph_load(Font_Info *fi, unsigned int idx, unsigned int hint)
      FT_Outline_Transform(&fsi->face->glyph->outline, &transform);
    /* Embolden the outline of Glyph according to rundtime_rend. */
    if (fi->runtime_rend & FONT_REND_WEIGHT)
-     FT_Outline_Embolden(&fsi->face->glyph->outline,
-                         (fsi->face->size->metrics.x_ppem * 5 * 64) /
-                         100);
+      FT_GlyphSlot_Embolden(fsi->face->glyph);
 
    return EINA_TRUE;
 }

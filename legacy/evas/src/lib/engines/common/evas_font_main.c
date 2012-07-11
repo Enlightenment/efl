@@ -422,8 +422,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt idx)
       FT_Outline_Transform(&fi->src->ft.face->glyph->outline, &transform);
    /* Embolden the outline of Glyph according to rundtime_rend. */
    if (fi->runtime_rend & FONT_REND_WEIGHT)
-      FT_Outline_Embolden(&fi->src->ft.face->glyph->outline,
-            (fi->src->ft.face->size->metrics.x_ppem * 5 * 64) / 100);
+      FT_GlyphSlot_Embolden(fi->src->ft.face->glyph);
 
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
    if (!fg) return NULL;
