@@ -676,66 +676,64 @@ _edje_recalc_do(Edje *ed)
         unsigned char limit;
         int part;
 
-        name = ed->collection->parts[i]->name;
         part = ed->collection->limits.parts[i].part;
+        name = ed->collection->parts[part]->name;
         limit = ed->table_parts[part]->chosen_description->limit;
         switch (limit)
           {
            case 0:
-              ed->collection->limits.parts[i].width = 2;
-              ed->collection->limits.parts[i].height = 2;
+              ed->collection->limits.parts[i].width = EDJE_PART_LIMIT_UNKNOWN;
+              ed->collection->limits.parts[i].height = EDJE_PART_LIMIT_UNKNOWN;
               break;
            case 1:
-              ed->collection->limits.parts[i].height = 2;
+              ed->collection->limits.parts[i].height = EDJE_PART_LIMIT_UNKNOWN;
               break;
            case 2:
-              ed->collection->limits.parts[i].width = 2;
+              ed->collection->limits.parts[i].width = EDJE_PART_LIMIT_UNKNOWN;
               break;
            case 3:
               break;
           }
 
-        if (limit | 1)
+        if ((limit & 1) == 1)
           {
              if (ed->table_parts[part]->w > 0 &&
-                 (ed->collection->limits.parts[i].width <= 0 ||
-                  ed->collection->limits.parts[i].width == 2))
+                 (ed->collection->limits.parts[i].width != EDJE_PART_LIMIT_OVER))
                {
-                  ed->collection->limits.parts[i].width = 1;
+                  ed->collection->limits.parts[i].width = EDJE_PART_LIMIT_OVER;
                   _edje_emit(ed, "limit,width,over", name);
                }
              else if (ed->table_parts[part]->w < 0 &&
-                      ed->collection->limits.parts[i].width >= 0)
+                      ed->collection->limits.parts[i].width != EDJE_PART_LIMIT_BELOW)
                {
-                  ed->collection->limits.parts[i].width = -1;
+                  ed->collection->limits.parts[i].width = EDJE_PART_LIMIT_BELOW;
                   _edje_emit(ed, "limit,width,below", name);
                }
              else if (ed->table_parts[part]->w == 0 &&
-                      ed->collection->limits.parts[i].width != 0)
+                      ed->collection->limits.parts[i].width != EDJE_PART_LIMIT_ZERO)
                {
-                  ed->collection->limits.parts[i].width = 0;
+                  ed->collection->limits.parts[i].width = EDJE_PART_LIMIT_ZERO;
                   _edje_emit(ed, "limit,width,zero", name);
                }
           }
-        if (limit | 2)
+        if ((limit & 2) == 2)
           {
              if (ed->table_parts[part]->h > 0 &&
-                 (ed->collection->limits.parts[i].height <= 0 ||
-                  ed->collection->limits.parts[i].height == 2))
+                 (ed->collection->limits.parts[i].height != EDJE_PART_LIMIT_OVER))
                {
-                  ed->collection->limits.parts[i].height = 1;
+                  ed->collection->limits.parts[i].height = EDJE_PART_LIMIT_OVER;
                   _edje_emit(ed, "limit,height,over", name);
                }
              else if (ed->table_parts[part]->h < 0 &&
-                      ed->collection->limits.parts[i].height >= 0)
+                      ed->collection->limits.parts[i].height != EDJE_PART_LIMIT_BELOW)
                {
-                  ed->collection->limits.parts[i].height = -1;
-                  _edje_emit(ed, "limit,height,beloh", name);
+                  ed->collection->limits.parts[i].height = EDJE_PART_LIMIT_BELOW;
+                  _edje_emit(ed, "limit,height,below", name);
                }
              else if (ed->table_parts[part]->h == 0 &&
-                      ed->collection->limits.parts[i].height != 0)
+                      ed->collection->limits.parts[i].height != EDJE_PART_LIMIT_ZERO)
                {
-                  ed->collection->limits.parts[i].height = 0;
+                  ed->collection->limits.parts[i].height = EDJE_PART_LIMIT_ZERO;
                   _edje_emit(ed, "limit,height,zero", name);
                }
           }

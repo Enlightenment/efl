@@ -727,12 +727,19 @@ struct _Edje_Pack_Element
    unsigned short   colspan, rowspan;
 };
 
+typedef enum {
+  EDJE_PART_LIMIT_UNKNOWN = 0,
+  EDJE_PART_LIMIT_BELOW,
+  EDJE_PART_LIMIT_ZERO,
+  EDJE_PART_LIMIT_OVER
+} Edje_Part_Limit_State;
+
 struct _Edje_Part_Limit
 {
    int part;
 
-   signed char width; /* -1, 0 or 1 */
-   signed char height; /* -1, 0, or 1 */
+   Edje_Part_Limit_State width; /* -1, 0 or 1 */
+   Edje_Part_Limit_State height; /* -1, 0, or 1 */
 };
 
 /*----------*/
