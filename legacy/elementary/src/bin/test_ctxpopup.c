@@ -88,7 +88,7 @@ _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    it = elm_ctxpopup_item_append(_hov, _label, ic, _ctxpopup_item_cb, NULL);  \
 
 static void
-_list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
    Elm_Object_Item *it;
@@ -117,7 +117,7 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-_list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb2(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
    Elm_Object_Item *it;
@@ -145,7 +145,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-_list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb3(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
    Elm_Object_Item *it;
@@ -172,7 +172,7 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-_list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb4(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *ic;
    Elm_Object_Item *it;
@@ -204,7 +204,7 @@ _list_item_cb4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
 
 static void
-_list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb5(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *btn, *sc, *bx;
    Evas_Coord x,y;
@@ -244,7 +244,7 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-_list_item_cb6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb6(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *ctxpopup, *btn, *sc, *bx;
    Evas_Coord x,y;
