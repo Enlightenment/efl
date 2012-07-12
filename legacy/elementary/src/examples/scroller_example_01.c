@@ -114,6 +114,7 @@ elm_main(int argc, char **argv)
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
@@ -122,6 +123,7 @@ elm_main(int argc, char **argv)
    evas_object_show(label);
 
    scroller = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, scroller);
    evas_object_show(scroller);
    elm_object_content_set(scroller, label);
