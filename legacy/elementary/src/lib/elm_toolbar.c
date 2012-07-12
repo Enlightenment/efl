@@ -507,7 +507,7 @@ _item_content_unset_hook(Elm_Object_Item *it, const char *part)
    Elm_Toolbar_Item *item = (Elm_Toolbar_Item *) it;
    Evas_Object *obj = WIDGET(item);
    Widget_Data *wd = elm_widget_data_get(obj);
-   
+
    edje_object_part_unswallow(VIEW(it), item->object);
    elm_widget_sub_object_del(obj, item->object);
    o = item->object;
