@@ -513,3 +513,9 @@
 2012-07-03  Tom Hacohen (TAsn)
 
 	* Entry: Update anchors from user_insert as well.
+
+2012-07-12  Tom Hacohen (TAsn)
+
+	* Textblock: Fixed issue with updating only the font size using text
+	classes.
+
