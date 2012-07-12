@@ -3606,6 +3606,7 @@ elm_genlist_add(Evas_Object *parent)
    elm_smart_scroller_bounce_allow_set(wd->scr, EINA_FALSE,
                                        _elm_config->thumbscroll_bounce_enable);
    elm_widget_resize_object_set(obj, wd->scr);
+   wd->v_bounce = _elm_config->thumbscroll_bounce_enable;
 
    evas_object_smart_callback_add(wd->scr, "animate,start", _scr_anim_start, obj);
    evas_object_smart_callback_add(wd->scr, "animate,stop", _scr_anim_stop, obj);

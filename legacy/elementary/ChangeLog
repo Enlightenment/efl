@@ -303,3 +303,7 @@
 	* Use this new API to replace a non backend safe call in the copy and
 	paste code
 
+2012-07-12  Tae-Hwan Kim (Bluezery)
+
+	* Fix that vertical bounce enable value can be get from elm_config
+	when the genlist is added.
