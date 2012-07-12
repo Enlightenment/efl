@@ -1091,7 +1091,7 @@ group { name: "elm/toolbar/item/item_centered";
             rel2 {
                relative: 0.0 0.0;
                to: "padding_right_bottom";
-               offset: 0 -10; 
+               offset: 0 -10;
             }
             aspect: 1.0 1.0;
             aspect_preference: BOTH;
