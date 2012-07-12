@@ -378,10 +378,10 @@ group { name: "elm/button/base/hoversel_vertical/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            fixed: 0 0;
+            fixed: 1 0;
             visible: 1;
             aspect: 1.0 1.0;
-            aspect_preference: VERTICAL;
+//            aspect_preference: VERTICAL;
             rel2.offset: 2 -5;
          }
          description { state: "icononly" 0.0;
@@ -389,13 +389,13 @@ group { name: "elm/button/base/hoversel_vertical/default";
             fixed: 0 0;
             visible: 1;
             align: 0.5 0.5;
-            aspect: 1.0 1.0;
+//            aspect: 1.0 1.0;
             rel1 {
                to_x: "button_image";
                offset: -3 -3;
                relative: 1.0 1.0;
             }
-            aspect_preference: VERTICAL;
+//            aspect_preference: VERTICAL;
          }
       }
       part {
@@ -655,18 +655,20 @@ group { name: "elm/button/base/hoversel_vertical_entry/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
+            fixed: 1 0;
             visible: 1;
             aspect: 1.0 1.0;
-            aspect_preference: VERTICAL;
+//            aspect_preference: VERTICAL;
             rel2.offset: 0 -3;
          }
          description { state: "icononly" 0.0;
             inherit: "default" 0.0;
+            fixed: 0 0;
             visible: 1;
             align: 0.5 0.5;
-            aspect: 1.0 1.0;
+//            aspect: 1.0 1.0;
             rel2.offset: -5 -5;
-            rel2.relative: 1.0 1.0;
+//            rel2.relative: 1.0 1.0;
             aspect_preference: VERTICAL;
          }
       }

@@ -115,6 +115,8 @@ _icon_signal_emit(Evas_Object *obj)
             elm_layout_content_get(obj, "icon") ? "visible" : "hidden");
 
    elm_layout_signal_emit(obj, buf, "elm");
+   edje_object_message_signal_process(elm_layout_edje_get(obj));
+   _elm_button_smart_sizing_eval(obj);
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot
