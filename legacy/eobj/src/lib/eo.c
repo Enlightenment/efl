@@ -831,8 +831,6 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
    /* Check restrictions on Interface types. */
    if (desc->type == EO_CLASS_TYPE_INTERFACE)
      {
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->class_constructor, NULL);
-        EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->class_destructor, NULL);
         EINA_SAFETY_ON_FALSE_RETURN_VAL(!desc->data_size, NULL);
      }
 
