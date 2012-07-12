@@ -1701,8 +1701,25 @@ EAPI Eina_Bool   ecore_evas_override_get(const Ecore_Evas *ee);
  * @param ee The Ecore_Evas
  * @param on The type of the damage management
  *
- * This function causes @p ee to be drawn to a pixmap to avoid recalculations.
- * On expose events it will copy from the pixmap to the window.
+ * This option causes updates of the Ecore_Evas to be done on a pixmap, and
+ * then copied to the window, or the pixmap used directly on the window,
+ * depending on the setting. Possible options are:
+ *
+ * @li @ref ECORE_EVAS_AVOID_DAMAGE_NONE - every expose event triggers a new
+ * damage and consequently render of the affected area. The rendering of things
+ * happens directly on the window;
+ *
+ * @li @ref ECORE_EVAS_AVOID_DAMAGE_EXPOSE - there's a pixmap where everything
+ * is rendered into, and then copied to the window. On expose events, there's
+ * no need to render things again, just to copy the exposed region to the
+ * window;
+ *
+ * @li @ref ECORE_EVAS_AVOID_DAMAGE_BUILT_IN - there's the same pixmap as the
+ * previous one, but it is set as a "background pixmap" of the window.  The
+ * rendered things appear directly on the window, with no need to copy
+ * anything, but would stay stored on the pixmap, so there's no need to render
+ * things again on expose events. This option can be faster than the previous
+ * one, but may lead to artifacts during resize of the window.
  */
 EAPI void        ecore_evas_avoid_damage_set(Ecore_Evas *ee, Ecore_Evas_Avoid_Damage_Type on);
 
