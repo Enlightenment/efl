@@ -826,8 +826,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
            return EINA_TRUE;
 
         /* Update the class found */
-        eina_stringshare_del(tc->font);
-        tc->font = eina_stringshare_add(font);
+        eina_stringshare_replace(&tc->font, font);
         tc->size = size;
      }
 
@@ -926,9 +925,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
                 return EINA_TRUE;
 
 	     /* Update new text class properties */
-	     if (tc->font) eina_stringshare_del(tc->font);
-	     if (font) tc->font = eina_stringshare_add(font);
-	     else tc->font = NULL;
+             eina_stringshare_replace(&tc->font, font);
 	     tc->size = size;
 
 	     /* Update edje */
@@ -951,8 +948,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 	free(tc);
 	return EINA_FALSE;
      }
-   if (font) tc->font = eina_stringshare_add(font);
-   else tc->font = NULL;
+   tc->font = eina_stringshare_add(font);
    tc->size = size;
 
    for (i = 0; i < ed->table_parts_size; i++)
