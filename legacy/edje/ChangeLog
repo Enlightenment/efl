@@ -518,4 +518,8 @@
 
 	* Textblock: Fixed issue with updating only the font size using text
 	classes.
+	* Textblock: Fixed updating textblock text_class with
+	edje_text_class_set.
+	* Text classes: Fixed edje_text_class_set to behave like
+	edje_object_text_class_set (and as expected) wrt NULL fonts.
 

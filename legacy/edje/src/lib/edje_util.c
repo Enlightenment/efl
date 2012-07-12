@@ -816,23 +816,20 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 
 	tc->font = eina_stringshare_add(font);
 	tc->size = size;
-	return EINA_FALSE;
      }
-
-   /* If the class found is the same just return */
-   if ((tc->size == size) && (tc->font) && (!strcmp(tc->font, font)))
-     return EINA_TRUE;
-
-   /* Update the class found */
-   eina_stringshare_del(tc->font);
-   tc->font = eina_stringshare_add(font);
-   if (!tc->font)
+   else
      {
-        eina_hash_del(_edje_text_class_hash, text_class, tc);
-	free(tc);
-	return EINA_FALSE;
+        /* Match and the same, return */
+        if ((tc->size == size) ||
+            (tc->font == font) ||
+            (tc->font && font && !strcmp(tc->font, font)))
+           return EINA_TRUE;
+
+        /* Update the class found */
+        eina_stringshare_del(tc->font);
+        tc->font = eina_stringshare_add(font);
+        tc->size = size;
      }
-   tc->size = size;
 
    /* Tell all members of the text class to recalc */
    members = eina_hash_find(_edje_text_class_member_hash, text_class);
@@ -923,12 +920,10 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 	if ((tc->name) && (!strcmp(tc->name, text_class)))
 	  {
 	     /* Match and the same, return */
-	     if ((tc->font) && (font) && (!strcmp(tc->font, font)) &&
-		 (tc->size == size))
-	       return EINA_TRUE;
-
-	     /* No font but size is the same, return */
-	     if ((!tc->font) && (!font) && (tc->size == size)) return EINA_TRUE;
+             if ((tc->size == size) ||
+                  (tc->font == font) ||
+                  (tc->font && font && !strcmp(tc->font, font)))
+                return EINA_TRUE;
 
 	     /* Update new text class properties */
 	     if (tc->font) eina_stringshare_del(tc->font);
