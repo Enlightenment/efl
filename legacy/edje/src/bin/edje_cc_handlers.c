@@ -3350,7 +3350,8 @@ st_collections_group_parts_part_use_alternate_font_metrics(void)
         [another part's name]
     @effect
         Only renders the area of part that coincides with another part's
-        container. Overflowing content will not be displayed.
+        container. Overflowing content will not be displayed. Note that
+        the part being clipped to can only be a rectangle part.
     @endproperty
 */
 static void
