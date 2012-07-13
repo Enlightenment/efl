@@ -357,9 +357,13 @@ EAPI Eina_Hash *eina_hash_new(Eina_Key_Length key_length_cb,
  * @param hash The given hash table
  * @param data_free_cb The function called on each value when the hash
  * table is freed, or when an item is deleted from it. @c NULL can be passed as
- * callback.
+ * callback to remove an existing callback.
+ *
+ * The argument received by @p data_free_cb will be that data of the item being
+ * removed.
+ *
  * @since 1.1
- * See @ref eina_hash_new.
+ * @see eina_hash_new.
  */
 EAPI void eina_hash_free_cb_set(Eina_Hash *hash, Eina_Free_Cb data_free_cb) EINA_ARG_NONNULL(1);
 
