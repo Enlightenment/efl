@@ -420,10 +420,10 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
 	    {
 	       if (image_num == (image_count - 1))
 		 {
-		   image_id = _edje_image_find(ep->object, ed,
-					       &ep->param2->set,
-					       (Edje_Part_Description_Image*) ep->param2->description,
-					       NULL);
+                    image_id = _edje_image_find(ep->object, ed,
+                                                &ep->param2->set,
+                                                (Edje_Part_Description_Image*) ep->param2->description,
+                                                NULL);
 		 }
 	       else
 		 {
@@ -435,11 +435,13 @@ _edje_real_part_image_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T pos)
 	    }
 	if (image_id < 0)
 	  {
-	     ERR("¨Part \"%s\" has description, "
-		 "\"%s\" %3.3f with a missing image id!!!",
+	     ERR("¨Part \"%s\" description, "
+		 "\"%s\" %3.3f with image %i index has a missing image id in a set of %i !!!",
 		 ep->part->name,
 		 ep->param1.description->state.name,
-		 ep->param1.description->state.value);
+		 ep->param1.description->state.value,
+		 image_num,
+		 image_count);
 	  }
 	else
 	  {

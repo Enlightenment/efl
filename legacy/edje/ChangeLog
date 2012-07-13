@@ -523,3 +523,7 @@
 	* Text classes: Fixed edje_text_class_set to behave like
 	edje_object_text_class_set (and as expected) wrt NULL fonts.
 
+2012-07-12  Cedric Bail
+
+	* Warn at compile time about forgotten image definition.
+

@@ -11,6 +11,7 @@ Additions:
     process (Use it to replace RECT part that are never visible and never catch any event).
     * Add accessibility flags and API to retrieve the relevant part.
     * Emit signal when flagged part size get to zero.
+    * Warn at compile time about forgotten image.
 
 Improvements:
     * Allocate once and reuse Evas_Map.

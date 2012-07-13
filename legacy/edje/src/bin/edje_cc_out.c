@@ -226,12 +226,11 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
 {
    unsigned int i;
    
-#if 0 /* FIXME: This check sounds like not a useful one */
-   if (epd->image.id == -1)
-     ERR(ef, "Collection %s(%i): image attributes missing for "
-	 "part \"%s\", description \"%s\" %f\n",
+   /* FIXME: This check sounds like not a useful one */
+   if (epd->image.id == -1 && epd->common.visible)
+     WRN("Collection %s(%i): image attributes missing for "
+	 "part \"%s\", description \"%s\" %f",
 	 pc->part, pc->id, ep->name, epd->common.state.name, epd->common.state.value);
-#endif
 
    for (i = 0; i < epd->image.tweens_count; ++i)
      {
