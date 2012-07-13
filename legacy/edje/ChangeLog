@@ -526,4 +526,4 @@
 2012-07-12  Cedric Bail
 
 	* Warn at compile time about forgotten image definition.
-
+	* Stop compilation when clipping to a non RECT part.

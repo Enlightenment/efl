@@ -12,6 +12,7 @@ Additions:
     * Add accessibility flags and API to retrieve the relevant part.
     * Emit signal when flagged part size get to zero.
     * Warn at compile time about forgotten image.
+    * Stop compilation when clipping to a non RECT part.
 
 Improvements:
     * Allocate once and reuse Evas_Map.
