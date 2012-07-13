@@ -2007,6 +2007,7 @@ data_queue_image_remove(int *dest, Eina_Bool *set)
         if (il->dest == dest && il->set == set)
           {
              image_lookups = eina_list_remove_list(image_lookups, l);
+             free(il->name);
              free(il);
              return ;
           }
