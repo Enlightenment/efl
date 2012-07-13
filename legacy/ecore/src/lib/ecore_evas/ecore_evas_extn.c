@@ -1601,6 +1601,8 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
           rend |= ee2->engine.func->fn_render(ee2);
         if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+
    if (ee->engine.buffer.pixels)
      {
         _ecore_evas_socket_lock(ee);
@@ -1627,6 +1629,7 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
            ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0, 0, NULL, 0);
      }
 
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
    return updates ? 1 : rend;
 }
 
