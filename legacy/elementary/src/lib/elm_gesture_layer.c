@@ -1790,16 +1790,13 @@ _tap_gesture_test(Evas_Object *obj,
 
         pe_list = _pointer_event_record
             (st, pe_list, pe, sd, event_info, event_type);
-        if (!sd->gest_taps_timeout)
-          {
-             sd->gest_taps_timeout =
-               ecore_timer_add(_elm_config->glayer_double_tap_timeout,
-                               _multi_tap_timeout, gesture->obj);
-          }
-        else
-          {
-             ecore_timer_reset(sd->gest_taps_timeout);
-          }
+        if ((!sd->gest_taps_timeout) && 
+            (_elm_config->glayer_double_tap_timeout > 0.0))
+          sd->gest_taps_timeout =
+          ecore_timer_add(_elm_config->glayer_double_tap_timeout,
+                          _multi_tap_timeout, gesture->obj);
+        else if (sd->gest_taps_timeout)
+          ecore_timer_reset(sd->gest_taps_timeout);
 
         /* This is the first mouse down we got */
         if ((pe->device == 0) && (eina_list_count(pe_list) == 1))
@@ -1813,19 +1810,16 @@ _tap_gesture_test(Evas_Object *obj,
              return;
           }
         else if (eina_list_count(pe_list) > st->n_taps_needed)
-          {
-             /* If we arleady got too many touches for this gesture. */
-             ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
-                                  &st->info, EINA_FALSE);
-          }
+          /* If we arleady got too many touches for this gesture. */
+          ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
+                               &st->info, EINA_FALSE);
 
         break;
 
       case EVAS_CALLBACK_MULTI_UP:
       case EVAS_CALLBACK_MOUSE_UP:
         pe_list = eina_list_search_unsorted(st->l, _pe_device_compare, pe);
-        if (!pe_list)
-          return;
+        if (!pe_list) return;
 
         pe_list = _pointer_event_record
             (st, pe_list, pe, sd, event_info, event_type);
@@ -1967,7 +1961,7 @@ _n_long_tap_test(Evas_Object *obj,
 
              /* To test long tap */
              /* When this timer expires, gesture STARTED */
-             if (!st->timeout)
+             if ((!st->timeout) && (sd->long_tap_start_timeout > 0.0))
                st->timeout = ecore_timer_add(sd->long_tap_start_timeout,
                                              _long_tap_timeout, gesture);
           }
@@ -1991,15 +1985,11 @@ _n_long_tap_test(Evas_Object *obj,
         if (st->info.n)
           {
              if (gesture->state == ELM_GESTURE_STATE_MOVE)
-               {
-                  ev_flag = _state_set(gesture, ELM_GESTURE_STATE_END,
-                        &st->info, EINA_FALSE);
-               }
+               ev_flag = _state_set(gesture, ELM_GESTURE_STATE_END,
+                                    &st->info, EINA_FALSE);
              else
-               {
-                  ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
-                        &st->info, EINA_FALSE);
-               }
+               ev_flag = _state_set(gesture, ELM_GESTURE_STATE_ABORT,
+                                    &st->info, EINA_FALSE);
 
              if (st->timeout)
                {
