@@ -112,8 +112,5 @@ evas_map_image_internal.c \
 evas_map_image_core.c \
 evas_map_image_loop.c
 
-libevas_engine_common_la_DEPENDENCIES = \
-$(top_builddir)/config.h
-
 libevas_engine_common_la_LIBADD = \
 evas_op_blend/libevas_engine_common_op_blend_master_sse3.la

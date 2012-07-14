@@ -18,12 +18,9 @@ if EVAS_CSERVE2
 
 noinst_LTLIBRARIES      = libevas_cache2.la
 libevas_cache2_la_SOURCES  = \
-evas_cache2.c
-
-noinst_HEADERS = evas_cache2.h
+evas_cache2.c \
+evas_cache2.h
 
 libevas_cache2_la_LIBAD = @EVIL_LIBS@
-
-libevas_cache2_la_DEPENDENCIES = $(top_builddir)/config.h
 
 endif

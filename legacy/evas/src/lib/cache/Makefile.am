@@ -15,10 +15,7 @@ noinst_LTLIBRARIES      = libevas_cache.la
 libevas_cache_la_SOURCES  = \
 evas_cache_image.c \
 evas_cache_engine_image.c \
-evas_preload.c
+evas_preload.c \
+evas_cache.h
 
 libevas_cache_la_LIBAD = @EVIL_LIBS@
-
-libevas_cache_la_DEPENDENCIES = $(top_builddir)/config.h
-
-EXTRA_DIST = evas_cache.h
