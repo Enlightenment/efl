@@ -527,3 +527,7 @@
 
 	* Warn at compile time about forgotten image definition.
 	* Stop compilation when clipping to a non RECT part.
+
+2012-07-14  Cedric Bail
+
+	* Fix Edje_Multisense shutdown.

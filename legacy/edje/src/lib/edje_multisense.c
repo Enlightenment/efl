@@ -283,13 +283,17 @@ _player_job(void *data __UNUSED__, Ecore_Thread *th)
      {
         if (!msdata->remaining)
           {
-             //Cleanup already played sound sources
+	     int err;
+             
+	     //Cleanup already played sound sources
              EINA_LIST_FREE(msdata->snd_src_list, sound)
                {
                   remix_destroy(msdata->msenv->remixenv, sound);
                }
              //wait for new sound
-             select(command_pipe[0] + 1, &wait_fds, NULL, NULL, 0);
+             err = select(command_pipe[0] + 1, &wait_fds, NULL, NULL, 0);
+	     if (ecore_thread_check(th))
+	       break;
           }
         //read sound command , if any
         sound_command_handler(msdata);
@@ -305,9 +309,6 @@ _player_job(void *data __UNUSED__, Ecore_Thread *th)
      {
         remix_destroy(msdata->msenv->remixenv, sound);
      }
-
-   close(command_pipe[0]);
-   close(command_pipe[1]);
 }
 #endif
 
@@ -400,7 +401,7 @@ _edje_multisense_init(void)
    if (!msdata) msdata = init_multisense_environment();
 
    if (!player_thread)
-     player_thread = ecore_thread_run(_player_job, _player_end, _player_cancel, NULL);
+     player_thread = ecore_thread_feedback_run(_player_job, NULL, _player_end, _player_cancel, NULL, EINA_TRUE);
 #endif
 }
 
@@ -408,11 +409,14 @@ void
 _edje_multisense_shutdown(void)
 {
 #ifdef ENABLE_MULTISENSE
+   if (player_thread) ecore_thread_cancel(player_thread);
    if (pipe_initialized)
      {
+        int i = 42;
+
+        write(command_pipe[1], &i, sizeof (int));
         close(command_pipe[1]);
         close(command_pipe[0]);
      }
-   if (player_thread) ecore_thread_cancel(player_thread);
 #endif
 }

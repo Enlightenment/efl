@@ -27,6 +27,7 @@ Fixes:
     * Fix table and text when fixed point is turned on.
     * Clamp image tween to never underflow also.
     * [entry] display preedit string even though there is no attribute
+    * Fix shutdown of Edje_Multisense.
 
 Edje 1.2.0
 
