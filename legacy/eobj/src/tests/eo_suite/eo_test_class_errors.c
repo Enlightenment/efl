@@ -254,13 +254,13 @@ START_TEST(eo_bad_interface)
    class_desc.class_constructor = _stub_class_constructor;
 
    klass = eo_class_new(&class_desc, 0, NULL, NULL);
-   fail_if(klass);
+   fail_if(!klass);
 
    class_desc.class_constructor = NULL;
    class_desc.class_destructor = _stub_class_constructor;
 
    klass = eo_class_new(&class_desc, 0, NULL, NULL);
-   fail_if(klass);
+   fail_if(!klass);
 
    class_desc.class_destructor = NULL;
 

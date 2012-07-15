@@ -124,7 +124,7 @@ _dich_chain_alloc(Dich_Chain1 *chain1)
 static inline void
 _dich_copy_all(Eo_Class *dst, const Eo_Class *src)
 {
-   Eo_Class_Id i;
+   Eo_Op i;
    const Dich_Chain1 *sc1 = src->chain;
    Dich_Chain1 *dc1 = dst->chain;
    for (i = 0 ; i <= DICH_CHAIN1(src->base_id) ; i++, sc1++, dc1++)
