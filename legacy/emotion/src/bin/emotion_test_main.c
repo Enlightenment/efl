@@ -300,7 +300,7 @@ bg_key_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 static void
 video_obj_time_changed(Evas_Object *obj, Evas_Object *edje)
 {
-   double pos, len, scale, bsize;
+   double pos, len, scale;
    char buf[256];
    int ph, pm, ps, pf, lh, lm, ls;
 
