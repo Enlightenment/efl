@@ -95,7 +95,7 @@ struct _Eo_Class
    Eo_Class_Id class_id;
    const Eo_Class *parent;
    const Eo_Class_Description *desc;
-   Dich_Chain1 *chain; /**< The size is class_id */
+   Dich_Chain1 *chain; /**< The size is chain size */
    size_t chain_size;
    size_t base_id;
 
@@ -127,7 +127,7 @@ _dich_copy_all(Eo_Class *dst, const Eo_Class *src)
    Eo_Op i;
    const Dich_Chain1 *sc1 = src->chain;
    Dich_Chain1 *dc1 = dst->chain;
-   for (i = 0 ; i <= DICH_CHAIN1(src->base_id) ; i++, sc1++, dc1++)
+   for (i = 0 ; i < src->chain_size ; i++, sc1++, dc1++)
      {
         if (sc1->funcs)
           {
@@ -176,7 +176,7 @@ _dich_func_clean_all(Eo_Class *klass)
    size_t i;
    Dich_Chain1 *chain1 = klass->chain;
 
-   for (i = 0 ; i <= DICH_CHAIN1(klass->base_id) ; i++, chain1++)
+   for (i = 0 ; i < klass->chain_size ; i++, chain1++)
      {
         if (chain1->funcs)
            free(chain1->funcs);
