@@ -263,6 +263,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
 
    RDI(level);
    RD("    [--- PROCESS [%p] '%s' active = %i, del = %i | %i %i %ix%i\n", obj, obj->type, is_active, obj->delete_me, obj->cur.geometry.x, obj->cur.geometry.y, obj->cur.geometry.w, obj->cur.geometry.h);
+
    if ((is_active) || (obj->delete_me != 0))
      eina_array_push(active_objects, obj);
 
@@ -316,12 +317,9 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         _evas_render_prev_cur_clip_cache_add(e, obj);
         if (obj->changed)
           {
-             if (hmap)
+             if (!map)
                {
-                  if (!map)
-                    {
-                       if ((obj->cur.map) && (obj->cur.usemap)) map = EINA_TRUE;
-                    }
+                  if ((obj->cur.map) && (obj->cur.usemap)) map = EINA_TRUE;
                }
              if (map != hmap)
                {
@@ -432,35 +430,33 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                     }
                }
           }
-        /*
-           else if (obj->smart.smart)
-           {
-           RDI(level);
-           RD("      smart + mot visible/was visible\n");
-           eina_array_push(render_objects, obj);
-           obj->render_pre = 1;
-           EINA_INLIST_FOREACH
-           (evas_object_smart_members_get_direct(obj), obj2)
-           {
-           _evas_render_phase1_object_process(e, obj2,
-           active_objects,
-           restack_objects,
-           delete_objects,
-           render_objects,
-           restack,
-           redraw_all
+/*        else if (obj->smart.smart)
+          {
+             RDI(level);
+             RD("      smart + mot visible/was visible\n");
+             eina_array_push(render_objects, obj);
+             obj->render_pre = 1;
+             EINA_INLIST_FOREACH (evas_object_smart_members_get_direct(obj), obj2)
+               {
+                  _evas_render_phase1_object_process(e, obj2,
+                                                     active_objects,
+                                                     restack_objects,
+                                                     delete_objects,
+                                                     render_objects,
+                                                     restack,
+                                                     redraw_all
 #ifdef REND_DGB
-, level + 1
+                                                     , level + 1
 #endif
-);
-}
-}
-         */
-}
-if (!is_active) obj->restack = EINA_FALSE;
-RDI(level);
-RD("    ---]\n");
-return clean_them;
+                                                    );
+               }
+          }
+*/
+     }
+   if (!is_active) obj->restack = EINA_FALSE;
+   RDI(level);
+   RD("    ---]\n");
+   return clean_them;
 }
 
 static Eina_Bool
