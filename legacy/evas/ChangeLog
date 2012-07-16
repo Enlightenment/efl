@@ -880,3 +880,7 @@
 2012-07-11  Tom Hacohen (TAsn)
 
 	* Fixed runtime emboldenment with bitmap fonts.
+
+2012-07-16  Hermet (ChunEon Park)
+
+	* Fixed to do pre render for the children of mapped object.
