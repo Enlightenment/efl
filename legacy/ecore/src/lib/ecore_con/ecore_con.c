@@ -2302,6 +2302,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 
    if (!count)
      {
+        if (!cl->buf) return;
         num = eina_binbuf_length_get(cl->buf) - cl->buf_offset;
         if (num <= 0) return;
         if (!(cl->host_server->type & ECORE_CON_SSL) || (!cl->upgrade))
