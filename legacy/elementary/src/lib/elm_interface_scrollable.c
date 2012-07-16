@@ -3100,8 +3100,6 @@ _elm_scroll_objects_set(Evas_Object *obj,
         if (!_elm_config->thumbscroll_enable)
           evas_object_size_hint_min_set(base, mw, mh);
      }
-   sid->vbar_visible = !sid->vbar_visible;
-   sid->hbar_visible = !sid->hbar_visible;
 
    _elm_scroll_scroll_bar_visibility_adjust(sid);
 }
