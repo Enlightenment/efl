@@ -59,7 +59,7 @@ typedef enum
 typedef enum
 {
     ECORE_IMF_INPUT_PANEL_SHIFT_MODE_OFF, /**< @since 1.7 */
-    ECORE_IMF_INPUT_PANEL_SHIFT_MODE_ON   /**< @since 1.7 */ 
+    ECORE_IMF_INPUT_PANEL_SHIFT_MODE_ON   /**< @since 1.7 */
 } Ecore_IMF_Input_Panel_Shift_Mode;
 
 typedef enum
