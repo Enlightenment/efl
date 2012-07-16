@@ -79,8 +79,8 @@ enum
    CNP_ATOM_image_tga,
    CNP_ATOM_image_ppm,
    CNP_ATOM_XELM,
-   CNP_ATOM_text_html_utf8,
-   CNP_ATOM_text_html,
+//   CNP_ATOM_text_html_utf8,
+//   CNP_ATOM_text_html,
    CNP_ATOM_UTF8STRING,
    CNP_ATOM_STRING,
    CNP_ATOM_TEXT,
@@ -175,7 +175,7 @@ static int notify_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_No
 static int notify_handler_text(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int notify_handler_uri(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
-static int notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
+//static int notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int vcard_receive(Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *notify);
 
 static Eina_Bool pasteimage_append(char *file, Evas_Object *entry);
@@ -299,6 +299,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
       notify_handler_image,/* Raw image data is the same */
       0
    },
+/*   
    [CNP_ATOM_text_html_utf8] = {
       "text/html;charset=utf-8",
       ELM_SEL_FORMAT_HTML,
@@ -312,9 +313,10 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
       ELM_SEL_FORMAT_HTML,
       general_converter,
       NULL,
-      notify_handler_html, /* No encoding: Webkit only */
+      notify_handler_html, // No encoding: Webkit only
       0
    },
+ */
    [CNP_ATOM_UTF8STRING] = {
       "UTF8_STRING",
       ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
@@ -1105,6 +1107,7 @@ notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
  *    Firefox sends ucs2 (i think).
  *       chrome sends utf8... blerg
  */
+/*
 static int
 notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
@@ -1130,12 +1133,12 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
      }
 
    cnp_debug("String is %s (%d bytes)\n", stripstr, data->length);
-   /* TODO BUG: should never NEVER assume it's an elm_entry! */
+   // TODO BUG: should never NEVER assume it's an elm_entry!
    _elm_entry_entry_paste(sel->requestwidget, stripstr);
    free(stripstr);
    return 0;
 }
-
+*/
 
 static Eina_Bool
 text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
