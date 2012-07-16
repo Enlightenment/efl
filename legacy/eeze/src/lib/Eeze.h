@@ -234,7 +234,7 @@ struct Eeze_Udev_Watch;
 typedef struct Eeze_Udev_Watch Eeze_Udev_Watch;
 
 #define EEZE_VERSION_MAJOR 1
-#define EEZE_VERSION_MINOR 2
+#define EEZE_VERSION_MINOR 6
 
    typedef struct _Eeze_Version
      {

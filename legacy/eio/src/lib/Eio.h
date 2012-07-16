@@ -61,7 +61,7 @@ extern "C" {
 #endif
 
 #define EIO_VERSION_MAJOR 1
-#define EIO_VERSION_MINOR 0
+#define EIO_VERSION_MINOR 6
 
     /**
     * @typedef Eio_Version

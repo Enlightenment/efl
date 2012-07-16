@@ -248,7 +248,7 @@ extern "C" {
 #endif
 
 #define EMOTION_VERSION_MAJOR 1
-#define EMOTION_VERSION_MINOR 0
+#define EMOTION_VERSION_MINOR 6
    
    typedef struct _Emotion_Version
      {
