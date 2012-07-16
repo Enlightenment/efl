@@ -813,3 +813,9 @@
         * Fix ecore-fb string lookup table to include ctrl+keys
         * Fix ecore-fb to trap sigint (ctrl+c) so it doesnt exit your fb app
         * Fix ecore-fb mouse to swap button 2 and 3 ro work right.
+
+2012-07-16  Carsten Haitzler (The Rasterman)
+
+        * Fix ecore-x selection handling to fall back to getting
+          selection directly if getting targets fails. This fixes e17 to
+          elm cnp.

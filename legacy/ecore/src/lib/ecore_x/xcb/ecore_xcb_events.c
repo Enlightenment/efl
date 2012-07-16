@@ -1333,7 +1333,15 @@ _ecore_xcb_event_handle_selection_notify(xcb_generic_event_t *event)
         format =
           ecore_x_window_prop_property_get(ev->requestor, ev->property,
                                            XCB_ATOM_ATOM, 32, &data, &num);
-        if (!format) return;
+        if (!format)
+          {
+             /* fallback if targets handling is not working and try get the
+              * selection directly */
+             xcb_convert_selection(_ecore_xcb_conn, ev->requestor,
+                                   selection, selection,
+                                   ECORE_X_ATOM_UTF8_STRING, XCB_CURRENT_TIME);
+             return;
+          }
      }
    else
      {

@@ -1403,7 +1403,16 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
                                                   xevent->xselection.property,
                                                   XA_ATOM, 32, &data, &num_ret);
         if (!format)
-          return;
+          {
+             /* fallback if targets handling is not working and try get the
+              * selection directly */
+             XConvertSelection(_ecore_x_disp, selection,
+                               ECORE_X_ATOM_UTF8_STRING,
+                               selection,
+                               xevent->xselection.requestor,
+                               CurrentTime);
+             return;
+          }
      }
    else
      {
