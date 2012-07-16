@@ -89,7 +89,7 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    api_data *a = data;
    char str[128];
 
-   printf("clicked event on API Button: api_state=<%d>\n", a->state);
+   INF("clicked event on API Button: api_state=<%d>\n", a->state);
    set_api_state(a);
    a->state++;
    sprintf(str, "Next API function (%u)", a->state);
@@ -141,7 +141,7 @@ Eina_Bool gl_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const
 static void
 gl_sel(void *data, Evas_Object *obj, void *event_info)
 {
-   printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
+   INF("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
 }
 
 static void
@@ -153,9 +153,9 @@ _move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Elm_Object_Item *gli;
    gli = elm_genlist_at_xy_item_get(gl, ev->cur.canvas.x, ev->cur.canvas.y, &where);
    if (gli)
-     printf("over %p, where %i\n", elm_object_item_data_get(gli), where);
+     INF("over %p, where %i\n", elm_object_item_data_get(gli), where);
    else
-     printf("over none, where %i\n", where);
+     INF("over none, where %i\n", where);
 }
 
 static void
@@ -173,19 +173,19 @@ _bt1500_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _gl_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   printf("selected: %p\n", event_info);
+   INF("selected: %p\n", event_info);
 }
 
 static void
 _gl_double_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   printf("double clicked: %p\n", event_info);
+   INF("double clicked: %p\n", event_info);
 }
 
 static void
 _gl_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   printf("longpress %p\n", event_info);
+   INF("longpress %p\n", event_info);
 }
 
 static void
@@ -329,7 +329,7 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
      {
-        printf("no item selected\n");
+        INF("no item selected\n");
         return ;
      }
 
@@ -359,7 +359,7 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
      {
-        printf("no item selected\n");
+        INF("no item selected\n");
         return ;
      }
 
@@ -380,7 +380,7 @@ my_gl_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Elm_Object_Item *gli = elm_genlist_selected_item_get(gl);
    if (!gli)
      {
-        printf("no item selected\n");
+        INF("no item selected\n");
         return;
      }
    elm_object_item_del(gli);
@@ -393,7 +393,7 @@ my_gl_disable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    Elm_Object_Item *gli = elm_genlist_selected_item_get(gl);
    if (!gli)
      {
-        printf("no item selected\n");
+        INF("no item selected\n");
         return;
      }
    elm_object_item_disabled_set(gli, EINA_TRUE);
@@ -410,7 +410,7 @@ my_gl_update_all(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    while (it)
      {
         elm_genlist_item_update(it);
-        printf("%i\n", i);
+        INF("%i\n", i);
         i++;
         it = elm_genlist_item_next_get(it);
      }
@@ -781,7 +781,7 @@ my_gl_item_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED
 {
    Testitem *tit = data;
    tit->onoff = elm_check_state_get(obj);
-   printf("item %p onoff = %i\n", tit, tit->onoff);
+   INF("item %p onoff = %i\n", tit, tit->onoff);
 }
 
 static Elm_Genlist_Item_Class itc3;
@@ -911,7 +911,7 @@ my_gl_item_check_changed2(void *data, Evas_Object *obj, void *event_info __UNUSE
 {
    Testitem *tit = data;
    tit->onoff = elm_check_state_get(obj);
-   printf("item %p onoff = %i\n", tit, tit->onoff);
+   INF("item %p onoff = %i\n", tit, tit->onoff);
 }
 
 static Elm_Genlist_Item_Class itc5;
@@ -976,67 +976,67 @@ Eina_Bool gl5_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, cons
 static void
 item_drag_up(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("drag up\n");
+   INF("drag up\n");
 }
 
 static void
 item_drag_down(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("drag down\n");
+   INF("drag down\n");
 }
 
 static void
 item_drag_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("drag left\n");
+   INF("drag left\n");
 }
 
 static void
 item_drag_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("drag right\n");
+   INF("drag right\n");
 }
 
 static void
 scroll_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("Top edge!\n");
+   INF("Top edge!\n");
 }
 
 static void
 scroll_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("Bottom edge!\n");
+   INF("Bottom edge!\n");
 }
 
 static void
 scroll_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("Left edge!\n");
+   INF("Left edge!\n");
 }
 
 static void
 scroll_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("Right edge!\n");
+   INF("Right edge!\n");
 }
 
 static void
 item_drag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("drag\n");
+   INF("drag\n");
 }
 
 static void
 item_drag_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("drag stop\n");
+   INF("drag stop\n");
 }
 
 static void
 item_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("longpress\n");
+   INF("longpress\n");
 }
 
 void
@@ -1138,7 +1138,7 @@ gl4_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    int depth = elm_genlist_item_expanded_depth_get(glit);
-   printf("expanded depth for selected item is %d\n", depth);
+   INF("expanded depth for selected item is %d\n", depth);
 }
 
 static void
@@ -1218,7 +1218,7 @@ Eina_Bool gl4_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, cons
 
 void gl4_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
-   printf("item deleted.\n");
+   INF("item deleted.\n");
 }
 
 static void
@@ -1333,7 +1333,7 @@ gl_sel7(void *data, Evas_Object *obj, void *event_info)
 {
    if (!event_info) return;
    elm_genlist_item_item_class_update(event_info, &itc7);
-   printf("sel item data [%p] on genlist obj [%p], item pointer [%p], new item style [%s] \n", data, obj, event_info, itc7.item_style);
+   INF("sel item data [%p] on genlist obj [%p], item pointer [%p], new item style [%s] \n", data, obj, event_info, itc7.item_style);
 }
 
 static void
@@ -1928,7 +1928,7 @@ static void gl_moved_after(Evas_Object *data __UNUSED__, Evas_Object *obj __UNUS
    // if needed, add application logic.
    Elm_Object_Item *it;
    it = elm_genlist_item_prev_get(item);
-   printf("it=%p, prev_it=%p\n",item,it);
+   INF("it=%p, prev_it=%p\n",item,it);
 }
 
 /**
@@ -1947,7 +1947,7 @@ static void gl_moved_before(Evas_Object *data __UNUSED__, Evas_Object *obj __UNU
    // if needed, add application logic.
    Elm_Object_Item *it;
    it = elm_genlist_item_next_get(item);
-   printf("it=%p, next_it=%p\n",item,it);
+   INF("it=%p, next_it=%p\n",item,it);
 }
 
 void
@@ -2172,7 +2172,7 @@ my_gl_insert_before_rel(void *data, Evas_Object *obj __UNUSED__, void *event_inf
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
      {
-        printf("no item selected\n");
+        INF("no item selected\n");
         return;
      }
 
@@ -2201,7 +2201,7 @@ my_gl_insert_after_rel(void *data, Evas_Object *obj __UNUSED__, void *event_info
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
      {
-        printf("no item selected\n");
+        INF("no item selected\n");
         return;
      }
 
@@ -2463,7 +2463,7 @@ gl15_normal_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 
 void gl15_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
-   printf("item deleted.\n");
+   INF("item deleted.\n");
 }
 
 static Elm_Genlist_Item_Class *itc15;
@@ -2859,7 +2859,7 @@ gl18_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    int depth = elm_genlist_item_expanded_depth_get(glit);
-   printf("expanded depth for selected item is %d\n", depth);
+   INF("expanded depth for selected item is %d\n", depth);
 }
 
 static void
