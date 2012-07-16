@@ -296,7 +296,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         if (obj->changed)
           {
              if (map != hmap) *redraw_all = 1;
-             evas_object_clip_recalc(obj);
 
              if ((is_active) && (!obj->clip.clipees) &&
                  ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
