@@ -2,6 +2,9 @@
  * @defgroup Genlist Genlist
  * @ingroup Elementary
  *
+ * @image html genlist_inheritance_tree.png
+ * @image latex genlist_inheritance_tree.eps
+ *
  * @image html img/widget/genlist/preview-00.png
  * @image latex img/widget/genlist/preview-00.eps
  * @image html img/genlist.png
@@ -18,6 +21,19 @@
  * trying to be both expansive, powerful and efficient. First we will begin
  * an overview on the theory behind genlist.
  *
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for genlist objects.
+ *
+ * This widget implements the @b @ref elm-scrollable-interface
+ * interface, so that all (non-deprecated) functions for the base @ref
+ * Scroller widget also work for genlists.
+ *
+ * Some calls on the genlist's API are marked as @b deprecated, as
+ * they just wrap the scrollable widgets counterpart functions. Use
+ * the ones we point you to, for each case of deprecation here,
+ * instead -- eventually the deprecated ones will be discarded (next
+ * major release).
+ *
  * @section Genlist_Item_Class Genlist item classes - creating items
  *
  * In order to have the ability to add and delete items on the fly, genlist
@@ -26,7 +42,7 @@
  * multiple different items with different classes, states and styles).
  * Genlist will call the functions in this struct (methods) when an item is
  * "realized" (i.e., created dynamically, while the user is scrolling the
- * grid). All objects will simply be deleted when no longer needed with
+ * list). All objects will simply be deleted when no longer needed with
  * evas_object_del(). The #Elm_Genlist_Item_Class structure contains the
  * following members:
  * - @c item_style - This is a constant string and simply defines the name
@@ -243,7 +259,8 @@
  *
  * @section Genlist_Smart_Events Genlist smart events
  *
- * Signals that you can add callbacks for are:
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
  * - @c "activated" - The user has double-clicked or pressed
  *   (enter|return|spacebar) on an item. The @c event_info parameter is the
  *   item that was activated.
@@ -334,8 +351,6 @@
  *   changed.
  * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.
  *
- * Supported elm_object common APIs
- * @li @ref elm_object_signal_emit()
  *
  * Supported elm_object_item common APIs
  * @li @ref elm_object_item_part_content_get()
@@ -556,12 +571,14 @@ EAPI Elm_List_Mode                 elm_genlist_mode_get(const Evas_Object *obj);
  * This will enable or disable the scroller bouncing effect for the
  * genlist. See elm_scroller_bounce_set() for details.
  *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
  * @see elm_scroller_bounce_set()
  * @see elm_genlist_bounce_get()
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+EINA_DEPRECATED EAPI void          elm_genlist_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * Get whether the horizontal and vertical bouncing effect is enabled.
@@ -572,11 +589,14 @@ EAPI void                          elm_genlist_bounce_set(Evas_Object *obj, Eina
  * @param v_bounce Pointer to a bool to receive if the bounce vertically
  * option is set.
  *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
+ * @see elm_scroller_bounce_get()
  * @see elm_genlist_bounce_set()
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+EINA_DEPRECATED EAPI void          elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * Append a new item in a given genlist widget.
@@ -800,11 +820,13 @@ EAPI Elm_Object_Item             *elm_genlist_last_item_get(const Evas_Object *o
  * This applies respectively for the horizontal and vertical scrollbars.
  * Default is #ELM_SCROLLER_POLICY_AUTO
  *
- * @see elm_genlist_scroller_policy_get()
+ * @deprecated Use elm_scroller_policy_set() instead.
+ *
+ * @see elm_scroller_policy_set()
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
 /**
  * Get the scrollbar policy
@@ -813,11 +835,13 @@ EAPI void                          elm_genlist_scroller_policy_set(Evas_Object *
  * @param policy_h Pointer to store the horizontal scrollbar policy.
  * @param policy_v Pointer to store the vertical scrollbar policy.
  *
- * @see elm_genlist_scroller_policy_set()
+ * @deprecated Use elm_scroller_policy_get() instead.
+ *
+ * @see elm_scroller_policy_get()
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+EINA_DEPRECATED EAPI void          elm_genlist_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Get the @b next item in a genlist widget's internal list of items,

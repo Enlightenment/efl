@@ -73,16 +73,16 @@ external_genlist_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
    if (p->homogeneous_exists)
      elm_genlist_homogeneous_set(obj, p->homogeneous);
    if ((p->h_bounce_exists) && (p->v_bounce_exists))
-     elm_genlist_bounce_set(obj, p->h_bounce, p->v_bounce);
+     elm_scroller_bounce_set(obj, p->h_bounce, p->v_bounce);
    else if ((p->h_bounce_exists) || (p->v_bounce_exists))
      {
 	Eina_Bool h_bounce, v_bounce;
 
-	elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
+	elm_scroller_bounce_get(obj, &h_bounce, &v_bounce);
 	if (p->h_bounce_exists)
-	  elm_genlist_bounce_set(obj, p->h_bounce, v_bounce);
+	  elm_scroller_bounce_set(obj, p->h_bounce, v_bounce);
 	else
-	  elm_genlist_bounce_set(obj, h_bounce, p->v_bounce);
+	  elm_scroller_bounce_set(obj, h_bounce, p->v_bounce);
      }
 }
 
@@ -143,8 +143,8 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     Eina_Bool h_bounce, v_bounce;
-	     elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
-	     elm_genlist_bounce_set(obj, param->i, v_bounce);
+	     elm_scroller_bounce_get(obj, &h_bounce, &v_bounce);
+	     elm_scroller_bounce_set(obj, param->i, v_bounce);
 	     return EINA_TRUE;
 	  }
      }
@@ -153,8 +153,8 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     Eina_Bool h_bounce, v_bounce;
-	     elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
-	     elm_genlist_bounce_set(obj, h_bounce, param->i);
+	     elm_scroller_bounce_get(obj, &h_bounce, &v_bounce);
+	     elm_scroller_bounce_set(obj, h_bounce, param->i);
 	     return EINA_TRUE;
 	  }
      }
@@ -226,7 +226,7 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     Eina_Bool h_bounce, v_bounce;
-	     elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
+	     elm_scroller_bounce_get(obj, &h_bounce, &v_bounce);
 	     param->i = h_bounce;
 	     return EINA_TRUE;
 	  }
@@ -236,7 +236,7 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
 	     Eina_Bool h_bounce, v_bounce;
-	     elm_genlist_bounce_get(obj, &h_bounce, &v_bounce);
+	     elm_scroller_bounce_get(obj, &h_bounce, &v_bounce);
 	     param->i = v_bounce;
 	     return EINA_TRUE;
 	  }

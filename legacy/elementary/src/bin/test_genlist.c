@@ -52,17 +52,17 @@ set_api_state(api_data *api)
          break;
 
       case BOUNCE_SET: /* 3 */
-         elm_genlist_bounce_set(gl, EINA_FALSE, EINA_FALSE);
+         elm_scroller_bounce_set(gl, EINA_FALSE, EINA_FALSE);
          break;
 
       case HOMOGENEOUS_SET: /* 4 */
-         elm_genlist_bounce_set(gl, EINA_TRUE, EINA_TRUE); /* Back to default */
+         elm_scroller_bounce_set(gl, EINA_TRUE, EINA_TRUE); /* Back to default */
          elm_genlist_homogeneous_set(gl, EINA_TRUE);
          break;
 
       case SCROLLER_POLICY_SET: /* 5 */
          elm_genlist_homogeneous_set(gl, EINA_FALSE); /* Back to default */
-         elm_genlist_scroller_policy_set(gl, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+         elm_scroller_policy_set(gl, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
          break;
 
       case TOOLTIP_TEXT_SET: /* 6 */
