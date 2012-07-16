@@ -1,5 +1,3 @@
-//fixme deprecate calls which deserve it
-
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
@@ -234,7 +232,6 @@ ELM_INTERNAL_SMART_SUBCLASS_NEW
   (GENGRID_PAN_SMART_NAME, _elm_gengrid_pan, Elm_Pan_Smart_Class,
   Elm_Pan_Smart_Class, elm_pan_smart_class_get, NULL);
 
-//FIXME: remove it
 typedef struct _Elm_Gengrid_Pan_Smart_Data Elm_Gengrid_Pan_Smart_Data;
 struct _Elm_Gengrid_Pan_Smart_Data
 {
@@ -2425,6 +2422,8 @@ elm_gengrid_add(Evas_Object *parent)
    sd->s_iface->objects_set
      (obj, ELM_WIDGET_DATA(sd)->resize_obj, sd->hit_rect);
 
+   sd->old_h_bounce = bounce;
+   sd->old_v_bounce = bounce;
    sd->s_iface->bounce_allow_set(obj, bounce, bounce);
 
    sd->s_iface->animate_start_cb_set(obj, _scroll_animate_start_cb);

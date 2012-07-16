@@ -16,6 +16,9 @@
  * view) or via the keyboard, navigating through item with the
  * arrow keys.
  *
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for gengrid objects.
+ *
  * This widget implements the @b @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base @ref
  * Scroller widget also work for gengrids.
@@ -158,7 +161,8 @@
  *
  * @section Gengrid_Smart_Events Gengrid smart events
  *
- * Smart events that you can add callbacks for are:
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
  * - @c "activated" - The user has double-clicked or pressed
  *   (enter|return|spacebar) on an item. The @c event_info parameter
  *   is the gengrid item that was activated.
