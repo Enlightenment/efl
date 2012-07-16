@@ -3698,7 +3698,7 @@ eet_data_get_array(Eet_Free_Context     *context,
    if (ede)
      {
         if (IS_POINTER_TYPE(type))
-          subsize = eet_basic_codec[ede->type].size;
+          subsize = eet_basic_codec[ede->type - 1].size;
         else
           subsize = ede->subtype->size;
 
@@ -4417,7 +4417,7 @@ eet_data_put_array(Eet_Dictionary      *ed,
      eet_data_encode(ed, ds, data, ede->name, size, ede->type, ede->group_type);
 
    if (IS_POINTER_TYPE(ede->type))
-     subsize = eet_basic_codec[ede->type].size;
+     subsize = eet_basic_codec[ede->type - 1].size;
    else
      subsize = ede->subtype->size;
 
