@@ -307,3 +307,8 @@
 
 	* Fix that vertical bounce enable value can be get from elm_config
 	when the genlist is added.
+
+2012-07-16  Carsten Haitzler (The Rasterman)
+
+	* Disable html mode pastes from cnp to work around thunderbird.
+
