@@ -802,6 +802,13 @@ _elm_calendar_smart_add(Evas_Object *obj)
    priv->update_timer = ecore_timer_add(t, _update_cur_date, obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   elm_layout_theme_set(obj, "calendar", "base", elm_object_style_get(obj));
+
+   _set_headers(obj);
+   _populate(obj);
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -859,13 +866,6 @@ elm_calendar_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_theme_set(obj, "calendar", "base", elm_object_style_get(obj));
-
-   _set_headers(obj);
-   _populate(obj);
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
