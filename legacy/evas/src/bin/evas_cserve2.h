@@ -187,20 +187,20 @@ typedef struct _Slave_Msg_Font_Loaded Slave_Msg_Font_Loaded;
 typedef struct _Slave_Msg_Font_Glyphs_Load Slave_Msg_Font_Glyphs_Load;
 typedef struct _Slave_Msg_Font_Glyphs_Loaded Slave_Msg_Font_Glyphs_Loaded;
 
-typedef void *(*Font_Request_Msg_Create)(void *data, int *size);
-typedef void (*Font_Request_Msg_Free)(void *msg, void *data);
-typedef Msg_Base *(*Font_Request_Response)(void *data, void *resp, int *size);
-typedef void (*Font_Request_Error)(void *data, Error_Type error);
+typedef void *(*Slave_Request_Msg_Create)(void *data, int *size);
+typedef void (*Slave_Request_Msg_Free)(void *msg, void *data);
+typedef Msg_Base *(*Slave_Request_Response)(void *data, void *resp, int *size);
+typedef void (*Slave_Request_Error)(void *data, Error_Type error);
 
-struct _Font_Request_Funcs {
-   Font_Request_Msg_Create msg_create;
-   Font_Request_Msg_Free msg_free;
-   Font_Request_Response response;
-   Font_Request_Error error;
+struct _Slave_Request_Funcs {
+   Slave_Request_Msg_Create msg_create;
+   Slave_Request_Msg_Free msg_free;
+   Slave_Request_Response response;
+   Slave_Request_Error error;
 };
 
-typedef struct _Font_Request Font_Request;
-typedef struct _Font_Request_Funcs Font_Request_Funcs;
+typedef struct _Slave_Request Slave_Request;
+typedef struct _Slave_Request_Funcs Slave_Request_Funcs;
 
 typedef enum {
    FONT_REND_REGULAR = 1,
@@ -214,7 +214,7 @@ typedef enum {
    CSERVE2_REQ_FONT_LOAD,
    CSERVE2_REQ_FONT_GLYPHS_LOAD,
    CSERVE2_REQ_LAST
-} Font_Request_Type;
+} Slave_Request_Type;
 
 typedef struct _Glyph_Entry Glyph_Entry;
 
@@ -293,10 +293,10 @@ void cserve2_cache_stats_get(Client *client, unsigned int rid);
 void cserve2_cache_font_debug(Client *client, unsigned int rid);
 
 
-Font_Request *cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request *dep, Font_Request_Funcs *funcs, void *data);
-void cserve2_request_waiter_add(Font_Request *req, unsigned int rid, Client *client);
-void cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err);
-void cserve2_request_cancel_all(Font_Request *req, Error_Type err);
+Slave_Request *cserve2_request_add(Slave_Request_Type type, unsigned int rid, Client *client, Slave_Request *dep, Slave_Request_Funcs *funcs, void *data);
+void cserve2_request_waiter_add(Slave_Request *req, unsigned int rid, Client *client);
+void cserve2_request_cancel(Slave_Request *req, Client *client, Error_Type err);
+void cserve2_request_cancel_all(Slave_Request *req, Error_Type err);
 void cserve2_requests_init(void);
 void cserve2_requests_shutdown(void);
 

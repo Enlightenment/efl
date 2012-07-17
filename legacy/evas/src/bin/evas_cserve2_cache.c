@@ -30,7 +30,7 @@ typedef enum {
 struct _Entry {
    unsigned int id;
    Eina_List *references;
-   Font_Request *request;
+   Slave_Request *request;
    Entry_Type type;
 #ifdef DEBUG_LOAD_TIME
    struct timeval load_start;
@@ -83,7 +83,7 @@ struct _Font_Source {
 
 struct _Font_Entry {
    Entry base;
-   Font_Request *request;
+   Slave_Request *request;
    unsigned int rend_flags;
    unsigned int size;
    unsigned int dpi;
@@ -403,11 +403,11 @@ _request_failed(Entry *e, Error_Type type __UNUSED__)
      }
 }
 
-static Font_Request_Funcs _open_funcs = {
-   .msg_create = (Font_Request_Msg_Create)_open_request_build,
+static Slave_Request_Funcs _open_funcs = {
+   .msg_create = (Slave_Request_Msg_Create)_open_request_build,
    .msg_free = _request_free,
-   .response = (Font_Request_Response)_open_request_response,
-   .error = (Font_Request_Error)_request_failed
+   .response = (Slave_Request_Response)_open_request_response,
+   .error = (Slave_Request_Error)_request_failed
 };
 
 static void *
@@ -489,11 +489,11 @@ _load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp, int *size)
    return _image_loaded_msg_create(e, size);
 }
 
-static Font_Request_Funcs _load_funcs = {
-   .msg_create = (Font_Request_Msg_Create)_load_request_build,
+static Slave_Request_Funcs _load_funcs = {
+   .msg_create = (Slave_Request_Msg_Create)_load_request_build,
    .msg_free = _request_free,
-   .response = (Font_Request_Response)_load_request_response,
-   .error = (Font_Request_Error)_request_failed
+   .response = (Slave_Request_Response)_load_request_response,
+   .error = (Slave_Request_Error)_request_failed
 };
 
 static unsigned int
@@ -1109,11 +1109,11 @@ _font_load_request_failed(Font_Entry *fe, Error_Type error __UNUSED__)
      _font_entry_reference_del(ref->client, fe);
 }
 
-static Font_Request_Funcs _font_load_funcs = {
-   .msg_create = (Font_Request_Msg_Create)_font_load_request_build,
-   .msg_free = (Font_Request_Msg_Free)_font_load_request_free,
-   .response = (Font_Request_Response)_font_load_request_response,
-   .error = (Font_Request_Error)_font_load_request_failed
+static Slave_Request_Funcs _font_load_funcs = {
+   .msg_create = (Slave_Request_Msg_Create)_font_load_request_build,
+   .msg_free = (Slave_Request_Msg_Free)_font_load_request_free,
+   .response = (Slave_Request_Response)_font_load_request_response,
+   .error = (Slave_Request_Error)_font_load_request_failed
 };
 
 static Eina_Bool
@@ -1521,11 +1521,11 @@ _glyphs_load_request_failed(void *data __UNUSED__, Error_Type error __UNUSED__)
 {
 }
 
-static Font_Request_Funcs _glyphs_load_funcs = {
-   .msg_create = (Font_Request_Msg_Create)_glyphs_load_request_build,
-   .msg_free = (Font_Request_Msg_Free)_glyphs_load_request_free,
-   .response = (Font_Request_Response)_glyphs_load_request_response,
-   .error = (Font_Request_Error)_glyphs_load_request_failed
+static Slave_Request_Funcs _glyphs_load_funcs = {
+   .msg_create = (Slave_Request_Msg_Create)_glyphs_load_request_build,
+   .msg_free = (Slave_Request_Msg_Free)_glyphs_load_request_free,
+   .response = (Slave_Request_Response)_glyphs_load_request_response,
+   .error = (Slave_Request_Error)_glyphs_load_request_failed
 };
 
 static Eina_Bool
@@ -1590,7 +1590,7 @@ _image_file_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __U
    msg->images.files_size += sizeof(File_Data) +
       eina_list_count(fd->images) * sizeof(Eina_List *) +
       eina_list_count(fd->base.references) *
-         (sizeof(Font_Request *) + sizeof(Eina_List *));
+         (sizeof(Slave_Request *) + sizeof(Eina_List *));
 
 #ifdef DEBUG_LOAD_TIME
    // accounting file entries load time

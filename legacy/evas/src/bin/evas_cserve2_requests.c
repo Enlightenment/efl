@@ -33,7 +33,7 @@ typedef struct _Slave_Worker Slave_Worker;
  */
 static struct _Request_Match
 {
-   Font_Request_Type rtype;
+   Slave_Request_Type rtype;
    Slave_Type stype;
    Slave_Command ctype;
 } _request_match[] =
@@ -61,16 +61,16 @@ static struct _Worker
    { SLAVE_FONT, 1, NULL, NULL, _create_font_slave },
 };
 
-struct _Font_Request
+struct _Slave_Request
 {
    EINA_INLIST;
-   Font_Request_Type type;
+   Slave_Request_Type type;
    void *data;
    void *msg;
    Eina_List *waiters;
    Eina_Bool processing;
-   Font_Request_Funcs *funcs;
-   Font_Request *dependency;
+   Slave_Request_Funcs *funcs;
+   Slave_Request *dependency;
    Eina_List *dependents; /* list of requests that depend on this one finishing */
    Eina_Bool locked : 1; /* locked waiting for a dependency request to finish */
 };
@@ -97,7 +97,7 @@ static Request_Queue *requests = NULL;
 static void _cserve2_requests_process(void);
 
 static void
-_request_waiter_add(Font_Request *req, Client *client, unsigned int rid)
+_request_waiter_add(Slave_Request *req, Client *client, unsigned int rid)
 {
    Waiter *w = malloc(sizeof(*w));
 
@@ -109,10 +109,10 @@ _request_waiter_add(Font_Request *req, Client *client, unsigned int rid)
    req->waiters = eina_list_append(req->waiters, w);
 }
 
-Font_Request *
-cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Font_Request *dep, Font_Request_Funcs *funcs, void *data)
+Slave_Request *
+cserve2_request_add(Slave_Request_Type type, unsigned int rid, Client *client, Slave_Request *dep, Slave_Request_Funcs *funcs, void *data)
 {
-   Font_Request *req, *r;
+   Slave_Request *req, *r;
 
    req = NULL;
 
@@ -169,15 +169,15 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
 }
 
 void
-cserve2_request_waiter_add(Font_Request *req, unsigned int rid, Client *client)
+cserve2_request_waiter_add(Slave_Request *req, unsigned int rid, Client *client)
 {
    _request_waiter_add(req, client, rid);
 }
 
 static void
-_request_dependents_cancel(Font_Request *req, Error_Type err)
+_request_dependents_cancel(Slave_Request *req, Error_Type err)
 {
-   Font_Request *dep;
+   Slave_Request *dep;
 
    EINA_LIST_FREE(req->dependents, dep)
      {
@@ -190,7 +190,7 @@ _request_dependents_cancel(Font_Request *req, Error_Type err)
 }
 
 void
-cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
+cserve2_request_cancel(Slave_Request *req, Client *client, Error_Type err)
 {
    Eina_List *l, *l_next;
    Waiter *w;
@@ -232,7 +232,7 @@ cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
 }
 
 void
-cserve2_request_cancel_all(Font_Request *req, Error_Type err)
+cserve2_request_cancel_all(Slave_Request *req, Error_Type err)
 {
    Waiter *w;
 
@@ -279,7 +279,7 @@ cserve2_requests_shutdown(void)
 }
 
 static void
-_cserve2_request_failed(Font_Request *req, Error_Type type)
+_cserve2_request_failed(Slave_Request *req, Error_Type type)
 {
    Waiter *w;
 
@@ -304,7 +304,7 @@ static void
 _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
 {
    Slave_Worker *sw = data;
-   Font_Request *dep, *req = sw->data;
+   Slave_Request *dep, *req = sw->data;
    Eina_List **working, **idle;
    Waiter *w;
    Msg_Base *resp = NULL;
@@ -364,7 +364,7 @@ static void
 _slave_dead_cb(Slave *s __UNUSED__, void *data)
 {
    Slave_Worker *sw = data;
-   Font_Request *req = sw->data;
+   Slave_Request *req = sw->data;
    Eina_List **working = &_workers[sw->type].working;
 
    if (req)
@@ -426,7 +426,7 @@ _slave_for_request_create(Slave_Type type)
 }
 
 static Eina_Bool
-_cserve2_request_dispatch(Slave_Worker *sw, Slave_Command ctype, Font_Request *req)
+_cserve2_request_dispatch(Slave_Worker *sw, Slave_Command ctype, Slave_Request *req)
 {
    int size;
    char *slave_msg = req->funcs->msg_create(req->data, &size);
@@ -459,7 +459,7 @@ _cserve2_requests_process(void)
          unsigned int max_workers;
          Eina_List **idle, **working;
          Eina_Inlist *itr;
-         Font_Request *req;
+         Slave_Request *req;
 
          for (j = 0; _request_match[j].rtype != CSERVE2_REQ_LAST; j++)
            {
