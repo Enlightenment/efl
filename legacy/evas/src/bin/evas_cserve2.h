@@ -209,7 +209,9 @@ typedef enum {
 } Font_Rend_Flags;
 
 typedef enum {
-   CSERVE2_REQ_FONT_LOAD = 0,
+   CSERVE2_REQ_IMAGE_OPEN = 0,
+   CSERVE2_REQ_IMAGE_LOAD,
+   CSERVE2_REQ_FONT_LOAD,
    CSERVE2_REQ_FONT_GLYPHS_LOAD,
    CSERVE2_REQ_LAST
 } Font_Request_Type;
@@ -297,9 +299,6 @@ void cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err);
 void cserve2_request_cancel_all(Font_Request *req, Error_Type err);
 void cserve2_requests_init(void);
 void cserve2_requests_shutdown(void);
-
-void cserve2_cache_requests_process(void);
-void cserve2_cache_requests_response(Slave_Command type, void *msg, void *data);
 
 void cserve2_font_init(void);
 void cserve2_font_shutdown(void);

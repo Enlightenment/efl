@@ -335,28 +335,10 @@ _image_opened_cb(void *data, const void *msg_received)
 }
 
 static void
-_image_loaded_cb(void *data, const void *msg_received)
+_loaded_handle(Image_Entry *ie, Msg_Loaded *msg)
 {
-   const Msg_Base *answer = msg_received;
-   const Msg_Loaded *msg = msg_received;
-   Image_Entry *ie = data;
    Data_Entry *dentry = ie->data2;
    const char *shmpath;
-
-   ie->load_rid = 0;
-
-   if (!ie->data2)
-     return;
-
-   if (answer->type == CSERVE2_ERROR)
-     {
-        const Msg_Error *msg_error = msg_received;
-        ERR("Couldn't load image: '%s':'%s'; error: %d",
-            ie->file, ie->key, msg_error->error);
-        free(ie->data2);
-        ie->data2 = NULL;
-        return;
-     }
 
    shmpath = ((const char *)msg) + sizeof(*msg);
 
@@ -393,6 +375,31 @@ _image_loaded_cb(void *data, const void *msg_received)
 }
 
 static void
+_image_loaded_cb(void *data, const void *msg_received)
+{
+   const Msg_Base *answer = msg_received;
+   const Msg_Loaded *msg = msg_received;
+   Image_Entry *ie = data;
+
+   ie->load_rid = 0;
+
+   if (!ie->data2)
+     return;
+
+   if (answer->type == CSERVE2_ERROR)
+     {
+        const Msg_Error *msg_error = msg_received;
+        ERR("Couldn't load image: '%s':'%s'; error: %d",
+            ie->file, ie->key, msg_error->error);
+        free(ie->data2);
+        ie->data2 = NULL;
+        return;
+     }
+
+   _loaded_handle(ie, msg);
+}
+
+static void
 _image_preloaded_cb(void *data, const void *msg_received)
 {
    const Msg_Base *answer = msg_received;
@@ -411,6 +418,8 @@ _image_preloaded_cb(void *data, const void *msg_received)
         dentry->preloaded_cb = NULL;
         return;
      }
+
+   _loaded_handle(ie, msg_received);
 
    if (dentry && (dentry->preloaded_cb))
      {

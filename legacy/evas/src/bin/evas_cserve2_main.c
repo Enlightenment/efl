@@ -13,25 +13,9 @@
 #endif
 #define CSERVE2_BIN_DEFAULT_COLOR EINA_COLOR_BLUE
 
-#define MAX_SLAVES 3
-
-struct _Slave_Worker {
-   EINA_INLIST;
-   void *data;
-   Slave *slave;
-   Eina_Binbuf *ret;
-   int ret_size;
-   Eina_Bool done;
-   Eina_Bool delete_me;
-};
-
-typedef struct _Slave_Worker Slave_Worker;
-
 int _evas_cserve2_bin_log_dom = -1;
 static unsigned int _client_id = 0;
 static Eina_Hash *client_list = NULL;
-static Eina_Inlist *slaves_idle = NULL;
-static Eina_Inlist *slaves_working = NULL;
 
 void
 cserve2_client_error_send(Client *client, unsigned int rid, int error_code)
@@ -66,117 +50,6 @@ _cserve2_client_image_setoptsed(Client *client, unsigned int rid)
 }
 
 static void
-_slave_dead_cb(Slave *s __UNUSED__, void *data)
-{
-   Slave_Worker *sw = data;
-
-   if (sw->delete_me)
-     {
-        DBG("Slave killed by cserve2. Restart routine.");
-        free(sw);
-        return;
-     }
-
-   if (!sw->data)
-     {
-        WRN("Slave died with no pending job, but not requested.");
-        slaves_idle = eina_inlist_remove(slaves_idle, EINA_INLIST_GET(sw));
-        free(sw);
-        return;
-     }
-
-   slaves_working = eina_inlist_remove(slaves_working, EINA_INLIST_GET(sw));
-   if (!sw->done)
-     cserve2_cache_requests_response(ERROR, (Error_Type[]){ CSERVE2_LOADER_DIED }, sw->data);
-   if (sw->ret)
-     eina_binbuf_free(sw->ret);
-   free(sw);
-}
-
-static void
-_slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
-{
-   Slave_Worker *sw = data;
-
-   DBG("Received reply command '%d' from slave '%p'", cmd, sw->slave);
-   switch (cmd)
-     {
-      case IMAGE_OPEN:
-      case IMAGE_LOAD:
-         sw->done = EINA_TRUE;
-         break;
-      case ERROR:
-         break;
-      default:
-         ERR("Unrecognized command received from slave: %d", cmd);
-     }
-   cserve2_cache_requests_response(cmd, msg, sw->data);
-   free(msg);
-
-   // slave finishes its work, put it back to idle list
-   sw->data = NULL;
-   slaves_working = eina_inlist_remove(slaves_working, EINA_INLIST_GET(sw));
-
-   if (!sw->delete_me) // if it is being deleted, it shouldn't be in any list
-     slaves_idle = eina_inlist_append(slaves_idle, EINA_INLIST_GET(sw));
-
-   cserve2_cache_requests_process();
-}
-
-int
-cserve2_slave_available_get(void)
-{
-    return MAX_SLAVES - eina_inlist_count(slaves_working);
-}
-
-Eina_Bool
-cserve2_slave_cmd_dispatch(void *data, Slave_Command cmd, const void *msg, int size)
-{
-   Slave_Worker *sw;
-   char *exe;
-
-   DBG("Dispatching command to slave. %d idle slaves, %d working slaves.",
-       eina_inlist_count(slaves_idle), eina_inlist_count(slaves_working));
-
-   // first check if there's an available slave
-   if (slaves_idle)
-     {
-        sw = EINA_INLIST_CONTAINER_GET(slaves_idle, Slave_Worker);
-        slaves_idle = eina_inlist_remove(slaves_idle, slaves_idle);
-        slaves_working = eina_inlist_append(slaves_working,
-                                            EINA_INLIST_GET(sw));
-
-        sw->data = data;
-        sw->done = EINA_FALSE;
-        DBG("Dispatching command '%d' to slave '%p'", cmd, sw->slave);
-        cserve2_slave_send(sw->slave, cmd, msg, size);
-        return EINA_TRUE;
-     }
-
-   // no available slave, start a new one
-   sw = calloc(1, sizeof(Slave_Worker));
-   if (!sw) return EINA_FALSE;
-
-   sw->data = data;
-   exe = getenv("EVAS_CSERVE2_SLAVE");
-   if (!exe) exe = "evas_cserve2_slave";
-   sw->slave = cserve2_slave_run(exe, _slave_read_cb, _slave_dead_cb, sw);
-   if (!sw->slave)
-     {
-        ERR("Could not launch slave process");
-        cserve2_cache_requests_response(ERROR, (Error_Type[]){ CSERVE2_LOADER_EXEC_ERR }, sw->data);
-        free(sw);
-        return EINA_FALSE;
-     }
-   DBG("Dispatching command '%d' to slave '%p'", cmd, sw->slave);
-   cserve2_slave_send(sw->slave, cmd, msg, size);
-
-   slaves_working = eina_inlist_append(slaves_working, EINA_INLIST_GET(sw));
-
-   return EINA_TRUE;
-}
-
-static void
 _cserve2_client_close(Client *client)
 {
    Msg_Close *msg = (Msg_Close *)client->msg.buf;
@@ -207,7 +80,6 @@ _cserve2_client_preload(Client *client)
    INF("Image_ID: %d\n", msg->image_id);
 
    cserve2_cache_image_preload(client, msg->image_id, msg->base.rid);
-   cserve2_cache_requests_process();
 }
 
 static void
@@ -219,7 +91,6 @@ _cserve2_client_load(Client *client)
    INF("Image_ID: %d\n", msg->image_id);
 
    cserve2_cache_image_load(client, msg->image_id, msg->base.rid);
-   cserve2_cache_requests_process();
 }
 
 static void
@@ -257,7 +128,6 @@ _cserve2_client_open(Client *client)
           msg->file_id, path, key);
 
    cserve2_cache_file_open(client, msg->file_id, path, key, msg->base.rid);
-   cserve2_cache_requests_process();
 }
 
 static void
@@ -381,52 +251,6 @@ cserve2_command_run(Client *client, Message_Type type)
      }
 }
 
-static void
-_slave_quit_send(Slave_Worker *sw)
-{
-   cserve2_slave_send(sw->slave, SLAVE_QUIT, NULL, 0);
-}
-
-static void
-_slaves_restart(void)
-{
-   Slave_Worker *list, *sw;
-
-   while (slaves_idle) // remove idle workers from idle list
-     {
-        sw = EINA_INLIST_CONTAINER_GET(slaves_idle, Slave_Worker);
-        slaves_idle = eina_inlist_remove(slaves_idle, slaves_idle);
-        sw->delete_me = EINA_TRUE;
-        _slave_quit_send(sw);
-     }
-
-   // working workers will be removed from the working list when they
-   // finish processing their jobs
-   list = EINA_INLIST_CONTAINER_GET(slaves_working, Slave_Worker);
-   EINA_INLIST_FOREACH(list, sw)
-     {
-        sw->delete_me = EINA_TRUE;
-        _slave_quit_send(sw);
-     }
-}
-
-static void
-_timeout_cb(void)
-{
-   static unsigned int slaves_restart = 0;
-
-   slaves_restart++;
-
-   if (slaves_restart == 10)
-     {
-        DBG("kill slaves");
-        _slaves_restart();
-        slaves_restart = 0;
-     }
-
-   cserve2_timeout_cb_set(3000, _timeout_cb);
-}
-
 void
 cserve2_client_accept(int fd)
 {
@@ -518,8 +342,6 @@ main(int argc __UNUSED__, const char *argv[] __UNUSED__)
 
    _clients_setup();
 
-   cserve2_timeout_cb_set(3000, _timeout_cb);
-
    cserve2_main_loop_run();
 
    _clients_finish();
@@ -530,7 +352,6 @@ main(int argc __UNUSED__, const char *argv[] __UNUSED__)
 
    cserve2_requests_shutdown();
 
-   _slaves_restart();
    cserve2_slaves_shutdown();
 
    cserve2_main_loop_finish();

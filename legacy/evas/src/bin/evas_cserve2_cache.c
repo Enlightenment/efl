@@ -11,12 +11,8 @@
 #include "evas_cserve2.h"
 #include "evas_cs2_utils.h"
 
-typedef struct _Request_Funcs Request_Funcs;
-typedef struct _Request Request;
-
 typedef struct _Entry Entry;
 typedef struct _Reference Reference;
-typedef struct _Waiter Waiter;
 typedef struct _File_Data File_Data;
 typedef struct _Image_Data Image_Data;
 typedef struct _File_Watch File_Watch;
@@ -24,23 +20,6 @@ typedef struct _File_Watch File_Watch;
 typedef struct _Font_Source Font_Source;
 typedef struct _Font_Entry Font_Entry;
 typedef struct _Font_Cache Font_Cache;
-
-typedef void *(*Request_Msg_Create)(Entry *e, int *size);
-typedef void (*Request_Response)(Entry *e, void *resp);
-typedef void (*Request_Error)(Entry *e, Error_Type error);
-
-struct _Request_Funcs {
-   Request_Msg_Create msg_create;
-   Request_Response response;
-   Request_Error error;
-};
-
-struct _Request {
-   Entry *entry;
-   Eina_List *waiters;
-   Eina_Bool processing;
-   Request_Funcs *funcs;
-};
 
 typedef enum {
    CSERVE2_IMAGE_FILE,
@@ -51,7 +30,7 @@ typedef enum {
 struct _Entry {
    unsigned int id;
    Eina_List *references;
-   Request *request;
+   Font_Request *request;
    Entry_Type type;
 #ifdef DEBUG_LOAD_TIME
    struct timeval load_start;
@@ -179,20 +158,10 @@ struct _Reference {
    int count;
 };
 
-struct _Waiter {
-   Reference *ref;
-   unsigned int rid;
-   Message_Type type;
-};
-
 struct _File_Watch {
    const char *path;
    Eina_List *entries;
 };
-
-static Eina_List *open_requests = NULL;
-static Eina_List *load_requests = NULL;
-static Eina_List *spload_requests = NULL; // speculative preload requests
 
 static unsigned int _file_id = 0; // id unique number
 static unsigned int _image_id = 0; // id unique number
@@ -259,79 +228,84 @@ _entry_load_reused(Entry *e)
 #endif
 }
 
+static Msg_Opened *
+_image_opened_msg_create(File_Data *entry, int *size)
+{
+   Msg_Opened *msg;
+
+   msg = calloc(1, sizeof(*msg));
+   msg->base.type = CSERVE2_OPENED;
+   msg->image.w = entry->w;
+   msg->image.h = entry->h;
+   msg->image.frame_count = entry->frame_count;
+   msg->image.loop_count = entry->loop_count;
+   msg->image.loop_hint = entry->loop_hint;
+   msg->image.alpha = entry->alpha;
+
+   *size = sizeof(*msg);
+
+   return msg;
+}
+
 static void
 _image_opened_send(Client *client, File_Data *entry, unsigned int rid)
 {
     int size;
-    Msg_Opened msg;
+    Msg_Opened *msg;
 
     DBG("Sending OPENED reply for entry: %d and RID: %d.", entry->base.id, rid);
     // clear the struct with possible paddings, since it is not aligned.
-    memset(&msg, 0, sizeof(msg));
-    msg.base.rid = rid;
-    msg.base.type = CSERVE2_OPENED;
-    msg.image.w = entry->w;
-    msg.image.h = entry->h;
-    msg.image.frame_count = entry->frame_count;
-    msg.image.loop_count = entry->loop_count;
-    msg.image.loop_hint = entry->loop_hint;
-    msg.image.alpha = entry->alpha;
 
-    size = sizeof(msg);
+    msg = _image_opened_msg_create(entry, &size);
+    msg->base.rid = rid;
+
     cserve2_client_send(client, &size, sizeof(size));
-    cserve2_client_send(client, &msg, sizeof(msg));
-    // _cserve2_cache_load_requests_process();
+    cserve2_client_send(client, msg, size);
+
+    free(msg);
+}
+
+static Msg_Loaded *
+_image_loaded_msg_create(Image_Data *entry, int *size)
+{
+   Msg_Loaded *msg;
+   const char *shmpath = cserve2_shm_name_get(entry->shm);
+   int path_len;
+   char *buf;
+
+   path_len = strlen(shmpath) + 1;
+
+   *size = sizeof(*msg) + path_len;
+   msg = calloc(1, *size);
+   msg->base.type = CSERVE2_LOADED;
+
+   msg->shm.mmap_offset = cserve2_shm_map_offset_get(entry->shm);
+   msg->shm.use_offset = cserve2_shm_offset_get(entry->shm);
+   msg->shm.mmap_size = cserve2_shm_map_size_get(entry->shm);
+   msg->shm.image_size = cserve2_shm_size_get(entry->shm);
+   msg->alpha_sparse = entry->alpha_sparse;
+
+   buf = (char *)msg + sizeof(*msg);
+   memcpy(buf, shmpath, path_len);
+
+   return msg;
 }
 
 static void
 _image_loaded_send(Client *client, Image_Data *entry, unsigned int rid)
 {
    int size;
-   const char *shmpath = cserve2_shm_name_get(entry->shm);
-   Msg_Loaded msg;
-   int path_len;
-   char *buf;
+   Msg_Loaded *msg;
 
    DBG("Sending LOADED reply for entry %d and RID: %d.", entry->base.id, rid);
-   path_len = strlen(shmpath) + 1;
 
-   memset(&msg, 0, sizeof(msg));
-   msg.base.rid = rid;
-   msg.base.type = CSERVE2_LOADED;
-
-   msg.shm.mmap_offset = cserve2_shm_map_offset_get(entry->shm);
-   msg.shm.use_offset = cserve2_shm_offset_get(entry->shm);
-   msg.shm.mmap_size = cserve2_shm_map_size_get(entry->shm);
-   msg.shm.image_size = cserve2_shm_size_get(entry->shm);
-   msg.alpha_sparse = entry->alpha_sparse;
-
-   buf = malloc(sizeof(msg) + path_len);
-
-   memcpy(buf, &msg, sizeof(msg));
-   memcpy(buf + sizeof(msg), shmpath, path_len);
-
-   size = sizeof(msg) + path_len;
+   msg = _image_loaded_msg_create(entry, &size);
+   msg->base.rid = rid;
 
    cserve2_client_send(client, &size, sizeof(size));
-   cserve2_client_send(client, buf, size);
+   cserve2_client_send(client, msg, size);
 
-   free(buf);
-}
-
-static void
-_image_preloaded_send(Client *client, unsigned int rid)
-{
-   int size;
-   Msg_Preloaded msg;
-
-   DBG("Sending PRELOADED reply for RID: %d.", rid);
-   memset(&msg, 0, sizeof(msg));
-   msg.base.rid = rid;
-   msg.base.type = CSERVE2_PRELOADED;
-
-   size = sizeof(msg);
-   cserve2_client_send(client, &size, sizeof(size));
-   cserve2_client_send(client, &msg, size);
+   free(msg);
 }
 
 static void
@@ -379,20 +353,41 @@ _open_request_build(File_Data *f, int *bufsize)
 }
 
 static void
-_request_failed(Entry *e, Error_Type type)
+_request_free(void *msg, void *data __UNUSED__)
 {
-   Waiter *w;
+   free(msg);
+}
+
+static Msg_Opened *
+_open_request_response(File_Data *e, Slave_Msg_Image_Opened *resp, int *size)
+{
+   _entry_load_finish(&e->base);
+
+   e->base.request = NULL;
+
+   e->w = resp->w;
+   e->h = resp->h;
+   e->frame_count = resp->frame_count;
+   e->loop_count = resp->loop_count;
+   e->loop_hint = resp->loop_hint;
+   e->alpha = resp->alpha;
+   if (resp->has_loader_data)
+     {
+        const char *ldata = (const char *)resp +
+                                           sizeof(Slave_Msg_Image_Opened);
+        e->loader_data = eina_stringshare_add(ldata);
+     }
+
+   return _image_opened_msg_create(e, size);
+}
+
+static void
+_request_failed(Entry *e, Error_Type type __UNUSED__)
+{
    Eina_List *l;
    Reference *ref;
 
-   DBG("Request for entry %p failed with error %d", e, type);
-   EINA_LIST_FREE(e->request->waiters, w)
-     {
-        cserve2_client_error_send(w->ref->client, w->rid, type);
-
-        w->ref->count--;
-        free(w);
-     }
+   e->request = NULL;
 
    EINA_LIST_FOREACH(e->references, l, ref)
      {
@@ -408,38 +403,11 @@ _request_failed(Entry *e, Error_Type type)
      }
 }
 
-static void
-_open_request_response(File_Data *e, Slave_Msg_Image_Opened *resp)
-{
-   Waiter *w;
-
-   _entry_load_finish(&e->base);
-   e->w = resp->w;
-   e->h = resp->h;
-   e->frame_count = resp->frame_count;
-   e->loop_count = resp->loop_count;
-   e->loop_hint = resp->loop_hint;
-   e->alpha = resp->alpha;
-   if (resp->has_loader_data)
-     {
-        const char *ldata = (const char *)resp +
-                                           sizeof(Slave_Msg_Image_Opened);
-        e->loader_data = eina_stringshare_add(ldata);
-     }
-
-   DBG("Finished opening file %d. Notifying %d waiters.", e->base.id,
-       e->base.request->waiters ? eina_list_count(e->base.request->waiters) : 0);
-   EINA_LIST_FREE(e->base.request->waiters, w)
-     {
-        _image_opened_send(w->ref->client, e, w->rid);
-        free(w);
-     }
-}
-
-static Request_Funcs _open_funcs = {
-   .msg_create = (Request_Msg_Create)_open_request_build,
-   .response = (Request_Response)_open_request_response,
-   .error = (Request_Error)_request_failed
+static Font_Request_Funcs _open_funcs = {
+   .msg_create = (Font_Request_Msg_Create)_open_request_build,
+   .msg_free = _request_free,
+   .response = (Font_Request_Response)_open_request_response,
+   .error = (Font_Request_Error)_request_failed
 };
 
 static void *
@@ -507,35 +475,25 @@ _load_request_build(Image_Data *i, int *bufsize)
    return buf;
 }
 
-static void
-_load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp)
+static Msg_Loaded *
+_load_request_response(Image_Data *e, Slave_Msg_Image_Loaded *resp, int *size)
 {
-   Waiter *w;
-
    _entry_load_finish(&e->base);
+
+   e->base.request = NULL;
 
    e->alpha_sparse = resp->alpha_sparse;
    if (!e->doload)
      DBG("Entry %d loaded by speculative preload.", e->base.id);
 
-   DBG("Finished loading image %d. Notifying %d waiters.", e->base.id,
-       e->base.request->waiters ? eina_list_count(e->base.request->waiters) : 0);
-   EINA_LIST_FREE(e->base.request->waiters, w)
-     {
-        if (w->type == CSERVE2_LOAD)
-          _image_loaded_send(w->ref->client, e, w->rid);
-        else if (w->type == CSERVE2_PRELOAD)
-          _image_preloaded_send(w->ref->client, w->rid);
-        // else w->type == CSERVE2_SETOPTS --> do nothing
-
-        free(w);
-     }
+   return _image_loaded_msg_create(e, size);
 }
 
-static Request_Funcs _load_funcs = {
-   .msg_create = (Request_Msg_Create)_load_request_build,
-   .response = (Request_Response)_load_request_response,
-   .error = (Request_Error)_request_failed
+static Font_Request_Funcs _load_funcs = {
+   .msg_create = (Font_Request_Msg_Create)_load_request_build,
+   .msg_free = _request_free,
+   .response = (Font_Request_Response)_load_request_response,
+   .error = (Font_Request_Error)_request_failed
 };
 
 static unsigned int
@@ -591,19 +549,7 @@ _image_entry_free(Image_Data *entry)
    File_Data *fentry = entry->file;
 
    if (entry->base.request)
-     {
-        if (entry->base.request->processing)
-          entry->base.request->entry = NULL;
-        else if (!entry->base.request->waiters)
-          {
-             if (entry->doload)
-               load_requests = eina_list_remove(load_requests,
-                                                entry->base.request);
-             else
-               spload_requests = eina_list_remove(spload_requests,
-                                                  entry->base.request);
-          }
-     }
+     cserve2_request_cancel_all(entry->base.request, CSERVE2_REQUEST_CANCEL);
 
    if (entry->unused)
      {
@@ -646,16 +592,7 @@ _file_entry_free(File_Data *entry)
      }
 
    if (entry->base.request)
-     {
-        if (entry->base.request->processing)
-          entry->base.request->entry = NULL;
-        else if (!entry->base.request->waiters)
-          {
-             open_requests = eina_list_remove(open_requests,
-                                              entry->base.request);
-             free(entry->base.request);
-          }
-     }
+     cserve2_request_cancel_all(entry->base.request, CSERVE2_REQUEST_CANCEL);
 
    if ((fw = entry->watcher))
      {
@@ -851,96 +788,6 @@ cserve2_cache_shutdown(void)
    eina_hash_free(font_sources);
 }
 
-static void
-_request_answer_del(Eina_List **requests, Request *req, Client *client, Error_Type err)
-{
-   Eina_List *l, *l_next;
-   Waiter *it;
-
-   DBG("Removing answer requests from entry: %d, client: %d",
-       req->entry->id, client->id);
-
-   EINA_LIST_FOREACH_SAFE(req->waiters, l, l_next, it)
-     {
-        if (it->ref->client->id == client->id)
-          {
-             cserve2_client_error_send(client, it->rid, err);
-             req->waiters = eina_list_remove_list(req->waiters, l);
-             free(it);
-          }
-     }
-
-   // FIXME: Should this be really here? I guess that it should be in the
-   // entry_free_cb function, or entry_reference_del, when there are no more
-   // references
-   if (!req->entry && !req->waiters)
-     {
-        *requests = eina_list_remove(*requests, req);
-        free(req);
-     }
-}
-
-static void
-_request_answer_all_del(Eina_List **requests, Request *req, Error_Type err)
-{
-   Waiter *it;
-
-   DBG("Removing all answer requests from entry: %d", req->entry->id);
-
-   EINA_LIST_FREE(req->waiters, it)
-     {
-        cserve2_client_error_send(it->ref->client, it->rid, err);
-        free(it);
-     }
-
-   *requests = eina_list_remove(*requests, req);
-   free(req);
-}
-
-static void
-_request_answer_add(Request *req, Reference *ref, unsigned int rid, Message_Type type)
-{
-   Waiter *w = malloc(sizeof(*w));
-
-   w->ref = ref;
-   w->rid = rid;
-   w->type = type;
-
-   DBG("Add answer request for entry id: %d, client: %d, rid: %d",
-       req->entry->id, ref->client->id, rid);
-   req->waiters = eina_list_append(req->waiters, w);
-}
-
-static void
-_request_add(Eina_List **requests, Entry *entry, Reference *ref, unsigned int rid, Message_Type type)
-{
-   Request *req;
-
-   // add the request if it doesn't exist yet
-   if (!entry->request)
-     {
-        req = malloc(sizeof(*req));
-        req->entry = entry;
-        req->waiters = NULL;
-        req->processing = EINA_FALSE;
-        entry->request = req;
-        if (type == CSERVE2_OPEN)
-          req->funcs = &_open_funcs;
-        else
-          req->funcs = &_load_funcs;
-        *requests = eina_list_append(*requests, req);
-        DBG("Add request for entry id: %d, client: %d, rid: %d",
-            req->entry->id, ref->client->id, rid);
-     }
-   else
-     req = entry->request;
-
-   if (type != CSERVE2_SETOPTS)
-     _request_answer_add(req, ref, rid, type);
-   else
-     DBG("Adding entry for speculative preload: id=%d", req->entry->id);
-}
-
 static Reference *
 _entry_reference_add(Entry *entry, Client *client, unsigned int client_entry_id)
 {
@@ -955,104 +802,6 @@ _entry_reference_add(Entry *entry, Client *client, unsigned int client_entry_id)
    entry->references = eina_list_append(entry->references, ref);
 
    return ref;
-}
-
-static int
-_cserve2_cache_open_requests_process(int nloaders)
-{
-   Request *req;
-   char *slave_cmd_data;
-   int slave_cmd_size;
-
-   while ((nloaders > 0) && (open_requests))
-     {
-        // remove the first element from the list and process this element
-        req = eina_list_data_get(open_requests);
-        open_requests = eina_list_remove_list(open_requests, open_requests);
-
-        DBG("Processing OPEN request for file entry: %d", req->entry->id);
-
-        slave_cmd_data = req->funcs->msg_create(req->entry, &slave_cmd_size);
-
-        cserve2_slave_cmd_dispatch(req, IMAGE_OPEN, slave_cmd_data,
-                                   slave_cmd_size);
-
-        free(slave_cmd_data);
-
-        req->processing = EINA_TRUE;
-        nloaders--;
-     }
-
-   return nloaders;
-}
-
-static int
-_cserve2_cache_load_requests_list_process(Eina_List **queue, int nloaders)
-{
-   Eina_List *skipped = NULL;
-   Request *req;
-
-   while ((nloaders > 0) && (*queue))
-     {
-        Image_Data *ientry;
-        char *buf;
-        int size;
-
-        // remove the first element from the list and process this element
-        req = eina_list_data_get(*queue);
-        *queue = eina_list_remove_list(*queue, *queue);
-
-        ientry = (Image_Data *)req->entry;
-        if (!ientry->file)
-          {
-             ERR("File entry doesn't exist for entry id %d", req->entry->id);
-             _request_failed(req->entry, CSERVE2_INVALID_CACHE);
-             continue;
-          }
-
-        if (ientry->file->base.request)
-          {
-             /* OPEN still pending, skip this request */
-             skipped = eina_list_append(skipped, req);
-             continue;
-          }
-
-        DBG("Processing LOAD request for image entry: %d", req->entry->id);
-
-        buf = req->funcs->msg_create(req->entry, &size);
-
-        cserve2_slave_cmd_dispatch(req, IMAGE_LOAD, buf, size);
-
-        free(buf);
-
-        req->processing = EINA_TRUE;
-
-        nloaders--;
-     }
-
-   EINA_LIST_FREE(skipped, req)
-      *queue = eina_list_append(*queue, req);
-
-   return nloaders;
-}
-
-static void
-_cserve2_cache_load_requests_process(int nloaders)
-{
-   nloaders = _cserve2_cache_load_requests_list_process(&load_requests,
-                                                        nloaders);
-   _cserve2_cache_load_requests_list_process(&spload_requests, nloaders - 1);
-}
-
-
-void
-cserve2_cache_requests_process(void)
-{
-   int avail_loaders;
-
-   avail_loaders = cserve2_slave_available_get();
-   avail_loaders = _cserve2_cache_open_requests_process(avail_loaders);
-   _cserve2_cache_load_requests_process(avail_loaders);
 }
 
 static void
@@ -1130,20 +879,15 @@ _entry_free_cb(void *data)
 
    entry = ref->entry;
 
-   if (entry->request && !entry->request->processing)
+   /* XXX: handle the case of requests being processed gracefully */
+   if (entry->request /*&& !entry->request->processing*/)
      {
         if (entry->type == CSERVE2_IMAGE_FILE)
-          _request_answer_del(&open_requests, entry->request, ref->client,
-                              CSERVE2_REQUEST_CANCEL);
+          cserve2_request_cancel(entry->request, ref->client,
+                                 CSERVE2_REQUEST_CANCEL);
         else if (entry->type == CSERVE2_IMAGE_DATA)
-          {
-             if (((Image_Data *)entry)->doload)
-               _request_answer_del(&load_requests, entry->request,
-                                   ref->client, CSERVE2_REQUEST_CANCEL);
-             else
-               _request_answer_del(&spload_requests, entry->request,
-                                   ref->client, CSERVE2_REQUEST_CANCEL);
-          }
+          cserve2_request_cancel(entry->request, ref->client,
+                                 CSERVE2_REQUEST_CANCEL);
      }
 
    _entry_reference_del(entry, ref);
@@ -1253,15 +997,9 @@ _file_changed_cb(const char *path __UNUSED__, Eina_Bool deleted __UNUSED__, void
           {
              _image_id_free(ie);
              eina_hash_set(image_entries, &ie->base.id, NULL);
-             if (ie->base.request && !ie->base.request->processing)
-               {
-                  if (ie->doload)
-                    _request_answer_all_del(&load_requests, ie->base.request,
-                                            CSERVE2_FILE_CHANGED);
-                  else
-                    _request_answer_all_del(&spload_requests, ie->base.request,
-                                            CSERVE2_FILE_CHANGED);
-               }
+             if (ie->base.request /*&& !ie->base.request->processing*/)
+               cserve2_request_cancel_all(ie->base.request,
+                                          CSERVE2_FILE_CHANGED);
              ie->base.request = NULL;
              if (ie->unused)
                _image_entry_free(ie);
@@ -1269,9 +1007,8 @@ _file_changed_cb(const char *path __UNUSED__, Eina_Bool deleted __UNUSED__, void
 
         _file_id_free(e);
         eina_hash_set(file_entries, &e->base.id, NULL);
-        if (e->base.request && !e->base.request->processing)
-          _request_answer_all_del(&open_requests, e->base.request,
-                                  CSERVE2_FILE_CHANGED);
+        if (e->base.request /*&& !e->base.request->processing*/)
+          cserve2_request_cancel_all(e->base.request, CSERVE2_FILE_CHANGED);
         e->base.request = NULL;
         if (!e->images && !e->base.references)
           _file_entry_free(e);
@@ -1853,7 +1590,7 @@ _image_file_entry_stats_cb(const Eina_Hash *hash __UNUSED__, const void *key __U
    msg->images.files_size += sizeof(File_Data) +
       eina_list_count(fd->images) * sizeof(Eina_List *) +
       eina_list_count(fd->base.references) *
-         (sizeof(Request) + sizeof(Eina_List *));
+         (sizeof(Font_Request *) + sizeof(Eina_List *));
 
 #ifdef DEBUG_LOAD_TIME
    // accounting file entries load time
@@ -2144,7 +1881,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
 
         // File already being loaded, just add the request to be replied
         if (entry->base.request)
-          _request_answer_add(entry->base.request, ref, rid, CSERVE2_OPEN);
+          cserve2_request_waiter_add(entry->base.request, rid, client);
         else
           _image_opened_send(client, entry, rid);
         return 0;
@@ -2169,7 +1906,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
         _entry_load_reused(ref->entry);
         eina_hash_add(client->files.referencing, &client_file_id, ref);
         if (entry->base.request)
-          _request_answer_add(entry->base.request, ref, rid, CSERVE2_OPEN);
+          cserve2_request_waiter_add(entry->base.request, rid, client);
         else // File already loaded, otherwise there would be a request
           _image_opened_send(client, entry, rid);
         return 0;
@@ -2202,7 +1939,9 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
    fw->entries = eina_list_append(fw->entries, entry);
    entry->watcher = fw;
 
-   _request_add(&open_requests, (Entry *)entry, ref, rid, CSERVE2_OPEN);
+   entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_OPEN,
+                                             rid, client, NULL, &_open_funcs,
+                                             entry);
 
    // _open_image_default_set(entry);
 
@@ -2296,8 +2035,9 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
    fentry = entry->file;
    fentry->images = eina_list_append(fentry->images, entry);
 
-   _request_add(&spload_requests, (Entry *)entry, ref, msg->base.rid,
-                CSERVE2_SETOPTS);
+   entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_LOAD,
+                                             0, NULL, fentry->base.request,
+                                             &_load_funcs, entry);
    return 0;
 }
 
@@ -2328,7 +2068,8 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
    // File already being loaded, just add the request to be replied
    if (entry->base.request)
      {
-        _request_answer_add(entry->base.request, ref, rid, CSERVE2_LOAD);
+        cserve2_request_waiter_add(entry->base.request, rid, client);
+        /* do this in *_requests.c. somehow
         if ((!entry->base.request->processing) && (!entry->doload))
           {
              DBG("Removing entry %d from speculative preload and adding "
@@ -2338,11 +2079,16 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
              load_requests = eina_list_append(load_requests,
                                               entry->base.request);
           }
+          */
      }
    else if (entry->shm)
      _image_loaded_send(client, entry, rid);
    else
-     _request_add(&load_requests, (Entry *)entry, ref, rid, CSERVE2_LOAD);
+     entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_LOAD,
+                                               rid, client,
+                                               entry->file->base.request,
+                                               &_load_funcs,
+                                               entry);
 
    entry->doload = EINA_TRUE;
 }
@@ -2374,21 +2120,27 @@ cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsign
    // File already being loaded, just add the request to be replied
    if (entry->base.request)
      {
-        _request_answer_add(entry->base.request, ref, rid, CSERVE2_PRELOAD);
+        cserve2_request_waiter_add(entry->base.request, rid, client);
+        /* do this in *_requests.c. somehow
         if ((!entry->base.request->processing) && (!entry->doload))
           {
              DBG("Removing entry %d from speculative preload and adding "
-                 "to normal (pre)load queue.", entry->base.id);
+                 "to normal load queue.", entry->base.id);
              spload_requests = eina_list_remove(spload_requests,
                                                 entry->base.request);
              load_requests = eina_list_append(load_requests,
                                               entry->base.request);
           }
+          */
      }
    else if (entry->shm)
-     _image_preloaded_send(client, rid);
+     _image_loaded_send(client, entry, rid);
    else
-     _request_add(&load_requests, (Entry *)entry, ref, rid, CSERVE2_PRELOAD);
+     entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_LOAD,
+                                               rid, client,
+                                               entry->file->base.request,
+                                               &_load_funcs,
+                                               entry);
 
    entry->doload = EINA_TRUE;
 }
@@ -2573,37 +2325,6 @@ cserve2_cache_font_glyphs_used(Client *client, const char *source, unsigned int 
 
    _glyphs_request_free(req);
    return 0;
-}
-
-void
-cserve2_cache_requests_response(Slave_Command type, void *msg, void *data)
-{
-   Request *req = data;
-
-   if (!req->entry)
-     {
-        Waiter *w;
-        DBG("Request finished but it has no entry anymore.");
-        EINA_LIST_FREE(req->waiters, w)
-          {
-             cserve2_client_error_send(w->ref->client, w->rid,
-                                       CSERVE2_REQUEST_CANCEL);
-
-             w->ref->count--;
-             free(w);
-          }
-     }
-   else if (type == ERROR)
-     {
-        Error_Type *error = msg;
-        req->funcs->error(req->entry, *error);
-     }
-   else
-     req->funcs->response(req->entry, msg);
-
-   if (req->entry)
-     req->entry->request = NULL;
-   free(req);
 }
 
 void

@@ -263,14 +263,6 @@ parse_answer_loaded(const void *buf)
 }
 
 static void
-parse_answer_preloaded(const void *buf)
-{
-   const Msg_Preloaded *msg = buf;
-
-   printf("PRELOADED rid = %d\n", msg->base.rid);
-}
-
-static void
 parse_answer_error(const void *buf)
 {
    const Msg_Error *msg = buf;
@@ -294,9 +286,6 @@ parse_answer(const void *buf)
       case CSERVE2_LOADED:
          parse_answer_loaded(buf);
          break;
-      case CSERVE2_PRELOADED:
-         parse_answer_preloaded(buf);
-         break;
       case CSERVE2_ERROR:
          parse_answer_error(buf);
          break;
@@ -317,7 +306,6 @@ static struct {
    { "LOAD", CSERVE2_LOAD, parse_input_load },
    { "LOADED", CSERVE2_LOADED, NULL },
    { "PRELOAD", CSERVE2_PRELOAD, parse_input_preload },
-   { "PRELOADED", CSERVE2_PRELOADED, NULL },
    { "UNLOAD", CSERVE2_UNLOAD, parse_input_unload },
    { "CLOSE", CSERVE2_CLOSE, parse_input_close },
    { NULL, 0, NULL }
