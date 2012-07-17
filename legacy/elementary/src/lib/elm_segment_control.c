@@ -553,6 +553,8 @@ _elm_segment_control_smart_add(Evas_Object *obj)
      (obj, EVAS_CALLBACK_RESIZE, _on_move_resize, obj);
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_MOVE, _on_move_resize, obj);
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -606,8 +608,6 @@ elm_segment_control_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
