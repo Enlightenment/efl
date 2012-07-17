@@ -169,7 +169,8 @@ _elm_fileselector_smart_theme(Evas_Object *obj)
 
    ELM_FILESELECTOR_DATA_GET(obj, sd);
 
-   if (!ELM_WIDGET_CLASS(_elm_fileselector_parent_sc)->theme(obj)) return EINA_FALSE;
+   if (!ELM_WIDGET_CLASS(_elm_fileselector_parent_sc)->theme(obj))
+     return EINA_FALSE;
 
    style = elm_widget_style_get(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
@@ -442,8 +443,9 @@ _ls_main_cb(void *data,
    if (info->type == EINA_FILE_DIR)
      itcn = ELM_DIRECTORY;
    else
-     if (evas_object_image_extension_can_load_get(info->path + info->name_start))
-       itcn = ELM_FILE_IMAGE;
+   if (evas_object_image_extension_can_load_get
+         (info->path + info->name_start))
+     itcn = ELM_FILE_IMAGE;
 
    if (lreq->sd->mode == ELM_FILESELECTOR_LIST)
      elm_genlist_item_sorted_insert(lreq->sd->files_list, list_itc[itcn],
