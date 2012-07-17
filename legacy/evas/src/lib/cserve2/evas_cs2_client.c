@@ -550,6 +550,16 @@ _image_setopts_server_send(Image_Entry *ie)
    msg.file_id = fentry->file_id;
    msg.image_id = dentry->image_id;
 
+   msg.opts.scale_down = ie->load_opts.scale_down_by;
+   msg.opts.dpi = ie->load_opts.dpi;
+   msg.opts.w = ie->load_opts.w;
+   msg.opts.h = ie->load_opts.h;
+   msg.opts.rx = ie->load_opts.region.x;
+   msg.opts.ry = ie->load_opts.region.y;
+   msg.opts.rw = ie->load_opts.region.w;
+   msg.opts.rh = ie->load_opts.region.h;
+   msg.opts.orientation = ie->load_opts.orientation;
+
    if (!_server_send(&msg, sizeof(msg), 0, NULL))
      return 0;
 
