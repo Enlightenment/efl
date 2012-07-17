@@ -313,6 +313,17 @@ _elm_photo_smart_add(Evas_Object *obj)
    _elm_photo_internal_image_follow(obj);
 
    _sizing_eval(obj);
+
+   elm_widget_resize_object_set
+       (obj, edje_object_add(evas_object_evas_get(obj)));
+
+   elm_widget_theme_object_set
+     (obj, ELM_WIDGET_DATA(priv)->resize_obj, "photo", "base", "default");
+
+   edje_object_part_swallow
+     (ELM_WIDGET_DATA(priv)->resize_obj, "elm.swallow.content", priv->icon);
+
+   elm_photo_file_set(obj, NULL);
 }
 
 static void
@@ -350,18 +361,6 @@ elm_photo_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   ELM_PHOTO_DATA_GET(obj, sd);
-
-   elm_widget_resize_object_set(obj, edje_object_add(e));
-
-   elm_widget_theme_object_set
-     (obj, ELM_WIDGET_DATA(sd)->resize_obj, "photo", "base", "default");
-
-   edje_object_part_swallow
-     (ELM_WIDGET_DATA(sd)->resize_obj, "elm.swallow.content", sd->icon);
-
-   elm_photo_file_set(obj, NULL);
 
    return obj;
 }
