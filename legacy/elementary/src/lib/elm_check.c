@@ -334,6 +334,9 @@ _elm_check_smart_add(Evas_Object *obj)
      (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj));
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -372,9 +375,6 @@ elm_check_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_theme_set(obj, "check", "base", elm_widget_style_get(obj));
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
