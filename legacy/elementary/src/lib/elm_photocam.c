@@ -1413,6 +1413,10 @@ _g_layer_zoom_end_cb(void *data,
 static void
 _elm_photocam_smart_add(Evas_Object *obj)
 {
+   Evas_Coord minw, minh;
+   Elm_Photocam_Pan_Smart_Data *pan_data;
+   Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
+
    EVAS_SMART_DATA_ALLOC(obj, Elm_Photocam_Smart_Data);
 
    ELM_WIDGET_DATA(priv)->resize_obj =
@@ -1428,13 +1432,62 @@ _elm_photocam_smart_add(Evas_Object *obj)
    evas_object_smart_member_add(priv->hit_rect, obj);
    elm_widget_sub_object_add(obj, priv->hit_rect);
 
-   /* common scroller hit rectangle setup -- it has to take place
-    * AFTER smart_member_add() */
+   /* common scroller hit rectangle setup */
    evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
    evas_object_show(priv->hit_rect);
    evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   priv->s_iface = evas_object_smart_interface_get
+       (obj, ELM_SCROLLABLE_IFACE_NAME);
+
+   priv->s_iface->objects_set
+     (obj, ELM_WIDGET_DATA(priv)->resize_obj, priv->hit_rect);
+
+   priv->s_iface->animate_start_cb_set(obj, _scroll_animate_start_cb);
+   priv->s_iface->animate_stop_cb_set(obj, _scroll_animate_stop_cb);
+   priv->s_iface->drag_start_cb_set(obj, _scroll_drag_start_cb);
+   priv->s_iface->drag_stop_cb_set(obj, _scroll_drag_stop_cb);
+   priv->s_iface->scroll_cb_set(obj, _scroll_cb);
+
+   priv->s_iface->bounce_allow_set(obj, bounce, bounce);
+
+   priv->pan_obj = evas_object_smart_add
+       (evas_object_evas_get(obj), _elm_photocam_pan_smart_class_new());
+   pan_data = evas_object_smart_data_get(priv->pan_obj);
+   pan_data->wsd = priv;
+
+   priv->s_iface->extern_pan_set(obj, priv->pan_obj);
+
+   priv->zoom_g_layer = EINA_FALSE;
+   priv->g_layer_start = 1.0;
+   priv->zoom = 1;
+   priv->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
+   priv->tsize = 512;
+
+   priv->img = evas_object_image_add(evas_object_evas_get(obj));
+   evas_object_image_load_orientation_set(priv->img, EINA_TRUE);
+   evas_object_image_scale_hint_set(priv->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
+   evas_object_event_callback_add
+     (priv->img, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
+   evas_object_event_callback_add
+     (priv->img, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
+   evas_object_image_scale_hint_set(priv->img, EVAS_IMAGE_SCALE_HINT_STATIC);
+
+   /* XXX: mmm... */
+   evas_object_smart_member_add(priv->img, priv->pan_obj);
+
+   elm_widget_sub_object_add(obj, priv->img);
+   evas_object_image_filled_set(priv->img, EINA_TRUE);
+   evas_object_event_callback_add
+     (priv->img, EVAS_CALLBACK_IMAGE_PRELOADED, _main_img_preloaded_cb, obj);
+
+   edje_object_size_min_calc(ELM_WIDGET_DATA(priv)->resize_obj, &minw, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+
+   _sizing_eval(obj);
+
 }
 
 static void
@@ -1518,9 +1571,6 @@ elm_photocam_add(Evas_Object *parent)
 {
    Evas *e;
    Evas_Object *obj;
-   Evas_Coord minw, minh;
-   Elm_Photocam_Pan_Smart_Data *pan_data;
-   Eina_Bool bounce = _elm_config->thumbscroll_bounce_enable;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
@@ -1531,58 +1581,6 @@ elm_photocam_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   ELM_PHOTOCAM_DATA_GET(obj, sd);
-
-   sd->s_iface = evas_object_smart_interface_get
-       (obj, ELM_SCROLLABLE_IFACE_NAME);
-
-   sd->s_iface->objects_set
-     (obj, ELM_WIDGET_DATA(sd)->resize_obj, sd->hit_rect);
-
-   sd->s_iface->animate_start_cb_set(obj, _scroll_animate_start_cb);
-   sd->s_iface->animate_stop_cb_set(obj, _scroll_animate_stop_cb);
-   sd->s_iface->drag_start_cb_set(obj, _scroll_drag_start_cb);
-   sd->s_iface->drag_stop_cb_set(obj, _scroll_drag_stop_cb);
-   sd->s_iface->scroll_cb_set(obj, _scroll_cb);
-
-   sd->s_iface->bounce_allow_set(obj, bounce, bounce);
-
-   sd->pan_obj = evas_object_smart_add
-       (evas_object_evas_get(obj), _elm_photocam_pan_smart_class_new());
-   pan_data = evas_object_smart_data_get(sd->pan_obj);
-   pan_data->wsd = sd;
-
-   sd->s_iface->extern_pan_set(obj, sd->pan_obj);
-
-   sd->zoom_g_layer = EINA_FALSE;
-   sd->g_layer_start = 1.0;
-   sd->zoom = 1;
-   sd->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
-   sd->tsize = 512;
-
-   sd->img = evas_object_image_add(evas_object_evas_get(obj));
-   evas_object_image_load_orientation_set(sd->img, EINA_TRUE);
-   evas_object_image_scale_hint_set(sd->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
-   evas_object_event_callback_add
-     (sd->img, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
-   evas_object_event_callback_add
-     (sd->img, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
-   evas_object_image_scale_hint_set(sd->img, EVAS_IMAGE_SCALE_HINT_STATIC);
-
-   /* XXX: mmm... */
-   evas_object_smart_member_add(sd->img, sd->pan_obj);
-
-   elm_widget_sub_object_add(obj, sd->img);
-   evas_object_image_filled_set(sd->img, EINA_TRUE);
-   evas_object_event_callback_add
-     (sd->img, EVAS_CALLBACK_IMAGE_PRELOADED, _main_img_preloaded_cb, obj);
-
-   edje_object_size_min_calc(ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-
-   _sizing_eval(obj);
-
    return obj;
 }
 
