@@ -76,6 +76,7 @@ struct _Slave_Request
    Slave_Request *dependency;
    Eina_List *dependents; /* list of requests that depend on this one finishing */
    Eina_Bool locked : 1; /* locked waiting for a dependency request to finish */
+   Eina_Bool cancelled : 1;
 };
 
 struct _Waiter
@@ -247,7 +248,8 @@ cserve2_request_cancel(Slave_Request *req, Client *client, Error_Type err)
 
         free(req);
      }
-
+   else if (!req->waiters)
+     req->cancelled = EINA_TRUE;
 }
 
 void
@@ -271,7 +273,10 @@ cserve2_request_cancel_all(Slave_Request *req, Error_Type err)
    _request_dependents_cancel(req, err);
 
    if (req->processing)
-     return;
+     {
+        req->cancelled = EINA_TRUE;
+        return;
+     }
 
    if (req->dependency)
      req->dependency->dependents = eina_list_remove(
@@ -329,6 +334,9 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
    Msg_Base *resp = NULL;
    int resp_size;
 
+   if (req->cancelled)
+     goto free_it;
+
    if (cmd == ERROR)
      {
         Error_Type *err = msg;
@@ -355,7 +363,9 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
 
    free(resp);
 
+free_it:
    req->funcs->msg_free(req->msg, req->data);
+
    // FIXME: We shouldn't free this message directly, it must be freed by a
    // callback.
    free(msg);
