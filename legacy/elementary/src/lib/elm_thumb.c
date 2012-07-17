@@ -591,6 +591,12 @@ _elm_thumb_smart_add(Evas_Object *obj)
 
    ELM_WIDGET_CLASS(_elm_thumb_parent_sc)->base.add(obj);
 
+   elm_widget_resize_object_set(obj, elm_layout_add(obj));
+
+   elm_layout_theme_set
+     (ELM_WIDGET_DATA(priv)->resize_obj, "thumb", "base",
+     elm_widget_style_get(obj));
+
    priv->view = NULL;
    priv->file = NULL;
    priv->key = NULL;
@@ -666,14 +672,6 @@ elm_thumb_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   ELM_THUMB_DATA_GET(obj, sd);
-
-   elm_widget_resize_object_set(obj, elm_layout_add(obj));
-
-   elm_layout_theme_set
-     (ELM_WIDGET_DATA(sd)->resize_obj, "thumb", "base",
-     elm_widget_style_get(obj));
 
    return obj;
 }
