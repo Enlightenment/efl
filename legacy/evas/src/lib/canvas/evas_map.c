@@ -104,6 +104,7 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
    obj->cur.map->normal_geometry.y = yy1;
    obj->cur.map->normal_geometry.w = (x2 - x1);
    obj->cur.map->normal_geometry.h = (yy2 - yy1);
+   obj->changed_map = ch;
    if (ch) _evas_map_calc_geom_change(obj);
 }
 
@@ -494,7 +495,6 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
         if (obj->cur.usemap)
            evas_object_mapped_clip_across_mark(obj);
      }
-   obj->changed_map = EINA_TRUE;
 
    _evas_map_calc_map_geometry(obj);
 }

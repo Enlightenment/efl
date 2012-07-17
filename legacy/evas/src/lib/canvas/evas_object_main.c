@@ -93,7 +93,7 @@ evas_object_change(Evas_Object *obj)
         obj->changed_move = EINA_FALSE;
      }
 
-     if (obj->changed) return;
+   if (obj->changed) return;
 
    evas_render_object_recalc(obj);
    /* set changed flag on all objects this one clips too */
@@ -321,7 +321,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int i
 int
 evas_object_was_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
 {
-   if (obj->smart.smart) return 0;
+   if (obj->smart.smart && !obj->prev.map && !obj->prev.usemap) return 0;
    /* assumes coords have been recalced */
    if ((RECTS_INTERSECT(x, y, w, h,
                         obj->prev.cache.clip.x,
