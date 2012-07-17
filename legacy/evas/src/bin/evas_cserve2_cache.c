@@ -2035,7 +2035,7 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
    fentry = entry->file;
    fentry->images = eina_list_append(fentry->images, entry);
 
-   entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_LOAD,
+   entry->base.request = cserve2_request_add(CSERVE2_REQ_IMAGE_SPEC_LOAD,
                                              0, NULL, fentry->base.request,
                                              &_load_funcs, entry);
    return 0;
@@ -2069,17 +2069,8 @@ cserve2_cache_image_load(Client *client, unsigned int client_image_id, unsigned 
    if (entry->base.request)
      {
         cserve2_request_waiter_add(entry->base.request, rid, client);
-        /* do this in *_requests.c. somehow
-        if ((!entry->base.request->processing) && (!entry->doload))
-          {
-             DBG("Removing entry %d from speculative preload and adding "
-                 "to normal load queue.", entry->base.id);
-             spload_requests = eina_list_remove(spload_requests,
-                                                entry->base.request);
-             load_requests = eina_list_append(load_requests,
-                                              entry->base.request);
-          }
-          */
+        if (!entry->doload)
+          cserve2_request_type_set(entry->base.request, CSERVE2_REQ_IMAGE_LOAD);
      }
    else if (entry->shm)
      _image_loaded_send(client, entry, rid);
@@ -2121,17 +2112,8 @@ cserve2_cache_image_preload(Client *client, unsigned int client_image_id, unsign
    if (entry->base.request)
      {
         cserve2_request_waiter_add(entry->base.request, rid, client);
-        /* do this in *_requests.c. somehow
-        if ((!entry->base.request->processing) && (!entry->doload))
-          {
-             DBG("Removing entry %d from speculative preload and adding "
-                 "to normal load queue.", entry->base.id);
-             spload_requests = eina_list_remove(spload_requests,
-                                                entry->base.request);
-             load_requests = eina_list_append(load_requests,
-                                              entry->base.request);
-          }
-          */
+        if (!entry->doload)
+          cserve2_request_type_set(entry->base.request, CSERVE2_REQ_IMAGE_LOAD);
      }
    else if (entry->shm)
      _image_loaded_send(client, entry, rid);

@@ -211,6 +211,7 @@ typedef enum {
 typedef enum {
    CSERVE2_REQ_IMAGE_OPEN = 0,
    CSERVE2_REQ_IMAGE_LOAD,
+   CSERVE2_REQ_IMAGE_SPEC_LOAD,
    CSERVE2_REQ_FONT_LOAD,
    CSERVE2_REQ_FONT_GLYPHS_LOAD,
    CSERVE2_REQ_LAST
@@ -295,6 +296,7 @@ void cserve2_cache_font_debug(Client *client, unsigned int rid);
 
 Slave_Request *cserve2_request_add(Slave_Request_Type type, unsigned int rid, Client *client, Slave_Request *dep, Slave_Request_Funcs *funcs, void *data);
 void cserve2_request_waiter_add(Slave_Request *req, unsigned int rid, Client *client);
+void cserve2_request_type_set(Slave_Request *req, Slave_Request_Type type);
 void cserve2_request_cancel(Slave_Request *req, Client *client, Error_Type err);
 void cserve2_request_cancel_all(Slave_Request *req, Error_Type err);
 void cserve2_requests_init(void);

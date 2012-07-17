@@ -36,13 +36,16 @@ static struct _Request_Match
    Slave_Request_Type rtype;
    Slave_Type stype;
    Slave_Command ctype;
+   int require_spares; /* for speculative operations, will require to leave at
+                          least this number of slaves always available */
 } _request_match[] =
 {
-   { CSERVE2_REQ_IMAGE_OPEN, SLAVE_IMAGE, IMAGE_OPEN },
-   { CSERVE2_REQ_IMAGE_LOAD, SLAVE_IMAGE, IMAGE_LOAD },
-   { CSERVE2_REQ_FONT_LOAD, SLAVE_FONT, FONT_LOAD },
-   { CSERVE2_REQ_FONT_GLYPHS_LOAD, SLAVE_FONT, FONT_GLYPHS_LOAD },
-   { CSERVE2_REQ_LAST, 0, 0 }
+   { CSERVE2_REQ_IMAGE_OPEN, SLAVE_IMAGE, IMAGE_OPEN, 0 },
+   { CSERVE2_REQ_IMAGE_LOAD, SLAVE_IMAGE, IMAGE_LOAD, 0 },
+   { CSERVE2_REQ_IMAGE_SPEC_LOAD, SLAVE_IMAGE, IMAGE_LOAD, 1 },
+   { CSERVE2_REQ_FONT_LOAD, SLAVE_FONT, FONT_LOAD, 0 },
+   { CSERVE2_REQ_FONT_GLYPHS_LOAD, SLAVE_FONT, FONT_GLYPHS_LOAD, 0 },
+   { CSERVE2_REQ_LAST, 0, 0, 0 }
 };
 
 static Slave *_create_image_slave(void *data);
@@ -172,6 +175,21 @@ void
 cserve2_request_waiter_add(Slave_Request *req, unsigned int rid, Client *client)
 {
    _request_waiter_add(req, client, rid);
+}
+
+void
+cserve2_request_type_set(Slave_Request *req, Slave_Request_Type type)
+{
+   Eina_Inlist **from, **to;
+
+   if (req->processing || (type == req->type))
+     return;
+
+   from = &requests[req->type].waiting;
+   to = &requests[type].waiting;
+
+   *from = eina_inlist_remove(*from, EINA_INLIST_GET(req));
+   *to = eina_inlist_append(*to, EINA_INLIST_GET(req));
 }
 
 static void
@@ -488,7 +506,8 @@ _cserve2_requests_process(void)
            {
               Slave_Worker *sw;
 
-              if (eina_list_count(*working) >= max_workers)
+              if (eina_list_count(*working) >=
+                  (max_workers - _request_match[j].require_spares))
                 break;
 
               if (req->locked)
