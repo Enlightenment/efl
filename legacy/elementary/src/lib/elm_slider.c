@@ -112,7 +112,7 @@ _val_fetch(Evas_Object *obj)
    edje_object_part_drag_value_get
      (ELM_WIDGET_DATA(sd)->resize_obj, "elm.dragable.slider", &posx, &posy);
    if (sd->horizontal) pos = posx;
-    else pos = posy;
+   else pos = posy;
 
    rtl = elm_widget_mirrored_get(obj);
    if ((!rtl && sd->inverted) ||
@@ -453,7 +453,7 @@ _elm_slider_smart_theme(Evas_Object *obj)
      {
         eina_stringshare_replace(&ELM_LAYOUT_DATA(sd)->group, "horizontal");
         if (sd->popup)
-          _elm_theme_set(NULL, sd->popup, 
+          _elm_theme_set(NULL, sd->popup,
                          "slider", "horizontal/popup",
                          elm_widget_style_get(obj));
      }
@@ -461,7 +461,7 @@ _elm_slider_smart_theme(Evas_Object *obj)
      {
         eina_stringshare_replace(&ELM_LAYOUT_DATA(sd)->group, "vertical");
         if (sd->popup)
-          _elm_theme_set(NULL, sd->popup, 
+          _elm_theme_set(NULL, sd->popup,
                          "slider", "vertical/popup",
                          elm_widget_style_get(obj));
      }
@@ -644,7 +644,7 @@ _track_move_cb(void *data,
                void *event_info __UNUSED__)
 {
    Evas_Coord x, y;
-   
+
    ELM_SLIDER_DATA_GET(data, sd);
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    evas_object_move(sd->popup, x, y);
@@ -652,12 +652,12 @@ _track_move_cb(void *data,
 
 static void
 _track_resize_cb(void *data,
-               Evas *e __UNUSED__,
-               Evas_Object *obj,
-               void *event_info __UNUSED__)
+                 Evas *e __UNUSED__,
+                 Evas_Object *obj,
+                 void *event_info __UNUSED__)
 {
    Evas_Coord w, h;
-   
+
    ELM_SLIDER_DATA_GET(data, sd);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_move(sd->popup, w, h);
@@ -735,19 +735,19 @@ _elm_slider_smart_add(Evas_Object *obj)
      {
         // XXX popup needs to adapt to theme etc.
         priv->popup = edje_object_add(evas_object_evas_get(obj));
-        _elm_theme_set(NULL, priv->popup, 
+        _elm_theme_set(NULL, priv->popup,
                        "slider", "horizontal/popup",
                        elm_widget_style_get(obj));
         edje_object_signal_callback_add(priv->popup, "popup,hide,done", "elm",
                                         _popup_hide_done, obj);
-        
+
         /* create a rectangle to track position+size of the dragable */
         priv->track = evas_object_rectangle_add(evas_object_evas_get(obj));
         evas_object_event_callback_add
           (priv->track, EVAS_CALLBACK_MOVE, _track_move_cb, obj);
         evas_object_event_callback_add
           (priv->track, EVAS_CALLBACK_RESIZE, _track_resize_cb, obj);
-        
+
         evas_object_color_set(priv->track, 0, 0, 0, 0);
         evas_object_pass_events_set(priv->track, EINA_TRUE);
         elm_layout_content_set(obj, "elm.track.slider", priv->track);
@@ -771,7 +771,7 @@ _elm_slider_smart_del(Evas_Object *obj)
    if (sd->indicator) eina_stringshare_del(sd->indicator);
    if (sd->units) eina_stringshare_del(sd->units);
    if (sd->delay) ecore_timer_del(sd->delay);
-   
+
    if (sd->popup) evas_object_del(sd->popup);
 
    ELM_WIDGET_CLASS(_elm_slider_parent_sc)->base.del(obj);
