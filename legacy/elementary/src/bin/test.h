@@ -18,8 +18,8 @@
    } while(0)
 #endif
 
-#define CRITICAL(...) printf(__VA_ARGS__)
-#define ERR(...)      printf(__VA_ARGS__)
-#define WRN(...)      printf(__VA_ARGS__)
-#define INF(...)      printf(__VA_ARGS__)
-#define DBG(...)      printf(__VA_ARGS__)
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(EINA_LOG_DOMAIN_DEFAULT, _VA_ARGS__)
+#define ERR(...)      EINA_LOG_DOM_ERR(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
+#define WRN(...)      EINA_LOG_DOM_WARN(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
+#define INF(...)      EINA_LOG_DOM_INFO(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_DBG(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
