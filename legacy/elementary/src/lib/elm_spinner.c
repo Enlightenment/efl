@@ -615,8 +615,6 @@ elm_spinner_add(Evas_Object *parent)
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
 
-   elm_layout_sizing_eval(obj);
-
    return obj;
 }
 
