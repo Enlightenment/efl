@@ -26,17 +26,17 @@ externals.external: "elm";
                 } \
                 description { state: "vertical" 0.0; \
                     inherit: "default" 0.0; \
-                    min: 10 0; \
+                    min: 13 0; \
                     align: 1.0 0.0; \
                 } \
                 description { state: "horizontal" 0.0; \
                     inherit: "default" 0.0; \
-                    min: 0 10; \
+                    min: 0 13; \
                     align: 0.0 1.0; \
                 } \
                 description { state: "both" 0.0; \
                     inherit: "default" 0.0; \
-                    min: 10 10; \
+                    min: 13 13; \
                     align: 1.0 1.0; \
                 } \
             } \
@@ -68,7 +68,7 @@ externals.external: "elm";
                 mouse_events: 0; \
                 clip_to: "sb_vbar_clip"; \
                 description { state: "default" 0.0; \
-                    min: 10 0; \
+                    min: 13 0; \
                     fixed: 1 1; \
                     color: 0 0 0 0; \
                     align: 0.5 0.5; \
@@ -149,7 +149,7 @@ externals.external: "elm";
                 mouse_events: 1; \
                 clip_to: "sb_vbar_clip"; \
                 description { state: "default" 0.0; \
-                    min: 10 10; \
+                    min: 13 13; \
                     fixed: 1 1; \
                     align: 0.5 0.0; \
                     aspect: 1.0 1.0; \
@@ -187,7 +187,7 @@ externals.external: "elm";
                 mouse_events: 1; \
                 clip_to: "sb_vbar_clip"; \
                 description { state: "default" 0.0; \
-                    min: 10 10; \
+                    min: 13 13; \
                     fixed: 1 1; \
                     align: 0.5 1.0; \
                     aspect: 1.0 1.0; \
@@ -224,7 +224,7 @@ externals.external: "elm";
                     confine: "sb_vbar"; \
                 } \
                 description { state: "default" 0.0; \
-                    min: 10 20; \
+                    min: 13 20; \
                     fixed: 1 1; \
                     aspect: 1.0 0.5; \
                     aspect_preference: VERTICAL; \
@@ -305,7 +305,7 @@ externals.external: "elm";
                 mouse_events: 0; \
                 clip_to: "sb_hbar_clip"; \
                 description { state: "default" 0.0; \
-                    min: 0 10; \
+                    min: 0 13; \
                     fixed: 1 1; \
                     color: 0 0 0 0; \
                     align: 0.5 0.5; \
@@ -357,7 +357,7 @@ externals.external: "elm";
                     confine: "sb_hbar"; \
                 } \
                 description { state: "default" 0.0; \
-                    min: 20 10; \
+                    min: 20 13; \
                     fixed: 1 1; \
                     aspect_preference: HORIZONTAL; \
                     align: 0.0 1.0; \
@@ -447,7 +447,7 @@ externals.external: "elm";
                 mouse_events: 1; \
                 clip_to: "sb_hbar_clip"; \
                 description { state: "default" 0.0; \
-                    min: 10 10; \
+                    min: 13 13; \
                     fixed: 1 1; \
                     align: 0.0 1.0; \
                     aspect: 1.0 1.0; \
@@ -484,7 +484,7 @@ externals.external: "elm";
                 mouse_events: 1; \
                 clip_to: "sb_hbar_clip"; \
                 description { state: "default" 0.0; \
-                    min: 10 10; \
+                    min: 13 13; \
                     align: 1.0 1.0; \
                     aspect: 1.0 1.0; \
                     fixed: 1 1; \
