@@ -207,12 +207,6 @@ cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
           }
      }
 
-   if (req->dependency)
-     req->dependency->dependents = eina_list_remove(
-        req->dependency->dependents, req);
-
-   _request_dependents_cancel(req, err);
-
    // TODO: When we have speculative preload, there may be no waiters,
    // so we need a flag or something else to make things still load.
    if ((!req->waiters) && (!req->processing))
@@ -222,6 +216,13 @@ cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
         // TODO: If the request is being processed, it can't be deleted. Must
         // be marked as delete_me instead.
         req->funcs->msg_free(req->msg, req->data);
+
+        if (req->dependency)
+          req->dependency->dependents = eina_list_remove(
+             req->dependency->dependents, req);
+
+        _request_dependents_cancel(req, err);
+
         free(req);
      }
 
