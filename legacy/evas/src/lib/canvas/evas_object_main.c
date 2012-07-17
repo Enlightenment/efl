@@ -41,6 +41,17 @@ evas_object_change_reset(Evas_Object *obj)
 }
 
 void
+evas_object_cur_prev(Evas_Object *obj)
+{
+   if (obj->cur.map != obj->prev.map)
+     {
+        if (obj->cache_map) evas_map_free(obj->cache_map);
+        obj->cache_map = obj->prev.map;
+     }
+   obj->prev = obj->cur;
+}
+
+void
 evas_object_free(Evas_Object *obj, int clean_layer)
 {
    int was_smart_child = 0;
@@ -50,6 +61,8 @@ evas_object_free(Evas_Object *obj, int clean_layer)
 #endif
    if (!strcmp(obj->type, "image")) evas_object_image_video_surface_set(obj, NULL);
    evas_object_map_set(obj, NULL);
+   if (obj->prev.map) evas_map_free(obj->prev.map);
+   if (obj->cache_map) evas_map_free(obj->cache_map);
    evas_object_grabs_cleanup(obj);
    evas_object_intercept_cleanup(obj);
    if (obj->smart.parent) was_smart_child = 1;

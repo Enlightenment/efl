@@ -1234,7 +1234,7 @@ evas_object_smart_render_pre(Evas_Object *obj)
 static void
 evas_object_smart_render_post(Evas_Object *obj)
 {
-   obj->prev = obj->cur;
+   evas_object_cur_prev(obj);
 }
 
 static unsigned int evas_object_smart_id_get(Evas_Object *obj)

@@ -42,36 +42,46 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
    // It has an infinite loop bug.
    if (obj->prev.map)
      {
-        // FIXME: this causes an infinite loop somewhere... hard to debug
-        if (obj->prev.map->count == obj->cur.map->count)
+        if (obj->prev.map != obj->cur.map)
           {
-             const Evas_Map_Point *p2;
-
-             p = obj->cur.map->points;
-             p_end = p + obj->cur.map->count;
-             p2 = obj->prev.map->points;
-
-             for (; p < p_end; p++, p2++)
+             // FIXME: this causes an infinite loop somewhere... hard to debug
+             if (obj->prev.map->count == obj->cur.map->count)
                {
-                  if ((p->a != p2->a) ||
-                      (p->r != p2->r) ||
-                      (p->g != p2->g) ||
-                      (p->b != p2->b))
+                  const Evas_Map_Point *p2;
+
+                  p = obj->cur.map->points;
+                  p_end = p + obj->cur.map->count;
+                  p2 = obj->prev.map->points;
+
+                  for (; p < p_end; p++, p2++)
                     {
-                       ch = 1;
-                       break;
+                       if ((p->a != p2->a) ||
+                           (p->r != p2->r) ||
+                           (p->g != p2->g) ||
+                           (p->b != p2->b))
+                         {
+                            ch = 1;
+                            break;
+                         }
+                       if ((p->x != p2->x) ||
+                           (p->y != p2->y) ||
+                           (p->z != p2->z))
+                         {
+                            ch = 1;
+                            break;
+                         }
                     }
-                  if ((p->x != p2->x) ||
-                      (p->y != p2->y) ||
-                      (p->z != p2->z))
+
+                  if (!ch)
                     {
-                       ch = 1;
-                       break;
+                       if (obj->cache_map) evas_map_free(obj->cache_map); 
+                       obj->cache_map = obj->cur.map;
+                       obj->cur.map = obj->prev.map;
                     }
                }
+             else
+               ch = 1;
           }
-        else
-           ch = 1;
      }
    else
       ch = 1;
@@ -468,8 +478,19 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
                   obj->cur.map->surface = NULL;
                }
              obj->prev.geometry = obj->cur.map->normal_geometry;
-             _evas_map_free(obj, obj->cur.map);
-             obj->cur.map = NULL;
+
+             if (obj->prev.map == obj->cur.map)
+               obj->cur.map = NULL;
+             else if (!obj->cache_map)
+               {
+                  obj->cache_map = obj->cur.map;
+                  obj->cur.map = NULL;
+               }
+             else
+               {
+                  _evas_map_free(obj, obj->cur.map);
+                  obj->cur.map = NULL;
+               }
 
              if (!obj->prev.map)
                {
@@ -483,6 +504,15 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
                evas_object_mapped_clip_across_mark(obj);
           }
         return;
+     }
+
+   if (obj->prev.map == obj->cur.map)
+     obj->cur.map = NULL;
+
+   if (!obj->cur.map)
+     {
+        obj->cur.map = obj->cache_map;
+        obj->cache_map = NULL;
      }
 
    // We do have the same exact count of point in this map, so just copy it

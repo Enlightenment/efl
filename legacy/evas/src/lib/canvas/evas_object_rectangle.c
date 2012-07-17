@@ -279,7 +279,7 @@ evas_object_rectangle_render_post(Evas_Object *obj)
    /* remove those pesky changes */
    evas_object_clip_changes_clean(obj);
    /* move cur to prev safely for object data */
-   obj->prev = obj->cur;
+   evas_object_cur_prev(obj);
 }
 
 static int

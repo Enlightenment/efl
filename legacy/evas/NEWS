@@ -22,6 +22,7 @@ Fixes:
    * Add svg rendering with Esvg
    * Don't accept broken map.
    * Fix garbage left by mapped smart object when they fly away from the canvas.
+   * Fix map life cycle.
 
 Removal:
    * Remove EVAS_FRAME_QUEUING, EVAS_SLI, METRIC_CACHE and WORD_CACHE.

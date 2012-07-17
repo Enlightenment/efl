@@ -3456,7 +3456,7 @@ evas_object_image_render_post(Evas_Object *obj)
    EINA_LIST_FREE(o->pixel_updates, r)
      eina_rectangle_free(r);
    /* move cur to prev safely for object data */
-   obj->prev = obj->cur;
+   evas_object_cur_prev(obj);
    o->prev = o->cur;
    o->changed = 0;
    /* FIXME: copy strings across */

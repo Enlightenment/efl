@@ -888,4 +888,5 @@
 2012-07-17  Cedric Bail
 
 	* Fix garbage left by mapped smart object when they fly away from the canvas.
+	* Fix map life cycle.
 
