@@ -35,7 +35,6 @@ struct _Elm_Plug_Smart_Data
    Elm_Widget_Smart_Data base;    /* base widget smart data as
                                    * first member obligatory, as
                                    * we're inheriting from it */
-   Evas_Object          *img;
 };
 
 static const char SIG_CLICKED[] = "clicked";
@@ -80,11 +79,28 @@ _on_mouse_up(void *data,
 static void
 _elm_plug_smart_add(Evas_Object *obj)
 {
+   Evas_Object *p_obj;
+   Ecore_Evas *ee;
+
    EVAS_SMART_DATA_ALLOC(obj, Elm_Plug_Smart_Data);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    _elm_plug_parent_sc->base.add(obj);
+
+   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
+   if (!ee) return;
+
+   p_obj = ecore_evas_extn_plug_new(ee);
+   if (!p_obj) return;
+
+   elm_widget_resize_object_set(obj, p_obj);
+
+   evas_object_event_callback_add
+     (ELM_WIDGET_DATA(priv)->resize_obj, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up,
+     obj);
+
+   _sizing_eval(obj);
 }
 
 static void
@@ -99,7 +115,6 @@ EAPI Evas_Object *
 elm_plug_add(Evas_Object *parent)
 {
    Evas *e;
-   Ecore_Evas *ee;
    Evas_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
@@ -109,26 +124,13 @@ elm_plug_add(Evas_Object *parent)
 
    obj = evas_object_smart_add(e, _elm_plug_smart_class_new());
 
+   ELM_PLUG_DATA_GET(obj, sd);
+   if (!ELM_WIDGET_DATA(sd)->resize_obj) return NULL;
+
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
 
-   ELM_PLUG_DATA_GET(obj, sd);
-
-   ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
-   if (!ee) goto err;
-   sd->img = ecore_evas_extn_plug_new(ee);
-   if (!sd->img) goto err;
-
-   evas_object_event_callback_add
-      (sd->img, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
-   elm_widget_resize_object_set(obj, sd->img);
-
-   _sizing_eval(obj);
    return obj;
-
-  err:
-   evas_object_del(obj);
-   return NULL;
 }
 
 EAPI Evas_Object *
@@ -137,7 +139,7 @@ elm_plug_image_object_get(const Evas_Object *obj)
    ELM_PLUG_CHECK(obj) NULL;
    ELM_PLUG_DATA_GET(obj, sd);
 
-   return sd->img;
+   return ELM_WIDGET_DATA(sd)->resize_obj;
 }
 
 EAPI Eina_Bool
