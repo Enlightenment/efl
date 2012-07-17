@@ -233,7 +233,8 @@ _elm_radio_smart_disable(Evas_Object *obj)
 {
    ELM_RADIO_DATA_GET(obj, sd);
 
-   if (!ELM_WIDGET_CLASS(_elm_radio_parent_sc)->disable(obj)) return EINA_FALSE;
+   if (!ELM_WIDGET_CLASS(_elm_radio_parent_sc)->disable(obj))
+     return EINA_FALSE;
 
    if (elm_widget_disabled_get(obj) && sd->state) _state_set(obj, EINA_FALSE);
 
