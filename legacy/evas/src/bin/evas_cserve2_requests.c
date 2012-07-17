@@ -340,10 +340,15 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
    if (cmd == ERROR)
      {
         Error_Type *err = msg;
+        WRN("Received error %d from slave, for request type %d.",
+            *err, req->type);
         req->funcs->error(req->data, *err);
      }
    else
-     resp = req->funcs->response(req->data, msg, &resp_size);
+     {
+        DBG("Received response from slave for message type %d.", req->type);
+        resp = req->funcs->response(req->data, msg, &resp_size);
+     }
 
    EINA_LIST_FREE(req->waiters, w)
      {

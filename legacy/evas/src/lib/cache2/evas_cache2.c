@@ -777,13 +777,10 @@ evas_cache2_image_load_data(Image_Entry *ie)
      {
         evas_cserve2_image_load_data_wait(ie);
         RGBA_Image *im = (RGBA_Image *)ie;
-        im->image.data = evas_cserve2_image_data_get(ie);
         DBG("try cserve2 image data '%s' '%s' loaded!",
             ie->file, ie->key ? ie->key : "");
         if (im->image.data)
           {
-             im->image.no_free = 1;
-             ie->flags.loaded = EINA_TRUE;
              error = EVAS_LOAD_ERROR_NONE;
           }
         else

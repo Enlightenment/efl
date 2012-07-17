@@ -335,7 +335,7 @@ _image_opened_cb(void *data, const void *msg_received)
 }
 
 static void
-_loaded_handle(Image_Entry *ie, Msg_Loaded *msg)
+_loaded_handle(Image_Entry *ie, const Msg_Loaded *msg)
 {
    Data_Entry *dentry = ie->data2;
    const char *shmpath;
@@ -368,7 +368,13 @@ _loaded_handle(Image_Entry *ie, Msg_Loaded *msg)
      }
 
    if (ie->data2)
-     ie->flags.alpha_sparse = msg->alpha_sparse;
+     {
+        RGBA_Image *im = (RGBA_Image *)ie;
+        im->image.data = evas_cserve2_image_data_get(ie);
+        ie->flags.alpha_sparse = msg->alpha_sparse;
+        ie->flags.loaded = EINA_TRUE;
+        im->image.no_free = 1;
+     }
 }
 
 static void
