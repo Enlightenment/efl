@@ -630,6 +630,8 @@ _elm_image_smart_add(Evas_Object *obj)
    ELM_IMAGE_CLASS(ELM_WIDGET_DATA(priv)->api)->load_size_set(obj, 0);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
+
+   ELM_IMAGE_CLASS(ELM_WIDGET_DATA(priv)->api)->sizing_eval(obj);
 }
 
 static void
@@ -1087,9 +1089,6 @@ elm_image_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   ELM_IMAGE_DATA_GET(obj, sd);
-   ELM_IMAGE_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    return obj;
 }
