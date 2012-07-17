@@ -83,7 +83,6 @@ struct _Font_Source {
 
 struct _Font_Entry {
    Entry base;
-   Slave_Request *request;
    unsigned int rend_flags;
    unsigned int size;
    unsigned int dpi;
@@ -1087,7 +1086,7 @@ _font_load_request_response(Font_Entry *fe, Slave_Msg_Font_Loaded *msg, int *siz
         _entry_load_finish(&fe->base);
      }
 
-   if (fe->request) fe->request = NULL;
+   if (fe->base.request) fe->base.request = NULL;
 
    /* could be a function, but it's too basic and only used here */
    resp = calloc(1, sizeof(*resp));
@@ -1103,7 +1102,7 @@ _font_load_request_failed(Font_Entry *fe, Error_Type error __UNUSED__)
    Eina_List *l;
    Reference *ref;
 
-   if (fe->request) fe->request = NULL;
+   if (fe->base.request) fe->base.request = NULL;
 
    EINA_LIST_FOREACH(fe->base.references, l, ref)
      _font_entry_reference_del(ref->client, fe);
@@ -2172,8 +2171,8 @@ cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcel
         _entry_load_reused(&fe->base);
         fe->unused = EINA_FALSE;
 
-        if (fe->request)
-          cserve2_request_waiter_add(fe->request, rid, client);
+        if (fe->base.request)
+          cserve2_request_waiter_add(fe->base.request, rid, client);
         else
           _font_loaded_send(client, rid);
         free(fullname);
@@ -2212,8 +2211,8 @@ cserve2_cache_font_load(Client *client, const char *source, unsigned int sourcel
    fe->src = fs;
    fs->references++;
    DBG("adding FONT_LOAD '%s' request.", fs->name);
-   fe->request = cserve2_request_add(CSERVE2_REQ_FONT_LOAD, rid,
-                                     client, NULL, &_font_load_funcs, fe);
+   fe->base.request = cserve2_request_add(CSERVE2_REQ_FONT_LOAD, rid, client,
+                                          NULL, &_font_load_funcs, fe);
 
    eina_hash_direct_add(font_entries, fe, fe);
 
@@ -2270,8 +2269,8 @@ cserve2_cache_font_glyphs_load(Client *client, const char *source, unsigned int 
      }
    else
      {
-        cserve2_request_add(CSERVE2_REQ_FONT_GLYPHS_LOAD, rid,
-                            client, req->fe->request, &_glyphs_load_funcs, req);
+        cserve2_request_add(CSERVE2_REQ_FONT_GLYPHS_LOAD, rid, client,
+                            req->fe->base.request, &_glyphs_load_funcs, req);
      }
    return 0;
 }
