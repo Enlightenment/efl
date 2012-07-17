@@ -439,6 +439,8 @@ _elm_actionslider_smart_add(Evas_Object *obj)
      (obj, "actionslider", "base", elm_widget_style_get(obj));
 
    elm_layout_content_set(obj, "elm.drag_button_base", priv->drag_button_base);
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -474,8 +476,6 @@ elm_actionslider_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
