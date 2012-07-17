@@ -814,6 +814,10 @@
         * Fix ecore-fb to trap sigint (ctrl+c) so it doesnt exit your fb app
         * Fix ecore-fb mouse to swap button 2 and 3 ro work right.
 
+2012-07-13  Jiyoun Park
+
+        * Fix bug in Ecore_extn to call pre/post render function
+
 2012-07-16  Carsten Haitzler (The Rasterman)
 
         * Fix ecore-x selection handling to fall back to getting
