@@ -570,11 +570,11 @@ EAPI Eina_List            *eina_list_sorted_insert(Eina_List *list, Eina_Compare
  * @return A list pointer.
  *
  * This function removes the first instance of @p data from
- * @p list. If the specified data is not in the given list (tihis
- * include the case where @p data is @c NULL), nothing is done. If
- * @p list is @c NULL, @c NULL is returned, otherwise a new list
- * pointer that should be used in place of the one passed to this
- * function.
+ * @p list. If the specified data is not in the given list (this
+ * includes the case where @p data is @c NULL), nothing is done and the
+ * specified @p list returned. If @p list is @c NULL, @c NULL is returned,
+ * otherwise a new list pointer that should be used in place of the one
+ * passed to this function.
  *
  * @warning @p list must be a pointer to the first element of the list.
  */
