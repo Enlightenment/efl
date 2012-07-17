@@ -408,6 +408,8 @@ _elm_slideshow_smart_add(Evas_Object *obj)
      (obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -456,8 +458,6 @@ elm_slideshow_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
