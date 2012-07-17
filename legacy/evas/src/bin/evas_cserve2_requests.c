@@ -158,7 +158,8 @@ cserve2_request_add(Font_Request_Type type, unsigned int rid, Client *client, Fo
         req->dependency = dep;
      }
 
-   _request_waiter_add(req, client, rid);
+   if (client && rid)
+     _request_waiter_add(req, client, rid);
 
    _cserve2_requests_process();
 
