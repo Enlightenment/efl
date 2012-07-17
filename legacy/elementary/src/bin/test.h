@@ -18,9 +18,8 @@
    } while(0)
 #endif
 
-extern int _elm_log_dom;
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
-#define ERR(...)      EINA_LOG_DOM_ERR (_elm_log_dom, __VA_ARGS__)
-#define WRN(...)      EINA_LOG_DOM_WARN(_elm_log_dom, __VA_ARGS__)
-#define INF(...)      EINA_LOG_DOM_INFO(_elm_log_dom, __VA_ARGS__)
-#define DBG(...)      EINA_LOG_DOM_DBG (_elm_log_dom, __VA_ARGS__)
+#define CRITICAL(...) printf(__VA_ARGS__)
+#define ERR(...)      printf(__VA_ARGS__)
+#define WRN(...)      printf(__VA_ARGS__)
+#define INF(...)      printf(__VA_ARGS__)
+#define DBG(...)      printf(__VA_ARGS__)
