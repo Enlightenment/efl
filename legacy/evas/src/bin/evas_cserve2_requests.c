@@ -188,6 +188,7 @@ cserve2_request_type_set(Slave_Request *req, Slave_Request_Type type)
    from = &requests[req->type].waiting;
    to = &requests[type].waiting;
 
+   req->type = type;
    *from = eina_inlist_remove(*from, EINA_INLIST_GET(req));
    *to = eina_inlist_append(*to, EINA_INLIST_GET(req));
 }
