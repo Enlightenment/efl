@@ -827,9 +827,10 @@ static void
 _mirrored_set(Evas_Object *obj,
               Eina_Bool rtl)
 {
-   ELM_LIST_DATA_GET(obj, sd);
    Elm_List_Item *it;
    Eina_List *n;
+
+   ELM_LIST_DATA_GET(obj, sd);
 
    sd->s_iface->mirrored_set(obj, rtl);
 
