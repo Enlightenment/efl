@@ -552,6 +552,13 @@ _elm_conformant_smart_add(Evas_Object *obj)
    elm_layout_theme_set(obj, "conformant", "base", elm_widget_style_get(obj));
 
    _conformant_parts_swallow(obj);
+
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_RESIZE, _move_resize_cb, obj);
+   evas_object_event_callback_add
+     (obj, EVAS_CALLBACK_MOVE, _move_resize_cb, obj);
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -614,13 +621,6 @@ elm_conformant_add(Evas_Object *parent)
      }
    // FIXME: get kbd region prop
 #endif
-
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_RESIZE, _move_resize_cb, obj);
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOVE, _move_resize_cb, obj);
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
