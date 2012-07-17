@@ -1336,13 +1336,10 @@ _font_load_request_free(void *msg, void *data __UNUSED__)
    free(msg);
 }
 
-static void
-_font_load_request_response(Client *client __UNUSED__, void *data, void *resp, unsigned int rid __UNUSED__)
+static Msg_Font_Loaded *
+_font_load_request_response(Font_Entry *fe, Slave_Msg_Font_Loaded *msg, int *size)
 {
-   Slave_Msg_Font_Loaded *msg = resp;
-   Font_Entry *fe = data;
-
-   DBG("request %d answered.", rid);
+   Msg_Font_Loaded *resp;
 
    if (!fe->src->ft)
      fe->src->ft = msg->ftdata1;
@@ -1355,20 +1352,24 @@ _font_load_request_response(Client *client __UNUSED__, void *data, void *resp, u
 
    if (fe->request) fe->request = NULL;
 
-   _font_loaded_send(client, rid);
+   /* could be a function, but it's too basic and only used here */
+   resp = calloc(1, sizeof(*resp));
+   resp->base.type = CSERVE2_FONT_LOADED;
+   *size = sizeof(*resp);
+
+   return resp;
 }
 
 static void
-_font_load_request_failed(Client *client __UNUSED__, void *data __UNUSED__, Error_Type error __UNUSED__, unsigned int rid __UNUSED__)
+_font_load_request_failed(Font_Entry *fe, Error_Type error __UNUSED__)
 {
-   Font_Entry *fe = data;
-   DBG("request %d error answered.", rid);
-
-   cserve2_client_error_send(client, rid, error);
+   Eina_List *l;
+   Reference *ref;
 
    if (fe->request) fe->request = NULL;
 
-   _font_entry_reference_del(client, fe);
+   EINA_LIST_FOREACH(fe->base.references, l, ref)
+     _font_entry_reference_del(ref->client, fe);
 }
 
 static Font_Request_Funcs _font_load_funcs = {
@@ -1447,8 +1448,8 @@ _glyphs_group_create(Glyphs_Request *req)
    return groups;
 }
 
-static void
-_glyphs_loaded_send(Glyphs_Request *req, unsigned int rid)
+static Msg_Font_Glyphs_Loaded *
+_glyphs_loaded_msg_create(Glyphs_Request *req, int *resp_size)
 {
    Msg_Font_Glyphs_Loaded msg;
    unsigned int size;
@@ -1460,7 +1461,6 @@ _glyphs_loaded_send(Glyphs_Request *req, unsigned int rid)
    Glyphs_Group *iter;
 
    memset(&msg, 0, sizeof(msg));
-   msg.base.rid = rid;
    msg.base.type = CSERVE2_FONT_GLYPHS_LOADED;
 
    answers = _glyphs_group_create(req);
@@ -1535,6 +1535,20 @@ _glyphs_loaded_send(Glyphs_Request *req, unsigned int rid)
         eina_list_free(iter->glyphs);
         free(iter);
      }
+
+   *resp_size = size;
+
+   return (Msg_Font_Glyphs_Loaded *)resp;
+}
+
+static void
+_glyphs_loaded_send(Glyphs_Request *req, unsigned int rid)
+{
+   Msg_Font_Glyphs_Loaded *resp;
+   int size;
+
+   resp = _glyphs_loaded_msg_create(req, &size);
+   resp->base.rid = rid;
 
    cserve2_client_send(req->client, &size, sizeof(size));
    cserve2_client_send(req->client, resp, size);
@@ -1695,11 +1709,9 @@ _glyphs_load_request_free(void *msg, void *data)
    free(msg);
 }
 
-static void
-_glyphs_load_request_response(Client *client __UNUSED__, void *data, void *resp, unsigned int rid)
+static Msg_Font_Glyphs_Loaded *
+_glyphs_load_request_response(Glyphs_Request *req, Slave_Msg_Font_Glyphs_Loaded *msg, int *size)
 {
-   Glyphs_Request *req = data;
-   Slave_Msg_Font_Glyphs_Loaded *msg = resp;
    Font_Entry *fe = req->fe;
    Font_Cache *fc = NULL;
    unsigned int i = 0;
@@ -1762,12 +1774,13 @@ _glyphs_load_request_response(Client *client __UNUSED__, void *data, void *resp,
    fe->gl_slave_time += msg->gl_slave_time;
 #endif
 
-   _glyphs_loaded_send(req, rid);
    _font_shm_lru_flush();
+
+   return _glyphs_loaded_msg_create(req, size);
 }
 
 static void
-_glyphs_load_request_failed(Client *client __UNUSED__, void *data __UNUSED__, Error_Type error __UNUSED__, unsigned int rid __UNUSED__)
+_glyphs_load_request_failed(void *data __UNUSED__, Error_Type error __UNUSED__)
 {
 }
 

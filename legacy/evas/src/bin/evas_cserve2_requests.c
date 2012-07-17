@@ -192,14 +192,16 @@ cserve2_request_cancel(Font_Request *req, Client *client, Error_Type err)
    Eina_List *l, *l_next;
    Waiter *w;
 
+   if (req->funcs && req->funcs->error)
+     req->funcs->error(req->data, err);
+
    EINA_LIST_FOREACH_SAFE(req->waiters, l, l_next, w)
      {
         if (w->client->id == client->id)
           {
              DBG("Removing answer from waiter client: %d, rid: %d",
                  client->id, w->rid);
-             if (req->funcs && req->funcs->error)
-               req->funcs->error(client, req->data, err, w->rid);
+             cserve2_client_error_send(w->client, w->rid, err);
              req->waiters = eina_list_remove_list(req->waiters, l);
              free(w);
           }
@@ -232,12 +234,14 @@ cserve2_request_cancel_all(Font_Request *req, Error_Type err)
 
    DBG("Removing all answers.");
 
+   if (req->funcs && req->funcs->error)
+     req->funcs->error(req->data, err);
+
    EINA_LIST_FREE(req->waiters, w)
      {
         DBG("Removing answer from waiter client: %d, rid: %d",
             w->client->id, w->rid);
-        if (req->funcs && req->funcs->error)
-          req->funcs->error(w->client, req->data, err, w->rid);
+        cserve2_client_error_send(w->client, w->rid, err);
         free(w);
      }
 
@@ -275,9 +279,11 @@ _cserve2_request_failed(Font_Request *req, Error_Type type)
 {
    Waiter *w;
 
+   req->funcs->error(req->data, type);
+
    EINA_LIST_FREE(req->waiters, w)
      {
-        req->funcs->error(w->client, req->data, type, w->rid);
+        cserve2_client_error_send(w->client, w->rid, type);
         free(w);
      }
 
@@ -297,18 +303,34 @@ _slave_read_cb(Slave *s __UNUSED__, Slave_Command cmd, void *msg, void *data)
    Font_Request *dep, *req = sw->data;
    Eina_List **working, **idle;
    Waiter *w;
+   Msg_Base *resp = NULL;
+   int resp_size;
+
+   if (cmd == ERROR)
+     {
+        Error_Type *err = msg;
+        req->funcs->error(req->data, *err);
+     }
+   else
+     resp = req->funcs->response(req->data, msg, &resp_size);
 
    EINA_LIST_FREE(req->waiters, w)
      {
         if (cmd == ERROR)
           {
              Error_Type *err = msg;
-             req->funcs->error(w->client, req->data, *err, w->rid);
+             cserve2_client_error_send(w->client, w->rid, *err);
           }
         else
-          req->funcs->response(w->client, req->data, msg, w->rid);
+          {
+             resp->rid = w->rid;
+             cserve2_client_send(w->client, &resp_size, sizeof(resp_size));
+             cserve2_client_send(w->client, resp, resp_size);
+          }
         free(w);
      }
+
+   free(resp);
 
    req->funcs->msg_free(req->msg, req->data);
    // FIXME: We shouldn't free this message directly, it must be freed by a

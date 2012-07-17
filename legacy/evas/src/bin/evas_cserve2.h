@@ -189,8 +189,8 @@ typedef struct _Slave_Msg_Font_Glyphs_Loaded Slave_Msg_Font_Glyphs_Loaded;
 
 typedef void *(*Font_Request_Msg_Create)(void *data, int *size);
 typedef void (*Font_Request_Msg_Free)(void *msg, void *data);
-typedef void (*Font_Request_Response)(Client *c, void *data, void *resp, unsigned int rid);
-typedef void (*Font_Request_Error)(Client *c, void *data, Error_Type error, unsigned int rid);
+typedef Msg_Base *(*Font_Request_Response)(void *data, void *resp, int *size);
+typedef void (*Font_Request_Error)(void *data, Error_Type error);
 
 struct _Font_Request_Funcs {
    Font_Request_Msg_Create msg_create;
