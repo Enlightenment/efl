@@ -783,6 +783,7 @@ evas_cache2_image_load_data(Image_Entry *ie)
         if (im->image.data)
           {
              im->image.no_free = 1;
+             ie->flags.loaded = EINA_TRUE;
              error = EVAS_LOAD_ERROR_NONE;
           }
         else

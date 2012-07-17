@@ -368,10 +368,7 @@ _loaded_handle(Image_Entry *ie, Msg_Loaded *msg)
      }
 
    if (ie->data2)
-     {
-        ie->flags.loaded = EINA_TRUE;
-        ie->flags.alpha_sparse = msg->alpha_sparse;
-     }
+     ie->flags.alpha_sparse = msg->alpha_sparse;
 }
 
 static void
