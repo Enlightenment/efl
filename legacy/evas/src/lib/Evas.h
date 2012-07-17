@@ -9675,8 +9675,8 @@ struct _Evas_Smart_Interface
 {
    const char *name; /**< Name of the given interface */
    unsigned    private_size; /**< Size, in bytes, of the interface's private dada blob. This will be allocated and freed automatically for you. Get it with evas_object_smart_interface_data_get(). */
-   Eina_Bool   (*add)(Evas_Object *obj); /**< Function to be called at object creation time */
-   void        (*del)(Evas_Object *obj); /**< Function to be called at object deletion time */
+   Eina_Bool   (*add)(Evas_Object *obj); /**< Function to be called at object creation time. This will take place @b before the object's smart @c add() function. */
+   void        (*del)(Evas_Object *obj); /**< Function to be called at object deletion time. This will take place @b after the object's smart @c del() function. */
 };
 
 /**

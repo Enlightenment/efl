@@ -448,8 +448,6 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
 
    _evas_smart_class_ifaces_private_data_alloc(obj, s);
 
-   if (s->smart_class->add) s->smart_class->add(obj);
-
    for (i = 0; i < s->interfaces.size; i++)
      {
         const Evas_Smart_Interface *iface;
@@ -465,6 +463,8 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
                }
           }
      }
+
+   if (s->smart_class->add) s->smart_class->add(obj);
 
    return obj;
 }
