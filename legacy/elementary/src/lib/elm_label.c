@@ -373,6 +373,8 @@ _elm_label_smart_add(Evas_Object *obj)
 
    elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
    elm_layout_text_set(obj, NULL, "<br>");
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -408,8 +410,6 @@ elm_label_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
