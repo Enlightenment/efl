@@ -108,7 +108,6 @@
  * #Elm_Widget_Smart_Class and is meant to build widgets exposing
  * "parts" to hold child elements at.
  */
-
 typedef struct _Elm_Container_Smart_Class
 {
    Elm_Widget_Smart_Class base; /**< Base Elementary widget class struct, since we're inheriting from it */
