@@ -813,6 +813,8 @@ _elm_datetime_smart_add(Evas_Object *obj)
    _field_list_arrange(obj);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -864,8 +866,6 @@ elm_datetime_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
