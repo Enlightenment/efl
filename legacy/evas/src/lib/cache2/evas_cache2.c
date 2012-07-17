@@ -820,9 +820,6 @@ evas_cache2_image_unload_data(Image_Entry *im)
 
    if (!im->flags.loaded)
      return;
-
-//    if (im->data2)
-   im->flags.loaded = 0;
 }
 
 EAPI void
