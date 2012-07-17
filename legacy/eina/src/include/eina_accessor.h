@@ -86,9 +86,15 @@
  * element in the container). For sequential access, see
  * @ref Eina_Iterator_Group.
  *
- * An accessor is created from container data types, so no creation
- * function is available here. An accessor is deleted with
- * eina_accessor_free(). To get the data of an element at a given
+ * Getting an accessor to access elements of a given container is done through
+ * the functions of that particular container. There is no function to create
+ * a generic accessor as accessors absolutely depend on the container. This
+ * means you won't find accessor creation function here, those can be found on
+ * the documentation of the container type you're using. Though created with
+ * container specific functions accessors are always deleted with the same
+ * function: eina_accessor_free().
+ *
+ * To get the data of an element at a given
  * position, use eina_accessor_data_get(). To call a function on
  * chosen elements of a container, use eina_accessor_over().
  *
@@ -142,6 +148,8 @@ typedef Eina_Bool (*Eina_Accessor_Lock_Callback)(Eina_Accessor *it);
 /**
  * @struct _Eina_Accessor
  * Type to provide random access to data structures.
+ *
+ * If creating an accessor remember to set the type using @ref EINA_MAGIC_SET.
  */
 struct _Eina_Accessor
 {

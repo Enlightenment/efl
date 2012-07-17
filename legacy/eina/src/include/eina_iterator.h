@@ -93,11 +93,16 @@
  * (that is, from an element to the next one). For random access, see
  * @ref Eina_Accessor_Group.
  *
- * An iterator is created from container data types, so no creation
- * function is available here. An iterator is deleted with
- * eina_iterator_free(). To get the data and iterate, use
- * eina_iterator_next(). To call a function on all the elements of a
- * container, use eina_iterator_foreach().
+ * Getting an iterator to access elements of a given container is done through
+ * the functions of that particular container. There is no function to create
+ * a generic iterator as iterators absolutely depend on the container. This
+ * means you won't find iterator creation function here, those can be found on
+ * the documentation of the container type you're using. Though created with
+ * container specific functions iterators are always deleted with the same
+ * function: eina_iterator_free().
+ *
+ * To get the data and iterate, use eina_iterator_next(). To call a function on
+ * all the elements of a container, use eina_iterator_foreach().
  * 
  * Here an @ref eina_iterator_example_page "example"
  */
@@ -147,6 +152,8 @@ typedef Eina_Bool           (*Eina_Iterator_Lock_Callback)(Eina_Iterator *it);
 /**
  * @struct _Eina_Iterator
  * structure of an iterator
+ *
+ * If creating an iterator remember to set the type using @ref EINA_MAGIC_SET.
  */
 struct _Eina_Iterator
 {

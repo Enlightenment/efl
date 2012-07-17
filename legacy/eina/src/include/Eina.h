@@ -100,6 +100,7 @@
  *
  * @defgroup Eina_Containers_Group Containers
  *
+ * @section Intro Introduction
  * Containers are data types that hold data and allow iteration over
  * their elements with an @ref Eina_Iterator_Group, or eventually an
  * @ref Eina_Accessor_Group.
@@ -107,6 +108,8 @@
  * The containers in eina are designed with performance in mind, one consequence
  * of this is that they @b don't check the validity of data structures given to
  * them(@ref Eina_Magic_Group).
+ *
+ * @section Choice Choosing container type
  *
  * The choice of which container to use in each situation is very important in
  * achieving good performance and readable code. The most common container types
@@ -129,6 +132,19 @@
  * list is required but the overhead of pointer indirection is not acceptable.
  * @warning These are general considerations, every situation is different,
  * don't follow these recommendations blindly.
+ *
+ * @section Creation Creating custom container types
+ *
+ * @note Before creating a custom container check if one of the existing ones
+ * doesn't suit your needs. For example, while there is no stack type @ref
+ * Eina_Array_Group is a very good substitute, similarly there is no queue type
+ * however an @ref Eina_List_Group works very well as a queue.
+ *
+ * If creating a custom container type consider allowing access to the data in
+ * your container through @ref Eina_Iterator_Group "Iterators" and @ref
+ * Eina_Accessor_Group "Accessors". To do so your container should have an
+ * iterator creation function and an accessor creation function, these functions
+ * should return properly populated @ref _Eina_Iterator and @ref _Eina_Accessor.
  *
  * @defgroup Eina_Tools_Group Tools
  *
