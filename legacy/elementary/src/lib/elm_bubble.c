@@ -173,6 +173,8 @@ _elm_bubble_smart_add(Evas_Object *obj)
      _on_mouse_up, obj);
 
    elm_layout_theme_set(obj, "bubble", "base", elm_widget_style_get(obj));
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -205,8 +207,6 @@ elm_bubble_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }
