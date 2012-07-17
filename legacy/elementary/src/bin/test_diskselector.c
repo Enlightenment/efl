@@ -44,21 +44,21 @@ set_api_state(api_data *api)
       case SCROLLER_POLICY_SET_ON: /* 0 */
            {  /* Get first disk */
               Evas_Object *disk = eina_list_nth(disks, 0);
-              elm_diskselector_scroller_policy_set(disk, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+              elm_scroller_policy_set(disk, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
            }
          break;
 
       case SCROLLER_POLICY_SET_OFF: /* 1 */
            {  /* Get first disk */
               Evas_Object *disk = eina_list_nth(disks, 0);
-              elm_diskselector_scroller_policy_set(disk, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+              elm_scroller_policy_set(disk, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
            }
          break;
 
       case BOUNCE_SET: /* 2 */
            {  /* Get second disk, cancel bounce */
               Evas_Object *disk = eina_list_nth(disks, 1);
-              elm_diskselector_bounce_set(disk, EINA_FALSE, EINA_FALSE);
+              elm_scroller_bounce_set(disk, EINA_FALSE, EINA_FALSE);
            }
          break;
 

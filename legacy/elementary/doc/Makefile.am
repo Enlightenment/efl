@@ -101,6 +101,7 @@ WGT_TREE = \
 	container \
 	datetime \
 	dayselector \
+	diskselector \
 	fileselector \
 	fileselector_button \
 	flip \

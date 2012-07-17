@@ -88,9 +88,9 @@ elm_main(int argc, char **argv)
    elm_box_pack_end(bx, ds);
    for (i = 0; i < sizeof(lbl) / sizeof(lbl[0]); i++)
      elm_diskselector_item_append(ds, lbl[i], NULL, NULL, NULL);
-   elm_diskselector_bounce_set(ds, EINA_TRUE, EINA_TRUE);
-   elm_diskselector_scroller_policy_set(ds, ELM_SCROLLER_POLICY_AUTO,
-                                        ELM_SCROLLER_POLICY_ON);
+   elm_scroller_bounce_set(ds, EINA_TRUE, EINA_TRUE);
+   elm_scroller_policy_set(ds, ELM_SCROLLER_POLICY_AUTO,
+                           ELM_SCROLLER_POLICY_ON);
    evas_object_show(ds);
 
    evas_object_resize(win, 320, 480);

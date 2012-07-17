@@ -2,6 +2,9 @@
  * @defgroup Diskselector Diskselector
  * @ingroup Elementary
  *
+ * @image html diskselector_inheritance_tree.png
+ * @image latex diskselector_inheritance_tree.eps
+ *
  * @image html img/widget/diskselector/preview-00.png
  * @image latex img/widget/diskselector/preview-00.eps
  *
@@ -12,12 +15,26 @@
  * It can act like a circular list with round mode and labels can be
  * reduced for a defined length for side items.
  *
- * Smart callbacks one can listen to:
- * @li "selected" - when item is selected, i.e. scroller stops.
- * @li "scroll,anim,start" - scrolling animation has started
- * @li "scroll,anim,stop" - scrolling animation has stopped
- * @li "scroll,drag,start" - dragging the diskselector has started
- * @li "scroll,drag,stop" - dragging the diskselector has stopped
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for diskselector objects.
+ *
+ * This widget implements the @b @ref elm-scrollable-interface
+ * interface, so that all (non-deprecated) functions for the base @ref
+ * Scroller widget also work for diskselectors.
+ *
+ * Some calls on the diskselector's API are marked as @b deprecated,
+ * as they just wrap the scrollable widgets counterpart functions. Use
+ * the ones we point you to, for each case of deprecation here,
+ * instead -- eventually the deprecated ones will be discarded (next
+ * major release).
+ *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * @li @c "selected" - when item is selected, i.e. scroller stops.
+ * @li @c "scroll,anim,start" - scrolling animation has started
+ * @li @c "scroll,anim,stop" - scrolling animation has stopped
+ * @li @c "scroll,drag,start" - dragging the diskselector has started
+ * @li @c "scroll,drag,stop" - dragging the diskselector has stopped
  * @note The "scroll,anim,*" and "scroll,drag,*" signals are only emitted by
  * user intervention.
  *
@@ -170,11 +187,13 @@ EAPI int                   elm_diskselector_display_item_num_get(const Evas_Obje
  * @param h_bounce Whether to bounce or not in the horizontal axis.
  * @param v_bounce Whether to bounce or not in the vertical axis.
  *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
  * @see elm_scroller_bounce_set()
  *
  * @ingroup Diskselector
  */
-EAPI void                   elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+EINA_DEPRECATED EAPI void elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * Get the bouncing behaviour of the internal scroller.
@@ -188,12 +207,14 @@ EAPI void                   elm_diskselector_bounce_set(Evas_Object *obj, Eina_B
  * @param v_bounce Pointer to store the bounce state of the vertical
  * axis.
  *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
  * @see elm_scroller_bounce_get()
  * @see elm_diskselector_bounce_set()
  *
  * @ingroup Diskselector
  */
-EAPI void                   elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+EINA_DEPRECATED EAPI void elm_diskselector_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * Get the scrollbar policy.
@@ -204,9 +225,13 @@ EAPI void                   elm_diskselector_bounce_get(const Evas_Object *obj, 
  * @param policy_h Pointer to store horizontal scrollbar policy.
  * @param policy_v Pointer to store vertical scrollbar policy.
  *
+ * @deprecated Use elm_scroller_policy_get() instead.
+ *
+ * @see elm_scroller_policy_get()
+ *
  * @ingroup Diskselector
  */
-EAPI void                   elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+EINA_DEPRECATED EAPI void elm_diskselector_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Set the scrollbar policy.
@@ -223,9 +248,13 @@ EAPI void                   elm_diskselector_scroller_policy_get(const Evas_Obje
  *
  * The both are disabled by default, i.e., are set to #ELM_SCROLLER_POLICY_OFF.
  *
+ * @deprecated Use elm_scroller_policy_set() instead.
+ *
+ * @see elm_scroller_policy_set()
+ *
  * @ingroup Diskselector
  */
-EAPI void                   elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+EINA_DEPRECATED EAPI void elm_diskselector_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
 /**
  * Remove all diskselector's items.
