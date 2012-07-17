@@ -511,6 +511,9 @@ _elm_clock_smart_add(Evas_Object *obj)
    priv->timediff = 0;
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   _time_update(obj);
+   _ticker(obj);
 }
 
 static void
@@ -554,9 +557,6 @@ elm_clock_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   _time_update(obj);
-   _ticker(obj);
 
    return obj;
 }
