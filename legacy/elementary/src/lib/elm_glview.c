@@ -242,6 +242,59 @@ _elm_glview_smart_add(Evas_Object *obj)
    evas_object_image_size_set(ELM_WIDGET_DATA(priv)->resize_obj, 1, 1);
 
    _elm_glview_parent_sc->base.add(obj);
+
+   // Evas_GL
+   priv->evasgl = evas_gl_new(evas_object_evas_get(obj));
+   if (!priv->evasgl)
+     {
+        ERR("Failed Creating an Evas GL Object.\n");
+
+        return;
+     }
+
+   // Create a default config
+   priv->config = evas_gl_config_new();
+   if (!priv->config)
+     {
+        ERR("Failed Creating a Config Object.\n");
+        evas_object_del(obj);
+
+        evas_gl_free(priv->evasgl);
+        priv->evasgl = NULL;
+        return;
+     }
+   priv->config->color_format = EVAS_GL_RGB_888;
+
+   // Initialize variables
+   priv->mode = 0;
+   priv->scale_policy = ELM_GLVIEW_RESIZE_POLICY_RECREATE;
+   priv->render_policy = ELM_GLVIEW_RENDER_POLICY_ON_DEMAND;
+   priv->surface = NULL;
+
+   // Initialize it to (64,64)  (It's an arbitrary value)
+   priv->w = 64;
+   priv->h = 64;
+
+   // Initialize the rest of the values
+   priv->init_func = NULL;
+   priv->del_func = NULL;
+   priv->render_func = NULL;
+   priv->render_idle_enterer = NULL;
+   priv->initialized = EINA_FALSE;
+   priv->resized = EINA_FALSE;
+
+   // Create Context
+   priv->context = evas_gl_context_create(priv->evasgl, NULL);
+   if (!priv->context)
+     {
+        ERR("Error Creating an Evas_GL Context.\n");
+        evas_object_del(obj);
+
+        evas_gl_config_free(priv->config);
+        evas_gl_free(priv->evasgl);
+        priv->evasgl = NULL;
+        return;
+     }
 }
 
 static void
@@ -289,55 +342,12 @@ elm_glview_add(Evas_Object *parent)
 
    obj = evas_object_smart_add(e, _elm_glview_smart_class_new());
 
+   ELM_GLVIEW_DATA_GET(obj, sd);
+   if (!sd->evasgl)
+     return NULL;
+
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   ELM_GLVIEW_DATA_GET(obj, sd);
-
-   // Evas_GL
-   sd->evasgl = evas_gl_new(e);
-   if (!sd->evasgl)
-     {
-        ERR("Failed Creating an Evas GL Object.\n");
-        return NULL;
-     }
-
-   // Create a default config
-   sd->config = evas_gl_config_new();
-   if (!sd->config)
-     {
-        ERR("Failed Creating a Config Object.\n");
-        evas_object_del(obj);
-        return NULL;
-     }
-   sd->config->color_format = EVAS_GL_RGB_888;
-
-   // Initialize variables
-   sd->mode = 0;
-   sd->scale_policy = ELM_GLVIEW_RESIZE_POLICY_RECREATE;
-   sd->render_policy = ELM_GLVIEW_RENDER_POLICY_ON_DEMAND;
-   sd->surface = NULL;
-
-   // Initialize it to (64,64)  (It's an arbitrary value)
-   sd->w = 64;
-   sd->h = 64;
-
-   // Initialize the rest of the values
-   sd->init_func = NULL;
-   sd->del_func = NULL;
-   sd->render_func = NULL;
-   sd->render_idle_enterer = NULL;
-   sd->initialized = EINA_FALSE;
-   sd->resized = EINA_FALSE;
-
-   // Create Context
-   sd->context = evas_gl_context_create(sd->evasgl, NULL);
-   if (!sd->context)
-     {
-        ERR("Error Creating an Evas_GL Context.\n");
-        evas_object_del(obj);
-        return NULL;
-     }
 
    return obj;
 }
