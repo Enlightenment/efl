@@ -35,28 +35,28 @@ typedef struct _Elm_Win_Smart_Data Elm_Win_Smart_Data;
 
 struct _Elm_Win_Smart_Data
 {
-   Elm_Widget_Smart_Data          base; /* base widget smart data as
-                                         * first member obligatory, as
-                                         * we're inheriting from it */
+   Elm_Widget_Smart_Data base; /* base widget smart data as
+                                * first member obligatory, as
+                                * we're inheriting from it */
 
-   Ecore_Evas                    *ee;
-   Evas                          *evas;
-   Evas_Object                   *parent; /* parent *window* object*/
-   Evas_Object                   *img_obj, *frame_obj;
-   Eina_List                     *resize_objs; /* a window may have
-                                                * *multiple* resize
-                                                * objects */
+   Ecore_Evas           *ee;
+   Evas                 *evas;
+   Evas_Object          *parent; /* parent *window* object*/
+   Evas_Object          *img_obj, *frame_obj;
+   Eina_List            *resize_objs; /* a window may have
+                                       * *multiple* resize
+                                       * objects */
 #ifdef HAVE_ELEMENTARY_X
    struct
    {
-      Ecore_X_Window                 xwin;
-      Ecore_Event_Handler           *client_message_handler;
+      Ecore_X_Window       xwin;
+      Ecore_Event_Handler *client_message_handler;
    } x;
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
    struct
    {
-     Ecore_Wl_Window             *win;
+      Ecore_Wl_Window *win;
    } wl;
 #endif
 
@@ -1313,6 +1313,7 @@ _elm_win_xwindow_get(Elm_Win_Smart_Data *sd)
 {
    sd->x.xwin = _elm_ee_xwin_get(sd->ee);
 }
+
 #endif
 
 #ifdef HAVE_ELEMENTARY_X
@@ -1461,6 +1462,7 @@ _elm_win_xwin_update(Elm_Win_Smart_Data *sd)
      ecore_x_e_illume_indicator_state_set
        (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
 }
+
 #endif
 
 static void
@@ -1621,7 +1623,7 @@ _elm_win_client_message(void *data,
                {
                   // XXX: call right access func
                }
-             else if ((unsigned int)e->data.l[1] == 
+             else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE)
                {
                   // XXX: call right access func
@@ -1631,12 +1633,12 @@ _elm_win_client_message(void *data,
                {
                   // XXX: call right access func
                }
-             else if ((unsigned int)e->data.l[1] == 
+             else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ_NEXT)
                {
                   // XXX: call right access func
                }
-             else if ((unsigned int)e->data.l[1] == 
+             else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ_PREV)
                {
                   // XXX: call right access func
@@ -1963,12 +1965,12 @@ elm_win_add(Evas_Object *parent,
            elm_config_preferred_engine_set                            \
              (ecore_evas_engine_name_get(tmp_sd.ee));                 \
       } while (0)
-#define FALLBACK_STORE(engine)                                        \
-  if (tmp_sd.ee)                                                      \
-    do {                                                              \
-         CRITICAL(engine "Fallback to %s successful.", engine);       \
-         elm_config_preferred_engine_set                              \
-           (ecore_evas_engine_name_get(tmp_sd.ee));                   \
+#define FALLBACK_STORE(engine)                                  \
+  if (tmp_sd.ee)                                                \
+    do {                                                        \
+         CRITICAL(engine "Fallback to %s successful.", engine); \
+         elm_config_preferred_engine_set                        \
+           (ecore_evas_engine_name_get(tmp_sd.ee));             \
       } while (0)
 
    switch (type)
@@ -2176,7 +2178,8 @@ elm_win_add(Evas_Object *parent,
           {
              tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
           }
-        else if (_elm_preferred_engine && !strncmp(_elm_preferred_engine, "shot:", 5))
+        else if (_elm_preferred_engine &&
+                 !strncmp(_elm_preferred_engine, "shot:", 5))
           {
              tmp_sd.ee = ecore_evas_buffer_new(1, 1);
              ecore_evas_manual_render_set(tmp_sd.ee, EINA_TRUE);
@@ -2192,7 +2195,7 @@ elm_win_add(Evas_Object *parent,
         ERR("Cannot create window.");
         return NULL;
      }
-   
+
    obj = evas_object_smart_add
        (ecore_evas_get(tmp_sd.ee), _elm_win_smart_class_new());
 
@@ -2218,19 +2221,20 @@ elm_win_add(Evas_Object *parent,
 #ifdef HAVE_ELEMENTARY_X
    else if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      sd->x.client_message_handler = ecore_event_handler_add
-     (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
      sd->x.client_message_handler = ecore_event_handler_add
-     (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
      sd->x.client_message_handler = ecore_event_handler_add
-     (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
    else if (ENGINE_COMPARE(ELM_OPENGL_X11))
      sd->x.client_message_handler = ecore_event_handler_add
-     (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
+         (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
 #endif
 
-   else if (_elm_preferred_engine && !strncmp(_elm_preferred_engine, "shot:", 5))
+   else if (_elm_preferred_engine &&
+            !strncmp(_elm_preferred_engine, "shot:", 5))
      _shot_init(sd);
 
    sd->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
@@ -2338,12 +2342,12 @@ elm_win_add(Evas_Object *parent,
 
    if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
        ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
-           elm_config_preferred_engine_get() &&
-           (!strcmp(elm_config_preferred_engine_get(), "fb"))))
+        elm_config_preferred_engine_get() &&
+        (!strcmp(elm_config_preferred_engine_get(), "fb"))))
      {
         Evas_Object *o;
         Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
-        
+
         sd->pointer.obj = o = edje_object_add(ecore_evas_get(tmp_sd.ee));
         _elm_theme_object_set(obj, o, "pointer", "base", "default");
         edje_object_size_min_calc(o, &mw, &mh);
@@ -3239,8 +3243,8 @@ elm_win_screen_size_get(const Evas_Object *obj,
 
 EAPI void
 elm_win_screen_dpi_get(const Evas_Object *obj,
-                        int *xdpi,
-                        int *ydpi)
+                       int *xdpi,
+                       int *ydpi)
 {
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
@@ -3575,4 +3579,3 @@ elm_win_wl_window_get(const Evas_Object *obj)
 #endif
    return NULL;
 }
-
