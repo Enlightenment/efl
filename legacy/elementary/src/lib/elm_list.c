@@ -519,8 +519,8 @@ _elm_list_smart_sizing_eval(Evas_Object *obj)
 
 static void
 _elm_list_content_min_limit_cb(Evas_Object *obj,
-                                   Eina_Bool w,
-                                   Eina_Bool h)
+                               Eina_Bool w,
+                               Eina_Bool h)
 {
    ELM_LIST_DATA_GET(obj, sd);
 
@@ -1496,12 +1496,12 @@ _item_new(Evas_Object *obj,
      it);
 
    edje_object_mirrored_set(VIEW(it), elm_widget_mirrored_get(obj));
-    evas_object_event_callback_add
-      (VIEW(it), EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, it);
-    evas_object_event_callback_add
-      (VIEW(it), EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, it);
-    evas_object_event_callback_add
-      (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, it);
+   evas_object_event_callback_add
+     (VIEW(it), EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, it);
+   evas_object_event_callback_add
+     (VIEW(it), EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, it);
+   evas_object_event_callback_add
+     (VIEW(it), EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, it);
    evas_object_size_hint_weight_set
      (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1570,6 +1570,8 @@ _elm_list_smart_focus_next(const Evas_Object *obj,
 static void
 _elm_list_smart_add(Evas_Object *obj)
 {
+   Evas_Coord minw, minh;
+
    EVAS_SMART_DATA_ALLOC(obj, Elm_List_Smart_Data);
 
    ELM_WIDGET_CLASS(_elm_list_parent_sc)->base.add(obj);
@@ -1577,6 +1579,58 @@ _elm_list_smart_add(Evas_Object *obj)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    priv->mode = ELM_LIST_SCROLL;
+
+   elm_layout_theme_set(obj, "list", "base", elm_widget_style_get(obj));
+
+   priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_smart_member_add(priv->hit_rect, obj);
+   elm_widget_sub_object_add(obj, priv->hit_rect);
+
+   /* common scroller hit rectangle setup */
+   evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
+   evas_object_show(priv->hit_rect);
+   evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
+
+   priv->s_iface = evas_object_smart_interface_get
+       (obj, ELM_SCROLLABLE_IFACE_NAME);
+
+   priv->s_iface->edge_left_cb_set(obj, _edge_left_cb);
+   priv->s_iface->edge_right_cb_set(obj, _edge_right_cb);
+   priv->s_iface->edge_top_cb_set(obj, _edge_top_cb);
+   priv->s_iface->edge_bottom_cb_set(obj, _edge_bottom_cb);
+
+   priv->s_iface->content_min_limit_cb_set
+     (obj, _elm_list_content_min_limit_cb);
+
+   priv->s_iface->objects_set
+     (obj, ELM_WIDGET_DATA(priv)->resize_obj, priv->hit_rect);
+
+   /* the scrollable interface may set this */
+   evas_object_event_callback_add
+     (ELM_WIDGET_DATA(priv)->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+     _size_hints_changed_cb, obj);
+
+   edje_object_size_min_calc
+     (ELM_WIDGET_DATA(priv)->resize_obj, &minw, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
+
+   priv->s_iface->bounce_allow_set
+     (obj, EINA_FALSE, _elm_config->thumbscroll_bounce_enable);
+
+   priv->box = elm_box_add(obj);
+   elm_box_homogeneous_set(priv->box, EINA_TRUE);
+   evas_object_size_hint_weight_set(priv->box, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(priv->box, EVAS_HINT_FILL, 0.0);
+
+   /* FIXME: change this ugly code path later */
+   elm_widget_on_show_region_hook_set(priv->box, _show_region_hook, obj);
+   elm_widget_sub_object_add(obj, priv->box);
+
+   priv->s_iface->content_set(obj, priv->box);
+   evas_object_event_callback_add
+     (priv->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+     _size_hints_changed_cb, obj);
 }
 
 static void
@@ -1688,7 +1742,6 @@ elm_list_add(Evas_Object *parent)
 {
    Evas *e;
    Evas_Object *obj;
-   Evas_Coord minw, minh;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
@@ -1699,60 +1752,6 @@ elm_list_add(Evas_Object *parent)
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   ELM_LIST_DATA_GET(obj, sd);
-
-   elm_layout_theme_set(obj, "list", "base", elm_widget_style_get(obj));
-
-   sd->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
-   evas_object_smart_member_add(sd->hit_rect, obj);
-   elm_widget_sub_object_add(obj, sd->hit_rect);
-
-   /* common scroller hit rectangle setup -- it has to take place
-    * AFTER smart_member_add() */
-   evas_object_color_set(sd->hit_rect, 0, 0, 0, 0);
-   evas_object_show(sd->hit_rect);
-   evas_object_repeat_events_set(sd->hit_rect, EINA_TRUE);
-
-   /* interface's add() routive issued AFTER the object's smart_add() */
-   sd->s_iface = evas_object_smart_interface_get
-       (obj, ELM_SCROLLABLE_IFACE_NAME);
-
-   sd->s_iface->edge_left_cb_set(obj, _edge_left_cb);
-   sd->s_iface->edge_right_cb_set(obj, _edge_right_cb);
-   sd->s_iface->edge_top_cb_set(obj, _edge_top_cb);
-   sd->s_iface->edge_bottom_cb_set(obj, _edge_bottom_cb);
-
-   sd->s_iface->content_min_limit_cb_set(obj, _elm_list_content_min_limit_cb);
-
-   sd->s_iface->objects_set
-     (obj, ELM_WIDGET_DATA(sd)->resize_obj, sd->hit_rect);
-
-   /* the scrollable interface may set this */
-   evas_object_event_callback_add
-     (ELM_WIDGET_DATA(sd)->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-     _size_hints_changed_cb, obj);
-
-   edje_object_size_min_calc
-     (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize_cb, obj);
-
-   sd->s_iface->bounce_allow_set
-     (obj, EINA_FALSE, _elm_config->thumbscroll_bounce_enable);
-
-   sd->box = elm_box_add(obj);
-   elm_box_homogeneous_set(sd->box, EINA_TRUE);
-   evas_object_size_hint_weight_set(sd->box, EVAS_HINT_EXPAND, 0.0);
-   evas_object_size_hint_align_set(sd->box, EVAS_HINT_FILL, 0.0);
-
-   /* FIXME: change this ugly code path later */
-   elm_widget_on_show_region_hook_set(sd->box, _show_region_hook, obj);
-   elm_widget_sub_object_add(obj, sd->box);
-
-   sd->s_iface->content_set(obj, sd->box);
-   evas_object_event_callback_add
-     (sd->box, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _size_hints_changed_cb, obj);
 
    return obj;
 }
