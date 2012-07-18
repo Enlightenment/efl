@@ -487,8 +487,14 @@ ecore_exe_pipe_run(const char     *exe_cmd,
       {
          if (run_pri != ECORE_EXE_PRIORITY_INHERIT)
          {
+#ifdef PRIO_PROCESS            
             if ((run_pri >= -20) && (run_pri <= 19))
               setpriority(PRIO_PROCESS, 0, run_pri);
+#else
+#warning "Your OS/libc does not provide PRIO_PROCESS (and possibly setpriority())"
+#warning "This is a POSIX-1.2001 standard and it is highly encouraged that you"
+#warning "Have support for this"
+#endif
          }
          /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the
           * second pipe if it's open. On the other hand, there was the
