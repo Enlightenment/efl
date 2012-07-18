@@ -20,6 +20,75 @@ group { name: "elm/flipselector/base/default";
    script {
       public cur, prev, next, lock;
 
+      flip_up(str[]) {
+         new tmp[FLIP_PICKER_MAX_LEN];
+         if (get_int(lock) == 1) {
+            replace_str(next, 0, str);
+            return;
+         }
+         fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
+
+         set_text(PART:"bottom_b", tmp);
+
+         set_state(PART:"elm.top", "shrink", 0.0);
+         set_text(PART:"elm.top", tmp);
+         set_state(PART:"elm.top", "default", 0.0);
+         set_text(PART:"elm.top", tmp);
+
+         replace_str(prev, 0, tmp);
+
+         set_state(PART:"elm.bottom", "default", 0.0);
+         set_text(PART:"elm.bottom", str);
+         set_state(PART:"elm.bottom", "shrink", 0.0);
+         set_text(PART:"elm.bottom", str);
+
+         set_text(PART:"top_b", str);
+
+         replace_str(cur, 0, str);
+
+         set_state(PART:"bottom_sheet", "shrink", 0.0);
+         set_state(PART:"top_sheet", "default", 0.0);
+
+         set_int(lock, 1);
+         set_state(PART:"shadow", "default", 0.0);
+         anim(0.2, "animator_top_down", 1);
+      }
+
+      flip_dn(str[]) {      
+         new tmp[FLIP_PICKER_MAX_LEN];
+         if (get_int(lock) == 1) {
+            replace_str(next, 0, str);
+            return;
+         }
+
+         fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
+
+         set_text(PART:"top_b", tmp);
+
+         set_state(PART:"elm.bottom", "shrink", 0.0);
+         set_text(PART:"elm.bottom", tmp);
+         set_state(PART:"elm.bottom", "default", 0.0);
+         set_text(PART:"elm.bottom", tmp);
+
+         replace_str(prev, 0, tmp);
+
+         set_state(PART:"elm.top", "default", 0.0);
+         set_text(PART:"elm.top", str);
+         set_state(PART:"elm.top", "shrink", 0.0);
+         set_text(PART:"elm.top", str);
+
+         set_text(PART:"bottom_b", str);
+
+         replace_str(cur, 0, str);
+
+         set_state(PART:"bottom_sheet", "default", 0.0);
+         set_state(PART:"top_sheet", "shrink", 0.0);
+
+         set_int(lock, 1);
+         set_state(PART:"shadow", "full", 0.0);
+         anim(0.2, "animator_bottom_up", 1);
+      }
+      
       public animator_bottom_down(val, Float:pos) {
          new tmp[FLIP_PICKER_MAX_LEN];
 
@@ -36,7 +105,7 @@ group { name: "elm/flipselector/base/default";
             fetch_str(next, 0, tmp, FLIP_PICKER_MAX_LEN);
             if (strncmp(tmp, "", FLIP_PICKER_MAX_LEN) != 0) {
                replace_str(next, 0, "");
-               message(MSG_STRING, 1, tmp);
+               flip_up(tmp);
             }
          }
       }
@@ -79,7 +148,7 @@ group { name: "elm/flipselector/base/default";
             fetch_str(next, 0, tmp, FLIP_PICKER_MAX_LEN);
             if (strncmp(tmp, "", FLIP_PICKER_MAX_LEN) != 0) {
                replace_str(next, 0, "");
-               message(MSG_STRING, 2, tmp);
+               flip_dn(tmp);
             }
          }
       }
@@ -87,80 +156,16 @@ group { name: "elm/flipselector/base/default";
       public message(Msg_Type:type, id, ...) {
          /* flip down */
          if ((type == MSG_STRING) && (id == 1)) {
-            new value[FLIP_PICKER_MAX_LEN], tmp[FLIP_PICKER_MAX_LEN];
-
+            new value[FLIP_PICKER_MAX_LEN];
             snprintf(value, FLIP_PICKER_MAX_LEN, "%s", getarg(2));
-
-            if (get_int(lock) == 1) {
-               replace_str(next, 0, value);
-               return;
-            }
-
-            fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
-
-            set_text(PART:"bottom_b", tmp);
-
-            set_state(PART:"elm.top", "shrink", 0.0);
-            set_text(PART:"elm.top", tmp);
-            set_state(PART:"elm.top", "default", 0.0);
-            set_text(PART:"elm.top", tmp);
-
-            replace_str(prev, 0, tmp);
-
-            set_state(PART:"elm.bottom", "default", 0.0);
-            set_text(PART:"elm.bottom", value);
-            set_state(PART:"elm.bottom", "shrink", 0.0);
-            set_text(PART:"elm.bottom", value);
-
-            set_text(PART:"top_b", value);
-
-            replace_str(cur, 0, value);
-
-            set_state(PART:"bottom_sheet", "shrink", 0.0);
-            set_state(PART:"top_sheet", "default", 0.0);
-
-            set_int(lock, 1);
-            set_state(PART:"shadow", "default", 0.0);
-            anim(0.2, "animator_top_down", 1);
+            flip_up(value);
          }
 
          /* flip up */
          if ((type == MSG_STRING) && (id == 2)) {
-            new value[FLIP_PICKER_MAX_LEN], tmp[FLIP_PICKER_MAX_LEN];
-
+            new value[FLIP_PICKER_MAX_LEN];
             snprintf(value, FLIP_PICKER_MAX_LEN, "%s", getarg(2));
-
-            if (get_int(lock) == 1) {
-               replace_str(next, 0, value);
-               return;
-            }
-
-            fetch_str(cur, 0, tmp, FLIP_PICKER_MAX_LEN);
-
-            set_text(PART:"top_b", tmp);
-
-            set_state(PART:"elm.bottom", "shrink", 0.0);
-            set_text(PART:"elm.bottom", tmp);
-            set_state(PART:"elm.bottom", "default", 0.0);
-            set_text(PART:"elm.bottom", tmp);
-
-            replace_str(prev, 0, tmp);
-
-            set_state(PART:"elm.top", "default", 0.0);
-            set_text(PART:"elm.top", value);
-            set_state(PART:"elm.top", "shrink", 0.0);
-            set_text(PART:"elm.top", value);
-
-            set_text(PART:"bottom_b", value);
-
-            replace_str(cur, 0, value);
-
-            set_state(PART:"bottom_sheet", "default", 0.0);
-            set_state(PART:"top_sheet", "shrink", 0.0);
-
-            set_int(lock, 1);
-            set_state(PART:"shadow", "full", 0.0);
-            anim(0.2, "animator_bottom_up", 1);
+            flip_dn(value);
          }
       }
    }
