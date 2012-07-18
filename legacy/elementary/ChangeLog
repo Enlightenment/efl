@@ -318,3 +318,7 @@
         self-feeding loops expecially with min size hints on scrollers (which
         the change in smart object infra broke too - fixed here).
 
+2012-07-18  Yan Wang
+
+        * Small fix to account for framespace that is used in wayland
+        (0 in x11 so shouldnt affect x11).

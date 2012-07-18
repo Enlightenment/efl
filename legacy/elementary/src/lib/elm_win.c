@@ -1498,6 +1498,9 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
         else if ((h > 0) && (h < maxh))
           maxh = h;
      }
+   evas_output_framespace_get(sd->evas, NULL, NULL, &w, &h);
+   minw += w;
+   minh += h;
    if (!xx) maxw = minw;
    else maxw = 32767;
    if (!xy) maxh = minh;
