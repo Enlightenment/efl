@@ -301,6 +301,8 @@ struct _Elm_Scrollable_Smart_Interface_Data
    Eina_Bool  bouncemex : 1;
    Eina_Bool  freeze : 1;
    Eina_Bool  hold : 1;
+   Eina_Bool  min_w : 1;
+   Eina_Bool  min_h : 1;
 };
 
 typedef struct _Elm_Scrollable_Smart_Interface Elm_Scrollable_Smart_Interface;

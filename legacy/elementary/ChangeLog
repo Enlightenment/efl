@@ -312,3 +312,9 @@
 
 	* Disable html mode pastes from cnp to work around thunderbird.
 
+2012-07-18  Carsten Haitzler (The Rasterman)
+
+	* Fix evil little bug where scrolelrs with scrollbars make
+        self-feeding loops expecially with min size hints on scrollers (which
+        the change in smart object infra broke too - fixed here).
+

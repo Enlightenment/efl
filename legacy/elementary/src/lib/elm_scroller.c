@@ -341,7 +341,7 @@ _elm_scroller_smart_sizing_eval(Evas_Object *obj)
 
    if (sd->min_w) w = vmw + minw;
    if (sd->min_h) h = vmh + minh;
-
+   
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
    if ((maxw > 0) && (w > maxw)) w = maxw;
    if ((maxh > 0) && (h > maxh)) h = maxh;

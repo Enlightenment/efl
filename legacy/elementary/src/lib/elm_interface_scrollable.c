@@ -576,45 +576,56 @@ _elm_scroll_scroll_bar_h_visibility_adjust(
      evas_object_geometry_get(sid->pan_obj, NULL, NULL, &vw, &vh);
    if (sid->hbar_visible)
      {
-        if (sid->hbar_flags == ELM_SCROLLER_POLICY_AUTO)
+        if (sid->min_w)
           {
-             if ((sid->content) || (sid->extern_pan))
+             scroll_h_vis_change = 1;
+             sid->hbar_visible = EINA_FALSE;
+          }
+        else
+          {
+             if (sid->hbar_flags == ELM_SCROLLER_POLICY_AUTO)
                {
-                  if (w <= vw)
+                  if ((sid->content) || (sid->extern_pan))
+                    {
+                       if (w <= vw)
+                         {
+                            scroll_h_vis_change = 1;
+                            sid->hbar_visible = EINA_FALSE;
+                         }
+                    }
+                  else
                     {
                        scroll_h_vis_change = 1;
                        sid->hbar_visible = EINA_FALSE;
                     }
                }
-             else
+             else if (sid->hbar_flags == ELM_SCROLLER_POLICY_OFF)
                {
                   scroll_h_vis_change = 1;
                   sid->hbar_visible = EINA_FALSE;
                }
           }
-        else if (sid->hbar_flags == ELM_SCROLLER_POLICY_OFF)
-          {
-             scroll_h_vis_change = 1;
-             sid->hbar_visible = EINA_FALSE;
-          }
      }
    else
      {
-        if (sid->hbar_flags == ELM_SCROLLER_POLICY_AUTO)
+        if (!sid->min_w)
           {
-             if ((sid->content) || (sid->extern_pan))
+             if (sid->hbar_flags == ELM_SCROLLER_POLICY_AUTO)
                {
-                  if (w > vw)
+                  if ((sid->content) || (sid->extern_pan))
                     {
-                       scroll_h_vis_change = 1;
-                       sid->hbar_visible = EINA_TRUE;
+                       if (w > vw)
+                         {
+                            scroll_h_vis_change = 1;
+                            sid->hbar_visible = EINA_TRUE;
+                         }
                     }
                }
-          }
-        else if (sid->hbar_flags == ELM_SCROLLER_POLICY_ON)
-          {
-             scroll_h_vis_change = 1;
-             sid->hbar_visible = EINA_TRUE;
+             else if (sid->hbar_flags == ELM_SCROLLER_POLICY_ON)
+               {
+                  scroll_h_vis_change = 1;
+                  sid->hbar_visible = EINA_TRUE;
+               }
           }
      }
    if (scroll_h_vis_change)
@@ -627,13 +638,13 @@ _elm_scroll_scroll_bar_h_visibility_adjust(
              else
                edje_object_signal_emit
                  (sid->edje_obj, "elm,action,hide,hbar", "elm");
-             edje_object_message_signal_process(sid->edje_obj);
-             _elm_scroll_scroll_bar_size_adjust(sid);
           }
         else
           edje_object_signal_emit
             (sid->edje_obj, "elm,action,hide,hbar", "elm");
+        edje_object_message_signal_process(sid->edje_obj);
         _elm_scroll_scroll_bar_size_adjust(sid);
+        elm_layout_sizing_eval(sid->obj);
      }
 
    return scroll_h_vis_change;
@@ -653,45 +664,56 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
      evas_object_geometry_get(sid->pan_obj, NULL, NULL, &vw, &vh);
    if (sid->vbar_visible)
      {
-        if (sid->vbar_flags == ELM_SCROLLER_POLICY_AUTO)
+        if (sid->min_h)
           {
-             if ((sid->content) || (sid->extern_pan))
+             scroll_v_vis_change = 1;
+             sid->vbar_visible = EINA_FALSE;
+          }
+        else
+          {
+             if (sid->vbar_flags == ELM_SCROLLER_POLICY_AUTO)
                {
-                  if (h <= vh)
+                  if ((sid->content) || (sid->extern_pan))
+                    {
+                       if (h <= vh)
+                         {
+                            scroll_v_vis_change = 1;
+                            sid->vbar_visible = EINA_FALSE;
+                         }
+                    }
+                  else
                     {
                        scroll_v_vis_change = 1;
                        sid->vbar_visible = EINA_FALSE;
                     }
                }
-             else
+             else if (sid->vbar_flags == ELM_SCROLLER_POLICY_OFF)
                {
                   scroll_v_vis_change = 1;
                   sid->vbar_visible = EINA_FALSE;
                }
           }
-        else if (sid->vbar_flags == ELM_SCROLLER_POLICY_OFF)
-          {
-             scroll_v_vis_change = 1;
-             sid->vbar_visible = EINA_FALSE;
-          }
      }
    else
      {
-        if (sid->vbar_flags == ELM_SCROLLER_POLICY_AUTO)
+        if (!sid->min_h)
           {
-             if ((sid->content) || (sid->extern_pan))
+             if (sid->vbar_flags == ELM_SCROLLER_POLICY_AUTO)
                {
-                  if (h > vh)
+                  if ((sid->content) || (sid->extern_pan))
                     {
-                       scroll_v_vis_change = 1;
-                       sid->vbar_visible = EINA_TRUE;
+                       if (h > vh)
+                         {
+                            scroll_v_vis_change = 1;
+                            sid->vbar_visible = EINA_TRUE;
+                         }
                     }
                }
-          }
-        else if (sid->vbar_flags == ELM_SCROLLER_POLICY_ON)
-          {
-             scroll_v_vis_change = 1;
-             sid->vbar_visible = EINA_TRUE;
+             else if (sid->vbar_flags == ELM_SCROLLER_POLICY_ON)
+               {
+                  scroll_v_vis_change = 1;
+                  sid->vbar_visible = EINA_TRUE;
+               }
           }
      }
    if (scroll_v_vis_change)
@@ -704,13 +726,13 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
              else
                edje_object_signal_emit
                  (sid->edje_obj, "elm,action,hide,vbar", "elm");
-
-             edje_object_message_signal_process(sid->edje_obj);
-             _elm_scroll_scroll_bar_size_adjust(sid);
           }
         else
           edje_object_signal_emit
             (sid->edje_obj, "elm,action,hide,vbar", "elm");
+        edje_object_message_signal_process(sid->edje_obj);
+        _elm_scroll_scroll_bar_size_adjust(sid);
+        elm_layout_sizing_eval(sid->obj);
      }
 
    return scroll_v_vis_change;
@@ -990,8 +1012,8 @@ _elm_scroll_content_min_limit(Evas_Object *obj,
 {
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
-   if (!sid->pan_obj || !sid->edje_obj) return;
-
+   if (!sid->edje_obj) return;
+   
    if (!sid->cb_func.content_min_limit)
      {
         ERR("Content minimim size limiting is unimplemented -- you "
@@ -999,6 +1021,8 @@ _elm_scroll_content_min_limit(Evas_Object *obj,
         return;
      }
 
+   sid->min_w = !!w;
+   sid->min_h = !!h;
    sid->cb_func.content_min_limit(obj, w, h);
 }
 
@@ -3537,8 +3561,9 @@ _elm_scroll_policy_set(Evas_Object *obj,
    else
      edje_object_signal_emit
        (sid->edje_obj, "elm,action,show_notalways,vbar", "elm");
-
+   edje_object_message_signal_process(sid->edje_obj);
    _elm_scroll_scroll_bar_size_adjust(sid);
+   elm_layout_sizing_eval(sid->obj);
 }
 
 static void
