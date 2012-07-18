@@ -58,6 +58,7 @@ group { name: "elm/check/base/default";
       }
       part { name: "elm.swallow.content";
          type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 0;
             visible: 0;
@@ -74,14 +75,15 @@ group { name: "elm/check/base/default";
             fixed: 1 0;
             visible: 1;
             aspect: 1.0 1.0;
+            min: 16 16;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 128 128 128 128;
+            color: 255 255 255 128;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
-            color: 128 128 128 128;
+            color: 255 255 255 128;
             fixed: 1 0;
             visible: 1;
             aspect: 1.0 1.0;
