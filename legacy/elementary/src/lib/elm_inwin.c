@@ -90,6 +90,19 @@ _elm_inwin_smart_add(Evas_Object *obj)
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
+
+   evas_object_size_hint_weight_set(obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_theme_set(obj, "win", "inwin", elm_object_style_get(obj));
+}
+
+static void
+_elm_inwin_smart_parent_set(Evas_Object *obj,
+                            Evas_Object *parent)
+{
+   elm_win_resize_object_add(parent, obj);
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -98,6 +111,7 @@ _elm_inwin_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->base.add = _elm_inwin_smart_add;
 
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_inwin_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->parent_set = _elm_inwin_smart_parent_set;
 
    sc->sizing_eval = _elm_inwin_smart_sizing_eval;
 
@@ -107,27 +121,16 @@ _elm_inwin_smart_set_user(Elm_Layout_Smart_Class *sc)
 EAPI Evas_Object *
 elm_win_inwin_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
 
    if (!parent || !elm_widget_type_check((parent), "elm_win", __func__))
      return NULL;  /* *has* to have a parent window */
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-
-   obj = evas_object_smart_add(e, _elm_inwin_smart_class_new());
+   obj = elm_widget_add(_elm_inwin_smart_class_new(), parent);
+   if (!obj) return NULL;
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   evas_object_size_hint_weight_set(obj, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_win_resize_object_add(parent, obj);
-
-   elm_layout_theme_set(obj, "win", "inwin", elm_object_style_get(obj));
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }

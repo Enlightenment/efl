@@ -293,11 +293,19 @@ _elm_hoversel_smart_del(Evas_Object *obj)
 }
 
 static void
+_elm_hoversel_smart_parent_set(Evas_Object *obj,
+                               Evas_Object *parent)
+{
+   elm_hoversel_hover_parent_set(obj, parent);
+}
+
+static void
 _elm_hoversel_smart_set_user(Elm_Button_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_hoversel_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_hoversel_smart_del;
 
+   ELM_WIDGET_CLASS(sc)->parent_set = _elm_hoversel_smart_parent_set;
    ELM_WIDGET_CLASS(sc)->theme = _elm_hoversel_smart_theme;
 
    sc->admits_autorepeat = EINA_FALSE;
@@ -306,20 +314,15 @@ _elm_hoversel_smart_set_user(Elm_Button_Smart_Class *sc)
 EAPI Evas_Object *
 elm_hoversel_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-
-   obj = evas_object_smart_add(e, _elm_hoversel_smart_class_new());
+   obj = elm_widget_add(_elm_hoversel_smart_class_new(), parent);
+   if (!obj) return NULL;
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_hoversel_hover_parent_set(obj, parent);
 
    return obj;
 }

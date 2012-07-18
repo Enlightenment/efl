@@ -4679,6 +4679,9 @@ _decorate_item_unset(Elm_Genlist_Smart_Data *sd)
 static void
 _elm_genlist_smart_add(Evas_Object *obj)
 {
+   Evas_Coord minw, minh;
+   Elm_Genlist_Pan_Smart_Data *pan_data;
+
    EVAS_SMART_DATA_ALLOC(obj, Elm_Genlist_Smart_Data);
 
    ELM_WIDGET_CLASS(_elm_genlist_parent_sc)->base.add(obj);
@@ -4687,11 +4690,57 @@ _elm_genlist_smart_add(Evas_Object *obj)
    evas_object_smart_member_add(priv->hit_rect, obj);
    elm_widget_sub_object_add(obj, priv->hit_rect);
 
-   /* common scroller hit rectangle setup -- it has to take place
-    * AFTER smart_member_add() */
+   /* common scroller hit rectangle setup */
    evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
    evas_object_show(priv->hit_rect);
    evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
+
+   elm_widget_can_focus_set(obj, EINA_TRUE);
+   elm_widget_on_show_region_hook_set(obj, _show_region_hook, obj);
+
+   priv->generation = 1;
+
+   elm_layout_theme_set(obj, "genlist", "base", elm_widget_style_get(obj));
+
+   /* interface's add() routine issued AFTER the object's smart_add() */
+   priv->s_iface = evas_object_smart_interface_get
+       (obj, ELM_SCROLLABLE_IFACE_NAME);
+
+   priv->s_iface->objects_set
+     (obj, ELM_WIDGET_DATA(priv)->resize_obj, priv->hit_rect);
+
+   priv->s_iface->bounce_allow_set
+     (obj, EINA_FALSE, _elm_config->thumbscroll_bounce_enable);
+   priv->v_bounce = _elm_config->thumbscroll_bounce_enable;
+
+   priv->s_iface->animate_start_cb_set(obj, _scroll_animate_start_cb);
+   priv->s_iface->animate_stop_cb_set(obj, _scroll_animate_stop_cb);
+   priv->s_iface->drag_start_cb_set(obj, _scroll_drag_start_cb);
+   priv->s_iface->drag_stop_cb_set(obj, _scroll_drag_stop_cb);
+   priv->s_iface->edge_left_cb_set(obj, _edge_left_cb);
+   priv->s_iface->edge_right_cb_set(obj, _edge_right_cb);
+   priv->s_iface->edge_top_cb_set(obj, _edge_top_cb);
+   priv->s_iface->edge_bottom_cb_set(obj, _edge_bottom_cb);
+
+   priv->mode = ELM_LIST_SCROLL;
+   priv->max_items_per_block = MAX_ITEMS_PER_BLOCK;
+   priv->item_cache_max = priv->max_items_per_block * 2;
+   priv->longpress_timeout = _elm_config->longpress_timeout;
+   priv->highlight = EINA_TRUE;
+
+   priv->pan_obj = evas_object_smart_add
+       (evas_object_evas_get(obj), _elm_genlist_pan_smart_class_new());
+   pan_data = evas_object_smart_data_get(priv->pan_obj);
+   pan_data->wsd = priv;
+
+   priv->s_iface->extern_pan_set(obj, priv->pan_obj);
+
+   edje_object_size_min_calc(ELM_WIDGET_DATA(priv)->resize_obj, &minw, &minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+
+   _mirrored_set(obj, elm_widget_mirrored_get(obj));
+
+   elm_layout_sizing_eval(obj);
 }
 
 static void
@@ -4776,69 +4825,15 @@ _elm_genlist_smart_set_user(Elm_Layout_Smart_Class *sc)
 EAPI Evas_Object *
 elm_genlist_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
-   Evas_Coord minw, minh;
-   Elm_Genlist_Pan_Smart_Data *pan_data;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-
-   obj = evas_object_smart_add(e, _elm_genlist_smart_class_new());
+   obj = elm_widget_add(_elm_genlist_smart_class_new(), parent);
+   if (!obj) return NULL;
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   ELM_GENLIST_DATA_GET(obj, sd);
-
-   elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_on_show_region_hook_set(obj, _show_region_hook, obj);
-
-   sd->generation = 1;
-
-   elm_layout_theme_set(obj, "genlist", "base", elm_widget_style_get(obj));
-
-   /* interface's add() routine issued AFTER the object's smart_add() */
-   sd->s_iface = evas_object_smart_interface_get
-       (obj, ELM_SCROLLABLE_IFACE_NAME);
-
-   sd->s_iface->objects_set
-     (obj, ELM_WIDGET_DATA(sd)->resize_obj, sd->hit_rect);
-
-   sd->s_iface->bounce_allow_set
-     (obj, EINA_FALSE, _elm_config->thumbscroll_bounce_enable);
-   sd->v_bounce = _elm_config->thumbscroll_bounce_enable;
-
-   sd->s_iface->animate_start_cb_set(obj, _scroll_animate_start_cb);
-   sd->s_iface->animate_stop_cb_set(obj, _scroll_animate_stop_cb);
-   sd->s_iface->drag_start_cb_set(obj, _scroll_drag_start_cb);
-   sd->s_iface->drag_stop_cb_set(obj, _scroll_drag_stop_cb);
-   sd->s_iface->edge_left_cb_set(obj, _edge_left_cb);
-   sd->s_iface->edge_right_cb_set(obj, _edge_right_cb);
-   sd->s_iface->edge_top_cb_set(obj, _edge_top_cb);
-   sd->s_iface->edge_bottom_cb_set(obj, _edge_bottom_cb);
-
-   sd->mode = ELM_LIST_SCROLL;
-   sd->max_items_per_block = MAX_ITEMS_PER_BLOCK;
-   sd->item_cache_max = sd->max_items_per_block * 2;
-   sd->longpress_timeout = _elm_config->longpress_timeout;
-   sd->highlight = EINA_TRUE;
-
-   sd->pan_obj = evas_object_smart_add
-       (evas_object_evas_get(obj), _elm_genlist_pan_smart_class_new());
-   pan_data = evas_object_smart_data_get(sd->pan_obj);
-   pan_data->wsd = sd;
-
-   sd->s_iface->extern_pan_set(obj, sd->pan_obj);
-
-   edje_object_size_min_calc(ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-
-   _mirrored_set(obj, elm_widget_mirrored_get(obj));
-
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }

@@ -370,15 +370,12 @@ _elm_button_widget_smart_set_user(Elm_Button_Smart_Class *sc __UNUSED__)
 EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-
-   obj = evas_object_smart_add(e, _elm_button_widget_smart_class_new());
+   obj = elm_widget_add(_elm_button_widget_smart_class_new(), parent);
+   if (!obj) return NULL;
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);

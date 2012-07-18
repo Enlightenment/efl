@@ -659,6 +659,15 @@ _elm_hover_smart_hide(Evas_Object *obj)
 }
 
 static void
+_elm_hover_smart_parent_set(Evas_Object *obj,
+                            Evas_Object *parent)
+{
+   elm_hover_parent_set(obj, parent);
+
+   elm_layout_sizing_eval(obj);
+}
+
+static void
 _elm_hover_smart_set_user(Elm_Layout_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_hover_smart_add;
@@ -668,6 +677,7 @@ _elm_hover_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->base.show = _elm_hover_smart_show;
    ELM_WIDGET_CLASS(sc)->base.hide = _elm_hover_smart_hide;
 
+   ELM_WIDGET_CLASS(sc)->parent_set = _elm_hover_smart_parent_set;
    ELM_WIDGET_CLASS(sc)->sub_object_add = _elm_hover_smart_sub_object_add;
    ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_hover_smart_sub_object_del;
    ELM_WIDGET_CLASS(sc)->theme = _elm_hover_smart_theme;
@@ -688,21 +698,15 @@ _elm_hover_smart_set_user(Elm_Layout_Smart_Class *sc)
 EAPI Evas_Object *
 elm_hover_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-
-   obj = evas_object_smart_add(e, _elm_hover_smart_class_new());
+   obj = elm_widget_add(_elm_hover_smart_class_new(), parent);
+   if (!obj) return NULL;
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_hover_parent_set(obj, parent);
-   elm_layout_sizing_eval(obj);
 
    return obj;
 }

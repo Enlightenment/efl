@@ -114,15 +114,12 @@ _elm_plug_smart_set_user(Elm_Widget_Smart_Class *sc)
 EAPI Evas_Object *
 elm_plug_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-
-   obj = evas_object_smart_add(e, _elm_plug_smart_class_new());
+   obj = elm_widget_add(_elm_plug_smart_class_new(), parent);
+   if (!obj) return NULL;
 
    ELM_PLUG_DATA_GET(obj, sd);
    if (!ELM_WIDGET_DATA(sd)->resize_obj) return NULL;

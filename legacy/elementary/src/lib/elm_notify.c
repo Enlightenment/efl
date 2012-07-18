@@ -578,6 +578,7 @@ _elm_notify_smart_add(Evas_Object *obj)
      (obj, EVAS_CALLBACK_RESTACK, _restack_cb, obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_notify_orient_set(obj, ELM_NOTIFY_ORIENT_TOP);
 }
 
 static void
@@ -597,6 +598,15 @@ _elm_notify_smart_del(Evas_Object *obj)
 }
 
 static void
+_elm_notify_smart_parent_set(Evas_Object *obj,
+                             Evas_Object *parent)
+{
+   elm_notify_parent_set(obj, parent);
+
+   _sizing_eval(obj);
+}
+
+static void
 _elm_notify_smart_set_user(Elm_Container_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_notify_smart_add;
@@ -607,6 +617,7 @@ _elm_notify_smart_set_user(Elm_Container_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->base.show = _elm_notify_smart_show;
    ELM_WIDGET_CLASS(sc)->base.hide = _elm_notify_smart_hide;
 
+   ELM_WIDGET_CLASS(sc)->parent_set = _elm_notify_smart_parent_set;
    ELM_WIDGET_CLASS(sc)->theme = _elm_notify_smart_theme;
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_notify_smart_focus_next;
    ELM_WIDGET_CLASS(sc)->focus_direction = _elm_notify_smart_focus_direction;
@@ -621,23 +632,15 @@ _elm_notify_smart_set_user(Elm_Container_Smart_Class *sc)
 EAPI Evas_Object *
 elm_notify_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-
-   obj = evas_object_smart_add(e, _elm_notify_smart_class_new());
+   obj = elm_widget_add(_elm_notify_smart_class_new(), parent);
+   if (!obj) return NULL;
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   elm_notify_orient_set(obj, ELM_NOTIFY_ORIENT_TOP);
-   elm_notify_parent_set(obj, parent);
-
-   _sizing_eval(obj);
 
    return obj;
 }

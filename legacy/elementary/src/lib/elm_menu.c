@@ -632,6 +632,21 @@ _elm_menu_smart_del(Evas_Object *obj)
 }
 
 static void
+_elm_menu_smart_parent_set(Evas_Object *obj,
+                           Evas_Object *parent)
+{
+   ELM_MENU_DATA_GET(obj, sd);
+
+   elm_menu_parent_set(obj, parent);
+   elm_hover_target_set(sd->hv, sd->location);
+   elm_layout_content_set
+     (sd->hv, elm_hover_best_content_location_get
+       (sd->hv, ELM_HOVER_AXIS_VERTICAL), sd->bx);
+
+   _sizing_eval(obj);
+}
+
+static void
 _elm_menu_smart_set_user(Elm_Widget_Smart_Class *sc)
 {
    sc->base.add = _elm_menu_smart_add;
@@ -642,34 +657,22 @@ _elm_menu_smart_set_user(Elm_Widget_Smart_Class *sc)
    sc->focus_next = NULL;
    sc->focus_direction = NULL;
 
+   sc->parent_set = _elm_menu_smart_parent_set;
    sc->theme = _elm_menu_smart_theme;
 }
 
 EAPI Evas_Object *
 elm_menu_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-
-   obj = evas_object_smart_add(e, _elm_menu_smart_class_new());
+   obj = elm_widget_add(_elm_menu_smart_class_new(), parent);
+   if (!obj) return NULL;
 
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-   ELM_MENU_DATA_GET(obj, sd);
-
-   elm_menu_parent_set(obj, parent);
-   elm_hover_target_set(sd->hv, sd->location);
-   elm_layout_content_set
-     (sd->hv, elm_hover_best_content_location_get
-       (sd->hv, ELM_HOVER_AXIS_VERTICAL), sd->bx);
-
-   _sizing_eval(obj);
 
    return obj;
 }

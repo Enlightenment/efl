@@ -576,11 +576,32 @@ _elm_conformant_smart_del(Evas_Object *obj)
 }
 
 static void
+_elm_conformant_smart_parent_set(Evas_Object *obj,
+                                 Evas_Object *parent)
+{
+#ifdef HAVE_ELEMENTARY_X
+   Evas_Object *top = elm_widget_top_get(parent);
+   Ecore_X_Window xwin = elm_win_xwindow_get(parent);
+
+   if ((xwin) && (!elm_win_inlined_image_object_get(top)))
+     {
+        ELM_CONFORMANT_DATA_GET(obj, sd);
+
+        sd->prop_hdl = ecore_event_handler_add
+            (ECORE_X_EVENT_WINDOW_PROPERTY, _on_prop_change, obj);
+        sd->vkb_state = ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF;
+     }
+   // FIXME: get kbd region prop
+#endif
+}
+
+static void
 _elm_conformant_smart_set_user(Elm_Layout_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_conformant_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_conformant_smart_del;
 
+   ELM_WIDGET_CLASS(sc)->parent_set = _elm_conformant_smart_parent_set;
    ELM_WIDGET_CLASS(sc)->theme = _elm_conformant_smart_theme;
 
    /* not a 'focus chain manager' */
@@ -593,34 +614,15 @@ _elm_conformant_smart_set_user(Elm_Layout_Smart_Class *sc)
 EAPI Evas_Object *
 elm_conformant_add(Evas_Object *parent)
 {
-   Evas *e;
    Evas_Object *obj;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
+   obj = elm_widget_add(_elm_conformant_smart_class_new(), parent);
+   if (!obj) return NULL;
 
-   obj = evas_object_smart_add(e, _elm_conformant_smart_class_new());
-
-   /* NB: we got to sub-object-add before we probe for the top widget */
    if (!elm_widget_sub_object_add(parent, obj))
      ERR("could not add %p as sub object of %p", obj, parent);
-
-#ifdef HAVE_ELEMENTARY_X
-   Evas_Object *top = elm_widget_top_get(obj);
-   Ecore_X_Window xwin = elm_win_xwindow_get(top);
-
-   if ((xwin) && (!elm_win_inlined_image_object_get(top)))
-     {
-        ELM_CONFORMANT_DATA_GET(obj, sd);
-
-        sd->prop_hdl = ecore_event_handler_add
-            (ECORE_X_EVENT_WINDOW_PROPERTY, _on_prop_change, obj);
-        sd->vkb_state = ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF;
-     }
-   // FIXME: get kbd region prop
-#endif
 
    return obj;
 }
