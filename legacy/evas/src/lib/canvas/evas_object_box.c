@@ -145,7 +145,10 @@ _on_child_hints_changed(void *data, Evas *evas __UNUSED__, Evas_Object *o __UNUS
 {
    Evas_Object *box = data;
    EVAS_OBJECT_BOX_DATA_GET_OR_RETURN(box, priv);
-   if (!priv->layouting) evas_object_smart_changed(box);
+// XXX: this breaks box repacking in elementary. widgets DEPEND on being able
+// to change their hints evenr WHILE being laid out. so comment this out.
+//   if (!priv->layouting)
+     evas_object_smart_changed(box);
 }
 
 static void

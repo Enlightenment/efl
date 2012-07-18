@@ -890,3 +890,10 @@
 	* Fix garbage left by mapped smart object when they fly away from the canvas.
 	* Fix map life cycle.
 
+2012-07-18  Carsten Haitzler (The Rasterman)
+
+        * Fix evas box to not skip dealing with size hint changes
+          while it lays out objects. This breaks elementary badly and it should
+          never have done this. This broke the general logic of size
+          hint handling.
+
