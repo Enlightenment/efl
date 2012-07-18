@@ -2229,6 +2229,7 @@ _proxy_set(Evas_Object *proxy, Evas_Object *src)
    evas_object_image_file_set(proxy, NULL, NULL);
 
    o->cur.source = src;
+   o->load_error = EVAS_LOAD_ERROR_NONE;
 
    src->proxy.proxies = eina_list_append(src->proxy.proxies, proxy);
    src->proxy.redraw = EINA_TRUE;
