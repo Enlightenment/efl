@@ -303,7 +303,7 @@ PKG_CHECK_MODULES([EIO],
    [have_eio="no"])
 
 # Enable Multisense use
-want_multisense="yes"
+want_multisense="no"
 AC_ARG_ENABLE([multisense],
    [AC_HELP_STRING(
        [--enable-multisense],
