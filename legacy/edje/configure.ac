@@ -304,13 +304,13 @@ PKG_CHECK_MODULES([EIO],
 
 # Enable Multisense use
 want_multisense="no"
-AC_ARG_ENABLE([multisense],
-   [AC_HELP_STRING(
-       [--enable-multisense],
-       [multisense provides sound. tone and haptic effects support, [[default=disabled]]]
-    )],
-    [want_multisense=$enableval]
-)
+dnl AC_ARG_ENABLE([multisense],
+dnl    [AC_HELP_STRING(
+dnl        [--enable-multisense],
+dnl        [multisense provides sound. tone and haptic effects support, [[default=disabled]]]
+dnl     )],
+dnl     [want_multisense=$enableval]
+dnl )
 AM_CONDITIONAL([ENABLE_MULTISENSE], [test "x${want_multisense}" = "xyes"])
 
 ##sndfile library
@@ -609,7 +609,7 @@ echo "Configuration Options Summary:"
 echo
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Ecore IMF............: $have_ecore_imf"
-echo "  Multisense...........: $want_multisense"
+dnl echo "  Multisense...........: $want_multisense"
 
 if test "x${want_multisense}" = "xyes" ; then
 echo "  LibRemix.............: $have_libremix"
