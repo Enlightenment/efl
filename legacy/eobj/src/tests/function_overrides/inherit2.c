@@ -21,7 +21,7 @@ _a_set(Eo *obj, void *class_data EINA_UNUSED, va_list *list)
    eo_do(obj, simple_a_print());
    eo_do_super(obj, simple_a_set(a + 1));
 
-   fail_if(eo_do_super(obj, simple_a_print()));
+   fail_if(!eo_do_super(obj, simple_a_print()));
 }
 
 static void
@@ -43,7 +43,7 @@ _class_print(const Eo_Class *klass, va_list *list)
    (void) list;
    printf("Print %s-%s\n", eo_class_name_get(klass), eo_class_name_get(MY_CLASS));
    fail_if(!eo_class_do_super(klass, simple_class_print()));
-   fail_if(eo_class_do_super(klass, simple_class_print2()));
+   fail_if(!eo_class_do_super(klass, simple_class_print2()));
 }
 
 static void

@@ -25,8 +25,7 @@ static inline void _eo_unref(Eo *obj);
 
 typedef struct
 {
-   const Eo_Class **kls_itr;
-   Eina_Bool insuper_context:1;
+   const Eo_Class *kls;
 } Eo_Kls_Itr;
 
 struct _Eo {
@@ -240,48 +239,51 @@ _eo_op_id_name_get(Eo_Op op)
 static inline void
 _eo_kls_itr_init(const Eo_Class *obj_klass, Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state)
 {
-   if (cur->insuper_context)
-     {
-        memcpy(prev_state, cur, sizeof(*cur));
-        cur->kls_itr = obj_klass->mro;
-     }
+   memcpy(prev_state, cur, sizeof(*cur));
+   cur->kls = *obj_klass->mro;
 }
 
 static inline void
 _eo_kls_itr_end(Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state)
 {
-   if (cur->insuper_context)
-     {
-        memcpy(cur, prev_state, sizeof(*cur));
-     }
+   memcpy(cur, prev_state, sizeof(*cur));
 }
 
 static inline const Eo_Class *
 _eo_kls_itr_get(Eo_Kls_Itr *cur)
 {
-   return *(cur->kls_itr);
+   return cur->kls;
+}
+
+static inline void
+_eo_kls_itr_set(Eo_Kls_Itr *cur, const Eo_Class *kls)
+{
+   cur->kls = kls;
 }
 
 static inline const Eo_Class *
-_eo_kls_itr_next(Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state, Eo_Op op)
+_eo_kls_itr_next(const Eo_Class *orig_kls, Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_state, Eo_Op op)
 {
-   const Eo_Class **kls_itr = cur->kls_itr;
+   const Eo_Class **kls_itr = NULL;
    memcpy(prev_state, cur, sizeof(*cur));
-   cur->insuper_context = EINA_TRUE;
+
+   /* Find the kls itr. */
+   kls_itr = orig_kls->mro;
+   while (*kls_itr && (*kls_itr != cur->kls))
+      kls_itr++;
+
    if (*kls_itr)
      {
-        const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
-
-        while (*kls_itr && (*(kls_itr++) != fsrc->src))
-           ;
-
-        cur->kls_itr = kls_itr;
-        return *kls_itr;
+        kls_itr++;
+        if (*kls_itr)
+          {
+             const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
+             cur->kls = fsrc->src;
+             return cur->kls;
+          }
      }
-   else
-     {
-        return NULL;
-     }
+
+   return NULL;
 }
 
 static inline const op_type_funcs *
@@ -294,10 +296,12 @@ _eo_kls_itr_func_get(Eo_Kls_Itr *mro_itr, Eo_Op op)
 
         if (func && func->func)
           {
+             _eo_kls_itr_set(mro_itr, func->src);
              return func;
           }
      }
 
+   _eo_kls_itr_set(mro_itr, NULL);
    return NULL;
 }
 
@@ -344,10 +348,15 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
         Eo *emb_obj;
         EINA_LIST_FOREACH(obj->composite_objects, itr, emb_obj)
           {
+             /* FIXME: Clean this up a bit. */
+             Eo_Kls_Itr prev_state;
+             _eo_kls_itr_init(emb_obj->klass, &emb_obj->mro_itr, &prev_state);
              if (_eo_op_internal(emb_obj, op_type, op, p_list))
                {
+                  _eo_kls_itr_end(&emb_obj->mro_itr, &prev_state);
                   return EINA_TRUE;
                }
+             _eo_kls_itr_end(&emb_obj->mro_itr, &prev_state);
           }
      }
    return EINA_FALSE;
@@ -405,7 +414,7 @@ eo_do_super_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, ...)
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
    /* Advance the kls itr. */
-   nklass = _eo_kls_itr_next(&obj->mro_itr, &prev_state, op);
+   nklass = _eo_kls_itr_next(obj->klass, &obj->mro_itr, &prev_state, op);
 
    va_start(p_list, op);
    if (!_eo_op_internal(obj, op_type, op, &p_list))
@@ -493,7 +502,7 @@ eo_class_do_super_internal(const Eo_Class *klass, Eo_Op op, ...)
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
 
    /* Advance the kls itr. */
-   nklass = _eo_kls_itr_next(&((Eo_Class *) klass)->mro_itr, &prev_state, op);
+   nklass = _eo_kls_itr_next(klass, &((Eo_Class *) klass)->mro_itr, &prev_state, op);
 
    va_start(p_list, op);
    if (!_eo_class_op_internal((Eo_Class *) klass, op, &p_list))
@@ -1030,8 +1039,6 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
           }
      }
 
-   klass->mro_itr.kls_itr = klass->mro;
-
    _eo_class_constructor(klass);
 
    va_end(p_list);
@@ -1113,7 +1120,6 @@ eo_add(const Eo_Class *klass, Eo *parent)
    EINA_MAGIC_SET(obj, EO_EINA_MAGIC);
    obj->refcount++;
    obj->klass = klass;
-   obj->mro_itr.kls_itr = obj->klass->mro;
 
    eo_parent_set(obj, parent);
 
