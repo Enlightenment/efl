@@ -113,6 +113,8 @@ _mapbuf(Evas_Object *obj)
    ELM_MAPBUF_DATA_GET(obj, sd);
 
    evas_object_geometry_get(ELM_WIDGET_DATA(sd)->resize_obj, &x, &y, &w, &h);
+   evas_object_resize(sd->content, w, h);
+
    if (sd->enabled)
      {
         Evas_Map *m;
@@ -130,7 +132,6 @@ _mapbuf(Evas_Object *obj)
         evas_object_map_set(sd->content, NULL);
         evas_object_map_enable_set(sd->content, EINA_FALSE);
         evas_object_move(sd->content, x, y);
-        evas_object_resize(sd->content, w, h);
      }
 }
 
@@ -160,7 +161,6 @@ _configure(Evas_Object *obj)
                   evas_nochange_pop(e);
                }
           }
-        evas_object_resize(sd->content, w, h);
         _mapbuf(obj);
      }
 }

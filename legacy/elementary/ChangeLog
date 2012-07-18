@@ -322,3 +322,9 @@
 
         * Small fix to account for framespace that is used in wayland
         (0 in x11 so shouldnt affect x11).
+
+2012-07-18  Hermet (ChunEon Park)
+
+	* Fix the mapbuf to resize the contents(smart obj) correctly. When smart obj was
+	set as the contents the _configure would be called recursively. In this process
+	the lastest size could be reverted as the previous one.
