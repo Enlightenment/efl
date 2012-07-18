@@ -377,7 +377,7 @@ EINA_DEPRECATED EAPI void         elm_list_scroller_policy_get(const Evas_Object
  * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_widget_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -399,7 +399,7 @@ EINA_DEPRECATED EAPI void         elm_list_scroller_policy_get(const Evas_Object
  *
  * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
- * @see elm_widget_item_del_cb_set()
+ * @see elm_object_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -428,7 +428,7 @@ EAPI Elm_Object_Item               *elm_list_item_append(Evas_Object *obj, const
  * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_widget_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -440,7 +440,7 @@ EAPI Elm_Object_Item               *elm_list_item_append(Evas_Object *obj, const
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
- * @see elm_widget_item_del_cb_set()
+ * @see elm_object_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -470,7 +470,7 @@ EAPI Elm_Object_Item               *elm_list_item_prepend(Evas_Object *obj, cons
  * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_widget_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -482,7 +482,7 @@ EAPI Elm_Object_Item               *elm_list_item_prepend(Evas_Object *obj, cons
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
- * @see elm_widget_item_del_cb_set()
+ * @see elm_object_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -512,7 +512,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_before(Evas_Object *obj
  * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_widget_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -524,7 +524,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_before(Evas_Object *obj
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
- * @see elm_widget_item_del_cb_set()
+ * @see elm_object_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -562,7 +562,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_after(Evas_Object *obj,
  * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_widget_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -574,7 +574,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_after(Evas_Object *obj,
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
- * @see elm_widget_item_del_cb_set()
+ * @see elm_object_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
