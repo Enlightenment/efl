@@ -644,7 +644,8 @@ _elm_scroll_scroll_bar_h_visibility_adjust(
             (sid->edje_obj, "elm,action,hide,hbar", "elm");
         edje_object_message_signal_process(sid->edje_obj);
         _elm_scroll_scroll_bar_size_adjust(sid);
-        elm_layout_sizing_eval(sid->obj);
+        if (sid->cb_func.content_min_limit)
+          sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
      }
 
    return scroll_h_vis_change;
@@ -732,7 +733,8 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
             (sid->edje_obj, "elm,action,hide,vbar", "elm");
         edje_object_message_signal_process(sid->edje_obj);
         _elm_scroll_scroll_bar_size_adjust(sid);
-        elm_layout_sizing_eval(sid->obj);
+        if (sid->cb_func.content_min_limit)
+          sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
      }
 
    return scroll_v_vis_change;
@@ -1013,7 +1015,7 @@ _elm_scroll_content_min_limit(Evas_Object *obj,
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
    if (!sid->edje_obj) return;
-   
+
    if (!sid->cb_func.content_min_limit)
      {
         ERR("Content minimim size limiting is unimplemented -- you "
@@ -1023,7 +1025,7 @@ _elm_scroll_content_min_limit(Evas_Object *obj,
 
    sid->min_w = !!w;
    sid->min_h = !!h;
-   sid->cb_func.content_min_limit(obj, w, h);
+   sid->cb_func.content_min_limit(sid->obj, w, h);
 }
 
 static Evas_Coord
@@ -3385,14 +3387,14 @@ _elm_scroll_edge_bottom_cb_set(Evas_Object *obj,
 }
 
 static void
-_elm_content_min_limit_cb_set(Evas_Object *obj,
-                              void (*content_min_limit_cb)(Evas_Object *obj,
-                                                           Eina_Bool w,
-                                                           Eina_Bool h))
+_elm_scroll_content_min_limit_cb_set(Evas_Object *obj,
+                                     void (*c_min_limit_cb)(Evas_Object *obj,
+                                                            Eina_Bool w,
+                                                            Eina_Bool h))
 {
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
-   sid->cb_func.content_min_limit = content_min_limit_cb;
+   sid->cb_func.content_min_limit = c_min_limit_cb;
 }
 
 static Eina_Bool
@@ -3563,7 +3565,8 @@ _elm_scroll_policy_set(Evas_Object *obj,
        (sid->edje_obj, "elm,action,show_notalways,vbar", "elm");
    edje_object_message_signal_process(sid->edje_obj);
    _elm_scroll_scroll_bar_size_adjust(sid);
-   elm_layout_sizing_eval(sid->obj);
+   if (sid->cb_func.content_min_limit)
+     sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
 }
 
 static void
@@ -3892,7 +3895,7 @@ EAPI const Elm_Scrollable_Smart_Interface ELM_SCROLLABLE_IFACE =
    _elm_scroll_edge_right_cb_set,
    _elm_scroll_edge_top_cb_set,
    _elm_scroll_edge_bottom_cb_set,
-   _elm_content_min_limit_cb_set,
+   _elm_scroll_content_min_limit_cb_set,
    _elm_scroll_content_pos_set,
    _elm_scroll_content_pos_get,
    _elm_scroll_content_region_show,
