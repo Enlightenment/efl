@@ -1367,7 +1367,7 @@ _eio_load_xattr_error(void *data, Eio_File *handler, int err __UNUSED__)
 {
    Smart_Data *sd = data;
 
-   evas_object_smart_callback_call(sd->obj, SIG_POSITION_LOAD_FAILED, NULL);
+   evas_object_smart_callback_call(evas_object_smart_parent_get(sd->obj), SIG_POSITION_LOAD_FAILED, NULL);
    _eio_load_xattr_cleanup(sd, handler);
 }
 #endif
