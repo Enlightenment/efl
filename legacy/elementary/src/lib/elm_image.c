@@ -171,12 +171,12 @@ _elm_image_internal_sizing_eval(Elm_Image_Smart_Data *sd)
                     }
                }
           }
-        if (!sd->scale_up)
+        if (!sd->resize_up)
           {
              if (w > iw) w = iw;
              if (h > ih) h = ih;
           }
-        if (!sd->scale_down)
+        if (!sd->resize_down)
           {
              if (w < iw) w = iw;
              if (h < ih) h = ih;
@@ -283,7 +283,7 @@ _elm_image_smart_size_get(const Evas_Object *obj,
    else
      evas_object_image_size_get(sd->img, &tw, &th);
 
-   if ((sd->scale_up) || (sd->scale_down))
+   if ((sd->resize_up) || (sd->resize_down))
      evas_object_geometry_get(sd->img, NULL, NULL, &cw, &ch);
 
    tw = tw > cw ? tw : cw;
@@ -347,49 +347,49 @@ _elm_image_smart_fill_inside_get(const Evas_Object *obj)
 }
 
 static void
-_elm_image_smart_scale_up_set(Evas_Object *obj,
-                              Eina_Bool scale_up)
+_elm_image_smart_resize_up_set(Evas_Object *obj,
+                              Eina_Bool resize_up)
 {
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   scale_up = !!scale_up;
+   resize_up = !!resize_up;
 
-   if (sd->scale_up == scale_up) return;
+   if (sd->resize_up == resize_up) return;
 
-   sd->scale_up = scale_up;
+   sd->resize_up = resize_up;
 
    _elm_image_internal_sizing_eval(sd);
 }
 
 static Eina_Bool
-_elm_image_smart_scale_up_get(const Evas_Object *obj)
+_elm_image_smart_resize_up_get(const Evas_Object *obj)
 {
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   return sd->scale_up;
+   return sd->resize_up;
 }
 
 static void
-_elm_image_smart_scale_down_set(Evas_Object *obj,
-                                Eina_Bool scale_down)
+_elm_image_smart_resize_down_set(Evas_Object *obj,
+                                Eina_Bool resize_down)
 {
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   scale_down = !!scale_down;
+   resize_down = !!resize_down;
 
-   if (sd->scale_down == scale_down) return;
+   if (sd->resize_down == resize_down) return;
 
-   sd->scale_down = scale_down;
+   sd->resize_down = resize_down;
 
    _elm_image_internal_sizing_eval(sd);
 }
 
 static Eina_Bool
-_elm_image_smart_scale_down_get(const Evas_Object *obj)
+_elm_image_smart_resize_down_get(const Evas_Object *obj)
 {
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   return sd->scale_up;
+   return sd->resize_up;
 }
 
 static void
@@ -620,8 +620,8 @@ _elm_image_smart_add(Evas_Object *obj)
 
    priv->smooth = EINA_TRUE;
    priv->fill_inside = EINA_TRUE;
-   priv->scale_up = EINA_TRUE;
-   priv->scale_down = EINA_TRUE;
+   priv->resize_up = EINA_TRUE;
+   priv->resize_down = EINA_TRUE;
    priv->aspect_fixed = EINA_TRUE;
 
    priv->load_size = 64;
@@ -794,12 +794,12 @@ _elm_image_smart_sizing_eval(Evas_Object *obj)
      {
         maxw = minw = w;
         maxh = minh = h;
-        if ((sd->scale > 1.0) && (sd->scale_up))
+        if ((sd->scale > 1.0) && (sd->resize_up))
           {
              maxw = minw = w * sd->scale;
              maxh = minh = h * sd->scale;
           }
-        else if ((sd->scale < 1.0) && (sd->scale_down))
+        else if ((sd->scale < 1.0) && (sd->resize_down))
           {
              maxw = minw = w * sd->scale;
              maxh = minh = h * sd->scale;
@@ -807,12 +807,12 @@ _elm_image_smart_sizing_eval(Evas_Object *obj)
      }
    else
      {
-        if (!sd->scale_down)
+        if (!sd->resize_down)
           {
              minw = w * sd->scale;
              minh = h * sd->scale;
           }
-        if (!sd->scale_up)
+        if (!sd->resize_up)
           {
              maxw = w * sd->scale;
              maxh = h * sd->scale;
@@ -1044,12 +1044,12 @@ _elm_image_smart_set_user(Elm_Image_Smart_Class *sc)
    sc->orient_get = _elm_image_smart_orient_get;
    sc->orient_set = _elm_image_smart_orient_set;
    sc->preload_set = _elm_image_smart_preload_set;
-   sc->scale_down_get = _elm_image_smart_scale_down_get;
-   sc->scale_down_set = _elm_image_smart_scale_down_set;
+   sc->resize_down_get = _elm_image_smart_resize_down_get;
+   sc->resize_down_set = _elm_image_smart_resize_down_set;
    sc->scale_get = _elm_image_smart_scale_get;
    sc->scale_set = _elm_image_smart_scale_set;
-   sc->scale_up_get = _elm_image_smart_scale_up_get;
-   sc->scale_up_set = _elm_image_smart_scale_up_set;
+   sc->resize_up_get = _elm_image_smart_resize_up_get;
+   sc->resize_up_set = _elm_image_smart_resize_up_set;
    sc->size_get = _elm_image_smart_size_get;
    sc->sizing_eval = _elm_image_smart_sizing_eval;
    sc->smooth_scale_get = _elm_image_smart_smooth_scale_get;
@@ -1204,8 +1204,8 @@ elm_image_resizable_set(Evas_Object *obj,
    ELM_IMAGE_CHECK(obj);
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   sd->scale_up = !!up;
-   sd->scale_down = !!down;
+   sd->resize_up = !!up;
+   sd->resize_down = !!down;
 
    ELM_IMAGE_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 }
@@ -1218,8 +1218,8 @@ elm_image_resizable_get(const Evas_Object *obj,
    ELM_IMAGE_CHECK(obj);
    ELM_IMAGE_DATA_GET(obj, sd);
 
-   if (size_up) *size_up = sd->scale_up;
-   if (size_down) *size_down = sd->scale_down;
+   if (size_up) *size_up = sd->resize_up;
+   if (size_down) *size_down = sd->resize_down;
 }
 
 EAPI void

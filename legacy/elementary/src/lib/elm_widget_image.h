@@ -151,12 +151,12 @@ typedef struct _Elm_Image_Smart_Class
    void                 (*smooth_scale_set)(Evas_Object *obj,
                                             Eina_Bool smooth); /* 'Virtual' function on setting whether the object's image should be scaled smoothly or not. */
    Eina_Bool            (*smooth_scale_get)(const Evas_Object *obj); /* 'Virtual' function on retrieving whether the object's image is to scaled smoothly or not. */
-   void                 (*scale_up_set)(Evas_Object *obj,
-                                        Eina_Bool scale_up); /* 'Virtual' function on setting whether the object's image can be resized to a size greater than the original one. */
-   Eina_Bool            (*scale_up_get)(const Evas_Object *obj); /* 'Virtual' function on retrieving whether the object's image can be resized to a size greater than the original one. */
-   void                 (*scale_down_set)(Evas_Object *obj,
-                                        Eina_Bool scale_down); /* 'Virtual' function on setting whether the object's image can be resized to a size smaller than the original one. */
-   Eina_Bool            (*scale_down_get)(const Evas_Object *obj); /* 'Virtual' function on retrieving whether the object's image can be resized to a size smaller than the original one. */
+   void                 (*resize_up_set)(Evas_Object *obj,
+                                        Eina_Bool resize_up); /* 'Virtual' function on setting whether the object's image can be resized to a size greater than the original one. */
+   Eina_Bool            (*resize_up_get)(const Evas_Object *obj); /* 'Virtual' function on retrieving whether the object's image can be resized to a size greater than the original one. */
+   void                 (*resize_down_set)(Evas_Object *obj,
+                                        Eina_Bool resize_down); /* 'Virtual' function on setting whether the object's image can be resized to a size smaller than the original one. */
+   Eina_Bool            (*resize_down_get)(const Evas_Object *obj); /* 'Virtual' function on retrieving whether the object's image can be resized to a size smaller than the original one. */
    void                 (*load_size_set)(Evas_Object *obj,
                                          int size); /* 'Virtual' function on setting the object's image loading size (in pixels, applied to both axis). */
    int                  (*load_size_get)(const Evas_Object *obj); /* 'Virtual' function on retrieving the object's image loading size. */
@@ -198,9 +198,9 @@ struct _Elm_Image_Smart_Data
 
    Eina_Bool             aspect_fixed : 1;
    Eina_Bool             fill_inside : 1;
-   Eina_Bool             scale_down : 1;
+   Eina_Bool             resize_down : 1;
    Eina_Bool             preloading : 1;
-   Eina_Bool             scale_up : 1;
+   Eina_Bool             resize_up : 1;
    Eina_Bool             no_scale : 1;
    Eina_Bool             smooth : 1;
    Eina_Bool             show : 1;
