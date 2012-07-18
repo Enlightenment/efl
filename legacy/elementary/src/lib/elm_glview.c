@@ -309,7 +309,8 @@ _elm_glview_smart_del(Evas_Object *obj)
         sd->del_func(obj);
      }
 
-   if (sd->render_idle_enterer) ecore_idle_enterer_del(sd->render_idle_enterer);
+   if (sd->render_idle_enterer)
+     ecore_idle_enterer_del(sd->render_idle_enterer);
 
    if (sd->surface) evas_gl_surface_destroy(sd->evasgl, sd->surface);
    if (sd->context) evas_gl_context_destroy(sd->evasgl, sd->context);
