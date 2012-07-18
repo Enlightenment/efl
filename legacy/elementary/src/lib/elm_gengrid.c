@@ -2753,6 +2753,13 @@ elm_gengrid_item_update(Elm_Object_Item *item)
 EAPI const Elm_Gengrid_Item_Class *
 elm_gengrid_item_item_class_get(const Elm_Object_Item *it)
 {
+   Elm_Gen_Item *item = (Elm_Gen_Item *)it;
+
+   ELM_GENGRID_ITEM_CHECK_OR_RETURN(it, NULL);
+
+   if (item->generation < GG_IT(item)->wsd->generation) return NULL;
+   return item->itc;
+
    return (Elm_Gengrid_Item_Class *)elm_gengrid_item_item_class_get(it);
 }
 
