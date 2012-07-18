@@ -356,7 +356,7 @@
  */
 #define ELM_WIDGET_SMART_CLASS_INIT(smart_class_init)                        \
   {smart_class_init, ELM_WIDGET_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, \
-   NULL, NULL, NULL, NULL, NULL, NULL}
+   NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 
 /**
  * @def ELM_WIDGET_SMART_CLASS_INIT_NULL
@@ -406,6 +406,8 @@ typedef struct _Elm_Widget_Smart_Class
    Evas_Smart_Class base; /**< Base smart class struct, needed for all smart objects */
    int              version; /**< Version of this smart class definition */
 
+   void             (*parent_set)(Evas_Object *obj,
+                                  Evas_Object *parent); /**< 'Virtual' function handling parent widget attachment to new object */
    Eina_Bool        (*on_focus)(Evas_Object *obj); /**< 'Virtual' function handling receipt of focus on the widget */
    Eina_Bool        (*disable)(Evas_Object *obj); /**< 'Virtual' function on the widget being disabled */
    Eina_Bool        (*theme)(Evas_Object *obj); /**< 'Virtual' function on the widget being re-themed */
@@ -428,7 +430,8 @@ typedef struct _Elm_Widget_Smart_Class
 
    Eina_Bool        (*sub_object_del)(Evas_Object *obj,
                                       Evas_Object *sobj); /**< 'Virtual' function handling sub objects being removed */
-   void             (*access)(Evas_Object *obj, Eina_Bool is_access); /**< 'Virtual' function on the widget being set access */
+   void             (*access)(Evas_Object *obj,
+                              Eina_Bool is_access); /**< 'Virtual' function on the widget being set access */
 } Elm_Widget_Smart_Class;
 
 /**
@@ -613,8 +616,10 @@ struct _Elm_Object_Item
 
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
+EAPI Evas_Object     *elm_widget_add(Evas_Smart *, Evas_Object *);
+EAPI void             elm_widget_parent_set(Evas_Object *, Evas_Object *);
 EAPI Eina_Bool        elm_widget_api_check(int ver);
-EAPI Evas_Object     *elm_widget_add(Evas *evas);
+EAPI Evas_Object     *elm_widget_compat_add(Evas *evas);
 EAPI void             elm_widget_del_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
 EAPI void             elm_widget_del_pre_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
 EAPI void             elm_widget_focus_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
@@ -1059,7 +1064,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
        EINA_SAFETY_ON_NULL_RETURN_VAL((par), (ret));                       \
        evas = evas_object_evas_get(par); if (!(evas)) return (ret);        \
        wdat = ELM_NEW(wdtype); if (!(wdat)) return (ret);                  \
-       ob = elm_widget_add(evas); if (!(ob)) { free(wdat); return (ret); } \
+       ob = elm_widget_compat_add(evas); if (!(ob)) { free(wdat); return (ret); } \
     } while (0)
 
 #define ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ...) \

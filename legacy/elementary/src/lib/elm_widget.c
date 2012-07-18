@@ -922,6 +922,33 @@ elm_widget_smart_class_get(void)
    return class;
 }
 
+EAPI Evas_Object *
+elm_widget_add(Evas_Smart *smart,
+               Evas_Object *parent)
+{
+   Evas *e;
+   Evas_Object *o;
+
+   e = evas_object_evas_get(parent);
+   if (!e) return NULL;
+
+   o = evas_object_smart_add(e, smart);
+   elm_widget_parent_set(o, parent);
+
+   return o;
+}
+
+EAPI void
+elm_widget_parent_set(Evas_Object *obj,
+                      Evas_Object *parent)
+{
+   ELM_WIDGET_DATA_GET(obj, sd);
+
+   if (!sd->api->parent_set) return;
+
+   sd->api->parent_set(obj, parent);
+}
+
 EAPI void
 elm_widget_type_register(const char **ptr)
 {
@@ -1018,7 +1045,7 @@ _elm_widget_compat_smart_set_user(Elm_Widget_Compat_Smart_Class *sc)
 }
 
 EAPI Evas_Object *
-elm_widget_add(Evas *evas)
+elm_widget_compat_add(Evas *evas)
 {
    return evas_object_smart_add(evas, _elm_widget_compat_smart_class_new());
 }
