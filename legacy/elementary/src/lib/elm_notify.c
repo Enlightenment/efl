@@ -396,13 +396,15 @@ _timer_cb(void *data)
 {
    Evas_Object *obj = data;
 
-   if (!evas_object_visible_get(obj)) return ECORE_CALLBACK_CANCEL;
    ELM_NOTIFY_DATA_GET(obj, sd);
 
-   sd->timer = NULL;
+   if (!evas_object_visible_get(obj)) goto end;
+
    evas_object_hide(obj);
    evas_object_smart_callback_call(obj, SIG_TIMEOUT, NULL);
 
+end:
+   sd->timer = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 
