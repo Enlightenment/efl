@@ -328,3 +328,7 @@
 	* Fix the mapbuf to resize the contents(smart obj) correctly. When smart obj was
 	set as the contents the _configure would be called recursively. In this process
 	the lastest size could be reverted as the previous one.
+
+2012-07-19  Gustavo Sverzut Barbieri (k-s)
+
+	* Add Elm_Win_Trap and elm_win_trap_set() to allow e17 integration.

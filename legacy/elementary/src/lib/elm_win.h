@@ -1345,6 +1345,8 @@ EAPI Ecore_Wl_Window *elm_win_wl_window_get(const Evas_Object *obj);
  * calls to internal ecore_evas with the same name and parameters. If
  * there is a trap and it returns @c EINA_TRUE then the call will be
  * allowed, otherwise it will be ignored.
+ *
+ * @since 1.7
  */
 typedef struct _Elm_Win_Trap Elm_Win_Trap;
 struct _Elm_Win_Trap
@@ -1398,6 +1400,8 @@ struct _Elm_Win_Trap
  *         problem, such as invalid version number.
  *
  * @warning this is an advanced feature that you should avoid using.
+ *
+ * @since 1.7
  */
 EAPI Eina_Bool elm_win_trap_set(const Elm_Win_Trap *trap);
 

@@ -17,6 +17,7 @@ Additions:
    * Add "changed" signal to the progressbar widgets
    * Use Edje to enable accessibility on TEXTBLOCK.
    * Initialize Emotion when necessary.
+   * Elm_Win_Trap and elm_win_trap_set() to allow e17 integration.
 
 Fixes:
 
