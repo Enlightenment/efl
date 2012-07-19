@@ -1260,7 +1260,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              if (shift) _sel_start(en->cursor, rp->object, en);
              else _sel_clear(en->cursor, rp->object, en);
           }
-        /* If control is pressed, go to the start of the word */
+        /* If control is pressed, go to the end of the word */
         if (control) evas_textblock_cursor_word_end(en->cursor);
         evas_textblock_cursor_char_next(en->cursor);
         if (en->select_allow)
