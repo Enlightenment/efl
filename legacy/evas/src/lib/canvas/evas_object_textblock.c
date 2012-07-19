@@ -9079,8 +9079,8 @@ evas_object_textblock_line_number_geometry_get(const Evas_Object *obj, int line,
    return EINA_TRUE;
 }
 
-EAPI void
-evas_object_textblock_clear(Evas_Object *obj)
+static void
+_evas_object_textblock_clear_all(Evas_Object *obj)
 {
    Eina_List *l;
    Evas_Textblock_Cursor *cur;
@@ -9102,12 +9102,19 @@ evas_object_textblock_clear(Evas_Object *obj)
 
      }
 
+   _evas_textblock_changed(o, obj);
+}
+
+EAPI void
+evas_object_textblock_clear(Evas_Object *obj)
+{
+   TB_HEAD();
+   _evas_object_textblock_clear_all(obj);
+
    /* Force recreation of everything for textblock.
     * FIXME: We have the same thing in other places, merge it... */
    evas_textblock_cursor_paragraph_first(o->cursor);
    evas_textblock_cursor_text_append(o->cursor, "");
-
-   _evas_textblock_changed(o, obj);
 }
 
 EAPI void
@@ -9347,7 +9354,7 @@ evas_object_textblock_free(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
 
-   evas_object_textblock_clear(obj);
+   _evas_object_textblock_clear_all(obj);
    evas_object_textblock_style_set(obj, NULL);
    while (evas_object_textblock_style_user_peek(obj))
      {
