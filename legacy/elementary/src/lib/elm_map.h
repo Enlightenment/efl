@@ -2,6 +2,9 @@
  * @defgroup Map Map
  * @ingroup Elementary
  *
+ * @image html map_inheritance_tree.png
+ * @image latex map_inheritance_tree.eps
+ *
  * @image html img/widget/map/preview-00.png
  * @image latex img/widget/map/preview-00.eps
  *
@@ -10,39 +13,42 @@
  * but custom providers can be added.
  *
  * It supports some basic but yet nice features:
- * @li zoom and scroll
- * @li markers with content to be displayed when user clicks over it
- * @li group of markers
- * @li routes
+ * @li zooming and scrolling,
+ * @li markers with content to be displayed when user clicks over them,
+ * @li group of markers and
+ * @li routes.
+ *
+ * This widget implements the @b @ref elm-scrollable-interface
+ * interface, so that all (non-deprecated) functions for the base @ref
+ * Scroller widget also work for map objects.
  *
  * Smart callbacks one can listen to:
- *
- * - "clicked" - This is called when a user has clicked the map without
- *   dragging around.
- * - "clicked,double" - This is called when a user has double-clicked
- *   the map.
- * - "press" - This is called when a user has pressed down on the map.
- * - "longpressed" - This is called when a user has pressed down on the map
- *   for a long time without dragging around.
- * - "scroll" - the content has been scrolled (moved).
- * - "scroll,drag,start" - dragging the contents around has started.
- * - "scroll,drag,stop" - dragging the contents around has stopped.
- * - "scroll,anim,start" - scrolling animation has started.
- * - "scroll,anim,stop" - scrolling animation has stopped.
- * - "zoom,start" - Zoom animation started.
- * - "zoom,stop" - Zoom animation stopped.
- * - "zoom,change" - Zoom changed when using an auto zoom mode.
- * - "tile,load" - A map tile image load begins.
- * - "tile,loaded" -  A map tile image load ends.
- * - "tile,loaded,fail" -  A map tile image load fails.
- * - "route,load" - Route request begins.
- * - "route,loaded" - Route request ends.
- * - "route,loaded,fail" - Route request fails.
- * - "name,load" - Name request begins.
- * - "name,loaded" - Name request ends.
- * - "name,loaded,fail" - Name request fails.
- * - "overlay,clicked" - A overlay is clicked.
- * - "loaded" - when a map is finally loaded. @since 1.7
+ * - @c "clicked" - This is called when a user has clicked the map without
+ *                  dragging around.
+ * - @c "clicked,double" - This is called when a user has double-clicked
+ *                         the map.
+ * - @c "press" - This is called when a user has pressed down on the map.
+ * - @c "longpressed" - This is called when a user has pressed down on the map
+ *   @c for a long time without dragging around.
+ * - @c "scroll" - the content has been scrolled (moved).
+ * - @c "scroll,drag,start" - dragging the contents around has started.
+ * - @c "scroll,drag,stop" - dragging the contents around has stopped.
+ * - @c "scroll,anim,start" - scrolling animation has started.
+ * - @c "scroll,anim,stop" - scrolling animation has stopped.
+ * - @c "zoom,start" - Zoom animation started.
+ * - @c "zoom,stop" - Zoom animation stopped.
+ * - @c "zoom,change" - Zoom changed when using an auto zoom mode.
+ * - @c "tile,load" - A map tile image load begins.
+ * - @c "tile,loaded" -  A map tile image load ends.
+ * - @c "tile,loaded,fail" -  A map tile image load fails.
+ * - @c "route,load" - Route request begins.
+ * - @c "route,loaded" - Route request ends.
+ * - @c "route,loaded,fail" - Route request fails.
+ * - @c "name,load" - Name request begins.
+ * - @c "name,loaded" - Name request ends.
+ * - @c "name,loaded,fail" - Name request fails.
+ * - @c "overlay,clicked" - A overlay is clicked.
+ * - @c "loaded" - when a map is finally loaded. @since 1.7
  *
  * Available style for map widget:
  * - @c "default"
@@ -975,7 +981,7 @@ EAPI void                  elm_map_overlays_show(Eina_List *overlays);
  * is clicked, callback will be called and return a virtual group overlays.
  *
  * You can delete this callback function by setting @c NULL.
- * 
+ *
  * @ingroup Map
  */
 EAPI void                  elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Get_Cb get_cb, void *data);
@@ -993,7 +999,7 @@ EAPI void                  elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, 
  * You can delete this callback function by setting @c NULL.
  *
  * @since 1.7
- * 
+ *
  * @ingroup Map
  */
 EAPI void                  elm_map_overlay_del_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Del_Cb del_cb, void *data);

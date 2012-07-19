@@ -121,6 +121,7 @@ WGT_TREE = \
 	label \
 	layout \
 	list \
+	map \
 	mapbuf \
 	menu \
 	naviframe \
