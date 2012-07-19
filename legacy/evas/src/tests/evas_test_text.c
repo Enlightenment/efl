@@ -169,7 +169,7 @@ START_TEST(evas_text_unrelated)
    START_TEXT_TEST();
    const char *buf = "נסיון";
    int pos;
-   Eina_Unicode value;
+   int value;
    /* Actually, they are tested in eina, just doing it for completeness. */
    fail_if(evas_string_char_len_get(buf) != 5);
 
