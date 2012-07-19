@@ -789,7 +789,8 @@ _elm_image_smart_sizing_eval(Evas_Object *obj)
    sd->scale = 1.0;
    ELM_IMAGE_CLASS(ELM_WIDGET_DATA(sd)->api)->size_get(obj, &w, &h);
    sd->scale = ts;
-
+   evas_object_size_hint_min_get(obj, &minw, &minh);
+   
    if (sd->no_scale)
      {
         maxw = minw = w;
