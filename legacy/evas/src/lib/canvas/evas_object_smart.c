@@ -1153,6 +1153,8 @@ evas_object_smart_render(Evas_Object *obj __UNUSED__, void *output __UNUSED__, v
 static void
 evas_object_smart_render_pre(Evas_Object *obj)
 {
+   Evas *e;
+
    if (obj->pre_render_done) return;
    if (!obj->child_has_map && !obj->cur.cached_surface)
      {
@@ -1225,8 +1227,13 @@ evas_object_smart_render_pre(Evas_Object *obj)
           }
 #endif
      }
+
+   e = obj->layer->evas;
+
    if (obj->changed_map)
-     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+     {
+       evas_object_render_pre_prev_cur_add(&e->clip_changes, obj);
+     }
 
    obj->pre_render_done = EINA_TRUE;
 }
