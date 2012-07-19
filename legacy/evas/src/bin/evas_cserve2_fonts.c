@@ -17,6 +17,7 @@
 #include FT_TYPES_H
 #include FT_MODULE_H
 #include FT_OUTLINE_H
+#include FT_SYNTHESIS_H
 
 #include "evas_cserve2.h"
 

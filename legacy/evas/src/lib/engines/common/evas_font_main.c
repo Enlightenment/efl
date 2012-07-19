@@ -10,6 +10,7 @@
 #include <assert.h>
 
 #include FT_OUTLINE_H
+#include FT_SYNTHESIS_H
 
 FT_Library      evas_ft_lib = 0;
 static int      initialised = 0;
