@@ -1724,7 +1724,7 @@ _move_cb(void *data,
              evas_smart_objects_calculate(evas_object_evas_get(data));
              _configure(fl);
              // FIXME: end hack
-             evas_object_smart_callback_call(obj, SIG_ANIMATE_BEGIN, NULL);
+             evas_object_smart_callback_call(fl, SIG_ANIMATE_BEGIN, NULL);
           }
         else return;
      }
