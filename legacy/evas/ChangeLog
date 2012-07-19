@@ -897,3 +897,7 @@
           never have done this. This broke the general logic of size
           hint handling.
 
+2012-07-19  Jiyoun Park(jypark)
+
+           * Fix jpeg save bug related with error handler
+

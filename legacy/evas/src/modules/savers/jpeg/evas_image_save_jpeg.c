@@ -51,8 +51,8 @@ _JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__, int msg_level __UNUSED__)
 static int
 save_image_jpeg(RGBA_Image *im, const char *file, int quality)
 {
-   struct _JPEG_error_mgr jerr;
    struct jpeg_compress_struct cinfo;
+   struct _JPEG_error_mgr jerr;
    FILE               *f;
    DATA8              *buf;
    DATA32             *ptr;
@@ -68,10 +68,11 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
      {
 	return 0;
      }
+   memset(&cinfo, 0, sizeof(cinfo));
+   cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
    jerr.pub.emit_message = _JPEGErrorHandler2;
    jerr.pub.output_message = _JPEGErrorHandler;
-   cinfo.err = jpeg_std_error(&(jerr.pub));
    if (sigsetjmp(jerr.setjmp_buffer, 1))
      {
 	jpeg_destroy_compress(&cinfo);
