@@ -50,28 +50,12 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
                   const Evas_Map_Point *p2;
 
                   p = obj->cur.map->points;
-                  p_end = p + obj->cur.map->count;
                   p2 = obj->prev.map->points;
 
-                  for (; p < p_end; p++, p2++)
-                    {
-                       if ((p->a != p2->a) ||
-                           (p->r != p2->r) ||
-                           (p->g != p2->g) ||
-                           (p->b != p2->b))
-                         {
-                            ch = 1;
-                            break;
-                         }
-                       if ((p->x != p2->x) ||
-                           (p->y != p2->y) ||
-                           (p->z != p2->z))
-                         {
-                            ch = 1;
-                            break;
-                         }
-                    }
+                  ch = memcmp(p, p2,
+                              sizeof (Evas_Map_Point) * obj->prev.map->count);
 
+                  ch = !!ch;
                   if (!ch)
                     {
                        if (obj->cache_map) evas_map_free(obj->cache_map); 
@@ -115,6 +99,10 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
    obj->cur.map->normal_geometry.w = (x2 - x1);
    obj->cur.map->normal_geometry.h = (yy2 - yy1);
    obj->changed_map = ch;
+   // This shouldn't really be needed, but without it we do have case
+   // where the clip is wrong when a map doesn't change, so always forcing
+   // it, as long as someone doesn't find a better fix.
+   evas_object_clip_dirty(obj);
    if (ch) _evas_map_calc_geom_change(obj);
 }
 
