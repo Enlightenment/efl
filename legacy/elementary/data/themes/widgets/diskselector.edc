@@ -195,3 +195,147 @@ group { name: "elm/diskselector/item/default";
       }
    }
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// diskselector item : datetime style
+///////////////////////////////////////////////////////////////////////////////
+group { name: "elm/diskselector/item/datetime/default";
+   data {
+      item: "len_threshold" "10";
+      item: "min_height" "-1";
+      item: "min_width" "-1";
+   }
+   parts {
+     part { name: "elm.text"; type: TEXT;
+        mouse_events: 0;
+        scale: 1;
+        description { state: "default" 0.0;
+           min: 13 13;
+           align: 0.0 0.0;
+           color: 172 172 172 255;
+           visible: 1;
+           text {
+              font: "Sans,Edje-Vera";
+              size: 10;
+              min: 1 1;
+           }
+        }
+        description { state: "center_sel" 0.0;
+           inherit: "default" 0.0;
+           color: 255 255 255 255;
+        }
+        description { state: "left_side" 0.0;
+           inherit: "default" 0.0;
+           color: 152 152 152 255;
+           text.align: 0.2 0.5;
+        }
+        description { state: "left_side_sel" 0.0;
+           inherit: "default" 0.0;
+           color: 255 255 255 255;
+           text.align: 0.2 0.5;
+        }
+        description { state: "right_side" 0.0;
+           inherit: "default" 0.0;
+           color: 152 152 152 255;
+           text.align: 0.8 0.5;
+        }
+        description { state: "right_side_sel" 0.0;
+           inherit: "default" 0.0;
+           color: 255 255 255 255;
+           text.align: 0.8 0.5;
+        }
+     }
+     part { name: "over1";
+        mouse_events: 1;
+        repeat_events: 1;
+        ignore_flags: ON_HOLD;
+        description {
+           state: "default" 0.0;
+        }
+     }
+   }
+   programs {
+      script {
+         public field_pos; // center = 0,left = 1, right =2.
+         public field_selected; //field is selected(1) or not(0).
+
+         public update_state() {
+            new pos, is_sel;
+            
+            pos = get_int(field_pos)
+            is_sel = get_int(field_selected);
+            if (is_sel == 1)
+              {
+                 if (pos == 0)
+                   set_state(PART:"elm.text", "center_sel", 0.0);
+                 else if (pos == 1)
+                   set_state(PART:"elm.text", "left_side_sel", 0.0);
+                 else if (pos == 2)
+                   set_state(PART:"elm.text", "right_side_sel", 0.0);
+              }
+            else if (is_sel == 0)
+              {
+                 if (pos == 0)
+                   set_state(PART:"elm.text", "default", 0.0);
+                 else if (pos == 1)
+                   set_state(PART:"elm.text", "left_side", 0.0);
+                 else if (pos == 2)
+                   set_state(PART:"elm.text", "right_side", 0.0);
+              }
+         }
+      }
+      program { name: "selected_text";
+         signal: "elm,state,selected";
+         source: "elm";
+         script {
+            set_int(field_selected, 1);
+            update_state();
+         }
+      }
+      program { name: "default_text";
+         signal: "elm,state,default";
+         source: "elm";
+         script {
+            set_int(field_selected, 0);
+            update_state();
+         }
+      }
+      program { name: "center_text";
+         signal: "elm,state,center";
+         source: "elm";
+         script {
+            set_int(field_pos, 0);
+            update_state();
+         }
+      }
+      program { name: "center_small_text";
+         signal: "elm,state,center_small";
+         source: "elm";
+         script {
+            set_int(field_pos, 0);
+            update_state();
+         }
+      }
+      program { name: "l_side_text";
+         signal: "elm,state,left_side";
+         source: "elm";
+         script {
+            set_int(field_pos, 1);
+            update_state();
+         }
+      }
+      program { name: "r_side_text";
+         signal: "elm,state,right_side";
+         source: "elm";
+         script {
+            set_int(field_pos, 2);
+            update_state();
+         }
+      }
+      program { name: "field_click";
+         signal: "mouse,clicked,1";
+         source: "over1";
+         action: SIGNAL_EMIT "elm,action,click" "";
+      }
+   }
+}

@@ -4,8 +4,7 @@
 
 #define DATETIME_FIELD(_pos) \
    part {\
-      name: "field"#_pos; \
-      type: SWALLOW; \
+      name: "field"#_pos; type: SWALLOW; \
       scale: 1;\
       clip_to: "clipper";\
       description { state: "default" 0.0; \
@@ -25,19 +24,17 @@
       description { state: "enable" 0.0;\
          inherit: "default" 0.0;\
          visible: 1;\
-         min: 25 25;\
+         min: 13 13;\
       }\
    }\
    programs{\
-      program {\
-         name: "field_"#_pos"enabled";\
+      program { name: "field_"#_pos"enabled";\
          signal: "field"#_pos",enable";\
          source: "elm";\
          action: STATE_SET "enable" 0.0;\
          target: "field"#_pos;\
       }\
-      program {\
-         name: "field_"#_pos"disabled";\
+      program { name: "field_"#_pos"disabled";\
          signal: "field"#_pos",disable";\
          source: "elm";\
          action: STATE_SET "default" 0.0;\
@@ -47,11 +44,9 @@
 
 #define DATETIME_SEPARATOR(_pos,_after) \
    part {\
-      name: "separator"#_pos; \
-      type: TEXT;\
+      name: "separator"#_pos; type: TEXT;\
       scale: 1;\
-      description {\
-         state: "default" 0.0;\
+      description { state: "default" 0.0;\
          visible: 0;\
          min: 0 0;\
          align: 0.0 0.5;\
@@ -66,8 +61,8 @@
          }\
          color: 100 100 100 255;\
          text {\
-            font: "SLP:style=Roman";\
-            size: 13;\
+            font: "Sans,Edje-Vera";\
+            size: 10;\
             min:  1 0;\
             align: 0.2 0.5;\
          }\
@@ -75,19 +70,17 @@
       description { state: "enable" 0.0;\
          inherit: "default" 0.0;\
          visible: 1;\
-         min: 13 25;\
+         min: 13 13;\
       }\
    }\
    programs {\
-      program {\
-         name: "separator"#_pos",enabled";\
+      program { name: "separator"#_pos",enabled";\
          signal: "field"#_after",enable";\
          source: "elm";\
          action: STATE_SET "enable" 0.0;\
          target: "separator"#_pos;\
       }\
-      program {\
-         name: "separator"#_pos",disabled";\
+      program { name: "separator"#_pos",disabled";\
          signal: "field"#_after",disable";\
          source: "elm";\
          action: STATE_SET "default" 0.0;\
@@ -98,23 +91,17 @@
 
 group { name: "elm/datetime/base/default";
    parts {
-      part {
-         name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          scale: 1;
-         description {
-            state: "default" 0.0;
+         description { state: "default" 0.0;
             color: 0 0 0 0;
          }
       }
-      part {
-         name: "separator0";
-         type: RECT;
+      part { name: "separator0"; type: RECT;
          scale: 1;
-         description {
-            state: "default" 0.0;
+         description { state: "default" 0.0;
             visible: 0;
-            min: 13 25;
+            min: 13 13;
             align: 0.0 0.5;
             fixed: 1 0;
             rel2 {
@@ -135,9 +122,7 @@ group { name: "elm/datetime/base/default";
       DATETIME_SEPARATOR(5,4)
       DATETIME_FIELD(5)
       DATETIME_SEPARATOR(6,5)
-      part {
-         name: "clipper";
-         type: RECT;
+      part { name: "clipper"; type: RECT;
          description { state: "default" 0.0;
             rel1 {
                relative: 0.0 0.0;
@@ -154,9 +139,7 @@ group { name: "elm/datetime/base/default";
             color: 255 255 255 127;
          }
       }
-      part {
-         name: "disabler";
-         type: RECT;
+      part { name: "disabler"; type: RECT;
          description { state: "default" 0.0;
             color: 0 0 0 0;
             visible: 0;
@@ -168,16 +151,14 @@ group { name: "elm/datetime/base/default";
       }
    }
    programs {
-      program {
-         name: "disble_datetime";
+      program { name: "disble_datetime";
          signal: "elm,state,disabled";
          source: "elm";
          action: STATE_SET "visible" 0.0;
          target: "disabler";
          target: "clipper";
       }
-      program {
-         name: "enable_datetime";
+      program { name: "enable_datetime";
          signal: "elm,state,enabled";
          source: "elm";
          action: STATE_SET "default" 0.0;
@@ -186,163 +167,6 @@ group { name: "elm/datetime/base/default";
       }
    }
 }//end datetime group
-
-///////////////////////////////////////////////////////////////////////////////
-// diskselector item : datetime style
-///////////////////////////////////////////////////////////////////////////////
-group { name: "elm/diskselector/item/datetime/default";
-   data {
-      item: "len_threshold" "10";
-      item: "min_height" "-1";
-      item: "min_width" "-1";
-   }
-   parts {
-     part {
-        name: "elm.text";
-        type: TEXT;
-        mouse_events: 0;
-        scale: 1;
-        description {
-           state: "default" 0.0;
-           min: 25 25;
-           fixed: 1 1;
-           align: 0.0 0.0;
-           color: 172 172 172 255;
-           visible: 1;
-           text {
-              font: "Sans,Edje-Vera";
-              size: 13;
-              min: 1 1;
-           }
-        }
-        description {
-           state: "center_sel" 0.0;
-           inherit: "default" 0.0;
-           color: 255 255 255 255;
-        }
-        description { state: "left_side" 0.0;
-           inherit: "default" 0.0;
-           color: 152 152 152 255;
-           text.size: 10;
-           text.align: 0.2 0.5;
-        }
-        description { state: "left_side_sel" 0.0;
-           inherit: "default" 0.0;
-           color: 255 255 255 255;
-           text.size: 10;
-           text.align: 0.2 0.5;
-        }
-        description { state: "right_side" 0.0;
-           inherit: "default" 0.0;
-           color: 152 152 152 255;
-           text.size: 10;
-           text.align: 0.8 0.5;
-        }
-        description { state: "right_side_sel" 0.0;
-           inherit: "default" 0.0;
-           color: 255 255 255 255;
-           text.size: 10;
-           text.align: 0.8 0.5;
-        }
-     }
-     part {
-        name: "over1";
-        mouse_events: 1;
-        repeat_events: 1;
-        ignore_flags: ON_HOLD;
-        description {
-           state: "default" 0.0;
-        }
-     }
-   }
-   programs {
-      script {
-         public field_pos; // center = 0,left = 1, right =2.
-         public field_selected; //field is selected(1) or not(0).
-
-         public update_state() {
-            new pos, is_sel;
-            pos = get_int(field_pos)
-            is_sel = get_int(field_selected);
-
-            if (is_sel == 1)
-              {
-                 if (pos == 0)
-                   set_state(PART:"elm.text", "center_sel", 0.0);
-                 else if (pos == 1)
-                   set_state(PART:"elm.text", "left_side_sel", 0.0);
-                 else if (pos == 2)
-                   set_state(PART:"elm.text", "right_side_sel", 0.0);
-              }
-            else if (is_sel == 0)
-              {
-                 if (pos == 0)
-                   set_state(PART:"elm.text", "default", 0.0);
-                 else if (pos == 1)
-                   set_state(PART:"elm.text", "left_side", 0.0);
-                 else if (pos == 2)
-                   set_state(PART:"elm.text", "right_side", 0.0);
-              }
-         }
-      }
-      program {
-         name: "selected_text";
-         signal: "elm,state,selected";
-         source: "elm";
-         script {
-            set_int(field_selected, 1);
-            update_state();
-         }
-      }
-      program {
-         name: "default_text";
-         signal: "elm,state,default";
-         source: "elm";
-         script {
-            set_int(field_selected, 0);
-            update_state();
-         }
-      }
-      program { name: "center_text";
-         signal: "elm,state,center";
-         source: "elm";
-         script {
-            set_int(field_pos, 0);
-            update_state();
-         }
-      }
-      program { name: "center_small_text";
-         signal: "elm,state,center_small";
-         source: "elm";
-         script {
-            set_int(field_pos, 0);
-            update_state();
-         }
-      }
-      program { name: "l_side_text";
-         signal: "elm,state,left_side";
-         source: "elm";
-         script {
-            set_int(field_pos, 1);
-            update_state();
-         }
-      }
-      program { name: "r_side_text";
-         signal: "elm,state,right_side";
-         source: "elm";
-         script {
-            set_int(field_pos, 2);
-            update_state();
-         }
-      }
-      program {
-         name: "field_click";
-         signal: "mouse,clicked,1";
-         source: "over1";
-         action: SIGNAL_EMIT "elm,action,click" "";
-      }
-   }
-}
 
 ///////////////////////////////////////////////////////////////////////////////
 // end of datetime style
