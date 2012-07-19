@@ -339,7 +339,7 @@ _parse_format(Evas_Object *obj,
                        /* ignore the fields already have or disabled
                         * valid formats, means already parsed &
                         * repeated, ignore. */
-                       if (!field->visible || field->location != -1) break;
+                       if (field->location != -1) break;
                        field->fmt[1] = cur;
                        field->fmt_exist = EINA_TRUE;
                        field->location = location++;
