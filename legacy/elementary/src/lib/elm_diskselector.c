@@ -13,7 +13,6 @@
 #define DISPLAY_ITEM_NUM_MIN 3
 
 static const char DISKSELECTOR_SMART_NAME[] = "elm_diskselector";
-static const char DISKSELECTOR_PAN_SMART_NAME[] = "elm_diskselector_pan";
 
 #define ELM_DISKSELECTOR_DATA_GET(o, sd) \
   Elm_Diskselector_Smart_Data * sd = evas_object_smart_data_get(o)
