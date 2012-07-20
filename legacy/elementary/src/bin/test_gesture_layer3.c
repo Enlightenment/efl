@@ -19,7 +19,6 @@
 #define MOMENTUM_FRICTION 1000
 #define ROTATE_MOMENTUM_FRICTION 30
 #define ZOOM_MOMENTUM_FRICTION 8
-#define TIMER_TICK 0.1
 
 struct _Photo_Object {
      Evas_Object *ic, *shadow;
@@ -28,8 +27,8 @@ struct _Photo_Object {
 
      /* 3 transit object to implement momentum animation */
      Elm_Transit *zoom_momentum;
-     Ecore_Timer *rot_timer;
-     Ecore_Timer *mom_timer;
+     Ecore_Animator *rot_timer;
+     Ecore_Animator *mom_timer;
      double rot_tot_time;
      double rot_progress;
      /* bx, by - current wanted coordinates of the photo object.
@@ -172,7 +171,7 @@ rotate_momentum_animation_operation(void *_po)
    Eina_Bool rc = ECORE_CALLBACK_RENEW;
    int deg_friction = ROTATE_MOMENTUM_FRICTION;
    Photo_Object *po = (Photo_Object *) _po;
-   po->rot_progress += TIMER_TICK;
+   po->rot_progress += ecore_animator_frametime_get();
    if (po->rot_progress > po->rot_tot_time)
      {
         po->rot_timer = NULL;
@@ -237,7 +236,7 @@ rotate_start(void *_po, void *event_info)
    if (po->rot_timer)
      {
         po->base_rotate = po->rotate;
-        ecore_timer_del(po->rot_timer);
+        ecore_animator_del(po->rot_timer);
         po->rot_timer = NULL;
      }
 
@@ -277,7 +276,7 @@ rotate_end(void *_po, void *event_info)
    po->rot_progress = 0.0;
    if (po->rot_momentum)
      {
-        po->rot_timer = ecore_timer_add(TIMER_TICK, rotate_momentum_animation_operation, po);
+        po->rot_timer = ecore_animator_add(rotate_momentum_animation_operation, po);
      }
    return EVAS_EVENT_FLAG_NONE;
 }
@@ -361,7 +360,7 @@ momentum_start(void *_po, void *event_info)
    /* If there's an active animator, stop it */
    if (po->mom_timer)
      {
-        ecore_timer_del(po->mom_timer);
+        ecore_animator_del(po->mom_timer);
         po->mom_timer = NULL;
      }
 
@@ -394,7 +393,7 @@ momentum_animation_operation(void *_po)
    Eina_Bool rc = ECORE_CALLBACK_RENEW;
    Evas_Coord x = po->bx;
    Evas_Coord y = po->by;
-   po->mom_tot_time -= TIMER_TICK;
+   po->mom_tot_time -= ecore_animator_frametime_get();
    if (po->mom_tot_time <= 0)
      {
         po->mom_timer = NULL;
@@ -434,7 +433,7 @@ momentum_end(void *_po, void *event_info)
         po->mom_y_acc = (p->my) / po->mom_tot_time; /* a = (v-v0) / t */
         po->mom_x_acc /= MOMENTUM_FACTOR;
         po->mom_y_acc /= MOMENTUM_FACTOR;
-        po->mom_timer = ecore_timer_add(TIMER_TICK, momentum_animation_operation, po);
+        po->mom_timer = ecore_animator_add(momentum_animation_operation, po);
      }
 
    return EVAS_EVENT_FLAG_NONE;
