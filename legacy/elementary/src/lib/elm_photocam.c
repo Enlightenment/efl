@@ -86,7 +86,6 @@ struct _Elm_Photocam_Smart_Data
 
    const Elm_Scrollable_Smart_Interface *s_iface;
 
-   /* Elm_Photocam_Pan_Smart_Data                   *pan; */
    Evas_Object                          *pan_obj;
 
    Evas_Coord                            pan_x, pan_y, minw, minh;
@@ -991,13 +990,13 @@ _elm_photocam_smart_on_focus(Evas_Object *obj)
      {
         edje_object_signal_emit
           (ELM_WIDGET_DATA(sd)->resize_obj, "elm,action,focus", "elm");
-        evas_object_focus_set(ELM_WIDGET_DATA(sd)->obj, EINA_TRUE);
+        evas_object_focus_set(ELM_WIDGET_DATA(sd)->resize_obj, EINA_TRUE);
      }
    else
      {
         edje_object_signal_emit
           (ELM_WIDGET_DATA(sd)->resize_obj, "elm,action,unfocus", "elm");
-        evas_object_focus_set(ELM_WIDGET_DATA(sd)->obj, EINA_FALSE);
+        evas_object_focus_set(ELM_WIDGET_DATA(sd)->resize_obj, EINA_FALSE);
      }
 
    return EINA_TRUE;
