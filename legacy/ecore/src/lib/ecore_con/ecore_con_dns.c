@@ -12,6 +12,10 @@
 #include <string.h>
 #include <sys/types.h>
 
+#ifdef HAVE_ERRNO_H
+# include <errno.h> /* for EAGAIN */
+#endif
+
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
