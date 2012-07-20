@@ -709,23 +709,26 @@ _elm_colorselector_smart_theme(Evas_Object *obj)
      }
    for (i = 0; i < 4; i++)
      {
-        evas_object_del(sd->cb_data[i]->colorbar);
-        sd->cb_data[i]->colorbar = NULL;
-        evas_object_del(sd->cb_data[i]->bar);
-        sd->cb_data[i]->bar = NULL;
-        evas_object_del(sd->cb_data[i]->lbt);
-        sd->cb_data[i]->lbt = NULL;
-        evas_object_del(sd->cb_data[i]->rbt);
-        sd->cb_data[i]->rbt = NULL;
-        if (i != 0)
+        if (sd->cb_data[i])
           {
-             evas_object_del(sd->cb_data[i]->bg_rect);
-             sd->cb_data[i]->bg_rect = NULL;
+             evas_object_del(sd->cb_data[i]->colorbar);
+             sd->cb_data[i]->colorbar = NULL;
+             evas_object_del(sd->cb_data[i]->bar);
+             sd->cb_data[i]->bar = NULL;
+             evas_object_del(sd->cb_data[i]->lbt);
+             sd->cb_data[i]->lbt = NULL;
+             evas_object_del(sd->cb_data[i]->rbt);
+             sd->cb_data[i]->rbt = NULL;
+             if (i != 0)
+               {
+                  evas_object_del(sd->cb_data[i]->bg_rect);
+                  sd->cb_data[i]->bg_rect = NULL;
+               }
+             evas_object_del(sd->cb_data[i]->arrow);
+             sd->cb_data[i]->arrow = NULL;
+             evas_object_del(sd->cb_data[i]->touch_area);
+             sd->cb_data[i]->touch_area = NULL;
           }
-        evas_object_del(sd->cb_data[i]->arrow);
-        sd->cb_data[i]->arrow = NULL;
-        evas_object_del(sd->cb_data[i]->touch_area);
-        sd->cb_data[i]->touch_area = NULL;
      }
 
    _color_bars_add(obj);
@@ -784,13 +787,16 @@ _component_sizing_eval(Evas_Object *obj)
 
    for (i = 0; i < 4; i++)
      {
-        if (sd->cb_data[i]->bg_rect)
-          _sub_obj_size_hints_set(sd->cb_data[i]->bg_rect, 1, 1);
-
-        _sub_obj_size_hints_set(sd->cb_data[i]->bar, 1, 1);
-        _sub_obj_size_hints_set(sd->cb_data[i]->rbt, 1, 1);
-        _sub_obj_size_hints_set(sd->cb_data[i]->lbt, 1, 1);
-        _sub_obj_size_hints_set(sd->cb_data[i]->colorbar, 4, 1);
+        if (sd->cb_data[i])
+          {
+             if (sd->cb_data[i]->bg_rect)
+               _sub_obj_size_hints_set(sd->cb_data[i]->bg_rect, 1, 1);
+             
+             _sub_obj_size_hints_set(sd->cb_data[i]->bar, 1, 1);
+             _sub_obj_size_hints_set(sd->cb_data[i]->rbt, 1, 1);
+             _sub_obj_size_hints_set(sd->cb_data[i]->lbt, 1, 1);
+             _sub_obj_size_hints_set(sd->cb_data[i]->colorbar, 4, 1);
+          }
      }
 
    edje_object_size_min_restricted_calc
@@ -1176,13 +1182,9 @@ _elm_colorselector_smart_del(Evas_Object *obj)
 
    _items_del(sd);
    /* This cb_data are used during the destruction process of base.del */
-   for (i = 0; i < 4; i++)
-     tmp[i] = sd->cb_data[i];
-
+   for (i = 0; i < 4; i++) tmp[i] = sd->cb_data[i];
    ELM_WIDGET_CLASS(_elm_colorselector_parent_sc)->base.del(obj);
-
-   for (i = 0; i < 4; i++)
-     free(tmp[i]);
+   for (i = 0; i < 4; i++) free(tmp[i]);
 }
 
 static Eina_Bool
