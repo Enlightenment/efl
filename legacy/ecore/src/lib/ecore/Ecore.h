@@ -931,7 +931,7 @@ struct _Ecore_Exe_Event_Del    /** Process exit event */
 struct _Ecore_Exe_Event_Data_Line    /**< Lines from a child process */
 {
    char *line; /**< The bytes of a line of buffered data */
-   int   size; /**< The size odf the line buffer in bytes */
+   int   size; /**< The size of the line buffer in bytes */
 };
 
 struct _Ecore_Exe_Event_Data    /** Data from a child process event */
