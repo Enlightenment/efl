@@ -468,7 +468,8 @@ _elm_list_deletions_process(Elm_List_Smart_Data *sd)
 static void
 _elm_list_smart_sizing_eval(Evas_Object *obj)
 {
-   Evas_Coord vw, vh, minw, minh, maxw, maxh, w, h, vmw, vmh;
+   Evas_Coord vw = 0, vh = 0;
+   Evas_Coord minw, minh, maxw, maxh, w, h, vmw, vmh;
    double xw, yw;
 
    ELM_LIST_DATA_GET(obj, sd);

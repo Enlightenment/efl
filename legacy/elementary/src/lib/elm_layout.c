@@ -964,12 +964,6 @@ _sub_box_remove(Evas_Object *obj,
    Evas_Object *child = sub_d->obj; /* sub_d will die in
                                      * _elm_layout_smart_sub_object_del */
 
-   if (!elm_widget_sub_object_del(obj, child))
-     {
-        ERR("could not remove sub object %p from %p", child, obj);
-        return NULL;
-     }
-
    if (sub_d->type == BOX_INSERT_BEFORE)
      evas_object_event_callback_del_full
        ((Evas_Object *)sub_d->p.box.reference,
@@ -977,6 +971,12 @@ _sub_box_remove(Evas_Object *obj,
 
    edje_object_part_box_remove
      (ELM_WIDGET_DATA(sd)->resize_obj, sub_d->part, child);
+
+   if (!elm_widget_sub_object_del(obj, child))
+     {
+        ERR("could not remove sub object %p from %p", child, obj);
+        return NULL;
+     }
 
    return child;
 }
@@ -1107,14 +1107,14 @@ _sub_table_remove(Evas_Object *obj,
 
    child = sub_d->obj; /* sub_d will die in _elm_layout_smart_sub_object_del */
 
+   edje_object_part_table_unpack
+     (ELM_WIDGET_DATA(sd)->resize_obj, sub_d->part, child);
+
    if (!elm_widget_sub_object_del(obj, child))
      {
         ERR("could not remove sub object %p from %p", child, obj);
         return NULL;
      }
-
-   edje_object_part_table_unpack
-     (ELM_WIDGET_DATA(sd)->resize_obj, sub_d->part, child);
 
    return child;
 }

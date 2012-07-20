@@ -1196,6 +1196,15 @@ _elm_win_smart_del(Evas_Object *obj)
    if (sd->role) eina_stringshare_del(sd->role);
    if (sd->icon) evas_object_del(sd->icon);
 
+   /* Don't let callback in the air that point to sd */
+   ecore_evas_callback_delete_request_set(sd->ee, NULL);
+   ecore_evas_callback_resize_set(sd->ee, NULL);
+   ecore_evas_callback_mouse_in_set(sd->ee, NULL);
+   ecore_evas_callback_focus_in_set(sd->ee, NULL);
+   ecore_evas_callback_focus_out_set(sd->ee, NULL);
+   ecore_evas_callback_move_set(sd->ee, NULL);
+   ecore_evas_callback_state_change_set(sd->ee, NULL);
+
    _elm_win_parent_sc->base.del(obj); /* handles freeing sd */
 
    if ((!_elm_win_list) &&

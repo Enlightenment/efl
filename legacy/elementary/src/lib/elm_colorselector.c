@@ -1167,6 +1167,7 @@ static void
 _elm_colorselector_smart_del(Evas_Object *obj)
 {
    int i = 0;
+   void *tmp[4];
 
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
@@ -1174,10 +1175,14 @@ _elm_colorselector_smart_del(Evas_Object *obj)
    if (sd->palette_name) eina_stringshare_del(sd->palette_name);
 
    _items_del(sd);
+   /* This cb_data are used during the destruction process of base.del */
    for (i = 0; i < 4; i++)
-     free(sd->cb_data[i]);
+     tmp[i] = sd->cb_data[i];
 
    ELM_WIDGET_CLASS(_elm_colorselector_parent_sc)->base.del(obj);
+
+   for (i = 0; i < 4; i++)
+     free(tmp[i]);
 }
 
 static Eina_Bool
