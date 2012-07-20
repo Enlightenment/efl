@@ -20,14 +20,14 @@ lib_LTLIBRARIES = libeet.la
 libeet_la_SOURCES = \
 Eet_private.h \
 eet_alloc.c \
-eet_lib.c \
-eet_data.c \
-eet_image.c \
 eet_cipher.c \
+eet_connection.c \
+eet_data.c \
 eet_dictionary.c \
+eet_image.c \
+eet_lib.c \
 eet_node.c \
 eet_utils.c \
-eet_connection.c \
 lz4/lz4.c \
 lz4/lz4.h \
 lz4/lz4hc.c \
