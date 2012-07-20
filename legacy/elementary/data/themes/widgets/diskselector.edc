@@ -54,6 +54,20 @@ group { name: "elm/diskselector/base/default";
             rel2.offset: -3 -3;
          }
       }
+      part { name: "text";
+         type: TEXT;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            visible: 0;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               min: 0 1;
+            }
+         }
+      }
       part { name: "elm.swallow.content";
          clip_to: "clipper";
          type: SWALLOW;
@@ -77,43 +91,59 @@ group { name: "elm/diskselector/item/default";
    parts {
       part { name: "elm.swallow.icon";
          type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
             rel1 {
                relative: 0 0;
-               offset: 4 4;
+               offset: 1 1;
             }
             rel2 {
                relative: 0 1;
-               offset: 4 -5;
+               offset: 1 -2;
             }
          }
          description { state: "show" 0.0;
             inherit: "default" 0.0;
+            min: 10 10;
+            aspect: 1.0 1.0;
+//            aspect_preference: VERTICAL;
          }
          description { state: "default_small" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0 0.2;
             rel2.relative: 0 0.8;
+            min: 10 10;
+            aspect: 1.0 1.0;
+//            aspect_preference: VERTICAL;
          }
          description { state: "left_side" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 0 0.2;
             rel2.relative: 0 0.8;
             color: 255 255 255 160;
+            min: 10 10;
+            aspect: 1.0 1.0;
+//            aspect_preference: VERTICAL;
          }
          description { state: "right_side" 0.0;
             inherit: "left_side" 0.0;
             rel1.relative: 0.4 0.2;
             rel2.relative: 0.4 0.8;
             color: 255 255 255 160;
+            min: 10 10;
+            aspect: 1.0 1.0;
+//            aspect_preference: VERTICAL;
          }
          description { state: "icon_only" 0.0;
             inherit: "default" 0.0;
             align: 0.5 0.5;
             rel1.relative: 0 0;
             rel2.relative: 1 1;
+            min: 10 10;
+            aspect: 1.0 1.0;
+//            aspect_preference: VERTICAL;
          }
       }
       part { name: "elm.text";
@@ -127,7 +157,7 @@ group { name: "elm/diskselector/item/default";
             visible: 0;
             text {
                font: "Sans,Edje-Vera";
-               size: 13;
+               size: 10;
                align: 0.5 0.5;
                min: 0 1;
             }
@@ -144,7 +174,7 @@ group { name: "elm/diskselector/item/default";
          description { state: "left_side" 0.0;
             inherit: "default" 0.0;
             color: 172 172 172 255;
-            text.size: 10;
+            text.size: 8;
             visible: 1;
             text.align: 0.2 0.5;
          }
@@ -152,7 +182,7 @@ group { name: "elm/diskselector/item/default";
             inherit: "default" 0.0;
             color: 172 172 172 255;
             visible: 1;
-            text.size: 10;
+            text.size: 8;
             text.align: 0.8 0.5;
          }
       }
@@ -210,7 +240,7 @@ group { name: "elm/diskselector/item/datetime/default";
         mouse_events: 0;
         scale: 1;
         description { state: "default" 0.0;
-           min: 13 13;
+           min: 10 10;
            align: 0.0 0.0;
            color: 172 172 172 255;
            visible: 1;
