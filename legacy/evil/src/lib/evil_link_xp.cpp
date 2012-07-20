@@ -1,4 +1,3 @@
-
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
@@ -25,7 +24,7 @@
 int
 symlink(const char *oldpath, const char *newpath)
 {
-   char          fullname[PATH_MAX]; 
+   char          fullname[PATH_MAX];
    wchar_t      *wnewpath;
    IShellLink   *pISL;
    IPersistFile *pIPF;
