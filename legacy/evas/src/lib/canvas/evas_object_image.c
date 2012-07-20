@@ -658,10 +658,11 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
 {
    Evas_Object_Image *o;
 
-   if (w < 0) w = -w;
-   if (h < 0) h = -h;
    if (w == 0) return;
    if (h == 0) return;
+   if (w < 0) w = -w;
+   if (h < 0) h = -h;
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -669,6 +670,7 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+
    if ((o->cur.fill.x == x) &&
        (o->cur.fill.y == y) &&
        (o->cur.fill.w == w) &&
@@ -677,7 +679,7 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    o->cur.fill.y = y;
    o->cur.fill.w = w;
    o->cur.fill.h = h;
-   o->cur.opaque_valid = 0;   
+   o->cur.opaque_valid = 0;
    o->changed = 1;
    evas_object_change(obj);
 }
