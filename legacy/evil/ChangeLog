@@ -1,3 +1,10 @@
+2012-07-20  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/bin/Makefile.am:
+	* src/lib/Makefile.am:
+	Fix compilation with mingw-w64 gcc 4.8
+
 2012-07-03  Vincent Torri  <doursse at users dot sf dot net>
 
 	* AUTHORS:

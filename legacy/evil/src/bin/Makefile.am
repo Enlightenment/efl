@@ -46,7 +46,7 @@ evil_suite_SOURCES +=  memcpy_glibc_arm.S
 
 endif
 
-evil_suite_LDADD = $(top_builddir)/src/lib/libevil.la $(top_builddir)/src/lib/dlfcn/libdl.la -lm
+evil_suite_LDADD = $(top_builddir)/src/lib/dlfcn/libdl.la $(top_builddir)/src/lib/libevil.la -lm
 evil_suite_LDFLAGS = -Wl,--enable-auto-import
 
 test_evil_SOURCES = test_evil.c

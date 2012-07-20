@@ -44,6 +44,7 @@ esac
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
+lt_cv_deplibs_check_method='pass_all'
 LT_INIT([win32-dll])
 
 VMAJ=v_maj
@@ -80,7 +81,7 @@ case "$host_os" in
     win32_dl_libs="-ltoolhelp"
     ;;
   *)
-    win32_libs="-lole32 -lws2_32 -lsecur32"
+    win32_libs="-lole32 -luuid -lws2_32 -lsecur32"
     win32_dl_libs="-lpsapi"
     ;;
 esac
@@ -102,7 +103,7 @@ AC_CHECK_HEADERS([errno.h])
 AC_C_CONST
 EFL_ATTRIBUTE_UNUSED
 
-win32_cppflags="-DEFL_EVIL_BUILD"
+win32_cppflags=""
 win32_cflags="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls"
 win32_cflags="${win32_cflags} -mms-bitfields"
 win32_cxxflags=""

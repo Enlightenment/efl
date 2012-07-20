@@ -68,7 +68,7 @@ libevil_la_SOURCES += evil_link_xp.cpp
 
 endif
 
-libevil_la_CPPFLAGS = @win32_cppflags@
+libevil_la_CPPFLAGS = @win32_cppflags@ -DEFL_EVIL_BUILD
 libevil_la_CFLAGS = @win32_cflags@
 libevil_la_CXXFLAGS = @win32_cxxflags@
 libevil_la_LIBADD = gdtoa/libgdtoa.la @win32_libs@ $(EFL_MPATROL_LIBS)
