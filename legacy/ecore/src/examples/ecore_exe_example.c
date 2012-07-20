@@ -21,7 +21,7 @@ _msg_from_child_handler(void *data, int type, void *event)
      }
    
    strncpy(msg, dataFromProcess->data, dataFromProcess->size);
-   msg[dataFromProcess->size = 0;
+   msg[dataFromProcess->size] = 0;
        
    if (strcmp(msg, "quit") == 0)
      {
