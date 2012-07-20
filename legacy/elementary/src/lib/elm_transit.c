@@ -2312,7 +2312,7 @@ _transit_effect_image_animation_op(Elm_Transit_Effect *effect, Elm_Transit *tran
    unsigned int count = 0;
    int len;
 
-   type = eina_stringshare_add("icon");
+   type = eina_stringshare_add("elm_icon");
    len = eina_list_count(image_animation->images);
 
    if (!len) count = floor(progress * len);
