@@ -15,9 +15,6 @@
  * It can act like a circular list with round mode and labels can be
  * reduced for a defined length for side items.
  *
- * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for diskselector objects.
- *
  * This widget implements the @b @ref elm-scrollable-interface
  * interface, so that all (non-deprecated) functions for the base @ref
  * Scroller widget also work for diskselectors.
