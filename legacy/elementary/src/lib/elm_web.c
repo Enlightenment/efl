@@ -1547,9 +1547,14 @@ elm_web_title_get(const Evas_Object *obj)
    ELM_WEB_CHECK(obj) NULL;
 
 #ifdef HAVE_ELEMENTARY_WEB
+   const Ewk_Text_With_Direction *txt;
+
    ELM_WEB_DATA_GET(obj, sd);
 
-   return ewk_view_title_get(ELM_WIDGET_DATA(sd)->resize_obj);
+   txt = ewk_view_title_get(ELM_WIDGET_DATA(sd)->resize_obj);
+   if (txt) return txt->string;
+
+   return NULL;
 #else
    return NULL;
 #endif
