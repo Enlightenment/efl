@@ -1162,16 +1162,6 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
                          }
 
                        pr->exec = exec;
-#if 0
-                       if (exec)
-                         {
-                            _edje_program_run(ed, pr, 0, sig, src);
-                            if (_edje_block_break(ed))
-                              {
-                                 goto break_prog;
-                              }
-                         }
-#endif
 		    }
 
                   EINA_LIST_FOREACH(matches, l, pr)
