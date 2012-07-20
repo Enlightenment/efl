@@ -12,8 +12,17 @@ static Eina_Bool
 _msg_from_child_handler(void *data, int type, void *event)
 {
    Ecore_Exe_Event_Data *dataFromProcess = (Ecore_Exe_Event_Data *)event;
-   char *msg = (char *)dataFromProcess->data;
+   char msg[BUFFER_SIZE];
 
+   if (dataFromProcess->size >= (BUFFER_SIZE - 1))
+     {
+        fprintf(stdout, "Data too big for bugger. error\n");
+        return ECORE_CALLBACK_DONE;
+     }
+   
+   strncpy(msg, dataFromProcess->data, dataFromProcess->size);
+   msg[dataFromProcess->size = 0;
+       
    if (strcmp(msg, "quit") == 0)
      {
         fprintf(stdout, "My child said to me, QUIT!\n");
