@@ -1157,8 +1157,13 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
                             Edje_Real_Part *rp;
 
                             rp = _edje_real_part_get(ed, pr->filter.part ? pr->filter.part : src);
-                            if (rp && !rp->program)
-                              exec = (rp->chosen_description->state.name == pr->filter.state);
+                            if (rp)
+                              {
+                                 if (rp->program)
+                                   exec = EINA_FALSE;
+                                 else
+                                   exec = (rp->chosen_description->state.name == pr->filter.state);
+                              }
                          }
 
                        pr->exec = exec;
