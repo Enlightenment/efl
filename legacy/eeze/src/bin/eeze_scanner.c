@@ -386,17 +386,7 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_
 static void
 es_exit(int sig)
 {
-   const char *tmp;
-   char buf[1024];
-   struct stat st;
    ecore_con_server_del(svr);
-
-   tmp = getenv("TMPDIR");
-   if (!tmp) tmp = "/tmp";
-
-   snprintf(buf, sizeof(buf), "%s/.ecore_service|eeze_scanner|0", tmp);
-   if (!stat(buf, &st))
-     unlink(buf);
    exit(sig);   
 }
 
@@ -422,10 +412,6 @@ sigs_setup(void)
 int
 main(void)
 {
-   const char *tmp;
-   char buf[128], buf2[128];
-   struct stat st;
-
    eina_init();
    ecore_init();
    ecore_con_init();
@@ -436,16 +422,6 @@ main(void)
    sigs_setup();
    es_log_dom = eina_log_domain_register("eeze_scanner", EINA_COLOR_CYAN);
 
-   tmp = getenv("TMPDIR");
-   if (!tmp) tmp = "/tmp";
-
-   snprintf(buf, sizeof(buf), "%s/.ecore_service|eeze_scanner", tmp);
-   snprintf(buf2, sizeof(buf), "%s/.ecore_service|eeze_scanner|0", tmp);
-   if (!stat(buf2, &st))
-     {
-        ERR("Socket file '%s' for scanner already exists! Refusing to start up!", buf2);
-        exit(1);
-     }
    eet_setup();
    clients = eina_hash_pointer_new(NULL);
    EINA_SAFETY_ON_NULL_GOTO(clients, error);
@@ -460,14 +436,9 @@ main(void)
    eeze_udev_watch_add(EEZE_UDEV_TYPE_DRIVE_CDROM, EEZE_UDEV_EVENT_NONE, cb_stor_chg, NULL);
    eeze_udev_watch_add(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, EEZE_UDEV_EVENT_NONE, cb_vol_chg, NULL);
 
-   svr = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, buf, 0, NULL);
+   svr = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, "eeze_scanner", 0, NULL);
    EINA_SAFETY_ON_NULL_GOTO(svr, error);
-   if (chmod(buf2, S_IRWXU | S_IRWXG | S_IRWXO))
-     {
-        ERR("Could not chmod socket (%s)! \"%s\"", buf, strerror(errno));
-        goto error;
-     }
-
+   
    storage_setup();
    ecore_main_loop_begin();
 

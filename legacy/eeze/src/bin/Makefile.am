@@ -17,7 +17,7 @@ endif
 
 bin_PROGRAMS = $(DISK_PROGS)
 util_PROGRAMS = $(SCAN_PROGS)
-utildir = @libdir@/enlightenment/utils
+utildir = $(bindir)
 
 eeze_udev_test_SOURCES = eeze_udev_test.c
 eeze_udev_test_CPPFLAGS = -I$(top_srcdir)/src/lib @EEZE_CFLAGS@
@@ -44,6 +44,6 @@ if HAVE_EEZE_MOUNT
 
 setuid_root_mode = a=rx,u+xs
 install-data-hook:
-	@chmod $(setuid_root_mode) $(DESTDIR)$(libdir)/enlightenment/utils/eeze_scanner$(EXEEXT) || true
+	@chmod $(setuid_root_mode) $(DESTDIR)$(bindir)/eeze_scanner$(EXEEXT) || true
 
 endif
