@@ -263,7 +263,7 @@ storage_setup(void)
         dev->mounted = eeze_disk_mounted_get(disk);
         eeze_disk_free(disk);
         event_send(sys, EEZE_SCANNER_EVENT_TYPE_ADD, EINA_FALSE);
-        ecore_poller_add(ECORE_POLLER_CORE, 32, (Ecore_Task_Cb)cdrom_timer, dev);
+        dev->poller = ecore_poller_add(ECORE_POLLER_CORE, 32, (Ecore_Task_Cb)cdrom_timer, dev);
         storage_cdrom = eina_list_append(storage_cdrom, dev);
      }
    volume_devices = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_MOUNTABLE, NULL);
@@ -354,6 +354,8 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_
           eina_stringshare_del(str);
           dev = calloc(1, sizeof(Eeze_Scanner_Device));
           dev->device = eina_stringshare_add(device);
+          dev->poller = ecore_poller_add(ECORE_POLLER_CORE, 32,
+                                         (Ecore_Task_Cb)cdrom_timer, dev);
           storage_cdrom = eina_list_append(storage_cdrom, dev);
           break;
         case EEZE_UDEV_EVENT_REMOVE:
@@ -369,6 +371,7 @@ cb_stor_chg(const char *device, Eeze_Udev_Event ev, void *data __UNUSED__, Eeze_
           EINA_LIST_FOREACH(storage_cdrom, l, dev)
             if (device == dev->device)
               {
+                 if (dev->poller) ecore_poller_del(dev->poller);
                  storage_cdrom = eina_list_remove_list(storage_cdrom, l);
                  eina_stringshare_del(dev->device);
                  free(dev);

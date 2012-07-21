@@ -25,8 +25,9 @@ typedef struct
 
 typedef struct
 {
+   Ecore_Poller *poller;
    const char *device;
-   Eina_Bool mounted : 1;
+   Eina_Bool mounted;
 } Eeze_Scanner_Device;
 
 #endif
