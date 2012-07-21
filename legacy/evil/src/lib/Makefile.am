@@ -85,4 +85,4 @@ libevil_la_LINK = $(CXXLINK) $(libevil_la_LDFLAGS)
 endif
 
 install-data-hook:
-	sed -i -e 's/-luuid//g' $(libdir)/$(lib_LTLIBRARIES)
+	rm -f $(libdir)/$(lib_LTLIBRARIES)

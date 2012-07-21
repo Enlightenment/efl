@@ -15,4 +15,4 @@ libdl_la_LIBADD = $(top_builddir)/src/lib/libevil.la $(EFL_MPATROL_LIBS) @win32_
 libdl_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
 install-data-hook:
-	sed -i -e 's/-luuid//g' $(libdir)/$(lib_LTLIBRARIES)
+	rm -f $(libdir)/$(lib_LTLIBRARIES)
