@@ -402,7 +402,13 @@ AC_HEADER_ASSERT
 AC_HEADER_TIME
 AC_HEADER_DIRENT
 
-AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h strings.h sys/mman.h execinfo.h mcheck.h])
+AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h strings.h execinfo.h mcheck.h])
+
+# sys/mman.h could be provided by evil/escape/exotic so we need to set CFLAGS accordingly
+CFLAGS_save="${CFLAGS}"
+CFLAGS="${CFLAGS} ${EINA_CFLAGS}"
+AC_CHECK_HEADERS([sys/mman.h])
+CFLAGS="${CFLAGS_save}"
 
 if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
    EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"
