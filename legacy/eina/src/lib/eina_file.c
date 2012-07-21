@@ -69,7 +69,7 @@ void *alloca (size_t);
 #include "eina_log.h"
 #include "eina_xattr.h"
 
-#ifdef HAVE_ESCAPE_H
+#ifdef HAVE_ESCAPE
 # include <Escape.h>
 #endif
 
