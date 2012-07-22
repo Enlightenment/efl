@@ -273,6 +273,8 @@ evas_object_smart_type_check(const Evas_Object *obj, const char *type)
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(type, EINA_FALSE);
+
    if (!obj->smart.smart)
      return EINA_FALSE;
    sc = obj->smart.smart->smart_class;
@@ -294,6 +296,8 @@ evas_object_smart_type_check_ptr(const Evas_Object *obj, const char *type)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
    MAGIC_CHECK_END();
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(type, EINA_FALSE);
 
    if (!obj->smart.smart)
      return EINA_FALSE;

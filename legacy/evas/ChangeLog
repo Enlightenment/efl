@@ -899,5 +899,8 @@
 
 2012-07-19  Jiyoun Park(jypark)
 
-           * Fix jpeg save bug related with error handler
+        * Fix jpeg save bug related with error handler
 
+2012-07-22  Cedric Bail
+
+	* Don't crash when calling evas_object_smart_type_check without type.
