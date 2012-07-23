@@ -164,6 +164,7 @@ _eeze_mount_fdh(void *d __UNUSED__, Ecore_Fd_Handler *fdh __UNUSED__)
              if (!strcmp(src, eeze_disk_devpath_get(disk)))
                {
                   found = EINA_TRUE;
+                  if (disk->mount_status) goto err;
                   break;
                }
           }
