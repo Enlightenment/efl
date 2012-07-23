@@ -332,3 +332,7 @@
 2012-07-19  Gustavo Sverzut Barbieri (k-s)
 
 	* Add Elm_Win_Trap and elm_win_trap_set() to allow e17 integration.
+
+2012-07-23  Hermet (ChunEon Park)
+
+	* fixed invalid sd memory access when delete window inlined image
