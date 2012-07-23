@@ -145,11 +145,13 @@ if test "x$eeze_mount" = "xyes";then
   fi
   AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eject"], [eject bin to use])
 fi
+
 if test -n "$mount_v";then
   AM_CONDITIONAL([OLD_LIBMOUNT], [test "$(echo $mount_v | cut -d'.' -f2)" -lt 19])
   AM_CONDITIONAL([NEW_LIBMOUNT], [test "$(echo $mount_v | cut -d'.' -f2)" -gt 19])
 else
   AM_CONDITIONAL([OLD_LIBMOUNT], [false])
+  AM_CONDITIONAL([NEW_LIBMOUNT], [false])
 fi
 AM_COND_IF([OLD_LIBMOUNT], [
      AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
