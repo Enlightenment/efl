@@ -15,6 +15,8 @@ struct _Widget_Data
    Evas_Object *content_text_obj;
    Evas_Object *action_area;
    Evas_Object *box;
+   Evas_Object *tbl;
+   Evas_Object *spacer;
    Evas_Object *scr;
    Evas_Object *content;
    Eina_List *items;
@@ -74,8 +76,6 @@ static void _sizing_eval(Evas_Object *obj);
 static void _block_clicked_cb(void *data, Evas_Object *obj, void *event_info);
 static void _notify_resize(void *data, Evas *e, Evas_Object *obj,
                            void *event_info);
-static void _scroller_resize(void *data, Evas *e, Evas_Object *obj,
-                             void *event_info);
 static void _timeout(void *data, Evas_Object *obj , void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
@@ -250,8 +250,7 @@ _sizing_eval(Evas_Object *obj)
 {
    Eina_List *elist;
    Elm_Popup_Content_Item *item;
-   Evas_Coord w_box = 0, h_box = 0;
-   Evas_Coord minw_box = 0, minh_box = 0;
+   Evas_Coord h_box = 0, minh_box = 0;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -261,18 +260,23 @@ _sizing_eval(Evas_Object *obj)
         EINA_LIST_FOREACH(wd->items, elist, item)
           {
              _item_sizing_eval(item);
-             evas_object_size_hint_min_get(VIEW(item), &minw_box,
-                                           &minh_box);
-             if (minw_box > w_box)
-               w_box = minw_box;
-             if (minh_box != -1)
-               h_box += minh_box;
+             evas_object_size_hint_min_get(VIEW(item), NULL, &minh_box);
+             if (minh_box != -1) h_box += minh_box;
           }
+        evas_object_size_hint_min_set(wd->spacer, 0, MIN(h_box, wd->max_sc_h));
+        evas_object_size_hint_max_set(wd->spacer, -1, wd->max_sc_h);
+/*        
         evas_object_size_hint_min_set(wd->box, w_box, h_box);
         evas_object_size_hint_min_set(wd->scr, w_box, MIN(h_box, wd->max_sc_h));
         evas_object_size_hint_max_set(wd->scr, w_box, wd->max_sc_h);
-        evas_object_smart_calculate(wd->scr);
+ */
+//        evas_object_smart_calculate(wd->scr);
      }
+   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
+   printf("min: %ix%i\n", minw, minh);
+   evas_object_size_hint_max_get(wd->scr, &minw, &minh);
+   printf("max: %ix%i\n", minw, minh);
+   
    edje_object_size_min_calc(elm_layout_edje_get(wd->base), &minw, &minh);
    evas_object_size_hint_min_set(wd->base, minw, minh);
    evas_object_size_hint_max_set(wd->base, maxw, maxh);
@@ -324,11 +328,12 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
              elm_object_part_content_unset(wd->base, "elm.swallow.content");
              _sizing_eval(data);
           }
-        else if (sub == wd->scr)
+        else if (sub == wd->tbl)
           {
+             wd->tbl = NULL;
+             wd->spacer = NULL;
              wd->scr = NULL;
              wd->box = NULL;
-             elm_object_part_content_unset(wd->base, "elm.swallow.content");
              _sizing_eval(data);
           }
      }
@@ -410,71 +415,53 @@ _restack(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
 }
 
 static void
-_scroller_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj,
-                 void *event_info __UNUSED__)
-{
-   Evas_Coord w, h;
-   Widget_Data *wd = elm_widget_data_get(data);
-
-   if (!wd || wd->scr_size_recalc) return;
-   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   if (w && h)
-     {
-        if ((w <= wd->max_sc_w) && (h <= wd->max_sc_h))
-          {
-             _sizing_eval(data);
-             wd->scr_size_recalc = EINA_TRUE;
-             return;
-          }
-     }
-   if (wd->max_sc_w < w)
-     wd->max_sc_w = w;
-   if (wd->max_sc_h < h)
-     wd->max_sc_h = h;
-   _sizing_eval(data);
-}
-
-static void
 _list_new(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
+   
+   wd->tbl = elm_table_add(obj);
+   elm_object_part_content_set(wd->base, "elm.swallow.content", wd->tbl);
+   evas_object_size_hint_weight_set(wd->tbl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(wd->tbl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(wd->tbl);
+   
+   wd->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_color_set(wd->spacer, 0, 0, 0, 0);
+   elm_table_pack(wd->tbl, wd->spacer, 0, 0, 1, 1);
+   
    //Scroller
    wd->scr = elm_scroller_add(obj);
+   elm_scroller_content_min_limit(wd->scr, EINA_TRUE, EINA_FALSE);
    elm_scroller_bounce_set(wd->scr, EINA_FALSE, EINA_TRUE);
-   elm_object_content_set(wd->scr, wd->box);
-   evas_object_size_hint_weight_set(wd->scr, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(wd->scr, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->scr, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_RESIZE,
-                                  _scroller_resize, obj);
    evas_object_event_callback_add(wd->scr,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints, obj);
-   elm_object_part_content_set(wd->base, "elm.swallow.content", wd->scr);
+   elm_table_pack(wd->tbl, wd->scr, 0, 0, 1, 1);
+   evas_object_show(wd->scr);
 
    //Box
    wd->box = elm_box_add(obj);
-   evas_object_size_hint_weight_set(wd->box, EVAS_HINT_EXPAND,
-                                    EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(wd->box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
+   evas_object_size_hint_weight_set(wd->box, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(wd->box, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(wd->scr, wd->box);
+   evas_object_show(wd->box);
 }
 
 static void
 _list_del(Widget_Data *wd)
 {
    if (!wd->scr) return;
-   elm_object_part_content_unset(wd->base, "elm.swallow.content");
-   evas_object_event_callback_del(wd->scr, EVAS_CALLBACK_RESIZE,
-                                  _scroller_resize);
    evas_object_event_callback_del(wd->scr, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints);
-   evas_object_del(wd->scr);
+   evas_object_del(wd->tbl);
    wd->scr = NULL;
    wd->box = NULL;
+   wd->spacer = NULL;
+   wd->tbl = NULL;
 }
 
 static void
