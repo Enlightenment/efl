@@ -842,7 +842,7 @@ evas_engine_sdl16_image_draw(void *data __UNUSED__, void *context, void *surface
 }
 
 static void
-evas_engine_sdl16_image_map_draw(void *data __UNUSED__, void *context __UNUSED__, void *surface __UNUSED__, void *image __UNUSED__, int npoints __UNUSED__, RGBA_Map_Point *p __UNUSED__, int smooth __UNUSED__, int level __UNUSED__)
+evas_engine_sdl16_image_map_draw(void *data __UNUSED__, void *context __UNUSED__, void *surface __UNUSED__, void *image __UNUSED__, RGBA_Map *m __UNUSED__, int smooth __UNUSED__, int level __UNUSED__)
 {
 }
 

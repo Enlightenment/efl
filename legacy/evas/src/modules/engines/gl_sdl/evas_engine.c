@@ -810,14 +810,52 @@ eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 }
 
 static void
-eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
+eng_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image,  RGBA_Map *m, int smooth, int level)
 {
+   Evas_GL_Image *gim = image;
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_gl_common_context_target_surface_set(re->gl_context, surface);
    re->gl_context->dc = context;
-   evas_gl_common_image_map_draw(re->gl_context, image, npoints, p, smooth, level);
+   if (m->count != 4)
+     {
+        // FIXME: nash - you didn't fix this
+        abort();
+     }
+   if ((m->pts[0].x == m->pts[3].x) &&
+       (m->pts[1].x == m->pts[2].x) &&
+       (m->pts[0].y == m->pts[1].y) &&
+       (m->pts[3].y == m->pts[2].y) &&
+       (m->pts[0].x <= m->pts[1].x) &&
+       (m->pts[0].y <= m->pts[2].y) &&
+       (m->pts[0].u == 0) &&
+       (m->pts[0].v == 0) &&
+       (m->pts[1].u == (gim->w << FP)) &&
+       (m->pts[1].v == 0) &&
+       (m->pts[2].u == (gim->w << FP)) &&
+       (m->pts[2].v == (gim->h << FP)) &&
+       (m->pts[3].u == 0) &&
+       (m->pts[3].v == (gim->h << FP)) &&
+       (m->pts[0].col == 0xffffffff) &&
+       (m->pts[1].col == 0xffffffff) &&
+       (m->pts[2].col == 0xffffffff) &&
+       (m->pts[3].col == 0xffffffff))
+     {
+        int dx, dy, dw, dh;
+
+        dx = m->pts[0].x >> FP;
+        dy = m->pts[0].y >> FP;
+        dw = (m->pts[2].x >> FP) - dx;
+        dh = (m->pts[2].y >> FP) - dy;
+        eng_image_draw(data, context, surface, image,
+                       0, 0, gim->w, gim->h, dx, dy, dw, dh, smooth);
+     }
+   else
+     {
+        evas_gl_common_image_map_draw(re->gl_context, image, m->count, &m->pts[0],
+                                      smooth, level);
+     }
 }
 
 static void *

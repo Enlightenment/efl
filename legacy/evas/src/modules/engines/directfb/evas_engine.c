@@ -1554,7 +1554,7 @@ evas_engine_dfb_image_draw(void *data, void *context, void *surface, void *image
 #endif
 
 static void
-evas_engine_dfb_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, int npoints, RGBA_Map_Point *p, int smooth, int level)
+evas_engine_dfb_image_map_draw(void *data __UNUSED__, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level)
 {
    Render_Engine *re = (Render_Engine*) data;
    DirectFB_Engine_Image_Entry *deie = image;
@@ -1573,7 +1573,7 @@ evas_engine_dfb_image_map_draw(void *data __UNUSED__, void *context, void *surfa
    if (!_dfb_lock_and_sync_image(deie->surface, src, DSLF_READ))
      goto error_src;
 
-   evas_common_map_rgba(src, dst, context, 4, p, smooth, level);
+   evas_common_map_rgba(src, dst, context, 4, &m->pts[0], smooth, level);
    evas_common_cpu_end_opt();
 
    screen->Unlock(screen);
