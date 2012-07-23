@@ -377,8 +377,11 @@ _theme_hook_item(Evas_Object *obj, Elm_Toolbar_Item *it, double scale, int icon_
              edje_object_part_swallow(view, "elm.swallow.icon", it->icon);
              edje_object_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
           }
-        edje_object_part_text_escaped_set(view, "elm.text", it->label);
-        edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+        if (it->label)
+          {
+             edje_object_part_text_escaped_set(view, "elm.text", it->label);
+             edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+          }
      }
    else
      {
@@ -1078,8 +1081,11 @@ _item_reorder_start(Elm_Toolbar_Item *item)
         evas_object_show(it->icon);
         elm_widget_sub_object_add(obj, it->icon);
      }
-   edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
-   edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+   if (it->label)
+     {
+        edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
+        edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+     }
 
    edje_object_signal_emit(VIEW(it), "elm,state,moving", "elm");
 
