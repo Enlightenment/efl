@@ -2,7 +2,7 @@
 
 static Evas_GL_Wl_Window *_evas_gl_wl_window = NULL;
 
-static EGLContext context = EGL_NO_CONTEXT;
+static EGLContext share_context = EGL_NO_CONTEXT;
 
 // fixme: something is up/wrong here - dont know what tho...
 //#define NEWGL 1
@@ -146,20 +146,21 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
      {
         ERR("eglCreateWindowSurface() fail for %p. code=%#x",
             gw->win, eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
 
-   if (context == EGL_NO_CONTEXT)
-     context = eglCreateContext(gw->egl_disp, gw->egl_config, NULL,
-                                context_attrs);
-   gw->egl_context[0] = context;
+   gw->egl_context[0] = eglCreateContext(gw->egl_disp, gw->egl_config, share_context, context_attrs);
+
    if (gw->egl_context[0] == EGL_NO_CONTEXT)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
+
+   if (share_context == EGL_NO_CONTEXT)
+     share_context = gw->egl_context[0];
 
    if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0],
                       gw->egl_context[0]) == EGL_FALSE)
@@ -213,10 +214,12 @@ eng_window_free(Evas_GL_Wl_Window *gw)
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
       eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+
+   if (gw->egl_context[0] != EGL_NO_CONTEXT && gw->egl_context[0] != share_context) 
+     eglDestroyContext(gw->egl_disp, gw->egl_context[0]);
+
    if (ref == 0)
      {
-        if (context) eglDestroyContext(gw->egl_disp, context);
-        context = EGL_NO_CONTEXT;
         /* NB: This is causing an unknown hang when we run elm apps as 
          * wayland clients inside the weston compositor */
         /* eglTerminate(gw->egl_disp); */

@@ -600,6 +600,7 @@ eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_Wayland_Egl *info;
+   Evas_GL_Wl_Window *new_win = NULL;
 
    info = (Evas_Engine_Info_Wayland_Egl *)in;
    if (!e->engine.data.output)
@@ -679,28 +680,36 @@ eng_setup(Evas *e, void *in)
                        return 0;
                     }
 
-                  if (re->win)
-                    {
-                       re->win->gl_context->references++;
-                       eng_window_free(re->win);
-                       inc = 1;
-                       gl_wins--;
-                    }
-                  re->w = e->output.w;
-                  re->h = e->output.h;
-                  re->win = eng_window_new(re->info->info.display,
+                  new_win = eng_window_new(re->info->info.display,
                                            re->info->info.surface,
                                            re->info->info.screen,
                                            re->info->info.depth,
-                                           re->w, re->h,
+                                           e->output.w, e->output.h,
                                            re->info->indirect,
                                            re->info->info.destination_alpha,
                                            re->info->info.rotation);
-                  eng_window_use(re->win);
-                  if (re->win) gl_wins++;
-                  if ((re->win) && (inc))
-                     re->win->gl_context->references--;
-               }
+
+                  if (new_win) 
+                    {
+                       // free old win
+                       if (re->win)
+                         {
+                            re->win->gl_context->references++;
+                            eng_window_free(re->win);
+                            inc = 1;
+                            gl_wins--;
+                         }
+
+                       re->win = new_win;
+                       re->w = e->output.w;
+                       re->h = e->output.h;
+
+                       eng_window_use(re->win);
+                       if (re->win) gl_wins++;
+                       if ((re->win) && (inc))
+                         re->win->gl_context->references--;
+                    }
+							 }
              else if ((re->win->w != e->output.w) ||
                       (re->win->h != e->output.h))
                {
