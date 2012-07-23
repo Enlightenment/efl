@@ -674,10 +674,9 @@ eng_setup(Evas *e, void *in)
                          {
                             eng_window_free(re->win);
                             gl_wins--;
+                            re->win = NULL;
                          }
-                       free(re);
-                       e->engine.data.output = NULL;
-                       return 0;
+                       return 1;
                     }
 
                   new_win = eng_window_new(re->info->info.display,
@@ -1472,7 +1471,6 @@ eng_image_free(void *data, void *image)
    re = (Render_Engine *)data;
    if (!image) return;
    eng_window_use(re->win);
-   evas_gl_common_image_free(image);
 }
 
 static void
@@ -1887,7 +1885,9 @@ eng_image_cache_flush(void *data)
    tmp_size = evas_common_image_get_cache();
    evas_common_image_set_cache(0);
    evas_common_rgba_image_scalecache_flush();
-   evas_gl_common_image_cache_flush(re->win->gl_context);
+
+   if ((re) && (re->win) && (re->win->gl_context))
+     evas_gl_common_image_cache_flush(re->win->gl_context);
    evas_common_image_set_cache(tmp_size);
 }
 
