@@ -958,7 +958,7 @@ _video_update_pixels(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_S
 }
 
 static void
-_image_resize(void *data, Evas *e, Evas_Object *obj, void *event_info)
+_image_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev = data;
    Evas_Coord width, height;
