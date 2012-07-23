@@ -807,6 +807,7 @@ eng_image_draw(void *data, void *context, void *surface, void *image, int src_x,
 static void
 eng_image_scale_hint_set(void *data __UNUSED__, void *image, int hint)
 {
+   if (image) evas_gl_common_image_scale_hint_set(image, hint);
 }
 
 static void
@@ -876,7 +877,9 @@ eng_image_map_surface_free(void *data __UNUSED__, void *surface)
 static int
 eng_image_scale_hint_get(void *data __UNUSED__, void *image)
 {
-   return EVAS_IMAGE_SCALE_HINT_NONE;
+   Evas_GL_Image *gim = image;
+   if (!gim) return EVAS_IMAGE_SCALE_HINT_NONE;
+   return gim->scale_hint;
 }
 
 static void
