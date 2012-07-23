@@ -105,3 +105,8 @@
 
         * Add a check in event monitoring for disks which ensures that
           device changes for loopback devices are picked up
+
+2012-07-23 Mike Blumenkrantz
+
+        * Add yet another libmount backend for eeze_disk to handle current
+          setups which do not have mtab and instead use /proc/self/mountinfo

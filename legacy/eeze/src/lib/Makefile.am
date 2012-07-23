@@ -21,7 +21,11 @@ if HAVE_EEZE_MOUNT
 if OLD_LIBMOUNT
   libeeze_la_SOURCES += eeze_disk_libmount_old.c
 else
+if NEW_LIBMOUNT
+  libeeze_la_SOURCES += eeze_disk_libmount_new.c
+else
   libeeze_la_SOURCES += eeze_disk_libmount.c
+endif
 endif
   includes_HEADERS += Eeze_Disk.h
 else

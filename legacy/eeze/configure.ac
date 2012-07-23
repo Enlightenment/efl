@@ -147,12 +147,13 @@ if test "x$eeze_mount" = "xyes";then
 fi
 if test -n "$mount_v";then
   AM_CONDITIONAL([OLD_LIBMOUNT], [test "$(echo $mount_v | cut -d'.' -f2)" -lt 19])
+  AM_CONDITIONAL([NEW_LIBMOUNT], [test "$(echo $mount_v | cut -d'.' -f2)" -gt 19])
 else
   AM_CONDITIONAL([OLD_LIBMOUNT], [false])
 fi
-if test -z "$OLD_LIBMOUNT_TRUE" ; then
-  AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
-fi
+AM_COND_IF([OLD_LIBMOUNT], [
+     AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
+  ],[])
 
 AC_CHECK_HEADERS([netinet/in.h])
 want_ipv6="yes"
