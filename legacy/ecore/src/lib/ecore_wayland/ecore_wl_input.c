@@ -252,6 +252,7 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
    input->selection_source = NULL;
 
    if (input->data_device) wl_data_device_destroy(input->data_device);
+
    if (input->xkb.state)
      xkb_state_unref(input->xkb.state);
    if (input->xkb.keymap)

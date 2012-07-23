@@ -356,21 +356,21 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
         break;
      }
 
-   if (win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN)
-     {
-        win->region.input = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.input, win->allocation.x, win->allocation.y, 
-                      win->allocation.w, win->allocation.h);
-     }
+   /* if (win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN) */
+   /*   { */
+   /*      win->region.input =  */
+   /*        wl_compositor_create_region(_ecore_wl_disp->wl.compositor); */
+   /*      wl_region_add(win->region.input, win->allocation.x, win->allocation.y,  */
+   /*                    win->allocation.w, win->allocation.h); */
+   /*   } */
 
-   if (!win->transparent)
-     {
-        win->region.opaque = 
-          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
-        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
-                      win->allocation.w, win->allocation.h);
-     }
+   /* if (!win->transparent) */
+   /*   { */
+   /*      win->region.opaque =  */
+   /*        wl_compositor_create_region(_ecore_wl_disp->wl.compositor); */
+   /*      wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y,  */
+   /*                    win->allocation.w, win->allocation.h); */
+   /*   } */
 }
 
 /**
