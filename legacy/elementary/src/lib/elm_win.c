@@ -1140,6 +1140,16 @@ _elm_win_focus_highlight_shutdown(Elm_Win_Smart_Data *sd)
 }
 
 static void
+_elm_win_on_img_obj_del(void *data,
+                        Evas *e __UNUSED__,
+                        Evas_Object *obj __UNUSED__,
+                        void *event_info __UNUSED__)
+{
+   Elm_Win_Smart_Data *sd = data;
+   sd->img_obj = NULL;
+}
+
+static void
 _elm_win_smart_del(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);
@@ -1177,6 +1187,8 @@ _elm_win_smart_del(Evas_Object *obj)
 
    if (sd->img_obj)
      {
+        evas_object_event_callback_del_full
+           (sd->img_obj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, sd);
         sd->img_obj = NULL;
      }
    else
@@ -1216,22 +1228,6 @@ _elm_win_smart_del(Evas_Object *obj)
         evas_font_cache_flush(evas_object_evas_get(obj));
         elm_exit();
      }
-}
-
-static void
-_elm_win_on_img_obj_del(void *data,
-                        Evas *e __UNUSED__,
-                        Evas_Object *obj __UNUSED__,
-                        void *event_info __UNUSED__)
-{
-   Elm_Win_Smart_Data *sd = data;
-
-   if (!sd->img_obj) return;
-
-   evas_object_event_callback_del_full
-     (sd->img_obj, EVAS_CALLBACK_DEL, _elm_win_on_img_obj_del, sd);
-
-   evas_object_del(sd->img_obj);
 }
 
 static void
