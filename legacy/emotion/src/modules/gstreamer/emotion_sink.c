@@ -1035,7 +1035,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    int flags;
    const char *launch;
 #if defined HAVE_ECORE_X && defined HAVE_XOVERLAY_H
-   const char *engine;
+   const char *engine = NULL;
    Eina_List *engines;
 #endif
 
