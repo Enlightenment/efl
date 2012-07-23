@@ -375,20 +375,22 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 
    prev_error = obj->do_error;
    _eo_ref(obj);
-   _eo_kls_itr_init(obj->klass, &obj->mro_itr, &prev_state);
 
    va_start(p_list, op_type);
 
    op = va_arg(p_list, Eo_Op);
    while (op)
      {
+        _eo_kls_itr_init(obj->klass, &obj->mro_itr, &prev_state);
         if (!_eo_op_internal(obj, op_type, op, &p_list))
           {
              _EO_OP_ERR_NO_OP_PRINT(op, obj->klass);
              ret = EINA_FALSE;
+             _eo_kls_itr_end(&obj->mro_itr, &prev_state);
              break;
           }
         op = va_arg(p_list, Eo_Op);
+        _eo_kls_itr_end(&obj->mro_itr, &prev_state);
      }
 
    va_end(p_list);
@@ -400,7 +402,6 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 
    obj->do_error = prev_error;
 
-   _eo_kls_itr_end(&obj->mro_itr, &prev_state);
    return ret;
 }
 
@@ -470,25 +471,25 @@ eo_class_do_internal(const Eo_Class *klass, ...)
 
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, EINA_FALSE);
 
-   _eo_kls_itr_init(klass, &((Eo_Class *) klass)->mro_itr, &prev_state);
-
    va_start(p_list, klass);
 
    op = va_arg(p_list, Eo_Op);
    while (op)
      {
+        _eo_kls_itr_init(klass, &((Eo_Class *) klass)->mro_itr, &prev_state);
         if (!_eo_class_op_internal((Eo_Class *) klass, op, &p_list))
           {
              _EO_OP_ERR_NO_OP_PRINT(op, klass);
              ret = EINA_FALSE;
+             _eo_kls_itr_end(&((Eo_Class *) klass)->mro_itr, &prev_state);
              break;
           }
+        _eo_kls_itr_end(&((Eo_Class *) klass)->mro_itr, &prev_state);
         op = va_arg(p_list, Eo_Op);
      }
 
    va_end(p_list);
 
-   _eo_kls_itr_end(&((Eo_Class *) klass)->mro_itr, &prev_state);
    return ret;
 }
 

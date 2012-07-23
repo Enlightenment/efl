@@ -654,6 +654,80 @@ START_TEST(eo_magic_checks)
 }
 END_TEST
 
+/* MULTI */
+static Eo_Op MULTI_BASE_ID;
+#define MULTI_ID(sub_id) (MULTI_BASE_ID + sub_id)
+#define multi_a_print() MULTI_ID(MULTI_SUB_ID_A_PRINT)
+#define multi_class_hi_print() MULTI_ID(MULTI_SUB_ID_CLASS_HI_PRINT)
+
+static void
+_a_print(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   printf("Hey\n");
+}
+
+static void
+_class_hi_print(const Eo_Class *klass EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   printf("Hi\n");
+}
+
+enum {
+     MULTI_SUB_ID_A_PRINT,
+     MULTI_SUB_ID_CLASS_HI_PRINT,
+     MULTI_SUB_ID_LAST
+};
+
+static void
+_eo_multiple_do_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(MULTI_ID(MULTI_SUB_ID_A_PRINT), _a_print),
+        EO_OP_FUNC_CLASS(MULTI_ID(MULTI_SUB_ID_CLASS_HI_PRINT), _class_hi_print),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description _eo_multiple_do_op_desc[] = {
+     EO_OP_DESCRIPTION(MULTI_SUB_ID_A_PRINT, "Print property A"),
+     EO_OP_DESCRIPTION_CLASS(MULTI_SUB_ID_CLASS_HI_PRINT, "Print Hi"),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+
+START_TEST(eo_multiple_do)
+{
+   eo_init();
+
+   /* Usually should be const, not const only for the test... */
+   static Eo_Class_Description class_desc = {
+        EO_VERSION,
+        "Inherit",
+        EO_CLASS_TYPE_REGULAR,
+        EO_CLASS_DESCRIPTION_OPS(&MULTI_BASE_ID, _eo_multiple_do_op_desc, MULTI_SUB_ID_LAST),
+        NULL,
+        0,
+        _eo_multiple_do_class_constructor,
+        NULL
+   };
+
+   const Eo_Class *klass = eo_class_new(&class_desc, 0, SIMPLE_CLASS, NULL);
+   fail_if(!klass);
+
+   Eo *obj = eo_add(klass, NULL);
+   fail_if(!obj);
+
+   fail_if(!eo_do(obj, simple_a_print(), multi_a_print(), multi_a_print()));
+   fail_if(!eo_class_do(klass, simple_class_hi_print(), multi_class_hi_print(), multi_class_hi_print()));
+
+   eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_generic_data);
@@ -667,4 +741,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_static_classes);
    tcase_add_test(tc, eo_composite_tests);
    tcase_add_test(tc, eo_isa_tests);
+   tcase_add_test(tc, eo_multiple_do);
 }

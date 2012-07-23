@@ -30,7 +30,8 @@ main(int argc, char *argv[])
    eo_unref(obj);
 
    obj = eo_add(INHERIT2_CLASS, NULL);
-   eo_do(obj, inherit2_print());
+   fail_if(!eo_do(obj, inherit2_print()));
+   fail_if(!eo_do(obj, inherit2_print(), inherit2_print()));
    eo_unref(obj);
 
    obj = eo_add(SIMPLE_CLASS, NULL);
