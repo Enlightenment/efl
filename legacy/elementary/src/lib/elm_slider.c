@@ -309,7 +309,6 @@ _popup_show(void *data,
    ELM_SLIDER_DATA_GET(data, sd);
    if (sd->popup)
      {
-        printf("%i\n", evas_object_layer_get(data));
         evas_object_layer_set(sd->popup, evas_object_layer_get(data));
         evas_object_raise(sd->popup);
         evas_object_show(sd->popup);
