@@ -49,6 +49,7 @@ struct _Elm_Flip_Smart_Data
    Slice               **slices, **slices2;
 
    Eina_Bool             state : 1;
+   Eina_Bool             next_state : 1;
    Eina_Bool             down : 1;
    Eina_Bool             finish : 1;
    Eina_Bool             started : 1;
@@ -1353,6 +1354,14 @@ _flip(Evas_Object *obj)
 
    if (t >= 1.0)
      {
+        if (sd->state == sd->next_state)
+          {
+             /* it was flipped while flipping, do it again */
+             sd->start = ecore_loop_time_get();
+             sd->state = !sd->next_state;
+             return ECORE_CALLBACK_RENEW;
+          }
+
         sd->pageflip = EINA_FALSE;
         _state_end(sd);
         evas_object_map_enable_set(sd->front.content, 0);
@@ -1363,7 +1372,7 @@ _flip(Evas_Object *obj)
         evas_smart_objects_calculate(evas_object_evas_get(obj));
         // FIXME: end hack
         sd->animator = NULL;
-        sd->state = !sd->state;
+        sd->state = sd->next_state;
         _configure(obj);
         _flip_show_hide(obj);
         evas_object_smart_callback_call(obj, SIG_ANIMATE_DONE, NULL);
@@ -1869,6 +1878,7 @@ _elm_flip_smart_add(Evas_Object *obj)
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _on_move, NULL);
 
    priv->state = EINA_TRUE;
+   priv->next_state = EINA_TRUE;
    priv->intmode = ELM_FLIP_INTERACTION_NONE;
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -1951,6 +1961,7 @@ elm_flip_go(Evas_Object *obj,
 
    sd->mode = mode;
    sd->start = ecore_loop_time_get();
+   sd->next_state = !sd->next_state;
    sd->len = 0.5; // FIXME: make config val
    if ((sd->mode == ELM_FLIP_PAGE_LEFT) ||
        (sd->mode == ELM_FLIP_PAGE_RIGHT) ||
