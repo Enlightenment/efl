@@ -2162,7 +2162,6 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
 #else
                        t = ecore_loop_time_get();
 #endif
-                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                        ax = ev->canvas.x;
                        ay = ev->canvas.y;
                        at = 0.0;
@@ -2315,10 +2314,7 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                   sd->down.scroll = EINA_FALSE;
                }
              if (sd->down.hold)
-               {
-                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-                  sd->down.hold = EINA_FALSE;
-               }
+               sd->down.hold = EINA_FALSE;
              sd->down.dragged_began = EINA_FALSE;
              sd->down.dir_x = EINA_FALSE;
              sd->down.dir_y = EINA_FALSE;

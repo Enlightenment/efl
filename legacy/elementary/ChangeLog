@@ -336,3 +336,7 @@
 2012-07-23  Hermet (ChunEon Park)
 
 	* fixed invalid sd memory access when delete window inlined image
+
+2012-07-24  Hermet (ChunEon Park)
+
+	* fixed scroller to not have the hold flag when mouse up happened.
