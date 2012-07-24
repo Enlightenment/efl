@@ -3,7 +3,7 @@
 
 static const char ACCESS_SMART_NAME[] = "elm_access";
 
-EVAS_SMART_SUBCLASS_NEW
+ELM_INTERNAL_SMART_SUBCLASS_NEW
   (ACCESS_SMART_NAME, _elm_access, Elm_Widget_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
 
