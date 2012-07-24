@@ -9462,15 +9462,15 @@ EAPI void evas_object_textgrid_cellrow_set(Evas_Object *obj, int y, const Evas_T
 EAPI Evas_Textgrid_Cell *evas_object_textgrid_cellrow_get(const Evas_Object *obj, int y);
 
 /**
- * @brief Get the string at the given row of the given textgrid object.
+ * @brief Indicate for evas that part of a textgrid region (cells) has been updated.
  *
- * @param obj The textgrid object to query for font information.
+ * @param obj The textgrid object.
  * @param x The rect region of cells top-left x (column)
  * @param y The rect region of cells top-left y (row)
  * @param w The rect region size in number of cells (columns)
  * @param h The rect region size in number of cells (rows)
  *
- * This function delcares to evas that a region of cells was updated by
+ * This function declares to evas that a region of cells was updated by
  * code and needs refreshing. An application should modify cells like this
  * as an example:
  * 

@@ -904,3 +904,7 @@
 2012-07-22  Cedric Bail
 
 	* Don't crash when calling evas_object_smart_type_check without type.
+
+2012-07-24  Ingvaldur Sigurjonsson
+
+	* Fix typoe in docs
