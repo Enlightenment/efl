@@ -973,7 +973,7 @@ elm_widget_api_check(int ver)
 }
 
 /* creating compat smart class */
-EVAS_SMART_SUBCLASS_NEW
+ELM_INTERNAL_SMART_SUBCLASS_NEW
   (SMART_NAME_COMPAT, _elm_widget_compat, Elm_Widget_Compat_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
 
