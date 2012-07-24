@@ -3615,7 +3615,7 @@ st_collections_group_parts_part_entry_mode(void)
         Sets the selection mode for a textblock part to one of:
         @li DEFAULT selection mode is what you would expect on any desktop. Press
         mouse, drag and release to end.
-        @li EXPLICITmode requires the application
+        @li EXPLICIT mode requires the application
         controlling the edje object has to explicitly begin and end selection
         modes, and the selection itself is dragable at both ends.
     @endproperty
