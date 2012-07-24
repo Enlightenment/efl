@@ -1822,9 +1822,6 @@ _ecore_con_svr_tcp_handler(void                        *data,
    if (svr->delete_me)
      return ECORE_CALLBACK_RENEW;
 
-   if (svr->delete_me)
-     return ECORE_CALLBACK_RENEW;
-
    if ((svr->client_limit >= 0) && (!svr->reject_excess_clients) &&
        (svr->client_count >= (unsigned int)svr->client_limit))
      return ECORE_CALLBACK_RENEW;
