@@ -900,11 +900,6 @@ _destroy_internal_glue_resources(void *data)
            eglDestroyContext(re->win->egl_disp, rsc->context);
         free(rsc);
      }
-   eina_list_free(resource_list);
-   LKU(resource_lock);
-
-   // Destroy TLS
-   eina_tls_free(resource_key);
 #else
    // GLX
    // Delete the Resources
@@ -917,19 +912,20 @@ _destroy_internal_glue_resources(void *data)
              free(rsc);
           }
      }
+#endif
    eina_list_free(resource_list);
+   resource_list = NULL;
    LKU(resource_lock);
 
    // Destroy TLS
    eina_tls_free(resource_key);
-#endif
 
    // Free the extension strings
    if (_ext_initted)
      {
-        if (_gl_ext_string) 
+        if (_gl_ext_string)
            free(_gl_ext_string);
-        if (_evasgl_ext_string) 
+        if (_evasgl_ext_string)
            free(_evasgl_ext_string);
 
         _gl_ext_string = NULL;

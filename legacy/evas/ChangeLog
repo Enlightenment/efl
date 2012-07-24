@@ -908,3 +908,8 @@
 2012-07-24  Ingvaldur Sigurjonsson
 
 	* Fix typoe in docs
+
+2012-07-24  Hermet (ChunEon Park)
+
+	* Fixed evas_gl resource list have cleared properly when it is released
+  	so it would be no problem when it is reinitialized in one same process.
