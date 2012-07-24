@@ -587,6 +587,7 @@ _destroy_internal_glue_resources(void *data)
         free(rsc);
      }
    eina_list_free(resource_list);
+   resource_list = NULL;
    LKU(resource_lock);
 
    // Destroy TLS
@@ -2284,7 +2285,7 @@ eng_gl_context_destroy(void *data, void *context)
 
    // 2. Delete the FBO
    if (ctx->context_fbo)
-        glDeleteFramebuffers(1, &ctx->context_fbo);
+     glDeleteFramebuffers(1, &ctx->context_fbo);
 
    // 3. Destroy the Context
    eglDestroyContext(re->win->egl_disp, ctx->context);
