@@ -242,7 +242,7 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
 {
    Evas_Object *win, *bx, *sl;
 
-   win = elm_win_util_standard_add("box-vert", "Box Vert");
+   win = elm_win_util_standard_add("evas-map-3d", "Evas Map 3D");
    elm_win_autodel_set(win, EINA_TRUE);
 
    cube = _cube_new(evas_object_evas_get(win), 240, 240, 240);
