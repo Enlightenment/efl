@@ -150,9 +150,64 @@ EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord 
  * @image html elm_flip.png
  * @image latex elm_flip.eps width=\textwidth
  *
+ * @see elm_flip_go_to()
+ *
  * @ingroup Flip
  */
 EAPI void                 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode);
+
+/**
+ * @brief Runs the flip animation to front or back.
+ *
+ * @param obj The flip object
+ * @param front if @c EINA_TRUE, makes front visible, otherwise makes back.
+ * @param mode The mode type
+ *
+ * Flips the front and back contents using the @p mode animation. This
+ * effectively hides the currently visible content and shows the hidden one.
+ *
+ * There a number of possible animations to use for the flipping:
+ * @li ELM_FLIP_ROTATE_X_CENTER_AXIS - Rotate the currently visible content
+ * around a horizontal axis in the middle of its height, the other content
+ * is shown as the other side of the flip.
+ * @li ELM_FLIP_ROTATE_Y_CENTER_AXIS - Rotate the currently visible content
+ * around a vertical axis in the middle of its width, the other content is
+ * shown as the other side of the flip.
+ * @li ELM_FLIP_ROTATE_XZ_CENTER_AXIS - Rotate the currently visible content
+ * around a diagonal axis in the middle of its width, the other content is
+ * shown as the other side of the flip.
+ * @li ELM_FLIP_ROTATE_YZ_CENTER_AXIS - Rotate the currently visible content
+ * around a diagonal axis in the middle of its height, the other content is
+ * shown as the other side of the flip.
+ * @li ELM_FLIP_CUBE_LEFT - Rotate the currently visible content to the left
+ * as if the flip was a cube, the other content is show as the right face of
+ * the cube.
+ * @li ELM_FLIP_CUBE_RIGHT - Rotate the currently visible content to the
+ * right as if the flip was a cube, the other content is show as the left
+ * face of the cube.
+ * @li ELM_FLIP_CUBE_UP - Rotate the currently visible content up as if the
+ * flip was a cube, the other content is show as the bottom face of the cube.
+ * @li ELM_FLIP_CUBE_DOWN - Rotate the currently visible content down as if
+ * the flip was a cube, the other content is show as the upper face of the
+ * cube.
+ * @li ELM_FLIP_PAGE_LEFT - Move the currently visible content to the left as
+ * if the flip was a book, the other content is shown as the page below that.
+ * @li ELM_FLIP_PAGE_RIGHT - Move the currently visible content to the right
+ * as if the flip was a book, the other content is shown as the page below
+ * that.
+ * @li ELM_FLIP_PAGE_UP - Move the currently visible content up as if the
+ * flip was a book, the other content is shown as the page below that.
+ * @li ELM_FLIP_PAGE_DOWN - Move the currently visible content down as if the
+ * flip was a book, the other content is shown as the page below that.
+ *
+ * @image html elm_flip.png
+ * @image latex elm_flip.eps width=\textwidth
+ *
+ * @since 1.7
+ *
+ * @ingroup Flip
+ */
+EAPI void                 elm_flip_go_to(Evas_Object *obj, Eina_Bool front, Elm_Flip_Mode mode);
 
 /**
  * @brief Set the interactive flip mode

@@ -18,6 +18,7 @@ Additions:
    * Use Edje to enable accessibility on TEXTBLOCK.
    * Initialize Emotion when necessary.
    * Elm_Win_Trap and elm_win_trap_set() to allow e17 integration.
+   * elm_flip_go_to()
 
 Fixes:
 

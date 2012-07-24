@@ -139,6 +139,7 @@ void test_flip(void *data, Evas_Object *obj, void *event_info);
 void test_flip2(void *data, Evas_Object *obj, void *event_info);
 void test_flip3(void *data, Evas_Object *obj, void *event_info);
 void test_flip4(void *data, Evas_Object *obj, void *event_info);
+void test_flip5(void *data, Evas_Object *obj, void *event_info);
 void test_flip_page(void *data, Evas_Object *obj, void *event_info);
 void test_label(void *data, Evas_Object *obj, void *event_info);
 void test_label2(void *data, Evas_Object *obj, void *event_info);
@@ -518,6 +519,7 @@ add_tests:
    ADD_TEST(NULL, "Effects", "Flip 2", test_flip2);
    ADD_TEST(NULL, "Effects", "Flip 3", test_flip3);
    ADD_TEST(NULL, "Effects", "Flip Interactive", test_flip4);
+   ADD_TEST(NULL, "Effects", "Flip To", test_flip5);
    ADD_TEST(NULL, "Effects", "Flip Page", test_flip_page);
    ADD_TEST(NULL, "Effects", "Animation", test_anim);
 

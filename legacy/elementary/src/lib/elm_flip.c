@@ -1949,19 +1949,19 @@ elm_flip_perspective_set(Evas_Object *obj,
 
 // FIXME: add ambient and lighting control
 
-EAPI void
-elm_flip_go(Evas_Object *obj,
-            Elm_Flip_Mode mode)
+static void
+_elm_flip_go_to(Elm_Flip_Smart_Data *sd,
+                Eina_Bool front,
+                Elm_Flip_Mode mode)
 {
-   ELM_FLIP_CHECK(obj);
-   ELM_FLIP_DATA_GET(obj, sd);
+   Evas_Object *obj = ELM_WIDGET_DATA(sd)->obj;
 
    if (!sd->animator) sd->animator = ecore_animator_add(_animate, obj);
    _flip_show_hide(obj);
 
    sd->mode = mode;
    sd->start = ecore_loop_time_get();
-   sd->next_state = !sd->next_state;
+   sd->next_state = front;
    sd->len = 0.5; // FIXME: make config val
    if ((sd->mode == ELM_FLIP_PAGE_LEFT) ||
        (sd->mode == ELM_FLIP_PAGE_RIGHT) ||
@@ -1980,6 +1980,29 @@ elm_flip_go(Evas_Object *obj,
    _configure(obj);
    // FIXME: end hack
    evas_object_smart_callback_call(obj, SIG_ANIMATE_BEGIN, NULL);
+}
+
+EAPI void
+elm_flip_go_to(Evas_Object *obj,
+               Eina_Bool front,
+               Elm_Flip_Mode mode)
+{
+   ELM_FLIP_CHECK(obj);
+   ELM_FLIP_DATA_GET(obj, sd);
+
+   if (sd->next_state == front) return;
+
+   _elm_flip_go_to(sd, front, mode);
+}
+
+EAPI void
+elm_flip_go(Evas_Object *obj,
+            Elm_Flip_Mode mode)
+{
+   ELM_FLIP_CHECK(obj);
+   ELM_FLIP_DATA_GET(obj, sd);
+
+   _elm_flip_go_to(sd, !sd->state, mode);
 }
 
 EAPI void

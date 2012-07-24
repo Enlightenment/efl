@@ -61,6 +61,20 @@ my_fl_8(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
+my_fl_front(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *fl = data;
+   elm_flip_go_to(fl, EINA_TRUE, ELM_FLIP_ROTATE_X_CENTER_AXIS);
+}
+
+void
+my_fl_back(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *fl = data;
+   elm_flip_go_to(fl, EINA_FALSE, ELM_FLIP_ROTATE_X_CENTER_AXIS);
+}
+
+void
 test_flip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bx, *bx2, *fl, *o, *bt, *ly;
@@ -603,6 +617,83 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
+}
+
+void
+test_flip5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bx, *bx2, *fl, *o, *bt, *ly;
+   char buf[PATH_MAX];
+
+   win = elm_win_util_standard_add("flip4", "Flip 4");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   fl = elm_flip_add(win);
+   evas_object_size_hint_align_set(fl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(fl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx, fl);
+
+   o = elm_bg_add(win);
+   evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), "sky_01.jpg");
+   elm_bg_file_set(o, buf, NULL);
+   elm_object_part_content_set(fl, "front", o);
+   evas_object_show(o);
+
+   ly = elm_layout_add(win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
+   elm_layout_file_set(ly, buf, "layout");
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_part_content_set(fl, "back", ly);
+   evas_object_show(ly);
+
+   bt = elm_button_add(ly);
+   elm_object_text_set(bt, "Button 1");
+   elm_object_part_content_set(ly, "element1", bt);
+
+   bt = elm_button_add(ly);
+   elm_object_text_set(bt, "Button 2");
+   elm_object_part_content_set(ly, "element2", bt);
+
+   bt = elm_button_add(ly);
+   elm_object_text_set(bt, "Button 3");
+   elm_object_part_content_set(ly, "element3", bt);
+
+   evas_object_show(fl);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Show Front");
+   evas_object_smart_callback_add(bt, "clicked", my_fl_front, fl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Show Back");
+   evas_object_smart_callback_add(bt, "clicked", my_fl_back, fl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
