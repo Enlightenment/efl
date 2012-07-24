@@ -908,6 +908,7 @@
 2012-07-24  Ingvaldur Sigurjonsson
 
 	* Fix typoe in docs
+<<<<<<< .mine
 
 2012-07-24  Hermet (ChunEon Park)
 
@@ -917,3 +918,10 @@
 2012-07-24  Cedric Bail
 
 	* Handle Proxy with the right context.
+
+2012-07-24  Carsten Haitzler (The Rasterman)
+
+        * Fix long-standing bug when changing layer of a smart object,
+        its children dont change their layer value and pointer with it, thus
+        getting layer from them get you the wrong one.
+

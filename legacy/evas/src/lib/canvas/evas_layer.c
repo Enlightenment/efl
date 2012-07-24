@@ -133,6 +133,31 @@ evas_layer_del(Evas_Layer *lay)
    e->layers = (Evas_Layer *)eina_inlist_remove(EINA_INLIST_GET(e->layers), EINA_INLIST_GET(lay));
 }
 
+static void
+_evas_object_layer_set_child(Evas_Object *obj, Evas_Object *par, short l)
+{
+   Evas *e;
+   
+   if (obj->delete_me) return;
+   if (obj->cur.layer == l) return;
+   e = obj->layer->evas;
+   evas_object_release(obj, 1);
+   obj->cur.layer = l;
+   obj->layer = par->layer;
+   obj->layer->usage++;
+   if (obj->smart.smart)
+     {
+        Eina_Inlist *contained;
+        Evas_Object *member;
+        
+        contained = (Eina_Inlist *)evas_object_smart_members_get_direct(obj);
+        EINA_INLIST_FOREACH(contained, member)
+          {
+             _evas_object_layer_set_child(member, obj, l);
+          }
+     }
+}
+
 /* public functions */
 
 EAPI void
@@ -175,6 +200,17 @@ evas_object_layer_set(Evas_Object *obj, short l)
                                        obj->layer->evas->pointer.y,
                                        obj->layer->evas->last_timestamp,
                                        NULL);
+     }
+   else
+     {
+        Eina_Inlist *contained;
+        Evas_Object *member;
+        
+        contained = (Eina_Inlist *)evas_object_smart_members_get_direct(obj);
+        EINA_INLIST_FOREACH(contained, member)
+          {
+            _evas_object_layer_set_child(member, obj, l);
+          }
      }
    evas_object_inform_call_restack(obj);
 }
