@@ -1651,8 +1651,9 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    Entry *en;
    Evas_Coord x, y, w, h;
    //   Eina_Bool multiline;
-   Evas_Textblock_Cursor *tc;
+   Evas_Textblock_Cursor *tc = NULL;
    Eina_Bool dosel = EINA_FALSE;
+   Eina_Bool shift;
    if (!rp) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    en = rp->entry_data;
@@ -1673,6 +1674,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
      }
 #endif
 
+   shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    en->select_mod_start = EINA_FALSE;
    en->select_mod_end = EINA_FALSE;
    if (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_DEFAULT)
@@ -1684,33 +1686,63 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    if (ev->button == 2) dosel = EINA_FALSE;
    if (dosel)
      {
+        evas_object_geometry_get(rp->object, &x, &y, &w, &h);
+        cx = ev->canvas.x - x;
+        cy = ev->canvas.y - y;
         if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
           {
-             en->have_selection = EINA_FALSE;
-             en->selecting = EINA_FALSE;
-             _sel_clear(en->cursor, rp->object, en);
-             tc = evas_object_textblock_cursor_new(rp->object);
-             evas_textblock_cursor_copy(en->cursor, tc);
-             evas_textblock_cursor_line_char_first(en->cursor);
-             _sel_start(en->cursor, rp->object, en);
-             evas_textblock_cursor_line_char_last(en->cursor);
-             _sel_extend(en->cursor, rp->object, en);
-
+             if (shift)
+               {
+                  tc = evas_object_textblock_cursor_new(rp->object);
+                  evas_textblock_cursor_copy(en->cursor, tc);
+                  if (evas_textblock_cursor_compare(en->cursor, en->sel_start) < 0)
+                    evas_textblock_cursor_line_char_first(en->cursor);
+                  else
+                    evas_textblock_cursor_line_char_last(en->cursor);
+                  _sel_extend(en->cursor, rp->object, en);
+               }
+             else
+               {
+                  en->have_selection = EINA_FALSE;
+                  en->selecting = EINA_FALSE;
+                  _sel_clear(en->cursor, rp->object, en);
+                  tc = evas_object_textblock_cursor_new(rp->object);
+                  evas_textblock_cursor_copy(en->cursor, tc);
+                  evas_textblock_cursor_line_char_first(en->cursor);
+                  _sel_start(en->cursor, rp->object, en);
+                  evas_textblock_cursor_line_char_last(en->cursor);
+                  _sel_extend(en->cursor, rp->object, en);
+               }
              goto end;
           }
         else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
           {
-             en->have_selection = EINA_FALSE;
-             en->selecting = EINA_FALSE;
-             _sel_clear(en->cursor, rp->object, en);
-             tc = evas_object_textblock_cursor_new(rp->object);
-             evas_textblock_cursor_copy(en->cursor, tc);
-             evas_textblock_cursor_word_start(en->cursor);
-             _sel_start(en->cursor, rp->object, en);
-             evas_textblock_cursor_word_end(en->cursor);
-             evas_textblock_cursor_char_next(en->cursor);
-             _sel_extend(en->cursor, rp->object, en);
-
+             if (shift)
+               {
+                  tc = evas_object_textblock_cursor_new(rp->object);
+                  evas_textblock_cursor_copy(en->cursor, tc);
+                  if (evas_textblock_cursor_compare(en->cursor, en->sel_start) < 0)
+                    evas_textblock_cursor_word_start(en->cursor);
+                  else
+                    {
+                       evas_textblock_cursor_word_end(en->cursor);
+                       evas_textblock_cursor_char_next(en->cursor);
+                    }
+                  _sel_extend(en->cursor, rp->object, en);
+               }
+             else
+               {
+                  en->have_selection = EINA_FALSE;
+                  en->selecting = EINA_FALSE;
+                  _sel_clear(en->cursor, rp->object, en);
+                  tc = evas_object_textblock_cursor_new(rp->object);
+                  evas_textblock_cursor_copy(en->cursor, tc);
+                  evas_textblock_cursor_word_start(en->cursor);
+                  _sel_start(en->cursor, rp->object, en);
+                  evas_textblock_cursor_word_end(en->cursor);
+                  evas_textblock_cursor_char_next(en->cursor);
+                  _sel_extend(en->cursor, rp->object, en);
+               }
              goto end;
           }
      }
@@ -1761,55 +1793,65 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         if ((en->have_selection) &&
             (rp->part->select_mode == EDJE_ENTRY_SELECTION_MODE_EXPLICIT))
           {
-             Eina_List *first, *last;
-             FLOAT_T sc;
-
-             first = en->sel;
-             last = eina_list_last(en->sel);
-             if (first && last)
+             if (shift)
+               _sel_extend(en->cursor, rp->object, en);
+             else
                {
-                  Evas_Textblock_Rectangle *r1, *r2;
-                  Evas_Coord d, d1, d2;
+                  Eina_List *first, *last;
+                  FLOAT_T sc;
 
-                  r1 = first->data;
-                  r2 = last->data;
-                  d = r1->x - cx;
-                  d1 = d * d;
-                  d = (r1->y + (r1->h / 2)) - cy;
-                  d1 += d * d;
-                  d = r2->x + r2->w - 1 - cx;
-                  d2 = d * d;
-                  d = (r2->y + (r2->h / 2)) - cy;
-                  d2 += d * d;
-                  sc = rp->edje->scale;
-                  if (sc == ZERO) sc = _edje_scale;
-                  d = (Evas_Coord)MUL(FROM_INT(20), sc); // FIXME: maxing number!
-                  d = d * d;
-                  if (d1 < d2)
+                  first = en->sel;
+                  last = eina_list_last(en->sel);
+                  if (first && last)
                     {
-                       if (d1 <= d)
+                       Evas_Textblock_Rectangle *r1, *r2;
+                       Evas_Coord d, d1, d2;
+                       
+                       r1 = first->data;
+                       r2 = last->data;
+                       d = r1->x - cx;
+                       d1 = d * d;
+                       d = (r1->y + (r1->h / 2)) - cy;
+                       d1 += d * d;
+                       d = r2->x + r2->w - 1 - cx;
+                       d2 = d * d;
+                       d = (r2->y + (r2->h / 2)) - cy;
+                       d2 += d * d;
+                       sc = rp->edje->scale;
+                       if (sc == ZERO) sc = _edje_scale;
+                       d = (Evas_Coord)MUL(FROM_INT(20), sc); // FIXME: maxing number!
+                       d = d * d;
+                       if (d1 < d2)
                          {
-                            en->select_mod_start = EINA_TRUE;
-                            en->selecting = EINA_TRUE;
+                            if (d1 <= d)
+                              {
+                                 en->select_mod_start = EINA_TRUE;
+                                 en->selecting = EINA_TRUE;
+                              }
                          }
-                    }
-                  else
-                    {
-                       if (d2 <= d)
+                       else
                          {
-                            en->select_mod_end = EINA_TRUE;
-                            en->selecting = EINA_TRUE;
+                            if (d2 <= d)
+                              {
+                                 en->select_mod_end = EINA_TRUE;
+                                 en->selecting = EINA_TRUE;
+                              }
                          }
                     }
                }
           }
         else
           {
-             en->selecting = EINA_TRUE;
-             _sel_clear(en->cursor, rp->object, en);
-             if (en->select_allow)
+             if ((en->have_selection) && (shift))
+               _sel_extend(en->cursor, rp->object, en);
+             else
                {
-                  _sel_start(en->cursor, rp->object, en);
+                  en->selecting = EINA_TRUE;
+                  _sel_clear(en->cursor, rp->object, en);
+                  if (en->select_allow)
+                    {
+                       _sel_start(en->cursor, rp->object, en);
+                    }
                }
           }
      }

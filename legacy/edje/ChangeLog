@@ -531,3 +531,9 @@
 2012-07-14  Cedric Bail
 
 	* Fix Edje_Multisense shutdown.
+
+2012-07-24  Carsten Haitzler (The Rasterman)
+
+        * Fix edje entry to extend selection to char pos/word or line
+        when holding shift + mouse click.
+
