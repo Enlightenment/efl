@@ -460,7 +460,7 @@ _font_slave_glyphs_load(const void *cmddata, void *data __UNUSED__)
    Slave_Msg_Font_Glyphs_Loaded *response;
    Font_Info *fi;
    unsigned int i;
-   unsigned int total_glyphs;
+   unsigned int total_glyphs = 0;
 #ifdef DEBUG_LOAD_TIME
    unsigned int gl_load_time = 0;
    unsigned int gl_render_time = 0;
