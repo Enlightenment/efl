@@ -943,7 +943,7 @@ EAPI void                          elm_genlist_item_show(Elm_Object_Item *it, El
 EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type type);
 
 /**
- * Update the contents of an item
+ * Update all the contents of an item
  *
  * @param it The item
  *
@@ -953,6 +953,11 @@ EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it
  *
  * Use elm_genlist_realized_items_update() to update all already realized
  * items.
+ *
+ * @note This also updates internal genlist item object(edje_object as of now).
+ * So when this is called between mouse down and mouse up, mouse up event will
+ * be ignored because edje_object is deleted and created again by this API. If
+ * you want to avoid this, please use @ref elm_genlist_item_fields_update.
  *
  * @see elm_genlist_realized_items_update()
  *
