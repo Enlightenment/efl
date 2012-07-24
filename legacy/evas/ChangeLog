@@ -913,3 +913,7 @@
 
 	* Fixed evas_gl resource list have cleared properly when it is released
   	so it would be no problem when it is reinitialized in one same process.
+
+2012-07-24  Cedric Bail
+
+	* Handle Proxy with the right context.

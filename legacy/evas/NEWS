@@ -24,6 +24,7 @@ Fixes:
    * Fix garbage left by mapped smart object when they fly away from the canvas.
    * Fix map life cycle.
    * Don't crash when calling evas_object_smart_type_check without type.
+   * Handle proxy with the right context.
 
 Removal:
    * Remove EVAS_FRAME_QUEUING, EVAS_SLI, METRIC_CACHE and WORD_CACHE.

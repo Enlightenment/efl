@@ -168,11 +168,8 @@ _evas_render_phase1_direct(Evas *e,
           {
              /* Flag need redraw on proxy too */
              evas_object_clip_recalc(obj);
-             if (obj->proxy.proxies)
-               {
-                  EINA_LIST_FOREACH(obj->proxy.proxies, l, proxy)
-                    proxy->proxy.redraw = EINA_TRUE;
-               }
+	     EINA_LIST_FOREACH(obj->proxy.proxies, l, proxy)
+               proxy->proxy.redraw = EINA_TRUE;
           }
      }
    for (i = 0; i < render_objects->count; i++)
@@ -186,6 +183,8 @@ _evas_render_phase1_direct(Evas *e,
              /* Flag need redraw on proxy too */
              evas_object_clip_recalc(obj);
              obj->func->render_pre(obj);
+             if (obj->proxy.redraw)
+               _evas_render_prev_cur_clip_cache_add(e, obj);
              if (obj->proxy.proxies)
                {
                   obj->proxy.redraw = EINA_TRUE;
@@ -195,8 +194,6 @@ _evas_render_phase1_direct(Evas *e,
                        _evas_render_prev_cur_clip_cache_add(e, proxy);
                     }
                }
-             else if (obj->proxy.redraw)
-               _evas_render_prev_cur_clip_cache_add(e, obj);
 
              RD("      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
                 obj->smart.smart,
@@ -993,7 +990,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                  0, 0, obj->cur.map->surface_w, obj->cur.map->surface_h);
           }
         e->engine.func->context_clip_unset(e->engine.data.output,
-                                           e->engine.data.context);
+                                           context);
         if (obj->cur.map->surface)
           {
              if (obj->smart.smart)
@@ -1018,7 +1015,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                           obj->cur.clipper->cur.cache.clip.w,
                                           obj->cur.clipper->cur.cache.clip.h);
                        e->engine.func->context_clip_set(e->engine.data.output,
-                                                        e->engine.data.context,
+                                                        context,
                                                         x + off_x, y + off_y, w, h);
                     }
                }
@@ -1039,21 +1036,21 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                           obj->cur.clipper->cur.cache.clip.w,
                                           obj->cur.clipper->cur.cache.clip.h);
                        e->engine.func->context_clip_set(e->engine.data.output,
-                                                        e->engine.data.context,
+                                                        context,
                                                         x + off_x, y + off_y, w, h);
                     }
                }
           }
 //        if (surface == e->engine.data.output)
           e->engine.func->context_clip_clip(e->engine.data.output,
-                                            e->engine.data.context,
+                                            context,
                                             ecx, ecy, ecw, ech);
         if (obj->cur.cache.clip.visible)
           {
              obj->layer->evas->engine.func->context_multiplier_unset
-               (e->engine.data.output, e->engine.data.context);
+               (e->engine.data.output, context);
              obj->layer->evas->engine.func->image_map_draw
-               (e->engine.data.output, e->engine.data.context, surface,
+               (e->engine.data.output, context, surface,
                    obj->cur.map->surface, obj->spans,
                    obj->cur.map->smooth, 0);
           }
@@ -1170,10 +1167,10 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                      obj->cur.clipper->cur.cache.clip.w,
                                      obj->cur.clipper->cur.cache.clip.h);
                   e->engine.func->context_clip_set(e->engine.data.output,
-                                                   e->engine.data.context,
+                                                   context,
                                                    x + off_x, y + off_y, w, h);
                   e->engine.func->context_clip_clip(e->engine.data.output,
-                                                    e->engine.data.context,
+                                                    context,
                                                     ecx, ecy, ecw, ech);
                }
 
