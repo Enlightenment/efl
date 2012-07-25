@@ -17,94 +17,127 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    Evas_Object *win, *ic, *ic1, *ic2, *ic3, *ic4, *ic5;
    Elm_Object_Item *seg_it;
 
-   Evas_Object * in_layout;
-   Evas_Object *segment1, *segment2, *segment3, *segment4;
-   char buf[PATH_MAX];
-   char buf1[PATH_MAX];
-   char buf2[PATH_MAX];
-   char buf3[PATH_MAX];
-   char buf4[PATH_MAX];
-   char buf5[PATH_MAX];
-   char buf6[PATH_MAX];
+   Evas_Object *bx;
+   Evas_Object *sc;
+   unsigned int i;
+   struct exp_mode {
+      struct {
+         double w, h;
+      } weight;
+      struct {
+         double x, y;
+      } align;
+   } exp_modes[2] = {
+     {{EVAS_HINT_EXPAND, 0.0}, {EVAS_HINT_FILL, EVAS_HINT_FILL}},
+     {{0.0, 0.0}, {0.5, 0.5}}
+   };
 
    win = elm_win_util_standard_add("segmentcontrol", "Segment Control");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   in_layout = elm_layout_add( win );
-   elm_win_resize_object_add(win, in_layout);
-   snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   elm_layout_file_set(in_layout, buf, "segment_test");
-   evas_object_size_hint_weight_set(in_layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   ic = elm_icon_add(in_layout);
-   snprintf(buf1, sizeof(buf1), "%s/images/logo.png", elm_app_data_dir_get());
-   elm_image_file_set(ic, buf1, NULL);
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   bx = elm_box_add(win);
+   elm_box_padding_set(bx, 0, 10);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_win_resize_object_add(win, bx);
 
-   ic1 = elm_icon_add(in_layout);
-   snprintf(buf2, sizeof(buf2), "%s/images/logo.png", elm_app_data_dir_get());
-   elm_image_file_set(ic1, buf2, NULL);
-   evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(exp_modes); i++)
+     {
+        const struct exp_mode *em = exp_modes + i;
+        ic = elm_icon_add(bx);
+        elm_icon_standard_set(ic, "home");
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
-   segment1 = elm_segment_control_add(win);
-   elm_segment_control_item_add(segment1, NULL, "Only Text");
-   seg_it = elm_segment_control_item_add(segment1, ic, NULL);
-   elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
-   elm_segment_control_item_add(segment1, ic1, "Text_Icon_test");
-   elm_segment_control_item_add(segment1, NULL, "Seg4");
-   elm_segment_control_item_add(segment1, NULL, "Seg5");
-   evas_object_smart_callback_add(segment1, "changed", cb_changed, NULL);
+        ic1 = elm_icon_add(bx);
+        elm_icon_standard_set(ic1, "home");
+        evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
-   segment2 = elm_segment_control_add(win);
-   elm_segment_control_item_add(segment2, NULL, "SegmentItem");
-   seg_it = elm_segment_control_item_add(segment2, NULL, "SegmentItem");
-   elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
-   elm_segment_control_item_add(segment2, NULL, "SegmentControlItem");
-   elm_segment_control_item_add(segment2, NULL, "SegmentItem");
-   evas_object_smart_callback_add(segment2, "changed", cb_changed, NULL);
+        sc = elm_segment_control_add(win);
+        evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
+        evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
+        elm_segment_control_item_add(sc, NULL, "Only Text");
+        seg_it = elm_segment_control_item_add(sc, ic, NULL);
+        elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
+        elm_segment_control_item_add(sc, ic1, "Text_Icon_test");
+        elm_segment_control_item_add(sc, NULL, "Seg4");
+        elm_segment_control_item_add(sc, NULL, "Seg5");
+        evas_object_smart_callback_add(sc, "changed", cb_changed, NULL);
+        evas_object_show(sc);
+        elm_box_pack_end(bx, sc);
 
-   ic2 = elm_icon_add(in_layout);
-   snprintf(buf3, sizeof(buf3), "%s/images/logo.png", elm_app_data_dir_get());
-   elm_image_file_set(ic2, buf3, NULL);
-   evas_object_size_hint_aspect_set(ic2, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+        sc = elm_segment_control_add(win);
+        evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
+        evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
+        elm_segment_control_item_add(sc, NULL, "SegmentItem");
+        seg_it = elm_segment_control_item_add(sc, NULL, "SegmentItem");
+        elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
+        elm_segment_control_item_add(sc, NULL, "SegmentControlItem");
+        elm_segment_control_item_add(sc, NULL, "SegmentItem");
+        evas_object_smart_callback_add(sc, "changed", cb_changed, NULL);
+        evas_object_show(sc);
+        elm_box_pack_end(bx, sc);
 
-   ic3 = elm_icon_add(in_layout);
-   snprintf(buf4, sizeof(buf4), "%s/images/logo.png", elm_app_data_dir_get());
-   elm_image_file_set(ic3, buf4, NULL);
-   evas_object_size_hint_aspect_set(ic3, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+        ic2 = elm_icon_add(bx);
+        elm_icon_standard_set(ic2, "home");
+        evas_object_size_hint_aspect_set(ic2, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
-   ic4 = elm_icon_add(in_layout);
-   snprintf(buf5, sizeof(buf5), "%s/images/logo.png", elm_app_data_dir_get());
-   elm_image_file_set(ic4, buf5, NULL);
-   evas_object_size_hint_aspect_set(ic4, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+        ic3 = elm_icon_add(bx);
+        elm_icon_standard_set(ic3, "home");
+        evas_object_size_hint_aspect_set(ic3, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
-   segment3 = elm_segment_control_add(win);
-   elm_segment_control_item_add(segment3, ic2, NULL);
-   seg_it = elm_segment_control_item_add(segment3, ic3, NULL);
-   elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
-   elm_segment_control_item_add(segment3, ic4, NULL);
-   evas_object_smart_callback_add(segment3, "changed", cb_changed, NULL);
+        ic4 = elm_icon_add(bx);
+        elm_icon_standard_set(ic4, "home");
+        evas_object_size_hint_aspect_set(ic4, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
-   ic5 = elm_icon_add(in_layout);
-   snprintf(buf6, sizeof(buf6), "%s/images/logo.png", elm_app_data_dir_get());
-   elm_image_file_set(ic5, buf6, NULL);
-   evas_object_size_hint_aspect_set(ic5, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+        sc = elm_segment_control_add(win);
+        evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
+        evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
+        elm_segment_control_item_add(sc, ic2, NULL);
+        seg_it = elm_segment_control_item_add(sc, ic3, NULL);
+        elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
+        elm_segment_control_item_add(sc, ic4, NULL);
+        evas_object_smart_callback_add(sc, "changed", cb_changed, NULL);
+        evas_object_show(sc);
+        elm_box_pack_end(bx, sc);
 
-   segment4 = elm_segment_control_add(win);
-   elm_segment_control_item_add(segment4, NULL, "Disabled");
-   seg_it = elm_segment_control_item_add(segment4, ic5, "Disabled");
-   elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
-   elm_segment_control_item_add(segment4, NULL, "Disabled");
-   elm_object_disabled_set(segment4, EINA_TRUE);
-   evas_object_smart_callback_add(segment4, "changed", cb_changed, NULL);
+        ic5 = elm_icon_add(bx);
+        elm_icon_standard_set(ic5, "home");
+        evas_object_size_hint_aspect_set(ic5, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
-   elm_object_part_content_set(in_layout, "segment1", segment1);
-   elm_object_part_content_set(in_layout, "segment2", segment2);
-   elm_object_part_content_set(in_layout, "segment3", segment3);
-   elm_object_part_content_set(in_layout, "segment4", segment4);
+        sc = elm_segment_control_add(win);
+        evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
+        evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
+        elm_segment_control_item_add(sc, NULL, "Disabled");
+        seg_it = elm_segment_control_item_add(sc, ic5, "Disabled");
+        elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
+        elm_segment_control_item_add(sc, NULL, "Disabled");
+        elm_object_disabled_set(sc, EINA_TRUE);
+        evas_object_smart_callback_add(sc, "changed", cb_changed, NULL);
+        evas_object_show(sc);
+        elm_box_pack_end(bx, sc);
 
-   evas_object_show(in_layout);
+        sc = elm_segment_control_add(win);
+        evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
+        evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
+        elm_segment_control_item_add(sc, NULL, "Single");
+        evas_object_smart_callback_add(sc, "changed", cb_changed, NULL);
+        evas_object_show(sc);
+        elm_box_pack_end(bx, sc);
 
+        sc = elm_segment_control_add(win);
+        evas_object_size_hint_weight_set(sc, em->weight.w, em->weight.h);
+        evas_object_size_hint_align_set(sc, em->align.x, em->align.y);
+        elm_segment_control_item_add(sc, NULL, "Single Disabled");
+        elm_object_disabled_set(sc, EINA_TRUE);
+        evas_object_smart_callback_add(sc, "changed", cb_changed, NULL);
+        evas_object_show(sc);
+        elm_box_pack_end(bx, sc);
+     }
+
+   evas_object_show(bx);
+
+   evas_object_resize(win, 400, 300);
    evas_object_show(win);
 }
 #endif
