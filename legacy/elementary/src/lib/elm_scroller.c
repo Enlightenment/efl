@@ -170,7 +170,7 @@ _elm_scroller_smart_event(Evas_Object *obj,
                        if (cur_weight == 0.0)
                          {
                             elm_widget_focus_steal(cur);
-
+                            ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                             return EINA_TRUE;
                          }
                        cur_weight = 1.0 / cur_weight;
@@ -184,7 +184,7 @@ _elm_scroller_smart_event(Evas_Object *obj,
              if (new_focus)
                {
                   elm_widget_focus_steal(new_focus);
-
+                  ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                   return EINA_TRUE;
                }
           }
@@ -230,6 +230,7 @@ _elm_scroller_smart_event(Evas_Object *obj,
                   if (ELM_RECTS_INTERSECT(x, y, v_w, v_h, l_x, l_y, l_w, l_h))
                     {
                        elm_widget_focus_steal(new_focus);
+                       ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
                        return EINA_TRUE;
                     }
                }
@@ -341,7 +342,7 @@ _elm_scroller_smart_sizing_eval(Evas_Object *obj)
 
    if (sd->min_w) w = vmw + minw;
    if (sd->min_h) h = vmh + minh;
-   
+
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
    if ((maxw > 0) && (w > maxw)) w = maxw;
    if ((maxh > 0) && (h > maxh)) h = maxh;
@@ -709,6 +710,7 @@ _elm_scroller_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->theme = _elm_scroller_smart_theme;
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_scroller_smart_focus_next;
    ELM_WIDGET_CLASS(sc)->event = _elm_scroller_smart_event;
+   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_scroller_smart_content_set;
    ELM_CONTAINER_CLASS(sc)->content_get = _elm_scroller_smart_content_get;
