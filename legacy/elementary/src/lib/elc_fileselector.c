@@ -443,15 +443,18 @@ _ls_main_cb(void *data,
    if (info->type == EINA_FILE_DIR)
      itcn = ELM_DIRECTORY;
    else
-   if (evas_object_image_extension_can_load_get
-         (info->path + info->name_start))
-     itcn = ELM_FILE_IMAGE;
+     {
+        if (evas_object_image_extension_can_load_get
+            (info->path + info->name_start))
+          itcn = ELM_FILE_IMAGE;
+     }
 
    if (lreq->sd->mode == ELM_FILESELECTOR_LIST)
      elm_genlist_item_sorted_insert(lreq->sd->files_list, list_itc[itcn],
                                     eina_stringshare_add(info->path),
                                     lreq->parent_it,
-                                    lreq->sd->expand && ELM_GENLIST_ITEM_TREE,
+                                    ((lreq->sd->expand) && (itcn == ELM_DIRECTORY))
+                                    ? ELM_GENLIST_ITEM_TREE : ELM_GENLIST_ITEM_NONE,
                                     _file_list_cmp, NULL, NULL);
    else if (lreq->sd->mode == ELM_FILESELECTOR_GRID)
      elm_gengrid_item_sorted_insert(lreq->sd->files_grid, grid_itc[itcn],
@@ -553,8 +556,8 @@ _populate(Evas_Object *obj,
           elm_genlist_item_append(sd->files_list, list_itc[ELM_DIRECTORY],
                                   entry, /* item data */
                                   parent_it,
-                                  sd->expand ? ELM_GENLIST_ITEM_TREE :
-                                  ELM_GENLIST_ITEM_NONE,
+                                  (sd->expand)
+                                  ? ELM_GENLIST_ITEM_TREE : ELM_GENLIST_ITEM_NONE,
                                   NULL, NULL);
         else if (sd->mode == ELM_FILESELECTOR_GRID)
           elm_gengrid_item_append(sd->files_grid, grid_itc[ELM_DIRECTORY],
