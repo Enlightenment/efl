@@ -1031,6 +1031,20 @@ _focus_next_hook(const Evas_Object *obj,
    return elm_widget_focus_next_get(wd->notify, dir, next);
 }
 
+static Eina_Bool
+_focus_direction_hook(const Evas_Object *obj,
+                      const Evas_Object *base,
+                      double degree,
+                      Evas_Object **direction,
+                      double *weight)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd)
+     return EINA_FALSE;
+   return elm_widget_focus_direction_get(wd->notify, base, degree, direction, weight);
+}
+
 static void
 _item_text_set(Elm_Popup_Content_Item *item, const char *label)
 {
@@ -1242,6 +1256,7 @@ elm_popup_add(Evas_Object *parent)
    elm_widget_content_unset_hook_set(obj,_content_unset_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_focus_next_hook_set(obj, _focus_next_hook);
+   elm_widget_focus_direction_hook_set(obj, _focus_direction_hook);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    wd->notify = elm_notify_add(obj);
