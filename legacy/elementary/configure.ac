@@ -723,6 +723,22 @@ AC_DEFINE_UNQUOTED(ELEMENTARY_BASE_DIR, "${elementary_base_dir}", "subdirectory 
 EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
 EFL_CHECK_INSTALL_EXAMPLES([enable_install_examples="yes"], [enable_install_examples="no"])
 
+AC_TRY_COMPILE([
+# define _GNU_SOURCE 1
+#include <unistd.h>
+], [
+extern char **environ;
+], [
+  AC_DEFINE(HAVE_ENVIRON, 1, [extern environ exists])
+])
+
+AC_TRY_COMPILE([
+#include <stdlib.h>
+], [
+clearenv();
+], [
+  AC_DEFINE(HAVE_CLEARENV, 1, [extern environ exists])
+])
 
 AC_OUTPUT([
 Makefile

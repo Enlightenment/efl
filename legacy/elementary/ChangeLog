@@ -344,3 +344,9 @@
 2012-07-24  Gustavo Sverzut Barbieri (k-s)
 
 	* Add elm_flip_go_to()
+
+2012-07-25  Carsten Haitzler (The Rasterman)
+
+	* Fix elementary quicklaunch to transprot environment over as
+        well as args and cwd.
+

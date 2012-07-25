@@ -9,11 +9,18 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#ifdef HAVE_ENVIRON
+# define _GNU_SOURCE 1
+#endif
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <signal.h>
 #include <sys/wait.h>
+
+#ifdef HAVE_ENVIRON
+extern char **environ;
+#endif
 
 static double restart_time = 0.0;
 
@@ -91,20 +98,54 @@ handle_run(int fd, unsigned long bytes)
    unsigned char *buf = NULL;
    int i;
    char **argv = NULL;
+   char **envir = NULL;
    char *cwd;
-   int argc;
+   int argc, envnum;
+   unsigned long off;
 
    buf = alloca(bytes);
-   if (read(fd, buf, bytes) <= 0)
+   if (read(fd, buf, bytes) != (int)bytes)
      {
+        CRITICAL("cannot read %i bytes of args and environment data", (int)bytes);
         close(fd);
         return;
      }
    close(fd);
+   
    argc = ((unsigned long *)(buf))[0];
-   argv = (char **)(&(((unsigned long *)(buf))[1]));
-   for (i = 0; i < argc; i++) argv[i] = (char *)(buf + (unsigned long)argv[i]);
-   cwd = argv[argc - 1] + strlen(argv[argc - 1]) + 1;
+   envnum = ((unsigned long *)(buf))[1];
+   
+   if (argc > 0) argv = alloca(argc * sizeof(char *));
+   if (envnum > 0) envir = alloca(envnum * sizeof(char *));
+   off = ((unsigned long *)(buf))[2 + argc + envnum] - sizeof(unsigned long);
+   cwd = (char *)(buf + off);
+   
+   if (argv)
+     {
+        for (i = 0; i < argc; i++)
+          {
+             off = ((unsigned long *)(buf))[2 + i] - sizeof(unsigned long);
+             argv[i] = (char *)(buf + off);
+          }
+     }
+
+#ifdef HAVE_ENVIRON
+   if (envir)
+     {
+#ifdef HAVE_CLEARENV
+        clearenv();
+#else
+        environ = NULL;
+#endif
+        for (i = 0; i < envnum; i++)
+          {
+             off = ((unsigned long *)(buf))[2 + argc + i] - sizeof(unsigned long);
+             envir[i] = (char *)(buf + off);
+             printf("SET ENV %s\n", envir[i]);
+             putenv(envir[i]);
+          }
+     }
+#endif
    elm_quicklaunch_prepare(argc, argv);
    elm_quicklaunch_fork(argc, argv, cwd, post_fork, NULL);
    elm_quicklaunch_cleanup();
@@ -119,6 +160,7 @@ main(int argc, char **argv)
    struct linger lin;
    char buf[PATH_MAX];
    struct sigaction action;
+   const char *disp;
 
    if (!eina_init())
      {
@@ -133,14 +175,10 @@ main(int argc, char **argv)
 	_log_dom = EINA_LOG_DOMAIN_GLOBAL;
      }
 
-   if (!getenv("DISPLAY"))
-     {
-	CRITICAL("DISPLAY env var not set");
-	exit(-1);
-     }
+   if (!(disp = getenv("DISPLAY"))) disp = "unknown";
    snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i", getuid());
    if (stat(buf, &st) < 0) mkdir(buf, S_IRUSR | S_IWUSR | S_IXUSR);
-   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), getenv("DISPLAY"));
+   snprintf(buf, sizeof(buf), "/tmp/elm-ql-%i/%s", getuid(), disp);
    unlink(buf);
    sock = socket(AF_UNIX, SOCK_STREAM, 0);
    if (sock < 0)
