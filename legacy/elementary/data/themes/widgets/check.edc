@@ -430,7 +430,6 @@ group { name: "elm/check/base/toggle";
       }
       part { name: "button0";
          mouse_events:  0;
-         clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.to: "button2";
             rel1.offset: -4 -4;
@@ -446,12 +445,11 @@ group { name: "elm/check/base/toggle";
       }
       part { name: "button2";
          mouse_events:  0;
-         clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.to: "button";
-            rel1.offset: -2 -2;
+            rel1.offset: -3 -3;
             rel2.to: "button";
-            rel2.offset: 1 1;
+            rel2.offset: 2 2;
             image {
                normal: "bt_basew.png";
                border: 7 7 7 7;
@@ -510,7 +508,7 @@ group { name: "elm/check/base/toggle";
             rel1.offset: 0 4;
             rel2.to_x: "bg";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -5 -5;
+            rel2.offset: -7 -5;
             color: 0 0 0 255;
             text {
                font: "Sans,Edje-Vera";
