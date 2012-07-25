@@ -30,6 +30,7 @@ struct _Elm_Naviframe_Item
    Evas_Object *title_next_btn;
    Evas_Object *title_icon;
    const char  *style;
+   const char  *title_label;
 
    Evas_Coord   minw;
    Evas_Coord   minh;
@@ -145,6 +146,7 @@ _item_free(Elm_Naviframe_Item *it)
    ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
 
    eina_stringshare_del(it->style);
+   eina_stringshare_del(it->title_label);
 
    if (it->title_prev_btn)
      evas_object_del(it->title_prev_btn);
@@ -260,7 +262,10 @@ _item_text_set_hook(Elm_Object_Item *it,
    char buf[1024];
 
    if (!part || !strcmp(part, "default"))
-     snprintf(buf, sizeof(buf), "elm.text.title");
+     {
+        eina_stringshare_replace(&nit->title_label, label);
+        snprintf(buf, sizeof(buf), "elm.text.title");
+     }
    else if (!strcmp("subtitle", part))
      snprintf(buf, sizeof(buf), "elm.text.subtitle");
    else
@@ -612,7 +617,7 @@ _on_item_back_btn_clicked(void *data,
 }
 
 static Evas_Object *
-_back_btn_new(Evas_Object *obj)
+_back_btn_new(Evas_Object *obj, const char *title_label)
 {
    Evas_Object *btn, *ico;
    char buf[1024];
@@ -625,7 +630,10 @@ _back_btn_new(Evas_Object *obj)
    snprintf
      (buf, sizeof(buf), "naviframe/back_btn/%s", elm_widget_style_get(obj));
    elm_object_style_set(btn, buf);
-   elm_object_domain_translatable_text_set(btn, PACKAGE, N_("Back"));
+   if (title_label)
+     elm_layout_text_set(btn, NULL, title_label);
+   else
+     elm_object_domain_translatable_text_set(btn, PACKAGE, N_("Back"));
 
    ico = elm_icon_add(btn);
    elm_icon_standard_set(ico, "arrow_left");
@@ -848,9 +856,12 @@ _item_new(Evas_Object *obj,
    _item_text_set_hook((Elm_Object_Item *)it, "elm.text.title", title_label);
 
    //title buttons
-   if ((!prev_btn) && sd->auto_pushed && eina_inlist_count(sd->stack))
+   if ((!prev_btn) && sd->auto_pushed && sd->stack)
      {
-        prev_btn = _back_btn_new(obj);
+        Elm_Naviframe_Item *previt = EINA_INLIST_CONTAINER_GET
+          (sd->stack->last, Elm_Naviframe_Item);
+        const char *prev_title = previt->title_label;
+        prev_btn = _back_btn_new(obj, prev_title);
         _item_title_prev_btn_set(it, prev_btn);
      }
    else
