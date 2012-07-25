@@ -42,7 +42,13 @@ static Ecore_IMF_Context_Class ibus_imf_class = {
     NULL,                                   /* input_panel_imdata_get */
     NULL,                                   /* input_panel_return_key_type_set */
     NULL,                                   /* input_panel_return_key_disabled_set */
-    NULL                                    /* input_panel_caps_lock_mode_set */
+    NULL,                                   /* input_panel_caps_lock_mode_set */
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL
 };
 
 static Ecore_IMF_Context *im_module_create (void);
