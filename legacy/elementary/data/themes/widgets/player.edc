@@ -1,140 +1,137 @@
+#define BSZ 24
 group {
    name: "elm/player/base/default";
-   min: 365 60;
+   min: 20 10;
 
    parts {
-      part {
-         type: SWALLOW;
-         name: "media_player/slider";
-
-         description {
-            fixed: 1 1;
-            rel2 {
-               relative: 1.0 0.0;
-               to_x: "media_player/forward";
-            }
+      part { name: "media_player/slider"; type: SWALLOW; 
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            rel1.offset: 2 2;
+            rel2.offset: 2 -3;
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
          }
       }
-      part {
-         type: SWALLOW;
-         name: "media_player/rewind";
-
-         description {
-            fixed: 1 1;
+      part { name: "media_player/rewind"; type: SWALLOW; 
+         description { state: "default" 0.0;
+            fixed: 1 0;
+            min: BSZ BSZ;
+            align: 0.0 1.0;
             rel1 {
                to_y: "media_player/slider";
-               offset: 42 0;
+               offset: 2 2;
                relative: 0.0 1.0;
             }
             rel2 {
                relative: 0.0 1.0;
+               offset: 2 -3;
             }
          }
       }
-      part {
-         type: SWALLOW;
-         name: "media_player/prev";
-
-         description {
-            rel1 {
-               to: "media_player/rewind";
+      part { name: "media_player/prev"; type: SWALLOW; 
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: BSZ BSZ;
+            align: 0.0 1.0;
+            rel1 { to: "media_player/rewind";
+               offset: 2 0;
                relative: 1.0 0.0;
             }
-            rel2 {
-               to: "media_player/rewind";
-               relative: 2.0 1.0;
+            rel2 { to: "media_player/rewind";
+               offset: 2 -1;
+               relative: 1.0 1.0;
             }
          }
       }
-      part {
-         type: SWALLOW;
-         name: "media_player/play";
-
-         description {
-            rel1 {
-               to: "media_player/prev";
+      part { name: "media_player/play"; type: SWALLOW; 
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: BSZ BSZ;
+            align: 0.0 1.0;
+            rel1 { to: "media_player/prev";
+               offset: 2 0;
                relative: 1.0 0.0;
             }
-            rel2 {
-               to: "media_player/prev";
-               relative: 2.0 1.0;
+            rel2 { to: "media_player/prev";
+               offset: 2 -1;
+               relative: 1.0 1.0;
             }
          }
-         description {
-            state: hidden 0.0;
-            inherit: default 0.0;
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
             visible: 0;
          }
       }
-      part {
-         type: SWALLOW;
-         name: "media_player/pause";
-
-         description {
+      part { name: "media_player/pause"; type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 1 1;
             rel1.to: "media_player/play";
             rel2.to: "media_player/play";
          }
-         description {
-            state: hidden 0.0;
-            inherit: default 0.0;
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
             visible: 0;
          }
       }
-      part {
-         type: SWALLOW;
-         name: "media_player/info";
-         description {
-            rel1 {
-               to: "media_player/play";
+      part { name: "media_player/info"; type: SWALLOW; 
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: BSZ BSZ;
+            align: 0.0 1.0;
+            rel1 { to: "media_player/play";
+               offset: 2 0;
                relative: 1.0 0.0;
             }
-            rel2 {
-               to: "media_player/play";
-               relative: 2.0 1.0;
+            rel2 { to: "media_player/play";
+               offset: 2 -1;
+               relative: 1.0 1.0;
+            }
+         }
+         description { state: "hidden" 0.0;
+            inherit: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "media_player/stop"; type: SWALLOW; 
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: BSZ BSZ;
+            align: 0.0 1.0;
+            rel1 { to: "media_player/info";
+               offset: 2 0;
+               relative: 1.0 0.0;
+            }
+            rel2 { to: "media_player/info";
+               offset: 2 -1;
+               relative: 1.0 1.0;
             }
          }
       }
-
-      part {
-         type: SWALLOW;
-         name: "media_player/stop";
-         description {
-            rel1 {
-               to: "media_player/info";
-               relative: 3.0 0.0;
+      part { name: "media_player/next"; type: SWALLOW; 
+         description { state: "default" 0.0;
+            fixed: 1 1;
+            min: BSZ BSZ;
+            align: 0.0 1.0;
+            rel1 { to: "media_player/stop";
+               offset: 2 0;
+               relative: 1.0 0.0;
             }
-            rel2 {
-               to: "media_player/info";
-               relative: 4.0 1.0;
+            rel2 { to: "media_player/stop";
+               offset: 2 -1;
+               relative: 1.0 1.0;
             }
          }
       }
-      part {
-         type: SWALLOW;
-         name: "media_player/next";
-         description {
-            rel1 {
-               to: "media_player/stop";
+      part { name: "media_player/forward"; type: SWALLOW; 
+         description { state: "default" 0.0;
+            min: BSZ BSZ;
+            align: 0.0 1.0;
+            rel1 { to: "media_player/next";
+               offset: 2 0;
                relative: 1.0 0.0;
             }
-            rel2 {
-               to: "media_player/stop";
-               relative: 2.0 1.0;
-            }
-         }
-      }
-      part {
-         type: SWALLOW;
-         name: "media_player/forward";
-         description {
-            rel1 {
-               to: "media_player/next";
-               relative: 1.0 0.0;
-            }
-            rel2 {
-               to: "media_player/next";
-               relative: 2.0 1.0;
-            }
+            rel2.offset: -3 -3;
          }
       }
    }
