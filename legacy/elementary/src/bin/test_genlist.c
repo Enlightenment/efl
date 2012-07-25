@@ -2784,7 +2784,7 @@ test_genlist17(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    itc17 = elm_genlist_item_class_new();
    itc17->item_style     = "default";
    itc17->decorate_item_style = "mode";
-   itc17->func.text_get = gl10_text_get;
+   itc17->func.text_get = gl15_text_get;
    itc17->func.content_get  = gl15_content_get;
    itc17->func.state_get = gl_state_get;
    itc17->func.del       = NULL;
