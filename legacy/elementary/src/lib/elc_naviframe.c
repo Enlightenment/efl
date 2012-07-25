@@ -38,6 +38,11 @@ struct _Elm_Naviframe_Item
    Eina_Bool    content_unfocusable : 1;
 };
 
+static const char CONTENT_PART[] = "elm.swallow.content";
+static const char PREV_BTN_PART[] = "elm.swallow.prev_btn";
+static const char NEXT_BTN_PART[] = "elm.swallow.next_btn";
+static const char ICON_PART[] = "elm.swallow.icon";
+
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -343,7 +348,7 @@ _item_content_set(Elm_Naviframe_Item *it,
 
    if (!content) return;
 
-   edje_object_part_swallow(VIEW(it), "elm.swallow.content", content);
+   edje_object_part_swallow(VIEW(it), CONTENT_PART, content);
 
    evas_object_event_callback_add
      (content, EVAS_CALLBACK_DEL, _item_content_del_cb, it);
@@ -358,7 +363,7 @@ _item_title_prev_btn_set(Elm_Naviframe_Item *it,
    it->title_prev_btn = btn;
    if (!btn) return;
 
-   edje_object_part_swallow(VIEW(it), "elm.swallow.prev_btn", btn);
+   edje_object_part_swallow(VIEW(it), PREV_BTN_PART, btn);
 
    evas_object_event_callback_add
      (btn, EVAS_CALLBACK_DEL, _item_title_prev_btn_del_cb, it);
@@ -373,7 +378,7 @@ _item_title_next_btn_set(Elm_Naviframe_Item *it,
    it->title_next_btn = btn;
    if (!btn) return;
 
-   edje_object_part_swallow(VIEW(it), "elm.swallow.next_btn", btn);
+   edje_object_part_swallow(VIEW(it), NEXT_BTN_PART, btn);
 
    evas_object_event_callback_add
      (btn, EVAS_CALLBACK_DEL, _item_title_next_btn_del_cb, it);
@@ -388,7 +393,7 @@ _item_title_icon_set(Elm_Naviframe_Item *it,
    it->title_icon = icon;
    if (!icon) return;
 
-   edje_object_part_swallow(VIEW(it), "elm.swallow.icon", icon);
+   edje_object_part_swallow(VIEW(it), ICON_PART, icon);
 
    evas_object_event_callback_add
      (icon, EVAS_CALLBACK_DEL, _item_title_icon_del_cb, it);
@@ -458,6 +463,21 @@ _item_title_icon_unset(Elm_Naviframe_Item *it)
    return content;
 }
 
+/* since we have each item as layout, we can't reusing the layout's
+ * aliasing, so let's do it ourselves */
+static void
+_part_aliasing_eval(const char **part)
+{
+   if (!*part || !strcmp("default", *part))
+     *part = CONTENT_PART;
+   else if (!strcmp(*part, "prev_btn"))
+     *part = PREV_BTN_PART;
+   else if (!strcmp(*part, "next_btn"))
+     *part = NEXT_BTN_PART;
+   else if (!strcmp(*part, "icon"))
+     *part = ICON_PART;
+}
+
 static void
 _item_content_set_hook(Elm_Object_Item *it,
                        const char *part,
@@ -465,14 +485,16 @@ _item_content_set_hook(Elm_Object_Item *it,
 {
    Elm_Naviframe_Item *nit = (Elm_Naviframe_Item *)it;
 
+   _part_aliasing_eval(&part);
+
    //specified parts
-   if (!part || !strcmp("default", part))
+   if (!part || !strcmp(CONTENT_PART, part))
      _item_content_set(nit, content);
-   else if (!strcmp(part, "prev_btn"))
+   else if (!strcmp(part, PREV_BTN_PART))
      _item_title_prev_btn_set(nit, content);
-   else if (!strcmp(part, "next_btn"))
+   else if (!strcmp(part, NEXT_BTN_PART))
      _item_title_next_btn_set(nit, content);
-   else if (!strcmp(part, "icon"))
+   else if (!strcmp(part, ICON_PART))
      _item_title_icon_set(nit, content);
    else
      edje_object_part_swallow(VIEW(it), part, content);
@@ -488,14 +510,16 @@ _item_content_get_hook(const Elm_Object_Item *it,
 {
    Elm_Naviframe_Item *nit = (Elm_Naviframe_Item *)it;
 
+   _part_aliasing_eval(&part);
+
    //specified parts
-   if (!part || !strcmp("default", part))
+   if (!part || !strcmp(CONTENT_PART, part))
      return nit->content;
-   else if (!strcmp(part, "prev_btn"))
+   else if (!strcmp(part, PREV_BTN_PART))
      return nit->title_prev_btn;
-   else if (!strcmp(part, "next_btn"))
+   else if (!strcmp(part, NEXT_BTN_PART))
      return nit->title_next_btn;
-   else if (!strcmp(part, "icon"))
+   else if (!strcmp(part, ICON_PART))
      return nit->title_icon;
 
    //common parts
@@ -509,14 +533,16 @@ _item_content_unset_hook(Elm_Object_Item *it,
    Elm_Naviframe_Item *nit = (Elm_Naviframe_Item *)it;
    Evas_Object *o = NULL;
 
+   _part_aliasing_eval(&part);
+
    //specified parts
-   if (!part || !strcmp("default", part))
+   if (!part || !strcmp(CONTENT_PART, part))
      o = _item_content_unset(nit);
-   else if (!strcmp(part, "prev_btn"))
+   else if (!strcmp(part, PREV_BTN_PART))
      o = _item_title_prev_btn_unset(nit);
-   else if (!strcmp(part, "next_btn"))
+   else if (!strcmp(part, NEXT_BTN_PART))
      o = _item_title_next_btn_unset(nit);
-   else if (!strcmp(part, "icon"))
+   else if (!strcmp(part, ICON_PART))
      o = _item_title_icon_unset(nit);
    else
      {
