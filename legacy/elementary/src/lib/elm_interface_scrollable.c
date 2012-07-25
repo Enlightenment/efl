@@ -482,7 +482,7 @@ _elm_scroll_smooth_debug_shutdown(void)
           (smooth_x_history[i].vpos - x_ave);
      }
    x_dev = x_dev_sum / (info_x_count - 1);
-   DBG(" Standard deviation of X-axid velocity: %9.3f\n", sqrt(x_dev));
+   DBG(" Standard deviation of X-axis velocity: %9.3f\n", sqrt(x_dev));
 
    DBG("\n\n<<< Y-axis Smoothness >>>\n");
    DBG("| Num  | t(time)  | dt       | y    |  dy  |vy(dy/1fps) |\n");
@@ -505,7 +505,7 @@ _elm_scroll_smooth_debug_shutdown(void)
      }
    y_dev = y_dev_sum / (info_y_count - 1);
 
-   DBG(" Standard deviation of Y-axid velocity: %9.3f\n", sqrt(y_dev));
+   DBG(" Standard deviation of Y-axis velocity: %9.3f\n", sqrt(y_dev));
 }
 
 void

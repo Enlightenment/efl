@@ -88,7 +88,7 @@ _els_scroller_smooth_debug_shutdown(void)
         x_dev_sum += (smooth_x_history[i].vpos - x_ave) * (smooth_x_history[i].vpos - x_ave);
      }
    x_dev = x_dev_sum / (info_x_count -1);
-   printf(" Standard deviation of X-axid velocity: %9.3f\n", sqrt(x_dev));
+   printf(" Standard deviation of X-axis velocity: %9.3f\n", sqrt(x_dev));
 
    printf("\n\n<<< Y-axis Smoothness >>>\n");
    printf("| Num  | t(time)  | dt       | y    |  dy  |vy(dy/1fps) |\n");
@@ -109,7 +109,7 @@ _els_scroller_smooth_debug_shutdown(void)
         y_dev_sum += (smooth_y_history[i].vpos - y_ave) * (smooth_y_history[i].vpos - y_ave);
      }
    y_dev = y_dev_sum / (info_y_count -1);
-   printf(" Standard deviation of Y-axid velocity: %9.3f\n", sqrt(y_dev));
+   printf(" Standard deviation of Y-axis velocity: %9.3f\n", sqrt(y_dev));
 }
 
 void
