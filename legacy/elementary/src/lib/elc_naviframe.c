@@ -191,6 +191,11 @@ _item_content_signals_emit(Elm_Naviframe_Item *it)
      edje_object_signal_emit(VIEW(it), "elm,state,icon,show", "elm");
    else
      edje_object_signal_emit(VIEW(it), "elm,state,icon,hide", "elm");
+
+   if ((it->title_label) && (it->title_label[0]))
+     edje_object_signal_emit(VIEW(it), "elm,state,title_label,show", "elm");
+   else
+     edje_object_signal_emit(VIEW(it), "elm,state,title_label,hide", "elm");
 }
 
 /* FIXME: we need to handle the case when this function is called
@@ -261,10 +266,18 @@ _item_text_set_hook(Elm_Object_Item *it,
    Elm_Naviframe_Item *nit = (Elm_Naviframe_Item *)it;
    char buf[1024];
 
-   if (!part || !strcmp(part, "default"))
+   if ((!part) || (!strcmp(part, "default")) ||
+       (!strcmp(part, "elm.text.title")))
      {
         eina_stringshare_replace(&nit->title_label, label);
         snprintf(buf, sizeof(buf), "elm.text.title");
+
+        if ((label) && (label[0]))
+          edje_object_signal_emit(VIEW(it), "elm,state,title_label,show",
+                                  "elm");
+        else
+          edje_object_signal_emit(VIEW(it), "elm,state,title_label,hide",
+                                  "elm");
      }
    else if (!strcmp("subtitle", part))
      snprintf(buf, sizeof(buf), "elm.text.subtitle");
@@ -811,6 +824,7 @@ _on_item_size_hints_changed(void *data,
 
 static Elm_Naviframe_Item *
 _item_new(Evas_Object *obj,
+          const Elm_Naviframe_Item *prev_it,
           const char *title_label,
           Evas_Object *prev_btn,
           Evas_Object *next_btn,
@@ -856,18 +870,18 @@ _item_new(Evas_Object *obj,
    _item_text_set_hook((Elm_Object_Item *)it, "elm.text.title", title_label);
 
    //title buttons
-   if ((!prev_btn) && sd->auto_pushed && sd->stack)
+   if ((!prev_btn) && sd->auto_pushed && prev_it)
      {
-        Elm_Naviframe_Item *previt = EINA_INLIST_CONTAINER_GET
-          (sd->stack->last, Elm_Naviframe_Item);
-        const char *prev_title = previt->title_label;
+        const char *prev_title = prev_it->title_label;
         prev_btn = _back_btn_new(obj, prev_title);
-        _item_title_prev_btn_set(it, prev_btn);
      }
-   else
-     _item_title_prev_btn_set(it, prev_btn);
 
-   _item_title_next_btn_set(it, next_btn);
+   if (prev_btn)
+     _item_content_set_hook((Elm_Object_Item *)it, PREV_BTN_PART, prev_btn);
+
+   if (next_btn)
+     _item_content_set_hook((Elm_Object_Item *)it, NEXT_BTN_PART, next_btn);
+
    _item_content_set(it, content);
    it->title_visible = EINA_TRUE;
 
@@ -989,13 +1003,14 @@ elm_naviframe_item_push(Evas_Object *obj,
 
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   it = _item_new(obj, title_label, prev_btn, next_btn, content, item_style);
+   prev_it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
+   it = _item_new(obj, prev_it,
+                  title_label, prev_btn, next_btn, content, item_style);
    if (!it) return NULL;
 
    evas_object_show(VIEW(it));
    elm_widget_resize_object_set(obj, VIEW(it));
 
-   prev_it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
    if (prev_it)
      {
         /* re-add as smart member */
@@ -1040,13 +1055,22 @@ elm_naviframe_item_insert_before(Evas_Object *obj,
                                  Evas_Object *content,
                                  const char *item_style)
 {
-   Elm_Naviframe_Item *it;
+   Elm_Naviframe_Item *it, *prev_it;
 
    ELM_NAVIFRAME_CHECK(obj) NULL;
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(before, NULL);
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   it = _item_new(obj, title_label, prev_btn, next_btn, content, item_style);
+   prev_it = NULL;
+   if (before)
+     {
+        it = (Elm_Naviframe_Item *)before;
+        prev_it = EINA_INLIST_CONTAINER_GET(EINA_INLIST_GET(it)->prev,
+                                            Elm_Naviframe_Item);
+     }
+
+   it = _item_new(obj, prev_it,
+                  title_label, prev_btn, next_btn, content, item_style);
    if (!it) return NULL;
 
    sd->stack = eina_inlist_prepend_relative
@@ -1073,7 +1097,8 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(after, NULL);
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   it = _item_new(obj, title_label, prev_btn, next_btn, content, item_style);
+   it = _item_new(obj, (Elm_Naviframe_Item *)after,
+                  title_label, prev_btn, next_btn, content, item_style);
    if (!it) return NULL;
 
    /* let's share that whole logic, if it goes to the top */

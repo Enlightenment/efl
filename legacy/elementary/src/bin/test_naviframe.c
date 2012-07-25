@@ -167,14 +167,9 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *bt, *bt2, *ic, *content, *nf = data;
+   Evas_Object *bt2, *ic, *content, *nf = data;
    char buf[PATH_MAX];
    Elm_Object_Item *it;
-
-   bt = elm_button_add(nf);
-   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   BUTTON_TEXT_SET(bt, "Prev");
-   evas_object_smart_callback_add(bt, "clicked", _navi_pop, nf);
 
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -185,7 +180,7 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    it = elm_naviframe_item_push(nf,
                                 "Page 3",
-                                bt,
+                                NULL,
                                 bt2,
                                 content,
                                 NULL);
@@ -214,7 +209,8 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    content = _content_new(nf, img2);
 
-   it = elm_naviframe_item_push(nf, "Page 2", NULL, bt, content,  NULL);
+   it = elm_naviframe_item_push(nf, "Page 2 - Long Title Here",
+                                NULL, bt, content,  NULL);
    elm_object_item_part_text_set(it, "subtitle", "Here is sub-title part!");
 }
 
@@ -243,6 +239,41 @@ test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    content = _content_new(nf, img1);
    it = elm_naviframe_item_push(nf, "Page 1", NULL, btn, content, NULL);
    evas_object_data_set(nf, "page1", it);
+
+   evas_object_resize(win, 400, 600);
+   evas_object_show(win);
+}
+
+void
+test_naviframe2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *nf, *sc, *btn, *ico, *content;
+   Elm_Object_Item *it;
+
+   win = elm_win_util_standard_add("naviframe", "Naviframe");
+   elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   nf = elm_naviframe_add(win);
+   evas_object_size_hint_weight_set(nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, nf);
+   evas_object_show(nf);
+
+   sc = elm_segment_control_add(nf);
+   elm_segment_control_item_add(sc, NULL, "Show All");
+   elm_segment_control_item_add(sc, NULL, "Just Filtered");
+
+   btn = elm_button_add(nf);
+   ico = elm_icon_add(btn);
+   elm_icon_standard_set(ico, "refresh");
+   elm_layout_content_set(btn, "icon", ico);
+
+
+   content = _content_new(nf, img1);
+   it = elm_naviframe_item_push(nf, NULL, NULL, btn, content, NULL);
+   evas_object_data_set(nf, "page1", it);
+
+   elm_object_item_part_content_set(it, "icon", sc);
 
    evas_object_resize(win, 400, 600);
    evas_object_show(win);

@@ -332,7 +332,8 @@ pointer_glint_12.png \
 pointer_glow.png \
 pointer.png \
 map_circle.png \
-map_scale.png
+map_scale.png \
+naviframe-base.jpg
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
