@@ -889,7 +889,7 @@ _elm_widget_focus_region_show(const Evas_Object *obj)
      {
         Evas_Coord px, py;
         sd2 = evas_object_smart_data_get(o);
-        if (_elm_legacy_is(o) && sd2->focus_region)
+        if (sd2->focus_region)
           {
              sd2->focus_region(o, x, y, w, h);
              elm_widget_focus_region_get(o, &x, &y, &w, &h);
