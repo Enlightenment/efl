@@ -141,7 +141,6 @@ handle_run(int fd, unsigned long bytes)
           {
              off = ((unsigned long *)(buf))[2 + argc + i] - sizeof(unsigned long);
              envir[i] = (char *)(buf + off);
-             printf("SET ENV %s\n", envir[i]);
              putenv(envir[i]);
           }
      }
