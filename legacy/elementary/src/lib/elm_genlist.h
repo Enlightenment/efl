@@ -1360,6 +1360,10 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
  * This will enable the homogeneous mode where items are of the same
  * height and width so that genlist may do the lazy-loading at its
  * maximum (which increases the performance for scrolling the list).
+ * In the normal mode, genlist will pre-calculate all the items' sizes even
+ * though they are not in use. So items' callbacks are called many times than
+ * expected. But homogeneous mode will skip the item size pre-calculation
+ * process so items' callbacks are called only when the item is needed.
  *
  * @see elm_genlist_mode_set()
  * @see elm_genlist_homogeneous_get()
