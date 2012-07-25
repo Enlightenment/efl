@@ -4819,6 +4819,10 @@ _elm_genlist_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->event = _elm_genlist_smart_event;
    ELM_WIDGET_CLASS(sc)->translate = _elm_genlist_smart_translate;
 
+   /* not a 'focus chain manager' */
+   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
+   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
+
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_genlist_smart_sizing_eval;
 }
 

@@ -843,7 +843,6 @@ static Eina_Bool
 _elm_list_smart_theme(Evas_Object *obj)
 {
    Elm_List_Item *it;
-   const char *str;
    Eina_List *n;
 
    ELM_LIST_DATA_GET(obj, sd);
@@ -851,13 +850,6 @@ _elm_list_smart_theme(Evas_Object *obj)
    if (!ELM_WIDGET_CLASS(_elm_list_parent_sc)->theme(obj)) return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
-
-   str = edje_object_data_get
-       (ELM_WIDGET_DATA(sd)->resize_obj, "focus_highlight");
-   if ((str) && (!strcmp(str, "on")))
-     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
-   else
-     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 
    EINA_LIST_FOREACH (sd->items, n, it)
      {
@@ -1731,6 +1723,7 @@ _elm_list_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_list_smart_sub_object_del;
    ELM_WIDGET_CLASS(sc)->on_focus = _elm_list_smart_on_focus;
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_list_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
    ELM_WIDGET_CLASS(sc)->theme = _elm_list_smart_theme;
    ELM_WIDGET_CLASS(sc)->disable = _elm_list_smart_disable;
    ELM_WIDGET_CLASS(sc)->event = _elm_list_smart_event;

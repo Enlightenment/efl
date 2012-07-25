@@ -2426,6 +2426,10 @@ _elm_gengrid_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->theme = _elm_gengrid_smart_theme;
    ELM_WIDGET_CLASS(sc)->event = _elm_gengrid_smart_event;
 
+   /* not a 'focus chain manager' */
+   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
+   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
+
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_gengrid_smart_sizing_eval;
 }
 

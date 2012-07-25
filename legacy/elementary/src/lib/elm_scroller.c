@@ -362,21 +362,10 @@ _mirrored_set(Evas_Object *obj,
 static Eina_Bool
 _elm_scroller_smart_theme(Evas_Object *obj)
 {
-   const char *str;
-
-   ELM_SCROLLER_DATA_GET(obj, sd);
-
    if (!ELM_WIDGET_CLASS(_elm_scroller_parent_sc)->theme(obj))
      return EINA_FALSE;
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
-
-   str = edje_object_data_get
-       (ELM_WIDGET_DATA(sd)->resize_obj, "focus_highlight");
-   if ((str) && (!strcmp(str, "on")))
-     elm_widget_highlight_in_theme_set(obj, EINA_TRUE);
-   else
-     elm_widget_highlight_in_theme_set(obj, EINA_FALSE);
 
    elm_layout_sizing_eval(obj);
 
