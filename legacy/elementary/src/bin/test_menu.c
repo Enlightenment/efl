@@ -243,7 +243,7 @@ test_menu2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_menu_item_add(mn, menu_it, NULL, "item 1", NULL, NULL);
    elm_menu_item_separator_add(mn, menu_it);
    elm_menu_item_add(mn, menu_it, NULL, "item 2", NULL, NULL);
-   menu_it2 = elm_menu_item_add(mn, NULL, NULL, "thrid item", NULL, NULL);
+   menu_it2 = elm_menu_item_add(mn, NULL, NULL, "third item", NULL, NULL);
    evas_object_data_set(mn, "parent_1", rect);
    evas_object_data_set(mn, "parent_2", rect2);
 

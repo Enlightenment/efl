@@ -135,7 +135,7 @@ _index_delay_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 void
 _index_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   // this is calld on every change, no matter how often
+   // this is called on every change, no matter how often
    // elm_genlist_item_bring_in(event_info);
 }
 
