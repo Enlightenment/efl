@@ -115,11 +115,6 @@ typedef struct _Elm_Widget_Compat_Smart_Data
                     Evas_Object *obj);
    void (*on_change)(void *data,
                      Evas_Object *obj);
-   void (*on_focus_region)(const Evas_Object *obj,
-                           Evas_Coord *x,
-                           Evas_Coord *y,
-                           Evas_Coord *w,
-                           Evas_Coord *h);
    Elm_Widget_Text_Set_Cb      text_set;
    Elm_Widget_Text_Get_Cb      text_get;
    Elm_Widget_Content_Set_Cb   content_set;
@@ -1536,7 +1531,7 @@ elm_widget_on_focus_region_hook_set(Evas_Object *obj,
 {
    API_ENTRY return;
 
-   COMPAT_SMART_DATA(sd)->on_focus_region = func;
+   sd->on_focus_region = func;
 }
 
 EAPI void
@@ -3055,15 +3050,14 @@ elm_widget_focus_region_get(const Evas_Object *obj,
    if (!obj) return;
 
    sd = evas_object_smart_data_get(obj);
-   if (!sd || !_elm_widget_is(obj) ||
-     !(_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->on_focus_region))
+   if (!sd || !_elm_widget_is(obj) || !sd->on_focus_region)
      {
         evas_object_geometry_get(obj, NULL, NULL, w, h);
         if (x) *x = 0;
         if (y) *y = 0;
         return;
      }
-   COMPAT_SMART_DATA(sd)->on_focus_region(obj, x, y, w, h);
+   sd->on_focus_region(obj, x, y, w, h);
 }
 
 EAPI void

@@ -481,6 +481,11 @@ typedef struct _Elm_Widget_Smart_Data
                                                Evas_Coord y,
                                                Evas_Coord w,
                                                Evas_Coord h);
+   void                        (*on_focus_region)(const Evas_Object *obj,
+                                                  Evas_Coord *x,
+                                                  Evas_Coord *y,
+                                                  Evas_Coord *w,
+                                                  Evas_Coord *h);
 
    Eina_Bool                     drag_x_locked : 1;
    Eina_Bool                     drag_y_locked : 1;
