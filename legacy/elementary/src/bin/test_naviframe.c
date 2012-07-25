@@ -137,15 +137,12 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Elm_Object_Item *it;
 
    ic = elm_icon_add(nf);
-   snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png",
-            elm_app_data_dir_get());
-   elm_image_file_set(ic, buf, NULL);
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+   elm_icon_standard_set(ic, "arrow_right");
 
    bt = elm_button_add(nf);
    evas_object_smart_callback_add(bt, "clicked", _page5, nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_part_content_set(bt, "icon", ic);
+   elm_layout_content_set(bt, "icon", ic);
 
    content = _content_new(nf, img4);
 
@@ -204,7 +201,6 @@ void
 _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *bt, *content, *ic, *nf = data;
-   char buf[PATH_MAX];
    Elm_Object_Item *it;
 
    bt = elm_button_add(nf);
@@ -212,11 +208,9 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    evas_object_smart_callback_add(bt, "clicked", _page3, nf);
 
    ic = elm_icon_add(nf);
-   snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png",
-            elm_app_data_dir_get());
-   elm_image_file_set(ic, buf, NULL);
+   elm_icon_standard_set(ic, "arrow_right");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   elm_object_part_content_set(bt, "icon", ic);
+   elm_layout_content_set(bt, "icon", ic);
 
    content = _content_new(nf, img2);
 
