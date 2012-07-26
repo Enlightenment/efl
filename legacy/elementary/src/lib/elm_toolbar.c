@@ -71,6 +71,9 @@ static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
 static void _mirrored_set_item(Evas_Object *obj, Elm_Toolbar_Item *it, Eina_Bool mirrored);
 static void _theme_hook(Evas_Object *obj);
+static void _on_focus_hook(void *data, Evas_Object *obj);
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src, Evas_Callback_Type type, void *event_info);
+
 static void _sizing_eval(Evas_Object *obj);
 static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -453,6 +456,32 @@ _theme_hook(Evas_Object *obj)
    if (wd->more_item)
      _theme_hook_item(obj, wd->more_item, scale, wd->icon_size);
    _sizing_eval(obj);
+}
+
+static void
+_on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (elm_widget_focus_get(obj))
+     evas_object_focus_set(obj, EINA_TRUE);
+   else
+     evas_object_focus_set(obj, EINA_FALSE);
+}
+
+static Eina_Bool
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type __UNUSED__, void *event_info)
+{
+   Evas_Event_Key_Down *ev = event_info;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+   // Key Down Event precess for toolbar.
+
+   ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+   return EINA_TRUE;
 }
 
 static void
@@ -1583,6 +1612,8 @@ elm_toolbar_add(Evas_Object *parent)
    elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
+   elm_widget_event_hook_set(obj, _event_hook);
    elm_widget_translate_hook_set(obj, _translate_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
