@@ -171,7 +171,7 @@ _dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
      {
         const Eo_Class *op_kls = _eo_op_class_get(op);
         const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
-        WRN("Already set function for op %x (%s:%s). Overriding with func %p",
+        ERR("Already set function for op %x (%s:%s). Overriding with func %p",
               op, op_kls->desc->name, op_desc->name, func);
      }
 
