@@ -169,6 +169,10 @@ evas_object_is_active(Evas_Object *obj)
                return 1;
           }
      }
+   /* FIXME: forcing object with proxies to stay active,
+      need to be smarter and only do that when really needed. */
+   if (obj->proxy.proxies && obj->changed)
+     return 1;
    return 0;
 }
 
