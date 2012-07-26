@@ -284,7 +284,7 @@ struct _Evas_Engine_GL_Context
       int                top_pipe;
       struct {
          GLuint          cur_prog;
-	 GLuint          cur_tex, cur_texu, cur_texv;
+         GLuint          cur_tex, cur_texu, cur_texv;
          GLuint          cur_texm, cur_texmu, cur_texmv;
          int             render_op;
          int             cx, cy, cw, ch;
@@ -307,8 +307,8 @@ struct _Evas_Engine_GL_Context
          Evas_GL_Image  *surface;
          GLuint          cur_prog;
          GLuint          cur_tex, cur_texu, cur_texv, cur_texm;
-	 void           *cur_tex_dyn, *cur_texu_dyn, *cur_texv_dyn;
-	 int             render_op;
+         void           *cur_tex_dyn, *cur_texu_dyn, *cur_texv_dyn;
+         int             render_op;
          int             cx, cy, cw, ch;
          int             smooth;
          int             blend;
@@ -322,7 +322,7 @@ struct _Evas_Engine_GL_Context
          GLfloat *texuv2;
          GLfloat *texuv3;
          GLfloat *texm;
-	 Eina_Bool line: 1;
+         Eina_Bool line: 1;
          Eina_Bool use_vertex : 1;
          Eina_Bool use_color : 1;
          Eina_Bool use_texuv : 1;
@@ -342,7 +342,7 @@ struct _Evas_Engine_GL_Context
    Evas_GL_Image *def_surface;
 
    /* If this is set: Force drawing with a particular filter */
-   GLuint	filter_prog;
+   GLuint filter_prog;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 // FIXME: hack. expose egl display to gl core for egl image sec extn.
@@ -543,17 +543,17 @@ void             evas_gl_common_context_yuv_push(Evas_Engine_GL_Context *gc,
                                                  int r, int g, int b, int a,
                                                  Eina_Bool smooth);
 void             evas_gl_common_context_yuy2_push(Evas_Engine_GL_Context *gc,
-						  Evas_GL_Texture *tex,
-						  double sx, double sy, double sw, double sh,
-						  int x, int y, int w, int h,
-						  int r, int g, int b, int a,
-						  Eina_Bool smooth);
+                                                  Evas_GL_Texture *tex,
+                                                  double sx, double sy, double sw, double sh,
+                                                  int x, int y, int w, int h,
+                                                  int r, int g, int b, int a,
+                                                  Eina_Bool smooth);
 void             evas_gl_common_context_nv12_push(Evas_Engine_GL_Context *gc,
-						  Evas_GL_Texture *tex,
-						  double sx, double sy, double sw, double sh,
-						  int x, int y, int w, int h,
-						  int r, int g, int b, int a,
-						  Eina_Bool smooth);
+                                                  Evas_GL_Texture *tex,
+                                                  double sx, double sy, double sw, double sh,
+                                                  int x, int y, int w, int h,
+                                                  int r, int g, int b, int a,
+                                                  Eina_Bool smooth);
 void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
                                                        Evas_GL_Texture *tex,
                                                        int npoints,
@@ -562,7 +562,7 @@ void             evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *g
                                                        int r, int g, int b, int a,
                                                        Eina_Bool smooth,
                                                        Eina_Bool tex_only,
-						       Evas_Colorspace cspace);
+                                                       Evas_Colorspace cspace);
 void              evas_gl_common_context_flush(Evas_Engine_GL_Context *gc);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
