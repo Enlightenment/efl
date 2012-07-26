@@ -224,6 +224,7 @@ _man_class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _man_con),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _man_des),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _man_des),
         EO_OP_FUNC_SENTINEL
    };
 

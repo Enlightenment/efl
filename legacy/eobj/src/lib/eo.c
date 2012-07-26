@@ -22,6 +22,8 @@ static void _eo_condtor_reset(Eo *obj);
 static inline void *_eo_data_get(const Eo *obj, const Eo_Class *klass);
 static inline Eo *_eo_ref(Eo *obj);
 static inline void _eo_unref(Eo *obj);
+static const Eo_Class *_eo_op_class_get(Eo_Op op);
+static const Eo_Op_Description *_eo_op_id_desc_get(Eo_Op op);
 
 typedef struct
 {
@@ -165,6 +167,14 @@ _dich_func_set(Eo_Class *klass, Eo_Op op, eo_op_func_type func)
    size_t idx1 = DICH_CHAIN1(op);
    Dich_Chain1 *chain1 = &klass->chain[idx1];
    _dich_chain_alloc(chain1);
+   if (chain1->funcs[DICH_CHAIN_LAST(op)].src == klass)
+     {
+        const Eo_Class *op_kls = _eo_op_class_get(op);
+        const Eo_Op_Description *op_desc = _eo_op_id_desc_get(op);
+        WRN("Already set function for op %x (%s:%s). Overriding with func %p",
+              op, op_kls->desc->name, op_desc->name, func);
+     }
+
    chain1->funcs[DICH_CHAIN_LAST(op)].func = func;
    chain1->funcs[DICH_CHAIN_LAST(op)].src = klass;
 }
