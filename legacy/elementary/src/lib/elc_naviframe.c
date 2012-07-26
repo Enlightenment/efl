@@ -632,7 +632,7 @@ _on_item_back_btn_clicked(void *data,
 static Evas_Object *
 _back_btn_new(Evas_Object *obj, const char *title_label)
 {
-   Evas_Object *btn;
+   Evas_Object *btn, *ed;
    char buf[1024];
 
    btn = elm_button_add(obj);
@@ -647,6 +647,24 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
      elm_layout_text_set(btn, NULL, title_label);
    else
      elm_object_domain_translatable_text_set(btn, PACKAGE, N_("Back"));
+
+   /* HACK NOTE: this explicit check only exists to avoid an ERR()
+    * message from elm_layout_content_set().
+    *
+    * The button was ALWAYS supposed to support an elm.swallow.content, but
+    * default naviframe/back_btn/default theme did not provide such, then
+    * old themes would emit such error message.
+    *
+    * Once we can break the theme API, remove this check and always
+    * set an icon.
+    */
+   ed = elm_layout_edje_get(btn);
+   if (edje_object_part_exists(ed, "elm.swallow.content"))
+     {
+        Evas_Object *ico = elm_icon_add(btn);
+        elm_icon_standard_set(ico, "arrow_left");
+        elm_layout_content_set(btn, "elm.swallow.content", ico);
+     }
 
    return btn;
 }
