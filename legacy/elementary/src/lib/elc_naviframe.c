@@ -650,7 +650,6 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
 
    ico = elm_icon_add(btn);
    elm_icon_standard_set(ico, "arrow_left");
-   elm_object_style_set(btn, buf);
    elm_layout_content_set(btn, NULL, ico);
 
    return btn;
