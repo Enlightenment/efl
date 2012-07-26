@@ -623,6 +623,7 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer __UNUSED
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!surface) return;
    if (!(input = data)) return;
 
    if (!input->timestamp)
