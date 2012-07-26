@@ -652,6 +652,8 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
                             Eina_Bool calc)
 {
    Evas_Object *content;
+   Eina_List *l;
+   const char *part;
 
    if (!it->realized) return;
    if (GL_IT(it)->wsd->reorder_it == it) return;
@@ -664,6 +666,9 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
         ecore_timer_del(it->long_timer);
         it->long_timer = NULL;
      }
+
+   EINA_LIST_FOREACH(it->texts, l, part)
+     edje_object_part_text_set(VIEW(it), part, NULL);
 
    elm_widget_stringlist_free(it->texts);
    it->texts = NULL;
