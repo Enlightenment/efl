@@ -59,7 +59,7 @@ struct _Ecore_IMF_Context_Data
    XIMFeedback   *feedbacks;
 
    XIMCallback    destroy_cb;
-   
+
    XIMCallback    preedit_start_cb;
    XIMCallback    preedit_done_cb;
    XIMCallback    preedit_draw_cb;
