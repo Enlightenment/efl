@@ -253,6 +253,7 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord h_box = 0, minh_box = 0;
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Coord bx, by, bw, bh;
 
    if (!wd) return;
    if (wd->items)
@@ -273,9 +274,7 @@ _sizing_eval(Evas_Object *obj)
 //        evas_object_smart_calculate(wd->scr);
      }
    evas_object_size_hint_min_get(wd->scr, &minw, &minh);
-   printf("min: %ix%i\n", minw, minh);
    evas_object_size_hint_max_get(wd->scr, &minw, &minh);
-   printf("max: %ix%i\n", minw, minh);
    
    edje_object_size_min_calc(elm_layout_edje_get(wd->base), &minw, &minh);
    evas_object_size_hint_min_set(wd->base, minw, minh);
@@ -283,6 +282,11 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
    elm_layout_sizing_eval(wd->base);
+
+   // hack hack hack. this widget needs a ... redo.
+   evas_object_geometry_get(wd->base, &bx, &by, &bw, &bh);
+   evas_object_resize(obj, bw, bh);
+   evas_object_move(obj, bx, by);
 }
 
 static void
