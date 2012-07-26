@@ -632,7 +632,7 @@ _on_item_back_btn_clicked(void *data,
 static Evas_Object *
 _back_btn_new(Evas_Object *obj, const char *title_label)
 {
-   Evas_Object *btn, *ico;
+   Evas_Object *btn;
    char buf[1024];
 
    btn = elm_button_add(obj);
@@ -647,10 +647,6 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
      elm_layout_text_set(btn, NULL, title_label);
    else
      elm_object_domain_translatable_text_set(btn, PACKAGE, N_("Back"));
-
-   ico = elm_icon_add(btn);
-   elm_icon_standard_set(ico, "arrow_left");
-   elm_layout_content_set(btn, NULL, ico);
 
    return btn;
 }
