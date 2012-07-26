@@ -448,7 +448,6 @@ elm_main(int    argc,
    grid = elm_gengrid_add(win);
    elm_gengrid_item_size_set(grid, 150, 150);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_min_set(grid, 600, 500);
    elm_box_pack_end(bx, grid);
    evas_object_smart_callback_add(grid, "clicked,double", _double_click, NULL);
    evas_object_smart_callback_add(grid, "longpressed", _long_pressed, NULL);

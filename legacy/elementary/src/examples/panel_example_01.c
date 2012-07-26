@@ -35,7 +35,6 @@ elm_main(int argc, char **argv)
    content = elm_label_add(win);
    elm_object_text_set(content, "content");
    evas_object_show(content);
-   evas_object_size_hint_min_set(content, 100, 30);
    elm_object_content_set(panel, content);
 
    panel = elm_panel_add(win);
@@ -49,7 +48,6 @@ elm_main(int argc, char **argv)
    content = elm_label_add(win);
    elm_object_text_set(content, "content2");
    evas_object_show(content);
-   evas_object_size_hint_min_set(content, 100, 30);
    elm_object_content_set(panel, content);
 
    panel = elm_panel_add(win);
@@ -61,7 +59,6 @@ elm_main(int argc, char **argv)
    content = elm_label_add(win);
    elm_object_text_set(content, "content2");
    evas_object_show(content);
-   evas_object_size_hint_min_set(content, 100, 30);
    elm_object_content_set(panel, content);
 
 

@@ -81,8 +81,6 @@ elm_main(int argc, char **argv)
    elm_object_part_content_set(layout, SWALLOW, btn);
    evas_object_smart_callback_add(btn, "clicked", _swallow_btn_cb, layout);
 
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 640);
    evas_object_resize(win, 160, 160);
    evas_object_show(win);
 

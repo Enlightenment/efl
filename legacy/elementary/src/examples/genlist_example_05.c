@@ -412,8 +412,6 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(list, "expanded", _expanded_cb, list);
    evas_object_smart_callback_add(list, "contracted", _contracted_cb, list);
 
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 800);
    evas_object_resize(win, 420, 600);
    evas_object_show(win);
 

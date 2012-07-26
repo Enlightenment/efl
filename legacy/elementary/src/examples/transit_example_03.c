@@ -197,8 +197,6 @@ elm_main(int argc, char **argv)
    bg = elm_bg_add(win);
    elm_bg_color_set(bg, 255, 255, 255);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_min_set(bg, 640, 640);
-   evas_object_size_hint_max_set(bg, 640, 640);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
@@ -317,7 +315,6 @@ elm_main(int argc, char **argv)
    elm_spinner_special_value_add(spinner, 4, "accelerate");
    evas_object_size_hint_weight_set(spinner, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(spinner, 0.0, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(spinner, 200, 30);
    evas_object_smart_callback_add(spinner, "changed", _cb_tween_changed, &context.tween_mode);
    elm_box_pack_end(vbox2, spinner);
    evas_object_show(spinner);

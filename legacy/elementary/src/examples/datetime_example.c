@@ -30,7 +30,6 @@ elm_main(int argc, char *argv[])
    elm_win_resize_object_add(win, bx);
    elm_box_horizontal_set(bx, EINA_FALSE);
    evas_object_show(bx);
-   evas_object_size_hint_min_set(bx, 360, 200);
 
    //datetime showing only DATE
    datetime = elm_datetime_add(bx);

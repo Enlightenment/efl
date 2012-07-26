@@ -26,14 +26,6 @@ elm_main(int argc, char **argv)
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
-   /* set size hints. a minimum size for the bg. this should propagate back
-    * to the window thus limiting its size based off the bg as the bg is one
-    * of the window's resize objects. */
-   evas_object_size_hint_min_set(bg, 160, 160);
-   /* and set a maximum size. not needed very often. normally used together
-    * with evas_object_size_hint_min_set() at the same size to make a
-    * window not resizable */
-   evas_object_size_hint_max_set(bg, 640, 640);
    /* and now just resize the window to a size you want. normally widgets
     * will determine the initial size though */
    evas_object_resize(win, 320, 320);

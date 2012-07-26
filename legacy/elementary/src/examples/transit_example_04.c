@@ -104,8 +104,6 @@ elm_main(int argc, char **argv)
    bg = elm_bg_add(win);
    elm_bg_color_set(bg, 255, 255, 255);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_min_set(bg, 640, 640);
-   evas_object_size_hint_max_set(bg, 640, 640);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 

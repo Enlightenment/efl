@@ -52,7 +52,6 @@ _genlist_add(Evas_Object *box)
    Evas_Object *list = elm_genlist_add(elm_object_parent_widget_get(box));
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(list, 200, 160);
    elm_box_pack_end(box, list);
    evas_object_show(list);
 
@@ -118,8 +117,6 @@ elm_main(int argc, char **argv)
    elm_genlist_mode_set(list, ELM_LIST_COMPRESS);
    _genlist_fill(list);
 
-   evas_object_size_hint_min_set(bg, 800, 160);
-   evas_object_size_hint_max_set(bg, 800, 640);
    evas_object_resize(win, 800, 320);
    evas_object_show(win);
 

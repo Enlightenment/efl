@@ -32,7 +32,6 @@ _box_btn_cb(void *data, Evas_Object *btn, void *event_info)
    elm_object_text_set(item, buf);
    evas_object_size_hint_weight_set(item, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(item, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(item, 100, 50);
    elm_layout_box_insert_before(layout, BOX, item, btn);
    evas_object_smart_callback_add(item, "clicked", _box_btn_cb, layout);
    evas_object_show(item);
@@ -118,7 +117,6 @@ elm_main(int argc, char **argv)
    elm_object_text_set(item, "Position 0");
    evas_object_size_hint_weight_set(item, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(item, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(item, 100, 50);
    elm_layout_box_insert_at(layout, BOX, item, 0);
    evas_object_smart_callback_add(item, "clicked", _box_btn_cb, layout);
    evas_object_show(item);
@@ -127,7 +125,6 @@ elm_main(int argc, char **argv)
    elm_object_text_set(item, "Prepended");
    evas_object_size_hint_weight_set(item, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(item, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_min_set(item, 100, 50);
    elm_layout_box_prepend(layout, BOX, item);
    evas_object_smart_callback_add(item, "clicked", _box_btn_cb, layout);
    evas_object_show(item);
@@ -137,8 +134,6 @@ elm_main(int argc, char **argv)
    elm_object_part_content_set(layout, SWALLOW, bt2);
    evas_object_smart_callback_add(bt2, "clicked", _swallow_btn_cb, layout);
 
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 640);
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 
