@@ -320,8 +320,8 @@ _eo_kls_itr_func_get(Eo_Kls_Itr *mro_itr, Eo_Op op)
       { \
          const Eo_Class *op_klass = _eo_op_class_get(op); \
          const char *_dom_name = (op_klass) ? op_klass->desc->name : NULL; \
-         ERR("Can't find func for op %x ('%s' of domain '%s') for class '%s'. Aborting.", \
-               op, _eo_op_id_name_get(op), _dom_name, \
+         ERR("Can't find func for op %x (%s:%s) for class '%s'. Aborting.", \
+               op, _dom_name, _eo_op_id_name_get(op), \
                (klass) ? klass->desc->name : NULL); \
       } \
    while (0)
@@ -734,11 +734,11 @@ eo_class_funcs_set(Eo_Class *klass, const Eo_Op_Func_Description *func_descs)
                }
              else
                {
-                  ERR("Set function's op type (%x) is different than the one in the op description (%d) for op '%s' in class '%s'. Func index: %d",
+                  ERR("Set function's op type (%x) is different than the one in the op description (%d) for op '%s:%s'. Func index: %d",
                         itr->op_type,
                         (op_desc) ? op_desc->op_type : EO_OP_TYPE_REGULAR,
-                        (op_desc) ? op_desc->name : NULL,
                         klass->desc->name,
+                        (op_desc) ? op_desc->name : NULL,
                         itr - func_descs);
                }
           }
