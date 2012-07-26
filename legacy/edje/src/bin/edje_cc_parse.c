@@ -91,11 +91,11 @@ err_show_stack(void)
    s = stack_id();
    if (s)
      {
-        printf("PARSE STACK:\n%s\n", s);
+        ERR("PARSE STACK:\n%s", s);
         free(s);
      }
    else
-      printf("NO PARSE STACK\n");
+      ERR("NO PARSE STACK");
 }
 
 static void
@@ -104,12 +104,11 @@ err_show_params(void)
    Eina_List *l;
    char *p;
 
-   printf("PARAMS:");
+   ERR("PARAMS:");
    EINA_LIST_FOREACH(params, l, p)
      {
-        printf(" %s", p);
+        ERR("  %s", p);
      }
-   printf("\n");
 }
 
 static void

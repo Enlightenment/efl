@@ -20,15 +20,15 @@ extern int _edje_cc_log_dom ;
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) EINA_LOG_DOM_ERR(_edje_cc_log_dom, __VA_ARGS__)
+#define ERR(...) do{printf("\033[31m");printf(__VA_ARGS__);printf("\033[0m\n");} while (0)
 #ifdef INF
 # undef INF
 #endif
-#define INF(...) EINA_LOG_DOM_INFO(_edje_cc_log_dom, __VA_ARGS__)
+#define INF(...) do{printf("\033[35m");printf(__VA_ARGS__);printf("\033[0m\n");} while (0)
 #ifdef WRN
 # undef WRN
 #endif
-#define WRN(...) EINA_LOG_DOM_WARN(_edje_cc_log_dom, __VA_ARGS__)
+#define WRN(...)  do{printf("\033[33m");printf(__VA_ARGS__);printf("\033[0m\n");} while (0)
 
 
 /* types */

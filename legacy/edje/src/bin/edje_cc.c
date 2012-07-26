@@ -87,7 +87,7 @@ main(int argc, char **argv)
    /* add defines to epp so edc files can detect edje_cc version */
    defines = eina_list_append(defines, mem_strdup("-DEDJE_VERSION_12=12"));
 
-   progname = argv[0];
+   progname = (char *)ecore_file_file_get(argv[0]);
    for (i = 1; i < argc; i++)
      {
 	if (!strcmp(argv[i], "-h"))
