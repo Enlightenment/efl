@@ -263,6 +263,8 @@ group { name: "elm/check/base/toggle";
    }
    script {
       public is_rtl;
+      public is_drag;
+      public was_drag;
    }
    parts {
       part { name: "bg";
@@ -546,6 +548,41 @@ group { name: "elm/check/base/toggle";
       }
    }
    programs {
+      program {
+         signal: "mouse,clicked,1";
+         source: "button";
+         script {
+            new Float:dx, Float:dy;
+            get_drag(PART:"button", dx, dy);
+
+            if (!get_int(was_drag)) {
+               if (dx > 0.5)
+                  set_drag(PART:"button", 0.0, 0.0);
+               else
+                  set_drag(PART:"button", 1.0, 0.0);
+               if (((get_int(is_rtl) == 1) && (dx <= 0.5)) ||
+                   (get_int(is_rtl) == 0) && (dx > 0.5))
+                  emit("elm,action,check,off", "");
+               else
+                  emit("elm,action,check,on", "");
+            }
+         }
+      }
+      program {
+         signal: "drag";
+         source: "button";
+         script {
+            set_int(is_drag, 1);
+         }
+      }
+      program {
+         signal: "mouse,down,1";
+         source: "button";
+         script {
+            set_int(was_drag, 0);
+            set_int(is_drag, 0);
+         }
+      }
       program { name:   "drag_end";
          signal: "mouse,up,1";
          source: "button";
@@ -561,13 +598,14 @@ group { name: "elm/check/base/toggle";
                set_drag(PART:"button", 0.0, 0.0);
             }
             if (((get_int(is_rtl) == 1) && (dx <= 0.5)) ||
-            (get_int(is_rtl) == 0) && (dx > 0.5)) {
+                (get_int(is_rtl) == 0) && (dx > 0.5)) {
                emit("elm,action,check,on", "");
             }
             else {
                emit("elm,action,check,off", "");
             }
-
+            set_int(was_drag, get_int(is_drag));
+            set_int(is_drag, 0);
          }
       }
       program { name: "check_on";
