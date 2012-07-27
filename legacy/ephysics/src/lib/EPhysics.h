@@ -923,6 +923,24 @@ EAPI Eina_Bool ephysics_world_bodies_outside_left_autodel_get(const EPhysics_Wor
 typedef struct _EPhysics_Body EPhysics_Body; /**< Body handle, represents an object on EPhysics world. Created with @ref ephysics_body_circle_add() or @ref ephysics_body_box_add() and deleted with @ref ephysics_body_del(). */
 
 /**
+ * @typedef EPhysics_Body_Collision
+ *
+ * Body collision wraps collision informations.
+ *
+ * EPhysics_Body_Collision is used on EPHYSICS_CALLBACK_BODY_COLLISION callback
+ * and is mostly interested to hold informations like:
+ * @li contact_body - the body which the collision occurred against;
+ * @li position - points the position where the collision happened;
+ *
+ * @see ephysics_body_collision_position_get()
+ * @see ephysics_body_collision_contact_body_get()
+ * @see EPHYSICS_CALLBACK_BODY_COLLISION and @ref
+ * ephysics_body_event_callback_add() for collision callback.
+ * @ingroup EPhysics_Body
+ */
+typedef struct _EPhysics_Body_Collision EPhysics_Body_Collision;
+
+/**
  * @enum _EPhysics_Callback_Body_Type
  * @typedef EPhysics_Callback_Body_Type
  *
@@ -1504,12 +1522,25 @@ EAPI void ephysics_body_evas_object_update(EPhysics_Body *body);
  *
  * Update callbacks receives evas object set to body as event_info argument.
  *
- * Regarding EPHYSICS_CALLBACK_BODY_COLLISION:
+ * What follows is a list of details about each callback type:
  *
- * Callbacks are called just after the collision has been actually processed
- * by the physics engine.
+ * - #EPHYSICS_CALLBACK_BODY_UPDATE: Called after every physics iteration. @p
+ *   body points to the EPhysics_Body itself and @p event_info points to the
+ *   evas object associated to the body.
  *
- * The other body involved in the collision is passed as event_info argument.
+ * - #EPHYSICS_CALLBACK_BODY_COLLISION: Called just after the collision has
+ *   been actually processed by the physics engine. The body involved in the
+ *   collision is passed as @p body argument. @p event_info is a pointer to
+ *   @ref EPhysics_Body_Collision - note, this structure(@p event_info) is
+ *   discarded/freed right after callback returns.
+ *
+ * - #EPHYSICS_CALLBACK_BODY_DEL: Called when a body deletion has been issued
+ *   and just before the deletion actually happens. @p body points to the body
+ *   being deleted and no @p event_info is provided.
+ *
+ * - #EPHYSICS_CALLBACK_BODY_STOPPED: Called when a body is found to be
+ *   stopped. @p body points to the body of interest and @p event_info is a
+ *   pointer to the evas object associated to it.
  *
  * @param body The physics body.
  * @param type Type of callback to be listened by @p func.
@@ -1563,6 +1594,39 @@ EAPI void *ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callba
  * @ingroup EPhysics_Body
  */
 EAPI void *ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, void *data);
+
+/**
+ * @brief
+ * Get the position(x, y) of a body's collision.
+ *
+ * Given a body collision data, fills @p x and @p y pointers with the position
+ * where the collision occurred.
+ *
+ * @param collision The body collision data of interest.
+ * @param x The x pointer to set the x coordinate to.
+ * @param y The y pointer to set the y coordinate to.
+ *
+ * @see EPHYSICS_CALLBACK_BODY_COLLISION and @ref
+ * ephysics_body_event_callback_add() for collision callback.
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, Evas_Coord *x, Evas_Coord *y);
+
+/**
+ * @brief
+ * Get the body's collision contact body.
+ *
+ * Given a body collision data returns the contact body which a collision
+ * occurred against.
+ *
+ * @param collision The body collision of interest.
+ * @return The contact body of @p collision.
+ *
+ * @see EPHYSICS_CALLBACK_BODY_COLLISION and @ref
+ * ephysics_body_event_callback_add() for collision callback.
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_collision_contact_body_get(const EPhysics_Body_Collision *collision);
 
 /**
  * @brief

@@ -14,19 +14,20 @@ struct _Collision_Data {
 };
 
 static void
-_collision_cb(void *data, EPhysics_Body *body __UNUSED__, void *event_info __UNUSED__)
+_collision_cb(void *data, EPhysics_Body *body __UNUSED__, void *event_info)
 {
+   EPhysics_Body *contact_body;
    Collision_Data *collision_data = data;
-   Evas_Object *obj;
-   int x;
+   EPhysics_Body_Collision *collision = event_info;
+   int x, y;
 
-   if (event_info != collision_data->sphere2) return;
+   contact_body = ephysics_body_collision_contact_body_get(collision);
+   if (contact_body != collision_data->sphere2) return;
 
+   ephysics_body_collision_position_get(collision, &x, &y);
    INF("Collision Detected");
 
-   obj = ephysics_body_evas_object_get(collision_data->sphere);
-   evas_object_geometry_get(obj, &x, NULL, NULL, NULL);
-   evas_object_move(collision_data->impact, x - 4, FLOOR_Y - 80);
+   evas_object_move(collision_data->impact, x, y);
    elm_object_signal_emit(collision_data->impact, "impact,show",
                           "ephysics_test");
 }

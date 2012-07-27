@@ -66,7 +66,7 @@ Eina_Bool ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world)
 
 void ephysics_body_evas_object_update_select(EPhysics_Body *body);
 void ephysics_orphan_body_del(EPhysics_Body *body);
-void ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body);
+void ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body, btVector3 position);
 btRigidBody *ephysics_body_rigid_body_get(const EPhysics_Body *body);
 void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
 

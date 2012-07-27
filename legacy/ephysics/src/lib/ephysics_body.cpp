@@ -32,6 +32,12 @@ struct _EPhysics_Body {
      Eina_Bool active:1;
 };
 
+struct _EPhysics_Body_Collision {
+     EPhysics_Body *contact_body;
+     Evas_Coord x;
+     Evas_Coord y;
+};
+
 void
 ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active)
 {
@@ -237,10 +243,50 @@ ephysics_body_evas_object_update_select(EPhysics_Body *body)
      _ephysics_body_outside_render_area_check(body);
 }
 
+static void
+ephysics_body_collision_set(EPhysics_Body_Collision *collision, EPhysics_Body *contact_body, btVector3 position)
+{
+   double rate;
+   int height;
+   EPhysics_World *world = contact_body->world;
+
+   ephysics_world_render_geometry_get(world, NULL, NULL, NULL, &height);
+   rate = ephysics_world_rate_get(world);
+   collision->contact_body = contact_body;
+   collision->x = position.getX() * rate;
+   collision->y = height - (position.getY() * rate);
+}
+
+EAPI void
+ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, Evas_Coord *x, Evas_Coord *y)
+{
+   if (!collision)
+     {
+        ERR("Can't get body's collision data, collision is null.");
+        return;
+     }
+
+   if (x) *x = collision->x;
+   if (y) *y = collision->y;
+}
+
+EAPI EPhysics_Body *
+ephysics_body_collision_contact_body_get(const EPhysics_Body_Collision *collision)
+{
+   if (!collision)
+     {
+        ERR("Can't get body's collision contact body, collision is null.");
+        return NULL;
+     }
+
+   return collision->contact_body;
+}
+
 void
-ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body)
+ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body, btVector3 position)
 {
    EPhysics_Body_Callback *cb;
+   EPhysics_Body_Collision *collision;
 
    if ((!body) || (!contact_body))
      return;
@@ -248,7 +294,18 @@ ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body
    EINA_INLIST_FOREACH(body->callbacks, cb)
      {
         if (cb->type == EPHYSICS_CALLBACK_BODY_COLLISION)
-          cb->func(cb->data, body, (void *) contact_body);
+          {
+             collision = (EPhysics_Body_Collision*)malloc(
+                                              sizeof(EPhysics_Body_Collision));
+             if (!collision)
+               {
+                  ERR("Can't allocate collision data structure.");
+                  continue;
+               }
+             ephysics_body_collision_set(collision, contact_body, position);
+             cb->func(cb->data, body, collision);
+             free(collision);
+          }
      }
 }
 

@@ -123,8 +123,8 @@ _ephysics_world_contact_processed_cb(btManifoldPoint &cp, void *b0, void *b1)
    body_0 = (EPhysics_Body *) rigid_body_0->getUserPointer();
    body_1 = (EPhysics_Body *) rigid_body_1->getUserPointer();
 
-   ephysics_body_contact_processed(body_0, body_1);
-   ephysics_body_contact_processed(body_1, body_0);
+   ephysics_body_contact_processed(body_0, body_1, cp.getPositionWorldOnA());
+   ephysics_body_contact_processed(body_1, body_0, cp.getPositionWorldOnB());
 
    return EINA_TRUE;
 }
