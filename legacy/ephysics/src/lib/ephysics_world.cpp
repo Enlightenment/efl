@@ -48,6 +48,23 @@ static int _worlds_running = 0;
 static Eina_List *_worlds = NULL;
 static Ecore_Animator *_anim_simulate = NULL;
 
+struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
+{
+   virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0,btBroadphaseProxy* proxy1) const
+   {
+      btCollisionObject *coll0 = (btCollisionObject *)proxy0->m_clientObject;
+      btCollisionObject *coll1 = (btCollisionObject *)proxy1->m_clientObject;
+
+      EPhysics_Body *body0 = (EPhysics_Body *)coll0->getUserPointer();
+      EPhysics_Body *body1 = (EPhysics_Body *)coll1->getUserPointer();
+
+      if ((!body0 || !body1) || (ephysics_body_filter_collision(body0, body1)))
+        return EINA_TRUE;
+
+      return EINA_FALSE;
+   }
+};
+
 static void
 _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
 {
@@ -235,6 +252,7 @@ EAPI EPhysics_World *
 ephysics_world_new(void)
 {
    EPhysics_World *world;
+   btOverlapFilterCallback *filter_cb;
 
    world = (EPhysics_World *) calloc(1, sizeof(EPhysics_World));
    if (!world)
@@ -297,6 +315,13 @@ ephysics_world_new(void)
    world->dynamics_world->getSolverInfo().m_solverMode ^=
       EPHYSICS_WORLD_SOLVER_SIMD;
    world->dynamics_world->setGravity(btVector3(0, -9.8, 0));
+
+   filter_cb = new _ephysics_world_ovelap_filter_cb();
+   if (!filter_cb)
+     INF("Couldn't initialize the collision filter.");
+   else
+     world->dynamics_world->getPairCache()->setOverlapFilterCallback(filter_cb);
+
    world->rate = 30;
    world->dynamics_world->setInternalTickCallback(_ephysics_world_tick_cb,
                                                   (void *) world);

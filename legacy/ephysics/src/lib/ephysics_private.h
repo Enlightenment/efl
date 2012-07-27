@@ -64,6 +64,8 @@ void ephysics_world_boundary_set(EPhysics_World *world, EPhysics_World_Boundary 
 EPhysics_Body *ephysics_world_boundary_get(const EPhysics_World *world, EPhysics_World_Boundary boundary);
 Eina_Bool ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world);
 
+Eina_Bool ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1);
+
 void ephysics_body_evas_object_update_select(EPhysics_Body *body);
 void ephysics_orphan_body_del(EPhysics_Body *body);
 void ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body, btVector3 position);

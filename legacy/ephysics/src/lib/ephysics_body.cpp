@@ -30,6 +30,7 @@ struct _EPhysics_Body {
      Eina_Inlist *callbacks;
      double mass;
      Eina_Bool active:1;
+     Eina_List *collision_groups;
 };
 
 struct _EPhysics_Body_Collision {
@@ -50,6 +51,82 @@ ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active)
    EINA_INLIST_FOREACH(body->callbacks, cb)
       if (cb->type == EPHYSICS_CALLBACK_BODY_STOPPED)
         cb->func(cb->data, body, (void *) body->evas_obj);
+};
+
+Eina_Bool
+ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1)
+{
+   void *grp;
+   Eina_Iterator *it;
+   Eina_List *l;
+
+   if ((!body0->collision_groups) || (!body1->collision_groups))
+     return EINA_TRUE;
+
+   EINA_LIST_FOREACH(body0->collision_groups, l, grp)
+     {
+        if (eina_list_data_find(body1->collision_groups, grp))
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ephysics_body_collision_group_add(EPhysics_Body *body, const char *group)
+{
+   Eina_List *l;
+   void *grp;
+   Eina_Stringshare *group_str;
+
+   if (!body)
+     {
+        ERR("Can't add body collision group, body is null.");
+        return EINA_FALSE;
+     }
+
+   group_str = eina_stringshare_add(group);
+   EINA_LIST_FOREACH(body->collision_groups, l, grp)
+     {
+        if (grp == group_str)
+          {
+             eina_stringshare_del(group_str);
+             return EINA_TRUE;
+          }
+     }
+
+   body->collision_groups = eina_list_append(body->collision_groups, group_str);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+ephysics_body_collision_group_del(EPhysics_Body *body, const char *group)
+{
+   Eina_Stringshare *group_str;
+
+   if (!body)
+     {
+        ERR("Can't remove body collision group, body is null.");
+        return EINA_FALSE;
+     }
+
+   group_str = eina_stringshare_add(group);
+   body->collision_groups = eina_list_remove(body->collision_groups, group_str);
+   eina_stringshare_del(group_str);
+   eina_stringshare_del(group_str);
+   return EINA_TRUE;
+}
+
+EAPI const Eina_List *
+ephysics_body_collision_group_list_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't get the body's collision group, body is null.");
+        return NULL;
+     }
+
+   return body->collision_groups;
 }
 
 static EPhysics_Body *
@@ -88,6 +165,7 @@ _ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape)
         return NULL;
      }
 
+   body->collision_groups = NULL;
    body->collision_shape = collision_shape;
    body->rigid_body = rigid_body;
    body->mass = mass;
@@ -111,6 +189,7 @@ static void
 _ephysics_body_del(EPhysics_Body *body)
 {
    EPhysics_Body_Callback *cb;
+   void *group;
 
    if (body->evas_obj)
      evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_DEL,
@@ -123,6 +202,9 @@ _ephysics_body_del(EPhysics_Body *body)
         body->callbacks = eina_inlist_remove(body->callbacks, body->callbacks);
         free(cb);
      }
+
+   EINA_LIST_FREE(body->collision_groups, group)
+        eina_stringshare_del((Eina_Stringshare *)group);
 
    delete body->rigid_body->getMotionState();
    delete body->collision_shape;

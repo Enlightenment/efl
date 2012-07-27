@@ -1453,6 +1453,58 @@ EAPI void ephysics_body_damping_get(const EPhysics_Body *body, double *linear_da
 
 /**
  * @brief
+ * Add a @p body to a given collision group.
+ *
+ * After calling this function the body is said to be added to collision @p
+ * group.
+ *
+ * If not added to any group the body will collide against any other body.
+ * Otherwise this body will collide only against those in the same groups.
+ *
+ * @param body The body to be added to @p group.
+ * @param group The group the @p body will belong to.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see ephysics_body_collision_group_del()
+ * @see ephysics_body_collision_group_list_get()
+ * @ingroup EPhysics_Body
+ */
+EAPI Eina_Bool ephysics_body_collision_group_add(EPhysics_Body *body, const char *group);
+
+/**
+ * @brief
+ * Removes @p body from collision @p group.
+ *
+ * This @p body will not belong to @p group any more and the collisions filter
+ * must take that on account.
+ *
+ * @param body The body to be removed from @p group.
+ * @param group The group @p body must be removed from.
+ * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ *
+ * @see ephysics_body_collision_group_add()
+ * @ingroup EPhysics_Body
+ */
+EAPI Eina_Bool ephysics_body_collision_group_del(EPhysics_Body *body, const char *group);
+
+/**
+ * @brief
+ * Get the collision group list of @p body.
+ *
+ * @param body The body of interest.
+ * @return The collision group list of @p body, NULL on failure or case no
+ * group has been added to @p body.
+ *
+ * @warning The collision group list is an EPhysics internal data structure and
+ * should @b never be modified by its callers.
+ *
+ * @see ephysics_body_collision_group_add()
+ * @ingroup EPhysics_Body
+ */
+EAPI const Eina_List *ephysics_body_collision_group_list_get(const EPhysics_Body *body);
+
+/**
+ * @brief
  * Update the evas object associated to the body.
  *
  * This function should be called to update position and rotation of
