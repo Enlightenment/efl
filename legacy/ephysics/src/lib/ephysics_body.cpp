@@ -26,6 +26,7 @@ struct _EPhysics_Body {
      btRigidBody *rigid_body;
      Evas_Object *evas_obj;
      EPhysics_World *world;
+     void *data;
      Eina_Inlist *callbacks;
      double mass;
      Eina_Bool active:1;
@@ -932,6 +933,30 @@ ephysics_body_rotation_get(const EPhysics_Body *body)
       trans.getRotation().getAxis().getZ();
 
    return rot;
+}
+
+EAPI void
+ephysics_body_data_set(EPhysics_Body *body, void *data)
+{
+   if (!body)
+     {
+        ERR("Can't set data, body is null.");
+        return;
+     }
+
+   body->data = data;
+}
+
+EAPI void *
+ephysics_body_data_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't get data, body is null.");
+        return NULL;
+     }
+
+   return body->data;
 }
 
 #ifdef  __cplusplus

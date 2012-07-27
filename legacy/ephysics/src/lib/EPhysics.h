@@ -1670,6 +1670,39 @@ EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Ei
 EAPI double ephysics_body_rotation_get(const EPhysics_Body *body);
 
 /**
+ * @brief
+ * Set data to @p body.
+ *
+ * If a previous data was set, it's reference will be lost and body
+ * will point to the new data.
+ *
+ * It can be useful when you need to store a structure per body. For example,
+ * some values that must to be updated when a collision occurs between two
+ * bodies.
+ *
+ * @param body The physics body.
+ * @param data The data to be set.
+ *
+ * @see ephysics_body_data_get()
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_data_set(EPhysics_Body *body, void *data);
+
+/**
+ * @brief
+ * Return data previously set to body.
+ *
+ * @param body The physics body.
+ * @return The data set or @c NULL on error.
+ *
+ * @see ephysics_body_data_get() for more details
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void *ephysics_body_data_get(const EPhysics_Body *body);
+
+/**
  * @}
  */
 
