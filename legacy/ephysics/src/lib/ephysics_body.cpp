@@ -75,8 +75,6 @@ ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1)
 EAPI Eina_Bool
 ephysics_body_collision_group_add(EPhysics_Body *body, const char *group)
 {
-   Eina_List *l;
-   void *grp;
    Eina_Stringshare *group_str;
 
    if (!body)
@@ -86,13 +84,11 @@ ephysics_body_collision_group_add(EPhysics_Body *body, const char *group)
      }
 
    group_str = eina_stringshare_add(group);
-   EINA_LIST_FOREACH(body->collision_groups, l, grp)
+   if (eina_list_data_find(body->collision_groups, group_str))
      {
-        if (grp == group_str)
-          {
-             eina_stringshare_del(group_str);
-             return EINA_TRUE;
-          }
+        INF("Body already added to group: %s", group);
+        eina_stringshare_del(group_str);
+        return EINA_TRUE;
      }
 
    body->collision_groups = eina_list_append(body->collision_groups, group_str);
@@ -111,6 +107,13 @@ ephysics_body_collision_group_del(EPhysics_Body *body, const char *group)
      }
 
    group_str = eina_stringshare_add(group);
+   if (!eina_list_data_find(body->collision_groups, group_str))
+     {
+        INF("Body isn't part of group: %s", group);
+        eina_stringshare_del(group_str);
+        return EINA_TRUE;
+     }
+
    body->collision_groups = eina_list_remove(body->collision_groups, group_str);
    eina_stringshare_del(group_str);
    eina_stringshare_del(group_str);
@@ -331,17 +334,17 @@ ephysics_body_evas_object_update_select(EPhysics_Body *body)
 }
 
 static void
-ephysics_body_collision_set(EPhysics_Body_Collision *collision, EPhysics_Body *contact_body, btVector3 position)
+_ephysics_body_collision_set(EPhysics_Body_Collision *collision, EPhysics_Body *contact_body, btVector3 position)
 {
    double rate;
-   int height;
+   int wy, wh;
    EPhysics_World *world = contact_body->world;
 
-   ephysics_world_render_geometry_get(world, NULL, NULL, NULL, &height);
+   ephysics_world_render_geometry_get(world, NULL, &wy, NULL, &wh);
    rate = ephysics_world_rate_get(world);
    collision->contact_body = contact_body;
    collision->x = position.getX() * rate;
-   collision->y = height - (position.getY() * rate);
+   collision->y = wh + wy - (position.getY() * rate);
 }
 
 EAPI void
@@ -373,7 +376,6 @@ void
 ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body, btVector3 position)
 {
    EPhysics_Body_Callback *cb;
-   EPhysics_Body_Collision *collision;
 
    if ((!body) || (!contact_body))
      return;
@@ -382,14 +384,18 @@ ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body
      {
         if (cb->type == EPHYSICS_CALLBACK_BODY_COLLISION)
           {
-             collision = (EPhysics_Body_Collision*)malloc(
-                                              sizeof(EPhysics_Body_Collision));
+             EPhysics_Body_Collision *collision;
+
+             collision = (EPhysics_Body_Collision *)malloc(
+                sizeof(EPhysics_Body_Collision));
+
              if (!collision)
                {
                   ERR("Can't allocate collision data structure.");
                   continue;
                }
-             ephysics_body_collision_set(collision, contact_body, position);
+
+             _ephysics_body_collision_set(collision, contact_body, position);
              cb->func(cb->data, body, collision);
              free(collision);
           }

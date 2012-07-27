@@ -1467,9 +1467,11 @@ EAPI void ephysics_body_damping_get(const EPhysics_Body *body, double *linear_da
  * If not added to any group the body will collide against any other body.
  * Otherwise this body will collide only against those in the same groups.
  *
+ * If @p body was already part of @p group, nothing will happen.
+ *
  * @param body The body to be added to @p group.
  * @param group The group the @p body will belong to.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if body is added to group, or @c EINA_FALSE on error.
  *
  * @see ephysics_body_collision_group_del()
  * @see ephysics_body_collision_group_list_get()
@@ -1484,9 +1486,12 @@ EAPI Eina_Bool ephysics_body_collision_group_add(EPhysics_Body *body, const char
  * This @p body will not belong to @p group any more and the collisions filter
  * must take that on account.
  *
+ * If @p body wasn't part of @p group before, nothing will happen.
+ *
  * @param body The body to be removed from @p group.
  * @param group The group @p body must be removed from.
- * @return EINA_TRUE on success, EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if body is removed from group, or @c EINA_FALSE on
+ * error.
  *
  * @see ephysics_body_collision_group_add()
  * @ingroup EPhysics_Body

@@ -25,11 +25,12 @@ _collision_cb(void *data, EPhysics_Body *body __UNUSED__, void *event_info)
    if (contact_body != collision_data->sphere2) return;
 
    ephysics_body_collision_position_get(collision, &x, &y);
-   INF("Collision Detected");
 
-   evas_object_move(collision_data->impact, x, y);
+   evas_object_move(collision_data->impact, x - 10, y - 40);
    elm_object_signal_emit(collision_data->impact, "impact,show",
                           "ephysics_test");
+
+   INF("Collision Detected at (%i, %i)", x, y);
 }
 
 static void
