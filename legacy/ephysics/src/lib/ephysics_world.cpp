@@ -125,6 +125,8 @@ _ephysics_world_contact_processed_cb(btManifoldPoint &cp, void *b0, void *b1)
 
    ephysics_body_contact_processed(body_0, body_1);
    ephysics_body_contact_processed(body_1, body_0);
+
+   return EINA_TRUE;
 }
 
 static void
