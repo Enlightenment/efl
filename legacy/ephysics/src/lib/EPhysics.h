@@ -1680,6 +1680,11 @@ EAPI double ephysics_body_rotation_get(const EPhysics_Body *body);
  * some values that must to be updated when a collision occurs between two
  * bodies.
  *
+ * @note EPhysics won't handle this data, it won't be used in any way
+ * by the library. If it need to be freed when the body is deleted, a
+ * callback for @ref EPHYSICS_CALLBACK_BODY_DEL can be added and
+ * data should be explicity freed.
+ *
  * @param body The physics body.
  * @param data The data to be set.
  *
