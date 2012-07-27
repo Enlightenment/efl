@@ -1,9 +1,7 @@
-* collision filters
-* receive collision point on collision cb
+* camera zoom
 * valgrind supp
 * EPhysics_Constants
 * Sandbox tools to try different materials / properties
-* camera
 * create shape from image
 * simple game using ephysics
 * set best shape based on evas object
