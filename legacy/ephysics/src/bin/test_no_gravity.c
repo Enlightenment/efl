@@ -40,10 +40,10 @@ _world_populate(Test_Data *test_data)
    ephysics_body_evas_object_set(box_body1, box1, EINA_TRUE);
    ephysics_body_event_callback_add(box_body1, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     update_object_cb, sh1);
-   ephysics_body_restitution_set(box_body1, 1);
+   ephysics_body_restitution_set(box_body1, 0.7);
    ephysics_body_friction_set(box_body1, 0);
    ephysics_body_linear_velocity_set(box_body1, -30, -40);
-   ephysics_body_damping_set(box_body1, 0.1, 0.1);
+   ephysics_body_sleeping_threshold_set(box_body1, 0.1, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body1);
 
    sh2 = elm_layout_add(test_data->win);
@@ -66,11 +66,11 @@ _world_populate(Test_Data *test_data)
    ephysics_body_evas_object_set(box_body2, box2, EINA_TRUE);
    ephysics_body_event_callback_add(box_body2, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     update_object_cb, sh2);
-   ephysics_body_restitution_set(box_body2, 1);
+   ephysics_body_restitution_set(box_body2, 0.7);
    ephysics_body_friction_set(box_body2, 0);
    ephysics_body_linear_velocity_set(box_body2, 40, 30);
    ephysics_body_angular_velocity_set(box_body2, 36);
-   ephysics_body_damping_set(box_body2, 0.05, 0.1);
+   ephysics_body_sleeping_threshold_set(box_body2, 0.1, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body2);
    test_data->data = box_body2;
 }

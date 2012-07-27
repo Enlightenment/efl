@@ -636,6 +636,49 @@ ephysics_body_angular_velocity_get(const EPhysics_Body *body)
 }
 
 EAPI void
+ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshold, double angular_threshold)
+{
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't set sleeping thresholds, body is null.");
+        return;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+   body->rigid_body->setSleepingThresholds(linear_threshold / rate,
+                                           angular_threshold / RAD_TO_DEG);
+}
+
+EAPI double
+ephysics_body_linear_sleeping_threshold_get(const EPhysics_Body *body)
+{
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't get linear sleeping threshold, body is null.");
+        return 0;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+   return body->rigid_body->getLinearSleepingThreshold() * rate;
+}
+
+EAPI double
+ephysics_body_angular_sleeping_threshold_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't get angular sleeping threshold, body is null.");
+        return 0;
+     }
+
+   return body->rigid_body->getAngularSleepingThreshold() * RAD_TO_DEG;
+}
+
+EAPI void
 ephysics_body_stop(EPhysics_Body *body)
 {
    if (!body)

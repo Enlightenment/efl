@@ -26,7 +26,8 @@ test_falling_letters.c \
 test_jumping_balls.c \
 test_no_gravity.c \
 test_rotate.c \
-test_velocity.c
+test_velocity.c \
+test_sleeping_threshold.c
 
 ephysics_logo_SOURCES = \
 ephysics_logo.c

@@ -439,6 +439,35 @@ EAPI Eina_Bool ephysics_world_running_get(const EPhysics_World *world);
 
 /**
  * @brief
+ * Set the max sleeping time value.
+ *
+ * This value determines how long(in seconds) a rigid body under the linear and
+ * angular threshold is supposed to be marked as sleeping. Default value is set
+ * to 2.0.
+ *
+ * @param world The world to set the max sleeping time.
+ * @param sleeping_time The max sleeping time to set to @p world.
+ *
+ * @see ephysics_world_max_sleeping_time_get()
+ * @see ephysics_body_sleeping_threshold_set() for sleeping thresholds details.
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_max_sleeping_time_set(EPhysics_World *world, double sleeping_time);
+
+/**
+ * @brief
+ * Get the max sleeping time value for @p world.
+ *
+ * @param world The world to get the max sleeping time from.
+ * @return The max sleeping time from @p world.
+ *
+ * @see ephysics_world_max_sleeping_time_set()
+ * @ingroup EPhysics_World
+ */
+EAPI double ephysics_world_max_sleeping_time_get(const EPhysics_World *world);
+
+/**
+ * @brief
  * Set world gravity in 2 axises (x, y).
  *
  * Gravity will act over bodies with mass over all the time.
@@ -1272,6 +1301,67 @@ EAPI void ephysics_body_angular_velocity_set(EPhysics_Body *body, double z);
  * @ingroup EPhysics_Body
  */
 EAPI double ephysics_body_angular_velocity_get(const EPhysics_Body *body);
+
+/**
+ * @brief
+ * Set the linear and angular sleeping threshold.
+ *
+ * These factors are used to determine whenever a rigid body is supposed to
+ * increment the sleeping time.
+ *
+ * After every tick the sleeping time is incremented, if the body's linear and
+ * angular velocity is less than the respective thresholds the sleeping time is
+ * incremented by the current time step(delta time).
+ *
+ * After reaching the max sleeping time the body is marked to sleep, that means
+ * the rigid body is to be deactivated.
+ *
+ * @note The expected linear velocity to be informed as @p linear_threshold is
+ * the sum of X and Y linear velocity, that's the total velocity. The velocity
+ * is measured in Evas coordinates per second.
+ *
+ * @note The expected angular velocity to be informed as @p angular_threshold
+ * is measured in degrees per second.
+ *
+ * @param body The body to be set.
+ * @param linear_threshold The linear sleeping threshold factor.
+ * @param angular_threshold The angular sleeping threshold factor.
+ *
+ * @see ephysics_body_linear_sleeping_threshold_get()
+ * @see ephysics_body_angular_sleeping_threshold_get()
+ * @see ephysics_world_max_sleeping_time_set() for sleeping time details.
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshold, double angular_threshold);
+
+/**
+ * @brief
+ * Get the linear sleeping threshold.
+ *
+ * @note The linear sleeping threshold is measured in Evas coordinates per
+ * second.
+ *
+ * @param body The body to get the linear sleeping threshold from.
+ * @return The linear sleeping threshold from @p body.
+ *
+ * @see ephysics_body_sleeping_threshold_set()
+ * @ingroup EPhysics_Body
+ */
+EAPI double ephysics_body_linear_sleeping_threshold_get(const EPhysics_Body *body);
+
+/**
+ * @brief
+ * Get the angular sleeping threshold.
+ *
+ * @note The angular sleeping threshold is measured in degrees.
+ *
+ * @param body The body to get the angular sleeping threshold from.
+ * @return The angular sleeping threshold from @p body.
+ *
+ * @see ephysics_body_sleeping_threshold_set()
+ * @ingroup EPhysics_Body
+ */
+EAPI double ephysics_body_angular_sleeping_threshold_get(const EPhysics_Body *body);
 
 /**
  * @brief

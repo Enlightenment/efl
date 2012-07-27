@@ -40,6 +40,7 @@ struct _EPhysics_World {
      Eina_Bool outside_bottom:1;
      Eina_Bool outside_left:1;
      Eina_Bool outside_right:1;
+     double max_sleeping_time;
 };
 
 static int _ephysics_world_init_count = 0;
@@ -103,6 +104,7 @@ _simulate_worlds(void *data)
         delta = time_now - world->last_update;
         world->last_update = time_now;
 
+        gDeactivationTime = world->max_sleeping_time;
         world->dynamics_world->stepSimulation(delta, 1, 1/40.f);
      }
 
@@ -297,6 +299,7 @@ ephysics_world_new(void)
    world->dynamics_world->setInternalTickCallback(_ephysics_world_tick_cb,
                                                   (void *) world);
 
+   world->max_sleeping_time = 2.0;
    world->running = EINA_TRUE;
    world->last_update = ecore_time_get();
    _worlds_running++;
@@ -457,6 +460,30 @@ ephysics_world_running_get(const EPhysics_World *world)
      }
 
    return world->running;
+}
+
+EAPI void
+ephysics_world_max_sleeping_time_set(EPhysics_World *world, double sleeping_time)
+{
+   if (!world)
+     {
+	ERR("Can't set the world's max sleeping time, world is null.");
+	return;
+     }
+
+   world->max_sleeping_time = sleeping_time;
+}
+
+EAPI double
+ephysics_world_max_sleeping_time_get(const EPhysics_World *world)
+{
+   if (!world)
+     {
+	ERR("Can't get the world's max sleeping time, world is null.");
+	return 0;
+     }
+
+   return world->max_sleeping_time;
 }
 
 EAPI void
