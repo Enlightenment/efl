@@ -27,6 +27,7 @@ struct _EPhysics_Body {
      Evas_Object *evas_obj;
      EPhysics_World *world;
      Eina_Inlist *callbacks;
+     double mass;
      Eina_Bool active:1;
 };
 
@@ -82,6 +83,7 @@ _ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape)
 
    body->collision_shape = collision_shape;
    body->rigid_body = rigid_body;
+   body->mass = mass;
    body->world = world;
    body->rigid_body->setUserPointer(body);
    body->rigid_body->setLinearFactor(btVector3(1, 1, 0));
@@ -558,6 +560,7 @@ ephysics_body_mass_set(EPhysics_Body *body, double mass)
    body->collision_shape->calculateLocalInertia(mass, inertia);
    body->rigid_body->setMassProps(mass, inertia);
    body->rigid_body->updateInertiaTensor();
+   body->mass = mass;
 
    DBG("Body %p mass changed to %lf.", body, mass);
 }
@@ -571,7 +574,7 @@ ephysics_body_mass_get(const EPhysics_Body *body)
         return 0;
      }
 
-   return 1 / body->rigid_body->getInvMass();
+   return body->mass;
 }
 
 EAPI void
