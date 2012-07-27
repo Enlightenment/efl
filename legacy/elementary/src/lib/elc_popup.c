@@ -11,6 +11,7 @@ struct _Widget_Data
    Evas_Object *base;
    Evas_Object *notify;
    Evas_Object *title_icon;
+   Evas_Object *title_access_obj;
    Evas_Object *content_area;
    Evas_Object *content_text_obj;
    Evas_Object *action_area;
@@ -579,6 +580,18 @@ _title_text_set(Evas_Object *obj, const char *text)
    title_visibility_old = (wd->title_text) || (wd->title_icon);
    eina_stringshare_replace(&wd->title_text, text);
    elm_object_part_text_set(wd->base, "elm.text.title", text);
+
+   // XXX: ACCESS
+  if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+    {
+        wd->title_access_obj = _elm_access_edje_object_part_object_register
+                                 (wd->base, elm_layout_edje_get(wd->base),
+                                  "elm.text.title");
+        _elm_access_text_set(_elm_access_object_get(wd->title_access_obj),
+                             ELM_ACCESS_TYPE, E_("popup title"));
+        elm_widget_sub_object_add(obj, wd->title_access_obj);
+    }
+
    if (wd->title_text)
      elm_object_signal_emit(wd->base, "elm,state,title,text,visible", "elm");
    else
@@ -625,6 +638,10 @@ _content_text_set(Evas_Object *obj, const char *text)
                                         EVAS_HINT_FILL);
         elm_object_part_content_set(wd->content_area, "elm.swallow.content",
                                     wd->content_text_obj);
+
+        // XXX: ACCESS
+        _elm_access_text_set
+         (_elm_access_object_get(wd->content_text_obj), ELM_ACCESS_TYPE, E_("popup label"));
      }
    _sizing_eval(obj);
 }
@@ -1032,7 +1049,20 @@ _focus_next_hook(const Evas_Object *obj,
 
    if (!wd)
      return EINA_FALSE;
-   return elm_widget_focus_next_get(wd->notify, dir, next);
+
+   if (!elm_widget_focus_next_get(wd->notify, dir, next))
+     {
+        // XXX: ACCESS
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+          {
+             *next = wd->title_access_obj;
+             return EINA_TRUE;
+          }
+        elm_widget_focused_object_clear(wd->notify);
+        elm_widget_focus_next_get(wd->notify, dir, next);
+     }
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1223,6 +1253,13 @@ _popup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
    if (!wd) return;
 
    evas_object_show(wd->notify);
+
+   // XXX: ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     {
+        evas_object_focus_set(wd->title_access_obj, EINA_TRUE);
+        _elm_access_highlight_set(wd->title_access_obj);
+     }
 }
 
 static void

@@ -350,3 +350,7 @@
 	* Fix elementary quicklaunch to transprot environment over as
         well as args and cwd.
 
+2012-07-27  Shinwoo Kim (kimcinoo)
+
+	* Patch in incomplete access supoprt in popup.
+
