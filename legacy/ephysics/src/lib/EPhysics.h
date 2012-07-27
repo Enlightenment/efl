@@ -133,7 +133,7 @@ EAPI int ephysics_shutdown(void);
  * Its position can be set with @ref ephysics_camera_position_set() and zoom
  * in / zoom out can be done with @ref ephysics_camera_zoom_set().
  *
- * @note WIP: IT'S NOT WORKING YET!!
+ * @note WIP: ZOOM API ISN'T WORKING YET!!
  */
 
 typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to zoom in / out a scene, or change the frame position to be rendered. Every world have a camera that can be get with @ref ephysics_world_camera_get(). */
@@ -147,10 +147,16 @@ typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to zoo
  *
  * By default a camera is created to map the first quadrant of physics
  * world from the point (0, 0) to
- * (canvas width / world rate, canvas height / world rate).
+ * (render area width / world rate, render area height / world rate).
  *
- * It can be modified passing another top-left point position, so another
- * region of the physics world will be rendered on the canvas.
+ * When render area is set with @ref ephysics_world_render_geometry_set(),
+ * the camera geometry is updated to match it. So, for most cases, camera
+ * won't need to be handled by the user.
+ *
+ * But it can be modified passing another top-left point position, so another
+ * region of the physics world will be rendered on the render area.
+ * So if you have a scene larger than the render area, camera handling can
+ * be very useful.
  *
  * @note This change will be noticed on the next physics tick, so evas objects
  * will be updated taking the camera's new position in account.
@@ -165,7 +171,7 @@ typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to zoo
  *
  * @ingroup EPhysics_Camera
  */
-EAPI void ephysics_camera_position_set(EPhysics_Camera *camera, double x, double y);
+EAPI void ephysics_camera_position_set(EPhysics_Camera *camera, Evas_Coord x, Evas_Coord y);
 
 /**
  * @brief
@@ -179,7 +185,7 @@ EAPI void ephysics_camera_position_set(EPhysics_Camera *camera, double x, double
  *
  * @ingroup EPhysics_Camera
  */
-EAPI void ephysics_camera_position_get(const EPhysics_Camera *camera, double *x, double *y);
+EAPI void ephysics_camera_position_get(const EPhysics_Camera *camera, Evas_Coord *x, Evas_Coord *y);
 
 /**
  * @brief

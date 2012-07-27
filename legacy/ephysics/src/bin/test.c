@@ -11,6 +11,7 @@ int _ephysics_test_log_dom = -1;
 /* examples prototypes */
 void test_bouncing_ball(void *data, Evas_Object *obj, void *event_info);
 void test_bouncing_text(void *data, Evas_Object *obj, void *event_info);
+void test_camera(void *data, Evas_Object *obj, void *event_info);
 void test_colliding_balls(void *data, Evas_Object *obj, void *event_info);
 void test_collision(void *data, Evas_Object *obj, void *event_info);
 void test_collision_speed(void *data, Evas_Object *obj, void *event_info);
@@ -151,6 +152,7 @@ _main_win_add(char *autorun __UNUSED__, Eina_Bool test_win_only __UNUSED__)
 
    ADD_TEST("BOUNCING BALL", test_bouncing_ball);
    ADD_TEST("BOUNCING TEXT", test_bouncing_text);
+   ADD_TEST("CAMERA", test_camera);
    ADD_TEST("COLLIDING BALLS", test_colliding_balls);
    ADD_TEST("COLLISION DETECTION", test_collision);
    ADD_TEST("COLLISION HIGH SPEED", test_collision_speed);

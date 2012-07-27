@@ -18,6 +18,7 @@ ephysics_test_SOURCES = \
 test.c \
 test_bouncing_ball.c \
 test_bouncing_text.c \
+test_camera.c \
 test_colliding_balls.c \
 test_collision_detection.c \
 test_collision_speed.c \

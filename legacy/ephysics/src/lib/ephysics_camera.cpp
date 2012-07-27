@@ -12,7 +12,8 @@ extern "C" {
 
 struct _EPhysics_Camera {
      EPhysics_World *world;
-     double x, y, zoom;
+     double zoom;
+     int x, y;
 };
 
 EPhysics_Camera *
@@ -47,7 +48,7 @@ ephysics_camera_del(EPhysics_Camera *camera)
 }
 
 EAPI void
-ephysics_camera_position_set(EPhysics_Camera *camera, double x, double y)
+ephysics_camera_position_set(EPhysics_Camera *camera, Evas_Coord x, Evas_Coord y)
 {
    if (!camera)
      {
@@ -60,7 +61,7 @@ ephysics_camera_position_set(EPhysics_Camera *camera, double x, double y)
 }
 
 EAPI void
-ephysics_camera_position_get(const EPhysics_Camera *camera, double *x, double *y)
+ephysics_camera_position_get(const EPhysics_Camera *camera, Evas_Coord *x, Evas_Coord *y)
 {
    if (!camera)
      {

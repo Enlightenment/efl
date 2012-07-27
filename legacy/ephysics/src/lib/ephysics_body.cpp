@@ -247,8 +247,9 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 static void
 _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 {
+   int x, y, w, h, wx, wy, wh, cx, cy;
+   EPhysics_Camera *camera;
    btTransform trans;
-   int wy, height, x, y, w, h;
    double rate, rot;
    Evas_Map *map;
 
@@ -256,13 +257,17 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
      return;
 
    body->rigid_body->getMotionState()->getWorldTransform(trans);
-   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
-   height += wy;
+   ephysics_world_render_geometry_get(body->world, &wx, &wy, NULL, &wh);
+
+   camera = ephysics_world_camera_get(body->world);
+   ephysics_camera_position_get(camera, &cx, &cy);
+   cx -= wx;
+   cy -= wy;
 
    evas_object_geometry_get(body->evas_obj, NULL, NULL, &w, &h);
    rate = ephysics_world_rate_get(body->world);
-   x = (int) (trans.getOrigin().getX() * rate) - w / 2;
-   y = height - (int) (trans.getOrigin().getY() * rate) - h / 2;
+   x = (int) (trans.getOrigin().getX() * rate) - w / 2 - cx;
+   y = wh + wy - (int) (trans.getOrigin().getY() * rate) - h / 2 - cy;
 
    evas_object_move(body->evas_obj, x, y);
 

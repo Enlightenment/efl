@@ -762,6 +762,7 @@ ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coo
    world->h = h;
 
    ephysics_body_world_boundaries_resize(world);
+   ephysics_camera_position_set(world->camera, x, y);
 }
 
 EAPI void
