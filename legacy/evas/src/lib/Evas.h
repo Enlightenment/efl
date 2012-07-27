@@ -7137,10 +7137,16 @@ EAPI Eina_Bool                     evas_object_image_pixels_import(Evas_Object *
 EAPI void                          evas_object_image_pixels_get_callback_set(Evas_Object *obj, Evas_Object_Image_Pixels_Get_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Mark whether the given image object is dirty (needs to be redrawn).
+ * Mark whether the given image object is dirty and needs to request its pixels.
  *
  * @param obj The given image object.
  * @param dirty Whether the image is dirty.
+ *
+ * This function will only properly work if a pixels get callback has been set.
+ *
+ * @warning use this function if you really know what you are doing.
+ *
+ * @see evas_object_image_pixels_get_callback_set()
  */
 EAPI void                          evas_object_image_pixels_dirty_set(Evas_Object *obj, Eina_Bool dirty) EINA_ARG_NONNULL(1);
 
