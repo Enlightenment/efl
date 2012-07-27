@@ -68,16 +68,31 @@ struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
 static void
 _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
 {
-   EPhysics_World *world;
-   btCollisionObjectArray objects = dynamics_world->getCollisionObjectArray();
+   Eina_Bool world_active, camera_moved, tx, ty;
+   btCollisionObjectArray objects;
    EPhysics_World_Callback *cb;
-   Eina_Bool world_active = EINA_FALSE;
+   btRigidBody *rigid_body;
+   EPhysics_World *world;
+   EPhysics_Body *body;
 
    world = (EPhysics_World *) dynamics_world->getWorldUserInfo();
 
+   world_active = EINA_FALSE;
+
+   camera_moved = ephysics_camera_moved_get(world->camera);
+   if (camera_moved)
+     ephysics_camera_moved_set(world->camera, EINA_FALSE);
+   ephysics_camera_tracked_body_get(world->camera, &body, &tx, &ty);
+   if ((body) && (tx || ty))
+     {
+        rigid_body = ephysics_body_rigid_body_get(body);
+        if (rigid_body->isActive())
+          camera_moved = EINA_TRUE;
+     }
+
+   objects = dynamics_world->getCollisionObjectArray();
    for (int i = 0; i < objects.size(); i++)
      {
-        EPhysics_Body *body;
         btRigidBody *rigid_body = btRigidBody::upcast(objects[i]);
         if (!rigid_body)
           continue;
@@ -90,7 +105,11 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
              world_active = EINA_TRUE;
           }
         else
-          ephysics_body_active_set(body, EINA_FALSE);
+          {
+             ephysics_body_active_set(body, EINA_FALSE);
+             if (camera_moved)
+               ephysics_body_evas_object_update_select(body);
+          }
      }
 
    if (world->active == world_active) return;

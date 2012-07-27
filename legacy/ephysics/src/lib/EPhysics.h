@@ -120,6 +120,18 @@ EAPI int ephysics_shutdown(void);
  */
 
 /**
+ * @typedef EPhysics_Body
+ *
+ * Body handle, represents an object on EPhysics world.
+ *
+ * Created with @ref ephysics_body_circle_add() or @ref ephysics_body_box_add()
+ * and deleted with @ref ephysics_body_del().
+ *
+ * @ingroup EPhysics_Body
+ */
+typedef struct _EPhysics_Body EPhysics_Body;
+
+/**
  * @defgroup EPhysics_Camera EPhysics Camera
  * @ingroup EPhysics
  *
@@ -158,6 +170,9 @@ typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to zoo
  * So if you have a scene larger than the render area, camera handling can
  * be very useful.
  *
+ * This function will make camera stop tracking a body set with
+ * @ref ephysics_camera_body_track().
+ *
  * @note This change will be noticed on the next physics tick, so evas objects
  * will be updated taking the camera's new position in account.
  *
@@ -186,6 +201,58 @@ EAPI void ephysics_camera_position_set(EPhysics_Camera *camera, Evas_Coord x, Ev
  * @ingroup EPhysics_Camera
  */
 EAPI void ephysics_camera_position_get(const EPhysics_Camera *camera, Evas_Coord *x, Evas_Coord *y);
+
+/**
+ * @brief
+ * Set camera to track a body.
+ *
+ * When a body is tracked, the camera will move automatically, following
+ * this body. It will keeps the body centralized on rendered area.
+ * If it will be centralized horizontally and / or vertically depends
+ * if parameters @p horizontal and @p vertical are set to @c EINA_TRUE.
+ *
+ * Default updates (@ref ephysics_body_evas_object_update())
+ * will take care of updating evas objects associated
+ * to the bodies correctly. But if you need to do it yourself, you'll need
+ * to take camera's position in consideration, using
+ * @ref ephysics_camera_position_get().
+ *
+ * @note This change will be noticed on the next physics tick, so evas objects
+ * will be updated taking the camera's new position in account.
+ *
+ * @param camera The world's camera.
+ * @param body The body tracked by the @p camera, or @c NULL if camera isn't
+ * tracking any body.
+ * @param horizontal @c EINA_TRUE if @p body is tracked on x axis,
+ * @c EINA_FALSE otherwise;
+ * @param vertical @c EINA_TRUE if @p body is tracked on y axis,
+ * @c EINA_FALSE otherwise;
+ *
+ * @see ephysics_camera_tracked_body_get().
+ * @see ephysics_camera_position_set().
+ * @see ephysics_world_camera_get().
+ *
+ * @ingroup EPhysics_Camera
+ */
+EAPI void ephysics_camera_body_track(EPhysics_Camera *camera, EPhysics_Body *body, Eina_Bool horizontal, Eina_Bool vertical);
+
+/**
+ * @brief
+ * Get body tracked by camera.
+ *
+ * @param camera The world's camera.
+ * @param body The body tracked by the @p camera, or @c NULL if camera isn't
+ * tracking any body.
+ * @param horizontal @c EINA_TRUE if @p body is tracked on x axis,
+ * @c EINA_FALSE otherwise;
+ * @param vertical @c EINA_TRUE if @p body is tracked on y axis,
+ * @c EINA_FALSE otherwise;
+ *
+ * @see ephysics_camera_body_track() for more details.
+ *
+ * @ingroup EPhysics_Camera
+ */
+EAPI void ephysics_camera_tracked_body_get(EPhysics_Camera *camera, EPhysics_Body **body, Eina_Bool *horizontal, Eina_Bool *vertical);
 
 /**
  * @brief
@@ -235,7 +302,6 @@ EAPI double ephysics_camera_zoom_get(const EPhysics_Camera *camera);
 /**
  * @}
  */
-
 
 /**
  * @defgroup EPhysics_World EPhysics World
@@ -926,8 +992,6 @@ EAPI Eina_Bool ephysics_world_bodies_outside_left_autodel_get(const EPhysics_Wor
  * moved or rotated.
  */
 
-typedef struct _EPhysics_Body EPhysics_Body; /**< Body handle, represents an object on EPhysics world. Created with @ref ephysics_body_circle_add() or @ref ephysics_body_box_add() and deleted with @ref ephysics_body_del(). */
-
 /**
  * @typedef EPhysics_Body_Collision
  *
@@ -971,7 +1035,7 @@ typedef enum _EPhysics_Callback_Body_Type
 /**
  * @typedef EPhysics_Body_Event_Cb
  *
- * EPhysics bode event callback function signature.
+ * EPhysics body event callback function signature.
  *
  * Callbacks can be registered for events like body updating or deleting.
  *

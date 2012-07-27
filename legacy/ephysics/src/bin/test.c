@@ -12,6 +12,7 @@ int _ephysics_test_log_dom = -1;
 void test_bouncing_ball(void *data, Evas_Object *obj, void *event_info);
 void test_bouncing_text(void *data, Evas_Object *obj, void *event_info);
 void test_camera(void *data, Evas_Object *obj, void *event_info);
+void test_camera_track(void *data, Evas_Object *obj, void *event_info);
 void test_colliding_balls(void *data, Evas_Object *obj, void *event_info);
 void test_collision(void *data, Evas_Object *obj, void *event_info);
 void test_collision_filter(void *data, Evas_Object *obj, void *event_info);
@@ -64,7 +65,6 @@ update_object_cb(void *data, EPhysics_Body *body, void *event_info)
    edje = elm_layout_edje_get(shadow);
    edje_object_message_send(edje, EDJE_MESSAGE_FLOAT, SHADOW_ALPHA_ID, &msg);
 }
-
 
 void
 test_clean(Test_Data *test_data)
@@ -154,6 +154,7 @@ _main_win_add(char *autorun __UNUSED__, Eina_Bool test_win_only __UNUSED__)
    ADD_TEST("BOUNCING BALL", test_bouncing_ball);
    ADD_TEST("BOUNCING TEXT", test_bouncing_text);
    ADD_TEST("CAMERA", test_camera);
+   ADD_TEST("CAMERA TRACK", test_camera_track);
    ADD_TEST("COLLIDING BALLS", test_colliding_balls);
    ADD_TEST("COLLISION DETECTION", test_collision);
    ADD_TEST("COLLISION FILTER", test_collision_filter);

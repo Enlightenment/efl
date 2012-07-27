@@ -74,6 +74,8 @@ void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
 
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);
 void ephysics_camera_del(EPhysics_Camera *camera);
+void ephysics_camera_moved_set(EPhysics_Camera *camera, Eina_Bool moved);
+Eina_Bool ephysics_camera_moved_get(const EPhysics_Camera *camera);
 
 #ifdef __cplusplus
 }
