@@ -17,19 +17,44 @@ extern Eina_Prefix *pfx;
 /* logging variables */
 extern int _edje_cc_log_dom ;
 #define EDJE_CC_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+
+#ifdef _WIN32
+# define EDJE_ERR_COLOR FOREGROUND_RED | FOREGROUND_INTENSITY
+# define EDJE_INF_COLOR FOREGROUND_RED | FOREGROUND_BLUE | FOREGROUND_INTENSITY
+# define EDJE_WRN_COLOR FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY
+# define EDJE_LOG(str, color, ...) do {					\
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),		\
+			    color);					\
+    printf(str);							\
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),		\
+			    FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE); \
+    printf(": ");							\
+    printf(__VA_ARGS__);						\
+    printf("\n");							\
+  } while (0)
+#else
+# define EDJE_ERR_COLOR "\033[31m"
+# define EDJE_INF_COLOR "\033[35m"
+# define EDJE_WRN_COLOR "\033[33m"
+# define EDJE_LOG(str, color, ...) do {					\
+    printf("\033[31m");							\
+    printf(__VA_ARGS__);						\
+    printf("\033[0m\n"); }						\
+  while (0)
+#endif
+
 #ifdef ERR
 # undef ERR
 #endif
-#define ERR(...) do{printf("\033[31m");printf(__VA_ARGS__);printf("\033[0m\n");} while (0)
+#define ERR(...) EDJE_LOG("ERR", EDJE_ERR_COLOR, __VA_ARGS__)
 #ifdef INF
 # undef INF
 #endif
-#define INF(...) do{printf("\033[35m");printf(__VA_ARGS__);printf("\033[0m\n");} while (0)
+#define INF(...) EDJE_LOG("INF", EDJE_INF_COLOR, __VA_ARGS__)
 #ifdef WRN
 # undef WRN
 #endif
-#define WRN(...)  do{printf("\033[33m");printf(__VA_ARGS__);printf("\033[0m\n");} while (0)
-
+#define WRN(...) EDJE_LOG("WRN", EDJE_WRN_COLOR, __VA_ARGS__)
 
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
