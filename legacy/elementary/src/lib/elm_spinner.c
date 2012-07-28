@@ -325,8 +325,16 @@ static Eina_Bool
 _spin_value(void *data)
 {
    ELM_SPINNER_DATA_GET(data, sd);
+   double real_speed = sd->spin_speed;
 
-   if (_value_set(data, sd->val + sd->spin_speed)) _label_write(data);
+   /* Sanity check: our step size should be at least as large as our rounding value */
+   if ((sd->spin_speed != 0.0) && (abs(sd->spin_speed) < sd->round))
+     {
+        WRN("The spinning step is smaller than the rounding value, please check your code");
+        real_speed = sd->spin_speed > 0 ? sd->round : -sd->round;
+     }
+
+   if (_value_set(data, sd->val + real_speed)) _label_write(data);
    sd->interval = sd->interval / 1.05;
    ecore_timer_interval_set(sd->spin, sd->interval);
 
