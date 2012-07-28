@@ -277,7 +277,7 @@ unlock:
  * This doesn't affect the interval of a timer.
  *
  * @param   timer The timer to change.
- * @param   add   The dalay to add to the next iteration.
+ * @param   add   The delay to add to the next iteration.
  */
 EAPI void
 ecore_timer_delay(Ecore_Timer *timer,
