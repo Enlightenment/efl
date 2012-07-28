@@ -449,7 +449,7 @@ edje_match_programs_exec_check_finals(const size_t      *signal_finals,
 }
 
 static int
-edje_match_callback_exec_check_finals(const Edje_Patterns *singal_ppat,
+edje_match_callback_exec_check_finals(const Edje_Patterns *signal_ppat,
                                       const Edje_Patterns *source_ppat,
                                       const size_t      *signal_finals,
                                       const size_t      *source_finals,
@@ -462,9 +462,13 @@ edje_match_callback_exec_check_finals(const Edje_Patterns *singal_ppat,
                                       Eina_Bool          prop
                                      )
 {
+   Edje_Signal_Callback *escb;
+   Eina_Array   run;
    size_t       i;
    size_t       j;
    int          r = 1;
+
+   eina_array_step_set(&run, sizeof (Eina_Array), 4);
 
    for (i = 0; i < signal_states->size; ++i)
      {
@@ -475,8 +479,6 @@ edje_match_callback_exec_check_finals(const Edje_Patterns *singal_ppat,
                   if (signal_states->states[i].idx == source_states->states[j].idx
                       && source_states->states[j].pos >= source_finals[source_states->states[j].idx])
                     {
-                       Edje_Signal_Callback      *escb;
-
                        escb = eina_list_nth(callbacks, signal_states->states[i].idx);
                        if (escb)
                          {
@@ -484,18 +486,24 @@ edje_match_callback_exec_check_finals(const Edje_Patterns *singal_ppat,
                             if ((!escb->just_added)
                                 && (!escb->delete_me))
                               {
-                                 escb->func(escb->data, ed->obj, sig, source);
+                                 eina_array_push(&run, escb);
                                  r = 2;
                               }
-                            if (_edje_block_break(ed))
-                               return 0;
-                            if ((singal_ppat->delete_me) || (source_ppat->delete_me))
-                               return 0;
                          }
                     }
                }
           }
      }
+
+   while ((escb = eina_array_pop(&run)))
+     {
+        escb->func(escb->data, ed->obj, sig, source);
+        if (_edje_block_break(ed))
+          return 0;
+        if ((signal_ppat->delete_me) || (source_ppat->delete_me))
+          return 0;
+     }
+   eina_array_flush(&run);
 
    return r;
 }

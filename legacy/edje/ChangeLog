@@ -537,3 +537,6 @@
         * Fix edje entry to extend selection to char pos/word or line
         when holding shift + mouse click.
 
+2012-07-29  Cedric Bail
+
+	* Reduce potential reentrant issue when using edje_object_signal_emit.
