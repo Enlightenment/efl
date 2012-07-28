@@ -69,7 +69,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 }
 
 /**
- * Query if a particular renginering engine target has support
+ * Query if a particular rendering engine target has support
  * @param  engine The engine to check support for
  * @return 1 if the particular engine is supported, 0 if it is not
  *
