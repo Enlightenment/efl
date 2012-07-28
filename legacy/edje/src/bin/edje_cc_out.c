@@ -2622,7 +2622,7 @@ using_file(const char *filename)
    FILE *f;
 
    if (!watchfile) return;
-   f = fopen(watchfile, "a");
+   f = fopen(watchfile, "ab");
    if (!f) return ;
    fputs(filename, f);
    fputc('\n', f);
