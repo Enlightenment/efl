@@ -475,8 +475,6 @@ esac
 AC_ISC_POSIX
 AC_FUNC_ALLOCA
 
-AC_CHECK_FUNCS(fmemopen open_memstream realpath)
-
 EFL_CHECK_FUNCS([eet], [fnmatch])
 
 
