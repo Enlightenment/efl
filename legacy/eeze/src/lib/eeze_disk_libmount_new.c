@@ -408,6 +408,7 @@ EAPI Eina_Bool
 eeze_mount_tabs_watch(void)
 {
    libmnt_table *bak;
+   char *lnk;
 
    if (_watching)
      return EINA_TRUE;
@@ -417,7 +418,7 @@ eeze_mount_tabs_watch(void)
 
    mnt_free_table(_eeze_mount_mtab);
    _eeze_mount_mtab = bak;
-   bak = _eeze_mount_tab_parse("/etc/fstab");
+   bak = _eeze_mount_tab_parse("/etc/mtab");
    EINA_SAFETY_ON_NULL_GOTO(bak, error);
 
    mnt_free_table(_eeze_mount_fstab);
@@ -433,8 +434,10 @@ eeze_mount_tabs_watch(void)
    if (!_mountinfo) goto error;
    _mountinfo_fdh = ecore_main_fd_handler_add(fileno(_mountinfo), ECORE_FD_ERROR, _eeze_mount_fdh, NULL, NULL, NULL);
    if (!_mountinfo_fdh) goto error;
-   _fstab_mon = ecore_file_monitor_add("/etc/fstab", _eeze_mount_tab_watcher, NULL);
-   _watching = EINA_TRUE;
+   _fstab_mon = ecore_file_monitor_add("/etc/mtab", _eeze_mount_tab_watcher, NULL);
+   lnk = ecore_file_readlink("/etc/mtab");
+   if (lnk) free(lnk);
+   else _watching = EINA_TRUE;
 
   return EINA_TRUE;
 

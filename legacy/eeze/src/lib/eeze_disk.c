@@ -283,6 +283,11 @@ eeze_disk_free(Eeze_Disk *disk)
    if (disk->mounter) ecore_exe_kill(disk->mounter);
    _eeze_disks = eina_list_remove(_eeze_disks, disk);
    eeze_events = eina_list_remove(eeze_events, disk);
+   if (disk->mount_fail_delay)
+     {
+        ecore_timer_del(disk->mount_fail_delay);
+        disk->mount_fail_delay = NULL;
+     }
    free(disk);
 }
 

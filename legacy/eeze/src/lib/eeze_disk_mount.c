@@ -55,6 +55,38 @@ _eeze_disk_mount_error_handler(Eeze_Disk *disk, const char *error)
 }
 
 static Eina_Bool
+_eeze_disk_mount_fail_delay_check(void *data)
+{
+   Eeze_Disk *disk = data;
+   
+   disk->fail_pol_check++;
+   if (eeze_disk_mounted_get(disk))
+     {
+        Eeze_Event_Disk_Mount *e;
+        
+        disk->mounted = EINA_TRUE;
+        e = malloc(sizeof(Eeze_Event_Disk_Mount));
+        if (e)
+          {
+             e->disk = disk;
+             ecore_event_add(EEZE_EVENT_DISK_MOUNT, e, NULL, NULL);
+          }
+        return EINA_FALSE;
+     }
+   if (disk->fail_pol_check > 30)
+     {
+        if (disk->mount_fail_delay)
+          {
+             ecore_timer_del(disk->mount_fail_delay);
+             disk->mount_fail_delay = NULL;
+          }
+        _eeze_disk_mount_error_handler(disk, "mount failure");
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecore_Exe_Event_Del *ev)
 {
    Eeze_Disk *disk;
@@ -79,11 +111,25 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
         disk->mounter = NULL;
         if (!ev->exit_code)
           {
-              disk->mounted = EINA_TRUE;
-              e = malloc(sizeof(Eeze_Event_Disk_Mount));
-              EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
-              e->disk = disk;
-              ecore_event_add(EEZE_EVENT_DISK_MOUNT, e, NULL, NULL);
+             if (!eeze_disk_mounted_get(disk))
+               {
+                  /* libmount seems to have a nasty race condition... or
+                   * mount .. or something... the mount exe returns
+                   * BUT its not mounted yet! so poll for a bit.. and see */
+                  if (!disk->mount_fail_delay)
+                    disk->mount_fail_delay = 
+                    ecore_timer_add(0.1, _eeze_disk_mount_fail_delay_check,
+                                    disk);
+                  disk->fail_pol_check = 0;
+               }
+             else
+               {
+                  disk->mounted = EINA_TRUE;
+                  e = malloc(sizeof(Eeze_Event_Disk_Mount));
+                  EINA_SAFETY_ON_NULL_RETURN_VAL(e, ECORE_CALLBACK_RENEW);
+                  e->disk = disk;
+                  ecore_event_add(EEZE_EVENT_DISK_MOUNT, e, NULL, NULL);
+               }
           }
         else if (ev->exit_code & 2)
            _eeze_disk_mount_error_handler(disk, "system error (out of memory, cannot fork, no more loop devices)");
@@ -417,6 +463,11 @@ eeze_disk_cancel(Eeze_Disk *disk)
    disk->mount_status = EEZE_DISK_NULL;
    ecore_exe_kill(disk->mounter);
    disk->mounter = NULL;
+   if (disk->mount_fail_delay)
+     {
+        ecore_timer_del(disk->mount_fail_delay);
+        disk->mount_fail_delay = NULL;
+     }
 }
 
 EAPI const char *
