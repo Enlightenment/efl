@@ -235,7 +235,7 @@ efreet_ini_parse(const char *file)
                 value_end++;
 
             /* make sure we have a key. blank values are allowed */
-            if (key_end == 0)
+            if (key_end <= 0)
             {
                 /* invalid file... */
 //                INF("Invalid file (%s) (invalid key=value pair)", file);
