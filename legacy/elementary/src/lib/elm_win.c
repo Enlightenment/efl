@@ -463,13 +463,18 @@ _elm_win_resize_job(void *data)
         w = MIN(w, sw);
         h = MIN(h, sh);
      }
+
    if (sd->frame_obj)
      {
-        evas_object_resize(sd->frame_obj, w, h);
+        int fw, fh, fx, fy;
+
+        evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
+        evas_object_resize(sd->frame_obj, w + fw, h + fh);
      }
    else if (sd->img_obj)
      {
      }
+
    evas_object_resize(ELM_WIDGET_DATA(sd)->obj, w, h);
    EINA_LIST_FOREACH (sd->resize_objs, l, obj)
      {
@@ -1306,7 +1311,6 @@ _elm_win_smart_resize(Evas_Object *obj,
                       Evas_Coord h)
 {
    ELM_WIN_DATA_GET(obj, sd);
-   Evas_Coord ow, oh, fw, fh;
 
    _elm_win_parent_sc->base.resize(obj, w, h);
 
@@ -1326,10 +1330,7 @@ _elm_win_smart_resize(Evas_Object *obj,
         evas_object_image_size_set(sd->img_obj, w, h);
      }
 
-   evas_output_framespace_get(sd->evas, NULL, NULL, &fw, &fh);
-   ow = w + fw;
-   oh = h + fh;
-   TRAP(sd, resize, ow, oh);
+   TRAP(sd, resize, w, h);
 }
 
 static void
@@ -1584,9 +1585,6 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
         else if ((h > 0) && (h < maxh))
           maxh = h;
      }
-   evas_output_framespace_get(sd->evas, NULL, NULL, &w, &h);
-   minw += w;
-   minh += h;
    if (!xx) maxw = minw;
    else maxw = 32767;
    if (!xy) maxh = minh;
