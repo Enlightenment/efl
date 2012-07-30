@@ -374,10 +374,7 @@ eeze_disk_mount(Eeze_Disk *disk)
      {
         INF("Creating not-existing mount point directory '%s'", disk->mount_point);
         if (mkdir(disk->mount_point, S_IROTH | S_IWOTH | S_IXOTH))
-          {
-             ERR("Could not create directory: %s", strerror(errno));
-             return EINA_FALSE;
-          }
+          ERR("Could not create directory: %s; hopefully this is handled by your mounter!", strerror(errno));
      }
    else if (!S_ISDIR(st.st_mode))
      {
