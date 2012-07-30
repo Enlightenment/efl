@@ -446,6 +446,7 @@ static void
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   int fw = 0, fh = 0;
 
    if (!ee) return;
    if (w < 1) w = 1;
@@ -458,6 +459,10 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
    ee->req.w = w;
    ee->req.h = h;
+
+   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+   w += fw;
+   h += fh;
 
 //   ecore_wl_window_damage(ee->engine.wl.win, 0, 0, ee->w, ee->h);
 
