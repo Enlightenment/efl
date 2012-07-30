@@ -1051,7 +1051,7 @@ typedef Eina_Bool (*Ecore_Win32_Handle_Cb)(void *data, Ecore_Win32_Handler *wh);
  *
  * @param fd The file descriptor to watch.
  * @param flags To monitor it for reading use @c ECORE_FD_READ, for writing @c
- * ECORE_FD_WRITE, and for error @c ECORE_FD_ERROR. Values bay |(ored).
+ * ECORE_FD_WRITE, and for error @c ECORE_FD_ERROR. Values by |(ored).
  * @param func The callback function.
  * @param data The data to pass to the callback.
  * @param buf_func The function to call to check if any data has been buffered
