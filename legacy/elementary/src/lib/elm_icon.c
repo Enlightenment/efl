@@ -1,87 +1,18 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_image.h"
+#include "elm_widget_icon.h"
 
 #ifdef ELM_EFREET
 #define NON_EXISTING (void *)-1
 static const char *icon_theme = NULL;
 #endif
 
-static const char ICON_SMART_NAME[] = "elm_icon";
-
-typedef struct _Elm_Icon_Smart_Data Elm_Icon_Smart_Data;
-
-struct _Elm_Icon_Smart_Data
-{
-   Elm_Image_Smart_Data  base;
-
-   const char           *stdicon;
-   Elm_Icon_Lookup_Order lookup_order;
-
-#ifdef HAVE_ELEMENTARY_ETHUMB
-   struct
-   {
-      struct
-      {
-         const char *path;
-         const char *key;
-      } file, thumb;
-
-      Ecore_Event_Handler *eeh;
-
-      Ethumb_Thumb_Format  format;
-
-      Ethumb_Client_Async *request;
-
-      Eina_Bool            retry : 1;
-   } thumb;
-#endif
-
-#ifdef ELM_EFREET
-   struct
-   {
-      int       requested_size;
-      Eina_Bool use : 1;
-   } freedesktop;
-#endif
-
-   int        in_eval;
-
-   /* WARNING: to be deprecated */
-   Eina_List *edje_signals;
-
-   Eina_Bool  is_video : 1;
-};
+EAPI const char ELM_ICON_SMART_NAME[] = "elm_icon";
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
 static Eina_List *_elm_icon_retry = NULL;
 static int _icon_pending_request = 0;
 #endif
-
-#define ELM_ICON_DATA_GET(o, sd) \
-  Elm_Icon_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_ICON_DATA_GET_OR_RETURN(o, ptr)          \
-  ELM_ICON_DATA_GET(o, ptr);                         \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_ICON_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_ICON_DATA_GET(o, ptr);                         \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return val;                                   \
-    }
-
-#define ELM_ICON_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), ICON_SMART_NAME, __func__)) \
-    return
 
 static const char SIG_THUMB_DONE[] = "thumb,done";
 static const char SIG_THUMB_ERROR[] = "thumb,error";
@@ -92,7 +23,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EVAS_SMART_SUBCLASS_NEW
-  (ICON_SMART_NAME, _elm_icon, Elm_Image_Smart_Class,
+  (ELM_ICON_SMART_NAME, _elm_icon, Elm_Icon_Smart_Class,
   Elm_Image_Smart_Class, elm_image_smart_class_get, _smart_callbacks);
 
 /* FIXME: move this code to ecore */
@@ -792,16 +723,33 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
 }
 
 static void
-_elm_icon_smart_set_user(Elm_Image_Smart_Class *sc)
+_elm_icon_smart_set_user(Elm_Icon_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_icon_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_icon_smart_del;
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_icon_smart_theme;
 
-   sc->file_set = _elm_icon_smart_file_set;
-   sc->memfile_set = _elm_icon_smart_memfile_set;
-   sc->sizing_eval = _elm_icon_smart_sizing_eval;
+   ELM_IMAGE_CLASS(sc)->file_set = _elm_icon_smart_file_set;
+   ELM_IMAGE_CLASS(sc)->memfile_set = _elm_icon_smart_memfile_set;
+   ELM_IMAGE_CLASS(sc)->sizing_eval = _elm_icon_smart_sizing_eval;
+}
+
+EAPI const Elm_Icon_Smart_Class *
+elm_icon_smart_class_get(void)
+{
+   static Elm_Icon_Smart_Class _sc =
+     ELM_ICON_SMART_CLASS_INIT_NAME_VERSION(ELM_ICON_SMART_NAME);
+   static const Elm_Icon_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_icon_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
