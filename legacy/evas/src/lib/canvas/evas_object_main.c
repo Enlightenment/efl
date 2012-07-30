@@ -595,11 +595,12 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 
    if (!obj->is_frame)
      {
-        int fx, fy;
-
-        evas_output_framespace_get(obj->layer->evas, &fx, &fy, NULL, NULL);
-        if (!obj->smart.parent)
+        if ((!obj->smart.parent) && (obj->smart.smart))
           {
+             int fx, fy;
+
+             evas_output_framespace_get(obj->layer->evas, 
+                                        &fx, &fy, NULL, NULL);
              nx += fx;
              ny += fy;
           }
@@ -668,7 +669,6 @@ EAPI void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    int is, was = 0, pass = 0, freeze =0;
-   int nw = 0, nh = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -676,23 +676,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->delete_me) return;
    if (w < 0) w = 0; if (h < 0) h = 0;
 
-   nw = w;
-   nh = h;
-   if (!obj->is_frame)
-     {
-        int fw, fh;
-
-        evas_output_framespace_get(obj->layer->evas, NULL, NULL, &fw, &fh);
-        if (!obj->smart.parent)
-          {
-             nw = w - fw;
-             nh = h - fh;
-             if (nw < 0) nw = 0;
-             if (nh < 0) nh = 0;
-          }
-     }
-
-   if (evas_object_intercept_call_resize(obj, nw, nh)) return;
+   if (evas_object_intercept_call_resize(obj, w, h)) return;
 
    if (obj->doing.in_resize > 0)
      {
@@ -700,7 +684,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
         return;
      }
 
-   if ((obj->cur.geometry.w == nw) && (obj->cur.geometry.h == nh)) return;
+   if ((obj->cur.geometry.w == w) && (obj->cur.geometry.h == h)) return;
 
    if (obj->layer->evas->events_frozen <= 0)
      {
@@ -716,11 +700,11 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->resize)
-          obj->smart.smart->smart_class->resize(obj, nw, nh);
+          obj->smart.smart->smart_class->resize(obj, w, h);
      }
 
-   obj->cur.geometry.w = nw;
-   obj->cur.geometry.h = nh;
+   obj->cur.geometry.w = w;
+   obj->cur.geometry.h = h;
 
    evas_object_update_bounding_box(obj);
 
@@ -757,6 +741,8 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 EAPI void
 evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
+   int nx = 0, ny = 0;
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    if (x) *x = 0; if (y) *y = 0; if (w) *w = 0; if (h) *h = 0;
    return;
@@ -767,8 +753,30 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
         return;
      }
 
-   if (x) *x = obj->cur.geometry.x;
-   if (y) *y = obj->cur.geometry.y;
+   nx = obj->cur.geometry.x;
+   ny = obj->cur.geometry.y;
+
+   if (!obj->is_frame)
+     {
+        int fx, fy;
+
+        evas_output_framespace_get(obj->layer->evas, 
+                                   &fx, &fy, NULL, NULL);
+
+        if ((!obj->smart.parent) && (obj->smart.smart))
+          {
+             if (nx > 0) nx -= fx;
+             if (ny > 0) ny -= fy;
+          }
+        else if ((obj->smart.parent) && (!obj->smart.smart))
+          {
+             if (nx > 0) nx -= fx;
+             if (ny > 0) ny -= fy;
+          }
+     }
+
+   if (x) *x = nx;
+   if (y) *y = ny;
    if (w) *w = obj->cur.geometry.w;
    if (h) *h = obj->cur.geometry.h;
 }

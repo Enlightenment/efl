@@ -1352,6 +1352,8 @@ evas_render_updates_internal(Evas *e,
         fy = e->viewport.y - e->framespace.y;
         fw = e->viewport.w + e->framespace.w;
         fh = e->viewport.h + e->framespace.h;
+        if (fx < 0) fx = 0;
+        if (fy < 0) fy = 0;
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
                                                 fx, fy, fw, fh);
      }
@@ -1372,9 +1374,10 @@ evas_render_updates_internal(Evas *e,
              e->framespace.clip = evas_object_rectangle_add(e);
              evas_object_color_set(e->framespace.clip, 255, 255, 255, 255);
              evas_object_move(e->framespace.clip,
-                              e->framespace.x, e->viewport.y);
+                              e->framespace.x, e->framespace.y);
              evas_object_resize(e->framespace.clip,
-                                e->viewport.w - e->framespace.w, e->viewport.h);
+                                e->viewport.w - e->framespace.w, 
+                                e->viewport.h - e->framespace.h);
              evas_object_show(e->framespace.clip);
           }
         else
@@ -1382,9 +1385,11 @@ evas_render_updates_internal(Evas *e,
              /* master clip is already present. check for size changes in the 
               * viewport, and update master clip size if needed */
              if ((e->viewport.changed) || (e->output.changed))
-               evas_object_resize(e->framespace.clip,
-                                  e->viewport.w - e->framespace.w,
-                                  e->viewport.h);
+               {
+                  evas_object_resize(e->framespace.clip,
+                                     e->viewport.w - e->framespace.w,
+                                     e->viewport.h - e->framespace.h);
+               }
           }
 
         EINA_RECTANGLE_SET(&clip_rect,
