@@ -3024,7 +3024,7 @@ _on_edje_resize(void *data,
 }
 
 static void
-_elm_scroll_objects_attach(Evas_Object *obj)
+_scroll_edje_object_attach(Evas_Object *obj)
 {
    ELM_SCROLL_IFACE_DATA_GET(obj, sid);
 
@@ -3069,6 +3069,12 @@ _elm_scroll_objects_attach(Evas_Object *obj)
    edje_object_signal_callback_add
      (sid->edje_obj, "drag,page", "elm.dragable.hbar",
      _elm_scroll_edje_drag_h_cb, sid);
+}
+
+static void
+_scroll_event_object_attach(Evas_Object *obj)
+{
+   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
 
    evas_object_event_callback_add
      (sid->event_rect, EVAS_CALLBACK_MOUSE_WHEEL, _elm_scroll_wheel_event_cb,
@@ -3085,6 +3091,73 @@ _elm_scroll_objects_attach(Evas_Object *obj)
 }
 
 static void
+_scroll_edje_object_detach(Evas_Object *obj)
+{
+   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
+
+   evas_object_event_callback_del_full
+     (sid->edje_obj, EVAS_CALLBACK_RESIZE, _on_edje_resize, sid);
+   evas_object_event_callback_del_full
+     (sid->edje_obj, EVAS_CALLBACK_MOVE, _on_edje_move, sid);
+
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag", "elm.dragable.vbar", _elm_scroll_edje_drag_v_cb,
+     sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,set", "elm.dragable.vbar",
+     _elm_scroll_edje_drag_v_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,start", "elm.dragable.vbar",
+     _elm_scroll_edje_drag_v_start_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,stop", "elm.dragable.vbar",
+     _elm_scroll_edje_drag_v_stop_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,step", "elm.dragable.vbar",
+     _elm_scroll_edje_drag_v_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,page", "elm.dragable.vbar",
+     _elm_scroll_edje_drag_v_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag", "elm.dragable.hbar", _elm_scroll_edje_drag_h_cb,
+     sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,set", "elm.dragable.hbar",
+     _elm_scroll_edje_drag_h_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,start", "elm.dragable.hbar",
+     _elm_scroll_edje_drag_h_start_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,stop", "elm.dragable.hbar",
+     _elm_scroll_edje_drag_h_stop_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,step", "elm.dragable.hbar",
+     _elm_scroll_edje_drag_h_cb, sid);
+   edje_object_signal_callback_del_full
+     (sid->edje_obj, "drag,page", "elm.dragable.hbar",
+     _elm_scroll_edje_drag_h_cb, sid);
+}
+
+static void
+_scroll_event_object_detach(Evas_Object *obj)
+{
+   ELM_SCROLL_IFACE_DATA_GET(obj, sid);
+
+   evas_object_event_callback_del_full
+     (sid->event_rect, EVAS_CALLBACK_MOUSE_WHEEL, _elm_scroll_wheel_event_cb,
+     sid);
+   evas_object_event_callback_del_full
+     (sid->event_rect, EVAS_CALLBACK_MOUSE_DOWN,
+     _elm_scroll_mouse_down_event_cb, sid);
+   evas_object_event_callback_del_full
+     (sid->event_rect, EVAS_CALLBACK_MOUSE_UP,
+     _elm_scroll_mouse_up_event_cb, sid);
+   evas_object_event_callback_del_full
+     (sid->event_rect, EVAS_CALLBACK_MOUSE_MOVE,
+     _elm_scroll_mouse_move_event_cb, sid);
+}
+
+static void
 _elm_scroll_objects_set(Evas_Object *obj,
                         Evas_Object *edje_object,
                         Evas_Object *hit_rectangle)
@@ -3093,19 +3166,21 @@ _elm_scroll_objects_set(Evas_Object *obj,
 
    ELM_SCROLL_IFACE_DATA_GET_OR_RETURN(obj, sid);
 
-   if (!edje_object) return;
-   if (sid->edje_obj) evas_object_del(sid->edje_obj);
+   if (!edje_object || !hit_rectangle) return;
+
+   if (sid->edje_obj)
+       _scroll_edje_object_detach(obj);
+
    sid->edje_obj = edje_object;
 
-   if (sid->event_rect) evas_object_del(sid->event_rect);
+   if (sid->event_rect)
+       _scroll_event_object_detach(obj);
+
    sid->event_rect = hit_rectangle;
    evas_object_repeat_events_set(hit_rectangle, EINA_TRUE);
 
-   _elm_scroll_objects_attach(obj);
-
-   edje_object_scale_set
-     (sid->edje_obj, elm_widget_scale_get(sid->obj) *
-     elm_config_scale_get());
+   _scroll_edje_object_attach(obj);
+   _scroll_event_object_attach(obj);
 
    mw = mh = -1;
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
