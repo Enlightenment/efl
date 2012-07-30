@@ -216,6 +216,32 @@ struct _Elm_Image_Smart_Data
  * @}
  */
 
+EAPI extern const char ELM_IMAGE_SMART_NAME[];
 EAPI const Elm_Image_Smart_Class *elm_image_smart_class_get(void);
+
+#define ELM_IMAGE_DATA_GET(o, sd) \
+  Elm_Image_Smart_Data * sd = evas_object_smart_data_get(o)
+
+#define ELM_IMAGE_DATA_GET_OR_RETURN(o, ptr)         \
+  ELM_IMAGE_DATA_GET(o, ptr);                        \
+  if (!ptr)                                          \
+    {                                                \
+       CRITICAL("No widget data for object %p (%s)", \
+                o, evas_object_type_get(o));         \
+       return;                                       \
+    }
+
+#define ELM_IMAGE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  ELM_IMAGE_DATA_GET(o, ptr);                         \
+  if (!ptr)                                           \
+    {                                                 \
+       CRITICAL("No widget data for object %p (%s)",  \
+                o, evas_object_type_get(o));          \
+       return val;                                    \
+    }
+
+#define ELM_IMAGE_CHECK(obj)                                                 \
+  if (!obj || !elm_widget_type_check((obj), ELM_IMAGE_SMART_NAME, __func__)) \
+    return
 
 #endif

@@ -8,32 +8,7 @@
 # define FMT_SIZE_T "%zu"
 #endif
 
-static const char IMAGE_SMART_NAME[] = "elm_image";
-
-#define ELM_IMAGE_DATA_GET(o, sd) \
-  Elm_Image_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_IMAGE_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_IMAGE_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_IMAGE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_IMAGE_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_IMAGE_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), IMAGE_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_IMAGE_SMART_NAME[] = "elm_image";
 
 static const char SIG_DND[] = "drop";
 static const char SIG_CLICKED[] = "clicked";
@@ -44,7 +19,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EVAS_SMART_SUBCLASS_NEW
-  (IMAGE_SMART_NAME, _elm_image, Elm_Image_Smart_Class,
+  (ELM_IMAGE_SMART_NAME, _elm_image, Elm_Image_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 static void
@@ -1061,7 +1036,7 @@ EAPI const Elm_Image_Smart_Class *
 elm_image_smart_class_get(void)
 {
    static Elm_Image_Smart_Class _sc =
-     ELM_IMAGE_SMART_CLASS_INIT_NAME_VERSION(IMAGE_SMART_NAME);
+     ELM_IMAGE_SMART_CLASS_INIT_NAME_VERSION(ELM_IMAGE_SMART_NAME);
    static const Elm_Image_Smart_Class *class = NULL;
    Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
 
