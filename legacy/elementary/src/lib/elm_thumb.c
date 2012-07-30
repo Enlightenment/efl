@@ -1,45 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_thumb.h"
 
-static const char THUMB_SMART_NAME[] = "elm_thumb";
-
-typedef struct _Elm_Thumb_Smart_Data Elm_Thumb_Smart_Data;
-
-struct _Elm_Thumb_Smart_Data
-{
-   Elm_Widget_Smart_Data base;
-
-   Evas_Object          *view;  /* actual thumbnail, to be swallowed
-                                 * at the thumb frame */
-
-   /* original object's file/key pair */
-   const char           *file;
-   const char           *key;
-
-   struct
-   {
-      /* object's thumbnail file/key pair */
-      const char          *file;
-      const char          *key;
-#ifdef HAVE_ELEMENTARY_ETHUMB
-      const char          *thumb_path;
-      const char          *thumb_key;
-      Ethumb_Client_Async *request;
-
-      Ethumb_Thumb_Format  format;
-
-      Eina_Bool            retry : 1;
-#endif
-   } thumb;
-
-   Ecore_Event_Handler        *eeh;
-   Elm_Thumb_Animation_Setting anim_setting;
-
-   Eina_Bool                   edit : 1;
-   Eina_Bool                   on_hold : 1;
-   Eina_Bool                   is_video : 1;
-   Eina_Bool                   was_video : 1;
-};
+EAPI const char ELM_THUMB_SMART_NAME[] = "elm_thumb";
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
@@ -77,33 +40,8 @@ static int pending_request = 0;
 
 EAPI int ELM_ECORE_EVENT_ETHUMB_CONNECT = 0;
 
-#define ELM_THUMB_DATA_GET(o, sd) \
-  Elm_Thumb_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_THUMB_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_THUMB_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_THUMB_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_THUMB_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_THUMB_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), THUMB_SMART_NAME, __func__)) \
-    return
-
 EVAS_SMART_SUBCLASS_NEW
-  (THUMB_SMART_NAME, _elm_thumb, Elm_Widget_Smart_Class,
+  (ELM_THUMB_SMART_NAME, _elm_thumb, Elm_Thumb_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
@@ -648,13 +586,30 @@ _elm_thumb_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_thumb_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_thumb_smart_set_user(Elm_Thumb_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_thumb_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_thumb_smart_del;
 
    ELM_WIDGET_CLASS(sc)->base.show = _elm_thumb_smart_show;
    ELM_WIDGET_CLASS(sc)->base.hide = _elm_thumb_smart_hide;
+}
+
+EAPI const Elm_Thumb_Smart_Class *
+elm_thumb_smart_class_get(void)
+{
+   static Elm_Thumb_Smart_Class _sc =
+     ELM_THUMB_SMART_CLASS_INIT_NAME_VERSION(ELM_THUMB_SMART_NAME);
+   static const Elm_Thumb_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_thumb_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
