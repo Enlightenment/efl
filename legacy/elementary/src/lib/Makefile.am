@@ -46,7 +46,8 @@ elm_widget.h \
 elm_widget_button.h \
 elm_widget_container.h \
 elm_widget_image.h \
-elm_widget_layout.h
+elm_widget_layout.h \
+elm_widget_photo.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 includesub_HEADERS = \

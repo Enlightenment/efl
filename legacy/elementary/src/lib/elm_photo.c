@@ -1,55 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_photo.h"
 
-static const char PHOTO_SMART_NAME[] = "elm_photo";
-
-typedef struct _Elm_Photo_Smart_Data Elm_Photo_Smart_Data;
-
-struct _Elm_Photo_Smart_Data
-{
-   Elm_Widget_Smart_Data base;
-
-   Evas_Object          *icon;
-   int                   size;
-   Eina_Bool             fill_inside;
-   Ecore_Timer          *long_press_timer;
-
-#ifdef HAVE_ELEMENTARY_ETHUMB
-   struct
-   {
-      struct
-      {
-         const char *path;
-         const char *key;
-      } file, thumb;
-   } thumb;
-#endif
-};
-
-#define ELM_PHOTO_DATA_GET(o, sd) \
-  Elm_Photo_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_PHOTO_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_PHOTO_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_PHOTO_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_PHOTO_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_PHOTO_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), PHOTO_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_PHOTO_SMART_NAME[] = "elm_photo";
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_DRAG_START[] = "drag,start";
@@ -62,7 +15,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EVAS_SMART_SUBCLASS_NEW
-  (PHOTO_SMART_NAME, _elm_photo, Elm_Widget_Smart_Class,
+  (ELM_PHOTO_SMART_NAME, _elm_photo, Elm_Photo_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 static void
@@ -338,12 +291,29 @@ _elm_photo_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_photo_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_photo_smart_set_user(Elm_Photo_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_photo_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_photo_smart_del;
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_photo_smart_theme;
+}
+
+EAPI const Elm_Photo_Smart_Class *
+elm_photo_smart_class_get(void)
+{
+   static Elm_Photo_Smart_Class _sc =
+     ELM_PHOTO_SMART_CLASS_INIT_NAME_VERSION(ELM_PHOTO_SMART_NAME);
+   static const Elm_Photo_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_photo_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
