@@ -32,6 +32,7 @@ static struct libmnt_optmap eeze_optmap[] =
    { "nosuid", EEZE_DISK_MOUNTOPT_NOSUID, 0 },
    { "remount", EEZE_DISK_MOUNTOPT_REMOUNT, 0 },
    { "uid[=]", EEZE_DISK_MOUNTOPT_UID, 0 },
+   { "nodev", EEZE_DISK_MOUNTOPT_NODEV, 0 },
    { NULL, 0, 0 }
 };
 typedef struct libmnt_table libmnt_table;

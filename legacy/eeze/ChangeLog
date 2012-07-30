@@ -110,3 +110,7 @@
 
         * Add yet another libmount backend for eeze_disk to handle current
           setups which do not have mtab and instead use /proc/self/mountinfo
+
+2012-07-30 Mike Blumenkrantz
+
+        * Add EEZE_DISK_MOUNTOPT_NODEV option for disabling device nodes on mount

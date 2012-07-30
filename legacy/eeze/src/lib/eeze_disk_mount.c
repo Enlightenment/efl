@@ -348,6 +348,8 @@ eeze_disk_mount(Eeze_Disk *disk)
                }
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_NOEXEC)
                eina_strbuf_append(disk->mount_cmd, "noexec,");
+             if (disk->mount_opts & EEZE_DISK_MOUNTOPT_NODEV)
+               eina_strbuf_append(disk->mount_cmd, "nodev,");
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_NOSUID)
                eina_strbuf_append(disk->mount_cmd, "nosuid,");
              if (disk->mount_opts & EEZE_DISK_MOUNTOPT_REMOUNT)

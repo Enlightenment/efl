@@ -63,7 +63,8 @@ typedef enum
    EEZE_DISK_MOUNTOPT_NOEXEC = (1 << 3),
    EEZE_DISK_MOUNTOPT_NOSUID = (1 << 4),
    EEZE_DISK_MOUNTOPT_REMOUNT = (1 << 5),
-   EEZE_DISK_MOUNTOPT_UID = (1 << 6) /**< use current user's uid */
+   EEZE_DISK_MOUNTOPT_UID = (1 << 6), /**< use current user's uid */
+   EEZE_DISK_MOUNTOPT_NODEV = (1 << 7) /**< @since 1.7 */
 } Eeze_Mount_Opts;
 
 
