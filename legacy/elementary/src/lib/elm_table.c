@@ -1,35 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_table.h"
 
-static const char TABLE_SMART_NAME[] = "elm_table";
-
-#define ELM_TABLE_DATA_GET(o, sd) \
-  Elm_Widget_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_TABLE_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_TABLE_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_TABLE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_TABLE_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_TABLE_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), TABLE_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_TABLE_SMART_NAME[] = "elm_table";
 
 EVAS_SMART_SUBCLASS_NEW
-  (TABLE_SMART_NAME, _elm_table, Elm_Widget_Smart_Class,
+  (ELM_TABLE_SMART_NAME, _elm_table, Elm_Table_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
 
 static Eina_Bool
@@ -210,15 +186,29 @@ _elm_table_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_table_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_table_smart_set_user(Elm_Table_Smart_Class *sc)
 {
-   sc->base.add = _elm_table_smart_add;
-   sc->base.del = _elm_table_smart_del;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_table_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_table_smart_del;
+   ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_table_smart_sub_object_del;
+   ELM_WIDGET_CLASS(sc)->theme = _elm_table_smart_theme;
+   ELM_WIDGET_CLASS(sc)->focus_next = _elm_table_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->focus_direction = _elm_table_smart_focus_direction;
+}
 
-   sc->sub_object_del = _elm_table_smart_sub_object_del;
-   sc->theme = _elm_table_smart_theme;
-   sc->focus_next = _elm_table_smart_focus_next;
-   sc->focus_direction = _elm_table_smart_focus_direction;
+EAPI const Elm_Table_Smart_Class *
+elm_table_smart_class_get(void)
+{
+   static Elm_Table_Smart_Class _sc =
+     ELM_TABLE_SMART_CLASS_INIT_NAME_VERSION(ELM_TABLE_SMART_NAME);
+   static const Elm_Table_Smart_Class *class = NULL;
+
+   if (class) return class;
+
+   _elm_table_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
