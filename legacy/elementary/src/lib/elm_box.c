@@ -1,82 +1,12 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "els_box.h"
+#include "elm_widget_box.h"
 
-static const char BOX_SMART_NAME[] = "elm_box";
-
-typedef struct _Elm_Box_Smart_Data        Elm_Box_Smart_Data;
-typedef struct _Transition_Animation_Data Transition_Animation_Data;
-
-struct _Elm_Box_Smart_Data
-{
-   Elm_Widget_Smart_Data base; /* base widget smart data as
-                                * first member obligatory, as
-                                * we're inheriting from it */
-
-   Eina_Bool             horizontal : 1;
-   Eina_Bool             homogeneous : 1;
-   Eina_Bool             recalc : 1;
-};
-
-struct _Elm_Box_Transition
-{
-   double          initial_time;
-   double          duration;
-   Ecore_Animator *animator;
-
-   struct
-   {
-      Evas_Object_Box_Layout layout;
-      void                  *data;
-      void                   (*free_data)(void *data);
-   } start, end;
-
-   void            (*transition_end_cb)(void *data);
-   void           *transition_end_data;
-   void            (*transition_end_free_data)(void *data);
-   Eina_List      *objs;
-   Evas_Object    *box;
-
-   Eina_Bool       animation_ended : 1;
-   Eina_Bool       recalculate : 1;
-};
-
-struct _Transition_Animation_Data
-{
-   Evas_Object *obj;
-   struct
-   {
-      Evas_Coord x, y, w, h;
-   } start, end;
-};
-
-#define ELM_BOX_DATA_GET(o, sd) \
-  Elm_Box_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_BOX_DATA_GET_OR_RETURN(o, ptr)           \
-  ELM_BOX_DATA_GET(o, ptr);                          \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_BOX_DATA_GET_OR_RETURN_VAL(o, ptr, val)  \
-  ELM_BOX_DATA_GET(o, ptr);                          \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return val;                                   \
-    }
-
-#define ELM_BOX_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), BOX_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_BOX_SMART_NAME[] = "elm_box";
 
 EVAS_SMART_SUBCLASS_NEW
-  (BOX_SMART_NAME, _elm_box, Elm_Widget_Smart_Class,
+  (ELM_BOX_SMART_NAME, _elm_box, Elm_Box_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
 
 static const char SIG_CHILD_ADDED[] = "child,added";
@@ -480,15 +410,32 @@ _elm_box_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_box_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_box_smart_set_user(Elm_Box_Smart_Class *sc)
 {
-   sc->base.add = _elm_box_smart_add;
-   sc->base.del = _elm_box_smart_del;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_box_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_box_smart_del;
 
-   sc->sub_object_del = _elm_box_smart_sub_object_del;
-   sc->theme = _elm_box_smart_theme;
-   sc->focus_next = _elm_box_smart_focus_next;
-   sc->focus_direction = _elm_box_smart_focus_direction;
+   ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_box_smart_sub_object_del;
+   ELM_WIDGET_CLASS(sc)->theme = _elm_box_smart_theme;
+   ELM_WIDGET_CLASS(sc)->focus_next = _elm_box_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->focus_direction = _elm_box_smart_focus_direction;
+}
+
+EAPI const Elm_Box_Smart_Class *
+elm_box_smart_class_get(void)
+{
+   static Elm_Box_Smart_Class _sc =
+     ELM_BOX_SMART_CLASS_INIT_NAME_VERSION(ELM_BOX_SMART_NAME);
+   static const Elm_Box_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_box_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
