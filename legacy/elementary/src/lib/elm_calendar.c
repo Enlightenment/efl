@@ -461,8 +461,6 @@ _set_headers(Evas_Object *obj)
 static Eina_Bool
 _elm_calendar_smart_theme(Evas_Object *obj)
 {
-   ELM_CALENDAR_DATA_GET(obj, sd);
-
    if (!ELM_WIDGET_CLASS(_elm_calendar_parent_sc)->theme(obj))
      return EINA_FALSE;
 
