@@ -899,7 +899,7 @@ elm_policy_set(unsigned int policy,
    if (value == _elm_policies[policy])
      return EINA_TRUE;
 
-   /* TODO: validade policy? */
+   /* TODO: validate policy? */
 
    ev = malloc(sizeof(*ev));
    ev->policy = policy;
