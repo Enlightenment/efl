@@ -269,6 +269,8 @@ _populate(Evas_Object *obj)
 
    ELM_CALENDAR_DATA_GET(obj, sd);
 
+   elm_layout_freeze(obj);
+
    if (sd->today_it > 0) _not_today(sd);
 
    maxdays = _maxdays_get(&sd->shown_time);
@@ -433,6 +435,8 @@ _populate(Evas_Object *obj)
              break;
           }
      }
+
+   elm_layout_thaw(obj);
 }
 
 static void
@@ -442,12 +446,16 @@ _set_headers(Evas_Object *obj)
    int i;
    ELM_CALENDAR_DATA_GET(obj, sd);
 
+   elm_layout_freeze(obj);
+
    for (i = 0; i < ELM_DAY_LAST; i++)
      {
         part[3] = i + '0';
         elm_layout_text_set
           (obj, part, sd->weekdays[(i + sd->first_week_day) % ELM_DAY_LAST]);
      }
+
+   elm_layout_thaw(obj);
 }
 
 static Eina_Bool
@@ -458,8 +466,12 @@ _elm_calendar_smart_theme(Evas_Object *obj)
    if (!ELM_WIDGET_CLASS(_elm_calendar_parent_sc)->theme(obj))
      return EINA_FALSE;
 
+   elm_layout_freeze(obj);
+
    _set_headers(obj);
    _populate(obj);
+
+   elm_layout_thaw(obj);
 
    edje_object_message_signal_process(ELM_WIDGET_DATA(sd)->resize_obj);
 
@@ -803,10 +815,14 @@ _elm_calendar_smart_add(Evas_Object *obj)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
+   elm_layout_freeze(obj);
+
    elm_layout_theme_set(obj, "calendar", "base", elm_object_style_get(obj));
 
    _set_headers(obj);
    _populate(obj);
+
+   elm_layout_thaw(obj);
 
    elm_layout_sizing_eval(obj);
 }
@@ -1086,8 +1102,13 @@ elm_calendar_first_day_of_week_set(Evas_Object *obj,
    if (sd->first_week_day != day)
      {
         sd->first_week_day = day;
+
+        elm_layout_freeze(obj);
+
         _set_headers(obj);
         _populate(obj);
+
+        elm_layout_thaw(obj);
      }
 }
 

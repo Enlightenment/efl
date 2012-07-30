@@ -190,6 +190,34 @@ EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
 EAPI Eina_Bool                    elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
 
 /**
+ * @brief Freezes the Elementary layout object.
+ *
+ * @param obj A handle to an Elementary layout object.
+ * @return The frozen state or 0 on Error
+ *
+ * This function puts all changes on hold. Successive freezes will
+ * nest, requiring an equal number of thaws.
+ *
+ * @see elm_layout_thaw()
+ */
+EAPI int elm_layout_freeze(Evas_Object *obj);
+
+/**
+ * @brief Thaws the Elementary object.
+ *
+ * @param obj A handle to an Elementary layout object.
+ * @return The frozen state or 0 if the object is not frozen or on error.
+ *
+ * This function thaws the given Edje object and the Elementary sizing calc.
+ *
+ * @note: If sucessives freezes were done, an equal number of
+ *        thaws will be required.
+ *
+ * @see elm_layout_freeze()
+ */
+EAPI int elm_layout_thaw(Evas_Object *obj);
+
+/**
  * Set the edje group from the elementary theme that will be used as layout
  *
  * @param obj The layout object

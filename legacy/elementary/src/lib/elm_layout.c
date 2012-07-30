@@ -108,6 +108,7 @@ _on_sub_object_size_hint_change(void *data,
                                 void *event_info __UNUSED__)
 {
    ELM_LAYOUT_DATA_GET(data, sd);
+   if (ELM_WIDGET_DATA(sd)->frozen) return ;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(data);
 }
 
@@ -451,6 +452,7 @@ _elm_layout_smart_sub_object_del(Evas_Object *obj,
         break;
      }
 
+   if (ELM_WIDGET_DATA(sd)->frozen) return EINA_TRUE;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    return EINA_TRUE;
@@ -655,7 +657,10 @@ _elm_layout_smart_text_set(Evas_Object *obj,
 
    _text_signal_emit(sd, sub_d, !!text);
 
-   ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
+   if (!ELM_WIDGET_DATA(sd)->frozen)
+     {
+        ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
+     }
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON &&
        ELM_WIDGET_DATA(sd)->can_access && !(sub_d->obj))
@@ -734,6 +739,7 @@ _elm_layout_smart_content_set(Evas_Object *obj,
         _icon_signal_emit(sd, sub_d, EINA_TRUE);
      }
 
+   if (ELM_WIDGET_DATA(sd)->frozen) return EINA_TRUE;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    return EINA_TRUE;
@@ -827,6 +833,7 @@ _elm_layout_smart_box_append(Evas_Object *obj,
    sub_d->obj = child;
    sd->subs = eina_list_append(sd->subs, sub_d);
 
+   if (ELM_WIDGET_DATA(sd)->frozen) return EINA_TRUE;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    return EINA_TRUE;
@@ -862,6 +869,7 @@ _elm_layout_smart_box_prepend(Evas_Object *obj,
    sub_d->obj = child;
    sd->subs = eina_list_prepend(sd->subs, sub_d);
 
+   if (ELM_WIDGET_DATA(sd)->frozen) return EINA_TRUE;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    return EINA_TRUE;
@@ -913,6 +921,7 @@ _elm_layout_smart_box_insert_before(Evas_Object *obj,
    evas_object_event_callback_add
      ((Evas_Object *)reference, EVAS_CALLBACK_DEL, _box_reference_del, sub_d);
 
+   if (ELM_WIDGET_DATA(sd)->frozen) return EINA_TRUE;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    return EINA_TRUE;
@@ -951,6 +960,7 @@ _elm_layout_smart_box_insert_at(Evas_Object *obj,
    sub_d->p.box.pos = pos;
    sd->subs = eina_list_append(sd->subs, sub_d);
 
+   if (ELM_WIDGET_DATA(sd)->frozen) return EINA_TRUE;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    return EINA_TRUE;
@@ -1093,6 +1103,7 @@ _elm_layout_smart_table_pack(Evas_Object *obj,
    sub_d->p.table.rowspan = rowspan;
    sd->subs = eina_list_append(sd->subs, sub_d);
 
+   if (ELM_WIDGET_DATA(sd)->frozen) return EINA_TRUE;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    return EINA_TRUE;
@@ -1199,6 +1210,7 @@ _elm_layout_smart_add(Evas_Object *obj)
      (ELM_WIDGET_DATA(priv)->resize_obj, "size,eval", "elm",
      _on_size_evaluate_signal, obj);
 
+   if (ELM_WIDGET_DATA(priv)->frozen) return ;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(priv)->api)->sizing_eval(obj);
 }
 
@@ -1601,6 +1613,36 @@ elm_layout_sizing_eval(Evas_Object *obj)
    ELM_LAYOUT_DATA_GET(obj, sd);
 
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
+}
+
+EAPI int
+elm_layout_freeze(Evas_Object *obj)
+{
+   ELM_LAYOUT_CHECK(obj) 0;
+   ELM_LAYOUT_DATA_GET(obj, sd);
+
+   if ((ELM_WIDGET_DATA(sd)->frozen)++ != 0)
+     return ELM_WIDGET_DATA(sd)->frozen;
+
+   edje_object_freeze(ELM_WIDGET_DATA(sd)->resize_obj);
+
+   return 1;
+}
+
+EAPI int
+elm_layout_thaw(Evas_Object *obj)
+{
+   ELM_LAYOUT_CHECK(obj) 0;
+   ELM_LAYOUT_DATA_GET(obj, sd);
+
+   if (--(ELM_WIDGET_DATA(sd)->frozen) != 0)
+     return ELM_WIDGET_DATA(sd)->frozen;
+
+   edje_object_thaw(ELM_WIDGET_DATA(sd)->resize_obj);
+
+   ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
+
+   return 0;
 }
 
 EAPI Eina_Bool

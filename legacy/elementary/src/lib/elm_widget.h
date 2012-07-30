@@ -487,6 +487,8 @@ typedef struct _Elm_Widget_Smart_Data
                                                   Evas_Coord *w,
                                                   Evas_Coord *h);
 
+   int                           frozen;
+
    Eina_Bool                     drag_x_locked : 1;
    Eina_Bool                     drag_y_locked : 1;
 
