@@ -108,7 +108,7 @@ _on_sub_object_size_hint_change(void *data,
                                 void *event_info __UNUSED__)
 {
    ELM_LAYOUT_DATA_GET(data, sd);
-   if (ELM_WIDGET_DATA(sd)->frozen) return ;
+   if (ELM_WIDGET_DATA(sd)->frozen) return;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(data);
 }
 
@@ -1210,7 +1210,7 @@ _elm_layout_smart_add(Evas_Object *obj)
      (ELM_WIDGET_DATA(priv)->resize_obj, "size,eval", "elm",
      _on_size_evaluate_signal, obj);
 
-   if (ELM_WIDGET_DATA(priv)->frozen) return ;
+   if (ELM_WIDGET_DATA(priv)->frozen) return;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(priv)->api)->sizing_eval(obj);
 }
 
