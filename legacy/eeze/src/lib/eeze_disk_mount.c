@@ -407,7 +407,7 @@ eeze_disk_unmount(Eeze_Disk *disk)
         eina_strbuf_string_free(disk->unmount_cmd);
         if (disk->mount_wrapper)
           eina_strbuf_append_printf(disk->unmount_cmd, "%s ", disk->mount_wrapper);
-        eina_strbuf_append_printf(disk->unmount_cmd, EEZE_UNMOUNT_BIN" %s", disk->mount_point);
+        eina_strbuf_append_printf(disk->unmount_cmd, EEZE_UNMOUNT_BIN" %s", eeze_disk_devpath_get(disk));
         disk->unmount_cmd_changed = EINA_FALSE;
      }
 
