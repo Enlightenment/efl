@@ -6,12 +6,15 @@
 # define USE_UNSTABLE_LIBMOUNT_API 1
 #endif
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #include <Ecore.h>
 #include <Eeze.h>
 #include <Eeze_Disk.h>
 #include <libmount.h>
-#include <unistd.h>
-
 #include "eeze_udev_private.h"
 #include "eeze_disk_private.h"
 
@@ -44,7 +47,7 @@ static libmnt_table *_eeze_mount_fstab = NULL;
 extern Eina_List *_eeze_disks;
 
 static Ecore_Fd_Handler *_mountinfo_fdh = NULL;
-static FILE *_mountinfo = NULL;
+static int _mountinfo = -1;
 
 static libmnt_table *_eeze_mount_tab_parse(const char *filename);
 static void _eeze_mount_tab_watcher(void *data, Ecore_File_Monitor *mon __UNUSED__, Ecore_File_Event event __UNUSED__, const char *path);
@@ -136,8 +139,7 @@ _eeze_mount_fdh(void *d __UNUSED__, Ecore_Fd_Handler *fdh __UNUSED__)
    EINA_SAFETY_ON_NULL_GOTO(itr, err);
    diff = mnt_new_tabdiff();
    EINA_SAFETY_ON_NULL_GOTO(diff, err);
-   rewind(_mountinfo);
-   if (mnt_table_parse_stream(tb_new, _mountinfo, "/proc/self/mountinfo"))
+   if (mnt_table_parse_file(tb_new, "/proc/self/mountinfo"))
      {
         ERR("PARSING FAILED FOR /proc/self/mountinfo! THIS IS WEIRD!");
         goto err;
@@ -408,7 +410,6 @@ EAPI Eina_Bool
 eeze_mount_tabs_watch(void)
 {
    libmnt_table *bak;
-   char *lnk;
 
    if (_watching)
      return EINA_TRUE;
@@ -418,7 +419,7 @@ eeze_mount_tabs_watch(void)
 
    mnt_free_table(_eeze_mount_mtab);
    _eeze_mount_mtab = bak;
-   bak = _eeze_mount_tab_parse("/etc/mtab");
+   bak = _eeze_mount_tab_parse("/etc/fstab");
    EINA_SAFETY_ON_NULL_GOTO(bak, error);
 
    mnt_free_table(_eeze_mount_fstab);
@@ -430,20 +431,18 @@ eeze_mount_tabs_watch(void)
    _eeze_mount_fstab_cache = mnt_new_cache();
    mnt_table_set_cache(_eeze_mount_fstab, _eeze_mount_fstab_cache);
 
-   _mountinfo = fopen("/proc/self/mountinfo", "r");
-   if (!_mountinfo) goto error;
-   _mountinfo_fdh = ecore_main_fd_handler_add(fileno(_mountinfo), ECORE_FD_ERROR, _eeze_mount_fdh, NULL, NULL, NULL);
+   _mountinfo = open("/proc/self/mountinfo", O_RDONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+   if (_mountinfo < 0) goto error;
+   _mountinfo_fdh = ecore_main_fd_handler_add(_mountinfo, ECORE_FD_ERROR, _eeze_mount_fdh, NULL, NULL, NULL);
    if (!_mountinfo_fdh) goto error;
-   _fstab_mon = ecore_file_monitor_add("/etc/mtab", _eeze_mount_tab_watcher, NULL);
-   lnk = ecore_file_readlink("/etc/mtab");
-   if (lnk) free(lnk);
-   else _watching = EINA_TRUE;
+   _fstab_mon = ecore_file_monitor_add("/etc/fstab", _eeze_mount_tab_watcher, NULL);
+   _watching = EINA_TRUE;
 
   return EINA_TRUE;
 
 error:
-   if (_mountinfo) fclose(_mountinfo);
-   _mountinfo = NULL;
+   if (_mountinfo >= 0) close(_mountinfo);
+   _mountinfo = -1;
    if (!_eeze_mount_mtab)
      ERR("Could not parse /proc/self/mountinfo!");
    else
@@ -461,8 +460,10 @@ eeze_mount_tabs_unwatch(void)
    if (!_watching)
      return;
 
-   _mountinfo_fdh = ecore_main_fd_handler_del(_mountinfo_fdh);
+   ecore_main_fd_handler_del(_mountinfo_fdh);
    ecore_file_monitor_del(_fstab_mon);
+   close(_mountinfo);
+   _mountinfo = -1;
    _fstab_mon = NULL;
    _watching = EINA_FALSE;
 }
