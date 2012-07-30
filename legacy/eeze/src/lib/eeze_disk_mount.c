@@ -311,24 +311,13 @@ eeze_disk_mount(Eeze_Disk *disk)
              mp = eeze_disk_libmount_mp_lookup_by_uuid(disk->cache.uuid);
              if (!mp)
                {
-                  const char *label;
+                  const char *devpath;
 
-                  label = eeze_disk_label_get(disk);
-                  if (label)
+                  devpath = eeze_disk_devpath_get(disk);
+                  if (devpath)
                     {
-                       mp = eeze_disk_libmount_mp_lookup_by_label(label);
-                       eina_stringshare_del(label);
-                    }
-                  if (!mp)
-                    {
-                       const char *devpath;
-
-                       devpath = eeze_disk_devpath_get(disk);
-                       if (devpath)
-                         {
-                            mp = eeze_disk_libmount_mp_lookup_by_devpath(devpath);
-                            eina_stringshare_del(devpath);
-                         }
+                       mp = eeze_disk_libmount_mp_lookup_by_devpath(devpath);
+                       eina_stringshare_del(devpath);
                     }
                }
              if (!eeze_disk_mount_point_set(disk, mp))
