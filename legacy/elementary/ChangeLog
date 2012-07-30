@@ -357,3 +357,4 @@
 2012-07-30  Cedric Bail
 
 	* Allow freeze/thaw on Elm_Layout and reduce number of object update.
+	* Defer Elm_Calendar generation until really needed.
