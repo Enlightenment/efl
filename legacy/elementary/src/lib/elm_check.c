@@ -72,10 +72,6 @@ _activate(Evas_Object *obj)
 {
    ELM_CHECK_DATA_GET(obj, sd);
 
-   if ((_elm_config->access_mode != ELM_ACCESS_MODE_OFF) &&
-       (!_elm_access_2nd_click_timeout(obj)))
-     return;
-
    sd->state = !sd->state;
    if (sd->statep) *sd->statep = sd->state;
    if (sd->state)

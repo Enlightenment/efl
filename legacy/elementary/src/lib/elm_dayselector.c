@@ -96,20 +96,6 @@ _dayselector_resize(void *data,
    elm_layout_sizing_eval(data);
 }
 
-#if 0
-static Eina_Bool
-_elm_dayselector_smart_focus_next(const Evas_Object *obj,
-                                  Elm_Focus_Direction dir __UNUSED__,
-                                  Evas_Object **next __UNUSED__)
-{
-   ELM_DAYSELECTOR_DATA_GET(obj, sd);
-
-   /* TODO: Focus switch support to Elm_widget_Item is not supported yet.*/
-   return EINA_FALSE;
-}
-
-#endif
-
 static Eina_Bool
 _elm_dayselector_smart_translate(Evas_Object *obj)
 {
@@ -453,6 +439,10 @@ _items_create(Evas_Object *obj)
 
         snprintf(buf, sizeof(buf), "day%d", idx);
         elm_layout_content_set(obj, buf, chk);
+
+        // XXX: ACCESS
+        _elm_access_text_set(_elm_access_object_get(chk),
+                 ELM_ACCESS_TYPE, E_("day selector item"));
      }
 
    _items_style_set(obj);
@@ -505,11 +495,6 @@ _elm_dayselector_smart_set_user(Elm_Layout_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_dayselector_smart_theme;
    ELM_WIDGET_CLASS(sc)->translate = _elm_dayselector_smart_translate;
-#if 0
-   ELM_WIDGET_CLASS(sc)->focus_next = _elm_dayselector_smart_focus_next;
-#else
-   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
-#endif
 
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
