@@ -1,11 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_hover.h"
 
-static const char HOVER_SMART_NAME[] = "elm_hover";
-
-typedef struct _Elm_Hover_Smart_Data Elm_Hover_Smart_Data;
-typedef struct _Content_Info         Content_Info;
+EAPI const char ELM_HOVER_SMART_NAME[] = "elm_hover";
 
 #ifndef MAX
 # define MAX(a, b) (((a) > (b)) ? (a) : (b))
@@ -24,7 +21,7 @@ typedef struct _Content_Info         Content_Info;
 #define _HOV_BOTTOM_LEFT        (&(sd->subs[7]))
 #define _HOV_MIDDLE             (&(sd->subs[8]))
 
-static const Elm_Layout_Part_Alias_Description _content_aliases[] =
+const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
    {"left", "elm.swallow.slot.left"},
    {"top-left", "elm.swallow.slot.top-left"},
@@ -38,26 +35,6 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-struct _Content_Info
-{
-   const char  *swallow;
-   Evas_Object *obj;
-};
-
-struct _Elm_Hover_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Evas_Object          *offset, *size;
-   Evas_Object          *parent, *target;
-
-   Content_Info         *smt_sub;  /* 'smart placement' sub object */
-   Content_Info          subs[sizeof(_content_aliases) /
-                              sizeof(_content_aliases[0]) - 1];
-
-   Eina_Bool             on_del : 1;
-};
-
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_SMART_LOCATION_CHANGED[] = "smart,changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -66,35 +43,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#define ELM_HOVER_DATA_GET(o, sd) \
-  Elm_Hover_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_HOVER_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_HOVER_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_HOVER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_HOVER_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_HOVER_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), HOVER_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (HOVER_SMART_NAME, _elm_hover, Elm_Layout_Smart_Class,
+  (ELM_HOVER_SMART_NAME, _elm_hover, Elm_Hover_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
@@ -668,7 +618,7 @@ _elm_hover_smart_parent_set(Evas_Object *obj,
 }
 
 static void
-_elm_hover_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_hover_smart_set_user(Elm_Hover_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_hover_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_hover_smart_del;
@@ -690,9 +640,27 @@ _elm_hover_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_CONTAINER_CLASS(sc)->content_get = _elm_hover_smart_content_get;
    ELM_CONTAINER_CLASS(sc)->content_unset = _elm_hover_smart_content_unset;
 
-   sc->sizing_eval = _elm_hover_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_hover_smart_sizing_eval;
 
-   sc->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+}
+
+EAPI const Elm_Hover_Smart_Class *
+elm_hover_smart_class_get(void)
+{
+   static Elm_Hover_Smart_Class _sc =
+     ELM_HOVER_SMART_CLASS_INIT_NAME_VERSION(ELM_HOVER_SMART_NAME);
+   static const Elm_Hover_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_hover_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
