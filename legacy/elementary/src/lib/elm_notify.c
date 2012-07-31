@@ -1,25 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_container.h"
+#include "elm_widget_notify.h"
 
-static const char NOTIFY_SMART_NAME[] = "elm_notify";
-
-typedef struct _Elm_Notify_Smart_Data Elm_Notify_Smart_Data;
-
-struct _Elm_Notify_Smart_Data
-{
-   Elm_Widget_Smart_Data base;
-
-   Evas_Object          *notify, *content, *parent;
-   Evas_Object          *block_events;
-
-   Elm_Notify_Orient     orient;
-
-   double                timeout;
-   Ecore_Timer          *timer;
-
-   Eina_Bool             allow_events : 1;
-};
+EAPI const char ELM_NOTIFY_SMART_NAME[] = "elm_notify";
 
 static const char SIG_BLOCK_CLICKED[] = "block,clicked";
 static const char SIG_TIMEOUT[] = "timeout";
@@ -29,33 +12,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#define ELM_NOTIFY_DATA_GET(o, sd) \
-  Elm_Notify_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_NOTIFY_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_NOTIFY_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_NOTIFY_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_NOTIFY_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
-    }
-
-#define ELM_NOTIFY_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), NOTIFY_SMART_NAME, __func__)) \
-    return
-
 EVAS_SMART_SUBCLASS_NEW
-  (NOTIFY_SMART_NAME, _elm_notify, Elm_Container_Smart_Class,
+  (ELM_NOTIFY_SMART_NAME, _elm_notify, Elm_Notify_Smart_Class,
   Elm_Container_Smart_Class, elm_container_smart_class_get, NULL);
 
 /**
@@ -609,7 +567,7 @@ _elm_notify_smart_parent_set(Evas_Object *obj,
 }
 
 static void
-_elm_notify_smart_set_user(Elm_Container_Smart_Class *sc)
+_elm_notify_smart_set_user(Elm_Notify_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_notify_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_notify_smart_del;
@@ -629,6 +587,23 @@ _elm_notify_smart_set_user(Elm_Container_Smart_Class *sc)
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_notify_smart_content_set;
    ELM_CONTAINER_CLASS(sc)->content_get = _elm_notify_smart_content_get;
    ELM_CONTAINER_CLASS(sc)->content_unset = _elm_notify_smart_content_unset;
+}
+
+EAPI const Elm_Notify_Smart_Class *
+elm_notify_smart_class_get(void)
+{
+   static Elm_Notify_Smart_Class _sc =
+     ELM_NOTIFY_SMART_CLASS_INIT_NAME_VERSION(ELM_NOTIFY_SMART_NAME);
+   static const Elm_Notify_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_notify_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
