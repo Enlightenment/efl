@@ -1,60 +1,13 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_progressbar.h"
 
-static const char PROGRESSBAR_SMART_NAME[] = "elm_progressbar";
+EAPI const char ELM_PROGRESSBAR_SMART_NAME[] = "elm_progressbar";
 
 static const char SIG_CHANGED[] = "changed";
 
 #define MIN_RATIO_LVL 0.0
 #define MAX_RATIO_LVL 1.0
-
-typedef struct _Elm_Progressbar_Smart_Data Elm_Progressbar_Smart_Data;
-
-struct _Elm_Progressbar_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Evas_Object          *spacer;
-   const char           *units;
-
-   Evas_Coord            size;
-   double                val;
-
-   Eina_Bool             horizontal : 1;
-   Eina_Bool             inverted : 1;
-   Eina_Bool             pulse : 1;
-   Eina_Bool             pulse_state : 1;
-
-   char                 *(*unit_format_func)(double val);
-   void                  (*unit_format_free)(char *str);
-};
-
-#define ELM_PROGRESSBAR_DATA_GET(o, sd) \
-  Elm_Progressbar_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_PROGRESSBAR_DATA_GET_OR_RETURN(o, ptr)   \
-  ELM_PROGRESSBAR_DATA_GET(o, ptr);                  \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_PROGRESSBAR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_PROGRESSBAR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                 \
-    {                                                       \
-       CRITICAL("No widget data for object %p (%s)",        \
-                o, evas_object_type_get(o));                \
-       return val;                                          \
-    }
-
-#define ELM_PROGRESSBAR_CHECK(obj)                 \
-  if (!obj || !elm_widget_type_check               \
-        ((obj), PROGRESSBAR_SMART_NAME, __func__)) \
-    return
 
 /* smart callbacks coming from elm progressbar objects (besides the
  * ones coming from elm layout): */
@@ -66,7 +19,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (PROGRESSBAR_SMART_NAME, _elm_progressbar, Elm_Layout_Smart_Class,
+  (ELM_PROGRESSBAR_SMART_NAME, _elm_progressbar, Elm_Progressbar_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
@@ -276,7 +229,7 @@ _elm_progressbar_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_progressbar_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_progressbar_smart_set_user(Elm_Progressbar_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_progressbar_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_progressbar_smart_del;
@@ -291,10 +244,28 @@ _elm_progressbar_smart_set_user(Elm_Layout_Smart_Class *sc)
 
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_progressbar_smart_content_set;
 
-   sc->sizing_eval = _elm_progressbar_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_progressbar_smart_sizing_eval;
 
-   sc->content_aliases = _content_aliases;
-   sc->text_aliases = _text_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->text_aliases = _text_aliases;
+}
+
+EAPI const Elm_Progressbar_Smart_Class *
+elm_progressbar_smart_class_get(void)
+{
+   static Elm_Progressbar_Smart_Class _sc =
+     ELM_PROGRESSBAR_SMART_CLASS_INIT_NAME_VERSION(ELM_PROGRESSBAR_SMART_NAME);
+   static const Elm_Progressbar_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_progressbar_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
