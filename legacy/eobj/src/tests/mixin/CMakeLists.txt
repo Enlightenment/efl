@@ -1,9 +1,11 @@
 LIST(APPEND MIXIN_CC_SOURCES
    main.c
    simple.c
+   inherit.c
    mixin.c
    mixin2.c
    mixin3.c
+   mixin4.c
    )
 
 include_directories(

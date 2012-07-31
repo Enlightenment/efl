@@ -1,5 +1,6 @@
 #include "Eo.h"
 #include "simple.h"
+#include "inherit.h"
 #include "mixin.h"
 #include "mixin2.h"
 #include "mixin3.h"
@@ -28,6 +29,12 @@ main(int argc, char *argv[])
 
    Mixin3_Public_Data *pd3 = eo_data_get(obj, MIXIN3_CLASS);
    fail_if(pd3->count != 9);
+
+   eo_unref(obj);
+
+   obj = eo_add(INHERIT_CLASS, NULL);
+   eo_do(obj, simple_a_set(5), simple_a_get(&a));
+   fail_if(a != 5);
 
    eo_unref(obj);
    eo_shutdown();

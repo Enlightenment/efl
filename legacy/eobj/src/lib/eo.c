@@ -285,14 +285,20 @@ _eo_kls_itr_next(const Eo_Class *orig_kls, Eo_Kls_Itr *cur, Eo_Kls_Itr *prev_sta
    if (*kls_itr)
      {
         kls_itr++;
-        if (*kls_itr)
+        while (*kls_itr)
           {
              const op_type_funcs *fsrc = _dich_func_get(*kls_itr, op);
+             if (!fsrc->func)
+               {
+                  kls_itr++;
+                  continue;
+               }
              cur->kls = fsrc->src;
              return cur->kls;
           }
      }
 
+   cur->kls = NULL;
    return NULL;
 }
 
