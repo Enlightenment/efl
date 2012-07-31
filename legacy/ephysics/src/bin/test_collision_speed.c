@@ -115,7 +115,7 @@ test_collision_speed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    speed_data->bt = bt;
 
    sp = elm_spinner_add(speed_data->base.win);
-   elm_spinner_min_max_set(sp, 0, 500);
+   elm_spinner_min_max_set(sp, 0, 300);
    elm_spinner_step_set(sp, 5);
    elm_spinner_value_set(sp, 100);
    elm_object_style_set(sp, "ephysics-test");
@@ -124,6 +124,7 @@ test_collision_speed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
+   ephysics_world_simulation_set(world, 1/260.f, 5);
    speed_data->base.world = world;
 
    boundary = ephysics_body_bottom_boundary_add(world);

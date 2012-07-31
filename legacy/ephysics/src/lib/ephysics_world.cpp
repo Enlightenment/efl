@@ -31,8 +31,10 @@ struct _EPhysics_World {
      Evas_Coord x, y, w, h;
      Eina_Inlist *callbacks;
      Eina_List *bodies;
+     int max_sub_steps;
      double last_update;
      double rate;
+     double fixed_time_step;
      Eina_Bool running:1;
      Eina_Bool active:1;
      Eina_Bool outside_autodel:1;
@@ -141,7 +143,8 @@ _simulate_worlds(void *data)
         world->last_update = time_now;
 
         gDeactivationTime = world->max_sleeping_time;
-        world->dynamics_world->stepSimulation(delta, 1, 1/40.f);
+        world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
+                                              world->fixed_time_step);
      }
 
    return EINA_TRUE;
@@ -342,6 +345,8 @@ ephysics_world_new(void)
      world->dynamics_world->getPairCache()->setOverlapFilterCallback(filter_cb);
 
    world->rate = 30;
+   world->max_sub_steps = 3;
+   world->fixed_time_step = 1/60.f;
    world->dynamics_world->setInternalTickCallback(_ephysics_world_tick_cb,
                                                   (void *) world);
 
@@ -927,7 +932,7 @@ ephysics_world_bodies_outside_right_autodel_get(const EPhysics_World *world)
    return world->outside_right;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world)
 {
    if (!world)
@@ -937,6 +942,47 @@ ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world)
      }
 
    return world->outside_autodel;
+}
+
+EAPI void
+ephysics_world_simulation_set(EPhysics_World *world, double fixed_time_step, int max_sub_steps)
+{
+   if (!world)
+     {
+        ERR("Can't set simulation, no world provided.");
+        return;
+     }
+
+   if (max_sub_steps < 1)
+     {
+        ERR("At least one sub step for simulation is required.");
+        return;
+     }
+
+   if (ecore_animator_frametime_get() >= max_sub_steps * fixed_time_step)
+     {
+        ERR("Assure frametime < max sub steps * fixed time step.");
+        return;
+     }
+
+   world->max_sub_steps = max_sub_steps;
+   world->fixed_time_step = fixed_time_step;
+
+   DBG("World %p simulation set to fixed time step: %lf, max substeps:%i.",
+       world, fixed_time_step, max_sub_steps);
+}
+
+EAPI void
+ephysics_world_simulation_get(const EPhysics_World *world, double *fixed_time_step, int *max_sub_steps)
+{
+   if (!world)
+     {
+	ERR("No world, can't get simulation configuration.");
+	return;
+     }
+
+   if (fixed_time_step) *fixed_time_step = world->fixed_time_step;
+   if (max_sub_steps) *max_sub_steps = world->max_sub_steps;
 }
 
 #ifdef  __cplusplus

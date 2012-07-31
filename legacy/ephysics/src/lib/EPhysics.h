@@ -951,6 +951,86 @@ EAPI void ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, 
 EAPI Eina_Bool ephysics_world_bodies_outside_left_autodel_get(const EPhysics_World *world);
 
 /**
+ * @brief
+ * Set world simulation's fixed time step and max number of sub steps
+ * configuration.
+ *
+ * It's important that time step is always less than
+ * @p max_sub_steps * @p fixed_time_step, otherwise you are losing time.
+ * Mathematically:
+ *
+ * time step < @p max_sub_steps * @p fixed_time_step;
+ *
+ * If you're a using a very large time step
+ * [say, five times the size of the fixed internal time step],
+ * then you must increase the number of max sub steps to compensate for this,
+ * otherwise your simulation is “losing” time.
+ *
+ * The time step may vary. Simulation ticks are called by an animator,
+ * so, by default, time step is @c 1/30 secs. If you're using elementary,
+ * default FPS configuration is 60 fps, i.e. time step is @c 1/60 secs.
+ * You can change that setting a
+ * different time with ecore_animator_frametime_set().
+ *
+ * Also, keep in mind
+ * that if you're using CPU intense calculations maybe this framerate won't
+ * be achieved, so the time step will be bigger. You need to define
+ * what range of frames per secons you need to support and configure
+ * @p max_sub_steps and @p fixed_time_step according to this.
+ *
+ * By decreasing the size of @p fixed_time_step, you are increasing the
+ * “resolution” of the simulation.
+ *
+ * If you are finding that your objects are moving very fast and escaping
+ * from your walls instead of colliding with them, then one way to help fix
+ * this problem is by decreasing @p fixed_time_step. If you do this,
+ * then you will need to increase @p max_sub_steps to ensure the equation
+ * listed above is still satisfied.
+ *
+ * The issue with this is that each internal “tick” takes an amount of
+ * computation. More of them means your CPU will be spending more time on
+ * physics and therefore less time on other stuff. Say you want twice the
+ * resolution, you'll need twice the @p max_sub_steps, which could chew up
+ * twice as much CPU for the same amount of simulation time.
+ *
+ * When you pass @p max_sub_steps > 1, it will interpolate movement for you.
+ * This means that if your @p fixed_time_step is 3 units, and you pass
+ * a timeStep of 4, then it will do exactly one tick, and estimate the
+ * remaining movement by 1/3. This saves you having to do interpolation
+ * yourself, but keep in mind that maxSubSteps needs to be greater than 1.
+ *
+ * By default @p fixed_time_step is 1/60 seconds and @p max_sub_steps is 3.
+ *
+ * @param world The physics world.
+ * @param fixed_time_step size of the internal simulation step, in seconds.
+ * @param max_sub_steps maximum number of steps that simulation is allowed
+ * to take at each simulation tick.
+ *
+ * @note The unit used for time is seconds.
+ *
+ * @see ephysics_world_simulation_get().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_simulation_set(EPhysics_World *world, double fixed_time_step, int max_sub_steps);
+
+/**
+ * @brief
+ * Get world simulation's fixed time step and max number of sub steps
+ * configuration.
+ *
+ * @param world The physics world.
+ * @param fixed_time_step size of the internal simulation step, in seconds.
+ * @param max_sub_steps maximum number of steps that simulation is allowed
+ * to take at each simulation tick.
+ *
+ * @see ephysics_world_simulation_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fixed_time_step, int *max_sub_steps);
+
+/**
  * @}
  */
 
