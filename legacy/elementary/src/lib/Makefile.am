@@ -67,6 +67,7 @@ elm_widget_photo.h \
 elm_widget_photocam.h \
 elm_widget_plug.h \
 elm_widget_progressbar.h \
+elm_widget_radio.h \
 elm_widget_route.h \
 elm_widget_scroller.h \
 elm_widget_separator.h \
