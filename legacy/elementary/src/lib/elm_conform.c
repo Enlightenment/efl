@@ -1,6 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_conform.h"
 
 #ifndef MIN
 # define MIN(a, b) ((a) < (b)) ? (a) : (b)
@@ -10,41 +10,7 @@
 # define MAX(a, b) ((a) < (b)) ? (b) : (a)
 #endif
 
-static const char CONFORMANT_SMART_NAME[] = "elm_conformant";
-
-typedef struct _Elm_Conformant_Smart_Data Elm_Conformant_Smart_Data;
-struct _Elm_Conformant_Smart_Data
-{
-   Elm_Layout_Smart_Data          base;
-
-   Evas_Object                   *indicator;
-   Evas_Object                   *softkey;
-   Evas_Object                   *virtualkeypad;
-   Evas_Object                   *clipboard;
-   Evas_Object                   *scroller;
-#ifdef HAVE_ELEMENTARY_X
-   Ecore_Event_Handler           *prop_hdl;
-   Ecore_X_Virtual_Keyboard_State vkb_state;
-#endif
-   struct
-   {
-      Ecore_Animator *animator; // animaton timer
-      double          start; // time started
-      Evas_Coord      auto_x, auto_y; // desired delta
-      Evas_Coord      x, y; // current delta
-   } delta;
-   Ecore_Job                     *show_region_job;
-};
-
-/* Enum to identify conformant swallow parts */
-typedef enum _Conformant_Part_Type Conformant_Part_Type;
-enum _Conformant_Part_Type
-{
-   ELM_CONFORMANT_INDICATOR_PART      = 1,
-   ELM_CONFORMANT_SOFTKEY_PART        = 2,
-   ELM_CONFORMANT_VIRTUAL_KEYPAD_PART = 4,
-   ELM_CONFORMANT_CLIPBOARD_PART    = 8
-};
+EAPI const char ELM_CONFORMANT_SMART_NAME[] = "elm_conformant";
 
 #ifdef HAVE_ELEMENTARY_X
 #define SUB_TYPE_COUNT 2
@@ -61,33 +27,8 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (CONFORMANT_SMART_NAME, _elm_conformant, Elm_Layout_Smart_Class,
+  (ELM_CONFORMANT_SMART_NAME, _elm_conformant, Elm_Conformant_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
-
-#define ELM_CONFORMANT_DATA_GET(o, sd) \
-  Elm_Conformant_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_CONFORMANT_DATA_GET_OR_RETURN(o, ptr)       \
-  ELM_CONFORMANT_DATA_GET(o, ptr);                      \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_CONFORMANT_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_CONFORMANT_DATA_GET(o, ptr);                         \
-  if (!ptr)                                             \
-    {                                                   \
-       CRITICAL("No widget data for object %p (%s)",    \
-                o, evas_object_type_get(o));            \
-       return val;                                      \
-    }
-
-#define ELM_CONFORMANT_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), CONFORMANT_SMART_NAME, __func__)) \
-    return
 
 /* Example of env vars:
  * ILLUME_KBD="0, 0, 800, 301"
@@ -452,7 +393,7 @@ _autoscroll_objects_update(void *data)
    while (sub)
      {
         type = elm_widget_type_get(sub);
-        if (!strcmp(type, CONFORMANT_SMART_NAME)) break;
+        if (!strcmp(type, ELM_CONFORMANT_SMART_NAME)) break;
 
         for (i = 0; i < SUB_TYPE_COUNT; i++)
           if (!strcmp(type, sub_type[i]))
@@ -596,7 +537,7 @@ _elm_conformant_smart_parent_set(Evas_Object *obj,
 }
 
 static void
-_elm_conformant_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_conformant_smart_set_user(Elm_Conformant_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_conformant_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_conformant_smart_del;
@@ -608,7 +549,23 @@ _elm_conformant_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
-   sc->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+}
+
+EAPI const Elm_Conformant_Smart_Class *
+elm_conformant_smart_class_get(void)
+{
+   static Elm_Conformant_Smart_Class _sc =
+     ELM_CONFORMANT_SMART_CLASS_INIT_NAME_VERSION(ELM_CONFORMANT_SMART_NAME);
+   static const Elm_Conformant_Smart_Class *class = NULL;
+
+   if (class)
+     return class;
+
+   _elm_conformant_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *

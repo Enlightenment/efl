@@ -46,6 +46,7 @@ elm_widget.h \
 elm_widget_actionslider.h \
 elm_widget_box.h \
 elm_widget_button.h \
+elm_widget_conform.h \
 elm_widget_container.h \
 elm_widget_diskselector.h \
 elm_widget_genlist.h \
