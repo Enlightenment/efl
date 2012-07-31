@@ -19,7 +19,7 @@
 #include "edje_decc.h"
 
 int _edje_cc_log_dom = -1;
-static char *progname = NULL;
+static const char *progname = NULL;
 char *file_in = NULL;
 char *file_out = NULL;
 int compress_mode = EET_COMPRESSION_DEFAULT;
@@ -152,7 +152,7 @@ main(int argc, char **argv)
        eina_shutdown();
        exit(-1);
      }
-   progname = (char *)ecore_file_file_get(argv[0]);
+   progname = ecore_file_file_get(argv[0]);
    eina_log_print_cb_set(_edje_cc_log_cb, NULL);
    eina_log_domain_level_set("edje_decc", EINA_LOG_LEVEL_INFO);
 
@@ -179,7 +179,7 @@ main(int argc, char **argv)
      }
    if (!file_in)
      {
-	ERR("%s: Error: no input file specified.", progname);
+	ERR("no input file specified.");
 	main_help();
 	exit(-1);
      }

@@ -21,7 +21,7 @@ char      *tmp_dir = NULL;
 char      *file_out = NULL;
 char      *watchfile = NULL;
 
-static char *progname = NULL;
+static const char *progname = NULL;
 
 int        no_lossy = 0;
 int        no_comp = 0;
@@ -160,7 +160,7 @@ main(int argc, char **argv)
        EINA_LOG_ERR("Enable to create a log domain.");
        exit(-1);
      }
-   progname = (char *)ecore_file_file_get(argv[0]);
+   progname = ecore_file_file_get(argv[0]);
    eina_log_print_cb_set(_edje_cc_log_cb, NULL);
 
    tmp_dir = getenv("TMPDIR");
@@ -271,7 +271,7 @@ main(int argc, char **argv)
 
    if (!file_in)
      {
-	fprintf(stderr, "%s: Error: no input file specified.\n", progname);
+	ERR("no input file specified.");
 	main_help();
 	exit(-1);
      }
@@ -296,7 +296,7 @@ main(int argc, char **argv)
    if (stat(file_in, &st) || !S_ISREG(st.st_mode))
 #endif
      {
-	fprintf(stderr, "%s: Error: file not found: %s.\n", progname, file_in);
+	ERR("file not found: %s.", file_in);
 	main_help();
 	exit(-1);
      }
@@ -317,7 +317,7 @@ main(int argc, char **argv)
       }
    if (!file_out)
      {
-	fprintf(stderr, "%s: Error: no output file specified.\n", progname);
+	ERR("no output file specified.");
 	main_help();
 	exit(-1);
      }
@@ -328,7 +328,7 @@ main(int argc, char **argv)
    if (!strcmp (file_in, file_out))
 #endif
      {
-	fprintf(stderr, "%s: Error: input file equals output file.\n", progname);
+	ERR("input file equals output file.");
 	main_help();
 	exit(-1);
      }
