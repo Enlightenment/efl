@@ -191,6 +191,25 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static Eina_Bool
+_focus_next_hook(const Evas_Object *obj,
+                 Elm_Focus_Direction dir,
+                 Evas_Object **next)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd)
+     return EINA_FALSE;
+
+   if (!elm_widget_focus_next_get(wd->box, dir, next))
+     {
+        elm_widget_focused_object_clear(wd->box);
+        elm_widget_focus_next_get(wd->box, dir, next);
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
             Evas_Callback_Type type, void *event_info)
 {
@@ -203,7 +222,18 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
    if (!wd) return EINA_FALSE;
 
    ev = event_info;
+
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return EINA_FALSE;
+
+   if (!strcmp(ev->keyname, "Tab"))
+     {
+        if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+          elm_widget_focus_cycle(wd->box, ELM_FOCUS_PREVIOUS);
+        else
+          elm_widget_focus_cycle(wd->box, ELM_FOCUS_NEXT);
+        return EINA_TRUE;
+     }
+
    if (strcmp(ev->keyname, "Escape")) return EINA_FALSE;
 
    evas_object_hide(obj);
@@ -966,6 +996,7 @@ _ctxpopup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
      {
         elm_list_go(wd->list);
         wd->visible = EINA_TRUE;
+        elm_object_focus_set(obj, EINA_TRUE);
         return;
      }
 
@@ -979,7 +1010,6 @@ _ctxpopup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
    edje_object_signal_emit(wd->base, "elm,state,show", "elm");
 
    _sizing_eval(obj);
-
    elm_object_focus_set(obj, EINA_TRUE);
 }
 
@@ -1166,6 +1196,7 @@ elm_ctxpopup_add(Evas_Object *parent)
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
+   elm_widget_focus_next_hook_set(obj, _focus_next_hook);
 
    //Background
    wd->bg = edje_object_add(e);
