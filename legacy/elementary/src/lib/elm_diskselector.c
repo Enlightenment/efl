@@ -1,6 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_interface_scrollable.h"
+#include "elm_widget_diskselector.h"
 
 #ifndef MAX
 # define MAX(a, b) (((a) > (b)) ? (a) : (b))
@@ -12,92 +12,7 @@
 
 #define DISPLAY_ITEM_NUM_MIN 3
 
-static const char DISKSELECTOR_SMART_NAME[] = "elm_diskselector";
-
-#define ELM_DISKSELECTOR_DATA_GET(o, sd) \
-  Elm_Diskselector_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_DISKSELECTOR_DATA_GET_OR_RETURN(o, ptr)  \
-  ELM_DISKSELECTOR_DATA_GET(o, ptr);                 \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_DISKSELECTOR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_DISKSELECTOR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                  \
-    {                                                        \
-       CRITICAL("No widget data for object %p (%s)",         \
-                o, evas_object_type_get(o));                 \
-       return val;                                           \
-    }
-
-#define ELM_DISKSELECTOR_CHECK(obj)                                      \
-  if (!obj || !elm_widget_type_check((obj),                              \
-                                     DISKSELECTOR_SMART_NAME, __func__)) \
-    return
-
-#define ELM_DISKSELECTOR_ITEM_CHECK(it)                     \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_DISKSELECTOR_CHECK(it->base.widget);
-
-#define ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                 \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_DISKSELECTOR_CHECK(it->base.widget) __VA_ARGS__;
-
-#define ELM_DISKSELECTOR_ITEM_CHECK_OR_GOTO(it, label)         \
-  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label); \
-  if (!it->base.widget || !elm_widget_type_check               \
-        ((it->base.widget), DISKSELECTOR_SMART_NAME, __func__)) goto label;
-
-typedef struct _Elm_Diskselector_Smart_Data Elm_Diskselector_Smart_Data;
-typedef struct _Elm_Diskselector_Item       Elm_Diskselector_Item;
-
-struct _Elm_Diskselector_Smart_Data
-{
-   Elm_Widget_Smart_Data                 base; /* base widget smart data as
-                                                * first member obligatory, as
-                                                * we're inheriting from it */
-
-   Evas_Object                          *hit_rect;
-   const Elm_Scrollable_Smart_Interface *s_iface;
-
-   Evas_Object                          *main_box;
-   Evas_Object                          *left_blank;
-   Evas_Object                          *right_blank;
-   Elm_Diskselector_Item                *selected_item;
-   Elm_Diskselector_Item                *first;
-   Elm_Diskselector_Item                *second;
-   Elm_Diskselector_Item                *s_last;
-   Elm_Diskselector_Item                *last;
-   Eina_List                            *items;
-   Eina_List                            *r_items;
-   Eina_List                            *over_items;
-   Eina_List                            *under_items;
-   Ecore_Idle_Enterer                   *idler;
-   Ecore_Idle_Enterer                   *check_idler;
-
-   int                                   item_count, len_threshold, len_side,
-                                         display_item_num;
-   Evas_Coord                            minw, minh;
-
-   Eina_Bool                             init : 1;
-   Eina_Bool                             round : 1;
-   Eina_Bool                             display_item_num_by_api : 1;
-};
-
-struct _Elm_Diskselector_Item
-{
-   ELM_WIDGET_ITEM;
-
-   Eina_List    *node;
-   Evas_Object  *icon;
-   const char   *label;
-   Evas_Smart_Cb func;
-};
+EAPI const char ELM_DISKSELECTOR_SMART_NAME[] = "elm_diskselector";
 
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
@@ -120,9 +35,9 @@ static const Evas_Smart_Interface *_smart_interfaces[] =
 };
 
 EVAS_SMART_SUBCLASS_IFACE_NEW
-  (DISKSELECTOR_SMART_NAME, _elm_diskselector, Elm_Widget_Smart_Class,
-  Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks,
-  _smart_interfaces);
+  (ELM_DISKSELECTOR_SMART_NAME, _elm_diskselector,
+  Elm_Diskselector_Smart_Class, Elm_Widget_Smart_Class,
+  elm_widget_smart_class_get, _smart_callbacks, _smart_interfaces);
 
 static void
 _selected_item_indicate(Elm_Diskselector_Item *it)
@@ -1269,7 +1184,7 @@ _elm_diskselector_smart_member_add(Evas_Object *obj,
 }
 
 static void
-_elm_diskselector_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_diskselector_smart_set_user(Elm_Diskselector_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_diskselector_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_diskselector_smart_del;
@@ -1282,6 +1197,24 @@ _elm_diskselector_smart_set_user(Elm_Widget_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->on_focus = _elm_diskselector_smart_on_focus;
    ELM_WIDGET_CLASS(sc)->theme = _elm_diskselector_smart_theme;
    ELM_WIDGET_CLASS(sc)->event = _elm_diskselector_smart_event;
+}
+
+EAPI const Elm_Diskselector_Smart_Class *
+elm_diskselector_smart_class_get(void)
+{
+   static Elm_Diskselector_Smart_Class _sc =
+     ELM_DISKSELECTOR_SMART_CLASS_INIT_NAME_VERSION
+       (ELM_DISKSELECTOR_SMART_NAME);
+   static const Elm_Diskselector_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_diskselector_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
