@@ -50,6 +50,7 @@ elm_widget_calendar.h \
 elm_widget_conform.h \
 elm_widget_container.h \
 elm_widget_diskselector.h \
+elm_widget_frame.h \
 elm_widget_gengrid.h \
 elm_widget_genlist.h \
 elm_widget_glview.h \
