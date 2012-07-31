@@ -1,62 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_glview.h"
 
-static const char GLVIEW_SMART_NAME[] = "elm_glview";
-
-#define ELM_GLVIEW_DATA_GET(o, sd) \
-  Elm_Glview_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_GLVIEW_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_GLVIEW_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_GLVIEW_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_GLVIEW_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
-    }
-
-#define ELM_GLVIEW_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), GLVIEW_SMART_NAME, __func__)) \
-    return
-
-typedef struct _Elm_Glview_Smart_Data Elm_Glview_Smart_Data;
-
-struct _Elm_Glview_Smart_Data
-{
-   Elm_Widget_Smart_Data    base; /* base widget smart data as
-                                   * first member obligatory, as
-                                   * we're inheriting from it */
-
-   Elm_GLView_Mode          mode;
-   Elm_GLView_Resize_Policy scale_policy;
-   Elm_GLView_Render_Policy render_policy;
-
-   Evas_GL                 *evasgl;
-   Evas_GL_Config          *config;
-   Evas_GL_Surface         *surface;
-   Evas_GL_Context         *context;
-
-   Evas_Coord               w, h;
-
-   Elm_GLView_Func_Cb       init_func;
-   Elm_GLView_Func_Cb       del_func;
-   Elm_GLView_Func_Cb       resize_func;
-   Elm_GLView_Func_Cb       render_func;
-
-   Ecore_Idle_Enterer      *render_idle_enterer;
-
-   Eina_Bool                initialized : 1;
-   Eina_Bool                resized : 1;
-};
+EAPI const char ELM_GLVIEW_SMART_NAME[] = "elm_glview";
 
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
@@ -69,7 +15,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EVAS_SMART_SUBCLASS_NEW
-  (GLVIEW_SMART_NAME, _elm_glview, Elm_Widget_Smart_Class,
+  (ELM_GLVIEW_SMART_NAME, _elm_glview, Elm_Glview_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 static Eina_Bool
@@ -321,13 +267,30 @@ _elm_glview_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_glview_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_glview_smart_set_user(Elm_Glview_Smart_Class *sc)
 {
-   sc->base.add = _elm_glview_smart_add;
-   sc->base.del = _elm_glview_smart_del;
-   sc->base.resize = _elm_glview_smart_resize;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_glview_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_glview_smart_del;
+   ELM_WIDGET_CLASS(sc)->base.resize = _elm_glview_smart_resize;
 
-   sc->on_focus = _elm_glview_smart_on_focus;
+   ELM_WIDGET_CLASS(sc)->on_focus = _elm_glview_smart_on_focus;
+}
+
+EAPI const Elm_Glview_Smart_Class *
+elm_glview_smart_class_get(void)
+{
+   static Elm_Glview_Smart_Class _sc =
+     ELM_GLVIEW_SMART_CLASS_INIT_NAME_VERSION(ELM_GLVIEW_SMART_NAME);
+   static const Elm_Glview_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_glview_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
