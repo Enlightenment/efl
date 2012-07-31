@@ -1,9 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_web.h"
 
 // TODO:
 //  1 - easy to use zoom like elm_photocam API
-//  2 - review scrolling to match elm_scroller. Maybe in future use elm_scroller
+//  2 - review scrolling to match elm_scroller. Maybe in future use
+//  elm_interface_scroller
 
 #ifdef HAVE_ELEMENTARY_WEB
 #include <EWebKit.h>
@@ -18,131 +20,13 @@
   " Safari/419.3 " PACKAGE_NAME "/" PACKAGE_VERSION
 #endif
 
-static const char WEB_SMART_NAME[] = "elm_web";
-
-#define ELM_WEB_DATA_GET(o, sd) \
-  Elm_Web_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_WEB_DATA_GET_OR_RETURN(o, ptr)           \
-  ELM_WEB_DATA_GET(o, ptr);                          \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_WEB_DATA_GET_OR_RETURN_VAL(o, ptr, val)  \
-  ELM_WEB_DATA_GET(o, ptr);                          \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return val;                                   \
-    }
-
-#define ELM_WEB_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), WEB_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_WEB_SMART_NAME[] = "elm_web";
 
 #ifdef HAVE_ELEMENTARY_WEB
 static Ewk_View_Smart_Class _ewk_view_parent_sc =
   EWK_VIEW_SMART_CLASS_INIT_NULL;
 
-typedef struct _View_Smart_Data View_Smart_Data;
-struct _View_Smart_Data
-{
-   Ewk_View_Smart_Data base;
-   struct
-   {
-      Evas_Event_Mouse_Down event;
-      Evas_Coord            x, y;
-      unsigned int          move_count;
-      Ecore_Timer          *longpress_timer;
-      Ecore_Animator       *pan_anim;
-   } mouse;
-};
 #endif
-
-typedef struct _Elm_Web_Smart_Data Elm_Web_Smart_Data;
-struct _Elm_Web_Smart_Data
-{
-   Elm_Widget_Smart_Data base;    /* base widget smart data as
-                                   * first member obligatory, as
-                                   * we're inheriting from it */
-
-#ifdef HAVE_ELEMENTARY_WEB
-   struct
-   {
-      Elm_Web_Window_Open          window_create;
-      void                        *window_create_data;
-      Elm_Web_Dialog_Alert         alert;
-      void                        *alert_data;
-      Elm_Web_Dialog_Confirm       confirm;
-      void                        *confirm_data;
-      Elm_Web_Dialog_Prompt        prompt;
-      void                        *prompt_data;
-      Elm_Web_Dialog_File_Selector file_selector;
-      void                        *file_selector_data;
-      Elm_Web_Console_Message      console_message;
-      void                        *console_message_data;
-   } hook;
-
-   Elm_Win_Keyboard_Mode input_method;
-
-   struct
-   {
-      Elm_Web_Zoom_Mode mode;
-      float             current;
-      float             min, max;
-      Eina_Bool         no_anim;
-      Ecore_Timer      *timer;
-   } zoom;
-
-   struct
-   {
-      struct
-      {
-         int x, y;
-      } start, end;
-      Ecore_Animator *animator;
-   } bring_in;
-
-   Eina_Bool tab_propagate : 1;
-   Eina_Bool inwin_mode : 1;
-#endif
-};
-
-enum Dialog_Type
-{
-   DIALOG_ALERT,
-   DIALOG_CONFIRM,
-   DIALOG_PROMPT,
-   DIALOG_FILE_SELECTOR
-};
-
-typedef struct _Dialog_Data Dialog_Data;
-struct _Dialog_Data
-{
-   enum Dialog_Type type;
-
-   Evas_Object     *dialog;
-   Evas_Object     *box;
-   Evas_Object     *bt_ok, *bt_cancel;
-   Evas_Object     *entry;
-   Evas_Object     *file_sel;
-
-   Eina_Bool       *response;
-   char           **entry_value;
-   Eina_List      **selected_files;
-};
-
-struct _Elm_Web_Callback_Proxy_Context
-{
-   const char  *name;
-   Evas_Object *obj;
-};
-typedef struct _Elm_Web_Callback_Proxy_Context Elm_Web_Callback_Proxy_Context;
 
 static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
    { "download,request", "p" },
@@ -183,7 +67,7 @@ static const Evas_Smart_Cb_Description _elm_web_smart_callbacks[] = {
 };
 
 EVAS_SMART_SUBCLASS_NEW
-  (WEB_SMART_NAME, _elm_web, Elm_Widget_Smart_Class, Elm_Widget_Smart_Class,
+  (ELM_WEB_SMART_NAME, _elm_web, Elm_Web_Smart_Class, Elm_Widget_Smart_Class,
   elm_widget_smart_class_get, _elm_web_smart_callbacks);
 
 #ifdef HAVE_ELEMENTARY_WEB
@@ -1303,14 +1187,31 @@ _elm_web_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_web_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_web_smart_set_user(Elm_Web_Smart_Class *sc)
 {
-   sc->base.add = _elm_web_smart_add;
-   sc->base.del = _elm_web_smart_del;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_web_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_web_smart_del;
 
-   sc->on_focus = _elm_web_smart_on_focus;
-   sc->theme = _elm_web_smart_theme;
-   sc->event = _elm_web_smart_event;
+   ELM_WIDGET_CLASS(sc)->on_focus = _elm_web_smart_on_focus;
+   ELM_WIDGET_CLASS(sc)->theme = _elm_web_smart_theme;
+   ELM_WIDGET_CLASS(sc)->event = _elm_web_smart_event;
+}
+
+EAPI const Elm_Web_Smart_Class *
+elm_web_smart_class_get(void)
+{
+   static Elm_Web_Smart_Class _sc =
+     ELM_WEB_SMART_CLASS_INIT_NAME_VERSION(ELM_WEB_SMART_NAME);
+   static const Elm_Web_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_web_smart_set(&_sc);
+   esc->callbacks = _elm_web_smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
