@@ -1,56 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_bg.h"
 
-static const char BG_SMART_NAME[] = "elm_bg";
-
-typedef struct _Elm_Bg_Smart_Data Elm_Bg_Smart_Data;
-
-struct _Elm_Bg_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-/* the basic background's edje object has three swallow spots, namely:
- *  - "elm.swallow.rectangle" (elm_bg_color_set),
- *  - "elm.swallow.background" (elm_bg_file_set) and
- *  - "elm.swallow.content" (elm_bg_overlay_set).
- * the following three variables hold possible content to fit in each
- * of them, respectively. */
-
-   Evas_Object          *rect, *img;
-   const char           *file, *group;  /* path to file and group name
-                                         * to give life to "img" */
-   Elm_Bg_Option         option;
-   struct
-     {
-        Evas_Coord w, h;
-     } load_opts;
-};
-
-#define ELM_BG_DATA_GET(o, sd) \
-  Elm_Bg_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_BG_DATA_GET_OR_RETURN(o, ptr)            \
-  ELM_BG_DATA_GET(o, ptr);                           \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_BG_DATA_GET_OR_RETURN_VAL(o, ptr, val)   \
-  ELM_BG_DATA_GET(o, ptr);                           \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return val;                                   \
-    }
-
-#define ELM_BG_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), BG_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_BG_SMART_NAME[] = "elm_bg";
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -61,7 +13,7 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (BG_SMART_NAME, _elm_bg, Elm_Layout_Smart_Class, Elm_Layout_Smart_Class,
+  (ELM_BG_SMART_NAME, _elm_bg, Elm_Bg_Smart_Class, Elm_Layout_Smart_Class,
   elm_layout_smart_class_get, NULL);
 
 static void
@@ -161,13 +113,29 @@ _elm_bg_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_bg_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_bg_smart_set_user(Elm_Bg_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_bg_smart_add;
 
-   sc->sizing_eval = _elm_bg_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_bg_smart_sizing_eval;
 
-   sc->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+}
+
+EAPI const Elm_Bg_Smart_Class *
+elm_bg_smart_class_get(void)
+{
+   static Elm_Bg_Smart_Class _sc =
+     ELM_BG_SMART_CLASS_INIT_NAME_VERSION(ELM_BG_SMART_NAME);
+   static const Elm_Bg_Smart_Class *class = NULL;
+
+   if (class)
+     return class;
+
+   _elm_bg_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
@@ -188,14 +156,15 @@ elm_bg_add(Evas_Object *parent)
 
 static void
 _elm_bg_file_reload(void *data, Evas_Object *obj,
-                    const char *emission __UNUSED__, const char *source __UNUSED__)
+                    const char *emission __UNUSED__,
+                    const char *source __UNUSED__)
 {
-  Evas_Object *bg = data;
-  const char *file;
-  const char *group;
+   Evas_Object *bg = data;
+   const char *file;
+   const char *group;
 
-  edje_object_file_get(obj, &file, &group);
-  elm_bg_file_set(bg, file, group);
+   edje_object_file_get(obj, &file, &group);
+   elm_bg_file_set(bg, file, group);
 }
 
 EAPI Eina_Bool
@@ -229,8 +198,10 @@ elm_bg_file_set(Evas_Object *obj,
         sd->img = edje_object_add
             (evas_object_evas_get(ELM_WIDGET_DATA(sd)->resize_obj));
         ret = edje_object_file_set(sd->img, file, group);
-        edje_object_signal_callback_del(sd->img, "edje,change,file", "edje", _elm_bg_file_reload);
-        edje_object_signal_callback_add(sd->img, "edje,change,file", "edje", _elm_bg_file_reload, obj);
+        edje_object_signal_callback_del
+          (sd->img, "edje,change,file", "edje", _elm_bg_file_reload);
+        edje_object_signal_callback_add
+          (sd->img, "edje,change,file", "edje", _elm_bg_file_reload, obj);
      }
    else
      {
