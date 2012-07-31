@@ -1,6 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_datetime.h"
 
 #ifdef HAVE_LOCALE_H
 # include <locale.h>
@@ -10,22 +10,14 @@
 # include <langinfo.h>
 #endif
 
-static const char DATETIME_SMART_NAME[] = "elm_datetime";
+EAPI const char ELM_DATETIME_SMART_NAME[] = "elm_datetime";
 
-typedef struct _Elm_Datetime_Smart_Data Elm_Datetime_Smart_Data;
-typedef struct _Datetime_Field          Datetime_Field;
-typedef struct _Datetime_Mod_Api        Datetime_Mod_Api;
-typedef struct _Format_Map              Format_Map;
-
-#define DATETIME_TYPE_COUNT            6
-#define MAX_FORMAT_LEN                 64
 #define MAX_SEPARATOR_LEN              6
-#define MAX_FIELD_FORMAT_LEN           3
 #define MIN_DAYS_IN_MONTH              28
 #define BUFFER_SIZE                    1024
 
 /* interface between EDC & C code (field & signal names). values 0 to
- * DATETIME_TYPE_COUNT are in the valid range, and must get in the
+ * ELM_DATETIME_TYPE_COUNT are in the valid range, and must get in the
  * place of "%d".
  */
 #define EDC_DATETIME_FOCUSIN_SIG_STR   "elm,action,focus"
@@ -47,56 +39,8 @@ typedef struct _Format_Map              Format_Map;
      &(tmptr)->tm_hour,                  \
      &(tmptr)->tm_min}
 
-struct _Datetime_Field
-{
-   Evas_Object            *item_obj;
-   char                    fmt[MAX_FIELD_FORMAT_LEN];
-   Elm_Datetime_Field_Type type;
-   const char             *separator;
-   int                     location;  /* location of the field as per
-                                       * current format */
-   int                     min, max;
-   Eina_Bool               fmt_exist : 1;  /* whether field format is
-                                            * present or not */
-   Eina_Bool               visible : 1;  /* whether field can be
-                                          * visible or not */
-};
-
-struct _Datetime_Mod_Api
-{
-   Elm_Datetime_Module_Data *(*obj_hook)(Evas_Object * obj);
-   void                      (*obj_unhook)(Elm_Datetime_Module_Data *mdata);
-   Evas_Object              *(*field_create)(Elm_Datetime_Module_Data * mdata,
-                                             Elm_Datetime_Field_Type ftype);
-   void                      (*field_value_display)(Elm_Datetime_Module_Data
-                                                    *mdata,
-                                                    Evas_Object *obj);
-};
-
-struct _Elm_Datetime_Smart_Data
-{
-   Elm_Layout_Smart_Data     base;
-
-   /* fixed set of fields. */
-   Datetime_Field            field_list[DATETIME_TYPE_COUNT];
-   struct tm                 curr_time, min_limit, max_limit;
-   Elm_Datetime_Module_Data *mod_data;
-   char                      format[MAX_FORMAT_LEN];
-   Eina_Bool                 user_format : 1;  /* whether user set
-                                                * format or default
-                                                * format. */
-};
-
-struct _Format_Map
-{
-   char *fmt_char;
-   int   def_min;
-   int   def_max;
-   char *ignore_sep;
-};
-
 // default limits for individual fields
-static Format_Map mapping[DATETIME_TYPE_COUNT] = {
+static Format_Map mapping[ELM_DATETIME_TYPE_COUNT] = {
    [ELM_DATETIME_YEAR] = { "Yy", -1, -1, "" },
    [ELM_DATETIME_MONTH] = { "mbBh", 0, 11, "" },
    [ELM_DATETIME_DATE] = { "de", 1, 31, "" },
@@ -109,31 +53,6 @@ static const char *multifield_formats = "cxXrRTDF";
 static const char *ignore_separators = "()";
 static Datetime_Mod_Api *dt_mod = NULL;
 
-#define ELM_DATETIME_DATA_GET(o, sd) \
-  Elm_Datetime_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_DATETIME_DATA_GET_OR_RETURN(o, ptr)      \
-  ELM_DATETIME_DATA_GET(o, ptr);                     \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_DATETIME_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_DATETIME_DATA_GET(o, ptr);                         \
-  if (!ptr)                                              \
-    {                                                    \
-       CRITICAL("No widget data for object %p (%s)",     \
-                o, evas_object_type_get(o));             \
-       return val;                                       \
-    }
-
-#define ELM_DATETIME_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), DATETIME_SMART_NAME, __func__)) \
-    return
-
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_LANGUAGE_CHANGED[] = "language,changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -145,7 +64,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (DATETIME_SMART_NAME, _elm_datetime, Elm_Layout_Smart_Class,
+  (ELM_DATETIME_SMART_NAME, _elm_datetime, Elm_Datetime_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static Datetime_Mod_Api *
@@ -178,7 +97,7 @@ _field_list_display(Evas_Object *obj)
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         if (field->fmt_exist && field->visible)
@@ -258,7 +177,7 @@ _expand_format(char *dt_fmt)
 {
    char *ptr, *expanded_fmt, ch;
    unsigned int idx = 0, len = 0;
-   char buf[MAX_FORMAT_LEN] = {0, };
+   char buf[ELM_DATETIME_MAX_FORMAT_LEN] = {0, };
    Eina_Bool fmt_char = EINA_FALSE;
 
    ptr = dt_fmt;
@@ -283,7 +202,7 @@ _expand_format(char *dt_fmt)
      }
 
    buf[idx] = 0;
-   strncpy(dt_fmt, buf, MAX_FORMAT_LEN);
+   strncpy(dt_fmt, buf, ELM_DATETIME_MAX_FORMAT_LEN);
 }
 
 static void
@@ -295,7 +214,7 @@ _field_list_arrange(Evas_Object *obj)
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         snprintf(buf, sizeof(buf), EDC_PART_FIELD_STR, field->location);
@@ -331,7 +250,7 @@ _parse_format(Evas_Object *obj,
         if (fmt_parsing)
           {
              fmt_parsing = EINA_FALSE;
-             for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+             for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
                {
                   if (strchr(mapping[idx].fmt_char, cur))
                     {
@@ -386,20 +305,20 @@ _reload_format(Evas_Object *obj)
    // fetch the default format from Libc.
    if (!sd->user_format)
 #ifdef HAVE_LANGINFO_H
-     strncpy(sd->format, nl_langinfo(D_T_FMT), MAX_FORMAT_LEN);
+     strncpy(sd->format, nl_langinfo(D_T_FMT), ELM_DATETIME_MAX_FORMAT_LEN);
 #else
-     strncpy(sd->format, "", MAX_FORMAT_LEN);
+     strncpy(sd->format, "", ELM_DATETIME_MAX_FORMAT_LEN);
 #endif
 
-   dt_fmt = (char *)malloc(MAX_FORMAT_LEN);
+   dt_fmt = (char *)malloc(ELM_DATETIME_MAX_FORMAT_LEN);
    if (!dt_fmt) return;
 
-   strncpy(dt_fmt, sd->format, MAX_FORMAT_LEN);
+   strncpy(dt_fmt, sd->format, ELM_DATETIME_MAX_FORMAT_LEN);
 
    _expand_format(dt_fmt);
 
    // reset all the fields to disable state
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         field->fmt_exist = EINA_FALSE;
@@ -410,7 +329,7 @@ _reload_format(Evas_Object *obj)
    free(dt_fmt);
 
    // assign locations to disabled fields for uniform usage
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         if (field->location == -1) field->location = field_count++;
@@ -459,14 +378,14 @@ _datetime_items_get(const Evas_Object *obj)
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         if (field->fmt_exist && field->visible) count++;
      }
    for (loc = 0; loc < count; loc++)
      {
-        for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+        for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
           {
              field = sd->field_list + idx;
              if (field->location == loc)
@@ -515,7 +434,7 @@ _elm_datetime_smart_sizing_eval(Evas_Object *obj)
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         if ((field->visible) && (field->fmt_exist)) field_count++;
@@ -542,7 +461,7 @@ _elm_datetime_smart_theme(Evas_Object *obj)
 
    if ((!dt_mod) || (!dt_mod->field_value_display)) return EINA_TRUE;
 
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         if (field->fmt_exist && field->visible)
@@ -604,7 +523,7 @@ _date_cmp(struct tm *time1,
    DATETIME_TM_ARRAY(timearr1, time1);
    DATETIME_TM_ARRAY(timearr2, time2);
 
-   for (idx = 0; idx < DATETIME_TYPE_COUNT - 1; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT - 1; idx++)
      {
         if (*timearr1[idx] != *timearr2[idx])
           return EINA_FALSE;
@@ -629,7 +548,7 @@ _validate_datetime_limits(struct tm *time1,
 
    DATETIME_TM_ARRAY(timearr1, time1);
    DATETIME_TM_ARRAY(timearr2, time2);
-   for (idx = 0; idx < DATETIME_TYPE_COUNT - 1; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT - 1; idx++)
      {
         if (*timearr1[idx] < *timearr2[idx])
           {
@@ -651,7 +570,7 @@ _apply_field_limits(Evas_Object *obj)
    ELM_DATETIME_DATA_GET(obj, sd);
 
    DATETIME_TM_ARRAY(timearr, &sd->curr_time);
-   for (idx = 0; idx < DATETIME_TYPE_COUNT - 1; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT - 1; idx++)
      {
         field = sd->field_list + idx;
         val = *timearr[idx];
@@ -673,7 +592,7 @@ _apply_range_restrictions(struct tm *tim)
    if (!tim) return;
 
    DATETIME_TM_ARRAY(timearr, tim);
-   for (idx = ELM_DATETIME_MONTH; idx < DATETIME_TYPE_COUNT - 1; idx++)
+   for (idx = ELM_DATETIME_MONTH; idx < ELM_DATETIME_TYPE_COUNT - 1; idx++)
      {
         val = *timearr[idx];
         min = mapping[idx].def_min;
@@ -755,7 +674,7 @@ _field_list_init(Evas_Object *obj)
 
    mapping[ELM_DATETIME_YEAR].def_min = _elm_config->year_min;
    mapping[ELM_DATETIME_YEAR].def_max = _elm_config->year_max;
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
         field->type = ELM_DATETIME_YEAR + idx;
@@ -767,7 +686,7 @@ _field_list_init(Evas_Object *obj)
      }
    DATETIME_TM_ARRAY(min_timearr, &sd->min_limit);
    DATETIME_TM_ARRAY(max_timearr, &sd->max_limit);
-   for (idx = 0; idx < DATETIME_TYPE_COUNT - 1; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT - 1; idx++)
      {
         *min_timearr[idx] = mapping[idx].def_min;
         *max_timearr[idx] = mapping[idx].def_max;
@@ -803,7 +722,7 @@ _elm_datetime_smart_add(Evas_Object *obj)
 
    if ((dt_mod) && (dt_mod->field_create))
      {
-        for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+        for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
           {
              field = priv->field_list + idx;
              field->item_obj = dt_mod->field_create(priv->mod_data, idx);
@@ -825,7 +744,7 @@ _elm_datetime_smart_del(Evas_Object *obj)
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
-   for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+   for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         tmp = sd->field_list + idx;
         evas_object_del(tmp->item_obj);
@@ -839,7 +758,7 @@ _elm_datetime_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_datetime_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_datetime_smart_set_user(Elm_Datetime_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_datetime_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_datetime_smart_del;
@@ -848,7 +767,25 @@ _elm_datetime_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_datetime_smart_focus_next;
    ELM_WIDGET_CLASS(sc)->theme = _elm_datetime_smart_theme;
 
-   sc->sizing_eval = _elm_datetime_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_datetime_smart_sizing_eval;
+}
+
+EAPI const Elm_Datetime_Smart_Class *
+elm_datetime_smart_class_get(void)
+{
+   static Elm_Datetime_Smart_Class _sc =
+     ELM_DATETIME_SMART_CLASS_INIT_NAME_VERSION(ELM_DATETIME_SMART_NAME);
+   static const Elm_Datetime_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_datetime_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
@@ -885,7 +822,7 @@ elm_datetime_format_set(Evas_Object *obj,
 
    if (fmt)
      {
-        strncpy(sd->format, fmt, MAX_FORMAT_LEN);
+        strncpy(sd->format, fmt, ELM_DATETIME_MAX_FORMAT_LEN);
         sd->user_format = EINA_TRUE;
      }
    else sd->user_format = EINA_FALSE;

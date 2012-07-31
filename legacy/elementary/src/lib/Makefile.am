@@ -49,6 +49,7 @@ elm_widget_button.h \
 elm_widget_calendar.h \
 elm_widget_conform.h \
 elm_widget_container.h \
+elm_widget_datetime.h \
 elm_widget_diskselector.h \
 elm_widget_frame.h \
 elm_widget_gengrid.h \
