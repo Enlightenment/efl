@@ -298,19 +298,19 @@ struct _Eina_Hash_Tuple
 typedef unsigned int (*Eina_Key_Length)(const void *key);
 /**
  * @def EINA_KEY_LENGTH
- * @param Function The function used to hash calculation.
+ * @param Function The function used to calculate length of hash key.
  */
 #define EINA_KEY_LENGTH(Function) ((Eina_Key_Length)Function)
 typedef int          (*Eina_Key_Cmp)(const void *key1, int key1_length, const void *key2, int key2_length);
 /**
  * @def EINA_KEY_CMP
- * @param Function The function used to hash calculation.
+ * @param Function The function used to compare hash key.
  */
 #define EINA_KEY_CMP(Function)    ((Eina_Key_Cmp)Function)
 typedef int          (*Eina_Key_Hash)(const void *key, int key_length);
 /**
  * @def EINA_KEY_HASH
- * @param Function The function used to hash calculation.
+ * @param Function The function used to hash key.
  */
 #define EINA_KEY_HASH(Function)   ((Eina_Key_Hash)Function)
 typedef Eina_Bool    (*Eina_Hash_Foreach)(const Eina_Hash *hash, const void *key, void *data, void *fdata);
