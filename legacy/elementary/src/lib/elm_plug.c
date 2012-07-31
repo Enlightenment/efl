@@ -1,41 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_plug.h"
 
-static const char PLUG_SMART_NAME[] = "elm_plug";
-
-#define ELM_PLUG_DATA_GET(o, sd) \
-  Elm_Plug_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_PLUG_DATA_GET_OR_RETURN(o, ptr)          \
-  ELM_PLUG_DATA_GET(o, ptr);                         \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_PLUG_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_PLUG_DATA_GET(o, ptr);                         \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return val;                                   \
-    }
-
-#define ELM_PLUG_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), PLUG_SMART_NAME, __func__)) \
-    return
-
-typedef struct _Elm_Plug_Smart_Data Elm_Plug_Smart_Data;
-
-struct _Elm_Plug_Smart_Data
-{
-   Elm_Widget_Smart_Data base;    /* base widget smart data as
-                                   * first member obligatory, as
-                                   * we're inheriting from it */
-};
+EAPI const char ELM_PLUG_SMART_NAME[] = "elm_plug";
 
 static const char SIG_CLICKED[] = "clicked";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -44,7 +11,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EVAS_SMART_SUBCLASS_NEW
-  (PLUG_SMART_NAME, _elm_plug, Elm_Widget_Smart_Class,
+  (ELM_PLUG_SMART_NAME, _elm_plug, Elm_Plug_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 static void
@@ -104,11 +71,26 @@ _elm_plug_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_plug_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_plug_smart_set_user(Elm_Plug_Smart_Class *sc)
 {
-   sc->base.add = _elm_plug_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_plug_smart_add;
 
-   sc->theme = _elm_plug_smart_theme;
+   ELM_WIDGET_CLASS(sc)->theme = _elm_plug_smart_theme;
+}
+
+EAPI const Elm_Plug_Smart_Class *
+elm_plug_smart_class_get(void)
+{
+   static Elm_Plug_Smart_Class _sc =
+     ELM_PLUG_SMART_CLASS_INIT_NAME_VERSION(ELM_PLUG_SMART_NAME);
+   static const Elm_Plug_Smart_Class *class = NULL;
+
+   if (class) return class;
+
+   _elm_plug_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
