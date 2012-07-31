@@ -1,47 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_slideshow.h"
 
-static const char SLIDESHOW_SMART_NAME[] = "elm_slideshow";
-
-typedef struct _Elm_Slideshow_Smart_Data Elm_Slideshow_Smart_Data;
-typedef struct _Elm_Slideshow_Item       Elm_Slideshow_Item;
-
-struct _Elm_Slideshow_Item
-{
-   ELM_WIDGET_ITEM;
-
-   Eina_List                      *l, *l_built;
-
-   const Elm_Slideshow_Item_Class *itc;
-};
-
-struct _Elm_Slideshow_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   // list of Elm_Slideshow_Item*
-   Eina_List            *items;
-   Eina_List            *items_built;
-
-   Elm_Slideshow_Item   *current;
-   Elm_Slideshow_Item   *previous;
-
-   Eina_List            *transitions;
-   const char           *transition;
-
-   int                   count_item_pre_before;
-   int                   count_item_pre_after;
-   Ecore_Timer          *timer;
-   double                timeout;
-   Eina_Bool             loop : 1;
-
-   struct
-   {
-      const char *current;
-      Eina_List  *list;  //list of const char *
-   } layout;
-};
+EAPI const char ELM_SLIDESHOW_SMART_NAME[] = "elm_slideshow";
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_TRANSITION_END[] = "transition,end";
@@ -52,43 +13,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#define ELM_SLIDESHOW_DATA_GET(o, sd) \
-  Elm_Slideshow_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_SLIDESHOW_DATA_GET_OR_RETURN(o, ptr)     \
-  ELM_SLIDESHOW_DATA_GET(o, ptr);                    \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_SLIDESHOW_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_SLIDESHOW_DATA_GET(o, ptr);                         \
-  if (!ptr)                                               \
-    {                                                     \
-       CRITICAL("No widget data for object %p (%s)",      \
-                o, evas_object_type_get(o));              \
-       return val;                                        \
-    }
-
-#define ELM_SLIDESHOW_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), SLIDESHOW_SMART_NAME, __func__)) \
-    return
-
-#define ELM_SLIDESHOW_ITEM_CHECK(it)                        \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_SLIDESHOW_CHECK(it->base.widget);
-
-#define ELM_SLIDESHOW_ITEM_CHECK_OR_RETURN(it, ...)                    \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_SLIDESHOW_CHECK(it->base.widget) __VA_ARGS__;
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (SLIDESHOW_SMART_NAME, _elm_slideshow, Elm_Layout_Smart_Class,
+  (ELM_SLIDESHOW_SMART_NAME, _elm_slideshow, Elm_Slideshow_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static Eina_Bool
@@ -429,7 +355,7 @@ _elm_slideshow_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_slideshow_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_slideshow_smart_set_user(Elm_Slideshow_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_slideshow_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_slideshow_smart_del;
@@ -440,7 +366,25 @@ _elm_slideshow_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
-   sc->sizing_eval = _elm_slideshow_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_slideshow_smart_sizing_eval;
+}
+
+EAPI const Elm_Slideshow_Smart_Class *
+elm_slideshow_smart_class_get(void)
+{
+   static Elm_Slideshow_Smart_Class _sc =
+     ELM_SLIDESHOW_SMART_CLASS_INIT_NAME_VERSION(ELM_SLIDESHOW_SMART_NAME);
+   static const Elm_Slideshow_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_slideshow_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
