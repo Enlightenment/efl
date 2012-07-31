@@ -58,6 +58,7 @@ elm_widget_image.h \
 elm_widget_layout.h \
 elm_widget_map.h \
 elm_widget_menu.h \
+elm_widget_naviframe.h \
 elm_widget_notify.h \
 elm_widget_photo.h \
 elm_widget_photocam.h \

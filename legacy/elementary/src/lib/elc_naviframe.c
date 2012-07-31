@@ -1,45 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_naviframe.h"
 
-static const char NAVIFRAME_SMART_NAME[] = "elm_naviframe";
-
-typedef struct _Elm_Naviframe_Smart_Data Elm_Naviframe_Smart_Data;
-typedef struct _Elm_Naviframe_Item       Elm_Naviframe_Item;
-
-struct _Elm_Naviframe_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Eina_Inlist          *stack; /* top item is the list's LAST item */
-   Evas_Object          *dummy_edje;
-
-   Eina_Bool             preserve : 1;
-   Eina_Bool             on_deletion : 1;
-   Eina_Bool             auto_pushed : 1;
-   Eina_Bool             freeze_events : 1;
-};
-
-struct _Elm_Naviframe_Item
-{
-   ELM_WIDGET_ITEM;
-   EINA_INLIST;
-
-   Evas_Object *content;
-   Evas_Object *title_prev_btn;
-   Evas_Object *title_next_btn;
-   Evas_Object *title_icon;
-   Evas_Object *title;
-   Evas_Object *subtitle;
-   const char  *style;
-   const char  *title_label;
-
-   Evas_Coord   minw;
-   Evas_Coord   minh;
-
-   Eina_Bool    title_visible : 1;
-   Eina_Bool    content_unfocusable : 1;
-};
+EAPI const char ELM_NAVIFRAME_SMART_NAME[] = "elm_naviframe";
 
 static const char CONTENT_PART[] = "elm.swallow.content";
 static const char PREV_BTN_PART[] = "elm.swallow.prev_btn";
@@ -54,44 +17,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#define ELM_NAVIFRAME_DATA_GET(o, sd) \
-  Elm_Naviframe_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_NAVIFRAME_DATA_GET_OR_RETURN(o, ptr)     \
-  ELM_NAVIFRAME_DATA_GET(o, ptr);                    \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_NAVIFRAME_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_NAVIFRAME_DATA_GET(o, ptr);                         \
-  if (!ptr)                                               \
-    {                                                     \
-       CRITICAL("No widget data for object %p (%s)",      \
-                o, evas_object_type_get(o));              \
-       return val;                                        \
-    }
-
-#define ELM_NAVIFRAME_CHECK(obj)                                  \
-  if (!obj || !elm_widget_type_check((obj), NAVIFRAME_SMART_NAME, \
-                                     __func__))                   \
-    return
-
-#define ELM_NAVIFRAME_ITEM_CHECK(it)                        \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_NAVIFRAME_CHECK(it->base.widget);
-
-#define ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(it, ...)                    \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_NAVIFRAME_CHECK(it->base.widget) __VA_ARGS__;
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (NAVIFRAME_SMART_NAME, _elm_naviframe, Elm_Layout_Smart_Class,
+  (ELM_NAVIFRAME_SMART_NAME, _elm_naviframe, Elm_Naviframe_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
@@ -1004,7 +931,7 @@ _elm_naviframe_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_naviframe_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_naviframe_smart_set_user(Elm_Naviframe_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_naviframe_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_naviframe_smart_del;
@@ -1020,6 +947,25 @@ _elm_naviframe_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_LAYOUT_CLASS(sc)->text_set = _elm_naviframe_smart_text_set;
    ELM_LAYOUT_CLASS(sc)->text_get = _elm_naviframe_smart_text_get;
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_naviframe_smart_sizing_eval;
+}
+
+EAPI const Elm_Naviframe_Smart_Class *
+elm_naviframe_smart_class_get(void)
+{
+   static Elm_Naviframe_Smart_Class _sc =
+     ELM_NAVIFRAME_SMART_CLASS_INIT_NAME_VERSION
+       (ELM_NAVIFRAME_SMART_NAME);
+   static const Elm_Naviframe_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_naviframe_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
