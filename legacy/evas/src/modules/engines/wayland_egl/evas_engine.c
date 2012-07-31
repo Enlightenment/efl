@@ -846,6 +846,8 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   if ((!re) || (!re->win)) return;
+
    eng_window_use(re->win);
    evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
    evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
@@ -1952,6 +1954,8 @@ static Eina_Bool
 eng_canvas_alpha_get(void *data, void *info __UNUSED__)
 {
    Render_Engine *re = (Render_Engine *)data;
+
+   if ((!re) || (!re->win)) return EINA_FALSE;
    return re->win->alpha;
 }
 
