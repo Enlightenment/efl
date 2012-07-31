@@ -1,44 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_calendar.h"
 
-static const char CALENDAR_SMART_NAME[] = "elm_calendar";
-
-typedef enum _Day_Color // EINA_DEPRECATED
-{
-   DAY_WEEKDAY = 0,
-   DAY_SATURDAY = 1,
-   DAY_SUNDAY = 2
-} Day_Color;
-
-typedef struct _Elm_Calendar_Smart_Data Elm_Calendar_Smart_Data;
-
-struct _Elm_Calendar_Smart_Data
-{
-   Elm_Layout_Smart_Data    base;
-
-   Eina_List               *marks;
-   double                   interval, first_interval;
-   int                      year_min, year_max, spin_speed;
-   int                      today_it, selected_it, first_day_it;
-   Elm_Calendar_Weekday     first_week_day;
-   Ecore_Timer             *spin, *update_timer;
-   Elm_Calendar_Format_Cb   format_func;
-   const char              *weekdays[ELM_DAY_LAST];
-   struct tm                current_time, selected_time, shown_time;
-   Day_Color                day_color[42]; // EINA_DEPRECATED
-   Elm_Calendar_Select_Mode select_mode;
-   Eina_Bool                selected : 1;
-};
-
-struct _Elm_Calendar_Mark
-{
-   Evas_Object                  *obj;
-   Eina_List                    *node;
-   struct tm                     mark_time;
-   const char                   *mark_type;
-   Elm_Calendar_Mark_Repeat_Type repeat;
-};
+EAPI const char ELM_CALENDAR_SMART_NAME[] = "elm_calendar";
 
 static const char SIG_CHANGED[] = "changed";
 
@@ -61,35 +25,8 @@ static int _days_in_month[2][12] =
    {31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31}
 };
 
-#define ELM_CALENDAR_DATA_GET(o, sd) \
-  Elm_Calendar_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_CALENDAR_DATA_GET_OR_RETURN(o, ptr)      \
-  ELM_CALENDAR_DATA_GET(o, ptr);                     \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_CALENDAR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_CALENDAR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                              \
-    {                                                    \
-       CRITICAL("No widget data for object %p (%s)",     \
-                o, evas_object_type_get(o));             \
-       return val;                                       \
-    }
-
-#define ELM_CALENDAR_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), CALENDAR_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (CALENDAR_SMART_NAME, _elm_calendar, Elm_Layout_Smart_Class,
+  (ELM_CALENDAR_SMART_NAME, _elm_calendar, Elm_Calendar_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static Elm_Calendar_Mark *
@@ -846,7 +783,7 @@ _elm_calendar_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_calendar_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_calendar_smart_set_user(Elm_Calendar_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_calendar_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_calendar_smart_del;
@@ -859,7 +796,25 @@ _elm_calendar_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
-   sc->sizing_eval = _elm_calendar_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_calendar_smart_sizing_eval;
+}
+
+EAPI const Elm_Calendar_Smart_Class *
+elm_calendar_smart_class_get(void)
+{
+   static Elm_Calendar_Smart_Class _sc =
+     ELM_CALENDAR_SMART_CLASS_INIT_NAME_VERSION(ELM_CALENDAR_SMART_NAME);
+   static const Elm_Calendar_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_calendar_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
