@@ -466,6 +466,24 @@ cursor_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_show(win);
 }
 
+static void
+_btn_bring_in_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   if (!data) return;
+   Elm_Object_Item *it = elm_gengrid_selected_item_get(data);
+   if (!it) return;
+   elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
+}
+
+static void
+_btn_show_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   if (!data) return;
+   Elm_Object_Item *it = elm_gengrid_selected_item_get(data);
+   if (!it) return;
+   elm_gengrid_item_show(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
+}
+
 void
 test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -555,6 +573,18 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_object_text_set(bt, "Check Cursor");
    evas_object_smart_callback_add(bt, "clicked", cursor_bt_clicked,
                                   (void *) api);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Bring in");
+   evas_object_smart_callback_add(bt, "clicked", _btn_bring_in_clicked_cb, api->grid);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Show");
+   evas_object_smart_callback_add(bt, "clicked", _btn_show_clicked_cb, api->grid);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
