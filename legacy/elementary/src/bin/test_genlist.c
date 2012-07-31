@@ -89,7 +89,7 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    api_data *a = data;
    char str[128];
 
-   INF("clicked event on API Button: api_state=<%d>\n", a->state);
+   INF("clicked event on API Button: api_state=<%d>", a->state);
    set_api_state(a);
    a->state++;
    sprintf(str, "Next API function (%u)", a->state);
@@ -133,6 +133,58 @@ Evas_Object *gl_content_get(void *data __UNUSED__, Evas_Object *obj, const char 
    return ic;
 }
 
+static void on_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("button clicked\n");
+}
+
+static void on_ck_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("checkbox changed\n");
+}
+
+Evas_Object *gl_content_full_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+{
+   Evas_Object *fr, *bx, *ic, *bt, *ck;
+
+   if (strcmp(part, "elm.swallow.content") != 0) return NULL;
+
+   fr = elm_frame_add(obj);
+   elm_layout_text_set(fr, NULL, "A Frame");
+
+   bx = elm_box_add(fr);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+
+   ic = elm_icon_add(bx);
+   elm_icon_standard_set(ic, "home");
+   evas_object_size_hint_min_set(ic, 32, 32);
+   evas_object_size_hint_align_set(ic, 0.5, EVAS_HINT_FILL);
+   evas_object_show(ic);
+   elm_box_pack_end(bx, ic);
+
+   bt = elm_button_add(bx);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(bt, "clicked", on_bt_clicked, NULL);
+   elm_layout_text_set(bt, NULL, "Click Me");
+   evas_object_show(bt);
+   elm_box_pack_end(bx, bt);
+
+   ck = elm_check_add(bx);
+   evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_smart_callback_add(ck, "changed", on_ck_changed, NULL);
+   elm_layout_text_set(ck, NULL, "some checkbox");
+   evas_object_show(ck);
+   elm_box_pack_end(bx, ck);
+
+   elm_layout_content_set(fr, NULL, bx);
+   evas_object_size_hint_min_set(fr, 100, 100);
+
+   return fr;
+}
+
+
 Eina_Bool gl_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    return EINA_FALSE;
@@ -141,7 +193,7 @@ Eina_Bool gl_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const
 static void
 gl_sel(void *data, Evas_Object *obj, void *event_info)
 {
-   INF("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
+   printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n", data, obj, event_info);
 }
 
 static void
@@ -153,9 +205,9 @@ _move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    Elm_Object_Item *gli;
    gli = elm_genlist_at_xy_item_get(gl, ev->cur.canvas.x, ev->cur.canvas.y, &where);
    if (gli)
-     INF("over %p, where %i\n", elm_object_item_data_get(gli), where);
+     INF("over %p, where %i", elm_object_item_data_get(gli), where);
    else
-     INF("over none, where %i\n", where);
+     INF("over none, where %i", where);
 }
 
 static void
@@ -173,19 +225,19 @@ _bt1500_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _gl_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   INF("selected: %p\n", event_info);
+   printf("selected: %p\n", event_info);
 }
 
 static void
 _gl_double_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   INF("double clicked: %p\n", event_info);
+   printf("double clicked: %p\n", event_info);
 }
 
 static void
 _gl_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   INF("longpress %p\n", event_info);
+   printf("longpress %p\n", event_info);
 }
 
 static void
@@ -329,7 +381,7 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
      {
-        INF("no item selected\n");
+        printf("no item selected\n");
         return ;
      }
 
@@ -359,7 +411,7 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
      {
-        INF("no item selected\n");
+        printf("no item selected\n");
         return ;
      }
 
@@ -380,7 +432,7 @@ my_gl_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Elm_Object_Item *gli = elm_genlist_selected_item_get(gl);
    if (!gli)
      {
-        INF("no item selected\n");
+        printf("no item selected\n");
         return;
      }
    elm_object_item_del(gli);
@@ -393,7 +445,7 @@ my_gl_disable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    Elm_Object_Item *gli = elm_genlist_selected_item_get(gl);
    if (!gli)
      {
-        INF("no item selected\n");
+        printf("no item selected\n");
         return;
      }
    elm_object_item_disabled_set(gli, EINA_TRUE);
@@ -410,7 +462,7 @@ my_gl_update_all(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    while (it)
      {
         elm_genlist_item_update(it);
-        INF("%i\n", i);
+        INF("%i", i);
         i++;
         it = elm_genlist_item_next_get(it);
      }
@@ -781,7 +833,7 @@ my_gl_item_check_changed(void *data, Evas_Object *obj, void *event_info __UNUSED
 {
    Testitem *tit = data;
    tit->onoff = elm_check_state_get(obj);
-   INF("item %p onoff = %i\n", tit, tit->onoff);
+   printf("item %p onoff = %i\n", tit, tit->onoff);
 }
 
 static Elm_Genlist_Item_Class itc3;
@@ -911,7 +963,7 @@ my_gl_item_check_changed2(void *data, Evas_Object *obj, void *event_info __UNUSE
 {
    Testitem *tit = data;
    tit->onoff = elm_check_state_get(obj);
-   INF("item %p onoff = %i\n", tit, tit->onoff);
+   printf("item %p onoff = %i\n", tit, tit->onoff);
 }
 
 static Elm_Genlist_Item_Class itc5;
@@ -976,67 +1028,67 @@ Eina_Bool gl5_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, cons
 static void
 item_drag_up(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("drag up\n");
+   INF("drag up");
 }
 
 static void
 item_drag_down(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("drag down\n");
+   INF("drag down");
 }
 
 static void
 item_drag_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("drag left\n");
+   INF("drag left");
 }
 
 static void
 item_drag_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("drag right\n");
+   INF("drag right");
 }
 
 static void
 scroll_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("Top edge!\n");
+   INF("Top edge!");
 }
 
 static void
 scroll_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("Bottom edge!\n");
+   INF("Bottom edge!");
 }
 
 static void
 scroll_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("Left edge!\n");
+   INF("Left edge!");
 }
 
 static void
 scroll_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("Right edge!\n");
+   INF("Right edge!");
 }
 
 static void
 item_drag(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("drag\n");
+   INF("drag");
 }
 
 static void
 item_drag_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("drag stop\n");
+   INF("drag stop");
 }
 
 static void
 item_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   INF("longpress\n");
+   INF("longpress");
 }
 
 void
@@ -1138,7 +1190,7 @@ gl4_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    int depth = elm_genlist_item_expanded_depth_get(glit);
-   INF("expanded depth for selected item is %d\n", depth);
+   printf("expanded depth for selected item is %d", depth);
 }
 
 static void
@@ -1218,7 +1270,7 @@ Eina_Bool gl4_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, cons
 
 void gl4_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
-   INF("item deleted.\n");
+   printf("item deleted.\n");
 }
 
 static void
@@ -1333,7 +1385,7 @@ gl_sel7(void *data, Evas_Object *obj, void *event_info)
 {
    if (!event_info) return;
    elm_genlist_item_item_class_update(event_info, &itc7);
-   INF("sel item data [%p] on genlist obj [%p], item pointer [%p], new item style [%s] \n", data, obj, event_info, itc7.item_style);
+   printf("sel item data [%p] on genlist obj [%p], item pointer [%p], new item style [%s] \n", data, obj, event_info, itc7.item_style);
 }
 
 static void
@@ -1928,7 +1980,7 @@ static void gl_moved_after(Evas_Object *data __UNUSED__, Evas_Object *obj __UNUS
    // if needed, add application logic.
    Elm_Object_Item *it;
    it = elm_genlist_item_prev_get(item);
-   INF("it=%p, prev_it=%p\n",item,it);
+   printf("it=%p, prev_it=%p\n",item,it);
 }
 
 /**
@@ -1947,7 +1999,7 @@ static void gl_moved_before(Evas_Object *data __UNUSED__, Evas_Object *obj __UNU
    // if needed, add application logic.
    Elm_Object_Item *it;
    it = elm_genlist_item_next_get(item);
-   INF("it=%p, next_it=%p\n",item,it);
+   printf("it=%p, next_it=%p\n",item,it);
 }
 
 void
@@ -2172,7 +2224,7 @@ my_gl_insert_before_rel(void *data, Evas_Object *obj __UNUSED__, void *event_inf
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
      {
-        INF("no item selected\n");
+        printf("no item selected\n");
         return;
      }
 
@@ -2201,7 +2253,7 @@ my_gl_insert_after_rel(void *data, Evas_Object *obj __UNUSED__, void *event_info
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
      {
-        INF("no item selected\n");
+        printf("no item selected\n");
         return;
      }
 
@@ -2463,7 +2515,7 @@ gl15_normal_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 
 void gl15_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
 {
-   INF("item deleted.\n");
+   printf("item deleted.\n");
 }
 
 static Elm_Genlist_Item_Class *itc15;
@@ -2859,7 +2911,7 @@ gl18_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    int depth = elm_genlist_item_expanded_depth_get(glit);
-   INF("expanded depth for selected item is %d\n", depth);
+   printf("expanded depth for selected item is %d\n", depth);
 }
 
 static void
@@ -3021,6 +3073,95 @@ test_genlist18(void        *data __UNUSED__,
    elm_box_pack_end(bx2, fr2);
 
    evas_object_resize(win, 400, 800);
+   evas_object_show(win);
+}
+
+void
+test_genlist19(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *gl, *bt_50, *bt_1500, *bx, *bxx, *bt;
+   Evas_Object *over;
+   Elm_Object_Item *gli;
+   int i;
+   api_data *api = calloc(1, sizeof(api_data));
+
+   win = elm_win_util_standard_add("genlist-full", "Genlist Full");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   bxx = elm_box_add(win);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   api->box = bx;
+   evas_object_show(bx);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next API function");
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
+   elm_box_pack_end(bxx, bt);
+   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bxx, bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
+   evas_object_smart_callback_add(gl, "clicked,double", _gl_double_clicked, NULL);
+   evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);
+   // FIXME: This causes genlist to resize the horiz axis very slowly :(
+   // Reenable this and resize the window horizontally, then try to resize it back
+   //elm_genlist_mode_set(gl, ELM_LIST_LIMIT);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(gl);
+
+   over = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_color_set(over, 0, 0, 0, 0);
+   evas_object_event_callback_add(over, EVAS_CALLBACK_MOUSE_MOVE, _move, gl);
+   evas_object_repeat_events_set(over, 1);
+   evas_object_show(over);
+   evas_object_size_hint_weight_set(over, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, over);
+
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style     = "full";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_full_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = NULL;
+
+   bt_50 = elm_button_add(win);
+   elm_object_text_set(bt_50, "Go to 50");
+   evas_object_show(bt_50);
+   elm_box_pack_end(bx, bt_50);
+
+   bt_1500 = elm_button_add(win);
+   elm_object_text_set(bt_1500, "Go to 1500");
+   evas_object_show(bt_1500);
+   elm_box_pack_end(bx, bt_1500);
+
+   for (i = 0; i < 2000; i++)
+     {
+        gli = elm_genlist_item_append(gl, itc1,
+                                      (void *)(long)i/* item data */,
+                                      NULL/* parent */,
+                                      ELM_GENLIST_ITEM_NONE,
+                                      gl_sel/* func */,
+                                      (void *)(long)(i * 10)/* func data */);
+        if (i == 50)
+          evas_object_smart_callback_add(bt_50, "clicked", _bt50_cb, gli);
+        else if (i == 1500)
+          evas_object_smart_callback_add(bt_1500, "clicked", _bt1500_cb, gli);
+     }
+   elm_genlist_item_class_free(itc1);
+
+   evas_object_resize(win, 480, 800);
    evas_object_show(win);
 }
 
