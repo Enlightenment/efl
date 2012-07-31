@@ -20,6 +20,7 @@ EXTRA_DIST = \
 	frame.edc \
 	list.edc \
 	shadows.edc \
+	spinner.edc \
 	images/arrows.png \
 	images/background.jpg \
 	images/ball-blue.png \
@@ -44,7 +45,12 @@ EXTRA_DIST = \
 	images/list-item-corner-pressed.png \
 	images/list-item-pressed.png \
 	images/shadow-ball.png \
-	images/shadow-cube.png
+	images/shadow-cube.png \
+	images/spinner_base.png \
+	images/spinner_bt_left.png \
+	images/spinner_bt_left_pressed.png \
+	images/spinner_bt_right.png \
+	images/spinner_bt_right_pressed.png
 
 ephysics_test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

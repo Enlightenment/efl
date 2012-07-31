@@ -10,4 +10,5 @@ collections {
 #include "frame.edc"
 #include "list.edc"
 #include "shadows.edc"
+#include "spinner.edc"
 }

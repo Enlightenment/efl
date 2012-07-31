@@ -1,0 +1,200 @@
+group {
+   name: "elm/spinner/base/ephysics-test";
+
+   images {
+      image: "spinner_bt_left.png" COMP;
+      image: "spinner_bt_left_pressed.png" COMP;
+      image: "spinner_bt_right.png" COMP;
+      image: "spinner_bt_right_pressed.png" COMP;
+      image: "spinner_base.png" COMP;
+   }
+
+   parts {
+
+      part {
+         name: "blocker";
+         type: RECT;
+         mouse_events: 1;
+         description {
+            state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
+
+      part {
+         name: "base";
+         type: IMAGE;
+         mouse_events: 0;
+         description {
+            state: "default" 0.0;
+            min: 140 28;
+            max: 1000 28;
+            rel1.offset: 30 0;
+            rel2.offset: -31 -1;
+            image.normal: "spinner_base.png";
+         }
+      }
+
+      part {
+         name: "left_bt";
+         mouse_events: 1;
+         description {
+            state: "default" 0.0;
+            min: 30 28;
+            max: 30 28;
+            rel1.to_y: "base";
+            rel2 {
+               to: "base";
+               relative: 0 1;
+            }
+            image.normal: "spinner_bt_left.png";
+         }
+         description {
+            state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "spinner_bt_left_pressed.png";
+         }
+      }
+
+      part {
+         name: "right_bt";
+         mouse_events: 1;
+         description {
+            state: "default" 0.0;
+            min: 30 28;
+            max: 30 28;
+            rel1 {
+               to: "base";
+               relative: 1 0;
+            }
+            rel2.to_y: "base";
+            image.normal: "spinner_bt_right.png";
+         }
+         description {
+            state: "clicked" 0.0;
+            inherit: "default" 0.0;
+            image.normal: "spinner_bt_right_pressed.png";
+         }
+      }
+
+      part {
+         name: "elm.text";
+         type: TEXT;
+         mouse_events: 0;
+         description { state: "default" 0.0;
+            visible: 1;
+            color: 223 215 208 255;
+            rel1.to: "base";
+            rel2.to: "base";
+            text {
+               font: "Arial";
+               style: "Bold";
+               size: 12;
+               align: 0.5 0.5;
+            }
+         }
+      }
+
+      part {
+         name: "elm.dragable.slider";
+         type: RECT;
+         mouse_events: 0;
+         scale: 1;
+
+         dragable {
+            x: 1 1 0;
+            y: 0 0 0;
+         }
+
+         description {
+            state: "default" 0.0;
+            rel1.to: "blocker";
+            rel2.to: "blocker";
+            color: 0 0 0 0;
+         }
+      }
+
+      part {
+         name: "elm.swallow.entry";
+         type: SWALLOW;
+         description {
+            state: "default" 0.0;
+            visible: 0;
+            align: 0.5 0.5;
+            rel1 { relative: 1.0 0.5;
+               offset: 3 2;
+               to_x: "left_bt";
+               to_y: "base";
+            }
+            rel2 { relative: 0.0 0.5;
+               offset: -3 -2;
+               to_x: "right_bt";
+               to_y: "base";
+            }
+            fixed: 1 1;
+            color: 0 0 0 0;
+         }
+      }
+   }
+
+   programs {
+
+      program {
+         name: "left_bt_clicked";
+         signal: "mouse,down,1";
+         source: "left_bt";
+         action: STATE_SET "clicked" 0.0;
+         target: "left_bt";
+         after: "left_bt_clicked_emit";
+      }
+
+      program {
+         name: "left_bt_clicked_emit";
+         action: SIGNAL_EMIT "elm,action,decrement,start" "";
+      }
+
+      program {
+         name: "left_bt_unclicked";
+         signal: "mouse,up,1";
+         source: "left_bt";
+         action: STATE_SET "default" 0.0;
+         target: "left_bt";
+         after: "left_bt_unclicked_emit";
+      }
+
+      program {
+         name: "left_bt_unclicked_emit";
+         action: SIGNAL_EMIT "elm,action,decrement,stop" "";
+      }
+
+      program {
+         name: "right_bt_clicked";
+         signal: "mouse,down,1";
+         source: "right_bt";
+         action: STATE_SET "clicked" 0.0;
+         target: "right_bt";
+         after: "right_bt_clicked_emit";
+      }
+
+      program {
+         name: "right_bt_clicked_emit";
+         action: SIGNAL_EMIT "elm,action,increment,start" "";
+      }
+
+      program {
+         name: "right_bt_unclicked";
+         signal: "mouse,up,1";
+         source: "right_bt";
+         action: STATE_SET "default" 0.0;
+         target: "right_bt";
+         after: "right_bt_unclicked_emit";
+      }
+
+      program {
+         name: "right_bt_unclicked_emit";
+         action: SIGNAL_EMIT "elm,action,increment,stop" "";
+      }
+
+   }
+
+}
