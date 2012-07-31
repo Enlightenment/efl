@@ -1,76 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_route.h"
 
-static const char ROUTE_SMART_NAME[] = "elm_route";
-
-/**
- * @defgroup Route MapRoute
- *
- * For displaying a route on the map widget
- *
- */
-
-typedef struct _Elm_Route_Smart_Data Elm_Route_Smart_Data;
-typedef struct Segment               Segment;
-
-struct _Elm_Route_Smart_Data
-{
-   Elm_Widget_Smart_Data base;
-
-#ifdef ELM_EMAP
-   EMap_Route           *emap;
-#endif
-
-   double                lon_min, lon_max;
-   double                lat_min, lat_max;
-
-   Eina_List            *segments; //list of *Segment
-
-   Eina_Bool             must_calc_segments : 1;
-};
-
-struct Segment
-{
-   Evas_Object     *obj;
-
-#ifdef ELM_EMAP
-   EMap_Route_Node *node_start;
-   EMap_Route_Node *node_end;
-#endif
-
-   double           start_x, start_y;
-   double           end_x, end_y;
-
-   Eina_Bool        must_calc : 1;
-};
-
-#define ELM_ROUTE_DATA_GET(o, sd) \
-  Elm_Route_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_ROUTE_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_ROUTE_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_ROUTE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_ROUTE_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_ROUTE_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), ROUTE_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_ROUTE_SMART_NAME[] = "elm_route";
 
 EVAS_SMART_SUBCLASS_NEW
-  (ROUTE_SMART_NAME, _elm_route, Elm_Widget_Smart_Class,
+  (ELM_ROUTE_SMART_NAME, _elm_route, Elm_Route_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
 
 static void
@@ -225,12 +160,27 @@ _elm_route_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_route_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_route_smart_set_user(Elm_Route_Smart_Class *sc)
 {
-   sc->base.add = _elm_route_smart_add;
-   sc->base.del = _elm_route_smart_del;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_route_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_route_smart_del;
 
-   sc->theme = _elm_route_smart_theme;
+   ELM_WIDGET_CLASS(sc)->theme = _elm_route_smart_theme;
+}
+
+EAPI const Elm_Route_Smart_Class *
+elm_route_smart_class_get(void)
+{
+   static Elm_Route_Smart_Class _sc =
+     ELM_ROUTE_SMART_CLASS_INIT_NAME_VERSION(ELM_ROUTE_SMART_NAME);
+   static const Elm_Route_Smart_Class *class = NULL;
+
+   if (class) return class;
+
+   _elm_route_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 /**
