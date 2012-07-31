@@ -2082,12 +2082,13 @@ EAPI void *ephysics_body_data_get(const EPhysics_Body *body);
  * between bodies and the world. Constraints can limit movement angle,
  * translation, or work like a motor.
  *
- * Constraints can be created with @ref ephysics_constraint_add() and removed
+ * Constraints can be created with @ref ephysics_constraint_p2p_add()
+ * or @ref ephysics_constraint_slider_add() and removed
  * with @ref ephysics_constraint_del().
  * Can be applied between two bodies or between a body and the world.
  */
 
-typedef struct _EPhysics_Constraint EPhysics_Constraint; /**< Constraint handle, used to limit bodies movements. Created with @ref ephysics_constraint_add() and deleted with @ref ephysics_constraint_del(). */
+typedef struct _EPhysics_Constraint EPhysics_Constraint; /**< Constraint handle, used to limit bodies movements. Created with @ref ephysics_constraint_p2p_add() or @ref ephysics_constraint_slider_add() and deleted with @ref ephysics_constraint_del(). */
 
 /**
  * @brief
@@ -2204,7 +2205,8 @@ EAPI void ephysics_constraint_slider_angular_limit_get(const EPhysics_Constraint
  *
  * @param constraint The constraint to be deleted.
  *
- * @see ephysics_constraint_add() for more details.
+ * @see ephysics_constraint_p2p_add() for more details.
+ * @see ephysics_constraint_slider_add() for more details.
  *
  * @ingroup EPhysics_Constraint
  */

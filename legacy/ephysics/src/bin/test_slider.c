@@ -163,5 +163,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 3);
 
+   ephysics_body_left_boundary_add(test_data->world);
+
    _world_populate(test_data);
 }
