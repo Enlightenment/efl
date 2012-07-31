@@ -46,9 +46,26 @@ elm_widget.h \
 elm_widget_box.h \
 elm_widget_button.h \
 elm_widget_container.h \
+elm_widget_diskselector.h \
+elm_widget_genlist.h \
+elm_widget_glview.h \
+elm_widget_grid.h \
+elm_widget_hover.h \
+elm_widget_icon.h \
 elm_widget_image.h \
 elm_widget_layout.h \
-elm_widget_photo.h
+elm_widget_map.h \
+elm_widget_menu.h \
+elm_widget_notify.h \
+elm_widget_photo.h \
+elm_widget_photocam.h \
+elm_widget_plug.h \
+elm_widget_route.h \
+elm_widget_scroller.h \
+elm_widget_slideshow.h \
+elm_widget_table.h \
+elm_widget_thumb.h \
+elm_widget_web.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 includesub_HEADERS = \
