@@ -1,38 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_inwin.h"
 
-static const char INWIN_SMART_NAME[] = "elm_inwin";
+EAPI const char ELM_INWIN_SMART_NAME[] = "elm_inwin";
 
-#define ELM_INWIN_DATA_GET(o, sd) \
-  Elm_Layout_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_INWIN_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_INWIN_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_INWIN_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_INWIN_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_INWIN_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), INWIN_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (INWIN_SMART_NAME, _elm_inwin, Elm_Layout_Smart_Class,
+  (ELM_INWIN_SMART_NAME, _elm_inwin, Elm_Inwin_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
@@ -84,7 +57,7 @@ _elm_inwin_smart_focus_next(const Evas_Object *obj,
 static void
 _elm_inwin_smart_add(Evas_Object *obj)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Layout_Smart_Data);
+   EVAS_SMART_DATA_ALLOC(obj, Elm_Inwin_Smart_Data);
 
    ELM_WIDGET_CLASS(_elm_inwin_parent_sc)->base.add(obj);
 
@@ -106,16 +79,32 @@ _elm_inwin_smart_parent_set(Evas_Object *obj,
 }
 
 static void
-_elm_inwin_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_inwin_smart_set_user(Elm_Inwin_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_inwin_smart_add;
 
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_inwin_smart_focus_next;
    ELM_WIDGET_CLASS(sc)->parent_set = _elm_inwin_smart_parent_set;
 
-   sc->sizing_eval = _elm_inwin_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_inwin_smart_sizing_eval;
 
-   sc->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+}
+
+EAPI const Elm_Inwin_Smart_Class *
+elm_inwin_smart_class_get(void)
+{
+   static Elm_Inwin_Smart_Class _sc =
+     ELM_INWIN_SMART_CLASS_INIT_NAME_VERSION(ELM_INWIN_SMART_NAME);
+   static const Elm_Inwin_Smart_Class *class = NULL;
+
+   if (class)
+     return class;
+
+   _elm_inwin_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
