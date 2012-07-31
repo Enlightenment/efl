@@ -533,11 +533,13 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
 	  }
      }
 
+#ifdef HAVE_FONTCONFIG
    if (found_fd)
      {
         font = evas_load_fontconfig(evas, found_fd->set, size, wanted_rend);
         goto on_find;
      }
+#endif
 
    EINA_LIST_FOREACH(fonts_zero, l, fd)
      {
@@ -564,11 +566,13 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
 	  }
      }
 
+#ifdef HAVE_FONTCONFIG
    if (found_fd)
      {
         font = evas_load_fontconfig(evas, found_fd->set, size, wanted_rend);
         goto on_find;
      }
+#endif
 
    fonts = evas_font_set_get(fdesc->name);
    EINA_LIST_FOREACH(fonts, l, nm) /* Load each font in append */
