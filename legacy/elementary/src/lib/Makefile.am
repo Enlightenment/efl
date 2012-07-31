@@ -43,6 +43,7 @@ includesdir = $(includedir)/elementary-@VMAJ@
 includesunstable_HEADERS = \
 elm_interface_scrollable.h \
 elm_widget.h \
+elm_widget_actionslider.h \
 elm_widget_box.h \
 elm_widget_button.h \
 elm_widget_container.h \

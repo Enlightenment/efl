@@ -1,23 +1,9 @@
 #include <Elementary.h>
 #include <math.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_actionslider.h"
 
-static const char ACTIONSLIDER_SMART_NAME[] = "elm_actionslider";
-
-typedef struct _Elm_Actionslider_Smart_Data Elm_Actionslider_Smart_Data;
-
-struct _Elm_Actionslider_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Evas_Object          *drag_button_base;
-   Elm_Actionslider_Pos  magnet_position, enabled_position;
-   Ecore_Animator       *button_animator;
-   double                final_position;
-
-   Eina_Bool             mouse_down : 1;
-};
+EAPI const char ELM_ACTIONSLIDER_SMART_NAME[] = "elm_actionslider";
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
@@ -37,37 +23,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    {NULL, NULL}
 };
 
-#define ELM_ACTIONSLIDER_DATA_GET(o, sd) \
-  Elm_Actionslider_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_ACTIONSLIDER_DATA_GET_OR_RETURN(o, ptr)  \
-  ELM_ACTIONSLIDER_DATA_GET(o, ptr);                 \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_ACTIONSLIDER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_ACTIONSLIDER_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                  \
-    {                                                        \
-       CRITICAL("No widget data for object %p (%s)",         \
-                o, evas_object_type_get(o));                 \
-       return val;                                           \
-    }
-
-#define ELM_ACTIONSLIDER_CHECK(obj)                                  \
-  if (!obj || !elm_widget_type_check((obj), ACTIONSLIDER_SMART_NAME, \
-                                     __func__))                      \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (ACTIONSLIDER_SMART_NAME, _elm_actionslider, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
+  (ELM_ACTIONSLIDER_SMART_NAME, _elm_actionslider,
+  Elm_Actionslider_Smart_Class, Elm_Layout_Smart_Class,
+  elm_layout_smart_class_get, _smart_callbacks);
 
 static Elm_Actionslider_Pos
 _get_pos_by_orientation(const Evas_Object *obj,
@@ -444,7 +403,7 @@ _elm_actionslider_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_actionslider_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_actionslider_smart_set_user(Elm_Actionslider_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_actionslider_smart_add;
 
@@ -454,11 +413,30 @@ _elm_actionslider_smart_set_user(Elm_Layout_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_actionslider_smart_theme;
 
-   sc->sizing_eval = _elm_actionslider_smart_sizing_eval;
-   sc->text_set = _elm_actionslider_smart_text_set;
-   sc->text_get = _elm_actionslider_smart_text_get;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_actionslider_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->text_set = _elm_actionslider_smart_text_set;
+   ELM_LAYOUT_CLASS(sc)->text_get = _elm_actionslider_smart_text_get;
 
-   sc->text_aliases = _text_aliases;
+   ELM_LAYOUT_CLASS(sc)->text_aliases = _text_aliases;
+}
+
+EAPI const Elm_Actionslider_Smart_Class *
+elm_actionslider_smart_class_get(void)
+{
+   static Elm_Actionslider_Smart_Class _sc =
+     ELM_ACTIONSLIDER_SMART_CLASS_INIT_NAME_VERSION
+       (ELM_ACTIONSLIDER_SMART_NAME);
+   static const Elm_Actionslider_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_actionslider_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
