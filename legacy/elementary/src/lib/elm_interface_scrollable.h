@@ -483,6 +483,19 @@ EAPI const Elm_Pan_Smart_Class *elm_pan_smart_class_get(void);
   const Elm_Scrollable_Smart_Interface * iface; \
   iface = evas_object_smart_interface_get(obj, ELM_SCROLLABLE_IFACE_NAME);
 
+#define ELM_SCROLLABLE_CHECK(obj, ...)                                       \
+  const Elm_Scrollable_Smart_Interface * s_iface =                           \
+    evas_object_smart_interface_get(obj, ELM_SCROLLABLE_IFACE_NAME);         \
+                                                                             \
+  if (!s_iface)                                                              \
+    {                                                                        \
+       ERR("Passing object (%p) of type '%s' in function %s, but it doesn't" \
+           " implement the Elementary scrollable interface.", obj,           \
+           elm_widget_type_get(obj), __func__);                              \
+       if (getenv("ELM_ERROR_ABORT")) abort();                               \
+       return __VA_ARGS__;                                                   \
+    }
+
 /**
  * @}
  */
