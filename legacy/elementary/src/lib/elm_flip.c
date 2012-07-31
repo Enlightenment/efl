@@ -205,7 +205,6 @@ _elm_flip_smart_sub_object_add(Evas_Object *obj,
    if (!ELM_WIDGET_CLASS(_elm_flip_parent_sc)->sub_object_add(obj, sobj))
      return EINA_FALSE;
 
-   evas_object_smart_member_add(sobj, obj);
    //FIXME: smart member clip could be reset by the obj.
    evas_object_event_callback_add
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb, obj);
