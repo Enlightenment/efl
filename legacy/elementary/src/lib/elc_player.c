@@ -1,57 +1,12 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_player.h"
 
 #ifdef HAVE_EMOTION
 # include <Emotion.h>
 #endif
 
-static const char PLAYER_SMART_NAME[] = "elm_player";
-
-typedef struct _Elm_Player_Smart_Data Elm_Player_Smart_Data;
-struct _Elm_Player_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Evas_Object          *video;
-   Evas_Object          *emotion;
-
-   /* tracking those to ease disabling/enabling them back */
-   Evas_Object          *forward;
-   Evas_Object          *info;
-   Evas_Object          *next;
-   Evas_Object          *pause;
-   Evas_Object          *play;
-   Evas_Object          *prev;
-   Evas_Object          *rewind;
-   Evas_Object          *stop;
-   Evas_Object          *slider;
-};
-
-#define ELM_PLAYER_DATA_GET(o, sd) \
-  Elm_Player_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_PLAYER_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_PLAYER_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_PLAYER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_PLAYER_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
-    }
-
-#define ELM_PLAYER_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), PLAYER_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_PLAYER_SMART_NAME[] = "elm_player";
 
 static const char SIG_FORWARD_CLICKED[] = "forward,clicked";
 static const char SIG_INFO_CLICKED[] = "info,clicked";
@@ -76,7 +31,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (PLAYER_SMART_NAME, _elm_player, Elm_Layout_Smart_Class,
+  (ELM_PLAYER_SMART_NAME, _elm_player, Elm_Player_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 #ifdef HAVE_EMOTION
@@ -541,7 +496,7 @@ _elm_player_smart_add(Evas_Object *obj)
 #endif
 
 static void
-_elm_player_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_player_smart_set_user(Elm_Player_Smart_Class *sc)
 {
 #ifdef HAVE_EMOTION
    ELM_WIDGET_CLASS(sc)->base.add = _elm_player_smart_add;
@@ -551,10 +506,28 @@ _elm_player_smart_set_user(Elm_Layout_Smart_Class *sc)
 
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_player_smart_content_set;
 
-   sc->sizing_eval = _elm_player_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_player_smart_sizing_eval;
 #else
    (void) sc;
 #endif
+}
+
+EAPI const Elm_Player_Smart_Class *
+elm_player_smart_class_get(void)
+{
+   static Elm_Player_Smart_Class _sc =
+     ELM_PLAYER_SMART_CLASS_INIT_NAME_VERSION(ELM_PLAYER_SMART_NAME);
+   static const Elm_Player_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_player_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *

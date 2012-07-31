@@ -68,6 +68,7 @@ elm_widget_naviframe.h \
 elm_widget_notify.h \
 elm_widget_photo.h \
 elm_widget_photocam.h \
+elm_widget_player.h \
 elm_widget_plug.h \
 elm_widget_progressbar.h \
 elm_widget_radio.h \
