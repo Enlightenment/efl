@@ -252,6 +252,32 @@ typedef struct _Elm_Layout_Smart_Data
  * @}
  */
 
+EAPI extern const char ELM_LAYOUT_SMART_NAME[];
 EAPI const Elm_Layout_Smart_Class *elm_layout_smart_class_get(void);
+
+#define ELM_LAYOUT_DATA_GET(o, sd) \
+  Elm_Layout_Smart_Data * sd = evas_object_smart_data_get(o)
+
+#define ELM_LAYOUT_DATA_GET_OR_RETURN(o, ptr)        \
+  ELM_LAYOUT_DATA_GET(o, ptr);                       \
+  if (!ptr)                                          \
+    {                                                \
+       CRITICAL("No widget data for object %p (%s)", \
+                o, evas_object_type_get(o));         \
+       return;                                       \
+    }
+
+#define ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  ELM_LAYOUT_DATA_GET(o, ptr);                         \
+  if (!ptr)                                            \
+    {                                                  \
+       CRITICAL("No widget data for object %p (%s)",   \
+                o, evas_object_type_get(o));           \
+       return val;                                     \
+    }
+
+#define ELM_LAYOUT_CHECK(obj)                                                 \
+  if (!obj || !elm_widget_type_check((obj), ELM_LAYOUT_SMART_NAME, __func__)) \
+    return
 
 #endif

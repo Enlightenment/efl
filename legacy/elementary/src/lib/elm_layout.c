@@ -2,32 +2,7 @@
 #include "elm_priv.h"
 #include "elm_widget_layout.h"
 
-static const char LAYOUT_SMART_NAME[] = "elm_layout";
-
-#define ELM_LAYOUT_DATA_GET(o, sd) \
-  Elm_Layout_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_LAYOUT_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_LAYOUT_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_LAYOUT_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
-    }
-
-#define ELM_LAYOUT_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), LAYOUT_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_LAYOUT_SMART_NAME[] = "elm_layout";
 
 static const char SIG_THEME_CHANGED[] = "theme,changed";
 
@@ -125,14 +100,14 @@ _part_cursor_free(Elm_Layout_Sub_Object_Cursor *pc)
 /* Elementary smart class for all widgets having an Edje layout as a
  * building block */
 EVAS_SMART_SUBCLASS_NEW
-  (LAYOUT_SMART_NAME, _elm_layout, Elm_Layout_Smart_Class,
+  (ELM_LAYOUT_SMART_NAME, _elm_layout, Elm_Layout_Smart_Class,
   Elm_Container_Smart_Class, elm_container_smart_class_get, _smart_callbacks);
 
 EAPI const Elm_Layout_Smart_Class *
 elm_layout_smart_class_get(void)
 {
    static Elm_Layout_Smart_Class _sc =
-     ELM_LAYOUT_SMART_CLASS_INIT_NAME_VERSION(LAYOUT_SMART_NAME);
+     ELM_LAYOUT_SMART_CLASS_INIT_NAME_VERSION(ELM_LAYOUT_SMART_NAME);
    static const Elm_Layout_Smart_Class *class = NULL;
    Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
 
@@ -222,10 +197,11 @@ _parts_text_fix(Elm_Layout_Smart_Data *sd)
    EINA_LIST_FOREACH (sd->subs, l, sub_d)
      {
         if (sub_d->type == TEXT)
-	  {
+          {
              edje_object_part_text_escaped_set
-               (ELM_WIDGET_DATA(sd)->resize_obj, sub_d->part, sub_d->p.text.text);
-	  }
+               (ELM_WIDGET_DATA(sd)->resize_obj, sub_d->part,
+               sub_d->p.text.text);
+          }
      }
 }
 
@@ -296,10 +272,10 @@ _visuals_refresh(Evas_Object *obj,
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(obj);
 
    edje_object_signal_callback_del(ELM_WIDGET_DATA(sd)->resize_obj,
-				   "edje,change,file", "edje",
+                                   "edje,change,file", "edje",
                                    _reload_theme);
    edje_object_signal_callback_add(ELM_WIDGET_DATA(sd)->resize_obj,
-				   "edje,change,file", "edje",
+                                   "edje,change,file", "edje",
                                    _reload_theme, obj);
 }
 
@@ -665,7 +641,7 @@ _elm_layout_smart_text_set(Evas_Object *obj,
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON &&
        ELM_WIDGET_DATA(sd)->can_access && !(sub_d->obj))
      sub_d->obj = _elm_access_edje_object_part_object_register
-                         (obj, elm_layout_edje_get(obj), part);
+         (obj, elm_layout_edje_get(obj), part);
 
    return EINA_TRUE;
 }
@@ -1805,7 +1781,7 @@ elm_layout_part_cursor_engine_only_get(const Evas_Object *obj,
 }
 
 EVAS_SMART_SUBCLASS_NEW
-  (LAYOUT_SMART_NAME, _elm_layout_widget, Elm_Layout_Smart_Class,
+  (ELM_LAYOUT_SMART_NAME, _elm_layout_widget, Elm_Layout_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
@@ -1822,7 +1798,8 @@ _elm_layout_widget_smart_set_user(Elm_Layout_Smart_Class *sc)
 }
 
 EAPI Eina_Bool
-elm_layout_edje_object_can_access_set(Evas_Object *obj, Eina_Bool can_access)
+elm_layout_edje_object_can_access_set(Evas_Object *obj,
+                                      Eina_Bool can_access)
 {
    ELM_LAYOUT_CHECK(obj) EINA_FALSE;
    ELM_LAYOUT_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
