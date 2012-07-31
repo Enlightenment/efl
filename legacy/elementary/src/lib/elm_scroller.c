@@ -1,54 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_interface_scrollable.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_scroller.h"
 
-typedef struct _Elm_Scroller_Smart_Data Elm_Scroller_Smart_Data;
-
-static const char SCROLLER_SMART_NAME[] = "elm_scroller";
-
-#define ELM_SCROLLER_DATA_GET(o, sd) \
-  Elm_Scroller_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_SCROLLER_DATA_GET_OR_RETURN(o, ptr)      \
-  ELM_SCROLLER_DATA_GET(o, ptr);                     \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_SCROLLER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_SCROLLER_DATA_GET(o, ptr);                         \
-  if (!ptr)                                              \
-    {                                                    \
-       CRITICAL("No widget data for object %p (%s)",     \
-                o, evas_object_type_get(o));             \
-       return val;                                       \
-    }
-
-#define ELM_SCROLLER_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), SCROLLER_SMART_NAME, __func__)) \
-    return
-
-
-struct _Elm_Scroller_Smart_Data
-{
-   Elm_Layout_Smart_Data                 base; /* base widget smart data as
-                                                * first member obligatory, as
-                                                * we're inheriting from it */
-
-   const Elm_Scrollable_Smart_Interface *s_iface;
-
-   Evas_Object                          *hit_rect;
-   Evas_Object                          *g_layer;
-
-   Evas_Object                          *content;
-
-   Eina_Bool                             min_w : 1;
-   Eina_Bool                             min_h : 1;
-};
+EAPI const char ELM_SCROLLER_SMART_NAME[] = "elm_scroller";
 
 static const char SIG_SCROLL[] = "scroll";
 static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
@@ -79,7 +33,7 @@ static const Evas_Smart_Interface *_smart_interfaces[] =
 };
 
 EVAS_SMART_SUBCLASS_IFACE_NEW
-  (SCROLLER_SMART_NAME, _elm_scroller, Elm_Layout_Smart_Class,
+  (ELM_SCROLLER_SMART_NAME, _elm_scroller, Elm_Scroller_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks,
   _smart_interfaces);
 
@@ -676,7 +630,7 @@ _elm_scroller_smart_member_add(Evas_Object *obj,
 }
 
 static void
-_elm_scroller_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_scroller_smart_set_user(Elm_Scroller_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_scroller_smart_add;
    ELM_WIDGET_CLASS(sc)->base.move = _elm_scroller_smart_move;
@@ -694,6 +648,24 @@ _elm_scroller_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_CONTAINER_CLASS(sc)->content_unset = _elm_scroller_smart_content_unset;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_scroller_smart_sizing_eval;
+}
+
+EAPI const Elm_Scroller_Smart_Class *
+elm_scroller_smart_class_get(void)
+{
+   static Elm_Scroller_Smart_Class _sc =
+     ELM_SCROLLER_SMART_CLASS_INIT_NAME_VERSION(ELM_SCROLLER_SMART_NAME);
+   static const Elm_Scroller_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_scroller_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
