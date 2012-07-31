@@ -1,37 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include "elm_widget_grid.h"
 
-static const char GRID_SMART_NAME[] = "elm_grid";
-
-typedef struct _Elm_Grid_Smart_Data Elm_Grid_Smart_Data;
-
-#define ELM_GRID_DATA_GET(o, sd) \
-  Elm_Widget_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_GRID_DATA_GET_OR_RETURN(o, ptr)          \
-  ELM_GRID_DATA_GET(o, ptr);                         \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_GRID_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_GRID_DATA_GET(o, ptr);                         \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return val;                                   \
-    }
-
-#define ELM_GRID_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), GRID_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_GRID_SMART_NAME[] = "elm_grid";
 
 EVAS_SMART_SUBCLASS_NEW
-  (GRID_SMART_NAME, _elm_grid, Elm_Widget_Smart_Class,
+  (ELM_GRID_SMART_NAME, _elm_grid, Elm_Grid_Smart_Class,
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
 
 static Eina_Bool
@@ -55,7 +29,7 @@ _elm_grid_smart_focus_next(const Evas_Object *obj,
      }
    else
      {
-        items = evas_object_grid_children_get(sd->resize_obj);
+        items = evas_object_grid_children_get(ELM_WIDGET_DATA(sd)->resize_obj);
         list_data_get = eina_list_data_get;
         list_free = eina_list_free;
 
@@ -92,7 +66,7 @@ _elm_grid_smart_focus_direction(const Evas_Object *obj,
      }
    else
      {
-        items = evas_object_grid_children_get(sd->resize_obj);
+        items = evas_object_grid_children_get(ELM_WIDGET_DATA(sd)->resize_obj);
         list_data_get = eina_list_data_get;
         list_free = eina_list_free;
 
@@ -112,7 +86,7 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
    ELM_GRID_DATA_GET(obj, sd);
 
-   evas_object_grid_mirrored_set(sd->resize_obj, rtl);
+   evas_object_grid_mirrored_set(ELM_WIDGET_DATA(sd)->resize_obj, rtl);
 }
 
 static Eina_Bool
@@ -128,10 +102,11 @@ _elm_grid_smart_theme(Evas_Object *obj)
 static void
 _elm_grid_smart_add(Evas_Object *obj)
 {
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Widget_Smart_Data);
+   EVAS_SMART_DATA_ALLOC(obj, Elm_Grid_Smart_Data);
 
-   priv->resize_obj = evas_object_grid_add(evas_object_evas_get(obj));
-   evas_object_grid_size_set(priv->resize_obj, 100, 100);
+   ELM_WIDGET_DATA(priv)->resize_obj =
+     evas_object_grid_add(evas_object_evas_get(obj));
+   evas_object_grid_size_set(ELM_WIDGET_DATA(priv)->resize_obj, 100, 100);
 
    _elm_grid_parent_sc->base.add(obj);
 
@@ -150,11 +125,12 @@ _elm_grid_smart_del(Evas_Object *obj)
 
    /* let's make our grid object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH (ELM_WIDGET_DATA(sd)->subobjs, l, child)
      {
-        if (child == sd->resize_obj)
+        if (child == ELM_WIDGET_DATA(sd)->resize_obj)
           {
-             sd->subobjs = eina_list_demote_list(sd->subobjs, l);
+             ELM_WIDGET_DATA(sd)->subobjs =
+               eina_list_demote_list(ELM_WIDGET_DATA(sd)->subobjs, l);
              break;
           }
      }
@@ -163,14 +139,29 @@ _elm_grid_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_grid_smart_set_user(Elm_Widget_Smart_Class *sc)
+_elm_grid_smart_set_user(Elm_Grid_Smart_Class *sc)
 {
-   sc->base.add = _elm_grid_smart_add;
-   sc->base.del = _elm_grid_smart_del;
+   ELM_WIDGET_CLASS(sc)->base.add = _elm_grid_smart_add;
+   ELM_WIDGET_CLASS(sc)->base.del = _elm_grid_smart_del;
 
-   sc->theme = _elm_grid_smart_theme;
-   sc->focus_next = _elm_grid_smart_focus_next;
-   sc->focus_direction = _elm_grid_smart_focus_direction;
+   ELM_WIDGET_CLASS(sc)->theme = _elm_grid_smart_theme;
+   ELM_WIDGET_CLASS(sc)->focus_next = _elm_grid_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->focus_direction = _elm_grid_smart_focus_direction;
+}
+
+EAPI const Elm_Grid_Smart_Class *
+elm_grid_smart_class_get(void)
+{
+   static Elm_Grid_Smart_Class _sc =
+     ELM_GRID_SMART_CLASS_INIT_NAME_VERSION(ELM_GRID_SMART_NAME);
+   static const Elm_Grid_Smart_Class *class = NULL;
+
+   if (class) return class;
+
+   _elm_grid_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
@@ -197,7 +188,7 @@ elm_grid_size_set(Evas_Object *obj,
    ELM_GRID_CHECK(obj);
    ELM_GRID_DATA_GET(obj, sd);
 
-   evas_object_grid_size_set(sd->resize_obj, w, h);
+   evas_object_grid_size_set(ELM_WIDGET_DATA(sd)->resize_obj, w, h);
 }
 
 EAPI void
@@ -208,7 +199,7 @@ elm_grid_size_get(const Evas_Object *obj,
    ELM_GRID_CHECK(obj);
    ELM_GRID_DATA_GET(obj, sd);
 
-   evas_object_grid_size_get(sd->resize_obj, w, h);
+   evas_object_grid_size_get(ELM_WIDGET_DATA(sd)->resize_obj, w, h);
 }
 
 EAPI void
@@ -223,7 +214,7 @@ elm_grid_pack(Evas_Object *obj,
    ELM_GRID_DATA_GET(obj, sd);
 
    elm_widget_sub_object_add(obj, subobj);
-   evas_object_grid_pack(sd->resize_obj, subobj, x, y, w, h);
+   evas_object_grid_pack(ELM_WIDGET_DATA(sd)->resize_obj, subobj, x, y, w, h);
 }
 
 EAPI void
@@ -234,7 +225,7 @@ elm_grid_unpack(Evas_Object *obj,
    ELM_GRID_DATA_GET(obj, sd);
 
    elm_widget_sub_object_del(obj, subobj);
-   evas_object_grid_unpack(sd->resize_obj, subobj);
+   evas_object_grid_unpack(ELM_WIDGET_DATA(sd)->resize_obj, subobj);
 }
 
 EAPI void
@@ -249,12 +240,12 @@ elm_grid_clear(Evas_Object *obj,
 
    if (!clear)
      {
-        chld = evas_object_grid_children_get(sd->resize_obj);
+        chld = evas_object_grid_children_get(ELM_WIDGET_DATA(sd)->resize_obj);
         EINA_LIST_FREE (chld, o)
           elm_widget_sub_object_del(obj, o);
      }
 
-   evas_object_grid_clear(sd->resize_obj, clear);
+   evas_object_grid_clear(ELM_WIDGET_DATA(sd)->resize_obj, clear);
 }
 
 EAPI void
@@ -269,7 +260,7 @@ elm_grid_pack_set(Evas_Object *subobj,
    ELM_GRID_CHECK(obj);
    ELM_GRID_DATA_GET(obj, sd);
 
-   evas_object_grid_pack(sd->resize_obj, subobj, x, y, w, h);
+   evas_object_grid_pack(ELM_WIDGET_DATA(sd)->resize_obj, subobj, x, y, w, h);
 }
 
 EAPI void
@@ -284,7 +275,8 @@ elm_grid_pack_get(Evas_Object *subobj,
    ELM_GRID_CHECK(obj);
    ELM_GRID_DATA_GET(obj, sd);
 
-   evas_object_grid_pack_get(sd->resize_obj, subobj, x, y, w, h);
+   evas_object_grid_pack_get
+     (ELM_WIDGET_DATA(sd)->resize_obj, subobj, x, y, w, h);
 }
 
 EAPI Eina_List *
@@ -293,5 +285,5 @@ elm_grid_children_get(const Evas_Object *obj)
    ELM_GRID_CHECK(obj) NULL;
    ELM_GRID_DATA_GET(obj, sd);
 
-   return evas_object_grid_children_get(sd->resize_obj);
+   return evas_object_grid_children_get(ELM_WIDGET_DATA(sd)->resize_obj);
 }
