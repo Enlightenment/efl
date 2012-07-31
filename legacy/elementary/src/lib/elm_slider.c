@@ -1,38 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_slider.h"
 
-static const char SLIDER_SMART_NAME[] = "elm_slider";
-
-typedef struct _Elm_Slider_Smart_Data Elm_Slider_Smart_Data;
-
-struct _Elm_Slider_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Evas_Object          *spacer, *popup, *track;
-   Ecore_Timer          *delay;
-
-   const char           *units;
-   const char           *indicator;
-
-   char                 *(*indicator_format_func)(double val);
-   void                  (*indicator_format_free)(char *str);
-
-   char                 *(*units_format_func)(double val);
-   void                  (*units_format_free)(char *str);
-
-   double                val, val_min, val_max, val2;
-   Evas_Coord            size;
-   Evas_Coord            downx, downy;
-
-   Eina_Bool             horizontal : 1;
-   Eina_Bool             inverted : 1;
-   Eina_Bool             indicator_show : 1;
-   Eina_Bool             spacer_down : 1;
-   Eina_Bool             frozen : 1;
-   Eina_Bool             popup_hiding : 1;
-};
+EAPI const char ELM_SLIDER_SMART_NAME[] = "elm_slider";
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -59,35 +29,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#define ELM_SLIDER_DATA_GET(o, sd) \
-  Elm_Slider_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_SLIDER_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_SLIDER_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_SLIDER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_SLIDER_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
-    }
-
-#define ELM_SLIDER_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), SLIDER_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (SLIDER_SMART_NAME, _elm_slider, Elm_Layout_Smart_Class,
+  (ELM_SLIDER_SMART_NAME, _elm_slider, Elm_Slider_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static Eina_Bool
@@ -781,7 +724,7 @@ _elm_slider_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_slider_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_slider_smart_set_user(Elm_Slider_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_slider_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_slider_smart_del;
@@ -793,10 +736,28 @@ _elm_slider_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
-   sc->sizing_eval = _elm_slider_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_slider_smart_sizing_eval;
 
-   sc->content_aliases = _content_aliases;
-   sc->text_aliases = _text_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->text_aliases = _text_aliases;
+}
+
+EAPI const Elm_Slider_Smart_Class *
+elm_slider_smart_class_get(void)
+{
+   static Elm_Slider_Smart_Class _sc =
+     ELM_SLIDER_SMART_CLASS_INIT_NAME_VERSION(ELM_SLIDER_SMART_NAME);
+   static const Elm_Slider_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_slider_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *

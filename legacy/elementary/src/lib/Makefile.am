@@ -65,6 +65,7 @@ elm_widget_photocam.h \
 elm_widget_plug.h \
 elm_widget_route.h \
 elm_widget_scroller.h \
+elm_widget_slider.h \
 elm_widget_slideshow.h \
 elm_widget_table.h \
 elm_widget_thumb.h \
