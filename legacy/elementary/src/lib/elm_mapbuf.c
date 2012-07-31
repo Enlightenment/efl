@@ -1,49 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_container.h"
+#include "elm_widget_mapbuf.h"
 
-static const char MAPBUF_SMART_NAME[] = "elm_mapbuf";
-
-typedef struct _Elm_Mapbuf_Smart_Data Elm_Mapbuf_Smart_Data;
-
-struct _Elm_Mapbuf_Smart_Data
-{
-   Elm_Widget_Smart_Data base;
-
-   Evas_Object          *content;
-
-   Eina_Bool             enabled : 1;
-   Eina_Bool             smooth : 1;
-   Eina_Bool             alpha : 1;
-};
-
-#define ELM_MAPBUF_DATA_GET(o, sd) \
-  Elm_Mapbuf_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_MAPBUF_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_MAPBUF_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_MAPBUF_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_MAPBUF_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
-    }
-
-#define ELM_MAPBUF_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), MAPBUF_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_MAPBUF_SMART_NAME[] = "elm_mapbuf";
 
 EVAS_SMART_SUBCLASS_NEW
-  (MAPBUF_SMART_NAME, _elm_mapbuf, Elm_Container_Smart_Class,
+  (ELM_MAPBUF_SMART_NAME, _elm_mapbuf, Elm_Mapbuf_Smart_Class,
   Elm_Container_Smart_Class, elm_container_smart_class_get, NULL);
 
 static void
@@ -272,7 +234,7 @@ _elm_mapbuf_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_mapbuf_smart_set_user(Elm_Container_Smart_Class *sc)
+_elm_mapbuf_smart_set_user(Elm_Mapbuf_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_mapbuf_smart_add;
    ELM_WIDGET_CLASS(sc)->base.resize = _elm_mapbuf_smart_resize;
@@ -281,9 +243,24 @@ _elm_mapbuf_smart_set_user(Elm_Container_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->theme = _elm_mapbuf_smart_theme;
    ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_mapbuf_smart_sub_object_del;
 
-   sc->content_set = _elm_mapbuf_smart_content_set;
-   sc->content_get = _elm_mapbuf_smart_content_get;
-   sc->content_unset = _elm_mapbuf_smart_content_unset;
+   ELM_CONTAINER_CLASS(sc)->content_set = _elm_mapbuf_smart_content_set;
+   ELM_CONTAINER_CLASS(sc)->content_get = _elm_mapbuf_smart_content_get;
+   ELM_CONTAINER_CLASS(sc)->content_unset = _elm_mapbuf_smart_content_unset;
+}
+
+EAPI const Elm_Mapbuf_Smart_Class *
+elm_mapbuf_smart_class_get(void)
+{
+   static Elm_Mapbuf_Smart_Class _sc =
+     ELM_MAPBUF_SMART_CLASS_INIT_NAME_VERSION(ELM_MAPBUF_SMART_NAME);
+   static const Elm_Mapbuf_Smart_Class *class = NULL;
+
+   if (class) return class;
+
+   _elm_mapbuf_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
