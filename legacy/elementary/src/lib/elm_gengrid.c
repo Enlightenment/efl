@@ -3323,12 +3323,12 @@ elm_gengrid_item_show(Elm_Object_Item *item,
      }
 
    if (sd->horizontal)
-     sd->s_iface->region_bring_in
+     sd->s_iface->content_region_show
        (WIDGET(it), ((it->x - GG_IT(it)->prev_group) * sd->item_width)
        + (GG_IT(it)->prev_group * sd->group_item_width) + minx,
        it->y * sd->item_height + miny, sd->item_width, sd->item_height);
    else
-     sd->s_iface->region_bring_in
+     sd->s_iface->content_region_show
        (WIDGET(it), it->x * sd->item_width + minx,
        ((it->y - GG_IT(it)->prev_group) * sd->item_height) +
        (GG_IT(it)->prev_group * sd->group_item_height) + miny,
