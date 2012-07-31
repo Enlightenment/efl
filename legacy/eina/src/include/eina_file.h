@@ -102,7 +102,7 @@ typedef struct _Eina_Stat Eina_Stat;
  * @typedef Eina_File_Lines
  * A typedef to #_Eina_File_Lines.
  */
-typedef struct _Eina_File_Lines Eina_File_Lines;
+typedef struct _Eina_File_Line Eina_File_Line;
 
 /**
  * @typedef Eina_File_Dir_List_Cb
@@ -195,17 +195,15 @@ struct _Eina_Stat
 };
 
 /**
- * @struct _Eina_File_Lines
+ * @struct _Eina_File_Line
  * A structure to store information of line
  * @since 1.3
  */
-struct _Eina_File_Lines
+struct _Eina_File_Line
 {
-  struct {
-    const char *start;
-    const char *end;
-    unsigned int index;
-  } line;
+  const char *start;
+  const char *end;
+  unsigned int index;
   unsigned long long length;
 };
 

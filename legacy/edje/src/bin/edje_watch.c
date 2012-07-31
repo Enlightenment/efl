@@ -19,7 +19,7 @@ read_watch_file(const char *file)
 {
    Eina_File *f;
    Eina_Iterator *it;
-   Eina_File_Lines *ln;
+   Eina_File_Line *ln;
    Eio_Monitor *mon;
    Eina_List *r = NULL;
 
@@ -33,7 +33,7 @@ read_watch_file(const char *file)
      {
         const char *path;
 
-        path = eina_stringshare_add_length(ln->line.start, ln->length);
+        path = eina_stringshare_add_length(ln->start, ln->length);
         r = eina_list_append(r, eio_monitor_add(path));
         eina_stringshare_del(path);
      }

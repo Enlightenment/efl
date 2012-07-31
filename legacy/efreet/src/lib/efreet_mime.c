@@ -810,16 +810,16 @@ efreet_mime_glob_remove(const char *glob)
 }
 
 static inline const char *
-efreet_eat_space(const char *head, const Eina_File_Lines *ln, Eina_Bool not)
+efreet_eat_space(const char *head, const Eina_File_Line *ln, Eina_Bool not)
 {
    if (not)
      {
-        while (!isspace(*head) && (head < ln->line.end))
+        while (!isspace(*head) && (head < ln->end))
           head++;
      }
    else
      {
-        while (isspace(*head) && (head < ln->line.end))
+        while (isspace(*head) && (head < ln->end))
           head++;
      }
 
@@ -839,7 +839,7 @@ efreet_eat_space(const char *head, const Eina_File_Lines *ln, Eina_Bool not)
 static void
 efreet_mime_mime_types_load(const char *file)
 {
-   const Eina_File_Lines *ln;
+   const Eina_File_Line *ln;
    Eina_Iterator *it;
    Eina_File *f;
    const char *head_line;
@@ -858,20 +858,20 @@ efreet_mime_mime_types_load(const char *file)
 
         EINA_ITERATOR_FOREACH(it, ln)
           {
-             head_line = efreet_eat_space(ln->line.start, ln, EINA_FALSE);
-             if (head_line == ln->line.end) continue ;
+             head_line = efreet_eat_space(ln->start, ln, EINA_FALSE);
+             if (head_line == ln->end) continue ;
 
              if (*head_line == '#') continue ;
 
              word_start = head_line;
              head_line = efreet_eat_space(head_line, ln, EINA_TRUE);
 
-             if (head_line == ln->line.end) continue ;
+             if (head_line == ln->end) continue ;
              mimetype = eina_stringshare_add_length(word_start, head_line - word_start);
              do
                {
                   head_line = efreet_eat_space(head_line, ln, EINA_FALSE);
-                  if (head_line == ln->line.end) break ;
+                  if (head_line == ln->end) break ;
 
                   word_start = head_line;
                   head_line = efreet_eat_space(head_line, ln, EINA_TRUE);
@@ -887,7 +887,7 @@ efreet_mime_mime_types_load(const char *file)
 
                   eina_strbuf_reset(ext);
                }
-             while (head_line < ln->line.end);
+             while (head_line < ln->end);
 
              eina_stringshare_del(mimetype);
           }

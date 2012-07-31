@@ -117,7 +117,7 @@ struct _Eina_Lines_Iterator
 
    int boundary;
 
-   Eina_File_Lines current;
+   Eina_File_Line current;
 };
 
 struct _Eina_File_Direct_Iterator
@@ -612,32 +612,32 @@ _eina_file_map_lines_iterator_next(Eina_Lines_Iterator *it, void **data)
    const char *eol;
    unsigned char match;
 
-   if (it->current.line.end >= it->end)
+   if (it->current.end >= it->end)
      return EINA_FALSE;
 
-   match = *it->current.line.end;
-   while ((*it->current.line.end == '\n' || *it->current.line.end == '\r')
-          && it->current.line.end < it->end)
+   match = *it->current.end;
+   while ((*it->current.end == '\n' || *it->current.end == '\r')
+          && it->current.end < it->end)
      {
-        if (match == *it->current.line.end)
-          it->current.line.index++;
-        it->current.line.end++;
+        if (match == *it->current.end)
+          it->current.index++;
+        it->current.end++;
      }
-   it->current.line.index++;
+   it->current.index++;
 
-   if (it->current.line.end == it->end)
+   if (it->current.end == it->end)
      return EINA_FALSE;
 
-   eol = _eina_fine_eol(it->current.line.end,
+   eol = _eina_fine_eol(it->current.end,
                         it->boundary,
                         it->end);
    it->boundary = (uintptr_t) eol & 0x3FF;
    if (it->boundary == 0) it->boundary = 4096;
 
-   it->current.line.start = it->current.line.end;
+   it->current.start = it->current.end;
 
-   it->current.line.end = eol;
-   it->current.length = eol - it->current.line.start - 1;
+   it->current.end = eol;
+   it->current.length = eol - it->current.start - 1;
 
    *data = &it->current;
    return EINA_TRUE;
@@ -1187,9 +1187,9 @@ eina_file_map_lines(Eina_File *file)
 
    it->fp = file;
    it->boundary = 4096;
-   it->current.line.start = it->map;
-   it->current.line.end = it->current.line.start;
-   it->current.line.index = 0;
+   it->current.start = it->map;
+   it->current.end = it->current.start;
+   it->current.index = 0;
    it->current.length = 0;
    it->end = it->map + it->fp->length;
 

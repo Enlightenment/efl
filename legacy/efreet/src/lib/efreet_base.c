@@ -340,7 +340,7 @@ static const char *
 efreet_user_dir_get(const char *key, const char *fallback)
 {
    Eina_File *file = NULL;
-   Eina_File_Lines *line;
+   Eina_File_Line *line;
    Eina_Iterator *it = NULL;
    const char *config_home;
    char path[PATH_MAX];
@@ -358,15 +358,15 @@ efreet_user_dir_get(const char *key, const char *fallback)
         const char *eq, *end;
 
         if (line->length < 3) continue;
-        if (line->line.start[0] == '#') continue;
-        if (strncmp(line->line.start, "XDG", 3)) continue;
-        eq = memchr(line->line.start, '=', line->length);
+        if (line->start[0] == '#') continue;
+        if (strncmp(line->start, "XDG", 3)) continue;
+        eq = memchr(line->start, '=', line->length);
         if (!eq) continue;
-        if (strncmp(key, line->line.start, eq - line->line.start)) continue;
-        if (++eq >= line->line.end) continue;
+        if (strncmp(key, line->start, eq - line->start)) continue;
+        if (++eq >= line->end) continue;
         if (*eq != '"') continue;
-        if (++eq >= line->line.end) continue;
-        end = memchr(eq, '"', line->line.end - eq);
+        if (++eq >= line->end) continue;
+        end = memchr(eq, '"', line->end - eq);
         if (!end) continue;
         ret = alloca(end - eq + 1);
         memcpy(ret, eq, end - eq);
