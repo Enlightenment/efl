@@ -122,6 +122,11 @@ typedef struct _Elm_Container_Smart_Class
                                          const char *part); /* 'Virtual' function on unsetting content from the object, at the given @a part part. Meant to return the content's pointer. */
 } Elm_Container_Smart_Class;
 
+typedef struct _Elm_Container_Smart_Data Elm_Container_Smart_Data;
+struct _Elm_Container_Smart_Data
+{
+   Elm_Widget_Smart_Data base;
+};
 /**
  * @}
  */
