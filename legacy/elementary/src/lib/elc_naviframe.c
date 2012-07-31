@@ -29,6 +29,8 @@ struct _Elm_Naviframe_Item
    Evas_Object *title_prev_btn;
    Evas_Object *title_next_btn;
    Evas_Object *title_icon;
+   Evas_Object *title;
+   Evas_Object *subtitle;
    const char  *style;
    const char  *title_label;
 
@@ -278,9 +280,29 @@ _item_text_set_hook(Elm_Object_Item *it,
         else
           edje_object_signal_emit(VIEW(it), "elm,state,title_label,hide",
                                   "elm");
+
+        //XXX: ACCESS
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+          {
+             nit->title = _elm_access_edje_object_part_object_register
+                          (WIDGET(nit), VIEW(nit), buf);
+             _elm_access_text_set(_elm_access_object_get(nit->title),
+                                  ELM_ACCESS_TYPE, E_("title"));
+          }
      }
    else if (!strcmp("subtitle", part))
-     snprintf(buf, sizeof(buf), "elm.text.subtitle");
+     {
+        snprintf(buf, sizeof(buf), "elm.text.subtitle");
+
+        //XXX: ACCESS
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+          {
+             nit->subtitle = _elm_access_edje_object_part_object_register
+                             (WIDGET(nit), VIEW(nit), buf);
+             _elm_access_text_set(_elm_access_object_get(nit->subtitle),
+                                  ELM_ACCESS_TYPE, E_("sub title"));
+          }
+     }
    else
      snprintf(buf, sizeof(buf), "%s", part);
 
@@ -914,13 +936,27 @@ _elm_naviframe_smart_focus_next(const Evas_Object *obj,
    top_it = (Elm_Naviframe_Item *)elm_naviframe_top_item_get(obj);
    if (!top_it) return EINA_FALSE;
 
+   if (!top_it->title_visible)
+     {
+        return elm_widget_focus_next_get(top_it->content, dir, next);
+     }
+
    list_data_get = eina_list_data_get;
 
    //Forcus order: prev button, next button, contents
+   //XXX: ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     {
+        if (top_it->title) l = eina_list_append(l, top_it->title);
+        if (top_it->subtitle) l = eina_list_append(l, top_it->subtitle);
+     }
+
    if (top_it->title_prev_btn)
      l = eina_list_append(l, top_it->title_prev_btn);
    if (top_it->title_next_btn)
      l = eina_list_append(l, top_it->title_next_btn);
+   if (top_it->content)
+     l = eina_list_append(l, top_it->content);
    l = eina_list_append(l, VIEW(top_it));
 
    ret = elm_widget_focus_list_next_get(obj, l, list_data_get, dir, next);
@@ -1054,6 +1090,10 @@ elm_naviframe_item_push(Evas_Object *obj,
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
    evas_object_raise(VIEW(it));
 
+   //XXX: ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     elm_object_focus_set(it->title, EINA_TRUE);
+
    elm_layout_sizing_eval(obj);
 
    return (Elm_Object_Item *)it;
@@ -1168,6 +1208,10 @@ elm_naviframe_item_pop(Evas_Object *obj)
 
         elm_widget_resize_object_set(obj, VIEW(it));
         evas_object_raise(VIEW(prev_it));
+
+        //XXX: ACCESS
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+          elm_object_focus_set(prev_it->title, EINA_TRUE);
 
         /* these 2 signals MUST take place simultaneously */
         edje_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
