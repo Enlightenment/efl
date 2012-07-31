@@ -21,7 +21,7 @@ _edje_multisense_encode(const char *filename, Edje_Sound_Sample *sample, double 
    enc_info = calloc(1, sizeof(Edje_Sound_Encode));
    if (!enc_info)
      {
-        ERR("Error. while allocating memory to load file ");
+        ERR("while allocating memory to load file ");
         exit(-1);
      }
    memset (&sfinfo, 0, sizeof (SF_INFO));
@@ -33,13 +33,13 @@ _edje_multisense_encode(const char *filename, Edje_Sound_Sample *sample, double 
    sfile = sf_open (filename, SFM_READ, &sfinfo);
    if (!sfile)
      {
-        ERR("Error. Unable to open audio file : %s", filename);
+        ERR("Unable to open audio file: %s", filename);
         exit(-1);
      }
 
    if (!sf_format_check(&sfinfo))
      {
-        ERR("Error. Unknown file, not a valid audio file");
+        ERR("Unknown file, not a valid audio file");
         exit(-1);
      }
 

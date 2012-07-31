@@ -19,7 +19,7 @@
 #include "edje_decc.h"
 
 int _edje_cc_log_dom = -1;
-char *progname = NULL;
+static char *progname = NULL;
 char *file_in = NULL;
 char *file_out = NULL;
 int compress_mode = EET_COMPRESSION_DEFAULT;
@@ -37,6 +37,87 @@ void       output(void);
 static int compiler_cmd_is_sane();
 static int root_filename_is_sane();
 
+
+static void
+_edje_cc_log_cb(const Eina_Log_Domain *d,
+                Eina_Log_Level level,
+                const char *file,
+                const char *fnc,
+                int line,
+                const char *fmt,
+                __UNUSED__ void *data,
+                va_list args)
+{
+   if ((d->name) && (d->namelen == sizeof("edje_decc") - 1) &&
+       (memcmp(d->name, "edje_decc", sizeof("edje_decc") - 1) == 0))
+     {
+        const char *prefix;
+        Eina_Bool use_color = !eina_log_color_disable_get();
+
+        if (use_color)
+          {
+#ifndef _WIN32
+             fputs(eina_log_level_color_get(level), stderr);
+#else
+             int color;
+             switch (level)
+               {
+                case EINA_LOG_LEVEL_CRITICAL:
+                   color = FOREGROUND_RED | FOREGROUND_INTENSITY;
+                   break;
+                case EINA_LOG_LEVEL_ERR:
+                   color = FOREGROUND_RED;
+                   break;
+                case EINA_LOG_LEVEL_WARN:
+                   color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+                   break;
+                case EINA_LOG_LEVEL_INFO:
+                   color = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+                   break;
+                case EINA_LOG_LEVEL_DBG:
+                   color = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+                   break;
+                default:
+                   color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+               }
+             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#endif
+          }
+
+        switch (level)
+          {
+           case EINA_LOG_LEVEL_CRITICAL:
+              prefix = "Critical. ";
+              break;
+           case EINA_LOG_LEVEL_ERR:
+              prefix = "Error. ";
+              break;
+           case EINA_LOG_LEVEL_WARN:
+              prefix = "Warning. ";
+              break;
+           default:
+              prefix = "";
+          }
+        fprintf(stderr, "%s: %s", progname, prefix);
+
+        if (use_color)
+          {
+#ifndef _WIN32
+             fputs(EINA_COLOR_RESET, stderr);
+#else
+             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+                                     FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+#endif
+          }
+
+
+        vfprintf(stderr, fmt, args);
+        putc('\n', stderr);
+     }
+   else
+     eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+}
+
 static void
 main_help(void)
 {
@@ -47,6 +128,7 @@ main_help(void)
       " -main-out\tCreate a symbolic link to the main edc \n"
       " -no-build-sh\tDon't output build.sh \n"
       " -current-dir\tOutput to current directory \n"
+      " -quiet\t\tProduce less output\n"
       "\n"
       ,progname);
 }
@@ -70,7 +152,10 @@ main(int argc, char **argv)
        eina_shutdown();
        exit(-1);
      }
-   progname = argv[0];
+   progname = (char *)ecore_file_file_get(argv[0]);
+   eina_log_print_cb_set(_edje_cc_log_cb, NULL);
+   eina_log_domain_level_set("edje_decc", EINA_LOG_LEVEL_INFO);
+
    for (i = 1; i < argc; i++)
      {
 	if (!strcmp(argv[i], "-h"))
@@ -89,6 +174,8 @@ main(int argc, char **argv)
 	  build_sh = 0;
 	else if (!strcmp(argv[i], "-current-dir"))
 	  new_dir = 0;
+        else if (!strcmp(argv[i], "-quiet"))
+          eina_log_domain_level_set("edje_decc", EINA_LOG_LEVEL_WARN);
      }
    if (!file_in)
      {
@@ -104,9 +191,9 @@ main(int argc, char **argv)
    if (!decomp()) return -1;
    output();
 
-   fprintf(stderr, "WARNING! If any Image or audio data was encoded in a LOSSY way, then\n"
-          "re-encoding will drop quality even more. You need access to the original\n"
-          "data to ensure no loss of quality.\n");
+   WRN("If any Image or audio data was encoded in a LOSSY way, then "
+       "re-encoding will drop quality even more. "
+       "You need access to the original data to ensure no loss of quality.");
    eet_close(ef);
    edje_shutdown();
    eina_log_domain_unregister(_edje_cc_log_dom);
@@ -121,27 +208,27 @@ decomp(void)
    ef = eet_open(file_in, EET_FILE_MODE_READ);
    if (!ef)
      {
-	ERR("ERROR: cannot open %s", file_in);
+	ERR("cannot open %s", file_in);
 	return 0;
      }
 
    srcfiles = source_load(ef);
    if (!srcfiles || !srcfiles->list)
      {
-	ERR("ERROR: %s has no decompile information", file_in);
+	ERR("%s has no decompile information", file_in);
 	eet_close(ef);
 	return 0;
      }
    if (!eina_list_data_get(srcfiles->list) || !root_filename_is_sane())
      {
-        ERR("ERROR: Invalid root filename: '%s'", (char *) eina_list_data_get(srcfiles->list));
+        ERR("Invalid root filename: '%s'", (char *) eina_list_data_get(srcfiles->list));
 	eet_close(ef);
 	return 0;
      }
    edje_file = eet_data_read(ef, _edje_edd_edje_file, "edje/file");
    if (!edje_file)
      {
-        ERR("ERROR: %s does not appear to be an edje file", file_in);
+        ERR("%s does not appear to be an edje file", file_in);
 	eet_close(ef);
 	return 0;
      }
@@ -153,7 +240,7 @@ decomp(void)
      }
    else if (!compiler_cmd_is_sane())
      {
-	ERR("ERROR: invalid compiler executable: '%s'", edje_file->compiler);
+	ERR("invalid compiler executable: '%s'", edje_file->compiler);
 	eet_close(ef);
 	return 0;
      }
@@ -225,7 +312,7 @@ output(void)
 		  snprintf(buf, sizeof(buf), "edje/images/%i", ei->id);
 		  evas_object_image_file_set(im, file_in, buf);
 		  snprintf(out, sizeof(out), "%s/%s", outdir, ei->entry);
-		  printf("Output Image: %s\n", out);
+		  INF("Output Image: %s", out);
 		  pp = strdup(out);
 		  p = strrchr(pp, '/');
 		  *p = 0;
@@ -256,7 +343,7 @@ output(void)
 	char *pp;
 
 	snprintf(out, sizeof(out), "%s/%s", outdir, sf->name);
-	INF("Output Source File: %s\n", out);
+	INF("Output Source File: %s", out);
 	pp = strdup(out);
 	p = strrchr(pp, '/');
 	*p = 0;
@@ -345,10 +432,10 @@ output(void)
 	if (build_sh)
 	  {
 	     snprintf(out, sizeof(out), "%s/build.sh", outdir);
-	     printf("Output Build Script: %s\n", out);
+	     INF("Output Build Script: %s", out);
 	     if (strstr(out, "../"))
 	       {
-		  ERR("potential security violation. attempt to write in parent dir.\n");
+		  ERR("potential security violation. attempt to write in parent dir.");
 		  exit (-1);
 	       }
 	     f = fopen(out, "wb");
@@ -356,7 +443,7 @@ output(void)
 	     fprintf(f, "%s $@ -id . -fd . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
 	     fclose(f);
 
-	     WRN("\n*** CAUTION ***\n"
+	     WRN("*** CAUTION ***\n"
 		 "Please check the build script for anything malicious "
 		 "before running it!\n\n");
 	  }
@@ -366,7 +453,7 @@ output(void)
 	     snprintf(out, sizeof(out), "%s/%s", outdir, file_out);
 	     if (ecore_file_symlink(sf->name, out) != EINA_TRUE)
                {
-                  ERR("symlink %s -> %s failed\n", sf->name, out);
+                  ERR("symlink %s -> %s failed", sf->name, out);
                }
 	  }
 

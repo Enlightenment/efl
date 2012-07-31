@@ -19,9 +19,9 @@ Eina_List *defines = NULL;
 char      *file_in = NULL;
 char      *tmp_dir = NULL;
 char      *file_out = NULL;
-char      *progname = NULL;
 char      *watchfile = NULL;
-int        verbose = 0;
+
+static char *progname = NULL;
 
 int        no_lossy = 0;
 int        no_comp = 0;
@@ -31,6 +31,86 @@ int        min_quality = 0;
 int        max_quality = 100;
 int        compress_mode = EET_COMPRESSION_DEFAULT;
 int        threads = 0;
+
+static void
+_edje_cc_log_cb(const Eina_Log_Domain *d,
+                Eina_Log_Level level,
+                const char *file,
+                const char *fnc,
+                int line,
+                const char *fmt,
+                __UNUSED__ void *data,
+                va_list args)
+{
+   if ((d->name) && (d->namelen == sizeof("edje_cc") - 1) &&
+       (memcmp(d->name, "edje_cc", sizeof("edje_cc") - 1) == 0))
+     {
+        const char *prefix;
+        Eina_Bool use_color = !eina_log_color_disable_get();
+
+        if (use_color)
+          {
+#ifndef _WIN32
+             fputs(eina_log_level_color_get(level), stderr);
+#else
+             int color;
+             switch (level)
+               {
+                case EINA_LOG_LEVEL_CRITICAL:
+                   color = FOREGROUND_RED | FOREGROUND_INTENSITY;
+                   break;
+                case EINA_LOG_LEVEL_ERR:
+                   color = FOREGROUND_RED;
+                   break;
+                case EINA_LOG_LEVEL_WARN:
+                   color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+                   break;
+                case EINA_LOG_LEVEL_INFO:
+                   color = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
+                   break;
+                case EINA_LOG_LEVEL_DBG:
+                   color = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
+                   break;
+                default:
+                   color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+               }
+             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
+#endif
+          }
+
+        switch (level)
+          {
+           case EINA_LOG_LEVEL_CRITICAL:
+              prefix = "Critical. ";
+              break;
+           case EINA_LOG_LEVEL_ERR:
+              prefix = "Error. ";
+              break;
+           case EINA_LOG_LEVEL_WARN:
+              prefix = "Warning. ";
+              break;
+           default:
+              prefix = "";
+          }
+        fprintf(stderr, "%s: %s", progname, prefix);
+
+        if (use_color)
+          {
+#ifndef _WIN32
+             fputs(EINA_COLOR_RESET, stderr);
+#else
+             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
+                                     FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+#endif
+          }
+
+
+        vfprintf(stderr, fmt, args);
+        putc('\n', stderr);
+     }
+   else
+     eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+}
 
 static void
 main_help(void)
@@ -80,6 +160,9 @@ main(int argc, char **argv)
        EINA_LOG_ERR("Enable to create a log domain.");
        exit(-1);
      }
+   progname = (char *)ecore_file_file_get(argv[0]);
+   eina_log_print_cb_set(_edje_cc_log_cb, NULL);
+
    tmp_dir = getenv("TMPDIR");
 
    img_dirs = eina_list_append(img_dirs, ".");
@@ -87,7 +170,6 @@ main(int argc, char **argv)
    /* add defines to epp so edc files can detect edje_cc version */
    defines = eina_list_append(defines, mem_strdup("-DEDJE_VERSION_12=12"));
 
-   progname = (char *)ecore_file_file_get(argv[0]);
    for (i = 1; i < argc; i++)
      {
 	if (!strcmp(argv[i], "-h"))
@@ -97,7 +179,7 @@ main(int argc, char **argv)
 	  }
 	else if (!strcmp(argv[i], "-v"))
 	  {
-	     verbose = 1;
+	     eina_log_domain_level_set("edje_cc", EINA_LOG_LEVEL_INFO);
 	  }
 	else if (!strcmp(argv[i], "-no-lossy"))
 	  {
@@ -186,12 +268,15 @@ main(int argc, char **argv)
 	else if (!file_out)
 	  file_out = argv[i];
      }
+
    if (!file_in)
      {
 	fprintf(stderr, "%s: Error: no input file specified.\n", progname);
 	main_help();
 	exit(-1);
      }
+
+   
 
    pfx = eina_prefix_new(argv[0],            /* argv[0] value (optional) */
                          main,               /* an optional symbol to check path of */

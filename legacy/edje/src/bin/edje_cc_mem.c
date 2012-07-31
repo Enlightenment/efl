@@ -14,8 +14,8 @@ mem_alloc(size_t size)
 
    mem = calloc(1, size);
    if (mem) return mem;
-   ERR("%s: Error. %s:%i memory allocation of %zu bytes failed. %s",
-       progname, file_in, line, size, strerror(errno));
+   ERR("%s:%i memory allocation of %zu bytes failed. %s",
+       file_in, line, size, strerror(errno));
    exit(-1);
    return NULL;
 }
@@ -27,8 +27,8 @@ mem_strdup(const char *s)
 
    str = strdup(s);
    if (str) return str;
-   ERR("%s: Error. %s:%i memory allocation of %zu bytes failed. %s. string being duplicated: \"%s\"",
-       progname, file_in, line, strlen(s) + 1, strerror(errno), s);
+   ERR("%s:%i memory allocation of %zu bytes failed. %s. string being duplicated: \"%s\"",
+       file_in, line, strlen(s) + 1, strerror(errno), s);
    exit(-1);
    return NULL;
 }

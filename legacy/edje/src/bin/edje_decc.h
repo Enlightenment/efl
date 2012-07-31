@@ -6,6 +6,7 @@
 /* logging variables */
 extern int _edje_cc_log_dom ;
 #define EDJE_CC_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+
 #ifdef ERR
 # undef ERR
 #endif
@@ -18,6 +19,14 @@ extern int _edje_cc_log_dom ;
 # undef WRN
 #endif
 #define WRN(...) EINA_LOG_DOM_WARN(_edje_cc_log_dom, __VA_ARGS__)
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_edje_cc_log_dom, __VA_ARGS__)
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_edje_cc_log_dom, __VA_ARGS__)
 
 /* types */
 typedef struct _Font                  Font;

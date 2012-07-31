@@ -24,10 +24,9 @@ error_and_abort(Eet_File *ef, const char *fmt, ...)
 {
    va_list ap;
 
-   fprintf(stderr, "%s: Error. ", progname);
-
    va_start(ap, fmt);
-   vfprintf(stderr, fmt, ap);
+   eina_log_vprint(_edje_cc_log_dom, EINA_LOG_LEVEL_CRITICAL,
+                   "unknown", "unknown", 0, fmt, ap);
    va_end(ap);
    eet_close(ef);
    exit(-1);

@@ -259,7 +259,7 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
 
    /* Change structure layout */
    edc = calloc(1, sizeof (Edje_Part_Collection));
-   if (!edc) error_and_abort(ef, "Not enough memory\n");
+   if (!edc) error_and_abort(ef, "Not enough memory");
    ce->ref = edc;
 
    EINA_LIST_FREE(oedc->programs, pg)
@@ -306,7 +306,7 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
    edc->parts_count = eina_list_count(oedc->parts);
    edc->parts = calloc(edc->parts_count, sizeof (Edje_Part *));
    if (edc->parts_count && !edc->parts)
-     error_and_abort(ef, "Not enough memory\n");
+     error_and_abort(ef, "Not enough memory");
    k = 0;
 
    EINA_LIST_FREE(oedc->parts, part)
@@ -318,7 +318,7 @@ _edje_collection_convert(Eet_File *ef, Edje_Part_Collection_Directory_Entry *ce,
 
 	replacement = eina_mempool_malloc(ce->mp.part, sizeof (Edje_Part));
 	if (!replacement)
-	  error_and_abort(ef, "Not enough memory\n");
+	  error_and_abort(ef, "Not enough memory");
 
 	replacement->name = part->name;
 	replacement->default_desc = _edje_description_convert(part->type, ce, part->default_desc);
