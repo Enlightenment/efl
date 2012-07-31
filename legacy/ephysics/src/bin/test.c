@@ -24,6 +24,7 @@ void test_no_gravity(void *data, Evas_Object *obj, void *event_info);
 void test_rotate(void *data, Evas_Object *obj, void *event_info);
 void test_velocity(void *data, Evas_Object *obj, void *event_info);
 void test_sleeping(void *data, Evas_Object *obj, void *event_info);
+void test_slider(void *data, Evas_Object *obj, void *event_info);
 
 static void
 _win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -166,6 +167,7 @@ _main_win_add(char *autorun __UNUSED__, Eina_Bool test_win_only __UNUSED__)
    ADD_TEST("ROTATE", test_rotate);
    ADD_TEST("VELOCITY", test_velocity);
    ADD_TEST("SLEEPING THRESHOLD", test_sleeping);
+   ADD_TEST("SLIDER", test_slider);
 
    elm_list_go(list);
 }

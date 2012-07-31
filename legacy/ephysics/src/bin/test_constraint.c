@@ -60,7 +60,8 @@ _world_populate(Test_Data *test_data)
    ephysics_body_friction_set(box_body2, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body2);
 
-   constraint = ephysics_constraint_add(box_body1, box_body2, 0, 100, 0, 0);
+   constraint = ephysics_constraint_p2p_add(box_body1, box_body2, 0, 100, 0,
+                                            0);
    test_data->constraints = eina_list_append(test_data->constraints,
                                              constraint);
 }

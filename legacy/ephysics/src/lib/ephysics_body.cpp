@@ -10,8 +10,6 @@
 extern "C" {
 #endif
 
-#define RAD_TO_DEG 57.29582 /* 2 * pi radians == 360 degree */
-
 typedef struct _EPhysics_Body_Callback EPhysics_Body_Callback;
 
 struct _EPhysics_Body_Callback {

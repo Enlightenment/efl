@@ -42,6 +42,8 @@
 extern "C" {
 #endif
 
+#define RAD_TO_DEG 57.29582 /* 2 * pi radians == 360 degree */
+
 typedef enum _EPhysics_World_Boundary
 {
    EPHYSICS_WORLD_BOUNDARY_TOP,
