@@ -2,37 +2,12 @@
 #include "elm_priv.h"
 #include "elm_widget_button.h"
 
-static const char BUTTON_SMART_NAME[] = "elm_button";
+EAPI const char ELM_BUTTON_SMART_NAME[] = "elm_button";
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_REPEATED[] = "repeated";
 static const char SIG_PRESSED[] = "pressed";
 static const char SIG_UNPRESSED[] = "unpressed";
-
-#define ELM_BUTTON_DATA_GET(o, sd) \
-  Elm_Button_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_BUTTON_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_BUTTON_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_BUTTON_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_BUTTON_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
-    }
-
-#define ELM_BUTTON_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), BUTTON_SMART_NAME, __func__)) \
-    return
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -45,9 +20,6 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
    {"default", "elm.text"},
    {NULL, NULL}
 };
-
-/* no *direct* instantiation of this class, so far */
-__UNUSED__ static Evas_Smart *_elm_button_smart_class_new(void);
 
 /* smart callbacks coming from elm button objects (besides the ones
  * coming from elm layout): */
@@ -62,7 +34,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (BUTTON_SMART_NAME, _elm_button, Elm_Button_Smart_Class,
+  (ELM_BUTTON_SMART_NAME, _elm_button, Elm_Button_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
@@ -336,13 +308,15 @@ _elm_button_smart_set_user(Elm_Button_Smart_Class *sc)
 
    ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
    ELM_LAYOUT_CLASS(sc)->text_aliases = _text_aliases;
+
+   sc->admits_autorepeat = EINA_TRUE;
 }
 
 EAPI const Elm_Button_Smart_Class *
 elm_button_smart_class_get(void)
 {
    static Elm_Button_Smart_Class _sc =
-     ELM_BUTTON_SMART_CLASS_INIT_NAME_VERSION(BUTTON_SMART_NAME);
+     ELM_BUTTON_SMART_CLASS_INIT_NAME_VERSION(ELM_BUTTON_SMART_NAME);
    static const Elm_Button_Smart_Class *class = NULL;
    Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
 
@@ -355,18 +329,6 @@ elm_button_smart_class_get(void)
    return class;
 }
 
-/* new class here just to take advantage of
- * ELM_BUTTON_SMART_CLASS_INIT() macro, which sets auto-repeat capability */
-EVAS_SMART_SUBCLASS_NEW
-  (BUTTON_SMART_NAME, _elm_button_widget, Elm_Button_Smart_Class,
-  Elm_Button_Smart_Class, elm_button_smart_class_get, NULL);
-
-static void
-_elm_button_widget_smart_set_user(Elm_Button_Smart_Class *sc __UNUSED__)
-{
-   /* NOP: declared because it's obligatory for Evas macro */
-}
-
 EAPI Evas_Object *
 elm_button_add(Evas_Object *parent)
 {
@@ -374,7 +336,7 @@ elm_button_add(Evas_Object *parent)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
 
-   obj = elm_widget_add(_elm_button_widget_smart_class_new(), parent);
+   obj = elm_widget_add(_elm_button_smart_class_new(), parent);
    if (!obj) return NULL;
 
    if (!elm_widget_sub_object_add(parent, obj))

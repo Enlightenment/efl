@@ -23,7 +23,7 @@
  *
  * @ingroup Widget
  */
-#define ELM_BUTTON_CLASS(x) ((Elm_Button_Smart_Class *) x)
+#define ELM_BUTTON_CLASS(x) ((Elm_Button_Smart_Class *)x)
 
 /**
  * @def ELM_BUTTON_DATA
@@ -33,7 +33,7 @@
  *
  * @ingroup Widget
  */
-#define ELM_BUTTON_DATA(x) ((Elm_Button_Smart_Data *) x)
+#define ELM_BUTTON_DATA(x)  ((Elm_Button_Smart_Data *)x)
 
 /**
  * @def ELM_BUTTON_SMART_CLASS_VERSION
@@ -61,7 +61,7 @@
  *
  * @ingroup Widget
  */
-#define ELM_BUTTON_SMART_CLASS_INIT(smart_class_init)                        \
+#define ELM_BUTTON_SMART_CLASS_INIT(smart_class_init) \
   {smart_class_init, ELM_BUTTON_SMART_CLASS_VERSION, EINA_TRUE}
 
 /**
@@ -139,5 +139,31 @@ typedef struct _Elm_Button_Smart_Data
  */
 
 EAPI const Elm_Button_Smart_Class *elm_button_smart_class_get(void);
+
+#define ELM_BUTTON_DATA_GET(o, sd) \
+  Elm_Button_Smart_Data * sd = evas_object_smart_data_get(o)
+
+#define ELM_BUTTON_DATA_GET_OR_RETURN(o, ptr)        \
+  ELM_BUTTON_DATA_GET(o, ptr);                       \
+  if (!ptr)                                          \
+    {                                                \
+       CRITICAL("No widget data for object %p (%s)", \
+                o, evas_object_type_get(o));         \
+       return;                                       \
+    }
+
+#define ELM_BUTTON_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
+  ELM_BUTTON_DATA_GET(o, ptr);                         \
+  if (!ptr)                                            \
+    {                                                  \
+       CRITICAL("No widget data for object %p (%s)",   \
+                o, evas_object_type_get(o));           \
+       return val;                                     \
+    }
+
+#define ELM_BUTTON_CHECK(obj)                     \
+  if (!obj || !elm_widget_type_check              \
+        ((obj), ELM_BUTTON_SMART_NAME, __func__)) \
+    return
 
 #endif
