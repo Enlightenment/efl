@@ -683,8 +683,8 @@ EAPI int                eina_log_domain_level_get(const char *domain_name) EINA_
  *        eina_log_domain_level_get(), but relies on domain being
  *        present.
  *
- * @return level to use to limit eina_log_print() for given domain. On
- *         error EINA_LOG_LEVEL_UNKNOWN is returned.
+ * @return #EINA_TRUE if level should be printed, #EINA_FALSE if not.
+ *         (domain's level is greater or equal @a level).
  */
 EAPI int                eina_log_domain_registered_level_get(int domain) EINA_WARN_UNUSED_RESULT;
 
