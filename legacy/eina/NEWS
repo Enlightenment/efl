@@ -17,6 +17,7 @@ Fixes:
     * Fix issue in the XML parser when a tag was in a comment or a CDATA.
     * Implement eina_file_map_lines() on Windows.
     * Handle NULL in all eina_*_free function.
+    * eina_log_console_color_set()
 
 Removal:
     * configure options: --disable-posix-threads, --disable-win32-threads,

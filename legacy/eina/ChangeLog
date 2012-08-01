@@ -320,3 +320,7 @@
         * Modify eina_prefix to deal with debian's fun new
         multiarch... if you are a shared library.
 
+2012-08-01 Gustavo Sverzut Barbieri (k-s)
+
+	* added eina_log_console_color_set() for cross platform console
+	color set.

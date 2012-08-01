@@ -900,6 +900,8 @@ EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
  * @note if color is disabled, nothing is done. See
  *       eina_log_color_disable_get()
  * @note on windows, both @a fp and @a color is converted automatically.
+ *
+ * @since 1.7
  */
 EAPI void eina_log_console_color_set(FILE *fp,
                                      const char *color) EINA_ARG_NONNULL(1, 2);
