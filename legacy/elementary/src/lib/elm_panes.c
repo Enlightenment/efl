@@ -1,6 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_panes.h"
 
 /**
  * TODO
@@ -9,25 +9,7 @@
  * Add events (move, start ...)
  */
 
-static const char PANES_SMART_NAME[] = "elm_panes";
-
-typedef struct _Elm_Panes_Smart_Data Elm_Panes_Smart_Data;
-
-struct _Elm_Panes_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   struct
-   {
-      int       x_diff;
-      int       y_diff;
-      Eina_Bool move;
-   } move;
-
-   Eina_Bool             double_clicked : 1;
-   Eina_Bool             horizontal : 1;
-   Eina_Bool             fixed : 1;
-};
+EAPI const char ELM_PANES_SMART_NAME[] = "elm_panes";
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_PRESS[] = "press";
@@ -48,35 +30,8 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-#define ELM_PANES_DATA_GET(o, sd) \
-  Elm_Panes_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_PANES_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_PANES_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_PANES_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_PANES_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_PANES_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), PANES_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (PANES_SMART_NAME, _elm_panes, Elm_Layout_Smart_Class,
+  (ELM_PANES_SMART_NAME, _elm_panes, Elm_Panes_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static Eina_Bool
@@ -229,14 +184,32 @@ _elm_panes_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_panes_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_panes_smart_set_user(Elm_Panes_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_panes_smart_add;
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_panes_smart_theme;
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_panes_smart_focus_next;
 
-   sc->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+}
+
+EAPI const Elm_Panes_Smart_Class *
+elm_panes_smart_class_get(void)
+{
+   static Elm_Panes_Smart_Class _sc =
+     ELM_PANES_SMART_CLASS_INIT_NAME_VERSION(ELM_PANES_SMART_NAME);
+   static const Elm_Panes_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_panes_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
