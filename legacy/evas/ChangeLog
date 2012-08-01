@@ -937,3 +937,9 @@
         * Fix evas pointer count problem, if press/release events occurs not pair,
 	it screws up the evas event process. We are not deal with release event if
 	there is no pressed pointer.
+
+2012-08-01  Carsten Haitzler (The Rasterman)
+
+        * Provide share (Data) file for prefix finding and use
+        eina_prefix for modules too so we work with debian multiarch
+
