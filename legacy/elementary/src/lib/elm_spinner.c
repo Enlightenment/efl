@@ -1,36 +1,9 @@
 #include <Elementary.h>
+//#include <ctype.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
-#include <ctype.h>
+#include "elm_widget_spinner.h"
 
-static const char SPINNER_SMART_NAME[] = "elm_spinner";
-
-typedef struct _Elm_Spinner_Smart_Data    Elm_Spinner_Smart_Data;
-typedef struct _Elm_Spinner_Special_Value Elm_Spinner_Special_Value;
-
-struct _Elm_Spinner_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Evas_Object          *ent;
-   const char           *label;
-   double                val, val_min, val_max, orig_val, step, val_base;
-   double                drag_start_pos, spin_speed, interval, first_interval;
-   int                   round;
-   Ecore_Timer          *delay, *spin;
-   Eina_List            *special_values;
-
-   Eina_Bool             entry_visible : 1;
-   Eina_Bool             dragging : 1;
-   Eina_Bool             editable : 1;
-   Eina_Bool             wrap : 1;
-};
-
-struct _Elm_Spinner_Special_Value
-{
-   double      value;
-   const char *label;
-};
+EAPI const char ELM_SPINNER_SMART_NAME[] = "elm_spinner";
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
@@ -40,39 +13,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#define ELM_SPINNER_SMART_DATA(_sd) \
-  ((Elm_Spinner_Smart_Data *)_sd)
-
-#define ELM_SPINNER_DATA_GET(o, sd) \
-  Elm_Spinner_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_SPINNER_DATA_GET_OR_RETURN(o, ptr)       \
-  ELM_SPINNER_DATA_GET(o, ptr);                      \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_SPINNER_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_SPINNER_DATA_GET(o, ptr);                         \
-  if (!ptr)                                             \
-    {                                                   \
-       CRITICAL("No widget data for object %p (%s)",    \
-                o, evas_object_type_get(o));            \
-       return val;                                      \
-    }
-
-#define ELM_SPINNER_CHECK(obj)                                  \
-  if (!obj || !elm_widget_type_check((obj), SPINNER_SMART_NAME, \
-                                     __func__))                 \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (SPINNER_SMART_NAME, _elm_spinner, Elm_Layout_Smart_Class,
+  (ELM_SPINNER_SMART_NAME, _elm_spinner, Elm_Spinner_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
@@ -596,7 +538,7 @@ _elm_spinner_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_spinner_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_spinner_smart_set_user(Elm_Spinner_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_spinner_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_spinner_smart_del;
@@ -604,7 +546,24 @@ _elm_spinner_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = NULL; /* not 'focus chain manager' */
    ELM_WIDGET_CLASS(sc)->event = _elm_spinner_smart_event;
 
-   sc->sizing_eval = _elm_spinner_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_spinner_smart_sizing_eval;
+}
+
+EAPI const Elm_Spinner_Smart_Class *
+elm_spinner_smart_class_get(void)
+{
+   static Elm_Spinner_Smart_Class _sc =
+     ELM_SPINNER_SMART_CLASS_INIT_NAME_VERSION(ELM_SPINNER_SMART_NAME);
+   static const Elm_Spinner_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_spinner_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *

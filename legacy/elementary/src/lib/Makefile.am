@@ -85,6 +85,7 @@ elm_widget_segment_control.h \
 elm_widget_separator.h \
 elm_widget_slider.h \
 elm_widget_slideshow.h \
+elm_widget_spinner.h \
 elm_widget_table.h \
 elm_widget_thumb.h \
 elm_widget_video.h \
