@@ -48,6 +48,7 @@ elm_widget_bg.h \
 elm_widget_box.h \
 elm_widget_button.h \
 elm_widget_calendar.h \
+elm_widget_check.h \
 elm_widget_conform.h \
 elm_widget_container.h \
 elm_widget_datetime.h \

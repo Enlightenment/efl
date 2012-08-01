@@ -1,43 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_check.h"
 
-static const char CHECK_SMART_NAME[] = "elm_check";
-
-typedef struct _Elm_Check_Smart_Data Elm_Check_Smart_Data;
-
-struct _Elm_Check_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Eina_Bool             state;
-   Eina_Bool            *statep;
-};
-
-#define ELM_CHECK_DATA_GET(o, sd) \
-  Elm_Check_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_CHECK_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_CHECK_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_CHECK_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_CHECK_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_CHECK_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), CHECK_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_CHECK_SMART_NAME[] = "elm_check";
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
 {
@@ -61,10 +26,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (CHECK_SMART_NAME, _elm_check, Elm_Layout_Smart_Class,
+  (ELM_CHECK_SMART_NAME, _elm_check, Elm_Check_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
@@ -336,7 +299,7 @@ _elm_check_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_check_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_check_smart_set_user(Elm_Check_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_check_smart_add;
 
@@ -350,10 +313,28 @@ _elm_check_smart_set_user(Elm_Layout_Smart_Class *sc)
 
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_check_smart_content_set;
 
-   sc->sizing_eval = _elm_check_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_check_smart_sizing_eval;
 
-   sc->content_aliases = _content_aliases;
-   sc->text_aliases = _text_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->text_aliases = _text_aliases;
+}
+
+EAPI const Elm_Check_Smart_Class *
+elm_check_smart_class_get(void)
+{
+   static Elm_Check_Smart_Class _sc =
+     ELM_CHECK_SMART_CLASS_INIT_NAME_VERSION(ELM_CHECK_SMART_NAME);
+   static const Elm_Check_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_check_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
