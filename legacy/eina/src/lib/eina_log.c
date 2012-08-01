@@ -252,75 +252,110 @@ static const char *_names[] = {
 };
 
 #ifdef _WIN32
+/* TODO: query win32_def_attr on eina_log_init() */
+static int win32_def_attr = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+
+/* NOTE: can't use eina_log from inside this function */
 static int
-eina_log_win32_color_get(const char *domain_str)
+eina_log_win32_color_convert(const char *color, const char **endptr)
 {
-   char *str;
-   char *tmp;
-   char *tmp2;
-   int code = -1;
-   int lighted = 0;
-   int ret = 0;
+   const char *p;
+   int attr = 0;
 
-   str = strdup(domain_str);
-   if (!str)
-      return 0;
+   if (endptr) *endptr = color;
 
-   /* this should not append */
-   if (str[0] != '\033')
+   if (color[0] != '\033') return 0;
+   if (color[1] != '[') return 0;
+
+   p = color + 2;
+   while (1)
      {
-        free(str);
-        return 0;
-     }
+        char *end;
+        int code = strtol(p, &end, 10);
 
-   /* we skip the first char and the [ */
-   tmp = tmp2 = str + 2;
-   while (*tmp != 'm')
-     {
-        if (*tmp == ';')
+        if (p == end)
           {
-             *tmp = '\0';
-             code = atol(tmp2);
-             tmp++;
-             tmp2 = tmp;
+             //fputs("empty color string\n", stderr);
+             if (endptr) *endptr = end;
+             attr = 0; /* assume it was not color, must end with 'm' */
+             break;
           }
 
-        tmp++;
+        if (code)
+          {
+             if (code == 0) attr = win32_def_attr;
+             else if (code == 1) attr |= FOREGROUND_INTENSITY;
+             else if (code == 4) attr |= COMMON_LVB_UNDERSCORE;
+             else if (code == 7) attr |= COMMON_LVB_REVERSE_VIDEO;
+             else if ((code >= 30) && (code <= 37))
+               {
+                  /* clear foreground */
+                  attr &= ~(FOREGROUND_RED |
+                            FOREGROUND_GREEN |
+                            FOREGROUND_BLUE);
+
+                  if (code == 31)
+                    attr |= FOREGROUND_RED;
+                  else if (code == 32)
+                    attr |= FOREGROUND_GREEN;
+                  else if (code == 33)
+                    attr |= FOREGROUND_RED | FOREGROUND_GREEN;
+                  else if (code == 34)
+                    attr |= FOREGROUND_BLUE;
+                  else if (code == 35)
+                    attr |= FOREGROUND_RED | FOREGROUND_BLUE;
+                  else if (code == 36)
+                    attr |= FOREGROUND_GREEN | FOREGROUND_BLUE;
+                  else if (code == 37)
+                    attr |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
+               }
+             else if ((code >= 40) && (code <= 47))
+               {
+                  /* clear background */
+                  attr &= ~(BACKGROUND_RED |
+                            BACKGROUND_GREEN |
+                            BACKGROUND_BLUE);
+
+                  if (code == 41)
+                    attr |= BACKGROUND_RED;
+                  else if (code == 42)
+                    attr |= BACKGROUND_GREEN;
+                  else if (code == 44)
+                    attr |= BACKGROUND_RED | BACKGROUND_GREEN;
+                  else if (code == 44)
+                    attr |= BACKGROUND_BLUE;
+                  else if (code == 45)
+                    attr |= BACKGROUND_RED | BACKGROUND_BLUE;
+                  else if (code == 46)
+                    attr |= BACKGROUND_GREEN | BACKGROUND_BLUE;
+                  else if (code == 47)
+                    attr |= BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE;
+               }
+          }
+
+        if (*end == 'm')
+          {
+             if (endptr) *endptr = end + 1;
+             break;
+          }
+        else if (*end == ';')
+          p = end + 1;
+        else
+          {
+             //fprintf(stderr, "unexpected char in color string: %s\n", end);
+             attr = 0; /* assume it was not color */
+             if (endptr) *endptr = end;
+             break;
+          }
      }
-   *tmp = '\0';
-   if (code < 0)
-      code = atol(tmp2);
-   else
-      lighted = atol(tmp2);
 
-   free(str);
+   return attr;
+}
 
-   if (code < lighted)
-     {
-        int c;
-
-        c = code;
-        code = lighted;
-        lighted = c;
-     }
-
-   if (lighted)
-      ret = FOREGROUND_INTENSITY;
-
-   if (code == 31)
-      ret |= FOREGROUND_RED;
-   else if (code == 32)
-      ret |= FOREGROUND_GREEN;
-   else if (code == 33)
-      ret |= FOREGROUND_RED | FOREGROUND_GREEN;
-   else if (code == 34)
-      ret |= FOREGROUND_BLUE;
-   else if (code == 36)
-      ret |= FOREGROUND_GREEN | FOREGROUND_BLUE;
-   else if (code == 37)
-      ret |= FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
-
-   return ret;
+static int
+eina_log_win32_color_get(const char *color)
+{
+   return eina_log_win32_color_convert(color, NULL);
 }
 #endif
 
@@ -2027,3 +2062,35 @@ eina_log_vprint(int domain, Eina_Log_Level level, const char *file,
 #endif
 }
 
+EAPI void
+eina_log_console_color_set(FILE *fp, const char *color)
+{
+#ifdef EINA_ENABLE_LOG
+
+   EINA_SAFETY_ON_NULL_RETURN(fp);
+   EINA_SAFETY_ON_NULL_RETURN(color);
+   if (_disable_color) return;
+
+#ifdef _WIN32
+   int attr = eina_log_win32_color_convert(color);
+   HANDLE *handle;
+   if (fp == stderr)
+     handle = GetStdHandle(STD_ERROR_HANDLE);
+   else if (fp == stdout)
+     handle = GetStdHandle(STD_OUTPUT_HANDLE);
+   else
+     {
+        /* Do we have a way to convert FILE* to HANDLE?
+         * Should we use it?
+         */
+        return;
+     }
+   SetConsoleTextAttribute(handle, attr);
+#else
+   fputs(color, fp);
+#endif
+
+#else
+   (void)color;
+#endif
+}

@@ -19,6 +19,7 @@
 #ifndef EINA_LOG_H_
 #define EINA_LOG_H_
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
 #include <sys/types.h>
@@ -889,6 +890,19 @@ EAPI void eina_log_print_cb_file(const Eina_Log_Domain *d,
                                  const char            *fmt,
                                  void                  *data,
                                  va_list                args);
+
+/**
+ * Configure console color of given file.
+ *
+ * @param fp file to configure console color (usually stderr or stdout).
+ * @param color a VT color code such as #EINA_COLOR_RED or #EINA_COLOR_RESET.
+ *
+ * @note if color is disabled, nothing is done. See
+ *       eina_log_color_disable_get()
+ * @note on windows, both @a fp and @a color is converted automatically.
+ */
+EAPI void eina_log_console_color_set(FILE *fp,
+                                     const char *color) EINA_ARG_NONNULL(1, 2);
 
 #include "eina_inline_log.x"
 
