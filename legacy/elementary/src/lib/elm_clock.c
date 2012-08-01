@@ -1,64 +1,10 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_clock.h"
 
-static const char CLOCK_SMART_NAME[] = "elm_clock";
+EAPI const char ELM_CLOCK_SMART_NAME[] = "elm_clock";
 
 #define DEFAULT_FIRST_INTERVAL 0.85
-typedef struct _Elm_Clock_Smart_Data Elm_Clock_Smart_Data;
-
-struct _Elm_Clock_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   double                interval, first_interval;
-   Elm_Clock_Edit_Mode   digedit;
-   int                   hrs, min, sec, timediff;
-   Evas_Object          *digit[6];
-   Evas_Object          *am_pm_obj;
-   Evas_Object          *sel_obj;
-   Ecore_Timer          *ticker, *spin;
-
-   struct
-   {
-      int                 hrs, min, sec;
-      char                ampm;
-      Elm_Clock_Edit_Mode digedit;
-
-      Eina_Bool           seconds : 1;
-      Eina_Bool           am_pm : 1;
-      Eina_Bool           edit : 1;
-   } cur;
-
-   Eina_Bool seconds : 1;
-   Eina_Bool am_pm : 1;
-   Eina_Bool edit : 1;
-};
-
-#define ELM_CLOCK_DATA_GET(o, sd) \
-  Elm_Clock_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_CLOCK_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_CLOCK_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_CLOCK_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_CLOCK_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_CLOCK_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), CLOCK_SMART_NAME, __func__)) \
-    return
 
 static void _time_update(Evas_Object *obj);
 
@@ -69,10 +15,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (CLOCK_SMART_NAME, _elm_clock, Elm_Layout_Smart_Class,
+  (ELM_CLOCK_SMART_NAME, _elm_clock, Elm_Clock_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static Eina_Bool
@@ -530,7 +474,7 @@ _elm_clock_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_clock_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_clock_smart_set_user(Elm_Clock_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_clock_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_clock_smart_del;
@@ -540,6 +484,24 @@ _elm_clock_smart_set_user(Elm_Layout_Smart_Class *sc)
    /* not a 'focus chain manager' */
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
+}
+
+EAPI const Elm_Clock_Smart_Class *
+elm_clock_smart_class_get(void)
+{
+   static Elm_Clock_Smart_Class _sc =
+     ELM_CLOCK_SMART_CLASS_INIT_NAME_VERSION(ELM_CLOCK_SMART_NAME);
+   static const Elm_Clock_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_clock_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
