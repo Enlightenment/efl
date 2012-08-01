@@ -1,50 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_label.h"
 
-static const char LABEL_SMART_NAME[] = "elm_label";
-
-typedef struct _Elm_Label_Smart_Data Elm_Label_Smart_Data;
-
-struct _Elm_Label_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   const char           *format;
-   double                slide_duration;
-   Evas_Coord            lastw;
-   Evas_Coord            wrap_w;
-   Elm_Wrap_Type         linewrap;
-
-   Eina_Bool             ellipsis : 1;
-   Eina_Bool             slidingmode : 1;
-   Eina_Bool             slidingellipsis : 1;
-};
-
-#define ELM_LABEL_DATA_GET(o, sd) \
-  Elm_Label_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_LABEL_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_LABEL_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_LABEL_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_LABEL_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_LABEL_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), LABEL_SMART_NAME, __func__)) \
-    return
+EAPI const char ELM_LABEL_SMART_NAME[] = "elm_label";
 
 static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 {
@@ -55,7 +13,7 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (LABEL_SMART_NAME, _elm_label, Elm_Layout_Smart_Class,
+  (ELM_LABEL_SMART_NAME, _elm_label, Elm_Label_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
 
 static void
@@ -378,7 +336,7 @@ _elm_label_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_label_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_label_smart_set_user(Elm_Label_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_label_smart_add;
 
@@ -389,10 +347,26 @@ _elm_label_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->theme = _elm_label_smart_theme;
    ELM_WIDGET_CLASS(sc)->translate = _elm_label_smart_translate;
 
-   sc->sizing_eval = _elm_label_smart_sizing_eval;
-   sc->text_set = _elm_label_smart_text_set;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_label_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->text_set = _elm_label_smart_text_set;
 
-   sc->text_aliases = _text_aliases;
+   ELM_LAYOUT_CLASS(sc)->text_aliases = _text_aliases;
+}
+
+EAPI const Elm_Label_Smart_Class *
+elm_label_smart_class_get(void)
+{
+   static Elm_Label_Smart_Class _sc =
+     ELM_LABEL_SMART_CLASS_INIT_NAME_VERSION(ELM_LABEL_SMART_NAME);
+   static const Elm_Label_Smart_Class *class = NULL;
+
+   if (class)
+     return class;
+
+   _elm_label_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
