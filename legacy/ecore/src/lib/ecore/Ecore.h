@@ -1085,6 +1085,26 @@ typedef Eina_Bool (*Ecore_Win32_Handle_Cb)(void *data, Ecore_Win32_Handler *wh);
  *
  */
 EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func, const void *data, Ecore_Fd_Cb buf_func, const void *buf_data);
+
+/**
+ * @brief Adds a callback for activity on the given file descriptor.
+ *
+ * @param fd The file descriptor to watch.
+ * @param flags To monitor it for reading use @c ECORE_FD_READ, for writing @c
+ * ECORE_FD_WRITE, and for error @c ECORE_FD_ERROR. Values by |(ored).
+ * @param func The callback function.
+ * @param data The data to pass to the callback.
+ * @param buf_func The function to call to check if any data has been buffered
+ * and already read from the fd. May be @c NULL.
+ * @param buf_data The data to pass to the @p buf_func function.
+ * @return A fd handler handle on success, @c NULL otherwise.
+ *
+ * This function is identical to ecore_main_fd_handler_add, except that it supports regular files.
+ *
+ * @since 1.7
+ */
+EAPI Ecore_Fd_Handler *ecore_main_fd_handler_file_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func, const void *data, Ecore_Fd_Cb buf_func, const void *buf_data);
+
 /**
  * @brief Set the prepare callback with data for a given #Ecore_Fd_Handler
  *
