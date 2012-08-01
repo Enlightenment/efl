@@ -1,17 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_bubble.h"
 
-static const char BUBBLE_SMART_NAME[] = "elm_bubble";
-
-typedef struct _Elm_Bubble_Smart_Data Elm_Bubble_Smart_Data;
-
-struct _Elm_Bubble_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Elm_Bubble_Pos        pos;
-};
+EAPI const char ELM_BUBBLE_SMART_NAME[] = "elm_bubble";
 
 static const char SIG_CLICKED[] = "clicked";
 
@@ -43,35 +34,8 @@ static const char *corner_string[] =
    "bottom_right"
 };
 
-#define ELM_BUBBLE_DATA_GET(o, sd) \
-  Elm_Bubble_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_BUBBLE_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_BUBBLE_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_BUBBLE_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_BUBBLE_DATA_GET(o, ptr);                         \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return val;                                     \
-    }
-
-#define ELM_BUBBLE_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), BUBBLE_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (BUBBLE_SMART_NAME, _elm_bubble, Elm_Layout_Smart_Class,
+  (ELM_BUBBLE_SMART_NAME, _elm_bubble, Elm_Bubble_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
@@ -178,18 +142,36 @@ _elm_bubble_smart_add(Evas_Object *obj)
 }
 
 static void
-_elm_bubble_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_bubble_smart_set_user(Elm_Bubble_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_bubble_smart_add;
 
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_bubble_smart_focus_next;
    ELM_WIDGET_CLASS(sc)->focus_direction = _elm_bubble_smart_focus_direction;
 
-   sc->text_set = _elm_bubble_smart_text_set;
-   sc->sizing_eval = _elm_bubble_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->text_set = _elm_bubble_smart_text_set;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_bubble_smart_sizing_eval;
 
-   sc->content_aliases = _content_aliases;
-   sc->text_aliases = _text_aliases;
+   ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
+   ELM_LAYOUT_CLASS(sc)->text_aliases = _text_aliases;
+}
+
+EAPI const Elm_Bubble_Smart_Class *
+elm_bubble_smart_class_get(void)
+{
+   static Elm_Bubble_Smart_Class _sc =
+     ELM_BUBBLE_SMART_CLASS_INIT_NAME_VERSION(ELM_BUBBLE_SMART_NAME);
+   static const Elm_Bubble_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_bubble_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *

@@ -46,6 +46,7 @@ elm_widget.h \
 elm_widget_actionslider.h \
 elm_widget_bg.h \
 elm_widget_box.h \
+elm_widget_bubble.h \
 elm_widget_button.h \
 elm_widget_calendar.h \
 elm_widget_check.h \
