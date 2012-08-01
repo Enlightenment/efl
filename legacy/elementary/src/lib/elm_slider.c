@@ -383,6 +383,11 @@ success:
 static void
 _visuals_refresh(Evas_Object *obj)
 {
+   ELM_SLIDER_DATA_GET(obj, sd);
+
+   if (sd->popup)
+     edje_object_scale_set(sd->popup, elm_widget_scale_get(obj) *
+                           elm_config_scale_get());
    _val_set(obj);
    _units_set(obj);
    _indicator_set(obj);
@@ -682,6 +687,8 @@ _elm_slider_smart_add(Evas_Object *obj)
         _elm_theme_set(NULL, priv->popup,
                        "slider", "horizontal/popup",
                        elm_widget_style_get(obj));
+        edje_object_scale_set(priv->popup, elm_widget_scale_get(obj) *
+                              elm_config_scale_get());
         edje_object_signal_callback_add(priv->popup, "popup,hide,done", "elm",
                                         _popup_hide_done, obj);
 
