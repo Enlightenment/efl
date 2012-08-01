@@ -1,8 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_colorselector.h"
 
-static const char COLORSELECTOR_SMART_NAME[] = "elm_colorselector";
+EAPI const char ELM_COLORSELECTOR_SMART_NAME[] = "elm_colorselector";
 
 #define BASE_STEP       360.0
 #define HUE_STEP        360.0
@@ -11,101 +11,6 @@ static const char COLORSELECTOR_SMART_NAME[] = "elm_colorselector";
 #define ALP_STEP        256.0
 #define DEFAULT_HOR_PAD 10
 #define DEFAULT_VER_PAD 10
-
-typedef enum _Color_Type
-{
-   HUE,
-   SATURATION,
-   LIGHTNESS,
-   ALPHA
-} Color_Type;
-
-typedef struct _Color_Bar_Data Color_Bar_Data;
-struct _Color_Bar_Data
-{
-   Evas_Object *parent;
-   Evas_Object *colorbar;
-   Evas_Object *bar;
-   Evas_Object *lbt;
-   Evas_Object *rbt;
-   Evas_Object *bg_rect;
-   Evas_Object *arrow;
-   Evas_Object *touch_area;
-   Color_Type   color_type;
-};
-
-typedef struct _Elm_Colorselector_Smart_Data Elm_Colorselector_Smart_Data;
-typedef struct _Elm_Color_Item               Elm_Color_Item;
-struct _Elm_Colorselector_Smart_Data
-{
-   Elm_Layout_Smart_Data  base;
-
-   /* for the 2 displaying modes of the widget */
-   Evas_Object           *col_bars_area;
-   Evas_Object           *palette_box;
-
-   Eina_List             *items, *selected;
-   Color_Bar_Data        *cb_data[4];
-
-   Ecore_Timer           *longpress_timer;
-   const char            *palette_name;
-   Evas_Coord             _x, _y, _w, _h;
-
-   /* color components */
-   int                    r, g, b, a;
-   int                    er, eg, eb;
-   int                    sr, sg, sb;
-   int                    lr, lg, lb;
-
-   double                 h, s, l;
-   Elm_Colorselector_Mode mode, focused;
-   int sel_color_type;
-
-   Eina_Bool              longpressed : 1;
-   Eina_Bool              config_load : 1;
-};
-
-struct _Elm_Color_Item
-{
-   ELM_WIDGET_ITEM;
-
-   Evas_Object    *color_obj;
-   Elm_Color_RGBA *color;
-};
-
-#define ELM_COLORSELECTOR_DATA_GET(o, sd) \
-  Elm_Colorselector_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_COLORSELECTOR_DATA_GET_OR_RETURN(o, ptr) \
-  ELM_COLORSELECTOR_DATA_GET(o, ptr);                \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_COLORSELECTOR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_COLORSELECTOR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                   \
-    {                                                         \
-       CRITICAL("No widget data for object %p (%s)",          \
-                o, evas_object_type_get(o));                  \
-       return val;                                            \
-    }
-
-#define ELM_COLORSELECTOR_CHECK(obj)                 \
-  if (!obj || !elm_widget_type_check                 \
-        ((obj), COLORSELECTOR_SMART_NAME, __func__)) \
-    return
-
-#define ELM_COLORSELECTOR_ITEM_CHECK(it)                    \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_COLORSELECTOR_CHECK(it->base.widget);
-
-#define ELM_COLORSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_COLORSELECTOR_CHECK(it->base.widget) __VA_ARGS__;
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_COLOR_ITEM_SELECTED[] = "color,item,selected";
@@ -118,11 +23,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
    {NULL, NULL}
 };
 
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (COLORSELECTOR_SMART_NAME, _elm_colorselector, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
+  (ELM_COLORSELECTOR_SMART_NAME, _elm_colorselector,
+  Elm_Colorselector_Smart_Class, Elm_Layout_Smart_Class,
+  elm_layout_smart_class_get, _smart_callbacks);
 
 static void
 _items_del(Elm_Colorselector_Smart_Data *sd)
@@ -791,7 +695,7 @@ _component_sizing_eval(Evas_Object *obj)
           {
              if (sd->cb_data[i]->bg_rect)
                _sub_obj_size_hints_set(sd->cb_data[i]->bg_rect, 1, 1);
-             
+
              _sub_obj_size_hints_set(sd->cb_data[i]->bar, 1, 1);
              _sub_obj_size_hints_set(sd->cb_data[i]->rbt, 1, 1);
              _sub_obj_size_hints_set(sd->cb_data[i]->lbt, 1, 1);
@@ -1182,16 +1086,18 @@ _elm_colorselector_smart_del(Evas_Object *obj)
 
    _items_del(sd);
    /* This cb_data are used during the destruction process of base.del */
-   for (i = 0; i < 4; i++) tmp[i] = sd->cb_data[i];
+   for (i = 0; i < 4; i++)
+     tmp[i] = sd->cb_data[i];
    ELM_WIDGET_CLASS(_elm_colorselector_parent_sc)->base.del(obj);
-   for (i = 0; i < 4; i++) free(tmp[i]);
+   for (i = 0; i < 4; i++)
+     free(tmp[i]);
 }
 
 static Eina_Bool
 _elm_colorselector_smart_event(Evas_Object *obj,
-                          Evas_Object *src __UNUSED__,
-                          Evas_Callback_Type type,
-                          void *event_info)
+                               Evas_Object *src __UNUSED__,
+                               Evas_Callback_Type type,
+                               void *event_info)
 {
    Eina_List *cl = NULL;
    Elm_Color_Item *item = NULL;
@@ -1223,7 +1129,7 @@ _elm_colorselector_smart_event(Evas_Object *obj,
           _button_clicked_cb(sd->cb_data[sd->sel_color_type], sd->cb_data[sd->sel_color_type]->rbt, NULL);
         else return EINA_FALSE;
      }
-   else if ((!strcmp(ev->keyname, "Up"))  ||
+   else if ((!strcmp(ev->keyname, "Up")) ||
             ((!strcmp(ev->keyname, "KP_Up")) && (!ev->string)))
      {
         if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
@@ -1234,7 +1140,8 @@ _elm_colorselector_smart_event(Evas_Object *obj,
                   if (sd->mode == ELM_COLORSELECTOR_BOTH)
                     {
                        sd->focused = ELM_COLORSELECTOR_PALETTE;
-                       /*when focus is shifted to palette start from first item*/
+                       /*when focus is shifted to palette start from
+                        * first item*/
                        sd->selected = sd->items;
                        cl = sd->selected;
                     }
@@ -1251,32 +1158,37 @@ _elm_colorselector_smart_event(Evas_Object *obj,
    else if ((!strcmp(ev->keyname, "Down")) ||
             ((!strcmp(ev->keyname, "KP_Down")) && (!ev->string)))
      {
-       if (sd->focused == ELM_COLORSELECTOR_PALETTE)
-         {
-            if (sd->mode == ELM_COLORSELECTOR_BOTH)
-              {
-                 sd->focused = ELM_COLORSELECTOR_COMPONENTS;
-                 /*when focus is shifted to component start from first color type*/
-                 sd->sel_color_type = HUE;
-              }
-            else return EINA_FALSE;
-         }
-       else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
-         {
-            snprintf(colorbar_s, sizeof(colorbar_s), "elm.colorbar_%d", (sd->sel_color_type + 1));
-            /*Append color type only if next color bar is available*/
-            if (edje_object_part_swallow_get(sd->col_bars_area, colorbar_s))
-              sd->sel_color_type = sd->sel_color_type + 1;
-            else return EINA_FALSE;
-         }
+        if (sd->focused == ELM_COLORSELECTOR_PALETTE)
+          {
+             if (sd->mode == ELM_COLORSELECTOR_BOTH)
+               {
+                  sd->focused = ELM_COLORSELECTOR_COMPONENTS;
+                  /*when focus is shifted to component start from
+                   * first color type*/
+                  sd->sel_color_type = HUE;
+               }
+             else return EINA_FALSE;
+          }
+        else if (sd->focused == ELM_COLORSELECTOR_COMPONENTS)
+          {
+             snprintf(colorbar_s, sizeof(colorbar_s), "elm.colorbar_%d",
+                      (sd->sel_color_type + 1));
+             /*Append color type only if next color bar is available*/
+             if (edje_object_part_swallow_get(sd->col_bars_area, colorbar_s))
+               sd->sel_color_type = sd->sel_color_type + 1;
+             else return EINA_FALSE;
+          }
      }
    else return EINA_FALSE;
    if (cl)
      {
         item = eina_list_data_get(cl);
         elm_object_signal_emit(VIEW(item), "elm,anim,activate", "elm");
-        evas_object_smart_callback_call(WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
-        elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g, item->color->b, item->color->a);
+        evas_object_smart_callback_call
+          (WIDGET(item), SIG_COLOR_ITEM_SELECTED, item);
+        elm_colorselector_color_set
+          (WIDGET(item), item->color->r, item->color->g, item->color->b,
+          item->color->a);
         sd->selected = cl;
      }
    else if (!cl && sd->focused == ELM_COLORSELECTOR_PALETTE)
@@ -1286,7 +1198,7 @@ _elm_colorselector_smart_event(Evas_Object *obj,
 }
 
 static void
-_elm_colorselector_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_colorselector_smart_set_user(Elm_Colorselector_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_colorselector_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_colorselector_smart_del;
@@ -1298,7 +1210,26 @@ _elm_colorselector_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->theme = _elm_colorselector_smart_theme;
    ELM_WIDGET_CLASS(sc)->event = _elm_colorselector_smart_event;
 
-   sc->sizing_eval = _elm_colorselector_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_colorselector_smart_sizing_eval;
+}
+
+EAPI const Elm_Colorselector_Smart_Class *
+elm_colorselector_smart_class_get(void)
+{
+   static Elm_Colorselector_Smart_Class _sc =
+     ELM_COLORSELECTOR_SMART_CLASS_INIT_NAME_VERSION
+       (ELM_COLORSELECTOR_SMART_NAME);
+   static const Elm_Colorselector_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_colorselector_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
