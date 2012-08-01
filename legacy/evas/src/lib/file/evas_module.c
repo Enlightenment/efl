@@ -42,7 +42,7 @@ _evas_module_append(Eina_List *list, char *path)
 void
 evas_module_paths_init(void)
 {
-   char *path;
+   char *libdir, *path;
 
    /* 1. ~/.evas/modules/ */
    path = eina_module_environment_path_get("HOME", "/.evas/modules");
@@ -56,13 +56,24 @@ evas_module_paths_init(void)
      evas_module_paths = _evas_module_append(evas_module_paths, path);
 
    /* 3. libevas.so/../evas/modules/ */
-   path = eina_module_symbol_path_get(evas_module_paths_init, "/evas/modules");
+   libdir = (char *)_evas_module_libdir_get();
+   if (!libdir)
+     path = eina_module_symbol_path_get(evas_module_paths_init, "/evas/modules");
+   else
+     {
+        path = malloc(strlen(libdir) + strlen("/evas/modules") + 1);
+        if (path)
+          {
+             strcpy(path, libdir);
+             strcat(path, "/evas/modules");
+          }
+     }
    if (eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
      free(path);
    else
      evas_module_paths = _evas_module_append(evas_module_paths, path);
 
-   /* 4. PREFIX/evas/modules/ */
+   /* 4. PREFIX/lib/evas/modules/ */
 #ifndef _MSC_VER
    path = PACKAGE_LIB_DIR "/evas/modules";
    if (!eina_list_search_unsorted(evas_module_paths, (Eina_Compare_Cb) strcmp, path))
@@ -616,7 +627,7 @@ EAPI const char *
 _evas_module_libdir_get(void)
 {
    if (!pfx) pfx = eina_prefix_new
-      (NULL, _evas_module_libdir_get, "EVAS", "evas", NULL,
+      (NULL, _evas_module_libdir_get, "EVAS", "evas", "checkme",
        PACKAGE_BIN_DIR, PACKAGE_LIB_DIR, PACKAGE_DATA_DIR, PACKAGE_DATA_DIR);
    if (!pfx) return NULL;
    return eina_prefix_lib_get(pfx);
