@@ -454,6 +454,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
    MAGIC_CHECK_END();
 
    if ((b < 1) || (b > 32)) return;
+   if (e->pointer.downs <= 0) return;
 
    e->pointer.button &= ~(1 << (b - 1));
    e->pointer.downs--;
@@ -1247,6 +1248,7 @@ evas_event_feed_multi_up(Evas *e,
    return;
    MAGIC_CHECK_END();
 
+   if (e->pointer.downs <= 0) return;
    e->pointer.downs--;
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
