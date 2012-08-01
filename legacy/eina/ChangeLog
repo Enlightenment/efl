@@ -314,3 +314,9 @@
 2012-07-05  Raphael Kubo da Costa
 
 	* Handle NULL in all eina_*_free function.
+
+2012-08-01 Carsten Haitzler (The Rasterman)
+
+        * Modify eina_prefix to deal with debian's fun new
+        multiarch... if you are a shared library.
+
