@@ -2072,8 +2072,11 @@ eina_log_console_color_set(FILE *fp, const char *color)
    if (_disable_color) return;
 
 #ifdef _WIN32
-   int attr = eina_log_win32_color_convert(color);
+   int attr = eina_log_win32_color_convert(color, NULL);
    HANDLE *handle;
+
+   if (!attr) return;
+
    if (fp == stderr)
      handle = GetStdHandle(STD_ERROR_HANDLE);
    else if (fp == stdout)
