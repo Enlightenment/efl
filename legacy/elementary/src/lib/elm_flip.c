@@ -1,61 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_container.h"
+#include "elm_widget_flip.h"
 
-static const char FLIP_SMART_NAME[] = "elm_flip";
-
-typedef struct _Elm_Flip_Smart_Data Elm_Flip_Smart_Data;
-typedef struct _Slice               Slice;
-typedef struct _Vertex2             Vertex2;
-typedef struct _Vertex3             Vertex3;
-
-struct _Slice
-{
-   Evas_Object *obj;
-   double       u[4], v[4], x[4], y[4], z[4];
-};
-
-struct _Vertex2
-{
-   double x, y;
-};
-
-struct _Vertex3
-{
-   double x, y, z;
-};
-
-struct _Elm_Flip_Smart_Data
-{
-   Elm_Widget_Smart_Data base;
-
-   Evas_Object          *clip;
-   Evas_Object          *event[4];
-   struct
-   {
-      Evas_Object *content, *clip;
-   } front, back;
-
-   Ecore_Animator       *animator;
-   double                start, len;
-   Ecore_Job            *job;
-   Evas_Coord            down_x, down_y, x, y, ox, oy, w, h;
-   Elm_Flip_Interaction  intmode;
-   Elm_Flip_Mode         mode;
-   int                   dir;
-   double                dir_hitsize[4];
-   Eina_Bool             dir_enabled[4];
-   int                   slices_w, slices_h;
-   Slice               **slices, **slices2;
-
-   Eina_Bool             state : 1;
-   Eina_Bool             next_state : 1;
-   Eina_Bool             down : 1;
-   Eina_Bool             finish : 1;
-   Eina_Bool             started : 1;
-   Eina_Bool             backflip : 1;
-   Eina_Bool             pageflip : 1;
-};
+EAPI const char ELM_FLIP_SMART_NAME[] = "elm_flip";
 
 static const char SIG_ANIMATE_BEGIN[] = "animate,begin";
 static const char SIG_ANIMATE_DONE[] = "animate,done";
@@ -67,33 +14,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 
 static Eina_Bool _flip(Evas_Object *obj);
 
-#define ELM_FLIP_DATA_GET(o, sd) \
-  Elm_Flip_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_FLIP_DATA_GET_OR_RETURN(o, ptr)          \
-  ELM_FLIP_DATA_GET(o, ptr);                         \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_FLIP_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_FLIP_DATA_GET(o, ptr);                         \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return val;                                   \
-    }
-
-#define ELM_FLIP_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), FLIP_SMART_NAME, __func__)) \
-    return
-
 EVAS_SMART_SUBCLASS_NEW
-  (FLIP_SMART_NAME, _elm_flip, Elm_Container_Smart_Class,
+  (ELM_FLIP_SMART_NAME, _elm_flip, Elm_Flip_Smart_Class,
   Elm_Container_Smart_Class, elm_container_smart_class_get, _smart_callbacks);
 
 static void
@@ -1897,7 +1819,7 @@ _elm_flip_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_flip_smart_set_user(Elm_Container_Smart_Class *sc)
+_elm_flip_smart_set_user(Elm_Flip_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_flip_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_flip_smart_del;
@@ -1907,9 +1829,26 @@ _elm_flip_smart_set_user(Elm_Container_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->sub_object_add = _elm_flip_smart_sub_object_add;
    ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_flip_smart_sub_object_del;
 
-   sc->content_set = _elm_flip_smart_content_set;
-   sc->content_get = _elm_flip_smart_content_get;
-   sc->content_unset = _elm_flip_smart_content_unset;
+   ELM_CONTAINER_CLASS(sc)->content_set = _elm_flip_smart_content_set;
+   ELM_CONTAINER_CLASS(sc)->content_get = _elm_flip_smart_content_get;
+   ELM_CONTAINER_CLASS(sc)->content_unset = _elm_flip_smart_content_unset;
+}
+
+EAPI const Elm_Flip_Smart_Class *
+elm_flip_smart_class_get(void)
+{
+   static Elm_Flip_Smart_Class _sc =
+     ELM_FLIP_SMART_CLASS_INIT_NAME_VERSION(ELM_FLIP_SMART_NAME);
+   static const Elm_Flip_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_flip_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *

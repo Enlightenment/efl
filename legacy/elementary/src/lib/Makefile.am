@@ -59,6 +59,7 @@ elm_widget_dayselector.h \
 elm_widget_diskselector.h \
 elm_widget_fileselector.h \
 elm_widget_fileselector_button.h \
+elm_widget_flip.h \
 elm_widget_flipselector.h \
 elm_widget_frame.h \
 elm_widget_gengrid.h \
