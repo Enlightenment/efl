@@ -1,70 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_button.h"
+#include "elm_widget_hoversel.h"
 
-static const char HOVERSEL_SMART_NAME[] = "elm_hoversel";
-
-typedef struct _Elm_Hoversel_Smart_Data Elm_Hoversel_Smart_Data;
-typedef struct _Elm_Hoversel_Item       Elm_Hoversel_Item;
-
-struct _Elm_Hoversel_Smart_Data
-{
-   Elm_Button_Smart_Data base;
-
-   /* aggregates a hover */
-   Evas_Object          *hover;
-   Evas_Object          *hover_parent;
-
-   Eina_List            *items;
-
-   Eina_Bool             horizontal : 1;
-   Eina_Bool             expanded   : 1;
-};
-
-struct _Elm_Hoversel_Item
-{
-   ELM_WIDGET_ITEM;
-
-   const char   *label;
-   const char   *icon_file;
-   const char   *icon_group;
-
-   Elm_Icon_Type icon_type;
-   Evas_Smart_Cb func;
-};
-
-#define ELM_HOVERSEL_DATA_GET(o, sd) \
-  Elm_Hoversel_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_HOVERSEL_DATA_GET_OR_RETURN(o, ptr)      \
-  ELM_HOVERSEL_DATA_GET(o, ptr);                     \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_HOVERSEL_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_HOVERSEL_DATA_GET(o, ptr);                         \
-  if (!ptr)                                              \
-    {                                                    \
-       CRITICAL("No widget data for object %p (%s)",     \
-                o, evas_object_type_get(o));             \
-       return val;                                       \
-    }
-
-#define ELM_HOVERSEL_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), HOVERSEL_SMART_NAME, __func__)) \
-    return
-
-#define ELM_HOVERSEL_ITEM_CHECK(it)                         \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_HOVERSEL_CHECK(it->base.widget);
-
-#define ELM_HOVERSEL_ITEM_CHECK_OR_RETURN(it, ...)                     \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_HOVERSEL_CHECK(it->base.widget) __VA_ARGS__;
+EAPI const char ELM_HOVERSEL_SMART_NAME[] = "elm_hoversel";
 
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_DISMISSED[] = "dismissed";
@@ -75,7 +13,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EVAS_SMART_SUBCLASS_NEW
-  (HOVERSEL_SMART_NAME, _elm_hoversel, Elm_Button_Smart_Class,
+  (ELM_HOVERSEL_SMART_NAME, _elm_hoversel, Elm_Hoversel_Smart_Class,
   Elm_Button_Smart_Class, elm_button_smart_class_get, _smart_callbacks);
 
 static Eina_Bool
@@ -300,7 +238,7 @@ _elm_hoversel_smart_parent_set(Evas_Object *obj,
 }
 
 static void
-_elm_hoversel_smart_set_user(Elm_Button_Smart_Class *sc)
+_elm_hoversel_smart_set_user(Elm_Hoversel_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_hoversel_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_hoversel_smart_del;
@@ -308,7 +246,24 @@ _elm_hoversel_smart_set_user(Elm_Button_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->parent_set = _elm_hoversel_smart_parent_set;
    ELM_WIDGET_CLASS(sc)->theme = _elm_hoversel_smart_theme;
 
-   sc->admits_autorepeat = EINA_FALSE;
+   ELM_BUTTON_CLASS(sc)->admits_autorepeat = EINA_FALSE;
+}
+
+EAPI const Elm_Hoversel_Smart_Class *
+elm_hoversel_smart_class_get(void)
+{
+   static Elm_Hoversel_Smart_Class _sc =
+     ELM_HOVERSEL_SMART_CLASS_INIT_NAME_VERSION(ELM_HOVERSEL_SMART_NAME);
+   static const Elm_Hoversel_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_hoversel_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
