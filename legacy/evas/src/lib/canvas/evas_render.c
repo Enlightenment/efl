@@ -1392,6 +1392,8 @@ evas_render_updates_internal(Evas *e,
                }
           }
 
+        if (obj->delete_me) continue;
+
         EINA_RECTANGLE_SET(&clip_rect,
                            e->framespace.clip->cur.geometry.x,
                            e->framespace.clip->cur.geometry.y,
