@@ -498,6 +498,13 @@ evas_video_sink_samsung_main_render(void *data)
    buffer = send->frame;
    preroll = send->preroll;
 
+   /* frame after cleanup */
+   if (!preroll && !send->ev->last_buffer)
+     {
+        priv = NULL;
+        goto exit_point;
+     }
+
    if (!priv || !priv->o || priv->unlocked)
      goto exit_point;
 
@@ -629,6 +636,13 @@ evas_video_sink_main_render(void *data)
    buffer = send->frame;
    preroll = send->preroll;
    ev = send->ev;
+
+   /* frame after cleanup */
+   if (!preroll && !ev->last_buffer)
+     {
+        priv = NULL;
+        goto exit_point;
+     }
 
    if (!priv || !priv->o || priv->unlocked)
      goto exit_point;
