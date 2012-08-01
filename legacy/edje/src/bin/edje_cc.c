@@ -46,38 +46,8 @@ _edje_cc_log_cb(const Eina_Log_Domain *d,
        (memcmp(d->name, "edje_cc", sizeof("edje_cc") - 1) == 0))
      {
         const char *prefix;
-        Eina_Bool use_color = !eina_log_color_disable_get();
 
-        if (use_color)
-          {
-#ifndef _WIN32
-             fputs(eina_log_level_color_get(level), stderr);
-#else
-             int color;
-             switch (level)
-               {
-                case EINA_LOG_LEVEL_CRITICAL:
-                   color = FOREGROUND_RED | FOREGROUND_INTENSITY;
-                   break;
-                case EINA_LOG_LEVEL_ERR:
-                   color = FOREGROUND_RED;
-                   break;
-                case EINA_LOG_LEVEL_WARN:
-                   color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-                   break;
-                case EINA_LOG_LEVEL_INFO:
-                   color = FOREGROUND_GREEN | FOREGROUND_INTENSITY;
-                   break;
-                case EINA_LOG_LEVEL_DBG:
-                   color = FOREGROUND_BLUE | FOREGROUND_INTENSITY;
-                   break;
-                default:
-                   color = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
-               }
-             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
-#endif
-          }
-
+        eina_log_console_color_set(stderr, eina_log_level_color_get(level));
         switch (level)
           {
            case EINA_LOG_LEVEL_CRITICAL:
@@ -93,17 +63,7 @@ _edje_cc_log_cb(const Eina_Log_Domain *d,
               prefix = "";
           }
         fprintf(stderr, "%s: %s", progname, prefix);
-
-        if (use_color)
-          {
-#ifndef _WIN32
-             fputs(EINA_COLOR_RESET, stderr);
-#else
-             SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE),
-                                     FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
-#endif
-          }
-
+        eina_log_console_color_set(stderr, EINA_COLOR_RESET);
 
         vfprintf(stderr, fmt, args);
         putc('\n', stderr);
