@@ -12,71 +12,9 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_fileselector.h"
 
-#ifdef HAVE_EIO
-# include <Eio.h>
-#endif
-
-static const char FILESELECTOR_SMART_NAME[] = "elm_fileselector";
-
-typedef struct _Elm_Fileselector_Smart_Data Elm_Fileselector_Smart_Data;
-
-struct _Elm_Fileselector_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   EINA_REFCOUNT;
-
-   Evas_Object          *filename_entry;
-   Evas_Object          *path_entry;
-   Evas_Object          *files_list;
-   Evas_Object          *files_grid;
-   Evas_Object          *up_button;
-   Evas_Object          *home_button;
-   Evas_Object          *spinner;
-   Evas_Object          *ok_button;
-   Evas_Object          *cancel_button;
-
-   const char           *path;
-   const char           *selection;
-   Ecore_Idler          *sel_idler;
-
-   const char           *path_separator;
-
-#ifdef HAVE_EIO
-   Eio_File             *current;
-#endif
-
-   Elm_Fileselector_Mode mode;
-
-   Eina_Bool             only_folder : 1;
-   Eina_Bool             expand : 1;
-};
-
-struct sel_data
-{
-   Evas_Object *fs;
-   const char  *path;
-};
-
-typedef struct _Listing_Request Listing_Request;
-struct _Listing_Request
-{
-   Elm_Fileselector_Smart_Data *sd;
-   Elm_Object_Item             *parent_it;
-
-   Evas_Object                 *obj;
-   const char                  *path;
-   Eina_Bool                    first : 1;
-};
-
-typedef enum {
-   ELM_DIRECTORY = 0,
-   ELM_FILE_IMAGE = 1,
-   ELM_FILE_UNKNOW = 2,
-   ELM_FILE_LAST
-} Elm_Fileselector_Type;
+EAPI const char ELM_FILESELECTOR_SMART_NAME[] = "elm_fileselector";
 
 static Elm_Genlist_Item_Class *list_itc[ELM_FILE_LAST];
 static Elm_Gengrid_Item_Class *grid_itc[ELM_FILE_LAST];
@@ -91,37 +29,10 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#define ELM_FILESELECTOR_DATA_GET(o, sd) \
-  Elm_Fileselector_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_FILESELECTOR_DATA_GET_OR_RETURN(o, ptr)  \
-  ELM_FILESELECTOR_DATA_GET(o, ptr);                 \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_FILESELECTOR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_FILESELECTOR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                  \
-    {                                                        \
-       CRITICAL("No widget data for object %p (%s)",         \
-                o, evas_object_type_get(o));                 \
-       return val;                                           \
-    }
-
-#define ELM_FILESELECTOR_CHECK(obj)                 \
-  if (!obj || !elm_widget_type_check                \
-        ((obj), FILESELECTOR_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (FILESELECTOR_SMART_NAME, _elm_fileselector, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
+  (ELM_FILESELECTOR_SMART_NAME, _elm_fileselector,
+  Elm_Fileselector_Smart_Class, Elm_Layout_Smart_Class,
+  elm_layout_smart_class_get, _smart_callbacks);
 
 /* final routine on deletion */
 static void
@@ -350,7 +261,7 @@ _ls_filter_cb(void *data,
      return EINA_FALSE;
 
    if (lreq->sd->only_folder && info->type != EINA_FILE_DIR)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -445,7 +356,7 @@ _ls_main_cb(void *data,
    else
      {
         if (evas_object_image_extension_can_load_get
-            (info->path + info->name_start))
+              (info->path + info->name_start))
           itcn = ELM_FILE_IMAGE;
      }
 
@@ -971,7 +882,7 @@ _elm_fileselector_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_fileselector_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_fileselector_smart_set_user(Elm_Fileselector_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_fileselector_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_fileselector_smart_del;
@@ -982,7 +893,26 @@ _elm_fileselector_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
-   sc->sizing_eval = _elm_fileselector_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_fileselector_smart_sizing_eval;
+}
+
+EAPI const Elm_Fileselector_Smart_Class *
+elm_fileselector_smart_class_get(void)
+{
+   static Elm_Fileselector_Smart_Class _sc =
+     ELM_FILESELECTOR_SMART_CLASS_INIT_NAME_VERSION
+       (ELM_FILESELECTOR_SMART_NAME);
+   static const Elm_Fileselector_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_fileselector_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
