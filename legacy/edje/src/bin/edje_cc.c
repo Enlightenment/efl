@@ -160,6 +160,9 @@ main(int argc, char **argv)
        EINA_LOG_ERR("Enable to create a log domain.");
        exit(-1);
      }
+   if (!eina_log_domain_level_check(_edje_cc_log_dom, EINA_LOG_LEVEL_WARN))
+     eina_log_domain_level_set("edje_cc", EINA_LOG_LEVEL_WARN);
+
    progname = ecore_file_file_get(argv[0]);
    eina_log_print_cb_set(_edje_cc_log_cb, NULL);
 
