@@ -1,11 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_dayselector.h"
 
-static const char DAYSELECTOR_SMART_NAME[] = "elm_dayselector";
-
-typedef struct _Elm_Dayselector_Smart_Data Elm_Dayselector_Smart_Data;
-typedef struct _Elm_Dayselector_Item       Elm_Dayselector_Item;
+EAPI const char ELM_DAYSELECTOR_SMART_NAME[] = "elm_dayselector";
 
 /* signals to edc */
 #define ITEM_TYPE_WEEKDAY_DEFAULT "elm,type,weekday,default"
@@ -16,23 +13,6 @@ typedef struct _Elm_Dayselector_Item       Elm_Dayselector_Item;
 #define ITEM_POS_RIGHT            "elm,pos,check,right"
 #define ITEM_POS_MIDDLE           "elm,pos,check,middle"
 
-struct _Elm_Dayselector_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Eina_List            *items;
-   Elm_Dayselector_Day   week_start;
-   Elm_Dayselector_Day   weekend_start;
-   unsigned int          weekend_len;
-};
-
-struct _Elm_Dayselector_Item
-{
-   ELM_WIDGET_ITEM;
-   Elm_Dayselector_Day day;
-   const char         *day_style;
-};
-
 static const char SIG_CHANGED[] = "dayselector,changed";
 static const char SIG_LANG_CHANGED[] = "language,changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -41,36 +21,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#define ELM_DAYSELECTOR_DATA_GET(o, sd) \
-  Elm_Dayselector_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_DAYSELECTOR_DATA_GET_OR_RETURN(o, ptr)   \
-  ELM_DAYSELECTOR_DATA_GET(o, ptr);                  \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_DAYSELECTOR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_DAYSELECTOR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                 \
-    {                                                       \
-       CRITICAL("No widget data for object %p (%s)",        \
-                o, evas_object_type_get(o));                \
-       return val;                                          \
-    }
-
-#define ELM_DAYSELECTOR_CHECK(obj)                \
-  if (!obj || !elm_widget_type_check(             \
-        (obj), DAYSELECTOR_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (DAYSELECTOR_SMART_NAME, _elm_dayselector, Elm_Layout_Smart_Class,
+  (ELM_DAYSELECTOR_SMART_NAME, _elm_dayselector, Elm_Dayselector_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
 
 static void
@@ -488,7 +440,7 @@ _elm_dayselector_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_dayselector_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_dayselector_smart_set_user(Elm_Dayselector_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_dayselector_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_dayselector_smart_del;
@@ -502,7 +454,25 @@ _elm_dayselector_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_CONTAINER_CLASS(sc)->content_unset =
      _elm_dayselector_smart_content_unset;
 
-   sc->sizing_eval = _elm_dayselector_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_dayselector_smart_sizing_eval;
+}
+
+EAPI const Elm_Dayselector_Smart_Class *
+elm_dayselector_smart_class_get(void)
+{
+   static Elm_Dayselector_Smart_Class _sc =
+     ELM_DAYSELECTOR_SMART_CLASS_INIT_NAME_VERSION(ELM_DAYSELECTOR_SMART_NAME);
+   static const Elm_Dayselector_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_dayselector_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
