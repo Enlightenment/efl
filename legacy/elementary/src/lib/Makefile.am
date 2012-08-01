@@ -75,6 +75,7 @@ elm_widget_progressbar.h \
 elm_widget_radio.h \
 elm_widget_route.h \
 elm_widget_scroller.h \
+elm_widget_segment_control.h \
 elm_widget_separator.h \
 elm_widget_slider.h \
 elm_widget_slideshow.h \

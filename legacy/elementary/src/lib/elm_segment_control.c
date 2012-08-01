@@ -1,64 +1,8 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_segment_control.h"
 
-static const char SEGMENT_CONTROL_SMART_NAME[] = "elm_segment_control";
-
-typedef struct _Elm_Segment_Control_Smart_Data Elm_Segment_Control_Smart_Data;
-typedef struct _Elm_Segment_Item               Elm_Segment_Item;
-
-struct _Elm_Segment_Control_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Eina_List            *items;
-   Elm_Segment_Item     *selected_item;
-
-   int                   item_width;
-};
-
-struct _Elm_Segment_Item
-{
-   ELM_WIDGET_ITEM;
-
-   Evas_Object *icon;
-   const char  *label;
-   int          seg_index;
-};
-
-#define ELM_SEGMENT_CONTROL_DATA_GET(o, sd) \
-  Elm_Segment_Control_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_SEGMENT_CONTROL_DATA_GET_OR_RETURN(o, ptr) \
-  ELM_SEGMENT_CONTROL_DATA_GET(o, ptr);                \
-  if (!ptr)                                            \
-    {                                                  \
-       CRITICAL("No widget data for object %p (%s)",   \
-                o, evas_object_type_get(o));           \
-       return;                                         \
-    }
-
-#define ELM_SEGMENT_CONTROL_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_SEGMENT_CONTROL_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                     \
-    {                                                           \
-       CRITICAL("No widget data for object %p (%s)",            \
-                o, evas_object_type_get(o));                    \
-       return val;                                              \
-    }
-
-#define ELM_SEGMENT_CONTROL_CHECK(obj)                 \
-  if (!obj || !elm_widget_type_check                   \
-        ((obj), SEGMENT_CONTROL_SMART_NAME, __func__)) \
-    return
-
-#define ELM_SEGMENT_CONTROL_ITEM_CHECK(it)                  \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_SEGMENT_CONTROL_CHECK(it->base.widget);
-
-#define ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, ...)              \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_SEGMENT_CONTROL_CHECK(it->base.widget) __VA_ARGS__;
+EAPI const char ELM_SEGMENT_CONTROL_SMART_NAME[] = "elm_segment_control";
 
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -69,8 +13,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (SEGMENT_CONTROL_SMART_NAME, _elm_segment_control, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
+  (ELM_SEGMENT_CONTROL_SMART_NAME, _elm_segment_control,
+  Elm_Segment_Control_Smart_Class, Elm_Layout_Smart_Class,
+  elm_layout_smart_class_get, _smart_callbacks);
 
 static void
 _elm_segment_control_smart_sizing_eval(Evas_Object *obj)
@@ -121,7 +66,7 @@ _position_items(Elm_Segment_Control_Smart_Data *sd)
    if (item_count <= 0) return;
 
    evas_object_geometry_get
-       (ELM_WIDGET_DATA(sd)->resize_obj, &bx, &by, &bw, &bh);
+     (ELM_WIDGET_DATA(sd)->resize_obj, &bx, &by, &bw, &bh);
    sd->item_width = bw / item_count;
    rtl = elm_widget_mirrored_get(ELM_WIDGET_DATA(sd)->obj);
 
@@ -574,7 +519,7 @@ _elm_segment_control_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_segment_control_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_segment_control_smart_set_user(Elm_Segment_Control_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_segment_control_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_segment_control_smart_del;
@@ -590,7 +535,26 @@ _elm_segment_control_smart_set_user(Elm_Layout_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
-   sc->sizing_eval = _elm_segment_control_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_segment_control_smart_sizing_eval;
+}
+
+EAPI const Elm_Segment_Control_Smart_Class *
+elm_segment_control_smart_class_get(void)
+{
+   static Elm_Segment_Control_Smart_Class _sc =
+     ELM_SEGMENT_CONTROL_SMART_CLASS_INIT_NAME_VERSION
+       (ELM_SEGMENT_CONTROL_SMART_NAME);
+   static const Elm_Segment_Control_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_segment_control_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
