@@ -1,6 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_flipselector.h"
 
 /* TODO: ideally, the default theme would use map{} blocks on the TEXT
    parts to implement their fading in/out propertly (as in the clock
@@ -16,7 +16,7 @@
  * bootstrapping (receiving the 1st message) and populate the downmost
  * TEXT parts with the same text as the upmost, where appropriate. */
 
-static const char FLIPSELECTOR_SMART_NAME[] = "elm_flipselector";
+EAPI const char ELM_FLIPSELECTOR_SMART_NAME[] = "elm_flipselector";
 
 #define FLIP_FIRST_INTERVAL (0.85)
 #define FLIP_MIN_INTERVAL   (0.1)
@@ -25,70 +25,6 @@ static const char FLIPSELECTOR_SMART_NAME[] = "elm_flipselector";
 #define MAX_LEN_DEFAULT     (50)
 
 #define DATA_GET            eina_list_data_get
-
-struct _Elm_Flipselector_Item
-{
-   ELM_WIDGET_ITEM;
-
-   const char   *label;
-   Evas_Smart_Cb func;
-   void         *data;
-   int           deleted : 1;
-};
-
-typedef struct _Elm_Flipselector_Smart_Data Elm_Flipselector_Smart_Data;
-typedef struct _Elm_Flipselector_Item       Elm_Flipselector_Item;
-
-struct _Elm_Flipselector_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Eina_List            *items;
-   Eina_List            *current;
-   Eina_List            *sentinel; /* item containing the largest
-                                    * label string */
-   Ecore_Timer          *spin;
-
-   unsigned int          max_len;
-   double                interval, first_interval;
-
-   int                   walking;
-   Eina_Bool             evaluating : 1;
-};
-
-#define ELM_FLIPSELECTOR_DATA_GET(o, sd) \
-  Elm_Flipselector_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_FLIPSELECTOR_DATA_GET_OR_RETURN(o, ptr)  \
-  ELM_FLIPSELECTOR_DATA_GET(o, ptr);                 \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_FLIPSELECTOR_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_FLIPSELECTOR_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                  \
-    {                                                        \
-       CRITICAL("No widget data for object %p (%s)",         \
-                o, evas_object_type_get(o));                 \
-       return val;                                           \
-    }
-
-#define ELM_FLIPSELECTOR_CHECK(obj)                 \
-  if (!obj || !elm_widget_type_check                \
-        ((obj), FLIPSELECTOR_SMART_NAME, __func__)) \
-    return
-
-#define ELM_FLIPSELECTOR_ITEM_CHECK(it)                     \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, ); \
-  ELM_FLIPSELECTOR_CHECK(it->base.widget);
-
-#define ELM_FLIPSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                 \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-  ELM_FLIPSELECTOR_CHECK(it->base.widget) __VA_ARGS__;
 
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNDERFLOWED[] = "underflowed";
@@ -103,8 +39,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 /* Inheriting from elm_layout. Besides, we need no more than what is
  * there */
 EVAS_SMART_SUBCLASS_NEW
-  (FLIPSELECTOR_SMART_NAME, _elm_flipselector, Elm_Layout_Smart_Class,
-  Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);
+  (ELM_FLIPSELECTOR_SMART_NAME, _elm_flipselector,
+  Elm_Flipselector_Smart_Class, Elm_Layout_Smart_Class,
+  elm_layout_smart_class_get, _smart_callbacks);
 
 static void
 _elm_flipselector_smart_sizing_eval(Evas_Object *obj)
@@ -643,7 +580,7 @@ _elm_flipselector_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_flipselector_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_flipselector_smart_set_user(Elm_Flipselector_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_flipselector_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_flipselector_smart_del;
@@ -655,7 +592,26 @@ _elm_flipselector_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
-   sc->sizing_eval = _elm_flipselector_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_flipselector_smart_sizing_eval;
+}
+
+EAPI const Elm_Flipselector_Smart_Class *
+elm_flipselector_smart_class_get(void)
+{
+   static Elm_Flipselector_Smart_Class _sc =
+     ELM_FLIPSELECTOR_SMART_CLASS_INIT_NAME_VERSION
+       (ELM_FLIPSELECTOR_SMART_NAME);
+   static const Elm_Flipselector_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class)
+     return class;
+
+   _elm_flipselector_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
