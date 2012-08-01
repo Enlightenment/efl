@@ -61,6 +61,7 @@ elm_widget_grid.h \
 elm_widget_hover.h \
 elm_widget_icon.h \
 elm_widget_image.h \
+elm_widget_index.h \
 elm_widget_inwin.h \
 elm_widget_layout.h \
 elm_widget_list.h \
