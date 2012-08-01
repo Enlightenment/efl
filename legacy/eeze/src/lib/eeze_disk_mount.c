@@ -48,6 +48,11 @@ _eeze_disk_mount_error_handler(Eeze_Disk *disk, const char *error)
    if (!(de = calloc(1, sizeof(Eeze_Event_Disk_Error))))
      return;
 
+   if (disk->mount_fail_delay)
+     {
+        ecore_timer_del(disk->mount_fail_delay);
+        disk->mount_fail_delay = NULL;
+     }
    de->disk = disk;
    de->message = eina_stringshare_add(error);
    /* FIXME: placeholder since currently there are only mount-type errors */
