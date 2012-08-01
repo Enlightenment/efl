@@ -1,58 +1,11 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_button.h"
+#include "elm_widget_fileselector_button.h"
 
-static const char FILESELECTOR_BUTTON_SMART_NAME[] = "elm_fileselector_button";
-
-typedef struct _Elm_Fileselector_Button_Smart_Data \
-  Elm_Fileselector_Button_Smart_Data;
-
-struct _Elm_Fileselector_Button_Smart_Data
-{
-   Elm_Button_Smart_Data base;
-
-   Evas_Object          *fs, *fsw;
-   const char           *window_title;
-   Evas_Coord            w, h;
-
-   struct
-   {
-      const char *path;
-      Eina_Bool   expandable : 1;
-      Eina_Bool   folder_only : 1;
-      Eina_Bool   is_save : 1;
-   } fsd;
-
-   Eina_Bool             inwin_mode : 1;
-};
+EAPI const char ELM_FILESELECTOR_BUTTON_SMART_NAME[] =
+  "elm_fileselector_button";
 
 #define DEFAULT_WINDOW_TITLE "Select a file"
-
-#define ELM_FILESELECTOR_BUTTON_DATA_GET(o, sd) \
-  Elm_Fileselector_Button_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(o, ptr) \
-  ELM_FILESELECTOR_BUTTON_DATA_GET(o, ptr);                \
-  if (!ptr)                                                \
-    {                                                      \
-       CRITICAL("No widget data for object %p (%s)",       \
-                o, evas_object_type_get(o));               \
-       return;                                             \
-    }
-
-#define ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_FILESELECTOR_BUTTON_DATA_GET(o, ptr);                         \
-  if (!ptr)                                                         \
-    {                                                               \
-       CRITICAL("No widget data for object %p (%s)",                \
-                o, evas_object_type_get(o));                        \
-       return val;                                                  \
-    }
-
-#define ELM_FILESELECTOR_BUTTON_CHECK(obj)                 \
-  if (!obj || !elm_widget_type_check                       \
-        ((obj), FILESELECTOR_BUTTON_SMART_NAME, __func__)) \
-    return
 
 static const char SIG_FILE_CHOSEN[] = "file,chosen";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
@@ -61,9 +14,9 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 
 EVAS_SMART_SUBCLASS_NEW
-  (FILESELECTOR_BUTTON_SMART_NAME, _elm_fileselector_button,
-  Elm_Button_Smart_Class, Elm_Button_Smart_Class, elm_button_smart_class_get,
-  _smart_callbacks);
+  (ELM_FILESELECTOR_BUTTON_SMART_NAME, _elm_fileselector_button,
+  Elm_Fileselector_Button_Smart_Class, Elm_Button_Smart_Class,
+  elm_button_smart_class_get, _smart_callbacks);
 
 static Eina_Bool
 _elm_fileselector_button_smart_theme(Evas_Object *obj)
@@ -237,14 +190,33 @@ _elm_fileselector_button_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_fileselector_button_smart_set_user(Elm_Button_Smart_Class *sc)
+_elm_fileselector_button_smart_set_user(
+  Elm_Fileselector_Button_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_fileselector_button_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_fileselector_button_smart_del;
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_fileselector_button_smart_theme;
 
-   sc->admits_autorepeat = EINA_FALSE;
+   ELM_BUTTON_CLASS(sc)->admits_autorepeat = EINA_FALSE;
+}
+
+EAPI const Elm_Fileselector_Button_Smart_Class *
+elm_fileselector_button_smart_class_get(void)
+{
+   static Elm_Fileselector_Button_Smart_Class _sc =
+     ELM_FILESELECTOR_BUTTON_SMART_CLASS_INIT_NAME_VERSION
+       (ELM_FILESELECTOR_BUTTON_SMART_NAME);
+   static const Elm_Fileselector_Button_Smart_Class *class = NULL;
+   Evas_Smart_Class *esc = (Evas_Smart_Class *)&_sc;
+
+   if (class) return class;
+
+   _elm_fileselector_button_smart_set(&_sc);
+   esc->callbacks = _smart_callbacks;
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
