@@ -80,6 +80,7 @@ elm_widget_slider.h \
 elm_widget_slideshow.h \
 elm_widget_table.h \
 elm_widget_thumb.h \
+elm_widget_video.h \
 elm_widget_web.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 

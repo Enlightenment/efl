@@ -1,6 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_widget_layout.h"
+#include "elm_widget_video.h"
 
 #ifdef HAVE_EMOTION
 # include <Emotion.h>
@@ -9,49 +9,10 @@
 /* TODO: add buffering support to Emotion and display buffering
  * progress in the theme when needed */
 
-static const char VIDEO_SMART_NAME[] = "elm_video";
+EAPI const char ELM_VIDEO_SMART_NAME[] = "elm_video";
 
-typedef struct _Elm_Video_Smart_Data Elm_Video_Smart_Data;
-struct _Elm_Video_Smart_Data
-{
-   Elm_Layout_Smart_Data base;
-
-   Evas_Object          *emotion;
-   Ecore_Timer          *timer;
-
-   Eina_Bool             stop : 1;
-   Eina_Bool             remember : 1;
-};
-
-#define ELM_VIDEO_DATA_GET(o, sd) \
-  Elm_Video_Smart_Data * sd = evas_object_smart_data_get(o)
-
-#define ELM_VIDEO_DATA_GET_OR_RETURN(o, ptr)         \
-  ELM_VIDEO_DATA_GET(o, ptr);                        \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("No widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#define ELM_VIDEO_DATA_GET_OR_RETURN_VAL(o, ptr, val) \
-  ELM_VIDEO_DATA_GET(o, ptr);                         \
-  if (!ptr)                                           \
-    {                                                 \
-       CRITICAL("No widget data for object %p (%s)",  \
-                o, evas_object_type_get(o));          \
-       return val;                                    \
-    }
-
-#define ELM_VIDEO_CHECK(obj)                                             \
-  if (!obj || !elm_widget_type_check((obj), VIDEO_SMART_NAME, __func__)) \
-    return
-
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
-  (VIDEO_SMART_NAME, _elm_video, Elm_Layout_Smart_Class,
+  (ELM_VIDEO_SMART_NAME, _elm_video, Elm_Video_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, NULL);
 
 static Eina_Bool
@@ -318,7 +279,7 @@ _elm_video_smart_del(Evas_Object *obj)
 }
 
 static void
-_elm_video_smart_set_user(Elm_Layout_Smart_Class *sc)
+_elm_video_smart_set_user(Elm_Video_Smart_Class *sc)
 {
    ELM_WIDGET_CLASS(sc)->base.add = _elm_video_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_video_smart_del;
@@ -329,7 +290,23 @@ _elm_video_smart_set_user(Elm_Layout_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
-   sc->sizing_eval = _elm_video_smart_sizing_eval;
+   ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_video_smart_sizing_eval;
+}
+
+EAPI const Elm_Video_Smart_Class *
+elm_video_smart_class_get(void)
+{
+   static Elm_Video_Smart_Class _sc =
+     ELM_VIDEO_SMART_CLASS_INIT_NAME_VERSION(ELM_VIDEO_SMART_NAME);
+   static const Elm_Video_Smart_Class *class = NULL;
+
+   if (class)
+     return class;
+
+   _elm_video_smart_set(&_sc);
+   class = &_sc;
+
+   return class;
 }
 
 EAPI Evas_Object *
