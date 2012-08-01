@@ -22,8 +22,6 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
    {NULL, NULL}
 };
 
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
   (ELM_FRAME_SMART_NAME, _elm_frame, Elm_Frame_Smart_Class,
   Elm_Layout_Smart_Class, elm_layout_smart_class_get, _smart_callbacks);

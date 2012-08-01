@@ -36,8 +36,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
   (ELM_FLIPSELECTOR_SMART_NAME, _elm_flipselector,
   Elm_Flipselector_Smart_Class, Elm_Layout_Smart_Class,

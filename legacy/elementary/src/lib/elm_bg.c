@@ -10,8 +10,6 @@ static const Elm_Layout_Part_Alias_Description _content_aliases[] =
    {NULL, NULL}
 };
 
-/* Inheriting from elm_layout. Besides, we need no more than what is
- * there */
 EVAS_SMART_SUBCLASS_NEW
   (ELM_BG_SMART_NAME, _elm_bg, Elm_Bg_Smart_Class, Elm_Layout_Smart_Class,
   elm_layout_smart_class_get, NULL);
