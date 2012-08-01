@@ -114,3 +114,7 @@
 2012-07-30 Mike Blumenkrantz
 
         * Add EEZE_DISK_MOUNTOPT_NODEV option for disabling device nodes on mount
+
+2012-07-31 Mike Blumenkrantz
+
+        * Prevent mount operations from retrying infinitely on failure

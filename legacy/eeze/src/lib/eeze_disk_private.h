@@ -52,6 +52,7 @@ struct _Eeze_Disk
    Eina_Bool mounted : 1;
    Ecore_Exe *mounter;
    Ecore_Timer *mount_fail_delay;
+   unsigned int mount_fail_count;
    int fail_pol_check;
 
    const char *syspath;

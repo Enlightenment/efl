@@ -159,9 +159,17 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
           break;
 
         default:
-          INF("Could not unmount disk, retrying");
-          disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
-          eeze_events = eina_list_append(eeze_events, disk);
+          if (disk->mount_fail_count++ < 3)
+            {
+               INF("Could not unmount disk, retrying");
+               disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
+               eeze_events = eina_list_append(eeze_events, disk);
+            }
+          else
+            {
+               disk->mount_fail_count = 0;
+               _eeze_disk_mount_error_handler(disk, "Maximimum number of mount-related failures reached");
+            }
           return ECORE_CALLBACK_RENEW;
        }
      else
@@ -184,12 +192,20 @@ _eeze_disk_mount_result_handler(void *data __UNUSED__, int type __UNUSED__, Ecor
             break;
 
           default:
-            INF("Could not eject disk, retrying");
-            if (disk->mount_status & EEZE_DISK_UNMOUNTING)
-              disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
-            else
-              disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->eject_cmd), disk);
-            eeze_events = eina_list_append(eeze_events, disk);
+            if (disk->mount_fail_count++ < 3)
+              {
+                 INF("Could not eject disk, retrying");
+                 if (disk->mount_status & EEZE_DISK_UNMOUNTING)
+                   disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->unmount_cmd), disk);
+                 else
+                   disk->mounter = ecore_exe_run(eina_strbuf_string_get(disk->eject_cmd), disk);
+                 eeze_events = eina_list_append(eeze_events, disk);
+              }
+           else
+             {
+                disk->mount_fail_count = 0;
+                _eeze_disk_mount_error_handler(disk, "Maximimum number of mount-related failures reached");
+             }
             return ECORE_CALLBACK_RENEW;
          }
    return ECORE_CALLBACK_RENEW;
