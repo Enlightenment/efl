@@ -924,6 +924,10 @@
         its children dont change their layer value and pointer with it, thus
         getting layer from them get you the wrong one.
 
-2012-07026  Cedric Bail
+2012-07-26  Cedric Bail
 
 	* Keep track of inactive proxied object change so we always update the proxy correctly.
+
+2012-08-01  Jiyoun Park(jypark)
+
+        * Fix gif load bug. we initialize first frame buffer of gif loader
