@@ -22,11 +22,12 @@ Additions:
 
 Fixes:
 
-   * Genlist : Fixed genlist expandable effect bug when we expand/contract items with many children very quickly.
-   * Genlist : Realize move items during tree effect only when the item is not in the queue.
+   * Genlist : fixed genlist expandable effect bug when we expand/contract items with many children very quickly.
+   * Genlist : realize move items during tree effect only when the item is not in the queue.
    * Add missing files in the tarball.
    * Fileselector : honor the folder_only option when using EIO
    * Segment Selector : do not abuse user object item data.
+   * Image: fixed elm_image_orient_set/get.
 
 Improvements:
 

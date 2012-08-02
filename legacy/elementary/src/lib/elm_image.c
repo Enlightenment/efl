@@ -473,14 +473,21 @@ _elm_image_smart_orient_set(Evas_Object *obj,
      {
       case ELM_IMAGE_FLIP_HORIZONTAL:
         _elm_image_flip_horizontal(sd);
+	sd->orient = orient;
         return;
 
       case ELM_IMAGE_FLIP_VERTICAL:
         _elm_image_flip_vertical(sd);
+	sd->orient = orient;
         return;
 
       case ELM_IMAGE_ROTATE_180:
         _elm_image_smart_rotate_180(sd);
+	sd->orient = orient;
+        return;
+
+     case ELM_IMAGE_ORIENT_NONE:
+        sd->orient = orient;
         return;
 
       default:
@@ -491,8 +498,11 @@ _elm_image_smart_orient_set(Evas_Object *obj,
 
    /* we need separate destination memory if we want to rotate 90 or
     * 270 degree */
-   evas_object_image_data_copy_set(sd->img, data2);
+   data = evas_object_image_data_get(sd->img, EINA_FALSE);
+   if (!data) return;
+   data2 = malloc(sizeof(unsigned char) * (iw * ih * 4));
    if (!data2) return;
+   memcpy(data2, data, sizeof (unsigned char) * (iw * ih * 4));
 
    w = ih;
    ih = iw;
@@ -507,23 +517,27 @@ _elm_image_smart_orient_set(Evas_Object *obj,
       case ELM_IMAGE_FLIP_TRANSPOSE:
         to = data;
         hw = -hw + 1;
+	sd->orient = orient;
         break;
 
       case ELM_IMAGE_FLIP_TRANSVERSE:
         to = data + hw - 1;
         w = -w;
         hw = hw - 1;
+	sd->orient = orient;
         break;
 
       case ELM_IMAGE_ROTATE_90:
         to = data + w - 1;
         hw = -hw - 1;
+	sd->orient = orient;
         break;
 
       case ELM_IMAGE_ROTATE_270:
         to = data + hw - w;
         w = -w;
         hw = hw + 1;
+	sd->orient = orient;
         break;
 
       default:
@@ -545,7 +559,6 @@ _elm_image_smart_orient_set(Evas_Object *obj,
           }
         to += hw;
      }
-   sd->orient = orient;
    if (data2) free(data2);
 
    evas_object_image_data_set(sd->img, data);

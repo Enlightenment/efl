@@ -183,6 +183,7 @@ void test_naviframe_complex(void *data, Evas_Object *obj, void *event_info);
 void test_datetime(void *data, Evas_Object *obj, void *event_info);
 void test_popup(void *data, Evas_Object *obj, void *event_info);
 void test_dayselector(void *data, Evas_Object *obj, void *event_info);
+void test_image(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -466,6 +467,7 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photocam", test_photocam);
    ADD_TEST(NULL, "Images", "Photo", test_photo);
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
+   ADD_TEST(NULL, "Images", "Image", test_image);
    ADD_TEST(NULL, "Images", "Slideshow", test_slideshow);
 #ifdef HAVE_EMOTION
    ADD_TEST(NULL, "Images", "Video", test_video);
