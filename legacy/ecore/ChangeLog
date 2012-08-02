@@ -824,6 +824,11 @@
           selection directly if getting targets fails. This fixes e17 to
           elm cnp.
 
+2012-08-01  Mike Blumenkrantz
+
+        * Add ecore_main_fd_handler_file_add() for integrating file descriptors
+          from regular files into the main loop
+
 2012-08-01  Rob Bradford
 
 	* Support setting fullscreen on Ecore_Evas's under the Wayland engine
