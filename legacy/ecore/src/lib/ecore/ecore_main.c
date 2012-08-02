@@ -65,7 +65,8 @@
 
 # define HAVE_EPOLL   0
 # define EPOLLIN      1
-# define EPOLLOUT     2
+# define EPOLLPRI     2
+# define EPOLLOUT     4
 # define EPOLLERR     8
 
 #define EPOLL_CTL_ADD 1
