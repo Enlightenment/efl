@@ -823,3 +823,9 @@
         * Fix ecore-x selection handling to fall back to getting
           selection directly if getting targets fails. This fixes e17 to
           elm cnp.
+
+2012-08-01  Rob Bradford
+
+	* Support setting fullscreen on Ecore_Evas's under the Wayland engine
+	before they are visible. The fullscreening will then be applied when
+	they become visible.
