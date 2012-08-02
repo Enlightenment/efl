@@ -26,6 +26,7 @@ Fixes:
    * Don't crash when calling evas_object_smart_type_check without type.
    * Handle proxy with the right context.
    * Force proxied object to stay active to keep track of change in them.
+   * Fix evas_gl's internal resource surface bug when evas' window is deleted/recreated.
 
 Removal:
    * Remove EVAS_FRAME_QUEUING, EVAS_SLI, METRIC_CACHE and WORD_CACHE.
