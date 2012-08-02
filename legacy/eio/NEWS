@@ -8,6 +8,7 @@ Additions:
 Fixes:
 	- build out of tree.
 	- detect when requesting to monitor a different file with the same name.
+	- memory leak when shutting down fallback monitor.
 
 Improvements:
 

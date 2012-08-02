@@ -1,11 +1,15 @@
-2012-04-26 Carsten Haitzler (The Rasterman)
+2012-04-26  Carsten Haitzler (The Rasterman)
 
 	* 1.0.0 release
 
-2012-04-30 Jérôme Pinot
+2012-04-30  Jérôme Pinot
 
 	* Fix build out of tree.
 
-2012-05-09 Cedric Bail
+2012-05-09  Cedric Bail
 
 	* Actually test if we are really requesting to monitor the same file.
+
+2012-08-02  Cedric Bail
+
+	* Fix a memory leak when shutting down fallback monitor.

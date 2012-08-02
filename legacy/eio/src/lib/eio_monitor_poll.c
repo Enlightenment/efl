@@ -340,6 +340,7 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
         ecore_thread_cancel(backend->work);
         return ;
      }
+   eina_hash_free(backend->children);
    free(backend);
 }
 
