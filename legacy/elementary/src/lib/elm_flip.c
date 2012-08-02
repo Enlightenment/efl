@@ -127,6 +127,7 @@ _elm_flip_smart_sub_object_add(Evas_Object *obj,
    if (!ELM_WIDGET_CLASS(_elm_flip_parent_sc)->sub_object_add(obj, sobj))
      return EINA_FALSE;
 
+   evas_object_smart_member_add(sobj, obj);
    //FIXME: smart member clip could be reset by the obj.
    evas_object_event_callback_add
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb, obj);
@@ -1222,59 +1223,63 @@ _flip(Evas_Object *obj)
    if (t > 1.0) t = 1.0;
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   if (sd->mode == ELM_FLIP_PAGE_LEFT)
+   if (!sd->manual)
      {
-        sd->dir = 0;
-        sd->started = EINA_TRUE;
-        sd->pageflip = EINA_TRUE;
-        sd->down_x = w - 1;
-        sd->down_y = h / 2;
-        sd->x = (1.0 - t) * sd->down_x;
-        sd->y = sd->down_y;
-        _flip_show_hide(obj);
-        _state_update(sd);
+        if (sd->mode == ELM_FLIP_PAGE_LEFT)
+          {
+             sd->dir = 0;
+             sd->started = EINA_TRUE;
+             sd->pageflip = EINA_TRUE;
+             sd->down_x = w - 1;
+             sd->down_y = h / 2;
+             sd->x = (1.0 - t) * sd->down_x;
+             sd->y = sd->down_y;
+             _flip_show_hide(obj);
+             _state_update(sd);
+          }
+        else if (sd->mode == ELM_FLIP_PAGE_RIGHT)
+          {
+             sd->dir = 1;
+             sd->started = EINA_TRUE;
+             sd->pageflip = EINA_TRUE;
+             sd->down_x = 0;
+             sd->down_y = h / 2;
+             sd->x = (t) * w;
+             sd->y = sd->down_y;
+             _flip_show_hide(obj);
+             _state_update(sd);
+          }
+        else if (sd->mode == ELM_FLIP_PAGE_UP)
+          {
+             sd->dir = 2;
+             sd->started = EINA_TRUE;
+             sd->pageflip = EINA_TRUE;
+             sd->down_x = w / 2;
+             sd->down_y = h - 1;
+             sd->x = sd->down_x;
+             sd->y = (1.0 - t) * sd->down_y;
+             _flip_show_hide(obj);
+             _state_update(sd);
+          }
+        else if (sd->mode == ELM_FLIP_PAGE_DOWN)
+          {
+             sd->dir = 3;
+             sd->started = EINA_TRUE;
+             sd->pageflip = EINA_TRUE;
+             sd->down_x = w / 2;
+             sd->down_y = 0;
+             sd->x = sd->down_x;
+             sd->y = (t) * h;
+             _flip_show_hide(obj);
+             _state_update(sd);
+          }
+        else
+          _flip_do(obj, t, sd->mode, 0, 0);
      }
-   else if (sd->mode == ELM_FLIP_PAGE_RIGHT)
-     {
-        sd->dir = 1;
-        sd->started = EINA_TRUE;
-        sd->pageflip = EINA_TRUE;
-        sd->down_x = 0;
-        sd->down_y = h / 2;
-        sd->x = (t) * w;
-        sd->y = sd->down_y;
-        _flip_show_hide(obj);
-        _state_update(sd);
-     }
-   else if (sd->mode == ELM_FLIP_PAGE_UP)
-     {
-        sd->dir = 2;
-        sd->started = EINA_TRUE;
-        sd->pageflip = EINA_TRUE;
-        sd->down_x = w / 2;
-        sd->down_y = h - 1;
-        sd->x = sd->down_x;
-        sd->y = (1.0 - t) * sd->down_y;
-        _flip_show_hide(obj);
-        _state_update(sd);
-     }
-   else if (sd->mode == ELM_FLIP_PAGE_DOWN)
-     {
-        sd->dir = 3;
-        sd->started = EINA_TRUE;
-        sd->pageflip = EINA_TRUE;
-        sd->down_x = w / 2;
-        sd->down_y = 0;
-        sd->x = sd->down_x;
-        sd->y = (t) * h;
-        _flip_show_hide(obj);
-        _state_update(sd);
-     }
-   else
-     _flip_do(obj, t, sd->mode, 0, 0);
-
+   
    if (t >= 1.0)
      {
+#if 0 // this breaks manual flipping. :/
         if (sd->state == sd->next_state)
           {
              /* it was flipped while flipping, do it again */
@@ -1282,7 +1287,7 @@ _flip(Evas_Object *obj)
              sd->state = !sd->next_state;
              return ECORE_CALLBACK_RENEW;
           }
-
+#endif
         sd->pageflip = EINA_FALSE;
         _state_end(sd);
         evas_object_map_enable_set(sd->front.content, 0);
@@ -1293,7 +1298,8 @@ _flip(Evas_Object *obj)
         evas_smart_objects_calculate(evas_object_evas_get(obj));
         // FIXME: end hack
         sd->animator = NULL;
-        sd->state = sd->next_state;
+        if (((sd->manual) && (sd->finish)) || (!sd->manual))
+          sd->state = sd->next_state;
         _configure(obj);
         _flip_show_hide(obj);
         evas_object_smart_callback_call(obj, SIG_ANIMATE_DONE, NULL);
@@ -1471,7 +1477,7 @@ _event_anim(void *data,
      (evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj));
    // FIXME: end hack
    sd->animator = NULL;
-   if (sd->finish) sd->state = !sd->state;
+   if (sd->finish) sd->state = sd->next_state;
    _flip_show_hide(ELM_WIDGET_DATA(sd)->obj);
    _configure(ELM_WIDGET_DATA(sd)->obj);
    sd->animator = NULL;
@@ -1590,12 +1596,15 @@ _up_cb(void *data,
         tm = 1.0 - ((double)sd->y / (double)sd->h);
      }
    if (tm < 0.01) tm = 0.01;
-   else if (tm > 0.99)
-     tm = 0.99;
+   else if (tm > 0.99) tm = 0.99;
    if (!sd->finish) tm = 1.0 - tm;
+   else sd->next_state = !sd->state;
    tm *= 1.0; // FIXME: config for anim time
    if (sd->animator) ecore_animator_del(sd->animator);
    sd->animator = ecore_animator_timeline_add(tm, _event_anim, sd);
+   sd->len = tm;
+   sd->start = ecore_loop_time_get();
+   sd->manual = EINA_TRUE;
    _event_anim(sd, 0.0);
 }
 
@@ -1901,6 +1910,7 @@ _elm_flip_go_to(Elm_Flip_Smart_Data *sd,
    sd->start = ecore_loop_time_get();
    sd->next_state = front;
    sd->len = 0.5; // FIXME: make config val
+   sd->manual = EINA_FALSE;
    if ((sd->mode == ELM_FLIP_PAGE_LEFT) ||
        (sd->mode == ELM_FLIP_PAGE_RIGHT) ||
        (sd->mode == ELM_FLIP_PAGE_UP) ||

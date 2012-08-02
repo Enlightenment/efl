@@ -150,6 +150,7 @@ struct _Elm_Flip_Smart_Data
    Eina_Bool             started : 1;
    Eina_Bool             backflip : 1;
    Eina_Bool             pageflip : 1;
+   Eina_Bool             manual : 1;
 };
 
 typedef struct _Vertex2             Vertex2;
