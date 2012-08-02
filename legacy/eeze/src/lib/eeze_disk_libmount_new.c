@@ -167,7 +167,6 @@ _eeze_mount_fdh(void *d __UNUSED__, Ecore_Fd_Handler *fdh __UNUSED__)
              if (!strcmp(src, eeze_disk_devpath_get(disk)))
                {
                   found = EINA_TRUE;
-                  if (disk->mount_status) goto err;
                   break;
                }
           }
@@ -177,6 +176,7 @@ _eeze_mount_fdh(void *d __UNUSED__, Ecore_Fd_Handler *fdh __UNUSED__)
            case MNT_TABDIFF_MOUNT:
              disk->mounted = EINA_TRUE;
              eina_stringshare_replace(&disk->mount_point, mnt_fs_get_target(new));
+             if (disk->mount_status) break;
              e = malloc(sizeof(Eeze_Event_Disk_Mount));
              if (e)
                {
@@ -188,6 +188,7 @@ _eeze_mount_fdh(void *d __UNUSED__, Ecore_Fd_Handler *fdh __UNUSED__)
              if (!mnt_fs_get_target(new))
                disk->mounted = EINA_FALSE;
              eina_stringshare_replace(&disk->mount_point, NULL);
+             if (disk->mount_status) break;
              e = malloc(sizeof(Eeze_Event_Disk_Mount));
              if (e)
                {
@@ -201,6 +202,7 @@ _eeze_mount_fdh(void *d __UNUSED__, Ecore_Fd_Handler *fdh __UNUSED__)
              if (!mnt_fs_get_target(new))
                disk->mounted = EINA_FALSE;
              eina_stringshare_replace(&disk->mount_point, mnt_fs_get_target(new));
+             if (disk->mount_status) break;
              e = malloc(sizeof(Eeze_Event_Disk_Mount));
              if (e)
                {
@@ -436,7 +438,7 @@ eeze_mount_tabs_watch(void)
    if (_mountinfo < 0) goto error;
    if (fcntl(_mountinfo, F_SETFL, O_NONBLOCK) < 0) goto error;
    
-   _mountinfo_fdh = ecore_main_fd_handler_add(_mountinfo, ECORE_FD_ERROR, _eeze_mount_fdh, NULL, NULL, NULL);
+   _mountinfo_fdh = ecore_main_fd_handler_file_add(_mountinfo, ECORE_FD_ERROR, _eeze_mount_fdh, NULL, NULL, NULL);
    if (!_mountinfo_fdh) goto error;
    _fstab_mon = ecore_file_monitor_add("/etc/fstab", _eeze_mount_tab_watcher, NULL);
    _watching = EINA_TRUE;
