@@ -797,7 +797,7 @@ _ecore_evas_wl_fullscreen_set(Ecore_Evas *ee, int full)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if ((!ee) || (!ee->visible)) return;
+   if (!ee) return;
    if (ee->prop.fullscreen == full) return;
    ee->prop.fullscreen = full;
    ecore_wl_window_fullscreen_set(ee->engine.wl.win, full);
