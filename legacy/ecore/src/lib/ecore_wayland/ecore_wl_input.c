@@ -462,56 +462,6 @@ _ecore_wl_input_cb_keyboard_keymap(void *data, struct wl_keyboard *keyboard __UN
      1 << xkb_map_mod_get_index(input->xkb.keymap, "Shift");
 }
 
-/*
- * _ecore_wl_input_keysym_to_string: Translate a symbol to its printable form 
- * 
- * @symbol: the symbol to translate
- * @buffer: the buffer where to put the translated string
- * @len: size of the buffer
- *
- * Translates @symbol into a printable representation in @buffer, if possible.
- *
- * Return value: The number of bytes of the translated string, 0 if the
- *               symbol can't be printed
- *
- * Note: The code is derived from libX11's src/KeyBind.c
- *       Copyright 1985, 1987, 1998  The Open Group
- *
- */
-static int
-_ecore_wl_input_keysym_to_string(unsigned int symbol, char *buffer, int len)
-{
-  unsigned long high_bytes;
-  unsigned char c;
-
-   high_bytes = symbol >> 8;
-   if (!(len &&
-         ((high_bytes == 0) ||
-             ((high_bytes == 0xFF) &&
-                 (((symbol >= XKB_KEY_BackSpace) &&
-                   (symbol <= XKB_KEY_Clear)) ||
-                     (symbol == XKB_KEY_Return) ||
-                     (symbol == XKB_KEY_Escape) ||
-                     (symbol == XKB_KEY_KP_Space) ||
-                     (symbol == XKB_KEY_KP_Tab) ||
-                     (symbol == XKB_KEY_KP_Enter) ||
-                     ((symbol >= XKB_KEY_KP_Multiply) &&
-                         (symbol <= XKB_KEY_KP_9)) ||
-                     (symbol == XKB_KEY_KP_Equal) ||
-                     (symbol == XKB_KEY_Delete))))))
-     return 0;
-
-   if (symbol == XKB_KEY_KP_Space)
-     c = ' ';
-   else if (high_bytes == 0xFF)
-     c = symbol & 0x7F;
-   else
-     c = symbol & 0xFF;
-
-   buffer[0] = c;
-   return 1;
-}
-
 static void 
 _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int keycode, unsigned int state)
 {
@@ -537,16 +487,6 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    xkb_state_update_key(input->xkb.state, code, 
                         (state ? XKB_KEY_DOWN : XKB_KEY_UP));
 
-   /* mask = xkb_state_serialize_mods(input->display->xkb.state,  */
-   /*                                 (XKB_STATE_DEPRESSED | XKB_STATE_LATCHED)); */
-   /* input->modifiers = 0; */
-   /* if (mask & input->display->xkb.control_mask) */
-   /*   input->modifiers |= MOD_CONTROL_MASK; */
-   /* if (mask & input->display->xkb.alt_mask) */
-   /*   input->modifiers |= MOD_ALT_MASK; */
-   /* if (mask & input->display->xkb.shift_mask) */
-   /*   input->modifiers |= MOD_SHIFT_MASK; */
-
    if (num == 1) sym = syms[0];
    else sym = XKB_KEY_NoSymbol;
 
@@ -554,8 +494,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    memset(keyname, 0, sizeof(keyname));
    memset(string, 0, sizeof(string));
 
-   /* TODO: Switch over to the libxkbcommon API when it is available */
-   if (!_ecore_wl_input_keysym_to_string(sym, string, sizeof(string)))
+   if (xkb_keysym_to_utf8(sym, string, 32) <= 0)
      string[0] = '\0';
 
    xkb_keysym_get_name(sym, key, sizeof(key));
