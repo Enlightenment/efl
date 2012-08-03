@@ -466,6 +466,16 @@ _elm_spinner_smart_event(Evas_Object *obj,
 }
 
 static void
+_on_focus_out(void *data,
+              Evas_Object *obj __UNUSED__,
+              void *event_info __UNUSED__)
+{
+   Evas_Object *spinner = data;
+
+   _entry_value_apply(spinner);
+}
+
+static void
 _elm_spinner_smart_add(Evas_Object *obj)
 {
    EVAS_SMART_DATA_ALLOC(obj, Elm_Spinner_Smart_Data);
@@ -502,6 +512,7 @@ _elm_spinner_smart_add(Evas_Object *obj)
 
    priv->ent = elm_entry_add(obj);
    elm_entry_single_line_set(priv->ent, EINA_TRUE);
+   evas_object_smart_callback_add(priv->ent, "focus-out", _on_focus_out, obj);
    evas_object_smart_callback_add
      (priv->ent, "activated", _entry_activated_cb, obj);
 
