@@ -1438,6 +1438,11 @@ _mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void
         if (wd->longpress_timer) ecore_timer_del(wd->longpress_timer);
         wd->longpress_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press, data);
      }
+   else if (ev->button == 3)
+     {
+        if (_elm_config->desktop_entry)
+          _menu_press(data);
+     }
 }
 
 static void
