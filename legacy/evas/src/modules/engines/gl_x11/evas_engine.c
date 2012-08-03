@@ -2659,8 +2659,6 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
        && (im->tex->pt->dyn.data)
        && (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
-        int w, h;
-
         if (im->tex->pt->dyn.data == image_data)
           {
              if (im->tex->pt->dyn.checked_out > 0)
@@ -2674,10 +2672,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
 
              return image;
           }
-
-        w = im->im->cache_entry.w;
-        h = im->im->cache_entry.h;
-        im2 = eng_image_new_from_data(data, w, h, image_data,
+        im2 = eng_image_new_from_data(data, im->w, im->h, image_data,
                                       eng_image_alpha_get(data, image),
                                       eng_image_colorspace_get(data, image));
         if (!im2) return im;
@@ -2689,13 +2684,9 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-         if (image_data != im->im->image.data)
+         if ((!im->im) || (image_data != im->im->image.data))
            {
-              int w, h;
-
-              w = im->im->cache_entry.w;
-              h = im->im->cache_entry.h;
-              im2 = eng_image_new_from_data(data, w, h, image_data,
+              im2 = eng_image_new_from_data(data, im->w, im->h, image_data,
                                             eng_image_alpha_get(data, image),
                                             eng_image_colorspace_get(data, image));
               if (!im2) return im;
