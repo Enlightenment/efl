@@ -33,7 +33,7 @@ my_im_ch(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-test_image(void *data, Evas_Object *obj, void *event_info)
+test_image(void *data __UNUSED__, Evas_Object *obj  __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *box, *im, *rd, *rdg = NULL;
    int i;
