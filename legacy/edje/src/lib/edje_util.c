@@ -1663,7 +1663,6 @@ edje_object_part_text_cursor_geometry_get(const Evas_Object *obj, const char *pa
 	if (x) *x -= rp->edje->x;
 	if (y) *y -= rp->edje->y;
      }
-   return;
 }
 
 EAPI void
