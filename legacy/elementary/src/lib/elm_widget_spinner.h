@@ -135,8 +135,6 @@ struct _Elm_Spinner_Smart_Data
    Ecore_Timer          *delay, *spin;
    Eina_List            *special_values;
 
-   void                (*entry_focus_hook)(void *data, Evas_Object *obj);
-
    Eina_Bool             entry_visible : 1;
    Eina_Bool             dragging : 1;
    Eina_Bool             editable : 1;
