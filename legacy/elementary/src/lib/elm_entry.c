@@ -1660,6 +1660,7 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
    const Eina_List *l;
    Evas_Object *entry;
    if (!wd) return;
+   if (!elm_object_focus_get(data)) elm_object_focus_set(data, EINA_TRUE);
    EINA_LIST_FOREACH(entries, l, entry)
      {
         if (entry != data) elm_entry_select_none(entry);
