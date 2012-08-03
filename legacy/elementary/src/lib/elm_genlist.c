@@ -266,7 +266,13 @@ _elm_genlist_pan_smart_resize(Evas_Object *obj,
    psd->wsd->pan_changed = EINA_TRUE;
    evas_object_smart_changed(obj);
    if (psd->wsd->calc_job) ecore_job_del(psd->wsd->calc_job);
-   psd->wsd->calc_job = NULL;
+   // if the widht changed we may have to resize content if scrollbar went
+   // away or appesared to queue a job to deal with it. it should settle in
+   // the end to a steady-state
+   if (ow != w)
+     psd->wsd->calc_job = ecore_job_add(_calc_job, psd->wsd);
+   else
+     psd->wsd->calc_job = NULL;
 }
 
 static void
@@ -429,9 +435,8 @@ _calc_job(void *data)
 
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &ow, &sd->h);
    sd->s_iface->content_viewport_size_get(ELM_WIDGET_DATA(sd)->obj, &vw, NULL);
-
-   if (sd->w != ow)
-     sd->w = ow;
+   
+   if (sd->w != ow) sd->w = ow;
 
    evas_event_freeze(evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj));
    EINA_INLIST_FOREACH (sd->blocks, itb)
