@@ -841,3 +841,10 @@
 	Wayland backend. Removing the need to have our own function to do this
 	and increasing the range of supported keysms. Fixes #1105.
 
+2012-08-03  Rob Bradford
+
+	* In the Wayland backend handle the case that events can be received
+	for surfaces that have been since destroyed - the client side
+	marshaller changes the pointer to NULL to when the object is destroyed
+	on the client side. Fixes #1258.
+

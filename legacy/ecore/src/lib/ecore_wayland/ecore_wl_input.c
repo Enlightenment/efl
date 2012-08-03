@@ -631,6 +631,7 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer __UNUSED
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!surface) return;
    if (!(input = data)) return;
 
    input->display->serial = serial;
@@ -660,6 +661,7 @@ _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *keyboard __UNU
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!surface) return;
    if (!(input = data)) return;
 
    if (!input->timestamp)
@@ -688,6 +690,7 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard __UNU
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!surface) return;
    if (!(input = data)) return;
 
    if (!input->timestamp)
@@ -716,6 +719,7 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch __UNUSED__, uns
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!surface) return;
    if (!(input = data)) return;
 
    /* FIXME: NB: Not sure yet if input->timestamp should be set here. 
@@ -787,6 +791,8 @@ static void
 _ecore_wl_input_cb_data_enter(void *data, struct wl_data_device *data_device, unsigned int timestamp, struct wl_surface *surface, wl_fixed_t x, wl_fixed_t y, struct wl_data_offer *offer)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!surface) return;
 
    _ecore_wl_dnd_enter(data, data_device, timestamp, surface, x, y, offer);
 }

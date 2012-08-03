@@ -583,6 +583,7 @@ ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent)
 static void 
 _ecore_wl_window_cb_ping(void *data __UNUSED__, struct wl_shell_surface *shell_surface, unsigned int serial)
 {
+   if (!shell_surface) return;
    wl_shell_surface_pong(shell_surface, serial);
 }
 
@@ -616,6 +617,7 @@ _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surfac
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!shell_surface) return;
    if (!(win = data)) return;
    ecore_wl_input_ungrab(win->pointer_device);
 }
@@ -627,6 +629,7 @@ _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!surface) return;
    if (!(win = data)) return;
 }
 
@@ -637,6 +640,7 @@ _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   if (!surface) return;
    if (!(win = data)) return;
 }
 
