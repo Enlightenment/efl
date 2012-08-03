@@ -368,6 +368,25 @@ _elm_widget_focus_direction_func_unimplemented(const Evas_Object *obj __UNUSED__
 }
 
 static Eina_Bool
+_elm_widget_focus_call(Elm_Widget_Smart_Data *sd, Evas_Object *obj)
+{
+   Eina_Bool r = EINA_FALSE;
+
+   sd->api->on_focus(obj);
+   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->focus)
+     {
+        COMPAT_SMART_DATA(sd)->focus(obj);
+        r = EINA_TRUE;
+     }
+   if (sd->focused)
+     evas_object_smart_callback_call(obj, "focus-in", NULL);
+   else
+     evas_object_smart_callback_call(obj, "focus-out", NULL);
+
+   return r;
+}
+
+static Eina_Bool
 _elm_widget_sub_object_add_func(Evas_Object *obj,
                                 Evas_Object *sobj)
 {
@@ -831,9 +850,7 @@ _parent_focus(Evas_Object *obj)
    if (sd->top_win_focused)
      {
         sd->focused = EINA_TRUE;
-        sd->api->on_focus(obj);
-        if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->focus)
-          COMPAT_SMART_DATA(sd)->focus(obj);
+        _elm_widget_focus_call(sd, obj);
         _elm_widget_focus_region_show(obj);
      }
    sd->focus_order_on_calc = EINA_FALSE;
@@ -2726,12 +2743,10 @@ elm_widget_focus_set(Evas_Object *obj,
         focus_order++;
         sd->focus_order = focus_order;
         sd->focused = EINA_TRUE;
-        sd->api->on_focus(obj);
      }
 
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->focus)
+   if (_elm_widget_focus_call(sd, obj))
      {
-        COMPAT_SMART_DATA(sd)->focus(obj);
         return;
      }
    else
@@ -2814,9 +2829,7 @@ elm_widget_focused_object_clear(Evas_Object *obj)
           }
      }
    sd->focused = EINA_FALSE;
-   sd->api->on_focus(obj);
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->focus)
-     COMPAT_SMART_DATA(sd)->focus(obj);
+   _elm_widget_focus_call(sd, obj);
 }
 
 EAPI void
