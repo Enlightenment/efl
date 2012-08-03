@@ -465,14 +465,16 @@ _elm_spinner_smart_event(Evas_Object *obj,
    return EINA_FALSE;
 }
 
-static void
-_on_focus_out(void *data,
-              Evas_Object *obj __UNUSED__,
-              void *event_info __UNUSED__)
+static Eina_Bool
+_elm_spinner_smart_on_focus(Evas_Object *obj)
 {
-   Evas_Object *spinner = data;
+   if (!ELM_WIDGET_CLASS(_elm_spinner_parent_sc)->on_focus(obj))
+     return EINA_FALSE;
 
-   _entry_value_apply(spinner);
+   if (!elm_widget_focus_get(obj))
+     _entry_value_apply(obj);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -512,7 +514,6 @@ _elm_spinner_smart_add(Evas_Object *obj)
 
    priv->ent = elm_entry_add(obj);
    elm_entry_single_line_set(priv->ent, EINA_TRUE);
-   evas_object_smart_callback_add(priv->ent, "focus-out", _on_focus_out, obj);
    evas_object_smart_callback_add
      (priv->ent, "activated", _entry_activated_cb, obj);
 
@@ -554,7 +555,11 @@ _elm_spinner_smart_set_user(Elm_Spinner_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->base.add = _elm_spinner_smart_add;
    ELM_WIDGET_CLASS(sc)->base.del = _elm_spinner_smart_del;
 
-   ELM_WIDGET_CLASS(sc)->focus_next = NULL; /* not 'focus chain manager' */
+   /* not a 'focus chain manager' */
+   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
+   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
+
+   ELM_WIDGET_CLASS(sc)->on_focus = _elm_spinner_smart_on_focus;
    ELM_WIDGET_CLASS(sc)->event = _elm_spinner_smart_event;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_spinner_smart_sizing_eval;
