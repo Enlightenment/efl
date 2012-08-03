@@ -1891,9 +1891,7 @@ _signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emis
    if (!wd->disabled)
      {
         evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
-
-        if (!_elm_config->desktop_entry)
-          _entry_hover_anchor_clicked(data, data, &ei);
+        _entry_hover_anchor_clicked(data, data, &ei);
      }
 }
 
