@@ -893,6 +893,7 @@ main(int argc, char **argv)
         {
             if (!strncmp(keys[i], "__efreet", 8)) continue;
             theme = eet_data_read(theme_ef, theme_edd, keys[i]);
+            theme->valid = 0;
             if (theme) eina_hash_direct_add(icon_themes, theme->theme.name.internal, theme);
         }
         free(keys);
