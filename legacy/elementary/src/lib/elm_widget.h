@@ -408,7 +408,7 @@ typedef struct _Elm_Widget_Smart_Class
 
    void             (*parent_set)(Evas_Object *obj,
                                   Evas_Object *parent); /**< 'Virtual' function handling parent widget attachment to new object */
-   Eina_Bool        (*on_focus)(Evas_Object *obj); /**< 'Virtual' function handling receipt of focus on the widget */
+   Eina_Bool        (*on_focus)(Evas_Object *obj); /**< 'Virtual' function handling focus in/out events on the widget */
    Eina_Bool        (*disable)(Evas_Object *obj); /**< 'Virtual' function on the widget being disabled */
    Eina_Bool        (*theme)(Evas_Object *obj); /**< 'Virtual' function on the widget being re-themed */
    Eina_Bool        (*translate)(Evas_Object *obj); /**< 'Virtual' function handling language changes on Elementary */
