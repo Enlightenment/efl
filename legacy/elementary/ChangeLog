@@ -366,8 +366,3 @@
 2012-08-02  Cedric Bail
 
 	* Fix elm_image_orient_set/get.
-
-2012-08-03  Cedric Bail
-
-	* Add smart callback "focus-in" and "focus-out".
-	* On focus loss, Elm_Spinner hide entry and display label properly.
