@@ -591,6 +591,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
 	  {
 	     if (*p == DSEP_C)
 	       {
+                  if (pfx->prefix_path) free(pfx->prefix_path);
 		  pfx->prefix_path = malloc(p - pfx->exe_path + 1);
 		  if (pfx->prefix_path)
 		    {
