@@ -57,11 +57,12 @@ static int fc_init = 0;
 void
 evas_font_dir_cache_free(void)
 {
-   if (!font_dirs) return;
-
-   eina_hash_foreach(font_dirs, font_cache_dir_free, NULL);
-   eina_hash_free(font_dirs);
-   font_dirs = NULL;
+   if (font_dirs)
+     {
+        eina_hash_foreach(font_dirs, font_cache_dir_free, NULL);
+        eina_hash_free(font_dirs);
+        font_dirs = NULL;
+     }
 
 #ifdef HAVE_FONTCONFIG
 /* this is bad i got a:
@@ -71,9 +72,13 @@ evas_font_dir_cache_free(void)
  * it as in reality - there is little reason to care about the memory not
  * being freed etc.
  * 
- *   fc_init--;
- *   if (fc_init == 0) FcFini();
+ * note 04/08/2012 - this doesnt seem to cause an issue anymore?
  */
+   if (fc_init > 0)
+     {
+        fc_init--;
+        if (fc_init == 0) FcFini();
+     }
 #endif
 }
 
