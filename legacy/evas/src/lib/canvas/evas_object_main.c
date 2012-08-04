@@ -74,6 +74,11 @@ evas_object_free(Evas_Object *obj, int clean_layer)
    evas_object_clip_changes_clean(obj);
    evas_object_event_callback_all_del(obj);
    evas_object_event_callback_cleanup(obj);
+   if (obj->spans)
+     {
+        free(obj->spans);
+        obj->spans = NULL;
+     }
    while (obj->data.elements)
      {
         Evas_Data_Node *node;

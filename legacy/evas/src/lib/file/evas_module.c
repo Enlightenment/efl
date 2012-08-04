@@ -571,6 +571,8 @@ evas_module_clean(void)
 /*      } */
 }
 
+static Eina_Prefix *pfx = NULL;
+
 /* will dlclose all the modules loaded and free all the structs */
 void
 evas_module_shutdown(void)
@@ -599,6 +601,11 @@ evas_module_shutdown(void)
 
    eina_array_free(evas_engines);
    evas_engines = NULL;
+   if (pfx)
+     {
+        eina_prefix_free(pfx);
+        pfx = NULL;
+     }
 }
 
 EAPI int
@@ -620,8 +627,6 @@ _evas_module_engine_inherit(Evas_Func *funcs, char *name)
      }
    return 0;
 }
-
-static Eina_Prefix *pfx = NULL;
 
 EAPI const char *
 _evas_module_libdir_get(void)
