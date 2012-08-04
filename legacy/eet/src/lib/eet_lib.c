@@ -675,6 +675,19 @@ eet_shutdown(void)
    eina_lock_free(&eet_cache_lock);
 
 #ifdef HAVE_GNUTLS
+   /* Note that gnutls has a leak where it doesnt free stuff it alloced
+    * on init. valgrind trace here:
+    * 21 bytes in 1 blocks are definitely lost in loss record 24 of 194
+    *    at 0x4C2B6CD: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+    *    by 0x68AC801: strdup (strdup.c:43)
+    *    by 0xD215B6A: p11_kit_registered_module_to_name (in /usr/lib/x86_64-linux-gnu/libp11-kit.so.0.0.0)
+    *    by 0x9571574: gnutls_pkcs11_init (in /usr/lib/x86_64-linux-gnu/libgnutls.so.26.21.8)
+    *    by 0x955B031: gnutls_global_init (in /usr/lib/x86_64-linux-gnu/libgnutls.so.26.21.8)
+    *    by 0x6DFD6D0: eet_init (eet_lib.c:608)
+    * 
+    * yes - i've tried calling gnutls_pkcs11_deinit() by hand but no luck.
+    * the leak is in there.
+    */
    gnutls_global_deinit();
 #endif /* ifdef HAVE_GNUTLS */
 #ifdef HAVE_OPENSSL
