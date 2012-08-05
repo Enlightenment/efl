@@ -1329,7 +1329,8 @@ ecore_evas_extn_plug_new(Ecore_Evas *ee_target)
    if (!ee) return NULL;
 
    o = evas_object_image_filled_add(ee_target->evas);
-   evas_object_image_content_hint_set(o, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
+   /* this make problem in gl engine, so I'll block this until solve problem 
+   evas_object_image_content_hint_set(o, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);*/
    evas_object_image_colorspace_set(o, EVAS_COLORSPACE_ARGB8888);
    evas_object_image_alpha_set(o, 1);
    evas_object_image_size_set(o, 1, 1);
