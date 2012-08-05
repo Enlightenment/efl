@@ -125,22 +125,21 @@ typedef enum _Ecore_X_Composite_Update_Type
  */
 typedef enum _Ecore_X_Window_State
 {
-   /* Unknown state */
-   ECORE_X_WINDOW_STATE_UNKNOWN = 0,  /** The window is iconified. */
-   ECORE_X_WINDOW_STATE_ICONIFIED,  /** The window is a modal dialog box. */
-   ECORE_X_WINDOW_STATE_MODAL,  /** The window manager should keep the window's position fixed
+   ECORE_X_WINDOW_STATE_UNKNOWN = 0,
+   ECORE_X_WINDOW_STATE_ICONIFIED,  /** The window is iconified. */
+   ECORE_X_WINDOW_STATE_MODAL,  /** The window is a modal dialog box. */
+   ECORE_X_WINDOW_STATE_STICKY, /** The window manager should keep the window's position fixed
                                  * even if the virtual desktop scrolls. */
-   ECORE_X_WINDOW_STATE_STICKY,  /** The window has the maximum vertical size. */
-   ECORE_X_WINDOW_STATE_MAXIMIZED_VERT,  /** The window has the maximum horizontal size. */
-   ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ,  /** The window is shaded. */
-   ECORE_X_WINDOW_STATE_SHADED,  /** The window should not be included in the taskbar. */
-   ECORE_X_WINDOW_STATE_SKIP_TASKBAR,  /** The window should not be included in the pager. */
-   ECORE_X_WINDOW_STATE_SKIP_PAGER,  /** The window is invisible (i.e. minimized/iconified) */
-   ECORE_X_WINDOW_STATE_HIDDEN,  /** The window should fill the entire screen and have no
-                                  * window border/decorations */
-   ECORE_X_WINDOW_STATE_FULLSCREEN,  /* The following are not documented because they are not
-                                      * intended for use in applications. */
-   ECORE_X_WINDOW_STATE_ABOVE, ECORE_X_WINDOW_STATE_BELOW,  /* FIXME: Documentation */
+   ECORE_X_WINDOW_STATE_MAXIMIZED_VERT,  /** The window has the maximum vertical size. */
+   ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ,  /** The window has the maximum horizontal size. */
+   ECORE_X_WINDOW_STATE_SHADED,  /** The window is shaded. */
+   ECORE_X_WINDOW_STATE_SKIP_TASKBAR,  /** The window should not be included in the taskbar. */
+   ECORE_X_WINDOW_STATE_SKIP_PAGER,  /** The window should not be included in the pager. */
+   ECORE_X_WINDOW_STATE_HIDDEN,  /** The window is invisible (i.e. minimized/iconified) */
+   ECORE_X_WINDOW_STATE_FULLSCREEN,  /** The window should fill the entire screen and have no
+                                      * window border/decorations */
+   ECORE_X_WINDOW_STATE_ABOVE,
+   ECORE_X_WINDOW_STATE_BELOW,
    ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION
 } Ecore_X_Window_State;
 
