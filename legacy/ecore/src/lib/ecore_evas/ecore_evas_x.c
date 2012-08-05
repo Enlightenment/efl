@@ -2758,6 +2758,24 @@ _ecore_evas_x_override_set(Ecore_Evas *ee, int on)
 }
 
 static void
+_ecore_evas_x_maximized_set(Ecore_Evas *ee, int on)
+{
+   if (ee->prop.maximized == on) return;
+   ee->engine.x.state.maximized_h = 1;
+   ee->engine.x.state.maximized_v = 1;
+   ee->prop.maximized = on;
+   if (ee->should_be_visible)
+     {
+        ecore_x_netwm_state_request_send(ee->prop.window, ee->engine.x.win_root,
+                                         ECORE_X_WINDOW_STATE_MAXIMIZED_VERT, -1, on);
+        ecore_x_netwm_state_request_send(ee->prop.window, ee->engine.x.win_root,
+                                         ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ, -1, on);
+     }
+   else
+     _ecore_evas_x_state_update(ee);
+}
+
+static void
 _ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
 {
    if (ee->prop.fullscreen == on) return;
@@ -3072,7 +3090,7 @@ static Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_iconified_set,
      _ecore_evas_x_borderless_set,
      _ecore_evas_x_override_set,
-     NULL,
+     _ecore_evas_x_maximized_set,
      _ecore_evas_x_fullscreen_set,
      _ecore_evas_x_avoid_damage_set,
      _ecore_evas_x_withdrawn_set,
