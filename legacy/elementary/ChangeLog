@@ -366,3 +366,7 @@
 2012-08-02  Cedric Bail
 
 	* Fix elm_image_orient_set/get.
+
+2012-08-06  Cedric Bail
+
+	* Make Elm_Slider update itself asynchronously.

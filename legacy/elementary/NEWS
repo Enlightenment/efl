@@ -35,6 +35,7 @@ Improvements:
    * Allocate once and reuse Evas_Map.
    * Allow freeze/thaw on Elm_Layout and reduce number of object update.
    * Defer Elm_Calendar generation until really needed.
+   * Defer Elm_Slider update until really needed.
 
 Removal:
 
