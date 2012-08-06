@@ -469,9 +469,9 @@ _elm_win_resize_job(void *data)
 
    if (sd->frame_obj)
      {
-        int fw, fh, fx, fy;
+        int fw, fh;
 
-        evas_output_framespace_get(sd->evas, &fx, &fy, &fw, &fh);
+        evas_output_framespace_get(sd->evas, NULL, NULL, &fw, &fh);
         evas_object_resize(sd->frame_obj, w + fw, h + fh);
      }
    else if (sd->img_obj)
