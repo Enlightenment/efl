@@ -394,12 +394,12 @@ _theme_hook_item(Evas_Object *obj, Elm_Toolbar_Item *it, double scale, int icon_
              if (wd->vertical)
                {
                   evas_object_size_hint_weight_set(view, EVAS_HINT_EXPAND, -1.0);
-                  evas_object_size_hint_align_set(view, EVAS_HINT_FILL, 0.5);
+                  evas_object_size_hint_align_set(view, EVAS_HINT_FILL, EVAS_HINT_FILL);
                }
              else
                {
                   evas_object_size_hint_weight_set(view, -1.0, EVAS_HINT_EXPAND);
-                  evas_object_size_hint_align_set(view, 0.5, EVAS_HINT_FILL);
+                  evas_object_size_hint_align_set(view, EVAS_HINT_FILL, EVAS_HINT_FILL);
                }
           }
         else
@@ -1374,12 +1374,12 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
         if (wd->vertical)
           {
              evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, -1.0);
-             evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, 0.5);
+             evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
           }
         else
           {
              evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
-             evas_object_size_hint_align_set(VIEW(it), 0.5, EVAS_HINT_FILL);
+             evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
           }
      }
    else
@@ -1412,12 +1412,12 @@ _elm_toolbar_item_label_update(Elm_Toolbar_Item *item)
         if (wd->vertical)
           {
              evas_object_size_hint_weight_set(VIEW(item), EVAS_HINT_EXPAND, -1.0);
-             evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, 0.5);
+             evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
           }
         else
           {
              evas_object_size_hint_weight_set(VIEW(item), -1.0, EVAS_HINT_EXPAND);
-             evas_object_size_hint_align_set(VIEW(item), 0.5, EVAS_HINT_FILL);
+             evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
           }
      }
    else
@@ -1488,12 +1488,12 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
         if (wd->vertical)
           {
              evas_object_size_hint_weight_set(VIEW(item), EVAS_HINT_EXPAND, -1.0);
-             evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, 0.5);
+             evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
           }
         else
           {
              evas_object_size_hint_weight_set(VIEW(item), -1.0, EVAS_HINT_EXPAND);
-             evas_object_size_hint_align_set(VIEW(item), 0.5, EVAS_HINT_FILL);
+             evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
           }
      }
    else
@@ -1631,6 +1631,7 @@ elm_toolbar_add(Evas_Object *parent)
                                  ELM_SMART_SCROLLER_POLICY_AUTO,
                                  ELM_SMART_SCROLLER_POLICY_OFF);
 
+   wd->shrink_mode = ELM_TOOLBAR_SHRINK_NONE;
    wd->icon_size = _elm_toolbar_icon_size_get(wd);
 
 
@@ -2049,6 +2050,7 @@ elm_toolbar_shrink_mode_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
    Eina_Bool bounce;
 
    if (!wd) return;
+   if (wd->shrink_mode == shrink_mode) return;
    wd->shrink_mode = shrink_mode;
    bounce = (_elm_config->thumbscroll_bounce_enable) &&
       (shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL);
@@ -2063,15 +2065,20 @@ elm_toolbar_shrink_mode_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
 
    if (shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
+        elm_toolbar_homogeneous_set(obj, EINA_FALSE);
         elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF,
                                       ELM_SMART_SCROLLER_POLICY_OFF);
         wd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
      }
    else if (shrink_mode == ELM_TOOLBAR_SHRINK_HIDE)
-     elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF,
-                                   ELM_SMART_SCROLLER_POLICY_OFF);
+     {
+        elm_toolbar_homogeneous_set(obj, EINA_FALSE);
+        elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF,
+                                      ELM_SMART_SCROLLER_POLICY_OFF);
+     }
    else if (shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
      {
+        elm_toolbar_homogeneous_set(obj, EINA_FALSE);
         elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_AUTO,
                                       ELM_SMART_SCROLLER_POLICY_OFF);
         wd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
@@ -2099,7 +2106,10 @@ elm_toolbar_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   wd->homogeneous = !!homogeneous;
+   homogeneous = !!homogeneous;
+   if (homogeneous == wd->homogeneous) return;
+   wd->homogeneous = homogeneous;
+   if (homogeneous) elm_toolbar_shrink_mode_set(obj, ELM_TOOLBAR_SHRINK_NONE);
    evas_object_smart_calculate(wd->bx);
 }
 
@@ -2405,7 +2415,7 @@ elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
    Elm_Toolbar_Item *it;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
+   if (wd->lookup_order == order) return;
    wd->lookup_order = order;
    EINA_INLIST_FOREACH(wd->items, it)
       elm_icon_order_lookup_set(it->icon, order);
@@ -2428,6 +2438,8 @@ elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   horizontal = !!horizontal;
+   if (!horizontal == wd->vertical) return;
    wd->vertical = !horizontal;
    if (wd->vertical)
      evas_object_size_hint_align_set(wd->bx, 0.5, wd->align);
@@ -2460,6 +2472,7 @@ elm_toolbar_standard_priority_set(Evas_Object *obj, int priority)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   if (wd->standard_priority == priority) return;
    wd->standard_priority = priority;
    _resize(obj, NULL, NULL, NULL);
 }
@@ -2481,6 +2494,7 @@ elm_toolbar_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode mode)
    if (!wd) return;
    if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
      return;
+   if (wd->select_mode == mode) return;
    if ((mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
        (wd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
        wd->items)
