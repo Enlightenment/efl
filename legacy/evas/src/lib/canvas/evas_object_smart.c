@@ -104,12 +104,16 @@ EAPI const void *
 evas_object_smart_interface_get(const Evas_Object *obj,
                                 const char *name)
 {
-   unsigned int i;
    Evas_Smart *s;
+   unsigned int i;
+   Evas_Object_Smart *o;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   o = (Evas_Object_Smart *)(obj->object_data);
+   if (!o) return NULL;
+   if (o->magic != MAGIC_OBJ_SMART) return NULL;
 
    s = evas_object_smart_smart_get(obj);
 
@@ -130,12 +134,16 @@ EAPI void *
 evas_object_smart_interface_data_get(const Evas_Object *obj,
                                      const Evas_Smart_Interface *iface)
 {
+   Evas_Object_Smart *o;
    unsigned int i;
    Evas_Smart *s;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   o = (Evas_Object_Smart *)(obj->object_data);
+   if (!o) return NULL;
+   if (o->magic != MAGIC_OBJ_SMART) return NULL;
 
    s = evas_object_smart_smart_get(obj);
 
