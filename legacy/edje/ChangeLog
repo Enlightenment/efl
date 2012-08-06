@@ -540,3 +540,7 @@
 2012-07-29  Cedric Bail
 
 	* Reduce potential reentrant issue when using edje_object_signal_emit.
+
+2012-08-06  Cedric Bail
+
+	* Call edje_object_message_signal_process also on GROUP part Edje object.

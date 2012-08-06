@@ -2421,6 +2421,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           {
              edje_object_update_hints_set(ep->swallowed_object, ep->param1.description->min.limit);
           }
+	if (edje_object_update_hints_get(ep->swallowed_object))
+	  {
+             Edje *ted;
+
+             ted = _edje_fetch(ep->swallowed_object);
+             _edje_recalc_do(ted);
+	  }
      }
 
 #ifdef EDJE_CALC_CACHE

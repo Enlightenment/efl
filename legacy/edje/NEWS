@@ -29,6 +29,7 @@ Fixes:
     * [entry] display preedit string even though there is no attribute
     * Fix shutdown of Edje_Multisense.
     * Reduce potential reentrant issue when using edje_object_signal_emit.
+    * Call edje_object_message_signal_process also on GROUP part Edje object.
 
 Edje 1.2.0
 

@@ -48,37 +48,47 @@ edje_object_message_handler_set(Evas_Object *obj, Edje_Message_Handler_Cb func, 
    _edje_message_cb_set(ed, func, data);
 }
 
-
 EAPI void
 edje_object_message_signal_process(Evas_Object *obj)
 {
    Eina_List *l, *ln, *tmpq = NULL;
    Edje *ed;
+   Edje *lookup_ed;
+   Eina_List *lg;
    Edje_Message *em;
+   Eina_List *groups = NULL;
    int gotos = 0;
+   unsigned int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
 
-   for (l = msgq; l; )
+   groups = eina_list_append(groups, ed);
+   for (i = 0; i < ed->table_parts_size; i++)
      {
-        ln = l->next;
-        em = l->data;
-        if (em->edje == ed)
-          {
-             tmpq = eina_list_append(tmpq, em);
-             msgq = eina_list_remove_list(msgq, l);
-          }
-        l = ln;
+        Edje_Real_Part *rp;
+
+        rp = ed->table_parts[i];
+        if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+          groups = eina_list_append(groups,
+                                    _edje_fetch(rp->swallowed_object));
+     }
+
+   EINA_LIST_FOREACH_SAFE(msgq, l, ln, em)
+     {
+        EINA_LIST_FOREACH(groups, lg, lookup_ed)
+          if (em->edje == lookup_ed)
+            {
+               tmpq = eina_list_append(tmpq, em);
+               msgq = eina_list_remove_list(msgq, l);
+               break;
+            }
      }
    /* a temporary message queue */
    if (tmp_msgq)
      {
-	while (tmpq)
-	  {
-	     tmp_msgq = eina_list_append(tmp_msgq, tmpq->data);
-	     tmpq = eina_list_remove_list(tmpq, tmpq);
-	  }
+        EINA_LIST_FREE(tmpq, em)
+          tmp_msgq = eina_list_append(tmp_msgq, em);
      }
    else
      {
@@ -90,20 +100,23 @@ edje_object_message_signal_process(Evas_Object *obj)
 again:
    EINA_LIST_FOREACH_SAFE(tmp_msgq, l, ln, em)
      {
-        if (em->edje != ed) continue;
+        EINA_LIST_FOREACH(groups, lg, lookup_ed)
+          if (em->edje == lookup_ed)
+            break;
+        if (em->edje != lookup_ed) continue;
 	tmp_msgq = eina_list_remove_list(tmp_msgq, l);
-        if (!ed->delete_me)
+        if (!lookup_ed->delete_me)
           {
-             ed->processing_messages++;
+             lookup_ed->processing_messages++;
              _edje_message_process(em);
              _edje_message_free(em);
-             ed->processing_messages--;
+             lookup_ed->processing_messages--;
           }
         else
            _edje_message_free(em);
-        if (ed->processing_messages == 0)
+        if (lookup_ed->processing_messages == 0)
           {
-             if (ed->delete_me) _edje_del(ed);
+             if (lookup_ed->delete_me) _edje_del(lookup_ed);
           }
         // if some child callback in _edje_message_process called
         // edje_object_message_signal_process() or
@@ -132,7 +145,6 @@ end:
    else
       tmp_msgq_restart = 1;
 }
-
 
 EAPI void
 edje_message_signal_process(void)

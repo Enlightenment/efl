@@ -1149,6 +1149,10 @@ edje_object_part_text_style_user_push(Evas_Object *obj, const char *part,
    evas_object_textblock_style_user_push(rp->object, ts);
    evas_textblock_style_free(ts);
    ed->recalc_hints = 1;
+#ifdef EDJE_CALC_CACHE
+   rp->invalidate = 1;
+#endif
+   _edje_recalc(ed);
 }
 
 EAPI void
@@ -1165,6 +1169,10 @@ edje_object_part_text_style_user_pop(Evas_Object *obj, const char *part)
 
    evas_object_textblock_style_user_pop(rp->object);
    ed->recalc_hints = 1;
+#ifdef EDJE_CALC_CACHE
+   rp->invalidate = 1;
+#endif
+   _edje_recalc(ed);
 }
 
 EAPI const char *
@@ -4462,7 +4470,11 @@ edje_object_update_hints_set(Evas_Object *obj, Eina_Bool update)
    if (ed->update_hints == !!update) return ;
 
    ed->update_hints = !!update;
-   if (update) ed->recalc_hints = 1;
+   if (update)
+     {
+        ed->recalc_hints = 1;
+        _edje_recalc(ed);
+     }
 }
 
 EAPI Eina_Bool
