@@ -1,5 +1,5 @@
 /*
- * gcc -o web_example web_example.c `pkg-config --cflags --libs elementary ewebkit` -D_GNU_SOURCE
+ * gcc -o web_example_02 web_example_02.c `pkg-config --cflags --libs elementary ewebkit` -D_GNU_SOURCE
  */
 
 #define _GNU_SOURCE

@@ -132,7 +132,8 @@ transit_example_01.c \
 transit_example_02.c \
 transit_example_03.c \
 transit_example_04.c \
-web_example.c \
+web_example_01.c \
+web_example_02.c \
 win_example.c
 
 .edc.edj:
@@ -243,7 +244,8 @@ transit_example_01 \
 transit_example_02 \
 transit_example_03 \
 transit_example_04 \
-web_example \
+web_example_01 \
+web_example_02 \
 win_example
 
 if ELEMENTARY_WINDOWS_BUILD

@@ -5932,7 +5932,7 @@
  */
 
 /**
- * @page web_example_01 Web - Simple example
+ * @page web_example_02 Web - Simple example
  *
  * WebKit-EFL is independent of any particular toolkit, such as Elementary,
  * so using it on applications requires that the programmer writes a lot of
@@ -5958,7 +5958,7 @@
  * some WebKit functions on it, thus we need to include the necessary headers
  * first.
  *
- * @dontinclude web_example.c
+ * @dontinclude web_example_02.c
  * @skip include
  * @until EWebKit
  *
@@ -6052,10 +6052,10 @@
  * @until ELM_MAIN
  *
  * Some parts of the code were left out, as they are not relevant to the
- * example, but the full listing can be found at @ref web_example.c
- * "web_example.c".
+ * example, but the full listing can be found at @ref web_example_02.c
+ * "web_example_02.c".
  *
- * @example web_example.c
+ * @example web_example_02.c
  */
 
 /**

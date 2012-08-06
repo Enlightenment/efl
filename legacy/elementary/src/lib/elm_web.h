@@ -80,7 +80,8 @@
  *
  * An example of use of web:
  *
- * - @ref web_example_01 TBD
+ * - @ref web_example_01
+ * - @ref web_example_02
  */
 
 /**
