@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
 static const char WIN_SMART_NAME[] = "elm_win";
@@ -1802,6 +1803,43 @@ _elm_win_frame_cb_move_start(void *data,
 }
 
 static void
+_elm_win_frame_cb_resize_show(void *data,
+                              Evas_Object *obj __UNUSED__,
+                              const char *sig __UNUSED__,
+                              const char *source)
+{
+   Elm_Win_Smart_Data *sd;
+
+   if (!(sd = data)) return;
+   if (sd->resizing) return;
+
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   if (!strcmp(source, "elm.event.resize.t"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_TOP_SIDE);
+   else if (!strcmp(source, "elm.event.resize.b"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_BOTTOM_SIDE);
+   else if (!strcmp(source, "elm.event.resize.l"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_LEFT_SIDE);
+   else if (!strcmp(source, "elm.event.resize.r"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_RIGHT_SIDE);
+   else if (!strcmp(source, "elm.event.resize.tl"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, 
+                                          ELM_CURSOR_TOP_LEFT_CORNER);
+   else if (!strcmp(source, "elm.event.resize.tr"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, 
+                                          ELM_CURSOR_TOP_RIGHT_CORNER);
+   else if (!strcmp(source, "elm.event.resize.bl"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, 
+                                          ELM_CURSOR_BOTTOM_LEFT_CORNER);
+   else if (!strcmp(source, "elm.event.resize.br"))
+     ecore_wl_window_cursor_from_name_set(sd->wl.win, 
+                                          ELM_CURSOR_BOTTOM_RIGHT_CORNER);
+   else
+     ecore_wl_window_cursor_default_restore(sd->wl.win);
+#endif
+}
+
+static void
 _elm_win_frame_cb_resize_start(void *data,
                                Evas_Object *obj __UNUSED__,
                                const char *sig __UNUSED__,
@@ -1813,8 +1851,6 @@ _elm_win_frame_cb_resize_start(void *data,
    if (sd->resizing) return;
 
    sd->resizing = EINA_TRUE;
-
-   /* FIXME: Change mouse pointer */
 
    if (!strcmp(source, "elm.event.resize.t"))
      sd->resize_location = 1;
@@ -1895,6 +1931,9 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,move,start", "elm",
      _elm_win_frame_cb_move_start, sd);
+   edje_object_signal_callback_add
+     (sd->frame_obj, "elm,action,resize,show", "*",
+     _elm_win_frame_cb_resize_show, sd);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,resize,start", "*",
      _elm_win_frame_cb_resize_start, sd);
