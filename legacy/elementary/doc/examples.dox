@@ -100,17 +100,17 @@
  * @ref progressbar_example
  *
  * @ref slideshow_example
- * 
+ *
  * @ref efl_thread_1
- * 
+ *
  * @ref efl_thread_2
- * 
+ *
  * @ref efl_thread_3
- * 
+ *
  * @ref efl_thread_4
- * 
+ *
  * @ref efl_thread_5
- * 
+ *
  * @ref efl_thread_6
  */
 
@@ -2018,37 +2018,37 @@
  * @until zoom_fill
  *
  * Overlays can be placed over the map to represent anything we want. Let's
- * say we want to represent some countries and cities with overlays. 
- * 
- * Before we create city or country overlays, let's create class overlays. 
+ * say we want to represent some countries and cities with overlays.
+ *
+ * Before we create city or country overlays, let's create class overlays.
  *
  * @skipline elm_map_overlay_class_add
  * @until elm_map_overlay_icon_set
  * These lines create a class overlay which represents cities.
- * This class overlay will be used for grouping city overlays. 
- * Later city overlays in the same class are appended to this class overlay. 
+ * This class overlay will be used for grouping city overlays.
+ * Later city overlays in the same class are appended to this class overlay.
  * if city overlays are near each other, they will be grouped.
  *
- * We can set the icon for the class so that the icon will be displayed 
+ * We can set the icon for the class so that the icon will be displayed
  * when city overlays are grouped.
  * We can set the zoom required to display the overlays that belongs
  * to this class, so if the zoom is less than this value, nothing
- * will be shown. 
- * 
+ * will be shown.
+ *
  * Country class can be created in the same way.
  * @skipline elm_map_overlay_class_add
  * @until elm_map_overlay_icon_set
  *
  * Next we'll create some overlays representing cities and countries.
- * We set the data for the overlay so that can be used later when 
+ * We set the data for the overlay so that can be used later when
  * clicked callback is called.
  * We'll append them into city class to be grouped.
- * We'll append them in a list, to close up them later. 
+ * We'll append them in a list, to close up them later.
  * To create a default overlay, we need to pass the coordinates.
  * @skipline elm_map_overlay_add
  * @until eina_list_append
  *
- * We subscribe a smart callback "overlay,clicked" to create bubble on 
+ * We subscribe a smart callback "overlay,clicked" to create bubble on
  * the clicked overlay.
  * @dontinclude map_example_02.c
  * @skipline "overlay,clicked"
@@ -6065,29 +6065,29 @@
  * to only use eina or eet calls inside a thread. Other libraries are not
  * totally threadsafe except for some specific ecore calls designed for
  * working from threads like the ecore_pipe_write() and ecore_thread calls.
- * 
+ *
  * Below is an example of how to use EFL calls from a native thread you have
  * already created. You have to put the EFL calls inside the critical block
  * between ecore_thread_main_loop_begin() and ecore_thread_main_loop_end()
  * which ensure you gain a lock on the mainloop. Beware that this requires
  * that the thread WAIT to synchronize with the mainloop at the beginning of
  * the critical section. It is highly suggested you use as few of these
- * in your thread as possible and probably put just a single 
+ * in your thread as possible and probably put just a single
  * ecore_thread_main_loop_begin() / ecore_thread_main_loop_end() section
  * at the end of the threads calculation or work when it is done and
  * would otherwise exit to sit idle.
- * 
+ *
  * For a progression of examples that become more complex and show other
  * ways to use threading with EFL, please see:
- * 
+ *
  * @ref efl_thread_2
- * 
+ *
  * @ref efl_thread_3
- * 
+ *
  * @ref efl_thread_4
- * 
+ *
  * @ref efl_thread_5
- * 
+ *
  * @ref efl_thread_6
  *
  * @include efl_thread_1.c
@@ -6104,11 +6104,11 @@
  * of inlining your code.
  *
  * @ref efl_thread_3
- * 
+ *
  * @ref efl_thread_4
- * 
+ *
  * @ref efl_thread_5
- * 
+ *
  * @ref efl_thread_6
  *
  * @include efl_thread_2.c
@@ -6129,9 +6129,9 @@
  * calculation.
  *
  * @ref efl_thread_4
- * 
+ *
  * @ref efl_thread_5
- * 
+ *
  * @ref efl_thread_6
  *
  * @include efl_thread_3.c
@@ -6147,7 +6147,7 @@
  * to do this.
  *
  * @ref efl_thread_5
- * 
+ *
  * @ref efl_thread_6
  *
  * @include efl_thread_4.c
