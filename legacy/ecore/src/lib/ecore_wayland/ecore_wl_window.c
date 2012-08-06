@@ -8,8 +8,8 @@
 static void _ecore_wl_window_cb_ping(void *data __UNUSED__, struct wl_shell_surface *shell_surface, unsigned int serial);
 static void _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, unsigned int edges, int w, int h);
 static void _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surface __UNUSED__);
-static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output);
-static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output);
+static void _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output __UNUSED__);
+static void _ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output __UNUSED__);
 static void _ecore_wl_window_configure_send(Ecore_Wl_Window *win, int w, int h);
 static char *_ecore_wl_window_id_str_get(unsigned int win_id);
 
@@ -270,6 +270,18 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
       case ECORE_WL_WINDOW_BUFFER_TYPE_SHM:
         if (win->surface)
           {
+             if (win->edges & 4) //  resizing from the left
+               x = win->server_allocation.w - win->allocation.w;
+             else
+               x = 0;
+
+             if (win->edges & 1) // resizing from the top
+               y = win->server_allocation.h - win->allocation.h;
+             else
+               y = 0;
+
+             win->edges = 0;
+
              /* if (buffer) */
              wl_surface_attach(win->surface, buffer, x, y);
              wl_surface_damage(win->surface, 0, 0, 
@@ -623,7 +635,7 @@ _ecore_wl_window_cb_popup_done(void *data, struct wl_shell_surface *shell_surfac
 }
 
 static void 
-_ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output)
+_ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct wl_output *output __UNUSED__)
 {
    Ecore_Wl_Window *win;
 
@@ -634,7 +646,7 @@ _ecore_wl_window_cb_surface_enter(void *data, struct wl_surface *surface, struct
 }
 
 static void 
-_ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output)
+_ecore_wl_window_cb_surface_leave(void *data, struct wl_surface *surface, struct wl_output *output __UNUSED__)
 {
    Ecore_Wl_Window *win;
 
