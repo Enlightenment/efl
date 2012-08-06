@@ -2426,7 +2426,6 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_on_focus_region_hook_set(obj, _on_focus_region_hook);
    elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
-   elm_object_cursor_set(obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_text_set_hook_set(obj, _elm_entry_text_set);
    elm_widget_text_get_hook_set(obj, _elm_entry_text_get);
@@ -2447,6 +2446,7 @@ elm_entry_add(Evas_Object *parent)
    wd->input_panel_imdata = NULL;
 
    wd->ent = edje_object_add(e);
+   elm_object_sub_cursor_set(wd->ent, obj, ELM_CURSOR_XTERM);
    edje_object_item_provider_set(wd->ent, _get_item, obj);
    edje_object_text_insert_filter_callback_add(wd->ent,"elm.text", _text_filter, obj);
    edje_object_text_markup_filter_callback_add(wd->ent,"elm.text", _markup_filter, obj);
