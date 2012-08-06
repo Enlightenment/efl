@@ -132,22 +132,19 @@ _elm_tooltip_show(Elm_Tooltip *tt)
    if (tt->free_size)
      {
         tt->tt_win = elm_win_add(NULL, "tooltip", ELM_WIN_BASIC);
-        elm_win_borderless_set(tt->tt_win, EINA_TRUE);
         elm_win_override_set(tt->tt_win, EINA_TRUE);
         tt->tt_evas = evas_object_evas_get(tt->tt_win);
         tt->tooltip = edje_object_add(tt->tt_evas);
-        evas_object_move(tt->tooltip, 0, 0);
+        evas_object_size_hint_weight_set(tt->tooltip, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(tt->tooltip, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_win_resize_object_add(tt->tt_win, tt->tooltip);
-#ifdef HAVE_ELEMENTARY_X
-        ecore_x_window_shape_input_rectangle_set(elm_win_xwindow_get(tt->tt_win), 0, 0, 0, 0);
-#endif
-        evas_object_show(tt->tt_win);
      }
    else
       tt->tooltip = edje_object_add(tt->evas);
    if (!tt->tooltip) return;
 
-   evas_object_layer_set(tt->tt_win ?: tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);
+   if (tt->free_size)
+     evas_object_layer_set(tt->tooltip, ELM_OBJECT_LAYER_TOOLTIP);
 
    evas_object_event_callback_add
      (tt->eventarea, EVAS_CALLBACK_MOVE, _elm_tooltip_obj_move_cb, tt);
@@ -303,11 +300,21 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
           {  /* FIXME: hardcoded here is bad */
              if (str && (!strcmp(str, "enabled")))
                {
+                  evas_object_hide(tt->tt_win);
                   elm_win_alpha_set(tt->tt_win, EINA_TRUE);
+#ifdef HAVE_ELEMENTARY_X
+                  ecore_x_window_shape_input_rectangle_set(elm_win_xwindow_get(tt->tt_win), 0, 0, 0, 0);
+#endif
+                  evas_object_show(tt->tt_win);
                }
              else
                {
+                  evas_object_hide(tt->tt_win);
                   elm_win_alpha_set(tt->tt_win, EINA_FALSE);
+#ifdef HAVE_ELEMENTARY_X
+                  ecore_x_window_shape_input_rectangle_set(elm_win_xwindow_get(tt->tt_win), 0, 0, 0, 0);
+#endif
+                  evas_object_show(tt->tt_win);
                }
           }
 
