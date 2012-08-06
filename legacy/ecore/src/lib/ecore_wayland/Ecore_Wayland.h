@@ -185,6 +185,9 @@ struct _Ecore_Wl_Window
    Ecore_Wl_Input *pointer_device;
    Ecore_Wl_Input *keyboard_device;
 
+   /* FIXME: Ideally we should record the cursor name for this window 
+    * so we can compare and avoid unnecessary cursor set calls to wayland */
+
    void *data;
 };
 
