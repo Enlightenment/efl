@@ -878,10 +878,22 @@ group {
          action: SIGNAL_EMIT "elm,action,close" "elm";
       }
       program {
+         name: "resize_t_show";
+         signal: "mouse,in";
+         source: "elm.event.resize.t";
+         action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.t";
+      }
+      program {
          name: "resize_t_down";
          signal: "mouse,down,1";
          source: "elm.event.resize.t";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.t";
+      }
+      program {
+         name: "resize_b_show";
+         signal: "mouse,in";
+         source: "elm.event.resize.b";
+         action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.b";
       }
       program {
          name: "resize_b_down";
@@ -890,10 +902,22 @@ group {
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.b";
       }
       program {
+         name: "resize_tl_show";
+         signal: "mouse,in";
+         source: "elm.event.resize.tl";
+         action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.tl";
+      }
+      program {
          name: "resize_tl_down";
          signal: "mouse,down,1";
          source: "elm.event.resize.tl";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.tl";
+      }
+      program {
+         name: "resize_tr_show";
+         signal: "mouse,in";
+         source: "elm.event.resize.tr";
+         action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.tr";
       }
       program {
          name: "resize_tr_down";
@@ -902,10 +926,22 @@ group {
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.tr";
       }
       program {
+         name: "resize_bl_show";
+         signal: "mouse,in";
+         source: "elm.event.resize.bl";
+         action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.bl";
+      }
+      program {
          name: "resize_bl_down";
          signal: "mouse,down,1";
          source: "elm.event.resize.bl";
          action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.bl";
+      }
+      program {
+         name: "resize_br_show";
+         signal: "mouse,in";
+         source: "elm.event.resize.br";
+         action: SIGNAL_EMIT "elm,action,resize,show" "elm.event.resize.br";
       }
       program {
          name: "resize_br_down";
