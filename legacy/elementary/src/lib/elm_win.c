@@ -1909,9 +1909,33 @@ _elm_win_frame_cb_close(void *data,
                         const char *source __UNUSED__)
 {
    Elm_Win_Smart_Data *sd;
+   Evas_Object *win;
+
+   /* FIXME: After the current freeze, this should be handled differently.
+    * 
+    * Ideally, we would want to mimic the X11 backend and use something 
+    * like ECORE_WL_EVENT_WINDOW_DELETE and handle the delete_request 
+    * inside of ecore_evas. That would be the 'proper' way, but since we are 
+    * in a freeze right now, I cannot add a new event value, or a new 
+    * event structure to ecore_wayland.
+    * 
+    * So yes, this is a temporary 'stop-gap' solution which will be fixed 
+    * when the freeze is over, but it does fix a trac bug for now, and in a 
+    * way which does not break API or the freeze. - dh
+    */
 
    if (!(sd = data)) return;
-   evas_object_del(ELM_WIDGET_DATA(sd)->obj);
+
+   win = ELM_WIDGET_DATA(sd)->obj;
+
+   int autodel = sd->autodel;
+   sd->autodel_clear = &autodel;
+   evas_object_ref(win);
+   evas_object_smart_callback_call(win, SIG_DELETE_REQUEST, NULL);
+   // FIXME: if above callback deletes - then the below will be invalid
+   if (autodel) evas_object_del(win);
+   else sd->autodel_clear = NULL;
+   evas_object_unref(win);
 }
 
 static void
