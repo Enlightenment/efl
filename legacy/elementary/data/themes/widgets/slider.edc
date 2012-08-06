@@ -860,6 +860,8 @@ group { name: "elm/slider/vertical/default";
             rel2.offset: -9 -9;
          }
       }
+      alias: "elm.units.min" "limits:elm.units.min";
+      alias: "elm.units.max" "limits:elm.units.max";
       part { name: "elm.units";
          type: TEXT;
          mouse_events: 0;
@@ -884,8 +886,7 @@ group { name: "elm/slider/vertical/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color:  0 0 0 128;
-            color3: 0 0 0 0;
+            color:  255 128 128 128;
             visible: 0;
          }
          description { state: "disabled_visible" 0.0;
@@ -1045,11 +1046,7 @@ group { name: "elm/slider/vertical/default";
          target: "elm.units";
          target: "limits";
          target: "units";
-         /* after: "limits,children,visible"; */
       }
-      /* program { name: "limits,children,visible"; */
-      /*    action: SIGNAL_EMIT "limits:limits,visible" "elm"; */
-      /* } */
       program { name: "units_hide";
          signal: "elm,state,units,hidden";
          source: "elm";
