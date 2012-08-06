@@ -82,6 +82,7 @@
  * @li "unfullscreen": window has stopped being fullscreen
  * @li "maximized": window has been maximized
  * @li "unmaximized": window has stopped being maximized
+ * @li "ioerr": there has been a low-level I/O error with the display system
  *
  * Examples:
  * @li @ref win_example_01

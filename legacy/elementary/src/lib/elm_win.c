@@ -157,6 +157,7 @@ static const char SIG_FULLSCREEN[] = "fullscreen";
 static const char SIG_UNFULLSCREEN[] = "unfullscreen";
 static const char SIG_MAXIMIZED[] = "maximized";
 static const char SIG_UNMAXIMIZED[] = "unmaximized";
+static const char SIG_IOERR[] = "ioerr";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DELETE_REQUEST, ""},
@@ -172,6 +173,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_UNFULLSCREEN, ""},
    {SIG_MAXIMIZED, ""},
    {SIG_UNMAXIMIZED, ""},
+   {SIG_IOERR, ""},
    {NULL, NULL}
 };
 
@@ -476,7 +478,7 @@ _elm_win_resize_job(void *data)
      }
 
    evas_object_resize(ELM_WIDGET_DATA(sd)->obj, w, h);
-   EINA_LIST_FOREACH (sd->resize_objs, l, obj)
+   EINA_LIST_FOREACH(sd->resize_objs, l, obj)
      {
         evas_object_move(obj, 0, 0);
         evas_object_resize(obj, w, h);
@@ -1563,7 +1565,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj)
    int xx = 1, xy = 1;
    double wx, wy;
 
-   EINA_LIST_FOREACH (sd->resize_objs, l, child)
+   EINA_LIST_FOREACH(sd->resize_objs, l, child)
      {
         evas_object_size_hint_weight_get(child, &wx, &wy);
         if (wx == 0.0) xx = 0;
@@ -1637,12 +1639,12 @@ _elm_win_rescale(Elm_Theme *th,
 
    if (!use_theme)
      {
-        EINA_LIST_FOREACH (_elm_win_list, l, obj)
+        EINA_LIST_FOREACH(_elm_win_list, l, obj)
           elm_widget_theme(obj);
      }
    else
      {
-        EINA_LIST_FOREACH (_elm_win_list, l, obj)
+        EINA_LIST_FOREACH(_elm_win_list, l, obj)
           elm_widget_theme_specific(obj, th, EINA_FALSE);
      }
 }
@@ -1653,7 +1655,7 @@ _elm_win_translate(void)
    const Eina_List *l;
    Evas_Object *obj;
 
-   EINA_LIST_FOREACH (_elm_win_list, l, obj)
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
      elm_widget_translate(obj);
 }
 
@@ -2028,6 +2030,21 @@ _elm_win_smart_set_user(Elm_Widget_Smart_Class *sc)
    sc->event = _elm_win_smart_event;
 }
 
+#ifdef HAVE_ELEMENTARY_X
+static void
+_elm_x_io_err(void *data)
+{
+   Eina_List *l;
+   Evas_Object *obj;
+   
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
+     {
+        evas_object_smart_callback_call(obj, SIG_IOERR, NULL);
+     }
+   elm_exit();
+}
+#endif
+
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent,
             const char *name,
@@ -2332,6 +2349,10 @@ elm_win_add(Evas_Object *parent,
 
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     {
+        ecore_x_io_error_handler_set(_elm_x_io_err, NULL);
+     }
 #endif
 
 #ifdef HAVE_ELEMENTARY_WAYLAND
@@ -2400,7 +2421,7 @@ elm_win_add(Evas_Object *parent,
    evas_image_cache_set(sd->evas, (_elm_config->image_cache * 1024));
    evas_font_cache_set(sd->evas, (_elm_config->font_cache * 1024));
 
-   EINA_LIST_FOREACH (_elm_config->font_dirs, l, fontpath)
+   EINA_LIST_FOREACH(_elm_config->font_dirs, l, fontpath)
      evas_font_path_append(sd->evas, fontpath);
 
    if (!_elm_config->font_hinting)
