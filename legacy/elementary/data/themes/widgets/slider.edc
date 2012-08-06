@@ -11,13 +11,9 @@ group { name: "elm/slider/hidden/limit";
             text {
                font: "Sans,Edje-Vera";
                size: 10;
-               min: 0 0;
+               min: 1 1;
                align: 0.0 0.5;
             }
-         }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            text.min: 1 1;
          }
       }
       part { name: "elm.units.max";
@@ -31,30 +27,10 @@ group { name: "elm/slider/hidden/limit";
             text {
                font: "Sans,Edje-Vera";
                size: 10;
-               min: 0 0;
+               min: 1 1;
                align: 0.0 0.5;
             }
          }
-         description { state: "visible" 0.0;
-            inherit: "default" 0.0;
-            text.min: 1 1;
-         }
-      }
-   }
-   programs {
-      program { name: "visisble";
-         signal: "limits,visible";
-         source: "elm";
-         action: STATE_SET "visible" 0.0;
-         target: "elm.units.min";
-         target: "elm.units.max";
-      }
-      program { name: "hide";
-         signal: "limits,hide";
-         source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "elm.units.min";
-         target: "elm.units.max";
       }
    }
 }
@@ -1069,11 +1045,11 @@ group { name: "elm/slider/vertical/default";
          target: "elm.units";
          target: "limits";
          target: "units";
-         after: "limits,children,visible";
+         /* after: "limits,children,visible"; */
       }
-      program { name: "limits,children,visible";
-         action: SIGNAL_EMIT "limits:limits,visible" "elm";
-      }
+      /* program { name: "limits,children,visible"; */
+      /*    action: SIGNAL_EMIT "limits:limits,visible" "elm"; */
+      /* } */
       program { name: "units_hide";
          signal: "elm,state,units,hidden";
          source: "elm";
