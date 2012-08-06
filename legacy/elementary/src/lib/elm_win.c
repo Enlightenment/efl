@@ -2032,11 +2032,11 @@ _elm_win_smart_set_user(Elm_Widget_Smart_Class *sc)
 
 #ifdef HAVE_ELEMENTARY_X
 static void
-_elm_x_io_err(void *data)
+_elm_x_io_err(void *data __UNUSED__)
 {
    Eina_List *l;
    Evas_Object *obj;
-   
+
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
      {
         evas_object_smart_callback_call(obj, SIG_IOERR, NULL);
