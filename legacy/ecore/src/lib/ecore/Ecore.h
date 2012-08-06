@@ -1100,6 +1100,9 @@ EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags 
  * @return A fd handler handle on success, @c NULL otherwise.
  *
  * This function is identical to ecore_main_fd_handler_add, except that it supports regular files.
+ * @warning This function should ONLY be called with ECORE_FD_ERROR, otherwise it will call the fd
+ * handler constantly.
+ * @warning Do not use this function unless you know what you are doing.
  *
  * @since 1.7
  */
