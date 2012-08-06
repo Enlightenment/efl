@@ -2,6 +2,20 @@
 #include <unistd.h>
 
 #ifdef BUILD_PIPE_RENDER
+
+# ifdef BUILD_PTHREAD
+typedef struct _Thinfo
+{
+   RGBA_Image            *im;
+   int                    thread_num;
+   pthread_t              thread_id;
+   pthread_barrier_t     *barrier;
+   const Eina_Inlist     *tasks;
+   Eina_Array             cutout_trash;
+   Eina_Array             rects_task;
+} Thinfo;
+#endif
+
 static RGBA_Pipe *evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op);
 static void evas_common_pipe_draw_context_copy(RGBA_Draw_Context *dc, RGBA_Pipe_Op *op);
 static void evas_common_pipe_op_free(RGBA_Pipe_Op *op);

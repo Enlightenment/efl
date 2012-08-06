@@ -4,19 +4,6 @@
 #include <sys/time.h>
 #include "language/evas_bidi_utils.h"
 
-#ifdef BUILD_PTHREAD
-typedef struct _Thinfo
-{
-   RGBA_Image            *im;
-   int                    thread_num;
-   pthread_t              thread_id;
-   pthread_barrier_t     *barrier;
-   const Eina_Inlist     *tasks;
-   Eina_Array             cutout_trash;
-   Eina_Array             rects_task;
-} Thinfo;
-#endif
-
 /* image rendering pipelines... new optional system - non-immediate and
  * threadable
  */
