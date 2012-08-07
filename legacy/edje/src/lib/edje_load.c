@@ -1446,6 +1446,9 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec, Edje_Part_Collec
    if (ec->script) embryo_program_free(ec->script);
    _edje_lua2_script_unload(ec);
 
+   eina_hash_free(ec->alias);
+   eina_hash_free(ec->aliased);
+
    /* Destroy all part and description. */
    eina_mempool_del(ce->mp.RECTANGLE);
    eina_mempool_del(ce->mp.TEXT);
