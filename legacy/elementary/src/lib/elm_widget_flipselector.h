@@ -134,6 +134,7 @@ struct _Elm_Flipselector_Smart_Data
 
    int                   walking;
    Eina_Bool             evaluating : 1;
+   Eina_Bool             deleting : 1;
 };
 
 typedef struct _Elm_Flipselector_Item       Elm_Flipselector_Item;

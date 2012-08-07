@@ -249,7 +249,8 @@ _on_item_changed(Elm_Flipselector_Smart_Data *sd)
 
    item = DATA_GET(sd->current);
    if (!item) return;
-
+   if (sd->deleting) return;
+   
    if (item->func)
      item->func((void *)item->base.data, WIDGET(item), item);
    if (!item->deleted)
@@ -293,8 +294,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
      {
         if (item2 == item)
           {
-             sd->items = eina_list_remove_list(sd->items, l);
-
              if (sd->current == l)
                {
                   sd->current = l->prev;
@@ -306,6 +305,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
                     }
                   else _send_msg(sd, MSG_FLIP_DOWN, "");
                }
+             sd->items = eina_list_remove_list(sd->items, l);
              break;
           }
      }
@@ -380,6 +380,7 @@ _flip_up(Elm_Flipselector_Smart_Data *sd)
 
    if (!sd->current) return;
 
+   if (sd->deleting) return;
    if (sd->current == sd->items)
      {
         sd->current = eina_list_last(sd->items);
@@ -402,6 +403,7 @@ _flip_down(Elm_Flipselector_Smart_Data *sd)
 
    if (!sd->current) return;
 
+   if (sd->deleting) return;
    sd->current = eina_list_next(sd->current);
    if (!sd->current)
      {
@@ -567,6 +569,8 @@ _elm_flipselector_smart_del(Evas_Object *obj)
 {
    ELM_FLIPSELECTOR_DATA_GET(obj, sd);
 
+   sd->deleting = EINA_TRUE;
+   
    if (sd->walking) ERR("flipselector deleted while walking.\n");
 
    while (sd->items)
