@@ -1598,6 +1598,110 @@ _item_state_new(const char *label, const char *icon_str, Evas_Object *icon, Evas
    return it_state;
 }
 
+static void
+_elm_toolbar_action_left_cb(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
+{
+   Evas_Object *obj = data;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Toolbar_Item *it, *it2;
+   Eina_Bool done = EINA_FALSE;
+   
+   if (!wd) return;
+   EINA_INLIST_FOREACH(wd->items, it)
+     {
+        if (it->selected)
+          {
+             Eina_Bool found = EINA_FALSE;
+             
+             EINA_INLIST_REVERSE_FOREACH(wd->items, it2)
+               {
+                  if (elm_object_item_disabled_get((Elm_Object_Item *)it2))
+                    continue;
+                  if (it2 == it)
+                    {
+                       found = EINA_TRUE;
+                       continue;
+                    }
+                  if (!found) continue;
+                  if (it2->separator) continue;
+                  _item_unselect(it);
+                  _item_select(it2);
+                  break;
+               }
+             done = EINA_TRUE;
+             break;
+          }
+     }
+   if (!done)
+     {
+        EINA_INLIST_FOREACH(wd->items, it)
+          {
+             if (elm_object_item_disabled_get((Elm_Object_Item *)it)) continue;
+             if (it->separator) continue;
+             _item_select(it);
+             break;
+          }
+     }
+}
+
+static void
+_elm_toolbar_action_right_cb(void *data, Evas_Object *o __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
+{
+   Evas_Object *obj = data;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Toolbar_Item *it, *it2;
+   Eina_Bool done = EINA_FALSE;
+   
+   if (!wd) return;
+   EINA_INLIST_FOREACH(wd->items, it)
+     {
+        if (it->selected)
+          {
+             Eina_Bool found = EINA_FALSE;
+             
+             EINA_INLIST_FOREACH(wd->items, it2)
+               {
+                  if (elm_object_item_disabled_get((Elm_Object_Item *)it2))
+                    continue;
+                  if (it2 == it)
+                    {
+                       found = EINA_TRUE;
+                       continue;
+                    }
+                  if (!found) continue;
+                  if (it2->separator) continue;
+                  _item_unselect(it);
+                  _item_select(it2);
+                  break;
+               }
+             done = EINA_TRUE;
+             break;
+          }
+     }
+   if (!done)
+     {
+        EINA_INLIST_REVERSE_FOREACH(wd->items, it)
+          {
+             if (elm_object_item_disabled_get((Elm_Object_Item *)it)) continue;
+             if (it->separator) continue;
+             _item_select(it);
+             break;
+          }
+     }
+}
+
+static void
+_elm_toolbar_action_up_cb(void *data, Evas_Object *o, const char *sig, const char *src)
+{
+   _elm_toolbar_action_left_cb(data, o, sig, src);
+}
+
+static void
+_elm_toolbar_action_down_cb(void *data, Evas_Object *o, const char *sig, const char *src)
+{
+   _elm_toolbar_action_right_cb(data, o, sig, src);
+}
+
 EAPI Evas_Object *
 elm_toolbar_add(Evas_Object *parent)
 {
@@ -1632,7 +1736,19 @@ elm_toolbar_add(Evas_Object *parent)
    elm_smart_scroller_policy_set(wd->scr,
                                  ELM_SMART_SCROLLER_POLICY_AUTO,
                                  ELM_SMART_SCROLLER_POLICY_OFF);
-
+   edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scr),
+                                   "elm,action,left", "elm",
+                                  _elm_toolbar_action_left_cb, obj);
+   edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scr),
+                                   "elm,action,right", "elm",
+                                  _elm_toolbar_action_right_cb, obj);
+   edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scr),
+                                   "elm,action,up", "elm",
+                                  _elm_toolbar_action_up_cb, obj);
+   edje_object_signal_callback_add(elm_smart_scroller_edje_object_get(wd->scr),
+                                   "elm,action,down", "elm",
+                                  _elm_toolbar_action_down_cb, obj);
+   
    wd->shrink_mode = ELM_TOOLBAR_SHRINK_NONE;
    wd->icon_size = _elm_toolbar_icon_size_get(wd);
 

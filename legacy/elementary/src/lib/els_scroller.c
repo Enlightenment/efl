@@ -269,6 +269,10 @@ struct _Smart_Data
    Eina_Bool bounce_animator_disabled :1;
    Eina_Bool is_mirrored : 1;
    Eina_Bool wheel_disabled : 1;
+   Eina_Bool go_left : 1;
+   Eina_Bool go_right : 1;
+   Eina_Bool go_up : 1;
+   Eina_Bool go_down : 1;
 };
 
 /* local subsystem functions */
@@ -316,6 +320,57 @@ elm_smart_scroller_add(Evas *evas)
 {
    _smart_init();
    return evas_object_smart_add(evas, _smart);
+}
+
+static void
+_elm_direction_arrows_eval(Smart_Data *sd)
+{
+   Eina_Bool go_left = EINA_TRUE, go_right = EINA_TRUE;
+   Eina_Bool go_up = EINA_TRUE, go_down = EINA_TRUE;
+   Evas_Coord x = 0, y = 0, mx = 0, my = 0, minx = 0, miny = 0;
+   
+   if (!sd->edje_obj || !sd->pan_obj) return;
+   
+   sd->pan_func.max_get(sd->pan_obj, &mx, &my);
+   sd->pan_func.min_get(sd->pan_obj, &minx, &miny);
+   sd->pan_func.get(sd->pan_obj, &x, &y);
+   
+   if (x == minx) go_left = EINA_FALSE;
+   if (x == (mx + minx)) go_right = EINA_FALSE;
+   if (y == miny) go_up = EINA_FALSE;
+   if (y == (my + miny)) go_down = EINA_FALSE;
+   if (go_left != sd->go_left)
+     {
+        if (go_left)
+          edje_object_signal_emit(sd->edje_obj, "elm,action,show,left", "elm");
+        else
+          edje_object_signal_emit(sd->edje_obj, "elm,action,hide,left", "elm");
+        sd->go_left = go_left;
+     }
+   if (go_right != sd->go_right)
+     {
+        if (go_right)
+          edje_object_signal_emit(sd->edje_obj, "elm,action,show,right", "elm");
+        else
+          edje_object_signal_emit(sd->edje_obj, "elm,action,hide,right", "elm");
+        sd->go_right= go_right;
+     }
+   if (go_up != sd->go_up)
+     {
+        if (go_up)
+          edje_object_signal_emit(sd->edje_obj, "elm,action,show,up", "elm");
+        else
+          edje_object_signal_emit(sd->edje_obj, "elm,action,hide,up", "elm");
+        sd->go_up = go_up;
+     }
+   if (go_down != sd->go_down)
+     {
+        if (go_down)
+          edje_object_signal_emit(sd->edje_obj, "elm,action,show,down", "elm");
+        else
+          edje_object_signal_emit(sd->edje_obj, "elm,action,hide,down", "elm");
+        sd->go_down= go_down;
+     }
 }
 
 static Evas_Coord
@@ -490,6 +545,7 @@ elm_smart_scroller_custom_edje_file_set(Evas_Object *obj, char *file, char *grou
      edje_object_signal_emit(sd->edje_obj, "elm,action,hide,vbar", "elm");
    else
      edje_object_signal_emit(sd->edje_obj, "elm,action,show_notalways,vbar", "elm");
+   _elm_direction_arrows_eval(sd);
 }
 
 Eina_Bool
@@ -1240,6 +1296,7 @@ elm_smart_scroller_child_pos_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
         if (y == my + miny)
           evas_object_smart_callback_call(obj, "edge,bottom", NULL);
      }
+   _elm_direction_arrows_eval(sd);
 }
 
 void
@@ -1438,6 +1495,7 @@ elm_smart_scroller_policy_set(Evas_Object *obj, Elm_Smart_Scroller_Policy hbar, 
    else
      edje_object_signal_emit(sd->edje_obj, "elm,action,show_notalways,vbar", "elm");
    _smart_scrollbar_size_adjust(sd);
+   _elm_direction_arrows_eval(sd);
 }
 
 void
@@ -2728,6 +2786,7 @@ _smart_scrollbar_read(Smart_Data *sd)
    sd->pan_func.set(sd->pan_obj, x, y);
    if ((px != x) || (py != y))
      edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
+   _elm_direction_arrows_eval(sd);
 }
 
 static void
@@ -2750,6 +2809,7 @@ _smart_scrollbar_reset(Smart_Data *sd)
      }
    if ((px != minx) || (py != miny))
      edje_object_signal_emit(sd->edje_obj, "elm,action,scroll", "elm");
+   _elm_direction_arrows_eval(sd);
 }
 
 static int
@@ -2818,6 +2878,7 @@ _smart_scrollbar_bar_v_visibility_adjust(Smart_Data *sd)
         else
           edje_object_signal_emit(sd->edje_obj, "elm,action,hide,vbar", "elm");
      }
+   _elm_direction_arrows_eval(sd);
    return scroll_v_vis_change;
 }
 
@@ -2888,6 +2949,7 @@ _smart_scrollbar_bar_h_visibility_adjust(Smart_Data *sd)
           edje_object_signal_emit(sd->edje_obj, "elm,action,hide,hbar", "elm");
         _smart_scrollbar_size_adjust(sd);
      }
+   _elm_direction_arrows_eval(sd);
    return scroll_h_vis_change;
 }
 

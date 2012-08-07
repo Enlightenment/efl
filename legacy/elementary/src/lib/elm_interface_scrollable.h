@@ -303,6 +303,10 @@ struct _Elm_Scrollable_Smart_Interface_Data
    Eina_Bool  hold : 1;
    Eina_Bool  min_w : 1;
    Eina_Bool  min_h : 1;
+   Eina_Bool  go_left : 1;
+   Eina_Bool  go_right : 1;
+   Eina_Bool  go_up : 1;
+   Eina_Bool  go_down : 1;
 };
 
 typedef struct _Elm_Scrollable_Smart_Interface Elm_Scrollable_Smart_Interface;

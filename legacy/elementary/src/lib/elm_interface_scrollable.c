@@ -508,6 +508,58 @@ _elm_scroll_smooth_debug_shutdown(void)
    DBG(" Standard deviation of Y-axis velocity: %9.3f\n", sqrt(y_dev));
 }
 
+static void
+_elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
+{
+   Eina_Bool go_left = EINA_TRUE, go_right = EINA_TRUE;
+   Eina_Bool go_up = EINA_TRUE, go_down = EINA_TRUE;
+   Evas_Coord x = 0, y = 0, mx = 0, my = 0, minx = 0, miny = 0;
+   
+   if (!sid->edje_obj || !sid->pan_obj) return;
+   ELM_PAN_DATA_GET(sid->pan_obj, psd);
+   
+   psd->api->pos_max_get(sid->pan_obj, &mx, &my);
+   psd->api->pos_min_get(sid->pan_obj, &minx, &miny);
+   psd->api->pos_get(sid->pan_obj, &x, &y);
+
+   if (x == minx) go_left = EINA_FALSE;
+   if (x == (mx + minx)) go_right = EINA_FALSE;
+   if (y == miny) go_up = EINA_FALSE;
+   if (y == (my + miny)) go_down = EINA_FALSE;
+   if (go_left != sid->go_left)
+     {
+        if (go_left)
+          edje_object_signal_emit(sid->edje_obj, "elm,action,show,left", "elm");
+        else
+          edje_object_signal_emit(sid->edje_obj, "elm,action,hide,left", "elm");
+        sid->go_left = go_left;
+     }
+   if (go_right != sid->go_right)
+     {
+        if (go_right)
+          edje_object_signal_emit(sid->edje_obj, "elm,action,show,right", "elm");
+        else
+          edje_object_signal_emit(sid->edje_obj, "elm,action,hide,right", "elm");
+        sid->go_right= go_right;
+     }
+   if (go_up != sid->go_up)
+     {
+        if (go_up)
+          edje_object_signal_emit(sid->edje_obj, "elm,action,show,up", "elm");
+        else
+          edje_object_signal_emit(sid->edje_obj, "elm,action,hide,up", "elm");
+        sid->go_up = go_up;
+     }
+   if (go_down != sid->go_down)
+     {
+        if (go_down)
+          edje_object_signal_emit(sid->edje_obj, "elm,action,show,down", "elm");
+        else
+          edje_object_signal_emit(sid->edje_obj, "elm,action,hide,down", "elm");
+        sid->go_down= go_down;
+     }
+}
+
 void
 _elm_scroll_smooth_debug_movetime_add(int x,
                                       int y)
@@ -647,7 +699,8 @@ _elm_scroll_scroll_bar_h_visibility_adjust(
         if (sid->cb_func.content_min_limit)
           sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
      }
-
+   
+   _elm_direction_arrows_eval(sid);
    return scroll_h_vis_change;
 }
 
@@ -737,6 +790,7 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
           sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
      }
 
+   _elm_direction_arrows_eval(sid);
    return scroll_v_vis_change;
 }
 
@@ -877,7 +931,9 @@ _elm_scroll_scroll_bar_read_and_update(
    psd->api->pos_get(sid->pan_obj, &px, &py);
    psd->api->pos_set(sid->pan_obj, x, y);
    if ((px != x) || (py != y))
-     edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
+     {
+        edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
+     }
 }
 
 static void
@@ -1411,11 +1467,13 @@ _elm_scroll_content_pos_set(Evas_Object *obj,
           {
              if (sid->cb_func.edge_left)
                sid->cb_func.edge_left(obj, NULL);
+             edje_object_signal_emit(sid->edje_obj, "elm,edge,left", "elm");
           }
         if (x == (mx + minx))
           {
              if (sid->cb_func.edge_right)
                sid->cb_func.edge_right(obj, NULL);
+             edje_object_signal_emit(sid->edje_obj, "elm,edge,right", "elm");
           }
      }
    if (y != py)
@@ -1424,13 +1482,17 @@ _elm_scroll_content_pos_set(Evas_Object *obj,
           {
              if (sid->cb_func.edge_top)
                sid->cb_func.edge_top(obj, NULL);
+             edje_object_signal_emit(sid->edje_obj, "elm,edge,top", "elm");
           }
         if (y == my + miny)
           {
              if (sid->cb_func.edge_bottom)
                sid->cb_func.edge_bottom(obj, NULL);
+             edje_object_signal_emit(sid->edje_obj, "elm,edge,bottom", "elm");
           }
      }
+   
+   _elm_direction_arrows_eval(sid);
 }
 
 static void
@@ -3233,6 +3295,7 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
      }
    if ((px != minx) || (py != miny))
      edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
+   _elm_direction_arrows_eval(sid);
 }
 
 /* even external pan objects get this */
@@ -3642,6 +3705,7 @@ _elm_scroll_policy_set(Evas_Object *obj,
    _elm_scroll_scroll_bar_size_adjust(sid);
    if (sid->cb_func.content_min_limit)
      sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
+   _elm_direction_arrows_eval(sid);
 }
 
 static void

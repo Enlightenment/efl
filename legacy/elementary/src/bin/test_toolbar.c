@@ -99,7 +99,7 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_MENU);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
-   elm_object_scale_set(tb, 0.9);
+//   elm_object_scale_set(tb, 0.9);
 
    ph1 = elm_photo_add(win);
    ph2 = elm_photo_add(win);
