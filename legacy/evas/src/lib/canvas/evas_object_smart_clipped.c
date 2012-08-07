@@ -131,7 +131,7 @@ static void
 evas_object_smart_clipped_smart_member_add(Evas_Object *obj, Evas_Object *member)
 {
    CSO_DATA_GET_OR_RETURN(obj, cso);
-   if (!cso->clipper)
+   if (!cso->clipper || member == cso->clipper)
      return;
    evas_object_clip_set(member, cso->clipper);
    if (evas_object_visible_get(obj))
