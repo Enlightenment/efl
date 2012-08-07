@@ -13,3 +13,7 @@
 2012-08-02  Cedric Bail
 
 	* Fix a memory leak when shutting down fallback monitor.
+
+2012-08-07  Cedric Bail
+
+	* Properly shutdown monitor when calling eio_shutdown.
