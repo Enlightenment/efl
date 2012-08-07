@@ -178,7 +178,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    if (obj->cur.clipper == clip) return;
    if (obj == clip)
      {
-        CRIT("Setting clip %p on itself", obj)
+        CRIT("Setting clip %p on itself", obj);
         return;
      }
    if (clip->delete_me)
