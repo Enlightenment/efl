@@ -221,6 +221,7 @@ static Eina_List *_ecore_running_job = NULL;
 static Eina_List *_ecore_pending_job_threads = NULL;
 static Eina_List *_ecore_pending_job_threads_feedback = NULL;
 static LK(_ecore_pending_job_threads_mutex);
+static LK(_ecore_running_job_mutex);
 
 static Eina_Hash *_ecore_thread_global_hash = NULL;
 static LRWK(_ecore_thread_global_hash_lock);
@@ -414,8 +415,11 @@ _ecore_short_job(PH(thread))
    work = eina_list_data_get(_ecore_pending_job_threads);
    _ecore_pending_job_threads = eina_list_remove_list(_ecore_pending_job_threads,
                                                       _ecore_pending_job_threads);
-   _ecore_running_job = eina_list_append(_ecore_running_job, work);
    LKU(_ecore_pending_job_threads_mutex);
+
+   LKL(_ecore_running_job_mutex);
+   _ecore_running_job = eina_list_append(_ecore_running_job, work);
+   LKU(_ecore_running_job_mutex);
    
    LKL(work->cancel_mutex);
    cancel = work->cancel;
@@ -424,9 +428,9 @@ _ecore_short_job(PH(thread))
    if (!cancel)
      work->u.short_run.func_blocking((void *) work->data, (Ecore_Thread*) work);
 
-   LKL(_ecore_pending_job_threads_mutex);
+   LKL(_ecore_running_job_mutex);
    _ecore_running_job = eina_list_remove(_ecore_running_job, work);
-   LKU(_ecore_pending_job_threads_mutex);
+   LKU(_ecore_running_job_mutex);
    
    if (work->reschedule)
      {
@@ -459,8 +463,10 @@ _ecore_feedback_job(PH(thread))
    work = eina_list_data_get(_ecore_pending_job_threads_feedback);
    _ecore_pending_job_threads_feedback = eina_list_remove_list(_ecore_pending_job_threads_feedback,
                                                                _ecore_pending_job_threads_feedback);
-   _ecore_running_job = eina_list_append(_ecore_running_job, work);
    LKU(_ecore_pending_job_threads_mutex);
+   LKL(_ecore_running_job_mutex);
+   _ecore_running_job = eina_list_append(_ecore_running_job, work);
+   LKU(_ecore_running_job_mutex);
    
    LKL(work->cancel_mutex);
    cancel = work->cancel;
@@ -469,9 +475,9 @@ _ecore_feedback_job(PH(thread))
    if (!cancel)
      work->u.feedback_run.func_heavy((void *) work->data, (Ecore_Thread *) work);
 
-   LKL(_ecore_pending_job_threads_mutex);
+   LKL(_ecore_running_job_mutex);
    _ecore_running_job = eina_list_remove(_ecore_running_job, work);
-   LKU(_ecore_pending_job_threads_mutex);
+   LKU(_ecore_running_job_mutex);
 
    if (work->reschedule)
      {
@@ -594,6 +600,7 @@ _ecore_thread_init(void)
    LKI(_ecore_pending_job_threads_mutex);
    LRWKI(_ecore_thread_global_hash_lock);
    LKI(_ecore_thread_global_hash_mutex);
+   LKI(_ecore_running_job_mutex);
    CDI(_ecore_thread_global_hash_cond, _ecore_thread_global_hash_mutex);
 #endif
 }
@@ -624,10 +631,13 @@ _ecore_thread_shutdown(void)
          free(work);
       }
 
+    LKU(_ecore_pending_job_threads_mutex);
+    LKL(_ecore_running_job_mutex);
+
     EINA_LIST_FOREACH(_ecore_running_job, l, work)
       ecore_thread_cancel((Ecore_Thread*) work);
 
-    LKU(_ecore_pending_job_threads_mutex);
+    LKU(_ecore_running_job_mutex);
 
     do
       {
@@ -663,6 +673,7 @@ _ecore_thread_shutdown(void)
     LKD(_ecore_pending_job_threads_mutex);
     LRWKD(_ecore_thread_global_hash_lock);
     LKD(_ecore_thread_global_hash_mutex);
+    LKD(_ecore_running_job_mutex);
     CDD(_ecore_thread_global_hash_cond);
 #endif
 }
