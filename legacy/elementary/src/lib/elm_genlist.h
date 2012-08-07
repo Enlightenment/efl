@@ -1688,6 +1688,10 @@ EAPI Elm_Object_Item              *elm_genlist_decorated_item_get(const Evas_Obj
  * @param reorder_mode The reorder mode
  * (EINA_TRUE = on, EINA_FALSE = off)
  *
+ * After turning on the reorder mode, longpress on normal item will trigger
+ * reordering of the item. You can move the item up and down. However, reorder
+ * does not work with group item.
+ *
  * @ingroup Genlist
  */
 EAPI void                          elm_genlist_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode);
