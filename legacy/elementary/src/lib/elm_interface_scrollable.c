@@ -2556,18 +2556,17 @@ _elm_scroll_hold_animator(void *data)
    if ((!sid->hold) && (!sid->freeze) &&
        _elm_config->scroll_smooth_amount > 0.0)
      {
-        int src_index = 0, dst_index = 0;
+        int src_index = 0, dst_index = 0, num = 0;
         Evas_Coord x = 0, y = 0;
         int xsum = 0, ysum = 0;
-        int queue_size = 10; /* for event queue size */
+#define QUEUE_SIZE 10 /* for event queue size */
         int i, count = 0; /* count for the real event number we have to
                            * deal with */
-
         struct
         {
            Evas_Coord x, y;
            double     t;
-        } pos[queue_size];
+        } pos[QUEUE_SIZE];
 
         double tdiff, tnow;
         double time_interval = _elm_config->scroll_smooth_time_interval;
@@ -2577,7 +2576,7 @@ _elm_scroll_hold_animator(void *data)
         tdiff = sid->down.hist.est_timestamp_diff;
         tnow = ecore_time_get() - tdiff;
 
-        for (i = 0; i < queue_size; i++)
+        for (i = 0; i < QUEUE_SIZE; i++)
           {
              x = sid->down.history[i].x;
              y = sid->down.history[i].y;
@@ -2594,11 +2593,12 @@ _elm_scroll_hold_animator(void *data)
              pos[i].x = x;
              pos[i].y = y;
              pos[i].t = tnow - sid->down.history[i].timestamp;
+             num++;
           }
         count = --i;
 
-        // we only deal with smooth scroll there is enough history
-        for (i = 0; i < queue_size; i++)
+        // we only deal with smooth scroll if there is enough history
+        for (i = 0; i < num; i++)
           {
              if (src_index > count) break;
              if (i == 0)
