@@ -228,6 +228,8 @@ _entry_value_apply(Evas_Object *obj)
 
    ELM_SPINNER_DATA_GET(obj, sd);
 
+   if (!sd->entry_visible) return;
+
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
