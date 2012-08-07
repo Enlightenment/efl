@@ -919,9 +919,9 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 	if ((tc->name) && (!strcmp(tc->name, text_class)))
 	  {
 	     /* Match and the same, return */
-             if ((tc->size == size) ||
-                  (tc->font == font) ||
-                  (tc->font && font && !strcmp(tc->font, font)))
+             if ((tc->size == size) &&
+                 ((tc->font == font) ||
+                     (tc->font && font && !strcmp(tc->font, font))))
                 return EINA_TRUE;
 
 	     /* Update new text class properties */
@@ -944,6 +944,8 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
           }
         tc->font = eina_stringshare_add(font);
         tc->size = size;
+        /* Add to edje's text class list */
+        ed->text_classes = eina_list_append(ed->text_classes, tc);
      }
 
    for (i = 0; i < ed->table_parts_size; i++)
@@ -956,8 +958,6 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
                                      font, size);
      }
 
-   /* Add to edje's text class list */
-   ed->text_classes = eina_list_append(ed->text_classes, tc);
    ed->dirty = 1;
    ed->recalc_call = 1;
 #ifdef EDJE_CALC_CACHE
