@@ -949,3 +949,7 @@
         * Fix evas_gl's internal resource surface bug. For optimzation evas_gl
         was using evas' window surface to do its resource creation and it 
         wans't properly updated when a window is destroyed and recreated.
+
+2012-08-07  Cedric Bail
+
+	* Properly warn when user try to link object from different canvas.

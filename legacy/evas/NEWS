@@ -16,6 +16,7 @@ Improvements:
    * Cache convertion from Evas_Map to RGBA_Map.
    * evas_object_smart_members_get() now returns NULL on non-smart objects.
    * Pipeline rendering use prepare stage more extensively.
+   * Properly warn when user try to link object from different canvas.
 
 Fixes:
    * Add missing files in the tarball.
