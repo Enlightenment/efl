@@ -176,14 +176,44 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    return;
    MAGIC_CHECK_END();
    if (obj->cur.clipper == clip) return;
-   if (obj == clip) return;
+   if (obj == clip)
+     {
+        CRIT("Setting clip %p on itself", obj)
+        return;
+     }
+   if (clip->delete_me)
+     {
+        CRIT("Setting deleted object %p as clip obj %p", clip, obj);
+        abort();
+        return;
+     }
+   if (obj->delete_me)
+     {
+        CRIT("Setting object %p as clip to deleted obj %p", clip, obj);
+        abort();
+        return;
+     }
+   if (!obj->layer)
+     {
+        CRIT("No evas surface associated with object (%p)", obj);
+        abort();
+        return;
+     }
+   if ((obj->layer && clip->layer) &&
+       (obj->layer->evas != clip->layer->evas))
+     {
+        CRIT("Setting object %p from Evas (%p) to another Evas (%p)", obj, obj->layer->evas, clip->layer->evas);
+        abort();
+        return;
+     }
+
    if (evas_object_intercept_call_clip_set(obj, clip)) return;
    // illegal to set anything but a rect as a clip
-   /* if (clip->type != o_rect_type) */
-   /*   { */
-   /*      ERR("For now a clip on other object than a rectangle is disabled"); */
-   /*      return; */
-   /*   } */
+   if (clip->type != o_rect_type)
+     {
+        ERR("For now a clip on other object than a rectangle is disabled");
+        return;
+     }
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->clip_set)
