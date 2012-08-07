@@ -187,11 +187,13 @@ _item_select(Elm_Toolbar_Item *it)
         if (sel)
           {
              if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
-               if (wd->more_item == it)
-                 {
-                    edje_object_signal_emit(elm_layout_edje_get(wd->more), "elm,state,close", "elm");
-                    _item_unselect(it);
-                 }
+               {
+                  if (wd->more_item == it)
+                    {
+                       edje_object_signal_emit(elm_layout_edje_get(wd->more), "elm,state,close", "elm");
+                       _item_unselect(it);
+                    }
+               }
              if (wd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS)
                _item_unselect(it);
           }
