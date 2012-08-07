@@ -315,10 +315,7 @@ main(int argc, char **argv)
 
 	     num = read(fd, &bytes, sizeof(unsigned long));
 	     if (num == sizeof(unsigned long))
-	       {
-		  ecore_app_args_set(argc, (const char **)argv);
-		  handle_run(fd, bytes);
-	       }
+               handle_run(fd, bytes);
 	  }
 	while (elm_quicklaunch_sub_shutdown() > 0);
      }

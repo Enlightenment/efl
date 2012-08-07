@@ -202,9 +202,8 @@ EAPI int
 elm_init(int    argc,
          char **argv)
 {
-   _elm_init_count++;
-   if (_elm_init_count > 1) return _elm_init_count;
    elm_quicklaunch_init(argc, argv);
+   if (_elm_init_count > 1) return _elm_init_count;
    elm_quicklaunch_sub_init(argc, argv);
    _prefix_shutdown();
    return _elm_init_count;
@@ -397,7 +396,9 @@ EAPI int
 elm_quicklaunch_init(int    argc,
                      char **argv)
 {
+   _elm_init_count++;
    _elm_ql_init_count++;
+   if (_elm_init_count > 1) return _elm_ql_init_count;
    if (_elm_ql_init_count > 1) return _elm_ql_init_count;
    eina_init();
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
@@ -422,7 +423,7 @@ elm_quicklaunch_init(int    argc,
    ecore_file_init();
 
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
-
+   
    if (argv) _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
    pfx = eina_prefix_new(argv ? argv[0] : NULL, elm_quicklaunch_init,
@@ -455,6 +456,7 @@ elm_quicklaunch_sub_init(int    argc,
         return _elm_sub_init_count;
 #endif
      }
+   
    if (!quicklaunch_on)
      {
         ecore_app_args_set(argc, (const char **)argv);
@@ -672,31 +674,6 @@ elm_quicklaunch_prepare(int argc __UNUSED__,
 #endif
 }
 
-#ifdef HAVE_FORK
-static void
-save_env(void)
-{
-   int i, size;
-   extern char **environ;
-   char **oldenv, **p;
-
-   oldenv = environ;
-
-   for (i = 0, size = 0; environ[i]; i++)
-     size += strlen(environ[i]) + 1;
-
-   p = malloc((i + 1) * sizeof(char *));
-   if (!p) return;
-
-   environ = p;
-
-   for (i = 0; oldenv[i]; i++)
-     environ[i] = strdup(oldenv[i]);
-   environ[i] = NULL;
-}
-
-#endif
-
 EAPI Eina_Bool
 elm_quicklaunch_fork(int    argc,
                      char **argv,
@@ -707,11 +684,7 @@ elm_quicklaunch_fork(int    argc,
 #ifdef HAVE_FORK
    pid_t child;
    int ret;
-   int real_argc;
-   char **real_argv;
 
-   // FIXME:
-   // need to accept current environment from elementary_run
    if (!qr_main)
      {
         int i;
@@ -725,8 +698,7 @@ elm_quicklaunch_fork(int    argc,
              return EINA_FALSE;
           }
         setsid();
-        if (chdir(cwd) != 0)
-          perror("could not chdir");
+        if (chdir(cwd) != 0) perror("could not chdir");
         args = alloca((argc + 1) * sizeof(char *));
         for (i = 0; i < argc; i++) args[i] = argv[i];
         args[argc] = NULL;
@@ -746,10 +718,16 @@ elm_quicklaunch_fork(int    argc,
 
    if (quicklaunch_on)
      {
+        if (_elm_appname) free(_elm_appname);
+        _elm_appname = NULL;
+        if ((argv) && (argv[0]))
+          _elm_appname = strdup(ecore_file_file_get(argv[0]));
+        
 #ifdef SEMI_BROKEN_QUICKLAUNCH
         ecore_app_args_set(argc, (const char **)argv);
         evas_init();
         edje_init();
+        _elm_module_init();
         _elm_config_sub_init();
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
         if (ENGINE_COMPARE(ELM_SOFTWARE_X11) ||
@@ -766,26 +744,11 @@ elm_quicklaunch_fork(int    argc,
 # ifdef HAVE_ELEMENTARY_ECORE_IMF
         ecore_imf_init();
 # endif
-        _elm_module_init();
 #endif
      }
 
    setsid();
-   if (chdir(cwd) != 0)
-     perror("could not chdir");
-   // FIXME: this is very linux specific. it changes argv[0] of the process
-   // so ps etc. report what you'd expect. for other unixes and os's this
-   // may just not work
-   save_env();
-   if (argv)
-     {
-        char *lastarg, *p;
-
-        ecore_app_args_get(&real_argc, &real_argv);
-        lastarg = real_argv[real_argc - 1] + strlen(real_argv[real_argc - 1]);
-        for (p = real_argv[0]; p < lastarg; p++) *p = 0;
-        strcpy(real_argv[0], argv[0]);
-     }
+   if (chdir(cwd) != 0) perror("could not chdir");
    ecore_app_args_set(argc, (const char **)argv);
    ret = qr_main(argc, argv);
    exit(ret);
