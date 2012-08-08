@@ -767,7 +767,7 @@ data/edje_externals/Makefile
 config/Makefile
 config/default/Makefile
 config/standard/Makefile
-config/illume/Makefile
+config/mobile/Makefile
 $po_makefile_in
 ])
 

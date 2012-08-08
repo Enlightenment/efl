@@ -7,7 +7,7 @@ EXTRA_DIST = \
         icon.png \
 	base.src
 
-filesdir = $(datadir)/elementary/config/illume
+filesdir = $(datadir)/elementary/config/mobile
 files_DATA = \
         profile.desktop \
         icon.png \
@@ -15,7 +15,7 @@ files_DATA = \
 
 %.cfg: %.src
 	$(EET_EET) -e \
-	$(top_builddir)/config/illume/$@ config \
+	$(top_builddir)/config/mobile/$@ config \
 	$< 1
 
 clean-local:
