@@ -1100,6 +1100,7 @@ _ecore_evas_wl_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, v
 {
    Ecore_Evas *ee;
    Ecore_Wl_Event_Window_Configure *ev;
+   int nw = 0, nh = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -1110,18 +1111,27 @@ _ecore_evas_wl_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, v
 
    if ((ee->x != ev->x) || (ee->y != ev->y))
      {
-        /* ee->x = ev->x; */
-        /* ee->y = ev->y; */
         ee->req.x = ee->x;
         ee->req.y = ee->y;
         if (ee->func.fn_move) ee->func.fn_move(ee);
      }
-   if ((ee->req.w != ev->w) || (ee->req.h != ev->h))
+
+   nw = ev->w;
+   nh = ev->h;
+
+   if (ee->prop.maximized)
      {
-        /* ee->w = ev->w; */
-        /* ee->h = ev->h; */
-        ee->req.w = ev->w;
-        ee->req.h = ev->h;
+        int fw = 0, fh = 0;
+
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+        nw = ev->w - fw;
+        nh = ev->h - fh;
+     }
+
+   if ((ee->w != nw) || (ee->h != nh))
+     {
+        ee->req.w = nw;
+        ee->req.h = nh;
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 
