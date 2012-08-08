@@ -582,7 +582,7 @@ _elm_genlist_smart_sizing_eval(Evas_Object *obj)
 
    if (sd->on_sub_del) return;;
 
-   evas_object_size_hint_min_get(obj, &minw, NULL);
+   evas_object_size_hint_min_get(obj, &minw, &minh);
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
 
    edje_object_size_min_calc(ELM_WIDGET_DATA(sd)->resize_obj, &vmw, &vmh);
@@ -606,7 +606,8 @@ _elm_genlist_smart_sizing_eval(Evas_Object *obj)
              sd->calc_job = ecore_job_add(_calc_job, sd);
           }
         minw = vmw;
-        minh = vmh;
+        if (minh < vmh)
+          minh = vmh;
      }
    else if (sd->mode == ELM_LIST_LIMIT)
      {
@@ -616,7 +617,8 @@ _elm_genlist_smart_sizing_eval(Evas_Object *obj)
    else
      {
         minw = vmw;
-        minh = vmh;
+        if (minh < vmh)
+          minh = vmh;
      }
 
    evas_object_size_hint_min_set(obj, minw, minh);
