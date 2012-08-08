@@ -1,5 +1,5 @@
 group {
-   name: "elm/panel/base/left";
+   name: "elm/panel/left/default";
    images
    {
       image: "bt_base1.png" COMP;
@@ -241,7 +241,7 @@ group {
          action: STATE_SET "default" 0.0;
          target: "bg";
          target: "btn_icon";
-         transition: LINEAR 0.5;
+         transition: BOUNCE 0.5 1.0 3;
       }
       program
       {
@@ -251,7 +251,7 @@ group {
          action: STATE_SET "hidden" 0.0;
          target: "bg";
          target: "btn_icon";
-         transition: LINEAR 0.5;
+         transition: BOUNCE 0.5 1.0 3;
       }
       program
       {
@@ -311,7 +311,7 @@ group {
 }
 
 group {
-   name: "elm/panel/base/top";
+   name: "elm/panel/top/default";
    images
    {
       image: "bt_base1.png" COMP;
@@ -553,7 +553,7 @@ group {
          action: STATE_SET "default" 0.0;
          target: "bg";
          target: "btn_icon";
-         transition: LINEAR 0.5;
+         transition: BOUNCE 0.5 1.0 3;
       }
       program
       {
@@ -563,7 +563,7 @@ group {
          action: STATE_SET "hidden" 0.0;
          target: "bg";
          target: "btn_icon";
-         transition: LINEAR 0.5;
+         transition: BOUNCE 0.5 1.0 3;
       }
       program
       {
@@ -623,7 +623,7 @@ group {
 }
 
 group {
-   name: "elm/panel/base/bottom";
+   name: "elm/panel/bottom/default";
    images
    {
       image: "bt_base1.png" COMP;
@@ -864,7 +864,7 @@ group {
          action: STATE_SET "default" 0.0;
          target: "bg";
          target: "btn_icon";
-         transition: LINEAR 0.5;
+         transition: BOUNCE 0.5 1.0 3;
       }
       program
       {
@@ -874,7 +874,7 @@ group {
          action: STATE_SET "hidden" 0.0;
          target: "bg";
          target: "btn_icon";
-         transition: LINEAR 0.5;
+         transition: BOUNCE 0.5 1.0 3;
       }
       program
       {
@@ -934,7 +934,7 @@ group {
 }
 
 group {
-   name: "elm/panel/base/right";
+   name: "elm/panel/right/default";
    images
    {
       image: "bt_base1.png" COMP;
@@ -1179,7 +1179,7 @@ group {
          action: STATE_SET "default" 0.0;
          target: "bg";
          target: "btn_icon";
-         transition: LINEAR 0.5;
+         transition: BOUNCE 0.5 1.0 3;
       }
       program
       {
@@ -1189,7 +1189,7 @@ group {
          action: STATE_SET "hidden" 0.0;
          target: "bg";
          target: "btn_icon";
-         transition: LINEAR 0.5;
+         transition: BOUNCE 0.5 1.0 3;
       }
       program
       {
