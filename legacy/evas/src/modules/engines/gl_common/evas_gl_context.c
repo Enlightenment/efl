@@ -718,7 +718,7 @@ evas_gl_common_context_new(void)
         SHADER_TEXTURE_ADD(shared, IMG_MASK, texm);
 
         if (gc->state.current.cur_prog == PRG_INVALID)
-           glUseProgram(gc->shared->shader[0].prog);
+           glUseProgram(shared->shader[0].prog);
         else glUseProgram(gc->state.current.cur_prog);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
