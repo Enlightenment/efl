@@ -195,6 +195,7 @@ const char *efreet_lang_modifier_get(void);
 size_t efreet_array_cat(char *buffer, size_t size, const char *strs[]);
 
 void efreet_cache_desktop_update(void);
+void efreet_cache_desktop_close(void);
 void efreet_cache_icon_update(void);
 
 Efreet_Desktop *efreet_cache_desktop_find(const char *file);
