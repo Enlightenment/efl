@@ -127,8 +127,8 @@ _elm_flip_smart_sub_object_add(Evas_Object *obj,
    if (!ELM_WIDGET_CLASS(_elm_flip_parent_sc)->sub_object_add(obj, sobj))
      return EINA_FALSE;
 
+   evas_object_data_set(sobj, "_elm_leaveme", sobj);
    evas_object_smart_member_add(sobj, obj);
-   //FIXME: smart member clip could be reset by the obj.
    evas_object_event_callback_add
      (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints_cb, obj);
 
@@ -146,11 +146,13 @@ _elm_flip_smart_sub_object_del(Evas_Object *obj,
 
    if (sobj == sd->front.content)
      {
+        evas_object_data_del(sobj, "_elm_leaveme");
         sd->front.content = NULL;
         evas_object_hide(sd->front.clip);
      }
    else if (sobj == sd->back.content)
      {
+        evas_object_data_del(sobj, "_elm_leaveme");
         sd->back.content = NULL;
         evas_object_hide(sd->back.clip);
      }
