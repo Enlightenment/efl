@@ -431,6 +431,7 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!win) return;
+
    if ((win->type == ECORE_WL_WINDOW_TYPE_MAXIMIZED) == maximized) return;
    if (win->type == ECORE_WL_WINDOW_TYPE_TOPLEVEL)
      {
@@ -439,14 +440,13 @@ ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized)
           wl_shell_surface_set_maximized(win->shell_surface, NULL);
         win->type = ECORE_WL_WINDOW_TYPE_MAXIMIZED;
      }
-   else
+   else if (win->type == ECORE_WL_WINDOW_TYPE_MAXIMIZED)
      {
         if (win->shell_surface) 
           wl_shell_surface_set_toplevel(win->shell_surface);
         win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-        win->allocation = win->saved_allocation;
-        _ecore_wl_window_configure_send(win, win->allocation.w, 
-                                        win->allocation.h);
+        _ecore_wl_window_configure_send(win, win->saved_allocation.w, 
+                                        win->saved_allocation.h);
      }
 }
 
@@ -484,6 +484,15 @@ ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent)
 
    if (!win) return;
    win->transparent = transparent;
+   if (win->region.opaque) wl_region_destroy(win->region.opaque);
+   win->region.opaque = NULL;
+   if (!win->transparent)
+     {
+        win->region.opaque = 
+          wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
+        wl_region_add(win->region.opaque, win->allocation.x, win->allocation.y, 
+                      win->allocation.w, win->allocation.h);
+     }
 }
 
 EAPI void 
@@ -612,6 +621,9 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
 
    if ((win->allocation.w != w) || (win->allocation.h != h))
      {
+        win->allocation.w = w;
+        win->allocation.h = h;
+
         win->edges = edges;
         if (win->region.input) wl_region_destroy(win->region.input);
         win->region.input = NULL;
