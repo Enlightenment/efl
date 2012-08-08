@@ -351,12 +351,14 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
         int size = PATH_MAX;
         int file_added = 0;
         Efreet_Desktop_Command_File *file = eina_list_data_get(l);
+       int single;
 
         exec = malloc(size);
         if (!exec) goto error;
         p = command->desktop->exec;
         len = 0;
 
+        single = 0;
         while (*p)
         {
             if (len >= size - 1)
@@ -385,6 +387,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                                     &len, file, *p);
                             if (!exec) goto error;
                             file_added = 1;
+                            single = 1;
                         }
                         break;
                     case 'F':
@@ -395,6 +398,7 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
                         {
                             exec = efreet_desktop_command_append_multiple(exec, &size,
                                     &len, command, *p);
+                           fprintf(stderr, "EXE: '%s'\n", exec);
                             if (!exec) goto error;
                             file_added = 1;
                         }
@@ -465,8 +469,11 @@ efreet_desktop_command_build(Efreet_Desktop_Command *command)
 #endif
         exec[len++] = '\0';
 
-        execs = eina_list_append(execs, exec);
-        exec = NULL;
+       if ((single) || (!execs))
+         {
+            execs = eina_list_append(execs, exec);
+            exec = NULL;
+         }
 
         /* If no file was added, then the Exec field doesn't contain any file
          * fields (fFuUdDnN). We only want to run the app once in this case. */
