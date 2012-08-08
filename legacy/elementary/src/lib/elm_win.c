@@ -1836,6 +1836,8 @@ _elm_win_frame_cb_resize_show(void *data,
                                           ELM_CURSOR_BOTTOM_RIGHT_CORNER);
    else
      ecore_wl_window_cursor_default_restore(sd->wl.win);
+#else
+   (void)source;
 #endif
 }
 
