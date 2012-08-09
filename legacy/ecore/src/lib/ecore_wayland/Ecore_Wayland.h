@@ -151,6 +151,13 @@ struct _Ecore_Wl_Input
         xkb_mod_mask_t alt_mask;
         xkb_mod_mask_t shift_mask;
      } xkb;
+
+   struct 
+     {
+        Ecore_Fd_Handler *hdlr;
+        int timerfd;
+        unsigned int sym, key, time;
+     } repeat;
 };
 
 struct _Ecore_Wl_Window

@@ -19,6 +19,7 @@
 
 #include "ecore_wl_private.h"
 #include <sys/mman.h>
+#include <sys/timerfd.h>
 
 /* FIXME: This gives BTN_LEFT/RIGHT/MIDDLE for linux systems ... 
  *        What about other OSs ?? */
@@ -52,6 +53,7 @@ static void _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *ke
 static void _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, struct wl_surface *surface);
 static void _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial, unsigned int timestamp, unsigned int key, unsigned int state);
 static void _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial __UNUSED__, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group);
+static Eina_Bool _ecore_wl_input_cb_keyboard_repeat(void *data, Ecore_Fd_Handler *handler __UNUSED__);
 static void _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch __UNUSED__, unsigned int serial, unsigned int timestamp, struct wl_surface *surface __UNUSED__, int id __UNUSED__, wl_fixed_t x, wl_fixed_t y);
 static void _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch __UNUSED__, unsigned int serial, unsigned int timestamp, int id __UNUSED__);
 static void _ecore_wl_input_cb_touch_motion(void *data, struct wl_touch *touch __UNUSED__, unsigned int timestamp, int id __UNUSED__, wl_fixed_t x, wl_fixed_t y);
@@ -207,6 +209,7 @@ ecore_wl_input_cursor_default_restore(Ecore_Wl_Input *input)
    ecore_wl_input_cursor_from_name_set(input, "left_ptr");
 }
 
+/* local functions */
 void 
 _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
 {
@@ -237,6 +240,14 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
    input->cursor_surface = 
      wl_compositor_create_surface(_ecore_wl_disp->wl.compositor);
 
+   input->repeat.timerfd = 
+     timerfd_create(CLOCK_MONOTONIC, (TFD_CLOEXEC | TFD_NONBLOCK));
+
+   input->repeat.hdlr = 
+     ecore_main_fd_handler_add(input->repeat.timerfd, ECORE_FD_READ, 
+                               _ecore_wl_input_cb_keyboard_repeat, input, 
+                               NULL, NULL);
+
    ewd->input = input;
 }
 
@@ -244,6 +255,16 @@ void
 _ecore_wl_input_del(Ecore_Wl_Input *input)
 {
    if (!input) return;
+
+   if (input->keyboard_focus)
+     {
+        Ecore_Wl_Window *win = NULL;
+
+        if ((win = input->keyboard_focus))
+          win->keyboard_device = NULL;
+
+        input->keyboard_focus = NULL;
+     }
 
    if (input->drag_source) _ecore_wl_dnd_del(input->drag_source);
    input->drag_source = NULL;
@@ -264,6 +285,12 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
    wl_list_remove(&input->link);
    if (input->seat) wl_seat_destroy(input->seat);
 
+   if (input->repeat.hdlr) ecore_main_fd_handler_del(input->repeat.hdlr);
+   input->repeat.hdlr = NULL;
+
+   if (input->repeat.timerfd) close(input->repeat.timerfd);
+   input->repeat.timerfd = 0;
+
    free(input);
 }
 
@@ -274,7 +301,6 @@ _ecore_wl_input_pointer_xy_get(int *x, int *y)
    if (y) *y = _pointer_y;
 }
 
-/* local functions */
 static void 
 _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability caps)
 {
@@ -472,6 +498,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    xkb_keysym_t sym;
    char string[32], key[32], keyname[32];
    Ecore_Event_Key *e;
+   struct itimerspec ts;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -480,7 +507,8 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    code = keycode + 8;
 
    win = input->keyboard_focus;
-   if ((!win) || (win->keyboard_device != input)) return;
+   if ((!win) || (win->keyboard_device != input) || (!input->xkb.state)) 
+     return;
 
    num = xkb_key_get_syms(input->xkb.state, code, &syms);
 
@@ -522,6 +550,38 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
      ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
    else
      ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
+
+   if ((!state) && (keycode == input->repeat.key))
+     {
+        input->repeat.sym = 0;
+        input->repeat.key = 0;
+        input->repeat.time = 0;
+
+        ts.it_interval.tv_sec = 0;
+        ts.it_interval.tv_nsec = 0;
+        ts.it_value.tv_sec = 0;
+        ts.it_value.tv_nsec = 0;
+
+        timerfd_settime(input->repeat.timerfd, 0, &ts, NULL);
+     }
+   else if ((state) && 
+            ((!input->repeat.key) || 
+                ((keycode) && (keycode != input->repeat.key))))
+     {
+        input->repeat.sym = sym;
+        input->repeat.key = keycode;
+        input->repeat.time = timestamp;
+
+        /* interval after expires */
+        ts.it_interval.tv_sec = 0;
+        ts.it_interval.tv_nsec = 35 * 1000 * 1000;
+
+        /* initial expiration */
+        ts.it_value.tv_sec = 0;
+        ts.it_value.tv_nsec = 500 * 1000 * 1000;
+
+        timerfd_settime(input->repeat.timerfd, 0, &ts, NULL);
+     }
 }
 
 static void 
@@ -552,6 +612,29 @@ _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard _
      input->modifiers |= MOD_ALT_MASK;
    if (mask & input->xkb.shift_mask)
      input->modifiers |= MOD_SHIFT_MASK;
+}
+
+static Eina_Bool 
+_ecore_wl_input_cb_keyboard_repeat(void *data, Ecore_Fd_Handler *handler __UNUSED__)
+{
+   Ecore_Wl_Input *input;
+   Ecore_Wl_Window *win = NULL;
+   unsigned long long int xp;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data)) return ECORE_CALLBACK_RENEW;
+
+   /* Trap for EAGAIN */
+   if (read(input->repeat.timerfd, &xp, sizeof(xp)) != sizeof(xp))
+     return ECORE_CALLBACK_RENEW;
+
+   if ((win = input->keyboard_focus))
+     _ecore_wl_input_cb_keyboard_key(input, NULL, input->display->serial, 
+                                     input->repeat.time, 
+                                     input->repeat.key, EINA_TRUE);
+
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void 
@@ -693,6 +776,18 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard __UNU
    if (!surface) return;
    if (!(input = data)) return;
 
+   if (input->repeat.timerfd)
+     {
+        struct itimerspec ts;
+        
+        ts.it_interval.tv_sec = 0;
+        ts.it_interval.tv_nsec = 0;
+        ts.it_value.tv_sec = 0;
+        ts.it_value.tv_nsec = 0;
+
+        timerfd_settime(input->repeat.timerfd, 0, &ts, NULL);
+     }
+
    if (!input->timestamp)
      {
         struct timeval tv;
@@ -707,9 +802,9 @@ _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_keyboard *keyboard __UNU
    if (!(win = wl_surface_get_user_data(surface))) return;
 
    win->keyboard_device = NULL;
-   input->keyboard_focus = NULL;
-
    _ecore_wl_input_focus_out_send(input, win, input->timestamp);
+
+   input->keyboard_focus = NULL;
 }
 
 static void 
