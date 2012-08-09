@@ -2052,6 +2052,11 @@ data_process_lookups(void)
         unsigned int id = 0;
         unsigned int i;
 
+        if (!pc->part)
+          {
+             ERR("A collection without a name was detected, that's not allowed.");
+             exit(-1);
+          }
         find = eina_hash_find(edje_file->collection, pc->part);
         if (find && find->id == pc->id)
           continue ;
