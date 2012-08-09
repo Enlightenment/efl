@@ -23,11 +23,6 @@
  * Default content parts of the bg widget that you can use for are:
  * @li @c "overlay" - overlay of the bg
  *
- * Supported elm_object common APIs.
- * @li @ref elm_object_part_content_set
- * @li @ref elm_object_part_content_get
- * @li @ref elm_object_part_content_unset
- *
  * Here is some sample code using it:
  * @li @ref bg_01_example_page
  * @li @ref bg_02_example_page
