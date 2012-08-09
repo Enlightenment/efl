@@ -224,6 +224,7 @@ shutdown_evil:
 EAPI int
 ecore_shutdown(void)
 {
+     Ecore_Pipe *p;
    /*
     * take a lock here because _ecore_event_shutdown() does callbacks
     */
@@ -237,6 +238,13 @@ ecore_shutdown(void)
      if (--_ecore_init_count != 0)
        goto unlock;
    
+     if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
+     _ecore_poller_shutdown();
+     _ecore_animator_shutdown();
+     _ecore_glib_shutdown();
+     _ecore_job_shutdown();
+     _ecore_thread_shutdown();
+
    /* this looks horrible - a hack for now, but something to note. as
     * we delete the _thread_call pipe a thread COULD be doing
     * ecore_pipe_write() or what not to it at the same time - we
@@ -246,25 +254,23 @@ ecore_shutdown(void)
     * ok - this causes other valgrind complaints regarding glib aquiring
     * locks internally. so fix bug a or bug b. let's leave the original
     * bug in then and leave this as a note for now
-     Ecore_Pipe *p;
+    */
+   /*
+    * It should be fine now as we do wait for thread to shutdown before
+    * we try to destroy the pipe.
+    */
      p = _thread_call;
      _thread_call = NULL;
      ecore_pipe_wait(p, 1, 0.1);
      ecore_pipe_del(p);
      eina_lock_free(&_thread_safety);
-    */
      eina_condition_free(&_thread_cond);
      eina_lock_free(&_thread_mutex);
      eina_condition_free(&_thread_feedback_cond);
      eina_lock_free(&_thread_feedback_mutex);
      eina_lock_free(&_thread_id_lock);
 
-     if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
-     _ecore_poller_shutdown();
-     _ecore_animator_shutdown();
-     _ecore_glib_shutdown();
-     _ecore_job_shutdown();
-     _ecore_thread_shutdown();
+
 #ifndef HAVE_EXOTIC
      _ecore_exe_shutdown();
 #endif

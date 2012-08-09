@@ -27,6 +27,7 @@ Fixes:
      - Reduce race condition on shutdown of Ecore_Thread.
      - Force cancel of all running Ecore_Thread on shutdown.
      - Make Ecore_Thread work reliably when called without a running main loop.
+     - Correctly shutdown Ecore_Thread.
 
     * ecore_x
      - Fix unitialized Ecore_X_Atom use.
