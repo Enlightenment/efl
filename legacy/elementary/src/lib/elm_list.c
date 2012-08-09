@@ -144,7 +144,15 @@ _item_single_select_up(Elm_List_Smart_Data *sd)
    Elm_Object_Item *prev;
 
    if (!sd->selected) prev = eina_list_data_get(eina_list_last(sd->items));
-   else prev = elm_list_item_prev(sd->last_selected_item);
+   else
+     {
+        prev = elm_list_item_prev(sd->last_selected_item);
+        while (prev)
+          {
+             if (!elm_object_item_disabled_get(prev)) break;
+             prev = elm_list_item_prev(prev);
+          }
+     }
    if (!prev) return EINA_FALSE;
 
    _all_items_unselect(sd);
@@ -161,7 +169,15 @@ _item_single_select_down(Elm_List_Smart_Data *sd)
    Elm_Object_Item *next;
 
    if (!sd->selected) next = eina_list_data_get(sd->items);
-   else next = elm_list_item_next(sd->last_selected_item);
+   else
+     {
+        next = elm_list_item_next(sd->last_selected_item);
+        while (next)
+          {
+             if (!elm_object_item_disabled_get(next)) break;
+             next = elm_list_item_next(next);
+          }
+     }
    if (!next) return EINA_FALSE;
 
    _all_items_unselect(sd);
