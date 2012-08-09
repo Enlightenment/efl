@@ -370,3 +370,7 @@
 2012-08-06  Cedric Bail
 
 	* Make Elm_Slider update itself asynchronously.
+
+2012-08-09  Cedric Bail
+
+	* Reset main loop after fork in quicklaunch.

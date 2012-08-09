@@ -716,6 +716,8 @@ elm_quicklaunch_fork(int    argc,
      }
    if (postfork_func) postfork_func(postfork_data);
 
+   ecore_fork_reset();
+
    if (quicklaunch_on)
      {
         if (_elm_appname) free(_elm_appname);

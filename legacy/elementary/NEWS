@@ -29,6 +29,7 @@ Fixes:
    * Fileselector : honor the folder_only option when using EIO
    * Segment Selector : do not abuse user object item data.
    * Image: fixed elm_image_orient_set/get.
+   * QuickLaunch: reset main loop after fork.
 
 Improvements:
 
