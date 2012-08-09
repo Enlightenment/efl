@@ -1969,9 +1969,16 @@ ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl], [wayland-egl egl >= 7.10],
       fi
    ])
 
-### Unit tests
+### Unit tests and coverage
 
 EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
+
+EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
+CFLAGS="${CFLAGS} ${EFL_COVERAGE_CFLAGS}"
+ECORE_LIBS="${ECORE_LIBS} ${EFL_COVERAGE_LIBS}"
+if test "x$enable_coverage" = "xyes" ; then
+   CFLAGS="${CFLAGS} ${EFL_DEBUG_CFLAGS}"
+fi
 
 ### install and build examples
 
@@ -2220,6 +2227,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
 fi
 echo
 echo "  Tests................: ${enable_tests}"
+echo "  Coverage.............: ${enable_coverage}"
 echo "  Maximum log level....: ${with_max_log_level}"
 echo "Documentation..........: ${build_doc}"
 echo "Examples...............: ${enable_build_examples}"

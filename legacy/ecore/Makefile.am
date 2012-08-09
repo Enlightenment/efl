@@ -117,6 +117,7 @@ m4/ecore_check_options.m4 \
 m4/efl_doxygen.m4 \
 m4/efl_path_max.m4 \
 m4/efl_shm_open.m4 \
+m4/efl_coverage.m4 \
 m4/efl_tests.m4 \
 m4/efl_threads.m4
 
@@ -196,7 +197,7 @@ if BUILD_ECORE_WAYLAND
 pkgconfig_DATA += ecore-wayland.pc
 endif
 
-.PHONY: doc
+.PHONY: doc coverage
 
 # Documentation
 
@@ -216,4 +217,34 @@ else
 check-local:
 	@echo "reconfigure with --enable-tests"
 
+endif
+
+# Coverage report
+
+if EFL_ENABLE_COVERAGE
+lcov-reset:
+	@rm -rf $(top_builddir)/coverage
+	@find $(top_builddir) -name "*.gcda" -delete
+	@lcov --zerocounters --directory $(top_builddir)
+
+lcov-report:
+	@mkdir $(top_builddir)/coverage
+	lcov --capture --compat-libtool --output-file $(top_builddir)/coverage/coverage.info --directory $(top_builddir)
+	lcov --remove $(top_builddir)/coverage/coverage.info '*.h' --output-file $(top_builddir)/coverage/coverage.cleaned.info
+	genhtml -t "$(PACKAGE_STRING)" -o $(top_builddir)/coverage/html $(top_builddir)/coverage/coverage.cleaned.info
+	@echo "Coverage Report at $(top_builddir)/coverage/html"
+
+coverage:
+	@$(MAKE) lcov-reset
+	@$(MAKE) check
+	@$(MAKE) lcov-report
+else
+lcov-reset:
+	@echo "reconfigure with --enable-coverage"
+
+lcov-report:
+	@echo "reconfigure with --enable-coverage"
+
+coverage:
+	@echo "reconfigure with --enable-tests --enable-coverage"
 endif

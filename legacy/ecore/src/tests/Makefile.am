@@ -5,7 +5,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_x \
 @EINA_CFLAGS@ \
-@CHECK_CFLAGS@
+@CHECK_CFLAGS@ \
+@EFL_ECORE_BUILD@
 
 if EFL_ENABLE_TESTS
 
