@@ -6,6 +6,7 @@ Changes since Ecore 1.2.0:
 Additions:
     * ecore:
      - Add ecore_main_fd_handler_file_add()
+     - Add ecore_fork_reset()
     * ecore_evas:
      - Add transparency support on Windows (GDI engine only)
      - Add API functions to get/set an Ecore_Evas's profile.

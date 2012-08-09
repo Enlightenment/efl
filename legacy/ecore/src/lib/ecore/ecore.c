@@ -80,6 +80,7 @@ static void _thread_callback(void        *data,
 static Eina_List *_thread_cb = NULL;
 static Ecore_Pipe *_thread_call = NULL;
 static Eina_Lock _thread_safety;
+static const int wakeup = 42;
 
 static int _thread_loop = 0;
 static Eina_Lock _thread_mutex;
@@ -175,11 +176,8 @@ ecore_init(void)
    eina_condition_new(&_thread_cond, &_thread_mutex);
    eina_lock_new(&_thread_feedback_mutex);
    eina_condition_new(&_thread_feedback_cond, &_thread_feedback_mutex);
-   if (!_thread_call)
-     {
-       _thread_call = ecore_pipe_add(_thread_callback, NULL);
-       eina_lock_new(&_thread_safety);
-     }
+   _thread_call = ecore_pipe_add(_thread_callback, NULL);
+   eina_lock_new(&_thread_safety);
 
    eina_lock_new(&_thread_id_lock);
 
@@ -307,11 +305,22 @@ unlock:
      return _ecore_init_count;
 }
 
+EAPI void
+ecore_fork_reset(void)
+{
+   eina_lock_take(&_thread_safety);
+
+   ecore_pipe_del(_thread_call);
+   _thread_call = ecore_pipe_add(_thread_callback, NULL);
+   /* If there was something in the pipe, trigger a wakeup again */
+   if (_thread_cb) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
+
+   eina_lock_release(&_thread_safety);
+}
+
 /**
  * @}
  */
-
-static int wakeup = 42;
 
 EAPI void
 ecore_main_loop_thread_safe_call_async(Ecore_Cb callback,

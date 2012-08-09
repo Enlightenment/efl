@@ -851,3 +851,4 @@
 2012-08-09  Cedric Bail
 
 	* Correctly shutdown Ecore_Thread.
+	* Add a way to reset Ecore_Thread internal pipe after a fork via ecore_fork_reset.

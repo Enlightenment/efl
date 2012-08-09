@@ -373,13 +373,14 @@ extern "C" {
 #endif
 
 /**
- * @defgroup Ecore_Init_Group Ecore initialization and shutdown functions.
+ * @defgroup Ecore_Init_Group Ecore initialization, shutdown functions and reset on fork.
  *
  * @{
  */
 
 EAPI int ecore_init(void);
 EAPI int ecore_shutdown(void);
+EAPI void ecore_fork_reset(void);
 
 /**
  * @}
