@@ -2668,9 +2668,9 @@ elm_widget_signal_callback_add(Evas_Object   *obj,
 }
 
 EAPI void *
-elm_widget_signal_callback_del(Evas_Object   *obj,
-                               const char    *emission,
-                               const char    *source,
+elm_widget_signal_callback_del(Evas_Object *obj,
+                               const char *emission,
+                               const char *source,
                                Edje_Signal_Cb func)
 {
    Edje_Signal_Data *esd;
@@ -2688,7 +2688,7 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
                  (!strcmp(esd->source, source)))
                {
                   COMPAT_SMART_DATA(sd)->edje_signals = eina_list_remove_list
-                    (COMPAT_SMART_DATA(sd)->edje_signals, l);
+                      (COMPAT_SMART_DATA(sd)->edje_signals, l);
                   eina_stringshare_del(esd->emission);
                   eina_stringshare_del(esd->source);
                   data = esd->data;
@@ -2701,13 +2701,13 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
           (obj, emission, source, _edje_signal_callback, esd);
      }
    else if (evas_object_smart_type_check(obj, "elm_layout"))
-     elm_layout_signal_callback_del(obj, emission, source, func);
+     data = elm_layout_signal_callback_del(obj, emission, source, func);
    else if (evas_object_smart_type_check(obj, "elm_icon"))
      {
         WRN("Deprecated function. This functionality on icon objects"
             " will be dropped on a next release.");
 
-        _elm_icon_signal_callback_del(obj, emission, source, func);
+        data = _elm_icon_signal_callback_del(obj, emission, source, func);
      }
 
    return data;
