@@ -993,7 +993,6 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj,
 
         evas_object_smart_callback_add(bt, "clicked", _canc, obj);
 
-        elm_widget_sub_object_add(obj, bt);
         sd->cancel_button = bt;
 
         // ok btn
@@ -1003,7 +1002,6 @@ elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj,
 
         evas_object_smart_callback_add(bt, "clicked", _ok, obj);
 
-        elm_widget_sub_object_add(obj, bt);
         sd->ok_button = bt;
 
         _elm_fileselector_smart_theme(obj);
