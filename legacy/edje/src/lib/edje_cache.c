@@ -173,7 +173,9 @@ _edje_file_change(void *data, int ev_type __UNUSED__, void *event)
 static Edje_File *
 _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, time_t mtime)
 {
+   Edje_Color_Class *cc;
    Edje_File *edf;
+   Eina_List *l;
    Edje_Part_Collection *edc;
    Eet_File *ef;
 #ifdef HAVE_EIO
@@ -231,6 +233,10 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
 
    /* This should be done at edje generation time */
    _edje_textblock_style_parse_and_fix(edf);
+   edf->color_hash = eina_hash_string_small_new(NULL);
+   EINA_LIST_FOREACH(edf->color_classes, l, cc)
+     if (cc->name)
+       eina_hash_direct_add(edf->color_hash, cc->name, cc);
 
    if (coll)
      {

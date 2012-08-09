@@ -77,6 +77,16 @@ _edje_object_smart_class_get(void)
    return class;
 }
 
+static void
+_edje_color_class_free(void *data)
+{
+   Edje_Color_Class *cc = data;
+
+   if (cc->name) eina_stringshare_del(cc->name);
+   free(cc);
+}
+
+
 /* Private Routines */
 static void
 _edje_smart_add(Evas_Object *obj)
@@ -113,6 +123,7 @@ _edje_smart_add(Evas_Object *obj)
    ed->have_objects = 1;
    ed->references = 1;
    ed->user_defined = NULL;
+   ed->color_classes = eina_hash_string_small_new(_edje_color_class_free);
 
    evas_object_geometry_get(obj, &(ed->x), &(ed->y), &(ed->w), &(ed->h));
    ed->obj = obj;

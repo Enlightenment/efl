@@ -453,7 +453,9 @@ struct _Edje_File
    Edje_Image_Directory           *image_dir;
    Edje_Sound_Directory           *sound_dir;
    Eina_List                      *styles;
+
    Eina_List                      *color_classes;
+   Eina_Hash                      *color_hash;
 
    int                             references;
    const char                     *compiler;
@@ -1121,7 +1123,7 @@ struct _Edje
    Eina_List            *actions; /* currently running actions */
    Eina_List            *callbacks;
    Eina_List            *pending_actions;
-   Eina_List            *color_classes;
+   Eina_Hash            *color_classes;
    Eina_List            *text_classes;
    /* variable pool for Edje Embryo scripts */
    Edje_Var_Pool        *var_pool;

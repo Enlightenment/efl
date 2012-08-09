@@ -548,3 +548,7 @@
 2012-08-07  Cedric Bail
 
 	* Fix memory leak when Edje file have alias defined.
+
+2012-08-09  Cedric Bail
+
+	* Improve speed of color_class lookup by using an Eina_Hash.

@@ -627,7 +627,6 @@ EAPI Eina_Bool
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
    Edje *ed;
-   Eina_List *l;
    Edje_Color_Class *cc;
    unsigned int i;
 
@@ -641,42 +640,39 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    else if (b > 255) b = 255;
    if (a < 0)        a = 0;
    else if (a > 255) a = 255;
+   cc = eina_hash_find(ed->color_classes, color_class);
+   if (cc)
+     {
+       if ((cc->r == r) && (cc->g == g) &&
+	   (cc->b == b) && (cc->a == a) &&
+	   (cc->r2 == r2) && (cc->g2 == g2) &&
+	   (cc->b2 == b2) && (cc->a2 == a2) &&
+	   (cc->r3 == r3) && (cc->g3 == g3) &&
+	   (cc->b3 == b3) && (cc->a3 == a3))
+	 return EINA_TRUE;
+       cc->r = r;
+       cc->g = g;
+       cc->b = b;
+       cc->a = a;
+       cc->r2 = r2;
+       cc->g2 = g2;
+       cc->b2 = b2;
+       cc->a2 = a2;
+       cc->r3 = r3;
+       cc->g3 = g3;
+       cc->b3 = b3;
+       cc->a3 = a3;
+       ed->dirty = 1;
+       ed->recalc_call = 1;
+#ifdef EDJE_CALC_CACHE
+       ed->all_part_change = 1;
+#endif
+       _edje_recalc(ed);
+       return EINA_TRUE;
+     }
+
    color_class = eina_stringshare_add(color_class);
    if (!color_class) return EINA_FALSE;
-   EINA_LIST_FOREACH(ed->color_classes, l, cc)
-     {
-	if (cc->name == color_class)
-	  {
-	     eina_stringshare_del(color_class);
-
-	     if ((cc->r == r) && (cc->g == g) &&
-		 (cc->b == b) && (cc->a == a) &&
-		 (cc->r2 == r2) && (cc->g2 == g2) &&
-		 (cc->b2 == b2) && (cc->a2 == a2) &&
-		 (cc->r3 == r3) && (cc->g3 == g3) &&
-		 (cc->b3 == b3) && (cc->a3 == a3))
-	       return EINA_TRUE;
-	     cc->r = r;
-	     cc->g = g;
-	     cc->b = b;
-	     cc->a = a;
-	     cc->r2 = r2;
-	     cc->g2 = g2;
-	     cc->b2 = b2;
-	     cc->a2 = a2;
-	     cc->r3 = r3;
-	     cc->g3 = g3;
-	     cc->b3 = b3;
-	     cc->a3 = a3;
-	     ed->dirty = 1;
-             ed->recalc_call = 1;
-#ifdef EDJE_CALC_CACHE
-	     ed->all_part_change = 1;
-#endif
-	     _edje_recalc(ed);
-	     return EINA_TRUE;
-	  }
-     }
    cc = malloc(sizeof(Edje_Color_Class));
    if (!cc)
      {
@@ -696,7 +692,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    cc->g3 = g3;
    cc->b3 = b3;
    cc->a3 = a3;
-   ed->color_classes = eina_list_append(ed->color_classes, cc);
+   eina_hash_direct_add(ed->color_classes, cc->name, cc);
    ed->dirty = 1;
    ed->recalc_call = 1;
 #ifdef EDJE_CALC_CACHE
@@ -753,7 +749,6 @@ void
 edje_object_color_class_del(Evas_Object *obj, const char *color_class)
 {
    Edje *ed;
-   Eina_List *l;
    Edje_Color_Class *cc = NULL;
    unsigned int i;
 
@@ -761,16 +756,7 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
 
    if ((!ed) || (!color_class)) return;
 
-   EINA_LIST_FOREACH(ed->color_classes, l, cc)
-     {
-	if (!strcmp(cc->name, color_class))
-	  {
-	     ed->color_classes = eina_list_remove(ed->color_classes, cc);
-	     eina_stringshare_del(cc->name);
-	     free(cc);
-	     break;
-	  }
-     }
+   eina_hash_del(ed->color_classes, color_class, cc);
 
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -4712,22 +4698,21 @@ _edje_real_part_get(const Edje *ed, const char *part)
 Edje_Color_Class *
 _edje_color_class_find(Edje *ed, const char *color_class)
 {
-   Eina_List *l;
    Edje_Color_Class *cc = NULL;
 
    if ((!ed) || (!color_class)) return NULL;
 
    /* first look through the object scope */
-   EINA_LIST_FOREACH(ed->color_classes, l, cc)
-     if ((cc->name) && (!strcmp(color_class, cc->name))) return cc;
+   cc = eina_hash_find(ed->color_classes, color_class);
+   if (cc) return cc;
 
    /* next look through the global scope */
    cc = eina_hash_find(_edje_color_class_hash, color_class);
    if (cc) return cc;
 
    /* finally, look through the file scope */
-   EINA_LIST_FOREACH(ed->file->color_classes, l, cc)
-     if ((cc->name) && (!strcmp(color_class, cc->name))) return cc;
+   cc = eina_hash_find(ed->file->color_hash, color_class);
+   if (cc) return cc;
 
    return NULL;
 }

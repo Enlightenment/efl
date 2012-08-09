@@ -237,11 +237,7 @@ _edje_del(Edje *ed)
 	if (escb->source) eina_stringshare_del(escb->source);
 	free(escb);
      }
-   EINA_LIST_FREE(ed->color_classes, cc)
-     {
-	if (cc->name) eina_stringshare_del(cc->name);
-	free(cc);
-     }
+   eina_hash_free(ed->color_classes);
    EINA_LIST_FREE(ed->text_classes, tc)
      {
 	if (tc->name) eina_stringshare_del(tc->name);

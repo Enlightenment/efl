@@ -1328,6 +1328,7 @@ _edje_file_free(Edje_File *edf)
 	free(edf->external_dir);
      }
 
+   eina_hash_free(edf->color_hash);
    EINA_LIST_FREE(edf->color_classes, ecc)
      {
 	if (edf->free_strings && ecc->name) eina_stringshare_del(ecc->name);
