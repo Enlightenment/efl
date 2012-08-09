@@ -8233,7 +8233,6 @@ EAPI Evas_BiDi_Direction  evas_object_text_direction_get(const Evas_Object *obj)
  * @li shadow_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
  * @li glow_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
  * @li glow2_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
- * @li backing_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
  * @li strikethrough_color - color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
  * @li align - Either "auto" (meaning according to text direction), "left", "right", "center", "middle", a value between 0.0 and 1.0, or a value between 0% to 100%.
  * @li valign - Either "top", "bottom", "middle", "center", "baseline", "base", a value between 0.0 and 1.0, or a value between 0% to 100%.
@@ -8242,7 +8241,8 @@ EAPI Evas_BiDi_Direction  evas_object_text_direction_get(const Evas_Object *obj)
  * @li right_margin - Either "reset", or a pixel value indicating the margin.
  * @li underline - "on", "off", "single", or "double".
  * @li strikethrough - "on" or "off"
- * @li backing - "on" or "off"
+ * @li backing_color - Background color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA".
+ * @li backing - Enable/disable background color. ex) "on" or "off"
  * @li style - Either "off", "none", "plain", "shadow", "outline", "soft_outline", "outline_shadow", "outline_soft_shadow", "glow", "far_shadow", "soft_shadow", or "far_soft_shadow".
  * @li tabstops - Pixel value for tab width.
  * @li linesize - Force a line size in pixels.
