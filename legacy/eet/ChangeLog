@@ -607,3 +607,7 @@
 
 	* Add code to detect overrun and underrun in eet_data_descriptor_element_add.
 	* Fix possible wrong size decoding for simple type.
+
+2012-08-09  Cedric Bail
+
+	* Don't copy string around for nothing.

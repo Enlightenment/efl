@@ -110,7 +110,7 @@ struct _Eet_Data_Group_Type_Codec
 
 struct _Eet_Data_Chunk
 {
-   char         *name;
+   const char   *name;
    int           len;
    int           size;
    int           hash;
@@ -1422,7 +1422,7 @@ eet_data_chunk_new(void       *data,
        || type == EET_T_F8P24)
      type = EET_T_DOUBLE;
 
-   chnk->name = strdup(name);
+   chnk->name = name;
    chnk->len = strlen(name) + 1;
    chnk->size = size;
    chnk->data = data;
@@ -1434,9 +1434,6 @@ eet_data_chunk_new(void       *data,
 static inline void
 eet_data_chunk_free(Eet_Data_Chunk *chnk)
 {
-   if (chnk->name)
-     free(chnk->name);
-
    free(chnk);
 }
 
@@ -1624,7 +1621,7 @@ _eet_descriptor_hash_free(Eet_Data_Descriptor *edd)
 
 static Eet_Data_Element *
 _eet_descriptor_hash_find(Eet_Data_Descriptor *edd,
-                          char                *name,
+                          const char          *name,
                           int                  hash)
 {
    Eet_Data_Descriptor_Hash *bucket;

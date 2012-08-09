@@ -12,6 +12,7 @@ Fixes:
     * Check that gnutls and openssl don't return below zero size during decipher.
     * Fix crash when cyphering huge amount of data.
     * Possible wrong size decoding of simple type.
+    * Don't strdup string around for nothing.
 
 Eet 1.6.0
 
