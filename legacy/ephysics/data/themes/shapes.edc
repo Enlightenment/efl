@@ -1,0 +1,24 @@
+#define ADD_SHAPE(_name) \
+   images { \
+      image: #_name##".png" COMP; \
+   } \
+   group { \
+      name: #_name; \
+      parts { \
+         part { \
+            name: #_name; \
+            mouse_events: 0; \
+            type: IMAGE; \
+            description { \
+               state: "default" 0.0; \
+               image.normal: #_name##".png"; \
+            } \
+         } \
+      } \
+   }
+
+ADD_SHAPE(hexagon)
+ADD_SHAPE(pentagon)
+ADD_SHAPE(star)
+
+#undef ADD_SHAPE

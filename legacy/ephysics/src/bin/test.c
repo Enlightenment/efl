@@ -24,6 +24,7 @@ void test_jumping_balls(void *data, Evas_Object *obj, void *event_info);
 void test_no_gravity(void *data, Evas_Object *obj, void *event_info);
 void test_rotate(void *data, Evas_Object *obj, void *event_info);
 void test_velocity(void *data, Evas_Object *obj, void *event_info);
+void test_shapes(void *data, Evas_Object *obj, void *event_info);
 void test_sleeping(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
 
@@ -168,6 +169,7 @@ _main_win_add(char *autorun __UNUSED__, Eina_Bool test_win_only __UNUSED__)
    ADD_TEST("NO GRAVITY", test_no_gravity);
    ADD_TEST("ROTATE", test_rotate);
    ADD_TEST("VELOCITY", test_velocity);
+   ADD_TEST("SHAPES", test_shapes);
    ADD_TEST("SLEEPING THRESHOLD", test_sleeping);
    ADD_TEST("SLIDER", test_slider);
 

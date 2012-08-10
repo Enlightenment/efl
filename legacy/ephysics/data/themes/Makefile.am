@@ -20,6 +20,7 @@ EXTRA_DIST = \
 	frame.edc \
 	list.edc \
 	shadows.edc \
+	shapes.edc \
 	spinner.edc \
 	images/arrows.png \
 	images/background.jpg \
@@ -41,11 +42,12 @@ EXTRA_DIST = \
 	images/collisionL.png \
 	images/cube-blue.png \
 	images/cube-purple.png \
-	images/hexagonal.png \
+	images/hexagon.png \
 	images/list-item.png \
 	images/list-item-corner.png \
 	images/list-item-corner-pressed.png \
 	images/list-item-pressed.png \
+	images/pentagon.png \
 	images/shadow-ball.png \
 	images/shadow-cube.png \
 	images/spinner_base.png \
