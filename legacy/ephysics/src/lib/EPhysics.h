@@ -21,6 +21,7 @@
  * @li @ref EPhysics_Body
  * @li @ref EPhysics_Camera
  * @li @ref EPhysics_Constraint
+ * @li @ref EPhysics_Shape
  *
  * Please see the @ref authors page for contact details.
  */
@@ -118,6 +119,166 @@ EAPI int ephysics_shutdown(void);
 /**
  * @}
  */
+
+/**
+ * @defgroup EPhysics_Shape EPhysics Shape
+ * @ingroup EPhysics
+ *
+ * @{
+ *
+ * Shapes are used to create bodies with shapes that differ from primitive
+ * ones, like box and circle.
+ *
+ * A shape consists in a group of points, the vertices of the body to be
+ * created later with @ref ephysics_body_shape_add().
+ *
+ * A new shape is created with @ref ephysics_shape_new() and points are
+ * set with @ref ephysics_shape_point_add(). A shape can be used to
+ * create many bodies. When done, it's required to delete the shape
+ * with @ref ephysics_shape_del().
+ *
+ * A shape can be load from a file describing it with
+ * @ref ephysics_shape_load(), and can be saved to a file with
+ * @ref ephysics_shape_save(). With that shapes can be done or visualized
+ * on design applications.
+ *
+ * @note Using primitive shapes has better perfomance than generic shapes.
+ * @note For now, only convex shapes are supported.
+ *
+ */
+
+/**
+ * @typedef EPhysics_Shape
+ *
+ * Shape handle, represents a shape to be used to create a body.
+ *
+ * Created with @ref ephysics_shape_new() and deleted with
+ * @ref ephysics_shape_del().
+ *
+ * @ingroup EPhysics_Shape
+ */
+typedef struct _EPhysics_Shape EPhysics_Shape;
+
+/**
+ * @brief
+ * Create a new shape.
+ *
+ * The returned shape initially doesn't has points set, so it's required
+ * to set vertices with @ref ephysics_shape_point_add().
+ *
+ * After the shape is completelly defined, all the points were added,
+ * it's possible to create one or more bodies with
+ * @ref ephysics_body_shape_add().
+ *
+ * @return The created shape or @c NULL on error.
+ *
+ * @see ephysics_shape_del().
+ * @see ephysics_shape_load().
+ *
+ * @ingroup EPhysics_Shape
+ */
+EAPI EPhysics_Shape *ephysics_shape_new(void);
+
+/**
+ * @brief
+ * Delete a shape.
+ *
+ * After a shape is used to create the wanted bodies, it's required
+ * to delete it. It won't be deleted automatically by ephysics
+ * at any point, even on shutdown. The creator is responsible to
+ * free it after usage is concluded.
+ *
+ * @param shape The shape to be deleted.
+ *
+ * @see ephysics_shape_new().
+ *
+ * @ingroup EPhysics_Shape
+ */
+EAPI void ephysics_shape_del(EPhysics_Shape *shape);
+
+/**
+ * @brief
+ * Add a new point to the shape.
+ *
+ * Any point can be added to a shape, but only vertices matter.
+ * A vertex is a special kind of point that describes a corner of
+ * geometric shapes. The final shape will be constructed in such a way
+ * it will have all the added points and will be convex.
+ *
+ * The order of points doesn't matter.
+ *
+ * For example, to create a pentagon:
+ *
+ * @code
+ * EPhysics_Shape *shape = ephysics_shape_new();
+ *
+ * ephysics_shape_point_add(shape, 0/70., 24/66.);
+ * ephysics_shape_point_add(shape, 35/70., 0/66.);
+ * ephysics_shape_point_add(shape, 70/70., 24/66.);
+ * ephysics_shape_point_add(shape, 56/70., 66/66.);
+ * ephysics_shape_point_add(shape, 14/70., 66/66.);
+ *
+ * ephysics_body_shape_add(world, shape);
+ *
+ * ephysics_shape_del(shape);
+ * @endcode
+ *
+ * @param shape The shape to be modified.
+ * @param x Point position at x axis. Should be a value between 0 and 1.
+ * @param y Point position at y axis. Should be a value between 0 and 1.
+ * @return @c EINA_TRUE on success or EINA_FALSE on error.
+ *
+ * @see ephysics_shape_new().
+ *
+ * @ingroup EPhysics_Shape
+ */
+EAPI Eina_Bool ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y);
+
+/**
+ * @brief
+ * Load the shape from a file.
+ *
+ * Useful to edit shapes on design tools and load it from an exported file.
+ *
+ * Also it helps to avoid lots of @ref ephysics_shape_point_add() in
+ * the code, and keep a better separation between code logic and
+ * design stuff.
+ *
+ * @param filename The path to the file describing the shape.
+ * @return The loaded shape or @c NULL on error.
+ *
+ * @note Not implemented yet.
+ *
+ * @see ephysics_shape_new() for more details.
+ * @see ephysics_shape_save().
+ *
+ * @ingroup EPhysics_Shape
+ */
+EAPI EPhysics_Shape *ephysics_shape_load(const char *filename);
+
+/**
+ * @brief
+ * Save the shape to a file.
+ *
+ * It can be useful to visualize it on design tools.
+ *
+ * @param shape The shape to be saved.
+ * @param filename The path to save the shape.
+ * @return @c EINA_TRUE on success or EINA_FALSE on error.
+ *
+ * @note Not implemented yet.
+ *
+ * @see ephysics_shape_new().
+ * @see ephysics_shape_load().
+ *
+ * @ingroup EPhysics_Shape
+ */
+EAPI Eina_Bool ephysics_shape_save(const EPhysics_Shape *shape, const char *filename);
+
+/**
+ * @}
+ */
+
 
 /**
  * @typedef EPhysics_Body

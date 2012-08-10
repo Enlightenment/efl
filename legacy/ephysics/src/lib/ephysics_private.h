@@ -44,6 +44,8 @@ extern "C" {
 
 #define RAD_TO_DEG 57.29582 /* 2 * pi radians == 360 degree */
 
+typedef struct _EPhysics_Point EPhysics_Point;
+
 typedef enum _EPhysics_World_Boundary
 {
    EPHYSICS_WORLD_BOUNDARY_TOP,
@@ -52,6 +54,12 @@ typedef enum _EPhysics_World_Boundary
    EPHYSICS_WORLD_BOUNDARY_RIGHT,
    EPHYSICS_WORLD_BOUNDARY_LAST
 } EPhysics_World_Boundary;
+
+struct _EPhysics_Point {
+     EINA_INLIST;
+     double x;
+     double y;
+};
 
 struct _EPhysics_Body {
      EINA_INLIST;
@@ -94,6 +102,8 @@ EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);
 void ephysics_camera_del(EPhysics_Camera *camera);
 void ephysics_camera_moved_set(EPhysics_Camera *camera, Eina_Bool moved);
 Eina_Bool ephysics_camera_moved_get(const EPhysics_Camera *camera);
+
+const Eina_Inlist *ephysics_shape_points_get(const EPhysics_Shape *shape);
 
 #ifdef __cplusplus
 }
