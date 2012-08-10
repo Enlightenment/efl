@@ -364,41 +364,14 @@ _ecore_evas_x_render(Ecore_Evas *ee)
                     {
                        if (ee->shaped)
                          {
+                            
                             /* if we have a damage pixmap - we can avoid exposures by
                              * disabling them just for setting the mask */
-                            ecore_x_event_mask_set(ee->prop.window,
-                                                   ECORE_X_EVENT_MASK_KEY_DOWN |
-                                                   ECORE_X_EVENT_MASK_KEY_UP |
-                                                   ECORE_X_EVENT_MASK_MOUSE_DOWN |
-                                                   ECORE_X_EVENT_MASK_MOUSE_UP |
-                                                   ECORE_X_EVENT_MASK_MOUSE_IN |
-                                                   ECORE_X_EVENT_MASK_MOUSE_OUT |
-                                                   ECORE_X_EVENT_MASK_MOUSE_MOVE |
-                                                   //ECORE_X_EVENT_MASK_WINDOW_DAMAGE |
-                                                   ECORE_X_EVENT_MASK_WINDOW_VISIBILITY |
-                                                   ECORE_X_EVENT_MASK_WINDOW_CONFIGURE |
-                                                   ECORE_X_EVENT_MASK_WINDOW_FOCUS_CHANGE |
-                                                   ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
-                                                   ECORE_X_EVENT_MASK_WINDOW_COLORMAP
-                                                  );
+                            ecore_x_event_mask_unset(ee->prop.window, ECORE_X_EVENT_MASK_WINDOW_DAMAGE);
                             ecore_x_window_shape_mask_set(ee->prop.window,
                                                           ee->engine.x.mask);
                             /* and re-enable them again */
-                            ecore_x_event_mask_set(ee->prop.window,
-                                                   ECORE_X_EVENT_MASK_KEY_DOWN |
-                                                   ECORE_X_EVENT_MASK_KEY_UP |
-                                                   ECORE_X_EVENT_MASK_MOUSE_DOWN |
-                                                   ECORE_X_EVENT_MASK_MOUSE_UP |
-                                                   ECORE_X_EVENT_MASK_MOUSE_IN |
-                                                   ECORE_X_EVENT_MASK_MOUSE_OUT |
-                                                   ECORE_X_EVENT_MASK_MOUSE_MOVE |
-                                                   ECORE_X_EVENT_MASK_WINDOW_DAMAGE |
-                                                   ECORE_X_EVENT_MASK_WINDOW_VISIBILITY |
-                                                   ECORE_X_EVENT_MASK_WINDOW_CONFIGURE |
-                                                   ECORE_X_EVENT_MASK_WINDOW_FOCUS_CHANGE |
-                                                   ECORE_X_EVENT_MASK_WINDOW_PROPERTY |
-                                                   ECORE_X_EVENT_MASK_WINDOW_COLORMAP
-                                                  );
+                            ecore_x_event_mask_set(ee->prop.window, ECORE_X_EVENT_MASK_WINDOW_DAMAGE);
                          }
                        ecore_x_xregion_set(ee->engine.x.damages, ee->engine.x.gc);
                        ecore_x_pixmap_paste(ee->engine.x.pmap, ee->prop.window,
