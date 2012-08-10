@@ -17,6 +17,7 @@ struct _EPhysics_World_Callback {
      void (*func) (void *data, EPhysics_World *world, void *event_info);
      void *data;
      EPhysics_Callback_World_Type type;
+     Eina_Bool deleted:1;
 };
 
 struct _EPhysics_World {
@@ -33,8 +34,10 @@ struct _EPhysics_World {
      Eina_Inlist *callbacks;
      Eina_Inlist *bodies;
      Eina_List *to_delete;
+     Eina_List *cb_to_delete;
      int max_sub_steps;
      int walking;
+     int cb_walking;
      double last_update;
      double rate;
      double fixed_time_step;
@@ -73,6 +76,49 @@ struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
       return EINA_FALSE;
    }
 };
+
+static void
+_ephysics_world_event_callback_call(EPhysics_World *world, EPhysics_Callback_World_Type type, void *event_info)
+{
+   EPhysics_World_Callback *cb;
+   void *clb;
+
+   world->cb_walking++;
+   EINA_INLIST_FOREACH(world->callbacks, cb)
+     {
+        if ((cb->type == type) && (!cb->deleted))
+          cb->func(cb->data, world, event_info);
+     }
+   world->cb_walking--;
+
+   if (world->cb_walking > 0) return;
+
+   EINA_LIST_FREE(world->cb_to_delete, clb)
+     {
+        cb = (EPhysics_World_Callback *)clb;
+        world->callbacks = eina_inlist_remove(world->callbacks,
+                                              EINA_INLIST_GET(cb));
+        free(cb);
+     }
+}
+
+static void
+_ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_World_Callback *cb)
+{
+   if (cb->deleted) return;
+
+   cb->deleted = EINA_TRUE;
+
+   if (world->cb_walking)
+     {
+        world->cb_to_delete = eina_list_append(world->cb_to_delete, cb);
+        return;
+     }
+
+   world->callbacks = eina_inlist_remove(world->callbacks,
+                                         EINA_INLIST_GET(cb));
+   free(cb);
+}
 
 static void
 _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
@@ -125,9 +171,8 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
    world->active = world_active;
    if (world_active) return;
 
-   EINA_INLIST_FOREACH(world->callbacks, cb)
-      if (cb->type == EPHYSICS_CALLBACK_WORLD_STOPPED)
-        cb->func(cb->data, world, NULL);
+   _ephysics_world_event_callback_call(world, EPHYSICS_CALLBACK_WORLD_STOPPED,
+                                       NULL);
 }
 
 static void
@@ -511,12 +556,8 @@ ephysics_world_del(EPhysics_World *world)
    if (world->deleted) return;
 
    world->deleted = EINA_TRUE;
-   EINA_INLIST_FOREACH(world->callbacks, cb)
-     {
-        if (cb->type == EPHYSICS_CALLBACK_WORLD_DEL)
-          cb->func(cb->data, world, NULL);
-     }
-
+   _ephysics_world_event_callback_call(world, EPHYSICS_CALLBACK_WORLD_DEL,
+                                       NULL);
    ephysics_world_running_set(world, EINA_FALSE);
 
    if (_worlds_walking > 0)
@@ -774,7 +815,7 @@ EAPI void *
 ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func)
 {
    EPhysics_World_Callback *cb;
-   void *cb_data;
+   void *cb_data = NULL;
 
    if (!world)
      {
@@ -784,23 +825,22 @@ ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_Callback_World
 
    EINA_INLIST_FOREACH(world->callbacks, cb)
      {
-        if ((cb->type == type) && (cb->func == func)) {
-             cb_data = cb->data;
-             world->callbacks = eina_inlist_remove(world->callbacks,
-                                                  EINA_INLIST_GET(cb));
-             free(cb);
-             return cb_data;
-        }
+        if ((cb->type != type) || (cb->func != func))
+          continue;
+
+        cb_data = cb->data;
+        _ephysics_world_event_callback_del(world, cb);
+        break;
      }
 
-   return NULL;
+   return cb_data;
 }
 
 EAPI void *
 ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_World_Type type, EPhysics_World_Event_Cb func, void *data)
 {
    EPhysics_World_Callback *cb;
-   void *cb_data;
+   void *cb_data = NULL;
 
    if (!world)
      {
@@ -810,16 +850,15 @@ ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_
 
    EINA_INLIST_FOREACH(world->callbacks, cb)
      {
-        if ((cb->type == type) && (cb->func == func) && (cb->data == data)) {
-             cb_data = cb->data;
-             world->callbacks = eina_inlist_remove(world->callbacks,
-                                                  EINA_INLIST_GET(cb));
-             free(cb);
-             return cb_data;
-        }
+        if ((cb->type != type) || (cb->func != func) || (cb->data != data))
+          continue;
+
+        cb_data = cb->data;
+        _ephysics_world_event_callback_del(world, cb);
+        break;
      }
 
-   return NULL;
+   return cb_data;
 }
 
 EAPI Eina_List *
