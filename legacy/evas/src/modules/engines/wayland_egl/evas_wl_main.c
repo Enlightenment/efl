@@ -39,7 +39,7 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
    context_attrs[2] = EGL_NONE;
 
 #if defined(GLES_VARIETY_S3C6410)
-   if (gw->visualinfo->depth == 16) // 16bpp
+   if (gw->depth == 16) // 16bpp
      {
         config_attrs[n++] = EGL_SURFACE_TYPE;
         config_attrs[n++] = EGL_WINDOW_BIT;
@@ -317,12 +317,5 @@ eng_best_depth_get(Evas_Engine_Info_Wayland_Egl *einfo)
 {
    if (!einfo) return 0;
    if (!einfo->info.display) return 0;
-   return 32;
-   /* if (!_evas_gl_x11_vi) eng_best_visual_get(einfo); */
-   /* if (!_evas_gl_x11_vi) return 0; */
-   /* if (einfo->info.destination_alpha) */
-   /*   { */
-   /*      if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->depth; */
-   /*   } */
-   /* return _evas_gl_x11_vi->depth; */
+   return (einfo->info.depth ? einfo->info.depth : 32);
 }
