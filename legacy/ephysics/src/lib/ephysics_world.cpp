@@ -797,7 +797,7 @@ ephysics_world_event_callback_add(EPhysics_World *world, EPhysics_Callback_World
         return;
      }
 
-   cb = (EPhysics_World_Callback *) malloc(sizeof(EPhysics_World_Callback));
+   cb = (EPhysics_World_Callback *)calloc(1, sizeof(EPhysics_World_Callback));
    if (!cb)
      {
         ERR("Can't set world event callback, can't create cb instance.");

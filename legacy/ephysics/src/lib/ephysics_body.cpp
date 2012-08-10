@@ -398,8 +398,8 @@ ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body
    if ((!body) || (!contact_body))
      return;
 
-   collision = (EPhysics_Body_Collision *)malloc(
-      sizeof(EPhysics_Body_Collision));
+   collision = (EPhysics_Body_Collision *)calloc(
+      1, sizeof(EPhysics_Body_Collision));
 
    if (!collision)
      {
@@ -911,7 +911,7 @@ ephysics_body_event_callback_add(EPhysics_Body *body, EPhysics_Callback_Body_Typ
         return;
      }
 
-   cb = (EPhysics_Body_Callback *) malloc(sizeof(EPhysics_Body_Callback));
+   cb = (EPhysics_Body_Callback *)calloc(1, sizeof(EPhysics_Body_Callback));
    if (!cb)
      {
         ERR("Can't set body event callback, can't create cb instance.");
