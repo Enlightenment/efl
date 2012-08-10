@@ -1424,6 +1424,10 @@ evas_render_updates_internal(Evas *e,
 
              if (!(pclip = evas_object_clip_get(obj)))
                {
+                  /* skip clipping if the object is itself the 
+                   * framespace clip */
+                  if (obj == e->framespace.clip) continue;
+
                   /* clip this object so it does not draw on the window frame */
                   evas_object_clip_set(obj, e->framespace.clip);
                }
