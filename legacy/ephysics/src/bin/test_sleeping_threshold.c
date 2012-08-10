@@ -9,6 +9,7 @@ _world_populate(Test_Data *test_data)
 {
    Evas_Object *sphere1, *sphere2, *sh1, *sh2;
    EPhysics_Body *sphere_body1, *sphere_body2;
+   double linear, angular;
 
    sh1 = elm_layout_add(test_data->win);
    elm_layout_file_set(
@@ -65,6 +66,11 @@ _world_populate(Test_Data *test_data)
    ephysics_body_linear_velocity_set(sphere_body2, -100, 0);
    ephysics_body_damping_set(sphere_body2, 0.5, 0.5);
    test_data->bodies = eina_list_append(test_data->bodies, sphere_body2);
+
+   ephysics_body_sleeping_threshold_get(sphere_body1, &linear, &angular);
+   INF("Body 1: linear threshold: %.2f, angular: %.2f", linear, angular);
+   ephysics_body_sleeping_threshold_get(sphere_body2, &linear, &angular);
+   INF("Body 2: linear threshold: %.2f, angular: %.2f", linear, angular);
 }
 
 static void

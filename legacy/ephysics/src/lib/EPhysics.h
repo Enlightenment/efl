@@ -1497,9 +1497,9 @@ EAPI double ephysics_body_angular_velocity_get(const EPhysics_Body *body);
  * @param linear_threshold The linear sleeping threshold factor.
  * @param angular_threshold The angular sleeping threshold factor.
  *
- * @see ephysics_body_linear_sleeping_threshold_get()
- * @see ephysics_body_angular_sleeping_threshold_get()
+ * @see ephysics_body_sleeping_threshold_get().
  * @see ephysics_world_max_sleeping_time_set() for sleeping time details.
+ *
  * @ingroup EPhysics_Body
  */
 EAPI void ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshold, double angular_threshold);
@@ -1509,29 +1509,17 @@ EAPI void ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linea
  * Get the linear sleeping threshold.
  *
  * @note The linear sleeping threshold is measured in Evas coordinates per
- * second.
+ * second and the angular sleeping threshold is measured in degrees..
  *
  * @param body The body to get the linear sleeping threshold from.
- * @return The linear sleeping threshold from @p body.
+ * @param linear_threshold The linear sleeping threshold factor.
+ * @param angular_threshold The angular sleeping threshold factor.
  *
- * @see ephysics_body_sleeping_threshold_set()
+ * @see ephysics_body_sleeping_threshold_set() for more details.
+ *
  * @ingroup EPhysics_Body
  */
-EAPI double ephysics_body_linear_sleeping_threshold_get(const EPhysics_Body *body);
-
-/**
- * @brief
- * Get the angular sleeping threshold.
- *
- * @note The angular sleeping threshold is measured in degrees.
- *
- * @param body The body to get the angular sleeping threshold from.
- * @return The angular sleeping threshold from @p body.
- *
- * @see ephysics_body_sleeping_threshold_set()
- * @ingroup EPhysics_Body
- */
-EAPI double ephysics_body_angular_sleeping_threshold_get(const EPhysics_Body *body);
+EAPI void ephysics_body_sleeping_threshold_get(const EPhysics_Body *body, double *linear_threshold, double *angular_threshold);
 
 /**
  * @brief
