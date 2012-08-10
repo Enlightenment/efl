@@ -29,6 +29,7 @@ EXTRA_DIST = \
 	images/ball-green70.png \
 	images/ball-red.png \
 	images/ball-red70.png \
+	images/bg_floor.jpg \
 	images/bt_jump.png \
 	images/bt_jump_pressed.png \
 	images/bt_restart.png \

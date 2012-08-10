@@ -1,4 +1,29 @@
    group {
+      name: "floor";
+
+      images {
+         image: "bg_floor.jpg" COMP;
+      }
+
+      parts {
+
+         part {
+            name: "floor";
+            type: IMAGE;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               min: 750 224;
+               max: 750 224;
+               image.normal: "bg_floor.jpg";
+            }
+         }
+
+      }
+
+   }
+
+   group {
       name: "frame";
 
       images {

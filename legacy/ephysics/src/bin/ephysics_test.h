@@ -43,6 +43,7 @@
 #define HEIGHT (384)
 #define SHADOW_ALPHA_ID (1)
 #define FLOOR_Y (344)
+#define FLOOR_WIDTH (750)
 #define SH_THRESHOLD (200)
 
 #ifdef __cplusplus
