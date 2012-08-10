@@ -20,6 +20,7 @@ struct _EPhysics_World_Callback {
 };
 
 struct _EPhysics_World {
+     EINA_INLIST;
      btBroadphaseInterface* broadphase;
      btDefaultCollisionConfiguration* collision;
      btCollisionDispatcher* dispatcher;
@@ -47,7 +48,7 @@ struct _EPhysics_World {
 
 static int _ephysics_world_init_count = 0;
 static int _worlds_running = 0;
-static Eina_List *_worlds = NULL;
+static Eina_Inlist *_worlds = NULL;
 static Ecore_Animator *_anim_simulate = NULL;
 
 struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
@@ -126,14 +127,13 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
 static Eina_Bool
 _simulate_worlds(void *data)
 {
-   Eina_List *l, *lworlds = (Eina_List *) data;
+   Eina_Inlist *lworlds = (Eina_Inlist *) data;
+   EPhysics_World *world;
    double time_now;
-   void *ldata;
 
-   EINA_LIST_FOREACH(lworlds, l, ldata)
+   EINA_INLIST_FOREACH(lworlds, world)
      {
         double time_now, delta;
-        EPhysics_World *world = (EPhysics_World *) ldata;
 
         if (!world->running)
           continue;
@@ -232,8 +232,6 @@ ephysics_world_init(void)
 int
 ephysics_world_shutdown(void)
 {
-   void *ldata;
-
    if (--_ephysics_world_init_count != 0)
      return _ephysics_world_init_count;
 
@@ -243,9 +241,11 @@ ephysics_world_shutdown(void)
         _anim_simulate = NULL;
      }
 
-   EINA_LIST_FREE(_worlds, ldata)
+   while (_worlds)
      {
-        EPhysics_World *world = (EPhysics_World *) ldata;
+        EPhysics_World *world = EINA_INLIST_CONTAINER_GET(
+           _worlds, EPhysics_World);
+        _worlds = eina_inlist_remove(_worlds, _worlds);
         ephysics_world_del(world);
      }
 
@@ -327,7 +327,7 @@ ephysics_world_new(void)
         goto no_world;
      }
 
-   _worlds = eina_list_append(_worlds, world);
+   _worlds = eina_inlist_append(_worlds, EINA_INLIST_GET(world));
    if (eina_error_get())
      {
         ERR("Couldn't add world to worlds list.");
@@ -435,7 +435,7 @@ ephysics_world_del(EPhysics_World *world)
      }
 
    ephysics_world_running_set(world, EINA_FALSE);
-   _worlds = eina_list_remove(_worlds, world);
+   _worlds = eina_inlist_remove(_worlds, EINA_INLIST_GET(world));
 
    while (world->callbacks)
      {
