@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-07-09 19:16+0900\n"
+"POT-Creation-Date: 2012-08-10 19:25+0900\n"
 "PO-Revision-Date: 2011-11-08 14:19+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -15,54 +15,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elc_fileselector.c:833
+#: src/lib/elc_fileselector.c:749
 msgid "Up"
 msgstr "Su"
 
-#: src/lib/elc_fileselector.c:848
+#: src/lib/elc_fileselector.c:764
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1060 src/lib/elm_entry.c:1373
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1373
 msgid "Cancel"
 msgstr "Annulla"
 
-#: src/lib/elc_fileselector.c:1070
+#: src/lib/elc_fileselector.c:1001
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elm_button.c:85
+#: src/lib/elm_button.c:55
 msgid "Clicked"
 msgstr "Cliccato"
 
-#: src/lib/elm_button.c:283 src/lib/elm_check.c:241 src/lib/elm_list.c:1446
-#: src/lib/elm_radio.c:287 src/lib/elm_toolbar.c:1212
+#: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_list.c:1350
+#: src/lib/elm_radio.c:241 src/lib/elm_toolbar.c:1249
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
-#: src/lib/elm_button.c:307
+#: src/lib/elm_button.c:279
 msgid "Button"
 msgstr "Bottone"
 
-#: src/lib/elm_calendar.c:195
+#: src/lib/elm_calendar.c:132
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:88 src/lib/elm_check.c:91 src/lib/elm_check.c:254
-#: src/lib/elm_radio.c:130 src/lib/elm_radio.c:288
+#: src/lib/elm_check.c:47 src/lib/elm_check.c:50 src/lib/elm_check.c:213
+#: src/lib/elm_radio.c:83 src/lib/elm_radio.c:242
 msgid "State: On"
 msgstr "Stato: attivo"
 
-#: src/lib/elm_check.c:101 src/lib/elm_check.c:104 src/lib/elm_check.c:266
-#: src/lib/elm_radio.c:290
+#: src/lib/elm_check.c:60 src/lib/elm_check.c:63 src/lib/elm_check.c:225
+#: src/lib/elm_radio.c:244
 msgid "State: Off"
 msgstr "Stato: inattivo"
 
-#: src/lib/elm_check.c:250 src/lib/elm_check.c:263
+#: src/lib/elm_check.c:209 src/lib/elm_check.c:222
 msgid "State"
 msgstr "Stato"
 
-#: src/lib/elm_check.c:330
+#: src/lib/elm_check.c:289
 msgid "Check"
 msgstr "Controllo"
 
@@ -86,31 +86,31 @@ msgstr "Seleziona"
 msgid "Paste"
 msgstr "Incolla"
 
-#: src/lib/elm_list.c:1486
+#: src/lib/elm_list.c:1390
 msgid "List Item"
 msgstr ""
 
-#: src/lib/elm_radio.c:317
+#: src/lib/elm_radio.c:271
 msgid "Radio"
 msgstr "Opzione"
 
-#: src/lib/elm_toolbar.c:950
+#: src/lib/elm_toolbar.c:984
 msgid "Selected"
 msgstr "Selezionato"
 
-#: src/lib/elm_toolbar.c:1210
+#: src/lib/elm_toolbar.c:1247
 msgid "Separator"
 msgstr "Separatore"
 
-#: src/lib/elm_toolbar.c:1214
+#: src/lib/elm_toolbar.c:1251
 msgid "State: Selected"
 msgstr "Stato: selezionato"
 
-#: src/lib/elm_toolbar.c:1216
+#: src/lib/elm_toolbar.c:1253
 msgid "Has menu"
 msgstr "Include menù"
 
-#: src/lib/elm_toolbar.c:1281
+#: src/lib/elm_toolbar.c:1318
 msgid "Tool Item"
 msgstr "Oggetto strumento"
 
