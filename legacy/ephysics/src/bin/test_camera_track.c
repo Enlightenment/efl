@@ -10,7 +10,46 @@ struct _Track_Data {
      Test_Data base;
      EPhysics_Body *body;
      Evas_Object *sp;
+     int old_cx;
 };
+
+static void
+_update_floor(Evas_Object *layout, const char *name, int delta_x, int cy, Eina_Bool ver)
+{
+   Evas_Object *floor_obj;
+   int x, y, fx, fy;
+
+   floor_obj = evas_object_data_get(layout, name);
+   evas_object_geometry_get(floor_obj, &x, &y, NULL, NULL);
+   fx = x + delta_x;
+   if (fx < -FLOOR_WIDTH)
+     fx += 2 * FLOOR_WIDTH;
+
+   fy = (ver) ? FLOOR_Y - 20 - cy + 40 : y;
+   evas_object_move(floor_obj, fx, fy);
+}
+
+static void
+_update_object_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
+{
+   Track_Data *track_data = data;
+   EPhysics_Camera *camera;
+   int cx, cy, delta_x = 0;
+   Eina_Bool hor, ver;
+
+   ephysics_body_evas_object_update(body);
+   camera = ephysics_world_camera_get(track_data->base.world);
+   ephysics_camera_tracked_body_get(camera, NULL, &hor, &ver);
+   ephysics_camera_position_get(camera, &cx, &cy);
+
+   if (hor)
+     delta_x = track_data->old_cx - cx;
+
+   _update_floor(track_data->base.layout, "floor", delta_x, cy, ver);
+   _update_floor(track_data->base.layout, "floor2", delta_x, cy, ver);
+
+   track_data->old_cx = cx;
+}
 
 static void
 _track_apply(Track_Data *track_data)
@@ -50,7 +89,7 @@ static void
 _world_populate(Track_Data *track_data)
 {
    static const char *colors[] = {"blue-cube", "purple-cube"};
-   Evas_Object *cube, *sphere, *shadow;
+   Evas_Object *cube, *sphere;
    EPhysics_Body *body;
    int i, color, row;
 
@@ -72,21 +111,11 @@ _world_populate(Track_Data *track_data)
         body = ephysics_body_box_add(track_data->base.world);
         ephysics_body_evas_object_set(body, cube, EINA_TRUE);
         ephysics_body_restitution_set(body, 0.95);
-        ephysics_body_friction_set(body, 0.1);
+        ephysics_body_friction_set(body, 1);
         ephysics_body_mass_set(body, 0);
         track_data->base.bodies = eina_list_append(
            track_data->base.bodies, body);
      }
-
-   shadow = elm_layout_add(track_data->base.win);
-   elm_layout_file_set(
-      shadow, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
-      "shadow-ball");
-   evas_object_move(shadow, 0, FLOOR_Y);
-   evas_object_resize(shadow, 54, 3);
-   evas_object_show(shadow);
-   track_data->base.evas_objs = eina_list_append(track_data->base.evas_objs,
-                                                 shadow);
 
    sphere = elm_image_add(track_data->base.win);
    elm_image_file_set(
@@ -101,9 +130,10 @@ _world_populate(Track_Data *track_data)
    ephysics_body_evas_object_set(body, sphere, EINA_TRUE);
    ephysics_body_event_callback_add(body,
                                     EPHYSICS_CALLBACK_BODY_UPDATE,
-                                    update_object_cb, shadow);
+                                    _update_object_cb, track_data);
    ephysics_body_restitution_set(body, 0.95);
-   ephysics_body_friction_set(body, 0.1);
+   ephysics_body_friction_set(body, 1);
+   ephysics_body_damping_set(body, 0.1, 0);
    ephysics_body_central_impulse_apply(body, 3, 0);
    track_data->body = body;
    track_data->base.bodies = eina_list_append(track_data->base.bodies, body);
@@ -114,14 +144,22 @@ _restart(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED_
 {
    Track_Data *track_data = data;
    EPhysics_Camera *camera;
+   Evas_Object *floor_obj;
 
    DBG("Restart pressed");
 
    test_clean((Test_Data *)track_data);
    _world_populate(track_data);
 
+   floor_obj = evas_object_data_get(track_data->base.layout, "floor");
+   evas_object_move(floor_obj, - WIDTH / 2, FLOOR_Y - 20);
+   floor_obj = evas_object_data_get(track_data->base.layout, "floor2");
+   evas_object_move(floor_obj, FLOOR_WIDTH - WIDTH / 2, FLOOR_Y - 20);
+
    camera = ephysics_world_camera_get(track_data->base.world);
    ephysics_camera_position_set(camera, 50, 40);
+   track_data->old_cx = 50;
+
    _track_apply(track_data);
 }
 
@@ -141,9 +179,9 @@ void
 test_camera_track(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    EPhysics_Body *boundary;
-   EPhysics_World *world;
+   Evas_Object *sp, *floor_obj;
    Track_Data *track_data;
-   Evas_Object *sp;
+   EPhysics_World *world;
 
    if (!ephysics_init())
      return;
@@ -178,6 +216,22 @@ test_camera_track(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_layout_content_set(track_data->base.layout, "extra_input", sp);
    track_data->sp = sp;
 
+   floor_obj = elm_image_add(track_data->base.win);
+   elm_image_file_set(
+      floor_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "floor");
+   evas_object_move(floor_obj, - WIDTH / 2, FLOOR_Y - 20);
+   evas_object_resize(floor_obj, FLOOR_WIDTH, 224);
+   evas_object_show(floor_obj);
+   evas_object_data_set(track_data->base.layout, "floor", floor_obj);
+
+   floor_obj = elm_image_add(track_data->base.win);
+   elm_image_file_set(
+      floor_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "floor");
+   evas_object_move(floor_obj, FLOOR_WIDTH - WIDTH / 2, FLOOR_Y - 20);
+   evas_object_resize(floor_obj, FLOOR_WIDTH, 224);
+   evas_object_show(floor_obj);
+   evas_object_data_set(track_data->base.layout, "floor2", floor_obj);
+
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
    track_data->base.world = world;
@@ -188,5 +242,6 @@ test_camera_track(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 4);
 
+   track_data->old_cx = 50;
    _world_populate(track_data);
 }
