@@ -113,6 +113,7 @@ test_velocity(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                        "Linear velocity: 0, 0");
    elm_layout_text_set(test_data->layout, "angular_vel", "Angular velocity: 0");
 
+   elm_object_signal_emit(test_data->layout, "borders,show", "ephysics_test");
    elm_object_signal_emit(test_data->layout, "arrows,show", "ephysics_test");
    elm_object_signal_emit(test_data->layout, "velocity,show", "ephysics_test");
 

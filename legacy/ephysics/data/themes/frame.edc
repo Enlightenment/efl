@@ -1,15 +1,27 @@
-   images {
-      image: "arrows.png" COMP;
-      image: "background.jpg" COMP;
-   }
-
    group {
       name: "frame";
+
+      images {
+         image: "arrows.png" COMP;
+         image: "background.jpg" COMP;
+      }
 
       parts {
 
          part {
             name: "bg";
+            type: RECT;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               min: 512 384;
+               max: 512 384;
+               color: 153 134 117 255;
+            }
+         }
+
+         part {
+            name: "borders";
             type: IMAGE;
             mouse_events: 0;
             description {
@@ -17,6 +29,12 @@
                min: 512 384;
                max: 512 384;
                image.normal: "background.jpg";
+               visible: 0;
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
             }
          }
 
@@ -164,6 +182,14 @@
             action: STATE_SET "visible" 0.0;
             target: "arrows";
             target: "arrows_msg";
+          }
+
+          program {
+            name: "borders,show";
+            source: "ephysics_test";
+            signal: "borders,show";
+            action: STATE_SET "visible" 0.0;
+            target: "borders";
           }
 
           program {

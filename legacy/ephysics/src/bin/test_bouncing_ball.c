@@ -84,6 +84,7 @@ test_bouncing_ball(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 
    elm_layout_signal_callback_add(test_data->layout, "restart", "test-theme",
                                   _restart, test_data);
+   elm_object_signal_emit(test_data->layout, "borders,show", "ephysics_test");
    elm_object_signal_emit(test_data->layout, "arrows,show", "ephysics_test");
 
    world = ephysics_world_new();

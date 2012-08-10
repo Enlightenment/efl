@@ -102,9 +102,10 @@ test_collision_speed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
    test_win_add((Test_Data *) speed_data, "Collision with High Speed",
                 EINA_FALSE);
+   elm_object_signal_emit(speed_data->base.layout, "borders,show",
+                          "ephysics_test");
    evas_object_smart_callback_add(speed_data->base.win,
                                   "delete,request", _win_del, speed_data);
-
    elm_layout_signal_callback_add(speed_data->base.layout, "restart",
                                   "test-theme", _restart, speed_data);
 

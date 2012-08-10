@@ -59,6 +59,7 @@ test_falling_letters(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
 
    test_data = test_data_new();
    test_win_add(test_data, "Falling Letters", EINA_TRUE);
+   elm_object_signal_emit(test_data->layout, "borders,show", "ephysics_test");
    elm_layout_signal_callback_add(test_data->layout, "restart", "test-theme",
                                   _restart, test_data);
 
