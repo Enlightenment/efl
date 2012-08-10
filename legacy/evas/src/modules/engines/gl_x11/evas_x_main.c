@@ -4,6 +4,7 @@ static Evas_GL_X11_Window *_evas_gl_x11_window = NULL;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 static EGLContext context = EGL_NO_CONTEXT;
+static EGLContext rgba_context = EGL_NO_CONTEXT;
 #else
 // FIXME: this will only work for 1 display connection (glx land can have > 1)
 static GLXContext context = 0;
@@ -196,10 +197,20 @@ eng_window_new(Display *disp,
 	eng_window_free(gw);
         return NULL;
      }
-   if (context == EGL_NO_CONTEXT)
-     context = eglCreateContext(gw->egl_disp, gw->egl_config, NULL,
-                                context_attrs);
-   gw->egl_context[0] = context;
+   if (gw->alpha)
+     {
+        if (rgba_context == EGL_NO_CONTEXT)
+          rgba_context = eglCreateContext(gw->egl_disp, gw->egl_config, NULL,
+                                          context_attrs);
+        gw->egl_context[0] = rgba_context;
+     }
+   else
+     {
+        if (context == EGL_NO_CONTEXT)
+          context = eglCreateContext(gw->egl_disp, gw->egl_config, NULL,
+                                     context_attrs);
+        gw->egl_context[0] = context;
+     }
    if (gw->egl_context[0] == EGL_NO_CONTEXT)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
@@ -552,8 +563,10 @@ eng_window_free(Evas_GL_X11_Window *gw)
    if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
+        if (rgba_context) eglDestroyContext(gw->egl_disp, rgba_context);
         eglTerminate(gw->egl_disp);
         context = EGL_NO_CONTEXT;
+        rgba_context = EGL_NO_CONTEXT;
      }
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #else
