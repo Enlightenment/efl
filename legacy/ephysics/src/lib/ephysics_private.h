@@ -62,16 +62,17 @@ struct _EPhysics_Body {
      void *data;
      Eina_Inlist *callbacks;
      double mass;
-     Eina_Bool active:1;
      Eina_List *collision_groups;
+     Eina_Bool active:1;
+     Eina_Bool deleted:1;
 };
 
 extern int _ephysics_log_dom;
 
 int ephysics_world_init(void);
 int ephysics_world_shutdown(void);
-Eina_Bool ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body, btRigidBody *rigid_body);
-void ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body, btRigidBody *rigid_body);
+Eina_Bool ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body);
+Eina_Bool ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body);
 void ephysics_world_constraint_add(EPhysics_World *world, btTypedConstraint *bt_constraint);
 void ephysics_world_constraint_del(EPhysics_World *world, btTypedConstraint *bt_constraint);
 void ephysics_body_world_boundaries_resize(EPhysics_World *world);

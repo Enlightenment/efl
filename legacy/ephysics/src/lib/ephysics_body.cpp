@@ -289,9 +289,8 @@ _ephysics_body_outside_render_area_check(EPhysics_Body *body)
        ((ephysics_world_bodies_outside_right_autodel_get(body->world)) &&
         (bx > wx + ww)))
      {
-        ephysics_world_body_del(body->world, body, body->rigid_body);
-        ephysics_orphan_body_del(body);
-        DBG("Body %p deleted. Out of render area", body);
+        DBG("Body %p out of render area", body);
+        ephysics_body_del(body);
      }
 }
 
@@ -415,7 +414,7 @@ ephysics_body_circle_add(EPhysics_World *world)
         return NULL;
      }
 
-   if (!ephysics_world_body_add(body->world, body, body->rigid_body))
+   if (!ephysics_world_body_add(body->world, body))
      {
         ERR("Couldn't add body to world's bodies list");
         _ephysics_body_del(body);
@@ -447,7 +446,7 @@ ephysics_body_box_add(EPhysics_World *world)
         return NULL;
      }
 
-   if (!ephysics_world_body_add(body->world, body, body->rigid_body))
+   if (!ephysics_world_body_add(body->world, body))
      {
         ERR("Couldn't add body to world's bodies list");
         _ephysics_body_del(body);
@@ -557,6 +556,7 @@ ephysics_orphan_body_del(EPhysics_Body *body)
      }
 
    _ephysics_body_del(body);
+   INF("Body %p deleted.", body);
 }
 
 EAPI void
@@ -568,10 +568,9 @@ ephysics_body_del(EPhysics_Body *body)
         return;
      }
 
-   ephysics_world_body_del(body->world, body, body->rigid_body);
-   ephysics_orphan_body_del(body);
-
-   INF("Body %p deleted.", body);
+   if (body->deleted) return;
+   body->deleted = EINA_TRUE;
+   ephysics_world_body_del(body->world, body);
 }
 
 EAPI void

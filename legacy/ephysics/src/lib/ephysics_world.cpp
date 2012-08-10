@@ -32,7 +32,9 @@ struct _EPhysics_World {
      Evas_Coord x, y, w, h;
      Eina_Inlist *callbacks;
      Eina_Inlist *bodies;
+     Eina_List *to_delete;
      int max_sub_steps;
+     int walking;
      double last_update;
      double rate;
      double fixed_time_step;
@@ -56,7 +58,8 @@ static int _worlds_walking = 0;
 
 struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
 {
-   virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0,btBroadphaseProxy* proxy1) const
+   virtual bool needBroadphaseCollision(btBroadphaseProxy* proxy0,
+                                        btBroadphaseProxy* proxy1) const
    {
       btCollisionObject *coll0 = (btCollisionObject *)proxy0->m_clientObject;
       btCollisionObject *coll1 = (btCollisionObject *)proxy1->m_clientObject;
@@ -168,7 +171,7 @@ _simulate_worlds(void *data)
    Eina_Inlist *lworlds = (Eina_Inlist *) data;
    EPhysics_World *world;
    double time_now;
-   void *wrld;
+   void *wrld, *bd;
 
    ephysics_init();
    _worlds_walking++;
@@ -179,6 +182,8 @@ _simulate_worlds(void *data)
         if (!world->running)
           continue;
 
+        world->walking++;
+
         time_now = ecore_time_get();
         delta = time_now - world->last_update;
         world->last_update = time_now;
@@ -186,6 +191,13 @@ _simulate_worlds(void *data)
         gDeactivationTime = world->max_sleeping_time;
         world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
                                               world->fixed_time_step);
+        world->walking--;
+
+        if (!world->walking)
+          {
+             EINA_LIST_FREE(world->to_delete, bd)
+                ephysics_world_body_del(world, (EPhysics_Body*)bd);
+          }
      }
    _worlds_walking--;
 
@@ -238,7 +250,7 @@ _ephysics_world_boundary_del_cb(void *data, EPhysics_Body *body, void *event_inf
 }
 
 Eina_Bool
-ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body, btRigidBody *rigid_body)
+ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body)
 {
    world->bodies = eina_inlist_append(world->bodies,
                                       EINA_INLIST_GET(body));
@@ -247,16 +259,27 @@ ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body, btRigidBody 
         ERR("Couldn't add body to bodies list.");
         return EINA_FALSE;
      }
-   world->dynamics_world->addRigidBody(rigid_body);
+
+   world->dynamics_world->addRigidBody(ephysics_body_rigid_body_get(body));
+
    return EINA_TRUE;
 }
 
-void
-ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body, btRigidBody *rigid_body)
+Eina_Bool
+ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
 {
-   world->dynamics_world->removeRigidBody(rigid_body);
+   if (world->walking)
+     {
+        world->to_delete = eina_list_append(world->to_delete, body);
+        return EINA_FALSE;
+     }
+
+   world->dynamics_world->removeRigidBody(ephysics_body_rigid_body_get(body));
    world->bodies = eina_inlist_remove(world->bodies,
                                       EINA_INLIST_GET(body));
+   ephysics_orphan_body_del(body);
+
+   return EINA_TRUE;
 }
 
 void
