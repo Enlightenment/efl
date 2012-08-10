@@ -36,20 +36,23 @@ struct _EPhysics_World {
      double last_update;
      double rate;
      double fixed_time_step;
+     double max_sleeping_time;
      Eina_Bool running:1;
      Eina_Bool active:1;
+     Eina_Bool deleted:1;
      Eina_Bool outside_autodel:1;
      Eina_Bool outside_top:1;
      Eina_Bool outside_bottom:1;
      Eina_Bool outside_left:1;
      Eina_Bool outside_right:1;
-     double max_sleeping_time;
 };
 
 static int _ephysics_world_init_count = 0;
 static int _worlds_running = 0;
 static Eina_Inlist *_worlds = NULL;
+static Eina_List *_worlds_to_delete = NULL;
 static Ecore_Animator *_anim_simulate = NULL;
+static int _worlds_walking = 0;
 
 struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
 {
@@ -124,13 +127,51 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
         cb->func(cb->data, world, NULL);
 }
 
+static void
+_ephysics_world_free(EPhysics_World *world)
+{
+   EPhysics_World_Callback *cb;
+   EPhysics_Body *body;
+
+   _worlds = eina_inlist_remove(_worlds, EINA_INLIST_GET(world));
+
+   while (world->callbacks)
+     {
+        cb = EINA_INLIST_CONTAINER_GET(world->callbacks,
+                                       EPhysics_World_Callback);
+        world->callbacks = eina_inlist_remove(world->callbacks,
+                                              world->callbacks);
+        free(cb);
+     }
+
+   while (world->bodies)
+     {
+        body = EINA_INLIST_CONTAINER_GET(world->bodies, EPhysics_Body);
+        world->bodies = eina_inlist_remove(world->bodies, world->bodies);
+        ephysics_orphan_body_del(body);
+     }
+
+   ephysics_camera_del(world->camera);
+   delete world->dynamics_world;
+   delete world->solver;
+   delete world->dispatcher;
+   delete world->collision;
+   delete world->broadphase;
+
+   free(world);
+   INF("World %p deleted.", world);
+}
+
 static Eina_Bool
 _simulate_worlds(void *data)
 {
    Eina_Inlist *lworlds = (Eina_Inlist *) data;
    EPhysics_World *world;
    double time_now;
+   void *wrld;
 
+   ephysics_init();
+   _worlds_walking++;
    EINA_INLIST_FOREACH(lworlds, world)
      {
         double time_now, delta;
@@ -146,6 +187,18 @@ _simulate_worlds(void *data)
         world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
                                               world->fixed_time_step);
      }
+   _worlds_walking--;
+
+   if (_worlds_walking > 0)
+     {
+        ephysics_shutdown();
+        return EINA_TRUE;
+     }
+
+   EINA_LIST_FREE(_worlds_to_delete, wrld)
+      _ephysics_world_free((EPhysics_World *)wrld);
+
+   ephysics_shutdown();
 
    return EINA_TRUE;
 }
@@ -247,7 +300,6 @@ ephysics_world_shutdown(void)
      {
         EPhysics_World *world = EINA_INLIST_CONTAINER_GET(
            _worlds, EPhysics_World);
-        _worlds = eina_inlist_remove(_worlds, _worlds);
         ephysics_world_del(world);
      }
 
@@ -422,7 +474,6 @@ EAPI void
 ephysics_world_del(EPhysics_World *world)
 {
    EPhysics_World_Callback *cb;
-   EPhysics_Body *body;
 
    if (!world)
      {
@@ -430,6 +481,9 @@ ephysics_world_del(EPhysics_World *world)
         return;
      }
 
+   if (world->deleted) return;
+
+   world->deleted = EINA_TRUE;
    EINA_INLIST_FOREACH(world->callbacks, cb)
      {
         if (cb->type == EPHYSICS_CALLBACK_WORLD_DEL)
@@ -437,33 +491,15 @@ ephysics_world_del(EPhysics_World *world)
      }
 
    ephysics_world_running_set(world, EINA_FALSE);
-   _worlds = eina_inlist_remove(_worlds, EINA_INLIST_GET(world));
 
-   while (world->callbacks)
+   if (_worlds_walking > 0)
      {
-        cb = EINA_INLIST_CONTAINER_GET(world->callbacks,
-                                       EPhysics_World_Callback);
-        world->callbacks = eina_inlist_remove(world->callbacks,
-                                              world->callbacks);
-        free(cb);
+        _worlds_to_delete = eina_list_append(_worlds_to_delete, world);
+        INF("World %p marked to delete.", world);
+        return;
      }
 
-   while (world->bodies)
-     {
-        body = EINA_INLIST_CONTAINER_GET(world->bodies, EPhysics_Body);
-        world->bodies = eina_inlist_remove(world->bodies, world->bodies);
-        ephysics_orphan_body_del(body);
-     }
-
-   ephysics_camera_del(world->camera);
-   delete world->dynamics_world;
-   delete world->solver;
-   delete world->dispatcher;
-   delete world->collision;
-   delete world->broadphase;
-
-   free(world);
-   INF("World %p deleted.", world);
+   _ephysics_world_free(world);
 }
 
 EAPI void
