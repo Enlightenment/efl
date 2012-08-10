@@ -155,11 +155,15 @@ _ephysics_world_free(EPhysics_World *world)
      }
 
    ephysics_camera_del(world->camera);
+   /* FIXME uncomment lines above when dynamicsworld destructor is fixed
+      on bullet. Right now looks like it will try to acess invalid memory.*/
+   /*
    delete world->dynamics_world;
    delete world->solver;
+   delete world->broadphase;
    delete world->dispatcher;
    delete world->collision;
-   delete world->broadphase;
+   */
 
    free(world);
    INF("World %p deleted.", world);
