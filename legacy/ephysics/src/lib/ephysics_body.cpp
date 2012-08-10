@@ -26,7 +26,6 @@ struct _EPhysics_Body_Collision {
      Evas_Coord y;
 };
 
-
 static void
 _ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Body_Callback *cb)
 {
@@ -168,39 +167,51 @@ ephysics_body_collision_group_list_get(const EPhysics_Body *body)
 }
 
 static EPhysics_Body *
-_ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape)
+_ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape, const char *type)
 {
+   btRigidBody::btRigidBodyConstructionInfo *rigid_body_ci;
+   btDefaultMotionState *motion_state;
+   btRigidBody *rigid_body;
    EPhysics_Body *body;
    btScalar mass = 1;
+   btVector3 inertia;
+
+   if (!collision_shape)
+     {
+        ERR("Couldn't create a %s shape.", type);
+        return NULL;
+     }
 
    body = (EPhysics_Body *) calloc(1, sizeof(EPhysics_Body));
    if (!body)
      {
         ERR("Couldn't create a new body instance.");
-        return NULL;
+        goto err_body;
      }
 
-   btDefaultMotionState *motion_state =
-      new btDefaultMotionState();
+   motion_state = new btDefaultMotionState();
    if (!motion_state)
      {
         ERR("Couldn't create a motion state.");
-        free(body);
-        return NULL;
+        goto err_motion_state;
      }
 
-   btVector3 inertia(0, 0, 0);
+   inertia = btVector3(0, 0, 0);
    collision_shape->calculateLocalInertia(mass, inertia);
 
-   btRigidBody::btRigidBodyConstructionInfo rigid_body_ci(
+   rigid_body_ci = new btRigidBody::btRigidBodyConstructionInfo(
       mass, motion_state, collision_shape, inertia);
-   btRigidBody *rigid_body = new btRigidBody(rigid_body_ci);
+   if (!rigid_body_ci)
+     {
+        ERR("Couldn't create a rigid body construction info.");
+        goto err_rigid_body_ci;
+     }
+
+   rigid_body = new btRigidBody(*rigid_body_ci);
    if (!rigid_body)
      {
         ERR("Couldn't create a rigid body.");
-        delete motion_state;
-        free(body);
-        return NULL;
+        goto err_rigid_body;
      }
 
    body->collision_groups = NULL;
@@ -212,7 +223,28 @@ _ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape)
    body->rigid_body->setLinearFactor(btVector3(1, 1, 0));
    body->rigid_body->setAngularFactor(btVector3(0, 0, 1));
 
+   if (!ephysics_world_body_add(body->world, body))
+     {
+        ERR("Couldn't add body to world's bodies list");
+        goto err_world_add;
+     }
+
+   delete rigid_body_ci;
+
+   INF("Body %p of type %s added.", body, type);
    return body;
+
+err_world_add:
+   delete rigid_body;
+err_rigid_body:
+   delete rigid_body_ci;
+err_rigid_body_ci:
+   delete motion_state;
+err_motion_state:
+   free(body);
+err_body:
+   delete collision_shape;
+   return NULL;
 }
 
 static void
@@ -430,65 +462,33 @@ ephysics_body_rigid_body_get(const EPhysics_Body *body)
 EAPI EPhysics_Body *
 ephysics_body_circle_add(EPhysics_World *world)
 {
-   EPhysics_Body *body;
+   btCollisionShape *collision_shape;
 
-   btCollisionShape *collision_shape = new btCylinderShapeZ(
-      btVector3(0.5, 0.5, 0.5));
-   if (!collision_shape)
+   if (!world)
      {
-        ERR("Couldn't create a cylinder shape on z.");
+        ERR("Can't add circle, world is null.");
         return NULL;
      }
 
-   body = _ephysics_body_add(world, collision_shape);
-   if (!body)
-     {
-        ERR("Couldn't create a circle body.");
-        delete collision_shape;
-        return NULL;
-     }
+   collision_shape = new btCylinderShapeZ(btVector3(0.5, 0.5, 0.5));
 
-   if (!ephysics_world_body_add(body->world, body))
-     {
-        ERR("Couldn't add body to world's bodies list");
-        _ephysics_body_del(body);
-        return NULL;
-     }
-
-   INF("Circle body added: %p.", body);
-   return body;
+   return _ephysics_body_add(world, collision_shape, "circle");
 }
 
 EAPI EPhysics_Body *
 ephysics_body_box_add(EPhysics_World *world)
 {
-   EPhysics_Body *body;
+   btCollisionShape *collision_shape;
 
-   btCollisionShape *collision_shape = new btBoxShape(
-      btVector3(0.5, 0.5, 0.5));
-   if (!collision_shape)
+   if (!world)
      {
-        ERR("Couldn't create a 2d box shape.");
+        ERR("Can't add box, world is null.");
         return NULL;
      }
 
-   body = _ephysics_body_add(world, collision_shape);
-   if (!body)
-     {
-        ERR("Couldn't create a box body.");
-        delete collision_shape;
-        return NULL;
-     }
+   collision_shape = new btBoxShape(btVector3(0.5, 0.5, 0.5));
 
-   if (!ephysics_world_body_add(body->world, body))
-     {
-        ERR("Couldn't add body to world's bodies list");
-        _ephysics_body_del(body);
-        return NULL;
-     }
-
-   INF("Box body added: %p.", body);
-   return body;
+   return _ephysics_body_add(world, collision_shape, "box");
 }
 
 void
