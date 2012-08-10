@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 #define ETHUMB_VERSION_MAJOR 1
-#define ETHUMB_VERSION_MINOR 0
+#define ETHUMB_VERSION_MINOR 7
    
    typedef struct _Ethumb_Version
      {

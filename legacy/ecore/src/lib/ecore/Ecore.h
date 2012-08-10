@@ -401,7 +401,7 @@ EAPI void ecore_fork_reset(void);
  */
 
 #define ECORE_VERSION_MAJOR 1
-#define ECORE_VERSION_MINOR 6
+#define ECORE_VERSION_MINOR 7
 
 typedef struct _Ecore_Version
 {

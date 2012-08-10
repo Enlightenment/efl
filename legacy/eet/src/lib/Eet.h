@@ -5,7 +5,7 @@
 
    @mainpage Eet Library Documentation
 
-   @version 1.6.0
+   @version 1.7.0
    @date 2000-2012
 
    Please see the @ref authors page for contact details.
@@ -188,7 +188,7 @@ extern "C" {
  */
 
 #define EET_VERSION_MAJOR 1
-#define EET_VERSION_MINOR 6
+#define EET_VERSION_MINOR 7
 /**
  * @typedef Eet_Version
  *
