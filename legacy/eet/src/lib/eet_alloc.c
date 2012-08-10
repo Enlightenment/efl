@@ -64,7 +64,7 @@ eet_mempool_init(void)
         mempool_array[i]->mp = eina_mempool_add(choice, mempool_array[i]->name, NULL, mempool_array[i]->size, 16);
         if (!mempool_array[i]->mp)
           {
-             if (!strcmp(choice, "pass_through"))
+             if (!(!strcmp(choice, "pass_through")))
                {
                   ERR("Falling back to pass through ! Previously tried '%s' mempool.", choice);
                   choice = "pass_through";
