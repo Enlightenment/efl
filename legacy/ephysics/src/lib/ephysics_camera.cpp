@@ -24,24 +24,32 @@ static void
 _ephysics_camera_target_move_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
 {
    EPhysics_Camera *camera = (EPhysics_Camera *) data;
-   int x, y, w, h, ww, wh;
+   int x, y, w, h, ww, wh, new_x, new_y;
 
    ephysics_body_geometry_get(body, &x, &y, &w, &h);
    ephysics_world_render_geometry_get(camera->world, NULL, NULL, &ww, &wh);
 
    if (camera->track_horizontal)
      {
-        camera->x = x + w / 2 - ww / 2;
-        camera->moved = EINA_TRUE;
+        new_x = x + w / 2 - ww / 2;
+        if (camera->x != new_x)
+          {
+             camera->x = new_x;
+             camera->moved = EINA_TRUE;
+          }
      }
 
    if (camera->track_vertical)
      {
-        camera->y = y + h / 2 - wh / 2;
-        camera->moved = EINA_TRUE;
+        new_y =  y + h / 2 - wh / 2;
+        if (camera->y != new_y)
+          {
+             camera->y = new_y;
+             camera->moved = EINA_TRUE;
+          }
      }
 
-   DBG("Camera position set to (%i, %i).", camera->x, camera->y);
+   WRN("Camera position set to (%i, %i).", camera->x, camera->y);
 }
 
 static void
@@ -125,6 +133,7 @@ ephysics_camera_position_set(EPhysics_Camera *camera, Evas_Coord x, Evas_Coord y
 
    camera->x = x;
    camera->y = y;
+   camera->moved = EINA_TRUE;
 
    INF("Camera position set to (%i, %i).", x, y);
 }
@@ -184,7 +193,8 @@ ephysics_camera_body_track(EPhysics_Camera *camera, EPhysics_Body *body, Eina_Bo
    ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_DEL,
                                     _ephysics_camera_target_del_cb, camera);
 
-   INF("Camera is tracking body %p.", body);
+   INF("Camera is tracking body %p: hor = %i, ver = %i.", body,
+       camera->track_horizontal, camera->track_vertical);
 }
 
 EAPI void
