@@ -41,6 +41,7 @@ EXTRA_DIST = \
 	images/collisionL.png \
 	images/cube-blue.png \
 	images/cube-purple.png \
+	images/hexagonal.png \
 	images/list-item.png \
 	images/list-item-corner.png \
 	images/list-item-corner-pressed.png \
@@ -51,7 +52,8 @@ EXTRA_DIST = \
 	images/spinner_bt_left.png \
 	images/spinner_bt_left_pressed.png \
 	images/spinner_bt_right.png \
-	images/spinner_bt_right_pressed.png
+	images/spinner_bt_right_pressed.png \
+	images/star.png
 
 ephysics_test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

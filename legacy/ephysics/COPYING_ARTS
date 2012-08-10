@@ -10,14 +10,19 @@ Unported License:
     ball-green.png
     ball-red70.png
     ball-red.png
+    bg_floor.jpg
     bt_jump.png
     bt_jump_pressed.png
     bt_restart.png
     bt_restart_pressed.png
+    bt_shoot.png
+    bt_shoot_pressed.png
+    bt_stop.png
+    bt_stop_pressed.png
     collisionL.png
     cube-blue.png
     cube-purple.png
-    impact.png
+    hexagonal.png
     list-item-corner.png
     list-item-corner-pressed.png
     list-item.png
@@ -25,6 +30,12 @@ Unported License:
     list.png
     shadow-ball.png
     shadow-cube.png
+    spinner_base.png
+    spinner_bt_left.png
+    spinner_bt_left_pressed.png
+    spinner_bt_right.png
+    spinner_bt_right_pressed.png
+    star.png
 
 ===
 
