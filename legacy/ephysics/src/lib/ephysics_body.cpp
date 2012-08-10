@@ -17,6 +17,7 @@ struct _EPhysics_Body_Callback {
      void (*func) (void *data, EPhysics_Body *body, void *event_info);
      void *data;
      EPhysics_Callback_Body_Type type;
+     Eina_Bool deleted:1;
 };
 
 struct _EPhysics_Body_Collision {
@@ -24,6 +25,55 @@ struct _EPhysics_Body_Collision {
      Evas_Coord x;
      Evas_Coord y;
 };
+
+
+static void
+_ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Body_Callback *cb)
+{
+   if (cb->deleted) return;
+
+   cb->deleted = EINA_TRUE;
+
+   if (body->walking)
+     {
+        body->to_delete = eina_list_append(body->to_delete, cb);
+        return;
+     }
+
+   body->callbacks = eina_inlist_remove(body->callbacks, EINA_INLIST_GET(cb));
+   free(cb);
+}
+
+static Eina_Bool
+_ephysics_body_event_callback_call(EPhysics_Body *body, EPhysics_Callback_Body_Type type, void *event_info)
+{
+   Eina_Bool called = EINA_FALSE;
+   EPhysics_Body_Callback *cb;
+   void *clb;
+
+   body->walking++;
+   EINA_INLIST_FOREACH(body->callbacks, cb)
+     {
+        if ((cb->type == type) && (!cb->deleted))
+          {
+             cb->func(cb->data, body, event_info);
+             called = EINA_TRUE;
+          }
+     }
+   body->walking--;
+
+   if (body->walking > 0) return called;
+
+   EINA_LIST_FREE(body->to_delete, clb)
+     {
+        cb = (EPhysics_Body_Callback *) clb;
+        body->callbacks = eina_inlist_remove(body->callbacks,
+                                             EINA_INLIST_GET(cb));
+        free(cb);
+     }
+
+   return called;
+}
 
 void
 ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active)
@@ -34,9 +84,8 @@ ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active)
    body->active = !!active;
    if (active) return;
 
-   EINA_INLIST_FOREACH(body->callbacks, cb)
-      if (cb->type == EPHYSICS_CALLBACK_BODY_STOPPED)
-        cb->func(cb->data, body, (void *) body->evas_obj);
+   _ephysics_body_event_callback_call(body, EPHYSICS_CALLBACK_BODY_STOPPED,
+                                      (void *) body->evas_obj);
 };
 
 Eina_Bool
@@ -298,38 +347,18 @@ void
 ephysics_body_evas_object_update_select(EPhysics_Body *body)
 {
    Eina_Bool callback_called = EINA_FALSE;
-   EPhysics_Body_Callback *cb;
 
    if (!body)
      return;
 
-   EINA_INLIST_FOREACH(body->callbacks, cb)
-     {
-        if (cb->type == EPHYSICS_CALLBACK_BODY_UPDATE) {
-             cb->func(cb->data, body, (void *) body->evas_obj);
-             callback_called = EINA_TRUE;
-        }
-     }
+   callback_called = _ephysics_body_event_callback_call(
+      body, EPHYSICS_CALLBACK_BODY_UPDATE, (void *) body->evas_obj);
 
    if (!callback_called)
      _ephysics_body_evas_object_default_update(body);
 
    if (ephysics_world_bodies_outside_autodel_get(body->world))
      _ephysics_body_outside_render_area_check(body);
-}
-
-static void
-_ephysics_body_collision_set(EPhysics_Body_Collision *collision, EPhysics_Body *contact_body, btVector3 position)
-{
-   double rate;
-   int wy, wh;
-   EPhysics_World *world = contact_body->world;
-
-   ephysics_world_render_geometry_get(world, NULL, &wy, NULL, &wh);
-   rate = ephysics_world_rate_get(world);
-   collision->contact_body = contact_body;
-   collision->x = position.getX() * rate;
-   collision->y = wh + wy - (position.getY() * rate);
 }
 
 EAPI void
@@ -360,31 +389,36 @@ ephysics_body_collision_contact_body_get(const EPhysics_Body_Collision *collisio
 void
 ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body, btVector3 position)
 {
+   EPhysics_Body_Collision *collision;
    EPhysics_Body_Callback *cb;
+   EPhysics_World *world;;
+   double rate;
+   int wy, wh;
 
    if ((!body) || (!contact_body))
      return;
 
-   EINA_INLIST_FOREACH(body->callbacks, cb)
+   collision = (EPhysics_Body_Collision *)malloc(
+      sizeof(EPhysics_Body_Collision));
+
+   if (!collision)
      {
-        if (cb->type == EPHYSICS_CALLBACK_BODY_COLLISION)
-          {
-             EPhysics_Body_Collision *collision;
-
-             collision = (EPhysics_Body_Collision *)malloc(
-                sizeof(EPhysics_Body_Collision));
-
-             if (!collision)
-               {
-                  ERR("Can't allocate collision data structure.");
-                  continue;
-               }
-
-             _ephysics_body_collision_set(collision, contact_body, position);
-             cb->func(cb->data, body, collision);
-             free(collision);
-          }
+        ERR("Can't allocate collision data structure.");
+        return;
      }
+
+   world = contact_body->world;
+   ephysics_world_render_geometry_get(world, NULL, &wy, NULL, &wh);
+   rate = ephysics_world_rate_get(world);
+
+   collision->contact_body = contact_body;
+   collision->x = position.getX() * rate;
+   collision->y = wh + wy - (position.getY() * rate);
+
+   _ephysics_body_event_callback_call(body, EPHYSICS_CALLBACK_BODY_COLLISION,
+                                      (void *) collision);
+
+   free(collision);
 }
 
 btRigidBody *
@@ -549,12 +583,7 @@ ephysics_orphan_body_del(EPhysics_Body *body)
 {
    EPhysics_Body_Callback *cb;
 
-   EINA_INLIST_FOREACH(body->callbacks, cb)
-     {
-        if (cb->type == EPHYSICS_CALLBACK_BODY_DEL)
-          cb->func(cb->data, body, NULL);
-     }
-
+   _ephysics_body_event_callback_call(body, EPHYSICS_CALLBACK_BODY_DEL, NULL);
    _ephysics_body_del(body);
    INF("Body %p deleted.", body);
 }
@@ -900,7 +929,7 @@ EAPI void *
 ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func)
 {
    EPhysics_Body_Callback *cb;
-   void *cb_data;
+   void *cb_data = NULL;
 
    if (!body)
      {
@@ -910,23 +939,23 @@ ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Callback_Body_Typ
 
    EINA_INLIST_FOREACH(body->callbacks, cb)
      {
-        if ((cb->type == type) && (cb->func == func)) {
-             cb_data = cb->data;
-             body->callbacks = eina_inlist_remove(body->callbacks,
-                                                  EINA_INLIST_GET(cb));
-             free(cb);
-             return cb_data;
-        }
+        if ((cb->type != type) || (cb->func != func))
+          continue;
+
+        cb_data = cb->data;
+        _ephysics_body_event_callback_del(body, cb);
+        break;
+
      }
 
-   return NULL;
+   return cb_data;
 }
 
 EAPI void *
 ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Body_Type type, EPhysics_Body_Event_Cb func, void *data)
 {
    EPhysics_Body_Callback *cb;
-   void *cb_data;
+   void *cb_data = NULL;
 
    if (!body)
      {
@@ -936,16 +965,15 @@ ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Bod
 
    EINA_INLIST_FOREACH(body->callbacks, cb)
      {
-        if ((cb->type == type) && (cb->func == func) && (cb->data == data)) {
-             cb_data = cb->data;
-             body->callbacks = eina_inlist_remove(body->callbacks,
-                                                  EINA_INLIST_GET(cb));
-             free(cb);
-             return cb_data;
-        }
+        if ((cb->type != type) || (cb->func != func) || (cb->data != data))
+          continue;
+
+        cb_data = cb->data;
+        _ephysics_body_event_callback_del(body, cb);
+        break;
      }
 
-   return NULL;
+   return cb_data;
 }
 
 EAPI void

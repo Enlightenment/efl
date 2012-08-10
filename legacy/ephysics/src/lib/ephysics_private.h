@@ -59,10 +59,12 @@ struct _EPhysics_Body {
      btRigidBody *rigid_body;
      Evas_Object *evas_obj;
      EPhysics_World *world;
+     int walking;
      void *data;
      Eina_Inlist *callbacks;
-     double mass;
      Eina_List *collision_groups;
+     Eina_List *to_delete;
+     double mass;
      Eina_Bool active:1;
      Eina_Bool deleted:1;
 };
