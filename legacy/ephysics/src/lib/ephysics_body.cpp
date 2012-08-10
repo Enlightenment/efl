@@ -19,18 +19,6 @@ struct _EPhysics_Body_Callback {
      EPhysics_Callback_Body_Type type;
 };
 
-struct _EPhysics_Body {
-     btCollisionShape *collision_shape;
-     btRigidBody *rigid_body;
-     Evas_Object *evas_obj;
-     EPhysics_World *world;
-     void *data;
-     Eina_Inlist *callbacks;
-     double mass;
-     Eina_Bool active:1;
-     Eina_List *collision_groups;
-};
-
 struct _EPhysics_Body_Collision {
      EPhysics_Body *contact_body;
      Evas_Coord x;

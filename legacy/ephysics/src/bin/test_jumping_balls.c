@@ -14,7 +14,7 @@ struct _Ball_Props {
 static void
 _jump(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   const Eina_List *l, *bodies;
+   Eina_List *l, *bodies;
    EPhysics_Body *body;
    Test_Data *test_data = data;
    EPhysics_World *world = test_data->world;
@@ -24,6 +24,7 @@ _jump(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    bodies = ephysics_world_bodies_get(world);
    EINA_LIST_FOREACH(bodies, l, body)
       ephysics_body_central_impulse_apply(body, 0, 10);
+   eina_list_free(bodies);
 }
 
 static void

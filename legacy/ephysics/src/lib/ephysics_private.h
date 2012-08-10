@@ -53,12 +53,25 @@ typedef enum _EPhysics_World_Boundary
    EPHYSICS_WORLD_BOUNDARY_LAST
 } EPhysics_World_Boundary;
 
+struct _EPhysics_Body {
+     EINA_INLIST;
+     btCollisionShape *collision_shape;
+     btRigidBody *rigid_body;
+     Evas_Object *evas_obj;
+     EPhysics_World *world;
+     void *data;
+     Eina_Inlist *callbacks;
+     double mass;
+     Eina_Bool active:1;
+     Eina_List *collision_groups;
+};
+
 extern int _ephysics_log_dom;
 
 int ephysics_world_init(void);
 int ephysics_world_shutdown(void);
-Eina_Bool ephysics_world_body_add(EPhysics_World *world, const EPhysics_Body *body, btRigidBody *rigid_body);
-void ephysics_world_body_del(EPhysics_World *world, const EPhysics_Body *body, btRigidBody *rigid_body);
+Eina_Bool ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body, btRigidBody *rigid_body);
+void ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body, btRigidBody *rigid_body);
 void ephysics_world_constraint_add(EPhysics_World *world, btTypedConstraint *bt_constraint);
 void ephysics_world_constraint_del(EPhysics_World *world, btTypedConstraint *bt_constraint);
 void ephysics_body_world_boundaries_resize(EPhysics_World *world);

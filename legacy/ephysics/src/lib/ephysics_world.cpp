@@ -31,7 +31,7 @@ struct _EPhysics_World {
      EPhysics_Camera *camera;
      Evas_Coord x, y, w, h;
      Eina_Inlist *callbacks;
-     Eina_List *bodies;
+     Eina_Inlist *bodies;
      int max_sub_steps;
      double last_update;
      double rate;
@@ -185,9 +185,10 @@ _ephysics_world_boundary_del_cb(void *data, EPhysics_Body *body, void *event_inf
 }
 
 Eina_Bool
-ephysics_world_body_add(EPhysics_World *world, const EPhysics_Body *body, btRigidBody *rigid_body)
+ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body, btRigidBody *rigid_body)
 {
-   world->bodies = eina_list_append(world->bodies, body);
+   world->bodies = eina_inlist_append(world->bodies,
+                                      EINA_INLIST_GET(body));
    if (eina_error_get())
      {
         ERR("Couldn't add body to bodies list.");
@@ -198,10 +199,11 @@ ephysics_world_body_add(EPhysics_World *world, const EPhysics_Body *body, btRigi
 }
 
 void
-ephysics_world_body_del(EPhysics_World *world, const EPhysics_Body *body, btRigidBody *rigid_body)
+ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body, btRigidBody *rigid_body)
 {
    world->dynamics_world->removeRigidBody(rigid_body);
-   world->bodies = eina_list_remove(world->bodies, body);
+   world->bodies = eina_inlist_remove(world->bodies,
+                                      EINA_INLIST_GET(body));
 }
 
 void
@@ -420,7 +422,7 @@ EAPI void
 ephysics_world_del(EPhysics_World *world)
 {
    EPhysics_World_Callback *cb;
-   void *data;
+   EPhysics_Body *body;
 
    if (!world)
      {
@@ -446,8 +448,12 @@ ephysics_world_del(EPhysics_World *world)
         free(cb);
      }
 
-   EINA_LIST_FREE(world->bodies, data)
-      ephysics_orphan_body_del((EPhysics_Body *) data);
+   while (world->bodies)
+     {
+        body = EINA_INLIST_CONTAINER_GET(world->bodies, EPhysics_Body);
+        world->bodies = eina_inlist_remove(world->bodies, world->bodies);
+        ephysics_orphan_body_del(body);
+     }
 
    ephysics_camera_del(world->camera);
    delete world->dynamics_world;
@@ -753,16 +759,22 @@ ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysics_Callback_
    return NULL;
 }
 
-EAPI const Eina_List *
+EAPI Eina_List *
 ephysics_world_bodies_get(const EPhysics_World *world)
 {
+   Eina_List *list = NULL;
+   EPhysics_Body *body;
+
    if (!world)
      {
         ERR("Couldn't get the bodies list, no world provided.");
         return NULL;
      }
 
-   return world->bodies;
+   EINA_INLIST_FOREACH(world->bodies, body)
+      list = eina_list_append(list, body);
+
+   return list;
 }
 
 EAPI void

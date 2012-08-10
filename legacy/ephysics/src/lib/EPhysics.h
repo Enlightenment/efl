@@ -684,13 +684,15 @@ EAPI double ephysics_world_rate_get(const EPhysics_World *world);
  * @param world The world object.
  * @return The list of bodies that belongs to this @p world.
  *
+ * @note The list should be freed after usage.
+ *
  * @see ephysics_body_circle_add().
  * @see ephysics_body_box_add().
  * @see ephysics_body_del().
  *
  * @ingroup EPhysics_World
  */
-EAPI const Eina_List *ephysics_world_bodies_get(const EPhysics_World *world);
+EAPI Eina_List *ephysics_world_bodies_get(const EPhysics_World *world);
 
 /**
  * @brief
