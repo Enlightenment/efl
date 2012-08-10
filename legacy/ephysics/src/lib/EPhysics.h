@@ -1336,6 +1336,28 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
 
 /**
  * @brief
+ * Create a new physics body using a custom shape.
+ *
+ * Its collision shape will be a convex shape that has all the points
+ * added to this @p shape. A shape can be created with
+ * @ref ephysics_shape_new().
+ *
+ * To change it's size @ref ephysics_body_geometry_set() should be used,
+ * so it can be deformed on x and y axises.
+ *
+ * @param world The world this body will belongs to.
+ * @param shape The custom shape to be used.
+ * @return a new body or @c NULL, on errors.
+ *
+ * @see ephysics_body_del().
+ * @see ephysics_body_evas_object_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape);
+
+/**
+ * @brief
  * Create a physic top boundary.
  *
  * A physic top boundary will limit the bodies area and placed on top edge of

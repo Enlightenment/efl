@@ -491,6 +491,47 @@ ephysics_body_box_add(EPhysics_World *world)
    return _ephysics_body_add(world, collision_shape, "box");
 }
 
+EAPI EPhysics_Body *
+ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
+{
+   btConvexHullShape* collision_shape;
+   const Eina_Inlist *points;
+   EPhysics_Point *point;
+   btVector3 point3d;
+
+   if (!world)
+     {
+        ERR("Can't add shape, world is null.");
+        return NULL;
+     }
+
+   if (!shape)
+     {
+        ERR("Can't add shape, shape is null.");
+        return NULL;
+     }
+
+   collision_shape = new btConvexHullShape();
+   if (!collision_shape)
+     {
+        ERR("Couldn't create a generic convex shape.");
+        return NULL;
+     }
+
+   points = ephysics_shape_points_get(shape);
+
+   EINA_INLIST_FOREACH(points, point)
+     {
+        point3d = btVector3(point->x, point->y, 0);
+        collision_shape->addPoint(point3d);
+        point3d = btVector3(point->x, point->y, 0.5);
+        collision_shape->addPoint(point3d);
+     }
+
+   return _ephysics_body_add(world, (btCollisionShape *)collision_shape,
+                             "generic");
+}
+
 void
 ephysics_body_world_boundaries_resize(EPhysics_World *world)
 {
