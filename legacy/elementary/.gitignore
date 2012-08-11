@@ -49,6 +49,7 @@ tags
 /config.rpath
 /config/default/base.cfg
 /config/illume/base.cfg
+/config/mobile/base.cfg
 /config/profile.cfg
 /config/standard/base.cfg
 /mkinstalldirs
