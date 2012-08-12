@@ -577,23 +577,31 @@ _elm_genlist_smart_sizing_eval(Evas_Object *obj)
 
    ELM_GENLIST_DATA_GET(obj, sd);
 
+   static int i = 0;
    /* parent class' early call */
    if (!sd->s_iface) return;
 
    if (sd->on_sub_del) return;;
 
-   evas_object_size_hint_min_get(obj, &minw, NULL);
+fprintf(stderr, "%s %d\t", __func__, i++);
+   evas_object_size_hint_min_get(obj, &minw, &minh);
    evas_object_size_hint_max_get(obj, &maxw, &maxh);
 
+fprintf(stderr, "minw %d minh %d maxw %d maxh %d\t", minw, minh, maxw, maxh);
+
    edje_object_size_min_calc(ELM_WIDGET_DATA(sd)->resize_obj, &vmw, &vmh);
+
+fprintf(stderr, "edje vmw %d vmh %d\t", vmw, vmh);
 
    if (sd->mode == ELM_LIST_COMPRESS)
      {
         Evas_Coord vw, vh;
 
         sd->s_iface->content_viewport_size_get(obj, &vw, &vh);
+fprintf(stderr, "viewport vw %d vh %d", vw, vh);
         if ((vw != 0) && (vw != sd->prev_viewport_w))
           {
+fprintf(stderr, "\n\t prev_viewport_w %d", sd->prev_viewport_w);
              Item_Block *itb;
 
              sd->prev_viewport_w = vw;
@@ -621,6 +629,7 @@ _elm_genlist_smart_sizing_eval(Evas_Object *obj)
 
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+fprintf(stderr, "\n\tminw %d minh %d", minw, minh);
 }
 
 static void
