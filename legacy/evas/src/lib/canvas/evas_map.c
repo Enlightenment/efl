@@ -48,14 +48,12 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
              if (obj->prev.map->count == obj->cur.map->count)
                {
                   const Evas_Map_Point *p2;
-
+                  
                   p = obj->cur.map->points;
                   p2 = obj->prev.map->points;
-
-                  ch = memcmp(p, p2,
-                              sizeof (Evas_Map_Point) * obj->prev.map->count);
-
-                  ch = !!ch;
+                  if (memcmp(p, p2, sizeof(Evas_Map_Point) * 
+                             obj->prev.map->count) != 0)
+                    ch = EINA_TRUE;
                   if (!ch)
                     {
                        if (obj->cache_map) evas_map_free(obj->cache_map); 
