@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore \
-@DIRECTFB_CFLAGS@ @EINA_CFLAGS@ @EFL_ECORE_BUILD@
+@DIRECTFB_CFLAGS@ @EINA_CFLAGS@
 
 lib_LTLIBRARIES = libecore_directfb.la
 includes_HEADERS = Ecore_DirectFB.h

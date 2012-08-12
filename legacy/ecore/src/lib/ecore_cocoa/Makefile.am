@@ -6,8 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_input \
 @EVAS_CFLAGS@ \
-@EINA_CFLAGS@ \
-@EFL_ECORE_BUILD@
+@EINA_CFLAGS@
 
 lib_LTLIBRARIES = libecore_cocoa.la
 includes_HEADERS = \

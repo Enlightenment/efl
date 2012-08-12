@@ -12,8 +12,7 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @TLS_CFLAGS@ \
 @CARES_CFLAGS@ \
-@WIN32_CPPFLAGS@ \
-@EFL_ECORE_BUILD@
+@WIN32_CPPFLAGS@
 
 lib_LTLIBRARIES = libecore_con.la
 includes_HEADERS = Ecore_Con.h
