@@ -4356,7 +4356,7 @@ EAPI Eina_Bool evas_object_freeze_events_get(const Evas_Object *obj) EINA_WARN_U
  * Maps can also be used to achieve the effect of 3-dimensionality. When doing
  * this, the @c z coordinate of each point counts, with higher values meaning
  * the point is further into the screen, and smaller values (negative, usually)
- * meaning the point is closwer towards the user.
+ * meaning the point is closer towards the user.
  *
  * Thinking in 3D also introduces the concept of back-face of an object. An
  * object is said to be facing the user when all its points are placed in a
@@ -5856,7 +5856,7 @@ EAPI Evas_Object *evas_object_name_child_find(const Evas_Object *obj, const char
  *
  * This function will traverse all the layers of the given canvas,
  * from top to bottom, querying for objects with areas covering the
- * given position. The user can remove from from the query
+ * given position. The user can remove from the query
  * objects which are hidden and/or which are set to pass events.
  *
  * @warning This function will @b skip objects parented by smart
@@ -5929,7 +5929,7 @@ EAPI Evas_Object *evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, 
  *
  * This function will traverse all the layers of the given canvas,
  * from top to bottom, querying for objects with areas covering the
- * given position. The user can remove from from the query
+ * given position. The user can remove from query
  * objects which are hidden and/or which are set to pass events.
  *
  * @warning This function will @b skip objects parented by smart
