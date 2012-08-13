@@ -218,6 +218,21 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
      };
 }
 
+static void
+_ecore_evas_fork_cb(void *data __UNUSED__)
+{
+   int fd;
+   
+   if (_ecore_evas_async_events_fd)
+     ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
+   fd = evas_async_events_fd_get();
+   if (fd >= 0)
+     _ecore_evas_async_events_fd = 
+     ecore_main_fd_handler_add(fd, ECORE_FD_READ,
+                               _ecore_evas_async_events_fd_handler, NULL,
+                               NULL, NULL);
+}
+
 EAPI int
 ecore_evas_init(void)
 {
@@ -240,12 +255,13 @@ ecore_evas_init(void)
         goto shutdown_ecore;
      }
 
+   ecore_fork_reset_callback_add(_ecore_evas_fork_cb, NULL);
    fd = evas_async_events_fd_get();
-   if (fd > 0)
-     _ecore_evas_async_events_fd = ecore_main_fd_handler_add(fd,
-                                                             ECORE_FD_READ,
-                                                             _ecore_evas_async_events_fd_handler, NULL,
-                                                             NULL, NULL);
+   if (fd >= 0)
+     _ecore_evas_async_events_fd = 
+     ecore_main_fd_handler_add(fd, ECORE_FD_READ,
+                               _ecore_evas_async_events_fd_handler, NULL,
+                               NULL, NULL);
 
    ecore_evas_idle_enterer =
      ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
@@ -308,6 +324,8 @@ ecore_evas_shutdown(void)
 
    if (_ecore_evas_async_events_fd)
      ecore_main_fd_handler_del(_ecore_evas_async_events_fd);
+   
+   ecore_fork_reset_callback_del(_ecore_evas_fork_cb, NULL);
 
    eina_log_domain_unregister(_ecore_evas_log_dom);
    _ecore_evas_log_dom = -1;

@@ -305,9 +305,60 @@ unlock:
      return _ecore_init_count;
 }
 
+struct _Ecore_Fork_Cb
+{
+   Ecore_Cb func;
+   void *data;
+   Eina_Bool delete_me : 1;
+};
+
+typedef struct _Ecore_Fork_Cb Ecore_Fork_Cb;
+
+static int fork_cbs_walking = 0;
+static Eina_List *fork_cbs = NULL;
+
+EAPI Eina_Bool
+ecore_fork_reset_callback_add(Ecore_Cb func, const void *data)
+{
+   Ecore_Fork_Cb *fcb;
+   
+   fcb = calloc(1, sizeof(Ecore_Fork_Cb));
+   if (!fcb) return EINA_FALSE;
+   fcb->func = func;
+   fcb->data = (void *)data;
+   fork_cbs = eina_list_append(fork_cbs, fcb);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+ecore_fork_reset_callback_del(Ecore_Cb func, const void *data)
+{
+   Eina_List *l;
+   Ecore_Fork_Cb *fcb;
+
+   EINA_LIST_FOREACH(fork_cbs, l, fcb)
+     {
+        if ((fcb->func == func) && (fcb->data == data))
+          {
+             if (!fork_cbs_walking)
+               {
+                  fork_cbs = eina_list_remove_list(fork_cbs, l);
+                  free(fcb);
+               }
+             else
+               fcb->delete_me = EINA_TRUE;
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
 EAPI void
 ecore_fork_reset(void)
 {
+   Eina_List *l, *ln;
+   Ecore_Fork_Cb *fcb;
+   
    eina_lock_take(&_thread_safety);
 
    ecore_pipe_del(_thread_call);
@@ -316,6 +367,24 @@ ecore_fork_reset(void)
    if (_thread_cb) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
 
    eina_lock_release(&_thread_safety);
+
+   // should this be done withing the eina lock stuff?
+   
+   fork_cbs_walking++;
+   EINA_LIST_FOREACH(fork_cbs, l, fcb)
+     {
+        fcb->func(fcb->data);
+     }
+   fork_cbs_walking--;
+   
+   EINA_LIST_FOREACH_SAFE(fork_cbs, l, ln, fcb)
+     {
+        if (fcb->delete_me)
+          {
+             fork_cbs = eina_list_remove_list(fork_cbs, l);
+             free(fcb);
+          }
+     }
 }
 
 /**

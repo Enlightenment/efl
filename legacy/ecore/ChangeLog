@@ -852,3 +852,9 @@
 
 	* Correctly shutdown Ecore_Thread.
 	* Add a way to reset Ecore_Thread internal pipe after a fork via ecore_fork_reset.
+
+2012-08-13  Carsten Haitzler (The Rasterman)
+
+        * Fix ecore fork reset function to allow for callbacks to be
+          attached so ecore-evas can reset evas async fd on fork.
+

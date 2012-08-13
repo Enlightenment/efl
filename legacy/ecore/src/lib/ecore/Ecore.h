@@ -381,25 +381,6 @@ extern "C" {
 EAPI int ecore_init(void);
 EAPI int ecore_shutdown(void);
 /**
- * Reset the ecore internal state after a fork
- * 
- * Ecore maintains internal data that can be affected by the fork() system call
- * which creates a duplicate of the current process. This also duplicates
- * file descriptors which is problematic in that these file descriptors still
- * point to their original sources. This function makes ecore reset internal
- * state (e.g. pipes used for signalling between threads) so they function
- * correctly afterwards.
- * 
- * It is highly suggested that you call this function after any fork()
- * system call inside the child process if you intend to use ecore features
- * after this point and not call any exec() family functions. Not doing so
- * will cause possible misbehaviour.
- * 
- * @since 1.7
- */
-EAPI void ecore_fork_reset(void);
-
-/**
  * @}
  */
 
@@ -471,6 +452,46 @@ typedef void (*Ecore_Cb)(void *data);
  * A callback which is used to return data to the main function
  */
 typedef void *(*Ecore_Data_Cb)(void *data);
+
+/**
+ * Add a function to be called by ecore_fork_reset()
+ * 
+ * This queues @p func to be called (and passed @p data as its argument) when
+ * ecore_fork_reset() is called. This allows other libraries and subsystems
+ * to also reset their internal state after a fork.
+ * 
+ * @since 1.7
+ */
+EAPI Eina_Bool ecore_fork_reset_callback_add(Ecore_Cb func, const void *data);
+
+/**
+ * This removes the callback specified
+ * 
+ * This deletes the callback added by ecore_fork_reset_callback_add() using
+ * the function and data pointer to specify which to remove.
+ * 
+ * @since 1.7
+ */
+EAPI Eina_Bool ecore_fork_reset_callback_del(Ecore_Cb func, const void *data);
+       
+/**
+ * Reset the ecore internal state after a fork
+ * 
+ * Ecore maintains internal data that can be affected by the fork() system call
+ * which creates a duplicate of the current process. This also duplicates
+ * file descriptors which is problematic in that these file descriptors still
+ * point to their original sources. This function makes ecore reset internal
+ * state (e.g. pipes used for signalling between threads) so they function
+ * correctly afterwards.
+ * 
+ * It is highly suggested that you call this function after any fork()
+ * system call inside the child process if you intend to use ecore features
+ * after this point and not call any exec() family functions. Not doing so
+ * will cause possible misbehaviour.
+ * 
+ * @since 1.7
+ */
+EAPI void ecore_fork_reset(void);
 
 /**
  * @brief Call callback asynchronously in the main loop.
