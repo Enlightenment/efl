@@ -264,7 +264,7 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
    switch (win->buffer_type)
      {
       case ECORE_WL_WINDOW_BUFFER_TYPE_EGL_WINDOW:
-        /* FIXME: weston has wl_egl_window_get_attached_size */
+        win->server_allocation = win->allocation;
         break;
       case ECORE_WL_WINDOW_BUFFER_TYPE_EGL_IMAGE:
       case ECORE_WL_WINDOW_BUFFER_TYPE_SHM:
