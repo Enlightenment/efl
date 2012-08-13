@@ -1970,7 +1970,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
      }
    else if ((offset + sizeof (void*)) > (unsigned int) edd->size)
      {
-        CRIT("Preventing later buffer overrun : offset = %i, estimated size = %lu in a structure of %i bytes", offset, sizeof (void*), edd->size);
+        CRIT("Preventing later buffer overrun : offset = %i, estimated size = %zu in a structure of %i bytes", offset, sizeof (void*), edd->size);
         return ;
      }
 
