@@ -24,7 +24,8 @@ struct _Evas_Engine_Info_Wayland_Egl
       int          depth;
       int          screen;
       int          rotation;
-      unsigned int destination_alpha  : 1;
+      int          edges;
+      unsigned int destination_alpha : 1;
    } info;
    /* engine specific function calls to query stuff about the destination */
    /* engine (what visual & colormap & depth to use, performance info etc. */

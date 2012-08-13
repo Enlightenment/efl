@@ -473,7 +473,7 @@ static Evas_Func func, pfunc;
 static Evas_GL_API gl_funcs;
 
 static void *
-eng_info(Evas *e)
+eng_info(Evas *e __UNUSED__)
 {
    Evas_Engine_Info_Wayland_Egl *info;
 
@@ -481,8 +481,8 @@ eng_info(Evas *e)
    info->magic.magic = rand();
    info->func.best_depth_get = eng_best_depth_get;
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
+
    return info;
-   e = NULL;
 }
 
 static void
@@ -822,7 +822,22 @@ eng_output_resize(void *data, int w, int h)
    eng_window_use(re->win);
 
    if (re->win->win)
-     wl_egl_window_resize(re->win->win, w, h, 0, 0);
+     {
+        int aw, ah, dx, dy;
+
+        wl_egl_window_get_attached_size(re->win->win, &aw, &ah);
+
+        if (re->info->info.edges & 4) // resize from left
+          dx = aw - w;
+        else
+          dx = 0;
+        if (re->info->info.edges & 1) // resize from top
+          dy = ah - h;
+        else
+          dy = 0;
+
+        wl_egl_window_resize(re->win->win, w, h, dx, dy);
+     }
 
    evas_gl_common_context_resize(re->win->gl_context, w, h, re->win->rot);
    evas_common_tilebuf_free(re->tb);
@@ -1041,11 +1056,11 @@ eng_output_flush(void *data)
 }
 
 static void
-eng_output_idle_flush(void *data)
+eng_output_idle_flush(void *data __UNUSED__)
 {
-   Render_Engine *re;
+   /* Render_Engine *re; */
 
-   re = (Render_Engine *)data;
+   /* re = (Render_Engine *)data; */
 }
 
 static void
@@ -1105,20 +1120,20 @@ eng_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, 
 }
 
 static void *
-eng_polygon_point_add(void *data, void *context __UNUSED__, void *polygon, int x, int y)
+eng_polygon_point_add(void *data __UNUSED__, void *context __UNUSED__, void *polygon, int x, int y)
 {
-   Render_Engine *re;
+   /* Render_Engine *re; */
 
-   re = (Render_Engine *)data;
+   /* re = (Render_Engine *)data; */
    return evas_gl_common_poly_point_add(polygon, x, y);
 }
 
 static void *
-eng_polygon_points_clear(void *data, void *context __UNUSED__, void *polygon)
+eng_polygon_points_clear(void *data __UNUSED__, void *context __UNUSED__, void *polygon)
 {
-   Render_Engine *re;
+   /* Render_Engine *re; */
 
-   re = (Render_Engine *)data;
+   /* re = (Render_Engine *)data; */
    return evas_gl_common_poly_points_clear(polygon);
 }
 
@@ -1249,13 +1264,13 @@ eng_image_comment_get(void *data __UNUSED__, void *image, char *key __UNUSED__)
 }
 
 static char *
-eng_image_format_get(void *data __UNUSED__, void *image)
+eng_image_format_get(void *data __UNUSED__, void *image __UNUSED__)
 {
 //   Render_Engine *re;
-   Evas_GL_Image *im;
+   /* Evas_GL_Image *im; */
 
 //   re = (Render_Engine *)data;
-   im = image;
+   /* im = image; */
    return NULL;
 }
 
@@ -2414,13 +2429,13 @@ eng_gl_proc_address_get(void *data __UNUSED__, const char *name)
 }
 
 static int
-eng_gl_native_surface_get(void *data, void *surface, void *native_surface)
+eng_gl_native_surface_get(void *data __UNUSED__, void *surface, void *native_surface)
 {
-   Render_Engine *re;
+   /* Render_Engine *re; */
    Render_Engine_GL_Surface *sfc;
    Evas_Native_Surface *ns;
 
-   re  = (Render_Engine *)data;
+   /* re  = (Render_Engine *)data; */
    sfc = (Render_Engine_GL_Surface*)surface;
    ns  = (Evas_Native_Surface*)native_surface;
 
@@ -2440,9 +2455,9 @@ static const GLubyte *
 evgl_glGetString(GLenum name)
 {
    if (name == GL_EXTENSIONS)
-      return (GLubyte *)_gl_ext_string; //glGetString(GL_EXTENSIONS); 
+     return (GLubyte *)_gl_ext_string; //glGetString(GL_EXTENSIONS); 
    else
-      return glGetString(name);
+     return glGetString(name);
 }
 
 static void
@@ -2553,11 +2568,11 @@ evgl_glEvasGLImageTargetRenderbufferStorageOES(GLenum target, EvasGLImage image)
 
 
 static void *
-eng_gl_api_get(void *data)
+eng_gl_api_get(void *data __UNUSED__)
 {
-   Render_Engine *re;
+   /* Render_Engine *re; */
 
-   re  = (Render_Engine *)data;
+   /* re  = (Render_Engine *)data; */
 
    gl_funcs.version = EVAS_GL_API_VERSION;
 

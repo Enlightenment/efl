@@ -137,7 +137,10 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
         return NULL;
      }
 
-   gw->win = wl_egl_window_create(gw->surface, gw->w, gw->h);
+   if ((gw->rot == 0) || (gw->rot == 180))
+     gw->win = wl_egl_window_create(gw->surface, gw->w, gw->h);
+   else if ((gw->rot == 90) || (gw->rot == 270))
+     gw->win = wl_egl_window_create(gw->surface, gw->h, gw->w);
 
    gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
@@ -150,7 +153,9 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
         return NULL;
      }
 
-   gw->egl_context[0] = eglCreateContext(gw->egl_disp, gw->egl_config, share_context, context_attrs);
+   gw->egl_context[0] = 
+     eglCreateContext(gw->egl_disp, gw->egl_config, share_context, 
+                      context_attrs);
 
    if (gw->egl_context[0] == EGL_NO_CONTEXT)
      {
