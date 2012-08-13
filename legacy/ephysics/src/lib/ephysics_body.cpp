@@ -341,6 +341,13 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 
    evas_object_move(body->evas_obj, x, y);
 
+   if ((!w) || (!h))
+     {
+        DBG("Evas object with no geometry: %p, w=%i h=%i", body->evas_obj,
+            w, h);
+        return;
+     }
+
    rot = - trans.getRotation().getAngle() * RAD_TO_DEG *
       trans.getRotation().getAxis().getZ();
 
