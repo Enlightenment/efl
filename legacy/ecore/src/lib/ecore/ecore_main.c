@@ -1941,12 +1941,21 @@ _ecore_main_win32_select(int             nfds __UNUSED__,
         long network_event;
 
         network_event = 0;
-        if (FD_ISSET(fdh->fd, readfds))
-          network_event |= FD_READ;
-        if (FD_ISSET(fdh->fd, writefds))
-          network_event |= FD_WRITE;
-        if (FD_ISSET(fdh->fd, exceptfds))
-          network_event |= FD_OOB;
+        if (readfds)
+          {
+             if (FD_ISSET(fdh->fd, readfds))
+               network_event |= FD_READ;
+          }
+        if (writefds)
+          {
+             if (FD_ISSET(fdh->fd, writefds))
+               network_event |= FD_WRITE;
+          }
+        if (exceptfds)
+          {
+             if (FD_ISSET(fdh->fd, exceptfds))
+               network_event |= FD_OOB;
+          }
 
         if (network_event)
           {
@@ -1986,9 +1995,12 @@ _ecore_main_win32_select(int             nfds __UNUSED__,
    result = MsgWaitForMultipleObjects(objects_nbr, (const HANDLE *)objects, EINA_FALSE,
                                       timeout, QS_ALLINPUT);
 
-   FD_ZERO(readfds);
-   FD_ZERO(writefds);
-   FD_ZERO(exceptfds);
+   if (readfds)
+     FD_ZERO(readfds);
+   if (writefds)
+     FD_ZERO(writefds);
+   if (exceptfds)
+     FD_ZERO(exceptfds);
 
    /* The result tells us the type of event we have. */
    if (result == WAIT_FAILED)
@@ -2021,11 +2033,11 @@ _ecore_main_win32_select(int             nfds __UNUSED__,
 
         WSAEnumNetworkEvents(sockets[result], objects[result], &network_event);
 
-        if (network_event.lNetworkEvents & FD_READ)
+        if ((network_event.lNetworkEvents & FD_READ) && readfds)
           FD_SET(sockets[result], readfds);
-        if (network_event.lNetworkEvents & FD_WRITE)
+        if ((network_event.lNetworkEvents & FD_WRITE) && writefds)
           FD_SET(sockets[result], writefds);
-        if (network_event.lNetworkEvents & FD_OOB)
+        if ((network_event.lNetworkEvents & FD_OOB) && exceptfds)
           FD_SET(sockets[result], exceptfds);
 
         res = 1;

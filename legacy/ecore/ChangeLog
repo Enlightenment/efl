@@ -858,3 +858,6 @@
         * Fix ecore fork reset function to allow for callbacks to be
           attached so ecore-evas can reset evas async fd on fork.
 
+2012-08-13  Vincent Torri
+
+        * Fix segmentation fault when fd_set pointers are NULL on Windows
