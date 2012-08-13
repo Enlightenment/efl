@@ -206,7 +206,6 @@ _edje_del(Edje *ed)
    Edje_Running_Program *runp;
    Edje_Pending_Program *pp;
    Edje_Signal_Callback *escb;
-   Edje_Color_Class *cc;
    Edje_Text_Class *tc;
    Edje_Text_Insert_Filter_Callback *cb;
 
