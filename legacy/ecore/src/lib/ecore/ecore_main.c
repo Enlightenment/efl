@@ -1459,8 +1459,6 @@ _ecore_main_select(double timeout)
           _ecore_main_fdh_epoll_mark_active();
         else
           {
-             Ecore_Fd_Handler *fdh;
-
              EINA_INLIST_FOREACH(fd_handlers, fdh)
                {
                   if (!fdh->delete_me)
@@ -1476,16 +1474,18 @@ _ecore_main_select(double timeout)
                }
           }
         EINA_LIST_FOREACH(file_fd_handlers, l, fdh)
-          if (!fdh->delete_me)
-            {
-               if (FD_ISSET(fdh->fd, &rfds))
-                 fdh->read_active = EINA_TRUE;
-               if (FD_ISSET(fdh->fd, &wfds))
-                 fdh->write_active = EINA_TRUE;
-               if (FD_ISSET(fdh->fd, &exfds))
-                 fdh->error_active = EINA_TRUE;
-               _ecore_try_add_to_call_list(fdh);
-            }
+          {
+             if (!fdh->delete_me)
+               {
+                  if (FD_ISSET(fdh->fd, &rfds))
+                    fdh->read_active = EINA_TRUE;
+                  if (FD_ISSET(fdh->fd, &wfds))
+                    fdh->write_active = EINA_TRUE;
+                  if (FD_ISSET(fdh->fd, &exfds))
+                    fdh->error_active = EINA_TRUE;
+                  _ecore_try_add_to_call_list(fdh);
+               }
+          }
         _ecore_main_fd_handlers_cleanup();
 #ifdef _WIN32
         _ecore_main_win32_handlers_cleanup();
