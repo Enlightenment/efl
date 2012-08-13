@@ -380,6 +380,23 @@ extern "C" {
 
 EAPI int ecore_init(void);
 EAPI int ecore_shutdown(void);
+/**
+ * Reset the ecore internal state after a fork
+ * 
+ * Ecore maintains internal data that can be affected by the fork() system call
+ * which creates a duplicate of the current process. This also duplicates
+ * file descriptors which is problematic in that these file descriptors still
+ * point to their original sources. This function makes ecore reset internal
+ * state (e.g. pipes used for signalling between threads) so they function
+ * correctly afterwards.
+ * 
+ * It is highly suggested that you call this function after any fork()
+ * system call inside the child process if you intend to use ecore features
+ * after this point and not call any exec() family functions. Not doing so
+ * will cause possible misbehaviour.
+ * 
+ * @since 1.7
+ */
 EAPI void ecore_fork_reset(void);
 
 /**
