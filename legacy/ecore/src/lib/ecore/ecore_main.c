@@ -279,18 +279,18 @@ static inline void
 _ecore_try_add_to_call_list(Ecore_Fd_Handler *fdh)
 {
    /* check if this fdh is already in the list */
-    if (fdh->next_ready)
-      return;
-    if (fdh->read_active || fdh->write_active || fdh->error_active)
-      {
-         /*
-          * make sure next_ready is non-null by pointing to ourselves
-          * use that to indicate this fdh is in the ready list
-          * insert at the head of the list to avoid trouble
-          */
-           fdh->next_ready = fd_handlers_to_call ? fd_handlers_to_call : fdh;
-           fd_handlers_to_call = fdh;
-      }
+   if (fdh->next_ready)
+     return;
+   if (fdh->read_active || fdh->write_active || fdh->error_active)
+     {
+        /*
+         * make sure next_ready is non-null by pointing to ourselves
+         * use that to indicate this fdh is in the ready list
+         * insert at the head of the list to avoid trouble
+         */
+        fdh->next_ready = fd_handlers_to_call ? fd_handlers_to_call : fdh;
+        fd_handlers_to_call = fdh;
+     }
 }
 
 static inline int
@@ -299,7 +299,7 @@ _ecore_get_epoll_fd(void)
    if (epoll_pid && epoll_pid != getpid())
      {
         /* forked! */
-         _ecore_main_loop_shutdown();
+        _ecore_main_loop_shutdown();
      }
    if (epoll_pid == 0 && epoll_fd < 0)
      {
