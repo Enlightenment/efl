@@ -611,7 +611,7 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_smart_callback_add(rd, "changed", my_fl_ch, win);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "Go");
+   elm_object_text_set(bt, "Flip page");
    evas_object_smart_callback_add(bt, "clicked", my_fl_go, win);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
