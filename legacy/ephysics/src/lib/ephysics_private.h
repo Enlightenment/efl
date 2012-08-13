@@ -102,6 +102,7 @@ EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);
 void ephysics_camera_del(EPhysics_Camera *camera);
 void ephysics_camera_moved_set(EPhysics_Camera *camera, Eina_Bool moved);
 Eina_Bool ephysics_camera_moved_get(const EPhysics_Camera *camera);
+void ephysics_camera_target_moved(EPhysics_Camera *camera, EPhysics_Body *body);
 
 const Eina_Inlist *ephysics_shape_points_get(const EPhysics_Shape *shape);
 

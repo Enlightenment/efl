@@ -24,12 +24,32 @@ _update_floor(Evas_Object *floor_obj, Evas_Coord delta)
    evas_object_move(floor_obj, fx, y);
 }
 
+static void
+_camera_moved_cb(void *data, EPhysics_World *world __UNUSED__, void *event_info)
+{
+   EPhysics_Camera *camera = event_info;
+   Camera_Data *camera_data = data;
+   Evas_Object *floor_obj;
+   int x;
+
+   DBG("Camera moved");
+
+   ephysics_camera_position_get(camera, &x, NULL);
+
+   floor_obj = evas_object_data_get(camera_data->base.layout, "floor");
+   _update_floor(floor_obj, camera_data->old_x - x);
+
+   floor_obj = evas_object_data_get(camera_data->base.layout, "floor2");
+   _update_floor(floor_obj, camera_data->old_x - x);
+
+   camera_data->old_x = x;
+}
+
 static Eina_Bool
 _camera_move_cb(void *data)
 {
    Camera_Data *camera_data = data;
    EPhysics_Camera *camera;
-   Evas_Object *floor_obj;
    int x, y, w;
 
    ephysics_world_render_geometry_get(camera_data->base.world,
@@ -46,14 +66,6 @@ _camera_move_cb(void *data)
 
    x += 2;
    ephysics_camera_position_set(camera, x, y);
-
-   floor_obj = evas_object_data_get(camera_data->base.layout, "floor");
-   _update_floor(floor_obj, camera_data->old_x - x);
-
-   floor_obj = evas_object_data_get(camera_data->base.layout, "floor2");
-   _update_floor(floor_obj, camera_data->old_x - x);
-
-   camera_data->old_x = x;
 
    return EINA_TRUE;
 }
@@ -208,6 +220,9 @@ test_camera(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
+   ephysics_world_event_callback_add(world,
+                                     EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED,
+                                     _camera_moved_cb, camera_data);
    camera_data->base.world = world;
 
    boundary = ephysics_body_box_add(camera_data->base.world);

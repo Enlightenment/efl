@@ -30,15 +30,15 @@ _update_floor(Evas_Object *layout, const char *name, int delta_x, int cy, Eina_B
 }
 
 static void
-_update_object_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
+_camera_moved_cb(void *data, EPhysics_World *world __UNUSED__, void *event_info)
 {
+   EPhysics_Camera *camera = event_info;
    Track_Data *track_data = data;
-   EPhysics_Camera *camera;
    int cx, cy, delta_x = 0;
    Eina_Bool hor, ver;
 
-   ephysics_body_evas_object_update(body);
-   camera = ephysics_world_camera_get(track_data->base.world);
+   DBG("Camera moved");
+
    ephysics_camera_tracked_body_get(camera, NULL, &hor, &ver);
    ephysics_camera_position_get(camera, &cx, &cy);
 
@@ -128,9 +128,6 @@ _world_populate(Track_Data *track_data)
 
    body = ephysics_body_circle_add(track_data->base.world);
    ephysics_body_evas_object_set(body, sphere, EINA_TRUE);
-   ephysics_body_event_callback_add(body,
-                                    EPHYSICS_CALLBACK_BODY_UPDATE,
-                                    _update_object_cb, track_data);
    ephysics_body_restitution_set(body, 0.95);
    ephysics_body_friction_set(body, 1);
    ephysics_body_damping_set(body, 0.1, 0);
@@ -235,6 +232,9 @@ test_camera_track(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
    track_data->base.world = world;
+   ephysics_world_event_callback_add(world,
+                                     EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED,
+                                     _camera_moved_cb, track_data);
 
    boundary = ephysics_body_box_add(track_data->base.world);
    ephysics_body_mass_set(boundary, 0);

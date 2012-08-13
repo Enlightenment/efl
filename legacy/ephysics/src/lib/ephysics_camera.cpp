@@ -21,9 +21,20 @@ struct _EPhysics_Camera {
 };
 
 static void
-_ephysics_camera_target_move_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
+_ephysics_camera_target_del_cb(void *data, EPhysics_Body *body, void *event_info)
 {
    EPhysics_Camera *camera = (EPhysics_Camera *) data;
+
+   camera->target = NULL;
+   camera->track_horizontal = EINA_FALSE;
+   camera->track_vertical = EINA_FALSE;
+
+   INF("Camera isn't tracking body %p anymore.", body);
+}
+
+void
+ephysics_camera_target_moved(EPhysics_Camera *camera, EPhysics_Body *body)
+{
    int x, y, w, h, ww, wh, new_x, new_y;
 
    ephysics_body_geometry_get(body, &x, &y, &w, &h);
@@ -49,19 +60,7 @@ _ephysics_camera_target_move_cb(void *data, EPhysics_Body *body, void *event_inf
           }
      }
 
-   WRN("Camera position set to (%i, %i).", camera->x, camera->y);
-}
-
-static void
-_ephysics_camera_target_del_cb(void *data, EPhysics_Body *body, void *event_info)
-{
-   EPhysics_Camera *camera = (EPhysics_Camera *) data;
-
-   camera->target = NULL;
-   camera->track_horizontal = EINA_FALSE;
-   camera->track_vertical = EINA_FALSE;
-
-   INF("Camera isn't tracking body %p anymore.", body);
+   INF("Camera position set to (%i, %i).", camera->x, camera->y);
 }
 
 void
@@ -121,9 +120,6 @@ ephysics_camera_position_set(EPhysics_Camera *camera, Evas_Coord x, Evas_Coord y
         INF("Camera isn't tracking body %p anymore.", camera->target);
 
         ephysics_body_event_callback_del(camera->target,
-                                         EPHYSICS_CALLBACK_BODY_UPDATE,
-                                         _ephysics_camera_target_move_cb);
-        ephysics_body_event_callback_del(camera->target,
                                          EPHYSICS_CALLBACK_BODY_DEL,
                                          _ephysics_camera_target_del_cb);
         camera->target = NULL;
@@ -173,9 +169,6 @@ ephysics_camera_body_track(EPhysics_Camera *camera, EPhysics_Body *body, Eina_Bo
    if (camera->target)
      {
         ephysics_body_event_callback_del(camera->target,
-                                         EPHYSICS_CALLBACK_BODY_UPDATE,
-                                         _ephysics_camera_target_move_cb);
-        ephysics_body_event_callback_del(camera->target,
                                          EPHYSICS_CALLBACK_BODY_DEL,
                                          _ephysics_camera_target_del_cb);
      }
@@ -188,8 +181,6 @@ ephysics_camera_body_track(EPhysics_Camera *camera, EPhysics_Body *body, Eina_Bo
         return;
      }
 
-   ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_UPDATE,
-                                    _ephysics_camera_target_move_cb, camera);
    ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_DEL,
                                     _ephysics_camera_target_del_cb, camera);
 

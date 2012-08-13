@@ -500,6 +500,7 @@ typedef enum _EPhysics_Callback_World_Type
 {
    EPHYSICS_CALLBACK_WORLD_DEL, /**< World being deleted (called before free) */
    EPHYSICS_CALLBACK_WORLD_STOPPED, /**< no objects are moving any more */
+   EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED, /**< camera position changed */
    EPHYSICS_CALLBACK_WORLD_LAST, /**< kept as sentinel, not really an event */
 } EPhysics_Callback_World_Type;
 
@@ -876,10 +877,18 @@ EAPI EPhysics_Camera *ephysics_world_camera_get(const EPhysics_World *world);
  * The registered callback will receives the world and extra user data that
  * can be passed.
  *
- * Regarding EPHYSICS_CALLBACK_WORLD_DEL:
+ * What follows is a list of details about each callback type:
  *
- * Registered callbacks will be called before world is freed.
- * No event_info is passed.
+ *  - #EPHYSICS_CALLBACK_WORLD_DEL: Called just before a world is freed.
+ * No event_info is passed to the callback.
+ *
+ *  - #EPHYSICS_CALLBACK_WORLD_STOPPED: Called when all the bodies
+ * are stopped. No event_info is passed to the callback.
+ *
+ *  - #EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED: Called if camera position changed
+ * on physics simulation tick. Camera is passed as event_info to the callback.
+ * Useful to move backgrounds, since objects would be already updated
+ * considering camera's position.
  *
  * @param world The physics world.
  * @param type Type of callback to be listened by @p func.

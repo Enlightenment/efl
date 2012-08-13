@@ -134,16 +134,15 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
 
    world_active = EINA_FALSE;
 
-   camera_moved = ephysics_camera_moved_get(world->camera);
-   if (camera_moved)
-     ephysics_camera_moved_set(world->camera, EINA_FALSE);
    ephysics_camera_tracked_body_get(world->camera, &body, &tx, &ty);
    if ((body) && (tx || ty))
      {
         rigid_body = ephysics_body_rigid_body_get(body);
-        if (rigid_body->isActive())
-          camera_moved = EINA_TRUE;
+        if ((rigid_body) && (rigid_body->isActive()))
+          ephysics_camera_target_moved(world->camera, body);
      }
+
+   camera_moved = ephysics_camera_moved_get(world->camera);
 
    objects = dynamics_world->getCollisionObjectArray();
    for (int i = 0; i < objects.size(); i++)
@@ -166,6 +165,14 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
                ephysics_body_evas_object_update_select(body);
           }
      }
+
+   if (camera_moved)
+     {
+        _ephysics_world_event_callback_call(
+           world, EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED, world->camera);
+        ephysics_camera_moved_set(world->camera, EINA_FALSE);
+     }
+
 
    if (world->active == world_active) return;
    world->active = world_active;
