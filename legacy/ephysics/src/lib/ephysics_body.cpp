@@ -256,34 +256,6 @@ _ephysics_body_evas_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
-_ephysics_body_del(EPhysics_Body *body)
-{
-   EPhysics_Body_Callback *cb;
-   void *group;
-
-   if (body->evas_obj)
-     evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_DEL,
-                                    _ephysics_body_evas_obj_del_cb);
-
-   while (body->callbacks)
-     {
-        cb = EINA_INLIST_CONTAINER_GET(body->callbacks,
-                                         EPhysics_Body_Callback);
-        body->callbacks = eina_inlist_remove(body->callbacks, body->callbacks);
-        free(cb);
-     }
-
-   EINA_LIST_FREE(body->collision_groups, group)
-        eina_stringshare_del((Eina_Stringshare *)group);
-
-   delete body->rigid_body->getMotionState();
-   delete body->collision_shape;
-   delete body->rigid_body;
-
-   free(body);
-}
-
-static void
 _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    double rate, mx, my, sx, sy;
@@ -310,8 +282,58 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 
    body->rigid_body->getMotionState()->setWorldTransform(trans);
 
+   body->w = w;
+   body->h = h;
+
    DBG("Body %p position changed to %lf, %lf.", body, mx, my);
    DBG("Body %p scale changed to %lf, %lf.", body, sx, sy);
+}
+
+static void
+_ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   EPhysics_Body *body = (EPhysics_Body *) data;
+   int x, y, w, h;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   if ((w == body->w) && (h == body->h))
+     return;
+
+   DBG("Resizing body %p to w=%i, h=%i", body, w, h);
+   ephysics_body_geometry_get(body, &x, &y, NULL, NULL);
+   _ephysics_body_geometry_set(body, x, y, w, h);
+}
+
+static void
+_ephysics_body_del(EPhysics_Body *body)
+{
+   EPhysics_Body_Callback *cb;
+   void *group;
+
+   if (body->evas_obj)
+     {
+        evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_DEL,
+                                       _ephysics_body_evas_obj_del_cb);
+        evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESIZE,
+                                       _ephysics_body_evas_obj_resize_cb);
+     }
+
+   while (body->callbacks)
+     {
+        cb = EINA_INLIST_CONTAINER_GET(body->callbacks,
+                                       EPhysics_Body_Callback);
+        body->callbacks = eina_inlist_remove(body->callbacks, body->callbacks);
+        free(cb);
+     }
+
+   EINA_LIST_FREE(body->collision_groups, group)
+      eina_stringshare_del((Eina_Stringshare *)group);
+
+   delete body->rigid_body->getMotionState();
+   delete body->collision_shape;
+   delete body->rigid_body;
+
+   free(body);
 }
 
 static void
@@ -668,8 +690,12 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
      }
 
    if (body->evas_obj)
-     evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_DEL,
-                                    _ephysics_body_evas_obj_del_cb);
+     {
+        evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_DEL,
+                                       _ephysics_body_evas_obj_del_cb);
+        evas_object_event_callback_del(body->evas_obj, EVAS_CALLBACK_RESIZE,
+                                       _ephysics_body_evas_obj_resize_cb);
+     }
 
    body->evas_obj = evas_obj;
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
@@ -678,6 +704,8 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
    if (!use_obj_pos)
      return;
 
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
+                                  _ephysics_body_evas_obj_resize_cb, body);
    evas_object_geometry_get(body->evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
    _ephysics_body_geometry_set(body, obj_x, obj_y, obj_w, obj_h);
 }
@@ -696,8 +724,12 @@ ephysics_body_evas_object_unset(EPhysics_Body *body)
    body->evas_obj = NULL;
 
    if (obj)
-     evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
-                                    _ephysics_body_evas_obj_del_cb);
+     {
+        evas_object_event_callback_del(obj, EVAS_CALLBACK_DEL,
+                                       _ephysics_body_evas_obj_del_cb);
+        evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE,
+                                       _ephysics_body_evas_obj_resize_cb);
+     }
 
    return obj;
 }
@@ -756,8 +788,8 @@ ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord 
    if (x) *x = round((trans.getOrigin().getX() - vector.x() / 2) * rate);
    if (y) *y = height - round((trans.getOrigin().getY() + vector.y() / 2)
                               * rate);
-   if (w) *w = round(vector.x() * rate);
-   if (h) *h = round(vector.y() * rate);
+   if (w) *w = body->w;
+   if (h) *h = body->h;
 }
 
 EAPI void

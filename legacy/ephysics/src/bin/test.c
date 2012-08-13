@@ -20,6 +20,7 @@ void test_collision_speed(void *data, Evas_Object *obj, void *event_info);
 void test_constraint(void *data, Evas_Object *obj, void *event_info);
 void test_delete(void *data, Evas_Object *obj, void *event_info);
 void test_falling_letters(void *data, Evas_Object *obj, void *event_info);
+void test_growing_balls(void *data, Evas_Object *obj, void *event_info);
 void test_jumping_balls(void *data, Evas_Object *obj, void *event_info);
 void test_no_gravity(void *data, Evas_Object *obj, void *event_info);
 void test_rotate(void *data, Evas_Object *obj, void *event_info);
@@ -165,6 +166,7 @@ _main_win_add(char *autorun __UNUSED__, Eina_Bool test_win_only __UNUSED__)
    ADD_TEST("CONSTRAINT", test_constraint);
    ADD_TEST("DELETE BODY", test_delete);
    ADD_TEST("FALLING LETTERS", test_falling_letters);
+   ADD_TEST("GROWING BALLS", test_growing_balls);
    ADD_TEST("JUMPING BALLS", test_jumping_balls);
    ADD_TEST("NO GRAVITY", test_no_gravity);
    ADD_TEST("ROTATE", test_rotate);

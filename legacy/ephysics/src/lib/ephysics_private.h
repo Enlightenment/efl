@@ -68,6 +68,8 @@ struct _EPhysics_Body {
      Evas_Object *evas_obj;
      EPhysics_World *world;
      int walking;
+     Evas_Coord w;
+     Evas_Coord h;
      void *data;
      Eina_Inlist *callbacks;
      Eina_List *collision_groups;
