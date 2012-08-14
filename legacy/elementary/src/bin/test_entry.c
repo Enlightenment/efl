@@ -2029,7 +2029,7 @@ test_entry8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 {
    Evas_Object *win, *gd, *rect, *en, *lb;
    Evas_Object *bt, *en2;
-   Evas_Object *ch, *en3, *bx;
+   Evas_Object *ch, *en3;
    Evas_Object *en4;
    static Elm_Entry_Filter_Limit_Size limit_filter_data;
 
@@ -2092,21 +2092,14 @@ test_entry8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(bt, "clicked", filter_remove_bt_clicked, en);
    evas_object_show(bt);
 
-   bx = elm_box_add(win);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
-   evas_object_show(bx);
-
    en3 = elm_entry_add(win);
    elm_entry_scrollable_set(en3, EINA_TRUE);
    elm_entry_scrollbar_policy_set(en3, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_single_line_set(en3, EINA_TRUE);
    evas_object_size_hint_weight_set(en3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en3, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
-   elm_box_pack_end(bx, en3);
    evas_object_show(en3);
-   elm_grid_pack(gd, bx, 5, 35, 90, 20);
+   elm_grid_pack(gd, en3, 5, 35, 90, 20);
 
    bt = elm_icon_add(win);
    elm_icon_standard_set(bt, "home");
@@ -2214,6 +2207,7 @@ test_entry_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_show(bx);
 
    np = elm_entry_add(win);
+   elm_entry_line_wrap_set(np, ELM_WRAP_MIXED);
    elm_entry_scrollable_set(np, EINA_TRUE);
    elm_entry_file_set(np, "note.txt", ELM_TEXT_FORMAT_PLAIN_UTF8);
    evas_object_size_hint_weight_set(np, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
