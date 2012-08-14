@@ -87,6 +87,8 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
    tex->sy1 = ((double)(tex->y)) / (double)tex->pt->h;
    tex->sx2 = ((double)(tex->x + tex->w)) / (double)tex->pt->w;
    tex->sy2 = ((double)(tex->y + tex->h)) / (double)tex->pt->h;
+   tex->fglyph = fg;
+   gc->font_glyph_textures = eina_list_append(gc->font_glyph_textures, tex);
    return tex;
 }
 

@@ -770,6 +770,9 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              if (gc->pipe[i].array.texuv3) free(gc->pipe[i].array.texuv3);
           }
      }
+   
+   while (gc->font_glyph_textures)
+     evas_gl_common_texture_free(gc->font_glyph_textures->data);
 
    if ((gc->shared) && (gc->shared->references == 0))
      {
@@ -783,16 +786,18 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
              evas_gl_common_image_free(gc->shared->images->data);
           }
 
-        EINA_LIST_FOREACH(gc->shared->tex.whole, l, pt)
-           evas_gl_texture_pool_empty(pt);
         for (i = 0; i < 33; i++)
           {
              for (j = 0; j < 3; j++)
                {
                   EINA_LIST_FOREACH(gc->shared->tex.atlas[i][j], l, pt)
                      evas_gl_texture_pool_empty(pt);
+                  eina_list_free(gc->shared->tex.atlas[i][j]);
                }
           }
+        EINA_LIST_FOREACH(gc->shared->tex.whole, l, pt)
+           evas_gl_texture_pool_empty(pt);
+        eina_list_free(gc->shared->tex.whole);
         eina_hash_free(gc->shared->native_pm_hash);
         eina_hash_free(gc->shared->native_tex_hash);
         free(gc->shared);

@@ -336,6 +336,8 @@ struct _Evas_Engine_GL_Context
    struct {
       Eina_Bool size : 1;
    } change;
+   
+   Eina_List *font_glyph_textures;
 
    Eina_Bool havestuff : 1;
 
@@ -377,6 +379,7 @@ struct _Evas_GL_Texture
    Evas_Engine_GL_Context *gc;
    Evas_GL_Image   *im;
    Evas_GL_Texture_Pool *pt, *ptu, *ptv, *ptuv;
+   RGBA_Font_Glyph *fglyph;
    int              x, y, w, h;
    double           sx1, sy1, sx2, sy2;
    int              references;

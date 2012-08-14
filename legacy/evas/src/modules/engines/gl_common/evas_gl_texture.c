@@ -675,9 +675,7 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         pt->fb = 0;
      }
-   while (pt->allocations)
-      pt->allocations =
-      eina_list_remove_list(pt->allocations, pt->allocations);
+   pt->allocations = eina_list_free(pt->allocations);
    pt->texture = 0;
    pt->gc = NULL;
    pt->w = 0;
@@ -965,6 +963,12 @@ evas_gl_common_texture_free(Evas_GL_Texture *tex)
    if (!tex) return;
    tex->references--;
    if (tex->references != 0) return;
+   if (tex->fglyph)
+     {
+        tex->gc->font_glyph_textures = eina_list_remove(tex->gc->font_glyph_textures, tex);
+        tex->fglyph->ext_dat = NULL;
+        tex->fglyph->ext_dat_free = NULL;
+     }
    if (tex->double_buffer.pt[0])
      {
         tex->double_buffer.pt[0]->allocations = eina_list_remove(tex->double_buffer.pt[0]->allocations, tex);
