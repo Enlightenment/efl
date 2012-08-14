@@ -476,11 +476,13 @@ _calc_job(void *data)
              minw = itb->minw;
              minw_change = EINA_TRUE;
           }
+/* this always makes the genlist min width the viewport min width. wrong. :(
         if (minw > vw)
           {
              minw = vw;
              minw_change = EINA_TRUE;
           }
+ */
         itb->w = minw;
         itb->h = itb->minh;
         y += itb->h;
@@ -490,7 +492,7 @@ _calc_job(void *data)
      }
    if (minw_change)
      {
-        EINA_INLIST_FOREACH (sd->blocks, itb)
+        EINA_INLIST_FOREACH(sd->blocks, itb)
           {
              itb->minw = minw;
              itb->w = itb->minw;
