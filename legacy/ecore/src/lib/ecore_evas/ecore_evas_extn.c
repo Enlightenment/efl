@@ -1223,6 +1223,7 @@ _ipc_server_data(void *data, int type __UNUSED__, void *event)
          if ((e->data) && (e->size > 0) &&
              (((unsigned char *)e->data)[e->size - 1] == 0))
            {
+              if (extn->file.have_lock) _ecore_evas_socket_unlock(ee);
               if (extn->file.lockfd) close(extn->file.lockfd);
               if (extn->file.lock) eina_stringshare_del(extn->file.lock);
               extn->file.lock = eina_stringshare_add(e->data);
