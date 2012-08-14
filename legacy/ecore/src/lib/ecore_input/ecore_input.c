@@ -30,6 +30,11 @@ ecore_event_init(void)
 {
    if (++_ecore_event_init_count != 1)
      return _ecore_event_init_count;
+   if (!ecore_init())
+     {
+        _ecore_event_init_count--;
+        return 0;
+     }
 
    _ecore_input_log_dom = eina_log_domain_register
      ("ecore_input", ECORE_INPUT_DEFAULT_LOG_COLOR);
@@ -67,6 +72,7 @@ ecore_event_shutdown(void)
    ECORE_EVENT_MOUSE_OUT = 0;
    eina_log_domain_unregister(_ecore_input_log_dom);
    _ecore_input_log_dom = -1;
+   ecore_shutdown();
    return _ecore_event_init_count;
 }
 
