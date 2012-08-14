@@ -8928,8 +8928,16 @@ _evas_textblock_cursor_range_in_line_geometry_get(
           }
         else
           {
-             x = 0;
-             w = it2->w;
+             if (end > 0)
+               {
+                  x = it2->adv;
+                  w = 0;
+               }
+             else
+               {
+                  x = 0;
+                  w = it2->adv;
+               }
              _evas_textblock_range_calc_x_w(it2, &x, &w, EINA_FALSE,
                         switch_items);
           }

@@ -957,3 +957,7 @@
 2012-08-13  Carsten Haitzler (The Rasterman)
 
 	* Fix async fd stuff to generate new pipe after a fork (pid mismatch)
+
+2012-08-14  Tom Hacohen (TAsn)
+
+	* Textblock: Fixed range geometry when the last item is a format.
