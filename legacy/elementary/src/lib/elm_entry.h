@@ -194,6 +194,7 @@
  * @li "changed": The text within the entry was changed.
  * @li "changed,user": The text within the entry was changed because of user interaction.
  * @li "activated": The enter key was pressed on a single line entry.
+ * @li "aborted": The escape key was pressed on a single line entry. (since 1.7)
  * @li "press": A mouse button has been pressed on the entry.
  * @li "longpressed": A mouse button has been pressed and held for a couple
  * seconds.

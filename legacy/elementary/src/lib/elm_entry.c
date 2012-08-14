@@ -146,6 +146,7 @@ static void _entry_hover_anchor_clicked(void *data, Evas_Object *obj, void *even
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_CHANGED_USER[] = "changed,user";
 static const char SIG_ACTIVATED[] = "activated";
+static const char SIG_ABORTED[] = "aborted";
 static const char SIG_PRESS[] = "press";
 static const char SIG_LONGPRESSED[] = "longpressed";
 static const char SIG_CLICKED[] = "clicked";
@@ -173,6 +174,7 @@ static const char SIG_REDO_REQUEST[] = "redo,request";
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CHANGED, ""},
        {SIG_ACTIVATED, ""},
+       {SIG_ABORTED, ""},
        {SIG_PRESS, ""},
        {SIG_LONGPRESSED, ""},
        {SIG_CLICKED, ""},
@@ -1943,6 +1945,14 @@ _signal_key_enter(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 }
 
 static void
+_signal_key_escape(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   evas_object_smart_callback_call(data, SIG_ABORTED, NULL);
+}
+
+static void
 _signal_mouse_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -2500,6 +2510,8 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_anchor_out, obj);
    edje_object_signal_callback_add(wd->ent, "entry,key,enter", "elm.text",
                                    _signal_key_enter, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,key,escape", "elm.text",
+                                   _signal_key_escape, obj);
    edje_object_signal_callback_add(wd->ent, "mouse,down,1", "elm.text",
                                    _signal_mouse_down, obj);
    edje_object_signal_callback_add(wd->ent, "mouse,clicked,1", "elm.text",
