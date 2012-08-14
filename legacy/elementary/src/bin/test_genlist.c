@@ -350,6 +350,7 @@ my_gl_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *gl = data;
    static int i = 0;
 
+   if (!itc1) itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "default";
    itc1->func.text_get = gl_text_get;
    itc1->func.content_get  = gl_content_get;
@@ -372,6 +373,7 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    static int i = 0;
    Elm_Object_Item *gli_selected;
 
+   if (!itc1) itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "default";
    itc1->func.text_get = gl_text_get;
    itc1->func.content_get  = gl_content_get;
@@ -402,6 +404,7 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    static int i = 0;
    Elm_Object_Item *gli_selected;
 
+   if (!itc1) itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "default";
    itc1->func.text_get = gl_text_get;
    itc1->func.content_get  = gl_content_get;
@@ -2216,6 +2219,7 @@ my_gl_insert_before_rel(void *data, Evas_Object *obj __UNUSED__, void *event_inf
    static int i = 1000;
    Elm_Object_Item *gli_selected;
 
+   if (!itc1) itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
    itc1->func.content_get = NULL;
@@ -2245,6 +2249,7 @@ my_gl_insert_after_rel(void *data, Evas_Object *obj __UNUSED__, void *event_info
    static int i = 0;
    Elm_Object_Item *gli_selected;
 
+   if (!itc1) itc1 = elm_genlist_item_class_new();
    itc1->item_style = "default";
    itc1->func.text_get = gl_text_get;
    itc1->func.content_get = NULL;
