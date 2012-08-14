@@ -2207,7 +2207,6 @@ test_entry_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_show(bx);
 
    np = elm_entry_add(win);
-   elm_entry_line_wrap_set(np, ELM_WRAP_MIXED);
    elm_entry_scrollable_set(np, EINA_TRUE);
    elm_entry_file_set(np, "note.txt", ELM_TEXT_FORMAT_PLAIN_UTF8);
    evas_object_size_hint_weight_set(np, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
