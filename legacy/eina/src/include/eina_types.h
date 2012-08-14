@@ -99,6 +99,9 @@
 #ifdef EINA_LIKELY
 # undef EINA_LIKELY
 #endif
+#ifdef EINA_SENTINEL
+# undef EINA_SENTINEL
+#endif
 
 #ifdef __GNUC__
 # if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
@@ -139,6 +142,7 @@
 #  define EINA_NOINSTRUMENT __attribute__((__no_instrument_function__))
 #  define EINA_UNLIKELY(exp)    __builtin_expect((exp), 0)
 #  define EINA_LIKELY(exp)      __builtin_expect((exp), 1)
+#  define EINA_SENTINEL __attribute__((__sentinel__))
 # else
 #  define EINA_PRINTF(fmt, arg)
 #  define EINA_SCANF(fmt, arg)
@@ -147,6 +151,7 @@
 #  define EINA_NOINSTRUMENT
 #  define EINA_UNLIKELY(exp) exp
 #  define EINA_LIKELY(exp)   exp
+#  define EINA_SENTINEL
 # endif
 
 #elif defined(_WIN32)
@@ -166,6 +171,7 @@
 # define EINA_NOINSTRUMENT
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp)   exp
+# define EINA_SENTINEL
 
 #elif defined(__SUNPRO_C)
 # define EINA_WARN_UNUSED_RESULT
@@ -189,6 +195,7 @@
 # define EINA_NOINSTRUMENT
 # define EINA_UNLIKELY(exp) exp
 # define EINA_LIKELY(exp)   exp
+# define EINA_SENTINEL
 
 #else /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 
@@ -260,6 +267,13 @@
  * @param exp The expression to be used.
  */
 # define EINA_LIKELY(exp)   exp
+/**
+ * @def EINA_SENTINEL
+ * @brief Attribute from gcc to prevent calls without the necessary NULL
+ * sentinel in certain variadic functions
+ * @since 1.7.0
+ */
+# define EINA_SENTINEL
 #endif /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
 
 /**
