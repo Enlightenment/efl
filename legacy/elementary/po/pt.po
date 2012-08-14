@@ -1,21 +1,18 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:2054
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2012-08-10 19:57+0900\n"
-"PO-Revision-Date: 2011-11-17 12:25-0000\n"
+"PO-Revision-Date: 2012-08-14 16:16-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
-"Language: \n"
+"Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Portuguese\n"
-"X-Poedit-Country: Portugal\n"
 
 #: src/lib/elc_fileselector.c:749
 msgid "Up"
@@ -31,7 +28,7 @@ msgstr "Cancelar"
 
 #: src/lib/elc_fileselector.c:1001
 msgid "OK"
-msgstr "OK"
+msgstr "Aceitar"
 
 #: src/lib/elm_button.c:55
 msgid "Clicked"
@@ -66,11 +63,11 @@ msgstr "Estado"
 
 #: src/lib/elm_check.c:289
 msgid "Check"
-msgstr "Verificar"
+msgstr "Verificação"
 
 #: src/lib/elm_config.c:2070
 msgid "default:LTR"
-msgstr "omissão: LTR"
+msgstr "padrão: LTR"
 
 #: src/lib/elm_entry.c:1367
 msgid "Copy"
@@ -90,7 +87,7 @@ msgstr "Colar"
 
 #: src/lib/elm_list.c:1390
 msgid "List Item"
-msgstr ""
+msgstr "Lista"
 
 #: src/lib/elm_radio.c:271
 msgid "Radio"
