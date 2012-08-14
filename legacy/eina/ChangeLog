@@ -324,3 +324,8 @@
 
 	* added eina_log_console_color_set() for cross platform console
 	color set.
+
+2012-08-14  Lucas De Marchi
+
+        * Add EINA_SENTINEL macro to protect variadic functions
+
