@@ -905,14 +905,14 @@ struct _Evas_Event_Mouse_Up /** Mouse button release event */
 {
    int               button; /**< Mouse button number that was raised (1 - 32) */
 
-   Evas_Point        output;
-   Evas_Coord_Point  canvas;
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
 
    void             *data;
-   Evas_Modifier    *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock        *locks;
 
-   Evas_Button_Flags flags;
+   Evas_Button_Flags flags; /**< button flags set during the event */
    unsigned int      timestamp;
    Evas_Event_Flags  event_flags;
    Evas_Device      *dev;
@@ -922,11 +922,11 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
 {
    int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
 
-   Evas_Point       output;
-   Evas_Coord_Point canvas;
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
 
    void            *data;
-   Evas_Modifier   *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock       *locks;
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
@@ -937,11 +937,11 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
 {
    int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
 
-   Evas_Point       output;
-   Evas_Coord_Point canvas;
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
 
    void            *data;
-   Evas_Modifier   *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock       *locks;
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
@@ -955,7 +955,7 @@ struct _Evas_Event_Mouse_Move /** Mouse button down event */
    Evas_Position    cur, prev;
 
    void            *data;
-   Evas_Modifier   *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock       *locks;
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
@@ -967,11 +967,11 @@ struct _Evas_Event_Mouse_Wheel /** Wheel event */
    int              direction; /* 0 = default up/down wheel FIXME: more wheel types */
    int              z; /* ...,-2,-1 = down, 1,2,... = up */
 
-   Evas_Point       output;
-   Evas_Coord_Point canvas;
+   Evas_Point        output; /**< The X/Y location of the cursor */
+   Evas_Coord_Point  canvas; /**< The X/Y location of the cursor */
 
    void            *data;
-   Evas_Modifier   *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock       *locks;
    unsigned int     timestamp;
    Evas_Event_Flags event_flags;
@@ -988,10 +988,10 @@ struct _Evas_Event_Multi_Down /** Multi button press event */
    Evas_Coord_Precision_Point canvas;
 
    void                      *data;
-   Evas_Modifier             *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock                 *locks;
 
-   Evas_Button_Flags          flags;
+   Evas_Button_Flags flags; /**< button flags set during the event */
    unsigned int               timestamp;
    Evas_Event_Flags           event_flags;
    Evas_Device               *dev;
@@ -1007,10 +1007,10 @@ struct _Evas_Event_Multi_Up /** Multi button release event */
    Evas_Coord_Precision_Point canvas;
 
    void                      *data;
-   Evas_Modifier             *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock                 *locks;
 
-   Evas_Button_Flags          flags;
+   Evas_Button_Flags flags; /**< button flags set during the event */
    unsigned int               timestamp;
    Evas_Event_Flags           event_flags;
    Evas_Device               *dev;
@@ -1025,7 +1025,7 @@ struct _Evas_Event_Multi_Move /** Multi button down event */
    Evas_Precision_Position cur;
 
    void                   *data;
-   Evas_Modifier          *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock              *locks;
    unsigned int            timestamp;
    Evas_Event_Flags        event_flags;
@@ -1036,7 +1036,7 @@ struct _Evas_Event_Key_Down /** Key press event */
 {
    char            *keyname; /**< the name string of the key pressed */
    void            *data;
-   Evas_Modifier   *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock       *locks;
 
    const char      *key; /**< The logical key : (eg shift+1 == exclamation) */
@@ -1051,7 +1051,7 @@ struct _Evas_Event_Key_Up /** Key release event */
 {
    char            *keyname; /**< the name string of the key released */
    void            *data;
-   Evas_Modifier   *modifiers;
+   Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
    Evas_Lock       *locks;
 
    const char      *key; /**< The logical key : (eg shift+1 == exclamation) */
