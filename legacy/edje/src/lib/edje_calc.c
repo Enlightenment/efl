@@ -2986,7 +2986,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              // create map and populate with part geometry
              if (!map) map = evas_map_new(4);
              evas_map_util_points_populate_from_object(map, ep->object);
-             if (ep->part->type == EDJE_PART_TYPE_IMAGE)
+             if (ep->part->type == EDJE_PART_TYPE_IMAGE ||
+                 ((ep->part->type == EDJE_PART_TYPE_SWALLOW) &&
+                  (!strcmp(evas_object_type_get(mo), "image")))
+                )
                {
                   int iw = 1, ih = 1;
 
@@ -2996,7 +2999,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                   evas_map_point_image_uv_set(map, 2, iw , ih );
                   evas_map_point_image_uv_set(map, 3, 0.0, ih );
                }
-
              evas_map_util_3d_rotate(map,
                                      TO_DOUBLE(pf->map.rotation.x), TO_DOUBLE(pf->map.rotation.y), TO_DOUBLE(pf->map.rotation.z),
                                      pf->map.center.x, pf->map.center.y, pf->map.center.z);
