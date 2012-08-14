@@ -340,6 +340,7 @@ struct _Extn
         Shmfile    *shmfile;
         Eina_List  *updates;
         Eina_Bool   have_lock : 1;
+        Eina_Bool   have_real_lock : 1;
    } file;
 };
 
@@ -380,6 +381,29 @@ _ecore_evas_extn_event(Ecore_Evas *ee, int event)
                    _ecore_evas_extn_event_free, ee);
 }
 
+static Eina_Bool
+_ecore_evas_lock_other_have(Ecore_Evas *ee)
+{
+   Eina_List *l;
+   Ecore_Evas *ee2;
+   Extn *extn, *extn2;
+   
+   extn = ee->engine.buffer.data;
+   if (!extn) return EINA_FALSE;
+   // brute force - i know. i expect extn_ee_list to be fairly short. could
+   // be improved with a hash of lockfiles
+   EINA_LIST_FOREACH(extn_ee_list, l, ee2)
+     {
+        if (ee == ee2) continue;
+        extn2 = ee2->engine.buffer.data;
+        if ((extn->file.lock) && (extn2->file.lock) &&
+            (!strcmp(extn->file.lock, extn2->file.lock)) &&
+            (extn2->file.have_real_lock))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static void
 _ecore_evas_socket_lock(Ecore_Evas *ee)
 {
@@ -389,8 +413,10 @@ _ecore_evas_socket_lock(Ecore_Evas *ee)
    if (!extn) return;
    if (extn->file.lockfd < 0) return;
    if (extn->file.have_lock) return;
-   flock(extn->file.lockfd, LOCK_EX);
    extn->file.have_lock = EINA_TRUE;
+   if (_ecore_evas_lock_other_have(ee)) return;
+   flock(extn->file.lockfd, LOCK_EX);
+   extn->file.have_real_lock = EINA_TRUE;
 }
 
 static void
@@ -402,8 +428,9 @@ _ecore_evas_socket_unlock(Ecore_Evas *ee)
    if (!extn) return;
    if (extn->file.lockfd < 0) return;
    if (!extn->file.have_lock) return;
-   flock(extn->file.lockfd, LOCK_UN);
    extn->file.have_lock = EINA_FALSE;
+   if (!extn->file.have_real_lock) return;
+   flock(extn->file.lockfd, LOCK_UN);
 }
 
 static void
