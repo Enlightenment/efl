@@ -1268,6 +1268,8 @@ _item_realize(Elm_Gen_Item *it,
      it->item->nocache_once = EINA_FALSE;
    else if (!it->item->nocache)
      itc = _item_cache_find(it);
+/* XXX: so someone explain why this is here forcing items to NOT be realized
+ * if tree effect is disabled? this doesn't make sense. fix.
    if (itc && (!GL_IT(it)->wsd->tree_effect_enabled))
      {
         VIEW(it) = itc->base_view;
@@ -1275,7 +1277,7 @@ _item_realize(Elm_Gen_Item *it,
         it->spacer = itc->spacer;
         itc->spacer = NULL;
      }
-   else
+   else */
      {
         const char *stacking_even;
         const char *stacking;
