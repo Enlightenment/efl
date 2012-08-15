@@ -302,8 +302,8 @@ EAPI Eina_Stringshare  *eina_stringshare_ref(Eina_Stringshare *str);
  * @p str is freed. If @p str is @c NULL, the function returns
  * immediately.
  *
- * Note that if the given pointer is not shared, bad things will happen, likely
- * a segmentation fault.
+ * @note If the given pointer is not shared, bad things will happen, likely a
+ * segmentation fault.
  */
 EAPI void               eina_stringshare_del(Eina_Stringshare *str);
 
