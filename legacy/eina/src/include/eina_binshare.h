@@ -135,8 +135,8 @@ EAPI const void *eina_binshare_ref(const void *obj);
  * @p obj is freed. If @p obj is @c NULL, the function returns
  * immediately.
  *
- * Note that if the given pointer is not shared or NULL, bad things
- * will happen, likely a segmentation fault.
+ * @note If the given pointer is not shared, bad things will happen, likely a
+ * segmentation fault.
  */
 EAPI void        eina_binshare_del(const void *obj);
 
@@ -148,9 +148,9 @@ EAPI void        eina_binshare_del(const void *obj);
  * @return The length of the shared object.
  *
  * This function is a cheap way to known the length of a shared
- * object. Note that if the given pointer is not shared, bad
- * things will happen, likely a segmentation fault. If in doubt, try
- * strlen().
+ * object.
+ * @note If the given pointer is not shared, bad things will happen, likely a
+ * segmentation fault. If in doubt, try strlen().
  */
 EAPI int         eina_binshare_length(const void *obj) EINA_WARN_UNUSED_RESULT;
 

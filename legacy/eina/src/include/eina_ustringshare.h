@@ -158,8 +158,8 @@ EAPI const Eina_Unicode *eina_ustringshare_ref(const Eina_Unicode *str);
  * @p str is freed. If @p str is @c NULL, the function returns
  * immediately.
  *
- * Note that if the given pointer is not shared or @c NULL, bad things
- * will happen, likely a segmentation fault.
+ * @note If the given pointer is not shared, bad things will happen, likely a
+ * segmentation fault.
  */
 EAPI void                eina_ustringshare_del(const Eina_Unicode *str);
 
@@ -170,9 +170,10 @@ EAPI void                eina_ustringshare_del(const Eina_Unicode *str);
  *        give @c NULL, in that case @c -1 is returned.
  *
  * This function is a cheap way to known the length of a shared
- * string. Note that if the given pointer is not shared, bad
- * things will happen, likely a segmentation fault. If in doubt, try
- * strlen().
+ * string.
+ *
+ * @note If the given pointer is not shared, bad things will happen, likely a
+ * segmentation fault. If in doubt, try strlen().
  */
 EAPI int                 eina_ustringshare_strlen(const Eina_Unicode *str) EINA_PURE EINA_WARN_UNUSED_RESULT;
 

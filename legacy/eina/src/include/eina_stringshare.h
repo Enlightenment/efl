@@ -315,9 +315,10 @@ EAPI void               eina_stringshare_del(Eina_Stringshare *str);
  * @return The length of a shared string.
  *
  * This function is a cheap way to known the length of a shared
- * string. Note that if the given pointer is not shared, bad
- * things will happen, likely a segmentation fault. If in doubt, try
- * strlen().
+ * string.
+ *
+ * @note If the given pointer is not shared, bad things will happen, likely a
+ * segmentation fault. If in doubt, try strlen().
  */
 EAPI int                eina_stringshare_strlen(Eina_Stringshare *str) EINA_PURE EINA_WARN_UNUSED_RESULT;
 

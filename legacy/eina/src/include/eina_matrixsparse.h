@@ -317,8 +317,10 @@ EAPI Eina_Bool eina_matrixsparse_column_idx_clear(Eina_Matrixsparse *m, unsigned
  *
  * @warning cells, rows or columns are not reference counted and thus
  *     after this call any reference might be invalid if instance were
- *     freed. Note that this call might delete container column and
- *     row if this cell was the last remainder.
+ *     freed.
+ *
+ * @note This call might delete container column and row if this cell was the
+ * last remainder.
  */
 EAPI Eina_Bool eina_matrixsparse_cell_idx_clear(Eina_Matrixsparse *m, unsigned long row, unsigned long col);
 
@@ -331,8 +333,10 @@ EAPI Eina_Bool eina_matrixsparse_cell_idx_clear(Eina_Matrixsparse *m, unsigned l
  *
  * @warning cells, rows or columns are not reference counted and thus
  *     after this call any reference might be invalid if instance were
- *     freed. Note that this call might delete container column and
- *     row if this cell was the last remainder.
+ *     freed.
+ *
+ * @note This call might delete container column and row if this cell was the
+ * last remainder.
  */
 EAPI Eina_Bool eina_matrixsparse_cell_clear(Eina_Matrixsparse_Cell *cell);
 

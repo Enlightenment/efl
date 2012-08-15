@@ -99,7 +99,7 @@
  * 1              9794125            783816           10577941
  * @endverbatim
  *
- * Note that the displayed time is in nanosecond.
+ * @note The displayed time is in nanosecond.
  */
 
 /**
