@@ -40,9 +40,10 @@ _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, u
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(input = data)) return;
+   if ((!(input = data)) || (!offer)) return;
 
-   input->drag_source = wl_data_offer_get_user_data(offer);
+   if (!(input->drag_source = wl_data_offer_get_user_data(offer)))
+     return;
 
    win = wl_surface_get_user_data(surface);
 //   input->pointer_focus = win;
@@ -53,7 +54,12 @@ _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, u
    if (!(event = calloc(1, sizeof(Ecore_Wl_Event_Dnd_Enter)))) return;
 
    event->win = win->id;
-   event->source = input->drag_source->input->keyboard_focus->id;
+   if (input->drag_source->input)
+     {
+        if (input->drag_source->input->keyboard_focus)
+          event->source = input->drag_source->input->keyboard_focus->id;
+     }
+
    event->position.x = wl_fixed_to_int(x);
    event->position.y = wl_fixed_to_int(y);
    event->num_types = input->drag_source->types.size;
@@ -92,8 +98,17 @@ _ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device __UNUSED__, 
 
    if (!(event = calloc(1, sizeof(Ecore_Wl_Event_Dnd_Position)))) return;
 
-   event->win = input->drag_source->input->pointer_focus->id;
-   event->source = input->drag_source->input->keyboard_focus->id;
+   if (input->drag_source)
+     {
+        if (input->drag_source->input)
+          {
+             if (input->drag_source->input->pointer_focus)
+               event->win = input->drag_source->input->pointer_focus->id;
+             if (input->drag_source->input->keyboard_focus)
+               event->source = input->drag_source->input->keyboard_focus->id;
+          }
+     }
+
    event->position.x = input->sx;
    event->position.y = input->sy;
 
@@ -112,8 +127,17 @@ _ecore_wl_dnd_drop(void *data, struct wl_data_device *data_device __UNUSED__)
 
    if (!(event = calloc(1, sizeof(Ecore_Wl_Event_Dnd_Drop)))) return;
 
-   event->win = input->drag_source->input->pointer_focus->id;
-   event->source = input->drag_source->input->keyboard_focus->id;
+   if (input->drag_source)
+     {
+        if (input->drag_source->input)
+          {
+             if (input->drag_source->input->pointer_focus)
+               event->win = input->drag_source->input->pointer_focus->id;
+             if (input->drag_source->input->keyboard_focus)
+               event->source = input->drag_source->input->keyboard_focus->id;
+          }
+     }
+
    event->position.x = input->sx;
    event->position.y = input->sy;
 
