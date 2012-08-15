@@ -431,11 +431,12 @@ _calc_job(void *data)
    Elm_Genlist_Smart_Data *sd = data;
    Eina_Bool minw_change = EINA_FALSE;
    Eina_Bool did_must_recalc = EINA_FALSE;
-   Evas_Coord minw = -1, minh = 0, y = 0, ow, dy = 0, vw;
+   Evas_Coord minw = -1, minh = 0, y = 0, ow, dy = 0, vw = 0;
 
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &ow, &sd->h);
-   sd->s_iface->content_viewport_size_get(ELM_WIDGET_DATA(sd)->obj, &vw, NULL);
-   
+   if (sd->mode == ELM_LIST_COMPRESS)
+     sd->s_iface->content_viewport_size_get(ELM_WIDGET_DATA(sd)->obj, &vw, NULL);
+
    if (sd->w != ow) sd->w = ow;
 
    evas_event_freeze(evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj));
@@ -476,13 +477,11 @@ _calc_job(void *data)
              minw = itb->minw;
              minw_change = EINA_TRUE;
           }
-/* this always makes the genlist min width the viewport min width. wrong. :(
-        if (minw > vw)
+        if ((sd->mode == ELM_LIST_COMPRESS) && (minw > vw))
           {
              minw = vw;
              minw_change = EINA_TRUE;
           }
- */
         itb->w = minw;
         itb->h = itb->minh;
         y += itb->h;
