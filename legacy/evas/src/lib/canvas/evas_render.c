@@ -1384,8 +1384,11 @@ evas_render_updates_internal(Evas *e,
           {
              /* master clip is already present. check for size changes in the 
               * viewport, and update master clip size if needed */
-             if ((e->viewport.changed) || (e->output.changed))
+             if ((e->viewport.changed) || (e->output.changed) || 
+                 (e->framespace.changed))
                {
+                  evas_object_move(e->framespace.clip, 
+                                   e->framespace.x, e->framespace.y);
                   evas_object_resize(e->framespace.clip,
                                      e->viewport.w - e->framespace.w,
                                      e->viewport.h - e->framespace.h);
