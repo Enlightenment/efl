@@ -441,6 +441,7 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
 
    ee->req.x = x;
    ee->req.y = y;
+
    if ((ee->x != x) || (ee->y != y))
      {
         ee->x = x;
@@ -455,7 +456,6 @@ static void
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
-   int fw = 0, fh = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -463,17 +463,22 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    if (w < 1) w = 1;
    if (h < 1) h = 1;
 
-   if (ee->prop.min.w > w) w = ee->prop.min.w;
-   else if (w > ee->prop.max.w) w = ee->prop.max.w;
-   if (ee->prop.min.h > h) h = ee->prop.min.h;
-   else if (h > ee->prop.max.h) h = ee->prop.max.h;
-
    ee->req.w = w;
    ee->req.h = h;
 
-   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-   w += fw;
-   h += fh;
+   if (!ee->prop.fullscreen)
+     {
+        int fw = 0, fh = 0;
+
+        if (ee->prop.min.w > w) w = ee->prop.min.w;
+        else if (w > ee->prop.max.w) w = ee->prop.max.w;
+        if (ee->prop.min.h > h) h = ee->prop.min.h;
+        else if (h > ee->prop.max.h) h = ee->prop.max.h;
+
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+        w += fw;
+        h += fh;
+     }
 
    if ((ee->w != w) || (ee->h != h))
      {
@@ -523,7 +528,8 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
         if (ee->engine.wl.win)
           {
-             ecore_wl_window_update_size(ee->engine.wl.win, w, h);
+//             if (!ee->prop.fullscreen)
+               ecore_wl_window_update_size(ee->engine.wl.win, w, h);
              ecore_wl_window_buffer_attach(ee->engine.wl.win, 
                                            ee->engine.wl.buffer, 0, 0);
           }
@@ -606,9 +612,9 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    if (ee->engine.wl.win)
      {
         ecore_wl_window_show(ee->engine.wl.win);
+        ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
         ecore_wl_window_buffer_attach(ee->engine.wl.win, 
                                       ee->engine.wl.buffer, 0, 0);
-        ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
 
         if ((ee->prop.clas) && (ee->engine.wl.win->shell_surface))
           wl_shell_surface_set_class(ee->engine.wl.win->shell_surface, 
@@ -1109,6 +1115,14 @@ _ecore_evas_wl_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, v
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
+   if (ee->prop.fullscreen)
+     {
+        _ecore_evas_wl_move(ee, ev->x, ev->y);
+        _ecore_evas_wl_resize(ee, ev->w, ev->h);
+
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
    if ((ee->x != ev->x) || (ee->y != ev->y))
      {
         ee->req.x = ee->x;
@@ -1119,7 +1133,7 @@ _ecore_evas_wl_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, v
    nw = ev->w;
    nh = ev->h;
 
-   if (ee->prop.maximized)
+   if ((ee->prop.maximized) || (!ee->prop.fullscreen))
      {
         int fw = 0, fh = 0;
 
