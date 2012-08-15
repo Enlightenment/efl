@@ -158,24 +158,24 @@ _eina_stringshare_small_cmp(const Eina_Stringshare_Small_Bucket *bucket,
    const char *cur_pstr;
 
    if (cur_plength > plength)
-      return 1;
+     return 1;
    else if (cur_plength < plength)
-      return -1;
+     return -1;
 
    cur_pstr = bucket->strings[i] + 1;
 
    if (cur_pstr[0] > pstr[0])
-      return 1;
+     return 1;
    else if (cur_pstr[0] < pstr[0])
-      return -1;
+     return -1;
 
    if (plength == 1)
-      return 0;
+     return 0;
 
    if (cur_pstr[1] > pstr[1])
-      return 1;
+     return 1;
    else if (cur_pstr[1] < pstr[1])
-      return -1;
+     return -1;
 
    return 0;
 }
@@ -207,9 +207,9 @@ _eina_stringshare_small_bucket_find(const Eina_Stringshare_Small_Bucket *bucket,
 
         r = _eina_stringshare_small_cmp(bucket, i, pstr, plength);
         if (r > 0)
-           high = i;
+          high = i;
         else if (r < 0)
-           low = i + 1;
+          low = i + 1;
         else
           {
              *idx = i;
@@ -230,7 +230,7 @@ _eina_stringshare_small_bucket_resize(Eina_Stringshare_Small_Bucket *bucket,
    tmp = realloc((void *)bucket->strings, size * sizeof(bucket->strings[0]));
    if (!tmp)
      {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
         return 0;
      }
 
@@ -239,7 +239,7 @@ _eina_stringshare_small_bucket_resize(Eina_Stringshare_Small_Bucket *bucket,
    tmp = realloc(bucket->lengths, size * sizeof(bucket->lengths[0]));
    if (!tmp)
      {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
         return 0;
      }
 
@@ -248,7 +248,7 @@ _eina_stringshare_small_bucket_resize(Eina_Stringshare_Small_Bucket *bucket,
    tmp = realloc(bucket->references, size * sizeof(bucket->references[0]));
    if (!tmp)
      {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
         return 0;
      }
 
@@ -283,13 +283,13 @@ _eina_stringshare_small_bucket_insert_at(
      {
         int size = bucket->size + EINA_STRINGSHARE_SMALL_BUCKET_STEP;
         if (!_eina_stringshare_small_bucket_resize(bucket, size))
-           return NULL;
+          return NULL;
      }
 
    snew = malloc(length + 1);
    if (!snew)
      {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
         return NULL;
      }
 
@@ -330,7 +330,7 @@ _eina_stringshare_small_bucket_remove_at(
         return;
      }
 
-        free((char *)bucket->strings[idx]);
+   free((char *)bucket->strings[idx]);
 
    if (bucket->count == 1)
      {
@@ -344,7 +344,7 @@ _eina_stringshare_small_bucket_remove_at(
 
    bucket->count--;
    if (idx == bucket->count)
-      goto end;
+     goto end;
 
    off = idx + 1;
    todo = bucket->count - idx;
@@ -372,7 +372,7 @@ _eina_stringshare_small_add(const char *str, unsigned char length)
 
    bucket = _eina_small_share.buckets + (unsigned char)str[0];
    if (!*bucket)
-      i = 0;
+     i = 0;
    else
      {
         const char *ret;
@@ -396,11 +396,11 @@ _eina_stringshare_small_del(const char *str, unsigned char length)
 
    bucket = _eina_small_share.buckets + (unsigned char)str[0];
    if (!*bucket)
-      goto error;
+     goto error;
 
    ret = _eina_stringshare_small_bucket_find(*bucket, str, length, &i);
    if (!ret)
-      goto error;
+     goto error;
 
    _eina_stringshare_small_bucket_remove_at(bucket, i);
    return;
@@ -430,17 +430,17 @@ _eina_stringshare_small_shutdown(void)
         char **s, **s_end;
 
         if (!bucket)
-           continue;
+          continue;
 
         s = (char **)bucket->strings;
         s_end = s + bucket->count;
         for (; s < s_end; s++)
-           free(*s);
+          free(*s);
 
-           free((void *)bucket->strings);
-           free(bucket->lengths);
-           free(bucket->references);
-           free(bucket);
+        free((void *)bucket->strings);
+        free(bucket->lengths);
+        free(bucket->references);
+        free(bucket);
         *p_bucket = NULL;
      }
 
@@ -489,7 +489,7 @@ _eina_stringshare_small_dump(struct dumpinfo *di)
         Eina_Stringshare_Small_Bucket *bucket = *p_bucket;
 
         if (!bucket)
-           continue;
+          continue;
 
         _eina_stringshare_small_bucket_dump(bucket, di);
      }
@@ -497,8 +497,8 @@ _eina_stringshare_small_dump(struct dumpinfo *di)
 
 
 /*============================================================================*
-*                                 Global                                     *
-*============================================================================*/
+ *                                 Global                                     *
+ *============================================================================*/
 
 /**
  * @internal
@@ -519,7 +519,7 @@ eina_stringshare_init(void)
    if (_eina_share_stringshare_log_dom < 0)
      {
         _eina_share_stringshare_log_dom = eina_log_domain_register
-          ("eina_stringshare", EINA_LOG_COLOR_DEFAULT);
+           ("eina_stringshare", EINA_LOG_COLOR_DEFAULT);
 
         if (_eina_share_stringshare_log_dom < 0)
           {
@@ -532,7 +532,7 @@ eina_stringshare_init(void)
                                 EINA_MAGIC_STRINGSHARE_NODE,
                                 EINA_MAGIC_STRINGSHARE_NODE_STR);
    if (ret)
-      _eina_stringshare_small_init();
+     _eina_stringshare_small_init();
    else
      {
         eina_log_domain_unregister(_eina_share_stringshare_log_dom);
@@ -570,8 +570,8 @@ eina_stringshare_shutdown(void)
 }
 
 /*============================================================================*
-*                                   API                                      *
-*============================================================================*/
+ *                                   API                                      *
+ *============================================================================*/
 
 EAPI void
 eina_stringshare_del(Eina_Stringshare *str)
@@ -579,22 +579,22 @@ eina_stringshare_del(Eina_Stringshare *str)
    int slen;
 
    if (!str)
-      return;
+     return;
 
    /* special cases */
    if (str[0] == '\0')
-      slen = 0;
+     slen = 0;
    else if (str[1] == '\0')
-      slen = 1;
+     slen = 1;
    else if (str[2] == '\0')
-      slen = 2;
+     slen = 2;
    else if (str[3] == '\0')
-      slen = 3;
+     slen = 3;
    else
-      slen = 4;  /* handled later */
+     slen = 4;  /* handled later */
 
    if (slen < 2)
-      return;
+     return;
    else if (slen < 4)
      {
         eina_share_common_population_del(stringshare_share, slen);
@@ -612,9 +612,9 @@ EAPI Eina_Stringshare *
 eina_stringshare_add_length(const char *str, unsigned int slen)
 {
    if ((!str) || (slen <= 0))
-      return "";
+     return "";
    else if (slen == 1)
-      return (Eina_Stringshare *) _eina_stringshare_single + ((*str) << 1);
+     return (Eina_Stringshare *) _eina_stringshare_single + ((*str) << 1);
    else if (slen < 4)
      {
         const char *s;
@@ -634,18 +634,18 @@ eina_stringshare_add(const char *str)
 {
    int slen;
    if (!str)
-      return NULL;
+     return NULL;
 
    if      (str[0] == '\0')
-      slen = 0;
+     slen = 0;
    else if (str[1] == '\0')
-      slen = 1;
+     slen = 1;
    else if (str[2] == '\0')
-      slen = 2;
+     slen = 2;
    else if (str[3] == '\0')
-      slen = 3;
+     slen = 3;
    else
-      slen = 3 + (int)strlen(str + 3);
+     slen = 3 + (int)strlen(str + 3);
 
    return eina_stringshare_add_length(str, slen);
 }
@@ -659,14 +659,14 @@ eina_stringshare_printf(const char *fmt, ...)
    int len;
 
    if (!fmt)
-      return NULL;
+     return NULL;
 
    va_start(args, fmt);
    len = vasprintf(&tmp, fmt, args);
    va_end(args);
 
    if (len < 1)
-      return NULL;
+     return NULL;
 
    ret = eina_stringshare_add_length(tmp, len);
    free(tmp);
@@ -682,12 +682,12 @@ eina_stringshare_vprintf(const char *fmt, va_list args)
    int len;
 
    if (!fmt)
-      return NULL;
+     return NULL;
 
    len = vasprintf(&tmp, fmt, args);
 
    if (len < 1)
-      return NULL;
+     return NULL;
 
    ret = eina_stringshare_add_length(tmp, len);
    free(tmp);
@@ -703,10 +703,10 @@ eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
    int size;
 
    if (!fmt)
-      return NULL;
+     return NULL;
 
    if (len < 1)
-      return NULL;
+     return NULL;
 
    tmp = alloca(sizeof(char) * len + 1);
 
@@ -715,7 +715,7 @@ eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
    va_end(args);
 
    if (size < 1)
-      return NULL;
+     return NULL;
 
    return eina_stringshare_add_length(tmp, len);
 }
@@ -726,19 +726,19 @@ eina_stringshare_ref(Eina_Stringshare *str)
    int slen;
 
    if (!str)
-      return eina_share_common_ref(stringshare_share, str);
+     return eina_share_common_ref(stringshare_share, str);
 
    /* special cases */
    if      (str[0] == '\0')
-      slen = 0;
+     slen = 0;
    else if (str[1] == '\0')
-      slen = 1;
+     slen = 1;
    else if (str[2] == '\0')
-      slen = 2;
+     slen = 2;
    else if (str[3] == '\0')
-      slen = 3;
+     slen = 3;
    else
-      slen = 3 + (int)strlen(str + 3);
+     slen = 3 + (int)strlen(str + 3);
 
    if (slen < 2)
      {
@@ -770,16 +770,16 @@ eina_stringshare_strlen(Eina_Stringshare *str)
 
    /* special cases */
    if (str[0] == '\0')
-      return 0;
+     return 0;
 
    if (str[1] == '\0')
-      return 1;
+     return 1;
 
    if (str[2] == '\0')
-      return 2;
+     return 2;
 
    if (str[3] == '\0')
-      return 3;
+     return 3;
 
    len = eina_share_common_length(stringshare_share, (Eina_Stringshare *) str);
    len = (len > 0) ? len / (int)sizeof(char) : -1;
