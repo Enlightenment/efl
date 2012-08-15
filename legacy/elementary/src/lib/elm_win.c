@@ -1971,6 +1971,43 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
      _elm_win_frame_cb_maximize, sd);
    edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,close", "elm", _elm_win_frame_cb_close, sd);
+
+   if (sd->title)
+     {
+        edje_object_part_text_escaped_set
+          (sd->frame_obj, "elm.text.title", sd->title);
+     }
+}
+
+static void 
+_elm_win_frame_del(Elm_Win_Smart_Data *sd)
+{
+   if (sd->frame_obj)
+     {
+        edje_object_signal_callback_del
+          (sd->frame_obj, "elm,action,move,start", "elm",
+              _elm_win_frame_cb_move_start);
+        edje_object_signal_callback_del
+          (sd->frame_obj, "elm,action,resize,show", "*",
+              _elm_win_frame_cb_resize_show);
+        edje_object_signal_callback_del
+          (sd->frame_obj, "elm,action,resize,start", "*",
+              _elm_win_frame_cb_resize_start);
+        edje_object_signal_callback_del
+          (sd->frame_obj, "elm,action,minimize", "elm",
+              _elm_win_frame_cb_minimize);
+        edje_object_signal_callback_del
+          (sd->frame_obj, "elm,action,maximize", "elm",
+              _elm_win_frame_cb_maximize);
+        edje_object_signal_callback_del
+          (sd->frame_obj, "elm,action,close", "elm", 
+              _elm_win_frame_cb_close);
+
+        evas_object_del(sd->frame_obj);
+        sd->frame_obj = NULL;
+     }
+
+   evas_output_framespace_set(sd->evas, 0, 0, 0, 0);
 }
 
 #ifdef ELM_DEBUG
@@ -2927,6 +2964,24 @@ elm_win_fullscreen_set(Evas_Object *obj,
    else
      {
         sd->fullscreen = fullscreen;
+
+        if (fullscreen)
+          {
+             if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
+               _elm_win_frame_del(sd);
+             else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
+               _elm_win_frame_del(sd);
+          }
+        else
+          {
+             if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
+               _elm_win_frame_add(sd, "default");
+             else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
+               _elm_win_frame_add(sd, "default");
+
+             evas_object_show(sd->frame_obj);
+          }
+
         TRAP(sd, fullscreen_set, fullscreen);
 #ifdef HAVE_ELEMENTARY_X
         _elm_win_xwin_update(sd);
