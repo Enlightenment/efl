@@ -205,11 +205,11 @@ ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 
    if (!win) return;
 
-   win->allocation.w = w;
-   win->allocation.h = h;
-
    if (win->type != ECORE_WL_WINDOW_TYPE_FULLSCREEN)
      {
+        win->allocation.w = w;
+        win->allocation.h = h;
+
         win->region.input = 
           wl_compositor_create_region(_ecore_wl_disp->wl.compositor);
         wl_region_add(win->region.input, win->allocation.x, win->allocation.y, 
@@ -471,9 +471,8 @@ ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen)
         if (win->shell_surface)
           wl_shell_surface_set_toplevel(win->shell_surface);
         win->type = ECORE_WL_WINDOW_TYPE_TOPLEVEL;
-        win->allocation = win->saved_allocation;
-        _ecore_wl_window_configure_send(win, win->allocation.w, 
-                                        win->allocation.h);
+        _ecore_wl_window_configure_send(win, win->saved_allocation.w, 
+                                        win->saved_allocation.h);
      }
 }
 
@@ -621,9 +620,6 @@ _ecore_wl_window_cb_configure(void *data, struct wl_shell_surface *shell_surface
 
    if ((win->allocation.w != w) || (win->allocation.h != h))
      {
-        win->allocation.w = w;
-        win->allocation.h = h;
-
         win->edges = edges;
         if (win->region.input) wl_region_destroy(win->region.input);
         win->region.input = NULL;
