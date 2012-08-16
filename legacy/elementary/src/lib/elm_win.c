@@ -1842,6 +1842,22 @@ _elm_win_frame_cb_resize_show(void *data,
 }
 
 static void
+_elm_win_frame_cb_resize_hide(void *data,
+                              Evas_Object *obj __UNUSED__,
+                              const char *sig __UNUSED__,
+                              const char *source __UNUSED__)
+{
+   Elm_Win_Smart_Data *sd;
+
+   if (!(sd = data)) return;
+   if (sd->resizing) return;
+
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   ecore_wl_window_cursor_default_restore(sd->wl.win);
+#endif
+}
+
+static void
 _elm_win_frame_cb_resize_start(void *data,
                                Evas_Object *obj __UNUSED__,
                                const char *sig __UNUSED__,
@@ -1961,6 +1977,9 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
      (sd->frame_obj, "elm,action,resize,show", "*",
      _elm_win_frame_cb_resize_show, sd);
    edje_object_signal_callback_add
+     (sd->frame_obj, "elm,action,resize,hide", "*",
+     _elm_win_frame_cb_resize_hide, sd);
+   edje_object_signal_callback_add
      (sd->frame_obj, "elm,action,resize,start", "*",
      _elm_win_frame_cb_resize_start, sd);
    edje_object_signal_callback_add
@@ -1990,6 +2009,9 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
         edje_object_signal_callback_del
           (sd->frame_obj, "elm,action,resize,show", "*",
               _elm_win_frame_cb_resize_show);
+        edje_object_signal_callback_del
+          (sd->frame_obj, "elm,action,resize,hide", "*",
+              _elm_win_frame_cb_resize_hide);
         edje_object_signal_callback_del
           (sd->frame_obj, "elm,action,resize,start", "*",
               _elm_win_frame_cb_resize_start);
