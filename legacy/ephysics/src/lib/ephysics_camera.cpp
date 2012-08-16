@@ -13,7 +13,6 @@ extern "C" {
 struct _EPhysics_Camera {
      EPhysics_World *world;
      EPhysics_Body *target;
-     double zoom;
      int x, y;
      Eina_Bool track_horizontal:1;
      Eina_Bool track_vertical:1;
@@ -200,37 +199,6 @@ ephysics_camera_tracked_body_get(EPhysics_Camera *camera, EPhysics_Body **body, 
    if (body) *body = camera->target;
    if (horizontal) *horizontal = camera->track_horizontal;
    if (vertical) *vertical = camera->track_vertical;
-}
-
-EAPI void
-ephysics_camera_zoom_set(EPhysics_Camera *camera, double zoom)
-{
-   if (!camera)
-     {
-        ERR("Can't set camera zoom, camera == NULL.");
-        return;
-     }
-
-   if (zoom <= 0)
-     {
-	ERR("Zoom should be a positive value. Keeping the old value: %lf.",
-            camera->zoom);
-        return;
-     }
-
-   camera->zoom = zoom;
-}
-
-EAPI double
-ephysics_camera_zoom_get(const EPhysics_Camera *camera)
-{
-   if (!camera)
-     {
-        ERR("Can't get camera zoom, camera == NULL.");
-        return -1;
-     }
-
-   return camera->zoom;
 }
 
 #ifdef  __cplusplus

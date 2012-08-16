@@ -303,13 +303,12 @@ typedef struct _EPhysics_Body EPhysics_Body;
  *
  * Every world has a camera, that can be get with
  * @ref ephysics_world_camera_get().
- * Its position can be set with @ref ephysics_camera_position_set() and zoom
- * in / zoom out can be done with @ref ephysics_camera_zoom_set().
+ * Its position can be set with @ref ephysics_camera_position_set() or
+ * can be set to track a body, with @ref ephysics_camera_body_track();
  *
- * @note WIP: ZOOM API ISN'T WORKING YET!!
  */
 
-typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to zoom in / out a scene, or change the frame position to be rendered. Every world have a camera that can be get with @ref ephysics_world_camera_get(). */
+typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to change the position of the frame to be rendered. Every world have a camera that can be get with @ref ephysics_world_camera_get(). */
 
 /**
  * @brief
@@ -414,51 +413,6 @@ EAPI void ephysics_camera_body_track(EPhysics_Camera *camera, EPhysics_Body *bod
  * @ingroup EPhysics_Camera
  */
 EAPI void ephysics_camera_tracked_body_get(EPhysics_Camera *camera, EPhysics_Body **body, Eina_Bool *horizontal, Eina_Bool *vertical);
-
-/**
- * @brief
- * Set camera's zoom.
- *
- * Zoom affects size and position of evas objects automatically updated
- * by ephysics. With zoom equal to 1, the original size of evas objects is
- * used and their position on canvas depends only on world rate and
- * camera's position.
- *
- * When zoom is smaller than 1, evas objects will be scaled down, and position
- * will take world rate, camera's position and zoom in account. More objects
- * could fit on the screen with small zoom values.
- *
- * If zoom is bigger than 1, evas objects will be scaled up, and position
- * will take world rate, camera's position and zoom in account. Less objects
- * will fit on the screen with big zoom values. It's nice for close-up
- * effects.
- *
- * By default zoom value is 1.
- *
- * @note This change will be noticed on the next physics tick, so evas objects
- * will be updated taking the camera's new zoom in account.
- *
- * @param camera The camera to be zoomed in / out.
- * @param zoom The new zoom value. Must to be bigger than 0.
- *
- * @see ephysics_camera_zoom_get().
- *
- * @ingroup EPhysics_Camera
- */
-EAPI void ephysics_camera_zoom_set(EPhysics_Camera *camera, double zoom);
-
-/**
- * @brief
- * Get camera's zoom.
- *
- * @param camera The world's camera.
- * @return The zoom value or -1 on error.
- *
- * @see ephysics_camera_zoom_set() for more details.
- *
- * @ingroup EPhysics_Camera
- */
-EAPI double ephysics_camera_zoom_get(const EPhysics_Camera *camera);
 
 /**
  * @}
@@ -864,7 +818,7 @@ EAPI Eina_List *ephysics_world_bodies_get(const EPhysics_World *world);
  * @return The camera.
  *
  * @see ephysics_camera_position_set().
- * @see ephysics_camera_zoom_set().
+ * @see ephysics_camera_body_track().
  *
  * @ingroup EPhysics_World
  */
