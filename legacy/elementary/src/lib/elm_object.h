@@ -1,26 +1,26 @@
 /**
- * Set a label of an object
+ * Set a text of an object
  *
  * @param obj The Elementary object
- * @param part The text part name to set (NULL for the default label)
- * @param label The new text of the label
+ * @param part The text part name to set (NULL for the default part)
+ * @param text The new text of the part
  *
- * @note Elementary objects may have many labels (e.g. Action Slider)
+ * @note Elementary objects may have many text parts (e.g. Action Slider)
  *
  * @ingroup General
  */
-EAPI void                         elm_object_part_text_set(Evas_Object *obj, const char *part, const char *label);
+EAPI void                         elm_object_part_text_set(Evas_Object *obj, const char *part, const char *text);
 
-#define elm_object_text_set(obj, label) elm_object_part_text_set((obj), NULL, (label))
+#define elm_object_text_set(obj, text) elm_object_part_text_set((obj), NULL, (text))
 
 /**
- * Get a label of an object
+ * Get a text of an object
  *
  * @param obj The Elementary object
- * @param part The text part name to get (NULL for the default label)
- * @return text of the label or NULL for any error
+ * @param part The text part name to get (NULL for the default part)
+ * @return text of the part or NULL for any error
  *
- * @note Elementary objects may have many labels (e.g. Action Slider)
+ * @note Elementary objects may have many text parts (e.g. Action Slider)
  *
  * @ingroup General
  */
