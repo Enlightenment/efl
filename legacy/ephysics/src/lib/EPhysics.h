@@ -1596,8 +1596,8 @@ EAPI void ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x
  *
  * @note EPhysics unit for angular velocity is degrees per second.
  *
- * @see ephysics_body_angular_velocity_set().
- * @see ephysics_body_linear_velocity_get().
+ * @see ephysics_body_angular_velocity_get().
+ * @see ephysics_body_linear_velocity_set().
  *
  * @ingroup EPhysics_Body
  */
@@ -1612,6 +1612,7 @@ EAPI void ephysics_body_angular_velocity_set(EPhysics_Body *body, double z);
  *
  * @note EPhysics unit for angular velocity is degrees per second.
  *
+ * @see ephysics_body_angular_velocity_set().
  * @see ephysics_body_linear_velocity_get().
  *
  * @ingroup EPhysics_Body
