@@ -78,6 +78,12 @@ struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
    }
 };
 
+static inline void
+_ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double rate)
+{
+   world->dynamics_world->setGravity(btVector3(gx / rate, -gy / rate, 0));
+}
+
 static void
 _ephysics_world_event_callback_call(EPhysics_World *world, EPhysics_Callback_World_Type type, void *event_info)
 {
@@ -670,8 +676,7 @@ ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
         return;
      }
 
-   world->dynamics_world->setGravity(btVector3(gx / world->rate,
-                                               -gy / world->rate, 0));
+   _ephysics_world_gravity_set(world, gx, gy, world->rate);
    DBG("World %p gravity set to X:%lf, Y:%lf.", world, gx, gy);
 }
 
