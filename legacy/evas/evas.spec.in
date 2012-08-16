@@ -233,7 +233,7 @@ XPM Image loader module for Evas
 %package module_loader_svg
 Summary: SVG Image loader module for Evas
 Group: System Environment/Libraries
-BuildRequires: librsvg-devel >= 2.14
+BuildRequires: esvg-devel >= 0.16
 %description module_loader_svg
 svg Image loader module for Evas
 %endif
