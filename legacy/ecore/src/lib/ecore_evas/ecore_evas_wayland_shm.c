@@ -823,20 +823,45 @@ static void
 _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
+   Ecore_Wl_Window *win;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
    if ((ee->alpha == alpha)) return;
    ee->alpha = alpha;
-   if (ee->engine.wl.win)
-     ecore_wl_window_transparent_set(ee->engine.wl.win, alpha);
+
+   /* FIXME: NB: We should really add a ecore_wl_window_alpha_set function
+    * but we are in API freeze, so just hack it in for now and fix when 
+    * freeze is over */
+   if ((win = ee->engine.wl.win))
+     win->alpha = alpha;
+
+   /* if (ee->engine.wl.win) */
+   /*   ecore_wl_window_transparent_set(ee->engine.wl.win, alpha); */
+
+   if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
+   ee->engine.wl.buffer = NULL;
+
+   _ecore_evas_wl_ensure_pool_size(ee, ee->w, ee->h);
+
+   if (ee->engine.wl.pool)
+     _ecore_evas_wl_buffer_new(ee, ee->engine.wl.pool);
+
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.destination_alpha = alpha;
+        einfo->info.dest = ee->engine.wl.pool_data;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
+
+   if (ee->engine.wl.win)
+     {
+        ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
+        ecore_wl_window_buffer_attach(ee->engine.wl.win, 
+                                      ee->engine.wl.buffer, 0, 0);
      }
 }
 
@@ -850,14 +875,32 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
    if (!ee) return;
    if ((ee->transparent == transparent)) return;
    ee->transparent = transparent;
+
    if (ee->engine.wl.win)
      ecore_wl_window_transparent_set(ee->engine.wl.win, transparent);
+
+   if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
+   ee->engine.wl.buffer = NULL;
+
+   _ecore_evas_wl_ensure_pool_size(ee, ee->w, ee->h);
+
+   if (ee->engine.wl.pool)
+     _ecore_evas_wl_buffer_new(ee, ee->engine.wl.pool);
+
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
         einfo->info.destination_alpha = transparent;
+        einfo->info.dest = ee->engine.wl.pool_data;
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
           ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
+
+   if (ee->engine.wl.win)
+     {
+        ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
+        ecore_wl_window_buffer_attach(ee->engine.wl.win, 
+                                      ee->engine.wl.buffer, 0, 0);
      }
 }
 
