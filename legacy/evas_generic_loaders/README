@@ -20,6 +20,7 @@ Recommended:
   poppler
   libraw
   libspectre
+  librsvg
 
 
 These are additional "generic" loaders for Evas that are stand-alone
@@ -43,6 +44,8 @@ Generic loaders currently provided:
     Should we use directly libgs ?
 
   RAW (using libraw)
+  
+  SVG (using librsvg)
 
   MPG/AVI/OGV/MOV/MKV/WMV etc. (using Gstreamer)
     Should we add libxine and vlc ?
@@ -53,7 +56,7 @@ Possible fun ones in future:
 
   DJVU (using libdjvu)
 
-  PPT/PPTX
+  PPT/PPTX/DOC/DOCX/XLS...
     (beats me how u can render a page from these without a whole
      office impl - but worth a try? libopenoffice/libllibreoffice if
      it ever happens?)
