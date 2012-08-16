@@ -752,6 +752,11 @@ ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy)
 EAPI void
 ephysics_world_rate_set(EPhysics_World *world, double rate)
 {
+   EPhysics_Body *body;
+   void *constraint;
+   double gx, gy;
+   Eina_List *l;
+
    if (!world)
      {
 	ERR("No world, can't set rate.");
@@ -765,7 +770,16 @@ ephysics_world_rate_set(EPhysics_World *world, double rate)
         return;
      }
 
-   /* FIXME update objects considering new rate */
+   /* Force to recalculate sizes, velocities and accelerations with new rate */
+   ephysics_world_gravity_get(world, &gx, &gy);
+   _ephysics_world_gravity_set(world, gx, gy, rate);
+
+   EINA_INLIST_FOREACH(world->bodies, body)
+      ephysics_body_recalc(body, rate);
+
+   EINA_LIST_FOREACH(world->constraints, l, constraint)
+        ephysics_constraint_recalc((EPhysics_Constraint *)constraint, rate);
+
    world->rate = rate;
 }
 
