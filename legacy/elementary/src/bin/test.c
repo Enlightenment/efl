@@ -723,17 +723,13 @@ add_tests:
 
    /* set an initial window size */
    evas_object_resize(win, 480, 480);
-   /* show the window */
-   if (!test_win_only)
+   evas_object_show(win);
+   /* bring in autorun frame */
+   if (autorun)
      {
-        evas_object_show(win);
-        /* bring in autorun frame */
-        if (autorun)
-          {
-             Evas_Coord x, y;
-             evas_object_geometry_get(tt, &x, &y, NULL, NULL);
-             elm_scroller_region_bring_in(sc, x, y, 0, 0);
-          }
+        Evas_Coord x, y;
+        evas_object_geometry_get(tt, &x, &y, NULL, NULL);
+        elm_scroller_region_bring_in(sc, x, y, 0, 0);
      }
 }
 
