@@ -436,6 +436,9 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
    else if (!strcmp(interface, "wl_shm"))
      {
         ewd->wl.shm = wl_display_bind(disp, id, &wl_shm_interface);
+
+        /* FIXME: We should not hard-code a cursor size here, and we should 
+         * also import the theme name from a config or env variable */
         ewd->cursor_theme = wl_cursor_theme_load(NULL, 32, ewd->wl.shm);
      }
    else if (!strcmp(interface, "wl_data_device_manager"))
