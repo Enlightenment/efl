@@ -17,7 +17,96 @@ struct _EPhysics_Constraint {
      btTypedConstraint *bt_constraint;
      EPhysics_World *world;
      EPhysics_Constraint_Type type;
+     struct {
+          EPhysics_Body *body1;
+          EPhysics_Body *body2;
+          Evas_Coord anchor_b1_x;
+          Evas_Coord anchor_b1_y;
+          Evas_Coord anchor_b2_x;
+          Evas_Coord anchor_b2_y;
+     } p2p;
 };
+
+/* FIXME: it shouldn't be this way.
+ * All constraints should be generic and have all these options
+ * set after add().
+ */
+static Eina_Bool
+_ephysics_constraint_p2p_set(EPhysics_Constraint *constraint, double rate)
+{
+   if (!constraint->p2p.body2)
+     constraint->bt_constraint = new btPoint2PointConstraint(
+        *ephysics_body_rigid_body_get(constraint->p2p.body1),
+        btVector3(constraint->p2p.anchor_b1_x / rate,
+                  constraint->p2p.anchor_b1_y / rate, 0));
+   else
+     constraint->bt_constraint = new btPoint2PointConstraint(
+        *ephysics_body_rigid_body_get(constraint->p2p.body1),
+        *ephysics_body_rigid_body_get(constraint->p2p.body2),
+        btVector3(constraint->p2p.anchor_b1_x / rate,
+                  constraint->p2p.anchor_b1_y / rate, 0),
+        btVector3(constraint->p2p.anchor_b2_x / rate,
+                  constraint->p2p.anchor_b2_y / rate, 0));
+
+   if (!constraint->bt_constraint)
+     {
+        ERR("Failed to create a btConstraint");
+        free(constraint);
+        return EINA_FALSE;
+     }
+
+   constraint->type = EPHYSICS_CONSTRAINT_P2P;
+   constraint->world = ephysics_body_world_get(constraint->p2p.body1);
+   ephysics_world_constraint_add(constraint->world, constraint,
+                                 constraint->bt_constraint);
+
+   return EINA_TRUE;
+}
+
+static void
+_ephysics_constraint_p2p_recalc(EPhysics_Constraint *constraint, double rate)
+{
+   ephysics_world_constraint_del(constraint->world, constraint,
+                                 constraint->bt_constraint);
+   delete constraint->bt_constraint;
+
+   _ephysics_constraint_p2p_set(constraint, rate);
+}
+
+static void
+_ephysics_constraint_slider_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord left_x, Evas_Coord under_y, Evas_Coord right_x, Evas_Coord above_y, double rate)
+{
+   btGeneric6DofConstraint *slider_constraint;
+
+   slider_constraint = (btGeneric6DofConstraint *)constraint->bt_constraint;
+   rate = ephysics_world_rate_get(constraint->world);
+
+   left_x = (left_x) / rate;
+   right_x = (right_x) / rate;
+
+   under_y = (under_y) / rate;
+   above_y = (above_y) / rate;
+
+   slider_constraint->setLinearLowerLimit(btVector3(-left_x, -under_y, 0));
+   slider_constraint->setLinearUpperLimit(btVector3(right_x, above_y, 0));
+}
+
+void
+ephysics_constraint_recalc(EPhysics_Constraint *constraint, double rate)
+{
+   Evas_Coord left_x, under_y, right_x, above_y;
+
+   if (constraint->type == EPHYSICS_CONSTRAINT_P2P)
+     {
+        _ephysics_constraint_p2p_recalc(constraint, rate);
+        return;
+     }
+
+   ephysics_constraint_slider_linear_limit_get(constraint, &left_x, &under_y,
+                                               &right_x, &above_y);
+   _ephysics_constraint_slider_linear_limit_set(constraint, left_x, under_y,
+                                                right_x, above_y, rate);
+}
 
 EAPI EPhysics_Constraint *
 ephysics_constraint_slider_add(EPhysics_Body *body)
@@ -62,9 +151,6 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
 EAPI void
 ephysics_constraint_slider_linear_limit_set(EPhysics_Constraint *constraint, Evas_Coord left_x, Evas_Coord under_y, Evas_Coord right_x, Evas_Coord above_y)
 {
-   btGeneric6DofConstraint *slider_constraint;
-   int rate;
-
    if (!constraint)
      {
         ERR("Can't set constraint's linear limit, constraint is null.");
@@ -77,17 +163,9 @@ ephysics_constraint_slider_linear_limit_set(EPhysics_Constraint *constraint, Eva
         return;
      }
 
-   slider_constraint = (btGeneric6DofConstraint *)constraint->bt_constraint;
-   rate = ephysics_world_rate_get(constraint->world);
-
-   left_x = (left_x) / rate;
-   right_x = (right_x) / rate;
-
-   under_y = (under_y) / rate;
-   above_y = (above_y) / rate;
-
-   slider_constraint->setLinearLowerLimit(btVector3(-left_x, -under_y, 0));
-   slider_constraint->setLinearUpperLimit(btVector3(right_x, above_y, 0));
+   _ephysics_constraint_slider_linear_limit_set(
+      constraint, left_x, under_y, right_x, above_y,
+      ephysics_world_rate_get(constraint->world));
 }
 
 EAPI void
@@ -184,7 +262,6 @@ EAPI EPhysics_Constraint *
 ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coord anchor_b1_x, Evas_Coord anchor_b1_y, Evas_Coord anchor_b2_x, Evas_Coord anchor_b2_y)
 {
    EPhysics_Constraint *constraint;
-   int rate;
 
    if (!body1)
      {
@@ -207,30 +284,17 @@ ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coo
         return NULL;
      }
 
-   rate = ephysics_world_rate_get(ephysics_body_world_get(body1));
+   constraint->p2p.body1 = body1;
+   constraint->p2p.body2 = body2;
+   constraint->p2p.anchor_b1_x = anchor_b1_x;
+   constraint->p2p.anchor_b1_y = anchor_b1_y;
+   constraint->p2p.anchor_b2_x = anchor_b2_x;
+   constraint->p2p.anchor_b2_y = anchor_b2_y;
 
-   if (!body2)
-     constraint->bt_constraint = new btPoint2PointConstraint(
-        *ephysics_body_rigid_body_get(body1),
-        btVector3(anchor_b1_x / rate, anchor_b1_y / rate, 0));
-   else
-     constraint->bt_constraint = new btPoint2PointConstraint(
-        *ephysics_body_rigid_body_get(body1),
-        *ephysics_body_rigid_body_get(body2),
-        btVector3(anchor_b1_x / rate, anchor_b1_y / rate, 0),
-        btVector3(anchor_b2_x / rate, anchor_b2_y / rate, 0));
-
-   if (!constraint->bt_constraint)
-     {
-        ERR("Failed to create a btConstraint");
-        free(constraint);
-        return NULL;
-     }
-
-   constraint->type = EPHYSICS_CONSTRAINT_P2P;
-   constraint->world = ephysics_body_world_get(body1);
-   ephysics_world_constraint_add(constraint->world, constraint,
-                                 constraint->bt_constraint);
+   if (!_ephysics_constraint_p2p_set(
+         constraint, ephysics_world_rate_get(ephysics_body_world_get(
+               constraint->p2p.body1))))
+     return NULL;
 
    INF("Constraint added.");
    return constraint;
