@@ -172,17 +172,16 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
 
    eina_stringshare_replace(&input->cursor_name, cursor_name);
 
-   /* No cursor */
-   if (!cursor_name)
-     {
-        ecore_wl_input_pointer_set(input, NULL, 0, 0);
-        return;
-     }
+   /* No cursor. Set to default Left Pointer */
+   if (!cursor_name) 
+     eina_stringshare_replace(&input->cursor_name, "left_ptr");
 
-   if (!(cursor = ecore_wl_cursor_get(cursor_name)))
+   /* try to get this cursor from the theme */
+   if (!(cursor = ecore_wl_cursor_get(input->cursor_name)))
      {
-        ecore_wl_input_pointer_set(input, NULL, 0, 0);
-        return;
+        /* if the theme does not have this cursor, default to left pointer */
+        if (!(cursor = ecore_wl_cursor_get("left_ptr")))
+          return;
      }
 
    if ((!cursor->images) || (!cursor->images[0]))
