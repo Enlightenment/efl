@@ -14,7 +14,6 @@
             description {
                state: "default" 0.0;
                min: 750 224;
-               max: 750 224;
                image.normal: "bg_floor.jpg";
             }
          }
@@ -40,7 +39,6 @@
             description {
                state: "default" 0.0;
                min: 512 384;
-               max: 512 384;
                color: 153 134 117 255;
             }
          }
@@ -52,7 +50,6 @@
             description {
                state: "default" 0.0;
                min: 512 384;
-               max: 512 384;
                image.normal: "background.jpg";
                visible: 0;
             }

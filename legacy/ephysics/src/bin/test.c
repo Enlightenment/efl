@@ -34,6 +34,7 @@ void test_velocity(void *data, Evas_Object *obj, void *event_info);
 void test_shapes(void *data, Evas_Object *obj, void *event_info);
 void test_sleeping(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
+void test_win_resize(void *data, Evas_Object *obj, void *event_info);
 
 static const EPhysics_Test tests[] = {
        {"Bouncing Ball", test_bouncing_ball},
@@ -55,6 +56,7 @@ static const EPhysics_Test tests[] = {
        {"Shapes", test_shapes},
        {"Sleeping Threshold", test_sleeping},
        {"Slider", test_slider},
+       {"Win Resize", test_win_resize},
 };
 
 static void
@@ -144,7 +146,6 @@ test_win_add(Test_Data *test_data, const char *title, Eina_Bool autodel)
    win = elm_win_add(NULL, title, ELM_WIN_BASIC);
    elm_win_title_set(win, title);
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_win_screen_constrain_set(win, EINA_TRUE);
    evas_object_show(win);
    test_data->win = win;
    if (autodel)
