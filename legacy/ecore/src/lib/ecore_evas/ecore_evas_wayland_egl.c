@@ -452,17 +452,20 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    if (w < 1) w = 1;
    if (h < 1) h = 1;
 
-   if (ee->prop.min.w > w) w = ee->prop.min.w;
-   else if (w > ee->prop.max.w) w = ee->prop.max.w;
-   if (ee->prop.min.h > h) h = ee->prop.min.h;
-   else if (h > ee->prop.max.h) h = ee->prop.max.h;
-
    ee->req.w = w;
    ee->req.h = h;
 
-   evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
-   w += fw;
-   h += fh;
+   if (!ee->prop.fullscreen)
+     {
+        if (ee->prop.min.w > w) w = ee->prop.min.w;
+        else if (w > ee->prop.max.w) w = ee->prop.max.w;
+        if (ee->prop.min.h > h) h = ee->prop.min.h;
+        else if (h > ee->prop.max.h) h = ee->prop.max.h;
+
+        evas_output_framespace_get(ee->evas, NULL, NULL, &fw, &fh);
+        w += fw;
+        h += fh;
+     }
 
 //   ecore_wl_window_damage(ee->engine.wl.win, 0, 0, ee->w, ee->h);
 
@@ -978,6 +981,14 @@ _ecore_evas_wl_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, v
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    if (ev->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
+   if (ee->prop.fullscreen)
+     {
+        _ecore_evas_wl_move(ee, ev->x, ev->y);
+        _ecore_evas_wl_resize(ee, ev->w, ev->h);
+
+        return ECORE_CALLBACK_PASS_ON;
+     }
+
    if ((ee->x != ev->x) || (ee->y != ev->y))
      {
         ee->req.x = ee->x;
@@ -988,7 +999,7 @@ _ecore_evas_wl_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, v
    nw = ev->w;
    nh = ev->h;
 
-   if (ee->prop.maximized)
+   if ((ee->prop.maximized) || (!ee->prop.fullscreen))
      {
         int fw = 0, fh = 0;
 
