@@ -170,6 +170,8 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
 
    if (!input) return;
 
+   eina_stringshare_replace(&input->cursor_name, cursor_name);
+
    /* No cursor */
    if (!cursor_name)
      {
@@ -178,10 +180,16 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
      }
 
    if (!(cursor = ecore_wl_cursor_get(cursor_name)))
-     return;
+     {
+        ecore_wl_input_pointer_set(input, NULL, 0, 0);
+        return;
+     }
 
    if ((!cursor->images) || (!cursor->images[0]))
-     return;
+     {
+        ecore_wl_input_pointer_set(input, NULL, 0, 0);
+        return;
+     }
 
    cursor_image = cursor->images[0];
    if ((buffer = wl_cursor_image_get_buffer(cursor_image)))
@@ -255,6 +263,9 @@ void
 _ecore_wl_input_del(Ecore_Wl_Input *input)
 {
    if (!input) return;
+
+   if (input->cursor_name) eina_stringshare_del(input->cursor_name);
+   input->cursor_name = NULL;
 
    if (input->keyboard_focus)
      {
@@ -362,7 +373,7 @@ _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSE
    if (input->pointer_focus)
      _ecore_wl_input_mouse_move_send(input, input->pointer_focus, timestamp);
 
-   ecore_wl_input_cursor_default_restore(input);
+   ecore_wl_input_cursor_from_name_set(input, input->cursor_name);
 }
 
 static void 
@@ -429,7 +440,12 @@ _ecore_wl_input_cb_pointer_frame(void *data, struct wl_callback *callback, unsig
         input->cursor_frame_cb = NULL;
      }
 
-   /* TODO: Finish me */
+   if (!input->cursor_name)
+     {
+        ecore_wl_input_pointer_set(input, NULL, 0, 0);
+        return;
+     }
+
    if (!input->cursor_frame_cb)
      {
         input->cursor_frame_cb = wl_surface_frame(input->cursor_surface);
@@ -670,7 +686,7 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer __UNUSED
    _ecore_wl_input_mouse_in_send(input, win, input->timestamp);
 
    /* The cursor on the surface is undefined until we set it */
-   ecore_wl_window_cursor_default_restore(win);
+   ecore_wl_input_cursor_from_name_set(input, "left_ptr");
 
    /* NB: This whole 'if' below is a major HACK due to wayland's stupidness 
     * of not sending a mouse_up (or any notification at all for that matter) 
