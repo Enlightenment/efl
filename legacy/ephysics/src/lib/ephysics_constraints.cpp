@@ -124,7 +124,7 @@ ephysics_constraint_slider_linear_limit_get(const EPhysics_Constraint *constrain
 }
 
 EAPI void
-ephysics_constraint_slider_angular_limit_set(EPhysics_Constraint *constraint, Evas_Coord counter_clock_z, Evas_Coord clock_wise_z)
+ephysics_constraint_slider_angular_limit_set(EPhysics_Constraint *constraint, double counter_clock_z, double clock_wise_z)
 {
    btGeneric6DofConstraint *slider_constraint;
 
@@ -148,7 +148,7 @@ ephysics_constraint_slider_angular_limit_set(EPhysics_Constraint *constraint, Ev
 }
 
 EAPI void
-ephysics_constraint_slider_angular_limit_get(const EPhysics_Constraint *constraint, Evas_Coord *counter_clock_z, Evas_Coord *clock_wise_z)
+ephysics_constraint_slider_angular_limit_get(const EPhysics_Constraint *constraint, double *counter_clock_z, double *clock_wise_z)
 {
    btGeneric6DofConstraint *slider_constraint;
    btVector3 angular_limit;
