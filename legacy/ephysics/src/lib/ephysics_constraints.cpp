@@ -52,7 +52,8 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
 
    constraint->type = EPHYSICS_CONSTRAINT_SLIDER;
    constraint->world = ephysics_body_world_get(body);
-   ephysics_world_constraint_add(constraint->world, constraint->bt_constraint);
+   ephysics_world_constraint_add(constraint->world, constraint,
+                                 constraint->bt_constraint);
 
    INF("Constraint added.");
    return constraint;
@@ -228,7 +229,8 @@ ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coo
 
    constraint->type = EPHYSICS_CONSTRAINT_P2P;
    constraint->world = ephysics_body_world_get(body1);
-   ephysics_world_constraint_add(constraint->world, constraint->bt_constraint);
+   ephysics_world_constraint_add(constraint->world, constraint,
+                                 constraint->bt_constraint);
 
    INF("Constraint added.");
    return constraint;
@@ -243,7 +245,8 @@ ephysics_constraint_del(EPhysics_Constraint *constraint)
         return;
      }
 
-   ephysics_world_constraint_del(constraint->world, constraint->bt_constraint);
+   ephysics_world_constraint_del(constraint->world, constraint,
+                                 constraint->bt_constraint);
    delete constraint->bt_constraint;
    free(constraint);
 

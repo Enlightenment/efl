@@ -35,6 +35,7 @@ struct _EPhysics_World {
      Eina_Inlist *bodies;
      Eina_List *to_delete;
      Eina_List *cb_to_delete;
+     Eina_List *constraints;
      int max_sub_steps;
      int walking;
      int cb_walking;
@@ -187,6 +188,7 @@ _ephysics_world_free(EPhysics_World *world)
 {
    EPhysics_World_Callback *cb;
    EPhysics_Body *body;
+   void *constraint;
 
    _worlds = eina_inlist_remove(_worlds, EINA_INLIST_GET(world));
 
@@ -205,6 +207,9 @@ _ephysics_world_free(EPhysics_World *world)
         world->bodies = eina_inlist_remove(world->bodies, world->bodies);
         ephysics_orphan_body_del(body);
      }
+
+   EINA_LIST_FREE(world->constraints, constraint)
+      ephysics_constraint_del((EPhysics_Constraint *)constraint);
 
    ephysics_camera_del(world->camera);
    /* FIXME uncomment lines above when dynamicsworld destructor is fixed
@@ -339,15 +344,17 @@ ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
 }
 
 void
-ephysics_world_constraint_add(EPhysics_World *world, btTypedConstraint *bt_constraint)
+ephysics_world_constraint_add(EPhysics_World *world, EPhysics_Constraint *constraint, btTypedConstraint *bt_constraint)
 {
    world->dynamics_world->addConstraint(bt_constraint);
+   world->constraints = eina_list_append(world->constraints, constraint);
 }
 
 void
-ephysics_world_constraint_del(EPhysics_World *world, btTypedConstraint *bt_constraint)
+ephysics_world_constraint_del(EPhysics_World *world, EPhysics_Constraint *constraint, btTypedConstraint *bt_constraint)
 {
    world->dynamics_world->removeConstraint(bt_constraint);
+   world->constraints = eina_list_remove(world->constraints, constraint);
 }
 
 int
