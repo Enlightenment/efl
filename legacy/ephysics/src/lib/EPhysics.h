@@ -1672,15 +1672,14 @@ EAPI double ephysics_body_angular_velocity_get(const EPhysics_Body *body);
  * increment the sleeping time.
  *
  * After every tick the sleeping time is incremented, if the body's linear and
- * angular velocity is less than the respective thresholds the sleeping time is
- * incremented by the current time step(delta time).
+ * angular speed is less than the respective thresholds the sleeping time is
+ * incremented by the current time step (delta time).
  *
  * After reaching the max sleeping time the body is marked to sleep, that means
  * the rigid body is to be deactivated.
  *
- * @note The expected linear velocity to be informed as @p linear_threshold is
- * the sum of X and Y linear velocity, that's the total velocity. The velocity
- * is measured in Evas coordinates per second.
+ * @note The expected value to be informed as @p linear_threshold is
+ * the body's speed. It is measured in Evas coordinates per second.
  *
  * @note The expected angular velocity to be informed as @p angular_threshold
  * is measured in degrees per second.
@@ -1701,7 +1700,7 @@ EAPI void ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linea
  * Get the linear sleeping threshold.
  *
  * @note The linear sleeping threshold is measured in Evas coordinates per
- * second and the angular sleeping threshold is measured in degrees..
+ * second and the angular sleeping threshold is measured in degrees per second.
  *
  * @param body The body to get the linear sleeping threshold from.
  * @param linear_threshold The linear sleeping threshold factor.
