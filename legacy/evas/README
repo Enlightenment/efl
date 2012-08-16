@@ -552,6 +552,35 @@ this loader load tga format files. these files are very old-fashioned
 but found often in the 3d graphics world.
 
 
+--enable-image-loader-generic[=static]
+
+this loader will execute a given binary to decode an image and read
+the resulting image data via a shared memory segment, a mmaped file or
+stdout. it uses the command-line to pass the filename and any load
+parameters, and reads stdout from the loader binary to get metadata like
+width, height, alpha channel flag and location of pixel data. this
+loader has no dependencies as the binaries run are to be found in
+PREIFX/lib/evas/utils and are named evas_image_loader.EXTENSION where
+.EXTENSION is replaced by the filename extension to be decoded. if
+this binary does not exist then evas_image_loader (with no extension) is
+tried as a last fallback allowing it to handle "all cases".
+
+since this loader doesn't use any libraires, it relies on runtime
+dependencies and executables existing in the utils directory. note that
+images loaded via this mechanism will have slower load times due to the
+overhead of execution of another binary, but any instability in the
+loaders themselves will not affect the application using evas.
+
+this also means that licenses such as GPL for the binaries in this
+utils directory do not affect evas and the applications or libraries
+using evas.
+
+there is a separately released evas_generic_loaders package which
+builds stand-alone binaries that can do this style of decoding for for
+evas. this package currently handles XCF, PDF, PS, RAW, SVG (via
+librsvg) and video formats (via gstreamer).
+
+
 ------------------------------------------------------------------------------
 FONT LOADERS:
 --enable-font-loader-eet[=static]
@@ -759,74 +788,11 @@ with --enable-pthreads and --enable-async-events. you really want all
 of these available.
 
 
---enable-async-render **CAUTION - MAY NOT WORK RIGHT**
-
-this enables a software multi-frame threaded renderer. this will
-allocate (for example) 2 frames to 2 cores, with one core of the cpu
-rendering the previous frame while the next frame starts rendering on
-another core in the meantime allowing for higher framerates with
-software rendering, using more cpu resources that are available on
-modern multi-core cpu's.
-
-This is buggy! it will likely cause crashes and rendering corruption.
-Do not enable it unless you plan to actually work on it. This requires you
-also set the environment variable EVAS_RENDER_MODE to "non-blocking" to
-enable it at runtime, as the compile-time enable simply sets up the feature
-to be ready to work. The runtime switch actually turns it on. If you don't
-plan to use this feature, don't enable it in the build as there is a general
-performance hit of maintaining this feature at all, so beware that
-enabling it for single core systems will likely take a performance hit.
-
-
---enable-pipe-render **DISABLED DUE TO BUGS**
+--enable-pipe-render **NOT ON BY DEFAULT DUE TO DUBIOUS IMPROVEMENTS**
 
 this enables a multiple-thread renderer that divides the rendering
 into N regions (1 per core) to speed up rendering in software when you
 have multiple cpu cores.
-
-
---enable-word-cache **DISABLED DUE TO BUGS**
-
-Cache rendered words and draw them as a single object, instead of
-individual characters.  This is a big gain for things like neon which
-draw large runs effectively.
-
-However it is useless on GL and similar back-ends as the cost in
-sending a word sized texture kills the performance gain (and GL is
-pretty good at drawing lots of small things anyway).  If it detects a GL
-backend is in use, it disables itself.
-
-By default words (strings) of more then 50 characters are not cached.
-The system caches 40 words by default, but this can be changed by
-setting EVAS_WORD_CACHE_MAX_WORDS to another number.  Setting it to 0
-will disable word-cache at run time.
-
-Text based benchmarks are 50-100% quicker.
-
-If you have any issues with word caching, please report them to either
-the e-devel mailing list or Brett Nash <nash@nash.id.uau>
-
-For GL see metric caching...
-
-
---enable-metric-cache **DISABLED DUE TO BUGS**
-
-Metric caching saves character metrics between characters in words.
-This enables it to render words much quicker as it avoids things like
-space calculations and kerning calculation.
-
-The cache size is also controlled by EVAS_WORD_CACHE_MAX_WORDS.
-
-It is useful for GL in particular, although software engines do get
-some gain.
-
-Generally it is recommended you enable one or both of word or metric caching,
-depending on your engine use.  If you are only using software, enable word
-caching (and neon on arm if you can), for GL, turn on metric caching.
-A simple solution is enable both, and let the engine sort it out at run time.
-
-If you have any issues with metric caching, please report them to either
-the e-devel mailing list or Brett Nash <nash@nash.id.uau>
 
 
 --enable-fontconfig
