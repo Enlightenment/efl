@@ -1008,6 +1008,11 @@ _ecore_evas_wl_cb_window_configure(void *data __UNUSED__, int type __UNUSED__, v
         nh = ev->h - fh;
      }
 
+   if (ee->prop.min.w > nw) nw = ee->prop.min.w;
+   else if (nw > ee->prop.max.w) nw = ee->prop.max.w;
+   if (ee->prop.min.h > nh) nh = ee->prop.min.h;
+   else if (nh > ee->prop.max.h) nh = ee->prop.max.h;
+
    if ((ee->w != nw) || (ee->h != nh))
      {
         ee->req.w = nw;
