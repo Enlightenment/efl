@@ -137,7 +137,7 @@ _icon_signal_emit(Elm_Layout_Smart_Data *sd,
                   Elm_Layout_Sub_Object_Data *sub_d,
                   Eina_Bool visible)
 {
-   char buf[64];
+   char buf[1024];
    const char *type;
 
    if (sub_d->type != SWALLOW ||
@@ -145,7 +145,10 @@ _icon_signal_emit(Elm_Layout_Smart_Data *sd,
         (strcmp("elm.swallow.end", sub_d->part))))
      return;
 
-   type = sub_d->part + 12;
+   if (strncmp(sub_d->part, "elm.swallow.", sizeof("elm.swallow.") - 1) == 0)
+     type = sub_d->part + sizeof("elm.swallow.") - 1;
+   else
+     type = sub_d->part;
 
    snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
             visible ? "visible" : "hidden");
@@ -161,11 +164,22 @@ _text_signal_emit(Elm_Layout_Smart_Data *sd,
                   Elm_Layout_Sub_Object_Data *sub_d,
                   Eina_Bool visible)
 {
-   char buf[64];
+   char buf[1024];
+   const char *type;
 
    if (sub_d->type != TEXT || strcmp("elm.text", sub_d->part))
      return;
 
+   if (strncmp(sub_d->part, "elm.text.", sizeof("elm.text.") - 1) == 0)
+     type = sub_d->part + sizeof("elm.text.") - 1;
+   else
+     type = sub_d->part;
+
+   snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
+            visible ? "visible" : "hidden");
+   edje_object_signal_emit(ELM_WIDGET_DATA(sd)->resize_obj, buf, "elm");
+
+   /* TODO: is this right? It was like that, but IMO it should be removed: */
    snprintf(buf, sizeof(buf),
             visible ? "elm,state,text,visible" : "elm,state,text,hidden");
 
