@@ -8,6 +8,12 @@
 
 int _ephysics_test_log_dom = -1;
 
+typedef struct _EPhysics_Test EPhysics_Test;
+struct _EPhysics_Test {
+     const char *name;
+     void (*func)(void *data, Evas_Object *obj, void *event_info);
+};
+
 /* examples prototypes */
 void test_bouncing_ball(void *data, Evas_Object *obj, void *event_info);
 void test_bouncing_text(void *data, Evas_Object *obj, void *event_info);
@@ -28,6 +34,28 @@ void test_velocity(void *data, Evas_Object *obj, void *event_info);
 void test_shapes(void *data, Evas_Object *obj, void *event_info);
 void test_sleeping(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
+
+static const EPhysics_Test tests[] = {
+       {"Bouncing Ball", test_bouncing_ball},
+       {"Bouncing Text", test_bouncing_text},
+       {"Camera", test_camera},
+       {"Camera Track", test_camera_track},
+       {"Colliding Balls", test_colliding_balls},
+       {"Collision Detection", test_collision},
+       {"Collision Filter", test_collision_filter},
+       {"Collision High Speed", test_collision_speed},
+       {"Constraint", test_constraint},
+       {"Delete Body", test_delete},
+       {"Falling Letters", test_falling_letters},
+       {"Growing Balls", test_growing_balls},
+       {"Jumping Balls", test_jumping_balls},
+       {"No Gravity", test_no_gravity},
+       {"Rotate", test_rotate},
+       {"Velocity", test_velocity},
+       {"Shapes", test_shapes},
+       {"Sleeping Threshold", test_sleeping},
+       {"Slider", test_slider},
+};
 
 static void
 _win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -133,14 +161,28 @@ test_win_add(Test_Data *test_data, const char *title, Eina_Bool autodel)
    test_data->layout = ly;
 }
 
-#define ADD_TEST(_name, _func) \
-   elm_list_item_append(list, _name, NULL, NULL, _func, NULL);
-
-/* FIXME add autorun and test_win_only features */
 static void
-_main_win_add(char *autorun __UNUSED__, Eina_Bool test_win_only __UNUSED__)
+_test_run(char *autorun)
 {
+   unsigned int i;
+
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(tests); i++)
+     {
+        EPhysics_Test test = tests[i];
+        if (!strcmp(test.name, autorun))
+          {
+             test.func(NULL, NULL, NULL);
+             return;
+          }
+     }
+}
+
+static void
+_main_win_add(char *autorun)
+{
+   Elm_Object_Item *selected = NULL;
    Evas_Object *win, *list;
+   unsigned int i;
 
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
    elm_win_title_set(win, "EPhysics Tests");
@@ -155,30 +197,27 @@ _main_win_add(char *autorun __UNUSED__, Eina_Bool test_win_only __UNUSED__)
    elm_win_resize_object_add(win, list);
    evas_object_show(list);
 
-   ADD_TEST("BOUNCING BALL", test_bouncing_ball);
-   ADD_TEST("BOUNCING TEXT", test_bouncing_text);
-   ADD_TEST("CAMERA", test_camera);
-   ADD_TEST("CAMERA TRACK", test_camera_track);
-   ADD_TEST("COLLIDING BALLS", test_colliding_balls);
-   ADD_TEST("COLLISION DETECTION", test_collision);
-   ADD_TEST("COLLISION FILTER", test_collision_filter);
-   ADD_TEST("COLLISION HIGH SPEED", test_collision_speed);
-   ADD_TEST("CONSTRAINT", test_constraint);
-   ADD_TEST("DELETE BODY", test_delete);
-   ADD_TEST("FALLING LETTERS", test_falling_letters);
-   ADD_TEST("GROWING BALLS", test_growing_balls);
-   ADD_TEST("JUMPING BALLS", test_jumping_balls);
-   ADD_TEST("NO GRAVITY", test_no_gravity);
-   ADD_TEST("ROTATE", test_rotate);
-   ADD_TEST("VELOCITY", test_velocity);
-   ADD_TEST("SHAPES", test_shapes);
-   ADD_TEST("SLEEPING THRESHOLD", test_sleeping);
-   ADD_TEST("SLIDER", test_slider);
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(tests); i++)
+     {
+        Elm_Object_Item *item;
+        EPhysics_Test test;
+
+        test = tests[i];
+        item = elm_list_item_append(list, test.name, NULL, NULL, test.func,
+                                    NULL);
+
+        if ((autorun) && (!strcmp(test.name, autorun)))
+          selected = item;
+     }
 
    elm_list_go(list);
-}
 
-#undef ADD_TEST
+   if (selected)
+     elm_list_item_bring_in(selected);
+
+   if (autorun)
+     _test_run(autorun);
+}
 
 EAPI_MAIN int
 elm_main(int argc, char **argv)
@@ -201,7 +240,7 @@ elm_main(int argc, char **argv)
 
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
-    * ex:  elementary_test "Box Vert 2" */
+    * ex: ephysics_test "Jumping Balls" */
    if (argc == 2)
      autorun = argv[1];
    else if (argc == 3)
@@ -216,7 +255,11 @@ elm_main(int argc, char **argv)
 
    elm_theme_extension_add(NULL,
                            PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj");
-   _main_win_add(autorun, test_win_only);
+
+   if (test_win_only)
+       _test_run(autorun);
+   else
+       _main_win_add(autorun);
 
    elm_run();
 

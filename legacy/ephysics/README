@@ -38,6 +38,16 @@ well, that showcases EPhysics capabilites. Run
   $ ephysics_test
 
 to see these examples.
+
+It supports to launch a specified test on command line, like
+
+ $ ephysics_test "Jumping Balls"
+
+Also, it can run only the test, avoiding the main menu, with parameter
+--test-win-only or -to (it must to be passed before the test name):
+
+ $ ephysics_test -to Camera
+
 ----
 
 DOCS
