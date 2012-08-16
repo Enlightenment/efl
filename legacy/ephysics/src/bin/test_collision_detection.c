@@ -156,8 +156,7 @@ test_collision(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         return;
      }
 
-   test_win_add((Test_Data *)collision_data, "Collision Detection",
-                EINA_FALSE);
+   test_win_add((Test_Data *)collision_data, "Collision Detection", EINA_FALSE);
    elm_object_signal_emit(collision_data->base.layout, "borders,show",
                           "ephysics_test");
    evas_object_smart_callback_add(collision_data->base.win,

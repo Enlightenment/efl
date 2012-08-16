@@ -94,7 +94,8 @@
                text {
                   font: "Sans";
                   size: 12;
-                  text: "Press the arrows on the keyboard to give impulse to the object.";
+                  text: "Press the arrows on the keyboard to give"
+                        "impulse to the object.";
                }
             }
             description {
@@ -110,9 +111,9 @@
             mouse_events: 0;
             description {
                state: "default" 0.0;
-               color: 232 224 215 0;
-               rel1.relative: 0.08 0.0;
-               rel2.relative: 0.92 0.04;
+               color: 0 0 0 0;
+               rel1.relative: 0.08 0.40;
+               rel2.relative: 0.92 0.44;
                text {
                   font: "Sans";
                   size: 12;
@@ -121,7 +122,28 @@
             description {
                state: "visible" 0.0;
                inherit: "default" 0.0;
-               color: 95 56 19 255;
+               color: 198 177 153 255;
+            }
+         }
+
+         part {
+            name: "linear_acc";
+            type: TEXT;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+               rel1.relative: 0.08 0.44;
+               rel2.relative: 0.92 0.48;
+               text {
+                  font: "Sans";
+                  size: 12;
+               }
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 198 177 153 255;
             }
          }
 
@@ -131,9 +153,9 @@
             mouse_events: 0;
             description {
                state: "default" 0.0;
-               color: 232 224 215 0;
-               rel1.relative: 0.08 0.04;
-               rel2.relative: 0.92 0.08;
+               color: 0 0 0 0;
+               rel1.relative: 0.08 0.54;
+               rel2.relative: 0.92 0.58;
                text {
                   font: "Sans";
                   size: 12;
@@ -142,7 +164,28 @@
             description {
                state: "visible" 0.0;
                inherit: "default" 0.0;
-               color: 95 56 19 255;
+               color: 198 177 153 255;
+            }
+         }
+
+         part {
+            name: "angular_acc";
+            type: TEXT;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 0;
+               rel1.relative: 0.08 0.58;
+               rel2.relative: 0.92 0.62;
+               text {
+                  font: "Sans";
+                  size: 12;
+               }
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               color: 198 177 153 255;
             }
          }
 
@@ -223,7 +266,9 @@
             signal: "velocity,show";
             action: STATE_SET "visible" 0.0;
             target: "linear_vel";
+            target: "linear_acc";
             target: "angular_vel";
+            target: "angular_acc";
           }
 
       }
