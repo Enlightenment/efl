@@ -121,6 +121,7 @@ struct _Ecore_Wl_Input
    struct wl_keyboard *keyboard;
    struct wl_touch *touch;
 
+   const char *cursor_name;
    struct wl_surface *cursor_surface;
    struct wl_callback *cursor_frame_cb;
 
@@ -182,6 +183,7 @@ struct _Ecore_Wl_Window
 
    /* Eina_Bool redraw_scheduled : 1; */
    /* Eina_Bool resize_scheduled : 1; */
+   Eina_Bool alpha : 1;
    Eina_Bool transparent : 1;
    Eina_Bool moving : 1;
    Eina_Bool resizing : 1;
