@@ -26,6 +26,19 @@ struct _EPhysics_Body_Collision {
      Evas_Coord y;
 };
 
+static inline void
+_ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshold, double angular_threshold, double rate)
+{
+   body->rigid_body->setSleepingThresholds(linear_threshold / rate,
+                                           angular_threshold / RAD_TO_DEG);
+}
+
+static inline void
+_ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, double rate)
+{
+   body->rigid_body->setLinearVelocity(btVector3(x / rate, y / rate, 0));
+}
+
 static void
 _ephysics_body_event_callback_del(EPhysics_Body *body, EPhysics_Body_Callback *cb)
 {
@@ -256,13 +269,12 @@ _ephysics_body_evas_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
-_ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, double rate)
 {
-   double rate, mx, my, sx, sy;
+   double mx, my, sx, sy;
    btTransform trans;
    int wy, height;
 
-   rate = ephysics_world_rate_get(body->world);
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
    height += wy;
 
@@ -285,6 +297,8 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    body->w = w;
    body->h = h;
 
+   body->rigid_body->activate(1);
+
    DBG("Body %p position changed to %lf, %lf.", body, mx, my);
    DBG("Body %p scale changed to %lf, %lf.", body, sx, sy);
 }
@@ -301,7 +315,8 @@ _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
 
    DBG("Resizing body %p to w=%i, h=%i", body, w, h);
    ephysics_body_geometry_get(body, &x, &y, NULL, NULL);
-   _ephysics_body_geometry_set(body, x, y, w, h);
+   _ephysics_body_geometry_set(body, x, y, w, h,
+                               ephysics_world_rate_get(body->world));
 }
 
 static void
@@ -402,6 +417,21 @@ _ephysics_body_outside_render_area_check(EPhysics_Body *body)
         DBG("Body %p out of render area", body);
         ephysics_body_del(body);
      }
+}
+
+void
+ephysics_body_recalc(EPhysics_Body *body, double rate)
+{
+   Evas_Coord x, y, w, h;
+   double vx, vy, lt, at;
+
+   ephysics_body_geometry_get(body, &x, &y, &w, &h);
+   ephysics_body_linear_velocity_get(body, &vx, &vy);
+   ephysics_body_sleeping_threshold_get(body, &lt, &at);
+
+   _ephysics_body_geometry_set(body, x, y, w, h, rate);
+   _ephysics_body_linear_velocity_set(body, vx, vy, rate);
+   _ephysics_body_sleeping_threshold_set(body, lt, at, rate);
 }
 
 void
@@ -707,7 +737,8 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
                                   _ephysics_body_evas_obj_resize_cb, body);
    evas_object_geometry_get(body->evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
-   _ephysics_body_geometry_set(body, obj_x, obj_y, obj_w, obj_h);
+   _ephysics_body_geometry_set(body, obj_x, obj_y, obj_w, obj_h,
+                               ephysics_world_rate_get(body->world));
 }
 
 EAPI Evas_Object *
@@ -761,7 +792,8 @@ ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas
         return;
      }
 
-   _ephysics_body_geometry_set(body, x, y, w, h);
+   _ephysics_body_geometry_set(body, x, y, w, h,
+                               ephysics_world_rate_get(body->world));
 }
 
 EAPI void
@@ -833,8 +865,8 @@ ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y)
         return;
      }
 
-   rate = ephysics_world_rate_get(body->world);
-   body->rigid_body->setLinearVelocity(btVector3(x / rate, y / rate, 0));
+   _ephysics_body_linear_velocity_set(body, x, y,
+                                      ephysics_world_rate_get(body->world));
    DBG("Linear velocity of body %p set to %lf, %lf", body, x, y);
 }
 
@@ -882,17 +914,15 @@ ephysics_body_angular_velocity_get(const EPhysics_Body *body)
 EAPI void
 ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshold, double angular_threshold)
 {
-   double rate;
-
    if (!body)
      {
         ERR("Can't set sleeping thresholds, body is null.");
         return;
      }
 
-   rate = ephysics_world_rate_get(body->world);
-   body->rigid_body->setSleepingThresholds(linear_threshold / rate,
-                                           angular_threshold / RAD_TO_DEG);
+   _ephysics_body_sleeping_threshold_set(body, linear_threshold,
+                                         angular_threshold,
+                                         ephysics_world_rate_get(body->world));
 }
 
 EAPI void

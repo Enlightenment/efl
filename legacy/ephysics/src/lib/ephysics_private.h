@@ -99,6 +99,7 @@ void ephysics_orphan_body_del(EPhysics_Body *body);
 void ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body, btVector3 position);
 btRigidBody *ephysics_body_rigid_body_get(const EPhysics_Body *body);
 void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
+void ephysics_body_recalc(EPhysics_Body *body, double rate);
 
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);
 void ephysics_camera_del(EPhysics_Camera *camera);
