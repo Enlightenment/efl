@@ -42,7 +42,7 @@ _world_populate(Test_Data *test_data)
                                     update_object_cb, sh1);
    ephysics_body_restitution_set(box_body1, 0.7);
    ephysics_body_friction_set(box_body1, 0);
-   ephysics_body_linear_velocity_set(box_body1, -30, -40);
+   ephysics_body_linear_velocity_set(box_body1, -30, 40);
    ephysics_body_sleeping_threshold_set(box_body1, 0.1, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body1);
 
@@ -68,7 +68,7 @@ _world_populate(Test_Data *test_data)
                                     update_object_cb, sh2);
    ephysics_body_restitution_set(box_body2, 0.7);
    ephysics_body_friction_set(box_body2, 0);
-   ephysics_body_linear_velocity_set(box_body2, 40, 30);
+   ephysics_body_linear_velocity_set(box_body2, 40, -30);
    ephysics_body_angular_velocity_set(box_body2, 36);
    ephysics_body_sleeping_threshold_set(box_body2, 0.1, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, box_body2);
