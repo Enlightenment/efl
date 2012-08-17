@@ -814,6 +814,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
    Eina_Bool clean_them = EINA_FALSE;
 
    evas_object_clip_recalc(obj);
+
    RDI(level);
    RD("      { evas_render_mapped(%p, %p,   %p, %p,   %i, %i,   %i,   %i)\n", e, obj, context, surface, off_x, off_y, mapped, level);
    if (mapped)
@@ -858,7 +859,6 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              RD("      }\n");
              return clean_them;
           }
-
         evas_object_map_update(obj, off_x, off_y, sw, sh, sw, sh);
 
         if (obj->cur.map->surface)
@@ -1089,35 +1089,10 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                }
              else
                {
-                  if (!obj->cur.map)
+                  RDI(level);
+
+                  if (obj->cur.clipper)
                     {
-                       int x, y, w, h;
-
-                       RDI(level);
-
-                       x = obj->cur.cache.clip.x + off_x;
-                       y = obj->cur.cache.clip.y + off_y;
-                       w = obj->cur.cache.clip.w;
-                       h = obj->cur.cache.clip.h;
-
-                       if (obj->cur.clipper)
-                         {
-                            if (_evas_render_has_map(obj))
-                              evas_object_clip_recalc(obj);
-
-                            RD("        clipper: %i %i %ix%i\n",
-                               obj->cur.clipper->cur.cache.clip.x + off_x,
-                               obj->cur.clipper->cur.cache.clip.y + off_y,
-                               obj->cur.clipper->cur.cache.clip.w,
-                               obj->cur.clipper->cur.cache.clip.h);
-
-                            RECTS_CLIP_TO_RECT(x, y, w, h,
-                                               obj->cur.clipper->cur.cache.clip.x + off_x,
-                                               obj->cur.clipper->cur.cache.clip.y + off_y,
-                                               obj->cur.clipper->cur.cache.clip.w,
-                                               obj->cur.clipper->cur.cache.clip.h);
-                         }
-
                        RD("        clip: %i %i %ix%i [%i %i %ix%i]\n",
                           obj->cur.cache.clip.x + off_x,
                           obj->cur.cache.clip.y + off_y,
@@ -1127,25 +1102,34 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                           obj->cur.geometry.y + off_y,
                           obj->cur.geometry.w,
                           obj->cur.geometry.h);
+
+                       RD("        clipper: %i %i %ix%i\n",
+                          obj->cur.clipper->cur.cache.clip.x + off_x,
+                          obj->cur.clipper->cur.cache.clip.y + off_y,
+                          obj->cur.clipper->cur.cache.clip.w,
+                          obj->cur.clipper->cur.cache.clip.h);
+
+                       int x, y, w, h;
+
+                       if (_evas_render_has_map(obj))
+                         evas_object_clip_recalc(obj);
+
+                       x = obj->cur.cache.clip.x + off_x;
+                       y = obj->cur.cache.clip.y + off_y;
+                       w = obj->cur.cache.clip.w;
+                       h = obj->cur.cache.clip.h;
+
+                       RECTS_CLIP_TO_RECT(x, y, w, h,
+                                          obj->cur.clipper->cur.cache.clip.x + off_x,
+                                          obj->cur.clipper->cur.cache.clip.y + off_y,
+                                          obj->cur.clipper->cur.cache.clip.w,
+                                          obj->cur.clipper->cur.cache.clip.h);
+
                        e->engine.func->context_clip_set(e->engine.data.output,
                                                         ctx, x, y, w, h);
                     }
-                  else
-                    {
-                       RDI(level);
-                       RD("        noclip\n");
-                    }
                   obj->func->render(obj, e->engine.data.output, ctx,
                                     surface, off_x, off_y);
-                  /*
-                                      obj->layer->evas->engine.func->context_color_set(e->engine.data.output,
-                                      ctx,
-                                      0, 30, 0, 30);
-                                      obj->layer->evas->engine.func->rectangle_draw(e->engine.data.output,
-                                      ctx,
-                                      surface,
-                                      0, 0, 9999, 9999);
-                   */
                }
              e->engine.func->context_free(e->engine.data.output, ctx);
           }
