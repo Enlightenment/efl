@@ -1,11 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
+#: src/lib/elm_config.c:2054
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-10 19:57+0900\n"
+"POT-Creation-Date: 2012-08-17 12:49+0900\n"
 "PO-Revision-Date: 2012-08-14 16:16-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -22,7 +23,7 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1373
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1375
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -69,19 +70,19 @@ msgstr "Verificação"
 msgid "default:LTR"
 msgstr "padrão: LTR"
 
-#: src/lib/elm_entry.c:1367
+#: src/lib/elm_entry.c:1369
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1370
+#: src/lib/elm_entry.c:1372
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1384
+#: src/lib/elm_entry.c:1386
 msgid "Select"
 msgstr "Selecionar"
 
-#: src/lib/elm_entry.c:1390
+#: src/lib/elm_entry.c:1392
 msgid "Paste"
 msgstr "Colar"
 

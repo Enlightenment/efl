@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-10 19:57+0900\n"
+"POT-Creation-Date: 2012-08-17 12:49+0900\n"
 "PO-Revision-Date: 2011-02-22 09:09-0800\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung@gmail.com>\n"
 "Language-Team: General\n"
@@ -25,7 +25,7 @@ msgstr "위로"
 msgid "Home"
 msgstr "홈"
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1373
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1375
 msgid "Cancel"
 msgstr "취소"
 
@@ -72,19 +72,19 @@ msgstr ""
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_entry.c:1367
+#: src/lib/elm_entry.c:1369
 msgid "Copy"
 msgstr "복사"
 
-#: src/lib/elm_entry.c:1370
+#: src/lib/elm_entry.c:1372
 msgid "Cut"
 msgstr "잘라내기"
 
-#: src/lib/elm_entry.c:1384
+#: src/lib/elm_entry.c:1386
 msgid "Select"
 msgstr "선택"
 
-#: src/lib/elm_entry.c:1390
+#: src/lib/elm_entry.c:1392
 msgid "Paste"
 msgstr "붙여넣기"
 
