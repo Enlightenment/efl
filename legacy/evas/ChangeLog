@@ -961,3 +961,8 @@
 2012-08-14  Tom Hacohen (TAsn)
 
 	* Textblock: Fixed range geometry when the last item is a format.
+
+2012-08-17  Hermet (ChunEon Park)
+
+	* Let clip the mapped obj even if it is a child of the mapped obj and do
+  	it only when clipper exists
