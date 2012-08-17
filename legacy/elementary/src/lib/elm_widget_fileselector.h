@@ -3,10 +3,6 @@
 
 #include "elm_widget_layout.h"
 
-#ifdef HAVE_EIO
-# include <Eio.h>
-#endif
-
 /**
  * @addtogroup Widget
  * @{
