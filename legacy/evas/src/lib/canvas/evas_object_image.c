@@ -450,6 +450,7 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
    if (obj->delete_me)
      {
         CRIT("Setting deleted object %p as image source %p", src, obj);
+        abort();
         return EINA_FALSE;
      }
    if (src)
@@ -457,22 +458,26 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
         if (src->delete_me)
           {
              CRIT("Setting object %p to deleted image source %p", src, obj);
+             abort();
              return EINA_FALSE;
           }
         if (!src->layer)
           {
              CRIT("No evas surface associated with source object (%p)", obj);
+             abort();
              return EINA_FALSE;
           }
         if ((obj->layer && src->layer) &&
             (obj->layer->evas != src->layer->evas))
           {
              CRIT("Setting object %p from Evas (%p) from another Evas (%p)", src, src->layer->evas, obj->layer->evas);
+             abort();
              return EINA_FALSE;
           }
         if (src == obj)
           {
              CRIT("Setting object %p as a source for itself", obj);
+             abort();
              return EINA_FALSE;
           }
      }
