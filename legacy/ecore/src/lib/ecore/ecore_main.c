@@ -2008,7 +2008,7 @@ _ecore_main_win32_select(int             nfds __UNUSED__,
         char *m;
 
         m = evil_last_error_get();
-        ERR(" * %s\n", m);
+        ERR("%s", m);
         free(m);
         res = -1;
      }
