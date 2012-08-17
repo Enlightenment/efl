@@ -963,8 +963,11 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    ev->multi.x = input->sx;
    ev->multi.y = input->sy;
 
-   ev->window = win->id;
-   ev->event_window = win->id;
+   if (win)
+     {
+        ev->window = win->id;
+        ev->event_window = win->id;
+     }
 
    ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
@@ -985,8 +988,11 @@ _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsig
    ev->modifiers = input->modifiers;
    ev->timestamp = timestamp;
 
-   ev->window = win->id;
-   ev->event_window = win->id;
+   if (win)
+     {
+        ev->window = win->id;
+        ev->event_window = win->id;
+     }
 
    ecore_event_add(ECORE_WL_EVENT_MOUSE_IN, ev, NULL, NULL);
 }
@@ -1007,8 +1013,11 @@ _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsi
    ev->modifiers = input->modifiers;
    ev->timestamp = timestamp;
 
-   ev->window = win->id;
-   ev->event_window = win->id;
+   if (win)
+     {
+        ev->window = win->id;
+        ev->event_window = win->id;
+     }
 
    ecore_event_add(ECORE_WL_EVENT_MOUSE_OUT, ev, NULL, NULL);
 }
@@ -1022,7 +1031,7 @@ _ecore_wl_input_focus_in_send(Ecore_Wl_Input *input __UNUSED__, Ecore_Wl_Window 
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Focus_In)))) return;
    ev->timestamp = timestamp;
-   ev->win = win->id;
+   if (win) ev->win = win->id;
    ecore_event_add(ECORE_WL_EVENT_FOCUS_IN, ev, NULL, NULL);
 }
 
@@ -1035,7 +1044,7 @@ _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input __UNUSED__, Ecore_Wl_Window
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Focus_Out)))) return;
    ev->timestamp = timestamp;
-   ev->win = win->id;
+   if (win) ev->win = win->id;
    ecore_event_add(ECORE_WL_EVENT_FOCUS_OUT, ev, NULL, NULL);
 }
 
@@ -1078,8 +1087,11 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    ev->multi.x = input->sx;
    ev->multi.y = input->sy;
 
-   ev->window = win->id;
-   ev->event_window = win->id;
+   if (win)
+     {
+        ev->window = win->id;
+        ev->event_window = win->id;
+     }
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
 }
@@ -1122,8 +1134,11 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsig
    ev->multi.x = input->sx;
    ev->multi.y = input->sy;
 
-   ev->window = win->id;
-   ev->event_window = win->id;
+   if (win)
+     {
+        ev->window = win->id;
+        ev->event_window = win->id;
+     }
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }
