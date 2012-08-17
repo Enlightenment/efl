@@ -31,7 +31,7 @@ AC_CACHE_CHECK([whether the Objective C compiler works],
                 AC_LANG_POP([Objective C])])], [rw_cv_prog_objc_works=no])
 ])
 
-AC_INIT([evas], [v_ver-alpha], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([evas], [v_ver-beta], [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
