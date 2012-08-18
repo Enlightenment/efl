@@ -439,6 +439,10 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %doc AUTHORS COPYING ChangeLog INSTALL README
 %{_bindir}/%{name}*
 %{_libdir}/*.so.*
+%{_libdir}/evas/modules/engines/wayland_shm/*/module.so
+%{_libdir}/evas/cserve2/loaders/*/*/module.*
+%{_prefix}/libexec/*
+%{_datadir}/evas/checkme
 
 %files devel
 %defattr(-, root, root)

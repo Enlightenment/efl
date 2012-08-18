@@ -64,7 +64,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %defattr(-, root, root)
 %doc AUTHORS COPYING README
 %{_libdir}/*.so.*
-%{_libdir}/enlightenment/utils/eeze_scanner
+#%{_libdir}/enlightenment/utils/eeze_scanner
 %{_bindir}/*
 
 %files devel

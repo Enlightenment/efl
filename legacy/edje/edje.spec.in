@@ -82,7 +82,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(-, root, root)
 %{_libdir}/*.so
-%{_libdir}/edje/modules/multisense_factory/*/module.*
 %{_libdir}/*.la
 %{_libdir}/*.a
 %{_libdir}/pkgconfig/*
@@ -98,6 +97,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/edje_player
 %{_bindir}/edje_external_inspector
 %{_bindir}/edje_inspector
+%{_bindir}/edje_watch
 %{_bindir}/inkscape2edc
 %{_datadir}/edje/include/edje.inc
 %{_datadir}/mime/packages/edje.xml
