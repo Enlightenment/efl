@@ -1045,6 +1045,8 @@ EAPI extern int ECORE_X_EVENT_DESKTOP_CHANGE;
 EAPI extern int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW;
 EAPI extern int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
 EAPI extern int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE;
+EAPI extern int ECORE_X_EVENT_XKB_STATE_NOTIFY; /** @since 1.7 */
+EAPI extern int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY; /** @since 1.7 */
 
 EAPI extern int ECORE_X_EVENT_GENERIC;
 
@@ -2169,6 +2171,12 @@ struct _Ecore_X_Event_Damage
 
 typedef struct _Ecore_X_Event_Damage Ecore_X_Event_Damage;
 
+struct _Ecore_X_Event_Xkb
+{
+   int group;
+};
+typedef struct _Ecore_X_Event_Xkb Ecore_X_Event_Xkb; /** @since 1.7 */
+
 EAPI Eina_Bool      ecore_x_damage_query(void);
 EAPI Ecore_X_Damage ecore_x_damage_new(Ecore_X_Drawable d, Ecore_X_Damage_Report_Level level);
 EAPI void           ecore_x_damage_free(Ecore_X_Damage damage);
@@ -2375,8 +2383,8 @@ EAPI void
 ecore_x_e_illume_window_state_set(Ecore_X_Window win,
                                   Ecore_X_Illume_Window_State state);
 
-EAPI Ecore_X_Illume_Window_State
-ecore_x_e_illume_window_state_get(Ecore_X_Window win);
+EAPI Ecore_X_Illume_Window_State           ecore_x_e_illume_window_state_get(Ecore_X_Window win);
+EAPI void                                  ecore_x_xkb_select_group(int group); /* @since 1.7 */
 
 #ifdef __cplusplus
 }

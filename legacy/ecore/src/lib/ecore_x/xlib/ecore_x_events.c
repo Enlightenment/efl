@@ -2221,7 +2221,7 @@ _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
 void
 _ecore_x_event_handle_damage_notify(XEvent *event)
 {
-   XDamageNotifyEvent *damage_event;
+   XDamageNotifyEvent *damage_event;   
    Ecore_X_Event_Damage *e;
 
    _ecore_x_last_event_mouse_move = 0;
@@ -2496,4 +2496,21 @@ _ecore_x_event_handle_gesture_notify_group(XEvent *xevent)
 }
 
 #endif /* ifdef ECORE_XGESTURE */
-
+#ifdef ECORE_XKB
+void
+_ecore_x_event_handle_xkb(XEvent *xevent)
+{
+   XkbEvent *xkbev;
+   Ecore_X_Event_Xkb *e;
+   
+   xkbev = (XkbEvent *) xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Xkb));
+   if (!e)
+     return;
+   e->group = xkbev->state.group;
+   if (xkbev->any.xkb_type == XkbStateNotify)
+     ecore_event_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, e, NULL, NULL);
+   else if (xkbev->any.xkb_type == XkbNewKeyboardNotify)
+     ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, e, NULL, NULL);
+}
+#endif /* ifdef ECORE_XKB */

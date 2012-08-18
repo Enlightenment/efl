@@ -180,6 +180,8 @@ EAPI int ECORE_X_EVENT_DESKTOP_CHANGE = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = 0;
+EAPI int ECORE_X_EVENT_XKB_STATE_NOTIFY = 0;
+EAPI int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_GENERIC = 0;
 
 void
@@ -243,6 +245,8 @@ _ecore_xcb_events_init(void)
         ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = ecore_event_type_new();
         ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = ecore_event_type_new();
         ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = ecore_event_type_new();
+        ECORE_X_EVENT_XKB_STATE_NOTIFY = ecore_event_type_new();
+        ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = ecore_event_type_new();
         ECORE_X_EVENT_GENERIC = ecore_event_type_new();
      }
 }

@@ -50,6 +50,9 @@ static int _ecore_x_event_damage_id = 0;
 #ifdef ECORE_XGESTURE
 static int _ecore_x_event_gesture_id = 0;
 #endif /* ifdef ECORE_XGESTURE */
+#ifdef ECORE_XKB
+static int _ecore_x_event_xkb_id = 0;
+#endif /* ifdef ECORE_XKB */
 static int _ecore_x_event_handlers_num = 0;
 static void (**_ecore_x_event_handlers) (XEvent * event) = NULL;
 
@@ -123,6 +126,10 @@ EAPI int ECORE_X_EVENT_DESKTOP_CHANGE = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = 0;
 EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = 0;
+
+EAPI int ECORE_X_EVENT_XKB_STATE_NOTIFY = 0;
+EAPI int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = 0;
+
 
 EAPI int ECORE_X_EVENT_GENERIC = 0;
 
@@ -299,7 +306,9 @@ ecore_x_init(const char *name)
    int gesture_base = 0;
    int gesture_err_base = 0;
 #endif /* ifdef ECORE_XGESTURE */
-
+#ifdef ECORE_XKB
+   int xkb_base = 0;
+#endif /* ifdef ECORE_XKB */
    if (++_ecore_x_init_count != 1)
      return _ecore_x_init_count;
 
@@ -390,6 +399,18 @@ ecore_x_init(const char *name)
 
    ECORE_X_EVENT_HANDLERS_GROW(gesture_base, GestureNumberEvents);
 #endif /* ifdef ECORE_XGESTURE */
+#ifdef ECORE_XKB
+     {
+        int dummy;
+        
+        if (XkbQueryExtension(_ecore_x_disp, &dummy, &xkb_base,
+                              &dummy, &dummy, &dummy))
+          _ecore_x_event_xkb_id = xkb_base;
+        XkbSelectEventDetails(_ecore_x_disp, XkbUseCoreKbd, XkbStateNotify,
+                              XkbAllStateComponentsMask, XkbGroupStateMask);
+     }
+   ECORE_X_EVENT_HANDLERS_GROW(xkb_base, XkbNumberEvents);
+#endif
 
    _ecore_x_event_handlers = calloc(_ecore_x_event_handlers_num, sizeof(void *));
    if (!_ecore_x_event_handlers)
@@ -502,7 +523,9 @@ ecore_x_init(const char *name)
         Bool works = 0;
         XkbSetDetectableAutoRepeat(_ecore_x_disp, 1, &works);
      }
-   while (0);
+     while (0);
+   if (_ecore_x_event_xkb_id)
+   _ecore_x_event_handlers[_ecore_x_event_xkb_id] = _ecore_x_event_handle_xkb;
 #endif /* ifdef ECORE_XKB */
 
 #ifdef ECORE_XGESTURE
@@ -585,6 +608,9 @@ ecore_x_init(const char *name)
         ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = ecore_event_type_new();
         ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = ecore_event_type_new();
 
+        ECORE_X_EVENT_XKB_STATE_NOTIFY = ecore_event_type_new();
+        ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = ecore_event_type_new();
+	
         ECORE_X_EVENT_GENERIC = ecore_event_type_new();
      }
 
@@ -1016,14 +1042,12 @@ _ecore_x_fd_handler(void *data,
         XEvent ev;
 
         XNextEvent(d, &ev);
-
 #ifdef ENABLE_XIM
         /* Filter event for XIM */
         if (XFilterEvent(&ev, ev.xkey.window))
           continue;
 
 #endif /* ifdef ENABLE_XIM */
-
         if ((ev.type >= 0) && (ev.type < _ecore_x_event_handlers_num))
           {
              if (_ecore_x_event_handlers[AnyXEvent])
@@ -2133,6 +2157,14 @@ ecore_x_default_depth_get(Ecore_X_Display *disp,
                           Ecore_X_Screen *screen)
 {
    return DefaultDepth(disp, ecore_x_screen_index_get(screen));
+}
+
+EAPI void
+ecore_x_xkb_select_group(int group)
+{
+#ifdef ECORE_XKB
+   XkbLockGroup(_ecore_x_disp, XkbUseCoreKbd, group);
+#endif
 }
 
 /*****************************************************************************/

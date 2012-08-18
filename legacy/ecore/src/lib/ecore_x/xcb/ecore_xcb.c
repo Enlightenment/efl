@@ -1404,6 +1404,12 @@ ecore_x_default_depth_get(Ecore_X_Display *disp __UNUSED__, Ecore_X_Screen *scre
    return s->root_depth;
 }
 
+API void
+ecore_x_xkb_select_group(int group)
+{
+   // XXX: implement me */
+}
+
 /**
  * Sets the timeout for a double and triple clicks to be flagged.
  *

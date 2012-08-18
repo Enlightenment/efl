@@ -258,6 +258,9 @@ void _ecore_x_event_handle_fixes_selection_notify(XEvent *xevent);
 #ifdef ECORE_XDAMAGE
 void      _ecore_x_event_handle_damage_notify(XEvent *xevent);
 #endif /* ifdef ECORE_XDAMAGE */
+#ifdef ECORE_XKB
+void   _ecore_x_event_handle_xkb(XEvent *xevent);
+#endif  /* ifdef ECORE_XKB */
 void      _ecore_x_event_handle_generic_event(XEvent *xevent);
 
 void      _ecore_x_selection_data_init(void);
