@@ -27,8 +27,10 @@ struct _Entry
    Eina_List *anchors;
    Eina_List *anchorlist;
    Eina_List *itemlist;
+   Eina_List *seq;
    char *selection;
    Edje_Input_Panel_Lang input_panel_lang;
+   Eina_Bool composing : 1;
    Eina_Bool selecting : 1;
    Eina_Bool have_selection : 1;
    Eina_Bool select_allow : 1;
@@ -1143,6 +1145,31 @@ _password_timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static Eina_Bool
+_is_modifier(const char *key)
+{
+   if ((!strncmp(key, "Shift", 5)) ||
+       (!strncmp(key, "Control", 7)) ||
+       (!strncmp(key, "Alt", 3)) ||
+       (!strncmp(key, "Meta", 4)) ||
+       (!strncmp(key, "Super", 5)) ||
+       (!strncmp(key, "Hyper", 5)) ||
+       (!strcmp(key, "Scroll_Lock")) ||
+       (!strcmp(key, "Num_Lock")) ||
+       (!strcmp(key, "Caps_Lock")))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+static void
+_compose_seq_reset(Entry *en)
+{
+   char *str;
+   
+   EINA_LIST_FREE(en->seq, str) eina_stringshare_del(str);
+   en->composing = EINA_FALSE;
+}
+
 static void
 _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
@@ -1166,10 +1193,13 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      {
         Ecore_IMF_Event_Key_Down ecore_ev;
         ecore_imf_evas_event_key_down_wrap(ev, &ecore_ev);
-        if (ecore_imf_context_filter_event(en->imf_context,
-                                           ECORE_IMF_EVENT_KEY_DOWN,
-                                           (Ecore_IMF_Event *)&ecore_ev))
-          return;
+        if (!en->composing)
+          {
+             if (ecore_imf_context_filter_event(en->imf_context,
+                                                ECORE_IMF_EVENT_KEY_DOWN,
+                                                (Ecore_IMF_Event *)&ecore_ev))
+               return;
+          }
      }
 #endif
 
@@ -1186,6 +1216,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    cursor_changed = EINA_FALSE;
    if (!strcmp(ev->keyname, "Escape"))
      {
+        _compose_seq_reset(en);
         // dead keys here. Escape for now (should emit these)
         _edje_emit(ed, "entry,key,escape", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1193,6 +1224,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if (!strcmp(ev->keyname, "Up") ||
             (!strcmp(ev->keyname, "KP_Up") && !ev->string))
      {
+        _compose_seq_reset(en);
         if (multiline)
           {
              if (en->select_allow)
@@ -1214,6 +1246,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if (!strcmp(ev->keyname, "Down") ||
             (!strcmp(ev->keyname, "KP_Down") && !ev->string))
      {
+        _compose_seq_reset(en);
         if (multiline)
           {
              if (en->select_allow)
@@ -1235,6 +1268,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if (!strcmp(ev->keyname, "Left") ||
             (!strcmp(ev->keyname, "KP_Left") && !ev->string))
      {
+        _compose_seq_reset(en);
         if (en->select_allow)
           {
              if (shift) _sel_start(en->cursor, rp->object, en);
@@ -1255,6 +1289,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if (!strcmp(ev->keyname, "Right") ||
             (!strcmp(ev->keyname, "KP_Right") && !ev->string))
      {
+        _compose_seq_reset(en);
         if (en->select_allow)
           {
              if (shift) _sel_start(en->cursor, rp->object, en);
@@ -1274,6 +1309,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if (!strcmp(ev->keyname, "BackSpace"))
      {
+        _compose_seq_reset(en);
         if (control && !en->have_selection)
           {
              // del to start of previous word
@@ -1312,6 +1348,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if (!strcmp(ev->keyname, "Delete") ||
             (!strcmp(ev->keyname, "KP_Delete") && !ev->string))
      {
+        _compose_seq_reset(en);
         if (control)
           {
              // del to end of next word
@@ -1347,6 +1384,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if (!strcmp(ev->keyname, "Home") ||
             ((!strcmp(ev->keyname, "KP_Home")) && !ev->string))
      {
+        _compose_seq_reset(en);
         if (en->select_allow)
           {
              if (shift) _sel_start(en->cursor, rp->object, en);
@@ -1366,6 +1404,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if (!strcmp(ev->keyname, "End") ||
             ((!strcmp(ev->keyname, "KP_End")) && !ev->string))
      {
+        _compose_seq_reset(en);
         if (en->select_allow)
           {
              if (shift) _sel_start(en->cursor, rp->object, en);
@@ -1384,12 +1423,14 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if ((control) && (!shift) && (!strcmp(ev->keyname, "v")))
      {
+        _compose_seq_reset(en);
         _edje_emit(ed, "entry,paste,request", rp->part->name);
         _edje_emit(ed, "entry,paste,request,3", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!strcmp(ev->keyname, "a")))
      {
+        _compose_seq_reset(en);
         if (shift)
           {
              _edje_emit(ed, "entry,selection,none,request", rp->part->name);
@@ -1403,16 +1444,19 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if ((control) && (((!shift) && !strcmp(ev->keyname, "c")) || !strcmp(ev->keyname, "Insert")))
      {
+        _compose_seq_reset(en);
         _edje_emit(ed, "entry,copy,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!shift) && ((!strcmp(ev->keyname, "x") || (!strcmp(ev->keyname, "m")))))
      {
+        _compose_seq_reset(en);
         _edje_emit(ed, "entry,cut,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!strcmp(ev->keyname, "z")))
      {
+        _compose_seq_reset(en);
         if (shift)
           {
              // redo
@@ -1427,18 +1471,21 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if ((control) && (!shift) && (!strcmp(ev->keyname, "y")))
      {
+        _compose_seq_reset(en);
         // redo
         _edje_emit(ed, "entry,redo,request", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && (!shift) && (!strcmp(ev->keyname, "w")))
      {
+        _compose_seq_reset(en);
         _sel_clear(en->cursor, rp->object, en);
         // select current word?
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->keyname, "Tab"))
      {
+        _compose_seq_reset(en);
         if (multiline)
           {
              if (shift)
@@ -1473,12 +1520,14 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if ((!strcmp(ev->keyname, "ISO_Left_Tab")) && (multiline))
      {
+        _compose_seq_reset(en);
         // remove a tab
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->keyname, "Prior") ||
             (!strcmp(ev->keyname, "KP_Prior") && !ev->string))
      {
+        _compose_seq_reset(en);
         if (en->select_allow)
           {
              if (shift) _sel_start(en->cursor, rp->object, en);
@@ -1496,6 +1545,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if (!strcmp(ev->keyname, "Next") ||
             (!strcmp(ev->keyname, "KP_Next") && !ev->string))
      {
+        _compose_seq_reset(en);
         if (en->select_allow)
           {
              if (shift) _sel_start(en->cursor, rp->object, en);
@@ -1512,6 +1562,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if ((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
      {
+        _compose_seq_reset(en);
         if (multiline)
           {
              Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
@@ -1552,12 +1603,43 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else
      {
-        if (ev->string)
+        char *compres = NULL, *string = (char *)ev->string;
+        Eina_Bool free_string = EINA_FALSE;
+        Ecore_Compose_State state;
+        
+        if (!en->composing)
+          {
+             _compose_seq_reset(en);
+             en->seq = eina_list_append(en->seq, eina_stringshare_add(ev->key));
+             state = ecore_compose_get(en->seq, &compres);
+             if (state == ECORE_COMPOSE_MIDDLE) en->composing = EINA_TRUE;
+             else en->composing = EINA_FALSE;
+             if (!en->composing) _compose_seq_reset(en);
+             else goto end;
+          }
+        else
+          {
+             if (_is_modifier(ev->key)) goto end;
+             en->seq = eina_list_append(en->seq, eina_stringshare_add(ev->key));
+             state = ecore_compose_get(en->seq, &compres);
+             if (state == ECORE_COMPOSE_NONE) _compose_seq_reset(en);
+             else if (state == ECORE_COMPOSE_DONE)
+               {
+                  _compose_seq_reset(en);
+                  if (compres)
+                    {
+                       string = compres;
+                       free_string = EINA_TRUE;
+                    }
+               }
+             else goto end;
+          }
+        if (string)
           {
              Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
              info->insert = EINA_TRUE;
              info->change.insert.plain_length = 1;
-             info->change.insert.content = eina_stringshare_add(ev->string);
+             info->change.insert.content = eina_stringshare_add(string);
 
              if (en->have_selection)
                {
@@ -1573,7 +1655,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                {
                   _edje_entry_hide_visible_password(en->rp);
                   _text_filter_format_prepend(en, en->cursor, "+ password=off");
-                  _text_filter_text_prepend(en, en->cursor, ev->string);
+                  _text_filter_text_prepend(en, en->cursor, string);
                   _text_filter_format_prepend(en, en->cursor, "- password");
                   if (en->pw_timer)
                     {
@@ -1584,7 +1666,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                                                  _password_timer_cb, en);
                }
              else
-               _text_filter_text_prepend(en, en->cursor, ev->string);
+               _text_filter_text_prepend(en, en->cursor, string);
              _anchors_get(en->cursor, rp->object, en);
              _edje_emit(ed, "entry,changed", rp->part->name);
              _edje_emit_full(ed, "entry,changed,user", rp->part->name,
@@ -1593,7 +1675,9 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              cursor_changed = EINA_TRUE;
              ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
           }
+        if (free_string) free(string);
      }
+end:
    if (!cursor_changed && (old_cur_pos != evas_textblock_cursor_pos_get(en->cursor)))
      _edje_emit(ed, "cursor,changed", rp->part->name);
 
@@ -2292,7 +2376,8 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
         ecore_imf_shutdown();
      }
 #endif
-
+   _compose_seq_reset(en);
+   
    free(en);
 }
 
