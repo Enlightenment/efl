@@ -578,6 +578,7 @@ EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 EAPI void             _elm_access_highlight_set(Evas_Object* obj);
 EAPI Evas_Object *    _elm_access_edje_object_part_object_register(Evas_Object *obj, const Evas_Object *partobj, const char* part);
 EAPI void             _elm_access_widget_item_register(Elm_Widget_Item *item);
+EAPI void             _elm_access_widget_item_unregister(Elm_Widget_Item *item);
 EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
 
 /**< put this as the first member in your widget item struct */

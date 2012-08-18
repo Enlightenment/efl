@@ -1651,6 +1651,16 @@ _elm_win_rescale(Elm_Theme *th,
 }
 
 void
+_elm_win_access(Eina_Bool is_access)
+{
+   const Eina_List *l;
+   Evas_Object *obj;
+
+   EINA_LIST_FOREACH (_elm_win_list, l, obj)
+     elm_widget_access(obj, is_access);
+}
+
+void
 _elm_win_translate(void)
 {
    const Eina_List *l;

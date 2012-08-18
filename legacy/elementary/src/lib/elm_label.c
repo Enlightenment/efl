@@ -304,6 +304,19 @@ _elm_label_smart_translate(Evas_Object *obj)
    return EINA_TRUE;
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   const char *txt = elm_widget_access_info_get(obj);
+
+   if (!txt) txt = elm_layout_text_get(obj, NULL);
+   if (txt) return strdup(txt);
+
+   return NULL;
+}
+
 static void
 _elm_label_smart_add(Evas_Object *obj)
 {
@@ -330,6 +343,12 @@ _elm_label_smart_add(Evas_Object *obj)
    elm_layout_theme_set(obj, "label", "base", elm_widget_style_get(obj));
    elm_layout_text_set(obj, NULL, "<br>");
 
+   _elm_access_object_register(obj, ELM_WIDGET_DATA(priv)->resize_obj);
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Label"));
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+   
    elm_layout_sizing_eval(obj);
 }
 

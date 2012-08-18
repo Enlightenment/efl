@@ -2410,6 +2410,59 @@ _elm_entry_text_get(const Evas_Object *obj, const char *item)
    return wd->text;
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || wd->password) return NULL;
+
+   const char *txt = elm_widget_access_info_get(obj);
+
+   if (!txt) txt = elm_entry_entry_get(obj);
+   if (txt) return strdup(txt);
+
+   return NULL;
+}
+
+static char *
+_access_state_cb(void *data __UNUSED__,
+                 Evas_Object *obj,
+                 Elm_Widget_Item *item __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   Eina_Strbuf *buf;
+   buf = eina_strbuf_new();
+
+   if (elm_widget_disabled_get(obj))
+     eina_strbuf_append(buf, "State: Disabled");
+
+   if (!wd->editable)
+     {
+        if (!eina_strbuf_length_get(buf))
+          eina_strbuf_append(buf, "State: Not Editable");
+        else eina_strbuf_append(buf, ", Not Editable");
+     }
+
+   if (wd->password)
+     {
+        if (!eina_strbuf_length_get(buf))
+          eina_strbuf_append(buf, "State: Password");
+        else eina_strbuf_append(buf, ", Password");
+     }
+
+   char *txt = strdup(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   if (txt) return txt;
+
+   return NULL;
+}
+
 EAPI Evas_Object *
 elm_entry_add(Evas_Object *parent)
 {
@@ -2563,6 +2616,16 @@ elm_entry_add(Evas_Object *parent)
    // TODO: convert Elementary to subclassing of Evas_Smart_Class
    // TODO: and save some bytes, making descriptions per-class and not instance!
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
+   // access
+   _elm_access_object_register(obj, wd->ent);
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Entry"));
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, NULL);
+
    return obj;
 }
 

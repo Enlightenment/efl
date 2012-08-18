@@ -168,6 +168,7 @@ struct _Color_Bar_Data
    Evas_Object *bg_rect;
    Evas_Object *arrow;
    Evas_Object *touch_area;
+   Evas_Object *access_obj;
    Color_Type   color_type;
 };
 

@@ -185,6 +185,45 @@ _elm_progressbar_smart_theme(Evas_Object *obj)
    return EINA_TRUE;
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   const char *txt = elm_widget_access_info_get(obj);
+
+   if (!txt) txt = elm_layout_text_get(obj, NULL);
+   if (txt) return strdup(txt);
+
+   return NULL;
+}
+
+static char *
+_access_state_cb(void *data __UNUSED__,
+                 Evas_Object *obj,
+                 Elm_Widget_Item *item __UNUSED__)
+{
+   char *ret;
+   Eina_Strbuf *buf;
+   buf = eina_strbuf_new();
+
+   const char *txt = elm_layout_text_get(obj, "elm.text.status");
+   if (txt) eina_strbuf_append(buf, txt);
+
+   if (elm_widget_disabled_get(obj))
+     eina_strbuf_append(buf, " state: disabled");
+
+   if (eina_strbuf_length_get(buf))
+     {
+        ret = eina_strbuf_string_steal(buf);
+        eina_strbuf_free(buf);
+        return ret;
+     }
+
+   eina_strbuf_free(buf);
+   return NULL;
+}
+
 static void
 _elm_progressbar_smart_add(Evas_Object *obj)
 {
@@ -211,9 +250,18 @@ _elm_progressbar_smart_add(Evas_Object *obj)
    _units_set(obj);
    _val_set(obj);
 
-   elm_widget_can_focus_set(obj, EINA_FALSE);
-
    elm_layout_sizing_eval(obj);
+
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     elm_widget_can_focus_set(obj, EINA_TRUE);
+
+   _elm_access_object_register(obj, ELM_WIDGET_DATA(priv)->resize_obj);
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("progressbar"));
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
 }
 
 static void

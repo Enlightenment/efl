@@ -208,6 +208,15 @@ group { name: "elm/colorselector/base/default";
             events: "elm.arrow";
          }
       }
+      part { name: "elm.arrow_bg_access";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "elm.arrow_bg";
+            rel2.to: "elm.arrow_bg";
+            color: 0 0 0 0;
+         }
+      }
       part { name: "elm.l_button";
          type: SWALLOW;
          scale: 1;

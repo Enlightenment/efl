@@ -410,6 +410,46 @@ _button_repeat_cb(void *data,
 }
 
 static void
+_access_colorbar_register(Evas_Object *obj,
+                          Color_Bar_Data *cd,
+                          const char* part)
+{
+   Evas_Object *ao;
+   Elm_Access_Info *ai;
+   const char* colorbar_type = NULL;
+
+   ao = _elm_access_edje_object_part_object_register(obj, cd->colorbar, part);
+   ai = _elm_access_object_get(ao);
+
+   switch (cd->color_type)
+     {
+      case HUE:
+        colorbar_type = "hue color bar";
+        break;
+
+      case SATURATION:
+        colorbar_type = "saturation color bar";
+        break;
+
+      case LIGHTNESS:
+        colorbar_type = "lightness color bar";
+        break;
+
+      case ALPHA:
+        colorbar_type = "alpha color bar";
+        break;
+
+      default:
+        break;
+     }
+
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, colorbar_type);
+
+   // this will be used in focus_next();
+   cd->access_obj = ao;
+}
+
+static void
 _color_bars_add(Evas_Object *obj)
 {
    char colorbar_name[128];
@@ -482,6 +522,10 @@ _color_bars_add(Evas_Object *obj)
           (sd->cb_data[i]->touch_area, EVAS_CALLBACK_MOUSE_DOWN, _colorbar_cb,
           sd->cb_data[i]);
         elm_widget_sub_object_add(obj, sd->cb_data[i]->touch_area);
+
+        // ACCESS
+        if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+           _access_colorbar_register(obj, sd->cb_data[i], "elm.arrow_bg_access");
 
         /* load background rectangle of the colorbar. used for
            changing color of the opacity bar */
@@ -818,6 +862,40 @@ _on_color_released(void *data,
    sd->focused = ELM_COLORSELECTOR_PALETTE;
 }
 
+static char *
+_access_info_cb(void *data,
+                Evas_Object *obj __UNUSED__,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   char *ret;
+   Eina_Strbuf *buf;
+   buf = eina_strbuf_new();
+   int r = 0, g = 0, b = 0 ,a = 0;
+
+   Elm_Color_Item *it = data;
+   ELM_COLORSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
+
+   elm_colorselector_palette_item_color_get((Elm_Object_Item *)it, &r, &g, &b, &a);
+
+   eina_strbuf_append_printf(buf, "red %d, green %d, blue %d, alpha %d", r, g, b, a);
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
+static void
+_access_widget_item_register(Elm_Color_Item *it)
+{
+   Elm_Access_Info *ai;
+
+   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+
+   ai = _elm_access_object_get(it->base.access_obj);
+
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("color selector palette item"));
+   _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
+}
+
 static Elm_Color_Item *
 _item_new(Evas_Object *obj)
 {
@@ -849,6 +927,10 @@ _item_new(Evas_Object *obj)
 
    _item_sizing_eval(item);
    evas_object_show(VIEW(item));
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     _access_widget_item_register(item);
 
    return item;
 }
@@ -1197,6 +1279,77 @@ _elm_colorselector_smart_event(Evas_Object *obj,
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_elm_colorselector_smart_focus_next(const Evas_Object *obj,
+                                    Elm_Focus_Direction dir,
+                                    Evas_Object **next)
+{
+   Eina_List *items = NULL;
+   Eina_List *l;
+   Elm_Widget_Item *item;
+   int i = 0;
+
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+   if (!sd) return EINA_FALSE;
+
+   if (!sd->items) return EINA_FALSE;
+
+   EINA_LIST_FOREACH(sd->items, l, item)
+     items = eina_list_append(items, item->access_obj);
+
+   for (i = 0; i < 4; i++)
+     {
+        items = eina_list_append(items, sd->cb_data[i]->lbt);
+        items = eina_list_append(items, sd->cb_data[i]->access_obj);
+        items = eina_list_append(items, sd->cb_data[i]->rbt);
+     }
+
+   return elm_widget_focus_list_next_get
+            (obj, items, eina_list_data_get, dir, next);
+}
+
+static void
+_access_obj_process(Evas_Object *obj, Eina_Bool is_access)
+{
+   Eina_List *l;
+   Elm_Color_Item *it;
+   int i = 0;
+
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   if (is_access)
+     {
+        EINA_LIST_FOREACH(sd->items, l, it)
+          _access_widget_item_register(it);
+
+        for (i = 0; i < 4; i++)
+          _access_colorbar_register(obj, sd->cb_data[i],
+                                    "elm.arrow_bg_access");
+     }
+   else
+     {
+        EINA_LIST_FOREACH(sd->items, l, it)
+          _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+
+        //TODO: _elm_access_edje_object_part_object_unregister() ?
+     }
+}
+
+static void
+_access_hook(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_COLORSELECTOR_CHECK(obj);
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   if (is_access)
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
+       _elm_colorselector_smart_focus_next;
+   else
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
+
+   _access_obj_process(obj, is_access);
+}
+
 static void
 _elm_colorselector_smart_set_user(Elm_Colorselector_Smart_Class *sc)
 {
@@ -1211,6 +1364,12 @@ _elm_colorselector_smart_set_user(Elm_Colorselector_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->event = _elm_colorselector_smart_event;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_colorselector_smart_sizing_eval;
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+      ELM_WIDGET_CLASS(sc)->focus_next = _elm_colorselector_smart_focus_next;
+
+   ELM_WIDGET_CLASS(sc)->access = _access_hook;
 }
 
 EAPI const Elm_Colorselector_Smart_Class *

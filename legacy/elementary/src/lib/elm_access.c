@@ -666,6 +666,22 @@ _elm_access_widget_item_register(Elm_Widget_Item *item)
 }
 
 EAPI void
+_elm_access_widget_item_unregister(Elm_Widget_Item *item)
+{
+   Evas_Object *ho;
+
+   if (!item || item->access_obj) return;
+
+   ho = item->view;
+   evas_object_event_callback_del_full(ho, EVAS_CALLBACK_RESIZE,
+                                  _content_resize, item->access_obj);
+   evas_object_event_callback_del_full(ho, EVAS_CALLBACK_MOVE,
+                                  _content_move, item->access_obj);
+
+   evas_object_del(item->access_obj);
+}
+
+EAPI void
 _elm_access_item_register(Elm_Widget_Item *item, Evas_Object *hoverobj)
 {
    Elm_Access_Info *ac;

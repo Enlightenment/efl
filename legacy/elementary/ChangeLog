@@ -374,3 +374,9 @@
 2012-08-09  Cedric Bail
 
 	* Reset main loop after fork in quicklaunch.
+
+2012-08-18  Shinwoo Kim (kimcinoo)
+
+	* Patch in incomplete access in: colorselecto, win, diskselector,
+          gengrid, genlist, progressbar, slider, label, entry
+
