@@ -5459,7 +5459,7 @@ evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text)
            eina_strbuf_append(sbuf, "<ps/>");
         else if (ch == _REPLACEMENT_CHAR)
            eina_strbuf_append(sbuf, "&#xfffc;");
-        else
+        else if (ch != '\r')
           {
              eina_strbuf_append_length(sbuf, text + pos, pos2 - pos);
           }
