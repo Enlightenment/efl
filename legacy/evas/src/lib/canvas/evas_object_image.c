@@ -449,14 +449,14 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
 
    if (obj->delete_me)
      {
-        CRIT("Setting deleted object %p as image source %p", src, obj);
+        WRN("Setting deleted object %p as image source %p", src, obj);
         return EINA_FALSE;
      }
    if (src)
      {
         if (src->delete_me)
           {
-             CRIT("Setting object %p to deleted image source %p", src, obj);
+             WRN("Setting object %p to deleted image source %p", src, obj);
              return EINA_FALSE;
           }
         if (!src->layer)
