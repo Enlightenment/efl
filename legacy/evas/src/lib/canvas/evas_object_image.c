@@ -484,6 +484,7 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
       evas_object_image_file_set(obj, NULL, NULL);
 
    if (src) _proxy_set(obj, src);
+   else _proxy_unset(obj);
 
    return EINA_TRUE;
 }
