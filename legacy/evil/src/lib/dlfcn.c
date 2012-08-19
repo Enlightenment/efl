@@ -20,7 +20,7 @@
 # include <psapi.h> /*  EnumProcessModules(Ex) */
 #endif
 
-#include "../Evil.h"
+#include "Evil.h"
 
 #include "dlfcn.h"
 

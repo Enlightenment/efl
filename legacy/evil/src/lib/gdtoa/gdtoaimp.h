@@ -570,10 +570,14 @@ extern Bigint *diff (Bigint*, Bigint*);
 extern int gethex (const char**, FPI*, Long*, Bigint**, int);
 extern void hexdig_init_D2A(void);
 extern int hexnan (const char**, FPI*, ULong*);
+#ifndef __GNUC__
 extern int hi0bits_D2A (ULong);
+#endif
 extern Bigint *i2b (int);
 extern Bigint *increment (Bigint*);
+#ifndef __GNUC__
 extern int lo0bits (ULong*);
+#endif
 extern Bigint *lshift (Bigint*, int);
 extern int match (const char**, char*);
 extern Bigint *mult (Bigint*, Bigint*);

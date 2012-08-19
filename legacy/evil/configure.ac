@@ -139,8 +139,6 @@ doc/Makefile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
-src/lib/dlfcn/Makefile
-src/lib/gdtoa/Makefile
 ])
 
 AC_OUTPUT

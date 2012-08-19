@@ -1,9 +1,7 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = gdtoa . dlfcn
-
-lib_LTLIBRARIES = libevil.la
+lib_LTLIBRARIES = libevil.la libdl.la
 
 install_evilheadersdir = $(includedir)/evil-@VMAJ@
 dist_install_evilheaders_DATA = \
@@ -24,7 +22,7 @@ evil_unistd.h \
 evil_util.h
 
 stdheadersdir = $(includedir)/evil-@VMAJ@
-nobase_dist_stdheaders_DATA = pwd.h sys/mman.h fnmatch.h dirent.h
+nobase_dist_stdheaders_DATA = pwd.h sys/mman.h fnmatch.h dirent.h dlfcn.h
 
 if EVIL_HAVE_WINCE
 
@@ -32,7 +30,36 @@ nobase_dist_stdheaders_DATA += mingw32ce/errno.h
 
 endif
 
+# gdtoa
 libevil_la_SOURCES = \
+gdtoa/arithchk.c \
+gdtoa/dmisc.c \
+gdtoa/dtoa.c \
+gdtoa/gd_arith.h \
+gdtoa/g_dfmt.c \
+gdtoa/gd_qnan.h \
+gdtoa/gdtoa.c \
+gdtoa/gdtoa_fltrnds.h \
+gdtoa/gdtoa.h \
+gdtoa/gdtoaimp.h \
+gdtoa/gethex.c \
+gdtoa/g_ffmt.c \
+gdtoa/g__fmt.c \
+gdtoa/gmisc.c \
+gdtoa/g_xfmt.c \
+gdtoa/hd_init.c \
+gdtoa/hexnan.c \
+gdtoa/misc.c \
+gdtoa/qnan.c \
+gdtoa/smisc.c \
+gdtoa/strtodg.c \
+gdtoa/strtof.c \
+gdtoa/strtopx.c \
+gdtoa/sum.c \
+gdtoa/ulp.c
+
+#evil
+libevil_la_SOURCES += \
 evil_dirent.c \
 evil_fcntl.c \
 evil_fnmatch.c \
@@ -71,7 +98,7 @@ endif
 libevil_la_CPPFLAGS = @win32_cppflags@ -DEFL_EVIL_BUILD
 libevil_la_CFLAGS = @win32_cflags@
 libevil_la_CXXFLAGS = @win32_cxxflags@
-libevil_la_LIBADD = gdtoa/libgdtoa.la @win32_libs@ $(EFL_MPATROL_LIBS)
+libevil_la_LIBADD = @win32_libs@ $(EFL_MPATROL_LIBS)
 libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
 if EVIL_HAVE_WINCE
@@ -84,5 +111,14 @@ libevil_la_LINK = $(CXXLINK) $(libevil_la_LDFLAGS)
 
 endif
 
+libdl_la_SOURCES = dlfcn.c
+
+libdl_la_CPPFLAGS = @win32_cppflags@ -DEFL_EVIL_DLFCN_BUILD -DPSAPI_VERSION=1
+libdl_la_CFLAGS = @win32_cflags@
+libdl_la_LIBADD = $(top_builddir)/src/lib/libevil.la $(EFL_MPATROL_LIBS) @win32_dl_libs@
+libdl_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
+
+EXTRA_DIST = gdtoa/README gdtoa/README.mingw
+
 install-data-hook:
-	rm -f $(libdir)/$(lib_LTLIBRARIES)
+	rm -f $(libdir)/libevil.la $(libdir)/libdl.la

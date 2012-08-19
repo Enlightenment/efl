@@ -1,3 +1,14 @@
+2012-08-19  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/bin/Makefile.am:
+	* src/lib/Makefile.am:
+	* src/lib/dlfcn/:
+	Less automake stuff.
+
+	* src/lib/gdtoa/gdtoaimp.h:
+	fix redundant declarations.
+
 2012-07-21  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Makefile.am:
