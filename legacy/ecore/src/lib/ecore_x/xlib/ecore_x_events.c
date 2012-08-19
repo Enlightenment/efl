@@ -2510,7 +2510,16 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
    e->group = xkbev->state.group;
    if (xkbev->any.xkb_type == XkbStateNotify)
      ecore_event_add(ECORE_X_EVENT_XKB_STATE_NOTIFY, e, NULL, NULL);
-   else if (xkbev->any.xkb_type == XkbNewKeyboardNotify)
-     ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, e, NULL, NULL);
+   else if ((xkbev->any.xkb_type == XkbNewKeyboardNotify) ||
+            (xkbev->any.xkb_type == XkbMapNotify))
+     {
+        if (xkbev->any.xkb_type == XkbMapNotify)
+          {
+             XkbMapNotifyEvent *xkbmapping = xkbev;
+             
+             XkbRefreshKeyboardMapping(xkbmapping);
+          }
+        ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, e, NULL, NULL);
+     }
 }
 #endif /* ifdef ECORE_XKB */
