@@ -738,18 +738,7 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
           }
         else
           {
-             XComposeStatus status;
-             val = XLookupString(&xev,
-                                 compose_buffer,
-                                 sizeof(compose_buffer),
-                                 &sym,
-                                 &status);
-             if (val > 0)
-               {
-                  compose_buffer[val] = '\0';
-                  compose = eina_str_convert(nl_langinfo(CODESET),
-                                             "UTF-8", compose_buffer);
-               }
+             compose = strdup(ev->compose);
           }
 
         if (compose)
