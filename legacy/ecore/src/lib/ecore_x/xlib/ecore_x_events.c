@@ -2515,8 +2515,9 @@ _ecore_x_event_handle_xkb(XEvent *xevent)
      {
         if (xkbev->any.xkb_type == XkbMapNotify)
           {
-             XkbMapNotifyEvent *xkbmapping = xkbev;
-             
+             XkbMapNotifyEvent *xkbmapping;
+
+             xkbmapping = (XkbMapNotifyEvent *)xkbev;
              XkbRefreshKeyboardMapping(xkbmapping);
           }
         ecore_event_add(ECORE_X_EVENT_XKB_NEWKBD_NOTIFY, e, NULL, NULL);
