@@ -1461,7 +1461,7 @@ ephysics_body_torque_apply(EPhysics_Body *body, double torque)
 EAPI void
 ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double *torque)
 {
-   double rate;
+   double rate, gx, gy;
 
    if (!body)
      {
@@ -1470,9 +1470,10 @@ ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double
      }
 
    rate = ephysics_world_rate_get(body->world);
+   ephysics_world_gravity_get(body->world, &gx, &gy);
 
-   if (x) *x = body->force.x * rate;
-   if (y) *y = body->force.y * rate;
+   if (x) *x = body->force.x * rate + gx;
+   if (y) *y = body->force.y * rate + gy;
    if (torque) *torque = -body->force.torque;
 }
 

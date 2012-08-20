@@ -2444,7 +2444,8 @@ EAPI void ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Eva
  * @brief
  * Get physics body forces.
  *
- * Get all the forces applied over a body.
+ * Get all the forces applied over a body, including gravity.
+ * Damping is not considered.
  *
  * @param body The physics body.
  * @param x The axis x component of total force.
@@ -2455,6 +2456,7 @@ EAPI void ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Eva
  * @see ephysics_body_central_force_apply().
  * @see ephysics_body_torque_apply().
  * @see ephysics_body_forces_clear().
+ * @see ephysics_world_gravity_set().
  *
  * @ingroup EPhysics_Body
  */
