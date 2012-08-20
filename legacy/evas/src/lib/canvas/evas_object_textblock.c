@@ -8841,14 +8841,22 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              tr->w = w;
           }
      }
-   else if ((it1 == it2) && (it1->type == EVAS_TEXTBLOCK_ITEM_FORMAT))
+   else if ((it1 == it2) && (it1->type != EVAS_TEXTBLOCK_ITEM_TEXT))
      {
-        tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
-        rects = eina_list_append(rects, tr);
-        tr->x = ln->x + it1->x;
-        tr->y = ln->par->y + ln->y;
-        tr->h = ln->h;
-        tr->w = it1->w;
+        Evas_Coord x, w;
+        x = 0;
+        w = it1->w;
+        _evas_textblock_range_calc_x_w(it1, &x, &w, EINA_TRUE,
+                                       switch_items);
+        if (w > 0)
+          {
+             tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+             rects = eina_list_append(rects, tr);
+             tr->x = ln->x + it1->x + x;
+             tr->y = ln->par->y + ln->y;
+             tr->h = ln->h;
+             tr->w = w;
+          }
      }
    else if (it1 != it2)
      {
