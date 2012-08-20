@@ -6,7 +6,7 @@
 #include "config.h"
 
 /* The last id that should be reserved for statically allocated classes. */
-#define EO_STATIC_IDS_LAST 10
+#define EO_CLASS_IDS_FIRST 1
 #define EO_OP_IDS_FIRST 1
 
 /* Used inside the class_get functions of classes, see #EO_DEFINE_CLASS */
@@ -775,7 +775,7 @@ eo_class_free(Eo_Class *klass)
 
 /* DEVCHECK */
 static Eina_Bool
-_eo_class_check_op_descs(const Eo_Class *klass, Eo_Class_Id id)
+_eo_class_check_op_descs(const Eo_Class *klass)
 {
    const Eo_Class_Description *desc = klass->desc;
    const Eo_Op_Description *itr;
@@ -783,7 +783,7 @@ _eo_class_check_op_descs(const Eo_Class *klass, Eo_Class_Id id)
 
    if (desc->ops.count > 0)
      {
-        if (((id == 0) || (id > EO_STATIC_IDS_LAST)) && !desc->ops.base_op_id)
+        if (!desc->ops.base_op_id)
           {
              ERR("Class '%s' has a non-zero ops count, but base_id is NULL.",
                    desc->name);
@@ -832,7 +832,7 @@ _eo_class_isa_func(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED, va_list *l
 }
 
 EAPI const Eo_Class *
-eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *parent, ...)
+eo_class_new(const Eo_Class_Description *desc, const Eo_Class *parent, ...)
 {
    Eo_Class *klass;
    va_list p_list;
@@ -840,12 +840,6 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
    if (parent && !EINA_MAGIC_CHECK(parent, EO_CLASS_EINA_MAGIC))
      {
         EINA_MAGIC_FAIL(parent, EO_CLASS_EINA_MAGIC);
-        return NULL;
-     }
-
-   if (id > EO_STATIC_IDS_LAST)
-     {
-        ERR("Tried creating a class with the static id %d while the maximum static id is %d. Aborting.", id, EO_STATIC_IDS_LAST);
         return NULL;
      }
 
@@ -930,7 +924,7 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
            EO_ALIGN_SIZE(klass->parent->desc->data_size);
      }
 
-   if (!_eo_class_check_op_descs(klass, id))
+   if (!_eo_class_check_op_descs(klass))
      {
         goto cleanup;
      }
@@ -983,24 +977,7 @@ eo_class_new(const Eo_Class_Description *desc, Eo_Class_Id id, const Eo_Class *p
 
    eina_lock_take(&_eo_class_creation_lock);
 
-   if (id == 0)
-     {
-        klass->class_id = ++_eo_classes_last_id;
-     }
-   else
-     {
-#ifndef NDEBUG
-        if (_eo_classes && _eo_classes[id - 1])
-          {
-             ERR("A class with id %d was already defined (%s). Aborting.", id,
-                   _eo_classes[id - 1]->desc->name);
-             eina_lock_release(&_eo_class_creation_lock);
-             goto cleanup;
-          }
-#endif
-        klass->class_id = id;
-     }
-
+   klass->class_id = ++_eo_classes_last_id;
 
      {
         /* FIXME: Handle errors. */
@@ -1451,7 +1428,7 @@ eo_init(void)
    eina_init();
 
    _eo_classes = NULL;
-   _eo_classes_last_id = EO_STATIC_IDS_LAST;
+   _eo_classes_last_id = EO_CLASS_IDS_FIRST - 1;
    _eo_ops_last_id = EO_OP_IDS_FIRST;
    _eo_log_dom = eina_log_domain_register(log_dom, EINA_COLOR_LIGHTBLUE);
    if (_eo_log_dom < 0)

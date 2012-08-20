@@ -5,6 +5,8 @@
 
 #include "config.h"
 
+EAPI Eo_Op EO_BASE_BASE_ID = 0;
+
 static int event_freeze_count = 0;
 
 typedef struct
@@ -565,12 +567,12 @@ static const Eo_Class_Description class_desc = {
      EO_VERSION,
      "Eo Base",
      EO_CLASS_TYPE_REGULAR_NO_INSTANT,
-     EO_CLASS_DESCRIPTION_OPS(NULL, op_desc, EO_BASE_SUB_ID_LAST),
+     EO_CLASS_DESCRIPTION_OPS(&EO_BASE_BASE_ID, op_desc, EO_BASE_SUB_ID_LAST),
      event_desc,
      sizeof(Private_Data),
      _class_constructor,
      NULL
 };
 
-EO_DEFINE_CLASS_STATIC(eo_base_class_get, EO_BASE_CLASS_ID, &class_desc, NULL, NULL)
+EO_DEFINE_CLASS(eo_base_class_get, &class_desc, NULL, NULL)
 

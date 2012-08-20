@@ -44,46 +44,46 @@ START_TEST(eo_incomplete_desc)
         NULL
    };
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
 
    class_desc.ops.base_op_id = &TMP_BASE_ID;
    class_desc.ops.descs = NULL;
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
 
    class_desc.ops.descs = op_desc;
    class_desc.ops.count = TEST_SUB_ID_LAST + 1;
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
 
    class_desc.ops.count = 0;
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
 
    class_desc.ops.count = TEST_SUB_ID_LAST;
    class_desc.ops.descs = op_desc_wrong;
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
 
    class_desc.ops.descs = op_desc;
    class_desc.name = NULL;
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
 
    class_desc.name = "Simple";
 
 
-   klass = eo_class_new(NULL, 0, NULL, NULL);
+   klass = eo_class_new(NULL, NULL, NULL);
    fail_if(klass);
 
    /* Should create a class. */
-   klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
+   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    (void) klass;
@@ -133,18 +133,18 @@ START_TEST(eo_inherit_errors)
         NULL
    };
 
-   klass_mixin = eo_class_new(&class_desc_mixin, 0, NULL, NULL);
+   klass_mixin = eo_class_new(&class_desc_mixin, NULL, NULL);
    fail_if(!klass_mixin);
 
-   klass_simple = eo_class_new(&class_desc_simple, 0, EO_BASE_CLASS, NULL);
+   klass_simple = eo_class_new(&class_desc_simple, EO_BASE_CLASS, NULL);
    fail_if(!klass_simple);
 
-   klass = eo_class_new(&class_desc, 0, klass_simple, NULL);
+   klass = eo_class_new(&class_desc, klass_simple, NULL);
    fail_if(klass);
 
    class_desc.type = EO_CLASS_TYPE_REGULAR;
 
-   klass = eo_class_new(&class_desc, 0, klass_mixin, NULL);
+   klass = eo_class_new(&class_desc, klass_mixin, NULL);
    fail_if(klass);
 
    (void) klass;
@@ -206,22 +206,22 @@ START_TEST(eo_inconsistent_mro)
         NULL
    };
 
-   klass_mixin = eo_class_new(&class_desc_mixin, 0, NULL, NULL);
+   klass_mixin = eo_class_new(&class_desc_mixin, NULL, NULL);
    fail_if(!klass_mixin);
 
-   klass_mixin2 = eo_class_new(&class_desc_mixin2, 0, klass_mixin, NULL);
+   klass_mixin2 = eo_class_new(&class_desc_mixin2, klass_mixin, NULL);
    fail_if(!klass_mixin2);
 
-   klass_mixin3 = eo_class_new(&class_desc_mixin3, 0, klass_mixin, NULL);
+   klass_mixin3 = eo_class_new(&class_desc_mixin3, klass_mixin, NULL);
    fail_if(!klass_mixin3);
 
-   klass = eo_class_new(&class_desc_simple, 0, EO_BASE_CLASS, klass_mixin, klass_mixin2, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin, klass_mixin2, NULL);
    fail_if(klass);
 
-   klass = eo_class_new(&class_desc_simple, 0, EO_BASE_CLASS, klass_mixin2, klass_mixin, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin2, klass_mixin, NULL);
    fail_if(!klass);
 
-   klass = eo_class_new(&class_desc_simple, 0, EO_BASE_CLASS, klass_mixin2, klass_mixin3, NULL);
+   klass = eo_class_new(&class_desc_simple, EO_BASE_CLASS, klass_mixin2, klass_mixin3, NULL);
    fail_if(!klass);
 
    eo_shutdown();
@@ -247,24 +247,24 @@ START_TEST(eo_bad_interface)
         NULL
    };
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(klass);
 
    class_desc.data_size = 0;
    class_desc.class_constructor = _stub_class_constructor;
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(!klass);
 
    class_desc.class_constructor = NULL;
    class_desc.class_destructor = _stub_class_constructor;
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(!klass);
 
    class_desc.class_destructor = NULL;
 
-   klass = eo_class_new(&class_desc, 0, NULL, NULL);
+   klass = eo_class_new(&class_desc, NULL, NULL);
    fail_if(!klass);
 
    eo_shutdown();
@@ -326,7 +326,7 @@ START_TEST(eo_op_types)
         NULL
    };
 
-   klass = eo_class_new(&class_desc, 0, SIMPLE_CLASS, NULL);
+   klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
    /* Add class checks here... */

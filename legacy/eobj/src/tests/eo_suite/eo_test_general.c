@@ -41,7 +41,7 @@ START_TEST(eo_data_fetch)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
@@ -52,7 +52,7 @@ START_TEST(eo_data_fetch)
    eo_unref(obj);
 
    class_desc.data_size = 0;
-   klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
+   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    obj = eo_add(klass, NULL);
@@ -83,7 +83,7 @@ START_TEST(eo_isa_tests)
              NULL
         };
 
-        iface = eo_class_new(&class_desc, 0, NULL, NULL);
+        iface = eo_class_new(&class_desc, NULL, NULL);
         fail_if(!iface);
      }
 
@@ -100,7 +100,7 @@ START_TEST(eo_isa_tests)
              NULL
         };
 
-        mixin = eo_class_new(&class_desc, 0, NULL, NULL);
+        mixin = eo_class_new(&class_desc, NULL, NULL);
         fail_if(!mixin);
      }
 
@@ -117,7 +117,7 @@ START_TEST(eo_isa_tests)
              NULL
         };
 
-        klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, iface, mixin, NULL);
+        klass = eo_class_new(&class_desc, EO_BASE_CLASS, iface, mixin, NULL);
         fail_if(!klass);
      }
 
@@ -159,40 +159,6 @@ START_TEST(eo_composite_tests)
 
    eo_unref(obj2);
    eo_unref(obj);
-
-   eo_shutdown();
-}
-END_TEST
-
-START_TEST(eo_static_classes)
-{
-   eo_init();
-
-   static const Eo_Op_Description op_desc[] = {
-        EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
-        EO_OP_DESCRIPTION_SENTINEL
-   };
-
-   /* Usually should be const, not const only for the test... */
-   static Eo_Class_Description class_desc = {
-        EO_VERSION,
-        "Simple2",
-        EO_CLASS_TYPE_REGULAR,
-        EO_CLASS_DESCRIPTION_OPS(NULL, op_desc, 1),
-        NULL,
-        0,
-        NULL,
-        NULL
-   };
-
-   const Eo_Class *klass = eo_class_new(&class_desc, 1, EO_BASE_CLASS, NULL);
-   fail_if(klass);
-
-   klass = eo_class_new(&class_desc, 1000, EO_BASE_CLASS, NULL);
-   fail_if(klass);
-
-   klass = eo_class_new(&class_desc, 2, EO_BASE_CLASS, NULL);
-   fail_if(!klass);
 
    eo_shutdown();
 }
@@ -247,7 +213,7 @@ START_TEST(eo_man_free)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
+   const Eo_Class *klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
@@ -260,7 +226,7 @@ START_TEST(eo_man_free)
    eo_unref(obj);
 
    _man_should_des = EINA_FALSE;
-   klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
+   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    obj = eo_add(klass, NULL);
@@ -275,7 +241,7 @@ START_TEST(eo_man_free)
    eo_manual_free(obj);
 
    _man_should_con = EINA_FALSE;
-   klass = eo_class_new(&class_desc, 0, EO_BASE_CLASS, NULL);
+   klass = eo_class_new(&class_desc, EO_BASE_CLASS, NULL);
    fail_if(!klass);
 
    obj = eo_add(klass, NULL);
@@ -467,7 +433,7 @@ START_TEST(eo_op_errors)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, 0, SIMPLE_CLASS, NULL);
+   const Eo_Class *klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
@@ -605,7 +571,7 @@ START_TEST(eo_magic_checks)
         eo_class_do((Eo_Class *) buf, NULL);
         eo_class_do_super((Eo_Class *) buf, EO_NOOP);
 
-        fail_if(eo_class_new(NULL, 0, (Eo_Class *) buf), NULL);
+        fail_if(eo_class_new(NULL, (Eo_Class *) buf), NULL);
 
         eo_xref(obj, (Eo *) buf);
         eo_xunref(obj, (Eo *) buf);
@@ -714,7 +680,7 @@ START_TEST(eo_multiple_do)
         NULL
    };
 
-   const Eo_Class *klass = eo_class_new(&class_desc, 0, SIMPLE_CLASS, NULL);
+   const Eo_Class *klass = eo_class_new(&class_desc, SIMPLE_CLASS, NULL);
    fail_if(!klass);
 
    Eo *obj = eo_add(klass, NULL);
@@ -739,7 +705,6 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_magic_checks);
    tcase_add_test(tc, eo_data_fetch);
    tcase_add_test(tc, eo_man_free);
-   tcase_add_test(tc, eo_static_classes);
    tcase_add_test(tc, eo_composite_tests);
    tcase_add_test(tc, eo_isa_tests);
    tcase_add_test(tc, eo_multiple_do);
