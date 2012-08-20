@@ -730,7 +730,22 @@ _sizing_eval(Evas_Object *obj)
    evas_object_geometry_get(obj, NULL, NULL, &resw, &resh);
    if (wd->linewrap)
      {
-        if ((resw == wd->lastw) && (!wd->changed)) return;
+        if ((resw == wd->lastw) && (!wd->changed))
+          {
+             if (wd->scroll)
+               {
+                  Evas_Coord vw = 0, vh = 0, w = 0, h = 0;
+                  
+                  elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
+                  w = wd->entmw;
+                  h = wd->entmh;
+                  if (vw > wd->entmw) w = vw;
+                  if (vh > wd->entmh) h = vh;
+                  evas_object_resize(wd->ent, w, h);
+                  return;
+               }
+             return;
+          }
         evas_event_freeze(evas_object_evas_get(obj));
         wd->changed = EINA_FALSE;
         wd->lastw = resw;
@@ -756,7 +771,7 @@ _sizing_eval(Evas_Object *obj)
                }
              wd->entmw = minw;
              wd->entmh = minh;
-
+             
              if ((minw > 0) && (vw < minw)) vw = minw;
              if (minh > vh) vh = minh;
 
