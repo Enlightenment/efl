@@ -122,3 +122,11 @@ EXTRA_DIST = gdtoa/README gdtoa/README.mingw
 
 install-data-hook:
 	rm -f $(libdir)/libevil.la $(libdir)/libdl.la
+
+uninstall-local:
+	rm -f $(DESTDIR)$(bindir)/libevil-@VMAJ@.dll
+	rm -f $(DESTDIR)$(bindir)/libdl-@VMAJ@.dll
+	rm -f $(DESTDIR)$(libdir)/libevil.dll.a
+	rm -f $(DESTDIR)$(libdir)/libevil.a
+	rm -f $(DESTDIR)$(libdir)/libdl.dll.a
+	rm -f $(DESTDIR)$(libdir)/libdl.a

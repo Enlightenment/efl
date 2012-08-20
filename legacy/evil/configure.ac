@@ -48,10 +48,10 @@ lt_cv_deplibs_check_method='pass_all'
 LT_INIT([win32-dll])
 
 VMAJ=v_maj
-AC_SUBST(VMAJ)
+AC_SUBST([VMAJ])
 
 version_info="lt_cur:lt_rev:lt_age"
-AC_SUBST(version_info)
+AC_SUBST([version_info])
 
 
 ### Needed information
@@ -62,7 +62,7 @@ EFL_SELECT_WINDOWS_VERSION
 ### Checks for programs
 AM_PROG_AS
 AC_PROG_CXX
-AC_LANG(C)
+AC_LANG([C])
 AC_PROG_CPP
 AC_PROG_CC
 
@@ -100,7 +100,6 @@ AC_CHECK_HEADERS([errno.h])
 
 
 ### Checks for compiler characteristics
-AC_C_CONST
 EFL_ATTRIBUTE_UNUSED
 
 win32_cppflags=""
