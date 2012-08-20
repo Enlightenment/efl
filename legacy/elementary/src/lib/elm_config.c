@@ -160,6 +160,7 @@ _prop_config_get(void)
 
    _config_free();
    _elm_config = config_data;
+   _env_get();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_rescale();
@@ -196,11 +197,14 @@ _prop_change_delay_cb(void *data __UNUSED__)
 {
    char *s;
 
-   s = ecore_x_window_prop_string_get(_root_1st, _atom[ATOM_E_PROFILE]);
-   if (s)
+   if (!getenv("ELM_PROFILE"))
      {
-        if (_elm_profile) free(_elm_profile);
-        _elm_profile = s;
+        s = ecore_x_window_prop_string_get(_root_1st, _atom[ATOM_E_PROFILE]);
+        if (s)
+          {
+             if (_elm_profile) free(_elm_profile);
+             _elm_profile = s;
+          }
      }
    _prop_config_get();
    _prop_change_delay_timer = NULL;
