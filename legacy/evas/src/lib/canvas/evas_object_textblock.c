@@ -8841,6 +8841,15 @@ _evas_textblock_cursor_range_in_line_geometry_get(
              tr->w = w;
           }
      }
+   else if ((it1 == it2) && (it1->type == EVAS_TEXTBLOCK_ITEM_FORMAT))
+     {
+        tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+        rects = eina_list_append(rects, tr);
+        tr->x = ln->x + it1->x;
+        tr->y = ln->par->y + ln->y;
+        tr->h = ln->h;
+        tr->w = it1->w;
+     }
    else if (it1 != it2)
      {
         /* Get the middle items */
