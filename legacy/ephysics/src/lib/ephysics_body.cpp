@@ -1253,7 +1253,7 @@ ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y)
    rate = ephysics_world_rate_get(body->world);
 
    body->rigid_body->activate(1);
-   body->rigid_body->applyCentralImpulse(btVector3(x / rate, y / rate, 0));
+   body->rigid_body->applyCentralImpulse(btVector3(x / rate, - y / rate, 0));
 }
 
 EAPI void
@@ -1270,7 +1270,7 @@ ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, Evas_Coord 
    rate = ephysics_world_rate_get(body->world);
 
    body->rigid_body->activate(1);
-   body->rigid_body->applyImpulse(btVector3(x / rate, y / rate, 0),
+   body->rigid_body->applyImpulse(btVector3(x / rate, - y / rate, 0),
                                   btVector3((double) pos_x / rate,
                                             (double) pos_y / rate, 0));
 }
@@ -1418,7 +1418,7 @@ ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y)
 
    rate = ephysics_world_rate_get(body->world);
    ephysics_body_forces_apply(body);
-   body->rigid_body->applyCentralForce(btVector3(x / rate, y / rate, 0));
+   body->rigid_body->applyCentralForce(btVector3(x / rate, - y / rate, 0));
    _ephysics_body_forces_update(body);
 }
 
@@ -1435,7 +1435,7 @@ ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Evas_Coord po
 
    rate = ephysics_world_rate_get(body->world);
    ephysics_body_forces_apply(body);
-   body->rigid_body->applyForce(btVector3(x / rate, y / rate, 0),
+   body->rigid_body->applyForce(btVector3(x / rate, - y / rate, 0),
                                 btVector3((double) pos_x / rate,
                                           (double) pos_y / rate, 0));
    _ephysics_body_forces_update(body);
@@ -1473,7 +1473,7 @@ ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double
    ephysics_world_gravity_get(body->world, &gx, &gy);
 
    if (x) *x = body->force.x * rate + gx;
-   if (y) *y = body->force.y * rate + gy;
+   if (y) *y = -body->force.y * rate + gy;
    if (torque) *torque = -body->force.torque;
 }
 
