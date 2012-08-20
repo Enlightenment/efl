@@ -207,6 +207,47 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    evas_object_show(ctx_mod->ctxpopup);
 }
 
+static void
+_access_set(Evas_Object *obj, Elm_Datetime_Field_Type field_type)
+{
+   const char* type = NULL;
+
+   switch (field_type)
+     {
+		 case ELM_DATETIME_YEAR:
+        type = "datetime field, year";
+        break;
+
+      case ELM_DATETIME_MONTH:
+        type = "datetime field, month";
+        break;
+
+	  case ELM_DATETIME_DATE:
+        type = "datetime field, date";
+        break;
+
+      case ELM_DATETIME_HOUR:
+        type = "datetime field, hour";
+        break;
+
+      case ELM_DATETIME_MINUTE:
+        type = "datetime field, minute";
+        break;
+
+      case ELM_DATETIME_AMPM:
+        type = "datetime field, AM PM";
+        break;
+
+      default:
+        break;
+     }
+
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, type);
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_STATE, NULL, NULL);
+}
+
 // module fucns for the specific module type
 EAPI void
 field_value_display(Elm_Datetime_Module_Data *module_data, Evas_Object *obj)
@@ -251,6 +292,10 @@ field_create(Elm_Datetime_Module_Data *module_data, Elm_Datetime_Field_Type  fie
         evas_object_smart_callback_add(field_obj, "clicked", _field_clicked_cb, ctx_mod);
      }
    evas_object_data_set(field_obj, "_field_type", (void *)field_type);
+
+   // ACCESS
+   _access_set(field_obj, field_type);
+
    return field_obj;
 }
 

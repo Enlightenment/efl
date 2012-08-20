@@ -149,6 +149,15 @@ group { name: "elm/datetime/base/default";
             visible: 1;
          }
       }
+      part { name: "access";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            rel1.to: "bg";
+            rel2.to: "bg";
+            color: 0 0 0 0;
+         }
+      }
    }
    programs {
       program { name: "disble_datetime";

@@ -371,25 +371,31 @@ _datetime_items_get(const Evas_Object *obj)
 {
    Eina_List *items = NULL;
    Datetime_Field *field;
-   int loc, count = 0;
+   int loc = 0;
    unsigned int idx;
+   Eina_Bool visible[ELM_DATETIME_TYPE_COUNT];
 
    ELM_DATETIME_DATA_GET(obj, sd);
 
    for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
      {
         field = sd->field_list + idx;
-        if (field->fmt_exist && field->visible) count++;
+        if (field->fmt_exist && field->visible) visible[idx] = EINA_TRUE;
+        else visible[idx] = EINA_FALSE;
      }
-   for (loc = 0; loc < count; loc++)
+   for (loc = 0; loc < ELM_DATETIME_TYPE_COUNT; loc++)
      {
         for (idx = 0; idx < ELM_DATETIME_TYPE_COUNT; idx++)
           {
              field = sd->field_list + idx;
-             if (field->location == loc)
+             if ((field->location == loc) && (visible[idx]))
                items = eina_list_append(items, field->item_obj);
           }
      }
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     items = eina_list_append(items, sd->access_obj);
 
    return items;
 }
@@ -416,7 +422,7 @@ _elm_datetime_smart_focus_next(const Evas_Object *obj,
         list_free = eina_list_free;
         if (!items) return EINA_FALSE;
      }
-
+printf("count = %d\n", eina_list_count(items));
    ret = elm_widget_focus_list_next_get(obj, items, list_data_get, dir, next);
    if (list_free) list_free((Eina_List *)items);
 
@@ -691,6 +697,27 @@ _field_list_init(Evas_Object *obj)
      }
 }
 
+static char *
+_access_info_cb(void *data,
+                Evas_Object *obj __UNUSED__,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   char *ret;
+   Eina_Strbuf *buf;
+   buf = eina_strbuf_new();
+
+   ELM_DATETIME_DATA_GET(data, sd);
+   eina_strbuf_append_printf(buf,
+                             "%d year, %d month, %d date, %d hour, %d minute",
+                             sd->curr_time.tm_year, sd->curr_time.tm_mon + 1,
+                             sd->curr_time.tm_mday, sd->curr_time.tm_hour,
+                             sd->curr_time.tm_min);
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 static void
 _elm_datetime_smart_add(Evas_Object *obj)
 {
@@ -732,6 +759,17 @@ _elm_datetime_smart_add(Evas_Object *obj)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     {
+        priv->access_obj = _elm_access_edje_object_part_object_register
+                             (obj, elm_layout_edje_get(obj), "access");
+        Elm_Access_Info *ai;
+        ai = _elm_access_object_get(priv->access_obj);
+        _elm_access_text_set(ai, ELM_ACCESS_TYPE, "date time");
+        _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, obj);
+     }
 }
 
 static void

@@ -385,3 +385,7 @@
 	* Fix sizing issue in multibutton entry by making all lines
           the same height.
 
+2012-08-20  Shinwoo Kim (kimcinoo)
+
+	* Patch in incomplte access support in datetime.
+

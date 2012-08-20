@@ -162,6 +162,7 @@ struct _Elm_Datetime_Smart_Data
    struct tm                 curr_time, min_limit, max_limit;
    Elm_Datetime_Module_Data *mod_data;
    char                      format[ELM_DATETIME_MAX_FORMAT_LEN];
+   Evas_Object              *access_obj;
    Eina_Bool                 user_format : 1;  /* whether user set
                                                 * format or default
                                                 * format. */
