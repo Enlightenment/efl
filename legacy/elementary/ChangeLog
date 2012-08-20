@@ -380,3 +380,8 @@
 	* Patch in incomplete access in: colorselecto, win, diskselector,
           gengrid, genlist, progressbar, slider, label, entry
 
+2012-08-20   Jihyeon Seol
+
+	* Fix sizing issue in multibutton entry by making all lines
+          the same height.
+
