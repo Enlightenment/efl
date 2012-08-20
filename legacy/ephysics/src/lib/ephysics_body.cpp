@@ -1341,6 +1341,28 @@ ephysics_body_rotation_get(const EPhysics_Body *body)
 }
 
 EAPI void
+ephysics_body_rotation_set(EPhysics_Body *body, double rotation)
+{
+   btTransform trans;
+   btQuaternion quat;
+
+   if (!body)
+     {
+        ERR("Can't set rotation, body is null.");
+        return;
+     }
+
+   body->rigid_body->activate(1);
+   body->rigid_body->getMotionState()->getWorldTransform(trans);
+   quat.setEuler(0, 0, -rotation / RAD_TO_DEG);
+   trans.setRotation(quat);
+   body->rigid_body->proceedToTransform(trans);
+   body->rigid_body->getMotionState()->setWorldTransform(trans);
+
+   DBG("Body %p rotation set to %lf", body, rotation);
+}
+
+EAPI void
 ephysics_body_data_set(EPhysics_Body *body, void *data)
 {
    if (!body)

@@ -2284,9 +2284,29 @@ EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Ei
  * @param body The physics body.
  * @return The amount of degrees @p body is rotated, from 0.0 to 360.0.
  *
+ * @see ephysics_body_rotation_set()
+ *
  * @ingroup EPhysics_Body
  */
 EAPI double ephysics_body_rotation_get(const EPhysics_Body *body);
+
+/**
+ * @brief
+ * Set body's rotation on z axis.
+ *
+ * By default rotation is 0 degrees.
+ * Negative values indicates rotation on counterclockwise direction.
+ *
+ * @note The unit used for rotation is degrees.
+ *
+ * @param body The physics body.
+ * @param The amount of degrees @p body should be rotated.
+ *
+ * @see ephysics_body_rotation_get()
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_rotation_set(EPhysics_Body *body, double rotation);
 
 /**
  * @brief

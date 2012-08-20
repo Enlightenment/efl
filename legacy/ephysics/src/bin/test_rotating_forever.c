@@ -4,6 +4,23 @@
 
 #include "ephysics_test.h"
 
+static Eina_Bool
+_rotate_cb(void *data)
+{
+   EPhysics_Body *body = data;
+   double rotation;
+
+   rotation = ephysics_body_rotation_get(body);
+   ephysics_body_rotation_set(body, ((int) round(rotation) + 5) % 360);
+
+   return EINA_TRUE;
+}
+
+static void
+_del_cb(void *data, EPhysics_Body *body __UNUSED__, void *event_info __UNUSED__)
+{
+   ecore_timer_del(data);
+}
 
 static void
 _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
@@ -21,6 +38,7 @@ static void
 _world_populate(Test_Data *test_data)
 {
    EPhysics_Body *body;
+   Ecore_Timer *timer;
    Evas_Object *cube;
 
    cube = elm_image_add(test_data->win);
@@ -56,6 +74,27 @@ _world_populate(Test_Data *test_data)
                                     _update_object_cb, NULL);
 
    ephysics_body_impulse_apply(body, 30, 0, 0, -10);
+
+   cube = elm_image_add(test_data->win);
+   elm_image_file_set(
+      cube, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "purple-cube");
+   evas_object_move(cube, WIDTH / 3, 60);
+   evas_object_resize(cube, 70, 70);
+   evas_object_show(cube);
+   test_data->evas_objs = eina_list_append(test_data->evas_objs, cube);
+
+   body = ephysics_body_box_add(test_data->world);
+   ephysics_body_evas_object_set(body, cube, EINA_TRUE);
+   test_data->bodies = eina_list_append(test_data->bodies, body);
+   ephysics_body_event_callback_add(body,
+                                    EPHYSICS_CALLBACK_BODY_UPDATE,
+                                    _update_object_cb, NULL);
+
+   timer = ecore_timer_add(1, _rotate_cb, body);
+
+   ephysics_body_event_callback_add(body,
+                                    EPHYSICS_CALLBACK_BODY_DEL,
+                                    _del_cb, timer);
 }
 
 static void
