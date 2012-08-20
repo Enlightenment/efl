@@ -2587,10 +2587,6 @@ elm_win_add(Evas_Object *parent,
      ERR("failed to grab F12 key to elm widgets (dot) tree generation");
 #endif
 
-   printf("_elm_config->softcursor_mode %i = %i, %i | '%s'\n",
-          _elm_config->softcursor_mode, 
-          ELM_SOFTCURSOR_MODE_ON, 
-          ELM_SOFTCURSOR_MODE_AUTO, fallback);
    if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
        ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
            (((fallback) && (!strcmp(fallback, "Software FB"))) ||
@@ -2599,7 +2595,6 @@ elm_win_add(Evas_Object *parent,
         Evas_Object *o;
         Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
 
-        printf("softcursoooooooooor\n");
         sd->pointer.obj = o = edje_object_add(ecore_evas_get(tmp_sd.ee));
         _elm_theme_object_set(obj, o, "pointer", "base", "default");
         edje_object_size_min_calc(o, &mw, &mh);
