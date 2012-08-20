@@ -385,7 +385,7 @@ _eina_class_range_add(Eina_Class *class)
 
   /* and now find an empty block */
   EINA_INLIST_FOREACH(class->top->available, av)
-    if (av->end - av->start == class->pool_size)
+    if ((av->end - av->start) == class->pool_size)
       break;
 
   if (av)
