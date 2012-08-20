@@ -1272,7 +1272,7 @@ ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll)
      }
 
    body->rigid_body->activate(1);
-   body->rigid_body->applyTorqueImpulse(btVector3(0, 0, roll));
+   body->rigid_body->applyTorqueImpulse(btVector3(0, 0, -roll));
 }
 
 EAPI void

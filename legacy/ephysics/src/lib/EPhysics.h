@@ -2152,6 +2152,10 @@ EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, dou
  * Apply a torque impulse over a body.
  *
  * An impulse will be applied over the body to make it rotate around Z axis.
+ * Impulse is the product of the force over the time this force is applied.
+ * In ephysics case, it would be the time of a tick, so it behaves just
+ * summing current angular velocity to the result of a calculation involving
+ * torque impulse and body's inertia.
  *
  * @param body The physics body that will receive the impulse.
  * @param roll Impulse to rotate body around Z axis (rotate on x - y plane).

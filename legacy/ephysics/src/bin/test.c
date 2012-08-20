@@ -30,6 +30,7 @@ void test_growing_balls(void *data, Evas_Object *obj, void *event_info);
 void test_jumping_balls(void *data, Evas_Object *obj, void *event_info);
 void test_no_gravity(void *data, Evas_Object *obj, void *event_info);
 void test_rotate(void *data, Evas_Object *obj, void *event_info);
+void test_rotating_forever(void *data, Evas_Object *obj, void *event_info);
 void test_velocity(void *data, Evas_Object *obj, void *event_info);
 void test_shapes(void *data, Evas_Object *obj, void *event_info);
 void test_sleeping(void *data, Evas_Object *obj, void *event_info);
@@ -52,6 +53,7 @@ static const EPhysics_Test tests[] = {
        {"Jumping Balls", test_jumping_balls},
        {"No Gravity", test_no_gravity},
        {"Rotate", test_rotate},
+       {"Rotating Forever", test_rotating_forever},
        {"Velocity", test_velocity},
        {"Shapes", test_shapes},
        {"Sleeping Threshold", test_sleeping},

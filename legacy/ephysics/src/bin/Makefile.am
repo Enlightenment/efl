@@ -31,6 +31,7 @@ test_growing_balls.c \
 test_jumping_balls.c \
 test_no_gravity.c \
 test_rotate.c \
+test_rotating_forever.c \
 test_velocity.c \
 test_shapes.c \
 test_sleeping_threshold.c \
