@@ -172,6 +172,7 @@ _del_hook(Evas_Object *obj)
    if (wd->guidetext) evas_object_del(wd->guidetext);
    if (wd->end) evas_object_del(wd->end);
    if (wd->rect_for_end) evas_object_del(wd->rect_for_end);
+   free(wd);
 }
 
 static void
