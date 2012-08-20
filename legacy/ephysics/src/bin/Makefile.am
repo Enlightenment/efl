@@ -27,6 +27,7 @@ test_collision_speed.c \
 test_constraint.c \
 test_delete.c \
 test_falling_letters.c \
+test_forces.c \
 test_growing_balls.c \
 test_jumping_balls.c \
 test_no_gravity.c \
