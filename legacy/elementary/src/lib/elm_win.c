@@ -41,8 +41,8 @@ static const Elm_Win_Trap *trap = NULL;
   if (!obj || !elm_widget_type_check((obj), WIN_SMART_NAME, __func__)) \
     return
 
-#define ENGINE_COMPARE(name) \
-  (_elm_preferred_engine && !strcmp(_elm_preferred_engine, name))
+#define ENGINE_GET() (_elm_preferred_engine ? _elm_preferred_engine : (_elm_config->engine ? _elm_config->engine : ""))
+#define ENGINE_COMPARE(name) (!strcmp(ENGINE_GET(), name))
 
 typedef struct _Elm_Win_Smart_Data Elm_Win_Smart_Data;
 
@@ -2187,29 +2187,23 @@ elm_win_add(Evas_Object *parent,
    Evas *e;
    Evas_Object *obj;
    const Eina_List *l;
-   const char *fontpath;
+   const char *fontpath, *fallback = NULL;
 
    Elm_Win_Smart_Data tmp_sd;
 
    /* just to store some data while trying out to create a canvas */
    memset(&tmp_sd, 0, sizeof(Elm_Win_Smart_Data));
 
-#define FALLBACK_TRY(engine)                                          \
-  if (!tmp_sd.ee)                                                     \
-    do {                                                              \
-         CRITICAL(engine " engine creation failed. Trying default."); \
-         tmp_sd.ee = ecore_evas_new(NULL, 0, 0, 1, 1, NULL);          \
-         if (tmp_sd.ee)                                               \
-           elm_config_preferred_engine_set                            \
-             (ecore_evas_engine_name_get(tmp_sd.ee));                 \
-      } while (0)
-#define FALLBACK_STORE(engine)                                  \
-  if (tmp_sd.ee)                                                \
-    do {                                                        \
-         CRITICAL(engine "Fallback to %s successful.", engine); \
-         elm_config_preferred_engine_set                        \
-           (ecore_evas_engine_name_get(tmp_sd.ee));             \
-      } while (0)
+#define FALLBACK_TRY(engine)                                      \
+  if (!tmp_sd.ee) {                                               \
+     CRITICAL(engine " engine creation failed. Trying default."); \
+  } while (0)
+#define FALLBACK_STORE(engine)                               \
+   if (tmp_sd.ee)                                            \
+   {                                                         \
+      CRITICAL(engine "Fallback to %s successful.", engine); \
+      fallback = engine;                                     \
+   }
 
    switch (type)
      {
@@ -2244,65 +2238,65 @@ elm_win_add(Evas_Object *parent,
         if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
           {
              tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-             FALLBACK_TRY("Sofware X11");
+             FALLBACK_TRY("Software X11");
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                  FALLBACK_STORE("Sofware FB");
+                  FALLBACK_STORE("Software FB");
                }
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_FB))
           {
              tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-             FALLBACK_TRY("Sofware FB");
+             FALLBACK_TRY("Software FB");
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Sofware X11");
+                  FALLBACK_STORE("Software X11");
                }
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_DIRECTFB))
           {
              tmp_sd.ee = ecore_evas_directfb_new(NULL, 1, 0, 0, 1, 1);
-             FALLBACK_TRY("Sofware DirectFB");
+             FALLBACK_TRY("Software DirectFB");
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Sofware X11");
+                  FALLBACK_STORE("Software X11");
                   if (!tmp_sd.ee)
                     {
                        tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Sofware FB");
+                       FALLBACK_STORE("Software FB");
                     }
                }
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_16_X11))
           {
              tmp_sd.ee = ecore_evas_software_x11_16_new(NULL, 0, 0, 0, 1, 1);
-             FALLBACK_TRY("Sofware-16");
+             FALLBACK_TRY("Software-16");
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Sofware X11");
+                  FALLBACK_STORE("Software X11");
                   if (!tmp_sd.ee)
                     {
                        tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Sofware FB");
+                       FALLBACK_STORE("Software FB");
                     }
                }
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_8_X11))
           {
              tmp_sd.ee = ecore_evas_software_x11_8_new(NULL, 0, 0, 0, 1, 1);
-             FALLBACK_TRY("Sofware-8");
+             FALLBACK_TRY("Software-8");
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Sofware X11");
+                  FALLBACK_STORE("Software X11");
                   if (!tmp_sd.ee)
                     {
                        tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Sofware FB");
+                       FALLBACK_STORE("Software FB");
                     }
                }
           }
@@ -2327,23 +2321,23 @@ elm_win_add(Evas_Object *parent,
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Sofware X11");
+                  FALLBACK_STORE("Software X11");
                   if (!tmp_sd.ee)
                     {
                        tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Sofware FB");
+                       FALLBACK_STORE("Software FB");
                     }
                }
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_WIN32))
           {
              tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
-             FALLBACK_TRY("Sofware Win32");
+             FALLBACK_TRY("Software Win32");
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
           {
              tmp_sd.ee = ecore_evas_software_wince_gdi_new(NULL, 0, 0, 1, 1);
-             FALLBACK_TRY("Sofware-16-WinCE");
+             FALLBACK_TRY("Software-16-WinCE");
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_PSL1GHT))
           {
@@ -2353,30 +2347,30 @@ elm_win_add(Evas_Object *parent,
         else if (ENGINE_COMPARE(ELM_SOFTWARE_SDL))
           {
              tmp_sd.ee = ecore_evas_sdl_new(NULL, 0, 0, 0, 0, 0, 1);
-             FALLBACK_TRY("Sofware SDL");
+             FALLBACK_TRY("Software SDL");
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Sofware X11");
+                  FALLBACK_STORE("Software X11");
                   if (!tmp_sd.ee)
                     {
                        tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Sofware FB");
+                       FALLBACK_STORE("Software FB");
                     }
                }
           }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_16_SDL))
           {
              tmp_sd.ee = ecore_evas_sdl16_new(NULL, 0, 0, 0, 0, 0, 1);
-             FALLBACK_TRY("Sofware-16-SDL");
+             FALLBACK_TRY("Software-16-SDL");
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Sofware X11");
+                  FALLBACK_STORE("Software X11");
                   if (!tmp_sd.ee)
                     {
                        tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Sofware FB");
+                       FALLBACK_STORE("Software FB");
                     }
                }
           }
@@ -2387,11 +2381,11 @@ elm_win_add(Evas_Object *parent,
              if (!tmp_sd.ee)
                {
                   tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 1, 1);
-                  FALLBACK_STORE("Sofware X11");
+                  FALLBACK_STORE("Software X11");
                   if (!tmp_sd.ee)
                     {
                        tmp_sd.ee = ecore_evas_fb_new(NULL, 0, 1, 1);
-                       FALLBACK_STORE("Sofware FB");
+                       FALLBACK_STORE("Software FB");
                     }
                }
           }
@@ -2416,13 +2410,12 @@ elm_win_add(Evas_Object *parent,
           {
              tmp_sd.ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
           }
-        else if (_elm_preferred_engine &&
-                 !strncmp(_elm_preferred_engine, "shot:", 5))
+        else if (!strncmp(ENGINE_GET(), "shot:", 5))
           {
              tmp_sd.ee = ecore_evas_buffer_new(1, 1);
              ecore_evas_manual_render_set(tmp_sd.ee, EINA_TRUE);
              tmp_sd.shot.info = eina_stringshare_add
-                 (_elm_preferred_engine + 5);
+                 (ENGINE_GET() + 5);
           }
 #undef FALLBACK_TRY
         break;
@@ -2474,8 +2467,7 @@ elm_win_add(Evas_Object *parent,
          (ECORE_X_EVENT_CLIENT_MESSAGE, _elm_win_client_message, sd);
 #endif
 
-   else if (_elm_preferred_engine &&
-            !strncmp(_elm_preferred_engine, "shot:", 5))
+   else if (!strncmp(ENGINE_GET(), "shot:", 5))
      _shot_init(sd);
 
    sd->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
@@ -2571,7 +2563,8 @@ elm_win_add(Evas_Object *parent,
 
    _elm_win_list = eina_list_append(_elm_win_list, obj);
 
-   if (ENGINE_COMPARE(ELM_SOFTWARE_FB))
+   if (((fallback) && (!strcmp(fallback, "Software FB"))) ||
+       ((!fallback) && (ENGINE_COMPARE(ELM_SOFTWARE_FB))))
      {
         TRAP(sd, fullscreen_set, 1);
      }
@@ -2594,14 +2587,19 @@ elm_win_add(Evas_Object *parent,
      ERR("failed to grab F12 key to elm widgets (dot) tree generation");
 #endif
 
+   printf("_elm_config->softcursor_mode %i = %i, %i | '%s'\n",
+          _elm_config->softcursor_mode, 
+          ELM_SOFTCURSOR_MODE_ON, 
+          ELM_SOFTCURSOR_MODE_AUTO, fallback);
    if ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_ON) ||
        ((_elm_config->softcursor_mode == ELM_SOFTCURSOR_MODE_AUTO) &&
-        elm_config_preferred_engine_get() &&
-        (!strcmp(elm_config_preferred_engine_get(), "fb"))))
+           (((fallback) && (!strcmp(fallback, "Software FB"))) ||
+               ((!fallback) && (ENGINE_COMPARE(ELM_SOFTWARE_FB))))))
      {
         Evas_Object *o;
         Evas_Coord mw = 1, mh = 1, hx = 0, hy = 0;
 
+        printf("softcursoooooooooor\n");
         sd->pointer.obj = o = edje_object_add(ecore_evas_get(tmp_sd.ee));
         _elm_theme_object_set(obj, o, "pointer", "base", "default");
         edje_object_size_min_calc(o, &mw, &mh);
