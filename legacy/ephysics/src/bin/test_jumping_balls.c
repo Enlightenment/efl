@@ -23,7 +23,7 @@ _jump(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_object_disabled_set(bt, EINA_TRUE);
    bodies = ephysics_world_bodies_get(world);
    EINA_LIST_FOREACH(bodies, l, body)
-      ephysics_body_central_impulse_apply(body, 0, 10);
+      ephysics_body_central_impulse_apply(body, 0, 300);
    eina_list_free(bodies);
 }
 

@@ -17,11 +17,13 @@ static void
 _shoot(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Speed_Data *speed_data = data;
-   double impulse;
+   double impulse, rate;
+
+   rate = ephysics_world_rate_get(ephysics_body_world_get(speed_data->ball));
+   impulse = elm_spinner_value_get(speed_data->sp);
 
    elm_object_disabled_set(obj, EINA_TRUE);
-   impulse = elm_spinner_value_get(speed_data->sp);
-   ephysics_body_central_impulse_apply(speed_data->ball, impulse, 0);
+   ephysics_body_central_impulse_apply(speed_data->ball, impulse * rate, 0);
 }
 
 static void

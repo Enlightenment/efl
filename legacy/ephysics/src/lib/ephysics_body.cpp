@@ -1223,14 +1223,18 @@ ephysics_body_world_get(const EPhysics_Body *body)
 EAPI void
 ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y)
 {
+   double rate;
+
    if (!body)
      {
         ERR("Can't apply impulse to a null body.");
         return;
      }
 
+   rate = ephysics_world_rate_get(body->world);
+
    body->rigid_body->activate(1);
-   body->rigid_body->applyCentralImpulse(btVector3(x, y, 0));
+   body->rigid_body->applyCentralImpulse(btVector3(x / rate, y / rate, 0));
 }
 
 EAPI void

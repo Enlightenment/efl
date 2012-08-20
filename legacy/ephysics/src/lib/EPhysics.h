@@ -2120,14 +2120,24 @@ EAPI double ephysics_body_friction_get(const EPhysics_Body *body);
  * Apply an impulse on the center of a body.
  *
  * The impulse is equal to the change of momentum of the body.
- * It's the product of the force over the time this force is applied.
  *
- * When a impulse is applied over a body it will has its velocity changed.
+ * Impulse is the product of the force over the time this force is applied.
+ * In ephysics case, it would be the time of a tick, so it behaves just
+ * summing current linear velocity to impulse per mass.
+ *
+ * Example:
+ * A body of 2kg of mass has an initial velocity of 30 p/s.
+ * After a impulse of 30 kg * p / s in the same direction is applied,
+ * the velocity will be * 45 p/s.
+ *
+ *    (0, 30) + (0, 300) / 2 = (0, 30) + (0, 15) = (0, 45)
+ *
+ * When a impulse is applied over a body, it will has its velocity changed.
  * This impulse will be applied on body's center, so it won't implies in
  * rotating the body. For that is possible to apply a torque impulse with
  * @ref ephysics_body_torque_impulse_apply().
  *
- * @note Impulse is measured in Ns (Newton seconds).
+ * @note Impulse is measured in kg * p / s.
  *
  * @param body The physics body that will receive the impulse.
  * @param x The axis x component of impulse.

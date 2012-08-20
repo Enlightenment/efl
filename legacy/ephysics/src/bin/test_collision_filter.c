@@ -35,7 +35,7 @@ _world_populate(Test_Data *test_data)
         ephysics_body_friction_set(fall_body, 0.1);
         ephysics_body_collision_group_add(fall_body, colors[row]);
         if (column + row == 1)
-          ephysics_body_central_impulse_apply(fall_body, 20 * row - 10, 0);
+          ephysics_body_central_impulse_apply(fall_body, 600 * row - 300, 0);
         test_data->bodies = eina_list_append(test_data->bodies, fall_body);
      }
 }

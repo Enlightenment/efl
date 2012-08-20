@@ -131,7 +131,7 @@ _world_populate(Track_Data *track_data)
    ephysics_body_restitution_set(body, 0.95);
    ephysics_body_friction_set(body, 1);
    ephysics_body_damping_set(body, 0.1, 0);
-   ephysics_body_central_impulse_apply(body, 3, 0);
+   ephysics_body_central_impulse_apply(body, 90, 0);
    track_data->body = body;
    track_data->base.bodies = eina_list_append(track_data->base.bodies, body);
 }

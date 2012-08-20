@@ -114,7 +114,7 @@ _world_populate(Collision_Data *collision_data)
                                     update_object_cb, sh2);
    ephysics_body_restitution_set(sphere_body2, 1);
    ephysics_body_friction_set(sphere_body2, 0.4);
-   ephysics_body_central_impulse_apply(sphere_body2, 12, 0);
+   ephysics_body_central_impulse_apply(sphere_body2, 360, 0);
    collision_data->sphere2 = sphere_body2;
    collision_data->base.bodies = eina_list_append(
       collision_data->base.bodies, sphere_body2);

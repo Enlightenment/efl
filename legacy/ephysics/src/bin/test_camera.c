@@ -103,7 +103,7 @@ _world_populate(Camera_Data *camera_data)
                                     update_object_cb, shadow);
    camera_data->base.bodies = eina_list_append(camera_data->base.bodies,
                                                fall_body);
-   ephysics_body_central_impulse_apply(fall_body, 10, 0);
+   ephysics_body_central_impulse_apply(fall_body, 300, 0);
 
    shadow = elm_layout_add(camera_data->base.win);
    elm_layout_file_set(

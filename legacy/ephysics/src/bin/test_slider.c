@@ -94,7 +94,7 @@ _world_populate(Test_Data *test_data)
    constraint = ephysics_constraint_slider_add(box_body3);
    ephysics_constraint_slider_linear_limit_set(constraint, WIDTH - 120, 0, 0,
                                                0);
-   ephysics_body_central_impulse_apply(box_body3, -8, 0);
+   ephysics_body_central_impulse_apply(box_body3, -240, 0);
    test_data->constraints = eina_list_append(test_data->constraints,
                                              constraint);
 
@@ -124,7 +124,7 @@ _world_populate(Test_Data *test_data)
 
    constraint = ephysics_constraint_slider_add(box_body4);
    ephysics_constraint_slider_linear_limit_set(constraint, WIDTH / 3, 0, 0, 0);
-   ephysics_body_central_impulse_apply(box_body4, -20, 0);
+   ephysics_body_central_impulse_apply(box_body4, -600, 0);
    test_data->constraints = eina_list_append(test_data->constraints,
                                              constraint);
 

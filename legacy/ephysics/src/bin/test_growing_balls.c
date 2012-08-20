@@ -44,7 +44,7 @@ _add_sphere(Test_Data *test_data, const char *group, int size, int x, int y)
    sphere_body = ephysics_body_circle_add(test_data->world);
    ephysics_body_evas_object_set(sphere_body, sphere, EINA_TRUE);
    ephysics_body_restitution_set(sphere_body, 0.5);
-   ephysics_body_central_impulse_apply(sphere_body, 10, 0);
+   ephysics_body_central_impulse_apply(sphere_body, 300, 0);
    test_data->bodies = eina_list_append(test_data->bodies, sphere_body);
 }
 

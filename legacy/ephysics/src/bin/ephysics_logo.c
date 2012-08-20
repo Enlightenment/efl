@@ -266,7 +266,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    ephysics_body_rotation_on_z_axis_enable_set(letter_body, EINA_TRUE);
 
    /* make the "E" logo get into the viewport by applying an horizontal force */
-   ephysics_body_central_impulse_apply(letter_body, 13, 0);
+   ephysics_body_central_impulse_apply(letter_body, 390, 0);
 
    elm_run();
 
