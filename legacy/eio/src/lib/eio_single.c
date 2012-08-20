@@ -421,7 +421,10 @@ eio_file_direct_stat(const char *path,
 		      _eio_file_stat,
 		      _eio_file_stat_done,
 		      _eio_file_stat_error))
-     return NULL;
+     {
+        free(s);
+        return NULL;
+     }
 
    return &s->common;
 }
@@ -482,7 +485,10 @@ eio_file_unlink(const char *path,
 		      _eio_file_unlink,
 		      _eio_file_unlink_done,
 		      _eio_file_unlink_error))
-     return NULL;
+     {
+        free(l);
+        return NULL;
+     }
 
    return &l->common;
 }
@@ -512,7 +518,10 @@ eio_file_mkdir(const char *path,
 		     _eio_file_mkdir,
 		     _eio_file_mkdir_done,
 		     _eio_file_mkdir_error))
-     return NULL;
+     {
+        free(r);
+        return NULL;
+     }
 
    return &r->common;
 }
@@ -542,7 +551,10 @@ eio_file_chmod(const char *path,
 		     _eio_file_chmod,
 		     _eio_file_mkdir_done,
 		     _eio_file_mkdir_error))
-     return NULL;
+     {
+        free(r);
+        return NULL;
+     }
 
    return &r->common;
 }
@@ -574,7 +586,10 @@ eio_file_chown(const char *path,
 		     _eio_file_chown,
 		     _eio_file_chown_done,
 		     _eio_file_chown_error))
-     return NULL;
+     {
+        free(c);
+        return NULL;
+     }
 
    return &c->common;
 }
