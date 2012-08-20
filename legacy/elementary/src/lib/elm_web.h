@@ -320,7 +320,7 @@ typedef Evas_Object *(*Elm_Web_Dialog_Confirm)(void *data, Evas_Object *obj, con
  *
  * @ingroup Web
  */
-typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, const char *message, const char *def_value, char **value, Eina_Bool *ret);
+typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, const char *message, const char *def_value, const char **value, Eina_Bool *ret);
 
 /**
  * Callback type for the JS file selector hook.
@@ -632,7 +632,7 @@ EAPI void              elm_web_bg_color_get(const Evas_Object *obj, int *r, int 
  * 
  * @ingroup Web
  */
-EAPI char             *elm_web_selection_get(const Evas_Object *obj);
+EAPI const char       *elm_web_selection_get(const Evas_Object *obj);
 
 /**
  * Tells the web object which index in the currently open popup was selected

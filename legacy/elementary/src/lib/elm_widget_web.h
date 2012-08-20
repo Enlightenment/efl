@@ -188,7 +188,7 @@ struct _Dialog_Data
    Evas_Object     *file_sel;
 
    Eina_Bool       *response;
-   char           **entry_value;
+   const char     **entry_value;
    Eina_List      **selected_files;
 };
 

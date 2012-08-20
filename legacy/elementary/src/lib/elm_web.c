@@ -448,7 +448,7 @@ _run_dialog(Evas_Object *parent,
             enum Dialog_Type type,
             const char *message,
             const char *default_entry_value,
-            char **entry_value,
+            const char **entry_value,
             Eina_Bool allows_multiple_files __UNUSED__,
             Eina_List *accept_types __UNUSED__,
             Eina_List **selected_filenames,
@@ -645,7 +645,7 @@ _view_smart_run_javascript_prompt(Ewk_View_Smart_Data *esd,
                                   Evas_Object *frame __UNUSED__,
                                   const char *message,
                                   const char *default_value,
-                                  char **value)
+                                  const char **value)
 {
    View_Smart_Data *vsd = (View_Smart_Data *)esd;
    Evas_Object *view = vsd->base.self;
@@ -1503,7 +1503,7 @@ elm_web_bg_color_get(const Evas_Object *obj,
 #endif
 }
 
-EAPI char *
+EAPI const char *
 elm_web_selection_get(const Evas_Object *obj)
 {
    ELM_WEB_CHECK(obj) NULL;
