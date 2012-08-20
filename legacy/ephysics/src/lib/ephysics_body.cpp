@@ -1238,6 +1238,25 @@ ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y)
 }
 
 EAPI void
+ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, Evas_Coord pos_x, Evas_Coord pos_y)
+{
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't apply impulse to a null body.");
+        return;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+
+   body->rigid_body->activate(1);
+   body->rigid_body->applyImpulse(btVector3(x / rate, y / rate, 0),
+                                  btVector3((double) pos_x / rate,
+                                            (double) pos_y / rate, 0));
+}
+
+EAPI void
 ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y)
 {
    if (!body)

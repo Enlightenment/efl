@@ -14,7 +14,7 @@ _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info _
    vrot = ephysics_body_angular_velocity_get(body);
    ephysics_body_evas_object_update(body);
 
-   DBG("rot: %lf, vrot :%lf", rot, vrot);
+   DBG("body: %p, rot: %lf, vrot :%lf", body, rot, vrot);
 }
 
 static void
@@ -39,6 +39,23 @@ _world_populate(Test_Data *test_data)
                                     _update_object_cb, NULL);
 
    ephysics_body_torque_impulse_apply(body, 1);
+
+   cube = elm_image_add(test_data->win);
+   elm_image_file_set(
+      cube, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "purple-cube");
+   evas_object_move(cube, WIDTH / 3, FLOOR_Y - 70);
+   evas_object_resize(cube, 70, 70);
+   evas_object_show(cube);
+   test_data->evas_objs = eina_list_append(test_data->evas_objs, cube);
+
+   body = ephysics_body_box_add(test_data->world);
+   ephysics_body_evas_object_set(body, cube, EINA_TRUE);
+   test_data->bodies = eina_list_append(test_data->bodies, body);
+   ephysics_body_event_callback_add(body,
+                                    EPHYSICS_CALLBACK_BODY_UPDATE,
+                                    _update_object_cb, NULL);
+
+   ephysics_body_impulse_apply(body, 30, 0, 0, -10);
 }
 
 static void

@@ -2143,6 +2143,9 @@ EAPI double ephysics_body_friction_get(const EPhysics_Body *body);
  * @param x The axis x component of impulse.
  * @param y The axis y component of impulse.
  *
+ * @see ephysics_body_torque_impulse_apply().
+ * @see ephysics_body_impulse_apply().
+ *
  * @ingroup EPhysics_Body
  */
 EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y);
@@ -2162,10 +2165,45 @@ EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, dou
  * Negative values will impulse body on anti clock rotation.
  *
  * @see ephysics_body_central_impulse_apply().
+ * @see ephysics_body_impulse_apply().
  *
  * @ingroup EPhysics_Body
  */
 EAPI void ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll);
+
+/**
+ * @brief
+ * Apply an impulse over a body.
+ *
+ * An impulse will be applied over the body to make it move and rotate around
+ * Z axis.
+ *
+ * Impulse is the product of the force over the time this force is applied.
+ * It can be applied in the center of the body, avoiding rotating it,
+ * with @ref ephysics_body_central_impulse_apply(), it can be applied only
+ * to make a body rotate, with @ref ephysics_body_torque_impulse_apply(),
+ * or can be used to lead to both behaviors with
+ * @ref ephysics_body_impulse_apply().
+ *
+ * It will resulte in a central impulse with impulse (@p x, @p y) and a
+ * torque impulse that will be calculated as a cross product on impulse
+ * and relative position.
+ *
+ * @param body The physics body that will receive the impulse.
+ * @param x The axis x component of impulse.
+ * @param y The axis y component of impulse.
+ * @param pos_x The axis x component of the relative position to apply impulse.
+ * @param pos_y The axis y component of the relative position to apply impulse.
+ *
+ * @note Impulse is measured in kg * p / s and position in pixels
+ * (Evas coordinates).
+ *
+ * @see ephysics_body_central_impulse_apply().
+ * @see ephysics_body_torque_impulse_apply().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, Evas_Coord pos_x, Evas_Coord pos_y);
 
 /**
  * @brief
