@@ -269,6 +269,52 @@ _ephysics_body_evas_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
+_ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
+{
+   double rate, sx, sy;
+
+   rate = ephysics_world_rate_get(body->world);
+   sx = w / rate;
+   sy = h / rate;
+
+   body->collision_shape->setLocalScaling(btVector3(sx, sy, 1));
+
+   if(!body->rigid_body->isStaticObject())
+      ephysics_body_mass_set(body, ephysics_body_mass_get(body));
+
+   body->w = w;
+   body->h = h;
+
+   body->rigid_body->activate(1);
+
+   DBG("Body %p scale changed to %lf, %lf.", body, sx, sy);
+}
+
+static void
+_ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
+{
+   double rate, mx, my;
+   btTransform trans;
+   int wy, height;
+
+   rate = ephysics_world_rate_get(body->world);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
+   height += wy;
+
+   mx = (x + body->w / 2) / rate;
+   my = (height - (y + body->h / 2)) / rate;
+
+   body->rigid_body->getMotionState()->getWorldTransform(trans);
+   trans.setOrigin(btVector3(mx, my, 0));
+   body->rigid_body->proceedToTransform(trans);
+   body->rigid_body->getMotionState()->setWorldTransform(trans);
+
+   body->rigid_body->activate(1);
+
+   DBG("Body %p position changed to %lf, %lf.", body, mx, my);
+}
+
+static void
 _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, double rate)
 {
    double mx, my, sx, sy;
@@ -307,16 +353,14 @@ static void
 _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
-   int x, y, w, h;
+   int w, h;
 
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if ((w == body->w) && (h == body->h))
      return;
 
    DBG("Resizing body %p to w=%i, h=%i", body, w, h);
-   ephysics_body_geometry_get(body, &x, &y, NULL, NULL);
-   _ephysics_body_geometry_set(body, x, y, w, h,
-                               ephysics_world_rate_get(body->world));
+   _ephysics_body_resize(body, w, h);
 }
 
 static void
@@ -782,7 +826,7 @@ ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas
 {
    if (!body)
      {
-        ERR("Can't set body position, body is null.");
+        ERR("Can't set body geometry, body is null.");
         return;
      }
 
@@ -794,6 +838,36 @@ ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas
 
    _ephysics_body_geometry_set(body, x, y, w, h,
                                ephysics_world_rate_get(body->world));
+}
+
+EAPI void
+ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
+{
+   if (!body)
+     {
+        ERR("Can't set body size, body is null.");
+        return;
+     }
+
+   if ((w <= 0) || (h <= 0))
+     {
+        ERR("Width and height must to be a non-null, positive value.");
+        return;
+     }
+
+   _ephysics_body_resize(body, w, h);
+}
+
+EAPI void
+ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
+{
+   if (!body)
+     {
+        ERR("Can't set body position, body is null.");
+        return;
+     }
+
+   _ephysics_body_move(body, x, y);
 }
 
 EAPI void

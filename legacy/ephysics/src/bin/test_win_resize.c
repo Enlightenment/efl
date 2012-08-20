@@ -22,10 +22,10 @@ _win_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
 {
    Test_Data *test_data = data;
    EPhysics_Body *sphere_body;
-   int ww, wh, x, y, w, h;
    double ratew, rateh;
    Evas_Object *sphere;
    Old_Rate *old_rate;
+   int ww, wh, x, y;
 
    evas_object_geometry_get(obj, NULL, NULL, &ww, &wh);
    ratew = (double) ww / WIDTH;
@@ -59,11 +59,10 @@ _win_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
    sphere_body = old_rate->body;
 
    sphere = ephysics_body_evas_object_get(sphere_body);
-   evas_object_geometry_get(sphere, &x, &y, &w, &h);
+   evas_object_geometry_get(sphere, &x, &y, NULL, NULL);
 
-   /* FIXME: add resize / move to API */
-   ephysics_body_geometry_set(sphere_body, x * (ratew / old_rate->w),
-                              y * (rateh / old_rate->h), 1, 1);
+   ephysics_body_move(sphere_body, x * (ratew / old_rate->w),
+                      y * (rateh / old_rate->h));
    evas_object_resize(sphere, 70 * ratew, 70 * rateh);
 
    old_rate->w = ratew;

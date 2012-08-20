@@ -102,7 +102,7 @@ _update_circle_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info)
    evas_object_color_set(shadow, alpha, alpha, alpha, alpha);
 
    if (x > E_THRESHOLD)
-     ephysics_body_geometry_set(body, -w - 1, y, w, h);
+     ephysics_body_move(body, -w - 1, y);
 }
 
 static void

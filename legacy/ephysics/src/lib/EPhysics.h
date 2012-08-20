@@ -1170,7 +1170,8 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
  *
  * Bodies can have different shapes that can be created with:
  * @li @ref ephysics_body_circle_add();
- * @li or @ref ephysics_body_box_add().
+ * @li @ref ephysics_body_box_add();
+ * @li or @ref ephysics_body_shape_add().
  *
  * They can collide and have customizable properties, like:
  * @li mass, set with @ref ephysics_body_mass_set();
@@ -1178,12 +1179,14 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
  * @ref ephysics_body_restitution_set();
  * @li and friction, set with @ref ephysics_body_friction_set().
  *
- * Bodies can have its position and size directly set by
+ * Bodies can have its position and size directly set by:
+ * @ref ephysics_body_move();
+ * @ref ephysics_body_resize();
  * @ref ephysics_body_geometry_set().
  *
  * Also, they can have an associated evas object, done with
- * @ref ephysics_body_evas_object_set() function, being responsible for updating
- * its position and rotation, or letting a user callback be set
+ * @ref ephysics_body_evas_object_set() function, being responsible for
+ * updating its position and rotation, or letting a user callback be set
  * for this task with @ref ephysics_body_event_callback_add().
  *
  * Also, bodies can have impulses applied over them, and will be affected
@@ -1475,13 +1478,40 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
 
 /**
  * @brief
- * Set physics body geometry.
+ * Set physics body size.
  *
- * All the physics bodies are created centered on origin (0, 0) and with
- * canonical dimensions. Circles have diameter 1, boxes have dimensions 1
+ * All the physics bodies are and with canonical dimensions.
+ * Circles have diameter 1, boxes have dimensions 1
  * on all the axises.
  *
- * There are two direct ways of modifying this geometry:
+ * There are three direct ways of modifying it's size:
+ * @li With @ref ephysics_body_resize();
+ * @li With @ref ephysics_body_geometry_set();
+ * @li When associating an evas object with
+ * @ref ephysics_body_evas_object_set().
+ *
+ * @note The unit used for size is Evas coordinates.
+ *
+ * @param body The body to be resized.
+ * @param w The body width, in pixels.
+ * @param h The body height, in pixels.
+ *
+ * @see ephysics_body_geometry_get().
+ * @see ephysics_body_geometry_set().
+ * @see ephysics_body_move().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h);
+
+/**
+ * @brief
+ * Set physics body position.
+ *
+ * All the physics bodies are created centered on origin (0, 0).
+ *
+ * There are three direct ways of modifying this position:
+ * @li With @ref ephysics_body_move();
  * @li With @ref ephysics_body_geometry_set();
  * @li When associating an evas object with
  * @ref ephysics_body_evas_object_set().
@@ -1489,15 +1519,53 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
  * When the world is simulated forces will be applied on objects
  * with mass and position will be modified too.
  *
- * @note The unit used for geometry is Evas coordinates.
+ * @note The unit used for position is Evas coordinates.
  *
  * @param body The body to be positioned.
+ * @param x The position on axis x, in pixels.
+ * @param y The position on axis y, in pixels.
+ *
+ * @see ephysics_body_geometry_get().
+ * @see ephysics_body_geometry_set().
+ * @see ephysics_body_resize().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y);
+
+/**
+ * @brief
+ * Set physics body geometry.
+ *
+ * All the physics bodies are created centered on origin (0, 0) and with
+ * canonical dimensions. Circles have diameter 1, boxes have dimensions 1
+ * on all the axises.
+ *
+ * There are four direct ways of modifying this geometry:
+ * @li With @ref ephysics_body_geometry_set();
+ * @li With @ref ephysics_body_move();
+ * @li With @ref ephysics_body_resize();
+ * @li When associating an evas object with
+ * @ref ephysics_body_evas_object_set().
+ *
+ * If you just need to move the body, no changes are required to it's size,
+ * use @ref ephysics_body_move(). If you just need to modify the size of
+ * @p body use @ref ephysics_body_resize().
+ *
+ * When the world is simulated forces will be applied on objects
+ * with mass and position will be modified too.
+ *
+ * @note The unit used for geometry is Evas coordinates.
+ *
+ * @param body The body to be modified.
  * @param x The position on axis x, in pixels.
  * @param y The position on axis y, in pixels.
  * @param w The body width, in pixels.
  * @param h The body height, in pixels.
  *
  * @see ephysics_body_geometry_get().
+ * @see ephysics_body_move().
+ * @see ephysics_body_resize().
  *
  * @ingroup EPhysics_Body
  */
@@ -1514,6 +1582,8 @@ EAPI void ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coo
  * @param h The body height, in pixels.
  *
  * @see ephysics_body_geometry_set() for more details.
+ * @see ephysics_body_move().
+ * @see ephysics_body_resize().
  *
  * @ingroup EPhysics_Body
  */
