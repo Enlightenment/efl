@@ -29,17 +29,21 @@ EAPI const char                  *elm_object_part_text_get(const Evas_Object *ob
 #define elm_object_text_get(obj) elm_object_part_text_get((obj), NULL)
 
 /**
- * Set a content of an object
+ * Set the content on part of a given container widget
  *
- * @param obj The Elementary object
- * @param part The content part name to set (NULL for the default content)
- * @param content The new content of the object
+ * @param obj The Elementary container widget
+ * @param part The container's part name to set (some might accept
+ *        @c NULL for the default part)
+ * @param content The new content for that part
  *
- * This sets a new object to a widget as a content object. If any object was
- * already set as a content object in the same part, previous object will be
- * deleted automatically.
+ * All widgets deriving from the @ref elm-container-class may hold
+ * child objects as content at given parts.  This sets new content to
+ * a given part. If any object was already set as a content object in
+ * the same part, the previous object will be deleted automatically
+ * with this call. If you wish to preserve it, issue
+ * elm_object_part_content_unset() on it first.
  *
- * @note Elementary objects may have many contents
+ * @see elm_object_part_content_set()
  *
  * @ingroup General
  */
@@ -48,13 +52,15 @@ EAPI void                         elm_object_part_content_set(Evas_Object *obj, 
 #define elm_object_content_set(obj, content) elm_object_part_content_set((obj), NULL, (content))
 
 /**
- * Get a content of an object
+ * Get the content on a part of a given container widget
  *
- * @param obj The Elementary object
- * @param part The content part name to get (NULL for the default content)
- * @return content of the object or NULL for any error
+ * @param obj The Elementary container widget
+ * @param part The container's part name to get (some might accept
+ *        @c NULL for the default part)
+ * @return content of the object at the given part or @c NULL, on
+ *         errors
  *
- * @note Elementary objects may have many contents
+ * @see elm_object_part_content_set() for more details
  *
  * @ingroup General
  */
@@ -63,12 +69,15 @@ EAPI Evas_Object                 *elm_object_part_content_get(const Evas_Object 
 #define elm_object_content_get(obj) elm_object_part_content_get((obj), NULL)
 
 /**
- * Unset a content of an object
+ * Unset the content on a part of a given container widget
  *
- * @param obj The Elementary object
- * @param part The content part name to unset (NULL for the default content)
+ * @param obj The Elementary container widget
+ * @param part The container's part name to unset (some might accept
+ *        @c NULL for the default part)
+ * @return content of the object at the given part or @c NULL, on
+ *         errors
  *
- * @note Elementary objects may have many contents
+ * @see elm_object_part_content_set() for more details
  *
  * @ingroup General
  */
