@@ -695,6 +695,7 @@ data_thread_image(void *data, Ecore_Thread *thread __UNUSED__)
      }
    else
      {
+        snprintf(buf, sizeof(buf), "edje/images/%i", iw->img->id);
         snprintf(buf2, sizeof(buf2),
                  "Unable to load image part "
                  "\"%s\" as \"%s\" part entry to "
