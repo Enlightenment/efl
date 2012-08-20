@@ -653,6 +653,8 @@ setconfig(char *root)
    char               *ptr;
    int                 len;
 
+   path[sizeof(path) - 1] = 0;
+
    /* add the default "include" directory */
    if (root)
      {
