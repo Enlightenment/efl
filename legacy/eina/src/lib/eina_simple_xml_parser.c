@@ -687,9 +687,11 @@ eina_simple_xml_node_tag_free(Eina_Simple_XML_Node_Tag *tag)
 static Eina_Simple_XML_Node_Data *
 _eina_simple_xml_node_data_new(Eina_Simple_XML_Node_Tag *parent, Eina_Simple_XML_Node_Type type, const char *content, unsigned length)
 {
-   Eina_Simple_XML_Node_Data *n = malloc(sizeof(*n) + length + 1);
+   Eina_Simple_XML_Node_Data *n;
 
    if (!content) return NULL;
+
+   n = malloc(sizeof(*n) + length + 1);
 
    if (!n)
      {
