@@ -207,7 +207,7 @@ _confirm_hook(void *data __UNUSED__, Evas_Object *obj, const char *message, Eina
 }
 
 static Evas_Object *
-_prompt_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *message __UNUSED__, const char *default_value, char **value, Eina_Bool *response)
+_prompt_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *message __UNUSED__, const char *default_value, const char **value, Eina_Bool *response)
 {
    *response = EINA_TRUE;
    *value = default_value ? strdup(default_value) : "No default!";
