@@ -888,19 +888,10 @@ _destroy_internal_glue_resources(void *data)
    Eina_List *l;
    Render_Engine_GL_Resource *rsc;
 
+   LKL(resource_lock);
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   // Create internal resource context if it hasn't been created already
-   if ((rsc = eina_tls_get(resource_key)) == NULL)
-     {
-        ERR("Error retrieving the TLS resources.");
-        return 0;
-     }
-
-   if (eina_main_loop_is()) rsc->surface = re->win->egl_surface[0];
-
    // EGL
    // Delete the Resources
-   LKL(resource_lock);
    EINA_LIST_FOREACH(resource_list, l, rsc)
      {
         if ((rsc->surface) && (rsc->surface != re->win->egl_surface[0]))
@@ -912,7 +903,6 @@ _destroy_internal_glue_resources(void *data)
  #else
    // GLX
    // Delete the Resources
-   LKL(resource_lock);
    EINA_LIST_FOREACH(resource_list, l, rsc)
      {
         if (rsc)

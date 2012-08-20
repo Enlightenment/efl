@@ -966,3 +966,8 @@
 
 	* Let clip the mapped obj even if it is a child of the mapped obj and do
   	it only when clipper exists
+
+2012-08-20  Hermet (ChunEon Park)
+
+	* Removed unnessesary lines which causes the gles resource leak and
+	corruption.
