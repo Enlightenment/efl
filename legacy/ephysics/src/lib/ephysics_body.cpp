@@ -26,6 +26,15 @@ struct _EPhysics_Body_Collision {
      Evas_Coord y;
 };
 
+static void
+_ephysics_body_forces_update(EPhysics_Body *body)
+{
+   body->force.x = body->rigid_body->getTotalForce().getX();
+   body->force.y = body->rigid_body->getTotalForce().getY();
+   body->force.torque = body->rigid_body->getTotalTorque().getZ();
+   body->rigid_body->clearForces();
+}
+
 static inline void
 _ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshold, double angular_threshold, double rate)
 {
@@ -461,6 +470,16 @@ _ephysics_body_outside_render_area_check(EPhysics_Body *body)
         DBG("Body %p out of render area", body);
         ephysics_body_del(body);
      }
+}
+
+void
+ephysics_body_forces_apply(EPhysics_Body *body)
+{
+   double rate = ephysics_world_rate_get(body->world);
+   body->rigid_body->activate(1);
+   body->rigid_body->applyCentralForce(btVector3(body->force.x / rate,
+                                                 body->force.y / rate, 0));
+   body->rigid_body->applyTorque(btVector3(0, 0, body->force.torque));
 }
 
 void
@@ -1384,6 +1403,91 @@ ephysics_body_data_get(const EPhysics_Body *body)
      }
 
    return body->data;
+}
+
+EAPI void
+ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y)
+{
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't apply force to a null body.");
+        return;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+   ephysics_body_forces_apply(body);
+   body->rigid_body->applyCentralForce(btVector3(x / rate, y / rate, 0));
+   _ephysics_body_forces_update(body);
+}
+
+EAPI void
+ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Evas_Coord pos_x, Evas_Coord pos_y)
+{
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't apply force to a null body.");
+        return;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+   ephysics_body_forces_apply(body);
+   body->rigid_body->applyForce(btVector3(x / rate, y / rate, 0),
+                                btVector3((double) pos_x / rate,
+                                          (double) pos_y / rate, 0));
+   _ephysics_body_forces_update(body);
+}
+
+EAPI void
+ephysics_body_torque_apply(EPhysics_Body *body, double torque)
+{
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't apply force to a null body.");
+        return;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+   ephysics_body_forces_apply(body);
+   body->rigid_body->applyTorque(btVector3(0, 0, -torque));
+   _ephysics_body_forces_update(body);
+}
+
+EAPI void
+ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double *torque)
+{
+   double rate;
+
+   if (!body)
+     {
+        ERR("Can't get forces from a null body.");
+        return;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+
+   if (x) *x = body->force.x * rate;
+   if (y) *y = body->force.y * rate;
+   if (torque) *torque = -body->force.torque;
+}
+
+EAPI void
+ephysics_body_forces_clear(EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't clear forces of a null body.");
+        return;
+     }
+
+   body->force.x = 0;
+   body->force.y = 0;
+   body->force.torque = 0;
 }
 
 #ifdef  __cplusplus

@@ -245,11 +245,15 @@ _simulate_worlds(void *data)
    EINA_INLIST_FOREACH(lworlds, world)
      {
         double time_now, delta;
+        EPhysics_Body *body;
 
         if (!world->running)
           continue;
 
         world->walking++;
+
+        EINA_INLIST_FOREACH(world->bodies, body)
+           ephysics_body_forces_apply(body);
 
         time_now = ecore_time_get();
         delta = time_now - world->last_update;

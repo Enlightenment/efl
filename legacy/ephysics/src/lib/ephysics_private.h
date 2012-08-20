@@ -75,6 +75,11 @@ struct _EPhysics_Body {
      Eina_List *collision_groups;
      Eina_List *to_delete;
      double mass;
+     struct {
+          double x;
+          double y;
+          double torque;
+     } force;
      Eina_Bool active:1;
      Eina_Bool deleted:1;
 };
@@ -101,6 +106,7 @@ void ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact
 btRigidBody *ephysics_body_rigid_body_get(const EPhysics_Body *body);
 void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
 void ephysics_body_recalc(EPhysics_Body *body, double rate);
+void ephysics_body_forces_apply(EPhysics_Body *body);
 
 /* Camera */
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);

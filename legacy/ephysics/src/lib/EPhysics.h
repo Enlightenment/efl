@@ -2185,7 +2185,7 @@ EAPI void ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll);
  * or can be used to lead to both behaviors with
  * @ref ephysics_body_impulse_apply().
  *
- * It will resulte in a central impulse with impulse (@p x, @p y) and a
+ * It will result in a central impulse with impulse (@p x, @p y) and a
  * torque impulse that will be calculated as a cross product on impulse
  * and relative position.
  *
@@ -2300,7 +2300,7 @@ EAPI double ephysics_body_rotation_get(const EPhysics_Body *body);
  * @note The unit used for rotation is degrees.
  *
  * @param body The physics body.
- * @param The amount of degrees @p body should be rotated.
+ * @param rotation The amount of degrees @p body should be rotated.
  *
  * @see ephysics_body_rotation_get()
  *
@@ -2345,6 +2345,143 @@ EAPI void ephysics_body_data_set(EPhysics_Body *body, void *data);
  * @ingroup EPhysics_Body
  */
 EAPI void *ephysics_body_data_get(const EPhysics_Body *body);
+
+/**
+ * @brief
+ * Apply a force on the center of a body.
+ *
+ * Applying a force to a body will lead it to change its velocity.
+ *
+ * Force is the product of mass and acceleration. So, keeping the mass
+ * fixed, when force is applied acceleration will change, and consequently,
+ * velocity will gradually be changes.
+ *
+ * Force = mass * acceleration
+ *
+ * Final velocity = initial velocity + acceleration * time
+ *
+ * While a force is applied, it will be acting over a body. It can be canceled
+ * by applying an inverse force, or just calling
+ * @ref ephysics_body_forces_clear().
+ *
+ * This force will be applied on body's center, so it won't implies in
+ * changing angular acceleration. For that, it is possible to apply a torque
+ * with @ref ephysics_body_torque_apply().
+ *
+ * If the force shouldn't be applied on body's center, it can be applied on
+ * a relative point with @ref ephysics_body_force_apply().
+ *
+ * @note Force is measured in kg * p / s / s.
+ *
+ * @param body The physics body which over the force will be applied.
+ * @param x The axis x component of force.
+ * @param y The axis y component of force.
+ *
+ * @see ephysics_body_torque_apply().
+ * @see ephysics_body_force_apply().
+ * @see ephysics_body_forces_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y);
+
+/**
+ * @brief
+ * Apply a torque over a body.
+ *
+ * A torque will be applied over the @p body to change the angular acceleration
+ * of this body. It will leads to a change on angular velocity over time.
+ * And the body will rotate around Z axis considering this angular velocity.
+ *
+ * @param body The physics body that will receive the torque.
+ * @param torque Torque to change angular acceleration of the body around Z
+ * axis (rotate on x - y plane).
+ * Negative values will accelerate it on anti clock rotation.
+ *
+ * @see ephysics_body_central_force_apply().
+ * @see ephysics_body_force_apply().
+ * @see ephysics_body_forces_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_torque_apply(EPhysics_Body *body, double torque);
+
+/**
+ * @brief
+ * Apply a force over a body.
+ *
+ * A force will be applied over the body to change it's linear and angular
+ * accelerations.
+ *
+ * It can be applied in the center of the body, avoiding affecting angular
+ * acceleration, with @ref ephysics_body_central_force_apply(),
+ * it can be applied only to change angular acceleration, with
+ * @ref ephysics_body_torque_apply(), or can be used to lead to both
+ * behaviors with @ref ephysics_body_force_apply().
+ *
+ * It will result in a central force with force (@p x, @p y) and a
+ * torque that will be calculated as a cross product on force
+ * and relative position.
+ *
+ * @param body The physics body that will receive the impulse.
+ * @param x The axis x component of force.
+ * @param y The axis y component of force.
+ * @param pos_x The axis x component of the relative position to apply force.
+ * @param pos_y The axis y component of the relative position to apply force.
+ *
+ * @note Force is measured in kg * p / s / s and position in p (pixels, or
+ * Evas coordinates).
+ *
+ * @see ephysics_body_central_force_apply().
+ * @see ephysics_body_torque_apply().
+ * @see ephysics_body_forces_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Evas_Coord pos_x, Evas_Coord pos_y);
+
+/**
+ * @brief
+ * Get physics body forces.
+ *
+ * Get all the forces applied over a body.
+ *
+ * @param body The physics body.
+ * @param x The axis x component of total force.
+ * @param y The axis y component of total force.
+ * @param torque The torque.
+ *
+ * @see ephysics_body_force_apply() for more details.
+ * @see ephysics_body_central_force_apply().
+ * @see ephysics_body_torque_apply().
+ * @see ephysics_body_forces_clear().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double *torque);
+
+/**
+ * @brief
+ * Clear all the forces applied to a body.
+ *
+ * It will remove all the forces previously applied. So linear acceleration
+ * and angular acceleration will be set to 0.
+ *
+ * It won't interfere with world's gravity, the body will continue to be
+ * accelerated considering gravity.
+ *
+ * It won't affect damping.
+ *
+ * @param body The physics body that will have applied forces set to 0.
+ *
+ * @see ephysics_body_central_force_apply().
+ * @see ephysics_body_torque_apply().
+ * @see ephysics_body_force_apply().
+ * @see ephysics_body_forces_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_forces_clear(EPhysics_Body *body);
 
 /**
  * @}
