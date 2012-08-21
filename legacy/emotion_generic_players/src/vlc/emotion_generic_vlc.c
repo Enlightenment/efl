@@ -25,7 +25,6 @@ enum _Thread_Events {
      EM_THREAD_POSITION_CHANGED,
      EM_THREAD_PLAYBACK_STARTED,
      EM_THREAD_PLAYBACK_STOPPED,
-     EM_THREAD_EOF,
      EM_THREAD_LAST
 };
 
@@ -312,7 +311,6 @@ _play(struct _App *app)
    else
      {
 	libvlc_time_t new_time = pos * 1000;
-        fprintf(stderr, "pos %f\n", pos);
 	libvlc_media_player_set_time(app->mp, new_time);
 	libvlc_media_player_play(app->mp);
 	app->playing = 1;
@@ -373,11 +371,9 @@ _event_cb(const struct libvlc_event_t *ev, void *data)
 	 _send_file_set(app);
 	 break;
       case libvlc_MediaPlayerEndReached:
-         thread_event = EM_THREAD_EOF;
-         write(app->fd_write, &thread_event, sizeof(thread_event));
-	 /* thread_event = EM_THREAD_PLAYBACK_STOPPED; */
-	 /* write(app->fd_write, &thread_event, sizeof(thread_event)); */
-         break;
+	 thread_event = EM_THREAD_PLAYBACK_STOPPED;
+	 write(app->fd_write, &thread_event, sizeof(thread_event));
+	 break;
    }
 }
 
@@ -743,10 +739,6 @@ _process_thread_events(struct _App *app)
       case EM_THREAD_PLAYBACK_STARTED:
 	 _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
 	 break;
-      case EM_THREAD_EOF:
-         _send_cmd(app, EM_RESULT_FILE_EOF);
-         app->playing = 0;
-         break;
       case EM_THREAD_PLAYBACK_STOPPED:
          libvlc_media_player_stop(app->mp);
          app->playing = 0;
