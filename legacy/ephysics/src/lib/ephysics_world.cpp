@@ -233,16 +233,15 @@ _ephysics_world_free(EPhysics_World *world)
 }
 
 static Eina_Bool
-_simulate_worlds(void *data)
+_simulate_worlds(void *data __UNUSED__)
 {
-   Eina_Inlist *lworlds = (Eina_Inlist *) data;
    EPhysics_World *world;
    double time_now;
    void *wrld, *bd;
 
    ephysics_init();
    _worlds_walking++;
-   EINA_INLIST_FOREACH(lworlds, world)
+   EINA_INLIST_FOREACH(_worlds, world)
      {
         double time_now, delta;
         EPhysics_Body *body;
@@ -505,7 +504,7 @@ ephysics_world_new(void)
    world->last_update = ecore_time_get();
    _worlds_running++;
    if (!_anim_simulate)
-     _anim_simulate = ecore_animator_add(_simulate_worlds, _worlds);
+     _anim_simulate = ecore_animator_add(_simulate_worlds, NULL);
 
    INF("World %p added.", world);
    return world;
@@ -632,7 +631,7 @@ ephysics_world_running_set(EPhysics_World *world, Eina_Bool running)
    if (_anim_simulate)
      return;
 
-   _anim_simulate = ecore_animator_add(_simulate_worlds, _worlds);
+   _anim_simulate = ecore_animator_add(_simulate_worlds, NULL);
 }
 
 EAPI Eina_Bool
