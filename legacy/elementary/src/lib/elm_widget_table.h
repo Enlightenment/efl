@@ -131,7 +131,7 @@ EAPI extern const char ELM_TABLE_SMART_NAME[];
 EAPI const Elm_Table_Smart_Class *elm_table_smart_class_get(void);
 
 #define ELM_TABLE_DATA_GET(o, sd) \
-  Elm_Widget_Smart_Data * sd = evas_object_smart_data_get(o)
+  Elm_Table_Smart_Data * sd = evas_object_smart_data_get(o)
 
 #define ELM_TABLE_DATA_GET_OR_RETURN(o, ptr)         \
   ELM_TABLE_DATA_GET(o, ptr);                        \

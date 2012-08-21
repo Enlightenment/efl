@@ -29,7 +29,8 @@ _elm_table_smart_focus_next(const Evas_Object *obj,
      }
    else
      {
-        items = evas_object_table_children_get(sd->resize_obj);
+        items = evas_object_table_children_get
+            (ELM_WIDGET_DATA(sd)->resize_obj);
         list_data_get = eina_list_data_get;
         list_free = eina_list_free;
 
@@ -52,8 +53,8 @@ _elm_table_smart_focus_direction(const Evas_Object *obj,
 {
    Eina_Bool ret;
    const Eina_List *items;
-   Eina_List *(*list_free) (Eina_List *list);
-   void *(*list_data_get) (const Eina_List *list);
+   Eina_List *(*list_free)(Eina_List *list);
+   void *(*list_data_get)(const Eina_List *list);
 
    ELM_TABLE_DATA_GET(obj, sd);
 
@@ -66,7 +67,8 @@ _elm_table_smart_focus_direction(const Evas_Object *obj,
      }
    else
      {
-        items = evas_object_table_children_get(sd->resize_obj);
+        items = evas_object_table_children_get
+            (ELM_WIDGET_DATA(sd)->resize_obj);
         list_data_get = eina_list_data_get;
         list_free = eina_list_free;
 
@@ -87,7 +89,7 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
    ELM_TABLE_DATA_GET(obj, sd);
 
-   evas_object_table_mirrored_set(sd->resize_obj, rtl);
+   evas_object_table_mirrored_set(ELM_WIDGET_DATA(sd)->resize_obj, rtl);
 }
 
 static Eina_Bool
@@ -108,8 +110,10 @@ _sizing_eval(Evas_Object *obj)
 
    ELM_TABLE_DATA_GET(obj, sd);
 
-   evas_object_size_hint_min_get(sd->resize_obj, &minw, &minh);
-   evas_object_size_hint_max_get(sd->resize_obj, &maxw, &maxh);
+   evas_object_size_hint_min_get
+     (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh);
+   evas_object_size_hint_max_get
+     (ELM_WIDGET_DATA(sd)->resize_obj, &maxw, &maxh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
@@ -168,16 +172,17 @@ _elm_table_smart_del(Evas_Object *obj)
    ELM_TABLE_DATA_GET(obj, sd);
 
    evas_object_event_callback_del_full
-     (sd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+     (ELM_WIDGET_DATA(sd)->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
      _on_size_hints_changed, obj);
 
    /* let's make our table object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH(ELM_WIDGET_DATA(sd)->subobjs, l, child)
      {
-        if (child == sd->resize_obj)
+        if (child == ELM_WIDGET_DATA(sd)->resize_obj)
           {
-             sd->subobjs = eina_list_demote_list(sd->subobjs, l);
+             ELM_WIDGET_DATA(sd)->subobjs =
+               eina_list_demote_list(ELM_WIDGET_DATA(sd)->subobjs, l);
              break;
           }
      }
@@ -234,7 +239,8 @@ elm_table_homogeneous_set(Evas_Object *obj,
    ELM_TABLE_CHECK(obj);
    ELM_TABLE_DATA_GET(obj, sd);
 
-   evas_object_table_homogeneous_set(sd->resize_obj, homogeneous);
+   evas_object_table_homogeneous_set
+     (ELM_WIDGET_DATA(sd)->resize_obj, homogeneous);
 }
 
 EAPI Eina_Bool
@@ -243,7 +249,7 @@ elm_table_homogeneous_get(const Evas_Object *obj)
    ELM_TABLE_CHECK(obj) EINA_FALSE;
    ELM_TABLE_DATA_GET(obj, sd);
 
-   return evas_object_table_homogeneous_get(sd->resize_obj);
+   return evas_object_table_homogeneous_get(ELM_WIDGET_DATA(sd)->resize_obj);
 }
 
 EAPI void
@@ -255,7 +261,7 @@ elm_table_padding_set(Evas_Object *obj,
    ELM_TABLE_DATA_GET(obj, sd);
 
    evas_object_table_padding_set
-     (sd->resize_obj, horizontal, vertical);
+     (ELM_WIDGET_DATA(sd)->resize_obj, horizontal, vertical);
 }
 
 EAPI void
@@ -267,7 +273,7 @@ elm_table_padding_get(const Evas_Object *obj,
    ELM_TABLE_DATA_GET(obj, sd);
 
    evas_object_table_padding_get
-     (sd->resize_obj, horizontal, vertical);
+     (ELM_WIDGET_DATA(sd)->resize_obj, horizontal, vertical);
 }
 
 EAPI void
@@ -282,7 +288,7 @@ elm_table_pack(Evas_Object *obj,
    ELM_TABLE_DATA_GET(obj, sd);
 
    elm_widget_sub_object_add(obj, subobj);
-   evas_object_table_pack(sd->resize_obj, subobj, x, y, w, h);
+   evas_object_table_pack(ELM_WIDGET_DATA(sd)->resize_obj, subobj, x, y, w, h);
 }
 
 EAPI void
@@ -293,7 +299,7 @@ elm_table_unpack(Evas_Object *obj,
    ELM_TABLE_DATA_GET(obj, sd);
 
    elm_widget_sub_object_del(obj, subobj);
-   evas_object_table_unpack(sd->resize_obj, subobj);
+   evas_object_table_unpack(ELM_WIDGET_DATA(sd)->resize_obj, subobj);
 }
 
 EAPI void
@@ -308,7 +314,7 @@ elm_table_pack_set(Evas_Object *subobj,
    ELM_TABLE_CHECK(obj);
    ELM_TABLE_DATA_GET(obj, sd);
 
-   evas_object_table_pack(sd->resize_obj, subobj, x, y, w, h);
+   evas_object_table_pack(ELM_WIDGET_DATA(sd)->resize_obj, subobj, x, y, w, h);
 }
 
 EAPI void
@@ -324,7 +330,8 @@ elm_table_pack_get(Evas_Object *subobj,
    ELM_TABLE_CHECK(obj);
    ELM_TABLE_DATA_GET(obj, sd);
 
-   evas_object_table_pack_get(sd->resize_obj, subobj, &ix, &iy, &iw, &ih);
+   evas_object_table_pack_get
+     (ELM_WIDGET_DATA(sd)->resize_obj, subobj, &ix, &iy, &iw, &ih);
    if (x) *x = ix;
    if (y) *y = iy;
    if (w) *w = iw;
@@ -338,5 +345,5 @@ elm_table_clear(Evas_Object *obj,
    ELM_TABLE_CHECK(obj);
    ELM_TABLE_DATA_GET(obj, sd);
 
-   evas_object_table_clear(sd->resize_obj, clear);
+   evas_object_table_clear(ELM_WIDGET_DATA(sd)->resize_obj, clear);
 }
