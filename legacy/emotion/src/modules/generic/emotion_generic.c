@@ -587,10 +587,6 @@ _player_cmd_process(Emotion_Generic_Video *ev)
       case EM_RESULT_META_INFO:
 	 _player_meta_info_read(ev);
 	 break;
-      case EM_RESULT_FILE_EOF:
-         _emotion_decode_stop(ev->obj);
-         _emotion_playback_finished(ev->obj);
-         break;
       default:
 	 WRN("received wrong command: %d", ev->cmd.type);
    }
