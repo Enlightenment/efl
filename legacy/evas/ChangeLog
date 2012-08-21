@@ -971,3 +971,7 @@
 
 	* Removed unnessesary lines which causes the gles resource leak and
 	corruption.
+
+2012-08-21  Sung W. Park (sung_)
+
+        * Fix evas_gl current_context update issue when evas_gl context is deleted.

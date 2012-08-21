@@ -28,6 +28,7 @@ Fixes:
    * Handle proxy with the right context.
    * Force proxied object to stay active to keep track of change in them.
    * Fix evas_gl's internal resource surface bug when evas' window is deleted/recreated.
+   * Fix evas_gl current_context update issue when evas_gl context is deleted.
 
 Removal:
    * Remove EVAS_FRAME_QUEUING, EVAS_SLI, METRIC_CACHE and WORD_CACHE.
