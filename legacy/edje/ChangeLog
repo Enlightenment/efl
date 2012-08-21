@@ -556,3 +556,7 @@
 2012-08-14  Hermet
 
 	* Fix the uv mapping correctly in case of image swallowed.
+
+2012-08-21  Guilherme Silveira
+
+	* Fix password timeout with fixed point.
