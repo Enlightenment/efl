@@ -475,7 +475,12 @@ _ephysics_body_outside_render_area_check(EPhysics_Body *body)
 void
 ephysics_body_forces_apply(EPhysics_Body *body)
 {
-   double rate = ephysics_world_rate_get(body->world);
+   double rate;
+
+   if (!((body->force.x) || (body->force.y) || (body->force.torque)))
+       return;
+
+   rate = ephysics_world_rate_get(body->world);
    body->rigid_body->activate(1);
    body->rigid_body->applyCentralForce(btVector3(body->force.x / rate,
                                                  body->force.y / rate, 0));
