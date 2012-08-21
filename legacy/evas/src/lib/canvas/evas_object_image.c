@@ -447,18 +447,18 @@ evas_object_image_source_set(Evas_Object *obj, Evas_Object *src)
    return EINA_FALSE;
    MAGIC_CHECK_END();
 
-//   if (obj->delete_me)
-//     {
-//        WRN("Setting deleted object %p as image source %p", src, obj);
-//        return EINA_FALSE;
-//     }
+   if (obj->delete_me && src)
+     {
+        WRN("Setting deleted object %p as image source %p", src, obj);
+        return EINA_FALSE;
+     }
    if (src)
      {
-//        if (src->delete_me)
-//          {
-//             WRN("Setting object %p to deleted image source %p", src, obj);
-//             return EINA_FALSE;
-//          }
+        if (src->delete_me)
+          {
+             WRN("Setting object %p to deleted image source %p", src, obj);
+             return EINA_FALSE;
+          }
         if (!src->layer)
           {
              CRIT("No evas surface associated with source object (%p)", obj);
