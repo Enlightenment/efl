@@ -878,6 +878,80 @@ EAPI void                  elm_win_layer_set(Evas_Object *obj, int layer);
 EAPI int                   elm_win_layer_get(const Evas_Object *obj);
 
 /**
+ * This pushes (incriments) the norender counter on the window
+ * 
+ * @param obj The window object
+ * 
+ * There are some occasions where you wish to suspend rendering on a window.
+ * You may be "sleeping" and have nothing to update and do not want animations
+ * or other theme side-effects causing rendering to the window while "asleep".
+ * You can push (and pop) the norender mode to have this work.
+ * 
+ * If combined with evas_render_dump(), evas_image_cache_flush() and
+ * evas_font_cache_flush() (and maybe edje_file_cache_flush() and 
+ * edje_collection_cache_flush()), you can minimize memory footprint
+ * significantly while "asleep", and the pausing of rendering ensures
+ * evas does not re-load data into memory until needed. When rendering is
+ * resumed, data will be re-loaded as needed, which may result in some
+ * lag, but does save memory.
+ * 
+ * @see elm_win_norender_pop()
+ * @see elm_win_norender_get()
+ * @see elm_win_render()
+ * @ingroup Win
+ * @since 1.7
+ */
+EAPI void                  elm_win_norender_push(Evas_Object *obj);
+
+/**
+ * This pops (decrements) the norender counter on the window
+ * 
+ * @param obj The window object
+ * 
+ * Once norender has gone back to 0, then automatic rendering will continue
+ * in the given window. If it is already at 0, this will have no effect.
+ * 
+ * @see elm_win_norender_push()
+ * @see elm_win_norender_get()
+ * @see elm_win_render()
+ * @ingroup Win
+ * @since 1.7
+ */
+EAPI void                  elm_win_norender_pop(Evas_Object *obj);
+
+/**
+ * The retruns how many times norender has been pushed on the window
+ * @param obj The window object
+ * @return The number of times norender has been pushed
+ * 
+ * @see elm_win_norender_push()
+ * @see elm_win_norender_pop()
+ * @see elm_win_render()
+ * @ingroup Win
+ * @since 1.7
+ */
+EAPI int                   elm_win_norender_get(Evas_Object *obj);
+
+/**
+ * This manually asks evas to render the window now
+ * 
+ * @param obj The window object
+ * 
+ * You should NEVER call this unless you really know what you are doing and
+ * why. Never call this unless you are asking for performance degredation
+ * and possibly weird behavior. Windows get automatically rendered when the
+ * application goes idle so there is never a need to call this UNLESS you
+ * have enabled "norender" mode.
+ * 
+ * @see elm_win_norender_push()
+ * @see elm_win_norender_pop()
+ * @see elm_win_norender_get()
+ * @ingroup Win
+ * @since 1.7
+ */
+EAPI void                  elm_win_render(Evas_Object *obj);
+
+/**
  * Set the rotation of the window.
  *
  * Most engines only work with multiples of 90.

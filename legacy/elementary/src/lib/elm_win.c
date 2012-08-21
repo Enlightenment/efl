@@ -131,6 +131,7 @@ struct _Elm_Win_Smart_Data
    double       aspect;
    int          size_base_w, size_base_h;
    int          size_step_w, size_step_h;
+   int          norender;
    Eina_Bool    urgent : 1;
    Eina_Bool    modal : 1;
    Eina_Bool    demand_attention : 1;
@@ -3258,6 +3259,43 @@ elm_win_layer_get(const Evas_Object *obj)
    ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
 
    return ecore_evas_layer_get(sd->ee);
+}
+
+EAPI void
+elm_win_norender_push(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   
+   sd->norender++;
+   if (sd->norender == 1) ecore_evas_manual_render_set(sd->ee, EINA_TRUE);
+}
+
+EAPI void
+elm_win_norender_pop(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (sd->norender <= 0) return;
+   sd->norender--;
+   if (sd->norender == 0) ecore_evas_manual_render_set(sd->ee, EINA_FALSE);
+}
+
+EAPI int
+elm_win_norender_get(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) - 1;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+   return sd->norender;
+}
+
+EAPI void
+elm_win_render(Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+   ecore_evas_manual_render(sd->ee);
 }
 
 EAPI void

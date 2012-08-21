@@ -389,3 +389,10 @@
 
 	* Patch in incomplte access support in datetime.
 
+2012-08-21  Carsten Haitzler (The Rasterman)
+
+	* Spotted an incompleteness. there is a way to set Elm_Win_Trap for
+          manual render, but no way to go to an elm win and do this (And
+          of course twiddle with the norender state too), so add this in.
+          elm_win_norender_push(), elm_win_norender_pop(),
+          elm_win_norender_get() and elm_win_render() added.
