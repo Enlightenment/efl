@@ -25,13 +25,13 @@ static int win_count = 0;
 
 Evas_GL_X11_Window *
 eng_window_new(Display *disp,
-	       Window   win,
-	       int      screen,
-	       Visual  *vis,
-	       Colormap cmap,
-	       int      depth,
-	       int      w,
-	       int      h,
+               Window   win,
+               int      screen,
+               Visual  *vis,
+               Colormap cmap,
+               int      depth,
+               int      w,
+               int      h,
                int      indirect,
                int      alpha,
                int      rot)
@@ -162,20 +162,20 @@ eng_window_new(Display *disp,
    if (!gw->egl_disp)
      {
         ERR("eglGetDisplay() fail. code=%#x", eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
    if (!eglInitialize(gw->egl_disp, &major_version, &minor_version))
      {
         ERR("eglInitialize() fail. code=%#x", eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
    eglBindAPI(EGL_OPENGL_ES_API);
    if (eglGetError() != EGL_SUCCESS)
      {
         ERR("eglBindAPI() fail. code=%#x", eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
 
@@ -184,7 +184,7 @@ eng_window_new(Display *disp,
                         1, &num_config) || (num_config != 1))
      {
         ERR("eglChooseConfig() fail. code=%#x", eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
    gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
@@ -194,7 +194,7 @@ eng_window_new(Display *disp,
      {
         ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
             (unsigned int)gw->win, eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
    if (gw->alpha)
@@ -214,7 +214,7 @@ eng_window_new(Display *disp,
    if (gw->egl_context[0] == EGL_NO_CONTEXT)
      {
         ERR("eglCreateContext() fail. code=%#x", eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
    if (eglMakeCurrent(gw->egl_disp,
@@ -223,7 +223,7 @@ eng_window_new(Display *disp,
                       gw->egl_context[0]) == EGL_FALSE)
      {
         ERR("eglMakeCurrent() fail. code=%#x", eglGetError());
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
 
@@ -294,7 +294,7 @@ eng_window_new(Display *disp,
      gw->glxwin = glXCreateWindow(gw->disp, fbconf, gw->win, NULL);
    if (!gw->glxwin)
      {
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
 
@@ -306,7 +306,7 @@ eng_window_new(Display *disp,
 
    if (!gw->context)
      {
-	eng_window_free(gw);
+        eng_window_free(gw);
         return NULL;
      }
    if (gw->context)
@@ -531,8 +531,8 @@ eng_window_new(Display *disp,
    gw->gl_context = evas_gl_common_context_new();
    if (!gw->gl_context)
      {
-	eng_window_free(gw);
-	return NULL;
+        eng_window_free(gw);
+        return NULL;
      }
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    gw->gl_context->egldisp = gw->egl_disp;
@@ -824,7 +824,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
              config_attrs[i++] = GLX_TRANSPARENT_TYPE;
              config_attrs[i++] = GLX_NONE;//GLX_NONE;//GLX_TRANSPARENT_INDEX//GLX_TRANSPARENT_RGB;
              config_attrs[i++] = 0;
-             
+
              configs = glXChooseFBConfig(einfo->info.display,
                                          einfo->info.screen,
                                          config_attrs, &num);
