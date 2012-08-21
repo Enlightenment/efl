@@ -3118,16 +3118,10 @@ _print_gl_surface_cap(Render_Engine *re, int error)
 static void
 _set_gl_surface_cap(Render_Engine *re)
 {
-   GLuint fbo, tex, depth, stencil;
-   int w, h;
-
    int i, count;
 
    if (!re) return;
    if (re->gl_cap_initted) return;
-
-   // Width/Heith for test purposes
-   w = h = 2;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    int max_samples = 0;
@@ -3146,8 +3140,10 @@ _set_gl_surface_cap(Render_Engine *re)
         re->gl_cap.msaa_samples[1] = max_samples/4;
         re->gl_cap.msaa_samples[0] = 0;
 
-        if (!re->gl_cap.msaa_samples[2]) re->gl_cap.msaa_samples[3];
-        if (!re->gl_cap.msaa_samples[1]) re->gl_cap.msaa_samples[2];
+        if (!re->gl_cap.msaa_samples[2])
+           re->gl_cap.msaa_samples[2] = re->gl_cap.msaa_samples[3];
+        if (!re->gl_cap.msaa_samples[1])
+           re->gl_cap.msaa_samples[1] = re->gl_cap.msaa_samples[2];
      }
    else
      {
@@ -3302,8 +3298,8 @@ _set_internal_config(Render_Engine *re, Render_Engine_GL_Surface *sfc, Evas_GL_C
               break;
            }
       case EVAS_GL_STENCIL_BIT_8:
-         if ((sfc->rb_depth_fmt == re->gl_cap.depth_24_stencil_8[0]) ||
-             (sfc->rb_depth_fmt == re->gl_cap.depth_24[0]) ||
+         if ((sfc->rb_depth_fmt == (GLenum)re->gl_cap.depth_24_stencil_8[0]) ||
+             (sfc->rb_depth_fmt == (GLenum)re->gl_cap.depth_24[0]) ||
              (!(re->gl_cap.stencil_8[0]) && (re->gl_cap.depth_24_stencil_8[0])))
            {
               sfc->rb_depth_stencil_fmt = re->gl_cap.depth_24_stencil_8[0];
@@ -3514,7 +3510,8 @@ _create_rt_buffers(Render_Engine *data __UNUSED__,
                    Render_Engine_GL_Surface *sfc)
 {
    int ret = 0;
-   GLuint fbo = 0, curr_fbo = 0;
+   GLuint fbo = 0;
+   GLint curr_fbo = 0;
 
    //------------------------------------//
    // Render Target texture
@@ -3550,7 +3547,7 @@ _create_rt_buffers(Render_Engine *data __UNUSED__,
    ret = _attach_fbo_surface(NULL, sfc, fbo);
 
    if (fbo) glDeleteFramebuffers(1, &fbo);
-   glBindFramebuffer(GL_FRAMEBUFFER, curr_fbo);
+   glBindFramebuffer(GL_FRAMEBUFFER, (GLuint)curr_fbo);
 
    if (!ret)
      {
@@ -3575,7 +3572,6 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
 {
    Render_Engine *re;
    Render_Engine_GL_Surface *sfc;
-   Render_Engine_GL_Resource *rsc;
    Evas_GL_Config *cfg;
    void *ret = NULL;
    int res;
@@ -3669,7 +3665,6 @@ eng_gl_surface_destroy(void *data, void *surface)
 {
    Render_Engine *re;
    Render_Engine_GL_Surface *sfc;
-   Render_Engine_GL_Resource *rsc;
    int ret;
 
    re  = (Render_Engine *)data;
@@ -3814,7 +3809,6 @@ eng_gl_context_destroy(void *data, void *context)
 {
    Render_Engine *re;
    Render_Engine_GL_Context *ctx;
-   Render_Engine_GL_Resource *rsc;
    int ret;
 
    re  = (Render_Engine *)data;
@@ -3917,7 +3911,7 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
 
    if (gl_direct_enabled)
      {
-        int curr_fbo = 0;
+        GLint curr_fbo = 0;
 
         // Do a make current only if it's not already current
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
@@ -3956,7 +3950,7 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
           }
 #endif
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curr_fbo);
-        if (ctx->context_fbo == curr_fbo)
+        if (ctx->context_fbo == (GLuint)curr_fbo)
           {
              ctx->current_fbo = 0;
              glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -4490,12 +4484,8 @@ evgl_glEvasGLImageTargetRenderbufferStorageOES(GLenum target, EvasGLImage image)
 
 
 static void *
-eng_gl_api_get(void *data)
+eng_gl_api_get(void *data __UNUSED__)
 {
-   Render_Engine *re;
-
-   re  = (Render_Engine *)data;
-
    gl_funcs.version = EVAS_GL_API_VERSION;
 
 #define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, )
