@@ -36,6 +36,8 @@ int _emotion_gstreamer_log_domain = -1;
 Eina_Bool debug_fps = EINA_FALSE;
 Eina_Bool _ecore_x_available = EINA_FALSE;
 
+static Ecore_Idler *restart_idler;
+
 /* Callbacks to get the eos */
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
 static void _free_metadata   (Emotion_Gstreamer_Metadata *m);
@@ -200,6 +202,8 @@ static Eina_Bool      em_priority_get             (void             *video);
 static GstBusSyncReply _eos_sync_fct(GstBus *bus,
 				     GstMessage *message,
 				     gpointer data);
+
+static Eina_Bool _em_restart_stream(void *data);
 
 /* Module interface */
 
@@ -437,6 +441,12 @@ em_cleanup(Emotion_Gstreamer_Video *ev)
        if (ev->win) ecore_x_window_free(ev->win);
        ev->win = 0;
 #endif
+     }
+
+   if (restart_idler)
+     {
+        ecore_idler_del(restart_idler);
+        restart_idler = NULL;
      }
 
    EINA_LIST_FREE(ev->audio_streams, astream)
@@ -1275,6 +1285,19 @@ em_priority_set(void *video, Eina_Bool pri)
 
    ev = video;
    if (priority_overide > 3) return ; /* If we failed to much to create that pipeline, let's don't wast our time anymore */
+
+   if (ev->priority != pri && ev->pipeline)
+     {
+        if (ev->threads)
+          {
+             Ecore_Thread *t;
+
+             EINA_LIST_FREE(ev->threads, t)
+                ecore_thread_cancel(t);
+          }
+        em_cleanup(ev);
+        restart_idler = ecore_idler_add(_em_restart_stream, ev);
+     }
    ev->priority = pri;
 }
 
@@ -1284,7 +1307,7 @@ em_priority_get(void *video)
    Emotion_Gstreamer_Video *ev;
 
    ev = video;
-   return ev->stream;
+   return !ev->stream;
 }
 
 #ifdef HAVE_ECORE_X
@@ -1606,6 +1629,8 @@ _em_restart_stream(void *data)
         gst_bus_set_sync_handler(ev->eos_bus, _eos_sync_fct, ev);
      }
 
+   restart_idler = NULL;
+
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -1723,7 +1748,7 @@ _eos_main_fct(void *data)
 	     ev->priority = EINA_FALSE;
 	     priority_overide++;
 
-	     ecore_idler_add(_em_restart_stream, ev);
+	     restart_idler = ecore_idler_add(_em_restart_stream, ev);
 	   }
          break;
       default:

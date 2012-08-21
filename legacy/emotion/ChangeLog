@@ -37,3 +37,7 @@
 2012-08-01  Cedric Bail
 
 	* Fix race condition in gstreamer render function.
+
+2012-08-10  Sohyun Kim
+
+	* Fix priority set/get for gstreamer.

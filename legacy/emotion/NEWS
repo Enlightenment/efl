@@ -14,6 +14,7 @@ Fixes:
 	- build out of tree.
 	- stride of all YUV video
 	- fix race condition in gstreamer render function on shutdown and file set.
+	- fix priority set/get for gstreamer.
 
 Improvements:
 
