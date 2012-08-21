@@ -995,7 +995,6 @@ eng_setup(Evas *e, void *in)
         if (!re) return 0;
         re->info = info;
         re->evas = e;
-        e->engine.data.output = re;
         re->w = e->output.w;
         re->h = e->output.h;
         re->win = eng_window_new(re->info->info.display,
@@ -1012,10 +1011,9 @@ eng_setup(Evas *e, void *in)
         if (!re->win)
           {
              free(re);
-             e->engine.data.output = NULL;
              return 0;
           }
-
+        e->engine.data.output = re;
         gl_wins++;
 /*
           {
