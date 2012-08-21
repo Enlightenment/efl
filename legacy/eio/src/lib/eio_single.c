@@ -421,10 +421,9 @@ eio_file_direct_stat(const char *path,
 		      _eio_file_stat,
 		      _eio_file_stat_done,
 		      _eio_file_stat_error))
-     {
-        free(s);
-        return NULL;
-     }
+     /* THERE IS NO MEMLEAK HERE, ECORE_THREAD CANCEL CALLBACK HAS BEEN ALREADY CALLED
+	AND s HAS BEEN FREED, SAME FOR ALL CALL TO EIO_FILE_SET ! */
+     return NULL;
 
    return &s->common;
 }
@@ -485,10 +484,7 @@ eio_file_unlink(const char *path,
 		      _eio_file_unlink,
 		      _eio_file_unlink_done,
 		      _eio_file_unlink_error))
-     {
-        free(l);
-        return NULL;
-     }
+     return NULL;
 
    return &l->common;
 }
@@ -518,10 +514,7 @@ eio_file_mkdir(const char *path,
 		     _eio_file_mkdir,
 		     _eio_file_mkdir_done,
 		     _eio_file_mkdir_error))
-     {
-        free(r);
-        return NULL;
-     }
+     return NULL;
 
    return &r->common;
 }
@@ -551,10 +544,7 @@ eio_file_chmod(const char *path,
 		     _eio_file_chmod,
 		     _eio_file_mkdir_done,
 		     _eio_file_mkdir_error))
-     {
-        free(r);
-        return NULL;
-     }
+     return NULL;
 
    return &r->common;
 }
@@ -586,10 +576,7 @@ eio_file_chown(const char *path,
 		     _eio_file_chown,
 		     _eio_file_chown_done,
 		     _eio_file_chown_error))
-     {
-        free(c);
-        return NULL;
-     }
+     return NULL;
 
    return &c->common;
 }

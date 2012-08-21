@@ -17,3 +17,8 @@
 2012-08-07  Cedric Bail
 
 	* Properly shutdown monitor when calling eio_shutdown.
+
+2012-08-21  Cedric Bail
+
+	* Add a comment describing the false positiv detected by static analyzer
+	when calling eio_file_set.
