@@ -2682,8 +2682,13 @@ _elm_scroll_hold_animator(void *data)
                   dst_index++;
                }
           }
-        fx = xsum / dst_index;
-        fy = ysum / dst_index;
+        if (dst_index)
+          {
+            fx = xsum / dst_index;
+            fy = ysum / dst_index;
+          }
+        else
+          fx = fy = 0;
      }
 
    _elm_scroll_content_pos_get(sid->obj, &ox, &oy);
