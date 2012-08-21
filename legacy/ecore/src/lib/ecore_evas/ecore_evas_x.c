@@ -2952,7 +2952,16 @@ _ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *
    Ecore_X_Window root;
    Ecore_X_Randr_Output *out = NULL;
    Ecore_X_Randr_Crtc crtc;
-
+   unsigned int val[4] = { 0 };
+   
+   if (ecore_x_window_prop_card32_get
+       (ee->prop.window, ecore_x_atom_get("E_ZONE_GEOMETRY"), val, 4) == 4)
+     {
+        *x = (int)val[0]; *y = (int)val[1];
+        *w = (int)val[2]; *h = (int)val[3];
+        return;
+     }
+   
    root = ecore_x_window_root_get(ee->prop.window);
    out = ecore_x_randr_window_outputs_get(ee->prop.window, &outnum);
    if (!out)
