@@ -704,6 +704,8 @@ int main(int argc, char **argv)
 	goto end;
      }
 
+   if (opts.size.w <= 0) opts.size.w = 320;
+   if (opts.size.h <= 0) opts.size.h = 240;
    win = ecore_evas_new(opts.engine, 0, 0, opts.size.w, opts.size.h, NULL);
    if (!win)
      {
@@ -780,9 +782,6 @@ int main(int argc, char **argv)
    if (opts.title)
      ecore_evas_title_set(win, opts.title);
 
-   if (opts.size.w <= 0) opts.size.w = 320;
-   if (opts.size.h <= 0) opts.size.h = 240;
-   ecore_evas_resize(win, opts.size.w, opts.size.h);
    ecore_evas_show(win);
    ecore_main_loop_begin();
 
