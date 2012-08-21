@@ -1286,7 +1286,7 @@ _eo_unref(Eo *obj)
         /* If for some reason it's not empty, clear it. */
         while (obj->xrefs)
           {
-             WRN("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
+             ERR("obj->xrefs is not empty, possibly a bug, please report. - An error will be reported for each xref in the stack.");
              Eina_Inlist *nitr = obj->xrefs->next;
              free(EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node));
              obj->xrefs = nitr;
