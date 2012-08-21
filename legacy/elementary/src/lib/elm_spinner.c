@@ -479,6 +479,78 @@ _elm_spinner_smart_on_focus(Evas_Object *obj)
    return EINA_TRUE;
 }
 
+static char *
+_access_info_cb(void *data,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   Evas_Object *spinner;
+   const char *txt = elm_widget_access_info_get(obj);
+
+   spinner = ELM_WIDGET_DATA(data)->obj;
+   if (!txt) txt = elm_layout_text_get(spinner, "elm.text");
+   if (txt) return strdup(txt);
+
+   return NULL;
+}
+
+static char *
+_access_state_cb(void *data,
+                 Evas_Object *obj __UNUSED__,
+                 Elm_Widget_Item *item __UNUSED__)
+{
+   if (elm_widget_disabled_get(ELM_WIDGET_DATA(data)->obj))
+     return strdup(E_("State: Disabled"));
+
+   return NULL;
+}
+
+static void
+_access_spinner_register(Evas_Object *obj)
+{
+   Elm_Access_Info *ai;
+   const char* increment_part;
+   const char* decrement_part;
+
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   if (!strcmp(elm_widget_style_get(obj), "vertical"))
+     {
+        increment_part = "up_bt";
+        decrement_part = "down_bt";
+     }
+   else
+     {
+        increment_part = "right_bt";
+        decrement_part = "left_bt";
+     }
+
+   // increment button
+   sd->increment_btn_access =
+     _elm_access_edje_object_part_object_register
+       (obj, elm_layout_edje_get(obj), increment_part);
+  
+   ai = _elm_access_object_get(sd->increment_btn_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner increment button"));
+
+   // decrement button
+   sd->decrement_btn_access =
+     _elm_access_edje_object_part_object_register
+       (obj, elm_layout_edje_get(obj), decrement_part);
+
+   ai = _elm_access_object_get(sd->decrement_btn_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner decrement button"));
+
+   // spinner label 
+   sd->access_obj = _elm_access_edje_object_part_object_register
+                       (obj, elm_layout_edje_get(obj), "access_text");
+
+   ai = _elm_access_object_get(sd->access_obj);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner"));
+   _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, sd);
+   _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, sd);
+}
+
 static void
 _elm_spinner_smart_add(Evas_Object *obj)
 {
@@ -527,6 +599,10 @@ _elm_spinner_smart_add(Evas_Object *obj)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    elm_layout_sizing_eval(obj);
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     _access_spinner_register(obj);
 }
 
 static void
@@ -551,6 +627,56 @@ _elm_spinner_smart_del(Evas_Object *obj)
    ELM_WIDGET_CLASS(_elm_spinner_parent_sc)->base.del(obj);
 }
 
+static Eina_Bool
+_elm_spinner_smart_theme(Evas_Object *obj)
+{
+   Eina_Bool ret;
+   ret = elm_layout_theme_set(obj, "spinner", "base",
+                              elm_widget_style_get(obj));
+
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     _access_spinner_register(obj);
+
+   return ret;
+}
+
+static Eina_Bool
+_elm_spinner_smart_focus_next(const Evas_Object *obj,
+                           Elm_Focus_Direction dir,
+                           Evas_Object **next)
+{
+   Eina_List *items = NULL;
+
+   ELM_SPINNER_CHECK(obj) EINA_FALSE;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   items = eina_list_append(items, sd->access_obj);
+   items = eina_list_append(items, sd->decrement_btn_access);
+   items = eina_list_append(items, sd->increment_btn_access);
+
+   return elm_widget_focus_list_next_get
+            (obj, items, eina_list_data_get, dir, next);
+}
+
+static void
+_access_hook(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+   
+   if (is_access)
+     {
+        ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
+        _elm_spinner_smart_focus_next;
+        _access_spinner_register(obj);
+     }
+   else
+     {
+        ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
+        //TODO: unregister edje part object
+     }
+}
+
 static void
 _elm_spinner_smart_set_user(Elm_Spinner_Smart_Class *sc)
 {
@@ -565,6 +691,14 @@ _elm_spinner_smart_set_user(Elm_Spinner_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->event = _elm_spinner_smart_event;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_spinner_smart_sizing_eval;
+
+   ELM_WIDGET_CLASS(sc)->theme = _elm_spinner_smart_theme;
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     ELM_WIDGET_CLASS(sc)->focus_next = _elm_spinner_smart_focus_next;
+
+   ELM_WIDGET_CLASS(sc)->access = _access_hook;
 }
 
 EAPI const Elm_Spinner_Smart_Class *

@@ -437,6 +437,53 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
+static char *
+_access_info_cb(void *data,
+                Evas_Object *obj __UNUSED__,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   const char *txt = NULL;
+   Elm_Segment_Item *it = (Elm_Segment_Item *)data;
+   ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, NULL);
+
+   if (!txt) txt = it->label;
+   if (txt) return strdup(txt);
+
+   return NULL;
+}
+
+static char *
+_access_state_cb(void *data,
+                 Evas_Object *obj __UNUSED__,
+                 Elm_Widget_Item *item __UNUSED__)
+{
+   Elm_Segment_Item *it = (Elm_Segment_Item *)data;
+   ELM_SEGMENT_CONTROL_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_SEGMENT_CONTROL_DATA_GET(WIDGET(it), sd);
+
+   if (ELM_WIDGET_DATA(sd)->disabled)
+     return strdup(E_("State: Disabled"));
+
+   if (it == sd->selected_item)
+     return strdup(E_("State: Selected"));
+   else
+     return strdup(E_("State: Unselected"));
+}
+
+static void
+_access_widget_item_register(Elm_Segment_Item *it)
+{
+   Elm_Access_Info *ai;
+
+   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+
+   ai = _elm_access_object_get(it->base.access_obj);
+
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("Segment Control Item"));
+   _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
+   _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
+}
+
 static Elm_Segment_Item *
 _item_new(Evas_Object *obj,
           Evas_Object *icon,
@@ -479,6 +526,10 @@ _item_new(Evas_Object *obj,
      (VIEW(it), EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, it);
    evas_object_show(VIEW(it));
 
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     _access_widget_item_register(it);
+
    return it;
 }
 
@@ -516,6 +567,53 @@ _elm_segment_control_smart_del(Evas_Object *obj)
    ELM_WIDGET_CLASS(_elm_segment_control_parent_sc)->base.del(obj);
 }
 
+static Eina_Bool
+_elm_segment_control_smart_focus_next(const Evas_Object *obj,
+                           Elm_Focus_Direction dir,
+                           Evas_Object **next)
+{
+   Eina_List *items = NULL;
+   Eina_List *l;
+   Elm_Segment_Item *it;
+
+   ELM_SEGMENT_CONTROL_CHECK(obj) EINA_FALSE;
+   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+     items = eina_list_append(items, it->base.access_obj);
+
+   return elm_widget_focus_list_next_get
+            (obj, items, eina_list_data_get, dir, next);
+}
+
+static void
+_access_obj_process(Elm_Segment_Control_Smart_Data * sd, Eina_Bool is_access)
+{
+   Eina_List *l;
+   Elm_Segment_Item *it;
+
+   EINA_LIST_FOREACH(sd->items, l, it)
+     {
+        if (is_access) _access_widget_item_register(it);
+        else
+          _elm_access_widget_item_unregister((Elm_Widget_Item *)it);
+     }
+}
+
+static void
+_access_hook(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_SEGMENT_CONTROL_CHECK(obj);
+   ELM_SEGMENT_CONTROL_DATA_GET(obj, sd);
+   
+   if (is_access)
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
+     _elm_segment_control_smart_focus_next;
+   else
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
+   _access_obj_process(sd, is_access);
+}
+
 static void
 _elm_segment_control_smart_set_user(Elm_Segment_Control_Smart_Class *sc)
 {
@@ -534,6 +632,12 @@ _elm_segment_control_smart_set_user(Elm_Segment_Control_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_segment_control_smart_sizing_eval;
+
+   // ACCESS
+   if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
+     ELM_WIDGET_CLASS(sc)->focus_next = _elm_segment_control_smart_focus_next;
+
+   ELM_WIDGET_CLASS(sc)->access = _access_hook;
 }
 
 EAPI const Elm_Segment_Control_Smart_Class *

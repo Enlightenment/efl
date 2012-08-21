@@ -355,6 +355,20 @@ group { name: "elm/spinner/base/default";
             visible: 1;
          }
       }
+      part { name: "access_text";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+         }
+         description { state: "disabled" 0.0;
+            color: 0 0 0 0;
+            rel1.to: "disabler";
+            rel2.to: "disabler";
+         }
+      }
    }
    programs {
       program { name: "text_show";
@@ -504,6 +518,7 @@ group { name: "elm/spinner/base/default";
          target: "right_over1";
          target: "right_over2";
          target: "disabler";
+         target: "access_text";
          after: "disable_text";
       }
       program { name: "disable_text";
@@ -534,6 +549,7 @@ group { name: "elm/spinner/base/default";
          target: "right_over1";
          target: "right_over2";
          target: "disabler";
+         target: "access_text";
          after: "enable_text";
       }
       program { name: "enable_text";
@@ -892,6 +908,20 @@ group { name: "elm/spinner/base/vertical";
             visible: 1;
          }
       }
+      part { name: "access_text";
+         type: RECT;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.to: "elm.text";
+            rel2.to: "elm.text";
+         }
+         description { state: "disabled" 0.0;
+            color: 0 0 0 0;
+            rel1.to: "disabler";
+            rel2.to: "disabler";
+         }
+      }
    }
    programs {
       program { name: "text_show";
@@ -963,6 +993,7 @@ group { name: "elm/spinner/base/vertical";
          target: "down_bt";
          target: "up_bt";
          target: "disabler";
+         target: "access_text";
          after: "disable_text";
       }
       program { name: "disable_text";
@@ -989,6 +1020,7 @@ group { name: "elm/spinner/base/vertical";
          target: "down_bt";
          target: "up_bt";
          target: "disabler";
+         target: "access_text";
          after: "enable_text";
       }
       program { name: "enable_text";

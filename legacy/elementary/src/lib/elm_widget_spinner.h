@@ -134,6 +134,9 @@ struct _Elm_Spinner_Smart_Data
    int                   round;
    Ecore_Timer          *delay, *spin;
    Eina_List            *special_values;
+   Evas_Object          *access_obj;
+   Evas_Object          *increment_btn_access;
+   Evas_Object          *decrement_btn_access;
 
    Eina_Bool             entry_visible : 1;
    Eina_Bool             dragging : 1;

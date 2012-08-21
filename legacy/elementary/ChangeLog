@@ -387,7 +387,7 @@
 
 2012-08-20  Shinwoo Kim (kimcinoo)
 
-	* Patch in incomplte access support in datetime.
+	* Patch in incomplete access support in datetime.
 
 2012-08-21  Carsten Haitzler (The Rasterman)
 
@@ -396,3 +396,8 @@
           of course twiddle with the norender state too), so add this in.
           elm_win_norender_push(), elm_win_norender_pop(),
           elm_win_norender_get() and elm_win_render() added.
+
+2012-08-21  Shinwoo Kim (kimcinoo)
+
+	* Patch in incomplete access support in segment control and spinner
+
