@@ -108,7 +108,7 @@ EAPI int ephysics_init(void);
  * Shutdown Bullet physics engine. If init count reaches 0, all the existing
  * worlds will be deleted, and consequently all the bodies.
  *
- * @return Ephysics' init counter value.
+ * @return EPhysics' init counter value.
  *
  * @see ephysics_init().
  *
@@ -1184,15 +1184,33 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
  * @ref ephysics_body_resize();
  * @ref ephysics_body_geometry_set().
  *
+ * Their rotation can be set directly with @ref ephysics_body_rotation_set().
+ *
  * Also, they can have an associated evas object, done with
  * @ref ephysics_body_evas_object_set() function, being responsible for
  * updating its position and rotation, or letting a user callback be set
  * for this task with @ref ephysics_body_event_callback_add().
  *
- * Also, bodies can have impulses applied over them, and will be affected
- * by gravity. Impulses can be applied with:
+ * Bodies can have velocity set with @ref ephysics_body_linear_velocity_set()
+ * and @ref ephysics_body_angular_velocity_set().
+ *
+ * Also, bodies can have forces and impulses applied over them, and they will
+ * be affected by gravity.
+ *
+ * Forces will be acting while they're set, changing bodies velocity over time.
+ * Impulses are applied only once, modifying bodies velocity imediatelly to the
+ * new value.
+ *
+ * Forces can be managed with:
+ * @li @ref ephysics_body_central_force_apply();
+ * @li @ref ephysics_body_torque_apply().
+ * @li @ref ephysics_body_force_apply();
+ * @li @ref ephysics_body_forces_clear();
+ *
+ * Impulses can be applied with:
  * @li @ref ephysics_body_central_impulse_apply();
  * @li @ref ephysics_body_torque_impulse_apply().
+ * @li @ref ephysics_body_impulse_apply();
  *
  * Bodies can be removed from the world being directly deleted with
  * @ref ephysics_body_del() or when the world is deleted, case when all the
