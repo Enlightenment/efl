@@ -271,6 +271,7 @@ PKG_CHECK_MODULES([EDJE],
     ecore >= 1.6.99
     ecore-evas >= 1.6.99
     ecore-file >= 1.6.99
+    ecore-input >= 1.6.99
     embryo >= 1.6.99
    ])
 
