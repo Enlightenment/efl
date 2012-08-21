@@ -1272,7 +1272,8 @@ _eo_free(Eo *obj)
 static inline void
 _eo_unref(Eo *obj)
 {
-   if (--(obj->refcount) == 0)
+   --(obj->refcount);
+   if (obj->refcount == 0)
      {
         if (obj->del)
           {
@@ -1297,6 +1298,11 @@ _eo_unref(Eo *obj)
            _eo_free(obj);
         else
            _eo_ref(obj); /* If we manual free, we keep a phantom ref. */
+     }
+   else if (obj->refcount < 0)
+     {
+        ERR("Obj:%p. Refcount (%d) < 0. Too many unrefs.", obj, obj->refcount);
+        return;
      }
 }
 
