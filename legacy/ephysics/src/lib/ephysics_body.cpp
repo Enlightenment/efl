@@ -3,6 +3,7 @@
 #endif
 
 #include <Evas.h>
+#include <BulletCollision/CollisionShapes/btShapeHull.h>
 
 #include <math.h>
 
@@ -888,10 +889,12 @@ ephysics_body_box_add(EPhysics_World *world)
 EAPI EPhysics_Body *
 ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
 {
-   btConvexHullShape* collision_shape;
+   btConvexHullShape *full_shape, *simplified_shape;
    const Eina_Inlist *points;
    EPhysics_Point *point;
+   btShapeHull *hull;
    btVector3 point3d;
+   btScalar margin;
 
    if (!world)
      {
@@ -905,8 +908,8 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
         return NULL;
      }
 
-   collision_shape = new btConvexHullShape();
-   if (!collision_shape)
+   full_shape = new btConvexHullShape();
+   if (!full_shape)
      {
         ERR("Couldn't create a generic convex shape.");
         return NULL;
@@ -917,12 +920,18 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
    EINA_INLIST_FOREACH(points, point)
      {
         point3d = btVector3(point->x, point->y, 0);
-        collision_shape->addPoint(point3d);
+        full_shape->addPoint(point3d);
         point3d = btVector3(point->x, point->y, 0.5);
-        collision_shape->addPoint(point3d);
+        full_shape->addPoint(point3d);
      }
 
-   return _ephysics_body_add(world, (btCollisionShape *)collision_shape,
+   hull = new btShapeHull(full_shape);
+   margin = full_shape->getMargin();
+   hull->buildHull(margin);
+   simplified_shape = new btConvexHullShape(&(hull->getVertexPointer()->getX()),
+                                            hull->numVertices());
+
+   return _ephysics_body_add(world, (btCollisionShape *)simplified_shape,
                              "generic");
 }
 
