@@ -14,9 +14,9 @@ _on_keydown(void *data, Evas_Object *obj __UNUSED__, Evas_Object *src __UNUSED__
      return EINA_FALSE;
 
    if (strcmp(ev->keyname, "Up") == 0)
-     ephysics_body_central_impulse_apply(body, 0, 300);
-   else if (strcmp(ev->keyname, "Down") == 0)
      ephysics_body_central_impulse_apply(body, 0, -300);
+   else if (strcmp(ev->keyname, "Down") == 0)
+     ephysics_body_central_impulse_apply(body, 0, 300);
    else if (strcmp(ev->keyname, "Right") == 0)
      ephysics_body_central_impulse_apply(body, 300, 0);
    else if (strcmp(ev->keyname, "Left") == 0)
