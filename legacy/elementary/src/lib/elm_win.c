@@ -2566,9 +2566,8 @@ elm_win_add(Evas_Object *parent,
      {
         TRAP(sd, fullscreen_set, 1);
      }
-   else if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
-     _elm_win_frame_add(sd, "default");
-   else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
+   else if (ENGINE_COMPARE(ELM_WAYLAND_SHM) ||
+            ENGINE_COMPARE(ELM_WAYLAND_EGL))
      _elm_win_frame_add(sd, "default");
 
    if (_elm_config->focus_highlight_enable)
@@ -2990,16 +2989,14 @@ elm_win_fullscreen_set(Evas_Object *obj,
 
         if (fullscreen)
           {
-             if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
-               _elm_win_frame_del(sd);
-             else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
+             if (ENGINE_COMPARE(ELM_WAYLAND_SHM) ||
+                 ENGINE_COMPARE(ELM_WAYLAND_EGL))
                _elm_win_frame_del(sd);
           }
         else
           {
-             if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
-               _elm_win_frame_add(sd, "default");
-             else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
+             if (ENGINE_COMPARE(ELM_WAYLAND_SHM) ||
+                 ENGINE_COMPARE(ELM_WAYLAND_EGL))
                _elm_win_frame_add(sd, "default");
 
              evas_object_show(sd->frame_obj);
