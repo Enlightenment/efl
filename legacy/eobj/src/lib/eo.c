@@ -1516,11 +1516,7 @@ eo_composite_detach(Eo *comp_obj, Eo *parent)
 EAPI Eina_Bool
 eo_composite_is(const Eo *comp_obj)
 {
-   if (!EINA_MAGIC_CHECK(comp_obj, EO_EINA_MAGIC))
-     {
-        EINA_MAGIC_FAIL(comp_obj, EO_EINA_MAGIC);
-        return EINA_FALSE;
-     }
+   EO_MAGIC_RETURN_VAL(comp_obj, EO_EINA_MAGIC, EINA_FALSE);
 
    return comp_obj->composite;
 }
