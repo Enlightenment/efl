@@ -1282,8 +1282,8 @@ typedef void (*EPhysics_Body_Event_Cb)(void *data, EPhysics_Body *body, void *ev
  * Create a new circle physics body.
  *
  * Its collision shape will be a circle of diameter 1. To change it's size
- * @ref ephysics_body_geometry_set() should be used, so it can be deformed
- * on x and y axises.
+ * @ref ephysics_body_geometry_set() should be used.
+ *
  * Any evas object can be associated to it with
  * @ref ephysics_body_evas_object_set(),
  * and it will collide as a circle (even if you have an evas rectangle).
@@ -1302,11 +1302,33 @@ EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
 
 /**
  * @brief
+ * Create a new deformable circle physics body.
+ *
+ * Its collision shape will be a circle of diameter 1. To change it's size
+ * @ref ephysics_body_geometry_set() should be used.
+ *
+ * Any evas object can be associated to it with
+ * @ref ephysics_body_evas_object_set(),
+ * and it will collide as a circle (even if you have an evas rectangle).
+ *
+ * Actually, since we're using a 3D backend, it will be a cylinder on
+ * z axis.
+ *
+ * @param world The world this body will belongs to.
+ * @return a new body or @c NULL, on errors.
+ *
+ * @see ephysics_body_del().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_soft_circle_add(EPhysics_World *world);
+
+/**
+ * @brief
  * Create a new box physics body.
  *
  * Its collision shape will be a box of dimensions 1 on all the axises.
- * To change it's size @ref ephysics_body_geometry_set() should be used,
- * so it can be deformed on x and y axises.
+ * To change it's size @ref ephysics_body_geometry_set() should be used.
  *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
@@ -1317,6 +1339,23 @@ EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
  * @ingroup EPhysics_Body
  */
 EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
+
+/**
+ * @brief
+ * Create a new deformable box physics body.
+ *
+ * Its collision shape will be a box of dimensions 1 on all the axises.
+ * To change it's size @ref ephysics_body_geometry_set() should be used.
+ *
+ * @param world The world this body will belongs to.
+ * @return a new body or @c NULL, on errors.
+ *
+ * @see ephysics_body_del().
+ * @see ephysics_body_evas_object_set().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
 
 /**
  * @brief

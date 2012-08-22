@@ -4,7 +4,10 @@
 
 #include <Evas.h>
 
+#include <math.h>
+
 #include "ephysics_private.h"
+#include "ephysics_trimesh.h"
 
 #ifdef  __cplusplus
 extern "C" {
@@ -236,6 +239,7 @@ _ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape, con
         goto err_rigid_body;
      }
 
+   body->soft_body = NULL;
    body->collision_groups = NULL;
    body->collision_shape = collision_shape;
    body->rigid_body = rigid_body;
@@ -278,6 +282,32 @@ _ephysics_body_evas_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
+_ephysics_body_soft_body_points_distance_get(const EPhysics_Body *body, double distances[4][3])
+{
+   btVector3 center;
+   btScalar raius;
+
+   body->soft_body->getCollisionShape()->getBoundingSphere(center, raius);
+
+   for (int m = 0; m < 4; m++)
+     {
+        for (int n = 0; n < 3; n++)
+          {
+             btVector3 node;
+             double distance;
+
+             node = body->soft_body->
+                         m_faces[body->points_deform[m][n]].m_n[1]->m_x;
+
+             distance = sqrt(pow(center.x() - node.x(), 2) +
+                        pow(center.y() - node.y(), 2));
+
+             distances[m][n] = distance;
+          }
+     }
+}
+
+static void
 _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
 {
    double rate, sx, sy;
@@ -286,10 +316,23 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
    sx = w / rate;
    sy = h / rate;
 
-   body->collision_shape->setLocalScaling(btVector3(sx, sy, 1));
+   if (body->soft_body)
+     {
+        body->soft_body->m_anchors.resize(0);
+        body->soft_body->scale(btVector3(sx, sy, 1));
 
-   if(!body->rigid_body->isStaticObject())
-      ephysics_body_mass_set(body, ephysics_body_mass_get(body));
+        for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
+          body->soft_body->appendAnchor(i, body->rigid_body);
+
+        _ephysics_body_soft_body_points_distance_get(body, body->distances);
+     }
+   else
+     {
+        body->collision_shape->setLocalScaling(btVector3(sx, sy, 1));
+
+        if(!body->rigid_body->isStaticObject())
+          ephysics_body_mass_set(body, ephysics_body_mass_get(body));
+     }
 
    body->w = w;
    body->h = h;
@@ -305,6 +348,7 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
    double rate, mx, my;
    btTransform trans;
    int wy, height;
+   btVector3 body_scale;
 
    rate = ephysics_world_rate_get(body->world);
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
@@ -329,6 +373,7 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    double mx, my, sx, sy;
    btTransform trans;
    int wy, height;
+   btVector3 body_scale;
 
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
    height += wy;
@@ -340,12 +385,28 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 
    body->rigid_body->getMotionState()->getWorldTransform(trans);
    trans.setOrigin(btVector3(mx, my, 0));
-   body->rigid_body->proceedToTransform(trans);
 
-   body->collision_shape->setLocalScaling(btVector3(sx, sy, 1));
+   body_scale = btVector3(sx, sy, 1);
+   if (body->soft_body)
+     {
+        body->soft_body->m_anchors.resize(0);
+        body->soft_body->scale(btVector3(sx, sy, 1));
+        body->rigid_body->proceedToTransform(trans);
+        body->soft_body->transform(trans);
 
-   if(!body->rigid_body->isStaticObject())
-      ephysics_body_mass_set(body, ephysics_body_mass_get(body));
+        for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
+          body->soft_body->appendAnchor(i, body->rigid_body);
+
+        _ephysics_body_soft_body_points_distance_get(body, body->distances);
+     }
+   else
+     {
+        body->collision_shape->setLocalScaling(body_scale);
+        body->rigid_body->proceedToTransform(trans);
+
+        if (!body->rigid_body->isStaticObject())
+          ephysics_body_mass_set(body, ephysics_body_mass_get(body));
+     }
 
    body->rigid_body->getMotionState()->setWorldTransform(trans);
 
@@ -356,6 +417,32 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 
    DBG("Body %p position changed to %lf, %lf.", body, mx, my);
    DBG("Body %p scale changed to %lf, %lf.", body, sx, sy);
+}
+
+static void
+_ephysics_body_soft_body_deform(EPhysics_Body *body, double rate, Evas_Map *map)
+{
+   double curr_distances[4][3];
+
+   _ephysics_body_soft_body_points_distance_get(body, curr_distances);
+
+    for (int m = 0; m < 4; m++)
+     {
+        Evas_Coord px, py, pz;
+        double dx = 0, dy = 0;
+
+        evas_map_point_coord_get(map, m, &px, &py, &pz);
+
+        for (int n = 0; n < 3; n++)
+          {
+             double diff = (curr_distances[m][n] - body->distances[m][n]);
+             dx += diff;
+             dy += diff;
+          }
+
+        evas_map_point_coord_set(map, m, px - (dx * rate), py - (dy * rate),
+                                 pz);
+     }
 }
 
 static void
@@ -400,6 +487,7 @@ _ephysics_body_del(EPhysics_Body *body)
    delete body->rigid_body->getMotionState();
    delete body->collision_shape;
    delete body->rigid_body;
+   delete body->soft_body;
 
    free(body);
 }
@@ -443,6 +531,10 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 
    map = evas_map_new(4);
    evas_map_util_points_populate_from_object(map, body->evas_obj);
+
+   if (body->soft_body)
+     _ephysics_body_soft_body_deform(body, rate, map);
+
    evas_map_util_rotate(map, rot, x + (w / 2), y + (h / 2));
    evas_object_map_set(body->evas_obj, map);
    evas_object_map_enable_set(body->evas_obj, EINA_TRUE);
@@ -586,6 +678,117 @@ ephysics_body_rigid_body_get(const EPhysics_Body *body)
    return body->rigid_body;
 }
 
+btSoftBody *
+ephysics_body_soft_body_get(const EPhysics_Body *body)
+{
+   return body->soft_body;
+}
+
+static EPhysics_Body *
+_ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape, btSoftBody *soft_body, const char *type)
+{
+   EPhysics_Body *body;
+   btSoftBody::AJoint::Specs angular_joint;
+   btSoftBody::LJoint::Specs linear_joint;
+
+   body = _ephysics_body_add(world, collision_shape, "soft box");
+   if (!body)
+     {
+        ephysics_body_del(body);
+        return NULL;
+     }
+
+   body->soft_body = soft_body;
+   body->soft_body->setUserPointer(body);
+
+   body->soft_body->getCollisionShape()->setMargin(0.22);
+
+   soft_body->m_materials[0]->m_kLST =	0.35;
+   soft_body->setPose(true, false);
+
+   body->soft_body->m_cfg.collisions += btSoftBody::fCollision::SDF_RS;
+   body->soft_body->m_cfg.collisions += btSoftBody::fCollision::CL_SS;
+
+   body->soft_body->generateClusters(body->soft_body->m_nodes.size());
+
+   angular_joint.erp = 0.;
+   angular_joint.cfm = 0.;
+   angular_joint.axis = btVector3(0, 0, 1);
+   body->soft_body->appendAngularJoint(angular_joint);
+
+   linear_joint.erp = 0.;
+   linear_joint.cfm = 0.;
+   linear_joint.position = btVector3(0, 0, 0);
+   body->soft_body->appendLinearJoint(linear_joint, body->rigid_body);
+
+   for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
+     body->soft_body->appendAnchor(i, body->rigid_body);
+
+   ephysics_world_soft_body_add(world, body);
+   return body;
+}
+
+EAPI EPhysics_Body *
+ephysics_body_soft_circle_add(EPhysics_World *world)
+{
+   EPhysics_Body *body;
+   btCollisionShape *shape;
+   btSoftBodyWorldInfo *world_info;
+   btSoftBody *soft_body;
+
+   if (!world)
+     {
+        ERR("Can't add circle, world is null.");
+        return NULL;
+     }
+
+   shape = new btCylinderShapeZ(btVector3(0.25, 0.25, 0.25));
+   if (!shape)
+     {
+        ERR("Couldn't create a new cylinder shape.");
+        goto no_collision_shape;
+     }
+
+   world_info = ephysics_world_info_get(world);
+   soft_body = btSoftBodyHelpers::CreateFromTriMesh(*world_info,
+                        cylinder_vertices, &cylinder_indices[0][0],
+		        CYLINDER_NUM_TRIANGLES);
+   if (!soft_body)
+     {
+        ERR("Couldn't create a new soft body.");
+        goto no_soft_body;
+     }
+
+   body = _ephysics_body_soft_add(world, shape, soft_body, "soft circle");
+   if (!body)
+     goto no_body;
+
+   body->points_deform[0][0] = 72;
+   body->points_deform[0][1] = 6;
+   body->points_deform[0][2] = 65;
+
+   body->points_deform[1][0] = 72;
+   body->points_deform[1][1] = 69;
+   body->points_deform[1][2] = 3;
+
+   body->points_deform[2][0] = 57;
+   body->points_deform[2][1] = 3;
+   body->points_deform[2][2] = 76;
+
+   body->points_deform[3][0] = 54;
+   body->points_deform[3][1] = 47;
+   body->points_deform[3][2] = 65;
+
+   return body;
+
+no_body:
+   delete soft_body;
+no_soft_body:
+   delete shape;
+no_collision_shape:
+   return NULL;
+}
+
 EAPI EPhysics_Body *
 ephysics_body_circle_add(EPhysics_World *world)
 {
@@ -598,8 +801,74 @@ ephysics_body_circle_add(EPhysics_World *world)
      }
 
    collision_shape = new btCylinderShapeZ(btVector3(0.5, 0.5, 0.5));
+   if (!collision_shape)
+     {
+        ERR("Couldn't create a new cylinder shape.");
+        return NULL;
+     }
 
    return _ephysics_body_add(world, collision_shape, "circle");
+}
+
+EAPI EPhysics_Body *
+ephysics_body_soft_box_add(EPhysics_World *world)
+{
+   EPhysics_Body *body;
+   btCollisionShape *shape;
+   btSoftBodyWorldInfo *world_info;
+   btSoftBody *soft_body;
+
+   if (!world)
+     {
+        ERR("Can't add circle, world is null.");
+        return NULL;
+     }
+
+   shape = new btBoxShape(btVector3(0.25, 0.25, 0.25));
+   if (!shape)
+     {
+        ERR("Couldn't create a new box shape.");
+        goto no_collision_shape;
+     }
+
+   world_info = ephysics_world_info_get(world);
+   soft_body = btSoftBodyHelpers::CreateFromTriMesh(*world_info,
+                                            cube_vertices, &cube_indices[0][0],
+                                            CUBE_NUM_TRIANGLES);
+   if (!soft_body)
+     {
+        ERR("Couldn't create a new soft body.");
+        goto no_soft_body;
+     }
+
+   body = _ephysics_body_soft_add(world, shape, soft_body, "soft box");
+   if (!body)
+     goto no_body;
+
+   body->points_deform[0][0] = 27;
+   body->points_deform[0][1] = 80;
+   body->points_deform[0][2] = 69;
+
+   body->points_deform[1][0] = 85;
+   body->points_deform[1][1] = 12;
+   body->points_deform[1][2] = 30;
+
+   body->points_deform[2][0] = 18;
+   body->points_deform[2][1] = 62;
+   body->points_deform[2][2] = 8;
+
+   body->points_deform[3][0] = 50;
+   body->points_deform[3][1] = 40;
+   body->points_deform[3][2] = 60;
+
+   return body;
+
+no_body:
+   delete soft_body;
+no_soft_body:
+   delete shape;
+no_collision_shape:
+   return NULL;
 }
 
 EAPI EPhysics_Body *
@@ -796,6 +1065,7 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
      }
 
    body->evas_obj = evas_obj;
+
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
                                   _ephysics_body_evas_obj_del_cb, body);
 
@@ -932,9 +1202,14 @@ ephysics_body_mass_set(EPhysics_Body *body, double mass)
      }
 
    btVector3 inertia(0, 0, 0);
-   body->collision_shape->calculateLocalInertia(mass, inertia);
-   body->rigid_body->setMassProps(mass, inertia);
-   body->rigid_body->updateInertiaTensor();
+   if (body->soft_body)
+     body->soft_body->setTotalMass(mass);
+   else
+     {
+        body->collision_shape->calculateLocalInertia(mass, inertia);
+        body->rigid_body->setMassProps(mass, inertia);
+        body->rigid_body->updateInertiaTensor();
+     }
    body->mass = mass;
 
    DBG("Body %p mass changed to %lf.", body, mass);
@@ -1380,6 +1655,10 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rotation)
    body->rigid_body->getMotionState()->getWorldTransform(trans);
    quat.setEuler(0, 0, -rotation / RAD_TO_DEG);
    trans.setRotation(quat);
+
+   if (body->soft_body)
+     body->soft_body->transform(trans);
+
    body->rigid_body->proceedToTransform(trans);
    body->rigid_body->getMotionState()->setWorldTransform(trans);
 

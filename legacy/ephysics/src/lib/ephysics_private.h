@@ -5,6 +5,10 @@
 # include <Evil.h>
 #endif
 
+#include <BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h>
+#include <BulletSoftBody/btDefaultSoftBodySolver.h>
+#include <BulletSoftBody/btSoftRigidDynamicsWorld.h>
+#include <BulletSoftBody/btSoftBodyHelpers.h>
 #include <btBulletDynamicsCommon.h>
 #include "EPhysics.h"
 
@@ -65,6 +69,7 @@ struct _EPhysics_Body {
      EINA_INLIST;
      btCollisionShape *collision_shape;
      btRigidBody *rigid_body;
+     btSoftBody *soft_body;
      Evas_Object *evas_obj;
      EPhysics_World *world;
      int walking;
@@ -82,6 +87,8 @@ struct _EPhysics_Body {
      } force;
      Eina_Bool active:1;
      Eina_Bool deleted:1;
+     double distances[4][3];
+     int points_deform[4][3];
 };
 
 extern int _ephysics_log_dom;
@@ -91,12 +98,14 @@ int ephysics_world_init(void);
 int ephysics_world_shutdown(void);
 Eina_Bool ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body);
 Eina_Bool ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body);
+Eina_Bool ephysics_world_soft_body_add(EPhysics_World *world, EPhysics_Body *body);
 void ephysics_world_constraint_add(EPhysics_World *world, EPhysics_Constraint *constraint, btTypedConstraint *bt_constraint);
 void ephysics_world_constraint_del(EPhysics_World *world, EPhysics_Constraint *constraint, btTypedConstraint *bt_constraint);
 void ephysics_body_world_boundaries_resize(EPhysics_World *world);
 void ephysics_world_boundary_set(EPhysics_World *world, EPhysics_World_Boundary boundary, EPhysics_Body *body);
 EPhysics_Body *ephysics_world_boundary_get(const EPhysics_World *world, EPhysics_World_Boundary boundary);
 Eina_Bool ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world);
+btSoftBodyWorldInfo *ephysics_world_info_get(const EPhysics_World *world);
 
 /* Body */
 Eina_Bool ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1);
@@ -104,6 +113,7 @@ void ephysics_body_evas_object_update_select(EPhysics_Body *body);
 void ephysics_orphan_body_del(EPhysics_Body *body);
 void ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body, btVector3 position);
 btRigidBody *ephysics_body_rigid_body_get(const EPhysics_Body *body);
+btSoftBody *ephysics_body_soft_body_get(const EPhysics_Body *body);
 void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
 void ephysics_body_recalc(EPhysics_Body *body, double rate);
 void ephysics_body_forces_apply(EPhysics_Body *body);

@@ -37,6 +37,7 @@ void test_shapes(void *data, Evas_Object *obj, void *event_info);
 void test_sleeping(void *data, Evas_Object *obj, void *event_info);
 void test_slider(void *data, Evas_Object *obj, void *event_info);
 void test_win_resize(void *data, Evas_Object *obj, void *event_info);
+void test_soft_body(void *data, Evas_Object *obj, void *event_info);
 
 static const EPhysics_Test tests[] = {
        {"Bouncing Ball", test_bouncing_ball},
@@ -61,6 +62,7 @@ static const EPhysics_Test tests[] = {
        {"Sleeping Threshold", test_sleeping},
        {"Slider", test_slider},
        {"Win Resize", test_win_resize},
+       {"Soft Body", test_soft_body},
 };
 
 static void

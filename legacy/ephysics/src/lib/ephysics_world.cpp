@@ -10,6 +10,8 @@
 extern "C" {
 #endif
 
+#define DEFAULT_GRAVITY btVector3(0, -9.8, 0)
+
 typedef struct _EPhysics_World_Callback EPhysics_World_Callback;
 
 struct _EPhysics_World_Callback {
@@ -26,7 +28,9 @@ struct _EPhysics_World {
      btDefaultCollisionConfiguration* collision;
      btCollisionDispatcher* dispatcher;
      btSequentialImpulseConstraintSolver* solver;
-     btDiscreteDynamicsWorld* dynamics_world;
+     btSoftRigidDynamicsWorld* dynamics_world;
+     btSoftBodyWorldInfo* world_info;
+     btSoftBodySolver* soft_solver;
 
      EPhysics_Body *boundaries[4];
      EPhysics_Camera *camera;
@@ -39,6 +43,7 @@ struct _EPhysics_World {
      int max_sub_steps;
      int walking;
      int cb_walking;
+     int soft_body_ref;
      double last_update;
      double rate;
      double fixed_time_step;
@@ -59,6 +64,12 @@ static Eina_Inlist *_worlds = NULL;
 static Eina_List *_worlds_to_delete = NULL;
 static Ecore_Animator *_anim_simulate = NULL;
 static int _worlds_walking = 0;
+
+btSoftBodyWorldInfo *
+ephysics_world_info_get(const EPhysics_World *world)
+{
+   return world->world_info;
+}
 
 struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
 {
@@ -81,7 +92,11 @@ struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
 static inline void
 _ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double rate)
 {
-   world->dynamics_world->setGravity(btVector3(gx / rate, -gy / rate, 0));
+   btVector3 gravity;
+
+   gravity = btVector3(gx / rate, -gy / rate, 0);
+   world->dynamics_world->setGravity(gravity);
+   world->world_info->m_gravity = gravity;
 }
 
 static void
@@ -226,6 +241,8 @@ _ephysics_world_free(EPhysics_World *world)
    delete world->broadphase;
    delete world->dispatcher;
    delete world->collision;
+   delete world->soft_solver;
+   delete world->world_info;
    */
 
    free(world);
@@ -259,8 +276,15 @@ _simulate_worlds(void *data __UNUSED__)
         world->last_update = time_now;
 
         gDeactivationTime = world->max_sleeping_time;
-        world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
+
+        if (world->soft_body_ref)
+          world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
                                               world->fixed_time_step);
+        else
+         ((btDiscreteDynamicsWorld *)world->dynamics_world)->stepSimulation(
+                                                delta, world->max_sub_steps,
+                                                world->fixed_time_step);
+
         world->walking--;
 
         if (!world->walking)
@@ -322,8 +346,9 @@ _ephysics_world_boundary_del_cb(void *data, EPhysics_Body *body, void *event_inf
 Eina_Bool
 ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body)
 {
-   world->bodies = eina_inlist_append(world->bodies,
-                                      EINA_INLIST_GET(body));
+   if (!eina_inlist_find(world->bodies, EINA_INLIST_GET(body)))
+       world->bodies = eina_inlist_append(world->bodies, EINA_INLIST_GET(body));
+
    if (eina_error_get())
      {
         ERR("Couldn't add body to bodies list.");
@@ -331,13 +356,14 @@ ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body)
      }
 
    world->dynamics_world->addRigidBody(ephysics_body_rigid_body_get(body));
-
    return EINA_TRUE;
 }
 
 Eina_Bool
 ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
 {
+   btSoftBody *soft_body;
+
    if (world->walking)
      {
         world->to_delete = eina_list_append(world->to_delete, body);
@@ -345,10 +371,34 @@ ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
      }
 
    world->dynamics_world->removeRigidBody(ephysics_body_rigid_body_get(body));
-   world->bodies = eina_inlist_remove(world->bodies,
-                                      EINA_INLIST_GET(body));
+
+   soft_body = ephysics_body_soft_body_get(body);
+   if (soft_body)
+     {
+        world->dynamics_world->removeSoftBody(soft_body);
+        --world->soft_body_ref;
+     }
+
+   world->bodies = eina_inlist_remove(world->bodies, EINA_INLIST_GET(body));
    ephysics_orphan_body_del(body);
 
+   return EINA_TRUE;
+}
+
+Eina_Bool
+ephysics_world_soft_body_add(EPhysics_World *world, EPhysics_Body *body)
+{
+   if (!eina_inlist_find(world->bodies, EINA_INLIST_GET(body)))
+       world->bodies = eina_inlist_append(world->bodies, EINA_INLIST_GET(body));
+
+   if (eina_error_get())
+     {
+        ERR("Couldn't add body to bodies list.");
+        return EINA_FALSE;
+     }
+
+   ++world->soft_body_ref;
+   world->dynamics_world->addSoftBody(ephysics_body_soft_body_get(body));
    return EINA_TRUE;
 }
 
@@ -446,7 +496,7 @@ ephysics_world_new(void)
         goto no_broadphase;
      }
 
-   world->collision = new btDefaultCollisionConfiguration();
+   world->collision = new btSoftBodyRigidBodyCollisionConfiguration();
    if (!world->collision)
      {
         ERR("Couldn't configure collision.");
@@ -467,14 +517,33 @@ ephysics_world_new(void)
         goto no_solver;
      }
 
-   world->dynamics_world = new btDiscreteDynamicsWorld(
+   world->soft_solver = new btDefaultSoftBodySolver();
+   if (!world->soft_solver)
+     {
+        ERR("Couldn't create soft body solver.");
+        goto no_soft_solver;
+     }
+
+   world->dynamics_world = new btSoftRigidDynamicsWorld(
       world->dispatcher, world->broadphase, world->solver,
-      world->collision);
+      world->collision, world->soft_solver);
    if (!world->dynamics_world)
      {
         ERR("Couldn't create dynamic world.");
         goto no_world;
      }
+
+   world->world_info = new btSoftBodyWorldInfo();
+   if (!world->world_info)
+     {
+        ERR("Couldn't create soft body world info.");
+        goto no_world_info;
+     }
+
+   world->world_info->m_gravity = DEFAULT_GRAVITY;
+   world->world_info->m_broadphase = world->broadphase;
+   world->world_info->m_dispatcher = world->dispatcher;
+   world->world_info->m_sparsesdf.Initialize();
 
    _worlds = eina_inlist_append(_worlds, EINA_INLIST_GET(world));
    if (eina_error_get())
@@ -485,7 +554,7 @@ ephysics_world_new(void)
 
    world->dynamics_world->getSolverInfo().m_solverMode ^=
       EPHYSICS_WORLD_SOLVER_SIMD;
-   world->dynamics_world->setGravity(btVector3(0, -9.8, 0));
+   world->dynamics_world->setGravity(DEFAULT_GRAVITY);
 
    filter_cb = new _ephysics_world_ovelap_filter_cb();
    if (!filter_cb)
@@ -493,6 +562,7 @@ ephysics_world_new(void)
    else
      world->dynamics_world->getPairCache()->setOverlapFilterCallback(filter_cb);
 
+   world->soft_body_ref = 0;
    world->rate = 30;
    world->max_sub_steps = 3;
    world->fixed_time_step = 1/60.f;
@@ -510,8 +580,12 @@ ephysics_world_new(void)
    return world;
 
 no_list:
+   delete world->world_info;
+no_world_info:
    delete world->dynamics_world;
 no_world:
+   delete world->soft_solver;
+no_soft_solver:
    delete world->solver;
 no_solver:
    delete world->dispatcher;
