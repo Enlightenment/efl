@@ -159,10 +159,8 @@ struct _X11_Cnp_Atom
    Ecore_X_Atom             atom;
 };
 
-static Ecore_X_Window _x11_elm_widget_xwin_get      (const Evas_Object *obj);
 static void           _x11_sel_obj_del              (void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static void           _x11_sel_obj_del2             (void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static Eina_Bool      _x11_elm_cnp_init             (void);
 static Eina_Bool      _x11_selection_clear          (void *udata __UNUSED__, int type, void *event);
 static Eina_Bool      _x11_selection_notify         (void *udata __UNUSED__, int type, void *event);
 static Eina_Bool      _x11_targets_converter        (char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize);
@@ -178,6 +176,23 @@ static int            _x11_notify_handler_image     (X11_Cnp_Selection *sel, Eco
 static int            _x11_notify_handler_uri       (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 //static int            _x11_notify_handler_html      (X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify);
 static int            _x11_vcard_receive            (X11_Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *notify);
+static Eina_Bool      _x11_dnd_enter                (void *data __UNUSED__, int etype __UNUSED__, void *ev);
+static Eina_Bool      _x11_dnd_drop                 (void *data __UNUSED__, int etype __UNUSED__, void *ev);
+static Eina_Bool      _x11_dnd_position             (void *data __UNUSED__, int etype __UNUSED__, void *ev);
+static Eina_Bool      _x11_dnd_status               (void *data __UNUSED__, int etype __UNUSED__, void *ev);
+static void           _x11_drag_mouse_up            (void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *data);
+static void           _x11_drag_move                (void *data __UNUSED__, Ecore_X_Xdnd_Position *pos);
+
+static Ecore_X_Window _x11_elm_widget_xwin_get           (const Evas_Object *obj);
+
+static Eina_Bool _x11_elm_cnp_init                       (void);
+static Eina_Bool _x11_elm_cnp_selection_set              (Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
+static void      _x11_elm_cnp_selection_loss_callback_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
+static Eina_Bool _x11_elm_object_cnp_selection_clear     (Evas_Object *obj, Elm_Sel_Type selection);
+static Eina_Bool _x11_elm_cnp_selection_get              (Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata);
+static Eina_Bool _x11_elm_drop_target_add                (Evas_Object *obj, Elm_Sel_Type format, Elm_Drop_Cb dropcb, void *cbdata);
+static Eina_Bool _x11_elm_drop_target_del                (Evas_Object *obj);
+static Eina_Bool _x11_elm_selection_selection_has_owner  (Evas_Object *obj __UNUSED__);
 
 static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
    [CNP_ATOM_TARGETS] = {
@@ -387,27 +402,6 @@ static X11_Cnp_Selection _x11_selections[ELM_SEL_TYPE_CLIPBOARD + 1] = {
    },
 };
 
-static Ecore_X_Window
-_x11_elm_widget_xwin_get(const Evas_Object *obj)
-{
-   Evas_Object *top;
-   Ecore_X_Window xwin = 0;
-   
-   top = elm_widget_top_get(obj);
-   if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
-   if (top) xwin = elm_win_xwindow_get(top);
-   if (!xwin)
-     {
-        Ecore_Evas *ee;
-        Evas *evas = evas_object_evas_get(obj);
-        if (!evas) return 0;
-        ee = ecore_evas_ecore_evas_get(evas);
-        if (!ee) return 0;
-        xwin = _elm_ee_xwin_get(ee);
-     }
-   return xwin;
-}
-
 static void
 _x11_sel_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -420,22 +414,6 @@ _x11_sel_obj_del2(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_
 {
    X11_Cnp_Selection *sel = data;
    if (sel->requestwidget == obj) sel->requestwidget = NULL;
-}
-
-static Eina_Bool
-_x11_elm_cnp_init(void)
-{
-   int i;
-   
-   for (i = 0; i < CNP_N_ATOMS; i++)
-     {
-        _x11_atoms[i].atom = ecore_x_atom_get(_x11_atoms[i].name);
-        ecore_x_selection_converter_atom_add
-          (_x11_atoms[i].atom, _x11_atoms[i].converter);
-     }
-   ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, _x11_selection_clear, NULL);
-   ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, _x11_selection_notify, NULL);
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -963,7 +941,7 @@ _x11_general_converter(char *target __UNUSED__, void *data, int size, void **dat
 }
 
 static Eina_Bool
-_dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
+_x11_dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    Ecore_X_Event_Xdnd_Enter *enter = ev;
    int i;
@@ -1000,7 +978,7 @@ _dnd_enter(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 }
 
 static Eina_Bool
-_dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
+_x11_dnd_drop(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    struct _Ecore_X_Event_Xdnd_Drop *drop;
    Dropable *dropable;
@@ -1140,7 +1118,7 @@ found:
 }
 
 static Eina_Bool
-_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
+_x11_dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    struct _Ecore_X_Event_Xdnd_Position *pos = ev;
    Ecore_X_Rectangle rect;
@@ -1162,7 +1140,7 @@ _dnd_position(void *data __UNUSED__, int etype __UNUSED__, void *ev)
  * appropriately.
  */
 static Eina_Bool
-_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
+_x11_dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 {
    struct _Ecore_X_Event_Xdnd_Status *status = ev;
 
@@ -1176,10 +1154,10 @@ _dnd_status(void *data __UNUSED__, int etype __UNUSED__, void *ev)
 }
 
 static void
-_drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *data)
+_x11_drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *data)
 {
    Ecore_X_Window xwin = *((Ecore_X_Window *)data);
-   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _drag_mouse_up);
+   evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _x11_drag_mouse_up);
    ecore_x_dnd_drop();
 
    cnp_debug("mouse up, xwin=%#llx\n", (unsigned long long)xwin);
@@ -1199,9 +1177,46 @@ _drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *
 }
 
 static void
-_drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos)
+_x11_drag_move(void *data __UNUSED__, Ecore_X_Xdnd_Position *pos)
 {
    evas_object_move(dragwin, pos->position.x - _dragx, pos->position.y - _dragy);
+}
+
+static Ecore_X_Window
+_x11_elm_widget_xwin_get(const Evas_Object *obj)
+{
+   Evas_Object *top;
+   Ecore_X_Window xwin = 0;
+   
+   top = elm_widget_top_get(obj);
+   if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
+   if (top) xwin = elm_win_xwindow_get(top);
+   if (!xwin)
+     {
+        Ecore_Evas *ee;
+        Evas *evas = evas_object_evas_get(obj);
+        if (!evas) return 0;
+        ee = ecore_evas_ecore_evas_get(evas);
+        if (!ee) return 0;
+        xwin = _elm_ee_xwin_get(ee);
+     }
+   return xwin;
+}
+
+static Eina_Bool
+_x11_elm_cnp_init(void)
+{
+   int i;
+   
+   for (i = 0; i < CNP_N_ATOMS; i++)
+     {
+        _x11_atoms[i].atom = ecore_x_atom_get(_x11_atoms[i].name);
+        ecore_x_selection_converter_atom_add
+          (_x11_atoms[i].atom, _x11_atoms[i].converter);
+     }
+   ecore_event_handler_add(ECORE_X_EVENT_SELECTION_CLEAR, _x11_selection_clear, NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_SELECTION_NOTIFY, _x11_selection_notify, NULL);
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1377,11 +1392,11 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
 
    cnp_debug("Adding drop target calls xwin=%#llx\n", (unsigned long long)xwin);
    handler_enter = ecore_event_handler_add(ECORE_X_EVENT_XDND_ENTER,
-                                           _dnd_enter, NULL);
+                                           _x11_dnd_enter, NULL);
    handler_pos = ecore_event_handler_add(ECORE_X_EVENT_XDND_POSITION,
-                                         _dnd_position, NULL);
+                                         _x11_dnd_position, NULL);
    handler_drop = ecore_event_handler_add(ECORE_X_EVENT_XDND_DROP,
-                                          _dnd_drop, NULL);
+                                          _x11_dnd_drop, NULL);
    return EINA_TRUE;
 }
 
@@ -1456,14 +1471,14 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, v
    /* TODO BUG: should NEVER have these as globals! They should be per context (window). */
    dragdonecb = dragdone;
    dragdonedata = donecbdata;
-   /* TODO BUG: should increase dnd-awareness, in case it's drop target as well. See _drag_mouse_up() */
+   /* TODO BUG: should increase dnd-awareness, in case it's drop target as well. See _x11_drag_mouse_up() */
    ecore_x_dnd_aware_set(xwin, EINA_TRUE);
-   ecore_x_dnd_callback_pos_update_set(_drag_move, NULL);
+   ecore_x_dnd_callback_pos_update_set(_x11_drag_move, NULL);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(Elm_Sel_Type));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
-                                  _drag_mouse_up, (void *)(long)xwin);
+                                  _x11_drag_mouse_up, (void *)(long)xwin);
    handler_status = ecore_event_handler_add(ECORE_X_EVENT_XDND_STATUS,
-                                            _dnd_status, NULL);
+                                            _x11_dnd_status, NULL);
    dragwin = elm_win_add(NULL, "Elm Drag Object", ELM_WIN_UTILITY);
    elm_win_override_set(dragwin, EINA_TRUE);
 
@@ -1493,7 +1508,176 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, v
 
    return EINA_TRUE;
 }
+
+static Eina_Bool
+_x11_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__)
+{
+   return !!ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_CLIPBOARD);
+}
+
 #endif
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// for local (Within 1 app/process) cnp (used by fb as fallback
+////////////////////////////////////////////////////////////////////////////
+#if 1
+typedef struct _Local_Selinfo Local_Selinfo;
+
+struct _Local_Selinfo
+{
+   Elm_Sel_Format format;
+   struct {
+      void *buf;
+      size_t size;
+   } sel;
+   struct {
+      Evas_Object *obj;
+      Elm_Drop_Cb func;
+      void *data;
+      Ecore_Job *job;
+   } get;
+};
+
+// for ELM_SEL_TYPE_PRIMARY, ELM_SEL_TYPE_SECONDARY, ELM_SEL_TYPE_XDND,
+// ELM_SEL_TYPE_CLIPBOARD
+static Local_Selinfo _local_selinfo[4];
+
+static void       _local_get_job(void *data);
+
+static Eina_Bool  _local_elm_cnp_init(void);
+static Eina_Bool  _local_elm_cnp_selection_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection, Elm_Sel_Format format, const void *selbuf, size_t buflen);
+static void       _local_elm_cnp_selection_loss_callback_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection __UNUSED__, Elm_Selection_Loss_Cb func __UNUSED__, const void *data __UNUSED__);
+static Eina_Bool  _local_elm_object_cnp_selection_clear(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection);
+static Eina_Bool  _local_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, Elm_Drop_Cb datacb, void *udata);
+static  Eina_Bool _local_elm_drop_target_add(Evas_Object *obj __UNUSED__, Elm_Sel_Type format __UNUSED__, Elm_Drop_Cb dropcb __UNUSED__, void *cbdata __UNUSED__);
+static  Eina_Bool _local_elm_drop_target_del(Evas_Object *obj __UNUSED__);
+static Eina_Bool  _local_elm_drag_start(Evas_Object *obj __UNUSED__, Elm_Sel_Format format __UNUSED__, const char *data __UNUSED__, void (*dragdone) (void *data, Evas_Object *) __UNUSED__, void *donecbdata __UNUSED__);
+static Eina_Bool  _local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__);
+
+static void
+_local_get_job(void *data)
+{
+   Local_Selinfo *info = data;
+   Elm_Selection_Data ev;
+   
+   info->get.job = NULL;
+   ev.x = 0;
+   ev.y = 0;
+   ev.format = info->format;
+   ev.data = info->sel.buf;
+   ev.len = info->sel.size;
+   if (info->get.func)
+     info->get.func(info->get.data, info->get.obj, &ev);
+}
+
+static Eina_Bool
+_local_elm_cnp_init(void)
+{
+   memset(&(_local_selinfo), 0, sizeof(_local_selinfo));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_local_elm_cnp_selection_set(Evas_Object *obj __UNUSED__,
+                             Elm_Sel_Type selection, Elm_Sel_Format format,
+                             const void *selbuf, size_t buflen)
+{
+   if (_local_selinfo[selection].sel.buf)
+     free(_local_selinfo[selection].sel.buf);
+   _local_selinfo[selection].format = format;
+   _local_selinfo[selection].sel.buf = malloc(buflen);
+   if (_local_selinfo[selection].sel.buf)
+     {
+        memcpy(_local_selinfo[selection].sel.buf, selbuf, buflen);
+        _local_selinfo[selection].sel.size = buflen;
+     }
+   else
+     _local_selinfo[selection].sel.size = 0;
+   return EINA_TRUE;
+}
+
+static void
+_local_elm_cnp_selection_loss_callback_set(Evas_Object *obj __UNUSED__,
+                                           Elm_Sel_Type selection __UNUSED__,
+                                           Elm_Selection_Loss_Cb func __UNUSED__,
+                                           const void *data __UNUSED__)
+{
+   // this doesnt need to do anything as we never lose selection to anyone
+   // as thisis local
+}
+
+static Eina_Bool
+_local_elm_object_cnp_selection_clear(Evas_Object *obj __UNUSED__,
+                                      Elm_Sel_Type selection)
+{
+   if (_local_selinfo[selection].sel.buf)
+     free(_local_selinfo[selection].sel.buf);
+   _local_selinfo[selection].sel.buf = NULL;
+   _local_selinfo[selection].sel.size = 0;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_local_elm_cnp_selection_get(Evas_Object *obj,
+                             Elm_Sel_Type selection,
+                             Elm_Sel_Format format __UNUSED__,
+                             Elm_Drop_Cb datacb, void *udata)
+{
+   if (_local_selinfo[selection].get.job)
+     ecore_job_del(_local_selinfo[selection].get.job);
+   _local_selinfo[selection].get.obj = obj;
+   _local_selinfo[selection].get.func = datacb;
+   _local_selinfo[selection].get.data = udata;
+   _local_selinfo[selection].get.job = 
+     ecore_job_add(_local_get_job, &(_local_selinfo[selection]));
+   return EINA_TRUE;
+}
+
+static  Eina_Bool
+_local_elm_drop_target_add(Evas_Object *obj __UNUSED__,
+                           Elm_Sel_Type format __UNUSED__,
+                           Elm_Drop_Cb dropcb __UNUSED__,
+                           void *cbdata __UNUSED__)
+{
+   // XXX: implement me
+   return EINA_FALSE;
+}
+
+static  Eina_Bool
+_local_elm_drop_target_del(Evas_Object *obj __UNUSED__)
+{
+   // XXX: implement me
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_local_elm_drag_start(Evas_Object *obj __UNUSED__,
+                      Elm_Sel_Format format __UNUSED__,
+                      const char *data __UNUSED__,
+                      void (*dragdone) (void *data, Evas_Object *) __UNUSED__,
+                      void *donecbdata __UNUSED__)
+{
+   // XXX: implement me
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__)
+{
+   if (_local_selinfo[ELM_SEL_TYPE_CLIPBOARD].sel.buf) return EINA_TRUE;
+   return EINA_FALSE;
+}
+#endif
+
+
+
+
+
 
 // common internal funcs
 ////////////////////////////////////////////////////////////////////////////
@@ -1504,6 +1688,7 @@ _elm_cnp_init(void)
 #ifdef HAVE_ELEMENTARY_X
    _x11_elm_cnp_init();
 #endif   
+   _local_elm_cnp_init();
    text_uri = eina_stringshare_add("text/uri-list");
    return EINA_TRUE;
 }
@@ -1615,7 +1800,12 @@ _pasteimage_append(char *file, Evas_Object *entry)
    return EINA_TRUE;
 }
 
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 // common exposed funcs
+////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////
 EAPI Eina_Bool
 elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
@@ -1627,7 +1817,7 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 #endif
-   return EINA_FALSE;
+   return _local_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 }
 
 EAPI void
@@ -1641,6 +1831,7 @@ elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection,
    if (_x11_elm_widget_xwin_get(obj))
      _x11_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 #endif   
+   _local_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
 }
 
 EAPI Eina_Bool
@@ -1652,7 +1843,7 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_object_cnp_selection_clear(obj, selection);
 #endif
-   return EINA_FALSE;
+   return _local_elm_object_cnp_selection_clear(obj, selection);
 }
 
 EAPI Eina_Bool
@@ -1665,7 +1856,7 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_cnp_selection_get(obj, selection, format, datacb, udata);
 #endif
-   return EINA_FALSE;
+   return _local_elm_cnp_selection_get(obj, selection, format, datacb, udata);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -1682,7 +1873,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_drop_target_add(obj, format, dropcb, cbdata);
 #endif
-   return EINA_FALSE;
+   return _local_elm_drop_target_add(obj, format, dropcb, cbdata);
 }
 
 EAPI Eina_Bool
@@ -1693,7 +1884,7 @@ elm_drop_target_del(Evas_Object *obj)
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_drop_target_del(obj);
 #endif
-   return EINA_FALSE;
+   return _local_elm_drop_target_del(obj);
 }
 
 EAPI Eina_Bool
@@ -1705,7 +1896,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_drag_start(obj, format, data, dragdone, donecbdata);
 #endif
-   return EINA_FALSE;
+   return _local_elm_drag_start(obj, format, data, dragdone, donecbdata);
 }
 
 EAPI Eina_Bool
@@ -1714,10 +1905,9 @@ elm_selection_selection_has_owner(Evas_Object *obj)
    if (!_elm_cnp_init_count) _elm_cnp_init();
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
-     return !!ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_CLIPBOARD);
+     return _x11_elm_selection_selection_has_owner(obj);
 #endif
-   // wl here?
-   return EINA_FALSE;
+   return _local_elm_selection_selection_has_owner(obj);
 }
 
 /* vim:set ts=8 sw=3 sts=3 expandtab cino=>5n-3f0^-2{2(0W1st0 :*/
