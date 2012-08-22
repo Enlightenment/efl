@@ -15,7 +15,7 @@ struct _Widget_Data
    Elm_Toolbar_Item *reorder_from, *reorder_to;
    Elm_Toolbar_Shrink_Mode shrink_mode;
    Elm_Icon_Lookup_Order lookup_order;
-   int icon_size;
+   int theme_icon_size, priv_icon_size, icon_size;
    int standard_priority;
    unsigned int item_count;
    double align;
@@ -135,10 +135,9 @@ end:
 static int
 _elm_toolbar_icon_size_get(Widget_Data *wd)
 {
-   const char *icon_size = edje_object_data_get(
-      elm_smart_scroller_edje_object_get(wd->scr), "icon_size");
-   if (icon_size)
-     return atoi(icon_size);
+   const char *icon_size = edje_object_data_get
+     (elm_smart_scroller_edje_object_get(wd->scr), "icon_size");
+   if (icon_size) return atoi(icon_size);
    return _elm_config->icon_size;
 }
 
@@ -245,7 +244,10 @@ _item_select(Elm_Toolbar_Item *it)
 
         _menu_move_resize(it, NULL, NULL, NULL);
      }
-   if (it->func) it->func((void *)(it->base.data), WIDGET(it), it);
+   if ((!sel) || (wd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
+     {
+        if (it->func) it->func((void *)(it->base.data), WIDGET(it), it);
+     }
    evas_object_smart_callback_call(obj2, SIG_CLICKED, it);
 }
 
@@ -433,7 +435,7 @@ _mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
    Elm_Toolbar_Item *it;
 
    EINA_INLIST_FOREACH(wd->items, it)
-      _mirrored_set_item(obj, it, mirrored);
+     _mirrored_set_item(obj, it, mirrored);
    if (wd->more_item)
      _mirrored_set_item(obj, wd->more_item, mirrored);
 }
@@ -452,9 +454,11 @@ _theme_hook(Evas_Object *obj)
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
    edje_object_scale_set(wd->scr, scale);
-   wd->icon_size = _elm_toolbar_icon_size_get(wd);
+   wd->theme_icon_size = _elm_toolbar_icon_size_get(wd);
+   if (wd->priv_icon_size) wd->icon_size = wd->priv_icon_size;
+   else wd->icon_size = wd->theme_icon_size;
    EINA_INLIST_FOREACH(wd->items, it)
-      _theme_hook_item(obj, it, scale, wd->icon_size);
+     _theme_hook_item(obj, it, scale, wd->icon_size);
    if (wd->more_item)
      _theme_hook_item(obj, wd->more_item, scale, wd->icon_size);
    _sizing_eval(obj);
@@ -1750,8 +1754,10 @@ elm_toolbar_add(Evas_Object *parent)
                                   _elm_toolbar_action_down_cb, obj);
    
    wd->shrink_mode = ELM_TOOLBAR_SHRINK_NONE;
-   wd->icon_size = _elm_toolbar_icon_size_get(wd);
-
+   wd->priv_icon_size = 0; // unset
+   wd->theme_icon_size = _elm_toolbar_icon_size_get(wd);
+   if (wd->priv_icon_size) wd->icon_size = wd->priv_icon_size;
+   else wd->icon_size = wd->theme_icon_size;
 
    wd->homogeneous = EINA_TRUE;
    wd->align = 0.5;
@@ -1800,8 +1806,10 @@ elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->icon_size == icon_size) return;
-   wd->icon_size = icon_size;
+   if (wd->priv_icon_size == icon_size) return;
+   wd->priv_icon_size = icon_size;
+   if (wd->priv_icon_size) wd->icon_size = wd->priv_icon_size;
+   else wd->icon_size = wd->theme_icon_size;
    _theme_hook(obj);
 }
 
@@ -1811,7 +1819,7 @@ elm_toolbar_icon_size_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
-   return wd->icon_size;
+   return wd->priv_icon_size;
 }
 
 EAPI Elm_Object_Item *

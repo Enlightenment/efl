@@ -1,7 +1,7 @@
 #define ITEM_STATE_ENABLED 0
 #define ITEM_STATE_DISABLED 1
 
-#define BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC 32 32
+#define BUTTON_CONTROLBAR_ITEM_BUTTON_ICON_SIZE_INC 16 16
 
 group { name: "elm/toolbar/base/default";
    images {
@@ -10,6 +10,8 @@ group { name: "elm/toolbar/base/default";
       image: "bt_dis_shine.png" COMP;
       image: "arrow_right.png" COMP;
       image: "arrow_left.png" COMP;
+      image: "arrow_up.png" COMP;
+      image: "arrow_down.png" COMP;
    }
    parts {
       part { name: "base";
@@ -75,6 +77,13 @@ group { name: "elm/toolbar/base/default";
             color: 255 255 255 128;
          }
       }
+      part { name: "event"; type: RECT;
+         mouse_events: 1;
+         repeat_events: 1;
+         description { state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
       part { name: "left_arrow";
          scale: 1;
          description { state: "default" 0.0;
@@ -103,11 +112,32 @@ group { name: "elm/toolbar/base/default";
             visible: 1;
          }
       }
-      part { name: "event"; type: RECT;
-         mouse_events: 1;
-         repeat_events: 1;
+      part { name: "up_arrow";
+         scale: 1;
          description { state: "default" 0.0;
-            color: 0 0 0 0;
+            image.normal: "arrow_up.png";
+            align: 0.5 0.0;
+            min: 22 22;
+            max: 22 22;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+      }
+      part { name: "down_arrow";
+         scale: 1;
+         description { state: "default" 0.0;
+            image.normal: "arrow_down.png";
+            align: 0.5 1.0;
+            min: 22 22;
+            max: 22 22;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
    }
@@ -136,15 +166,49 @@ group { name: "elm/toolbar/base/default";
          action:  STATE_SET "default" 0.0;
          target: "right_arrow";
       }
+      program { name: "up_show";
+         signal: "elm,action,show,up";
+         source: "elm";
+         action:  STATE_SET "visible" 0.0;
+         target: "up_arrow";
+      }
+      program { name: "up_hide";
+         signal: "elm,action,hide,up";
+         source: "elm";
+         action:  STATE_SET "default" 0.0;
+         target: "up_arrow";
+      }
+      program { name: "down_show";
+         signal: "elm,action,show,down";
+         source: "elm";
+         action:  STATE_SET "visible" 0.0;
+         target: "down_arrow";
+      }
+      program { name: "down_hide";
+         signal: "elm,action,hide,down";
+         source: "elm";
+         action:  STATE_SET "default" 0.0;
+         target: "down_arrow";
+      }
       program { name: "left_go";
-         signal: "mouse,down,1";
+         signal: "mouse,up,1";
          source: "left_arrow";
          action:  SIGNAL_EMIT "elm,action,left" "elm";
       }
       program { name: "right_go";
-         signal: "mouse,down,1";
+         signal: "mouse,up,1";
          source: "right_arrow";
          action:  SIGNAL_EMIT "elm,action,right" "elm";
+      }
+      program { name: "up_go";
+         signal: "mouse,up,1";
+         source: "up_arrow";
+         action:  SIGNAL_EMIT "elm,action,up" "elm";
+      }
+      program { name: "down_go";
+         signal: "mouse,up,1";
+         source: "down_arrow";
+         action:  SIGNAL_EMIT "elm,action,down" "elm";
       }
    }
 }
@@ -772,7 +836,7 @@ group { name: "elm/toolbar/item/item_horizontal";
    parts {
       part { name: "elm.swallow.icon";
          description { state: "default" 0.0;
-            fixed: 1 1;
+            fixed: 0 0;
             aspect: 1 1;
             aspect_preference: VERTICAL;
             align: 0.0 0.5;
