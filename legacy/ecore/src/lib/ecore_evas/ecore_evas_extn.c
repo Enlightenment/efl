@@ -396,6 +396,7 @@ _ecore_evas_lock_other_have(Ecore_Evas *ee)
      {
         if (ee == ee2) continue;
         extn2 = ee2->engine.buffer.data;
+        if (!extn2) continue;
         if ((extn->file.lock) && (extn2->file.lock) &&
             (!strcmp(extn->file.lock, extn2->file.lock)) &&
             (extn2->file.have_real_lock))
