@@ -80,12 +80,6 @@ ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y)
         return EINA_FALSE;;
      }
 
-   if ((x < 0) || (x > 1) || (y < 0) || (y > 1))
-     {
-        ERR("Points should be between 0 and 1.");
-        return EINA_FALSE;
-     }
-
    point = _ephysics_shape_point_new();
    if (!point)
      return EINA_FALSE;;

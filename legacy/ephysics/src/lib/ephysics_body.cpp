@@ -193,7 +193,7 @@ ephysics_body_collision_group_list_get(const EPhysics_Body *body)
 }
 
 static EPhysics_Body *
-_ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape, const char *type)
+_ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape, const char *type, double cm_x, double cm_y)
 {
    btRigidBody::btRigidBodyConstructionInfo *rigid_body_ci;
    btDefaultMotionState *motion_state;
@@ -244,6 +244,8 @@ _ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape, con
    body->rigid_body = rigid_body;
    body->mass = mass;
    body->world = world;
+   body->cm.x = cm_x;
+   body->cm.y = cm_y;
    body->rigid_body->setUserPointer(body);
    body->rigid_body->setLinearFactor(btVector3(1, 1, 0));
    body->rigid_body->setAngularFactor(btVector3(0, 0, 1));
@@ -353,8 +355,8 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
    height += wy;
 
-   mx = (x + body->w / 2) / rate;
-   my = (height - (y + body->h / 2)) / rate;
+   mx = (x + body->w * body->cm.x) / rate;
+   my = (height - (y + body->h * body->cm.y)) / rate;
 
    body->rigid_body->getMotionState()->getWorldTransform(trans);
    trans.setOrigin(btVector3(mx, my, 0));
@@ -377,8 +379,8 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
    height += wy;
 
-   mx = (x + w / 2) / rate;
-   my = (height - (y + h / 2)) / rate;
+   mx = (x + w * body->cm.x) / rate;
+   my = (height - (y + h * body->cm.y)) / rate;
    sx = w / rate;
    sy = h / rate;
 
@@ -513,8 +515,8 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 
    evas_object_geometry_get(body->evas_obj, NULL, NULL, &w, &h);
    rate = ephysics_world_rate_get(body->world);
-   x = (int) (trans.getOrigin().getX() * rate) - w / 2 - cx;
-   y = wh + wy - (int) (trans.getOrigin().getY() * rate) - h / 2 - cy;
+   x = (int) (trans.getOrigin().getX() * rate) - w * body->cm.x - cx;
+   y = wh + wy - (int) (trans.getOrigin().getY() * rate) - h * body->cm.y - cy;
 
    evas_object_move(body->evas_obj, x, y);
 
@@ -534,7 +536,8 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
    if (body->soft_body)
      _ephysics_body_soft_body_deform(body, rate, map);
 
-   evas_map_util_rotate(map, rot, x + (w / 2), y + (h / 2));
+   evas_map_util_rotate(map, rot, x + (w * body->cm.x), y +
+                        (h * body->cm.y));
    evas_object_map_set(body->evas_obj, map);
    evas_object_map_enable_set(body->evas_obj, EINA_TRUE);
    evas_map_free(map);
@@ -690,7 +693,7 @@ _ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape
    btSoftBody::AJoint::Specs angular_joint;
    btSoftBody::LJoint::Specs linear_joint;
 
-   body = _ephysics_body_add(world, collision_shape, "soft box");
+   body = _ephysics_body_add(world, collision_shape, "soft box", 0.5, 0.5);
    if (!body)
      {
         ephysics_body_del(body);
@@ -702,7 +705,7 @@ _ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape
 
    body->soft_body->getCollisionShape()->setMargin(0.22);
 
-   soft_body->m_materials[0]->m_kLST =	0.35;
+   soft_body->m_materials[0]->m_kLST = 0.35;
    soft_body->setPose(true, false);
 
    body->soft_body->m_cfg.collisions += btSoftBody::fCollision::SDF_RS;
@@ -806,7 +809,7 @@ ephysics_body_circle_add(EPhysics_World *world)
         return NULL;
      }
 
-   return _ephysics_body_add(world, collision_shape, "circle");
+   return _ephysics_body_add(world, collision_shape, "circle", 0.5, 0.5);
 }
 
 EAPI EPhysics_Body *
@@ -883,13 +886,14 @@ ephysics_body_box_add(EPhysics_World *world)
 
    collision_shape = new btBoxShape(btVector3(0.5, 0.5, 0.5));
 
-   return _ephysics_body_add(world, collision_shape, "box");
+   return _ephysics_body_add(world, collision_shape, "box", 0.5, 0.5);
 }
 
 EAPI EPhysics_Body *
 ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
 {
    btConvexHullShape *full_shape, *simplified_shape;
+   double max_x, max_y, min_x, min_y, cm_x, cm_y, range_x, range_y;
    const Eina_Inlist *points;
    EPhysics_Point *point;
    btShapeHull *hull;
@@ -908,6 +912,13 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
         return NULL;
      }
 
+   points = ephysics_shape_points_get(shape);
+   if (eina_inlist_count(points) < 3)
+     {
+        ERR("At least 3 points are required to add a shape");
+        return NULL;
+     }
+
    full_shape = new btConvexHullShape();
    if (!full_shape)
      {
@@ -915,24 +926,65 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
         return NULL;
      }
 
-   points = ephysics_shape_points_get(shape);
+   point = EINA_INLIST_CONTAINER_GET(points, EPhysics_Point);
+   max_x = min_x = point->x;
+   max_y = min_y = point->y;
+   cm_x = cm_y = 0;
+
+   /* FIXME : only vertices should be used to calculate the center of mass */
+   EINA_INLIST_FOREACH(points, point)
+     {
+        if (point->x > max_x) max_x = point->x;
+        if (point->x < min_x) min_x = point->x;
+        if (point->y > max_y) max_y = point->y;
+        if (point->y < min_y) min_y = point->y;
+
+        cm_x += point->x;
+        cm_y += point->y;
+     }
+
+   cm_x /= eina_inlist_count(points);
+   cm_y /= eina_inlist_count(points);
+   range_x = max_x - min_x;
+   range_y = max_y - min_y;
 
    EINA_INLIST_FOREACH(points, point)
      {
-        point3d = btVector3(point->x, point->y, 0);
+        double x, y;
+
+        x = (point->x - cm_x) / range_x;
+        y = - (point->y - cm_y) / range_y;
+
+        point3d = btVector3(x, y, -0.5);
         full_shape->addPoint(point3d);
-        point3d = btVector3(point->x, point->y, 0.5);
+
+        point3d = btVector3(x, y, 0.5);
         full_shape->addPoint(point3d);
      }
 
    hull = new btShapeHull(full_shape);
+   if (!hull)
+     {
+        delete full_shape;
+        ERR("Couldn't create a shape hull.");
+        return NULL;
+     }
+
    margin = full_shape->getMargin();
    hull->buildHull(margin);
    simplified_shape = new btConvexHullShape(&(hull->getVertexPointer()->getX()),
                                             hull->numVertices());
+   delete hull;
+   delete full_shape;
+   if (!simplified_shape)
+     {
+        ERR("Couldn't create a simplified shape.");
+        return NULL;
+     }
 
    return _ephysics_body_add(world, (btCollisionShape *)simplified_shape,
-                             "generic");
+                             "generic", (cm_x - min_x) / range_x,
+                             1 - (cm_y - min_y) / range_y);
 }
 
 void

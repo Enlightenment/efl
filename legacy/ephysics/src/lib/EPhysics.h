@@ -205,6 +205,9 @@ EAPI void ephysics_shape_del(EPhysics_Shape *shape);
  * geometric shapes. The final shape will be constructed in such a way
  * it will have all the added points and will be convex.
  *
+ * The center of mass will be the centroid, or geometric center of the
+ * shape.
+ *
  * The order of points doesn't matter.
  *
  * For example, to create a pentagon:
@@ -212,11 +215,11 @@ EAPI void ephysics_shape_del(EPhysics_Shape *shape);
  * @code
  * EPhysics_Shape *shape = ephysics_shape_new();
  *
- * ephysics_shape_point_add(shape, 0/70., 24/66.);
- * ephysics_shape_point_add(shape, 35/70., 0/66.);
- * ephysics_shape_point_add(shape, 70/70., 24/66.);
- * ephysics_shape_point_add(shape, 56/70., 66/66.);
- * ephysics_shape_point_add(shape, 14/70., 66/66.);
+ * ephysics_shape_point_add(shape, 0, 24);
+ * ephysics_shape_point_add(shape, 35, 0);
+ * ephysics_shape_point_add(shape, 70, 24);
+ * ephysics_shape_point_add(shape, 56, 66);
+ * ephysics_shape_point_add(shape, 14, 66);
  *
  * ephysics_body_shape_add(world, shape);
  *
@@ -224,8 +227,8 @@ EAPI void ephysics_shape_del(EPhysics_Shape *shape);
  * @endcode
  *
  * @param shape The shape to be modified.
- * @param x Point position at x axis. Should be a value between 0 and 1.
- * @param y Point position at y axis. Should be a value between 0 and 1.
+ * @param x Point position at x axis.
+ * @param y Point position at y axis.
  * @return @c EINA_TRUE on success or EINA_FALSE on error.
  *
  * @see ephysics_shape_new().

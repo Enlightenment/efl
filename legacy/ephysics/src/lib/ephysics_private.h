@@ -85,6 +85,10 @@ struct _EPhysics_Body {
           double y;
           double torque;
      } force;
+     struct {
+          double x;
+          double y;
+     } cm;
      Eina_Bool active:1;
      Eina_Bool deleted:1;
      double distances[4][3];
