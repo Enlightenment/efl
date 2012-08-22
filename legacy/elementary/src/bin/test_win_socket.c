@@ -166,7 +166,7 @@ test_win_socket(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "If you runs more than Window Plug Program<br/>"
+                       "If you run more than one Window Plug Program<br/>"
                        "you can see each plug programs shared same<br/>"
                        "canvas<br/>"
                        );
