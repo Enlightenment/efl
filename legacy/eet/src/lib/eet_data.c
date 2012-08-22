@@ -1560,9 +1560,9 @@ case EET_T_ ## Type: type += EET_I_ ## Type; break;
    if (chnk->data)
      eet_data_stream_write(ds, chnk->data, chnk->size);
 
-   free(string);
-on_error:
    free(size);
+on_error:
+   free(string);
 }
 
 /*---*/
