@@ -2957,8 +2957,10 @@ _ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *
    if (ecore_x_window_prop_card32_get
        (ee->prop.window, ecore_x_atom_get("E_ZONE_GEOMETRY"), val, 4) == 4)
      {
-        *x = (int)val[0]; *y = (int)val[1];
-        *w = (int)val[2]; *h = (int)val[3];
+        if (x) *x = (int)val[0];
+        if (y) *y = (int)val[1];
+        if (w) *w = (int)val[2];
+        if (h) *h = (int)val[3];
         return;
      }
    
