@@ -19,8 +19,8 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
 
    evas_obj = elm_image_add(test_data->win);
-   elm_image_file_set(
-      evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "big-red-ball");
+   elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
+                      "big-red-ball");
    evas_object_move(evas_obj, WIDTH / 3, HEIGHT / 2);
    evas_object_resize(evas_obj, 70, 70);
    evas_object_show(evas_obj);
@@ -43,8 +43,8 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
 
    evas_obj = elm_image_add(test_data->win);
-   elm_image_file_set(
-      evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "big-blue-ball");
+   elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
+                      "big-blue-ball");
    evas_object_move(evas_obj, WIDTH / 3, HEIGHT / 4);
    evas_object_resize(evas_obj, 70, 70);
    evas_object_show(evas_obj);
@@ -68,8 +68,8 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
 
    evas_obj = elm_image_add(test_data->win);
-   elm_image_file_set(
-      evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "big-blue-ball");
+   elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
+                      "big-blue-ball");
    evas_object_move(evas_obj, WIDTH / 4, HEIGHT / 4);
    evas_object_resize(evas_obj, 70, 70);
    evas_object_show(evas_obj);
@@ -136,7 +136,6 @@ test_soft_body(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_layout_signal_callback_add(test_data->layout, "restart", "test-theme",
                                   _restart, test_data);
    elm_object_signal_emit(test_data->layout, "borders,show", "ephysics_test");
-   elm_object_signal_emit(test_data->layout, "arrows,show", "ephysics_test");
 
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
