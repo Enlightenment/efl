@@ -475,9 +475,10 @@ _elm_win_resize_job(void *data)
         evas_output_framespace_get(sd->evas, NULL, NULL, &fw, &fh);
         evas_object_resize(sd->frame_obj, w + fw, h + fh);
      }
-   else if (sd->img_obj)
-     {
-     }
+
+   /* if (sd->img_obj) */
+   /*   { */
+   /*   } */
 
    evas_object_resize(ELM_WIDGET_DATA(sd)->obj, w, h);
    EINA_LIST_FOREACH(sd->resize_objs, l, obj)
@@ -695,10 +696,11 @@ _elm_win_focus_in(Ecore_Evas *ee)
      {
         edje_object_signal_emit(sd->frame_obj, "elm,action,focus", "elm");
      }
-   else if (sd->img_obj)
-     {
-        /* do nothing */
-     }
+
+   /* do nothing */
+   /* else if (sd->img_obj) */
+   /*   { */
+   /*   } */
 }
 
 static void
@@ -720,10 +722,11 @@ _elm_win_focus_out(Ecore_Evas *ee)
      {
         edje_object_signal_emit(sd->frame_obj, "elm,action,unfocus", "elm");
      }
-   else if (sd->img_obj)
-     {
-        /* do nothing */
-     }
+
+   /* do nothing */
+   /* if (sd->img_obj) */
+   /*   { */
+   /*   } */
 }
 
 static void
@@ -973,7 +976,7 @@ _elm_win_smart_hide(Evas_Object *obj)
      {
         evas_object_hide(sd->frame_obj);
      }
-   else if (sd->img_obj)
+   if (sd->img_obj)
      {
         evas_object_hide(sd->img_obj);
      }
@@ -1253,7 +1256,7 @@ _elm_win_obj_intercept_show(void *data,
      {
         evas_object_show(sd->frame_obj);
      }
-   else if (sd->img_obj)
+   if (sd->img_obj)
      {
         evas_object_show(sd->img_obj);
      }
@@ -1298,11 +1301,11 @@ _elm_win_smart_move(Evas_Object *obj,
      }
    if (sd->frame_obj)
      {
+        /* FIXME: We should update ecore_wl_window_location here !! */
         sd->screen.x = x;
         sd->screen.y = y;
      }
-   /* FIXME: We should update ecore_wl_window_location here !! */
-   else if (sd->img_obj)
+   if (sd->img_obj)
      {
         sd->screen.x = x;
         sd->screen.y = y;
