@@ -1401,7 +1401,7 @@ _menu_press(Evas_Object *obj)
                          elm_hoversel_item_add(wd->hoversel, E_("Select"), NULL, ELM_ICON_NONE,
                                                _select, obj);
                     }
-                  if (elm_selection_selection_has_owner())
+                  if (elm_selection_selection_has_owner(obj))
                     {
                        if (wd->editable)
                          elm_hoversel_item_add(wd->hoversel, E_("Paste"), NULL, ELM_ICON_NONE,

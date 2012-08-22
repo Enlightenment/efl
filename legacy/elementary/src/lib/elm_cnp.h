@@ -183,11 +183,12 @@ EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
  * 
  * @code
  * elm_cnp_selection_set(obj, ELM_SEL_TYPE_PRIMARY, ELM_SEL_FORMAT_TEXT, "hello", strlen(hello));
- * elm_cnp_selection_loss_callback_set(ELM_SEL_TYPE_PRIMARY, loss_cb, NULL);
+ * elm_cnp_selection_loss_callback_set(obj, ELM_SEL_TYPE_PRIMARY, loss_cb, NULL);
  * @endcode
  *
  * @see also elm_cnp_selection_set()
  *
+ * @param obj The object to indicate the window target/display system.
  * @param selection Selection to be notified of for loss
  * @param func The function to call
  * @param data The data pointer passed to the function.
@@ -196,7 +197,7 @@ EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
  *
  * @since 1.7
  */
-EAPI void elm_cnp_selection_loss_callback_set(Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
+EAPI void elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Selection_Loss_Cb func, const void *data);
 
 /**
  * @}
