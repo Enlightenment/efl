@@ -372,7 +372,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    evas_object_show(tb2);
 
-   evas_object_resize(win, 480, 800);
+   evas_object_resize(win, 480, 400);
    evas_object_show(win);
 }
 
@@ -916,7 +916,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    evas_object_show(tb2);
 
-   evas_object_resize(win, 480, 800);
+   evas_object_resize(win, 480, 400);
    evas_object_show(win);
 }
 #endif
