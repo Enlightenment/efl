@@ -605,7 +605,7 @@ _track_resize_cb(void *data,
 
    ELM_SLIDER_DATA_GET(data, sd);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   evas_object_move(sd->popup, w, h);
+   evas_object_resize(sd->popup, w, h);
 }
 
 static void
