@@ -67,7 +67,6 @@ EAPI_MAIN int
 elm_main(int    argc,
          char **argv)
 {
-   int h;
    Evas_Object *win, *bg, *box, *frame, *check, *b, *slider;
 
    /* tell elm about our app so it can figure out where to get files */
