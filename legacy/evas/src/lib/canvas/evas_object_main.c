@@ -763,18 +763,12 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
 
    if (!obj->is_frame)
      {
-        int fx, fy;
-
-        evas_output_framespace_get(obj->layer->evas, 
-                                   &fx, &fy, NULL, NULL);
-
         if ((!obj->smart.parent) && (obj->smart.smart))
           {
-             if (nx > 0) nx -= fx;
-             if (ny > 0) ny -= fy;
-          }
-        else if ((obj->smart.parent) && (!obj->smart.smart))
-          {
+             int fx, fy;
+
+             evas_output_framespace_get(obj->layer->evas, 
+                                        &fx, &fy, NULL, NULL);
              if (nx > 0) nx -= fx;
              if (ny > 0) ny -= fy;
           }
