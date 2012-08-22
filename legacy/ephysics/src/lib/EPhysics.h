@@ -285,8 +285,14 @@ EAPI Eina_Bool ephysics_shape_save(const EPhysics_Shape *shape, const char *file
  *
  * Body handle, represents an object on EPhysics world.
  *
- * Created with @ref ephysics_body_circle_add() or @ref ephysics_body_box_add()
- * and deleted with @ref ephysics_body_del().
+ * Many types of bodies can be created:
+ * @li @ref ephysics_body_circle_add()
+ * @li @ref ephysics_body_box_add()
+ * @li @ref ephysics_body_shape_add()
+ * @li @ref ephysics_body_soft_circle_add()
+ * @li @ref ephysics_body_soft_box_add()
+ *
+ * and it can be deleted with @ref ephysics_body_del().
  *
  * @ingroup EPhysics_Body
  */
@@ -1173,6 +1179,12 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
  * @li @ref ephysics_body_box_add();
  * @li or @ref ephysics_body_shape_add().
  *
+ * Also they can be soft bodies, that won't act as rigid bodies. They will
+ * deform its shape under certain circunstances, like under collisions.
+ * Soft bodies can be created with:
+ * @li @ref ephysics_body_soft_circle_add();
+ * @li @ref ephysics_body_soft_box_add();
+ *
  * They can collide and have customizable properties, like:
  * @li mass, set with @ref ephysics_body_mass_set();
  * @li coefficient of restitution, set with
@@ -1288,8 +1300,8 @@ typedef void (*EPhysics_Body_Event_Cb)(void *data, EPhysics_Body *body, void *ev
  * @ref ephysics_body_evas_object_set(),
  * and it will collide as a circle (even if you have an evas rectangle).
  *
- * Actually, since we're using a 3D backend, it will be a cylinder on
- * z axis.
+ * If a circle that could have its shape deformed is required, use
+ * @ref ephysics_body_soft_box_add().
  *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
@@ -1309,10 +1321,13 @@ EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
  *
  * Any evas object can be associated to it with
  * @ref ephysics_body_evas_object_set(),
- * and it will collide as a circle (even if you have an evas rectangle).
+ * and it will collide and deform as a circle (even if you have an evas
+ * rectangle).
  *
- * Actually, since we're using a 3D backend, it will be a cylinder on
- * z axis.
+ * Just like rotation, deformation will be applied on associated
+ * evas object using evas map.
+ *
+ * For a rigid circle, check @ref ephysics_body_circle_add().
  *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
@@ -1330,6 +1345,9 @@ EAPI EPhysics_Body *ephysics_body_soft_circle_add(EPhysics_World *world);
  * Its collision shape will be a box of dimensions 1 on all the axises.
  * To change it's size @ref ephysics_body_geometry_set() should be used.
  *
+ * If a box that could have its shape deformed is required, use
+ * @ref ephysics_body_soft_box_add().
+ *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
  *
@@ -1346,6 +1364,11 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  *
  * Its collision shape will be a box of dimensions 1 on all the axises.
  * To change it's size @ref ephysics_body_geometry_set() should be used.
+ *
+ * Just like rotation, deformation will be applied on associated
+ * evas object using evas map.
+ *
+ * For a rigid circle, check @ref ephysics_body_circle_add().
  *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
