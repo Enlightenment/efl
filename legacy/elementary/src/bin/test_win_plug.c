@@ -6,6 +6,14 @@
 
 
 static void
+cb_mouse_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Mouse_Down *ev = event_info;
+   
+   if (ev->button == 1) elm_object_focus_set(obj, EINA_TRUE);
+}
+
+static void
 cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
@@ -90,6 +98,7 @@ test_win_plug(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bg);
 
    plug = elm_plug_add(win);
+   evas_object_event_callback_add(elm_plug_image_object_get(plug), EVAS_CALLBACK_MOUSE_DOWN, cb_mouse_down, NULL);
    if (!elm_plug_connect(plug, "ello", 0, EINA_FALSE))
      {
         printf("Cannot connect plug\n");
