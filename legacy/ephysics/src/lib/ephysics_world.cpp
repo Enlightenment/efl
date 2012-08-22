@@ -279,11 +279,10 @@ _simulate_worlds(void *data __UNUSED__)
 
         if (world->soft_body_ref)
           world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
-                                              world->fixed_time_step);
-        else
-         ((btDiscreteDynamicsWorld *)world->dynamics_world)->stepSimulation(
-                                                delta, world->max_sub_steps,
                                                 world->fixed_time_step);
+        else
+          ((btDiscreteDynamicsWorld *)world->dynamics_world)->stepSimulation(
+             delta, world->max_sub_steps, world->fixed_time_step);
 
         world->walking--;
 
@@ -562,7 +561,6 @@ ephysics_world_new(void)
    else
      world->dynamics_world->getPairCache()->setOverlapFilterCallback(filter_cb);
 
-   world->soft_body_ref = 0;
    world->rate = 30;
    world->max_sub_steps = 3;
    world->fixed_time_step = 1/60.f;

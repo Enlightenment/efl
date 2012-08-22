@@ -239,8 +239,6 @@ _ephysics_body_add(EPhysics_World *world, btCollisionShape *collision_shape, con
         goto err_rigid_body;
      }
 
-   body->soft_body = NULL;
-   body->collision_groups = NULL;
    body->collision_shape = collision_shape;
    body->rigid_body = rigid_body;
    body->mass = mass;
@@ -426,7 +424,7 @@ _ephysics_body_soft_body_deform(EPhysics_Body *body, double rate, Evas_Map *map)
 
    _ephysics_body_soft_body_points_distance_get(body, curr_distances);
 
-    for (int m = 0; m < 4; m++)
+   for (int m = 0; m < 4; m++)
      {
         Evas_Coord px, py, pz;
         double dx = 0, dy = 0;
