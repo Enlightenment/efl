@@ -344,7 +344,7 @@ test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    elm_list_go(list);
    evas_object_show(list);
    evas_object_show(win);
-   evas_object_resize(win, 480, 800);
+   evas_object_resize(win, 480, 400);
 }
 
 #endif
