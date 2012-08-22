@@ -501,10 +501,14 @@ slprintf(char *str, size_t size, const char *format, ...)
 static char *
 _eina_file_escape(const char *path, int *length)
 {
-   char *result = strdup(path ? path : "");
-   char *p = result;
-   char *q = result;
-   int len;
+   char *result;
+   char *p;
+   char *q;
+   size_t len;
+
+   result = strdup(path ? path : "");
+   p = result;
+   q = result;
 
    if (!result)
      return NULL;
