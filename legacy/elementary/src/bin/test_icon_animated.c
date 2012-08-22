@@ -44,6 +44,7 @@ test_icon_animated(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 
    evas_object_smart_callback_add(ic, "clicked", icon_clicked, ic);
 
+   evas_object_resize(win, 200, 200);
    evas_object_show(win);
 }
 #endif
