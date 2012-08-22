@@ -1834,6 +1834,19 @@ ephysics_body_forces_clear(EPhysics_Body *body)
    body->force.torque = 0;
 }
 
+EAPI void
+ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y)
+{
+   if (!body)
+     {
+        ERR("Can't get center of mass from a null body.");
+        return;
+     }
+
+   if (x) *x = body->cm.x;
+   if (y) *y = body->cm.y;
+}
+
 #ifdef  __cplusplus
 }
 #endif

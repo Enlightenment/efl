@@ -1394,6 +1394,9 @@ EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
  * To change it's size @ref ephysics_body_geometry_set() should be used,
  * so it can be deformed on x and y axises.
  *
+ * The center of mass of this body can be get with
+ * @ref ephysics_body_center_mass_get().
+ *
  * @param world The world this body will belongs to.
  * @param shape The custom shape to be used.
  * @return a new body or @c NULL, on errors.
@@ -2567,6 +2570,33 @@ EAPI void ephysics_body_forces_get(const EPhysics_Body *body, double *x, double 
  * @ingroup EPhysics_Body
  */
 EAPI void ephysics_body_forces_clear(EPhysics_Body *body);
+
+/**
+ * @brief
+ * Get the center of mass of physics body.
+ *
+ * It returns a value from 0 to 1 representing where is the center of the mass
+ * considering the height and width of the body.
+ *
+ * If a body of width = 30 and height = 20 has the center of mass at
+ * center of mass x component = 20 and y component = 10, it will return
+ * @p x = 0.666 and @p y = 0.5.
+ *
+ * For primitive shapes, like box and circle, the center of mass
+ * is (0.5, 0.5).
+ *
+ * This function can be useful when updating evas objects for bodies
+ * with custom shapes.
+ *
+ * @param body The physics body.
+ * @param x The axis x component of center of mass.
+ * @param y The axis y component of center of mass.
+ *
+ * @see ephysics_body_shape_add().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y);
 
 /**
  * @}
