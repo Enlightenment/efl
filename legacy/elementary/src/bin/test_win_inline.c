@@ -135,6 +135,14 @@ fill(Evas_Object *win, Eina_Bool do_bg)
 }
 
 static void
+cb_mouse_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
+{
+   Evas_Event_Mouse_Down *ev = event_info;
+
+   if (ev->button == 1) elm_object_focus_set(obj, EINA_TRUE);
+}
+
+static void
 cb_mouse_move(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
@@ -219,6 +227,7 @@ test_win_inline(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_show(bg);
 
    win2 = elm_win_add(win, "inlined", ELM_WIN_INLINED_IMAGE);
+   evas_object_event_callback_add(elm_win_inlined_image_object_get(win2), EVAS_CALLBACK_MOUSE_DOWN, cb_mouse_down, NULL);
    fill(win2, EINA_TRUE);
 
    evas_object_move(win2, 20, 60);
@@ -230,6 +239,7 @@ test_win_inline(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_show(win2);
 
    win3 = elm_win_add(win, "inlined", ELM_WIN_INLINED_IMAGE);
+   evas_object_event_callback_add(elm_win_inlined_image_object_get(win3), EVAS_CALLBACK_MOUSE_DOWN, cb_mouse_down, NULL);
    elm_win_alpha_set(win3, EINA_TRUE);
    fill(win3, EINA_FALSE);
 

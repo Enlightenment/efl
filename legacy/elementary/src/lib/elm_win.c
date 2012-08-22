@@ -680,7 +680,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    obj = ELM_WIDGET_DATA(sd)->obj;
-
+   
    _elm_widget_top_win_focused_set(obj, EINA_TRUE);
    if (!elm_widget_focus_order_get(obj))
      {
