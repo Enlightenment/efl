@@ -91,7 +91,7 @@
                text {
                   font: "Sans";
                   size: 12;
-                  text: "Press the arrows on the keyboard to give"
+                  text: "Press the arrows on the keyboard to give "
                         "impulse to the object.";
                }
             }
