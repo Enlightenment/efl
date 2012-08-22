@@ -13,7 +13,7 @@ _world_populate(Test_Data *test_data)
    shadow = elm_layout_add(test_data->win);
    elm_layout_file_set(
       shadow, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "shadow-ball");
-   evas_object_move(shadow, WIDTH / 3, FLOOR_Y);
+   evas_object_move(shadow, 200, FLOOR_Y);
    evas_object_resize(shadow, 70, 3);
    evas_object_show(shadow);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
@@ -21,12 +21,12 @@ _world_populate(Test_Data *test_data)
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
                       "big-red-ball");
-   evas_object_move(evas_obj, WIDTH / 3, HEIGHT / 2);
+   evas_object_move(evas_obj, 200, 200);
    evas_object_resize(evas_obj, 70, 70);
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
-   fall_body = ephysics_body_soft_circle_add(test_data->world);
+   fall_body = ephysics_body_circle_add(test_data->world);
    ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
    ephysics_body_restitution_set(fall_body, 0.95);
    ephysics_body_friction_set(fall_body, 0.1);
@@ -37,7 +37,7 @@ _world_populate(Test_Data *test_data)
    shadow = elm_layout_add(test_data->win);
    elm_layout_file_set(
       shadow, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "shadow-ball");
-   evas_object_move(shadow, WIDTH / 3, FLOOR_Y);
+   evas_object_move(shadow, 100, FLOOR_Y);
    evas_object_resize(shadow, 70, 3);
    evas_object_show(shadow);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
@@ -45,42 +45,15 @@ _world_populate(Test_Data *test_data)
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
                       "big-blue-ball");
-   evas_object_move(evas_obj, WIDTH / 3, HEIGHT / 4);
+   evas_object_move(evas_obj, 100, 100);
    evas_object_resize(evas_obj, 70, 70);
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
    fall_body = ephysics_body_circle_add(test_data->world);
    ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
-   ephysics_body_mass_set(fall_body, 1200);
    ephysics_body_restitution_set(fall_body, 0.95);
    ephysics_body_friction_set(fall_body, 0.1);
-   ephysics_body_event_callback_add(fall_body, EPHYSICS_CALLBACK_BODY_UPDATE,
-                                    update_object_cb, shadow);
-   test_data->bodies = eina_list_append(test_data->bodies, fall_body);
-
-   shadow = elm_layout_add(test_data->win);
-   elm_layout_file_set(
-      shadow, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "shadow-ball");
-   evas_object_move(shadow, WIDTH / 4, FLOOR_Y);
-   evas_object_resize(shadow, 70, 3);
-   evas_object_show(shadow);
-   test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
-
-   evas_obj = elm_image_add(test_data->win);
-   elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
-                      "big-blue-ball");
-   evas_object_move(evas_obj, WIDTH / 4, HEIGHT / 4);
-   evas_object_resize(evas_obj, 70, 70);
-   evas_object_show(evas_obj);
-   test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
-
-   fall_body = ephysics_body_circle_add(test_data->world);
-   ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
-   ephysics_body_mass_set(fall_body, 600);
-   ephysics_body_restitution_set(fall_body, 0.95);
-   ephysics_body_friction_set(fall_body, 0.1);
-   ephysics_body_central_impulse_apply(fall_body, 500, 150);
    ephysics_body_event_callback_add(fall_body, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     update_object_cb, shadow);
    test_data->bodies = eina_list_append(test_data->bodies, fall_body);
@@ -88,7 +61,7 @@ _world_populate(Test_Data *test_data)
    shadow = elm_layout_add(test_data->win);
    elm_layout_file_set(
       shadow, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "shadow-cube");
-   evas_object_move(shadow, WIDTH / 6 + 60, FLOOR_Y);
+   evas_object_move(shadow, 100, FLOOR_Y);
    evas_object_resize(shadow, 70, 3);
    evas_object_show(shadow);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
@@ -96,7 +69,7 @@ _world_populate(Test_Data *test_data)
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(
       evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "purple-cube");
-   evas_object_move(evas_obj, WIDTH / 6 + 60, HEIGHT / 8);
+   evas_object_move(evas_obj, 100, 220);
    evas_object_resize(evas_obj, 70, 70);
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
