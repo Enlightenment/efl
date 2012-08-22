@@ -836,9 +836,10 @@ _ecore_wl_input_cb_touch_down(void *data, struct wl_touch *touch __UNUSED__, uns
     * This needs to be tested with an actual touch device */
    /* input->timestamp = timestamp; */
    input->display->serial = serial;
-   input->button = 0;
+   input->button = BTN_LEFT;
    input->sx = wl_fixed_to_int(x);
    input->sy = wl_fixed_to_int(y);
+   _ecore_wl_input_cb_pointer_enter(data, NULL, serial, surface, x, y);
    _ecore_wl_input_mouse_down_send(input, input->pointer_focus, timestamp);
 }
 
@@ -854,9 +855,10 @@ _ecore_wl_input_cb_touch_up(void *data, struct wl_touch *touch __UNUSED__, unsig
    /* FIXME: NB: Not sure yet if input->timestamp should be set here. 
     * This needs to be tested with an actual touch device */
    /* input->timestamp = timestamp; */
-   input->button = 0;
+   input->button = BTN_LEFT;
    input->display->serial = serial;
    _ecore_wl_input_mouse_up_send(input, input->pointer_focus, timestamp);
+   input->button = 0;
 }
 
 static void 
