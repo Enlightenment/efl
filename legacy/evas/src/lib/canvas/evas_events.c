@@ -23,17 +23,15 @@ _evas_event_havemap_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Eina_
 static void
 _evas_event_framespace_adjust(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y)
 {
-  if (!obj->is_frame)
+  if (obj->is_frame) return;
+  
+  if ((!obj->smart.parent) && (obj->smart.smart))
     {
-       if (((!obj->smart.parent) && (obj->smart.smart)) ||
-           ((obj->smart.parent) && (!obj->smart.smart)))
-         {
-            Evas *evas;
+       Evas *evas;
 
-            evas = obj->layer->evas;
-            if (x) *x -= evas->framespace.x;
-            if (y) *y -= evas->framespace.y;
-         }
+       evas = obj->layer->evas;
+       if (x) *x -= evas->framespace.x;
+       if (y) *y -= evas->framespace.y;
     }
 }
 
