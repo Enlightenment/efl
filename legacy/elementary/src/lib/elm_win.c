@@ -2510,12 +2510,6 @@ elm_win_add(Evas_Object *parent,
    evas_object_layer_set(obj, 50);
    evas_object_pass_events_set(obj, EINA_TRUE);
 
-   /* if (sd->frame_obj) */
-   /*   { */
-   /*      evas_object_clip_set(obj, sd->frame_obj); */
-   /*      evas_object_stack_below(sd->frame_obj, obj); */
-   /*   } */
-
    if (type == ELM_WIN_INLINED_IMAGE)
      elm_widget_parent2_set(obj, parent);
 
