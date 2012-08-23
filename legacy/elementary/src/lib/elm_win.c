@@ -886,7 +886,8 @@ _elm_win_smart_event(Evas_Object *obj,
      return EINA_FALSE;
 
    current_focused = elm_widget_focused_object_get(obj);
-   if (!strcmp(ev->keyname, "Tab"))
+   if ((!strcmp(ev->keyname, "Tab")) ||
+       (!strcmp(ev->keyname, "ISO_Left_Tab")))
      {
         if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
           elm_widget_focus_cycle(obj, ELM_FOCUS_PREVIOUS);
