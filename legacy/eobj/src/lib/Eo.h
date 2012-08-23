@@ -562,8 +562,8 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  */
 #define eo_add(klass, parent, ...) \
    ({ \
-    (void) klass; \
-    eo_add_internal(klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
+    volatile const Eo_Class *_tmp_klass = klass; \
+    eo_add_internal((const Eo_Class *) _tmp_klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
     })
 
 /**
@@ -576,8 +576,8 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  */
 #define eo_add_custom(klass, parent, ...) \
    ({ \
-    (void) klass; \
-    eo_add_internal(klass, parent, ## __VA_ARGS__, EO_NOOP); \
+    volatile const Eo_Class *_tmp_klass = klass; \
+    eo_add_internal((const Eo_Class *) _tmp_klass, parent, ## __VA_ARGS__, EO_NOOP); \
     })
 
 /**
