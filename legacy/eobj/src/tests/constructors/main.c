@@ -59,6 +59,16 @@ main(int argc, char *argv[])
    obj = eo_add(SIMPLE7_CLASS, NULL);
    fail_if(obj);
 
+   my_init_count = 0;
+   obj = eo_add_custom(SIMPLE_CLASS, NULL, simple_constructor(7));
+   fail_if(!obj);
+
+   fail_if(my_init_count != 2);
+   eo_do(obj, simple_a_get(&a));
+   fail_if(a != 7);
+
+   eo_unref(obj);
+
    eo_shutdown();
    return ret;
 }

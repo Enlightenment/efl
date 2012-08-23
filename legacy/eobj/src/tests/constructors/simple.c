@@ -42,6 +42,21 @@ _GET_SET_FUNC(b)
 extern int my_init_count;
 
 static void
+_simple_constructor(Eo *obj, void *class_data, va_list *list)
+{
+   Private_Data *pd = class_data;
+   int a;
+   a = va_arg(*list, int);
+
+   eo_do_super(obj, eo_constructor());
+
+   pd->a = a;
+   printf("%s %d\n", __func__, pd->a);
+
+   my_init_count++;
+}
+
+static void
 _constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
 {
    eo_do_super(obj, eo_constructor());
@@ -63,6 +78,7 @@ _class_constructor(Eo_Class *klass)
    const Eo_Op_Func_Description func_desc[] = {
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
         EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_CONSTRUCTOR), _simple_constructor),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_SET), _a_set),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_A_GET), _a_get),
         EO_OP_FUNC(SIMPLE_ID(SIMPLE_SUB_ID_B_SET), _b_set),
@@ -82,6 +98,7 @@ _class_destructor(Eo_Class *klass EINA_UNUSED)
 }
 
 static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(SIMPLE_SUB_ID_CONSTRUCTOR, "Construct and set A."),
      EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_SET, "Set property A"),
      EO_OP_DESCRIPTION(SIMPLE_SUB_ID_A_GET, "Get property A"),
      EO_OP_DESCRIPTION(SIMPLE_SUB_ID_B_SET, "Set property B"),
