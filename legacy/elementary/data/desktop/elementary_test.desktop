@@ -2,12 +2,13 @@
 Encoding=UTF-8
 Name=Elementary Test
 Name[ru]=Тест Elementary
+Name[pt]=Testes Elementary
 Comment=Elementary Test Application
 Comment[ru]=Тестовое приложение Элементария
 Comment[cs]=Testovací aplikace Elementary
 Comment[fr]=Programme de tests pour Elementary
 Comment[it]=Applicazione di test per Elementary
-Comment[pt]=Uma aplicação de teste do Elementary
+Comment[pt]=Aplicação de testes do Elementary
 Exec=elementary_test
 Icon=elementary
 Terminal=false
