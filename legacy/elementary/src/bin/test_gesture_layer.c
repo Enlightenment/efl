@@ -323,6 +323,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon, Evas_Co
    evas_object_repeat_events_set(po->hit, EINA_TRUE);
    evas_object_color_set(po->hit, 0, 0, 0, 0);
 
+   evas_object_move(po->ic, 0, 0);
    evas_object_resize(po->ic, po->bw, po->bh);
    evas_object_show(po->ic);
 
