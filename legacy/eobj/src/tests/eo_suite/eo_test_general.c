@@ -258,6 +258,17 @@ START_TEST(eo_man_free)
    eo_unref(obj);
    eo_manual_free(obj);
 
+   obj = eo_add(klass, NULL);
+   fail_if(!obj);
+   eo_manual_free_set(obj, EINA_TRUE);
+   eo_unref(obj);
+   eo_ref(obj);
+   eo_unref(obj);
+   eo_unref(obj);
+   eo_unref(obj);
+   eo_unref(obj);
+   eo_manual_free(obj);
+
    eo_shutdown();
 }
 END_TEST
