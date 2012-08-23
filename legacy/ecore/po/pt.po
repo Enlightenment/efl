@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ecore\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2012-08-17 12:44+0900\n"
-"PO-Revision-Date: 2010-10-06 12:37-0000\n"
+"PO-Revision-Date: 2012-08-23 00:30+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -45,7 +45,7 @@ msgstr "Tipo:"
 
 #: src/lib/ecore/ecore_getopt.c:533
 msgid "Default: "
-msgstr "Omissão:"
+msgstr "Padrão:"
 
 #: src/lib/ecore/ecore_getopt.c:560
 msgid "Choices: "
@@ -69,22 +69,28 @@ msgstr "ERRO: opção desconhecida -%c.\n"
 msgid "ERROR: "
 msgstr "ERRO: "
 
-#: src/lib/ecore/ecore_getopt.c:931 src/lib/ecore/ecore_getopt.c:1068
-#: src/lib/ecore/ecore_getopt.c:1084 src/lib/ecore/ecore_getopt.c:1099
-#: src/lib/ecore/ecore_getopt.c:1116 src/lib/ecore/ecore_getopt.c:1163
-#: src/lib/ecore/ecore_getopt.c:1283 src/lib/ecore/ecore_getopt.c:1324
+#: src/lib/ecore/ecore_getopt.c:931
+#: src/lib/ecore/ecore_getopt.c:1068
+#: src/lib/ecore/ecore_getopt.c:1084
+#: src/lib/ecore/ecore_getopt.c:1099
+#: src/lib/ecore/ecore_getopt.c:1116
+#: src/lib/ecore/ecore_getopt.c:1163
+#: src/lib/ecore/ecore_getopt.c:1283
+#: src/lib/ecore/ecore_getopt.c:1324
 msgid "value has no pointer set.\n"
 msgstr "o valor não está definido.\n"
 
-#: src/lib/ecore/ecore_getopt.c:963 src/lib/ecore/ecore_getopt.c:1183
+#: src/lib/ecore/ecore_getopt.c:963
+#: src/lib/ecore/ecore_getopt.c:1183
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "valor booleano desconhecido %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1014 src/lib/ecore/ecore_getopt.c:1271
+#: src/lib/ecore/ecore_getopt.c:1014
+#: src/lib/ecore/ecore_getopt.c:1271
 #, c-format
 msgid "invalid number format %s\n"
-msgstr "formato do número inválido %s\n"
+msgstr "formato numérico inválido %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:1129
 #, c-format
@@ -97,7 +103,7 @@ msgstr "faltam os parâmetros a anexar.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1261
 msgid "could not parse value.\n"
-msgstr "incapaz de analisar o valor.\n"
+msgstr "incapaz de processar o valor.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1318
 msgid "missing parameter.\n"
@@ -105,7 +111,7 @@ msgstr "parâmetro em falta.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1331
 msgid "missing callback function!\n"
-msgstr "função de chamada em falta!\n"
+msgstr "função de invocação em falta!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1360
 msgid "no version was defined.\n"
@@ -141,7 +147,7 @@ msgstr "ERRO: a opção --%c requer um argumento!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1793
 msgid "ERROR: no parser provided.\n"
-msgstr "ERRO: nenhum analisador fornecido.\n"
+msgstr "ERRO: nenhum processador fornecido.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1798
 msgid "ERROR: no values provided.\n"
@@ -158,12 +164,12 @@ msgstr "ERRO: encontradas opções inválidas."
 #: src/lib/ecore/ecore_getopt.c:1839
 #, c-format
 msgid " See --%s.\n"
-msgstr " Veja --%s.\n"
+msgstr "Consulte --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1841
 #, c-format
 msgid " See -%c.\n"
-msgstr " Veja -%c.\n"
+msgstr "Consulte -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1887
 #, c-format
@@ -174,3 +180,4 @@ msgstr "ERRO: valor geométrico incorreto \"%s\"\n"
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERRO: tamanho incorreto \"%s\"\n"
+
