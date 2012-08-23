@@ -23,7 +23,7 @@ struct _Evas_Object_Text
       const char          *source;
       Evas_Font_Size       size;
       struct {
-	 unsigned char  r, g, b, a;
+         unsigned char  r, g, b, a;
       } outline, shadow, glow, glow2;
 
       unsigned char        style;
@@ -609,8 +609,8 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
 
    if (!text) text = eina_unicode_strdup(EINA_UNICODE_EMPTY_STRING);
    was = evas_object_is_in_output_rect(obj,
-				       obj->layer->evas->pointer.x,
-				       obj->layer->evas->pointer.y, 1, 1);
+                                       obj->layer->evas->pointer.x,
+                                       obj->layer->evas->pointer.y, 1, 1);
    /* DO II */
    /*Update bidi_props*/
 
@@ -619,12 +619,12 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    if ((text) && (*text)) 
      {
         _evas_object_text_layout(obj, o, text);
-	eina_stringshare_replace(&o->cur.utf8_text, _text);
+        eina_stringshare_replace(&o->cur.utf8_text, _text);
         o->prev.utf8_text = NULL;
     }
    else 
      {
-	eina_stringshare_replace(&o->cur.utf8_text, NULL);
+        eina_stringshare_replace(&o->cur.utf8_text, NULL);
      }
    if (text)
      {
@@ -637,14 +637,14 @@ evas_object_text_text_set(Evas_Object *obj, const char *_text)
    evas_object_clip_dirty(obj);
    evas_object_coords_recalc(obj);
    is = evas_object_is_in_output_rect(obj,
-				      obj->layer->evas->pointer.x,
-				      obj->layer->evas->pointer.y, 1, 1);
+                                      obj->layer->evas->pointer.x,
+                                      obj->layer->evas->pointer.y, 1, 1);
    if ((is || was) && obj->cur.visible)
      evas_event_feed_mouse_move(obj->layer->evas,
-				obj->layer->evas->pointer.x,
-				obj->layer->evas->pointer.y,
-				obj->layer->evas->last_timestamp,
-				NULL);
+                                obj->layer->evas->pointer.x,
+                                obj->layer->evas->pointer.y,
+                                obj->layer->evas->last_timestamp,
+                                NULL);
    evas_object_inform_call_resize(obj);
    if (text) free(text);
 }
@@ -850,15 +850,15 @@ evas_object_text_char_pos_get(const Evas_Object *obj, int pos, Evas_Coord *cx, E
    x -= l;
    if (x < 0)
      {
-	w += x;
-	x = 0;
+        w += x;
+        x = 0;
      }
    if ((x + w) > obj->cur.geometry.w) w = obj->cur.geometry.w - x;
    if (w < 0) w = 0;
    if (y < 0)
      {
-	h += y;
-	y = 0;
+        h += y;
+        y = 0;
      }
    if ((y + h) > obj->cur.geometry.h) h = obj->cur.geometry.h - y;
    if (h < 0) h = 0;
@@ -910,15 +910,15 @@ evas_object_text_char_coords_get(const Evas_Object *obj, Evas_Coord x, Evas_Coor
    rx -= l;
    if (rx < 0)
      {
-	rw += rx;
-	rx = 0;
+        rw += rx;
+        rx = 0;
      }
    if ((rx + rw) > obj->cur.geometry.w) rw = obj->cur.geometry.w - rx;
    if (rw < 0) rw = 0;
    if (ry < 0)
      {
-	rh += ry;
-	ry = 0;
+        rh += ry;
+        ry = 0;
      }
    if ((ry + rh) > obj->cur.geometry.h) rh = obj->cur.geometry.h - ry;
    if (rh < 0) rh = 0;
@@ -1431,11 +1431,11 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
    Evas_Object_Text_Item *it;
    const char vals[5][5] =
      {
-	{0, 1, 2, 1, 0},
-	{1, 3, 4, 3, 1},
-	{2, 4, 5, 4, 2},
-	{1, 3, 4, 3, 1},
-	{0, 1, 2, 1, 0}
+        {0, 1, 2, 1, 0},
+        {1, 3, 4, 3, 1},
+        {2, 4, 5, 4, 2},
+        {1, 3, 4, 3, 1},
+        {0, 1, 2, 1, 0}
      };
    int sl = 0, st = 0;
    int shad_dst, shad_sz, dx, dy, haveshad;
@@ -1464,55 +1464,55 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
                         obj->cur.geometry.h);
  */
 #define COLOR_ONLY_SET(object, sub, col) \
-	ENFN->context_color_set(output, context, \
-				object->sub.col.r, \
-				object->sub.col.g, \
-				object->sub.col.b, \
-				object->sub.col.a);
+        ENFN->context_color_set(output, context, \
+                                object->sub.col.r, \
+                                object->sub.col.g, \
+                                object->sub.col.b, \
+                                object->sub.col.a);
 
 #define COLOR_SET(object, sub, col) \
         if (obj->cur.clipper)\
-	   ENFN->context_color_set(output, context, \
-				((int)object->sub.col.r * ((int)obj->cur.clipper->cur.cache.clip.r + 1)) >> 8, \
-				((int)object->sub.col.g * ((int)obj->cur.clipper->cur.cache.clip.g + 1)) >> 8, \
-				((int)object->sub.col.b * ((int)obj->cur.clipper->cur.cache.clip.b + 1)) >> 8, \
-				((int)object->sub.col.a * ((int)obj->cur.clipper->cur.cache.clip.a + 1)) >> 8); \
+           ENFN->context_color_set(output, context, \
+                                ((int)object->sub.col.r * ((int)obj->cur.clipper->cur.cache.clip.r + 1)) >> 8, \
+                                ((int)object->sub.col.g * ((int)obj->cur.clipper->cur.cache.clip.g + 1)) >> 8, \
+                                ((int)object->sub.col.b * ((int)obj->cur.clipper->cur.cache.clip.b + 1)) >> 8, \
+                                ((int)object->sub.col.a * ((int)obj->cur.clipper->cur.cache.clip.a + 1)) >> 8); \
         else\
-	   ENFN->context_color_set(output, context, \
-				object->sub.col.r, \
-				object->sub.col.g, \
-				object->sub.col.b, \
-				object->sub.col.a);
+           ENFN->context_color_set(output, context, \
+                                object->sub.col.r, \
+                                object->sub.col.g, \
+                                object->sub.col.b, \
+                                object->sub.col.a);
 
 #define COLOR_SET_AMUL(object, sub, col, amul) \
         if (obj->cur.clipper) \
-	    ENFN->context_color_set(output, context, \
-				(((int)object->sub.col.r) * ((int)obj->cur.clipper->cur.cache.clip.r) * (amul)) / 65025, \
-				(((int)object->sub.col.g) * ((int)obj->cur.clipper->cur.cache.clip.g) * (amul)) / 65025, \
-				(((int)object->sub.col.b) * ((int)obj->cur.clipper->cur.cache.clip.b) * (amul)) / 65025, \
-				(((int)object->sub.col.a) * ((int)obj->cur.clipper->cur.cache.clip.a) * (amul)) / 65025); \
+            ENFN->context_color_set(output, context, \
+                                (((int)object->sub.col.r) * ((int)obj->cur.clipper->cur.cache.clip.r) * (amul)) / 65025, \
+                                (((int)object->sub.col.g) * ((int)obj->cur.clipper->cur.cache.clip.g) * (amul)) / 65025, \
+                                (((int)object->sub.col.b) * ((int)obj->cur.clipper->cur.cache.clip.b) * (amul)) / 65025, \
+                                (((int)object->sub.col.a) * ((int)obj->cur.clipper->cur.cache.clip.a) * (amul)) / 65025); \
         else \
-	    ENFN->context_color_set(output, context, \
-				(((int)object->sub.col.r) * (amul)) / 255, \
-				(((int)object->sub.col.g) * (amul)) / 255, \
-				(((int)object->sub.col.b) * (amul)) / 255, \
-				(((int)object->sub.col.a) * (amul)) / 255);
+            ENFN->context_color_set(output, context, \
+                                (((int)object->sub.col.r) * (amul)) / 255, \
+                                (((int)object->sub.col.g) * (amul)) / 255, \
+                                (((int)object->sub.col.b) * (amul)) / 255, \
+                                (((int)object->sub.col.a) * (amul)) / 255);
 
 #define DRAW_TEXT(ox, oy) \
    if ((o->font) && (it->text_props.len > 0)) \
      ENFN->font_draw(output, \
-		     context, \
-		     surface, \
-		     o->font, \
-		     obj->cur.geometry.x + x + sl + ox + it->x, \
-		     obj->cur.geometry.y + y + st + oy + \
-		     (int) \
-		     (((o->max_ascent * obj->cur.geometry.h) / obj->cur.geometry.h)), \
-		     obj->cur.geometry.w, \
-		     obj->cur.geometry.h, \
-		     obj->cur.geometry.w, \
-		     obj->cur.geometry.h, \
-		     &it->text_props);
+                     context, \
+                     surface, \
+                     o->font, \
+                     obj->cur.geometry.x + x + sl + ox + it->x, \
+                     obj->cur.geometry.y + y + st + oy + \
+                     (int) \
+                     (((o->max_ascent * obj->cur.geometry.h) / obj->cur.geometry.h)), \
+                     obj->cur.geometry.w, \
+                     obj->cur.geometry.h, \
+                     obj->cur.geometry.w, \
+                     obj->cur.geometry.h, \
+                     &it->text_props);
 
    /* shadows */
    shad_dst = shad_sz = dx = dy = haveshad = 0;
@@ -1685,9 +1685,9 @@ evas_object_text_render_pre(Evas_Object *obj)
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
-	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.clipper);
-	obj->cur.clipper->func->render_pre(obj->cur.clipper);
+        if (obj->cur.cache.clip.dirty)
+          evas_object_clip_recalc(obj->cur.clipper);
+        obj->cur.clipper->func->render_pre(obj->cur.clipper);
      }
    /* now figure what changed and add draw rects
     if it just became visible or invisible */
@@ -1695,9 +1695,9 @@ evas_object_text_render_pre(Evas_Object *obj)
    was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
-	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, 
-					      obj, is_v, was_v);
-	goto done;
+        evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, 
+                                              obj, is_v, was_v);
+        goto done;
      }
    if (obj->changed_map)
      {
@@ -1712,9 +1712,9 @@ evas_object_text_render_pre(Evas_Object *obj)
    /* if we restacked (layer or just within a layer) and dont clip anyone */
    if (obj->restack)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
-					    obj);
-	goto done;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+                                            obj);
+        goto done;
      }
    /* if it changed color */
    if ((obj->cur.color.r != obj->prev.color.r) ||
@@ -1722,9 +1722,9 @@ evas_object_text_render_pre(Evas_Object *obj)
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
-					    obj);
-	goto done;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+                                            obj);
+        goto done;
      }
    /* if it changed geometry - and obviously not visibility or color
     calculate differences since we have a constant color fill
@@ -1734,53 +1734,53 @@ evas_object_text_render_pre(Evas_Object *obj)
        (obj->cur.geometry.w != obj->prev.geometry.w) ||
        (obj->cur.geometry.h != obj->prev.geometry.h))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
-					    obj);
-	goto done;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+                                            obj);
+        goto done;
      }
    if (obj->cur.render_op != obj->prev.render_op)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
-					    obj);
-	goto done;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+                                            obj);
+        goto done;
      }
    if (obj->cur.scale != obj->prev.scale)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
-					    obj);
-	goto done;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+                                            obj);
+        goto done;
      }
    if (o->changed)
      {
-	if ((o->cur.size != o->prev.size) ||
-	    ((o->cur.font != o->prev.font)) ||
-	    ((o->cur.utf8_text != o->prev.utf8_text)) ||
-	    ((o->cur.style != o->prev.style)) ||
-	    ((o->cur.shadow.r != o->prev.shadow.r)) ||
-	    ((o->cur.shadow.g != o->prev.shadow.g)) ||
-	    ((o->cur.shadow.b != o->prev.shadow.b)) ||
-	    ((o->cur.shadow.a != o->prev.shadow.a)) ||
-	    ((o->cur.outline.r != o->prev.outline.r)) ||
-	    ((o->cur.outline.g != o->prev.outline.g)) ||
-	    ((o->cur.outline.b != o->prev.outline.b)) ||
-	    ((o->cur.outline.a != o->prev.outline.a)) ||
-	    ((o->cur.glow.r != o->prev.glow.r)) ||
-	    ((o->cur.glow.g != o->prev.glow.g)) ||
-	    ((o->cur.glow.b != o->prev.glow.b)) ||
-	    ((o->cur.glow.a != o->prev.glow.a)) ||
-	    ((o->cur.glow2.r != o->prev.glow2.r)) ||
-	    ((o->cur.glow2.g != o->prev.glow2.g)) ||
-	    ((o->cur.glow2.b != o->prev.glow2.b)) ||
-	    ((o->cur.glow2.a != o->prev.glow2.a)))
-	  {
-	     evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
-						 obj);
-	     goto done;
-	  }
+        if ((o->cur.size != o->prev.size) ||
+            ((o->cur.font != o->prev.font)) ||
+            ((o->cur.utf8_text != o->prev.utf8_text)) ||
+            ((o->cur.style != o->prev.style)) ||
+            ((o->cur.shadow.r != o->prev.shadow.r)) ||
+            ((o->cur.shadow.g != o->prev.shadow.g)) ||
+            ((o->cur.shadow.b != o->prev.shadow.b)) ||
+            ((o->cur.shadow.a != o->prev.shadow.a)) ||
+            ((o->cur.outline.r != o->prev.outline.r)) ||
+            ((o->cur.outline.g != o->prev.outline.g)) ||
+            ((o->cur.outline.b != o->prev.outline.b)) ||
+            ((o->cur.outline.a != o->prev.outline.a)) ||
+            ((o->cur.glow.r != o->prev.glow.r)) ||
+            ((o->cur.glow.g != o->prev.glow.g)) ||
+            ((o->cur.glow.b != o->prev.glow.b)) ||
+            ((o->cur.glow.a != o->prev.glow.a)) ||
+            ((o->cur.glow2.r != o->prev.glow2.r)) ||
+            ((o->cur.glow2.g != o->prev.glow2.g)) ||
+            ((o->cur.glow2.b != o->prev.glow2.b)) ||
+            ((o->cur.glow2.a != o->prev.glow2.a)))
+          {
+             evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, 
+                                                 obj);
+             goto done;
+          }
      }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, 
-					 obj, is_v, was_v);
+                                         obj, is_v, was_v);
 }
 
 static void
@@ -1873,10 +1873,10 @@ _evas_object_text_rehint(Evas_Object *obj)
    o = (Evas_Object_Text *)(obj->object_data);
    if (!o->font) return;
    evas_font_load_hinting_set(obj->layer->evas, o->font,
-			      obj->layer->evas->hinting);
+                              obj->layer->evas->hinting);
    was = evas_object_is_in_output_rect(obj,
-				       obj->layer->evas->pointer.x,
-				       obj->layer->evas->pointer.y, 1, 1);
+                                       obj->layer->evas->pointer.x,
+                                       obj->layer->evas->pointer.y, 1, 1);
    /* DO II */
    _evas_object_text_recalc(obj);
    o->changed = 1;
@@ -1884,14 +1884,14 @@ _evas_object_text_rehint(Evas_Object *obj)
    evas_object_clip_dirty(obj);
    evas_object_coords_recalc(obj);
    is = evas_object_is_in_output_rect(obj,
-				      obj->layer->evas->pointer.x,
-				      obj->layer->evas->pointer.y, 1, 1);
+                                      obj->layer->evas->pointer.x,
+                                      obj->layer->evas->pointer.y, 1, 1);
    if ((is || was) && obj->cur.visible)
      evas_event_feed_mouse_move(obj->layer->evas,
-				obj->layer->evas->pointer.x,
-				obj->layer->evas->pointer.y,
-				obj->layer->evas->last_timestamp,
-				NULL);
+                                obj->layer->evas->pointer.x,
+                                obj->layer->evas->pointer.y,
+                                obj->layer->evas->last_timestamp,
+                                NULL);
    evas_object_inform_call_resize(obj);
 }
 
@@ -1915,22 +1915,22 @@ _evas_object_text_recalc(Evas_Object *obj)
 
    if ((o->font) && (o->items))
      {
-	int w, h;
-	int l = 0, r = 0, t = 0, b = 0;
+        int w, h;
+        int l = 0, r = 0, t = 0, b = 0;
 
         w = _evas_object_text_horiz_advance_get(obj, o);
         h = _evas_object_text_vert_advance_get(obj, o);
-	evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
-	obj->cur.geometry.w = w + l + r;
+        evas_text_style_pad_get(o->cur.style, &l, &r, &t, &b);
+        obj->cur.geometry.w = w + l + r;
         obj->cur.geometry.h = h + t + b;
 ////        obj->cur.cache.geometry.validity = 0;
      }
    else
      {
-	int t = 0, b = 0;
+        int t = 0, b = 0;
 
-	evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
-	obj->cur.geometry.w = 0;
+        evas_text_style_pad_get(o->cur.style, NULL, NULL, &t, &b);
+        obj->cur.geometry.w = 0;
         obj->cur.geometry.h = o->max_ascent + o->max_descent + t + b;
 ////        obj->cur.cache.geometry.validity = 0;
      }

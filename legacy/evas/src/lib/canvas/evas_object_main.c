@@ -175,10 +175,10 @@ evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj)
                                            obj->cur.geometry.y,
                                            obj->cur.geometry.w,
                                            obj->cur.geometry.h,
-////	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
-////						obj->cur.cache.geometry.y,
-////						obj->cur.cache.geometry.w,
-////						obj->cur.cache.geometry.h,
+////        rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
+////                                                obj->cur.cache.geometry.y,
+////                                                obj->cur.cache.geometry.w,
+////                                                obj->cur.cache.geometry.h,
                                            obj->cur.clipper->cur.cache.clip.x,
                                            obj->cur.clipper->cur.cache.clip.y,
                                            obj->cur.clipper->cur.cache.clip.w,
@@ -191,10 +191,10 @@ evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj)
                                         obj->prev.geometry.y,
                                         obj->prev.geometry.w,
                                         obj->prev.geometry.h,
-////	rl = evas_rects_return_difference_rects(obj->prev.cache.geometry.x,
-////						obj->prev.cache.geometry.y,
-////						obj->prev.cache.geometry.w,
-////						obj->prev.cache.geometry.h,
+////        rl = evas_rects_return_difference_rects(obj->prev.cache.geometry.x,
+////                                                obj->prev.cache.geometry.y,
+////                                                obj->prev.cache.geometry.w,
+////                                                obj->prev.cache.geometry.h,
                                         obj->prev.clipper->prev.cache.clip.x,
                                         obj->prev.clipper->prev.cache.clip.y,
                                         obj->prev.clipper->prev.cache.clip.w,
@@ -221,19 +221,19 @@ evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj)
                       obj->cur.geometry.y,
                       obj->cur.geometry.w,
                       obj->cur.geometry.h);
-////	    obj->cur.cache.geometry.x,
-////	    obj->cur.cache.geometry.y,
-////	    obj->cur.cache.geometry.w,
-////	    obj->cur.cache.geometry.h);
+////            obj->cur.cache.geometry.x,
+////            obj->cur.cache.geometry.y,
+////            obj->cur.cache.geometry.w,
+////            obj->cur.cache.geometry.h);
         evas_add_rect(rects,
                       obj->prev.geometry.x,
                       obj->prev.geometry.y,
                       obj->prev.geometry.w,
                       obj->prev.geometry.h);
-////	    obj->prev.cache.geometry.x,
-////	    obj->prev.cache.geometry.y,
-////	    obj->prev.cache.geometry.w,
-////	    obj->prev.cache.geometry.h);
+////            obj->prev.cache.geometry.x,
+////            obj->prev.cache.geometry.y,
+////            obj->prev.cache.geometry.w,
+////            obj->prev.cache.geometry.h);
 */
 }
 
@@ -562,7 +562,7 @@ evas_object_update_bounding_box(Evas_Object *obj)
              computeminmax = EINA_TRUE;
           }
 
-	if (computeminmax)
+        if (computeminmax)
           {
              evas_object_smart_need_bounding_box_update(obj->smart.parent);
           }

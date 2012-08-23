@@ -414,9 +414,9 @@ struct _Evas_Object_Textblock_Format
    } font;
    struct {
       struct {
-	 unsigned char  r, g, b, a;
+         unsigned char  r, g, b, a;
       } normal, underline, underline2, underline_dash, outline, shadow, glow, glow2, backing,
-	strikethrough;
+        strikethrough;
    } color;
    struct {
       int               l, r;
@@ -595,13 +595,13 @@ _style_replace(Evas_Textblock_Style *ts, const char *style_text)
    if (ts->default_tag) free(ts->default_tag);
    while (ts->tags)
      {
-	Evas_Object_Style_Tag *tag;
+        Evas_Object_Style_Tag *tag;
 
-	tag = (Evas_Object_Style_Tag *)ts->tags;
-	ts->tags = (Evas_Object_Style_Tag *)eina_inlist_remove(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
-	free(tag->tag.tag);
-	free(tag->tag.replace);
-	free(tag);
+        tag = (Evas_Object_Style_Tag *)ts->tags;
+        ts->tags = (Evas_Object_Style_Tag *)eina_inlist_remove(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
+        free(tag->tag.tag);
+        free(tag->tag.replace);
+        free(tag);
      }
    ts->default_tag = NULL;
    ts->tags = NULL;
@@ -635,12 +635,12 @@ _style_match_tag(const Evas_Textblock_Style *ts, const char *s, size_t tag_len, 
    /* Try the style tags */
    EINA_INLIST_FOREACH(ts->tags, tag)
      {
-	if (tag->tag.tag_len != tag_len) continue;
-	if (!strncmp(tag->tag.tag, s, tag_len))
-	  {
-	     *replace_len = tag->tag.replace_len;
-	     return tag->tag.replace;
-	  }
+        if (tag->tag.tag_len != tag_len) continue;
+        if (!strncmp(tag->tag.tag, s, tag_len))
+          {
+             *replace_len = tag->tag.replace_len;
+             return tag->tag.replace;
+          }
      }
 
    /* Try the default tags */
@@ -677,9 +677,9 @@ _nodes_clear(const Evas_Object *obj)
    o = (Evas_Object_Textblock *)(obj->object_data);
    while (o->text_nodes)
      {
-	Evas_Object_Textblock_Node_Text *n;
+        Evas_Object_Textblock_Node_Text *n;
 
-	n = o->text_nodes;
+        n = o->text_nodes;
         o->text_nodes = _NODE_TEXT(eina_inlist_remove(
                  EINA_INLIST_GET(o->text_nodes), EINA_INLIST_GET(n)));
         _evas_textblock_node_text_free(n);
@@ -1876,8 +1876,8 @@ _layout_format_ascent_descent_adjust(const Evas_Object *obj,
 
    if (fmt->font.font)
      {
-        //	ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
-        //	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
+        //        ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
+        //        descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
         ascent = ENFN->font_ascent_get(ENDT, fmt->font.font);
         descent = ENFN->font_descent_get(ENDT, fmt->font.font);
         if (fmt->linesize > 0)
@@ -3599,7 +3599,7 @@ _layout_paragraph_reorder_lines(Evas_Object_Textblock_Paragraph *par)
 
 static void
 _layout_paragraph_render(Evas_Object_Textblock *o,
-			 Evas_Object_Textblock_Paragraph *par)
+                         Evas_Object_Textblock_Paragraph *par)
 {
    if (par->rendered)
       return;
@@ -4548,12 +4548,12 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
           {
              if (!key_start)
                {
-		 if (!isspace((unsigned char)(*p)))
+                 if (!isspace((unsigned char)(*p)))
                     key_start = p;
                }
              else if (!key_stop)
                {
-		 if ((*p == '=') || (isspace((unsigned char)(*p))))
+                 if ((*p == '=') || (isspace((unsigned char)(*p))))
                     key_stop = p;
                }
              else if (!val_start)
@@ -5954,14 +5954,14 @@ evas_textblock_cursor_paragraph_last(Evas_Textblock_Cursor *cur)
      {
         node = _NODE_TEXT(EINA_INLIST_GET(node)->last);
         cur->node = node;
-	cur->pos = 0;
+        cur->pos = 0;
 
-	evas_textblock_cursor_paragraph_char_last(cur);
+        evas_textblock_cursor_paragraph_char_last(cur);
      }
    else
      {
-	cur->node = NULL;
-	cur->pos = 0;
+        cur->node = NULL;
+        cur->pos = 0;
 
      }
 }
@@ -6300,8 +6300,8 @@ evas_textblock_cursor_line_char_first(Evas_Textblock_Cursor *cur)
      }
    if (it)
      {
-	cur->pos = it->text_pos;
-	cur->node = it->text_node;
+        cur->pos = it->text_pos;
+        cur->node = it->text_node;
      }
 }
 
@@ -6336,8 +6336,8 @@ evas_textblock_cursor_line_char_last(Evas_Textblock_Cursor *cur)
      {
         size_t ind;
 
-	cur->node = it->text_node;
-	cur->pos = it->text_pos;
+        cur->node = it->text_node;
+        cur->pos = it->text_pos;
         if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
           {
              ind = _ITEM_TEXT(it)->text_props.text_len - 1;
@@ -6874,8 +6874,8 @@ evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
    it = (Evas_Object_Textblock_Item *)ln->items;
    if (it)
      {
-	cur->pos = it->text_pos;
-	cur->node = it->text_node;
+        cur->pos = it->text_pos;
+        cur->node = it->text_node;
      }
    else
      {
@@ -6897,19 +6897,19 @@ evas_textblock_cursor_compare(const Evas_Textblock_Cursor *cur1, const Evas_Text
    if ((!cur1->node) || (!cur2->node)) return 0;
    if (cur1->node == cur2->node)
      {
-	if (cur1->pos < cur2->pos) return -1; /* cur1 < cur2 */
-	else if (cur1->pos > cur2->pos) return 1; /* cur2 < cur1 */
-	return 0;
+        if (cur1->pos < cur2->pos) return -1; /* cur1 < cur2 */
+        else if (cur1->pos > cur2->pos) return 1; /* cur2 < cur1 */
+        return 0;
      }
    for (l1 = EINA_INLIST_GET(cur1->node),
         l2 = EINA_INLIST_GET(cur1->node); (l1) || (l2);)
      {
-	if (l1 == EINA_INLIST_GET(cur2->node)) return 1; /* cur2 < cur 1 */
-	else if (l2 == EINA_INLIST_GET(cur2->node)) return -1; /* cur1 < cur 2 */
-	else if (!l1) return -1; /* cur1 < cur 2 */
-	else if (!l2) return 1; /* cur2 < cur 1 */
-	l1 = l1->prev;
-	l2 = l2->next;
+        if (l1 == EINA_INLIST_GET(cur2->node)) return 1; /* cur2 < cur 1 */
+        else if (l2 == EINA_INLIST_GET(cur2->node)) return -1; /* cur1 < cur 2 */
+        else if (!l1) return -1; /* cur1 < cur 2 */
+        else if (!l2) return 1; /* cur2 < cur 1 */
+        l1 = l1->prev;
+        l2 = l2->next;
      }
    return 0;
 }
@@ -7146,8 +7146,8 @@ _evas_textblock_changed(Evas_Object_Textblock *o, Evas_Object *obj)
    o->content_changed = 1;
    if (o->markup_text)
      {
-	free(o->markup_text);
-	o->markup_text = NULL;
+        free(o->markup_text);
+        o->markup_text = NULL;
      }
 
    evas_object_change(obj);
@@ -7424,14 +7424,14 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
    format = n->format;
    if (!cur->node)
      {
-	o->format_nodes = _NODE_FORMAT(eina_inlist_append(
+        o->format_nodes = _NODE_FORMAT(eina_inlist_append(
                  EINA_INLIST_GET(o->format_nodes),
                  EINA_INLIST_GET(n)));
-	cur->pos = 0;
+        cur->pos = 0;
         n->text_node = (EINA_INLIST_GET(n)->prev) ?
            _NODE_FORMAT(EINA_INLIST_GET(n)->prev)->text_node :
            o->text_nodes;
-	cur->node = n->text_node;
+        cur->node = n->text_node;
      }
    else
      {
@@ -7616,12 +7616,12 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
 
    if (cur->pos == eina_ustrbuf_length_get(n->unicode))
      {
-	n2 = _NODE_TEXT(EINA_INLIST_GET(n)->next);
-	if (n2)
-	  {
-	     cur->node = n2;
-	     cur->pos = 0;
-	  }
+        n2 = _NODE_TEXT(EINA_INLIST_GET(n)->next);
+        if (n2)
+          {
+             cur->node = n2;
+             cur->pos = 0;
+          }
      }
 
    _evas_textblock_cursors_update_offset(cur, n, ppos, -(ind - ppos));
@@ -7643,11 +7643,11 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
    o = (Evas_Object_Textblock *)(cur1->obj->object_data);
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
-	Evas_Textblock_Cursor *tc;
+        Evas_Textblock_Cursor *tc;
 
-	tc = cur1;
-	cur1 = cur2;
-	cur2 = tc;
+        tc = cur1;
+        cur1 = cur2;
+        cur2 = tc;
      }
    n1 = cur1->node;
    n2 = cur2->node;
@@ -7789,11 +7789,11 @@ _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, 
    if (cur1->obj != _cur2->obj) return NULL;
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
-	const Evas_Textblock_Cursor *tc;
+        const Evas_Textblock_Cursor *tc;
 
-	tc = cur1;
-	cur1 = _cur2;
-	_cur2 = tc;
+        tc = cur1;
+        cur1 = _cur2;
+        _cur2 = tc;
      }
    /* Work on a local copy of the cur */
    cur2 = alloca(sizeof(Evas_Textblock_Cursor));
@@ -7908,11 +7908,11 @@ _evas_textblock_cursor_range_text_plain_get(const Evas_Textblock_Cursor *cur1, c
    if (cur1->obj != _cur2->obj) return NULL;
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
-	const Evas_Textblock_Cursor *tc;
+        const Evas_Textblock_Cursor *tc;
 
-	tc = cur1;
-	cur1 = _cur2;
-	_cur2 = tc;
+        tc = cur1;
+        cur1 = _cur2;
+        _cur2 = tc;
      }
    n1 = cur1->node;
    n2 = _cur2->node;
@@ -8364,8 +8364,8 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
           {
              x = ln->x;
           }
-	y = ln->par->y + ln->y;
-	h = ln->h;
+        y = ln->par->y + ln->y;
+        h = ln->h;
      }
    else if (ln && fi)
      {
@@ -8403,7 +8403,7 @@ _evas_textblock_cursor_char_pen_geometry_common_get(int (*query_func) (void *dat
      }
    else
      {
-	return -1;
+        return -1;
      }
    if (cx) *cx = x;
    if (cy) *cy = y;
@@ -8981,11 +8981,11 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
    if (!o->formatted.valid) _relayout(cur1->obj);
    if (evas_textblock_cursor_compare(cur1, cur2) > 0)
      {
-	const Evas_Textblock_Cursor *tc;
+        const Evas_Textblock_Cursor *tc;
 
-	tc = cur1;
-	cur1 = cur2;
-	cur2 = tc;
+        tc = cur1;
+        cur1 = cur2;
+        cur2 = tc;
      }
 
    ln1 = ln2 = NULL;
@@ -9017,12 +9017,12 @@ evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, cons
           }
         while (lni && (lni != ln2))
           {
-	     tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
-	     rects = eina_list_append(rects, tr);
-	     tr->x = lni->x;
-	     tr->y = lni->par->y + lni->y;
-	     tr->h = lni->h;
-	     tr->w = lni->w;
+             tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+             rects = eina_list_append(rects, tr);
+             tr->x = lni->x;
+             tr->y = lni->par->y + lni->y;
+             tr->h = lni->h;
+             tr->w = lni->w;
              plni = lni;
              lni = (Evas_Object_Textblock_Line *) EINA_INLIST_GET(lni)->next;
              if (!lni && (plni->par != ln2->par))
@@ -9107,8 +9107,8 @@ _evas_object_textblock_clear_all(Evas_Object *obj)
    TB_HEAD();
    if (o->paragraphs)
      {
-	_paragraphs_free(obj, o->paragraphs);
-	o->paragraphs = NULL;
+        _paragraphs_free(obj, o->paragraphs);
+        o->paragraphs = NULL;
      }
 
    _nodes_clear(obj);
@@ -9116,8 +9116,8 @@ _evas_object_textblock_clear_all(Evas_Object *obj)
    o->cursor->pos = 0;
    EINA_LIST_FOREACH(o->cursors, l, cur)
      {
-	cur->node = NULL;
-	cur->pos = 0;
+        cur->node = NULL;
+        cur->pos = 0;
 
      }
 
@@ -9280,7 +9280,7 @@ evas_object_textblock_size_native_get(const Evas_Object *obj, Evas_Coord *w, Eva
         o->native.w = wmax;
         o->native.h = hmax;
 
-	o->native.valid = 1;
+        o->native.valid = 1;
         o->content_changed = 0;
         o->format_changed = EINA_FALSE;
      }
@@ -9383,11 +9383,11 @@ evas_object_textblock_free(Evas_Object *obj)
    free(o->cursor);
    while (o->cursors)
      {
-	Evas_Textblock_Cursor *cur;
+        Evas_Textblock_Cursor *cur;
 
-	cur = (Evas_Textblock_Cursor *)o->cursors->data;
-	o->cursors = eina_list_remove_list(o->cursors, o->cursors);
-	free(cur);
+        cur = (Evas_Textblock_Cursor *)o->cursors->data;
+        o->cursors = eina_list_remove_list(o->cursors, o->cursors);
+        free(cur);
      }
    if (o->repch) eina_stringshare_del(o->repch);
    if (o->ellip_ti) _item_free(obj, NULL, _ITEM(o->ellip_ti));
@@ -9407,17 +9407,17 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    int cx, cy, cw, ch, clip;
    const char vals[5][5] =
      {
-	  {0, 1, 2, 1, 0},
-	  {1, 3, 4, 3, 1},
-	  {2, 4, 5, 4, 2},
-	  {1, 3, 4, 3, 1},
-	  {0, 1, 2, 1, 0}
+          {0, 1, 2, 1, 0},
+          {1, 3, 4, 3, 1},
+          {2, 4, 5, 4, 2},
+          {1, 3, 4, 3, 1},
+          {0, 1, 2, 1, 0}
      };
 
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Textblock *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
-							   context);
+                                                           context);
    /* FIXME: This clipping is just until we fix inset handling correctly. */
    ENFN->context_clip_clip(output, context,
                               obj->cur.geometry.x + x,
@@ -9813,26 +9813,26 @@ evas_object_textblock_render_pre(Evas_Object *obj)
                (obj->cur.geometry.h != o->last_h))))
      {
         _relayout(obj);
-	o->redraw = 0;
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-	is_v = evas_object_is_visible(obj);
-	was_v = evas_object_was_visible(obj);
-	goto done;
+        o->redraw = 0;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        is_v = evas_object_is_visible(obj);
+        was_v = evas_object_was_visible(obj);
+        goto done;
      }
    if (o->redraw)
      {
-	o->redraw = 0;
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-	is_v = evas_object_is_visible(obj);
-	was_v = evas_object_was_visible(obj);
-	goto done;
+        o->redraw = 0;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        is_v = evas_object_is_visible(obj);
+        was_v = evas_object_was_visible(obj);
+        goto done;
      }
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
-	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.clipper);
-	obj->cur.clipper->func->render_pre(obj->cur.clipper);
+        if (obj->cur.cache.clip.dirty)
+          evas_object_clip_recalc(obj->cur.clipper);
+        obj->cur.clipper->func->render_pre(obj->cur.clipper);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -9840,8 +9840,8 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
-	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
-	goto done;
+        evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
+        goto done;
      }
    if (obj->changed_map)
      {
@@ -9856,8 +9856,8 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    /* if we restacked (layer or just within a layer) and don't clip anyone */
    if (obj->restack)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-	goto done;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        goto done;
      }
    /* if it changed color */
    if ((obj->cur.color.r != obj->prev.color.r) ||
@@ -9865,8 +9865,8 @@ evas_object_textblock_render_pre(Evas_Object *obj)
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-	goto done;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        goto done;
      }
    /* if it changed geometry - and obviously not visibility or color */
    /* calculate differences since we have a constant color fill */
@@ -9876,8 +9876,8 @@ evas_object_textblock_render_pre(Evas_Object *obj)
        (obj->cur.geometry.w != obj->prev.geometry.w) ||
        (obj->cur.geometry.h != obj->prev.geometry.h))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-	goto done;
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+        goto done;
      }
    done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
@@ -9953,8 +9953,8 @@ evas_object_textblock_coords_recalc(Evas_Object *obj)
        (((o->valign != 0.0) || (o->have_ellipsis)) &&
            (obj->cur.geometry.h != o->last_h)))
      {
-	o->formatted.valid = 0;
-	o->changed = 1;
+        o->formatted.valid = 0;
+        o->changed = 1;
      }
 }
 
