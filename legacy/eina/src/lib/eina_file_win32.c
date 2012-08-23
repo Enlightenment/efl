@@ -172,19 +172,6 @@ static Eina_Lock _eina_file_lock_cache;
 
 static int _eina_file_log_dom = -1;
 
-static void
-_eina_file_win32_backslash_change(char *dir)
-{
-   char *tmp;
-
-   tmp = dir;
-   while (*tmp)
-     {
-        if (*tmp == '/') *tmp = '\\';
-        tmp++;
-     }
-}
-
 static Eina_Bool
 _eina_file_win32_is_dir(const char *dir)
 {
@@ -228,7 +215,6 @@ _eina_file_win32_dir_new(const char *dir)
 
    memcpy(new_dir, dir, length);
    memcpy(new_dir + length, "\\*.*", 5);
-   _eina_file_win32_backslash_change(new_dir);
 
    return new_dir;
 }
@@ -507,10 +493,23 @@ _eina_file_map_key_hash(const unsigned long int *key, int key_length __UNUSED__)
 static char *
 _eina_file_win32_escape(const char *path, size_t *length)
 {
-   char *result = strdup(path ? path : "");
-   char *p = result;
-   char *q = result;
+   char *result;
+   char *p;
+   char *q;
    size_t len;
+
+   result = strdup(path ? path : "");
+   if (!result)
+     return NULL;
+
+   p = result;
+   while (*p)
+     {
+       if (*p == '\\') *p = '/';
+       p++;
+     }
+   p = result;
+   q = result;
 
    if (!result)
      return NULL;
@@ -521,7 +520,7 @@ _eina_file_win32_escape(const char *path, size_t *length)
    while ((p = strchr(p, '/')))
      {
         // remove double `/'
-        if (p[1] == '/')
+	if (p[1] == '/')
           {
              memmove(p, p + 1, --len - (p - result));
              result[len] = '\0';
@@ -730,7 +729,6 @@ eina_file_path_sanitize(const char *path)
    if (!path) return NULL;
 
    len = strlen(path);
-   if (len < 3) return NULL;
 
    if (!evil_path_is_absolute(path))
      {
@@ -740,20 +738,15 @@ eina_file_path_sanitize(const char *path)
         if (l > 0)
           {
              char *cwd;
-             DWORD l2;
+             char *tmp;
 
              cwd = alloca(sizeof(char) * (l + 1));
-             l2 = GetCurrentDirectory(l + 1, cwd);
-             if (l2 == l)
-               {
-                  char *tmp;
-
-                  len += l + 2;
-                  tmp = alloca(sizeof (char) * len);
-                  snprintf(tmp, len, "%s/%s", cwd, path);
-                  tmp[len - 1] = '\0';
-                  result = tmp;
-               }
+             GetCurrentDirectory(l + 1, cwd);
+             len += l + 2;
+             tmp = alloca(sizeof (char) * len);
+             snprintf(tmp, len, "%s\\%s", cwd, path);
+             tmp[len - 1] = '\0';
+             result = tmp;
           }
      }
 
@@ -839,17 +832,28 @@ eina_file_split(char *path)
    if (!ea)
       return NULL;
 
-   for (current = strchr(path, '\\');
-        current;
-        path = current + 1, current = strchr(path, '\\'))
+   current = path;
+   while (*current)
      {
-        length = current - path;
+        if ((*current == '\\') || (*current == '/'))
+          {
+             if (((*current == '\\') && (current[1] == '\\')) ||
+                 ((*current == '/') && (current[1] == '/')))
+               {
+                  *current = '\0';
+                  goto next_char;
+               }
 
-        if (length <= 0)
-           continue;
+             length = current - path;
+             if (length <= 0)
+               goto next_char;
 
-        eina_array_push(ea, path);
-        *current = '\0';
+             eina_array_push(ea, path);
+             *current = '\0';
+             path = current + 1;
+          }
+     next_char:
+        current++;
      }
 
    if (*path != '\0')
@@ -891,11 +895,10 @@ eina_file_ls(const char *dir)
      goto free_it;
 
    memcpy(it->dir, dir, length + 1);
-   if (dir[length - 1] != '\\')
+   if ((dir[length - 1] != '\\') && (dir[length - 1] != '/'))
       it->length = length;
    else
       it->length = length - 1;
-   _eina_file_win32_backslash_change(it->dir);
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_win32_ls_iterator_next);
@@ -944,17 +947,15 @@ eina_file_direct_ls(const char *dir)
 
    memcpy(it->dir, dir, length + 1);
    it->length = length;
-   _eina_file_win32_backslash_change(it->dir);
 
    memcpy(it->info.path, dir, length);
-   if (dir[length - 1] == '\\')
+   if ((dir[length - 1] == '\\') || (dir[length - 1] == '/'))
       it->info.name_start = length;
    else
      {
         it->info.path[length] = '\\';
         it->info.name_start = length + 1;
      }
-   _eina_file_win32_backslash_change(it->info.path);
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_file_win32_direct_ls_iterator_next);
