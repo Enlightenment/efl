@@ -39,6 +39,8 @@ static const char *commands = \
   "\td - decrease smart object's size\n"
   "\ti - increase smart object's size\n"
   "\tc - change smart object's clipper color\n"
+  "\t. - rotate object to the right\n"
+  "\t, - rotate object to the left\n"
   "\th - print help\n"
   "\tq - quit\n"
 ;
@@ -60,6 +62,7 @@ struct color_tuple
    int r, g, b, a;
 } clipper_colors[4] = {WHITE, RED, GREEN, BLUE};
 int cur_color = 0;
+int cur_angle = 0;
 
 static const char *
 _index_to_color(int i)
@@ -443,6 +446,21 @@ evas_smart_example_set_right(Evas_Object *o,
 /* END OF example smart object's own interface */
 
 static void
+_map_update(void)
+{
+   Evas_Map *m;
+   Evas_Coord x, y, w, h;
+
+   evas_object_geometry_get(d.smt, &x, &y, &w, &h);
+   m = evas_map_new(4);
+   evas_map_util_points_populate_from_object(m, d.smt);
+   evas_map_util_rotate(m, cur_angle, x + (w / 2), y + (h / 2));
+   evas_object_map_set(d.smt, m);
+   evas_object_map_enable_set(d.smt, EINA_TRUE);
+   evas_map_free(m);
+}
+
+static void
 _on_keydown(void *data __UNUSED__,
             Evas *evas __UNUSED__,
             Evas_Object *o __UNUSED__,
@@ -569,6 +587,7 @@ _on_keydown(void *data __UNUSED__,
           }
 
         evas_object_move(d.smt, x, y);
+        _map_update();
 
         return;
      }
@@ -584,6 +603,7 @@ _on_keydown(void *data __UNUSED__,
         h *= 1.1;
 
         evas_object_resize(d.smt, w, h);
+        _map_update();
 
         return;
      }
@@ -599,6 +619,7 @@ _on_keydown(void *data __UNUSED__,
         h *= 0.9;
 
         evas_object_resize(d.smt, w, h);
+        _map_update();
 
         return;
      }
@@ -617,6 +638,23 @@ _on_keydown(void *data __UNUSED__,
 
         return;
      }
+
+   /* rotate object to the right */
+   if (strcmp(ev->keyname, "period") == 0)
+     {
+        cur_angle = (cur_angle + 30) % 360;
+        _map_update();
+        return;
+     }
+
+   if (strcmp(ev->keyname, "comma") == 0)
+     {
+        cur_angle = (cur_angle - 30) % 360;
+        _map_update();
+        return;
+     }
+
+   fprintf(stderr, "Invalid key: '%s'\n", ev->keyname);
 }
 
 static void
