@@ -224,7 +224,7 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
                       Edje_Part_Description_Image *epd, Eet_File *ef)
 {
    unsigned int i;
-   
+
    /* FIXME: This check sounds like not a useful one */
    if (epd->image.id == -1 && epd->common.visible)
      WRN("Collection %s(%i): image attributes missing for "
@@ -384,7 +384,7 @@ static void
 data_thread_head_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Head_Write *hw = data;
-   
+
    pending_threads--;
    if (pending_threads <= 0) ecore_main_loop_quit();
    if (hw->errstr)
@@ -399,7 +399,7 @@ static void
 data_write_header(Eet_File *ef)
 {
    Head_Write  *hw;
-   
+
    hw = calloc(1, sizeof(Head_Write));
    hw->ef = ef;
    pending_threads++;
@@ -721,7 +721,7 @@ static void
 data_thread_image_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Image_Write *iw = data;
-         
+
    pending_threads--;
    if (pending_threads <= 0) ecore_main_loop_quit();
    if (iw->errstr)
@@ -757,7 +757,7 @@ data_write_images(Eet_File *ef, int *image_num)
    int i;
    Ecore_Evas *ee;
    Evas *evas;
-   
+
    if (!((edje_file) && (edje_file->image_dir))) return;
 
    ecore_evas_init();
@@ -765,11 +765,11 @@ data_write_images(Eet_File *ef, int *image_num)
    if (!ee)
      error_and_abort(ef, "Cannot create buffer engine canvas for image load.");
    evas = ecore_evas_get(ee);
-   
+
    for (i = 0; i < (int)edje_file->image_dir->entries_count; i++)
      {
         Edje_Image_Directory_Entry *img;
-        
+
         img = &edje_file->image_dir->entries[i];
         if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL) ||
             (img->entry == NULL))
@@ -782,7 +782,7 @@ data_write_images(Eet_File *ef, int *image_num)
              char *s;
              int load_err = EVAS_LOAD_ERROR_NONE;
              Image_Write *iw;
-             
+
              iw = calloc(1, sizeof(Image_Write));
              iw->ef = ef;
              iw->img = img;
@@ -795,7 +795,7 @@ data_write_images(Eet_File *ef, int *image_num)
              EINA_LIST_FOREACH(img_dirs, ll, s)
                {
                   char buf[PATH_MAX];
-                  
+
                   snprintf(buf, sizeof(buf), "%s/%s", s, img->entry);
                   evas_object_image_file_set(im, buf, NULL);
                   load_err = evas_object_image_load_error_get(im);
@@ -936,7 +936,7 @@ data_write_sounds(Eet_File *ef, int *sound_num)
         for (i = 0; i < (int)edje_file->sound_dir->samples_count; i++)
           {
              Sound_Write *sw;
-             
+
              sw = calloc(1, sizeof(Sound_Write));
              if (!sw) continue;
              sw->ef = ef;
@@ -1183,7 +1183,7 @@ data_thread_script(void *data, Ecore_Thread *thread __UNUSED__)
      {
         Eina_List *ll;
         Code_Program *cp;
-        
+
         if (sc->cd->original)
           {
              snprintf(buf, PATH_MAX, "edje/scripts/embryo/source/%i", sc->i);
@@ -1199,7 +1199,7 @@ data_thread_script(void *data, Ecore_Thread *thread __UNUSED__)
                        strlen(cp->original) + 1, compress_mode);
           }
      }
-   
+
    unlink(sc->tmpn);
    unlink(sc->tmpo);
    close(sc->tmpn_fd);
@@ -1292,7 +1292,7 @@ data_write_scripts(Eet_File *ef)
         create_script_file(ef, sc->tmpn, cd, sc->tmpn_fd);
         snprintf(buf, sizeof(buf),
                  "%s/embryo_cc -i %s/include -o %s %s",
-                 eina_prefix_bin_get(pfx), 
+                 eina_prefix_bin_get(pfx),
                  eina_prefix_data_get(pfx),
                  sc->tmpo, sc->tmpn);
         pending_threads++;
@@ -1326,7 +1326,7 @@ _edje_lua_error_and_abort(lua_State *L, int err_code, Script_Write *sc)
 {
    char buf[PATH_MAX];
    char *err_type;
-   
+
    switch (err_code)
      {
       case LUA_ERRRUN:
@@ -1364,7 +1364,7 @@ data_thread_lua_script(void *data, Ecore_Thread *thread __UNUSED__)
 #ifdef LUA_BINARY
    int err_code;
 #endif
-   
+
    L = luaL_newstate();
    if (!L)
      {
@@ -1373,9 +1373,9 @@ data_thread_lua_script(void *data, Ecore_Thread *thread __UNUSED__)
         sc->errstr = strdup(buf);
         return;
      }
-   
+
    luaL_buffinit(L, &b);
-   
+
    dat.buf = NULL;
    dat.size = 0;
    if (sc->cd->shared)
@@ -1388,7 +1388,7 @@ data_thread_lua_script(void *data, Ecore_Thread *thread __UNUSED__)
         luaL_addstring(&b, sc->cd->shared);
         ln += sc->cd->l2 - sc->cd->l1;
      }
-   
+
    EINA_LIST_FOREACH(sc->cd->programs, ll, cp)
      {
         if (cp->script)
@@ -1420,18 +1420,18 @@ data_thread_lua_script(void *data, Ecore_Thread *thread __UNUSED__)
    dat.size = strlen(dat.buf);
 #endif
    //printf("lua chunk size: %d\n", dat.size);
-   
-   /* 
+
+   /*
     * TODO load and test Lua chunk
     */
-   
+
    /*
     if (luaL_loadbuffer(L, globbuf, globbufsize, "edje_lua_script"))
     printf("lua load error: %s\n", lua_tostring (L, -1));
     if (lua_pcall(L, 0, 0, 0))
     printf("lua call error: %s\n", lua_tostring (L, -1));
     */
-   
+
    snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", sc->i);
    if (eet_write(sc->ef, buf, dat.buf, dat.size, compress_mode) <= 0)
      {
@@ -1470,13 +1470,13 @@ data_write_lua_scripts(Eet_File *ef)
      {
         Code *cd;
         Script_Write *sc;
-        
+
         cd = (Code *)eina_list_data_get(l);
         if (!cd->is_lua)
           continue;
         if ((!cd->shared) && (!cd->programs))
           continue;
-        
+
         sc = calloc(1, sizeof(Script_Write));
         sc->ef = ef;
         sc->cd = cd;
@@ -1753,8 +1753,8 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    char buf[256];
 #endif
 
-#ifdef NEWPARTLOOKUP  
-   snprintf(buf, sizeof(buf), "%lu-%lu", 
+#ifdef NEWPARTLOOKUP
+   snprintf(buf, sizeof(buf), "%lu-%lu",
             (unsigned long)name, (unsigned long)dest);
    if (_part_lookups_hash) pl = eina_hash_find(_part_lookups_hash, buf);
    if (pl)
@@ -1788,7 +1788,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
              return;
           }
      }
-#endif   
+#endif
    if (!name[0]) return;
 
    pl = mem_alloc(SZ(Part_Lookup));
@@ -1796,11 +1796,11 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
    pl->pc = pc;
    pl->name = mem_strdup(name);
    pl->dest = dest;
-#ifdef NEWPARTLOOKUP  
+#ifdef NEWPARTLOOKUP
    if (!_part_lookups_hash)
      _part_lookups_hash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(_part_lookups_hash, buf, pl);
-   
+
    snprintf(buf, sizeof(buf), "%lu", (unsigned long)dest);
    if (!_part_lookups_dest_hash)
      _part_lookups_dest_hash = eina_hash_string_superfast_new(NULL);
@@ -1815,7 +1815,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
         l = eina_list_append(l, pl);
         eina_hash_add(_part_lookups_dest_hash, buf, l);
      }
-#endif   
+#endif
 }
 
 void
@@ -1836,7 +1836,7 @@ data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
      {
         data_queue_part_lookup(pc, pl->name, dest);
      }
-#else   
+#else
    EINA_LIST_FOREACH(part_lookups, l, pl)
      {
         if (pl->dest == src)
@@ -2391,7 +2391,7 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
 		    {
 		       if (!inesc)
 		         {
-		  	    if (*p == '\\') inesc = 1;
+			    if (*p == '\\') inesc = 1;
 			    else if (*p == '\"')
 			      {
 			         /* string concatenation, see below */
@@ -2418,17 +2418,17 @@ data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void 
 		       i = 0;
 		       while (*pp)
 		         {
-		    	    if (!inesc)
+			    if (!inesc)
 			      {
 			         if (*pp == '\\') inesc = 1;
 			         else if (*pp == '\"')
-			    	   {
+				   {
 				      /* concat strings like "foo""bar" to "foobar" */
 				      if (*(pp + 1) == '\"')
 				        pp++;
 				      else
 				        {
-				   	   name[i] = 0;
+					   name[i] = 0;
 					   break;
 					}
 				   }
