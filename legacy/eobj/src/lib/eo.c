@@ -386,8 +386,6 @@ _eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list p_list)
    Eo_Op op = EO_NOOP;
    Eo_Kls_Itr prev_state;
 
-   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
-
    prev_error = obj->do_error;
    _eo_ref(obj);
 
@@ -421,6 +419,8 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 {
    Eina_Bool ret = EINA_TRUE;
    va_list p_list;
+
+   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
    va_start(p_list, op_type);
 
