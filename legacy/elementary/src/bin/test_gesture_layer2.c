@@ -669,8 +669,10 @@ test_gesture_layer2(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
 
    /* Gesture layer transparent object */
    r = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_move(r, 0, 0);
    evas_object_color_set(r, 0, 0, 0, 0);
    elm_win_resize_object_add(win, r);
+
    g = elm_gesture_layer_add(win);
    elm_gesture_layer_attach(g, r);
    evas_object_show(r);
