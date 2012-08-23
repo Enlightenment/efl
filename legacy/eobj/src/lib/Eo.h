@@ -191,6 +191,7 @@ typedef struct _Eo_Event_Description Eo_Event_Description;
 EAPI const Eo_Class * \
 class_get_func_name(void) \
 { \
+   const Eo_Class *_tmp_parent_class; \
    static volatile char lk_init = 0; \
    static Eina_Lock _my_lock; \
    static const Eo_Class * volatile _my_class = NULL; \
@@ -209,8 +210,8 @@ class_get_func_name(void) \
         return _my_class; \
      } \
    eina_lock_release(&_eo_class_creation_lock); \
-   (void) parent_class; \
-   _my_class = eo_class_new(class_desc, parent_class, __VA_ARGS__); \
+   _tmp_parent_class = parent_class; \
+   _my_class = eo_class_new(class_desc, _tmp_parent_class, __VA_ARGS__); \
    eina_lock_release(&_my_lock); \
    \
    eina_lock_take(&_eo_class_creation_lock); \
@@ -559,11 +560,13 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  * @param parent the parent to set to the object.
  * @param ... The ops to run.
  * @return An handle to the new object on success, NULL otherwise.
+ *
+ * @see #eo_add_custom
  */
 #define eo_add(klass, parent, ...) \
    ({ \
-    volatile const Eo_Class *_tmp_klass = klass; \
-    eo_add_internal((const Eo_Class *) _tmp_klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
+    const Eo_Class *_tmp_klass = klass; \
+    eo_add_internal(_tmp_klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
     })
 
 /**
@@ -573,11 +576,13 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
  * @param parent the parent to set to the object.
  * @param ... The ops to run. With the constructor being first.
  * @return An handle to the new object on success, NULL otherwise.
+ *
+ * @see #eo_add
  */
 #define eo_add_custom(klass, parent, ...) \
    ({ \
-    volatile const Eo_Class *_tmp_klass = klass; \
-    eo_add_internal((const Eo_Class *) _tmp_klass, parent, ## __VA_ARGS__, EO_NOOP); \
+    const Eo_Class *_tmp_klass = klass; \
+    eo_add_internal(_tmp_klass, parent, ## __VA_ARGS__, EO_NOOP); \
     })
 
 /**
