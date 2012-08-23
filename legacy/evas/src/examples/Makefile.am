@@ -18,7 +18,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 -DPACKAGE_EXAMPLES_DIR=\"$(datadir)/$(PACKAGE)/examples\" \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
@@ -85,7 +85,7 @@ evas_smart_interface_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS
 
 examples_PROGRAMS += evas_box
 evas_box_SOURCES = evas-box.c
-evas_box_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@ @EINA_LIBS@
+evas_box_LDADD = $(top_builddir)/src/lib/libevas.la @ECORE_EVAS_LIBS@ @EVAS_GENERAL_LIBS@
 
 #the ones using ecore_evas and edje follow
 AM_CPPFLAGS += @EDJE_CFLAGS@

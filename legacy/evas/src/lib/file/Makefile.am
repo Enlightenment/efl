@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @FREETYPE_CFLAGS@ \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @EVIL_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @PIXMAN_CFLAGS@
@@ -21,5 +21,5 @@ evas_module.c \
 evas_module.h \
 evas_path.h
 
-libevas_file_la_LIBADD = @EINA_LIBS@ @EVIL_LIBS@
+libevas_file_la_LIBADD = @EVAS_GENERAL_LIBS@ @EVIL_LIBS@
 

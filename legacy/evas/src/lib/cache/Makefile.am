@@ -9,7 +9,7 @@ AM_CPPFLAGS = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
-@EINA_CFLAGS@
+@EVAS_GENERAL_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_cache.la
 libevas_cache_la_SOURCES  = \

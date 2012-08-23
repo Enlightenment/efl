@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @EET_CFLAGS@ \
@@ -29,4 +29,4 @@ evas_cs_server.c \
 evas_cs_client.c \
 evas_cs_mem.c
 
-libevas_cserve_la_LIBADD = @EINA_LIBS@ @EFL_SHM_OPEN_LIBS@
+libevas_cserve_la_LIBADD = @EVAS_GENERAL_LIBS@ @EFL_SHM_OPEN_LIBS@

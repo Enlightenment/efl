@@ -10,7 +10,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @EET_CFLAGS@ \
@@ -26,7 +26,7 @@ evas_cserve_main.c
 evas_cserve_LDADD = \
 $(top_builddir)/src/lib/libevas.la \
 @pthread_libs@ \
-@EINA_LIBS@
+@EVAS_GENERAL_LIBS@
 
 evas_cserve_tool_LDFLAGS =
 
@@ -36,7 +36,7 @@ evas_cserve_tool.c
 evas_cserve_tool_LDADD = \
 $(top_builddir)/src/lib/libevas.la \
 @pthread_libs@ \
-@EINA_LIBS@
+@EVAS_GENERAL_LIBS@
 
 endif
 
@@ -56,7 +56,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_LIBEXEC_DIR=\"$(libexecdir)\" \
 @FREETYPE_CFLAGS@ \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @EET_CFLAGS@
 
 evas_cserve2_SOURCES = \
@@ -75,7 +75,7 @@ libevas_cserve2_utils_la = $(top_builddir)/src/lib/cserve2/libevas_cserve2_utils
 
 evas_cserve2_LDADD = \
 @FREETYPE_LIBS@ \
-@EINA_LIBS@ \
+@EVAS_GENERAL_LIBS@ \
 @EFL_SHM_OPEN_LIBS@ \
 @EET_LIBS@ \
 $(libevas_cserve2_utils_la)
@@ -90,10 +90,10 @@ evas_cserve2_debug_SOURCES = \
 evas_cserve2_debug.c
 
 evas_cserve2_usage_LDADD = \
-@EINA_LIBS@
+@EVAS_GENERAL_LIBS@
 
 evas_cserve2_debug_LDADD = \
-@EINA_LIBS@
+@EVAS_GENERAL_LIBS@
 
 evas_cserve2_slave_SOURCES = \
 evas_cserve2_slave.c \
@@ -102,14 +102,14 @@ evas_cserve2_utils.c
 evas_cserve2_slave_LDFLAGS = -export-dynamic
 
 evas_cserve2_slave_LDADD = \
-@EINA_LIBS@ \
+@EVAS_GENERAL_LIBS@ \
 @EFL_SHM_OPEN_LIBS@
 
 dummy_slave_SOURCES = \
 dummy_slave.c
 
 dummy_slave_LDADD = \
-@EINA_LIBS@ \
+@EVAS_GENERAL_LIBS@ \
 @EFL_SHM_OPEN_LIBS@
 
 endif

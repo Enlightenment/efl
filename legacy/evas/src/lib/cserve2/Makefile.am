@@ -4,7 +4,7 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/lib/include \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @EET_CFLAGS@ \
@@ -26,6 +26,6 @@ libevas_cserve2_utils_la_SOURCES = \
 evas_cs2_utils.h \
 evas_cs2_utils.c
 
-libevas_cserve2_la_LIBADD = @EINA_LIBS@ libevas_cserve2_utils.la
+libevas_cserve2_la_LIBADD = @EVAS_GENERAL_LIBS@ libevas_cserve2_utils.la
 
 endif

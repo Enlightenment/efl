@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @evas_engine_psl1ght_cflags@
 
@@ -29,7 +29,7 @@ if !EVAS_STATIC_BUILD_PSL1GHT
 pkgdir = $(libdir)/evas/modules/engines/psl1ght/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 module_la_SOURCES = $(PSL1GHT_SOURCES)
-module_la_LIBADD = @EINA_LIBS@ $(PSL1GHT_LIBADD) $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EVAS_GENERAL_LIBS@ $(PSL1GHT_LIBADD) $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 

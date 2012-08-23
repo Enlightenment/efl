@@ -6,7 +6,7 @@ AM_CPPFLAGS = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include \
 @PIXMAN_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @evas_image_loader_edb_cflags@ \
-@EINA_CFLAGS@
+@EVAS_GENERAL_CFLAGS@
 
 if BUILD_LOADER_EDB
 if !EVAS_STATIC_BUILD_EDB
@@ -16,7 +16,7 @@ pkg_LTLIBRARIES        = module.la
 
 module_la_SOURCES      = evas_image_save_edb.c
 
-module_la_LIBADD       = @EINA_LIBS@ @evas_image_loader_edb_libs@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD       = @EVAS_GENERAL_LIBS@ @evas_image_loader_edb_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 

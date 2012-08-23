@@ -185,7 +185,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @HARFBUZZ_CFLAGS@ \
@@ -226,7 +226,7 @@ engines/common/libevas_engine_common.la \
 @EET_LIBS@ \
 @FONTCONFIG_LIBS@ \
 @pthread_libs@ \
-@EINA_LIBS@ \
+@EVAS_GENERAL_LIBS@ \
 $(EVAS_STATIC_MODULE) \
 $(EVAS_STATIC_LIBADD) \
 @PIXMAN_LIBS@ \

@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/lib/cserve2 \
 -I$(top_srcdir)/src/bin \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @EVIL_CFLAGS@
 
 if BUILD_LOADER_ICO
@@ -18,7 +18,7 @@ pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = evas_image_load_ico.c
 
-module_la_LIBADD = @EINA_LIBS@ @EVIL_LIBS@
+module_la_LIBADD = @EVAS_GENERAL_LIBS@ @EVIL_LIBS@
 module_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 

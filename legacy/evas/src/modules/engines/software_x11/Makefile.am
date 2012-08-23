@@ -15,7 +15,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @evas_engine_software_xlib_cflags@
 
@@ -25,7 +25,7 @@ evas_xlib_buffer.c \
 evas_xlib_color.c \
 evas_xlib_main.c
 
-SOFTWARE_X11_LIBADD = @FREETYPE_LIBS@ @EINA_LIBS@ @evas_engine_software_xlib_libs@
+SOFTWARE_X11_LIBADD = @FREETYPE_LIBS@ @EVAS_GENERAL_LIBS@ @evas_engine_software_xlib_libs@
 
 endif
 
@@ -39,7 +39,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @evas_engine_software_xcb_cflags@
 
 SOFTWARE_X11_SOURCES += \
@@ -49,7 +49,7 @@ evas_xcb_buffer.c \
 evas_xcb_color.c \
 evas_xcb_main.c
 
-SOFTWARE_X11_LIBADD = @FREETYPE_LIBS@ @PIXMAN_LIBS@ @EINA_LIBS@ @evas_engine_software_xcb_libs@
+SOFTWARE_X11_LIBADD = @FREETYPE_LIBS@ @PIXMAN_LIBS@ @EVAS_GENERAL_LIBS@ @evas_engine_software_xcb_libs@
 
 endif
 

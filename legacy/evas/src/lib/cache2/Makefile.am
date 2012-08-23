@@ -11,7 +11,7 @@ AM_CPPFLAGS	     = -I. \
 		       @EVIL_CFLAGS@ \
 		       @FREETYPE_CFLAGS@ \
                        @PIXMAN_CFLAGS@ \
-		       @EINA_CFLAGS@ \
+		       @EVAS_GENERAL_CFLAGS@ \
                        @PIXMAN_CFLAGS@ \
                        @FRIBIDI_CFLAGS@
 

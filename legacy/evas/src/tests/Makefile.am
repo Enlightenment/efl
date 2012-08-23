@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @CHECK_CFLAGS@
 
 if EFL_ENABLE_TESTS
@@ -24,6 +24,6 @@ evas_test_callbacks.c \
 evas_tests_helpers.h \
 evas_suite.h
 
-evas_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libevas.la @EINA_LIBS@
+evas_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libevas.la @EVAS_GENERAL_LIBS@
 
 endif

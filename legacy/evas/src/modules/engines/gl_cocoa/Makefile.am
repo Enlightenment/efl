@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines/gl_common \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @GL_EET_CFLAGS@ \
 @FREETYPE_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
@@ -30,7 +30,7 @@ pkgdir = $(libdir)/evas/modules/engines/gl_cocoa/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = $(GL_COCOA_SOURCES)
-module_la_LIBADD = @EINA_LIBS@ @GL_EET_LIBS@ $(GL_COCOA_LIBADD) $(top_builddir)/src/lib/libevas.la @dlopen_libs@
+module_la_LIBADD = @EVAS_GENERAL_LIBS@ @GL_EET_LIBS@ $(GL_COCOA_LIBADD) $(top_builddir)/src/lib/libevas.la @dlopen_libs@
 module_la_LDFLAGS = -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 

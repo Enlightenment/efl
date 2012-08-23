@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @GL_EET_CFLAGS@ \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @FRIBIDI_CFLAGS@
 
 if BUILD_ENGINE_GL_COMMON
@@ -93,7 +93,7 @@ shader/yuy2_vert.h \
 shader/yuy2_nomul_frag.h \
 shader/yuy2_nomul_vert.h
 
-libevas_engine_gl_common_la_LIBADD = @EINA_LIBS@ @GL_EET_LIBS@ @evas_engine_gl_common_libs@ @dlopen_libs@
+libevas_engine_gl_common_la_LIBADD = @EVAS_GENERAL_LIBS@ @GL_EET_LIBS@ @evas_engine_gl_common_libs@ @dlopen_libs@
 endif
 
 EXTRA_DIST = \

@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/modules/engines/gl_common \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
-@EINA_CFLAGS@ \
+@EVAS_GENERAL_CFLAGS@ \
 @GL_EET_CFLAGS@ \
 @FRIBIDI_CFLAGS@ \
 @evas_engine_wayland_egl_cflags@
@@ -19,7 +19,7 @@ WAYLAND_EGL_SOURCES  = \
 evas_engine.c \
 evas_wl_main.c
 
-WAYLAND_EGL_LIBADD = @FREETYPE_LIBS@ @GL_EET_LIBS@ @EINA_LIBS@ @evas_engine_wayland_egl_libs@ @dlopen_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la
+WAYLAND_EGL_LIBADD = @FREETYPE_LIBS@ @GL_EET_LIBS@ @EVAS_GENERAL_LIBS@ @evas_engine_wayland_egl_libs@ @dlopen_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la
 
 includes_HEADERS = Evas_Engine_Wayland_Egl.h
 includesdir = $(includedir)/evas-@VMAJ@

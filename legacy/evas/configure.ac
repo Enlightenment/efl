@@ -1790,6 +1790,13 @@ fi
 AC_SUBST(EVAS_CFLAGS)
 AC_SUBST(EVAS_LIBS)
 
+# General CFLAGS
+
+EVAS_GENERAL_CFLAGS="${EINA_CFLAGS}"
+EVAS_GENERAL_LIBS="${EINA_LIBS}"
+AC_SUBST(EVAS_GENERAL_CFLAGS)
+AC_SUBST(EVAS_GENERAL_LIBS)
+
 #####################################################################
 ## Fill in flags
 

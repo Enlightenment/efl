@@ -14,7 +14,7 @@ AM_CPPFLAGS	     = -I. \
 		       @FREETYPE_CFLAGS@ @VALGRIND_CFLAGS@ \
                        @PIXMAN_CFLAGS@ \
 		       @EET_CFLAGS@ @pthread_cflags@ \
-		       @EINA_CFLAGS@ \
+		       @EVAS_GENERAL_CFLAGS@ \
                        @FRIBIDI_CFLAGS@ @HARFBUZZ_CFLAGS@ \
                        @PIXMAN_CFLAGS@
 
