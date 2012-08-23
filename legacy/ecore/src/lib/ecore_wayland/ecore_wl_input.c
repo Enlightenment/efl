@@ -510,41 +510,69 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    Ecore_Wl_Window *win;
    unsigned int code, num;
    const xkb_keysym_t *syms;
-   xkb_keysym_t sym;
-   char string[32], key[32], keyname[32];
+   xkb_keysym_t sym = XKB_KEY_NoSymbol;
+   xkb_mod_mask_t mask;
+   char string[32], key[32], keyname[32];// compose[32];
    Ecore_Event_Key *e;
    struct itimerspec ts;
+   int len = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
    input->display->serial = serial;
+
+   /* xkb rules reflect X broken keycodes, so offset by 8 */
    code = keycode + 8;
 
    win = input->keyboard_focus;
    if ((!win) || (win->keyboard_device != input) || (!input->xkb.state)) 
      return;
 
+   mask = xkb_state_serialize_mods(input->xkb.state, 
+                                   XKB_STATE_DEPRESSED | XKB_STATE_LATCHED);
+
+   input->modifiers = 0;
+
+   /* The Ecore_Event_Modifiers don't quite match the X mask bits */
+   if (mask & input->xkb.control_mask)
+     input->modifiers |= MOD_CONTROL_MASK;
+   if (mask & input->xkb.alt_mask)
+     input->modifiers |= MOD_ALT_MASK;
+   if (mask & input->xkb.shift_mask)
+     input->modifiers |= MOD_SHIFT_MASK;
+
    num = xkb_key_get_syms(input->xkb.state, code, &syms);
-
-   xkb_state_update_key(input->xkb.state, code, 
-                        (state ? XKB_KEY_DOWN : XKB_KEY_UP));
-
    if (num == 1) sym = syms[0];
-   else sym = XKB_KEY_NoSymbol;
 
    memset(key, 0, sizeof(key));
-   memset(keyname, 0, sizeof(keyname));
-   memset(string, 0, sizeof(string));
-
-   if (xkb_keysym_to_utf8(sym, string, 32) <= 0)
-     string[0] = '\0';
-
    xkb_keysym_get_name(sym, key, sizeof(key));
-   xkb_keysym_get_name(sym, keyname, sizeof(keyname));
 
-   e = malloc(sizeof(Ecore_Event_Key) + strlen(keyname) + strlen(key) +
-              strlen(string) + 3);
+   memset(keyname, 0, sizeof(keyname));
+   xkb_keysym_get_name(sym, keyname, sizeof(keyname));
+   if (keyname[0] == '\0')
+     snprintf(keyname, sizeof(keyname), "Keycode-%i", code);
+
+   memset(string, 0, sizeof(string));
+   if (xkb_keysym_to_utf8(sym, string, 32) <= 0)
+     {
+        /* FIXME: NB: We may need to add more checks here for other 
+         * non-printable characters */
+        if ((sym == XKB_KEY_Tab) || (sym == XKB_KEY_ISO_Left_Tab)) 
+          string[len++] = '\t';
+     }
+
+   /* FIXME: NB: Start hacking on compose key support */
+   /* memset(compose, 0, sizeof(compose)); */
+   /* if (sym == XKB_KEY_Multi_key) */
+   /*   { */
+   /*      if (xkb_keysym_to_utf8(sym, compose, 32) <= 0) */
+   /*        compose[0] = '\0'; */
+   /*   } */
+
+   e = malloc(sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
+              ((string[0] != '\0') ? strlen(string) : 0) + 3);
+   if (!e) return;
 
    e->keyname = (char *)(e + 1);
    e->key = e->keyname + strlen(keyname) + 1;
@@ -553,8 +581,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
 
    strcpy((char *)e->keyname, keyname);
    strcpy((char *)e->key, key);
-   if (strlen (string))
-     strcpy((char *)e->string, string);
+   if (strlen(string)) strcpy((char *)e->string, string);
 
    e->window = win->id;
    e->event_window = win->id;
@@ -603,30 +630,12 @@ static void
 _ecore_wl_input_cb_keyboard_modifiers(void *data, struct wl_keyboard *keyboard __UNUSED__, unsigned int serial __UNUSED__, unsigned int depressed, unsigned int latched, unsigned int locked, unsigned int group)
 {
    Ecore_Wl_Input *input;
-   xkb_mod_mask_t mask = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
-   if (input->xkb.state)
-     {
-        xkb_state_update_mask(input->xkb.state, depressed, latched, 
-                              locked, 0, 0, group);
-
-        mask = 
-          xkb_state_serialize_mods(input->xkb.state, 
-                                   (XKB_STATE_DEPRESSED | XKB_STATE_LATCHED));
-     }
-
-   input->modifiers = 0;
-
-   /* The Ecore_Event_Modifiers don't quite match the X mask bits */
-   if (mask & input->xkb.control_mask)
-     input->modifiers |= MOD_CONTROL_MASK;
-   if (mask & input->xkb.alt_mask)
-     input->modifiers |= MOD_ALT_MASK;
-   if (mask & input->xkb.shift_mask)
-     input->modifiers |= MOD_SHIFT_MASK;
+   xkb_state_update_mask(input->xkb.state, depressed, latched, 
+                         locked, 0, 0, group);
 }
 
 static Eina_Bool 
@@ -1073,7 +1082,6 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    ev->y = input->sy;
    /* ev->root.x = input->sx; */
    /* ev->root.y = input->sy; */
-   /* printf("Input Modifiers: %d\n", input->modifiers); */
    ev->modifiers = input->modifiers;
 
    /* FIXME: Need to get these from wayland somehow */
