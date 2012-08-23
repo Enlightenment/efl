@@ -6133,16 +6133,10 @@ evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur)
 
    i = cur->pos;
 
-   /* Skip the first one. This ensures we don't point to the nul, and also
-    * we just don't care about it anyway. */
-   if (i > 0) i--;
-
    for ( ; i > 0 ; i--)
      {
-        if (BREAK_AFTER(i))
+        if (BREAK_AFTER(i - 1))
           {
-             /* Advance to the current char */
-             i++;
              break;
           }
      }
@@ -6194,7 +6188,7 @@ evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
 #ifdef HAVE_LINEBREAK
    free(breaks);
 #endif
-   return EINA_TRUE;;
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool

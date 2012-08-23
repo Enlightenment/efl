@@ -975,3 +975,9 @@
 2012-08-21  Sung W. Park (sung_)
 
         * Fix evas_gl current_context update issue when evas_gl context is deleted.
+
+2012-08-23  Tom Hacohen (TAsn)
+
+	* Textblock: Fixed bug with 1 char word separators at the start of the
+	text when going to the start of the word (e.g: "=test").
+

@@ -590,6 +590,12 @@ START_TEST(evas_textblock_cursor)
         fail_if(18 != evas_textblock_cursor_pos_get(cur));
         evas_textblock_cursor_word_end(cur);
         fail_if(18 != evas_textblock_cursor_pos_get(cur));
+
+        /* Bug with 1 char word separators at paragraph start. */
+        evas_object_textblock_text_markup_set(tb, "=test");
+        evas_textblock_cursor_pos_set(cur, 4);
+        evas_textblock_cursor_word_start(cur);
+        fail_if(1 != evas_textblock_cursor_pos_get(cur));
      }
 
    END_TB_TEST();
