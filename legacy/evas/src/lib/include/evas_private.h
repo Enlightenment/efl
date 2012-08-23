@@ -533,6 +533,7 @@ struct _Evas_Object
          unsigned char      r, g, b, a;
       } color;
       Eina_Bool             usemap : 1;
+      Eina_Bool             valid_map : 1;
       Eina_Bool             visible : 1;
       Eina_Bool             have_clipees : 1;
       Eina_Bool             anti_alias : 1;

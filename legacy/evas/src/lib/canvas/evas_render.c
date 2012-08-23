@@ -917,6 +917,11 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              evas_object_change_reset(obj);
           }
 
+        /* mark the old map as invalid, so later we don't reuse it as a
+         * cache. */
+        if (changed && obj->prev.map)
+           obj->prev.valid_map = EINA_FALSE;
+
         // clear surface before re-render
         if ((changed) && (obj->cur.map->surface))
           {
@@ -988,6 +993,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              obj->cur.map->surface = e->engine.func->image_dirty_region
                 (e->engine.data.output, obj->cur.map->surface,
                  0, 0, obj->cur.map->surface_w, obj->cur.map->surface_h);
+             obj->cur.valid_map = EINA_TRUE;
           }
         e->engine.func->context_clip_unset(e->engine.data.output,
                                            context);
