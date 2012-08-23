@@ -378,21 +378,18 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
    return EINA_FALSE;
 }
 
-EAPI Eina_Bool
-eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
+static inline Eina_Bool
+_eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list p_list)
 {
    Eina_Bool prev_error;
    Eina_Bool ret = EINA_TRUE;
    Eo_Op op = EO_NOOP;
    Eo_Kls_Itr prev_state;
-   va_list p_list;
 
    EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
 
    prev_error = obj->do_error;
    _eo_ref(obj);
-
-   va_start(p_list, op_type);
 
    op = va_arg(p_list, Eo_Op);
    while (op)
@@ -409,14 +406,27 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
         _eo_kls_itr_end(&obj->mro_itr, &prev_state);
      }
 
-   va_end(p_list);
-
    _eo_unref(obj);
 
    if (obj->do_error)
       ret = EINA_FALSE;
 
    obj->do_error = prev_error;
+
+   return ret;
+}
+
+EAPI Eina_Bool
+eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
+{
+   Eina_Bool ret = EINA_TRUE;
+   va_list p_list;
+
+   va_start(p_list, op_type);
+
+   ret = _eo_dov_internal(obj, op_type, p_list);
+
+   va_end(p_list);
 
    return ret;
 }
@@ -1095,7 +1105,7 @@ eo_parent_set(Eo *obj, const Eo *parent)
 }
 
 EAPI Eo *
-eo_add(const Eo_Class *klass, Eo *parent)
+eo_add_internal(const Eo_Class *klass, Eo *parent, ...)
 {
    Eina_Bool do_err;
    EO_MAGIC_RETURN_VAL(klass, EO_CLASS_EINA_MAGIC, NULL);
@@ -1120,7 +1130,14 @@ eo_add(const Eo_Class *klass, Eo *parent)
    _eo_condtor_reset(obj);
 
    _eo_ref(obj);
-   do_err = !eo_do(obj, eo_constructor());
+
+   /* Run the relevant do stuff. */
+     {
+        va_list p_list;
+        va_start(p_list, parent);
+        do_err = !_eo_dov_internal(obj, EO_OP_TYPE_REGULAR, p_list);
+        va_end(p_list);
+     }
 
    if (EINA_UNLIKELY(do_err))
      {
@@ -1133,6 +1150,7 @@ eo_add(const Eo_Class *klass, Eo *parent)
         ERR("Object of class '%s' - Not all of the object constructors have been executed.", klass->desc->name);
         goto fail;
      }
+
    _eo_unref(obj);
 
    return obj;

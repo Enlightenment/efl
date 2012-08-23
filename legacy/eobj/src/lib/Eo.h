@@ -553,12 +553,46 @@ EAPI void eo_error_set_internal(const Eo *obj, const char *file, int line);
 /* @endcond */
 
 /**
+ * @def eo_add
+ * @brief Create a new object with the default constructor.
+ * @param klass the class of the object to create.
+ * @param parent the parent to set to the object.
+ * @param ... The ops to run.
+ * @return An handle to the new object on success, NULL otherwise.
+ */
+#define eo_add(klass, parent, ...) \
+   ({ \
+    (void) klass; \
+    eo_add_internal(klass, parent, eo_constructor(), ## __VA_ARGS__, EO_NOOP); \
+    })
+
+/**
+ * @def eo_add_custom
+ * @brief Create a new object with a custom constructor.
+ * @param klass the class of the object to create.
+ * @param parent the parent to set to the object.
+ * @param ... The ops to run. With the constructor being first.
+ * @return An handle to the new object on success, NULL otherwise.
+ */
+#define eo_add_custom(klass, parent, ...) \
+   ({ \
+    (void) klass; \
+    eo_add_internal(klass, parent, ## __VA_ARGS__, EO_NOOP); \
+    })
+
+/**
  * @brief Create a new object.
  * @param klass the class of the object to create.
  * @param parent the parent to set to the object.
+ * @param ... The ops to run. With the constructor being first.
  * @return An handle to the new object on success, NULL otherwise.
+ *
+ * Use the helper macros, don't pass the parameters manually.
+ * Use #eo_add or #eo_add_custom instead of this function.
+ *
+ * @see #eo_add
  */
-EAPI Eo *eo_add(const Eo_Class *klass, Eo *parent);
+EAPI Eo *eo_add_internal(const Eo_Class *klass, Eo *parent, ...);
 
 /**
  * @brief Get the parent of an object

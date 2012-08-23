@@ -695,6 +695,32 @@ START_TEST(eo_multiple_do)
 }
 END_TEST
 
+START_TEST(eo_add_do_and_custom)
+{
+   Simple_Public_Data *pd = NULL;
+   Eo *obj = NULL;
+   eo_init();
+
+   obj = eo_add_custom(SIMPLE_CLASS, NULL, eo_constructor());
+   fail_if(!obj);
+   eo_unref(obj);
+
+   obj = eo_add(SIMPLE_CLASS, NULL, simple_a_set(7));
+   fail_if(!obj);
+   pd = eo_data_get(obj, SIMPLE_CLASS);
+   fail_if(pd->a != 7);
+   eo_unref(obj);
+
+   obj = eo_add_custom(SIMPLE_CLASS, NULL, eo_constructor(), simple_a_set(7));
+   fail_if(!obj);
+   pd = eo_data_get(obj, SIMPLE_CLASS);
+   fail_if(pd->a != 7);
+   eo_unref(obj);
+
+   eo_shutdown();
+}
+END_TEST
+
 void eo_test_general(TCase *tc)
 {
    tcase_add_test(tc, eo_generic_data);
@@ -708,4 +734,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_composite_tests);
    tcase_add_test(tc, eo_isa_tests);
    tcase_add_test(tc, eo_multiple_do);
+   tcase_add_test(tc, eo_add_do_and_custom);
 }
