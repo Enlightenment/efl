@@ -611,3 +611,7 @@
 2012-08-09  Cedric Bail
 
 	* Don't copy string around for nothing.
+
+2012-08-24  Cedric Bail
+
+	* Add eet_connection_empty.

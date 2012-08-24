@@ -170,6 +170,12 @@ _eet_connection_raw_send(Eet_Connection *conn,
 }
 
 EAPI Eina_Bool
+eet_connection_empty(Eet_Connection *conn)
+{
+   return conn->size ? EINA_FALSE : EINA_TRUE;
+}
+
+EAPI Eina_Bool
 eet_connection_send(Eet_Connection      *conn,
                     Eet_Data_Descriptor *edd,
                     const void          *data_in,

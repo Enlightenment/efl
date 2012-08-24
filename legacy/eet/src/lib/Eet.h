@@ -4192,6 +4192,20 @@ eet_connection_received(Eet_Connection *conn,
                         size_t size);
 
 /**
+ * Tell if the Eet_Connection as received some partial data.
+ * @param conn Connection handler to request.
+ * @return EINA_TRUE if there is some data pending inside, EINA_FALSE otherwise.
+ *
+ * Eet_Connection buffer data until the received data can be unserialized correctly. This
+ * function let you know if there is some data inside that buffer waiting for more data to
+ * be received before being processed.
+ *
+ * @since 1.7
+ * @ingroup Eet_Connection_Group
+ */
+EAPI Eina_Bool eet_connection_empty(Eet_Connection *conn);
+
+/**
  * Convert a complex structure and prepare it to be send.
  * @param conn Connection handler to track.
  * @param edd The data descriptor to use when encoding.

@@ -5,6 +5,7 @@ Changes since Eet 1.6.0:
 
 Additions:
     * Add code to detect overrun and underrun during Eet Data Descriptor setup.
+    * Add eet_connection_empty.
 
 Fixes:
     * Force destruction of all pending file when shuting down eet.
