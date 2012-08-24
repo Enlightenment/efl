@@ -188,16 +188,29 @@ edje_shutdown(void)
 }
 
 /* Private Routines */
-static Eina_Bool
-_class_member_free(const Eina_Hash *hash __UNUSED__,
-                   const void *key,
-                   void *data,
-                   void *fdata)
+static void
+_class_member_free(Eina_Hash *hash,
+                   void (*_edje_class_member_direct_del)(const char *class, void *l))
 {
-   void (*_edje_class_member_direct_del)(const char *class, void *l) = fdata;
+   const char *color_class;
+   Eina_Iterator *it;
+   Eina_List *class_kill = NULL;
 
-   _edje_class_member_direct_del(key, data);
-   return EINA_TRUE;
+   if (hash)
+     {
+        it = eina_hash_iterator_key_new(hash);
+        EINA_ITERATOR_FOREACH(it, color_class)
+          class_kill = eina_list_append(class_kill, color_class);
+        eina_iterator_free(it);
+        EINA_LIST_FREE(class_kill, color_class)
+          {
+             void *l;
+
+             l = eina_hash_find(hash, color_class);
+             _edje_class_member_direct_del(color_class, l);
+          }
+        eina_hash_free(hash);
+     }
 }
 
 void
@@ -254,16 +267,8 @@ _edje_del(Edje *ed)
         free(cb);
      }
 
-   if (ed->members.text_class)
-     {
-        eina_hash_foreach(ed->members.text_class, _class_member_free, _edje_text_class_member_direct_del);
-        eina_hash_free(ed->members.text_class);
-     }
-   if (ed->members.color_class)
-     {
-        eina_hash_foreach(ed->members.color_class, _class_member_free, _edje_color_class_member_direct_del);
-        eina_hash_free(ed->members.color_class);
-     }
+   _class_member_free(ed->members.text_class, _edje_text_class_member_direct_del);
+   _class_member_free(ed->members.color_class, _edje_color_class_member_direct_del);
    free(ed);
 }
 

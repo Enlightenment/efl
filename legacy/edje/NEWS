@@ -32,6 +32,7 @@ Fixes:
     * Reduce potential reentrant issue when using edje_object_signal_emit.
     * Call edje_object_message_signal_process also on GROUP part Edje object.
     * Remove memory leak when alias are present in the edj file.
+    * Properly destroy color_class and text_class on an Edje_Object.
 
 Edje 1.2.0
 
