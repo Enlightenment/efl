@@ -1595,6 +1595,7 @@ EAPI void                            ecore_x_netwm_ping_send(Ecore_X_Window win)
 EAPI void                            ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial);
 EAPI void                            ecore_x_netwm_state_request_send(Ecore_X_Window win, Ecore_X_Window root, Ecore_X_Window_State s1, Ecore_X_Window_State s2, Eina_Bool set);
 EAPI void                            ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsigned int desktop);
+EAPI void                            ecore_x_netwm_moveresize_request_send(Ecore_X_Window win, Ecore_X_Window root, unsigned int desktop);
 
 EAPI void                            ecore_x_e_init(void);
 EAPI void                            ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
