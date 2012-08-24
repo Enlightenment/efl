@@ -1,6 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = @EIO_CFLAGS@ \
+@EFL_PTHREAD_CFLAGS@ \
 @EFL_EIO_BUILD@
 
 lib_LTLIBRARIES = libeio.la
@@ -27,7 +28,7 @@ libeio_la_SOURCES += eio_monitor_win32.c
 endif
 endif
 
-libeio_la_LIBADD = @EIO_LIBS@
+libeio_la_LIBADD = @EIO_LIBS@ @EFL_PTHREAD_LIBS@
 libeio_la_LDFLAGS  = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 EXTRA_DIST = eio_private.h
