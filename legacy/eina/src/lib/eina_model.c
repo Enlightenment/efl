@@ -2769,7 +2769,7 @@ _eina_model_interface_children_inarray_setup(Eina_Model *model)
    DBG("setup interface children (inarray) at %p model %p (%s)",
        priv, model, model->desc->cache.types[0]->name);
 
-   eina_inarray_setup(priv, sizeof(Eina_Model *), 0);
+   eina_inarray_step_set(priv, sizeof(Eina_Inarray), sizeof(Eina_Model *), 0);
    return EINA_TRUE;
 }
 

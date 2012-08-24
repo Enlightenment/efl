@@ -76,7 +76,7 @@
  * to ask eina to use a step of size 4 because that's how many elements we'll be
  * putting on the array:
  * @until _step_set
- * @note Strictly speaking the reason to call eina_inarray_setup() is not
+ * @note Strictly speaking the reason to call eina_inarray_step_set() is not
  * because we're storing different type, but rather because our types have
  * different sizes. Eina inline arrays don't actually know anything about types,
  * they only deal in blocks of memory of a given size.
