@@ -5,9 +5,9 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 
 #define WEIGHT evas_object_size_hint_weight_set
-#define ALIGN evas_object_size_hint_align_set
+#define ALIGN_ evas_object_size_hint_align_set
 #define EXPAND(X) WEIGHT((X), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND)
-#define FILL(X) ALIGN((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
+#define FILL(X) ALIGN_((X), EVAS_HINT_FILL, EVAS_HINT_FILL)
 
 #define BUTTON_TEXT_SET(BT, TEXT) \
    elm_object_text_set((BT), (TEXT)); \
