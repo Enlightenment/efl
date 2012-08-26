@@ -615,3 +615,7 @@
 2012-08-24  Cedric Bail
 
 	* Add eet_connection_empty.
+
+2012-08-26  Cedric Bail
+
+	* Correctly initialize dictionary correctly.

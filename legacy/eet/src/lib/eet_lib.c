@@ -950,7 +950,7 @@ eet_internal_read2(Eet_File *ef)
                            ef))
           return NULL;
 
-        ef->ed = eet_dictionary_calloc(1);
+        ef->ed = eet_dictionary_add();
         if (eet_test_close(!ef->ed, ef))
           return NULL;
 
