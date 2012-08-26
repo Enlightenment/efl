@@ -1995,7 +1995,8 @@ _ecore_xcb_event_handle_screensaver_notify(xcb_generic_event_t *event)
 
    e->win = ev->window;
    e->on = EINA_FALSE;
-   if (ev->state == XCB_SCREENSAVER_STATE_ON) e->on = EINA_TRUE;
+   if ((ev->state == XCB_SCREENSAVER_STATE_ON) ||
+       (ev->state == XCB_SCREENSAVER_STATE_CYCLE)) e->on = EINA_TRUE;
    e->time = ev->time;
 
    ecore_event_add(ECORE_X_EVENT_SCREENSAVER_NOTIFY, e, NULL, NULL);

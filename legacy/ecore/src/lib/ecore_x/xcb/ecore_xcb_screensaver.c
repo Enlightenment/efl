@@ -324,7 +324,9 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
    root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    if (on)
      xcb_screensaver_select_input(_ecore_xcb_conn, root,
-                                  XCB_SCREENSAVER_EVENT_NOTIFY_MASK);
+                                  XCB_SCREENSAVER_EVENT_NOTIFY_MASK |
+                                  XCB_SCREENSAVER_EVENT_CYCLE_MASK
+                                 );
    else
      xcb_screensaver_select_input(_ecore_xcb_conn, root, 0);
 #endif
@@ -336,3 +338,34 @@ ecore_x_screensaver_event_available_get(void)
    return _screensaver_avail;
 }
 
+EAPI Eina_Bool
+ecore_x_screensaver_custom_blanking_enable(void)
+{
+#ifdef ECORE_XCB_SCREENSAVER
+   uint32_t mask_list[9];
+   
+   xcb_screensaver_set_attributes_checked
+     (_ecore_xcb_conn,
+         ((xcb_screen_t *)_ecore_xcb_screen)->root,
+         -9999, -9999, 1, 1, 0,
+         XCB_WINDOW_CLASS_INPUT_ONLY.
+         XCB_COPY_FROM_PARENT, XCB_COPY_FROM_PARENT,
+         0, mask_list);
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+EAPI Eina_Bool
+ecore_x_screensaver_custom_blanking_disable(void)
+{
+#ifdef ECORE_XCB_SCREENSAVER
+   xcb_screensaver_unset_attributes_checked
+     (_ecore_xcb_conn,
+         ((xcb_screen_t *)_ecore_xcb_screen)->root);
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
+}

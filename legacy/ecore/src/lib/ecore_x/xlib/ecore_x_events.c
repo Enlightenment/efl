@@ -2007,7 +2007,8 @@ _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
      return;
 
    e->win = screensaver_event->window;
-   if (screensaver_event->state == ScreenSaverOn)
+   if ((screensaver_event->state == ScreenSaverOn) ||
+       (screensaver_event->state == ScreenSaverCycle))
      e->on = EINA_TRUE;
    else
      e->on = EINA_FALSE;

@@ -162,12 +162,43 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    root = DefaultRootWindow(_ecore_x_disp);
    if (on)
-     XScreenSaverSelectInput(_ecore_x_disp, root, ScreenSaverNotifyMask);
+     XScreenSaverSelectInput(_ecore_x_disp, root,
+                             ScreenSaverNotifyMask | ScreenSaverCycle);
    else
      XScreenSaverSelectInput(_ecore_x_disp, root, 0);
 #else
    return;
    on = EINA_FALSE;
+#endif /* ifdef ECORE_XSS */
+}
+
+
+EAPI Eina_Bool
+ecore_x_screensaver_custom_blanking_enable(void)
+{
+#ifdef ECORE_XSS
+   XSetWindowAttributes attr;
+   
+   XScreenSaverSetAttributes(_ecore_x_disp,
+                             DefaultRootWindow(_ecore_x_disp),
+                             -9999, -9999, 1, 1, 0,
+                             CopyFromParent, InputOnly, CopyFromParent,
+                             0, &attr);
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif /* ifdef ECORE_XSS */
+}
+
+EAPI Eina_Bool
+ecore_x_screensaver_custom_blanking_disable(void)
+{
+#ifdef ECORE_XSS
+   XScreenSaverUnsetAttributes(_ecore_x_disp,
+                               DefaultRootWindow(_ecore_x_disp));
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
 #endif /* ifdef ECORE_XSS */
 }
 

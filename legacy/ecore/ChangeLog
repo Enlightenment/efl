@@ -865,3 +865,8 @@
 2012-08-18  Carsten Haitzler (The Rasterman)
 
         * Add xkb change events patch from trac.
+
+2012-08-27  Carsten Haitzler (The Rasterman)
+
+        * Add ecore_x custom blanker screensaver enable/disable - cant
+          do e17 properly without so add in even in freeze.
