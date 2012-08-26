@@ -41,6 +41,7 @@ include(EFLCheck)
 add_subdirectory(src/lib)
 
 add_subdirectory(src/tests EXCLUDE_FROM_ALL)
+add_subdirectory(src/benchmarks EXCLUDE_FROM_ALL)
 add_subdirectory(src/examples)
 
 add_subdirectory(doc)
