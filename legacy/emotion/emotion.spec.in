@@ -66,7 +66,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files devel
 %defattr(-, root, root)
 %doc doc/html
-%{_includedir}/emotion-0/*.h
+%{_includedir}/emotion-1/*.h
 %{_libdir}/libemotion.a
 %{_libdir}/libemotion.la
 %{_libdir}/libemotion.so
