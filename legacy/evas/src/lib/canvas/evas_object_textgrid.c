@@ -721,9 +721,9 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
-        if (obj->cur.cache.clip.dirty)
-          evas_object_clip_recalc(obj->cur.clipper);
-        obj->cur.clipper->func->render_pre(obj->cur.clipper);
+	if (obj->cur.cache.clip.dirty)
+	  evas_object_clip_recalc(obj->cur.clipper);
+	obj->cur.clipper->func->render_pre(obj->cur.clipper);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -731,8 +731,8 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
    was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
-        evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
-        goto done;
+	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
+	goto done;
      }
    if (obj->changed_map)
      {
@@ -747,8 +747,8 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
    /* if we restacked (layer or just within a layer) and dont clip anyone */
    if (obj->restack)
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	goto done;
      }
    /* if it changed color */
    if ((obj->cur.color.r != obj->prev.color.r) ||
@@ -756,8 +756,8 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	goto done;
      }
    /* if it changed geometry - and obviously not visibility or color */
    /* calculate differences since we have a constant color fill */
@@ -767,18 +767,18 @@ evas_object_textgrid_render_pre(Evas_Object *obj)
        (obj->cur.geometry.w != obj->prev.geometry.w) ||
        (obj->cur.geometry.h != obj->prev.geometry.h))
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	goto done;
      }
    if (obj->cur.render_op != obj->prev.render_op)
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	goto done;
      }
    if (obj->cur.scale != obj->prev.scale)
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
-        goto done;
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	goto done;
      }
 
    if (o->changed)

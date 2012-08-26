@@ -39,27 +39,27 @@ struct _Evas_Object_Grid_Accessor
    const Evas_Object *grid;
 };
 
-#define EVAS_OBJECT_GRID_DATA_GET(o, ptr)                        \
+#define EVAS_OBJECT_GRID_DATA_GET(o, ptr)			\
   Evas_Object_Grid_Data *ptr = evas_object_smart_data_get(o)
 
-#define EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, ptr)              \
-  EVAS_OBJECT_GRID_DATA_GET(o, ptr);                             \
-  if (!ptr)                                                      \
-    {                                                            \
-      CRIT("no widget data for object %p (%s)",                  \
-           o, evas_object_type_get(o));                          \
-       abort();                                                  \
-       return;                                                   \
+#define EVAS_OBJECT_GRID_DATA_GET_OR_RETURN(o, ptr)			\
+  EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
+  if (!ptr)								\
+    {									\
+      CRIT("no widget data for object %p (%s)",				\
+	   o, evas_object_type_get(o));					\
+       abort();								\
+       return;								\
     }
 
-#define EVAS_OBJECT_GRID_DATA_GET_OR_RETURN_VAL(o, ptr, val)     \
-  EVAS_OBJECT_GRID_DATA_GET(o, ptr);                             \
-  if (!ptr)                                                      \
-    {                                                            \
-       CRIT("No widget data for object %p (%s)",                 \
-               o, evas_object_type_get(o));                      \
-       abort();                                                  \
-       return val;                                               \
+#define EVAS_OBJECT_GRID_DATA_GET_OR_RETURN_VAL(o, ptr, val)		\
+  EVAS_OBJECT_GRID_DATA_GET(o, ptr);					\
+  if (!ptr)								\
+    {									\
+       CRIT("No widget data for object %p (%s)",	                \
+	       o, evas_object_type_get(o));				\
+       abort();								\
+       return val;							\
     }
 
 static const char EVAS_OBJECT_GRID_OPTION_KEY[] = "|EvGd";
@@ -152,8 +152,8 @@ _evas_object_grid_child_disconnect(Evas_Object *o, Evas_Object *child)
 }
 
 EVAS_SMART_SUBCLASS_NEW("Evas_Object_Grid", _evas_object_grid,
-                        Evas_Smart_Class, Evas_Smart_Class,
-                        evas_object_smart_clipped_class_get, NULL)
+			Evas_Smart_Class, Evas_Smart_Class,
+			evas_object_smart_clipped_class_get, NULL)
 
 static void
 _evas_object_grid_smart_add(Evas_Object *o)
@@ -175,11 +175,11 @@ _evas_object_grid_smart_del(Evas_Object *o)
    l = priv->children;
    while (l)
      {
-        Evas_Object_Grid_Option *opt = l->data;
-        _evas_object_grid_child_disconnect(o, opt->obj);
-        _evas_object_grid_option_del(opt->obj);
-        free(opt);
-        l = eina_list_remove_list(l, l);
+	Evas_Object_Grid_Option *opt = l->data;
+	_evas_object_grid_child_disconnect(o, opt->obj);
+	_evas_object_grid_option_del(opt->obj);
+	free(opt);
+	l = eina_list_remove_list(l, l);
      }
    _evas_object_grid_parent_sc->del(o);
 }
@@ -328,15 +328,15 @@ evas_object_grid_unpack(Evas_Object *o, Evas_Object *child)
 
    if (o != evas_object_smart_parent_get(child))
      {
-        ERR("cannot unpack child from incorrect grid!");
-        return EINA_FALSE;
+	ERR("cannot unpack child from incorrect grid!");
+	return EINA_FALSE;
      }
 
    opt = _evas_object_grid_option_del(child);
    if (!opt)
      {
-        ERR("cannot unpack child with no packing option!");
-        return EINA_FALSE;
+	ERR("cannot unpack child with no packing option!");
+	return EINA_FALSE;
      }
 
    _evas_object_grid_child_disconnect(o, child);
@@ -355,12 +355,12 @@ evas_object_grid_clear(Evas_Object *o, Eina_Bool clear)
 
    EINA_LIST_FREE(priv->children, opt)
      {
-        _evas_object_grid_child_disconnect(o, opt->obj);
-        _evas_object_grid_option_del(opt->obj);
-        evas_object_smart_member_del(opt->obj);
-        if (clear)
-          evas_object_del(opt->obj);
-        free(opt);
+	_evas_object_grid_child_disconnect(o, opt->obj);
+	_evas_object_grid_option_del(opt->obj);
+	evas_object_smart_member_del(opt->obj);
+	if (clear)
+	  evas_object_del(opt->obj);
+	free(opt);
      }
 }
 
