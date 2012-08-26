@@ -981,3 +981,7 @@
 	* Textblock: Fixed bug with 1 char word separators at the start of the
 	text when going to the start of the word (e.g: "=test").
 
+2012-08-26  Jiyoun Park(jypark)
+
+	* Jpeg loader: fix orientation didn't work if jpeg file format is JFIF.
+	Add code deal with JFIF file format.

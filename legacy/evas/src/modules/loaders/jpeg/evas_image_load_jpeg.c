@@ -25,6 +25,9 @@ struct _JPEG_error_mgr
 static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
+static int _get_orientation_app0(char *app0_head, size_t remain_length);
+static int _get_orientation_app1(char *app1_head, size_t remain_length);
+static int _get_orientation(void *map, size_t length);
 
 static Eina_Bool evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
                                                          void *map,
@@ -161,8 +164,11 @@ _evas_jpeg_membuf_src(j_decompress_ptr cinfo,
    return 0;
 }
 
-/*! Magic number for EXIF header & App1*/
+/*! Magic number for EXIF header, App0, App1*/
 static const unsigned char ExifHeader[] = {0x45, 0x78, 0x69, 0x66, 0x00, 0x00};
+static const unsigned char JfifHeader[] = {0x4A, 0x46, 0x49, 0x46, 0x00};
+static const unsigned char JfxxHeader[] = {0x4A, 0x46, 0x58, 0x58, 0x00};
+static const unsigned char App0[] = {0xff, 0xe0};
 static const unsigned char App1[] = {0xff, 0xe1};
 typedef enum {
      EXIF_BYTE_ALIGN_II,
@@ -170,7 +176,48 @@ typedef enum {
 } ExifByteAlign;
 
 static int
-_get_orientation(void *map, size_t length)
+_get_orientation_app0(char *app0_head, size_t remain_length)
+{
+   unsigned int length = 0;
+   unsigned int w = 0, h = 0;
+   unsigned int format = 0;
+   unsigned int data_size = 0;
+   char *p;
+
+   /* p is appn's start pointer excluding app0 marker */
+   p = app0_head + 2;
+
+
+   length = ((*p << 8) + *(p + 1));
+
+   /* JFIF segment format */
+   if (!memcmp(p + 2, JfifHeader, sizeof (JfifHeader)))
+     {
+        format = 3;
+        w = *(p + 14);
+        h = *(p + 15);
+     }
+   else if (!memcmp(p + 2, JfxxHeader, sizeof (JfxxHeader)))
+     {
+        if (*(p + 7) == 0x11)
+          format = 1;
+        else
+          format = 3;
+        w = *(p + 8);
+        h = *(p + 9);
+     }
+
+     data_size = format * w * h;
+     p += length + data_size;
+
+     if (!memcmp(p, App1, sizeof (App1)))
+       return _get_orientation_app1(p, remain_length - (2 + length + data_size));
+     else
+       return 0;
+}
+
+static int
+_get_orientation_app1(char *app1_head, size_t remain_length)
 {
    char *buf;
    char orientation[2];
@@ -179,39 +226,33 @@ _get_orientation(void *map, size_t length)
    unsigned int i, j;
    int direction;
 
-   /* open file and get 22 byte frome file */
-   if (!map) return 0;
-   /* 1. read 22byte */
-   if (length < 22) return 0;
-   buf = (char *)map;
+   /* start of app1 frame */
+   buf = app1_head;
 
-   /* 2. check 2,3 bypte with APP1(0xFFE1) */
-   if (memcmp(buf + 2, App1, sizeof (App1))) return 0;
+   /* 1. check 4~9bype with Exif Header (0x45786966 0000) */
+   if (memcmp(buf + 4, ExifHeader, sizeof (ExifHeader))) return 0;
 
-   /* 3. check 6~11bype with Exif Header (0x45786966 0000) */
-   if (memcmp(buf + 6, ExifHeader, sizeof (ExifHeader))) return 0;
-
-   /* 4. get 12&13 byte  get info of "II(0x4949)" or "MM(0x4d4d)" */
-   /* 5. get [20]&[21] get directory entry # */
-   if (!strncmp(buf + 12, "MM", 2))
+   /* 2. get 10&11 byte  get info of "II(0x4949)" or "MM(0x4d4d)" */
+   /* 3. get [18]&[19] get directory entry # */
+   if (!strncmp(buf + 10, "MM", 2))
      {
         byte_align = EXIF_BYTE_ALIGN_MM;
-        num_directory = ((*(buf + 20) << 8) + *(buf + 21));
+        num_directory = ((*(buf + 18) << 8) + *(buf + 19));
         orientation[0] = 0x01;
         orientation[1] = 0x12;
      }
-   else if (!strncmp(buf + 12, "II", 2))
+   else if (!strncmp(buf + 10, "II", 2))
      {
         byte_align = EXIF_BYTE_ALIGN_II;
-        num_directory = ((*(buf + 21) << 8) + *(buf + 20));
+        num_directory = ((*(buf + 19) << 8) + *(buf + 18));
         orientation[0] = 0x12;
         orientation[1] = 0x01;
      }
    else return 0;
 
-   buf = map + 22;
+   buf = app1_head + 20;
 
-   if (length < (12 * num_directory + 22)) return 0;
+   if (remain_length < (12 * num_directory + 20)) return 0;
 
    j = 0;
 
@@ -221,7 +262,7 @@ _get_orientation(void *map, size_t length)
           {
              /*get orientation tag */
              if (byte_align == EXIF_BYTE_ALIGN_MM)
-               direction = *(buf+ j + 11);
+	       direction = *(buf+ j + 9);
              else direction = *(buf+ j + 8);
              switch (direction)
                {
@@ -241,6 +282,25 @@ _get_orientation(void *map, size_t length)
         else
           j = j + 12;
      }
+   return 0;
+}
+
+static int
+_get_orientation(void *map, size_t length)
+{
+   char *buf;
+
+   /* open file and get 22 byte frome file */
+   if (!map) return 0;
+   /* 1. read 22byte */
+   if (length < 22) return 0;
+   buf = (char *)map;
+
+   /* 2. check 2,3 bypte with APP0(0xFFE0) or APP1(0xFFE1) */
+   if (!memcmp(buf + 2, App0, sizeof (App0)))
+      return _get_orientation_app0(buf + 2, length - 2);
+   if (!memcmp(buf + 2, App1, sizeof (App1)))
+      return _get_orientation_app1(buf + 2, length - 2);
    return 0;
 }
 
