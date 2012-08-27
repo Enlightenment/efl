@@ -1294,6 +1294,22 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 }
 
 static void
+_edje_textblock_recalc_apply(Edje *ed, Edje_Real_Part *ep,
+			Edje_Calc_Params *params,
+			Edje_Part_Description_Text *chosen_desc)
+{
+   /* FIXME: this is just an hack. */
+   FLOAT_T sc;
+   sc = ed->scale;
+   if (sc == ZERO) sc = _edje_scale;
+   if (chosen_desc->text.fit_x || chosen_desc->text.fit_y)
+     {
+        _edje_part_recalc_single_textblock(sc, ed, ep, chosen_desc, params,
+              NULL, NULL, NULL, NULL);
+     }
+}
+
+static void
 _edje_part_recalc_single_text(FLOAT_T sc __UNUSED__,
                               Edje *ed,
                               Edje_Real_Part *ep,
@@ -2941,11 +2957,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
            case EDJE_PART_TYPE_TABLE:
               _edje_table_recalc_apply(ed, ep, pf, (Edje_Part_Description_Table*) chosen_desc);
               break;
+           case EDJE_PART_TYPE_TEXTBLOCK:
+              _edje_textblock_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc);
+              break;
            case EDJE_PART_TYPE_EXTERNAL:
            case EDJE_PART_TYPE_RECTANGLE:
            case EDJE_PART_TYPE_SWALLOW:
            case EDJE_PART_TYPE_GROUP:
-           case EDJE_PART_TYPE_TEXTBLOCK:
               /* Nothing special to do for this type of object. */
               break;
            case EDJE_PART_TYPE_GRADIENT:

@@ -2454,6 +2454,8 @@ _edje_entry_text_markup_set(Edje_Real_Part *rp, const char *text)
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
    _edje_entry_imf_cursor_info_set(en);
+
+   _edje_entry_real_part_configure(rp);
 #if 0
    /* Don't emit cursor changed cause it didn't. It's just init to 0. */
    _edje_emit(rp->edje, "cursor,changed", rp->part->name);

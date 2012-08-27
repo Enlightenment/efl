@@ -565,3 +565,7 @@
 
 	* Properly destroy color_class and text_class on an Edje_Object.
 
+2012-08-27  Tom Hacohen (TAsn)
+
+	* Textblock: Fixed issue with textblock fit not sizing correctly. This
+	fix is not perfect.
