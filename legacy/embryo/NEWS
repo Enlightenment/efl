@@ -1,4 +1,11 @@
-Embryo 1.2.0
+Embryo 1.7.0
+
+Changes since Embryo 1.2.0:
+---------------------------
+
+Fixes:
+
+    * Fix divide by 0 n FP support to avoid FPE.
 
 Changes since Embryo 1.1.0:
 ---------------------------
