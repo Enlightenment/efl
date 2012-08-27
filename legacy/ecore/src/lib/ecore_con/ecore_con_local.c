@@ -8,6 +8,7 @@
 #include <time.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 #ifdef HAVE_SYS_SOCKET_H
 # include <sys/socket.h>
