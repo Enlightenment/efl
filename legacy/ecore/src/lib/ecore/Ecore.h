@@ -359,6 +359,8 @@ sudo make install
 #elif defined (__FreeBSD__) || defined (__OpenBSD__)
 # include <sys/select.h>
 # include <signal.h>
+#elif defined (__ANDROID__)
+# include <sys/select.h>
 #else
 # include <sys/time.h>
 # if !defined (EXOTIC_NO_SIGNAL)

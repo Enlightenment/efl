@@ -1248,7 +1248,22 @@ AC_CHECK_HEADERS([net/if.h], [], [],
 # include <sys/socket.h>
 #endif
 ])
-AC_CHECK_HEADERS([sys/un.h arpa/inet.h arpa/nameser.h netinet/tcp.h netinet/in.h ws2tcpip.h netdb.h errno.h])
+AC_CHECK_HEADERS([sys/un.h], [], [],
+[
+#include <stdio.h>
+#ifdef STDC_HEADERS
+# include <stdlib.h>
+# include <stddef.h>
+#else
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# endif
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+])
+AC_CHECK_HEADERS([arpa/inet.h arpa/nameser.h netinet/tcp.h netinet/in.h ws2tcpip.h netdb.h errno.h])
 
 if test "x${ac_cv_header_netdb_h}" = "xyes" ; then
    have_addrinfo="yes"
