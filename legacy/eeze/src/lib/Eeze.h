@@ -3,7 +3,7 @@
  *
  @mainpage Eeze
  @image html  eeze.png
- @version 1.2.0
+ @version 1.7.0
  @author Mike Blumenkrantz (zmike/discomfitor) <michael.blumenkrantz@@gmail.com>
  @date 2010-2012
 

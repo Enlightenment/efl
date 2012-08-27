@@ -12,7 +12,7 @@
  *
  * @mainpage Emotion Library Documentation
  *
- * @version 0.2.0
+ * @version 1.7.0
  * @date 2003-2012
  *
  * @section intro What is Emotion?
