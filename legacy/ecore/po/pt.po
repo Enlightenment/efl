@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ecore\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-17 12:44+0900\n"
+"POT-Creation-Date: 2012-08-27 19:14+0900\n"
 "PO-Revision-Date: 2012-08-23 00:30+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -69,25 +69,19 @@ msgstr "ERRO: opção desconhecida -%c.\n"
 msgid "ERROR: "
 msgstr "ERRO: "
 
-#: src/lib/ecore/ecore_getopt.c:931
-#: src/lib/ecore/ecore_getopt.c:1068
-#: src/lib/ecore/ecore_getopt.c:1084
-#: src/lib/ecore/ecore_getopt.c:1099
-#: src/lib/ecore/ecore_getopt.c:1116
-#: src/lib/ecore/ecore_getopt.c:1163
-#: src/lib/ecore/ecore_getopt.c:1283
-#: src/lib/ecore/ecore_getopt.c:1324
+#: src/lib/ecore/ecore_getopt.c:931 src/lib/ecore/ecore_getopt.c:1068
+#: src/lib/ecore/ecore_getopt.c:1084 src/lib/ecore/ecore_getopt.c:1099
+#: src/lib/ecore/ecore_getopt.c:1116 src/lib/ecore/ecore_getopt.c:1163
+#: src/lib/ecore/ecore_getopt.c:1283 src/lib/ecore/ecore_getopt.c:1324
 msgid "value has no pointer set.\n"
 msgstr "o valor não está definido.\n"
 
-#: src/lib/ecore/ecore_getopt.c:963
-#: src/lib/ecore/ecore_getopt.c:1183
+#: src/lib/ecore/ecore_getopt.c:963 src/lib/ecore/ecore_getopt.c:1183
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "valor booleano desconhecido %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1014
-#: src/lib/ecore/ecore_getopt.c:1271
+#: src/lib/ecore/ecore_getopt.c:1014 src/lib/ecore/ecore_getopt.c:1271
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "formato numérico inválido %s\n"
@@ -180,4 +174,3 @@ msgstr "ERRO: valor geométrico incorreto \"%s\"\n"
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "ERRO: tamanho incorreto \"%s\"\n"
-
