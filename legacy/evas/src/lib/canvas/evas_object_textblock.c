@@ -9966,6 +9966,8 @@ evas_object_textblock_scale_update(Evas_Object *obj)
    o = (Evas_Object_Textblock *)(obj->object_data);
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, obj);
+   o->last_w = -1;
+   o->last_h = -1;
 }
 
 void

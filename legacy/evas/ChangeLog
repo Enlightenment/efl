@@ -985,3 +985,8 @@
 
 	* Jpeg loader: fix orientation didn't work if jpeg file format is JFIF.
 	Add code deal with JFIF file format.
+
+2012-08-27  Tom Hacohen (TAsn)
+
+	* Textblock: Make sure scale changes causes a complete recalc.
+
