@@ -2,8 +2,8 @@
 ### Version
 
 m4_define([v_maj], [1])
-m4_define([v_min], [6])
-m4_define([v_mic], [99])
+m4_define([v_min], [7])
+m4_define([v_mic], [0])
 
 m4_define([evil_version], [v_maj.v_min.v_mic])
 
