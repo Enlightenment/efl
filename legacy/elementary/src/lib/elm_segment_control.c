@@ -368,27 +368,49 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *label)
 {
    Elm_Segment_Item *item;
-
-   if (part && strcmp(part, "default")) return;
-
+   char buf[1024];
    item = (Elm_Segment_Item *)it;
-   eina_stringshare_replace(&item->label, label);
-   if (item->label)
-     edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
-   else
-     edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(VIEW(item));
 
+   if ((!part) || (!strcmp(part, "default")) ||
+       (!strcmp(part, "elm.text")))
+     {
+        eina_stringshare_replace(&item->label, label);
+        if (label)
+          edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
+        else
+          edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
+     }
+   else
+     {
+        if (label)
+          {
+             snprintf(buf, sizeof(buf), "elm,state,%s,visible", part);
+             edje_object_signal_emit(VIEW(item), buf, "elm");
+          }
+        else
+          {
+             snprintf(buf, sizeof(buf), "elm,state,%s,hidden", part);
+             edje_object_signal_emit(VIEW(item), buf, "elm");
+          }
+     }
+
+   edje_object_message_signal_process(VIEW(item));
    //label can be NULL also.
-   edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
+   edje_object_part_text_escaped_set(VIEW(item), part, label);
 }
 
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it,
                     const char *part)
 {
-   if (part && strcmp(part, "default")) return NULL;
-   return ((Elm_Segment_Item *)it)->label;
+   char buf[1024];
+
+   if (!part || !strcmp(part, "default"))
+     snprintf(buf, sizeof(buf), "elm.text");
+   else
+     snprintf(buf, sizeof(buf), "%s", part);
+
+   return edje_object_part_text_get(VIEW(it), buf);
 }
 
 static void
@@ -397,32 +419,51 @@ _item_content_set_hook(Elm_Object_Item *it,
                        Evas_Object *content)
 {
    Elm_Segment_Item *item;
-
-   if (part && strcmp(part, "icon")) return;
-
+   char buf[1024];
    item = (Elm_Segment_Item *)it;
-   if (content == item->icon) return;
 
-   //Remove the existing icon
-   if (item->icon) evas_object_del(item->icon);
-   item->icon = content;
-   if (item->icon)
+   if (!part || !strcmp("icon", part))
      {
-        elm_widget_sub_object_add(VIEW(item), item->icon);
-        edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
-        edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
+        if (content == item->icon) return;
+
+        if (item->icon) evas_object_del(item->icon);
+        item->icon = content;
+        if (!item->icon)
+          {
+             elm_widget_sub_object_add(VIEW(item), item->icon);
+             edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
+             edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
+          }
+        else
+          edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
      }
    else
-     edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
+     {
+        if (content)
+          {
+             edje_object_part_swallow(VIEW(it), part, content);
+             snprintf(buf, sizeof(buf), "elm,state,%s,visible", part);
+             edje_object_signal_emit(VIEW(item), buf, "elm");
+          }
+        else
+          {
+             snprintf(buf, sizeof(buf), "elm,state,%s,hidden", part);
+             edje_object_signal_emit(VIEW(item), buf, "elm");
+          }
+     }
 }
 
 static Evas_Object *
 _item_content_get_hook(const Elm_Object_Item *it,
                        const char *part)
 {
-   if (part && strcmp(part, "icon")) return NULL;
+   Elm_Segment_Item *item;
+   item = (Elm_Segment_Item *)it;
 
-   return ((Elm_Segment_Item *)it)->icon;
+   if (!part && !strcmp(part, "icon"))
+     return item->icon;
+   else
+     return edje_object_part_swallow_get(VIEW(item), part);
 }
 
 static Eina_Bool
