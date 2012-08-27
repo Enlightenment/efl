@@ -561,7 +561,7 @@ fi
 build_examples="no"
 AC_ARG_ENABLE([build-examples],
    AC_HELP_STRING([--enable-build-examples],
-                  [Enable building examples. This requires extra denpendencies. If you don't have them installed yet, don't build with this option or it will fail. Build again when you have it, overriding the previous installation). @<:@default==disabled@:>@]),
+                  [Enable building examples. This requires extra dependencies. If you don't have them installed yet, don't build with this option or it will fail. Build again when you have it, overriding the previous installation). @<:@default==disabled@:>@]),
    [
     if test "x${enableval}" = "xyes" ; then
        build_examples="yes"
