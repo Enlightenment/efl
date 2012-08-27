@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <tom.hacohen@samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:2054
+#: src/lib/elm_config.c:2059
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-17 12:49+0900\n"
+"POT-Creation-Date: 2012-08-24 15:52+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@samsung.com>\n"
 "Language-Team: General\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1375
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1390
 msgid "Cancel"
 msgstr ""
 
@@ -38,8 +38,9 @@ msgstr ""
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_list.c:1350
-#: src/lib/elm_radio.c:241 src/lib/elm_toolbar.c:1249
+#: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
+#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1350 src/lib/elm_radio.c:241
+#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1253
 msgid "State: Disabled"
 msgstr ""
 
@@ -69,50 +70,94 @@ msgstr ""
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:2070
+#: src/lib/elm_colorselector.c:895
+msgid "color selector palette item"
+msgstr ""
+
+#: src/lib/elm_config.c:2075
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:1369
+#: src/lib/elm_diskselector.c:621
+msgid "diskselector item"
+msgstr ""
+
+#: src/lib/elm_entry.c:1384
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elm_entry.c:1372
+#: src/lib/elm_entry.c:1387
 msgid "Cut"
 msgstr ""
 
-#: src/lib/elm_entry.c:1386
+#: src/lib/elm_entry.c:1401
 msgid "Select"
 msgstr ""
 
-#: src/lib/elm_entry.c:1392
+#: src/lib/elm_entry.c:1407
 msgid "Paste"
+msgstr ""
+
+#: src/lib/elm_entry.c:2638
+msgid "Entry"
+msgstr ""
+
+#: src/lib/elm_gengrid.c:650
+msgid "Gengrid Item"
+msgstr ""
+
+#: src/lib/elm_genlist.c:1315
+msgid "Genlist Item"
+msgstr ""
+
+#: src/lib/elm_label.c:348
+msgid "Label"
 msgstr ""
 
 #: src/lib/elm_list.c:1390
 msgid "List Item"
 msgstr ""
 
+#: src/lib/elm_progressbar.c:260
+msgid "progressbar"
+msgstr ""
+
 #: src/lib/elm_radio.c:271
 msgid "Radio"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:984
+#: src/lib/elm_slider.c:778
+msgid "slider"
+msgstr ""
+
+#: src/lib/elm_spinner.c:534
+msgid "spinner increment button"
+msgstr ""
+
+#: src/lib/elm_spinner.c:542
+msgid "spinner decrement button"
+msgstr ""
+
+#: src/lib/elm_spinner.c:549
+msgid "spinner"
+msgstr ""
+
+#: src/lib/elm_toolbar.c:988
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1247
+#: src/lib/elm_toolbar.c:1251
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1251
+#: src/lib/elm_toolbar.c:1255
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1253
+#: src/lib/elm_toolbar.c:1257
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1318
+#: src/lib/elm_toolbar.c:1322
 msgid "Tool Item"
 msgstr ""
