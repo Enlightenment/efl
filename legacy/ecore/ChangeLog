@@ -870,3 +870,8 @@
 
         * Add ecore_x custom blanker screensaver enable/disable - cant
           do e17 properly without so add in even in freeze.
+
+2012-08-27  Vincent Torri
+
+        * Fix segmentation fault in ecore_thread on Windows as PHS
+	  was returning a wrong value.

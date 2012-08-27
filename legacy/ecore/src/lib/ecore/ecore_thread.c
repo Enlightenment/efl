@@ -66,44 +66,79 @@ typedef struct
    void  *val;
 } win32_thread;
 
+static Eina_List    *_ecore_thread_win32_threads = NULL;
+static Eina_Lock     _ecore_thread_win32_lock;
+
 #  define PH(x)     win32_thread * x
 #  define PHE(x, y) ((x) == (y))
-#  define PHS()     (HANDLE)GetCurrentThreadId()
 
-int
+static win32_thread *
+_ecore_thread_win32_self()
+{
+   win32_thread *t;
+   Eina_List *l;
+
+   LKL(_ecore_thread_win32_lock);
+   EINA_LIST_FOREACH(_ecore_thread_win32_threads, l, t)
+     {
+       printf("thread self : %p %p\n", t, t->thread);
+       if (t->thread == GetCurrentThread())
+         {
+           LKU(_ecore_thread_win32_lock);
+           return t;
+         }
+     }
+
+   LKU(_ecore_thread_win32_lock);
+   return NULL;
+}
+
+#  define PHS()     _ecore_thread_win32_self()
+
+static int
 _ecore_thread_win32_create(win32_thread         **x,
                            LPTHREAD_START_ROUTINE f,
                            void                  *d)
 {
    win32_thread *t;
+
    t = (win32_thread *)calloc(1, sizeof(win32_thread));
    if (!t)
      return -1;
 
+   LKL(_ecore_thread_win32_lock);
    (t)->thread = CreateThread(NULL, 0, f, d, 0, NULL);
    if (!t->thread)
      {
         free(t);
+        LKU(_ecore_thread_win32_lock);
         return -1;
      }
    t->val = d;
    *x = t;
+   _ecore_thread_win32_threads = eina_list_append(_ecore_thread_win32_threads, t);
+   LKU(_ecore_thread_win32_lock);
+   printf(" * thread create 1: %p\n", t);
+   printf(" * thread create 2: %p\n", t->thread);
 
    return 0;
 }
 
 #  define PHC(x, f, d) _ecore_thread_win32_create(&(x), (LPTHREAD_START_ROUTINE)f, d)
 
-int
+static int
 _ecore_thread_win32_join(win32_thread *x,
                          void        **res)
 {
+   printf(" * thread join 1  : %p\n", x);
    if (!PHE(x, PHS()))
      {
+        printf(" * thread join 2  : %p\n", x->thread);
         WaitForSingleObject(x->thread, INFINITE);
         CloseHandle(x->thread);
      }
    if (res) *res = x->val;
+   _ecore_thread_win32_threads = eina_list_remove(_ecore_thread_win32_threads, x);
    free(x);
 
    return 0;
@@ -597,6 +632,9 @@ _ecore_thread_init(void)
      _ecore_thread_count_max = 1;
 
 #ifdef EFL_HAVE_THREADS
+# ifdef EFL_HAVE_WIN32_THREADS
+   LKI(_ecore_thread_win32_lock);
+# endif
    LKI(_ecore_pending_job_threads_mutex);
    LRWKI(_ecore_thread_global_hash_lock);
    LKI(_ecore_thread_global_hash_mutex);
@@ -675,6 +713,9 @@ _ecore_thread_shutdown(void)
     LKD(_ecore_thread_global_hash_mutex);
     LKD(_ecore_running_job_mutex);
     CDD(_ecore_thread_global_hash_cond);
+# ifdef EFL_HAVE_WIN32_THREADS
+   LKU(_ecore_thread_win32_lock);
+# endif
 #endif
 }
 

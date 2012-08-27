@@ -30,6 +30,7 @@ Fixes:
      - Make Ecore_Thread work reliably when called without a running main loop.
      - Correctly shutdown Ecore_Thread.
      - Fix usage of FD_SET and al. when fd_set pointers are NULL (Windows)
+     - Fix ecore_thread seg fault on Windows where PHS() was returning a wrong value
 
     * ecore_x
      - Fix unitialized Ecore_X_Atom use.
