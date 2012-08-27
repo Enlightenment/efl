@@ -80,14 +80,11 @@ _ecore_thread_win32_self()
 
    LKL(_ecore_thread_win32_lock);
    EINA_LIST_FOREACH(_ecore_thread_win32_threads, l, t)
-     {
-       printf("thread self : %p %p\n", t, t->thread);
-       if (t->thread == GetCurrentThread())
-         {
-           LKU(_ecore_thread_win32_lock);
-           return t;
-         }
-     }
+     if (t->thread == GetCurrentThread())
+       {
+          LKU(_ecore_thread_win32_lock);
+          return t;
+       }
 
    LKU(_ecore_thread_win32_lock);
    return NULL;
@@ -118,8 +115,6 @@ _ecore_thread_win32_create(win32_thread         **x,
    *x = t;
    _ecore_thread_win32_threads = eina_list_append(_ecore_thread_win32_threads, t);
    LKU(_ecore_thread_win32_lock);
-   printf(" * thread create 1: %p\n", t);
-   printf(" * thread create 2: %p\n", t->thread);
 
    return 0;
 }
@@ -130,10 +125,8 @@ static int
 _ecore_thread_win32_join(win32_thread *x,
                          void        **res)
 {
-   printf(" * thread join 1  : %p\n", x);
    if (!PHE(x, PHS()))
      {
-        printf(" * thread join 2  : %p\n", x->thread);
         WaitForSingleObject(x->thread, INFINITE);
         CloseHandle(x->thread);
      }
