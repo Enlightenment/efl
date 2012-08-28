@@ -215,7 +215,7 @@ _eio_monitor_win32_watcher_new(Eio_Monitor *monitor, unsigned char is_dir)
         msg = evil_last_error_get();
         if (msg)
           {
-             ERR("%s\n", msg);
+             ERR("%s", msg);
              free(msg);
           }
         goto close_event;
