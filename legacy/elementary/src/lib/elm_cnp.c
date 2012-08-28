@@ -423,6 +423,7 @@ _x11_selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event)
    X11_Cnp_Selection *sel;
    unsigned int i;
 
+   _x11_elm_cnp_init();
    for (i = ELM_SEL_TYPE_PRIMARY; i <= ELM_SEL_TYPE_CLIPBOARD; i++)
      {
         if (_x11_selections[i].ecore_sel == ev->selection) break;
@@ -1207,7 +1208,10 @@ static Eina_Bool
 _x11_elm_cnp_init(void)
 {
    int i;
+   static int _init_count = 0;
    
+   if (_init_count > 0) return EINA_TRUE;
+   _init_count++;
    for (i = 0; i < CNP_N_ATOMS; i++)
      {
         _x11_atoms[i].atom = ecore_x_atom_get(_x11_atoms[i].name);
@@ -1225,6 +1229,7 @@ _x11_elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_For
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
    X11_Cnp_Selection *sel;
    
+   _x11_elm_cnp_init();
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
      return elm_object_cnp_selection_clear(obj, selection);
 
@@ -1273,6 +1278,7 @@ _x11_elm_cnp_selection_loss_callback_set(Evas_Object *obj __UNUSED__, Elm_Sel_Ty
 {
    X11_Cnp_Selection *sel;
    
+   _x11_elm_cnp_init();
    sel = _x11_selections + selection;
    sel->loss_cb = func;
    sel->loss_data = (void *)data;
@@ -1283,6 +1289,8 @@ _x11_elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 {
    X11_Cnp_Selection *sel;
 
+   _x11_elm_cnp_init();
+   
    sel = _x11_selections + selection;
 
    /* No longer this selection: Consider it gone! */
@@ -1317,6 +1325,8 @@ _x11_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
    Ecore_X_Window xwin = _x11_elm_widget_xwin_get(obj);
    X11_Cnp_Selection *sel;
 
+   _x11_elm_cnp_init();
+   
    sel = _x11_selections + selection;
 
    if (sel->requestwidget)
@@ -1346,6 +1356,8 @@ _x11_elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
    Eina_List *item;
    int first;
 
+   _x11_elm_cnp_init();
+   
    /* TODO: check if obj is already a drop target. Do not add twice! */
 
    /* Is this the first? */
@@ -1407,6 +1419,8 @@ _x11_elm_drop_target_del(Evas_Object *obj)
    Eina_List *item;
    Ecore_X_Window xwin;
 
+   _x11_elm_cnp_init();
+   
    del = NULL;
    EINA_LIST_FOREACH(drops, item, drop)
      {
@@ -1453,6 +1467,8 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, v
    Evas_Object *icon;
    int w, h;
 
+   _x11_elm_cnp_init();
+   
    cnp_debug("starting drag...\n");
 
    if (dragwin)
@@ -1512,6 +1528,7 @@ _x11_elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, v
 static Eina_Bool
 _x11_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__)
 {
+   _x11_elm_cnp_init();
    return !!ecore_x_selection_owner_get(ECORE_X_ATOM_SELECTION_CLIPBOARD);
 }
 
@@ -1578,6 +1595,10 @@ _local_get_job(void *data)
 static Eina_Bool
 _local_elm_cnp_init(void)
 {
+   static int _init_count = 0;
+   
+   if (_init_count > 0) return EINA_TRUE;
+   _init_count++;
    memset(&(_local_selinfo), 0, sizeof(_local_selinfo));
    return EINA_TRUE;
 }
@@ -1587,6 +1608,7 @@ _local_elm_cnp_selection_set(Evas_Object *obj __UNUSED__,
                              Elm_Sel_Type selection, Elm_Sel_Format format,
                              const void *selbuf, size_t buflen)
 {
+   _local_elm_cnp_init();
    if (_local_selinfo[selection].sel.buf)
      free(_local_selinfo[selection].sel.buf);
    _local_selinfo[selection].format = format;
@@ -1607,6 +1629,7 @@ _local_elm_cnp_selection_loss_callback_set(Evas_Object *obj __UNUSED__,
                                            Elm_Selection_Loss_Cb func __UNUSED__,
                                            const void *data __UNUSED__)
 {
+   _local_elm_cnp_init();
    // this doesnt need to do anything as we never lose selection to anyone
    // as thisis local
 }
@@ -1615,6 +1638,7 @@ static Eina_Bool
 _local_elm_object_cnp_selection_clear(Evas_Object *obj __UNUSED__,
                                       Elm_Sel_Type selection)
 {
+   _local_elm_cnp_init();
    if (_local_selinfo[selection].sel.buf)
      free(_local_selinfo[selection].sel.buf);
    _local_selinfo[selection].sel.buf = NULL;
@@ -1628,6 +1652,7 @@ _local_elm_cnp_selection_get(Evas_Object *obj,
                              Elm_Sel_Format format __UNUSED__,
                              Elm_Drop_Cb datacb, void *udata)
 {
+   _local_elm_cnp_init();
    if (_local_selinfo[selection].get.job)
      ecore_job_del(_local_selinfo[selection].get.job);
    _local_selinfo[selection].get.obj = obj;
@@ -1645,6 +1670,7 @@ _local_elm_drop_target_add(Evas_Object *obj __UNUSED__,
                            void *cbdata __UNUSED__)
 {
    // XXX: implement me
+   _local_elm_cnp_init();
    return EINA_FALSE;
 }
 
@@ -1652,6 +1678,7 @@ static  Eina_Bool
 _local_elm_drop_target_del(Evas_Object *obj __UNUSED__)
 {
    // XXX: implement me
+   _local_elm_cnp_init();
    return EINA_FALSE;
 }
 
@@ -1663,12 +1690,14 @@ _local_elm_drag_start(Evas_Object *obj __UNUSED__,
                       void *donecbdata __UNUSED__)
 {
    // XXX: implement me
+   _local_elm_cnp_init();
    return EINA_FALSE;
 }
 
 static Eina_Bool
 _local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__)
 {
+   _local_elm_cnp_init();
    if (_local_selinfo[ELM_SEL_TYPE_CLIPBOARD].sel.buf) return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -1684,11 +1713,8 @@ _local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__)
 static Eina_Bool
 _elm_cnp_init(void)
 {
-   if (_elm_cnp_init_count++) return EINA_TRUE;
-#ifdef HAVE_ELEMENTARY_X
-   _x11_elm_cnp_init();
-#endif   
-   _local_elm_cnp_init();
+   if (_elm_cnp_init_count > 0) return EINA_TRUE;
+   _elm_cnp_init_count++;
    text_uri = eina_stringshare_add("text/uri-list");
    return EINA_TRUE;
 }
