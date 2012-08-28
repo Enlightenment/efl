@@ -612,6 +612,10 @@
 
 	* Don't copy string around for nothing.
 
+2012-08-22 Igor Murzov (GArik_)
+
+	* Fixed memory leak of eet_data_chunk_put().
+
 2012-08-24  Cedric Bail
 
 	* Add eet_connection_empty.

@@ -15,6 +15,7 @@ Fixes:
     * Possible wrong size decoding of simple type.
     * Don't strdup string around for nothing.
     * Always initialize dictionary correctly.
+    * Fixed memory leak of eet_data_chunk_put().
 
 Eet 1.6.0
 
