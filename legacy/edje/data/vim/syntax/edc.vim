@@ -29,7 +29,7 @@ syn keyword	edcLabel	use_alternate_font_metrics entry_mode contained
 syn keyword	edcLabel	source source2 source3 source4 contained
 syn keyword	edcLabel	source5 source6 multiline pointer_mode contained
 syn keyword	edcLabel	state visible step aspect fixed middle contained
-syn keyword	edcLabel	aspect_preference elipsis image contained
+syn keyword	edcLabel	aspect_preference ellipsis elipsis image contained
 syn keyword	edcLabel	relative offset to to_x to_y contained
 syn keyword	edcLabel	border border_scale scale_hint color color2 color3 font size contained
 syn keyword	edcLabel	signal action transition in filter contained
