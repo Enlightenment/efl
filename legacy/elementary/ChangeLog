@@ -401,3 +401,8 @@
 
 	* Patch in incomplete access support in segment control and spinner
 
+2012-08-28  Carsten Haitzler (The Rasterman)
+
+	* Track window states as a total count and be able to self-throttle
+          or suspend rendering as a result.
+

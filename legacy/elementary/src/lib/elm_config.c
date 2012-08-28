@@ -392,6 +392,12 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, year_max, T_INT);
    ELM_CONFIG_LIST(D, T, color_palette, _config_color_palette_edd);
    ELM_CONFIG_VAL(D, T, softcursor_mode, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, auto_norender_withdrawn, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, auto_norender_iconified_same_as_withdrawn, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, auto_flush_withdrawn, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, auto_dump_withdrawn, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, auto_throttle, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, auto_throttle_amount, T_DOUBLE);
 #undef T
 #undef D
 #undef T_INT
@@ -1063,6 +1069,12 @@ _config_load(void)
    _elm_config->year_max = 137;
    _elm_config->softcursor_mode = 0; /* 0 = auto, 1 = on, 2 = off */
    _elm_config->color_palette = NULL;
+   _elm_config->auto_norender_withdrawn = 0;
+   _elm_config->auto_norender_iconified_same_as_withdrawn = 1;
+   _elm_config->auto_flush_withdrawn = 0;
+   _elm_config->auto_dump_withdrawn = 0;
+   _elm_config->auto_throttle = 0;
+   _elm_config->auto_throttle_amount = 0.1;
 }
 
 static const char *
@@ -1547,6 +1559,19 @@ _env_get(void)
    if (s) _elm_config->desktop_entry = !!atoi(s);
    s = getenv("ELM_ACCESS_MODE");
    if (s) _elm_config->access_mode = ELM_ACCESS_MODE_ON;
+
+   s = getenv("ELM_AUTO_THROTTLE");
+   if (s) _elm_config->auto_throttle = EINA_TRUE;
+   s = getenv("ELM_AUTO_THROTTLE_AMOUNT");
+   if (s) _elm_config->auto_throttle_amount = _elm_atof(s);
+   s = getenv("ELM_AUTO_NORENDER_WITHDRAWN");
+   if (s) _elm_config->auto_norender_withdrawn = EINA_TRUE;
+   s = getenv("ELM_AUTO_NORENDER_ICONIFIED_SAME_AS_WITHDRAWN");
+   if (s) _elm_config->auto_norender_iconified_same_as_withdrawn = EINA_TRUE;
+   s = getenv("ELM_AUTO_FLUSH_WITHDRAWN");
+   if (s) _elm_config->auto_flush_withdrawn = EINA_TRUE;
+   s = getenv("ELM_AUTO_DUMP_WIDTHDRAWN");
+   if (s) _elm_config->auto_dump_withdrawn = EINA_TRUE;
 }
 
 EAPI Eina_Bool

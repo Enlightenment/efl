@@ -186,6 +186,101 @@ EVAS_SMART_SUBCLASS_NEW
 Eina_List *_elm_win_list = NULL;
 int _elm_win_deferred_free = 0;
 
+static int _elm_win_count = 0;
+static int _elm_win_count_shown = 0;
+static int _elm_win_count_iconified = 0;
+static int _elm_win_count_withdrawn = 0;
+
+static Eina_Bool _elm_win_auto_throttled = EINA_FALSE;
+
+static Ecore_Job *_elm_win_state_eval_job = NULL;
+
+static void
+_elm_win_state_eval(void *data __UNUSED__)
+{
+   Eina_List *l;
+   Evas_Object *obj;
+   
+   _elm_win_state_eval_job = NULL;
+   
+   if (_elm_config->auto_norender_withdrawn)
+     {
+        EINA_LIST_FOREACH(_elm_win_list, l, obj)
+          {
+             if ((elm_win_withdrawn_get(obj)) ||
+                 ((elm_win_iconified_get(obj) && 
+                   (_elm_config->auto_norender_iconified_same_as_withdrawn))))
+               {
+                  if (!evas_object_data_get(obj, "__win_auto_norender"))
+                    {
+                       Evas *evas = evas_object_evas_get(obj);
+                       
+                       elm_win_norender_push(obj);
+                       evas_object_data_set(obj, "__win_auto_norender", obj);
+                       
+                       if (_elm_config->auto_flush_withdrawn)
+                         {
+                            edje_file_cache_flush();
+                            edje_collection_cache_flush();
+                            evas_image_cache_flush(evas);
+                            evas_font_cache_flush(evas);
+                         }
+                       if (_elm_config->auto_dump_withdrawn)
+                         {
+                            evas_render_dump(evas);
+                         }
+                    }
+               }
+             else
+               {
+                  if (evas_object_data_get(obj, "__win_auto_norender"))
+                    {
+                       elm_win_norender_pop(obj);
+                       evas_object_data_del(obj, "__win_auto_norender");
+                    }
+               }
+          }
+     }
+   if (_elm_config->auto_throttle)
+     {
+        if (_elm_win_count == 0)
+          {
+             if (_elm_win_auto_throttled)
+               {
+                  ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
+                  _elm_win_auto_throttled = EINA_FALSE;
+               }
+          }
+        else
+          {
+             if ((_elm_win_count_iconified + _elm_win_count_withdrawn) >= 
+                 _elm_win_count_shown)
+               {
+                  if (!_elm_win_auto_throttled)
+                    {
+                       ecore_throttle_adjust(_elm_config->auto_throttle_amount);
+                       _elm_win_auto_throttled = EINA_TRUE;
+                    }
+               }
+             else
+               {
+                  if (_elm_win_auto_throttled)
+                    {
+                       ecore_throttle_adjust(-_elm_config->auto_throttle_amount);
+                       _elm_win_auto_throttled = EINA_FALSE;
+                    }
+               }
+          }
+     }
+}
+
+static void
+_elm_win_state_eval_queue(void)
+{
+   if (_elm_win_state_eval_job) ecore_job_del(_elm_win_state_eval_job);
+   _elm_win_state_eval_job = ecore_job_add(_elm_win_state_eval, NULL);
+}
+
 // example shot spec (wait 0.1 sec then save as my-window.png):
 // ELM_ENGINE="shot:delay=0.1:file=my-window.png"
 
@@ -744,6 +839,9 @@ _elm_win_state_change(Ecore_Evas *ee)
 
    obj = ELM_WIDGET_DATA(sd)->obj;
 
+   if (sd->withdrawn) _elm_win_count_withdrawn--;
+   if (sd->iconified) _elm_win_count_iconified--;
+   
    if (sd->withdrawn != ecore_evas_withdrawn_get(sd->ee))
      {
         sd->withdrawn = ecore_evas_withdrawn_get(sd->ee);
@@ -769,6 +867,11 @@ _elm_win_state_change(Ecore_Evas *ee)
         sd->maximized = ecore_evas_maximized_get(sd->ee);
         ch_maximized = EINA_TRUE;
      }
+
+   if (sd->withdrawn) _elm_win_count_withdrawn++;
+   if (sd->iconified) _elm_win_count_iconified++;
+   _elm_win_state_eval_queue();
+   
    if ((ch_withdrawn) || (ch_iconified))
      {
         if (sd->withdrawn)
@@ -956,6 +1059,11 @@ _elm_win_smart_show(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);
 
+   if (!evas_object_visible_get(obj))
+     {
+        _elm_win_count_shown++;
+        _elm_win_state_eval_queue();
+     }
    _elm_win_parent_sc->base.show(obj);
 
    TRAP(sd, show);
@@ -969,6 +1077,11 @@ _elm_win_smart_hide(Evas_Object *obj)
 {
    ELM_WIN_DATA_GET(obj, sd);
 
+   if (evas_object_visible_get(obj))
+     {
+        _elm_win_count_shown--;
+        _elm_win_state_eval_queue();
+     }
    _elm_win_parent_sc->base.hide(obj);
 
    TRAP(sd, hide);
@@ -1182,7 +1295,12 @@ _elm_win_smart_del(Evas_Object *obj)
    if (sd->autodel_clear) *(sd->autodel_clear) = -1;
 
    _elm_win_list = eina_list_remove(_elm_win_list, obj);
-
+   if (sd->withdrawn) _elm_win_count_withdrawn--;
+   if (sd->iconified) _elm_win_count_iconified--;
+   if (evas_object_visible_get(obj)) _elm_win_count_shown--;
+   _elm_win_count--;
+   _elm_win_state_eval_queue();
+   
    if (sd->ee)
      {
         ecore_evas_callback_delete_request_set(sd->ee, NULL);
@@ -1632,8 +1750,12 @@ _elm_win_on_resize_obj_changed_size_hints(void *data,
 void
 _elm_win_shutdown(void)
 {
-   while (_elm_win_list)
-     evas_object_del(_elm_win_list->data);
+   while (_elm_win_list) evas_object_del(_elm_win_list->data);
+   if (_elm_win_state_eval_job)
+     {
+        ecore_job_del(_elm_win_state_eval_job);
+        _elm_win_state_eval_job = NULL;
+     }
 }
 
 void
@@ -1661,7 +1783,7 @@ _elm_win_access(Eina_Bool is_access)
    const Eina_List *l;
    Evas_Object *obj;
 
-   EINA_LIST_FOREACH (_elm_win_list, l, obj)
+   EINA_LIST_FOREACH(_elm_win_list, l, obj)
      elm_widget_access(obj, is_access);
 }
 
@@ -2177,9 +2299,7 @@ _elm_x_io_err(void *data __UNUSED__)
    Evas_Object *obj;
 
    EINA_LIST_FOREACH(_elm_win_list, l, obj)
-     {
-        evas_object_smart_callback_call(obj, SIG_IOERR, NULL);
-     }
+     evas_object_smart_callback_call(obj, SIG_IOERR, NULL);
    elm_exit();
 }
 #endif
@@ -2561,7 +2681,8 @@ elm_win_add(Evas_Object *parent,
 #endif
 
    _elm_win_list = eina_list_append(_elm_win_list, obj);
-
+   _elm_win_count++;
+   
    if (((fallback) && (!strcmp(fallback, "Software FB"))) ||
        ((!fallback) && (ENGINE_COMPARE(ELM_SOFTWARE_FB))))
      {

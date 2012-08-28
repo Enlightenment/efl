@@ -62,6 +62,12 @@ group "Elm_Config" struct {
   value "weekend_start" int: 6;
   value "weekend_len" int: 2;
   value "softcursor_mode" uchar: 0;
+  value "auto_norender_withdrawn" uchar: 1;
+  value "auto_norender_iconified_same_as_withdrawn" uchar: 0;
+  value "auto_flush_withdrawn" uchar: 1;
+  value "auto_dump_withdrawn" uchar: 1;
+  value "auto_throttle" uchar: 0;
+  value "auto_throttle_amount" double: 0.0333333333;
   group "color_palette" list {
      group "Elm_Custom_Palette" struct {
         value "palette_name" string: "default";

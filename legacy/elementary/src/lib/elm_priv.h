@@ -198,9 +198,9 @@ struct _Elm_Config
    double        longpress_timeout;
    unsigned char effect_enable;
    unsigned char desktop_entry;
-   Eina_Bool     password_show_last;
+   unsigned char password_show_last;
    double        password_show_last_timeout;
-   Eina_Bool     glayer_zoom_finger_enable;
+   unsigned char glayer_zoom_finger_enable;
    double        glayer_zoom_finger_factor;
    double        glayer_zoom_wheel_factor;
    double        glayer_zoom_distance_tolerance;
@@ -213,7 +213,7 @@ struct _Elm_Config
    double        glayer_long_tap_start_timeout;
    double        glayer_double_tap_timeout;
    int           access_mode;
-   Eina_Bool     glayer_continues_enable;
+   unsigned char glayer_continues_enable;
    int           week_start;
    int           weekend_start;
    int           weekend_len;
@@ -221,6 +221,12 @@ struct _Elm_Config
    int           year_max;
    Eina_List    *color_palette;
    unsigned char softcursor_mode;
+   unsigned char auto_norender_withdrawn;
+   unsigned char auto_norender_iconified_same_as_withdrawn;
+   unsigned char auto_flush_withdrawn;
+   unsigned char auto_dump_withdrawn;
+   unsigned char auto_throttle;
+   double        auto_throttle_amount;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
