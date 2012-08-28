@@ -391,6 +391,7 @@ _audio_channels_free(Emotion_Generic_Video *ev)
    for (i = 0; i < ev->audio_channels_count; i++)
      eina_stringshare_del(ev->audio_channels[i].name);
    free(ev->audio_channels);
+   ev->audio_channels = NULL;
    ev->audio_channels_count = 0;
 }
 
@@ -401,6 +402,7 @@ _video_channels_free(Emotion_Generic_Video *ev)
    for (i = 0; i < ev->video_channels_count; i++)
      eina_stringshare_del(ev->video_channels[i].name);
    free(ev->video_channels);
+   ev->video_channels = NULL;
    ev->video_channels_count = 0;
 }
 
@@ -411,6 +413,7 @@ _spu_channels_free(Emotion_Generic_Video *ev)
    for (i = 0; i < ev->spu_channels_count; i++)
      eina_stringshare_del(ev->spu_channels[i].name);
    free(ev->spu_channels);
+   ev->spu_channels = NULL;
    ev->spu_channels_count = 0;
 }
 
