@@ -3617,6 +3617,7 @@ st_collections_group_parts_part_entry_mode(void)
         @li EXPLICIT mode requires the application
         controlling the edje object has to explicitly begin and end selection
         modes, and the selection itself is dragable at both ends.
+        @li BLOCK_HANDLE mode is the same as DEFAULT, it is for backward-compatibility.
     @endproperty
 */
 static void
@@ -3627,6 +3628,7 @@ st_collections_group_parts_part_select_mode(void)
    current_part->select_mode = parse_enum(0,
                                 "DEFAULT", EDJE_ENTRY_SELECTION_MODE_DEFAULT,
                                 "EXPLICIT", EDJE_ENTRY_SELECTION_MODE_EXPLICIT,
+                                "BLOCK_HANDLE", EDJE_ENTRY_SELECTION_MODE_DEFAULT,
                                 NULL);
 }
 
