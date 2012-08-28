@@ -29,10 +29,11 @@ _item_free(Elm_Index_Item *it)
    ELM_INDEX_DATA_GET(WIDGET(it), sd);
 
    sd->items = eina_list_remove(sd->items, it);
-   if (it->letter) {
-	   eina_stringshare_del(it->letter);
-	   it->letter = NULL;
-   }
+   if (it->letter) 
+     {
+        eina_stringshare_del(it->letter);
+        it->letter = NULL;
+     }
 }
 
 static void
