@@ -1483,6 +1483,7 @@ elm_diskselector_clear(Evas_Object *obj)
      }
 
    _round_items_del(sd);
+   sd->r_items = eina_list_free(sd->r_items);
    _sizing_eval(obj);
 }
 
