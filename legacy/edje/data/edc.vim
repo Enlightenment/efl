@@ -5,6 +5,14 @@
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
+"
+" Usage:
+" 1) Copy this file to $HOME/.vim/syntax/
+" 2) Paste the following line to your $HOME/.vimrc file to load the syntax
+"    automatically:
+"
+"    au BufNewFile,BufRead *.edc set syntax=edc
+"
 if version < 600
   syntax clear
 elseif exists("b:current_syntax")
