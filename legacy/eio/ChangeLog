@@ -26,3 +26,4 @@
 2012-08-07  Vincent Torri
 
 	* Do not free Windows stuff when it is not used. Fix seg fault
+	* Add log debugging macros

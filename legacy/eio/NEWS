@@ -13,5 +13,6 @@ Fixes:
         - Fix segfault when shutting down the Windows monitor.
 
 Improvements:
+	- Add log debuggong macros
 
 Removal:

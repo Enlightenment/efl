@@ -91,6 +91,33 @@ typedef struct stat _eio_stat_t;
 
 #define EIO_PACKED_TIME 0.003
 
+extern int _eio_log_dom_global;
+
+#ifdef EIO_DEFAULT_LOG_COLOR
+# undef EIO_DEFAULT_LOG_COLOR
+#endif /* ifdef EIO_DEFAULT_LOG_COLOR */
+#define EIO_DEFAULT_LOG_COLOR EINA_COLOR_CYAN
+#ifdef ERR
+# undef ERR
+#endif /* ifdef ERR */
+#define ERR(...)  EINA_LOG_DOM_ERR(_eio_log_dom_global, __VA_ARGS__)
+#ifdef DBG
+# undef DBG
+#endif /* ifdef DBG */
+#define DBG(...)  EINA_LOG_DOM_DBG(_eio_log_dom_global, __VA_ARGS__)
+#ifdef INF
+# undef INF
+#endif /* ifdef INF */
+#define INF(...)  EINA_LOG_DOM_INFO(_eio_log_dom_global, __VA_ARGS__)
+#ifdef WRN
+# undef WRN
+#endif /* ifdef WRN */
+#define WRN(...)  EINA_LOG_DOM_WARN(_eio_log_dom_global, __VA_ARGS__)
+#ifdef CRIT
+# undef CRIT
+#endif /* ifdef CRIT */
+#define CRIT(...) EINA_LOG_DOM_CRIT(_eio_log_dom_global, __VA_ARGS__)
+
 typedef struct _Eio_Eet_Open Eio_Eet_Open;
 typedef struct _Eio_Eet_Simple Eio_Eet_Simple;
 typedef struct _Eio_Eet_Write Eio_Eet_Write;

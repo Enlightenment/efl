@@ -210,8 +210,15 @@ _eio_monitor_win32_watcher_new(Eio_Monitor *monitor, unsigned char is_dir)
                               &w->overlapped,
                               NULL))
      {
-       printf("error : %s\n", evil_last_error_get());
-       goto close_event;
+        char *msg;
+
+        msg = evil_last_error_get();
+        if (msg)
+          {
+             ERR("%s\n", msg);
+             free(msg);
+          }
+        goto close_event;
      }
 
    w->h = ecore_main_win32_handler_add(w->event,
@@ -280,6 +287,7 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    backend->file = _eio_monitor_win32_watcher_new(monitor, 0);
    if (!backend->file)
      {
+        INF("falling back to poll monitoring");
         free(backend);
         eio_monitor_fallback_add(monitor);
         return;
@@ -288,6 +296,7 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    backend->dir = _eio_monitor_win32_watcher_new(monitor, 1);
    if (!backend->dir)
      {
+        INF("falling back to poll monitoring");
         _eio_monitor_win32_watcher_free(backend->file);
         free(backend);
         eio_monitor_fallback_add(monitor);

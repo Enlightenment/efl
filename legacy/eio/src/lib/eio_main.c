@@ -59,7 +59,8 @@ struct _Eio_Alloc_Pool
    EIO_MUTEX_TYPE lock;
 };
 
-static int _eio_count = 0;
+static int _eio_init_count = 0;
+int _eio_log_dom_global = -1;
 
 static Eio_Alloc_Pool progress_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
 static Eio_Alloc_Pool direct_info_pool = { 0, NULL, EIO_MUTEX_INITIALIZER };
@@ -211,12 +212,27 @@ eio_associate_free(void *data)
 EAPI int
 eio_init(void)
 {
-   _eio_count++;
+   if (++_eio_init_count != 1)
+     return _eio_init_count;
 
-   if (_eio_count > 1) return _eio_count;
+   if (!eina_init())
+     {
+        fprintf(stderr, "Eio can not initialize Eina\n");
+        return --_eio_init_count;
+     }
 
-   eina_init();
-   ecore_init();
+   _eio_log_dom_global = eina_log_domain_register("eio", EIO_DEFAULT_LOG_COLOR);
+   if (_eio_log_dom_global < 0)
+     {
+        EINA_LOG_ERR("Eio can not create a general log domain.");
+        goto shutdown_eina;
+     }
+
+   if (!ecore_init())
+     {
+        ERR("Can not initialize Eina\n");
+        goto unregister_log_domain;
+     }
 
    EIO_MUTEX_INIT(progress_pool);
    EIO_MUTEX_INIT(direct_info_pool);
@@ -225,7 +241,14 @@ eio_init(void)
 
    eio_monitor_init();
 
-   return _eio_count;
+   return _eio_init_count;
+
+unregister_log_domain:
+   eina_log_domain_unregister(_eio_log_dom_global);
+   _eio_log_dom_global = -1;
+shutdown_eina:
+   eina_shutdown();
+   return --_eio_init_count;
 }
 
 EAPI int
@@ -236,14 +259,13 @@ eio_shutdown(void)
    Eio_Progress *pg;
    Eio_File_Associate *asso;
 
-   if (_eio_count <= 0)
+   if (_eio_init_count <= 0)
      {
-        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        ERR("Init count not greater than 0 in shutdown.");
         return 0;
      }
-   _eio_count--;
-
-   if (_eio_count > 0) return _eio_count;
+   if (--_eio_init_count != 0)
+     return _eio_init_count;
 
    eio_monitor_shutdown();
 
@@ -270,6 +292,9 @@ eio_shutdown(void)
    associate_pool.count = 0;
 
    ecore_shutdown();
+   eina_log_domain_unregister(_eio_log_dom_global);
+   _eio_log_dom_global = -1;
    eina_shutdown();
-   return _eio_count;
+
+   return _eio_init_count;
 }
