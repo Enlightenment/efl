@@ -2345,14 +2345,14 @@ _proxy_subrender(Evas *e, Evas_Object *source)
    source->proxy.redraw = EINA_FALSE;
 
    /* We need to redraw surface then */
-   if ((source->proxy.surface) && 
+   if ((source->proxy.surface) &&
        ((source->proxy.w != w) || (source->proxy.h != h)))
      {
         e->engine.func->image_map_surface_free(e->engine.data.output,
                                                source->proxy.surface);
         source->proxy.surface = NULL;
      }
-   
+
    /* FIXME: Hardcoded alpha 'on' */
    /* FIXME (cont): Should see if the object has alpha */
    if (!source->proxy.surface)
@@ -2363,13 +2363,15 @@ _proxy_subrender(Evas *e, Evas_Object *source)
         source->proxy.h = h;
      }
 
+   if (!source->proxy.surface) return;
+
    ctx = e->engine.func->context_new(e->engine.data.output);
    e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0, 0, 0);
    e->engine.func->context_render_op_set(e->engine.data.output, ctx, EVAS_RENDER_COPY);
    e->engine.func->rectangle_draw(e->engine.data.output, ctx,
                                   source->proxy.surface, 0, 0, w, h);
    e->engine.func->context_free(e->engine.data.output, ctx);
-   
+
    ctx = e->engine.func->context_new(e->engine.data.output);
    evas_render_mapped(e, source, ctx, source->proxy.surface,
                       -source->cur.geometry.x,
