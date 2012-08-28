@@ -77,6 +77,10 @@ eina_str_split_full_helper(const char *str,
    unsigned int tokens = 0, x;
    const char *idx[256] = {NULL};
 
+
+   if (!str) return NULL;
+   if (!delim) return NULL;
+   if (!elements) return NULL;
    if (max_tokens < 0) max_tokens = 0;
    if (max_tokens == 1)
      {
