@@ -53,6 +53,8 @@ struct _Eio_Monitor_Backend
    Eio_Monitor_Win32_Watcher *dir;
 };
 
+static Eina_Bool _eio_monitor_win32_native = EINA_FALSE;
+
 static Eina_Bool
 _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 {
@@ -149,7 +151,7 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
      FILE_NOTIFY_CHANGE_SECURITY;
 
     ReadDirectoryChangesW(w->handle,
-                          w->buffer,
+                          (LPVOID)w->buffer,
                           EIO_MONITOR_WIN32_BUFFER_SIZE,
                           FALSE,
                           filter,
@@ -163,13 +165,15 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 static Eio_Monitor_Win32_Watcher *
 _eio_monitor_win32_watcher_new(Eio_Monitor *monitor, unsigned char is_dir)
 {
+   char path[PATH_MAX];
    Eio_Monitor_Win32_Watcher *w;
    DWORD                      filter;
 
    w = (Eio_Monitor_Win32_Watcher *)calloc(1, sizeof(Eio_Monitor_Win32_Watcher));
    if (!w) return NULL;
 
-   w->handle = CreateFile(monitor->path,
+   realpath(monitor->path, path);
+   w->handle = CreateFile(path,
                           FILE_LIST_DIRECTORY,
                           FILE_SHARE_READ |
                           FILE_SHARE_WRITE,
@@ -198,14 +202,17 @@ _eio_monitor_win32_watcher_new(Eio_Monitor *monitor, unsigned char is_dir)
      FILE_NOTIFY_CHANGE_SECURITY;
 
    if (!ReadDirectoryChangesW(w->handle,
-                              w->buffer,
+                              (LPVOID)w->buffer,
                               EIO_MONITOR_WIN32_BUFFER_SIZE,
                               FALSE,
                               filter,
                               &w->buf_length,
                               &w->overlapped,
                               NULL))
-     goto close_event;
+     {
+       printf("error : %s\n", evil_last_error_get());
+       goto close_event;
+     }
 
    w->h = ecore_main_win32_handler_add(w->event,
                                        _eio_monitor_win32_cb,
@@ -287,12 +294,13 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
         return;
      }
 
+   _eio_monitor_win32_native = EINA_TRUE;
    monitor->backend = backend;
 }
 
 void eio_monitor_backend_del(Eio_Monitor *monitor)
 {
-   if (!monitor->backend)
+   if (!_eio_monitor_win32_native)
      {
         eio_monitor_fallback_del(monitor);
         return ;

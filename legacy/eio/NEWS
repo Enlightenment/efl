@@ -10,8 +10,8 @@ Fixes:
 	- detect when requesting to monitor a different file with the same name.
 	- memory leak when shutting down fallback monitor.
 	- properly shutdown monitor.
+        - Fix segfault when shutting down the Windows monitor.
 
 Improvements:
 
 Removal:
-
