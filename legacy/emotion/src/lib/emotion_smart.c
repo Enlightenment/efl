@@ -71,6 +71,7 @@ struct _Smart_Data
 
 #ifdef HAVE_EIO
    Eio_File *load_xattr;
+   Eio_File *save_xattr;
 #endif
 
    struct {
@@ -481,6 +482,8 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    /* Only cancel the load_xattr or we will loose ref to time_seek stringshare */
    if (sd->load_xattr) eio_file_cancel(sd->load_xattr);
    sd->load_xattr = NULL;
+   if (sd->save_xattr) eio_file_cancel(sd->save_xattr);
+   sd->save_xattr = NULL;
 #endif
 
    return EINA_TRUE;
@@ -1416,19 +1419,30 @@ emotion_object_last_position_load(Evas_Object *obj)
 
 #ifdef HAVE_EIO
 static void
-_eio_save_xattr_done(void *data, Eio_File *handler __UNUSED__)
+_eio_save_xattr_cleanup(Smart_Data *sd, Eio_File *handler)
+{
+   if (handler == sd->save_xattr) sd->save_xattr = NULL;
+
+   EINA_REFCOUNT_UNREF(sd)
+     _smart_data_free(sd);
+}
+
+static void
+_eio_save_xattr_done(void *data, Eio_File *handler)
 {
    Smart_Data *sd = data;
 
    evas_object_smart_callback_call(sd->obj, SIG_POSITION_SAVE_SUCCEED, NULL);
+   _eio_save_xattr_cleanup(sd, handler);
 }
 
 static void
-_eio_save_xattr_error(void *data, Eio_File *handler __UNUSED__, int err __UNUSED__)
+_eio_save_xattr_error(void *data, Eio_File *handler, int err __UNUSED__)
 {
    Smart_Data *sd = data;
 
    evas_object_smart_callback_call(sd->obj, SIG_POSITION_SAVE_FAILED, NULL);
+   _eio_save_xattr_cleanup(sd, handler);
 }
 #endif
 
@@ -1449,8 +1463,17 @@ emotion_object_last_position_save(Evas_Object *obj)
      return ;
 
 #ifdef HAVE_EIO
-   eio_file_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0,
-			     _eio_save_xattr_done, _eio_save_xattr_error, sd);
+   if (sd->save_xattr) return ;
+
+   EINA_REFCOUNT_REF(sd);
+
+   sd->save_xattr = eio_file_xattr_double_set(tmp,
+                                              "user.e.time_seek",
+                                              emotion_object_position_get(obj),
+                                              0,
+                                              _eio_save_xattr_done,
+                                              _eio_save_xattr_error,
+                                              sd);
 #else
    if (eina_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0))
      evas_object_smart_callback_call(obj, SIG_POSITION_SAVE_SUCCEED, NULL);
