@@ -3576,6 +3576,7 @@ _item_process_post(Elm_Genlist_Smart_Data *sd,
         Elm_Gen_Item *it2;
 
         it2 = sd->selected->data;
+        if (!it2->item->block) return;
         sd->s_iface->content_pos_get(ELM_WIDGET_DATA(sd)->obj, NULL, &y);
         evas_object_geometry_get(sd->pan_obj, NULL, NULL, NULL, &h);
         if ((it->y + it->item->block->y > y + h) ||
