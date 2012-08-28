@@ -2301,6 +2301,8 @@ EAPI void         edje_object_text_change_cb_set      (Evas_Object *obj, Edje_Te
  * @param obj A valid Evas Object handle
  * @param part The part name
  * @param text The text string
+ *
+ * @return @c EINA_BOOL on success, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const char *part, const char *text);
 
@@ -2314,6 +2316,9 @@ EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const c
  * @param obj A valid Evas Object handle
  * @param part The part name
  * @param text The text string
+ *
+ * @return @c EINA_BOOL on success, @c EINA_FALSE otherwise
+ *
  * @since 1.2
  */
 EAPI Eina_Bool    edje_object_part_text_escaped_set   (Evas_Object *obj, const char *part, const char *text);

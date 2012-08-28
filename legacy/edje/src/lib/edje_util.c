@@ -1056,10 +1056,10 @@ Eina_Bool
 _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char *part, const char *text)
 {
    if ((!rp->text.text) && (!text))
-     return EINA_FALSE;
+     return EINA_TRUE; /* nothing to do, no error */
    if ((rp->text.text) && (text) &&
        (!strcmp(rp->text.text, text)))
-     return EINA_FALSE;
+     return EINA_TRUE; /* nothing to do, no error */
    if (rp->text.text)
      {
 	eina_stringshare_del(rp->text.text);
