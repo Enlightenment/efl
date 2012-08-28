@@ -312,7 +312,7 @@ _play(struct _App *app)
      {
 	libvlc_time_t new_time = pos * 1000;
 	libvlc_media_player_set_time(app->mp, new_time);
-	libvlc_media_player_play(app->mp);
+        libvlc_media_player_play(app->mp);
 	app->playing = 1;
      }
 }
@@ -395,8 +395,8 @@ _file_set(struct _App *app)
 	fprintf(stderr, "could not open path: \"%s\"\n", app->filename);
 	return;
      }
-   app->mp = libvlc_media_player_new_from_media(app->m);
 
+   app->mp = libvlc_media_player_new_from_media(app->m);
    if (!app->mp)
      {
 	fprintf(stderr, "could not create new player from media.\n");
@@ -740,7 +740,6 @@ _process_thread_events(struct _App *app)
 	 _send_cmd(app, EM_RESULT_PLAYBACK_STARTED);
 	 break;
       case EM_THREAD_PLAYBACK_STOPPED:
-         libvlc_media_player_stop(app->mp);
          app->playing = 0;
 	 _send_cmd(app, EM_RESULT_PLAYBACK_STOPPED);
 	 break;

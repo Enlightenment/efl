@@ -41,3 +41,7 @@
 2012-08-10  Sohyun Kim
 
 	* Fix priority set/get for gstreamer.
+
+2012-08-28  Cedric Bail
+
+	* Reset VLC pipeline on EOS.

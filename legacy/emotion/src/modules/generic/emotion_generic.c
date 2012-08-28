@@ -40,6 +40,19 @@ static struct _default_players players[] = {
        { NULL, NULL }
 };
 
+static Eina_Bool _fork_and_exec(Emotion_Generic_Video *ev);
+static void em_partial_shutdown(Emotion_Generic_Video *ev);
+
+static Eina_Bool
+_player_restart(void *data)
+{
+   Emotion_Generic_Video *ev = data;
+
+   _fork_and_exec(ev);
+   ev->player_restart = NULL;
+   return EINA_FALSE;
+}
+
 static const char *
 _get_player(const char *name)
 {
@@ -107,18 +120,33 @@ _player_send_cmd(Emotion_Generic_Video *ev, int cmd)
 	ERR("invalid command to player.");
 	return;
      }
+   if (ev->fd_write == -1)
+     {
+        ERR("you should wait for emotion to be ready to take action.");
+        return ;
+     }
    if (write(ev->fd_write, &cmd, sizeof(cmd)) < 0) perror("write");
 }
 
 static void
 _player_send_int(Emotion_Generic_Video *ev, int number)
 {
+   if (ev->fd_write == -1)
+     {
+        ERR("you should wait for emotion to be ready to take action.");
+        return ;
+     }
    if (write(ev->fd_write, &number, sizeof(number)) < 0) perror("write");
 }
 
 static void
 _player_send_float(Emotion_Generic_Video *ev, float number)
 {
+   if (ev->fd_write == -1)
+     {
+        ERR("you should wait for emotion to be ready to take action.");
+        return ;
+     }
    if (write(ev->fd_write, &number, sizeof(number)) < 0) perror("write");
 }
 
@@ -561,7 +589,12 @@ _player_cmd_process(Emotion_Generic_Video *ev)
 	 _emotion_playback_started(ev->obj);
 	 break;
       case EM_RESULT_PLAYBACK_STOPPED:
+         ev->pos = 0;
 	 _emotion_playback_finished(ev->obj);
+         _emotion_decode_stop(ev->obj);
+
+         em_partial_shutdown(ev);
+         ev->player_restart = ecore_idler_add(_player_restart, ev);
 	 break;
       case EM_RESULT_FRAME_SIZE:
 	 _player_frame_resize(ev);
@@ -944,7 +977,7 @@ _player_exec(Emotion_Generic_Video *ev)
 }
 
 static Eina_Bool
-_fork_and_exec(Evas_Object *obj __UNUSED__, Emotion_Generic_Video *ev)
+_fork_and_exec(Emotion_Generic_Video *ev)
 {
    char shmname[256];
    struct timeval tv;
@@ -961,7 +994,6 @@ _fork_and_exec(Evas_Object *obj __UNUSED__, Emotion_Generic_Video *ev)
       ECORE_EXE_EVENT_DEL, _player_del_cb, ev);
    ev->player_data = ecore_event_handler_add(
       ECORE_EXE_EVENT_DATA, _player_data_cb, ev);
-
 
    if (!_player_exec(ev))
      {
@@ -998,15 +1030,13 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    ev->cmdline = eina_stringshare_add(player);
    *emotion_video = ev;
 
-   return _fork_and_exec(obj, ev);
+   return _fork_and_exec(ev);
 }
 
-static int
-em_shutdown(void *data)
+static void
+em_partial_shutdown(Emotion_Generic_Video *ev)
 {
-   Emotion_Generic_Video *ev = data;
-
-   if (!ev) return 0;
+   _emotion_image_reset(ev->obj);
 
    if (ev->player.exe)
      {
@@ -1017,20 +1047,39 @@ em_shutdown(void *data)
 
    if (ev->shared)
      munmap(ev->shared, ev->shared->size);
+   ev->shared = NULL;
 
    if (ev->fd_read >= 0)
      close(ev->fd_read);
+   ev->fd_read = -1;
    if (ev->fd_write >= 0)
      close(ev->fd_write);
+   ev->fd_write = -1;
    if (ev->fd_handler)
      ecore_main_fd_handler_del(ev->fd_handler);
+   ev->fd_handler = NULL;
+
+   if (ev->player_add) ecore_event_handler_del(ev->player_add);
+   ev->player_add = NULL;
+   if (ev->player_data) ecore_event_handler_del(ev->player_data);
+   ev->player_data = NULL;
+   if (ev->player_del) ecore_event_handler_del(ev->player_del);
+   ev->player_del = NULL;
+   if (ev->player_restart) ecore_idler_del(ev->player_restart);
+   ev->player_restart = NULL;
+}
+
+static int
+em_shutdown(void *data)
+{
+   Emotion_Generic_Video *ev = data;
+
+   if (!ev) return 0;
 
    eina_stringshare_del(ev->cmdline);
    eina_stringshare_del(ev->shmname);
 
-   ecore_event_handler_del(ev->player_add);
-   ecore_event_handler_del(ev->player_data);
-   ecore_event_handler_del(ev->player_del);
+   em_partial_shutdown(ev);
 
    return 1;
 }

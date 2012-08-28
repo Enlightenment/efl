@@ -122,6 +122,7 @@ EAPI void  _emotion_file_ref_set(Evas_Object *obj, const char *file, int num);
 EAPI void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
 EAPI void  _emotion_spu_button_set(Evas_Object *obj, int button);
 EAPI void  _emotion_seek_done(Evas_Object *obj);
+EAPI void  _emotion_image_reset(Evas_Object *obj);
 
 EAPI Eina_Bool _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close);
 EAPI Eina_Bool _emotion_module_unregister(const char *name);

@@ -1577,6 +1577,15 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 }
 
 EAPI void
+_emotion_image_reset(Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   _emotion_image_data_zero(sd->obj);
+}
+
+EAPI void
 _emotion_decode_stop(Evas_Object *obj)
 {
    Smart_Data *sd;

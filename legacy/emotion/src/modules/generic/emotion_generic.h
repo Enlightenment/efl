@@ -67,6 +67,7 @@ struct _Emotion_Generic_Video
    Emotion_Generic_Player    player;
    Emotion_Generic_Cmd_Buffer	cmd;
    Ecore_Event_Handler	     *player_add, *player_del, *player_data;
+   Ecore_Idler               *player_restart;
    int			     drop;
    int			     fd_read, fd_write;
    Ecore_Fd_Handler	     *fd_handler;
