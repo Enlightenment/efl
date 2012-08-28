@@ -1,7 +1,12 @@
 Evil NEWS - User visible changes.
 
+* Evil 1.7:
+
+** Correctly display messages with evil_format_message()
+
 * Evil 1.1:
 
+** Released April 26th, 2012, by Vincent Torri
 ** Add evil_path_is_absolute() API
 ** Add POSIX printf() family functions
 ** Add S_ISLNK macro

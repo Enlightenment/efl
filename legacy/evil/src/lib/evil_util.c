@@ -142,11 +142,12 @@ evil_format_message(long err)
    str = msg;
 #endif /* UNICODE */
 
-   LocalFree(msg);
-
    disp = (char *)malloc((strlen(str) + strlen("(00000) ") + 1) * sizeof(char));
    if (!disp)
-     return NULL;
+     {
+        LocalFree(msg);
+        return NULL;
+     }
 
    snprintf(disp, strlen(str) + strlen("(00000) ") + 1,
             "(%5ld) %s", err, str);
@@ -154,6 +155,8 @@ evil_format_message(long err)
 #ifdef UNICODE
    free(str);
 #endif /* UNICODE */
+
+   LocalFree(msg);
 
    return disp;
 }

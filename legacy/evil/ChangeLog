@@ -1,13 +1,11 @@
 2012-08-20  Vincent Torri  <doursse at users dot sf dot net>
 
-	* configure.ac:
-	quoting.
+	* src/lib/evil_util.c:
+	fix evil_format_message(): free the message to display
+	at the end of the function. Hence the message is displayed,
+	now.
 
-	* Makefile.am:
-	* src/lib/Makefile.am:
-	fix distcheck
-
-2012-08-19  Vincent Torri  <doursse at users dot sf dot net>
+012-08-19  Vincent Torri  <doursse at users dot sf dot net>
 
 	* configure.ac:
 	* src/bin/Makefile.am:
@@ -43,6 +41,7 @@
 
 	* NEWS:
 	* src/lib/evil_langinfo.c:
+	Release Version 1.1.0.
 	Fix nl_langinfo(RADIXCHAR).
 
 2012-04-20  Vincent Torri  <doursse at users dot sf dot net>
