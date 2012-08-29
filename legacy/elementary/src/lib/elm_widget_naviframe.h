@@ -138,6 +138,8 @@ struct _Elm_Naviframe_Item
    ELM_WIDGET_ITEM;
    EINA_INLIST;
 
+   Eina_Inlist *content_list;
+   Eina_Inlist *text_list;
    Evas_Object *content;
    Evas_Object *title_prev_btn;
    Evas_Object *title_next_btn;
@@ -146,12 +148,29 @@ struct _Elm_Naviframe_Item
    Evas_Object *subtitle;
    const char  *style;
    const char  *title_label;
+   const char  *subtitle_label;
 
    Evas_Coord   minw;
    Evas_Coord   minh;
 
    Eina_Bool    title_visible : 1;
    Eina_Bool    content_unfocusable : 1;
+};
+
+typedef struct _Elm_Naviframe_Content_Item_Pair Elm_Naviframe_Content_Item_Pair;
+struct _Elm_Naviframe_Content_Item_Pair
+{
+   EINA_INLIST;
+   const char *part;
+   Elm_Naviframe_Item *it;
+};
+
+typedef struct _Elm_Naviframe_Text_Item_Pair Elm_Naviframe_Text_Item_Pair;
+struct _Elm_Naviframe_Text_Item_Pair
+{
+   EINA_INLIST;
+   const char *part;
+   Evas_Object *access_object;
 };
 
 /**
