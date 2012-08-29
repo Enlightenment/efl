@@ -406,3 +406,8 @@
 	* Track window states as a total count and be able to self-throttle
           or suspend rendering as a result.
 
+2012-08-29  Shinwoo Kim (kimcinoo)
+
+	* Patch for selection of middle item in diskselector required adding
+          API elm_diskselector_autoselect_set/get()
+

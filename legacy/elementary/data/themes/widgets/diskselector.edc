@@ -186,6 +186,17 @@ group { name: "elm/diskselector/item/default";
             text.align: 0.8 0.5;
          }
       }
+     part { name: "auto_select";
+        type: RECT;
+        mouse_events: 1;
+        repeat_events: 1;
+        description {
+           state: "default" 0.0;
+        }
+        description {
+           state: "disable" 0.0;
+        }
+     }
    }
 
    programs {
@@ -222,6 +233,29 @@ group { name: "elm/diskselector/item/default";
          source: "elm";
          action: STATE_SET "icon_only" 0.0;
          target: "elm.swallow.icon";
+      }
+      program { name: "auto_select";
+         signal: "elm,state,autoselect,default";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "auto_select";
+      }
+      program { name: "auto_select_disable";
+         signal: "elm,state,autoselect,disable";
+         source: "elm";
+         action: STATE_SET "disable" 0.0;
+         target: "auto_select";
+      }
+      program { name: "item_click";
+         signal: "mouse,clicked,1";
+         source: "auto_select";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"auto_select", st, 30, vl);
+            if (!strcmp(st, "disable"))
+              emit("elm,action,click", "");
+         }
       }
    }
 }
@@ -275,13 +309,17 @@ group { name: "elm/diskselector/item/datetime/default";
            text.align: 0.8 0.5;
         }
      }
-     part { name: "over1";
+     part { name: "auto_select";
         type: RECT;
         mouse_events: 1;
         repeat_events: 1;
         ignore_flags: ON_HOLD;
-        description {
-           state: "default" 0.0;
+        description { state: "default" 0.0;
+           color: 0 0 0 0;
+        }
+        description { state: "disable" 0.0;
+           inherit: "default" 0.0;
+           visible: 0;
         }
      }
    }
@@ -362,10 +400,28 @@ group { name: "elm/diskselector/item/datetime/default";
             update_state();
          }
       }
+      program { name: "auto_select";
+         signal: "elm,state,autoselect,default";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "auto_select";
+      }
+      program { name: "auto_select_disable";
+         signal: "elm,state,autoselect,disable";
+         source: "elm";
+         action: STATE_SET "disable" 0.0;
+         target: "auto_select";
+      }
       program { name: "field_click";
          signal: "mouse,clicked,1";
-         source: "over1";
-         action: SIGNAL_EMIT "elm,action,click" "";
+         source: "auto_select";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"auto_select", st, 30, vl);
+            if (!strcmp(st, "disable"))
+              emit("elm,action,click", "");
+         }
       }
    }
 }
