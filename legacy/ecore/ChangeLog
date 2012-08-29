@@ -880,6 +880,11 @@
 
 	* Always call evas_render_update_free to prevent leak in Ecore_Evas X backend.
 
-2012-08-39  Mike Blumenkrantz
+2012-08-29  Mike Blumenkrantz
 
         * Fix leak in ecore_ipc servers
+
+2012-08-29  Christopher Michael
+
+        * Add Copy-N-Paste support for Ecore_Wayland.
+
