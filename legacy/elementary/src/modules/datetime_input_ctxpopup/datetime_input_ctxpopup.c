@@ -264,7 +264,14 @@ field_value_display(Elm_Datetime_Module_Data *module_data, Evas_Object *obj)
    elm_datetime_value_get(ctx_mod->mod_data.base, &tim);
    field_type = (Elm_Datetime_Field_Type )evas_object_data_get(obj, "_field_type");
    fmt = ctx_mod->mod_data.field_format_get(ctx_mod->mod_data.base, field_type);
+   buf[0] = 0;
    strftime(buf, sizeof(buf), fmt, &tim);
+   if ((!buf[0]) && ((!strcmp(fmt, "%p")) || (!strcmp(fmt, "%P"))))
+     {
+        // yes BUFF_SIZE is more than 2 bytes!
+        if (tim.tm_hour < 12) strcpy(buf, "AM");
+        else strcpy(buf, "PM");
+     }
    elm_object_text_set(obj, buf);
 }
 
