@@ -50,6 +50,18 @@ extern Ecore_Wl_Display *_ecore_wl_disp;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_wl_log_dom, __VA_ARGS__)
 
+struct _Ecore_Wl_Dnd
+{
+   Ecore_Wl_Display *ewd;
+   Ecore_Wl_Input *input;
+
+   /* As provider */
+   struct wl_data_source *data_source;
+   struct wl_array types_offered;
+
+   /* TODO: dnd specific fields */
+};
+
 struct _Ecore_Wl_Dnd_Source
 {
    struct wl_data_offer *offer;
@@ -77,6 +89,7 @@ void _ecore_wl_output_del(Ecore_Wl_Output *output);
 void _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id);
 void _ecore_wl_input_del(Ecore_Wl_Input *input);
 void _ecore_wl_input_pointer_xy_get(int *x, int *y);
+void _ecore_wl_input_set_selection(Ecore_Wl_Input *input, struct wl_data_source *source);
 
 void _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device, struct wl_data_offer *offer);
 void _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, struct wl_surface *surface, int x, int y, struct wl_data_offer *offer);
@@ -86,4 +99,5 @@ void _ecore_wl_dnd_drop(void *data, struct wl_data_device *data_device __UNUSED_
 void _ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device __UNUSED__, struct wl_data_offer *offer);
 void _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source);
 
+struct wl_data_source *_ecore_wl_create_data_source(Ecore_Wl_Display *ewd);
 #endif

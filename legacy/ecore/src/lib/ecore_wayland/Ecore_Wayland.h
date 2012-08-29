@@ -35,6 +35,7 @@ typedef struct _Ecore_Wl_Input Ecore_Wl_Input;
 # ifndef _ECORE_WAYLAND_WINDOW_PREDEF
 typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 # endif
+typedef struct _Ecore_Wl_Dnd Ecore_Wl_Dnd; /** @since 1.7 */
 typedef struct _Ecore_Wl_Dnd_Source Ecore_Wl_Dnd_Source;
 typedef struct _Ecore_Wl_Dnd_Target Ecore_Wl_Dnd_Target;
 
@@ -47,6 +48,8 @@ typedef struct _Ecore_Wl_Event_Dnd_Enter Ecore_Wl_Event_Dnd_Enter;
 typedef struct _Ecore_Wl_Event_Dnd_Position Ecore_Wl_Event_Dnd_Position;
 typedef struct _Ecore_Wl_Event_Dnd_Leave Ecore_Wl_Event_Dnd_Leave;
 typedef struct _Ecore_Wl_Event_Dnd_Drop Ecore_Wl_Event_Dnd_Drop;
+typedef struct _Ecore_Wl_Event_Data_Source_Send Ecore_Wl_Event_Data_Source_Send; /** @since 1.7 */
+typedef struct _Ecore_Wl_Event_Selection_Data_Ready Ecore_Wl_Event_Selection_Data_Ready; /** @since 1.7 */
 typedef struct _Ecore_Wl_Event_Interfaces_Bound Ecore_Wl_Event_Interfaces_Bound;
 
 enum _Ecore_Wl_Window_Type
@@ -143,6 +146,7 @@ struct _Ecore_Wl_Input
 
    Ecore_Wl_Dnd_Source *drag_source;
    Ecore_Wl_Dnd_Source *selection_source;
+   Ecore_Wl_Dnd *dnd; /** @since 1.7 */
 
    struct
      {
@@ -281,6 +285,21 @@ struct _Ecore_Wl_Event_Dnd_Drop
      } position;
 };
 
+/** @since 1.7 */
+struct _Ecore_Wl_Event_Data_Source_Send
+{
+   char *type;
+   int fd;
+};
+
+/** @since 1.7 */
+struct _Ecore_Wl_Event_Selection_Data_Ready
+{
+   char *data;
+   int len;
+   Eina_Bool done;
+};
+
 struct _Ecore_Wl_Event_Interfaces_Bound
 {
    Eina_Bool compositor : 1;
@@ -311,6 +330,10 @@ EAPI extern int ECORE_WL_EVENT_DND_ENTER;
 EAPI extern int ECORE_WL_EVENT_DND_POSITION;
 EAPI extern int ECORE_WL_EVENT_DND_LEAVE;
 EAPI extern int ECORE_WL_EVENT_DND_DROP;
+EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_TARGET; /** @since 1.7 */
+EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_SEND; /** @since 1.7 */
+EAPI extern int ECORE_WL_EVENT_DATA_SOURCE_CANCELLED; /** @since 1.7 */
+EAPI extern int ECORE_WL_EVENT_SELECTION_DATA_READY; /** @since 1.7 */
 EAPI extern int ECORE_WL_EVENT_INTERFACES_BOUND;
 
 EAPI int ecore_wl_init(const char *name);
@@ -355,5 +378,12 @@ EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_surface *s
 EAPI void ecore_wl_window_cursor_from_name_set(Ecore_Wl_Window *win, const char *cursor_name);
 EAPI void ecore_wl_window_cursor_default_restore(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_parent_set(Ecore_Wl_Window *win, Ecore_Wl_Window *parent);
+
+/** @since 1.7 */
+EAPI Eina_Bool ecore_wl_dnd_set_selection(Ecore_Wl_Dnd *dnd, const char **types_offered);
+EAPI Eina_Bool ecore_wl_dnd_get_selection(Ecore_Wl_Dnd *dnd, const char *type);
+EAPI Ecore_Wl_Dnd *ecore_wl_dnd_get();
+EAPI Eina_Bool ecore_wl_dnd_start_drag();
+EAPI Eina_Bool ecore_wl_dnd_selection_has_owner(Ecore_Wl_Dnd *dnd);
 
 #endif

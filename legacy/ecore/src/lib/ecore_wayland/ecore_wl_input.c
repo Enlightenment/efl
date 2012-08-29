@@ -39,6 +39,8 @@
 #define MOD_ALT_MASK 0x02
 #define MOD_CONTROL_MASK 0x04
 
+Ecore_Wl_Dnd *glb_dnd = NULL;
+
 /* local function prototypes */
 static void _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat *seat, enum wl_seat_capability caps);
 
@@ -109,7 +111,6 @@ static const struct wl_seat_listener _ecore_wl_seat_listener =
 {
    _ecore_wl_input_seat_handle_capabilities,
 };
-
 
 static const struct wl_data_device_listener _ecore_wl_data_listener = 
 {
@@ -256,6 +257,14 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
                                NULL, NULL);
 
    ewd->input = input;
+
+   /* create Ecore_Wl_Dnd */
+   if (!glb_dnd)
+     if (!(glb_dnd = calloc(1, sizeof(Ecore_Wl_Dnd)))) return;
+   glb_dnd->ewd = ewd;
+   glb_dnd->input = input;
+   input->dnd = glb_dnd;
+   wl_array_init(&glb_dnd->types_offered);
 }
 
 void 
@@ -1192,4 +1201,10 @@ _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int v
      }
 
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+}
+
+void
+_ecore_wl_input_set_selection(Ecore_Wl_Input *input, struct wl_data_source *source)
+{
+   wl_data_device_set_selection(input->data_device, source, input->display->serial);
 }
