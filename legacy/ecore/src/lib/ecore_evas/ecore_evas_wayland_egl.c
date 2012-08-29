@@ -528,7 +528,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
      {
         ecore_wl_window_show(ee->engine.wl.win);
         ecore_wl_window_update_size(ee->engine.wl.win, ee->w, ee->h);
-        /* ecore_wl_sync(); */
+        ecore_wl_window_buffer_attach(ee->engine.wl.win, NULL, 0, 0);
 
         if ((ee->prop.clas) && (ee->engine.wl.win->shell_surface))
           wl_shell_surface_set_class(ee->engine.wl.win->shell_surface, 
@@ -559,8 +559,6 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         /* else */
         /*   printf("Failed to get a Surface from Ecore_Wl\n"); */
      }
-
-   /* ecore_wl_window_buffer_attach(ee->engine.wl.win, ee->engine.wl.buffer, 0, 0); */
 
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
