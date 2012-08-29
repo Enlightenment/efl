@@ -33,6 +33,7 @@ Fixes:
     * Call edje_object_message_signal_process also on GROUP part Edje object.
     * Remove memory leak when alias are present in the edj file.
     * Properly destroy color_class and text_class on an Edje_Object.
+    * Stop leaking memory on edje block error during signal emit.
 
 Edje 1.2.0
 

@@ -569,3 +569,7 @@
 
 	* Textblock: Fixed issue with textblock fit not sizing correctly. This
 	fix is not perfect.
+
+2012-08-29  Cedric Bail
+
+	* Don't leak memory on edje block error during signal emit.

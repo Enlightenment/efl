@@ -499,10 +499,17 @@ edje_match_callback_exec_check_finals(const Edje_Patterns *signal_ppat,
      {
         escb->func(escb->data, ed->obj, sig, source);
         if (_edje_block_break(ed))
-          return 0;
+	  {
+             r = 0;
+             break;
+          }
         if ((signal_ppat->delete_me) || (source_ppat->delete_me))
-          return 0;
+          {
+             r = 0;
+             break;
+          }
      }
+
    eina_array_flush(&run);
 
    return r;
