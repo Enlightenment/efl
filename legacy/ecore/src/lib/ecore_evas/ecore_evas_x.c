@@ -307,7 +307,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
                     {
 //                     ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
                     }
-                  evas_render_updates_free(updates);
                   _ecore_evas_idle_timeout_update(ee);
                   rend = 1;
                }
@@ -380,7 +379,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
                        ecore_x_xregion_free(ee->engine.x.damages);
                        ee->engine.x.damages = NULL;
                     }
-                  evas_render_updates_free(updates);
                   _ecore_evas_idle_timeout_update(ee);
                   rend = 1;
                }
@@ -401,13 +399,14 @@ _ecore_evas_x_render(Ecore_Evas *ee)
                {
 //                ecore_x_window_shape_input_mask_set(ee->prop.window, ee->engine.x.mask);
                }
-             evas_render_updates_free(updates);
              _ecore_evas_idle_timeout_update(ee);
              rend = 1;
           }
      }
    else
      evas_norender(ee->evas);
+   evas_render_updates_free(updates);
+
    if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 /*
    if (rend)

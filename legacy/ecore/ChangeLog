@@ -875,3 +875,7 @@
 
         * Fix segmentation fault in ecore_thread on Windows as PHS
 	  was returning a wrong value.
+
+2012-08-29  Cedric Bail
+
+	* Always call evas_render_update_free to prevent leak in Ecore_Evas X backend.
