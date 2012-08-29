@@ -439,11 +439,6 @@ group {
       image: "hoversel_entry_bg.png" COMP;
    }
    parts {
-      part { name: "event";
-         mouse_events: 1;
-         description { state: "default" 0.0;
-         }
-      }
       part { name: "bg";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -498,6 +493,7 @@ group {
          }
       }
       part { name: "over1";
+         type: RECT;
          mouse_events: 1;
          repeat_events: 1;
          ignore_flags: ON_HOLD;
@@ -510,6 +506,7 @@ group {
          }
       }
       part { name: "over2";
+         type: RECT;
          mouse_events: 1;
          repeat_events: 1;
          description { state: "default" 0.0;
@@ -530,6 +527,7 @@ group {
          }
       }
       part { name: "blocker";
+         type: RECT;
          description { state: "default" 0.0;
             visible: 0;
          }
@@ -585,11 +583,6 @@ group {
       image: "hoversel_entry_bg.png" COMP;
    }
    parts {
-      part { name: "event";
-         mouse_events: 1;
-         description { state: "default" 0.0;
-         }
-      }
       part { name: "bg";
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -644,6 +637,7 @@ group {
          }
       }
       part { name: "over1";
+         type: RECT;
          mouse_events: 1;
          repeat_events: 1;
          ignore_flags: ON_HOLD;
@@ -656,6 +650,7 @@ group {
          }
       }
       part { name: "over2";
+         type: RECT;
          mouse_events: 1;
          repeat_events: 1;
          description { state: "default" 0.0;
@@ -676,6 +671,7 @@ group {
          }
       }
       part { name: "blocker";
+         type: RECT;
          description { state: "default" 0.0;
             visible: 0;
          }
