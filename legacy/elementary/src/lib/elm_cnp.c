@@ -2059,7 +2059,8 @@ elm_selection_selection_has_owner(Evas_Object *obj)
      return _x11_elm_selection_selection_has_owner(obj);
 #endif
 #ifdef HAVE_ELEMENTARY_WAYLAND
-   return ecore_wl_dnd_selection_has_owner(ecore_wl_dnd_get());
+   if (elm_win_wl_window_get(obj))
+     return ecore_wl_dnd_selection_has_owner(ecore_wl_dnd_get());
 #endif
    return _local_elm_selection_selection_has_owner(obj);
 }
