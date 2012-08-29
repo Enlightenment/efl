@@ -98,25 +98,17 @@ static Tmp_Info  *_tempfile_new      (int size);
 static int        _tmpinfo_free      (Tmp_Info *tmp);
 static Eina_Bool  _pasteimage_append (char *file, Evas_Object *entry);
 
-
-
-
-
-
-
-
-
-
-// x11 specific stuff
-////////////////////////////////////////////////////////////////////////////
-#ifdef HAVE_ELEMENTARY_X
-#define ARRAYINIT(foo)  [foo] =
 //#define DEBUGON 1
 #ifdef DEBUGON
 # define cnp_debug(x...) fprintf(stderr, __FILE__": " x)
 #else
 # define cnp_debug(x...) do { } while (0)
 #endif
+
+// x11 specific stuff
+////////////////////////////////////////////////////////////////////////////
+#ifdef HAVE_ELEMENTARY_X
+#define ARRAYINIT(foo)  [foo] =
 
 typedef struct _X11_Cnp_Selection X11_Cnp_Selection;
 typedef struct _X11_Cnp_Atom      X11_Cnp_Atom;
@@ -1534,6 +1526,124 @@ _x11_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__)
 
 #endif
 
+#ifdef HAVE_ELEMENTARY_WAYLAND
+typedef struct _Wl_Cnp_Selection Wl_Cnp_Selection;
+
+struct _Wl_Cnp_Selection
+{
+   char *selbuf;
+   int buflen;
+
+   Evas_Object *widget;
+   Evas_Object *requestwidget;
+};
+
+static Wl_Cnp_Selection wl_cnp_selection = {0, 0, NULL, NULL};
+
+static void
+_wl_sel_obj_del2(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Wl_Cnp_Selection *sel = data;
+   if (sel->requestwidget == obj) sel->requestwidget = NULL;
+}
+
+static Eina_Bool 
+_wl_elm_cnp_selection_set(Evas_Object *obj __UNUSED__, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, const void *selbuf, size_t buflen)
+{
+   const char *types[10] = {0, };
+
+   /* TODO: other EML_SEL_TYPE and ELM_SEL_FORMAT */
+   if (ELM_SEL_TYPE_CLIPBOARD == selection) 
+     {
+        types[0] = "text/plain;charset=utf-8";
+        ecore_wl_dnd_set_selection(ecore_wl_dnd_get(), types);
+
+        if (wl_cnp_selection.selbuf) free(wl_cnp_selection.selbuf);
+        wl_cnp_selection.selbuf = strdup((char*)selbuf);
+        wl_cnp_selection.buflen = buflen;
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool 
+_wl_elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection, Elm_Sel_Format format __UNUSED__, Elm_Drop_Cb datacb __UNUSED__, void *udata __UNUSED__)
+{
+   /* For now, just avoid overlapped request */
+   if (wl_cnp_selection.requestwidget) return EINA_FALSE;
+
+   /* TODO: other EML_SEL_TYPE and ELM_SEL_FORMAT */
+   if (ELM_SEL_TYPE_CLIPBOARD == selection)
+     {
+        wl_cnp_selection.requestwidget = obj;
+        evas_object_event_callback_add(wl_cnp_selection.requestwidget, EVAS_CALLBACK_DEL,
+                                       _wl_sel_obj_del2, &wl_cnp_selection);
+        ecore_wl_dnd_get_selection(ecore_wl_dnd_get(), "text/plain;charset=utf-8");
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_wl_selection_send(void *udata, int type __UNUSED__, void *event)
+{
+   char *buf;
+   int ret, len_remained;
+   int len_written = 0;
+   Wl_Cnp_Selection *sel = udata;
+   Ecore_Wl_Event_Data_Source_Send *ev = event;
+
+   len_remained = sel->buflen;
+   buf = sel->selbuf;
+
+   while (len_written < sel->buflen)
+     {
+        ret = write(ev->fd, buf, len_remained);
+        if (ret == -1) break;
+        buf += ret;
+        len_written += ret;
+        len_remained -= ret;
+     }
+
+   close(ev->fd);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_wl_selection_receive(void *udata, int type __UNUSED__, void *event)
+{
+   Wl_Cnp_Selection *sel = udata;
+   Ecore_Wl_Event_Selection_Data_Ready *ev = event;
+
+   if (sel->requestwidget)
+     {
+        if (!ev->done)
+          {
+             /* TODO BUG: should never NEVER assume it's an elm_entry! */
+             _elm_entry_entry_paste(sel->requestwidget, ev->data);
+          }
+        else
+          {
+             evas_object_event_callback_del_full(sel->requestwidget, EVAS_CALLBACK_DEL,
+                                                 _wl_sel_obj_del2, sel);
+             sel->requestwidget = NULL;
+          }
+     }
+
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool _wl_elm_cnp_init(void)
+{
+   ecore_event_handler_add(ECORE_WL_EVENT_DATA_SOURCE_SEND, 
+                           _wl_selection_send, &wl_cnp_selection);
+   ecore_event_handler_add(ECORE_WL_EVENT_SELECTION_DATA_READY, 
+                           _wl_selection_receive, &wl_cnp_selection);
+
+   return EINA_TRUE;
+}
+#endif
+
 
 
 
@@ -1711,10 +1821,17 @@ _local_elm_selection_selection_has_owner(Evas_Object *obj __UNUSED__)
 // common internal funcs
 ////////////////////////////////////////////////////////////////////////////
 static Eina_Bool
-_elm_cnp_init(void)
+_elm_cnp_init(Evas_Object *obj)
 {
    if (_elm_cnp_init_count > 0) return EINA_TRUE;
    _elm_cnp_init_count++;
+#ifdef HAVE_ELEMENTARY_X
+   if (_x11_elm_widget_xwin_get(obj)) _x11_elm_cnp_init();
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   if (elm_win_wl_window_get(obj)) _wl_elm_cnp_init();
+#endif
+   _local_elm_cnp_init();
    text_uri = eina_stringshare_add("text/uri-list");
    return EINA_TRUE;
 }
@@ -1838,10 +1955,14 @@ elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, const void *selbuf, size_t buflen)
 {
    if (selection > ELM_SEL_TYPE_CLIPBOARD) return EINA_FALSE;
-   if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!_elm_cnp_init_count) _elm_cnp_init(obj);
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   if (elm_win_wl_window_get(obj))
+      return _wl_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 #endif
    return _local_elm_cnp_selection_set(obj, selection, format, selbuf, buflen);
 }
@@ -1852,7 +1973,7 @@ elm_cnp_selection_loss_callback_set(Evas_Object *obj, Elm_Sel_Type selection,
                                     const void *data)
 {
    if (selection > ELM_SEL_TYPE_CLIPBOARD) return;
-   if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!_elm_cnp_init_count) _elm_cnp_init(obj);
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      _x11_elm_cnp_selection_loss_callback_set(obj, selection, func, data);
@@ -1864,7 +1985,7 @@ EAPI Eina_Bool
 elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 {
    if (selection > ELM_SEL_TYPE_CLIPBOARD) return EINA_FALSE;
-   if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!_elm_cnp_init_count) _elm_cnp_init(obj);
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_object_cnp_selection_clear(obj, selection);
@@ -1877,10 +1998,14 @@ elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
 {
    if (selection > ELM_SEL_TYPE_CLIPBOARD) return EINA_FALSE;
-   if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!_elm_cnp_init_count) _elm_cnp_init(obj);
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_cnp_selection_get(obj, selection, format, datacb, udata);
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   if (elm_win_wl_window_get(obj))
+      return _wl_elm_cnp_selection_get(obj, selection, format, datacb, udata);
 #endif
    return _local_elm_cnp_selection_get(obj, selection, format, datacb, udata);
 }
@@ -1894,7 +2019,7 @@ EAPI Eina_Bool
 elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
                     Elm_Drop_Cb dropcb, void *cbdata)
 {
-   if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!_elm_cnp_init_count) _elm_cnp_init(obj);
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_drop_target_add(obj, format, dropcb, cbdata);
@@ -1905,7 +2030,7 @@ elm_drop_target_add(Evas_Object *obj, Elm_Sel_Type format,
 EAPI Eina_Bool
 elm_drop_target_del(Evas_Object *obj)
 {
-   if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!_elm_cnp_init_count) _elm_cnp_init(obj);
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_drop_target_del(obj);
@@ -1917,7 +2042,7 @@ EAPI Eina_Bool
 elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, 
                void (*dragdone) (void *data, Evas_Object *), void *donecbdata)
 {
-   if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!_elm_cnp_init_count) _elm_cnp_init(obj);
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_drag_start(obj, format, data, dragdone, donecbdata);
@@ -1928,10 +2053,13 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data,
 EAPI Eina_Bool
 elm_selection_selection_has_owner(Evas_Object *obj)
 {
-   if (!_elm_cnp_init_count) _elm_cnp_init();
+   if (!_elm_cnp_init_count) _elm_cnp_init(obj);
 #ifdef HAVE_ELEMENTARY_X
    if (_x11_elm_widget_xwin_get(obj))
      return _x11_elm_selection_selection_has_owner(obj);
+#endif
+#ifdef HAVE_ELEMENTARY_WAYLAND
+   return ecore_wl_dnd_selection_has_owner(ecore_wl_dnd_get());
 #endif
    return _local_elm_selection_selection_has_owner(obj);
 }
