@@ -365,6 +365,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
           ed->is_rtl = (ed->collection->prop.orientation ==
                         EDJE_ORIENTATION_RTL);
 
+	ed->groups = eina_list_append(ed->groups, ed);
+
 	if (ed->collection->script_only)
 	  {
 	     ed->load_error = EDJE_LOAD_ERROR_NONE;
