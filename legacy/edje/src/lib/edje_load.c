@@ -808,6 +808,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                                                           obj);
 		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
 			 {
+                            ed->groups = eina_list_append(ed->groups, _edje_fetch(child_obj));
                             _edje_real_part_swallow(rp, child_obj, EINA_TRUE);
                             _edje_subobj_register(ed, child_obj);
 			    source = NULL;
@@ -1087,6 +1088,8 @@ _edje_file_del(Edje *ed)
    Evas *tev = NULL;
    
    if (ed->obj) tev = evas_object_evas_get(ed->obj);
+
+   ed->groups = eina_list_free(ed->groups);
 
    if (tev) evas_event_freeze(tev);
    if (ed->freeze_calc)

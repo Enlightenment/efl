@@ -1140,6 +1140,8 @@ struct _Edje
    int                   table_programs_size;
    unsigned int          table_parts_size;
 
+   Eina_List            *groups;
+
    struct {
       Eina_Hash         *text_class;
       Eina_Hash         *color_class;

@@ -63,16 +63,7 @@ edje_object_message_signal_process(Evas_Object *obj)
    ed = _edje_fetch(obj);
    if (!ed) return;
 
-   groups = eina_list_append(groups, ed);
-   for (i = 0; i < ed->table_parts_size; i++)
-     {
-        Edje_Real_Part *rp;
-
-        rp = ed->table_parts[i];
-        if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
-          groups = eina_list_append(groups,
-                                    _edje_fetch(rp->swallowed_object));
-     }
+   groups = ed->groups;
 
    EINA_LIST_FOREACH_SAFE(msgq, l, ln, em)
      {
