@@ -691,6 +691,9 @@ _size_hints_changed_cb(void *data,
                        Evas_Object *obj __UNUSED__,
                        void *event_info __UNUSED__)
 {
+   ELM_LIST_DATA_GET(data, sd);
+   if (sd->delete_me) return;
+
    _items_fix(data);
    elm_layout_sizing_eval(data);
 }
@@ -1548,6 +1551,7 @@ _elm_list_smart_del(Evas_Object *obj)
    if (sd->walking)
      ERR("ERROR: list deleted while walking.\n");
 
+   sd->delete_me = EINA_TRUE;
    EINA_LIST_FOREACH (sd->items, l, it)
      {
         if (it->icon)
