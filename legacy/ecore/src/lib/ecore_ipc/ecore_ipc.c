@@ -538,7 +538,7 @@ ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
                          "ecore_ipc_server_clients_get");
         return NULL;
      }
-   return svr->client_list;
+   return svr->clients;
 }
 
 #define SVENC(_member) \
@@ -1044,7 +1044,6 @@ _ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void 
         cl->max_buf_size = 32 * 1024;
         ecore_con_client_data_set(cl->client, (void *)cl);
         svr->clients = eina_list_append(svr->clients, cl);
-        svr->client_list = eina_list_append(svr->client_list, cl);
         if (!cl->delete_me)
           {
              Ecore_Ipc_Event_Client_Add *e2;
@@ -1081,7 +1080,6 @@ _ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void 
           {
              Ecore_Ipc_Event_Client_Del *e2;
 
-             svr->client_list = eina_list_remove(svr->client_list, cl);
              if (!cl->delete_me)
                {
                   e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Del));

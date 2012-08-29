@@ -89,7 +89,6 @@ struct _Ecore_Ipc_Server
    ECORE_MAGIC;
    Ecore_Con_Server *server;
    Eina_List        *clients;
-   Eina_List        *client_list;
    void              *data;
    unsigned char     *buf;
    int                buf_size;

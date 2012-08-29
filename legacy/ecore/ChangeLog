@@ -879,3 +879,7 @@
 2012-08-29  Cedric Bail
 
 	* Always call evas_render_update_free to prevent leak in Ecore_Evas X backend.
+
+2012-08-39  Mike Blumenkrantz
+
+        * Fix leak in ecore_ipc servers
