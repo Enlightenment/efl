@@ -187,7 +187,7 @@ EAPI int                   elm_diskselector_display_item_num_get(const Evas_Obje
  * default is EINA_TRUE.
  *
  * @ingroup Diskselector
- * @since 1.8
+ * @since 1.7
  */
 EAPI void                  elm_diskselector_autoselect_set(Evas_Object *obj, Eina_Bool enable);
 
@@ -198,7 +198,7 @@ EAPI void                  elm_diskselector_autoselect_set(Evas_Object *obj, Ein
  * @return The auto select set (EINA_TRUE by default)
  *
  * @ingroup Diskselector
- * @since 1.8
+ * @since 1.7
  */
 EAPI Eina_Bool             elm_diskselector_autoselect_get(const Evas_Object *obj);
 
