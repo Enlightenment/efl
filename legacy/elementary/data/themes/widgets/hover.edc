@@ -679,6 +679,10 @@ group { name: "elm/hover/base/menu";
             rel1.offset: -5 -5;
             rel2.to: "elm.swallow.slot.middle";
             rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
          }
       }
       part { name: "elm.swallow.slot.middle";
@@ -834,6 +838,10 @@ group { name: "elm/hover/base/submenu";
             rel1.offset: -5 -5;
             rel2.to: "elm.swallow.slot.middle";
             rel2.offset: 4 4;
+            image {
+               normal: "bt_dis_base.png";
+               border: 4 4 4 4;
+            }
          }
       }
       part { name: "elm.swallow.slot.middle";
