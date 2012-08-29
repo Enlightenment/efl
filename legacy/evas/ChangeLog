@@ -990,3 +990,8 @@
 
 	* Textblock: Make sure scale changes causes a complete recalc.
 
+2012-08-29  Christopher Michael (devilhorns)
+
+	* Wayland Egl Engine: Add support for Multi-Sample Anti-Aliasing and GL Direct Images.
+                              Add support for using native image binding.
+                              Add support for setting GL surface capabilities.
