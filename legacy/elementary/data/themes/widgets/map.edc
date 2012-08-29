@@ -617,6 +617,7 @@ group { name: "elm/map/marker/empty/default";
          }
       }
       part { name: "base";
+         type: RECT;
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
          }

@@ -276,6 +276,7 @@ group { name: "elm/diskselector/item/datetime/default";
         }
      }
      part { name: "over1";
+        type: RECT;
         mouse_events: 1;
         repeat_events: 1;
         ignore_flags: ON_HOLD;
@@ -291,7 +292,6 @@ group { name: "elm/diskselector/item/datetime/default";
 
          public update_state() {
             new pos, is_sel;
-            
             pos = get_int(field_pos)
             is_sel = get_int(field_selected);
             if (is_sel == 1)

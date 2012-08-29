@@ -2,6 +2,7 @@ group { name: "elm/naviframe/base/default";
    name: "elm/naviframe/base/pager";
    parts {
       part { name: "base0";
+         type: RECT;
          description { state: "default" 0.0;
          }
       }
