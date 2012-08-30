@@ -399,7 +399,7 @@ _elm_access_object_hilight(Evas_Object *obj)
           }
      }
    evas_object_data_set(o, "_elm_access_target", obj);
-   _elm_theme_object_set(obj, o, "access", "base", "default");
+   elm_widget_theme_object_set(obj, o, "access", "base", "default");
    evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL,
                                   _access_obj_hilight_del_cb, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_HIDE,
