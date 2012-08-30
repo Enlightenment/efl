@@ -130,6 +130,7 @@ WGT_TREE = \
 	multibuttonentry \
 	naviframe \
 	notify \
+	panel \
 	panes \
 	photo \
 	photocam \

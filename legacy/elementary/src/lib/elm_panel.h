@@ -2,27 +2,27 @@
  * @defgroup Panel Panel
  * @ingroup Elementary
  *
+ * @image html panel_inheritance_tree.png
+ * @image latex panel_inheritance_tree.eps
+ *
  * @image html img/widget/panel/preview-00.png
  * @image latex img/widget/panel/preview-00.eps
  *
- * @brief A panel is a type of animated container that contains subobjects.
- * It can be expanded or contracted by clicking the button on it's edge.
+ * @brief A panel is an animated side-panel that contains a
+ * sub-object. It can be expanded or contracted by clicking the
+ * button on its edge.
  *
  * Orientations are as follows:
- * @li ELM_PANEL_ORIENT_TOP
- * @li ELM_PANEL_ORIENT_LEFT
- * @li ELM_PANEL_ORIENT_RIGHT
+ * @li @c ELM_PANEL_ORIENT_TOP
+ * @li @c ELM_PANEL_ORIENT_LEFT
+ * @li @c ELM_PANEL_ORIENT_RIGHT
+ * @li @c ELM_PANEL_ORIENT_BOTTOM
  *
- * Default content parts of the panel widget that you can use for are:
- * @li "default" - A content of the panel
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for panel objects.
  *
- * Supported elm_object common APIs.
- * @li @ref elm_object_signal_emit
- * @li @ref elm_object_signal_callback_add
- * @li @ref elm_object_signal_callback_del
- * @li @ref elm_object_part_content_set
- * @li @ref elm_object_part_content_get
- * @li @ref elm_object_part_content_unset
+ * Default content parts of the panel widget that you can use are:
+ * @li @c "default" - A content of the panel
  *
  * @ref tutorial_panel shows one way to use this widget.
  * @{
@@ -30,7 +30,7 @@
 typedef enum
 {
    ELM_PANEL_ORIENT_TOP, /**< Panel (dis)appears from the top */
-   ELM_PANEL_ORIENT_BOTTOM, /**< Not implemented */
+   ELM_PANEL_ORIENT_BOTTOM, /**< Panel (dis)appears from the bottom */
    ELM_PANEL_ORIENT_LEFT, /**< Panel (dis)appears from the left */
    ELM_PANEL_ORIENT_RIGHT, /**< Panel (dis)appears from the right */
 } Elm_Panel_Orient;
