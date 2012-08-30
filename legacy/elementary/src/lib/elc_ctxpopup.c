@@ -1319,22 +1319,13 @@ elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 
    wd->horizontal = !!horizontal;
 
-   if ((!wd->list))
-      return;
+   if (!wd->list) return;
 
-   if (!horizontal)
-     {
-        elm_list_horizontal_set(wd->list, wd->horizontal);
-     }
-   else
-     {
-        elm_list_horizontal_set(wd->list, wd->horizontal);
-     }
+   elm_list_horizontal_set(wd->list, wd->horizontal);
 
    wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
-   if (wd->visible)
-      _sizing_eval(obj);
+   if (wd->visible) _sizing_eval(obj);
 }
 
 EAPI Eina_Bool
