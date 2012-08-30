@@ -53,10 +53,10 @@
 #endif
 
 #define CRITICAL(...) EINA_LOG_DOM_CRIT(_elm_log_dom, __VA_ARGS__)
-#define ERR(...)      EINA_LOG_DOM_ERR (_elm_log_dom, __VA_ARGS__)
+#define ERR(...)      EINA_LOG_DOM_ERR(_elm_log_dom, __VA_ARGS__)
 #define WRN(...)      EINA_LOG_DOM_WARN(_elm_log_dom, __VA_ARGS__)
 #define INF(...)      EINA_LOG_DOM_INFO(_elm_log_dom, __VA_ARGS__)
-#define DBG(...)      EINA_LOG_DOM_DBG (_elm_log_dom, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_DBG(_elm_log_dom, __VA_ARGS__)
 
 #ifdef ENABLE_NLS
 #include <libintl.h>
@@ -78,9 +78,9 @@
 #endif
 #define N_(string) (string)
 
-typedef struct _Edje_Signal_Data Edje_Signal_Data;
-typedef struct _Elm_Config Elm_Config;
-typedef struct _Elm_Module Elm_Module;
+typedef struct _Edje_Signal_Data         Edje_Signal_Data;
+typedef struct _Elm_Config               Elm_Config;
+typedef struct _Elm_Module               Elm_Module;
 typedef struct _Elm_Datetime_Module_Data Elm_Datetime_Module_Data;
 
 struct _Edje_Signal_Data
@@ -109,11 +109,13 @@ struct _Elm_Theme
  * defaults for elm to work.
  */
 #define ELM_CONFIG_EPOCH           0x0001
-/* increment this whenever a new set of config values are added but the users
- * config doesn't need to be wiped - simply new values need to be put in
+/* increment this whenever a new set of config values are added but
+ * the users config doesn't need to be wiped - simply new values need
+ * to be put in
  */
 #define ELM_CONFIG_FILE_GENERATION 0x0003
-#define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << 16) | ELM_CONFIG_FILE_GENERATION)
+#define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << 16) | \
+                                    ELM_CONFIG_FILE_GENERATION)
 /* NB: profile configuration files (.src) must have their
  * "config_version" entry's value up-to-date with ELM_CONFIG_VERSION
  * (in decimal)!! */
@@ -252,44 +254,66 @@ struct _Elm_Module
 struct _Elm_Datetime_Module_Data
 {
    Evas_Object *base;
-   void (*field_limit_get)(Evas_Object *obj, Elm_Datetime_Field_Type  field_type, int *range_min, int *range_max);
-   const char *(*field_format_get)(Evas_Object * obj, Elm_Datetime_Field_Type  field_type);
+   void         (*field_limit_get)(Evas_Object *obj,
+                                   Elm_Datetime_Field_Type field_type,
+                                   int *range_min,
+                                   int *range_max);
+   const char  *(*field_format_get)(Evas_Object * obj,
+                                    Elm_Datetime_Field_Type field_type);
 };
 
-void		     _elm_emotion_init(void);
-void		     _elm_emotion_shutdown(void);
+void                 _elm_emotion_init(void);
+void                 _elm_emotion_shutdown(void);
 
 int                  _elm_ews_wm_init(void);
 void                 _elm_ews_wm_shutdown(void);
-void                 _elm_ews_wm_rescale(Elm_Theme *th, Eina_Bool use_theme);
+void                 _elm_ews_wm_rescale(Elm_Theme *th,
+                                         Eina_Bool use_theme);
 
 void                 _elm_win_shutdown(void);
-void                 _elm_win_rescale(Elm_Theme *th, Eina_Bool use_theme);
+void                 _elm_win_rescale(Elm_Theme *th,
+                                      Eina_Bool use_theme);
 void                 _elm_win_access(Eina_Bool is_access);
 void                 _elm_win_translate(void);
 
 Ecore_X_Window       _elm_ee_xwin_get(const Ecore_Evas *ee);
 
-Eina_Bool            _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style);
-Eina_Bool            _elm_theme_object_icon_set(Evas_Object *o, const char *group, const char *style);
-Eina_Bool            _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style);
-Eina_Bool            _elm_theme_icon_set(Elm_Theme *th, Evas_Object *o, const char *group, const char *style);
-Eina_Bool            _elm_theme_parse(Elm_Theme *th, const char *theme);
+Eina_Bool            _elm_theme_object_set(Evas_Object *parent,
+                                           Evas_Object *o,
+                                           const char *clas,
+                                           const char *group,
+                                           const char *style);
+Eina_Bool            _elm_theme_object_icon_set(Evas_Object *o,
+                                                const char *group,
+                                                const char *style);
+Eina_Bool            _elm_theme_set(Elm_Theme *th,
+                                    Evas_Object *o,
+                                    const char *clas,
+                                    const char *group,
+                                    const char *style);
+Eina_Bool            _elm_theme_icon_set(Elm_Theme *th,
+                                         Evas_Object *o,
+                                         const char *group,
+                                         const char *style);
+Eina_Bool            _elm_theme_parse(Elm_Theme *th,
+                                      const char *theme);
 void                 _elm_theme_shutdown(void);
 
 void                 _elm_module_init(void);
 void                 _elm_module_shutdown(void);
 void                 _elm_module_parse(const char *s);
 Elm_Module          *_elm_module_find_as(const char *as);
-Elm_Module          *_elm_module_add(const char *name, const char *as);
+Elm_Module          *_elm_module_add(const char *name,
+                                     const char *as);
 void                 _elm_module_del(Elm_Module *m);
 Eina_Bool            _elm_module_load(Elm_Module *m);
 void                 _elm_module_unload(Elm_Module *m);
-const void          *_elm_module_symbol_get(Elm_Module *m, const char *name);
+const void          *_elm_module_symbol_get(Elm_Module *m,
+                                            const char *name);
 
-void                 _elm_widget_type_clear(void);
 void                 _elm_widget_focus_region_show(const Evas_Object *obj);
-void                 _elm_widget_top_win_focused_set(Evas_Object *obj, Eina_Bool top_win_focused);
+void                 _elm_widget_top_win_focused_set(Evas_Object *obj,
+                                                     Eina_Bool top_win_focused);
 Eina_Bool            _elm_widget_top_win_focused_get(const Evas_Object *obj);
 
 void                 _elm_unneed_ethumb(void);
@@ -308,7 +332,8 @@ void                 _elm_config_reload(void);
 void                 _elm_recache(void);
 
 const char          *_elm_config_current_profile_get(void);
-const char          *_elm_config_profile_dir_get(const char *prof, Eina_Bool is_user);
+const char          *_elm_config_profile_dir_get(const char *prof,
+                                                 Eina_Bool is_user);
 Eina_List           *_elm_config_profiles_list(void);
 void                 _elm_config_all_update(void);
 void                 _elm_config_profile_set(const char *profile);
@@ -316,7 +341,9 @@ void                 _elm_config_profile_set(const char *profile);
 void                 _elm_config_engine_set(const char *engine);
 
 Eina_List           *_elm_config_font_overlays_list(void);
-void                 _elm_config_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
+void                 _elm_config_font_overlay_set(const char *text_class,
+                                                  const char *font,
+                                                  Evas_Font_Size size);
 void                 _elm_config_font_overlay_remove(const char *text_class);
 void                 _elm_config_font_overlay_apply(void);
 Eina_List           *_elm_config_text_classes_get(void);
@@ -325,20 +352,26 @@ void                 _elm_config_text_classes_free(Eina_List *l);
 Eina_Bool            _elm_config_access_get(void);
 void                 _elm_config_access_set(Eina_Bool is_access);
 
-Elm_Font_Properties *_elm_font_properties_get(Eina_Hash **font_hash, const char *font);
-Eina_Hash           *_elm_font_available_hash_add(Eina_Hash *font_hash, const char *full_name);
+Elm_Font_Properties *_elm_font_properties_get(Eina_Hash **font_hash,
+                                              const char *font);
+Eina_Hash           *_elm_font_available_hash_add(Eina_Hash *font_hash,
+                                                  const char *full_name);
 void                 _elm_font_available_hash_del(Eina_Hash *hash);
 
 void                 elm_tooltip_theme(Elm_Tooltip *tt);
-void                 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea, Evas_Object *owner, Elm_Tooltip_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+void                 elm_object_sub_tooltip_content_cb_set(Evas_Object *eventarea,
+                                                           Evas_Object *owner,
+                                                           Elm_Tooltip_Content_Cb func,
+                                                           const void *data,
+                                                           Evas_Smart_Cb del_cb);
 void                 elm_cursor_theme(Elm_Cursor *cur);
-void                 elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char *cursor);
+void                 elm_object_sub_cursor_set(Evas_Object *eventarea,
+                                               Evas_Object *owner,
+                                               const char *cursor);
 
-void                 elm_menu_clone(Evas_Object *from_menu, Evas_Object *to_menu, Elm_Object_Item *parent);
-
-Eina_Bool            _elm_dangerous_call_check(const char *call);
-
-Evas_Object         *_elm_scroller_edje_object_get(Evas_Object *obj);
+void                 elm_menu_clone(Evas_Object *from_menu,
+                                    Evas_Object *to_menu,
+                                    Elm_Object_Item *parent);
 
 char                *_elm_util_mkup_to_text(const char *mkup);
 char                *_elm_util_text_to_mkup(const char *text);
@@ -346,7 +379,11 @@ char                *_elm_util_text_to_mkup(const char *text);
 Eina_Bool            _elm_video_check(Evas_Object *video);
 
 Eina_List           *_elm_config_color_list_get(const char *palette_name);
-void                 _elm_config_color_set(const char *palette_name, int r, int g, int b, int a);
+void                 _elm_config_color_set(const char *palette_name,
+                                           int r,
+                                           int g,
+                                           int b,
+                                           int a);
 void                 _elm_config_colors_free(const char *palette_name);
 
 /* DEPRECATED, will be removed on next release */
@@ -390,7 +427,7 @@ _elm_dgettext(const char *string)
 #endif
 
 /* Used by the paste handler */
-void _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
+void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
 
 double _elm_atof(const char *s);
 
