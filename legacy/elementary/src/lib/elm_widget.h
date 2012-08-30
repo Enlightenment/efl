@@ -256,7 +256,7 @@
  * that code he/she needs to recompile and link its code to a newer
  * version of Elementary.
  *
- * The next fields are the class functions itself. We call them
+ * The next fields are the class functions themselves. We call them
  * 'virtual' because, as in object-oriented languages, one is supposed
  * here to override them on inheriting classes. On most of
  * inheritances you'll probably want to call the parent's version of
@@ -281,33 +281,7 @@
  * instance. This is the reason of the first field of that struct: a
  * pointer set to point to its class when the object is instantiated.
  *
- * @section elm-migration Elementary's Migration to a hierarchical schema
- *
- * What's been stated before is a work in progress. Elementary 1.0 is
- * @b not hierarchical in this way, but the idea is to get at this
- * shape, now. This section is here to explain the process of
- * migration, and it will be taken off once it's completed.
- *
- * We want to migrate widgets to the new schema progressively, one by
- * one. In order for this to happen without hurting anyone during the
- * process, it was made a @b compatibility class for Elementary
- * widgets, to take place of the old, unique smart class for
- * them. This is the role of #Elm_Widget_Compat_Smart_Class.
- *
- * All functions we had as 'hooks' before will be migrated to class
- * functions. As you can see, all calls to @b instance hooks on the
- * common code for widgets were replaced to <b> class function calls
- * </b>, now. It just happens that, for
- * #Elm_Widget_Compat_Smart_Class-typed widgets, i.e., the ones not
- * migrated to the new schema yet, class calls are proxyed back to
- * their instance 'hook' calls, that live on
- * #Elm_Widget_Compat_Smart_Data structs.  Those structs are
- * #Elm_Widget_Smart_Data augmented with what is needed to reach the
- * original widget's data field set, so that things go on @b unnoticed
- * for the widgets awaiting translation to the new hierarchy.
- *
- * The following figure illustrates the old an new widget schemas,
- * with highlights on their differences.
+ * The following figure illustrates the widget inheritance schema.
  *
  * @image html elm-widget-hierarchy.png
  * @image rtf elm-widget-hierarchy.png
@@ -315,8 +289,8 @@
  *
  * @section elm-hierarchy-tree Elementary Widgets Hierarchy Tree
  *
- * The following figure illustrates the current state on the
- * Elementary widget inheriting tree.
+ * The following figure illustrates the Elementary widget inheritance
+ * tree.
  *
  * @image html elm-widget-tree.png
  * @image rtf elm-widget-tree.png
