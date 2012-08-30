@@ -151,7 +151,6 @@ struct _Elm_Diskselector_Smart_Data
    Eina_Bool                             init : 1;
    Eina_Bool                             round : 1;
    Eina_Bool                             display_item_num_by_api : 1;
-   Eina_Bool                             auto_select : 1;
 };
 
 struct _Elm_Diskselector_Item

@@ -535,7 +535,6 @@ _item_click_cb(void *data,
      }
 
    if (it->func) it->func((void *)it->base.data, WIDGET(it), it);
-   evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
 }
 
 static char *
@@ -614,10 +613,6 @@ _item_new(Evas_Object *obj,
      {
         _item_content_set_hook((Elm_Object_Item *)it, "icon", icon);
      }
-
-   ELM_DISKSELECTOR_DATA_GET(obj, sd);
-   if (!sd->auto_select)
-     edje_object_signal_emit(VIEW(it), "elm,state,autoselect,disable", "elm");
 
    //XXX: ACCESS
    _elm_access_widget_item_register((Elm_Widget_Item *)it);
@@ -878,8 +873,6 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 
    if (sd->idler) return;
 
-   if (!sd->auto_select) return;
-
    if (!sd->round)
      list = sd->items;
    else
@@ -1095,7 +1088,6 @@ _elm_diskselector_smart_add(Evas_Object *obj)
    priv->init = EINA_FALSE;
    priv->len_side = 3;
    priv->display_item_num_by_api = EINA_FALSE;
-   priv->auto_select = EINA_TRUE;
 
    _elm_diskselector_smart_theme(obj);
    priv->s_iface->policy_set
@@ -1654,40 +1646,4 @@ elm_diskselector_display_item_num_get(const Evas_Object *obj)
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
 
    return sd->display_item_num;
-}
-
-EAPI void
-elm_diskselector_autoselect_set(Evas_Object *obj, Eina_Bool enable)
-{
-   Elm_Diskselector_Item *it;
-   Eina_List *l, *list;
-
-   ELM_DISKSELECTOR_CHECK(obj);
-   ELM_DISKSELECTOR_DATA_GET(obj, sd);
-
-   enable = !!enable;
-   if (sd->auto_select == enable) return;
-   sd->auto_select = enable;
-
-   if (!sd->round)
-     list = sd->items;
-   else
-     list = sd->r_items;
-
-   EINA_LIST_FOREACH (list, l, it)
-     {
-        if (!sd->auto_select)
-          edje_object_signal_emit(VIEW(it), "elm,state,autoselect,disable", "elm");
-        else
-          edje_object_signal_emit(VIEW(it), "elm,state,autoselect,default", "elm");
-     }
-}
-
-EAPI Eina_Bool
-elm_diskselector_autoselect_get(const Evas_Object *obj)
-{
-   ELM_DISKSELECTOR_CHECK(obj) EINA_TRUE;
-   ELM_DISKSELECTOR_DATA_GET(obj, sd);
-
-   return sd->auto_select;
 }

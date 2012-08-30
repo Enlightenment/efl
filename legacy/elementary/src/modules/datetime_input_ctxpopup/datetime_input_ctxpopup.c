@@ -185,9 +185,9 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_geometry_get(elm_widget_top_get(ctx_mod->mod_data.base), NULL, NULL, &width, NULL);
    evas_object_size_hint_min_set(ctx_mod->ctxpopup, width, -1);
-   display_item_num = w + elm_config_finger_size_get();
-
-   elm_diskselector_autoselect_set(diskselector, EINA_FALSE);
+   display_item_num = width / (w + elm_config_finger_size_get());
+   // always display even number of items to avoid autoselection
+   if (display_item_num % 2) display_item_num -= 1;
    if (display_item_num < DISKSELECTOR_MIN_ITEMS)
      display_item_num = DISKSELECTOR_MIN_ITEMS;
    elm_diskselector_display_item_num_set(diskselector, display_item_num);

@@ -175,34 +175,6 @@ EAPI void                   elm_diskselector_display_item_num_set(Evas_Object *o
 EAPI int                   elm_diskselector_display_item_num_get(const Evas_Object *obj);
 
 /**
- * Set the auto select of the diskselector
- *
- * After scroll diskselector, an item which is right in the center of diskselector
- * is selected automatically. This is default behavior of diskselector.
- * If @p enable is @c EINA_FALSE, the automatic selection is disabled and
- * even though item is not right in the center user can select item by clicking.
- *
- * @param obj The diskselector object.
- * @param enable EINA_TRUE to enable auto select, EINA_FALSE to disable auto select.
- * default is EINA_TRUE.
- *
- * @ingroup Diskselector
- * @since 1.8
- */
-EAPI void                  elm_diskselector_autoselect_set(Evas_Object *obj, Eina_Bool enable);
-
-/**
- * Get the auto select of the diskselector object.
- *
- * @param obj The diskselector object.
- * @return The auto select set (EINA_TRUE by default)
- *
- * @ingroup Diskselector
- * @since 1.8
- */
-EAPI Eina_Bool             elm_diskselector_autoselect_get(const Evas_Object *obj);
-
-/**
  * Set bouncing behaviour when the scrolled content reaches an edge.
  *
  * Tell the internal scroller object whether it should bounce or not
