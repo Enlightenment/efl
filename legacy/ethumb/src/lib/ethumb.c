@@ -1088,7 +1088,7 @@ ethumb_thumb_hash_copy(Ethumb *dst, const Ethumb *src)
    dst->src_hash = eina_stringshare_ref(src->src_hash);
 }
 
-void
+EAPI void
 ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h)
 {
    float a;
@@ -1110,7 +1110,7 @@ ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h)
      }
 }
 
-void
+EAPI void
 ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h)
 {
    float ia;
@@ -1120,7 +1120,7 @@ ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h)
    ethumb_calculate_aspect_from_ratio(e, ia, w, h);
 }
 
-void
+EAPI void
 ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw, int *fh)
 {
    float a;
@@ -1154,7 +1154,7 @@ ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw,
      }
 }
 
-void
+EAPI void
 ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int *fh)
 {
    float ia;
@@ -1199,7 +1199,7 @@ _ethumb_plugin_generate(Ethumb *e)
    return EINA_TRUE;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 ethumb_plugin_image_resize(Ethumb *e, int w, int h)
 {
    Evas_Object *img;
@@ -1229,7 +1229,7 @@ ethumb_plugin_image_resize(Ethumb *e, int w, int h)
    return EINA_TRUE;
 }
 
-Eina_Bool
+EAPI Eina_Bool
 ethumb_image_save(Ethumb *e)
 {
    Eina_Bool r;
@@ -1519,7 +1519,7 @@ _ethumb_finished_idler_cb(void *data)
    return EINA_FALSE;
 }
 
-void
+EAPI void
 ethumb_finished_callback_call(Ethumb *e, int result)
 {
    EINA_SAFETY_ON_NULL_RETURN(e);
