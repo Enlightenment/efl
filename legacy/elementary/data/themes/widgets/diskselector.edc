@@ -186,6 +186,16 @@ group { name: "elm/diskselector/item/default";
             text.align: 0.8 0.5;
          }
       }
+      part { name: "over1";
+         type: RECT;
+         mouse_events: 1;
+         repeat_events: 1;
+         ignore_flags: ON_HOLD;
+         description {
+            state: "default" 0.0;
+            color: 0 0 0 0;
+         }
+      }
    }
 
    programs {
@@ -222,6 +232,11 @@ group { name: "elm/diskselector/item/default";
          source: "elm";
          action: STATE_SET "icon_only" 0.0;
          target: "elm.swallow.icon";
+      }
+      program { name: "field_click";
+         signal: "mouse,clicked,1";
+         source: "over1";
+         action: SIGNAL_EMIT "elm,action,click" "";
       }
    }
 }
