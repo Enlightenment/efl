@@ -225,7 +225,6 @@ check_image_part_desc(Edje_Part_Collection *pc, Edje_Part *ep,
 {
    unsigned int i;
 
-   /* FIXME: This check sounds like not a useful one */
    if (epd->image.id == -1 && epd->common.visible)
      WRN("Collection %s(%i): image attributes missing for "
 	 "part \"%s\", description \"%s\" %f",

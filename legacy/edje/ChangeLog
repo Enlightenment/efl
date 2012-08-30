@@ -577,3 +577,7 @@
 2012-08-30  Carsten Haitzler (The Rasterman)
 
         1.7.0 release
+
+2012-08-30  Cedric Bail
+
+	* Check the number of parameter for image in edc.

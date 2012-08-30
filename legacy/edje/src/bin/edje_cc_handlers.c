@@ -1238,6 +1238,8 @@ st_images_image(void)
    unsigned int i;
    int v;
 
+   check_min_arg_count(2);
+
    if (!edje_file->image_dir)
      edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
 

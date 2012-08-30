@@ -1,3 +1,16 @@
+Edje 1.8.0
+
+Changes since Edje 1.8.0:
+-------------------------
+
+Additions:
+
+Improvements:
+    * Check the number of parameter for image in edc.
+
+Fixes:
+
+
 Edje 1.7.0
 
 Changes since Edje 1.2.0:
