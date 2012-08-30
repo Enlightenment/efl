@@ -15,6 +15,7 @@
 EAPI const char ELM_DISKSELECTOR_SMART_NAME[] = "elm_diskselector";
 
 static const char SIG_SELECTED[] = "selected";
+static const char SIG_CLICKED[] = "clicked";
 static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
 static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
@@ -22,6 +23,7 @@ static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_SELECTED, ""},
+   {SIG_CLICKED, ""},
    {SIG_SCROLL_ANIM_START, ""},
    {SIG_SCROLL_ANIM_STOP, ""},
    {SIG_SCROLL_DRAG_START, ""},
@@ -535,6 +537,7 @@ _item_click_cb(void *data,
      }
 
    if (it->func) it->func((void *)it->base.data, WIDGET(it), it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED, it);
 }
 
 static char *

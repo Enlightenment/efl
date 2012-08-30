@@ -28,6 +28,7 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * @li @c "selected" - when item is selected, i.e. scroller stops.
+ * @li @c "clicked" - This is called when a user clicks an item (@since 1.8)
  * @li @c "scroll,anim,start" - scrolling animation has started
  * @li @c "scroll,anim,stop" - scrolling animation has stopped
  * @li @c "scroll,drag,start" - dragging the diskselector has started

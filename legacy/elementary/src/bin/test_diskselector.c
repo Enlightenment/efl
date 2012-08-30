@@ -166,6 +166,13 @@ _print_disk_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    printf("Selected label: %s\n", elm_object_item_text_get(ds_it));
 }
 
+static void
+_item_clicked_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Elm_Object_Item *ds_it = event_info;
+   printf("Clicked label: %s\n", elm_object_item_text_get(ds_it));
+}
+
 static Evas_Object *
 _disk_create(Evas_Object *win, Eina_Bool rnd)
 {
@@ -325,6 +332,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
+   evas_object_smart_callback_add(disk, "clicked", _item_clicked_cb, NULL);
 
    // displayed item number setting example
    disk = elm_diskselector_add(win);
