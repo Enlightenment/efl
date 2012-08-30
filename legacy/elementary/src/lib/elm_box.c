@@ -120,6 +120,9 @@ _sizing_eval(Evas_Object *obj)
 
    ELM_BOX_DATA_GET(obj, sd);
 
+   if (sd->on_deletion)
+     return;
+
    evas_object_size_hint_min_get
      (ELM_WIDGET_DATA(sd)->resize_obj, &minw, &minh);
    evas_object_size_hint_max_get
@@ -389,6 +392,8 @@ _elm_box_smart_del(Evas_Object *obj)
    Evas_Object *child;
 
    ELM_BOX_DATA_GET(obj, sd);
+
+   sd->on_deletion = EINA_TRUE;
 
    evas_object_event_callback_del_full
      (ELM_WIDGET_DATA(sd)->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,

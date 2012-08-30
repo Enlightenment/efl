@@ -122,8 +122,9 @@ struct _Elm_Box_Smart_Data
                                 * first member obligatory, as
                                 * we're inheriting from it */
 
-   Eina_Bool             horizontal : 1;
    Eina_Bool             homogeneous : 1;
+   Eina_Bool             on_deletion : 1;
+   Eina_Bool             horizontal : 1;
    Eina_Bool             recalc : 1;
 };
 
