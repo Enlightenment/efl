@@ -1168,7 +1168,7 @@ group { name: "elm/gengrid/item/thumb/default";
             rel1.offset: -3 -3;
             rel2.offset: 2 2;
             image {
-               image: "bt_sm_shine.png";
+               normal: "bt_sm_shine.png";
                border: 6 6 6 0;
             }
          }
