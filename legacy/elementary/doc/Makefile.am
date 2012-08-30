@@ -135,6 +135,7 @@ WGT_TREE = \
 	photocam \
 	player \
 	plug \
+	popup \
 	progressbar \
 	radio \
 	route \

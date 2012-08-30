@@ -89,6 +89,7 @@ elm_widget_photo.h \
 elm_widget_photocam.h \
 elm_widget_player.h \
 elm_widget_plug.h \
+elm_widget_popup.h \
 elm_widget_progressbar.h \
 elm_widget_radio.h \
 elm_widget_route.h \
