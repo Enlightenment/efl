@@ -480,9 +480,17 @@ typedef struct _Elm_Widget_Smart_Data
    Evas_Object                  *hover_obj;
    Eina_List                    *tooltips, *cursors;
 
+   /* "show region" coordinates. all widgets got those because this
+    * info may be set and queried recursively through the widget
+    * parenting tree */
    Evas_Coord                    rx, ry, rw, rh;
+
+   /* scrolling hold/freeze hints. all widgets got those because this
+    * info may be set and queried recursively through the widget
+    * parenting tree */
    int                           scroll_hold;
    int                           scroll_freeze;
+
    double                        scale;
    Elm_Theme                    *theme;
    const char                   *style;
@@ -497,8 +505,9 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_List                    *focus_chain;
    Eina_List                    *event_cb;
 
-   /* this block is subject to later analysis: to be changed by
-    * something different */
+   /* this is a hook to be set on-the-fly on widgets. this is code
+    * handling the request of showing a specific region from an inner
+    * widget (mainly issued by entries, on cursor moving) */
    void                         *on_show_region_data;
    void                        (*on_show_region)(void *data,
                                                  Evas_Object *obj);

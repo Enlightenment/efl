@@ -888,8 +888,7 @@ _show_region_hook(void *data,
 
    elm_widget_show_region_get(obj, &x, &y, &w, &h);
 
-   if (sd->scroll)
-     sd->s_iface->content_region_show(obj, x, y, w, h);
+   sd->s_iface->content_region_show(obj, x, y, w, h);
 }
 
 static Eina_Bool
