@@ -127,6 +127,7 @@ WGT_TREE = \
 	map \
 	mapbuf \
 	menu \
+	multibuttonentry \
 	naviframe \
 	notify \
 	panes \

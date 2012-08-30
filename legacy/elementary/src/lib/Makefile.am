@@ -81,6 +81,7 @@ elm_widget_list.h \
 elm_widget_map.h \
 elm_widget_mapbuf.h \
 elm_widget_menu.h \
+elm_widget_multibuttonentry.h \
 elm_widget_naviframe.h \
 elm_widget_notify.h \
 elm_widget_panes.h \
