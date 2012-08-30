@@ -996,6 +996,6 @@
                               Add support for using native image binding.
                               Add support for setting GL surface capabilities.
 
-2012-04-26  Carsten Haitzler (The Rasterman)
+2012-08-30  Carsten Haitzler (The Rasterman)
 
         1.7.0 release
