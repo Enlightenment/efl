@@ -96,6 +96,18 @@ _elm_widget_theme_func(Evas_Object *obj)
    return EINA_TRUE;
 }
 
+static void
+_elm_widget_on_focus_region_func(const Evas_Object *obj,
+                                 Evas_Coord *x,
+                                 Evas_Coord *y,
+                                 Evas_Coord *w,
+                                 Evas_Coord *h)
+{
+   evas_object_geometry_get(obj, NULL, NULL, w, h);
+   if (x) *x = 0;
+   if (y) *y = 0;
+}
+
 static Eina_Bool
 _elm_widget_on_focus_func_unimplemented(Evas_Object *obj)
 {
@@ -706,7 +718,8 @@ _elm_widget_smart_set(Elm_Widget_Smart_Class *api)
    API_DEFAULT_SET_UNIMPLEMENTED(on_focus);
    API_DEFAULT_SET_UNIMPLEMENTED(disable);
 
-   api->theme = _elm_widget_theme_func;
+   API_DEFAULT_SET(theme);
+   API_DEFAULT_SET(on_focus_region);
 
    API_DEFAULT_SET_UNIMPLEMENTED(translate);
    API_DEFAULT_SET_UNIMPLEMENTED(event);
@@ -873,7 +886,6 @@ static void
 _elm_widget_focus_region_show(const Evas_Object *obj)
 {
    Evas_Coord x, y, w, h, ox, oy;
-   Elm_Widget_Smart_Data *sd2;
    Evas_Object *o;
 
    API_ENTRY return;
@@ -883,13 +895,17 @@ _elm_widget_focus_region_show(const Evas_Object *obj)
 
    elm_widget_focus_region_get(obj, &x, &y, &w, &h);
    evas_object_geometry_get(obj, &ox, &oy, NULL, NULL);
+
    while (o)
      {
         Evas_Coord px, py;
-        sd2 = evas_object_smart_data_get(o);
-        if (sd2->focus_region)
+
+        if (_elm_scrollable_is(o))
           {
-             sd2->focus_region(o, x, y, w, h);
+             ELM_SCROLLABLE_IFACE_GET(o, s_iface);
+
+             s_iface->content_region_show(o, x, y, w, h);
+
              elm_widget_focus_region_get(o, &x, &y, &w, &h);
           }
         else
@@ -1173,62 +1189,6 @@ elm_widget_on_show_region_hook_set(Evas_Object *obj,
 
    sd->on_show_region = func;
    sd->on_show_region_data = data;
-}
-
-/**
- * @internal
- *
- * Set the hook to use to show the focused region.
- *
- * Whenever a new widget gets focused or it's needed to show the focused
- * area of the current one, this hook will be called on objects that may
- * want to move their children into their visible area.
- * The area given in the hook function is relative to the @p obj widget.
- *
- * @param obj The widget object
- * @param func The function to call to show the specified area.
- *
- * @ingroup Widget
- */
-EAPI void
-elm_widget_focus_region_hook_set(Evas_Object *obj,
-                                 void (*func)(Evas_Object *obj,
-                                              Evas_Coord x,
-                                              Evas_Coord y,
-                                              Evas_Coord w,
-                                              Evas_Coord h))
-{
-   API_ENTRY return;
-
-   sd->focus_region = func;
-}
-
-/**
- * @internal
- *
- * Set the hook to retrieve the focused region of a widget.
- *
- * This hook will be called by elm_widget_focus_region_get() whenever
- * it's needed to get the focused area of a widget. The area must be relative
- * to the widget itself and if no hook is set, it will default to the entire
- * object.
- *
- * @param obj The widget object
- * @param func The function used to retrieve the focus region.
- *
- * @ingroup Widget
- */
-EAPI void
-elm_widget_on_focus_region_hook_set(Evas_Object *obj,
-                                    void (*func)(const Evas_Object *obj,
-                                                 Evas_Coord *x,
-                                                 Evas_Coord *y,
-                                                 Evas_Coord *w,
-                                                 Evas_Coord *h))
-{
-   API_ENTRY return;
-
-   sd->on_focus_region = func;
 }
 
 EAPI Eina_Bool
@@ -2834,19 +2794,17 @@ elm_widget_focus_region_get(const Evas_Object *obj,
                             Evas_Coord *w,
                             Evas_Coord *h)
 {
-   Elm_Widget_Smart_Data *sd;
-
-   if (!obj) return;
-
-   sd = evas_object_smart_data_get(obj);
-   if (!sd || !_elm_widget_is(obj) || !sd->on_focus_region)
+   if (!_elm_widget_is(obj))
      {
         evas_object_geometry_get(obj, NULL, NULL, w, h);
         if (x) *x = 0;
         if (y) *y = 0;
         return;
      }
-   sd->on_focus_region(obj, x, y, w, h);
+
+   ELM_WIDGET_DATA_GET(obj, sd);
+
+   sd->api->on_focus_region(obj, x, y, w, h);
 }
 
 EAPI Eina_List *

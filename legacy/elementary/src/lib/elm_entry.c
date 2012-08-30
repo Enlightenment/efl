@@ -866,29 +866,16 @@ _elm_entry_smart_translate(Evas_Object *obj)
 }
 
 static void
-_on_focus_region_hook(const Evas_Object *obj,
-                      Evas_Coord *x,
-                      Evas_Coord *y,
-                      Evas_Coord *w,
-                      Evas_Coord *h)
+_elm_entry_smart_on_focus_region(const Evas_Object *obj,
+                                 Evas_Coord *x,
+                                 Evas_Coord *y,
+                                 Evas_Coord *w,
+                                 Evas_Coord *h)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
 
    edje_object_part_text_cursor_geometry_get
      (sd->entry_edje, "elm.text", x, y, w, h);
-}
-
-static void
-_focus_region_hook(Evas_Object *obj,
-                   Evas_Coord x,
-                   Evas_Coord y,
-                   Evas_Coord w,
-                   Evas_Coord h)
-{
-   ELM_ENTRY_DATA_GET(obj, sd);
-
-   if (sd->scroll)
-     sd->s_iface->content_region_show(obj, x, y, w, h);
 }
 
 static void
@@ -2887,8 +2874,6 @@ _elm_entry_smart_add(Evas_Object *obj)
 
    elm_layout_text_set(obj, "elm.text", "");
 
-   elm_widget_focus_region_hook_set(obj, _focus_region_hook);
-   elm_widget_on_focus_region_hook_set(obj, _on_focus_region_hook);
    elm_object_sub_cursor_set
      (ELM_WIDGET_DATA(priv)->resize_obj, obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -3065,6 +3050,7 @@ _elm_entry_smart_set_user(Elm_Entry_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->base.resize = _elm_entry_smart_resize;
    ELM_WIDGET_CLASS(sc)->base.member_add = _elm_entry_smart_member_add;
 
+   ELM_WIDGET_CLASS(sc)->on_focus_region = _elm_entry_smart_on_focus_region;
    ELM_WIDGET_CLASS(sc)->sub_object_del = _elm_entry_smart_sub_object_del;
    ELM_WIDGET_CLASS(sc)->on_focus = _elm_entry_smart_on_focus;
    ELM_WIDGET_CLASS(sc)->theme = _elm_entry_smart_theme;

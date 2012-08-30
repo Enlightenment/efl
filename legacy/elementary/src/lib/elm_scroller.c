@@ -354,18 +354,6 @@ _show_region_hook(void *data,
 }
 
 static void
-_focus_region_hook(Evas_Object *obj,
-                   Evas_Coord x,
-                   Evas_Coord y,
-                   Evas_Coord w,
-                   Evas_Coord h)
-{
-   ELM_SCROLLER_DATA_GET(obj, sd);
-
-   sd->s_iface->content_region_show(obj, x, y, w, h);
-}
-
-static void
 _changed_size_hints_cb(void *data,
                        Evas *e __UNUSED__,
                        Evas_Object *obj __UNUSED__,
@@ -562,9 +550,6 @@ _elm_scroller_smart_add(Evas_Object *obj)
    evas_object_color_set(priv->hit_rect, 0, 0, 0, 0);
    evas_object_show(priv->hit_rect);
    evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
-
-   /* FIXME: rework it */
-   elm_widget_focus_region_hook_set(obj, _focus_region_hook);
 
    priv->s_iface = evas_object_smart_interface_get
        (obj, ELM_SCROLLABLE_IFACE_NAME);

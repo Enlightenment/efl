@@ -377,7 +377,7 @@
  */
 #define ELM_WIDGET_SMART_CLASS_INIT(smart_class_init)                        \
   {smart_class_init, ELM_WIDGET_SMART_CLASS_VERSION, NULL, NULL, NULL, NULL, \
-   NULL, NULL, NULL, NULL, NULL, NULL, NULL}
+   NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL}
 
 /**
  * @def ELM_WIDGET_SMART_CLASS_INIT_NULL
@@ -437,6 +437,11 @@ typedef struct _Elm_Widget_Smart_Class
                              Evas_Object *source,
                              Evas_Callback_Type type,
                              void *event_info); /**< 'Virtual' function handling input events on the widget */
+   void             (*on_focus_region)(const Evas_Object *obj,
+                                       Evas_Coord *x,
+                                       Evas_Coord *y,
+                                       Evas_Coord *w,
+                                       Evas_Coord *h); /**< 'Virtual' function returning an inner area of a widget that should be brought into the visible are of a broader viewport, may this context arise. On the base Elementary widget class, it defaults to the object's total area, so only override it if you have to. */
    Eina_Bool        (*focus_next)(const Evas_Object *obj,
                                   Elm_Focus_Direction dir,
                                   Evas_Object **next); /**< 'Virtual' function handling passing focus to sub-objects */
@@ -497,16 +502,6 @@ typedef struct _Elm_Widget_Smart_Data
    void                         *on_show_region_data;
    void                        (*on_show_region)(void *data,
                                                  Evas_Object *obj);
-   void                        (*focus_region)(Evas_Object *obj,
-                                               Evas_Coord x,
-                                               Evas_Coord y,
-                                               Evas_Coord w,
-                                               Evas_Coord h);
-   void                        (*on_focus_region)(const Evas_Object *obj,
-                                                  Evas_Coord *x,
-                                                  Evas_Coord *y,
-                                                  Evas_Coord *w,
-                                                  Evas_Coord *h);
 
    int                           frozen;
 
@@ -657,8 +652,6 @@ EAPI Eina_Bool        elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
 EAPI void             elm_widget_translate(Evas_Object *obj);
 EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data);
-EAPI void             elm_widget_focus_region_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h));
-EAPI void             elm_widget_on_focus_region_hook_set(Evas_Object *obj, void (*func)(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h));
 EAPI Eina_Bool        elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
 EAPI Eina_Bool        elm_widget_sub_object_del(Evas_Object *obj, Evas_Object *sobj);
 EAPI void             elm_widget_resize_object_set(Evas_Object *obj, Evas_Object *sobj);
