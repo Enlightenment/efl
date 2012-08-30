@@ -14,8 +14,7 @@ EAPI const char ELM_CONFORMANT_SMART_NAME[] = "elm_conformant";
 
 #ifdef HAVE_ELEMENTARY_X
 #define SUB_TYPE_COUNT 2
-/* FIXME: change the smart names once those two are ported to new classes */
-static char *sub_type[SUB_TYPE_COUNT] = { "scroller", "genlist" };
+static char *sub_type[SUB_TYPE_COUNT] = { "elm_scroller", "elm_genlist" };
 #endif
 
 static const Elm_Layout_Part_Alias_Description _content_aliases[] =
