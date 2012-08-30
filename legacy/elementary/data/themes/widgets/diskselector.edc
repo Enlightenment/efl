@@ -297,6 +297,7 @@ group { name: "elm/diskselector/item/datetime/default";
         ignore_flags: ON_HOLD;
         description {
            state: "default" 0.0;
+           color: 0 0 0 0;
         }
      }
    }
