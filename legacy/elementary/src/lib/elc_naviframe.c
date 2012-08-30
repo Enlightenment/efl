@@ -76,6 +76,7 @@ _item_free(Elm_Naviframe_Item *it)
 
    eina_stringshare_del(it->style);
    eina_stringshare_del(it->title_label);
+   eina_stringshare_del(it->subtitle_label);
 
    if (it->title_prev_btn)
      evas_object_del(it->title_prev_btn);
