@@ -1540,7 +1540,7 @@ elm_widget_data_set(Evas_Object *obj,
 {
    API_ENTRY return;
 
-   if (!_elm_widget_is(obj)) return;
+   if (!_elm_legacy_is(obj)) return;
 
    COMPAT_SMART_DATA(sd)->data = data;
 }
