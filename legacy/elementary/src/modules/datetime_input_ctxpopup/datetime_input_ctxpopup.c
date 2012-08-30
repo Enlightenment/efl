@@ -83,13 +83,13 @@ _field_value_get(struct tm *tim, Elm_Datetime_Field_Type  field_type)
 }
 
 static void
-_diskselector_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_diskselector_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    DiskItem_Data *disk_data;
    struct tm curr_time;
    const char *fmt;
 
-   disk_data = (DiskItem_Data *)data;
+   disk_data = (DiskItem_Data *)elm_object_item_data_get(event_info);
    if (!disk_data || !(disk_data->ctx_mod)) return;
 
    elm_datetime_value_get(disk_data->ctx_mod->mod_data.base, &curr_time);
@@ -176,7 +176,8 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
              disk_data->ctx_mod = ctx_mod;
              disk_data->sel_field_type = field_type;
              disk_data->sel_field_value = idx;
-             item = elm_diskselector_item_append(diskselector, label, NULL, _diskselector_cb, disk_data);
+             item = elm_diskselector_item_append(diskselector, label, NULL, NULL, disk_data);
+             evas_object_smart_callback_add(diskselector, "clicked", _diskselector_cb, NULL);
              elm_object_item_del_cb_set(item, _diskselector_item_free_cb);
           }
      }
