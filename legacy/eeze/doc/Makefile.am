@@ -30,4 +30,4 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile.in $(wildcard $(srcdir)img/*.*) e.css head.html foot.html eeze.dox.in
+EXTRA_DIST = Doxyfile.in $(wildcard img/*.*) e.css head.html foot.html eeze.dox.in
