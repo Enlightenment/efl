@@ -961,6 +961,8 @@ _icon_duplicate(Evas_Object *icon)
    const char *file;
    const char *group;
 
+   if (!icon) return NULL;
+
    elm_image_file_get(icon, &file, &group);
    ic = elm_icon_add(icon);
    elm_image_file_set(ic, file, group);
