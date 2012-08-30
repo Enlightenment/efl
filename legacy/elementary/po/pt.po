@@ -1,19 +1,20 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:2084
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-30 14:02+0900\n"
-"PO-Revision-Date: 2012-08-14 16:16-0000\n"
+"POT-Creation-Date: 2012-08-27 19:19+0900\n"
+"PO-Revision-Date: 2012-08-30 01:17+0100\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: pt_PT\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: Portuguese\n"
+"X-Poedit-Country: Portugal\n"
 
 #: src/lib/elc_fileselector.c:749
 msgid "Up"
@@ -23,7 +24,8 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1402
+#: src/lib/elc_fileselector.c:992
+#: src/lib/elm_entry.c:1390
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -35,9 +37,14 @@ msgstr "Aceitar"
 msgid "Clicked"
 msgstr "Clicado"
 
-#: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
-#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1253
+#: src/lib/elm_button.c:255
+#: src/lib/elm_check.c:200
+#: src/lib/elm_gengrid.c:618
+#: src/lib/elm_genlist.c:1281
+#: src/lib/elm_list.c:1350
+#: src/lib/elm_radio.c:241
+#: src/lib/elm_spinner.c:503
+#: src/lib/elm_toolbar.c:1253
 msgid "State: Disabled"
 msgstr "Estado: inativo"
 
@@ -49,17 +56,23 @@ msgstr "Botão"
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:47 src/lib/elm_check.c:50 src/lib/elm_check.c:213
-#: src/lib/elm_radio.c:83 src/lib/elm_radio.c:242
+#: src/lib/elm_check.c:47
+#: src/lib/elm_check.c:50
+#: src/lib/elm_check.c:213
+#: src/lib/elm_radio.c:83
+#: src/lib/elm_radio.c:242
 msgid "State: On"
 msgstr "Estado: ligado"
 
-#: src/lib/elm_check.c:60 src/lib/elm_check.c:63 src/lib/elm_check.c:225
+#: src/lib/elm_check.c:60
+#: src/lib/elm_check.c:63
+#: src/lib/elm_check.c:225
 #: src/lib/elm_radio.c:244
 msgid "State: Off"
 msgstr "Estado: desligado"
 
-#: src/lib/elm_check.c:209 src/lib/elm_check.c:222
+#: src/lib/elm_check.c:209
+#: src/lib/elm_check.c:222
 msgid "State"
 msgstr "Estado"
 
@@ -69,56 +82,55 @@ msgstr "Verificação"
 
 #: src/lib/elm_colorselector.c:895
 msgid "color selector palette item"
-msgstr ""
+msgstr "seletor de cor"
 
-#: src/lib/elm_config.c:2100
+#: src/lib/elm_config.c:2075
 msgid "default:LTR"
 msgstr "padrão: LTR"
 
 #: src/lib/elm_diskselector.c:621
 msgid "diskselector item"
-msgstr ""
+msgstr "seletor de disco"
 
-#: src/lib/elm_entry.c:1396
+#: src/lib/elm_entry.c:1384
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1399
+#: src/lib/elm_entry.c:1387
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1413
+#: src/lib/elm_entry.c:1401
 msgid "Select"
 msgstr "Selecionar"
 
-#: src/lib/elm_entry.c:1419
+#: src/lib/elm_entry.c:1407
 msgid "Paste"
 msgstr "Colar"
 
-#: src/lib/elm_entry.c:2650
+#: src/lib/elm_entry.c:2638
 msgid "Entry"
-msgstr ""
+msgstr "Entrada"
 
 #: src/lib/elm_gengrid.c:650
 msgid "Gengrid Item"
-msgstr ""
+msgstr "Grelha genérica"
 
 #: src/lib/elm_genlist.c:1315
-#, fuzzy
 msgid "Genlist Item"
-msgstr "Lista"
+msgstr "Lista genérica"
 
 #: src/lib/elm_label.c:348
 msgid "Label"
-msgstr ""
+msgstr "Texto"
 
-#: src/lib/elm_list.c:1393
+#: src/lib/elm_list.c:1390
 msgid "List Item"
 msgstr "Lista"
 
 #: src/lib/elm_progressbar.c:260
 msgid "progressbar"
-msgstr ""
+msgstr "barra de progresso"
 
 #: src/lib/elm_radio.c:271
 msgid "Radio"
@@ -126,19 +138,19 @@ msgstr "Opção"
 
 #: src/lib/elm_slider.c:778
 msgid "slider"
-msgstr ""
+msgstr "barra deslizante"
 
 #: src/lib/elm_spinner.c:534
 msgid "spinner increment button"
-msgstr ""
+msgstr "botão de aumento"
 
 #: src/lib/elm_spinner.c:542
 msgid "spinner decrement button"
-msgstr ""
+msgstr "botão de diminuição"
 
 #: src/lib/elm_spinner.c:549
 msgid "spinner"
-msgstr ""
+msgstr "botão"
 
 #: src/lib/elm_toolbar.c:988
 msgid "Selected"

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-30 14:02+0900\n"
-"PO-Revision-Date: 2012-08-14 23:01+0200\n"
+"POT-Creation-Date: 2012-08-29 21:05+0200\n"
+"PO-Revision-Date: 2012-08-30 18:48+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
 "Language: \n"
@@ -36,7 +36,7 @@ msgid "Clicked"
 msgstr "Cliccato"
 
 #: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
+#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1350 src/lib/elm_radio.c:241
 #: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1253
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
@@ -69,7 +69,7 @@ msgstr "Controllo"
 
 #: src/lib/elm_colorselector.c:895
 msgid "color selector palette item"
-msgstr ""
+msgstr "palette selezione colore"
 
 #: src/lib/elm_config.c:2100
 msgid "default:LTR"
@@ -77,7 +77,7 @@ msgstr "predefintito: LTR"
 
 #: src/lib/elm_diskselector.c:621
 msgid "diskselector item"
-msgstr ""
+msgstr "selettore disco"
 
 #: src/lib/elm_entry.c:1396
 msgid "Copy"
@@ -97,28 +97,27 @@ msgstr "Incolla"
 
 #: src/lib/elm_entry.c:2650
 msgid "Entry"
-msgstr ""
+msgstr "Voce"
 
 #: src/lib/elm_gengrid.c:650
 msgid "Gengrid Item"
-msgstr ""
+msgstr "Voce griglia generica"
 
 #: src/lib/elm_genlist.c:1315
-#, fuzzy
 msgid "Genlist Item"
-msgstr "Voce elenco"
+msgstr "Voce elenco generico"
 
 #: src/lib/elm_label.c:348
 msgid "Label"
-msgstr ""
+msgstr "Etichetta"
 
-#: src/lib/elm_list.c:1393
+#: src/lib/elm_list.c:1390
 msgid "List Item"
 msgstr "Voce elenco"
 
 #: src/lib/elm_progressbar.c:260
 msgid "progressbar"
-msgstr ""
+msgstr "barra avanzamento"
 
 #: src/lib/elm_radio.c:271
 msgid "Radio"
@@ -126,19 +125,19 @@ msgstr "Opzione"
 
 #: src/lib/elm_slider.c:778
 msgid "slider"
-msgstr ""
+msgstr "cursore"
 
 #: src/lib/elm_spinner.c:534
 msgid "spinner increment button"
-msgstr ""
+msgstr "bottone di aumento"
 
 #: src/lib/elm_spinner.c:542
 msgid "spinner decrement button"
-msgstr ""
+msgstr "bottone di diminuzione"
 
 #: src/lib/elm_spinner.c:549
 msgid "spinner"
-msgstr ""
+msgstr "spinner bottoni"
 
 #: src/lib/elm_toolbar.c:988
 msgid "Selected"
