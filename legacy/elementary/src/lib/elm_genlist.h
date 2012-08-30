@@ -1365,6 +1365,8 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
  * expected. But homogeneous mode will skip the item size pre-calculation
  * process so items' callbacks are called only when the item is needed.
  *
+ * @note This also works well with group index.
+ *
  * @see elm_genlist_mode_set()
  * @see elm_genlist_homogeneous_get()
  *
