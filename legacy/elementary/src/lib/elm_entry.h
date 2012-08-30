@@ -2,6 +2,9 @@
  * @defgroup Entry Entry
  * @ingroup Elementary
  *
+ * @image html entry_inheritance_tree.png
+ * @image latex entry_inheritance_tree.eps
+ *
  * @image html img/widget/entry/preview-00.png
  * @image latex img/widget/entry/preview-00.eps width=\textwidth
  * @image html img/widget/entry/preview-01.png
@@ -23,6 +26,19 @@
  * Other features include password mode, filtering of inserted text with
  * elm_entry_markup_filter_append() and related functions, inline "items" and
  * formatted markup text.
+ *
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for entry objects.
+ *
+ * This widget implements the @b @ref elm-scrollable-interface
+ * interface, so that all (non-deprecated) functions for the base @ref
+ * Scroller widget also work for entries.
+ *
+ * Some calls on the entry's API are marked as @b deprecated, as they
+ * just wrap the scrollable widgets counterpart functions. Use the
+ * ones we point you to, for each case of deprecation here, instead --
+ * eventually the deprecated ones will be discarded (next major
+ * release).
  *
  * @section entry-markup Formatted text
  *
@@ -189,8 +205,8 @@
  *
  * @section entry-signals Emitted signals
  *
- * This widget emits the following signals:
- *
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
  * @li "changed": The text within the entry was changed.
  * @li "changed,user": The text within the entry was changed because of user interaction.
  * @li "activated": The enter key was pressed on a single line entry.
@@ -1298,9 +1314,11 @@ EAPI void               elm_entry_end_visible_set(Evas_Object *obj, Eina_Bool se
  * @param h The horizontal scrollbar policy to apply
  * @param v The vertical scrollbar policy to apply
  *
+ * @deprecated Use elm_scroller_policy_set() instead.
+ *
  * @ingroup Entry
  */
-EAPI void               elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
+EINA_DEPRECATED EAPI void elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scroller_Policy h, Elm_Scroller_Policy v);
 
 /**
  * This enables/disables bouncing within the entry.
@@ -1312,9 +1330,11 @@ EAPI void               elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scr
  * @param h_bounce The horizontal bounce state
  * @param v_bounce The vertical bounce state
  *
+ * @deprecated Use elm_scroller_bounce_set() instead.
+ *
  * @ingroup Entry
  */
-EAPI void               elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+EINA_DEPRECATED EAPI void elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * Get the bounce mode
@@ -1323,9 +1343,11 @@ EAPI void               elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounc
  * @param h_bounce Allow bounce horizontally
  * @param v_bounce Allow bounce vertically
  *
+ * @deprecated Use elm_scroller_bounce_get() instead.
+ *
  * @ingroup Entry
  */
-EAPI void               elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
+EINA_DEPRECATED EAPI void elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * Set the input panel layout of the entry

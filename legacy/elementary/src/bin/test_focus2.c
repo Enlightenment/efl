@@ -74,7 +74,7 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en, "Entry that should get focus");
    elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
@@ -102,7 +102,7 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en, "Scrolled Entry that should get focus");
    elm_entry_single_line_set(en, EINA_TRUE);
    elm_object_part_content_set(ly, "element2", en);

@@ -471,7 +471,7 @@ test_tooltip(void *data       __UNUSED__,
    elm_entry_scrollable_set(se, EINA_TRUE);
    evas_object_size_hint_weight_set(se, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(se, EVAS_HINT_FILL, 0.5);
-   elm_entry_scrollbar_policy_set(se, ELM_SCROLLER_POLICY_OFF,
+   elm_scroller_policy_set(se, ELM_SCROLLER_POLICY_OFF,
                                            ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(se, "Hello, some entry here!");
    elm_object_tooltip_text_set(se, "Type something here!");

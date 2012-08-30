@@ -102,6 +102,7 @@ WGT_TREE = \
 	datetime \
 	dayselector \
 	diskselector \
+	entry \
 	fileselector \
 	fileselector_button \
 	flip \

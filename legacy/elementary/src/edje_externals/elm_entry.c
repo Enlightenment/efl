@@ -66,14 +66,14 @@ external_entry_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
    if (p->password_exists)
      elm_entry_password_set(obj, p->password);
    if (p->horizontal_bounce_exists && p->vertical_bounce_exists)
-     elm_entry_bounce_set(obj, p->horizontal_bounce, p->vertical_bounce);
+     elm_scroller_bounce_set(obj, p->horizontal_bounce, p->vertical_bounce);
    else if (p->horizontal_bounce_exists || p->vertical_bounce_exists)
      {
-        elm_entry_bounce_get(obj, &hbounce, &vbounce);
+        elm_scroller_bounce_get(obj, &hbounce, &vbounce);
         if (p->horizontal_bounce_exists)
-          elm_entry_bounce_set(obj, p->horizontal_bounce, vbounce);
+          elm_scroller_bounce_set(obj, p->horizontal_bounce, vbounce);
         else
-          elm_entry_bounce_set(obj, hbounce, p->vertical_bounce);
+          elm_scroller_bounce_set(obj, hbounce, p->vertical_bounce);
      }
    if (p->editable_exists)
      elm_entry_editable_set(obj, p->editable);
@@ -141,9 +141,9 @@ external_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              Eina_Bool hbounce, vbounce;
-             elm_entry_bounce_get(obj, NULL, &vbounce);
+             elm_scroller_bounce_get(obj, NULL, &vbounce);
              hbounce = !!param->i;
-             elm_entry_bounce_set(obj, hbounce, vbounce);
+             elm_scroller_bounce_set(obj, hbounce, vbounce);
              return EINA_TRUE;
           }
      }
@@ -152,9 +152,9 @@ external_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              Eina_Bool hbounce, vbounce;
-             elm_entry_bounce_get(obj, &hbounce, NULL);
+             elm_scroller_bounce_get(obj, &hbounce, NULL);
              vbounce = !!param->i;
-             elm_entry_bounce_set(obj, hbounce, vbounce);
+             elm_scroller_bounce_set(obj, hbounce, vbounce);
              return EINA_TRUE;
           }
      }
@@ -237,7 +237,7 @@ external_entry_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              Eina_Bool hbounce;
-             elm_entry_bounce_get(obj, &hbounce, NULL);
+             elm_scroller_bounce_get(obj, &hbounce, NULL);
              param->i = hbounce;
              return EINA_TRUE;
           }
@@ -247,7 +247,7 @@ external_entry_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              Eina_Bool vbounce;
-             elm_entry_bounce_get(obj, NULL, &vbounce);
+             elm_scroller_bounce_get(obj, NULL, &vbounce);
              param->i = vbounce;
              return EINA_TRUE;
           }
