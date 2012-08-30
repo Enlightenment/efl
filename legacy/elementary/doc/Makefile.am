@@ -99,6 +99,7 @@ WGT_TREE = \
 	colorselector \
 	conformant \
 	container \
+	ctxpopup \
 	datetime \
 	dayselector \
 	diskselector \

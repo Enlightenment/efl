@@ -55,6 +55,7 @@ elm_widget_clock.h \
 elm_widget_colorselector.h \
 elm_widget_conform.h \
 elm_widget_container.h \
+elm_widget_ctxpopup.h \
 elm_widget_datetime.h \
 elm_widget_dayselector.h \
 elm_widget_diskselector.h \

@@ -2,6 +2,9 @@
  * @defgroup Ctxpopup Ctxpopup
  * @ingroup Elementary
  *
+ * @image html ctxpopup_inheritance_tree.png
+ * @image latex ctxpopup_inheritance_tree.eps
+ *
  * @image html img/widget/ctxpopup/preview-00.png
  * @image latex img/widget/ctxpopup/preview-00.eps
  *
@@ -15,10 +18,12 @@
  * items have a label and/or an icon. It is intended for a small
  * number of items (hence the use of list, not genlist).
  *
- * @note Ctxpopup is a specialization of @ref Hover.
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for context popup objects.
  *
- * Signals that you can add callbacks for are:
- * "dismissed" - the ctxpopup was dismissed
+ * This widget emits the following signals, besides the ones sent from
+ * @ref Layout:
+ * - @c "dismissed" - the ctxpopup was dismissed
  *
  * Default content parts of the ctxpopup widget that you can use for are:
  * @li "default" - A content of the ctxpopup
@@ -32,12 +37,6 @@
  * Supported elm_object common APIs.
  * @li @ref elm_object_disabled_set
  * @li @ref elm_object_disabled_get
- * @li @ref elm_object_part_content_set
- * @li @ref elm_object_part_content_get
- * @li @ref elm_object_part_content_unset
- * @li @ref elm_object_signal_emit
- * @li @ref elm_object_signal_callback_add
- * @li @ref elm_object_signal_callback_del
  *
  * Supported elm_object_item common APIs.
  * @li @ref elm_object_item_disabled_set
