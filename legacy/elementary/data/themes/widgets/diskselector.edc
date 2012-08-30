@@ -190,11 +190,13 @@ group { name: "elm/diskselector/item/default";
         type: RECT;
         mouse_events: 1;
         repeat_events: 1;
-        description {
-           state: "default" 0.0;
+        ignore_flags: ON_HOLD;
+        description { state: "default" 0.0;
+           color: 0 0 0 0;
         }
-        description {
-           state: "disable" 0.0;
+        description { state: "disable" 0.0;
+           inherit: "default" 0.0;
+           visible: 0;
         }
      }
    }
