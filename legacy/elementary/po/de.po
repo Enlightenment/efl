@@ -4,12 +4,12 @@
 # This file is distributed under the same license as the elementary package.
 # Fabian Nowak <timystery@arcor.de>, 2011.
 #
-#: src/lib/elm_config.c:2059
+#: src/lib/elm_config.c:2084
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-27 19:19+0900\n"
+"POT-Creation-Date: 2012-08-30 14:02+0900\n"
 "PO-Revision-Date: 2011-02-25 20:22+0100\n"
 "Last-Translator: Fabian Nowak <timystery@arcor.de>\n"
 "Language-Team: German\n"
@@ -27,7 +27,7 @@ msgstr "Aufwärts"
 msgid "Home"
 msgstr "Persönlicher Ordner"
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1390
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1402
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -40,7 +40,7 @@ msgid "Clicked"
 msgstr ""
 
 #: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1350 src/lib/elm_radio.c:241
+#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
 #: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1253
 msgid "State: Disabled"
 msgstr ""
@@ -75,7 +75,7 @@ msgstr ""
 msgid "color selector palette item"
 msgstr ""
 
-#: src/lib/elm_config.c:2075
+#: src/lib/elm_config.c:2100
 msgid "default:LTR"
 msgstr "Standard: LTR"
 
@@ -83,23 +83,23 @@ msgstr "Standard: LTR"
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1384
+#: src/lib/elm_entry.c:1396
 msgid "Copy"
 msgstr "Kopieren"
 
-#: src/lib/elm_entry.c:1387
+#: src/lib/elm_entry.c:1399
 msgid "Cut"
 msgstr "Ausschneiden"
 
-#: src/lib/elm_entry.c:1401
+#: src/lib/elm_entry.c:1413
 msgid "Select"
 msgstr "Auswählen"
 
-#: src/lib/elm_entry.c:1407
+#: src/lib/elm_entry.c:1419
 msgid "Paste"
 msgstr "Einfügen"
 
-#: src/lib/elm_entry.c:2638
+#: src/lib/elm_entry.c:2650
 msgid "Entry"
 msgstr ""
 
@@ -115,7 +115,7 @@ msgstr ""
 msgid "Label"
 msgstr ""
 
-#: src/lib/elm_list.c:1390
+#: src/lib/elm_list.c:1393
 msgid "List Item"
 msgstr ""
 
