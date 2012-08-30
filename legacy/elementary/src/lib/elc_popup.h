@@ -62,8 +62,8 @@
  * buttons currently set to popup.
  *
  * Signals that you can add callbacks for are:
- * @li "timeout" - when ever popup is closed as a result of timeout.
- * @li "block,clicked" - when ever user taps on Blocked Event area.
+ * @li "timeout" - whenever popup is closed as a result of timeout.
+ * @li "block,clicked" - whenever user taps on Blocked Event area.
  *
  * Styles available for Popup
  * @li "default"
