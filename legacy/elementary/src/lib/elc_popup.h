@@ -64,7 +64,7 @@
  * buttons currently set to popup.
  *
  * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for popup objects.
+ * functions acting on it also work for popup objects (@since 1.8).
  *
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:

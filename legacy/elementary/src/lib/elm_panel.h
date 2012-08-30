@@ -19,7 +19,7 @@
  * @li @c ELM_PANEL_ORIENT_BOTTOM
  *
  * This widget inherits from the @ref Layout one, so that all the
- * functions acting on it also work for panel objects.
+ * functions acting on it also work for panel objects (@since 1.8).
  *
  * Default content parts of the panel widget that you can use are:
  * @li @c "default" - A content of the panel

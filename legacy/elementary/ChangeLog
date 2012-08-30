@@ -409,3 +409,16 @@
 2012-08-30  Carsten Haitzler (The Rasterman)
 
         1.7.0 release
+
+2012-08-30  Gustavo Lima Chaves (glima)
+
+	Toolbar widget is now a scrollable widget.
+	Entry widget is now a scrollable layout.
+	Fileselector entry widget is now an elm layout.
+	Ctxpopup widget is now an elm layout.
+	Multibutton entry entry is now an elm layout.
+	Popup widget is now an elm layout.
+	Panel widget is now an elm layout.
+	All internal widget hooks (and related macros) were removed, due
+	to deprecation. Thus, people using that (unstable) API will have
+	to adapt themselves.
