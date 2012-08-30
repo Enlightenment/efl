@@ -821,6 +821,12 @@ EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item)
 EAPI void             _elm_widget_item_disable_hook_set(Elm_Widget_Item *item, Elm_Widget_Disable_Cb func);
 EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func);
 
+/**
+ * Function to operate on a given widget's scrollabe children when necessary.
+ * @warning free the returned list with eina_list_free().
+ */
+EAPI Eina_List       *elm_widget_scrollable_children_get(Evas_Object *obj);
+
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
 EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *output);

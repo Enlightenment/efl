@@ -3060,6 +3060,23 @@ elm_widget_focus_region_get(const Evas_Object *obj,
    sd->on_focus_region(obj, x, y, w, h);
 }
 
+EAPI Eina_List *
+elm_widget_scrollable_children_get(Evas_Object *obj)
+{
+   Eina_List *l, *ret = NULL;
+   Evas_Object *child;
+
+   API_ENTRY return NULL;
+
+   EINA_LIST_FOREACH (sd->subobjs, l, child)
+     {
+        if (_elm_scrollable_is(child))
+          ret = eina_list_append(ret, child);
+     }
+
+   return ret;
+}
+
 EAPI void
 elm_widget_scroll_hold_push(Evas_Object *obj)
 {
@@ -3072,9 +3089,19 @@ elm_widget_scroll_hold_push(Evas_Object *obj)
              ELM_SCROLLABLE_IFACE_GET(obj, s_iface);
              s_iface->hold_set(obj, EINA_TRUE);
           }
-        else /* FIXME: this will vanish as soon as we don't have
-              * any legacy widget anymore */
-          evas_object_smart_callback_call(obj, "scroll-hold-on", obj);
+        else
+          {
+             Eina_List *scr_children, *l;
+             Evas_Object *child;
+
+             scr_children = elm_widget_scrollable_children_get(obj);
+             EINA_LIST_FOREACH (scr_children, l, child)
+               {
+                  ELM_SCROLLABLE_IFACE_GET(child, s_iface);
+                  s_iface->hold_set(child, EINA_TRUE);
+               }
+             eina_list_free(scr_children);
+          }
      }
    if (sd->parent_obj) elm_widget_scroll_hold_push(sd->parent_obj);
    // FIXME: on delete/reparent hold pop
@@ -3092,9 +3119,19 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
              ELM_SCROLLABLE_IFACE_GET(obj, s_iface);
              s_iface->hold_set(obj, EINA_FALSE);
           }
-        else /* FIXME: this will vanish as soon as we don't have
-              * any legacy widget anymore */
-          evas_object_smart_callback_call(obj, "scroll-hold-off", obj);
+        else
+          {
+             Eina_List *scr_children, *l;
+             Evas_Object *child;
+
+             scr_children = elm_widget_scrollable_children_get(obj);
+             EINA_LIST_FOREACH (scr_children, l, child)
+               {
+                  ELM_SCROLLABLE_IFACE_GET(child, s_iface);
+                  s_iface->hold_set(child, EINA_FALSE);
+               }
+             eina_list_free(scr_children);
+          }
      }
    if (sd->parent_obj) elm_widget_scroll_hold_pop(sd->parent_obj);
    if (sd->scroll_hold < 0) sd->scroll_hold = 0;
@@ -3119,9 +3156,19 @@ elm_widget_scroll_freeze_push(Evas_Object *obj)
              ELM_SCROLLABLE_IFACE_GET(obj, s_iface);
              s_iface->freeze_set(obj, EINA_TRUE);
           }
-        else /* FIXME: this will vanish as soon as we don't have
-              * any legacy widget anymore */
-          evas_object_smart_callback_call(obj, "scroll-freeze-on", obj);
+        else
+          {
+             Eina_List *scr_children, *l;
+             Evas_Object *child;
+
+             scr_children = elm_widget_scrollable_children_get(obj);
+             EINA_LIST_FOREACH (scr_children, l, child)
+               {
+                  ELM_SCROLLABLE_IFACE_GET(child, s_iface);
+                  s_iface->freeze_set(child, EINA_TRUE);
+               }
+             eina_list_free(scr_children);
+          }
      }
    if (sd->parent_obj) elm_widget_scroll_freeze_push(sd->parent_obj);
    // FIXME: on delete/reparent freeze pop
@@ -3139,9 +3186,19 @@ elm_widget_scroll_freeze_pop(Evas_Object *obj)
              ELM_SCROLLABLE_IFACE_GET(obj, s_iface);
              s_iface->freeze_set(obj, EINA_FALSE);
           }
-        else /* FIXME: this will vanish as soon as we don't have
-              * any legacy widget anymore */
-          evas_object_smart_callback_call(obj, "scroll-freeze-off", obj);
+        else
+          {
+             Eina_List *scr_children, *l;
+             Evas_Object *child;
+
+             scr_children = elm_widget_scrollable_children_get(obj);
+             EINA_LIST_FOREACH (scr_children, l, child)
+               {
+                  ELM_SCROLLABLE_IFACE_GET(child, s_iface);
+                  s_iface->freeze_set(child, EINA_FALSE);
+               }
+             eina_list_free(scr_children);
+          }
      }
    if (sd->parent_obj) elm_widget_scroll_freeze_pop(sd->parent_obj);
    if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
