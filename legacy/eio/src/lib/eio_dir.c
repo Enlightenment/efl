@@ -454,7 +454,7 @@ _eio_dir_copy_free(Eio_Dir_Copy *copy)
 {
    eina_stringshare_del(copy->progress.source);
    eina_stringshare_del(copy->progress.dest);
-   free(copy);
+   eio_file_free(&copy->progress.common);
 }
 
 static void
@@ -777,8 +777,7 @@ _eio_dir_stat_done(void *data, Ecore_Thread *thread __UNUSED__)
 
    async->common.done_cb((void*) async->common.data, &async->common);
 
-   eina_stringshare_del(async->directory);
-   free(async);
+   eio_async_free(async);
 }
 
 static void
@@ -788,8 +787,7 @@ _eio_dir_stat_error(void *data, Ecore_Thread *thread __UNUSED__)
 
    eio_file_error(&async->common);
 
-   eina_stringshare_del(async->directory);
-   free(async);
+   eio_async_free(async);
 }
 
 /**

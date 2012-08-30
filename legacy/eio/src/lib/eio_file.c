@@ -429,7 +429,7 @@ _eio_file_copy_free(Eio_File_Progress *copy)
 {
    eina_stringshare_del(copy->source);
    eina_stringshare_del(copy->dest);
-   free(copy);
+   eio_file_free(&copy->common);
 }
 
 static void
@@ -457,7 +457,7 @@ _eio_file_move_free(Eio_File_Move *move)
 {
    eina_stringshare_del(move->progress.source);
    eina_stringshare_del(move->progress.dest);
-   free(move);
+   eio_file_free(&move->progress.common);
 }
 
 static void
@@ -703,14 +703,20 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 }
 
 void
+eio_async_free(Eio_File_Ls *async)
+{
+   eina_stringshare_del(async->directory);
+   eio_file_free(&async->common);
+}
+
+void
 eio_async_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Ls *async = data;
 
    async->common.done_cb((void*) async->common.data, &async->common);
 
-   eina_stringshare_del(async->directory);
-   free(async);
+   eio_async_free(async);
 }
 
 void
@@ -720,8 +726,7 @@ eio_async_error(void *data, Ecore_Thread *thread __UNUSED__)
 
    eio_file_error(&async->common);
 
-   eina_stringshare_del(async->directory);
-   free(async);
+   eio_async_free(async);
 }
 
 /**

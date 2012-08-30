@@ -464,6 +464,9 @@ Eina_Bool eio_long_file_set(Eio_File *common,
 			    Ecore_Thread_Cb end_cb,
 			    Ecore_Thread_Cb cancel_cb);
 
+void eio_file_free(Eio_File *common);
+void eio_async_free(Eio_File_Ls *async);
+
 void eio_file_container_set(Eio_File *common, void *container);
 
 void eio_file_error(Eio_File *common);

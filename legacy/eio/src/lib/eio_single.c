@@ -42,7 +42,7 @@ static void
 _eio_mkdir_free(Eio_File_Mkdir *m)
 {
    eina_stringshare_del(m->path);
-   free(m);
+   eio_file_free(&m->common);
 }
 
 static void
@@ -78,7 +78,7 @@ static void
 _eio_unlink_free(Eio_File_Unlink *l)
 {
    eina_stringshare_del(l->path);
-   free(l);
+   eio_file_free(&l->common);
 }
 
 static void
@@ -169,7 +169,7 @@ static void
 _eio_stat_free(Eio_File_Stat *s)
 {
    eina_stringshare_del(s->path);
-   free(s);
+   eio_file_free(&s->common);
 }
 
 static void
@@ -272,7 +272,7 @@ _eio_chown_free(Eio_File_Chown *ch)
    if (ch->user) eina_stringshare_del(ch->user);
    if (ch->group) eina_stringshare_del(ch->group);
    eina_stringshare_del(ch->path);
-   free(ch);
+   eio_file_free(&ch->common);
 }
 
 static void
@@ -319,6 +319,16 @@ eio_file_thread_error(Eio_File *common, Ecore_Thread *thread)
 {
    common->error = errno;
    ecore_thread_cancel(thread);
+}
+
+void
+eio_file_free(Eio_File *common)
+{
+   if (common->worker.associated)
+     eina_hash_free(common->worker.associated);
+   if (common->main.associated)
+     eina_hash_free(common->main.associated);
+   free(common);
 }
 
 Eina_Bool
@@ -372,6 +382,8 @@ eio_file_set(Eio_File *common,
    common->error = 0;
    common->thread = NULL;
    common->container = NULL;
+   common->worker.associated = NULL;
+   common->main.associated = NULL;
 
    /* Be aware that ecore_thread_run could call cancel_cb if something goes wrong.
       This means that common would be destroyed if thread == NULL.

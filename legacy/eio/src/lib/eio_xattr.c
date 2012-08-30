@@ -113,7 +113,7 @@ _eio_file_xattr_free(Eio_File_Xattr *async)
        if (async->op == EIO_XATTR_DATA) free(async->todo.xdata.xattr_data);
        if (async->op == EIO_XATTR_STRING) free(async->todo.xstring.xattr_string);
      }
-   free(async);
+   eio_file_free(&async->common);
 }
 
 static void
