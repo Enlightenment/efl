@@ -142,6 +142,7 @@ WGT_TREE = \
 	spinner \
 	table \
 	thumb \
+	toolbar \
 	video \
 	web \
 	win

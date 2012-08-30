@@ -2,6 +2,9 @@
  * @defgroup Toolbar Toolbar
  * @ingroup Elementary
  *
+ * @image html toolbar_inheritance_tree.png
+ * @image latex toolbar_inheritance_tree.eps
+ *
  * @image html img/widget/toolbar/preview-00.png
  * @image latex img/widget/toolbar/preview-00.eps width=\textwidth
  *
@@ -16,10 +19,16 @@
  *
  * Items can have multiple states, or show menus when selected by the user.
  *
+ * This widget implements the @b @ref elm-scrollable-interface
+ * interface, so that all (non-deprecated) functions for the base @ref
+ * Scroller widget also work for toolbars.
+ *
  * Smart callbacks one can listen to:
- * - "clicked" - when the user clicks on a toolbar item and becomes selected.
- * - "longpressed" - when the toolbar is pressed for a certain amount of time.
- * - "language,changed" - when the program language changes.
+ * - @c "clicked" - when the user clicks on a toolbar item and becomes
+ *                  selected.
+ * - @c "longpressed" - when the toolbar is pressed for a certain
+ *                      amount of time.
+ * - @c "language,changed" - when the program language changes.
  *
  * Available styles for it:
  * - @c "default"
@@ -384,7 +393,7 @@ EAPI int                          elm_toolbar_item_priority_get(const Elm_Object
  */
 EAPI Elm_Object_Item             *elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label);
 
-/*
+/**
  * Get whether the @p item is selected or not.
  *
  * @param it The toolbar item.
@@ -568,16 +577,21 @@ EAPI void                         elm_toolbar_item_separator_set(Elm_Object_Item
 EAPI Eina_Bool                    elm_toolbar_item_separator_get(const Elm_Object_Item *it);
 
 /**
- * Set the shrink state of toolbar @p obj.
+ * Set the item displaying mode of a given toolbar widget @p obj.
  *
- * @param obj The toolbar object.
- * @param shrink_mode Toolbar's items display behavior.
+ * @param obj The toolbar object handle
+ * @param shrink_mode Toolbar's items display behavior
  *
- * The toolbar won't scroll if #ELM_TOOLBAR_SHRINK_NONE,
- * but will enforce a minimum size so all the items will fit, won't scroll
- * and won't show the items that don't fit if #ELM_TOOLBAR_SHRINK_HIDE,
- * will scroll if #ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to
- * pop up excess elements with #ELM_TOOLBAR_SHRINK_MENU.
+ * The toolbar won't scroll under #ELM_TOOLBAR_SHRINK_NONE mode, but
+ * it will enforce a minimum size, so that all the items will fit
+ * inside it. It won't scroll and won't show the items that don't fit
+ * under #ELM_TOOLBAR_SHRINK_HIDE mode. Finally, it'll scroll under
+ * #ELM_TOOLBAR_SHRINK_SCROLL mode, and it will create a button to
+ * aggregate items which didn't fit with the #ELM_TOOLBAR_SHRINK_MENU
+ * mode.
+ *
+ * @warning This function's behavior will clash with those of
+ * elm_scroller_policy_set(), so use either one of them, but not both.
  *
  * @ingroup Toolbar
  */
