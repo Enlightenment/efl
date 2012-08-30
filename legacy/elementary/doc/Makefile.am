@@ -105,6 +105,7 @@ WGT_TREE = \
 	entry \
 	fileselector \
 	fileselector_button \
+	fileselector_entry \
 	flip \
 	flipselector \
 	frame \

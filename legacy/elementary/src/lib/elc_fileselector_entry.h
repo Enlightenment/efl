@@ -2,6 +2,9 @@
  * @defgroup File_Selector_Entry File Selector Entry
  * @ingroup Elementary
  *
+ * @image html fileselector_entry_inheritance_tree.png
+ * @image latex fileselector_entry_inheritance_tree.eps
+ *
  * @image html img/widget/fileselector_entry/preview-00.png
  * @image latex img/widget/fileselector_entry/preview-00.eps
  *
@@ -16,6 +19,9 @@
  * inner window. When a file is chosen from it, the (inner) window
  * is closed and the selected file's path string is exposed both as
  * a smart event and as the new text on the entry.
+ *
+ * This widget inherits from the @ref Layout one, so that all the
+ * functions acting on it also work for file selector entry objects.
  *
  * This widget encapsulates operations on its internal file
  * selector on its own API. There is less control over its file
