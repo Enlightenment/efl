@@ -566,8 +566,6 @@ elm_quicklaunch_shutdown(void)
         _elm_log_dom = -1;
      }
 
-   _elm_widget_type_clear();
-
    eina_shutdown();
    return _elm_ql_init_count;
 }

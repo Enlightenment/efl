@@ -4,7 +4,6 @@
 #include "elm_interface_scrollable.h"
 
 static const char SMART_NAME[] = "elm_widget";
-static const char SMART_NAME_COMPAT[] = "elm_widget_compat";
 
 #define API_ENTRY                                    \
   Elm_Widget_Smart_Data * sd = evas_object_smart_data_get(obj); \
@@ -12,130 +11,6 @@ static const char SMART_NAME_COMPAT[] = "elm_widget_compat";
 #define INTERNAL_ENTRY                               \
   Elm_Widget_Smart_Data * sd = evas_object_smart_data_get(obj); \
   if (!sd) return
-
-/* this will vanish as soon as we finish the migration of widgets to
- * the new hierarchical schema. */
-#define COMPAT_SMART_DATA(_sd) \
-  ((Elm_Widget_Compat_Smart_Data *)_sd)
-
-/* these typedefs are just to save typing on
- * _elm_widget_compat_smart_set_user() and will die eventually */
-typedef Eina_Bool (*one_arg_class_func)(Evas_Object *obj);
-typedef Eina_Bool (*event_class_func)(Evas_Object *obj,
-                                      Evas_Object *source,
-                                      Evas_Callback_Type type,
-                                      void *event_info);
-typedef Eina_Bool (*focus_next_func)(const Evas_Object *obj,
-                                     Elm_Focus_Direction dir,
-                                     Evas_Object **next);
-typedef Eina_Bool (*focus_direction_func)(const Evas_Object *obj,
-                                          const Evas_Object *base,
-                                          double degree,
-                                          Evas_Object **target,
-                                          double *weight);
-
-/* these will eventually take place of the two on the top */
-#define ELM_WIDGET_DATA_GET(o, wd) \
-  Elm_Widget_Smart_Data * wd = evas_object_smart_data_get(o)
-
-#define ELM_WIDGET_DATA_GET_OR_RETURN(o, ptr)        \
-  ELM_WIDGET_DATA_GET(o, ptr);                       \
-  if (!ptr)                                          \
-    {                                                \
-       CRITICAL("no widget data for object %p (%s)", \
-                o, evas_object_type_get(o));         \
-       return;                                       \
-    }
-
-#undef elm_widget_text_set_hook_set
-#undef elm_widget_text_get_hook_set
-#undef elm_widget_content_set_hook_set
-#undef elm_widget_content_get_hook_set
-#undef elm_widget_content_unset_hook_set
-
-/**
- * @addtogroup Widget
- * @{
- */
-
-/**
- * Base widget smart data extended with instance widget hooks. This
- * will be used for compatibility with the old (non-hierarchical)
- * widget structure, until all widgets are adapted to the new
- * hierarchical schema
- */
-typedef struct _Elm_Widget_Compat_Smart_Data
-{
-   Elm_Widget_Smart_Data base;  /**< Base widget smart data as first member obligatory, as we're inheriting from it */
-
-   const char           *type;
-   void                 *data;
-
-   void                 *on_focus_data;
-   void                 *on_change_data;
-
-   Eina_List            *edje_signals;
-
-   /* (instance) widget hooks */
-   void (*del)(Evas_Object *obj);
-   void (*del_pre)(Evas_Object *obj);
-   void (*focus)(Evas_Object *obj);
-   void (*activate)(Evas_Object *obj);
-   void (*disable)(Evas_Object *obj);
-   void (*theme)(Evas_Object *obj);
-   void (*access)(Evas_Object *obj, Eina_Bool is_access);
-   void (*translate)(Evas_Object *obj);
-   Eina_Bool (*event)(Evas_Object *obj,
-                      Evas_Object *source,
-                      Evas_Callback_Type type,
-                      void *event_info);
-   void (*signal)(Evas_Object *obj,
-                  const char *emission,
-                  const char *source);
-   void (*callback_add)(Evas_Object *obj,
-                        const char *emission,
-                        const char *source,
-                        Edje_Signal_Cb func,
-                        void *data);
-   void (*callback_del)(Evas_Object *obj,
-                        const char *emission,
-                        const char *source,
-                        Edje_Signal_Cb func,
-                        void *data);
-   void (*changed)(Evas_Object *obj);
-   Eina_Bool (*focus_next)(const Evas_Object *obj,
-                           Elm_Focus_Direction dir,
-                           Evas_Object **next);
-   Eina_Bool (*focus_direction)(const Evas_Object *obj,
-                                const Evas_Object *base,
-                                double degree,
-                                Evas_Object **target,
-                                double *weight);
-   void (*on_focus)(void *data,
-                    Evas_Object *obj);
-   void (*on_change)(void *data,
-                     Evas_Object *obj);
-   Elm_Widget_Text_Set_Cb      text_set;
-   Elm_Widget_Text_Get_Cb      text_get;
-   Elm_Widget_Content_Set_Cb   content_set;
-   Elm_Widget_Content_Get_Cb   content_get;
-   Elm_Widget_Content_Unset_Cb content_unset;
-} Elm_Widget_Compat_Smart_Data;
-
-/**
- * Inheriting from base widget smart class, so that we flag widgets
- * not migrated to new hierarchical schema as "compat" (or legacy),
- * until we get all of them migrated. Then, this class will be
- * dropped.
- */
-typedef struct _Elm_Widget_Compat_Smart_Class
-{
-   Elm_Widget_Smart_Class base;  /**< Base widget smart class wrapped here */
-} Elm_Widget_Compat_Smart_Class;
-
-/**
- * @}
- */
 
 typedef struct _Elm_Event_Cb_Data Elm_Event_Cb_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
@@ -194,8 +69,6 @@ static void _sub_obj_hide(void *data,
                           void *event_info);
 
 /* local subsystem globals */
-static Eina_List  *widtypes = NULL;
-
 static unsigned int focus_order = 0;
 
 static inline Eina_Bool
@@ -212,35 +85,12 @@ _is_focusable(Evas_Object *obj)
 }
 
 static inline Eina_Bool
-_elm_legacy_is(const Evas_Object *obj)
-{
-   return evas_object_smart_type_check_ptr(obj, SMART_NAME_COMPAT);
-}
-
-static inline Eina_Bool
 _elm_scrollable_is(const Evas_Object *obj)
 {
    return !!evas_object_smart_interface_get(obj, ELM_SCROLLABLE_IFACE_NAME);
 }
 
-/* what follows are both basic (unimplemented) smart class functions
- * and proxies from those to smart data (instance) widget
- * functions. one by one we'll be surpassing the proxies on the
- * widgets, as long as we make them extensions of the basic elm widget
- * the right way */
-#define PROXY_MAKE(_prefix)                              \
-  static Eina_Bool                                       \
-  _elm_widget_##_prefix##_func_compat(Evas_Object * obj) \
-  {                                                      \
-     ELM_WIDGET_DATA_GET(obj, sd);                       \
-     if (COMPAT_SMART_DATA(sd)->_prefix)                 \
-       {                                                 \
-          COMPAT_SMART_DATA(sd)->_prefix(obj);           \
-          return EINA_TRUE;                              \
-       }                                                 \
-     return EINA_FALSE;                                  \
-  }
-
+/* what follows are basic (unimplemented) smart class functions */
 #define UNIMPLEMENTED_MAKE(_prefix)                                         \
   static Eina_Bool                                                          \
   _elm_widget_##_prefix##_func_unimplemented(Evas_Object * obj)             \
@@ -250,13 +100,9 @@ _elm_scrollable_is(const Evas_Object *obj)
      return EINA_FALSE;                                                     \
   }
 
-PROXY_MAKE(disable);
-PROXY_MAKE(theme);
-PROXY_MAKE(translate);
 UNIMPLEMENTED_MAKE(disable);
 UNIMPLEMENTED_MAKE(translate);
 
-#undef PROXY_MAKE
 #undef UNIMPLEMENTED_MAKE
 
 static Eina_Bool
@@ -270,38 +116,10 @@ _elm_widget_theme_func(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_widget_on_focus_func_compat(Evas_Object *obj)
-{
-   ELM_WIDGET_DATA_GET(obj, sd);
-
-   if (COMPAT_SMART_DATA(sd)->on_focus)
-     {
-        COMPAT_SMART_DATA(sd)->on_focus
-          (COMPAT_SMART_DATA(sd)->on_focus_data, obj);
-        return EINA_TRUE;
-     }
-   return EINA_FALSE;
-}
-
-static Eina_Bool
 _elm_widget_on_focus_func_unimplemented(Evas_Object *obj)
 {
    WRN("The %s widget does not implement the \"on_focus\" function.",
        elm_widget_type_get(obj));
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_elm_widget_event_func_compat(Evas_Object *obj,
-                              Evas_Object *source,
-                              Evas_Callback_Type type,
-                              void *event_info)
-{
-   ELM_WIDGET_DATA_GET(obj, sd);
-
-   if (COMPAT_SMART_DATA(sd)->event)
-     return COMPAT_SMART_DATA(sd)->event(obj, source, type, event_info);
-
    return EINA_FALSE;
 }
 
@@ -317,20 +135,7 @@ _elm_widget_event_func_unimplemented(Evas_Object *obj,
 }
 
 static Eina_Bool
-_elm_widget_focus_next_func_compat(const Evas_Object *obj,
-                                   Elm_Focus_Direction dir,
-                                   Evas_Object **next)
-{
-   ELM_WIDGET_DATA_GET(obj, sd);
-
-   if (COMPAT_SMART_DATA(sd)->focus_next)
-     return COMPAT_SMART_DATA(sd)->focus_next(obj, dir, next);
-
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_elm_widget_focus_next_func_unimplemented(const Evas_Object *obj __UNUSED__,
+_elm_widget_focus_next_func_unimplemented(const Evas_Object *obj,
                                           Elm_Focus_Direction dir __UNUSED__,
                                           Evas_Object **next __UNUSED__)
 {
@@ -340,24 +145,8 @@ _elm_widget_focus_next_func_unimplemented(const Evas_Object *obj __UNUSED__,
 }
 
 static Eina_Bool
-_elm_widget_focus_direction_func_compat(const Evas_Object *obj,
-                                        const Evas_Object *base,
-                                        double degree,
-                                        Evas_Object **target,
-                                        double *weight)
-{
-   ELM_WIDGET_DATA_GET(obj, sd);
-
-   if (COMPAT_SMART_DATA(sd)->focus_direction)
-     return COMPAT_SMART_DATA(sd)->focus_direction
-              (obj, base, degree, target, weight);
-
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_elm_widget_focus_direction_func_unimplemented(const Evas_Object *obj __UNUSED__,
-                                               const Evas_Object *base __UNUSED__,
+_elm_widget_focus_direction_func_unimplemented(const Evas_Object *obj,
+                                               const Evas_Object *b __UNUSED__,
                                                double degree __UNUSED__,
                                                Evas_Object **target __UNUSED__,
                                                double *weight __UNUSED__)
@@ -605,7 +394,6 @@ _elm_widget_focus_chain_manager_is(const Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
 
-   if (_elm_legacy_is(obj)) return !!COMPAT_SMART_DATA(sd)->focus_next;
    if (!sd->api) return EINA_FALSE;
    return sd->api->focus_next &&
           (sd->api->focus_next != _elm_widget_focus_next_func_unimplemented);
@@ -616,7 +404,6 @@ _elm_widget_focus_direction_manager_is(const Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
 
-   if (_elm_legacy_is(obj)) return !!COMPAT_SMART_DATA(sd)->focus_direction;
    if (!sd->api) return EINA_FALSE;
    return sd->api->focus_direction &&
           (sd->api->focus_direction !=
@@ -667,11 +454,6 @@ _sub_obj_del(void        *data,
      {
         sd->hover_obj = NULL;
         return;
-     }
-   else if (_elm_legacy_is(sd->obj))
-     {
-        evas_object_smart_callback_call(sd->obj, "sub-object-del", obj);
-        sd->subobjs = eina_list_remove(sd->subobjs, obj);
      }
    else
      {
@@ -832,8 +614,6 @@ _parent_focus(Evas_Object *obj)
      {
         sd->focused = EINA_TRUE;
         sd->api->on_focus(obj);
-        if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->focus)
-          COMPAT_SMART_DATA(sd)->focus(obj);
         _elm_widget_focus_region_show(obj);
      }
    sd->focus_order_on_calc = EINA_FALSE;
@@ -854,18 +634,6 @@ _elm_object_focus_chain_del_cb(void        *data,
 }
 
 // exposed util funcs to elm
-void
-_elm_widget_type_clear(void)
-{
-   const char **ptr;
-
-   EINA_LIST_FREE(widtypes, ptr)
-     {
-        eina_stringshare_del(*ptr);
-        *ptr = NULL;
-     }
-}
-
 void
 _elm_widget_focus_region_show(const Evas_Object *obj)
 {
@@ -944,18 +712,6 @@ elm_widget_parent_set(Evas_Object *obj,
    sd->api->parent_set(obj, parent);
 }
 
-EAPI void
-elm_widget_type_register(const char **ptr)
-{
-   widtypes = eina_list_append(widtypes, (void *)ptr);
-}
-
-EAPI void
-elm_widget_type_unregister(const char **ptr)
-{
-   widtypes = eina_list_remove(widtypes, (void *)ptr);
-}
-
 EAPI Eina_Bool
 elm_widget_api_check(int ver)
 {
@@ -965,260 +721,6 @@ elm_widget_api_check(int ver)
         return EINA_FALSE;
      }
    return EINA_TRUE;
-}
-
-/* creating compat smart class */
-ELM_INTERNAL_SMART_SUBCLASS_NEW
-  (SMART_NAME_COMPAT, _elm_widget_compat, Elm_Widget_Compat_Smart_Class,
-  Elm_Widget_Smart_Class, elm_widget_smart_class_get, NULL);
-
-static void
-_compat_smart_add(Evas_Object *obj)
-{
-   EVAS_SMART_DATA_ALLOC(obj, Elm_Widget_Compat_Smart_Data);
-
-   _elm_widget_compat_parent_sc->base.add(obj);
-}
-
-static void
-_compat_smart_del(Evas_Object *obj)
-{
-   Edje_Signal_Data *esd;
-
-   ELM_WIDGET_DATA_GET(obj, sd);
-
-   if (COMPAT_SMART_DATA(sd)->del_pre)
-     COMPAT_SMART_DATA(sd)->del_pre(obj);
-   if (COMPAT_SMART_DATA(sd)->del)
-     COMPAT_SMART_DATA(sd)->del(obj);
-
-   if (COMPAT_SMART_DATA(sd)->type)
-     eina_stringshare_del(COMPAT_SMART_DATA(sd)->type);
-
-   EINA_LIST_FREE(COMPAT_SMART_DATA(sd)->edje_signals, esd)
-     {
-        eina_stringshare_del(esd->emission);
-        eina_stringshare_del(esd->source);
-        free(esd);
-     }
-
-   COMPAT_SMART_DATA(sd)->data = NULL;
-
-   _elm_widget_compat_parent_sc->base.del(obj);
-}
-
-static void
-_compat_smart_calculate(Evas_Object *obj)
-{
-   ELM_WIDGET_DATA_GET(obj, sd);
-
-   if (COMPAT_SMART_DATA(sd)->changed) COMPAT_SMART_DATA(sd)->changed(obj);
-}
-
-static void
-_elm_widget_compat_smart_set_user(Elm_Widget_Compat_Smart_Class *sc)
-{
-   ELM_WIDGET_CLASS(sc)->base.add = _compat_smart_add;
-   ELM_WIDGET_CLASS(sc)->base.del = _compat_smart_del;
-   ELM_WIDGET_CLASS(sc)->base.calculate = _compat_smart_calculate;
-
-/* proxying base class functions to instance ones on compat widgets
- * (and overriding defaults -- unimplemented) */
-#define API_BASE_COMPAT_SET(_cast, _prefix) \
-  ELM_WIDGET_CLASS(sc)->_prefix = (_cast)_elm_widget_##_prefix##_func_compat
-
-   /* base api */
-   API_BASE_COMPAT_SET(one_arg_class_func, on_focus);
-   API_BASE_COMPAT_SET(one_arg_class_func, disable);
-   API_BASE_COMPAT_SET(one_arg_class_func, theme);
-   API_BASE_COMPAT_SET(one_arg_class_func, translate);
-   API_BASE_COMPAT_SET(event_class_func, event);
-   API_BASE_COMPAT_SET(focus_next_func, focus_next);
-   API_BASE_COMPAT_SET(focus_direction_func, focus_direction);
-
-#undef API_BASE_COMPAT_SET
-}
-
-EAPI Evas_Object *
-elm_widget_compat_add(Evas *evas)
-{
-   return evas_object_smart_add(evas, _elm_widget_compat_smart_class_new());
-}
-
-EAPI void
-elm_widget_del_hook_set(Evas_Object *obj,
-                        void       (*func)(Evas_Object *obj))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->del = func;
-}
-
-EAPI void
-elm_widget_del_pre_hook_set(Evas_Object *obj,
-                            void       (*func)(Evas_Object *obj))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->del_pre = func;
-}
-
-EAPI void
-elm_widget_focus_hook_set(Evas_Object *obj,
-                          void       (*func)(Evas_Object *obj))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->focus = func;
-}
-
-EAPI void
-elm_widget_activate_hook_set(Evas_Object *obj,
-                             void       (*func)(Evas_Object *obj))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->activate = func;
-}
-
-EAPI void
-elm_widget_disable_hook_set(Evas_Object *obj,
-                            void       (*func)(Evas_Object *obj))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->disable = func;
-}
-
-EAPI void
-elm_widget_theme_hook_set(Evas_Object *obj,
-                          void       (*func)(Evas_Object *obj))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->theme = func;
-}
-
-EAPI void
-elm_widget_access_hook_set(Evas_Object *obj,
-                           void       (*func)(Evas_Object *obj,
-                                              Eina_Bool is_access))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->access = func;
-}
-
-EAPI void
-elm_widget_translate_hook_set(Evas_Object *obj,
-                              void       (*func)(Evas_Object *obj))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->translate = func;
-}
-
-EAPI void
-elm_widget_event_hook_set(Evas_Object *obj,
-                          Eina_Bool  (*func)(Evas_Object       *obj,
-                                             Evas_Object       *source,
-                                             Evas_Callback_Type type,
-                                             void              *event_info))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->event = func;
-}
-
-EAPI void
-elm_widget_text_set_hook_set(Evas_Object *obj,
-                             Elm_Widget_Text_Set_Cb func)
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->text_set = func;
-}
-
-EAPI void
-elm_widget_text_get_hook_set(Evas_Object *obj,
-                             Elm_Widget_Text_Get_Cb func)
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->text_get = func;
-}
-
-EAPI void
-elm_widget_content_set_hook_set(Evas_Object *obj,
-                                Elm_Widget_Content_Set_Cb func)
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->content_set = func;
-}
-
-EAPI void
-elm_widget_content_get_hook_set(Evas_Object *obj,
-                                Elm_Widget_Content_Get_Cb func)
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->content_get = func;
-}
-
-EAPI void
-elm_widget_content_unset_hook_set(Evas_Object *obj,
-                                  Elm_Widget_Content_Unset_Cb func)
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->content_unset = func;
-}
-
-EAPI void
-elm_widget_changed_hook_set(Evas_Object *obj,
-                            void       (*func)(Evas_Object *obj))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->changed = func;
-}
-
-EAPI void
-elm_widget_signal_emit_hook_set(Evas_Object *obj,
-                                void       (*func)(Evas_Object *obj,
-                                                   const char *emission,
-                                                   const char *source))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->signal = func;
-}
-
-EAPI void
-elm_widget_signal_callback_add_hook_set(Evas_Object *obj,
-                                        void       (*func)(Evas_Object   *obj,
-                                                           const char    *emission,
-                                                           const char    *source,
-                                                           Edje_Signal_Cb func_cb,
-                                                           void          *data))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->callback_add = func;
-}
-
-EAPI void
-elm_widget_signal_callback_del_hook_set(Evas_Object *obj,
-                                        void       (*func)(Evas_Object   *obj,
-                                                           const char    *emission,
-                                                           const char    *source,
-                                                           Edje_Signal_Cb func_cb,
-                                                           void          *data))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->callback_del = func;
 }
 
 EAPI Eina_Bool
@@ -1232,9 +734,7 @@ elm_widget_access(Evas_Object *obj, Eina_Bool is_access)
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      ret &= elm_widget_access(child, is_access);
 
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->access)
-     COMPAT_SMART_DATA(sd)->access(obj, is_access);
-   else if (sd->api && sd->api->access)
+   if (sd->api && sd->api->access)
      sd->api->access(obj, is_access);
    else
      return EINA_FALSE;
@@ -1306,49 +806,6 @@ elm_widget_theme_specific(Evas_Object *obj,
    EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
    if (!sd->api) return;
    sd->api->theme(obj);
-}
-
-/**
- * @internal
- *
- * Set hook to get next object in object focus chain.
- *
- * @param obj The widget object.
- * @param func The hook to be used with this widget.
- *
- * @ingroup Widget
- */
-EAPI void
-elm_widget_focus_next_hook_set(Evas_Object *obj,
-                               Eina_Bool  (*func)(const Evas_Object   *obj,
-                                                   Elm_Focus_Direction dir,
-                                                   Evas_Object       **next))
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->focus_next = func;
-}
-
-/**
- * @internal
- *
- * Set hook to get near object in one direction.
- *
- * @param obj The widget object.
- * @param func The hook to be used with this widget.
- *
- * @ingroup Widget
- */
-EAPI void
-elm_widget_focus_direction_hook_set(Evas_Object *obj,
-                                    Eina_Bool  (*func)(const Evas_Object *obj,
-                                                       const Evas_Object *base,
-                                                       double             degree,
-                                                       Evas_Object      **direction,
-                                                       double            *weight))
-{
-   API_ENTRY return;
-   COMPAT_SMART_DATA(sd)->focus_direction = func;
 }
 
 /**
@@ -1443,30 +900,6 @@ elm_widget_mirrored_automatic_set(Evas_Object *obj,
 }
 
 EAPI void
-elm_widget_on_focus_hook_set(Evas_Object *obj,
-                             void       (*func)(void *data,
-                                                Evas_Object *obj),
-                             void        *data)
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->on_focus = func;
-   COMPAT_SMART_DATA(sd)->on_focus_data = data;
-}
-
-EAPI void
-elm_widget_on_change_hook_set(Evas_Object *obj,
-                              void       (*func)(void *data,
-                                                 Evas_Object *obj),
-                              void        *data)
-{
-   API_ENTRY return;
-
-   COMPAT_SMART_DATA(sd)->on_change = func;
-   COMPAT_SMART_DATA(sd)->on_change_data = data;
-}
-
-EAPI void
 elm_widget_on_show_region_hook_set(Evas_Object *obj,
                                    void       (*func)(void *data,
                                                       Evas_Object *obj),
@@ -1534,27 +967,6 @@ elm_widget_on_focus_region_hook_set(Evas_Object *obj,
    sd->on_focus_region = func;
 }
 
-EAPI void
-elm_widget_data_set(Evas_Object *obj,
-                    void        *data)
-{
-   API_ENTRY return;
-
-   if (!_elm_legacy_is(obj)) return;
-
-   COMPAT_SMART_DATA(sd)->data = data;
-}
-
-EAPI void *
-elm_widget_data_get(const Evas_Object *obj)
-{
-   API_ENTRY return NULL;
-
-   if (!_elm_legacy_is(obj)) return NULL;
-
-   return COMPAT_SMART_DATA(sd)->data;
-}
-
 EAPI Eina_Bool
 elm_widget_sub_object_add(Evas_Object *obj,
                           Evas_Object *sobj)
@@ -1563,148 +975,20 @@ elm_widget_sub_object_add(Evas_Object *obj,
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
    if (!sd->api) return EINA_FALSE;
-   if (!_elm_legacy_is(obj)) return sd->api->sub_object_add(obj, sobj);
-
-   /* this part will go away once all widgets are migrated to the new schema */
-   double scale, pscale = elm_widget_scale_get(sobj);
-   Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
-   Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
-
-   if (sobj == sd->parent_obj)
-     {
-        if (!elm_widget_sub_object_del(sobj, obj)) return EINA_FALSE;
-        WRN("You passed a parent object of obj = %p as the sub object = %p!", obj, sobj);
-     }
-
-   if (_elm_widget_is(sobj))
-     {
-        Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sobj);
-        if (sd2)
-          {
-             if (sd2->parent_obj == obj)
-               return EINA_TRUE;
-             if (sd2->parent_obj)
-               elm_widget_sub_object_del(sd2->parent_obj, sobj);
-             sd2->parent_obj = obj;
-             _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
-             if (!sd->child_can_focus && (_is_focusable(sobj)))
-               {
-                  Elm_Widget_Smart_Data *sdt = evas_object_smart_data_get(obj);
-                  sdt->child_can_focus = EINA_TRUE;
-                  while (sdt->parent_obj)
-                    {
-                       sdt = evas_object_smart_data_get(sdt->parent_obj);
-                       if (sdt->child_can_focus) break;
-                       sdt->child_can_focus = EINA_TRUE;
-                    }
-               }
-          }
-     }
-   else
-     {
-        void *data = evas_object_data_get(sobj, "elm-parent");
-        if (data)
-          {
-             if (data == obj) return EINA_TRUE;
-             elm_widget_sub_object_del(data, sobj);
-          }
-     }
-   sd->subobjs = eina_list_append(sd->subobjs, sobj);
-   evas_object_data_set(sobj, "elm-parent", obj);
-   evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
-   if (_elm_widget_is(sobj))
-     evas_object_event_callback_add(sobj, EVAS_CALLBACK_HIDE, _sub_obj_hide, sd);
-   evas_object_smart_callback_call(obj, "sub-object-add", sobj);
-   scale = elm_widget_scale_get(sobj);
-   th = elm_widget_theme_get(sobj);
-   mirrored = elm_widget_mirrored_get(sobj);
-   if ((scale != pscale) || (th != pth) || (pmirrored != mirrored)) elm_widget_theme(sobj);
-   if (elm_widget_focus_get(sobj)) _focus_parents(obj);
-
-   return EINA_TRUE;
+   return sd->api->sub_object_add(obj, sobj);
 }
 
 EAPI Eina_Bool
 elm_widget_sub_object_del(Evas_Object *obj,
                           Evas_Object *sobj)
 {
-   Evas_Object *sobj_parent;
-
    API_ENTRY return EINA_FALSE;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
    if (!sobj) return EINA_FALSE;
 
    if (!sd->api) return EINA_FALSE;
-   if (!_elm_legacy_is(obj)) return sd->api->sub_object_del(obj, sobj);
-
-   /* this part will go away once all widgets are migrated to the new schema */
-   sobj_parent = evas_object_data_del(sobj, "elm-parent");
-   if (sobj_parent != obj)
-     {
-        static int abort_on_warn = -1;
-        ERR("removing sub object %p (%s) from parent %p (%s), "
-            "but elm-parent is different %p (%s)!",
-            sobj, elm_widget_type_get(sobj), obj, elm_widget_type_get(obj),
-            sobj_parent, elm_widget_type_get(sobj_parent));
-        if (EINA_UNLIKELY(abort_on_warn == -1))
-          {
-             if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
-             else abort_on_warn = 0;
-          }
-        if (abort_on_warn == 1) abort();
-
-        return EINA_FALSE;
-     }
-   if (_elm_widget_is(sobj))
-     {
-        if (elm_widget_focus_get(sobj))
-          {
-             elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
-             elm_widget_tree_unfocusable_set(sobj, EINA_FALSE);
-          }
-        if ((sd->child_can_focus) && (_is_focusable(sobj)))
-          {
-             Evas_Object *subobj;
-             const Eina_List *l;
-             Elm_Widget_Smart_Data *sdt = evas_object_smart_data_get(obj);
-             while (1)
-               {
-                  sdt->child_can_focus = EINA_FALSE;
-                  EINA_LIST_FOREACH(sdt->subobjs, l, subobj)
-                    {
-                       if ((subobj != sobj) && (_is_focusable(subobj)))
-                         {
-                            sdt->child_can_focus = EINA_TRUE;
-                            break;
-                         }
-                    }
-                  if (sdt->child_can_focus) break;
-                  if (!sdt->parent_obj) break;
-                  sdt = evas_object_smart_data_get(sdt->parent_obj);
-               }
-          }
-        Elm_Widget_Smart_Data *sd2 = evas_object_smart_data_get(sobj);
-        if (sd2)
-          {
-             sd2->parent_obj = NULL;
-              if (sd2->resize_obj == sobj) sd2->resize_obj = NULL;
-
-              sd->subobjs = eina_list_remove(sd->subobjs, sobj);
-          }
-        else
-          sd->subobjs = eina_list_remove(sd->subobjs, sobj);
-     }
-   else
-     sd->subobjs = eina_list_remove(sd->subobjs, sobj);
-   evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL,
-                                       _sub_obj_del, sd);
-   if (_elm_widget_is(sobj))
-     evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_HIDE,
-                                         _sub_obj_hide, sd);
-   evas_object_smart_callback_call(obj, "sub-object-del", sobj);
-
-   return EINA_TRUE;
+   return sd->api->sub_object_del(obj, sobj);
 }
 
 /* a resize object is a sub object with some more callbacks on it and
@@ -2603,9 +1887,7 @@ elm_widget_signal_emit(Evas_Object *obj,
 {
    API_ENTRY return;
 
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->signal)
-     COMPAT_SMART_DATA(sd)->signal(obj, emission, source);
-   else if (evas_object_smart_type_check(obj, "elm_layout"))
+   if (evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_emit(obj, emission, source);
    else if (evas_object_smart_type_check(obj, "elm_icon"))
      {
@@ -2615,16 +1897,6 @@ elm_widget_signal_emit(Evas_Object *obj,
      }
 }
 
-static void
-_edje_signal_callback(void        *data,
-                      Evas_Object *obj __UNUSED__,
-                      const char  *emission,
-                      const char  *source)
-{
-   Edje_Signal_Data *esd = data;
-   esd->func(esd->data, esd->obj, emission, source);
-}
-
 EAPI void
 elm_widget_signal_callback_add(Evas_Object   *obj,
                                const char    *emission,
@@ -2632,31 +1904,11 @@ elm_widget_signal_callback_add(Evas_Object   *obj,
                                Edje_Signal_Cb func,
                                void          *data)
 {
-   Edje_Signal_Data *esd;
    API_ENTRY return;
 
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   if (_elm_legacy_is(obj))
-     {
-        if (!COMPAT_SMART_DATA(sd)->callback_add) return;
-
-        esd = ELM_NEW(Edje_Signal_Data);
-        if (!esd) return;
-
-        esd->obj = obj;
-        esd->func = func;
-        esd->emission = eina_stringshare_add(emission);
-        esd->source = eina_stringshare_add(source);
-        esd->data = data;
-        COMPAT_SMART_DATA(sd)->edje_signals = eina_list_append
-          (COMPAT_SMART_DATA(sd)->edje_signals, esd);
-
-        COMPAT_SMART_DATA(sd)->callback_add
-          (obj, emission, source, _edje_signal_callback, esd);
-     }
-
-   else if (evas_object_smart_type_check(obj, "elm_layout"))
+   if (evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_signal_callback_add(obj, emission, source, func, data);
    else if (evas_object_smart_type_check(obj, "elm_icon"))
      {
@@ -2668,39 +1920,16 @@ elm_widget_signal_callback_add(Evas_Object   *obj,
 }
 
 EAPI void *
-elm_widget_signal_callback_del(Evas_Object *obj,
-                               const char *emission,
-                               const char *source,
+elm_widget_signal_callback_del(Evas_Object   *obj,
+                               const char    *emission,
+                               const char    *source,
                                Edje_Signal_Cb func)
 {
-   Edje_Signal_Data *esd;
-   Eina_List *l;
    void *data = NULL;
+
    API_ENTRY return NULL;
 
-   if (_elm_legacy_is(obj))
-     {
-        if (!COMPAT_SMART_DATA(sd)->callback_del) return NULL;
-
-        EINA_LIST_FOREACH (COMPAT_SMART_DATA(sd)->edje_signals, l, esd)
-          {
-             if ((esd->func == func) && (!strcmp(esd->emission, emission)) &&
-                 (!strcmp(esd->source, source)))
-               {
-                  COMPAT_SMART_DATA(sd)->edje_signals = eina_list_remove_list
-                      (COMPAT_SMART_DATA(sd)->edje_signals, l);
-                  eina_stringshare_del(esd->emission);
-                  eina_stringshare_del(esd->source);
-                  data = esd->data;
-                  free(esd);
-                  break;
-               }
-          }
-
-        COMPAT_SMART_DATA(sd)->callback_del
-          (obj, emission, source, _edje_signal_callback, esd);
-     }
-   else if (evas_object_smart_type_check(obj, "elm_layout"))
+   if (evas_object_smart_type_check(obj, "elm_layout"))
      data = elm_layout_signal_callback_del(obj, emission, source, func);
    else if (evas_object_smart_type_check(obj, "elm_icon"))
      {
@@ -2715,12 +1944,12 @@ elm_widget_signal_callback_del(Evas_Object *obj,
 
 EAPI void
 elm_widget_focus_set(Evas_Object *obj,
-                     int          first)
+                     int first)
 {
    API_ENTRY return;
 
    if (!sd->api) return;
-   
+
    if (!sd->focused)
      {
         focus_order++;
@@ -2729,40 +1958,19 @@ elm_widget_focus_set(Evas_Object *obj,
         sd->api->on_focus(obj);
      }
 
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->focus)
+   if (first)
      {
-        COMPAT_SMART_DATA(sd)->focus(obj);
-        return;
-     }
-   else
-     {
-        if (first)
+        if ((_is_focusable(sd->resize_obj)) &&
+            (!elm_widget_disabled_get(sd->resize_obj)))
           {
-             if ((_is_focusable(sd->resize_obj)) &&
-                 (!elm_widget_disabled_get(sd->resize_obj)))
-               {
-                  elm_widget_focus_set(sd->resize_obj, first);
-               }
-             else
-               {
-                  const Eina_List *l;
-                  Evas_Object *child;
-                  EINA_LIST_FOREACH(sd->subobjs, l, child)
-                    {
-                       if ((_is_focusable(child)) &&
-                           (!elm_widget_disabled_get(child)))
-                         {
-                            elm_widget_focus_set(child, first);
-                            break;
-                         }
-                    }
-               }
+             elm_widget_focus_set(sd->resize_obj, first);
           }
         else
           {
              const Eina_List *l;
              Evas_Object *child;
-             EINA_LIST_REVERSE_FOREACH(sd->subobjs, l, child)
+
+             EINA_LIST_FOREACH (sd->subobjs, l, child)
                {
                   if ((_is_focusable(child)) &&
                       (!elm_widget_disabled_get(child)))
@@ -2771,17 +1979,33 @@ elm_widget_focus_set(Evas_Object *obj,
                        break;
                     }
                }
-             if (!l)
+          }
+     }
+   else
+     {
+        const Eina_List *l;
+        Evas_Object *child;
+
+        EINA_LIST_REVERSE_FOREACH (sd->subobjs, l, child)
+          {
+             if ((_is_focusable(child)) &&
+                 (!elm_widget_disabled_get(child)))
                {
-                  if ((_is_focusable(sd->resize_obj)) &&
-                      (!elm_widget_disabled_get(sd->resize_obj)))
-                    {
-                       elm_widget_focus_set(sd->resize_obj, first);
-                    }
+                  elm_widget_focus_set(child, first);
+                  break;
+               }
+          }
+        if (!l)
+          {
+             if ((_is_focusable(sd->resize_obj)) &&
+                 (!elm_widget_disabled_get(sd->resize_obj)))
+               {
+                  elm_widget_focus_set(sd->resize_obj, first);
                }
           }
      }
 }
+
 
 EAPI Evas_Object *
 elm_widget_parent_get(const Evas_Object *obj)
@@ -2815,8 +2039,6 @@ elm_widget_focused_object_clear(Evas_Object *obj)
      }
    sd->focused = EINA_FALSE;
    sd->api->on_focus(obj);
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->focus)
-     COMPAT_SMART_DATA(sd)->focus(obj);
 }
 
 EAPI void
@@ -2908,27 +2130,6 @@ _elm_widget_top_win_focused_get(const Evas_Object *obj)
 {
    API_ENTRY return EINA_FALSE;
    return sd->top_win_focused;
-}
-
-EAPI void
-elm_widget_activate(Evas_Object *obj)
-{
-   API_ENTRY return;
-
-   elm_widget_change(obj);
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->activate)
-     COMPAT_SMART_DATA(sd)->activate(obj);
-}
-
-EAPI void
-elm_widget_change(Evas_Object *obj)
-{
-   API_ENTRY return;
-
-   elm_widget_change(elm_widget_parent_get(obj));
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->on_change)
-     COMPAT_SMART_DATA(sd)->on_change
-       (COMPAT_SMART_DATA(sd)->on_change_data, obj);
 }
 
 EAPI void
@@ -3258,9 +2459,7 @@ elm_widget_text_part_set(Evas_Object *obj, const char *part, const char *label)
 {
    API_ENTRY return;
 
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->text_set)
-     COMPAT_SMART_DATA(sd)->text_set(obj, part, label);
-   else if (evas_object_smart_type_check(obj, "elm_layout"))
+   if (evas_object_smart_type_check(obj, "elm_layout"))
      elm_layout_text_set(obj, part, label);
 }
 
@@ -3269,9 +2468,7 @@ elm_widget_text_part_get(const Evas_Object *obj, const char *part)
 {
    API_ENTRY return NULL;
 
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->text_get)
-     return COMPAT_SMART_DATA(sd)->text_get(obj, part);
-   else if (evas_object_smart_type_check(obj, "elm_layout"))
+   if (evas_object_smart_type_check(obj, "elm_layout"))
      return elm_layout_text_get(obj, part);
 
    return NULL;
@@ -3381,9 +2578,7 @@ elm_widget_content_part_set(Evas_Object *obj, const char *part, Evas_Object *con
    API_ENTRY return;
 
    if (!sd->api) return;
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_set)
-     COMPAT_SMART_DATA(sd)->content_set(obj, part, content);
-   else if (evas_object_smart_type_check(obj, "elm_container"))
+   if (evas_object_smart_type_check(obj, "elm_container"))
      ELM_CONTAINER_CLASS(sd->api)->content_set(obj, part, content);
 }
 
@@ -3394,9 +2589,7 @@ elm_widget_content_part_get(const Evas_Object *obj, const char *part)
 
    if (!sd->api) return NULL;
    
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_get)
-     return COMPAT_SMART_DATA(sd)->content_get(obj, part);
-   else if (evas_object_smart_type_check(obj, "elm_container"))
+   if (evas_object_smart_type_check(obj, "elm_container"))
      return ELM_CONTAINER_CLASS(sd->api)->content_get(obj, part);
 
    return NULL;
@@ -3408,9 +2601,7 @@ elm_widget_content_part_unset(Evas_Object *obj, const char *part)
    API_ENTRY return NULL;
 
    if (!sd->api) return NULL;
-   if (_elm_legacy_is(obj) && COMPAT_SMART_DATA(sd)->content_unset)
-     return COMPAT_SMART_DATA(sd)->content_unset(obj, part);
-   else if (evas_object_smart_type_check(obj, "elm_container"))
+   if (evas_object_smart_type_check(obj, "elm_container"))
      return ELM_CONTAINER_CLASS(sd->api)->content_unset(obj, part);
 
    return NULL;
@@ -3464,28 +2655,6 @@ elm_widget_style_get(const Evas_Object *obj)
    API_ENTRY return NULL;
    if (sd->style) return sd->style;
    return "default";
-}
-
-EAPI void
-elm_widget_type_set(Evas_Object *obj,
-                    const char  *type)
-{
-   API_ENTRY return;
-
-   if (!_elm_legacy_is(obj)) return;
-
-   eina_stringshare_replace(&(COMPAT_SMART_DATA(sd)->type), type);
-}
-
-EAPI const char *
-elm_widget_type_get(const Evas_Object *obj)
-{
-   API_ENTRY return NULL;
-
-   if (_elm_legacy_is(obj) && (COMPAT_SMART_DATA(sd)->type))
-     return COMPAT_SMART_DATA(sd)->type;
-
-   return evas_object_type_get(obj);
 }
 
 EAPI void
@@ -3598,6 +2767,14 @@ elm_widget_is_check(const Evas_Object *obj)
    return EINA_FALSE;
 }
 
+EAPI const char *
+elm_widget_type_get(const Evas_Object *obj)
+{
+   API_ENTRY return NULL;
+
+   return evas_object_type_get(obj);
+}
+
 EAPI Eina_Bool
 elm_widget_type_check(const Evas_Object *obj,
                       const char        *type,
@@ -3605,11 +2782,10 @@ elm_widget_type_check(const Evas_Object *obj,
 {
    const char *provided, *expected = "(unknown)";
    static int abort_on_warn = -1;
+
    provided = elm_widget_type_get(obj);
-   if (_elm_legacy_is(obj) && EINA_LIKELY(provided == type))
-     return EINA_TRUE;
    /* TODO: eventually migrate to check_ptr version */
-   else if (evas_object_smart_type_check(obj, type)) return EINA_TRUE;
+   if (evas_object_smart_type_check(obj, type)) return EINA_TRUE;
    if (type) expected = type;
    if ((!provided) || (!provided[0]))
      {
@@ -4899,25 +4075,17 @@ _smart_del(Evas_Object *obj)
         sobj = eina_list_data_get(sd->subobjs);
 
         /* let the objects clean-up themselves and get rid of this list */
-        if (_elm_legacy_is(sd->obj))
+        if (!elm_widget_sub_object_del(obj, sobj))
           {
-             evas_object_smart_callback_call(obj, "sub-object-del", sobj);
-             sd->subobjs = eina_list_remove_list(sd->subobjs, sd->subobjs);
-          }
-        else
-          {
-             if (!elm_widget_sub_object_del(obj, sobj))
-               {
-                  ERR("failed to remove sub object %p from %p\n", sobj, obj);
-                  sd->subobjs = eina_list_remove_list
-                      (sd->subobjs, sd->subobjs);
-               }
+             ERR("failed to remove sub object %p from %p\n", sobj, obj);
+             sd->subobjs = eina_list_remove_list
+                 (sd->subobjs, sd->subobjs);
           }
         evas_object_del(sobj);
      }
    sd->tooltips = eina_list_free(sd->tooltips); /* should be empty anyway */
    sd->cursors = eina_list_free(sd->cursors); /* should be empty anyway */
-   EINA_LIST_FREE(sd->translate_strings, ts)
+   EINA_LIST_FREE (sd->translate_strings, ts)
      {
         eina_stringshare_del(ts->id);
         eina_stringshare_del(ts->domain);
@@ -4925,8 +4093,8 @@ _smart_del(Evas_Object *obj)
         free(ts);
      }
 
-   EINA_LIST_FREE(sd->event_cb, ecb)
-         free(ecb);
+   EINA_LIST_FREE (sd->event_cb, ecb)
+     free(ecb);
 
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->theme) elm_theme_free(sd->theme);
