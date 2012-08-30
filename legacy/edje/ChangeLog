@@ -573,3 +573,7 @@
 2012-08-29  Cedric Bail
 
 	* Don't leak memory on edje block error during signal emit.
+
+2012-04-26  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release

@@ -5,3 +5,7 @@
 2012-04-30 Jérôme Pinot
 
 	* Fix build out of tree configuration
+
+2012-04-26  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release

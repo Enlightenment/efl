@@ -118,3 +118,7 @@
 2012-07-31 Mike Blumenkrantz
 
         * Prevent mount operations from retrying infinitely on failure
+
+2012-04-26  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release

@@ -46,3 +46,7 @@
 
 	* Reset VLC pipeline on EOS.
 	* Fix a race condition on shutdown when still saving a file position.
+
+2012-04-26  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release

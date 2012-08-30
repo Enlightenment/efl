@@ -130,3 +130,7 @@
 2012-07-02 Sebastian Dransfeld
 
 	* Fix minor memory leak in cache update handler
+
+2012-04-26  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release

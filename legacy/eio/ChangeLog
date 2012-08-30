@@ -31,3 +31,7 @@
 2012-08-30  Cedric Bail
 
 	* Fix memory leak when using file associate API.
+
+2012-04-26  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release

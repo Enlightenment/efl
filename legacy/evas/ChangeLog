@@ -995,3 +995,7 @@
 	* Wayland Egl Engine: Add support for Multi-Sample Anti-Aliasing and GL Direct Images.
                               Add support for using native image binding.
                               Add support for setting GL surface capabilities.
+
+2012-04-26  Carsten Haitzler (The Rasterman)
+
+        1.7.0 release
