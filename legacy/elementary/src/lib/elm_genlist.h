@@ -111,7 +111,7 @@
  * - one_icon - Only 1 icon (left) @since 1.7
  * - end_icon - Only 1 icon (at end/right) @since 1.7
  * - no_icon - No icon (at end/right) @since 1.7
- * 
+ *
  * @section Genlist_Items Structure of items
  *
  * An item in a genlist can have 0 or more texts (they can be regular
@@ -209,12 +209,12 @@
  * scroller will scroll horizontally. Otherwise items are expanded to
  * fill the width of the viewport of the scroller. If it is
  * ELM_LIST_LIMIT, items will be expanded to the viewport width
- * if larger than the item, but genlist widget with is
- * limited to the largest item. D not use ELM_LIST_LIMIT mode with homogenous
+ * if larger than the item, but genlist widget witdh is
+ * limited to the largest item. Do not use ELM_LIST_LIMIT mode with homogenous
  * mode turned on. ELM_LIST_COMPRESS can be combined with a different style
  * that uses edjes' ellipsis feature (cutting text off like this: "tex...").
  *
- * Items will only call their selection func and callback when first becoming
+ * Items will call their selection func and callback only once when first becoming
  * selected. Any further clicks will do nothing, unless you enable always
  * select with elm_genlist_select_mode_set() as ELM_OBJECT_SELECT_MODE_ALWAYS.
  * This means even if selected, every click will make the selected callbacks
@@ -251,11 +251,11 @@
  * you may find it takes a while for them to all appear, with your process
  * consuming a lot of CPU while it is busy spooling.
  *
- * Genlist also implements a tree structure, but it does so with callbacks to
- * the application, with the application filling in tree structures when
- * requested (allowing for efficient building of a very deep tree that could
- * even be used for file-management). See the above smart signal callbacks for
- * details.
+ * Genlist also implements a tree structure for items, but it does so with
+ * callbacks to  the application, with the application filling in tree
+ * structures when requested (allowing for efficient building of a very
+ * deep tree that could even be used for file-management).
+ * See the above smart signal callbacks for details.
  *
  * @section Genlist_Smart_Events Genlist smart events
  *
@@ -1809,8 +1809,8 @@ EAPI Eina_Bool          elm_genlist_tree_effect_enabled_get(const Evas_Object *o
  * @param mode The select mode
  *
  * elm_genlist_select_mode_set() changes item select mode in the genlist widget.
- * - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
- *      callback when first becoming selected. Any further clicks will
+ * - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will call their selection func and
+ *      callback once when first becoming selected. Any further clicks will
  *      do nothing, unless you set always select mode.
  * - ELM_OBJECT_SELECT_MODE_ALWAYS :  This means that, even if selected,
  *      every click will make the selected callbacks be called.
