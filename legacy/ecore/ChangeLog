@@ -891,3 +891,7 @@
 2012-08-30  Carsten Haitzler (The Rasterman)
 
         1.7.0 release
+
+2012-08-31  Cedric Bail
+
+	* Add Ecore_Con_Eet API to help using Eet_Data with Ecore_Con

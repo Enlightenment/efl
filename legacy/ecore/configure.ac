@@ -114,6 +114,7 @@ want_glib="no"
 
 # core modules
 want_ecore_con="yes"
+want_ecore_con_eet="yes"
 want_ecore_ipc="yes"
 want_ecore_file="yes"
 #want_ecore_config="no"
@@ -184,6 +185,7 @@ want_ecore_imf_ibus="no"
 case "$host_os" in
    mingw32ce*)
       want_ecore_con="no"
+      want_ecore_con_eet="no"
       want_ecore_ipc="no"
       want_ecore_wince="yes"
       want_ecore_evas_software_16_wince="yes"
@@ -622,11 +624,10 @@ PKG_CHECK_MODULES([DIRECTFB],
 
 # Eet library (ecore_config)
 
-#PKG_CHECK_MODULES([EET],
-#   [eet >= 1.6.99],
-#   [have_eet="yes"],
-#   [have_eet="no"])
-
+PKG_CHECK_MODULES([EET],
+   [eet >= 1.6.99],
+   [have_eet="yes"],
+   [have_eet="no"])
 
 # Xlib and XCB (ecore_x)
 
@@ -1477,6 +1478,7 @@ have_openssl="no"
 have_cares="no"
 want_ipv6="yes"
 have_ipv6="no"
+have_ecore_con_eet="no"
 
 AC_ARG_ENABLE([ipv6],
    [AC_HELP_STRING([--disable-ipv6],
@@ -1510,6 +1512,13 @@ if test "x${have_ecore_con}" = "xyes" ; then
       AC_DEFINE(HAVE_IPV6, 1, [Define if IPV6 is supported])
    fi
    AM_CONDITIONAL([HAVE_IPV6], [test "x${have_ipv6}" = "xyes"])
+
+   if test "x${have_eet}" = "xyes" ; then
+      requirements_ecore_con="eet > 1.7 ${requirements_ecore_con}"
+      have_ecore_con_eet="yes"
+      AC_DEFINE(ECORE_HAVE_EET, 1, [Define if Ecore_Con Eet_Connection helper is supported])
+   fi
+   AM_CONDITIONAL([ECORE_HAVE_EET], [test "x${have_ecore_con_eet}" = "xyes"])
 
    ECORE_CHECK_CURL([${want_curl}],
       [
@@ -2113,6 +2122,7 @@ fi
   echo "    IPv6.......................: $have_ipv6"
   echo "    GnuTLS.....................: $have_gnutls"
   echo "    CURL.......................: $have_curl"
+  echo "    Eet........................: $have_ecore_con_eet"
   echo "    Local Sockets..............: $want_ecore_con_local_sockets"
 if test "x$want_ecore_con_local_sockets" = "xyes" ; then
   echo "      Abstract Sockets.........: $want_ecore_con_abstract_sockets"

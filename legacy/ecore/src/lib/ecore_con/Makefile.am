@@ -12,6 +12,7 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @TLS_CFLAGS@ \
 @CARES_CFLAGS@ \
+@EET_CFLAGS@ \
 @WIN32_CPPFLAGS@
 
 lib_LTLIBRARIES = libecore_con.la
@@ -44,9 +45,14 @@ libecore_con_la_SOURCES += ecore_con_info.c
 endif
 endif
 
+if ECORE_HAVE_EET
+libecore_con_la_SOURCES += ecore_con_eet.c
+includes_HEADERS += Ecore_Con_Eet.h
+endif
+
 libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@SSL_LIBS@ @CURL_LIBS@ @EINA_LIBS@ @EVIL_LIBS@ @TLS_LIBS@ @CARES_LIBS@ @WIN32_LIBS@
+@SSL_LIBS@ @CURL_LIBS@ @EINA_LIBS@ @EVIL_LIBS@ @TLS_LIBS@ @CARES_LIBS@ @WIN32_LIBS@ @EET_LIBS@
 
 libecore_con_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 

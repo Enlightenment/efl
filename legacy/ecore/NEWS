@@ -1,3 +1,16 @@
+Ecore 1.8.0
+
+Changes since Ecore 1.7.0:
+--------------------------
+
+Additions:
+    * ecore_con:
+     - Add Ecore_Con_Eet API to help using Eet_Data with Ecore_Con.
+
+Fixes:
+
+Improvements:
+
 Ecore 1.7.0
 
 Changes since Ecore 1.2.0:
