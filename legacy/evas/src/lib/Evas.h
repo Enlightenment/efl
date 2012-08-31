@@ -5360,6 +5360,8 @@ EAPI void evas_object_size_hint_align_get(const Evas_Object *obj, double *x, dou
  * This is not a size enforcement in any way, it's just a hint that
  * should be used whenever appropriate.
  *
+ * @note Default alignment hint values are 0.5, for both axis.
+ *
  * Example:
  * @dontinclude evas-hints.c
  * @skip evas_object_size_hint_align_set
