@@ -58,7 +58,6 @@ edje_object_message_signal_process(Evas_Object *obj)
    Edje_Message *em;
    Eina_List *groups = NULL;
    int gotos = 0;
-   unsigned int i;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
