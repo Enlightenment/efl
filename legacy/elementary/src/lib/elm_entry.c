@@ -1104,10 +1104,10 @@ _paste_cb(void *data,
      {
 #ifdef HAVE_ELEMENTARY_WAYLAND
         Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
-        wd->selection_asked = EINA_TRUE;
-        if (wd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
+        sd->selection_asked = EINA_TRUE;
+        if (sd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
            formats = ELM_SEL_FORMAT_TEXT;
-        else if (wd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
+        else if (sd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
            formats |= ELM_SEL_FORMAT_IMAGE;
         elm_cnp_selection_get(data, ELM_SEL_TYPE_CLIPBOARD, formats, NULL, NULL);
 #endif
