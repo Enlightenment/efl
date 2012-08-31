@@ -896,6 +896,49 @@ evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz,
 }
 
 EAPI void
+evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz,
+                          double qw, double cx, double cy, double cz)
+{
+   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
+   return;
+   MAGIC_CHECK_END();
+
+   Evas_Map_Point *p, *p_end;
+
+   p = m->points;
+   p_end = p + m->count;
+
+   for (; p < p_end; p++)
+     {
+       double x, y, z, uvx, uvy, uvz, uuvx, uuvy, uuvz;
+
+       x = p->x - cx;
+       y = p->y - cy;
+       z = p->z - cz;
+
+       uvx = qy * z - qz * y;
+       uvy = qz * x - qx * z;
+       uvz = qx * y - qy * x;
+
+       uuvx = qy * uvz - qz * uvy;
+       uuvy = qz * uvx - qx * uvz;
+       uuvz = qx * uvy - qy * uvx;
+
+       uvx *= (2.0f * qw);
+       uvy *= (2.0f * qw);
+       uvz *= (2.0f * qw);
+
+       uuvx *= 2.0f;
+       uuvy *= 2.0f;
+       uuvz *= 2.0f;
+
+       p->px = p->x = cx + x + uvx + uuvx;
+       p->py = p->y = cy + y + uvy + uuvy;
+       p->z = cz + z + uvz + uuvz;
+     }
+}
+
+EAPI void
 evas_map_util_3d_lighting(Evas_Map *m,
                           Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
                           int lr, int lg, int lb, int ar, int ag, int ab)

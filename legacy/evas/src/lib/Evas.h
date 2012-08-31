@@ -4753,6 +4753,30 @@ EAPI void            evas_map_util_zoom(Evas_Map *m, double zoomx, double zoomy,
 EAPI void            evas_map_util_3d_rotate(Evas_Map *m, double dx, double dy, double dz, Evas_Coord cx, Evas_Coord cy, Evas_Coord cz);
 
 /**
+ * Rotate the map in 3D using a unit quaternion.
+ *
+ * This will rotate in 3D using a unit quaternion. Like with
+ * evas_map_util_3d_rotate() you provide a center point 
+ * to rotate around (in 3D).
+ *
+ * @param m map to change.
+ * @param qx the x component of the imaginary part of the quaternion.
+ * @param qy the y component of the imaginary part of the quaternion.
+ * @param qz the z component of the imaginary part of the quaternion.
+ * @param qw the w component of the real part of the quaternion.
+ * @param cx rotation's center x.
+ * @param cy rotation's center y.
+ * @param cz rotation's center z.
+ *
+ * @warning Rotations can be done using a unit quaternion. Thus, this
+ * function expects a unit quaternion (i.e. qx² + qy² + qz² + qw² == 1).
+ * If this is not the case the behavior is undefined.
+ *
+ * @since 1.8
+ */
+EAPI void            evas_map_util_quat_rotate(Evas_Map *m, double qx, double qy, double qz, double qw, double cx, double cy, double cz);
+
+/**
  * Perform lighting calculations on the given Map
  *
  * This is used to apply lighting calculations (from a single light source)
