@@ -577,11 +577,7 @@ test_glview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    gldata_init(gld);
 
    // new window - do the usual and give it a name, title and delete handler
-   // Set the engine to opengl_x11
-   elm_config_preferred_engine_set("opengl_x11");
    win = elm_win_util_standard_add("glview", "GLView");
-   // Set preferred engine back to default from config
-   elm_config_preferred_engine_set(NULL);
 
    elm_win_autodel_set(win, EINA_TRUE);
 
