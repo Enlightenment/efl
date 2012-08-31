@@ -13,35 +13,35 @@ typedef void (*Ecore_Con_Eet_Raw_Data_Cb)(void *data, Ecore_Con_Reply *reply, co
 typedef Eina_Bool (*Ecore_Con_Eet_Client_Cb)(void *data, Ecore_Con_Reply *reply, Ecore_Con_Client *conn);
 typedef Eina_Bool (*Ecore_Con_Eet_Server_Cb)(void *data, Ecore_Con_Reply *reply, Ecore_Con_Server *conn);
 
-Ecore_Con_Eet *ecore_con_eet_server_new(Ecore_Con_Server *server);
-Ecore_Con_Eet *ecore_con_eet_client_new(Ecore_Con_Server *server);
-void ecore_con_eet_server_free(Ecore_Con_Eet *ece);
+EAPI Ecore_Con_Eet *ecore_con_eet_server_new(Ecore_Con_Server *server);
+EAPI Ecore_Con_Eet *ecore_con_eet_client_new(Ecore_Con_Server *server);
+EAPI void ecore_con_eet_server_free(Ecore_Con_Eet *ece);
 
-void ecore_con_eet_register(Ecore_Con_Eet *ece, const char *name, Eet_Data_Descriptor *edd);
+EAPI void ecore_con_eet_register(Ecore_Con_Eet *ece, const char *name, Eet_Data_Descriptor *edd);
 
-void ecore_con_eet_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_Eet_Data_Cb func, const void *data);
-void ecore_con_eet_data_callback_del(Ecore_Con_Eet *ece, const char *name);
+EAPI void ecore_con_eet_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_Eet_Data_Cb func, const void *data);
+EAPI void ecore_con_eet_data_callback_del(Ecore_Con_Eet *ece, const char *name);
 
-void ecore_con_eet_raw_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_Eet_Raw_Data_Cb func, const void *data);
-void ecore_con_eet_raw_data_callback_del(Ecore_Con_Eet *ece, const char *name);
+EAPI void ecore_con_eet_raw_data_callback_add(Ecore_Con_Eet *ece, const char *name, Ecore_Con_Eet_Raw_Data_Cb func, const void *data);
+EAPI void ecore_con_eet_raw_data_callback_del(Ecore_Con_Eet *ece, const char *name);
 
-void ecore_con_eet_client_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data);
-void ecore_con_eet_client_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data);
+EAPI void ecore_con_eet_client_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data);
+EAPI void ecore_con_eet_client_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data);
 
-void ecore_con_eet_client_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data);
-void ecore_con_eet_client_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data);
+EAPI void ecore_con_eet_client_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data);
+EAPI void ecore_con_eet_client_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Client_Cb func, const void *data);
 
-void ecore_con_eet_server_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data);
-void ecore_con_eet_server_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data);
+EAPI void ecore_con_eet_server_connect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data);
+EAPI void ecore_con_eet_server_connect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data);
 
-void ecore_con_eet_server_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data);
-void ecore_con_eet_server_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data);
+EAPI void ecore_con_eet_server_disconnect_callback_add(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data);
+EAPI void ecore_con_eet_server_disconnect_callback_del(Ecore_Con_Eet *ece, Ecore_Con_Eet_Server_Cb func, const void *data);
 
-void ecore_con_eet_data_set(Ecore_Con_Eet *ece, const void *data);
-void *ecore_con_eet_data_get(Ecore_Con_Eet *ece);
+EAPI void ecore_con_eet_data_set(Ecore_Con_Eet *ece, const void *data);
+EAPI void *ecore_con_eet_data_get(Ecore_Con_Eet *ece);
 
-Ecore_Con_Eet *ecore_con_eet_reply(Ecore_Con_Reply *reply);
-void ecore_con_eet_send(Ecore_Con_Reply *reply, const char *protocol_name, void *value);
-void ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length);
+EAPI Ecore_Con_Eet *ecore_con_eet_reply(Ecore_Con_Reply *reply);
+EAPI void ecore_con_eet_send(Ecore_Con_Reply *reply, const char *protocol_name, void *value);
+EAPI void ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const char *section, void *value, unsigned int length);
 
 #endif
