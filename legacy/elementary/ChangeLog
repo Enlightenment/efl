@@ -422,3 +422,7 @@
 	All internal widget hooks (and related macros) were removed, due
 	to deprecation. Thus, people using that (unstable) API will have
 	to adapt themselves.
+
+2012-0830 Shilpa Onkar Singh
+
+	Naviframe's item Subtitle_label deleted in item_free.
