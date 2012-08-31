@@ -5431,6 +5431,8 @@ EAPI void evas_object_size_hint_weight_get(const Evas_Object *obj, double *x, do
  * when layouting its children. See the full @ref
  * Example_Evas_Size_Hints "example".
  *
+ * @note Default weight hint values are 0.0, for both axis.
+ *
  * @see evas_object_size_hint_weight_get() for more information
  */
 EAPI void evas_object_size_hint_weight_set(Evas_Object *obj, double x, double y) EINA_ARG_NONNULL(1);
