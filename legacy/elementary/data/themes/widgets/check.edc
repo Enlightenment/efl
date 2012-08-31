@@ -147,7 +147,7 @@ group { name: "elm/check/base/default";
    }
    programs {
       program { name: "click";
-         signal: "mouse,up,1";
+         signal: "mouse,clicked,1";
          source: "events";
          action: SIGNAL_EMIT "elm,action,check,toggle" "";
       }

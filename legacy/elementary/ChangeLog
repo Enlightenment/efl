@@ -426,3 +426,7 @@
 2012-0830 Shilpa Onkar Singh
 
 	Naviframe's item Subtitle_label deleted in item_free.
+
+2012-0831 WooHyun Jung
+
+	The state of elm_check is now changed by mouse click event.
