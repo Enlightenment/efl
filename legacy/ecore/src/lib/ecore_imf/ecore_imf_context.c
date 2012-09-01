@@ -690,6 +690,7 @@ ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param prediction Whether the IM context should allow to use the text prediction.
+ * @note Default value is EINA_TRUE.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.1.0
  */
@@ -736,6 +737,7 @@ ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx)
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param autocapital_type the autocapitalization type.
+ * @note Default type is ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.1.0
  */
@@ -1415,6 +1417,7 @@ ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param layout see #Ecore_IMF_Input_Panel_Layout
+ * @note Default layout type is ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.1.0
  */
@@ -1608,6 +1611,7 @@ ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param return_key_type The type of "return" key on the input panel
+ * @note Default type is ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT.
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.2.0
  */
