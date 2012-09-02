@@ -588,6 +588,7 @@ src/modules/mp/buddy/Makefile
 src/modules/mp/one_big/Makefile
 src/tests/Makefile
 src/examples/Makefile
+src/scripts/Makefile
 ])
 
 AC_OUTPUT
