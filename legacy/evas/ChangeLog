@@ -1003,3 +1003,8 @@
 2012-08-31  Christophe Sadoine
 
        * Added a function: evas_map_util_quat_rotate().
+
+2012-09-02  Vincent Torri
+
+       * Fix seg fault in the esvg loader, latest code is required, and
+	 enable it on Windows.

@@ -233,8 +233,8 @@ evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
 
 PKG_CHECK_MODULES([SVG],
-   [esvg >= 0.0.16],
-   [have_dep="yes" have_esvg="yes" requirement="esvg"],
+   [esvg >= 0.0.16 ender >= 0.0.6],
+   [have_dep="yes" have_esvg="yes" requirement="esvg >= 0.0.16 ender >= 0.0.6"],
    [have_dep="no"])
 
 if test "x${have_dep}" = "xyes" ; then

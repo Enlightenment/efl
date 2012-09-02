@@ -146,7 +146,7 @@ case "$host_os" in
       want_evas_engine_software_ddraw="yes"
       want_evas_engine_direct3d="yes"
       want_evas_image_loader_edb="no"
-      want_evas_image_loader_svg="no"
+      want_evas_image_loader_svg="yes"
       ;;
    darwin*)
       want_evas_engine_software_xlib="auto"

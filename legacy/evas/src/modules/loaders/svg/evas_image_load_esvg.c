@@ -1,9 +1,17 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <math.h>
+
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
+#include <Esvg.h>
 
 #include "evas_common.h"
 #include "evas_private.h"
-
-#include <Esvg.h>
 
 static inline Eina_Bool evas_image_load_file_is_svg(const char *file) EINA_ARG_NONNULL(1) EINA_PURE;
 static Eina_Bool evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
@@ -79,17 +87,16 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
         return EINA_FALSE;
      }
 
-   esvg_renderable_x_dpi_set(e, 75.0);
-   esvg_renderable_y_dpi_set(e, 75.0);
+   esvg_renderable_x_dpi_set(e, 92.0);
+   esvg_renderable_y_dpi_set(e, 92.0);
    esvg_svg_actual_width_get(e, &sw);
    esvg_svg_actual_height_get(e, &sh);
-   esvg_element_setup(e, NULL);
    w = (int)ceil(sw);
    h = (int)ceil(sh);
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
      {
-        ender_element_delete(e);
+        ender_element_unref(e);
         if (IMG_TOO_BIG(w, h))
           *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         else
@@ -127,7 +134,7 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
    ie->h = h;
    ie->flags.alpha = 1;
 
-   ender_element_delete(e);
+   ender_element_unref(e);
 
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
@@ -167,7 +174,7 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
    h = (int)ceil(sh);
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE))
      {
-        ender_element_delete(e);
+        ender_element_unref(e);
         if (IMG_TOO_BIG(w, h))
           *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         else
@@ -251,7 +258,7 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
    memcpy (pixels, data, h * stride);
 
    enesim_surface_unref(s);
-   ender_element_delete(e);
+   ender_element_unref(e);
 
    evas_common_image_set_alpha_sparse(ie);
 
@@ -260,7 +267,7 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
  unref_surface:
    enesim_surface_unref(s);
  unref_renderer:
-   ender_element_delete(e);
+   ender_element_unref(e);
 
    return EINA_FALSE;
 }

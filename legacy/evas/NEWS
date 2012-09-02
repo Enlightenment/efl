@@ -7,6 +7,9 @@ Improvements:
 
    * Function to rotate an evas map with a quaternion: evas_map_util_quat_rotate().
 
+Fixes:
+   * Fix segmentation fault with the esvg loader.
+
 Evas 1.7.0
 
 Changes since Evas 1.2.0:
