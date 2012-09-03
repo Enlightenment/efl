@@ -6,6 +6,16 @@
 
 static Evas_Object *menu;
 
+static void 
+_resize(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+{
+   Evas_Coord w, h;
+   Evas_Object *rect = data;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(rect, w, h);
+}
+
 static void
 _show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
@@ -99,12 +109,15 @@ test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 {
    Evas_Object *win, *rect;
    Elm_Object_Item *menu_it;
+   Evas_Coord fx, fy;
 
    win = elm_win_util_standard_add("menu", "Menu");
    elm_win_autodel_set(win, EINA_TRUE);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_win_resize_object_add(win, rect);
+   evas_output_framespace_get(evas_object_evas_get(win), &fx, &fy, NULL, NULL);
+   evas_object_move(rect, fx, fy);
+   evas_object_resize(rect, 350, 200);
    evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_color_set(rect, 0, 0, 0, 0);
    evas_object_show(rect);
@@ -118,6 +131,7 @@ test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 
    elm_menu_item_add(menu, menu_it, "window-new", "sub menu", NULL, NULL);
 
+   evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _resize, rect);
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _show, menu);
 
    evas_object_resize(win, 350, 200);
