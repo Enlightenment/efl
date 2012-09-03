@@ -590,6 +590,7 @@ evas_object_update_bounding_box(Evas_Object *obj)
 EAPI void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
+   Evas *evas;
    int is, was = 0, pass = 0, freeze = 0;
    int nx = 0, ny = 0;
 
@@ -601,16 +602,14 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    nx = x;
    ny = y;
 
-   if (!obj->is_frame)
+   evas = obj->layer->evas;
+
+   if ((!obj->is_frame) && (obj != evas->framespace.clip))
      {
         if ((!obj->smart.parent) && (obj->smart.smart))
           {
-             int fx, fy;
-
-             evas_output_framespace_get(obj->layer->evas, 
-                                        &fx, &fy, NULL, NULL);
-             nx += fx;
-             ny += fy;
+             nx += evas->framespace.x;
+             ny += evas->framespace.y;
           }
      }
 
@@ -749,6 +748,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 EAPI void
 evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
+   Evas *evas;
    int nx = 0, ny = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -764,16 +764,14 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
    nx = obj->cur.geometry.x;
    ny = obj->cur.geometry.y;
 
-   if (!obj->is_frame)
+   evas = obj->layer->evas;
+
+   if ((!obj->is_frame) && (obj != evas->framespace.clip))
      {
         if ((!obj->smart.parent) && (obj->smart.smart))
           {
-             int fx, fy;
-
-             evas_output_framespace_get(obj->layer->evas, 
-                                        &fx, &fy, NULL, NULL);
-             if (nx > 0) nx -= fx;
-             if (ny > 0) ny -= fy;
+             if (nx > 0) nx -= evas->framespace.x;
+             if (ny > 0) ny -= evas->framespace.y;
           }
      }
 
