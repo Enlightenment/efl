@@ -6,6 +6,9 @@ Changes since Ecore 1.7.0:
 Additions:
     * ecore_con:
      - Add Ecore_Con_Eet API to help using Eet_Data with Ecore_Con.
+    * ecore_x:
+     - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP
+     - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN
 
 Fixes:
 

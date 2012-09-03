@@ -1626,6 +1626,8 @@ EAPI void                            ecore_x_e_illume_access_action_activate_sen
 EAPI void                            ecore_x_e_illume_access_action_read_send(Ecore_X_Window win);
 EAPI void                            ecore_x_e_illume_access_action_read_next_send(Ecore_X_Window win);
 EAPI void                            ecore_x_e_illume_access_action_read_prev_send(Ecore_X_Window win);
+EAPI void                            ecore_x_e_illume_access_action_up_send(Ecore_X_Window win);
+EAPI void                            ecore_x_e_illume_access_action_down_send(Ecore_X_Window win);
 
 EAPI void                            ecore_x_e_illume_drag_set(Ecore_X_Window win, unsigned int drag);
 EAPI Eina_Bool                       ecore_x_e_illume_drag_get(Ecore_X_Window win);

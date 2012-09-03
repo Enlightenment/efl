@@ -401,7 +401,7 @@ EAPI int ecore_shutdown(void);
  */
 
 #define ECORE_VERSION_MAJOR 1
-#define ECORE_VERSION_MINOR 7
+#define ECORE_VERSION_MINOR 8
 
 typedef struct _Ecore_Version
 {

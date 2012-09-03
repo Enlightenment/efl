@@ -1102,6 +1102,30 @@ ecore_x_e_illume_access_action_read_prev_send(Ecore_X_Window win)
 }
 
 EAPI void
+ecore_x_e_illume_access_action_up_send(Ecore_X_Window win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
+                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+                                 win,
+                                 ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP,
+                                 0, 0, 0);
+}
+
+EAPI void
+ecore_x_e_illume_access_action_down_send(Ecore_X_Window win)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_ACCESS_CONTROL,
+                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+                                 win,
+                                 ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN,
+                                 0, 0, 0);
+}
+
+EAPI void
 ecore_x_e_illume_drag_set(Ecore_X_Window win,
                           unsigned int   drag)
 {

@@ -895,3 +895,9 @@
 2012-08-31  Cedric Bail
 
 	* Add Ecore_Con_Eet API to help using Eet_Data with Ecore_Con
+
+2012-09-03  Shinwoo Kim (kimcinoo)
+
+       * Add ecore_x illume access messages:
+         ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP
+         ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN
