@@ -296,7 +296,17 @@ _elm_hover_smart_sizing_eval(Evas_Object *obj)
 
    if (sd->on_del) return;
 
-   if (sd->parent) evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
+   if (sd->parent) 
+     {
+        Evas_Coord fx, fy;
+
+        evas_output_framespace_get(evas_object_evas_get(obj),
+                                   &fx, &fy, NULL, NULL);
+        evas_object_geometry_get(sd->parent, &x, &y, &w, &h);
+        x += fx;
+        y += fy;
+     }
+
    evas_object_geometry_get(obj, &x2, &y2, &w2, &h2);
 
    if (elm_widget_mirrored_get(obj)) ofs_x = w - (x2 - x) - w2;
