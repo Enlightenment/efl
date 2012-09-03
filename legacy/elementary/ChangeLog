@@ -442,3 +442,7 @@
         * Fix re-order animation when it doesn't end correctly.
         * Improve elm map module loading to onlt init the module needed
         when searching and not all modules.
+
+2012-09-03  Shinwoo Kim (kimcinoo)
+
+        * Add in more access subsystem features like activation cb.
