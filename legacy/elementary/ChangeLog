@@ -431,3 +431,8 @@
 
 	* The state of elm_check is now changed by mouse click event.
 
+2012-09-03  Rajeev Ranjan
+
+        * Fix min/max limit setting to respect field boundaires EXCEPT
+        for years which have no boundaries with
+        elm_datetime_field_limit_set()

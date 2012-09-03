@@ -934,11 +934,13 @@ elm_datetime_field_limit_set(Evas_Object *obj,
    if (min > max) return;
 
    field = sd->field_list + fieldtype;
-   if ((min > mapping[fieldtype].def_min && min < mapping[fieldtype].def_max)
-       || (field->type == ELM_DATETIME_YEAR))
+   if (((min >= mapping[fieldtype].def_min) && 
+        (min <= mapping[fieldtype].def_max)) ||
+       (field->type == ELM_DATETIME_YEAR))
      field->min = min;
-   if ((max > mapping[fieldtype].def_min && max < mapping[fieldtype].def_max)
-       || (field->type == ELM_DATETIME_YEAR))
+   if (((max >= mapping[fieldtype].def_min) && 
+        (max <= mapping[fieldtype].def_max)) ||
+       (field->type == ELM_DATETIME_YEAR))
      field->max = max;
 
    _apply_field_limits(obj);
