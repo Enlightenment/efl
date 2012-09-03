@@ -126,6 +126,7 @@ want_evas_image_loader_xpm="yes"
 want_evas_image_loader_bmp="yes"
 want_evas_image_loader_tga="yes"
 want_evas_image_loader_wbmp="yes"
+want_evas_image_loader_webp="yes"
 want_evas_image_loader_ico="yes"
 want_evas_image_loader_psd="yes"
 want_evas_image_loader_generic="yes"
@@ -1058,6 +1059,8 @@ EVAS_CHECK_IMAGE_LOADER([TGA], [${want_evas_image_loader_tga}])
 
 EVAS_CHECK_IMAGE_LOADER([WBMP], [${want_evas_image_loader_wbmp}])
 
+EVAS_CHECK_IMAGE_LOADER([WEBP], [${want_evas_image_loader_webp}])
+
 EVAS_CHECK_IMAGE_LOADER([ICO], [${want_evas_image_loader_ico}])
 
 EVAS_CHECK_IMAGE_LOADER([PSD], [${want_evas_image_loader_psd}])
@@ -1845,6 +1848,7 @@ src/bin/loaders/ico/Makefile
 src/bin/loaders/tga/Makefile
 src/bin/loaders/pmaps/Makefile
 src/bin/loaders/wbmp/Makefile
+src/bin/loaders/webp/Makefile
 src/bin/loaders/psd/Makefile
 src/lib/Makefile
 src/lib/canvas/Makefile
@@ -1900,6 +1904,7 @@ src/modules/loaders/tga/Makefile
 src/modules/loaders/svg/Makefile
 src/modules/loaders/pmaps/Makefile
 src/modules/loaders/wbmp/Makefile
+src/modules/loaders/webp/Makefile
 src/modules/loaders/psd/Makefile
 src/modules/loaders/generic/Makefile
 src/modules/savers/Makefile
@@ -1994,6 +1999,7 @@ echo "  SVG.....................: $have_evas_image_loader_svg"
 echo "  TGA.....................: $have_evas_image_loader_tga"
 echo "  TIFF....................: $have_evas_image_loader_tiff"
 echo "  WBMP....................: $have_evas_image_loader_wbmp"
+echo "  WEBP....................: $have_evas_image_loader_webp"
 echo "  XPM.....................: $have_evas_image_loader_xpm"
 echo
 echo "Font Sourcing Systems:"

@@ -429,6 +429,38 @@ fi
 
 ])
 
+dnl use: EVAS_CHECK_LOADER_DEP_WEBP(loader, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_LOADER_DEP_WEBP],
+[
+
+have_dep="no"
+evas_image_loader_[]$1[]_cflags=""
+evas_image_loader_[]$1[]_libs=""
+
+AC_CHECK_HEADER([webp/decode.h], [have_dep="yes"])
+
+if test "x${have_dep}"  = "xyes" ; then
+   AC_CHECK_LIB([webp],
+      [WebPDecodeRGBA],
+      [
+       evas_image_loader_[]$1[]_libs="-lwebp"
+      ],
+      [have_dep="no"]
+   )
+fi
+
+AC_SUBST([evas_image_loader_$1_cflags])
+AC_SUBST([evas_image_loader_$1_libs])
+
+if test "x${have_dep}" = "xyes" ; then
+  m4_default([$3], [:])
+else
+  m4_default([$4], [:])
+fi
+
+])
+
 dnl use: EVAS_CHECK_LOADER_DEP_GENERIC(loader, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_LOADER_DEP_GENERIC],

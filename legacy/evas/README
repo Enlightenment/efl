@@ -527,6 +527,9 @@ egueb
 
 this loader uses libtiff to load tiff image files
 
+--enable-image-loader-webp[=static]
+
+this loader uses libwebp to load webp image files
 
 --enable-image-loader-xpm[=static]
 

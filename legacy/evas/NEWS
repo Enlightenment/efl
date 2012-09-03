@@ -3,6 +3,10 @@ Evas 1.8.0
 Changes since Evas 1.7.0:
 -------------------------
 
+Additions:
+
+   * WEBP image loader support.
+
 Improvements:
 
    * Function to rotate an evas map with a quaternion: evas_map_util_quat_rotate().

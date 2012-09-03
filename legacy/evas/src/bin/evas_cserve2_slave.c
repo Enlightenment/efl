@@ -50,6 +50,7 @@ static const struct ext_loader_s map_loaders[] =
    MATCHING(".bmp", "bmp"),
    MATCHING(".tga", "tga"),
    MATCHING(".wbmp", "wbmp"),
+   MATCHING(".webp", "webp"),
    MATCHING(".ico", "ico"),
    MATCHING(".cur", "ico"),
    MATCHING(".psd", "psd")
@@ -57,7 +58,7 @@ static const struct ext_loader_s map_loaders[] =
 
 static const char *loaders_name[] =
 { /* in order of most likely needed */
-  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "pmaps", "bmp", "tga", "wbmp", "ico", "psd", "edb"
+  "png", "jpeg", "eet", "xpm", "tiff", "gif", "svg", "webp", "pmaps", "bmp", "tga", "wbmp", "ico", "psd", "edb"
 };
 
 Eina_Bool

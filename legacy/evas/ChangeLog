@@ -1008,3 +1008,7 @@
 
        * Fix seg fault in the esvg loader, latest code is required, and
 	 enable it on Windows.
+
+2012-09-03  Igor Murzov
+
+       * Add WEBP loader module and cserve2 binary loader patch.

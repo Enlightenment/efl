@@ -42,6 +42,10 @@ if BUILD_LOADER_WBMP
 SUBDIRS += wbmp
 endif
 
+if BUILD_LOADER_WEBP
+SUBDIRS += webp
+endif
+
 if BUILD_LOADER_XPM
 SUBDIRS += xpm
 endif

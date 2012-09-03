@@ -86,6 +86,12 @@ SUBDIRS += wbmp
 endif
 endif
 
+if BUILD_LOADER_WEBP
+if !EVAS_STATIC_BUILD_WEBP
+SUBDIRS += webp
+endif
+endif
+
 if BUILD_LOADER_XPM
 if !EVAS_STATIC_BUILD_XPM
 SUBDIRS += xpm
