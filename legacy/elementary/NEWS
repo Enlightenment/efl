@@ -14,7 +14,8 @@ Improvements:
 Fixes:
 
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.
-
+   * Fix re-order animation when it doesn't end correctly.
+   
 Removals:
 
    * All internal widget hooks (and related macros) were removed, due
