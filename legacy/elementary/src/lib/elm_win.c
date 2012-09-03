@@ -1874,6 +1874,16 @@ _elm_win_client_message(void *data,
                {
                   // XXX: call right access func
                }
+             else if ((unsigned int)e->data.l[1] ==
+                      ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP)
+               {
+                  // XXX: call right access func
+               }
+             else if ((unsigned int)e->data.l[1] ==
+                      ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN)
+               {
+                  // XXX: call right access func
+               }
           }
      }
    return ECORE_CALLBACK_PASS_ON;
