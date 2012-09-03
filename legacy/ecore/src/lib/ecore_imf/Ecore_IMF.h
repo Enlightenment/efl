@@ -266,7 +266,8 @@ typedef enum
    ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login @since 1.2 */
    ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next @since 1.2 */
    ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search or magnifier icon @since 1.2 */
-   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SEND     /**< Send @since 1.2 */
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SEND,    /**< Send @since 1.2 */
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Send @since 1.8 */
 } Ecore_IMF_Input_Panel_Return_Key_Type;
 
 struct _Ecore_IMF_Event_Preedit_Start

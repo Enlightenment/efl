@@ -901,3 +901,7 @@
        * Add ecore_x illume access messages:
          ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP
          ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN
+
+2012-09-04  Jihoon Kim (jihoon)
+
+       * Add ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
