@@ -436,3 +436,8 @@
         * Fix min/max limit setting to respect field boundaires EXCEPT
         for years which have no boundaries with
         elm_datetime_field_limit_set()
+
+2012-09-03  Bluezery
+
+        * Fix re-order animation when iot doesn't end correctly.
+        
