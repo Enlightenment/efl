@@ -261,8 +261,8 @@ _slice_3d(Elm_Flip_Smart_Data *sd __UNUSED__,
    evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 1024);
    for (i = 0; i < 4; i++)
      {
-        Evas_Coord xx, yy, zz;
-        evas_map_point_coord_get(m, i, &xx, &yy, &zz);
+        Evas_Coord xx, yy;
+        evas_map_point_coord_get(m, i, &xx, &yy, NULL);
         evas_map_point_coord_set(m, i, xx, yy, 0);
      }
 
