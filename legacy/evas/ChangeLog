@@ -1012,3 +1012,11 @@
 2012-09-03  Igor Murzov
 
        * Add WEBP loader module and cserve2 binary loader patch.
+
+2012-09-03  Christopher Michael (devilhorns)
+
+       * When doing a move or geometry_get, we need to make sure that we 
+	 don't try to do these on the framespace clip object. Also, since we
+	 need the evas to get the framespace clip object, just directly use the
+	 framespace values from the canvas, rather than function call to get
+	 those values.
