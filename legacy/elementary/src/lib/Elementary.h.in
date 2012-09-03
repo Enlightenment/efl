@@ -134,8 +134,8 @@ extern "C"
 #include <elm_getting_started.h>
 #include <elm_authors.h>
 
-#define ELM_VERSION_MAJOR @VMAJ@
-#define ELM_VERSION_MINOR @VMIN@
+#define ELM_VERSION_MAJOR 1
+#define ELM_VERSION_MINOR 8
 
 typedef struct _Elm_Version
 {
