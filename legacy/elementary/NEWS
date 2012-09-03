@@ -16,6 +16,7 @@ Fixes:
 
    * Now elm_datetime_field_limit_set() can set year limits wihtout problems.
    * Fix re-order animation when it doesn't end correctly.
+   * Fix popup to apply the same style to the notify sub-widget.
    
 Removals:
 

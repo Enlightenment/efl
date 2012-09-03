@@ -446,3 +446,4 @@
 2012-09-03  Shinwoo Kim (kimcinoo)
 
         * Add in more access subsystem features like activation cb.
+        * Fix popup to apply the same style to the notify sub-widget.

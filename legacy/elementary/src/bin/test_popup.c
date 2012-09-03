@@ -305,6 +305,24 @@ _popup_center_text_1button_hide_show_cb(void *data, Evas_Object *obj __UNUSED__,
    evas_object_show(g_popup);
 }
 
+static void
+_popup_transparent_cb(void *data, Evas_Object *obj __UNUSED__,
+                      void *event_info __UNUSED__)
+{
+   Evas_Object *popup;
+   Evas_Object *btn;
+
+   popup = elm_popup_add(data);
+   elm_object_style_set(popup, "transparent");
+   evas_object_size_hint_weight_set(popup, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_object_text_set(popup, "This Popup has transparent background");
+   btn = elm_button_add(popup);
+   elm_object_text_set(btn, "Close");
+   elm_object_part_content_set(popup, "button1", btn);
+   evas_object_smart_callback_add(btn, "clicked", _response_cb, popup);
+   evas_object_show(popup);
+}
+
 void
 test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
            void *event_info __UNUSED__)
@@ -341,6 +359,8 @@ test_popup(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
                         _popup_center_title_text_2button_restack_cb, win);
    elm_list_item_append(list, "popup-center-text + 1 button (check hide, show)", NULL, NULL,
                         _popup_center_text_1button_hide_show_cb, win);
+   elm_list_item_append(list, "popup-transparent", NULL, NULL,
+                        _popup_transparent_cb, win);
    elm_list_go(list);
    evas_object_show(list);
    evas_object_show(win);
