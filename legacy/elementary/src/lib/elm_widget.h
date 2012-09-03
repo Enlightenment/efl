@@ -546,6 +546,7 @@ typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 
 typedef char *(*Elm_Access_Content_Cb)(void *data, Evas_Object *obj, Elm_Widget_Item *item);
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
+typedef void (*Elm_Access_Activate_Cb)(Evas_Object *obj, void *data);
 
 struct _Elm_Access_Item
 {
@@ -561,6 +562,8 @@ struct _Elm_Access_Info
    Ecore_Timer               *delay_timer;
    void                      *on_highlight_data;
    Elm_Access_On_Highlight_Cb on_highlight;
+   void                      *activate_data;
+   Elm_Access_Activate_Cb     activate;
 };
 
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
@@ -583,6 +586,8 @@ EAPI Evas_Object *    _elm_access_edje_object_part_object_register(Evas_Object *
 EAPI void             _elm_access_widget_item_register(Elm_Widget_Item *item);
 EAPI void             _elm_access_widget_item_unregister(Elm_Widget_Item *item);
 EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
+EAPI void             _elm_access_activate_hook_set(Elm_Access_Info *ac, Elm_Access_Activate_Cb  func, void *data);
+EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj);
 
 /**< put this as the first member in your widget item struct */
 #define ELM_WIDGET_ITEM       Elm_Widget_Item base

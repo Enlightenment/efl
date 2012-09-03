@@ -1857,7 +1857,7 @@ _elm_win_client_message(void *data,
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_ACTIVATE)
                {
-                  // XXX: call right access func
+                  _elm_access_highlight_object_activate(ELM_WIDGET_DATA(sd)->obj);
                }
              else if ((unsigned int)e->data.l[1] ==
                       ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_READ)

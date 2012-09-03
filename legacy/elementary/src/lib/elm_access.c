@@ -290,6 +290,29 @@ _elm_access_on_highlight_hook_set(Elm_Access_Info           *ac,
     ac->on_highlight_data = data;
 }
 
+EAPI void
+_elm_access_activate_hook_set(Elm_Access_Info        *ac,
+                              Elm_Access_Activate_Cb  func,
+                              void                   *data)
+{
+    if (!ac) return;
+    ac->activate = func;
+    ac->activate_data = data;
+}
+
+EAPI void
+_elm_access_highlight_object_activate(Evas_Object *obj)
+{
+   Evas_Object *highlight_obj;
+   highlight_obj = elm_widget_focused_object_get(obj);
+
+   Elm_Access_Info *ac = evas_object_data_get(highlight_obj, "_elm_access");
+   if (!ac) return;
+
+   if (ac->activate)
+     ac->activate(highlight_obj, ac->activate_data);
+}
+
 EAPI char *
 _elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item)
 {

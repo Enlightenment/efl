@@ -258,6 +258,13 @@ _access_state_cb(void *data __UNUSED__,
 }
 
 static void
+_access_activate_cb(Evas_Object *obj, void *data __UNUSED__)
+{
+   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+}
+
+static void
 _elm_button_smart_add(Evas_Object *obj)
 {
    EVAS_SMART_DATA_ALLOC(obj, Elm_Button_Smart_Data);
@@ -281,6 +288,8 @@ _elm_button_smart_add(Evas_Object *obj)
      (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
+   _elm_access_activate_hook_set
+     (_elm_access_object_get(obj), _access_activate_cb, NULL);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
