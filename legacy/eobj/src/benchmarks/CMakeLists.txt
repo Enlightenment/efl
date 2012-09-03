@@ -21,6 +21,6 @@ target_link_libraries(eo_bench
 add_dependencies(eo_bench eo)
 
 get_target_property(eo_bench_EXEC_FILE eo_bench LOCATION)
-add_custom_target(benchmark COMMAND ${eo_bench_EXEC_FILE} eo_bench)
+add_custom_target(benchmark COMMAND ${eo_bench_EXEC_FILE} eo)
 
 add_dependencies(benchmark eo_bench)

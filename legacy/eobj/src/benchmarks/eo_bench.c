@@ -17,7 +17,7 @@ struct _Eina_Benchmark_Case
 };
 
 static const Eina_Benchmark_Case etc[] = {
-   { "Eo_Do", eo_bench_eo_do },
+   { "eo_do", eo_bench_eo_do },
    { NULL, NULL }
 };
 
