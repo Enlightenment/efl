@@ -655,6 +655,9 @@ EAPI const void *
 ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
+
+   if(!ee) return NULL;
+
    _ecore_evas_buffer_render(ee);
    return ee->engine.buffer.pixels;
 #else
@@ -689,6 +692,8 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    Ecore_Evas *ee;
    int rmethod;
    int w = 1, h = 1;
+
+   if (!ee_target) return NULL;
 
    rmethod = evas_render_method_lookup("buffer");
    if (!rmethod) return NULL;
