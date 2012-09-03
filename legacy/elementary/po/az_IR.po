@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-30 14:02+0900\n"
+"POT-Creation-Date: 2012-09-01 17:37+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@samsung.com>\n"
 "Language-Team: General\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1402
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1254
 msgid "Cancel"
 msgstr ""
 
@@ -39,7 +39,7 @@ msgstr ""
 
 #: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
 #: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
-#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1253
+#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1418
 msgid "State: Disabled"
 msgstr ""
 
@@ -77,27 +77,27 @@ msgstr ""
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_diskselector.c:621
+#: src/lib/elm_diskselector.c:624
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1396
+#: src/lib/elm_entry.c:1246
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elm_entry.c:1399
+#: src/lib/elm_entry.c:1250
 msgid "Cut"
 msgstr ""
 
-#: src/lib/elm_entry.c:1413
+#: src/lib/elm_entry.c:1266
 msgid "Select"
 msgstr ""
 
-#: src/lib/elm_entry.c:1419
+#: src/lib/elm_entry.c:1273
 msgid "Paste"
 msgstr ""
 
-#: src/lib/elm_entry.c:2650
+#: src/lib/elm_entry.c:2921
 msgid "Entry"
 msgstr ""
 
@@ -141,22 +141,22 @@ msgstr ""
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:988
+#: src/lib/elm_toolbar.c:1092
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1251
+#: src/lib/elm_toolbar.c:1416
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1255
+#: src/lib/elm_toolbar.c:1420
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1257
+#: src/lib/elm_toolbar.c:1422
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:1322
+#: src/lib/elm_toolbar.c:1501
 msgid "Tool Item"
 msgstr ""

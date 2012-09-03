@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-30 14:02+0900\n"
+"POT-Creation-Date: 2012-09-01 17:37+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -29,7 +29,7 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1402
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1254
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -43,7 +43,7 @@ msgstr "Cliqué"
 
 #: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
 #: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
-#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1253
+#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1418
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -81,27 +81,27 @@ msgstr ""
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
-#: src/lib/elm_diskselector.c:621
+#: src/lib/elm_diskselector.c:624
 msgid "diskselector item"
 msgstr ""
 
-#: src/lib/elm_entry.c:1396
+#: src/lib/elm_entry.c:1246
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:1399
+#: src/lib/elm_entry.c:1250
 msgid "Cut"
 msgstr "Couper"
 
-#: src/lib/elm_entry.c:1413
+#: src/lib/elm_entry.c:1266
 msgid "Select"
 msgstr "Sélectionner"
 
-#: src/lib/elm_entry.c:1419
+#: src/lib/elm_entry.c:1273
 msgid "Paste"
 msgstr "Coller"
 
-#: src/lib/elm_entry.c:2650
+#: src/lib/elm_entry.c:2921
 msgid "Entry"
 msgstr ""
 
@@ -145,23 +145,23 @@ msgstr ""
 msgid "spinner"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:988
+#: src/lib/elm_toolbar.c:1092
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:1251
+#: src/lib/elm_toolbar.c:1416
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:1255
+#: src/lib/elm_toolbar.c:1420
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
-#: src/lib/elm_toolbar.c:1257
+#: src/lib/elm_toolbar.c:1422
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:1322
+#: src/lib/elm_toolbar.c:1501
 msgid "Tool Item"
 msgstr "Élément outil"
 
