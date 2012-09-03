@@ -485,17 +485,16 @@ struct _Elm_Map_Smart_Data
    Evas_Object                          *sep_maps_overlays;
    Evas_Map                             *map;
 
-   Eina_Array                           *src_tile_mods;
+   Eina_Array                           *src_mods;
+
    Source_Tile                          *src_tile;
    Eina_List                            *src_tiles;
    const char                          **src_tile_names;
 
-   Eina_Array                           *src_route_mods;
    Source_Route                         *src_route;
    Eina_List                            *src_routes;
    const char                          **src_route_names;
 
-   Eina_Array                           *src_name_mods;
    Source_Name                          *src_name;
    Eina_List                            *src_names;
    const char                          **src_name_names;

@@ -3263,116 +3263,6 @@ _pinch_rotate_end_cb(void *data,
    return EVAS_EVENT_FLAG_NONE;
 }
 
-static Eina_Bool
-_source_tile_mod_cb(Eina_Module *m,
-                    void *data)
-{
-   Source_Tile *s;
-   const char *file;
-   Elm_Map_Smart_Data *sd = data;
-   Elm_Map_Module_Tile_Url_Func url_cb;
-   Elm_Map_Module_Source_Name_Func name_cb;
-   Elm_Map_Module_Tile_Scale_Func scale_cb;
-   Elm_Map_Module_Tile_Zoom_Min_Func zoom_min;
-   Elm_Map_Module_Tile_Zoom_Max_Func zoom_max;
-   Elm_Map_Module_Tile_Geo_to_Coord_Func geo_to_coord;
-   Elm_Map_Module_Tile_Coord_to_Geo_Func coord_to_geo;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
-
-   file = eina_module_file_get(m);
-   if (!eina_module_load(m))
-     {
-        ERR("Could not load module \"%s\": %s", file,
-            eina_error_msg_get(eina_error_get()));
-        return EINA_FALSE;
-     }
-
-   name_cb = eina_module_symbol_get(m, "map_module_source_name_get");
-   zoom_min = eina_module_symbol_get(m, "map_module_tile_zoom_min_get");
-   zoom_max = eina_module_symbol_get(m, "map_module_tile_zoom_max_get");
-   url_cb = eina_module_symbol_get(m, "map_module_tile_url_get");
-   geo_to_coord = eina_module_symbol_get(m, "map_module_tile_geo_to_coord");
-   coord_to_geo = eina_module_symbol_get(m, "map_module_tile_coord_to_geo");
-   scale_cb = eina_module_symbol_get(m, "map_module_tile_scale_get");
-   if ((!name_cb) || (!zoom_min) || (!zoom_max) || (!url_cb) ||
-       (!geo_to_coord) || (!coord_to_geo) || (!scale_cb))
-     {
-        WRN("Could not find map module functions from module \"%s\": %s",
-            file, eina_error_msg_get(eina_error_get()));
-        eina_module_unload(m);
-        return EINA_FALSE;
-     }
-
-   s = ELM_NEW(Source_Tile);
-   s->name = name_cb();
-   s->zoom_min = zoom_min();
-   s->zoom_max = zoom_max();
-   s->url_cb = url_cb;
-   s->geo_to_coord = geo_to_coord;
-   s->coord_to_geo = coord_to_geo;
-   s->scale_cb = scale_cb;
-   sd->src_tiles = eina_list_append(sd->src_tiles, s);
-
-   return EINA_TRUE;
-}
-
-static void
-_source_tile_load(Elm_Map_Smart_Data *sd)
-{
-   unsigned int idx;
-   Source_Tile *s;
-   Eina_List *l;
-
-   // Load from hard coded data
-   for (idx = 0; idx < (sizeof(src_tiles) / sizeof(Source_Tile)); idx++)
-     {
-        s = ELM_NEW(Source_Tile);
-        s->name = src_tiles[idx].name;
-        s->zoom_min = src_tiles[idx].zoom_min;
-        s->zoom_max = src_tiles[idx].zoom_max;
-        s->url_cb = src_tiles[idx].url_cb;
-        s->geo_to_coord = src_tiles[idx].geo_to_coord;
-        s->coord_to_geo = src_tiles[idx].coord_to_geo;
-        s->scale_cb = src_tiles[idx].scale_cb;
-        sd->src_tiles = eina_list_append(sd->src_tiles, s);
-     }
-
-   // Load from modules
-   sd->src_tile_mods = eina_module_list_get(sd->src_tile_mods, MODULES_PATH, 1,
-                                            &_source_tile_mod_cb, sd);
-
-   // Set default source
-   sd->src_tile = eina_list_nth(sd->src_tiles, 0);
-
-   // Make name strings
-   idx = 0;
-   sd->src_tile_names =
-     calloc((eina_list_count(sd->src_tiles) + 1), sizeof(char *));
-
-   EINA_LIST_FOREACH (sd->src_tiles, l, s)
-     {
-        eina_stringshare_replace(&sd->src_tile_names[idx], s->name);
-        INF("source : %s", sd->src_tile_names[idx]);
-        idx++;
-     }
-}
-
-static void
-_source_tile_unload(Elm_Map_Smart_Data *sd)
-{
-   int idx = 0;
-   Source_Tile *s;
-
-   for (idx = 0; sd->src_tile_names[idx]; idx++)
-     eina_stringshare_del(sd->src_tile_names[idx]);
-
-   EINA_LIST_FREE (sd->src_tiles, s)
-     free(s);
-
-   eina_module_list_free(sd->src_tile_mods);
-}
-
 static void
 _source_tile_set(Elm_Map_Smart_Data *sd,
                  const char *source_name)
@@ -3414,96 +3304,6 @@ _source_tile_set(Elm_Map_Smart_Data *sd,
    _zoom_do(sd, sd->zoom);
 }
 
-static Eina_Bool
-_source_route_mod_cb(Eina_Module *m,
-                     void *data)
-{
-   Elm_Map_Module_Source_Name_Func name_cb;
-   Elm_Map_Module_Route_Url_Func url_cb;
-   Elm_Map_Smart_Data *sd = data;
-   const char *file;
-   Source_Route *s;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
-
-   file = eina_module_file_get(m);
-   if (!eina_module_load(m))
-     {
-        ERR("Could not load module \"%s\": %s", file,
-            eina_error_msg_get(eina_error_get()));
-        return EINA_FALSE;
-     }
-
-   name_cb = eina_module_symbol_get(m, "map_module_source_name_get");
-   url_cb = eina_module_symbol_get(m, "map_module_route_url_get");
-
-   if ((!name_cb) || (!url_cb))
-     {
-        WRN("Could not find map module functions from module \"%s\": %s",
-            file, eina_error_msg_get(eina_error_get()));
-        eina_module_unload(m);
-        return EINA_FALSE;
-     }
-   s = ELM_NEW(Source_Tile);
-   s->name = name_cb();
-   s->url_cb = url_cb;
-   sd->src_routes = eina_list_append(sd->src_routes, s);
-
-   eina_module_unload(m);
-
-   return EINA_TRUE;
-}
-
-static void
-_source_route_load(Elm_Map_Smart_Data *sd)
-{
-   Eina_List *l;
-   Source_Route *s;
-   unsigned int idx;
-
-   // Load from hard coded data
-   for (idx = 0; idx < (sizeof(src_routes) / sizeof(Source_Route)); idx++)
-     {
-        s = ELM_NEW(Source_Route);
-        s->name = src_routes[idx].name;
-        s->url_cb = src_routes[idx].url_cb;
-        sd->src_routes = eina_list_append(sd->src_routes, s);
-     }
-
-   // Load from modules
-   sd->src_route_mods = eina_module_list_get(sd->src_route_mods, MODULES_PATH,
-                                             1, &_source_route_mod_cb, sd);
-
-   // Set default source
-   sd->src_route = eina_list_nth(sd->src_routes, 0);
-
-   // Make name strings
-   idx = 0;
-   sd->src_route_names = calloc((eina_list_count(sd->src_routes) + 1),
-                                sizeof(char *));
-   EINA_LIST_FOREACH (sd->src_routes, l, s)
-     {
-        eina_stringshare_replace(&sd->src_route_names[idx], s->name);
-        INF("source : %s", sd->src_route_names[idx]);
-        idx++;
-     }
-}
-
-static void
-_source_route_unload(Elm_Map_Smart_Data *sd)
-{
-   int idx = 0;
-   Source_Route *s;
-
-   for (idx = 0; sd->src_route_names[idx]; idx++)
-     eina_stringshare_del(sd->src_route_names[idx]);
-
-   EINA_LIST_FREE (sd->src_routes, s)
-     free(s);
-
-   eina_module_list_free(sd->src_route_mods);
-}
-
 static void
 _source_route_set(Elm_Map_Smart_Data *sd,
                   const char *source_name)
@@ -3529,96 +3329,6 @@ _source_route_set(Elm_Map_Smart_Data *sd,
         ERR("source name (%s) is not found", source_name);
         return;
      }
-}
-
-static Eina_Bool
-_source_name_mod_cb(Eina_Module *m,
-                    void *data)
-{
-   Elm_Map_Module_Source_Name_Func name_cb;
-   Elm_Map_Module_Name_Url_Func url_cb;
-   Elm_Map_Smart_Data *sd = data;
-   const char *file;
-   Source_Name *s;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
-
-   file = eina_module_file_get(m);
-   if (!eina_module_load(m))
-     {
-        ERR("Could not load module \"%s\": %s", file,
-            eina_error_msg_get(eina_error_get()));
-        return EINA_FALSE;
-     }
-
-   name_cb = eina_module_symbol_get(m, "map_module_source_name_get");
-   url_cb = eina_module_symbol_get(m, "map_module_name_url_get");
-
-   if ((!name_cb) || (!url_cb))
-     {
-        WRN("Could not find map module functions from module \"%s\": %s",
-            file, eina_error_msg_get(eina_error_get()));
-        eina_module_unload(m);
-        return EINA_FALSE;
-     }
-   s = ELM_NEW(Source_Tile);
-   s->name = name_cb();
-   s->url_cb = url_cb;
-   sd->src_names = eina_list_append(sd->src_names, s);
-
-   eina_module_unload(m);
-
-   return EINA_TRUE;
-}
-
-static void
-_source_name_load(Elm_Map_Smart_Data *sd)
-{
-   Eina_List *l;
-   Source_Name *s;
-   unsigned int idx;
-
-   // Load from hard coded data
-   for (idx = 0; idx < (sizeof(src_names) / sizeof(Source_Name)); idx++)
-     {
-        s = ELM_NEW(Source_Name);
-        s->name = src_names[idx].name;
-        s->url_cb = src_names[idx].url_cb;
-        sd->src_names = eina_list_append(sd->src_names, s);
-     }
-
-   // Load from modules
-   sd->src_name_mods = eina_module_list_get(sd->src_name_mods, MODULES_PATH, 1,
-                                            &_source_name_mod_cb, sd);
-
-   // Set default source
-   sd->src_name = eina_list_nth(sd->src_names, 0);
-
-   // Make name strings
-   idx = 0;
-   sd->src_name_names = calloc((eina_list_count(sd->src_names) + 1),
-                               sizeof(char *));
-   EINA_LIST_FOREACH (sd->src_names, l, s)
-     {
-        eina_stringshare_replace(&sd->src_name_names[idx], s->name);
-        INF("source : %s", sd->src_name_names[idx]);
-        idx++;
-     }
-}
-
-static void
-_source_name_unload(Elm_Map_Smart_Data *sd)
-{
-   int idx = 0;
-   Source_Name *s;
-
-   for (idx = 0; sd->src_name_names[idx]; idx++)
-     eina_stringshare_del(sd->src_name_names[idx]);
-
-   EINA_LIST_FREE (sd->src_names, s)
-     free(s);
-
-   eina_module_list_free(sd->src_name_mods);
 }
 
 static void
@@ -3648,20 +3358,186 @@ _source_name_set(Elm_Map_Smart_Data *sd,
      }
 }
 
-static void
-_source_all_load(Elm_Map_Smart_Data *sd)
+static Eina_Bool
+_source_mod_cb(Eina_Module *m,
+                    void *data)
 {
-   _source_tile_load(sd);
-   _source_route_load(sd);
-   _source_name_load(sd);
+   const char *file;
+   Elm_Map_Smart_Data *sd = data;
+
+   Elm_Map_Module_Source_Name_Func name_cb;
+   Elm_Map_Module_Tile_Url_Func tile_url_cb;
+   Elm_Map_Module_Tile_Scale_Func scale_cb;
+   Elm_Map_Module_Tile_Zoom_Min_Func zoom_min;
+   Elm_Map_Module_Tile_Zoom_Max_Func zoom_max;
+   Elm_Map_Module_Tile_Geo_to_Coord_Func geo_to_coord;
+   Elm_Map_Module_Tile_Coord_to_Geo_Func coord_to_geo;
+   Elm_Map_Module_Route_Url_Func route_url_cb;
+   Elm_Map_Module_Name_Url_Func name_url_cb;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(data, EINA_FALSE);
+
+   file = eina_module_file_get(m);
+   if (!eina_module_load(m))
+     {
+        ERR("Could not load module \"%s\": %s", file,
+            eina_error_msg_get(eina_error_get()));
+        return EINA_FALSE;
+     }
+   name_cb = eina_module_symbol_get(m, "map_module_source_name_get");
+   if ((!name_cb))
+     {
+        WRN("Could not find map module name from module \"%s\": %s",
+            file, eina_error_msg_get(eina_error_get()));
+        eina_module_unload(m);
+        return EINA_FALSE;
+     }
+
+   // Find TILE module
+   tile_url_cb = eina_module_symbol_get(m, "map_module_tile_url_get");
+   zoom_min = eina_module_symbol_get(m, "map_module_tile_zoom_min_get");
+   zoom_max = eina_module_symbol_get(m, "map_module_tile_zoom_max_get");
+   geo_to_coord = eina_module_symbol_get(m, "map_module_tile_geo_to_coord");
+   coord_to_geo = eina_module_symbol_get(m, "map_module_tile_coord_to_geo");
+   scale_cb = eina_module_symbol_get(m, "map_module_tile_scale_get");
+   if (tile_url_cb && zoom_min && zoom_max && geo_to_coord && coord_to_geo &&
+       scale_cb)
+     {
+        INF("Map TILE module is loaded \"%s\"",  file);
+        Source_Tile *s;
+        s = ELM_NEW(Source_Tile);
+        s->name = name_cb();
+        s->url_cb = tile_url_cb;
+        s->zoom_min = zoom_min();
+        s->zoom_max = zoom_max();
+        s->geo_to_coord = geo_to_coord;
+        s->coord_to_geo = coord_to_geo;
+        s->scale_cb = scale_cb;
+        sd->src_tiles = eina_list_append(sd->src_tiles, s);
+     }
+
+   // Find ROUTE module
+   route_url_cb = eina_module_symbol_get(m, "map_module_route_url_get");
+   if (route_url_cb)
+     {
+        INF("Map ROUTE module is loaded \"%s\"",  file);
+        Source_Route *s;
+        s = ELM_NEW(Source_Tile);
+        s->name = name_cb();
+        s->url_cb = route_url_cb;
+        sd->src_routes = eina_list_append(sd->src_routes, s);
+     }
+
+   // Find NAME module
+   name_url_cb = eina_module_symbol_get(m, "map_module_name_url_get");
+   if (name_url_cb)
+     {
+        INF("Map NAME module is loaded \"%s\"",  file);
+        Source_Name *s;
+        s = ELM_NEW(Source_Tile);
+        s->name = name_cb();
+        s->url_cb = name_url_cb;
+        sd->src_names = eina_list_append(sd->src_names, s);
+     }
+   return EINA_TRUE;
 }
 
 static void
 _source_all_unload(Elm_Map_Smart_Data *sd)
 {
-   _source_tile_unload(sd);
-   _source_route_unload(sd);
-   _source_name_unload(sd);
+   int idx = 0;
+   Source_Tile *s;
+
+   for (idx = 0; sd->src_tile_names[idx]; idx++)
+     eina_stringshare_del(sd->src_tile_names[idx]);
+   for (idx = 0; sd->src_route_names[idx]; idx++)
+     eina_stringshare_del(sd->src_route_names[idx]);
+   for (idx = 0; sd->src_name_names[idx]; idx++)
+     eina_stringshare_del(sd->src_name_names[idx]);
+
+   EINA_LIST_FREE(sd->src_tiles, s) free(s);
+   EINA_LIST_FREE(sd->src_routes, s) free(s);
+   EINA_LIST_FREE(sd->src_names, s) free(s);
+
+   eina_module_list_free(sd->src_mods);
+}
+
+static void
+_source_all_load(Elm_Map_Smart_Data *sd)
+{
+   Source_Tile *src_tile;
+   Source_Route *src_route;
+   Source_Name *src_name;
+   unsigned int idx;
+   Eina_List *l;
+
+   // Load hard coded TILE source
+   for (idx = 0; idx < (sizeof(src_tiles) / sizeof(Source_Tile)); idx++)
+     {
+        src_tile = ELM_NEW(Source_Tile);
+        src_tile->name = src_tiles[idx].name;
+        src_tile->zoom_min = src_tiles[idx].zoom_min;
+        src_tile->zoom_max = src_tiles[idx].zoom_max;
+        src_tile->url_cb = src_tiles[idx].url_cb;
+        src_tile->geo_to_coord = src_tiles[idx].geo_to_coord;
+        src_tile->coord_to_geo = src_tiles[idx].coord_to_geo;
+        src_tile->scale_cb = src_tiles[idx].scale_cb;
+        sd->src_tiles = eina_list_append(sd->src_tiles, src_tile);
+     }
+   // Load hard coded ROUTE source
+   for (idx = 0; idx < (sizeof(src_routes) / sizeof(Source_Route)); idx++)
+     {
+        src_route = ELM_NEW(Source_Route);
+        src_route->name = src_routes[idx].name;
+        src_route->url_cb = src_routes[idx].url_cb;
+        sd->src_routes = eina_list_append(sd->src_routes, src_route);
+     }
+   // Load from hard coded NAME source
+   for (idx = 0; idx < (sizeof(src_names) / sizeof(Source_Name)); idx++)
+     {
+        src_name = ELM_NEW(Source_Name);
+        src_name->name = src_names[idx].name;
+        src_name->url_cb = src_names[idx].url_cb;
+        sd->src_names = eina_list_append(sd->src_names, src_name);
+     }
+
+   // Load from modules
+   sd->src_mods = eina_module_list_get(sd->src_mods, MODULES_PATH, 1,
+                                            &_source_mod_cb, sd);
+
+   // Set default source
+   sd->src_tile = eina_list_nth(sd->src_tiles, 0);
+   sd->src_route = eina_list_nth(sd->src_routes, 0);
+   sd->src_name = eina_list_nth(sd->src_names, 0);
+
+   // Make name string of sources
+   idx = 0;
+   sd->src_tile_names = calloc((eina_list_count(sd->src_tiles) + 1),
+                               sizeof(const char *));
+   EINA_LIST_FOREACH (sd->src_tiles, l, src_tile)
+     {
+        eina_stringshare_replace(&sd->src_tile_names[idx], src_tile->name);
+        INF("source : %s", sd->src_tile_names[idx]);
+        idx++;
+     }
+   idx = 0;
+   sd->src_route_names = calloc((eina_list_count(sd->src_routes) + 1),
+                                sizeof(const char *));
+   EINA_LIST_FOREACH (sd->src_routes, l, src_route)
+     {
+        eina_stringshare_replace(&sd->src_route_names[idx], src_route->name);
+        INF("source : %s", sd->src_route_names[idx]);
+        idx++;
+     }
+   idx = 0;
+   sd->src_name_names = calloc((eina_list_count(sd->src_names) + 1),
+                               sizeof(const char *));
+   EINA_LIST_FOREACH (sd->src_names, l, src_name)
+     {
+        eina_stringshare_replace(&sd->src_name_names[idx], src_name->name);
+        INF("source : %s", sd->src_name_names[idx]);
+        idx++;
+     }
 }
 
 static void
