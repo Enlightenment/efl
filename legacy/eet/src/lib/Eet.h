@@ -188,7 +188,7 @@ extern "C" {
  */
 
 #define EET_VERSION_MAJOR 1
-#define EET_VERSION_MINOR 7
+#define EET_VERSION_MINOR 8
 /**
  * @typedef Eet_Version
  *

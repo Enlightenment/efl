@@ -352,7 +352,7 @@ extern "C" {
 #endif
 
 #define EVAS_VERSION_MAJOR 1
-#define EVAS_VERSION_MINOR 7
+#define EVAS_VERSION_MINOR 8
 
 typedef struct _Evas_Version
 {

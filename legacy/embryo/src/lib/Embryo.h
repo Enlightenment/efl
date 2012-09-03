@@ -341,7 +341,7 @@ extern "C" {
 #endif
 
 #define EMBRYO_VERSION_MAJOR 1
-#define EMBRYO_VERSION_MINOR 7
+#define EMBRYO_VERSION_MINOR 8
    
    typedef struct _Embryo_Version
      {
