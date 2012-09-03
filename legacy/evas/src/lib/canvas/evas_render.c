@@ -1385,8 +1385,7 @@ evas_render_updates_internal(Evas *e,
              Evas_Object *pclip;
 
              obj = eina_array_data_get(&e->render_objects, i);
-             if (evas_object_is_frame_object_get(obj))
-               continue;
+             if (obj->is_frame) continue;
 
              if (obj->delete_me) continue;
 
