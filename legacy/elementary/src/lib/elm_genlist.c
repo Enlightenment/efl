@@ -1743,7 +1743,8 @@ _reorder_move_animator_cb(void *data)
    else y = dy;
 
    diff = abs(it->item->old_scrl_y - it->item->scrl_y);
-   if (diff > it->item->h) y = diff / 2;
+   if (diff < dy) y = diff;
+   else if (diff > it->item->h) y = diff / 2;
 
    if (it->item->old_scrl_y < it->item->scrl_y)
      {
