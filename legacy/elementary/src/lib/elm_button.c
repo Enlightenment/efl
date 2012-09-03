@@ -73,6 +73,13 @@ _elm_button_smart_sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_set(obj, minw, minh);
 }
 
+static void
+_elm_button_smart_activate(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+}
+
 /* FIXME: replicated from elm_layout just because button's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
@@ -258,13 +265,6 @@ _access_state_cb(void *data __UNUSED__,
 }
 
 static void
-_access_activate_cb(Evas_Object *obj, void *data __UNUSED__)
-{
-   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
-   elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
-}
-
-static void
 _elm_button_smart_add(Evas_Object *obj)
 {
    EVAS_SMART_DATA_ALLOC(obj, Elm_Button_Smart_Data);
@@ -288,8 +288,6 @@ _elm_button_smart_add(Evas_Object *obj)
      (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
    _elm_access_callback_set
      (_elm_access_object_get(obj), ELM_ACCESS_STATE, _access_state_cb, priv);
-   _elm_access_activate_hook_set
-     (_elm_access_object_get(obj), _access_activate_cb, NULL);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
@@ -312,6 +310,7 @@ _elm_button_smart_set_user(Elm_Button_Smart_Class *sc)
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_button_smart_content_set;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_button_smart_sizing_eval;
+   ELM_WIDGET_CLASS(sc)->activate = _elm_button_smart_activate;
 
    ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
    ELM_LAYOUT_CLASS(sc)->text_aliases = _text_aliases;

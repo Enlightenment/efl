@@ -3506,6 +3506,16 @@ elm_widget_focus_order_get(const Evas_Object *obj)
    return sd->focus_order;
 }
 
+EAPI void 
+elm_widget_activate(Evas_Object *obj)
+{
+   API_ENTRY return;
+
+   if (!sd->api->activate) return;
+
+   sd->api->activate(obj);
+}
+
 /**
  * @internal
  *
