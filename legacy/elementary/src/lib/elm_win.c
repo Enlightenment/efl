@@ -160,6 +160,8 @@ static const char SIG_UNFULLSCREEN[] = "unfullscreen";
 static const char SIG_MAXIMIZED[] = "maximized";
 static const char SIG_UNMAXIMIZED[] = "unmaximized";
 static const char SIG_IOERR[] = "ioerr";
+static const char SIG_INDICATOR_PROP_CHANGED[] = "indicator,prop,changed";
+static const char SIG_ROTATION_CHANGED[] = "rotation,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_DELETE_REQUEST, ""},
@@ -176,6 +178,8 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_MAXIMIZED, ""},
    {SIG_UNMAXIMIZED, ""},
    {SIG_IOERR, ""},
+   {SIG_INDICATOR_PROP_CHANGED, ""},
+   {SIG_ROTATION_CHANGED, ""},
    {NULL, NULL}
 };
 
@@ -3430,6 +3434,7 @@ elm_win_rotation_set(Evas_Object *obj,
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
+   evas_object_smart_callback_call(obj, SIG_ROTATION_CHANGED, NULL);
 }
 
 EAPI void
@@ -3449,6 +3454,7 @@ elm_win_rotation_with_resize_set(Evas_Object *obj,
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
 #endif
+   evas_object_smart_callback_call(obj, SIG_ROTATION_CHANGED, NULL);
 }
 
 EAPI int
@@ -3564,6 +3570,7 @@ elm_win_indicator_mode_set(Evas_Object *obj,
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
      }
 #endif
+   evas_object_smart_callback_call(obj, SIG_INDICATOR_PROP_CHANGED, NULL);
 }
 
 EAPI Elm_Win_Indicator_Mode
@@ -3599,6 +3606,7 @@ elm_win_indicator_opacity_set(Evas_Object *obj,
             (sd->x.xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
      }
 #endif
+   evas_object_smart_callback_call(obj, SIG_INDICATOR_PROP_CHANGED, NULL);
 }
 
 EAPI Elm_Win_Indicator_Opacity_Mode
