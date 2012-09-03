@@ -203,20 +203,24 @@ static const Eo_Class *
 _eo_op_class_get(Eo_Op op)
 {
    /* FIXME: Make it fast. */
-   const Eo_Class *klass = NULL;
    Eo_Class **itr = _eo_classes;
-   Eo_Class_Id i;
-   for (i = 0 ; i < _eo_classes_last_id ; i++, itr++)
+   int mid, max, min;
+
+   min = 0;
+   max = _eo_classes_last_id - 1;
+   while (min <= max)
      {
-        if (*itr && ((*itr)->base_id <= op) &&
-              (op <= (*itr)->base_id + (*itr)->desc->ops.count))
-          {
-             klass = *itr;
-             return klass;
-          }
+        mid = (min + max) / 2;
+
+        if (itr[mid]->base_id + itr[mid]->desc->ops.count < op)
+           min = mid + 1;
+        else if (itr[mid]->base_id  > op)
+           max = mid - 1;
+        else
+           return itr[mid];
      }
 
-   return klass;
+   return NULL;
 }
 
 static const Eo_Op_Description *
