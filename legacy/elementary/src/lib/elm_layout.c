@@ -70,7 +70,7 @@ _elm_layout_smart_sizing_eval(Evas_Object *obj)
 {
    ELM_LAYOUT_DATA_GET(obj, sd);
 
-   if (!sd || sd->needs_size_calc) return;
+   if (sd->needs_size_calc) return;
    sd->needs_size_calc = EINA_TRUE;
 
    evas_object_smart_changed(obj);
@@ -83,7 +83,7 @@ _on_sub_object_size_hint_change(void *data,
                                 void *event_info __UNUSED__)
 {
    ELM_LAYOUT_DATA_GET(data, sd);
-   if (!sd || ELM_WIDGET_DATA(sd)->frozen) return;
+   if (ELM_WIDGET_DATA(sd)->frozen) return;
    ELM_LAYOUT_CLASS(ELM_WIDGET_DATA(sd)->api)->sizing_eval(data);
 }
 
