@@ -1474,6 +1474,12 @@ ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, 
    ee = evas_object_data_get(obj, "Ecore_Evas");
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS)) return EINA_FALSE;
 
+   if (!svcname)
+     {
+        ee->engine.buffer.data = NULL;
+        return EINA_FALSE;
+     }
+
    extn = calloc(1, sizeof(Extn));
    if (!extn) return EINA_FALSE;
 
@@ -1489,6 +1495,7 @@ ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, 
                                                extn->svc.num, ee);
    if (!extn->ipc.server)
      {
+        ee->engine.buffer.data = NULL;
         eina_stringshare_del(extn->svc.name);
         free(extn);
         ecore_ipc_shutdown();
@@ -1624,6 +1631,7 @@ _ecore_evas_extn_socket_render(Ecore_Evas *ee)
    Ecore_Ipc_Client *client;
 
    extn = ee->engine.buffer.data;
+   if (!extn) return rend;
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
      {
         if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);

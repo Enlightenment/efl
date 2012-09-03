@@ -357,6 +357,8 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, cons
    Ecore_Ipc_Type type;
    Ecore_Con_Type extra = 0;
 
+   if (!name) return NULL;
+
    svr = calloc(1, sizeof(Ecore_Ipc_Server));
    if (!svr) return NULL;
    type = compl_type;
