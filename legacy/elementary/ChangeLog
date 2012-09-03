@@ -440,4 +440,5 @@
 2012-09-03  Bluezery
 
         * Fix re-order animation when it doesn't end correctly.
-        
+        * Improve elm map module loading to onlt init the module needed
+        when searching and not all modules.
