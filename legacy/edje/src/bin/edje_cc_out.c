@@ -425,7 +425,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread __UNUSED__)
    f = eina_file_open(fc->fn->file, 0);
    if (f)
      {
-        using_file(fc->fn->file);
+       using_file(fc->fn->file, 'F');
         m = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
      }
    else
@@ -438,7 +438,7 @@ data_thread_fonts(void *data, Ecore_Thread *thread __UNUSED__)
              f = eina_file_open(buf, 0);
              if (f)
                {
-                  using_file(buf);
+		 using_file(buf, 'F');
                   m = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
                   if (m) break;
                   eina_file_close(f);
@@ -805,7 +805,7 @@ data_write_images(Eet_File *ef, int *image_num)
                        pending_threads++;
                        if (threads)
                          evas_object_image_preload(im, 0);
-                       using_file(buf);
+                       using_file(buf, 'I');
                        if (!threads)
                          data_image_preload_done(iw, evas, im, NULL);
                        break;
@@ -822,7 +822,7 @@ data_write_images(Eet_File *ef, int *image_num)
                        pending_threads++;
                        if (threads)
                          evas_object_image_preload(im, 0);
-                       using_file(img->entry);
+                       using_file(img->entry, 'I');
                        if (!threads)
                          data_image_preload_done(iw, evas, im, NULL);
                     }
@@ -868,9 +868,9 @@ data_thread_sounds(void *data, Ecore_Thread *thread __UNUSED__)
    enc_info = _edje_multisense_encode(snd_path, sw->sample,
                                       sw->sample->quality);
    f = eina_file_open(enc_info->file, 0);
-   if (f) using_file(enc_info->file);
+   if (f) using_file(enc_info->file, 'S');
 #else
-   if (f) using_file(snd_path);
+   if (f) using_file(snd_path, 'S');
 #endif
    if (!f)
      {
@@ -2569,14 +2569,21 @@ data_process_script_lookups(void)
 }
 
 void
-using_file(const char *filename)
+using_file(const char *filename, const char type)
 {
    FILE *f;
 
    if (!watchfile) return;
    f = fopen(watchfile, "ab");
    if (!f) return ;
-   fputs(filename, f);
-   fputc('\n', f);
+   if (anotate)
+     {
+       fprintf(f, "%c: %s\n", type, filename);
+     }
+   else
+     {
+       fputs(filename, f);
+       fputc('\n', f);
+     }
    fclose(f);
 }

@@ -202,7 +202,7 @@ void   *mem_alloc(size_t size);
 char   *mem_strdup(const char *s);
 #define SZ sizeof
 
-void    using_file(const char *filename);
+void    using_file(const char *filename, const char type);
 
 void    error_and_abort(Eet_File *ef, const char *fmt, ...);
 
@@ -235,5 +235,6 @@ extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
 extern int                    compress_mode;
 extern int                    threads;
+extern int		      anotate;
 
 #endif

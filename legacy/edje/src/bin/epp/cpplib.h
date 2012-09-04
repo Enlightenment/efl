@@ -639,7 +639,7 @@ void               *xmalloc(unsigned size);
 void               *xrealloc(void *old, unsigned size);
 void               *xcalloc(unsigned number, unsigned size);
 
-void                using_file(const char *filename);
+void                using_file(const char *filename, const char type);
 
 #ifdef __EMX__
 #define PATH_SEPARATOR ';'

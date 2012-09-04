@@ -513,6 +513,8 @@ unsigned char       is_hor_space[256];
 /* table to tell if c is horizontal or vertical space.  */
 static unsigned char is_space[256];
 
+static int           anotate = 0;
+
 /* Initialize syntactic classifications of characters.  */
 
 static void
@@ -5489,7 +5491,7 @@ open_include_file(cpp_reader * pfile, char *filename,
        && !strncmp(searchptr->fname, filename, p - filename))
      {
 	/* FILENAME is in SEARCHPTR, which we've already checked.  */
-        using_file(filename);
+        using_file(filename, 'E');
 	return open(filename, O_RDONLY | O_BINARY, 0666);
      }
    if (p == filename)
@@ -5510,11 +5512,11 @@ open_include_file(cpp_reader * pfile, char *filename,
    for (map = read_name_map(pfile, dir); map; map = map->map_next)
       if (!strcmp(map->map_from, from))
         {
-           using_file(map->map_to);
+           using_file(map->map_to, 'E');
            return open(map->map_to, O_RDONLY | O_BINARY, 0666);
         }
 
-   using_file(filename);
+   using_file(filename, 'E');
    return open(filename, O_RDONLY | O_BINARY, 0666);
 }
 
@@ -5524,7 +5526,7 @@ static int
 open_include_file(cpp_reader * pfile __UNUSED__, char *filename,
 		  file_name_list * searchptr __UNUSED__)
 {
-   using_file(filename);
+   using_file(filename, 'E');
    return open(filename, O_RDONLY | O_BINARY, 0666);
 }
 
@@ -6578,6 +6580,10 @@ cpp_handle_options(cpp_reader * pfile, int argc, char **argv)
                                opts->watchfile = argv[i];
                             }
                        }
+                     else if (!strcmp(argv[i], "-anotate"))
+                       {
+                          anotate = 1;
+                       }
 		     break;
                   }
 
@@ -7449,13 +7455,20 @@ cpp_perror_with_name(cpp_reader * pfile, const char *name)
 extern cpp_options         options;
 
 void
-using_file(const char *filename)
+using_file(const char *filename, const char type)
 {
    FILE *f;
 
    f = fopen(options.watchfile, "a");
    if (!f) return ;
-   fputs(filename, f);
-   fputc('\n', f);
+   if (anotate)
+     {
+        fprintf(f, "%c: %s\n", type, filename);
+     }
+   else
+     {
+        fputs(filename, f);
+        fputc('\n', f);
+     }
    fclose(f);
 }

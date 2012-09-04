@@ -31,6 +31,7 @@ int        min_quality = 0;
 int        max_quality = 100;
 int        compress_mode = EET_COMPRESSION_DEFAULT;
 int        threads = 0;
+int	   anotate = 0;
 
 static void
 _edje_cc_log_cb(const Eina_Log_Domain *d,
@@ -82,6 +83,7 @@ main_help(void)
       "Where OPTIONS is one or more of:\n"
       "\n"
       "-w files.txt             Dump all sources files path into files.txt\n"
+      "-anotate                 Anotate the dumped files.\n"
       "-id image/directory      Add a directory to look in for relative path images\n"
       "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-sd sound/directory      Add a directory to look in for relative path sounds samples\n"
@@ -226,6 +228,10 @@ main(int argc, char **argv)
              watchfile = argv[i];
              unlink(watchfile);
 	  }
+	else if (!strcmp(argv[i], "-anotate"))
+	  {
+             anotate = 1;
+          }
 	else if (!file_in)
 	  file_in = argv[i];
 	else if (!file_out)
@@ -296,7 +302,8 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
-   using_file(file_in);
+   using_file(file_in, 'E');
+   if (anotate) using_file(file_out, 'O');
 
    if (!edje_init())
      exit(-1);

@@ -33,8 +33,11 @@ read_watch_file(const char *file)
      {
         const char *path;
 
-        path = eina_stringshare_add_length(ln->start, ln->length);
-        r = eina_list_append(r, eio_monitor_add(path));
+	if (ln->length < 4) continue ;
+        path = eina_stringshare_add_length(ln->start + 3, ln->length);
+	fprintf(stderr, "%c: %s\n", *ln->start, path);
+	if (*ln->start != 'O')
+	  r = eina_list_append(r, eio_monitor_add(path));
         eina_stringshare_del(path);
      }
    eina_iterator_free(it);
@@ -53,11 +56,11 @@ rebuild(void *data __UNUSED__)
    double start, end;
 
    start = ecore_time_get();
-   fprintf(stderr, "SYSTEM('%s')\n", edje_cc_command);
+   fprintf(stderr, "* SYSTEM('%s')\n", edje_cc_command);
    if (system(edje_cc_command) == 0)
      read_watch_file(watchfile);
    end = ecore_time_get();
-   fprintf(stderr, "DONE IN %f\n", end - start);
+   fprintf(stderr, "* DONE IN %f\n", end - start);
 
    timeout = NULL;
    return EINA_FALSE;
@@ -66,9 +69,6 @@ rebuild(void *data __UNUSED__)
 Eina_Bool
 some_change(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
-   Eio_Monitor_Event *ev = event;
-
-   fprintf(stderr, "EVENT %i on [%s]\n", type, ev->filename);
    if (timeout) ecore_timer_del(timeout);
    timeout = ecore_timer_add(0.5, rebuild, NULL);
 
@@ -89,7 +89,7 @@ main(int argc, char **argv)
    eio_init();
 
    if (argc < 2) return -1;
-
+   
    ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, some_change, NULL);
    ecore_event_handler_add(EIO_MONITOR_FILE_CREATED, some_change, NULL);
    ecore_event_handler_add(EIO_MONITOR_FILE_DELETED, some_change, NULL);
@@ -110,7 +110,7 @@ main(int argc, char **argv)
    buf = eina_strbuf_new();
    if (!buf) return -1;
 
-   eina_strbuf_append_printf(buf, "%s/edje_cc -threads -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
+   eina_strbuf_append_printf(buf, "%s/edje_cc -anotate -threads -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
    for (i = 1; i < argc; ++i)
      eina_strbuf_append_printf(buf, "%s ", argv[i]);
 

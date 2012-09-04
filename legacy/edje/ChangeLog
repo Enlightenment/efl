@@ -581,3 +581,7 @@
 2012-08-30  Cedric Bail
 
 	* Check the number of parameter for image in edc.
+
+2012-09-04  Cedric Bail
+
+	* Report type of file when listing file used by an edc.
