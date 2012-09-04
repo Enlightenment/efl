@@ -6,13 +6,13 @@ endif
 
 bin_SCRIPTS = @EDJE_RECC_PRG@
 
-bin_PROGRAMS = @EDJE_CC_PRG@ @EDJE_DECC_PRG@ @EDJE_PLAYER_PRG@ @EDJE_INSPECTOR_PRG@ @EDJE_EXTERNAL_INSPECTOR_PRG@
+bin_PROGRAMS = @EDJE_CC_PRG@ @EDJE_DECC_PRG@ @EDJE_PLAYER_PRG@ @EDJE_INSPECTOR_PRG@ @EDJE_EXTERNAL_INSPECTOR_PRG@ @EDJE_CODEGEN_PRG@
 
 if BUILD_EDJE_WATCH
 bin_PROGRAMS += @EDJE_WATCH_PRG@
 endif
 
-EXTRA_PROGRAMS = edje_cc edje_decc edje_player edje_inspector edje_external_inspector
+EXTRA_PROGRAMS = edje_cc edje_decc edje_player edje_inspector edje_external_inspector edje_codegen
 
 if BUILD_EDJE_WATCH
 EXTRA_PROGRAMS += edje_watch
@@ -69,6 +69,19 @@ edje_player_CPPFLAGS = \
 @EDJE_PLAYER_CFLAGS@ @EVIL_CFLAGS@ @EIO_CFLAGS@
 edje_player_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_PLAYER_LIBS@ @EDJE_LIBS@ @EVIL_LIBS@ @VORBISENC_LIBS@ @FLAC_LIBS@ @SNDFILE_LIBS@
 edje_player_LDFLAGS = @lt_enable_auto_import@
+
+edje_codegen_SOURCES = edje_codegen.c
+
+edje_codegen_CPPFLAGS = \
+-I$(top_srcdir)/src/bin \
+-I$(top_srcdir)/src/lib \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
+-DEPP_DIR=\"$(libdir)/$(PACKAGE)/utils\" \
+@EDJE_CFLAGS@ @EDJE_CODEGEN_CFLAGS@
+edje_codegen_LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_CODEGEN_LIBS@ @EDJE_LIBS@ -lm
+edje_codegen_LDFLAGS = @lt_enable_auto_import@
 
 edje_inspector_SOURCES = edje_inspector.c
 edje_inspector_CPPFLAGS = \
