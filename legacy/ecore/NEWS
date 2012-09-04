@@ -9,6 +9,8 @@ Additions:
     * ecore_x:
      - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP
      - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN
+    * ecore_imf:
+     - Add ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
 
 Fixes:
 
