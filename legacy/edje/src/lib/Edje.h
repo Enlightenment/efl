@@ -659,7 +659,8 @@ typedef enum _Edje_Input_Panel_Return_Key_Type
    EDJE_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login @since 1.2 */
    EDJE_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next @since 1.2 */
    EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search or magnifier icon @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEND     /**< Send @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEND,    /**< Send @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Sign-in @since 1.8 */
 } Edje_Input_Panel_Return_Key_Type;
 
 /**

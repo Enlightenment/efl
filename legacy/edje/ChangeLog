@@ -585,3 +585,7 @@
 2012-09-04  Cedric Bail
 
 	* Report type of file when listing file used by an edc.
+
+2012-09-04  Jihoon Kim (jihoon)
+
+	* Add EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
