@@ -703,14 +703,17 @@ _elm_naviframe_smart_sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1;
    Elm_Naviframe_Item *it;
    Evas_Coord x, y, w, h;
+   Evas_Coord fy;
 
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   evas_output_framespace_get(evas_object_evas_get(obj), 
+                              NULL, &fy, NULL, NULL);
 
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
    EINA_INLIST_FOREACH (sd->stack, it)
      {
-        evas_object_move(VIEW(it), x, y);
+        evas_object_move(VIEW(it), x, y + fy);
         evas_object_resize(VIEW(it), w, h);
         edje_object_size_min_calc(VIEW(it), &it->minw, &it->minh);
         if (it->minw > minw) minw = it->minw;
