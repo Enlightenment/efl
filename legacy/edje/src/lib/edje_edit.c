@@ -263,6 +263,8 @@ _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group,
         eina_hash_add(eed->program_scripts, &ps->id, ps);
      }
    if (keys) free(keys);
+   eet_close(ef);
+
    return EINA_TRUE;
 }
 
