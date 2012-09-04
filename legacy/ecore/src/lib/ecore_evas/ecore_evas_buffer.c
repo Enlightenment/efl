@@ -655,8 +655,11 @@ EAPI const void *
 ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
-   if (!ee) return NULL;
-
+   if (!ee)
+     {
+        CRIT("Ecore_Evas is missing");
+        return NULL;
+     }
    _ecore_evas_buffer_render(ee);
    return ee->engine.buffer.pixels;
 #else
