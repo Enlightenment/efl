@@ -678,10 +678,11 @@ static Evas_Object *
 _elm_ctxpopup_smart_content_get(const Evas_Object *obj,
                                 const char *part)
 {
-   if ((part) && (strcmp(part, "default"))) return NULL;
-   return ELM_CONTAINER_CLASS(_elm_ctxpopup_parent_sc)->content_get(obj, part);
-
    ELM_CTXPOPUP_DATA_GET(obj, sd);
+
+   if ((part) && (strcmp(part, "default")))
+     return ELM_CONTAINER_CLASS(_elm_ctxpopup_parent_sc)->content_get
+              (obj, part);
 
    return sd->content;
 }
@@ -692,11 +693,11 @@ _elm_ctxpopup_smart_content_unset(Evas_Object *obj,
 {
    Evas_Object *content;
 
-   if ((part) && (strcmp(part, "default"))) return NULL;
-   return ELM_CONTAINER_CLASS(_elm_ctxpopup_parent_sc)->content_unset
-            (obj, part);
-
    ELM_CTXPOPUP_DATA_GET(obj, sd);
+
+   if ((part) && (strcmp(part, "default")))
+     return ELM_CONTAINER_CLASS(_elm_ctxpopup_parent_sc)->content_unset
+              (obj, part);
 
    content = sd->content;
    if (!content) return NULL;
