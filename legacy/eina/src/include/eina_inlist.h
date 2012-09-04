@@ -803,7 +803,7 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
 #define EINA_INLIST_FOREACH_SAFE(list, list2, l) \
    for (l = (list ? _EINA_INLIST_CONTAINER(l, list) : NULL), list2 = l ? ((EINA_INLIST_GET(l) ? EINA_INLIST_GET(l)->next : NULL)) : NULL; \
         l; \
-        l = _EINA_INLIST_CONTAINER(l, list2), list2 = list2 ? list2->next : NULL)
+        l = list2 ? _EINA_INLIST_CONTAINER(l, list2) : NULL, list2 = list2 ? list2->next : NULL)
 /**
  * @def EINA_INLIST_REVERSE_FOREACH
  * @param list The list to be reversed.
