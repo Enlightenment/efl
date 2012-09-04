@@ -1984,11 +1984,6 @@ EAPI void ephysics_body_evas_object_update(EPhysics_Body *body);
  *
  * So it's enough to do customized updates or fix pointers in your program.
  *
- * Regarding EPHYSICS_CALLBACK_BODY_DEL:
- *
- * Registered callbacks will be called before body is freed.
- * No event_info is passed.
- *
  * Regarding EPHYSICS_CALLBACK_BODY_UPDATE:
  *
  * This update event happens after each physics world tick. Its main use
@@ -2035,7 +2030,8 @@ EAPI void ephysics_body_evas_object_update(EPhysics_Body *body);
  *
  * - #EPHYSICS_CALLBACK_BODY_DEL: Called when a body deletion has been issued
  *   and just before the deletion actually happens. @p body points to the body
- *   being deleted and no @p event_info is provided.
+ *   being deleted and @p event_info is a pointer to the evas object
+ *   associated to it.
  *
  * - #EPHYSICS_CALLBACK_BODY_STOPPED: Called when a body is found to be
  *   stopped. @p body points to the body of interest and @p event_info is a

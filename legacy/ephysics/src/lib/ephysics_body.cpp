@@ -1079,7 +1079,8 @@ ephysics_orphan_body_del(EPhysics_Body *body)
 {
    EPhysics_Body_Callback *cb;
 
-   _ephysics_body_event_callback_call(body, EPHYSICS_CALLBACK_BODY_DEL, NULL);
+   _ephysics_body_event_callback_call(body, EPHYSICS_CALLBACK_BODY_DEL,
+                                      (void *) body->evas_obj);
    _ephysics_body_del(body);
    INF("Body %p deleted.", body);
 }
