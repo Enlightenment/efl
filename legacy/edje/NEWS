@@ -7,6 +7,7 @@ Additions:
     * Report type of file when listing file used by an edc.
     * Add nested parts support.
     * Add EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
+    * Add edje_codegen - A code generator to working with edje files.
 
 Improvements:
     * Check the number of parameter for image in edc.
