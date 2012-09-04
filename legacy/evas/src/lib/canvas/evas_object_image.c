@@ -82,15 +82,14 @@ struct _Evas_Object_Image
 
    void             *engine_data;
 
-   unsigned char     changed : 1;
-   unsigned char     dirty_pixels : 1;
-   unsigned char     filled : 1;
-   unsigned char     proxyrendering : 1;
-   unsigned char     preloading : 1;
-   unsigned char     video_rendering : 1;
-   unsigned char     video_surface : 1;
-   unsigned char     video_visible : 1;
-   unsigned char     created : 1;
+   Eina_Bool         changed : 1;
+   Eina_Bool         dirty_pixels : 1;
+   Eina_Bool         filled : 1;
+   Eina_Bool         proxyrendering : 1;
+   Eina_Bool         preloading : 1;
+   Eina_Bool         video_surface : 1;
+   Eina_Bool         video_visible : 1;
+   Eina_Bool         created : 1;
 };
 
 /* private methods for image objects */
@@ -159,7 +158,7 @@ _evas_object_image_cleanup(Evas_Object *obj, Evas_Object_Image *o)
 {
    if ((o->preloading) && (o->engine_data))
      {
-        o->preloading = 0;
+        o->preloading = EINA_FALSE;
         obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
                                                                  o->engine_data,
                                                                  obj);
@@ -356,7 +355,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
      {
         if (o->preloading)
           {
-             o->preloading = 0;
+             o->preloading = EINA_FALSE;
              obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output, o->engine_data, obj);
           }
         obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output, o->engine_data);
@@ -402,7 +401,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
         o->cur.image.h = 0;
         o->cur.image.stride = 0;
      }
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -529,7 +528,7 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
    o->cur.border.t = t;
    o->cur.border.b = b;
    o->cur.opaque_valid = 0;
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -573,7 +572,7 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode
    MAGIC_CHECK_END();
    if (fill == o->cur.border.fill) return;
    o->cur.border.fill = fill;
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -655,7 +654,7 @@ evas_object_image_border_scale_set(Evas_Object *obj, double scale)
    MAGIC_CHECK_END();
    if (scale == o->cur.border.scale) return;
    o->cur.border.scale = scale;
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -701,7 +700,7 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
    o->cur.fill.w = w;
    o->cur.fill.h = h;
    o->cur.opaque_valid = 0;
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -746,7 +745,7 @@ evas_object_image_fill_spread_set(Evas_Object *obj, Evas_Fill_Spread spread)
    MAGIC_CHECK_END();
    if (spread == (Evas_Fill_Spread)o->cur.spread) return;
    o->cur.spread = spread;
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -822,7 +821,7 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
 								     o->cur.has_alpha);
 */
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -892,7 +891,7 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
    MAGIC_CHECK_END();
    if ((o->preloading) && (o->engine_data))
      {
-        o->preloading = 0;
+        o->preloading = EINA_FALSE;
         obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output, o->engine_data, obj);
      }
    if (!o->engine_data) return NULL;
@@ -986,7 +985,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
         EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
         o->pixels_checked_out = 0;
      }
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -1054,7 +1053,7 @@ evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
    MAGIC_CHECK_END();
    if (!o->engine_data)
      {
-        o->preloading = 1;
+        o->preloading = EINA_TRUE;
         evas_object_inform_call_image_preloaded(obj);
         return;
      }
@@ -1064,7 +1063,7 @@ evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
      {
         if (o->preloading)
           {
-             o->preloading = 0;
+             o->preloading = EINA_FALSE;
              obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
                                                                       o->engine_data,
                                                                       obj);
@@ -1074,7 +1073,7 @@ evas_object_image_preload(Evas_Object *obj, Eina_Bool cancel)
      {
         if (!o->preloading)
           {
-             o->preloading = 1;
+             o->preloading = EINA_TRUE;
              obj->layer->evas->engine.func->image_data_preload_request(obj->layer->evas->engine.data.output,
                                                                        o->engine_data,
                                                                        obj);
@@ -1153,7 +1152,7 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
    if ((w <= 0)  || (h <= 0)) return;
    NEW_RECT(r, x, y, w, h);
    if (r) o->pixel_updates = eina_list_append(o->pixel_updates, r);
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -1171,7 +1170,7 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
    MAGIC_CHECK_END();
    if ((o->preloading) && (o->engine_data))
      {
-        o->preloading = 0;
+        o->preloading = EINA_FALSE;
         obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
                                                                  o->engine_data,
                                                                  obj);
@@ -1184,7 +1183,7 @@ evas_object_image_alpha_set(Evas_Object *obj, Eina_Bool has_alpha)
      {
         int stride = 0;
 
-        o->engine_data = 
+        o->engine_data =
           obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
                                                          o->engine_data,
                                                          o->cur.has_alpha);
@@ -1240,7 +1239,7 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, Eina_Bool smooth_scale)
        ((!smooth_scale) && (!o->cur.smooth_scale)))
      return;
    o->cur.smooth_scale = smooth_scale;
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -1273,7 +1272,7 @@ evas_object_image_reload(Evas_Object *obj)
    MAGIC_CHECK_END();
    if ((o->preloading) && (o->engine_data))
      {
-        o->preloading = 0;
+        o->preloading = EINA_FALSE;
         obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
                                                                  o->engine_data,
                                                                  obj);
@@ -1287,7 +1286,7 @@ evas_object_image_reload(Evas_Object *obj)
    evas_object_image_load(obj);
    o->prev.file = NULL;
    o->prev.key = NULL;
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -1398,7 +1397,7 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
 		    obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								   o->engine_data,
 								   o->cur.has_alpha);
-		  o->changed = 1;
+		  o->changed = EINA_TRUE;
 		  evas_object_change(obj);
 	       }
 	  }
@@ -1421,7 +1420,7 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
                   if (o->engine_data)
                     o->engine_data =
                        obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output, o->engine_data, o->cur.has_alpha);
-                  o->changed = 1;
+                  o->changed = EINA_TRUE;
                   evas_object_change(obj);
                }
           }
@@ -1462,9 +1461,9 @@ evas_object_image_pixels_dirty_set(Evas_Object *obj, Eina_Bool dirty)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
-   if (dirty) o->dirty_pixels = 1;
-   else o->dirty_pixels = 0;
-   o->changed = 1;
+   if (dirty) o->dirty_pixels = EINA_TRUE;
+   else o->dirty_pixels = EINA_FALSE;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 }
 
@@ -1503,7 +1502,7 @@ evas_object_image_load_dpi_set(Evas_Object *obj, double dpi)
         evas_object_image_unload(obj, 0);
         evas_object_inform_call_image_unloaded(obj);
         evas_object_image_load(obj);
-        o->changed = 1;
+        o->changed = EINA_TRUE;
         evas_object_change(obj);
      }
 }
@@ -1543,7 +1542,7 @@ evas_object_image_load_size_set(Evas_Object *obj, int w, int h)
         evas_object_image_unload(obj, 0);
         evas_object_inform_call_image_unloaded(obj);
         evas_object_image_load(obj);
-        o->changed = 1;
+        o->changed = EINA_TRUE;
         evas_object_change(obj);
      }
 }
@@ -1583,7 +1582,7 @@ evas_object_image_load_scale_down_set(Evas_Object *obj, int scale_down)
         evas_object_image_unload(obj, 0);
         evas_object_inform_call_image_unloaded(obj);
         evas_object_image_load(obj);
-        o->changed = 1;
+        o->changed = EINA_TRUE;
         evas_object_change(obj);
      }
 }
@@ -1626,7 +1625,7 @@ evas_object_image_load_region_set(Evas_Object *obj, int x, int y, int w, int h)
         evas_object_image_unload(obj, 0);
         evas_object_inform_call_image_unloaded(obj);
         evas_object_image_load(obj);
-        o->changed = 1;
+        o->changed = EINA_TRUE;
         evas_object_change(obj);
      }
 }
@@ -1729,7 +1728,7 @@ evas_object_image_video_surface_set(Evas_Object *obj, Evas_Video_Surface *surf)
    _evas_object_image_cleanup(obj, o);
    if (o->video_surface)
      {
-        o->video_surface = 0;
+        o->video_surface = EINA_FALSE;
         obj->layer->evas->video_objects = eina_list_remove(obj->layer->evas->video_objects, obj);
      }
 
@@ -1745,14 +1744,14 @@ evas_object_image_video_surface_set(Evas_Object *obj, Evas_Video_Surface *surf)
           return ;
 
         o->created = EINA_TRUE;
-        o->video_surface = 1;
+        o->video_surface = EINA_TRUE;
         o->video = *surf;
 
         obj->layer->evas->video_objects = eina_list_append(obj->layer->evas->video_objects, obj);
      }
    else
      {
-        o->video_surface = 0;
+        o->video_surface = EINA_FALSE;
         o->video.update_pixels = NULL;
         o->video.move = NULL;
         o->video.resize = NULL;
@@ -2087,7 +2086,7 @@ evas_object_image_animated_frame_set(Evas_Object *obj, int frame_index)
    o->prev.frame = o->cur.frame;
    o->cur.frame = frame_index;
 
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(obj);
 
 }
@@ -2141,7 +2140,7 @@ evas_image_cache_reload(Evas *e)
              if (o->magic == MAGIC_OBJ_IMAGE)
                {
                   evas_object_image_load(obj);
-                  o->changed = 1;
+                  o->changed = EINA_TRUE;
                   evas_object_change(obj);
                }
           }
@@ -2544,7 +2543,7 @@ evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
      {
         if (o->preloading)
           {
-             o->preloading = 0;
+             o->preloading = EINA_FALSE;
              obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
                                                                       o->engine_data,
                                                                       obj);
@@ -2728,7 +2727,7 @@ evas_object_image_free(Evas_Object *obj)
      {
         if (o->preloading)
           {
-             o->preloading = 0;
+             o->preloading = EINA_FALSE;
              obj->layer->evas->engine.func->image_data_preload_cancel(obj->layer->evas->engine.data.output,
                                                                       o->engine_data,
                                                                       obj);
@@ -2738,7 +2737,7 @@ evas_object_image_free(Evas_Object *obj)
      }
    if (o->video_surface)
      {
-        o->video_surface = 0;
+        o->video_surface = EINA_FALSE;
         obj->layer->evas->video_objects = eina_list_remove(obj->layer->evas->video_objects, obj);
      }
    o->engine_data = NULL;
@@ -2842,14 +2841,14 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
      }
    else
      {
-        o->proxyrendering = 1;
+        o->proxyrendering = EINA_TRUE;
         _proxy_subrender(obj->layer->evas, o->cur.source);
         pixels = o->cur.source->proxy.surface;
         imagew = o->cur.source->proxy.w;
         imageh = o->cur.source->proxy.h;
         uvw = imagew;
         uvh = imageh;
-        o->proxyrendering = 0;
+        o->proxyrendering = EINA_FALSE;
      }
 
 #if 0 // filtering disabled
@@ -2939,7 +2938,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
                      (obj->layer->evas->engine.data.output, o->engine_data,
                       0, 0, o->cur.image.w, o->cur.image.h);
                }
-             o->dirty_pixels = 0;
+             o->dirty_pixels = EINA_FALSE;
           }
         if ((obj->cur.map) && (obj->cur.map->count > 3) && (obj->cur.usemap))
           {
@@ -3449,7 +3448,7 @@ evas_object_image_render_post(Evas_Object *obj)
    /* move cur to prev safely for object data */
    evas_object_cur_prev(obj);
    o->prev = o->cur;
-   o->changed = 0;
+   o->changed = EINA_FALSE;
    /* FIXME: copy strings across */
 }
 
@@ -3914,7 +3913,7 @@ _evas_object_image_video_overlay_show(Evas_Object *obj)
         /* Cancel dirty on the image */
         Eina_Rectangle *r;
 
-        o->dirty_pixels = 0;
+        o->dirty_pixels = EINA_FALSE;
         EINA_LIST_FREE(o->pixel_updates, r)
           eina_rectangle_free(r);
      }
