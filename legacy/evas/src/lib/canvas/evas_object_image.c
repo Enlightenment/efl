@@ -2322,7 +2322,7 @@ _proxy_subrender(Evas *e, Evas_Object *source)
         source->proxy.h = h;
      }
 
-//   if (!source->proxy.surface) return;
+   if (!source->proxy.surface) return;
 
    ctx = e->engine.func->context_new(e->engine.data.output);
    e->engine.func->context_color_set(e->engine.data.output, ctx, 0, 0, 0, 0);
