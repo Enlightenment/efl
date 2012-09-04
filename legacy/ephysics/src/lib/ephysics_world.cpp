@@ -190,9 +190,9 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
 
    if (camera_moved)
      {
+        ephysics_camera_moved_set(world->camera, EINA_FALSE);
         _ephysics_world_event_callback_call(
            world, EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED, world->camera);
-        ephysics_camera_moved_set(world->camera, EINA_FALSE);
      }
 
 
