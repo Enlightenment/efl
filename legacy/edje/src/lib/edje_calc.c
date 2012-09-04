@@ -2277,28 +2277,35 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
      }
    pp = ed->table_parts[part_id % ed->table_parts_size];
 
-   switch (pp->part->type)
+   if (pp->nested_smart)  /* using nested_smart for nested parts */
      {
-      case EDJE_PART_TYPE_IMAGE:
-      case EDJE_PART_TYPE_TEXT:
-      case EDJE_PART_TYPE_TEXTBLOCK:
-      case EDJE_PART_TYPE_RECTANGLE:
-      case EDJE_PART_TYPE_BOX:
-      case EDJE_PART_TYPE_TABLE:
-      case EDJE_PART_TYPE_PROXY:
-         evas_object_image_source_set(ep->object, pp->object);
-         break;
-      case EDJE_PART_TYPE_GRADIENT:
-         /* FIXME: THIS ONE SHOULD NEVER BE TRIGGERED. */
-         break;
-      case EDJE_PART_TYPE_GROUP:
-      case EDJE_PART_TYPE_SWALLOW:
-      case EDJE_PART_TYPE_EXTERNAL:
-         evas_object_image_source_set(ep->object, pp->swallowed_object);
-         break;
-      case EDJE_PART_TYPE_SPACER:
-         /* FIXME: detect that at compile time and prevent it */
-         break;
+        evas_object_image_source_set(ep->object, pp->nested_smart);
+     }
+   else
+     {
+        switch (pp->part->type)
+          {
+           case EDJE_PART_TYPE_IMAGE:
+           case EDJE_PART_TYPE_TEXT:
+           case EDJE_PART_TYPE_TEXTBLOCK:
+           case EDJE_PART_TYPE_RECTANGLE:
+           case EDJE_PART_TYPE_BOX:
+           case EDJE_PART_TYPE_TABLE:
+           case EDJE_PART_TYPE_PROXY:
+              evas_object_image_source_set(ep->object, pp->object);
+              break;
+           case EDJE_PART_TYPE_GRADIENT:
+              /* FIXME: THIS ONE SHOULD NEVER BE TRIGGERED. */
+              break;
+           case EDJE_PART_TYPE_GROUP:
+           case EDJE_PART_TYPE_SWALLOW:
+           case EDJE_PART_TYPE_EXTERNAL:
+              evas_object_image_source_set(ep->object, pp->swallowed_object);
+              break;
+           case EDJE_PART_TYPE_SPACER:
+              /* FIXME: detect that at compile time and prevent it */
+              break;
+          }
      }
 
    evas_object_image_fill_set(ep->object, p3->type.common.fill.x, p3->type.common.fill.y,
@@ -2924,6 +2931,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
               /* visibility and color have no meaning on SWALLOW and GROUP part. */
               evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
               evas_object_resize(ep->object, pf->w, pf->h);
+
+              if (ep->nested_smart)
+                {  /* Move, Resize all nested parts */
+                   /* Not really needed but will improve the bounding box evaluation done by Evas */
+                   evas_object_move(ep->nested_smart,
+                                    ed->x + pf->x, ed->y + pf->y);
+                   evas_object_resize(ep->nested_smart, pf->w, pf->h);
+                }
               if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                 _edje_entry_real_part_configure(ep);
               break;
@@ -3056,13 +3071,30 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              if (chosen_desc->map.alpha) evas_map_alpha_set(map, 1);
              else evas_map_alpha_set(map, 0);
 
-             evas_object_map_set(mo, map);
-             evas_object_map_enable_set(mo, 1);
+
+             if (ep->nested_smart)
+               {  /* Apply map to smart obj holding nested parts */
+                  evas_object_map_set(ep->nested_smart, map);
+                  evas_object_map_enable_set(ep->nested_smart, 1);
+               }
+             else
+               {
+                  evas_object_map_set(mo, map);
+                  evas_object_map_enable_set(mo, 1);
+               }
           }
         else
           {
-             evas_object_map_enable_set(mo, 0);
-             evas_object_map_set(mo, NULL);
+             if (ep->nested_smart)
+               {  /* Cancel map of smart obj holding nested parts */
+                  evas_object_map_enable_set(ep->nested_smart, 0);
+                  evas_object_map_set(ep->nested_smart, NULL);
+               }
+             else
+               {
+                  evas_object_map_enable_set(mo, 0);
+                  evas_object_map_set(mo, NULL);
+               }
           }
      }
 

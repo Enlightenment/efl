@@ -179,7 +179,7 @@ struct _Edje_Smart_Api
 {
    Evas_Smart_Class base;
    int version;
-   Eina_Bool (*file_set)(Evas_Object *obj, const char *file, const char *group);
+   Eina_Bool (*file_set)(Evas_Object *obj, const char *file, const char *group, Eina_Array *nested);
 };
 
 /* Basic macro to init the Edje Smart API */
@@ -873,6 +873,7 @@ struct _Edje_Part
    unsigned char          multiline;
    unsigned char          access; /* it will be used accessibility feature */
    Edje_Part_Api          api;
+   unsigned char          nested_children_count;
 };
 
 struct _Edje_Part_Image_Id
@@ -1312,6 +1313,7 @@ struct _Edje_Real_Part
    Edje                     *edje; // 4
    Edje_Part                *part; // 4
    Evas_Object              *object; // 4
+   Evas_Object              *nested_smart; // 4
    int                       x, y, w, h; // 16
    Edje_Rectangle            req; // 16
 
@@ -1374,7 +1376,7 @@ struct _Edje_Real_Part
 #ifdef EDJE_CALC_CACHE
    unsigned char             invalidate : 1; // 0
 #endif
-}; //  264
+}; //  268
 // WITH EDJE_CALC_CACHE: 404
 
 struct _Edje_Running_Program
@@ -1719,7 +1721,7 @@ void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 void  _edje_edd_init(void);
 void  _edje_edd_shutdown(void);
 
-int _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path);
+int _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
 void  _edje_file_add(Edje *ed);
 void  _edje_file_del(Edje *ed);

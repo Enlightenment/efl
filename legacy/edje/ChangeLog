@@ -589,3 +589,8 @@
 2012-09-04  Jihoon Kim (jihoon)
 
 	* Add EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
+
+2012-09-04  Aharon Hillel
+
+	* Added nested parts support.
+	This lets us do nested parts, e.g parts "{ part { part { } } }"

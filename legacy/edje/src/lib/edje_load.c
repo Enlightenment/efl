@@ -24,6 +24,40 @@ struct _Edje_Drag_Items
    } page;
 };
 
+/* START - Nested part support */
+#define _edje_smart_nested_type "Evas_Smart_Nested"
+typedef struct _Edje_Nested_Support Edje_Nested_Support;
+struct _Edje_Nested_Support
+{  /* We builed nested-parts list using this struct */
+   Evas_Object *o;        /* Smart object containing nested children */
+   unsigned char nested_children_count; /* Number of nested children */
+};
+
+Evas_Smart *
+_edje_smart_nested_smart_class_new(void)
+{
+   static Evas_Smart_Class _sc = EVAS_SMART_CLASS_INIT_NAME_VERSION("EdjeNested");
+   static const Evas_Smart_Class *class = NULL;
+   static Evas_Smart *smart;
+
+   if (smart)
+     return smart;
+
+   class = &_sc;
+   smart = evas_smart_class_new(class);
+   return smart;
+}
+
+
+Evas_Object *
+edje_smart_nested_add(Evas *evas)
+{
+      return evas_object_smart_add(evas, _edje_smart_nested_smart_class_new());
+}
+
+/* END   - Nested part support */
+
+
 #ifdef EDJE_PROGRAM_CACHE
 static Eina_Bool  _edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata);
 #endif
@@ -41,11 +75,17 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *group)
 {
    Eina_Bool ret;
    Edje *ed;
+   Eina_Array *nested;
 
    ed = _edje_fetch(obj);
    if (!ed)
      return EINA_FALSE;
-   ret = ed->api->file_set(obj, file, group);
+
+   nested = eina_array_new(8);
+   ret = ed->api->file_set(obj, file, group, nested);
+   eina_array_free(nested);
+   nested = NULL;
+
    _edje_object_orientation_inform(obj);
    return ret;
 }
@@ -298,7 +338,7 @@ _edje_programs_patterns_init(Edje *ed)
 }
 
 int
-_edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path)
+_edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
 {
    Edje *ed;
    Evas *tev;
@@ -310,6 +350,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    unsigned int n;
    Eina_List *parts = NULL;
    int group_path_started = 0;
+   Evas_Object *nested_smart = NULL;
+
+   /* Get data pointer of top-of-stack */
+   int idx = eina_array_count(nested) - 1;
+   Edje_Nested_Support *st_nested = (idx >= 0) ? eina_array_data_get(nested, idx) : NULL;
 
    ed = _edje_fetch(obj);
    if (!ed) return 0;
@@ -409,6 +454,22 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  Edje_Part *ep;
 
 		  ep = ed->collection->parts[n];
+
+                  if (ep->nested_children_count)
+                    {  /* Add object to nested parts list */
+                       st_nested = malloc(sizeof(*st_nested));
+                       nested_smart = st_nested->o = edje_smart_nested_add(tev);
+
+                       /* We add 1 to children_count because the parent
+                          object is added to smart obj children as well */
+                       st_nested->nested_children_count =
+                          ep->nested_children_count + 1;
+
+                       evas_object_show(st_nested->o);
+
+                       eina_array_push(nested, st_nested);
+                    }
+
 		  rp = eina_mempool_malloc(_edje_real_part_mp, sizeof(Edje_Real_Part));
 		  if (!rp)
 		    {
@@ -501,7 +562,47 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
 		  if (rp->object)
 		    {
-		       evas_object_smart_member_add(rp->object, ed->obj);
+                       if (nested_smart)
+                         {  /* Update this pointer to father object only
+                               this will make smart object size == father sz */
+                            rp->nested_smart = nested_smart;
+                            nested_smart = NULL;
+                         }
+
+                       if (st_nested && st_nested->nested_children_count)
+                         {  /* Add this to list of children */
+                            evas_object_smart_member_add(rp->object,
+							 st_nested->o);
+
+                            st_nested->nested_children_count--;
+
+                            /* No more nested children for this obj */
+                            while (st_nested && (st_nested->nested_children_count == 0))
+                              {
+                                 /* Loop to add smart counter as child */
+                                 Evas_Object *p_obj = st_nested->o;
+
+                                 st_nested = eina_array_pop(nested);
+                                 free(st_nested);
+
+                                 /* Check for parent in stack */
+                                 idx = eina_array_count(nested) - 1;
+                                 st_nested = (idx >= 0) ? eina_array_data_get(nested,idx) : NULL;
+
+                                 if (st_nested)
+                                   {
+                                      st_nested->nested_children_count--;
+                                      evas_object_smart_member_add(p_obj, st_nested->o);
+                                   }
+                                 else
+                                   {
+                                      evas_object_smart_member_add(p_obj, ed->obj);
+                                   }
+                              }
+                         }
+                       else
+                         evas_object_smart_member_add(rp->object, ed->obj);
+
 //		       evas_object_layer_set(rp->object, evas_object_layer_get(ed->obj));
 		       if (ep->type != EDJE_PART_TYPE_SWALLOW && ep->type != EDJE_PART_TYPE_GROUP && ep->type != EDJE_PART_TYPE_EXTERNAL)
 			 {
@@ -775,7 +876,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                             _edje_real_part_swallow(rp, child_obj, EINA_FALSE);
 			 }
 
-		       if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path))
+		       if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path, nested))
 			 {
                             ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
                                 rp->part->name, group_path_entry, file, source);

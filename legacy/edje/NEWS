@@ -5,6 +5,7 @@ Changes since Edje 1.8.0:
 
 Additions:
     * Report type of file when listing file used by an edc.
+    * Add nested parts support.
     * Add EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
 
 Improvements:

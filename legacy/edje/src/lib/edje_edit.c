@@ -123,7 +123,7 @@ struct _Program_Script
 static void _edje_edit_smart_add(Evas_Object *obj);
 static void _edje_edit_smart_del(Evas_Object *obj);
 
-static Eina_Bool _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group);
+static Eina_Bool _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group, Eina_Array *nested);
 static Eina_Bool _edje_edit_edje_file_save(Eet_File *eetf, Edje_File *ef);
 
 EVAS_SMART_SUBCLASS_NEW(_edje_edit_type, _edje_edit, Edje_Smart_Api,
@@ -212,7 +212,7 @@ _edje_edit_program_script_free(Program_Script *ps)
 }
 
 static Eina_Bool
-_edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group)
+_edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group, Eina_Array *nested)
 {
    Edje_Edit *eed;
    Eet_File *ef;
@@ -237,7 +237,7 @@ _edje_edit_smart_file_set(Evas_Object *obj, const char *file, const char *group)
     *    (GROUP parts or BOX/TABLE items pointing to non-existent/renamed
     *    groups).
     */
-   if (!_edje_edit_parent_sc->file_set(obj, file, group))
+   if (!_edje_edit_parent_sc->file_set(obj, file, group, nested))
      return EINA_FALSE;
 
    eed->program_scripts = eina_hash_int32_new((Eina_Free_Cb)_edje_edit_program_script_free);

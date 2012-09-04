@@ -44,8 +44,7 @@ static void  new_statement(void);
 static char *perform_math (char *input);
 static int   isdelim(char c);
 static char *next_token(char *p, char *end, char **new_p, int *delim);
-static char *stack_id(void);
-static void  stack_chop_top(void);
+static const char *stack_id(void);
 static void  parse(char *data, off_t size);
 
 /* simple expression parsing protos */
@@ -82,18 +81,16 @@ static int   verbatim = 0;
 static int   verbatim_line1 = 0;
 static int   verbatim_line2 = 0;
 static char *verbatim_str = NULL;
+static Eina_Strbuf *stack_buf = NULL;
 
 static void
 err_show_stack(void)
 {
-   char *s;
+   const char *s;
    
    s = stack_id();
    if (s)
-     {
-        ERR("PARSE STACK:\n%s", s);
-        free(s);
-     }
+      ERR("PARSE STACK:\n%s", s);
    else
       ERR("NO PARSE STACK");
 }
@@ -120,6 +117,7 @@ err_show(void)
 
 static Eina_Hash *_new_object_hash = NULL;
 static Eina_Hash *_new_statement_hash = NULL;
+static Eina_Hash *_new_nested_hash = NULL;
 static void
 fill_object_statement_hashes(void)
 {
@@ -129,25 +127,32 @@ fill_object_statement_hashes(void)
    
    _new_object_hash = eina_hash_string_superfast_new(NULL);
    _new_statement_hash = eina_hash_string_superfast_new(NULL);
+   _new_nested_hash = eina_hash_string_superfast_new(NULL);
    
    n = object_handler_num();
    for (i = 0; i < n; i++)
      {
-        eina_hash_add(_new_object_hash, object_handlers[i].type,
-                      &(object_handlers[i]));
+        eina_hash_direct_add(_new_object_hash, object_handlers[i].type,
+                             &(object_handlers[i]));
      }
    n = statement_handler_num();
    for (i = 0; i < n; i++)
      {
-        eina_hash_add(_new_statement_hash, statement_handlers[i].type,
-                      &(statement_handlers[i]));
+        eina_hash_direct_add(_new_statement_hash, statement_handlers[i].type,
+                             &(statement_handlers[i]));
+     }
+   n = nested_handler_num();
+   for (i = 0; i < n; i++)
+     {
+        eina_hash_direct_add(_new_nested_hash, nested_handlers[i].type,
+                             &(nested_handlers[i]));
      }
 }
 
 static void
 new_object(void)
 {
-   char *id;
+   const char *id;
    New_Object_Handler *oh;
    New_Statement_Handler *sh;
 
@@ -170,13 +175,12 @@ new_object(void)
              exit(-1);
           }
      }
-   free(id);
 }
 
 static void
 new_statement(void)
 {
-   char *id;
+   const char *id;
    New_Statement_Handler *sh;
 
    fill_object_statement_hashes();
@@ -194,7 +198,6 @@ new_statement(void)
         err_show();
         exit(-1);
      }
-   free(id);
 }
 
 static char *
@@ -432,46 +435,120 @@ next_token(char *p, char *end, char **new_p, int *delim)
    return tok;
 }
 
-static char *
-stack_id(void)
+static void
+stack_push(char *token)
 {
-   char *id;
-   int len;
-   Eina_List *l;
-   char *data;
+   New_Nested_Handler *nested;
+   Eina_Bool do_append = EINA_TRUE;
 
-   len = 0;
-   EINA_LIST_FOREACH(stack, l, data)
-     len += strlen(data) + 1;
-   id = mem_alloc(len);
-   id[0] = 0;
-   EINA_LIST_FOREACH(stack, l, data)
+   if (eina_list_count(stack) > 1)
      {
-	strcat(id, data);
-	if (eina_list_next(l)) strcat(id, ".");
+        if (!strcmp(token, eina_list_data_get(eina_list_last(stack))))
+          {
+             char *tmp;
+             int token_length;
+
+             token_length = strlen(token);
+             tmp = alloca(eina_strbuf_length_get(stack_buf));
+             memcpy(tmp,
+                    eina_strbuf_string_get(stack_buf),
+                    eina_strbuf_length_get(stack_buf) - token_length - 1);
+             tmp[eina_strbuf_length_get(stack_buf) - token_length - 1] = '\0';
+
+             nested = eina_hash_find(_new_nested_hash, tmp);
+             if (nested)
+               {
+                  if (!strcmp(token, nested->token) &&
+                      stack && !strcmp(eina_list_data_get(eina_list_last(stack)), nested->token))
+                    {
+                       /* Do not append the nested token in buffer */
+                       do_append = EINA_FALSE;
+                       if (nested->func_push) nested->func_push();
+                    }
+               }
+          }
      }
-   return id;
+   if (do_append)
+     {
+        if (stack) eina_strbuf_append(stack_buf, ".");
+        eina_strbuf_append(stack_buf, token);
+     }
+   stack = eina_list_append(stack, token);
 }
 
 static void
-stack_chop_top(void)
+stack_pop(void)
 {
-   char *top;
+   char *tmp;
+   int tmp_length;
+   Eina_Bool do_remove = EINA_TRUE;
 
-   /* remove top from stack */
-   top = eina_list_data_get(eina_list_last(stack));
-   if (top)
-     {
-	free(top);
-	stack = eina_list_remove(stack, top);
-     }
-   else
+   if (!stack)
      {
 	ERR("parse error %s:%i. } marker without matching { marker",
 	    file_in, line - 1);
         err_show();
 	exit(-1);
      }
+   tmp = eina_list_data_get(eina_list_last(stack));
+   tmp_length = strlen(tmp);
+
+   stack = eina_list_remove_list(stack, eina_list_last(stack));
+   if (eina_list_count(stack) > 0)
+     {
+        const char *prev;
+        New_Nested_Handler *nested;
+        char *hierarchy;
+        char *lookup;
+
+        hierarchy = alloca(eina_strbuf_length_get(stack_buf));
+        memcpy(hierarchy,
+               eina_strbuf_string_get(stack_buf),
+               eina_strbuf_length_get(stack_buf));
+
+        /* This is nasty, but it's the way to get parts.part when they are collapsed together. still not perfect */
+        lookup = strrchr(hierarchy + eina_strbuf_length_get(stack_buf) - tmp_length, '.');
+        while (lookup)
+          {
+             hierarchy[lookup - hierarchy] = '\0';
+             nested = eina_hash_find(_new_nested_hash, hierarchy);
+             if (nested && nested->func_pop) nested->func_pop();
+             lookup = strrchr(hierarchy + eina_strbuf_length_get(stack_buf) - tmp_length, '.');
+          }
+
+        hierarchy[eina_strbuf_length_get(stack_buf) - 1 - tmp_length] = '\0';
+
+        nested = eina_hash_find(_new_nested_hash, hierarchy);
+        if (nested)
+          {
+             if (nested->func_pop) nested->func_pop();
+
+             prev = eina_list_data_get(eina_list_last(stack));
+             if (!strcmp(tmp, prev))
+               {
+                  if (!strcmp(nested->token, tmp))
+                    do_remove = EINA_FALSE;
+               }
+          }
+
+        if (do_remove)
+          eina_strbuf_remove(stack_buf,
+                             eina_strbuf_length_get(stack_buf) - tmp_length - 1,
+                             eina_strbuf_length_get(stack_buf)); /* remove: '.tmp' */
+     }
+   else
+     {
+        eina_strbuf_remove(stack_buf,
+                           eina_strbuf_length_get(stack_buf) - tmp_length,
+                           eina_strbuf_length_get(stack_buf)); /* remove: 'tmp' */
+     }
+   free(tmp);
+}
+
+static const char *
+stack_id(void)
+{
+   return eina_strbuf_string_get(stack_buf);
 }
 
 static void
@@ -483,6 +560,8 @@ parse(char *data, off_t size)
 
    DBG("Parsing input file");
 
+   /* Allocate arrays used to impl nested parts */
+   edje_cc_handlers_hierarchy_alloc();
    p = data;
    end = data + size;
    line = 1;
@@ -511,7 +590,7 @@ parse(char *data, off_t size)
 		       exit(-1);
 		    }
 		  else
-		    stack_chop_top();
+		    stack_pop();
 	       }
 	     else if (*token == ';')
 	       {
@@ -526,7 +605,7 @@ parse(char *data, off_t size)
 			    params = eina_list_remove(params, eina_list_data_get(params));
 			 }
 		       /* remove top from stack */
-		       stack_chop_top();
+		       stack_pop();
 		    }
 	       }
 	     else if (*token == '{')
@@ -547,7 +626,7 @@ parse(char *data, off_t size)
 	       params = eina_list_append(params, token);
 	     else
 	       {
-		  stack = eina_list_append(stack, token);
+                  stack_push(token);
 		  new_object();
 		  if ((verbatim == 1) && (p < (end - 2)))
 		    {
@@ -629,6 +708,7 @@ parse(char *data, off_t size)
 	  }
      }
 
+   edje_cc_handlers_hierarchy_free();
    DBG("Parsing done");
 }
 
@@ -773,7 +853,12 @@ compile(void)
    lseek(fd, 0, SEEK_SET);
    data = malloc(size);
    if (data && (read(fd, data, size) == size))
-      parse(data, size);
+     {
+        stack_buf = eina_strbuf_new();
+        parse(data, size);
+        eina_strbuf_free(stack_buf);
+        stack_buf = NULL;
+     }
    else
      {
 	ERR("Cannot read file \"%s\". %s", file_in, strerror(errno));

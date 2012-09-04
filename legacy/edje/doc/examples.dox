@@ -4,6 +4,7 @@
  * Here is a page with examples.
  *
  * @li @ref Example_Edje_Basics
+ * @li @ref tutorial_edje_nested
  * @li @ref tutorial_edje_swallow
  * @li @ref tutorial_edje_swallow2
  * @li @ref tutorial_edje_text
@@ -151,6 +152,29 @@
  * edje_cc basic.edc
  * @endverbatim
  * @example edje-basic.c
+ */
+
+/**
+ * @page tutorial_edje_nested Edje Nested Part (hierarchy) example
+ *
+ * Nested part feature represents the concept of hierarchy to edje.
+ *
+ * A nested part inherits it's location relatively to the parent part.
+ * Thus, parent part modifications such move or map effects all nested parts.
+ * To declare a nested part just start a new part declaration within
+ * (before closing) the current part declaration.
+ *
+ * Note that nested part declaration is allowed only after
+ * current part name is defined.
+ *
+ * Here's an example of a rect nested in other rect plus inner nested rect:
+ * @include edje-nested.edc
+ *
+ * The example's window should look like this picture:
+ *
+ * @image html edje-nested.png
+ * @image rtf edje-nested.png
+ * @image latex edje-nested.eps width=\textwidth
  */
 
 /**

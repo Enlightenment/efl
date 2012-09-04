@@ -72,6 +72,25 @@ static Edje_Part_Description_Common *current_desc = NULL;
 static Edje_Part_Description_Common *parent_desc = NULL;
 static Edje_Program *current_program = NULL;
 
+struct _Edje_Cc_Handlers_Hierarchy_Info
+{  /* Struct that keeps globals value to impl hierarchy */
+   Edje_Part_Collection_Directory_Entry *current_de;
+   Edje_Part *current_part;
+   Edje_Pack_Element *current_item;
+   Edje_Part_Description_Common *current_desc;
+   Edje_Part_Description_Common *parent_desc;
+   Edje_Program *current_program;
+   Edje_Part *ep;
+};
+typedef struct _Edje_Cc_Handlers_Hierarchy_Info Edje_Cc_Handlers_Hierarchy_Info;
+
+static Eina_Array *part_hierarchy = NULL; /* stack parts,support nested parts */
+static void edje_cc_handlers_hierarchy_set(Edje_Part *src);
+static Edje_Part *edje_cc_handlers_hierarchy_parent_get(void);
+static void edje_cc_handlers_hierarchy_push(Edje_Part *ep, Edje_Part *cp);
+static void edje_cc_handlers_hierarchy_rename(Edje_Part *old, Edje_Part *new);
+static void edje_cc_handlers_hierarchy_pop(void);
+
 static void st_externals_external(void);
 
 static void st_images_image(void);
@@ -118,6 +137,7 @@ static void ob_collections_group_lua_script(void);
 
 static void st_collections_group_parts_alias(void);
 
+static Edje_Part *edje_cc_handlers_part_make(void);
 static void ob_collections_group_parts_part(void);
 static void st_collections_group_parts_part_name(void);
 static void st_collections_group_parts_part_type(void);
@@ -182,11 +202,13 @@ static void st_collections_group_parts_part_description_aspect(void);
 static void st_collections_group_parts_part_description_aspect_preference(void);
 static void st_collections_group_parts_part_description_rel1_relative(void);
 static void st_collections_group_parts_part_description_rel1_offset(void);
+static void st_collections_group_parts_part_description_rel1_to_set(const char *name);
 static void st_collections_group_parts_part_description_rel1_to(void);
 static void st_collections_group_parts_part_description_rel1_to_x(void);
 static void st_collections_group_parts_part_description_rel1_to_y(void);
 static void st_collections_group_parts_part_description_rel2_relative(void);
 static void st_collections_group_parts_part_description_rel2_offset(void);
+static void st_collections_group_parts_part_description_rel2_to_set(const char *name);
 static void st_collections_group_parts_part_description_rel2_to(void);
 static void st_collections_group_parts_part_description_rel2_to_x(void);
 static void st_collections_group_parts_part_description_rel2_to_y(void);
@@ -808,6 +830,10 @@ New_Object_Handler object_handlers[] =
      {"collections.group.programs.script", ob_collections_group_script} /* dup */
 };
 
+New_Nested_Handler nested_handlers[] = {
+     {"collections.group.parts", "part", NULL, edje_cc_handlers_hierarchy_pop }
+};
+
 /*****/
 
 int
@@ -820,6 +846,12 @@ int
 statement_handler_num(void)
 {
    return sizeof(statement_handlers) / sizeof (New_Object_Handler);
+}
+
+int
+nested_handler_num(void)
+{
+   return sizeof(nested_handlers) / sizeof (New_Nested_Handler);
 }
 
 static void
@@ -2373,7 +2405,7 @@ st_collections_group_inherit(void)
    for (i = 0 ; i < pc2->parts_count ; i++)
      {
         // copy the part
-        ob_collections_group_parts_part();
+        edje_cc_handlers_part_make();
         ep = pc->parts[i];
         ep2 = pc2->parts[i];
         ep->name = STRDUP(ep2->name);
@@ -2406,6 +2438,7 @@ st_collections_group_inherit(void)
         ep->dragable.y = ep2->dragable.y;
         ep->dragable.step_y = ep2->dragable.step_y;
         ep->dragable.count_y = ep2->dragable.count_y;
+        ep->nested_children_count = ep2->nested_children_count;
 
         data_queue_copied_part_lookup(pc, &(ep2->dragable.confine_id), &(ep->dragable.confine_id));
         data_queue_copied_part_lookup(pc, &(ep2->dragable.event_id), &(ep->dragable.event_id));
@@ -2964,9 +2997,9 @@ st_collections_group_parts_alias(void)
         on a button.
     @endblock
 */
-static void
-ob_collections_group_parts_part(void)
-{
+static Edje_Part *
+edje_cc_handlers_part_make(void)
+{  /* Doing ob_collections_group_parts_part() job, without hierarchy */
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    Edje_Part_Parser *epp;
@@ -2997,6 +3030,7 @@ ob_collections_group_parts_part(void)
    ep->dragable.confine_id = -1;
    ep->dragable.event_id = -1;
    ep->items = NULL;
+   ep->nested_children_count = 0;
 
    epp = (Edje_Part_Parser *)ep;
    epp->reorder.insert_before = NULL;
@@ -3007,6 +3041,23 @@ ob_collections_group_parts_part(void)
    epp->reorder.linked_next = 0;
    epp->reorder.done = EINA_FALSE;
    epp->can_override = EINA_FALSE;
+
+   return ep;
+}
+
+static void
+ob_collections_group_parts_part(void)
+{
+   Edje_Part *cp = current_part;  /* Save to restore on pop    */
+   Edje_Part *ep = edje_cc_handlers_part_make(); /* This changes current_part */
+   Edje_Part *prnt;
+
+   /* Add this new part to hierarchy stack (removed part finished parse) */
+   edje_cc_handlers_hierarchy_push(ep, cp);
+
+   prnt = edje_cc_handlers_hierarchy_parent_get();
+   if (prnt)  /* This is the child of parent in stack */
+     prnt->nested_children_count++;
 }
 
 /**
@@ -3039,8 +3090,10 @@ st_collections_group_parts_part_name(void)
         unsigned int i;
 
         for (i = 0; i < (pc->parts_count - 1); i++)
-          {
-             if (pc->parts[i]->name && (!strcmp(pc->parts[i]->name, ep->name)))
+          {  /* Compare name only if did NOT updated ep from hircy pop */
+             if ((ep != pc->parts[i]) &&
+                   (pc->parts[i]->name &&
+                    (!strcmp(pc->parts[i]->name, ep->name))))
                {
                   epp = (Edje_Part_Parser *)pc->parts[i];
                   if (!epp->can_override)
@@ -3054,7 +3107,9 @@ st_collections_group_parts_part_name(void)
                        free(ep);
                        pc->parts_count--;
                        pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
-                       ep = current_part = pc->parts[i];
+                       current_part = pc->parts[i];
+                       edje_cc_handlers_hierarchy_rename(ep, current_part);
+                       ep = current_part;
                        epp->can_override = EINA_FALSE;
                        break;
                     }
@@ -3141,6 +3196,38 @@ st_collections_group_parts_part_type(void)
 
    current_part->type = type;
 }
+
+/**
+    @page edcref
+    @property
+        part
+    @parameters
+        [part declaration]
+    @effect
+    @code
+        group {
+            parts {
+                part {
+                    name: "parent_rect";
+                    type: RECT;
+                    description { }
+                    part {
+                        name: "nested_rect";
+                        type: RECT;
+                        description { }
+                    }
+                }
+                ..
+            }
+        }
+    @endcode
+        Nested parts adds hierarchy to edje.
+        Nested part inherits it's location relatively to the parent part.
+        To declare a nested part just start a new part within current part decl.
+        You must define parent part name before adding nested parts.
+    @endproperty
+    @since 1.7.0
+*/
 
 /**
     @page edcref
@@ -4265,7 +4352,7 @@ static void st_collections_group_parts_part_table_items_item_span(void)
 */
 static void
 ob_collections_group_parts_part_description(void)
-{
+{  /* Allocate and set desc, set relative part hierarchy if needed */
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    Edje_Part_Description_Common *ed;
@@ -4275,9 +4362,20 @@ ob_collections_group_parts_part_description(void)
 
    ed = _edje_part_description_alloc(ep->type, pc->part, ep->name);
 
+   ed->rel1.id_x = -1;
+   ed->rel1.id_y = -1;
+   ed->rel2.id_x = -1;
+   ed->rel2.id_y = -1;
+
    if (!ep->default_desc)
      {
         current_desc = ep->default_desc = ed;
+
+          {  /* Get the ptr of the part above current part in hierarchy */
+             Edje_Part *node = edje_cc_handlers_hierarchy_parent_get();
+             if (node)  /* Make relative according to part hierarchy */
+               edje_cc_handlers_hierarchy_set(node);
+          }
      }
    else
      {
@@ -4301,14 +4399,10 @@ ob_collections_group_parts_part_description(void)
    ed->rel1.relative_y = FROM_DOUBLE(0.0);
    ed->rel1.offset_x = 0;
    ed->rel1.offset_y = 0;
-   ed->rel1.id_x = -1;
-   ed->rel1.id_y = -1;
    ed->rel2.relative_x = FROM_DOUBLE(1.0);
    ed->rel2.relative_y = FROM_DOUBLE(1.0);
    ed->rel2.offset_x = -1;
    ed->rel2.offset_y = -1;
-   ed->rel2.id_x = -1;
-   ed->rel2.id_y = -1;
    ed->color_class = NULL;
    ed->color.r = 255;
    ed->color.g = 255;
@@ -5148,20 +5242,23 @@ st_collections_group_parts_part_description_rel1_offset(void)
     @endproperty
 */
 static void
-st_collections_group_parts_part_description_rel1_to(void)
+st_collections_group_parts_part_description_rel1_to_set(const char *name)
 {
    Edje_Part_Collection *pc;
-
-   check_arg_count(1);
-
    pc = eina_list_data_get(eina_list_last(edje_collections));
+   data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
+   data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
+}
+
+static void
+st_collections_group_parts_part_description_rel1_to(void)
+{
+   check_arg_count(1);
 
    {
       char *name;
-
       name = parse_str(0);
-      data_queue_part_lookup(pc, name, &(current_desc->rel1.id_x));
-      data_queue_part_lookup(pc, name, &(current_desc->rel1.id_y));
+      st_collections_group_parts_part_description_rel1_to_set(name);
       free(name);
    }
 }
@@ -5245,20 +5342,23 @@ st_collections_group_parts_part_description_rel2_offset(void)
 }
 
 static void
-st_collections_group_parts_part_description_rel2_to(void)
+st_collections_group_parts_part_description_rel2_to_set(const char *name)
 {
    Edje_Part_Collection *pc;
-
-   check_arg_count(1);
-
    pc = eina_list_data_get(eina_list_last(edje_collections));
+   data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
+   data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
+}
+
+static void
+st_collections_group_parts_part_description_rel2_to(void)
+{
+   check_arg_count(1);
 
    {
       char *name;
-
       name = parse_str(0);
-      data_queue_part_lookup(pc, name, &(current_desc->rel2.id_x));
-      data_queue_part_lookup(pc, name, &(current_desc->rel2.id_y));
+      st_collections_group_parts_part_description_rel2_to_set(name);
       free(name);
    }
 }
@@ -8051,3 +8151,86 @@ ob_collections_group_programs_program_script(void)
     @page edcref
     </table>
 */
+
+static void
+edje_cc_handlers_hierarchy_set(Edje_Part *src)
+{  /* This funcion makes current part rel_1.id, rel_2.id relative to src */
+   if (!src->name)
+     {
+        ERR("parse error %s:%i. You must set parent name before creating nested part",
+            file_in, line - 1);
+        exit(-1);
+     }
+   st_collections_group_parts_part_description_rel1_to_set(src->name);
+   st_collections_group_parts_part_description_rel2_to_set(src->name);
+}
+
+static Edje_Part *
+edje_cc_handlers_hierarchy_parent_get(void)
+{  /* Return the parent part pointer */
+   int idx = eina_array_count(part_hierarchy) - 2;
+   Edje_Cc_Handlers_Hierarchy_Info *info = (idx >= 0) ?
+      eina_array_data_get(part_hierarchy, idx) : NULL;
+
+   return (info) ? info->ep : NULL;
+}
+
+static void
+edje_cc_handlers_hierarchy_push(Edje_Part *ep, Edje_Part *cp)
+{  /* Remove part from hierarchy stack when finished parsing it */
+   Edje_Cc_Handlers_Hierarchy_Info *info = malloc(sizeof(*info));
+   info->current_de = current_de;
+   info->current_part = cp;  /* current_part restored on pop */
+   info->current_item = current_item;
+   info->current_desc = current_desc;
+   info->parent_desc = parent_desc;
+   info->current_program = current_program;
+   info->ep = ep;
+
+   eina_array_push(part_hierarchy, info);
+}
+
+static void
+edje_cc_handlers_hierarchy_rename(Edje_Part *old, Edje_Part *new)
+{
+   Edje_Cc_Handlers_Hierarchy_Info *item;
+   Eina_Array_Iterator iterator;
+   unsigned int i;       
+
+   EINA_ARRAY_ITER_NEXT(part_hierarchy, i, item, iterator)
+     {
+        if (item->ep == old) item->ep = new;
+        if (item->current_part == old) item->current_part = new;
+     }
+}
+
+void
+edje_cc_handlers_hierarchy_alloc(void)
+{
+   part_hierarchy = eina_array_new(8);
+}
+
+void
+edje_cc_handlers_hierarchy_free(void)
+{
+   eina_array_free(part_hierarchy);
+   part_hierarchy = NULL;
+}
+
+static void
+edje_cc_handlers_hierarchy_pop(void)
+{  /* Remove part from hierarchy stack when finished parsing it */
+   Edje_Cc_Handlers_Hierarchy_Info *info = eina_array_pop(part_hierarchy);
+
+   if (info)
+     {
+        current_de = info->current_de;
+        current_part = info->current_part;
+        current_item = info->current_item;
+        current_desc = info->current_desc;
+        parent_desc = info->parent_desc;
+        current_program = info->current_program;
+
+        free(info);
+     }
+}

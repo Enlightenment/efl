@@ -8,7 +8,7 @@ static void _edje_smart_show(Evas_Object * obj);
 static void _edje_smart_hide(Evas_Object * obj);
 static void _edje_smart_calculate(Evas_Object * obj);
 
-static Eina_Bool _edje_smart_file_set(Evas_Object *obj, const char *file, const char *group);
+static Eina_Bool _edje_smart_file_set(Evas_Object *obj, const char *file, const char *group, Eina_Array *nested);
 
 static Edje_Smart_Api _edje_smart_class = EDJE_SMART_API_INIT_NAME_VERSION("edje");
 static Evas_Smart_Class _edje_smart_parent;
@@ -342,7 +342,7 @@ _edje_smart_calculate(Evas_Object *obj)
 }
 
 static Eina_Bool
-_edje_smart_file_set(Evas_Object *obj, const char *file, const char *group)
+_edje_smart_file_set(Evas_Object *obj, const char *file, const char *group, Eina_Array *nested)
 {
-   return _edje_object_file_set_internal(obj, file, group, NULL, NULL);
+   return _edje_object_file_set_internal(obj, file, group, NULL, NULL, nested);
 }
