@@ -5,6 +5,9 @@ EDJE_CC_FLAGS_VERBOSE_0 =
 EDJE_CC_FLAGS_VERBOSE_1 = -v
 EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_$(V)) -id $(srcdir) -fd $(srcdir)
 
+EDJE_CODEGEN = @edje_codegen@
+EDJE_CODEGEN_FLAGS = --prefix=codegen_example
+
 examplesdir = $(datadir)/$(PACKAGE)/examples
 
 if ENABLE_MULTISENSE
@@ -21,6 +24,7 @@ EDCS = \
 	text.edc \
 	table.edc \
 	box.edc \
+	codegen.edc \
 	drag.edc \
 	edje_example.edc \
 	embryo_custom_state.edc \
@@ -60,6 +64,7 @@ files_DATA = \
 	test.png \
 	Vera.ttf \
         duck.wav \
+	edje-codegen-example.c \
 	edje_example.c \
 	edje-basic.c \
 	edje-swallow.c \
@@ -92,6 +97,13 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 @EDJE_CFLAGS@
 
+codegen_example_generated.c codegen_example_generated.h: codegen.edj
+	$(EDJE_CODEGEN) $(EDJE_CODEGEN_FLAGS) codegen.edj example_group $(builddir)/codegen_example_generated.c $(builddir)/codegen_example_generated.h
+
+edje_codegen_example_SOURCES = \
+	codegen_example_generated.c \
+	edje-codegen-example.c
+
 files_DATA += $(EDJS)
 
 examples_PROGRAMS = \
@@ -99,6 +111,7 @@ examples_PROGRAMS = \
 	edje-basic \
 	edje-box \
 	edje-box2 \
+	edje-codegen-example \
 	edje-color-class \
 	edje-drag\
 	edje-perspective \
@@ -118,4 +131,4 @@ LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
 endif
 
 clean-local:
-	rm -f *.edj
+	rm -f *.edj codegen_example_generated.*

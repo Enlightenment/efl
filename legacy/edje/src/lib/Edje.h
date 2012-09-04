@@ -93,6 +93,7 @@ You may use different tools to edit and view the generated ".edj"
 files, for instance:
 
   - edje_player (provided by Edje)
+  - edje_codegen (provided by Edje) @since 1.8.0
   - editje (http://trac.enlightenment.org/e/wiki/Editje)
   - edje_viewer (http://trac.enlightenment.org/e/wiki/Edje_Viewer)
 

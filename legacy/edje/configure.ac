@@ -97,6 +97,7 @@ AC_ARG_ENABLE([amalgamation],
 AM_CONDITIONAL([EDJE_AMALGAMATION], [test "x${do_amalgamation}" = "xyes"])
 
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
+EFL_WITH_BIN([edje], [edje-codegen], [edje_codegen])
 
 EFL_ENABLE_BIN([edje-cc])
 EFL_ENABLE_BIN([edje-decc])
