@@ -447,3 +447,7 @@
 
         * Add in more access subsystem features like activation cb.
         * Fix popup to apply the same style to the notify sub-widget.
+
+2012-09-04  Jihoon Kim (jihoon)
+
+        * Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.

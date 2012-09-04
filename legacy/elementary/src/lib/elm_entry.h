@@ -364,7 +364,8 @@ typedef enum
    ELM_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login */
    ELM_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next */
    ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search string or magnifier icon */
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEND     /**< Send */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEND,    /**< Send */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Sign-in @since 1.8 */
 } Elm_Input_Panel_Return_Key_Type;
 
 /**
