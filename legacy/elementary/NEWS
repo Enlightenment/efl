@@ -1,6 +1,10 @@
 Changes since Elementary 1.7.0:
 -------------------------
 
+Additions:
+
+   * Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
+
 Improvements:
 
    * Toolbar widget is now a scrollable widget.
