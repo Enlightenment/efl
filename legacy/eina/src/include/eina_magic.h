@@ -250,7 +250,7 @@ EAPI extern Eina_Error EINA_ERROR_MAGIC_FAILED;
  * If the magic feature of Eina is disabled, #EINA_MAGIC_CHECK is just
  * the value @c 1.
  */
-#define EINA_MAGIC_CHECK(d, m) ((d) && ((d)->__magic == (m)))
+#define EINA_MAGIC_CHECK(d, m) (EINA_LIKELY((d) && ((d)->__magic == (m))))
 
 /**
  * @def EINA_MAGIC_FAIL(d, m)
