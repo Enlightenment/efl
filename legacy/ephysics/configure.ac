@@ -2,7 +2,7 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
 m4_define([v_min], [1])
-m4_define([v_mic], [0])
+m4_define([v_mic], [99])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v '\(export\|Unversioned directory\)' || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
 ##--   When released, remove the dnl on the below line
@@ -83,9 +83,9 @@ AC_DEFINE_UNQUOTED(MODULE_ARCH, "${MODULE_ARCH}", "Module architecture")
 
 m4_ifdef([v_mic],
         [
-        EFL_COMPILER_FLAG([-Wshadow])
         EFL_COMPILER_FLAG([-Wall])
         EFL_COMPILER_FLAG([-Wextra])
+        EFL_COMPILER_FLAG([-Wunused])
         EFL_COMPILER_FLAG([-W])
         ])
 

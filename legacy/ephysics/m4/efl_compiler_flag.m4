@@ -12,7 +12,10 @@ AC_DEFUN([EFL_COMPILER_FLAG],
 
 CFLAGS_save="${CFLAGS}"
 CFLAGS="${CFLAGS} $1"
-  
+
+CPPFLAGS_save="${CPPFLAGS}"
+CPPFLAGS="${CPPFLAGS} $1"
+
 AC_LANG_PUSH([C])
 AC_MSG_CHECKING([whether the compiler supports $1])
 

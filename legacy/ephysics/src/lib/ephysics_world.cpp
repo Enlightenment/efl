@@ -143,11 +143,10 @@ _ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_World_Callbac
 }
 
 static void
-_ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep)
+_ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep __UNUSED__)
 {
    Eina_Bool world_active, camera_moved, tx, ty;
    btCollisionObjectArray objects;
-   EPhysics_World_Callback *cb;
    btRigidBody *rigid_body;
    EPhysics_World *world;
    EPhysics_Body *body;
@@ -253,7 +252,6 @@ static Eina_Bool
 _simulate_worlds(void *data __UNUSED__)
 {
    EPhysics_World *world;
-   double time_now;
    void *wrld, *bd;
 
    ephysics_init();
@@ -327,7 +325,7 @@ _ephysics_world_contact_processed_cb(btManifoldPoint &cp, void *b0, void *b1)
 }
 
 static void
-_ephysics_world_boundary_del_cb(void *data, EPhysics_Body *body, void *event_info)
+_ephysics_world_boundary_del_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
 {
    EPhysics_World *world = (EPhysics_World *) data;
    int i;
@@ -640,8 +638,6 @@ ephysics_world_serialize(const EPhysics_World *world, const char *path)
 EAPI void
 ephysics_world_del(EPhysics_World *world)
 {
-   EPhysics_World_Callback *cb;
-
    if (!world)
      {
         ERR("Can't delete world, it wasn't provided.");

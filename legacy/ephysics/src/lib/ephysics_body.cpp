@@ -103,8 +103,6 @@ _ephysics_body_event_callback_call(EPhysics_Body *body, EPhysics_Callback_Body_T
 void
 ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active)
 {
-   EPhysics_Body_Callback *cb;
-
    if (body->active == !!active) return;
    body->active = !!active;
    if (active) return;
@@ -116,9 +114,8 @@ ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active)
 Eina_Bool
 ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1)
 {
-   void *grp;
-   Eina_Iterator *it;
    Eina_List *l;
+   void *grp;
 
    if ((!body0->collision_groups) || (!body1->collision_groups))
      return EINA_TRUE;
@@ -643,7 +640,6 @@ void
 ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body, btVector3 position)
 {
    EPhysics_Body_Collision *collision;
-   EPhysics_Body_Callback *cb;
    EPhysics_World *world;;
    double rate;
    int wy, wh;
@@ -687,7 +683,7 @@ ephysics_body_soft_body_get(const EPhysics_Body *body)
 }
 
 static EPhysics_Body *
-_ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape, btSoftBody *soft_body, const char *type)
+_ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape, btSoftBody *soft_body)
 {
    EPhysics_Body *body;
    btSoftBody::AJoint::Specs angular_joint;
@@ -761,7 +757,7 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
         goto no_soft_body;
      }
 
-   body = _ephysics_body_soft_add(world, shape, soft_body, "soft circle");
+   body = _ephysics_body_soft_add(world, shape, soft_body);
    if (!body)
      goto no_body;
 
@@ -843,7 +839,7 @@ ephysics_body_soft_box_add(EPhysics_World *world)
         goto no_soft_body;
      }
 
-   body = _ephysics_body_soft_add(world, shape, soft_body, "soft box");
+   body = _ephysics_body_soft_add(world, shape, soft_body);
    if (!body)
      goto no_body;
 
@@ -1077,8 +1073,6 @@ ephysics_body_right_boundary_add(EPhysics_World *world)
 void
 ephysics_orphan_body_del(EPhysics_Body *body)
 {
-   EPhysics_Body_Callback *cb;
-
    _ephysics_body_event_callback_call(body, EPHYSICS_CALLBACK_BODY_DEL,
                                       (void *) body->evas_obj);
    _ephysics_body_del(body);
@@ -1290,8 +1284,6 @@ ephysics_body_mass_get(const EPhysics_Body *body)
 EAPI void
 ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y)
 {
-   double rate;
-
    if (!body)
      {
         ERR("Can't set body linear velocity, body is null.");
@@ -1788,15 +1780,12 @@ ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Evas_Coord po
 EAPI void
 ephysics_body_torque_apply(EPhysics_Body *body, double torque)
 {
-   double rate;
-
    if (!body)
      {
         ERR("Can't apply force to a null body.");
         return;
      }
 
-   rate = ephysics_world_rate_get(body->world);
    ephysics_body_forces_apply(body);
    body->rigid_body->applyTorque(btVector3(0, 0, -torque));
    _ephysics_body_forces_update(body);
