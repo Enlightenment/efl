@@ -360,6 +360,7 @@ Eina_Bool
 ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
 {
    btSoftBody *soft_body;
+   EPhysics_Body *bd;
 
    if (world->walking)
      {
@@ -378,6 +379,16 @@ ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
 
    world->bodies = eina_inlist_remove(world->bodies, EINA_INLIST_GET(body));
    ephysics_orphan_body_del(body);
+
+   /* Activate all the bodies after a body is deleted.
+      Otherwise it can lead to scenarios when a body 1, below body 2 is deleted
+      and body 2 will stay freezed in the air. Gravity won't start to
+      act over it until it's activated again. */
+   EINA_INLIST_FOREACH(world->bodies, bd)
+     {
+        btRigidBody *rigid_body = ephysics_body_rigid_body_get(bd);
+        rigid_body->activate(1);
+     }
 
    return EINA_TRUE;
 }
