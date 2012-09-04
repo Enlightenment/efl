@@ -790,28 +790,40 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
                                                   _EINA_INLIST_OFFSET(ref))
 #endif
 
-/** Macro to iterate over an inlist */
-#define EINA_INLIST_FOREACH(list, l)                                     \
-  for (l = NULL, l = (list ? _EINA_INLIST_CONTAINER(l, list) : NULL); l; \
-       l = (EINA_INLIST_GET(l)->next ? _EINA_INLIST_CONTAINER(l, EINA_INLIST_GET(l)->next) : NULL))
+/**
+ * @def EINA_INLIST_FOREACH
+ * @param list The list to iterate on.
+ * @param it The pointer to the list item, i.e. a pointer to each item
+ * that is part of the list.
+ */
+#define EINA_INLIST_FOREACH(list, it)                                     \
+  for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list) : NULL); it; \
+       it = (EINA_INLIST_GET(it)->next ? _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(it)->next) : NULL))
+
 /**
  * @def EINA_INLIST_FOREACH_SAFE
- * @param list The first list to be used.
- * @param list2 The second list to be used.
- * @param l The auxiliar variable to be used.
+ * @param list The list to iterate on.
+ * @param list2 Auxiliar Eina_Inlist variable so we can save the pointer to the
+ * next element, allowing us to free/remove the current one. Note that this
+ * macro is only safe if the next element is not removed. Only the current one
+ * is allowed to be removed.
+ * @param it The pointer to the list item, i.e. a pointer to each item
+ * that is part of the list.
  */
-#define EINA_INLIST_FOREACH_SAFE(list, list2, l) \
-   for (l = (list ? _EINA_INLIST_CONTAINER(l, list) : NULL), list2 = l ? ((EINA_INLIST_GET(l) ? EINA_INLIST_GET(l)->next : NULL)) : NULL; \
-        l; \
-        l = list2 ? _EINA_INLIST_CONTAINER(l, list2) : NULL, list2 = list2 ? list2->next : NULL)
+#define EINA_INLIST_FOREACH_SAFE(list, list2, it) \
+   for (it = (list ? _EINA_INLIST_CONTAINER(it, list) : NULL), list2 = it ? ((EINA_INLIST_GET(it) ? EINA_INLIST_GET(it)->next : NULL)) : NULL; \
+        it; \
+        it = list2 ? _EINA_INLIST_CONTAINER(it, list2) : NULL, list2 = list2 ? list2->next : NULL)
+
 /**
  * @def EINA_INLIST_REVERSE_FOREACH
- * @param list The list to be reversed.
- * @param l The auxiliar variable to be used.
+ * @param list The list to traversed in reverse order.
+ * @param it The pointer to the list item, i.e. a pointer to each item
+ * that is part of the list.
  */
-#define EINA_INLIST_REVERSE_FOREACH(list, l)                                \
-  for (l = NULL, l = (list ? _EINA_INLIST_CONTAINER(l, list->last) : NULL); \
-       l; l = (EINA_INLIST_GET(l)->prev ? _EINA_INLIST_CONTAINER(l, EINA_INLIST_GET(l)->prev) : NULL))
+#define EINA_INLIST_REVERSE_FOREACH(list, it)                                \
+  for (it = NULL, it = (list ? _EINA_INLIST_CONTAINER(it, list->last) : NULL); \
+       it; it = (EINA_INLIST_GET(it)->prev ? _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(it)->prev) : NULL))
 
 /**
  * @}
