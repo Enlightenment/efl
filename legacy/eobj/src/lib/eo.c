@@ -1,9 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <Eina.h>
 
 #include "Eo.h"
 #include "eo_private.h"
-
-#include "config.h"
 
 /* The last id that should be reserved for statically allocated classes. */
 #define EO_CLASS_IDS_FIRST 1
@@ -1569,4 +1571,3 @@ eo_manual_free(Eo *obj)
 
    _eo_free(obj);
 }
-

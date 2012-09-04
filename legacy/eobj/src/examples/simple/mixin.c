@@ -1,8 +1,10 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "mixin.h"
 #include "simple.h"
-
-#include "config.h"
 
 EAPI Eo_Op MIXIN_BASE_ID = 0;
 

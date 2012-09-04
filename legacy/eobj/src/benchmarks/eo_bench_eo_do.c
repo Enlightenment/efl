@@ -1,10 +1,9 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 
 #include "Eo.h"
 #include "eo_bench.h"
-
 #include "class_simple.h"
 
 static void

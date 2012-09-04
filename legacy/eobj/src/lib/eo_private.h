@@ -57,4 +57,3 @@ extern int _eo_log_dom;
 void _eo_condtor_done(Eo *obj);
 
 #endif
-

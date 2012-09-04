@@ -1,10 +1,12 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <Elementary.h>
 
 #include "Eo.h"
 #include "evas_obj.h"
 #include "elw_button.h"
-
-#include "config.h"
 
 EAPI Eo_Op ELW_BUTTON_BASE_ID = 0;
 

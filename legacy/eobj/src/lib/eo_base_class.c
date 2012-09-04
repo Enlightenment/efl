@@ -1,9 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <Eina.h>
 
 #include "Eo.h"
 #include "eo_private.h"
-
-#include "config.h"
 
 EAPI Eo_Op EO_BASE_BASE_ID = 0;
 
@@ -575,4 +577,3 @@ static const Eo_Class_Description class_desc = {
 };
 
 EO_DEFINE_CLASS(eo_base_class_get, &class_desc, NULL, NULL)
-

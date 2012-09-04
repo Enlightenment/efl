@@ -1,8 +1,6 @@
 #ifndef SIMPLE_H
 #define SIMPLE_H
 
-#include "Eo.h"
-
 extern EAPI Eo_Op SIMPLE_BASE_ID;
 
 enum {

@@ -1,7 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "interface.h"
-
-#include "config.h"
 
 EAPI Eo_Op INTERFACE_BASE_ID = 0;
 

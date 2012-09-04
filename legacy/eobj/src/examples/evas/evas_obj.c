@@ -1,9 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <Elementary.h>
 
 #include "Eo.h"
 #include "evas_obj.h"
-
-#include "config.h"
 
 #define MY_CLASS EXEVAS_OBJ_CLASS
 

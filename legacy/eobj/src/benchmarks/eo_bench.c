@@ -1,10 +1,12 @@
 #ifdef HAVE_CONFIG_H
-# include "config.h"
+# include <config.h>
 #endif
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <limits.h>
+
+#include <Eina.h>
 
 #include "Eo.h"
 #include "eo_bench.h"

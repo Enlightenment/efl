@@ -1,7 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "complex.h"
-
-#include "config.h"
 
 #define MY_CLASS COMPLEX_CLASS
 

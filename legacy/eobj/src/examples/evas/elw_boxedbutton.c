@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <Elementary.h>
 
 #include "Eo.h"
@@ -5,8 +9,6 @@
 #include "elw_box.h"
 #include "elw_button.h"
 #include "elw_boxedbutton.h"
-
-#include "config.h"
 
 typedef struct
 {
