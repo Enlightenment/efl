@@ -240,7 +240,7 @@ test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    it = elm_naviframe_item_push(nf, "Page 1", NULL, btn, content, NULL);
    evas_object_data_set(nf, "page1", it);
 
-   evas_object_resize(win, 400, 600);
+   evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
 
@@ -275,7 +275,7 @@ test_naviframe2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 
    elm_object_item_part_content_set(it, "icon", sc);
 
-   evas_object_resize(win, 400, 600);
+   evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
 #endif
