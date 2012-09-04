@@ -85,6 +85,7 @@ _submenu_sizing_eval(Elm_Menu_Item *parent_it)
 
    EINA_LIST_FOREACH (parent_it->submenu.items, l, item)
      _item_sizing_eval(item);
+
    evas_object_geometry_get
      (parent_it->submenu.location, &x_p, &y_p, &w_p, &h_p);
    evas_object_geometry_get(VIEW(parent_it), &x2, &y2, &w2, &h2);
@@ -129,7 +130,8 @@ _sizing_eval(Evas_Object *obj)
 {
    Eina_List *l;
    Elm_Menu_Item *item;
-   Evas_Coord x_p, y_p, w_p, h_p, x2, y2, w2, h2, bx, by, bw, bh;
+   Evas_Coord x_p, y_p, w_p, h_p, x2, y2, w2, h2, bw, bh;
+   Evas_Coord fy;
 
    ELM_MENU_DATA_GET(obj, sd);
 
@@ -137,12 +139,15 @@ _sizing_eval(Evas_Object *obj)
 
    EINA_LIST_FOREACH (sd->items, l, item)
      _item_sizing_eval(item);
-   evas_object_geometry_get(sd->location, &x_p, &y_p, &w_p, &h_p);
+
+   evas_object_geometry_get(sd->location, NULL, NULL, &w_p, &h_p);
    evas_object_geometry_get(sd->parent, &x2, &y2, &w2, &h2);
-   evas_object_geometry_get(sd->bx, &bx, &by, &bw, &bh);
+   evas_object_geometry_get(sd->bx, NULL, NULL, &bw, &bh);
+   evas_output_framespace_get(evas_object_evas_get(sd->bx), 
+                              NULL, &fy, NULL, NULL);
 
    x_p = sd->xloc;
-   y_p = sd->yloc;
+   y_p = sd->yloc - fy;
 
    if (elm_widget_mirrored_get(obj)) x_p -= w_p;
 
