@@ -863,7 +863,7 @@ eng_output_resize(void *data, int w, int h)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   if (!(re) || !(re->win)) return;
+   if ((!re) || (!re->win)) return;
 
    re->win->w = w;
    re->win->h = h;
