@@ -471,11 +471,14 @@ _resize_cb(void *data,
            void *event_info __UNUSED__)
 {
    Evas_Coord x, y, h;
+   Evas_Coord fy;
 
    ELM_TOOLBAR_DATA_GET(data, sd);
 
+   evas_output_framespace_get(evas_object_evas_get(data), 
+                              NULL, &fy, NULL, NULL);
    evas_object_geometry_get(data, &x, &y, NULL, &h);
-   evas_object_move(sd->more, x, y + h);
+   evas_object_move(sd->more, x, (y + h) - fy);
 
    if (!sd->resize_job)
      sd->resize_job = ecore_job_add(_resize_job, data);
@@ -538,12 +541,12 @@ _menu_move_resize_cb(void *data,
                      void *event_info __UNUSED__)
 {
    Elm_Toolbar_Item *it = data;
-   Evas_Coord x, y, w, h;
+   Evas_Coord x, y, h;
 
    ELM_TOOLBAR_DATA_GET(WIDGET(it), sd);
 
    if (!sd->menu_parent) return;
-   evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
+   evas_object_geometry_get(VIEW(it), &x, &y, NULL, &h);
    elm_menu_move(it->o_menu, x, y + h);
 }
 
