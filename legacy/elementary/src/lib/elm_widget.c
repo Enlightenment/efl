@@ -48,6 +48,7 @@ _is_focusable(Evas_Object *obj)
 static inline Eina_Bool
 _elm_scrollable_is(const Evas_Object *obj)
 {
+   INTERNAL_ENTRY EINA_FALSE;
    return !!evas_object_smart_interface_get(obj, ELM_SCROLLABLE_IFACE_NAME);
 }
 
