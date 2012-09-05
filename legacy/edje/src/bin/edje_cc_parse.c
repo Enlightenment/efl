@@ -501,10 +501,10 @@ stack_pop(void)
         char *hierarchy;
         char *lookup;
 
-        hierarchy = alloca(eina_strbuf_length_get(stack_buf));
+        hierarchy = alloca(eina_strbuf_length_get(stack_buf) + 1);
         memcpy(hierarchy,
                eina_strbuf_string_get(stack_buf),
-               eina_strbuf_length_get(stack_buf));
+               eina_strbuf_length_get(stack_buf) + 1);
 
         /* This is nasty, but it's the way to get parts.part when they are collapsed together. still not perfect */
         lookup = strrchr(hierarchy + eina_strbuf_length_get(stack_buf) - tmp_length, '.');
