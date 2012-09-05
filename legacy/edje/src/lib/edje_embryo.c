@@ -2129,7 +2129,7 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 	 GETINT(rp->custom->description->visible, params[3]);
 
 	 break;
-      case EDJE_STATE_PARAM_MAP_OM:
+      case EDJE_STATE_PARAM_MAP_ON:
         CHKPARAM(3);
         
         GETINT(rp->custom->description->map.on, params[3]);
