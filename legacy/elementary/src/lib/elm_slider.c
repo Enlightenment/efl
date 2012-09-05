@@ -589,12 +589,10 @@ _track_move_cb(void *data,
                void *event_info __UNUSED__)
 {
    Evas_Coord x, y;
-   int fy = 0;
 
    ELM_SLIDER_DATA_GET(data, sd);
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
-   evas_output_framespace_get(e, NULL, &fy, NULL, NULL);
-   evas_object_move(sd->popup, x, y - fy);
+   evas_object_move(sd->popup, x, y);
 }
 
 static void

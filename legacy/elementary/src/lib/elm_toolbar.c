@@ -471,14 +471,11 @@ _resize_cb(void *data,
            void *event_info __UNUSED__)
 {
    Evas_Coord x, y, h;
-   Evas_Coord fy;
 
    ELM_TOOLBAR_DATA_GET(data, sd);
 
-   evas_output_framespace_get(evas_object_evas_get(data), 
-                              NULL, &fy, NULL, NULL);
    evas_object_geometry_get(data, &x, &y, NULL, &h);
-   evas_object_move(sd->more, x, (y + h) - fy);
+   evas_object_move(sd->more, x, y + h);
 
    if (!sd->resize_job)
      sd->resize_job = ecore_job_add(_resize_job, data);
