@@ -4745,7 +4745,7 @@ _textblock_style_generic_set(Evas_Object *obj, Evas_Textblock_Style *ts,
                   while (*match == ' ') match++;
                }
              fnode->is_new = EINA_TRUE;
-             fnode->format = eina_stringshare_add(match);
+             eina_stringshare_replace(&fnode->format, match);
           }
         fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
      }
