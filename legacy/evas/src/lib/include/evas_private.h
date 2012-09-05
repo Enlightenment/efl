@@ -129,7 +129,7 @@ OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
  else evas_debug_magic_wrong((m), ((t *)o)->magic); \
 }
 # define MAGIC_CHECK(o, t, m) \
-{if ((!o) || (!(((t *)o)->magic == (m)))) { \
+{if (EINA_UNLIKELY((!o) || (!(((t *)o)->magic == (m))))) { \
 MAGIC_CHECK_FAILED(o, t, m)
 # define MAGIC_CHECK_END() }}
 #else
