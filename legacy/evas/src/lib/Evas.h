@@ -425,7 +425,6 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_HOLD, /**< Events go on/off hold */
    EVAS_CALLBACK_CHANGED_SIZE_HINTS, /**< Size hints changed event */
    EVAS_CALLBACK_IMAGE_PRELOADED, /**< Image has been preloaded */
-   EVAS_CALLBACK_IMAGE_RESIZE, /**< Image size is changed @since 1.8 */
 
    /*
     * The following events are only for use with Evas canvases, with
@@ -446,6 +445,7 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_RENDER_PRE, /**< Called just before rendering starts on the canvas target @since 1.2 */
    EVAS_CALLBACK_RENDER_POST, /**< Called just after rendering stops on the canvas target @since 1.2 */
 
+   EVAS_CALLBACK_IMAGE_RESIZE, /**< Image size is changed @since 1.8 */
    EVAS_CALLBACK_LAST /**< kept as last element/sentinel -- not really an event */
 } Evas_Callback_Type; /**< The types of events triggering a callback */
 
