@@ -77,3 +77,11 @@ evas_object_inform_call_image_unloaded(Evas_Object *obj)
    evas_object_event_callback_call(obj, EVAS_CALLBACK_IMAGE_UNLOADED, NULL, _evas_event_counter);
    _evas_post_event_callback_call(obj->layer->evas);
 }
+
+void
+evas_object_inform_call_image_resize(Evas_Object *obj)
+{
+   _evas_object_event_new();
+   evas_object_event_callback_call(obj, EVAS_CALLBACK_IMAGE_RESIZE, NULL, _evas_event_counter);
+   _evas_post_event_callback_call(obj->layer->evas);
+}

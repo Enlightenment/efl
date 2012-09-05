@@ -1020,3 +1020,7 @@
 	 need the evas to get the framespace clip object, just directly use the
 	 framespace values from the canvas, rather than function call to get
 	 those values.
+
+2012-09-05  ChunEon Park (Hermet)
+
+       * Added EVAS_CALLBACK_IMAGE_RESIZE. Now user have a notify when image data size of the image object is changed.

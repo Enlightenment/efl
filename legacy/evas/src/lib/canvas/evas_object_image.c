@@ -319,6 +319,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    Evas_Object_Image *o;
    Evas_Image_Load_Opts lo;
+   Eina_Bool resize_call = EINA_FALSE;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -387,6 +388,10 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
           stride = w * 4;
         o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output, o->engine_data);
         o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get(obj->layer->evas->engine.data.output, o->engine_data);
+
+        if ((o->cur.image.w != w) || (o->cur.image.h != h))
+          resize_call = EINA_TRUE;
+
         o->cur.image.w = w;
         o->cur.image.h = h;
         o->cur.image.stride = stride;
@@ -397,11 +402,17 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
           o->load_error = EVAS_LOAD_ERROR_GENERIC;
         o->cur.has_alpha = 1;
         o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
+
+        if ((o->cur.image.w != 0) || (o->cur.image.h != 0))
+          resize_call = EINA_TRUE;
+
         o->cur.image.w = 0;
         o->cur.image.h = 0;
         o->cur.image.stride = 0;
      }
+
    o->changed = EINA_TRUE;
+   if (resize_call) evas_object_inform_call_image_resize(obj);
    evas_object_change(obj);
 }
 
@@ -822,6 +833,7 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
 */
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
    o->changed = EINA_TRUE;
+   evas_object_inform_call_image_resize(obj);
    evas_object_change(obj);
 }
 
@@ -913,6 +925,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
 {
    Evas_Object_Image *o;
    void *p_data;
+   Eina_Bool resize_call = EINA_FALSE;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -968,6 +981,8 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
         if (o->engine_data)
           obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output, o->engine_data);
         o->load_error = EVAS_LOAD_ERROR_NONE;
+        if ((o->cur.image.w != 0) || (o->cur.image.h != 0))
+          resize_call = EINA_TRUE;
         o->cur.image.w = 0;
         o->cur.image.h = 0;
         o->cur.image.stride = 0;
@@ -986,6 +1001,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
         o->pixels_checked_out = 0;
      }
    o->changed = EINA_TRUE;
+   if (resize_call) evas_object_inform_call_image_resize(obj);
    evas_object_change(obj);
 }
 
@@ -2525,6 +2541,7 @@ static void
 evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
 {
    Evas_Object_Image *o;
+   Eina_Bool resize_call = EINA_FALSE;
 
    o = (Evas_Object_Image *)(obj->object_data);
 
@@ -2555,9 +2572,11 @@ evas_object_image_unload(Evas_Object *obj, Eina_Bool dirty)
    o->load_error = EVAS_LOAD_ERROR_NONE;
    o->cur.has_alpha = 1;
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
+   if ((o->cur.image.w != 0) || (o->cur.image.h != 0)) resize_call = EINA_TRUE;
    o->cur.image.w = 0;
    o->cur.image.h = 0;
    o->cur.image.stride = 0;
+   if (resize_call) evas_object_inform_call_image_resize(obj);
 }
 
 static void
@@ -2588,6 +2607,7 @@ evas_object_image_load(Evas_Object *obj)
      {
         int w, h;
         int stride = 0;
+        Eina_Bool resize_call = EINA_FALSE;
 
         obj->layer->evas->engine.func->image_size_get
            (obj->layer->evas->engine.data.output,
@@ -2604,9 +2624,12 @@ evas_object_image_load(Evas_Object *obj)
         o->cur.cspace = obj->layer->evas->engine.func->image_colorspace_get
            (obj->layer->evas->engine.data.output,
             o->engine_data);
+        if ((o->cur.image.w != w) || (o->cur.image.h != h))
+          resize_call = EINA_TRUE;
         o->cur.image.w = w;
         o->cur.image.h = h;
         o->cur.image.stride = stride;
+        if (resize_call) evas_object_inform_call_image_resize(obj);
      }
    else
      {

@@ -6,6 +6,7 @@ Changes since Evas 1.7.0:
 Additions:
 
    * WEBP image loader support.
+   * EVAS_CALLBACK_IMAGE_RESIZE.
 
 Improvements:
 
