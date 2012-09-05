@@ -1741,6 +1741,7 @@ _ecore_con_ssl_server_privkey_add_openssl(Ecore_Con_Server *svr,
    SSL_ERROR_CHECK_GOTO_ERROR(!(privkey = PEM_read_PrivateKey(fp, NULL, NULL, NULL)));
 
    fclose(fp);
+   fp = NULL;
    SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_PrivateKey(svr->ssl_ctx, privkey) < 1);
    SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_check_private_key(svr->ssl_ctx) < 1);
 
@@ -1766,7 +1767,7 @@ _ecore_con_ssl_server_cert_add_openssl(Ecore_Con_Server *svr,
    SSL_ERROR_CHECK_GOTO_ERROR(!(cert = PEM_read_X509(fp, NULL, NULL, NULL)));
 
    fclose(fp);
-
+   fp = NULL;
    SSL_ERROR_CHECK_GOTO_ERROR(SSL_CTX_use_certificate(svr->ssl_ctx, cert) < 1);
 
    return EINA_TRUE;

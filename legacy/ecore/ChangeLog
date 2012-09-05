@@ -905,3 +905,7 @@
 2012-09-04  Jihoon Kim (jihoon)
 
        * Add ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
+
+2012-09-05  Mike Blumenkrantz
+
+       * Fix crash that could occur in ecore_con_ssl with privkeys and certificates on failure
