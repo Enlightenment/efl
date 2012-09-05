@@ -1,6 +1,8 @@
 #ifndef ELM_WIDGET_CONTAINER_H
 #define ELM_WIDGET_CONTAINER_H
 
+#include <elm_widget.h>
+
 /**
  * @addtogroup Widget
  * @{
