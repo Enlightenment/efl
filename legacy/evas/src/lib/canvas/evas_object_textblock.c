@@ -4659,6 +4659,32 @@ evas_textblock_style_get(const Evas_Textblock_Style *ts)
    return ts->style_text;
 }
 
+static const char *
+_textblock_format_node_from_style_tag(Evas_Object_Textblock *o, Evas_Object_Textblock_Node_Format *fnode, const char *format, size_t format_len)
+{
+   const char *match;
+   size_t replace_len;
+   if (!o->style_user || !(match = _style_match_tag(o->style_user, format,
+               format_len, &replace_len)))
+     {
+        match = _style_match_tag(o->style, format, format_len,
+              &replace_len);
+     }
+
+   if (match)
+     {
+        if (match[0] != '-')
+          {
+             fnode->opener = EINA_TRUE;
+             if (match[0] != '+')
+               {
+                  fnode->own_closer = EINA_TRUE;
+               }
+          }
+     }
+   return match;
+}
+
 /* textblock styles */
 
 static void
@@ -4688,6 +4714,43 @@ _textblock_style_generic_set(Evas_Object *obj, Evas_Textblock_Style *ts,
      }
    *obj_ts = ts;
 
+   Evas_Object_Textblock_Node_Format *fnode = o->format_nodes;
+   while (fnode)
+     {
+        const char *match;
+        size_t format_len = eina_stringshare_strlen(fnode->orig_format);
+        /* Is this safe to use alloca here? Strings might possibly get large */
+        char *format = alloca(format_len + 2);
+
+        if (!fnode->opener)
+          {
+             format[0] = '/';
+             format[1] = '\0';
+          }
+        else
+          {
+             format[0] = '\0';
+          }
+
+        strcat(format, fnode->orig_format);
+
+        match = _textblock_format_node_from_style_tag(o, fnode, format,
+              format_len);
+
+        if (match && fnode->format && strcmp(match, fnode->format))
+          {
+             if ((*match == '+') || (*match == '-'))
+               {
+                  match++;
+                  while (*match == ' ') match++;
+               }
+             fnode->is_new = EINA_TRUE;
+             fnode->format = eina_stringshare_add(match);
+          }
+        fnode = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+     }
+
+   o->format_changed = EINA_TRUE;
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, obj);
 }
@@ -7290,7 +7353,6 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
      {
         const char *match;
         size_t format_len;
-        size_t replace_len;
 
         format++; /* Advance after '<' */
         format_len = strlen(format);
@@ -7305,24 +7367,10 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
                }
           }
 
-        if (!o->style_user || !(match = _style_match_tag(o->style_user, format,
-                    format_len, &replace_len)))
-          {
-             match = _style_match_tag(o->style, format, format_len,
-                   &replace_len);
-          }
+        match = _textblock_format_node_from_style_tag(o, n, format, format_len);
 
         if (match)
           {
-             if (match[0] != '-')
-               {
-                  n->opener = EINA_TRUE;
-                  if (match[0] != '+')
-                    {
-                       n->own_closer = EINA_TRUE;
-                    }
-               }
-
              pre_stripped_format = match;
           }
         else
