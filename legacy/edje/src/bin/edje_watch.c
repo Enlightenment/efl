@@ -9,10 +9,11 @@
 # include <Evil.h>
 #endif
 
-char watchfile[PATH_MAX];
-char *edje_cc_command = NULL;
-Eina_List *watching = NULL;
-Ecore_Timer *timeout = NULL;
+static char watchfile[PATH_MAX];
+static char *edje_cc_command = NULL;
+static Eina_List *watching = NULL;
+static Ecore_Timer *timeout = NULL;
+static Eina_Bool anotate = EINA_FALSE;
 
 static void
 read_watch_file(const char *file)
@@ -32,11 +33,21 @@ read_watch_file(const char *file)
    EINA_ITERATOR_FOREACH(it, ln)
      {
         const char *path;
+        Eina_Bool do_append = EINA_TRUE;
 
 	if (ln->length < 4) continue ;
-        path = eina_stringshare_add_length(ln->start + 3, ln->length);
-	fprintf(stderr, "%c: %s\n", *ln->start, path);
-	if (*ln->start != 'O')
+        if (anotate)
+          {
+             path = eina_stringshare_add_length(ln->start + 3, ln->length - 3);
+             fprintf(stderr, "%c: %s\n", *ln->start, path);
+             if (*ln->start == 'O')
+               do_append = EINA_FALSE;
+          }
+        else
+          {
+             path = eina_stringshare_add_length(ln->start, ln->length);
+          }
+        if (do_append)
 	  r = eina_list_append(r, eio_monitor_add(path));
         eina_stringshare_del(path);
      }
@@ -110,9 +121,13 @@ main(int argc, char **argv)
    buf = eina_strbuf_new();
    if (!buf) return -1;
 
-   eina_strbuf_append_printf(buf, "%s/edje_cc -anotate -threads -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
+   eina_strbuf_append_printf(buf, "%s/edje_cc -threads -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
    for (i = 1; i < argc; ++i)
-     eina_strbuf_append_printf(buf, "%s ", argv[i]);
+     {
+        if (!strcmp(argv[i], "-anotate"))
+          anotate = EINA_TRUE;
+        eina_strbuf_append_printf(buf, "%s ", argv[i]);
+     }
 
    edje_cc_command = eina_strbuf_string_steal(buf);
 
