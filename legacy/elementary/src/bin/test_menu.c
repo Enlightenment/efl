@@ -109,14 +109,12 @@ test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 {
    Evas_Object *win, *rect;
    Elm_Object_Item *menu_it;
-   Evas_Coord fx, fy;
 
    win = elm_win_util_standard_add("menu", "Menu");
    elm_win_autodel_set(win, EINA_TRUE);
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_output_framespace_get(evas_object_evas_get(win), &fx, &fy, NULL, NULL);
-   evas_object_move(rect, fx, fy);
+   evas_object_move(rect, 0, 0);
    evas_object_resize(rect, 350, 200);
    evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_color_set(rect, 0, 0, 0, 0);

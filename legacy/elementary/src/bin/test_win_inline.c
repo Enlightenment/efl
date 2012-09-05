@@ -250,7 +250,7 @@ test_win_inline(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 
    create_handles(elm_win_inlined_image_object_get(win3));
 
-   evas_object_resize(win, 400, 600);
+   evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
 #endif
