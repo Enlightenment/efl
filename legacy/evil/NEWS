@@ -2,6 +2,7 @@ Evil NEWS - User visible changes.
 
 * Evil 1.7:
 
+** Released August 30th, 2012, by Carsten Haitzler
 ** Correctly display messages with evil_format_message()
 
 * Evil 1.1:

@@ -177,9 +177,15 @@ main()
 			fprintf(f, "#define NO_LONG_LONG\n");
 		if (a->kind <= 2 && fzcheck())
 			fprintf(f, "#define Sudden_Underflow\n");
+#ifdef WRITE_ARITH_H	/* for Symantec's buggy "make" */
+		fclose(f);
+#endif
 		return 0;
 		}
 	fprintf(f, "/* Unknown arithmetic */\n");
+#ifdef WRITE_ARITH_H	/* for Symantec's buggy "make" */
+	fclose(f);
+#endif
 	return 1;
 	}
 #endif /* MINGW_BUILD_GEN */
