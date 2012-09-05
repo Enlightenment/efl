@@ -599,3 +599,10 @@
 
 	* Added nested parts support.
 	This lets us do nested parts, e.g parts "{ part { part { } } }"
+
+2012-09-05  ChunEon Park (Hermet)
+
+	* if user change image size of the image object which is swallowed and
+	it's map enabled by the edje, then edje needs to update it's uv mapping
+  	info.
+

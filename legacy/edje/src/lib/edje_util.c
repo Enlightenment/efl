@@ -5022,6 +5022,26 @@ _edje_object_part_swallow_changed_hints_cb(void *data, __UNUSED__ Evas *e, __UNU
 }
 
 void
+_edje_object_part_swallow_image_resize_cb(void *data, __UNUSED__ Evas *e, Evas_Object *obj, __UNUSED__ void *event_info)
+{
+   Edje_Real_Part *rp = data;
+   Evas_Coord w, h;
+
+   if (!rp->chosen_description->map.on) return;
+
+   Evas_Map *map = (Evas_Map *) evas_object_map_get(rp->swallowed_object);
+   if (!map) return;
+
+   evas_object_image_size_get(rp->swallowed_object, &w, &h);
+   evas_map_point_image_uv_set(map, 0, 0, 0);
+   evas_map_point_image_uv_set(map, 1, w, 0);
+   evas_map_point_image_uv_set(map, 2, w, h);
+   evas_map_point_image_uv_set(map, 3, 0, h);
+
+   evas_object_map_set(rp->swallowed_object, map);
+}
+
+void
 _edje_real_part_swallow(Edje_Real_Part *rp,
 			Evas_Object *obj_swallow,
 			Eina_Bool hints_update)
@@ -5062,6 +5082,12 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
 				  _edje_object_part_swallow_changed_hints_cb,
 				  rp);
 
+   //If the map is enabled, uv should be updated when image size is changed.
+   if (!strcmp(evas_object_type_get(rp->swallowed_object), "image"))
+     evas_object_event_callback_add(obj_swallow, EVAS_CALLBACK_IMAGE_RESIZE,
+                                    _edje_object_part_swallow_image_resize_cb,
+                                    rp);
+
    if (hints_update)
      _edje_real_part_swallow_hints_update(rp);
 
@@ -5099,6 +5125,11 @@ _edje_real_part_swallow_clear(Edje_Real_Part *rp)
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _edje_object_part_swallow_changed_hints_cb,
                                        rp);
+   if (!strcmp(evas_object_type_get(rp->swallowed_object), "image"))
+     evas_object_event_callback_del_full(rp->swallowed_object,
+                                         EVAS_CALLBACK_IMAGE_RESIZE,
+                                         _edje_object_part_swallow_image_resize_cb,
+                                         rp);
    evas_object_clip_unset(rp->swallowed_object);
    evas_object_data_del(rp->swallowed_object, "\377 edje.swallowing_part");
    if (rp->part->mouse_events)
