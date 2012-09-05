@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 
 if EFL_ENABLE_BENCHMARK
 
-bin_PROGRAMS = eo_bench
+noinst_PROGRAMS = eo_bench
 
 eo_bench_SOURCES = \
 class_simple.c \
@@ -17,6 +17,7 @@ class_simple.h \
 eo_bench.c \
 eo_bench.h \
 eo_bench_eo_do.c
+
 eo_bench_LDADD = $(top_builddir)/src/lib/libeo.la @EO_LIBS@
 
 endif
