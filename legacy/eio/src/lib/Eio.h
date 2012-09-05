@@ -1105,7 +1105,7 @@ EAPI Eio_File *eio_eet_write_cipher(Eet_File *ef,
  */
 
 EAPI extern int EIO_MONITOR_FILE_CREATED; /**< A new file was created in a watched directory */
-EAPI extern int EIO_MONITOR_FILE_DELETED; /**< A watched file was modified, or a file in a watched directory was modified */
+EAPI extern int EIO_MONITOR_FILE_DELETED; /**< A watched file was deleted, or a file in a watched deleted was modified */
 EAPI extern int EIO_MONITOR_FILE_MODIFIED; /**< A file was modified in a watched directory */
 EAPI extern int EIO_MONITOR_FILE_CLOSED; /**< A file was closed in a watched directory */
 EAPI extern int EIO_MONITOR_DIRECTORY_CREATED; /**< A new directory was created in a watched directory */
