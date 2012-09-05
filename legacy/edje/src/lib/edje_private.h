@@ -1191,29 +1191,29 @@ struct _Edje
 
    int                   walking_callbacks;
 
-   unsigned int          dirty : 1;
-   unsigned int          recalc : 1;
-   unsigned int          delete_callbacks : 1;
-   unsigned int          just_added_callbacks : 1;
-   unsigned int          have_objects : 1;
-   unsigned int          paused : 1;
-   unsigned int          no_anim : 1;
-   unsigned int          calc_only : 1;
-   unsigned int          walking_actions : 1;
-   unsigned int          block_break : 1;
-   unsigned int          delete_me : 1;
-   unsigned int          postponed : 1;
-   unsigned int          freeze_calc : 1;
-   unsigned int          has_entries : 1;
-   unsigned int          entries_inited : 1;
+   Eina_Bool          dirty : 1;
+   Eina_Bool          recalc : 1;
+   Eina_Bool          delete_callbacks : 1;
+   Eina_Bool          just_added_callbacks : 1;
+   Eina_Bool          have_objects : 1;
+   Eina_Bool          paused : 1;
+   Eina_Bool          no_anim : 1;
+   Eina_Bool          calc_only : 1;
+   Eina_Bool          walking_actions : 1;
+   Eina_Bool          block_break : 1;
+   Eina_Bool          delete_me : 1;
+   Eina_Bool          postponed : 1;
+   Eina_Bool          freeze_calc : 1;
+   Eina_Bool          has_entries : 1;
+   Eina_Bool          entries_inited : 1;
 #ifdef EDJE_CALC_CACHE
-   unsigned int          text_part_change : 1;
-   unsigned int          all_part_change : 1;
+   Eina_Bool          text_part_change : 1;
+   Eina_Bool          all_part_change : 1;
 #endif
-   unsigned int          have_mapped_part : 1;
-   unsigned int          recalc_call : 1;
-   unsigned int          update_hints : 1;
-   unsigned int          recalc_hints : 1;
+   Eina_Bool          have_mapped_part : 1;
+   Eina_Bool          recalc_call : 1;
+   Eina_Bool          update_hints : 1;
+   Eina_Bool          recalc_hints : 1;
 };
 
 struct _Edje_Calc_Params
@@ -1384,7 +1384,7 @@ struct _Edje_Running_Program
    Edje           *edje;
    Edje_Program   *program;
    double          start_time;
-   char            delete_me : 1;
+   Eina_Bool       delete_me : 1;
 };
 
 struct _Edje_Signal_Callback
@@ -1393,9 +1393,9 @@ struct _Edje_Signal_Callback
    const char	  *source;
    Edje_Signal_Cb  func;
    void           *data;
-   unsigned char   just_added : 1;
-   unsigned char   delete_me : 1;
-   unsigned char   propagate : 1;
+   Eina_Bool       just_added : 1;
+   Eina_Bool       delete_me : 1;
+   Eina_Bool       propagate : 1;
 };
 
 struct _Edje_Text_Insert_Filter_Callback

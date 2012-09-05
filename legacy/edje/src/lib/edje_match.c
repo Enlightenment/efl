@@ -264,7 +264,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
      if (!r) return NULL;                                       \
                                                                 \
      r->ref = 1;						\
-     r->delete_me = 0;						\
+     r->delete_me = EINA_FALSE;	\
      r->patterns_size = eina_list_count(lst);                   \
      r->max_length = 0;                                         \
      r->patterns = (const char **) r->finals + r->patterns_size + 1;    \
@@ -331,7 +331,7 @@ _edje_match_patterns_exec_init_states(Edje_States       *states,
      if (!r) return NULL;                                       \
                                                                 \
      r->ref = 1;						\
-     r->delete_me = 0;						\
+     r->delete_me = EINA_FALSE;	\
      r->patterns_size = count;					\
      r->max_length = 0;                                         \
      r->patterns = (const char **) r->finals + r->patterns_size + 1;    \
@@ -678,7 +678,7 @@ edje_match_patterns_free(Edje_Patterns *ppat)
 {
    if (!ppat) return ;
 
-   ppat->delete_me = 1;
+   ppat->delete_me = EINA_TRUE;
    ppat->ref--;
    if (ppat->ref > 0) return;
    _edje_match_states_free(ppat->states, 2);

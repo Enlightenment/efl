@@ -4315,7 +4315,7 @@ _edje_lua_group_set_size_min(lua_State *L)
    lua_rawgeti(L, 2, 2);
    obj->ed->collection->prop.min.w = luaL_checkint(L, -2);
    obj->ed->collection->prop.min.h = luaL_checkint(L, -1);
-   obj->ed->dirty = 1;
+   obj->ed->dirty = EINA_TRUE;
    _edje_recalc(obj->ed);
    return 0;
 }
@@ -4329,7 +4329,7 @@ _edje_lua_group_set_size_max(lua_State *L)
    lua_rawgeti(L, 2, 2);
    obj->ed->collection->prop.max.w = luaL_checkint(L, -2);
    obj->ed->collection->prop.max.h = luaL_checkint(L, -1);
-   obj->ed->dirty = 1;
+   obj->ed->dirty = EINA_TRUE;
    _edje_recalc(obj->ed);
    return 0;
 }
@@ -4536,11 +4536,11 @@ _edje_lua_group_fn_program_stop(lua_State *L)
    int program_id = pr->id;
    Edje_Running_Program *runp;
    Eina_List *l;
-   obj->ed->walking_actions = 1;
+   obj->ed->walking_actions = EINA_TRUE;
    EINA_LIST_FOREACH(obj->ed->actions, l, runp)
       if (program_id == runp->program->id)
       _edje_program_end(obj->ed, runp);
-   obj->ed->walking_actions = 0;
+   obj->ed->walking_actions = EINA_FALSE;
    return 0;
 }
 

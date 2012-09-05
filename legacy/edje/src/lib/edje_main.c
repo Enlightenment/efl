@@ -224,7 +224,7 @@ _edje_del(Edje *ed)
 
    if (ed->processing_messages)
      {
-	ed->delete_me = 1;
+	ed->delete_me = EINA_TRUE;
 	return;
      }
    _edje_message_del(ed);

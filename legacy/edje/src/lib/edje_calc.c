@@ -115,8 +115,8 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
 
    ep->description_pos = npos;
 
-   ed->dirty = 1;
-   ed->recalc_call = 1;
+   ed->dirty = EINA_TRUE;
+   ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
    ep->invalidate = 1;
 #endif
@@ -585,9 +585,9 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
        ep->part->type == EDJE_PART_TYPE_EXTERNAL)
      _edje_external_recalc_apply(ed, ep, NULL, chosen_desc);
 
-   ed->recalc_hints = 1;
-   ed->dirty = 1;
-   ed->recalc_call = 1;
+   ed->recalc_hints = EINA_TRUE;
+   ed->dirty = EINA_TRUE;
+   ed->recalc_call = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
    ep->invalidate = 1;
 #endif
@@ -598,7 +598,7 @@ _edje_recalc(Edje *ed)
 {
    if ((ed->freeze > 0) || (_edje_freeze_val > 0))
      {
-        ed->recalc = 1;
+        ed->recalc = EINA_TRUE;
         if (!ed->calc_only)
           {
              if (_edje_freeze_val > 0)
@@ -607,7 +607,7 @@ _edje_recalc(Edje *ed)
                     {
                        _edje_freeze_calc_count++;
                        _edje_freeze_calc_list = eina_list_append(_edje_freeze_calc_list, ed);
-                       ed->freeze_calc = 1;
+                       ed->freeze_calc = EINA_TRUE;
                     }
                }
              return;
@@ -618,7 +618,7 @@ _edje_recalc(Edje *ed)
 //   if (!ed->calc_only)
      evas_object_smart_changed(ed->obj);
 // XXX: dont need this with current smart calc infra. remove me later
-//   ed->postponed = 1;
+//   ed->postponed = EINA_TRUE;
 }
 
 void
@@ -628,12 +628,12 @@ _edje_recalc_do(Edje *ed)
    Eina_Bool need_calc;
 
 // XXX: dont need this with current smart calc infra. remove me later
-//   ed->postponed = 0;
+//   ed->postponed = EINA_FALSE;
    need_calc = evas_object_smart_need_recalculate_get(ed->obj);
    evas_object_smart_need_recalculate_set(ed->obj, 0);
    if (!ed->dirty) return;
-   ed->have_mapped_part = 0;
-   ed->dirty = 0;
+   ed->have_mapped_part = EINA_FALSE;
+   ed->dirty = EINA_FALSE;
    ed->state++;
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -651,10 +651,10 @@ _edje_recalc_do(Edje *ed)
         if (ep->calculated != FLAG_XY)
           _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY, NULL);
      }
-   if (!ed->calc_only) ed->recalc = 0;
+   if (!ed->calc_only) ed->recalc = EINA_FALSE;
 #ifdef EDJE_CALC_CACHE
-   ed->all_part_change = 0;
-   ed->text_part_change = 0;
+   ed->all_part_change = EINA_FALSE;
+   ed->text_part_change = EINA_FALSE;
 #endif
    if (!ed->calc_only)
      {
@@ -663,13 +663,13 @@ _edje_recalc_do(Edje *ed)
      }
    else
      evas_object_smart_need_recalculate_set(ed->obj, need_calc);
-   ed->recalc_call = 0;
+   ed->recalc_call = EINA_FALSE;
 
    if (ed->update_hints && ed->recalc_hints && !ed->calc_only)
      {
         Evas_Coord w, h;
 
-        ed->recalc_hints = 0;
+        ed->recalc_hints = EINA_FALSE;
 
         edje_object_size_min_calc(ed->obj, &w, &h);
         evas_object_size_hint_min_set(ed->obj, w, h);
@@ -811,8 +811,8 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
         ep->drag->x = x;
         ep->drag->tmp.x = 0;
         ep->drag->need_reset = 0;
-        ed->dirty = 1;
-        ed->recalc_call = 1;
+        ed->dirty = EINA_TRUE;
+        ed->recalc_call = EINA_TRUE;
      }
 
    if (ep->drag->y != y || ep->drag->tmp.y)
@@ -820,8 +820,8 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, FLOAT_T x, FLOAT_T y)
         ep->drag->y = y;
         ep->drag->tmp.y = 0;
         ep->drag->need_reset = 0;
-        ed->dirty = 1;
-        ed->recalc_call = 1;
+        ed->dirty = EINA_TRUE;
+        ed->recalc_call = EINA_TRUE;
      }
 
 #ifdef EDJE_CALC_CACHE
@@ -3015,7 +3015,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           {
              static Evas_Map *map = NULL;
 
-             ed->have_mapped_part = 1;
+             ed->have_mapped_part = EINA_TRUE;
              // create map and populate with part geometry
              if (!map) map = evas_map_new(4);
              evas_map_util_points_populate_from_object(map, ep->object);

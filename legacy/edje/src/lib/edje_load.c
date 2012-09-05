@@ -389,7 +389,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
-   ed->block_break = 0;
+   ed->block_break = EINA_FALSE;
 
    if (ed->file && ed->file->external_dir)
      {
@@ -764,10 +764,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
 		    }
 	       }
-             ed->recalc_call = 1;
-	     ed->dirty = 1;
+             ed->recalc_call = EINA_TRUE;
+	     ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-	     ed->all_part_change = 1;
+	     ed->all_part_change = EINA_TRUE;
 #endif
 	     if ((evas_object_clipees_get(ed->base.clipper)) &&
 		 (evas_object_visible_get(obj)))
@@ -1198,7 +1198,7 @@ _edje_file_del(Edje *ed)
    if (ed->freeze_calc)
      {
         _edje_freeze_calc_list = eina_list_remove(_edje_freeze_calc_list, ed);
-        ed->freeze_calc = 0;
+        ed->freeze_calc = EINA_FALSE;
         _edje_freeze_calc_count--;
      }
    _edje_entry_shutdown(ed);

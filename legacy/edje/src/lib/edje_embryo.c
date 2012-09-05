@@ -674,10 +674,10 @@ _edje_embryo_fn_set_min_size(Embryo_Program *ep, Embryo_Cell *params)
    if (h < 0.0) h = 0.0;
    ed->collection->prop.min.w = w;
    ed->collection->prop.min.h = h;
-   ed->recalc_call = 1;
-   ed->dirty = 1;
+   ed->recalc_call = EINA_TRUE;
+   ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   ed->all_part_change = 1;
+   ed->all_part_change = EINA_TRUE;
 #endif
    _edje_recalc(ed);
    return 0;
@@ -702,10 +702,10 @@ _edje_embryo_fn_set_max_size(Embryo_Program *ep, Embryo_Cell *params)
    if (h < 0.0) h = 0.0;
    ed->collection->prop.max.w = w;
    ed->collection->prop.max.h = h;
-   ed->recalc_call = 1;
-   ed->dirty = 1;
+   ed->recalc_call = EINA_TRUE;
+   ed->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
-   ed->all_part_change = 1;
+   ed->all_part_change = EINA_TRUE;
 #endif
    _edje_recalc(ed);
 
@@ -726,13 +726,13 @@ _edje_embryo_fn_stop_program(Embryo_Program *ep, Embryo_Cell *params)
    program_id = params[1];
    if (program_id < 0) return 0;
 
-   ed->walking_actions = 1;
+   ed->walking_actions = EINA_TRUE;
 
    EINA_LIST_FOREACH(ed->actions, l, runp)
      if (program_id == runp->program->id)
        _edje_program_end(ed, runp);
 
-   ed->walking_actions = 0;
+   ed->walking_actions = EINA_FALSE;
 
    return 0;
 }
@@ -2202,7 +2202,7 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
-   ed->dirty=1;
+   ed->dirty = EINA_TRUE;
    return 0;
 }
 

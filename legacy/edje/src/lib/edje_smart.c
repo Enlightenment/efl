@@ -120,7 +120,7 @@ _edje_smart_add(Evas_Object *obj)
    evas_object_resize(ed->base.clipper, 20000, 20000);
    evas_object_pass_events_set(ed->base.clipper, 1);
    ed->is_rtl = EINA_FALSE;
-   ed->have_objects = 1;
+   ed->have_objects = EINA_TRUE;
    ed->references = 1;
    ed->user_defined = NULL;
    ed->color_classes = eina_hash_string_small_new(_edje_color_class_free);
@@ -192,7 +192,7 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 
    if (ed->have_mapped_part)
      {
-        ed->dirty = 1;
+        ed->dirty = EINA_TRUE;
         _edje_recalc_do(ed);
      }
    else
@@ -269,7 +269,7 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
    ed->w = w;
    ed->h = h;
 #ifdef EDJE_CALC_CACHE
-   ed->all_part_change = 1;
+   ed->all_part_change = EINA_TRUE;
 #endif
    if (_edje_script_only(ed))
      {
@@ -282,7 +282,7 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
         return;
      }
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
-   ed->dirty = 1;
+   ed->dirty = EINA_TRUE;
    _edje_recalc_do(ed);
    _edje_emit(ed, "resize", NULL);
 }

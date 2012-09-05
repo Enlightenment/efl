@@ -44,7 +44,7 @@ edje_object_propagate_callback_add(Evas_Object *obj, void (*func) (void *data, E
    if (ed->walking_callbacks)
      {
 	escb->just_added = 1;
-	ed->just_added_callbacks = 1;
+	ed->just_added_callbacks = EINA_TRUE;
      }
    else
      _edje_callbacks_patterns_clean(ed);
@@ -71,7 +71,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
    if (ed->walking_callbacks)
      {
 	escb->just_added = 1;
-	ed->just_added_callbacks = 1;
+	ed->just_added_callbacks = EINA_TRUE;
      }
    else
      _edje_callbacks_patterns_clean(ed);
@@ -101,8 +101,8 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 	     data = escb->data;
 	     if (ed->walking_callbacks)
 	       {
-		  escb->delete_me = 1;
-		  ed->delete_callbacks = 1;
+		  escb->delete_me = EINA_TRUE;
+		  ed->delete_callbacks = EINA_TRUE;
 	       }
 	     else
 	       {
@@ -143,8 +143,8 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
 	     data2 = escb->data;
 	     if (ed->walking_callbacks)
 	       {
-		  escb->delete_me = 1;
-		  ed->delete_callbacks = 1;
+		  escb->delete_me = EINA_TRUE;
+		  ed->delete_callbacks = EINA_TRUE;
 	       }
 	     else
 	       {
@@ -189,7 +189,7 @@ edje_object_play_set(Evas_Object *obj, Eina_Bool play)
    if (play)
      {
 	if (!ed->paused) return;
-	ed->paused = 0;
+	ed->paused = EINA_FALSE;
 	t = ecore_time_get() - ed->paused_at;
 	EINA_LIST_FOREACH(ed->actions, l, runp)
 	  runp->start_time += t;
@@ -349,7 +349,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	       }
 	  }
 	_edje_recalc(ed);
-	runp->delete_me = 1;
+	runp->delete_me = EINA_TRUE;
 	if (!ed->walking_actions)
 	  {
 	     _edje_anim_count--;
@@ -426,7 +426,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 	  }
      }
    _edje_recalc(ed);
-   runp->delete_me = 1;
+   runp->delete_me = EINA_TRUE;
 //   pname = runp->program->name;
    if (!ed->walking_actions)
      {
@@ -1326,8 +1326,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
    if (!ed->walking_callbacks &&
        ((ed->delete_callbacks) || (ed->just_added_callbacks)))
      {
-	ed->delete_callbacks = 0;
-	ed->just_added_callbacks = 0;
+	ed->delete_callbacks = EINA_FALSE;
+	ed->just_added_callbacks = EINA_FALSE;
 	l = ed->callbacks;
 	while (l)
 	  {
@@ -1633,8 +1633,8 @@ _edje_param_native_set(Edje_Real_Part *rp, const char *name, const Edje_External
 		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
 		    return EINA_FALSE;
 		  rp->drag->size.x = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
-                  rp->edje->recalc_call = 1;
-		  rp->edje->dirty = 1;
+                  rp->edje->recalc_call = EINA_TRUE;
+		  rp->edje->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
 		  rp->invalidate = 1;
 #endif
@@ -1646,8 +1646,8 @@ _edje_param_native_set(Edje_Real_Part *rp, const char *name, const Edje_External
 		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
 		    return EINA_FALSE;
 		  rp->drag->size.y = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
-                  rp->edje->recalc_call = 1;
-		  rp->edje->dirty = 1;
+                  rp->edje->recalc_call = EINA_TRUE;
+		  rp->edje->dirty = EINA_TRUE;
 #ifdef EDJE_CALC_CACHE
 		  rp->invalidate = 1;
 #endif

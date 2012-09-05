@@ -157,7 +157,7 @@ _edje_item_recalc(Edje_Item *ei)
 	  ((Smart_Data *)(ei->sd))->colinfo[i].maxw = ei->cells[i].maxw;
      }
 
-   ei->recalc = 0;
+   ei->recalc = EINA_FALSE;
 
    _edje_container_recalc(ei->sd);
 }
@@ -419,7 +419,7 @@ edje_item_column_size_set(Edje_Item *ei, int col, Evas_Coord minw, Evas_Coord ma
    ei->cells[col].maxh = maxh;
    ei->cells[col].minw = minw;
    ei->cells[col].maxw = maxw;
-   ei->recalc = 1;
+   ei->recalc = EINA_TRUE;
    if (ei->sd)
      {
 	((Smart_Data *)(ei->sd))->changed = 1;
