@@ -584,7 +584,7 @@ _spacer_up_cb(void *data,
 
 static void
 _track_move_cb(void *data,
-               Evas *e,
+               Evas *e __UNUSED__,
                Evas_Object *obj,
                void *event_info __UNUSED__)
 {
