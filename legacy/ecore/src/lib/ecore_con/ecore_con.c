@@ -2135,7 +2135,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
         _ecore_con_cl_timer_update(cl);
      }
 
-   if (!(cl->host_server->type & ECORE_CON_SSL) || (!cl->upgrade))
+   if (!(cl->host_server->type & ECORE_CON_SSL) && (!cl->upgrade))
      {
         num = read(cl->fd, buf, sizeof(buf));
         /* 0 is not a valid return value for a tcp socket */
@@ -2311,7 +2311,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
         if (!cl->buf) return;
         num = eina_binbuf_length_get(cl->buf) - cl->buf_offset;
         if (num <= 0) return;
-        if (!(cl->host_server->type & ECORE_CON_SSL) || (!cl->upgrade))
+        if (!(cl->host_server->type & ECORE_CON_SSL) && (!cl->upgrade))
           count = write(cl->fd, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num);
         else
           count = ecore_con_ssl_client_write(cl, eina_binbuf_string_get(cl->buf) + cl->buf_offset, num);

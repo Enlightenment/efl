@@ -914,3 +914,4 @@
 
        * Fix race condition in ecore-con where events could sometimes be sent for freed clients
        * Fix ssl servers using openssl
+       * Fix ssl connections overall
