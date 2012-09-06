@@ -1882,6 +1882,15 @@ _ecore_con_svr_tcp_handler(void                        *data,
 error:
    if (cl->fd_handler) ecore_main_fd_handler_del(cl->fd_handler);
    if (cl->fd >= 0) close(cl->fd);
+   {
+      Ecore_Event *ev;
+
+      EINA_LIST_FREE(cl->event_count, ev)
+        {
+           svr->event_count = eina_list_remove(svr->event_count, ev);
+           ecore_event_del(ev);
+        }
+   }
    free(cl);
    if (clerr || errno) ecore_con_event_server_error(svr, clerr ?: strerror(errno));
    return ECORE_CALLBACK_RENEW;
@@ -2545,15 +2554,15 @@ _ecore_con_event_client_error_free(Ecore_Con_Server *svr, Ecore_Con_Event_Client
 {
    if (e->client)
      {
-        e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
-        if ((!e->client->event_count) && (e->client->delete_me))
-          _ecore_con_client_free(e->client);
-        if (e->client->host_server)
+        if (eina_list_data_find(svr->clients, e->client))
           {
-             e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
-             if ((!svr->event_count) && (svr->delete_me))
-               _ecore_con_server_free(svr);
+             e->client->event_count = eina_list_remove(e->client->event_count, e);
+             if ((!e->client->event_count) && (e->client->delete_me))
+               _ecore_con_client_free(e->client);
           }
+        svr->event_count = eina_list_remove(svr->event_count, e);
+        if ((!svr->event_count) && (svr->delete_me))
+          _ecore_con_server_free(svr);
      }
    free(e->error);
    ecore_con_event_client_error_free(e);

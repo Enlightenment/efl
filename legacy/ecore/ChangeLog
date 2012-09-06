@@ -909,3 +909,7 @@
 2012-09-05  Mike Blumenkrantz
 
        * Fix crash that could occur in ecore_con_ssl with privkeys and certificates on failure
+
+2012-09-06  Mike Blumenkrantz
+
+       * Fix race condition in ecore-con where events could sometimes be sent for freed clients
