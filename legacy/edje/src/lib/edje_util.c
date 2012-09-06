@@ -5083,7 +5083,9 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
 				  rp);
 
    //If the map is enabled, uv should be updated when image size is changed.
-   if (!strcmp(evas_object_type_get(rp->swallowed_object), "image"))
+   if (rp->swallowed_object &&
+       evas_object_type_get(rp->swallowed_object) &&
+       !strcmp(evas_object_type_get(rp->swallowed_object), "image"))
      evas_object_event_callback_add(obj_swallow, EVAS_CALLBACK_IMAGE_RESIZE,
                                     _edje_object_part_swallow_image_resize_cb,
                                     rp);
