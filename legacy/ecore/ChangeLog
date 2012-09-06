@@ -913,3 +913,4 @@
 2012-09-06  Mike Blumenkrantz
 
        * Fix race condition in ecore-con where events could sometimes be sent for freed clients
+       * Fix ssl servers using openssl

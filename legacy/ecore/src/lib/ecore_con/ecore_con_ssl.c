@@ -1557,6 +1557,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr,
         break;
 
       default:
+        svr->ssl_prepared = EINA_TRUE;
         return ECORE_CON_SSL_ERROR_NONE;
      }
 
@@ -1577,6 +1578,7 @@ _ecore_con_ssl_server_prepare_openssl(Ecore_Con_Server *svr,
    else if (!svr->use_cert)
      SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_set_cipher_list(svr->ssl_ctx, "aNULL:!eNULL:!LOW:!EXPORT:!ECDH:RSA:AES:!PSK:@STRENGTH"));
 
+   svr->ssl_prepared = EINA_TRUE;
    return ECORE_CON_SSL_ERROR_NONE;
 
 error:
