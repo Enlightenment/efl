@@ -1,14 +1,13 @@
-* camera zoom
 * valgrind supp
 * EPhysics_Constants
 * Sandbox tools to try different materials / properties
 * create shape from image
-* simple game using ephysics
 * set best shape based on evas object
 * optimize collision shapes usage
 * deform objects
 * improve docs
 * run simulation on other thread
+* support linear moves on Z axis and rotation on X and Y axises.
 
 FAR FAR FUTURE:
 * support Box2d backend
