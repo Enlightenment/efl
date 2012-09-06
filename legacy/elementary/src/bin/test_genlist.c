@@ -1497,7 +1497,7 @@ test_genlist7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /*************/
 
-static Elm_Genlist_Item_Class itc_group;
+static Elm_Genlist_Item_Class *itc_group;
 
 char *gl8_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
@@ -1553,11 +1553,12 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    itc1->func.state_get = gl_state_get;
    itc1->func.del       = NULL;
 
-   itc_group.item_style     = "group_index";
-   itc_group.func.text_get = gl8_text_get;
-   itc_group.func.content_get  = NULL;
-   itc_group.func.state_get = NULL;
-   itc_group.func.del       = NULL;
+   itc_group = elm_genlist_item_class_new();
+   itc_group->item_style     = "group_index";
+   itc_group->func.text_get = gl8_text_get;
+   itc_group->func.content_get  = NULL;
+   itc_group->func.state_get = NULL;
+   itc_group->func.del       = NULL;
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
@@ -1638,7 +1639,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
      {
         if (!(i % 10))
           {
-             gli = git = elm_genlist_item_append(gl, &itc_group,
+             gli = git = elm_genlist_item_append(gl, itc_group,
                                                  (void *)(long)i/* item data */,
                                                  NULL/* parent */,
                                                  ELM_GENLIST_ITEM_GROUP,
@@ -1682,6 +1683,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
           }
      }
    elm_genlist_item_class_free(itc1);
+   elm_genlist_item_class_free(itc_group);
 
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
@@ -1764,13 +1766,14 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    itc1->func.state_get = gl_state_get;
    itc1->func.del       = NULL;
 
-   itc_group.item_style     = "group_index";
-   itc_group.func.text_get = gl8_text_get;
-   itc_group.func.content_get  = NULL;
-   itc_group.func.state_get = NULL;
-   itc_group.func.del       = NULL;
+   itc_group = elm_genlist_item_class_new();
+   itc_group->item_style     = "group_index";
+   itc_group->func.text_get = gl8_text_get;
+   itc_group->func.content_get  = NULL;
+   itc_group->func.state_get = NULL;
+   itc_group->func.del       = NULL;
 
-   git = elm_genlist_item_append(gl, &itc_group,
+   git = elm_genlist_item_append(gl, itc_group,
                                  (void *)0/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
    elm_genlist_item_select_mode_set(git, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
@@ -1784,7 +1787,7 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_genlist_item_append(gl, itc1,
                            (void *)3/* item data */, git/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
                            NULL/* func data */);
-   git = elm_genlist_item_append(gl, &itc_group,
+   git = elm_genlist_item_append(gl, itc_group,
                                  (void *)4/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
    elm_genlist_item_select_mode_set(git, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
@@ -1799,6 +1802,7 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                            (void *)7/* item data */, git/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
                            NULL/* func data */);
    elm_genlist_item_class_free(itc1);
+   elm_genlist_item_class_free(itc_group);
 
    evas_object_smart_callback_add(gl, "expand,request", gl9_exp_req, gl);
    evas_object_smart_callback_add(gl, "contract,request", gl9_con_req, gl);
