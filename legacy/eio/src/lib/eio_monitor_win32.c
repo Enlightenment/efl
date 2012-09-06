@@ -41,16 +41,19 @@ struct _Eio_Monitor_Win32_Watcher
    HANDLE               event;
    Eio_Monitor         *monitor;
    Ecore_Win32_Handler *h;
+   char                *current;
+   char                *file;
    DWORD                buf_length;
-   int                  is_dir;
+   Eina_Bool            monitor_file : 1;
+   Eina_Bool            monitor_parent : 1;
 };
 
 struct _Eio_Monitor_Backend
 {
    Eio_Monitor               *parent;
-
-   Eio_Monitor_Win32_Watcher *file;
-   Eio_Monitor_Win32_Watcher *dir;
+   Eio_Monitor_Win32_Watcher *watcher_file;
+   Eio_Monitor_Win32_Watcher *watcher_dir;
+   Eio_Monitor_Win32_Watcher *watcher_parent;
 };
 
 static Eina_Bool _eio_monitor_win32_native = EINA_FALSE;
@@ -58,7 +61,6 @@ static Eina_Bool _eio_monitor_win32_native = EINA_FALSE;
 static Eina_Bool
 _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 {
-   char                       filename[PATH_MAX];
    PFILE_NOTIFY_INFORMATION   fni;
    Eio_Monitor_Win32_Watcher *w;
    wchar_t                   *wname;
@@ -66,7 +68,7 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
    DWORD                      filter;
    DWORD                      offset;
    DWORD                      buf_length;
-   int                        event = EIO_MONITOR_ERROR;
+   int                        event;
 
    w = (Eio_Monitor_Win32_Watcher *)data;
 
@@ -79,76 +81,99 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
         break;
       offset = fni->NextEntryOffset;
 
-      wname = (wchar_t *)malloc(sizeof(wchar_t) * (fni->FileNameLength + 1));
+      wname = (wchar_t *)malloc(fni->FileNameLength + sizeof(wchar_t));
       if (!wname)
         return 0;
 
       memcpy(wname, fni->FileName, fni->FileNameLength);
-      wname[fni->FileNameLength]='\0';
+      wname[fni->FileNameLength / sizeof(wchar_t)] = 0;
       name = evil_wchar_to_char(wname);
       free(wname);
       if (!name)
         return ECORE_CALLBACK_CANCEL;
 
-      _snprintf(filename, PATH_MAX, "%s\\%s", w->monitor->path, name);
-      free(name);
-
-      name = filename;
-      while (*name)
-        {
-          if (*name == '/') *name = '\\';
-          name++;
-        }
-
+      event = -1;
       switch (fni->Action)
         {
         case FILE_ACTION_ADDED:
-          if (w->is_dir)
-            event = EIO_MONITOR_DIRECTORY_CREATED;
-          else
-            event = EIO_MONITOR_FILE_CREATED;
+          if (!w->monitor_parent)
+            {
+               if (w->monitor_file)
+                 event = EIO_MONITOR_FILE_CREATED;
+               else
+                 event = EIO_MONITOR_DIRECTORY_CREATED;
+            }
           break;
         case FILE_ACTION_REMOVED:
-          if (w->is_dir)
-            event = EIO_MONITOR_DIRECTORY_DELETED;
+          if (w->monitor_parent)
+            {
+               char path[MAX_PATH];
+               char *res;
+
+               res = _fullpath(path, name, MAX_PATH);
+               if (res && (strcmp(res, w->current) == 0))
+                 event = EIO_MONITOR_SELF_DELETED;
+            }
           else
-            event = EIO_MONITOR_FILE_DELETED;
+            {
+               if (w->monitor_file)
+                 event = EIO_MONITOR_FILE_DELETED;
+               else
+                 event = EIO_MONITOR_DIRECTORY_DELETED;
+            }
           break;
         case FILE_ACTION_MODIFIED:
-          if (!w->is_dir)
-            event = EIO_MONITOR_FILE_MODIFIED;
+          if (!w->monitor_parent)
+            {
+               if (w->monitor_file)
+                 event = EIO_MONITOR_FILE_MODIFIED;
+               else
+                 event = EIO_MONITOR_DIRECTORY_MODIFIED;
+            }
           break;
         case FILE_ACTION_RENAMED_OLD_NAME:
-          if (w->is_dir)
-            event = EIO_MONITOR_DIRECTORY_DELETED;
-          else
-            event = EIO_MONITOR_FILE_DELETED;
+          if (!w->monitor_parent)
+            {
+               if (w->monitor_file)
+                 event = EIO_MONITOR_FILE_DELETED;
+               else
+                 event = EIO_MONITOR_DIRECTORY_DELETED;
+            }
           break;
         case FILE_ACTION_RENAMED_NEW_NAME:
-          if (w->is_dir)
-            event = EIO_MONITOR_DIRECTORY_CREATED;
-          else
-            event = EIO_MONITOR_FILE_CREATED;
+          if (!w->monitor_parent)
+            {
+               if (w->monitor_file)
+                 event = EIO_MONITOR_FILE_CREATED;
+               else
+                 event = EIO_MONITOR_DIRECTORY_CREATED;
+            }
           break;
         default:
-          fprintf(stderr, "unknown event\n");
+          ERR("unknown event");
           event = EIO_MONITOR_ERROR;
           break;
         }
-      if (event != EIO_MONITOR_ERROR)
-        _eio_monitor_send(w->monitor, filename, event);
+
+      if (event >= 0)
+        _eio_monitor_send(w->monitor, name, event);
+
+      free(name);
 
       fni = (PFILE_NOTIFY_INFORMATION)((LPBYTE)fni + offset);
    } while (offset);
 
-   filter = (w->is_dir == 0) ? FILE_NOTIFY_CHANGE_FILE_NAME : FILE_NOTIFY_CHANGE_DIR_NAME;
-   filter |=
+   filter =
      FILE_NOTIFY_CHANGE_ATTRIBUTES |
      FILE_NOTIFY_CHANGE_SIZE |
      FILE_NOTIFY_CHANGE_LAST_WRITE |
      FILE_NOTIFY_CHANGE_LAST_ACCESS |
      FILE_NOTIFY_CHANGE_CREATION |
      FILE_NOTIFY_CHANGE_SECURITY;
+   if (w->monitor_file)
+     filter |= FILE_NOTIFY_CHANGE_FILE_NAME;
+   else
+     filter |= FILE_NOTIFY_CHANGE_DIR_NAME;
 
     ReadDirectoryChangesW(w->handle,
                           (LPVOID)w->buffer,
@@ -163,17 +188,32 @@ _eio_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh __UNUSED__)
 }
 
 static Eio_Monitor_Win32_Watcher *
-_eio_monitor_win32_watcher_new(Eio_Monitor *monitor, unsigned char is_dir)
+_eio_monitor_win32_watcher_new(Eio_Monitor *monitor,
+                               char        *current,
+                               char        *file,
+                               Eina_Bool    monitor_file,
+                               Eina_Bool    monitor_parent)
 {
-   char path[PATH_MAX];
    Eio_Monitor_Win32_Watcher *w;
+   char                      *monitored;
    DWORD                      filter;
 
    w = (Eio_Monitor_Win32_Watcher *)calloc(1, sizeof(Eio_Monitor_Win32_Watcher));
    if (!w) return NULL;
 
-   realpath(monitor->path, path);
-   w->handle = CreateFile(path,
+   if (!monitor_parent)
+     monitored = current;
+   else
+     {
+        char *tmp;
+
+        tmp = strrchr(current, '\\');
+        monitored = (char *)alloca((tmp - current) + 1);
+        memcpy(monitored, current, tmp - current);
+        monitored[tmp - current] = '\0';
+     }
+
+   w->handle = CreateFile(monitored,
                           FILE_LIST_DIRECTORY,
                           FILE_SHARE_READ |
                           FILE_SHARE_WRITE,
@@ -192,14 +232,17 @@ _eio_monitor_win32_watcher_new(Eio_Monitor *monitor, unsigned char is_dir)
    ZeroMemory (&w->overlapped, sizeof(w->overlapped));
    w->overlapped.hEvent = w->event;
 
-   filter = (is_dir == 0) ? FILE_NOTIFY_CHANGE_FILE_NAME : FILE_NOTIFY_CHANGE_DIR_NAME;
-   filter |=
+   filter =
      FILE_NOTIFY_CHANGE_ATTRIBUTES |
      FILE_NOTIFY_CHANGE_SIZE |
      FILE_NOTIFY_CHANGE_LAST_WRITE |
      FILE_NOTIFY_CHANGE_LAST_ACCESS |
      FILE_NOTIFY_CHANGE_CREATION |
      FILE_NOTIFY_CHANGE_SECURITY;
+   if (monitor_file)
+     filter |= FILE_NOTIFY_CHANGE_FILE_NAME;
+   else
+     filter |= FILE_NOTIFY_CHANGE_DIR_NAME;
 
    if (!ReadDirectoryChangesW(w->handle,
                               (LPVOID)w->buffer,
@@ -228,7 +271,10 @@ _eio_monitor_win32_watcher_new(Eio_Monitor *monitor, unsigned char is_dir)
      goto close_event;
 
    w->monitor = monitor;
-   w->is_dir = is_dir;
+   w->monitor_file = monitor_file;
+   w->monitor_parent = monitor_parent;
+   w->file = file;
+   w->current = current;
 
    return w;
 
@@ -247,6 +293,9 @@ _eio_monitor_win32_watcher_free(Eio_Monitor_Win32_Watcher *w)
 {
    if (!w) return;
 
+   if (w->file)
+     free(w->file);
+   free(w->current);
    CloseHandle(w->event);
    CloseHandle (w->handle);
    free (w);
@@ -274,37 +323,80 @@ void eio_monitor_backend_shutdown(void)
 
 void eio_monitor_backend_add(Eio_Monitor *monitor)
 {
+   char path[PATH_MAX];
+   struct _stat s;
+   char *res;
+   char *current;
+   char *file = NULL;
    Eio_Monitor_Backend *backend;
+   int ret;
+
+   res = _fullpath(path, monitor->path, MAX_PATH);
+   if (!res)
+     goto fallback;
+
+   ret = _stat(res, &s);
+   if (ret != 0)
+     goto fallback;
+
+   if (_S_IFDIR & s.st_mode)
+     {
+        current = strdup(path);
+        if (!current)
+          goto fallback;
+     }
+   else if (_S_IFREG & s.st_mode)
+     {
+        char *tmp;
+
+        tmp = strrchr(path, '\\');
+        file = strdup(tmp + 1);
+        if (!file)
+          goto fallback;
+
+        *tmp = '\0';
+        current = strdup(path);
+        if (!current)
+          {
+             free(file);
+             goto fallback;
+          }
+     }
+   else
+     goto fallback;
 
    backend = calloc(1, sizeof (Eio_Monitor_Backend));
    if (!backend)
-     {
-        eio_monitor_fallback_add(monitor);
-        return;
-     }
+     goto fallback;
 
    backend->parent = monitor;
-   backend->file = _eio_monitor_win32_watcher_new(monitor, 0);
-   if (!backend->file)
-     {
-        INF("falling back to poll monitoring");
-        free(backend);
-        eio_monitor_fallback_add(monitor);
-        return;
-     }
 
-   backend->dir = _eio_monitor_win32_watcher_new(monitor, 1);
-   if (!backend->dir)
-     {
-        INF("falling back to poll monitoring");
-        _eio_monitor_win32_watcher_free(backend->file);
-        free(backend);
-        eio_monitor_fallback_add(monitor);
-        return;
-     }
+   backend->watcher_file = _eio_monitor_win32_watcher_new(monitor, current, file, EINA_TRUE, EINA_FALSE);
+   if (!backend->watcher_file)
+     goto free_backend;
+
+   backend->watcher_dir = _eio_monitor_win32_watcher_new(monitor, current, file, EINA_FALSE, EINA_FALSE);
+   if (!backend->watcher_dir)
+     goto free_backend_file;
+
+   backend->watcher_parent = _eio_monitor_win32_watcher_new(monitor, current, file, EINA_FALSE, EINA_TRUE);
+   if (!backend->watcher_parent)
+     goto free_backend_dir;
 
    _eio_monitor_win32_native = EINA_TRUE;
    monitor->backend = backend;
+
+   return;
+
+ free_backend_dir:
+   _eio_monitor_win32_watcher_free(backend->watcher_dir);
+ free_backend_file:
+   _eio_monitor_win32_watcher_free(backend->watcher_file);
+ free_backend:
+   free(backend);
+ fallback:
+   INF("falling back to poll monitoring");
+   eio_monitor_fallback_add(monitor);
 }
 
 void eio_monitor_backend_del(Eio_Monitor *monitor)
@@ -315,8 +407,9 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
         return ;
      }
 
-   _eio_monitor_win32_watcher_free(monitor->backend->file);
-   _eio_monitor_win32_watcher_free(monitor->backend->dir);
+   _eio_monitor_win32_watcher_free(monitor->backend->watcher_parent);
+   _eio_monitor_win32_watcher_free(monitor->backend->watcher_dir);
+   _eio_monitor_win32_watcher_free(monitor->backend->watcher_file);
    free(monitor->backend);
    monitor->backend = NULL;
 }

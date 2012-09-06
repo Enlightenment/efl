@@ -1,0 +1,1 @@
+ * Fix file monitoring on Windows when we pass a file and not just a directory

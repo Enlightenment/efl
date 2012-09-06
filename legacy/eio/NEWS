@@ -14,6 +14,7 @@ Fixes:
 	- Fix memory leak when using file_associate.
 
 Improvements:
-	- Add log debuggong macros
+	- Add log debugging macros.
+	- path monitoring on Windows.
 
 Removal:

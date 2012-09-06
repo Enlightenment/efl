@@ -35,3 +35,7 @@
 2012-08-30  Carsten Haitzler (The Rasterman)
 
         1.7.0 release
+
+2012-09-06  Vincent Torri
+
+	* Improve file monitoring on Windows to mimic more inotify behavior.

@@ -273,7 +273,11 @@ eio_monitor_stringshared_add(const char *path)
        eio_monitor_init();
      }
 
-   if (stat(path, &st) != 0) return NULL;
+   if (stat(path, &st) != 0)
+     {
+        INF("monitored path not found");
+        return NULL;
+     }
 
    monitor = eina_hash_find(_eio_monitors, path);
 
