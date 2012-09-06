@@ -39,7 +39,7 @@ enum
 
 typedef struct _Tmp_Info      Tmp_Info;
 typedef struct _Saved_Type    Saved_Type;
-typedef struct _Escape        Escape;
+typedef struct _Cnp_Escape    Cnp_Escape;
 typedef struct _Dropable      Dropable;
 
 struct _Tmp_Info
@@ -59,7 +59,7 @@ struct _Saved_Type
    Eina_Bool     textreq: 1;
 };
 
-struct _Escape
+struct _Cnp_Escape
 {
    const char *escape;
    const char *value;
