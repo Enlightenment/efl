@@ -3034,10 +3034,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
              evas_map_util_3d_rotate(map,
                                      TO_DOUBLE(pf->map.rotation.x),
-												 TO_DOUBLE(pf->map.rotation.y),
-												 TO_DOUBLE(pf->map.rotation.z),
+                                     TO_DOUBLE(pf->map.rotation.y),
+                                     TO_DOUBLE(pf->map.rotation.z),
                                      pf->map.center.x, pf->map.center.y,
-												 pf->map.center.z);
+                                     pf->map.center.z);
 
              // calculate light color & position etc. if there is one
              if (pf->lighted)
