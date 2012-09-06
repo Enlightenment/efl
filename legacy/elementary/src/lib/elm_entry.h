@@ -316,7 +316,7 @@ typedef enum
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY,  /**< Number Only layout */
    ELM_INPUT_PANEL_LAYOUT_INVALID,     /**< Never use this */
    ELM_INPUT_PANEL_LAYOUT_HEX,         /**< Hexadecimal layout */
-   ELM_INPUT_PANEL_LAYOUT_TERMINAL,    /**< Command-line terminal layout */
+   ELM_INPUT_PANEL_LAYOUT_TERMINAL,    /**< Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization) */
    ELM_INPUT_PANEL_LAYOUT_PASSWORD     /**< Like normal, but no auto-correct, no auto-capitalization etc. */
 } Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired. */
 
