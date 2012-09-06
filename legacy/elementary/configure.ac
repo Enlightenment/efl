@@ -201,6 +201,7 @@ if test "x$want_quicklaunch" != "xno"; then
         have_fork="yes"
         AC_DEFINE(HAVE_FORK)
    ])
+   AC_CHECK_FUNCS([clearenv])
 fi
 AM_CONDITIONAL([BUILD_QUICKLAUNCH], [test "x$have_fork" = "xyes" && test "x$have_dlopen" = "xyes"])
 
@@ -730,14 +731,6 @@ AC_TRY_COMPILE([
 extern char **environ;
 ], [
   AC_DEFINE(HAVE_ENVIRON, 1, [extern environ exists])
-])
-
-AC_TRY_COMPILE([
-#include <stdlib.h>
-], [
-clearenv();
-], [
-  AC_DEFINE(HAVE_CLEARENV, 1, [extern environ exists])
 ])
 
 AC_OUTPUT([
