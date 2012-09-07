@@ -889,8 +889,8 @@ EAPI Eina_List            *eina_list_clone(const Eina_List *list) EINA_WARN_UNUS
  * This function sorts @p list. @p size if the number of the first
  * element to sort. If @p limit is 0 or greater than the number of
  * elements in @p list, all the elements are sorted. @p func is used to
- * compare two elements of @p list. If @p list or @p func are @c NULL,
- * this function returns @c NULL.
+ * compare two elements of @p list. If @p func is @c NULL, this function returns
+ * @p list.
  *
  * @note @b in-place: this will change the given list, so you should
  * now point to the new list head that is returned by this function.
