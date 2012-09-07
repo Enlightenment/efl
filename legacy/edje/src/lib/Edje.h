@@ -2304,7 +2304,7 @@ EAPI void         edje_object_text_change_cb_set      (Evas_Object *obj, Edje_Te
  * @param part The part name
  * @param text The text string
  *
- * @return @c EINA_BOOL on success, @c EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  */
 EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const char *part, const char *text);
 
