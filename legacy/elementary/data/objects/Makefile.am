@@ -9,10 +9,11 @@ EDJE_FLAGS = $(EDJE_FLAGS_$(V)) -id $(top_srcdir)/data/objects -fd $(top_srcdir)
 
 filesdir = $(datadir)/elementary/objects
 
-files_DATA = test.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj
+files_DATA = test.edj test_external.edj multip.edj cursors.edj font_preview.edj postit_ent.edj multibuttonentry.edj
 
 EXTRA_DIST = \
 test.edc \
+test_external.edc \
 multip.edc \
 cursors.edc \
 font_preview.edc \
@@ -28,6 +29,11 @@ test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/objects/test.edc \
 	$(top_builddir)/data/objects/test.edj
+
+test_external.edj: Makefile $(EXTRA_DIST)
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/objects/test_external.edc \
+	$(top_builddir)/data/objects/test_external.edj
 
 multip.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

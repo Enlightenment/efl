@@ -184,6 +184,8 @@ void test_datetime(void *data, Evas_Object *obj, void *event_info);
 void test_popup(void *data, Evas_Object *obj, void *event_info);
 void test_dayselector(void *data, Evas_Object *obj, void *event_info);
 void test_image(void *data, Evas_Object *obj, void *event_info);
+void test_external_button(void *data, Evas_Object *obj, void *event_info);
+void test_external_slider(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -528,6 +530,10 @@ add_tests:
    ADD_TEST(NULL, "Effects", "Animation", test_anim);
 
    //------------------------------//
+   ADD_TEST(NULL, "Edje External", "ExtButton", test_external_button);
+   ADD_TEST(NULL, "Edje External", "ExtSlider", test_external_slider);
+
+   //------------------------------//
    ADD_TEST(NULL, "Toolbars", "Toolbar", test_toolbar);
    ADD_TEST(NULL, "Toolbars", "Toolbar 2", test_toolbar2);
    ADD_TEST(NULL, "Toolbars", "Toolbar 3", test_toolbar3);
@@ -697,10 +703,9 @@ add_tests:
 
    if (autorun)
      {
-        size_t alen = strlen(autorun);
         EINA_LIST_FOREACH(tests, l, t)
           {
-             if ((t->name) && (t->cb) && (!strncasecmp(t->name, autorun, alen)))
+             if ((t->name) && (t->cb) && (!strcasecmp(t->name, autorun)))
                {
                   t->cb(NULL, NULL, NULL);
                   break;

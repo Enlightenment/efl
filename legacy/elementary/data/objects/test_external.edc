@@ -1,0 +1,451 @@
+
+#define COMMON_EXTERNAL_UNDER \
+         part { name: "clip"; \
+            type: RECT; \
+            description { state: "default" 0.0; \
+            } \
+         } \
+         part { name: "under"; \
+            mouse_events: 0; \
+            clip_to: "clip"; \
+            description { state: "default" 0.0; \
+               align: 0.5 0.0; \
+               aspect: 2.6255 2.6255; \
+               image.normal: "sky.jpg"; \
+            } \
+         }
+
+#define COMMON_EXTERNAL_OVER \
+         part { name: "over"; \
+            mouse_events: 0; \
+            clip_to: "clip"; \
+            description { state: "default" 0.0; \
+               fill { \
+                  smooth: 0; \
+                  origin { \
+                     relative: 0.0 0.0; \
+                     offset: 0 0; \
+                  } \
+                  size { \
+                     relative: 1.84722 1.0; \
+                     offset: 0 0; \
+                  } \
+               } \
+               image.normal: "clo.png"; \
+            } \
+            description { state: "drift" 0.0; \
+               inherit: "default" 0.0; \
+               fill { \
+                  origin { \
+                     relative: 1.84722 0.0; \
+                     offset: 0 0; \
+                  } \
+                  size { \
+                     relative: 1.84722 1.0; \
+                     offset: 0 0; \
+                  } \
+               } \
+            } \
+         }
+
+#define COMMON_EXTERNAL_PROGRAM \
+         program { name: "anim1"; \
+            signal: "load"; \
+            source: ""; \
+            action: STATE_SET "drift" 0.0; \
+            transition: LINEAR 10.0; \
+            target: "over"; \
+            after: "anim2"; \
+         } \
+         program { name: "anim2"; \
+            action: STATE_SET "default" 0.0; \
+            target: "over"; \
+            after: "anim1"; \
+         }
+
+images {
+   image: "sky.jpg" COMP;
+   image: "clo.png" LOSSY 60;
+}
+
+collections {
+   group { name: "external/button";
+      parts {
+         COMMON_EXTERNAL_UNDER
+         part { name: "ext_label1";
+            type: EXTERNAL;
+            source: "elm/label";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               params {
+                  string: "label" "<b>Label and Buttons are edje externals</>\
+<br>Click buttons to perform edje animations.<br><b>BUG</>: disabled style.";
+               }
+            }
+         }
+         part { name: "ext_button1";
+             type: EXTERNAL;
+             source: "elm/button";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 200 50;
+                 align: 0.5 0.0;
+                 rel1.offset: 0 60;
+                 params {
+                     string: "label" "icon + label";
+                     string: "icon" "home";
+                 }
+             }
+         }
+         part { name: "ext_button2";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               rel1.offset: 0 120;
+               params {
+                  string: "label" "only label";
+               }
+            }
+         }
+         part { name: "ext_button3";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 50 50;
+               align: 0.5 0.0;
+               rel1.offset: 0 180;
+               params {
+                  string: "icon" "home";
+               }
+            }
+            description { state: "left" 0.0;
+               inherit: "default" 0.0;
+               align: 0.2 0.0;
+            }
+            description { state: "right" 0.0;
+               inherit: "default" 0.0;
+               align: 0.8 0.0;
+            }
+         }
+         part { name: "ext_button4";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               rel1.offset: 0 240;
+               params {
+                  string: "label" "anchor style";
+                  string: "style" "anchor";
+               }
+            }
+         }
+         part { name: "ext_button5";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               rel1.offset: 0 300;
+               params {
+                  string: "label" "disabled";
+                  string: "icon" "home";
+                  bool: "disabled" 1;
+               }
+            }
+         }
+         COMMON_EXTERNAL_OVER
+      }
+      programs {
+         COMMON_EXTERNAL_PROGRAM  
+         program { name: "btn1_click";
+            signal: "clicked";
+            source: "ext_button1";
+            action: STATE_SET "left" 0.0;
+            transition: SINUSOIDAL 0.6 CURRENT;
+            target: "ext_button3";
+         }
+         program { name: "btn2_click";
+            signal: "clicked";
+            source: "ext_button2";
+            action: STATE_SET "right" 0.0;
+            transition: SINUSOIDAL 0.6 CURRENT;
+            target: "ext_button3";
+         }
+         program { name: "btn4_click";
+            signal: "clicked";
+            source: "ext_button4";
+            action: STATE_SET "default" 0.0;
+            transition: SINUSOIDAL 0.6 CURRENT;
+            target: "ext_button3";
+         }
+      }
+   }
+   group { name: "external/slider";
+      parts {
+         COMMON_EXTERNAL_UNDER
+         part { name: "ext_label1";
+            type: EXTERNAL;
+            source: "elm/label";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               params {
+                  string: "label" "<b>All the Widgets and the Interaction are pure edje</>\
+<br>The first one is linked with the 3 verticals.<br><b>BUG</>: vertical+disabled.";
+               }
+            }
+         }
+         part { name: "ext_slider1";
+             type: EXTERNAL;
+             source: "elm/slider";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 300 50;
+                 align: 0.5 0.0;
+                 rel1.offset: 0 60;
+                 params {
+                     string: "label" "Horizontal";
+                     string: "icon" "home";
+                     string: "unit format" "%.1f units";
+                     string: "indicator format" "%.0f";
+                     double: "min" -100.0;
+                     double: "max" 100.0;
+                 }
+             }
+         }
+         part { name: "ext_slider2";
+             type: EXTERNAL;
+             source: "elm/slider";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 300 50;
+                 align: 0.5 0.0;
+                 rel1.offset: 0 90;
+                 params {
+                     string: "label" "Disabled";
+                     string: "icon" "home";
+                     bool: "disabled" 1;
+                     double: "value" 0.5;
+                 }
+             }
+         }
+         part { name: "ext_slider3";
+             type: EXTERNAL;
+             source: "elm/slider";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 300 50;
+                 align: 0.5 0.0;
+                 rel1.offset: 0 120;
+                 params {
+                     string: "label" "Inverted";
+                     bool: "inverted" 1;
+                 }
+             }
+         }
+         part { name: "ext_slider4";
+             type: EXTERNAL;
+             source: "elm/slider";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 50 300;
+                 align: 0.0 0.0;
+                 rel1.offset: 20 160;
+                 params {
+                     string: "label" "Horizontal";
+                     string: "icon" "home";
+                     bool: "horizontal" 0;
+                     string: "unit format" "%.0f u";
+                     string: "indicator format" "%.3f";
+                     double: "min" -100.0;
+                     double: "max" 100.0;
+                 }
+             }
+            description { state: "anim" 0.0;
+                 inherit: "default" 0.0;
+                 rel1.offset: 140 160;
+             }
+         }
+         part { name: "ext_slider5";
+             type: EXTERNAL;
+             source: "elm/slider";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 50 300;
+                 align: 0.0 0.0;
+                 rel1.offset: 80 160;
+                 params {
+                     string: "label" "Inverted";
+                     string: "icon" "home";
+                     bool: "horizontal" 0;
+                     bool: "inverted" 1;
+                     string: "unit format" "%.0f u";
+                     string: "indicator format" "%.3f";
+                     double: "min" -100.0;
+                     double: "max" 100.0;
+                 }
+             }
+            description { state: "anim" 0.0;
+                 inherit: "default" 0.0;
+                 rel1.offset: 200 160;
+             }
+         }
+         part { name: "ext_slider6";
+             type: EXTERNAL;
+             source: "elm/slider";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 50 300;
+                 align: 0.0 0.0;
+                 rel1.offset: 140 160;
+                 params {
+                     string: "label" "Disabled";
+                     string: "icon" "home";
+                     double: "min" -70.0;
+                     double: "max" 70.0;
+                     bool: "disabled" 1;
+                     bool: "horizontal" 0;
+                 }
+             }
+             description { state: "anim" 0.0;
+                 inherit: "default" 0.0;
+                 rel1.offset: 260 160;
+             }
+         }
+         part { name: "ext_button1";
+             type: EXTERNAL;
+             source: "elm/button";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 80 40;
+                 align: 0.0 0.0;
+                 rel1.offset: 200 230;
+                 params {
+                     string: "label" "reset all";
+                 }
+             }
+            description { state: "anim" 0.0;
+                 inherit: "default" 0.0;
+                 rel1.offset: 30 230;
+             }
+         }
+         part { name: "ext_button2";
+             type: EXTERNAL;
+             source: "elm/button";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 80 40;
+                 align: 0.0 0.0;
+                 rel1.offset: 200 270;
+                 params {
+                     string: "label" "animate";
+                 }
+             }
+            description { state: "anim" 0.0;
+                 inherit: "default" 0.0;
+                 rel1.offset: 30 270;
+             }
+         }
+         part { name: "ext_check1";
+             type: EXTERNAL;
+             source: "elm/check";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 80 40;
+                 align: 0.0 0.0;
+                 rel1.offset: 200 310;
+                 params {
+                     string: "label" "disable first";
+                 }
+             }
+            description { state: "anim" 0.0;
+                 inherit: "default" 0.0;
+                 rel1.offset: 30 310;
+             }
+         }
+         COMMON_EXTERNAL_OVER
+      }
+      programs {
+         COMMON_EXTERNAL_PROGRAM  
+         program { name: "link";
+            signal: "changed";
+            source: "ext_slider1";
+            action: PARAM_COPY "ext_slider1" "value" "ext_slider4" "value";
+            after: "link2";
+         }
+         program { name: "link2";
+            action: PARAM_COPY "ext_slider1" "value" "ext_slider5" "value";
+            after: "link3";
+         }
+         program { name: "link3";
+            action: PARAM_COPY "ext_slider1" "value" "ext_slider6" "value";
+         }
+         program { name: "reset";
+            signal: "clicked";
+            source: "ext_button1";
+            action: PARAM_SET "ext_slider1" "value" 0.0;
+            after: "reset2";
+         }
+         program { name: "reset2";
+            action: PARAM_SET "ext_slider2" "value" 0.0;
+            after: "reset3";
+         }
+         program { name: "reset3";
+            action: PARAM_SET "ext_slider3" "value" 0.0;
+            after: "reset4";
+         }
+         program { name: "reset4";
+            action: PARAM_SET "ext_slider4" "value" 0.0;
+            after: "reset5";
+         }
+         program { name: "reset5";
+            action: PARAM_SET "ext_slider5" "value" 0.0;
+            after: "reset6";
+         }
+         program { name: "reset6";
+            action: PARAM_SET "ext_slider6" "value" 0.0;
+         }
+         program { name: "disable_first";
+            signal: "changed";
+            source: "ext_check1";
+            action: PARAM_COPY "ext_check1" "state" "ext_slider1" "disabled";
+         }
+         program { name: "animate";
+            signal: "clicked";
+            source: "ext_button2";
+            filter: "ext_slider4" "default" 0.0;
+            action: STATE_SET "anim" 0.0;
+            transition: SPRING 1.5 0.0 5.0;
+            target: "ext_slider4";
+            target: "ext_slider5";
+            target: "ext_slider6";
+            target: "ext_button1";
+            target: "ext_button2";
+            target: "ext_check1";
+         }
+         program { name: "animate_reverse";
+            signal: "clicked";
+            source: "ext_button2";
+            filter: "ext_slider4" "anim" 0.0;
+            action: STATE_SET "default" 0.0;
+            transition: BOUNCE 1.5 0.0 5.0;
+            target: "ext_slider4";
+            target: "ext_slider5";
+            target: "ext_slider6";
+            target: "ext_button1";
+            target: "ext_button2";
+            target: "ext_check1";
+         }
+      }
+   }
+}

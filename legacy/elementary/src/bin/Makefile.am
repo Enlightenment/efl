@@ -58,6 +58,7 @@ test_diskselector.c \
 test_entry.c \
 test_entry_anchor.c \
 test_entry_anchor2.c \
+test_external.c \
 test_fileselector_button.c \
 test_fileselector.c \
 test_fileselector_entry.c \
