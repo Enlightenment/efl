@@ -300,7 +300,7 @@ evas_object_image_memfile_set(Evas_Object *obj, void *data, int size, char *form
    evas_object_image_file_set(obj, NULL, NULL);
    // invalidate the cache effectively
    evas_object_image_alpha_set(obj, !o->cur.has_alpha);
-   evas_object_image_alpha_set(obj, !o->cur.has_alpha);
+   evas_object_image_alpha_set(obj, o->cur.has_alpha);
 
    if ((size < 1) || (!data)) return;
 
