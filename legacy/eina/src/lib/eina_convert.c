@@ -182,7 +182,7 @@ eina_convert_itoa(int n, char *s)
 
    do {
         s[i++] = n % 10 + '0';
-     } while ((n /= 10) > 0);
+   } while ((n /= 10) > 0);
 
    s[i] = '\0';
 
@@ -201,7 +201,7 @@ eina_convert_xtoa(unsigned int n, char *s)
    i = 0;
    do {
         s[i++] = look_up_table[n & 0xF];
-     } while ((n >>= 4) > 0);
+   } while ((n >>= 4) > 0);
 
    s[i] = '\0';
 
@@ -224,7 +224,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
    EINA_SAFETY_ON_NULL_RETURN_VAL(e,   EINA_FALSE);
 
    if (length <= 0)
-      goto on_length_error;
+     goto on_length_error;
 
    /* Compute the mantisse. */
    if (*str == '-')
@@ -235,7 +235,7 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
      }
 
    if (length <= 2)
-      goto on_length_error;
+     goto on_length_error;
 
    if (strncmp(str, "0x", 2))
      {
@@ -254,16 +254,16 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
       goto on_length_error;
 
    if (*str == '.')
-      for (str++, length--;
-           length > 0 && *str != 'p';
-           ++str, --length, ++nbr_decimals)
-        {
-           mantisse <<= 4;
-           mantisse += HEXA_TO_INT(*str);
-        }
+     for (str++, length--;
+          length > 0 && *str != 'p';
+          ++str, --length, ++nbr_decimals)
+       {
+          mantisse <<= 4;
+          mantisse += HEXA_TO_INT(*str);
+       }
 
    if (sign < 0)
-      mantisse = -mantisse;
+     mantisse = -mantisse;
 
    /* Compute the exponent. */
    if (*str != 'p')
@@ -293,10 +293,10 @@ eina_convert_atod(const char *src, int length, long long *m, long *e)
      }
 
    if (length < 0)
-      goto on_length_error;
+     goto on_length_error;
 
    if (sign < 0)
-      exponent = -exponent;
+     exponent = -exponent;
 
    *m = mantisse;
    *e = exponent - (nbr_decimals << 2);
@@ -364,7 +364,7 @@ eina_convert_dtoa(double d, char *des)
         p = -p;
      }
    else
-      *(des++) = '+';
+     *(des++) = '+';
 
    length += 2;
 
@@ -395,19 +395,19 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
 
    /* fp >= 1 */
    if (fp >= 0x0000000100000000LL)
-      while (fp >= 0x0000000100000000LL)
-        {
-           p++;
-           /* fp /= 2 */
-           fp >>= 1;
-        } /* fp < 0.5 */
+     while (fp >= 0x0000000100000000LL)
+       {
+          p++;
+          /* fp /= 2 */
+          fp >>= 1;
+       } /* fp < 0.5 */
    else if (fp < 0x80000000)
-      while (fp < 0x80000000)
-        {
-           p--;
-           /* fp *= 2 */
-           fp <<= 1;
-        }
+     while (fp < 0x80000000)
+       {
+          p--;
+          /* fp *= 2 */
+          fp <<= 1;
+       }
 
    if (p)
      {
@@ -448,7 +448,7 @@ eina_convert_fptoa(Eina_F32p32 fp, char *des)
         p = -p;
      }
    else
-      *(des++) = '+';
+     *(des++) = '+';
 
    length += 2;
 
@@ -462,17 +462,17 @@ eina_convert_atofp(const char *src, int length, Eina_F32p32 *fp)
    long e;
 
    if (!eina_convert_atod(src, length, &m, &e))
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    if (!fp)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
    e += 32;
 
    if (e > 0)
-      *fp = m << e;
+     *fp = m << e;
    else
-      *fp = m >> -e;
+     *fp = m >> -e;
 
    return EINA_TRUE;
 }
