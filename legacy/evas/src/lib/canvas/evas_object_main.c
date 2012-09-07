@@ -66,6 +66,13 @@ evas_object_free(Evas_Object *obj, int clean_layer)
    evas_object_map_set(obj, NULL);
    if (obj->prev.map) evas_map_free(obj->prev.map);
    if (obj->cache_map) evas_map_free(obj->cache_map);
+   if (obj->map.surface)
+     {
+        obj->layer->evas->engine.func->image_map_surface_free
+          (obj->layer->evas->engine.data.output,
+              obj->map.surface);
+        obj->map.surface = NULL;
+     }
    evas_object_grabs_cleanup(obj);
    evas_object_intercept_cleanup(obj);
    if (obj->smart.parent) was_smart_child = 1;

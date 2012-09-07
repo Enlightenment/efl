@@ -166,9 +166,6 @@ _evas_map_free(Evas_Object *obj, Evas_Map *m)
 {
    if (obj)
      {
-        if (m->surface)
-          obj->layer->evas->engine.func->image_map_surface_free
-            (obj->layer->evas->engine.data.output, m->surface);
         if (obj->spans)
           {
              obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->spans);
@@ -408,6 +405,13 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
      }
    else
      {
+        if (obj->map.surface)
+          {
+             obj->layer->evas->engine.func->image_map_surface_free
+               (obj->layer->evas->engine.data.output,
+                   obj->map.surface);
+             obj->map.surface = NULL;
+          }
         if (obj->cur.map)
           {
              _evas_map_calc_geom_change(obj);
@@ -449,19 +453,18 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
    return;
    MAGIC_CHECK_END();
 
-   if (!map || map->count < 4)
+   if ((!map) || (map->count < 4))
      {
+        if (obj->map.surface)
+          {
+             obj->layer->evas->engine.func->image_map_surface_free
+               (obj->layer->evas->engine.data.output,
+                   obj->map.surface);
+             obj->map.surface = NULL;
+          }
         if (obj->cur.map)
           {
              obj->changed_map = EINA_TRUE;
-
-             if (obj->cur.map->surface)
-               {
-                  obj->layer->evas->engine.func->image_map_surface_free
-                    (obj->layer->evas->engine.data.output,
-                     obj->cur.map->surface);
-                  obj->cur.map->surface = NULL;
-               }
              obj->prev.geometry = obj->cur.map->normal_geometry;
 
              if (obj->prev.map == obj->cur.map)

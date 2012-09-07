@@ -463,8 +463,8 @@ struct _Evas_Map
    DATA32                magic;
    int                   count; // num of points
    Evas_Coord_Rectangle  normal_geometry; // bounding box of map geom actually
-   void                 *surface; // surface holding map if needed
-   int                   surface_w, surface_h; // current surface w & h alloc
+//   void                 *surface; // surface holding map if needed
+//   int                   surface_w, surface_h; // current surface w & h alloc
    Evas_Coord            mx, my; // mouse x, y after conversion to map space
    struct {
       Evas_Coord         px, py, z0, foc;
@@ -543,6 +543,11 @@ struct _Evas_Object
       Eina_Bool             cached_surface : 1;
       Eina_Bool             parent_cached_surface : 1;
    } cur, prev;
+
+   struct {
+      void                 *surface; // surface holding map if needed
+      int                   surface_w, surface_h; // current surface w & h alloc
+   } map;
 
    Evas_Map                   *cache_map;
    char                       *name;

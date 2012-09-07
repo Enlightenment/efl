@@ -1034,3 +1034,4 @@
 
        * Fix image alpha set bug if the image data has not been loaded
        yet from disk. Fixes across software and gl engines needed.
+       * Fix map surface leak.

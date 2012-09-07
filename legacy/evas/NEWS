@@ -17,6 +17,7 @@ Fixes:
    * Fix segmentation fault with the esvg loader.
    * Fix EGL/GLES dest alpha rendering bug (no rendering).
    * Fix evas_object_image_alpha_set when image data not loaded yet.
+   * Fix map surface leak.
 
 Evas 1.7.0
 
