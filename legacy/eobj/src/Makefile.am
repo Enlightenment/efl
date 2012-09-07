@@ -1,7 +1,7 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib benchmarks examples
+SUBDIRS = lib benchmarks examples tests
 
 .PHONY: benchmark
 

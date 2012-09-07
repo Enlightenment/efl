@@ -1,8 +1,6 @@
 #ifndef INTERFACE_H
 #define INTERFACE_H
 
-#include "Eo.h"
-
 extern EAPI Eo_Op INTERFACE_BASE_ID;
 
 enum {

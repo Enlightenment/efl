@@ -37,7 +37,7 @@ if test "x${_efl_enable_tests}" = "xyes" ; then
       [_efl_enable_tests="no"])
 fi
 
-efl_enable_coverage="no"
+_efl_enable_coverage="no"
 if test "x${_efl_enable_tests}" = "xyes" ; then
    AC_CHECK_PROG(have_lcov, [lcov], [yes], [no])
    if test "x$have_lcov" = "xyes" ; then
@@ -49,13 +49,14 @@ if test "x${_efl_enable_tests}" = "xyes" ; then
       else
          m4_defn([UPEFL])[]_CFLAGS="${m4_defn([UPEFL])[]_CFLAGS} -g -O0 -DDEBUG"
       fi
-      efl_enable_coverage="yes"
+      _efl_enable_coverage="yes"
    else
       AC_MSG_WARN([lcov is not found, disable profiling instrumentation])
    fi
 fi
 
 AM_CONDITIONAL(EFL_ENABLE_TESTS, test "x${_efl_enable_tests}" = "xyes")
+AM_CONDITIONAL(EFL_ENABLE_COVERAGE, test "x${_efl_enable_coverage}" = "xyes")
 
 AS_IF([test "x$_efl_enable_tests" = "xyes"], [$2], [$3])
 

@@ -52,6 +52,7 @@ doc:
 
 if EFL_ENABLE_TESTS
 
+
 lcov-reset:
 	@rm -rf $(top_builddir)/coverage
 	@find $(top_builddir) -name "*.gcda" -delete
@@ -65,9 +66,13 @@ lcov-report:
 	@echo "Coverage Report at $(top_builddir)/coverage/html"
 
 check-local:
+if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-reset
-	@./src/tests/eina_suite
+endif
+	@./src/tests/eo_suite/eo_suite
+if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-report
+endif
 
 else
 
@@ -87,7 +92,7 @@ if EFL_ENABLE_BENCHMARK
 benchmark:
 	@cd src && $(MAKE) benchmark
 	@mkdir result || true
-	@cd result && ../src/tests/eina_bench `date +%F_%s`
+	@cd result && ../src/tests/eo_bench `date +%F_%s`
 
 else
 

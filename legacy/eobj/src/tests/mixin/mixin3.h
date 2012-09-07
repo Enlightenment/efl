@@ -1,8 +1,6 @@
 #ifndef MIXIN3_H
 #define MIXIN3_H
 
-#include "Eo.h"
-
 typedef struct
 {
    int count;

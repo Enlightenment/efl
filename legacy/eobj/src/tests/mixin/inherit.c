@@ -1,7 +1,11 @@
-#include "Eo.h"
-#include "inherit.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
-#include "config.h"
+#include "Eo.h"
+#include "simple.h"
+#include "mixin4.h"
+#include "inherit.h"
 
 #define MY_CLASS INHERIT_CLASS
 

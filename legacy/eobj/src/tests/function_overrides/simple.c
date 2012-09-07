@@ -1,7 +1,10 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "simple.h"
 
-#include "config.h"
 #include "../eunit_tests.h"
 
 EAPI Eo_Op SIMPLE_BASE_ID = 0;

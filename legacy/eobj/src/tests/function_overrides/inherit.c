@@ -1,6 +1,9 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "simple.h"
-
 #include "inherit.h"
 
 #define MY_CLASS INHERIT_CLASS

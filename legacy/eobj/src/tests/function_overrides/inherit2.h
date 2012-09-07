@@ -1,8 +1,6 @@
 #ifndef INHERIT2_H
 #define INHERIT2_H
 
-#include "Eo.h"
-
 extern EAPI Eo_Op INHERIT2_BASE_ID;
 
 enum {

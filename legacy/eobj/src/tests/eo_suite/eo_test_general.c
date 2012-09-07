@@ -4,9 +4,8 @@
 
 #include <stdio.h>
 
-#include "eo_suite.h"
 #include "Eo.h"
-
+#include "eo_suite.h"
 #include "class_simple.h"
 
 START_TEST(eo_simple)

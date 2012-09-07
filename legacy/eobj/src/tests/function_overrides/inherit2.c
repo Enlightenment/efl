@@ -1,10 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "simple.h"
-
 #include "inherit.h"
 #include "inherit2.h"
-
-#include "config.h"
 
 #include "../eunit_tests.h"
 

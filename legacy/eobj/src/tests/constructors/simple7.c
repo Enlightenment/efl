@@ -1,9 +1,12 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "mixin.h"
 #include "simple7.h"
 #include "simple2.h"
 
-#include "config.h"
 #include "../eunit_tests.h"
 
 #define MY_CLASS SIMPLE7_CLASS

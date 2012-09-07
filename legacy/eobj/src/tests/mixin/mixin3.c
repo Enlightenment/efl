@@ -1,9 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "mixin.h"
 #include "mixin3.h"
 #include "simple.h"
-
-#include "config.h"
 
 #include "../eunit_tests.h"
 

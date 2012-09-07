@@ -1,8 +1,6 @@
 #ifndef MIXIN_H
 #define MIXIN_H
 
-#include "Eo.h"
-
 extern EAPI Eo_Op MIXIN_BASE_ID;
 
 enum {

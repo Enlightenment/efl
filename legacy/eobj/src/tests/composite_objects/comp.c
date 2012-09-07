@@ -1,8 +1,10 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "simple.h"
-
 #include "comp.h"
-#include "config.h"
 
 #include "../eunit_tests.h"
 

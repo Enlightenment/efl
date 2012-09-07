@@ -1,10 +1,12 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "simple.h"
 #include "simple_protected.h"
 
 #include "inherit.h"
-
-#include "config.h"
 
 EAPI Eo_Op INHERIT_BASE_ID = 0;
 

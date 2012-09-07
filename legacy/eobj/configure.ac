@@ -158,6 +158,15 @@ src/examples/eo_isa/Makefile
 src/examples/evas/Makefile
 src/examples/simple/Makefile
 src/lib/Makefile
+src/tests/Makefile
+src/tests/access/Makefile
+src/tests/composite_objects/Makefile
+src/tests/constructors/Makefile
+src/tests/eo_suite/Makefile
+src/tests/function_overrides/Makefile
+src/tests/interface/Makefile
+src/tests/mixin/Makefile
+src/tests/signals/Makefile
 ])
 
 AC_OUTPUT
@@ -176,7 +185,7 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  Documentation........: ${build_doc}"
-echo "  Tests................: ${enable_tests} (Coverage: ${efl_enable_coverage})"
+echo "  Unit Tests...........: ${enable_tests} (Coverage: ${efl_enable_coverage})"
 echo "  Examples.............: ${enable_build_examples}"
 echo "  Benchmark............: ${enable_benchmark}"
 echo

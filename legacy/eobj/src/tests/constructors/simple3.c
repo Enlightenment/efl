@@ -1,8 +1,10 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include "Eo.h"
 #include "mixin.h"
 #include "simple3.h"
-
-#include "config.h"
 
 #define MY_CLASS SIMPLE3_CLASS
 

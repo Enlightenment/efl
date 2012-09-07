@@ -6,7 +6,6 @@
 #include <stdio.h>
 
 #include "Eo.h"
-
 #include "eo_suite.h"
 
 typedef struct _Eo_Test_Case Eo_Test_Case;

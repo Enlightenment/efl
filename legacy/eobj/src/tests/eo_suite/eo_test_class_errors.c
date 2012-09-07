@@ -1,10 +1,11 @@
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
 
 #include <stdio.h>
 
-#include "eo_suite.h"
 #include "Eo.h"
-
+#include "eo_suite.h"
 #include "class_simple.h"
 
 START_TEST(eo_incomplete_desc)
