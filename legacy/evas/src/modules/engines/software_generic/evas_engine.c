@@ -569,6 +569,7 @@ eng_image_alpha_set(void *data __UNUSED__, void *image, int has_alpha)
 	im->cache_entry.flags.alpha = 0;
 	return im;
      }
+   if (!im->image.data) evas_cache_image_load_data(&im->cache_entry);
    im = (RGBA_Image *) evas_cache_image_alone(&im->cache_entry);
    im->cache_entry.flags.alpha = has_alpha ? 1 : 0;
    evas_common_image_colorspace_dirty(im);

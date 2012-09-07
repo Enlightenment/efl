@@ -446,6 +446,8 @@ eng_image_alpha_set(void *data, void *image, int has_alpha)
      {
         Evas_GL_Image *im_new;
         
+        if (!im->im->image.data)
+          evas_cache_image_load_data(&im->im->cache_entry);
         im_new = evas_gl_common_image_new_from_copied_data
            (im->gc, im->im->cache_entry.w, im->im->cache_entry.h, 
                im->im->image.data,

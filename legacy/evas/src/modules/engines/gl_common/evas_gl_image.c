@@ -314,6 +314,7 @@ evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
    if (im->alpha == alpha) return im;
    im->alpha = alpha;
    if (!im->im) return im;
+   evas_cache_image_load_data(&im->im->cache_entry);
    im->im->cache_entry.flags.alpha = alpha ? 1 : 0;
    if (im->tex)
      {
@@ -321,7 +322,16 @@ evas_gl_common_image_alpha_set(Evas_GL_Image *im, int alpha)
         im->tex = NULL;
      }
    if (!im->tex)
-     im->tex = evas_gl_common_texture_new(im->gc, im->im);
+     {
+        if (im->tex_only)
+          im->tex = evas_gl_common_texture_native_new(im->gc, im->w, im->h,
+                                                      im->alpha, im);
+        else
+          {
+             im->tex = evas_gl_common_texture_new(im->gc, im->im);
+             evas_gl_common_texture_update(im->tex, im->im);
+          }
+     }
    return im;
 }
 
