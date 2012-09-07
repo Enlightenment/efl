@@ -108,8 +108,7 @@ main(int argc, char *argv[])
    evas_object_show(bg);
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
-   edje_obj = edje_object_add(evas);
-   edje_object_file_set(edje_obj, edje_file, "example_group");
+   edje_obj = codegen_example_object_add(evas, NULL);
    evas_object_move(edje_obj, 20, 20);
    evas_object_resize(edje_obj, WIDTH - 40, HEIGHT - 40);
    evas_object_show(edje_obj);
