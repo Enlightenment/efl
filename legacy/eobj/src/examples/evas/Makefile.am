@@ -5,7 +5,9 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
-@EO_CFLAGS@
+@EFL_EO_BUILD@ \
+@EO_CFLAGS@ \
+@ELM_CFLAGS@
 
 noinst_PROGRAMS =
 
@@ -27,7 +29,7 @@ evas_obj.c \
 evas_obj.h \
 test.c
 
-evas_LDADD = $(top_builddir)/src/lib/libeo.la @EO_LIBS@
+evas_LDADD = $(top_builddir)/src/lib/libeo.la @ELM_LIBS@ @EO_LIBS@
 
 endif
 endif
