@@ -465,7 +465,7 @@ eina_convert_atofp(const char *src, int length, Eina_F32p32 *fp)
       return EINA_FALSE;
 
    if (!fp)
-      return EINA_TRUE;
+      return EINA_FALSE;
 
    e += 32;
 
