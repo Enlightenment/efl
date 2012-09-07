@@ -9,6 +9,7 @@ Additions:
     * ecore_x:
      - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP
      - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN
+     - Fix ecore_x_randr functions to work properly.
     * ecore_imf:
      - Add ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
 

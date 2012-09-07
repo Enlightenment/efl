@@ -915,3 +915,7 @@
        * Fix race condition in ecore-con where events could sometimes be sent for freed clients
        * Fix ssl servers using openssl
        * Fix ssl connections overall
+
+2012-09-07  Christopher Michael
+
+       * Fix ecore_x_randr to actually return outputs properly.
