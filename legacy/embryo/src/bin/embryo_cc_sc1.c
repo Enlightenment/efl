@@ -489,7 +489,7 @@ sc_addtag(char *name)
 
    /* tagname currently unknown, add it */
    tag = last + 1;		/* guaranteed not to exist already */
-   if (isupper(*name))
+   if (sc_isupper(*name))
       tag |= (int)FIXEDTAG;
    append_constval(&tagname_tab, name, (cell) tag, 0);
    return tag;
@@ -1949,7 +1949,7 @@ tag2str(char *dest, int tag)
    tag &= TAGMASK;
    assert(tag >= 0);
    sprintf(dest, "0%x", tag);
-   return isdigit(dest[1]) ? &dest[1] : dest;
+   return sc_isdigit(dest[1]) ? &dest[1] : dest;
 }
 
 char       *
@@ -1995,7 +1995,7 @@ parse_funcname(char *fname, int *tag1, int *tag2, char *opname)
      }				/* if */
    assert(!unary || *tag1 == 0);
    assert(*ptr != '\0');
-   for (name = opname; !isdigit(*ptr);)
+   for (name = opname; !sc_isdigit(*ptr);)
       *name++ = *ptr++;
    *name = '\0';
    *tag2 = (int)strtol(ptr, NULL, 16);
@@ -2010,7 +2010,7 @@ funcdisplayname(char *dest, char *funcname)
    constvalue         *tagsym[2];
    int                 unary;
 
-   if (isalpha(*funcname) || *funcname == '_' || *funcname == PUBLIC_CHAR
+   if (sc_isalpha(*funcname) || *funcname == '_' || *funcname == PUBLIC_CHAR
        || *funcname == '\0')
      {
 	if (dest != funcname)

@@ -471,7 +471,7 @@ matchsequence(char *start, char *end, char *pattern,
 	  {
 	  case '%':		/* new "symbol" */
 	     pattern++;
-	     assert(isdigit(*pattern));
+	     assert(sc_isdigit(*pattern));
 	     var = atoi(pattern) - 1;
 	     assert(var >= 0 && var < _maxoptvars);
 	     assert(alphanum(*start));
@@ -542,7 +542,7 @@ replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
 	  {
 	  case '%':
 	     lptr++;		/* skip '%' */
-	     assert(isdigit(*lptr));
+	     assert(sc_isdigit(*lptr));
 	     var = atoi(lptr) - 1;
 	     assert(var >= 0 && var < _maxoptvars);
 	     assert(symbols[var][0] != '\0');	/* variable should be defined */
@@ -575,7 +575,7 @@ replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
 	  case '%':
 	     /* write out the symbol */
 	     pattern++;
-	     assert(isdigit(*pattern));
+	     assert(sc_isdigit(*pattern));
 	     var = atoi(pattern) - 1;
 	     assert(var >= 0 && var < _maxoptvars);
 	     assert(symbols[var][0] != '\0');	/* variable should be defined */

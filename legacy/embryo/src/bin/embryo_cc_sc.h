@@ -664,4 +664,10 @@ extern FILE      *outf;	/* file written to */
 
 extern jmp_buf    errbuf;	/* target of longjmp() on a fatal error */
 
+#define sc_isspace(x)  isspace ((int)((unsigned char)x))
+#define sc_isalpha(x)  isalpha ((int)((unsigned char)x))
+#define sc_isdigit(x)  isdigit ((int)((unsigned char)x))
+#define sc_isupper(x)  isupper ((int)((unsigned char)x))
+#define sc_isxdigit(x) isxdigit((int)((unsigned char)x))
+
 #endif

@@ -134,7 +134,7 @@ align32(long *v)
 static char        *
 skipwhitespace(char *str)
 {
-   while (isspace(*str))
+   while (sc_isspace(*str))
       str++;
    return str;
 }
@@ -272,7 +272,7 @@ do_dump(FILE * fbin, char *params, cell opcode __UNUSED__)
 	if (fbin)
 	   write_encoded(fbin, &p, 1);
 	num++;
-	while (isspace(*params))
+	while (sc_isspace(*params))
 	   params++;
      }				/* while */
    return num * sizeof(cell);
@@ -286,7 +286,7 @@ do_call(FILE * fbin, char *params, cell opcode)
    symbol             *sym;
    ucell               p;
 
-   for (i = 0; !isspace(*params); i++, params++)
+   for (i = 0; !sc_isspace(*params); i++, params++)
      {
 	assert(*params != '\0');
 	assert(i < sNAMEMAX);
@@ -339,10 +339,10 @@ do_file(FILE * fbin, char *params, cell opcode)
    p = hex2long(params, &params);
 
    /* remove leading and trailing white space from the filename */
-   while (isspace(*params))
+   while (sc_isspace(*params))
       params++;
    len = strlen(params);
-   while (len > 0 && isspace(params[len - 1]))
+   while (len > 0 && sc_isspace(params[len - 1]))
       len--;
    params[len++] = '\0';	/* zero-terminate */
    while (len % sizeof(cell) != 0)
@@ -368,7 +368,7 @@ do_symbol(FILE * fbin, char *params, cell opcode)
    int                 len;
    unsigned char       mclass, type;
 
-   for (endptr = params; !isspace(*endptr) && endptr != '\0'; endptr++)
+   for (endptr = params; !sc_isspace(*endptr) && endptr != '\0'; endptr++)
       /* nothing */ ;
    assert(*endptr == ' ');
 
@@ -1003,7 +1003,7 @@ assemble(FILE * fout, FILE * fin)
 		  /* get to the end of the instruction (make use of the '\n' that fgets()
 		   * added at the end of the line; this way we will *always* drop on a
 		   * whitespace character) */
-		  for (params = instr; *params != '\0' && !isspace(*params);
+		  for (params = instr; *params != '\0' && !sc_isspace(*params);
 		       params++)
 		     /* nothing */ ;
 		  assert(params > instr);
@@ -1039,7 +1039,7 @@ assemble(FILE * fout, FILE * fin)
 	     /* get to the end of the instruction (make use of the '\n' that fgets()
 	      * added at the end of the line; this way we will *always* drop on a
 	      * whitespace character) */
-	     for (params = instr; *params != '\0' && !isspace(*params);
+	     for (params = instr; *params != '\0' && !sc_isspace(*params);
 		  params++)
 		/* nothing */ ;
 	     assert(params > instr);
