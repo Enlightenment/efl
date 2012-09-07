@@ -2319,12 +2319,12 @@ EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const c
  * @param part The part name
  * @param text The text string
  *
- * @return @c EINA_BOOL on success, @c EINA_FALSE otherwise
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * @since 1.2
  */
 EAPI Eina_Bool    edje_object_part_text_escaped_set   (Evas_Object *obj, const char *part, const char *text);
-       
+
 /**
  * @brief Return the text of the object part.
  *
