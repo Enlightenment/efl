@@ -963,17 +963,43 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *part,
                     const char *label)
 {
-   if (part && strcmp(part, "default")) return;
-   _item_label_set(((Elm_Toolbar_Item *)it), label, "elm,state,label_set");
+   Elm_Toolbar_Item *item;
+   char buf[256];
+   item = (Elm_Toolbar_Item *)it;
+
+   if ((!part) || (!strcmp(part, "default")) ||
+       (!strcmp(part, "elm.text")))
+     {
+        _item_label_set(((Elm_Toolbar_Item *)it), label, "elm,state,label_set");
+     }
+   else
+     {
+        if (label)
+          {
+             snprintf(buf, sizeof(buf), "elm,state,%s,visible", part);
+             edje_object_signal_emit(VIEW(item), buf, "elm");
+          }
+        else
+          {
+             snprintf(buf, sizeof(buf), "elm,state,%s,hidden", part);
+             edje_object_signal_emit(VIEW(item), buf, "elm");
+          }
+        edje_object_part_text_escaped_set(VIEW(item), part, label);
+     }
 }
 
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it,
                     const char *part)
 {
-   if (part && strcmp(part, "default")) return NULL;
+   char buf[256];
 
-   return ((Elm_Toolbar_Item *)it)->label;
+   if (!part || !strcmp(part, "default"))
+     snprintf(buf, sizeof(buf), "elm.text");
+   else
+     snprintf(buf, sizeof(buf), "%s", part);
+
+   return edje_object_part_text_get(VIEW(it), buf);
 }
 
 static void
