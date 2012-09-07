@@ -642,10 +642,12 @@ ecore_x_randr_outputs_get(Ecore_X_Window root,
      {
         if ((ret = malloc(sizeof(Ecore_X_Randr_Output) * res->noutput)))
           {
-             memcpy(ret, res->outputs,
-                    (sizeof(Ecore_X_Randr_Output) * res->noutput));
-             if (num)
-               *num = res->noutput;
+             int i = 0;
+
+             if (num) *num = res->noutput;
+
+             for (i = 0; i < res->noutput; i++)
+               ret[i] = res->outputs[i];
           }
 
         if (res)
