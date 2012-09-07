@@ -39,9 +39,28 @@ static FILE *header_fd = NULL;
   "\n#endif /* _%s */\n"
 
 #define C_HEADER                                        \
-  "#include <Edje.h>\n"                                 \
-  "#include <Evas.h>\n\n"                               \
-  "#include <stdlib.h>\n\n"
+  "#include \"%s\"\n\n"
+
+#define C_CODEGEN_OBJECT_ADD                              \
+  "Evas_Object *\n"                                       \
+  "%s_object_add(Evas *e, const char *file)\n"            \
+  "{\n"                                                   \
+  "   Evas_Object *o;\n\n"                                \
+  "   o = edje_object_add(e);\n"                          \
+  "   if (!o) return NULL;\n\n"                           \
+  "   if (file)\n"                                        \
+  "      edje_object_file_set(o, file, \"%s\");\n"        \
+  "   else\n"                                             \
+  "      edje_object_file_set(o, \"%s\", \"%s\");\n\n"    \
+  "   return o;\n"                                        \
+  "}\n\n"
+
+#define H_CODEGEN_OBJECT_ADD                                           \
+  "/**\n * @brief Creates the Edje object and set the edj file\n"      \
+  " * @param e The surface\n"                                          \
+  " * @param file The path to edj, if NULL it's used the path given\n" \
+  " *             to edje_codegen\n */\n"                              \
+  "Evas_Object * %s_object_add(Evas *e, const char *file);\n\n"
 
 #define C_CODEGEN_PART_TEXT_SET                         \
   "void\n"                                              \
@@ -209,7 +228,8 @@ _write_headers(const char *filename)
 
    free(str);
 
-   if (fwrite(C_HEADER, strlen(C_HEADER), 1, source_fd) != 1)
+   snprintf(buf, sizeof(buf), C_HEADER, filename);
+   if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
 	return EINA_FALSE;
 
    return EINA_TRUE;
@@ -230,6 +250,22 @@ _write_footer(const char *filename)
      }
 
    free(str);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_write_object_get(void)
+{
+   char buf[512];
+
+   snprintf(buf, sizeof(buf), H_CODEGEN_OBJECT_ADD, prefix);
+   if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
+     return EINA_FALSE;
+
+   snprintf(buf, sizeof(buf), C_CODEGEN_OBJECT_ADD, prefix, group, file, group);
+   if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
+     return EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -558,7 +594,6 @@ main(int argc, char *argv[])
 {
    Eina_Bool quit_option = EINA_FALSE;
    char *source, *header;
-   char aux[EINA_PATH_MAX];
    int arg_index, ret = 0;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(prefix),
@@ -655,10 +690,18 @@ main(int argc, char *argv[])
 	goto error_getopt;
      }
 
+   if (!_write_object_get())
+     {
+	ERR("Could not write the object get, error %d (%s)",
+	    errno, strerror(errno));
+	ret = 6;
+	goto error_getopt;
+     }
+
    if (!_parse())
      {
 	ERR("Could not parsing the EDJE");
-	ret = 6;
+	ret = 7;
 	goto error_getopt;
      }
 
@@ -666,7 +709,7 @@ main(int argc, char *argv[])
      {
 	ERR("Could not write the footer, error %d (%s)",
 	    errno, strerror(errno));
-	ret = 7;
+	ret = 8;
 	goto error_getopt;
      }
 
@@ -674,7 +717,7 @@ main(int argc, char *argv[])
      {
 	ERR("Could not close the source files, error %d (%s)",
 	    errno, strerror(errno));
-	ret = 8;
+	ret = 9;
      }
 
  error_getopt:
