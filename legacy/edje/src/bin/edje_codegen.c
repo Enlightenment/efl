@@ -2,20 +2,20 @@
 # include "config.h"
 #endif
 
-#include "Edje.h"
-#define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT 1
-#include "Edje_Edit.h"
-
-#include <Ecore.h>
-#include <Ecore_Evas.h>
-#include <Ecore_Getopt.h>
-#include <Eina.h>
-
+#include <stdio.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <locale.h>
-#include <stdio.h>
 #include <unistd.h>
+
+#include <Eina.h>
+#include <Ecore.h>
+#include <Ecore_Getopt.h>
+#include <Ecore_Evas.h>
+
+#include "Edje.h"
+#define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT 1
+#include "Edje_Edit.h"
 
 static int _log_dom;
 #define DBG(...)  EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
@@ -724,11 +724,11 @@ main(int argc, char *argv[])
    if (ee)
      ecore_evas_free(ee);
 
-   eina_log_domain_unregister(_log_dom);
  error_log:
    edje_shutdown();
    ecore_evas_shutdown();
    ecore_shutdown();
+   eina_log_domain_unregister(_log_dom);
    eina_shutdown();
 
    if (ret > 4)
