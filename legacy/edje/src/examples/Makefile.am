@@ -11,7 +11,7 @@ EDJE_CODEGEN_FLAGS = --prefix=codegen_example
 examplesdir = $(pkgdatadir)/examples
 
 if ENABLE_MULTISENSE
-SND_DIR             = -sd $(srcdir)
+SND_DIR = -sd $(srcdir)
 endif
 
 #put here all EDCs one needs to the examples
@@ -104,8 +104,8 @@ codegen_example_generated.c codegen_example_generated.h: codegen.edj
 	$(EDJE_CODEGEN) $(EDJE_CODEGEN_FLAGS) codegen.edj example_group $(builddir)/codegen_example_generated.c $(builddir)/codegen_example_generated.h
 
 edje_codegen_example_SOURCES = \
-	codegen_example_generated.c \
-	edje-codegen-example.c
+codegen_example_generated.c \
+edje-codegen-example.c
 
 files_DATA += $(EDJS)
 
