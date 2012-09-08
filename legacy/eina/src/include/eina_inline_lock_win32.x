@@ -19,6 +19,15 @@
 #ifndef EINA_INLINE_LOCK_WIN32_X_
 #define EINA_INLINE_LOCK_WIN32_X_
 
+#ifdef EINA_UNUSED
+# undef EINA_UNUSED
+#endif
+#ifdef __GNUC__
+# define EINA_UNUSED __attribute__((unused))
+#else
+# define EINA_UNUSED
+#endif
+
 #include <windows.h>
 
 typedef CRITICAL_SECTION       Eina_Lock;
