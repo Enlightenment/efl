@@ -268,7 +268,6 @@ static void
 _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
 {
    /* FIXME: Enforce detection of attack and kill connection on that case */
-
    if (n->buffer)
      {
         if (n->buffer_current + size > n->buffer_length)
@@ -320,9 +319,13 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
                             return ;
                          }
                        _ecore_con_eet_reply_cleanup(n);
+
+                       size += protocol_length + section_length;
                     }
                }
           }
+
+        size += 4 * sizeof (unsigned int) + 2;
      }
 
    eet_connection_received(n->econn, data, size);
