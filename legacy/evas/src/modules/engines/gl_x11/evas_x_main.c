@@ -237,6 +237,8 @@ eng_window_new(Display *disp,
      }
    if (strstr((const char *)renderer, "softpipe"))
      blacklist = 1;
+   if (strstr((const char *)renderer, "llvmpipe"))
+     blacklist = 1;
    if (blacklist)
      {
         ERR("OpenGL Driver blacklisted:");
@@ -399,6 +401,8 @@ eng_window_new(Display *disp,
           }
         if (strstr((const char *)renderer, "softpipe"))
            blacklist = 1;
+        if (strstr((const char *)renderer, "llvmpipe"))
+          blacklist = 1;
         if (blacklist)
           {
              ERR("OpenGL Driver blacklisted:");
