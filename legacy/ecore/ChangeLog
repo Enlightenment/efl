@@ -919,3 +919,7 @@
 2012-09-07  Christopher Michael
 
        * Fix ecore_x_randr to actually return outputs properly.
+
+2012-09-08  Vincent Torri
+
+       * Fix readlink usage in ecore_file.

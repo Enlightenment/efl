@@ -404,7 +404,7 @@ ecore_file_recursive_rm(const char *dir)
    struct stat st;
    int ret;
 
-   if (readlink(dir, buf, sizeof(buf)) > 0)
+   if (readlink(dir, buf, sizeof(buf) - 1) > 0)
      return ecore_file_unlink(dir);
 
    ret = stat(dir, &st);
