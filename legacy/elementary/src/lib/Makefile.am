@@ -63,6 +63,7 @@ elm_widget_diskselector.h \
 elm_widget_entry.h \
 elm_widget_fileselector.h \
 elm_widget_fileselector_button.h \
+elm_widget_fileselector_entry.h \
 elm_widget_flip.h \
 elm_widget_flipselector.h \
 elm_widget_frame.h \
@@ -103,6 +104,7 @@ elm_widget_slideshow.h \
 elm_widget_spinner.h \
 elm_widget_table.h \
 elm_widget_thumb.h \
+elm_widget_toolbar.h \
 elm_widget_video.h \
 elm_widget_web.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
