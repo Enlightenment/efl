@@ -8,8 +8,6 @@ AM_CPPFLAGS = \
 @EO_CFLAGS@ \
 @CHECK_CFLAGS@
 
-if EFL_ENABLE_TESTS
-
 check_PROGRAMS = eo_suite
 
 eo_suite_SOURCES = \
@@ -22,5 +20,3 @@ eo_test_general.c \
 eo_test_init.c
 
 eo_suite_LDADD = $(top_builddir)/src/lib/libeo.la @EO_LIBS@ @CHECK_LIBS@
-
-endif

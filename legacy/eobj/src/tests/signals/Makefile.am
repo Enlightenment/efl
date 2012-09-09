@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-noinst_PROGRAMS = signals
+check_PROGRAMS = signals
 
 signals_SOURCES = \
 main.c \

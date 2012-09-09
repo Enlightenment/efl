@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-noinst_PROGRAMS = function_overrides
+check_PROGRAMS = function_overrides
 
 function_overrides_SOURCES = \
 inherit.c \

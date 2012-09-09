@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-noinst_PROGRAMS = constructors
+check_PROGRAMS = constructors
 
 constructors_SOURCES = \
 main.c \

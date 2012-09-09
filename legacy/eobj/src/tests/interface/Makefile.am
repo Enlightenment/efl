@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-noinst_PROGRAMS = interface
+check_PROGRAMS = interface
 
 interface_SOURCES = \
 interface.c \

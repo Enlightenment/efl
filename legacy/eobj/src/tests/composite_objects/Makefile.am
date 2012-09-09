@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-noinst_PROGRAMS = composite_objects
+check_PROGRAMS = composite_objects
 
 composite_objects_SOURCES = \
 comp.c \

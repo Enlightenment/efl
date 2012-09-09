@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-noinst_PROGRAMS = mixin
+check_PROGRAMS = mixin
 
 mixin_SOURCES = \
 inherit.c \

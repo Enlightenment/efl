@@ -7,7 +7,7 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-noinst_PROGRAMS = access
+check_PROGRAMS = access
 
 access_SOURCES = \
 inherit.c \
