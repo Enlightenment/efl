@@ -127,6 +127,12 @@ PKG_CHECK_MODULES([EO], [${requirements_pc_eo}])
 
 PKG_CHECK_MODULES([ELM], [elementary >= 1.7.0], [have_elm="yes"], [have_elm="no"])
 
+PKG_CHECK_MODULES([CHECK],
+   [check >= 0.9.5],
+   [_efl_enable_tests="yes"],
+   [_efl_enable_tests="no"])
+
+AM_CONDITIONAL([EO_BUILD_UNIT_TEST], [test "x${_efl_enable_tests}" = "xyes"])
 AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
 
 
@@ -213,10 +219,11 @@ echo "Configuration Options Summary:"
 echo
 echo "  Documentation........: ${build_doc}"
 echo "  Unit Tests...........:"
+echo "    unit testing.......: ${_efl_enable_tests}"
 echo "    build..............: make check"
 echo "    coverage...........: ${_efl_enable_coverage}"
-echo "  Examples.............: ${enable_build_examples}"
-echo "  Benchmark............: ${enable_benchmark}"
+echo "  Examples.............: make examples"
+echo "  Benchmark............: make benchmark"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
