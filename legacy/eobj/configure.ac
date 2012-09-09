@@ -35,7 +35,6 @@ AH_BOTTOM([
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-#lt_cv_deplibs_check_method='pass_all'
 AC_LIBTOOL_WIN32_DLL
 define([AC_LIBTOOL_LANG_CXX_CONFIG], [:])dnl
 define([AC_LIBTOOL_LANG_F77_CONFIG], [:])dnl
@@ -76,6 +75,20 @@ requirements_pc_eo="eina"
 
 ### Additional options to configure
 
+AC_ARG_ENABLE([coverage],
+   [AC_HELP_STRING([--enable-coverage], [enable coverage profiling instrumentation @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       _efl_enable_coverage="yes"
+    else
+       _efl_enable_coverage="no"
+    fi
+   ],
+   [_efl_enable_coverage="no"])
+
+AC_MSG_CHECKING([whether to use profiling instrumentation])
+AC_MSG_RESULT([${_efl_enable_coverage}])
+
 
 ### Checks for programs
 
@@ -95,6 +108,17 @@ AC_SUBST(pkgconfig_requires_private)
 # doxygen program for documentation building
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
+
+# lcov
+
+if test "x$_efl_enable_coverage" = "xyes" ; then
+   AC_CHECK_PROG(have_lcov, [lcov], [yes], [no])
+   if test "x$have_lcov" = "xno" ; then
+      _efl_enable_coverage="no"
+   fi
+fi
+
+AM_CONDITIONAL([EFL_ENABLE_COVERAGE], [test "x${_efl_enable_coverage}" = "xyes"])
 
 
 ### Checks for libraries
@@ -119,6 +143,11 @@ AC_CHECK_HEADERS([stdarg.h])
 
 ### Checks for compiler characteristics
 
+if test "x$_efl_enable_coverage" = "xyes" ; then
+   EO_CFLAGS="${EO_CFLAGS} -fprofile-arcs -ftest-coverage"
+   EO_LIBS="${EO_LIBS} -lgcov"
+fi
+
 
 ### Checks for linker characteristics
 
@@ -135,8 +164,6 @@ AC_SUBST([lt_enable_auto_import])
 ### Make the debug preprocessor configurable
 
 ### Unit tests, coverage and benchmarking
-
-EFL_CHECK_TESTS([eina], [enable_tests="yes"], [enable_tests="no"])
 
 EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
 
@@ -185,7 +212,9 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  Documentation........: ${build_doc}"
-echo "  Unit Tests...........: ${enable_tests} (Coverage: ${efl_enable_coverage})"
+echo "  Unit Tests...........:"
+echo "    build..............: make check"
+echo "    coverage...........: ${_efl_enable_coverage}"
 echo "  Examples.............: ${enable_build_examples}"
 echo "  Benchmark............: ${enable_benchmark}"
 echo

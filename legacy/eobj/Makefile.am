@@ -50,9 +50,6 @@ doc:
 
 # Unit tests
 
-if EFL_ENABLE_TESTS
-
-
 lcov-reset:
 	@rm -rf $(top_builddir)/coverage
 	@find $(top_builddir) -name "*.gcda" -delete
@@ -69,22 +66,12 @@ check-local:
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-reset
 endif
-	@./src/tests/eo_suite/eo_suite
+	@dirs=`find src/tests -maxdepth 1 -type d \! -name '.*' -printf '%P\n' | sort` ; \
+	for dir in $$dirs ; do \
+	  ./src/tests/$$dir/$$dir ; \
+	done
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-report
-endif
-
-else
-
-lcov-reset:
-	@echo "reconfigure with --enable-tests"
-
-lcov-report:
-	@echo "reconfigure with --enable-tests"
-
-check-local:
-	@echo "reconfigure with --enable-tests"
-
 endif
 
 if EFL_ENABLE_BENCHMARK
