@@ -86,18 +86,18 @@ collections {
             }
          }
          part { name: "ext_button1";
-             type: EXTERNAL;
-             source: "elm/button";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 200 50;
-                 align: 0.5 0.0;
-                 rel1.offset: 0 60;
-                 params {
-                     string: "label" "icon + label";
-                     string: "icon" "home";
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               rel1.offset: 0 60;
+               params {
+                  string: "label" "icon + label";
+                  string: "icon" "home";
+               }
+            }
          }
          part { name: "ext_button2";
             type: EXTERNAL;
@@ -206,172 +206,172 @@ collections {
             }
          }
          part { name: "ext_slider1";
-             type: EXTERNAL;
-             source: "elm/slider";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 300 50;
-                 align: 0.5 0.0;
-                 rel1.offset: 0 60;
-                 params {
-                     string: "label" "Horizontal";
-                     string: "icon" "home";
-                     string: "unit format" "%.1f units";
-                     string: "indicator format" "%.0f";
-                     double: "min" -100.0;
-                     double: "max" 100.0;
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 300 50;
+               align: 0.5 0.0;
+               rel1.offset: 0 60;
+               params {
+                  string: "label" "Horizontal";
+                  string: "icon" "home";
+                  string: "unit format" "%.1f units";
+                  string: "indicator format" "%.0f";
+                  double: "min" -100.0;
+                  double: "max" 100.0;
+               }
+            }
          }
          part { name: "ext_slider2";
-             type: EXTERNAL;
-             source: "elm/slider";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 300 50;
-                 align: 0.5 0.0;
-                 rel1.offset: 0 90;
-                 params {
-                     string: "label" "Disabled";
-                     string: "icon" "home";
-                     bool: "disabled" 1;
-                     double: "value" 0.5;
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 300 50;
+               align: 0.5 0.0;
+               rel1.offset: 0 90;
+               params {
+                  string: "label" "Disabled";
+                  string: "icon" "home";
+                  bool: "disabled" 1;
+                  double: "value" 0.5;
+               }
+            }
          }
          part { name: "ext_slider3";
-             type: EXTERNAL;
-             source: "elm/slider";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 300 50;
-                 align: 0.5 0.0;
-                 rel1.offset: 0 120;
-                 params {
-                     string: "label" "Inverted";
-                     bool: "inverted" 1;
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 300 50;
+               align: 0.5 0.0;
+               rel1.offset: 0 120;
+               params {
+                  string: "label" "Inverted";
+                  bool: "inverted" 1;
+               }
+            }
          }
          part { name: "ext_slider4";
-             type: EXTERNAL;
-             source: "elm/slider";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 50 300;
-                 align: 0.0 0.0;
-                 rel1.offset: 20 160;
-                 params {
-                     string: "label" "Horizontal";
-                     string: "icon" "home";
-                     bool: "horizontal" 0;
-                     string: "unit format" "%.0f u";
-                     string: "indicator format" "%.3f";
-                     double: "min" -100.0;
-                     double: "max" 100.0;
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 50 300;
+               align: 0.0 0.0;
+               rel1.offset: 20 160;
+               params {
+                  string: "label" "Horizontal";
+                  string: "icon" "home";
+                  bool: "horizontal" 0;
+                  string: "unit format" "%.0f u";
+                  string: "indicator format" "%.3f";
+                  double: "min" -100.0;
+                  double: "max" 100.0;
+               }
+            }
             description { state: "anim" 0.0;
-                 inherit: "default" 0.0;
-                 rel1.offset: 140 160;
-             }
+               inherit: "default" 0.0;
+               rel1.offset: 140 160;
+            }
          }
          part { name: "ext_slider5";
-             type: EXTERNAL;
-             source: "elm/slider";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 50 300;
-                 align: 0.0 0.0;
-                 rel1.offset: 80 160;
-                 params {
-                     string: "label" "Inverted";
-                     string: "icon" "home";
-                     bool: "horizontal" 0;
-                     bool: "inverted" 1;
-                     string: "unit format" "%.0f u";
-                     string: "indicator format" "%.3f";
-                     double: "min" -100.0;
-                     double: "max" 100.0;
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 50 300;
+               align: 0.0 0.0;
+               rel1.offset: 80 160;
+               params {
+                  string: "label" "Inverted";
+                  string: "icon" "home";
+                  bool: "horizontal" 0;
+                  bool: "inverted" 1;
+                  string: "unit format" "%.0f u";
+                  string: "indicator format" "%.3f";
+                  double: "min" -100.0;
+                  double: "max" 100.0;
+               }
+            }
             description { state: "anim" 0.0;
-                 inherit: "default" 0.0;
-                 rel1.offset: 200 160;
-             }
+               inherit: "default" 0.0;
+               rel1.offset: 200 160;
+            }
          }
          part { name: "ext_slider6";
-             type: EXTERNAL;
-             source: "elm/slider";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 50 300;
-                 align: 0.0 0.0;
-                 rel1.offset: 140 160;
-                 params {
-                     string: "label" "Disabled";
-                     string: "icon" "home";
-                     double: "min" -70.0;
-                     double: "max" 70.0;
-                     bool: "disabled" 1;
-                     bool: "horizontal" 0;
-                 }
-             }
-             description { state: "anim" 0.0;
-                 inherit: "default" 0.0;
-                 rel1.offset: 260 160;
-             }
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 50 300;
+               align: 0.0 0.0;
+               rel1.offset: 140 160;
+               params {
+                  string: "label" "Disabled";
+                  string: "icon" "home";
+                  double: "min" -70.0;
+                  double: "max" 70.0;
+                  bool: "disabled" 1;
+                  bool: "horizontal" 0;
+               }
+            }
+            description { state: "anim" 0.0;
+               inherit: "default" 0.0;
+               rel1.offset: 260 160;
+            }
          }
          part { name: "ext_button1";
-             type: EXTERNAL;
-             source: "elm/button";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 80 40;
-                 align: 0.0 0.0;
-                 rel1.offset: 200 230;
-                 params {
-                     string: "label" "reset all";
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 80 40;
+               align: 0.0 0.0;
+               rel1.offset: 200 230;
+               params {
+                  string: "label" "reset all";
+               }
+            }
             description { state: "anim" 0.0;
-                 inherit: "default" 0.0;
-                 rel1.offset: 30 230;
-             }
+               inherit: "default" 0.0;
+               rel1.offset: 30 230;
+            }
          }
          part { name: "ext_button2";
-             type: EXTERNAL;
-             source: "elm/button";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 80 40;
-                 align: 0.0 0.0;
-                 rel1.offset: 200 270;
-                 params {
-                     string: "label" "animate";
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 80 40;
+               align: 0.0 0.0;
+               rel1.offset: 200 270;
+               params {
+                  string: "label" "animate";
+               }
+            }
             description { state: "anim" 0.0;
-                 inherit: "default" 0.0;
-                 rel1.offset: 30 270;
-             }
+               inherit: "default" 0.0;
+               rel1.offset: 30 270;
+            }
          }
          part { name: "ext_check1";
-             type: EXTERNAL;
-             source: "elm/check";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 80 40;
-                 align: 0.0 0.0;
-                 rel1.offset: 200 310;
-                 params {
-                     string: "label" "disable first";
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/check";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 80 40;
+               align: 0.0 0.0;
+               rel1.offset: 200 310;
+               params {
+                  string: "label" "disable first";
+               }
+            }
             description { state: "anim" 0.0;
-                 inherit: "default" 0.0;
-                 rel1.offset: 30 310;
-             }
+               inherit: "default" 0.0;
+               rel1.offset: 30 310;
+            }
          }
          COMMON_EXTERNAL_OVER
       }
@@ -465,63 +465,63 @@ collections {
             }
          }
          part { name: "ext_scroller1";
-             type: EXTERNAL;
-             source: "elm/scroller";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 align: 0.5 0.0;
-                 rel1.offset: 10 60;
-                 rel2 {
-                    to_y: "ext_button1";
-                    relative: 1.0 0.0;
-                    offset: -10 -10;
-                 }
-                 params {
-                     string: "content" "external/slider";
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/scroller";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               align: 0.5 0.0;
+               rel1.offset: 10 60;
+               rel2 {
+                  to_y: "ext_button1";
+                  relative: 1.0 0.0;
+                  offset: -10 -10;
+               }
+               params {
+                  string: "content" "external/slider";
+               }
+            }
          }
          part { name: "ext_button1";
-             type: EXTERNAL;
-             source: "elm/button";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 80 40;
-                 align: 0.0 1.0;
-                 rel1.offset: 20 0;
-                 rel2.offset: 0 -15;
-                 params {
-                     string: "label" "content 1";
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 80 40;
+               align: 0.0 1.0;
+               rel1.offset: 20 0;
+               rel2.offset: 0 -15;
+               params {
+                  string: "label" "content 1";
+               }
+            }
          }
          part { name: "ext_button2";
-             type: EXTERNAL;
-             source: "elm/button";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 80 40;
-                 align: 0.0 1.0;
-                 rel1.offset: 100 0;
-                 rel2.offset: 0 -15;
-                 params {
-                     string: "label" "content 2";
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 80 40;
+               align: 0.0 1.0;
+               rel1.offset: 100 0;
+               rel2.offset: 0 -15;
+               params {
+                  string: "label" "content 2";
+               }
+            }
          }
          part { name: "ext_button3";
-             type: EXTERNAL;
-             source: "elm/button";
-             clip_to: "clip";
-             description { state: "default" 0.0;
-                 max: 80 40;
-                 align: 0.0 1.0;
-                 rel1.offset: 180 0;
-                 rel2.offset: 0 -15;
-                 params {
-                     string: "label" "content unset";
-                 }
-             }
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 80 40;
+               align: 0.0 1.0;
+               rel1.offset: 180 0;
+               rel2.offset: 0 -15;
+               params {
+                  string: "label" "content unset";
+               }
+            }
          }
          COMMON_EXTERNAL_OVER
       }
