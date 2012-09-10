@@ -527,7 +527,7 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root,
    XRRScreenResources *res = NULL;
    Ecore_X_Randr_Crtc *ret = NULL;
 
-   if (num && root &&
+   if (root &&
        (res = _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
      {
         if ((ret = malloc(sizeof(Ecore_X_Randr_Crtc) * res->ncrtc)))
