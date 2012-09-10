@@ -283,27 +283,49 @@ EDJE_CFLAGS="${EDJE_CFLAGS} ${LUA_CFLAGS}"
 requirement_edje="embryo >= 1.6.99 ecore-evas >= 1.6.99 ecore >= 1.6.99 evas >= 1.6.99 eet >= 1.6.99 eina >= 1.6.99 ${requirement_edje}"
 requirement_edje="${requirement_lua} ${requirement_edje}"
 
+want_ecore_imf="auto"
 have_ecore_imf="no"
-PKG_CHECK_MODULES([ECORE_IMF],
-   [
-    ecore-imf >= 1.6.99
-    ecore-imf-evas >= 1.6.99
-   ],
-   [
-    AC_DEFINE([HAVE_ECORE_IMF], [1], [Input Method Support for Edje Entry])
-    have_ecore_imf="yes"
-    requirement_edje="ecore-imf-evas >= 1.6.99 ecore-imf >= 1.6.99 ${requirement_edje}"
-   ],
-   [have_ecore_imf="no"])
+AC_ARG_ENABLE([ecore-imf],
+   [AC_HELP_STRING([--disable-ecore-imf], [Disable build with ecore-imf])],
+   [want_ecore_imf="${enableval}"])
 
-PKG_CHECK_MODULES([EIO],
-   [eio >= 1.6.99],
-   [
-    AC_DEFINE([HAVE_EIO], [1], [Eio is available for monitoring file assynchronously])
-    have_eio="yes"
-    requirement_edje="eio >= 1.6.99 ${requirement_edje}"
-   ],
-   [have_eio="no"])
+if test "x${want_ecore_imf}" != "xno"; then
+   PKG_CHECK_MODULES([ECORE_IMF],
+      [
+       ecore-imf >= 1.6.99
+       ecore-imf-evas >= 1.6.99
+      ],
+      [
+       AC_DEFINE([HAVE_ECORE_IMF], [1], [Input Method Support for Edje Entry])
+       have_ecore_imf="yes"
+       requirement_edje="ecore-imf-evas >= 1.6.99 ecore-imf >= 1.6.99 ${requirement_edje}"
+      ],
+      [have_ecore_imf="no"])
+fi
+if test "x${want_ecore_imf}" = "xyes" -a "x${have_ecore_imf}" = "xno"; then
+   AC_MSG_ERROR([Ecore-IMF required, but not found])
+fi
+
+want_eio="auto"
+have_eio="no"
+AC_ARG_ENABLE([eio],
+   [AC_HELP_STRING([--disable-eio], [Disable build with eio])],
+   [want_eio="${enableval}"])
+
+if test "x${want_eio}" != "xno"; then
+   PKG_CHECK_MODULES([EIO],
+      [eio >= 1.6.99],
+      [
+       AC_DEFINE([HAVE_EIO], [1], [Eio is available for monitoring file assynchronously])
+       have_eio="yes"
+       requirement_edje="eio >= 1.6.99 ${requirement_edje}"
+      ],
+      [have_eio="no"])
+fi
+if test "x${want_eio}" = "xyes" -a "x${have_eio}" = "xno"; then
+   AC_MSG_ERROR([Eio required, but not found])
+fi
+
 
 # Enable Multisense use
 want_multisense="no"
@@ -619,6 +641,7 @@ echo "Configuration Options Summary:"
 echo
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Ecore IMF............: $have_ecore_imf"
+echo "  EIO..................: $have_eio"
 dnl echo "  Multisense...........: $want_multisense"
 
 if test "x${want_multisense}" = "xyes" ; then
