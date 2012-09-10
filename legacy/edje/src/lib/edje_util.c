@@ -2499,7 +2499,7 @@ _recalc_extern_parent(Evas_Object *obj)
    Edje *ed;
 
    parent = evas_object_smart_parent_get(obj);
-   ed = _edje_fetch(parent);
+   if (!(ed = _edje_fetch(parent))) return;
 
    ed->dirty = EINA_TRUE;
    ed->recalc_call = EINA_TRUE; // ZZZ: ???
