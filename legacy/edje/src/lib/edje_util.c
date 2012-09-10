@@ -5022,7 +5022,7 @@ _edje_object_part_swallow_changed_hints_cb(void *data, __UNUSED__ Evas *e, __UNU
 }
 
 void
-_edje_object_part_swallow_image_resize_cb(void *data, __UNUSED__ Evas *e, Evas_Object *obj, __UNUSED__ void *event_info)
+_edje_object_part_swallow_image_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Edje_Real_Part *rp = data;
    Evas_Coord w, h;
