@@ -125,7 +125,7 @@ _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                         bt2,
                                         content,
                                         NULL);
-   elm_object_item_part_text_set(it, "subtitle", "This page is inserted without transition");
+   elm_object_item_part_text_set(it, "subtitle", "This page is inserted after top item");
    evas_object_smart_callback_add(bt, "clicked", _navi_it_del, it);
 }
 
@@ -167,8 +167,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *bt2, *ic, *content, *nf = data;
-   char buf[PATH_MAX];
+   Evas_Object *bt2, *content, *nf = data;
    Elm_Object_Item *it;
 
    bt2 = elm_button_add(nf);
@@ -184,12 +183,6 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt2,
                                 content,
                                 NULL);
-   ic = elm_icon_add(nf);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
-   elm_image_file_set(ic, buf, NULL);
-   evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-
-   elm_object_item_part_content_set(it, "icon", ic);
 }
 
 void
