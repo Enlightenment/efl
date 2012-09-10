@@ -196,7 +196,11 @@ typedef enum
    ECORE_IMF_PREEDIT_TYPE_NONE, /**< None style @since 1.1 */
    ECORE_IMF_PREEDIT_TYPE_SUB1, /**< Substring style 1 @since 1.1 */
    ECORE_IMF_PREEDIT_TYPE_SUB2, /**< Substring style 2 @since 1.1 */
-   ECORE_IMF_PREEDIT_TYPE_SUB3  /**< Substring style 3 @since 1.1 */
+   ECORE_IMF_PREEDIT_TYPE_SUB3, /**< Substring style 3 @since 1.1 */
+   ECORE_IMF_PREEDIT_TYPE_SUB4, /**< Substring style 4 @since 1.8 */
+   ECORE_IMF_PREEDIT_TYPE_SUB5, /**< Substring style 5 @since 1.8 */
+   ECORE_IMF_PREEDIT_TYPE_SUB6, /**< Substring style 6 @since 1.8 */
+   ECORE_IMF_PREEDIT_TYPE_SUB7  /**< Substring style 7 @since 1.8 */
 } Ecore_IMF_Preedit_Type;
 
 /**

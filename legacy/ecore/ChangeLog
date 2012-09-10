@@ -923,3 +923,7 @@
 2012-09-08  Vincent Torri
 
        * Fix readlink usage in ecore_file.
+
+2012-09-12  Jihoon Kim (jihoon)
+
+       * Add ECORE_IMF_PREEDIT_TYPE_SUB4~7 style.
