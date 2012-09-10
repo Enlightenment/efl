@@ -1,11 +1,11 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-EDJE_CC = @edje_cc@
+EDJE_CC = $(top_builddir)/src/bin/@EDJE_CC_PRG@
 EDJE_CC_FLAGS_VERBOSE_0 =
 EDJE_CC_FLAGS_VERBOSE_1 = -v
 EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_$(V)) -id $(srcdir) -fd $(srcdir)
 
-EDJE_CODEGEN = @edje_codegen@
+EDJE_CODEGEN = $(top_builddir)/src/bin/@EDJE_CODEGEN_PRG@
 EDJE_CODEGEN_FLAGS = --prefix=codegen_example
 
 examplesdir = $(pkgdatadir)/examples
