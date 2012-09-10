@@ -15,6 +15,9 @@ Additions:
      - Add ECORE_IMF_PREEDIT_TYPE_SUB4~7 style
 
 Fixes:
+    * ecore_con_url:
+     - Timeouts are handled correctly now (passing HTTP status 408 to
+       completion callback).
 
 Improvements:
 

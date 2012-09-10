@@ -1303,22 +1303,39 @@ static void
 _ecore_con_url_event_url_complete(Ecore_Con_Url *url_con, CURLMsg *curlmsg)
 {
    Ecore_Con_Event_Url_Complete *e;
+   int status = url_con->status;
 
    e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
    if (!e) return;
 
-   if (curlmsg && (curlmsg->data.result == CURLE_OK))
+   if (!curlmsg)
      {
-        if (!url_con->status)
-          _ecore_con_url_status_get(url_con);
+        ERR("Event completed without CURL message handle. Shouldn't happen");
      }
-   else if (curlmsg)
-     ERR("Curl message have errors: %d", curlmsg->data.result);
+   else if ((curlmsg->msg == CURLMSG_DONE) &&
+            (curlmsg->data.result == CURLE_OPERATION_TIMEDOUT) &&
+            (!curlmsg->easy_handle))
+     {
+        /* easy_handle is set to NULL on timeout messages */
+        status = 408; /* Request Timeout */
+     }
+   else if (curlmsg->data.result == CURLE_OK)
+     {
+        if (!status)
+          {
+             _ecore_con_url_status_get(url_con);
+             status = url_con->status;
+          }
+     }
    else
-     CRIT("THIS IS BAD.");
+     {
+        ERR("Curl message have errors: %d (%s)",
+          curlmsg->data.result, curl_easy_strerror(curlmsg->data.result));
+     }
 
-   e->status = url_con->status;
+   e->status = status;
    e->url_con = url_con;
+   
    url_con->event_count++;
    ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e, (Ecore_End_Cb)_ecore_con_event_url_free, url_con);
 }
@@ -1337,6 +1354,7 @@ static Eina_Bool
 _ecore_con_url_timeout_cb(void *data)
 {
    Ecore_Con_Url *url_con = data;
+   CURLMsg timeout_msg;
 
    if (!url_con) return ECORE_CALLBACK_CANCEL;
    if (!url_con->curl_easy) return ECORE_CALLBACK_CANCEL;
@@ -1349,7 +1367,11 @@ _ecore_con_url_timeout_cb(void *data)
 
    url_con->timer = NULL;
 
-   _ecore_con_url_event_url_complete(url_con, NULL);
+   timeout_msg.msg = CURLMSG_DONE;
+   timeout_msg.easy_handle = NULL;
+   timeout_msg.data.result = CURLE_OPERATION_TIMEDOUT;
+
+   _ecore_con_url_event_url_complete(url_con, &timeout_msg);
    return ECORE_CALLBACK_CANCEL;
 }
 
