@@ -927,3 +927,7 @@
 2012-09-12  Jihoon Kim (jihoon)
 
        * Add ECORE_IMF_PREEDIT_TYPE_SUB4~7 style.
+
+2012-09-07  Christopher Michael
+
+       * Fix ecore_x_randr to actually return crtcs properly.
