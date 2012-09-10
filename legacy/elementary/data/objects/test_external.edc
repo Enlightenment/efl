@@ -448,4 +448,101 @@ collections {
          }
       }
    }
+   group { name: "external/scroller";
+      parts {
+         COMMON_EXTERNAL_UNDER
+         part { name: "ext_label1";
+            type: EXTERNAL;
+            source: "elm/label";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               params {
+                  string: "label" "<b>All the Widgets and the Interaction are pure edje</>\
+<br>This is not a real test, just an experiment<br><b>BUG</>: clip issue, slider drag, lots of warning, ...";
+               }
+            }
+         }
+         part { name: "ext_scroller1";
+             type: EXTERNAL;
+             source: "elm/scroller";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 align: 0.5 0.0;
+                 rel1.offset: 10 60;
+                 rel2 {
+                    to_y: "ext_button1";
+                    relative: 1.0 0.0;
+                    offset: -10 -10;
+                 }
+                 params {
+                     string: "content" "external/slider";
+                 }
+             }
+         }
+         part { name: "ext_button1";
+             type: EXTERNAL;
+             source: "elm/button";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 80 40;
+                 align: 0.0 1.0;
+                 rel1.offset: 20 0;
+                 rel2.offset: 0 -15;
+                 params {
+                     string: "label" "content 1";
+                 }
+             }
+         }
+         part { name: "ext_button2";
+             type: EXTERNAL;
+             source: "elm/button";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 80 40;
+                 align: 0.0 1.0;
+                 rel1.offset: 100 0;
+                 rel2.offset: 0 -15;
+                 params {
+                     string: "label" "content 2";
+                 }
+             }
+         }
+         part { name: "ext_button3";
+             type: EXTERNAL;
+             source: "elm/button";
+             clip_to: "clip";
+             description { state: "default" 0.0;
+                 max: 80 40;
+                 align: 0.0 1.0;
+                 rel1.offset: 180 0;
+                 rel2.offset: 0 -15;
+                 params {
+                     string: "label" "content unset";
+                 }
+             }
+         }
+         COMMON_EXTERNAL_OVER
+      }
+      programs {
+         COMMON_EXTERNAL_PROGRAM  
+         program { name: "bt1_click";
+            signal: "clicked";
+            source: "ext_button1";
+            action: PARAM_SET "ext_scroller1" "content" "external/button";
+            
+         }
+         program { name: "bt2_click";
+            signal: "clicked";
+            source: "ext_button2";
+            action: PARAM_SET "ext_scroller1" "content" "external/slider";
+         }
+         program { name: "bt3_click";
+            signal: "clicked";
+            source: "ext_button3";
+            action: PARAM_SET "ext_scroller1" "content" "";
+         }
+      }
+   }
 }
