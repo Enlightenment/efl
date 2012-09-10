@@ -158,7 +158,20 @@ eio_monitor_init(void)
 void
 eio_monitor_shutdown(void)
 {
-   /* FIXME: Need to cancel all request... */
+   Eina_Iterator *it;
+   Eio_Monitor *monitor;
+
+   it = eina_hash_iterator_data_new(_eio_monitors);
+   EINA_ITERATOR_FOREACH(it, monitor)
+     {
+        if (monitor->exist)
+          {
+             eio_file_cancel(monitor->exist);
+             monitor->exist = NULL;
+          }
+        monitor->delete_me = EINA_TRUE;
+     }
+   eina_iterator_free(it);
    eina_hash_free(_eio_monitors);
 
    eio_monitor_backend_shutdown();

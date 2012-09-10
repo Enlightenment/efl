@@ -39,3 +39,7 @@
 2012-09-06  Vincent Torri
 
 	* Improve file monitoring on Windows to mimic more inotify behavior.
+
+2012-09-10  Cedric Bail
+
+	* Fix monitor shutdown when mainloop did never run.

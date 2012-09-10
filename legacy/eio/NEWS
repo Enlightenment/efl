@@ -1,3 +1,17 @@
+Eio 1.8.0
+
+Changes since Eio 1.7.0:
+-------------------------
+
+Additions:
+
+Fixes:
+	- fix monitor shutdown when mainloop did never run.
+
+Improvements:
+
+Removal:
+
 Eio 1.7.0
 
 Changes since Eio 1.0.0:
