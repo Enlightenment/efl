@@ -545,4 +545,291 @@ collections {
          }
       }
    }
+   group { name: "external/pbar";
+      parts {
+         COMMON_EXTERNAL_UNDER
+         part { name: "ext_label1";
+            type: EXTERNAL;
+            source: "elm/label";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               params {
+                  string: "label" "<b>All the Widgets are edje external</>\
+<br>This test show how you can access external widgets from <br>\
+embryo script and from C code.";
+               }
+            }
+         }
+         
+         part { name: "ext_pbar1";
+            type: EXTERNAL;
+            source: "elm/progressbar";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 999 40;
+               align: 0.0 0.0;
+               rel1.offset: 0 60;
+               params {
+                  string: "unit format" "%.0f %%";
+                  double: "value" 0.5;
+               }
+            }
+         }
+         part { name: "ext_pbar2";
+            type: EXTERNAL;
+            source: "elm/progressbar";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 999 40;
+               align: 0.0 0.0;
+               rel1.offset: 0 100;
+               params {
+                  string: "label" "infinite bouce";
+                  string: "unit format" "";
+               }
+            }
+         }
+         part { name: "ext_pbar3";
+            type: EXTERNAL;
+            source: "elm/progressbar";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 999 40;
+               align: 0.0 0.0;
+               rel1.offset: 0 140;
+               params {
+                  string: "label" "inverted";
+                  string: "icon" "home";
+                  bool: "inverted" 1;
+                  string: "unit format" "%.3f units";
+               }
+            }
+         }
+         part { name: "ext_pbar4";
+            type: EXTERNAL;
+            source: "elm/progressbar";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 50 999;
+               align: 0.1 0.0;
+               rel1.offset: 0 180;
+               rel2.offset: 0 -50;
+               params {
+                  string: "label" "percent";
+                  bool: "horizontal" 0;
+               }
+            }
+         }
+         part { name: "ext_pbar5";
+            type: EXTERNAL;
+            source: "elm/progressbar";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 50 999;
+               align: 0.5 0.0;
+               rel1.offset: 0 180;
+               rel2.offset: 0 -100;
+               params {
+                  string: "label" "infinite bouce";
+                  bool: "horizontal" 0;
+                  string: "unit format" "";
+               }
+            }
+         }
+         part { name: "ext_pbar6";
+            type: EXTERNAL;
+            source: "elm/progressbar";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 50 999;
+               align: 0.9 0.0;
+               rel1.offset: 0 180;
+               rel2.offset: 0 -50;
+               params {
+                  string: "label" "inverted";
+                  string: "icon" "home";
+                  bool: "horizontal" 0;
+                  bool: "inverted" 1;
+                  bool: "disabled" 1;
+               }
+            }
+         }
+         part { name: "ext_pbar7";
+            type: EXTERNAL;
+            source: "elm/progressbar";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 50 999;
+               align: 0.5 0.0;
+               rel1.offset: 0 300;
+               rel2.offset: 0 -50;
+               params {
+                  string: "style" "wheel";
+               }
+            }
+         }
+         part { name: "ext_button1";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 100 40;
+               align: 0.0 1.0;
+               rel1.offset: 0 0;
+               rel2.offset: 0 -15;
+               params {
+                  string: "label" "anim with edje";
+               }
+            }
+         }
+         part { name: "ext_button2";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 100 40;
+               align: 0.5 1.0;
+               rel1.offset: 0 0;
+               rel2.offset: 0 -15;
+               params {
+                  string: "label" "...with embryo ?";
+               }
+            }
+         }
+         part { name: "ext_button3";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 100 40;
+               align: 1.0 1.0;
+               rel1.offset: 0 0;
+               rel2.offset: 0 -15;
+               params {
+                  string: "label" "...or from C";
+               }
+            }
+         }
+         COMMON_EXTERNAL_OVER
+      }
+      programs {
+         COMMON_EXTERNAL_PROGRAM  
+         program { name: "anim_with_edje";
+            signal: "clicked";
+            source: "ext_button1";
+            action: PARAM_SET "ext_pbar1" "value" 0.0;
+            after: "disable_button1";
+         }
+         program { name: "disable_button1";
+            action: PARAM_SET "ext_button1" "disabled" 1;
+            after: "disable_button2";
+         }
+         program { name: "disable_button2";
+            action: PARAM_SET "ext_button2" "disabled" 1;
+            after: "disable_button3";
+         }
+         program { name: "disable_button3";
+            action: PARAM_SET "ext_button3" "disabled" 1;
+            after: "anim_0";
+         }
+         program { name: "anim_0";
+            action: PARAM_SET "ext_pbar1" "value" 0.0;
+            after: "anim_1";
+         }
+         program { name: "anim_1";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.1;
+            after: "anim_2";
+         }
+         program { name: "anim_2";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.2;
+            after: "anim_3";
+         }
+         program { name: "anim_3";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.3;
+            after: "anim_4";
+         }
+         program { name: "anim_4";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.4;
+            after: "anim_5";
+         }
+         program { name: "anim_5";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.5;
+            after: "anim_6";
+         }
+         program { name: "anim_6";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.6;
+            after: "anim_7";
+         }
+         program { name: "anim_7";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.7;
+            after: "anim_8";
+         }
+         program { name: "anim_8";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.8;
+            after: "anim_9";
+         }
+         program { name: "anim_9";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 0.9;
+            after: "anim_10";
+         }
+         program { name: "anim_10";
+            in: 0.3 0.0;
+            action: PARAM_SET "ext_pbar1" "value" 1.0;
+            after: "reenable_button1";
+         }
+         program { name: "reenable_button1";
+            action: PARAM_SET "ext_button1" "disabled" 0;
+            after: "reenable_button2";
+         }
+         program { name: "reenable_button2";
+            action: PARAM_SET "ext_button2" "disabled" 0;
+            after: "reenable_button3";
+         }
+         program { name: "reenable_button3";
+            action: PARAM_SET "ext_button3" "disabled" 0;
+         }
+         script {
+            public my_value;
+            public timer_cb(unused) {
+               external_param_set_float(PART:"ext_pbar1", "value", get_float(my_value));
+               external_param_set_float(PART:"ext_pbar3", "value", get_float(my_value));
+               external_param_set_float(PART:"ext_pbar4", "value", get_float(my_value));
+               external_param_set_float(PART:"ext_pbar6", "value", get_float(my_value));
+               if (get_float(my_value) < 1.0)
+               {
+                  set_float(my_value, get_float(my_value) + 0.0123);
+                  timer(0.1, "timer_cb", unused);
+               }
+               else
+               {
+                  external_param_set_bool(PART:"ext_button1", "disabled", 0);
+                  external_param_set_bool(PART:"ext_button2", "disabled", 0);
+                  external_param_set_bool(PART:"ext_button3", "disabled", 0);
+               }
+            }
+         }
+         program { name: "bt2_click";
+            signal: "clicked";
+            source: "ext_button2";
+            script {
+               set_float(my_value, 0.0);
+               external_param_set_bool(PART:"ext_button1", "disabled", 1);
+               external_param_set_bool(PART:"ext_button2", "disabled", 1);
+               external_param_set_bool(PART:"ext_button3", "disabled", 1);
+               timer_cb(0);
+            }
+         }
+      }
+   }
 }
