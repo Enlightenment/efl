@@ -103,9 +103,13 @@ AM_CPPFLAGS = \
 codegen_example_generated.c codegen_example_generated.h: codegen.edj
 	$(EDJE_CODEGEN) $(EDJE_CODEGEN_FLAGS) codegen.edj example_group $(builddir)/codegen_example_generated.c $(builddir)/codegen_example_generated.h
 
+BUILT_SOURCES = codegen_example_generated.c codegen_example_generated.h
+
 edje_codegen_example_SOURCES = \
-codegen_example_generated.c \
 edje-codegen-example.c
+nodist_edje_codegen_example_SOURCES = \
+codegen_example_generated.c \
+codegen_example_generated.h
 
 files_DATA += $(EDJS)
 
@@ -137,4 +141,4 @@ LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
 endif
 
 clean-local:
-	rm -f *.edj codegen_example_generated.*
+	rm -f *.edj
