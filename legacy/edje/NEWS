@@ -14,6 +14,7 @@ Improvements:
     * O(1) lookup used when searching Part_Lookup in edje_cc.
     * O(1) lookup when generating alias of group.
     * O(1) access time for parameters in edje_cc_handler.
+    * Recycle and use less memory during load time.
 
 Fixes:
 

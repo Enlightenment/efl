@@ -348,7 +348,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    Eina_List *externals = NULL;
    Eina_List *collect = NULL;
    unsigned int n;
-   Eina_List *parts = NULL;
+   Eina_Array parts;
    int group_path_started = 0;
    Evas_Object *nested_smart = NULL;
 
@@ -406,7 +406,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    if (ed->collection)
      {
-	if (ed->collection->prop.orientation != EDJE_ORIENTATION_AUTO)
+        eina_array_step_set(&parts, sizeof (Eina_Array), 8);
+
+        if (ed->collection->prop.orientation != EDJE_ORIENTATION_AUTO)
           ed->is_rtl = (ed->collection->prop.orientation ==
                         EDJE_ORIENTATION_RTL);
 
@@ -475,9 +477,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		    {
                        /* FIXME: destroy all allocated ressource, need to have a common exit point */
 		       ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-                       evas_event_thaw(tev);
-                       evas_event_thaw_eval(tev);
-		       return 0;
+                       goto on_error;
 		    }
 
 		  memset(rp, 0, sizeof (Edje_Real_Part));
@@ -488,10 +488,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       if (!rp->drag)
 			 {
 			    ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-			    eina_mempool_free(_edje_real_part_mp, rp);
-                            evas_event_thaw(tev);
-                            evas_event_thaw_eval(tev);
-                            return 0;
+                            goto on_error;
 			 }
 
 		       rp->drag->step.x = FROM_INT(ep->dragable.step_x);
@@ -501,7 +498,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		  rp->edje = ed;
 		  _edje_ref(rp->edje);
 		  rp->part = ep;
-		  parts = eina_list_append(parts, rp);
+                  eina_array_push(&parts, rp);
 		  rp->param1.description = 
                     _edje_part_description_find(ed, rp, "default", 0.0);
 		  rp->chosen_description = rp->param1.description;
@@ -629,18 +626,15 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 	       }
 	     if (n > 0)
 	       {
-		  Eina_List *l;
-
 		  ed->table_parts = malloc(sizeof(Edje_Real_Part *) * n);
 		  ed->table_parts_size = n;
 		  /* FIXME: check malloc return */
-		  n = 0;
-		  EINA_LIST_FOREACH(parts, l, rp)
+		  n = eina_array_count(&parts) - 1;
+                  while ((rp = eina_array_pop(&parts)))
 		    {
 		       ed->table_parts[n] = rp;
-		       n++;
+		       n--;
 		    }
-		  eina_list_free(parts);
 		  for (i = 0; i < ed->table_parts_size; i++)
 		    {
 		       rp = ed->table_parts[i];
@@ -849,23 +843,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			      {
                                  ERR("recursive loop group '%s' already included inside part '%s' of group '%s' from file '%s'",
                                      group_path_entry, rp->part->name, group, file);
-                                 textblocks = eina_list_free(textblocks);
-                                 externals = eina_list_free(externals);
-                                 sources = eina_list_free(sources);
-				 _edje_thaw(ed);
-				 _edje_unblock(ed);
-				 _edje_unref(ed);
-				 _edje_file_del(ed);
-				 eina_stringshare_del(group_path_entry);
-				 if (group_path_started)
-				   {
-				      eina_stringshare_del(eina_list_data_get(group_path));
-				      eina_list_free(group_path);
-				   }
-				 ed->load_error = EDJE_LOAD_ERROR_RECURSIVE_REFERENCE;
-                                 evas_event_thaw(tev);
-                                 evas_event_thaw_eval(tev);
-				 return 0;
+                                 ed->load_error = EDJE_LOAD_ERROR_RECURSIVE_REFERENCE;
+                                 eina_stringshare_del(group_path_entry);
+				 goto on_error;
 			      }
 			 }
 
@@ -880,27 +860,10 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 {
                             ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
                                 rp->part->name, group_path_entry, file, source);
-                            textblocks = eina_list_free(textblocks);
-                            externals = eina_list_free(externals);
-                            sources = eina_list_free(sources);
-			    _edje_thaw(ed);
-			    _edje_unblock(ed);
-			    _edje_unref(ed);
-			    _edje_file_del(ed);
-
-			    if (group_path_started)
-			      {
-				 while (group_path)
-				   {
-				      eina_stringshare_del(eina_list_data_get(group_path));
-				      group_path = eina_list_remove_list(group_path, group_path);
-				   }
-			      }
 			    ed->load_error = edje_object_load_error_get(child_obj);
                             evas_object_del(child_obj);
-                            evas_event_thaw(tev);
-                            evas_event_thaw_eval(tev);
-			    return 0;
+                            eina_stringshare_del(group_path_entry);
+                            goto on_error;
 			 }
 
 		       group_path = eina_list_remove(group_path, group_path_entry);
@@ -1065,6 +1028,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
                  }
 	  }
         _edje_entry_init(ed);
+        eina_array_flush(&parts);
         evas_event_thaw(tev);
         evas_event_thaw_eval(tev);
 	return 1;
@@ -1080,6 +1044,26 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
    evas_event_thaw(tev);
    evas_event_thaw_eval(tev);
    return 1;
+
+ on_error:
+   textblocks = eina_list_free(textblocks);
+   externals = eina_list_free(externals);
+   sources = eina_list_free(sources);
+   eina_array_flush(&parts);
+   _edje_thaw(ed);
+   _edje_unblock(ed);
+   _edje_unref(ed);
+   _edje_file_del(ed);
+   if (group_path_started)
+     {
+        const char *path;
+
+        EINA_LIST_FREE(group_path, path)
+          eina_stringshare_del(path);
+     }
+   evas_event_thaw(tev);
+   evas_event_thaw_eval(tev);
+   return 0;
 }
 
 void
@@ -1663,7 +1647,7 @@ _edje_collection_free_part_description_free(int type,
 
 #ifdef EDJE_PROGRAM_CACHE
 static Eina_Bool
-_edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash, const void *key, void *data, void *fdata)
+_edje_collection_free_prog_cache_matches_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
 {
    eina_list_free((Eina_List *)data);
    return EINA_TRUE;
