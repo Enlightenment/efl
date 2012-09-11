@@ -277,7 +277,7 @@ EAPI const Elm_Layout_Smart_Class *elm_layout_smart_class_get(void);
     }
 
 #define ELM_LAYOUT_CHECK(obj)                                                 \
-  if (!obj || !elm_widget_type_check((obj), ELM_LAYOUT_SMART_NAME, __func__)) \
+  if (!elm_widget_type_check((obj), ELM_LAYOUT_SMART_NAME, __func__)) \
     return
 
 #endif
