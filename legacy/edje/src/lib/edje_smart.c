@@ -202,17 +202,27 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
         for (i = 0; i < ed->table_parts_size; i++)
           {
              Edje_Real_Part *ep;
-             Evas_Coord ox, oy;
 
              ep = ed->table_parts[i];
-             evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
-             evas_object_move(ep->object, ed->x + ep->x + ep->text.offset.x, ed->y + ep->y + ep->text.offset.y);
+             if ((ep->type == EDJE_RP_TYPE_TEXT) &&
+                 (ep->typedata.text))
+               evas_object_move(ep->object, 
+                                ed->x + ep->x + ep->typedata.text->offset.x, 
+                                ed->y + ep->y + ep->typedata.text->offset.y);
+             else
+               evas_object_move(ep->object, 
+                                ed->x + ep->x, 
+                                ed->y + ep->y);
              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                _edje_entry_real_part_configure(ep);
-             if (ep->swallowed_object)
+             if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+                 (ep->typedata.swallow))
                {
-                  evas_object_geometry_get(ep->swallowed_object, &ox, &oy, NULL, NULL);
-                  evas_object_move(ep->swallowed_object, ed->x + ep->x + ep->text.offset.x, ed->y + ep->y + ep->text.offset.y);
+                  if (ep->typedata.swallow->swallowed_object)
+                    evas_object_move
+                    (ep->typedata.swallow->swallowed_object, 
+                        ed->x + ep->x, 
+                        ed->y + ep->y);
                }
           }
      }

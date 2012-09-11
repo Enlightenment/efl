@@ -325,6 +325,9 @@ typedef struct _Edje_Part_Box_Animation              Edje_Part_Box_Animation;
 typedef struct _Edje_Part_Limit                      Edje_Part_Limit;
 
 typedef struct _Edje Edje;
+typedef struct _Edje_Real_Part_Text Edje_Real_Part_Text;
+typedef struct _Edje_Real_Part_Swallow Edje_Real_Part_Swallow;
+typedef struct _Edje_Real_Part_Container Edje_Real_Part_Container;
 typedef struct _Edje_Real_Part_State Edje_Real_Part_State;
 typedef struct _Edje_Real_Part_Drag Edje_Real_Part_Drag;
 typedef struct _Edje_Real_Part_Set Edje_Real_Part_Set;
@@ -1308,75 +1311,86 @@ struct _Edje_Real_Part_Drag
    Edje_Real_Part       *confine_to; // 4
 }; // 104
 
-struct _Edje_Real_Part
-{
-   Edje                     *edje; // 4
-   Edje_Part                *part; // 4
-   Evas_Object              *object; // 4
-   Evas_Object              *nested_smart; // 4
-   int                       x, y, w, h; // 16
-   Edje_Rectangle            req; // 16
+#define EDJE_RP_TYPE_NONE 0
+#define EDJE_RP_TYPE_TEXT 1
+#define EDJE_RP_TYPE_CONTAINER 2
+#define EDJE_RP_TYPE_SWALLOW 3
 
+struct _Edje_Real_Part_Text
+{
+   void                  *entry_data; // 4
+   Edje_Real_Part        *source; // 4
+   Edje_Real_Part        *text_source; // 4
+   const char            *text; // 4
+   const char            *font; // 4
+   const char            *style; // 4
+   Edje_Position          offset; // 8
+   short                  size; // 2
+   struct {
+      unsigned char       fit_x, fit_y; // 2
+      short               in_size; // 2
+      short               out_size; // 2
+      float               elipsis; // 4
+      Evas_Coord          in_w, in_h; // 8
+      const char         *in_str; // 4
+      const char         *out_str; // 4
+      FLOAT_T             align_x, align_y; // 16
+   } cache;
+}; // 76
+// FIXME make text a potiner to struct and alloc at end
+// if part type is TEXT move common members textblock +
+// text to front and have smaller struct for textblock
+
+struct _Edje_Real_Part_Container
+{
    Eina_List                *items; // 4 //FIXME: only if table/box
    Edje_Part_Box_Animation  *anim; // 4 //FIXME: Used only if box
-   void                     *entry_data; // 4 // FIXME: move to entry section
+};
 
-   Evas_Object              *swallowed_object; // 4 // FIXME: move with swallow_params data
+struct _Edje_Real_Part_Swallow
+{
+   Evas_Object        *swallowed_object; // 4 // FIXME: move with swallow_params data
    struct {
       Edje_Size min, max; // 16
       Edje_Aspect aspect; // 12
    } swallow_params; // 28 // FIXME: only if type SWALLOW
+};
 
+struct _Edje_Real_Part
+{
+   Edje                     *edje; // 4
+   Edje_Part                *part; // 4
+   int                       x, y, w, h; // 16
+   Edje_Rectangle            req; // 16
+   Evas_Object              *object; // 4
+   Evas_Object              *nested_smart; // 4
    Edje_Real_Part_Drag      *drag; // 4
    Edje_Real_Part	    *events_to; // 4
-
-   struct {
-      Edje_Real_Part        *source; // 4
-      Edje_Real_Part        *text_source; // 4
-      const char            *text; // 4
-      Edje_Position          offset; // 8 text only
-      const char	    *font; // 4 text only
-      const char	    *style; // 4 text only
-      int                    size; // 4 text only
-      struct {
-	 double              in_w, in_h; // 16 text only
-	 int                 in_size; // 4 text only
-	 const char	    *in_str; // 4 text only
-	 const char         *out_str; // 4 text only
-	 int                 out_size; // 4 text only
-	 FLOAT_T             align_x, align_y; // 16 text only
-	 double              elipsis; // 8 text only
-	 int                 fit_x, fit_y; // 8 text only
-      } cache; // 64
-   } text; // 86 // FIXME make text a potiner to struct and alloc at end
-                 // if part type is TEXT move common members textblock +
-                 // text to front and have smaller struct for textblock
-
    FLOAT_T                   description_pos; // 8
    Edje_Part_Description_Common *chosen_description; // 4
-   Edje_Real_Part_State      param1; // 20
+   Edje_Real_Part_State      param1; // 32
    // WITH EDJE_CALC_CACHE: 140
    Edje_Real_Part_State     *param2, *custom; // 8
    Edje_Calc_Params         *current; // 4
-
+   Edje_Real_Part           *clip_to; // 4
+   Edje_Running_Program     *program; // 4
+   union {
+      Edje_Real_Part_Text      *text;
+      Edje_Real_Part_Container *container;
+      Edje_Real_Part_Swallow   *swallow;
+   } typedata; // 4
+   int                       clicked_button; // 4
 #ifdef EDJE_CALC_CACHE
    int                       state; // 4
 #endif
-
-   Edje_Real_Part           *clip_to; // 4
-
-   Edje_Running_Program     *program; // 4
-
-   int                       clicked_button; // 4
-
+   unsigned char             type; // 1
    unsigned char             calculated; // 1
    unsigned char             calculating; // 1
-
    unsigned char             still_in   : 1; // 1
 #ifdef EDJE_CALC_CACHE
    unsigned char             invalidate : 1; // 0
 #endif
-}; //  268
+}; //  287 -> 126
 // WITH EDJE_CALC_CACHE: 404
 
 struct _Edje_Running_Program

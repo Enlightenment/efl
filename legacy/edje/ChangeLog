@@ -612,3 +612,9 @@
 	* O(1) lookup when generating alias of group.
 	* O(1) access time for parameters in edje_cc_handler.
 	* Recycle and use less memory during load time.
+
+2012-09-11  Carsten Haitzler (The Rasterman)
+
+        * Improve memory footrpint by cutting core edje real part
+        struct down by less than half its size and making some parts allocated
+        extra only if the type needs it.

@@ -155,45 +155,48 @@ _edje_box_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep, Edje_Calc_Params
 #if 0
    int min_w, min_h;
 #endif
+   if ((ep->type != EDJE_RP_TYPE_CONTAINER) ||
+       (!ep->typedata.container)) return;
+     
    if ((ep->param2) && (ep->description_pos != ZERO))
      {
         Edje_Part_Description_Box *param2_desc = (Edje_Part_Description_Box *)ep->param2->description;
-        if (ep->anim->end.layout == NULL)
+        if (ep->typedata.container->anim->end.layout == NULL)
           {
-             _edje_box_layout_find_all(param2_desc->box.layout, param2_desc->box.alt_layout, &ep->anim->end.layout, &ep->anim->end.data, &ep->anim->end.free_data);
-             ep->anim->end.padding.x = param2_desc->box.padding.x;
-             ep->anim->end.padding.y = param2_desc->box.padding.y;
-             ep->anim->end.align.x = param2_desc->box.align.x;
-             ep->anim->end.align.y = param2_desc->box.align.y;
+             _edje_box_layout_find_all(param2_desc->box.layout, param2_desc->box.alt_layout, &ep->typedata.container->anim->end.layout, &ep->typedata.container->anim->end.data, &ep->typedata.container->anim->end.free_data);
+             ep->typedata.container->anim->end.padding.x = param2_desc->box.padding.x;
+             ep->typedata.container->anim->end.padding.y = param2_desc->box.padding.y;
+             ep->typedata.container->anim->end.align.x = param2_desc->box.align.x;
+             ep->typedata.container->anim->end.align.y = param2_desc->box.align.y;
 
              priv = evas_object_smart_data_get(ep->object);
              if (priv == NULL)
                 return;
 
-             evas_object_box_padding_set(ep->object, ep->anim->start.padding.x, ep->anim->start.padding.y);
-             evas_object_box_align_set(ep->object, TO_DOUBLE(ep->anim->start.align.x), TO_DOUBLE(ep->anim->start.align.y));
-             ep->anim->start.layout(ep->object, priv, ep->anim->start.data);
-             _edje_box_layout_calculate_coords(ep->object, priv, ep->anim);
-             ep->anim->start_progress = 0.0;
+             evas_object_box_padding_set(ep->object, ep->typedata.container->anim->start.padding.x, ep->typedata.container->anim->start.padding.y);
+             evas_object_box_align_set(ep->object, TO_DOUBLE(ep->typedata.container->anim->start.align.x), TO_DOUBLE(ep->typedata.container->anim->start.align.y));
+             ep->typedata.container->anim->start.layout(ep->object, priv, ep->typedata.container->anim->start.data);
+             _edje_box_layout_calculate_coords(ep->object, priv, ep->typedata.container->anim);
+             ep->typedata.container->anim->start_progress = 0.0;
           }
         evas_object_smart_changed(ep->object);
      }
    else
      {
-        ep->anim->end.layout = NULL;
+        ep->typedata.container->anim->end.layout = NULL;
      }
 
-   if (ep->description_pos < 0.01 || !ep->anim->start.layout)
+   if (ep->description_pos < 0.01 || !ep->typedata.container->anim->start.layout)
      {
-        _edje_box_layout_find_all(chosen_desc->box.layout, chosen_desc->box.alt_layout, &ep->anim->start.layout, &ep->anim->start.data, &ep->anim->start.free_data);
-        ep->anim->start.padding.x = chosen_desc->box.padding.x;
-        ep->anim->start.padding.y = chosen_desc->box.padding.y;
-        ep->anim->start.align.x = chosen_desc->box.align.x;
-        ep->anim->start.align.y = chosen_desc->box.align.y;
+        _edje_box_layout_find_all(chosen_desc->box.layout, chosen_desc->box.alt_layout, &ep->typedata.container->anim->start.layout, &ep->typedata.container->anim->start.data, &ep->typedata.container->anim->start.free_data);
+        ep->typedata.container->anim->start.padding.x = chosen_desc->box.padding.x;
+        ep->typedata.container->anim->start.padding.y = chosen_desc->box.padding.y;
+        ep->typedata.container->anim->start.align.x = chosen_desc->box.align.x;
+        ep->typedata.container->anim->start.align.y = chosen_desc->box.align.y;
         evas_object_smart_changed(ep->object);
      }
 
-   ep->anim->progress = ep->description_pos;
+   ep->typedata.container->anim->progress = ep->description_pos;
 
    if (evas_object_smart_need_recalculate_get(ep->object))
      {
@@ -213,12 +216,14 @@ Eina_Bool
 _edje_box_layout_add_child(Edje_Real_Part *rp, Evas_Object *child_obj)
 {
    Edje_Transition_Animation_Data *tad;
+   
+   if ((rp->type != EDJE_RP_TYPE_CONTAINER) ||
+       (!rp->typedata.container)) return EINA_FALSE;
    tad = calloc(1, sizeof(Edje_Transition_Animation_Data));
-   if (!tad)
-      return EINA_FALSE;
+   if (!tad) return EINA_FALSE;
    tad->obj = child_obj;
-   rp->anim->objs = eina_list_append(rp->anim->objs, tad);
-   rp->anim->recalculate = EINA_TRUE;
+   rp->typedata.container->anim->objs = eina_list_append(rp->typedata.container->anim->objs, tad);
+   rp->typedata.container->anim->recalculate = EINA_TRUE;
    return EINA_TRUE;
 }
 
@@ -228,15 +233,17 @@ _edje_box_layout_remove_child(Edje_Real_Part *rp, Evas_Object *child_obj)
    Eina_List *l;
    Edje_Transition_Animation_Data *tad;
 
-   EINA_LIST_FOREACH(rp->anim->objs, l, tad)
+   if ((rp->type != EDJE_RP_TYPE_CONTAINER) ||
+       (!rp->typedata.container)) return;
+   EINA_LIST_FOREACH(rp->typedata.container->anim->objs, l, tad)
      {
         if (tad->obj == child_obj)
           {
              free(eina_list_data_get(l));
-             rp->anim->objs = eina_list_remove_list(rp->anim->objs, l);
-             rp->anim->recalculate = EINA_TRUE;
+             rp->typedata.container->anim->objs = eina_list_remove_list(rp->typedata.container->anim->objs, l);
+             rp->typedata.container->anim->recalculate = EINA_TRUE;
              break;
           }
      }
-   rp->anim->recalculate = EINA_TRUE;
+   rp->typedata.container->anim->recalculate = EINA_TRUE;
 }

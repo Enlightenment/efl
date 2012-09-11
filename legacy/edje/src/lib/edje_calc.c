@@ -510,11 +510,14 @@ _edje_real_part_rel_to_apply(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part_State 
           {
              Edje_Part_Description_External *external;
 
-             external = (Edje_Part_Description_External*) state->description;
-
+             if ((ep->type != EDJE_RP_TYPE_SWALLOW) ||
+                 (!ep->typedata.swallow)) return;
+             
+             external = (Edje_Part_Description_External*)state->description;
+             
              if (state->external_params)
-               _edje_external_parsed_params_free(ep->swallowed_object, state->external_params);
-             state->external_params = _edje_external_params_parse(ep->swallowed_object, external->external_params);
+               _edje_external_parsed_params_free(ep->typedata.swallow->swallowed_object, state->external_params);
+             state->external_params = _edje_external_params_parse(ep->typedata.swallow->swallowed_object, external->external_params);
           }
      }
 }
@@ -549,16 +552,24 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
              memset(ep->param2, 0, sizeof(Edje_Real_Part_State));
           }
         else if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
-          _edje_external_parsed_params_free(ep->swallowed_object,
-                                            ep->param2->external_params);
+          {
+             if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+                 (ep->typedata.swallow))
+               _edje_external_parsed_params_free(ep->typedata.swallow->swallowed_object,
+                                                 ep->param2->external_params);
+          }
         ep->param2->external_params = NULL;
      }
    else
      if (ep->param2)
        {
           if (ep->part->type == EDJE_PART_TYPE_EXTERNAL)
-            _edje_external_parsed_params_free(ep->swallowed_object,
-                                              ep->param2->external_params);
+            {
+               if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+                   (ep->typedata.swallow))
+                 _edje_external_parsed_params_free(ep->typedata.swallow->swallowed_object,
+                                                   ep->param2->external_params);
+            }
           if (ep->param2)
             free(ep->param2->set);
           eina_mempool_free(_edje_real_part_state_mp, ep->param2);
@@ -912,11 +923,15 @@ _edje_part_recalc_single_aspect(Edje *ed,
         evas_object_image_size_get(ep->object, &w, &h);
         amin = amax = DIV(FROM_INT(w), FROM_INT(h));
      }
-   if ((ep->swallow_params.aspect.w > 0) &&
-       (ep->swallow_params.aspect.h > 0))
-     amin = amax =
-        DIV(FROM_INT(ep->swallow_params.aspect.w),
-            FROM_INT(ep->swallow_params.aspect.h));
+   if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+       (ep->typedata.swallow))
+     {
+        if ((ep->typedata.swallow->swallow_params.aspect.w > 0) &&
+            (ep->typedata.swallow->swallow_params.aspect.h > 0))
+          amin = amax =
+          DIV(FROM_INT(ep->typedata.swallow->swallow_params.aspect.w),
+              FROM_INT(ep->typedata.swallow->swallow_params.aspect.h));
+     }
    want_x = FROM_INT(params->x);
    want_w = new_w = FROM_INT(params->w);
 
@@ -926,24 +941,28 @@ _edje_part_recalc_single_aspect(Edje *ed,
    if ((amin > ZERO) && (amax > ZERO))
      {
         apref = desc->aspect.prefer;
-        if (ep->swallow_params.aspect.mode > EDJE_ASPECT_CONTROL_NONE)
+        if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+            (ep->typedata.swallow))
           {
-             switch (ep->swallow_params.aspect.mode)
+             if (ep->typedata.swallow->swallow_params.aspect.mode > EDJE_ASPECT_CONTROL_NONE)
                {
-                case EDJE_ASPECT_CONTROL_NEITHER:
-                   apref = EDJE_ASPECT_PREFER_NONE;
-                   break;
-                case EDJE_ASPECT_CONTROL_HORIZONTAL:
-                   apref = EDJE_ASPECT_PREFER_HORIZONTAL;
-                   break;
-                case EDJE_ASPECT_CONTROL_VERTICAL:
-                   apref = EDJE_ASPECT_PREFER_VERTICAL;
-                   break;
-                case EDJE_ASPECT_CONTROL_BOTH:
-                   apref = EDJE_ASPECT_PREFER_BOTH;
-                   break;
-                default:
-                   break;
+                  switch (ep->typedata.swallow->swallow_params.aspect.mode)
+                    {
+                     case EDJE_ASPECT_CONTROL_NEITHER:
+                       apref = EDJE_ASPECT_PREFER_NONE;
+                       break;
+                     case EDJE_ASPECT_CONTROL_HORIZONTAL:
+                       apref = EDJE_ASPECT_PREFER_HORIZONTAL;
+                       break;
+                     case EDJE_ASPECT_CONTROL_VERTICAL:
+                       apref = EDJE_ASPECT_PREFER_VERTICAL;
+                       break;
+                     case EDJE_ASPECT_CONTROL_BOTH:
+                       apref = EDJE_ASPECT_PREFER_BOTH;
+                       break;
+                     default:
+                       break;
+                    }
                }
           }
         switch (apref)
@@ -1141,6 +1160,9 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
                                    int *minw, int *minh,
                                    int *maxw, int *maxh)
 {
+   if ((ep->type != EDJE_RP_TYPE_TEXT) ||
+       (!ep->typedata.text))
+     return;
    if (chosen_desc)
      {
         Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
@@ -1152,14 +1174,14 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
         if (chosen_desc->text.id_source >= 0)
           {
-             ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
+             ep->typedata.text->source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
 
-             tmp = edje_string_get(&((Edje_Part_Description_Text *)ep->text.source->chosen_description)->text.style);
+             tmp = edje_string_get(&((Edje_Part_Description_Text *)ep->typedata.text->source->chosen_description)->text.style);
              if (tmp) style = tmp;
           }
         else
           {
-             ep->text.source = NULL;
+             ep->typedata.text->source = NULL;
 
              tmp = edje_string_get(&chosen_desc->text.style);
              if (tmp) style = tmp;
@@ -1167,16 +1189,16 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
 
         if (chosen_desc->text.id_text_source >= 0)
           {
-             ep->text.text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
-             text = edje_string_get(&((Edje_Part_Description_Text*)ep->text.text_source->chosen_description)->text.text);
+             ep->typedata.text->text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
+             text = edje_string_get(&((Edje_Part_Description_Text*)ep->typedata.text->text_source->chosen_description)->text.text);
 
-             if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
+             if (ep->typedata.text->text_source->typedata.text->text) text = ep->typedata.text->text_source->typedata.text->text;
           }
         else
           {
-             ep->text.text_source = NULL;
+             ep->typedata.text->text_source = NULL;
              text = edje_string_get(&chosen_desc->text.text);
-             if (ep->text.text) text = ep->text.text;
+             if (ep->typedata.text->text) text = ep->typedata.text->text;
           }
 
         EINA_LIST_FOREACH(ed->file->styles, l, stl)
@@ -1829,8 +1851,12 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
 {
    *minw = desc->min.w;
    if (ep->part->scale) *minw = TO_INT(SCALE(sc, *minw));
-   if (ep->swallow_params.min.w > desc->min.w)
-     *minw = ep->swallow_params.min.w;
+   if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+       (ep->typedata.swallow))
+     {
+        if (ep->typedata.swallow->swallow_params.min.w > desc->min.w)
+          *minw = ep->typedata.swallow->swallow_params.min.w;
+     }
 
    if (ep->edje->calc_only)
      {
@@ -1841,22 +1867,12 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           }
      }
 
-   /* XXX TODO: remove need of EDJE_INF_MAX_W, see edje_util.c */
-   if ((ep->swallow_params.max.w <= 0) ||
-       (ep->swallow_params.max.w == EDJE_INF_MAX_W))
+   if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+       (ep->typedata.swallow))
      {
-        *maxw = desc->max.w;
-        if (*maxw > 0)
-          {
-             if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
-             if (*maxw < 1) *maxw = 1;
-          }
-     }
-   else
-     {
-        if (desc->max.w <= 0)
-          *maxw = ep->swallow_params.max.w;
-        else
+        /* XXX TODO: remove need of EDJE_INF_MAX_W, see edje_util.c */
+        if ((ep->typedata.swallow->swallow_params.max.w <= 0) ||
+            (ep->typedata.swallow->swallow_params.max.w == EDJE_INF_MAX_W))
           {
              *maxw = desc->max.w;
              if (*maxw > 0)
@@ -1864,8 +1880,31 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
                   if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
                   if (*maxw < 1) *maxw = 1;
                }
-             if (ep->swallow_params.max.w < *maxw)
-               *maxw = ep->swallow_params.max.w;
+          }
+        else
+          {
+             if (desc->max.w <= 0)
+               *maxw = ep->typedata.swallow->swallow_params.max.w;
+             else
+               {
+                  *maxw = desc->max.w;
+                  if (*maxw > 0)
+                    {
+                       if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
+                       if (*maxw < 1) *maxw = 1;
+                    }
+                  if (ep->typedata.swallow->swallow_params.max.w < *maxw)
+                    *maxw = ep->typedata.swallow->swallow_params.max.w;
+               }
+          }
+     }
+   else
+     {
+        *maxw = desc->max.w;
+        if (*maxw > 0)
+          {
+             if (ep->part->scale) *maxw = TO_INT(SCALE(sc, *maxw));
+             if (*maxw < 1) *maxw = 1;
           }
      }
    if ((ep->edje->calc_only) && (desc->minmul.have) &&
@@ -1877,8 +1916,12 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
 
    *minh = desc->min.h;
    if (ep->part->scale) *minh = TO_INT(SCALE(sc, *minh));
-   if (ep->swallow_params.min.h > desc->min.h)
-     *minh = ep->swallow_params.min.h;
+   if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+       (ep->typedata.swallow))
+     {
+        if (ep->typedata.swallow->swallow_params.min.h > desc->min.h)
+          *minh = ep->typedata.swallow->swallow_params.min.h;
+     }
 
    if (ep->edje->calc_only)
      {
@@ -1889,22 +1932,12 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           }
      }
 
-   /* XXX TODO: remove need of EDJE_INF_MAX_H, see edje_util.c */
-   if ((ep->swallow_params.max.h <= 0) ||
-       (ep->swallow_params.max.h == EDJE_INF_MAX_H))
+   if ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+       (ep->typedata.swallow))
      {
-        *maxh = desc->max.h;
-        if (*maxh > 0)
-          {
-             if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
-             if (*maxh < 1) *maxh = 1;
-          }
-     }
-   else
-     {
-        if (desc->max.h <= 0)
-          *maxh = ep->swallow_params.max.h;
-        else
+        /* XXX TODO: remove need of EDJE_INF_MAX_H, see edje_util.c */
+        if ((ep->typedata.swallow->swallow_params.max.h <= 0) ||
+            (ep->typedata.swallow->swallow_params.max.h == EDJE_INF_MAX_H))
           {
              *maxh = desc->max.h;
              if (*maxh > 0)
@@ -1912,8 +1945,31 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
                   if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
                   if (*maxh < 1) *maxh = 1;
                }
-             if (ep->swallow_params.max.h < *maxh)
-               *maxh = ep->swallow_params.max.h;
+          }
+        else
+          {
+             if (desc->max.h <= 0)
+               *maxh = ep->typedata.swallow->swallow_params.max.h;
+             else
+               {
+                  *maxh = desc->max.h;
+                  if (*maxh > 0)
+                    {
+                       if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
+                       if (*maxh < 1) *maxh = 1;
+                    }
+                  if (ep->typedata.swallow->swallow_params.max.h < *maxh)
+                    *maxh = ep->typedata.swallow->swallow_params.max.h;
+               }
+          }
+     }
+   else
+     {
+        *maxh = desc->max.h;
+        if (*maxh > 0)
+          {
+             if (ep->part->scale) *maxh = TO_INT(SCALE(sc, *maxh));
+             if (*maxh < 1) *maxh = 1;
           }
      }
    if ((ep->edje->calc_only) && (desc->minmul.have) &&
@@ -2300,7 +2356,11 @@ _edje_proxy_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *p3, Edj
            case EDJE_PART_TYPE_GROUP:
            case EDJE_PART_TYPE_SWALLOW:
            case EDJE_PART_TYPE_EXTERNAL:
-              evas_object_image_source_set(ep->object, pp->swallowed_object);
+             if ((pp->type == EDJE_RP_TYPE_SWALLOW) &&
+                 (pp->typedata.swallow))
+               {
+                  evas_object_image_source_set(ep->object, pp->typedata.swallow->swallowed_object);
+               }
               break;
            case EDJE_PART_TYPE_SPACER:
               /* FIXME: detect that at compile time and prevent it */
@@ -2443,23 +2503,25 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
    if (ep->part->scale &&
        ep->part->type == EDJE_PART_TYPE_GROUP &&
-       ep->swallowed_object)
+       ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+           (ep->typedata.swallow)) &&
+       ep->typedata.swallow->swallowed_object)
      {
-        edje_object_scale_set(ep->swallowed_object, TO_DOUBLE(ed->scale));
+        edje_object_scale_set(ep->typedata.swallow->swallowed_object, TO_DOUBLE(ed->scale));
 
         if (ep->description_pos > FROM_DOUBLE(0.5) && ep->param2)
           {
-             edje_object_update_hints_set(ep->swallowed_object, ep->param2->description->min.limit);
+             edje_object_update_hints_set(ep->typedata.swallow->swallowed_object, ep->param2->description->min.limit);
           }
         else
           {
-             edje_object_update_hints_set(ep->swallowed_object, ep->param1.description->min.limit);
+             edje_object_update_hints_set(ep->typedata.swallow->swallowed_object, ep->param1.description->min.limit);
           }
-        if (edje_object_update_hints_get(ep->swallowed_object))
+        if (edje_object_update_hints_get(ep->typedata.swallow->swallowed_object))
           {
              Edje *ted;
 
-             ted = _edje_fetch(ep->swallowed_object);
+             ted = _edje_fetch(ep->typedata.swallow->swallowed_object);
              _edje_recalc_do(ted);
           }
      }
@@ -2631,7 +2693,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                                       ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
                                       confine_to,
                                       p1, pos);
-
 #ifdef EDJE_CALC_CACHE
              if (flags == FLAG_XY)
                ep->param1.state = ed->state;
@@ -2931,7 +2992,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
               /* visibility and color have no meaning on SWALLOW and GROUP part. */
               evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
               evas_object_resize(ep->object, pf->w, pf->h);
-
+             
               if (ep->nested_smart)
                 {  /* Move, Resize all nested parts */
                    /* Not really needed but will improve the bounding box evaluation done by Evas */
@@ -2990,25 +3051,27 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
               break;
           }
 
-        if (ep->swallowed_object)
+        if (((ep->type == EDJE_RP_TYPE_SWALLOW) &&
+             (ep->typedata.swallow)) &&
+            (ep->typedata.swallow->swallowed_object))
           {
              //// the below really is wrong - swallow color shouldn't affect swallowed object
              //// color - the edje color as a WHOLE should though - and that should be
              //// done via the clipper anyway. this created bugs when objects had their
              //// colro set and were swallowed - then had their color changed.
-             //	     evas_object_color_set(ep->swallowed_object,
+             //	     evas_object_color_set(ep->typedata.swallow->swallowed_object,
              //				   (pf->color.r * pf->color.a) / 255,
              //				   (pf->color.g * pf->color.a) / 255,
              //				   (pf->color.b * pf->color.a) / 255,
              //				   pf->color.a);
              if (pf->visible)
                {
-                  evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
-                  evas_object_resize(ep->swallowed_object, pf->w, pf->h);
-                  evas_object_show(ep->swallowed_object);
+                  evas_object_move(ep->typedata.swallow->swallowed_object, ed->x + pf->x, ed->y + pf->y);
+                  evas_object_resize(ep->typedata.swallow->swallowed_object, pf->w, pf->h);
+                  evas_object_show(ep->typedata.swallow->swallowed_object);
                }
-             else evas_object_hide(ep->swallowed_object);
-             mo = ep->swallowed_object;
+             else evas_object_hide(ep->typedata.swallow->swallowed_object);
+             mo = ep->typedata.swallow->swallowed_object;
           }
         else mo = ep->object;
         if (chosen_desc->map.on && ep->part->type != EDJE_PART_TYPE_SPACER)

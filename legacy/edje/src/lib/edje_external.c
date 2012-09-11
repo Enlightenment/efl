@@ -47,7 +47,9 @@ edje_object_part_external_object_get(const Evas_Object *obj, const char *part)
 	    rp->part->name);
 	return NULL;
      }
-   return rp->swallowed_object;
+   if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+       (!rp->typedata.swallow)) return NULL;
+   return rp->typedata.swallow->swallowed_object;
 }
 
 EAPI Eina_Bool
@@ -111,8 +113,9 @@ edje_object_part_external_content_get(const Evas_Object *obj, const char *part, 
 	ERR("no part '%s'", part);
 	return EINA_FALSE;
      }
-
-   return _edje_external_content_get(rp->swallowed_object, content);
+   if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+       (!rp->typedata.swallow)) return NULL;
+   return _edje_external_content_get(rp->typedata.swallow->swallowed_object, content);
 }
 
 EAPI Edje_External_Param_Type
@@ -132,7 +135,9 @@ edje_object_part_external_param_type_get(const Evas_Object *obj, const char *par
 	ERR("no part '%s'", part);
 	return EDJE_EXTERNAL_PARAM_TYPE_MAX;
      }
-   type = evas_object_data_get(rp->swallowed_object, "Edje_External_Type");
+  if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+      (!rp->typedata.swallow)) return EDJE_EXTERNAL_PARAM_TYPE_MAX;
+   type = evas_object_data_get(rp->typedata.swallow->swallowed_object, "Edje_External_Type");
    if (!type)
      {
 	ERR("no external type for object %p", obj);
@@ -409,7 +414,11 @@ _edje_external_signal_emit(Evas_Object *obj, const char *emission, const char *s
 Eina_Bool
 _edje_external_param_set(Evas_Object *obj, Edje_Real_Part *rp, const Edje_External_Param *param)
 {
-   Evas_Object *swallowed_object = rp->swallowed_object;
+   Evas_Object *swallowed_object;
+   
+   if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+      (!rp->typedata.swallow)) return EINA_FALSE;
+   swallowed_object = rp->typedata.swallow->swallowed_object;
    Edje_External_Type *type = evas_object_data_get(swallowed_object, "Edje_External_Type");
    if (!type)
      {
@@ -438,7 +447,11 @@ _edje_external_param_set(Evas_Object *obj, Edje_Real_Part *rp, const Edje_Extern
 Eina_Bool
 _edje_external_param_get(const Evas_Object *obj, Edje_Real_Part *rp, Edje_External_Param *param)
 {
-   Evas_Object *swallowed_object = rp->swallowed_object;
+   Evas_Object *swallowed_object;
+   
+   if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+      (!rp->typedata.swallow)) return EINA_FALSE;
+   swallowed_object = rp->typedata.swallow->swallowed_object;
    Edje_External_Type *type = evas_object_data_get(swallowed_object, "Edje_External_Type");
    if (!type)
      {
@@ -508,8 +521,10 @@ _edje_external_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep,
    Edje_Part_Description_External *ext;
    void *params1, *params2 = NULL;
 
-   if (!ep->swallowed_object) return;
-   type = evas_object_data_get(ep->swallowed_object, "Edje_External_Type");
+   if ((ep->type != EDJE_RP_TYPE_SWALLOW) ||
+      (!ep->typedata.swallow)) return;
+   if (!ep->typedata.swallow->swallowed_object) return;
+   type = evas_object_data_get(ep->typedata.swallow->swallowed_object, "Edje_External_Type");
 
    if ((!type) || (!type->state_set)) return;
 
@@ -526,7 +541,7 @@ _edje_external_recalc_apply(Edje *ed __UNUSED__, Edje_Real_Part *ep,
           ep->param2->external_params : ext->external_params;
      }
 
-   type->state_set(type->data, ep->swallowed_object,
+   type->state_set(type->data, ep->typedata.swallow->swallowed_object,
                    params1, params2, ep->description_pos);
 }
 

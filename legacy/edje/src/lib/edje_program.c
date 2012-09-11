@@ -205,8 +205,11 @@ edje_object_play_set(Evas_Object *obj, Eina_Bool play)
      {
 	Edje_Real_Part *rp;
 	rp = ed->table_parts[i];
-	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
-	  edje_object_play_set(rp->swallowed_object, play);
+	if ((rp->part->type == EDJE_PART_TYPE_GROUP) && 
+            ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+                (rp->typedata.swallow)) &&
+            (rp->typedata.swallow->swallowed_object))
+	  edje_object_play_set(rp->typedata.swallow->swallowed_object, play);
      }
 }
 
@@ -272,8 +275,11 @@ edje_object_animation_set(Evas_Object *obj, Eina_Bool on)
      {
 	Edje_Real_Part *rp;
 	rp = ed->table_parts[i];
-	if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
-	  edje_object_animation_set(rp->swallowed_object, on);
+	if ((rp->part->type == EDJE_PART_TYPE_GROUP) && 
+            ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+                (rp->typedata.swallow)) &&
+            (rp->typedata.swallow->swallowed_object))
+	  edje_object_animation_set(rp->typedata.swallow->swallowed_object, on);
      }
 
    _edje_thaw(ed);
@@ -771,7 +777,10 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		  for (i = 0; i < ed->table_parts_size; ++i)
 		    {
 		       rp = ed->table_parts[i];
-		       if (rp && rp->swallowed_object == focused)
+		       if ((rp) && 
+                           ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+                               (rp->typedata.swallow)) &&
+                           (rp->typedata.swallow->swallowed_object == focused))
 			 {
 			    evas_object_focus_set(focused, EINA_FALSE);
 			    break;
@@ -786,8 +795,11 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		  if (pt->id >= 0)
 		    {
 		       rp = ed->table_parts[pt->id % ed->table_parts_size];
-		       if (rp && rp->swallowed_object)
-                          evas_object_focus_set(rp->swallowed_object, EINA_TRUE);
+		       if (rp && 
+                           ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
+                               (rp->typedata.swallow)) &&
+                           (rp->typedata.swallow->swallowed_object))
+                         evas_object_focus_set(rp->typedata.swallow->swallowed_object, EINA_TRUE);
 		    }
 	       }
 	  }
@@ -956,8 +968,11 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
         switch (rp->part->type)
           {
            case EDJE_PART_TYPE_GROUP:
-              if (!rp->swallowed_object) goto end;
-              ed2 = _edje_fetch(rp->swallowed_object);
+              if (((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+                   (!rp->typedata.swallow)) ||
+                  (!rp->typedata.swallow->swallowed_object))
+                goto end;
+              ed2 = _edje_fetch(rp->typedata.swallow->swallowed_object);
               if (!ed2) goto end;
 
               _edje_emit(ed2, newsig, src);
@@ -965,11 +980,14 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
               break;
 
            case EDJE_PART_TYPE_EXTERNAL:
-              if (!rp->swallowed_object) break ;
+              if (((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+                   (!rp->typedata.swallow)) ||
+                  (!rp->typedata.swallow->swallowed_object))
+               break;
 
               if (!idx)
                 {
-                   _edje_external_signal_emit(rp->swallowed_object, newsig, src);
+                   _edje_external_signal_emit(rp->typedata.swallow->swallowed_object, newsig, src);
                 }
               else
                 {
@@ -1370,8 +1388,12 @@ _edje_external_param_info_get(const Evas_Object *obj, const char *name)
 static Edje_External_Param *
 _edje_param_external_get(Edje_Real_Part *rp, const char *name, Edje_External_Param *param)
 {
-   Evas_Object *swallowed_object = rp->swallowed_object;
+   Evas_Object *swallowed_object;
    const Edje_External_Param_Info *info;
+   
+   if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
+       (!rp->typedata.swallow)) return NULL;
+   swallowed_object = rp->typedata.swallow->swallowed_object;
 
    info = _edje_external_param_info_get(swallowed_object, name);
    if (!info) return NULL;
@@ -1399,8 +1421,10 @@ _edje_param_native_get(Edje_Real_Part *rp, const char *name, Edje_External_Param
 	     _edje_recalc_do(rp->edje);
 	     if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
 	       param->s = _edje_entry_text_get(rp);
-	     else if (rp->part->type == EDJE_PART_TYPE_TEXT)
-		    param->s = rp->text.text;
+	     else if ((rp->part->type == EDJE_PART_TYPE_TEXT) &&
+                      ((rp->type == EDJE_RP_TYPE_TEXT) &&
+                          (rp->typedata.text)))
+               param->s = rp->typedata.text->text;
 	     else
 	       param->s = evas_object_textblock_text_markup_get(rp->object);
 	     return param;
@@ -1420,8 +1444,10 @@ _edje_param_native_get(Edje_Real_Part *rp, const char *name, Edje_External_Param
 		       *free_ptr = unescaped;
 		       param->s = unescaped;
 		    }
-		  else if (rp->part->type == EDJE_PART_TYPE_TEXT)
-		    param->s = rp->text.text;
+                  else if ((rp->part->type == EDJE_PART_TYPE_TEXT) &&
+                           ((rp->type == EDJE_RP_TYPE_TEXT) &&
+                               (rp->typedata.text)))
+		    param->s = rp->typedata.text->text;
 		  else
 		    {
 		       const char *tmp;
@@ -1436,9 +1462,11 @@ _edje_param_native_get(Edje_Real_Part *rp, const char *name, Edje_External_Param
 		  return param;
 	       }
 
-	     if ((rp->entry_data) &&
-		 (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE) &&
-		 (!strcmp(name, "select_allow")))
+             if (((rp->type == EDJE_RP_TYPE_TEXT) &&
+                  (rp->typedata.text)) &&
+                 ((rp->typedata.text->entry_data) &&
+                     (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE) &&
+                     (!strcmp(name, "select_allow"))))
 	       {
 		  param->name = name;
 		  param->type = EDJE_EXTERNAL_PARAM_TYPE_BOOL;
@@ -1572,9 +1600,11 @@ _edje_param_native_set(Edje_Real_Part *rp, const char *name, const Edje_External
 		  return EINA_TRUE;
 	       }
 
-	     if ((rp->entry_data) &&
-		 (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE) &&
-		 (!strcmp(name, "select_allow")))
+             if (((rp->type == EDJE_RP_TYPE_TEXT) &&
+                  (rp->typedata.text)) &&
+                 ((rp->typedata.text->entry_data) &&
+                     (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE) &&
+                     (!strcmp(name, "select_allow"))))
 	       {
 		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 		    return EINA_FALSE;
@@ -1967,9 +1997,11 @@ _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part
    if ((!src_part) || (!src_param) || (!dst_part) || (!dst_param))
      return;
 
-   if (dst_part->part->type == EDJE_PART_TYPE_EXTERNAL)
+   if ((dst_part->part->type == EDJE_PART_TYPE_EXTERNAL) &&
+       (dst_part->type == EDJE_RP_TYPE_SWALLOW) &&
+       (dst_part->typedata.swallow))
      dst_info = _edje_external_param_info_get
-       (dst_part->swallowed_object, dst_param);
+       (dst_part->typedata.swallow->swallowed_object, dst_param);
    else
      dst_info = _edje_native_param_info_get(dst_part, dst_param);
 
@@ -2050,8 +2082,10 @@ _edje_param_set(Edje_Real_Part *part, const char *param, const char *value)
    if ((!part) || (!param) || (!value))
      return;
 
-   if (part->part->type == EDJE_PART_TYPE_EXTERNAL)
-     info = _edje_external_param_info_get(part->swallowed_object, param);
+   if ((part->part->type == EDJE_PART_TYPE_EXTERNAL) &&
+       (part->type == EDJE_RP_TYPE_SWALLOW) &&
+       (part->typedata.swallow))
+     info = _edje_external_param_info_get(part->typedata.swallow->swallowed_object, param);
    else
      info = _edje_native_param_info_get(part, param);
 
