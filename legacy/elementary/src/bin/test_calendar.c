@@ -326,6 +326,9 @@ test_calendar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    cal = elm_calendar_add(win);
    elm_calendar_first_day_of_week_set(cal, ELM_DAY_THURSDAY);
    elm_calendar_select_mode_set(cal, ELM_CALENDAR_SELECT_MODE_ONDEMAND);
+   elm_calendar_selectable_set(cal,
+                               (ELM_CALENDAR_SELECTABLE_YEAR
+                                | ELM_CALENDAR_SELECTABLE_MONTH));
    current_time = time(NULL) + 34 * 84600;
    localtime_r(&current_time, &selected_time);
    elm_calendar_selected_time_set(cal, &selected_time);

@@ -143,6 +143,7 @@ struct _Elm_Calendar_Smart_Data
    Day_Color                day_color[42]; // EINA_DEPRECATED
    Elm_Calendar_Select_Mode select_mode;
    Eina_Bool                selected : 1;
+   Elm_Calendar_Selectable  selectable;
 };
 
 struct _Elm_Calendar_Mark

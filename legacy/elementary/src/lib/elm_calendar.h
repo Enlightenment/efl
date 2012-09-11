@@ -117,6 +117,28 @@ typedef enum
  */
 typedef _Elm_Calendar_Select_Mode Elm_Calendar_Select_Mode;
 
+typedef enum
+{
+   ELM_CALENDAR_SELECTABLE_NONE = 0,
+   ELM_CALENDAR_SELECTABLE_YEAR = (1 << 0),
+   ELM_CALENDAR_SELECTABLE_MONTH = (1 << 1),
+   ELM_CALENDAR_SELECTABLE_DAY = (1 << 2)
+} _Elm_Calendar_Selectable;
+
+/**
+ * @enum _Elm_Calendar_Selectable
+ * @typedef Elm_Calendar_Selectable
+ *
+ * A bitmask used to define which fields of a @b tm struct will be taken into
+ * account, when elm_calendar_selected_time_set() is invoked.
+ *
+ * @ingroup Calendar
+ * @see elm_calendar_selectable_set()
+ * @see elm_calendar_selected_time_set()
+ * @since 1.8
+ */
+typedef _Elm_Calendar_Selectable Elm_Calendar_Selectable;
+
 typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a calendar mark. Created with elm_calendar_mark_add() and deleted with elm_calendar_mark_del(). */
 
 /**
@@ -514,6 +536,36 @@ EAPI void                 elm_calendar_first_day_of_week_set(Evas_Object *obj, E
  * @ingroup Calendar
  */
 EAPI Elm_Calendar_Weekday elm_calendar_first_day_of_week_get(const Evas_Object *obj);
+
+/**
+ * Define which fields of a @b tm struct will be taken into account, when
+ * elm_calendar_selected_time_set() is invoked.
+ *
+ * @param obj The calendar object
+ * @param selectable A bitmask of Elm_Calendar_Selectable
+ *
+ * By Default the bitmask is set to use all fields of a @b tm struct (year,
+ * month and day of the month).
+ *
+ * @ingroup Calendar
+ * @see elm_calendar_selected_time_set
+ * @since 1.8
+ */
+EAPI void                 elm_calendar_selectable_set(Evas_Object *obj, Elm_Calendar_Selectable selectable);
+
+
+/**
+ * Get how elm_calendar_selected_time_set manage a date
+ *
+ * @param obj The calendar object
+ * @return The flag used to manage a date with a elm_calendar_selected_time_set
+ *
+ * @ingroup Calendar
+ * @see elm_calendar_selectable_set
+ * @see elm_calendar_selected_time_set
+ * @since 1.8
+ */
+EAPI Elm_Calendar_Selectable elm_calendar_selectable_get(const Evas_Object *obj);
 
 /**
  * @}

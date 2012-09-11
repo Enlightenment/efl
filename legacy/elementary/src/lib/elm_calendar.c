@@ -711,6 +711,7 @@ _elm_calendar_smart_add(Evas_Object *obj)
    priv->first_day_it = -1;
    priv->format_func = _format_month_year;
    priv->marks = NULL;
+   priv->selectable = (~(ELM_CALENDAR_SELECTABLE_NONE));
 
    edje_object_signal_callback_add
      (ELM_WIDGET_DATA(priv)->resize_obj, "elm,action,increment,start", "*",
@@ -943,9 +944,21 @@ elm_calendar_selected_time_set(Evas_Object *obj,
    ELM_CALENDAR_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN(selected_time);
 
-   sd->selected_time = *selected_time;
-   if (!sd->selected)
-     sd->selected = EINA_TRUE;
+   if (sd->selectable & ELM_CALENDAR_SELECTABLE_YEAR)
+     sd->selected_time.tm_year = selected_time->tm_year;
+   if (sd->selectable & ELM_CALENDAR_SELECTABLE_MONTH)
+     sd->selected_time.tm_mon = selected_time->tm_mon;
+   if (sd->selectable & ELM_CALENDAR_SELECTABLE_DAY)
+       {
+          sd->selected_time.tm_mday = selected_time->tm_mday;
+          if (!sd->selected)
+            sd->selected = EINA_TRUE;
+       }
+   else if (sd->select_mode != ELM_CALENDAR_SELECT_MODE_ONDEMAND)
+     {
+        if (!sd->selected)
+          sd->selected = EINA_TRUE;
+     }
    if (sd->selected_time.tm_year != sd->shown_time.tm_year)
      sd->shown_time.tm_year = sd->selected_time.tm_year;
    if (sd->selected_time.tm_mon != sd->shown_time.tm_mon)
@@ -1094,3 +1107,22 @@ elm_calendar_select_mode_get(const Evas_Object *obj)
 
    return sd->select_mode;
 }
+
+EAPI void
+elm_calendar_selectable_set(Evas_Object *obj, Elm_Calendar_Selectable selectable)
+{
+   ELM_CALENDAR_CHECK(obj);
+   ELM_CALENDAR_DATA_GET(obj, sd);
+
+   sd->selectable = selectable;
+}
+
+EAPI Elm_Calendar_Selectable
+elm_calendar_selectable_get(const Evas_Object *obj)
+{
+   ELM_CALENDAR_CHECK(obj) -1;
+   ELM_CALENDAR_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
+
+   return sd->selectable;
+}
+
