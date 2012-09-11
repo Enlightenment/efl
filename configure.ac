@@ -183,8 +183,8 @@ AC_PROG_CC
 # pkg-config
 
 PKG_PROG_PKG_CONFIG
-if test "x${PKGCONFIG}" = "x" ; then
-   AC_MSG_ERROR([pkg-config tool not found. Install it or set PKGCONFIG environment variable to that path tool. Exiting...])
+if test "x${PKG_CONFIG}" = "x" ; then
+   AC_MSG_ERROR([pkg-config tool not found. Install it or set PKG_CONFIG environment variable to that path tool. Exiting...])
 fi
 
 # doxygen program for documentation building
