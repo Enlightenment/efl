@@ -1465,13 +1465,6 @@ group { name: "elm/button/base/colorselector/left/default";
 group { name: "elm/button/base/colorselector/right/default";
      inherit: "elm/button/base/colorselector/left/default";
      images {
-      image: "bt_base1.png" COMP;
-      image: "bt_base2.png" COMP;
-      image: "bt_hilight.png" COMP;
-      image: "bt_shine.png" COMP;
-      image: "bt_glow.png" COMP;
-      image: "bt_dis_base.png" COMP;
-      image: "bt_dis_hilight.png" COMP;
       image: "sp_bt_r.png" COMP;
    }
    parts {
