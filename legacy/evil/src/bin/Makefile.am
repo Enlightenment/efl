@@ -5,9 +5,9 @@ AM_CPPFLAGS = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
 -I$(top_srcdir)/src/lib \
-@win32_cppflags@
+@EVIL_CPPFLAGS@
 
-AM_CFLAGS = @win32_cflags@
+AM_CFLAGS = @EVIL_CFLAGS@
 
 bin_PROGRAMS = evil_suite test_evil
 

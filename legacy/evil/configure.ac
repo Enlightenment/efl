@@ -73,20 +73,20 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-win32_libs=""
-win32_dl_libs=""
+EVIL_LIBS=""
+EVIL_DLFCN_LIBS=""
 case "$host_os" in
   mingw32ce*)
-    win32_libs="-lws2"
-    win32_dl_libs="-ltoolhelp"
+    EVIL_LIBS="-lws2"
+    EVIL_DLFCN_LIBS="-ltoolhelp"
     ;;
   *)
-    win32_libs="-lole32 -luuid -lws2_32 -lsecur32"
-    win32_dl_libs="-lpsapi"
+    EVIL_LIBS="-lole32 -luuid -lws2_32 -lsecur32"
+    EVIL_DLFCN_LIBS="-lpsapi"
     ;;
 esac
-AC_SUBST([win32_libs])
-AC_SUBST([win32_dl_libs])
+AC_SUBST([EVIL_LIBS])
+AC_SUBST([EVIL_DLFCN_LIBS])
 
 
 ### Checks for header files
@@ -102,25 +102,25 @@ AC_CHECK_HEADERS([errno.h])
 ### Checks for compiler characteristics
 EFL_ATTRIBUTE_UNUSED
 
-win32_cppflags=""
-win32_cflags="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls"
-win32_cflags="${win32_cflags} -mms-bitfields"
-win32_cxxflags=""
+EVIL_CPPFLAGS="-DEFL_EVIL_BUILD"
+EVIL_DLFCN_CPPFLAGS="-DEFL_EVIL_DLFCN_BUILD -DPSAPI_VERSION=1"
+EVIL_CFLAGS="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -mms-bitfields"
+EVIL_CXXFLAGS=""
 have_wince="no"
 case "$host_os" in
   mingw32ce*)
     have_wince="yes"
-    win32_cppflags="${win32_cppflags}"
     ;;
   *)
     have_wince="no"
-    win32_cxxflags="-fno-rtti -fno-exceptions"
-    win32_cppflags="${win32_cppflags} -DSECURITY_WIN32"
+    EVIL_CXXFLAGS="-fno-rtti -fno-exceptions"
+    EVIL_CPPFLAGS="-DSECURITY_WIN32"
     ;;
 esac
-AC_SUBST([win32_cppflags])
-AC_SUBST([win32_cflags])
-AC_SUBST([win32_cxxflags])
+AC_SUBST([EVIL_CPPFLAGS])
+AC_SUBST([EVIL_DLFCN_CPPFLAGS])
+AC_SUBST([EVIL_CFLAGS])
+AC_SUBST([EVIL_CXXFLAGS])
 
 AM_CONDITIONAL(EVIL_HAVE_WINCE, test "x${have_wince}" = "xyes")
 

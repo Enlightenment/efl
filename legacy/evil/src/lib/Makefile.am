@@ -95,10 +95,10 @@ libevil_la_SOURCES += evil_link_xp.cpp
 
 endif
 
-libevil_la_CPPFLAGS = @win32_cppflags@ -DEFL_EVIL_BUILD
-libevil_la_CFLAGS = @win32_cflags@
-libevil_la_CXXFLAGS = @win32_cxxflags@
-libevil_la_LIBADD = @win32_libs@ $(EFL_MPATROL_LIBS)
+libevil_la_CPPFLAGS = @EVIL_CPPFLAGS@
+libevil_la_CFLAGS = @EVIL_CFLAGS@
+libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@
+libevil_la_LIBADD = @EVIL_LIBS@
 libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
 if EVIL_HAVE_WINCE
@@ -113,9 +113,9 @@ endif
 
 libdl_la_SOURCES = dlfcn.c
 
-libdl_la_CPPFLAGS = @win32_cppflags@ -DEFL_EVIL_DLFCN_BUILD -DPSAPI_VERSION=1
-libdl_la_CFLAGS = @win32_cflags@
-libdl_la_LIBADD = $(top_builddir)/src/lib/libevil.la $(EFL_MPATROL_LIBS) @win32_dl_libs@
+libdl_la_CPPFLAGS = @EVIL_DLFCN_CPPFLAGS@
+libdl_la_CFLAGS = @EVIL_CFLAGS@
+libdl_la_LIBADD = $(top_builddir)/src/lib/libevil.la @EVIL_DLFCN_LIBS@
 libdl_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
 EXTRA_DIST = gdtoa/README gdtoa/README.mingw
