@@ -233,7 +233,7 @@ _double_pointer_key_hash(const void *key, int key_length __UNUSED__)
 {
 #ifdef __LP64__
    return eina_hash_int64(key, sizeof (void*)) ^
-     eina_hash_int64(((unsigned char*) key) + sizeof (void*), sizeof (void*));
+     eina_hash_int64((void*)(((unsigned char*) key) + sizeof (void*)), sizeof (void*));
 #else
    /* double 32 bits pointer is ... 64bits awesome ! */
    return eina_hash_int64(key, key_length);
