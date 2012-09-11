@@ -2,9 +2,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--I$(top_srcdir) \
--I$(top_srcdir)/bin \
--I$(top_srcdir)/src/lib \
+-I. \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil \
 @EVIL_CPPFLAGS@
 
 AM_CFLAGS = @EVIL_CFLAGS@
@@ -45,9 +45,9 @@ evil_suite_SOURCES +=  memcpy_glibc_arm.S
 
 endif
 
-evil_suite_LDADD = $(top_builddir)/src/lib/libdl.la $(top_builddir)/src/lib/libevil.la -lm
+evil_suite_LDADD = $(top_builddir)/src/lib/evil/libdl.la $(top_builddir)/src/lib/evil/libevil.la -lm
 evil_suite_LDFLAGS = -Wl,--enable-auto-import
 
 test_evil_SOURCES = test_evil.c
-test_evil_LDADD = $(top_builddir)/src/lib/libevil.la
+test_evil_LDADD = $(top_builddir)/src/lib/evil/libevil.la
 test_evil_LDFLAGS = -Wl,--enable-auto-import

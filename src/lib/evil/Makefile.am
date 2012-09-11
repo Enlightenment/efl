@@ -115,7 +115,7 @@ libdl_la_SOURCES = dlfcn.c
 
 libdl_la_CPPFLAGS = @EVIL_DLFCN_CPPFLAGS@
 libdl_la_CFLAGS = @EVIL_CFLAGS@
-libdl_la_LIBADD = $(top_builddir)/src/lib/libevil.la @EVIL_DLFCN_LIBS@
+libdl_la_LIBADD = $(top_builddir)/src/lib/evil/libevil.la @EVIL_DLFCN_LIBS@
 libdl_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
 EXTRA_DIST = gdtoa/README gdtoa/README.mingw

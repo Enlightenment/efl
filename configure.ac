@@ -248,7 +248,7 @@ case "$host_os" in
     EVIL_DLFCN_LIBS="-ltoolhelp"
     ;;
   *)
-    EVIL_LIBS="-lole32 -lws2_32 -lsecur32"
+    EVIL_LIBS="-luuid -lole32 -lws2_32 -lsecur32"
     EVIL_DLFCN_LIBS="-lpsapi"
     ;;
 esac
@@ -267,6 +267,7 @@ AC_CHECK_HEADERS([errno.h])
 ### Checks for compiler characteristics
 
 EVIL_CPPFLAGS="-DEFL_EVIL_BUILD"
+EVIL_DLFCN_CPPFLAGS="-DEFL_EVIL_DLFCN_BUILD -DPSAPI_VERSION=1"
 EVIL_CFLAGS="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -mms-bitfields"
 EVIL_CXXFLAGS=""
 
@@ -276,6 +277,7 @@ if test "x${have_win32}" = "xyes" ; then
 fi
 
 AC_SUBST([EVIL_CPPFLAGS])
+AC_SUBST([EVIL_DLFCN_CPPFLAGS])
 AC_SUBST([EVIL_CFLAGS])
 AC_SUBST([EVIL_CXXFLAGS])
 
@@ -313,6 +315,7 @@ src/bin/Makefile
 src/bin/evil/Makefile
 src/lib/Makefile
 src/lib/evil/Makefile
+evil.pc
 ])
 
 AC_OUTPUT
