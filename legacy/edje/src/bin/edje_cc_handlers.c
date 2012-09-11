@@ -1959,7 +1959,10 @@ static void
 ob_collections(void)
 {
    if (!edje_file->collection)
-     edje_file->collection = eina_hash_string_small_new(NULL);
+     {
+        edje_file->collection = eina_hash_string_small_new(NULL);
+        edje_collections_lookup = eina_hash_int32_new(NULL);
+     }
 }
 
 /**
@@ -2218,6 +2221,8 @@ ob_collections_group(void)
 
    current_de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    current_de->id = eina_list_count(edje_collections);
+
+   eina_hash_add(edje_collections_lookup, &current_de->id, current_de);
 
    pc = mem_alloc(SZ(Edje_Part_Collection));
    edje_collections = eina_list_append(edje_collections, pc);

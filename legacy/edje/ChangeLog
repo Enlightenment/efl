@@ -609,3 +609,4 @@
 2012-09-11  Cedric Bail
 
 	* O(1) lookup used when searching Part_Lookup in edje_cc.
+	* O(1) lookup when generating alias of group.

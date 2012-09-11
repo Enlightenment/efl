@@ -183,6 +183,7 @@ static void data_process_string(Edje_Part_Collection *pc, const char *prefix, ch
 
 Edje_File *edje_file = NULL;
 Eina_List *edje_collections = NULL;
+Eina_Hash *edje_collections_lookup = NULL;
 Eina_List *externals = NULL;
 Eina_List *fonts = NULL;
 Eina_List *codes = NULL;
@@ -371,7 +372,6 @@ data_thread_head(void *data, Ecore_Thread *thread __UNUSED__)
 	     EINA_LIST_FREE(aliases, ce)
 	       {
 		  Edje_Part_Collection_Directory_Entry *sce;
-		  Eina_Iterator *it;
 
 		  if (!ce->entry)
                     {
@@ -381,18 +381,12 @@ data_thread_head(void *data, Ecore_Thread *thread __UNUSED__)
                        return;
                     }
 
-		  it = eina_hash_iterator_data_new(edje_file->collection);
-
-		  EINA_ITERATOR_FOREACH(it, sce)
+		  sce = eina_hash_find(edje_collections_lookup, &ce->id);
+		  if (sce)
                     {
-                       if (ce->id == sce->id)
-                         {
-                            memcpy(&ce->count, &sce->count, sizeof (ce->count));
-                            break;
-                         }
+                       memcpy(&ce->count, &sce->count, sizeof (ce->count));
                     }
-
-		  if (!sce)
+		  else
                     {
                        snprintf(buf, sizeof(buf),
                                 "Collection %s (%i) can't find an correct alias.",
@@ -400,7 +394,7 @@ data_thread_head(void *data, Ecore_Thread *thread __UNUSED__)
                        hw->errstr = strdup(buf);
                        return;
                     }
-		  eina_iterator_free(it);
+
 		  eina_hash_direct_add(edje_file->collection, ce->entry, ce);
 	       }
 	  }
