@@ -24,7 +24,7 @@ evil_util.h
 stdheadersdir = $(includedir)/evil-@VMAJ@
 nobase_dist_stdheaders_DATA = pwd.h sys/mman.h fnmatch.h dirent.h dlfcn.h
 
-if EVIL_HAVE_WINCE
+if HAVE_WINCE
 
 nobase_dist_stdheaders_DATA += mingw32ce/errno.h
 
@@ -85,7 +85,7 @@ evil_pformat.h \
 evil_private.h \
 evil_fnmatch_private.h
 
-if EVIL_HAVE_WINCE
+if HAVE_WINCE
 
 libevil_la_SOURCES += evil_errno.c evil_link_ce.c
 
@@ -101,7 +101,7 @@ libevil_la_CXXFLAGS = @EVIL_CXXFLAGS@
 libevil_la_LIBADD = @EVIL_LIBS@
 libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
-if EVIL_HAVE_WINCE
+if HAVE_WINCE
 
 libevil_la_LINK = $(LINK) $(libevil_la_LDFLAGS)
 

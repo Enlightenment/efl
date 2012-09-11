@@ -35,7 +35,7 @@ evil_test_print.h \
 evil_test_realpath.h \
 evil_test_util.h
 
-if EVIL_HAVE_WINCE
+if HAVE_WINCE
 
 evil_suite_SOURCES +=  memcpy_glibc_arm.S
 

@@ -174,6 +174,7 @@ AC_SUBST([release_info])
 
 ### compilers
 
+AM_PROG_AS
 AC_PROG_CXX
 AC_LANG(C)
 AC_PROG_CPP
