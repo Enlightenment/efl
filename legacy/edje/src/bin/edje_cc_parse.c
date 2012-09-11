@@ -287,12 +287,6 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	       }
 	     l = pp - p;
 	     tmpstr = alloca(l + 1);
-	     if (!tmpstr)
-	       {
-		  ERR("%s:%i malloc %i bytes failed",
-		      file_in, line - 1, l + 1);
-		  exit(-1);
-	       }
 	     strncpy(tmpstr, p, l);
 	     tmpstr[l] = 0;
 	     l = sscanf(tmpstr, "%*s %i \"%[^\"]\"", &nm, fl);
