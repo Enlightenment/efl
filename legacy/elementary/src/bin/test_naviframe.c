@@ -125,7 +125,7 @@ _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                         bt2,
                                         content,
                                         NULL);
-   elm_object_item_part_text_set(it, "subtitle", "This page is inserted after top item");
+   elm_object_item_part_text_set(it, "subtitle", "This page is inserted after top item without transition");
    evas_object_smart_callback_add(bt, "clicked", _navi_it_del, it);
 }
 
