@@ -11,6 +11,7 @@ Additions:
 
 Improvements:
     * Check the number of parameter for image in edc.
+    * O(1) lookup used when searching Part_Lookup in edje_cc.
 
 Fixes:
 

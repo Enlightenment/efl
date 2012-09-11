@@ -606,3 +606,6 @@
 	it's map enabled by the edje, then edje needs to update it's uv mapping
   	info.
 
+2012-09-11  Cedric Bail
+
+	* O(1) lookup used when searching Part_Lookup in edje_cc.

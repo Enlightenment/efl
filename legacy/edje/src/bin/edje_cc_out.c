@@ -192,12 +192,14 @@ Eina_List *aliases = NULL;
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_part_collection = NULL;
 
-static Eina_List *part_lookups = NULL;
 static Eina_List *program_lookups = NULL;
 static Eina_List *group_lookups = NULL;
 static Eina_List *image_lookups = NULL;
 static Eina_List *part_slave_lookups = NULL;
 static Eina_List *image_slave_lookups= NULL;
+
+static Eina_Hash *part_dest_lookup = NULL;
+static Eina_Hash *part_pc_dest_lookup = NULL;
 
 void
 error_and_abort(Eet_File *ef __UNUSED__, const char *fmt, ...)
@@ -212,11 +214,50 @@ error_and_abort(Eet_File *ef __UNUSED__, const char *fmt, ...)
    exit(-1);
 }
 
+static unsigned int
+_double_pointer_key_length(const void *key __UNUSED__)
+{
+   return sizeof (void*) * 2;
+}
+
+static int
+_double_pointer_key_cmp(const void *key1, int key1_length,
+                        const void *key2, int key2_length __UNUSED__)
+{
+   return memcmp(key1, key2, key1_length);
+}
+
+static int
+_double_pointer_key_hash(const void *key, int key_length __UNUSED__)
+{
+#ifdef __LP64__
+   return eina_hash_int64(key, sizeof (void*)) ^
+     eina_hash_int64(((unsigned char) key) + sizeof (void*), sizeof (void*));
+#else
+   /* double 32 bits pointer is ... 64bits awesome ! */
+   return eina_hash_int64(key, key_length);
+#endif
+}
+
+static void
+data_part_lookup_free(Part_Lookup *pl)
+{
+   free(pl->name);
+   free(pl);
+}
+
 void
 data_setup(void)
 {
    edd_edje_file = _edje_edd_edje_file;
    edd_edje_part_collection = _edje_edd_edje_part_collection;
+
+   part_dest_lookup = eina_hash_pointer_new(EINA_FREE_CB(eina_list_free));
+   part_pc_dest_lookup = eina_hash_new(EINA_KEY_LENGTH(_double_pointer_key_length),
+                                       EINA_KEY_CMP(_double_pointer_key_cmp),
+                                       EINA_KEY_HASH(_double_pointer_key_hash),
+                                       EINA_FREE_CB(data_part_lookup_free),
+                                       8);
 }
 
 static void
@@ -1737,111 +1778,58 @@ data_queue_group_lookup(const char *name, Edje_Part *part)
    gl->part = part;
 }
 
-//#define NEWPARTLOOKUP 1
-#ifdef NEWPARTLOOKUP
-static Eina_Hash *_part_lookups_hash = NULL;
-static Eina_Hash *_part_lookups_dest_hash = NULL;
-#endif
-
 void
 data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
 {
+   void *key[2];
    Part_Lookup *pl = NULL;
-   Eina_List *l;
-#ifdef NEWPARTLOOKUP
-   char buf[256];
-#endif
+   Eina_List *list;
 
-#ifdef NEWPARTLOOKUP
-   snprintf(buf, sizeof(buf), "%lu-%lu",
-            (unsigned long)name, (unsigned long)dest);
-   if (_part_lookups_hash) pl = eina_hash_find(_part_lookups_hash, buf);
+   key[0] = pc;
+   key[1] = dest;
+
+   pl = eina_hash_find(part_pc_dest_lookup, &key);
    if (pl)
      {
         free(pl->name);
         if (name[0])
-          pl->name = mem_strdup(name);
+          {
+             pl->name = mem_strdup(name);
+          }
         else
           {
-             eina_hash_del(_part_lookups_hash, buf, pl);
-             snprintf(buf, sizeof(buf), "%lu", (unsigned long)dest);
-             eina_hash_del(_part_lookups_dest_hash, buf, pl);
-             part_lookups = eina_list_remove(part_lookups, pl);
+             list = eina_hash_find(part_dest_lookup, &pl->dest);
+             list = eina_list_remove(list, pl);
+             eina_hash_set(part_dest_lookup, &pl->dest, list);
              free(pl);
           }
-        return;
+        return ;
      }
-#else
-   EINA_LIST_FOREACH(part_lookups, l, pl)
-     {
-        if ((pl->pc == pc) && (pl->dest == dest))
-          {
-             free(pl->name);
-             if (name[0])
-               pl->name = mem_strdup(name);
-             else
-               {
-                  part_lookups = eina_list_remove(part_lookups, pl);
-                  free(pl);
-               }
-             return;
-          }
-     }
-#endif
+
    if (!name[0]) return;
 
    pl = mem_alloc(SZ(Part_Lookup));
-   part_lookups = eina_list_prepend(part_lookups, pl);
    pl->pc = pc;
    pl->name = mem_strdup(name);
    pl->dest = dest;
-#ifdef NEWPARTLOOKUP
-   if (!_part_lookups_hash)
-     _part_lookups_hash = eina_hash_string_superfast_new(NULL);
-   eina_hash_add(_part_lookups_hash, buf, pl);
 
-   snprintf(buf, sizeof(buf), "%lu", (unsigned long)dest);
-   if (!_part_lookups_dest_hash)
-     _part_lookups_dest_hash = eina_hash_string_superfast_new(NULL);
-   l = eina_hash_find(_part_lookups_dest_hash, buf);
-   if (l)
-     {
-        l = eina_list_append(l, pl);
-        eina_hash_modify(_part_lookups_dest_hash, buf, l);
-     }
-   else
-     {
-        l = eina_list_append(l, pl);
-        eina_hash_add(_part_lookups_dest_hash, buf, l);
-     }
-#endif
+   eina_hash_add(part_pc_dest_lookup, &key, pl);
+
+   list = eina_hash_find(part_dest_lookup, &pl->dest);
+   list = eina_list_prepend(list, pl);
+   eina_hash_set(part_dest_lookup, &pl->dest, list);
 }
 
 void
 data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 {
+   Eina_List *list;
    Eina_List *l;
    Part_Lookup *pl;
-#ifdef NEWPARTLOOKUP
-   Eina_List *list;
-   char buf[256];
-#endif
 
-#ifdef NEWPARTLOOKUP
-   if (!_part_lookups_dest_hash) return;
-   snprintf(buf, sizeof(buf), "%lu", (unsigned long)src);
-   list = eina_hash_find(_part_lookups_dest_hash, buf);
+   list = eina_hash_find(part_dest_lookup, &src);
    EINA_LIST_FOREACH(list, l, pl)
-     {
-        data_queue_part_lookup(pc, pl->name, dest);
-     }
-#else
-   EINA_LIST_FOREACH(part_lookups, l, pl)
-     {
-        if (pl->dest == src)
-          data_queue_part_lookup(pc, pl->name, dest);
-     }
-#endif
+     data_queue_part_lookup(pc, pl->name, dest);
 }
 
 void
@@ -2033,6 +2021,7 @@ void
 data_process_lookups(void)
 {
    Edje_Part_Collection *pc;
+   Eina_Iterator *it;
    Part_Lookup *part;
    Program_Lookup *program;
    Group_Lookup *group;
@@ -2115,7 +2104,8 @@ data_process_lookups(void)
 #undef PROGRAM_ID_SET
      }
 
-   EINA_LIST_FREE(part_lookups, part)
+   it = eina_hash_iterator_data_new(part_pc_dest_lookup);
+   EINA_ITERATOR_FOREACH(it, part)
      {
         Edje_Part *ep;
         unsigned int i;
@@ -2149,10 +2139,10 @@ data_process_lookups(void)
                   exit(-1);
                }
           }
-
-        free(part->name);
-        free(part);
      }
+   eina_iterator_free(it);
+   eina_hash_free(part_dest_lookup);
+   eina_hash_free(part_pc_dest_lookup);
 
    EINA_LIST_FREE(program_lookups, program)
      {
