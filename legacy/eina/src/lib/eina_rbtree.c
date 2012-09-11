@@ -29,6 +29,7 @@
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_array.h"
+#include "eina_trash.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -50,6 +51,7 @@ struct _Eina_Iterator_Rbtree
    Eina_Iterator iterator;
 
    Eina_Array *stack;
+   Eina_Trash *trash;
 
    unsigned char mask;
 };
@@ -63,16 +65,20 @@ struct _Eina_Iterator_Rbtree_List
 };
 
 static Eina_Iterator_Rbtree_List *
-_eina_rbtree_iterator_list_new(const Eina_Rbtree *tree)
+_eina_rbtree_iterator_list_new(Eina_Iterator_Rbtree *it, const Eina_Rbtree *tree)
 {
    Eina_Iterator_Rbtree_List *new;
 
-        eina_error_set(0);
-   new = malloc(sizeof (Eina_Iterator_Rbtree_List));
+   eina_error_set(0);
+   new = eina_trash_pop(&it->trash);
    if (!new)
      {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
+        new = malloc(sizeof (Eina_Iterator_Rbtree_List));
+        if (!new)
+          {
+             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+             return NULL;
+          }
      }
 
    new->tree = (Eina_Rbtree *)tree;
@@ -97,12 +103,15 @@ _eina_rbtree_iterator_free(Eina_Iterator_Rbtree *it)
    Eina_Iterator_Rbtree_List *item;
    Eina_Array_Iterator et;
    unsigned int i;
+   void *last;
 
    EINA_ARRAY_ITER_NEXT(it->stack, i, item, et)
      free(item);
 
    eina_array_free(it->stack);
-                     free(it);
+   while ((last = eina_trash_pop(&it->trash)))
+     free(last);
+   free(it);
 }
 
 static Eina_Bool
@@ -128,7 +137,7 @@ _eina_rbtree_iterator_next(Eina_Iterator_Rbtree *it, void **data)
                 if ((it->mask & EINA_RBTREE_ITERATOR_POSTFIX_MASK) ==
                     EINA_RBTREE_ITERATOR_POSTFIX_MASK)
                   {
-                     free(last);
+                     eina_trash_push(&it->trash, last);
 
                      if (eina_array_count(it->stack) > 0)
                        {
@@ -143,7 +152,7 @@ _eina_rbtree_iterator_next(Eina_Iterator_Rbtree *it, void **data)
                      goto onfix;
                   }
 
-             free(last);
+             eina_trash_push(&it->trash, last);
 
              last = eina_array_pop(it->stack);
              if (!last)
@@ -162,11 +171,11 @@ _eina_rbtree_iterator_next(Eina_Iterator_Rbtree *it, void **data)
            goto onfix;
      }
 
-   new = _eina_rbtree_iterator_list_new(last->tree->son[last->dir]);
+   new = _eina_rbtree_iterator_list_new(it, last->tree->son[last->dir]);
    if (!new)
-      return EINA_FALSE;
+     return EINA_FALSE;
 
-        eina_array_push(it->stack, new);
+   eina_array_push(it->stack, new);
 
    if (last->dir == EINA_RBTREE_RIGHT)
       if ((it->mask & EINA_RBTREE_ITERATOR_PREFIX_MASK) ==
@@ -194,11 +203,13 @@ _eina_rbtree_iterator_build(const Eina_Rbtree *root, unsigned char mask)
         return NULL;
      }
 
+   eina_trash_init(&it->trash);
+
    it->stack = eina_array_new(8);
    if (!it->stack)
       goto on_error2;
 
-   first = _eina_rbtree_iterator_list_new(root);
+   first = _eina_rbtree_iterator_list_new(it, root);
    if (!first)
       goto on_error;
 

@@ -1,3 +1,11 @@
+Eina 1.8.0
+
+Changes since Eina 1.7.0:
+-------------------------
+
+Improvements:
+    * Speedup Eina Rbtree Iterator by recycling memory instead of massively calling malloc/free.
+
 Eina 1.7.0
 
 Changes since Eina 1.2.0:
