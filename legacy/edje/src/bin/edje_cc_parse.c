@@ -74,7 +74,7 @@ static int strstrip(const char *in, char *out, size_t size);
 
 int        line = 0;
 Eina_List *stack = NULL;
-Eina_List *params = NULL;
+Eina_Array params;
 
 static char  file_buf[4096];
 static int   verbatim = 0;
@@ -98,11 +98,12 @@ err_show_stack(void)
 static void
 err_show_params(void)
 {
-   Eina_List *l;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
    char *p;
 
    ERR("PARAMS:");
-   EINA_LIST_FOREACH(params, l, p)
+   EINA_ARRAY_ITER_NEXT(&params, i, p, iterator)
      {
         ERR("  %s", p);
      }
@@ -113,6 +114,14 @@ err_show(void)
 {
    err_show_stack();
    err_show_params();
+}
+
+static char *
+_parse_param_get(int n)
+{
+   if (n < (int) eina_array_count(&params))
+     return eina_array_data_get(&params, n);
+   return NULL;
 }
 
 static Eina_Hash *_new_object_hash = NULL;
@@ -590,14 +599,13 @@ parse(char *data, off_t size)
 	       {
 		  if (do_params)
 		    {
+                       void *param;
+
 		       do_params = 0;
 		       new_statement();
 		       /* clear out params */
-		       while (params)
-			 {
-			    free(eina_list_data_get(params));
-			    params = eina_list_remove(params, eina_list_data_get(params));
-			 }
+		       while ((param = eina_array_pop(&params)))
+                         free(param);
 		       /* remove top from stack */
 		       stack_pop();
 		    }
@@ -617,7 +625,9 @@ parse(char *data, off_t size)
 	else
 	  {
 	     if (do_params)
-	       params = eina_list_append(params, token);
+               {
+                  eina_array_push(&params, token);
+               }
 	     else
 	       {
                   stack_push(token);
@@ -849,7 +859,9 @@ compile(void)
    if (data && (read(fd, data, size) == size))
      {
         stack_buf = eina_strbuf_new();
+	eina_array_step_set(&params, sizeof (Eina_Array), 8);
         parse(data, size);
+	eina_array_flush(&params);
         eina_strbuf_free(stack_buf);
         stack_buf = NULL;
      }
@@ -876,7 +888,7 @@ is_param(int n)
 {
    char *str;
 
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (str) return 1;
    return 0;
 }
@@ -888,7 +900,7 @@ is_num(int n)
    char *end;
    long int ret;
    
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (!str)
      {
 	ERR("%s:%i no parameter supplied as argument %i",
@@ -913,7 +925,7 @@ parse_str(int n)
    char *str;
    char *s;
 
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (!str)
      {
 	ERR("%s:%i no parameter supplied as argument %i",
@@ -977,7 +989,7 @@ parse_enum(int n, ...)
    int result;
    va_list va;
 
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (!str)
      {
 	ERR("%s:%i no parameter supplied as argument %i",
@@ -996,14 +1008,15 @@ parse_enum(int n, ...)
 int
 parse_flags(int n, ...)
 {
-   Eina_List *lst;
    int result = 0;
    va_list va;
-   char *data;
 
    va_start(va, n);
-   EINA_LIST_FOREACH(eina_list_nth_list(params, n), lst, data)
-     result |= _parse_enum(data, va);
+   while (n < (int) eina_array_count(&params))
+     {
+        result |= _parse_enum(eina_array_data_get(&params, n), va);
+        n++;
+     }
    va_end(va);
 
    return result;
@@ -1015,7 +1028,7 @@ parse_int(int n)
    char *str;
    int i;
 
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (!str)
      {
 	ERR("%s:%i no parameter supplied as argument %i",
@@ -1033,7 +1046,7 @@ parse_int_range(int n, int f, int t)
    char *str;
    int i;
 
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (!str)
      {
 	ERR("%s:%i no parameter supplied as argument %i",
@@ -1058,7 +1071,7 @@ parse_bool(int n)
    char *str, buf[4096];
    int i;
 
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (!str)
      {
 	ERR("%s:%i no parameter supplied as argument %i",
@@ -1096,7 +1109,7 @@ parse_float(int n)
    char *str;
    double i;
 
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (!str)
      {
 	ERR("%s:%i no parameter supplied as argument %i",
@@ -1114,7 +1127,7 @@ parse_float_range(int n, double f, double t)
    char *str;
    double i;
 
-   str = eina_list_nth(params, n);
+   str = _parse_param_get(n);
    if (!str)
      {
 	ERR("%s:%i no parameter supplied as argument %i",
@@ -1136,13 +1149,13 @@ parse_float_range(int n, double f, double t)
 int
 get_arg_count(void)
 {
-   return eina_list_count (params);
+   return eina_array_count(&params);
 }
 
 void
 check_arg_count(int required_args)
 {
-   int num_args = eina_list_count (params);
+   int num_args = eina_array_count(&params);
 
    if (num_args != required_args)
      {
@@ -1156,7 +1169,7 @@ check_arg_count(int required_args)
 void
 check_min_arg_count(int min_required_args)
 {
-   int num_args = eina_list_count (params);
+   int num_args = eina_array_count(&params);
 
    if (num_args < min_required_args)
      {
