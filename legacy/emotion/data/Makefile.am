@@ -43,12 +43,12 @@ window_inner_shadow.png \
 theme.edc \
 icon.edc
 
-theme.edj: Makefile
+theme.edj: Makefile theme.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/theme.edc \
 	$(top_builddir)/data/theme.edj
 
-icon.edj: Makefile
+icon.edj: Makefile icon.edc
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/icon.edc \
 	$(top_builddir)/data/icon.edj
