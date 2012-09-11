@@ -681,19 +681,19 @@ ecore_x_randr_crtc_outputs_get(Ecore_X_Window root,
    Ecore_X_Randr_Output *ret = NULL;
    XRRCrtcInfo *crtc_info = NULL;
 
-   if (_ecore_x_randr_crtc_validate(root,
-                                    crtc) &&
+   if (_ecore_x_randr_crtc_validate(root, crtc) &&
        (res =
-          _ecore_x_randr_get_screen_resources (_ecore_x_disp,
-                                               root)) &&
+           _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)) &&
        (crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
      {
         if ((ret = malloc(sizeof(Ecore_X_Randr_Output) * crtc_info->noutput)))
           {
-             memcpy(ret, crtc_info->outputs,
-                    (sizeof(Ecore_X_Randr_Output) * crtc_info->noutput));
-             if (num)
-               *num = crtc_info->noutput;
+             int i = 0;
+
+             if (num) *num = crtc_info->noutput;
+
+             for (i = 0; i < crtc_info->noutput; i++)
+               ret[i] = crtc_info->outputs[i];
           }
 
         if (crtc_info)
@@ -725,8 +725,7 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root,
    Ecore_X_Randr_Output *ret = NULL;
    XRRCrtcInfo *crtc_info = NULL;
 
-   if (_ecore_x_randr_crtc_validate(root,
-                                    crtc) &&
+   if (_ecore_x_randr_crtc_validate(root, crtc) &&
        (res = _ecore_x_randr_get_screen_resources (_ecore_x_disp, root)))
      {
         if ((crtc_info = XRRGetCrtcInfo(_ecore_x_disp, res, crtc)))
@@ -734,10 +733,12 @@ ecore_x_randr_crtc_possible_outputs_get(Ecore_X_Window root,
              if ((ret =
                     malloc(sizeof(Ecore_X_Randr_Output) * crtc_info->npossible)))
                {
-                  memcpy(ret, crtc_info->possible,
-                         (sizeof(Ecore_X_Randr_Output) * crtc_info->npossible));
-                  if (num)
-                    *num = res->ncrtc;
+                  int i = 0;
+
+                  if (num) *num = crtc_info->npossible;
+
+                  for (i = 0; i < crtc_info->npossible; i++)
+                    ret[i] = crtc_info->possible[i];
                }
 
              XRRFreeCrtcInfo(crtc_info);
