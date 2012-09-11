@@ -1268,6 +1268,7 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
                                 const char *item_style)
 {
    Elm_Naviframe_Item *it;
+   Eina_Bool top_inserted = EINA_FALSE;
 
    ELM_NAVIFRAME_CHECK(obj) NULL;
    ELM_NAVIFRAME_ITEM_CHECK_OR_RETURN(after, NULL);
@@ -1277,14 +1278,17 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
                   title_label, prev_btn, next_btn, content, item_style);
    if (!it) return NULL;
 
-   /* let's share that whole logic, if it goes to the top */
-   if (elm_naviframe_top_item_get(obj) == after)
-     return elm_naviframe_item_push
-              (obj, title_label, prev_btn, next_btn, content, item_style);
+   if (elm_naviframe_top_item_get(obj) == after) top_inserted = EINA_TRUE;
 
    sd->stack = eina_inlist_append_relative
        (sd->stack, EINA_INLIST_GET(it),
        EINA_INLIST_GET(((Elm_Naviframe_Item *)after)));
+
+   if (top_inserted)
+     {
+        evas_object_show(VIEW(it));
+        evas_object_hide(VIEW(after));
+     }
 
    elm_layout_sizing_eval(obj);
 

@@ -451,3 +451,8 @@
 2012-09-04  Jihoon Kim (jihoon)
 
         * Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
+
+2012-09-11  ChunEon Park (Hermet)
+
+	* Even if the top item is inserted into the naviframe. Any transition
+  	wouldn't be launched.
