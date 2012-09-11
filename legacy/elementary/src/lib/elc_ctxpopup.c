@@ -200,7 +200,7 @@ _base_geometry_calc(Evas_Object *obj,
              break;
 
            default:
-             break;
+             continue;
           }
         break;
      }
