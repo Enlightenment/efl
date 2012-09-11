@@ -931,3 +931,8 @@
 2012-09-10  Christopher Michael
 
        * Fix ecore_x_randr to actually return crtcs properly.
+
+2012-09-11  Christopher Michael
+
+       * Fix ecore_x_randr to actually return crtcs possible outputs properly.
+       * Fix ecore_x_randr to actually return crtcs outputs properly.
