@@ -1,0 +1,11 @@
+Evil
+----
+
+Vincent Torri <vtorri at univ-evry dot fr>
+Tor Lillqvist <tml at iki dot fi> (pipe function)
+Lance Fetters
+Vincent Richomme <vrichomme at smartmobili dot com>
+Paul Vixie (ISC) (inet_pton and inet_ntop functions)
+Daniel Stenberg (inet_pton and inet_ntop functions)
+The MinGW and MinGW-w64 teams (POSIX printf family functions)
+Keith Marshall (realpath on Windows XP). See http://sourceforge.net/tracker/?func=detail&atid=302435&aid=1294010&group_id=2435
