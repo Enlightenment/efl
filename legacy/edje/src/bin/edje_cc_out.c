@@ -1881,27 +1881,32 @@ data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest
           {
              for (i = 0 ; i < pc->programs.fnmatch_count ; i++)
                {
-                  if (!strcmp(pl->u.ep->name, pc->programs.fnmatch[i]->name))
+                  if (pl->u.ep->name && pc->programs.fnmatch[i]->name &&
+                      !strcmp(pl->u.ep->name, pc->programs.fnmatch[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.fnmatch[i], dest);
                }
              for (i = 0 ; i < pc->programs.strcmp_count ; i++)
                {
-                  if (!strcmp(pl->u.ep->name, pc->programs.strcmp[i]->name))
+                  if (pl->u.ep->name && pc->programs.strcmp[i]->name &&
+                      !strcmp(pl->u.ep->name, pc->programs.strcmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strcmp[i], dest);
                }
              for (i = 0 ; i < pc->programs.strncmp_count ; i++)
                {
-                  if (!strcmp(pl->u.ep->name, pc->programs.strncmp[i]->name))
+                  if (pl->u.ep->name && pc->programs.strncmp[i]->name &&
+                      !strcmp(pl->u.ep->name, pc->programs.strncmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strncmp[i], dest);
                }
              for (i = 0 ; i < pc->programs.strrncmp_count ; i++)
                {
-                  if (!strcmp(pl->u.ep->name, pc->programs.strrncmp[i]->name))
+                  if (pl->u.ep->name && pc->programs.strrncmp[i]->name &&
+                      !strcmp(pl->u.ep->name, pc->programs.strrncmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strrncmp[i], dest);
                }
              for (i = 0 ; i < pc->programs.nocmp_count ; i++)
                {
-                  if (!strcmp(pl->u.ep->name, pc->programs.nocmp[i]->name))
+                  if (pl->u.ep->name && pc->programs.nocmp[i]->name &&
+                      !strcmp(pl->u.ep->name, pc->programs.nocmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.nocmp[i], dest);
                }
           }
@@ -2449,6 +2454,7 @@ static void
 _data_queue_part_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int len)
 {
    Code_Lookup *cl;
+
    cl = mem_alloc(SZ(Code_Lookup));
    cl->ptr = ptr;
    cl->len = len;
