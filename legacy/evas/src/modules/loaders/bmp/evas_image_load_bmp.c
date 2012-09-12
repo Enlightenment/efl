@@ -456,7 +456,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        image_size = tmp2; // bitmap data size
+        if (tmp2 <= image_size) image_size = tmp2; // bitmap data size, GIMP can handle image size error
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
@@ -484,7 +484,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        image_size = tmp2; // bitmap data size
+        if (tmp2 <= image_size) image_size = tmp2; // bitmap data size, GIMP can handle image size error
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
@@ -512,7 +512,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        image_size = tmp2; // bitmap data size
+        if (tmp2 <= image_size) image_size = tmp2; // bitmap data size, GIMP can handle image size error
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
@@ -550,7 +550,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
-        image_size = tmp2; // bitmap data size
+        if (tmp2 <= image_size) image_size = tmp2; // bitmap data size, GIMP can handle image size error
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         //hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
         if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
