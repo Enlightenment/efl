@@ -268,6 +268,10 @@ static int _fc_slant_map[] =
    FC_SLANT_ITALIC
 };
 
+/* Apparently EXTRABLACK is not always available, hardcode. */
+# ifndef FC_WEIGHT_EXTRABLACK
+#  define FC_WEIGHT_EXTRABLACK 215
+# endif
 static int _fc_weight_map[] =
 {
    FC_WEIGHT_NORMAL,
