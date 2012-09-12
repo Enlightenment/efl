@@ -467,3 +467,8 @@
 
         * Add access features to calendar.
 
+
+2012-09-12  Thiep Ha
+
+        * Fix ctxpopup direction if -1 is uses as priority.
+
