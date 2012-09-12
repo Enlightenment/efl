@@ -98,6 +98,12 @@ evas_image_load_file_data_webp(Evas_Img_Load_Params *ilp, const char *file, cons
    fclose(f);
 
    decoded = WebPDecodeBGRA(data, file_size, &width, &height);
+   if (!decoded)
+     {
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        free(data);
+        goto close_file;
+     }
    memcpy(ilp->buffer, decoded, width * height * 4);
    evas_cserve2_image_premul(ilp);
    
