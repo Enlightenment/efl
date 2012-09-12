@@ -268,6 +268,9 @@ struct _Evas_GL_Shared
 #define RTYPE_IMASK 6
 #define RTYPE_YUY2  7
 #define RTYPE_NV12  8
+#define GL_USE_SERVER_BUFFERS
+#define ARRAY_BUFFER_USE 500
+#define ARRAY_BUFFER_USE_SHIFT 100
 
 struct _Evas_Engine_GL_Context
 {
@@ -330,6 +333,11 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texuv3 : 1;
          Eina_Bool use_texm : 1;
          Evas_GL_Image *im;
+#ifdef GL_USE_SERVER_BUFFERS
+         GLuint buffer;
+         int buffer_alloc;
+         int buffer_use;
+#endif
       } array;
    } pipe[MAX_PIPES];
 
