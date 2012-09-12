@@ -43,8 +43,14 @@ evas_object_change_reset(Evas_Object *obj)
 void
 evas_object_cur_prev(Evas_Object *obj)
 {
-   if (!obj->prev.valid_map && (obj->prev.map == obj->cur.map))
-     obj->prev.map = NULL;
+   if (!obj->prev.valid_map)
+     {
+        if (obj->prev.map != obj->cur.map)
+          evas_map_free(obj->prev.map);
+        if (obj->cache_map == obj->prev.map)
+          obj->cache_map = NULL;
+        obj->prev.map = NULL;
+     }
 
    if (obj->cur.map != obj->prev.map)
      {
