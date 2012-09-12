@@ -352,6 +352,18 @@ obj_unhook(Elm_Datetime_Module_Data *module_data)
       }
 }
 
+EAPI void
+obj_hide(Elm_Datetime_Module_Data *module_data)
+{
+   Ctxpopup_Module_Data *ctx_mod;
+
+   ctx_mod = (Ctxpopup_Module_Data *)module_data;
+   if (!ctx_mod) return;
+
+   if (ctx_mod->ctxpopup)
+     evas_object_hide(ctx_mod->ctxpopup);
+}
+
 // module api funcs needed
 EAPI int
 elm_modapi_init(void *m __UNUSED__)

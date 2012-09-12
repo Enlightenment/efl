@@ -79,6 +79,8 @@ _dt_mod_init()
      _elm_module_symbol_get(mod, "obj_hook");
    ((Datetime_Mod_Api *)(mod->api))->obj_unhook =
      _elm_module_symbol_get(mod, "obj_unhook");
+   ((Datetime_Mod_Api *)(mod->api))->obj_hide =
+     _elm_module_symbol_get(mod, "obj_hide");
    ((Datetime_Mod_Api *)(mod->api))->field_create =
      _elm_module_symbol_get(mod, "field_create");
    ((Datetime_Mod_Api *)(mod->api))->field_value_display =
@@ -427,6 +429,20 @@ printf("count = %d\n", eina_list_count(items));
    if (list_free) list_free((Eina_List *)items);
 
    return ret;
+}
+
+static Eina_Bool
+_elm_datetime_smart_on_focus(Evas_Object *obj)
+{
+   if (!elm_widget_focus_get(obj))
+     {
+        ELM_DATETIME_DATA_GET(obj, sd);
+
+        if ((dt_mod) && (dt_mod->obj_hide))
+          dt_mod->obj_hide(sd->mod_data);
+     }
+
+   return EINA_TRUE;
 }
 
 static void
@@ -801,6 +817,7 @@ _elm_datetime_smart_set_user(Elm_Datetime_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->translate = _elm_datetime_smart_translate;
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_datetime_smart_focus_next;
+   ELM_WIDGET_CLASS(sc)->on_focus = _elm_datetime_smart_on_focus;
    ELM_WIDGET_CLASS(sc)->theme = _elm_datetime_smart_theme;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_datetime_smart_sizing_eval;
