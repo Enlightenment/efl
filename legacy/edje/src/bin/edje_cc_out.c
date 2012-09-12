@@ -1877,35 +1877,35 @@ data_queue_copied_anonymous_lookup(Edje_Part_Collection *pc, int *src, int *dest
 
    EINA_LIST_FOREACH(program_lookups, l, pl)
      {
-        if (pl->dest == src)
+        if (pl->dest == src && pl->u.ep->name)
           {
              for (i = 0 ; i < pc->programs.fnmatch_count ; i++)
                {
-                  if (pl->u.ep->name && pc->programs.fnmatch[i]->name &&
+                  if (pc->programs.fnmatch[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.fnmatch[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.fnmatch[i], dest);
                }
              for (i = 0 ; i < pc->programs.strcmp_count ; i++)
                {
-                  if (pl->u.ep->name && pc->programs.strcmp[i]->name &&
+                  if (pc->programs.strcmp[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.strcmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strcmp[i], dest);
                }
              for (i = 0 ; i < pc->programs.strncmp_count ; i++)
                {
-                  if (pl->u.ep->name && pc->programs.strncmp[i]->name &&
+                  if (pc->programs.strncmp[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.strncmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strncmp[i], dest);
                }
              for (i = 0 ; i < pc->programs.strrncmp_count ; i++)
                {
-                  if (pl->u.ep->name && pc->programs.strrncmp[i]->name &&
+                  if (pc->programs.strrncmp[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.strrncmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.strrncmp[i], dest);
                }
              for (i = 0 ; i < pc->programs.nocmp_count ; i++)
                {
-                  if (pl->u.ep->name && pc->programs.nocmp[i]->name &&
+                  if (pc->programs.nocmp[i]->name &&
                       !strcmp(pl->u.ep->name, pc->programs.nocmp[i]->name))
                     data_queue_anonymous_lookup(pc, pc->programs.nocmp[i], dest);
                }
