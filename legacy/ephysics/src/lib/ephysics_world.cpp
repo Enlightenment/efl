@@ -276,8 +276,11 @@ _simulate_worlds(void *data __UNUSED__)
         gDeactivationTime = world->max_sleeping_time;
 
         if (world->soft_body_ref)
-          world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
+          {
+             world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
                                                 world->fixed_time_step);
+             world->world_info->m_sparsesdf.GarbageCollect();
+          }
         else
           ((btDiscreteDynamicsWorld *)world->dynamics_world)->stepSimulation(
              delta, world->max_sub_steps, world->fixed_time_step);
