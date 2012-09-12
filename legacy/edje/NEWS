@@ -16,6 +16,7 @@ Improvements:
     * O(1) lookup when generating alias of group.
     * O(1) access time for parameters in edje_cc_handler.
     * Recycle and use less memory during load time.
+    * Less memory used per callbacks.
 
 Fixes:
 

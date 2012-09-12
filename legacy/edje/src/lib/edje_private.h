@@ -1083,7 +1083,7 @@ struct _Edje_Signal_Source_Char
    const char *signal;
    const char *source;
 
-   Eina_List *list;
+   Eina_Array  list;
 };
 
 struct _Edje_Signals_Sources_Patterns
@@ -1672,9 +1672,9 @@ Eina_List *edje_match_program_hash_build(Edje_Program * const * programs,
 					 Eina_Rbtree **tree);
 Eina_List *edje_match_callback_hash_build(const Eina_List *callbacks,
 					  Eina_Rbtree **tree);
-const Eina_List *edje_match_signal_source_hash_get(const char *signal,
-						   const char *source,
-						   const Eina_Rbtree *tree);
+const Eina_Array *edje_match_signal_source_hash_get(const char *signal,
+						    const char *source,
+						    const Eina_Rbtree *tree);
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
 
 // FIXME remove below 2 eapi decls when edje_convert goes

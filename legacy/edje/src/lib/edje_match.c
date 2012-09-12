@@ -750,13 +750,13 @@ edje_match_program_hash_build(Edje_Program * const *programs,
 
 		  item->signal = programs[i]->signal;
 		  item->source = programs[i]->source;
-		  item->list = NULL;
+		  eina_array_step_set(&item->list, sizeof (Eina_Array), 8);
 
 		  new = eina_rbtree_inline_insert(new, EINA_RBTREE_GET(item),
 						  EINA_RBTREE_CMP_NODE_CB(_edje_signal_source_node_cmp), NULL);
 	       }
 
-	     item->list = eina_list_prepend(item->list, programs[i]);
+	     eina_array_push(&item->list, programs[i]);
 	  }
 	else
            result = eina_list_prepend(result, programs[i]);
@@ -791,13 +791,13 @@ edje_match_callback_hash_build(const Eina_List *callbacks,
 
 		  item->signal = callback->signal;
 		  item->source = callback->source;
-		  item->list = NULL;
+		  eina_array_step_set(&item->list, sizeof (Eina_Array), 8);
 
 		  new = eina_rbtree_inline_insert(new, EINA_RBTREE_GET(item),
 						  EINA_RBTREE_CMP_NODE_CB(_edje_signal_source_node_cmp), NULL);
 	       }
 
-	     item->list = eina_list_prepend(item->list, callback);
+	     eina_array_push(&item->list, callback);
 	  }
 	else
            result = eina_list_prepend(result, callback);
@@ -807,7 +807,7 @@ edje_match_callback_hash_build(const Eina_List *callbacks,
    return result;
 }
 
-const Eina_List *
+const Eina_Array *
 edje_match_signal_source_hash_get(const char *sig,
 				  const char *source,
 				  const Eina_Rbtree *tree)
@@ -817,13 +817,13 @@ edje_match_signal_source_hash_get(const char *sig,
    lookup = (Edje_Signal_Source_Char*) eina_rbtree_inline_lookup(tree, sig, 0,
 								 EINA_RBTREE_CMP_KEY_CB(_edje_signal_source_key_cmp), source);
 
-   if (lookup) return lookup->list;
+   if (lookup) return &lookup->list;
    return NULL;
 }
 
 void
 edje_match_signal_source_free(Edje_Signal_Source_Char *key, __UNUSED__ void *data)
 {
-   eina_list_free(key->list);
+   eina_array_flush(&key->list);
    free(key);
 }

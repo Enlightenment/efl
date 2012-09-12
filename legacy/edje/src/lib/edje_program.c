@@ -1211,9 +1211,13 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 
              if (ed->table_programs_size > 0)
                {
-		  const Eina_List *match;
+		  const Eina_Array *match;
+#ifdef EDJE_PROGRAM_CACHE
 		  const Eina_List *l;
+#endif
 		  Edje_Program *pr;
+		  Eina_Array_Iterator iterator;
+		  unsigned int i;       
 
 		  if (ed->patterns.programs.u.programs.globing)
 		    if (edje_match_programs_exec(ed->patterns.programs.signals_patterns,
@@ -1228,8 +1232,9 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 
 		  match = edje_match_signal_source_hash_get(sig, src,
 							    ed->patterns.programs.exact_match);
-		  EINA_LIST_FOREACH(match, l, pr)
-		    _edje_glob_callback(pr, &data);
+                  if (match)
+                    EINA_ARRAY_ITER_NEXT(match, i, pr, iterator)
+                      _edje_glob_callback(pr, &data);
 
 #ifdef EDJE_PROGRAM_CACHE
                   EINA_LIST_FOREACH(data.matches, l, pr)
@@ -1307,8 +1312,9 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
    if (ed->callbacks)
      {
 	Edje_Signal_Callback *escb;
-	const Eina_List *match;
-	const Eina_List *l2;
+	const Eina_Array *match;
+        Eina_Array_Iterator iterator;
+        unsigned int i;
         int r = 1;
         callback_extra_data = (data) ? data->data : NULL;
 
@@ -1327,16 +1333,17 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 
 	match = edje_match_signal_source_hash_get(sig, src,
 						  ed->patterns.callbacks.exact_match);
-	EINA_LIST_FOREACH(match, l2, escb)
-          {
-             if ((prop) && (escb->propagate)) continue;
-             if ((!escb->just_added) && (!escb->delete_me))
-               {
-                  escb->func(escb->data, ed->obj, sig, src);
-                  if (_edje_block_break(ed))
-                    break;
-               }
-          }
+        if (match)
+          EINA_ARRAY_ITER_NEXT(match, i, escb, iterator)
+            {
+               if ((prop) && (escb->propagate)) continue;
+               if ((!escb->just_added) && (!escb->delete_me))
+                 {
+                    escb->func(escb->data, ed->obj, sig, src);
+                    if (_edje_block_break(ed))
+                      break;
+                 }
+            }
      }
    break_prog:
 

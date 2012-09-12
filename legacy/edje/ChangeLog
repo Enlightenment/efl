@@ -615,6 +615,11 @@
 
 2012-09-11  Carsten Haitzler (The Rasterman)
 
-        * Improve memory footrpint by cutting core edje real part
+        * Improve memory footprint by cutting core edje real part
         struct down by less than half its size and making some parts allocated
         extra only if the type needs it.
+
+2012-09-12  Cedric Bail
+
+	* Small improvement in memory footprint by using an array instead of a list for
+	some callback list.
