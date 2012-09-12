@@ -14,7 +14,7 @@ _world_populate(Test_Data *test_data)
    pentagon = elm_image_add(test_data->win);
    elm_image_file_set(
       pentagon, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "pentagon");
-   evas_object_move(pentagon, WIDTH / 3, HEIGHT / 2 - 30);
+   evas_object_move(pentagon, WIDTH / 3, HEIGHT / 2 - 80);
    evas_object_resize(pentagon, 70, 68);
    evas_object_show(pentagon);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, pentagon);
@@ -34,7 +34,7 @@ _world_populate(Test_Data *test_data)
    hexagon = elm_image_add(test_data->win);
    elm_image_file_set(
       hexagon, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "hexagon");
-   evas_object_move(hexagon, WIDTH / 3 + 80, HEIGHT / 2 - 30);
+   evas_object_move(hexagon, WIDTH / 3 + 100, HEIGHT / 2 - 100);
    evas_object_resize(hexagon, 70, 60);
    evas_object_show(hexagon);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, hexagon);
@@ -51,6 +51,7 @@ _world_populate(Test_Data *test_data)
    ephysics_body_evas_object_set(hexagon_body, hexagon, EINA_TRUE);
    ephysics_body_restitution_set(hexagon_body, 1);
    test_data->bodies = eina_list_append(test_data->bodies, hexagon_body);
+   ephysics_body_torque_apply(hexagon_body, -3);
 
    ephysics_shape_del(pentagon_shape);
    ephysics_shape_del(hexagon_shape);

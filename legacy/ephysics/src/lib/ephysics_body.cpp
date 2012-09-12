@@ -4,6 +4,7 @@
 
 #include <Evas.h>
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
+#include <LinearMath/btGeometryUtil.h>
 
 #include <math.h>
 
@@ -946,10 +947,12 @@ ephysics_body_box_add(EPhysics_World *world)
 EAPI EPhysics_Body *
 ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
 {
-   btConvexHullShape *full_shape, *simplified_shape;
    double max_x, max_y, min_x, min_y, cm_x, cm_y, range_x, range_y;
+   btConvexHullShape *full_shape, *simplified_shape;
+   btAlignedObjectArray<btVector3> vertexes, planes;
    const Eina_Inlist *points;
    EPhysics_Point *point;
+   int array_size, i;
    btShapeHull *hull;
    btVector3 point3d;
    btScalar margin;
@@ -1010,11 +1013,24 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
         y = - (point->y - cm_y) / range_y;
 
         point3d = btVector3(x, y, -0.5);
-        full_shape->addPoint(point3d);
+        vertexes.push_back(point3d);
 
         point3d = btVector3(x, y, 0.5);
-        full_shape->addPoint(point3d);
+        vertexes.push_back(point3d);
      }
+
+   /* Shrink convex shape to consider margin. Otherwise it would have a gap */
+   btGeometryUtil::getPlaneEquationsFromVertices(vertexes, planes);
+   array_size = planes.size();
+   for (i = 0; i < array_size; ++i)
+     planes[i][3] += full_shape->getMargin();
+
+   vertexes.clear();
+   btGeometryUtil::getVerticesFromPlaneEquations(planes, vertexes);
+
+   array_size = vertexes.size();
+   for (i = 0; i < array_size; ++i)
+     full_shape->addPoint(vertexes[i]);
 
    hull = new btShapeHull(full_shape);
    if (!hull)
