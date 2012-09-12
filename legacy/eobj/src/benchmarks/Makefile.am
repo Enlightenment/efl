@@ -7,9 +7,9 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-if EFL_ENABLE_BENCHMARK
+EXTRA_PROGRAMS = eo_bench
 
-noinst_PROGRAMS = eo_bench
+benchmark: eo_bench
 
 eo_bench_SOURCES = \
 class_simple.c \
@@ -19,8 +19,6 @@ eo_bench.h \
 eo_bench_eo_do.c
 
 eo_bench_LDADD = $(top_builddir)/src/lib/libeo.la @EO_LIBS@
-
-endif
 
 clean-local:
 	rm -rf *.gcno ..\#..\#src\#*.gcov *.gcda

@@ -74,18 +74,10 @@ if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-report
 endif
 
-if EFL_ENABLE_BENCHMARK
-
 benchmark:
 	@cd src && $(MAKE) benchmark
 	@mkdir result || true
-	@cd result && ../src/tests/eo_bench `date +%F_%s`
-
-else
-
-benchmark:
-	@echo "reconfigure with --enable-benchmark"
-endif
+	@cd result && ../src/benchmarks/eo_bench `date +%F_%s`
 
 clean-local:
 	@rm -rf coverage benchmark

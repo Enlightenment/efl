@@ -171,8 +171,6 @@ AC_SUBST([lt_enable_auto_import])
 
 ### Unit tests, coverage and benchmarking
 
-EFL_CHECK_BENCHMARK([enable_benchmark="yes"], [enable_benchmark="no"])
-
 AC_SUBST([requirements_pc_eo])
 
 
