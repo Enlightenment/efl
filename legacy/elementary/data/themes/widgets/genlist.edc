@@ -4607,6 +4607,7 @@ group { name: "elm/genlist/item/double_label/default";
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
+            aspect: 1.0 1.0;
             rel1 {
                to_x: "elm.swallow.pad";
                relative: 1.0  0.0;
@@ -5485,6 +5486,7 @@ group { name: "elm/genlist/item_compress_odd/double_label/default";
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
+            aspect: 1.0 1.0;
             rel1 {
                to_x: "elm.swallow.pad";
                relative: 1.0  0.0;
@@ -5822,6 +5824,7 @@ group { name: "elm/genlist/tree/double_label/default";
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
+            aspect: 1.0 1.0;
             rel1 {
                to_x: "arrow";
                relative: 1.0  0.0;
@@ -6509,6 +6512,7 @@ group { name: "elm/genlist/tree_odd/double_label/default";
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
+            aspect: 1.0 1.0;
             rel1 {
                to_x: "arrow";
                relative: 1.0  0.0;
@@ -7904,6 +7908,7 @@ group { name: "elm/genlist/tree_compress_odd/double_label/default";
          description { state: "default" 0.0;
             fixed: 1 0;
             align: 0.0 0.5;
+            aspect: 1.0 1.0;
             rel1 {
                to_x: "arrow";
                relative: 1.0  0.0;
