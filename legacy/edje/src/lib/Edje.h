@@ -70,9 +70,9 @@ Evas needs to be build with the JPEG, PNG and EET image loaders enabled at a
 minimum. You will also need the buffer engine (which requires the
 software_generic engine) as well.
 
-Ecore needs the ECORE, ECORE_EVAS and ECORE_X modules built at a minimum.
+Ecore (library) needs the ECORE, ECORE_EVAS and ECORE_X modules built at a minimum.
 It's suggested to build all the Ecore modules. You will beed the Buffer
-engine support built into Ecore_Evas for edje?_cc to function.
+engine support built into Ecore_Evas for edje_cc to function.
 
 
 @section compiling How to compile and test Edje
