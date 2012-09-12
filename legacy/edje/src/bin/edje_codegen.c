@@ -7,6 +7,7 @@
 #include <fcntl.h>
 #include <locale.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <Eina.h>
 #include <Ecore.h>
