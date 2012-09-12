@@ -204,6 +204,50 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep __UNU
 }
 
 static void
+_ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
+{
+   btSoftBody *soft_body;
+
+   world->dynamics_world->removeRigidBody(ephysics_body_rigid_body_get(body));
+
+   soft_body = ephysics_body_soft_body_get(body);
+   if (soft_body)
+     {
+        world->dynamics_world->removeSoftBody(soft_body);
+        --world->soft_body_ref;
+     }
+
+   world->bodies = eina_inlist_remove(world->bodies, EINA_INLIST_GET(body));
+   ephysics_orphan_body_del(body);
+}
+
+Eina_Bool
+ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
+{
+   EPhysics_Body *bd;
+
+   if (world->walking)
+     {
+        world->to_delete = eina_list_append(world->to_delete, body);
+        return EINA_FALSE;
+     }
+
+   _ephysics_world_body_del(world, body);
+
+   /* Activate all the bodies after a body is deleted.
+      Otherwise it can lead to scenarios when a body 1, below body 2 is deleted
+      and body 2 will stay freezed in the air. Gravity won't start to
+      act over it until it's activated again. */
+   EINA_INLIST_FOREACH(world->bodies, bd)
+     {
+        btRigidBody *rigid_body = ephysics_body_rigid_body_get(bd);
+        rigid_body->activate(1);
+     }
+
+   return EINA_TRUE;
+}
+
+static void
 _ephysics_world_free(EPhysics_World *world)
 {
    EPhysics_World_Callback *cb;
@@ -224,17 +268,14 @@ _ephysics_world_free(EPhysics_World *world)
    while (world->bodies)
      {
         body = EINA_INLIST_CONTAINER_GET(world->bodies, EPhysics_Body);
-        world->bodies = eina_inlist_remove(world->bodies, world->bodies);
-        ephysics_orphan_body_del(body);
+        _ephysics_world_body_del(world, body);
      }
 
    EINA_LIST_FREE(world->constraints, constraint)
       ephysics_constraint_del((EPhysics_Constraint *)constraint);
 
    ephysics_camera_del(world->camera);
-   /* FIXME uncomment lines above when dynamicsworld destructor is fixed
-      on bullet. Right now looks like it will try to acess invalid memory.*/
-   /*
+
    delete world->dynamics_world;
    delete world->solver;
    delete world->broadphase;
@@ -242,7 +283,6 @@ _ephysics_world_free(EPhysics_World *world)
    delete world->collision;
    delete world->soft_solver;
    delete world->world_info;
-   */
 
    free(world);
    INF("World %p deleted.", world);
@@ -356,43 +396,6 @@ ephysics_world_body_add(EPhysics_World *world, EPhysics_Body *body)
      }
 
    world->dynamics_world->addRigidBody(ephysics_body_rigid_body_get(body));
-   return EINA_TRUE;
-}
-
-Eina_Bool
-ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
-{
-   btSoftBody *soft_body;
-   EPhysics_Body *bd;
-
-   if (world->walking)
-     {
-        world->to_delete = eina_list_append(world->to_delete, body);
-        return EINA_FALSE;
-     }
-
-   world->dynamics_world->removeRigidBody(ephysics_body_rigid_body_get(body));
-
-   soft_body = ephysics_body_soft_body_get(body);
-   if (soft_body)
-     {
-        world->dynamics_world->removeSoftBody(soft_body);
-        --world->soft_body_ref;
-     }
-
-   world->bodies = eina_inlist_remove(world->bodies, EINA_INLIST_GET(body));
-   ephysics_orphan_body_del(body);
-
-   /* Activate all the bodies after a body is deleted.
-      Otherwise it can lead to scenarios when a body 1, below body 2 is deleted
-      and body 2 will stay freezed in the air. Gravity won't start to
-      act over it until it's activated again. */
-   EINA_INLIST_FOREACH(world->bodies, bd)
-     {
-        btRigidBody *rigid_body = ephysics_body_rigid_body_get(bd);
-        rigid_body->activate(1);
-     }
-
    return EINA_TRUE;
 }
 
