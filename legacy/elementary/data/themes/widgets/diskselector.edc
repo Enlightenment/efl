@@ -185,6 +185,23 @@ group { name: "elm/diskselector/item/default";
             text.size: 8;
             text.align: 0.8 0.5;
          }
+         description { state: "text_only" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.relative: 0 0;
+            rel2.relative: 1 1;
+         }
+         description { state: "text_only_left_side" 0.0;
+            inherit: "left_side" 0.0;
+            rel1.relative: 0 0;
+            rel2.relative: 1 1;
+         }
+         description { state: "text_only_right_side" 0.0;
+            inherit: "right_side" 0.0;
+            visible: 1;
+            rel1.relative: 0 0;
+            rel2.relative: 1 1;
+         }
       }
       part { name: "over1";
          type: RECT;
@@ -199,12 +216,23 @@ group { name: "elm/diskselector/item/default";
    }
 
    programs {
+      script {
+         public item_style; // 0:icon and text, 1:text only, 2:con only
+      }
       program { name: "center_text";
          signal: "elm,state,center";
          source: "elm";
-         action: STATE_SET "show" 0.0;
-         target: "elm.text";
-         target: "elm.swallow.icon";
+         script {
+            if (get_int(item_style) == 1)
+              set_state(PART:"elm.text", "text_only", 0.0);
+            else if (get_int(item_style) == 2)
+              set_state(PART:"elm.swallow.icon", "icon_only", 0.0);
+            else
+              {
+                 set_state(PART:"elm.text", "show", 0.0);
+                 set_state(PART:"elm.swallow.icon", "show", 0.0);
+              }
+         }
       }
       program { name: "center_small_text";
          signal: "elm,state,center_small";
@@ -216,22 +244,55 @@ group { name: "elm/diskselector/item/default";
       program { name: "l_side_text";
          signal: "elm,state,left_side";
          source: "elm";
-         action: STATE_SET "left_side" 0.0;
-         target: "elm.text";
-         target: "elm.swallow.icon";
+         script {
+            if (get_int(item_style) == 1)
+              set_state(PART:"elm.text", "text_only_left_side", 0.0);
+            else if (get_int(item_style) == 2)
+              set_state(PART:"elm.swallow.icon", "left_side", 0.0);
+            else
+              {
+                 set_state(PART:"elm.text", "left_side", 0.0);
+                 set_state(PART:"elm.swallow.icon", "left_side", 0.0);
+              }
+         }
       }
       program { name: "r_side_text";
          signal: "elm,state,right_side";
          source: "elm";
-         action: STATE_SET "right_side" 0.0;
-         target: "elm.text";
-         target: "elm.swallow.icon";
+         script {
+            if (get_int(item_style) == 1)
+              set_state(PART:"elm.text", "text_only_right_side", 0.0);
+            else if (get_int(item_style) == 2)
+              set_state(PART:"elm.swallow.icon", "right_side", 0.0);
+            else
+              {
+                 set_state(PART:"elm.text", "right_side", 0.0);
+                 set_state(PART:"elm.swallow.icon", "right_side", 0.0);
+              }
+         }
       }
       program { name: "icon_only";
          signal: "elm,state,icon,only";
          source: "elm";
-         action: STATE_SET "icon_only" 0.0;
-         target: "elm.swallow.icon";
+         script {
+            set_state(PART:"elm.swallow.icon", "icon_only", 0.0);
+            set_int(item_style, 2);
+         }
+      }
+      program { name: "text_only";
+         signal: "elm,state,text,only";
+         source: "elm";
+         script {
+            set_state(PART:"elm.text", "text_only", 0.0);
+            set_int(item_style, 1);
+         }
+      }
+      program { name: "text_icon";
+         signal: "elm,state,text,icon";
+         source: "elm";
+         script {
+            set_int(item_style, 0);
+         }
       }
       program { name: "field_click";
          signal: "mouse,clicked,1";

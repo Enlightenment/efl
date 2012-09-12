@@ -15,6 +15,7 @@ Improvements:
    * Popup widget is now an elm layout.
    * Panel widget is now an elm layout.
    * Improve elm map module loading/searching efficiency.
+   * Diskselector handles dyanmic show/hide of icons now like buttons.
 
 Fixes:
 

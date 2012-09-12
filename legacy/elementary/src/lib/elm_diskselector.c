@@ -105,6 +105,16 @@ _letters_check(const char *str,
 
    return pos;
 }
+static void
+_item_signal_emit(Elm_Diskselector_Item *item)
+{
+   if ((item->icon) && (!item->label))
+     edje_object_signal_emit(VIEW(item), "elm,state,icon,only", "elm");
+   else if ((!item->icon) && (item->label))
+     edje_object_signal_emit(VIEW(item), "elm,state,text,only", "elm");
+   else
+     edje_object_signal_emit(VIEW(item), "elm,state,text,icon", "elm");
+}
 
 static Eina_Bool
 _string_check(void *data)
@@ -413,9 +423,7 @@ _item_text_set_hook(Elm_Object_Item *it,
    eina_stringshare_replace(&item->label, label);
    edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
 
-   // if the label is NULL, the icon should position at center of the item
-   if (item->icon && (!item->label))
-     edje_object_signal_emit(VIEW(item), "elm,state,icon,only", "elm");
+   _item_signal_emit(item);
 }
 
 static const char *
@@ -435,18 +443,17 @@ _item_icon_set(Elm_Diskselector_Item *it,
 
    if (it->icon) evas_object_del(it->icon);
    it->icon = icon;
+
    if (VIEW(it))
      {
-        // if the label is NULL, the icon should position at center of the item
-        if (it->icon && (!it->label))
-          edje_object_signal_emit(VIEW(it), "elm,state,icon,only", "elm");
-
         evas_object_size_hint_min_set(it->icon, 24, 24);
         evas_object_size_hint_max_set(it->icon, 40, 40);
         edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
         evas_object_show(it->icon);
         elm_widget_sub_object_add(WIDGET(it), it->icon);
      }
+
+   _item_signal_emit(it);
 }
 
 static void
@@ -606,15 +613,14 @@ _item_new(Evas_Object *obj,
    evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(VIEW(it));
 
+   if (icon)
+     _item_content_set_hook((Elm_Object_Item *)it, "icon", icon);
+
    if (it->label)
      {
-        edje_object_part_text_escaped_set(VIEW(it), "elm.text", it->label);
+        _item_text_set_hook((Elm_Object_Item *)it, "default", it->label);
         edje_object_signal_callback_add
           (VIEW(it), "elm,action,click", "", _item_click_cb, it);
-     }
-   if (icon)
-     {
-        _item_content_set_hook((Elm_Object_Item *)it, "icon", icon);
      }
 
    //XXX: ACCESS
