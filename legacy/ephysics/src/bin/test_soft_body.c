@@ -51,6 +51,7 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
    fall_body = ephysics_body_circle_add(test_data->world);
+   ephysics_body_mass_set(fall_body, 2);
    ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
    ephysics_body_restitution_set(fall_body, 0.95);
    ephysics_body_friction_set(fall_body, 0.1);
@@ -75,6 +76,7 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
    fall_body = ephysics_body_soft_box_add(test_data->world);
+   ephysics_body_soft_body_hardness_set(fall_body, 50);
    ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
    ephysics_body_event_callback_add(fall_body, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     update_object_cb, shadow);

@@ -1294,6 +1294,40 @@ typedef void (*EPhysics_Body_Event_Cb)(void *data, EPhysics_Body *body, void *ev
 
 /**
  * @brief
+ * Set the soft body hardness percentage.
+ *
+ * The hardness percentage will define how the soft body is supposed to deform,
+ * its default is set to 100%. The soft body mass will also interfere on soft
+ * body deformation, so bare in mind that the bodies mass must also be changed to
+ * have different deformation results.
+ *
+ * Valid values vary from 0 to 100.
+ *
+ * @param body The body to be set.
+ * @param hardness The percentage of deformation.
+ *
+ * @see ephysics_body_soft_body_hardness_get()
+ * @see ephysics_body_mass_set() form body mass changing.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness);
+
+/**
+ * @brief
+ * Get the soft body hardness percentage.
+ *
+ * @param body The body of interest.
+ * @return The deformation percentage.
+ *
+ * @see ephysics_body_soft_body_hardness_set()
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI double ephysics_body_soft_body_hardness_get(const EPhysics_Body *body);
+
+/**
+ * @brief
  * Create a new circle physics body.
  *
  * Its collision shape will be a circle of diameter 1. To change it's size

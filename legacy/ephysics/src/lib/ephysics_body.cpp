@@ -306,6 +306,41 @@ _ephysics_body_soft_body_points_distance_get(const EPhysics_Body *body, double d
 }
 
 static void
+_ephysics_body_soft_body_anchors_rebuild(int node, btRigidBody *rigid_body, btSoftBody *soft_body)
+{
+   btTransform world_trans = rigid_body->getWorldTransform();
+   btVector3 local = world_trans.inverse() * soft_body->m_nodes[node].m_x;
+
+   for (int i = 0; i < soft_body->m_anchors.size(); i++)
+     {
+        if (soft_body->m_anchors[i].m_node == &soft_body->m_nodes[node])
+          soft_body->m_anchors[i].m_local = local;
+     }
+}
+
+static void
+_ephysics_body_soft_body_constraints_rebuild(EPhysics_Body *body)
+{
+   btSoftBody *soft_body = body->soft_body;
+   btRigidBody *rigid_body = body->rigid_body;
+
+   if (soft_body->m_anchors.size() > 0)
+     {
+        for (int i = 0; i < soft_body->m_nodes.size(); i++)
+          _ephysics_body_soft_body_anchors_rebuild(i, rigid_body, soft_body);
+     }
+   else
+     {
+        for (int i = 0; i < soft_body->m_nodes.size(); i++)
+          soft_body->appendAnchor(i, rigid_body);
+     }
+
+   soft_body->generateClusters(0);
+   soft_body->generateBendingConstraints(10, soft_body->m_materials[0]);
+   _ephysics_body_soft_body_points_distance_get(body, body->distances);
+}
+
+static void
 _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
 {
    double rate, sx, sy;
@@ -316,13 +351,8 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
 
    if (body->soft_body)
      {
-        body->soft_body->m_anchors.resize(0);
         body->soft_body->scale(btVector3(sx, sy, 1));
-
-        for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
-          body->soft_body->appendAnchor(i, body->rigid_body);
-
-        _ephysics_body_soft_body_points_distance_get(body, body->distances);
+        _ephysics_body_soft_body_constraints_rebuild(body);
      }
    else
      {
@@ -387,15 +417,10 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    body_scale = btVector3(sx, sy, 1);
    if (body->soft_body)
      {
-        body->soft_body->m_anchors.resize(0);
         body->soft_body->scale(btVector3(sx, sy, 1));
         body->rigid_body->proceedToTransform(trans);
         body->soft_body->transform(trans);
-
-        for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
-          body->soft_body->appendAnchor(i, body->rigid_body);
-
-        _ephysics_body_soft_body_points_distance_get(body, body->distances);
+        _ephysics_body_soft_body_constraints_rebuild(body);
      }
    else
      {
@@ -682,12 +707,59 @@ ephysics_body_soft_body_get(const EPhysics_Body *body)
    return body->soft_body;
 }
 
+EAPI void
+ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
+{
+   btSoftBody *soft_body;
+
+   if (!body)
+     {
+        ERR("Can't set soft body's hardness, body is null.");
+        return;
+     }
+
+   if (!body->soft_body)
+     {
+        ERR("Can't set soft body's hardness, body seems not to be a soft body.");
+        return;
+     }
+
+   if (hardness < 0 || hardness > 100)
+     {
+        ERR("Can't set soft body's hardness, it must be between 0 and 100.");
+        return;
+     }
+
+   soft_body = body->soft_body;
+   soft_body->m_cfg.kAHR = (hardness / 100) * 0.6;
+   soft_body->m_materials[0]->m_kVST = (hardness / 100);
+   soft_body->m_materials[0]->m_kLST = (hardness / 100);
+   soft_body->m_materials[0]->m_kAST = (hardness / 100);
+   DBG("Soft body hardness set.");
+}
+
+EAPI double
+ephysics_body_soft_body_hardness_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't get soft body's hardness, body is null.");
+        return 0;
+     }
+
+   if (!body->soft_body)
+     {
+        ERR("Can't get soft body's hardness, body seems not to be a soft body.");
+        return 0;
+     }
+
+   return (body->soft_body->m_materials[0]->m_kVST * 100);
+}
+
 static EPhysics_Body *
 _ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape, btSoftBody *soft_body)
 {
    EPhysics_Body *body;
-   btSoftBody::AJoint::Specs angular_joint;
-   btSoftBody::LJoint::Specs linear_joint;
 
    body = _ephysics_body_add(world, collision_shape, "soft box", 0.5, 0.5);
    if (!body)
@@ -695,33 +767,19 @@ _ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape
         ephysics_body_del(body);
         return NULL;
      }
-
    body->soft_body = soft_body;
    body->soft_body->setUserPointer(body);
-
-   body->soft_body->getCollisionShape()->setMargin(0.22);
-
-   soft_body->m_materials[0]->m_kLST = 0.35;
-   soft_body->setPose(true, false);
+   body->soft_body->setTotalMass(body->mass);
 
    body->soft_body->m_cfg.collisions += btSoftBody::fCollision::SDF_RS;
-   body->soft_body->m_cfg.collisions += btSoftBody::fCollision::CL_SS;
+   body->soft_body->m_cfg.collisions += btSoftBody::fCollision::VF_SS;
 
-   body->soft_body->generateClusters(body->soft_body->m_nodes.size());
+   ephysics_body_soft_body_hardness_set(body, 100);
 
-   angular_joint.erp = 0.;
-   angular_joint.cfm = 0.;
-   angular_joint.axis = btVector3(0, 0, 1);
-   body->soft_body->appendAngularJoint(angular_joint);
+   body->rigid_body->setCollisionFlags(
+                                      btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
-   linear_joint.erp = 0.;
-   linear_joint.cfm = 0.;
-   linear_joint.position = btVector3(0, 0, 0);
-   body->soft_body->appendLinearJoint(linear_joint, body->rigid_body);
-
-   for (int i = 0; i < body->soft_body->m_nodes.size(); i++)
-     body->soft_body->appendAnchor(i, body->rigid_body);
-
+   _ephysics_body_soft_body_constraints_rebuild(body);
    ephysics_world_soft_body_add(world, body);
    return body;
 }
@@ -750,7 +808,7 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
    world_info = ephysics_world_info_get(world);
    soft_body = btSoftBodyHelpers::CreateFromTriMesh(*world_info,
                         cylinder_vertices, &cylinder_indices[0][0],
-		        CYLINDER_NUM_TRIANGLES);
+                        CYLINDER_NUM_TRIANGLES);
    if (!soft_body)
      {
         ERR("Couldn't create a new soft body.");
@@ -762,20 +820,20 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
      goto no_body;
 
    body->points_deform[0][0] = 72;
-   body->points_deform[0][1] = 6;
-   body->points_deform[0][2] = 65;
+   body->points_deform[0][1] = 69;
+   body->points_deform[0][2] = 3;
 
    body->points_deform[1][0] = 72;
-   body->points_deform[1][1] = 69;
-   body->points_deform[1][2] = 3;
+   body->points_deform[1][1] = 6;
+   body->points_deform[1][2] = 65;
 
-   body->points_deform[2][0] = 57;
-   body->points_deform[2][1] = 3;
-   body->points_deform[2][2] = 76;
+   body->points_deform[2][0] = 54;
+   body->points_deform[2][1] = 47;
+   body->points_deform[2][2] = 65;
 
-   body->points_deform[3][0] = 54;
-   body->points_deform[3][1] = 47;
-   body->points_deform[3][2] = 65;
+   body->points_deform[3][0] = 57;
+   body->points_deform[3][1] = 3;
+   body->points_deform[3][2] = 76;
 
    return body;
 
@@ -843,21 +901,21 @@ ephysics_body_soft_box_add(EPhysics_World *world)
    if (!body)
      goto no_body;
 
-   body->points_deform[0][0] = 27;
-   body->points_deform[0][1] = 80;
-   body->points_deform[0][2] = 69;
+   body->points_deform[0][0] = 85;
+   body->points_deform[0][1] = 12;
+   body->points_deform[0][2] = 30;
 
-   body->points_deform[1][0] = 85;
-   body->points_deform[1][1] = 12;
-   body->points_deform[1][2] = 30;
+   body->points_deform[1][0] = 27;
+   body->points_deform[1][1] = 80;
+   body->points_deform[1][2] = 69;
 
-   body->points_deform[2][0] = 18;
-   body->points_deform[2][1] = 62;
-   body->points_deform[2][2] = 8;
+   body->points_deform[2][0] = 50;
+   body->points_deform[2][1] = 40;
+   body->points_deform[2][2] = 60;
 
-   body->points_deform[3][0] = 50;
-   body->points_deform[3][1] = 40;
-   body->points_deform[3][2] = 60;
+   body->points_deform[3][0] = 18;
+   body->points_deform[3][1] = 62;
+   body->points_deform[3][2] = 8;
 
    return body;
 
