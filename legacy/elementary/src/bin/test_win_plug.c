@@ -53,7 +53,6 @@ cb_plug_disconnected(void *data __UNUSED__,
      {
         ecore_timer_del(timer);
         evas_object_data_del(obj, "test-timer");
-        return;
      }
 
    timer = ecore_timer_add(1, cb_plug_connect, obj);
