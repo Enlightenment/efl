@@ -15,6 +15,9 @@ Additions:
     * Add backtrace support to Eina_Log, use EINA_LOG_BACKTRACE to enable it.
     * Add an helper to iterate over line in a mapped file.
     * Add EINA_SENTINEL to protect variadic functions
+    * Add EINA_SAFETY checks for proper function arguments.
+    * Add check if given arguments (distance and coordinates) in eina_tiler
+    and eina_rectangle are not below zero
 
 Fixes:
     * Add missing files in the tarball.
@@ -27,6 +30,8 @@ Fixes:
     * Implement eina_file_map_lines() on Windows.
     * Handle NULL in all eina_*_free function.
     * eina_log_console_color_set()
+    * Documentation for eina list specified and eina stringshare fixed.
+    * eina_convert_atofp wrong return value if fp is NULL.
 
 Removal:
     * configure options: --disable-posix-threads, --disable-win32-threads,

@@ -311,7 +311,7 @@ EAPI void               eina_stringshare_del(Eina_Stringshare *str);
  * @brief Note that the given string @b must be shared.
  *
  * @param str the shared string to know the length. It is safe to
- *        give @c NULL, in that case @c -1 is returned.
+ *        give @c NULL, in that case @c 0 is returned.
  * @return The length of a shared string.
  *
  * This function is a cheap way to known the length of a shared

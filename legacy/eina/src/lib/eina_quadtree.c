@@ -875,6 +875,8 @@ eina_quadtree_increase(Eina_QuadTree_Item *object)
 {
    size_t tmp;
 
+   EINA_MAGIC_CHECK_QUADTREE_ITEM(object);
+
    tmp = object->quad->index++;
    if (object->index == tmp)
       return;

@@ -544,6 +544,9 @@ eina_str_escape(const char *str)
    char *s2, *d;
    const char *s;
 
+   if (!str)
+      return NULL;
+
    s2 = malloc((strlen(str) * 2) + 1);
    if (!s2)
       return NULL;

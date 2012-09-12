@@ -341,3 +341,10 @@
 2012-09-11  Cedric Bail
 
 	* Speedup Eina Rbtree Iterator by recycling memory instead of massively calling malloc/free.
+
+2012-09-12 Patryk Kaczmarek <patryk.k@samsung.com>
+
+        * Add EINA_SAFETY checks for proper function arguments.
+        * Add check if given arguments (distance and coordinates) in eina_tiler
+        and eina_rectangle are not below zero
+        * Documentation for eina list specified and eina stringshare fixed

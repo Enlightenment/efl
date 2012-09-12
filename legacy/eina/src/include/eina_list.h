@@ -954,8 +954,8 @@ EAPI Eina_List            *eina_list_merge(Eina_List *left, Eina_List *right) EI
  * smallest one to be head of the returned list. It will continue this process
  * for all entry of both list.
  *
- * Both left and right do not exist anymore after the merge.
- * If @p func is @c NULL, it will return @c NULL.
+ * Both left and right lists are not vailid anymore after the merge and should
+ * not be used. If @p func is @c NULL, it will return @c NULL.
  *
  * Example:
  * @code

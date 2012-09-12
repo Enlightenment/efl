@@ -1115,6 +1115,9 @@ EAPI Eina_Tiler *eina_tiler_new(int w, int h)
 {
    Eina_Tiler *t;
 
+   if ((w <= 0) || (h <= 0))
+     return NULL;
+
    t = calloc(1, sizeof(Eina_Tiler));
    t->area.w = w;
    t->area.h = h;
@@ -1151,6 +1154,8 @@ EAPI Eina_Bool eina_tiler_rect_add(Eina_Tiler *t, const Eina_Rectangle *r)
    Eina_Rectangle tmp;
 
    EINA_MAGIC_CHECK_TILER(t, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(r, EINA_FALSE);
+
    if ((r->w <= 0) || (r->h <= 0))
       return EINA_FALSE;
 
@@ -1169,6 +1174,8 @@ EAPI void eina_tiler_rect_del(Eina_Tiler *t, const Eina_Rectangle *r)
    Eina_Rectangle tmp;
 
    EINA_MAGIC_CHECK_TILER(t);
+   EINA_SAFETY_ON_NULL_RETURN(r);
+
    if ((r->w <= 0) || (r->h <= 0))
       return;
 
@@ -1259,6 +1266,10 @@ eina_tile_grid_slicer_iterator_new(int x,
                                    int tile_h)
 {
    Eina_Tile_Grid_Slicer_Iterator *it;
+
+   if ((x < 0) || (y < 0) || (w <= 0) || (h <= 0) || 
+       (tile_w <= 0) || (tile_h <= 0))
+     return NULL;
 
    it = calloc(1, sizeof(*it));
    if (!it)

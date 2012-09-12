@@ -1466,6 +1466,8 @@ eina_list_accessor_new(const Eina_List *list)
 {
    Eina_Accessor_List *ac;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(list, NULL);
+
    eina_error_set(0);
    ac = calloc(1, sizeof (Eina_Accessor_List));
    if (!ac)

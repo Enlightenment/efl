@@ -361,6 +361,9 @@ eina_rectangle_pool_new(int w, int h)
 {
    Eina_Rectangle_Pool *new;
 
+   if ((w <= 0) || (h <= 0))
+      return NULL;
+
    new = malloc(sizeof (Eina_Rectangle_Pool));
    if (!new)
       return NULL;
