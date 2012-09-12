@@ -694,7 +694,7 @@ embryo script and from C code.";
                rel1.offset: 0 0;
                rel2.offset: 0 -15;
                params {
-                  string: "label" "...with embryo ?";
+                  string: "label" "...with embryo";
                }
             }
          }
