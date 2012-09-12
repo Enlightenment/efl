@@ -22,7 +22,7 @@
 
 #define RENDER_METHOD_INVALID            0x00000000
 
-/* #define REND_DGB 1 */
+/* #define REND_DBG 1 */
 
 typedef struct _Evas_Layer                  Evas_Layer;
 typedef struct _Evas_Size                   Evas_Size;
@@ -1075,7 +1075,7 @@ Eina_Bool evas_render_mapped(Evas *e, Evas_Object *obj,
                              void *context, void *surface,
                              int off_x, int off_y, int mapped,
                              int ecx, int ecy, int ecw, int ech
-#ifdef REND_DGB
+#ifdef REND_DBG
                              , int level
 #endif
                              );

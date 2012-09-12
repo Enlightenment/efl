@@ -2352,7 +2352,7 @@ _proxy_subrender(Evas *e, Evas_Object *source)
                       -source->cur.geometry.x,
                       -source->cur.geometry.y,
                       1, 0, 0, e->output.w, e->output.h
-#ifdef REND_DGB
+#ifdef REND_DBG
                       , 1
 #endif
                       );

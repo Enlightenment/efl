@@ -6,12 +6,12 @@
 #endif
 
 /* debug rendering
- * NOTE: Define REND_DGB 1 in evas_private.h to enable debugging. Don't define
+ * NOTE: Define REND_DBG 1 in evas_private.h to enable debugging. Don't define
  * it here since the flag is used on other places too. */
 
 /* #define STDOUT_DBG 1 */
 
-#ifdef REND_DGB
+#ifdef REND_DBG
 static FILE *dbf = NULL;
 
 static void
@@ -237,7 +237,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                    int restack,
                                    int *redraw_all,
                                    Eina_Bool mapped_parent
-#ifdef REND_DGB
+#ifdef REND_DBG
                                    , int level
 #endif
                                   )
@@ -271,7 +271,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    if ((!mapped_parent) && ((is_active) || (obj->delete_me != 0)))
      eina_array_push(active_objects, obj);
 
-#ifdef REND_DGB
+#ifdef REND_DBG
    if (!is_active)
      {
         RDI(level);
@@ -321,7 +321,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                                                obj->restack,
                                                                redraw_all,
                                                                EINA_TRUE
-#ifdef REND_DGB
+#ifdef REND_DBG
                                                                , level + 1
 #endif
                                                               );
@@ -370,7 +370,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                                      obj->restack,
                                                      redraw_all,
                                                      mapped_parent
-#ifdef REND_DGB
+#ifdef REND_DBG
                                                      , level + 1
 #endif
                                                     );
@@ -426,7 +426,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                                              restack,
                                                              redraw_all,
                                                              mapped_parent
-#ifdef REND_DGB
+#ifdef REND_DBG
                                                              , level + 1
 #endif
                                                             );
@@ -472,7 +472,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                                                      render_objects,
                                                      restack,
                                                      redraw_all
-#ifdef REND_DGB
+#ifdef REND_DBG
                                                      , level + 1
 #endif
                                                     );
@@ -507,7 +507,7 @@ _evas_render_phase1_process(Evas *e,
              clean_them |= _evas_render_phase1_object_process
                 (e, obj, active_objects, restack_objects, delete_objects,
                  render_objects, 0, redraw_all, EINA_FALSE
-#ifdef REND_DGB
+#ifdef REND_DBG
                  , 1
 #endif
                 );
@@ -807,7 +807,7 @@ Eina_Bool
 evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                    int off_x, int off_y, int mapped,
                    int ecx, int ecy, int ecw, int ech
-#ifdef REND_DGB
+#ifdef REND_DBG
                    , int level
 #endif
                   )
@@ -957,7 +957,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                                            obj->map.surface,
                                                            off_x2, off_y2, 1,
                                                            ecx, ecy, ecw, ech
-#ifdef REND_DGB
+#ifdef REND_DBG
                                                            , level + 1
 #endif
                                                           );
@@ -1069,7 +1069,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                                                            surface,
                                                            off_x, off_y, 1,
                                                            ecx, ecy, ecw, ech
-#ifdef REND_DGB
+#ifdef REND_DBG
                                                            , level + 1
 #endif
                                                           );
@@ -1565,7 +1565,7 @@ evas_render_updates_internal(Evas *e,
                             clean_them |= evas_render_mapped(e, obj, e->engine.data.context,
                                                              surface, off_x, off_y, 0,
                                                              cx, cy, cw, ch
-#ifdef REND_DGB
+#ifdef REND_DBG
                                                              , 1
 #endif
                                                             );
