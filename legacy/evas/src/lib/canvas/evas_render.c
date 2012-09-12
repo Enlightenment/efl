@@ -600,6 +600,7 @@ pending_change(void *data, void *gdata __UNUSED__)
    if (obj->pre_render_done)
      {
         RD("  OBJ [%p] pending change %i -> 0, pre %i\n", obj, obj->changed, obj->pre_render_done);
+        obj->func->render_post(obj);
         obj->pre_render_done = EINA_FALSE;
         evas_object_change_reset(obj);
      }
@@ -896,25 +897,21 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                   if (!evas_object_is_visible(o2) &&
                       !evas_object_was_visible(o2))
                     {
-                       evas_object_change_reset(o2);
                        continue;
                     }
                   if (o2->changed)
                     {
                        changed = EINA_TRUE;
-                       evas_object_change_reset(o2);
                        break;
                     }
                }
              if (obj->changed_color) changed = EINA_TRUE;
-             evas_object_change_reset(obj);
           }
         else if (obj->changed)
           {
              if (((obj->changed_pchange) && (obj->changed_map)) ||
                  (obj->changed_color))
                changed = EINA_TRUE;
-             evas_object_change_reset(obj);
           }
 
         /* mark the old map as invalid, so later we don't reuse it as a
@@ -1632,6 +1629,12 @@ evas_render_updates_internal(Evas *e,
      {
         obj = eina_array_data_get(&e->render_objects, i);
         obj->pre_render_done = EINA_FALSE;
+        if ((obj->changed) && (do_draw))
+          {
+             obj->func->render_post(obj);
+             obj->restack = EINA_FALSE;
+             evas_object_change_reset(obj);
+          }
      }
 
    /* delete all objects flagged for deletion now */
