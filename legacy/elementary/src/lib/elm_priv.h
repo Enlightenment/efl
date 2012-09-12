@@ -229,6 +229,10 @@ struct _Elm_Config
    unsigned char auto_dump_withdrawn;
    unsigned char auto_throttle;
    double        auto_throttle_amount;
+   const char   *indicator_service_0;
+   const char   *indicator_service_90;
+   const char   *indicator_service_180;
+   const char   *indicator_service_270;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

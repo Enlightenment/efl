@@ -398,6 +398,10 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, auto_dump_withdrawn, T_UCHAR);
    ELM_CONFIG_VAL(D, T, auto_throttle, T_UCHAR);
    ELM_CONFIG_VAL(D, T, auto_throttle_amount, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, indicator_service_0, T_STRING);
+   ELM_CONFIG_VAL(D, T, indicator_service_90, T_STRING);
+   ELM_CONFIG_VAL(D, T, indicator_service_180, T_STRING);
+   ELM_CONFIG_VAL(D, T, indicator_service_270, T_STRING);
 #undef T
 #undef D
 #undef T_INT
@@ -1075,6 +1079,10 @@ _config_load(void)
    _elm_config->auto_dump_withdrawn = 0;
    _elm_config->auto_throttle = 0;
    _elm_config->auto_throttle_amount = 0.1;
+   _elm_config->indicator_service_0 = eina_stringshare_add("elm_indicator_portrait");
+   _elm_config->indicator_service_90 = eina_stringshare_add("elm_indicator_landscape");
+   _elm_config->indicator_service_180 = eina_stringshare_add("elm_indicator_portrait");
+   _elm_config->indicator_service_270 = eina_stringshare_add("elm_indicator_landscape");
 }
 
 static const char *
@@ -1572,6 +1580,15 @@ _env_get(void)
    if (s) _elm_config->auto_flush_withdrawn = EINA_TRUE;
    s = getenv("ELM_AUTO_DUMP_WIDTHDRAWN");
    if (s) _elm_config->auto_dump_withdrawn = EINA_TRUE;
+
+   s = getenv("ELM_INDICATOR_SERVICE_0");
+   if (s) eina_stringshare_replace(&_elm_config->indicator_service_0, s);
+   s = getenv("ELM_INDICATOR_SERVICE_90");
+   if (s) eina_stringshare_replace(&_elm_config->indicator_service_90, s);
+   s = getenv("ELM_INDICATOR_SERVICE_180");
+   if (s) eina_stringshare_replace(&_elm_config->indicator_service_180, s);
+   s = getenv("ELM_INDICATOR_SERVICE_270");
+   if (s) eina_stringshare_replace(&_elm_config->indicator_service_270, s);
 }
 
 EAPI Eina_Bool
@@ -2225,6 +2242,30 @@ elm_config_preferred_engine_set(const char *engine)
         if (_elm_preferred_engine) eina_stringshare_del(_elm_preferred_engine);
         _elm_preferred_engine = NULL;
      }
+}
+
+EAPI const char *
+elm_config_indicator_service_0_get(void)
+{
+   return _elm_config->indicator_service_0;
+}
+
+EAPI const char *
+elm_config_indicator_service_90_get(void)
+{
+   return _elm_config->indicator_service_90;
+}
+
+EAPI const char *
+elm_config_indicator_service_180_get(void)
+{
+   return _elm_config->indicator_service_180;
+}
+
+EAPI const char *
+elm_config_indicator_service_270_get(void)
+{
+   return _elm_config->indicator_service_270;
 }
 
 void
