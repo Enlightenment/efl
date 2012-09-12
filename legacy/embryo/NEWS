@@ -1,4 +1,11 @@
-Embryo 1.7.0
+Embryo 1.8.0
+
+Changes since Embryo 1.7.0:
+---------------------------
+
+Fixes:
+
+    * Fix windows utf8 shitepsace parse issue.
 
 Changes since Embryo 1.2.0:
 ---------------------------
