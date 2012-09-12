@@ -16,6 +16,7 @@ Improvements:
    * Panel widget is now an elm layout.
    * Improve elm map module loading/searching efficiency.
    * Diskselector handles dyanmic show/hide of icons now like buttons.
+   * Plug widget handles image object deletion
 
 Fixes:
 

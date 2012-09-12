@@ -472,3 +472,8 @@
 
         * Fix ctxpopup direction if -1 is uses as priority.
 
+2012-09-15  Jiyoun Park (jypark)
+
+        * Add image deleted signal into plug. it help user notice socket service
+	fail and they can retry service connection. 
+	* Add test code deal with this signal. 

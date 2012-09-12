@@ -4,6 +4,61 @@
 #include <Elementary.h>
 #ifndef ELM_LIB_QUICKLAUNCH
 
+#define MAX_TRY 40
+
+static int try_num = 0;
+
+static void
+_timer_del(void *data       __UNUSED__,
+	      Evas *e          __UNUSED__,
+	      Evas_Object     *obj,
+	      void *event_info __UNUSED__)
+{
+   Ecore_Timer *timer = evas_object_data_del(obj, "test-timer");
+   if (!timer) return;
+   ecore_timer_del(timer);
+}
+
+static Eina_Bool
+cb_plug_connect(void *data)
+{
+   Evas_Object *obj = data;
+   Ecore_Timer *timer;
+
+   if (!obj) return ECORE_CALLBACK_CANCEL;
+
+   try_num++;
+   if (try_num > MAX_TRY) return ECORE_CALLBACK_CANCEL;
+
+   timer= evas_object_data_get(obj, "test-timer");
+   if (!timer) return ECORE_CALLBACK_CANCEL;
+
+   if (elm_plug_connect(obj, "ello", 0, EINA_FALSE))
+     {
+        printf("plug connect to server[ello]\n");
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   ecore_timer_interval_set(timer, 1);
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+cb_plug_disconnected(void *data __UNUSED__,
+                    Evas_Object *obj,
+                    void *event_info __UNUSED__)
+{
+   Ecore_Timer *timer = evas_object_data_get(obj, "test-timer");
+   if (timer)
+     {
+        ecore_timer_del(timer);
+        evas_object_data_del(obj, "test-timer");
+        return;
+     }
+
+   timer = ecore_timer_add(1, cb_plug_connect, obj);
+   evas_object_data_set(obj, "test-timer", timer);
+}
 
 static void
 cb_mouse_down(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
@@ -99,11 +154,14 @@ test_win_plug(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    plug = elm_plug_add(win);
    evas_object_event_callback_add(elm_plug_image_object_get(plug), EVAS_CALLBACK_MOUSE_DOWN, cb_mouse_down, NULL);
+   evas_object_event_callback_add(plug, EVAS_CALLBACK_DEL, _timer_del, NULL);
    if (!elm_plug_connect(plug, "ello", 0, EINA_FALSE))
      {
         printf("Cannot connect plug\n");
         return;
      }
+
+   evas_object_smart_callback_add(plug, "image.deleted", cb_plug_disconnected, NULL);
 
    evas_object_resize(plug, 380, 500);
    evas_object_move(plug, 10, 10);

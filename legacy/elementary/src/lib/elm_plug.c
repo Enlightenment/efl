@@ -4,9 +4,13 @@
 
 EAPI const char ELM_PLUG_SMART_NAME[] = "elm_plug";
 
+static const char PLUG_KEY[] = "__Plug_Ecore_Evas";
+
 static const char SIG_CLICKED[] = "clicked";
+static const char SIG_IMAGE_DELETED[] = "image.deleted";
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CLICKED, ""},
+   {SIG_IMAGE_DELETED, ""},
    {NULL, NULL}
 };
 
@@ -22,6 +26,17 @@ _sizing_eval(Evas_Object *obj)
    //TODO: get socket object size
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
+}
+
+static void
+_elm_plug_disconnected(Ecore_Evas *ee)
+{
+   Evas_Object *plug = NULL;
+
+   if (!ee) return;
+   plug = ecore_evas_data_get(ee, PLUG_KEY);
+   if (!plug) return;
+   evas_object_smart_callback_call(plug, SIG_IMAGE_DELETED, NULL);
 }
 
 static Eina_Bool
@@ -129,8 +144,21 @@ elm_plug_connect(Evas_Object *obj,
 {
    Evas_Object *plug_img = NULL;
 
+   ELM_PLUG_CHECK(obj) EINA_FALSE;
+
    plug_img = elm_plug_image_object_get(obj);
    if (!plug_img) return EINA_FALSE;
 
-   return ecore_evas_extn_plug_connect(plug_img, svcname, svcnum, svcsys);
+   if (ecore_evas_extn_plug_connect(plug_img, svcname, svcnum, svcsys))
+     {
+        Ecore_Evas *ee = NULL;
+        ee = ecore_evas_object_ecore_evas_get(plug_img);
+        if (!ee) return EINA_FALSE;
+
+        ecore_evas_data_set(ee, PLUG_KEY, obj);
+        ecore_evas_callback_delete_request_set(ee, _elm_plug_disconnected);
+        return EINA_TRUE;
+     }
+   else
+     return EINA_FALSE;
 }
