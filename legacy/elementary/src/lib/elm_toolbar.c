@@ -907,7 +907,10 @@ _elm_toolbar_item_label_update(Elm_Toolbar_Item *item)
    ELM_TOOLBAR_DATA_GET(WIDGET(item), sd);
 
    edje_object_part_text_escaped_set(VIEW(item), "elm.text", item->label);
-   edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
+   if (item->label)
+     edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
+   else
+     edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
 
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
@@ -1658,7 +1661,10 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
 
    elm_widget_sub_object_del(VIEW(item), old_icon);
    edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
-   edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
+   if (item->icon)
+       edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
+   else
+       edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
    evas_object_hide(old_icon);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
