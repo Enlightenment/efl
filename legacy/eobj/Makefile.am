@@ -35,12 +35,9 @@ COPYING \
 README \
 autogen.sh \
 eo.pc.in \
-m4/efl_benchmark.m4 \
-m4/efl_doxygen.m4 \
-m4/efl_examples.m4 \
-m4/efl_tests.m4
+m4/efl_doxygen.m4
 
-.PHONY: doc benchmark
+.PHONY: doc benchmark examples
 
 # Documentation
 
@@ -74,10 +71,17 @@ if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-report
 endif
 
+# benchmark
+
 benchmark:
-	@cd src && $(MAKE) benchmark
-	@mkdir result || true
-	@cd result && ../src/benchmarks/eo_bench `date +%F_%s`
+	@$(MAKE) -C src benchmark
+	@mkdir benchmark || true
+	@cd benchmark && ../src/benchmarks/eo_bench `date +%F_%s`
+
+# examples
+
+examples:
+	@$(MAKE) -C src examples
 
 clean-local:
 	@rm -rf coverage benchmark

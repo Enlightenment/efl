@@ -169,13 +169,8 @@ AC_SUBST([lt_enable_auto_import])
 
 ### Make the debug preprocessor configurable
 
-### Unit tests, coverage and benchmarking
 
 AC_SUBST([requirements_pc_eo])
-
-
-### Build and install examples
-EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
 
 AC_CONFIG_FILES([
 Makefile
@@ -218,8 +213,8 @@ echo
 echo "  Documentation........: ${build_doc}"
 echo "  Unit Tests...........:"
 echo "    unit testing.......: ${_efl_enable_tests}"
-echo "    build..............: make check"
 echo "    coverage...........: ${_efl_enable_coverage}"
+echo "    build..............: make check"
 echo "  Examples.............: make examples"
 echo "  Benchmark............: make benchmark"
 echo

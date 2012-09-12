@@ -3,7 +3,12 @@ MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = lib benchmarks examples tests
 
-.PHONY: benchmark
+.PHONY: benchmark examples
 
 benchmark:
-	@cd benchmarks && $(MAKE) benchmark
+	@make -C lib
+	@$(MAKE) -C benchmarks benchmark
+
+examples:
+	@make -C lib
+	@$(MAKE) -C examples examples

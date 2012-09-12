@@ -9,12 +9,13 @@ AM_CPPFLAGS = \
 @EO_CFLAGS@ \
 @ELM_CFLAGS@
 
-noinst_PROGRAMS =
+EXTRA_PROGRAMS =
 
-if EFL_BUILD_EXAMPLES
 if EO_BUILD_EXAMPLE_EVAS
 
-noinst_PROGRAMS += evas
+EXTRA_PROGRAMS += evas
+
+examples: evas
 
 evas_SOURCES = \
 elw_box.c \
@@ -31,5 +32,8 @@ test.c
 
 evas_LDADD = $(top_builddir)/src/lib/libeo.la @ELM_LIBS@ @EO_LIBS@
 
-endif
+else
+
+examples:
+
 endif

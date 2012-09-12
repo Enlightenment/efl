@@ -8,11 +8,9 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
-noinst_PROGRAMS =
+EXTRA_PROGRAMS = simple
 
-if EFL_BUILD_EXAMPLES
-
-noinst_PROGRAMS += simple
+examples: simple
 
 simple_SOURCES = \
 interface.c \
@@ -24,5 +22,3 @@ simple.c \
 simple.h
 
 simple_LDADD = $(top_builddir)/src/lib/libeo.la @EO_LIBS@
-
-endif
