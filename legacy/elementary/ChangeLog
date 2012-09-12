@@ -456,3 +456,8 @@
 
 	* Even if the top item is inserted into the naviframe. Any transition
   	wouldn't be launched.
+
+2012-09-12  Jaehwan Kim
+
+    * When the number of item is changed, the toolbar emits the signal to theme.
+    The theme can be changed something according the number of item.

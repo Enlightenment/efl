@@ -776,6 +776,32 @@ _item_theme_hook(Evas_Object *obj,
 }
 
 static void
+_inform_item_number(Evas_Object *obj)
+{
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+   Elm_Toolbar_Item *it;
+   char buf[sizeof("elm,action,click,") + 3];
+   static int scount = 0;
+   int count = 0;
+
+   EINA_INLIST_FOREACH(sd->items, it)
+     {
+        if (!it->separator) count++;
+     }
+   if (scount != count)
+     {
+        scount = count;
+        sprintf(buf, "elm,number,item,%d", count);
+
+        EINA_INLIST_FOREACH(sd->items, it)
+          {
+             if (!it->separator && !it->object)
+               edje_object_signal_emit(VIEW(it), buf, "elm");
+          }
+     }
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Evas_Coord minw = -1, minh = -1, minw_bx = -1, minh_bx = -1;
@@ -835,6 +861,8 @@ _sizing_eval(Evas_Object *obj)
    evas_object_resize(sd->more, w, h);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
+
+   _inform_item_number(obj);
 }
 
 static Eina_Bool
