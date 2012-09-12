@@ -1545,6 +1545,14 @@ eo_composite_is(const Eo *comp_obj)
    return comp_obj->composite;
 }
 
+EAPI Eina_Bool
+eo_destructed_is(const Eo *obj)
+{
+   EO_MAGIC_RETURN_VAL(obj, EO_EINA_MAGIC, EINA_FALSE);
+
+   return obj->del;
+}
+
 EAPI void
 eo_manual_free_set(Eo *obj, Eina_Bool manual_free)
 {

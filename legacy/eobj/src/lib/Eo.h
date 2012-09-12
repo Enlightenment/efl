@@ -744,6 +744,17 @@ EAPI void eo_manual_free_set(Eo *obj, Eina_Bool manual_free);
 EAPI void eo_manual_free(Eo *obj);
 
 /**
+ * @brief Checks if the object was already descructed (only relevant for manual_free objects).
+ * @param obj the object to check.
+ * This function checks if the object was already destructed (but not alraedy
+ * freed). It should only be used with objects that are supposed to be manually
+ * freed, but not yet freed (but possibly destructed).
+ *
+ * @see eo_manual_free_set()
+ */
+EAPI Eina_Bool eo_destructed_is(const Eo *obj);
+
+/**
  * @addtogroup Eo_Composite_Objects Composite Objects.
  * @{
  */

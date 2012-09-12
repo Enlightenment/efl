@@ -231,12 +231,15 @@ START_TEST(eo_man_free)
    obj = eo_add(klass, NULL);
    fail_if(!obj);
    eo_manual_free(obj);
+   fail_if(eo_destructed_is(obj));
    eo_unref(obj);
+   fail_if(!eo_destructed_is(obj));
    eo_manual_free(obj);
 
    obj = eo_add(klass, NULL);
    fail_if(!obj);
    eo_unref(obj);
+   fail_if(!eo_destructed_is(obj));
    eo_manual_free(obj);
 
    _man_should_con = EINA_FALSE;
@@ -618,6 +621,7 @@ START_TEST(eo_magic_checks)
 
         eo_manual_free_set((Eo *) buf, EINA_TRUE);
         eo_manual_free((Eo *) buf);
+        eo_destructed_is((Eo *) buf);
 
         eo_unref(obj);
 
