@@ -832,4 +832,188 @@ embryo script and from C code.";
          }
       }
    }
+   group { name: "external/video";
+      parts {
+         COMMON_EXTERNAL_UNDER
+         part { name: "ext_label1";
+            type: EXTERNAL;
+            source: "elm/label";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 200 50;
+               align: 0.5 0.0;
+               params {
+                  string: "label" "<b>Simple videoplayer in pure edje</>\
+<br>Just choose a video file, click 'play' and enjoy your movie :)<br>\
+<b>BUGS:</> Video don't emit signals, some external props are missing.";
+               }
+            }
+         }
+         part { name: "ext_video1";
+            type: EXTERNAL;
+            source: "elm/video";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               align: 0.5 0.0;
+               rel1.offset: 12 60;
+               rel2.offset: -12 60;
+            }
+         }
+         part { name: "ext_button1";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 60 40;
+               align: 0.1 0.0;
+               rel1 {
+                  to: "ext_slider1";
+                  relative: 0.0 -1.0;
+               }
+               params {
+                  string: "label" "play";
+                  bool: "disabled" 1;
+               }
+            }
+         }
+         part { name: "ext_button2";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 60 40;
+               align: 0.5 0.0;
+               rel1 {
+                  to: "ext_slider1";
+                  relative: 0.0 -1.0;
+               }
+               params {
+                  string: "label" "pause";
+                  bool: "disabled" 1;
+               }
+            }
+         }
+         part { name: "ext_button3";
+            type: EXTERNAL;
+            source: "elm/button";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 60 40;
+               align: 0.9 0.0;
+               rel1 {
+                  to: "ext_slider1";
+                  relative: 0.0 -1.0;
+               }
+               params {
+                  string: "label" "stop";
+                  bool: "disabled" 1;
+               }
+            }
+         }
+         part { name: "ext_slider1";
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 9999 40;
+               align: 0.0 0.0;
+               rel1 {
+                  to: "ext_slider2";
+                  relative: 0.0 -1.0;
+               }
+               params {
+                  string: "label" "Volume";
+                  string: "indicator format" "%.3f";
+               }
+            }
+         }
+         part { name: "ext_slider2";
+            type: EXTERNAL;
+            source: "elm/slider";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 9999 40;
+               align: 0.0 0.0;
+               rel1 {
+                  to: "ext_fsentry";
+                  relative: 0.0 -1.0;
+               }
+               params {
+                  string: "label" "Position";
+                  string: "indicator format" "%.3f";
+                  bool: "disabled" 1;
+               }
+            }
+         }
+         part { name: "ext_fsentry";
+            type: EXTERNAL;
+            source: "elm/fileselector_entry";
+            clip_to: "clip";
+            description { state: "default" 0.0;
+               max: 9999 40;
+               align: 0.0 1.0;
+               rel1.offset: 6 -6;
+               rel2.offset: -6 -6;
+               params {
+                  string: "label" "choose file";
+               }
+            }
+         }
+         COMMON_EXTERNAL_OVER
+      }
+      programs {
+         COMMON_EXTERNAL_PROGRAM  
+         program { name: "play_clicked";
+            signal: "clicked";
+            source: "ext_button1";
+            action: PARAM_SET "ext_video1" "play" 1;
+         }
+         program { name: "pause_click";
+            signal: "clicked";
+            source: "ext_button2";
+            action: PARAM_SET "ext_video1" "pause" 1;
+         }
+         program { name: "stop_clicked";
+            signal: "clicked";
+            source: "ext_button3";
+            action: PARAM_SET "ext_video1" "stop" 1;
+         }
+         program { name: "volume_slider";
+            signal: "changed";
+            source: "ext_slider1";
+            action: PARAM_COPY "ext_slider1" "value" "ext_video1" "audio level";
+         }
+         program { name: "position_slider";
+            signal: "changed";
+            source: "ext_slider2";
+            script {
+               // here we need to get the lenght of the video from external
+               // to calc the play position...
+               new Float:myval = external_param_get_float(PART:"ext_slider2", "value");
+               external_param_set_float(PART:"ext_video1", "play position", myval*100);
+            }
+         }
+         program { name: "file_chosen";
+            signal: "file,chosen";
+            source: "ext_fsentry";
+            action: PARAM_COPY "ext_fsentry" "path" "ext_video1" "uri";
+            after: "enable_bt1";
+            after: "enable_bt2";
+            after: "enable_bt3";
+            after: "update_volume_slider";
+         }
+         program { name: "enable_bt1";
+            action: PARAM_SET "ext_button1" "disabled" 0;
+         }
+         program { name: "enable_bt2";
+            action: PARAM_SET "ext_button2" "disabled" 0;
+         }
+         program { name: "enable_bt3";
+            action: PARAM_SET "ext_button3" "disabled" 0;
+         }
+         program { name: "update_volume_slider";
+            action: PARAM_COPY "ext_video1" "audio level" "ext_slider1" "value";
+         }
+      }
+   }
 }

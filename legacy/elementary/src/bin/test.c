@@ -188,6 +188,7 @@ void test_external_button(void *data, Evas_Object *obj, void *event_info);
 void test_external_slider(void *data, Evas_Object *obj, void *event_info);
 void test_external_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_external_pbar(void *data, Evas_Object *obj, void *event_info);
+void test_external_video(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -536,6 +537,7 @@ add_tests:
    ADD_TEST(NULL, "Edje External", "ExtProgressBar", test_external_pbar);
    ADD_TEST(NULL, "Edje External", "ExtScroller", test_external_scroller);
    ADD_TEST(NULL, "Edje External", "ExtSlider", test_external_slider);
+   ADD_TEST(NULL, "Edje External", "ExtVideo", test_external_video);
 
    //------------------------------//
    ADD_TEST(NULL, "Toolbars", "Toolbar", test_toolbar);
