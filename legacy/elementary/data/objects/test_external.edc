@@ -924,6 +924,7 @@ embryo script and from C code.";
                params {
                   string: "label" "Volume";
                   string: "indicator format" "%.3f";
+                  bool: "disabled" 1;
                }
             }
          }
@@ -940,7 +941,7 @@ embryo script and from C code.";
                }
                params {
                   string: "label" "Position";
-                  string: "indicator format" "%.3f";
+                  string: "indicator format" "%.1f sec";
                   bool: "disabled" 1;
                }
             }
@@ -987,10 +988,10 @@ embryo script and from C code.";
             signal: "changed";
             source: "ext_slider2";
             script {
-               // here we need to get the lenght of the video from external
-               // to calc the play position...
-               new Float:myval = external_param_get_float(PART:"ext_slider2", "value");
-               external_param_set_float(PART:"ext_video1", "play position", myval*100);
+               new Float:len = external_param_get_float(PART:"ext_video1", "play length");
+               new Float:val = external_param_get_float(PART:"ext_slider2", "value");
+               external_param_set_float(PART:"ext_slider2", "max", len);
+               external_param_set_float(PART:"ext_video1", "play position", val);
             }
          }
          program { name: "file_chosen";
@@ -1000,6 +1001,8 @@ embryo script and from C code.";
             after: "enable_bt1";
             after: "enable_bt2";
             after: "enable_bt3";
+            after: "enable_sl1";
+            after: "enable_sl2";
             after: "update_volume_slider";
          }
          program { name: "enable_bt1";
@@ -1010,6 +1013,12 @@ embryo script and from C code.";
          }
          program { name: "enable_bt3";
             action: PARAM_SET "ext_button3" "disabled" 0;
+         }
+         program { name: "enable_sl1";
+            action: PARAM_SET "ext_slider1" "disabled" 0;
+         }
+         program { name: "enable_sl2";
+            action: PARAM_SET "ext_slider2" "disabled" 0;
          }
          program { name: "update_volume_slider";
             action: PARAM_COPY "ext_video1" "audio level" "ext_slider1" "value";

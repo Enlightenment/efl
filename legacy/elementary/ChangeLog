@@ -420,8 +420,8 @@
 	* Popup widget is now an elm layout.
 	* Panel widget is now an elm layout.
 	* All internal widget hooks (and related macros) were removed, due
-	to deprecation. Thus, people using that (unstable) API will have
-	to adapt themselves.
+          to deprecation. Thus, people using that (unstable) API will have
+          to adapt themselves.
 
 2012-08-30  Shilpa Onkar Singh
 
@@ -433,47 +433,51 @@
 
 2012-09-03  Rajeev Ranjan
 
-        * Fix min/max limit setting to respect field boundaires EXCEPT
-        for years which have no boundaries with
-        elm_datetime_field_limit_set()
+	* Fix min/max limit setting to respect field boundaires EXCEPT
+          for years which have no boundaries with
+          elm_datetime_field_limit_set()
 
 2012-09-03  Bluezery
 
-        * Fix re-order animation when it doesn't end correctly.
-        * Improve elm map module loading to onlt init the module needed
-        when searching and not all modules.
+	* Fix re-order animation when it doesn't end correctly.
+	* Improve elm map module loading to onlt init the module needed
+          when searching and not all modules.
 
 2012-09-03  Shinwoo Kim (kimcinoo)
 
-        * Add in more access subsystem features like activation cb.
-        * Fix popup to apply the same style to the notify sub-widget.
+	* Add in more access subsystem features like activation cb.
+	* Fix popup to apply the same style to the notify sub-widget.
 
 2012-09-04  Jihoon Kim (jihoon)
 
-        * Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
+	* Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
 
 2012-09-11  ChunEon Park (Hermet)
 
 	* Even if the top item is inserted into the naviframe. Any transition
-  	wouldn't be launched.
+          wouldn't be launched.
 
 2012-09-12  Jaehwan Kim
 
-        * When the number of item is changed, the toolbar emits the signal
-        to theme. The theme can be changed something according the number
-        of item.
+	* When the number of item is changed, the toolbar emits the signal
+          to theme. The theme can be changed something according the number
+          of item.
 
 2012-09-12  Shinwoo Kim (kimcinoo)
 
-        * Add access features to calendar.
-        * Add icon show/hide handling to diskselector ala button etc.
+	* Add access features to calendar.
+	* Add icon show/hide handling to diskselector ala button etc.
 
 2012-09-12  Thiep Ha
 
-        * Fix ctxpopup direction if -1 is uses as priority.
+	* Fix ctxpopup direction if -1 is uses as priority.
 
-2012-09-15  Jiyoun Park (jypark)
+2012-09-12  Jiyoun Park (jypark)
 
-        * Add image deleted signal into plug. it help user notice socket service
-	fail and they can retry service connection. 
+	* Add image deleted signal into plug. it help user notice socket service
+          fail and they can retry service connection. 
 	* Add test code deal with this signal. 
+
+2012-09-12  Davide Andreoli (davemds)
+
+	* Add external property "play length" to Video widget, read-only.

@@ -163,6 +163,12 @@ external_video_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
         param->d = elm_video_play_position_get(obj);
         return EINA_TRUE;
      }
+   else if ((param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+            && (!strcmp(param->name, "play length")))
+     {
+        param->d = elm_video_play_length_get(obj);
+        return EINA_TRUE;
+     }
    else if ((param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
             && (!strcmp(param->name, "remember position")))
      {
@@ -253,6 +259,7 @@ static Edje_External_Param_Info external_video_params[] = {
      EDJE_EXTERNAL_PARAM_INFO_BOOL("audio mute"),
      EDJE_EXTERNAL_PARAM_INFO_DOUBLE("audio level"),
      EDJE_EXTERNAL_PARAM_INFO_DOUBLE("play position"),
+     EDJE_EXTERNAL_PARAM_INFO_DOUBLE("play length"),
      EDJE_EXTERNAL_PARAM_INFO_BOOL("remember position"),
      EDJE_EXTERNAL_PARAM_INFO_SENTINEL
 };
