@@ -2351,7 +2351,11 @@ _proxy_subrender(Evas *e, Evas_Object *source)
    evas_render_mapped(e, source, ctx, source->proxy.surface,
                       -source->cur.geometry.x,
                       -source->cur.geometry.y,
-                      1, 0, 0, e->output.w, e->output.h);
+                      1, 0, 0, e->output.w, e->output.h
+#ifdef REND_DGB
+                      , 1
+#endif
+                      );
    e->engine.func->context_free(e->engine.data.output, ctx);
    source->proxy.surface = e->engine.func->image_dirty_region
       (e->engine.data.output, source->proxy.surface, 0, 0, w, h);

@@ -5,8 +5,10 @@
 #include "evas_cs2_private.h"
 #endif
 
-// debug rendering
-/* #define REND_DGB 1 */
+/* debug rendering
+ * NOTE: Define REND_DGB 1 in evas_private.h to enable debugging. Don't define
+ * it here since the flag is used on other places too. */
+
 /* #define STDOUT_DBG 1 */
 
 #ifdef REND_DGB
