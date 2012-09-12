@@ -142,6 +142,9 @@ struct _Elm_Calendar_Smart_Data
    struct tm                current_time, selected_time, shown_time;
    Day_Color                day_color[42]; // EINA_DEPRECATED
    Elm_Calendar_Select_Mode select_mode;
+   Evas_Object             *inc_btn_access;
+   Evas_Object             *dec_btn_access;
+   Evas_Object             *month_access;
    Eina_Bool                selected : 1;
    Elm_Calendar_Selectable  selectable;
 };

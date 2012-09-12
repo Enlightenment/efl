@@ -258,6 +258,16 @@
          visible: 1; \
       } \
    } \
+   part { name: "cit_"#_pos".access"; \
+      type: RECT; \
+      repeat_events: 1; \
+      description { state: "default" 0.0; \
+         rel1.to: "cit_"#_pos".event"; \
+         rel2.to: "cit_"#_pos".event"; \
+         visible: 1; \
+         color: 0 0 0 0; \
+      } \
+   } \
    programs { \
       program { \
          name:    "cit_"#_pos".go_active"; \

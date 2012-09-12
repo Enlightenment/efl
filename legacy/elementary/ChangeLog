@@ -462,3 +462,8 @@
         * When the number of item is changed, the toolbar emits the signal
         to theme. The theme can be changed something according the number
         of item.
+
+2012-09-12  Shinwoo Kim (kimcinoo)
+
+        * Add access features to calendar.
+

@@ -194,6 +194,97 @@ _set_month_year(Elm_Calendar_Smart_Data *sd)
    else elm_layout_text_set(ELM_WIDGET_DATA(sd)->obj, "month_text", "");
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   char *ret;
+   Eina_Strbuf *buf;
+   buf = eina_strbuf_new();
+
+   eina_strbuf_append_printf(buf, "day %s", elm_widget_access_info_get(obj));
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
+static void
+_access_calendar_item_register(Evas_Object *obj)
+{
+   int maxdays, day, i;
+   char day_s[3], pname[14];
+   Evas_Object *ao;
+
+   ELM_CALENDAR_DATA_GET(obj, sd);
+
+   day = 0;
+   maxdays = _maxdays_get(&sd->shown_time);
+   for (i = 0; i < 42; i++)
+     {
+        if ((!day) && (i == sd->first_day_it)) day = 1;
+        if ((day) && (day <= maxdays))
+          {
+             snprintf(pname, sizeof(pname), "cit_%i.access", i);
+
+             ao = _elm_access_edje_object_part_object_register
+                        (obj, elm_layout_edje_get(obj), pname);
+             _elm_access_text_set(_elm_access_object_get(ao),
+                         ELM_ACCESS_TYPE, E_("calendar item"));
+             _elm_access_callback_set(_elm_access_object_get(ao),
+                           ELM_ACCESS_INFO, _access_info_cb, NULL);
+
+             snprintf(day_s, sizeof(day_s), "%i", day++);
+             elm_widget_access_info_set(ao, (const char*)day_s);
+          }
+        else
+          {
+             snprintf(pname, sizeof(pname), "cit_%i.access", i);
+             _elm_access_edje_object_part_object_unregister
+                     (obj, elm_layout_edje_get(obj), pname);
+          }
+     }
+}
+
+static void
+_access_calendar_spinner_register(Evas_Object *obj)
+{
+   Evas_Object *po;
+   Elm_Access_Info *ai;
+   ELM_CALENDAR_DATA_GET(obj, sd);
+
+   // decrement button
+   sd->dec_btn_access = _elm_access_edje_object_part_object_register
+                            (obj, elm_layout_edje_get(obj), "left_bt");
+   ai = _elm_access_object_get(sd->dec_btn_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar decrement button"));
+
+   // increment button
+   sd->inc_btn_access = _elm_access_edje_object_part_object_register
+                            (obj, elm_layout_edje_get(obj), "right_bt");
+   ai = _elm_access_object_get(sd->inc_btn_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar increment button"));
+
+   // month text
+   sd->month_access = _elm_access_edje_object_part_object_register
+                          (obj, elm_layout_edje_get(obj), "month_text");
+   ai = _elm_access_object_get(sd->month_access);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("calendar month"));
+
+   po = (Evas_Object *)edje_object_part_object_get
+          (elm_layout_edje_get(obj), "month_text");
+   evas_object_pass_events_set(po, EINA_FALSE);
+
+}
+
+static void
+_access_calendar_register(Evas_Object *obj)
+{
+   _access_calendar_spinner_register(obj);
+   _access_calendar_item_register(obj);
+}
+
 static void
 _populate(Evas_Object *obj)
 {
@@ -309,6 +400,10 @@ _populate(Evas_Object *obj)
         /* Clear previous marks */
         _cit_mark(obj, i, "clear");
      }
+
+   // ACCESS
+   if ((_elm_config->access_mode != ELM_ACCESS_MODE_OFF))
+     _access_calendar_item_register(obj);
 
    /* Set marks */
    EINA_LIST_FOREACH (sd->marks, l, mark)
@@ -757,6 +852,10 @@ _elm_calendar_smart_add(Evas_Object *obj)
 
    elm_layout_theme_set(obj, "calendar", "base", elm_object_style_get(obj));
    evas_object_smart_changed(obj);
+
+   // ACCESS
+   if ((_elm_config->access_mode != ELM_ACCESS_MODE_OFF))
+      _access_calendar_spinner_register(obj);
 }
 
 static void
@@ -783,6 +882,96 @@ _elm_calendar_smart_del(Evas_Object *obj)
    ELM_WIDGET_CLASS(_elm_calendar_parent_sc)->base.del(obj);
 }
 
+static Eina_Bool
+_elm_calendar_smart_focus_next(const Evas_Object *obj,
+                               Elm_Focus_Direction dir,
+                               Evas_Object **next)
+{
+   int maxdays, day, i;
+   Eina_List *items = NULL;
+   Evas_Object *ao;
+   Evas_Object *po;
+
+   ELM_CALENDAR_CHECK(obj) EINA_FALSE;
+   ELM_CALENDAR_DATA_GET(obj, sd);
+
+   items = eina_list_append(items, sd->month_access);
+   items = eina_list_append(items, sd->dec_btn_access);
+   items = eina_list_append(items, sd->inc_btn_access);
+
+   day = 0;
+   maxdays = _maxdays_get(&sd->shown_time);
+   for (i = 0; i < 42; i++)
+     {
+        if ((!day) && (i == sd->first_day_it)) day = 1;
+        if ((day) && (day <= maxdays))
+          {
+             char pname[14];
+             snprintf(pname, sizeof(pname), "cit_%i.access", i);
+
+             po = (Evas_Object *)edje_object_part_object_get
+                           (elm_layout_edje_get(obj), pname);
+             ao = evas_object_data_get(po, "_part_access_obj");
+             items = eina_list_append(items, ao);
+          }
+     }
+
+   return elm_widget_focus_list_next_get
+            (obj, items, eina_list_data_get, dir, next);
+}
+
+static void
+_access_obj_process(Evas_Object *obj, Eina_Bool is_access)
+{
+   int maxdays, day, i;
+
+   ELM_CALENDAR_DATA_GET(obj, sd);
+
+   if (is_access)
+     _access_calendar_register(obj);
+   else
+     {
+        day = 0;
+        maxdays = _maxdays_get(&sd->shown_time);
+        for (i = 0; i < 42; i++)
+          {
+             if ((!day) && (i == sd->first_day_it)) day = 1;
+             if ((day) && (day <= maxdays))
+               {
+                  char pname[14];
+                  snprintf(pname, sizeof(pname), "cit_%i.access", i);
+
+                  _elm_access_edje_object_part_object_unregister
+                          (obj, elm_layout_edje_get(obj), pname);
+               }
+          }
+
+        if (sd->dec_btn_access)
+          _elm_access_edje_object_part_object_unregister
+            (obj, elm_layout_edje_get(obj), "left_bt");
+        if (sd->inc_btn_access)
+          _elm_access_edje_object_part_object_unregister
+            (obj, elm_layout_edje_get(obj), "right_bt");
+        if (sd->month_access)
+          _elm_access_edje_object_part_object_unregister
+            (obj, elm_layout_edje_get(obj), "month_text");
+     }
+}
+
+static void
+_access_hook(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_CALENDAR_CHECK(obj);
+   ELM_CALENDAR_DATA_GET(obj, sd);
+
+   if (is_access)
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
+     _elm_calendar_smart_focus_next;
+   else
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
+   _access_obj_process(obj, is_access);
+}
+
 static void
 _elm_calendar_smart_set_user(Elm_Calendar_Smart_Class *sc)
 {
@@ -798,6 +987,12 @@ _elm_calendar_smart_set_user(Elm_Calendar_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
 
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_calendar_smart_sizing_eval;
+
+   // ACCESS
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+     ELM_WIDGET_CLASS(sc)->focus_next = _elm_calendar_smart_focus_next;
+
+   ELM_WIDGET_CLASS(sc)->access = _access_hook;
 }
 
 EAPI const Elm_Calendar_Smart_Class *

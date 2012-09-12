@@ -164,6 +164,9 @@ _access_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event
         _elm_access_clear(ac);
         free(ac);
      }
+
+   // _elm_access_edje_object_part_object_register(); set below object data
+   evas_object_data_del(obj, "_part_access_obj");
 }
 
 static void
@@ -506,6 +509,11 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
 
    if (!obj || !po) return NULL;
 
+   // check previous access object
+   ao = evas_object_data_get(po, "_part_access_obj");
+   if (ao)
+     _elm_access_edje_object_part_object_unregister(obj, eobj, part);
+
    // create access object
    ao = _elm_access_add(obj);
    evas_object_event_callback_add(po, EVAS_CALLBACK_RESIZE,
@@ -528,7 +536,41 @@ _elm_access_edje_object_part_object_register(Evas_Object* obj,
    _elm_access_callback_set(_elm_access_object_get(ao),
                             ELM_ACCESS_INFO,
                             _part_access_info_cb, eobj);
+
+   // set access object
+   evas_object_data_set(po, "_part_access_obj", ao);
+
    return ao;
+}
+
+EAPI void
+_elm_access_edje_object_part_object_unregister(Evas_Object* obj,
+                                               const Evas_Object *eobj,
+                                               const char* part)
+{
+   Evas_Object *ao;
+   Evas_Object *po = (Evas_Object *)edje_object_part_object_get(eobj, part);
+
+   if (!obj || !po) return;
+
+   ao = evas_object_data_get(po, "_part_access_obj");
+   if (!ao) return;
+
+   evas_object_data_del(po, "_part_access_obj");
+
+   // delete callbacks
+   evas_object_event_callback_del_full(po, EVAS_CALLBACK_RESIZE,
+                                       _content_resize, ao);
+   evas_object_event_callback_del_full(po, EVAS_CALLBACK_MOVE,
+                                       _content_move, ao);
+
+   evas_object_event_callback_del_full(po, EVAS_CALLBACK_MOUSE_IN,
+                                      _access_obj_mouse_in_cb, ao);
+   evas_object_event_callback_del_full(po, EVAS_CALLBACK_MOUSE_OUT,
+                                      _access_obj_mouse_out_cb, ao);
+   evas_object_event_callback_del_full(po, EVAS_CALLBACK_DEL,
+                                       _access_obj_del_cb, ao);
+   evas_object_del(ao);
 }
 
 EAPI void
