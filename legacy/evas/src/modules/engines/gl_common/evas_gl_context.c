@@ -2573,7 +2573,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.buffer_use++;
 
 # if defined(GLES_VARIETY_SGX)
-        void * x = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
+        void * x = glMapBufferOES(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
 # else
         void * x = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 # endif
