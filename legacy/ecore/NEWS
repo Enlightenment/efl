@@ -9,7 +9,10 @@ Additions:
     * ecore_x:
      - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP
      - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN
-     - Fix ecore_x_randr functions to work properly.
+     - Fix ecore_x_randr to actually return outputs properly.
+     - Fix ecore_x_randr to actually return crtcs properly.
+     - Fix ecore_x_randr to actually return crtcs possible outputs properly.
+     - Fix ecore_x_randr to actually return crtcs outputs properly.
     * ecore_imf:
      - Add ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
      - Add ECORE_IMF_PREEDIT_TYPE_SUB4~7 style
