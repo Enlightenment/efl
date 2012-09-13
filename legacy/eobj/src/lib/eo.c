@@ -359,7 +359,8 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
            _eo_kls_itr_func_get(&obj->mro_itr, op);
         if (func)
           {
-             func->func(obj, _eo_data_get(obj, func->src), p_list);
+             void *func_data =_eo_data_get(obj, func->src);
+             func->func(obj, func_data, p_list);
              return EINA_TRUE;
           }
      }
