@@ -35,6 +35,9 @@ EDJE_FLAGS_VERBOSE_0 =
 EDJE_FLAGS_VERBOSE_1 = -v
 EDJE_FLAGS = $(EDJE_FLAGS_$(V))
 
+ELEMENTARY_CODEGEN = $(top_builddir)/src/bin/@ELEMENTARY_CODEGEN_PRG@
+ELEMENTARY_CODEGEN_FLAGS = --prefix=codegen_example
+
 SRCS = \
 actionslider_example_01.c \
 bg_example_01.c \
@@ -52,6 +55,7 @@ calendar_example_05.c \
 calendar_example_06.c \
 check_example_01.c \
 clock_example.c \
+codegen_example.edc \
 colorselector_example_01.c \
 conformant_example_01.c \
 conformant_example_02.c \
@@ -148,10 +152,23 @@ endif
 if EFL_BUILD_EXAMPLES
 files_DATA += \
 	theme_example.edj \
-	layout_example.edj
+	layout_example.edj\
+	codegen_example.edj
 
 clean-local:
 	rm -f *.edj
+
+codegen_example_generated.c codegen_example_generated.h: codegen_example.edj
+	$(ELEMENTARY_CODEGEN) $(ELEMENTARY_CODEGEN_FLAGS) codegen_example.edj \
+	elm/example/mylayout/default codegen_example_generated.c codegen_example_generated.h
+
+BUILT_SOURCES = codegen_example_generated.c codegen_example_generated.h
+
+codegen_example_SOURCES = \
+	codegen_example.c
+nodist_codegen_example_SOURCES = \
+codegen_example_generated.c \
+codegen_example_generated.h
 
 examples_PROGRAMS = \
 actionslider_example_01 \
@@ -170,6 +187,7 @@ calendar_example_05 \
 calendar_example_06 \
 check_example_01 \
 clock_example \
+codegen_example \
 colorselector_example_01 \
 conformant_example_01 \
 conformant_example_02 \
@@ -367,4 +385,4 @@ screenshots:
 
 endif
 
-EXTRA_DIST = dict.txt layout_example.edc theme_example.edc
+EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen.edc

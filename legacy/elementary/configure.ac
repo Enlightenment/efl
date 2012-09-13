@@ -684,6 +684,7 @@ AC_SUBST(requirement_elm)
 
 EFL_WITH_BIN([eet], [eet-eet], [eet])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
+EFL_WITH_BIN([elementary], [elementary-codegen], [elementary_codegen])
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
