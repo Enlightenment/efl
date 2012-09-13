@@ -848,7 +848,9 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data __UNUSED__)
 {
-   Evas_Coord x, y, w, h, bw;
+   Evas_Coord x, y, w, h, bw, x_boundary;
+   unsigned int adjust_pixels;
+   Eina_Bool h_bounce;
 
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
 
@@ -858,15 +860,41 @@ _scroll_cb(Evas_Object *obj,
    if (sd->round)
      {
         evas_object_geometry_get(sd->main_box, NULL, NULL, &bw, NULL);
-        if (x > ((w / sd->display_item_num) * (sd->item_count
-                                               + (sd->display_item_num % 2))))
-          sd->s_iface->content_region_show
-            (obj, x - ((w / sd->display_item_num) * sd->item_count),
-            y, w, h);
-        else if (x < 0)
-          sd->s_iface->content_region_show
-            (obj, x + ((w / sd->display_item_num) * sd->item_count),
-            y, w, h);
+        x_boundary = bw - w;
+
+        if (x >= x_boundary)
+          {
+              if (sd->left_boundary_reached) return;
+
+              sd->right_boundary_reached = EINA_TRUE;
+              sd->s_iface->bounce_allow_get(obj, &h_bounce, NULL);
+              /* If scroller's bounce effect is disabled, add 1 pixel
+               *  to provide circular effect */
+              adjust_pixels = (_elm_config->thumbscroll_bounce_enable
+                               && h_bounce) ? 0 : 1;
+              sd->s_iface->content_region_show
+                 (obj, x - x_boundary + adjust_pixels, y, w, h);
+              sd->left_boundary_reached = EINA_FALSE;
+          }
+        else if (x <= 0)
+          {
+              if (sd->right_boundary_reached) return;
+
+              sd->left_boundary_reached = EINA_TRUE;
+              sd->s_iface->bounce_allow_get(obj, &h_bounce, NULL);
+              /* If scroller's bounce effect is disabled, subtract 1 pixel
+               *  to provide circular effect */
+              adjust_pixels = (_elm_config->thumbscroll_bounce_enable
+                               && h_bounce) ? 0 : 1;
+              sd->s_iface->content_region_show
+                 (obj, x + x_boundary - adjust_pixels, y, w, h);
+              sd->right_boundary_reached = EINA_FALSE;
+          }
+        else
+          {
+              sd->left_boundary_reached = EINA_FALSE;
+              sd->right_boundary_reached = EINA_FALSE;
+          }
      }
 }
 

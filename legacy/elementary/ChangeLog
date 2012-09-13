@@ -481,3 +481,7 @@
 2012-09-12  Davide Andreoli (davemds)
 
 	* Add external property "play length" to Video widget, read-only.
+
+2012-09-13  Prince Kumar Dubey
+
+	* Fix diskselector when bounce off and round enabled.
