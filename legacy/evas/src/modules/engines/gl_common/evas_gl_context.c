@@ -2578,17 +2578,17 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         unsigned char *x = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 # endif
         if (gc->pipe[i].array.use_vertex)
-          memcpy (x + VERTEX_POINTER, gc->pipe[i].array.vertex, VERTEX_SIZE);
+          memcpy(x + VERTEX_POINTER, gc->pipe[i].array.vertex, VERTEX_SIZE);
         if (gc->pipe[i].array.use_color)
-          memcpy (x + COLOR_POINTER, gc->pipe[i].array.color, COLOR_SIZE);
+          memcpy(x + COLOR_POINTER, gc->pipe[i].array.color, COLOR_SIZE);
         if (gc->pipe[i].array.use_texuv)
-          memcpy (x + TEXUV_POINTER, gc->pipe[i].array.texuv, TEX_SIZE);
+          memcpy(x + TEXUV_POINTER, gc->pipe[i].array.texuv, TEX_SIZE);
         if (gc->pipe[i].array.use_texuv2)
-          memcpy (x + TEXUV2_POINTER, gc->pipe[i].array.texuv2, TEX_SIZE);
+          memcpy(x + TEXUV2_POINTER, gc->pipe[i].array.texuv2, TEX_SIZE);
         if (gc->pipe[i].array.use_texuv3)
-          memcpy (x + TEXUV3_POINTER, gc->pipe[i].array.texuv3, TEX_SIZE);
+          memcpy(x + TEXUV3_POINTER, gc->pipe[i].array.texuv3, TEX_SIZE);
         if (gc->pipe[i].array.use_texm)
-          memcpy (x + TEXM_POINTER, gc->pipe[i].array.texm, TEX_SIZE);
+          memcpy(x + TEXM_POINTER, gc->pipe[i].array.texm, TEX_SIZE);
         glUnmapBuffer(GL_ARRAY_BUFFER);
 #else
 # define VERTEX_POINTER gc->pipe[i].array.vertex
