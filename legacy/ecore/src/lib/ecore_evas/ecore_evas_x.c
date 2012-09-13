@@ -1616,6 +1616,8 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
                   ecore_x_window_resize(ee->prop.window, ee->req.h, ee->req.w);
                   ee->expecting_resize.w = ee->h;
                   ee->expecting_resize.h = ee->w;
+                  evas_output_size_set(ee->evas, ee->req.h, ee->req.w);
+                  evas_output_viewport_set(ee->evas, 0, 0, ee->req.h, ee->req.w);
                }
              else
                {

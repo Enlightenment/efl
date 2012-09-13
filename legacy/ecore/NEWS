@@ -18,6 +18,7 @@ Fixes:
     * ecore_con_url:
      - Timeouts are handled correctly now (passing HTTP status 408 to
        completion callback).
+    * ecore_evas rotation handling on some driver implementations
 
 Improvements:
 
