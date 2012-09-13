@@ -24,8 +24,9 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
    //TODO: get socket object size
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   //this reset plug's min/max size
+   //evas_object_size_hint_min_set(obj, minw, minh);
+   //evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
 static void
