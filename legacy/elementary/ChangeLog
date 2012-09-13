@@ -485,3 +485,20 @@
 2012-09-13  Prince Kumar Dubey
 
 	* Fix diskselector when bounce off and round enabled.
+
+2012-09-12  Flavio Ceolin
+
+        * Add elementary_codegen - tool that genereates code to working with
+          edje files. Given an edje file and a group, it searchs for SWALLOW
+          parts and programs and generates a source/header with the helpers
+          for the follow functions:
+
+            - elm_layout_signal_callback_del
+            - elm_layout_signal_callback_add
+            - elm_layout_signal_emit
+            - elm_layout_content_get
+            - elm_layout_content_set
+            - elm_layout_content_unset
+            - elm_layout_text_get
+            - elm_layout_text_set
+            - elm_layout_theme_set

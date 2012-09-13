@@ -28,12 +28,12 @@ AM_CPPFLAGS = \
 @EIO_CFLAGS@ \
 @EMOTION_CFLAGS@
 
-bin_PROGRAMS = @ELEMENTARY_TEST_PRG@ @ELEMENTARY_CONFIG_PRG@
+bin_PROGRAMS = @ELEMENTARY_TEST_PRG@ @ELEMENTARY_CONFIG_PRG@  @ELEMENTARY_CODEGEN_PRG@
 if BUILD_QUICKLAUNCH
 bin_PROGRAMS += elementary_quicklaunch elementary_run elementary_testql
 endif
 
-EXTRA_PROGRAMS = elementary_test elementary_config
+EXTRA_PROGRAMS = elementary_test elementary_config elementary_codegen
 
 elementary_test_SOURCES = \
 test.c \
@@ -151,6 +151,14 @@ elementary_config_LDADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_LIBS@ \
 	@my_libs@
 elementary_config_LDFLAGS =
+
+elementary_codegen_SOURCES = \
+elementary_codegen.c
+
+elementary_codegen_LDADD = \
+	$(top_builddir)/src/lib/libelementary.la \
+	@my_libs@
+elementary_codegen_LDFLAGS =
 
 if BUILD_QUICKLAUNCH
 elementary_quicklaunch_SOURCES = quicklaunch.c

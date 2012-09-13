@@ -688,6 +688,7 @@ EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 EFL_ENABLE_BIN([elementary-test])
+EFL_ENABLE_BIN([elementary-codegen])
 EFL_ENABLE_BIN([elementary-config])
 
 m4_ifdef([AM_GNU_GETTEXT_VERSION], [
@@ -803,6 +804,7 @@ echo "  eet......................: ${eet_eet}"
 echo "  edje_cc..................: ${edje_cc}"
 echo
 echo "  Build elementary_test....: ${have_elementary_test}"
+echo "  Build elementary_codegen.: ${have_elementary_codegen}"
 echo "  Examples.................: ${enable_build_examples}"
 echo "  Examples installed.......: ${enable_install_examples}"
 echo "  Build elementary_config..: ${have_elementary_config}"
