@@ -158,7 +158,6 @@ _base_geometry_calc(Evas_Object *obj,
      {
         switch (sd->dir_priority[idx])
           {
-           case ELM_CTXPOPUP_DIRECTION_UNKNOWN:
            case ELM_CTXPOPUP_DIRECTION_UP:
              temp.y = (pos.y - base_size.y);
              if ((temp.y - arrow_size.y) < hover_area.y)
