@@ -2563,8 +2563,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 
         glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
 
-        if (gc->pipe[i].array.buffer_alloc < END_POINTER ||
-            gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i))
+        if ((gc->pipe[i].array.buffer_alloc < (int)END_POINTER) ||
+            (gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i)))
           {
              glBufferData(GL_ARRAY_BUFFER, END_POINTER, NULL, GL_STATIC_DRAW);
              gc->pipe[i].array.buffer_alloc = END_POINTER;
@@ -2573,9 +2573,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.buffer_use++;
 
 # if defined(GLES_VARIETY_SGX)
-        void * x = glMapBufferOES(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
+        unsigned char *x = glMapBufferOES(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
 # else
-        void * x = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+        unsigned char *x = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 # endif
         if (gc->pipe[i].array.use_vertex)
           memcpy (x + VERTEX_POINTER, gc->pipe[i].array.vertex, VERTEX_SIZE);
@@ -2598,15 +2598,15 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 # define TEXUV3_POINTER gc->pipe[i].array.texuv3
 # define TEXM_POINTER gc->pipe[i].array.texm
 #endif
-        glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, VERTEX_POINTER);
+        glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, (void *)VERTEX_POINTER);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, COLOR_POINTER);
+        glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, (void *)COLOR_POINTER);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         if (gc->pipe[i].array.use_texuv)
           {
              glEnableVertexAttribArray(SHAD_TEXUV);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, TEXUV_POINTER);
+             glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXUV_POINTER);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
         else
@@ -2632,7 +2632,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 	       {
 		  glEnableVertexAttribArray(SHAD_TEXM);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXM, 2, GL_FLOAT, GL_FALSE, 0, TEXM_POINTER);
+                  glVertexAttribPointer(SHAD_TEXM, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXM_POINTER);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glActiveTexture(GL_TEXTURE1);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -2651,9 +2651,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glEnableVertexAttribArray(SHAD_TEXUV3);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, TEXUV2_POINTER);
+                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXUV2_POINTER);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, TEXUV3_POINTER);
+                  glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXUV3_POINTER);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
                   glActiveTexture(GL_TEXTURE1);
@@ -2680,7 +2680,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
                   glEnableVertexAttribArray(SHAD_TEXUV2);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, TEXUV2_POINTER);
+                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXUV2_POINTER);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
                   glActiveTexture(GL_TEXTURE1);
