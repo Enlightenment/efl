@@ -357,7 +357,7 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
      {
         const op_type_funcs *func =
            _eo_kls_itr_func_get(&obj->mro_itr, op);
-        if (func)
+        if (EINA_LIKELY(func != NULL))
           {
              void *func_data =_eo_data_get(obj, func->src);
              func->func(obj, func_data, p_list);
