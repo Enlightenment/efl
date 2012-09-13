@@ -259,6 +259,25 @@ param in edje programs
 
 */
 
+/**
+ * @file Edje.h
+ * @brief Edje Graphical Design Library
+ *
+ * These routines are used for Edje.
+ */
+
+/**
+ * @defgroup Edje_General_Group Edje General
+ *
+ * @brief This group discusses functions that have general purposes or affect Edje as a whole.
+ *
+ * Besides containing the initialize and shutdown functions of the library, which should
+ * always be called when we are using Edje, this module contains some other utilities that
+ * could be used in many contexts or should do their jobs independent of the context inside Edje.
+ *
+ * @{
+ */
+
 #ifndef _EDJE_H
 #define _EDJE_H
 
@@ -318,11 +337,142 @@ extern "C" {
 
    EAPI extern Edje_Version *edje_version;
 
+typedef enum _Edje_Action_Type
+{
+   EDJE_ACTION_TYPE_NONE                = 0,
+   EDJE_ACTION_TYPE_STATE_SET           = 1,
+   EDJE_ACTION_TYPE_ACTION_STOP         = 2,
+   EDJE_ACTION_TYPE_SIGNAL_EMIT         = 3,
+   EDJE_ACTION_TYPE_DRAG_VAL_SET        = 4,
+   EDJE_ACTION_TYPE_DRAG_VAL_STEP       = 5,
+   EDJE_ACTION_TYPE_DRAG_VAL_PAGE       = 6,
+   EDJE_ACTION_TYPE_SCRIPT              = 7,
+   EDJE_ACTION_TYPE_FOCUS_SET           = 8,
+   EDJE_ACTION_TYPE_RESERVED00          = 9,
+   EDJE_ACTION_TYPE_FOCUS_OBJECT        = 10,
+   EDJE_ACTION_TYPE_PARAM_COPY          = 11,
+   EDJE_ACTION_TYPE_PARAM_SET           = 12,
+   EDJE_ACTION_TYPE_SOUND_SAMPLE        = 13, /**< @since 1.1 */
+   EDJE_ACTION_TYPE_SOUND_TONE          = 14, /**< @since 1.1 */
+   EDJE_ACTION_TYPE_LAST                = 15
+} Edje_Action_Type;
+
+typedef enum _Edje_Load_Error
+{
+   EDJE_LOAD_ERROR_NONE = 0, /**< No error happened, the loading was successful */
+   EDJE_LOAD_ERROR_GENERIC = 1, /**< A generic error happened during the loading */
+   EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< The file pointed to did not exist */
+   EDJE_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission to read the given file was denied */
+   EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Resource allocation failed during the loading */
+   EDJE_LOAD_ERROR_CORRUPT_FILE = 5, /**< The file pointed to was corrupt */
+   EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6, /**< The file pointed to had an unknown format */
+   EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7, /**< The file pointed to is incompatible, i.e., it doesn't match the library's current version's format */
+   EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8, /**< The group/collection set to load from was @b not found in the file */
+   EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9 /**< The group/collection set to load from had <b>recursive references</b> on its components */
+} Edje_Load_Error; /**< Edje file loading error codes one can get - see edje_load_error_str() too. */
+
 /**
- * @file Edje.h
- * @brief Edje Graphical Design Library
+ * @brief Initialize the Edje library.
  *
- * These routines are used for Edje.
+ * @return The new init count. The initial value is zero.
+ *
+ * This function initializes the Ejde library, making the proper calls
+ * to internal initialization functions. It will also initialize its
+ * @b dependencies, making calls to @c eina_init(), @c ecore_init(),
+ * @c embryo_init() and @c eet_init(). So, there is no need to call
+ * those functions again, in your code. To shutdown Edje there is the
+ * function edje_shutdown().
+ *
+ * @see edje_shutdown()
+ * @see eina_init()
+ * @see ecore_init()
+ * @see embryo_init()
+ * @see eet_init()
+ *
+ */
+EAPI int          edje_init                       (void);
+
+/**
+ * @brief Shutdown the Edje library.
+ *
+ * @return The number of times the library has been initialised
+ *         without being shutdown.
+ *
+ * This function shuts down the Edje library. It will also call the
+ * shutdown functions of its @b dependencies, which are @c
+ * eina_shutdown(), @c ecore_shutdown(), @c embryo_shutdown() and @c
+ * eet_shutdown(), so there is no need to call these functions again,
+ * in your code.
+ *
+ * @see edje_init()
+ * @see eina_shutdown()
+ * @see ecore_shutdown()
+ * @see embryo_shutdown()
+ * @see eet_shutdown()
+ *
+ */
+EAPI int		edje_shutdown			(void);
+
+/**
+ * @brief Set the edje append fontset.
+ *
+ * @param fonts The fontset to append.
+ *
+ * This function sets the edje append fontset.
+ *
+ */
+EAPI void		edje_fontset_append_set		(const char *fonts);
+
+/**
+ * Get data from the file level data block of an edje file
+ * @param file The path to the .edj file
+ * @param key The data key
+ * @return The string value of the data. Must be freed by the user when no
+ * longer needed.
+ *
+ * If an edje file is built from the following edc:
+ *
+ * data {
+ *   item: "key1" "value1";
+ *   item: "key2" "value2";
+ * }
+ * collections { ... }
+ *
+ * Then, edje_file_data_get("key1") will return "value1"
+ */
+EAPI char        *edje_file_data_get              (const char *file, const char *key);
+
+/**
+ * @brief Get the edje append fontset.
+ *
+ * @return The edje append fontset.
+ *
+ * This function returns the edje append fontset set by
+ * edje_fontset_append_set() function.
+ *
+ * @see edje_fontset_append_set().
+ *
+ */
+EAPI const char		*edje_fontset_append_get	(void);
+
+/**
+ * Converts the given Edje file load error code into a string
+ * describing it in English.
+ *
+ * @param error the error code, a value in ::Edje_Load_Error.
+ * @return Always returns a valid string. If the given @p error is not
+ *         supported, <code>"Unknown error"</code> is returned.
+ *
+ * edje_object_file_set() is a function which sets an error value,
+ * afterwards, which can be fetched with
+ * edje_object_load_error_get(). The function in question is meant
+ * to be used in conjunction with the latter, for pretty-printing any
+ * possible error cause.
+ */
+EAPI const char		*edje_load_error_str		(Edje_Load_Error error);
+
+/**
+ * @}
  */
 
 /**
@@ -418,26 +568,6 @@ typedef enum _Edje_Text_Effect
    EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4),
    EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)
 } Edje_Text_Effect;
-
-typedef enum _Edje_Action_Type
-{
-   EDJE_ACTION_TYPE_NONE                = 0,
-   EDJE_ACTION_TYPE_STATE_SET           = 1,
-   EDJE_ACTION_TYPE_ACTION_STOP         = 2,
-   EDJE_ACTION_TYPE_SIGNAL_EMIT         = 3,
-   EDJE_ACTION_TYPE_DRAG_VAL_SET        = 4,
-   EDJE_ACTION_TYPE_DRAG_VAL_STEP       = 5,
-   EDJE_ACTION_TYPE_DRAG_VAL_PAGE       = 6,
-   EDJE_ACTION_TYPE_SCRIPT              = 7,
-   EDJE_ACTION_TYPE_FOCUS_SET           = 8,
-   EDJE_ACTION_TYPE_RESERVED00          = 9,
-   EDJE_ACTION_TYPE_FOCUS_OBJECT        = 10,
-   EDJE_ACTION_TYPE_PARAM_COPY          = 11,
-   EDJE_ACTION_TYPE_PARAM_SET           = 12,
-   EDJE_ACTION_TYPE_SOUND_SAMPLE        = 13, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_SOUND_TONE          = 14, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_LAST                = 15
-} Edje_Action_Type;
 
 typedef enum _Edje_Tween_Mode
 {
@@ -569,20 +699,6 @@ typedef enum _Edje_Drag_Dir
    EDJE_DRAG_DIR_Y = 2,
    EDJE_DRAG_DIR_XY = 3
 } Edje_Drag_Dir;
-
-typedef enum _Edje_Load_Error
-{
-   EDJE_LOAD_ERROR_NONE = 0, /**< No error happened, the loading was successful */
-   EDJE_LOAD_ERROR_GENERIC = 1, /**< A generic error happened during the loading */
-   EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< The file pointed to did not exist */
-   EDJE_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission to read the given file was denied */
-   EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Resource allocation failed during the loading */
-   EDJE_LOAD_ERROR_CORRUPT_FILE = 5, /**< The file pointed to was corrupt */
-   EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6, /**< The file pointed to had an unknown format */
-   EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7, /**< The file pointed to is incompatible, i.e., it doesn't match the library's current version's format */
-   EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8, /**< The group/collection set to load from was @b not found in the file */
-   EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9 /**< The group/collection set to load from had <b>recursive references</b> on its components */
-} Edje_Load_Error; /**< Edje file loading error codes one can get - see edje_load_error_str() too. */
 
 typedef enum _Edje_Text_Filter_Type
 {
@@ -905,48 +1021,6 @@ typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, c
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
 /**
- * @brief Initialize the Edje library.
- *
- * @return The new init count. The initial value is zero.
- *
- * This function initializes the Ejde library, making the proper calls
- * to internal initialization functions. It will also initialize its
- * @b dependencies, making calls to @c eina_init(), @c ecore_init(),
- * @c embryo_init() and @c eet_init(). So, there is no need to call
- * those functions again, in your code. To shutdown Edje there is the
- * function edje_shutdown().
- *
- * @see edje_shutdown()
- * @see eina_init()
- * @see ecore_init()
- * @see embryo_init()
- * @see eet_init()
- *
- */
-EAPI int          edje_init                       (void);
-
-/**
- * @brief Shutdown the Edje library.
- *
- * @return The number of times the library has been initialised
- *         without being shutdown.
- *
- * This function shuts down the Edje library. It will also call the
- * shutdown functions of its @b dependencies, which are @c
- * eina_shutdown(), @c ecore_shutdown(), @c embryo_shutdown() and @c
- * eet_shutdown(), so there is no need to call these functions again,
- * in your code.
- *
- * @see edje_init()
- * @see eina_shutdown()
- * @see ecore_shutdown()
- * @see embryo_shutdown()
- * @see eet_shutdown()
- *
- */
-EAPI int          edje_shutdown                   (void);
-
-/**
  * @brief Set edje trasitions' frame time.
  *
  * @param t The frame time, in seconds. Default value is 1/30.
@@ -997,29 +1071,6 @@ EAPI void         edje_freeze                     (void);
  *
  */
 EAPI void         edje_thaw                       (void);
-
-/**
- * @brief Set the edje append fontset.
- *
- * @param fonts The fontset to append.
- *
- * This function sets the edje append fontset.
- *
- */
-EAPI void         edje_fontset_append_set         (const char *fonts);
-
-/**
- * @brief Get the edje append fontset.
- *
- * @return The edje append fontset.
- *
- * This function returns the edje append fontset set by
- * edje_fontset_append_set() function.
- *
- * @see edje_fontset_append_set().
- *
- */
-EAPI const char  *edje_fontset_append_get         (void);
 
 /**
  * @brief Set Edje's global scaling factor.
@@ -1170,25 +1221,6 @@ EAPI void         edje_file_collection_list_free  (Eina_List *lst);
  * @return 1 if a match is found, 0 otherwise
  */
 EAPI Eina_Bool    edje_file_group_exists          (const char *file, const char *glob);
-
-/**
- * Get data from the file level data block of an edje file
- * @param file The path to the .edj file
- * @param key The data key
- * @return The string value of the data. Must be freed by the user when no
- * longer needed.
- *
- * If an edje file is built from the following edc:
- *
- * data {
- *   item: "key1" "value1";
- *   item: "key2" "value2";
- * }
- * collections { ... }
- *
- * Then, edje_file_data_get("key1") will return "value1"
- */
-EAPI char        *edje_file_data_get              (const char *file, const char *key);
 
 /**
  * @brief Set the file cache size.
@@ -1650,22 +1682,6 @@ EAPI void             edje_object_file_get        (const Evas_Object *obj, const
  * @see edje_load_error_str()
  */
 EAPI Edje_Load_Error  edje_object_load_error_get  (const Evas_Object *obj);
-
-/**
- * Converts the given Edje file load error code into a string
- * describing it in English.
- *
- * @param error the error code, a value in ::Edje_Load_Error.
- * @return Always returns a valid string. If the given @p error is not
- *         supported, <code>"Unknown error"</code> is returned.
- *
- * edje_object_file_set() is a function which sets an error value,
- * afterwards, which can be fetched with
- * edje_object_load_error_get(). The function in question is meant
- * to be used in conjunction with the latter, for pretty-printing any
- * possible error cause.
- */
-EAPI const char      *edje_load_error_str         (Edje_Load_Error error);
 
 /**
  * @brief Preload the images on the Edje Object in the background.
