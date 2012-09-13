@@ -936,3 +936,7 @@
 
        * Fix ecore_x_randr to actually return crtcs possible outputs properly.
        * Fix ecore_x_randr to actually return crtcs outputs properly.
+
+2012-09-13  Mike Blumenkrantz
+
+       * Return -1 for ecore_con_server_fd_get() in the case that the server has already been deleted

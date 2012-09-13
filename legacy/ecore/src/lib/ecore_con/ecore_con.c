@@ -953,6 +953,7 @@ ecore_con_server_fd_get(Ecore_Con_Server *svr)
         return -1;
      }
    if (svr->created) return -1;
+   if (svr->delete_me) return -1;
    return ecore_main_fd_handler_fd_get(svr->fd_handler);
 }
 
