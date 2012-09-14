@@ -305,7 +305,7 @@
 
 2012-07-01  Vincent Torri
 
-        * Remove --enable-coverage from configure options,
+        * Remove --enable-coverage from configure options.
 
 2012-07-04  Vincent Torri
 
@@ -348,3 +348,7 @@
         * Add check if given arguments (distance and coordinates) in eina_tiler
         and eina_rectangle are not below zero
         * Documentation for eina list specified and eina stringshare fixed
+
+2012-07-01  Vincent Torri
+
+        * Add DOCTYPE children to be parse in eina_simple_xml.

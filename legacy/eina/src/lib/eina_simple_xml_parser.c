@@ -181,6 +181,15 @@ _eina_simple_xml_tag_cdata_end_find(const char *itr, const char *itr_end)
    return NULL;
 }
 
+static inline const char *
+_eina_simple_xml_tag_doctype_child_end_find(const char *itr, const char *itr_end)
+{
+   for (; itr < itr_end; itr++)
+     if (*itr == '>')
+       return itr;
+   return NULL;
+}
+
 /**
  * @endcond
  */
@@ -352,6 +361,13 @@ eina_simple_xml_parse(const char *buf, unsigned buflen, Eina_Bool strip, Eina_Si
                             type = EINA_SIMPLE_XML_CDATA;
                             toff = sizeof("![CDATA[") - 1;
                          }
+                       else if ((itr + sizeof("<!>") - 1 < itr_end) &&
+                                (!memcmp(itr + 2, "",
+                                         sizeof("") - 1)))
+                         {
+                            type = EINA_SIMPLE_XML_DOCTYPE_CHILD;
+                            toff = sizeof("!") - 1;
+                         }
                        else
                          {
                             type = EINA_SIMPLE_XML_OPEN;
@@ -366,6 +382,8 @@ eina_simple_xml_parse(const char *buf, unsigned buflen, Eina_Bool strip, Eina_Si
 
                   if (type == EINA_SIMPLE_XML_CDATA)
                     p = _eina_simple_xml_tag_cdata_end_find(itr + 1 + toff, itr_end);
+                  else if (type == EINA_SIMPLE_XML_DOCTYPE_CHILD)
+                    p = _eina_simple_xml_tag_doctype_child_end_find(itr + 1 + toff, itr_end);
                   else if (type == EINA_SIMPLE_XML_COMMENT)
                     p = _eina_simple_xml_tag_comment_end_find(itr + 1 + toff, itr_end);
                   else
@@ -407,6 +425,7 @@ eina_simple_xml_parse(const char *buf, unsigned buflen, Eina_Bool strip, Eina_Si
                           case EINA_SIMPLE_XML_DATA:
                           case EINA_SIMPLE_XML_ERROR:
                           case EINA_SIMPLE_XML_DOCTYPE:
+                          case EINA_SIMPLE_XML_DOCTYPE_CHILD:
                           case EINA_SIMPLE_XML_IGNORED:
                              break;
                          }
@@ -758,6 +777,28 @@ eina_simple_xml_node_cdata_free(Eina_Simple_XML_Node_Data *node)
    _eina_simple_xml_node_data_free(node);
 }
 
+EAPI Eina_Simple_XML_Node_Doctype_Child *
+eina_simple_xml_node_doctype_child_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length)
+{
+   return _eina_simple_xml_node_data_new
+     (parent, EINA_SIMPLE_XML_NODE_DOCTYPE_CHILD, contents, length);
+}
+
+EAPI void
+eina_simple_xml_node_doctype_child_free(Eina_Simple_XML_Node_Data *node)
+{
+   if (!node)
+     return;
+
+   EINA_MAGIC_CHECK_DATA(&node->base);
+   if (node->base.type != EINA_SIMPLE_XML_NODE_DOCTYPE_CHILD)
+     {
+        ERR("expected node of type: doctype child!");
+        return;
+     }
+   _eina_simple_xml_node_data_free(node);
+}
+
 EAPI Eina_Simple_XML_Node_Processing *
 eina_simple_xml_node_processing_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length)
 {
@@ -907,6 +948,9 @@ _eina_simple_xml_node_parse(void *data, Eina_Simple_XML_Type type, const char *c
            (ctx->current, content, length);
       case EINA_SIMPLE_XML_DOCTYPE:
          return !!eina_simple_xml_node_doctype_new
+           (ctx->current, content, length);
+      case EINA_SIMPLE_XML_DOCTYPE_CHILD:
+         return !!eina_simple_xml_node_doctype_child_new
            (ctx->current, content, length);
       case EINA_SIMPLE_XML_COMMENT:
          return !!eina_simple_xml_node_comment_new
@@ -1077,6 +1121,18 @@ _eina_simple_xml_node_dump(Eina_Strbuf *buf, Eina_Simple_XML_Node *node, const c
              (buf, "<!DOCTYPE ", sizeof("<!DOCTYPE ") - 1);
            eina_strbuf_append_length(buf, n->data, n->length);
            eina_strbuf_append_char(buf, '>');
+           if (indent) eina_strbuf_append_char(buf, '\n');
+        }
+        break;
+
+      case EINA_SIMPLE_XML_NODE_DOCTYPE_CHILD:
+        {
+           Eina_Simple_XML_Node_Data *n = (Eina_Simple_XML_Node_Data *)node;
+
+           if (indent) _eina_simple_xml_node_dump_indent(buf, indent, level);
+           eina_strbuf_append_length(buf, "<!", sizeof("<!") - 1);
+           eina_strbuf_append_length(buf, n->data, n->length);
+           eina_strbuf_append_length(buf, ">", sizeof(">") - 1);
            if (indent) eina_strbuf_append_char(buf, '\n');
         }
         break;

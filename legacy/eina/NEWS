@@ -3,6 +3,9 @@ Eina 1.8.0
 Changes since Eina 1.7.0:
 -------------------------
 
+Additions:
+    * Add DOCTYPE children parsing in eina_simple_xml
+
 Improvements:
     * Speedup Eina Rbtree Iterator by recycling memory instead of massively calling malloc/free.
 

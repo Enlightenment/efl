@@ -146,6 +146,7 @@ typedef struct _Eina_Simple_XML_Node_Data Eina_Simple_XML_Node_Data;
 typedef struct _Eina_Simple_XML_Node_Data Eina_Simple_XML_Node_CData;
 typedef struct _Eina_Simple_XML_Node_Data Eina_Simple_XML_Node_Processing;
 typedef struct _Eina_Simple_XML_Node_Data Eina_Simple_XML_Node_Doctype;
+typedef struct _Eina_Simple_XML_Node_Data Eina_Simple_XML_Node_Doctype_Child; /**< @since 1.8 */
 typedef struct _Eina_Simple_XML_Node_Data Eina_Simple_XML_Node_Comment;
 typedef struct _Eina_Simple_XML_Attribute Eina_Simple_XML_Attribute;
 
@@ -167,7 +168,8 @@ typedef enum _Eina_Simple_XML_Node_Type
   EINA_SIMPLE_XML_NODE_CDATA,
   EINA_SIMPLE_XML_NODE_PROCESSING,
   EINA_SIMPLE_XML_NODE_DOCTYPE,
-  EINA_SIMPLE_XML_NODE_COMMENT
+  EINA_SIMPLE_XML_NODE_COMMENT,
+  EINA_SIMPLE_XML_NODE_DOCTYPE_CHILD, /**< @since 1.8 */
 } Eina_Simple_XML_Node_Type;
 
 struct _Eina_Simple_XML_Node
@@ -208,7 +210,8 @@ typedef enum _Eina_Simple_XML_Type
   EINA_SIMPLE_XML_PROCESSING, /*!< \<?xml ... ?\> \<?php .. ?\> */
   EINA_SIMPLE_XML_DOCTYPE, /*!< \<!DOCTYPE html */
   EINA_SIMPLE_XML_COMMENT, /*!< \<!-- something --\> */
-  EINA_SIMPLE_XML_IGNORED /*!< whatever is ignored by parser, like whitespace */
+  EINA_SIMPLE_XML_IGNORED, /*!< whatever is ignored by parser, like whitespace */
+  EINA_SIMPLE_XML_DOCTYPE_CHILD /*!< \<!DOCTYPE_CHILD @since 1.8 */
 } Eina_Simple_XML_Type;
 
 typedef Eina_Bool (*Eina_Simple_XML_Cb)(void *data, Eina_Simple_XML_Type type, const char *content, unsigned offset, unsigned length);
@@ -359,6 +362,32 @@ EAPI Eina_Simple_XML_Node_CData * eina_simple_xml_node_cdata_new(Eina_Simple_XML
  * @param node to release memory.
  */
 EAPI void eina_simple_xml_node_cdata_free(Eina_Simple_XML_Node_Data *node);
+
+
+/**
+ * Create new doctype child. If parent is provided, it is automatically appended.
+ *
+ * @param parent if provided, will be set in the resulting structure
+ *        as well as the doctype child will be appended to children list.
+ * @param contents String to be used. Must not be @c NULL.
+ * @param length size in bytes of @a content.
+ *
+ * @return Newly allocated memory or @c NULL on error. This memory should be
+ *         released with eina_simple_xml_node_doctype_child_free() or indirectly
+ *         with eina_simple_xml_node_tag_free() of the parent.
+ *
+ * @since 1.8
+ */
+EAPI Eina_Simple_XML_Node_Doctype_Child * eina_simple_xml_node_doctype_child_new(Eina_Simple_XML_Node_Tag *parent, const char *contents, size_t length);
+
+/**
+ * Remove doctype child from parent and delete it.
+ *
+ * @param node to release memory.
+ *
+ * @since 1.8
+ */
+EAPI void eina_simple_xml_node_doctype_child_free(Eina_Simple_XML_Node_Data *node);
 
 
 /**
