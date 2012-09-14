@@ -293,3 +293,8 @@ div.luaattrib {
         color: #888;
         border: 1px solid #ccc;
 }
+
+div.title {
+   font-size : 20px;
+   font-weight : bold;
+}
