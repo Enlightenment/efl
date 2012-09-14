@@ -6,6 +6,7 @@
  * @li @ref tutorial_ephysics_bouncing_ball
  * @li @ref tutorial_ephysics_bouncing_text
  * @li @ref tutorial_ephysics_collision_detection
+ * @li @ref tutorial_ephysics_collision_filter
  * @li @ref tutorial_ephysics_delete_body
  * @li @ref tutorial_ephysics_constraint
  */
@@ -372,6 +373,85 @@
  * @include test_collision_detection.c
  *
  * @example test_collision_detection.c
+ */
+
+/**
+ * @page tutorial_ephysics_collision_filter EPhysics - Collision Filter
+ *
+ * The purpose of this example is to demonstrate the EPhysics Collision Filter
+ * usage - The code adds four balls in 2 rows and 2 columns, two on each
+ * collision group, the collision only happens when the balls are in the
+ * same group (row),to make it easier, balls in the same group has the same
+ * color and size.
+ *
+ * For this example we'll have an EPhysics_World and four basic EPhysics_Bodys,
+ * we'll apply an impulse on then and see what happens when they're in other
+ * collision group.
+ *
+ * The basic concepts like - initializing an EPhysics_World, render geometry,
+ * physics limiting boundaries, add an Ephysics_Body, associate it to evas
+ * objects, change restitution, friction and impulse properties, were
+ * already covered in
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * @section add-callbacks Adding the balls
+ * @dontinclude test_collision_filter.c
+ *
+ * We'll use two arrays (color and size) to distinguish the groups.
+ *
+ * @skip _world_populate
+ * @until row;
+ *
+ * The balls declaration was placed into a For loop, just to simplify the
+ * coding and divide them in two groups.
+ *
+ * @skip for (i = 0; i < 4
+ * @until 0.1);
+ *
+ * Note in this part we divide the balls in two groups by color (row).
+ *
+ * @skipline ephysics_body_collision_group_add(fall_body
+ *
+ * The impulse will be applied in only 1 ball per group, in this case:
+ *
+ * The 1st row 2nd column ball will be applied an impulse to the
+ * left (-300kg * p/s).
+ *
+ * The 2nd row 1st column ball will be applied an impulse to the
+ * right (300kg * p/s).
+ *
+ * And then saving the body into a list.
+ *
+ * @skip if (column + row == 1
+ * @until }
+ * @skipline }
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_collision_filter_c.
+ *
+ */
+
+ /**
+ * @page test_collision_filter_c test_collision_filter.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-collision_filter-c test_collision_filter.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_data_new
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_collision_filter.c
+ *
+ * @example test_collision_filter.c
  */
 
 /**
