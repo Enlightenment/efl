@@ -1,5 +1,6 @@
 ACLOCAL_AMFLAGS = -I m4
 
+if !BUILD_DOCS_ONLY
 SUBDIRS = src doc data
 
 MAINTAINERCLEANFILES = \
@@ -36,6 +37,7 @@ README
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = ephysics.pc
+endif
 
 .PHONY: doc
 

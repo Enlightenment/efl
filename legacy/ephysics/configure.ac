@@ -131,8 +131,21 @@ case "$host_os" in
 esac
 AC_SUBST(EFL_EPHYSICS_BUILD)
 
-# Dependencies for the library
+build_docs_only="no"
+AC_ARG_ENABLE([build-docs-only],
+   AC_HELP_STRING([--enable-build-docs-only],
+                  [Doesn't build library or tests, just build docs. @<:@default==disabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       build_docs_only="yes"
+    fi
+   ],
+   [])
+AM_CONDITIONAL([BUILD_DOCS_ONLY], [test "x${build_docs_only}" = "xyes"])
 
+
+# Dependencies for the library
+if test "${build_docs_only}" = "no" ; then
 PKG_CHECK_MODULES([EPHYSICS],
    [
     eina >= 1.2.99
@@ -142,6 +155,7 @@ PKG_CHECK_MODULES([EPHYSICS],
    ])
 
 requirement_ephysics="bullet >= 2.80 ecore >= 1.2.99 evas >= 1.2.99 eina >= 1.2.99 ${requirement_ephysics}"
+fi
 
 ### Checks for header files
 AC_CHECK_HEADERS([locale.h sys/resource.h])
@@ -175,22 +189,23 @@ esac
 AC_SUBST(lt_enable_auto_import)
 
 ## Tests
+build_tests="no"
+if test "${build_docs_only}" = "no" ; then
 PKG_CHECK_MODULES([ELEMENTARY], [elementary >= 1.0.99], [build_tests="yes"], [build_tests="no"])
 AC_ARG_ENABLE([build-tests],
    AC_HELP_STRING([--disable-build-tests],
                   [Disable building tests. It is enabled by default unless
                    required dependencies are not present. @<:@default==enabled@:>@]),
    [
-    if test "x${enableval}" = "xno" ; then
-       build_tests="no"
-    else
+    if test "x${enableval}" = "xyes" ; then
        requirement_ephysics="elementary >= 1.0.99 ${requirement_ephysics}"
     fi
    ],
    [])
+fi
 AM_CONDITIONAL([BUILD_TESTS], [test "x${build_tests}" = "xyes"])
 
-if test "${build_tests}" = "yes" ; then
+if test "${build_tests}" = "yes" && test "${build_docs_only}" = "no" ; then
 PKG_CHECK_MODULES([EPHYSICS_TEST],
    [
     eina >= 1.2.99
@@ -229,7 +244,7 @@ echo "------------------------------------------------------------------------"
 echo
 echo "Configuration Options Summary:"
 echo
-echo "  Documentation........: ${build_doc}"
+echo "  Documentation........: ${build_doc} | docs-only: ${build_docs_only}"
 echo "  Tests................: ${build_tests}"
 echo
 echo "Compilation............: make (or gmake)"
