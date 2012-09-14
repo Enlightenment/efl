@@ -111,6 +111,9 @@
 #ifndef GL_MAX_SAMPLES_IMG
 #define GL_MAX_SAMPLES_IMG 0x9135
 #endif
+#ifndef GL_WRITE_ONLY
+#define GL_WRITE_ONLY 0x88B9
+#endif
 
 #define SHAD_VERTEX 0
 #define SHAD_COLOR  1
@@ -268,7 +271,6 @@ struct _Evas_GL_Shared
 #define RTYPE_IMASK 6
 #define RTYPE_YUY2  7
 #define RTYPE_NV12  8
-#define GL_USE_SERVER_BUFFERS
 #define ARRAY_BUFFER_USE 500
 #define ARRAY_BUFFER_USE_SHIFT 100
 
@@ -333,11 +335,9 @@ struct _Evas_Engine_GL_Context
          Eina_Bool use_texuv3 : 1;
          Eina_Bool use_texm : 1;
          Evas_GL_Image *im;
-#ifdef GL_USE_SERVER_BUFFERS
          GLuint buffer;
          int buffer_alloc;
          int buffer_use;
-#endif
       } array;
    } pipe[MAX_PIPES];
 
@@ -638,14 +638,16 @@ Filtered_Image   *evas_gl_common_image_filtered_save(Evas_GL_Image *im, Evas_GL_
 void              evas_gl_common_image_filtered_free(Evas_GL_Image *im, Filtered_Image *);
 #endif
 
-extern void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
-extern void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
-extern void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
-extern void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
-extern void (*glsym_glGetProgramBinary)     (GLuint a, GLsizei b, GLsizei *c, GLenum *d, void *e);
-extern void (*glsym_glProgramBinary)        (GLuint a, GLenum b, const void *c, GLint d);
-extern void (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d);
-extern void (*glsym_glReleaseShaderCompiler)(void);
+extern void       (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
+extern void       (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
+extern void       (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
+extern void       (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
+extern void       (*glsym_glGetProgramBinary)     (GLuint a, GLsizei b, GLsizei *c, GLenum *d, void *e);
+extern void       (*glsym_glProgramBinary)        (GLuint a, GLenum b, const void *c, GLint d);
+extern void       (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d);
+extern void       (*glsym_glReleaseShaderCompiler)(void);
+extern void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b);
+extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
