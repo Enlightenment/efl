@@ -5,6 +5,7 @@
  *
  * @li @ref tutorial_ephysics_bouncing_ball
  * @li @ref tutorial_ephysics_delete_body
+ * @li @ref tutorial_ephysics_constraint
  */
 
 /**
@@ -290,3 +291,63 @@
  *
  * @example test_delete.c
  */
+
+ /**
+ * @page tutorial_ephysics_constraint EPhysics - Constraint
+ *
+ * The purpose of this example is to demonstrate the EPhysics Constraint usage -
+ * The code apply a constraint between two cubes.
+ *
+ * For this example we'll have an EPhysics_World, and two basic EPhysics_Bodys.
+ *
+ * The basic concepts like - defining an EPhysics_World, render geometry,
+ * physics limiting boundaries, add an EPhysics_Body, associate it to evas
+ * objects, change restitution, friction and impulse properties, were
+ * already covered in
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * @section add-constraint Adding a constraint
+ * @dontinclude test_constraint.c
+ *
+ * Constraint is a specific type of variable in EPhysics.
+ *
+ * @skipline EPhysics_Constraint
+ *
+ * Here we're working with a point-to-point constraint, its purpose is to join
+ * two bodies limiting their movements based on specified anchors.
+ *
+ * After we create our 2 EPhysics_Bodys, now we'll add a constraint between
+ * them and setting an anchor to first body's Y using a p2p constraint
+ * (point to point).
+ *
+ * @skip constraint = ephysics_constraint_p2p
+ * @until );
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_constraint_c.
+ *
+ */
+
+ /**
+ * @page test_constraint_c test_constraint.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-constraint-c test_constraint.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_data_new
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_constraint.c
+ *
+ * @example test_constraint.c
+ */
+
