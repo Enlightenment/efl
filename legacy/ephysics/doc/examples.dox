@@ -22,6 +22,9 @@
  * responding to users events by making it jump - applying a central impulse on
  * it.
  *
+ * @image html bouncing_ball.png
+ * @image latex bouncing_ball.eps
+ *
  * We'll guide you on defining a EPhysics world, defining its render geometry
  * and the physics limiting boundaries, you'll learn how to add EPhysics bodies
  * and how to associate it to evas objects.  We also explain how to change
@@ -219,6 +222,9 @@
  * The purpose of this example is to demonstrate the EPhysics_Body binding to
  * a text (Evas_Object)
  *
+ * @image html bouncing_text.png
+ * @image latex bouncing_text.eps
+ *
  * For this example we'll have an EPhysics_World and one basic EPhysics_Body.
  *
  * The basic concepts like - initializing an EPhysics_World, render geometry,
@@ -291,6 +297,9 @@
  * The purpose of this example is to demonstrate the EPhysics Collision
  * Detection usage - The code adds two balls, one with impulse and the second
  * with a collision detection callback, to show an effect.
+ *
+ * @image html collision_detection.png
+ * @image latex collision_detection.eps
  *
  * For this example we'll have an EPhysics_World, and two basic EPhysics_Bodys,
  * we'll apply an impulse in one of then and the other will be stopped
@@ -386,6 +395,9 @@
  * collision group, the collision only happens when the balls are in the
  * same group (row),to make it easier, balls in the same group has the same
  * color and size.
+ *
+ * @image html collision_filter.png
+ * @image latex collision_filter.eps
  *
  * For this example we'll have an EPhysics_World and four basic EPhysics_Bodys,
  * we'll apply an impulse on then and see what happens when they're in other
@@ -606,6 +618,9 @@
  *
  * The purpose of this example is to demonstrate the EPhysics Gravity usage -
  * The code apply gravity in an EPhysics_World with two cubes in movement.
+ *
+ * @image html no_gravity.png
+ * @image latex no_gravity.eps
  *
  * For this example we'll have an EPhysics_World, and two basic EPhysics_Bodys.
  *
