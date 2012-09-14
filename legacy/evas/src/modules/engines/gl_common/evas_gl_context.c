@@ -12,16 +12,20 @@
 static int sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
 
-typedef void    (*glsym_func_void) ();
+typedef void       (*glsym_func_void) ();
+typedef void      *(*glsym_func_void_ptr) ();
+typedef GLboolean  (*glsym_func_boolean) ();
 
-void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b) = NULL;
-void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b) = NULL;
-void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e) = NULL;
-void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b) = NULL;
-void (*glsym_glGetProgramBinary)     (GLuint a, GLsizei b, GLsizei *c, GLenum *d, void *e) = NULL;
-void (*glsym_glProgramBinary)        (GLuint a, GLenum b, const void *c, GLint d) = NULL;
-void (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d) = NULL;
-void (*glsym_glReleaseShaderCompiler)(void) = NULL;
+void       (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b) = NULL;
+void       (*glsym_glBindFramebuffer)      (GLenum a, GLuint b) = NULL;
+void       (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e) = NULL;
+void       (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b) = NULL;
+void       (*glsym_glGetProgramBinary)     (GLuint a, GLsizei b, GLsizei *c, GLenum *d, void *e) = NULL;
+void       (*glsym_glProgramBinary)        (GLuint a, GLenum b, const void *c, GLint d) = NULL;
+void       (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d) = NULL;
+void       (*glsym_glReleaseShaderCompiler)(void) = NULL;
+void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b) = NULL;
+GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 // just used for finding symbols :)
@@ -98,6 +102,21 @@ gl_symbols(void)
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompiler", glsym_func_void);
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompilerEXT", glsym_func_void);
    FINDSYM(glsym_glReleaseShaderCompiler, "glReleaseShaderCompilerARB", glsym_func_void);
+
+   if (!getenv("EVAS_GL_MAPBUFFER_DISABLE"))
+     {
+        FINDSYM(glsym_glMapBuffer, "glMapBuffer", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferEXT", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferARB", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferOES", glsym_func_void_ptr);
+        FINDSYM(glsym_glMapBuffer, "glMapBufferKHR", glsym_func_void_ptr);
+        
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBuffer", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferEXT", glsym_func_boolean); 
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferARB", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferOES", glsym_func_boolean);
+        FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferKHR", glsym_func_boolean);
+     }
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #undef FINDSYM
@@ -500,11 +519,12 @@ evas_gl_common_context_new(void)
    for (i = 0; i < MAX_PIPES; i++)
      {
         gc->pipe[i].shader.render_op = EVAS_RENDER_BLEND;
-#ifdef GL_USE_SERVER_BUFFERS
-        glGenBuffers (1, &gc->pipe[i].array.buffer);
-        gc->pipe[i].array.buffer_alloc = 0;
-        gc->pipe[i].array.buffer_use = 0;
-#endif
+        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+          {
+             glGenBuffers(1, &gc->pipe[i].array.buffer);
+             gc->pipe[i].array.buffer_alloc = 0;
+             gc->pipe[i].array.buffer_use = 0;
+          }
      }
 
    if (!shared)
@@ -765,10 +785,11 @@ evas_gl_common_context_free(Evas_Engine_GL_Context *gc)
 
    if (gc->def_surface) evas_gl_common_image_free(gc->def_surface);
 
-#ifdef GL_USE_SERVER_BUFFERS
-   for (i = 0; i < MAX_PIPES; i++)
-      glDeleteBuffers (1, &gc->pipe[i].array.buffer);
-#endif
+   if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+     {
+        for (i = 0; i < MAX_PIPES; i++)
+          glDeleteBuffers(1, &gc->pipe[i].array.buffer);
+     }
 
    if (gc->shared)
      {
@@ -2549,64 +2570,76 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                                gc->pipe[i].shader.cw, gc->pipe[i].shader.ch);
                }
           }
-#ifdef GL_USE_SERVER_BUFFERS
+        
+        unsigned char *vertex_ptr = NULL;
+        unsigned char *color_ptr = NULL;
+        unsigned char *texuv_ptr = NULL;
+        unsigned char *texuv2_ptr = NULL;
+        unsigned char *texuv3_ptr = NULL;
+        unsigned char *texm_ptr = NULL;
+        
+        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+          {
+             unsigned char *x;
+             
 # define VERTEX_SIZE (gc->pipe[i].array.alloc * sizeof(GLshort) * 3)
 # define COLOR_SIZE (gc->pipe[i].array.alloc * sizeof(GLubyte) * 4)
 # define TEX_SIZE (gc->pipe[i].array.alloc * sizeof(GLfloat) * 2)
-# define VERTEX_POINTER 0
-# define COLOR_POINTER (VERTEX_POINTER + VERTEX_SIZE)
-# define TEXUV_POINTER (COLOR_POINTER + COLOR_SIZE)
-# define TEXUV2_POINTER (TEXUV_POINTER + TEX_SIZE)
-# define TEXUV3_POINTER (TEXUV2_POINTER + TEX_SIZE)
-# define TEXM_POINTER (TEXUV3_POINTER + TEX_SIZE)
-# define END_POINTER (TEXM_POINTER + TEX_SIZE)
+             vertex_ptr = NULL;
+             color_ptr = vertex_ptr + VERTEX_SIZE;
+             texuv_ptr = color_ptr + COLOR_SIZE;
+             texuv2_ptr = texuv_ptr + TEX_SIZE;
+             texuv3_ptr = texuv2_ptr + TEX_SIZE;
+             texm_ptr = texuv3_ptr + TEX_SIZE;
+# define END_POINTER (texm_ptr + TEX_SIZE)
 
-        glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
-
-        if ((gc->pipe[i].array.buffer_alloc < (int)END_POINTER) ||
-            (gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i)))
-          {
-             glBufferData(GL_ARRAY_BUFFER, END_POINTER, NULL, GL_STATIC_DRAW);
-             gc->pipe[i].array.buffer_alloc = END_POINTER;
-             gc->pipe[i].array.buffer_use = 0;
+             glBindBuffer(GL_ARRAY_BUFFER, gc->pipe[i].array.buffer);
+             if ((gc->pipe[i].array.buffer_alloc < (long)END_POINTER) ||
+                 
+                 (gc->pipe[i].array.buffer_use >= (ARRAY_BUFFER_USE + ARRAY_BUFFER_USE_SHIFT * i)))
+               {
+                  glBufferData(GL_ARRAY_BUFFER, (long)END_POINTER, NULL, GL_STATIC_DRAW);
+                  gc->pipe[i].array.buffer_alloc = (long)END_POINTER;
+                  gc->pipe[i].array.buffer_use = 0;
+               }
+             gc->pipe[i].array.buffer_use++;
+             
+             x = glsym_glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+             if (x)
+               {
+                  if (gc->pipe[i].array.use_vertex)
+                    memcpy(x + (unsigned long)vertex_ptr, gc->pipe[i].array.vertex, VERTEX_SIZE);
+                  if (gc->pipe[i].array.use_color)
+                    memcpy(x + (unsigned long)color_ptr, gc->pipe[i].array.color, COLOR_SIZE);
+                  if (gc->pipe[i].array.use_texuv)
+                    memcpy(x + (unsigned long)texuv_ptr, gc->pipe[i].array.texuv, TEX_SIZE);
+                  if (gc->pipe[i].array.use_texuv2)
+                    memcpy(x + (unsigned long)texuv2_ptr, gc->pipe[i].array.texuv2, TEX_SIZE);
+                  if (gc->pipe[i].array.use_texuv3)
+                    memcpy(x + (unsigned long)texuv3_ptr, gc->pipe[i].array.texuv3, TEX_SIZE);
+                  if (gc->pipe[i].array.use_texm)
+                    memcpy(x + (unsigned long)texm_ptr, gc->pipe[i].array.texm, TEX_SIZE);
+                  glsym_glUnmapBuffer(GL_ARRAY_BUFFER);
+               }
           }
-        gc->pipe[i].array.buffer_use++;
-
-# if defined(GLES_VARIETY_SGX)
-        unsigned char *x = glMapBufferOES(GL_ARRAY_BUFFER, GL_WRITE_ONLY_OES);
-# else
-        unsigned char *x = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-# endif
-        if (gc->pipe[i].array.use_vertex)
-          memcpy(x + VERTEX_POINTER, gc->pipe[i].array.vertex, VERTEX_SIZE);
-        if (gc->pipe[i].array.use_color)
-          memcpy(x + COLOR_POINTER, gc->pipe[i].array.color, COLOR_SIZE);
-        if (gc->pipe[i].array.use_texuv)
-          memcpy(x + TEXUV_POINTER, gc->pipe[i].array.texuv, TEX_SIZE);
-        if (gc->pipe[i].array.use_texuv2)
-          memcpy(x + TEXUV2_POINTER, gc->pipe[i].array.texuv2, TEX_SIZE);
-        if (gc->pipe[i].array.use_texuv3)
-          memcpy(x + TEXUV3_POINTER, gc->pipe[i].array.texuv3, TEX_SIZE);
-        if (gc->pipe[i].array.use_texm)
-          memcpy(x + TEXM_POINTER, gc->pipe[i].array.texm, TEX_SIZE);
-        glUnmapBuffer(GL_ARRAY_BUFFER);
-#else
-# define VERTEX_POINTER gc->pipe[i].array.vertex
-# define COLOR_POINTER gc->pipe[i].array.color
-# define TEXUV_POINTER gc->pipe[i].array.texuv
-# define TEXUV2_POINTER gc->pipe[i].array.texuv2
-# define TEXUV3_POINTER gc->pipe[i].array.texuv3
-# define TEXM_POINTER gc->pipe[i].array.texm
-#endif
-        glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, (void *)VERTEX_POINTER);
+        else
+          {
+             vertex_ptr = (unsigned char *)gc->pipe[i].array.vertex;
+             color_ptr = (unsigned char *)gc->pipe[i].array.color;
+             texuv_ptr = (unsigned char *)gc->pipe[i].array.texuv;
+             texuv2_ptr = (unsigned char *)gc->pipe[i].array.texuv2;
+             texuv3_ptr = (unsigned char *)gc->pipe[i].array.texuv3;
+             texm_ptr = (unsigned char *)gc->pipe[i].array.texm;
+          }
+        glVertexAttribPointer(SHAD_VERTEX, 3, GL_SHORT, GL_FALSE, 0, (void *)vertex_ptr);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, (void *)COLOR_POINTER);
+        glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, (void *)color_ptr);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         if (gc->pipe[i].array.use_texuv)
           {
              glEnableVertexAttribArray(SHAD_TEXUV);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXUV_POINTER);
+             glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, (void *)texuv_ptr);
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
         else
@@ -2632,7 +2665,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
 	       {
 		  glEnableVertexAttribArray(SHAD_TEXM);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXM, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXM_POINTER);
+                  glVertexAttribPointer(SHAD_TEXM, 2, GL_FLOAT, GL_FALSE, 0, (void *)texm_ptr);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glActiveTexture(GL_TEXTURE1);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -2651,9 +2684,9 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glEnableVertexAttribArray(SHAD_TEXUV3);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXUV2_POINTER);
+                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, (void *)texuv2_ptr);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXUV3_POINTER);
+                  glVertexAttribPointer(SHAD_TEXUV3, 2, GL_FLOAT, GL_FALSE, 0, (void *)texuv3_ptr);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
                   glActiveTexture(GL_TEXTURE1);
@@ -2680,7 +2713,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                {
                   glEnableVertexAttribArray(SHAD_TEXUV2);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, (void *)TEXUV2_POINTER);
+                  glVertexAttribPointer(SHAD_TEXUV2, 2, GL_FLOAT, GL_FALSE, 0, (void *)texuv2_ptr);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
                   glActiveTexture(GL_TEXTURE1);
@@ -2689,7 +2722,8 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 		  if (gc->pipe[i].shader.cur_texu_dyn)
-		    secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
+		    secsym_glEGLImageTargetTexture2DOES
+                    (GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
 #endif
                   glActiveTexture(GL_TEXTURE0);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -2758,9 +2792,11 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         gc->pipe[i].array.num = 0;
         gc->pipe[i].array.alloc = 0;
 
-#ifdef GL_USE_SERVER_BUFFERS
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
+        if (glsym_glMapBuffer && glsym_glUnmapBuffer)
+          {
+             glBindBuffer(GL_ARRAY_BUFFER, 0);
+          }
+        
         gc->pipe[i].region.x = 0;
         gc->pipe[i].region.y = 0;
         gc->pipe[i].region.w = 0;
