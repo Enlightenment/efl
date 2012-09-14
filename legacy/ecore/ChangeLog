@@ -946,3 +946,8 @@
        * Fix ecore-evas rotation handling for canvases that shows up
        only on some drivers and GL implementations.
 
+2012-09-14  Doyoun Kang
+
+       * Add string to atom_items for ECORE_X_ATOM_E_ILLUME_WINDOW_STATE, 
+       ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_NORMAL, ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_FLOATING
+
