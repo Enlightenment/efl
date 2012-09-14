@@ -7,6 +7,8 @@ SUBDIRS = src doc
 MAINTAINERCLEANFILES = \
 Makefile.in \
 aclocal.m4 \
+config.cache \
+config.cache-env \
 config.guess \
 config.h.in \
 config.h.in~ \
