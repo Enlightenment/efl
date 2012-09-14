@@ -4,6 +4,7 @@
  * Here is a page with examples.
  *
  * @li @ref tutorial_ephysics_bouncing_ball
+ * @li @ref tutorial_ephysics_bouncing_text
  * @li @ref tutorial_ephysics_delete_body
  * @li @ref tutorial_ephysics_constraint
  */
@@ -205,6 +206,78 @@
  * @include ephysics_logo.c
  *
  * @example ephysics_logo.c
+ */
+ 
+/**
+ * @page tutorial_ephysics_bouncing_text EPhysics - Bouncing Text
+ *
+ * The purpose of this example is to demonstrate the EPhysics_Body binding to
+ * a text (Evas_Object)
+ *
+ * For this example we'll have an EPhysics_World and one basic EPhysics_Body.
+ *
+ * The basic concepts like - initializing an EPhysics_World, render geometry,
+ * physics limiting boundaries, were already covered in 
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * @section add-text Creating the text
+ * @dontinclude test_bouncing_text.c
+ *
+ * Create a basic evas_object_text.
+ *
+ * @skipline Evas_Object *text;
+ *
+ * @skip text =
+ * @until text);
+ *
+ * @section add-textbody Creating the body
+ *
+ * Create a simple EPhysics_Body.
+ *
+ * Note that we use ephysics_body_geometry_set() to define its size because
+ * the evas_object has a different size that we want to represent physically.
+ * The text may have accent or letters like j and g.
+ *
+ * @skipline text_body =
+ * @skip ephysics_body_geometry_set(text_body
+ * @until 0.1);
+ *
+ * @section text-binding Binding
+ * @dontinclude test_bouncing_text.c
+ *
+ * After create the body and the text, now we need to bind them.
+ *
+ * We set the last parameter as EINA_FALSE because in this example we don't
+ * want to set the physics body position to match evas object position.
+ *
+ * @skipline ephysics_body_evas_object_set
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_bouncing_text_c.
+ *
+ */
+
+ /**
+ * @page test_bouncing_text_c test_bouncing_text.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-bouncing_text-c test_bouncing_text.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_data_new
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_bouncing_text.c
+ *
+ * @example test_bouncing_text.c
  */
 
 /**
