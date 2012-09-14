@@ -14,6 +14,7 @@
  * It's not intended to be a physics library (we already have many out there).
  *
  * @image html diagram_ephysics.png
+ * @image latex diagram_ephysics.eps
  *
  * For a better reference, check the following groups:
  * @li @ref EPhysics
