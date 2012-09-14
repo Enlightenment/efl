@@ -669,7 +669,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
      }
    else
      {
-#ifdef HAVE_XATTR
+#if defined HAVE_XATTR && defined HAVE_SPLICE
        _eio_file_copy_xattr(thread, copy, in, out);
 #endif
      }

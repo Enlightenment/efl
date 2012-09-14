@@ -43,3 +43,7 @@
 2012-09-10  Cedric Bail
 
 	* Fix monitor shutdown when mainloop did never run.
+
+2012-09-14  Cedric Bail
+
+	* Fix build with xattr without splice.
