@@ -70,6 +70,9 @@ static FILE *header_fd = NULL;
   "   edje_object_part_text_set(o, \"%s\", value);\n"   \
   "}\n\n"
 
+#define H_CODEGEN_PART_TEXT_SET                              \
+  "void %s_%s_set(Evas_Object *o, const char *value);\n"
+
 #define C_CODEGEN_PART_SWALLOW_SET                             \
   "void\n"                                                     \
   "%s_%s_set(Evas_Object *o, Evas_Object *value)\n"            \
@@ -77,18 +80,158 @@ static FILE *header_fd = NULL;
   "   edje_object_part_swallow(o, \"%s\", value);\n"           \
   "}\n\n"
 
-#define H_CODEGEN_PART_SET                              \
-  "void %s_%s_set(Evas_Object *o, %svalue);\n"
+#define H_CODEGEN_PART_SWALLOW_SET                             \
+  "void %s_%s_set(Evas_Object *o, Evas_Object *value);\n"
 
-#define C_CODEGEN_PART_GET                              \
-  "%s\n"                                                \
+#define C_CODEGEN_PART_TEXT_GET                         \
+  "const char *\n"                                      \
   "%s_%s_get(const Evas_Object *o)\n"                   \
   "{\n"                                                 \
-  "   return edje_object_part_%s_get(o, \"%s\");\n"     \
+  "   return edje_object_part_text_get(o, \"%s\");\n"   \
   "}\n\n"
 
-#define H_CODEGEN_PART_GET                              \
-  "%s %s_%s_get(const Evas_Object *o);\n"
+#define H_CODEGEN_PART_TEXT_GET                         \
+  "const char *%s_%s_get(const Evas_Object *o);\n"
+
+#define C_CODEGEN_PART_SWALLOW_GET                        \
+  "Evas_Object *\n"                                       \
+  "%s_%s_get(const Evas_Object *o)\n"                     \
+  "{\n"                                                   \
+  "   return edje_object_part_swallow_get(o, \"%s\");\n"  \
+  "}\n\n"
+
+#define H_CODEGEN_PART_SWALLOW_GET                         \
+  "Evas_Object *%s_%s_get(const Evas_Object *o);\n"
+
+#define C_CODEGEN_PART_BOX_APPEND                                \
+  "Eina_Bool\n"                                                  \
+  "%s_%s_append(Evas_Object *o, Evas_Object *child)\n"           \
+  "{\n"                                                          \
+  "   return edje_object_part_box_append(o, \"%s\", child);\n"   \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_APPEND                                      \
+  "Eina_Bool %s_%s_append(Evas_Object *o, Evas_Object *child);\n"
+
+#define C_CODEGEN_PART_BOX_PREPEND                                \
+  "Eina_Bool\n"                                                   \
+  "%s_%s_prepend(Evas_Object *o, Evas_Object *child)\n"           \
+  "{\n"                                                           \
+  "   return edje_object_part_box_prepend(o, \"%s\", child);\n"   \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_PREPEND                                      \
+  "Eina_Bool %s_%s_prepend(Evas_Object *o, Evas_Object *child);\n"
+
+#define C_CODEGEN_PART_BOX_INSERT_BEFORE                          \
+  "Eina_Bool\n"                                                   \
+  "%s_%s_insert_before(Evas_Object *o, Evas_Object *child, "      \
+  "const Evas_Object *reference)\n"                               \
+  "{\n"                                                           \
+  "   return edje_object_part_box_insert_before(o, \"%s\", "      \
+  "child, reference);\n"   \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_INSERT_BEFORE                                \
+  "Eina_Bool %s_%s_insert_before(Evas_Object *o, Evas_Object *child, "  \
+  "const Evas_Object *reference);\n"
+
+#define C_CODEGEN_PART_BOX_INSERT_AT                                        \
+  "Eina_Bool\n"                                                             \
+  "%s_%s_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos)\n" \
+  "{\n"                                                                     \
+  "   return edje_object_part_box_insert_at(o, \"%s\", child, pos);\n"      \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_INSERT_AT                                     \
+  "Eina_Bool %s_%s_insert_at(Evas_Object *o, Evas_Object *child, "       \
+  "unsigned int pos);\n"
+
+#define C_CODEGEN_PART_BOX_REMOVE                                   \
+  "Evas_Object *\n"                                                 \
+  "%s_%s_remove(Evas_Object *o, Evas_Object *child)\n"              \
+  "{\n"                                                             \
+  "   return edje_object_part_box_remove(o, \"%s\", child);\n"      \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_REMOVE                                    \
+  "Evas_Object *%s_%s_remove(Evas_Object *o, Evas_Object *child);\n"
+
+#define C_CODEGEN_PART_BOX_REMOVE_AT                                 \
+  "Evas_Object *\n"                                                  \
+  "%s_%s_remove_at(Evas_Object *o, unsigned int pos)\n"              \
+  "{\n"                                                              \
+  "   return edje_object_part_box_remove_at(o, \"%s\", pos);\n"      \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_REMOVE_AT                                 \
+  "Evas_Object *%s_%s_remove_at(Evas_Object *o, unsigned int pos);\n"
+
+#define C_CODEGEN_PART_BOX_REMOVE_ALL                                \
+  "Eina_Bool\n"                                                      \
+  "%s_%s_remove_all(Evas_Object *o, Eina_Bool clear)\n"              \
+  "{\n"                                                              \
+  "   return edje_object_part_box_remove_all(o, \"%s\", clear);\n"   \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_REMOVE_ALL                                     \
+  "Eina_Bool %s_%s_remove_all(Evas_Object *o, Eina_Bool clear);\n"
+
+#define C_CODEGEN_PART_TABLE_CHILD_GET                                    \
+  "Evas_Object *\n"                                                       \
+  "%s_%s_child_get(Evas_Object *o, unsigned int col, unsigned int row)\n" \
+  "{\n"                                                                   \
+  "   return edje_object_part_table_child_get(o, \"%s\", col, row);\n"    \
+  "}\n\n"
+
+#define H_CODEGEN_PART_TABLE_CHILD_GET                                \
+  "Evas_Object * %s_%s_child_get(Evas_Object *o, unsigned int col, "  \
+  "unsigned int row);\n"
+
+#define C_CODEGEN_PART_TABLE_PACK                                         \
+  "Eina_Bool\n"                                                           \
+  "%s_%s_pack(Evas_Object *o, Evas_Object *child, unsigned short col, "   \
+  "unsigned short row, unsigned short colspan, unsigned short rowspan)\n" \
+  "{\n"                                                                   \
+  "   return edje_object_part_table_pack(o, \"%s\", child, col, row, "    \
+  "colspan, rowspan);\n"                                                  \
+  "}\n\n"
+
+#define H_CODEGEN_PART_TABLE_PACK                                \
+  "Eina_Bool %s_%s_pack(Evas_Object *o, Evas_Object *child, "    \
+  "unsigned short col, unsigned short row, unsigned short "      \
+  "colspan, unsigned short rowspan);\n"
+
+#define C_CODEGEN_PART_TABLE_UNPACK                                  \
+  "Eina_Bool\n"                                                      \
+  "%s_%s_unpack(Evas_Object *o, Evas_Object *child)\n"               \
+  "{\n"                                                              \
+  "   return edje_object_part_table_unpack(o, \"%s\", child);\n"     \
+  "}\n\n"
+
+#define H_CODEGEN_PART_TABLE_UNPACK                                  \
+  "Eina_Bool %s_%s_unpack(Evas_Object *o, Evas_Object *child);\n"
+
+#define C_CODEGEN_PART_TABLE_CLEAR                               \
+  "Eina_Bool\n"                                                  \
+  "%s_%s_clear(Evas_Object *o, Eina_Bool clear)\n"               \
+  "{\n"                                                          \
+  "   return edje_object_part_table_clear(o, \"%s\", clear);\n"  \
+  "}\n\n"
+
+#define H_CODEGEN_PART_TABLE_CLEAR                                   \
+  "Eina_Bool %s_%s_clear(Evas_Object *o, Eina_Bool clear);\n"
+
+#define C_CODEGEN_PART_TABLE_COL_ROW_SIZE_GET                        \
+  "Eina_Bool\n"                                                      \
+  "%s_%s_col_row_size_get(Evas_Object *o, int  *cols, int *rows)\n"  \
+  "{\n"                                                              \
+  "   return edje_object_part_table_col_row_size_get(o, \"%s\", "    \
+  "cols, rows);\n"                                                   \
+  "}\n\n"
+
+#define H_CODEGEN_PART_TABLE_COL_ROW_SIZE_GET                                \
+  "Eina_Bool %s_%s_col_row_size_get(Evas_Object *o, int *cols, int *rows);\n"
 
 #define C_CODEGEN_PROGRAM_EMIT                          \
   "void\n"                                              \
@@ -193,26 +336,6 @@ _close_file_descriptors(void)
    return ret;
 }
 
-static const char *
-_part_type_name_get(Edje_Part_Type t)
-{
-   switch (t)
-     {
-      case EDJE_PART_TYPE_TEXT:
-         return "text";
-      case EDJE_PART_TYPE_SWALLOW:
-         return "swallow";
-
-      case EDJE_PART_TYPE_NONE:
-      case EDJE_PART_TYPE_LAST:
-         ERR("Invalid part type %d", t);
-      default:
-         return NULL;
-     }
-
-   return NULL;
-}
-
 static Eina_Bool
 _write_headers(const char *filename)
 {
@@ -273,25 +396,22 @@ _write_object_get(void)
 
 static Eina_Bool
 _write_part(const char *apiname, const char *partname,
-	    const char *parttype, const char *description)
+	    Edje_Part_Type parttype, const char *description)
 {
    char buf[512];
    const char *type, *template;
 
-   if (!strcmp(parttype, "text"))
-     {
-        type = "const char *";
-        template = C_CODEGEN_PART_TEXT_SET;
-     }
-   else
-     {
-        type = "Evas_Object *";
-        template = C_CODEGEN_PART_SWALLOW_SET;
-     }
-
-   snprintf(buf, sizeof(buf), template, prefix, apiname, partname);
-   if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
-     goto err;
+#define TEMPLATE_NAME(sufix)                                      \
+   do {                                                           \
+     snprintf(buf, sizeof(buf), C_CODEGEN_PART_##sufix, prefix,   \
+              apiname, partname);                                 \
+     if (fwrite(buf, strlen(buf), 1, source_fd) != 1)             \
+       goto err;                                                  \
+     snprintf(buf, sizeof(buf), H_CODEGEN_PART_##sufix, prefix,   \
+              apiname);                                           \
+     if (fwrite(buf, strlen(buf), 1, header_fd) != 1)             \
+       goto err;                                                  \
+   } while(0)
 
    if (description)
      {
@@ -300,19 +420,38 @@ _write_part(const char *apiname, const char *partname,
 	  goto err;
      }
 
-   snprintf(buf, sizeof(buf), H_CODEGEN_PART_SET, prefix, apiname,
-	    type);
-   if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-     goto err;
+   switch (parttype)
+     {
+      case EDJE_PART_TYPE_BOX:
+	 TEMPLATE_NAME(BOX_APPEND);
+	 TEMPLATE_NAME(BOX_PREPEND);
+	 TEMPLATE_NAME(BOX_INSERT_BEFORE);
+	 TEMPLATE_NAME(BOX_INSERT_AT);
+	 TEMPLATE_NAME(BOX_REMOVE);
+	 TEMPLATE_NAME(BOX_REMOVE_AT);
+	 TEMPLATE_NAME(BOX_REMOVE_ALL);
+	 break;
 
-   snprintf(buf, sizeof(buf), H_CODEGEN_PART_GET, type, prefix, apiname);
-   if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-     goto err;
+      case EDJE_PART_TYPE_TABLE:
+	TEMPLATE_NAME(TABLE_PACK);
+	TEMPLATE_NAME(TABLE_UNPACK);
+	TEMPLATE_NAME(TABLE_CHILD_GET);
+	TEMPLATE_NAME(TABLE_CLEAR);
+	TEMPLATE_NAME(TABLE_COL_ROW_SIZE_GET);
+	break;
 
-   snprintf(buf, sizeof(buf), C_CODEGEN_PART_GET, type, prefix, apiname,
-	    parttype, partname);
-   if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
-     goto err;
+      case EDJE_PART_TYPE_TEXT:
+	TEMPLATE_NAME(TEXT_SET);
+	TEMPLATE_NAME(TEXT_GET);
+	break;
+
+      default:
+	TEMPLATE_NAME(SWALLOW_SET);
+	TEMPLATE_NAME(SWALLOW_GET);
+	break;
+     }
+
+#undef TEMPLATE_NAME
 
    return EINA_TRUE;
 
@@ -383,15 +522,18 @@ _parse_parts(Evas_Object *ed)
 	  }
 
 	type = edje_edit_part_type_get(ed, name);
-	typename = _part_type_name_get(type);
-	if (!typename)
+	if (!((type == EDJE_PART_TYPE_TEXT)    ||
+	      (type == EDJE_PART_TYPE_SWALLOW) ||
+	      (type == EDJE_PART_TYPE_BOX)     ||
+	      (type == EDJE_PART_TYPE_TABLE)))
 	  {
+	     ERR("Invalid part type %d", type);
 	     free(apiname);
 	     continue;
 	  }
 
 	description = edje_edit_part_api_description_get(ed, name);
-	if (!_write_part(apiname, name, typename, description))
+	if (!_write_part(apiname, name, type, description))
 	  {
 	     ret = EINA_FALSE;
 	     edje_edit_string_free(description);
