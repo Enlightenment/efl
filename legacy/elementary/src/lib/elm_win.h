@@ -1481,5 +1481,29 @@ struct _Elm_Win_Trap
 EAPI Eina_Bool elm_win_trap_set(const Elm_Win_Trap *trap);
 
 /**
+ * Set the floating mode of a window.
+ *
+ * @param obj The window object
+ * @param floating If true, the window is floating mode
+ *
+ * @ingroup Win
+ * @see elm_win_floating_mode_get()
+ * @since 1.8
+ */
+EAPI void                  elm_win_floating_mode_set(Evas_Object *obj, Eina_Bool floating);
+
+/**
+ * Get the floating mode of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is floating mode
+ *
+ * @ingroup Win
+ * @see elm_win_floating_mode_set()
+ * @since 1.8
+ */
+EAPI Eina_Bool             elm_win_floating_mode_get(const Evas_Object *obj);
+
+/**
  * @}
  */

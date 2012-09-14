@@ -144,6 +144,7 @@ struct _Elm_Win_Smart_Data
    Eina_Bool    fullscreen : 1;
    Eina_Bool    maximized : 1;
    Eina_Bool    skip_focus : 1;
+   Eina_Bool    floating : 1;
 };
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
@@ -4035,3 +4036,35 @@ elm_win_trap_set(const Elm_Win_Trap *t)
    trap = t;
    return EINA_TRUE;
 }
+
+EAPI void
+elm_win_floating_mode_set(Evas_Object *obj, Eina_Bool floating)
+{
+   ELM_WIN_CHECK(obj);
+   ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
+
+   if (floating == sd->floating) return;
+   sd->floating = floating;
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(sd);
+   if (sd->x.xwin)
+     {
+        if (sd->floating)
+          ecore_x_e_illume_window_state_set
+             (sd->x.xwin, ECORE_X_ILLUME_WINDOW_STATE_FLOATING);
+        else
+          ecore_x_e_illume_window_state_set
+             (sd->x.xwin, ECORE_X_ILLUME_WINDOW_STATE_NORMAL);
+     }
+#endif
+}
+
+EAPI Eina_Bool
+elm_win_floating_mode_get(const Evas_Object *obj)
+{
+   ELM_WIN_CHECK(obj) EINA_FALSE;
+   ELM_WIN_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   return sd->floating;
+}
+

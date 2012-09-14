@@ -5,6 +5,7 @@ Additions:
 
    * Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
    * Add elementary_codegen
+   * Add window floating mode api's
 
 Improvements:
 
