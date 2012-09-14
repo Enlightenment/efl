@@ -11,6 +11,7 @@
  * @li @ref tutorial_ephysics_constraint
  * @li @ref tutorial_ephysics_gravity
  * @li @ref tutorial_ephysics_velocity
+ * @li @ref tutorial_ephysics_sleeping_threshold
  */
 
 /**
@@ -782,4 +783,89 @@
  * @include test_velocity.c
  *
  * @example test_velocity.c
+ */
+
+ /**
+ * @page tutorial_ephysics_sleeping_threshold EPhysics - Sleeping Threshold
+ *
+ * The purpose of this example is to demonstrate the EPhysics Sleeping
+ * Threshold usage - The code apply sleeping threshold in two cubes.
+ *
+ * For this example we'll have an EPhysics_World, and two basic EPhysics_Bodys.
+ *
+ * The basic concepts like - defining an EPhysics_World, render geometry,
+ * physics limiting boundaries, add an EPhysics_Body, associate it to evas
+ * objects, change restitution, friction and impulse properties, were
+ * already covered in
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * Concept of velocity were already covered in
+ * @ref tutorial_ephysics_velocity
+ *
+ * @section add-maxsleeping Adding Max Sleeping Time
+ * @dontinclude test_sleeping_threshold.c
+ *
+ * Setting the max sleeping time determines how long(in seconds) a rigid body
+ * under the linear and angular threshold is supposed to be marked as sleeping.
+ *
+ * @skipline ephysics_world_max_sleeping_time_set
+ *
+ * @section add-sleeping Adding a Sleeping Threshold
+ * @dontinclude test_sleeping_threshold.c
+ *
+ * Here we set EPhysics_Bodys linear and angular sleeping threshold. These
+ * factors are used to determine whenever a rigid body is supposed to
+ * increment the sleeping time.
+ *
+ * After every tick the sleeping time is incremented. After reaching the max
+ * sleeping time the body is market to sleep, that means the rigid body is to
+ * be deactivated.
+ *
+ * @skipline ephysics_body_sleeping_threshold_set(sphere_body1
+ *
+ * @skipline ephysics_body_sleeping_threshold_set(sphere_body2
+ *
+ * We can get the EPhysics_Bodys linear and angular sleeping threshold as well.
+ *
+ * @skipline ephysics_body_sleeping_threshold_get(sphere_body1
+ *
+ * @skipline ephysics_body_sleeping_threshold_get(sphere_body2
+ *
+ * @section add-damping Adding a Damping
+ * @dontinclude test_sleeping_threshold.c
+ *
+ * Here we set EPhysics_Bodys linear and angular damping values.The damping is
+ * a force synchronous with the velocity of the object but in opposite
+ * direction - like air resistence.
+ *
+ * @skipline ephysics_body_damping_set(sphere_body1
+ *
+ * @skipline ephysics_body_damping_set(sphere_body2
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_sleeping_threshold_c.
+ *
+ */
+
+ /**
+ * @page test_sleeping_threshold_c test_sleeping_threshold.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-sleeping-threshold-c test_sleeping_threshold.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_data_new
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_sleeping_threshold.c
+ *
+ * @example test_sleeping_threshold.c
  */
