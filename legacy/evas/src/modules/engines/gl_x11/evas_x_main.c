@@ -239,7 +239,7 @@ eng_window_new(Display *disp,
      blacklist = 1;
    if (strstr((const char *)renderer, "llvmpipe"))
      blacklist = 1;
-   if (blacklist)
+   if ((blacklist) && (!getenv("EVAS_GL_NO_BLACKLIST")))
      {
         ERR("OpenGL Driver blacklisted:");
         ERR("Vendor: %s", (const char *)vendor);
@@ -403,7 +403,7 @@ eng_window_new(Display *disp,
            blacklist = 1;
         if (strstr((const char *)renderer, "llvmpipe"))
           blacklist = 1;
-        if (blacklist)
+        if ((blacklist) && (!getenv("EVAS_GL_NO_BLACKLIST")))
           {
              ERR("OpenGL Driver blacklisted:");
              ERR("Vendor: %s", (const char *)vendor);

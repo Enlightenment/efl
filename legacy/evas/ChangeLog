@@ -1035,3 +1035,7 @@
        * Fix image alpha set bug if the image data has not been loaded
        yet from disk. Fixes across software and gl engines needed.
        * Fix map surface leak.
+
+2012-09-14  Carsten Haitzler (The Rasterman)
+
+       * Add env EVAS_GL_NO_BLACKLIST to disable blacklisting.

@@ -11,6 +11,7 @@ Additions:
 Improvements:
 
    * Function to rotate an evas map with a quaternion: evas_map_util_quat_rotate().
+   * EVAS_GL_NO_BLACKLIST env var to turn off blacklisted drivers in gl
 
 Fixes:
 
