@@ -35,8 +35,8 @@
 #include <Ecore_Evas.h>
 #include <Edje.h>
 
-#define WIDTH  (300)
-#define HEIGHT (300)
+#define WIDTH  (800)
+#define HEIGHT (800)
 
 static void
 _on_delete(Ecore_Evas *ee)
@@ -45,20 +45,54 @@ _on_delete(Ecore_Evas *ee)
 }
 
 static void
+_columns_rows_print(Evas_Object *edje_obj)
+{
+   int cols, rows;
+
+   if (codegen_example_part_four_col_row_size_get(edje_obj, &cols, &rows))
+     fprintf(stdout, "Number of columns: %d\nNumber of rows: %d\n", cols, rows);
+   else
+     fprintf(stderr, "Cannot get the number of columns and rows\n");
+}
+
+static void
 _on_mouse_over(void *data, Evas_Object *obj, const char *emission,
 	       const char *source)
 {
-    static int i = 0;
+   Evas_Object *rect;
+   static int i = 0;
 
-    printf("Mouse over, source: %s - emission: %s\n",
-	   source, emission);
-    if (i++ == 5)
-      {
-	 Evas_Object *rect = codegen_example_part_two_get(obj);
-	 evas_object_color_set(rect, 0, 255, 0, 255);
-	 codegen_example_part_below_over_callback_del_full(obj,_on_mouse_over,
-							   NULL);
-      }
+   printf("Mouse over, source: %s - emission: %s\n",
+	  source, emission);
+   if (i == 2)
+     {
+	rect = codegen_example_part_three_remove_at(obj, 0);
+	codegen_example_part_three_append(obj, rect);
+     }
+   if (i++ == 5)
+     {
+	Evas_Object *rect = codegen_example_part_two_get(obj);
+	evas_object_color_set(rect, 0, 255, 0, 255);
+	codegen_example_part_below_over_callback_del_full(obj,_on_mouse_over,
+							  NULL);
+	codegen_example_part_four_clear(obj, EINA_TRUE);
+	_columns_rows_print(obj);
+	codegen_example_part_three_remove_all(obj, EINA_TRUE);
+     }
+}
+
+static Evas_Object *
+_rect_create(Evas *e, unsigned char r, unsigned char g, unsigned char b)
+{
+   Evas_Object *o;
+
+   o = evas_object_rectangle_add(e);
+   evas_object_color_set(o, r, g, b, 255);
+   evas_object_size_hint_weight_set(o, 1.0, 1.0);
+   evas_object_size_hint_min_set(o, 100, 100);
+   evas_object_show(o);
+
+   return o;
 }
 
 int
@@ -70,7 +104,7 @@ main(int argc, char *argv[])
    Evas        *evas;
    Evas_Object *bg;
    Evas_Object *edje_obj;
-   Evas_Object *red_rect;
+   Evas_Object *red_rect, *yellow_rect, *blue_rect, *rects[4];
    Eina_Prefix *pfx;
 
    if (!ecore_evas_init())
@@ -90,6 +124,9 @@ main(int argc, char *argv[])
    if (!pfx)
      goto shutdown_edje;
 
+   snprintf(edje_file_path, sizeof(edje_file_path),
+            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
+
    /* this will give you a window with an Evas canvas under the first
     * engine available */
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
@@ -97,30 +134,50 @@ main(int argc, char *argv[])
      goto free_prefix;
 
    ecore_evas_callback_delete_request_set(ee, _on_delete);
-   ecore_evas_title_set(ee, "Edje text Example");
+   ecore_evas_title_set(ee, "Edje codegen Example");
 
    evas = ecore_evas_get(ee);
 
-   bg = evas_object_rectangle_add(evas);
-   evas_object_color_set(bg, 255, 255, 255, 255); /* white bg */
+   bg = _rect_create(evas, 255, 255, 255);
    evas_object_move(bg, 0, 0); /* at canvas' origin */
    evas_object_resize(bg, WIDTH, HEIGHT); /* covers full canvas */
-   evas_object_show(bg);
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
-   edje_obj = codegen_example_object_add(evas, NULL);
-   evas_object_move(edje_obj, 20, 20);
-   evas_object_resize(edje_obj, WIDTH - 40, HEIGHT - 40);
+   edje_obj = codegen_example_object_add(evas, edje_file_path);
+   evas_object_resize(edje_obj, WIDTH, HEIGHT);
    evas_object_show(edje_obj);
 
    codegen_example_part_one_set(edje_obj, "CODEGEN_EXAMPLE");
    codegen_example_part_below_over_callback_add(edje_obj, _on_mouse_over, NULL);
 
-   red_rect = evas_object_rectangle_add(evas);
-   evas_object_color_set(red_rect, 255, 0, 0, 255); /* white bg */
+   red_rect = _rect_create(evas, 255, 0, 0);
    codegen_example_part_two_set(edje_obj, red_rect);
-   evas_object_show(red_rect);
 
+   blue_rect = _rect_create(evas, 0, 0, 255);
+   codegen_example_part_three_append(edje_obj, blue_rect);
+
+   yellow_rect = _rect_create(evas, 255, 255, 0);
+   codegen_example_part_three_prepend(edje_obj, yellow_rect);
+
+
+   rects[0] = _rect_create(evas, 0, 0, 255);
+   rects[1] = _rect_create(evas, 0, 255, 0);
+   rects[2] = _rect_create(evas, 255, 0, 0);
+   rects[3] = _rect_create(evas, 125, 140, 80);
+
+   if (!codegen_example_part_four_pack(edje_obj, rects[0], 0, 0, 1, 2))
+     fprintf(stderr, "Cannot add the rectangle 1 to table\n");
+
+   if (!codegen_example_part_four_pack(edje_obj, rects[1], 0, 1, 1, 1))
+     fprintf(stderr, "Cannot add the rectangle 2 to table\n");
+
+   if (!codegen_example_part_four_pack(edje_obj, rects[2], 1, 0, 1, 1))
+     fprintf(stderr, "Cannot add the rectangle 3 to table\n");
+
+   if (!codegen_example_part_four_pack(edje_obj, rects[3], 1, 1, 1, 1))
+     fprintf(stderr, "Cannot add the rectangle 4 to table\n");
+
+   _columns_rows_print(edje_obj);
    ecore_evas_show(ee);
 
    ecore_main_loop_begin();
