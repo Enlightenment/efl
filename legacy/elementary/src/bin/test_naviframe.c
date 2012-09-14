@@ -168,7 +168,6 @@ void
 _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *bt2, *content, *nf = data;
-   Elm_Object_Item *it;
 
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -177,12 +176,12 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    content = _content_new(nf, img3);
 
-   it = elm_naviframe_item_push(nf,
-                                "Page 3",
-                                NULL,
-                                bt2,
-                                content,
-                                NULL);
+   elm_naviframe_item_push(nf,
+                           "Page 3",
+                           NULL,
+                           bt2,
+                           content,
+                           NULL);
 }
 
 void

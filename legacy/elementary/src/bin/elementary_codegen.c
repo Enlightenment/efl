@@ -467,13 +467,13 @@ _parts_parse(Evas_Object *ed)
 }
 
 static Eina_Bool
-_program_emit_write(const char *apiname, const char *source, const char *signal,
+_program_emit_write(const char *apiname, const char *source, const char *sig,
 		    const char *description)
 {
    char buf[512];
 
    snprintf(buf, sizeof(buf), C_CODEGEN_PROGRAM_EMIT, prefix,
-	    apiname, signal, source);
+	    apiname, sig, source);
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
      goto err;
 
@@ -497,18 +497,18 @@ _program_emit_write(const char *apiname, const char *source, const char *signal,
 }
 
 static Eina_Bool
-_program_add_write(const char *apiname, const char *source, const char *signal,
+_program_add_write(const char *apiname, const char *source, const char *sig,
 		   const char *description)
 {
   char buf[512];
 
    snprintf(buf, sizeof(buf), C_CODEGEN_PROGRAM_CALLBACK_ADD, prefix,
-	    apiname, signal, source);
+	    apiname, sig, source);
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
      goto err;
 
    snprintf(buf, sizeof(buf), C_CODEGEN_PROGRAM_CALLBACK_DEL, prefix,
-	    apiname, signal, source);
+	    apiname, sig, source);
    if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
      goto err;
 
@@ -554,7 +554,7 @@ _programs_parse(Evas_Object *ed)
 {
    Eina_Bool ret = EINA_TRUE;
    Eina_List *programs, *l;
-   const char *name, *source, *signal, *description;
+   const char *name, *source, *sig, *description;
    char *apiname;
    Edje_Action_Type type;
 
@@ -567,16 +567,16 @@ _programs_parse(Evas_Object *ed)
 	     continue;
 	  }
 
-	signal = edje_edit_program_signal_get(ed, name);
-	if (!signal) signal = eina_stringshare_add("");
+	sig= edje_edit_program_signal_get(ed, name);
+	if (!sig) sig = eina_stringshare_add("");
 
 	source = edje_edit_program_source_get(ed, name);
 	if (!source) source = eina_stringshare_add("");
 
 	description = edje_edit_program_api_description_get(ed, name);
-	if (strlen (signal))
+	if (strlen (sig))
 	  {
-	     if (!_program_emit_write(apiname, source, signal, description))
+	     if (!_program_emit_write(apiname, source, sig, description))
 	       {
 		  ret = EINA_FALSE;
 		  break;
@@ -603,7 +603,7 @@ _programs_parse(Evas_Object *ed)
 	  }
 
 	edje_edit_string_free(description);
-	edje_edit_string_free(signal);
+	edje_edit_string_free(sig);
 	edje_edit_string_free(source);
 	free(apiname);
      }
@@ -612,7 +612,7 @@ _programs_parse(Evas_Object *ed)
    if (!ret)
      {
 	edje_edit_string_free(description);
-	edje_edit_string_free(signal);
+	edje_edit_string_free(sig);
 	edje_edit_string_free(source);
 	free(apiname);
      }

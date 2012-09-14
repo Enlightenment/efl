@@ -171,7 +171,7 @@ test_external_pbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 void
 test_external_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *ly, *edje, *bt;
+   Evas_Object *win, *ly;
    char buf[PATH_MAX];
 
    win = elm_win_util_standard_add("ext_video", "Edje External Video");
