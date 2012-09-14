@@ -9,8 +9,8 @@
  *
  * @section intro What is EPhysics ?
  *
- * EPhysics is a library that manages Ecore, Evas and Bullet Physics into
- * an easy to use way. It's a kind of wrapper, a glue, between these libraries.
+ * EPhysics is a library that makes it easy to use Ecore, Evas and Bullet
+ * Physics together. It's a kind of wrapper, a glue, between these libraries.
  * It's not intended to be a physics library (we already have many out there).
  *
  * @image html diagram_ephysics.png
@@ -84,9 +84,6 @@ extern "C" {
  * @defgroup EPhysics Top Level API available to add physics effects.
  *
  * @{
- *
- * See @ref EPhysics and @ref EPhysics_World for details about
- * these interfaces.
  *
  */
 
