@@ -27,6 +27,7 @@ Fixes:
    * Fix popup to apply the same style to the notify sub-widget.
    * Fix Ctxpopup direction if unknown priority used.
    * Fix diskselector when bounce off and round enabled.
+   * Fix bubble info field set.
    
 Removals:
 

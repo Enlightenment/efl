@@ -106,6 +106,9 @@ _elm_bubble_smart_text_set(Evas_Object *obj,
                            const char *item,
                            const char *label)
 {
+   if (!_elm_bubble_parent_sc->text_set(obj, item, label))
+     return EINA_FALSE;
+
    if (item && (!strcmp(item, "info") || !strcmp(item, "elm.info")))
      {
         if (label)
@@ -113,8 +116,6 @@ _elm_bubble_smart_text_set(Evas_Object *obj,
         else
           elm_layout_signal_emit(obj, "elm,state,info,hidden", "elm");
      }
-   else if (!_elm_bubble_parent_sc->text_set(obj, item, label))
-     return EINA_FALSE;
 
    elm_layout_sizing_eval(obj);
 
