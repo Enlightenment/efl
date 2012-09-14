@@ -250,7 +250,7 @@
  * @section text-binding Binding
  * @dontinclude test_bouncing_text.c
  *
- * After create the body and the text, now we need to bind them.
+ * After creating the body and the text, now we need to bind them.
  *
  * We set the last parameter as EINA_FALSE because in this example we don't
  * want to set the physics body position to match evas object position.
@@ -623,7 +623,7 @@
  * @section add-gravity Setting Gravity
  * @dontinclude test_no_gravity.c
  *
- * Here we set EPhysics_worlds gravity in 2 axises (x, y) to (0, 0). Gravity
+ * Here we set EPhysics_worlds gravity in 2 axes (x, y) to (0, 0). Gravity
  * will act over bodies with mass over all the time.
  *
  * @skipline ephysics_world_gravity_set

@@ -137,7 +137,7 @@ EAPI int ephysics_shutdown(void);
  * create many bodies. When done, it's required to delete the shape
  * with @ref ephysics_shape_del().
  *
- * A shape can be load from a file describing it with
+ * A shape can be loaded from a file describing it with
  * @ref ephysics_shape_load(), and can be saved to a file with
  * @ref ephysics_shape_save(). With that shapes can be done or visualized
  * on design applications.
@@ -310,14 +310,14 @@ typedef struct _EPhysics_Body EPhysics_Body;
  * A camera defines the region of the physics world that will be rendered
  * on the canvas. It sets the point of view.
  *
- * Every world has a camera, that can be get with
+ * Every world has a camera, that can be gotten with
  * @ref ephysics_world_camera_get().
  * Its position can be set with @ref ephysics_camera_position_set() or
  * can be set to track a body, with @ref ephysics_camera_body_track();
  *
  */
 
-typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to change the position of the frame to be rendered. Every world have a camera that can be get with @ref ephysics_world_camera_get(). */
+typedef struct _EPhysics_Camera EPhysics_Camera; /**< Camera handle, used to change the position of the frame to be rendered. Every world have a camera that can be gotten with @ref ephysics_world_camera_get(). */
 
 /**
  * @brief
@@ -665,7 +665,7 @@ EAPI double ephysics_world_max_sleeping_time_get(const EPhysics_World *world);
 
 /**
  * @brief
- * Set world gravity in 2 axises (x, y).
+ * Set world gravity in 2 axes (x, y).
  *
  * Gravity will act over bodies with mass over all the time.
  *
@@ -1379,7 +1379,7 @@ EAPI EPhysics_Body *ephysics_body_soft_circle_add(EPhysics_World *world);
  * @brief
  * Create a new box physics body.
  *
- * Its collision shape will be a box of dimensions 1 on all the axises.
+ * Its collision shape will be a box of dimensions 1 on all the axes.
  * To change it's size @ref ephysics_body_geometry_set() should be used.
  *
  * If a box that could have its shape deformed is required, use
@@ -1399,7 +1399,7 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  * @brief
  * Create a new deformable box physics body.
  *
- * Its collision shape will be a box of dimensions 1 on all the axises.
+ * Its collision shape will be a box of dimensions 1 on all the axes.
  * To change it's size @ref ephysics_body_geometry_set() should be used.
  *
  * Just like rotation, deformation will be applied on associated
@@ -1426,7 +1426,7 @@ EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
  * @ref ephysics_shape_new().
  *
  * To change it's size @ref ephysics_body_geometry_set() should be used,
- * so it can be deformed on x and y axises.
+ * so it can be deformed on x and y axes.
  *
  * The center of mass of this body can be get with
  * @ref ephysics_body_center_mass_get().
@@ -1602,7 +1602,7 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
  *
  * All the physics bodies are and with canonical dimensions.
  * Circles have diameter 1, boxes have dimensions 1
- * on all the axises.
+ * on all the axes.
  *
  * There are three direct ways of modifying it's size:
  * @li With @ref ephysics_body_resize();
@@ -1659,7 +1659,7 @@ EAPI void ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y);
  *
  * All the physics bodies are created centered on origin (0, 0) and with
  * canonical dimensions. Circles have diameter 1, boxes have dimensions 1
- * on all the axises.
+ * on all the axes.
  *
  * There are four direct ways of modifying this geometry:
  * @li With @ref ephysics_body_geometry_set();
@@ -2278,7 +2278,7 @@ EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, dou
  *
  * @param body The physics body that will receive the impulse.
  * @param roll Impulse to rotate body around Z axis (rotate on x - y plane).
- * Negative values will impulse body on anti clock rotation.
+ * Negative values will impulse body on counter clockwise rotation.
  *
  * @see ephysics_body_central_impulse_apply().
  * @see ephysics_body_impulse_apply().
@@ -2355,9 +2355,9 @@ EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *
 
 /**
  * @brief
- * Enable or disable body's movement on x and y axises.
+ * Enable or disable body's movement on x and y axes.
  *
- * Enabled by default on both axises.
+ * Enabled by default on both axes.
  *
  * @param body The physics body.
  * @param enable_x If @c EINA_TRUE allow movement on x axis, if @c EINA_FALSE
@@ -2374,7 +2374,7 @@ EAPI void ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Boo
 
 /**
  * @brief
- * Get body's movement on x and y axises behavior.
+ * Get body's movement on x and y axes behavior.
  *
  * @param body The physics body.
  * @param enable_x @c EINA_TRUE if movement on x axis is allowed, or
@@ -2411,7 +2411,7 @@ EAPI double ephysics_body_rotation_get(const EPhysics_Body *body);
  * Set body's rotation on z axis.
  *
  * By default rotation is 0 degrees.
- * Negative values indicates rotation on counterclockwise direction.
+ * Negative values indicates rotation on counter clockwise direction.
  *
  * @note The unit used for rotation is degrees.
  *
@@ -2512,7 +2512,7 @@ EAPI void ephysics_body_central_force_apply(EPhysics_Body *body, double x, doubl
  * @param body The physics body that will receive the torque.
  * @param torque Torque to change angular acceleration of the body around Z
  * axis (rotate on x - y plane).
- * Negative values will accelerate it on anti clock rotation.
+ * Negative values will accelerate it on counter clockwise rotation.
  *
  * @see ephysics_body_central_force_apply().
  * @see ephysics_body_force_apply().
@@ -2733,12 +2733,12 @@ EAPI void ephysics_constraint_slider_linear_limit_get(const EPhysics_Constraint 
  * Set the angular moving limits of a slider @p constraint.
  *
  * The angular moving limits is defined in degrees and will limit the moving on
- * Z axis - counter clock and clock wise directions.
+ * Z axis - counter clockwise and clockwise directions.
  *
  * @param constraint The constraint to be set.
  * @param counter_clock_z Amount of degrees from 0.0 to 360.0 to limit
- * counter clock rotation.
- * @param clock_wise_z Amount of degrees from 0.0 to 360.0 to limit clock wise
+ * counter clockwise rotation.
+ * @param clock_wise_z Amount of degrees from 0.0 to 360.0 to limit clockwise
  * rotation.
  *
  * @see ephysics_constraint_slider_angular_limit_get()
@@ -2751,8 +2751,9 @@ EAPI void ephysics_constraint_slider_angular_limit_set(EPhysics_Constraint *cons
  * Get the angular moving limits of a slider @p constraint.
  *
  * @param constraint The constraint to get the angular limits from.
- * @param counter_clock_z Pointer to set with the counter clock limit degrees.
- * @param clock_wise_z Pointer to set with the clock wise limit degrees.
+ * @param counter_clock_z Pointer to set with the counter clockwise limit
+ * degrees.
+ * @param clock_wise_z Pointer to set with the clockwise limit degrees.
  *
  * @see ephysics_constraint_slider_angular_limit_set()
  * @ingroup EPhysics_Constraint

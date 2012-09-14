@@ -7,7 +7,7 @@
 * deform objects
 * improve docs
 * run simulation on other thread
-* support linear moves on Z axis and rotation on X and Y axises.
+* support linear moves on Z axis and rotation on X and Y axes.
 
 FAR FAR FUTURE:
 * support Box2d backend
