@@ -9,6 +9,7 @@
  * @li @ref tutorial_ephysics_collision_filter
  * @li @ref tutorial_ephysics_delete_body
  * @li @ref tutorial_ephysics_constraint
+ * @li @ref tutorial_ephysics_velocity
  */
 
 /**
@@ -598,3 +599,118 @@
  * @example test_constraint.c
  */
 
+/**
+ * @page tutorial_ephysics_velocity EPhysics - Velocity
+ *
+ * The purpose of this example is to demonstrate the EPhysics Velocity usage -
+ * The code adds a small bouncing ball on the ground and responding to users
+ * events by making it jump - applying a central impulse on it and showing its
+ * velocity and acceleration.
+ *
+ * We'll see in this example how to get EPhysics_Body Linear and Angular
+ * velocity and acceleration.
+ *
+ * For this example we'll have an EPhysics_World and one basic EPhysics_Body,
+ * we'll apply impulses that follows user events, it were already covered in 
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * @section add-velstruct Velocity Data Struct
+ * @dontinclude test_velocity.c
+ *
+ * While in this example we'll be working with a struct to hold some objects
+ * in our code. For clarity sake we present you the struct declaration in the
+ * following block.
+ *
+ * @skip struct _Velocity_Data {
+ * @until };
+ *
+ * @section add-callbacks Adding the Callbacks
+ *
+ * Calling ephysics_body_event_callback_add()
+ * will register a callback to a type of physics body event.
+ *
+ * @ref EPHYSICS_CALLBACK_BODY_UPDATE : called after every physics iteration.
+ * In other words, will be called after each world tick.
+ *
+ * @skipline ephysics_body_event_callback_add(sphere_body, EPHYSICS_CALLBACK_
+ * @skipline _update_vel_cb
+ *
+ * @ref EPHYSICS_CALLBACK_BODY_STOPPED : called when a body is found to be
+ * stopped. In other words, when the body is not moving anymore.
+ *
+ * @skip ephysics_body_event_callback_add(sphere_body, EPHYSICS_CALLBACK_BODY_ST
+ * @until );
+ *
+ * See
+ * @ref _EPhysics_Callback_Body_Type
+ * for more event types.
+ *
+ * @section add-velcb Velocity Function
+ *
+ * The callback function will be called on every physics iteration to show the
+ * linear and angular velocity and acceleration.
+ *
+ * Here we're declaring the necessary variables to calculate acelerations and
+ * delta time. And checking if its the first time to return before shows
+ * informations about the velocity.
+ *
+ * @dontinclude test_velocity.c
+ *
+ * @skip _update_vel_cb(void *data,
+ * @until EINA_TRUE;
+ *
+ * Get the delta time to use it soon to calculate the acceleration on every
+ * physics iteration.
+ *
+ * @skip time_now = ecore_time_get();
+ * @until time_now;
+ *
+ * Note in this part we get the angular and linear velocities.
+ *
+ * @skip vaz = ephysics_body
+ * @until &vy);
+ *
+ * We need to handle the velocity using delta time to have the acceleration
+ * on every tick. Check if its the first time to return before shows
+ * informations about the velocity because we dont have the old aceletations
+ * and then the calculation of this informations will be wrong.
+ *
+ * Here we calculate the aceletarions using this formula:
+ *
+ * (velocity - old_velocity) / delta_time;
+ *
+ * @skip aaz = (vaz -
+ * @until return;
+ *
+ * Turning data into text, to pass it to edje shows on screen.
+ *
+ * @skip snprintf(buff,
+ * @until "linear_acc", buff);
+ * @skip snprintf(buff,
+ * @until "angular_acc", buff);
+ * @skipline }
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_velocity_c.
+ *
+ */
+
+ /**
+ * @page test_velocity_c test_velocity.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-velocity-c test_velocity.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_velocity.c
+ *
+ * @example test_velocity.c
+ */
