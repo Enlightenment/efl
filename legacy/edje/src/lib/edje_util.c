@@ -5188,7 +5188,7 @@ void
 _edje_real_part_swallow_clear(Edje_Real_Part *rp)
 {
    if ((rp->type != EDJE_RP_TYPE_SWALLOW) ||
-       (!rp->typedata.swallow)) return NULL;
+       (!rp->typedata.swallow)) return;
    if (!rp->typedata.swallow->swallowed_object) return;
    evas_object_smart_member_del(rp->typedata.swallow->swallowed_object);
    evas_object_event_callback_del_full(rp->typedata.swallow->swallowed_object,
