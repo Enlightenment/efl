@@ -1,119 +1,119 @@
 2012-04-26 Carsten Haitzler (The Rasterman)
 
-	* 1.0.0 release
+        * 1.0.0 release
 
 2012-04-27 Daniel Juyung Seo (SeoZ)
 
-	* Genlist : Fixed genlist expandable effect bug when we expand/contract
-	  items with many children very quickly.
-	* Genlist : Realize move items during tree effect only when the item is
-	  not in the queue.
+        * Genlist : Fixed genlist expandable effect bug when we expand/contract
+          items with many children very quickly.
+        * Genlist : Realize move items during tree effect only when the item is
+          not in the queue.
 
 2012-04-30 Jérôme Pinot
 
-	* Add missing files in the tarballs.
+        * Add missing files in the tarballs.
 
 2012-05-02  Cedric Bail
 
-	* Do less allocation and reuse much more Evas_Map.
+        * Do less allocation and reuse much more Evas_Map.
 
 2012-05-02 Carsten Haitzler (The Rasterman)
 
-	* Fix possible problems with other subsystems depending on X11 display
-	  being closed (XCloseDisplay not close() on socket fd).
+        * Fix possible problems with other subsystems depending on X11 display
+          being closed (XCloseDisplay not close() on socket fd).
 
 2012-05-02  ChunEon Park (Hermet)
 
-	* Font: actually it doesnt append the font to the hash when font_hash is
-	  created inside. Now it is fixed.
+        * Font: actually it doesnt append the font to the hash when font_hash is
+          created inside. Now it is fixed.
 
 2012-05-03  WooHyun Jung
 
-	* Add feature about focus. Focus can be moved in all direction by
-	  by elm_widget_focus_go function.
+        * Add feature about focus. Focus can be moved in all direction by
+          by elm_widget_focus_go function.
 
 2012-05-04  Leandro Pereira
 
-	* Fix icon not appearing in default Genlist theme.
+        * Fix icon not appearing in default Genlist theme.
 
 2012-05-09  Cedric bail
 
-	* Reload theme when it change on disk.
+        * Reload theme when it change on disk.
 
 2012-05-11  ShilpaOnkar Singh
 
-	* Added focus key event handling for the colorselector
+        * Added focus key event handling for the colorselector
 
 2012-05-13  Dave Andreoli
 
-	* Fileselector: honor folder_only when using EIO
+        * Fileselector: honor folder_only when using EIO
 
 2012-05-14  Shinwoo Kim
 
-	* menu: remove crash issue when no-parent item is passed to the
-	elm_menu_item_separator_add()
+        * menu: remove crash issue when no-parent item is passed to the
+        elm_menu_item_separator_add()
 
 2012-05-14  Shinwoo Kim (kimcinoo)
 
-	* popup: Bug Fix: improper usage of textblock
+        * popup: Bug Fix: improper usage of textblock
 
 2012-05-15  Dave Andreoli
 
-	* Fileselector: honor folder_only when using EIO
+        * Fileselector: honor folder_only when using EIO
 
 2012-05-16 Carsten Haitzler (The Rasterman)
 
-	* Fix genlist ELM_LIST_LIMIT mode to do what it originally did.
-	  Documentation was wrong too and code had a slight bug stopping
-	  genlist from contracting to min size.
-	* Optimize the case of COMPRESS + homogeneous mode to avoid
-	  queue entirely and use existing known item sizes.
+        * Fix genlist ELM_LIST_LIMIT mode to do what it originally did.
+          Documentation was wrong too and code had a slight bug stopping
+          genlist from contracting to min size.
+        * Optimize the case of COMPRESS + homogeneous mode to avoid
+          queue entirely and use existing known item sizes.
 
 2012-05-16  Dave Andreoli
 
-	* Fileselector: Add a wheel spinner that show/spin while EIO is working
+        * Fileselector: Add a wheel spinner that show/spin while EIO is working
 
 2012-05-16  Tom Hacohen (TAsn)
 
-	* Fix fileselector selection done bug and pass the right string.
+        * Fix fileselector selection done bug and pass the right string.
 
 2012-05-22  Jaehwan Kim
 
-	* Toolbar: Add the more panel feature in toolbar.
-	  When it is the ELM_TOOLBAR_SHRINK_EXPAND mode and the max item is set,
-	  the items over max number are located in more panel.
-	  The APIs are added for this feature.(elm_toolbar_more_item_get, elm_toolbar_items_max_set/get)
+        * Toolbar: Add the more panel feature in toolbar.
+          When it is the ELM_TOOLBAR_SHRINK_EXPAND mode and the max item is set,
+          the items over max number are located in more panel.
+          The APIs are added for this feature.(elm_toolbar_more_item_get, elm_toolbar_items_max_set/get)
 
 2012-05-22  Carsten Haitzler (The Rasterman)
 
-	* Add skeleton for handling remote commands access controls.
+        * Add skeleton for handling remote commands access controls.
 
 2012-05-23  Tae-Hwan Kim (Bluezery)
 
-	* Map: Add elm_map_overlays_get & elm_map_overlay_visible_get functions.
+        * Map: Add elm_map_overlays_get & elm_map_overlay_visible_get functions.
 
 2012-05-24  Michal Pakula vel Rutka
 
-	* Add ability to use cnp helper code on non-elm widget objects by
-	  falling back to ecore-evas to get the window id.
+        * Add ability to use cnp helper code on non-elm widget objects by
+          falling back to ecore-evas to get the window id.
 
 2012-05-24  Tae-Hwan Kim (Bluezery)
 
-	* Add "loaded" signal for elm_map.
+        * Add "loaded" signal for elm_map.
 
 2012-05-25  Rob Bradford
 
-	* Refactor X11 specific code to use ecore_evas_*_window_get functions
-	so that the driver for the Ecore_Evas will be checked.
+        * Refactor X11 specific code to use ecore_evas_*_window_get functions
+        so that the driver for the Ecore_Evas will be checked.
 
 2012-05-28  Mike Blumenkrantz
 
-	* Fix sizing calc error in list item homogenizing
+        * Fix sizing calc error in list item homogenizing
 
 2012-05-28  Carsten Haitzler (The Rasterman)
 
-	* Made elm_object_focus_set() fall back to evbas_object_focus_set()
-	  if the object is not an elm widget.
+        * Made elm_object_focus_set() fall back to evbas_object_focus_set()
+          if the object is not an elm widget.
 
 2012-05-29  Mike Blumenkrantz
 
@@ -123,22 +123,22 @@
 
 2012-05-29  Rob Bradford
 
-	* Move X related window items into their own substruct of
-	_Elm_Win_Smart_Data to allow grouping based on engine.
+        * Move X related window items into their own substruct of
+        _Elm_Win_Smart_Data to allow grouping based on engine.
 
 2012-05-29  Rob Bradford
 
-	* Move X related cursor items into their own substruct of Elm_Cursor
-	to make supporting cursors on other platforms cleaner.
+        * Move X related cursor items into their own substruct of Elm_Cursor
+        to make supporting cursors on other platforms cleaner.
 
 2012-05-30  Rob Bradford
 
-	* Add support for setting the cursor under Wayland:
-	* Introduce a configure option and #define to as per other engines
-	* Add always-built API function to allow identification of running
-	under Wayland (like for X11)
-	* Call into Ecore to set the cursor when the mouse enters the desired
-	widget.
+        * Add support for setting the cursor under Wayland:
+        * Introduce a configure option and #define to as per other engines
+        * Add always-built API function to allow identification of running
+        under Wayland (like for X11)
+        * Call into Ecore to set the cursor when the mouse enters the desired
+        widget.
 
 2012-05-30  Mike Blumenkrantz
 
@@ -162,8 +162,8 @@
 2012-06-07  Jaehwan Kim
 
         * Toolbar: Remove the APIs elm_toolbar_items_max_set/get.
-	  Instead of them, add the APIs elm_toolbar_standard_priority_set/get.
-	  The items which are lower than standard priority are located in more menu or panel.
+          Instead of them, add the APIs elm_toolbar_standard_priority_set/get.
+          The items which are lower than standard priority are located in more menu or panel.
 
 2012-06-08  Jaehwan Kim
 
@@ -175,7 +175,7 @@
 
 2012-06-12  Carsten Haitzler (The Rasterman)
 
-	* Add elm_win_size_base_set/get, elm_win_size_step_set/get for hinting
+        * Add elm_win_size_base_set/get, elm_win_size_step_set/get for hinting
         sizing of windows. Useful for terminals.
 
 2012-06-12  Mike Blumenkrantz
@@ -193,24 +193,24 @@
 
 2012-06-14  Michael Bouchaud
 
-	* Add an enum to Elm_Calendar_Mark_Repeat_Type:
-	ELM_CALENDAR_LAST_DAY_OF_MONTH
+        * Add an enum to Elm_Calendar_Mark_Repeat_Type:
+        ELM_CALENDAR_LAST_DAY_OF_MONTH
 
 2012-06-15  Michael Bouchaud
 
-	* elm_progressbar: elm_progressbar_format_function_set to add a callback
-	function to format the unit string.
+        * elm_progressbar: elm_progressbar_format_function_set to add a callback
+        function to format the unit string.
 
 2012-06-16  Davide Andreoli
 
-	* elm_map: add elm_map_overlay_del_cb_set to be notify when
-	an overlay is deleted.
+        * elm_map: add elm_map_overlay_del_cb_set to be notify when
+        an overlay is deleted.
 
 2012-06-21  Daniel Juyung Seo (SeoZ)
 
-	* Genlist: Fixed a bug with decorate all mode + tree effect. Delete tree
-	effect animator and set the effect mode to none when decorate all mode is
-	set.
+        * Genlist: Fixed a bug with decorate all mode + tree effect. Delete tree
+        effect animator and set the effect mode to none when decorate all mode is
+        set.
 
 2012-06-23  Daniel Willmann
 
@@ -219,59 +219,59 @@
 
 2012-06-25  Daniel Juyung Seo (SeoZ)
 
-	* Genlist: Fixed tree expand bug. Check item type when an item is requested
-	to be expanded/contracted.
+        * Genlist: Fixed tree expand bug. Check item type when an item is requested
+        to be expanded/contracted.
 
 2012-06-25  Carsten Haitzler (The Rasterman)
 
-	* add elm_cnp_selection_loss_callback_set() so you know when you
+        * add elm_cnp_selection_loss_callback_set() so you know when you
         lose a selection as a client
         * improve robustness of cnp to track target object deletions.
 
 2012-06-26  Shinwoo Kim (kimcinoo)
 
-	* Use Edje to enable accessibility on TEXTBLOCK.
+        * Use Edje to enable accessibility on TEXTBLOCK.
 
 2012-06-27 Daniel Juyung Seo (SeoZ)
 
-	* Genlist: Fixed homogeneous mode bug with ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY item. Now it calculates display only item size correctly.
+        * Genlist: Fixed homogeneous mode bug with ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY item. Now it calculates display only item size correctly.
 
 2012-06-29 Artem Popov
 
-	* Add support for a new toolbar style with icon and text
+        * Add support for a new toolbar style with icon and text
         aligned in center. "item_centered".
 
 2012-06-30  Shinwoo Kim (kimcinoo)
 
-	* Add elm_config_access_set/get() to allow for a config tool to enable
+        * Add elm_config_access_set/get() to allow for a config tool to enable
         to diasbale access mode.
         * Add access highlight infra
 
 2012-06-30  Artem Popov
 
-	* Fix panel theme_hook handling for scaling
+        * Fix panel theme_hook handling for scaling
 
 2012-07-01  Gustavo Sverzut Barbieri (k-s)
 
-	* Add and use elm_widget_item_widget_get()
-	* Fix elm_segment_control to not abuse user's data from item.
+        * Add and use elm_widget_item_widget_get()
+        * Fix elm_segment_control to not abuse user's data from item.
 
 2012-07-03  Cedric Bail
 
-	* Initialize Emotion when necessary.
+        * Initialize Emotion when necessary.
 
 2012-07-03  Minseok Kim
 
-	* Add elm_multibuttonentry_editable_set() and
+        * Add elm_multibuttonentry_editable_set() and
         elm_multibuttonentry_editable_get()
 
 2012-07-03  Shinwoo Kim (kimcinoo)
 
-	* Add access hook to widget infra.
+        * Add access hook to widget infra.
 
 2012-07-05  Carsten Haitzler (The Rasterman)
 
-	* Fix several FB related issues:
+        * Fix several FB related issues:
           * Fallback to FB from X11 so it "just works"
           * Config expected x11 and failed to start app if engine not
             explicitly set to non-x11
@@ -281,40 +281,40 @@
         
 2012-07-06  Shinwoo Kim (kimcinoo)
 
-	* Add layout access enable/disable api:
+        * Add layout access enable/disable api:
           * elm_layout_edje_object_can_access_set/get()
 
 2012-07-07  Carsten Haitzler (The Rasterman)
 
-	* Add slider popup mode (based in idea originally proposed in
+        * Add slider popup mode (based in idea originally proposed in
           patches from Sumanth Krishna Mannam, but susbequently rejected
           a few times as it didn't measure up to commitable standards).
 
 2012-07-10  Gustavo Lima Chaves
 
-	* Add elm_scroller_page_size_get() and
-	  elm_scroller_page_relative_get() for consistency (some scrolling
-	  widgets got these gettes before).
+        * Add elm_scroller_page_size_get() and
+          elm_scroller_page_relative_get() for consistency (some scrolling
+          widgets got these gettes before).
 
 2012-07-10  Rob Bradford
 
-	* Expose into private API a function for getting the X window from an
-	Ecore_Evas using the backend safe functions.
-	* Use this new API to replace a non backend safe call in the copy and
-	paste code
+        * Expose into private API a function for getting the X window from an
+        Ecore_Evas using the backend safe functions.
+        * Use this new API to replace a non backend safe call in the copy and
+        paste code
 
 2012-07-12  Tae-Hwan Kim (Bluezery)
 
-	* Fix that vertical bounce enable value can be get from elm_config
-	when the genlist is added.
+        * Fix that vertical bounce enable value can be get from elm_config
+        when the genlist is added.
 
 2012-07-16  Carsten Haitzler (The Rasterman)
 
-	* Disable html mode pastes from cnp to work around thunderbird.
+        * Disable html mode pastes from cnp to work around thunderbird.
 
 2012-07-18  Carsten Haitzler (The Rasterman)
 
-	* Fix evil little bug where scrolelrs with scrollbars make
+        * Fix evil little bug where scrolelrs with scrollbars make
         self-feeding loops expecially with min size hints on scrollers (which
         the change in smart object infra broke too - fixed here).
 
@@ -325,73 +325,73 @@
 
 2012-07-18  Hermet (ChunEon Park)
 
-	* Fix the mapbuf to resize the contents(smart obj) correctly. When smart obj was
-	set as the contents the _configure would be called recursively. In this process
-	the lastest size could be reverted as the previous one.
+        * Fix the mapbuf to resize the contents(smart obj) correctly. When smart obj was
+        set as the contents the _configure would be called recursively. In this process
+        the lastest size could be reverted as the previous one.
 
 2012-07-19  Gustavo Sverzut Barbieri (k-s)
 
-	* Add Elm_Win_Trap and elm_win_trap_set() to allow e17 integration.
+        * Add Elm_Win_Trap and elm_win_trap_set() to allow e17 integration.
 
 2012-07-23  Hermet (ChunEon Park)
 
-	* fixed invalid sd memory access when delete window inlined image
+        * fixed invalid sd memory access when delete window inlined image
 
 2012-07-24  Hermet (ChunEon Park)
 
-	* fixed scroller to not have the hold flag when mouse up happened.
+        * fixed scroller to not have the hold flag when mouse up happened.
 
 2012-07-24  Gustavo Sverzut Barbieri (k-s)
 
-	* Add elm_flip_go_to()
+        * Add elm_flip_go_to()
 
 2012-07-25  Carsten Haitzler (The Rasterman)
 
-	* Fix elementary quicklaunch to transprot environment over as
+        * Fix elementary quicklaunch to transprot environment over as
         well as args and cwd.
 
 2012-07-27  Shinwoo Kim (kimcinoo)
 
-	* Patch in incomplete access supoprt in popup.
+        * Patch in incomplete access supoprt in popup.
 
 2012-07-30  Cedric Bail
 
-	* Allow freeze/thaw on Elm_Layout and reduce number of object update.
-	* Defer Elm_Calendar generation until really needed.
+        * Allow freeze/thaw on Elm_Layout and reduce number of object update.
+        * Defer Elm_Calendar generation until really needed.
 
 2012-07-31  Shinwoo Kim (kimcinoo)
 
-	* Patch in incomplete access supoprt in ctxpopup and dayselector.
+        * Patch in incomplete access supoprt in ctxpopup and dayselector.
 
 2012-08-02  Cedric Bail
 
-	* Fix elm_image_orient_set/get.
+        * Fix elm_image_orient_set/get.
 
 2012-08-06  Cedric Bail
 
-	* Make Elm_Slider update itself asynchronously.
+        * Make Elm_Slider update itself asynchronously.
 
 2012-08-09  Cedric Bail
 
-	* Reset main loop after fork in quicklaunch.
+        * Reset main loop after fork in quicklaunch.
 
 2012-08-18  Shinwoo Kim (kimcinoo)
 
-	* Patch in incomplete access in: colorselecto, win, diskselector,
+        * Patch in incomplete access in: colorselecto, win, diskselector,
           gengrid, genlist, progressbar, slider, label, entry
 
 2012-08-20   Jihyeon Seol
 
-	* Fix sizing issue in multibutton entry by making all lines
+        * Fix sizing issue in multibutton entry by making all lines
           the same height.
 
 2012-08-20  Shinwoo Kim (kimcinoo)
 
-	* Patch in incomplete access support in datetime.
+        * Patch in incomplete access support in datetime.
 
 2012-08-21  Carsten Haitzler (The Rasterman)
 
-	* Spotted an incompleteness. there is a way to set Elm_Win_Trap for
+        * Spotted an incompleteness. there is a way to set Elm_Win_Trap for
           manual render, but no way to go to an elm win and do this (And
           of course twiddle with the norender state too), so add this in.
           elm_win_norender_push(), elm_win_norender_pop(),
@@ -399,11 +399,11 @@
 
 2012-08-21  Shinwoo Kim (kimcinoo)
 
-	* Patch in incomplete access support in segment control and spinner
+        * Patch in incomplete access support in segment control and spinner
 
 2012-08-28  Carsten Haitzler (The Rasterman)
 
-	* Track window states as a total count and be able to self-throttle
+        * Track window states as a total count and be able to self-throttle
           or suspend rendering as a result.
 
 2012-08-30  Carsten Haitzler (The Rasterman)
@@ -412,79 +412,79 @@
 
 2012-08-30  Gustavo Lima Chaves (glima)
 
-	* Toolbar widget is now a scrollable widget.
-	* Entry widget is now a scrollable layout.
-	* Fileselector entry widget is now an elm layout.
-	* Ctxpopup widget is now an elm layout.
-	* Multibutton entry entry is now an elm layout.
-	* Popup widget is now an elm layout.
-	* Panel widget is now an elm layout.
-	* All internal widget hooks (and related macros) were removed, due
+        * Toolbar widget is now a scrollable widget.
+        * Entry widget is now a scrollable layout.
+        * Fileselector entry widget is now an elm layout.
+        * Ctxpopup widget is now an elm layout.
+        * Multibutton entry entry is now an elm layout.
+        * Popup widget is now an elm layout.
+        * Panel widget is now an elm layout.
+        * All internal widget hooks (and related macros) were removed, due
           to deprecation. Thus, people using that (unstable) API will have
           to adapt themselves.
 
 2012-08-30  Shilpa Onkar Singh
 
-	* Naviframe's item Subtitle_label deleted in item_free.
+        * Naviframe's item Subtitle_label deleted in item_free.
 
 2012-08-31  WooHyun Jung
 
-	* The state of elm_check is now changed by mouse click event.
+        * The state of elm_check is now changed by mouse click event.
 
 2012-09-03  Rajeev Ranjan
 
-	* Fix min/max limit setting to respect field boundaires EXCEPT
+        * Fix min/max limit setting to respect field boundaires EXCEPT
           for years which have no boundaries with
           elm_datetime_field_limit_set()
 
 2012-09-03  Bluezery
 
-	* Fix re-order animation when it doesn't end correctly.
-	* Improve elm map module loading to onlt init the module needed
+        * Fix re-order animation when it doesn't end correctly.
+        * Improve elm map module loading to onlt init the module needed
           when searching and not all modules.
 
 2012-09-03  Shinwoo Kim (kimcinoo)
 
-	* Add in more access subsystem features like activation cb.
-	* Fix popup to apply the same style to the notify sub-widget.
+        * Add in more access subsystem features like activation cb.
+        * Fix popup to apply the same style to the notify sub-widget.
 
 2012-09-04  Jihoon Kim (jihoon)
 
-	* Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
+        * Add ELM_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
 
 2012-09-11  ChunEon Park (Hermet)
 
-	* Even if the top item is inserted into the naviframe. Any transition
+        * Even if the top item is inserted into the naviframe. Any transition
           wouldn't be launched.
 
 2012-09-12  Jaehwan Kim
 
-	* When the number of item is changed, the toolbar emits the signal
+        * When the number of item is changed, the toolbar emits the signal
           to theme. The theme can be changed something according the number
           of item.
 
 2012-09-12  Shinwoo Kim (kimcinoo)
 
-	* Add access features to calendar.
-	* Add icon show/hide handling to diskselector ala button etc.
+        * Add access features to calendar.
+        * Add icon show/hide handling to diskselector ala button etc.
 
 2012-09-12  Thiep Ha
 
-	* Fix ctxpopup direction if -1 is uses as priority.
+        * Fix ctxpopup direction if -1 is uses as priority.
 
 2012-09-12  Jiyoun Park (jypark)
 
-	* Add image deleted signal into plug. it help user notice socket service
+        * Add image deleted signal into plug. it help user notice socket service
           fail and they can retry service connection. 
-	* Add test code deal with this signal. 
+        * Add test code deal with this signal. 
 
 2012-09-12  Davide Andreoli (davemds)
 
-	* Add external property "play length" to Video widget, read-only.
+        * Add external property "play length" to Video widget, read-only.
 
 2012-09-13  M.V.K. Sumanth
 
-	* Fix diskselector when bounce off and round enabled.
+        * Fix diskselector when bounce off and round enabled.
 
 2012-09-12  Flavio Ceolin
 
@@ -505,11 +505,11 @@
 
 2012-09-14  Doyoun Kang
 
-	* Add APIs for floating mode
+        * Add APIs for floating mode
           - elm_win_floating_mode_set
           - elm_win_floating_mode_get
 
 2012-09-14  Shinwoo Kim (kimcinoo)
 
-	* Fix info field set for bubble widget.
+        * Fix info field set for bubble widget.
 
