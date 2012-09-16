@@ -54,3 +54,52 @@ AC_DEFUN([EFL_CHECK_COMPILER_FLAGS],
 [
 m4_foreach_w([flag], [$2], [EFL_CHECK_COMPILER_FLAG([$1], m4_defn([flag]))])
 ])
+
+
+dnl Macro that checks for a linker flag availability
+dnl
+dnl EFL_CHECK_LINKER_FLAG(EFL, FLAG[, ACTION-IF-FOUND[ ,ACTION-IF-NOT-FOUND]])
+dnl AC_SUBST : EFL_LIBS (EFL being replaced by its value)
+dnl AM_CONDITIONAL : EFL_HAVE_FLAG (FLAG being replaced by its value)
+
+AC_DEFUN([EFL_CHECK_LINKER_FLAG],
+[
+m4_pushdef([UPEFL], m4_translit([[$1]], [-a-z], [_A-Z]))
+m4_pushdef([UP], m4_translit([[$2]], [-a-z], [_A-Z]))
+
+LDFLAGS_save="${LDFLAGS}"
+LDFLAGS="${LDFLAGS} $2"
+
+AC_LANG_PUSH([C])
+AC_MSG_CHECKING([whether the linker supports $2])
+
+AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM([[]])],
+   [have_flag="yes"],
+   [have_flag="no"])
+AC_MSG_RESULT([${have_flag}])
+
+LDFLAGS="${LDFLAGS_save}"
+AC_LANG_POP([C])
+
+if test "x${have_flag}" = "xyes" ; then
+   UPEFL[_LIBS]="${UPEFL[_LIBS]} [$2]"
+fi
+AC_ARG_VAR(UPEFL[_LIBS], [preprocessor flags for $2])
+AC_SUBST(UPEFL[_LIBS])
+
+AM_CONDITIONAL([EFL_HAVE]UP, [test "x${have_flag}" = "xyes"])
+
+m4_popdef([UP])
+m4_popdef([UPEFL])
+])
+
+dnl Macro that iterates over a sequence of white separated flags
+dnl and that call EFL_CHECK_LINKER_FLAG() for each of these flags
+dnl
+dnl EFL_CHECK_LINKER_FLAGS(EFL, FLAGS)
+
+AC_DEFUN([EFL_CHECK_LINKER_FLAGS],
+[
+m4_foreach_w([flag], [$2], [EFL_CHECK_LINKER_FLAG([$1], m4_defn([flag]))])
+])

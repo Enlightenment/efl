@@ -1,0 +1,4 @@
+SUBDIRS = mp
+
+MAINTAINERCLEANFILES = \
+Makefile.in
