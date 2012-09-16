@@ -47,7 +47,7 @@ endif
 pkgconfig_DATA += eina.pc
 
 
-.PHONY: doc benchmark
+.PHONY: doc benchmark examples install-examples
 
 # Documentation
 
@@ -97,3 +97,16 @@ benchmark-e17:
 	@$(MAKE) -C src benchmark-e17
 	@mkdir benchmark || true
 	@cd benchmark && ../src/benchmarks/eina/eina_bench `date +%F_%s`
+
+# examples
+
+examples:
+	@$(MAKE) -C src examples
+
+install-examples:
+	@$(MAKE) -C src install-examples
+
+# cleaning
+
+clean-local:
+	rm -rf benchmark coverage

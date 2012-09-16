@@ -774,6 +774,8 @@ src/benchmarks/Makefile
 src/benchmarks/eina/Makefile
 src/bin/Makefile
 src/bin/evil/Makefile
+src/examples/Makefile
+src/examples/eina/Makefile
 src/include/Makefile
 src/include/eina/Makefile
 src/include/eina/eina_config.h
