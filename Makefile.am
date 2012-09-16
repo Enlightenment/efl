@@ -47,13 +47,15 @@ endif
 pkgconfig_DATA += eina.pc
 
 
-.PHONY: doc
+.PHONY: doc benchmark
 
 # Documentation
 
 doc:
 	@echo "entering doc/"
 	make -C doc doc
+
+# Unit tests
 
 if EFL_ENABLE_COVERAGE
 
@@ -77,9 +79,21 @@ check-local:
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-reset
 endif
-	@./src/tests/eina_suite
+	@./src/tests/eina/eina_suite
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-report
 endif
 
 endif
+
+# benchmark
+
+benchmark:
+	@$(MAKE) -C src benchmark
+	@mkdir benchmark || true
+	@cd benchmark && ../src/benchmarks/eina/eina_bench `date +%F_%s`
+
+benchmark-e17:
+	@$(MAKE) -C src benchmark-e17
+	@mkdir benchmark || true
+	@cd benchmark && ../src/benchmarks/eina/eina_bench `date +%F_%s`

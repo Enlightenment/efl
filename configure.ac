@@ -598,6 +598,17 @@ AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
 EFL_CHECK_TESTS(EINA)
 
+## Benchmarks
+
+PKG_CHECK_MODULES([GLIB],
+   [glib-2.0],
+   [have_glib="yes"],
+   [have_glib="no"])
+
+if test "x${have_glib}" = "xyes" ; then
+   GLIB_CFLAGS="${GLIB_CFLAGS} -DEINA_BENCH_HAVE_GLIB"
+fi
+
 ### Checks for header files
 
 AC_HEADER_ASSERT
@@ -759,6 +770,8 @@ EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 AC_CONFIG_FILES([
 Makefile
 src/Makefile
+src/benchmarks/Makefile
+src/benchmarks/eina/Makefile
 src/bin/Makefile
 src/bin/evil/Makefile
 src/include/Makefile
@@ -779,6 +792,8 @@ src/modules/eina/mp/buddy/Makefile
 src/modules/eina/mp/one_big/Makefile
 src/scripts/Makefile
 src/scripts/eina/Makefile
+src/tests/Makefile
+src/tests/eina/Makefile
 eina.spec
 evil.pc
 eina.pc
