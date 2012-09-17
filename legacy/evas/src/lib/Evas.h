@@ -5059,7 +5059,7 @@ EAPI int             evas_map_count_get(const Evas_Map *m) EINA_CONST;
  *
  * This sets the fixed point's coordinate in the map. Note that points
  * describe the outline of a quadrangle and are ordered either clockwise
- * or anti-clock-wise. It is suggested to keep your quadrangles concave and
+ * or counter clock-wise. It is suggested to keep your quadrangles concave and
  * non-complex, though these polygon modes may work, they may not render
  * a desired set of output. The quadrangle will use points 0 and 1 , 1 and 2,
  * 2 and 3, and 3 and 0 to describe the edges of the quadrangle.
