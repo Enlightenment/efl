@@ -1,0 +1,55 @@
+/**
+ * @page Examples Examples
+ *
+ * Here is a page with some EDBus examples:
+ * 
+ * @li @ref banshee
+ * @li @ref simple_dbus_client
+ * @li @ref simple_dbus_server
+ * @li @ref complex_types
+ * @li @ref complex_types_server
+ * @li @ref connman
+ * @li @ref ofono
+ */
+
+/**
+ * @page banshee Banshee dbus client
+ * 
+ * @include banshee.c
+ */
+
+/**
+ * @page simple_dbus_client Simple dbus client
+ * 
+ * @include client.c
+ */
+
+/**
+ * @page simple_dbus_server Simple dbus server
+ * 
+ * @include server.c
+ */
+
+/**
+ * @page complex_types Handling with dbus complex types
+ * 
+ * @include complex_types.c
+ */
+
+/**
+ * @page complex_types_server Handling with dbus complex types server side
+ * 
+ * @include complex_types_server.c
+ */
+
+/**
+ * @page connman Connman
+ * 
+ * @include connman-list-services.c
+ */
+
+/**
+ * @page ofono Ofono
+ * 
+ * @include ofono-dial.c
+ */
