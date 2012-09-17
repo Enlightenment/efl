@@ -69,6 +69,8 @@ rebuild(void *data __UNUSED__)
 
    start = ecore_time_get();
    fprintf(stdout, "* SYSTEM('%s')\n", edje_cc_command);
+   fflush(stdout);
+
    ret = system(edje_cc_command);
    if (WEXITSTATUS(ret) == 0)
      read_watch_file(watchfile);
