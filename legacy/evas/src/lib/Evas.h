@@ -949,7 +949,7 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
    Evas_Device     *dev;
 };
 
-struct _Evas_Event_Mouse_Move /** Mouse button down event */
+struct _Evas_Event_Mouse_Move /** Mouse move event */
 {
    int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
 
