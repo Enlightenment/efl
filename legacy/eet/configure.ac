@@ -229,8 +229,7 @@ PKG_CHECK_EXISTS([exotic],
    [
     enable_exotic="yes"
     AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
-    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
-    requirements_pc_eina="exotic ${requirements_pc_eina}"
+    requirements_pc_eet="exotic ${requirements_pc_eet}"
    ],
    [enable_exotic="no"])
 
