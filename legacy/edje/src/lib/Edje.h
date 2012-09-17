@@ -443,6 +443,28 @@ EAPI void		edje_fontset_append_set		(const char *fonts);
 EAPI char        *edje_file_data_get              (const char *file, const char *key);
 
 /**
+ * @brief Load a new module in Edje.
+ * @param module The name of the module that will be added to Edje.
+ * @return EINA_TRUE if if the module was successfully loaded. Otherwise, EINA_FALSE.
+ *
+ * Modules are used to add functionality to Edje.
+ * So, when a module is loaded, its functionality should be available for use.
+ *
+ */
+EAPI Eina_Bool               edje_module_load                (const char *module);
+
+/**
+ * @brief Retrieves all modules that can be loaded.
+ * @return A list of all loadable modules.
+ *
+ * This function retrieves all modules that can be loaded by edje_module_load().
+ *
+ * @see edje_module_load().
+ *
+ */
+EAPI const Eina_List        *edje_available_modules_get      (void);
+
+/**
  * @brief Get the edje append fontset.
  *
  * @return The edje append fontset.
@@ -4045,9 +4067,6 @@ EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char 
  * the name @p type_name.
  */
    EAPI const Edje_External_Type       *edje_external_type_get         (const char *type_name);
-
-   EAPI Eina_Bool               edje_module_load                (const char *module);
-   EAPI const Eina_List        *edje_available_modules_get      (void);
 
    /* perspective info for maps inside edje objects */
    typedef struct _Edje_Perspective Edje_Perspective;
