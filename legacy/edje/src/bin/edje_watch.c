@@ -39,7 +39,7 @@ read_watch_file(const char *file)
         if (anotate)
           {
              path = eina_stringshare_add_length(ln->start + 3, ln->length - 3);
-             fprintf(stderr, "%c: %s\n", *ln->start, path);
+             fprintf(stdout, "%c: %s\n", *ln->start, path);
              if (*ln->start == 'O')
                do_append = EINA_FALSE;
           }
@@ -65,13 +65,16 @@ Eina_Bool
 rebuild(void *data __UNUSED__)
 {
    double start, end;
+   int ret;
 
    start = ecore_time_get();
-   fprintf(stderr, "* SYSTEM('%s')\n", edje_cc_command);
-   if (system(edje_cc_command) == 0)
+   fprintf(stdout, "* SYSTEM('%s')\n", edje_cc_command);
+   ret = system(edje_cc_command);
+   if (WEXITSTATUS(ret) == 0)
      read_watch_file(watchfile);
    end = ecore_time_get();
-   fprintf(stderr, "* DONE IN %f\n", end - start);
+   fprintf(stdout, "* DONE IN %f\n", end - start);
+   fflush(stdout);
 
    timeout = NULL;
    return EINA_FALSE;
@@ -91,7 +94,6 @@ main(int argc, char **argv)
 {
    char *watchout;
    Eina_Strbuf *buf;
-   double start, end;
    int tfd;
    int i;
 
@@ -121,24 +123,20 @@ main(int argc, char **argv)
    buf = eina_strbuf_new();
    if (!buf) return -1;
 
-   eina_strbuf_append_printf(buf, "%s/edje_cc -threads -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
+   eina_strbuf_append_printf(buf, "%s/edje_cc -fastcomp -w %s ", PACKAGE_BIN_DIR, watchfile);
    for (i = 1; i < argc; ++i)
      {
         if (!strcmp(argv[i], "-anotate"))
           anotate = EINA_TRUE;
         eina_strbuf_append_printf(buf, "%s ", argv[i]);
      }
+   eina_strbuf_append(buf, "> /dev/null 2>/dev/null");
 
    edje_cc_command = eina_strbuf_string_steal(buf);
 
    eina_strbuf_free(buf);
 
-   start = ecore_time_get();
-   fprintf(stderr, "SYSTEM('%s')\n", edje_cc_command);
-   system(edje_cc_command);
-   read_watch_file(watchfile);
-   end = ecore_time_get();
-   fprintf(stderr, "DONE %f\n", end - start);
+   rebuild(NULL);
 
    ecore_main_loop_begin();
 
