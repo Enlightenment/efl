@@ -378,6 +378,32 @@ success:
    return EINA_TRUE;
 }
 
+static Eina_Bool
+_elm_slider_smart_activate(Evas_Object *obj, Elm_Activate act)
+{
+   ELM_SLIDER_DATA_GET(obj, sd);
+
+   if ((elm_widget_disabled_get(obj)) ||
+       (act == ELM_ACTIVATE_DEFAULT)) return EINA_FALSE;
+
+   if ((act == ELM_ACTIVATE_UP) ||
+       (act == ELM_ACTIVATE_RIGHT))
+     {
+        if (sd->inverted) _drag_up(obj, NULL, NULL, NULL);
+        else _drag_down(obj, NULL, NULL, NULL);
+     }
+   else if ((act == ELM_ACTIVATE_DOWN) ||
+            (act == ELM_ACTIVATE_LEFT))
+     {
+        if (sd->inverted) _drag_down(obj, NULL, NULL, NULL);
+        else _drag_up(obj, NULL, NULL, NULL);
+     }
+
+   _slider_update(obj);
+
+   return EINA_TRUE;
+}
+
 static void
 _visuals_refresh(Evas_Object *obj)
 {
@@ -805,6 +831,7 @@ _elm_slider_smart_set_user(Elm_Slider_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->theme = _elm_slider_smart_theme;
    ELM_WIDGET_CLASS(sc)->event = _elm_slider_smart_event;
+   ELM_WIDGET_CLASS(sc)->activate = _elm_slider_smart_activate;
 
    /* not a 'focus chain manager' */
    ELM_WIDGET_CLASS(sc)->focus_next = NULL;

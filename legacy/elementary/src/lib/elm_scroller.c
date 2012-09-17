@@ -1,7 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_scroller.h"
-
 EAPI const char ELM_SCROLLER_SMART_NAME[] = "elm_scroller";
 
 static const char SIG_SCROLL[] = "scroll";
@@ -233,6 +232,58 @@ _elm_scroller_smart_event(Evas_Object *obj,
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    sd->s_iface->content_pos_set(obj, x, y);
 
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_elm_scroller_smart_activate(Evas_Object *obj, Elm_Activate act)
+{
+   Evas_Coord x = 0;
+   Evas_Coord y = 0;
+   Evas_Coord v_w = 0;
+   Evas_Coord v_h = 0;
+   Evas_Coord page_x = 0;
+   Evas_Coord page_y = 0;
+
+   ELM_SCROLLER_DATA_GET(obj, sd);
+
+   if ((elm_widget_disabled_get(obj)) ||
+       (act == ELM_ACTIVATE_DEFAULT)) return EINA_FALSE;
+
+   sd->s_iface->content_pos_get(obj, &x, &y);
+   sd->s_iface->page_size_get(obj, &page_x, &page_y);
+   sd->s_iface->content_viewport_size_get(obj, &v_w, &v_h);
+
+   if (act == ELM_ACTIVATE_UP)
+     {
+        if (page_y < 0)
+          y -= -(page_y * v_h) / 100;
+        else
+          y -= page_y;
+     }
+   else if (act == ELM_ACTIVATE_DOWN)
+     {
+        if (page_y < 0)
+          y += -(page_y * v_h) / 100;
+        else
+          y += page_y;
+     }
+   else if (act == ELM_ACTIVATE_LEFT)
+     {
+        if (page_x < 0)
+          x -= -(page_x * v_w) / 100;
+        else
+          x -= page_x;
+     }
+   else if (act == ELM_ACTIVATE_RIGHT)
+     {
+        if (page_x < 0)
+          x += -(page_x * v_w) / 100;
+        else
+          x += page_x;
+     }
+
+   sd->s_iface->content_pos_set(obj, x, y);
    return EINA_TRUE;
 }
 
@@ -627,6 +678,7 @@ _elm_scroller_smart_set_user(Elm_Scroller_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_scroller_smart_focus_next;
    ELM_WIDGET_CLASS(sc)->event = _elm_scroller_smart_event;
    ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
+   ELM_WIDGET_CLASS(sc)->activate = _elm_scroller_smart_activate;
 
    ELM_CONTAINER_CLASS(sc)->content_set = _elm_scroller_smart_content_set;
    ELM_CONTAINER_CLASS(sc)->content_get = _elm_scroller_smart_content_get;

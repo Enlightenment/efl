@@ -294,11 +294,11 @@ _elm_access_on_highlight_hook_set(Elm_Access_Info           *ac,
 }
 
 EAPI void
-_elm_access_highlight_object_activate(Evas_Object *obj)
+_elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act)
 {
    Evas_Object *highlight_obj;
    highlight_obj = elm_widget_focused_object_get(obj);
-   elm_widget_activate(highlight_obj);
+   elm_widget_activate(highlight_obj, act);
 }
 
 EAPI char *

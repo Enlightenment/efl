@@ -3507,14 +3507,25 @@ elm_widget_focus_order_get(const Evas_Object *obj)
    return sd->focus_order;
 }
 
-EAPI void 
-elm_widget_activate(Evas_Object *obj)
+EAPI void
+elm_widget_activate(Evas_Object *obj, Elm_Activate act)
 {
+   Evas_Object *parent;
+   Eina_Bool ret;
+
    API_ENTRY return;
 
-   if (!sd->api->activate) return;
+   ret = EINA_FALSE;
+   if (sd->api->activate)
+     ret = sd->api->activate(obj, act);
 
-   sd->api->activate(obj);
+   if (ret) return;
+
+   parent = elm_widget_parent_get(obj);
+   if (parent)
+     elm_widget_activate(parent, act);
+
+   return;
 }
 
 /**

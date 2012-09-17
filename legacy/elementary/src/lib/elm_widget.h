@@ -389,6 +389,17 @@
 #define ELM_WIDGET_SMART_CLASS_INIT_NAME_VERSION(name) \
   ELM_WIDGET_SMART_CLASS_INIT(EVAS_SMART_CLASS_INIT_NAME_VERSION(name))
 
+/* Elm_Activate is used in 'Virtual' function Eina_Bool (*activate)
+ * (Evas_Object *obj, Elm_Activate act); of Elm_Widget_Smart_Class */
+typedef enum
+{
+   ELM_ACTIVATE_DEFAULT = 0,
+   ELM_ACTIVATE_UP,
+   ELM_ACTIVATE_DOWN,
+   ELM_ACTIVATE_RIGHT,
+   ELM_ACTIVATE_LEFT
+} Elm_Activate;
+
 /* Please, ALWAYS update the ELM_WIDGET_SMART_CLASS_INIT macro
  * whenever you change the following struct! */
 
@@ -432,7 +443,8 @@ typedef struct _Elm_Widget_Smart_Class
                                       Evas_Object *sobj); /**< 'Virtual' function handling sub objects being removed */
    void             (*access)(Evas_Object *obj,
                               Eina_Bool is_access); /**< 'Virtual' function on the widget being set access */
-   void             (*activate)(Evas_Object *obj); /**< 'Virtual' function to activate widget  */
+   Eina_Bool        (*activate)(Evas_Object *obj,
+                                Elm_Activate act); /**< 'Virtual' function to activate widget  */
 } Elm_Widget_Smart_Class;
 
 /**
@@ -547,7 +559,6 @@ typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 
 typedef char *(*Elm_Access_Content_Cb)(void *data, Evas_Object *obj, Elm_Widget_Item *item);
 typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
-typedef void (*Elm_Access_Activate_Cb)(Evas_Object *obj, void *data);
 
 struct _Elm_Access_Item
 {
@@ -563,8 +574,6 @@ struct _Elm_Access_Info
    Ecore_Timer               *delay_timer;
    void                      *on_highlight_data;
    Elm_Access_On_Highlight_Cb on_highlight;
-   void                      *activate_data;
-   Elm_Access_Activate_Cb     activate;
 };
 
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
@@ -588,7 +597,7 @@ EAPI void             _elm_access_edje_object_part_object_unregister(Evas_Object
 EAPI void             _elm_access_widget_item_register(Elm_Widget_Item *item);
 EAPI void             _elm_access_widget_item_unregister(Elm_Widget_Item *item);
 EAPI void             _elm_access_on_highlight_hook_set(Elm_Access_Info *ac, Elm_Access_On_Highlight_Cb func, void *data);
-EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj);
+EAPI void             _elm_access_highlight_object_activate(Evas_Object *obj, Elm_Activate act);
 
 /**< put this as the first member in your widget item struct */
 #define ELM_WIDGET_ITEM       Elm_Widget_Item base
@@ -743,7 +752,7 @@ EAPI void             elm_widget_focus_mouse_up_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_tree_unfocusable_handle(Evas_Object *obj);
 EAPI void             elm_widget_focus_disabled_handle(Evas_Object *obj);
 EAPI unsigned int     elm_widget_focus_order_get(const Evas_Object *obj);
-EAPI void             elm_widget_activate(Evas_Object *obj);
+EAPI void             elm_widget_activate(Evas_Object *obj, Elm_Activate act);
 EAPI void             elm_widget_text_part_set(Evas_Object *obj, const char *part, const char *label);
 EAPI const char      *elm_widget_text_part_get(const Evas_Object *obj, const char *part);
 EAPI void             elm_widget_domain_translatable_text_part_set(Evas_Object *obj, const char *part, const char *domain, const char *text);

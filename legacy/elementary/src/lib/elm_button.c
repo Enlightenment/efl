@@ -73,11 +73,15 @@ _elm_button_smart_sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_set(obj, minw, minh);
 }
 
-static void
-_elm_button_smart_activate(Evas_Object *obj)
+static Eina_Bool
+_elm_button_smart_activate(Evas_Object *obj, Elm_Activate act)
 {
+   if (act != ELM_ACTIVATE_DEFAULT) return EINA_FALSE;
+
    evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
    elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
+
+   return EINA_TRUE;
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot
