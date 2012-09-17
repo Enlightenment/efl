@@ -242,6 +242,8 @@ evas_free(Evas *e)
    EINA_LIST_FREE(e->touch_points, touch_point)
      free(touch_point);
 
+   _evas_device_cleanup(e);
+   
    e->magic = 0;
    free(e);
 }

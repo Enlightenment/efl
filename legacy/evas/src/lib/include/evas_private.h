@@ -107,21 +107,22 @@ OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
 /* End of general types */
 
 #define MAGIC_EVAS                 0x70777770
-#define MAGIC_OBJ                  0x71777770
-#define MAGIC_OBJ_RECTANGLE        0x71777771
-#define MAGIC_OBJ_LINE             0x71777772
-#define MAGIC_OBJ_POLYGON          0x71777774
-#define MAGIC_OBJ_IMAGE            0x71777775
-#define MAGIC_OBJ_TEXT             0x71777776
-#define MAGIC_OBJ_SMART            0x71777777
-#define MAGIC_OBJ_TEXTBLOCK        0x71777778
-#define MAGIC_OBJ_TEXTGRID         0x7177777A
-#define MAGIC_SMART                0x72777770
-#define MAGIC_OBJ_SHAPE            0x72777773
-#define MAGIC_OBJ_CONTAINER        0x72777774
-#define MAGIC_OBJ_CUSTOM           0x72777775
-#define MAGIC_EVAS_GL              0x72777776
-#define MAGIC_MAP                  0x72777777
+#define MAGIC_OBJ                  0x71737723
+#define MAGIC_OBJ_RECTANGLE        0x76748772
+#define MAGIC_OBJ_LINE             0x7a27f839
+#define MAGIC_OBJ_POLYGON          0x7bb7577e
+#define MAGIC_OBJ_IMAGE            0x747ad76c
+#define MAGIC_OBJ_TEXT             0x77757721
+#define MAGIC_OBJ_SMART            0x78c7c73f
+#define MAGIC_OBJ_TEXTBLOCK        0x71737744
+#define MAGIC_OBJ_TEXTGRID         0x7377a7ca
+#define MAGIC_SMART                0x7c6977c5
+#define MAGIC_OBJ_SHAPE            0x747297f7
+#define MAGIC_OBJ_CONTAINER        0x71877776
+#define MAGIC_OBJ_CUSTOM           0x7b7857ab
+#define MAGIC_EVAS_GL              0x77976718
+#define MAGIC_MAP                  0x7575177d
+#define MAGIC_DEV                  0x7d773738
 
 #ifdef MAGIC_DEBUG
 # define MAGIC_CHECK_FAILED(o, t, m) \
@@ -408,6 +409,8 @@ struct _Evas
    unsigned char  focus : 1;
 
    Eina_List     *touch_points;
+   Eina_List     *devices;
+   Eina_Array    *cur_device;
 };
 
 struct _Evas_Layer
@@ -709,6 +712,19 @@ struct _Evas_Font_Description
    Evas_Font_Width width;
 
    Eina_Bool is_new : 1;
+};
+
+struct _Evas_Device
+{
+   DATA32 magic;
+   Evas *evas;
+   Evas_Device *parent;
+   Evas_Device *src;
+   Eina_List *children;
+   const char *name;
+   const char *desc;
+   int ref;
+   Evas_Device_Class clas;
 };
 
 struct _Evas_Object_Func
@@ -1093,6 +1109,11 @@ void _evas_touch_point_append(Evas *e, int id, Evas_Coord x, Evas_Coord y);
 void _evas_touch_point_update(Evas *e, int id, Evas_Coord x, Evas_Coord y, Evas_Touch_Point_State state);
 void _evas_touch_point_remove(Evas *e, int id);
 
+void _evas_device_cleanup(Evas *e);
+Evas_Device *_evas_device_top_get(const Evas *e);
+void _evas_device_ref(Evas_Device *dev);
+void _evas_device_unref(Evas_Device *dev);
+       
 /****************************************************************************/
 /*****************************************/
 /********************/

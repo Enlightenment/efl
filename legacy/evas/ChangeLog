@@ -1039,3 +1039,8 @@
 2012-09-14  Carsten Haitzler (The Rasterman)
 
        * Add env EVAS_GL_NO_BLACKLIST to disable blacklisting.
+
+2012-09-17  Carsten Haitzler (The Rasterman)
+
+       * Add evas_device API for being able to register devices, set
+       their names, descriptions, classes, parents, sources etc. etc.

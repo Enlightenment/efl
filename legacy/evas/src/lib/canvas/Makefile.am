@@ -23,6 +23,7 @@ libevas_canvas_la_SOURCES  = \
 evas_callbacks.c \
 evas_clip.c \
 evas_data.c \
+evas_device.c \
 evas_events.c \
 evas_filter.c \
 evas_focus.c \

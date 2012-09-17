@@ -446,6 +446,7 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_RENDER_POST, /**< Called just after rendering stops on the canvas target @since 1.2 */
 
    EVAS_CALLBACK_IMAGE_RESIZE, /**< Image size is changed @since 1.8 */
+   EVAS_CALLBACK_DEVICE_CHANGED, /**< Devices added, removed or changed on canvas @since 1.8 */
    EVAS_CALLBACK_LAST /**< kept as last element/sentinel -- not really an event */
 } Evas_Callback_Type; /**< The types of events triggering a callback */
 
@@ -880,6 +881,18 @@ typedef enum _Evas_Image_Content_Hint
    EVAS_IMAGE_CONTENT_HINT_STATIC = 2 /**< The contents won't change over time */
 } Evas_Image_Content_Hint; /**< How an image's data is to be treated by Evas, for optimization */
 
+typedef enum _Evas_Device_Class
+{
+   EVAS_DEVICE_CLASS_NONE, /**< Not a device @since 1.8 */
+   EVAS_DEVICE_CLASS_SEAT, /**< The user/seat (the user themselves) @since 1.8 */
+   EVAS_DEVICE_CLASS_KEYBOARD, /**< A regular keyboard, numberpad or attached buttons @since 1.8 */
+   EVAS_DEVICE_CLASS_MOUSE, /**< A mouse, trackball or touchpad relative motion device @since 1.8 */
+   EVAS_DEVICE_CLASS_TOUCH, /**< A touchscreen with fingers or stylus @since 1.8 */
+   EVAS_DEVICE_CLASS_PEN, /**< A special pen device @since 1.8 */
+   EVAS_DEVICE_CLASS_POINTER, /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
+   EVAS_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
+} Evas_Device_Class;
+   
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */
@@ -2162,8 +2175,9 @@ EAPI int               evas_pointer_button_down_mask_get(const Evas *e) EINA_WAR
  * @endcode
  */
 EAPI Eina_Bool         evas_pointer_inside_get(const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
-EAPI void              evas_sync(Evas *e) EINA_ARG_NONNULL(1);
 
+EAPI void              evas_sync(Evas *e) EINA_ARG_NONNULL(1);
+   
 /**
  * @defgroup Evas_Canvas_Events Canvas Events
  *
@@ -2543,6 +2557,81 @@ EAPI void             evas_event_thaw_eval(Evas *e) EINA_ARG_NONNULL(1);
  * @addtogroup Evas_Event_Feeding_Group
  * @{
  */
+
+/**
+ * @since 1.8
+ */
+EAPI Evas_Device *evas_device_new(Evas *e);
+
+/**
+ * @since 1.8
+ */
+EAPI void evas_device_free(Evas_Device *dev);
+   
+/**
+ * @since 1.8
+ */
+EAPI void evas_device_push(Evas *e, Evas_Device *dev);
+   
+/**
+ * @since 1.8
+ */
+EAPI void evas_device_pop(Evas *e);
+   
+/**
+ * @since 1.8
+ */
+EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
+   
+/**
+ * @since 1.8
+ */
+EAPI void evas_device_name_set(Evas_Device *dev, const char *name);
+   
+/**
+ * @since 1.8
+ */
+EAPI const char *evas_device_name_get(const Evas_Device *dev);
+   
+/**
+ * @since 1.8
+ */
+EAPI void evas_device_description_set(Evas_Device *dev, const char *desc);
+   
+/**
+ * @since 1.8
+ */
+EAPI const char *evas_device_description_get(const Evas_Device *dev);
+   
+/**
+ * @since 1.8
+ */
+EAPI void evas_device_parent_set(Evas_Device *dev, Evas_Device *parent);
+   
+/**
+ * @since 1.8
+ */
+EAPI const Evas_Device *evas_device_parent_get(const Evas_Device *dev);
+   
+/**
+ * @since 1.8
+ */
+EAPI void evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas);
+   
+/**
+ * @since 1.8
+ */
+EAPI Evas_Device_Class evas_device_class_get(const Evas_Device *dev);
+   
+/**
+ * @since 1.8
+ */
+EAPI void evas_device_emulation_source_set(Evas_Device *dev, Evas_Device *src);
+   
+/**
+ * @since 1.8
+ */
+EAPI const Evas_Device *evas_device_emulation_source_get(const Evas_Device *dev);
 
 /**
  * Get the number of mouse or multi presses currently active
