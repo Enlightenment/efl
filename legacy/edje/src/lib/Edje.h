@@ -327,15 +327,15 @@ extern "C" {
 #define EDJE_VERSION_MAJOR 1
 #define EDJE_VERSION_MINOR 8
 
-   typedef struct _Edje_Version
-     {
-        int major;
-        int minor;
-        int micro;
-        int revision;
-     } Edje_Version;
+typedef struct _Edje_Version
+{
+   int major;
+   int minor;
+   int micro;
+   int revision;
+} Edje_Version;
 
-   EAPI extern Edje_Version *edje_version;
+EAPI extern Edje_Version *edje_version;
 
 typedef enum _Edje_Action_Type
 {
