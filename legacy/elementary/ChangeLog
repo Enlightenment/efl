@@ -513,3 +513,8 @@
 
         * Fix info field set for bubble widget.
 
+2012-09-17  Shinwoo Kim (kimcinoo)
+
+        * Add direction enum to elm access activate api
+        * Use activate directions
+
