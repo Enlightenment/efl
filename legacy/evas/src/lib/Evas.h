@@ -4602,7 +4602,7 @@ EAPI void            evas_object_map_set(Evas_Object *obj, const Evas_Map *map);
  * const Evas_Map *m = evas_object_map_get(obj);
  * Evas_Map *m2 = evas_map_dup(m);
  * evas_map_util_rotate(m2, 30.0, 0, 0);
- * evas_object_map_set(obj);
+ * evas_object_map_set(obj, m2);
  * evas_map_free(m2);
  * @endcode
  *
