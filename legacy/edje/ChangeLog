@@ -623,3 +623,8 @@
 
 	* Small improvement in memory footprint by using an array instead of a list for
 	some callback list.
+
+2012-09-17  Cedric Bail
+
+	* Don't generate an annotate file if edje_cc failed.
+

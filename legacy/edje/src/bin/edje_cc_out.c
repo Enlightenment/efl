@@ -212,6 +212,7 @@ error_and_abort(Eet_File *ef __UNUSED__, const char *fmt, ...)
                    "unknown", "unknown", 0, fmt, ap);
    va_end(ap);
    unlink(file_out);
+   if (watchfile) unlink(watchfile);
    exit(-1);
 }
 

@@ -17,6 +17,7 @@ Improvements:
     * O(1) access time for parameters in edje_cc_handler.
     * Recycle and use less memory during load time.
     * Less memory used per callbacks.
+    * Don't generate an annotate file if edje_cc failed.
 
 Fixes:
 
