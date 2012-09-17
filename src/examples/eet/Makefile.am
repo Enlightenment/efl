@@ -46,5 +46,3 @@ uninstall-local:
 	for f in $(SRCS) ; do \
 	  rm -f $(pkgdatadir)/examples/$$f ; \
 	done
-
-EXTRA_DIST = addr_book.txt chat.xml

@@ -36,7 +36,6 @@ evas_object_list.c \
 evas_stringshare.c \
 eina_bench_quad.c \
 eina_bench.h \
-eina_suite.h \
 Ecore_Data.h \
 Evas_Data.h \
 evas_mempool.h

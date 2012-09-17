@@ -13,6 +13,7 @@ check_PROGRAMS = eina_suite cxx_compile_test
 
 eina_suite_SOURCES = \
 eina_suite.c \
+eina_suite.h \
 eina_test_fp.c \
 eina_test_stringshare.c \
 eina_test_ustringshare.c \
