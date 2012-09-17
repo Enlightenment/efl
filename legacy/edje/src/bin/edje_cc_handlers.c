@@ -1098,6 +1098,8 @@ _edje_program_copy(Edje_Program *ep, Edje_Program *ep2)
           data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
         else if (ep2->action == EDJE_ACTION_TYPE_ACTION_STOP)
           data_queue_copied_program_lookup(pc, &(et2->id), &(et->id));
+        else if (ep2->action == EDJE_ACTION_TYPE_SCRIPT)
+          data_queue_copied_program_lookup(pc, &(et2->id), &(et->id));
         else if (ep2->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
           data_queue_copied_part_lookup(pc, &(et2->id), &(et->id));
         else if (ep2->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
@@ -2557,6 +2559,7 @@ st_collections_group_inherit(void)
         cp->l2 = cp2->l2;
         cp->script = STRDUP(cp2->script);
         cd->is_lua = cd2->is_lua;
+        cd->shared = cd2->shared;
         cd->programs = eina_list_append(cd->programs, cp);
         data_queue_copied_anonymous_lookup(pc, &(cp2->id), &(cp->id));
      }
