@@ -112,7 +112,7 @@ install-examples:
 	mkdir -p $(pkgdatadir)/examples
 	$(install_sh_DATA) -c $(SRCS) $(pkgdatadir)/examples
 
-unsinstall-local:
+uninstall-local:
 	for f in $(SRCS) ; do \
 	  rm -f $(pkgdatadir)/examples/$$f ; \
 	done

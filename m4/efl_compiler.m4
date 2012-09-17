@@ -65,7 +65,7 @@ dnl AM_CONDITIONAL : EFL_HAVE_FLAG (FLAG being replaced by its value)
 AC_DEFUN([EFL_CHECK_LINKER_FLAG],
 [
 m4_pushdef([UPEFL], m4_translit([[$1]], [-a-z], [_A-Z]))
-m4_pushdef([UP], m4_translit([[$2]], [-a-z], [_A-Z]))
+m4_pushdef([UP], m4_translit([[$2]], [,-a-z], [__A-Z]))
 
 LDFLAGS_save="${LDFLAGS}"
 LDFLAGS="${LDFLAGS} $2"

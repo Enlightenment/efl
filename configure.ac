@@ -167,6 +167,19 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 
 #### Additional options to configure
 
+# Assert or fail.
+
+AC_ARG_ENABLE([assert],
+   [AC_HELP_STRING([--enable-assert], [enable assert, @<:@default=no@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       prefer_assert="yes"
+    else
+       prefer_assert="no"
+    fi
+   ],
+   [prefer_assert="no"])
+
 
 #### Checks for programs
 
@@ -216,6 +229,8 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 #### Checks for header files
 
+EFL_CHECK_PATH_MAX
+
 
 #### Checks for types
 
@@ -225,6 +240,8 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 #### Checks for compiler characteristics
 
+AC_C_BIGENDIAN
+AC_C_INLINE
 EFL_ATTRIBUTE_UNUSED
 # EFL_CHECK_COMPILER_FLAGS([MY_LIB], [-Wall -Wextra])
 
@@ -242,6 +259,7 @@ AC_SUBST([lt_enable_auto_import])
 
 #### Checks for library functions
 
+AC_FUNC_ALLOCA
 
 
 ######################  EFL  ######################
@@ -422,19 +440,6 @@ if test "x${have_stringshare_usage}" = "xyes"; then
    AC_DEFINE([EINA_STRINGSHARE_USAGE], [1], [Report Eina stringshare usage pattern])
 fi
 
-# Assert or fail.
-
-AC_ARG_ENABLE([assert],
-   [AC_HELP_STRING([--enable-assert], [enable assert, @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       prefer_assert="yes"
-    else
-       prefer_assert="no"
-    fi
-   ],
-   [prefer_assert="no"])
-
 # Check if we want to benchmark on real data
 AC_ARG_ENABLE([e17],
    [AC_HELP_STRING([--enable-e17], [enable heavy benchmark @<:@default=no@:>@])],
@@ -481,7 +486,7 @@ case "$host_vendor" in
     ;;
 esac
 
-# Exotic library for copilation on Coyote
+# Exotic library for compilation on Coyote
 
 PKG_CHECK_EXISTS([exotic],
    [
@@ -667,10 +672,6 @@ AC_SUBST([EINA_CONFIGURE_HAVE_DIRENT_H])
 
 ### Checks for compiler characteristics
 
-AC_C_BIGENDIAN
-AC_C_INLINE
-EFL_ATTRIBUTE_UNUSED
-
 m4_ifdef([v_ver],
    [
     EFL_CHECK_COMPILER_FLAGS([EINA], [-Wall -Wextra])
@@ -678,15 +679,11 @@ m4_ifdef([v_ver],
 
 EFL_CHECK_COMPILER_FLAGS([EINA], [-Wshadow])
 
-EFL_CHECK_PATH_MAX
-
 ### Checks for linker characteristics
 
 EFL_CHECK_LINKER_FLAGS([EINA], [-fno-strict-aliasing])
 
 ### Checks for library functions
-
-AC_FUNC_ALLOCA
 
 AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp backtrace backtrace_symbols malloc_usable_size mtrace])
 
@@ -752,7 +749,344 @@ EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 
 #### Eet
 
-#AC_MSG_NOTICE([Eet checks])
+AC_MSG_NOTICE([Eet checks])
+
+### Default values
+
+### Additional options to configure
+
+EFL_ENABLE_BIN([eet])
+
+# Old eet file format support
+
+AC_ARG_ENABLE(old-eet-file-format,
+   [AC_HELP_STRING(
+      [--disable-old-eet-file-format],
+      [disable old eet file format support @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       old_eet_file_format="yes"
+    else
+       old_eet_file_format="no"
+    fi
+   ],
+   [old_eet_file_format="yes"])
+
+AC_MSG_CHECKING([whether to support old eet file format])
+AC_MSG_RESULT([${old_eet_file_format}])
+
+if test "x${old_eet_file_format}" = "xyes" ; then
+   AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 1, [support old eet file format])
+else
+   AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 0, [support old eet file format])
+fi
+
+# Openssl support
+
+AC_ARG_ENABLE([openssl],
+   [AC_HELP_STRING([--disable-openssl], [disable openssl eet support @<:@default=auto@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_openssl="yes"
+    else
+       want_openssl="no"
+    fi
+   ],
+   [want_openssl="auto"])
+
+AC_MSG_CHECKING([whether to use OpenSSL])
+AC_MSG_RESULT([${want_openssl}])
+
+# GnuTLS support
+
+AC_ARG_ENABLE([gnutls],
+   [AC_HELP_STRING([--disable-gnutls], [disable gnutls eet support @<:@default=auto@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_gnutls="yes"
+    else
+       want_gnutls="no"
+    fi
+   ],
+   [want_gnutls="auto"])
+
+AC_MSG_CHECKING([whether to use Gnutls])
+AC_MSG_RESULT([${want_gnutls}])
+
+# Cryptography support
+
+AC_ARG_ENABLE([cipher],
+   [AC_HELP_STRING([--disable-cipher], [disable cipher support for eet API @<:@default=yes@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_cipher="yes"
+    else
+       want_cipher="no"
+    fi
+   ],
+   [want_cipher="yes"])
+
+AC_MSG_CHECKING([whether to use cipher])
+AC_MSG_RESULT([${want_cipher}])
+
+AC_ARG_ENABLE([signature],
+   [AC_HELP_STRING([--disable-signature], [disable signature file support for eet @<:@default=yes@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_signature="yes"
+    else
+       want_signature="no"
+    fi
+   ],
+   [want_signature="yes"])
+
+AC_MSG_CHECKING([whether to use signature])
+AC_MSG_RESULT([${want_signature}])
+
+### Checks for programs
+
+### Checks for libraries
+
+## Compatibility layers
+
+# Evil library for compilation on Windows
+
+EFL_EET_BUILD=""
+case "$host_os" in
+   mingw*)
+      PKG_CHECK_EXISTS([evil >= 1.1.0])
+      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
+      requirements_pc_eet="evil ${requirements_pc_eet}"
+      EFL_EET_BUILD="-DEFL_EET_BUILD"
+   ;;
+esac
+AC_SUBST(EFL_EET_BUILD)
+
+# Exotic library for compilation on Coyote
+
+PKG_CHECK_EXISTS([exotic],
+   [
+    enable_exotic="yes"
+    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
+    requirements_pc_eet="exotic ${requirements_pc_eet}"
+   ],
+   [enable_exotic="no"])
+
+## Secure layer
+
+# Gnutls library
+
+have_gnutls="no"
+if test "x${want_gnutls}" = "xyes" || test "x${want_gnutls}" = "xauto" ; then
+   PKG_CHECK_MODULES([GNUTLS], [gnutls >= 1.7.6],
+      [
+       have_gnutls="yes"
+       want_openssl="no"
+       AC_DEFINE([HAVE_GNUTLS], [1], [Have Gnutls support])
+       requirements_pc_eet="gnutls >= 1.7.6 ${requirements_pc_eet}"
+      ],
+      [have_gnutls="no"])
+fi
+
+# libgcrypt
+
+if test "x${have_gnutls}" = "xyes" ; then
+   AC_PATH_GENERIC([libgcrypt], [], [have_gnutls="yes"], [have_gnutls="no"])
+   if test "x${have_gnutls}" = "xyes" ; then
+      requirements_libs_eet="${LIBGCRYPT_LIBS} ${requirements_libs_eet}"
+   fi
+fi
+
+# Specific GNUTLS improvement
+
+AC_ARG_ENABLE(new-gnutls-api,
+   [AC_HELP_STRING(
+      [--disable-new-gnutls-api],
+      [enable use of gnutls_x509_crt_verify_hash. @<:@default=yes@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       new_gnutls_api="yes"
+    else
+       new_gnutls_api="no"
+    fi
+   ],
+   [new_gnutls_api="yes"])
+
+AC_MSG_CHECKING([whether to use gnutls_x509_crt_verify_hash])
+AC_MSG_RESULT([${new_gnutls_api}])
+
+if test "x${have_gnutls}" = "xyes" && test "x${new_gnutls_api}" = "xyes" ; then
+   CFLAGS_save="${CFLAGS}"
+   LIBS_save="${LIBS}"
+   CFLAGS="${GNUTLS_CFLAGS}"
+   LIBS="${GNUTLS_LIBS}"
+   AC_CHECK_LIB([gnutls], [gnutls_x509_crt_verify_hash],
+      [
+       AC_DEFINE([EET_USE_NEW_GNUTLS_API], [1], [use gnutls_x509_crt_verify_hash])
+       new_gnutls_api="yes"
+      ],
+      [new_gnutls_api="no"])
+   CFLAGS="${CFLAGS_save}"
+   LIBS="${LIBS_save}"
+fi
+
+use_gnutls_privkey_sign_data="no"
+if test "x${have_gnutls}" = "xyes" ; then
+   CFLAGS_save="${CFLAGS}"
+   LIBS_save="${LIBS}"
+   CFLAGS="${GNUTLS_CFLAGS}"
+   LIBS="${GNUTLS_LIBS}"
+   AC_CHECK_LIB([gnutls], [gnutls_privkey_sign_data],
+      [
+       AC_DEFINE([EET_USE_NEW_PRIVKEY_SIGN_DATA], [1], [use gnutls_privkey_sign_data])
+       use_gnutls_privkey_sign_data="yes"
+      ],
+      [use_gnutls_privkey_sign_data="no"])
+   CFLAGS="${CFLAGS_save}"
+   LIBS="${LIBS_save}"
+fi
+
+AC_MSG_CHECKING([whether to use gnutls_privkey_sign_data])
+AC_MSG_RESULT([${use_gnutls_privkey_sign_data}])
+
+use_gnutls_pubkey_verify_hash="no"
+if test "x${have_gnutls}" = "xyes" ; then
+   CFLAGS_save="${CFLAGS}"
+   LIBS_save="${LIBS}"
+   CFLAGS="${GNUTLS_CFLAGS}"
+   LIBS="${GNUTLS_LIBS}"
+   AC_CHECK_LIB([gnutls], [gnutls_pubkey_verify_hash],
+      [
+       AC_DEFINE([EET_USE_NEW_PUBKEY_VERIFY_HASH], [1], [use gnutls_pubkey_verify_hash])
+       use_gnutls_pubkey_verify_hash="yes"
+      ],
+      [use_gnutls_pubkey_verify_hash="no"])
+   CFLAGS="${CFLAGS_save}"
+   LIBS="${LIBS_save}"
+fi
+
+AC_MSG_CHECKING([whether to use gnutls_pubkey_verify_hash])
+AC_MSG_RESULT([${use_gnutls_pubkey_verify_hash}])
+
+# Openssl library
+
+have_openssl="no"
+if test "x${want_openssl}" = "xyes" || test "x${want_openssl}" = "xauto" ; then
+   PKG_CHECK_EXISTS([openssl],
+      [
+       have_openssl="yes"
+       AC_DEFINE([HAVE_OPENSSL], [1], [Have Openssl support])
+       requirements_pc_eet="openssl ${requirements_pc_eet}"
+      ],
+      [have_openssl="no"])
+fi
+
+if test "x${have_gnutls}" = "xyes" ; then
+   secure_layer="GnuTLS"
+elif test "x${have_openssl}" = "xyes" ; then
+   secure_layer="OpenSSL"
+else
+   secure_layer="no"
+fi
+
+# Cryptography support
+
+have_cipher="no"
+if test "x${have_gnutls}" = "xyes" && test "x${want_cipher}" = "xyes" ; then
+   have_cipher="yes"
+   AC_DEFINE([HAVE_CIPHER], [1], [Have cipher support built in eet])
+elif test "x${have_openssl}" = "xyes" && test "x${want_cipher}" = "xyes" ; then
+   have_cipher="yes"
+   AC_DEFINE([HAVE_CIPHER], [1], [Have cipher support built in eet])
+fi
+
+AC_MSG_CHECKING([whether to activate cipher support in eet])
+AC_MSG_RESULT([${have_cipher}])
+
+have_signature="no"
+if test "x${have_gnutls}" = "xyes" && test "x${want_signature}" = "xyes" ; then
+   have_signature="yes"
+   AC_DEFINE([HAVE_SIGNATURE], [1], [Have signature support for eet file])
+elif test "x${have_openssl}" = "xyes" && test "x${want_signature}" = "xyes" ; then
+   have_signature="yes"
+   AC_DEFINE([HAVE_SIGNATURE], [1], [Have signature support for eet file])
+fi
+
+AC_MSG_CHECKING([whether to activate signature support in eet])
+AC_MSG_RESULT([${have_signature}])
+
+# libjpeg and zlib
+
+EFL_CHECK_LIBS([eet], [libjpeg zlib])
+
+# Eina library
+
+requirements_pc_eet="eina >= 1.2.0 ${requirements_pc_eet}"
+PKG_CHECK_MODULES([EET], [${requirements_pc_eet}])
+
+case "$host_os" in
+   mingw32ce*)
+      requirements_libs_eet="${requirements_libs_eet} -lws2"
+      ;;
+   mingw*)
+      requirements_libs_eet="${requirements_libs_eet} -lws2_32"
+      ;;
+esac
+
+EET_LIBS="${EET_LIBS} ${requirements_libs_eet}"
+
+### Checks for header files
+
+AC_CHECK_HEADERS(netinet/in.h unistd.h)
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+# Check whether the null pointer is zero on this arch
+AC_TRY_RUN(
+   [
+#include <stdlib.h>
+#include <inttypes.h>
+int main (int argc, char **argv) {
+  void *foo = NULL;
+  uintptr_t bar = (uintptr_t)foo;
+  return (uintptr_t)foo;
+}
+   ],
+   [have_null="yes"],
+   [have_null="no"],
+   [
+    AC_MSG_WARN([Cannot check when cross-compiling -- assuming null is okay])
+    have_null="yes"
+   ])
+AC_MSG_CHECKING([value of the null pointer])
+AC_MSG_RESULT([${have_null}])
+
+if test ! "x${have_null}" = "xyes" ; then
+   AC_MSG_WARN([Your system is a bit too funny, eet might not work properly])
+fi
+
+### Checks for linker characteristics
+
+case "${host_os}" in
+   openbsd*)
+   ;;
+   *)
+      EFL_CHECK_LINKER_FLAGS([EET], [-Wl,--as-needed])
+   ;;
+esac
+
+### Checks for library functions
+
+#### End of Eet
+
+
+#### Evas
+
+#AC_MSG_NOTICE([Evas checks])
 
 ### Default values
 ### Additional options to configure
@@ -765,7 +1099,8 @@ EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 ### Checks for linker characteristics
 ### Checks for library functions
 
-#### End of Eet
+#### End of Evas
+
 
 AC_CONFIG_FILES([
 Makefile
@@ -774,14 +1109,17 @@ src/benchmarks/Makefile
 src/benchmarks/eina/Makefile
 src/bin/Makefile
 src/bin/evil/Makefile
+src/bin/eet/Makefile
 src/examples/Makefile
 src/examples/eina/Makefile
+src/examples/eet/Makefile
 src/include/Makefile
 src/include/eina/Makefile
 src/include/eina/eina_config.h
 src/lib/Makefile
 src/lib/evil/Makefile
 src/lib/eina/Makefile
+src/lib/eet/Makefile
 src/modules/Makefile
 src/modules/eina/Makefile
 src/modules/eina/mp/Makefile
@@ -796,9 +1134,12 @@ src/scripts/Makefile
 src/scripts/eina/Makefile
 src/tests/Makefile
 src/tests/eina/Makefile
+src/tests/eet/Makefile
 eina.spec
+eet.spec
 evil.pc
 eina.pc
+eet.pc
 ])
 
 AC_OUTPUT
@@ -842,11 +1183,11 @@ echo "  File dirfd...........: ${efl_func_dirfd}"
 echo "  File xattr...........: ${efl_func_setxattr}"
 echo "  shm_open.............: ${efl_func_shm_open}"
 echo
-echo "  Tests................: ${_efl_enable_tests} (Coverage: ${_efl_enable_coverage})"
-echo "  Examples.............: ${enable_build_examples}"
-echo "  Tiler Example........: ${build_tiler_example}"
-echo "  Examples installed...: ${enable_install_examples}"
-echo "  Benchmark............: ${enable_benchmark}"
+echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
+echo "  Examples.............: make examples"
+echo "    Tiler Example......: ${build_tiler_example}"
+echo "    installation.......: make install-examples"
+echo "  Benchmark............: make benchmark"
 if test "x${enable_benchmark}" = "xyes" ; then
 echo "    Glib...............: ${enable_benchmark_glib}"
 echo "    E17 real data......: ${enable_benchmark_e17}"
@@ -860,6 +1201,20 @@ echo "    Ememoa unknown.....: ${enable_ememoa_unknown}"
 echo "    Fixed bitmap.......: ${enable_fixed_bitmap}"
 echo "    One big............: ${enable_one_big}"
 echo "    Pass through.......: ${enable_pass_through}"
+echo
+echo "Eet"
+echo
+echo "  Secure layer.........: ${secure_layer}"
+if test "x${have_gnutls}" = "xyes" || test "x${have_openssl}" = "xyes" ; then
+   echo "    Cipher support.....: ${have_cipher}"
+   echo "    Signature..........: ${have_signature}"
+fi
+echo
+echo "  Old eet file format..: ${old_eet_file_format}"
+echo
+echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
+echo "  Examples.............: make examples"
+echo "    installation.......: make install-examples"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

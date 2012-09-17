@@ -7,3 +7,5 @@ if HAVE_WINDOWS
 SUBDIRS += evil
 
 endif
+
+SUBDIRS += eet

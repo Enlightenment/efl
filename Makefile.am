@@ -21,21 +21,35 @@ m4/ltsugar.m4 \
 m4/ltversion.m4
 
 EXTRA_DIST =  \
+m4/ac_path_generic.m4 \
 m4/efl_attribute.m4 \
 m4/efl_check_funcs.m4 \
 m4/efl_compiler.m4 \
 m4/efl_doxygen.m4 \
 m4/efl_path_max.m4 \
 m4/efl_threads.m4 \
-m4/evil_windows.m4
+m4/evil_windows.m4 \
+m4/eina_check.m4
 
 if HAVE_WINDOWS
-EXTRA_DIST += evil.pc
+EXTRA_DIST += \
+ChangeLog.evil \
+NEWS.evil \
+README.evil \
+evil.pc
 endif
 
 EXTRA_DIST += \
+ChangeLog.eina \
+NEWS.eina \
+README.eina \
 eina.spec \
-eina.pc
+eina.pc \
+ChangeLog.eet \
+NEWS.eet \
+README.eet \
+eet.spec \
+eet.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -44,7 +58,7 @@ if HAVE_WINDOWS
 pkgconfig_DATA += evil.pc
 endif
 
-pkgconfig_DATA += eina.pc
+pkgconfig_DATA += eina.pc eet.pc
 
 
 .PHONY: doc benchmark examples install-examples
@@ -79,7 +93,7 @@ check-local:
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-reset
 endif
-	@./src/tests/eina/eina_suite
+	@./src/tests/eet/eet_suite
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) lcov-report
 endif
