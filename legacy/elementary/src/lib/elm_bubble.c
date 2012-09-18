@@ -75,12 +75,23 @@ _elm_bubble_smart_focus_next(const Evas_Object *obj,
 {
    Evas_Object *content;
 
-   content = elm_layout_content_get(obj, NULL);
+   ELM_BUBBLE_DATA_GET(obj, sd);
 
-   if (!content) return EINA_FALSE;
+   if ((elm_widget_can_focus_get(obj)) &&
+       (!ELM_WIDGET_DATA(sd)->focused))
+     {
+        // ACCESS
+        *next = (Evas_Object *)obj;
+        return EINA_TRUE;
+     }
+   else
+     {
+        content = elm_layout_content_get(obj, NULL);
+        if (!content) return EINA_FALSE;
 
-   /* attempt to follow focus cycle into sub-object */
-   return elm_widget_focus_next_get(content, dir, next);
+        /* attempt to follow focus cycle into sub-object */
+        return elm_widget_focus_next_get(content, dir, next);
+     }
 }
 
 static Eina_Bool
@@ -122,6 +133,48 @@ _elm_bubble_smart_text_set(Evas_Object *obj,
    return EINA_TRUE;
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   char *ret;
+   Eina_Strbuf *buf;
+   buf = eina_strbuf_new();
+   Evas_Object *content;
+   const char *default_txt = NULL;
+   const char *content_txt = NULL;
+   const char *info_txt = NULL;
+
+   default_txt = elm_widget_access_info_get(obj);
+   if (!default_txt) default_txt = elm_layout_text_get(obj, NULL);
+   if (default_txt) eina_strbuf_append(buf, default_txt);
+
+   content = elm_layout_content_get(obj, NULL);
+   if (content) content_txt = elm_layout_text_get(content, NULL);
+   if (content_txt)
+     {
+        if (!eina_strbuf_length_get(buf))
+          eina_strbuf_append(buf, content_txt);
+        else
+          eina_strbuf_append_printf(buf, ", %s", content_txt);
+     }
+
+
+   info_txt = edje_object_part_text_get(elm_layout_edje_get(obj), "elm.info");
+   if (info_txt)
+     {
+        if (!eina_strbuf_length_get(buf))
+          eina_strbuf_append(buf, info_txt);
+        else
+          eina_strbuf_append_printf(buf, ", %s", info_txt);
+     }
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 static void
 _elm_bubble_smart_add(Evas_Object *obj)
 {
@@ -137,9 +190,30 @@ _elm_bubble_smart_add(Evas_Object *obj)
      (ELM_WIDGET_DATA(priv)->resize_obj, EVAS_CALLBACK_MOUSE_UP,
      _on_mouse_up, obj);
 
+   // ACCESS
+   _elm_access_object_register(obj, ELM_WIDGET_DATA(priv)->resize_obj);
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("Bubble"));
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
+
    elm_layout_theme_set(obj, "bubble", "base", elm_widget_style_get(obj));
 
    elm_layout_sizing_eval(obj);
+
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON))
+     elm_widget_can_focus_set(obj, EINA_TRUE);
+}
+
+static void
+_elm_bubble_smart_access(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_BUBBLE_CHECK(obj);
+
+   if (is_access)
+     elm_widget_can_focus_set(obj, EINA_TRUE);
+   else
+     elm_widget_can_focus_set(obj, EINA_FALSE);
 }
 
 static void
@@ -149,6 +223,7 @@ _elm_bubble_smart_set_user(Elm_Bubble_Smart_Class *sc)
 
    ELM_WIDGET_CLASS(sc)->focus_next = _elm_bubble_smart_focus_next;
    ELM_WIDGET_CLASS(sc)->focus_direction = _elm_bubble_smart_focus_direction;
+   ELM_WIDGET_CLASS(sc)->access = _elm_bubble_smart_access;
 
    ELM_LAYOUT_CLASS(sc)->text_set = _elm_bubble_smart_text_set;
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_bubble_smart_sizing_eval;
