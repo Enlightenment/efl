@@ -350,6 +350,8 @@ START_TEST(eeze_test_sensor_read)
    fail_if(rc == EINA_FALSE);
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
    fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_xyz_get(sens, &x, &y, &z);
+   fail_if(rc == EINA_FALSE);
 
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_MAGNETIC);
    fail_if(sens == NULL);
@@ -358,6 +360,8 @@ START_TEST(eeze_test_sensor_read)
    rc = eeze_sensor_accuracy_get(sens, &acc);
    fail_if(rc == EINA_FALSE);
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
+   fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_xyz_get(sens, &x, &y, &z);
    fail_if(rc == EINA_FALSE);
 
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_ORIENTATION);
@@ -368,6 +372,8 @@ START_TEST(eeze_test_sensor_read)
    fail_if(rc == EINA_FALSE);
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
    fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_xyz_get(sens, &x, &y, &z);
+   fail_if(rc == EINA_FALSE);
 
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_GYROSCOPE);
    fail_if(sens == NULL);
@@ -376,6 +382,8 @@ START_TEST(eeze_test_sensor_read)
    rc = eeze_sensor_accuracy_get(sens, &acc);
    fail_if(rc == EINA_FALSE);
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
+   fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_xyz_get(sens, &x, &y, &z);
    fail_if(rc == EINA_FALSE);
 
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_PROXIMITY);
@@ -386,6 +394,8 @@ START_TEST(eeze_test_sensor_read)
    fail_if(rc == EINA_FALSE);
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
    fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_x_get(sens, &x);
+   fail_if(rc == EINA_FALSE);
 
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_LIGHT);
    fail_if(sens == NULL);
@@ -394,6 +404,8 @@ START_TEST(eeze_test_sensor_read)
    rc = eeze_sensor_accuracy_get(sens, &acc);
    fail_if(rc == EINA_FALSE);
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
+   fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_x_get(sens, &x);
    fail_if(rc == EINA_FALSE);
 
    eeze_sensor_free(sens);
