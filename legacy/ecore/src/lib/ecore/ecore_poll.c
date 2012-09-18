@@ -194,6 +194,13 @@ ecore_poller_poll_interval_set(Ecore_Poller_Type type __UNUSED__,
                                double            poll_time)
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
+
+   if (poll_time < 0.0)
+     {
+        ERR("Poll time %f less than zero, ignored", poll_time);
+        return;
+     }
+
    poll_interval = poll_time;
    _ecore_poller_next_tick_eval();
 }
