@@ -2883,7 +2883,7 @@ _status_config_caches(Evas_Object *win,
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
 
-   LABEL_FRAME_ADD("<hilight>Cache Flush Interval (8 ticks pre second)</>");
+   LABEL_FRAME_ADD("<hilight>Cache Flush Interval (8 ticks per second)</>");
 
    sl = elm_slider_add(win);
    evas_object_data_set(win, "cache_flush_interval_slider", sl);
