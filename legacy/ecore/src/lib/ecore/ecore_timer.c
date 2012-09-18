@@ -232,13 +232,7 @@ ecore_timer_interval_set(Ecore_Timer *timer,
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
    _ecore_lock();
-
-   if (in < 0.0)
-     {
-        ERR("Interval %f less than zero, ignored", in);
-        goto unlock;
-     }
-
+   if (in < 0.0) in = 0.0;
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
      {
         ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
