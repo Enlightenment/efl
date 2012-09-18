@@ -122,3 +122,9 @@
 2012-08-30  Carsten Haitzler (The Rasterman)
 
         1.7.0 release
+
+2012-09-18 Stefan Schmidt
+
+        * Added sensor subsystem to read out data from various sensor frameworks
+        * Added sensor modules for Tizen and a fake module for testing
+        * Added unit tests for various parts of eeze

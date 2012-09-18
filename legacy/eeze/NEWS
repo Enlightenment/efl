@@ -1,5 +1,13 @@
 Eeze 1.7.0
 
+Changes since Eeze 1.7.0:
+-------------------------
+
+Additions:
+
+    * Sensor subsystem
+    * Unit tests
+
 Changes since Eeze 1.2.0:
 -------------------------
 
