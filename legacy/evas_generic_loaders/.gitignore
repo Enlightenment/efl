@@ -41,6 +41,12 @@ src/bin/gst/evas_image_loader_gst-shmfile.o
 src/bin/pdf/.deps/
 src/bin/pdf/Makefile
 src/bin/pdf/Makefile.in
+src/bin/pdf/evas_image_loader.pdf
+src/bin/pdf/evas_image_loader_pdf-shmfile.o
+src/bin/pdf/main.o
+src/bin/ps/evas_image_loader.ps
+src/bin/ps/evas_image_loader_ps-main.o
+src/bin/ps/evas_image_loader_ps-shmfile.o
 src/bin/ps/.deps/
 src/bin/ps/Makefile
 src/bin/ps/Makefile.in
@@ -61,4 +67,3 @@ src/bin/xcf/evas_image_loader_xcf-main.o
 src/bin/xcf/evas_image_loader_xcf-pixelfuncs.o
 src/bin/xcf/evas_image_loader_xcf-shmfile.o
 stamp-h1
-
