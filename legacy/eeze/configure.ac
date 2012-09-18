@@ -240,6 +240,10 @@ fi
 EFL_COMPILER_FLAG([-Wshadow])
 
 
+### Unit tests, coverage and benchmarking
+
+EFL_CHECK_TESTS([eeze], [enable_tests="yes"], [enable_tests="no"])
+
 ### Binary
 
 EFL_ENABLE_BIN([eeze-udev-test], ["yes"])
@@ -260,6 +264,7 @@ doc/Doxyfile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
+src/tests/Makefile
 eeze.pc
 eeze.spec
 ])
@@ -283,7 +288,9 @@ if test "x$eeze_mount" = "xyes";then
   echo "Eject..................: ${with_eject}"
   echo
 fi
-echo "Tests..................: ${have_eeze_udev_test}"
+echo "Udev Tests.............: ${have_eeze_udev_test}"
+echo
+echo "Tests..............: ${enable_tests} (Coverage: ${efl_enable_coverage})"
 echo
 echo "Demos..................:"
 echo "  eeze_mount...........: ${have_eeze_mount}"
