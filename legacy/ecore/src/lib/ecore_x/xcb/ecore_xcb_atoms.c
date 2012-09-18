@@ -63,10 +63,6 @@ _ecore_xcb_atoms_finalize(void)
  * @p reply is @c NULL, the NULL atom is returned. Otherwise, the atom
  * associated to the name is returned.
  *
- * To use this function, you must call before, and in order,
- * ecore_x_atom_get_prefetch(), which sends the InternAtom request,
- * then ecore_x_atom_get_fetch(), which gets the reply.
- *
  * @ingroup Ecore_X_Atom_Group
  */
 EAPI Ecore_X_Atom

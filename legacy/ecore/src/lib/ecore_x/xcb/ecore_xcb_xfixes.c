@@ -507,12 +507,6 @@ ecore_x_region_extents(Ecore_X_Region dest,
  * @param  bounds The returned bounds of the region.
  * @return        The returned rectangles.
  *
- * The @p region passed to ecore_xcb_region_fetch_prefetch() is
- * returned as a list of rectagles in XY-banded order.
- *
- * To use this function, you must call before, and in order,
- * ecore_xcb_region_fetch_prefetch(), which sends the XFixesFetchRegion request,
- * then ecore_xcb_region_fetch_fetch(), which gets the reply.
  * @ingroup Ecore_X_Fixes_Group
  */
 EAPI Ecore_X_Rectangle *
