@@ -206,6 +206,19 @@ if test "x${have_ipv6}" = "xyes" ; then
    AC_DEFINE(HAVE_IPV6, 1, [Define if IPV6 is supported])
 fi
 
+eeze_sensor_tizen="no"
+PKG_CHECK_EXISTS([capi-system-sensor],
+  [
+     AC_DEFINE([HAVE_EEZE_TIZEN], [1], [Eeze has Tizen sensor support enabled])
+     AM_CONDITIONAL([HAVE_EEZE_TIZEN], [true])
+     eeze_sensor_tizen="yes"
+  ],
+  AM_CONDITIONAL([HAVE_EEZE_TIZEN], [false])
+)
+if test "x$eeze_sensor_tizen" = "xyes";then
+  PKG_CHECK_MODULES([TIZEN_SENSOR], [capi-system-sensor])
+fi
+
 ### Checks for header files
 
 
@@ -230,6 +243,7 @@ EFL_COMPILER_FLAG([-Wshadow])
 ### Binary
 
 EFL_ENABLE_BIN([eeze-udev-test], ["yes"])
+EFL_ENABLE_BIN([eeze_sensor_test], ["yes"])
 EFL_ENABLE_BIN([eeze-mount], ["yes"])
 EFL_ENABLE_BIN([eeze-disk-ls], ["yes"])
 EFL_ENABLE_BIN([eeze-umount], ["yes"])
@@ -280,6 +294,9 @@ echo "Utilities..............:"
 echo "  eeze_scanner.........: ${have_eeze_scanner}"
 echo
 echo "IPv6...................: ${have_ipv6}"
+echo
+echo "Sensor.................:"
+echo "  Tizen................: ${eeze_sensor_tizen}"
 echo
 echo "Documentation..........: ${build_doc}"
 echo

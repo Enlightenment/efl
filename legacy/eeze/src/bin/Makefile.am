@@ -5,7 +5,7 @@ EEZE_CFLAGS = \
 @EEZE_CFLAGS@
 
 noinst_PROGRAMS = @EEZE_UDEV_TEST_PRG@
-EXTRA_PROGRAMS = eeze_udev_test eeze_mount eeze_umount eeze_disk_ls eeze_scanner
+EXTRA_PROGRAMS = eeze_udev_test eeze_mount eeze_umount eeze_disk_ls eeze_scanner eeze_sensor_test
 
 if HAVE_EEZE_MOUNT
   DISK_PROGS = @EEZE_MOUNT_PRG@ @EEZE_UMOUNT_PRG@ @EEZE_DISK_LS_PRG@
@@ -22,6 +22,11 @@ utildir = $(bindir)
 eeze_udev_test_SOURCES = eeze_udev_test.c
 eeze_udev_test_CPPFLAGS = -I$(top_srcdir)/src/lib @EEZE_CFLAGS@
 eeze_udev_test_LDADD = $(top_builddir)/src/lib/libeeze.la @EEZE_LIBS@
+
+bin_PROGRAMS += @EEZE_SENSOR_TEST_PRG@
+eeze_sensor_test_SOURCES = eeze_sensor_test.c
+eeze_sensor_test_CPPFLAGS = -I$(top_srcdir)/src/lib @EEZE_CFLAGS@
+eeze_sensor_test_LDADD = $(top_builddir)/src/lib/libeeze.la @EEZE_LIBS@
 
 if HAVE_EEZE_MOUNT
   eeze_mount_SOURCES = eeze_mount.c

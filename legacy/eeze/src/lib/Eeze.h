@@ -30,6 +30,7 @@
          @li @ref find Functions which find types of devices
  @li @ref disk Disk functions
  @li @ref net Net functions
+ @li @ref sensor Sensor functions
  @verbatim
  Pants
  @endverbatim
