@@ -628,3 +628,8 @@
 
 	* Don't generate an annotate file if edje_cc failed.
 
+2012-09-17  Michael Bouchaud (yoz)
+
+        * fix group inheritance on a group who have a script with global
+        varable.
+        * fix group inheritance on a group who have some programs uses script
