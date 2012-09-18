@@ -951,3 +951,8 @@
        * Add string to atom_items for ECORE_X_ATOM_E_ILLUME_WINDOW_STATE, 
        ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_NORMAL, ECORE_X_ATOM_E_ILLUME_WINDOW_STATE_FLOATING
 
+2012-09-18  Patryk Kaczmarek
+
+       * Fix escaping in ecore_file_escape_name() to handle tab and
+       newline right.
+

@@ -22,6 +22,7 @@ Fixes:
      - Timeouts are handled correctly now (passing HTTP status 408 to
        completion callback).
     * ecore_evas rotation handling on some driver implementations
+    * ecore_file_escape_name() escape taba nd newline right.
 
 Improvements:
 
