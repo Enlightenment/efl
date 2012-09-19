@@ -386,6 +386,18 @@ START_TEST(eeze_test_sensor_read)
    rc = eeze_sensor_xyz_get(sens, &x, &y, &z);
    fail_if(rc == EINA_FALSE);
 
+   /* Use gyro with xz here even if it offers xzy */
+   sens = eeze_sensor_new(EEZE_SENSOR_TYPE_GYROSCOPE);
+   fail_if(sens == NULL);
+   rc = eeze_sensor_read(sens);
+   fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_accuracy_get(sens, &acc);
+   fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_timestamp_get(sens, &timestamp);
+   fail_if(rc == EINA_FALSE);
+   rc = eeze_sensor_xy_get(sens, &x, &y);
+   fail_if(rc == EINA_FALSE);
+
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_PROXIMITY);
    fail_if(sens == NULL);
    rc = eeze_sensor_read(sens);
@@ -407,6 +419,9 @@ START_TEST(eeze_test_sensor_read)
    fail_if(rc == EINA_FALSE);
    rc = eeze_sensor_x_get(sens, &x);
    fail_if(rc == EINA_FALSE);
+
+   /* Call non existing type */
+   sens = eeze_sensor_new(42);
 
    eeze_sensor_free(sens);
 
@@ -502,6 +517,9 @@ START_TEST(eeze_test_sensor_obj_get)
 
    obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_ACCELEROMETER);
    fail_if(obj == obj_tmp);
+
+   /* Try to get non existing obj */
+   eeze_sensor_obj_get(42);
 
    free(obj);
 
