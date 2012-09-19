@@ -1333,7 +1333,7 @@ elm_naviframe_item_pop(Evas_Object *obj)
              evas_object_freeze_events_set(VIEW(prev_it), EINA_TRUE);
           }
 
-        elm_widget_resize_object_set(obj, VIEW(it));
+        elm_widget_resize_object_set(obj, VIEW(prev_it));
         evas_object_raise(VIEW(prev_it));
 
         //XXX: ACCESS

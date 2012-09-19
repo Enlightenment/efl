@@ -521,3 +521,8 @@
 2012-09-19  Jaehwan Kim
 
         * Add reorder mode set/get API in Toolbar
+
+2012-09-19 Michael Bouchaud (yoz)
+
+        * fix resizing on naviframe when an item is poped
+
