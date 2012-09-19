@@ -301,8 +301,10 @@ _arrow_update(Evas_Object *obj,
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
         edje_object_signal_emit(sd->arrow, "elm,state,left", "elm");
         edje_object_part_swallow
-          (ELM_WIDGET_DATA(sd)->resize_obj, "elm.swallow.arrow_left",
-          sd->arrow);
+           (ELM_WIDGET_DATA(sd)->resize_obj,
+            (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_right" :
+             "elm.swallow.arrow_left"), sd->arrow);
+
         if (base_size.h > 0)
           {
              if (y < ((arrow_size.h * 0.5) + base_size.y))
@@ -313,16 +315,18 @@ _arrow_update(Evas_Object *obj,
                y = y - base_size.y - (arrow_size.h * 0.5);
              drag = (double)(y) / (double)(base_size.h - arrow_size.h);
              edje_object_part_drag_value_set
-               (ELM_WIDGET_DATA(sd)->resize_obj, "elm.swallow.arrow_left", 1,
-               drag);
+                (ELM_WIDGET_DATA(sd)->resize_obj,
+                 (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_right" :
+                  "elm.swallow.arrow_left"), 1, drag);
           }
         break;
 
       case ELM_CTXPOPUP_DIRECTION_LEFT:
         edje_object_signal_emit(sd->arrow, "elm,state,right", "elm");
         edje_object_part_swallow
-          (ELM_WIDGET_DATA(sd)->resize_obj, "elm.swallow.arrow_right",
-          sd->arrow);
+           (ELM_WIDGET_DATA(sd)->resize_obj,
+            (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_left" :
+             "elm.swallow.arrow_right"), sd->arrow);
 
         if (base_size.h > 0)
           {
@@ -334,8 +338,9 @@ _arrow_update(Evas_Object *obj,
                y = y - base_size.y - (arrow_size.h * 0.5);
              drag = (double)(y) / (double)(base_size.h - arrow_size.h);
              edje_object_part_drag_value_set
-               (ELM_WIDGET_DATA(sd)->resize_obj, "elm.swallow.arrow_right", 0,
-               drag);
+                (ELM_WIDGET_DATA(sd)->resize_obj,
+                 (elm_widget_mirrored_get(obj) ? "elm.swallow.arrow_left" :
+                  "elm.swallow.arrow_right"), 0, drag);
           }
         break;
 
