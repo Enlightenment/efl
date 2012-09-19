@@ -5,6 +5,7 @@
 #include <Eeze.h>
 #include <Ecore.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <Eeze_Sensor.h>
 
