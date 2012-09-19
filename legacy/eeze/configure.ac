@@ -265,6 +265,7 @@ src/Makefile
 src/lib/Makefile
 src/bin/Makefile
 src/tests/Makefile
+src/modules/Makefile
 eeze.pc
 eeze.spec
 ])
