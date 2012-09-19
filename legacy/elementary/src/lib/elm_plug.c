@@ -19,9 +19,9 @@ EVAS_SMART_SUBCLASS_NEW
   Elm_Widget_Smart_Class, elm_widget_smart_class_get, _smart_callbacks);
 
 static void
-_sizing_eval(Evas_Object *obj)
+_sizing_eval(Evas_Object *obj __UNUSED__)
 {
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   //Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
 
    //TODO: get socket object size
    //this reset plug's min/max size
