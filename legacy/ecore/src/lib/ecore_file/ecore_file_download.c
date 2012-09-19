@@ -110,6 +110,12 @@ _ecore_file_download(const char *url,
                      Eina_Hash *headers)
 {
 #ifdef BUILD_ECORE_CON
+   if (!url)
+     {
+        CRIT("Download URL is null");
+        return EINA_FALSE;
+     }
+
    char *dir = ecore_file_dir_get(dst);
 
    if (!ecore_file_is_dir(dir))

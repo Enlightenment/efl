@@ -1011,6 +1011,8 @@ ecore_file_escape_name(const char *filename)
    char *q;
    char buf[PATH_MAX];
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(filename, NULL);
+
    p = filename;
    q = buf;
    while (*p)

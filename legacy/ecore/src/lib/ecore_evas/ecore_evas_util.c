@@ -424,8 +424,14 @@ ecore_getopt_callback_ecore_evas_list_engines(const Ecore_Getopt *parser __UNUSE
 {
    Eina_List  *lst, *n;
    const char *engine;
-   FILE *fp = data;
 
+   if (!storage)
+     {
+        ERR("Storage is missing");
+        return 0;
+     }
+
+   FILE *fp = data;
    if (!fp)
      fp = stdout;
 

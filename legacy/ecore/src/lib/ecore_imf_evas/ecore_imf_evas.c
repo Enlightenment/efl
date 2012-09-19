@@ -1,7 +1,10 @@
+
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
 
+#include <Ecore.h>
+#include "ecore_private.h"
 #include "Ecore_IMF_Evas.h"
 
 /**
@@ -299,6 +302,18 @@ EAPI void
 ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event,
                                  Ecore_IMF_Event_Key_Up *imf_event)
 {
+   if (!evas_event)
+     {
+        ERR("Evas event is missing");
+        return;
+     }
+
+   if (!imf_event)
+     {
+        ERR("Imf event is missing");
+        return;
+     }
+
    imf_event->keyname = evas_event->keyname ? evas_event->keyname : _ecore_imf_evas_event_empty;
    imf_event->key = evas_event->key ? evas_event->key : _ecore_imf_evas_event_empty;
    imf_event->string = evas_event->string ? evas_event->string : _ecore_imf_evas_event_empty;
