@@ -949,5 +949,27 @@ EAPI Elm_Object_Select_Mode
 elm_toolbar_select_mode_get(const Evas_Object *obj);
 
 /**
+ * Set reorder mode
+ *
+ * @param obj The toolbar object
+ * @param reorder_mode The reorder mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Toolbar
+ */
+EAPI void                          elm_toolbar_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode);
+
+/**
+ * Get the reorder mode
+ *
+ * @param obj The toolbar object
+ * @return The reorder mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @ingroup Toolbar
+ */
+EAPI Eina_Bool                     elm_toolbar_reorder_mode_get(const Evas_Object *obj);
+
+/**
  * @}
  */

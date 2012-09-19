@@ -150,6 +150,7 @@ struct _Elm_Toolbar_Smart_Data
    Eina_Bool                             long_press : 1;
    Eina_Bool                             homogeneous : 1;
    Eina_Bool                             on_deletion : 1;
+   Eina_Bool                             reorder_mode : 1;
 };
 
 struct _Elm_Toolbar_Item

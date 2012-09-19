@@ -1164,9 +1164,13 @@ _items_change(Evas_Object *obj)
      {
         prev = ELM_TOOLBAR_ITEM_FROM_INLIST
             (EINA_INLIST_GET(sd->reorder_from)->prev);
+        if (prev == sd->reorder_to)
+          prev = sd->reorder_from;
         if (!prev)
           next = ELM_TOOLBAR_ITEM_FROM_INLIST
               (EINA_INLIST_GET(sd->reorder_from)->next);
+        if (next == sd->reorder_to)
+          next = NULL;
 
         sd->items = eina_inlist_remove
             (sd->items, EINA_INLIST_GET(sd->reorder_from));
@@ -1184,6 +1188,26 @@ _items_change(Evas_Object *obj)
           sd->items = eina_inlist_prepend_relative
               (sd->items, EINA_INLIST_GET(sd->reorder_to),
               EINA_INLIST_GET(next));
+        else
+          sd->items = eina_inlist_prepend
+             (sd->items, EINA_INLIST_GET(sd->reorder_to));
+
+        if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_NONE ||
+            sd->shrink_mode == ELM_TOOLBAR_SHRINK_SCROLL)
+          {
+             evas_object_box_remove(sd->bx, VIEW(sd->reorder_from));
+             evas_object_box_insert_after(sd->bx, VIEW(sd->reorder_from),
+                                          VIEW(sd->reorder_to));
+             evas_object_box_remove(sd->bx, VIEW(sd->reorder_to));
+             if (prev)
+               evas_object_box_insert_after(sd->bx, VIEW(sd->reorder_to),
+                                            VIEW(prev));
+             else if (next)
+               evas_object_box_insert_before(sd->bx, VIEW(sd->reorder_to),
+                                             VIEW(next));
+             else
+               evas_object_box_prepend(sd->bx, VIEW(sd->reorder_to));
+          }
 
         tmp = sd->reorder_from->prio.priority;
         sd->reorder_from->prio.priority = sd->reorder_to->prio.priority;
@@ -1210,7 +1234,7 @@ _mouse_move_reorder(Elm_Toolbar_Item *it,
 static void
 _mouse_up_reorder(Elm_Toolbar_Item *it,
                   Evas *evas __UNUSED__,
-                  Evas_Object *obj __UNUSED__,
+                  Evas_Object *obj,
                   Evas_Event_Mouse_Up *ev)
 {
    Evas_Coord x, y, w, h;
@@ -1244,6 +1268,8 @@ _mouse_up_reorder(Elm_Toolbar_Item *it,
              _items_change(WIDGET(it));
           }
      }
+
+   sd->s_iface->hold_set(obj, EINA_FALSE);
 }
 
 static void
@@ -1330,6 +1356,8 @@ _item_reorder_start(Elm_Toolbar_Item *item)
    evas_object_resize(VIEW(it), w, h);
    evas_object_move(VIEW(it), x, y);
    evas_object_show(VIEW(it));
+
+   sd->s_iface->hold_set(WIDGET(it), EINA_TRUE);
 }
 
 static Eina_Bool
@@ -1340,14 +1368,24 @@ _long_press(Elm_Toolbar_Item *it)
    sd->long_timer = NULL;
    sd->long_press = EINA_TRUE;
 
-   if ((sd->more_item != it) &&
-       (sd->more_item ==
-        (Elm_Toolbar_Item *)elm_toolbar_selected_item_get(WIDGET(it))))
+   if (sd->reorder_mode)
      _item_reorder_start(it);
 
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, it);
 
    return ECORE_CALLBACK_CANCEL;
+}
+
+static void
+_drag_start_cb(Evas_Object *obj, void *data __UNUSED__)
+{
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if (sd->long_timer)
+     {
+        ecore_timer_del(sd->long_timer);
+        sd->long_timer = NULL;
+     }
 }
 
 static void
@@ -1962,6 +2000,7 @@ _elm_toolbar_smart_add(Evas_Object *obj)
      (obj, _elm_config->thumbscroll_bounce_enable, EINA_FALSE);
    priv->s_iface->policy_set
      (obj, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_OFF);
+   priv->s_iface->drag_start_cb_set(obj, _drag_start_cb);
 
    edje_object_signal_callback_add
      (ELM_WIDGET_DATA(priv)->resize_obj, "elm,action,left", "elm",
@@ -3023,4 +3062,23 @@ elm_toolbar_select_mode_get(const Evas_Object *obj)
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    return sd->select_mode;
+}
+
+EAPI void
+elm_toolbar_reorder_mode_set(Evas_Object *obj,
+                             Eina_Bool    reorder_mode)
+{
+   ELM_TOOLBAR_CHECK(obj);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   sd->reorder_mode = !!reorder_mode;
+}
+
+EAPI Eina_Bool
+elm_toolbar_reorder_mode_get(const Evas_Object *obj)
+{
+   ELM_TOOLBAR_CHECK(obj) EINA_FALSE;
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   return sd->reorder_mode;
 }

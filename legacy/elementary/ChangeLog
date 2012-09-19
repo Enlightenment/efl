@@ -518,3 +518,6 @@
         * Add direction enum to elm access activate api
         * Use activate directions
 
+2012-09-19  Jaehwan Kim
+
+        * Add reorder mode set/get API in Toolbar
