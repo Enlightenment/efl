@@ -1104,6 +1104,8 @@ esac
 
 AC_CONFIG_FILES([
 Makefile
+doc/Makefile
+doc/Doxyfile
 src/Makefile
 src/benchmarks/Makefile
 src/benchmarks/eina/Makefile
