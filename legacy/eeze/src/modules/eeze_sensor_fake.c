@@ -37,7 +37,7 @@ fake_shutdown(void)
 Eina_Bool
 fake_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 {
-   Eeze_Sensor_Obj *obj;
+   Eeze_Sensor_Obj *obj = NULL;
 
    obj = eeze_sensor_obj_get(sensor_type);
    if (obj == NULL)
