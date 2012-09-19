@@ -9,6 +9,7 @@
 #include <stdbool.h>
 
 #include <Eina.h>
+#include <Ecore.h>
 #include <Eeze_Sensor.h>
 #include "eeze_sensor_private.h"
 
@@ -446,17 +447,35 @@ panning_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
 void
 facedown_read_cb(unsigned long long timestamp, void *user_data)
 {
+   Eeze_Sensor_Obj *obj = NULL;
+
    sensor_motion_facedown_unset_cb(sensor_handle);
+
+   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_FACEDOWN);
+   if (obj == NULL)
+     {
+        ERR("No matching sensor object found in list.");
+        return;
+     }
    ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, NULL, NULL);
-   sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_MOTION_TYPE_FACEDOWN));
+   sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_FACEDOWN));
 }
 
 void
 doubletap_read_cb(unsigned long long timestamp, void *user_data)
 {
+   Eeze_Sensor_Obj *obj = NULL;
+
    sensor_motion_doubletap_unset_cb(sensor_handle);
+
+   obj = eeze_sensor_obj_get(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP);
+   if (obj == NULL)
+     {
+        ERR("No matching sensor object found in list.");
+        return;
+     }
    ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, NULL, NULL);
-   sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_MOTION_TYPE_DOUBLETAP));
+   sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP));
 }
 
 Eina_Bool
@@ -478,7 +497,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         return EINA_FALSE;
      }
 
-   sensor_start(handle->sensor_handle, type);
+   sensor_start(sensor_handle, type);
    obj = eeze_sensor_obj_get(sensor_type);
    if (obj == NULL)
      {
@@ -554,44 +573,44 @@ eeze_sensor_tizen_cb_set(Eeze_Sensor *handle, Eeze_Sensor_Type sensor_type, void
 
    handle->cb_function = cb_function;
 
-   sensor_start(handle->sensor_handle, type);
+   sensor_start(sensor_handle, type);
 
    switch (type)
      {
       case SENSOR_ACCELEROMETER:
-        sensor_accelerometer_set_cb(handle->sensor_handle, 0, accelerometer_cb, handle);
+        sensor_accelerometer_set_cb(sensor_handle, 0, accelerometer_cb, handle);
         break;
 
       case SENSOR_MAGNETIC:
-        sensor_magnetic_set_cb(handle->sensor_handle, 0, magnetic_cb, handle);
+        sensor_magnetic_set_cb(sensor_handle, 0, magnetic_cb, handle);
         break;
 
       case SENSOR_ORIENTATION:
-        sensor_orientation_set_cb(handle->sensor_handle, 0, orientation_cb, handle);
+        sensor_orientation_set_cb(sensor_handle, 0, orientation_cb, handle);
         break;
 
       case SENSOR_GYROSCOPE:
-        sensor_gyroscope_set_cb(handle->sensor_handle, 0, gyroscope_cb, handle);
+        sensor_gyroscope_set_cb(sensor_handle, 0, gyroscope_cb, handle);
         break;
 
       case SENSOR_LIGHT:
-        sensor_light_set_cb(handle->sensor_handle, 0, light_cb, handle);
+        sensor_light_set_cb(sensor_handle, 0, light_cb, handle);
         break;
 
       case SENSOR_PROXIMITY:
-        sensor_proximity_set_cb(handle->sensor_handle, 0, proximity_cb, handle);
+        sensor_proximity_set_cb(sensor_handle, 0, proximity_cb, handle);
         break;
 
       case SENSOR_MOTION_SNAP:
-        sensor_motion_snap_set_cb(handle->sensor_handle, snap_cb, handle);
+        sensor_motion_snap_set_cb(sensor_handle, snap_cb, handle);
         break;
 
       case SENSOR_MOTION_SHAKE:
-        sensor_motion_shake_set_cb(handle->sensor_handle, shake_cb, handle);
+        sensor_motion_shake_set_cb(sensor_handle, shake_cb, handle);
         break;
 
       case SENSOR_MOTION_PANNING:
-        sensor_motion_panning_set_cb(handle->sensor_handle, panning_cb, handle);
+        sensor_motion_panning_set_cb(sensor_handle, panning_cb, handle);
         break;
 
       default:
@@ -718,8 +737,8 @@ eeze_sensor_tizen_init(void)
    /* FIXME add other motion events in here */
    sensor_start(sensor_handle, SENSOR_MOTION_FACEDOWN);
    sensor_start(sensor_handle, SENSOR_MOTION_DOUBLETAP);
-   sensor_motion_doubletap_set_cb(sensor_handle, doubletap_cb, handle);
-   sensor_motion_facedown_set_cb(sensor_handle, facedown_cb, handle);
+   sensor_motion_doubletap_set_cb(sensor_handle, doubletap_cb, NULL);
+   sensor_motion_facedown_set_cb(sensor_handle, facedown_cb, NULL);
 
    return EINA_TRUE;
 }
