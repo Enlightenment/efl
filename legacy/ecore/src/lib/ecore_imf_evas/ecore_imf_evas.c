@@ -304,13 +304,13 @@ ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event,
 {
    if (!evas_event)
      {
-        ERR("Evas event is missing");
+        EINA_LOG_ERR("Evas event is missing");
         return;
      }
 
    if (!imf_event)
      {
-        ERR("Imf event is missing");
+        EINA_LOG_ERR("Imf event is missing");
         return;
      }
 
