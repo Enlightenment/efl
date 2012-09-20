@@ -526,3 +526,7 @@
 
         * fix resizing on naviframe when an item is poped
 
+2012-09-20 Michael Bouchaud (yoz)
+
+        * fix wrong size calc in naviframe when an item have setted
+          tittle_visible_set to false.
