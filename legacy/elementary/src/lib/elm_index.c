@@ -598,7 +598,7 @@ static void
 _on_mouse_in_access(void *data,
                     Evas *e __UNUSED__,
                     Evas_Object *o __UNUSED__,
-                    void *event_info)
+                    void *event_info __UNUSED__)
 {
    ELM_INDEX_DATA_GET(data, sd);
 
