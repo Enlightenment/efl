@@ -385,4 +385,4 @@ screenshots:
 
 endif
 
-EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen.edc
+EXTRA_DIST = dict.txt layout_example.edc theme_example.edc codegen_example.edc
