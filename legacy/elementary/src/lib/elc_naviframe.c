@@ -208,6 +208,7 @@ _item_title_visible_update(Elm_Naviframe_Item *nit)
      edje_object_signal_emit(VIEW(nit), "elm,state,title,show", "elm");
    else
      edje_object_signal_emit(VIEW(nit), "elm,state,title,hide", "elm");
+   edje_object_message_signal_process(VIEW(nit));
 }
 
 static Eina_Bool
