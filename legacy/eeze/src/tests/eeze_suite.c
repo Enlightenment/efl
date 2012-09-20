@@ -13,6 +13,8 @@
 #include <Eeze_Sensor.h>
 #include <Eeze_Net.h>
 
+#include "eeze_udev_private.h"
+
 START_TEST(eeze_test_init)
 {
    int ret;
@@ -212,6 +214,38 @@ START_TEST(eeze_test_udev_attr)
 	 }
        eina_stringshare_del(name);
      }
+
+   eeze_shutdown();
+}
+END_TEST
+
+START_TEST(eeze_test_udev_device)
+{
+   Eina_List *type, *l;
+   _udev_device *device, *device2;
+   const char *name;
+
+   eeze_init();
+
+   type = eeze_udev_find_by_type(EEZE_UDEV_TYPE_DRIVE_INTERNAL, NULL);
+   fail_if(type == NULL);
+   type = eeze_udev_find_unlisted_similar(type);
+   fail_if(type == NULL);
+   EINA_LIST_FOREACH(type, l, name)
+     {
+         device = _new_device(name);
+         fail_if(device == NULL);
+         _walk_parents_get_attr(device, "FOO", EINA_FALSE);
+         _walk_parents_get_attr(device, "FOO", EINA_TRUE);
+         _walk_children_get_attr(name, "FOO", "BAR", EINA_FALSE);
+         _walk_children_get_attr(name, "FOO", "BAR", EINA_TRUE);
+     }
+
+   device = _new_device("Wrong path");
+   fail_if(device != NULL);
+
+   device2 = _copy_device(device);
+   fail_if(device2 != NULL);
 
    eeze_shutdown();
 }
@@ -545,6 +579,7 @@ eeze_suite(void)
    tcase_add_test(tc, eeze_test_udev_watch);
    tcase_add_test(tc, eeze_test_udev_syspath);
    tcase_add_test(tc, eeze_test_udev_attr);
+   tcase_add_test(tc, eeze_test_udev_device);
    suite_add_tcase(s, tc);
 
    tc = tcase_create("Eeze_Net");
