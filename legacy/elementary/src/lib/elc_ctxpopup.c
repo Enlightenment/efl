@@ -409,11 +409,15 @@ _show_signals_emit(Evas_Object *obj,
         break;
 
       case ELM_CTXPOPUP_DIRECTION_LEFT:
-        elm_layout_signal_emit(obj, "elm,state,show,left", "elm");
+        elm_layout_signal_emit(obj,
+              (elm_widget_mirrored_get(obj) ? "elm,state,show,right" :
+               "elm,state,show,left"), "elm");
         break;
 
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
-        elm_layout_signal_emit(obj, "elm,state,show,right", "elm");
+        elm_layout_signal_emit(obj,
+              (elm_widget_mirrored_get(obj) ? "elm,state,show,left" :
+               "elm,state,show,right"), "elm");
         break;
 
       case ELM_CTXPOPUP_DIRECTION_DOWN:
@@ -443,11 +447,15 @@ _hide_signals_emit(Evas_Object *obj,
         break;
 
       case ELM_CTXPOPUP_DIRECTION_LEFT:
-        elm_layout_signal_emit(obj, "elm,state,hide,left", "elm");
+        elm_layout_signal_emit(obj,
+              (elm_widget_mirrored_get(obj) ? "elm,state,hide,right" :
+               "elm,state,hide,left"), "elm");
         break;
 
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
-        elm_layout_signal_emit(obj, "elm,state,hide,right", "elm");
+        elm_layout_signal_emit(obj,
+              (elm_widget_mirrored_get(obj) ? "elm,state,hide,left" :
+               "elm,state,hide,right"), "elm");
         break;
 
       case ELM_CTXPOPUP_DIRECTION_DOWN:
