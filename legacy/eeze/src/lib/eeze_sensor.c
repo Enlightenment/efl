@@ -134,6 +134,7 @@ eeze_sensor_new(Eeze_Sensor_Type type)
    if (!sens) return NULL;
 
    sens = eeze_sensor_obj_get(type);
+   if (!sens) return NULL;
 
    module = _highest_priority_module_get();
    if (!module) return EINA_FALSE;
