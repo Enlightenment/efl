@@ -625,7 +625,7 @@ eng_image_native_set(void *data __UNUSED__, void *image, void *native __UNUSED__
 
    if (!im)
      {
-        if ((!ns) && (ns->data.x11.visual))
+        if ((ns) && (ns->data.x11.visual))
           {
              im = evas_cache_image_data(evas_common_image_cache_get(),
                                         im->w, im->h,
