@@ -2035,7 +2035,7 @@ eng_image_native_set(void *data, void *image, void *native)
 
   if (!im)
     {
-       if ((!ns) && (ns->type == EVAS_NATIVE_SURFACE_OPENGL))
+       if ((ns) && (ns->type == EVAS_NATIVE_SURFACE_OPENGL))
          {
             im = evas_gl_common_image_new_from_data(re->win->gl_context,
                                                     ns->data.opengl.w,
@@ -2044,7 +2044,7 @@ eng_image_native_set(void *data, void *image, void *native)
                                                     EVAS_COLORSPACE_ARGB8888);
          }
        else
-           return NULL;
+         return NULL;
     }
 
   if (ns)

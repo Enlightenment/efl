@@ -1044,3 +1044,8 @@
 
        * Add evas_device API for being able to register devices, set
        their names, descriptions, classes, parents, sources etc. etc.
+
+2012-09-20  Carsten Haitzler (The Rasterman)
+
+       * Fix native surface crash when setting to null in some
+       situations.
