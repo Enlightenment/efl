@@ -237,6 +237,11 @@ shutdown_ecore:
 EAPI int
 efreet_mime_shutdown(void)
 {
+    if (_efreet_mime_init_count <= 0)
+      {
+         EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+         return 0;
+      }
     if (--_efreet_mime_init_count != 0)
         return _efreet_mime_init_count;
 
