@@ -18,6 +18,7 @@ Improvements:
     * Recycle and use less memory during load time.
     * Less memory used per callbacks.
     * Don't generate an annotate file if edje_cc failed.
+    * Lua 5.2 support added, still works fine with 5.1.
 
 Fixes:
 

@@ -633,3 +633,8 @@
         * fix group inheritance on a group who have a script with global
         varable.
         * fix group inheritance on a group who have some programs uses script
+
+2012-09-20  David Seikel (onefang)
+
+	* Lua: Lua 5.2 support added.
+

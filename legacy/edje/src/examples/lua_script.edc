@@ -67,7 +67,7 @@ collections {
             d = edje.size();
             D.clip:geom(10, 10, d.w - 20, d.h - 20);
             c = D.clip:clipees();
-            for i=1,table.getn(c),1 do
+            for i=1,#c,1 do
                d = c[i]:geom();
                print("lua::" .. i .. " geom = " .. d.x .. "," .. d.y .. " " .. d.w .. "x" .. d.h);
             end

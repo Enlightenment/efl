@@ -985,7 +985,11 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         int i, n;
         const char *str;
         luaL_checktype(L, 3, LUA_TTABLE);                    // Stack usage [-0, +0, v]
+#if LUA_VERSION_NUM >= 502
+        n = lua_rawlen(L, 3);                                // Stack usage [-0, +0, -]
+#else
         n = lua_objlen(L, 3);                                // Stack usage [-0, +0, -]
+#endif
         emsg = alloca(sizeof(Edje_Message_String_Set) + ((n - 1) * sizeof(char *)));
         emsg->count = n;
         for (i = 1; i <= n; i ++)
@@ -1003,7 +1007,11 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         Edje_Message_Int_Set *emsg;
         int i, n;
         luaL_checktype(L, 3, LUA_TTABLE);                    // Stack usage [-0, +0, v]
+#if LUA_VERSION_NUM >= 502
+        n = lua_rawlen(L, 3);                                // Stack usage [-0, +0, -]
+#else
         n = lua_objlen(L, 3);                                // Stack usage [-0, +0, -]
+#endif
         emsg = alloca(sizeof(Edje_Message_Int_Set) + ((n - 1) * sizeof(int)));
         emsg->count = n;
         for (i = 1; i <= n; i ++)
@@ -1020,7 +1028,11 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         Edje_Message_Float_Set *emsg;
         int i, n;
         luaL_checktype(L, 3, LUA_TTABLE);                    // Stack usage [-0, +0, v]
+#if LUA_VERSION_NUM >= 502
+        n = lua_rawlen(L, 3);                                // Stack usage [-0, +0, -]
+#else
         n = lua_objlen(L, 3);                                // Stack usage [-0, +0, -]
+#endif
         emsg = alloca(sizeof(Edje_Message_Float_Set) + ((n - 1) * sizeof(double)));
         emsg->count = n;
         for (i = 1; i <= n; i ++)
@@ -1057,7 +1069,11 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         const char *str = luaL_checkstring(L, 3);            // Stack usage [-0, +0, v]
         if (!str) return 0;
         luaL_checktype(L, 4, LUA_TTABLE);                    // Stack usage [-0, +0, v]
+#if LUA_VERSION_NUM >= 502
+        n = lua_rawlen(L, 4);                                // Stack usage [-0, +0, -]
+#else
         n = lua_objlen(L, 4);                                // Stack usage [-0, +0, -]
+#endif
         emsg = alloca(sizeof(Edje_Message_String_Int_Set) + ((n - 1) * sizeof(int)));
         emsg->str = (char *)str;
         emsg->count = n;
@@ -1077,7 +1093,11 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
         const char *str = luaL_checkstring(L, 3);            // Stack usage [-0, +0, v]
         if (!str) return 0;
         luaL_checktype(L, 4, LUA_TTABLE);                    // Stack usage [-0, +0, v]
+#if LUA_VERSION_NUM >= 502
+        n = lua_rawlen(L, 4);                                // Stack usage [-0, +0, -]
+#else
         n = lua_objlen(L, 4);
+#endif
         emsg = alloca(sizeof(Edje_Message_String_Float_Set) + ((n - 1) * sizeof(double)));
         emsg->str = (char *)str;
         emsg->count = n;
@@ -3734,26 +3754,43 @@ _elua_bogan_protect(lua_State *L)                    // Stack usage [-3, +3, m]
 {
    lua_pushnil(L);                                   // Stack usage [-0, +1, -]
    luaL_newmetatable(L, "bogan");                    // Stack usage [-0, +1, m]
+#if LUA_VERSION_NUM >= 502
+   luaL_setfuncs(L, _elua_bogan_funcs, 0);           // Stack usage [-0, +0, e]
+#else
    luaL_register(L, 0, _elua_bogan_funcs);           // Stack usage [-1, +1, m]
+#endif
    lua_setmetatable(L, -2);                          // Stack usage [-1, +0, -]
    lua_pop(L, 1);                                    // Stack usage [-1, +0, -]
 }
 
 //--------------------------------------------------------------------------//
 
+// TODO - All the register / setfuncs and rlelated stuff around here should be reviewed.  Works fine for 5.1, probably works fine for 5.2, but maybe there's a better way?  It may also need to change if we start using LuaJIT.
+
 // Brain dead inheritance thingy, built for speed.  Kinda.  Part 1.
 static void
 _elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)  // Stack usage [-3, +5, m]  if inheriting [-6, +11, em]
 {
    // Create an api table, fill it full of the methods.
+#if LUA_VERSION_NUM >= 502
+   lua_newtable(L);                           // Stack usage [-0, +1, e]
+   lua_pushvalue(L, -1);                      // Stack usage [-0, +1, -]
+   lua_setglobal(L, api);                     // Stack usage [-1, +0, e]
+   luaL_setfuncs(L, funcs, 0);                // Stack usage [-0, +0, e]
+#else
    luaL_register(L, api, funcs);              // Stack usage [-0, +1, m]
+#endif
    // Set the api metatable to the bogan metatable.
    luaL_getmetatable(L, "bogan");             // Stack usage [-0, +1, -]
    lua_setmetatable(L, -2);                   // Stack usage [-1, +0, -]
    // Creat a meta metatable.
    luaL_newmetatable(L, meta);                // Stack usage [-0, +1, m]
    // Put the gc functions in the metatable.
+#if LUA_VERSION_NUM >= 502
+   luaL_setfuncs(L, _elua_edje_gc_funcs, 0);  // Stack usage [-0, +0, e]
+#else
    luaL_register(L, 0, _elua_edje_gc_funcs);  // Stack usage [-1, +1, m]
+#endif
    // Create an __index entry in the metatable, make it point to the api table.
    lua_pushliteral(L, "__index");             // Stack usage [-0, +1, m]
    lua_pushvalue(L, -3);                      // Stack usage [-0, +1, -]
@@ -3821,14 +3858,29 @@ _elua_init(void)                                                                
 
    for (l = _elua_libs; l->func; l++)                                                      // Currently * 4
      {
+#if LUA_VERSION_NUM >= 502
+        luaL_requiref(L, l->name, l->func, 1);                                             // Stack usage [-0, +1, e]
+#else
         lua_pushcfunction(L, l->func);                                                     // Stack usage [-0, +1, m]
         lua_pushstring(L, l->name);                                                        // Stack usage [-0, +1, m]
         lua_call(L, 1, 0);                                                                 // Stack usage [-2, +0, e]
+#endif
      }
 
+#if LUA_VERSION_NUM >= 502
+   lua_newtable(L);                                                                        // Stack usage [-0, +1, e]
+   lua_pushvalue(L, -1);                                                                   // Stack usage [-0, +1, -]
+   lua_setglobal(L, _elua_edje_api);                                                       // Stack usage [-1, +0, e]
+   luaL_setfuncs(L, _elua_edje_funcs, 0);                                                  // Stack usage [-0, +0, e]
+#else
    luaL_register(L, _elua_edje_api, _elua_edje_funcs);                                     // Stack usage [-0, +1, m]
+#endif
    luaL_newmetatable(L, _elua_edje_meta);                                                  // Stack usage [-0, +1, m]
+#if LUA_VERSION_NUM >= 502
+   luaL_setfuncs(L, _elua_edje_gc_funcs, 0);                                               // Stack usage [-0, +0, e]
+#else
    luaL_register(L, 0, _elua_edje_gc_funcs);                                               // Stack usage [-1, +1, m]
+#endif
 
    _elua_add_functions(L, _elua_evas_api, _elua_evas_funcs, _elua_evas_meta, NULL, NULL);  // Stack usage [-3, +5, m]
 
@@ -3873,18 +3925,33 @@ _edje_lua2_script_init(Edje *ed)                                  // Stack usage
 
    for (l = _elua_libs; l->func; l++)                             // Currently * 4
      {
+#if LUA_VERSION_NUM >= 502
+        luaL_requiref(L, l->name, l->func, 1);                    // Stack usage [-0, +1, e]
+#else
         lua_pushcfunction(L, l->func);                            // Stack usage [-0, +1, m]
         lua_pushstring(L, l->name);                               // Stack usage [-0, +1, m]
         lua_call(L, 1, 0);                                        // Stack usage [-2, +0, m]
+#endif
      }
 
    _elua_bogan_protect(L);                                        // Stack usage [+3, -3, m]
 
+#if LUA_VERSION_NUM >= 502
+   lua_newtable(L);                                               // Stack usage [-0, +1, e]
+   lua_pushvalue(L, -1);                                          // Stack usage [-0, +1, -]
+   lua_setglobal(L, _elua_edje_api);                              // Stack usage [-1, +0, e]
+   luaL_setfuncs(L, _elua_edje_funcs, 0);                         // Stack usage [-0, +0, e]
+#else
    luaL_register(L, _elua_edje_api, _elua_edje_funcs);            // Stack usage [-0, +1, m]
+#endif
    luaL_getmetatable(L, "bogan");                                 // Stack usage [-0, +1, -]
    lua_setmetatable(L, -2);                                       // Stack usage [-1, +0, -]
    luaL_newmetatable(L, _elua_edje_meta);                         // Stack usage [-0, +1, m]
+#if LUA_VERSION_NUM >= 502
+   luaL_setfuncs(L, _elua_edje_gc_funcs, 0);                      // Stack usage [-0, +0, e]
+#else
    luaL_register(L, 0, _elua_edje_gc_funcs);                      // Stack usage [-1, +1, m]
+#endif
 
    lua_pop(L, 2);                                                 // Stack usage [-n, +0, -]
 
