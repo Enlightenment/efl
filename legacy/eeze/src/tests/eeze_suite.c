@@ -479,11 +479,18 @@ event_cb(void *data EINA_UNUSED, int ev_type, void *event)
    rc = eeze_sensor_timestamp_get(sens, &timestamp);
    fail_if(rc == EINA_FALSE);
 
-   return ECORE_CALLBACK_PASS_ON;
+   eeze_sensor_free(sens);
+
+   ecore_main_loop_quit();
+
+   return EINA_FALSE;
 }
 
 START_TEST(eeze_test_sensor_async_read)
 {
+   Ecore_Event_Handler *handler;
+   Ecore_Event *event;
+
    Eeze_Sensor_Obj *sens = NULL;
    int ret = 0;
    Eina_Bool rc = EINA_FALSE;
@@ -492,7 +499,11 @@ START_TEST(eeze_test_sensor_async_read)
    ret = eeze_init();
    fail_if(ret != 1);
 
-   ecore_event_handler_add(EEZE_SENSOR_EVENT_ACCELEROMETER, event_cb, NULL);
+   EEZE_SENSOR_EVENT_ACCELEROMETER = ecore_event_type_new();
+   fail_if(EEZE_SENSOR_EVENT_ACCELEROMETER < 1);
+
+   handler = ecore_event_handler_add(EEZE_SENSOR_EVENT_ACCELEROMETER, event_cb, NULL);
+   fail_if(handler == NULL);
    sens = eeze_sensor_new(EEZE_SENSOR_TYPE_ACCELEROMETER);
    fail_if(sens == NULL);
    rc = eeze_sensor_async_read(sens, NULL);
@@ -528,7 +539,10 @@ START_TEST(eeze_test_sensor_async_read)
    rc = eeze_sensor_async_read(sens, NULL);
    fail_if(rc == EINA_FALSE);
 
-   eeze_sensor_free(sens);
+   event = ecore_event_add(EEZE_SENSOR_EVENT_ACCELEROMETER, sens, NULL, NULL);
+   fail_if(event == NULL);
+
+   ecore_main_loop_begin();
 
    ret = eeze_shutdown();
    fail_if(ret != 0);
