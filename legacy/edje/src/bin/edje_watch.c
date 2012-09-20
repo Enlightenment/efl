@@ -2,6 +2,8 @@
 # include "config.h"
 #endif
 
+#include <sys/wait.h>
+
 #include <Eina.h>
 #include <Ecore.h>
 #include <Eio.h>
