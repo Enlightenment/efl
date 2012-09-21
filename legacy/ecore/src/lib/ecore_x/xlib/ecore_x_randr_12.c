@@ -1590,13 +1590,13 @@ ecore_x_randr_output_modes_get(Ecore_X_Window root,
      {
         if ((modes = malloc(sizeof(Ecore_X_Randr_Mode) * output_info->nmode)))
           {
-             memcpy(modes, output_info->modes,
-                    (sizeof(Ecore_X_Randr_Mode) * output_info->nmode));
-             if (num)
-               *num = output_info->nmode;
+             int i = 0;
 
-             if (npreferred)
-               *npreferred = output_info->npreferred;
+             if (num) *num = output_info->nmode;
+             if (npreferred) *npreferred = output_info->npreferred;
+
+             for (i = 0; i < output_info->nmode; i++)
+               modes[i] = output_info->modes[i];
           }
      }
 
