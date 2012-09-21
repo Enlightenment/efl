@@ -186,6 +186,7 @@ main(void)
    EDBus_Proxy *test2_proxy;
    EDBus_Pending *pending;
    EDBus_Message_Iter *iter, *array_of_string, *variant;
+   EDBus_Message_Iter *array_itr, *structure;
    EDBus_Message *msg;
    int size_of_array = 5;
    const char *array[5] = { "aaaa", "bbbb", "cccc", "dddd", "eeee" };
@@ -232,6 +233,28 @@ main(void)
    edbus_message_iter_append_basic(variant, 's', "test");
    edbus_message_iter_container_close(iter, variant);
    pending = edbus_proxy_send(test2_proxy, msg, on_send_variant, NULL, -1);
+   edbus_message_unref(msg);
+
+   msg = edbus_proxy_method_call_new(test2_proxy, "DoubleContainner");
+   iter = edbus_message_iter_get(msg);
+   /**
+    * edbus_message_iterator_arguments_set(itr, "a(ii)a(ii)", &array_itr, &array_itr2);
+    * this will cause a error, we could not open another container until
+    * we close the first one
+    */
+   array_itr = edbus_message_iter_container_new(iter, 'a', "(ii)");
+   edbus_message_iter_arguments_set(array_itr, "(ii)", &structure);
+   for (i = 0; i < 5; i++)
+     edbus_message_iter_arguments_set(structure, "ii", i, i*i);
+   edbus_message_iter_container_close(array_itr, structure);
+   edbus_message_iter_container_close(iter, array_itr);
+   array_itr = edbus_message_iter_container_new(iter, 'a', "(ii)");
+   edbus_message_iter_arguments_set(array_itr, "(ii)", &structure);
+   for (i = 0; i < 7; i++)
+     edbus_message_iter_arguments_set(structure, "ii", i, i*i*i);
+   edbus_message_iter_container_close(array_itr, structure);
+   edbus_message_iter_container_close(iter, array_itr);
+   edbus_proxy_send(test2_proxy, msg, NULL, NULL, -1);
    edbus_message_unref(msg);
 
    pending = edbus_proxy_call(test2_proxy, "SendArrayInt", on_send_array_int, NULL,

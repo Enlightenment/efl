@@ -170,6 +170,36 @@ _plus_one(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 }
 
 static EDBus_Message *
+_double_container(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
+{
+   EDBus_Message_Iter *array1, *array2, *structure;
+   int num1, num2;
+   EDBus_Message *reply = edbus_message_method_return_new(msg);
+
+   if (!edbus_message_arguments_get(msg, "a(ii)a(ii)", &array1, &array2))
+     {
+        printf("Error on edbus_message_arguments_get()\n");
+        return NULL;
+     }
+
+   printf("DoubleCountainer\nArray1:\n");
+   while (edbus_message_iter_get_and_next(array1, 'r', &structure))
+     {
+        edbus_message_iter_arguments_get(structure, "ii", &num1, &num2);
+        printf("1 %d - 2 %d\n", num1, num2);
+     }
+
+   printf("Array2:\n");
+   while (edbus_message_iter_get_and_next(array2, 'r', &structure))
+     {
+         edbus_message_iter_arguments_get(structure, "ii", &num1, &num2);
+         printf("1 %d - 2 %d\n", num1, num2);
+     }
+   printf("\n");
+   return reply;
+}
+
+static EDBus_Message *
 _properties_get(const EDBus_Service_Interface *iface, const EDBus_Message *msg)
 {
    EDBus_Message *reply;
@@ -281,6 +311,10 @@ static const EDBus_Method methods[] = {
       {
         "PlusOne", EDBUS_ARGS({"i", "integer"}),
         EDBUS_ARGS({"i", "integer_plus_one"}), _plus_one, 0
+      },
+      {
+        "DoubleContainner", EDBUS_ARGS({"a(ii)", "array1"}, {"a(ii)", "array2"}),
+        EDBUS_ARGS({"", ""}), _double_container, 0
       },
       { }
 };
