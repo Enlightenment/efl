@@ -3751,8 +3751,6 @@ _elm_map_smart_event(Evas_Object *obj,
    return EINA_TRUE;
 }
 
-#endif
-
 static void
 _elm_map_smart_add(Evas_Object *obj)
 {
@@ -3990,10 +3988,12 @@ _elm_map_smart_set_user(Elm_Map_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->theme = _elm_map_smart_theme;
    ELM_WIDGET_CLASS(sc)->event = _elm_map_smart_event;
 }
+#endif
 
 EAPI const Elm_Map_Smart_Class *
 elm_map_smart_class_get(void)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    static Elm_Map_Smart_Class _sc =
      ELM_MAP_SMART_CLASS_INIT_NAME_VERSION(ELM_MAP_SMART_NAME);
    static const Elm_Map_Smart_Class *class = NULL;
@@ -4006,6 +4006,9 @@ elm_map_smart_class_get(void)
    class = &_sc;
 
    return class;
+#else
+   return NULL;
+#endif
 }
 
 EAPI Evas_Object *
@@ -4488,6 +4491,7 @@ elm_map_source_set(Evas_Object *obj,
 
 #else
    (void)obj;
+   (void)type;
    (void)source_name;
 #endif
 }
@@ -4512,6 +4516,7 @@ elm_map_source_get(const Evas_Object *obj,
    return NULL;
 #else
    (void)obj;
+   (void)type;
    return NULL;
 #endif
 }
@@ -4534,6 +4539,7 @@ elm_map_sources_get(const Evas_Object *obj,
    return NULL;
 #else
    (void)obj;
+   (void)type;
    return NULL;
 #endif
 }
@@ -5272,7 +5278,7 @@ elm_map_overlay_content_set(Elm_Map_Overlay *overlay,
    evas_object_smart_changed(overlay->wsd->pan_obj);
 #else
    (void)overlay;
-   (void)obj;
+   (void)content;
 #endif
 }
 
@@ -5573,8 +5579,8 @@ elm_map_overlay_group_members_get(const Elm_Map_Overlay *grp)
    ovl = grp->ovl;
    return ovl->members;
 #else
-   (void)clas;
-   return OVERLAY_CLASS_ZOOM_MAX;
+   (void)grp;
+   return NULL;
 #endif
 }
 
@@ -5736,8 +5742,8 @@ elm_map_overlay_line_add(Evas_Object *obj,
 #else
    (void)obj;
    (void)flon;
-   (void)flat
-     (void) tlon;
+   (void)flat;
+   (void)tlon;
    (void)tlat;
    return NULL;
 #endif
@@ -5793,8 +5799,8 @@ elm_map_overlay_polygon_region_add(Elm_Map_Overlay *overlay,
 #else
    (void)overlay;
    (void)lon;
-   (void)lat
- #endif
+   (void)lat;
+#endif
 }
 
 EAPI Elm_Map_Overlay *
@@ -5824,6 +5830,9 @@ elm_map_overlay_circle_add(Evas_Object *obj,
    return overlay;
 #else
    (void)obj;
+   (void)lon;
+   (void)lat;
+   (void)radius;
    return NULL;
 #endif
 }
@@ -5854,6 +5863,8 @@ elm_map_overlay_scale_add(Evas_Object *obj,
    return overlay;
 #else
    (void)obj;
+   (void)x;
+   (void)y;
    return NULL;
 #endif
 }
