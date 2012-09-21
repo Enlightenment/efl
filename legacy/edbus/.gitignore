@@ -29,7 +29,7 @@ missing
 stamp-h1
 edbus-*.tar.*
 edbus2.pc
-libedbus.la
+libedbus2.la
 src/examples/connman-list-services
 src/examples/ofono-dial
 src/examples/banshee
