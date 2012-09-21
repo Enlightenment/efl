@@ -802,7 +802,7 @@ eet_data_image_lossless_compressed_convert(int         *size,
         {
            unsigned int i;
            
-           for (i = 0; i < ((w * h) + 8); i++) SWAP32(header[i]);
+           for (i = 0; i < 8; i++) SWAP32(header[i]);
         }
 
       memcpy(d + (8 * sizeof(int)), comp, buflen);

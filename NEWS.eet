@@ -1,4 +1,10 @@
-Eet 1.7.0
+Eet 1.7.1
+
+Changes since Eet 1.7.0:
+--------------------------
+
+Fixes:
+    * Fix PPC (big endian) image codec bug.
 
 Changes since Eet 1.6.0:
 --------------------------
