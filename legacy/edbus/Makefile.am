@@ -29,9 +29,9 @@ SED_PROCESS = \
 	$(SED_PROCESS)
 
 pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = edbus.pc
-CLEANFILES += edbus.pc
-EXTRA_DIST += edbus.pc.in
+pkgconfig_DATA = edbus2.pc
+CLEANFILES += edbus2.pc
+EXTRA_DIST += edbus2.pc.in
 
 EXTRA_DIST += \
 	m4/efl_doxygen.m4 \

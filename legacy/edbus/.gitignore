@@ -28,7 +28,7 @@ Makefile.in
 missing
 stamp-h1
 edbus-*.tar.*
-edbus.pc
+edbus2.pc
 libedbus.la
 src/examples/connman-list-services
 src/examples/ofono-dial
