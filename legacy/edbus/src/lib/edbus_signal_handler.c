@@ -79,8 +79,7 @@ EAPI Eina_Bool
 edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
 {
    va_list ap;
-   char *key = NULL, *read;
-   Signal_Argument *arg;
+   const char *key = NULL, *read;
    DBusError err;
 
    EDBUS_SIGNAL_HANDLER_CHECK_RETVAL(sh, EINA_FALSE);
@@ -93,6 +92,8 @@ edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
    va_start(ap, sh);
    for (read = va_arg(ap, char *); read; read = va_arg(ap, char *))
      {
+        Signal_Argument *arg;
+
         if (!key)
           {
              key = read;
