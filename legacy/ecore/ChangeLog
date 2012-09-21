@@ -961,3 +961,6 @@
        * Fix ecore_x_image_is_argb32_get() to return correctly on
        endianess.
 
+2012-09-21  Christopher Michael
+
+       * Fix ecore_x_randr to properly return output modes from ecore_x_randr_output_modes_get
