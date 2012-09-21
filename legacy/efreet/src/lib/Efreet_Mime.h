@@ -50,8 +50,10 @@ extern "C" {
 EAPI int         efreet_mime_init(void);
 
 /**
- * @return No value.
- * @brief Cleans up the efreet mime settings system
+ * @return The number of times the init function has been called minus the
+ * corresponding init call.
+ * @brief Shuts down Efreet mime settings system if a balanced number of
+ * init/shutdown calls have been made
  */
 EAPI int         efreet_mime_shutdown(void);
 
