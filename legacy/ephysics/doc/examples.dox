@@ -49,7 +49,7 @@
  * @skip struct _Test_Data
  * @until };
  *
- * @section world-new World Initialization 
+ * @section world-new World Initialization
  * @dontinclude test_bouncing_ball.c
  *
  * Calling ephysics_world_new()
@@ -95,20 +95,20 @@
  * whenever it hits the ground.
  *
  * @skip ephysics_body_bottom_boundary_add
- * @until ephysics_body_friction_set 
+ * @until ephysics_body_friction_set
  *
  * Then we add a right boundary limiting the physics world on the left side, we
  * also change its restitution and friction factors but with a smaller value,
- * we don't want to make it bounce as much as it is when hits the ground. 
+ * we don't want to make it bounce as much as it is when hits the ground.
  *
  * @skip ephysics_body_right_boundary_add
- * @until ephysics_body_friction_set 
+ * @until ephysics_body_friction_set
  *
  * We also add a left boundary taking the same considerations for right
  * boundary.
  *
  * @skip ephysics_body_left_boundary_add
- * @until ephysics_body_friction_set 
+ * @until ephysics_body_friction_set
  *
  * One of this examples requirements is to make the ball jump after a specific
  * user event, so the ball can suffer an impulse for any direction.
@@ -116,7 +116,7 @@
  * With an upper impulse we don't want our ball to fly all over there, we want
  * to limit its upper movements, it's intended to limit the ball movement
  * within a box, it should not leave the render geometry area, for that purpose
- * we must define a top boundary. 
+ * we must define a top boundary.
  *
  * @skipline ephysics_body_top_boundary_add
  * @dontinclude test_bouncing_ball.c
@@ -172,10 +172,10 @@
  * function applies an inpulse on the center of a body.
  *
  * Once pressed \<Up> key it applies a central impulse of 0 kilos on X axis and
- * 10 kilos on Y - so the ball is forced up. 
+ * 10 kilos on Y - so the ball is forced up.
  *
  * If \<Down> key has been pressed we apply an impulse of 0 kilos on X axis and
- * -10 on Y - here the ball is forced down. 
+ * -10 on Y - here the ball is forced down.
  *
  * In the case of \<Right> key pressing it's applied an impulse of 10 kilos on X
  * axis and 0 kilos on Y - which applies a force to the right side. But if the
@@ -221,7 +221,7 @@
  *
  * @example ephysics_logo.c
  */
- 
+
 /**
  * @page tutorial_ephysics_bouncing_text EPhysics - Bouncing Text
  *
@@ -234,7 +234,7 @@
  * For this example we'll have an EPhysics_World and one basic EPhysics_Body.
  *
  * The basic concepts like - initializing an EPhysics_World, render geometry,
- * physics limiting boundaries, were already covered in 
+ * physics limiting boundaries, were already covered in
  * @ref tutorial_ephysics_bouncing_ball
  *
  * @section add-text Creating the text
@@ -310,7 +310,7 @@
  * @image latex camera.eps
  *
  * For this example we'll have an EPhysics_World, two distant EPhysics_Bodys,
- * one with an impulse to collide each other and an EPhysics_Camera that 
+ * one with an impulse to collide each other and an EPhysics_Camera that
  * follows the moving body using an animator.
  *
  * The basic concepts like - initializing an EPhysics_World, render geometry,
@@ -335,7 +335,7 @@
  *
  * @skipline camera_data->animator = ecore_animator_add
  *
- * In the animators function, we'll have to create a specific type of variable: 
+ * In the animators function, we'll have to create a specific type of variable:
  * @ref EPhysics_Camera
  * And also get the worlds rendered area width to define a limit to the camera.
  *
@@ -463,9 +463,7 @@
  * @section add-camera Adding a Camera
  *
  * In this example we'll use 3 kinds of tracking, to change this values we'll
- * have an 
- * @ref Elm_Spinner
- * and handle it on this function.
+ * have an Elementary spinner widget and handle it on this function.
  *
  * Every world has a camera, so here we get this camera used by our
  * EPhysics_World.
@@ -612,7 +610,7 @@
  * The callback function will filter the collision to be sure if that body is
  * which we want and then show the effect.
  *
- * First we need to create a specific variable type to get collision infos: 
+ * First we need to create a specific variable type to get collision infos:
  * @ref EPhysics_Body_Collision
  *
  * @dontinclude test_collision_detection.c
@@ -804,7 +802,7 @@
  * @ref test_delete_c.
  *
  */
- 
+
  /**
  * @page test_delete_c test_delete.c
  *
@@ -838,7 +836,7 @@
  * already covered in
  * @ref tutorial_ephysics_bouncing_ball
  *
- * You can use also a slider constraint: 
+ * You can use also a slider constraint:
  * @ref tutorial_ephysics_slider
  *
  * @section add-constraint Adding a constraint
@@ -915,7 +913,7 @@
  * last parameters are responsible to set a relative position to apply the
  * force.In other words, the force applied with an offset will make the body
  * rotates. Otherwise (0, 0) the force would be applied on the center of the
- * body, in this case its recomended use the 
+ * body, in this case its recomended use the
  * ephysics_body_central_force_apply();
  *
  * @skipline ephysics_body_force_apply(box_body1
@@ -1044,9 +1042,9 @@
  * @ref tutorial_ephysics_bouncing_ball
  *
  * Concepts like velocity and sleeping threshold were already
- * covered in
- * @ref tutorial_ephysics_velocity and 
- * @ref tutorial_ephysics_sleeping_threshold
+ * covered in:
+ * @li @ref tutorial_ephysics_velocity
+ * @li @ref tutorial_ephysics_sleeping_threshold
  *
  * @section add-gravity Setting Gravity
  * @dontinclude test_no_gravity.c
@@ -1109,7 +1107,7 @@
  * velocity and acceleration.
  *
  * For this example we'll have an EPhysics_World and one basic EPhysics_Body,
- * we'll apply impulses that follows user events, it were already covered in 
+ * we'll apply impulses that follows user events, it were already covered in
  * @ref tutorial_ephysics_bouncing_ball
  *
  * @section add-velstruct Velocity Data Struct
@@ -1240,7 +1238,7 @@
  * created later with ephysics_body_shape_add(). You can also save and load
  * it from a file.
  *
- * We'll have to create a specific type of variable: 
+ * We'll have to create a specific type of variable:
  * @ref EPhysics_Shape
  *
  * @skip _world_populate(Test_Data
@@ -1259,7 +1257,7 @@
  *
  * Now we're setting the shape points (vertices) basing on the image that
  * we added, two vertices form a link between them, an edge, so with some
- * vertices is possible to create polygons, in this case a pentagon. 
+ * vertices is possible to create polygons, in this case a pentagon.
  *
  * @skip ephysics_shape_point_add(pentagon_shape
  * @until , 1);
@@ -1407,7 +1405,7 @@
  * @image html slider.png
  * @image latex slider.eps
  *
- * For this example we'll have an EPhysics_World, and four basic 
+ * For this example we'll have an EPhysics_World, and four basic
  * EPhysics_Bodys.
  *
  * The basic concepts like - defining an EPhysics_World, render geometry,
@@ -1416,18 +1414,18 @@
  * already covered in
  * @ref tutorial_ephysics_bouncing_ball
  *
- * You can use also a P2P (point to point) constraint: 
+ * You can use also a P2P (point to point) constraint:
  * @ref tutorial_ephysics_constraint
  *
  * @section add-slider Adding a Slider
  * @dontinclude test_slider.c
  *
- * Slider is a constraint that will limit the linear and angular moving of 
+ * Slider is a constraint that will limit the linear and angular moving of
  * a body.
  *
  * We'll add three sliders on the cubes, starting with the highest purple.
  *
- * First we need to create a specific variable type to get EPhysics_Body 
+ * First we need to create a specific variable type to get EPhysics_Body
  * constraint and create a new slider constraint passing the body which we
  * want as parameter.
  *
@@ -1448,7 +1446,7 @@
  * set the counter clockwise direction also.
  *
  *
- * @skipline ephysics_constraint_slider_angular_limit_set(constraint, 0, 45 
+ * @skipline ephysics_constraint_slider_angular_limit_set(constraint, 0, 45
  *
  * When this cube falls by the gravity, the slider constraint will act limiting
  * its linear and angular movings, giving the impression that its hanging.
