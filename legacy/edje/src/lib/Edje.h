@@ -337,20 +337,6 @@ typedef struct _Edje_Version
 
 EAPI extern Edje_Version *edje_version;
 
-typedef enum _Edje_Load_Error
-{
-   EDJE_LOAD_ERROR_NONE = 0, /**< No error happened, the loading was successful */
-   EDJE_LOAD_ERROR_GENERIC = 1, /**< A generic error happened during the loading */
-   EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< The file pointed to did not exist */
-   EDJE_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission to read the given file was denied */
-   EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Resource allocation failed during the loading */
-   EDJE_LOAD_ERROR_CORRUPT_FILE = 5, /**< The file pointed to was corrupt */
-   EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6, /**< The file pointed to had an unknown format */
-   EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7, /**< The file pointed to is incompatible, i.e., it doesn't match the library's current version's format */
-   EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8, /**< The group/collection set to load from was @b not found in the file */
-   EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9 /**< The group/collection set to load from had <b>recursive references</b> on its components */
-} Edje_Load_Error; /**< Edje file loading error codes one can get - see edje_load_error_str() too. */
-
 /**
  * @brief Initialize the Edje library.
  *
@@ -456,22 +442,6 @@ EAPI const Eina_List        *edje_available_modules_get      (void);
  *
  */
 EAPI const char		*edje_fontset_append_get	(void);
-
-/**
- * Converts the given Edje file load error code into a string
- * describing it in English.
- *
- * @param error the error code, a value in ::Edje_Load_Error.
- * @return Always returns a valid string. If the given @p error is not
- *         supported, <code>"Unknown error"</code> is returned.
- *
- * edje_object_file_set() is a function which sets an error value,
- * afterwards, which can be fetched with
- * edje_object_load_error_get(). The function in question is meant
- * to be used in conjunction with the latter, for pretty-printing any
- * possible error cause.
- */
-EAPI const char		*edje_load_error_str		(Edje_Load_Error error);
 
 /**
  * @}
@@ -1467,34 +1437,6 @@ EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool r
 EAPI Eina_Bool    edje_object_mirrored_get        (const Evas_Object *obj);
 
 /**
- * Get a list of groups in an edje file
- * @param file The path to the edje file
- *
- * @return The Eina_List of group names (char *)
- *
- * Note: the list must be freed using edje_file_collection_list_free()
- * when you are done with it.
- */
-EAPI Eina_List   *edje_file_collection_list       (const char *file);
-
-/**
- * Free file collection list
- * @param lst The Eina_List of groups
- *
- * Frees the list returned by edje_file_collection_list().
- */
-EAPI void         edje_file_collection_list_free  (Eina_List *lst);
-
-/**
- * Determine whether a group matching glob exists in an edje file.
- * @param file The file path
- * @param glob A glob to match on
- *
- * @return 1 if a match is found, 0 otherwise
- */
-EAPI Eina_Bool    edje_file_group_exists          (const char *file, const char *glob);
-
-/**
  * @brief Set Edje color class.
  *
  * @param color_class
@@ -1755,6 +1697,91 @@ EAPI void         edje_box_layout_register        (const char *name, Evas_Object
 EAPI Evas_Object *edje_object_add                 (Evas *evas);
 
 /**
+ * @brief Preload the images on the Edje Object in the background.
+ *
+ * @param obj A handle to an Edje object
+ * @param cancel @c EINA_FALSE will add it the preloading work queue,
+ *               @c EINA_TRUE will remove it (if it was issued before).
+ * @return @c EINA_FASLE if obj was not a valid Edje object
+ *         otherwise @c EINA_TRUE
+ *
+ * This function requests the preload of all data images (on the given
+ * object) in the background. The work is queued before being processed
+ * (because there might be other pending requests of this type).
+ * It emits a signal "preload,done" when finished.
+ *
+ * @note Use @c EINA_TRUE on scenarios where you don't need
+ *       the image data preloaded anymore.
+ */
+EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Object_File Edje Object File
+ *
+ * @brief Functions to deals with EDJ files.
+ *
+ * Layouts in Edje are usually called themes and they are
+ * created using the EDC language. The EDC language is declarative
+ * and must be compiled before being used. The output of this
+ * compilation is an EDJ file, this file can be loaded by Edje,
+ * and the result is a edje object.
+ *
+ * This groups of functions interact with these EDJ files,
+ * either by loading them or retrieving information of the EDC
+ * file about objects.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+typedef enum _Edje_Load_Error
+{
+   EDJE_LOAD_ERROR_NONE = 0, /**< No error happened, the loading was successful */
+   EDJE_LOAD_ERROR_GENERIC = 1, /**< A generic error happened during the loading */
+   EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2, /**< The file pointed to did not exist */
+   EDJE_LOAD_ERROR_PERMISSION_DENIED = 3, /**< Permission to read the given file was denied */
+   EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4, /**< Resource allocation failed during the loading */
+   EDJE_LOAD_ERROR_CORRUPT_FILE = 5, /**< The file pointed to was corrupt */
+   EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6, /**< The file pointed to had an unknown format */
+   EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7, /**< The file pointed to is incompatible, i.e., it doesn't match the library's current version's format */
+   EDJE_LOAD_ERROR_UNKNOWN_COLLECTION = 8, /**< The group/collection set to load from was @b not found in the file */
+   EDJE_LOAD_ERROR_RECURSIVE_REFERENCE = 9 /**< The group/collection set to load from had <b>recursive references</b> on its components */
+} Edje_Load_Error; /**< Edje file loading error codes one can get - see edje_load_error_str() too. */
+
+/**
+ * Get a list of groups in an edje file
+ * @param file The path to the edje file
+ *
+ * @return The Eina_List of group names (char *)
+ *
+ * Note: the list must be freed using edje_file_collection_list_free()
+ * when you are done with it.
+ */
+EAPI Eina_List        *edje_file_collection_list  (const char *file);
+
+/**
+ * Free file collection list
+ * @param lst The Eina_List of groups
+ *
+ * Frees the list returned by edje_file_collection_list().
+ */
+EAPI void             edje_file_collection_list_free (Eina_List *lst);
+
+/**
+ * Determine whether a group matching glob exists in an edje file.
+ * @param file The file path
+ * @param glob A glob to match on
+ *
+ * @return 1 if a match is found, 0 otherwise
+ */
+EAPI Eina_Bool        edje_file_group_exists      (const char *file, const char *glob);
+
+/**
  * @brief Retrive an <b>EDC data field's value</b> from a given Edje
  * object's group.
  *
@@ -1873,23 +1900,20 @@ EAPI void             edje_object_file_get        (const Evas_Object *obj, const
 EAPI Edje_Load_Error  edje_object_load_error_get  (const Evas_Object *obj);
 
 /**
- * @brief Preload the images on the Edje Object in the background.
+ * Converts the given Edje file load error code into a string
+ * describing it in English.
  *
- * @param obj A handle to an Edje object
- * @param cancel @c EINA_FALSE will add it the preloading work queue,
- *               @c EINA_TRUE will remove it (if it was issued before).
- * @return @c EINA_FASLE if obj was not a valid Edje object
- *         otherwise @c EINA_TRUE
+ * @param error the error code, a value in ::Edje_Load_Error.
+ * @return Always returns a valid string. If the given @p error is not
+ *         supported, <code>"Unknown error"</code> is returned.
  *
- * This function requests the preload of all data images (on the given
- * object) in the background. The work is queued before being processed
- * (because there might be other pending requests of this type).
- * It emits a signal "preload,done" when finished.
- *
- * @note Use @c EINA_TRUE on scenarios where you don't need
- *       the image data preloaded anymore.
+ * edje_object_file_set() is a function which sets an error value,
+ * afterwards, which can be fetched with
+ * edje_object_load_error_get(). The function in question is meant
+ * to be used in conjunction with the latter, for pretty-printing any
+ * possible error cause.
  */
-EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
+EAPI const char	      *edje_load_error_str	  (Edje_Load_Error error);
 
 /**
  * @}
