@@ -1241,13 +1241,6 @@ typedef enum _Edje_Aspect_Control
    EDJE_ASPECT_CONTROL_BOTH = 4
 } Edje_Aspect_Control;
 
-typedef enum _Edje_Object_Table_Homogeneous_Mode
-{
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1,
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
-} Edje_Object_Table_Homogeneous_Mode;
-
 typedef enum _Edje_Text_Effect
 {
 #define EDJE_TEXT_EFFECT_MASK_BASIC 0xf
@@ -4023,6 +4016,30 @@ EAPI Evas_Object *edje_object_part_box_remove_at          (Evas_Object *obj, con
  * @see edje_object_part_box_remove_at()
  */
 EAPI Eina_Bool    edje_object_part_box_remove_all         (Evas_Object *obj, const char *part, Eina_Bool clear);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Part_Table Edje Table Part
+ *
+ * @brief Functions that deal with parts of type table.
+ *
+ * Table is a container type for parts, that means it can contain
+ * other parts.
+ *
+ * @ingroup Edje_Object_Part_Group
+ *
+ * @{
+ */
+
+typedef enum _Edje_Object_Table_Homogeneous_Mode
+{
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1,
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
+} Edje_Object_Table_Homogeneous_Mode;
 
 /**
  * @brief Retrieve a child from a table
