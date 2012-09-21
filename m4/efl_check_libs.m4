@@ -26,6 +26,7 @@ if test "x${have_dep}" = "xyes" ; then
       [
        have_dep="yes"
        requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} -ljpeg"
+       requirements_libs_deps_[]m4_defn([DOWNEFL])="${requirements_libs_deps_[]m4_defn([DOWNEFL])} -ljpeg"
       ],
       [
        AC_MSG_ERROR("Cannot find libjpeg library. Make sure your LDFLAGS environment variable contains include lines for the location of this file")
@@ -47,16 +48,12 @@ AC_DEFUN([_EFL_CHECK_LIB_ZLIB],
 m4_pushdef([UPEFL], m4_translit([$1], [-a-z], [_A-Z]))dnl
 m4_pushdef([DOWNEFL], m4_translit([$1], [-A-Z], [_a-z]))dnl
 
-PKG_CHECK_EXISTS([zlib],
-   [
-    _efl_have_lib="yes"
-    requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_[]m4_defn([DOWNEFL])} zlib"
-   ],
-   [
-    _efl_have_lib="no"
-   ])
+PKG_CHECK_EXISTS([zlib >= 1.2.3], [_efl_have_lib="yes"], [_efl_have_lib="no"])
 
-if test "x${_efl_have_lib}" = "xno" ; then
+if test "x${_efl_have_lib}" = "xyes" ; then
+   requirements_pc_[]m4_defn([DOWNEFL])="${requirements_pc_[]m4_defn([DOWNEFL])} zlib >= 1.2.3"
+   requirements_pc_deps_[]m4_defn([DOWNEFL])="${requirements_pc_deps_[]m4_defn([DOWNEFL])} zlib >= 1.2.3"
+else
    AC_CHECK_HEADER([zlib.h],
       [_efl_have_lib="yes"],
       [
@@ -69,6 +66,7 @@ if test "x${_efl_have_lib}" = "xno" ; then
          [
           _efl_have_lib="yes"
           requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} -lz"
+          requirements_libs_deps_[]m4_defn([DOWNEFL])="${requirements_libs_deps_[]m4_defn([DOWNEFL])} -lz"
          ],
          [
           AC_MSG_ERROR(["Cannot find libjpeg library. Make sure your LDFLAGS environment variable contains include lines for the location of this file"])

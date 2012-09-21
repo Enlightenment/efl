@@ -11,6 +11,12 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @VALGRIND_CFLAGS@
 
+if HAVE_WINDOWS
+AM_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
 lib_LTLIBRARIES = libeina.la
 
 libeina_la_SOURCES = \
@@ -104,7 +110,16 @@ if EINA_STATIC_BUILD_PASS_THROUGH
 libeina_la_SOURCES += $(top_srcdir)/src/modules/eina/mp/pass_through/eina_pass_through.c
 endif
 
-libeina_la_LIBADD = @EINA_LIBS@ -lm
+libeina_la_LIBADD = @EINA_LIBS@
+
+if HAVE_WINDOWS
+libeina_la_LIBADD += \
+$(top_builddir)/src/lib/evil/libevil.la \
+$(top_builddir)/src/lib/evil/libdl.la
+endif
+
+libeina_la_LIBADD += -lm
+
 libeina_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@ @EFL_PTHREAD_LIBS@
 
 clean-local:

@@ -80,6 +80,21 @@ requirements_libs_emotion=""
 requirements_libs_ethumb=""
 requirements_libs_elementary=""
 
+requirements_libs_deps_evil=""
+requirements_libs_deps_eina=""
+requirements_libs_deps_eet=""
+requirements_libs_deps_evas=""
+requirements_libs_deps_ecore=""
+requirements_libs_deps_embryo=""
+requirements_libs_deps_eio=""
+requirements_libs_deps_edje=""
+requirements_libs_deps_efreet=""
+requirements_libs_deps_e_dbus=""
+requirements_libs_deps_eeze=""
+requirements_libs_deps_emotion=""
+requirements_libs_deps_ethumb=""
+requirements_libs_deps_elementary=""
+
 requirements_pc_eina=""
 requirements_pc_eet=""
 requirements_pc_evas=""
@@ -93,6 +108,20 @@ requirements_pc_eeze=""
 requirements_pc_emotion=""
 requirements_pc_ethumb=""
 requirements_pc_elementary=""
+
+requirements_pc_deps_eina=""
+requirements_pc_deps_eet=""
+requirements_pc_deps_evas=""
+requirements_pc_deps_ecore=""
+requirements_pc_deps_embryo=""
+requirements_pc_deps_eio=""
+requirements_pc_deps_edje=""
+requirements_pc_deps_efreet=""
+requirements_pc_deps_e_dbus=""
+requirements_pc_deps_eeze=""
+requirements_pc_deps_emotion=""
+requirements_pc_deps_ethumb=""
+requirements_pc_deps_elementary=""
 
 AC_SUBST([requirements_libs_evil])
 AC_SUBST([requirements_libs_eina])
@@ -310,7 +339,7 @@ AC_CHECK_HEADERS([errno.h])
 
 EVIL_CPPFLAGS="-DEFL_EVIL_BUILD"
 EVIL_DLFCN_CPPFLAGS="-DEFL_EVIL_DLFCN_BUILD -DPSAPI_VERSION=1"
-EVIL_CFLAGS="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -mms-bitfields"
+EVIL_CFLAGS="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls -Wpointer-arith -mms-bitfields"
 EVIL_CXXFLAGS=""
 
 if test "x${have_win32}" = "xyes" ; then
@@ -457,6 +486,22 @@ AC_MSG_RESULT([${enable_benchmark_e17}])
 
 AM_CONDITIONAL([EINA_ENABLE_BENCHMARK_E17], [test "x${enable_benchmark_e17}" = "xyes"])
 
+# Valgrind
+
+AC_ARG_ENABLE([valgrind],
+   [AC_HELP_STRING([--enable-valgrind], [improve valgrind support by hinting it of our memory usages, having it to report proper mempool leaks. @<:@default=no@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_valgrind="yes"
+    else
+       want_valgrind="no"
+    fi
+   ],
+   [want_valgrind="no"])
+
+AC_MSG_CHECKING([whether to enable build with valgrind])
+AC_MSG_RESULT([${want_valgrind}])
+
 ### Checks for programs
 
 ### Checks for libraries
@@ -468,7 +513,6 @@ AM_CONDITIONAL([EINA_ENABLE_BENCHMARK_E17], [test "x${enable_benchmark_e17}" = "
 EFL_EINA_BUILD=""
 case "$host_os" in
    mingw*)
-      PKG_CHECK_EXISTS([evil >= 1.6.99])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
       requirements_pc_eina="${requirements_pc_eina} evil"
       EFL_EINA_BUILD="-DEFL_EINA_BUILD"
@@ -500,33 +544,16 @@ PKG_CHECK_EXISTS([exotic],
 AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
 AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
 
-if ! test "x${requirements_pc_eina}" = "x" ; then
-   PKG_CHECK_MODULES([EINA], [${requirements_pc_eina}])
-fi
-
 ## Options
 
 # Valgrind
-
-AC_ARG_ENABLE([valgrind],
-   [AC_HELP_STRING([--enable-valgrind], [improve valgrind support by hinting it of our memory usages, having it to report proper mempool leaks.])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_valgrind="yes"
-    else
-       want_valgrind="no"
-    fi
-   ],
-   [want_valgrind="auto"])
-
-AC_MSG_CHECKING([whether to enable build with valgrind])
-AC_MSG_RESULT([${want_valgrind}])
 
 if test "x${want_valgrind}" = "xyes" || test "x${want_valgrind}" = "xauto"; then
    PKG_CHECK_MODULES([VALGRIND], [valgrind >= 2.4.0],
       [
        have_valgrind="yes"
-       requirements_pc_eina="valgrind ${requirements_pc_eina}"
+       requirements_pc_eina="valgrind >= 2.4.0 ${requirements_pc_eina}"
+       requirements_pc_deps_eina="valgrind ${requirements_pc_deps_eina}"
       ],
       [
        have_valgrind="no"
@@ -589,6 +616,12 @@ if test "x${enable_ememoa}" = "xyes" ; then
       [enable_ememoa="yes"],
       [enable_ememoa="no"])
 fi
+
+if ! test "x${requirements_pc_deps_eina}" = "x" ; then
+   PKG_CHECK_MODULES([EINA], [${requirements_pc_deps_eina}])
+fi
+
+
 
 ## Examples
 
@@ -677,7 +710,7 @@ m4_ifdef([v_ver],
     EFL_CHECK_COMPILER_FLAGS([EINA], [-Wall -Wextra])
    ])
 
-EFL_CHECK_COMPILER_FLAGS([EINA], [-Wshadow])
+EFL_CHECK_COMPILER_FLAGS([EINA], [-Wshadow -Wpointer-arith])
 
 ### Checks for linker characteristics
 
@@ -854,7 +887,6 @@ AC_MSG_RESULT([${want_signature}])
 EFL_EET_BUILD=""
 case "$host_os" in
    mingw*)
-      PKG_CHECK_EXISTS([evil >= 1.1.0])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
       requirements_pc_eet="evil ${requirements_pc_eet}"
       EFL_EET_BUILD="-DEFL_EET_BUILD"
@@ -884,6 +916,7 @@ if test "x${want_gnutls}" = "xyes" || test "x${want_gnutls}" = "xauto" ; then
        want_openssl="no"
        AC_DEFINE([HAVE_GNUTLS], [1], [Have Gnutls support])
        requirements_pc_eet="gnutls >= 1.7.6 ${requirements_pc_eet}"
+       requirements_pc_deps_eet="gnutls >= 1.7.6 ${requirements_pc_deps_eet}"
       ],
       [have_gnutls="no"])
 fi
@@ -894,6 +927,7 @@ if test "x${have_gnutls}" = "xyes" ; then
    AC_PATH_GENERIC([libgcrypt], [], [have_gnutls="yes"], [have_gnutls="no"])
    if test "x${have_gnutls}" = "xyes" ; then
       requirements_libs_eet="${LIBGCRYPT_LIBS} ${requirements_libs_eet}"
+      requirements_libs_deps_eet="${LIBGCRYPT_LIBS} ${requirements_libs_deps_eet}"
    fi
 fi
 
@@ -977,6 +1011,7 @@ if test "x${want_openssl}" = "xyes" || test "x${want_openssl}" = "xauto" ; then
        have_openssl="yes"
        AC_DEFINE([HAVE_OPENSSL], [1], [Have Openssl support])
        requirements_pc_eet="openssl ${requirements_pc_eet}"
+       requirements_pc_deps_eet="openssl ${requirements_pc_deps_eet}"
       ],
       [have_openssl="no"])
 fi
@@ -1017,23 +1052,28 @@ AC_MSG_RESULT([${have_signature}])
 
 # libjpeg and zlib
 
-EFL_CHECK_LIBS([eet], [libjpeg zlib])
+EFL_CHECK_LIBS([EET], [libjpeg zlib])
 
 # Eina library
 
-requirements_pc_eet="eina >= 1.2.0 ${requirements_pc_eet}"
-PKG_CHECK_MODULES([EET], [${requirements_pc_eet}])
+requirements_pc_eet="eina >= 1.7.99 ${requirements_pc_eet}"
+
+PKG_CHECK_MODULES([EET], [${requirements_pc_deps_eet}])
+
+# Windows
 
 case "$host_os" in
    mingw32ce*)
       requirements_libs_eet="${requirements_libs_eet} -lws2"
+      requirements_libs_deps_eet="${requirements_libs_deps_eet} -lws2"
       ;;
    mingw*)
       requirements_libs_eet="${requirements_libs_eet} -lws2_32"
+      requirements_libs_deps_eet="${requirements_libs_deps_eet} -lws2_32"
       ;;
 esac
 
-EET_LIBS="${EET_LIBS} ${requirements_libs_eet}"
+EET_LIBS="${EET_LIBS} ${requirements_libs_deps_eet}"
 
 ### Checks for header files
 
@@ -1068,6 +1108,8 @@ AC_MSG_RESULT([${have_null}])
 if test ! "x${have_null}" = "xyes" ; then
    AC_MSG_WARN([Your system is a bit too funny, eet might not work properly])
 fi
+
+EFL_CHECK_COMPILER_FLAGS([EET], [-Wshadow -Wpointer-arith])
 
 ### Checks for linker characteristics
 

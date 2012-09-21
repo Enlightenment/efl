@@ -85,7 +85,6 @@ case "$host_os" in
    mingw*)
       _efl_have_fct="yes"
       requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} -ldl"
-      m4_defn([UPEFL])[]_LIBS="${m4_defn([UPEFL])[]_LIBS} -ldl"
    ;;
    *)
       _efl_have_fct="no"
@@ -151,7 +150,6 @@ case "$host_os" in
    mingw*)
       _efl_have_fct="yes"
       requirements_libs_[]m4_defn([DOWNEFL])="${requirements_libs_[]m4_defn([DOWNEFL])} -ldl"
-      m4_defn([UPEFL])[]_LIBS="${m4_defn([UPEFL])[]_LIBS} -ldl"
    ;;
    *)
       _efl_have_fct="no"
