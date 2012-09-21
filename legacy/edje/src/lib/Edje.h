@@ -1200,34 +1200,6 @@ EAPI const Edje_External_Type       *edje_external_type_get         (const char 
  * @{
  */
 
-/**
- * Identifiers of Edje message types, which can be sent back and forth
- * code and a given Edje object's theme file/group.
- *
- * @see edje_object_message_send()
- * @see edje_object_message_handler_set()
- */
-typedef enum _Edje_Message_Type
-{
-   EDJE_MESSAGE_NONE = 0,
-
-   EDJE_MESSAGE_SIGNAL = 1, /* DONT USE THIS */
-
-   EDJE_MESSAGE_STRING = 2, /**< A message with a string as value. Use #Edje_Message_String structs as message body, for this type. */
-   EDJE_MESSAGE_INT = 3, /**< A message with an integer number as value. Use #Edje_Message_Int structs as message body, for this type. */
-   EDJE_MESSAGE_FLOAT = 4, /**< A message with a floating pointer number as value. Use #Edje_Message_Float structs as message body, for this type. */
-
-   EDJE_MESSAGE_STRING_SET = 5, /**< A message with a list of strings as value. Use #Edje_Message_String_Set structs as message body, for this type. */
-   EDJE_MESSAGE_INT_SET = 6, /**< A message with a list of integer numbers as value. Use #Edje_Message_Int_Set structs as message body, for this type. */
-   EDJE_MESSAGE_FLOAT_SET = 7, /**< A message with a list of floating point numbers as value. Use #Edje_Message_Float_Set structs as message body, for this type. */
-
-   EDJE_MESSAGE_STRING_INT = 8, /**< A message with a struct containing a string and an integer number as value. Use #Edje_Message_String_Int structs as message body, for this type. */
-   EDJE_MESSAGE_STRING_FLOAT = 9, /**< A message with a struct containing a string and a floating point number as value. Use #Edje_Message_String_Float structs as message body, for this type. */
-
-   EDJE_MESSAGE_STRING_INT_SET = 10, /**< A message with a struct containing a string and list of integer numbers as value. Use #Edje_Message_String_Int_Set structs as message body, for this type. */
-   EDJE_MESSAGE_STRING_FLOAT_SET = 11 /**< A message with a struct containing a string and list of floating point numbers as value. Use #Edje_Message_String_Float_Set structs as message body, for this type. */
-} Edje_Message_Type;
-
 typedef enum _Edje_Aspect_Control
 {
    EDJE_ASPECT_CONTROL_NONE = 0,
@@ -1347,76 +1319,6 @@ struct _Edje_Entry_Change_Info
  */
 typedef struct _Edje_Entry_Change_Info        Edje_Entry_Change_Info;
 
-typedef struct _Edje_Message_String           Edje_Message_String;
-typedef struct _Edje_Message_Int              Edje_Message_Int;
-typedef struct _Edje_Message_Float            Edje_Message_Float;
-typedef struct _Edje_Message_String_Set       Edje_Message_String_Set;
-typedef struct _Edje_Message_Int_Set          Edje_Message_Int_Set;
-typedef struct _Edje_Message_Float_Set        Edje_Message_Float_Set;
-typedef struct _Edje_Message_String_Int       Edje_Message_String_Int;
-typedef struct _Edje_Message_String_Float     Edje_Message_String_Float;
-typedef struct _Edje_Message_String_Int_Set   Edje_Message_String_Int_Set;
-typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set;
-
-struct _Edje_Message_String
-{
-   char *str; /**< The message's string pointer */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING messages. The string in it is automatically freed be Edje if passed to you by Edje */
-
-struct _Edje_Message_Int
-{
-   int val; /**< The message's value */
-}; /**< Structure passed as value on #EDJE_MESSAGE_INT messages */
-
-struct _Edje_Message_Float
-{
-   double val; /**< The message's value */
-}; /**< Structure passed as value on #EDJE_MESSAGE_FLOAT messages */
-
-struct _Edje_Message_String_Set
-{
-   int count; /**< The size of the message's array (may be greater than 1) */
-   char *str[1]; /**< The message's @b array of string pointers */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
-
-struct _Edje_Message_Int_Set
-{
-   int count; /**< The size of the message's array (may be greater than 1) */
-   int val[1]; /**< The message's @b array of integers */
-}; /**< Structure passed as value on #EDJE_MESSAGE_INT_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
-
-struct _Edje_Message_Float_Set
-{
-   int count; /**< The size of the message's array (may be greater than 1) */
-   double val[1]; /**< The message's @b array of floats */
-}; /**< Structure passed as value on #EDJE_MESSAGE_FLOAT_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
-
-struct _Edje_Message_String_Int
-{
-   char *str; /**< The message's string value */
-   int val; /**< The message's integer value */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT messages. The string in it is automatically freed be Edje if passed to you by Edje */
-
-struct _Edje_Message_String_Float
-{
-   char *str; /**< The message's string value */
-   double val; /**< The message's float value */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT messages. The string in it is automatically freed be Edje if passed to you by Edje */
-
-struct _Edje_Message_String_Int_Set
-{
-   char *str; /**< The message's string value */
-   int count; /**< The size of the message's array (may be greater than 1) */
-   int val[1]; /**< The message's @b array of integers */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT_SET messages. The array and string in it are automatically freed be Edje if passed to you by Edje */
-
-struct _Edje_Message_String_Float_Set
-{
-   char *str; /**< The message's string value */
-   int count; /**< The size of the message's array (may be greater than 1) */
-   double val[1]; /**< The message's @b array of floats */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT_SET messages. The array and string in it are automatically freed be Edje if passed to you by Edje */
-
 typedef enum _Edje_Drag_Dir
 {
    EDJE_DRAG_DIR_NONE = 0,
@@ -1475,9 +1377,7 @@ typedef enum _Edje_Input_Panel_Layout
    EDJE_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
 } Edje_Input_Panel_Layout;
 
-typedef void         (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Edje signal callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the signal comes from. @c emission will identify the exact signal's emission string and @c source the exact signal's source one. */
 typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
-typedef void         (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg); /**< Edje message handler callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the message comes from. @c type will identify the type of the given message and @c msg will be a pointer the message's contents, de facto, which depend on @c type. */
 typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
 typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, const char *part, char **text);
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
@@ -2082,6 +1982,29 @@ EAPI Edje_Load_Error  edje_object_load_error_get  (const Evas_Object *obj);
 EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
 
 /**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Object_Communication_Interface_Signal Edje Communication Interface: Signal
+ *
+ * @brief Functions that deal with signals.
+ *
+ * Edje has two communication interfaces between @b code and @b theme.
+ * Signals and messages.
+ *
+ * This group has functions that deal with signals. One can either
+ * emit a signal from @b code to a @b theme or create handles for
+ * the ones emitted from @b themes. Signals are identified by strings.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+typedef void         (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, const char *emission, const char *source); /**< Edje signal callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the signal comes from. @c emission will identify the exact signal's emission string and @c source the exact signal's source one. */
+
+/**
  * @brief Add a callback for an arriving Edje signal, emitted by
  * a given Ejde object.
  *
@@ -2231,6 +2154,16 @@ EAPI void         edje_object_signal_emit         (Evas_Object *obj, const char 
  * @since 1.1.0
  */
 EAPI void *       edje_object_signal_callback_extra_data_get(void);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Edje_Object_Group
+ *
+ * @{
+ */
 
 /**
  * @brief Set the Edje object to playing or paused states.
@@ -4026,6 +3959,131 @@ EAPI Eina_Bool    edje_object_part_table_col_row_size_get (const Evas_Object *ob
 EAPI Eina_Bool    edje_object_part_table_clear            (Evas_Object *obj, const char *part, Eina_Bool clear);
 
 /**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Object_Communication_Interface_Message Edje Communication Interface: Message
+ *
+ * @brief Functions that deal with messages.
+ *
+ * Edje has two communication interfaces between @b code and @b theme.
+ * Signals and messages.
+ *
+ * Edje messages are one of the communication interfaces between
+ * @b code and a given Edje object's @b theme. With messages, one can
+ * communicate values like strings, float numbers and integer
+ * numbers. Moreover, messages can be identified by integer
+ * numbers. See #Edje_Message_Type for the full list of message types.
+ *
+ * @note Messages must be handled by scripts.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+/**
+ * Identifiers of Edje message types, which can be sent back and forth
+ * code and a given Edje object's theme file/group.
+ *
+ * @see edje_object_message_send()
+ * @see edje_object_message_handler_set()
+ */
+typedef enum _Edje_Message_Type
+{
+   EDJE_MESSAGE_NONE = 0,
+
+   EDJE_MESSAGE_SIGNAL = 1, /* DONT USE THIS */
+
+   EDJE_MESSAGE_STRING = 2, /**< A message with a string as value. Use #Edje_Message_String structs as message body, for this type. */
+   EDJE_MESSAGE_INT = 3, /**< A message with an integer number as value. Use #Edje_Message_Int structs as message body, for this type. */
+   EDJE_MESSAGE_FLOAT = 4, /**< A message with a floating pointer number as value. Use #Edje_Message_Float structs as message body, for this type. */
+
+   EDJE_MESSAGE_STRING_SET = 5, /**< A message with a list of strings as value. Use #Edje_Message_String_Set structs as message body, for this type. */
+   EDJE_MESSAGE_INT_SET = 6, /**< A message with a list of integer numbers as value. Use #Edje_Message_Int_Set structs as message body, for this type. */
+   EDJE_MESSAGE_FLOAT_SET = 7, /**< A message with a list of floating point numbers as value. Use #Edje_Message_Float_Set structs as message body, for this type. */
+
+   EDJE_MESSAGE_STRING_INT = 8, /**< A message with a struct containing a string and an integer number as value. Use #Edje_Message_String_Int structs as message body, for this type. */
+   EDJE_MESSAGE_STRING_FLOAT = 9, /**< A message with a struct containing a string and a floating point number as value. Use #Edje_Message_String_Float structs as message body, for this type. */
+
+   EDJE_MESSAGE_STRING_INT_SET = 10, /**< A message with a struct containing a string and list of integer numbers as value. Use #Edje_Message_String_Int_Set structs as message body, for this type. */
+   EDJE_MESSAGE_STRING_FLOAT_SET = 11 /**< A message with a struct containing a string and list of floating point numbers as value. Use #Edje_Message_String_Float_Set structs as message body, for this type. */
+} Edje_Message_Type;
+
+typedef struct _Edje_Message_String           Edje_Message_String;
+typedef struct _Edje_Message_Int              Edje_Message_Int;
+typedef struct _Edje_Message_Float            Edje_Message_Float;
+typedef struct _Edje_Message_String_Set       Edje_Message_String_Set;
+typedef struct _Edje_Message_Int_Set          Edje_Message_Int_Set;
+typedef struct _Edje_Message_Float_Set        Edje_Message_Float_Set;
+typedef struct _Edje_Message_String_Int       Edje_Message_String_Int;
+typedef struct _Edje_Message_String_Float     Edje_Message_String_Float;
+typedef struct _Edje_Message_String_Int_Set   Edje_Message_String_Int_Set;
+typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set;
+
+struct _Edje_Message_String
+{
+   char *str; /**< The message's string pointer */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING messages. The string in it is automatically freed be Edje if passed to you by Edje */
+
+struct _Edje_Message_Int
+{
+   int val; /**< The message's value */
+}; /**< Structure passed as value on #EDJE_MESSAGE_INT messages */
+
+struct _Edje_Message_Float
+{
+   double val; /**< The message's value */
+}; /**< Structure passed as value on #EDJE_MESSAGE_FLOAT messages */
+
+struct _Edje_Message_String_Set
+{
+   int count; /**< The size of the message's array (may be greater than 1) */
+   char *str[1]; /**< The message's @b array of string pointers */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
+
+struct _Edje_Message_Int_Set
+{
+   int count; /**< The size of the message's array (may be greater than 1) */
+   int val[1]; /**< The message's @b array of integers */
+}; /**< Structure passed as value on #EDJE_MESSAGE_INT_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
+
+struct _Edje_Message_Float_Set
+{
+   int count; /**< The size of the message's array (may be greater than 1) */
+   double val[1]; /**< The message's @b array of floats */
+}; /**< Structure passed as value on #EDJE_MESSAGE_FLOAT_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
+
+struct _Edje_Message_String_Int
+{
+   char *str; /**< The message's string value */
+   int val; /**< The message's integer value */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT messages. The string in it is automatically freed be Edje if passed to you by Edje */
+
+struct _Edje_Message_String_Float
+{
+   char *str; /**< The message's string value */
+   double val; /**< The message's float value */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT messages. The string in it is automatically freed be Edje if passed to you by Edje */
+
+struct _Edje_Message_String_Int_Set
+{
+   char *str; /**< The message's string value */
+   int count; /**< The size of the message's array (may be greater than 1) */
+   int val[1]; /**< The message's @b array of integers */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT_SET messages. The array and string in it are automatically freed be Edje if passed to you by Edje */
+
+struct _Edje_Message_String_Float_Set
+{
+   char *str; /**< The message's string value */
+   int count; /**< The size of the message's array (may be greater than 1) */
+   double val[1]; /**< The message's @b array of floats */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT_SET messages. The array and string in it are automatically freed be Edje if passed to you by Edje */
+
+typedef void         (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg); /**< Edje message handler callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the message comes from. @c type will identify the type of the given message and @c msg will be a pointer the message's contents, de facto, which depend on @c type. */
+
+/**
  * @brief Send an (Edje) message to a given Edje object
  *
  * @param obj A handle to an Edje object
@@ -4055,13 +4113,6 @@ EAPI void         edje_object_message_send                (Evas_Object *obj, Edj
  * @param obj A handle to an Edje object
  * @param func The function to handle messages @b coming from @p obj
  * @param data Auxiliary data to be passed to @p func
- *
- * Edje messages are one of the communication interfaces between
- * @b code and a given Edje object's @b theme. With messages, one can
- * communicate values beyond strings (which are the subject of Edje
- * signals -- see edje_object_signal_emit()), like float and integer
- * numbers. Moreover, messages can be identified by integer
- * numbers. See #Edje_Message_Type for the full list of message types.
  *
  * For scriptable programs on an Edje object's defining EDC file which
  * send messages with the @c send_message() primitive, one can attach
@@ -4096,6 +4147,16 @@ EAPI void         edje_object_message_signal_process      (Evas_Object *obj);
  *
  */
 EAPI void         edje_message_signal_process             (void);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Edje_Object_Group
+ *
+ * @{
+ */
 
    /* perspective info for maps inside edje objects */
    typedef struct _Edje_Perspective Edje_Perspective;
