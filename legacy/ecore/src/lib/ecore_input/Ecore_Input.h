@@ -7,6 +7,8 @@
 # include <inttypes.h>
 #endif
 
+#include <Eina.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
