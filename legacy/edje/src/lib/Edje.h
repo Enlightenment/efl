@@ -1315,21 +1315,32 @@ typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, c
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
 /**
- * @brief Set Edje's global scaling factor.
+ * @defgroup Edje_Object_Scale Edje Scale
  *
- * @param scale The global scaling factor (the default value is @c 1.0)
+ * @brief Functions that deal with scaling objects
  *
  * Edje allows one to build scalable interfaces. Scaling factors,
  * which are set to neutral (@c 1.0) values by default (no scaling,
  * actual sizes), are of two types: @b global and @b individual.
+ *
+ * Scaling affects the values of minimum/maximum @b part sizes, which
+ * are @b multiplied by it. Font sizes are scaled, too.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+/**
+ * @brief Set Edje's global scaling factor.
+ *
+ * @param scale The global scaling factor (the default value is @c 1.0)
+ *
  * Edje's global scaling factor will affect all its objects which
  * hadn't their individual scaling factors altered from the default
  * value (which is zero). If they had it set differently, by
  * edje_object_scale_set(), that factor will @b override the global
  * one.
- *
- * Scaling affects the values of minimum/maximum @b part sizes, which
- * are @b multiplied by it. Font sizes are scaled, too.
  *
  * @warning Only parts which, at EDC level, had the @c "scale"
  * property set to @c 1, will be affected by this function. Check the
@@ -1350,35 +1361,6 @@ EAPI void         edje_scale_set                  (double scale);
  *
  */
 EAPI double       edje_scale_get                  (void);
-
-/**
- * @brief Show last character in password mode.
- *
- * @param password_show_last If TRUE enable last character show in password mode.
- *
- * This function enables last input to be visible when in password mode for few seconds
- * or until the next input is entered.
- *
- * The time out value is obtained by edje_password_show_last_timeout_set function.
- *
- * @see edje_password_show_last_timeout_set().
- */
-EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
-
-/**
- * @brief Set's the timeout value in last show password mode.
- *
- * @param password_show_last_timeout The timeout value.
- *
- * This functions sets the time out value for which the last input entered in password
- * mode will be visible.
- *
- * This value can be used only when last show mode is set in password mode.
- *
- * @see edje_password_show_last_set().
- *
- */
-EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout);
 
 /**
  * @brief Set the scaling factor for a given Edje object.
@@ -1415,6 +1397,45 @@ EAPI Eina_Bool    edje_object_scale_set           (Evas_Object *obj, double scal
  *
  */
 EAPI double       edje_object_scale_get           (const Evas_Object *obj);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Edje_Object_Group
+ *
+ * @{
+ */
+
+/**
+ * @brief Show last character in password mode.
+ *
+ * @param password_show_last If TRUE enable last character show in password mode.
+ *
+ * This function enables last input to be visible when in password mode for few seconds
+ * or until the next input is entered.
+ *
+ * The time out value is obtained by edje_password_show_last_timeout_set function.
+ *
+ * @see edje_password_show_last_timeout_set().
+ */
+EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
+
+/**
+ * @brief Set's the timeout value in last show password mode.
+ *
+ * @param password_show_last_timeout The timeout value.
+ *
+ * This functions sets the time out value for which the last input entered in password
+ * mode will be visible.
+ *
+ * This value can be used only when last show mode is set in password mode.
+ *
+ * @see edje_password_show_last_set().
+ *
+ */
+EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout);
 
 /**
  * @brief Set the RTL orientation for this object.
