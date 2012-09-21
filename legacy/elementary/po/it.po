@@ -1,12 +1,12 @@
 # Italian translation for Elementary.
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2011.
-#: src/lib/elm_config.c:2084
+#: src/lib/elm_config.c:2101
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-09-01 17:37+0900\n"
+"POT-Creation-Date: 2012-09-20 13:50+0900\n"
 "PO-Revision-Date: 2012-08-30 18:48+0200\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -31,23 +31,45 @@ msgstr "Annulla"
 msgid "OK"
 msgstr "OK"
 
+#: src/lib/elm_bubble.c:196
+msgid "Bubble"
+msgstr ""
+
 #: src/lib/elm_button.c:55
 msgid "Clicked"
 msgstr "Cliccato"
 
-#: src/lib/elm_button.c:255 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
+#: src/lib/elm_button.c:266 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
 #: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
-#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1418
+#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1513
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
-#: src/lib/elm_button.c:279
+#: src/lib/elm_button.c:290
 msgid "Button"
 msgstr "Bottone"
 
 #: src/lib/elm_calendar.c:132
 msgid "%B %Y"
 msgstr "%B %Y"
+
+#: src/lib/elm_calendar.c:234
+msgid "calendar item"
+msgstr ""
+
+#: src/lib/elm_calendar.c:261
+#, fuzzy
+msgid "calendar decrement button"
+msgstr "bottone di diminuzione"
+
+#: src/lib/elm_calendar.c:267
+#, fuzzy
+msgid "calendar increment button"
+msgstr "bottone di aumento"
+
+#: src/lib/elm_calendar.c:273
+msgid "calendar month"
+msgstr ""
 
 #: src/lib/elm_check.c:47 src/lib/elm_check.c:50 src/lib/elm_check.c:213
 #: src/lib/elm_radio.c:83 src/lib/elm_radio.c:242
@@ -71,11 +93,11 @@ msgstr "Controllo"
 msgid "color selector palette item"
 msgstr "palette selezione colore"
 
-#: src/lib/elm_config.c:2100
+#: src/lib/elm_config.c:2117
 msgid "default:LTR"
 msgstr "predefintito: LTR"
 
-#: src/lib/elm_diskselector.c:624
+#: src/lib/elm_diskselector.c:630
 msgid "diskselector item"
 msgstr "selettore disco"
 
@@ -107,6 +129,15 @@ msgstr "Voce griglia generica"
 msgid "Genlist Item"
 msgstr "Voce elenco generico"
 
+#: src/lib/elm_index.c:99
+#, fuzzy
+msgid "Index Item"
+msgstr "Voce griglia generica"
+
+#: src/lib/elm_index.c:672
+msgid "Index"
+msgstr ""
+
 #: src/lib/elm_label.c:348
 msgid "Label"
 msgstr "Etichetta"
@@ -123,7 +154,7 @@ msgstr "barra avanzamento"
 msgid "Radio"
 msgstr "Opzione"
 
-#: src/lib/elm_slider.c:778
+#: src/lib/elm_slider.c:802
 msgid "slider"
 msgstr "cursore"
 
@@ -139,22 +170,22 @@ msgstr "bottone di diminuzione"
 msgid "spinner"
 msgstr "spinner bottoni"
 
-#: src/lib/elm_toolbar.c:1092
+#: src/lib/elm_toolbar.c:1149
 msgid "Selected"
 msgstr "Selezionato"
 
-#: src/lib/elm_toolbar.c:1416
+#: src/lib/elm_toolbar.c:1511
 msgid "Separator"
 msgstr "Separatore"
 
-#: src/lib/elm_toolbar.c:1420
+#: src/lib/elm_toolbar.c:1515
 msgid "State: Selected"
 msgstr "Stato: selezionato"
 
-#: src/lib/elm_toolbar.c:1422
+#: src/lib/elm_toolbar.c:1517
 msgid "Has menu"
 msgstr "Include menù"
 
-#: src/lib/elm_toolbar.c:1501
+#: src/lib/elm_toolbar.c:1596
 msgid "Tool Item"
 msgstr "Oggetto strumento"

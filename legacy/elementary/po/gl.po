@@ -2,11 +2,12 @@
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 #
+#: src/lib/elm_config.c:2101
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-30 19:32+0200\n"
+"POT-Creation-Date: 2012-09-20 13:50+0900\n"
 "PO-Revision-Date: 2012-09-16 11:07+0200\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
@@ -15,58 +16,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/elm_colorselector.c:895
-msgid "color selector palette item"
-msgstr "Paleta de selección de cor"
+#: src/lib/elc_fileselector.c:749
+msgid "Up"
+msgstr "Arriba"
 
-#: src/lib/elc_naviframe.c:255
-msgid "title"
-msgstr "título"
+#: src/lib/elc_fileselector.c:764
+msgid "Home"
+msgstr "Cartafol persoal"
 
-#: src/lib/elc_naviframe.c:269
-msgid "sub title"
-msgstr "subtítulo"
+#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1254
+msgid "Cancel"
+msgstr "Cancelar"
 
-#: src/lib/elc_naviframe.c:762
-msgid "Back"
-msgstr "Atrás"
+#: src/lib/elc_fileselector.c:1001
+msgid "OK"
+msgstr "Aceptar"
 
-#: src/lib/elm_spinner.c:503
-#: src/lib/elm_segment_control.c:506
-#: src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1281
-#: src/lib/elm_toolbar.c:1475
-#: src/lib/elm_radio.c:241
-#: src/lib/elm_list.c:1353
-#: src/lib/elm_button.c:262
-#: src/lib/elm_check.c:200
+#: src/lib/elm_bubble.c:196
+msgid "Bubble"
+msgstr ""
+
+#: src/lib/elm_button.c:55
+msgid "Clicked"
+msgstr "Premido"
+
+#: src/lib/elm_button.c:266 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
+#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
+#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1513
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
-#: src/lib/elm_spinner.c:534
-msgid "spinner increment button"
-msgstr "botón de aumento"
-
-#: src/lib/elm_spinner.c:542
-msgid "spinner decrement button"
-msgstr "botón de disminución"
-
-#: src/lib/elm_spinner.c:549
-msgid "spinner"
-msgstr "botón de spinner"
-
-#: src/lib/elm_segment_control.c:509
-#: src/lib/elm_toolbar.c:1477
-msgid "State: Selected"
-msgstr "Estado: Seleccionado"
-
-#: src/lib/elm_segment_control.c:511
-msgid "State: Unselected"
-msgstr "Estado: Sen seleccionar"
-
-#: src/lib/elm_segment_control.c:523
-msgid "Segment Control Item"
-msgstr "Segmento de control"
+#: src/lib/elm_button.c:290
+msgid "Button"
+msgstr "Botón"
 
 #: src/lib/elm_calendar.c:132
 msgid "%B %Y"
@@ -88,53 +70,35 @@ msgstr "Botón de aumento do calendario"
 msgid "calendar month"
 msgstr "mes do calendario"
 
+#: src/lib/elm_check.c:47 src/lib/elm_check.c:50 src/lib/elm_check.c:213
+#: src/lib/elm_radio.c:83 src/lib/elm_radio.c:242
+msgid "State: On"
+msgstr "Estado: Conectado"
+
+#: src/lib/elm_check.c:60 src/lib/elm_check.c:63 src/lib/elm_check.c:225
+#: src/lib/elm_radio.c:244
+msgid "State: Off"
+msgstr "Estado: Desconectado"
+
+#: src/lib/elm_check.c:209 src/lib/elm_check.c:222
+msgid "State"
+msgstr "Estado"
+
+#: src/lib/elm_check.c:289
+msgid "Check"
+msgstr "Comprobar"
+
+#: src/lib/elm_colorselector.c:895
+msgid "color selector palette item"
+msgstr "Paleta de selección de cor"
+
 #: src/lib/elm_config.c:2117
 msgid "default:LTR"
 msgstr "Predeterminado: LTR"
 
-#: src/lib/elc_popup.c:783
-msgid "popup title"
-msgstr "título emerxente"
-
-#: src/lib/elc_popup.c:848
-msgid "popup label"
-msgstr "etiqueta emerxente"
-
-#: src/lib/elm_gengrid.c:650
-msgid "Gengrid Item"
-msgstr "Grella xenérica"
-
 #: src/lib/elm_diskselector.c:630
 msgid "diskselector item"
 msgstr "Selector de disco"
-
-#: src/lib/elm_genlist.c:1315
-msgid "Genlist Item"
-msgstr "Lista xenérica"
-
-#: src/lib/elm_progressbar.c:260
-msgid "progressbar"
-msgstr "barra de progreso"
-
-#: src/lib/elm_toolbar.c:1149
-msgid "Selected"
-msgstr "Seleccionado"
-
-#: src/lib/elm_toolbar.c:1473
-msgid "Separator"
-msgstr "Separador"
-
-#: src/lib/elm_toolbar.c:1479
-msgid "Has menu"
-msgstr "Ten menú"
-
-#: src/lib/elm_toolbar.c:1558
-msgid "Tool Item"
-msgstr "Ferramenta"
-
-#: src/lib/elm_label.c:348
-msgid "Label"
-msgstr "Etiqueta"
 
 #: src/lib/elm_entry.c:1246
 msgid "Copy"
@@ -143,11 +107,6 @@ msgstr "Copiar"
 #: src/lib/elm_entry.c:1250
 msgid "Cut"
 msgstr "Cortar"
-
-#: src/lib/elm_entry.c:1254
-#: src/lib/elc_fileselector.c:992
-msgid "Cancel"
-msgstr "Cancelar"
 
 #: src/lib/elm_entry.c:1266
 msgid "Select"
@@ -161,40 +120,13 @@ msgstr "Pegar"
 msgid "Entry"
 msgstr "Entrada"
 
-#: src/lib/elm_radio.c:83
-#: src/lib/elm_radio.c:242
-#: src/lib/elm_check.c:47
-#: src/lib/elm_check.c:50
-#: src/lib/elm_check.c:213
-msgid "State: On"
-msgstr "Estado: Conectado"
+#: src/lib/elm_gengrid.c:650
+msgid "Gengrid Item"
+msgstr "Grella xenérica"
 
-#: src/lib/elm_radio.c:244
-#: src/lib/elm_check.c:60
-#: src/lib/elm_check.c:63
-#: src/lib/elm_check.c:225
-msgid "State: Off"
-msgstr "Estado: Desconectado"
-
-#: src/lib/elm_radio.c:271
-msgid "Radio"
-msgstr "Radio"
-
-#: src/lib/elm_dayselector.c:397
-msgid "day selector item"
-msgstr "selector de día"
-
-#: src/lib/elc_fileselector.c:749
-msgid "Up"
-msgstr "Arriba"
-
-#: src/lib/elc_fileselector.c:764
-msgid "Home"
-msgstr "Cartafol persoal"
-
-#: src/lib/elc_fileselector.c:1001
-msgid "OK"
-msgstr "Aceptar"
+#: src/lib/elm_genlist.c:1315
+msgid "Genlist Item"
+msgstr "Lista xenérica"
 
 #: src/lib/elm_index.c:99
 msgid "Index Item"
@@ -204,28 +136,78 @@ msgstr "Elemento do índice"
 msgid "Index"
 msgstr "Índice"
 
-#: src/lib/elm_slider.c:776
-msgid "slider"
-msgstr "Barra de desprazamento"
+#: src/lib/elm_label.c:348
+msgid "Label"
+msgstr "Etiqueta"
 
 #: src/lib/elm_list.c:1393
 msgid "List Item"
 msgstr "Lista"
 
-#: src/lib/elm_button.c:55
-msgid "Clicked"
-msgstr "Premido"
+#: src/lib/elm_progressbar.c:260
+msgid "progressbar"
+msgstr "barra de progreso"
 
-#: src/lib/elm_button.c:286
-msgid "Button"
-msgstr "Botón"
+#: src/lib/elm_radio.c:271
+msgid "Radio"
+msgstr "Radio"
 
-#: src/lib/elm_check.c:209
-#: src/lib/elm_check.c:222
-msgid "State"
-msgstr "Estado"
+#: src/lib/elm_slider.c:802
+msgid "slider"
+msgstr "Barra de desprazamento"
 
-#: src/lib/elm_check.c:289
-msgid "Check"
-msgstr "Comprobar"
+#: src/lib/elm_spinner.c:534
+msgid "spinner increment button"
+msgstr "botón de aumento"
 
+#: src/lib/elm_spinner.c:542
+msgid "spinner decrement button"
+msgstr "botón de disminución"
+
+#: src/lib/elm_spinner.c:549
+msgid "spinner"
+msgstr "botón de spinner"
+
+#: src/lib/elm_toolbar.c:1149
+msgid "Selected"
+msgstr "Seleccionado"
+
+#: src/lib/elm_toolbar.c:1511
+msgid "Separator"
+msgstr "Separador"
+
+#: src/lib/elm_toolbar.c:1515
+msgid "State: Selected"
+msgstr "Estado: Seleccionado"
+
+#: src/lib/elm_toolbar.c:1517
+msgid "Has menu"
+msgstr "Ten menú"
+
+#: src/lib/elm_toolbar.c:1596
+msgid "Tool Item"
+msgstr "Ferramenta"
+
+#~ msgid "title"
+#~ msgstr "título"
+
+#~ msgid "sub title"
+#~ msgstr "subtítulo"
+
+#~ msgid "Back"
+#~ msgstr "Atrás"
+
+#~ msgid "State: Unselected"
+#~ msgstr "Estado: Sen seleccionar"
+
+#~ msgid "Segment Control Item"
+#~ msgstr "Segmento de control"
+
+#~ msgid "popup title"
+#~ msgstr "título emerxente"
+
+#~ msgid "popup label"
+#~ msgstr "etiqueta emerxente"
+
+#~ msgid "day selector item"
+#~ msgstr "selector de día"
