@@ -52,7 +52,7 @@ MAINTAINERCLEANFILES += \
 	missing \
 	mkinstalldirs
 
-lib_LTLIBRARIES = libedbus.la
+lib_LTLIBRARIES = libedbus2.la
 
 include_HEADERS = \
 	src/lib/EDBus.h \
@@ -65,8 +65,8 @@ include_HEADERS = \
 	src/lib/edbus_service.h \
 	src/lib/edbus_signal_handler.h
 
-libedbus_la_LIBADD = @ECORE_LIBS@ @DBUS_LIBS@
-libedbus_la_SOURCES = \
+libedbus2_la_LIBADD = @ECORE_LIBS@ @DBUS_LIBS@
+libedbus2_la_SOURCES = \
 	src/lib/edbus_private.h \
 	src/lib/edbus_private_types.h \
 	src/lib/edbus_proxy.c \
@@ -87,7 +87,7 @@ noinst_PROGRAMS = \
 	src/examples/server \
 	src/examples/client
 
-EXAMPLES_LIBS = libedbus.la @ECORE_LIBS@
+EXAMPLES_LIBS = libedbus2.la @ECORE_LIBS@
 
 src_examples_connman_list_services_SOURCES = \
 	src/examples/connman-list-services.c
