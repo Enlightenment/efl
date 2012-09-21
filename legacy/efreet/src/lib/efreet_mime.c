@@ -76,8 +76,8 @@ static const char *_mime_text_plain = NULL;
  */
 static enum
 {
-    EFREET_ENDIAN_BIG = 0,
-    EFREET_ENDIAN_LITTLE = 1
+   EFREET_ENDIAN_BIG = 0,
+   EFREET_ENDIAN_LITTLE = 1
 } efreet_mime_endianess = EFREET_ENDIAN_BIG;
 
 /*
@@ -109,46 +109,46 @@ static enum
 typedef struct Efreet_Mime_Glob Efreet_Mime_Glob;
 struct Efreet_Mime_Glob
 {
-    const char *glob;
-    const char *mime;
+   const char *glob;
+   const char *mime;
 };
 
 typedef struct Efreet_Mime_Magic Efreet_Mime_Magic;
 struct Efreet_Mime_Magic
 {
-    unsigned int priority;
-    const char *mime;
-    Eina_List *entries;
+   unsigned int priority;
+   const char *mime;
+   Eina_List *entries;
 };
 
 typedef struct Efreet_Mime_Magic_Entry Efreet_Mime_Magic_Entry;
 struct Efreet_Mime_Magic_Entry
 {
-    unsigned int indent;
-    unsigned int offset;
-    unsigned int word_size;
-    unsigned int range_len;
-    unsigned short value_len;
-    char *mask;
-    char *value;
+   unsigned int indent;
+   unsigned int offset;
+   unsigned int word_size;
+   unsigned int range_len;
+   unsigned short value_len;
+   char *mask;
+   char *value;
 };
 
 typedef struct Efreet_Mime_Icon_Entry_Head Efreet_Mime_Icon_Entry_Head;
 struct Efreet_Mime_Icon_Entry_Head
 {
-    EINA_INLIST; /* node of mime_icons_lru */
-    Eina_Inlist *list;
-    const char *mime;
-    double timestamp;
+   EINA_INLIST; /* node of mime_icons_lru */
+   Eina_Inlist *list;
+   const char *mime;
+   double timestamp;
 };
 
 typedef struct Efreet_Mime_Icon_Entry Efreet_Mime_Icon_Entry;
 struct Efreet_Mime_Icon_Entry
 {
-    EINA_INLIST;
-    const char *icon;
-    const char *theme;
-    unsigned int size;
+   EINA_INLIST;
+   const char *icon;
+   const char *theme;
+   unsigned int size;
 };
 
 static int efreet_mime_glob_remove(const char *glob);
@@ -157,8 +157,8 @@ static void efreet_mime_shared_mimeinfo_globs_load(const char *file);
 static void efreet_mime_shared_mimeinfo_magic_load(const char *file);
 static void efreet_mime_shared_mimeinfo_magic_parse(char *data, int size);
 static const char *efreet_mime_magic_check_priority(const char *file,
-                                                      unsigned int start,
-                                                      unsigned int end);
+                                                    unsigned int start,
+                                                    unsigned int end);
 static int efreet_mime_init_files(void);
 static const char *efreet_mime_special_check(const char *file);
 static const char *efreet_mime_fallback_check(const char *file);
@@ -171,9 +171,9 @@ static int efreet_mime_endian_check(void);
 
 static void efreet_mime_monitor_add(const char *file);
 static void efreet_mime_cb_update_file(void *data,
-                                        Ecore_File_Monitor *monitor,
-                                        Ecore_File_Event event,
-                                        const char *path);
+                                       Ecore_File_Monitor *monitor,
+                                       Ecore_File_Event event,
+                                       const char *path);
 
 static void efreet_mime_icons_flush(double now);
 static void efreet_mime_icon_entry_head_free(Efreet_Mime_Icon_Entry_Head *entry);
@@ -189,166 +189,166 @@ static void efreet_mime_icons_debug(void);
 EAPI int
 efreet_mime_init(void)
 {
-    if (++_efreet_mime_init_count != 1)
-        return _efreet_mime_init_count;
+   if (++_efreet_mime_init_count != 1)
+     return _efreet_mime_init_count;
 
-    if (!ecore_init())
-        return --_efreet_mime_init_count;
+   if (!ecore_init())
+     return --_efreet_mime_init_count;
 
-    if (!ecore_file_init())
-        goto shutdown_ecore;
+   if (!ecore_file_init())
+     goto shutdown_ecore;
 
-    if (!efreet_init())
-        goto shutdown_ecore_file;
+   if (!efreet_init())
+     goto shutdown_ecore_file;
 
-    _efreet_mime_log_dom = eina_log_domain_register
+   _efreet_mime_log_dom = eina_log_domain_register
       ("efreet_mime", EFREET_DEFAULT_LOG_COLOR);
 
-    if (_efreet_mime_log_dom < 0)
-    {
+   if (_efreet_mime_log_dom < 0)
+     {
         EINA_LOG_ERR("Efreet: Could not create a log domain for efreet_mime.");
         goto shutdown_efreet;
-    }
+     }
 
-    efreet_mime_endianess = efreet_mime_endian_check();
+   efreet_mime_endianess = efreet_mime_endian_check();
 
-    monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
+   monitors = eina_hash_string_superfast_new(EINA_FREE_CB(ecore_file_monitor_del));
 
-    efreet_mime_type_cache_clear();
+   efreet_mime_type_cache_clear();
 
-    if (!efreet_mime_init_files())
-        goto unregister_log_domain;
+   if (!efreet_mime_init_files())
+     goto unregister_log_domain;
 
-    return _efreet_mime_init_count;
+   return _efreet_mime_init_count;
 
 unregister_log_domain:
-    eina_log_domain_unregister(_efreet_mime_log_dom);
-    _efreet_mime_log_dom = -1;
+   eina_log_domain_unregister(_efreet_mime_log_dom);
+   _efreet_mime_log_dom = -1;
 shutdown_efreet:
-    efreet_shutdown();
+   efreet_shutdown();
 shutdown_ecore_file:
-    ecore_file_shutdown();
+   ecore_file_shutdown();
 shutdown_ecore:
-    ecore_shutdown();
+   ecore_shutdown();
 
-    return --_efreet_mime_init_count;
+   return --_efreet_mime_init_count;
 }
 
 EAPI int
 efreet_mime_shutdown(void)
 {
-    if (_efreet_mime_init_count <= 0)
-      {
-         EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
-         return 0;
-      }
-    if (--_efreet_mime_init_count != 0)
-        return _efreet_mime_init_count;
+   if (_efreet_mime_init_count <= 0)
+     {
+        EINA_LOG_ERR("Init count not greater than 0 in shutdown.");
+        return 0;
+     }
+   if (--_efreet_mime_init_count != 0)
+     return _efreet_mime_init_count;
 
-    efreet_mime_icons_debug();
+   efreet_mime_icons_debug();
 
-    IF_RELEASE(_mime_inode_symlink);
-    IF_RELEASE(_mime_inode_fifo);
-    IF_RELEASE(_mime_inode_chardevice);
-    IF_RELEASE(_mime_inode_blockdevice);
-    IF_RELEASE(_mime_inode_socket);
-    IF_RELEASE(_mime_inode_mountpoint);
-    IF_RELEASE(_mime_inode_directory);
-    IF_RELEASE(_mime_application_x_executable);
-    IF_RELEASE(_mime_application_octet_stream);
-    IF_RELEASE(_mime_text_plain);
+   IF_RELEASE(_mime_inode_symlink);
+   IF_RELEASE(_mime_inode_fifo);
+   IF_RELEASE(_mime_inode_chardevice);
+   IF_RELEASE(_mime_inode_blockdevice);
+   IF_RELEASE(_mime_inode_socket);
+   IF_RELEASE(_mime_inode_mountpoint);
+   IF_RELEASE(_mime_inode_directory);
+   IF_RELEASE(_mime_application_x_executable);
+   IF_RELEASE(_mime_application_octet_stream);
+   IF_RELEASE(_mime_text_plain);
 
-    IF_FREE_LIST(globs, efreet_mime_glob_free);
-    IF_FREE_LIST(magics, efreet_mime_magic_free);
-    IF_FREE_HASH(monitors);
-    IF_FREE_HASH(wild);
-    IF_FREE_HASH(mime_icons);
-    eina_log_domain_unregister(_efreet_mime_log_dom);
-    _efreet_mime_log_dom = -1;
-    efreet_shutdown();
-    ecore_file_shutdown();
-    ecore_shutdown();
+   IF_FREE_LIST(globs, efreet_mime_glob_free);
+   IF_FREE_LIST(magics, efreet_mime_magic_free);
+   IF_FREE_HASH(monitors);
+   IF_FREE_HASH(wild);
+   IF_FREE_HASH(mime_icons);
+   eina_log_domain_unregister(_efreet_mime_log_dom);
+   _efreet_mime_log_dom = -1;
+   efreet_shutdown();
+   ecore_file_shutdown();
+   ecore_shutdown();
 
-    return _efreet_mime_init_count;
+   return _efreet_mime_init_count;
 }
 
 EAPI const char *
 efreet_mime_type_get(const char *file)
 {
-    const char *type = NULL;
+   const char *type = NULL;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
-    if ((type = efreet_mime_special_check(file)))
-        return type;
+   if ((type = efreet_mime_special_check(file)))
+     return type;
 
-    /* Check magics with priority > 80 */
-    if ((type = efreet_mime_magic_check_priority(file, 0, 80)))
-        return type;
+   /* Check magics with priority > 80 */
+   if ((type = efreet_mime_magic_check_priority(file, 0, 80)))
+     return type;
 
-    /* Check globs */
-    if ((type = efreet_mime_globs_type_get(file)))
-        return type;
+   /* Check globs */
+   if ((type = efreet_mime_globs_type_get(file)))
+     return type;
 
-    /* Check rest of magics */
-    if ((type = efreet_mime_magic_check_priority(file, 80, 0)))
-        return type;
+   /* Check rest of magics */
+   if ((type = efreet_mime_magic_check_priority(file, 80, 0)))
+     return type;
 
-    return efreet_mime_fallback_check(file);
+   return efreet_mime_fallback_check(file);
 }
 
 EAPI const char *
 efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size)
 {
-    const char *icon = NULL;
-    char *data;
-    Eina_List *icons  = NULL;
-    const char *env = NULL;
-    char *p = NULL, *pp = NULL, *ppp = NULL;
-    char buf[PATH_MAX];
-    const char *cache;
+   const char *icon = NULL;
+   char *data;
+   Eina_List *icons  = NULL;
+   const char *env = NULL;
+   char *p = NULL, *pp = NULL, *ppp = NULL;
+   char buf[PATH_MAX];
+   const char *cache;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(mime, NULL);
-    EINA_SAFETY_ON_NULL_RETURN_VAL(theme, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(mime, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(theme, NULL);
 
-    mime = eina_stringshare_add(mime);
-    theme = eina_stringshare_add(theme);
-    cache = efreet_mime_icon_entry_find(mime, theme, size);
-    if (cache)
-    {
+   mime = eina_stringshare_add(mime);
+   theme = eina_stringshare_add(theme);
+   cache = efreet_mime_icon_entry_find(mime, theme, size);
+   if (cache)
+     {
         eina_stringshare_del(mime);
         eina_stringshare_del(theme);
         return cache;
-    }
+     }
 
-    /* Standard icon name */
-    p = strdup(mime);
-    pp = p;
-    while (*pp)
-    {
+   /* Standard icon name */
+   p = strdup(mime);
+   pp = p;
+   while (*pp)
+     {
         if (*pp == '/') *pp = '-';
         pp++;
-    }
-    icons = eina_list_append(icons, p);
+     }
+   icons = eina_list_append(icons, p);
 
-    /* Environment Based icon names */
-    if ((env = efreet_desktop_environment_get()))
-    {
+   /* Environment Based icon names */
+   if ((env = efreet_desktop_environment_get()))
+     {
         snprintf(buf, sizeof(buf), "%s-mime-%s", env, p);
         icons = eina_list_append(icons, strdup(buf));
 
         snprintf(buf, sizeof(buf), "%s-%s", env, p);
         icons = eina_list_append(icons, strdup(buf));
-    }
+     }
 
-    /* Mime prefixed icon names */
-    snprintf(buf, sizeof(buf), "mime-%s", p);
-    icons = eina_list_append(icons, strdup(buf));
+   /* Mime prefixed icon names */
+   snprintf(buf, sizeof(buf), "mime-%s", p);
+   icons = eina_list_append(icons, strdup(buf));
 
-    /* Generic icons */
-    pp = strdup(p);
-    while ((ppp = strrchr(pp, '-')))
-    {
+   /* Generic icons */
+   pp = strdup(p);
+   while ((ppp = strrchr(pp, '-')))
+     {
         *ppp = '\0';
 
         snprintf(buf, sizeof(buf), "%s-x-generic", pp);
@@ -359,105 +359,105 @@ efreet_mime_type_icon_get(const char *mime, const char *theme, unsigned int size
 
         snprintf(buf, sizeof(buf), "%s", pp);
         icons = eina_list_append(icons, strdup(buf));
-    }
-    FREE(pp);
+     }
+   FREE(pp);
 
-    /* Search for icons using list */
-    icon = efreet_icon_list_find(theme, icons, size);
-    while (icons)
-    {
+   /* Search for icons using list */
+   icon = efreet_icon_list_find(theme, icons, size);
+   while (icons)
+     {
         data = eina_list_data_get(icons);
         free(data);
         icons = eina_list_remove_list(icons, icons);
-    }
+     }
 
-    efreet_mime_icon_entry_add(mime, eina_stringshare_add(icon), theme, size);
+   efreet_mime_icon_entry_add(mime, eina_stringshare_add(icon), theme, size);
 
-    return icon;
+   return icon;
 }
 
 EAPI void
 efreet_mime_type_cache_clear(void)
 {
-    if (mime_icons)
-    {
+   if (mime_icons)
+     {
         eina_hash_free(mime_icons);
         mime_icons_lru = NULL;
-    }
-    mime_icons = eina_hash_stringshared_new(EINA_FREE_CB(efreet_mime_icon_entry_head_free));
+     }
+   mime_icons = eina_hash_stringshared_new(EINA_FREE_CB(efreet_mime_icon_entry_head_free));
 }
 
 EAPI void
 efreet_mime_type_cache_flush(void)
 {
-    efreet_mime_icons_flush(ecore_loop_time_get());
+   efreet_mime_icons_flush(ecore_loop_time_get());
 }
 
 
 EAPI const char *
 efreet_mime_magic_type_get(const char *file)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
-    return efreet_mime_magic_check_priority(file, 0, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   return efreet_mime_magic_check_priority(file, 0, 0);
 }
 
 EAPI const char *
 efreet_mime_globs_type_get(const char *file)
 {
-    Eina_List *l;
-    Efreet_Mime_Glob *g;
-    char *sl, *p;
-    const char *s;
-    char *ext, *mime;
+   Eina_List *l;
+   Efreet_Mime_Glob *g;
+   char *sl, *p;
+   const char *s;
+   char *ext, *mime;
 
-    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
-    /* Check in the extension hash for the type */
-    ext = strchr(file, '.');
-    if (ext)
-    {
+   /* Check in the extension hash for the type */
+   ext = strchr(file, '.');
+   if (ext)
+     {
         sl = alloca(strlen(ext) + 1);
         for (s = ext, p = sl; *s; s++, p++) *p = tolower(*s);
         *p = 0;
         p = sl;
         while (p)
-        {
-            p++;
-            if (p && (mime = eina_hash_find(wild, p))) return mime;
-            p = strchr(p, '.');
-        }
-    }
+          {
+             p++;
+             if (p && (mime = eina_hash_find(wild, p))) return mime;
+             p = strchr(p, '.');
+          }
+     }
 
-    /* Fallback to the other globs if not found */
-    EINA_LIST_FOREACH(globs, l, g)
-    {
+   /* Fallback to the other globs if not found */
+   EINA_LIST_FOREACH(globs, l, g)
+     {
         if (efreet_mime_glob_match(file, g->glob))
-            return g->mime;
-    }
+          return g->mime;
+     }
 
-    ext = alloca(strlen(file) + 1);
-    for (s = file, p = ext; *s; s++, p++) *p = tolower(*s);
-    *p = 0;
-    EINA_LIST_FOREACH(globs, l, g)
-    {
+   ext = alloca(strlen(file) + 1);
+   for (s = file, p = ext; *s; s++, p++) *p = tolower(*s);
+   *p = 0;
+   EINA_LIST_FOREACH(globs, l, g)
+     {
         if (efreet_mime_glob_case_match(ext, g->glob))
-            return g->mime;
-    }
-    return NULL;
+          return g->mime;
+     }
+   return NULL;
 }
 
 EAPI const char *
 efreet_mime_special_type_get(const char *file)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
-    return efreet_mime_special_check(file);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   return efreet_mime_special_check(file);
 }
 
 EAPI const char *
 efreet_mime_fallback_type_get(const char *file)
 {
-    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
-    return efreet_mime_fallback_check(file);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+   return efreet_mime_fallback_check(file);
 }
 
 /**
@@ -468,8 +468,8 @@ efreet_mime_fallback_type_get(const char *file)
 static int
 efreet_mime_endian_check(void)
 {
-    int test = 1;
-    return (*((char*)(&test)));
+   int test = 1;
+   return (*((char*)(&test)));
 }
 
 /**
@@ -482,18 +482,18 @@ efreet_mime_endian_check(void)
 static void
 efreet_mime_monitor_add(const char *file)
 {
-    Ecore_File_Monitor *fm = NULL;
+   Ecore_File_Monitor *fm = NULL;
 
-    /* if this is already in our hash then we're already monitoring so no
-     * reason to re-monitor */
-    if (eina_hash_find(monitors, file))
-        return;
+   /* if this is already in our hash then we're already monitoring so no
+    * reason to re-monitor */
+   if (eina_hash_find(monitors, file))
+     return;
 
-    if ((fm = ecore_file_monitor_add(file, efreet_mime_cb_update_file, NULL)))
-    {
+   if ((fm = ecore_file_monitor_add(file, efreet_mime_cb_update_file, NULL)))
+     {
         eina_hash_del(monitors, file, NULL);
         eina_hash_add(monitors, file, fm);
-    }
+     }
 }
 
 /**
@@ -507,35 +507,35 @@ efreet_mime_monitor_add(const char *file)
 static void
 efreet_mime_load_globs(Eina_List *datadirs, const char *datahome)
 {
-    Eina_List *l;
-    char buf[4096];
-    const char *datadir = NULL;
+   Eina_List *l;
+   char buf[4096];
+   const char *datadir = NULL;
 
-    IF_FREE_HASH(wild);
-    wild = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
-    while (globs)
-    {
+   IF_FREE_HASH(wild);
+   wild = eina_hash_string_superfast_new(EINA_FREE_CB(eina_stringshare_del));
+   while (globs)
+     {
         efreet_mime_glob_free(eina_list_data_get(globs));
         globs = eina_list_remove_list(globs, globs);
-    }
+     }
 
-    /*
-     * This is here for legacy reasons.  It is mentioned briefly
-     * in the spec and seems to still be quite valid.  It is
-     * loaded first so the globs files will override anything
-     * in here.
+   /*
+    * This is here for legacy reasons.  It is mentioned briefly
+    * in the spec and seems to still be quite valid.  It is
+    * loaded first so the globs files will override anything
+    * in here.
     */
-    efreet_mime_mime_types_load("/etc/mime.types");
+   efreet_mime_mime_types_load("/etc/mime.types");
 
-    datadir = datahome;
-    snprintf(buf, sizeof(buf), "%s/mime/globs", datadir);
-    efreet_mime_shared_mimeinfo_globs_load(buf);
+   datadir = datahome;
+   snprintf(buf, sizeof(buf), "%s/mime/globs", datadir);
+   efreet_mime_shared_mimeinfo_globs_load(buf);
 
-    EINA_LIST_FOREACH(datadirs, l, datadir)
-    {
+   EINA_LIST_FOREACH(datadirs, l, datadir)
+     {
         snprintf(buf, sizeof(buf), "%s/mime/globs", datadir);
         efreet_mime_shared_mimeinfo_globs_load(buf);
-    }
+     }
 }
 
 /**
@@ -548,25 +548,25 @@ efreet_mime_load_globs(Eina_List *datadirs, const char *datahome)
 static void
 efreet_mime_load_magics(Eina_List *datadirs, const char *datahome)
 {
-    Eina_List *l;
-    char buf[4096];
-    const char *datadir = NULL;
+   Eina_List *l;
+   char buf[4096];
+   const char *datadir = NULL;
 
-    while (magics)
-    {
+   while (magics)
+     {
         efreet_mime_magic_free(eina_list_data_get(magics));
         magics = eina_list_remove_list(magics, magics);
-    }
+     }
 
-    datadir = datahome;
-    snprintf(buf, sizeof(buf), "%s/mime/magic", datadir);
-    efreet_mime_shared_mimeinfo_magic_load(buf);
+   datadir = datahome;
+   snprintf(buf, sizeof(buf), "%s/mime/magic", datadir);
+   efreet_mime_shared_mimeinfo_magic_load(buf);
 
-    EINA_LIST_FOREACH(datadirs, l, datadir)
-    {
+   EINA_LIST_FOREACH(datadirs, l, datadir)
+     {
         snprintf(buf, sizeof(buf), "%s/mime/magic", datadir);
         efreet_mime_shared_mimeinfo_magic_load(buf);
-    }
+     }
 }
 
 /**
@@ -583,23 +583,23 @@ efreet_mime_load_magics(Eina_List *datadirs, const char *datahome)
  */
 static void
 efreet_mime_cb_update_file(void *data __UNUSED__,
-                    Ecore_File_Monitor *monitor __UNUSED__,
-                    Ecore_File_Event event __UNUSED__,
-                    const char *path)
+                           Ecore_File_Monitor *monitor __UNUSED__,
+                           Ecore_File_Event event __UNUSED__,
+                           const char *path)
 {
-    Eina_List *datadirs = NULL;
-    const char *datahome = NULL;
+   Eina_List *datadirs = NULL;
+   const char *datahome = NULL;
 
-    if (!(datahome = efreet_data_home_get()))
-        return;
+   if (!(datahome = efreet_data_home_get()))
+     return;
 
-    if (!(datadirs = efreet_data_dirs_get()))
-        return;
+   if (!(datadirs = efreet_data_dirs_get()))
+     return;
 
-    if (strstr(path, "magic"))
-        efreet_mime_load_magics(datadirs, datahome);
-    else
-        efreet_mime_load_globs(datadirs, datahome);
+   if (strstr(path, "magic"))
+     efreet_mime_load_magics(datadirs, datahome);
+   else
+     efreet_mime_load_globs(datadirs, datahome);
 }
 
 /**
@@ -612,48 +612,48 @@ efreet_mime_cb_update_file(void *data __UNUSED__,
 static int
 efreet_mime_init_files(void)
 {
-    Eina_List *l;
-    Eina_List *datadirs = NULL;
-    char buf[PATH_MAX];
-    const char *datahome, *datadir = NULL;
+   Eina_List *l;
+   Eina_List *datadirs = NULL;
+   char buf[PATH_MAX];
+   const char *datahome, *datadir = NULL;
 
-    if (!(datahome = efreet_data_home_get()))
-        return 0;
+   if (!(datahome = efreet_data_home_get()))
+     return 0;
 
-    if (!(datadirs = efreet_data_dirs_get()))
-        return 0;
+   if (!(datadirs = efreet_data_dirs_get()))
+     return 0;
 
-    /*
-     * Add our file monitors
-     * We watch the directories so we can watch for new files
-     */
-    datadir = datahome;
-    snprintf(buf, sizeof(buf), "%s/mime", datadir);
-    efreet_mime_monitor_add(buf);
+   /*
+    * Add our file monitors
+    * We watch the directories so we can watch for new files
+    */
+   datadir = datahome;
+   snprintf(buf, sizeof(buf), "%s/mime", datadir);
+   efreet_mime_monitor_add(buf);
 
-    EINA_LIST_FOREACH(datadirs, l, datadir)
-    {
+   EINA_LIST_FOREACH(datadirs, l, datadir)
+     {
         snprintf(buf, sizeof(buf), "%s/mime", datadir);
         efreet_mime_monitor_add(buf);
-    }
-    efreet_mime_monitor_add("/etc/mime.types");
+     }
+   efreet_mime_monitor_add("/etc/mime.types");
 
-    /* Load our mime information */
-    efreet_mime_load_globs(datadirs, datahome);
-    efreet_mime_load_magics(datadirs, datahome);
+   /* Load our mime information */
+   efreet_mime_load_globs(datadirs, datahome);
+   efreet_mime_load_magics(datadirs, datahome);
 
-    _mime_inode_symlink		   = eina_stringshare_add("inode/symlink");
-    _mime_inode_fifo		   = eina_stringshare_add("inode/fifo");
-    _mime_inode_chardevice	   = eina_stringshare_add("inode/chardevice");
-    _mime_inode_blockdevice	   = eina_stringshare_add("inode/blockdevice");
-    _mime_inode_socket		   = eina_stringshare_add("inode/socket");
-    _mime_inode_mountpoint	   = eina_stringshare_add("inode/mountpoint");
-    _mime_inode_directory	   = eina_stringshare_add("inode/directory");
-    _mime_application_x_executable = eina_stringshare_add("application/x-executable");
-    _mime_application_octet_stream = eina_stringshare_add("application/octet-stream");
-    _mime_text_plain               = eina_stringshare_add("text/plain");
+   _mime_inode_symlink		   = eina_stringshare_add("inode/symlink");
+   _mime_inode_fifo		   = eina_stringshare_add("inode/fifo");
+   _mime_inode_chardevice	   = eina_stringshare_add("inode/chardevice");
+   _mime_inode_blockdevice	   = eina_stringshare_add("inode/blockdevice");
+   _mime_inode_socket		   = eina_stringshare_add("inode/socket");
+   _mime_inode_mountpoint	   = eina_stringshare_add("inode/mountpoint");
+   _mime_inode_directory	   = eina_stringshare_add("inode/directory");
+   _mime_application_x_executable = eina_stringshare_add("application/x-executable");
+   _mime_application_octet_stream = eina_stringshare_add("application/octet-stream");
+   _mime_text_plain               = eina_stringshare_add("text/plain");
 
-    return 1;
+   return 1;
 }
 
 /**
@@ -682,72 +682,72 @@ efreet_mime_init_files(void)
 static const char *
 efreet_mime_special_check(const char *file)
 {
-    struct stat s;
-    int path_len = 0;
+   struct stat s;
+   int path_len = 0;
 
-    /* no link on Windows < Vista */
+   /* no link on Windows < Vista */
 #ifdef _WIN32
-    if (!stat(file, &s))
+   if (!stat(file, &s))
 #else
-    if (!lstat(file, &s))
+     if (!lstat(file, &s))
 #endif
-    {
-        if (S_ISREG(s.st_mode))
+       {
+          if (S_ISREG(s.st_mode))
             return NULL;
 
 #ifndef _WIN32
-        if (S_ISLNK(s.st_mode))
-        return _mime_inode_symlink;
+          if (S_ISLNK(s.st_mode))
+            return _mime_inode_symlink;
 #endif
 
-        if (S_ISFIFO(s.st_mode))
+          if (S_ISFIFO(s.st_mode))
             return _mime_inode_fifo;
 
-        if (S_ISCHR(s.st_mode))
+          if (S_ISCHR(s.st_mode))
             return _mime_inode_chardevice;
 
-        if (S_ISBLK(s.st_mode))
+          if (S_ISBLK(s.st_mode))
             return _mime_inode_blockdevice;
 
 #ifndef _WIN32
-        if (S_ISSOCK(s.st_mode))
+          if (S_ISSOCK(s.st_mode))
             return _mime_inode_socket;
 #endif
 
-        if (S_ISDIR(s.st_mode))
-        {
-            struct stat s2;
-            char parent[PATH_MAX];
-            char path[PATH_MAX];
+          if (S_ISDIR(s.st_mode))
+            {
+               struct stat s2;
+               char parent[PATH_MAX];
+               char path[PATH_MAX];
 
-            strncpy(path, file, PATH_MAX);
+               strncpy(path, file, PATH_MAX);
 
-            path_len = strlen(file);
-            strncpy(parent, path, PATH_MAX);
+               path_len = strlen(file);
+               strncpy(parent, path, PATH_MAX);
 
-            /* Kill any trailing slash */
-            parent[--path_len] = '\0';
+               /* Kill any trailing slash */
+               parent[--path_len] = '\0';
 
-            /* Truncate to last slash */
-            while (parent[--path_len] != '/') parent[path_len] = '\0';
+               /* Truncate to last slash */
+               while (parent[--path_len] != '/') parent[path_len] = '\0';
 
 #ifdef _WIN32
-            if (!stat(file, &s2))
+               if (!stat(file, &s2))
 #else
-            if (!lstat(parent, &s2))
+                 if (!lstat(parent, &s2))
 #endif
-            {
-                if (s.st_dev != s2.st_dev)
-                    return _mime_inode_mountpoint;
+                   {
+                      if (s.st_dev != s2.st_dev)
+                        return _mime_inode_mountpoint;
+                   }
+
+               return _mime_inode_directory;
             }
 
-            return _mime_inode_directory;
-        }
+          return NULL;
+       }
 
-        return NULL;
-    }
-
-    return NULL;
+   return NULL;
 }
 
 /**
@@ -760,35 +760,35 @@ efreet_mime_special_check(const char *file)
 static const char *
 efreet_mime_fallback_check(const char *file)
 {
-    FILE *f = NULL;
-    char buf[32];
-    int i;
+   FILE *f = NULL;
+   char buf[32];
+   int i;
 
-    if (ecore_file_can_exec(file))
-        return _mime_application_x_executable;
+   if (ecore_file_can_exec(file))
+     return _mime_application_x_executable;
 
-    if (!(f = fopen(file, "r"))) return NULL;
+   if (!(f = fopen(file, "r"))) return NULL;
 
-    i = fread(buf, 1, sizeof(buf), f);
-    fclose(f);
+   i = fread(buf, 1, sizeof(buf), f);
+   fclose(f);
 
-    if (i == 0) return _mime_application_octet_stream;
+   if (i == 0) return _mime_application_octet_stream;
 
-    /*
-     * Check for ASCII control characters in the first 32 bytes.
-     * Line Feeds, carriage returns, and tabs are ignored as they are
-     * quite common in text files in the first 32 chars.
-     */
-    for (i -= 1; i >= 0; --i)
-    {
+   /*
+    * Check for ASCII control characters in the first 32 bytes.
+    * Line Feeds, carriage returns, and tabs are ignored as they are
+    * quite common in text files in the first 32 chars.
+    */
+   for (i -= 1; i >= 0; --i)
+     {
         if ((buf[i] < 0x20) &&
             (buf[i] != '\n') &&     /* Line Feed */
             (buf[i] != '\r') &&     /* Carriage Return */
             (buf[i] != '\t'))       /* Tab */
-            return _mime_application_octet_stream;
-    }
+          return _mime_application_octet_stream;
+     }
 
-    return _mime_text_plain;
+   return _mime_text_plain;
 }
 
 /**
@@ -800,18 +800,18 @@ efreet_mime_fallback_check(const char *file)
 static int
 efreet_mime_glob_remove(const char *glob)
 {
-    Efreet_Mime_Glob *mime = NULL;
+   Efreet_Mime_Glob *mime = NULL;
 
-    if ((mime = eina_list_search_unsorted(globs, EINA_COMPARE_CB(strcmp), glob)))
-    {
+   if ((mime = eina_list_search_unsorted(globs, EINA_COMPARE_CB(strcmp), glob)))
+     {
         globs = eina_list_remove(globs, mime);
         IF_RELEASE(mime->glob);
         IF_RELEASE(mime->mime);
         FREE(mime);
         return 1;
-    }
+     }
 
-    return 0;
+   return 0;
 }
 
 static inline const char *
@@ -918,15 +918,15 @@ efreet_mime_mime_types_load(const char *file)
 static void
 efreet_mime_shared_mimeinfo_globs_load(const char *file)
 {
-    FILE *f = NULL;
-    char buf[4096], mimetype[4096], ext[4096], *p, *pp;
-    Efreet_Mime_Glob *mime = NULL;
+   FILE *f = NULL;
+   char buf[4096], mimetype[4096], ext[4096], *p, *pp;
+   Efreet_Mime_Glob *mime = NULL;
 
-    f = fopen(file, "rb");
-    if (!f) return;
+   f = fopen(file, "rb");
+   if (!f) return;
 
-    while (fgets(buf, sizeof(buf), f))
-    {
+   while (fgets(buf, sizeof(buf), f))
+     {
         p = buf;
         while (isspace(*p) && (*p != 0) && (*p != '\n')) p++;
 
@@ -943,43 +943,43 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
         pp = ext;
 
         while ((*p != 0) && (*p != '\n'))
-        {
-            *pp = *p;
-            pp++;
-            p++;
-        }
+          {
+             *pp = *p;
+             pp++;
+             p++;
+          }
 
         *pp = 0;
 
         if (ext[0] == '*' && ext[1] == '.')
-        {
-            eina_hash_del(wild, &(ext[2]), NULL);
-            eina_hash_add(wild, &(ext[2]),
-                            (void*)eina_stringshare_add(mimetype));
-        }
+          {
+             eina_hash_del(wild, &(ext[2]), NULL);
+             eina_hash_add(wild, &(ext[2]),
+                           (void*)eina_stringshare_add(mimetype));
+          }
         else
-        {
-            mime = NEW(Efreet_Mime_Glob, 1);
-            if (mime)
-            {
-                mime->mime = eina_stringshare_add(mimetype);
-                mime->glob = eina_stringshare_add(ext);
-                if ((!mime->mime) || (!mime->glob))
-                {
-                    IF_RELEASE(mime->mime);
-                    IF_RELEASE(mime->glob);
-                    FREE(mime);
-                }
-                else
-                {
-                    efreet_mime_glob_remove(ext);
-                    globs = eina_list_append(globs, mime);
-                }
-            }
-        }
-    }
+          {
+             mime = NEW(Efreet_Mime_Glob, 1);
+             if (mime)
+               {
+                  mime->mime = eina_stringshare_add(mimetype);
+                  mime->glob = eina_stringshare_add(ext);
+                  if ((!mime->mime) || (!mime->glob))
+                    {
+                       IF_RELEASE(mime->mime);
+                       IF_RELEASE(mime->glob);
+                       FREE(mime);
+                    }
+                  else
+                    {
+                       efreet_mime_glob_remove(ext);
+                       globs = eina_list_append(globs, mime);
+                    }
+               }
+          }
+     }
 
-    fclose(f);
+   fclose(f);
 }
 
 /**
@@ -992,12 +992,12 @@ efreet_mime_shared_mimeinfo_globs_load(const char *file)
 static int
 efreet_mime_count_digits(int in)
 {
-    int i = 1, j = in;
+   int i = 1, j = in;
 
-    if (j < 10) return 1;
-    while ((j /= 10) > 0) ++i;
+   if (j < 10) return 1;
+   while ((j /= 10) > 0) ++i;
 
-    return i;
+   return i;
 }
 
 /**
@@ -1009,31 +1009,31 @@ efreet_mime_count_digits(int in)
 static void
 efreet_mime_shared_mimeinfo_magic_load(const char *file)
 {
-    int fd = -1, size;
-    char *data = (void *)-1;
+   int fd = -1, size;
+   char *data = (void *)-1;
 
-    if (!file) return;
+   if (!file) return;
 
-    size = ecore_file_size(file);
-    if (size <= 0) return;
+   size = ecore_file_size(file);
+   if (size <= 0) return;
 
-    fd = open(file, O_RDONLY);
-    if (fd == -1) return;
+   fd = open(file, O_RDONLY);
+   if (fd == -1) return;
 
-    /* let's make mmap safe and just get 0 pages for IO erro */
-    eina_mmap_safety_enabled_set(EINA_TRUE);
+   /* let's make mmap safe and just get 0 pages for IO erro */
+   eina_mmap_safety_enabled_set(EINA_TRUE);
 
-    data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
-    if (data == MAP_FAILED)
-    {
+   data = mmap(NULL, size, PROT_READ, MAP_SHARED, fd, 0);
+   if (data == MAP_FAILED)
+     {
         close(fd);
         return;
-    }
+     }
 
-    efreet_mime_shared_mimeinfo_magic_parse(data, size);
+   efreet_mime_shared_mimeinfo_magic_parse(data, size);
 
-    munmap(data, size);
-    close(fd);
+   munmap(data, size);
+   close(fd);
 }
 
 /**
@@ -1076,105 +1076,105 @@ efreet_mime_shared_mimeinfo_magic_load(const char *file)
 static void
 efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 {
-    Efreet_Mime_Magic *mime = NULL;
-    Efreet_Mime_Magic_Entry *entry = NULL;
-    char *ptr;
+   Efreet_Mime_Magic *mime = NULL;
+   Efreet_Mime_Magic_Entry *entry = NULL;
+   char *ptr;
 
-    ptr = data;
+   ptr = data;
 
-    /* make sure we're a magic file */
-    if (!ptr || (size < 12) || strncmp(ptr, "MIME-Magic\0\n", 12))
-        return;
+   /* make sure we're a magic file */
+   if (!ptr || (size < 12) || strncmp(ptr, "MIME-Magic\0\n", 12))
+     return;
 
-    ptr += 12;
+   ptr += 12;
 
-    for (; (ptr - data) < size; )
-    {
+   for (; (ptr - data) < size; )
+     {
         if (*ptr == '[')
-        {
-            char *val, buf[512];
+          {
+             char *val, buf[512];
 
-            mime = NEW(Efreet_Mime_Magic, 1);
-            magics = eina_list_append(magics, mime);
+             mime = NEW(Efreet_Mime_Magic, 1);
+             magics = eina_list_append(magics, mime);
 
-            val = ++ptr;
-            while ((*val != ':')) val++;
-            memcpy(&buf, ptr, val - ptr);
-            buf[val - ptr] = '\0';
+             val = ++ptr;
+             while ((*val != ':')) val++;
+             memcpy(&buf, ptr, val - ptr);
+             buf[val - ptr] = '\0';
 
-            mime->priority = atoi(buf);
-            ptr = ++val;
+             mime->priority = atoi(buf);
+             ptr = ++val;
 
-            while ((*val != ']')) val++;
-            memcpy(&buf, ptr, val - ptr);
-            buf[val - ptr] = '\0';
+             while ((*val != ']')) val++;
+             memcpy(&buf, ptr, val - ptr);
+             buf[val - ptr] = '\0';
 
-            mime->mime = eina_stringshare_add(buf);
-            ptr = ++val;
+             mime->mime = eina_stringshare_add(buf);
+             ptr = ++val;
 
-            while (*ptr != '\n') ptr++;
-            ptr++;
-        }
+             while (*ptr != '\n') ptr++;
+             ptr++;
+          }
         else
-        {
-            short tshort;
+          {
+             short tshort;
 
-            if (!mime) continue;
-            if (!entry)
-            {
-                if (!(entry = NEW(Efreet_Mime_Magic_Entry, 1)))
-                {
-                    IF_FREE_LIST(magics, efreet_mime_magic_free);
-                    return;
-                }
+             if (!mime) continue;
+             if (!entry)
+               {
+                  if (!(entry = NEW(Efreet_Mime_Magic_Entry, 1)))
+                    {
+                       IF_FREE_LIST(magics, efreet_mime_magic_free);
+                       return;
+                    }
 
-                entry->indent = 0;
-                entry->offset = 0;
-                entry->value_len = 0;
-                entry->word_size = 1;
-                entry->range_len = 1;
-                entry->mask = NULL;
-                entry->value = NULL;
+                  entry->indent = 0;
+                  entry->offset = 0;
+                  entry->value_len = 0;
+                  entry->word_size = 1;
+                  entry->range_len = 1;
+                  entry->mask = NULL;
+                  entry->value = NULL;
 
-                mime->entries = eina_list_append(mime->entries, entry);
-            }
+                  mime->entries = eina_list_append(mime->entries, entry);
+               }
 
-            switch(*ptr)
-            {
+             switch(*ptr)
+               {
                 case '>':
-                    ptr ++;
-                    entry->offset = atoi(ptr);
-                    ptr += efreet_mime_count_digits(entry->offset);
-                    break;
+                   ptr ++;
+                   entry->offset = atoi(ptr);
+                   ptr += efreet_mime_count_digits(entry->offset);
+                   break;
 
                 case '=':
-                    ptr++;
+                   ptr++;
 
-                    tshort = 0;
-                    memcpy(&tshort, ptr, sizeof(short));
-                    entry->value_len = ntohs(tshort);
-                    ptr += 2;
+                   tshort = 0;
+                   memcpy(&tshort, ptr, sizeof(short));
+                   entry->value_len = ntohs(tshort);
+                   ptr += 2;
 
-                    entry->value = NEW(1, entry->value_len);
-                    memcpy(entry->value, ptr, entry->value_len);
-                    ptr += entry->value_len;
-                    break;
+                   entry->value = NEW(1, entry->value_len);
+                   memcpy(entry->value, ptr, entry->value_len);
+                   ptr += entry->value_len;
+                   break;
 
                 case '&':
-                    ptr++;
-                    entry->mask = NEW(1, entry->value_len);
-                    memcpy(entry->mask, ptr, entry->value_len);
-                    ptr += entry->value_len;
-                    break;
+                   ptr++;
+                   entry->mask = NEW(1, entry->value_len);
+                   memcpy(entry->mask, ptr, entry->value_len);
+                   ptr += entry->value_len;
+                   break;
 
                 case '~':
-                    ptr++;
-                    entry->word_size = atoi(ptr);
-                    if ((entry->word_size != 0) && (((entry->word_size != 1)
-                                    && (entry->word_size != 2)
-                                    && (entry->word_size != 4))
-                                || (entry->value_len % entry->word_size)))
-                    {
+                   ptr++;
+                   entry->word_size = atoi(ptr);
+                   if ((entry->word_size != 0) && (((entry->word_size != 1)
+                                                    && (entry->word_size != 2)
+                                                    && (entry->word_size != 4))
+                                                   || (entry->value_len % entry->word_size)))
+                     {
                         /* Invalid, Destroy */
                         FREE(entry->value);
                         FREE(entry->mask);
@@ -1182,67 +1182,67 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
 
                         while (*ptr != '\n') ptr++;
                         break;
-                    }
+                     }
 
-                    if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
-                    {
+                   if (efreet_mime_endianess == EFREET_ENDIAN_LITTLE)
+                     {
                         int j;
 
                         for (j = 0; j < entry->value_len; j += entry->word_size)
-                        {
-                            if (entry->word_size == 2)
-                            {
-                                ((short*)entry->value)[j] =
-                                              ntohs(((short*)entry->value)[j]);
+                          {
+                             if (entry->word_size == 2)
+                               {
+                                  ((short*)entry->value)[j] =
+                                     ntohs(((short*)entry->value)[j]);
 
-                                if (entry->mask)
+                                  if (entry->mask)
                                     ((short*)entry->mask)[j] =
-                                              ntohs(((short*)entry->mask)[j]);
-                            }
-                            else if (entry->word_size == 4)
-                            {
-                                ((int*)entry->value)[j] =
-                                              ntohl(((int*)entry->value)[j]);
+                                       ntohs(((short*)entry->mask)[j]);
+                               }
+                             else if (entry->word_size == 4)
+                               {
+                                  ((int*)entry->value)[j] =
+                                     ntohl(((int*)entry->value)[j]);
 
-                                if (entry->mask)
+                                  if (entry->mask)
                                     ((int*)entry->mask)[j] =
-                                              ntohl(((int*)entry->mask)[j]);
-                            }
-                        }
-                    }
+                                       ntohl(((int*)entry->mask)[j]);
+                               }
+                          }
+                     }
 
-                    ptr += efreet_mime_count_digits(entry->word_size);
-                    break;
+                   ptr += efreet_mime_count_digits(entry->word_size);
+                   break;
 
                 case '+':
-                    ptr++;
-                    entry->range_len = atoi(ptr);
-                    ptr += efreet_mime_count_digits(entry->range_len);
-                    break;
+                   ptr++;
+                   entry->range_len = atoi(ptr);
+                   ptr += efreet_mime_count_digits(entry->range_len);
+                   break;
 
                 case '\n':
-                    ptr++;
-                    entry = NULL;
-                    break;
+                   ptr++;
+                   entry = NULL;
+                   break;
 
                 default:
-                    if (isdigit(*ptr))
-                    {
+                   if (isdigit(*ptr))
+                     {
                         entry->indent = atoi(ptr);
                         ptr += efreet_mime_count_digits(entry->indent);
-                    }
-                    break;
-            }
-        }
-    }
-/*
-    if (entry)
-    {
-        IF_FREE(entry->value);
-        IF_FREE(entry->mask);
-        FREE(entry);
-    }
- */
+                     }
+                   break;
+               }
+          }
+     }
+   /*
+      if (entry)
+      {
+      IF_FREE(entry->value);
+      IF_FREE(entry->mask);
+      FREE(entry);
+      }
+    */
 }
 
 /**
@@ -1256,96 +1256,96 @@ efreet_mime_shared_mimeinfo_magic_parse(char *data, int size)
  */
 static const char *
 efreet_mime_magic_check_priority(const char *file,
-                                  unsigned int start,
-                                  unsigned int end)
+                                 unsigned int start,
+                                 unsigned int end)
 {
-    Efreet_Mime_Magic *m = NULL;
-    Efreet_Mime_Magic_Entry *e = NULL;
-    Eina_List *l, *ll;
-    FILE *f = NULL;
-    unsigned int i = 0, offset = 0,level = 0, match = 0, bytes_read = 0;
-    const char *last_mime = NULL;
-    char c, v, buf[EFREET_MIME_MAGIC_BUFFER_SIZE];
+   Efreet_Mime_Magic *m = NULL;
+   Efreet_Mime_Magic_Entry *e = NULL;
+   Eina_List *l, *ll;
+   FILE *f = NULL;
+   unsigned int i = 0, offset = 0,level = 0, match = 0, bytes_read = 0;
+   const char *last_mime = NULL;
+   char c, v, buf[EFREET_MIME_MAGIC_BUFFER_SIZE];
 
-    f = fopen(file, "rb");
-    if (!f) return NULL;
+   f = fopen(file, "rb");
+   if (!f) return NULL;
 
-    if (!magics)
-    {
+   if (!magics)
+     {
         fclose(f);
         return NULL;
-    }
+     }
 
-    if ((bytes_read = fread(buf, 1, sizeof(buf), f)) == 0)
-    {
+   if ((bytes_read = fread(buf, 1, sizeof(buf), f)) == 0)
+     {
         fclose(f);
         return NULL;
-    }
+     }
 
-    EINA_LIST_FOREACH(magics, l, m)
-    {
+   EINA_LIST_FOREACH(magics, l, m)
+     {
         if ((start != 0) && (m->priority > start))
-            continue;
+          continue;
 
         if (m->priority < end)
-            break;
+          break;
 
         EINA_LIST_FOREACH(m->entries, ll, e)
-        {
-            if ((level < e->indent) && !match)
-                continue;
+          {
+             if ((level < e->indent) && !match)
+               continue;
 
-            if ((level >= e->indent) && !match)
-                level = e->indent;
+             if ((level >= e->indent) && !match)
+               level = e->indent;
 
-            else if ((level > e->indent) && match)
-            {
-                fclose(f);
-                return last_mime;
-            }
+             else if ((level > e->indent) && match)
+               {
+                  fclose(f);
+                  return last_mime;
+               }
 
-            for (offset = e->offset; offset < e->offset + e->range_len; offset++)
-            {
-                if (((offset + e->value_len) > bytes_read) &&
-                        (fseek(f, offset, SEEK_SET) == -1))
+             for (offset = e->offset; offset < e->offset + e->range_len; offset++)
+               {
+                  if (((offset + e->value_len) > bytes_read) &&
+                      (fseek(f, offset, SEEK_SET) == -1))
                     break;
 
-                match = 1;
-                for (i = 0; i < e->value_len; ++i)
-                {
-                    if (offset + e->value_len > bytes_read)
-                        c = fgetc(f);
-                    else
-                        c = buf[offset + i];
-
-                    v = e->value[i];
-                    if (e->mask) v &= e->mask[i];
-
-                    if (!(c == v))
+                  match = 1;
+                  for (i = 0; i < e->value_len; ++i)
                     {
-                        match = 0;
-                        break;
-                    }
-                }
+                       if (offset + e->value_len > bytes_read)
+                         c = fgetc(f);
+                       else
+                         c = buf[offset + i];
 
-                if (match)
-                {
-                    level += 1;
-                    last_mime = m->mime;
-                    break;
-                }
-            }
-        }
+                       v = e->value[i];
+                       if (e->mask) v &= e->mask[i];
+
+                       if (!(c == v))
+                         {
+                            match = 0;
+                            break;
+                         }
+                    }
+
+                  if (match)
+                    {
+                       level += 1;
+                       last_mime = m->mime;
+                       break;
+                    }
+               }
+          }
 
         if (match)
-        {
-            fclose(f);
-            return last_mime;
-        }
-    }
-    fclose(f);
+          {
+             fclose(f);
+             return last_mime;
+          }
+     }
+   fclose(f);
 
-    return NULL;
+   return NULL;
 }
 
 /**
@@ -1357,11 +1357,11 @@ efreet_mime_magic_check_priority(const char *file,
 static void
 efreet_mime_glob_free(void *data)
 {
-    Efreet_Mime_Glob *m = data;
+   Efreet_Mime_Glob *m = data;
 
-    IF_RELEASE(m->mime);
-    IF_RELEASE(m->glob);
-    IF_FREE(m);
+   IF_RELEASE(m->mime);
+   IF_RELEASE(m->glob);
+   IF_FREE(m);
 }
 
 /**
@@ -1373,11 +1373,11 @@ efreet_mime_glob_free(void *data)
 static void
 efreet_mime_magic_free(void *data)
 {
-    Efreet_Mime_Magic *m = data;
+   Efreet_Mime_Magic *m = data;
 
-    IF_RELEASE(m->mime);
-    IF_FREE_LIST(m->entries, efreet_mime_magic_entry_free);
-    IF_FREE(m);
+   IF_RELEASE(m->mime);
+   IF_FREE_LIST(m->entries, efreet_mime_magic_entry_free);
+   IF_FREE(m);
 }
 
 /**
@@ -1389,11 +1389,11 @@ efreet_mime_magic_free(void *data)
 static void
 efreet_mime_magic_entry_free(void *data)
 {
-    Efreet_Mime_Magic_Entry *e = data;
+   Efreet_Mime_Magic_Entry *e = data;
 
-    IF_FREE(e->mask);
-    IF_FREE(e->value);
-    IF_FREE(e);
+   IF_FREE(e->mask);
+   IF_FREE(e->value);
+   IF_FREE(e);
 }
 
 
@@ -1407,14 +1407,14 @@ efreet_mime_magic_entry_free(void *data)
 static int
 efreet_mime_glob_match(const char *str, const char *glob)
 {
-    if (!str || !glob) return 0;
-    if (glob[0] == 0)
-    {
+   if (!str || !glob) return 0;
+   if (glob[0] == 0)
+     {
         if (str[0] == 0) return 1;
         return 0;
-    }
-    if (!fnmatch(glob, str, 0)) return 1;
-    return 0;
+     }
+   if (!fnmatch(glob, str, 0)) return 1;
+   return 0;
 }
 
 /**
@@ -1427,71 +1427,71 @@ efreet_mime_glob_match(const char *str, const char *glob)
 static int
 efreet_mime_glob_case_match(char *str, const char *glob)
 {
-    const char *p;
-    char *tglob, *tp;
+   const char *p;
+   char *tglob, *tp;
 
-    if (!str || !glob) return 0;
-    if (glob[0] == 0)
-    {
+   if (!str || !glob) return 0;
+   if (glob[0] == 0)
+     {
         if (str[0] == 0) return 1;
         return 0;
-    }
-    tglob = alloca(strlen(glob) + 1);
-    for (tp = tglob, p = glob; *p; p++, tp++) *tp = tolower(*p);
-    *tp = 0;
-    if (!fnmatch(str, tglob, 0)) return 1;
-    return 0;
+     }
+   tglob = alloca(strlen(glob) + 1);
+   for (tp = tglob, p = glob; *p; p++, tp++) *tp = tolower(*p);
+   *tp = 0;
+   if (!fnmatch(str, tglob, 0)) return 1;
+   return 0;
 }
 
 static void
 efreet_mime_icons_flush(double now)
 {
-    Eina_Inlist *l;
-    static double old = 0;
-    int todo;
+   Eina_Inlist *l;
+   static double old = 0;
+   int todo;
 
-    if (now - old < EFREET_MIME_ICONS_FLUSH_TIMEOUT)
-        return;
-    old = now;
+   if (now - old < EFREET_MIME_ICONS_FLUSH_TIMEOUT)
+     return;
+   old = now;
 
-    todo = eina_hash_population(mime_icons) - EFREET_MIME_ICONS_MAX_POPULATION;
-    if (todo <= 0)
-        return;
+   todo = eina_hash_population(mime_icons) - EFREET_MIME_ICONS_MAX_POPULATION;
+   if (todo <= 0)
+     return;
 
-    l = mime_icons_lru->last; /* mime_icons_lru is not NULL, since todo > 0 */
-    for (; todo > 0; todo--)
-    {
+   l = mime_icons_lru->last; /* mime_icons_lru is not NULL, since todo > 0 */
+   for (; todo > 0; todo--)
+     {
         Efreet_Mime_Icon_Entry_Head *entry = (Efreet_Mime_Icon_Entry_Head *)l;
         Eina_Inlist *prev = l->prev;
 
         mime_icons_lru = eina_inlist_remove(mime_icons_lru, l);
         eina_hash_del_by_key(mime_icons, entry->mime);
         l = prev;
-    }
+     }
 
-    efreet_mime_icons_debug();
+   efreet_mime_icons_debug();
 }
 
 static void
 efreet_mime_icon_entry_free(Efreet_Mime_Icon_Entry *node)
 {
-    eina_stringshare_del(node->icon);
-    eina_stringshare_del(node->theme);
-    free(node);
+   eina_stringshare_del(node->icon);
+   eina_stringshare_del(node->theme);
+   free(node);
 }
 
 static void
 efreet_mime_icon_entry_head_free(Efreet_Mime_Icon_Entry_Head *entry)
 {
-    while (entry->list)
-    {
+   while (entry->list)
+     {
         Efreet_Mime_Icon_Entry *n = (Efreet_Mime_Icon_Entry *)entry->list;
         entry->list = eina_inlist_remove(entry->list, entry->list);
         efreet_mime_icon_entry_free(n);
-    }
+     }
 
-    eina_stringshare_del(entry->mime);
-    free(entry);
+   eina_stringshare_del(entry->mime);
+   free(entry);
 }
 
 static Efreet_Mime_Icon_Entry *
@@ -1499,17 +1499,17 @@ efreet_mime_icon_entry_new(const char *icon,
                            const char *theme,
                            unsigned int size)
 {
-    Efreet_Mime_Icon_Entry *entry;
+   Efreet_Mime_Icon_Entry *entry;
 
-    entry = malloc(sizeof(*entry));
-    if (!entry)
-        return NULL;
+   entry = malloc(sizeof(*entry));
+   if (!entry)
+     return NULL;
 
-    entry->icon = icon;
-    entry->theme = theme;
-    entry->size = size;
+   entry->icon = icon;
+   entry->theme = theme;
+   entry->size = size;
 
-    return entry;
+   return entry;
 }
 
 static void
@@ -1518,16 +1518,16 @@ efreet_mime_icon_entry_add(const char *mime,
                            const char *theme,
                            unsigned int size)
 {
-    Efreet_Mime_Icon_Entry_Head *entry;
-    Efreet_Mime_Icon_Entry *n;
+   Efreet_Mime_Icon_Entry_Head *entry;
+   Efreet_Mime_Icon_Entry *n;
 
-    n = efreet_mime_icon_entry_new(icon, theme, size);
-    if (!n)
-        return;
-    entry = eina_hash_find(mime_icons, mime);
+   n = efreet_mime_icon_entry_new(icon, theme, size);
+   if (!n)
+     return;
+   entry = eina_hash_find(mime_icons, mime);
 
-    if (entry)
-    {
+   if (entry)
+     {
         Eina_Inlist *l;
 
         l = EINA_INLIST_GET(n);
@@ -1535,17 +1535,17 @@ efreet_mime_icon_entry_add(const char *mime,
 
         l = EINA_INLIST_GET(entry);
         mime_icons_lru = eina_inlist_promote(mime_icons_lru, l);
-    }
-    else
-    {
+     }
+   else
+     {
         Eina_Inlist *l;
 
         entry = malloc(sizeof(*entry));
         if (!entry)
-        {
-            efreet_mime_icon_entry_free(n);
-            return;
-        }
+          {
+             efreet_mime_icon_entry_free(n);
+             return;
+          }
 
         l = EINA_INLIST_GET(n);
         entry->list = eina_inlist_prepend(NULL, l);
@@ -1554,10 +1554,10 @@ efreet_mime_icon_entry_add(const char *mime,
 
         l = EINA_INLIST_GET(entry);
         mime_icons_lru = eina_inlist_prepend(mime_icons_lru, l);
-    }
+     }
 
-    entry->timestamp = ecore_loop_time_get();
-    efreet_mime_icons_flush(entry->timestamp);
+   entry->timestamp = ecore_loop_time_get();
+   efreet_mime_icons_flush(entry->timestamp);
 }
 
 static const char *
@@ -1565,59 +1565,59 @@ efreet_mime_icon_entry_find(const char *mime,
                             const char *theme,
                             unsigned int size)
 {
-    Efreet_Mime_Icon_Entry_Head *entry;
-    Efreet_Mime_Icon_Entry *n;
+   Efreet_Mime_Icon_Entry_Head *entry;
+   Efreet_Mime_Icon_Entry *n;
 
-    entry = eina_hash_find(mime_icons, mime);
-    if (!entry)
-        return NULL;
+   entry = eina_hash_find(mime_icons, mime);
+   if (!entry)
+     return NULL;
 
-    EINA_INLIST_FOREACH(entry->list, n)
-    {
+   EINA_INLIST_FOREACH(entry->list, n)
+     {
         if ((n->theme == theme) && (n->size == size))
-        {
-            Eina_Inlist *l;
+          {
+             Eina_Inlist *l;
 
-            l = EINA_INLIST_GET(n);
-            if (entry->list != l)
-                entry->list = eina_inlist_promote(entry->list, l);
+             l = EINA_INLIST_GET(n);
+             if (entry->list != l)
+               entry->list = eina_inlist_promote(entry->list, l);
 
-            l = EINA_INLIST_GET(entry);
-            if (mime_icons_lru != l)
-                mime_icons_lru = eina_inlist_promote(mime_icons_lru, l);
+             l = EINA_INLIST_GET(entry);
+             if (mime_icons_lru != l)
+               mime_icons_lru = eina_inlist_promote(mime_icons_lru, l);
 
-            entry->timestamp = ecore_loop_time_get();
-            return n->icon;
-        }
-    }
+             entry->timestamp = ecore_loop_time_get();
+             return n->icon;
+          }
+     }
 
-    return NULL;
+   return NULL;
 }
 
 #ifdef EFREET_MIME_ICONS_DEBUG
 static void
 efreet_mime_icons_debug(void)
 {
-    double now = ecore_loop_time_get();
-    Efreet_Mime_Icon_Entry_Head *entry;
-    EINA_INLIST_FOREACH(mime_icons_lru, entry)
-    {
+   double now = ecore_loop_time_get();
+   Efreet_Mime_Icon_Entry_Head *entry;
+   EINA_INLIST_FOREACH(mime_icons_lru, entry)
+     {
         Efreet_Mime_Icon_Entry *n;
 
         if ((now > 0) &&
             (now - entry->timestamp >= EFREET_MIME_ICONS_EXPIRE_TIMEOUT))
-        {
-            puts("*** FOLLOWING ENTRIES ARE AGED AND CAN BE EXPIRED ***");
-            now = 0;
-        }
+          {
+             puts("*** FOLLOWING ENTRIES ARE AGED AND CAN BE EXPIRED ***");
+             now = 0;
+          }
 
         DBG("mime-icon entry: '%s' last used: %s",
             entry->mime, ctime(&entry->timestamp));
 
         EINA_INLIST_FOREACH(entry->list, n)
-            DBG("\tsize: %3u theme: '%s' icon: '%s'",
-                   n->theme, n->size, n->icon);
-    }
+           DBG("\tsize: %3u theme: '%s' icon: '%s'",
+               n->theme, n->size, n->icon);
+     }
 }
 #else
 static void
