@@ -1511,14 +1511,12 @@ if test "x${have_ecore_con}" = "xyes" ; then
    if test "x${have_ipv6}" = "xyes" ; then
       AC_DEFINE(HAVE_IPV6, 1, [Define if IPV6 is supported])
    fi
-   AM_CONDITIONAL([HAVE_IPV6], [test "x${have_ipv6}" = "xyes"])
 
    if test "x${have_eet}" = "xyes" ; then
       requirements_ecore_con="eet > 1.7 ${requirements_ecore_con}"
       have_ecore_con_eet="yes"
       AC_DEFINE(ECORE_HAVE_EET, 1, [Define if Ecore_Con Eet_Connection helper is supported])
    fi
-   AM_CONDITIONAL([ECORE_HAVE_EET], [test "x${have_ecore_con_eet}" = "xyes"])
 
    ECORE_CHECK_CURL([${want_curl}],
       [
@@ -1555,6 +1553,8 @@ if test "x${have_ecore_con}" = "xyes" ; then
       [have_cares="no"])
 
 fi
+AM_CONDITIONAL([HAVE_IPV6], [test "x${have_ipv6}" = "xyes"])
+AM_CONDITIONAL([ECORE_HAVE_EET], [test "x${have_ecore_con_eet}" = "xyes"])
 
 EFL_CHECK_COMPILER_FLAGS([ECORE_CON], [-Wno-override-init -Wno-initializer-overrides])
 
