@@ -1150,6 +1150,88 @@ EAPI const Edje_External_Type       *edje_external_type_get         (const char 
  * @{
  */
 
+/**
+ * @brief Instantiate a new Edje object
+ *
+ * @param evas A valid Evas handle, the canvas to place the new object
+ * in
+ * @return A handle to the new object created or @c NULL, on errors.
+ *
+ * This function creates a new Edje smart object, returning its @c
+ * Evas_Object handle. An Edje object is useless without a (source)
+ * file set to it, so you'd most probably call edje_object_file_set()
+ * afterwards, like in:
+ * @code
+ * Evas_Object *edje;
+ *
+ * edje = edje_object_add(canvas);
+ * if (!edje)
+ *   {
+ *      fprintf(stderr, "could not create edje object!\n");
+ *      return NULL;
+ *   }
+ *
+ * if (!edje_object_file_set(edje, "theme.edj", "group_name"))
+ *   {
+ *      int err = edje_object_load_error_get(edje);
+ *      const char *errmsg = edje_load_error_str(err);
+ *      fprintf(stderr, "could not load 'group_name' from theme.edj: %s",
+ *      	errmsg);
+ *
+ *      evas_object_del(edje);
+ *      return NULL;
+ *   }
+ *
+ * @endcode
+ *
+ * @note You can get a callback every time edje re-calculates the object
+ * (either due to animation or some kind of signal or input). This is called
+ * in-line just after the recalculation has occurred. It is a good idea not
+ * to go and delete or alter the object inside this callbacks, simply make
+ * a note that the recalculation has taken place and then do something about
+ * it outside the callback. to register a callback use code like:
+ *
+ * @code
+ *    evas_object_smart_callback_add(edje_obj, "recalc", my_cb, my_cb_data);
+ * @endcode
+ *
+ * @see evas_object_smart_callback_add()
+ *
+ * @note Before creating the first Edje object in your code, remember
+ * to initialize the library, with edje_init(), or unexpected behavior
+ * might occur.
+ */
+EAPI Evas_Object *edje_object_add                 (Evas *evas);
+
+/**
+ * @brief Preload the images on the Edje Object in the background.
+ *
+ * @param obj A handle to an Edje object
+ * @param cancel @c EINA_FALSE will add it the preloading work queue,
+ *               @c EINA_TRUE will remove it (if it was issued before).
+ * @return @c EINA_FASLE if obj was not a valid Edje object
+ *         otherwise @c EINA_TRUE
+ *
+ * This function requests the preload of all data images (on the given
+ * object) in the background. The work is queued before being processed
+ * (because there might be other pending requests of this type).
+ * It emits a signal "preload,done" when finished.
+ *
+ * @note Use @c EINA_TRUE on scenarios where you don't need
+ *       the image data preloaded anymore.
+ */
+EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Edje_Object_Part
+ *
+ * @{
+ */
+
 typedef enum _Edje_Aspect_Control
 {
    EDJE_ASPECT_CONTROL_NONE = 0,
@@ -1165,24 +1247,6 @@ typedef enum _Edje_Object_Table_Homogeneous_Mode
    EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1,
    EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2
 } Edje_Object_Table_Homogeneous_Mode;
-
-typedef enum _Edje_Part_Type
-{
-   EDJE_PART_TYPE_NONE      = 0,
-   EDJE_PART_TYPE_RECTANGLE = 1,
-   EDJE_PART_TYPE_TEXT      = 2,
-   EDJE_PART_TYPE_IMAGE     = 3,
-   EDJE_PART_TYPE_SWALLOW   = 4,
-   EDJE_PART_TYPE_TEXTBLOCK = 5,
-   EDJE_PART_TYPE_GRADIENT  = 6,
-   EDJE_PART_TYPE_GROUP     = 7,
-   EDJE_PART_TYPE_BOX       = 8,
-   EDJE_PART_TYPE_TABLE     = 9,
-   EDJE_PART_TYPE_EXTERNAL  = 10,
-   EDJE_PART_TYPE_PROXY     = 11,
-   EDJE_PART_TYPE_SPACER    = 12, /**< @since 1.7 */
-   EDJE_PART_TYPE_LAST      = 13
-} Edje_Part_Type;
 
 typedef enum _Edje_Text_Effect
 {
@@ -1315,6 +1379,10 @@ typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, c
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
 /**
+ * @}
+ */
+
+/**
  * @defgroup Edje_Object_Scale Edje Scale
  *
  * @brief Functions that deal with scaling objects
@@ -1403,7 +1471,7 @@ EAPI double       edje_object_scale_get           (const Evas_Object *obj);
  */
 
 /**
- * @addtogroup Edje_Object_Group
+ * @addtogroup Edje_Object_Part
  *
  * @{
  */
@@ -1755,7 +1823,7 @@ EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const c
  */
 
 /**
- * @addtogroup Edje_Object_Group
+ * @addtogroup Edje_Object_Part
  *
  * @{
  */
@@ -1820,78 +1888,6 @@ EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect
  * the layout is unregistered from Edje.
  */
 EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
-
-/**
- * @brief Instantiate a new Edje object
- *
- * @param evas A valid Evas handle, the canvas to place the new object
- * in
- * @return A handle to the new object created or @c NULL, on errors.
- *
- * This function creates a new Edje smart object, returning its @c
- * Evas_Object handle. An Edje object is useless without a (source)
- * file set to it, so you'd most probably call edje_object_file_set()
- * afterwards, like in:
- * @code
- * Evas_Object *edje;
- *
- * edje = edje_object_add(canvas);
- * if (!edje)
- *   {
- *      fprintf(stderr, "could not create edje object!\n");
- *      return NULL;
- *   }
- *
- * if (!edje_object_file_set(edje, "theme.edj", "group_name"))
- *   {
- *      int err = edje_object_load_error_get(edje);
- *      const char *errmsg = edje_load_error_str(err);
- *      fprintf(stderr, "could not load 'group_name' from theme.edj: %s",
- *      	errmsg);
- *
- *      evas_object_del(edje);
- *      return NULL;
- *   }
- *
- * @endcode
- * 
- * @note You can get a callback every time edje re-calculates the object
- * (either due to animation or some kind of signal or input). This is called
- * in-line just after the recalculation has occurred. It is a good idea not
- * to go and delete or alter the object inside this callbacks, simply make
- * a note that the recalculation has taken place and then do something about
- * it outside the callback. to register a callback use code like:
- * 
- * @code
- *    evas_object_smart_callback_add(edje_obj, "recalc", my_cb, my_cb_data);
- * @endcode
- * 
- * @see evas_object_smart_callback_add()
- *
- * @note Before creating the first Edje object in your code, remember
- * to initialize the library, with edje_init(), or unexpected behavior
- * might occur.
- */
-EAPI Evas_Object *edje_object_add                 (Evas *evas);
-
-/**
- * @brief Preload the images on the Edje Object in the background.
- *
- * @param obj A handle to an Edje object
- * @param cancel @c EINA_FALSE will add it the preloading work queue,
- *               @c EINA_TRUE will remove it (if it was issued before).
- * @return @c EINA_FASLE if obj was not a valid Edje object
- *         otherwise @c EINA_TRUE
- *
- * This function requests the preload of all data images (on the given
- * object) in the background. The work is queued before being processed
- * (because there might be other pending requests of this type).
- * It emits a signal "preload,done" when finished.
- *
- * @note Use @c EINA_TRUE on scenarios where you don't need
- *       the image data preloaded anymore.
- */
-EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool cancel);
 
 /**
  * @}
@@ -2684,10 +2680,42 @@ EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Co
  */
 
 /**
- * @addtogroup Edje_Object_Group
+ * @defgroup Edje_Object_Part Edje Part
+ *
+ * @brief Functions that deal with layout components
+ *
+ * Parts are layout components, but as a layout, they are objects too.
+ *
+ * There are several types of parts, these types can be divided into two
+ * main categories, the first being containers. Containers are parts
+ * that are in effect a group of elements. The second group is that of
+ * the elements, these part types may not contain others.
+ *
+ * This section has some functions specific for some types and others that
+ * could be applied to any type.
+ *
+ * @ingroup Edje_Object_Group
  *
  * @{
  */
+
+typedef enum _Edje_Part_Type
+{
+   EDJE_PART_TYPE_NONE      = 0,
+   EDJE_PART_TYPE_RECTANGLE = 1,
+   EDJE_PART_TYPE_TEXT      = 2,
+   EDJE_PART_TYPE_IMAGE     = 3,
+   EDJE_PART_TYPE_SWALLOW   = 4,
+   EDJE_PART_TYPE_TEXTBLOCK = 5,
+   EDJE_PART_TYPE_GRADIENT  = 6,
+   EDJE_PART_TYPE_GROUP     = 7,
+   EDJE_PART_TYPE_BOX       = 8,
+   EDJE_PART_TYPE_TABLE     = 9,
+   EDJE_PART_TYPE_EXTERNAL  = 10,
+   EDJE_PART_TYPE_PROXY     = 11,
+   EDJE_PART_TYPE_SPACER    = 12, /**< @since 1.7 */
+   EDJE_PART_TYPE_LAST      = 13
+} Edje_Part_Type;
 
 /**
  * @brief Check if an Edje part exists in a given Edje object's group
@@ -2753,6 +2781,14 @@ EAPI const Evas_Object *edje_object_part_object_get   (const Evas_Object *obj, c
  */
 EAPI Eina_Bool    edje_object_part_geometry_get       (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
+/**
+ * @brief Retrieve a list all accessibility part names
+ *
+ * @param obj A valid Evas_Object handle
+ * @return A list all accessibility part names on @p obj
+ * @since 1.7.0
+ */
+EAPI Eina_List    *edje_object_access_part_list_get   (const Evas_Object *obj);
 
 /**
  * @brief Set the function that provides item objects for named items in an edje entry text
@@ -3987,15 +4023,6 @@ EAPI Evas_Object *edje_object_part_box_remove_at          (Evas_Object *obj, con
  * @see edje_object_part_box_remove_at()
  */
 EAPI Eina_Bool    edje_object_part_box_remove_all         (Evas_Object *obj, const char *part, Eina_Bool clear);
-
-/**
- * @brief Retrieve a list all accessibility part names
- *
- * @param obj A valid Evas_Object handle
- * @return A list all accessibility part names on @p obj
- * @since 1.7.0
- */
-EAPI Eina_List * edje_object_access_part_list_get         (const Evas_Object *obj);
 
 /**
  * @brief Retrieve a child from a table
