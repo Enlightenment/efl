@@ -14,6 +14,7 @@
  * @li @ref tutorial_ephysics_velocity
  * @li @ref tutorial_ephysics_shapes
  * @li @ref tutorial_ephysics_sleeping_threshold
+ * @li @ref tutorial_ephysics_slider
  */
 
 /**
@@ -570,6 +571,9 @@
  * already covered in
  * @ref tutorial_ephysics_bouncing_ball
  *
+ * You can use also a slider constraint: 
+ * @ref tutorial_ephysics_slider
+ *
  * @section add-constraint Adding a constraint
  * @dontinclude test_constraint.c
  *
@@ -1053,4 +1057,97 @@
  * @include test_sleeping_threshold.c
  *
  * @example test_sleeping_threshold.c
+ */
+
+ /**
+ * @page tutorial_ephysics_slider EPhysics - Slider
+ *
+ * The purpose of this example is to demonstrate the EPhysics Slider
+ * usage - The code applies slider on three cubes.
+ *
+ * For this example we'll have an EPhysics_World, and four basic 
+ * EPhysics_Bodys.
+ *
+ * The basic concepts like - defining an EPhysics_World, render geometry,
+ * physics limiting boundaries, add an EPhysics_Body, associate it to evas
+ * objects, change restitution, friction and impulse properties, were
+ * already covered in
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * You can use also a P2P (point to point) constraint: 
+ * @ref tutorial_ephysics_constraint
+ *
+ * @section add-slider Adding a Slider
+ * @dontinclude test_slider.c
+ *
+ * Slider is a constraint that will limit the linear and angular moving of 
+ * a body.
+ *
+ * We'll add three sliders on the cubes, starting with the highest purple.
+ *
+ * First we need to create a specific variable type to get EPhysics_Body 
+ * constraint and create a new slider constraint passing the body which we
+ * want as parameter.
+ *
+ * @skipline EPhysics_Constraint *constr
+ *
+ * @skipline constraint = ephysics_constraint_slider_add(box_body2
+ *
+ * Here we define the linear moving limits of the slider constraint, in this
+ * case we just set moving limit down on Y axis (under), but if we wanted we
+ * could set left, right and above also.
+ *
+ * @skip ephysics_constraint_slider_linear_limit_set(constraint, 0,
+ * @until , 0, 0);
+ *
+ * Here we set the angular moving limits of the slider constraint. The angular
+ * moving limits is defined in degrees and will limit the moving on Z axis, in
+ * this case we just set the clockwise direction, but if we wanted we could
+ * set the counter clockwise direction also.
+ *
+ *
+ * @skipline ephysics_constraint_slider_angular_limit_set(constraint, 0, 45 
+ *
+ * When this cube falls by the gravity, the slider constraint will act limiting
+ * its linear and angular movings, giving the impression that its hanging.
+ *
+ * For the next two cubes is the same process.
+ *
+ * Now we set the slider constraint of the highest blue and lowest purple,
+ * limiting moving limits to the left on X axis and applying an impulse
+ * to the left where the two cubes will be limited by the slider constraint
+ * and pushed back.
+ *
+ * @skip constraint = ephysics_constraint_slider_add(box_body3
+ * @until box_body3, -240, 0);
+ *
+ * @skip constraint = ephysics_constraint_slider_add(box_body4
+ * @until box_body4, -600, 0);
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_slider_c.
+ *
+ */
+
+ /**
+ * @page test_slider_c test_slider.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-slider-c test_slider.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_data_new
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_slider.c
+ *
+ * @example test_slider.c
  */
