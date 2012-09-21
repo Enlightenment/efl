@@ -306,6 +306,9 @@
  * viewport, thats because the EPhysics handles the position of objects
  * which has control.
  *
+ * @image html camera.png
+ * @image latex camera.eps
+ *
  * For this example we'll have an EPhysics_World, two distant EPhysics_Bodys,
  * one with an impulse to collide each other and an EPhysics_Camera that 
  * follows the moving body using an animator.
@@ -431,6 +434,9 @@
  * The EPhysics_Camera facilitates the usage of scenarios bigger than the
  * viewport, thats because the EPhysics handles the position of objects
  * which has control.
+ *
+ * @image html camera_track.png
+ * @image latex camera_track.eps
  *
  * For this example we'll have an EPhysics_World, one main EPhysics_Body that
  * will be tracked by an EPhysics_Camera on three ways, horizontal, vertical
@@ -886,6 +892,9 @@
  * The purpose of this example is to demonstrate the EPhysics Force usage -
  * The code applies force over two cubes.
  *
+ * @image html forces.png
+ * @image latex forces.eps
+ *
  * For this example we'll have an EPhysics_World with gravity setted to zero,
  * and two basic EPhysics_Bodys.
  *
@@ -957,6 +966,9 @@
  * The purpose of this example is to demonstrate the dynamically growing
  * and shrinking of an EPhysics_Body - The code applies the growth of a ball
  * and the shrink of another.
+ *
+ * @image html growing_balls.png
+ * @image latex growing_balls.eps
  *
  * For this example we'll have an EPhysics_World and three EPhysics_Bodys
  * with different sizes associated with an evas_object.
@@ -1207,6 +1219,9 @@
  * The purpose of this example is to demonstrate the EPhysics Shapes
  * usage - The code creates two EPhysics_Bodys using a custom shape.
  *
+ * @image html shapes.png
+ * @image latex shapes.eps
+ *
  * For this example we'll have an EPhysics_World, and two basic EPhysics_Bodys.
  *
  * The basic concepts like - defining an EPhysics_World, render geometry,
@@ -1386,8 +1401,11 @@
  /**
  * @page tutorial_ephysics_slider EPhysics - Slider
  *
- * The purpose of this example is to demonstrate the EPhysics Slider
+ * The purpose of this example is to demonstrate the EPhysics Slider constraint
  * usage - The code applies slider on three cubes.
+ *
+ * @image html slider.png
+ * @image latex slider.eps
  *
  * For this example we'll have an EPhysics_World, and four basic 
  * EPhysics_Bodys.
