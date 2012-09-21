@@ -2425,6 +2425,28 @@ EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, con
 EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Object_Geometry_Group Edje Object Geometry
+ *
+ * @brief Functions that deal with object's geometry.
+ *
+ * By geometry we mean size and position. So in this groups there are
+ * functions to manipulate object's geometry or retrieve information
+ * about it.
+ *
+ * Keep in mind that by changing an object's geometry, it may affect
+ * the appearance in the screen of the parts inside. Most times
+ * that is what you want.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+/**
  * @brief Get the minimum size specified -- as an EDC property -- for a
  * given Edje object
  *
@@ -2602,6 +2624,16 @@ EAPI Eina_Bool    edje_object_parts_extends_calc      (Evas_Object *obj, Evas_Co
  * into account in this calculation.
  */
 EAPI void         edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord restrictedw, Evas_Coord restrictedh);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Edje_Object_Group
+ *
+ * @{
+ */
 
 /**
  * @brief Check if an Edje part exists in a given Edje object's group
