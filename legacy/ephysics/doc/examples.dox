@@ -9,6 +9,7 @@
  * @li @ref tutorial_ephysics_collision_filter
  * @li @ref tutorial_ephysics_delete_body
  * @li @ref tutorial_ephysics_constraint
+ * @li @ref tutorial_ephysics_forces
  * @li @ref tutorial_ephysics_gravity
  * @li @ref tutorial_ephysics_velocity
  * @li @ref tutorial_ephysics_shapes
@@ -612,6 +613,77 @@
  * @include test_constraint.c
  *
  * @example test_constraint.c
+ */
+
+ /**
+ * @page tutorial_ephysics_forces EPhysics - Forces
+ *
+ * The purpose of this example is to demonstrate the EPhysics Force usage -
+ * The code applies force over two cubes.
+ *
+ * For this example we'll have an EPhysics_World with gravity setted to zero,
+ * and two basic EPhysics_Bodys.
+ *
+ * The basic concepts like - defining an EPhysics_World, render geometry,
+ * physics limiting boundaries, add an EPhysics_Body, associate it to evas
+ * objects, change restitution, friction and impulse properties, were
+ * already covered in
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * @section add-force Adding a Force
+ * @dontinclude test_forces.c
+ *
+ * We apply a force over the first body to change its linear and angular
+ * accelerations. Applying a force to a body will lead it to change its
+ * velocity gradually.
+ *
+ * Note that in this blue cube we use an offset to apply the force, the two
+ * last parameters are responsible to set a relative position to apply the
+ * force.In other words, the force applied with an offset will make the body
+ * rotates. Otherwise (0, 0) the force would be applied on the center of the
+ * body, in this case its recomended use the 
+ * ephysics_body_central_force_apply();
+ *
+ * @skipline ephysics_body_force_apply(box_body1
+ *
+ * Here we apply a central force over the second body avoiding affect the
+ * angular acceleration (rotate).
+ *
+ * @skipline ephysics_body_central_force_apply(box_body2
+ *
+ * We can also get all the forces applied over a body, including gravity, but
+ * in this case we setted to zero.
+ *
+ * @dontinclude test_forces.c
+ *
+ * @skipline ephysics_body_forces_get(
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_forces_c.
+ *
+ */
+
+ /**
+ * @page test_forces_c test_forces.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-forces-c test_forces.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_data_new
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_forces.c
+ *
+ * @example test_forces.c
  */
 
  /**
