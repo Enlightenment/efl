@@ -28,6 +28,7 @@ static char *group = NULL;
 static char *prefix = NULL;
 static FILE *source_fd = NULL;
 static FILE *header_fd = NULL;
+static Eina_List *externals = NULL;
 
 #define H_HEADER                                        \
   "#ifndef _%s\n"                                       \
@@ -233,6 +234,37 @@ static FILE *header_fd = NULL;
 #define H_CODEGEN_PART_TABLE_COL_ROW_SIZE_GET                                \
   "Eina_Bool %s_%s_col_row_size_get(Evas_Object *o, int *cols, int *rows);\n"
 
+#define C_CODEGEN_PART_EXTERNAL_PARAM_SET(type, param_type, field)            \
+  "Eina_Bool\n"                                                               \
+  "%s_%s_%s_set(Evas_Object *o, "type"value)\n"                               \
+  "{\n"                                                                       \
+  "   Edje_External_Param param;\n\n"                                         \
+  "   param.name = \"%s\";\n"                                                 \
+  "   param.type = "param_type";\n"                                           \
+  "   param."field" = value;\n"                                               \
+  "   return edje_object_part_external_param_set(o, \"%s\", &param);\n"       \
+  "}\n\n"
+
+#define H_CODEGEN_PART_EXTERNAL_PARAM_SET(type)            \
+  "Eina_Bool %s_%s_%s_set(Evas_Object *o, "type"value);\n"
+
+#define C_CODEGEN_PART_EXTERNAL_PARAM_GET(type, param_type, field)            \
+  "Eina_Bool\n"                                                               \
+  "%s_%s_%s_get(Evas_Object *o, "type"*value)\n"                              \
+  "{\n"                                                                       \
+  "   if (!value) return EINA_FALSE;\n\n"                                     \
+  "   Edje_External_Param param;\n\n"                                         \
+  "   param.name = \"%s\";\n"                                                 \
+  "   param.type = "param_type";\n"                                           \
+  "   if (!edje_object_part_external_param_get(o, \"%s\", &param))\n"         \
+  "     return EINA_FALSE;\n\n"                                               \
+  "   *value = param."field";\n"                                              \
+  "   return EINA_TRUE;\n"                                                    \
+  "}\n\n"
+
+#define H_CODEGEN_PART_EXTERNAL_PARAM_GET(type)               \
+  "Eina_Bool %s_%s_%s_get(Evas_Object *o, "type"*value);\n"
+
 #define C_CODEGEN_PROGRAM_EMIT                          \
   "void\n"                                              \
   "%s_%s_emit(Evas_Object *o)\n"                        \
@@ -240,7 +272,7 @@ static FILE *header_fd = NULL;
   "   edje_object_signal_emit(o, \"%s\", \"%s\");\n"    \
   "}\n\n"
 
-#define H_CODEGEN_PROGRAM_EMIT	        \
+#define H_CODEGEN_PROGRAM_EMIT         \
   "void %s_%s_emit(Evas_Object *o);\n"
 
 #define C_CODEGEN_PROGRAM_CALLBACK_ADD                                        \
@@ -265,6 +297,12 @@ static FILE *header_fd = NULL;
   "void %s_%s_callback_del_full(Evas_Object *o, Edje_Signal_Cb func, "  \
   "void *data);\n"
 
+
+typedef struct _Part_External_Info Part_External_Info;
+struct _Part_External_Info {
+  const char *description, *name, *source;
+  char *apiname;
+};
 
 const Ecore_Getopt optdesc = {
   "edje_codegen",
@@ -395,6 +433,130 @@ _write_object_get(void)
 }
 
 static Eina_Bool
+_write_part_external_param(const Part_External_Info *info,
+			   const Edje_External_Param_Info *param)
+{
+   const char *template;
+   char buf[1024];
+
+#define WRITE_TEMPLATE(type, param_type, field)		                     \
+   do {                                                                      \
+      template = C_CODEGEN_PART_EXTERNAL_PARAM_SET(type, param_type, field); \
+      snprintf(buf, sizeof(buf), template, info->apiname, info->name,        \
+	      param->name, param->name, info->name);                         \
+      if (fwrite(buf, strlen(buf), 1, source_fd) != 1)                       \
+	return EINA_FALSE;                                                   \
+      template = H_CODEGEN_PART_EXTERNAL_PARAM_SET(type);                    \
+      snprintf(buf, sizeof(buf), template, info->apiname, info->name,        \
+	       param->name);                                                 \
+      if (fwrite(buf, strlen(buf), 1, header_fd) != 1)                       \
+	return EINA_FALSE;                                                   \
+      template =                                                             \
+	C_CODEGEN_PART_EXTERNAL_PARAM_GET(type, param_type, field);          \
+      snprintf(buf, sizeof(buf), template, info->apiname, info->name,        \
+	      param->name, param->name, info->name);                         \
+      if (fwrite(buf, strlen(buf), 1, source_fd) != 1)                       \
+	return EINA_FALSE;                                                   \
+      template = H_CODEGEN_PART_EXTERNAL_PARAM_GET(type);                    \
+      snprintf(buf, sizeof(buf), template, info->apiname, info->name,        \
+	       param->name);                                                 \
+      if (fwrite(buf, strlen(buf), 1, header_fd) != 1)                       \
+	return EINA_FALSE;                                                   \
+   } while (0)
+
+   switch (param->type)
+     {
+      case EDJE_EXTERNAL_PARAM_TYPE_INT:
+	 WRITE_TEMPLATE("int ", "EDJE_EXTERNAL_PARAM_TYPE_INT", "i");
+	 break;
+      case EDJE_EXTERNAL_PARAM_TYPE_DOUBLE:
+	 WRITE_TEMPLATE("double ", "EDJE_EXTERNAL_PARAM_TYPE_DOUBLE", "d");
+	 break;
+      case EDJE_EXTERNAL_PARAM_TYPE_STRING:
+	 WRITE_TEMPLATE("const char *", "EDJE_EXTERNAL_PARAM_TYPE_STRING", "s");
+	 break;
+      case EDJE_EXTERNAL_PARAM_TYPE_BOOL:
+	 WRITE_TEMPLATE("Eina_Bool ", "EDJE_EXTERNAL_PARAM_TYPE_BOOL", "i");
+	 break;
+      case EDJE_EXTERNAL_PARAM_TYPE_CHOICE:
+	 WRITE_TEMPLATE("const char *", "EDJE_EXTERNAL_PARAM_TYPE_CHOICE", "s");
+	 break;
+      default:
+         break;
+     }
+
+#undef WRITE_TEMPLATE
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_write_part_external(Eina_List **parts)
+{
+   char buf[512];
+   Eina_Iterator *itr;
+   Part_External_Info *ei;
+   const Eina_Hash_Tuple *tuple;
+   Eina_List *l, *l_next;
+   const char *name;
+   Eina_Bool ret = EINA_TRUE;
+
+   itr = edje_external_iterator_get();
+   EINA_ITERATOR_FOREACH(itr, tuple)
+     {
+        const Edje_External_Type *type = tuple->data;
+        const Edje_External_Param_Info *param;
+        name = tuple->key;
+
+        if (!type)
+          {
+             ERR("no type value for '%s'", name);
+             continue;
+          }
+        else if (type->abi_version != edje_external_type_abi_version_get())
+          {
+             ERR("type '%s' with incorrect abi_version %u (expected %u)",
+                 name, type->abi_version, edje_external_type_abi_version_get());
+             continue;
+          }
+
+	EINA_LIST_FOREACH_SAFE(*parts, l, l_next, ei)
+	  {
+	     if (!strcmp(ei->source, name))
+	       {
+		  if (ei->description)
+		    {
+		       snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n",
+				ei->description);
+		       if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
+			 goto end;
+		    }
+		  for (param = type->parameters_info; param->name != NULL;
+		       param++)
+		    if (!_write_part_external_param(ei, param))
+		      {
+			 ret = EINA_FALSE;
+			 goto end;
+		      }
+
+		  edje_edit_string_free(ei->description);
+		  free(ei->apiname);
+		  free(ei);
+
+		  *parts = eina_list_remove_list(*parts, l);
+
+	       }
+	  }
+     }
+
+ end:
+   if (eina_list_count(*parts) == 0) *parts = NULL;
+   eina_iterator_free(itr);
+
+   return ret;
+}
+
+static Eina_Bool
 _write_part(const char *apiname, const char *partname,
 	    Edje_Part_Type parttype, const char *description)
 {
@@ -506,11 +668,12 @@ _part_api_name_get(Evas_Object *ed, const char *program)
 static Eina_Bool
 _parse_parts(Evas_Object *ed)
 {
-   Eina_List *parts, *l;
+   Eina_List *parts, *l, *parts_external = NULL;
    const char *name, *typename, *description;
    char *apiname;
    Edje_Part_Type type;
    Eina_Bool ret = EINA_TRUE;
+   Part_External_Info *ei;
 
    parts = edje_edit_parts_list_get(ed);
    EINA_LIST_FOREACH(parts, l, name)
@@ -522,9 +685,10 @@ _parse_parts(Evas_Object *ed)
 	  }
 
 	type = edje_edit_part_type_get(ed, name);
-	if (!((type == EDJE_PART_TYPE_TEXT)    ||
-	      (type == EDJE_PART_TYPE_SWALLOW) ||
-	      (type == EDJE_PART_TYPE_BOX)     ||
+	if (!((type == EDJE_PART_TYPE_TEXT)      ||
+	      (type == EDJE_PART_TYPE_SWALLOW)   ||
+	      (type == EDJE_PART_TYPE_BOX)       ||
+	      (type == EDJE_PART_TYPE_EXTERNAL)  ||
 	      (type == EDJE_PART_TYPE_TABLE)))
 	  {
 	     ERR("Invalid part type %d", type);
@@ -533,19 +697,43 @@ _parse_parts(Evas_Object *ed)
 	  }
 
 	description = edje_edit_part_api_description_get(ed, name);
-	if (!_write_part(apiname, name, type, description))
+	if (type == EDJE_PART_TYPE_EXTERNAL)
 	  {
-	     ret = EINA_FALSE;
+	     ei = calloc(1, sizeof(Part_External_Info));
+	     if (!ei) goto end;
+	     ei->description = description;
+	     ei->source = edje_edit_part_source_get(ed, name);
+	     ei->apiname = apiname;
+	     ei->name = name;
+
+	     parts_external = eina_list_append(parts_external, ei);
+	  }
+	else
+	  {
+	     if (!_write_part(apiname, name, type, description))
+	       {
+		  ret = EINA_FALSE;
+		  edje_edit_string_free(description);
+		  free(apiname);
+		  goto end;
+	       }
+
 	     edje_edit_string_free(description);
 	     free(apiname);
-	     break;
 	  }
-
-	edje_edit_string_free(description);
-	free(apiname);
      }
 
+   ret = _write_part_external(&parts_external);
+
+ end:
    edje_edit_string_list_free(parts);
+   EINA_LIST_FREE(parts_external, ei)
+     {
+	edje_edit_string_free(ei->description);
+	free(ei->apiname);
+	free(ei);
+     }
+
    return ret;
 }
 
@@ -710,11 +898,30 @@ _parse_programs(Evas_Object *ed)
 }
 
 static Eina_Bool
+_module_matches(const char *module)
+{
+   Eina_List *l;
+   const char *name;
+
+   EINA_LIST_FOREACH(externals, l, name)
+     {
+	if (!strcmp(module, name))
+	  return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
 _parse(void)
 {
    Evas_Object *ed;
    Eina_Bool ret;
+   const char *module_name;
+   const Eina_List *modules_available, *l;
+   unsigned short modules_loaded = 0;
 
+   modules_available = edje_available_modules_get();
    ed = edje_edit_object_add(ecore_evas_get(ee));
    if (!edje_object_file_set(ed, file, group))
      {
@@ -722,6 +929,30 @@ _parse(void)
 	const char *errmsg = edje_load_error_str(err);
 	ERR("could not load group '%s' from file '%s': %s",
 	    group, file, errmsg);
+	evas_object_del(ed);
+	return EINA_FALSE;
+     }
+
+   externals = edje_edit_externals_list_get(ed);
+   if (externals)
+     {
+	EINA_LIST_FOREACH(modules_available, l, module_name)
+	  {
+	     if (_module_matches(module_name))
+	       {
+		  if (!edje_module_load(module_name))
+		    {
+		       ERR("error loading external '%s'", module_name);
+		       continue;
+		    }
+		  modules_loaded++;
+	       }
+	  }
+     }
+
+   if (eina_list_count(externals) != modules_loaded)
+     {
+	edje_edit_string_list_free(externals);
 	evas_object_del(ed);
 	return EINA_FALSE;
      }

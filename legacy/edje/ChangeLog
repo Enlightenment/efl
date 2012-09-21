@@ -638,3 +638,7 @@
 
 	* Lua: Lua 5.2 support added.
 
+2012-09-21  Flavio Ceolin
+
+	* edje_codegen: added support for externals
+
