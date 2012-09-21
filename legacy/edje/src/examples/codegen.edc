@@ -1,22 +1,11 @@
 collections {
+
    group {
-      name: "sel_group";
-      parts {
-         part {
-            name: "rect";
-            type: RECT;
-            description {
-               state: "default" 0.0;
-               color: 0 255 0 255; /* green */
-               rel1.relative: 0.0 0.0;
-               rel2.relative: 1.0 1.0;
-            }
-         }
+      externals { /* declare the modules you want to load */
+         external: "elm"; /* toolkit/widgets */
       }
-   }
-   group {
+
       name: "example_group";
-      max: 500 500;
       min: 50 50;
 
       styles {
@@ -55,7 +44,7 @@ collections {
                min: 50 50;
                state: "default" 0.0;
                rel1.relative: 0.0 0.3;
-               rel2.relative: 1.0 0.6;
+               rel2.relative: 0.3 0.6;
             }
          }
 
@@ -80,6 +69,19 @@ collections {
                state: "default" 0.0;
                rel1.relative: 0.5 0.6;
                rel2.relative: 1.0 1.0;
+            }
+         }
+
+         part {
+            name: "part_five";
+            type: EXTERNAL;
+            source: "elm/button";
+            api: "part_five" "An elm button using externals";
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0.9 0.5;
+               rel2.relative: 1.0 0.6;
+               params.string: "icon" "apps";
             }
          }
       }

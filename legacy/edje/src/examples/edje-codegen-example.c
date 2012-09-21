@@ -60,6 +60,7 @@ _on_mouse_over(void *data, Evas_Object *obj, const char *emission,
 	       const char *source)
 {
    Evas_Object *rect;
+   Eina_Bool disabled;
    static int i = 0;
 
    printf("Mouse over, source: %s - emission: %s\n",
@@ -78,6 +79,15 @@ _on_mouse_over(void *data, Evas_Object *obj, const char *emission,
 	codegen_example_part_four_clear(obj, EINA_TRUE);
 	_columns_rows_print(obj);
 	codegen_example_part_three_remove_all(obj, EINA_TRUE);
+	part_five_part_five_disabled_set(obj, EINA_TRUE);
+
+	if (part_five_part_five_disabled_get(obj, &disabled))
+	  if (disabled)
+	    fprintf(stdout, "Button is disabled\n");
+	  else
+	    fprintf(stdout, "Button is enabled\n");
+	else
+	  fprintf(stderr, "Couldn't check if the button is disabled\n");
      }
 }
 
@@ -99,13 +109,14 @@ int
 main(int argc, char *argv[])
 {
    char         edje_file_path[PATH_MAX];
-   const char  *edje_file = "codegen.edj";
+   const char  *edje_file = "codegen.edj", *aux;
    Ecore_Evas  *ee;
    Evas        *evas;
    Evas_Object *bg;
    Evas_Object *edje_obj;
    Evas_Object *red_rect, *yellow_rect, *blue_rect, *rects[4];
    Eina_Prefix *pfx;
+   Eina_Bool    disabled;
 
    if (!ecore_evas_init())
      return EXIT_FAILURE;
@@ -176,6 +187,22 @@ main(int argc, char *argv[])
 
    if (!codegen_example_part_four_pack(edje_obj, rects[3], 1, 1, 1, 1))
      fprintf(stderr, "Cannot add the rectangle 4 to table\n");
+
+   if (!part_five_part_five_label_set(edje_obj, "new label"))
+     fprintf(stderr, "Cannot set the label of the button\n");
+
+   if (part_five_part_five_label_get(edje_obj, &aux))
+     fprintf(stdout, "Label contents: %s\n", aux);
+   else
+     fprintf(stderr, "Couldn't get the label contents\n");
+
+   if (part_five_part_five_disabled_get(edje_obj, &disabled))
+     if (disabled)
+       fprintf(stdout, "Button is disabled\n");
+     else
+       fprintf(stdout, "Button is enabled\n");
+   else
+     fprintf(stderr, "Couldn't check if the button is disabled\n");
 
    _columns_rows_print(edje_obj);
    ecore_evas_show(ee);
