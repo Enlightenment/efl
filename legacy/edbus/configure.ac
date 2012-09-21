@@ -79,6 +79,9 @@ PKG_CHECK_MODULES([EINA], [eina >= 1.7.0])
 PKG_CHECK_MODULES([ECORE], [ecore])
 PKG_CHECK_MODULES([DBUS], [dbus-1])
 
+### Build and install examples
+EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
+
 with_max_log_level="EINA_LOG_LEVEL_DBG"
 AC_ARG_WITH(maximum-log-level,
    [AC_HELP_STRING([--with-maximum-log-level=NUMBER],

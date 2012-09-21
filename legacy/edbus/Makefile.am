@@ -78,6 +78,7 @@ libedbus2_la_SOURCES = \
 	src/lib/edbus_service.c \
 	src/lib/edbus_signal_handler.c
 
+if EFL_BUILD_EXAMPLES
 noinst_PROGRAMS = \
 	src/examples/connman-list-services \
 	src/examples/ofono-dial \
@@ -110,6 +111,7 @@ src_examples_server_LDADD = $(EXAMPLES_LIBS)
 
 src_examples_client_SOURCES = src/examples/client.c
 src_examples_client_LDADD = $(EXAMPLES_LIBS)
+endif
 
 .PHONY: doc
 
