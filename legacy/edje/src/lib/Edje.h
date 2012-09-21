@@ -3891,6 +3891,23 @@ EAPI Eina_Bool        edje_object_part_drag_step      (Evas_Object *obj, const c
 EAPI Eina_Bool        edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
 
 /**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Part_Box Edje Box Part
+ *
+ * @brief Functions that deal with parts of type box.
+ *
+ * Box is a container type for parts, that means it can contain
+ * other parts.
+ *
+ * @ingroup Edje_Object_Part_Group
+ *
+ * @{
+ */
+
+/**
  * @brief Appends an object to the box.
  *
  * @param obj A valid Evas_Object handle
