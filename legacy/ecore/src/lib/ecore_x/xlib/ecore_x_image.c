@@ -338,9 +338,9 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
        (vis->blue_mask == 0x0000ff))
      {
 #ifdef WORDS_BIGENDIAN
-        if (im->xim->bitmap_bit_order == LSBFirst) return EINA_TRUE;
-#else
         if (im->xim->bitmap_bit_order == MSBFirst) return EINA_TRUE;
+#else
+        if (im->xim->bitmap_bit_order == LSBFirst) return EINA_TRUE;
 #endif
      }
    return EINA_FALSE;

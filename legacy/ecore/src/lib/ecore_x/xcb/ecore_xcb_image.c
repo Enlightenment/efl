@@ -253,11 +253,9 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
        (vis->green_mask == 0x00ff00) && (vis->blue_mask == 0x0000ff))
      {
 #ifdef WORDS_BIGENDIAN
-        if (im->xim->byte_order == XCB_IMAGE_ORDER_LSB_FIRST)
-          return EINA_TRUE;
+        if (im->xim->byte_order == XCB_IMAGE_ORDER_MSB_FIRST) return EINA_TRUE;
 #else
-        if (im->xim->byte_order == XCB_IMAGE_ORDER_MSB_FIRST)
-          return EINA_TRUE;
+        if (im->xim->byte_order == XCB_IMAGE_ORDER_LSB_FIRST) return EINA_TRUE;
 #endif
      }
 

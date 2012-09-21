@@ -956,3 +956,8 @@
        * Fix escaping in ecore_file_escape_name() to handle tab and
        newline right.
 
+2012-09-21  Carsten Haitzler (The Rasterman)
+
+       * Fix ecore_x_image_is_argb32_get() to return correctly on
+       endianess.
+
