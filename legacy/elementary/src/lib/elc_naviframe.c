@@ -1105,6 +1105,8 @@ _elm_naviframe_smart_del(Evas_Object *obj)
 
    evas_object_del(sd->dummy_edje);
 
+   if (sd->animator) ecore_animator_del(sd->animator);
+
    ELM_WIDGET_CLASS(_elm_naviframe_parent_sc)->base.del(obj);
 }
 
@@ -1125,6 +1127,50 @@ _elm_naviframe_smart_set_user(Elm_Naviframe_Smart_Class *sc)
    ELM_LAYOUT_CLASS(sc)->text_set = _elm_naviframe_smart_text_set;
    ELM_LAYOUT_CLASS(sc)->text_get = _elm_naviframe_smart_text_get;
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_naviframe_smart_sizing_eval;
+}
+
+static Eina_Bool
+_push_transition_cb(void *data)
+{
+   Elm_Naviframe_Item *prev_it, *it;
+   ELM_NAVIFRAME_DATA_GET(data, sd);
+
+   it = (Elm_Naviframe_Item *) elm_naviframe_top_item_get(data);
+
+   if (sd->stack->last->prev)
+     {
+        prev_it = EINA_INLIST_CONTAINER_GET(sd->stack->last->prev,
+                                            Elm_Naviframe_Item);
+        edje_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed,deferred", "elm");
+        edje_object_message_signal_process(VIEW(prev_it));
+     }
+   edje_object_signal_emit(VIEW(it), "elm,state,new,pushed,deferred", "elm");
+   edje_object_message_signal_process(VIEW(it));
+
+   sd->animator = NULL;
+   return ECORE_CALLBACK_CANCEL;
+}
+
+static Eina_Bool
+_pop_transition_cb(void *data)
+{
+   Elm_Naviframe_Item *prev_it, *it;
+   it = (Elm_Naviframe_Item *)data;
+   if (!it) return ECORE_CALLBACK_CANCEL;
+   ELM_NAVIFRAME_DATA_GET(WIDGET(it), sd);
+
+   prev_it = (Elm_Naviframe_Item *) elm_naviframe_top_item_get(WIDGET(it));
+   if (prev_it)
+     {
+        edje_object_signal_emit(VIEW(prev_it), "elm,state,prev,popped,deferred", "elm");
+        edje_object_message_signal_process(VIEW(prev_it));
+     }
+   edje_object_signal_emit(VIEW(it), "elm,state,cur,popped,deferred", "elm");
+
+   edje_object_message_signal_process(VIEW(it));
+
+   sd->animator = NULL;
+   return ECORE_CALLBACK_CANCEL;
 }
 
 EAPI const Elm_Naviframe_Smart_Class *
@@ -1209,6 +1255,9 @@ elm_naviframe_item_push(Evas_Object *obj,
 
         /* animate new one */
         edje_object_message_signal_process(VIEW(it));
+
+        if (sd->animator) ecore_animator_del(sd->animator);
+        sd->animator = ecore_animator_add(_push_transition_cb, obj);
      }
 
    sd->stack = eina_inlist_append(sd->stack, EINA_INLIST_GET(it));
@@ -1348,6 +1397,9 @@ elm_naviframe_item_pop(Evas_Object *obj)
 
         edje_object_message_signal_process(VIEW(it));
         edje_object_message_signal_process(VIEW(prev_it));
+
+        if (sd->animator) ecore_animator_del(sd->animator);
+        sd->animator = ecore_animator_add(_pop_transition_cb, it);
      }
    else
      elm_widget_item_del(it);
@@ -1439,6 +1491,8 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
 
    edje_object_message_signal_process(VIEW(prev_it));
    edje_object_message_signal_process(VIEW(nit));
+   if (sd->animator) ecore_animator_del(sd->animator);
+   sd->animator = ecore_animator_add(_push_transition_cb, nit->base.widget);
 }
 
 EAPI void
