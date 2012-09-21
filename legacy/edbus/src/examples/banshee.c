@@ -141,11 +141,7 @@ on_name_owner_changed_by_id(void *data, const EDBus_Message *msg)
    if (!edbus_message_arguments_get(msg, "sss", &bus, &older_id, &new_id))
      printf("Error getting arguments from NameOwnerChanged");
 
-   printf("on_name_owner_changed_by_id bus = %s older=%s new=%s\n\n",
-          bus, older_id, new_id);
-
-   if (!new_id[0])
-     edbus_signal_handler_unref(sh3);
+   printf("banshee started on id=%s\n", new_id);
 }
 
 static void
@@ -160,18 +156,6 @@ on_name_owner_changed(void *data, const EDBus_Message *msg)
      printf("Error getting arguments from NameOwnerChanged");
 
    printf("bus = %s older=%s new=%s\n\n", bus, older_id, new_id);
-
-   if (new_id[0])
-     {
-        sh4 = edbus_signal_handler_add(conn,
-                                  EDBUS_FDO_BUS,
-                                  EDBUS_FDO_PATH,
-                                  EDBUS_FDO_INTERFACE,
-                                  "NameOwnerChanged",
-                                  on_name_owner_changed_by_id,
-                                  NULL);
-        edbus_signal_handler_match_extra_set(sh4, "arg1", new_id, NULL);
-     }
 }
 
 int
@@ -275,6 +259,17 @@ main(void)
                                   on_name_owner_changed,
                                   NULL);
    edbus_signal_handler_match_extra_set(sh3, "arg0", "org.bansheeproject.Banshee", NULL);
+
+   sh4 = edbus_signal_handler_add(conn,
+                                  EDBUS_FDO_BUS,
+                                  EDBUS_FDO_PATH,
+                                  EDBUS_FDO_INTERFACE,
+                                  "NameOwnerChanged",
+                                  on_name_owner_changed_by_id,
+                                  NULL);
+   edbus_signal_handler_match_extra_set(sh4,
+                                        "arg0", "org.bansheeproject.Banshee",
+                                        "arg1", "", NULL);
 
    ecore_timer_add(50, _timer1_cb, NULL);
 

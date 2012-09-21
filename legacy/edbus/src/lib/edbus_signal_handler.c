@@ -51,7 +51,7 @@ edbus_signal_handler_shutdown(void)
 static void
 _match_append(Eina_Strbuf *match, const char *key, const char *value)
 {
-   if (value == NULL || !value[0]) return;
+   if (!value) return;
 
    if ((eina_strbuf_length_get(match) + strlen(",=''") + strlen(key) + strlen(value))
        >= DBUS_MAXIMUM_MATCH_RULE_LENGTH)
@@ -79,7 +79,7 @@ EAPI Eina_Bool
 edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
 {
    va_list ap;
-   char *key = NULL, *value;
+   char *key = NULL, *read;
    Signal_Argument *arg;
    DBusError err;
 
@@ -91,30 +91,33 @@ edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
    EINA_SAFETY_ON_TRUE_RETURN_VAL(dbus_error_is_set(&err), EINA_FALSE);
 
    va_start(ap, sh);
-   do
+   for (read = va_arg(ap, char *); read; read = va_arg(ap, char *))
      {
         if (!key)
           {
-             key = va_arg(ap, char *);
+             key = read;
              continue;
           }
-        value = va_arg(ap, char *);
         arg = calloc(1, sizeof(Signal_Argument));
         EINA_SAFETY_ON_NULL_GOTO(arg, error);
-
         if (!strncmp(key, ARGX, strlen(ARGX)))
           {
-             int id = atoi(key+strlen(ARGX)-1);
-             arg->index = (unsigned short)id;
-             arg->value = eina_stringshare_add(value);
+             int id = atoi(key + strlen(ARGX));
+             arg->index = (unsigned short) id;
+             arg->value = eina_stringshare_add(read);
              sh->args = eina_inlist_sorted_state_insert(sh->args,
                                                         EINA_INLIST_GET(arg),
                                                         _sort_arg,
                                                         sh->state_args);
-             _match_append(sh->match, key, value);
+             _match_append(sh->match, key, read);
+          }
+        else
+          {
+             ERR("%s not supported", key);
+             free(arg);
           }
         key = NULL;
-     } while(key);
+     }
    va_end(ap);
 
    dbus_error_init(&err);
