@@ -18,12 +18,6 @@ static const char *_module_priority[] = {
    NULL
 };
 
-EAPI Eeze_Sensor *
-eeze_sensor_handle_get(void)
-{
-   return g_handle;
-}
-
 Eeze_Sensor_Module *
 _highest_priority_module_get(void)
 {
@@ -124,11 +118,7 @@ EAPI Eeze_Sensor_Obj *
 eeze_sensor_new(Eeze_Sensor_Type type)
 {
    Eeze_Sensor_Obj *sens;
-   Eeze_Sensor *handle;
    Eeze_Sensor_Module *module = NULL;
-
-   handle = eeze_sensor_handle_get();
-   if (!handle) return NULL;
 
    sens = calloc(1, sizeof(Eeze_Sensor_Obj));
    if (!sens) return NULL;
@@ -207,13 +197,9 @@ eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, unsigned long long *timestamp)
 EAPI Eina_Bool
 eeze_sensor_read(Eeze_Sensor_Obj *sens)
 {
-   Eeze_Sensor *handle = NULL;
    Eeze_Sensor_Module *module = NULL;
 
    if (!sens) return EINA_FALSE;
-
-   handle = eeze_sensor_handle_get();
-   if (!handle) return EINA_FALSE;
 
    module = _highest_priority_module_get();
    if (!module) return EINA_FALSE;
@@ -228,10 +214,6 @@ EAPI Eina_Bool
 eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data)
 {
    Eeze_Sensor_Module *module = NULL;
-   Eeze_Sensor *handle = NULL;
-
-   handle = eeze_sensor_handle_get();
-   if (!handle) return EINA_FALSE;
 
    module = _highest_priority_module_get();
    if (!module) return EINA_FALSE;
