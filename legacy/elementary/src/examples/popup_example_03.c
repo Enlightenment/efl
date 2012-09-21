@@ -69,7 +69,7 @@ elm_main(int argc, char **argv)
    evas_object_smart_callback_add(btn2, "clicked", _response_cb, popup);
 
    //Appending the second action button
-   elm_object_part_content_set(popup, "button1", btn2);
+   elm_object_part_content_set(popup, "button2", btn2);
 
    //Display the popup object
    evas_object_show(popup);
