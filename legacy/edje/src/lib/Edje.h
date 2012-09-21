@@ -1437,6 +1437,29 @@ EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool r
 EAPI Eina_Bool    edje_object_mirrored_get        (const Evas_Object *obj);
 
 /**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Object_Color_Class Edje Class: Color
+ *
+ * @brief Functions that deal with Color Classes
+ *
+ * Sometimes we want to change the color of two or more parts equally and
+ * that's when we use color classes.
+ *
+ * If one or more parts are assigned with a color class, when we set color
+ * values to this class it will cause all these parts to have their colors
+ * multiplied by the values. Setting values to a color class at a process level
+ * will affect all parts with that color class, while at a object level will
+ * affect only the parts inside an specified object.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+/**
  * @brief Set Edje color class.
  *
  * @param color_class
@@ -1538,6 +1561,115 @@ EAPI void         edje_color_class_del            (const char *color_class);
 EAPI Eina_List   *edje_color_class_list           (void);
 
 /**
+ * @brief Sets the object color class.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param color_class
+ * @param r Object Red value
+ * @param g Object Green value
+ * @param b Object Blue value
+ * @param a Object Alpha value
+ * @param r2 Outline Red value
+ * @param g2 Outline Green value
+ * @param b2 Outline Blue value
+ * @param a2 Outline Alpha value
+ * @param r3 Shadow Red value
+ * @param g3 Shadow Green value
+ * @param b3 Shadow Blue value
+ * @param a3 Shadow Alpha value
+ *
+ * This function sets the color values for an object level color
+ * class. This will cause all edje parts in the specified object that
+ * have the specified color class to have their colors multiplied by
+ * these values.
+ *
+ * The first color is the object, the second is the text outline, and
+ * the third is the text shadow. (Note that the second two only apply
+ * to text parts).
+ *
+ * Setting color emits a signal "color_class,set" with source being
+ * the given color.
+ *
+ * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ *       half-transparent white is 255 255 255 128.
+ */
+EAPI Eina_Bool    edje_object_color_class_set         (Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
+
+/**
+ * @brief Gets the object color class.
+ *
+ * @param o A valid Evas_Object handle
+ * @param color_class
+ * @param r Object Red value
+ * @param g Object Green value
+ * @param b Object Blue value
+ * @param a Object Alpha value
+ * @param r2 Outline Red value
+ * @param g2 Outline Green value
+ * @param b2 Outline Blue value
+ * @param a2 Outline Alpha value
+ * @param r3 Shadow Red value
+ * @param g3 Shadow Green value
+ * @param b3 Shadow Blue value
+ * @param a3 Shadow Alpha value
+ *
+ * @return EINA_TRUE if found or EINA_FALSE if not found and all
+ *         values are zeroed.
+ *
+ * This function gets the color values for an object level color
+ * class. If no explicit object color is set, then global values will
+ * be used.
+ *
+ * The first color is the object, the second is the text outline, and
+ * the third is the text shadow. (Note that the second two only apply
+ * to text parts).
+ *
+ * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
+ *       half-transparent white is 255 255 255 128.
+ */
+EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
+
+/**
+ * @brief Delete the object color class.
+ *
+ * @param obj The edje object's reference.
+ * @param color_class The color class to be deleted.
+ *
+ * This function deletes any values at the object level for the
+ * specified object and color class.
+ * @note Deleting the color class will revert it to the values
+ *       defined by edje_color_class_set() or the color class
+ *       defined in the theme file.
+ *
+ * Deleting the color class will emit the signal "color_class,del"
+ * for the given Edje object.
+ */
+ EAPI void         edje_object_color_class_del         (Evas_Object *obj, const char *color_class);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Object_Text_Class Edje Class: Text
+ *
+ * @brief Functions that deal with Text Classes
+ *
+ * Sometimes we want to change the text of two or more parts equally and
+ * that's when we use text classes.
+ *
+ * If one or more parts are assigned with a text class, when we set font
+ * attributes to this class will update all these parts with the new font
+ * attributes. Setting values to a text class at a process level will affect
+ * all parts with that text class, while at object level will affect only
+ * the parts inside an specified object.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+/**
  * @brief Set the Edje text class.
  *
  * @param text_class The text class name
@@ -1581,6 +1713,31 @@ EAPI void         edje_text_class_del             (const char *text_class);
  *
  */
 EAPI Eina_List   *edje_text_class_list            (void);
+
+/**
+ * @brief Sets Edje text class.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param text_class The text class name
+ * @param font Font name
+ * @param size Font Size
+ *
+ * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
+ *
+ * This function sets the text class for the Edje.
+ *
+ */
+EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Edje_Object_Group
+ *
+ * @{
+ */
 
 /**
  * @brief Set the object minimum size.
@@ -2299,117 +2456,6 @@ EAPI int          edje_object_thaw                    (Evas_Object *obj);
  * "" for other states
  */
 EAPI const char      *edje_object_part_state_get      (const Evas_Object *obj, const char *part, double *val_ret);
-
-/**
- * @}
- */
-
-/**
- * @addtogroup Edje_Object_Group
- *
- * @{
- */
-
-/**
- * @brief Sets the object color class.
- *
- * @param obj A valid Evas_Object handle
- * @param color_class
- * @param r Object Red value
- * @param g Object Green value
- * @param b Object Blue value
- * @param a Object Alpha value
- * @param r2 Outline Red value
- * @param g2 Outline Green value
- * @param b2 Outline Blue value
- * @param a2 Outline Alpha value
- * @param r3 Shadow Red value
- * @param g3 Shadow Green value
- * @param b3 Shadow Blue value
- * @param a3 Shadow Alpha value
- *
- * This function sets the color values for an object level color
- * class. This will cause all edje parts in the specified object that
- * have the specified color class to have their colors multiplied by
- * these values.
- *
- * The first color is the object, the second is the text outline, and
- * the third is the text shadow. (Note that the second two only apply
- * to text parts).
- *
- * Setting color emits a signal "color_class,set" with source being
- * the given color.
- *
- * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
- *       half-transparent white is 255 255 255 128.
- */
-EAPI Eina_Bool    edje_object_color_class_set         (Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
-
-/**
- * @brief Gets the object color class.
- *
- * @param o A valid Evas_Object handle
- * @param color_class
- * @param r Object Red value
- * @param g Object Green value
- * @param b Object Blue value
- * @param a Object Alpha value
- * @param r2 Outline Red value
- * @param g2 Outline Green value
- * @param b2 Outline Blue value
- * @param a2 Outline Alpha value
- * @param r3 Shadow Red value
- * @param g3 Shadow Green value
- * @param b3 Shadow Blue value
- * @param a3 Shadow Alpha value
- *
- * @return EINA_TRUE if found or EINA_FALSE if not found and all
- *         values are zeroed.
- *
- * This function gets the color values for an object level color
- * class. If no explicit object color is set, then global values will
- * be used.
- *
- * The first color is the object, the second is the text outline, and
- * the third is the text shadow. (Note that the second two only apply
- * to text parts).
- *
- * @note unlike Evas, Edje colors are @b not pre-multiplied. That is,
- *       half-transparent white is 255 255 255 128.
- */
-EAPI Eina_Bool    edje_object_color_class_get         (const Evas_Object *o, const char *color_class, int *r, int *g, int *b, int *a, int *r2, int *g2, int *b2, int *a2, int *r3, int *g3, int *b3, int *a3);
-
-/**
- * @brief Delete the object color class.
- *
- * @param obj The edje object's reference.
- * @param color_class The color class to be deleted.
- *
- * This function deletes any values at the object level for the
- * specified object and color class.
- * @note Deleting the color class will revert it to the values
- *       defined by edje_color_class_set() or the color class
- *       defined in the theme file.
- *
- * Deleting the color class will emit the signal "color_class,del"
- * for the given Edje object.
- */
- EAPI void         edje_object_color_class_del         (Evas_Object *obj, const char *color_class);
-
-/**
- * @brief Sets Edje text class.
- *
- * @param obj A valid Evas_Object handle
- * @param text_class The text class name
- * @param font Font name
- * @param size Font Size
- *
- * @return @c EINA_TRUE, on success or @c EINA_FALSE, on error
- *
- * This function sets the text class for the Edje.
- *
- */
-EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
 
 /**
  * @}
