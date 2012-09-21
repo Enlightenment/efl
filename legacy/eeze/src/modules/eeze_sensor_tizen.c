@@ -359,7 +359,7 @@ light_read_cb(unsigned long long timestamp, float lux, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
-   obj->accuracy = 0;
+   obj->accuracy = -1;
    obj->data[0] = lux;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_LIGHT, obj, NULL, NULL);
@@ -379,7 +379,7 @@ proximity_read_cb(unsigned long long timestamp, float distance, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
-   obj->accuracy = 0;
+   obj->accuracy = -1;
    obj->data[0] = distance;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_PROXIMITY, obj, NULL, NULL);
@@ -399,6 +399,7 @@ snap_read_cb(unsigned long long timestamp, sensor_motion_snap_e snap, void *user
         ERR("No matching sensor object found in list.");
         return;
      }
+   obj->accuracy = -1;
    obj->data[0] = snap;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_SNAP, obj, NULL, NULL);
@@ -418,6 +419,7 @@ shake_read_cb(unsigned long long timestamp, sensor_motion_shake_e shake, void *u
         ERR("No matching sensor object found in list.");
         return;
      }
+   obj->accuracy = -1;
    obj->data[0] = shake;
    obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_SHAKE, obj, NULL, NULL);
@@ -437,6 +439,7 @@ panning_read_cb(unsigned long long timestamp, int x, int y, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   obj->accuracy = -1;
    obj->data[0] = x;
    obj->data[1] = y;
    obj->timestamp = timestamp;
@@ -457,6 +460,7 @@ facedown_read_cb(unsigned long long timestamp, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_FACEDOWN, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_FACEDOWN));
 }
@@ -474,6 +478,7 @@ doubletap_read_cb(unsigned long long timestamp, void *user_data)
         ERR("No matching sensor object found in list.");
         return;
      }
+   obj->timestamp = timestamp;
    ecore_event_add(EEZE_SENSOR_EVENT_DOUBLETAP, obj, NULL, NULL);
    sensor_stop(sensor_handle, eeze_to_tizen(EEZE_SENSOR_TYPE_MOTION_DOUBLETAP));
 }
@@ -513,6 +518,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = x;
         obj->data[1] = y;
         obj->data[2] = z;
+        obj->timestamp = 0;
         break;
 
       case SENSOR_MAGNETIC:
@@ -521,6 +527,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = x;
         obj->data[1] = y;
         obj->data[2] = z;
+        obj->timestamp = 0;
         break;
 
       case SENSOR_ORIENTATION:
@@ -529,6 +536,7 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = azimuth;
         obj->data[1] = pitch;
         obj->data[2] = roll;
+        obj->timestamp = 0;
         break;
 
       case SENSOR_GYROSCOPE:
@@ -537,18 +545,21 @@ eeze_sensor_tizen_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = x;
         obj->data[1] = y;
         obj->data[2] = z;
+        obj->timestamp = 0;
         break;
 
       case SENSOR_LIGHT:
         sensor_light_read_data(sensor_handle, &lux);
-        obj->accuracy = 0;
+        obj->accuracy = -1;
         obj->data[0] = lux;
+        obj->timestamp = 0;
         break;
 
       case SENSOR_PROXIMITY:
         sensor_proximity_read_data(sensor_handle, &distance);
-        obj->accuracy = 0;
+        obj->accuracy = -1;
         obj->data[0] = distance;
+        obj->timestamp = 0;
         break;
 
       default:
