@@ -337,26 +337,6 @@ typedef struct _Edje_Version
 
 EAPI extern Edje_Version *edje_version;
 
-typedef enum _Edje_Action_Type
-{
-   EDJE_ACTION_TYPE_NONE                = 0,
-   EDJE_ACTION_TYPE_STATE_SET           = 1,
-   EDJE_ACTION_TYPE_ACTION_STOP         = 2,
-   EDJE_ACTION_TYPE_SIGNAL_EMIT         = 3,
-   EDJE_ACTION_TYPE_DRAG_VAL_SET        = 4,
-   EDJE_ACTION_TYPE_DRAG_VAL_STEP       = 5,
-   EDJE_ACTION_TYPE_DRAG_VAL_PAGE       = 6,
-   EDJE_ACTION_TYPE_SCRIPT              = 7,
-   EDJE_ACTION_TYPE_FOCUS_SET           = 8,
-   EDJE_ACTION_TYPE_RESERVED00          = 9,
-   EDJE_ACTION_TYPE_FOCUS_OBJECT        = 10,
-   EDJE_ACTION_TYPE_PARAM_COPY          = 11,
-   EDJE_ACTION_TYPE_PARAM_SET           = 12,
-   EDJE_ACTION_TYPE_SOUND_SAMPLE        = 13, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_SOUND_TONE          = 14, /**< @since 1.1 */
-   EDJE_ACTION_TYPE_LAST                = 15
-} Edje_Action_Type;
-
 typedef enum _Edje_Load_Error
 {
    EDJE_LOAD_ERROR_NONE = 0, /**< No error happened, the loading was successful */
@@ -1266,24 +1246,6 @@ typedef enum _Edje_Text_Effect
    EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)
 } Edje_Text_Effect;
 
-typedef enum _Edje_Tween_Mode
-{
-   EDJE_TWEEN_MODE_NONE              = 0,
-   EDJE_TWEEN_MODE_LINEAR            = 1,
-   EDJE_TWEEN_MODE_SINUSOIDAL        = 2,
-   EDJE_TWEEN_MODE_ACCELERATE        = 3,
-   EDJE_TWEEN_MODE_DECELERATE        = 4,
-   EDJE_TWEEN_MODE_ACCELERATE_FACTOR = 5,
-   EDJE_TWEEN_MODE_DECELERATE_FACTOR = 6,
-   EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR = 7,
-   EDJE_TWEEN_MODE_DIVISOR_INTERP    = 8,
-   EDJE_TWEEN_MODE_BOUNCE            = 9,
-   EDJE_TWEEN_MODE_SPRING            = 10,
-   EDJE_TWEEN_MODE_LAST              = 11,
-   EDJE_TWEEN_MODE_MASK              = 0xff,
-   EDJE_TWEEN_MODE_OPT_FROM_CURRENT  = (1 << 31)
-} Edje_Tween_Mode;
-
 typedef enum _Edje_Cursor
 {
    EDJE_CURSOR_MAIN,
@@ -1381,58 +1343,6 @@ typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, c
 typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
 typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, const char *part, char **text);
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
-
-/**
- * @brief Set edje trasitions' frame time.
- *
- * @param t The frame time, in seconds. Default value is 1/30.
- *
- * This function sets the edje built-in animations' frame time (thus,
- * affecting their resolution) by calling
- * ecore_animator_frametime_set(). This frame time can be retrieved
- * with edje_frametime_get().
- *
- * @see edje_frametime_get()
- *
- */
-EAPI void         edje_frametime_set              (double t);
-
-/**
- * @brief Get edje trasitions' frame time.
- *
- * @return The frame time, in seconds.
- *
- * This function returns the edje frame time set by
- * edje_frametime_set() or the default value 1/30.
- *
- * @see edje_frametime_set()
- *
- */
-EAPI double       edje_frametime_get              (void);
-
-/**
- * @brief Freeze Edje objects.
- *
- * This function freezes all Edje animations in the current process.
- *
- * @note: for freeze a specific object @see edje_object_freeze().
- *
- * @see edje_thaw()
- *
- */
-EAPI void         edje_freeze                     (void);
-
-/**
- * @brief Thaw Edje objects.
- *
- * This function thaws all Edje animations in the current process.
- *
- * @note for thaw a specific object @see edje_object_thaw().
- *
- * @see edje_freeze()
- *
- */
-EAPI void         edje_thaw                       (void);
 
 /**
  * @brief Set Edje's global scaling factor.
@@ -2160,10 +2070,107 @@ EAPI void *       edje_object_signal_callback_extra_data_get(void);
  */
 
 /**
- * @addtogroup Edje_Object_Group
+ * @defgroup Edje_Object_Animation Edje Object Animation
+ *
+ * @brief Functions that deal with animations.
+ *
+ * Edje has the ability to animate objects. One can start, stop, play,
+ * pause, freeze and thaw edje animations using the functions of this section.
+ *
+ * @ingroup Edje_Object_Group
  *
  * @{
  */
+
+typedef enum _Edje_Tween_Mode
+{
+   EDJE_TWEEN_MODE_NONE              = 0,
+   EDJE_TWEEN_MODE_LINEAR            = 1,
+   EDJE_TWEEN_MODE_SINUSOIDAL        = 2,
+   EDJE_TWEEN_MODE_ACCELERATE        = 3,
+   EDJE_TWEEN_MODE_DECELERATE        = 4,
+   EDJE_TWEEN_MODE_ACCELERATE_FACTOR = 5,
+   EDJE_TWEEN_MODE_DECELERATE_FACTOR = 6,
+   EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR = 7,
+   EDJE_TWEEN_MODE_DIVISOR_INTERP    = 8,
+   EDJE_TWEEN_MODE_BOUNCE            = 9,
+   EDJE_TWEEN_MODE_SPRING            = 10,
+   EDJE_TWEEN_MODE_LAST              = 11,
+   EDJE_TWEEN_MODE_MASK              = 0xff,
+   EDJE_TWEEN_MODE_OPT_FROM_CURRENT  = (1 << 31)
+} Edje_Tween_Mode;
+
+typedef enum _Edje_Action_Type
+{
+   EDJE_ACTION_TYPE_NONE                = 0,
+   EDJE_ACTION_TYPE_STATE_SET           = 1,
+   EDJE_ACTION_TYPE_ACTION_STOP         = 2,
+   EDJE_ACTION_TYPE_SIGNAL_EMIT         = 3,
+   EDJE_ACTION_TYPE_DRAG_VAL_SET        = 4,
+   EDJE_ACTION_TYPE_DRAG_VAL_STEP       = 5,
+   EDJE_ACTION_TYPE_DRAG_VAL_PAGE       = 6,
+   EDJE_ACTION_TYPE_SCRIPT              = 7,
+   EDJE_ACTION_TYPE_FOCUS_SET           = 8,
+   EDJE_ACTION_TYPE_RESERVED00          = 9,
+   EDJE_ACTION_TYPE_FOCUS_OBJECT        = 10,
+   EDJE_ACTION_TYPE_PARAM_COPY          = 11,
+   EDJE_ACTION_TYPE_PARAM_SET           = 12,
+   EDJE_ACTION_TYPE_SOUND_SAMPLE        = 13, /**< @since 1.1 */
+   EDJE_ACTION_TYPE_SOUND_TONE          = 14, /**< @since 1.1 */
+   EDJE_ACTION_TYPE_LAST                = 15
+} Edje_Action_Type;
+
+/**
+ * @brief Set edje trasitions' frame time.
+ *
+ * @param t The frame time, in seconds. Default value is 1/30.
+ *
+ * This function sets the edje built-in animations' frame time (thus,
+ * affecting their resolution) by calling
+ * ecore_animator_frametime_set(). This frame time can be retrieved
+ * with edje_frametime_get().
+ *
+ * @see edje_frametime_get()
+ *
+ */
+EAPI void         edje_frametime_set              (double t);
+
+/**
+ * @brief Get edje trasitions' frame time.
+ *
+ * @return The frame time, in seconds.
+ *
+ * This function returns the edje frame time set by
+ * edje_frametime_set() or the default value 1/30.
+ *
+ * @see edje_frametime_set()
+ *
+ */
+EAPI double       edje_frametime_get              (void);
+
+/**
+ * @brief Freeze Edje objects.
+ *
+ * This function freezes all Edje animations in the current process.
+ *
+ * @note: for freeze a specific object @see edje_object_freeze().
+ *
+ * @see edje_thaw()
+ *
+ */
+EAPI void         edje_freeze                     (void);
+
+/**
+ * @brief Thaw Edje objects.
+ *
+ * This function thaws all Edje animations in the current process.
+ *
+ * @note for thaw a specific object @see edje_object_thaw().
+ *
+ * @see edje_freeze()
+ *
+ */
+EAPI void         edje_thaw                       (void);
 
 /**
  * @brief Set the Edje object to playing or paused states.
@@ -2255,6 +2262,29 @@ EAPI int          edje_object_freeze                  (Evas_Object *obj);
  * @see edje_object_freeze()
  */
 EAPI int          edje_object_thaw                    (Evas_Object *obj);
+
+/**
+ * @brief Returns the state of the Edje part.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param val_ret
+ *
+ * @return The part state:\n
+ * "default" for the default state\n
+ * "" for other states
+ */
+EAPI const char      *edje_object_part_state_get      (const Evas_Object *obj, const char *part, double *val_ret);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Edje_Object_Group
+ *
+ * @{
+ */
 
 /**
  * @brief Sets the object color class.
@@ -3549,19 +3579,6 @@ EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Ob
  * @return The swallowed object, or NULL if there is none.
  */
 EAPI Evas_Object     *edje_object_part_swallow_get    (const Evas_Object *obj, const char *part);
-
-/**
- * @brief Returns the state of the Edje part.
- *
- * @param obj A valid Evas_Object handle
- * @param part The part name
- * @param val_ret
- *
- * @return The part state:\n
- * "default" for the default state\n
- * "" for other states
- */
-EAPI const char      *edje_object_part_state_get      (const Evas_Object *obj, const char *part, double *val_ret);
 
 /**
  * @brief Determine dragable directions.
