@@ -11,6 +11,7 @@
  * @li @ref tutorial_ephysics_constraint
  * @li @ref tutorial_ephysics_gravity
  * @li @ref tutorial_ephysics_velocity
+ * @li @ref tutorial_ephysics_shapes
  * @li @ref tutorial_ephysics_sleeping_threshold
  */
 
@@ -798,6 +799,103 @@
  * @include test_velocity.c
  *
  * @example test_velocity.c
+ */
+
+ /**
+ * @page tutorial_ephysics_shapes EPhysics - Shapes
+ *
+ * The purpose of this example is to demonstrate the EPhysics Shapes
+ * usage - The code creates two EPhysics_Bodys using a custom shape.
+ *
+ * For this example we'll have an EPhysics_World, and two basic EPhysics_Bodys.
+ *
+ * The basic concepts like - defining an EPhysics_World, render geometry,
+ * physics limiting boundaries, add an EPhysics_Body, associate it to evas
+ * objects, change restitution, friction and impulse properties, were
+ * already covered in
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * @section add-shape Adding a Shape
+ * @dontinclude test_shapes.c
+ *
+ * Shapes are used to create bodies with shapes that differ from primitive
+ * ones, like box and circle.
+ *
+ * A shape consists in a group of points, the vertices of the body to be
+ * created later with ephysics_body_shape_add(). You can also save and load
+ * it from a file.
+ *
+ * We'll have to create a specific type of variable: 
+ * @ref EPhysics_Shape
+ *
+ * @skip _world_populate(Test_Data
+ * @until Evas_Object *pentagon,
+ *
+ * First we add an image we want to add an EPhysics_Body to have a reference
+ * to after set the points (vertices).
+ *
+ * @skip pentagon = elm_image_add
+ * @until evas_object_show(pentagon);
+ *
+ * Here we create a new shape, note that the returned shape initially
+ * doesn't has points set, so its requiered to set vertices.
+ *
+ * @skipline pentagon_shape =
+ *
+ * Now we're setting the shape points (vertices) basing on the image that
+ * we added, two vertices form a link between them, an edge, so with some
+ * vertices is possible to create polygons, in this case a pentagon. 
+ *
+ * @skip ephysics_shape_point_add(pentagon_shape
+ * @until , 1);
+ *
+ * Here we create a new physics body using a custom shape. The center of mass
+ * will be the center of the shape. Its collision shape will be the convex
+ * shape that has all the points (and edges) we added to this shape before.
+ *
+ * @skip pentagon_body = ephysics_body_shape_add
+ * @until ephysics_body_restitution_set(pentagon_body, 1);
+ *
+ * Here we just delete the custom shape (not the body) after used to create
+ * the wanted bodies, it's required to delete it. It won't be deleted
+ * automatically by ephysics at any point, even on shutdown.
+ *
+ * @skipline ephysics_shape_del(pentagon_shape
+ *
+ * In the example we add another shape with the same process we just used,
+ * but with different image and points.
+ *
+ * @dontinclude test_shapes.c
+ *
+ * @skip ephysics_shape_point_add(hexagon_shape
+ * @until 18, 60);
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_shapes_c.
+ *
+ */
+
+ /**
+ * @page test_shapes_c test_shapes.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-shapes-c test_shapes.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_data_new
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_shapes.c
+ *
+ * @example test_shapes.c
  */
 
  /**
