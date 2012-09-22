@@ -87,8 +87,8 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
         return EINA_FALSE;
      }
 
-   esvg_renderable_x_dpi_set(e, 92.0);
-   esvg_renderable_y_dpi_set(e, 92.0);
+   esvg_svg_x_dpi_set(e, 92.0);
+   esvg_svg_y_dpi_set(e, 92.0);
    esvg_svg_actual_width_get(e, &sw);
    esvg_svg_actual_height_get(e, &sh);
    w = (int)ceil(sw);
@@ -166,8 +166,8 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
         return EINA_FALSE;
      }
 
-   esvg_renderable_x_dpi_set(e, 75.0);
-   esvg_renderable_y_dpi_set(e, 75.0);
+   esvg_svg_x_dpi_set(e, 92.0);
+   esvg_svg_y_dpi_set(e, 92.0);
    esvg_svg_actual_width_get(e, &sw);
    esvg_svg_actual_height_get(e, &sh);
    w = (int)ceil(sw);
@@ -231,9 +231,9 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
         goto unref_renderer;
      }
 
-   esvg_element_setup(e, NULL);
+   esvg_svg_setup(e, NULL);
 
-   if (!esvg_renderable_draw(e, s, NULL, 0, 0, &err))
+   if (!esvg_svg_draw(e, s, NULL, 0, 0, &err))
      {
         *error = EVAS_LOAD_ERROR_GENERIC;
         enesim_error_dump(err);
