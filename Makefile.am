@@ -67,7 +67,7 @@ pkgconfig_DATA += eina.pc eet.pc
 
 doc:
 	@echo "entering doc/"
-	make -C doc doc
+	$(MAKE) $(AM_MAKEFLAGS) -C doc doc
 
 # Unit tests
 
@@ -91,11 +91,12 @@ if EFL_ENABLE_TESTS
 
 check-local:
 if EFL_ENABLE_COVERAGE
-	@$(MAKE) lcov-reset
+	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
 endif
-	@./src/tests/eet/eet_suite
+	@./src/tests/eina/eina_suite$(EXEEXT)
+	@./src/tests/eet/eet_suite$(EXEEXT)
 if EFL_ENABLE_COVERAGE
-	@$(MAKE) lcov-report
+	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
 endif
 
 endif
@@ -103,22 +104,22 @@ endif
 # benchmark
 
 benchmark:
-	@$(MAKE) -C src benchmark
+	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark
 	@mkdir benchmark || true
-	@cd benchmark && ../src/benchmarks/eina/eina_bench `date +%F_%s`
+	@cd benchmark && ../src/benchmarks/eina/eina_bench$(EXEEXT) `date +%F_%s`
 
 benchmark-e17:
-	@$(MAKE) -C src benchmark-e17
+	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark-e17
 	@mkdir benchmark || true
-	@cd benchmark && ../src/benchmarks/eina/eina_bench `date +%F_%s`
+	@cd benchmark && ../src/benchmarks/eina/eina_bench$(EXEEXT) `date +%F_%s`
 
 # examples
 
 examples:
-	@$(MAKE) -C src examples
+	@$(MAKE) $(AM_MAKEFLAGS) -C src examples
 
 install-examples:
-	@$(MAKE) -C src install-examples
+	@$(MAKE) $(AM_MAKEFLAGS) -C src install-examples
 
 # cleaning
 

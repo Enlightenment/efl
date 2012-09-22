@@ -3,9 +3,9 @@ MAINTAINERCLEANFILES = Makefile.in
 SUBDIRS = eina eet
 
 examples:
-	@$(MAKE) -C eina examples
-	@$(MAKE) -C eet examples
+	@$(MAKE) $(AM_MAKEFLAGS) -C eina examples
+	@$(MAKE) $(AM_MAKEFLAGS) -C eet examples
 
 install-examples:
-	@$(MAKE) -C eina install-examples
-	@$(MAKE) -C eet install-examples
+	@$(MAKE) $(AM_MAKEFLAGS) -C eina install-examples
+	@$(MAKE) $(AM_MAKEFLAGS) -C eet install-examples

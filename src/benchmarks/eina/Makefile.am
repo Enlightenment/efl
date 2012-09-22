@@ -12,8 +12,8 @@ EXTRA_PROGRAMS = eina_bench
 
 benchmark: eina_bench libcity.la
 
-#benchmark-e17: eina_bench
-#	AM_CPPFLAGS += -DEINA_ENABLE_BENCH_E17
+benchmark-e17: eina_bench
+	  @$(MAKE) $(AM_MAKEFLAGS) AM_CPPFLAGS="${AM_CPPFLAGS} -DEINA_ENABLE_BENCH_E17"
 
 eina_bench_SOURCES = \
 eina_bench.c \
