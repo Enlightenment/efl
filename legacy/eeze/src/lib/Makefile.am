@@ -3,7 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = @EEZE_CFLAGS@ \
 -DPACKAGE_LIB_DIR=\"$(libdir)\"
 
-includes_HEADERS = Eeze.h Eeze_Net.h Eeze_Sensor.h eeze_sensor_private.h
+includes_HEADERS = Eeze.h Eeze_Net.h Eeze_Sensor.h
 
 libeeze_la_SOURCES = \
 eeze_main.c \
@@ -15,6 +15,7 @@ eeze_udev_private.c \
 eeze_udev_syspath.c \
 eeze_udev_walk.c \
 eeze_udev_watch.c \
+eeze_sensor_private.h \
 eeze_sensor.c
 
 if HAVE_EEZE_MOUNT
