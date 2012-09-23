@@ -1,0 +1,66 @@
+%{!?_rel:%{expand:%%global _rel 0.enl%{?dist}}}
+%define _missing_doc_files_terminate_build 0
+
+Summary: ephysics library
+Name: @PACKAGE@
+Version: @VERSION@
+Release: %{_rel}
+License: MIT
+Group: System Environment/Libraries
+Source: http://download.enlightenment.org/releases/%{name}-%{version}.tar.gz
+Packager: %{?_packager:%{_packager}}%{!?_packager:Rui Miguel Seabra <rms@1407.org>}
+Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
+Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
+URL: http://www.enlightenment.org/
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
+
+%description
+EPhysics is a library that manages Ecore, Evas and Bullet Physics into
+an easy to use way. It's a kind of wrapper, a glue, between these libraries.
+It's not intended to be a physics library (we already have many out there).
+
+%package devel
+Summary: EPhysics headers, static libraries, documentation and test programs
+Group: System Environment/Libraries
+Requires: %{name} = %{version}
+
+%description devel
+Headers, static libraries, test programs and documentation for EPhysics
+
+%prep
+%setup -q
+
+%build
+%{configure} --prefix=%{_prefix}
+%{__make} %{?_smp_mflags} %{?mflags}
+
+%install
+%{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
+
+%clean
+test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
+
+%post
+/sbin/ldconfig
+
+%postun
+/sbin/ldconfig
+
+%files
+%defattr(-, root, root)
+%doc AUTHORS COPYING README
+%{_bindir}/*
+%{_libdir}/*.so.*
+%dir %{_datadir}/ephysics/
+%{_datadir}/ephysics/*.edj
+%{_datadir}/ephysics/*.png
+
+%files devel
+%defattr(-, root, root)
+%{_includedir}/*
+%{_libdir}/*.a
+%{_libdir}/*.so
+%{_libdir}/*.la
+%{_libdir}/pkgconfig/*
+
+%changelog

@@ -220,6 +220,7 @@ AC_SUBST(requirement_ephysics)
 
 AC_OUTPUT([
 ephysics.pc
+ephysics.spec
 Makefile
 data/Makefile
 data/logo_images/Makefile
