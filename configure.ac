@@ -196,6 +196,9 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 
 #### Additional options to configure
 
+EFL_ENABLE_LIB([eet], [yes])
+
+
 # Assert or fail.
 
 AC_ARG_ENABLE([assert],
@@ -782,6 +785,10 @@ EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 
 #### Eet
 
+efl_have_eet="no"
+
+if test "x${efl_want_build_eet}" = "xyes" ; then
+
 AC_MSG_NOTICE([Eet checks])
 
 ### Default values
@@ -1123,6 +1130,14 @@ esac
 
 ### Checks for library functions
 
+### Check availability
+
+if test "x${efl_lib_zlib}" = ""xyes" && test "x${efl_lib_libjpeg}" = ""xyes" ; then
+   efl_have_eet="yes"
+fi
+
+fi
+
 #### End of Eet
 
 
@@ -1246,6 +1261,9 @@ echo "    Fixed bitmap.......: ${enable_fixed_bitmap}"
 echo "    One big............: ${enable_one_big}"
 echo "    Pass through.......: ${enable_pass_through}"
 echo
+if test "x${efl_have_eet}" = "xno" ; then
+echo "Eet....................: no"
+else
 echo "Eet"
 echo
 echo "  Secure layer.........: ${secure_layer}"
@@ -1259,6 +1277,7 @@ echo
 echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
 echo "  Examples.............: make examples"
 echo "    installation.......: make install-examples"
+fi
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
@@ -1269,4 +1288,3 @@ echo
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
 echo
-

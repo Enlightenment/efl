@@ -8,4 +8,8 @@ SUBDIRS += evil
 
 endif
 
+if EFL_BUILD_EET
+
 SUBDIRS += eet
+
+endif

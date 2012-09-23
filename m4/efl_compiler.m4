@@ -8,7 +8,6 @@ dnl Macro that checks for a compiler flag availability
 dnl
 dnl EFL_CHECK_COMPILER_FLAG(EFL, FLAG[, ACTION-IF-FOUND[ ,ACTION-IF-NOT-FOUND]])
 dnl AC_SUBST : EFL_CFLAGS (EFL being replaced by its value)
-dnl AM_CONDITIONAL : EFL_HAVE_FLAG (FLAG being replaced by its value)
 
 AC_DEFUN([EFL_CHECK_COMPILER_FLAG],
 [
@@ -39,8 +38,6 @@ fi
 AC_ARG_VAR(UPEFL[_CFLAGS], [preprocessor flags for $2])
 AC_SUBST(UPEFL[_CFLAGS])
 
-AM_CONDITIONAL([EFL_HAVE]UP, [test "x${have_flag}" = "xyes"])
-
 m4_popdef([UP])
 m4_popdef([UPEFL])
 ])
@@ -60,7 +57,6 @@ dnl Macro that checks for a linker flag availability
 dnl
 dnl EFL_CHECK_LINKER_FLAG(EFL, FLAG[, ACTION-IF-FOUND[ ,ACTION-IF-NOT-FOUND]])
 dnl AC_SUBST : EFL_LIBS (EFL being replaced by its value)
-dnl AM_CONDITIONAL : EFL_HAVE_FLAG (FLAG being replaced by its value)
 
 AC_DEFUN([EFL_CHECK_LINKER_FLAG],
 [
@@ -87,8 +83,6 @@ if test "x${have_flag}" = "xyes" ; then
 fi
 AC_ARG_VAR(UPEFL[_LIBS], [preprocessor flags for $2])
 AC_SUBST(UPEFL[_LIBS])
-
-AM_CONDITIONAL([EFL_HAVE]UP, [test "x${have_flag}" = "xyes"])
 
 m4_popdef([UP])
 m4_popdef([UPEFL])

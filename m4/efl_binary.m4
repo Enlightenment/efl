@@ -18,8 +18,8 @@ have_[]m4_defn([DOWN])="yes"
 
 dnl configure option
 
-AC_ARG_ENABLE([$1],
-   [AC_HELP_STRING([--disable-$1], [disable building of ]DOWN)],
+AC_ARG_ENABLE([binary-$1],
+   [AC_HELP_STRING([--disable-binary-$1], [disable building of ]DOWN[ binary])],
    [
     if test "x${enableval}" = "xyes" ; then
        have_[]m4_defn([DOWN])="yes"
@@ -36,8 +36,6 @@ if test "x$have_[]m4_defn([DOWN])" = "xyes"; then
 fi
 
 AC_SUBST(UP[]_PRG)
-
-AM_CONDITIONAL(BUILD_[]UP, test "x$have_[]m4_defn([DOWN])" = "xyes")
 
 AS_IF([test "x$have_[]m4_defn([DOWN])" = "xyes"], [$2], [$3])
 

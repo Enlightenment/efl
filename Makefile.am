@@ -58,7 +58,11 @@ if HAVE_WINDOWS
 pkgconfig_DATA += evil.pc
 endif
 
-pkgconfig_DATA += eina.pc eet.pc
+pkgconfig_DATA += eina.pc
+
+if EFL_BUILD_EET
+pkgconfig_DATA += eet.pc
+endif
 
 
 .PHONY: doc benchmark examples install-examples
@@ -94,7 +98,9 @@ if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
 endif
 	@./src/tests/eina/eina_suite$(EXEEXT)
+if EFL_BUILD_EET
 	@./src/tests/eet/eet_suite$(EXEEXT)
+endif
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
 endif
