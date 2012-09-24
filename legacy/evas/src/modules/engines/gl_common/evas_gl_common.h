@@ -20,19 +20,15 @@
 # include <OpenGL/glext.h>
 #else
 # ifdef _EVAS_ENGINE_SDL_H
-#  if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
+#  ifdef GL_GLES
 #   include <SDL/SDL_opengles.h>
 #  else
 #   include <SDL/SDL_opengl.h>
 #  endif
 # else
-#  if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-#   if defined(GLES_VARIETY_S3C6410)
-#    include <GLES2/gl2.h>
-#   elif defined(GLES_VARIETY_SGX)
-#    include <GLES2/gl2.h>
-#    include <GLES2/gl2ext.h>
-#   endif
+#  ifdef GL_GLES
+#   include <GLES2/gl2.h>
+#   include <GLES2/gl2ext.h>
 #  else
 #   include <GL/gl.h>
 #   include <GL/glext.h>
@@ -354,7 +350,7 @@ struct _Evas_Engine_GL_Context
    /* If this is set: Force drawing with a particular filter */
    GLuint filter_prog;
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 // FIXME: hack. expose egl display to gl core for egl image sec extn.
    void *egldisp;
 #endif
@@ -649,7 +645,7 @@ extern void       (*glsym_glReleaseShaderCompiler)(void);
 extern void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b);
 extern GLboolean  (*glsym_glUnmapBuffer)          (GLenum a);
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
 extern unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
 extern void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);

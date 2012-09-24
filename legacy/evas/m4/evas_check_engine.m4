@@ -174,7 +174,7 @@ else
             evas_engine_[]$1[]_libs="${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
             evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
             have_dep="yes"
-            AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
+            AC_DEFINE(GL_GLES, 1, [GLSL runtime shader GLES2 support])
             gles_variety_sgx="yes"
          fi
       fi

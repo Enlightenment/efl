@@ -2,7 +2,7 @@
 
 static const GLenum rgba_fmt   = GL_RGBA;
 static const GLenum rgba_ifmt  = GL_RGBA;
-//#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+//#ifdef GL_GLES
 //static const GLenum rgb_fmt    = GL_RGBA;
 //static const GLenum rgb_ifmt   = GL_RGBA;
 //#else
@@ -10,7 +10,7 @@ static const GLenum rgb_fmt    = GL_RGBA;
 static const GLenum rgb_ifmt   = GL_RGB;
 //#endif
 #ifdef GL_BGRA
-# if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+# ifdef GL_GLES
 static const GLenum bgra_fmt   = GL_BGRA;
 static const GLenum bgra_ifmt  = GL_BGRA;
 static const GLenum bgr_fmt    = GL_BGRA;
@@ -322,7 +322,7 @@ evas_gl_common_texture_new(Evas_Engine_GL_Context *gc, RGBA_Image *im)
                                     &u, &v, &l_after,
                                     gc->shared->info.tune.atlas.max_alloc_size);
         else
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
            tex->pt = _pool_tex_find(gc, im->cache_entry.w + 3,
                                     im->cache_entry.h + 1, rgba_ifmt, rgba_fmt,
                                     &u, &v, &l_after,
@@ -371,7 +371,7 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    pt->dataformat = GL_UNSIGNED_BYTE;
    pt->render = 1;
    pt->references = 0;
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 # ifndef GL_FRAMEBUFFER
 #  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
 # endif
@@ -456,7 +456,7 @@ _pool_tex_native_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    glBindTexture(im->native.target, pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 #else
    if (im->native.loose)
      {
@@ -485,7 +485,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 {
    Evas_GL_Texture_Pool *pt = NULL;
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    int fmt; // EGL_MAP_GL_TEXTURE_RGBA_SEC or EGL_MAP_GL_TEXTURE_RGB_SEC or bust
    int pixtype; // EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC or bust
    int attr[] =
@@ -600,7 +600,7 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
    return pt;
 
 /* ERROR HANDLING */
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 error:
   secsym_eglDestroyImage(egldisplay, pt->dyn.img);
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -652,7 +652,7 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
 
    _print_tex_count();
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    if (pt->dyn.img)
      {
         if (pt->dyn.checked_out > 0)
@@ -1292,7 +1292,7 @@ evas_gl_common_texture_nv12_new(Evas_Engine_GL_Context *gc, DATA8 **rows, unsign
 {
    Evas_GL_Texture *tex;
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    tex = _evas_gl_common_texture_y2uv_new(gc, w, h, EINA_TRUE, EINA_TRUE, lum_ifmt, lum_fmt, lum_alpha_ifmt, lum_alpha_fmt, 1);
    if (!tex)
 #endif
@@ -1307,7 +1307,7 @@ evas_gl_common_texture_nv12tiled_new(Evas_Engine_GL_Context *gc, DATA8 **rows, u
 {
    Evas_GL_Texture *tex = NULL;
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    tex = _evas_gl_common_texture_y2uv_new(gc, w, h, EINA_TRUE, EINA_TRUE, lum_ifmt, lum_fmt, lum_alpha_ifmt, lum_alpha_fmt, 1);
    if (!tex)
 #endif
@@ -1439,7 +1439,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
    mb_w = w / 64 + (w % 64 ? 1 : 0);
    mb_h = h / 32 + (h % 32 ? 1 : 0);
 
-#if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
+#ifdef GL_GLES
    if (tex->dyn)
      {
         char *texture_addr;

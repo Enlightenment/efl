@@ -27,7 +27,7 @@ void       (*glsym_glReleaseShaderCompiler)(void) = NULL;
 void      *(*glsym_glMapBuffer)            (GLenum a, GLenum b) = NULL;
 GLboolean  (*glsym_glUnmapBuffer)          (GLenum a) = NULL;
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 // just used for finding symbols :)
 typedef void (*_eng_fn) (void);
 
@@ -118,7 +118,7 @@ gl_symbols(void)
         FINDSYM(glsym_glUnmapBuffer, "glUnmapBufferKHR", glsym_func_boolean);
      }
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 #undef FINDSYM
 #define FINDSYM(dst, sym, typ) \
    if ((!dst) && (secsym_eglGetProcAddress)) dst = (typ)secsym_eglGetProcAddress(sym); \
@@ -558,7 +558,7 @@ evas_gl_common_context_new(void)
                  (strstr((char *)ext, "GL_EXT_texture_format_BGRA8888")))
                shared->info.bgra = 1;
 #endif
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
              // FIXME: there should be an extension name/string to check for
              // not just symbols in the lib
              i = 0;
@@ -993,7 +993,7 @@ evas_gl_common_context_target_surface_set(Evas_Engine_GL_Context *gc,
 
    gc->pipe[0].shader.surface = surface;
    gc->change.size = 1;
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 # ifndef GL_FRAMEBUFFER
 #  define GL_FRAMEBUFFER GL_FRAMEBUFFER_OES
 # endif
@@ -2425,7 +2425,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
           }
         if (gc->pipe[i].array.im)
           {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
              if (gc->pipe[i].array.im->tex->pt->dyn.img)
                {
                   secsym_glEGLImageTargetTexture2DOES
@@ -2693,7 +2693,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
                   if (gc->pipe[i].shader.cur_texu_dyn)
 		    secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);
 #endif
@@ -2702,7 +2702,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 		  if (gc->pipe[i].shader.cur_texv_dyn)
 		    secsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texv_dyn);
 #endif
@@ -2720,7 +2720,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glBindTexture(GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 		  if (gc->pipe[i].shader.cur_texu_dyn)
 		    secsym_glEGLImageTargetTexture2DOES
                     (GL_TEXTURE_2D, gc->pipe[i].shader.cur_texu_dyn);

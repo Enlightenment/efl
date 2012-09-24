@@ -1106,7 +1106,7 @@ evgl_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
 static void
 evgl_glClearDepthf(GLclampf depth)
 {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    glClearDepthf(depth);
 #else
    glClearDepth(depth);
@@ -1116,7 +1116,7 @@ evgl_glClearDepthf(GLclampf depth)
 static void
 evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
 {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    glDepthRangef(zNear, zFar);
 #else
    glDepthRange(zNear, zFar);
@@ -1126,7 +1126,7 @@ evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
 static void
 evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision)
 {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
 #else
    if (range)
@@ -1146,7 +1146,7 @@ evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* 
 static void
 evgl_glReleaseShaderCompiler(void)
 {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    glReleaseShaderCompiler();
 #else
 #endif
@@ -1155,7 +1155,7 @@ evgl_glReleaseShaderCompiler(void)
 static void
 evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length)
 {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    glShaderBinary(n, shaders, binaryformat, binary, length);
 #else
 // FIXME: need to dlsym/getprocaddress for this

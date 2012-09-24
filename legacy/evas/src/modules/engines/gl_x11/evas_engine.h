@@ -10,26 +10,16 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-# if defined(GLES_VARIETY_S3C6410)
-#  include <EGL/egl.h>
-#  include <GLES2/gl2.h>
-#  include <X11/Xlib.h>
-#  include <X11/Xatom.h>
-#  include <X11/Xutil.h>
-#  include <X11/extensions/Xrender.h>
-#  include <X11/Xresource.h> // xres - dpi
-# elif defined(GLES_VARIETY_SGX)
-#  define SUPPORT_X11 1
-#  include <EGL/egl.h>
-#  include <GLES2/gl2.h>
-#  include <GLES2/gl2ext.h>
-#  include <X11/Xlib.h>
-#  include <X11/Xatom.h>
-#  include <X11/Xutil.h>
-#  include <X11/extensions/Xrender.h>
-#  include <X11/Xresource.h> // xres - dpi
-# endif
+#ifdef GL_GLES
+# define SUPPORT_X11 1
+# include <EGL/egl.h>
+# include <GLES2/gl2.h>
+# include <GLES2/gl2ext.h>
+# include <X11/Xlib.h>
+# include <X11/Xatom.h>
+# include <X11/Xutil.h>
+# include <X11/extensions/Xrender.h>
+# include <X11/Xresource.h> // xres - dpi
 #else
 # include <X11/Xlib.h>
 # include <X11/Xatom.h>
@@ -87,7 +77,7 @@ struct _Evas_GL_X11_Window
       int              drew : 1;
       int              x1, y1, x2, y2;
    } draw;
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    EGLContext       egl_context[1];
    EGLSurface       egl_surface[1];
    EGLConfig        egl_config;

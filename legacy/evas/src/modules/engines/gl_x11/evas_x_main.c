@@ -2,7 +2,7 @@
 
 static Evas_GL_X11_Window *_evas_gl_x11_window = NULL;
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 static EGLContext context = EGL_NO_CONTEXT;
 #else
 // FIXME: this will only work for 1 display connection (glx land can have > 1)
@@ -36,7 +36,7 @@ eng_window_new(Display *disp,
                int      rot)
 {
    Evas_GL_X11_Window *gw;
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    int context_attrs[3];
    int config_attrs[40];
    int major_version, minor_version;
@@ -66,7 +66,7 @@ eng_window_new(Display *disp,
    vi_use = _evas_gl_x11_vi;
    if (gw->alpha)
      {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
         if (_evas_gl_x11_rgba_vi)
           {
              vi_use = _evas_gl_x11_rgba_vi;
@@ -83,54 +83,16 @@ eng_window_new(Display *disp,
    gw->visualinfo = vi_use;
 
 // EGL / GLES
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    context_attrs[1] = 2;
    context_attrs[2] = EGL_NONE;
 
-# if defined(GLES_VARIETY_S3C6410)
-   if (gw->visualinfo->depth == 16) // 16bpp
-     {
-        config_attrs[n++] = EGL_SURFACE_TYPE;
-        config_attrs[n++] = EGL_WINDOW_BIT;
-        config_attrs[n++] = EGL_RENDERABLE_TYPE;
-        config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-        config_attrs[n++] = EGL_RED_SIZE;
-        config_attrs[n++] = 5;
-        config_attrs[n++] = EGL_GREEN_SIZE;
-        config_attrs[n++] = 6;
-        config_attrs[n++] = EGL_BLUE_SIZE;
-        config_attrs[n++] = 5;
-        config_attrs[n++] = EGL_DEPTH_SIZE;
-        config_attrs[n++] = 0;
-        config_attrs[n++] = EGL_STENCIL_SIZE;
-        config_attrs[n++] = 0;
-        config_attrs[n++] = EGL_NONE;
-     }
-   else // 24/32bit. no one does 8bpp anymore. and 15bpp... dead
-     {
-        config_attrs[n++] = EGL_SURFACE_TYPE;
-        config_attrs[n++] = EGL_WINDOW_BIT;
-        config_attrs[n++] = EGL_RENDERABLE_TYPE;
-        config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-        config_attrs[n++] = EGL_RED_SIZE;
-        config_attrs[n++] = 8;
-        config_attrs[n++] = EGL_GREEN_SIZE;
-        config_attrs[n++] = 8;
-        config_attrs[n++] = EGL_BLUE_SIZE;
-        config_attrs[n++] = 8;
-        config_attrs[n++] = EGL_DEPTH_SIZE;
-        config_attrs[n++] = 0;
-        config_attrs[n++] = EGL_STENCIL_SIZE;
-        config_attrs[n++] = 0;
-        config_attrs[n++] = EGL_NONE;
-     }
-# elif defined(GLES_VARIETY_SGX)
    config_attrs[n++] = EGL_SURFACE_TYPE;
    config_attrs[n++] = EGL_WINDOW_BIT;
    config_attrs[n++] = EGL_RENDERABLE_TYPE;
    config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-#if 0
+# if 0
 // FIXME: n900 - omap3 sgx libs break here
    config_attrs[n++] = EGL_RED_SIZE;
    config_attrs[n++] = 1;
@@ -139,7 +101,7 @@ eng_window_new(Display *disp,
    config_attrs[n++] = EGL_BLUE_SIZE;
    config_attrs[n++] = 1;
 // FIXME: end n900 breakage
-#endif
+# endif
    if (gw->alpha)
      {
         config_attrs[n++] = EGL_ALPHA_SIZE;
@@ -155,8 +117,7 @@ eng_window_new(Display *disp,
    config_attrs[n++] = EGL_STENCIL_SIZE;
    config_attrs[n++] = 0;
    config_attrs[n++] = EGL_NONE;
-# endif
-
+   
    gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)
      {
@@ -528,7 +489,7 @@ eng_window_new(Display *disp,
         eng_window_free(gw);
         return NULL;
      }
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    gw->gl_context->egldisp = gw->egl_disp;
 #endif
    eng_window_use(gw);
@@ -550,7 +511,7 @@ eng_window_free(Evas_GL_X11_Window *gw)
         ref = gw->gl_context->references - 1;
         evas_gl_common_context_free(gw->gl_context);
      }
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
       eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
@@ -582,7 +543,7 @@ eng_window_use(Evas_GL_X11_Window *gw)
 {
    Eina_Bool force_use = EINA_FALSE;
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    if (_evas_gl_x11_window)
      {
         if ((eglGetCurrentContext() !=
@@ -611,7 +572,7 @@ eng_window_use(Evas_GL_X11_Window *gw)
         if (gw)
           {
 // EGL / GLES
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
            if (gw->egl_surface[0] != EGL_NO_SURFACE)
              {
                 if (eglMakeCurrent(gw->egl_disp,
@@ -652,7 +613,7 @@ eng_window_unsurf(Evas_GL_X11_Window *gw)
    if (!getenv("EVAS_GL_WIN_RESURF")) return;
    if (getenv("EVAS_GL_INFO"))
       printf("unsurf %p\n", gw);
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    if (_evas_gl_x11_window)
       evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
    if (_evas_gl_x11_window == gw)
@@ -681,7 +642,7 @@ eng_window_resurf(Evas_GL_X11_Window *gw)
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO"))
       printf("resurf %p\n", gw);
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
                                                NULL);
@@ -729,7 +690,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
         int alpha;
 
 // EGL / GLES
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
         for (alpha = 0; alpha < 2; alpha++)
           {
              int depth = DefaultDepth(einfo->info.display,
@@ -871,7 +832,7 @@ eng_best_visual_get(Evas_Engine_Info_GL_X11 *einfo)
    if (einfo->info.destination_alpha)
      {
 // EGL / GLES
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
         if (_evas_gl_x11_rgba_vi) return _evas_gl_x11_rgba_vi->visual;
 #else
 //# ifdef NEWGL

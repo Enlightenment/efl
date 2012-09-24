@@ -5,7 +5,7 @@
 
 #include "config.h"
 #include <SDL/SDL.h>
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 # include <EGL/egl.h>
 # include <SDL/SDL_opengles.h>
 # ifdef HAVE_SDL_FLAG_OPENGLES
@@ -61,7 +61,7 @@ struct _Render_Engine
       int              drew : 1;
       int              x1, y1, x2, y2;
    } draw;
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    EGLContext       egl_context[1];
    EGLSurface       egl_surface[1];
    EGLConfig        egl_config;

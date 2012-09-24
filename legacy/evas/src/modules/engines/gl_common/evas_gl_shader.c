@@ -736,7 +736,7 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
      }
    
    p->prog = glCreateProgram();
-#if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
+#ifdef GL_GLES
 #else
    if ((glsym_glGetProgramBinary) && (glsym_glProgramParameteri))
       glsym_glProgramParameteri(p->prog, GL_PROGRAM_BINARY_RETRIEVABLE_HINT,
@@ -940,7 +940,7 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
 void
 evas_gl_common_shader_program_init_done(void)
 {
-#if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
+#ifdef GL_GLES
    glReleaseShaderCompiler();
 #else
    if (glsym_glReleaseShaderCompiler) glsym_glReleaseShaderCompiler();

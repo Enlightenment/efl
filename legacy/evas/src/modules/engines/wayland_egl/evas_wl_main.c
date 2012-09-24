@@ -38,44 +38,6 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
    context_attrs[1] = 2;
    context_attrs[2] = EGL_NONE;
 
-#if defined(GLES_VARIETY_S3C6410)
-   if (gw->depth == 16) // 16bpp
-     {
-        config_attrs[n++] = EGL_SURFACE_TYPE;
-        config_attrs[n++] = EGL_WINDOW_BIT;
-        config_attrs[n++] = EGL_RENDERABLE_TYPE;
-        config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-        config_attrs[n++] = EGL_RED_SIZE;
-        config_attrs[n++] = 5;
-        config_attrs[n++] = EGL_GREEN_SIZE;
-        config_attrs[n++] = 6;
-        config_attrs[n++] = EGL_BLUE_SIZE;
-        config_attrs[n++] = 5;
-        config_attrs[n++] = EGL_DEPTH_SIZE;
-        config_attrs[n++] = 0;
-        config_attrs[n++] = EGL_STENCIL_SIZE;
-        config_attrs[n++] = 0;
-        config_attrs[n++] = EGL_NONE;
-     }
-   else // 24/32bit. no one does 8bpp anymore. and 15bpp... dead
-     {
-        config_attrs[n++] = EGL_SURFACE_TYPE;
-        config_attrs[n++] = EGL_WINDOW_BIT;
-        config_attrs[n++] = EGL_RENDERABLE_TYPE;
-        config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-        config_attrs[n++] = EGL_RED_SIZE;
-        config_attrs[n++] = 8;
-        config_attrs[n++] = EGL_GREEN_SIZE;
-        config_attrs[n++] = 8;
-        config_attrs[n++] = EGL_BLUE_SIZE;
-        config_attrs[n++] = 8;
-        config_attrs[n++] = EGL_DEPTH_SIZE;
-        config_attrs[n++] = 0;
-        config_attrs[n++] = EGL_STENCIL_SIZE;
-        config_attrs[n++] = 0;
-        config_attrs[n++] = EGL_NONE;
-     }
-#elif defined(GLES_VARIETY_SGX)
    config_attrs[n++] = EGL_SURFACE_TYPE;
    config_attrs[n++] = EGL_WINDOW_BIT;
    config_attrs[n++] = EGL_RENDERABLE_TYPE;
@@ -105,7 +67,6 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
    config_attrs[n++] = EGL_STENCIL_SIZE;
    config_attrs[n++] = 0;
    config_attrs[n++] = EGL_NONE;
-#endif
    
    gw->egl_disp = eglGetDisplay((EGLNativeDisplayType)(gw->disp));
    if (!gw->egl_disp)

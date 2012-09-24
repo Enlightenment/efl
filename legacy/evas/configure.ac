@@ -670,7 +670,6 @@ AC_ARG_ENABLE(gl-flavor-gles,
   [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(GLES_VARIETY_SGX, 1, [GLSL runtime shader GLES2 support])
         AC_DEFINE(GL_GLES, 1, [GLSL runtime shader GLES2 support])
         gl_flavor_gles="yes"
         gles_variety_sgx="yes"
@@ -1902,7 +1901,7 @@ echo "  Software Memory Buffer.....: $have_evas_engine_buffer"
 echo "  Software X11...............: $have_evas_engine_software_x11 (Xlib: $have_evas_engine_software_xlib) (XCB: $have_evas_engine_software_xcb)"
 echo $ECHO_N "  OpenGL X11.................: $have_evas_engine_gl_x11 (Xlib: $have_evas_engine_gl_xlib) (XCB: $have_evas_engine_gl_xcb) $ECHO_C"
 if test "x$have_evas_engine_gl_x11" = "xyes"; then
-  echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
+  echo "(GLES: $gl_flavor_gles)"
 else
   echo
 fi
@@ -1911,7 +1910,7 @@ echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"
 echo "  OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"
 if test "x$have_evas_engine_gl_sdl" = "xyes"; then
-  echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
+  echo "(GLES: $gl_flavor_gles)"
 else
   echo
 fi

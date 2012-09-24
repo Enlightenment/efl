@@ -243,7 +243,7 @@ eng_output_flush(void *data)
    re->draw.drew = 0;
 
 #if 0
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
 //   glFlush();
    eglSwapBuffers(re->egl_disp, re->egl_surface[0]);
 #else
@@ -499,7 +499,7 @@ struct _Native
 {
    Evas_Native_Surface ns;
    
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#ifdef GL_GLES
    EGLSurface  egl_surface;
 #endif
 };
