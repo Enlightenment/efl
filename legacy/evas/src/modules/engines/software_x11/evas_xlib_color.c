@@ -61,13 +61,13 @@ x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
 		  Status ret;
 		  int dr, dg, db;
 
-                  val = (int)((((double)r) / ((nr) - 1)) * 255);
+                  val = (int)(((r * 255) / ((nr) - 1)));
 		  val = (val << 8) | val;
 		  xcl.red = (unsigned short)(val);
-		  val = (int)((((double)g) / ((ng) - 1)) * 255);
+		  val = (int)(((g * 255) / ((ng) - 1)));
 		  val = (val << 8) | val;
 		  xcl.green = (unsigned short)(val);
-		  val = (int)((((double)b) / ((nb) - 1)) * 255);
+		  val = (int)(((b * 255) / ((nb) - 1)));
 		  val = (val << 8) | val;
 		  xcl.blue = (unsigned short)(val);
 		  xcl_in = xcl;
@@ -78,7 +78,7 @@ x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
 		  if (dg < 0) dg = -dg;
 		  db = (int)xcl_in.blue - (int)xcl.blue;
 		  if (db < 0) db = -db;
-/*
+/*                  
 		  printf("ASK [%i]: %04x %04x %04x = %04x %04x %04x | dif = %04x / %04x\n",
 			 ret,
 			 xcl_in.red, xcl_in.green, xcl_in.blue,
@@ -134,7 +134,7 @@ x_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 	int val;
 	Status ret;
 
-	val = (int)((((double)g) / ((ng) - 1)) * 255);
+	val = (int)(((g * 255) / ((ng) - 1)));
 	val = (val << 8) | val;
 	xcl.red = (unsigned short)(val);
 	xcl.green = (unsigned short)(val);

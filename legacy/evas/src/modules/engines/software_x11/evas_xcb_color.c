@@ -65,13 +65,13 @@ x_color_alloc_rgb(int               nr,
 		  int                      val;
                   int                      dr, dg, db;
 
-                  val = (int)((((double)r) / ((nr) - 1)) * 255);
+                  val = (int)(((r * 255) / ((nr) - 1)));
                   val = (val << 8) | val;
 		  xcl.red = (uint16_t)(val);
-		  val = (int)((((double)g) / ((ng) - 1)) * 255);
+		  val = (int)(((g * 255) / ((ng) - 1)));
                   val = (val << 8) | val;
 		  xcl.green = (uint16_t)(val);
-		  val = (int)((((double)b) / ((nb) - 1)) * 255);
+		  val = (int)(((b * 255) / ((nb) - 1)));
                   val = (val << 8) | val;
 		  xcl.blue = (uint16_t)(val);
 		  xcl_in = xcl;
@@ -154,7 +154,7 @@ x_color_alloc_gray(int               ng,
 	int                      val;
 	xcb_alloc_color_reply_t *rep;
 
-	val = (int)((((double)g) / ((ng) - 1)) * 255);
+	val = (int)(((g * 255) / ((ng) - 1)));
         val = (val << 8) | val;
 	xcl.red = (uint16_t)(val);
 	xcl.green = (uint16_t)(val);
