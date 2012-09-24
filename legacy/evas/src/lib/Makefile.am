@@ -48,20 +48,6 @@ SUBDIRS += ../modules/engines/psl1ght/
 EVAS_STATIC_MODULE += ../modules/engines/psl1ght/libevas_engine_psl1ght.la
 EVAS_STATIC_LIBADD += @evas_engine_psl1ght_libs@
 endif
-if EVAS_STATIC_BUILD_SOFTWARE_16
-SUBDIRS += ../modules/engines/software_16/
-EVAS_STATIC_MODULE += ../modules/engines/software_16/libevas_engine_software_16.la
-endif
-if EVAS_STATIC_BUILD_SOFTWARE_16_WINCE
-SUBDIRS += ../modules/engines/software_16_wince/
-EVAS_STATIC_MODULE += ../modules/engines/software_16_wince/libevas_engine_software_16_wince.la
-EVAS_STATIC_LIBADD += @evas_engine_software_16_wince_libs@
-endif
-if EVAS_STATIC_BUILD_SOFTWARE_16_X11
-SUBDIRS += ../modules/engines/software_16_x11/
-EVAS_STATIC_MODULE += ../modules/engines/software_16_x11/libevas_engine_software_16_x11.la
-EVAS_STATIC_LIBADD += @evas_engine_software_16_x11_libs@
-endif
 if EVAS_STATIC_BUILD_SOFTWARE_8
 SUBDIRS += ../modules/engines/software_8/
 EVAS_STATIC_MODULE += ../modules/engines/software_8/libevas_engine_software_8.la
@@ -70,13 +56,6 @@ if EVAS_STATIC_BUILD_SOFTWARE_8_X11
 SUBDIRS += ../modules/engines/software_8_x11/
 EVAS_STATIC_MODULE += ../modules/engines/software_8_x11/libevas_engine_software_8_x11.la
 EVAS_STATIC_LIBADD += @evas_engine_software_8_x11_libs@
-endif
-if EVAS_STATIC_BUILD_SOFTWARE_16_SDL
-SUBDIRS += \
-	../modules/engines/software_16_sdl/
-EVAS_STATIC_MODULE += \
-	../modules/engines/software_16_sdl/libevas_engine_software_16_sdl.la
-EVAS_STATIC_LIBADD += @SDL_LIBS@
 endif
 if EVAS_STATIC_BUILD_SOFTWARE_DDRAW
 SUBDIRS += ../modules/engines/software_ddraw/
@@ -248,13 +227,6 @@ cache2/libevas_cache2.la
 
 libevas_la_DEPENDENCIES += \
 cache2/libevas_cache2.la
-
-endif
-
-if BUILD_ENGINE_SOFTWARE_16
-
-libevas_la_LIBADD += engines/common_16/libevas_engine_common_16.la
-libevas_la_DEPENDENCIES += engines/common_16/libevas_engine_common_16.la
 
 endif
 

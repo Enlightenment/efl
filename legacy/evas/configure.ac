@@ -100,9 +100,6 @@ want_evas_engine_software_xcb="no"
 want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
 want_evas_engine_software_8_x11="no"
-want_evas_engine_software_16_x11="no"
-want_evas_engine_software_16_wince="no"
-want_evas_engine_software_16_sdl="no"
 want_evas_engine_gl_xlib="no"
 want_evas_engine_gl_xcb="no"
 want_evas_engine_gl_sdl="no"
@@ -136,7 +133,6 @@ want_evas_font_loader_eet="yes"
 case "$host_os" in
    mingw32ce*)
       want_fontconfig="no"
-      want_evas_engine_software_16_wince="yes"
       want_evas_image_loader_edb="no"
       want_evas_image_loader_gif="no"
       want_evas_image_loader_svg="no"
@@ -163,7 +159,6 @@ case "$host_os" in
       want_evas_engine_wayland_egl="auto"
 ### no - not ready/usable/complete
 #      want_evas_engine_software_8_x11="auto"
-#      want_evas_engine_software_16_x11="auto"
       ;;
 esac
 
@@ -706,12 +701,6 @@ EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
 
 EVAS_CHECK_ENGINE([software-8-x11], [${want_evas_engine_software_8_x11}], [no], [Software X11 8 bits grayscale])
 
-EVAS_CHECK_ENGINE([software-16-x11], [${want_evas_engine_software_16_x11}], [no], [Software X11 16 bits])
-
-EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], [no], [Software Windows CE 16 bits])
-
-EVAS_CHECK_ENGINE([software-16-sdl], [${want_evas_engine_software_16_sdl}], [no], [Software SDL 16 bits])
-
 EVAS_CHECK_ENGINE([wayland-shm], [${want_evas_engine_wayland_shm}], [no], [Wayland Shm])
 
 EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
@@ -906,34 +895,6 @@ if test "x$gl_flavor_gles" = "xyes"; then
    AC_CHECK_DECL(SDL_OPENGLES,
       [AC_DEFINE(HAVE_SDL_FLAG_OPENGLES, [1], [SDL_OPENGLES flag is present])],,
       [#include <SDL/SDL_video.h>])
-fi
-
-# if software 16 x11 is enabled - build software_16 (the generic 16bit
-# engine). later enable it fb_16 or other "16" bit engines are enabled.
-have_evas_engine_software_16="no"
-if test "x$have_evas_engine_software_16_x11" = "xyes" -o "x$have_evas_engine_software_16_x11" = "xstatic"; then
-   have_evas_engine_software_16="yes"
-fi
-if test "x$have_evas_engine_software_16_sdl" = "xyes" -o "x$have_evas_engine_software_16_sdl" = "xstatic"; then
-   have_evas_engine_software_16="yes"
-fi
-if test "x$have_evas_engine_software_16_wince" = "xyes" -o "x$have_evas_engine_software_16_wince" = "xstatic"; then
-   have_evas_engine_software_16="yes"
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_16, test "x$have_evas_engine_software_16" = "xyes")
-
-# if software 16 need to be build as part of libevas.so
-have_static_software_16="no"
-AC_ARG_ENABLE([static-software-16],
-   [AC_HELP_STRING([--enable-static-software-16], [Build software 16 engine as part of libevas])],
-   [have_static_software_16=${enableval}]
-)
-AC_MSG_CHECKING([Whether to build software 16 engine as part of libevas])
-AC_MSG_RESULT([${have_static_software_16}])
-
-AM_CONDITIONAL(EVAS_STATIC_BUILD_SOFTWARE_16, test "x${have_static_software_16}" = "xyes")
-if test "x${have_static_software_16}" = "xyes"; then
-   AC_DEFINE(EVAS_STATIC_BUILD_SOFTWARE_16, [1], [Build software 16 engine as part of libevas])
 fi
 
 # if software 8 x11 is enabled - build software_8 (the generic 8bit
@@ -1765,11 +1726,9 @@ evas-opengl-cocoa.pc
 evas-software-buffer.pc
 evas-software-x11.pc
 evas-software-8-x11.pc
-evas-software-16-x11.pc
 evas-software-gdi.pc
 evas-software-ddraw.pc
 evas-direct3d.pc
-evas-software-16-wince.pc
 evas-software-sdl.pc
 evas-psl1ght.pc
 evas-wayland-shm.pc
@@ -1809,14 +1768,12 @@ src/lib/engines/common/evas_op_mask/Makefile
 src/lib/engines/common/evas_op_mul/Makefile
 src/lib/engines/common/evas_op_sub/Makefile
 src/lib/engines/common_8/Makefile
-src/lib/engines/common_16/Makefile
 src/modules/Makefile
 src/modules/engines/Makefile
 src/modules/engines/software_generic/Makefile
 src/modules/engines/software_gdi/Makefile
 src/modules/engines/software_ddraw/Makefile
 src/modules/engines/direct3d/Makefile
-src/modules/engines/software_16_wince/Makefile
 src/modules/engines/software_x11/Makefile
 src/modules/engines/fb/Makefile
 src/modules/engines/buffer/Makefile
@@ -1828,9 +1785,6 @@ src/modules/engines/gl_cocoa/Makefile
 src/modules/engines/psl1ght/Makefile
 src/modules/engines/software_8/Makefile
 src/modules/engines/software_8_x11/Makefile
-src/modules/engines/software_16/Makefile
-src/modules/engines/software_16_x11/Makefile
-src/modules/engines/software_16_sdl/Makefile
 src/modules/engines/wayland_shm/Makefile
 src/modules/engines/wayland_egl/Makefile
 src/modules/loaders/Makefile
@@ -1919,11 +1873,6 @@ echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
 echo "  PSL1GHT....................: $have_evas_engine_psl1ght"
 echo "  Software 8bit grayscale....: $have_evas_engine_software_8"
-# FIXME: kill software 16bit
-echo "  Software 16bit ............: $have_evas_engine_software_16"
-echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11"
-echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince"
-echo "  Software 16bit SDL.........: $have_evas_engine_software_16_sdl (primitive: $sdl_primitive)"
 echo "  Wayland Shm................: $have_evas_engine_wayland_shm"
 echo "  Wayland Egl................: $have_evas_engine_wayland_egl"
 echo

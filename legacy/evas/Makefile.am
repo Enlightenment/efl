@@ -36,12 +36,10 @@ evas-opengl-x11.pc.in \
 evas-opengl-sdl.pc.in \
 evas-software-buffer.pc.in \
 evas-software-x11.pc.in \
-evas-software-16-x11.pc.in \
 evas-software-8-x11.pc.in \
 evas-software-gdi.pc.in \
 evas-software-ddraw.pc.in \
 evas-direct3d.pc.in \
-evas-software-16-wince.pc.in \
 evas-psl1ght.pc.in \
 evas-wayland-shm.pc.in \
 evas-wayland-egl.pc.in \
@@ -66,10 +64,6 @@ pkgconfig_DATA = evas.pc
 
 if BUILD_ENGINE_SOFTWARE_X11
 pkgconfig_DATA += evas-software-x11.pc
-endif
-
-if BUILD_ENGINE_SOFTWARE_16_X11
-pkgconfig_DATA += evas-software-16-x11.pc
 endif
 
 if BUILD_ENGINE_SOFTWARE_8_X11
@@ -110,14 +104,6 @@ endif
 
 if BUILD_ENGINE_DIRECT3D
 pkgconfig_DATA += evas-direct3d.pc
-endif
-
-if BUILD_ENGINE_SOFTWARE_16_WINCE
-pkgconfig_DATA += evas-software-16-wince.pc
-endif
-
-if BUILD_ENGINE_SOFTWARE_16_SDL
-pkgconfig_DATA += evas-software-sdl.pc
 endif
 
 if BUILD_ENGINE_PSL1GHT
