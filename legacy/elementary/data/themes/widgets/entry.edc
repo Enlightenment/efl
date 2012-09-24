@@ -1251,10 +1251,11 @@ group { name: "elm/entry/cursor/default";
          description { state: "default" 0.0;
             rel1.offset: -10 0;
             rel2.offset: 9 9;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
             visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
       part { name: "bg";
@@ -1319,53 +1320,67 @@ group { name: "elm/entry/cursor/default";
             image.border: 2 2 0 4;
             image.normal: "cur_glow.png";
             fill.smooth: 0;
-         }
-         description { state: "hidden" 0.0;
-            inherit: "default" 0.0;
             color: 255 255 255 0;
+            visible: 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            color: 255 255 255 55;
+            visible: 1;
          }
       }
    }
    programs {
-      program { name: "show";
-         signal: "show";
-         source: "";
-         action: STATE_SET "hidden" 0.0;
-         in: 1.0 0.0;
-         transition: DECELERATE 2.0;
-         target: "glow";
-         after: "show2";
-      }
-      program { name: "show2";
-         action: STATE_SET "hidden" 0.0;
+      program { name: "blink";
+         action: STATE_SET "visible" 0.0;
          in: 0.2 0.0;
          target: "clip";
-         after: "show3";
+         after: "blink2";
       }
-      program { name: "show3";
-         action: STATE_SET "default" 0.0;
-         in: 0.5 0.0;
-         target: "clip";
-         after: "show4";
-      }
-      program { name: "show4";
-         action: STATE_SET "default" 0.0;
-         in: 0.5 0.0;
-         transition: DECELERATE 0.5;
+      program { name: "blink2";
+         action: STATE_SET "visible" 0.0;
+         in: 0.2 0.0;
          target: "glow";
-         after: "show";
+         after: "blink3";
+      }
+      program { name: "blink3";
+         action: STATE_SET "default" 0.0;
+         in: 0.2 0.0;
+         target: "glow";
+         after: "blink4";
+      }
+      program { name: "blink4";
+         action: STATE_SET "default" 0.0;
+         in: 0.2 0.0;
+         target: "clip";
+         after: "blink";
+      }
+      program { name: "noblink";
+         action: ACTION_STOP;
+         target: "blink";
+         target: "blink2";
+         target: "blink3";
+         target: "blink4";
+         after: "noblink2";
+      }
+      program { name: "noblink2";
+         action: STATE_SET "default" 0.0;
+         target: "clip";
+         target: "glow";
       }
       program { name: "focused";
          signal: "elm,action,focus";
          source: "elm";
          action: STATE_SET "focused" 0.0;
          target: "clip2";
+         after: "blink";
       }
       program { name: "unfocused";
          signal: "elm,action,unfocus";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "clip2";
+         after: "noblink";
       }
    }
 }
