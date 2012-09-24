@@ -259,7 +259,8 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w,
              return NULL;
           }
 
-        if (!eina_array_push(&buf->priv.onebuf_regions, rect))
+        if ((eina_array_push(&buf->priv.onebuf_regions, rect)) &&
+            (buf->priv.onebuf))
           {
              if (cx) *cx = x;
              if (cy) *cy = y;
