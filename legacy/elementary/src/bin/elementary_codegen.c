@@ -123,6 +123,104 @@ static FILE *header_fd = NULL;
 #define H_CODEGEN_PART_TEXT_GET			    \
   "const char *%s_%s_get(const Evas_Object *o);\n"
 
+#define C_CODEGEN_PART_BOX_APPEND                                \
+  "Eina_Bool\n"                                                  \
+  "%s_%s_append(Evas_Object *o, Evas_Object *child)\n"           \
+  "{\n"                                                          \
+  "   return elm_layout_box_append(o, \"%s\", child);\n"         \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_APPEND                                  \
+  "Eina_Bool %s_%s_append(Evas_Object *o, Evas_Object *child);\n"
+
+#define C_CODEGEN_PART_BOX_PREPEND                                \
+  "Eina_Bool\n"                                                   \
+  "%s_%s_prepend(Evas_Object *o, Evas_Object *child)\n"           \
+  "{\n"                                                           \
+  "   return elm_layout_box_prepend(o, \"%s\", child);\n"         \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_PREPEND                                 \
+  "Eina_Bool %s_%s_prepend(Evas_Object *o, Evas_Object *child);\n"
+
+#define C_CODEGEN_PART_BOX_INSERT_BEFORE                          \
+  "Eina_Bool\n"                                                   \
+  "%s_%s_insert_before(Evas_Object *o, Evas_Object *child, "      \
+  "const Evas_Object *reference)\n"                               \
+  "{\n"                                                           \
+  "   return elm_layout_box_insert_before(o, \"%s\", "            \
+  "child, reference);\n"                                          \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_INSERT_BEFORE                                \
+  "Eina_Bool %s_%s_insert_before(Evas_Object *o, Evas_Object *child, "  \
+  "const Evas_Object *reference);\n"
+
+#define C_CODEGEN_PART_BOX_INSERT_AT                                        \
+  "Eina_Bool\n"                                                             \
+  "%s_%s_insert_at(Evas_Object *o, Evas_Object *child, unsigned int pos)\n" \
+  "{\n"                                                                     \
+  "   return elm_layout_box_insert_at(o, \"%s\", child, pos);\n"            \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_INSERT_AT                                     \
+  "Eina_Bool %s_%s_insert_at(Evas_Object *o, Evas_Object *child, "       \
+  "unsigned int pos);\n"
+
+#define C_CODEGEN_PART_BOX_REMOVE                             \
+  "Evas_Object *\n"                                           \
+  "%s_%s_remove(Evas_Object *o, Evas_Object *child)\n"        \
+  "{\n"                                                       \
+  "   return elm_layout_box_remove(o, \"%s\", child);\n"      \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_REMOVE                                    \
+  "Evas_Object *%s_%s_remove(Evas_Object *o, Evas_Object *child);\n"
+
+#define C_CODEGEN_PART_BOX_REMOVE_ALL                           \
+  "Eina_Bool\n"                                                 \
+  "%s_%s_remove_all(Evas_Object *o, Eina_Bool clear)\n"         \
+  "{\n"                                                         \
+  "   return elm_layout_box_remove_all(o, \"%s\", clear);\n"    \
+  "}\n\n"
+
+#define H_CODEGEN_PART_BOX_REMOVE_ALL                               \
+  "Eina_Bool %s_%s_remove_all(Evas_Object *o, Eina_Bool clear);\n"
+
+#define C_CODEGEN_PART_TABLE_PACK                                         \
+  "Eina_Bool\n"                                                           \
+  "%s_%s_pack(Evas_Object *o, Evas_Object *child, unsigned short col, "   \
+  "unsigned short row, unsigned short colspan, unsigned short rowspan)\n" \
+  "{\n"                                                                   \
+  "   return elm_layout_table_pack(o, \"%s\", child, col, row, "          \
+  "colspan, rowspan);\n"                                                  \
+  "}\n\n"
+
+#define H_CODEGEN_PART_TABLE_PACK                                \
+  "Eina_Bool %s_%s_pack(Evas_Object *o, Evas_Object *child, "    \
+  "unsigned short col, unsigned short row, unsigned short "      \
+  "colspan, unsigned short rowspan);\n"
+
+#define C_CODEGEN_PART_TABLE_UNPACK                                  \
+  "Evas_Object *\n"                                                  \
+  "%s_%s_unpack(Evas_Object *o, Evas_Object *child)\n"               \
+  "{\n"                                                              \
+  "   return elm_layout_table_unpack(o, \"%s\", child);\n"           \
+  "}\n\n"
+
+#define H_CODEGEN_PART_TABLE_UNPACK                                  \
+  "Evas_Object *%s_%s_unpack(Evas_Object *o, Evas_Object *child);\n"
+
+#define C_CODEGEN_PART_TABLE_CLEAR                               \
+  "Eina_Bool\n"                                                  \
+  "%s_%s_clear(Evas_Object *o, Eina_Bool clear)\n"               \
+  "{\n"                                                          \
+  "   return elm_layout_table_clear(o, \"%s\", clear);\n"        \
+  "}\n\n"
+
+#define H_CODEGEN_PART_TABLE_CLEAR                                   \
+  "Eina_Bool %s_%s_clear(Evas_Object *o, Eina_Bool clear);\n"
+
 #define C_CODEGEN_PROGRAM_EMIT                          \
   "void\n"                                              \
   "%s_%s_emit(Evas_Object *o)\n"                        \
@@ -313,66 +411,57 @@ static Eina_Bool
 _part_write(const char *apiname, const char *partname, const char *description,
 	    Edje_Part_Type type)
 {
-   char buf[512];
+   char buf[1024];
 
-   if (type == EDJE_PART_TYPE_SWALLOW)
+#define TEMPLATE_NAME(sufix)                                      \
+   do {                                                           \
+     snprintf(buf, sizeof(buf), C_CODEGEN_PART_##sufix, prefix,   \
+              apiname, partname);                                 \
+     if (fwrite(buf, strlen(buf), 1, source_fd) != 1)             \
+       goto err;                                                  \
+     snprintf(buf, sizeof(buf), H_CODEGEN_PART_##sufix, prefix,   \
+              apiname);                                           \
+     if (fwrite(buf, strlen(buf), 1, header_fd) != 1)             \
+       goto err;                                                  \
+   } while(0)
+
+   if (description)
      {
-	snprintf(buf, sizeof(buf), C_CODEGEN_PART_CONTENT_SET , prefix, apiname, partname);
-	if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
-	  goto err;
-
-	snprintf(buf, sizeof(buf), C_CODEGEN_PART_CONTENT_UNSET , prefix, apiname, partname);
-	if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
-	  goto err;
-
-	if (description)
-	  {
-	     snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
-	     if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	       goto err;
-	  }
-
-	snprintf(buf, sizeof(buf), H_CODEGEN_PART_CONTENT_SET, prefix, apiname);
+	snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
 	if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	  goto err;
-
-	snprintf(buf, sizeof(buf), H_CODEGEN_PART_CONTENT_UNSET, prefix, apiname);
-	if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	  goto err;
-
-	snprintf(buf, sizeof(buf), H_CODEGEN_PART_CONTENT_GET, prefix, apiname);
-	if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	  goto err;
-
-	snprintf(buf, sizeof(buf), C_CODEGEN_PART_CONTENT_GET, prefix, apiname, partname);
-	if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
 	  goto err;
      }
-   else
+
+   switch (type)
      {
-	snprintf(buf, sizeof(buf), C_CODEGEN_PART_TEXT_SET , prefix, apiname, partname);
-	if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
-	  goto err;
+      case EDJE_PART_TYPE_BOX:
+	 TEMPLATE_NAME(BOX_APPEND);
+	 TEMPLATE_NAME(BOX_PREPEND);
+	 TEMPLATE_NAME(BOX_INSERT_BEFORE);
+	 TEMPLATE_NAME(BOX_INSERT_AT);
+	 TEMPLATE_NAME(BOX_REMOVE);
+	 TEMPLATE_NAME(BOX_REMOVE_ALL);
+	 break;
 
-	if (description)
-	  {
-	     snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n", description);
-	     if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	       goto err;
-	  }
+      case EDJE_PART_TYPE_TABLE:
+	 TEMPLATE_NAME(TABLE_PACK);
+	 TEMPLATE_NAME(TABLE_UNPACK);
+	 TEMPLATE_NAME(TABLE_CLEAR);
+	 break;
 
-	snprintf(buf, sizeof(buf), H_CODEGEN_PART_TEXT_SET, prefix, apiname);
-	if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	  goto err;
+      case EDJE_PART_TYPE_TEXT:
+	TEMPLATE_NAME(TEXT_SET);
+	TEMPLATE_NAME(TEXT_GET);
+	break;
 
-	snprintf(buf, sizeof(buf), H_CODEGEN_PART_TEXT_GET, prefix, apiname);
-	if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-	  goto err;
-
-	snprintf(buf, sizeof(buf), C_CODEGEN_PART_TEXT_GET, prefix, apiname, partname);
-	if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
-	  goto err;
+      default:
+	TEMPLATE_NAME(CONTENT_SET);
+	TEMPLATE_NAME(CONTENT_UNSET);
+	TEMPLATE_NAME(CONTENT_GET);
+	break;
      }
+
+#undef TEMPLATE_NAME
 
    return EINA_TRUE;
 
@@ -443,7 +532,10 @@ _parts_parse(Evas_Object *ed)
 	  }
 
 	type = edje_edit_part_type_get(ed, name);
-	if ((type != EDJE_PART_TYPE_SWALLOW) && (type != EDJE_PART_TYPE_TEXT))
+	if ((type != EDJE_PART_TYPE_SWALLOW) &&
+	    (type != EDJE_PART_TYPE_TEXT)    &&
+	    (type != EDJE_PART_TYPE_BOX)     &&
+	    (type != EDJE_PART_TYPE_TABLE))
 	  {
 	     free(apiname);
 	     continue;
