@@ -20,60 +20,6 @@ int _evas_engine_soft_x11_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
 
-#ifdef BUILD_ENGINE_SOFTWARE_XLIB
-/*
-struct xrdb_user
-{
-   time_t last_stat;
-   time_t last_mtime;
-   XrmDatabase db;
-};
-static struct xrdb_user xrdb_user = {0, 0, NULL};
-
-static Eina_Bool
-xrdb_user_query(const char *name, const char *cls, char **type, XrmValue *val)
-{
-   time_t last, now;
-
-   last = xrdb_user.last_stat;
-   now = time(NULL);
-
-   xrdb_user.last_stat = now;
-   if (last != now) // don't stat() more than once every second
-     {
-	struct stat st;
-	const char *home;
-	char tmp[PATH_MAX];
-
-        if (!(home = getenv("HOME"))) 
-          goto failed;
-
-	snprintf(tmp, sizeof(tmp), "%s/.Xdefaults", home);
-	if (stat(tmp, &st) != 0) goto failed;
-	if (xrdb_user.last_mtime != st.st_mtime)
-	  {
-	     if (xrdb_user.db) XrmDestroyDatabase(xrdb_user.db);
-	     xrdb_user.db = XrmGetFileDatabase(tmp);
-	     if (!xrdb_user.db) goto failed;
-	     xrdb_user.last_mtime = st.st_mtime;
-	  }
-     }
-
-   if (!xrdb_user.db) return EINA_FALSE;
-   return XrmGetResource(xrdb_user.db, name, cls, type, val);
-
- failed:
-   if (xrdb_user.db)
-     {
-	XrmDestroyDatabase(xrdb_user.db);
-	xrdb_user.db = NULL;
-     }
-   xrdb_user.last_mtime = 0;
-   return EINA_FALSE;
-}
-*/
-#endif
-
 /* engine struct data */
 typedef struct _Render_Engine Render_Engine;
 
@@ -84,15 +30,6 @@ struct _Render_Engine
    Tilebuf_Rect *rects;
    Eina_Inlist *cur_rect;
    unsigned char end : 1;
-/*
-#ifdef BUILD_ENGINE_SOFTWARE_XLIB
-   XrmDatabase xrdb;
-#endif
-   struct 
-     {
-        int dpi;
-     } xr;
- */
    void (*outbuf_free)(Outbuf *ob);
    void (*outbuf_reconfigure)(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth);
    int (*outbuf_get_rot)(Outbuf *ob);
@@ -133,66 +70,13 @@ _output_xlib_setup(int w, int h, int rot, Display *disp, Drawable draw,
                    int shape_dither, int destination_alpha)
 {
    Render_Engine *re;
-//   int status;
-//   char *type = NULL;
-//   XrmValue val;
 
    if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
 
    evas_software_xlib_x_init();
    evas_software_xlib_x_color_init();
    evas_software_xlib_outbuf_init();
-/*
-   re->xr.dpi = 75000; // dpy * 1000
-
-   status = xrdb_user_query("Xft.dpi", "Xft.Dpi", &type, &val);
-   if ((!status) || (!type))
-     {
-        if (!re->xrdb) re->xrdb = XrmGetDatabase(disp);
-        if (re->xrdb)
-          status = XrmGetResource(re->xrdb,
-                                  "Xft.dpi", "Xft.Dpi", &type, &val);
-     }
-
-   if ((status) && (type))
-     {
-        if (!strcmp(type, "String"))
-          {
-             const char *str, *dp;
-                  
-             str = val.addr;
-             dp = strchr(str, '.');
-             if (!dp) dp = strchr(str, ',');
-
-             if (dp)
-               {
-                  int subdpi, len, i;
-                  char *buf;
-                       
-                  buf = alloca(dp - str + 1);
-                  strncpy(buf, str, dp - str);
-                  buf[dp - str] = 0;
-                  len = strlen(dp + 1);
-                  subdpi = atoi(dp + 1);
-
-                  if (len < 3)
-                    {
-                       for (i = len; i < 3; i++) 
-                         subdpi *= 10;
-                    }
-                  else if (len > 3)
-                    {
-                       for (i = len; i > 3; i--) 
-                         subdpi /= 10;
-                    }
-                  re->xr.dpi = atoi(buf) * 1000;
-               }
-             else
-               re->xr.dpi = atoi(str) * 1000;
-             evas_common_font_dpi_set(re->xr.dpi / 1000);
-          }
-     }
- */
+   
    re->ob = 
      evas_software_xlib_outbuf_setup_x(w, h, rot, OUTBUF_DEPTH_INHERIT, disp, 
                                        draw, vis, cmap, depth, grayscale,
@@ -238,23 +122,12 @@ _output_xcb_setup(int w, int h, int rot, xcb_connection_t *conn,
                   int shape_dither, int destination_alpha)
 {
    Render_Engine *re;
-//   int v = 0;
 
    if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
 
    evas_software_xcb_init();
    evas_software_xcb_color_init();
    evas_software_xcb_outbuf_init();
-/*
-   // FIXME: re->xrdb
-   _evas_xcb_xdefaults_init();
-   v = _evas_xcb_xdefaults_int_get("Xft", "dpi");
-   _evas_xcb_xdefaults_shutdown();
-   if (v) re->xr.dpi = (v * 1000);
-   else re->xr.dpi = 75000; // dpy * 1000
-
-   evas_common_font_dpi_set(re->xr.dpi / 1000);
- */
    re->ob = 
      evas_software_xcb_outbuf_setup(w, h, rot, OUTBUF_DEPTH_INHERIT, conn, 
                                     screen, draw, vis, cmap, depth,
@@ -581,11 +454,6 @@ eng_output_free(void *data)
 {
    Render_Engine *re;
 
-#ifdef BUILD_ENGINE_SOFTWARE_XLIB
-// NOTE: XrmGetDatabase() result is shared per connection, do not free it.
-//   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
-#endif
-
    if ((re = (Render_Engine *)data))
      {
         re->outbuf_free(re->ob);
@@ -785,17 +653,6 @@ static void
 module_close(Evas_Module *em __UNUSED__)
 {
   eina_log_domain_unregister(_evas_engine_soft_x11_log_dom);
-#ifdef BUILD_ENGINE_SOFTWARE_XLIB
-/*   
-  if (xrdb_user.db)
-    {
-       XrmDestroyDatabase(xrdb_user.db);
-       xrdb_user.last_stat = 0;
-       xrdb_user.last_mtime = 0;
-       xrdb_user.db = NULL;
-    }
- */
-#endif
 }
 
 static Evas_Module_Api evas_modapi =

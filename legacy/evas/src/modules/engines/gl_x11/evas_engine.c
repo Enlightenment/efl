@@ -23,12 +23,6 @@ struct _Render_Engine
    Evas                    *evas;
    Tilebuf                 *tb;
    int                      end;
-/*
-   XrmDatabase   xrdb; // xres - dpi
-   struct { // xres - dpi
-      int        dpi; // xres - dpi
-   } xr; // xres - dpi
- */
    int w, h;
    int vsync;
 
@@ -688,52 +682,6 @@ static Evas_Func func, pfunc;
 
 /* Function table for GL APIs */
 static Evas_GL_API gl_funcs;
-/*
-struct xrdb_user
-{
-   time_t last_stat;
-   time_t last_mtime;
-   XrmDatabase db;
-};
-static struct xrdb_user xrdb_user = {0, 0, NULL};
-
-static Eina_Bool
-xrdb_user_query(const char *name, const char *cls, char **type, XrmValue *val)
-{
-   time_t last = xrdb_user.last_stat, now = time(NULL);
-
-   xrdb_user.last_stat = now;
-   if (last != now) // don't stat() more than once every second
-     {
-	struct stat st;
-	const char *home = getenv("HOME");
-	char tmp[PATH_MAX];
-
-	if (!home) goto failed;
-	snprintf(tmp, sizeof(tmp), "%s/.Xdefaults", home);
-	if (stat(tmp, &st) != 0) goto failed;
-	if (xrdb_user.last_mtime != st.st_mtime)
-	  {
-	     if (xrdb_user.db) XrmDestroyDatabase(xrdb_user.db);
-	     xrdb_user.db = XrmGetFileDatabase(tmp);
-	     if (!xrdb_user.db) goto failed;
-	     xrdb_user.last_mtime = st.st_mtime;
-	  }
-     }
-
-   if (!xrdb_user.db) return EINA_FALSE;
-   return XrmGetResource(xrdb_user.db, name, cls, type, val);
-
- failed:
-   if (xrdb_user.db)
-     {
-	XrmDestroyDatabase(xrdb_user.db);
-	xrdb_user.db = NULL;
-     }
-   xrdb_user.last_mtime = 0;
-   return EINA_FALSE;
-}
-*/
 
 static void *
 eng_info(Evas *e)
@@ -1006,61 +954,7 @@ eng_setup(Evas *e, void *in)
           }
         e->engine.data.output = re;
         gl_wins++;
-/*
-          {
-             int status;
-             char *type = NULL;
-             XrmValue val;
-
-             re->xr.dpi = 75000; // dpy * 1000
-
-             status = xrdb_user_query("Xft.dpi", "Xft.Dpi", &type, &val);
-             if ((!status) || (!type))
-	       {
-		  if (!re->xrdb) re->xrdb = XrmGetDatabase(re->info->info.display);
-		  if (re->xrdb)
-		    status = XrmGetResource(re->xrdb,
-					    "Xft.dpi", "Xft.Dpi", &type, &val);
-	       }
-
-             if ((status) && (type))
-               {
-                  if (!strcmp(type, "String"))
-                    {
-                       const char *str, *dp;
-
-                       str = val.addr;
-                       dp = strchr(str, '.');
-                       if (!dp) dp = strchr(str, ',');
-
-                       if (dp)
-                         {
-                            int subdpi, len, i;
-                            char *buf;
-
-                            buf = alloca(dp - str + 1);
-                            strncpy(buf, str, dp - str);
-                            buf[dp - str] = 0;
-                            len = strlen(dp + 1);
-                            subdpi = atoi(dp + 1);
-
-                            if (len < 3)
-                              {
-                                 for (i = len; i < 3; i++) subdpi *= 10;
-                              }
-                            else if (len > 3)
-                              {
-                                 for (i = len; i > 3; i--) subdpi /= 10;
-                              }
-                            re->xr.dpi = atoi(buf) * 1000;
-                         }
-                       else
-                         re->xr.dpi = atoi(str) * 1000;
-                       evas_common_font_dpi_set(re->xr.dpi / 1000);
-                    }
-               }
-          }
- */
+        
         if (!initted)
           {
              evas_common_cpu_init();
@@ -1192,9 +1086,6 @@ eng_output_free(void *data)
 
    if (re)
      {
-// NOTE: XrmGetDatabase() result is shared per connection, do not free it.
-//   if (re->xrdb) XrmDestroyDatabase(re->xrdb);
-
 #if 0
 #ifdef GL_GLES
         // Destroy the resource surface
@@ -4988,15 +4879,6 @@ static void
 module_close(Evas_Module *em __UNUSED__)
 {
     eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
-/*
-    if (xrdb_user.db)
-      {
-	 XrmDestroyDatabase(xrdb_user.db);
-	 xrdb_user.last_stat = 0;
-	 xrdb_user.last_mtime = 0;
-	 xrdb_user.db = NULL;
-      }
- */
     evas_gl_common_module_close();
 }
 
