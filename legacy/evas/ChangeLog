@@ -1049,3 +1049,11 @@
 
        * Fix native surface crash when setting to null in some
        situations.
+
+2012-09-24  Sung W. Park (sung_)
+
+	* Refactored Evas GL engine code so wayland_egl and gl_x11 and other
+        engines can share the same code. The common codes are in gl_common/
+        directory and evas_engine just has to implement a few engine functions.
+
+

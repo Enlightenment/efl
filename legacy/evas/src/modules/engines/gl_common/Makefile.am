@@ -26,6 +26,9 @@ evas_gl_font.c \
 evas_gl_polygon.c \
 evas_gl_line.c \
 evas_gl_filter.c \
+evas_gl_core.c \
+evas_gl_api.c \
+evas_gl_api_ext.c \
 shader/rect_frag.h \
 shader/rect_vert.h \
 shader/font_frag.h \
