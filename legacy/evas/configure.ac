@@ -670,7 +670,10 @@ AC_ARG_ENABLE(gl-flavor-gles,
   [
       if test "x$enableval" = "xyes" ; then
         AC_MSG_RESULT(yes)
+        AC_DEFINE(GLES_VARIETY_SGX, 1, [GLSL runtime shader GLES2 support])
+        AC_DEFINE(GL_GLES, 1, [GLSL runtime shader GLES2 support])
         gl_flavor_gles="yes"
+        gles_variety_sgx="yes"
       else
         AC_MSG_RESULT(no)
         gl_flavor_gles="no"
@@ -680,65 +683,6 @@ AC_ARG_ENABLE(gl-flavor-gles,
       gl_flavor_gles="no"
   ]
 )
-
-#######################################
-## GLES variety sgx
-gles_variety_sgx="no"
-AC_MSG_CHECKING(whether to build GLES variety for SGX)
-AC_ARG_ENABLE(gles-variety-sgx,
-  AC_HELP_STRING([--enable-gles-variety-sgx], [GLES variety SGX 3D unit]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
-        gles_variety_sgx="yes"
-      else
-        AC_MSG_RESULT(no)
-        gles_variety_sgx="no"
-      fi
-  ], [
-      AC_MSG_RESULT(no)
-      gles_variety_sgx="no"
-  ]
-)
-
-#######################################
-## GLES variety s3c6410
-gles_variety_s3c6410="no"
-AC_MSG_CHECKING(whether to build GLES variety for s3c6410)
-AC_ARG_ENABLE(gles-variety-s3c6410,
-  AC_HELP_STRING([--enable-gles-variety-s3c6410], [GLES variety s3c6410 3D unit]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(GLES_VARIETY_S3C6410, 1, [Samsung S3c6410 GLES2 support])
-        gles_variety_s3c6410="yes"
-      else
-        AC_MSG_RESULT(no)
-        gles_variety_s3c6410="no"
-      fi
-  ], [
-      AC_MSG_RESULT(no)
-      gles_variety_s3c6410="no"
-  ]
-)
-
-if test "x$gl_flavor_gles" = "xyes"; then
-  eng=""
-  if test "x$gles_variety_sgx" = "xyes"; then eng="x"$eng; fi
-  if test "x$gles_variety_s3c6410" = "xyes"; then eng="x"$eng; fi
-  if test "x$eng" = "xx"; then
-    eng=""
-  else
-     AC_MSG_ERROR(
-       [Please enable just 1 OpenGL-ES flavor. Choices are:
-          --enable-gles-variety-sgx (Most GL-ES2 GPUs with shader compiler)
-          --enable-gles-variety-s3c6410 (s3c6410 with offline shader compiler)
-        You will also need to enable the OpenGL engine for X11 with:
-          --enable-gl-xlib or --enable-gl-xcb
-       ])
-  fi
-fi
 
 #####################################################################
 ## Engines

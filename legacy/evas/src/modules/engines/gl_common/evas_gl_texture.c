@@ -1439,7 +1439,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
    mb_w = w / 64 + (w % 64 ? 1 : 0);
    mb_h = h / 32 + (h % 32 ? 1 : 0);
 
-#if ( defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX) )
+#if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
    if (tex->dyn)
      {
         char *texture_addr;

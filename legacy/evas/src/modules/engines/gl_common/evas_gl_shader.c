@@ -1,250 +1,118 @@
 #include "evas_gl_private.h"
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int rect_frag_bin[] =
-{
-# include "shader/rect_frag_bin_s3c6410.h"
-};
-#endif
-
 const char rect_frag_glsl[] =
 #include "shader/rect_frag.h"
   ;
 Evas_GL_Program_Source shader_rect_frag_src =
 {
    rect_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     rect_frag_bin, sizeof(rect_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int rect_vert_bin[] =
-{
-# include "shader/rect_vert_bin_s3c6410.h"
-};
-#endif
 const char rect_vert_glsl[] =
 #include "shader/rect_vert.h"
   ;
 Evas_GL_Program_Source shader_rect_vert_src =
 {
    rect_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     rect_vert_bin, sizeof(rect_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int font_frag_bin[] =
-{
-# include "shader/font_frag_bin_s3c6410.h"
-};
-#endif
-
 const char font_frag_glsl[] =
 #include "shader/font_frag.h"
   ;
 Evas_GL_Program_Source shader_font_frag_src =
 {
    font_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     font_frag_bin, sizeof(font_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int font_vert_bin[] =
-{
-# include "shader/font_vert_bin_s3c6410.h"
-};
-#endif
 const char font_vert_glsl[] =
 #include "shader/font_vert.h"
   ;
 Evas_GL_Program_Source shader_font_vert_src =
 {
    font_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     font_vert_bin, sizeof(font_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int yuv_frag_bin[] =
-{
-# include "shader/yuv_frag_bin_s3c6410.h"
-};
-#endif
-
 const char yuv_frag_glsl[] =
 #include "shader/yuv_frag.h"
   ;
 Evas_GL_Program_Source shader_yuv_frag_src =
 {
    yuv_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     yuv_frag_bin, sizeof(yuv_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int yuv_vert_bin[] =
-{
-# include "shader/yuv_vert_bin_s3c6410.h"
-};
-#endif
 const char yuv_vert_glsl[] =
 #include "shader/yuv_vert.h"
   ;
 Evas_GL_Program_Source shader_yuv_vert_src =
 {
    yuv_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     yuv_vert_bin, sizeof(yuv_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int yuy2_frag_bin[] =
-{
-# include "shader/yuy2_frag_bin_s3c6410.h"
-};
-#endif
-
 const char yuy2_frag_glsl[] =
 #include "shader/yuy2_frag.h"
   ;
 Evas_GL_Program_Source shader_yuy2_frag_src =
 {
    yuy2_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     yuy2_frag_bin, sizeof(yuy2_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int yuy2_vert_bin[] =
-{
-# include "shader/yuy2_vert_bin_s3c6410.h"
-};
-#endif
 const char yuy2_vert_glsl[] =
 #include "shader/yuy2_vert.h"
   ;
 Evas_GL_Program_Source shader_yuy2_vert_src =
 {
    yuy2_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     yuy2_vert_bin, sizeof(yuy2_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int yuy2_nomul_frag_bin[] =
-{
-# include "shader/yuy2_nomul_frag_bin_s3c6410.h"
-};
-#endif
-
 const char yuy2_nomul_frag_glsl[] =
 #include "shader/yuy2_nomul_frag.h"
   ;
 Evas_GL_Program_Source shader_yuy2_nomul_frag_src =
 {
    yuy2_nomul_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     yuy2_nomul_frag_bin, sizeof(yuy2_nomul_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int yuy2_nomul_vert_bin[] =
-{
-# include "shader/yuy2_nomul_vert_bin_s3c6410.h"
-};
-#endif
 const char yuy2_nomul_vert_glsl[] =
 #include "shader/yuy2_nomul_vert.h"
   ;
 Evas_GL_Program_Source shader_yuy2_nomul_vert_src =
 {
    yuy2_nomul_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     yuy2_nomul_vert_bin, sizeof(yuy2_nomul_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int nv12_nomul_vert_bin[] =
-{
-# include "shader/nv12_nomul_vert_bin_s3c6410.h"
-};
-#endif
 const char nv12_nomul_vert_glsl[] =
 #include "shader/nv12_nomul_vert.h"
   ;
 Evas_GL_Program_Source shader_nv12_nomul_vert_src =
 {
    nv12_nomul_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     nv12_nomul_vert_bin, sizeof(nv12_nomul_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int nv12_vert_bin[] =
-{
-# include "shader/nv12_vert_bin_s3c6410.h"
-};
-#endif
 const char nv12_vert_glsl[] =
 #include "shader/nv12_vert.h"
   ;
 Evas_GL_Program_Source shader_nv12_vert_src =
 {
    nv12_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     nv12_vert_bin, sizeof(nv12_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
-
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int nv12_nomul_frag_bin[] =
-{
-# include "shader/nv12_nomul_frag_bin_s3c6410.h"
-};
-#endif
 
 const char nv12_frag_glsl[] =
 #include "shader/nv12_frag.h"
@@ -252,19 +120,8 @@ const char nv12_frag_glsl[] =
 Evas_GL_Program_Source shader_nv12_frag_src =
 {
    nv12_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     nv12_frag_bin, sizeof(nv12_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
-
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int nv12_nomul_frag_bin[] =
-{
-# include "shader/nv12_nomul_frag_bin_s3c6410.h"
-};
-#endif
 
 const char nv12_nomul_frag_glsl[] =
 #include "shader/nv12_nomul_frag.h"
@@ -272,333 +129,161 @@ const char nv12_nomul_frag_glsl[] =
 Evas_GL_Program_Source shader_nv12_nomul_frag_src =
 {
    nv12_nomul_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     nv12_nomul_frag_bin, sizeof(nv12_nomul_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int yuv_nomul_frag_bin[] =
-{
-# include "shader/yuv_nomul_frag_bin_s3c6410.h"
-};
-#endif
-
 const char yuv_nomul_frag_glsl[] =
 #include "shader/yuv_nomul_frag.h"
   ;
 Evas_GL_Program_Source shader_yuv_nomul_frag_src =
 {
    yuv_nomul_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     yuv_nomul_frag_bin, sizeof(yuv_nomul_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int yuv_nomul_vert_bin[] =
-{
-# include "shader/yuv_nomul_vert_bin_s3c6410.h"
-};
-#endif
 const char yuv_nomul_vert_glsl[] =
 #include "shader/yuv_nomul_vert.h"
   ;
 Evas_GL_Program_Source shader_yuv_nomul_vert_src =
 {
    yuv_nomul_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     yuv_nomul_vert_bin, sizeof(yuv_nomul_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int tex_frag_bin[] =
-{
-# include "shader/tex_frag_bin_s3c6410.h"
-};
-#endif
-
 const char tex_frag_glsl[] =
 #include "shader/tex_frag.h"
   ;
 Evas_GL_Program_Source shader_tex_frag_src =
 {
    tex_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     tex_frag_bin, sizeof(tex_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int tex_vert_bin[] =
-{
-# include "shader/tex_vert_bin_s3c6410.h"
-};
-#endif
 const char tex_vert_glsl[] =
 #include "shader/tex_vert.h"
   ;
 Evas_GL_Program_Source shader_tex_vert_src =
 {
    tex_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     tex_vert_bin, sizeof(tex_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int tex_nomul_frag_bin[] =
-{
-# include "shader/tex_nomul_frag_bin_s3c6410.h"
-};
-#endif
-
 const char tex_nomul_frag_glsl[] =
 #include "shader/tex_nomul_frag.h"
   ;
 Evas_GL_Program_Source shader_tex_nomul_frag_src =
 {
    tex_nomul_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     tex_nomul_frag_bin, sizeof(tex_nomul_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int tex_nomul_vert_bin[] =
-{
-# include "shader/tex_nomul_vert_bin_s3c6410.h"
-};
-#endif
 const char tex_nomul_vert_glsl[] =
 #include "shader/tex_nomul_vert.h"
   ;
 Evas_GL_Program_Source shader_tex_nomul_vert_src =
 {
    tex_nomul_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     tex_nomul_vert_bin, sizeof(tex_nomul_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_frag_bin[] =
-{
-# include "shader/img_frag_bin_s3c6410.h"
-};
-#endif
-
 const char img_frag_glsl[] =
 #include "shader/img_frag.h"
   ;
 Evas_GL_Program_Source shader_img_frag_src =
 {
    img_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_frag_bin, sizeof(img_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_vert_bin[] =
-{
-# include "shader/img_vert_bin_s3c6410.h"
-};
-#endif
 const char img_vert_glsl[] =
 #include "shader/img_vert.h"
   ;
 Evas_GL_Program_Source shader_img_vert_src =
 {
    img_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_vert_bin, sizeof(img_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_nomul_frag_bin[] =
-{
-# include "shader/img_nomul_frag_bin_s3c6410.h"
-};
-#endif
-
 const char img_nomul_frag_glsl[] =
 #include "shader/img_nomul_frag.h"
   ;
 Evas_GL_Program_Source shader_img_nomul_frag_src =
 {
    img_nomul_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_nomul_frag_bin, sizeof(img_nomul_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_nomul_vert_bin[] =
-{
-# include "shader/img_nomul_vert_bin_s3c6410.h"
-};
-#endif
 const char img_nomul_vert_glsl[] =
 #include "shader/img_nomul_vert.h"
   ;
 Evas_GL_Program_Source shader_img_nomul_vert_src =
 {
    img_nomul_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_nomul_vert_bin, sizeof(img_nomul_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_bgra_frag_bin[] =
-{
-# include "shader/img_bgra_frag_bin_s3c6410.h"
-};
-#endif
-
 const char img_bgra_frag_glsl[] =
 #include "shader/img_bgra_frag.h"
   ;
 Evas_GL_Program_Source shader_img_bgra_frag_src =
 {
    img_bgra_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_bgra_frag_bin, sizeof(img_bgra_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_bgra_vert_bin[] =
-{
-# include "shader/img_bgra_vert_bin_s3c6410.h"
-};
-#endif
 const char img_bgra_vert_glsl[] =
 #include "shader/img_bgra_vert.h"
   ;
 Evas_GL_Program_Source shader_img_bgra_vert_src =
 {
    img_bgra_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_bgra_vert_bin, sizeof(img_bgra_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_mask_frag_bin[] =
-{
-# include "shader/img_mask_frag_bin_s3c6410.h"
-};
-#endif
-
 const char img_mask_frag_glsl[] =
 #include "shader/img_mask_frag.h"
   ;
 Evas_GL_Program_Source shader_img_mask_frag_src =
 {
    img_mask_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_mask_frag_bin, sizeof(img_mask_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_mask_vert_bin[] =
-{
-# include "shader/img_mask_vert_bin_s3c6410.h"
-};
-#endif
 const char img_mask_vert_glsl[] =
 #include "shader/img_mask_vert.h"
   ;
 Evas_GL_Program_Source shader_img_mask_vert_src =
 {
    img_mask_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_mask_vert_bin, sizeof(img_mask_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 
 /////////////////////////////////////////////
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_bgra_nomul_frag_bin[] =
-{
-# include "shader/img_bgra_nomul_frag_bin_s3c6410.h"
-};
-#endif
-
 const char img_bgra_nomul_frag_glsl[] =
 #include "shader/img_bgra_nomul_frag.h"
   ;
 Evas_GL_Program_Source shader_img_bgra_nomul_frag_src =
 {
    img_bgra_nomul_frag_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_bgra_nomul_frag_bin, sizeof(img_bgra_nomul_frag_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
-#if defined (GLES_VARIETY_S3C6410)
-const unsigned int img_bgra_nomul_vert_bin[] =
-{
-# include "shader/img_bgra_nomul_vert_bin_s3c6410.h"
-};
-#endif
 const char img_bgra_nomul_vert_glsl[] =
 #include "shader/img_bgra_nomul_vert.h"
   ;
 Evas_GL_Program_Source shader_img_bgra_nomul_vert_src =
 {
    img_bgra_nomul_vert_glsl,
-#if defined (GLES_VARIETY_S3C6410)
-     img_bgra_nomul_vert_bin, sizeof(img_bgra_nomul_vert_bin)
-#else
-     NULL, 0
-#endif
+   NULL, 0
 };
 
 /////////////////////////////////////////////
@@ -628,6 +313,7 @@ Evas_GL_Program_Source shader_filter_invert_bgra_frag_src =
    filter_invert_bgra_frag_glsl,
    NULL, 0
 };
+
 const char filter_invert_bgra_nomul_frag_glsl[] =
 #include "shader/filter_invert_bgra_nomul.h"
   ;
@@ -1019,12 +705,7 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
 
    p->vert = glCreateShader(GL_VERTEX_SHADER);
    p->frag = glCreateShader(GL_FRAGMENT_SHADER);
-#if defined (GLES_VARIETY_S3C6410)
-   glShaderBinary(1, &(p->vert), 0, vert->bin, vert->bin_size);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glShaderBinary(1, &(p->frag), 0, frag->bin, frag->bin_size);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-#else
+   
    glShaderSource(p->vert, 1,
                   (const char **)&(vert->src), NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
@@ -1053,7 +734,7 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
         ERR("Abort compile of shader frag (%s): %s", name, frag->src);
         return 0;
      }
-#endif
+   
    p->prog = glCreateProgram();
 #if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
 #else
@@ -1259,7 +940,7 @@ evas_gl_common_shader_program_init(Evas_GL_Shared *shared)
 void
 evas_gl_common_shader_program_init_done(void)
 {
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+#if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
    glReleaseShaderCompiler();
 #else
    if (glsym_glReleaseShaderCompiler) glsym_glReleaseShaderCompiler();
