@@ -41,7 +41,7 @@ collections {
                state: "default" 0.0;
                min: 160 50;
                max: 160 50;
-               align: 0.5 1.0;
+               align: 0.5 0.4;
             }
             description {
                state: "big" 0.0;
@@ -50,6 +50,33 @@ collections {
                max: 320 100;
             }
          } // example/custom
+
+         part {
+            name: "example/box";
+            api: "box" "The box part";
+            type: BOX;
+
+            description {
+               state: "default" 0.0;
+               box {
+                  layout: "horizontal_homogeneous";
+               }
+               rel1.relative: 0.0 0.5;
+               rel2.relative: 1.0 0.6;
+            }
+         } // box
+
+         part {
+            name: "example/table";
+            api: "table" "The table part";
+            type: TABLE;
+
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0.0 0.8;
+               rel2.relative: 1.0 1.0;
+            }
+         } // table
 
          programs {
             program {

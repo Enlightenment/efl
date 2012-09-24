@@ -39,6 +39,8 @@ _swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
 	_btn_large = EINA_TRUE;
 	codegen_example_swallow_grow_emit(layout);
 	elm_object_text_set(btn, "Reduce me!");
+	if (!codegen_example_table_clear(layout, EINA_TRUE))
+	  fprintf(stderr, "Could not remove the items from the table!\n");
      }
    else
      {
@@ -60,10 +62,26 @@ _size_changed_cb(void *data, Evas_Object *layout, const char *emission, const ch
    printf("Minimum size for this theme: %dx%d\n", w, h);
 }
 
+static Evas_Object *
+_button_create(Evas_Object *parent, const char *label)
+{
+   Evas_Object *btn;
+   btn = elm_button_add(parent);
+   if (!btn) return NULL;
+
+   elm_object_text_set(btn, label);
+   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   return btn;
+}
+
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-   Evas_Object *win, *bg, *btn, *layout;
+    Evas_Object *win, *bg, *btn, *layout, *tbl_items[3];
+    const char *labels[] = {"One", "Two", "Three", "Four", "Five", "Six"};
+    int i;
 
    elm_app_info_set(elm_main, "elementary", "examples/codegen_example.edj");
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
@@ -98,14 +116,28 @@ elm_main(int argc, char **argv)
 	codegen_example_title_set(layout, title);
      }
 
-   btn = elm_button_add(win);
-   elm_object_text_set(btn, "Enlarge me!");
-   evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   btn = _button_create(win, "Enlarge me!");
    codegen_example_custom_set(layout, btn);
    evas_object_smart_callback_add(btn, "clicked", _swallow_btn_cb, layout);
 
-   evas_object_resize(win, 160, 160);
+   for (i = 0; i < 6; i++)
+     {
+	tbl_items[i] = _button_create(win, labels[i]);
+	if (i < 3)
+	  {
+	     if (!codegen_example_table_pack(layout, tbl_items[i], i, i, 1,1))
+	       fprintf(stderr, "Could not add the button to the table!\n");
+	  }
+	else
+	  {
+	     if (!codegen_example_box_append(layout, tbl_items[i]))
+	       fprintf(stderr, "Could not add the button to the box!\n");
+	  }
+
+	evas_object_show(tbl_items[i]);
+     }
+
+   evas_object_resize(win, 500, 600);
    evas_object_show(win);
 
    elm_run();
