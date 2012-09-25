@@ -15,6 +15,8 @@
 # include "evas_xcb_xdefaults.h"
 #endif
 
+#include "evas_x_egl.h"
+
 int _evas_engine_soft_x11_log_dom = -1;
 
 /* function tables - filled in later (func and parent func) */
@@ -63,6 +65,38 @@ static void eng_output_idle_flush(void *data);
 /* internal engine routines */
 
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
+
+static void *
+_output_egl_setup(int w, int h, int rot, Display *disp, Drawable draw,
+                  Visual *vis, Colormap cmap, int depth, int debug,
+                  int grayscale, int max_colors, Pixmap mask,
+                  int shape_dither, int destination_alpha)
+{
+   Render_Engine *re;
+
+   if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
+   // _egl_x_disp_get()
+   // then
+   // _egl_x_disp_init()
+   // then
+   // _egl_x_disp_choose_config()
+   // then
+   // _egl_x_win_surf_new()
+   // 
+   // and on cleaup
+   // 
+   // _egl_x_win_surf_free()
+   // 
+   // to access pixels
+   // 
+   // _egl_x_map_surf()
+   // 
+   // to give back pixels
+   // 
+   // _egl_x_unmap_surf()
+   return re;
+}
+
 static void *
 _output_xlib_setup(int w, int h, int rot, Display *disp, Drawable draw,
                    Visual *vis, Colormap cmap, int depth, int debug,

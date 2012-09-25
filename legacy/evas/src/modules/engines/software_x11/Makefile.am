@@ -3,7 +3,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 if BUILD_ENGINE_SOFTWARE_X11
 
-SOFTWARE_X11_SOURCES = evas_engine.c
+SOFTWARE_X11_SOURCES = \
+evas_engine.c \
+evas_x_egl.c
 
 if BUILD_ENGINE_SOFTWARE_XLIB
 
@@ -25,7 +27,7 @@ evas_xlib_buffer.c \
 evas_xlib_color.c \
 evas_xlib_main.c
 
-SOFTWARE_X11_LIBADD = @FREETYPE_LIBS@ @EVAS_GENERAL_LIBS@ @evas_engine_software_xlib_libs@
+SOFTWARE_X11_LIBADD = @FREETYPE_LIBS@ @EVAS_GENERAL_LIBS@ @evas_engine_software_xlib_libs@ @dlopen_libs@
 
 endif
 
@@ -49,7 +51,7 @@ evas_xcb_buffer.c \
 evas_xcb_color.c \
 evas_xcb_main.c
 
-SOFTWARE_X11_LIBADD = @FREETYPE_LIBS@ @PIXMAN_LIBS@ @EVAS_GENERAL_LIBS@ @evas_engine_software_xcb_libs@
+SOFTWARE_X11_LIBADD = @FREETYPE_LIBS@ @PIXMAN_LIBS@ @EVAS_GENERAL_LIBS@ @evas_engine_software_xcb_libs@ @dlopen_libs@
 
 endif
 
