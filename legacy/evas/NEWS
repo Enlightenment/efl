@@ -22,6 +22,9 @@ Fixes:
    * Fix map surface leak.
    * Fix native surface set to null crash bug in gl engine.
 
+Removal:
+   * No more support s3c6410.
+
 Evas 1.7.0
 
 Changes since Evas 1.2.0:
