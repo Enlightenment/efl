@@ -1,6 +1,8 @@
 MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
+-I$(top_srcdir)/src/include/eina \
 -I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/include/eina \
 -I$(top_builddir)/src/lib/eet \
 @EET_CFLAGS@
 
@@ -39,10 +41,10 @@ eet-data-cipher_decipher.c
 examples: $(EXTRA_PROGRAMS)
 
 install-examples:
-	mkdir -p $(pkgdatadir)/examples
-	$(install_sh_DATA) -c $(SRCS) $(pkgdatadir)/examples
+	mkdir -p $(pkgdatadir)/examples/eet
+	$(install_sh_DATA) -c $(SRCS) $(pkgdatadir)/examples/eet
 
 uninstall-local:
 	for f in $(SRCS) ; do \
-	  rm -f $(pkgdatadir)/examples/$$f ; \
+	  rm -f $(pkgdatadir)/examples/eet/$$f ; \
 	done
