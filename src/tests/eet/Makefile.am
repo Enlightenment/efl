@@ -1,7 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
+-I$(top_srcdir)/src/include/eina \
 -I$(top_srcdir)/src/lib/eet \
+-I$(top_builddir)/src/include/eina \
 -I$(top_builddir)/src/lib/eet \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests\" \
 @CHECK_CFLAGS@ \
