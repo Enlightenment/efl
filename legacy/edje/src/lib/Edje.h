@@ -3914,7 +3914,7 @@ EAPI Eina_Bool        edje_object_part_drag_page      (Evas_Object *obj, const c
  * Box is a container type for parts, that means it can contain
  * other parts.
  *
- * @ingroup Edje_Object_Part_Group
+ * @ingroup Edje_Object_Part
  *
  * @{
  */
@@ -4082,7 +4082,7 @@ EAPI Eina_Bool    edje_object_part_box_remove_all         (Evas_Object *obj, con
  * Table is a container type for parts, that means it can contain
  * other parts.
  *
- * @ingroup Edje_Object_Part_Group
+ * @ingroup Edje_Object_Part
  *
  * @{
  */
