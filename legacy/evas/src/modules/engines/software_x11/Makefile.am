@@ -5,7 +5,8 @@ if BUILD_ENGINE_SOFTWARE_X11
 
 SOFTWARE_X11_SOURCES = \
 evas_engine.c \
-evas_x_egl.c
+evas_x_egl.c \
+evas_x_egl.h
 
 if BUILD_ENGINE_SOFTWARE_XLIB
 
