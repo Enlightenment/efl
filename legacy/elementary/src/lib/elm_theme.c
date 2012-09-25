@@ -320,33 +320,41 @@ _elm_theme_parse(Elm_Theme *th, const char *theme)
    if (!th) th = &(theme_default);
    if (theme)
      {
+        Eina_Strbuf *buf;
+
+        buf = eina_strbuf_new();
+
         p = theme;
         pe = p;
         for (;;)
           {
-             if ((*pe == ':') || (!*pe))
+             if ((pe[0] == '\\') && (pe[1] == ':'))
+               {
+                  eina_strbuf_append_char(buf, ':');
+                  pe += 2;
+               }
+             else if ((*pe == ':') || (!*pe))
                { // p -> pe == 'name:'
                   if (pe > p)
                     {
-                       char *n = malloc(pe - p + 1);
-                       if (n)
-                         {
-                            const char *nn;
+                       const char *nn;
 
-                            strncpy(n, p, pe - p);
-                            n[pe - p] = 0;
-                            nn = eina_stringshare_add(n);
-                            if (nn) names = eina_list_append(names, nn);
-                            free(n);
-                         }
+                       nn = eina_stringshare_add(eina_strbuf_string_get(buf));
+                       if (nn) names = eina_list_append(names, nn);
+                       eina_strbuf_reset(buf);
                     }
                   if (!*pe) break;
                   p = pe + 1;
                   pe = p;
                }
              else
-               pe++;
+               {
+                  eina_strbuf_append_char(buf, *pe);
+                  pe++;
+               }
           }
+
+        eina_strbuf_free(buf);
      }
    p = eina_list_data_get(eina_list_last(names));
    if ((!p) || ((p) && (strcmp(p, "default"))))
@@ -552,25 +560,25 @@ elm_theme_get(Elm_Theme *th)
    if (!th) th = &(theme_default);
    if (!th->theme)
      {
+        Eina_Strbuf *buf;
         Eina_List *l;
         const char *f;
-        char *tmp;
-        int len;
 
-        len = 0;
+        buf = eina_strbuf_new();
         EINA_LIST_FOREACH(th->themes, l, f)
           {
-             len += strlen(f);
-             if (l->next) len += 1;
+             while (*f)
+               {
+                  if (*f == ':')
+                    eina_strbuf_append_char(buf, '\\');
+                  eina_strbuf_append_char(buf, *f);
+
+                  f++;
+               }
+             if (l->next) eina_strbuf_append_char(buf, ':');
           }
-        tmp = alloca(len + 1);
-        tmp[0] = 0;
-        EINA_LIST_FOREACH(th->themes, l, f)
-          {
-             strcat(tmp, f);
-             if (l->next) strcat(tmp, ":");
-          }
-        th->theme = eina_stringshare_add(tmp);
+        th->theme = eina_stringshare_add(eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
      }
    return th->theme;
 }

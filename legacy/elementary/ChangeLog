@@ -534,3 +534,7 @@
 2012-09-24 Flavio Ceolin
 
         * elementary_codegen: Adding support for box and table.
+
+2012-09-25  Cedric Bail
+
+	* Escape theme filename correctly.
