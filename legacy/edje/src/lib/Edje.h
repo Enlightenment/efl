@@ -1799,40 +1799,6 @@ EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const c
  */
 
 /**
- * @addtogroup Edje_Object_Part
- *
- * @{
- */
-
-/**
- * @brief Registers a custom layout to be used in edje boxes.
- *
- * @param name The name of the layout
- * @param func The function defining the layout
- * @param layout_data_get This function gets the custom data pointer
- * for func
- * @param layout_data_free Passed to func to free its private data
- * when needed
- * @param free_data Frees data
- * @param data Private pointer passed to layout_data_get
- *
- * This function registers custom layouts that can be referred from
- * themes by the registered name. The Evas_Object_Box_Layout
- * functions receive two pointers for internal use, one being private
- * data, and the other the function to free that data when it's not
- * longer needed. From Edje, this private data will be retrieved by
- * calling layout_data_get, and layout_data_free will be the free
- * function passed to func. layout_data_get will be called with data
- * as its parameter, and this one will be freed by free_data whenever
- * the layout is unregistered from Edje.
- */
-EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
-
-/**
- * @}
- */
-
-/**
  * @defgroup Edje_Object_File Edje Object File
  *
  * @brief Functions to deals with EDJ files.
@@ -3952,6 +3918,30 @@ EAPI Eina_Bool        edje_object_part_drag_page      (Evas_Object *obj, const c
  *
  * @{
  */
+
+/**
+ * @brief Registers a custom layout to be used in edje boxes.
+ *
+ * @param name The name of the layout
+ * @param func The function defining the layout
+ * @param layout_data_get This function gets the custom data pointer
+ * for func
+ * @param layout_data_free Passed to func to free its private data
+ * when needed
+ * @param free_data Frees data
+ * @param data Private pointer passed to layout_data_get
+ *
+ * This function registers custom layouts that can be referred from
+ * themes by the registered name. The Evas_Object_Box_Layout
+ * functions receive two pointers for internal use, one being private
+ * data, and the other the function to free that data when it's not
+ * longer needed. From Edje, this private data will be retrieved by
+ * calling layout_data_get, and layout_data_free will be the free
+ * function passed to func. layout_data_get will be called with data
+ * as its parameter, and this one will be freed by free_data whenever
+ * the layout is unregistered from Edje.
+ */
+EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
 
 /**
  * @brief Appends an object to the box.
