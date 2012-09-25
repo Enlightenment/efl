@@ -662,6 +662,8 @@ struct _Edje_External_Param_Info
 
 #define EDJE_EXTERNAL_PARAM_INFO_SENTINEL {NULL, 0, 0, {.s = {NULL, NULL, NULL}}}
 
+#define EDJE_EXTERNAL_TYPE_ABI_VERSION (3)
+
 /**
  * @struct _Edje_External_Type
  *
@@ -682,7 +684,6 @@ struct _Edje_External_Param_Info
  */
 struct _Edje_External_Type
 {
-  #define EDJE_EXTERNAL_TYPE_ABI_VERSION (3)
   unsigned int  abi_version; /**< always use:
                               *  - #EDJE_EXTERNAL_TYPE_ABI_VERSION to declare.
                               *  - edje_external_type_abi_version_get() to check.
