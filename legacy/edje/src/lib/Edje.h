@@ -1227,42 +1227,10 @@ EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool c
  */
 
 /**
- * @addtogroup Edje_Object_Part
+ * @addtogroup Edje_Part_Text
  *
  * @{
  */
-
-typedef enum _Edje_Text_Effect
-{
-#define EDJE_TEXT_EFFECT_MASK_BASIC 0xf
-#define EDJE_TEXT_EFFECT_BASIC_SET(x, s) \
-   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_BASIC) | (s); } while (0)
-   EDJE_TEXT_EFFECT_NONE                = 0,
-   EDJE_TEXT_EFFECT_PLAIN               = 1,
-   EDJE_TEXT_EFFECT_OUTLINE             = 2,
-   EDJE_TEXT_EFFECT_SOFT_OUTLINE        = 3,
-   EDJE_TEXT_EFFECT_SHADOW              = 4,
-   EDJE_TEXT_EFFECT_SOFT_SHADOW         = 5,
-   EDJE_TEXT_EFFECT_OUTLINE_SHADOW      = 6,
-   EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW = 7,
-   EDJE_TEXT_EFFECT_FAR_SHADOW          = 8,
-   EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     = 9,
-   EDJE_TEXT_EFFECT_GLOW                = 10,
-
-   EDJE_TEXT_EFFECT_LAST                = 11,
-
-#define EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION (0x7 << 4)
-#define EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(x, s) \
-   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) | (s); } while (0)
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT         = (0x3 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP          = (0x5 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4),
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)
-} Edje_Text_Effect;
 
 typedef enum _Edje_Cursor
 {
@@ -1349,7 +1317,6 @@ typedef enum _Edje_Input_Panel_Layout
    EDJE_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
 } Edje_Input_Panel_Layout;
 
-typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
 typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
 typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, const char *part, char **text);
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
@@ -1447,7 +1414,7 @@ EAPI double       edje_object_scale_get           (const Evas_Object *obj);
  */
 
 /**
- * @addtogroup Edje_Object_Part
+ * @addtogroup Edje_Part_Text
  *
  * @{
  */
@@ -2696,17 +2663,58 @@ EAPI Eina_Bool    edje_object_part_geometry_get       (const Evas_Object *obj, c
 EAPI Eina_List    *edje_object_access_part_list_get   (const Evas_Object *obj);
 
 /**
- * @brief Set the function that provides item objects for named items in an edje entry text
- *
- * @param obj A valid Evas Object handle
- * @param func The function to call (or NULL to disable) to get item objects
- * @param data The data pointer to pass to the @p func callback
- *
- * Item objects may be deleted any time by Edje, and will be deleted when the
- * Edje object is deleted (or file is set to a new file).
+ * @}
  */
-EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_Item_Provider_Cb func, void *data);
 
+/**
+ * @defgroup Edje_Part_Text Edje Text Part
+ *
+ * @brief Functions that deal with parts of type text
+ *
+ * Text is an element type for parts. It's basic functionality is to
+ * display a string on the layout, but a lot more things can be done
+ * with texts, like string selection, setting the cursor and include
+ * a input panel, where one can set a virtual keyboard to handle
+ * keyboard entry easily.
+ *
+ * @ingroup Edje_Object_Part
+ *
+ * @{
+ */
+
+typedef enum _Edje_Text_Effect
+{
+#define EDJE_TEXT_EFFECT_MASK_BASIC 0xf
+#define EDJE_TEXT_EFFECT_BASIC_SET(x, s) \
+   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_BASIC) | (s); } while (0)
+   EDJE_TEXT_EFFECT_NONE                = 0,
+   EDJE_TEXT_EFFECT_PLAIN               = 1,
+   EDJE_TEXT_EFFECT_OUTLINE             = 2,
+   EDJE_TEXT_EFFECT_SOFT_OUTLINE        = 3,
+   EDJE_TEXT_EFFECT_SHADOW              = 4,
+   EDJE_TEXT_EFFECT_SOFT_SHADOW         = 5,
+   EDJE_TEXT_EFFECT_OUTLINE_SHADOW      = 6,
+   EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW = 7,
+   EDJE_TEXT_EFFECT_FAR_SHADOW          = 8,
+   EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     = 9,
+   EDJE_TEXT_EFFECT_GLOW                = 10,
+
+   EDJE_TEXT_EFFECT_LAST                = 11,
+
+#define EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION (0x7 << 4)
+#define EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(x, s) \
+   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) | (s); } while (0)
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4),
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4),
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4),
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT         = (0x3 << 4),
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4),
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP          = (0x5 << 4),
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4),
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)
+} Edje_Text_Effect;
+
+typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
 
 /**
  * @brief Set the object text callback.
@@ -2830,40 +2838,6 @@ EAPI Eina_Bool    edje_object_part_text_unescaped_set (Evas_Object *obj, const c
 EAPI char        *edje_object_part_text_unescaped_get (const Evas_Object *obj, const char *part);
 
 /**
- * @brief Return the selection text of the object part.
- *
- * @param obj A valid Evas_Object handle
- * @param part The part name
- * @return The text string
- *
- * This function returns selection text of the object part.
- *
- * @see edje_object_part_text_select_all()
- * @see edje_object_part_text_select_none()
- */
-EAPI const char      *edje_object_part_text_selection_get           (const Evas_Object *obj, const char *part);
-
-/**
- * @brief Set the selection to be none.
- *
- * @param obj A valid Evas_Object handle
- * @param part The part name
- *
- * This function sets the selection text to be none.
- */
-EAPI void             edje_object_part_text_select_none             (const Evas_Object *obj, const char *part);
-
-/**
- * @brief Set the selection to be everything.
- *
- * @param obj A valid Evas_Object handle
- * @param part The part name
- *
- * This function selects all text of the object of the part.
- */
-EAPI void             edje_object_part_text_select_all              (const Evas_Object *obj, const char *part);
-
-/**
  * @brief Insert text for an object part.
  *
  * @param obj A valid Evas Object handle
@@ -2952,6 +2926,16 @@ EAPI const Eina_List *edje_object_part_text_item_list_get           (const Evas_
 EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_Object *obj, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 
 /**
+ * @brief Deletes the selection and emits a change event.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param text The text string
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_user_insert        (const Evas_Object *obj, const char *part, const char *text);
+
+/**
  * @brief Returns the cursor geometry of the part relative to the edje
  * object.
  *
@@ -2966,14 +2950,50 @@ EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_
 EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 /**
- * @brief Deletes the selection and emits a change event.
+ * @brief Set the function that provides item objects for named items in an edje entry text
+ *
+ * @param obj A valid Evas Object handle
+ * @param func The function to call (or NULL to disable) to get item objects
+ * @param data The data pointer to pass to the @p func callback
+ *
+ * Item objects may be deleted any time by Edje, and will be deleted when the
+ * Edje object is deleted (or file is set to a new file).
+ */
+EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_Item_Provider_Cb func, void *data);
+
+/**
+ * @brief Return the selection text of the object part.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
- * @param text The text string
- * @since 1.2.0
+ * @return The text string
+ *
+ * This function returns selection text of the object part.
+ *
+ * @see edje_object_part_text_select_all()
+ * @see edje_object_part_text_select_none()
  */
-EAPI void             edje_object_part_text_user_insert        (const Evas_Object *obj, const char *part, const char *text);
+EAPI const char      *edje_object_part_text_selection_get           (const Evas_Object *obj, const char *part);
+
+/**
+ * @brief Set the selection to be none.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * This function sets the selection text to be none.
+ */
+EAPI void             edje_object_part_text_select_none             (const Evas_Object *obj, const char *part);
+
+/**
+ * @brief Set the selection to be everything.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * This function selects all text of the object of the part.
+ */
+EAPI void             edje_object_part_text_select_all              (const Evas_Object *obj, const char *part);
 
 /**
  * @brief Enables selection if the entry is an EXPLICIT selection mode
