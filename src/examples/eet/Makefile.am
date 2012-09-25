@@ -40,6 +40,9 @@ eet-data-cipher_decipher.c
 
 examples: $(EXTRA_PROGRAMS)
 
+clean-local:
+	rm -f $(EXTRA_PROGRAMS)
+
 install-examples:
 	mkdir -p $(pkgdatadir)/examples/eet
 	$(install_sh_DATA) -c $(SRCS) $(pkgdatadir)/examples/eet

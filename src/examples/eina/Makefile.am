@@ -108,13 +108,16 @@ endif
 
 examples: $(EXTRA_PROGRAMS)
 
+clean-local:
+	rm -f $(EXTRA_PROGRAMS)
+
 install-examples:
-	mkdir -p $(pkgdatadir)/examples
-	$(install_sh_DATA) -c $(SRCS) $(pkgdatadir)/examples
+	mkdir -p $(pkgdatadir)/examples/eina
+	$(install_sh_DATA) -c $(SRCS) $(pkgdatadir)/examples/eina
 
 uninstall-local:
 	for f in $(SRCS) ; do \
-	  rm -f $(pkgdatadir)/examples/$$f ; \
+	  rm -f $(pkgdatadir)/examples/eina/$$f ; \
 	done
 
 EXTRA_DIST = addr_book.txt chat.xml
