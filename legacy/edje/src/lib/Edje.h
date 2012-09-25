@@ -1308,14 +1308,6 @@ struct _Edje_Entry_Change_Info
  */
 typedef struct _Edje_Entry_Change_Info        Edje_Entry_Change_Info;
 
-typedef enum _Edje_Drag_Dir
-{
-   EDJE_DRAG_DIR_NONE = 0,
-   EDJE_DRAG_DIR_X = 1,
-   EDJE_DRAG_DIR_Y = 2,
-   EDJE_DRAG_DIR_XY = 3
-} Edje_Drag_Dir;
-
 typedef enum _Edje_Text_Filter_Type
 {
    EDJE_TEXT_FILTER_TEXT = 0,
@@ -3699,6 +3691,37 @@ EAPI void             edje_object_part_unswallow      (Evas_Object *obj, Evas_Ob
  * @return The swallowed object, or NULL if there is none.
  */
 EAPI Evas_Object     *edje_object_part_swallow_get    (const Evas_Object *obj, const char *part);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Part_Drag Edje Drag
+ *
+ * @brief Functions that deal with dragable parts.
+ *
+ * To create a movable part it must be declared as dragable
+ * in EDC file. To do so, one must define a "dragable" block inside
+ * the "part" block.
+ *
+ * These functions are used to set dragging properties to a
+ * part or get dragging information about it.
+ *
+ * @see @ref tutorial_edje_drag
+ *
+ * @ingroup Edje_Object_Part
+ *
+ * @{
+ */
+
+typedef enum _Edje_Drag_Dir
+{
+   EDJE_DRAG_DIR_NONE = 0,
+   EDJE_DRAG_DIR_X = 1,
+   EDJE_DRAG_DIR_Y = 2,
+   EDJE_DRAG_DIR_XY = 3
+} Edje_Drag_Dir;
 
 /**
  * @brief Determine dragable directions.
