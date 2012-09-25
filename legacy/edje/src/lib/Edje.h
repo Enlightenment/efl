@@ -2852,7 +2852,10 @@ EAPI const Eina_List *edje_object_part_text_item_list_get           (const Evas_
 EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_Object *obj, const char *part, const char *item, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 
 /**
- * @brief Deletes the selection and emits a change event.
+ * @brief This function inserts text as if the user has inserted it.
+ *
+ * This means it actually registers as a change and emits signals, triggers
+ * callbacks as appropriate.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
