@@ -1232,18 +1232,6 @@ EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool c
  * @{
  */
 
-typedef enum _Edje_Cursor
-{
-   EDJE_CURSOR_MAIN,
-   EDJE_CURSOR_SELECTION_BEGIN,
-   EDJE_CURSOR_SELECTION_END,
-   EDJE_CURSOR_PREEDIT_START,
-   EDJE_CURSOR_PREEDIT_END,
-   EDJE_CURSOR_USER,
-   EDJE_CURSOR_USER_EXTRA,
-   // more later
-} Edje_Cursor;
-
 struct _Edje_Entry_Change_Info
 {
    union {
@@ -2936,20 +2924,6 @@ EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_
 EAPI void             edje_object_part_text_user_insert        (const Evas_Object *obj, const char *part, const char *text);
 
 /**
- * @brief Returns the cursor geometry of the part relative to the edje
- * object.
- *
- * @param obj A valid Evas_Object handle
- * @param part The part name
- * @param x Cursor X position
- * @param y Cursor Y position
- * @param w Cursor width
- * @param h Cursor height
- *
- */
-EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-
-/**
  * @brief Set the function that provides item objects for named items in an edje entry text
  *
  * @param obj A valid Evas Object handle
@@ -3033,6 +3007,38 @@ EAPI void             edje_object_part_text_select_begin            (const Evas_
  */
 EAPI void             edje_object_part_text_select_extend           (const Evas_Object *obj, const char *part);
 
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Text_Cursor Edje Text Cursor
+ *
+ * @brief Functions that deal with cursor in text parts
+ *
+ * Cursor is a known functionality for texts in the whole computational
+ * world. It marks a position in the text from where one may want
+ * to make a insertion, deletion or selection.
+ *
+ * Edje is responsible for handling this functionality through the
+ * following functions.
+ *
+ * @ingroup Edje_Part_Text
+ *
+ * @{
+ */
+
+typedef enum _Edje_Cursor
+{
+   EDJE_CURSOR_MAIN,
+   EDJE_CURSOR_SELECTION_BEGIN,
+   EDJE_CURSOR_SELECTION_END,
+   EDJE_CURSOR_PREEDIT_START,
+   EDJE_CURSOR_PREEDIT_END,
+   EDJE_CURSOR_USER,
+   EDJE_CURSOR_USER_EXTRA,
+   // more later
+} Edje_Cursor;
 
 /**
  * @brief Advances the cursor to the next cursor position.
@@ -3192,6 +3198,30 @@ EAPI void             edje_object_part_text_cursor_pos_set              (Evas_Ob
  * @since 1.1.0
  */
 EAPI int              edje_object_part_text_cursor_pos_get              (const Evas_Object *obj, const char *part, Edje_Cursor cur);
+
+/**
+ * @brief Returns the cursor geometry of the part relative to the edje
+ * object.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param x Cursor X position
+ * @param y Cursor Y position
+ * @param w Cursor width
+ * @param h Cursor height
+ *
+ */
+EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * @}
+ */
+
+/**
+ * @addtogroup Edje_Part_Text
+ *
+ * @{
+ */
 
 /**
  * @brief Reset the input method context if needed.
