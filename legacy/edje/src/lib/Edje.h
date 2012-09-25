@@ -1227,93 +1227,6 @@ EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool c
  */
 
 /**
- * @addtogroup Edje_Part_Text
- *
- * @{
- */
-
-struct _Edje_Entry_Change_Info
-{
-   union {
-        struct {
-             const char *content;
-             size_t pos;
-             size_t plain_length; /* Number of cursor positions represented
-                                     in content. */
-        } insert;
-        struct {
-             const char *content;
-             size_t start, end;
-        } del;
-   } change;
-   Eina_Bool insert : 1; /**< True if the "change" union's "insert" is valid */
-   Eina_Bool merge : 1; /**< True if can be merged with the previous one. Used for example with insertion when something is already selected. */
-};
-
-/**
- * @since 1.1.0
- */
-typedef struct _Edje_Entry_Change_Info        Edje_Entry_Change_Info;
-
-typedef enum _Edje_Text_Filter_Type
-{
-   EDJE_TEXT_FILTER_TEXT = 0,
-   EDJE_TEXT_FILTER_FORMAT = 1,
-   EDJE_TEXT_FILTER_MARKUP = 2
-} Edje_Text_Filter_Type;
-
-typedef enum _Edje_Text_Autocapital_Type
-{
-   EDJE_TEXT_AUTOCAPITAL_TYPE_NONE,
-   EDJE_TEXT_AUTOCAPITAL_TYPE_WORD,
-   EDJE_TEXT_AUTOCAPITAL_TYPE_SENTENCE,
-   EDJE_TEXT_AUTOCAPITAL_TYPE_ALLCHARACTER
-} Edje_Text_Autocapital_Type;
-
-typedef enum _Edje_Input_Panel_Lang
-{
-   EDJE_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic @since 1.2 */
-   EDJE_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet @since 1.2 */
-} Edje_Input_Panel_Lang;
-
-typedef enum _Edje_Input_Panel_Return_Key_Type
-{
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT, /**< Default @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DONE,    /**< Done @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_GO,      /**< Go @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,    /**< Join @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search or magnifier icon @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEND,    /**< Send @since 1.2 */
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Sign-in @since 1.8 */
-} Edje_Input_Panel_Return_Key_Type;
-
-typedef enum _Edje_Input_Panel_Layout
-{
-   EDJE_INPUT_PANEL_LAYOUT_NORMAL,          /**< Default layout */
-   EDJE_INPUT_PANEL_LAYOUT_NUMBER,          /**< Number layout */
-   EDJE_INPUT_PANEL_LAYOUT_EMAIL,           /**< Email layout */
-   EDJE_INPUT_PANEL_LAYOUT_URL,             /**< URL layout */
-   EDJE_INPUT_PANEL_LAYOUT_PHONENUMBER,     /**< Phone Number layout */
-   EDJE_INPUT_PANEL_LAYOUT_IP,              /**< IP layout */
-   EDJE_INPUT_PANEL_LAYOUT_MONTH,           /**< Month layout */
-   EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY,      /**< Number Only layout */
-   EDJE_INPUT_PANEL_LAYOUT_INVALID,         /**< Never use this */
-   EDJE_INPUT_PANEL_LAYOUT_HEX,             /**< Hexadecimal layout @since 1.2 */
-   EDJE_INPUT_PANEL_LAYOUT_TERMINAL,        /**< Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization) @since 1.2 */
-   EDJE_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
-} Edje_Input_Panel_Layout;
-
-typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
-typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, const char *part, char **text);
-typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
-
-/**
- * @}
- */
-
-/**
  * @defgroup Edje_Object_Scale Edje Scale
  *
  * @brief Functions that deal with scaling objects
@@ -1396,65 +1309,6 @@ EAPI Eina_Bool    edje_object_scale_set           (Evas_Object *obj, double scal
  *
  */
 EAPI double       edje_object_scale_get           (const Evas_Object *obj);
-
-/**
- * @}
- */
-
-/**
- * @addtogroup Edje_Part_Text
- *
- * @{
- */
-
-/**
- * @brief Show last character in password mode.
- *
- * @param password_show_last If TRUE enable last character show in password mode.
- *
- * This function enables last input to be visible when in password mode for few seconds
- * or until the next input is entered.
- *
- * The time out value is obtained by edje_password_show_last_timeout_set function.
- *
- * @see edje_password_show_last_timeout_set().
- */
-EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
-
-/**
- * @brief Set's the timeout value in last show password mode.
- *
- * @param password_show_last_timeout The timeout value.
- *
- * This functions sets the time out value for which the last input entered in password
- * mode will be visible.
- *
- * This value can be used only when last show mode is set in password mode.
- *
- * @see edje_password_show_last_set().
- *
- */
-EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout);
-
-/**
- * @brief Set the RTL orientation for this object.
- *
- * @param obj A handle to an Edje object.
- * @param rtl new value of flag EINA_TRUE/EINA_FALSE
- * @since 1.1.0
- */
-EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool rtl);
-
-/**
- * @brief Get the RTL orientation for this object.
- *
- * You can RTL orientation explicitly with edje_object_mirrored_set.
- *
- * @param obj A handle to an Edje object.
- * @return @c EINA_TRUE if the flag is set or @c EINA_FALSE if not.
- * @since 1.1.0
- */
-EAPI Eina_Bool    edje_object_mirrored_get        (const Evas_Object *obj);
 
 /**
  * @}
@@ -2924,18 +2778,6 @@ EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_
 EAPI void             edje_object_part_text_user_insert        (const Evas_Object *obj, const char *part, const char *text);
 
 /**
- * @brief Set the function that provides item objects for named items in an edje entry text
- *
- * @param obj A valid Evas Object handle
- * @param func The function to call (or NULL to disable) to get item objects
- * @param data The data pointer to pass to the @p func callback
- *
- * Item objects may be deleted any time by Edje, and will be deleted when the
- * Edje object is deleted (or file is set to a new file).
- */
-EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_Item_Provider_Cb func, void *data);
-
-/**
  * @}
  */
 
@@ -3236,12 +3078,163 @@ EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_
 /**
  * @}
  */
-
+;;
 /**
- * @addtogroup Edje_Part_Text
+ * @defgroup Edje_Text_Entry Edje Text Entry
+ *
+ * @brief Functions that deal with text entries
+ *
+ * In Edje it's possible to use a text part as a entry so the user is
+ * able to make inputs of text. To do so, the text part must be set
+ * with a input panel taht will work as a virtual keyboard.
+ * 
+ * Some of effects can be applied to the entered text and also plenty
+ * actions can be performed after any input.
+ *
+ * Use the functions of this section to handle the user input of text.
+ *
+ * @ingroup Edje_Part_Text
  *
  * @{
  */
+
+struct _Edje_Entry_Change_Info
+{
+   union {
+        struct {
+             const char *content;
+             size_t pos;
+             size_t plain_length; /* Number of cursor positions represented
+                                     in content. */
+        } insert;
+        struct {
+             const char *content;
+             size_t start, end;
+        } del;
+   } change;
+   Eina_Bool insert : 1; /**< True if the "change" union's "insert" is valid */
+   Eina_Bool merge : 1; /**< True if can be merged with the previous one. Used for example with insertion when something is already selected. */
+};
+
+/**
+ * @since 1.1.0
+ */
+typedef struct _Edje_Entry_Change_Info        Edje_Entry_Change_Info;
+
+typedef enum _Edje_Text_Filter_Type
+{
+   EDJE_TEXT_FILTER_TEXT = 0,
+   EDJE_TEXT_FILTER_FORMAT = 1,
+   EDJE_TEXT_FILTER_MARKUP = 2
+} Edje_Text_Filter_Type;
+
+typedef enum _Edje_Text_Autocapital_Type
+{
+   EDJE_TEXT_AUTOCAPITAL_TYPE_NONE,
+   EDJE_TEXT_AUTOCAPITAL_TYPE_WORD,
+   EDJE_TEXT_AUTOCAPITAL_TYPE_SENTENCE,
+   EDJE_TEXT_AUTOCAPITAL_TYPE_ALLCHARACTER
+} Edje_Text_Autocapital_Type;
+
+typedef enum _Edje_Input_Panel_Lang
+{
+   EDJE_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic @since 1.2 */
+   EDJE_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet @since 1.2 */
+} Edje_Input_Panel_Lang;
+
+typedef enum _Edje_Input_Panel_Return_Key_Type
+{
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT, /**< Default @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DONE,    /**< Done @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_GO,      /**< Go @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,    /**< Join @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search or magnifier icon @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEND,    /**< Send @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN   /**< Sign-in @since 1.8 */
+} Edje_Input_Panel_Return_Key_Type;
+
+typedef enum _Edje_Input_Panel_Layout
+{
+   EDJE_INPUT_PANEL_LAYOUT_NORMAL,          /**< Default layout */
+   EDJE_INPUT_PANEL_LAYOUT_NUMBER,          /**< Number layout */
+   EDJE_INPUT_PANEL_LAYOUT_EMAIL,           /**< Email layout */
+   EDJE_INPUT_PANEL_LAYOUT_URL,             /**< URL layout */
+   EDJE_INPUT_PANEL_LAYOUT_PHONENUMBER,     /**< Phone Number layout */
+   EDJE_INPUT_PANEL_LAYOUT_IP,              /**< IP layout */
+   EDJE_INPUT_PANEL_LAYOUT_MONTH,           /**< Month layout */
+   EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY,      /**< Number Only layout */
+   EDJE_INPUT_PANEL_LAYOUT_INVALID,         /**< Never use this */
+   EDJE_INPUT_PANEL_LAYOUT_HEX,             /**< Hexadecimal layout @since 1.2 */
+   EDJE_INPUT_PANEL_LAYOUT_TERMINAL,        /**< Command-line terminal layout including esc, alt, ctrl key, so on (no auto-correct, no auto-capitalization) @since 1.2 */
+   EDJE_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
+} Edje_Input_Panel_Layout;
+
+typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
+typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, const char *part, char **text);
+typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
+
+/**
+ * @brief Show last character in password mode.
+ *
+ * @param password_show_last If TRUE enable last character show in password mode.
+ *
+ * This function enables last input to be visible when in password mode for few seconds
+ * or until the next input is entered.
+ *
+ * The time out value is obtained by edje_password_show_last_timeout_set function.
+ *
+ * @see edje_password_show_last_timeout_set().
+ */
+EAPI void edje_password_show_last_set(Eina_Bool password_show_last);
+
+/**
+ * @brief Set's the timeout value in last show password mode.
+ *
+ * @param password_show_last_timeout The timeout value.
+ *
+ * This functions sets the time out value for which the last input entered in password
+ * mode will be visible.
+ *
+ * This value can be used only when last show mode is set in password mode.
+ *
+ * @see edje_password_show_last_set().
+ *
+ */
+EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout);
+
+/**
+ * @brief Set the RTL orientation for this object.
+ *
+ * @param obj A handle to an Edje object.
+ * @param rtl new value of flag EINA_TRUE/EINA_FALSE
+ * @since 1.1.0
+ */
+EAPI void         edje_object_mirrored_set        (Evas_Object *obj, Eina_Bool rtl);
+
+/**
+ * @brief Get the RTL orientation for this object.
+ *
+ * You can RTL orientation explicitly with edje_object_mirrored_set.
+ *
+ * @param obj A handle to an Edje object.
+ * @return @c EINA_TRUE if the flag is set or @c EINA_FALSE if not.
+ * @since 1.1.0
+ */
+EAPI Eina_Bool    edje_object_mirrored_get        (const Evas_Object *obj);
+
+/**
+ * @brief Set the function that provides item objects for named items in an edje entry text
+ *
+ * @param obj A valid Evas Object handle
+ * @param func The function to call (or NULL to disable) to get item objects
+ * @param data The data pointer to pass to the @p func callback
+ *
+ * Item objects may be deleted any time by Edje, and will be deleted when the
+ * Edje object is deleted (or file is set to a new file).
+ */
+EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_Item_Provider_Cb func, void *data);
 
 /**
  * @brief Reset the input method context if needed.
