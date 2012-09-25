@@ -2936,6 +2936,26 @@ EAPI void             edje_object_part_text_user_insert        (const Evas_Objec
 EAPI void         edje_object_item_provider_set       (Evas_Object *obj, Edje_Item_Provider_Cb func, void *data);
 
 /**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Text_Selection Edje Text Selection
+ *
+ * @brief Functions that deal with selection in text parts
+ *
+ * Selection is a known functionality for texts in the whole computational
+ * world. It is a block of text marked for further manipulation.
+ *
+ * Edje is responsible for handling this functionality through the
+ * following functions.
+ *
+ * @ingroup Edje_Part_Text
+ *
+ * @{
+ */
+
+/**
  * @brief Return the selection text of the object part.
  *
  * @param obj A valid Evas_Object handle
