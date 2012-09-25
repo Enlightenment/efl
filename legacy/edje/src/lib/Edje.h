@@ -1232,15 +1232,6 @@ EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool c
  * @{
  */
 
-typedef enum _Edje_Aspect_Control
-{
-   EDJE_ASPECT_CONTROL_NONE = 0,
-   EDJE_ASPECT_CONTROL_NEITHER = 1,
-   EDJE_ASPECT_CONTROL_HORIZONTAL = 2,
-   EDJE_ASPECT_CONTROL_VERTICAL = 3,
-   EDJE_ASPECT_CONTROL_BOTH = 4
-} Edje_Aspect_Control;
-
 typedef enum _Edje_Text_Effect
 {
 #define EDJE_TEXT_EFFECT_MASK_BASIC 0xf
@@ -1812,43 +1803,6 @@ EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const c
  *
  * @{
  */
-
-/**
- * @brief Set the object minimum size.
- *
- * @param obj A valid Evas_Object handle
- * @param minw The minimum width
- * @param minh The minimum height
- *
- * This sets the minimum size restriction for the object.
- */
-EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
-
-/**
- * @brief Set the object maximum size.
- *
- * @param obj A valid Evas_Object handle
- * @param maxw The maximum width
- * @param maxh The maximum height
- *
- * This sets the maximum size restriction for the object.
- */
-EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
-
-/**
- * @brief Set the object aspect size.
- *
- * @param obj A valid Evas_Object handle
- * @param aspect The aspect control axes
- * @param aw The aspect radio width
- * @param ah The aspect ratio height
- *
- * This sets the desired aspect ratio to keep an object that will be
- * swallowed by Edje. The width and height define a preferred size
- * ASPECT and the object may be scaled to be larger or smaller, but
- * retaining the relative scale of both aspect width and height.
- */
-EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
 
 /**
  * @brief Registers a custom layout to be used in edje boxes.
@@ -3630,6 +3584,75 @@ EAPI void *edje_object_text_markup_filter_callback_del(Evas_Object *obj, const c
  * @since 1.2.0
  */
 EAPI void *edje_object_text_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Part_Swallow Edje Swallow Part
+ *
+ * @brief Functions that deal with parts of type swallow and swallowed objects.
+ *
+ * A important feature of Edje is to be able to create Evas_Objects
+ * in code and place them in a layout. And that is what swallowing
+ * is all about.
+ *
+ * Swallow parts are place holders defined in the EDC file for
+ * objects that one may want to include in the layout later, or for
+ * objects that are not native of Edje. In this last case, Edje will
+ * only treat the Evas_Object properties of the swallowed objects.
+ *
+ * @ingroup Edje_Object_Part
+ *
+ * @{
+ */
+
+typedef enum _Edje_Aspect_Control
+{
+   EDJE_ASPECT_CONTROL_NONE = 0,
+   EDJE_ASPECT_CONTROL_NEITHER = 1,
+   EDJE_ASPECT_CONTROL_HORIZONTAL = 2,
+   EDJE_ASPECT_CONTROL_VERTICAL = 3,
+   EDJE_ASPECT_CONTROL_BOTH = 4
+} Edje_Aspect_Control;
+
+/**
+ * @brief Set the object minimum size.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param minw The minimum width
+ * @param minh The minimum height
+ *
+ * This sets the minimum size restriction for the object.
+ */
+EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
+
+/**
+ * @brief Set the object maximum size.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param maxw The maximum width
+ * @param maxh The maximum height
+ *
+ * This sets the maximum size restriction for the object.
+ */
+EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
+
+/**
+ * @brief Set the object aspect size.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param aspect The aspect control axes
+ * @param aw The aspect radio width
+ * @param ah The aspect ratio height
+ *
+ * This sets the desired aspect ratio to keep an object that will be
+ * swallowed by Edje. The width and height define a preferred size
+ * ASPECT and the object may be scaled to be larger or smaller, but
+ * retaining the relative scale of both aspect width and height.
+ */
+EAPI void         edje_extern_object_aspect_set   (Evas_Object *obj, Edje_Aspect_Control aspect, Evas_Coord aw, Evas_Coord ah);
 
 /**
  * @brief "Swallows" an object into one of the Edje object @c SWALLOW
