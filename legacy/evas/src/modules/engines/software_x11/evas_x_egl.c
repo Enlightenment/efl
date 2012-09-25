@@ -69,6 +69,8 @@ static struct {
    unsigned int (*QuerySurface)        (void *ed, void *surf, int attr, int *val);
    void *       (*CreateWindowSurface) (void *ed, void *config, Window win, int *attr);
    unsigned int (*DestroySurface)      (void *ed, void *surf);
+   unsigned int (*SwapBuffers)         (void *ed, void *surf);
+   unsigned int (*SwapInterval)        (void *ed, int interval);
    
    unsigned int (*LockSurface)         (void *ed, void *surf, int *attr);
    unsigned int (*UnlockSurface)       (void *ed, void *surf);
@@ -97,6 +99,8 @@ _egl_find(void)
    SYM(QuerySurface,        "eglQuerySurface");
    SYM(CreateWindowSurface, "eglCreateWindowSurface");
    SYM(DestroySurface,      "eglDestroySurface");
+   SYM(SwapBuffers,         "eglSwapBuffers");
+   SYM(SwapInterval,        "eglSwapInterval");
 
 #undef SYM
 #define SYM(x, y) egl.x = egl.GetProcAddress(y)
@@ -202,13 +206,13 @@ _egl_x_win_surf_free(void *ed, void *surf)
 }
 
 void *
-_egl_x_map_surf(void *ed, void *surf, int *stride)
+_egl_x_surf_map(void *ed, void *surf, int *stride)
 {
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    int config_attrs[40], n = 0;
    void *ptr = NULL;
    int pitch = 0,  origin = 0;
-   int r_offset = 0, g_offset = 0, b_offset = 0, a_offset = 0;
+   int r_offset = 0, g_offset = 0, b_offset = 0;
    
    if (!_egl_find()) return NULL;
    
@@ -225,14 +229,15 @@ _egl_x_map_surf(void *ed, void *surf, int *stride)
    if (!egl.QuerySurface(ed, surf, EGL_BITMAP_PIXEL_RED_OFFSET_KHR, &r_offset)) goto err;
    if (!egl.QuerySurface(ed, surf, EGL_BITMAP_PIXEL_GREEN_OFFSET_KHR, &g_offset)) goto err;
    if (!egl.QuerySurface(ed, surf, EGL_BITMAP_PIXEL_BLUE_OFFSET_KHR, &b_offset)) goto err;
-   if (!egl.QuerySurface(ed, surf, EGL_BITMAP_PIXEL_ALPHA_OFFSET_KHR, &a_offset)) goto err;
    
    if (!ptr) goto err;
    if (pitch <= 0) goto err;
-   // need to check rgb offset matiching sw pixel fmt
-   // do we add origin to ptr?
-   // is pitch in bytes?
-   *stride = pitch;
+   // must be top-left to bottom-right ordered
+   if (origin != EGL_UPPER_LEFT_KHR) goto err;
+   // must be xRGB
+   if (!((b_offset == 0) && (g_offset == 8) && (r_offset == 16))) goto err;
+   // return stride
+   *stride = pitch; // pitch is in bytes
    return ptr;
 err:
    egl.UnlockSurface(ed, surf);
@@ -243,9 +248,19 @@ err:
 }
 
 void
-_egl_x_unmap_surf(void *ed, void *surf)
+_egl_x_surf_unmap(void *ed, void *surf)
 {
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
    egl.UnlockSurface(ed, surf);
+#endif   
+}
+
+void
+_egl_x_surf_swap(void *ed, void *surf, int vsync)
+{
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+   if (vsync) egl.SwapInterval(ed, 1);
+   else egl.SwapInterval(ed, 0);
+   egl.SwapBuffers(ed, surf);
 #endif   
 }
