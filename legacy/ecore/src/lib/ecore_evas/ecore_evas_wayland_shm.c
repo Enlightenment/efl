@@ -74,13 +74,10 @@ static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
 static void _ecore_evas_wl_screen_dpi_get(const Ecore_Evas *ee __UNUSED__, int *xdpi, int *ydpi);
-static void _ecore_evas_wl_ensure_pool_size(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_shm_pool_free(Ecore_Evas *ee);
-static struct wl_shm_pool *_ecore_evas_wl_shm_pool_create(int size, void **data);
-
+static void _ecore_evas_wl_shm_pool_create(Ecore_Evas *ee, size_t size);
 static void _ecore_evas_wl_buffer_free(Ecore_Evas *ee);
-static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, struct wl_shm_pool *pool);
-
+static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, int w, int h);
 static Eina_Bool _ecore_evas_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_cb_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_cb_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
@@ -510,11 +507,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
         if (ee->engine.wl.frame)
           evas_object_resize(ee->engine.wl.frame, w, h);
 
-        _ecore_evas_wl_buffer_free(ee);
-        _ecore_evas_wl_ensure_pool_size(ee, w, h);
-
-        if (ee->engine.wl.pool)
-          _ecore_evas_wl_buffer_new(ee, ee->engine.wl.pool);
+        _ecore_evas_wl_buffer_new(ee, w, h);
 
         einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
         if (!einfo)
@@ -551,38 +544,6 @@ _ecore_evas_wl_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 }
 
 static void
-_ecore_evas_wl_ensure_pool_size(Ecore_Evas *ee, int w, int h)
-{
-   int stride = 0;
-   size_t len = 0;
-
-   stride = w * sizeof(int);
-   len = stride * h;
-
-   if ((ee->engine.wl.pool) && (len < ee->engine.wl.pool_size))
-     return;
-   else
-     {
-        struct wl_shm_pool *pool = NULL;
-        void *data;
-        int size;
-
-        _ecore_evas_wl_shm_pool_free(ee);
-
-        /*
-         * Make the pool 1.5 times the current requirement to allow growth
-         * without requiring a new pool allocation
-         */
-        size = 1.5 * len;
-        pool = _ecore_evas_wl_shm_pool_create(size, &data);
-
-        ee->engine.wl.pool = pool;
-        ee->engine.wl.pool_size = size;
-        ee->engine.wl.pool_data = data;
-     }
-}
-
-static void
 _ecore_evas_wl_show(Ecore_Evas *ee)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
@@ -591,10 +552,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 
    if ((!ee) || (ee->visible)) return;
 
-   _ecore_evas_wl_ensure_pool_size(ee, ee->w, ee->h);
-
-   if (ee->engine.wl.pool)
-     _ecore_evas_wl_buffer_new(ee, ee->engine.wl.pool);
+   _ecore_evas_wl_buffer_new(ee, ee->w, ee->h);
 
    einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
    if (!einfo)
@@ -838,11 +796,7 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
    /* if (ee->engine.wl.win) */
    /*   ecore_wl_window_transparent_set(ee->engine.wl.win, alpha); */
 
-   _ecore_evas_wl_buffer_free(ee);
-   _ecore_evas_wl_ensure_pool_size(ee, ee->w, ee->h);
-
-   if (ee->engine.wl.pool)
-     _ecore_evas_wl_buffer_new(ee, ee->engine.wl.pool);
+   _ecore_evas_wl_buffer_new(ee, ee->w, ee->h);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
@@ -875,11 +829,7 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
    if (ee->engine.wl.win)
      ecore_wl_window_transparent_set(ee->engine.wl.win, transparent);
 
-   _ecore_evas_wl_buffer_free(ee);
-   _ecore_evas_wl_ensure_pool_size(ee, ee->w, ee->h);
-
-   if (ee->engine.wl.pool)
-     _ecore_evas_wl_buffer_new(ee, ee->engine.wl.pool);
+   _ecore_evas_wl_buffer_new(ee, ee->w, ee->h);
 
    if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
      {
@@ -980,47 +930,56 @@ _ecore_evas_wl_shm_pool_free(Ecore_Evas *ee)
    ee->engine.wl.pool_data = NULL;
 }
 
-static struct wl_shm_pool *
-_ecore_evas_wl_shm_pool_create(int size, void **data)
+static void
+_ecore_evas_wl_shm_pool_create(Ecore_Evas *ee, size_t size)
 {
    struct wl_shm *shm;
-   struct wl_shm_pool *pool;
+   void *data;
    char tmp[PATH_MAX];
    int fd;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (!(shm = ecore_wl_shm_get())) return NULL;
+   if (size <= ee->engine.wl.pool_size)
+      return;
+
+   size *= 1.5;
+   _ecore_evas_wl_shm_pool_free(ee);
+
+   if (!(shm = ecore_wl_shm_get()))
+     {
+        ERR("ecore_wl_shm_get returned NULL");
+        return;
+     }
 
    strcpy(tmp, "/tmp/ecore-evas-wayland_shm-XXXXXX");
    if ((fd = mkstemp(tmp)) < 0) 
      {
         ERR("Could not create temporary file.");
-        return NULL;
+        return;
      }
 
    if (ftruncate(fd, size) < 0) 
      {
         ERR("Could not truncate temporary file.");
-        close(fd);
-        return NULL;
+        goto end;
      }
 
-   *data = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, 0);
+   data = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, 0);
    unlink(tmp);
 
-   if (*data == MAP_FAILED) 
+   if (data == MAP_FAILED)
      {
         ERR("mmap of temporary file failed.");
-        close(fd);
-        return NULL;
+        goto end;
      }
 
-   pool = wl_shm_create_pool(shm, fd, size);
+   ee->engine.wl.pool_size = size;
+   ee->engine.wl.pool_data = data;
+   ee->engine.wl.pool = wl_shm_create_pool(shm, fd, size);
 
+ end:
    close(fd);
-
-   return pool;
 }
 
 static void
@@ -1033,20 +992,24 @@ _ecore_evas_wl_buffer_free(Ecore_Evas *ee)
 }
 
 static void 
-_ecore_evas_wl_buffer_new(Ecore_Evas *ee, struct wl_shm_pool *pool)
+_ecore_evas_wl_buffer_new(Ecore_Evas *ee, int w, int h)
 {
    unsigned int format;
    int stride = 0;
+
+   stride = (w * sizeof(int));
+
+   _ecore_evas_wl_shm_pool_create(ee, stride * h);
 
    if ((ee->alpha) || (ee->transparent))
      format = WL_SHM_FORMAT_ARGB8888;
    else
      format = WL_SHM_FORMAT_XRGB8888;
 
-   stride = (ee->w * sizeof(int));
-
+   _ecore_evas_wl_buffer_free(ee);
    ee->engine.wl.buffer = 
-     wl_shm_pool_create_buffer(pool, 0, ee->w, ee->h, stride, format);
+     wl_shm_pool_create_buffer(ee->engine.wl.pool, 0, w, h, stride, format);
+
 }
 
 void 
