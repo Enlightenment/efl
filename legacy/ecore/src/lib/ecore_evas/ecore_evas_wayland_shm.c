@@ -75,8 +75,10 @@ static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
 static void _ecore_evas_wl_screen_dpi_get(const Ecore_Evas *ee __UNUSED__, int *xdpi, int *ydpi);
 static void _ecore_evas_wl_ensure_pool_size(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_wl_shm_pool_free(Ecore_Evas *ee);
 static struct wl_shm_pool *_ecore_evas_wl_shm_pool_create(int size, void **data);
 
+static void _ecore_evas_wl_buffer_free(Ecore_Evas *ee);
 static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, struct wl_shm_pool *pool);
 
 static Eina_Bool _ecore_evas_wl_cb_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
@@ -356,8 +358,8 @@ _ecore_evas_wl_free(Ecore_Evas *ee)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
-   ee->engine.wl.buffer = NULL;
+   _ecore_evas_wl_buffer_free(ee);
+   _ecore_evas_wl_shm_pool_free(ee);
 
    if (ee->engine.wl.win) ecore_wl_window_free(ee->engine.wl.win);
    ee->engine.wl.win = NULL;
@@ -508,9 +510,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
         if (ee->engine.wl.frame)
           evas_object_resize(ee->engine.wl.frame, w, h);
 
-        if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
-        ee->engine.wl.buffer = NULL;
-
+        _ecore_evas_wl_buffer_free(ee);
         _ecore_evas_wl_ensure_pool_size(ee, w, h);
 
         if (ee->engine.wl.pool)
@@ -567,8 +567,7 @@ _ecore_evas_wl_ensure_pool_size(Ecore_Evas *ee, int w, int h)
         void *data;
         int size;
 
-        if (ee->engine.wl.pool)
-          wl_shm_pool_destroy(ee->engine.wl.pool);
+        _ecore_evas_wl_shm_pool_free(ee);
 
         /*
          * Make the pool 1.5 times the current requirement to allow growth
@@ -643,8 +642,7 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
 
    if ((!ee) || (!ee->visible)) return;
 
-   if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
-   ee->engine.wl.buffer = NULL;
+   _ecore_evas_wl_buffer_free(ee);
 
    munmap(ee->engine.wl.pool_data, ee->engine.wl.pool_size);
 
@@ -840,9 +838,7 @@ _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
    /* if (ee->engine.wl.win) */
    /*   ecore_wl_window_transparent_set(ee->engine.wl.win, alpha); */
 
-   if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
-   ee->engine.wl.buffer = NULL;
-
+   _ecore_evas_wl_buffer_free(ee);
    _ecore_evas_wl_ensure_pool_size(ee, ee->w, ee->h);
 
    if (ee->engine.wl.pool)
@@ -879,9 +875,7 @@ _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
    if (ee->engine.wl.win)
      ecore_wl_window_transparent_set(ee->engine.wl.win, transparent);
 
-   if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
-   ee->engine.wl.buffer = NULL;
-
+   _ecore_evas_wl_buffer_free(ee);
    _ecore_evas_wl_ensure_pool_size(ee, ee->w, ee->h);
 
    if (ee->engine.wl.pool)
@@ -975,6 +969,17 @@ _ecore_evas_wl_screen_dpi_get(const Ecore_Evas *ee __UNUSED__, int *xdpi, int *y
    if (ydpi) *ydpi = dpi;
 }
 
+static void
+_ecore_evas_wl_shm_pool_free(Ecore_Evas *ee)
+{
+   if (!ee->engine.wl.pool) return;
+
+   wl_shm_pool_destroy(ee->engine.wl.pool);
+   ee->engine.wl.pool = NULL;
+   ee->engine.wl.pool_size = 0;
+   ee->engine.wl.pool_data = NULL;
+}
+
 static struct wl_shm_pool *
 _ecore_evas_wl_shm_pool_create(int size, void **data)
 {
@@ -1016,6 +1021,15 @@ _ecore_evas_wl_shm_pool_create(int size, void **data)
    close(fd);
 
    return pool;
+}
+
+static void
+_ecore_evas_wl_buffer_free(Ecore_Evas *ee)
+{
+   if (!ee->engine.wl.buffer) return;
+
+   wl_buffer_destroy(ee->engine.wl.buffer);
+   ee->engine.wl.buffer = NULL;
 }
 
 static void 
