@@ -31,15 +31,11 @@ m4/efl_threads.m4 \
 m4/evil_windows.m4 \
 m4/eina_check.m4
 
-if HAVE_WINDOWS
 EXTRA_DIST += \
 ChangeLog.evil \
 NEWS.evil \
 README.evil \
-evil.pc
-endif
-
-EXTRA_DIST += \
+evil.pc \
 ChangeLog.eina \
 NEWS.eina \
 README.eina \
@@ -49,7 +45,8 @@ ChangeLog.eet \
 NEWS.eet \
 README.eet \
 eet.spec \
-eet.pc
+eet.pc \
+eo.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
@@ -62,6 +59,10 @@ pkgconfig_DATA += eina.pc
 
 if EFL_BUILD_EET
 pkgconfig_DATA += eet.pc
+endif
+
+if EFL_BUILD_EO
+pkgconfig_DATA += eo.pc
 endif
 
 
@@ -97,9 +98,11 @@ check-local:
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
 endif
-	@./src/tests/eina/eina_suite$(EXEEXT)
 if EFL_BUILD_EET
 	@./src/tests/eet/eet_suite$(EXEEXT)
+endif
+if EFL_BUILD_EO
+	@./src/tests/eo/eo_suite$(EXEEXT)
 endif
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
@@ -112,7 +115,9 @@ endif
 benchmark:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark
 	@mkdir benchmark || true
-	@cd benchmark && ../src/benchmarks/eina/eina_bench$(EXEEXT) `date +%F_%s`
+if EFL_BUILD_EO
+	@cd benchmark && ../src/benchmarks/eo/eo_bench$(EXEEXT) `date +%F_%s`
+endif
 
 benchmark-e17:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark-e17

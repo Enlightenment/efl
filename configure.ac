@@ -51,8 +51,6 @@ AC_SUBST([VMAJ])
 
 #### Default values
 
-want_eina="yes"
-want_eet="yes"
 want_evas="yes"
 want_ecore="yes"
 want_embryo="yes"
@@ -97,6 +95,7 @@ requirements_libs_deps_elementary=""
 
 requirements_pc_eina=""
 requirements_pc_eet=""
+requirements_pc_eo=""
 requirements_pc_evas=""
 requirements_pc_ecore=""
 requirements_pc_embryo=""
@@ -140,6 +139,7 @@ AC_SUBST([requirements_libs_elementary])
 
 AC_SUBST([requirements_pc_eina])
 AC_SUBST([requirements_pc_eet])
+AC_SUBST([requirements_pc_eo])
 AC_SUBST([requirements_pc_evas])
 AC_SUBST([requirements_pc_ecore])
 AC_SUBST([requirements_pc_embryo])
@@ -197,6 +197,7 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 #### Additional options to configure
 
 EFL_ENABLE_LIB([eet], [yes])
+EFL_ENABLE_LIB([eo], [yes])
 
 
 # Assert or fail.
@@ -1141,6 +1142,62 @@ fi
 #### End of Eet
 
 
+#### Eo
+
+efl_have_eo="no"
+
+if test "x${efl_want_build_eo}" = "xyes" ; then
+
+AC_MSG_NOTICE([Eo checks])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+
+# Eina library
+
+requirements_pc_eo="eina >= 1.7.99"
+
+PKG_CHECK_MODULES([EO], [${requirements_pc_eo}])
+
+# Example (evas one)
+
+PKG_CHECK_MODULES([ELM], [elementary >= 1.7.0], [have_elm="yes"], [have_elm="no"])
+AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+EFL_EO_BUILD=""
+case "$host_os" in
+   mingw*)
+      EFL_EO_BUILD="-DEFL_EO_BUILD"
+   ;;
+esac
+AC_SUBST([EFL_EO_BUILD])
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+efl_have_eo="yes"
+
+fi
+
+#### End of Eo
+
+
 #### Evas
 
 #AC_MSG_NOTICE([Evas checks])
@@ -1166,12 +1223,14 @@ doc/Doxyfile
 src/Makefile
 src/benchmarks/Makefile
 src/benchmarks/eina/Makefile
+src/benchmarks/eo/Makefile
 src/bin/Makefile
 src/bin/evil/Makefile
 src/bin/eet/Makefile
 src/examples/Makefile
 src/examples/eina/Makefile
 src/examples/eet/Makefile
+src/examples/eo/Makefile
 src/include/Makefile
 src/include/eina/Makefile
 src/include/eina/eina_config.h
@@ -1179,6 +1238,7 @@ src/lib/Makefile
 src/lib/evil/Makefile
 src/lib/eina/Makefile
 src/lib/eet/Makefile
+src/lib/eo/Makefile
 src/modules/Makefile
 src/modules/eina/Makefile
 src/modules/eina/mp/Makefile
@@ -1194,11 +1254,13 @@ src/scripts/eina/Makefile
 src/tests/Makefile
 src/tests/eina/Makefile
 src/tests/eet/Makefile
+src/tests/eo/Makefile
 eina.spec
 eet.spec
 evil.pc
 eina.pc
 eet.pc
+eo.pc
 ])
 
 AC_OUTPUT
@@ -1263,6 +1325,7 @@ echo "    Pass through.......: ${enable_pass_through}"
 echo
 if test "x${efl_have_eet}" = "xno" ; then
 echo "Eet....................: no"
+echo
 else
 echo "Eet"
 echo
@@ -1273,6 +1336,16 @@ if test "x${have_gnutls}" = "xyes" || test "x${have_openssl}" = "xyes" ; then
 fi
 echo
 echo "  Old eet file format..: ${old_eet_file_format}"
+echo
+echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
+echo "  Examples.............: make examples"
+echo "    installation.......: make install-examples"
+fi
+if test "x${efl_have_eo}" = "xno" ; then
+echo "Eo.....................: no"
+echo
+else
+echo "Eo"
 echo
 echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
 echo "  Examples.............: make examples"
