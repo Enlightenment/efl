@@ -76,9 +76,8 @@ _sort_arg(const void *d1, const void *d2)
 }
 
 EAPI Eina_Bool
-edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
+edbus_signal_handler_match_extra_vset(EDBus_Signal_Handler *sh, va_list ap)
 {
-   va_list ap;
    const char *key = NULL, *read;
    DBusError err;
 
@@ -89,7 +88,6 @@ edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
                          eina_strbuf_string_get(sh->match), &err);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(dbus_error_is_set(&err), EINA_FALSE);
 
-   va_start(ap, sh);
    for (read = va_arg(ap, char *); read; read = va_arg(ap, char *))
      {
         Signal_Argument *arg;
@@ -119,7 +117,6 @@ edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
           }
         key = NULL;
      }
-   va_end(ap);
 
    dbus_error_init(&err);
    dbus_bus_add_match(sh->conn->dbus_conn,
@@ -131,13 +128,24 @@ edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
    return EINA_FALSE;
 
 error:
-   va_end(ap);
    dbus_error_init(&err);
    dbus_bus_add_match(sh->conn->dbus_conn,
                       eina_strbuf_string_get(sh->match), &err);
    if (dbus_error_is_set(&err))
      ERR("Error setting partial extra arguments.");
    return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...)
+{
+   Eina_Bool ret;
+   va_list ap;
+
+   va_start(ap, sh);
+   ret = edbus_signal_handler_match_extra_vset(sh, ap);
+   va_end(ap);
+   return ret;
 }
 
 EAPI EDBus_Signal_Handler *

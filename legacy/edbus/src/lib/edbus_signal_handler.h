@@ -51,6 +51,23 @@ EAPI void                  edbus_signal_handler_del(EDBus_Signal_Handler *handle
  * http://dbus.freedesktop.org/doc/dbus-specification.html#message-bus-routing-match-rules
  */
 EAPI Eina_Bool             edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...) EINA_ARG_NONNULL(1) EINA_SENTINEL;
+/**
+ * @brief Add extra argument in match of signal handler to obtain specifics signals.
+ *
+ * Example:
+ * edbus_signal_handler_match_extra_set(sh, "arg0", "org.bansheeproject.Banshee", "arg1", "", NULL);
+ * With this extra arguments this signal handler callback only will be called
+ * when Banshee is started.
+ *
+ * @note For now is only supported argX.
+ *
+ * @param sh signal handler
+ * @param ap va_list with the keys and values, must be ended with a NULL
+ *
+ * @note To information:
+ * http://dbus.freedesktop.org/doc/dbus-specification.html#message-bus-routing-match-rules
+ */
+EAPI Eina_Bool             edbus_signal_handler_match_extra_vset(EDBus_Signal_Handler *sh, va_list ap);
 
 /**
  * @brief Add a callback function to be called when signal handler will be freed.
