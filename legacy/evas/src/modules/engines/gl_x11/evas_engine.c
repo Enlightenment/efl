@@ -11,19 +11,31 @@
 #define EVAS_GL_NO_GL_H_CHECK 1
 #include "Evas_GL.h"
 
+enum {
+   MODE_FULL,
+   MODE_COPY,
+   MODE_DOUBLE,
+   MODE_TRIPLE
+};
+
 typedef struct _Render_Engine               Render_Engine;
 
 struct _Render_Engine
 {
+   Tilebuf_Rect            *rects;
+   Tilebuf_Rect            *rects_prev[3];
+   Eina_Inlist             *cur_rect;
+   
    Evas_GL_X11_Window      *win;
    Evas_Engine_Info_GL_X11 *info;
    Evas                    *evas;
    Tilebuf                 *tb;
    int                      end;
-   int w, h;
-   int vsync;
+   int                      mode;
+   int                      w, h;
+   int                      vsync;
 
-   EVGL_Engine    *evgl_engine;
+   EVGL_Engine             *evgl_engine;
 };
 
 static int initted = 0;
@@ -627,6 +639,7 @@ eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_GL_X11 *info;
+   const char *s;
 
    info = (Evas_Engine_Info_GL_X11 *)in;
    if (!e->engine.data.output)
@@ -740,6 +753,36 @@ eng_setup(Evas *e, void *in)
                }
           }
      }
+   if ((s = getenv("EVAS_GL_SWAP_MODE")))
+     {
+        if ((!strcasecmp(s, "full")) ||
+            (!strcasecmp(s, "f")))
+          re->mode = MODE_FULL;
+        else if ((!strcasecmp(s, "copy")) ||
+                 (!strcasecmp(s, "c")))
+          re->mode = MODE_COPY;
+        else if ((!strcasecmp(s, "double")) ||
+                 (!strcasecmp(s, "d")) ||
+                 (!strcasecmp(s, "2")))
+          re->mode = MODE_DOUBLE;
+        else if ((!strcasecmp(s, "triple")) ||
+                 (!strcasecmp(s, "t")) ||
+                 (!strcasecmp(s, "3")))
+          re->mode = MODE_TRIPLE;
+     }
+   else
+     {
+// in most gl implementations - egl and glx here that we care about the TEND
+// to either swap or copy backbuffer and front buffer, but strictly that is
+// not true. technically backbuffer content is totally undefined after a swap
+// and thus you MUST re-render all of it, thus MODE_FULL
+//        re->mode = MODE_FULL;
+// BUT... reality is that lmost every implementation copies or swaps so
+// triple buffer mode can be used as it is a superset of double buffer and
+// copy (though using those explicitly is more efficient). so let's play with
+// triple buffer mdoe as a default and see.
+        re->mode = MODE_TRIPLE;
+     }
    if (!re->win)
      {
         free(re);
@@ -815,6 +858,10 @@ eng_output_free(void *data)
                 evgl_engine_destroy(re->evgl_engine);
           }
         evas_common_tilebuf_free(re->tb);
+        if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
+        if (re->rects_prev[0]) evas_common_tilebuf_free_render_rects(re->rects_prev[0]);
+        if (re->rects_prev[1]) evas_common_tilebuf_free_render_rects(re->rects_prev[1]);
+        if (re->rects_prev[2]) evas_common_tilebuf_free_render_rects(re->rects_prev[2]);
         free(re);
      }
    if ((initted == 1) && (gl_wins == 0))
@@ -860,6 +907,7 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
    evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 
+   /* bounding box track */
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->w, re->win->h);
    if ((w <= 0) || (h <= 0)) return;
    if (!re->win->draw.redraw)
@@ -906,6 +954,64 @@ eng_output_redraws_clear(void *data)
 //   INF("GL: finish update cycle!");
 }
 
+static Tilebuf_Rect *
+_merge_rects(Tilebuf *tb, Tilebuf_Rect *r1, Tilebuf_Rect *r2, Tilebuf_Rect *r3)
+{
+   Tilebuf_Rect *r, *rects;
+   int x1, y1, x2, y2;
+   
+   if (r1)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r1), r)
+          {
+             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+          }
+     }
+   if (r2)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r2), r)
+          {
+             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+          }
+     }
+   if (r2)
+     {
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(r3), r)
+          {
+             evas_common_tilebuf_add_redraw(tb, r->x, r->y, r->w, r->h);
+          }
+     }
+   rects = evas_common_tilebuf_get_render_rects(tb);
+   
+// bounding box -> make a bounding box single region update of all regions.
+// yes we could try and be smart and figure out size of regions, how far
+// apart etc. etc. to try and figure out an optimal "set". this is a tradeoff
+// between multiple update regions to render and total pixels to render.
+   if (rects)
+     {
+        x1 = rects->x; y1 = rects->y;
+        x2 = rects->x + rects->w; y2 = rects->y + rects->h;
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
+          {
+             if (r->x < x1) x1 = r->x;
+             if (r->y < y1) y1 = r->y;
+             if ((r->x + r->w) > x2) x2 = r->x + r->w;
+             if ((r->y + r->h) > y2) y2 = r->y + r->h;
+          }
+        evas_common_tilebuf_free_render_rects(rects);
+        rects = calloc(1, sizeof(Tilebuf_Rect));
+        if (rects)
+          {
+             rects->x = x1;
+             rects->y = y1;
+             rects->w = x2 - x1;
+             rects->h = y2 - y1;
+          }
+     }
+   evas_common_tilebuf_clear(tb);
+   return rects;
+}
+
 /* vsync games - not for now though */
 #define VSYNC_TO_SCREEN 1
 
@@ -913,79 +1019,119 @@ static void *
 eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch)
 {
    Render_Engine *re;
-   Tilebuf_Rect *rects;
+   Tilebuf_Rect *rect;
+   int i;
+   Eina_Bool first_rect = EINA_FALSE;
+   
+#define CLEAR_PREV_RECTS(x) \
+   do { \
+      if (re->rects_prev[i]) \
+        evas_common_tilebuf_free_render_rects(re->rects_prev[i]); \
+      re->rects_prev[i] = NULL; \
+   } while (0)
 
    re = (Render_Engine *)data;
    /* get the upate rect surface - return engine data as dummy */
-   rects = evas_common_tilebuf_get_render_rects(re->tb);
-   if (rects)
+   if (re->end)
      {
-/*        
-        Tilebuf_Rect *r;
-        
-        printf("REAAAAACCTS\n");
-        EINA_INLIST_FOREACH(EINA_INLIST_GET(rects), r)
-          {
-             printf("  %i %i %ix%i\n", r->x, r->y, r->w, r->h);
-          }
- */
-        evas_common_tilebuf_free_render_rects(rects);
+        re->end = 0;
+        return NULL;
+     }
+   if (!re->rects)
+     {
+        re->rects = evas_common_tilebuf_get_render_rects(re->tb);
         evas_common_tilebuf_clear(re->tb);
+        if (re->rects)
+          {
+             /* ensure we get rid of previous rect lists we dont need if mode
+              * changed/is appropriate */
+             switch (re->mode)
+               {
+                case MODE_FULL:
+                case MODE_COPY: // no prev rects needed
+                  for (i = 0; i < 3; i++) CLEAR_PREV_RECTS(i);
+                  break;
+                case MODE_DOUBLE: // double mode - only 1 level of prev rect
+                  for (i = 1; i < 3; i++) CLEAR_PREV_RECTS(i);
+                  re->rects_prev[1] = re->rects_prev[0];
+                  re->rects_prev[0] = re->rects;
+                  // merge prev[1] + prev[0] -> rects
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], NULL);
+                  break;
+                case MODE_TRIPLE: // keep all
+                  for (i = 2; i < 3; i++) CLEAR_PREV_RECTS(i);
+                  re->rects_prev[2] = re->rects_prev[1];
+                  re->rects_prev[1] = re->rects_prev[0];
+                  re->rects_prev[0] = re->rects;
+                  re->rects = NULL;
+                  // merge prev[2] + prev[1] + prev[0] -> rects
+                  re->rects = _merge_rects(re->tb, re->rects_prev[0], re->rects_prev[1], re->rects_prev[2]);
+                  break;
+                default:
+                  break;
+               }
+             re->cur_rect = EINA_INLIST_GET(re->rects);
+             first_rect = EINA_TRUE;
+          }
+     }
+   if (!re->cur_rect) return NULL;
+   rect = (Tilebuf_Rect *)re->cur_rect;
+   if (re->rects)
+     {
+        switch (re->mode)
+          {
+           case MODE_COPY:
+           case MODE_DOUBLE:
+           case MODE_TRIPLE:
+             rect = (Tilebuf_Rect *)re->cur_rect;
+             *x = rect->x;
+             *y = rect->y;
+             *w = rect->w;
+             *h = rect->h;
+             *cx = rect->x;
+             *cy = rect->y;
+             *cw = rect->w;
+             *ch = rect->h;
+             re->cur_rect = re->cur_rect->next;
+             break;
+           case MODE_FULL:
+             re->cur_rect = NULL;
+             if (x) *x = 0;
+             if (y) *y = 0;
+             if (w) *w = re->win->w;
+             if (h) *h = re->win->h;
+             if (cx) *cx = 0;
+             if (cy) *cy = 0;
+             if (cw) *cw = re->win->w;
+             if (ch) *ch = re->win->h;
+             break;
+           default:
+             break;
+          }
+        if (first_rect)
+          {
 #ifdef GL_GLES
-        // dont need to for egl - eng_window_use() can check for other ctxt's
+             // dont need to for egl - eng_window_use() can check for other ctxt's
 #else
-        eng_window_use(NULL);
+             eng_window_use(NULL);
 #endif
-        eng_window_use(re->win);
-        if (!_re_wincheck(re)) return NULL;
-        evas_gl_common_context_flush(re->win->gl_context);
-        evas_gl_common_context_newframe(re->win->gl_context);
-        if (x) *x = 0;
-        if (y) *y = 0;
-        if (w) *w = re->win->w;
-        if (h) *h = re->win->h;
-        if (cx) *cx = 0;
-        if (cy) *cy = 0;
-        if (cw) *cw = re->win->w;
-        if (ch) *ch = re->win->h;
+             eng_window_use(re->win);
+             if (!_re_wincheck(re)) return NULL;
+             
+             evas_gl_common_context_flush(re->win->gl_context);
+             evas_gl_common_context_newframe(re->win->gl_context);
+//// debug partial updates :)
+//             glClearColor(1.0, 0.5, 0.2, 1.0);
+//             glClear(GL_COLOR_BUFFER_BIT);
+          }
+        if (!re->cur_rect)
+          {
+             re->end = 1;
+          }
         return re->win->gl_context->def_surface;
      }
    return NULL;
-/*   
-   if (!re->win->draw.redraw) return NULL;
-#ifdef GL_GLES
-   // dont need to for egl - eng_window_use() can check for other ctxt's
-#else
-   eng_window_use(NULL);
-#endif
-   eng_window_use(re->win);
-   if (!_re_wincheck(re)) return NULL;
-   evas_gl_common_context_flush(re->win->gl_context);
-   evas_gl_common_context_newframe(re->win->gl_context);
-   if (x) *x = re->win->draw.x1;
-   if (y) *y = re->win->draw.y1;
-   if (w) *w = re->win->draw.x2 - re->win->draw.x1 + 1;
-   if (h) *h = re->win->draw.y2 - re->win->draw.y1 + 1;
-   if (cx) *cx = re->win->draw.x1;
-   if (cy) *cy = re->win->draw.y1;
-   if (cw) *cw = re->win->draw.x2 - re->win->draw.x1 + 1;
-   if (ch) *ch = re->win->draw.y2 - re->win->draw.y1 + 1;
-   return re->win->gl_context->def_surface;
- */
 }
-
-//#define FRAMECOUNT 1
-
-#ifdef FRAMECOUNT
-static double
-get_time(void)
-{
-   struct timeval timev;
-
-   gettimeofday(&timev, NULL);
-   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
-}
-#endif
 
 static int safe_native = -1;
 
@@ -993,10 +1139,6 @@ static void
 eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
 {
    Render_Engine *re;
-#ifdef FRAMECOUNT
-   static double pt = 0.0;
-   double ta, tb;
-#endif
 
    re = (Render_Engine *)data;
    /* put back update surface.. in this case just unflag redraw */
@@ -1023,18 +1165,8 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
 #ifdef GL_GLES
    // this is needed to make sure all previous rendering is flushed to
    // buffers/surfaces
-#ifdef FRAMECOUNT
-   double t0 = get_time();
-   ta = t0 - pt;
-   pt = t0;
-#endif
    // previous rendering should be done and swapped
    if (!safe_native) eglWaitNative(EGL_CORE_NATIVE_ENGINE);
-#ifdef FRAMECOUNT
-   double t1 = get_time();
-   tb = t1 - t0;
-   printf("... %1.5f -> %1.5f | ", ta, tb);
-#endif
 //   if (eglGetError() != EGL_SUCCESS)
 //     {
 //        printf("Error:  eglWaitNative(EGL_CORE_NATIVE_ENGINE) fail.\n");
@@ -1043,7 +1175,6 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    // previous rendering should be done and swapped
    if (!safe_native) glXWaitX();
 #endif
-//x//   printf("frame -> push\n");
 }
 
 static void
@@ -1054,14 +1185,11 @@ eng_output_flush(void *data)
    re = (Render_Engine *)data;
    if (!_re_wincheck(re)) return;
    if (!re->win->draw.drew) return;
-//x//   printf("frame -> flush\n");
+   
    re->win->draw.drew = 0;
    eng_window_use(re->win);
 
 #ifdef GL_GLES
-#ifdef FRAMECOUNT
-   double t0 = get_time();
-#endif
    if (!re->vsync)
      {
         if (re->info->vsync) eglSwapInterval(re->win->egl_disp, 1);
@@ -1072,23 +1200,20 @@ eng_output_flush(void *data)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
+   // XXX: if partial swaps can be done use re->rects
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
    if (!safe_native) eglWaitGL();
    if (re->info->callback.post_swap)
      {
         re->info->callback.post_swap(re->info->callback.data, re->evas);
      }
-#ifdef FRAMECOUNT
-   double t1 = get_time();
-   printf("%1.5f\n", t1 - t0);
-#endif
 //   if (eglGetError() != EGL_SUCCESS)
 //     {
 //        printf("Error:  eglSwapBuffers() fail.\n");
 //     }
 #else
 #ifdef VSYNC_TO_SCREEN
-   if ((re->info->vsync)/* || (1)*/)
+   if (re->info->vsync)
      {
         if (glsym_glXSwapIntervalEXT)
           {
@@ -1119,56 +1244,24 @@ eng_output_flush(void *data)
                }
           }
      }
-# endif
+#endif
    if (re->info->callback.pre_swap)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
-#if 1
-   if (1)
-#else
-   if ((re->win->draw.x1 == 0) && (re->win->draw.y1 == 0) && (re->win->draw.x2 == (re->win->w - 1)) && (re->win->draw.y2 == (re->win->h - 1)))
-#endif     
-     {
-//        double t, t2 = 0.0;
-//        t = get_time();
-        glXSwapBuffers(re->win->disp, re->win->win);
-//        t = get_time() - t;
-//        if (!safe_native)
-//          {
-//             t2 = get_time();
-//             glXWaitGL();
-//             t2 = get_time() - t2;
-//          }
-//        printf("swap: %3.5f (%3.5fms), x wait gl: %3.5f (%3.5fms)\n", 
-//               t, t * 1000.0, t2, t2 * 1000.0);
-     }
-   else
-     {
-// FIXME: this doesn't work.. why oh why?
-        int sx, sy, sw, sh;
-
-        sx = re->win->draw.x1;
-        sy = re->win->draw.y1;
-        sw = (re->win->draw.x2 - re->win->draw.x1) + 1;
-        sh = (re->win->draw.y2 - re->win->draw.y1) + 1;
-        sy = re->win->h - sy - sh;
-        
-        glBitmap(0, 0, 0, 0, sx, re->win->h - sy, NULL);
-        glEnable(GL_SCISSOR_TEST);
-        glScissor(sx, sy, sw, sh);
-        glDrawBuffer(GL_FRONT);
-        glCopyPixels(sx, sy, sw, sh, GL_COLOR);
-        glDrawBuffer(GL_BACK);
-        glDisable(GL_SCISSOR_TEST);
-        glBitmap(0, 0, 0, 0, 0, 0, NULL);
-        glFlush();
-     }
+   // XXX: if partial swaps can be done use re->rects
+   glXSwapBuffers(re->win->disp, re->win->win);
    if (re->info->callback.post_swap)
      {
         re->info->callback.post_swap(re->info->callback.data, re->evas);
      }
 #endif
+   // clear out rects after swap as we may use them during swap
+   if (re->rects)
+     {
+        evas_common_tilebuf_free_render_rects(re->rects);
+        re->rects = NULL;
+     }
 }
 
 static void

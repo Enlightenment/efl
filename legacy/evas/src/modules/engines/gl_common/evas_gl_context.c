@@ -2212,16 +2212,27 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    w = w - x;
    h = h - y;
 
+   if (!flat)
+     {
+        // FUZZZZ!
+        x -= 3;
+        y -= 3;
+        w += 6;
+        h += 6;
+     }
    if (clip)
      {
-        int nx = x, ny = y, nw = w, nh = h;
-
-        RECTS_CLIP_TO_RECT(nx, ny, nw, nh, cx, cy, cw, ch);
-        if ((nx == x) && (ny == y) && (nw == w) && (nh == h))
+        if (flat)
           {
-             clip = 0; cx = 0; cy = 0; cw = 0; ch = 0;
+             int nx = x, ny = y, nw = w, nh = h;
+             
+             RECTS_CLIP_TO_RECT(nx, ny, nw, nh, cx, cy, cw, ch);
+             if ((nx == x) && (ny == y) && (nw == w) && (nh == h))
+               {
+                  clip = 0; cx = 0; cy = 0; cw = 0; ch = 0;
+               }
+             x = nx; y = ny; w = nw; h = nh;
           }
-        x = nx; y = ny; w = nw; h = nh;
      }
 
    if (!flat)

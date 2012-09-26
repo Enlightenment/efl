@@ -1052,8 +1052,15 @@
 
 2012-09-24  Sung W. Park (sung_)
 
-	* Refactored Evas GL engine code so wayland_egl and gl_x11 and other
-        engines can share the same code. The common codes are in gl_common/
-        directory and evas_engine just has to implement a few engine functions.
+       * Refactored Evas GL engine code so wayland_egl and gl_x11 and other
+       engines can share the same code. The common codes are in gl_common/
+       directory and evas_engine just has to implement a few engine functions.
+
+2012-09-26  Carsten Haitzler (The Rasterman)
+
+       * Add the ability via env vars to do partial swaps in the gl
+       engine. This requires that we also can get from gl info as to
+       if a swap was a copy, swap, discard and if a swap with 2 or 3 
+       buffers. don't have that but env var will do for now for testing.
 
 
