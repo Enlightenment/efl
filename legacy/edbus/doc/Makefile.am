@@ -29,4 +29,8 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile.in $(wildcard images/*.*) e.css head.html foot.html
+EXTRA_DIST = $(srcdir)/Doxyfile.in \
+	$(wildcard $(srcdir)/img/*.*) \
+	$(srcdir)/e.css \
+	$(srcdir)/head.html \
+	$(srcdir)/foot.html
