@@ -2234,7 +2234,6 @@ _transit_effect_rotation_op(Elm_Transit_Effect *effect, Elm_Transit *transit, do
         half_h = (float)h * 0.5;
 
         evas_map_util_rotate(map, degree, x + half_w, y + half_h);
-        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, _TRANSIT_FOCAL);
         evas_object_map_enable_set(obj, EINA_TRUE);
         evas_object_map_set(obj, map);
      }
