@@ -979,6 +979,8 @@ _ecore_evas_wl_shm_pool_create(Ecore_Evas *ee, size_t size)
    ee->engine.wl.pool_size = size;
    ee->engine.wl.pool_data = data;
    ee->engine.wl.pool = wl_shm_create_pool(shm, fd, size);
+
+   close(fd);
 }
 
 static void
