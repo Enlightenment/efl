@@ -41,6 +41,12 @@ struct _Render_Engine
    void (*outbuf_flush)(Outbuf *ob);
    void (*outbuf_idle_flush)(Outbuf *ob);
    Eina_Bool (*outbuf_alpha_get)(Outbuf *ob);
+   
+   struct {
+      void *disp;
+      void *config;
+      void *surface;
+   } egl;
 };
 
 /* prototypes we will use here */
@@ -73,28 +79,68 @@ _output_egl_setup(int w, int h, int rot, Display *disp, Drawable draw,
                   int shape_dither, int destination_alpha)
 {
    Render_Engine *re;
-
+   void *ptr;
+   int stride = 0;
+   
+   if (depth != 32) return NULL;
+   if (mask) return NULL;
    if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
-   // _egl_x_disp_get()
-   // then
-   // _egl_x_disp_init()
-   // then
-   // _egl_x_disp_choose_config()
-   // then
-   // _egl_x_win_surf_new()
-   // 
-   // and on cleaup
-   // 
-   // _egl_x_win_surf_free()
-   // 
-   // to access pixels
-   // 
-   // _egl_x_map_surf()
-   // 
-   // to give back pixels
-   // 
-   // _egl_x_unmap_surf()
+   re->egl.disp = _egl_x_disp_get(disp);
+   if (!re->egl.disp)
+     {
+        free(re);
+        return NULL;
+     }
+   re->egl.config = _egl_x_disp_choose_config(re->egl.disp);
+   if (!re->egl.config)
+     {
+        _egl_x_disp_terminate(re->egl.disp);
+        free(re);
+        return NULL;
+     }
+   re->egl.surface = _egl_x_win_surf_new(re->egl.disp, draw, re->egl.config);
+   if (!re->egl.surface)
+     {
+        _egl_x_disp_terminate(re->egl.disp);
+        free(re);
+        return NULL;
+     }
+   ptr = _egl_x_surf_map(re->egl.disp, re->egl.surface, &stride);
+   if (!ptr)
+     {
+        _egl_x_win_surf_free(re->egl.disp, re->egl.surface);
+        _egl_x_disp_terminate(re->egl.disp);
+        free(re);
+        return NULL;
+     }
+   _egl_x_surf_unmap(re->egl.disp, re->egl.surface);
+   
+   re->ob = 
+     evas_software_egl_outbuf_setup_x(w, h, rot, OUTBUF_DEPTH_INHERIT, disp, 
+                                       draw, vis, cmap, depth, grayscale,
+                                       max_colors, mask, shape_dither,
+                                       destination_alpha);
+   
+   re->tb = evas_common_tilebuf_new(w, h);
+   if (!re->tb)
+     {
+	evas_software_xlib_outbuf_free(re->ob);
+	free(re);
+	return NULL;
+     }
+
+   /* in preliminary tests 16x16 gave highest framerates */
+   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   
    return re;
+}
+
+static void
+_output_egl_shutdown(Render_Engine *re)
+{
+   if (!re->egl.disp) return;
+   _egl_x_win_surf_free(re->egl.disp, re->egl.surface);
+   _egl_x_disp_terminate(re->egl.disp);
 }
 
 static void *
@@ -361,15 +407,25 @@ eng_setup(Evas *e, void *in)
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
         if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
           {
-             re = _output_xlib_setup(e->output.w, e->output.h,
-                                     info->info.rotation, info->info.connection,
-                                     info->info.drawable, info->info.visual,
-                                     info->info.colormap,
-                                     info->info.depth, info->info.debug,
-                                     info->info.alloc_grayscale,
-                                     info->info.alloc_colors_max,
-                                     info->info.mask, info->info.shape_dither,
-                                     info->info.destination_alpha);
+             re = _output_egl_setup(e->output.w, e->output.h,
+                                    info->info.rotation, info->info.connection,
+                                    info->info.drawable, info->info.visual,
+                                    info->info.colormap,
+                                    info->info.depth, info->info.debug,
+                                    info->info.alloc_grayscale,
+                                    info->info.alloc_colors_max,
+                                    info->info.mask, info->info.shape_dither,
+                                    info->info.destination_alpha);
+             if (!re)
+               re = _output_xlib_setup(e->output.w, e->output.h,
+                                       info->info.rotation, info->info.connection,
+                                       info->info.drawable, info->info.visual,
+                                       info->info.colormap,
+                                       info->info.depth, info->info.debug,
+                                       info->info.alloc_grayscale,
+                                       info->info.alloc_colors_max,
+                                       info->info.mask, info->info.shape_dither,
+                                       info->info.destination_alpha);
 
              re->outbuf_free = evas_software_xlib_outbuf_free;
              re->outbuf_reconfigure = evas_software_xlib_outbuf_reconfigure;
@@ -493,6 +549,7 @@ eng_output_free(void *data)
         re->outbuf_free(re->ob);
         evas_common_tilebuf_free(re->tb);
         if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
+        _output_egl_shutdown(re);
         free(re);
      }
 

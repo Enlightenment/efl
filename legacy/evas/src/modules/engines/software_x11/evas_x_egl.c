@@ -31,8 +31,6 @@
 #define EGL_FALSE                       0
 #define EGL_TRUE                        1
 
-#define EGL_NATIVE_BIT                  0x0010
-
 #define EGL_LOCK_SURFACE_BIT_KHR              0x0080
 #define EGL_OPTIMAL_FORMAT_BIT_KHR            0x0100
 #define EGL_MATCH_FORMAT_KHR                  0x3043
@@ -133,6 +131,15 @@ _egl_x_disp_get(void *d)
 #endif
 }
 
+void
+_egl_x_disp_terminate(void *ed)
+{
+#ifdef BUILD_ENGINE_SOFTWARE_XLIB
+   if (!_egl_find()) return;
+   egl.Terminate(ed);
+#endif
+}
+
 int
 _egl_x_disp_init(void *ed)
 {
@@ -156,8 +163,6 @@ _egl_x_disp_choose_config(void *ed)
    if (!_egl_find()) return NULL;
    config_attrs[n++] = EGL_SURFACE_TYPE;
    config_attrs[n++] = EGL_WINDOW_BIT;
-   config_attrs[n++] = EGL_RENDERABLE_TYPE;
-   config_attrs[n++] = EGL_NATIVE_BIT;
    config_attrs[n++] = EGL_RED_SIZE;
    config_attrs[n++] = 8;
    config_attrs[n++] = EGL_GREEN_SIZE;
@@ -263,4 +268,14 @@ _egl_x_surf_swap(void *ed, void *surf, int vsync)
    else egl.SwapInterval(ed, 0);
    egl.SwapBuffers(ed, surf);
 #endif   
+}
+
+Outbuf *
+evas_software_egl_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
+                                 Display *disp, Drawable draw, Visual *vis,
+                                 Colormap cmap, int x_depth,
+                                 int grayscale, int max_colors, Pixmap mask,
+                                 int shape_dither, int destination_alpha)
+{
+   return NULL;
 }
