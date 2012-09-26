@@ -27,6 +27,9 @@ evas_gl_polygon.c \
 evas_gl_line.c \
 evas_gl_filter.c \
 evas_gl_core.c \
+evas_gl_api_ext.h \
+evas_gl_api_ext_def.h \
+evas_gl_core.h \
 evas_gl_core_private.h \
 evas_gl_api.c \
 evas_gl_api_ext.c \
