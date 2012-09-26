@@ -739,7 +739,7 @@ int
 main(int argc, char *argv[])
 {
    Eina_Bool quit_option = EINA_FALSE;
-   char *source, *header;
+   char *source = NULL, *header = NULL;
    int arg_index, ret = 0;
    Ecore_Getopt_Value values[] = {
      ECORE_GETOPT_VALUE_STR(prefix),
