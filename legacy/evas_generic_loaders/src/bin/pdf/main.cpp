@@ -15,6 +15,7 @@
 #include <Eina.h>
 
 #include "shmfile.h"
+#include "timeout.h"
 
 #define DATA32  unsigned int
 
@@ -242,6 +243,8 @@ main(int argc, char **argv)
    D("dpi....: %f\n", dpi);
    D("page...: %d\n", page);
 
+   timeout_init(10);
+   
    if (!poppler_init(file, page, size_w, size_h))
      return -1;
    D("poppler_file_init done\n");

@@ -17,7 +17,8 @@ bindir = $(libdir)/evas/utils
 
 evas_image_loader_gst_SOURCES = \
 main.c \
-$(top_srcdir)/src/bin/common/shmfile.c
+$(top_srcdir)/src/bin/common/shmfile.c \
+$(top_srcdir)/src/bin/common/timeout.c
 evas_image_loader_gst_CFLAGS =
 evas_image_loader_gst_LDADD = @GSTREAMER_LIBS@ @EINA_LIBS@ @SHM_OPEN_LIBS@
 evas_image_loader_gst_LDFLAGS =

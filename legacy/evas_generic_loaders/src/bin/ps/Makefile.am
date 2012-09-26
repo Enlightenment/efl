@@ -17,7 +17,8 @@ bindir = $(libdir)/evas/utils
 
 evas_image_loader_ps_SOURCES = \
 main.c \
-$(top_srcdir)/src/bin/common/shmfile.c
+$(top_srcdir)/src/bin/common/shmfile.c \
+$(top_srcdir)/src/bin/common/timeout.c
 evas_image_loader_ps_CFLAGS =
 evas_image_loader_ps_LDADD = @SPECTRE_LIBS@ @EINA_LIBS@ @SHM_OPEN_LIBS@
 evas_image_loader_ps_LDFLAGS =

@@ -10,6 +10,7 @@
 #include <Eina.h>
 
 #include "shmfile.h"
+#include "timeout.h"
 
 #define DATA32  unsigned int
 
@@ -249,6 +250,8 @@ main(int argc, char **argv)
    D("dpi....: %f\n", dpi);
    D("page...: %d\n", page);
 
+   timeout_init(10);
+   
    if (!_spectre_init(file, page, size_w, size_h))
      return -1;
    D("_spectre_init done\n");

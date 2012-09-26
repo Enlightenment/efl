@@ -16,7 +16,8 @@ bindir = $(libdir)/evas/utils
 
 evas_image_loader_xcf_SOURCES = \
 main.c pixelfuncs.c common.h \
-$(top_srcdir)/src/bin/common/shmfile.c
+$(top_srcdir)/src/bin/common/shmfile.c \
+$(top_srcdir)/src/bin/common/timeout.c
 evas_image_loader_xcf_CFLAGS = @EINA_CFLAGS@
 evas_image_loader_xcf_LDADD = @EINA_LIBS@ -lz -lm @SHM_OPEN_LIBS@
 evas_image_loader_xcf_LDFLAGS =

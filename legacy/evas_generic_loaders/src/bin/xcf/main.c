@@ -47,6 +47,7 @@
 */
 #include "common.h"
 #include "shmfile.h"
+#include "timeout.h"
 
 #define FREE(X) { free(X); X = NULL; }
 
@@ -1693,8 +1694,12 @@ main(int argc, char **argv)
              // int size_h = atoi(argv[i]);
           }
      }
+   
+   timeout_init(8);
+   
    D("xcf_file_init\n");
    if (!xcf_file_init(file)) return -1;
+   
    D("size %i %i\n", image->width, image->height);
    if (!head_only)
      {

@@ -1,4 +1,12 @@
-Evas Generic Loaders 1.7.0
+Evas Generic Loaders 1.8.0
+
+Changes since Evas Generic Loaders 1.7.0:
+-----------------------------------------
+
+Improvements:
+
+   * All generic loader binaries have built-in timeouts in case they
+   get stuck.
 
 Changes since Evas Generic Loaders 1.2.0:
 -----------------------------------------

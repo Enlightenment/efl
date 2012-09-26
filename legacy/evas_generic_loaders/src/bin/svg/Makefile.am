@@ -14,7 +14,10 @@ AM_CPPFLAGS = \
 bin_PROGRAMS = evas_image_loader.svg
 bindir = $(libdir)/evas/utils
 
-evas_image_loader_svg_SOURCES = main.c $(top_srcdir)/src/bin/common/shmfile.c
+evas_image_loader_svg_SOURCES = \
+main.c \
+$(top_srcdir)/src/bin/common/shmfile.c \
+$(top_srcdir)/src/bin/common/timeout.c
 evas_image_loader_svg_CFLAGS = @SVG_CFLAGS@
 evas_image_loader_svg_LDADD = @SVG_LIBS@ @SHM_OPEN_LIBS@ -lm
 evas_image_loader_svg_LDFLAGS =

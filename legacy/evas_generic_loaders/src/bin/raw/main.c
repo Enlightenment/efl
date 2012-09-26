@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <libraw.h>
 #include "shmfile.h"
+#include "timeout.h"
 
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
@@ -205,6 +206,8 @@ int main(int argc, char **argv)
           }
      }
 
+   timeout_init(4);
+   
    if (!_raw_init(file)) return -1;
    if (head_only != 0)
      {

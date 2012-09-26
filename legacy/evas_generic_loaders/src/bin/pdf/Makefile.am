@@ -17,7 +17,8 @@ bindir = $(libdir)/evas/utils
 
 evas_image_loader_pdf_SOURCES = \
 main.cpp \
-$(top_srcdir)/src/bin/common/shmfile.c
+$(top_srcdir)/src/bin/common/shmfile.c \
+$(top_srcdir)/src/bin/common/timeout.c
 evas_image_loader_pdf_CFLAGS =
 evas_image_loader_pdf_LDADD = @POPPLER_LIBS@ @EINA_LIBS@ @SHM_OPEN_LIBS@
 evas_image_loader_pdf_LDFLAGS =
