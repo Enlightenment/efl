@@ -776,12 +776,14 @@ eng_setup(Evas *e, void *in)
 // to either swap or copy backbuffer and front buffer, but strictly that is
 // not true. technically backbuffer content is totally undefined after a swap
 // and thus you MUST re-render all of it, thus MODE_FULL
-//        re->mode = MODE_FULL;
+        re->mode = MODE_FULL;
 // BUT... reality is that lmost every implementation copies or swaps so
 // triple buffer mode can be used as it is a superset of double buffer and
 // copy (though using those explicitly is more efficient). so let's play with
 // triple buffer mdoe as a default and see.
-        re->mode = MODE_TRIPLE;
+//        re->mode = MODE_TRIPLE;
+// XXX: note - the abvoe seems to break on some older intel chipsets and
+// drivers. it seems we CANT depend on backbuffer staying around. bugger!
      }
    if (!re->win)
      {
