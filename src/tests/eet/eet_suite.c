@@ -24,7 +24,7 @@
 
 #include "eet_suite.h"
 
-#define CERT_DIR ((*TESTS_SRC_DIR == '/') ? TESTS_SRC_DIR : "src/tests/" TESTS_SRC_DIR)
+#define CERT_DIR ((*TESTS_SRC_DIR == '/') ? TESTS_SRC_DIR : "src/tests/eet/" TESTS_SRC_DIR)
 
 START_TEST(eet_test_init)
 {
