@@ -197,7 +197,7 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 #### Additional options to configure
 
 EFL_ENABLE_LIB([eet], [yes])
-EFL_ENABLE_LIB([eo], [yes])
+EFL_ENABLE_LIB([eo], [no])
 
 
 # Assert or fail.
@@ -1133,7 +1133,7 @@ esac
 
 ### Check availability
 
-if test "x${efl_lib_zlib}" = ""xyes" && test "x${efl_lib_libjpeg}" = ""xyes" ; then
+if test "x${efl_lib_zlib}" = "xyes" && test "x${efl_lib_libjpeg}" = "xyes" ; then
    efl_have_eet="yes"
 fi
 
@@ -1192,6 +1192,10 @@ AC_SUBST([EFL_EO_BUILD])
 ### Check availability
 
 efl_have_eo="yes"
+
+else
+
+AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [false])
 
 fi
 

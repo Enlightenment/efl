@@ -4,8 +4,7 @@ dnl That code is public domain and can be freely used or copied.
 dnl Macro that allows an EFL to not be built
 
 dnl Usage: EFL_ENABLE_LIB(lib, want)
-dnl Call AC_SUBST(BINARY_PRG) (BINARY is the uppercase of binary, - being transformed into _)
-dnl Define have_lib (- is transformed into _)
+dnl Define  efl_want_build_lib (- is transformed into _)
 dnl Define conditional EFL_BUILD_LIB (LIB is the uppercase of lib, - being transformed into _)
 
 AC_DEFUN([EFL_ENABLE_LIB],
