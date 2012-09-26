@@ -7,5 +7,5 @@ Name: edbus
 Description: D-Bus access from Ecore
 Requires.private: ecore dbus-1
 Version: @VERSION@
-Libs: -L${libdir} -ledbus
+Libs: -L${libdir} -ledbus2
 Cflags: -I${includedir}
