@@ -962,7 +962,8 @@ _ecore_evas_wl_shm_pool_create(Ecore_Evas *ee, size_t size)
    if (ftruncate(fd, size) < 0) 
      {
         ERR("Could not truncate temporary file.");
-        goto end;
+        close(fd);
+        return;
      }
 
    data = mmap(NULL, size, (PROT_READ | PROT_WRITE), MAP_SHARED, fd, 0);
@@ -971,15 +972,13 @@ _ecore_evas_wl_shm_pool_create(Ecore_Evas *ee, size_t size)
    if (data == MAP_FAILED)
      {
         ERR("mmap of temporary file failed.");
-        goto end;
+        close(fd);
+        return;
      }
 
    ee->engine.wl.pool_size = size;
    ee->engine.wl.pool_data = data;
    ee->engine.wl.pool = wl_shm_create_pool(shm, fd, size);
-
- end:
-   close(fd);
 }
 
 static void
@@ -1009,7 +1008,6 @@ _ecore_evas_wl_buffer_new(Ecore_Evas *ee, int w, int h)
    _ecore_evas_wl_buffer_free(ee);
    ee->engine.wl.buffer = 
      wl_shm_pool_create_buffer(ee->engine.wl.pool, 0, w, h, stride, format);
-
 }
 
 void 
