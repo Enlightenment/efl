@@ -44,8 +44,7 @@ old/NEWS.eina \
 old/README.eina \
 old/NEWS.eet \
 old/README.eet \
-spec/eina.spec \
-spec/eet.spec \
+spec/efl.spec \
 pc/evil.pc \
 pc/eina.pc \
 pc/eet.pc \
