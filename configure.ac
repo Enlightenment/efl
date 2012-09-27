@@ -197,6 +197,8 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 #### Additional options to configure
 
 EFL_ENABLE_LIB([eet], [yes])
+EFL_ENABLE_LIB([eo], [no])
+
 
 # Assert or fail.
 
@@ -782,56 +784,6 @@ EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 #### End of Eina
 
 
-#### Eo
-
-AC_MSG_NOTICE([Eo checks])
-
-### Default values
-
-### Additional options to configure
-
-### Checks for programs
-
-### Checks for libraries
-
-# Eina library
-
-requirements_pc_eo="eina >= 1.7.99"
-
-PKG_CHECK_MODULES([EO], [${requirements_pc_eo}])
-
-# Example (evas one)
-
-PKG_CHECK_MODULES([ELM], [elementary >= 1.7.0], [have_elm="yes"], [have_elm="no"])
-AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
-
-### Checks for header files
-
-### Checks for types
-
-### Checks for structures
-
-### Checks for compiler characteristics
-
-EFL_EO_BUILD=""
-case "$host_os" in
-   mingw*)
-      EFL_EO_BUILD="-DEFL_EO_BUILD"
-   ;;
-esac
-AC_SUBST([EFL_EO_BUILD])
-
-### Checks for linker characteristics
-
-### Checks for library functions
-
-### Check availability
-
-efl_have_eo="yes"
-
-#### End of Eo
-
-
 #### Eet
 
 efl_have_eet="no"
@@ -1110,6 +1062,8 @@ AC_MSG_RESULT([${have_signature}])
 
 EFL_CHECK_LIBS([EET], [libjpeg zlib])
 
+# Eina library
+
 requirements_pc_eet="eina >= 1.7.99 ${requirements_pc_eet}"
 
 PKG_CHECK_MODULES([EET], [${requirements_pc_deps_eet}])
@@ -1186,6 +1140,67 @@ fi
 fi
 
 #### End of Eet
+
+
+#### Eo
+
+efl_have_eo="no"
+
+if test "x${efl_want_build_eo}" = "xyes" ; then
+
+AC_MSG_NOTICE([Eo checks])
+
+### Default values
+
+### Additional options to configure
+
+### Checks for programs
+
+### Checks for libraries
+
+# Eina library
+
+requirements_pc_eo="eina >= 1.7.99"
+
+PKG_CHECK_MODULES([EO], [${requirements_pc_eo}])
+
+# Example (evas one)
+
+PKG_CHECK_MODULES([ELM], [elementary >= 1.7.0], [have_elm="yes"], [have_elm="no"])
+AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
+
+### Checks for header files
+
+### Checks for types
+
+### Checks for structures
+
+### Checks for compiler characteristics
+
+EFL_EO_BUILD=""
+case "$host_os" in
+   mingw*)
+      EFL_EO_BUILD="-DEFL_EO_BUILD"
+   ;;
+esac
+AC_SUBST([EFL_EO_BUILD])
+
+### Checks for linker characteristics
+
+### Checks for library functions
+
+### Check availability
+
+efl_have_eo="yes"
+
+else
+
+AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [false])
+
+fi
+
+#### End of Eo
+
 
 #### Evas
 
