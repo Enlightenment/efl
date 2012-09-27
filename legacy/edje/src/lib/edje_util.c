@@ -350,6 +350,7 @@ EAPI Eina_Bool
 edje_object_scale_set(Evas_Object *obj, double scale)
 {
    Edje *ed, *ged;
+   Evas_Object *o;
    Eina_List *l;
 
    ed = _edje_fetch(obj);
@@ -358,6 +359,8 @@ edje_object_scale_set(Evas_Object *obj, double scale)
    ed->scale = FROM_DOUBLE(scale);
    EINA_LIST_FOREACH(ed->groups, l, ged)
       ged->scale = ed->scale;
+   EINA_LIST_FOREACH(ed->subobjs, l, o)
+      edje_object_calc_force(o);
    edje_object_calc_force(obj);
    return EINA_TRUE;
 }
