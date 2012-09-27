@@ -134,3 +134,8 @@
 2012-08-30  Carsten Haitzler (The Rasterman)
 
         1.7.0 release
+
+2012-09-27  Carsten Haitzler (The Rasterman)
+
+        * Fix long lurking bug where desktop/icon cache updates get
+        delayed by silly long amounts of time.

@@ -947,9 +947,8 @@ efreet_cache_desktop_update(void)
     if (!efreet_cache_update) return;
 
     if (desktop_cache_timer)
-        ecore_timer_delay(desktop_cache_timer, 0.2);
-    else
-        desktop_cache_timer = ecore_timer_add(0.2, desktop_cache_update_cache_cb, NULL);
+        ecore_timer_del(desktop_cache_timer);
+    desktop_cache_timer = ecore_timer_add(0.2, desktop_cache_update_cache_cb, NULL);
 }
 
 void
@@ -994,9 +993,8 @@ efreet_cache_icon_update(void)
     if (!efreet_cache_update) return;
 
     if (icon_cache_timer)
-        ecore_timer_delay(icon_cache_timer, 0.2);
-    else
-        icon_cache_timer = ecore_timer_add(0.2, icon_cache_update_cache_cb, NULL);
+        ecore_timer_del(icon_cache_timer);
+    icon_cache_timer = ecore_timer_add(0.2, icon_cache_update_cache_cb, NULL);
 }
 
 static Eina_Bool
