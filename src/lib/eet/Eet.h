@@ -1821,6 +1821,7 @@ typedef int (*Eet_Key_Password_Callback)(char *buffer, int size, int rwflag, voi
  *
  * @see eet_identity_close()
  *
+ * @warning You need to compile signature support in EET.
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
@@ -1863,6 +1864,7 @@ eet_identity_set(Eet_File *ef,
  * @param key the handle to print.
  * @param out where to print.
  *
+ * @warning You need to compile signature support in EET.
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */
@@ -1922,6 +1924,7 @@ eet_identity_sha1(Eet_File *ef,
  * @param der_length The length the certificate.
  * @param out where to print.
  *
+ * @warning You need to compile signature support in EET.
  * @since 1.2.0
  * @ingroup Eet_Cipher_Group
  */

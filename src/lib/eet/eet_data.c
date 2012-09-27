@@ -2149,6 +2149,8 @@ eet_data_write_cipher(Eet_File            *ef,
    int size;
    int val;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, 0);
+
    ed = eet_dictionary_get(ef);
 
    data_enc = _eet_data_descriptor_encode(ed, edd, data, &size);
@@ -4737,6 +4739,8 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
    Eet_Free_Context context;
    unsigned int deciphered_len = size_in;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
+
    if (cipher_key && data_in)
      if (eet_decipher(data_in, size_in, cipher_key,
                       strlen(cipher_key), &deciphered, &deciphered_len))
@@ -4938,6 +4942,8 @@ eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
    unsigned int ciphered_len = 0;
    int size;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
+
    ret = _eet_data_descriptor_encode(NULL, edd, data_in, &size);
    if (cipher_key && ret)
      {
@@ -4983,6 +4989,8 @@ eet_data_xattr_cipher_get(const char          *filename,
    void *ret;
    ssize_t size;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, NULL);
+
    blob = eina_xattr_get(filename, attribute, &size);
    if (!blob) return NULL;
 
@@ -5003,6 +5011,8 @@ eet_data_xattr_cipher_set(const char          *filename,
    void *blob;
    int size;
    Eina_Bool ret;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(edd, EINA_FALSE);
 
    blob = eet_data_descriptor_encode_cipher(edd, data, cipher_key, &size);
    if (!blob) return EINA_FALSE;
