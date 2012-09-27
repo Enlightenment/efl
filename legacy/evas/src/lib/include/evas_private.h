@@ -454,6 +454,7 @@ struct _Evas_Size_Hints
    Evas_Aspect aspect;
    Evas_Double_Pair align, weight;
    Evas_Border padding;
+   Evas_Display_Mode dispmode;
 };
 
 struct _Evas_Map_Point

@@ -1063,4 +1063,7 @@
        if a swap was a copy, swap, discard and if a swap with 2 or 3 
        buffers. don't have that but env var will do for now for testing.
 
+2012-09-27  Jiyoun Park (jypark)
 
+       * Add the object display mode hint. this can be used to check object
+       mode like compress or expand or etc

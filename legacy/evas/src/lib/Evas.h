@@ -699,6 +699,15 @@ typedef enum _Evas_Aspect_Control
    EVAS_ASPECT_CONTROL_BOTH = 4 /**< Use all horizontal @b and vertical container spaces to place an object (never growing it out of those bounds), using the given aspect */
 } Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set() */
 
+typedef enum _Evas_Display_Mode
+{
+   EVAS_DISPLAY_MODE_NONE = 0, /**<Default mode */
+   EVAS_DISPLAY_MODE_INHERIT = 1, /**< Use this mode when object's display mode depend on ancestor's */
+   EVAS_DISPLAY_MODE_COMPRESS = 2, /**< Use this mode want to give comppress display mode hint to object */
+   EVAS_DISPLAY_MODE_EXPAND = 3, /**< Use this mode want to give expand display mode hint to object */
+   EVAS_DISPLAY_MODE_DONT_CHANGE = 4 /**< Use this mode when object should not change display mode */
+} Evas_Display_Mode; /**< object's display mode type related with compress/expand or etc mode */
+
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
 typedef struct _Evas_Engine_Info         Evas_Engine_Info; /**< A generic Evas Engine information structure */
 typedef struct _Evas_Device              Evas_Device; /**< A source device handle - where the event came from */
@@ -5286,6 +5295,33 @@ EAPI void evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, E
  * @see evas_object_size_hint_max_get()
  */
 EAPI void evas_object_size_hint_max_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieves the hints for an object's display mode
+ *
+ * @param obj The given Evas object to query hints from.
+ *
+ * These are hints on the display mode @p obj. This is
+ * not a size enforcement in any way, it's just a hint that can be
+ * used whenever appropriate.
+ * This mode can be used object's display mode like commpress or expand
+ *
+ * @see evas_object_size_hint_display_mode_set()
+ */
+EAPI Evas_Display_Mode evas_object_size_hint_display_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Sets the hints for an object's disply mode
+ *
+ * @param obj The given Evas object to query hints from.
+ * @param dispmode to use as the display mode hint.
+ *
+ * This is not a size enforcement in any way, it's just a hint that
+ * can be used whenever appropriate.
+ *
+ * @see evas_object_size_hint_display_mode_get()
+ */
+EAPI void evas_object_size_hint_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode) EINA_ARG_NONNULL(1);
 
 /**
  * Retrieves the hints for an object's optimum size.

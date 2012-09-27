@@ -8,6 +8,7 @@ Additions:
    * WEBP image loader support.
    * EVAS_CALLBACK_IMAGE_RESIZE.
    * Evas_Device registration/manipulation/querying API
+   * Evas_Object_Display_Mode querying API
 
 Improvements:
 

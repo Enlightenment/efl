@@ -807,6 +807,33 @@ _evas_object_size_hint_alloc(Evas_Object *obj)
    obj->size_hints->max.h = -1;
    obj->size_hints->align.x = 0.5;
    obj->size_hints->align.y = 0.5;
+   obj->size_hints->dispmode = EVAS_DISPLAY_MODE_NONE;
+}
+
+EAPI Evas_Display_Mode
+evas_object_size_hint_display_mode_get(const Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EVAS_DISPLAY_MODE_NONE;
+   MAGIC_CHECK_END();
+   if ((!obj->size_hints) || obj->delete_me)
+     return EVAS_DISPLAY_MODE_NONE;
+   return obj->size_hints->dispmode;
+}
+
+EAPI void
+evas_object_size_hint_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me)
+     return;
+   _evas_object_size_hint_alloc(obj);
+   if (obj->size_hints->dispmode == dispmode) return;
+   obj->size_hints->dispmode = dispmode;
+
+   evas_object_inform_call_changed_size_hints(obj);
 }
 
 EAPI void
