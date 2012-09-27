@@ -1259,12 +1259,12 @@ src/tests/Makefile
 src/tests/eina/Makefile
 src/tests/eet/Makefile
 src/tests/eo/Makefile
-eina.spec
-eet.spec
-evil.pc
-eina.pc
-eet.pc
-eo.pc
+spec/eina.spec
+spec/eet.spec
+pc/evil.pc
+pc/eina.pc
+pc/eet.pc
+pc/eo.pc
 ])
 
 AC_OUTPUT

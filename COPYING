@@ -1,7 +1,6 @@
-The EFL come with several licences:
+EFL comes with several licences. Listed are the library/probject
+name and the license file covering it.
 
-BSD 2-clause: Evil, Eet
-
-LGPL v2: Eina
-
-GPL v2:
+evil:            licenses/COPYING.BSD
+eet:             licenses/COPYING.BSD
+eina:            licenses/COPYING.LGPL

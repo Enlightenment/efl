@@ -1,0 +1,16 @@
+=========
+EFL 1.8.0
+=========
+
+Changes since 1.7.0:
+
+Additions:
+    * Add DOCTYPE children parsing in eina_simple_xml
+
+Improvements:
+    * Single EFL tree now covring all EFL library components.
+    * Speedup Eina Rbtree Iterator by recycling memory instead of
+    massively calling malloc/free.
+
+Fixes:
+    * Fix PPC (big endian) image codec bug.

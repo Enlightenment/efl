@@ -32,37 +32,40 @@ m4/evil_windows.m4 \
 m4/eina_check.m4
 
 EXTRA_DIST += \
-ChangeLog.evil \
-NEWS.evil \
-README.evil \
-evil.pc \
-ChangeLog.eina \
-NEWS.eina \
-README.eina \
-eina.spec \
-eina.pc \
-ChangeLog.eet \
-NEWS.eet \
-README.eet \
-eet.spec \
-eet.pc \
-eo.pc
+licenses/COPYING.LGPL \
+licenses/COPYING.GPL \
+licenses/COPYING.BSD \
+old/ChangeLog.evil \
+old/ChangeLog.eina \
+old/ChangeLog.eet \
+old/NEWS.evil \
+old/README.evil \
+old/NEWS.eina \
+old/README.eina \
+old/NEWS.eet \
+old/README.eet \
+spec/eina.spec \
+spec/eet.spec \
+pc/evil.pc \
+pc/eina.pc \
+pc/eet.pc \
+pc/eo.pc
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
 
 if HAVE_WINDOWS
-pkgconfig_DATA += evil.pc
+pkgconfig_DATA += pc/evil.pc
 endif
 
-pkgconfig_DATA += eina.pc
+pkgconfig_DATA += pc/eina.pc
 
 if EFL_BUILD_EET
-pkgconfig_DATA += eet.pc
+pkgconfig_DATA += pc/eet.pc
 endif
 
 if EFL_BUILD_EO
-pkgconfig_DATA += eo.pc
+pkgconfig_DATA += pc/eo.pc
 endif
 
 
