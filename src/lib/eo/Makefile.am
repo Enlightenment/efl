@@ -1,9 +1,9 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--I$(top_srcdir)/src/include/eina \
+-I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
--I$(top_builddir)/src/include/eina \
+-I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
