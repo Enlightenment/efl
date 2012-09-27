@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = lib include modules bin scripts benchmarks tests examples
+SUBDIRS = lib modules bin scripts benchmarks tests examples
 
 .PHONY: benchmark benchmark-e17 examples
 
