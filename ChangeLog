@@ -1,3 +1,9 @@
+2012-09-27  Carsten Haitzler (The Rasterman)
+
+        * Fix return value of eina_mmap_safety_enabled_set() and
+        ensure future eina_mmap_safety_enabled_get() return right value
+        on success.
+        
 2012-09-21  Carsten Haitzler (The Rasterman)
 
         * Fix big endian bug with eet image handling and endianess swapping.

@@ -164,10 +164,7 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
         sa.sa_sigaction = _eina_mmap_safe_sigbus;
         sa.sa_flags = SA_RESTART | SA_SIGINFO;
         sigemptyset(&sa.sa_mask);
-        /* FIXME: This is rubbish. We return EINA_FALSE whether sigaction
-         * fails or not. And we never set mmap_safe, so we always hit this
-         * code path. */
-        if (sigaction(SIGBUS, &sa, NULL) == 0) return EINA_FALSE;
+        if (sigaction(SIGBUS, &sa, NULL) == 0) goto done;
         /* setup of SIGBUS handler failed, lets close zero page dev and fail */
         close(_eina_mmap_zero_fd);
         _eina_mmap_zero_fd = -1;
@@ -176,8 +173,14 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
    else
      {
         /* reset signal handler to default for SIGBUS */
+        if (_eina_mmap_zero_fd >= 0)
+          {
+             close(_eina_mmap_zero_fd);
+             _eina_mmap_zero_fd = -1;
+          }
         signal(SIGBUS, SIG_DFL);
      }
+done:   
    mmap_safe = enabled;
    return mmap_safe;
 #endif

@@ -3,6 +3,7 @@ EFL 1.8.0
 =========
 
 Changes since 1.7.0:
+--------------------
 
 Additions:
     * Add DOCTYPE children parsing in eina_simple_xml
@@ -14,3 +15,5 @@ Improvements:
 
 Fixes:
     * Fix PPC (big endian) image codec bug.
+    * Fix return value of eina_mmap_safety_enabled_set() and future
+    eina_mmap_safety_enabled_get() returns after success
