@@ -53,18 +53,13 @@ pc/eo.pc
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
 
+pkgconfig_DATA += pc/eina.pc pc/eo.pc
+
 if HAVE_WINDOWS
 pkgconfig_DATA += pc/evil.pc
 endif
-
-pkgconfig_DATA += pc/eina.pc
-
 if EFL_BUILD_EET
 pkgconfig_DATA += pc/eet.pc
-endif
-
-if EFL_BUILD_EO
-pkgconfig_DATA += pc/eo.pc
 endif
 
 
@@ -100,11 +95,9 @@ check-local:
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
 endif
+	@./src/tests/eo/eo_suite$(EXEEXT)
 if EFL_BUILD_EET
 	@./src/tests/eet/eet_suite$(EXEEXT)
-endif
-if EFL_BUILD_EO
-	@./src/tests/eo/eo_suite$(EXEEXT)
 endif
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
@@ -117,9 +110,7 @@ endif
 benchmark:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark
 	@mkdir benchmark || true
-if EFL_BUILD_EO
 	@cd benchmark && ../src/benchmarks/eo/eo_bench$(EXEEXT) `date +%F_%s`
-endif
 
 benchmark-e17:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark-e17
