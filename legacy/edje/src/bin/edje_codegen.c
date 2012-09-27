@@ -62,7 +62,48 @@ static Eina_List *externals = NULL;
   " * @param e The surface\n"                                          \
   " * @param file The path to edj, if NULL it's used the path given\n" \
   " *             to edje_codegen\n */\n"                              \
-  "Evas_Object * %s_object_add(Evas *e, const char *file);\n\n"
+  "Evas_Object *%s_object_add(Evas *e, const char *file);\n\n"
+
+#define C_CODEGEN_DRAG_SET(option)                                      \
+  "Eina_Bool\n"                                                         \
+  "%s_%s_drag_"#option"_set(Evas_Object *o, double dx, double dy)\n"    \
+  "{\n"                                                                 \
+  "   return edje_object_part_drag_"#option"_set(o, \"%s\", dx, dy);\n" \
+  "}\n\n"
+
+#define H_CODEGEN_DRAG_SET(option)                                      \
+  "Eina_Bool %s_%s_drag_"#option"_set(Evas_Object *o, double dx, double dy);\n"
+
+#define C_CODEGEN_DRAG_GET(option)                                      \
+  "Eina_Bool\n"                                                         \
+  "%s_%s_drag_"#option"_get(Evas_Object *o, double *dx, double *dy)\n"  \
+  "{\n"                                                                 \
+  "   return edje_object_part_drag_"#option"_get(o, \"%s\", dx, dy);\n" \
+  "}\n\n"
+
+#define H_CODEGEN_DRAG_GET(option)                                      \
+  "Eina_Bool %s_%s_drag_"#option"_get(Evas_Object *o, double *dx"       \
+  ", double *dy);\n"
+
+#define C_CODEGEN_DRAG_ACTION(option)                                   \
+  "Eina_Bool\n"                                                         \
+  "%s_%s_drag_"#option"(Evas_Object *o, double dx, double dy)\n"        \
+  "{\n"                                                                 \
+  "   return edje_object_part_drag_"#option"(o, \"%s\", dx, dy);\n"     \
+  "}\n\n"
+
+#define H_CODEGEN_DRAG_ACTION(option)                                   \
+  "Eina_Bool %s_%s_drag_"#option"(Evas_Object *o, double dx, double dy);\n"
+
+#define C_CODEGEN_DRAG_DIR_GET                              \
+  "Edje_Drag_Dir\n"                                         \
+  "%s_%s_drag_dir_get(Evas_Object *o)\n"                    \
+  "{\n"                                                     \
+  "   return edje_object_part_drag_dir_get(o, \"%s\");\n"   \
+  "}\n\n"
+
+#define H_CODEGEN_DRAG_DIR_GET                          \
+  "Edje_Drag_Dir %s_%s_drag_dir_get(Evas_Object *o);\n"
 
 #define C_CODEGEN_PART_TEXT_SET                         \
   "void\n"                                              \
@@ -302,6 +343,7 @@ typedef struct _Part_External_Info Part_External_Info;
 struct _Part_External_Info {
   const char *description, *name, *source;
   char *apiname;
+  Eina_Bool draggable;
 };
 
 const Ecore_Getopt optdesc = {
@@ -433,6 +475,50 @@ _write_object_get(void)
 }
 
 static Eina_Bool
+_write_part_draggable(const char *apiname, const char *partname)
+{
+   char buf[1024];
+
+#define TEMPLATE_DRAGGABLE(sufix, option)                               \
+   do {                                                                 \
+     const char *template;                                              \
+     template = C_CODEGEN_DRAG_##sufix(option);                         \
+     snprintf(buf, sizeof(buf), template, prefix, apiname,              \
+              partname);                                                \
+     if (fwrite(buf, strlen(buf), 1, source_fd) != 1)                   \
+       return EINA_FALSE;                                               \
+     template = H_CODEGEN_DRAG_##sufix(option);                         \
+     snprintf(buf, sizeof(buf), template, prefix,                       \
+              apiname);                                                 \
+     if (fwrite(buf, strlen(buf), 1, header_fd) != 1)                   \
+       return EINA_FALSE;                                               \
+   } while (0)
+
+   TEMPLATE_DRAGGABLE(SET, value);
+   TEMPLATE_DRAGGABLE(GET, value);
+   TEMPLATE_DRAGGABLE(SET, size);
+   TEMPLATE_DRAGGABLE(GET, size);
+   TEMPLATE_DRAGGABLE(SET, page);
+   TEMPLATE_DRAGGABLE(GET, page);
+   TEMPLATE_DRAGGABLE(SET, step);
+   TEMPLATE_DRAGGABLE(GET, step);
+   TEMPLATE_DRAGGABLE(ACTION, page);
+   TEMPLATE_DRAGGABLE(ACTION, step);
+
+#undef TEMPLATE_DRAGGABLE
+
+   snprintf(buf, sizeof(buf), C_CODEGEN_DRAG_DIR_GET, prefix,
+	    apiname, partname);
+   if (fwrite(buf, strlen(buf), 1, source_fd) != 1)
+     return EINA_FALSE;
+   snprintf(buf, sizeof(buf), H_CODEGEN_DRAG_DIR_GET, prefix, apiname);
+   if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _write_part_external_param(const Part_External_Info *info,
 			   const Edje_External_Param_Info *param)
 {
@@ -493,7 +579,7 @@ _write_part_external_param(const Part_External_Info *info,
 static Eina_Bool
 _write_part_external(Eina_List **parts)
 {
-   char buf[512];
+   char buf[1024];
    Eina_Iterator *itr;
    Part_External_Info *ei;
    const Eina_Hash_Tuple *tuple;
@@ -529,8 +615,21 @@ _write_part_external(Eina_List **parts)
 		       snprintf(buf, sizeof(buf), "\n/**\n * @brief %s\n */\n",
 				ei->description);
 		       if (fwrite(buf, strlen(buf), 1, header_fd) != 1)
-			 goto end;
+			 {
+			    ret = EINA_FALSE;
+			    goto end;
+			 }
 		    }
+
+                  if (ei->draggable)
+                    {
+		       if (!_write_part_draggable(ei->apiname, ei->name))
+			 {
+			    ret = EINA_FALSE;
+			    goto end;
+			 }
+                    }
+
 		  for (param = type->parameters_info; param->name != NULL;
 		       param++)
 		    if (!_write_part_external_param(ei, param))
@@ -557,23 +656,22 @@ _write_part_external(Eina_List **parts)
 }
 
 static Eina_Bool
-_write_part(const char *apiname, const char *partname,
-	    Edje_Part_Type parttype, const char *description)
+_write_part(const char *apiname, const char *partname, Edje_Part_Type parttype,
+            const char *description, Eina_Bool draggable)
 {
    char buf[512];
-   const char *type, *template;
 
-#define TEMPLATE_NAME(sufix)                                      \
-   do {                                                           \
-     snprintf(buf, sizeof(buf), C_CODEGEN_PART_##sufix, prefix,   \
-              apiname, partname);                                 \
-     if (fwrite(buf, strlen(buf), 1, source_fd) != 1)             \
-       goto err;                                                  \
-     snprintf(buf, sizeof(buf), H_CODEGEN_PART_##sufix, prefix,   \
-              apiname);                                           \
-     if (fwrite(buf, strlen(buf), 1, header_fd) != 1)             \
-       goto err;                                                  \
-   } while(0)
+#define TEMPLATE_NAME(sufix)                                     \
+   do {                                                          \
+     snprintf(buf, sizeof(buf), C_CODEGEN_##sufix, prefix,       \
+              apiname, partname);                                \
+     if (fwrite(buf, strlen(buf), 1, source_fd) != 1)            \
+       goto err;                                                 \
+     snprintf(buf, sizeof(buf), H_CODEGEN_##sufix, prefix,       \
+              apiname);                                          \
+     if (fwrite(buf, strlen(buf), 1, header_fd) != 1)            \
+       goto err;                                                 \
+   } while (0)
 
    if (description)
      {
@@ -585,33 +683,40 @@ _write_part(const char *apiname, const char *partname,
    switch (parttype)
      {
       case EDJE_PART_TYPE_BOX:
-	 TEMPLATE_NAME(BOX_APPEND);
-	 TEMPLATE_NAME(BOX_PREPEND);
-	 TEMPLATE_NAME(BOX_INSERT_BEFORE);
-	 TEMPLATE_NAME(BOX_INSERT_AT);
-	 TEMPLATE_NAME(BOX_REMOVE);
-	 TEMPLATE_NAME(BOX_REMOVE_AT);
-	 TEMPLATE_NAME(BOX_REMOVE_ALL);
+	 TEMPLATE_NAME(PART_BOX_APPEND);
+	 TEMPLATE_NAME(PART_BOX_PREPEND);
+	 TEMPLATE_NAME(PART_BOX_INSERT_BEFORE);
+	 TEMPLATE_NAME(PART_BOX_INSERT_AT);
+	 TEMPLATE_NAME(PART_BOX_REMOVE);
+	 TEMPLATE_NAME(PART_BOX_REMOVE_AT);
+	 TEMPLATE_NAME(PART_BOX_REMOVE_ALL);
 	 break;
 
       case EDJE_PART_TYPE_TABLE:
-	TEMPLATE_NAME(TABLE_PACK);
-	TEMPLATE_NAME(TABLE_UNPACK);
-	TEMPLATE_NAME(TABLE_CHILD_GET);
-	TEMPLATE_NAME(TABLE_CLEAR);
-	TEMPLATE_NAME(TABLE_COL_ROW_SIZE_GET);
-	break;
+	 TEMPLATE_NAME(PART_TABLE_PACK);
+	 TEMPLATE_NAME(PART_TABLE_UNPACK);
+	 TEMPLATE_NAME(PART_TABLE_CHILD_GET);
+	 TEMPLATE_NAME(PART_TABLE_CLEAR);
+	 TEMPLATE_NAME(PART_TABLE_COL_ROW_SIZE_GET);
+	 break;
 
       case EDJE_PART_TYPE_TEXT:
-	TEMPLATE_NAME(TEXT_SET);
-	TEMPLATE_NAME(TEXT_GET);
-	break;
+	 TEMPLATE_NAME(PART_TEXT_SET);
+	 TEMPLATE_NAME(PART_TEXT_GET);
+	 break;
+
+      case EDJE_PART_TYPE_SWALLOW:
+	 TEMPLATE_NAME(PART_SWALLOW_SET);
+	 TEMPLATE_NAME(PART_SWALLOW_GET);
+	 break;
 
       default:
-	TEMPLATE_NAME(SWALLOW_SET);
-	TEMPLATE_NAME(SWALLOW_GET);
-	break;
+	 break;
      }
+
+   if (draggable)
+     if (!_write_part_draggable(apiname, partname))
+       goto err;
 
 #undef TEMPLATE_NAME
 
@@ -672,7 +777,7 @@ _parse_parts(Evas_Object *ed)
    const char *name, *typename, *description;
    char *apiname;
    Edje_Part_Type type;
-   Eina_Bool ret = EINA_TRUE;
+   Eina_Bool draggable, ret = EINA_TRUE;
    Part_External_Info *ei;
 
    parts = edje_edit_parts_list_get(ed);
@@ -689,12 +794,18 @@ _parse_parts(Evas_Object *ed)
 	      (type == EDJE_PART_TYPE_SWALLOW)   ||
 	      (type == EDJE_PART_TYPE_BOX)       ||
 	      (type == EDJE_PART_TYPE_EXTERNAL)  ||
+	      (type == EDJE_PART_TYPE_IMAGE)     ||
 	      (type == EDJE_PART_TYPE_TABLE)))
 	  {
 	     ERR("Invalid part type %d", type);
 	     free(apiname);
 	     continue;
 	  }
+        if (edje_edit_part_drag_x_get(ed, name) ||
+            edje_edit_part_drag_y_get(ed, name))
+	  draggable = EINA_TRUE;
+        else
+	  draggable = EINA_FALSE;
 
 	description = edje_edit_part_api_description_get(ed, name);
 	if (type == EDJE_PART_TYPE_EXTERNAL)
@@ -705,12 +816,13 @@ _parse_parts(Evas_Object *ed)
 	     ei->source = edje_edit_part_source_get(ed, name);
 	     ei->apiname = apiname;
 	     ei->name = name;
+	     ei->draggable = draggable;
 
 	     parts_external = eina_list_append(parts_external, ei);
 	  }
 	else
 	  {
-	     if (!_write_part(apiname, name, type, description))
+	     if (!_write_part(apiname, name, type, description, draggable))
 	       {
 		  ret = EINA_FALSE;
 		  edje_edit_string_free(description);

@@ -645,3 +645,7 @@
 2012-09-27  Michael Bouchaud (yoz)
 
         * fix scale_set in sub group
+
+2012-09-27  Flavio Ceolin
+
+	* edje_codegen: adding support for draggable
