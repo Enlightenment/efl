@@ -782,8 +782,25 @@ eng_setup(Evas *e, void *in)
 // copy (though using those explicitly is more efficient). so let's play with
 // triple buffer mdoe as a default and see.
 //        re->mode = MODE_TRIPLE;
-// XXX: note - the abvoe seems to break on some older intel chipsets and
+// XXX: note - the above seems to break on some older intel chipsets and
 // drivers. it seems we CANT depend on backbuffer staying around. bugger!
+        switch (info->swap_mode)
+          {
+           case EVAS_ENGINE_GL_X11_SWAP_MODE_FULL:
+             re->mode = MODE_FULL;
+             break;
+           case EVAS_ENGINE_GL_X11_SWAP_MODE_COPY:
+             re->mode = MODE_COPY;
+             break;
+           case EVAS_ENGINE_GL_X11_SWAP_MODE_DOUBLE:
+             re->mode = MODE_DOUBLE;
+             break;
+           case EVAS_ENGINE_GL_X11_SWAP_MODE_TRIPLE:
+             re->mode = MODE_TRIPLE;
+             break;
+           default:
+             break;
+          }
      }
    if (!re->win)
      {

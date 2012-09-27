@@ -5,6 +5,18 @@
 
 typedef struct _Evas_Engine_Info_GL_X11              Evas_Engine_Info_GL_X11;
 
+/* have this feature */
+#define EVAS_ENGINE_GL_X11_SWAP_MODE_EXISTS 1
+
+typedef enum _Evas_Engine_Info_GL_X11_Swap_Mode
+{
+   EVAS_ENGINE_GL_X11_SWAP_MODE_AUTO   = 0,
+   EVAS_ENGINE_GL_X11_SWAP_MODE_FULL   = 1,
+   EVAS_ENGINE_GL_X11_SWAP_MODE_COPY   = 2,
+   EVAS_ENGINE_GL_X11_SWAP_MODE_DOUBLE = 3,
+   EVAS_ENGINE_GL_X11_SWAP_MODE_TRIPLE = 4
+} Evas_Engine_Info_GL_X11_Swap_Mode;
+
 struct _Evas_Engine_Info_GL_X11
 {
    /* PRIVATE - don't mess with this baby or evas will poke its tongue out */
@@ -42,5 +54,6 @@ struct _Evas_Engine_Info_GL_X11
 
    unsigned char vsync : 1; // does nothing right now
    unsigned char indirect : 1; // use indirect rendering
+   unsigned char swap_mode : 4; // what swap mode to assume
 };
 #endif
