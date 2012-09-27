@@ -1259,8 +1259,7 @@ src/tests/Makefile
 src/tests/eina/Makefile
 src/tests/eet/Makefile
 src/tests/eo/Makefile
-spec/eina.spec
-spec/eet.spec
+spec/efl.spec
 pc/evil.pc
 pc/eina.pc
 pc/eet.pc
