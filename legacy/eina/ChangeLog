@@ -349,6 +349,6 @@
         and eina_rectangle are not below zero
         * Documentation for eina list specified and eina stringshare fixed
 
-2012-07-01  Vincent Torri
+2012-09-15  Vincent Torri
 
         * Add DOCTYPE children to be parse in eina_simple_xml.
