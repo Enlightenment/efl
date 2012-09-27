@@ -257,6 +257,8 @@ ibus_im_context_del(Ecore_IMF_Context *ctx)
    // release preedit
    if (ibusimcontext->preedit_string)
      free(ibusimcontext->preedit_string);
+   if (_focus_im_context == ctx)
+     _focus_im_context = NULL;
 }
 
 EAPI Eina_Bool
