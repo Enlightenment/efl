@@ -1,0 +1,24 @@
+2012-09-21  Carsten Haitzler (The Rasterman)
+
+        * Fix big endian bug with eet image handling and endianess swapping.
+
+2012-09-15  Vincent Torri
+
+        * Add DOCTYPE children to be parse in eina_simple_xml.
+
+2012-09-12 Patryk Kaczmarek <patryk.k@samsung.com>
+
+        * Add EINA_SAFETY checks for proper function arguments.
+        * Add check if given arguments (distance and coordinates) in eina_tiler
+        and eina_rectangle are not below zero
+        * Documentation for eina list specified and eina stringshare fixed
+
+2012-09-11  Cedric Bail
+        
+        * Speedup Eina Rbtree Iterator by recycling memory instead of
+        massively calling malloc/free.
+
+2012-09-04  Roberto de Souza <zehortigoza@profusion.mobi>
+
+        * Fix EINA_INLIST_FOREACH_SAFE macro to work when inlist is not the
+        first item in the struct.
