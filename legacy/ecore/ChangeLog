@@ -969,4 +969,4 @@
 2012-09-27  Carsten Haitzler (The Rasterman)
 
        * Fix ecore_imf buf in the ibus module where it may segv
-       accessign a wrong context handle.
+       accessing a wrong context handle.
