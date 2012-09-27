@@ -89,7 +89,7 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
           {
            case EINA_FILE_DIR:
               if (_eio_lstat(info->path, &buffer) != 0)
-                goto on_error;
+		continue;
 
               if (S_ISLNK(buffer.st_mode))
                 info->type = EINA_FILE_LNK;

@@ -47,3 +47,7 @@
 2012-09-14  Cedric Bail
 
 	* Fix build with xattr without splice.
+
+2012-09-27  Cedric Bail
+
+	* Don't stop on limited access right.

@@ -8,6 +8,7 @@ Additions:
 Fixes:
 	- fix monitor shutdown when mainloop did never run.
 	- fix build with xattr and without splice.
+	- don't stop on limited access right.
 
 Improvements:
 
