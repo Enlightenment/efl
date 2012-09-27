@@ -1,10 +1,10 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
--I$(top_srcdir)/src/include/eina \
+-I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eet \
 -I$(top_srcdir)/src/lib/eet/lz4 \
--I$(top_builddir)/src/include/eina \
+-I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eet \
 -I$(top_builddir)/src/lib/eet/lz4 \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
