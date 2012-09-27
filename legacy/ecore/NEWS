@@ -24,6 +24,7 @@ Fixes:
     * ecore_evas rotation handling on some driver implementations
     * ecore_file_escape_name() escape taba nd newline right.
     * ecore_x_image_is_argb32_get() returns correctly given endianness.
+    * ecore_imf ibus module potential segv fixed.
 
 Improvements:
 

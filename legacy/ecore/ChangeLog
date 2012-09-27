@@ -963,4 +963,10 @@
 
 2012-09-21  Christopher Michael
 
-       * Fix ecore_x_randr to properly return output modes from ecore_x_randr_output_modes_get
+       * Fix ecore_x_randr to properly return output modes from
+       ecore_x_randr_output_modes_get().
+
+2012-09-27  Carsten Haitzler (The Rasterman)
+
+       * Fix ecore_imf buf in the ibus module where it may segv
+       accessign a wrong context handle.
