@@ -15,16 +15,16 @@ eet_file_SOURCES = eet-file.c
 eet_file_LDADD = $(top_builddir)/src/lib/eet/libeet.la @EET_LIBS@
 
 eet_data_simple_SOURCES = eet-data-simple.c
-eet_data_simple_LDADD = $(top_builddir)/src/lib/eet/libeet.la @EET_LIBS@
+eet_data_simple_LDADD = $(top_builddir)/src/lib/eet/libeet.la $(top_builddir)/src/lib/eina/libeina.la @EET_LIBS@
 
 eet_data_nested_SOURCES = eet-data-nested.c
-eet_data_nested_LDADD = $(top_builddir)/src/lib/eet/libeet.la @EET_LIBS@
+eet_data_nested_LDADD = $(top_builddir)/src/lib/eet/libeet.la $(top_builddir)/src/lib/eina/libeina.la @EET_LIBS@
 
 eet_data_file_descriptor_01_SOURCES = eet-data-file_descriptor_01.c
-eet_data_file_descriptor_01_LDADD = $(top_builddir)/src/lib/eet/libeet.la @EET_LIBS@
+eet_data_file_descriptor_01_LDADD = $(top_builddir)/src/lib/eet/libeet.la $(top_builddir)/src/lib/eina/libeina.la @EET_LIBS@
 
 eet_data_file_descriptor_02_SOURCES = eet-data-file_descriptor_02.c
-eet_data_file_descriptor_02_LDADD = $(top_builddir)/src/lib/eet/libeet.la @EET_LIBS@
+eet_data_file_descriptor_02_LDADD = $(top_builddir)/src/lib/eet/libeet.la $(top_builddir)/src/lib/eina/libeina.la @EET_LIBS@
 
 eet_data_cipher_decipher_SOURCES = eet-data-cipher_decipher.c
 eet_data_cipher_decipher_LDADD = $(top_builddir)/src/lib/eet/libeet.la @EET_LIBS@
