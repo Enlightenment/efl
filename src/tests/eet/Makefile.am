@@ -14,7 +14,7 @@ if EFL_ENABLE_TESTS
 check_PROGRAMS = eet_suite
 
 eet_suite_SOURCES = eet_suite.c eet_data_suite.c eet_suite.h
-eet_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/eet/libeet.la @EET_LIBS@
+eet_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/eet/libeet.la $(top_builddir)/src/lib/eina/libeina.la @EET_LIBS@
 
 endif
 

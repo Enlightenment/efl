@@ -73,4 +73,4 @@ module_dummy_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 
 clean-local:
-	rm -rf *.gcno ..\#..\#src\#*.gcov *.gcda
+	rm -rf *.la *.gcno ..\#..\#src\#*.gcov *.gcda
