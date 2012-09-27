@@ -162,37 +162,13 @@ _ecore_evas_x_gl_window_new(Ecore_Evas *ee, Ecore_X_Window parent, int x, int y,
                        einfo->vsync = opt[op];
                     }
 #ifdef EVAS_ENGINE_GL_X11_SWAP_MODE_EXISTS                  
-                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_SWAP_MODE_FULL)
+                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_SWAP_MODE)
                     {
                        op++;
                        if ((evas_version->major >= 1) &&
                            (evas_version->minor >= 7) &&
                            (evas_version->minor >= 99))
-                       einfo->swap_mode = EVAS_ENGINE_GL_X11_SWAP_MODE_FULL;
-                    }
-                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_SWAP_MODE_COPY)
-                    {
-                       op++;
-                       if ((evas_version->major >= 1) &&
-                           (evas_version->minor >= 7) &&
-                           (evas_version->minor >= 99))
-                       einfo->swap_mode = EVAS_ENGINE_GL_X11_SWAP_MODE_COPY;
-                    }
-                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_SWAP_MODE_DOUBLE)
-                    {
-                       op++;
-                       if ((evas_version->major >= 1) &&
-                           (evas_version->minor >= 7) &&
-                           (evas_version->minor >= 99))
-                       einfo->swap_mode = EVAS_ENGINE_GL_X11_SWAP_MODE_DOUBLE;
-                    }
-                  else if (opt[op] == ECORE_EVAS_GL_X11_OPT_SWAP_MODE_TRIPLE)
-                    {
-                       op++;
-                       if ((evas_version->major >= 1) &&
-                           (evas_version->minor >= 7) &&
-                           (evas_version->minor >= 99))
-                       einfo->swap_mode = EVAS_ENGINE_GL_X11_SWAP_MODE_TRIPLE;
+                       einfo->swap_mode = opt[op];
                     }
 #endif                  
                }

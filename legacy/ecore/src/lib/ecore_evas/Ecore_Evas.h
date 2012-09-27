@@ -861,15 +861,18 @@ EAPI void            ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, E
 EAPI Eina_Bool       ecore_evas_software_x11_direct_resize_get(const Ecore_Evas *ee);
 EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 
-#define ECORE_EVAS_GL_X11_OPT_NONE             0
-#define ECORE_EVAS_GL_X11_OPT_INDIRECT         1
-#define ECORE_EVAS_GL_X11_OPT_VSYNC            2
-#define ECORE_EVAS_GL_X11_OPT_SWAP_MODE_FULL   3 
-#define ECORE_EVAS_GL_X11_OPT_SWAP_MODE_COPY   4
-#define ECORE_EVAS_GL_X11_OPT_SWAP_MODE_DOUBLE 5
-#define ECORE_EVAS_GL_X11_OPT_SWAP_MODE_TRIPLE 6
-#define ECORE_EVAS_GL_X11_OPT_LAST             7
+#define ECORE_EVAS_GL_X11_OPT_NONE         0
+#define ECORE_EVAS_GL_X11_OPT_INDIRECT     1
+#define ECORE_EVAS_GL_X11_OPT_VSYNC        2
+#define ECORE_EVAS_GL_X11_OPT_SWAP_MODE    3 
+#define ECORE_EVAS_GL_X11_OPT_LAST         4
 
+#define ECORE_EVAS_GL_X11_SWAP_MODE_AUTO   0
+#define ECORE_EVAS_GL_X11_SWAP_MODE_FULL   1
+#define ECORE_EVAS_GL_X11_SWAP_MODE_COPY   2
+#define ECORE_EVAS_GL_X11_SWAP_MODE_DOUBLE 3
+#define ECORE_EVAS_GL_X11_SWAP_MODE_TRIPLE 4
+   
 EAPI Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_Evas     *ecore_evas_gl_x11_options_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h, const int *opt);
 EAPI Ecore_X_Window  ecore_evas_gl_x11_window_get(const Ecore_Evas *ee);
