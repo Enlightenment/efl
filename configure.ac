@@ -1235,12 +1235,10 @@ src/examples/Makefile
 src/examples/eina/Makefile
 src/examples/eet/Makefile
 src/examples/eo/Makefile
-src/include/Makefile
-src/include/eina/Makefile
-src/include/eina/eina_config.h
 src/lib/Makefile
 src/lib/evil/Makefile
 src/lib/eina/Makefile
+src/lib/eina/eina_config.h
 src/lib/eet/Makefile
 src/lib/eo/Makefile
 src/modules/Makefile
