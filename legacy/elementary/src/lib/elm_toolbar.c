@@ -236,12 +236,12 @@ _resize_job(void *data)
 
         if (sd->vertical)
           {
-             evas_object_resize(sd->bx, w, vh);
+             h = vh;
              _items_visibility_fix(sd, &ih, vh, &more);
           }
         else
           {
-             evas_object_resize(sd->bx, vw, h);
+             w = vw;
              _items_visibility_fix(sd, &iw, vw, &more);
           }
         evas_object_geometry_get
@@ -316,12 +316,12 @@ _resize_job(void *data)
 
         if (sd->vertical)
           {
-             evas_object_resize(sd->bx, w, vh);
+             h = vh;
              _items_visibility_fix(sd, &ih, vh, &more);
           }
         else
           {
-             evas_object_resize(sd->bx, vw, h);
+             w = vw;
              _items_visibility_fix(sd, &iw, vw, &more);
           }
         evas_object_box_remove_all(sd->bx, EINA_FALSE);
@@ -353,12 +353,10 @@ _resize_job(void *data)
      {
         Evas_Coord iw = 0, ih = 0;
 
-        if ((vw >= mw) && (vh >= mh))
-          evas_object_resize(sd->bx, vw, vh);
-        else if (vw < mw)
-          evas_object_resize(sd->bx, mw, vh);
-        else if (vh < mh)
-          evas_object_resize(sd->bx, vw, mh);
+        if (sd->vertical)
+			h = (vh >= mh) ? vh : mh;
+		else
+			w = (vw >= mw) ? vw : mw;
 
         if (sd->vertical)
           _items_visibility_fix(sd, &ih, vh, &more);
@@ -389,11 +387,11 @@ _resize_job(void *data)
      {
         if (sd->vertical)
           {
-             if ((vh >= mh) && (h != vh)) evas_object_resize(sd->bx, w, vh);
+             if ((vh >= mh) && (h != vh)) h = vh;
           }
         else
           {
-             if ((vw >= mw) && (w != vw)) evas_object_resize(sd->bx, vw, h);
+             if ((vw >= mw) && (w != vw)) w = vw;
           }
         EINA_INLIST_FOREACH(sd->items, it)
           {
@@ -404,6 +402,16 @@ _resize_job(void *data)
                }
           }
      }
+
+   if (sd->transverse_expanded)
+     {
+        if (sd->vertical)
+          w = vw;
+        else
+          h = vh;
+     }
+
+   evas_object_resize(sd->bx, w, h);
 
 // Remove the first or last separator since it is not neccessary
    list = evas_object_box_children_get(sd->bx_more);
@@ -840,8 +848,14 @@ _sizing_eval(Evas_Object *obj)
      {
         minw = minw_bx + (w - vw);
         minh = minh_bx + (h - vh);
-        if (minw_bx < vw) minw_bx = vw;
-        if (minh_bx < vh) minh_bx = vh;
+		if (sd->vertical)
+		{
+			if (minh_bx < vh) minh_bx = vh;
+		}
+		else
+		{
+			if (minw_bx < vw) minw_bx = vw;
+		}
      }
    else
      {
@@ -857,8 +871,16 @@ _sizing_eval(Evas_Object *obj)
           }
      }
 
+   if (sd->transverse_expanded)
+     {
+        if (sd->vertical)
+          minw_bx = vw;
+        else
+          minh_bx = vh;
+     }
+
    evas_object_resize(sd->bx, minw_bx, minh_bx);
-   evas_object_resize(sd->more, w, h);
+   evas_object_resize(sd->more, minw_bx, minh_bx);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 
@@ -2645,6 +2667,27 @@ elm_toolbar_shrink_mode_get(const Evas_Object *obj)
    ELM_TOOLBAR_DATA_GET(obj, sd);
 
    return sd->shrink_mode;
+}
+
+EAPI void
+elm_toolbar_transverse_expanded_set(Evas_Object *obj, Eina_Bool transverse_expanded)
+{
+   ELM_TOOLBAR_CHECK(obj);
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   if (sd->transverse_expanded == transverse_expanded) return;
+   sd->transverse_expanded = transverse_expanded;
+
+   _sizing_eval(obj);
+}
+
+EAPI Eina_Bool
+elm_toolbar_transverse_expanded_get(const Evas_Object *obj)
+{
+   ELM_TOOLBAR_CHECK(obj) EINA_FALSE;
+   ELM_TOOLBAR_DATA_GET(obj, sd);
+
+   return sd->transverse_expanded;
 }
 
 EAPI void

@@ -7,6 +7,7 @@ Additions:
    * Add elementary_codegen
    * Add window floating mode api's
    * Add reorder mode set/get API in Toolbar.
+   * Add the toolbar API which expand the transverse length.
 
 Improvements:
 

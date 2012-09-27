@@ -537,4 +537,8 @@
 
 2012-09-25  Cedric Bail
 
-	* Escape theme filename correctly.
+        * Escape theme filename correctly.
+
+2012-09-27  Jaehwan Kim
+
+        * Add the toolbar API which expand the transverse length
