@@ -642,3 +642,6 @@
 
 	* edje_codegen: added support for externals
 
+2012-09-27  Michael Bouchaud (yoz)
+
+        * fix scale_set in sub group

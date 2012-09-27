@@ -349,12 +349,15 @@ edje_password_show_last_timeout_set(double password_show_last_timeout)
 EAPI Eina_Bool
 edje_object_scale_set(Evas_Object *obj, double scale)
 {
-   Edje *ed;
+   Edje *ed, *ged;
+   Eina_List *l;
 
    ed = _edje_fetch(obj);
    if (!ed) return EINA_FALSE;
    if (ed->scale == scale) return EINA_TRUE;
    ed->scale = FROM_DOUBLE(scale);
+   EINA_LIST_FOREACH(ed->groups, l, ged)
+      ged->scale = ed->scale;
    edje_object_calc_force(obj);
    return EINA_TRUE;
 }
