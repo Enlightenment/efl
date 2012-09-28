@@ -82,18 +82,6 @@ EAPI int EEZE_SENSOR_EVENT_TEMPERATURE;
 /**@}*/
 
 /**
- * @typedef Eeze_Sensor
- * @since 1.8
- *
- * Handle for an Eeze_Sensor.
- */
-typedef struct _Eeze_Sensor
-{
-   Eina_Array *modules_array;  /**< Array of available runtime modules */
-   Eina_Hash  *modules; /**< Hash with loaded modules */
-}  Eeze_Sensor;
-
-/**
  * @typedef Eeze_Sensor_Obj;
  * @since 1.8
  *

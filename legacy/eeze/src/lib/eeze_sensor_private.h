@@ -34,6 +34,18 @@ extern int _eeze_sensor_log_dom;
 #define ERR(...)  EINA_LOG_DOM_ERR(_eeze_sensor_log_dom, __VA_ARGS__)
 
 /**
+ * @typedef Eeze_Sensor
+ * @since 1.8
+ *
+ * Handle for an Eeze_Sensor.
+ */
+typedef struct _Eeze_Sensor
+{
+   Eina_Array *modules_array;  /**< Array of available runtime modules */
+   Eina_Hash  *modules; /**< Hash with loaded modules */
+}  Eeze_Sensor;
+
+/**
  * @typedef Eeze_Sensor_Module;
  * @since 1.8
  *
