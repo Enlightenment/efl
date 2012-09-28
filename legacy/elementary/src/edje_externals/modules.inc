@@ -1,4 +1,5 @@
 DEFINE_TYPE(actionslider)
+DEFINE_TYPE(bg)
 DEFINE_TYPE(bubble)
 DEFINE_TYPE(button)
 DEFINE_TYPE(calendar)

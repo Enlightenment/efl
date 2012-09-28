@@ -36,6 +36,7 @@ module_la_SOURCES = private.h \
 modules.inc \
 elm.c \
 elm_actionslider.c \
+elm_bg.c \
 elm_bubble.c \
 elm_button.c \
 elm_calendar.c \
