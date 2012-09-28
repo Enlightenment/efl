@@ -1048,14 +1048,16 @@ elm_widget_theme(Evas_Object *obj)
    Eina_Bool ret = EINA_TRUE;
 
    API_ENTRY return EINA_FALSE;
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
-     ret &= elm_widget_theme(child);
+
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
+     if (_elm_widget_is(child)) ret &= elm_widget_theme(child);
    if (sd->resize_obj && _elm_widget_is(sd->resize_obj))
      ret &= elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) ret &= elm_widget_theme(sd->hover_obj);
-   EINA_LIST_FOREACH (sd->tooltips, l, tt)
+
+   EINA_LIST_FOREACH(sd->tooltips, l, tt)
      elm_tooltip_theme(tt);
-   EINA_LIST_FOREACH (sd->cursors, l, cur)
+   EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
 
    if (!sd->api) return EINA_FALSE;
