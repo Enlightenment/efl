@@ -354,9 +354,9 @@ _resize_job(void *data)
         Evas_Coord iw = 0, ih = 0;
 
         if (sd->vertical)
-			h = (vh >= mh) ? vh : mh;
-		else
-			w = (vw >= mw) ? vw : mw;
+          h = (vh >= mh) ? vh : mh;
+        else
+          w = (vw >= mw) ? vw : mw;
 
         if (sd->vertical)
           _items_visibility_fix(sd, &ih, vh, &more);
@@ -848,14 +848,14 @@ _sizing_eval(Evas_Object *obj)
      {
         minw = minw_bx + (w - vw);
         minh = minh_bx + (h - vh);
-		if (sd->vertical)
-		{
-			if (minh_bx < vh) minh_bx = vh;
-		}
-		else
-		{
-			if (minw_bx < vw) minw_bx = vw;
-		}
+        if (sd->vertical)
+          {
+             if (minh_bx < vh) minh_bx = vh;
+          }
+        else
+          {
+             if (minw_bx < vw) minw_bx = vw;
+          }
      }
    else
      {
