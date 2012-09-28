@@ -416,29 +416,41 @@ eng_setup(Evas *e, void *in)
                                     info->info.alloc_colors_max,
                                     info->info.mask, info->info.shape_dither,
                                     info->info.destination_alpha);
-             if (!re)
-               re = _output_xlib_setup(e->output.w, e->output.h,
-                                       info->info.rotation, info->info.connection,
-                                       info->info.drawable, info->info.visual,
-                                       info->info.colormap,
-                                       info->info.depth, info->info.debug,
-                                       info->info.alloc_grayscale,
-                                       info->info.alloc_colors_max,
-                                       info->info.mask, info->info.shape_dither,
-                                       info->info.destination_alpha);
-
-             re->outbuf_free = evas_software_xlib_outbuf_free;
-             re->outbuf_reconfigure = evas_software_xlib_outbuf_reconfigure;
-             re->outbuf_get_rot = evas_software_xlib_outbuf_get_rot;
-             re->outbuf_new_region_for_update = 
-               evas_software_xlib_outbuf_new_region_for_update;
-             re->outbuf_push_updated_region = 
-               evas_software_xlib_outbuf_push_updated_region;
-             re->outbuf_free_region_for_update = 
-               evas_software_xlib_outbuf_free_region_for_update;
-             re->outbuf_flush = evas_software_xlib_outbuf_flush;
-             re->outbuf_idle_flush = evas_software_xlib_outbuf_idle_flush;
-	     re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
+             if (re)
+               {
+                  // XXX these need to provide egl functions not xlib
+                  re->outbuf_free = evas_software_xlib_outbuf_free;
+                  re->outbuf_reconfigure = evas_software_xlib_outbuf_reconfigure;
+                  re->outbuf_get_rot = evas_software_xlib_outbuf_get_rot;
+                  re->outbuf_new_region_for_update = evas_software_xlib_outbuf_new_region_for_update;
+                  re->outbuf_push_updated_region = evas_software_xlib_outbuf_push_updated_region;
+                  re->outbuf_free_region_for_update = evas_software_xlib_outbuf_free_region_for_update;
+                  re->outbuf_flush = evas_software_xlib_outbuf_flush;
+                  re->outbuf_idle_flush = evas_software_xlib_outbuf_idle_flush;
+                  re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
+               }
+             else
+               {
+                  re = _output_xlib_setup(e->output.w, e->output.h,
+                                          info->info.rotation, info->info.connection,
+                                          info->info.drawable, info->info.visual,
+                                          info->info.colormap,
+                                          info->info.depth, info->info.debug,
+                                          info->info.alloc_grayscale,
+                                          info->info.alloc_colors_max,
+                                          info->info.mask, info->info.shape_dither,
+                                          info->info.destination_alpha);
+                  
+                  re->outbuf_free = evas_software_xlib_outbuf_free;
+                  re->outbuf_reconfigure = evas_software_xlib_outbuf_reconfigure;
+                  re->outbuf_get_rot = evas_software_xlib_outbuf_get_rot;
+                  re->outbuf_new_region_for_update = evas_software_xlib_outbuf_new_region_for_update;
+                  re->outbuf_push_updated_region = evas_software_xlib_outbuf_push_updated_region;
+                  re->outbuf_free_region_for_update = evas_software_xlib_outbuf_free_region_for_update;
+                  re->outbuf_flush = evas_software_xlib_outbuf_flush;
+                  re->outbuf_idle_flush = evas_software_xlib_outbuf_idle_flush;
+                  re->outbuf_alpha_get = evas_software_xlib_outbuf_alpha_get;
+               }
           }
 #endif
 
@@ -482,6 +494,7 @@ eng_setup(Evas *e, void *in)
 #ifdef BUILD_ENGINE_SOFTWARE_XLIB
         if (info->info.backend == EVAS_ENGINE_INFO_SOFTWARE_X11_BACKEND_XLIB)
           {
+             // XXXX do egl stuff as above
              evas_software_xlib_outbuf_free(re->ob);
              re->ob = 
                evas_software_xlib_outbuf_setup_x(e->output.w, e->output.h,
