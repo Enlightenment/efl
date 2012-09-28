@@ -129,8 +129,6 @@ main(void)
    else
      printf("Could not find a light sensor!\n");
 
-   sleep(1);
-
    /* Get updated values on a sensor. Read out is synchronous */
    eeze_sensor_read(sens);
    if (!sens) printf("can't find an light sensor!\n");

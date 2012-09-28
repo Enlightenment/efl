@@ -3,7 +3,7 @@
 #endif
 
 #include <stdio.h>
-#include <time.h>
+#include <sys/time.h>
 
 #include <Eina.h>
 #include <Ecore.h>
@@ -38,6 +38,7 @@ Eina_Bool
 fake_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
 {
    Eeze_Sensor_Obj *obj = NULL;
+   struct timeval tv;
 
    obj = eeze_sensor_obj_get(sensor_type);
    if (obj == NULL)
@@ -56,7 +57,8 @@ fake_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
         obj->data[0] = 7;
         obj->data[1] = 23;
         obj->data[2] = 42;
-        obj->timestamp = time(NULL);
+        gettimeofday(&tv, NULL);
+        obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
         break;
 
       case EEZE_SENSOR_TYPE_LIGHT:
@@ -65,7 +67,8 @@ fake_read(Eeze_Sensor_Type sensor_type, Eeze_Sensor_Obj *lobj)
       case EEZE_SENSOR_TYPE_TEMPERATURE:
         obj->accuracy = 0;
         obj->data[0] = 7;
-        obj->timestamp = time(NULL);
+        gettimeofday(&tv, NULL);
+        obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
         break;
 
       default:
@@ -82,6 +85,7 @@ Eina_Bool
 fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
 {
    Eeze_Sensor_Obj *obj = NULL;
+   struct timeval tv;
 
    obj = eeze_sensor_obj_get(sensor_type);
    if (obj == NULL)
@@ -101,7 +105,8 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
         obj->data[0] = 7;
         obj->data[1] = 23;
         obj->data[2] = 42;
-        obj->timestamp = time(NULL);
+        gettimeofday(&tv, NULL);
+        obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
         break;
 
       case EEZE_SENSOR_TYPE_LIGHT:
@@ -110,7 +115,8 @@ fake_async_read(Eeze_Sensor_Type sensor_type, void *user_data EINA_UNUSED)
       case EEZE_SENSOR_TYPE_TEMPERATURE:
         obj->accuracy = 0;
         obj->data[0] = 7;
-        obj->timestamp = time(NULL);
+        gettimeofday(&tv, NULL);
+        obj->timestamp = ((tv.tv_sec * 1000000) + tv.tv_usec);
         break;
 
       case EEZE_SENSOR_TYPE_MOTION_SNAP:
