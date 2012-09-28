@@ -903,7 +903,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
                         void *data __UNUSED__)
 {
    Elm_Diskselector_Item *it;
-   Evas_Coord x, w, ow;
+   Evas_Coord x, w, ox, ow;
    Eina_List *l, *list;
 
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
@@ -915,11 +915,11 @@ _scroll_animate_stop_cb(Evas_Object *obj,
    else
      list = sd->r_items;
 
-   evas_object_geometry_get(obj, NULL, NULL, &ow, NULL);
+   evas_object_geometry_get(obj, &ox, NULL, &ow, NULL);
    EINA_LIST_FOREACH (list, l, it)
      {
         evas_object_geometry_get(VIEW(it), &x, NULL, &w, NULL);
-        if (abs((int)(ow / 2 - (int)(x + w / 2))) < 10) break;
+        if (abs((int)(ox + (ow / 2)) - (int)(x + (w / 2))) < 10) break;
      }
 
    if (!it) return;

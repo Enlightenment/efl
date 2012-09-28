@@ -31,6 +31,7 @@ Fixes:
    * Fix diskselector when bounce off and round enabled.
    * Fix bubble info field set.
    * Escape theme filename correctly.
+   * Fix diskselkector selection of middle item.
    
 Removals:
 

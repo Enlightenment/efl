@@ -542,3 +542,8 @@
 2012-09-27  Jaehwan Kim
 
         * Add the toolbar API which expand the transverse length
+
+2012-09-28  Shinwoo Kim (kimcinoo)
+
+        * Fix disk selector selection of middle item when obj not at 0.
+
