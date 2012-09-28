@@ -547,3 +547,7 @@
 
         * Fix disk selector selection of middle item when obj not at 0.
 
+2012-09-28   Jihyeon Seol
+
+        * Fix list corruption issue in multibuttonentry.
+

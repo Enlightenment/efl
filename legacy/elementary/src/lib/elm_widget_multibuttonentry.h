@@ -203,6 +203,7 @@ struct _Elm_Multibuttonentry_Smart_Data
    Eina_Bool                           last_btn_select : 1;
    Eina_Bool                           editable : 1;
    Eina_Bool                           focused : 1;
+   Eina_Bool                           guide_text_vis_enable : 1;
 };
 
 /**

@@ -32,6 +32,7 @@ Fixes:
    * Fix bubble info field set.
    * Escape theme filename correctly.
    * Fix diskselector selection of middle item.
+   * Fix multibuttonentry list corruption.
    
 Removals:
 
