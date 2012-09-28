@@ -5,6 +5,7 @@
 .libs
 .deps
 *.pc
+*.spec
 Makefile
 Makefile.in
 *.so
