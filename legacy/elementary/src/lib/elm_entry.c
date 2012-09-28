@@ -830,17 +830,20 @@ static Eina_Bool
 _elm_entry_smart_on_focus(Evas_Object *obj)
 {
    Evas_Object *top;
+   Eina_Bool top_is_win;
 
    ELM_ENTRY_DATA_GET(obj, sd);
 
    top = elm_widget_top_get(obj);
+   if (!strcmp(evas_object_type_get(top), "elm_win"))
+     top_is_win = EINA_TRUE;
 
    if (!sd->editable) return EINA_FALSE;
    if (elm_widget_focus_get(obj))
      {
         evas_object_focus_set(sd->entry_edje, EINA_TRUE);
         edje_object_signal_emit(sd->entry_edje, "elm,action,focus", "elm");
-        if (top && sd->input_panel_enable)
+        if (top && top_is_win && sd->input_panel_enable)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_ON);
         evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
         _return_key_enabled_check(obj);
@@ -849,7 +852,7 @@ _elm_entry_smart_on_focus(Evas_Object *obj)
      {
         edje_object_signal_emit(sd->entry_edje, "elm,action,unfocus", "elm");
         evas_object_focus_set(sd->entry_edje, EINA_FALSE);
-        if (top && sd->input_panel_enable)
+        if (top && top_is_win && sd->input_panel_enable)
           elm_win_keyboard_mode_set(top, ELM_WIN_KEYBOARD_OFF);
         evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
      }
