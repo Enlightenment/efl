@@ -34,6 +34,7 @@ struct _Render_Engine
    int                      mode;
    int                      w, h;
    int                      vsync;
+   int                      lost_back;
 
    EVGL_Engine             *evgl_engine;
 };
@@ -620,6 +621,7 @@ _re_wincheck(Render_Engine *re)
 {
    if (re->win->surf) return 1;
    eng_window_resurf(re->win);
+   re->lost_back = 1;
    if (!re->win->surf)
      {
         ERR("GL engine can't re-create window surface!");
@@ -1059,9 +1061,16 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (!re->rects)
      {
         re->rects = evas_common_tilebuf_get_render_rects(re->tb);
-        evas_common_tilebuf_clear(re->tb);
         if (re->rects)
           {
+             if (re->lost_back)
+               {
+                  /* if we lost our backbuffer since the last frame redraw all */
+                  re->lost_back = 0;
+                  evas_common_tilebuf_add_redraw(re->tb, 0, 0, re->win->w, re->win->h);
+                  evas_common_tilebuf_free_render_rects(re->rects);
+                  re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+               }
              /* ensure we get rid of previous rect lists we dont need if mode
               * changed/is appropriate */
              switch (re->mode)
@@ -1092,6 +1101,7 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
              re->cur_rect = EINA_INLIST_GET(re->rects);
              first_rect = EINA_TRUE;
           }
+        evas_common_tilebuf_clear(re->tb);
      }
    if (!re->cur_rect) return NULL;
    rect = (Tilebuf_Rect *)re->cur_rect;
