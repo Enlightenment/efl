@@ -927,32 +927,6 @@ eng_output_redraws_rect_add(void *data, int x, int y, int w, int h)
    eng_window_use(re->win);
    evas_gl_common_context_resize(re->win->gl_context, re->win->w, re->win->h, re->win->rot);
    evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
-
-   /* bounding box track */
-   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, re->win->w, re->win->h);
-   if ((w <= 0) || (h <= 0)) return;
-   if (!re->win->draw.redraw)
-     {
-#if 1
-	re->win->draw.x1 = x;
-	re->win->draw.y1 = y;
-	re->win->draw.x2 = x + w - 1;
-	re->win->draw.y2 = y + h - 1;
-#else
-	re->win->draw.x1 = 0;
-	re->win->draw.y1 = 0;
-	re->win->draw.x2 = re->win->w - 1;
-	re->win->draw.y2 = re->win->h - 1;
-#endif
-     }
-   else
-     {
-	if (x < re->win->draw.x1) re->win->draw.x1 = x;
-	if (y < re->win->draw.y1) re->win->draw.y1 = y;
-	if ((x + w - 1) > re->win->draw.x2) re->win->draw.x2 = x + w - 1;
-	if ((y + h - 1) > re->win->draw.y2) re->win->draw.y2 = y + h - 1;
-     }
-   re->win->draw.redraw = 1;
 }
 
 static void
@@ -971,7 +945,6 @@ eng_output_redraws_clear(void *data)
 
    re = (Render_Engine *)data;
    evas_common_tilebuf_clear(re->tb);
-/*   re->win->draw.redraw = 0;*/
 //   INF("GL: finish update cycle!");
 }
 
@@ -1172,7 +1145,6 @@ eng_output_redraws_next_update_push(void *data, void *surface __UNUSED__, int x 
    re = (Render_Engine *)data;
    /* put back update surface.. in this case just unflag redraw */
    if (!_re_wincheck(re)) return;
-   re->win->draw.redraw = 0;
    re->win->draw.drew = 1;
    evas_gl_common_context_flush(re->win->gl_context);
    if (safe_native == -1)

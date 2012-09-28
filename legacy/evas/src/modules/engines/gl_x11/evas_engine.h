@@ -73,9 +73,7 @@ struct _Evas_GL_X11_Window
    int              rot;
    Evas_Engine_GL_Context *gl_context;
    struct {
-      int              redraw : 1;
-      int              drew : 1;
-      int              x1, y1, x2, y2;
+      int           drew : 1;
    } draw;
 #ifdef GL_GLES
    EGLContext       egl_context[1];
