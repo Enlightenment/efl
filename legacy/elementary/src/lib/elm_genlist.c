@@ -1142,7 +1142,7 @@ _item_cache_find(Elm_Gen_Item *it)
    Eina_Bool tree = 0;
 
    if (it->item->type & ELM_GENLIST_ITEM_TREE) tree = 1;
-   EINA_INLIST_FOREACH (GL_IT(it)->wsd->item_cache, itc)
+   EINA_INLIST_FOREACH_SAFE (GL_IT(it)->wsd->item_cache, itc)
      {
         if ((itc->selected) || (itc->disabled) || (itc->expanded))
           continue;
