@@ -30,5 +30,6 @@ config.*
 src/bin/eeze_disk_ls
 src/bin/eeze_mount
 src/bin/eeze_scanner
+src/bin/eeze_sensor_test
 src/bin/eeze_umount
 

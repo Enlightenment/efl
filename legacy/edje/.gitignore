@@ -33,6 +33,7 @@ cscope.out
 /m4/lt~obsolete.m4
 /missing
 /src/bin/edje_cc
+/src/bin/edje_codegen
 /src/bin/edje_convert
 /src/bin/edje_decc
 /src/bin/edje_player
