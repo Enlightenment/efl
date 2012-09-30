@@ -59,22 +59,22 @@
 #define DBG(...)      EINA_LOG_DOM_DBG(_elm_log_dom, __VA_ARGS__)
 
 #ifdef ENABLE_NLS
-#include <libintl.h>
-#define E_(string)    _elm_dgettext(string)
+# include <libintl.h>
+# define E_(string)    _elm_dgettext(string)
 #else
-#ifndef setlocale
-#define setlocale(c, l)
-#endif
-#ifndef libintl_setlocale
-#define libintl_setlocale(c, l)
-#endif
-#ifndef bindtextdomain
-#define bindtextdomain(domain, dir)
-#endif
-#ifndef libintl_bindtextdomain
-#define libintl_bindtextdomain(domain, dir)
-#endif
-#define E_(string) (string)
+# ifndef setlocale
+#  define setlocale(c, l)
+# endif
+# ifndef libintl_setlocale
+#  define libintl_setlocale(c, l)
+# endif
+# ifndef bindtextdomain
+#  define bindtextdomain(domain, dir)
+# endif
+# ifndef libintl_bindtextdomain
+#  define libintl_bindtextdomain(domain, dir)
+# endif
+# define E_(string) (string)
 #endif
 #define N_(string) (string)
 

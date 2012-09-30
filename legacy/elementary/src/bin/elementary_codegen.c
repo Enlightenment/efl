@@ -18,6 +18,12 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#ifndef ENABLE_NLS
+# ifndef libintl_setlocale
+#  define libintl_setlocale(c, l)
+# endif
+#endif
+
 static int _log_dom;
 #define DBG(...)  EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 #define ERR(...)  EINA_LOG_DOM_ERR(_log_dom, __VA_ARGS__)
