@@ -4,7 +4,6 @@ collections {
 	 image: "over.png" COMP;
 	 image: "under.png" COMP;
 	 image: "sky.jpg" LOSSY 80;
-	 image: "clo.png" LOSSY 60;
       }
       parts {
          part { name: "clip";
