@@ -4,6 +4,7 @@ collections {
 	 image: "over.png" COMP;
 	 image: "under.png" COMP;
 	 image: "sky.jpg" LOSSY 80;
+	 image: "clo.png" LOSSY 60;
       }
       parts {
          part { name: "clip";
@@ -104,6 +105,7 @@ collections {
 	       max: 329 147;
 	       aspect_preference: HORIZONTAL;
 	       image.normal: "over.png";
+visible: 0;
 	    }
 	 }
          part { name: "clo";
