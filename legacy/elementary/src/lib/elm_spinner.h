@@ -215,14 +215,16 @@ EAPI double      elm_spinner_value_get(const Evas_Object *obj);
  * Disabled by default. If disabled, when the user tries to increment the
  * value,
  * but displayed value plus step value is bigger than maximum value,
- * the spinner
- * won't allow it. The same happens when the user tries to decrement it,
- * but the value less step is less than minimum value.
+ * the new value will be the maximum value.
+ * The same happens when the user tries to decrement it,
+ * but the value less step is less than minimum value. In this case,
+ * the new displayed value will be the minimum value.
  *
- * When wrap is enabled, in such situations it will allow these changes,
- * but will get the value that would be less than minimum and subtracts
- * from maximum. Or add the value that would be more than maximum to
- * the minimum.
+ * When wrap is enabled, when the user tries to increment the value,
+ * but displayed value plus step value is bigger than maximum value,
+ * the new value will be the minimum value. When the the user tries to
+ * decrement it, but the value less step is less than minimum value,
+ * the new displayed value will be the maximum value.
  *
  * E.g.:
  * @li min value = 10
@@ -231,8 +233,7 @@ EAPI double      elm_spinner_value_get(const Evas_Object *obj);
  * @li displayed value = 20
  *
  * When the user decrement value (using left or bottom arrow), it will
- * displays @c 40, because max - (min - (displayed - step)) is
- * @c 50 - (@c 10 - (@c 20 - @c 20)) = @c 40.
+ * displays @c 50.
  *
  * @see elm_spinner_wrap_get().
  *

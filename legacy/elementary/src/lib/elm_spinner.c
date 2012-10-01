@@ -111,10 +111,10 @@ _value_set(Evas_Object *obj,
 
    if (sd->wrap)
      {
-        while (new_val < sd->val_min)
-          new_val = sd->val_max + new_val + 1 - sd->val_min;
-        while (new_val > sd->val_max)
-          new_val = sd->val_min + new_val - sd->val_max - 1;
+        if (new_val < sd->val_min)
+          new_val = sd->val_max;
+        else if (new_val > sd->val_max)
+          new_val = sd->val_min;
      }
    else
      {
