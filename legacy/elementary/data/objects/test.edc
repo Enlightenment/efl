@@ -105,7 +105,6 @@ collections {
 	       max: 329 147;
 	       aspect_preference: HORIZONTAL;
 	       image.normal: "over.png";
-visible: 0;
 	    }
 	 }
          part { name: "clo";
