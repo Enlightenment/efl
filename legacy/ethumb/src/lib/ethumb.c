@@ -530,7 +530,7 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
    if (!theme_file)
      {
 	e->frame = NULL;
-	return EINA_TRUE;
+	return EINA_FALSE;
      }
 
    if (!frame)
