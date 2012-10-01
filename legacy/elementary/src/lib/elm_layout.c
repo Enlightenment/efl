@@ -195,7 +195,7 @@ _parts_signals_emit(Elm_Layout_Smart_Data *sd)
    const Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         _icon_signal_emit(sd, sub_d, EINA_TRUE);
         _text_signal_emit(sd, sub_d, EINA_TRUE);
@@ -208,7 +208,7 @@ _parts_text_fix(Elm_Layout_Smart_Data *sd)
    const Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if (sub_d->type == TEXT)
           {
@@ -236,7 +236,7 @@ _parts_cursors_apply(Elm_Layout_Smart_Data *sd)
 
    edje_object_file_get(ELM_WIDGET_DATA(sd)->resize_obj, &file, &group);
 
-   EINA_LIST_FOREACH (sd->parts_cursors, l, pc)
+   EINA_LIST_FOREACH(sd->parts_cursors, l, pc)
      {
         Evas_Object *obj = (Evas_Object *)edje_object_part_object_get
             (ELM_WIDGET_DATA(sd)->resize_obj, pc->part);
@@ -428,7 +428,7 @@ _elm_layout_smart_sub_object_del(Evas_Object *obj,
    if (!ELM_WIDGET_CLASS(_elm_layout_parent_sc)->sub_object_del(obj, sobj))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if (sub_d->obj != sobj) continue;
 
@@ -536,7 +536,7 @@ _elm_layout_smart_callback_del(Evas_Object *obj,
 
    ELM_LAYOUT_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->edje_signals, l, esd)
+   EINA_LIST_FOREACH(sd->edje_signals, l, esd)
      {
         if ((esd->func == func_cb) && (!strcmp(esd->emission, emission)) &&
             (!strcmp(esd->source, source)))
@@ -610,7 +610,7 @@ _elm_layout_smart_text_set(Evas_Object *obj,
    if (!_elm_layout_part_aliasing_eval(sd, &part, EINA_TRUE))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if ((sub_d->type == TEXT) && (!strcmp(part, sub_d->part)))
           {
@@ -685,7 +685,7 @@ _elm_layout_smart_content_set(Evas_Object *obj,
    if (!_elm_layout_part_aliasing_eval(sd, &part, EINA_FALSE))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if ((sub_d->type == SWALLOW))
           {
@@ -747,7 +747,7 @@ _elm_layout_smart_content_get(const Evas_Object *obj,
    if (!_elm_layout_part_aliasing_eval(sd, &part, EINA_FALSE))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if ((sub_d->type == SWALLOW) && !strcmp(part, sub_d->part))
           return sub_d->obj;
@@ -767,7 +767,7 @@ _elm_layout_smart_content_unset(Evas_Object *obj,
    if (!_elm_layout_part_aliasing_eval(sd, &part, EINA_FALSE))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if ((sub_d->type == SWALLOW) && (!strcmp(part, sub_d->part)))
           {
@@ -1010,7 +1010,7 @@ _elm_layout_smart_box_remove(Evas_Object *obj,
    const Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if (!_sub_box_is(sub_d)) continue;
         if ((sub_d->obj == child) && (!strcmp(sub_d->part, part)))
@@ -1133,7 +1133,7 @@ _elm_layout_smart_table_unpack(Evas_Object *obj,
    const Eina_List *l;
    Elm_Layout_Sub_Object_Data *sub_d;
 
-   EINA_LIST_FOREACH (sd->subs, l, sub_d)
+   EINA_LIST_FOREACH(sd->subs, l, sub_d)
      {
         if (sub_d->type != TABLE_PACK) continue;
         if ((sub_d->obj == child) && (!strcmp(sub_d->part, part)))
@@ -1240,7 +1240,7 @@ _elm_layout_smart_del(Evas_Object *obj)
 
    /* let's make our Edje object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
-   EINA_LIST_FOREACH (ELM_WIDGET_DATA(sd)->subobjs, l, child)
+   EINA_LIST_FOREACH(ELM_WIDGET_DATA(sd)->subobjs, l, child)
      {
         if (child == ELM_WIDGET_DATA(sd)->resize_obj)
           {
@@ -1311,7 +1311,7 @@ _parts_cursors_find(Elm_Layout_Smart_Data *sd,
    const Eina_List *l;
    Elm_Layout_Sub_Object_Cursor *pc;
 
-   EINA_LIST_FOREACH (sd->parts_cursors, l, pc)
+   EINA_LIST_FOREACH(sd->parts_cursors, l, pc)
      {
         if (!strcmp(pc->part, part))
           return pc;
@@ -1712,7 +1712,7 @@ elm_layout_part_cursor_unset(Evas_Object *obj,
    Eina_List *l;
    Elm_Layout_Sub_Object_Cursor *pc;
 
-   EINA_LIST_FOREACH (sd->parts_cursors, l, pc)
+   EINA_LIST_FOREACH(sd->parts_cursors, l, pc)
      {
         if (!strcmp(part_name, pc->part))
           {

@@ -61,7 +61,7 @@ _elm_dayselector_smart_translate(Evas_Object *obj)
 
    t = time(NULL);
    localtime_r(&t, &time_daysel);
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         time_daysel.tm_wday = it->day;
         strftime(buf, sizeof(buf), "%a", &time_daysel);
@@ -88,7 +88,7 @@ _update_items(Evas_Object *obj)
      last_day = last_day % ELM_DAYSELECTOR_MAX;
 
    rtl = elm_widget_mirrored_get(obj);
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         elm_object_signal_emit(VIEW(it), it->day_style, "");
         if (it->day == sd->week_start)
@@ -126,7 +126,7 @@ _elm_dayselector_smart_theme(Evas_Object *obj)
    if (!ELM_WIDGET_CLASS(_elm_dayselector_parent_sc)->theme(obj))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         snprintf
           (buf, sizeof(buf), "dayselector/%s", elm_object_style_get(obj));
@@ -155,7 +155,7 @@ _item_del_cb(void *data,
 
    ELM_DAYSELECTOR_DATA_GET(data, sd);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (obj == VIEW(it))
           {
@@ -204,7 +204,7 @@ _item_find(const Evas_Object *obj,
 
    ELM_DAYSELECTOR_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      if (day == it->day) return it;
 
    return NULL;
@@ -344,7 +344,7 @@ _items_style_set(Evas_Object *obj)
    if (weekend_last >= ELM_DAYSELECTOR_MAX)
      weekend_last = weekend_last % ELM_DAYSELECTOR_MAX;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (weekend_last >= sd->weekend_start)
           {
@@ -523,7 +523,7 @@ elm_dayselector_week_start_set(Evas_Object *obj,
 
    /* just shuffling items, so swalling them directly */
    sd->week_start = day;
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         snprintf(buf, sizeof(buf), "day%d", _item_location_get(sd, it));
         edje_object_part_swallow

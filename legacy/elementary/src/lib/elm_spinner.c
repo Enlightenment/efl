@@ -70,7 +70,7 @@ _label_write(Evas_Object *obj)
 
    ELM_SPINNER_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->special_values, l, sv)
+   EINA_LIST_FOREACH(sd->special_values, l, sv)
      {
         if (sv->value == sd->val)
           {

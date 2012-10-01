@@ -125,7 +125,7 @@ _elm_grid_smart_del(Evas_Object *obj)
 
    /* let's make our grid object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
-   EINA_LIST_FOREACH (ELM_WIDGET_DATA(sd)->subobjs, l, child)
+   EINA_LIST_FOREACH(ELM_WIDGET_DATA(sd)->subobjs, l, child)
      {
         if (child == ELM_WIDGET_DATA(sd)->resize_obj)
           {

@@ -39,7 +39,7 @@ _submenu_hide(Elm_Menu_Item *item)
    evas_object_hide(item->submenu.hv);
    item->submenu.open = EINA_FALSE;
 
-   EINA_LIST_FOREACH (item->submenu.items, l, item2)
+   EINA_LIST_FOREACH(item->submenu.items, l, item2)
      {
         if (item2->submenu.open) _submenu_hide(item2);
      }
@@ -83,7 +83,7 @@ _submenu_sizing_eval(Elm_Menu_Item *parent_it)
               h2, bx, by, bw, bh, px, py, pw, ph;
    ELM_MENU_DATA_GET_OR_RETURN(WIDGET(parent_it), sd);
 
-   EINA_LIST_FOREACH (parent_it->submenu.items, l, item)
+   EINA_LIST_FOREACH(parent_it->submenu.items, l, item)
      _item_sizing_eval(item);
 
    evas_object_geometry_get
@@ -119,7 +119,7 @@ _submenu_sizing_eval(Elm_Menu_Item *parent_it)
    evas_object_size_hint_max_set(parent_it->submenu.location, bw, h_p);
    elm_hover_target_set(parent_it->submenu.hv, parent_it->submenu.location);
 
-   EINA_LIST_FOREACH (parent_it->submenu.items, l, item)
+   EINA_LIST_FOREACH(parent_it->submenu.items, l, item)
      {
         if (item->submenu.open) _submenu_sizing_eval(item);
      }
@@ -136,7 +136,7 @@ _sizing_eval(Evas_Object *obj)
 
    if (!sd->parent) return;
 
-   EINA_LIST_FOREACH (sd->items, l, item)
+   EINA_LIST_FOREACH(sd->items, l, item)
      _item_sizing_eval(item);
 
    evas_object_geometry_get(sd->location, NULL, NULL, &w_p, &h_p);
@@ -160,7 +160,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(sd->location, bw, h_p);
    elm_hover_target_set(sd->hv, sd->location);
 
-   EINA_LIST_FOREACH (sd->items, l, item)
+   EINA_LIST_FOREACH(sd->items, l, item)
      if (item->submenu.open) _submenu_sizing_eval(item);
 }
 
@@ -175,9 +175,9 @@ _elm_menu_smart_theme(Evas_Object *obj)
    if (!_elm_menu_parent_sc->theme(obj)) return EINA_FALSE;
 
    ll = eina_list_append(ll, sd->items);
-   EINA_LIST_FOREACH (ll, _ll, l)
+   EINA_LIST_FOREACH(ll, _ll, l)
      {
-        EINA_LIST_FOREACH (l, _l, item)
+        EINA_LIST_FOREACH(l, _l, item)
           {
              edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(obj));
              ll = eina_list_append(ll, item->submenu.items);
@@ -339,7 +339,7 @@ _menu_hide(void *data,
    evas_object_hide(sd->hv);
    evas_object_hide(data);
 
-   EINA_LIST_FOREACH (sd->items, l, item2)
+   EINA_LIST_FOREACH(sd->items, l, item2)
      {
         if (item2->submenu.open) _submenu_hide(item2);
      }
@@ -398,7 +398,7 @@ _menu_item_activate_cb(void *data,
    item->selected = 1;
    if (item->parent)
      {
-        EINA_LIST_FOREACH (item->parent->submenu.items, l, item2)
+        EINA_LIST_FOREACH(item->parent->submenu.items, l, item2)
           {
              if (item2 != item)
                elm_menu_item_selected_set((Elm_Object_Item *)item2, 0);
@@ -407,7 +407,7 @@ _menu_item_activate_cb(void *data,
    else
      {
         ELM_MENU_DATA_GET(WIDGET(item), sd);
-        EINA_LIST_FOREACH (sd->items, l, item2)
+        EINA_LIST_FOREACH(sd->items, l, item2)
           {
              if (item2 != item)
                elm_menu_item_selected_set((Elm_Object_Item *)item2, 0);
@@ -655,9 +655,9 @@ elm_menu_parent_set(Evas_Object *obj,
    elm_hover_parent_set(sd->hv, parent);
 
    ll = eina_list_append(ll, sd->items);
-   EINA_LIST_FOREACH (ll, _ll, l)
+   EINA_LIST_FOREACH(ll, _ll, l)
      {
-        EINA_LIST_FOREACH (l, _l, item)
+        EINA_LIST_FOREACH(l, _l, item)
           {
              if (item->submenu.hv)
                {
@@ -731,7 +731,7 @@ _item_clone(Evas_Object *obj,
    elm_object_item_disabled_set
      (new_item, elm_widget_item_disabled_get(item));
 
-   EINA_LIST_FOREACH (item->submenu.items, iter, subitem)
+   EINA_LIST_FOREACH(item->submenu.items, iter, subitem)
      _item_clone(obj, (Elm_Menu_Item *)new_item, subitem);
 }
 
@@ -748,7 +748,7 @@ elm_menu_clone(Evas_Object *from_menu,
 
    ELM_MENU_DATA_GET_OR_RETURN(from_menu, from_sd);
 
-   EINA_LIST_FOREACH (from_sd->items, iter, item)
+   EINA_LIST_FOREACH(from_sd->items, iter, item)
      _item_clone(to_menu, (Elm_Menu_Item *)parent, item);
 }
 
@@ -1088,7 +1088,7 @@ elm_menu_selected_item_get(const Evas_Object *obj)
    ELM_MENU_CHECK(obj) NULL;
    ELM_MENU_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->items, l, item)
+   EINA_LIST_FOREACH(sd->items, l, item)
      {
         if (item->selected) return (Elm_Object_Item *)item;
      }

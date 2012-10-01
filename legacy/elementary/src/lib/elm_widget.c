@@ -348,7 +348,7 @@ _elm_widget_sub_object_del_func(Evas_Object *obj,
                   ELM_WIDGET_DATA_GET(parent, sdp);
 
                   sdp->child_can_focus = EINA_FALSE;
-                  EINA_LIST_FOREACH (sdp->subobjs, l, subobj)
+                  EINA_LIST_FOREACH(sdp->subobjs, l, subobj)
                     {
                        if ((subobj != sobj) && (_is_focusable(subobj)))
                          {
@@ -436,7 +436,7 @@ _newest_focus_order_get(Evas_Object *obj,
         *newest_focus_order = sd->focus_order;
         best = obj;
      }
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         ret = _newest_focus_order_get
             (child, newest_focus_order, can_focus_only);
@@ -1027,7 +1027,7 @@ elm_widget_access(Evas_Object *obj,
    Eina_Bool ret = EINA_TRUE;
 
    API_ENTRY return EINA_FALSE;
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
      ret &= elm_widget_access(child, is_access);
 
    if (sd->api && sd->api->access)
@@ -1099,13 +1099,13 @@ elm_widget_theme_specific(Evas_Object *obj,
           }
      }
    if (!force) return;
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
      elm_widget_theme_specific(child, th, force);
    if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
-   EINA_LIST_FOREACH (sd->tooltips, l, tt)
+   EINA_LIST_FOREACH(sd->tooltips, l, tt)
      elm_tooltip_theme(tt);
-   EINA_LIST_FOREACH (sd->cursors, l, cur)
+   EINA_LIST_FOREACH(sd->cursors, l, cur)
      elm_cursor_theme(cur);
    if (!sd->api) return;
    sd->api->theme(obj);
@@ -1424,7 +1424,7 @@ elm_widget_can_focus_child_list_get(const Evas_Object *obj)
 
    if (sd->subobjs)
      {
-        EINA_LIST_FOREACH (sd->subobjs, l, child)
+        EINA_LIST_FOREACH(sd->subobjs, l, child)
           {
              if ((elm_widget_can_focus_get(child)) &&
                  (evas_object_visible_get(child)) &&
@@ -1488,7 +1488,7 @@ elm_widget_focused_object_get(const Evas_Object *obj)
    API_ENTRY return NULL;
 
    if (!sd->focused) return NULL;
-   EINA_LIST_FOREACH (sd->subobjs, l, subobj)
+   EINA_LIST_FOREACH(sd->subobjs, l, subobj)
      {
         Evas_Object *fobj = elm_widget_focused_object_get(subobj);
         if (fobj) return fobj;
@@ -1578,7 +1578,7 @@ elm_widget_event_callback_del(Evas_Object *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(func, NULL);
    Eina_List *l;
    Elm_Event_Cb_Data *ecd;
-   EINA_LIST_FOREACH (sd->event_cb, l, ecd)
+   EINA_LIST_FOREACH(sd->event_cb, l, ecd)
      if ((ecd->func == func) && (ecd->data == data))
        {
           free(ecd);
@@ -1612,7 +1612,7 @@ elm_widget_event_propagate(Evas_Object *obj,
         if (sd->api->event(parent, obj, type, event_info))
           return EINA_TRUE;
 
-        EINA_LIST_FOREACH_SAFE (sd->event_cb, l, l_prev, ecd)
+        EINA_LIST_FOREACH_SAFE(sd->event_cb, l, l_prev, ecd)
           {
              if (ecd->func((void *)ecd->data, parent, obj, type, event_info) ||
                  (event_flags && ((*event_flags) & EVAS_EVENT_FLAG_ON_HOLD)))
@@ -1652,7 +1652,7 @@ elm_widget_focus_custom_chain_set(Evas_Object *obj,
    Eina_List *l;
    Evas_Object *o;
 
-   EINA_LIST_FOREACH (objs, l, o)
+   EINA_LIST_FOREACH(objs, l, o)
      {
         evas_object_event_callback_add(o, EVAS_CALLBACK_DEL,
                                        _elm_object_focus_chain_del_cb, sd);
@@ -1691,7 +1691,7 @@ elm_widget_focus_custom_chain_unset(Evas_Object *obj)
    Eina_List *l, *l_next;
    Evas_Object *o;
 
-   EINA_LIST_FOREACH_SAFE (sd->focus_chain, l, l_next, o)
+   EINA_LIST_FOREACH_SAFE(sd->focus_chain, l, l_next, o)
      {
         evas_object_event_callback_del_full(o, EVAS_CALLBACK_DEL,
                                             _elm_object_focus_chain_del_cb, sd);
@@ -2521,7 +2521,7 @@ elm_widget_focus_set(Evas_Object *obj,
              const Eina_List *l;
              Evas_Object *child;
 
-             EINA_LIST_FOREACH (sd->subobjs, l, child)
+             EINA_LIST_FOREACH(sd->subobjs, l, child)
                {
                   if ((_is_focusable(child)) &&
                       (!elm_widget_disabled_get(child)))
@@ -2537,7 +2537,7 @@ elm_widget_focus_set(Evas_Object *obj,
         const Eina_List *l;
         Evas_Object *child;
 
-        EINA_LIST_REVERSE_FOREACH (sd->subobjs, l, child)
+        EINA_LIST_REVERSE_FOREACH(sd->subobjs, l, child)
           {
              if ((_is_focusable(child)) &&
                  (!elm_widget_disabled_get(child)))
@@ -2578,7 +2578,7 @@ elm_widget_focused_object_clear(Evas_Object *obj)
      {
         const Eina_List *l;
         Evas_Object *child;
-        EINA_LIST_FOREACH (sd->subobjs, l, child)
+        EINA_LIST_FOREACH(sd->subobjs, l, child)
           {
              if (elm_widget_focus_get(child))
                {
@@ -2628,7 +2628,7 @@ elm_widget_focus_steal(Evas_Object *obj)
                {
                   const Eina_List *l;
                   Evas_Object *child;
-                  EINA_LIST_FOREACH (sd->subobjs, l, child)
+                  EINA_LIST_FOREACH(sd->subobjs, l, child)
                     {
                        if (elm_widget_focus_get(child))
                          {
@@ -2669,7 +2669,7 @@ _elm_widget_top_win_focused_set(Evas_Object *obj,
    if (sd->top_win_focused == top_win_focused) return;
    if (sd->resize_obj)
      _elm_widget_top_win_focused_set(sd->resize_obj, top_win_focused);
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         _elm_widget_top_win_focused_set(child, top_win_focused);
      }
@@ -2818,7 +2818,7 @@ elm_widget_scrollable_children_get(Evas_Object *obj)
 
    API_ENTRY return NULL;
 
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         if (_elm_scrollable_is(child))
           ret = eina_list_append(ret, child);
@@ -2845,7 +2845,7 @@ elm_widget_scroll_hold_push(Evas_Object *obj)
              Evas_Object *child;
 
              scr_children = elm_widget_scrollable_children_get(obj);
-             EINA_LIST_FOREACH (scr_children, l, child)
+             EINA_LIST_FOREACH(scr_children, l, child)
                {
                   ELM_SCROLLABLE_IFACE_GET(child, s_iface);
                   s_iface->hold_set(child, EINA_TRUE);
@@ -2875,7 +2875,7 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
              Evas_Object *child;
 
              scr_children = elm_widget_scrollable_children_get(obj);
-             EINA_LIST_FOREACH (scr_children, l, child)
+             EINA_LIST_FOREACH(scr_children, l, child)
                {
                   ELM_SCROLLABLE_IFACE_GET(child, s_iface);
                   s_iface->hold_set(child, EINA_FALSE);
@@ -2912,7 +2912,7 @@ elm_widget_scroll_freeze_push(Evas_Object *obj)
              Evas_Object *child;
 
              scr_children = elm_widget_scrollable_children_get(obj);
-             EINA_LIST_FOREACH (scr_children, l, child)
+             EINA_LIST_FOREACH(scr_children, l, child)
                {
                   ELM_SCROLLABLE_IFACE_GET(child, s_iface);
                   s_iface->freeze_set(child, EINA_TRUE);
@@ -2942,7 +2942,7 @@ elm_widget_scroll_freeze_pop(Evas_Object *obj)
              Evas_Object *child;
 
              scr_children = elm_widget_scrollable_children_get(obj);
-             EINA_LIST_FOREACH (scr_children, l, child)
+             EINA_LIST_FOREACH(scr_children, l, child)
                {
                   ELM_SCROLLABLE_IFACE_GET(child, s_iface);
                   s_iface->freeze_set(child, EINA_FALSE);
@@ -3038,7 +3038,7 @@ elm_widget_domain_translatable_text_part_set(Evas_Object *obj,
    API_ENTRY return;
 
    str = eina_stringshare_add(part);
-   EINA_LIST_FOREACH (sd->translate_strings, l, ts)
+   EINA_LIST_FOREACH(sd->translate_strings, l, ts)
      if (ts->id == str)
        break;
      else
@@ -3092,7 +3092,7 @@ elm_widget_translatable_text_part_get(const Evas_Object *obj,
    API_ENTRY return NULL;
 
    str = eina_stringshare_add(part);
-   EINA_LIST_FOREACH (sd->translate_strings, l, ts)
+   EINA_LIST_FOREACH(sd->translate_strings, l, ts)
      if (ts->id == str)
        {
           ret = ts->string;
@@ -3113,7 +3113,7 @@ elm_widget_translate(Evas_Object *obj)
 
    API_ENTRY return;
 
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
      elm_widget_translate(child);
    if (sd->resize_obj) elm_widget_translate(sd->resize_obj);
    if (sd->hover_obj) elm_widget_translate(sd->hover_obj);
@@ -3121,7 +3121,7 @@ elm_widget_translate(Evas_Object *obj)
    sd->api->translate(obj);
 
 #ifdef HAVE_GETTEXT
-   EINA_LIST_FOREACH (sd->translate_strings, l, ts)
+   EINA_LIST_FOREACH(sd->translate_strings, l, ts)
      {
         const char *s = dgettext(ts->domain, ts->string);
         elm_widget_text_part_set(obj, ts->id, s);
@@ -3385,7 +3385,7 @@ _widget_name_find(const Evas_Object *obj,
             ((child = _widget_name_find(sd->resize_obj, name, recurse - 1))))
           return child;
      }
-   EINA_LIST_FOREACH (sd->subobjs, l, child)
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         s = evas_object_name_get(child);
         if ((s) && (!strcmp(s, name))) return child;
@@ -4283,7 +4283,7 @@ _sub_obj_tree_dump(const Evas_Object *obj,
                obj);
         if (sd->resize_obj)
           _sub_obj_tree_dump(sd->resize_obj, lvl + 1);
-        EINA_LIST_FOREACH (sd->subobjs, l, obj)
+        EINA_LIST_FOREACH(sd->subobjs, l, obj)
           {
              if (obj != sd->resize_obj)
                _sub_obj_tree_dump(obj, lvl + 1);
@@ -4338,7 +4338,7 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj,
 
    Eina_List *l;
    Evas_Object *o;
-   EINA_LIST_FOREACH (sd->subobjs, l, o)
+   EINA_LIST_FOREACH(sd->subobjs, l, o)
      _sub_obj_tree_dot_dump(o, output);
 }
 

@@ -51,7 +51,7 @@ _selected_item_indicate(Elm_Diskselector_Item *it)
 
    if (!it->label) return;
 
-   EINA_LIST_FOREACH (sd->r_items, l, item)
+   EINA_LIST_FOREACH(sd->r_items, l, item)
      {
         if (item->label && !strcmp(item->label, it->label))
           edje_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
@@ -139,7 +139,7 @@ _string_check(void *data)
    else
      list = sd->r_items;
 
-   EINA_LIST_FOREACH (list, l, it)
+   EINA_LIST_FOREACH(list, l, it)
      {
         Evas_Coord x, w;
         int len;
@@ -221,7 +221,7 @@ _scroller_move(void *data)
         list = sd->r_items;
      }
 
-   EINA_LIST_FOREACH (list, l, dit)
+   EINA_LIST_FOREACH(list, l, dit)
      {
         if (sd->selected_item == dit)
           break;
@@ -343,10 +343,10 @@ _item_del_pre_hook(Elm_Object_Item *it)
              evas_object_hide(sd->VIEW(last));
              evas_object_hide(sd->VIEW(s_last));
 
-             EINA_LIST_FOREACH (sd->under_items, l, item2)
+             EINA_LIST_FOREACH(sd->under_items, l, item2)
                evas_object_hide(VIEW(item2));
 
-             EINA_LIST_FOREACH (sd->over_items, l, item2)
+             EINA_LIST_FOREACH(sd->over_items, l, item2)
                evas_object_hide(VIEW(item2));
           }
         else
@@ -471,7 +471,7 @@ _identical_item_check(Elm_Diskselector_Item *it,
    if (sd->round)
      {
         // Get index from indentical item from round items
-        EINA_LIST_FOREACH (sd->r_items, l, dit)
+        EINA_LIST_FOREACH(sd->r_items, l, dit)
           {
              if (it == dit) break;
              idx++;
@@ -676,7 +676,7 @@ _elm_diskselector_smart_theme(Evas_Object *obj)
 
    if (sd->round)
      {
-        EINA_LIST_FOREACH (sd->r_items, l, it)
+        EINA_LIST_FOREACH(sd->r_items, l, it)
           {
              elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                          elm_widget_style_get(obj));
@@ -686,7 +686,7 @@ _elm_diskselector_smart_theme(Evas_Object *obj)
      }
    else
      {
-        EINA_LIST_FOREACH (sd->items, l, it)
+        EINA_LIST_FOREACH(sd->items, l, it)
           {
              elm_widget_theme_object_set(obj, VIEW(it), "diskselector", "item",
                                          elm_widget_style_get(obj));
@@ -716,7 +716,7 @@ _elm_diskselector_smart_sub_object_del(Evas_Object *obj,
          (obj, sobj))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (sobj == it->icon)
           {
@@ -763,7 +763,7 @@ _elm_diskselector_smart_focus_next(const Evas_Object *obj,
    ELM_DISKSELECTOR_CHECK(obj) EINA_FALSE;
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->items, elist, it)
+   EINA_LIST_FOREACH(sd->items, elist, it)
      items = eina_list_append(items, it->base.access_obj);
 
    if (!sd->round)
@@ -916,7 +916,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
      list = sd->r_items;
 
    evas_object_geometry_get(obj, &ox, NULL, &ow, NULL);
-   EINA_LIST_FOREACH (list, l, it)
+   EINA_LIST_FOREACH(list, l, it)
      {
         evas_object_geometry_get(VIEW(it), &x, NULL, &w, NULL);
         if (abs((int)(ox + (ow / 2)) - (int)(x + (w / 2))) < 10) break;
@@ -978,13 +978,13 @@ _round_items_del(Elm_Diskselector_Smart_Data *sd)
    _round_item_del(sd, sd->first);
    sd->first = NULL;
 
-   EINA_LIST_FOREACH (sd->under_items, l, it)
+   EINA_LIST_FOREACH(sd->under_items, l, it)
      {
         _round_item_del(sd, it);
      }
    sd->under_items = eina_list_free(sd->under_items);
 
-   EINA_LIST_FOREACH (sd->over_items, l, it)
+   EINA_LIST_FOREACH(sd->over_items, l, it)
      {
         _round_item_del(sd, it);
      }
@@ -1221,7 +1221,7 @@ _elm_diskselector_smart_del(Evas_Object *obj)
         free(sd->first);
      }
 
-   EINA_LIST_FOREACH (sd->under_items, l, it)
+   EINA_LIST_FOREACH(sd->under_items, l, it)
      {
         if (it)
           {
@@ -1231,7 +1231,7 @@ _elm_diskselector_smart_del(Evas_Object *obj)
           }
      }
 
-   EINA_LIST_FOREACH (sd->over_items, l, it)
+   EINA_LIST_FOREACH(sd->over_items, l, it)
      {
         if (it)
           {
@@ -1408,7 +1408,7 @@ elm_diskselector_round_enabled_set(Evas_Object *obj,
           elm_box_pack_start(sd->main_box, sd->VIEW(s_last));
 
         // if more than 3 items should be displayed
-        EINA_LIST_FOREACH (sd->under_items, elist, it)
+        EINA_LIST_FOREACH(sd->under_items, elist, it)
           elm_box_pack_start(sd->main_box, VIEW(it));
 
         if (sd->first)
@@ -1417,7 +1417,7 @@ elm_diskselector_round_enabled_set(Evas_Object *obj,
           elm_box_pack_end(sd->main_box, sd->VIEW(second));
 
         // if more than 3 items should be displayed
-        EINA_LIST_FOREACH (sd->over_items, elist, it)
+        EINA_LIST_FOREACH(sd->over_items, elist, it)
           elm_box_pack_end(sd->main_box, VIEW(it));
      }
    else

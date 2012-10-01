@@ -1279,7 +1279,7 @@ _menu_call(Evas_Object *obj)
                }
           }
 
-        EINA_LIST_FOREACH (sd->items, l, it)
+        EINA_LIST_FOREACH(sd->items, l, it)
           {
              elm_hoversel_item_add(sd->hoversel, it->label, it->icon_file,
                                    it->icon_type, _hover_item_clicked_cb, it);
@@ -1537,7 +1537,7 @@ _entry_selection_start_signal_cb(void *data,
    ELM_ENTRY_DATA_GET(data, sd);
 
    if (!elm_object_focus_get(data)) elm_object_focus_set(data, EINA_TRUE);
-   EINA_LIST_FOREACH (entries, l, entry)
+   EINA_LIST_FOREACH(entries, l, entry)
      {
         if (entry != data) elm_entry_select_none(entry);
      }
@@ -1726,7 +1726,7 @@ _signal_anchor_geoms_do_things_with_lol(Elm_Entry_Smart_Data *sd,
    evas_pointer_canvas_xy_get
      (evas_object_evas_get(sd->entry_edje), &px, &py);
 
-   EINA_LIST_FOREACH (geoms, l, r)
+   EINA_LIST_FOREACH(geoms, l, r)
      {
         if (((r->x + x) <= px) && ((r->y + y) <= py) &&
             ((r->x + x + r->w) > px) && ((r->y + y + r->h) > py))
@@ -2130,7 +2130,7 @@ _item_get(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
-   EINA_LIST_FOREACH (sd->item_providers, l, ip)
+   EINA_LIST_FOREACH(sd->item_providers, l, ip)
      {
         o = ip->func(ip->data, data, item);
         if (o) return o;
@@ -2179,7 +2179,7 @@ _text_filter_cb(void *data,
    if (type == EDJE_TEXT_FILTER_FORMAT)
      return;
 
-   EINA_LIST_FOREACH (sd->text_filters, l, tf)
+   EINA_LIST_FOREACH(sd->text_filters, l, tf)
      {
         tf->func(tf->data, data, text);
         if (!*text)
@@ -2198,7 +2198,7 @@ _markup_filter_cb(void *data,
 
    ELM_ENTRY_DATA_GET(data, sd);
 
-   EINA_LIST_FOREACH (sd->markup_filters, l, tf)
+   EINA_LIST_FOREACH(sd->markup_filters, l, tf)
      {
         tf->func(tf->data, data, text);
         if (!*text)
@@ -3731,7 +3731,7 @@ elm_entry_item_provider_remove(Evas_Object *obj,
    ELM_ENTRY_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   EINA_LIST_FOREACH (sd->item_providers, l, ip)
+   EINA_LIST_FOREACH(sd->item_providers, l, ip)
      {
         if ((ip->func == func) && ((!data) || (ip->data == data)))
           {
@@ -3788,7 +3788,7 @@ elm_entry_markup_filter_remove(Evas_Object *obj,
    ELM_ENTRY_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   EINA_LIST_FOREACH (sd->markup_filters, l, tf)
+   EINA_LIST_FOREACH(sd->markup_filters, l, tf)
      {
         if ((tf->func == func) && ((!data) || (tf->data == data)))
           {

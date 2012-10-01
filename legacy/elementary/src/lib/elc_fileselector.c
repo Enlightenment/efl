@@ -442,7 +442,7 @@ _populate(Evas_Object *obj,
      }
 
    if (sd->filename_entry) elm_object_text_set(sd->filename_entry, "");
-   EINA_ITERATOR_FOREACH (it, file)
+   EINA_ITERATOR_FOREACH(it, file)
      {
         const char *filename;
 

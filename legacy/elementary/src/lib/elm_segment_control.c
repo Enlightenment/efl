@@ -71,7 +71,7 @@ _position_items(Elm_Segment_Control_Smart_Data *sd)
    if (rtl) pos = bx + bw - sd->item_width;
    else pos = bx;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         evas_object_move(VIEW(it), pos, by);
         evas_object_resize(VIEW(it), sd->item_width, bh);
@@ -143,7 +143,7 @@ _update_list(Elm_Segment_Control_Smart_Data *sd)
      }
 
    rtl = elm_widget_mirrored_get(ELM_WIDGET_DATA(sd)->obj);
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         it->seg_index = idx;
 
@@ -200,7 +200,7 @@ _elm_segment_control_smart_theme(Evas_Object *obj)
 
    rtl = elm_widget_mirrored_get(obj);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         elm_widget_theme_object_set
           (obj, VIEW(it), "segment_control", "item",

@@ -406,7 +406,7 @@ _populate(Evas_Object *obj)
      _access_calendar_item_register(obj);
 
    /* Set marks */
-   EINA_LIST_FOREACH (sd->marks, l, mark)
+   EINA_LIST_FOREACH(sd->marks, l, mark)
      {
         struct tm *mtime = &mark->mark_time;
         int month = sd->shown_time.tm_mon;

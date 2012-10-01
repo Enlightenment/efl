@@ -41,7 +41,7 @@ _sizing_eval(Evas_Object *obj)
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
-   EINA_LIST_FOREACH (sd->segments, l, segment)
+   EINA_LIST_FOREACH(sd->segments, l, segment)
      {
         if (sd->must_calc_segments || segment->must_calc)
           {
@@ -231,7 +231,7 @@ elm_route_emap_set(Evas_Object *obj,
 
    _clear_route(obj);
 
-   EINA_LIST_FOREACH (emap_route_nodes_get(sd->emap), l, node)
+   EINA_LIST_FOREACH(emap_route_nodes_get(sd->emap), l, node)
      {
         if (node_prev)
           {

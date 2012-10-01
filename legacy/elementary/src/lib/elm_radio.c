@@ -48,7 +48,7 @@ _state_set_all(Elm_Radio_Smart_Data *sd)
    Eina_Bool disabled = EINA_FALSE;
    Evas_Object *child, *selected = NULL;
 
-   EINA_LIST_FOREACH (sd->group->radios, l, child)
+   EINA_LIST_FOREACH(sd->group->radios, l, child)
      {
         ELM_RADIO_DATA_GET(child, sdc);
 
@@ -442,7 +442,7 @@ elm_radio_selected_object_get(Evas_Object *obj)
    ELM_RADIO_CHECK(obj) NULL;
    ELM_RADIO_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->group->radios, l, child)
+   EINA_LIST_FOREACH(sd->group->radios, l, child)
      {
         ELM_RADIO_DATA_GET(child, sdc);
 

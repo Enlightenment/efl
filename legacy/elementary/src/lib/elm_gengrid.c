@@ -108,7 +108,7 @@ _calc_job(void *data)
         if (nmax < 1)
           nmax = 1;
 
-        EINA_INLIST_FOREACH (sd->items, it)
+        EINA_INLIST_FOREACH(sd->items, it)
           {
              if (GG_IT(it)->prev_group != count_group)
                GG_IT(it)->prev_group = count_group;
@@ -552,7 +552,7 @@ _item_mouse_up_cb(void *data,
              const Eina_List *l, *l_next;
              Elm_Gen_Item *item2;
 
-             EINA_LIST_FOREACH_SAFE (sd->selected, l, l_next, item2)
+             EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, item2)
                if (item2 != it) _item_unselect(item2);
           }
         _item_highlight(it);
@@ -687,7 +687,7 @@ _item_realize(Elm_Gen_Item *it)
 
         it->texts =
           elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "texts"));
-        EINA_LIST_FOREACH (it->texts, l, key)
+        EINA_LIST_FOREACH(it->texts, l, key)
           {
              char *s = it->itc->func.text_get
                  ((void *)it->base.data, WIDGET(it), key);
@@ -707,7 +707,7 @@ _item_realize(Elm_Gen_Item *it)
 
         it->contents = elm_widget_stringlist_get
             (edje_object_data_get(VIEW(it), "contents"));
-        EINA_LIST_FOREACH (it->contents, l, key)
+        EINA_LIST_FOREACH(it->contents, l, key)
           {
              if (it->itc->func.content_get)
                ic = it->itc->func.content_get
@@ -729,7 +729,7 @@ _item_realize(Elm_Gen_Item *it)
 
         it->states =
           elm_widget_stringlist_get(edje_object_data_get(VIEW(it), "states"));
-        EINA_LIST_FOREACH (it->states, l, key)
+        EINA_LIST_FOREACH(it->states, l, key)
           {
              Eina_Bool on = it->itc->func.state_get
                  ((void *)it->base.data, WIDGET(it), l->data);
@@ -1211,7 +1211,7 @@ _group_item_place(Elm_Gengrid_Pan_Smart_Data *psd)
         iw = vw;
         ih = psd->wsd->group_item_height;
      }
-   EINA_LIST_FOREACH (psd->wsd->group_items, l, it)
+   EINA_LIST_FOREACH(psd->wsd->group_items, l, it)
      {
         was_realized = it->realized;
         if (GG_IT(it)->group_realized)
@@ -1242,7 +1242,7 @@ _elm_gengrid_pan_smart_calculate(Evas_Object *obj)
 
    psd->wsd->reorder_item_changed = EINA_FALSE;
 
-   EINA_INLIST_FOREACH (psd->wsd->items, it)
+   EINA_INLIST_FOREACH(psd->wsd->items, it)
      {
         if (it->group)
           {
@@ -1873,7 +1873,7 @@ _item_position_update(Eina_Inlist *list,
 {
    Elm_Gen_Item *it;
 
-   EINA_INLIST_FOREACH (list, it)
+   EINA_INLIST_FOREACH(list, it)
      {
         it->position = idx++;
         it->position_update = EINA_TRUE;
@@ -2879,7 +2879,7 @@ elm_gengrid_realized_items_get(const Evas_Object *obj)
    ELM_GENGRID_CHECK(obj) NULL;
    ELM_GENGRID_DATA_GET(obj, sd);
 
-   EINA_INLIST_FOREACH (sd->items, it)
+   EINA_INLIST_FOREACH(sd->items, it)
      {
         if (it->realized) list = eina_list_append(list, (Elm_Object_Item *)it);
      }
@@ -2895,7 +2895,7 @@ elm_gengrid_realized_items_update(Evas_Object *obj)
    ELM_GENGRID_CHECK(obj);
 
    list = elm_gengrid_realized_items_get(obj);
-   EINA_LIST_FOREACH (list, l, it)
+   EINA_LIST_FOREACH(list, l, it)
      elm_gengrid_item_update(it);
 }
 

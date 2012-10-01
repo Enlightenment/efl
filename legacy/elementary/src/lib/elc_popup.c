@@ -201,7 +201,7 @@ _mirrored_set(Evas_Object *obj,
 
    elm_object_mirrored_set(sd->notify, rtl);
    if (sd->items)
-     EINA_LIST_FOREACH (sd->items, elist, item)
+     EINA_LIST_FOREACH(sd->items, elist, item)
        edje_object_mirrored_set(VIEW(item), rtl);
 }
 
@@ -242,7 +242,7 @@ _elm_popup_smart_theme(Evas_Object *obj)
      }
    else if (sd->items)
      {
-        EINA_LIST_FOREACH (sd->items, elist, item)
+        EINA_LIST_FOREACH(sd->items, elist, item)
           {
              elm_widget_theme_object_set
                (obj, VIEW(item), "popup", "item", elm_widget_style_get(obj));
@@ -302,7 +302,7 @@ _elm_popup_smart_sizing_eval(Evas_Object *obj)
 
    if (sd->items)
      {
-        EINA_LIST_FOREACH (sd->items, elist, item)
+        EINA_LIST_FOREACH(sd->items, elist, item)
           {
              _item_sizing_eval(item);
              evas_object_size_hint_min_get(VIEW(item), NULL, &minh_box);

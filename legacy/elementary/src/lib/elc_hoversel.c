@@ -118,7 +118,7 @@ _activate(Evas_Object *obj)
      snprintf(buf, sizeof(buf), "hoversel_vertical_entry/%s",
               elm_widget_style_get(obj));
 
-   EINA_LIST_FOREACH (sd->items, l, item)
+   EINA_LIST_FOREACH(sd->items, l, item)
      {
         bt = elm_button_add(bx);
         elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
@@ -374,7 +374,7 @@ elm_hoversel_clear(Evas_Object *obj)
    ELM_HOVERSEL_CHECK(obj);
    ELM_HOVERSEL_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH_SAFE (sd->items, l, ll, it)
+   EINA_LIST_FOREACH_SAFE(sd->items, l, ll, it)
      {
         elm_widget_item_del(it);
      }

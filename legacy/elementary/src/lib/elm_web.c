@@ -77,7 +77,7 @@ _webkit_theme_find(const Eina_List *list)
    const Eina_List *l;
    const char *th;
 
-   EINA_LIST_FOREACH (list, l, th)
+   EINA_LIST_FOREACH(list, l, th)
      {
         char *path = elm_theme_list_item_path_get(th, NULL);
 
@@ -927,7 +927,7 @@ _popup_item_selected(void *data,
    int i = 0;
    void *d;
 
-   EINA_LIST_FOREACH (list, itr, d)
+   EINA_LIST_FOREACH(list, itr, d)
      {
         if (d == list_it)
           break;
@@ -982,7 +982,7 @@ _ewk_view_popup_create_cb(void *data,
    elm_object_content_set(notify, list);
    evas_object_show(list);
 
-   EINA_LIST_FOREACH (m->items, itr, it)
+   EINA_LIST_FOREACH(m->items, itr, it)
      elm_list_item_append(list, it->text, NULL, NULL, _popup_item_selected,
                           obj);
    elm_list_go(list);

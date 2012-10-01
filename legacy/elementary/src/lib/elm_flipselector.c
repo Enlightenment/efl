@@ -177,7 +177,7 @@ _sentinel_eval(Elm_Flipselector_Smart_Data *sd)
 
    sd->sentinel = sd->items;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (strlen(elm_object_item_text_get((Elm_Object_Item *)it)) >
             strlen(elm_object_item_text_get(DATA_GET(sd->sentinel))))
@@ -196,7 +196,7 @@ _flipselector_process_deletions(Elm_Flipselector_Smart_Data *sd)
 
    sd->walking++; /* avoid nested deletions */
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (!it->deleted) continue;
 
@@ -290,7 +290,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    _flipselector_walk(sd);
 
-   EINA_LIST_FOREACH (sd->items, l, item2)
+   EINA_LIST_FOREACH(sd->items, l, item2)
      {
         if (item2 == item)
           {
@@ -751,7 +751,7 @@ elm_flipselector_first_item_get(const Evas_Object *obj)
 
    if (!sd->items) return NULL;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->deleted) continue;
         return (Elm_Object_Item *)it;
@@ -771,7 +771,7 @@ elm_flipselector_last_item_get(const Evas_Object *obj)
 
    if (!sd->items) return NULL;
 
-   EINA_LIST_REVERSE_FOREACH (sd->items, l, it)
+   EINA_LIST_REVERSE_FOREACH(sd->items, l, it)
      {
         if (it->deleted) continue;
         return (Elm_Object_Item *)it;
@@ -809,7 +809,7 @@ elm_flipselector_item_selected_set(Elm_Object_Item *it,
 
    if ((!selected) && (cur == item))
      {
-        EINA_LIST_FOREACH (sd->items, l, _item)
+        EINA_LIST_FOREACH(sd->items, l, _item)
           {
              if (!_item->deleted)
                {
@@ -822,7 +822,7 @@ elm_flipselector_item_selected_set(Elm_Object_Item *it,
         return;
      }
 
-   EINA_LIST_FOREACH (sd->items, l, _item)
+   EINA_LIST_FOREACH(sd->items, l, _item)
      {
         if (_item == cur) flipside = MSG_FLIP_DOWN;
 

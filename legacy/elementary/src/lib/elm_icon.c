@@ -133,7 +133,7 @@ _icon_thumb_cleanup(Ethumb_Client *ethumbd)
    Eina_List *l, *ll;
    Elm_Icon_Smart_Data *sd;
 
-   EINA_LIST_FOREACH_SAFE (_elm_icon_retry, l, ll, sd)
+   EINA_LIST_FOREACH_SAFE(_elm_icon_retry, l, ll, sd)
      if (_icon_thumb_retry(sd))
        {
           _elm_icon_retry = eina_list_remove_list(_elm_icon_retry, l);
@@ -700,7 +700,7 @@ _elm_icon_signal_callback_del(Evas_Object *obj,
 
    if (!ELM_IMAGE_DATA(sd)->edje) return NULL;
 
-   EINA_LIST_FOREACH (sd->edje_signals, l, esd)
+   EINA_LIST_FOREACH(sd->edje_signals, l, esd)
      {
         if ((esd->func == func_cb) && (!strcmp(esd->emission, emission)) &&
             (!strcmp(esd->source, source)))

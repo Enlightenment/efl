@@ -203,7 +203,7 @@ _transition_layout_child_removed(void *data,
    Transition_Animation_Data *tad;
    Elm_Box_Transition *layout_data = data;
 
-   EINA_LIST_FOREACH (layout_data->objs, l, tad)
+   EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
         if (tad->obj == event_info)
           {
@@ -241,7 +241,7 @@ _transition_layout_calculate_coords(Evas_Object *obj,
    layout_data->initial_time = curtime;
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   EINA_LIST_FOREACH (layout_data->objs, l, tad)
+   EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
         evas_object_geometry_get(tad->obj, &tad->start.x, &tad->start.y,
                                  &tad->start.w, &tad->start.h);
@@ -249,7 +249,7 @@ _transition_layout_calculate_coords(Evas_Object *obj,
         tad->start.y = tad->start.y - y;
      }
    layout_data->end.layout(obj, priv, layout_data->end.data);
-   EINA_LIST_FOREACH (layout_data->objs, l, tad)
+   EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
         evas_object_geometry_get(tad->obj, &tad->end.x, &tad->end.y,
                                  &tad->end.w, &tad->end.h);
@@ -269,7 +269,7 @@ _transition_layout_load_children_list(Evas_Object_Box_Data *priv,
    EINA_LIST_FREE (layout_data->objs, tad)
      free(tad);
 
-   EINA_LIST_FOREACH (priv->children, l, opt)
+   EINA_LIST_FOREACH(priv->children, l, opt)
      {
         tad = calloc(1, sizeof(Transition_Animation_Data));
         if (!tad)
@@ -347,7 +347,7 @@ _transition_layout_animation_exec(Evas_Object *obj,
    progress = (curtime - layout_data->initial_time) / layout_data->duration;
    evas_object_geometry_get(obj, &x, &y, &w, &h);
 
-   EINA_LIST_FOREACH (layout_data->objs, l, tad)
+   EINA_LIST_FOREACH(layout_data->objs, l, tad)
      {
         cur_x = x + tad->start.x + ((tad->end.x - tad->start.x) * progress);
         cur_y = y + tad->start.y + ((tad->end.y - tad->start.y) * progress);
@@ -401,7 +401,7 @@ _elm_box_smart_del(Evas_Object *obj)
 
    /* let's make our box object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
-   EINA_LIST_FOREACH (ELM_WIDGET_DATA(sd)->subobjs, l, child)
+   EINA_LIST_FOREACH(ELM_WIDGET_DATA(sd)->subobjs, l, child)
      {
         if (child == ELM_WIDGET_DATA(sd)->resize_obj)
           {
@@ -579,7 +579,7 @@ elm_box_unpack_all(Evas_Object *obj)
    ELM_BOX_DATA_GET(obj, sd);
 
    bd = evas_object_smart_data_get(ELM_WIDGET_DATA(sd)->resize_obj);
-   EINA_LIST_FOREACH (bd->children, l, opt)
+   EINA_LIST_FOREACH(bd->children, l, opt)
      elm_widget_sub_object_del(obj, opt->obj);
 
    /* EINA_FALSE means to delete objects as well */

@@ -268,7 +268,7 @@ _thumb_finish(Elm_Thumb_Smart_Data *sd,
 
    _thumb_ready_inform(sd, thumb_path, thumb_key);
 
-   EINA_LIST_FOREACH_SAFE (retry, l, ll, sd)
+   EINA_LIST_FOREACH_SAFE(retry, l, ll, sd)
      {
         if (_thumb_retry(sd))
           retry = eina_list_remove_list(retry, l);

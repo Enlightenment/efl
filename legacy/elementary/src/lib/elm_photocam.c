@@ -339,7 +339,7 @@ _elm_photocam_pan_smart_calculate(Evas_Object *obj)
        ox - psd->wsd->g_layer_zoom.imx, oy - psd->wsd->g_layer_zoom.imy, ow,
        oh);
 
-   EINA_LIST_FOREACH (psd->wsd->grids, l, g)
+   EINA_LIST_FOREACH(psd->wsd->grids, l, g)
      {
         _grid_load(ELM_WIDGET_DATA(psd->wsd)->obj, g);
         _grid_place(
@@ -624,7 +624,7 @@ _smooth_update(Evas_Object *obj)
 
    ELM_PHOTOCAM_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->grids, l, g)
+   EINA_LIST_FOREACH(sd->grids, l, g)
      {
         for (y = 0; y < g->gh; y++)
           {
@@ -736,7 +736,7 @@ _zoom_do(Evas_Object *obj,
         Eina_List *l, *l_next;
         Elm_Phocam_Grid *g;
 
-        EINA_LIST_FOREACH_SAFE (sd->grids, l, l_next, g)
+        EINA_LIST_FOREACH_SAFE(sd->grids, l, l_next, g)
           {
              if (g->dead)
                {
@@ -1659,7 +1659,7 @@ elm_photocam_zoom_set(Evas_Object *obj,
         goto done;
      }
 
-   EINA_LIST_FOREACH (sd->grids, l, g)
+   EINA_LIST_FOREACH(sd->grids, l, g)
      {
         if (g->zoom == _grid_zoom_calc(sd->zoom))
           {
@@ -1679,7 +1679,7 @@ elm_photocam_zoom_set(Evas_Object *obj,
              sd->grids = eina_list_remove(sd->grids, g_zoom);
              _grid_clear(obj, g_zoom);
              free(g_zoom);
-             EINA_LIST_FOREACH (sd->grids, l, g_zoom)
+             EINA_LIST_FOREACH(sd->grids, l, g_zoom)
                {
                   g_zoom->dead = 1;
                }

@@ -538,7 +538,7 @@ _items_fix(Evas_Object *obj)
    evas_object_ref(obj);
    _elm_list_walk(sd); // watch out "return" before unwalk!
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->deleted) continue;
         if (it->icon)
@@ -566,7 +566,7 @@ _items_fix(Evas_Object *obj)
      }
 
    i = 0;
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->deleted)
           continue;
@@ -748,7 +748,7 @@ _mirrored_set(Evas_Object *obj,
 
    sd->s_iface->mirrored_set(obj, rtl);
 
-   EINA_LIST_FOREACH (sd->items, n, it)
+   EINA_LIST_FOREACH(sd->items, n, it)
      edje_object_mirrored_set(VIEW(it), rtl);
 }
 
@@ -764,7 +764,7 @@ _elm_list_smart_theme(Evas_Object *obj)
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
-   EINA_LIST_FOREACH (sd->items, n, it)
+   EINA_LIST_FOREACH(sd->items, n, it)
      {
         edje_object_scale_set
           (VIEW(it), elm_widget_scale_get(obj) * elm_config_scale_get());
@@ -805,7 +805,7 @@ _elm_list_smart_sub_object_del(Evas_Object *obj,
 
    if ((sobj == sd->box) || (sobj == obj)) goto end;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if ((sobj == it->icon) || (sobj == it->end))
           {
@@ -1164,7 +1164,7 @@ _mouse_up_cb(void *data,
              const Eina_List *l, *l_next;
              Elm_List_Item *it2;
 
-             EINA_LIST_FOREACH_SAFE (sd->selected, l, l_next, it2)
+             EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
                if (it2 != it) _item_unselect(it2);
              _item_highlight(it);
              _item_select(it);
@@ -1462,7 +1462,7 @@ _elm_list_smart_focus_next(const Evas_Object *obj,
 
    if (_elm_config->access_mode != ELM_ACCESS_MODE_ON) return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->items, elist, it)
+   EINA_LIST_FOREACH(sd->items, elist, it)
      {
         items = eina_list_append(items, it->base.access_obj);
         if (it->icon) items = eina_list_append(items, it->icon);
@@ -1552,7 +1552,7 @@ _elm_list_smart_del(Evas_Object *obj)
      ERR("ERROR: list deleted while walking.\n");
 
    sd->delete_me = EINA_TRUE;
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->icon)
           evas_object_event_callback_del
@@ -1861,7 +1861,7 @@ elm_list_clear(Evas_Object *obj)
      {
         Eina_List *n;
 
-        EINA_LIST_FOREACH (sd->items, n, it)
+        EINA_LIST_FOREACH(sd->items, n, it)
           {
              if (it->deleted) continue;
              it->deleted = EINA_TRUE;

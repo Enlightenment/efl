@@ -58,7 +58,7 @@ _index_box_clear(Evas_Object *obj,
 
    if (!sd->level_active[level]) return;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (!VIEW(it)) continue;
         if (it->level != level) continue;
@@ -119,7 +119,7 @@ _index_box_auto_fill(Evas_Object *obj,
    rtl = elm_widget_mirrored_get(obj);
    evas_object_geometry_get(box, NULL, NULL, &w, &h);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         Evas_Object *o;
         const char *stacking;
@@ -317,7 +317,7 @@ _item_find(Evas_Object *obj,
 
    ELM_INDEX_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      if (it->base.data == data) return it;
 
    return NULL;
@@ -359,7 +359,7 @@ _sel_eval(Evas_Object *obj,
         dist = 0x7fffffff;
         evas_object_geometry_get(sd->bx[i], &bx, &by, &bw, &bh);
 
-        EINA_LIST_FOREACH (sd->items, l, it)
+        EINA_LIST_FOREACH(sd->items, l, it)
           {
              if (it->level != i) continue;
              if (it->level != sd->level)
@@ -630,7 +630,7 @@ _on_mouse_move_access(void *data,
    it_closest = NULL;
    dist = 0x7fffffff;
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
         xx = x + (w / 2);
@@ -795,7 +795,7 @@ _elm_index_smart_focus_next(const Evas_Object *obj,
    ao = evas_object_data_get(po, "_part_access_obj");
    items = eina_list_append(items, ao);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->level != 0) continue;
         items = eina_list_append(items, it->base.access_obj);
@@ -820,7 +820,7 @@ _access_obj_process(Evas_Object *obj, Eina_Bool is_access)
 
    ELM_INDEX_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->level != 0) continue;
         if (is_access) _access_widget_item_register(it);
@@ -1003,7 +1003,7 @@ elm_index_selected_item_get(const Evas_Object *obj,
    ELM_INDEX_CHECK(obj) NULL;
    ELM_INDEX_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if ((it->selected) && (it->level == level))
           return (Elm_Object_Item *)it;
@@ -1171,7 +1171,7 @@ elm_index_item_clear(Evas_Object *obj)
    ELM_INDEX_DATA_GET(obj, sd);
 
    _index_box_clear(obj, sd->bx[sd->level], sd->level);
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it->level != sd->level) continue;
         clear = eina_list_append(clear, it);

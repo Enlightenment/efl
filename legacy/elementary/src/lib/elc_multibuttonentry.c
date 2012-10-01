@@ -48,7 +48,7 @@ _elm_multibuttonentry_smart_theme(Evas_Object *obj)
    if (!ELM_WIDGET_CLASS(_elm_multibuttonentry_parent_sc)->theme(obj))
      return EINA_FALSE;
 
-   EINA_LIST_FOREACH (sd->items, l, item)
+   EINA_LIST_FOREACH(sd->items, l, item)
      {
         if (item->button)
           elm_widget_theme_object_set
@@ -131,7 +131,7 @@ _shrink_mode_set(Evas_Object *obj,
         elm_box_padding_get(sd->box, &box_inner_item_width_padding, NULL);
         // unpack all items and entry
         elm_box_unpack_all(sd->box);
-        EINA_LIST_FOREACH (sd->items, l, item)
+        EINA_LIST_FOREACH(sd->items, l, item)
           {
              evas_object_hide(item->button);
              item->visible = EINA_FALSE;
@@ -164,7 +164,7 @@ _shrink_mode_set(Evas_Object *obj,
               */
           }
 
-        EINA_LIST_FOREACH (sd->items, l, item)
+        EINA_LIST_FOREACH(sd->items, l, item)
           {
              int w_label_count = 0;
              char buf[MAX_STR];
@@ -255,7 +255,7 @@ _shrink_mode_set(Evas_Object *obj,
      {
         // unpack all items and entry
         elm_box_unpack_all(sd->box);
-        EINA_LIST_FOREACH (sd->items, l, item)
+        EINA_LIST_FOREACH(sd->items, l, item)
           {
              evas_object_hide(item->button);
              item->visible = EINA_FALSE;
@@ -270,7 +270,7 @@ _shrink_mode_set(Evas_Object *obj,
 
         // pack remain btns
         item = NULL;
-        EINA_LIST_FOREACH (sd->items, l, item)
+        EINA_LIST_FOREACH(sd->items, l, item)
           {
              elm_box_pack_end(sd->box, item->button);
              evas_object_show(item->button);
@@ -364,7 +364,7 @@ _button_item_del(Elm_Multibuttonentry_Item *item)
 
    ELM_MULTIBUTTONENTRY_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->items, l, it)
+   EINA_LIST_FOREACH(sd->items, l, it)
      {
         if (it == item)
           {
@@ -432,7 +432,7 @@ _current_button_change(Evas_Object *obj,
    _current_button_state_change(obj, MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT);
 
    // change the current
-   EINA_LIST_FOREACH (sd->items, l, item)
+   EINA_LIST_FOREACH(sd->items, l, item)
      {
         if (item->button == btn)
           {
@@ -583,7 +583,7 @@ _button_item_add(Evas_Object *obj,
 
    if (!str) return NULL;
 
-   EINA_LIST_FOREACH (sd->filter_list, l, item_filter)
+   EINA_LIST_FOREACH(sd->filter_list, l, item_filter)
      {
         if (!(item_filter->callback_func(obj, str, data, item_filter->data)))
           return NULL;
@@ -1097,7 +1097,7 @@ _box_min_size_calculate(Evas_Object *box,
    evas_object_geometry_get(box, NULL, NULL, &w, NULL);
    evas_object_size_hint_min_get(box, &minw, NULL);
 
-   EINA_LIST_FOREACH (priv->children, l, opt)
+   EINA_LIST_FOREACH(priv->children, l, opt)
      {
         evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
         evas_object_size_hint_weight_get(opt->obj, &wx, NULL);
@@ -1139,7 +1139,7 @@ _item_max_height_calculate(Evas_Object *box,
 
    evas_object_geometry_get(box, NULL, NULL, &w, NULL);
 
-   EINA_LIST_FOREACH (priv->children, l, opt)
+   EINA_LIST_FOREACH(priv->children, l, opt)
      {
         evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
         evas_object_size_hint_weight_get(opt->obj, &wx, NULL);
@@ -1206,7 +1206,7 @@ _box_layout_cb(Evas_Object *o,
 
    sd->guide_text_vis_enable = EINA_FALSE;
 
-   EINA_LIST_FOREACH (priv->children, l, opt)
+   EINA_LIST_FOREACH(priv->children, l, opt)
      {
         Evas_Coord mnw, mnh, mxw, mxh;
         Evas_Coord ww, hh, ow, oh;
@@ -1663,7 +1663,7 @@ elm_multibuttonentry_item_prev_get(const Elm_Object_Item *it)
    ELM_MULTIBUTTONENTRY_ITEM_CHECK_OR_RETURN(it, NULL);
    ELM_MULTIBUTTONENTRY_DATA_GET(WIDGET(it), sd);
 
-   EINA_LIST_FOREACH (sd->items, l, item)
+   EINA_LIST_FOREACH(sd->items, l, item)
      {
         if (item == (Elm_Multibuttonentry_Item *)it)
           {
@@ -1684,7 +1684,7 @@ elm_multibuttonentry_item_next_get(const Elm_Object_Item *it)
    ELM_MULTIBUTTONENTRY_ITEM_CHECK_OR_RETURN(it, NULL);
    ELM_MULTIBUTTONENTRY_DATA_GET(WIDGET(it), sd);
 
-   EINA_LIST_FOREACH (sd->items, l, item)
+   EINA_LIST_FOREACH(sd->items, l, item)
      {
         if (item == (Elm_Multibuttonentry_Item *)it)
           {
@@ -1726,7 +1726,7 @@ elm_multibuttonentry_item_filter_append(Evas_Object *obj,
    new_item_filter = _filter_new(func, data);
    if (!new_item_filter) return;
 
-   EINA_LIST_FOREACH (sd->filter_list, l, _item_filter)
+   EINA_LIST_FOREACH(sd->filter_list, l, _item_filter)
      {
         if (_item_filter && ((_item_filter->callback_func == func)
                              && (_item_filter->data == data)))
@@ -1754,7 +1754,7 @@ elm_multibuttonentry_item_filter_prepend(Evas_Object *obj,
    new_item_filter = _filter_new(func, data);
    if (!new_item_filter) return;
 
-   EINA_LIST_FOREACH (sd->filter_list, l, _item_filter)
+   EINA_LIST_FOREACH(sd->filter_list, l, _item_filter)
      {
         if (_item_filter && ((_item_filter->callback_func == func)
                              && (_item_filter->data == data)))
@@ -1778,7 +1778,7 @@ elm_multibuttonentry_item_filter_remove(Evas_Object *obj,
 
    EINA_SAFETY_ON_NULL_RETURN(func);
 
-   EINA_LIST_FOREACH (sd->filter_list, l, item_filter)
+   EINA_LIST_FOREACH(sd->filter_list, l, item_filter)
      {
         if ((item_filter->callback_func == func)
             && ((!data) || (item_filter->data == data)))

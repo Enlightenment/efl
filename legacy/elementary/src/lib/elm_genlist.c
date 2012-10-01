@@ -129,14 +129,14 @@ _elm_genlist_pan_smart_pos_set(Evas_Object *obj,
    psd->wsd->pan_x = x;
    psd->wsd->pan_y = y;
 
-   EINA_INLIST_FOREACH (psd->wsd->blocks, itb)
+   EINA_INLIST_FOREACH(psd->wsd->blocks, itb)
      {
         if ((itb->y + itb->h) > y)
           {
              Elm_Gen_Item *it;
              Eina_List *l2;
 
-             EINA_LIST_FOREACH (itb->items, l2, it)
+             EINA_LIST_FOREACH(itb->items, l2, it)
                {
                   if ((itb->y + it->y) >= y)
                     {
@@ -387,7 +387,7 @@ _item_block_unrealize(Item_Block *itb)
    if (!itb->realized) return;
    evas_event_freeze(evas_object_evas_get(ELM_WIDGET_DATA(itb->sd)->obj));
 
-   EINA_LIST_FOREACH (itb->items, l, it)
+   EINA_LIST_FOREACH(itb->items, l, it)
      {
         if (itb->must_recalc || !it->group)
           {
@@ -440,7 +440,7 @@ _calc_job(void *data)
    if (sd->w != ow) sd->w = ow;
 
    evas_event_freeze(evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj));
-   EINA_INLIST_FOREACH (sd->blocks, itb)
+   EINA_INLIST_FOREACH(sd->blocks, itb)
      {
         Eina_Bool show_me = EINA_FALSE;
 
@@ -458,7 +458,7 @@ _calc_job(void *data)
                   Eina_List *l;
                   Elm_Gen_Item *it;
 
-                  EINA_LIST_FOREACH (itb->items, l, it)
+                  EINA_LIST_FOREACH(itb->items, l, it)
                     if (it->item->mincalcd) it->item->mincalcd = EINA_FALSE;
                   itb->changed = EINA_TRUE;
                   if (itb->must_recalc) did_must_recalc = EINA_TRUE;
@@ -499,7 +499,7 @@ _calc_job(void *data)
      }
    if ((chb) && (EINA_INLIST_GET(chb)->next))
      {
-        EINA_INLIST_FOREACH (EINA_INLIST_GET(chb)->next, itb)
+        EINA_INLIST_FOREACH(EINA_INLIST_GET(chb)->next, itb)
           {
              if (itb->realized) _item_block_unrealize(itb);
           }
@@ -599,7 +599,7 @@ _elm_genlist_smart_sizing_eval(Evas_Object *obj)
 
              sd->prev_viewport_w = vw;
 
-             EINA_INLIST_FOREACH (sd->blocks, itb)
+             EINA_INLIST_FOREACH(sd->blocks, itb)
                {
                   itb->must_recalc = EINA_TRUE;
                }
@@ -633,7 +633,7 @@ _item_contract_emit(Elm_Gen_Item *it)
    edje_object_signal_emit(VIEW(it), "elm,state,contract_flip", "");
    it->item->tree_effect_finished = EINA_FALSE;
 
-   EINA_LIST_FOREACH (it->item->items, l, it2)
+   EINA_LIST_FOREACH(it->item->items, l, it2)
      if (it2) _item_contract_emit(it2);
 }
 
@@ -643,7 +643,7 @@ _item_tree_effect_before(Elm_Gen_Item *it)
    Elm_Gen_Item *it2;
    Eina_List *l;
 
-   EINA_LIST_FOREACH (it->item->items, l, it2)
+   EINA_LIST_FOREACH(it->item->items, l, it2)
      {
         if (it2->parent && (it == it2->parent))
           {
@@ -744,7 +744,7 @@ _item_sub_items_clear(Elm_Gen_Item *it)
 
    ELM_GENLIST_ITEM_CHECK_OR_RETURN(it);
 
-   EINA_LIST_FOREACH (it->item->items, l, it2)
+   EINA_LIST_FOREACH(it->item->items, l, it2)
      tl = eina_list_append(tl, it2);
    EINA_LIST_FREE (tl, it2)
      elm_object_item_del(it2);
@@ -784,7 +784,7 @@ _item_tree_effect_finish(Elm_Genlist_Smart_Data *sd)
         if (sd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
           _item_sub_items_clear(sd->expanded_item);
 
-        EINA_LIST_FOREACH (sd->expanded_item->item->items, l, it)
+        EINA_LIST_FOREACH(sd->expanded_item->item->items, l, it)
           {
              it->item->tree_effect_finished = EINA_TRUE;
              it->item->old_scrl_y = it->item->scrl_y;
@@ -940,7 +940,7 @@ _item_text_realize(Elm_Gen_Item *it,
         if (!(*source))
           *source = elm_widget_stringlist_get
               (edje_object_data_get(target, "texts"));
-        EINA_LIST_FOREACH (*source, l, key)
+        EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
@@ -976,7 +976,7 @@ _item_mode_content_realize(Elm_Gen_Item *it,
         const char *key;
         Evas_Object *ic;
 
-        EINA_LIST_FOREACH (*source, l, key)
+        EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
@@ -1014,7 +1014,7 @@ _item_state_realize(Elm_Gen_Item *it,
         if (!(*source))
           *source = elm_widget_stringlist_get
               (edje_object_data_get(target, "states"));
-        EINA_LIST_FOREACH (*source, l, key)
+        EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
@@ -1143,7 +1143,7 @@ _item_cache_find(Elm_Gen_Item *it)
    Eina_Bool tree = 0;
 
    if (it->item->type & ELM_GENLIST_ITEM_TREE) tree = 1;
-   EINA_INLIST_FOREACH_SAFE (GL_IT(it)->wsd->item_cache, l, itc)
+   EINA_INLIST_FOREACH_SAFE(GL_IT(it)->wsd->item_cache, l, itc)
      {
         if ((itc->selected) || (itc->disabled) || (itc->expanded))
           continue;
@@ -1220,7 +1220,7 @@ _item_content_realize(Elm_Gen_Item *it,
           *source = elm_widget_stringlist_get
               (edje_object_data_get(target, "contents"));
 
-        EINA_LIST_FOREACH (*source, l, key)
+        EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
@@ -1578,7 +1578,7 @@ _tree_effect_animator_cb(void *data)
         expanded_next_it = sd->expanded_next_item;
 
         /* move items */
-        EINA_LIST_FOREACH (sd->move_items, l, it)
+        EINA_LIST_FOREACH(sd->move_items, l, it)
           {
              if (sd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_EXPAND)
                {
@@ -1708,7 +1708,7 @@ _group_items_recalc(void *data)
    Elm_Genlist_Smart_Data *sd = data;
 
    evas_event_freeze(evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj));
-   EINA_LIST_FOREACH (sd->group_items, l, git)
+   EINA_LIST_FOREACH(sd->group_items, l, git)
      {
         if (git->item->want_realize)
           {
@@ -1839,7 +1839,7 @@ _item_block_position(Item_Block *itb,
      (evas_object_evas_get(ELM_WIDGET_DATA(itb->sd)->obj),
      &cvx, &cvy, &cvw, &cvh);
 
-   EINA_LIST_FOREACH (itb->items, l, it)
+   EINA_LIST_FOREACH(itb->items, l, it)
      {
         if (it->generation < GL_IT(it)->wsd->generation) continue;
         else if (GL_IT(it)->wsd->reorder_it == it)
@@ -1967,7 +1967,7 @@ _elm_genlist_pan_smart_calculate(Evas_Object *obj)
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    evas_output_viewport_get(evas_object_evas_get(obj), &cvx, &cvy, &cvw, &cvh);
-   EINA_LIST_FOREACH (psd->wsd->group_items, l, git)
+   EINA_LIST_FOREACH(psd->wsd->group_items, l, git)
      {
         git->item->want_realize = EINA_FALSE;
      }
@@ -1986,7 +1986,7 @@ _elm_genlist_pan_smart_calculate(Evas_Object *obj)
           }
      }
 
-   EINA_INLIST_FOREACH (psd->wsd->blocks, itb)
+   EINA_INLIST_FOREACH(psd->wsd->blocks, itb)
      {
         itb->w = psd->wsd->minw;
         if (ELM_RECTS_INTERSECT(itb->x - psd->wsd->pan_x + ox,
@@ -2433,13 +2433,13 @@ _elm_genlist_smart_theme(Evas_Object *obj)
    sd->item_width = sd->item_height = 0;
    sd->group_item_width = sd->group_item_height = 0;
    sd->minw = sd->minh = sd->realminw = 0;
-   EINA_INLIST_FOREACH (sd->blocks, itb)
+   EINA_INLIST_FOREACH(sd->blocks, itb)
      {
         Eina_List *l;
         Elm_Gen_Item *it;
 
         if (itb->realized) _item_block_unrealize(itb);
-        EINA_LIST_FOREACH (itb->items, l, it)
+        EINA_LIST_FOREACH(itb->items, l, it)
           it->item->mincalcd = EINA_FALSE;
 
         itb->changed = EINA_TRUE;
@@ -2540,7 +2540,7 @@ _item_block_position_update(Eina_Inlist *list,
 {
    Item_Block *tmp;
 
-   EINA_INLIST_FOREACH (list, tmp)
+   EINA_INLIST_FOREACH(list, tmp)
      {
         tmp->position = idx++;
         tmp->position_update = EINA_TRUE;
@@ -2554,7 +2554,7 @@ _item_position_update(Eina_List *list,
    Elm_Gen_Item *it;
    Eina_List *l;
 
-   EINA_LIST_FOREACH (list, l, it)
+   EINA_LIST_FOREACH(list, l, it)
      {
         it->position = idx++;
         it->position_update = EINA_TRUE;
@@ -2568,7 +2568,7 @@ _item_block_merge(Item_Block *left,
    Eina_List *l;
    Elm_Gen_Item *it2;
 
-   EINA_LIST_FOREACH (right->items, l, it2)
+   EINA_LIST_FOREACH(right->items, l, it2)
      {
         it2->item->block = left;
         left->count++;
@@ -2980,7 +2980,7 @@ _long_press_cb(void *data)
 
         list = elm_genlist_realized_items_get
             (ELM_WIDGET_DATA(GL_IT(it)->wsd)->obj);
-        EINA_LIST_FOREACH (list, l, it_tmp)
+        EINA_LIST_FOREACH(list, l, it_tmp)
           {
              if (it != it_tmp) _item_unselect(it_tmp);
           }
@@ -3873,7 +3873,7 @@ _item_mouse_up_cb(void *data,
              const Eina_List *l, *l_next;
              Elm_Gen_Item *it2;
 
-             EINA_LIST_FOREACH_SAFE (sd->selected, l, l_next, it2)
+             EINA_LIST_FOREACH_SAFE(sd->selected, l, l_next, it2)
                if (it2 != it)
                  {
                     _item_unhighlight(it2);
@@ -4079,7 +4079,7 @@ _item_mode_content_unrealize(Elm_Gen_Item *it,
         const char *key;
         Evas_Object *ic = NULL;
 
-        EINA_LIST_FOREACH (*source, l, key)
+        EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
@@ -4111,7 +4111,7 @@ _item_content_unrealize(Elm_Gen_Item *it,
         const char *key;
         Evas_Object *ic = NULL;
 
-        EINA_LIST_FOREACH (*source, l, key)
+        EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
@@ -4179,7 +4179,7 @@ _item_block_recalc(Item_Block *itb,
    Evas_Coord y = 0;
 
    itb->num = in;
-   EINA_LIST_FOREACH (itb->items, l, it)
+   EINA_LIST_FOREACH(itb->items, l, it)
      {
         if (it->generation < GL_IT(it)->wsd->generation) continue;
         show_me |= it->item->show_me;
@@ -4255,7 +4255,7 @@ _update_job(void *data)
    num = 0;
 
    evas_event_freeze(evas_object_evas_get(ELM_WIDGET_DATA(sd)->obj));
-   EINA_INLIST_FOREACH (sd->blocks, itb)
+   EINA_INLIST_FOREACH(sd->blocks, itb)
      {
         Evas_Coord itminw, itminh;
         Elm_Gen_Item *it;
@@ -4269,7 +4269,7 @@ _update_job(void *data)
           }
         num0 = num;
         recalc = EINA_FALSE;
-        EINA_LIST_FOREACH (itb->items, l2, it)
+        EINA_LIST_FOREACH(itb->items, l2, it)
           {
              if (it->item->updateme)
                {
@@ -4903,7 +4903,7 @@ _item_disable_hook(Elm_Object_Item *item)
                edje_object_signal_emit
                  (it->deco_all_view, "elm,state,enabled", "elm");
           }
-        EINA_LIST_FOREACH (it->content_objs, l, obj)
+        EINA_LIST_FOREACH(it->content_objs, l, obj)
           elm_widget_disabled_set(obj, elm_widget_item_disabled_get(it));
      }
 }
@@ -5391,7 +5391,7 @@ elm_genlist_realized_items_get(const Evas_Object *obj)
    ELM_GENLIST_CHECK(obj) NULL;
    ELM_GENLIST_DATA_GET(obj, sd);
 
-   EINA_INLIST_FOREACH (sd->blocks, itb)
+   EINA_INLIST_FOREACH(sd->blocks, itb)
      {
         if (itb->realized)
           {
@@ -5399,7 +5399,7 @@ elm_genlist_realized_items_get(const Evas_Object *obj)
              Elm_Gen_Item *it;
 
              done = EINA_TRUE;
-             EINA_LIST_FOREACH (itb->items, l, it)
+             EINA_LIST_FOREACH(itb->items, l, it)
                {
                   if (it->realized) list = eina_list_append(list, it);
                }
@@ -5427,7 +5427,7 @@ elm_genlist_at_xy_item_get(const Evas_Object *obj,
 
    evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
    lasty = oy;
-   EINA_INLIST_FOREACH (sd->blocks, itb)
+   EINA_INLIST_FOREACH(sd->blocks, itb)
      {
         Eina_List *l;
         Elm_Gen_Item *it;
@@ -5436,7 +5436,7 @@ elm_genlist_at_xy_item_get(const Evas_Object *obj,
                                  oy + itb->y - itb->sd->pan_y,
                                  itb->w, itb->h, x, y, 1, 1))
           continue;
-        EINA_LIST_FOREACH (itb->items, l, it)
+        EINA_LIST_FOREACH(itb->items, l, it)
           {
              Evas_Coord itx, ity;
 
@@ -5650,7 +5650,7 @@ _elm_genlist_move_items_set(Elm_Gen_Item *it)
         GL_IT(it)->wsd->move_items = elm_genlist_realized_items_get
             (ELM_WIDGET_DATA(GL_IT(it)->wsd)->obj);
 
-        EINA_LIST_FOREACH_SAFE (GL_IT(it)->wsd->move_items, l, ll, it2)
+        EINA_LIST_FOREACH_SAFE(GL_IT(it)->wsd->move_items, l, ll, it2)
           {
              if (it2 == GL_IT(it)->wsd->expanded_next_item) break;
              GL_IT(it)->wsd->move_items =
@@ -6350,7 +6350,7 @@ elm_genlist_realized_items_update(Evas_Object *obj)
    ELM_GENLIST_CHECK(obj);
 
    list = elm_genlist_realized_items_get(obj);
-   EINA_LIST_FOREACH (list, l, it)
+   EINA_LIST_FOREACH(list, l, it)
      elm_genlist_item_update(it);
 }
 
@@ -6381,7 +6381,7 @@ elm_genlist_item_decorate_mode_set(Elm_Object_Item *item,
 
    if (sd->multi)
      {
-        EINA_LIST_FOREACH (sd->selected, l, it2)
+        EINA_LIST_FOREACH(sd->selected, l, it2)
           if (((Elm_Gen_Item *)it2)->realized)
             elm_genlist_item_selected_set(it2, EINA_FALSE);
      }
@@ -6453,7 +6453,7 @@ elm_genlist_decorate_mode_set(Evas_Object *obj,
    list = elm_genlist_realized_items_get(obj);
    if (!sd->decorate_all_mode)
      {
-        EINA_LIST_FOREACH (list, l, it)
+        EINA_LIST_FOREACH(list, l, it)
           {
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                _decorate_all_item_unrealize(it);
@@ -6472,7 +6472,7 @@ elm_genlist_decorate_mode_set(Evas_Object *obj,
              _decorate_item_finished_signal_cb(deco_it, obj, NULL, NULL);
           }
 
-        EINA_LIST_FOREACH (list, l, it)
+        EINA_LIST_FOREACH(list, l, it)
           {
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                {

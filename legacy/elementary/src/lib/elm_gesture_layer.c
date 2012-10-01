@@ -1430,7 +1430,7 @@ _n_long_tap_test_reset(Gesture_Info *gesture)
 
    st = gesture->data;
 
-   EINA_LIST_FOREACH (st->touched, l, p)
+   EINA_LIST_FOREACH(st->touched, l, p)
      free(p);
 
    eina_list_free(st->touched);
@@ -1475,7 +1475,7 @@ _line_test_reset(Gesture_Info *gesture)
    st = gesture->data;
    list = st->list;
 
-   EINA_LIST_FOREACH (list, l, t_line)
+   EINA_LIST_FOREACH(list, l, t_line)
      free(t_line);
 
    eina_list_free(list);
@@ -1616,7 +1616,7 @@ _tap_gesture_check_finish(Gesture_Info *gesture)
    Eina_List *pe_list;
 
    if (!st->l) return EINA_FALSE;
-   EINA_LIST_FOREACH (st->l, l, pe_list)
+   EINA_LIST_FOREACH(st->l, l, pe_list)
      {
         /* No match taps number on device, ABORT */
         if (eina_list_count(pe_list) != st->n_taps_needed)
@@ -1884,7 +1884,7 @@ _compute_taps_center(Long_Tap_Type *st,
    if (!eina_list_count(st->touched))
      return;
 
-   EINA_LIST_FOREACH (st->touched, l, p)
+   EINA_LIST_FOREACH(st->touched, l, p)
      {  /* Accumulate all then take avarage */
        if (p->device == pe->device) /* This will take care of values
                                      * coming from MOVE event */
@@ -2253,7 +2253,7 @@ _momentum_test(Evas_Object *obj,
 
    /* First make avarage of all touched devices to determine center point */
    pe_local = *pe; /* Copy pe event info to local */
-   EINA_LIST_FOREACH (sd->touched, l, p)
+   EINA_LIST_FOREACH(sd->touched, l, p)
      if (p->device != pe_local.device)
        {
           pe_local.x += p->x;
@@ -2635,7 +2635,7 @@ _n_line_test(Evas_Object *obj,
    Line_Data *t_line;
    double base_angle = ELM_GESTURE_NEGATIVE_ANGLE;
    Eina_Bool lines_parallel = EINA_TRUE;
-   EINA_LIST_FOREACH (list, l, t_line)
+   EINA_LIST_FOREACH(list, l, t_line)
      {
         if (base_angle < 0)
           base_angle = t_line->line_angle;
@@ -3229,7 +3229,7 @@ _zoom_test(Evas_Object *obj,
         if (!st->zoom_st.timestamp) /* Now scan touched-devices list
                                      * and find other finger */
           {
-             EINA_LIST_FOREACH (sd->touched, l, p)
+             EINA_LIST_FOREACH(sd->touched, l, p)
                { /* Device of other finger <> pe device */
                  if (p->device != pe->device)
                    break;
@@ -3472,7 +3472,7 @@ _rotate_test(Evas_Object *obj,
         if (!st->rotate_st.timestamp) /* Now scan touched-devices list
                                        * and find other finger */
           {
-             EINA_LIST_FOREACH (sd->touched, l, p)
+             EINA_LIST_FOREACH(sd->touched, l, p)
                { /* Device of other finger <> pe device */
                  if (p->device != pe->device)
                    break;

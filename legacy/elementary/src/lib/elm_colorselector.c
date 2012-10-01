@@ -647,7 +647,7 @@ _elm_colorselector_smart_theme(Evas_Object *obj)
      (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get()),
      (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get()));
 
-   EINA_LIST_FOREACH (sd->items, elist, item)
+   EINA_LIST_FOREACH(sd->items, elist, item)
      {
         elm_layout_theme_set
           (VIEW(item), "colorselector", "item", elm_widget_style_get(obj));
@@ -721,7 +721,7 @@ _palette_sizing_eval(Evas_Object *obj)
 
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH (sd->items, elist, item)
+   EINA_LIST_FOREACH(sd->items, elist, item)
      _item_sizing_eval(item);
 }
 
@@ -857,7 +857,7 @@ _on_color_released(void *data,
           (WIDGET(item), item->color->r, item->color->g, item->color->b,
           item->color->a);
      }
-   EINA_LIST_FOREACH (sd->items, l, temp_item)
+   EINA_LIST_FOREACH(sd->items, l, temp_item)
      if (item == temp_item) sd->selected = l;
    sd->focused = ELM_COLORSELECTOR_PALETTE;
 }
@@ -953,7 +953,7 @@ _colors_save(Evas_Object *obj)
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
    _elm_config_colors_free(sd->palette_name);
-   EINA_LIST_FOREACH (sd->items, elist, item)
+   EINA_LIST_FOREACH(sd->items, elist, item)
      _elm_config_color_set(sd->palette_name, item->color->r, item->color->g,
                            item->color->b, item->color->a);
 }
@@ -971,7 +971,7 @@ _palette_colors_load(Evas_Object *obj)
    color_list = _elm_config_color_list_get(sd->palette_name);
    if (!color_list) return;
 
-   EINA_LIST_FOREACH (color_list, elist, color)
+   EINA_LIST_FOREACH(color_list, elist, color)
      {
         item = _item_new(obj);
         if (!item) return;

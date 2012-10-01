@@ -865,7 +865,7 @@ _grid_unload(Grid *g)
    EINA_SAFETY_ON_NULL_RETURN(g);
 
    it = eina_matrixsparse_iterator_new(g->grid);
-   EINA_ITERATOR_FOREACH (it, cell)
+   EINA_ITERATOR_FOREACH(it, cell)
      {
         gi = eina_matrixsparse_cell_data_get(cell);
         _grid_item_unload(gi);
@@ -884,7 +884,7 @@ _grid_load(Grid *g)
    EINA_SAFETY_ON_NULL_RETURN(g);
 
    it = eina_matrixsparse_iterator_new(g->grid);
-   EINA_ITERATOR_FOREACH (it, cell)
+   EINA_ITERATOR_FOREACH(it, cell)
      {
         gi = eina_matrixsparse_cell_data_get(cell);
         if (!_grid_item_in_viewport(gi)) _grid_item_unload(gi);
@@ -911,7 +911,7 @@ _grid_place(Elm_Map_Smart_Data *sd)
 
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
-   EINA_LIST_FOREACH (sd->grids, l, g)
+   EINA_LIST_FOREACH(sd->grids, l, g)
      {
         if (sd->zoom == g->zoom) _grid_load(g);
         else _grid_unload(g);
@@ -955,7 +955,7 @@ _grid_all_clear(Elm_Map_Smart_Data *sd)
         Eina_Matrixsparse_Cell *cell;
         Eina_Iterator *it = eina_matrixsparse_iterator_new(g->grid);
 
-        EINA_ITERATOR_FOREACH (it, cell)
+        EINA_ITERATOR_FOREACH(it, cell)
           {
              Grid_Item *gi;
 
@@ -985,7 +985,7 @@ _track_place(Elm_Map_Smart_Data *sd)
 
    size = sd->size.w;
 
-   EINA_LIST_FOREACH (sd->track, l, route)
+   EINA_LIST_FOREACH(sd->track, l, route)
      {
         double lon_min, lon_max;
         double lat_min, lat_max;
@@ -1039,12 +1039,12 @@ _smooth_update(Elm_Map_Smart_Data *sd)
    Eina_List *l;
    Grid *g;
 
-   EINA_LIST_FOREACH (sd->grids, l, g)
+   EINA_LIST_FOREACH(sd->grids, l, g)
      {
         Eina_Iterator *it = eina_matrixsparse_iterator_new(g->grid);
         Eina_Matrixsparse_Cell *cell;
 
-        EINA_ITERATOR_FOREACH (it, cell)
+        EINA_ITERATOR_FOREACH(it, cell)
           {
              Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
              if (_grid_item_in_viewport(gi))
@@ -1761,7 +1761,7 @@ _overlay_class_cb_set(Overlay_Class *ovl,
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
    // Update class members' callbacks
-   EINA_LIST_FOREACH (ovl->members, l, overlay)
+   EINA_LIST_FOREACH(ovl->members, l, overlay)
      _overlay_group_cb_set(overlay->grp, cb, data);
 }
 
@@ -1779,7 +1779,7 @@ _overlay_class_icon_update(Overlay_Class *ovl,
    ovl->icon = icon;
 
    // Update class members' class icons
-   EINA_LIST_FOREACH (ovl->members, l, overlay)
+   EINA_LIST_FOREACH(ovl->members, l, overlay)
      {
         _overlay_group_icon_update(overlay->grp, icon);
 
@@ -1802,7 +1802,7 @@ _overlay_class_content_update(Overlay_Class *ovl,
    ovl->content = content;
 
    // Update class members' class contents
-   EINA_LIST_FOREACH (ovl->members, l, overlay)
+   EINA_LIST_FOREACH(ovl->members, l, overlay)
      {
         _overlay_group_content_update(overlay->grp, content);
 
@@ -1821,7 +1821,7 @@ _overlay_class_color_update(Overlay_Class *ovl,
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
    // Update class members' class contents
-   EINA_LIST_FOREACH (ovl->members, l, overlay)
+   EINA_LIST_FOREACH(ovl->members, l, overlay)
      _overlay_group_color_update(overlay->grp, c);
 }
 
@@ -1834,7 +1834,7 @@ _overlay_class_free(Overlay_Class *clas)
    EINA_SAFETY_ON_NULL_RETURN(clas);
 
    // Update class members' class contents
-   EINA_LIST_FOREACH (clas->members, l, overlay)
+   EINA_LIST_FOREACH(clas->members, l, overlay)
      {
         overlay->grp->klass = NULL;
         _overlay_group_content_update(overlay->grp, NULL);
@@ -2035,7 +2035,7 @@ _overlay_route_show(Overlay_Route *r)
    EINA_SAFETY_ON_NULL_RETURN(r->wsd);
 
    evas_object_polygon_points_clear(r->obj);
-   EINA_LIST_FOREACH (r->nodes, l, n)
+   EINA_LIST_FOREACH(r->nodes, l, n)
      {
         p = eina_list_nth(r->paths, n->idx);
         if (!p) continue;
@@ -2044,10 +2044,10 @@ _overlay_route_show(Overlay_Route *r)
           (r->wsd, n->pos.lon, n->pos.lat, r->wsd->size.w, &p->x, &p->y);
         _coord_to_canvas(r->wsd, p->x, p->y, &p->x, &p->y);
      }
-   EINA_LIST_FOREACH (r->paths, l, p)
+   EINA_LIST_FOREACH(r->paths, l, p)
      evas_object_polygon_point_add(r->obj, p->x - 3, p->y - 3);
 
-   EINA_LIST_REVERSE_FOREACH (r->paths, l, p)
+   EINA_LIST_REVERSE_FOREACH(r->paths, l, p)
      evas_object_polygon_point_add(r->obj, p->x + 3, p->y + 3);
 
    evas_object_show(r->obj);
@@ -2093,7 +2093,7 @@ _overlay_route_new(Elm_Map_Smart_Data *sd,
    evas_object_smart_member_add(ovl->obj, sd->pan_obj);
    _overlay_route_color_update(ovl, c);
 
-   EINA_LIST_FOREACH (route->nodes, l, n)
+   EINA_LIST_FOREACH(route->nodes, l, n)
      {
         Path *path;
         Path_Node *node;
@@ -2205,7 +2205,7 @@ _overlay_polygon_show(Overlay_Polygon *ovl)
    sd = ovl->wsd;
 
    evas_object_polygon_points_clear(ovl->obj);
-   EINA_LIST_FOREACH (ovl->regions, l, r)
+   EINA_LIST_FOREACH(ovl->regions, l, r)
      {
         Evas_Coord x, y;
 
@@ -2429,7 +2429,7 @@ _overlay_grouping(Eina_List *clas_membs,
    else if (boss->type == ELM_MAP_OVERLAY_TYPE_BUBBLE)
      _overlay_bubble_coord_get(boss->ovl, &bx, &by, &bw, &bh);
 
-   EINA_LIST_FOREACH (clas_membs, l, memb)
+   EINA_LIST_FOREACH(clas_membs, l, memb)
      {
         Evas_Coord x = 0, y = 0, w = 0, h = 0;
 
@@ -2553,7 +2553,7 @@ _overlay_place(Elm_Map_Smart_Data *sd)
    eina_list_free(sd->group_overlays);
    sd->group_overlays = NULL;
 
-   EINA_LIST_FOREACH (sd->overlays, l, overlay)
+   EINA_LIST_FOREACH(sd->overlays, l, overlay)
      {
         // Reset groups
         if ((overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS) ||
@@ -2571,7 +2571,7 @@ _overlay_place(Elm_Map_Smart_Data *sd)
      }
 
    // Classify into group boss or follwer
-   EINA_LIST_FOREACH (sd->overlays, l, overlay)
+   EINA_LIST_FOREACH(sd->overlays, l, overlay)
      {
         Elm_Map_Overlay *boss;
         Overlay_Class *clas;
@@ -2581,7 +2581,7 @@ _overlay_place(Elm_Map_Smart_Data *sd)
 
         clas = overlay->ovl;
         if (clas->zoom_max < sd->zoom) continue;
-        EINA_LIST_FOREACH (clas->members, ll, boss)
+        EINA_LIST_FOREACH(clas->members, ll, boss)
           {
              if (boss->type == ELM_MAP_OVERLAY_TYPE_CLASS) continue;
              if (boss->hide || (boss->zoom_min > sd->zoom)) continue;
@@ -2591,9 +2591,9 @@ _overlay_place(Elm_Map_Smart_Data *sd)
      }
 
    // Place group overlays and overlays
-   EINA_LIST_FOREACH (sd->group_overlays, l, overlay)
+   EINA_LIST_FOREACH(sd->group_overlays, l, overlay)
      _overlay_show(overlay);
-   EINA_LIST_FOREACH (sd->overlays, l, overlay)
+   EINA_LIST_FOREACH(sd->overlays, l, overlay)
      _overlay_show(overlay);
 }
 
@@ -3275,7 +3275,7 @@ _source_tile_set(Elm_Map_Smart_Data *sd,
    if (sd->src_tile && !strcmp(sd->src_tile->name, source_name))
      return;
 
-   EINA_LIST_FOREACH (sd->src_tiles, l, s)
+   EINA_LIST_FOREACH(sd->src_tiles, l, s)
      {
         if (!strcmp(s->name, source_name))
           {
@@ -3316,7 +3316,7 @@ _source_route_set(Elm_Map_Smart_Data *sd,
    if (sd->src_route && !strcmp(sd->src_route->name, source_name))
      return;
 
-   EINA_LIST_FOREACH (sd->src_routes, l, s)
+   EINA_LIST_FOREACH(sd->src_routes, l, s)
      {
         if (!strcmp(s->name, source_name))
           {
@@ -3343,7 +3343,7 @@ _source_name_set(Elm_Map_Smart_Data *sd,
    if (sd->src_name && !strcmp(sd->src_name->name, source_name))
      return;
 
-   EINA_LIST_FOREACH (sd->src_names, l, s)
+   EINA_LIST_FOREACH(sd->src_names, l, s)
      {
         if (!strcmp(s->name, source_name))
           {
@@ -3514,7 +3514,7 @@ _source_all_load(Elm_Map_Smart_Data *sd)
    idx = 0;
    sd->src_tile_names = calloc((eina_list_count(sd->src_tiles) + 1),
                                sizeof(const char *));
-   EINA_LIST_FOREACH (sd->src_tiles, l, src_tile)
+   EINA_LIST_FOREACH(sd->src_tiles, l, src_tile)
      {
         eina_stringshare_replace(&sd->src_tile_names[idx], src_tile->name);
         INF("source : %s", sd->src_tile_names[idx]);
@@ -3523,7 +3523,7 @@ _source_all_load(Elm_Map_Smart_Data *sd)
    idx = 0;
    sd->src_route_names = calloc((eina_list_count(sd->src_routes) + 1),
                                 sizeof(const char *));
-   EINA_LIST_FOREACH (sd->src_routes, l, src_route)
+   EINA_LIST_FOREACH(sd->src_routes, l, src_route)
      {
         eina_stringshare_replace(&sd->src_route_names[idx], src_route->name);
         INF("source : %s", sd->src_route_names[idx]);
@@ -3532,7 +3532,7 @@ _source_all_load(Elm_Map_Smart_Data *sd)
    idx = 0;
    sd->src_name_names = calloc((eina_list_count(sd->src_names) + 1),
                                sizeof(const char *));
-   EINA_LIST_FOREACH (sd->src_names, l, src_name)
+   EINA_LIST_FOREACH(sd->src_names, l, src_name)
      {
         eina_stringshare_replace(&sd->src_name_names[idx], src_name->name);
         INF("source : %s", sd->src_name_names[idx]);
@@ -3873,17 +3873,17 @@ _elm_map_smart_del(Evas_Object *obj)
 
    ELM_MAP_DATA_GET(obj, sd);
 
-   EINA_LIST_FOREACH_SAFE (sd->routes, l, ll, r)
+   EINA_LIST_FOREACH_SAFE(sd->routes, l, ll, r)
      elm_map_route_del(r);
 
    eina_list_free(sd->routes);
 
-   EINA_LIST_FOREACH_SAFE (sd->names, l, ll, na)
+   EINA_LIST_FOREACH_SAFE(sd->names, l, ll, na)
      elm_map_name_del(na);
 
    eina_list_free(sd->names);
 
-   EINA_LIST_FOREACH_SAFE (sd->overlays, l, ll, overlay)
+   EINA_LIST_FOREACH_SAFE(sd->overlays, l, ll, overlay)
      elm_map_overlay_del(overlay);
 
    eina_list_free(sd->overlays);
@@ -4847,9 +4847,9 @@ elm_map_overlays_get(Evas_Object *obj)
    eina_list_free(sd->all_overlays);
    sd->all_overlays = NULL;
 
-   EINA_LIST_FOREACH (sd->overlays, l, ovl)
+   EINA_LIST_FOREACH(sd->overlays, l, ovl)
      sd->all_overlays = eina_list_append(sd->all_overlays, ovl);
-   EINA_LIST_FOREACH (sd->group_overlays, l, ovl)
+   EINA_LIST_FOREACH(sd->group_overlays, l, ovl)
      sd->all_overlays = eina_list_append(sd->all_overlays, ovl);
 
    return sd->all_overlays;

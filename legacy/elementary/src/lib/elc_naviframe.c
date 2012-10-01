@@ -221,7 +221,7 @@ _elm_naviframe_smart_theme(Evas_Object *obj)
    if (!ELM_WIDGET_CLASS(_elm_naviframe_parent_sc)->theme(obj))
      return EINA_FALSE;
 
-   EINA_INLIST_FOREACH (sd->stack, it)
+   EINA_INLIST_FOREACH(sd->stack, it)
      {
         _item_style_set(it, it->style);
         _item_title_visible_update(it);
@@ -708,7 +708,7 @@ _elm_naviframe_smart_sizing_eval(Evas_Object *obj)
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
-   EINA_INLIST_FOREACH (sd->stack, it)
+   EINA_INLIST_FOREACH(sd->stack, it)
      {
         evas_object_move(VIEW(it), x, y);
         evas_object_resize(VIEW(it), w, h);
@@ -1504,7 +1504,7 @@ elm_naviframe_item_simple_promote(Evas_Object *obj,
    ELM_NAVIFRAME_CHECK(obj);
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   EINA_INLIST_FOREACH (sd->stack, itr)
+   EINA_INLIST_FOREACH(sd->stack, itr)
      {
         if (elm_object_item_content_get((Elm_Object_Item *)itr) == content)
           {
@@ -1635,7 +1635,7 @@ elm_naviframe_items_get(const Evas_Object *obj)
    ELM_NAVIFRAME_CHECK(obj) NULL;
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
-   EINA_INLIST_FOREACH (sd->stack, itr)
+   EINA_INLIST_FOREACH(sd->stack, itr)
      ret = eina_list_append(ret, itr);
 
    return ret;

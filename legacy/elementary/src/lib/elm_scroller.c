@@ -96,7 +96,7 @@ _elm_scroller_smart_event(Evas_Object *obj,
              Evas_Object *cur;
              double weight = 0.0;
 
-             EINA_LIST_FOREACH (can_focus_list, l, cur)
+             EINA_LIST_FOREACH(can_focus_list, l, cur)
                {
                   double cur_weight = 0.0;
 
