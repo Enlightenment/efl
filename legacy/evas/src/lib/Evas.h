@@ -4385,7 +4385,7 @@ EAPI Eina_Bool evas_object_freeze_events_get(const Evas_Object *obj) EINA_WARN_U
  * specific effect. For example, to rotate an object around its own center
  * you would need to take the rotation angle, the coordinates of each corner
  * of the object and do all the math to get the new set of coordinates that
- * need to tbe set in the map.
+ * need to be set in the map.
  *
  * Or you can use this code:
  * @code
