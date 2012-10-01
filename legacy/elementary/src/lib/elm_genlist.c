@@ -1950,6 +1950,7 @@ static void
 _elm_genlist_pan_smart_calculate(Evas_Object *obj)
 {
    Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh;
+   Evas_Coord vx = 0, vy = 0, vw = 0, vh = 0;
    Elm_Gen_Item *git;
    Item_Block *itb;
    Eina_List *l;
@@ -2020,6 +2021,17 @@ _elm_genlist_pan_smart_calculate(Evas_Object *obj)
    if (!psd->wsd->tree_effect_enabled ||
        (psd->wsd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_NONE))
      _item_auto_scroll(psd->wsd);
+
+   psd->wsd->s_iface->content_pos_get(ELM_WIDGET_DATA(psd->wsd)->obj, &vx, &vy);
+   psd->wsd->s_iface->content_viewport_size_get(ELM_WIDGET_DATA(psd->wsd)->obj,
+                                                &vw, &vh);
+
+   if (psd->wsd->reorder_fast == 1)
+     psd->wsd->s_iface->content_region_show(ELM_WIDGET_DATA(psd->wsd)->obj,
+                                            vx,vy - 10, vw, vh);
+   else if (psd->wsd->reorder_fast == -1)
+     psd->wsd->s_iface->content_region_show(ELM_WIDGET_DATA(psd->wsd)->obj,
+                                            vx, vy + 10, vw, vh);
 
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
@@ -2865,6 +2877,13 @@ _item_mouse_move_cb(void *data,
         if ((sd->reorder_mode) && (sd->reorder_it))
           {
              evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
+
+             if (ev->cur.canvas.y < (oy + (sd->reorder_it->item->h / 2)))
+                sd->reorder_fast = 1;
+             else if (ev->cur.canvas.y > (oy + oh - (sd->reorder_it->item->h  / 2)))
+                sd->reorder_fast = -1;
+             else sd->reorder_fast = 0;
+
              it_scrl_y = ev->cur.canvas.y - sd->reorder_it->dy;
 
              if (!sd->reorder_start_y)
@@ -3799,6 +3818,7 @@ _item_mouse_up_cb(void *data,
    if ((sd->reorder_mode) && (sd->reorder_it))
      {
         Evas_Coord it_scrl_y = ev->canvas.y - sd->reorder_it->dy;
+        sd->reorder_fast = 0;
 
         if (sd->reorder_rel &&
             (sd->reorder_it->parent == sd->reorder_rel->parent))
@@ -4623,14 +4643,14 @@ _access_obj_process(Elm_Genlist_Smart_Data * sd, Eina_Bool is_access)
 {
    Item_Block *itb;
    Eina_Bool done = EINA_FALSE;
-   
+
    EINA_INLIST_FOREACH(sd->blocks, itb)
      {
         if (itb->realized)
           {
              Eina_List *l;
              Elm_Gen_Item *it;
-             
+
              done = EINA_TRUE;
              EINA_LIST_FOREACH(itb->items, l, it)
                {
@@ -4649,7 +4669,7 @@ _access_hook(Evas_Object *obj, Eina_Bool is_access)
 {
    ELM_GENLIST_CHECK(obj);
    ELM_GENLIST_DATA_GET(obj, sd);
-   
+
    if (is_access)
      ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
      _elm_genlist_smart_focus_next;

@@ -282,6 +282,7 @@ struct _Elm_Genlist_Smart_Data
                                                      * selection */
 
    Eina_Bool                             swipe : 1;
+   int                                   reorder_fast;
 };
 
 typedef struct _Item_Block Item_Block;
