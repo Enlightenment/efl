@@ -2792,8 +2792,8 @@ void
 _edje_entry_user_insert(Edje_Real_Part *rp, const char *text)
 {
    Entry *en;
-   Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
-   
+   Edje_Entry_Change_Info *info;
+
    if ((rp->type != EDJE_RP_TYPE_TEXT) ||
        (!rp->typedata.text)) return;
    en = rp->typedata.text->entry_data;
