@@ -231,6 +231,8 @@ void
 eeze_sensor_shutdown(void)
 {
    eeze_sensor_modules_unload();
+   eina_hash_free(g_handle->modules);
+   g_handle->modules = NULL;
    free(g_handle);
    g_handle = NULL;
 
