@@ -30,8 +30,8 @@ EAPI EDBus_Signal_Handler *edbus_signal_handler_ref(EDBus_Signal_Handler *handle
 EAPI void                  edbus_signal_handler_unref(EDBus_Signal_Handler *handler) EINA_ARG_NONNULL(1);
 /**
  * @brief Decrease signal handler reference like edbus_signal_handler_unref()
- * but if reference > 0 this signal handler will stop listen signals. In other
- * words will be canceled but memory will not be freed.
+ * but if reference > 0 this signal handler will stop listening to signals. In other
+ * words it will be canceled but memory will not be freed.
  */
 EAPI void                  edbus_signal_handler_del(EDBus_Signal_Handler *handler) EINA_ARG_NONNULL(1);
 /**
@@ -42,12 +42,12 @@ EAPI void                  edbus_signal_handler_del(EDBus_Signal_Handler *handle
  * With this extra arguments this signal handler callback only will be called
  * when Banshee is started.
  *
- * @note For now is only supported argX.
+ * @note For now only argX is supported.
  *
  * @param sh signal handler
  * @param ... variadic of key and value and must be ended with a NULL
  *
- * @note To information:
+ * @note For more information:
  * http://dbus.freedesktop.org/doc/dbus-specification.html#message-bus-routing-match-rules
  */
 EAPI Eina_Bool             edbus_signal_handler_match_extra_set(EDBus_Signal_Handler *sh, ...) EINA_ARG_NONNULL(1) EINA_SENTINEL;

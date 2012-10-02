@@ -46,7 +46,7 @@ typedef struct _EDBus_Signal
 } EDBus_Signal;
 
 /**
- * @brief Register a interface on the passed path and connection.
+ * @brief Register an interface in the given path and connection.
  *
  * @param conn where the interface should listen
  * @param path object path
@@ -63,8 +63,8 @@ typedef struct _EDBus_Signal
 EAPI EDBus_Service_Interface *edbus_service_interface_register(EDBus_Connection *conn, const char *path, const char *interface, const EDBus_Method methods[], const EDBus_Signal signals[]);
 /**
  * @brief Unregister a interface.
- * If this is the last interface of object path, the object path will be
- * remove too.
+ * If this is the last interface of the object path, the object path will be
+ * removed too.
  */
 EAPI void edbus_service_interface_unregister(EDBus_Service_Interface *iface);
 /**
@@ -89,7 +89,7 @@ EAPI Eina_Bool edbus_service_signal_emit(EDBus_Service_Interface *iface, unsigne
  * @brief Create signal message.
  * Each signal handler have a internal id, the first signal handler of
  * interface is = 0 the second = 1 and go on.
- * This function is used when signal have complex types.
+ * This function is used when the signal has complex types.
  *
  * @param iface interface of the signal
  * @param signal_id id of signal
@@ -100,7 +100,7 @@ EAPI EDBus_Message *edbus_service_signal_new(EDBus_Service_Interface *iface, uns
  */
 EAPI Eina_Bool edbus_service_signal_send(EDBus_Service_Interface *iface, EDBus_Message *signal_msg) EINA_ARG_NONNULL(1, 2);
 /**
- * @brief Store data at object path, this data can be get from all interfaces
+ * @brief Store data at object path, this data can be obtained from all interfaces
  * of the same object.
  *
  * @param iface interface that belong to the object path where data will
@@ -112,7 +112,7 @@ EAPI void edbus_service_object_data_set(EDBus_Service_Interface *iface, const ch
 /**
  * @brief Get data stored in object path.
  *
- * @param iface interface that belong to the object path where data are stored
+ * @param iface interface that belongs to the object path where data are stored
  * @param key that identify data
  *
  * @return pointer to data if found otherwise NULL
@@ -121,7 +121,7 @@ EAPI void *edbus_service_object_data_get(const EDBus_Service_Interface *iface, c
 /**
  * @brief Del data stored in object path.
  *
- * @param iface interface that belong to the object path where data are stored
+ * @param iface interface that belongs to the object path where data are stored
  * @param key that identify data
  *
  * @return pointer to data if found otherwise NULL

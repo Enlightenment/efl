@@ -16,7 +16,7 @@ EAPI EDBus_Proxy          *edbus_proxy_get(EDBus_Object *obj, const char *interf
 EAPI EDBus_Proxy          *edbus_proxy_ref(EDBus_Proxy *proxy) EINA_ARG_NONNULL(1);
 /**
  * @brief Decrease proxy reference.
- * If reference == 0 proxy will be freed and all your children's.
+ * If reference == 0 proxy will be freed and all your children.
  */
 EAPI void                  edbus_proxy_unref(EDBus_Proxy *proxy) EINA_ARG_NONNULL(1);
 

@@ -81,19 +81,19 @@ typedef struct _EDBus_Connection     EDBus_Connection;
 /**
  * @typedef EDBus_Object
  *
- * Represents a object path already attach with bus name or unique id.
+ * Represents an object path already attached with bus name or unique id.
  */
 typedef struct _EDBus_Object         EDBus_Object;
 /**
  * @typedef EDBus_Proxy
  *
- * Represents a interface of a object path.
+ * Represents an interface of an object path.
  */
 typedef struct _EDBus_Proxy          EDBus_Proxy;
 /**
  * @typedef EDBus_Message
  *
- * Represents the way of how the data is send and received in DBus.
+ * Represents the way data is sent and received in DBus.
  */
 typedef struct _EDBus_Message        EDBus_Message;
 /**
@@ -107,7 +107,7 @@ typedef struct _EDBus_Message_Iter EDBus_Message_Iter;
 /**
  * @typedef EDBus_Pending
  *
- * Represents a message that was been sent but has not yet reached its
+ * Represents a message that has been sent but has not yet reached its
  * destination.
  */
 typedef struct _EDBus_Pending        EDBus_Pending;

@@ -25,7 +25,7 @@ EAPI EDBus_Message        *edbus_message_method_call_new(const char *dest, const
 EAPI EDBus_Message        *edbus_message_ref(EDBus_Message *msg) EINA_ARG_NONNULL(1);
 /**
  * @brief Decrease message reference.
- * If reference == 0 message will be freed and all your children's.
+ * If reference == 0 message will be freed and all its children.
  */
 EAPI void                  edbus_message_unref(EDBus_Message *msg) EINA_ARG_NONNULL(1);
 
@@ -72,29 +72,29 @@ EAPI EDBus_Message        *edbus_message_signal_new(const char *path, const char
 EAPI Eina_Bool             edbus_message_error_get(const EDBus_Message *msg, const char **name, const char **text) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Get data from EDBus_Message, for each complete type must have
- * a pointer to store his value, in case of complex type a
- * EDBus_Message_Iter will be need.
+ * @brief Get data from EDBus_Message. For each complete type we must have
+ * a pointer to store its value. In case of complex type EDBus_Message_Iter
+ * needs to be need.
  */
 EAPI Eina_Bool             edbus_message_arguments_get(const EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 /**
- * @brief Get data from EDBus_Message, for each complete type must have
- * a pointer to store his value, in case of complex type a
- * EDBus_Message_Iter will be need.
+ * @brief Get data from EDBus_Message. For each complete type we must have
+ * a pointer to store its value, in case of complex type
+ * EDBus_Message_Iter needs to be used.
  */
 EAPI Eina_Bool             edbus_message_arguments_vget(const EDBus_Message *msg, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Set data to EDBus_Message.
  *
- * This function only support basic type from complex type use
+ * This function only supports basic type, for complex types use
  * edbus_message_iter_* functions.
  */
 EAPI Eina_Bool             edbus_message_arguments_set(EDBus_Message *msg, const char *signature, ...) EINA_ARG_NONNULL(1, 2);
 /**
  * @brief Set data to EDBus_Message.
  *
- * This function only support basic type from complex type use
+ * This function only supports basic types, for complex types use
  * edbus_message_iter_* functions.
  */
 EAPI Eina_Bool             edbus_message_arguments_vset(EDBus_Message *msg, const char *signature, va_list ap) EINA_ARG_NONNULL(1, 2);

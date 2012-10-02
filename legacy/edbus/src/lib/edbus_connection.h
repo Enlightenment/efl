@@ -36,7 +36,7 @@ EAPI EDBus_Connection *edbus_connection_get(EDBus_Connection_Type type);
 EAPI EDBus_Connection *edbus_connection_ref(EDBus_Connection *conn) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Decrement object reference count.
+ * @brief Decrement connection reference count.
  *
  * If reference count reaches 0, the connection to bus will be dropped and all
  * its children will be invalidated.
@@ -48,7 +48,7 @@ EAPI void              edbus_connection_unref(EDBus_Connection *conn) EINA_ARG_N
  *
  * @param conn The connection object to add the callback to.
  * @param cb callback to be called
- * @param data passed to callback
+ * @param data data passed to callback
  */
 EAPI void              edbus_connection_cb_free_add(EDBus_Connection *conn, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
 
@@ -69,8 +69,8 @@ EAPI void              edbus_connection_data_set(EDBus_Connection *conn, const c
 /**
  * @brief Get data stored in connection.
  *
- * @param conn connection where data are stored
- * @param key that identify data
+ * @param conn connection where data is stored
+ * @param key key that identifies data
  *
  * @return pointer to data if found otherwise NULL
  */
@@ -79,8 +79,8 @@ EAPI void             *edbus_connection_data_get(const EDBus_Connection *conn, c
 /**
  * @brief Del data stored in connection.
  *
- * @param conn connection where data are stored
- * @param key that identify data
+ * @param conn connection where data is stored
+ * @param key that identifies data
  *
  * @return pointer to data if found otherwise NULL
  */
@@ -116,7 +116,7 @@ typedef struct _EDBus_Connection_Event_Name_Owner_Changed
 typedef void (*EDBus_Connection_Event_Cb)(void *data, EDBus_Connection *conn, void *event_info);
 
 /**
- * @brief Add a callback function to be called when occurs a event of the
+ * @brief Add a callback function to be called when an event occurs of the
  * type passed.
  */
 EAPI void                  edbus_connection_event_callback_add(EDBus_Connection *conn, EDBus_Connection_Event_Type type, EDBus_Connection_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
@@ -129,12 +129,12 @@ EAPI void                  edbus_connection_event_callback_del(EDBus_Connection 
 /**
  * @brief Send a message.
  *
- * @param conn the connection where the message will be send
- * @param msg message that will be send
+ * @param conn the connection where the message will be sent
+ * @param msg message that will be sent
  * @param cb if msg is a method call a callback should be passed
- * to be execute when response arrive
+ * to be executed when a response arrives
  * @param cb_data data passed to callback
- * @param timeout timeout in milliseconds, -1 to default internal value or
+ * @param timeout timeout in milliseconds, -1 to use default internal value or
  * EDBUS_TIMEOUT_INFINITE for no timeout
  */
 EAPI EDBus_Pending *edbus_connection_send(EDBus_Connection *conn, EDBus_Message *msg, EDBus_Message_Cb cb, const void *cb_data, double timeout) EINA_ARG_NONNULL(1, 2);

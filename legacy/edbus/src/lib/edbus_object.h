@@ -7,10 +7,10 @@
  * @{
  */
 /**
- * @brief Get a object of the following bus and path.
+ * @brief Get an object of the given bus and path.
  *
  * @param conn connection where object belongs
- * @param bus name of bus or unique-id of who listen for calls of this object
+ * @param bus name of bus or unique-id of who listens for calls of this object
  * @param path object path of this object
  */
 EAPI EDBus_Object *edbus_object_get(EDBus_Connection *conn, const char *bus, const char *path) EINA_ARG_NONNULL(1, 2, 3) EINA_WARN_UNUSED_RESULT;
@@ -20,15 +20,15 @@ EAPI EDBus_Object *edbus_object_get(EDBus_Connection *conn, const char *bus, con
 EAPI EDBus_Object *edbus_object_ref(EDBus_Object *obj) EINA_ARG_NONNULL(1);
 /**
  * @brief Decrease object reference.
- * If reference == 0 object will be freed and all your children's.
+ * If reference == 0 object will be freed and all its children.
  */
 EAPI void          edbus_object_unref(EDBus_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Add a callback function to be called when object will be freed.
  *
- * @param obj object that you want to know when it will be free
- * @param cb callback that will be execute
+ * @param obj object that you want to monitor
+ * @param cb callback that will be executed
  * @param data passed to callback
  */
 EAPI void          edbus_object_cb_free_add(EDBus_Object *obj, EDBus_Free_Cb cb, const void *data) EINA_ARG_NONNULL(1, 2);
@@ -76,8 +76,8 @@ typedef struct _EDBus_Object_Event_Property_Removed
 typedef void (*EDBus_Object_Event_Cb)(void *data, EDBus_Object *obj, void *event_info);
 
 /**
- * @brief Add a callback function to be called when occurs a event of the
- * type passed.
+ * @brief Add a callback function to be called when an event of the specified
+ * type occurs.
  */
 EAPI void                  edbus_object_event_callback_add(EDBus_Object *obj, EDBus_Object_Event_Type type, EDBus_Object_Event_Cb cb, const void *cb_data) EINA_ARG_NONNULL(1, 3);
 /**
@@ -92,10 +92,10 @@ EAPI const char           *edbus_object_bus_path_get(const EDBus_Object *obj) EI
 /**
  * @brief Send a message.
  *
- * @param obj the msg will be send in connection that obj belongs
- * @param msg message that will be send
+ * @param obj the msg will be sent in connection to this object
+ * @param msg message that will be sent
  * @param cb if msg is a method call a callback should be passed
- * to be execute when response arrive
+ * to be executed when a response arrives
  * @param cb_data data passed to callback
  * @param timeout timeout in milliseconds, -1 to default internal value or
  * EDBUS_TIMEOUT_INFINITE for no timeout
