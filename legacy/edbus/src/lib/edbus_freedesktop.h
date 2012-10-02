@@ -40,6 +40,12 @@ typedef void (*EDBus_Name_Owner_Changed_Cb)(void *data, const char *bus, const c
 /**
  * Add a callback to be called when unique id of a bus name changed.
  *
+ * This function implicitly calls edbus_name_owner_get() in order to be able to
+ * monitor the name. If the only interest is to receive notifications when the
+ * name in fact changes, pass EINA_FALSE to @param allow_initial_call so your
+ * callback will not be called on first retrieval of name owner. If the
+ * initial state is important, pass EINA_TRUE to this parameter.
+ *
  * @param conn connection
  * @param bus name of bus
  * @param cb callback
