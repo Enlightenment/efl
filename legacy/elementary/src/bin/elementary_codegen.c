@@ -665,22 +665,7 @@ _programs_parse(Evas_Object *ed)
 	     continue;
 	  }
 
-	sig= edje_edit_program_signal_get(ed, name);
-	if (!sig) sig = eina_stringshare_add("");
-
-	source = edje_edit_program_source_get(ed, name);
-	if (!source) source = eina_stringshare_add("");
-
 	description = edje_edit_program_api_description_get(ed, name);
-	if (strlen (sig))
-	  {
-	     if (!_program_emit_write(apiname, source, sig, description))
-	       {
-		  ret = EINA_FALSE;
-		  break;
-	       }
-	  }
-
 	type = edje_edit_program_action_get(ed, name);
 	if (type == EDJE_ACTION_TYPE_SIGNAL_EMIT)
 	  {
@@ -698,6 +683,21 @@ _programs_parse(Evas_Object *ed)
 
 	     edje_edit_string_free(str);
 	     edje_edit_string_free(str2);
+	  }
+
+	sig = edje_edit_program_signal_get(ed, name);
+	if (!sig) sig = eina_stringshare_add("");
+
+	source = edje_edit_program_source_get(ed, name);
+	if (!source) source = eina_stringshare_add("");
+
+	if (strlen (sig))
+	  {
+	     if (!_program_emit_write(apiname, source, sig, description))
+	       {
+		  ret = EINA_FALSE;
+		  break;
+	       }
 	  }
 
 	edje_edit_string_free(description);
