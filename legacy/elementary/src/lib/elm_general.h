@@ -77,6 +77,9 @@ typedef enum
                      * should quit automatically. @see
                      * Elm_Policy_Quit.
                      */
+   ELM_POLICY_EXIT, /**< defines elm_exit() behaviour. @see Elm_Policy_Exit.
+                     * @since 1.8
+                     */
    ELM_POLICY_LAST
 } Elm_Policy; /**< Elementary policy identifiers/groups enumeration.  @see elm_policy_set() */
 
@@ -88,6 +91,13 @@ typedef enum
                                        * application's last
                                        * window is closed */
 } Elm_Policy_Quit; /**< Possible values for the #ELM_POLICY_QUIT policy */
+
+typedef enum
+{
+   ELM_POLICY_EXIT_NONE = 0, /**< just quit the main loop on elm_exit() */
+   ELM_POLICY_EXIT_WINDOWS_DEL /**< delete all the windows after quitting
+                                * the main loop */
+} Elm_Policy_Exit; /**< Possible values for the #ELM_POLICY_EXIT policy */
 
 typedef enum
 {

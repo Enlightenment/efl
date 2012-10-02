@@ -847,6 +847,15 @@ EAPI void
 elm_exit(void)
 {
    ecore_main_loop_quit();
+
+   if (elm_policy_get(ELM_POLICY_EXIT) == ELM_POLICY_EXIT_WINDOWS_DEL)
+     {
+        Eina_List *l, *l_next;
+        Evas_Object *win;
+
+        EINA_LIST_FOREACH_SAFE(_elm_win_list, l, l_next, win)
+           evas_object_del(win);
+     }
 }
 
 //FIXME: Use Elm_Policy Parameter when 2.0 is released.
