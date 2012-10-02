@@ -2,14 +2,13 @@
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 #
-#: src/lib/elm_config.c:2101
 msgid ""
 msgstr ""
-"Project-Id-Version: Elementary\n"
+"Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-09-20 13:50+0900\n"
-"PO-Revision-Date: 2012-09-16 11:07+0200\n"
-"Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
+"POT-Creation-Date: 2012-10-02 20:47+0200\n"
+"PO-Revision-Date: 2012-10-02 20:51+0200\n"
+"Last-Translator: Khany <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
 "Language: gl\n"
 "MIME-Version: 1.0\n"
@@ -24,7 +23,8 @@ msgstr "Arriba"
 msgid "Home"
 msgstr "Cartafol persoal"
 
-#: src/lib/elc_fileselector.c:992 src/lib/elm_entry.c:1254
+#: src/lib/elc_fileselector.c:992
+#: src/lib/elm_entry.c:1257
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -34,15 +34,20 @@ msgstr "Aceptar"
 
 #: src/lib/elm_bubble.c:196
 msgid "Bubble"
-msgstr ""
+msgstr "Burbulla"
 
 #: src/lib/elm_button.c:55
 msgid "Clicked"
 msgstr "Premido"
 
-#: src/lib/elm_button.c:266 src/lib/elm_check.c:200 src/lib/elm_gengrid.c:618
-#: src/lib/elm_genlist.c:1281 src/lib/elm_list.c:1353 src/lib/elm_radio.c:241
-#: src/lib/elm_spinner.c:503 src/lib/elm_toolbar.c:1513
+#: src/lib/elm_button.c:266
+#: src/lib/elm_check.c:200
+#: src/lib/elm_gengrid.c:618
+#: src/lib/elm_genlist.c:1282
+#: src/lib/elm_list.c:1353
+#: src/lib/elm_radio.c:241
+#: src/lib/elm_spinner.c:503
+#: src/lib/elm_toolbar.c:1535
 msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
@@ -70,17 +75,23 @@ msgstr "Botón de aumento do calendario"
 msgid "calendar month"
 msgstr "mes do calendario"
 
-#: src/lib/elm_check.c:47 src/lib/elm_check.c:50 src/lib/elm_check.c:213
-#: src/lib/elm_radio.c:83 src/lib/elm_radio.c:242
+#: src/lib/elm_check.c:47
+#: src/lib/elm_check.c:50
+#: src/lib/elm_check.c:213
+#: src/lib/elm_radio.c:83
+#: src/lib/elm_radio.c:242
 msgid "State: On"
 msgstr "Estado: Conectado"
 
-#: src/lib/elm_check.c:60 src/lib/elm_check.c:63 src/lib/elm_check.c:225
+#: src/lib/elm_check.c:60
+#: src/lib/elm_check.c:63
+#: src/lib/elm_check.c:225
 #: src/lib/elm_radio.c:244
 msgid "State: Off"
 msgstr "Estado: Desconectado"
 
-#: src/lib/elm_check.c:209 src/lib/elm_check.c:222
+#: src/lib/elm_check.c:209
+#: src/lib/elm_check.c:222
 msgid "State"
 msgstr "Estado"
 
@@ -100,23 +111,23 @@ msgstr "Predeterminado: LTR"
 msgid "diskselector item"
 msgstr "Selector de disco"
 
-#: src/lib/elm_entry.c:1246
+#: src/lib/elm_entry.c:1249
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1250
+#: src/lib/elm_entry.c:1253
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1266
+#: src/lib/elm_entry.c:1269
 msgid "Select"
 msgstr "Seleccionar"
 
-#: src/lib/elm_entry.c:1273
+#: src/lib/elm_entry.c:1276
 msgid "Paste"
 msgstr "Pegar"
 
-#: src/lib/elm_entry.c:2921
+#: src/lib/elm_entry.c:2924
 msgid "Entry"
 msgstr "Entrada"
 
@@ -124,7 +135,7 @@ msgstr "Entrada"
 msgid "Gengrid Item"
 msgstr "Grella xenérica"
 
-#: src/lib/elm_genlist.c:1315
+#: src/lib/elm_genlist.c:1316
 msgid "Genlist Item"
 msgstr "Lista xenérica"
 
@@ -168,23 +179,23 @@ msgstr "botón de disminución"
 msgid "spinner"
 msgstr "botón de spinner"
 
-#: src/lib/elm_toolbar.c:1149
+#: src/lib/elm_toolbar.c:1171
 msgid "Selected"
 msgstr "Seleccionado"
 
-#: src/lib/elm_toolbar.c:1511
+#: src/lib/elm_toolbar.c:1533
 msgid "Separator"
 msgstr "Separador"
 
-#: src/lib/elm_toolbar.c:1515
+#: src/lib/elm_toolbar.c:1537
 msgid "State: Selected"
 msgstr "Estado: Seleccionado"
 
-#: src/lib/elm_toolbar.c:1517
+#: src/lib/elm_toolbar.c:1539
 msgid "Has menu"
 msgstr "Ten menú"
 
-#: src/lib/elm_toolbar.c:1596
+#: src/lib/elm_toolbar.c:1618
 msgid "Tool Item"
 msgstr "Ferramenta"
 
