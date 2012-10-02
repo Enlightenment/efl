@@ -48,6 +48,7 @@ typedef struct _EDBus_Connection_Context_NOC_Cb
    EDBus_Name_Owner_Changed_Cb cb;
    const void                 *cb_data;
    Eina_Bool                   deleted : 1;
+   Ecore_Idler                *idler;
 } EDBus_Connection_Context_NOC_Cb;
 
 typedef struct _EDBus_Handler_Data
@@ -1165,6 +1166,23 @@ edbus_dispatch_name_owner_change(EDBus_Connection_Name *cn, const char *old_id)
    cn->event_handlers.walking--;
 }
 
+typedef struct _dispach_name_owner_data
+{
+   EDBus_Connection_Context_NOC_Cb *ctx;
+   const EDBus_Connection_Name *cn;
+} dispatch_name_owner_data;
+
+static Eina_Bool
+dispach_name_owner_cb(void *context)
+{
+   dispatch_name_owner_data *data = context;
+   data->ctx->cb((void *)data->ctx->cb_data, data->cn->name, "",
+                 data->cn->unique_id);
+   data->ctx->idler = NULL;
+   free(data);
+   return ECORE_CALLBACK_CANCEL;
+}
+
 EAPI void
 edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data)
 {
@@ -1194,6 +1212,15 @@ edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, E
 
    cn->event_handlers.list = eina_inlist_append(cn->event_handlers.list,
                                                 EINA_INLIST_GET(ctx));
+   if (cn->unique_id)
+     {
+        dispatch_name_owner_data *dispatch_data;
+        dispatch_data = malloc(sizeof(dispatch_name_owner_data));
+        EINA_SAFETY_ON_NULL_RETURN(dispatch_data);
+        dispatch_data->cn = cn;
+        dispatch_data->ctx = ctx;
+        ctx->idler = ecore_idler_add(dispach_name_owner_cb, dispatch_data);
+     }
    return;
 
 cleanup:
@@ -1235,6 +1262,12 @@ edbus_name_owner_changed_callback_del(EDBus_Connection *conn, const char *bus, E
 
    cn->event_handlers.list = eina_inlist_remove(cn->event_handlers.list,
                                                 EINA_INLIST_GET(found));
+   if (found->idler)
+     {
+        dispatch_name_owner_data *data;
+        data = ecore_idler_del(found->idler);
+        free(data);
+     }
    free(found);
    edbus_connection_name_owner_monitor(conn, cn, EINA_FALSE);
 }

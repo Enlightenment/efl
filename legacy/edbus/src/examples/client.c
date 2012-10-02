@@ -218,6 +218,27 @@ _on_async_test(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
    printf("%s\n", str);
 }
 
+static void
+on_name_owner_changed2(void *data, const char *bus, const char *old_id, const char *new_id)
+{
+   printf("2 - Bus=%s | old=%s | new=%s\n", bus, old_id, new_id);
+}
+
+static void
+on_name_owner_changed(void *data, const char *bus, const char *old_id, const char *new_id)
+{
+   printf("Bus=%s | old=%s | new=%s\n", bus, old_id, new_id);
+}
+
+static Eina_Bool
+add_name_owner2(void *data)
+{
+   EDBus_Connection *conn = data;
+   edbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed2,
+					 NULL);
+   return EINA_FALSE;
+}
+
 int
 main(void)
 {
@@ -245,8 +266,14 @@ main(void)
    edbus_proxy_call(proxy, "SendString", _on_send_string, NULL, -1, "s", string_value);
    edbus_proxy_call(proxy, "AsyncTest", _on_async_test, NULL, -1, "");
 
+   edbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed, conn);
+   ecore_timer_add(3, add_name_owner2, conn);
+
    ecore_main_loop_begin();
 
+   edbus_name_owner_changed_callback_del(conn, BUS, on_name_owner_changed, conn);
+   edbus_name_owner_changed_callback_del(conn, BUS, on_name_owner_changed2,
+                                         NULL);
    edbus_connection_unref(conn);
 
    edbus_shutdown();
