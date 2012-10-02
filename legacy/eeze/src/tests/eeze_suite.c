@@ -347,22 +347,6 @@ START_TEST(eeze_test_net_attr_ipv6)
 END_TEST
 #endif
 
-START_TEST(eeze_test_sensor_handle_get)
-{
-   Eeze_Sensor *handle;
-   int ret;
-
-   ret = eeze_init();
-   fail_if(ret != 1);
-
-   handle = eeze_sensor_handle_get();
-   fail_if(handle == NULL);
-
-   ret = eeze_shutdown();
-   fail_if(ret != 0);
-}
-END_TEST
-
 START_TEST(eeze_test_sensor_read)
 {
    Eeze_Sensor_Obj *sens = NULL;
@@ -606,7 +590,6 @@ eeze_suite(void)
    suite_add_tcase(s, tc);
 
    tc = tcase_create("Eeze Sensor");
-   tcase_add_test(tc, eeze_test_sensor_handle_get);
    tcase_add_test(tc, eeze_test_sensor_read);
    tcase_add_test(tc, eeze_test_sensor_async_read);
    tcase_add_test(tc, eeze_test_sensor_obj_get);
