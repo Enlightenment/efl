@@ -41,7 +41,7 @@ EAPI Eeze_Sensor_Obj *
 eeze_sensor_obj_get(Eeze_Sensor_Type sensor_type)
 {
    Eina_List *l;
-   Eeze_Sensor_Obj *obj;
+   Eeze_Sensor_Obj *obj, *sens;
    Eeze_Sensor_Module *module;
 
    module = _highest_priority_module_get();
@@ -52,7 +52,12 @@ eeze_sensor_obj_get(Eeze_Sensor_Type sensor_type)
      {
         if (obj->type == sensor_type)
           {
-             return obj;
+             sens = calloc(1, sizeof(Eeze_Sensor_Obj));
+             if (!sens) return NULL;
+
+             memcpy(sens, obj, sizeof(Eeze_Sensor_Obj));
+
+             return sens;
           }
      }
    return NULL;

@@ -781,9 +781,14 @@ sensor_tizen_init(void)
 void
 sensor_tizen_shutdown(void)
 {
+   Eeze_Sensor_Obj *sens;
+
    sensor_stop(sensor_handle, SENSOR_MOTION_FACEDOWN);
    sensor_stop(sensor_handle, SENSOR_MOTION_DOUBLETAP);
    eeze_sensor_module_unregister("tizen");
+   EINA_LIST_FREE(esensor_module->sensor_list, sens)
+      free(sens);
+
    free(esensor_module);
    esensor_module = NULL;
 }

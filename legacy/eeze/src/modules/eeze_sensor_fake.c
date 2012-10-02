@@ -168,7 +168,12 @@ sensor_fake_init(void)
 void
 sensor_fake_shutdown(void)
 {
+   Eeze_Sensor_Obj *sens;
+
    eeze_sensor_module_unregister("fake");
+   EINA_LIST_FREE(esensor_module->sensor_list, sens)
+      free(sens);
+
    free(esensor_module);
    esensor_module = NULL;
 }
