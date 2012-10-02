@@ -324,7 +324,8 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
    root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
    if (on)
      xcb_screensaver_select_input(_ecore_xcb_conn, root,
-                                  XCB_SCREENSAVER_EVENT_NOTIFY_MASK);
+                                  XCB_SCREENSAVER_EVENT_NOTIFY_MASK | 
+                                  XCB_SCREENSAVER_EVENT_CYCLE_MASK);
    else
      xcb_screensaver_select_input(_ecore_xcb_conn, root, 0);
 #endif
