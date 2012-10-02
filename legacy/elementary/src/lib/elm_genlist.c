@@ -1138,7 +1138,7 @@ _item_cache_free(Item_Cache *itc)
 static Item_Cache *
 _item_cache_find(Elm_Gen_Item *it)
 {
-   Item_Cache *itc;
+   Item_Cache *itc = NULL;
    Eina_Inlist *l;
    Eina_Bool tree = 0;
 
