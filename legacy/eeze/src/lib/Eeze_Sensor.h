@@ -20,11 +20,16 @@
 /**
  * @file Eeze_Sensor.h
  * @brief Sensor information
- * @since 1.8
  *
  * Eeze sensor functions allow you to gather sensor information from different sensor sources
  * available on the hardware. It supports a plugin architecture to support different hardware
- * platforms and devices.
+ * platforms and devices. These plugins can be loaded at runtime to allow support for a specific
+ * set of hardware or platform.
+ *
+ * Right now we have support for the Tizen sensor framework as well as a simple fake plugin to be
+ * used as a test harness for developing.
+ *
+ * @since 1.8
  *
  * @addtogroup sensor Sensor
  * @{
@@ -60,9 +65,10 @@ typedef enum
  * @defgroup Sensor_Events Available eeze sensor events
  * @brief Sensor events that are emitted from the library as ecore events
  *
- * Event types used to register ecore_event_handler on. These events are used for
+ * Event types used to register #ecore_event_handler on. These events are used for
  * #eeze_sensor_async_read to deliver read out data. It is also used for generated events like
  * facedown or shake.
+ *
  * @since 1.8
  * @{
  */
@@ -83,12 +89,17 @@ EAPI int EEZE_SENSOR_EVENT_TEMPERATURE;
 
 /**
  * @typedef Eeze_Sensor_Obj;
- * @since 1.8
  *
  * Object for a sensor type. Keeps information about the type and holds the data for the accessor
  * functions. As this information gets also updated by asynchronous reads it might be a good idea
  * to check the timestamp value to see when the data has been updated. The timestamp is given in
  * microseconds.
+ *
+ * You are not supposed to access the raw data values from here but use the getter functions for it.
+ * Using the raw values from this struct might break your applications later if the internal
+ * structure changes.
+ *
+ * @since 1.8
  */
 typedef struct _Eeze_Sensor_Obj
 {
@@ -111,6 +122,10 @@ extern "C" {
  * Takes the sensor type and create an object for it to operate on. During this it also does an
  * initial sensor data read to fill the sensor data into the object.
  * The #eeze_sensor_free function must be used to destroy the object and release its memory.
+ *
+ * For every sensor type you want to work with this is the first thing you have to do. Create the
+ * object from the type and everything else the operates on this object.
+ *
  * @since 1.8
  */
 EAPI Eeze_Sensor_Obj *eeze_sensor_new(Eeze_Sensor_Type type);
@@ -120,6 +135,7 @@ EAPI Eeze_Sensor_Obj *eeze_sensor_new(Eeze_Sensor_Type type);
  * @param sens Sensor object to operate on.
  *
  * Free an sensor object when it is no longer needed.
+ *
  * @since 1.8
  */
 EAPI void eeze_sensor_free(Eeze_Sensor_Obj *sens);
@@ -130,7 +146,14 @@ EAPI void eeze_sensor_free(Eeze_Sensor_Obj *sens);
  * @param accuracy Pointer to write accuracy value into.
  * @return EINA_TRUE for success and EINA_FALSE for failure
  *
- * Access function to get the accuracy property from the sensor object.
+ * Access function to get the accuracy property from the sensor object. The accuracy value can have
+ * the following values and meaning:
+ * -1 Undefined accuracy
+ * 0 Bad accurancy
+ * 1 Normal accuracy
+ * 2 Good accuracy
+ * 3 Very good accuracy
+ *
  * @since 1.8
  */
 EAPI Eina_Bool eeze_sensor_accuracy_get(Eeze_Sensor_Obj *sens, int *accuracy);
@@ -145,6 +168,7 @@ EAPI Eina_Bool eeze_sensor_accuracy_get(Eeze_Sensor_Obj *sens, int *accuracy);
  *
  * Access function to get all three data properties from the sensor object. This is used for sensor
  * types that offer all three values. Like accelerometer and magnetic.
+ *
  * @since 1.8
  */
 EAPI Eina_Bool eeze_sensor_xyz_get(Eeze_Sensor_Obj *sens, float *x, float *y, float *z);
@@ -156,8 +180,9 @@ EAPI Eina_Bool eeze_sensor_xyz_get(Eeze_Sensor_Obj *sens, float *x, float *y, fl
  * @param y Pointer to write second data property value into.
  * @return EINA_TRUE for success and EINA_FALSE for failure
  *
- * Access function to get the first two data properties from the sensor object. This is used for sensor
- * types that offer two values. Like panning.
+ * Access function to get the first two data properties from the sensor object. This is used for
+ * sensor types that offer two values. Like panning.
+ *
  * @since 1.8
  */
 EAPI Eina_Bool eeze_sensor_xy_get(Eeze_Sensor_Obj *sens, float *x, float *y);
@@ -170,6 +195,7 @@ EAPI Eina_Bool eeze_sensor_xy_get(Eeze_Sensor_Obj *sens, float *x, float *y);
  *
  * Access function to get the first data property from the sensor object. This is used for sensor
  * types that only offer one value. Like light or proximity.
+ *
  * @since 1.8
  */
 EAPI Eina_Bool eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x);
@@ -180,7 +206,9 @@ EAPI Eina_Bool eeze_sensor_x_get(Eeze_Sensor_Obj *sens, float *x);
  * @param timestamp Pointer to write timestamp value into.
  * @return EINA_TRUE for success and EINA_FALSE for failure
  *
- * Access function to get the timestamp property from the sensor object.
+ * Access function to get the timestamp property from the sensor object. It allows you to determine
+ * if the values have been updated since the last time you requested them.
+ *
  * @since 1.8
  */
 EAPI Eina_Bool eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, unsigned long long *timestamp);
@@ -193,6 +221,7 @@ EAPI Eina_Bool eeze_sensor_timestamp_get(Eeze_Sensor_Obj *sens, unsigned long lo
  * This function reads sensor data from the device and fills the sensor object with the data. This
  * call is synchronous and blocks until the data is read out and updated in the sensor object.
  * For simple applications this is fine and the easiest way to use the API.
+ *
  * @since 1.8
  */
 EAPI Eina_Bool eeze_sensor_read(Eeze_Sensor_Obj *sens);
@@ -206,6 +235,7 @@ EAPI Eina_Bool eeze_sensor_read(Eeze_Sensor_Obj *sens);
  * This function reads sensor data from the device and fills the sensor object with the data. The
  * read is done asynchronously and thus does not block after calling. Instead the given callback
  * function is called once the read is finished and the object filled.
+ *
  * @since 1.8
  */
 EAPI Eina_Bool       eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_data);
@@ -219,7 +249,19 @@ EAPI Eina_Bool       eeze_sensor_async_read(Eeze_Sensor_Obj *sens, void *user_da
  */
 EAPI Eeze_Sensor_Obj    *eeze_sensor_obj_get(Eeze_Sensor_Type type);
 
+/**
+ * @brief Initialize the Eeze sensor subsystem.
+ * @return EINA_TRUE for success and EINA_FALSE for failure
+ *
+ * @since 1.8
+ */
 Eina_Bool            eeze_sensor_init(void);
+
+/**
+ * @brief Clean up and shutdown the Eeze sensor subsystem.
+ *
+ * @since 1.8
+ */
 void                 eeze_sensor_shutdown(void);
 
 #ifdef __cplusplus

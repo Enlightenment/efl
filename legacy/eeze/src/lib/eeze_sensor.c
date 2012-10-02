@@ -11,7 +11,11 @@
 
 Eeze_Sensor *g_handle;
 
-/* Priority order for modules. The one with the highest order of the available ones will be used */
+/* Priority order for modules. The one with the highest order of the available ones will be used.
+ * This in good enough for now as we only have two modules and one is a test harness anyway. If the
+ * number of modules grows we might re-think the priority handling, but we should do this when the
+ * need arise.
+ */
 static const char *_module_priority[] = {
    "tizen",
    "fake",

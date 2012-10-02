@@ -10,6 +10,11 @@
 #include <Eeze_Sensor.h>
 #include "eeze_sensor_private.h"
 
+/* This small Eeze_Sensor module is meant to be used as a test harness for developing. It does not
+ * gather any real data from hardware sensors. It uses fixed values for the data, but provides the
+ * correct timestamp value.
+ */
+
 Eeze_Sensor_Module *esensor_module;
 
 Eina_Bool

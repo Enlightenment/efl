@@ -37,7 +37,8 @@ extern int _eeze_sensor_log_dom;
  * @typedef Eeze_Sensor
  * @since 1.8
  *
- * Handle for an Eeze_Sensor.
+ * Internal data structure to hold the information about loaded and available runtime modules of
+ * Eeze_Sensor.
  */
 typedef struct _Eeze_Sensor
 {
@@ -49,7 +50,8 @@ typedef struct _Eeze_Sensor
  * @typedef Eeze_Sensor_Module;
  * @since 1.8
  *
- * Loadable module data structure.
+ * Internal data structure for the modules. It mainly holds function pointers each modules provides
+ * to be called from the Eeze_Sensor core to access the data provided by the module.
  */
 typedef struct _Eeze_Sensor_Module
 {
