@@ -83,6 +83,9 @@ typedef enum
    ELM_POLICY_LAST
 } Elm_Policy; /**< Elementary policy identifiers/groups enumeration.  @see elm_policy_set() */
 
+/**
+ * Possible values for the #ELM_POLICY_QUIT policy
+ */
 typedef enum
 {
    ELM_POLICY_QUIT_NONE = 0, /**< never quit the application
@@ -90,14 +93,18 @@ typedef enum
    ELM_POLICY_QUIT_LAST_WINDOW_CLOSED /**< quit when the
                                        * application's last
                                        * window is closed */
-} Elm_Policy_Quit; /**< Possible values for the #ELM_POLICY_QUIT policy */
+} Elm_Policy_Quit;
 
+/**
+ * Possible values for the #ELM_POLICY_EXIT policy.
+ * @since 1.8
+ */
 typedef enum
 {
    ELM_POLICY_EXIT_NONE = 0, /**< just quit the main loop on elm_exit() */
    ELM_POLICY_EXIT_WINDOWS_DEL /**< delete all the windows after quitting
                                 * the main loop */
-} Elm_Policy_Exit; /**< Possible values for the #ELM_POLICY_EXIT policy */
+} Elm_Policy_Exit;
 
 typedef enum
 {
