@@ -235,7 +235,7 @@ add_name_owner2(void *data)
 {
    EDBus_Connection *conn = data;
    edbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed2,
-					 NULL);
+					 NULL, EINA_TRUE);
    return EINA_FALSE;
 }
 
@@ -266,7 +266,8 @@ main(void)
    edbus_proxy_call(proxy, "SendString", _on_send_string, NULL, -1, "s", string_value);
    edbus_proxy_call(proxy, "AsyncTest", _on_async_test, NULL, -1, "");
 
-   edbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed, conn);
+   edbus_name_owner_changed_callback_add(conn, BUS, on_name_owner_changed,
+                                         conn, EINA_TRUE);
    ecore_timer_add(3, add_name_owner2, conn);
 
    ecore_main_loop_begin();

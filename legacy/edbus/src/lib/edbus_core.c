@@ -49,6 +49,7 @@ typedef struct _EDBus_Connection_Context_NOC_Cb
    const void                 *cb_data;
    Eina_Bool                   deleted : 1;
    Ecore_Idler                *idler;
+   Eina_Bool                   allow_initial : 1;
 } EDBus_Connection_Context_NOC_Cb;
 
 typedef struct _EDBus_Handler_Data
@@ -499,7 +500,7 @@ on_get_name_owner(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
      ERR("Error getting arguments from GetNameOwner");
 
    cn->unique_id = eina_stringshare_add(unique_id);
-   edbus_dispatch_name_owner_change(cn, "");
+   edbus_dispatch_name_owner_change(cn, NULL);
 }
 
 static void
@@ -1157,11 +1158,14 @@ static void
 edbus_dispatch_name_owner_change(EDBus_Connection_Name *cn, const char *old_id)
 {
    EDBus_Connection_Context_NOC_Cb *ctx;
+   const char *previous_id = !old_id ? "" : old_id;
    cn->event_handlers.walking++;
    EINA_INLIST_FOREACH(cn->event_handlers.list, ctx)
      {
         if (ctx->deleted) continue;
-        ctx->cb((void *)ctx->cb_data, cn->name, old_id, cn->unique_id);
+        if (!old_id && !ctx->allow_initial)
+          continue;
+        ctx->cb((void *)ctx->cb_data, cn->name, previous_id, cn->unique_id);
      }
    cn->event_handlers.walking--;
 }
@@ -1184,7 +1188,7 @@ dispach_name_owner_cb(void *context)
 }
 
 EAPI void
-edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data)
+edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data, Eina_Bool allow_initial_call)
 {
    EDBus_Connection_Name *cn;
    EDBus_Connection_Context_NOC_Cb *ctx;
@@ -1209,10 +1213,11 @@ edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, E
    EINA_SAFETY_ON_NULL_GOTO(ctx, cleanup);
    ctx->cb = cb;
    ctx->cb_data = cb_data;
+   ctx->allow_initial = allow_initial_call;
 
    cn->event_handlers.list = eina_inlist_append(cn->event_handlers.list,
                                                 EINA_INLIST_GET(ctx));
-   if (cn->unique_id)
+   if (cn->unique_id && allow_initial_call)
      {
         dispatch_name_owner_data *dispatch_data;
         dispatch_data = malloc(sizeof(dispatch_name_owner_data));

@@ -37,7 +37,24 @@ EAPI EDBus_Pending        *edbus_name_start(EDBus_Connection *conn, const char *
 
 typedef void (*EDBus_Name_Owner_Changed_Cb)(void *data, const char *bus, const char *old_id, const char *new_id);
 
-EAPI void                  edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data);
+/**
+ * Add a callback to be called when unique id of a bus name changed.
+ *
+ * @param conn connection
+ * @param bus name of bus
+ * @param cb callback
+ * @param cb_data context data
+ * @param allow_initial_call allow call callback with actual id of the bus
+ */
+EAPI void                  edbus_name_owner_changed_callback_add(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data, Eina_Bool allow_initial_call);
+/**
+ * Remove callback added with edbus_name_owner_changed_callback_add().
+ *
+ * @param conn connection
+ * @param bus name of bus
+ * @param cb callback
+ * @param cb_data context data
+ */
 EAPI void                  edbus_name_owner_changed_callback_del(EDBus_Connection *conn, const char *bus, EDBus_Name_Owner_Changed_Cb cb, const void *cb_data);
 
 /**
