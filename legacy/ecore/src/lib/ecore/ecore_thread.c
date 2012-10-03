@@ -1107,7 +1107,7 @@ ecore_thread_feedback(Ecore_Thread *thread,
         Ecore_Pthread_Message *msg;
         Ecore_Pthread_Notify *notify;
 
-        msg = malloc(sizeof (Ecore_Pthread_Message*));
+        msg = malloc(sizeof (Ecore_Pthread_Message));
         if (!msg) return EINA_FALSE;
         msg->data = data;
         msg->callback = EINA_FALSE;

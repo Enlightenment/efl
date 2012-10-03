@@ -970,3 +970,7 @@
 
        * Fix ecore_imf buf in the ibus module where it may segv
        accessing a wrong context handle.
+
+2012-10-02  Daniel Willmann
+
+       * Fix memory allocation size in ecore_thread_feedback()
