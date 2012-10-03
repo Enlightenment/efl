@@ -202,8 +202,9 @@ EAPI int
 elm_init(int    argc,
          char **argv)
 {
-   elm_quicklaunch_init(argc, argv);
+   _elm_init_count++;
    if (_elm_init_count > 1) return _elm_init_count;
+   elm_quicklaunch_init(argc, argv);
    elm_quicklaunch_sub_init(argc, argv);
    _prefix_shutdown();
    return _elm_init_count;
@@ -396,9 +397,7 @@ EAPI int
 elm_quicklaunch_init(int    argc,
                      char **argv)
 {
-   _elm_init_count++;
    _elm_ql_init_count++;
-   if (_elm_init_count > 1) return _elm_ql_init_count;
    if (_elm_ql_init_count > 1) return _elm_ql_init_count;
    eina_init();
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
