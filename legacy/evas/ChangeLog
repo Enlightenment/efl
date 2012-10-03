@@ -1067,3 +1067,7 @@
 
        * Add the object display mode hint. this can be used to check object
        mode like compress or expand or etc
+
+2012-10-03  Mike Blumenkrantz
+
+       * evas_object_del() now accepts NULL more peacefully

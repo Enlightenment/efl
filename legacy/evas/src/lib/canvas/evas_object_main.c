@@ -430,6 +430,7 @@ evas_object_ref_get(const Evas_Object *obj)
 EAPI void
 evas_object_del(Evas_Object *obj)
 {
+   if (!obj) return;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
