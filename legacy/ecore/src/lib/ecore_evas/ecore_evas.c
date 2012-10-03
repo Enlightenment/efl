@@ -2820,12 +2820,9 @@ ecore_evas_wayland_window_get(const Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y)
+ecore_evas_wayland_pointer_set(Ecore_Evas *ee __UNUSED__, int hot_x __UNUSED__, int hot_y __UNUSED__)
 {
-   Ecore_Wl_Window *win;
 
-   win = ecore_evas_wayland_window_get(ee);
-   /* ecore_wl_window_pointer_set(win, ee->engine.wl.buffer, hot_x, hot_y); */
 }
 
 #else
@@ -2858,4 +2855,5 @@ ecore_evas_wayland_pointer_set(Ecore_Evas *ee __UNUSED__, int hot_x __UNUSED__, 
 {
 
 }
+
 #endif
