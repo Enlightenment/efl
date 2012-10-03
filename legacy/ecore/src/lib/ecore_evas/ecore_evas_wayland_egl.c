@@ -24,10 +24,10 @@
 #include <Evas.h>
 #include <Ecore.h>
 
-#include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+# include "ecore_evas_private.h"
 # include <Evas_Engine_Wayland_Egl.h>
 # include <Ecore_Wayland.h>
 

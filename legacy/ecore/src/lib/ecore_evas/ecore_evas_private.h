@@ -79,13 +79,15 @@
 # include <Evas_Engine_Gl_Cocoa.h>
 #endif
 
-#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+#if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined(BUILD_ECORE_EVAS_WAYLAND_EGL)
 # include "Ecore_Wayland.h"
+#endif
+
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 # include <Evas_Engine_Wayland_Shm.h>
 #endif
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-# include "Ecore_Wayland.h"
 # include <Evas_Engine_Wayland_Egl.h>
 #endif
 
