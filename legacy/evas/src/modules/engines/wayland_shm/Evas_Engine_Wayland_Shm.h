@@ -1,6 +1,7 @@
 #ifndef _EVAS_ENGINE_WAYLAND_SHM_H
 # define _EVAS_ENGINE_WAYLAND_SHM_H
 
+#include <Evas.h>
 /*
  * Wayland supoprt is considered experimental as wayland itself is still
  * unstable and liable to change core protocol. If you use this api, it is
@@ -18,7 +19,6 @@ struct _Evas_Engine_Info_Wayland_Shm
         int rotation;
 
         Eina_Bool destination_alpha : 1;
-        Eina_Bool debug : 1;
      } info;
 
    Evas_Engine_Render_Mode render_mode;

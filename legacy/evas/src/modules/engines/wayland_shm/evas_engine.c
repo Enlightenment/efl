@@ -85,7 +85,6 @@ eng_info(Evas *evas __UNUSED__)
      return NULL;
 
    info->magic.magic = rand();
-   info->info.debug = EINA_FALSE;
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
 
    return info;
