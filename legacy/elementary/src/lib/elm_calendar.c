@@ -5,9 +5,11 @@
 EAPI const char ELM_CALENDAR_SMART_NAME[] = "elm_calendar";
 
 static const char SIG_CHANGED[] = "changed";
+static const char SIG_DISPLAY_CHANGED[] = "display,changed";
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_CHANGED, ""},
+   {SIG_DISPLAY_CHANGED, ""},
    {NULL, NULL}
 };
 
@@ -559,6 +561,7 @@ _update_month(Evas_Object *obj,
         _fix_selected_time(sd);
         evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);
      }
+   evas_object_smart_callback_call(obj, SIG_DISPLAY_CHANGED, NULL);
 
    return EINA_TRUE;
 }
@@ -1319,5 +1322,16 @@ elm_calendar_selectable_get(const Evas_Object *obj)
    ELM_CALENDAR_DATA_GET_OR_RETURN_VAL(obj, sd, -1);
 
    return sd->selectable;
+}
+
+EAPI Eina_Bool
+elm_calendar_displayed_time_get(const Evas_Object *obj, struct tm *displayed_time)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(displayed_time, EINA_FALSE);
+   ELM_CALENDAR_CHECK(obj) EINA_FALSE;
+   ELM_CALENDAR_DATA_GET_OR_RETURN_VAL(obj, sd, EINA_FALSE);
+
+   *displayed_time = sd->shown_time;
+   return EINA_TRUE;
 }
 

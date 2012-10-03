@@ -188,6 +188,26 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
    elm_object_text_set(en, info);
 }
 
+void
+_print_cal_shown_info(Evas_Object *cal, Evas_Object *en)
+{
+   char info[1024];
+   struct tm stm;
+
+   elm_calendar_displayed_time_get(cal, &stm);
+   snprintf(info, sizeof(info),
+            "  Mon: %i, Year %i",
+            stm.tm_mon, stm.tm_year + 1900);
+
+   elm_object_text_set(en, info);
+}
+
+void
+_print_cal_shown_info_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   _print_cal_shown_info(obj, data);
+}
+
 static void
 _print_cal_info_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -311,18 +331,25 @@ test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 void
 test_calendar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *cal, *bxx;
+   Evas_Object *win, *cal, *en, *bx;
    struct tm selected_time;
    time_t current_time;
 
    win = elm_win_util_standard_add("calendar", "Calendar");
    elm_win_autodel_set(win, EINA_TRUE);
 
-   bxx = elm_box_add(win);
-   elm_win_resize_object_add(win, bxx);
-   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bxx);
+   bx = elm_box_add(win);
+   elm_win_resize_object_add(win, bx);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bx);
 
+   en = elm_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(en);
+   elm_box_pack_end(bx, en);
+
+   elm_entry_editable_set(en, EINA_FALSE);
    cal = elm_calendar_add(win);
    elm_calendar_first_day_of_week_set(cal, ELM_DAY_THURSDAY);
    elm_calendar_select_mode_set(cal, ELM_CALENDAR_SELECT_MODE_ONDEMAND);
@@ -331,11 +358,13 @@ test_calendar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
                                 | ELM_CALENDAR_SELECTABLE_MONTH));
    current_time = time(NULL) + 34 * 84600;
    localtime_r(&current_time, &selected_time);
-   elm_calendar_selected_time_set(cal, &selected_time);
    evas_object_size_hint_weight_set(cal, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_pack_end(bxx, cal);
+   elm_box_pack_end(bx, cal);
 
    evas_object_show(cal);
+   elm_calendar_selected_time_set(cal, &selected_time);
+   _print_cal_shown_info(cal, en);
+   evas_object_smart_callback_add(cal, "display,changed", _print_cal_shown_info_cb, en);
 
    evas_object_show(win);
 }

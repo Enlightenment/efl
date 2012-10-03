@@ -23,6 +23,8 @@
  * This widget emits the following signals, besides the ones sent from
  * @ref Layout:
  * - @c "changed" - emitted when the date in the calendar is changed.
+ * - @c "display,changed" - emitted when the current month displayed in the
+ * calendar is changed.
  *
  * Supported elm_object common APIs.
  * @li @ref elm_object_signal_emit
@@ -566,6 +568,19 @@ EAPI void                 elm_calendar_selectable_set(Evas_Object *obj, Elm_Cale
  * @since 1.8
  */
 EAPI Elm_Calendar_Selectable elm_calendar_selectable_get(const Evas_Object *obj);
+
+/**
+ * Get the current time displayed in the widget
+ *
+ * @param obj The calendar object
+ * @param selected_time A @b tm struct to point to displayed date
+ * @return EINA_FALSE means an error occurred. If it's an error the returned
+ * time is zero filled.
+ *
+ * @ingroup Calendar
+ * @since 1.8
+ */
+EAPI Eina_Bool                    elm_calendar_displayed_time_get(const Evas_Object *obj, struct tm *displayed_time);
 
 /**
  * @}

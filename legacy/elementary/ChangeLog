@@ -551,3 +551,7 @@
 
         * Fix list corruption issue in multibuttonentry.
 
+2012-10-03  Michael Bouchaud (yoz)
+
+        * add elm_calendar_displayed_time_get
+        * add a signal display,changed to elm_calendar
