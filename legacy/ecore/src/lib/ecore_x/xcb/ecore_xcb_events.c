@@ -1939,7 +1939,7 @@ _ecore_xcb_event_handle_randr_output_change(xcb_generic_event_t *event)
 
 #ifdef ECORE_XCB_RANDR
    ev = (xcb_randr_notify_event_t *)event;
-   if (!(e = calloc(1, sizeof(Ecore_X_Event_Randr_Crtc_Change))))
+   if (!(e = calloc(1, sizeof(Ecore_X_Event_Randr_Output_Change))))
      return;
 
    e->win = ev->u.oc.window;
