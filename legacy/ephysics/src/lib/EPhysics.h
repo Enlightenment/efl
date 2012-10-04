@@ -432,8 +432,14 @@ EAPI void ephysics_camera_tracked_body_get(EPhysics_Camera *camera, EPhysics_Bod
  * @{
  *
  * A world is required to simulate physics between bodies.
- * It will setup collision configuration, constraint solver, the
- * broadphase interface and a dispatcher to dispatch calculations
+ * It will setup collision configuration,
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>,
+ * the
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Broadphase">
+ * broadphase</a></b>
+ * interface and a dispatcher to dispatch calculations
  * for overlapping pairs.
  *
  * A new world can be created with @ref ephysics_world_new() and deleted with
@@ -469,7 +475,10 @@ typedef enum _EPhysics_Callback_World_Type
  * @enum _EPhysics_World_Constraint_Solver_Mode
  * typedef EPhysics_World_Constraint_Solver_Mode
  *
- * Identifies the worlds contact and joint constraint solver mode. By default
+ * Identifies the worlds contact and
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Glossary_of_
+ * Terms#Joint.2C_constraint"> joint constraint</a></b>
+ * solver mode. By default
  * EPHYSICS_WORLD_SOLVER_USE_WARMSTARTING is the only enabled solver mode.
  *
  * @see ephysics_world_constraint_solver_mode_enable_set()
@@ -508,7 +517,12 @@ typedef void (*EPhysics_World_Event_Cb)(void *data, EPhysics_World *world, void 
  * Create a new physics world.
  *
  * A new world will be created with set collision configuration,
- * constraint solver, broadphase interface and dispatcher.
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>,
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Broadphase">
+ * broadphase</a></b>
+ * interface and dispatcher.
  *
  * It can be paused / unpaused with @ref ephysics_world_running_set() and its
  * gravity can be changed with @ref ephysics_world_gravity_set().
@@ -688,15 +702,28 @@ EAPI void ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy
 
 /**
  * @brief
- * Set the number of iterations the constraint solver will have for contact and
- * joint constraints.
+ * Set the number of iterations the
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>
+ * will have for contact and
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Glossary_of_
+ * Terms#Joint.2C_constraint">
+ * joint constraints</a></b>.
  *
  * The default value is set to 10. The greater number of iterations more
  * quality and precise the result but with performance penalty.
  *
- * By default, the Projected Gauss Seidel constraint solver is used for contact
- * and joint constraints. The algorithm is an iterative LCP solver, informally
- * known as 'sequential impulse'.
+ * By default, the Projected Gauss Seidel
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>
+ * is used for contact and
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Glossary_of_
+ * Terms#Joint.2C_constraint">
+ * joint constraints</a></b>.
+ * The algorithm is an iterative LCP solver, informally known as 'sequential
+ * impulse'.
  *
  * A reasonable range of iterations is from 4 (low quality, good performance)
  * to 20 (good quality, less but still reasonable performance).
@@ -711,8 +738,14 @@ EAPI void ephysics_world_constraint_solver_iterations_set(EPhysics_World *world,
 
 /**
  * @brief
- * Get the number of iterations the constraint solver will have for contact and
- * joint constraints.
+ * Get the number of iterations the
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>
+ * will have for contact and
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Glossary_of_
+ * Terms#Joint.2C_constraint">
+ * joint constraints</a></b>.
  *
  * @param world The world to get number of iterations from.
  * @return the number of iterations set to @p world, or 0 on failure.
@@ -724,8 +757,16 @@ EAPI int ephysics_world_constraint_solver_iterations_get(const EPhysics_World *w
 
 /**
  * @brief
- * Enable or disable a constraint solver mode to @p world. A world can operate
- * on several constraint solver modes.
+ * Enable or disable a
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>
+ * mode to @p world. A world can operate
+ * on several
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>
+ * modes.
  *
  * @param world The world to be set.
  * @param solver_mode The solver mode to set.
@@ -908,17 +949,27 @@ EAPI void *ephysics_world_event_callback_del_full(EPhysics_World *world, EPhysic
  * @brief
  * Set linear slop to be used by world.
  *
- * Constraint solver can be configured using some advanced settings, like
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * Constraint solver</a></b>
+ * can be configured using some advanced settings, like
  * the solver slop factor.
  *
  * The default value is set to 0 with a small value results in a smoother
  * stabilization for stacking bodies.
  *
- * Linear slop on sequencial impulse constraint solver is used as a factor
- * for penetration. The penetration will the manifold distance + linear slop.
+ * Linear slop on sequencial impulse
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>
+ * is used as a factor for penetration. The penetration will the manifold
+ * distance + linear slop.
  *
  * @param world The physics world.
- * @param linear_slop New linear slop value to be used by constraint solver
+ * @param linear_slop New linear slop value to be used by
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>
  * of physics engine.
  *
  * @ingroup EPhysics_World
@@ -930,8 +981,11 @@ EAPI void ephysics_world_linear_slop_set(EPhysics_World *world, double linear_sl
  * Get linear slop used by world.
  *
  * @param world The physics world.
- * @return Linear slop value used by constraint solver of physics engine or 0
- * on failure.
+ * @return Linear slop value used by
+ * <b><a href="http://bulletphysics.org/mediawiki-1.5.8/index.php/Collision_
+ * Detection_and_Physics_FAQ#How_do_most_physics_engines_solve_constraints.3F">
+ * constraint solver</a></b>
+ * of physics engine or 0 on failure.
  *
  * @see ephysics_world_linear_slop_set() for details.
  *
