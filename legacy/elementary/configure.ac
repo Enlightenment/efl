@@ -218,9 +218,9 @@ PKG_CHECK_MODULES([ELEMENTARY],
     eina >= 1.6.99
     eet >= 1.6.99
     evas >= 1.6.99
-    ecore >= 1.6.99
-    ecore-evas >= 1.6.99
-    ecore-file >= 1.6.99
+    ecore >= 1.7.99
+    ecore-evas >= 1.7.99
+    ecore-file >= 1.7.99
     edje >= 1.6.99
    ]
 )
