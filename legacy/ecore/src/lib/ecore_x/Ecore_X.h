@@ -1308,6 +1308,7 @@ EAPI void                      ecore_x_selection_parser_add(const char *target, 
 EAPI void                      ecore_x_selection_parser_del(const char *target);
 EAPI void                      ecore_x_selection_owner_set(Ecore_X_Window win, Ecore_X_Atom atom, Ecore_X_Time tm);
 EAPI Ecore_X_Window            ecore_x_selection_owner_get(Ecore_X_Atom atom);
+EAPI Eina_Bool                 ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *targprop, int *s); /** @since 1.8 */
 
 EAPI void                      ecore_x_dnd_aware_set(Ecore_X_Window win, Eina_Bool on);
 EAPI int                       ecore_x_dnd_version_get(Ecore_X_Window win);

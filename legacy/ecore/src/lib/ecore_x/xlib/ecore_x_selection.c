@@ -15,13 +15,6 @@ static Ecore_X_Selection_Intern selections[4];
 static Ecore_X_Selection_Converter *converters = NULL;
 static Ecore_X_Selection_Parser *parsers = NULL;
 
-static Eina_Bool _ecore_x_selection_converter_text(char *target,
-                                                   void *data,
-                                                   int size,
-                                                   void **data_ret,
-                                                   int *size_ret,
-                                                   Ecore_X_Atom *tprop,
-                                                   int *);
 static int   _ecore_x_selection_data_default_free(void *data);
 static void *_ecore_x_selection_parser_files(const char *target,
                                              void *data,
@@ -49,15 +42,15 @@ _ecore_x_selection_data_init(void)
 
    /* Initialize converters */
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_TEXT,
-                                        _ecore_x_selection_converter_text);
+                                        ecore_x_selection_converter_text);
 #ifdef X_HAVE_UTF8_STRING
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_UTF8_STRING,
-                                        _ecore_x_selection_converter_text);
+                                        ecore_x_selection_converter_text);
 #endif /* ifdef X_HAVE_UTF8_STRING */
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_COMPOUND_TEXT,
-                                        _ecore_x_selection_converter_text);
+                                        ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_STRING,
-                                        _ecore_x_selection_converter_text);
+                                        ecore_x_selection_converter_text);
 
    /* Initialize parsers */
    ecore_x_selection_parser_add("text/plain",
@@ -582,14 +575,14 @@ ecore_x_selection_convert(Ecore_X_Atom selection,
 /* TODO: We need to work out a mechanism for automatic conversion to any requested
  * locale using Ecore_Txt functions */
 /* Converter for standard non-utf8 text targets */
-static Eina_Bool
-_ecore_x_selection_converter_text(char *target,
-                                  void *data,
-                                  int size,
-                                  void **data_ret,
-                                  int *size_ret,
-                                  Ecore_X_Atom *targprop __UNUSED__,
-                                  int *s __UNUSED__)
+EAPI Eina_Bool
+ecore_x_selection_converter_text(char *target,
+                                 void *data,
+                                 int size,
+                                 void **data_ret,
+                                 int *size_ret,
+                                 Ecore_X_Atom *targprop __UNUSED__,
+                                 int *s __UNUSED__)
 {
    XTextProperty text_prop;
    char *mystr;

@@ -4,13 +4,6 @@
 #define ECORE_XCB_SELECTION_DATA(x) ((Ecore_X_Selection_Data *)(x))
 
 /* local function prototypes */
-static Eina_Bool _ecore_xcb_selection_converter_text(char         *target,
-                                                     void         *data,
-                                                     int           size,
-                                                     void        **data_ret,
-                                                     int          *size_ret,
-                                                     Ecore_X_Atom *type,
-                                                     int          *size_type);
 static void *_ecore_xcb_selection_parser_text(const char *target __UNUSED__,
                                               void       *data,
                                               int         size,
@@ -53,13 +46,13 @@ _ecore_xcb_selection_init(void)
 
    /* init converters */
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_TEXT,
-                                        _ecore_xcb_selection_converter_text);
+                                        ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_UTF8_STRING,
-                                        _ecore_xcb_selection_converter_text);
+                                        ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_COMPOUND_TEXT,
-                                        _ecore_xcb_selection_converter_text);
+                                        ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_STRING,
-                                        _ecore_xcb_selection_converter_text);
+                                        ecore_x_selection_converter_text);
 
    /* init parsers */
    ecore_x_selection_parser_add("text/plain",
@@ -672,14 +665,14 @@ _ecore_xcb_selection_request(Ecore_X_Window win,
                          XCB_CURRENT_TIME);
 }
 
-static Eina_Bool
-_ecore_xcb_selection_converter_text(char         *target,
-                                    void         *data,
-                                    int           size,
-                                    void        **data_ret,
-                                    int          *size_ret,
-                                    Ecore_X_Atom *type __UNUSED__,
-                                    int          *size_type __UNUSED__)
+EAPI Eina_Bool
+ecore_x_selection_converter_text(char         *target,
+                                 void         *data,
+                                 int           size,
+                                 void        **data_ret,
+                                 int          *size_ret,
+                                 Ecore_X_Atom *type __UNUSED__,
+                                 int          *size_type __UNUSED__)
 {
    Ecore_Xcb_Encoding_Style style;
    Ecore_Xcb_Textproperty ret;

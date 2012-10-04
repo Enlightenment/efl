@@ -10,6 +10,7 @@ Additions:
      - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP.
      - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN.
      - ecore_x_input_raw_select.
+     - +ecore_x_selection_converter_text.
      - ECORE_X_RAW_MOTION, ECORE_X_RAW_BUTTON_PRESS and ECORE_X_RAW_BUTTON_RELEASE.
     * ecore_imf:
      - ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.

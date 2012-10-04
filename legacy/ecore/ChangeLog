@@ -981,3 +981,7 @@
 2012-10-04  Cedric Bail
 
 	* Add ecore_x_input_raw_select and ECORE_X_RAW_*.
+
+2012-10-04  Sebastian Dransfeld
+
+	* Expose ecore_x_selection_converter_text
