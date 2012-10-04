@@ -1401,6 +1401,12 @@ ephysics_body_mass_set(EPhysics_Body *body, double mass)
         return;
      }
 
+   if (mass < 0)
+     {
+        ERR("Can't set body's mass, it must to be non-negative.");
+        return;
+     }
+
    ephysics_world_lock_take(body->world);
    _ephysics_body_mass_set(body, mass);
    ephysics_world_lock_release(body->world);

@@ -1288,6 +1288,16 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
  */
 
 /**
+ * @def EPHYSICS_BODY_MASS_STATIC
+ * @brief Mass amount used to makes a body static.
+ *
+ * Body will be set with infinite mass, so it will be immovable.
+ *
+ * @see ephysics_body_mass_set() for details.
+ */
+#define EPHYSICS_BODY_MASS_STATIC (0.0)
+
+/**
  * @typedef EPhysics_Body_Collision
  *
  * Body collision wraps collision informations.
@@ -1769,6 +1779,13 @@ EAPI void ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, E
  * It will set inertial mass of the body. It is a quantitative measure of
  * an object's resistance to the change of its speed. It's required to apply
  * more force on objects with more mass to increase its speed.
+ *
+ * If mass is set to 0 the body will have infinite mass, so it will be
+ * immovable, static. @ref EPHYSICS_BODY_MASS_STATIC can be used too.
+ *
+ * Negative mass is not allowed.
+ *
+ * By default, a body is created with 1 kg.
  *
  * @note The unit used for mass is kilograms.
  *

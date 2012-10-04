@@ -6,9 +6,6 @@
 #include <EPhysics.h>
 #include <Evas.h>
 
-/* TODO: move to EPhysics.h */
-#define EPHYSICS_BODY_MASS_IMMUTABLE (0.0)
-
 #define WIDTH (512)
 #define HEIGHT (384)
 #define FLOOR_Y (HEIGHT - 80)
@@ -219,7 +216,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    ephysics_world_render_geometry_set(world, 0, 0, WIDTH, HEIGHT);
 
    ground_body = ephysics_body_box_add(world);
-   ephysics_body_mass_set(ground_body, EPHYSICS_BODY_MASS_IMMUTABLE);
+   ephysics_body_mass_set(ground_body, EPHYSICS_BODY_MASS_STATIC);
    ephysics_body_geometry_set(ground_body, -100, FLOOR_Y, WIDTH + 800, 10);
    ephysics_body_restitution_set(ground_body, 0.65);
    ephysics_body_friction_set(ground_body, 0.8);
