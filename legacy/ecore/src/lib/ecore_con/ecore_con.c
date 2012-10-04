@@ -2021,7 +2021,7 @@ _ecore_con_cl_udp_handler(void             *data,
    want_write = ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE);
 
    svr = data;
-   if (svr->delete_me || svr->delete_me || ((!want_read) && (!want_write)))
+   if (svr->delete_me || ((!want_read) && (!want_write)))
      return ECORE_CALLBACK_RENEW;
 
    if (want_write)
