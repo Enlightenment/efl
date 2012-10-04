@@ -64,6 +64,7 @@ struct _EPhysics_World {
      Eina_Lock mutex;
      Eina_Condition condition;
      Eina_Bool running:1;
+     Eina_Bool ticked:1;
      Eina_Bool active:1;
      Eina_Bool deleted:1;
      Eina_Bool outside_autodel:1;
@@ -244,17 +245,27 @@ body_del:
 }
 
 static void
-_ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep __UNUSED__)
+_ephysics_world_tick_dispatch(EPhysics_World *world)
 {
-   EPhysics_World *world;
    Simulation_Msg *msg;
+
+   if (!world->ticked)
+     return;
+
+   world->ticked = EINA_FALSE;
+   world->pending_ticks++;
 
    msg = (Simulation_Msg *) calloc(1, sizeof(Simulation_Msg));
    msg->tick = EINA_TRUE;
-
-   world = (EPhysics_World *) dynamics_world->getWorldUserInfo();
-   world->pending_ticks++;
    ecore_thread_feedback(world->cur_th, msg);
+}
+
+static void
+_ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep __UNUSED__)
+{
+   EPhysics_World *world;
+   world = (EPhysics_World *) dynamics_world->getWorldUserInfo();
+   world->ticked = EINA_TRUE;
 }
 
 static void
@@ -564,6 +575,7 @@ _th_simulate(void *data, Ecore_Thread *th)
           ((btDiscreteDynamicsWorld *)world->dynamics_world)->stepSimulation(
              delta, world->max_sub_steps, world->fixed_time_step);
 
+        _ephysics_world_tick_dispatch(world);
         world->pending_ticks--;
         eina_lock_release(&world->mutex);
      }
