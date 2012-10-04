@@ -12,15 +12,6 @@
  */
 
 
-/**
- * @param desktop the desktop entry
- * @param files an eina list of file names to execute, as either absolute paths,
- * relative paths, or uris
- * @param func a callback to call for each prepared command line
- * @param data user data passed to the callback
- * @return Returns the return value of @p func on success or NULL on failure
- * @brief Get a command to use to execute a desktop entry.
- */
 EAPI extern int EFREET_DESKTOP_TYPE_APPLICATION;
 EAPI extern int EFREET_DESKTOP_TYPE_LINK;
 EAPI extern int EFREET_DESKTOP_TYPE_DIRECTORY;
@@ -246,6 +237,15 @@ EAPI void             *efreet_desktop_command_progress_get(Efreet_Desktop *deskt
                                          Efreet_Desktop_Command_Cb cb_command,
                                          Efreet_Desktop_Progress_Cb cb_prog,
                                          void *data);
+/**
+ * @param desktop the desktop entry
+ * @param files an eina list of file names to execute, as either absolute paths,
+ * relative paths, or uris
+ * @param func a callback to call for each prepared command line
+ * @param data user data passed to the callback
+ * @return Returns the return value of @p func on success or NULL on failure
+ * @brief Get a command to use to execute a desktop entry.
+ */
 EAPI void              *efreet_desktop_command_get(Efreet_Desktop *desktop,
                                          Eina_List *files,
                                          Efreet_Desktop_Command_Cb func,
