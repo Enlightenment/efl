@@ -31,6 +31,7 @@ struct _EPhysics_World {
      btSoftRigidDynamicsWorld* dynamics_world;
      btSoftBodyWorldInfo* world_info;
      btSoftBodySolver* soft_solver;
+     btOverlapFilterCallback *filter_cb;
 
      EPhysics_Body *boundaries[4];
      EPhysics_Camera *camera;
@@ -276,6 +277,7 @@ _ephysics_world_free(EPhysics_World *world)
 
    ephysics_camera_del(world->camera);
 
+   delete world->filter_cb;
    delete world->dynamics_world;
    delete world->solver;
    delete world->broadphase;
@@ -487,7 +489,6 @@ EAPI EPhysics_World *
 ephysics_world_new(void)
 {
    EPhysics_World *world;
-   btOverlapFilterCallback *filter_cb;
 
    world = (EPhysics_World *) calloc(1, sizeof(EPhysics_World));
    if (!world)
@@ -570,11 +571,12 @@ ephysics_world_new(void)
       EPHYSICS_WORLD_SOLVER_SIMD;
    world->dynamics_world->setGravity(DEFAULT_GRAVITY);
 
-   filter_cb = new _ephysics_world_ovelap_filter_cb();
-   if (!filter_cb)
+   world->filter_cb = new _ephysics_world_ovelap_filter_cb();
+   if (!world->filter_cb)
      INF("Couldn't initialize the collision filter.");
    else
-     world->dynamics_world->getPairCache()->setOverlapFilterCallback(filter_cb);
+     world->dynamics_world->getPairCache()->setOverlapFilterCallback(
+                                                               world->filter_cb);
 
    world->rate = 30;
    world->max_sub_steps = 3;
