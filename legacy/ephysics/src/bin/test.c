@@ -126,7 +126,9 @@ test_clean(Test_Data *test_data)
 void
 test_data_del(Test_Data *test_data)
 {
-   test_clean(test_data);
+   Evas_Object *evas_obj;
+   EINA_LIST_FREE(test_data->evas_objs, evas_obj)
+      evas_object_del(evas_obj);
    evas_object_del(test_data->layout);
    ephysics_world_del(test_data->world);
    free(test_data);
