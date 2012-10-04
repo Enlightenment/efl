@@ -658,13 +658,8 @@ static int
 _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
 {
    Ecore_X_Selection_Data *data;
-   char *stripstr, *mkupstr;
 
    data = notify->data;
-   stripstr = malloc(data->length + 1);
-   if (!stripstr) return 0;
-   strncpy(stripstr, (char *)data->data, data->length);
-   stripstr[data->length] = '\0';
    if (sel->datacb)
      {
         Elm_Selection_Data ddata;
@@ -674,17 +669,24 @@ _x11_notify_handler_text(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
         ddata.data = data->data;
         ddata.len = data->length;
         sel->datacb(sel->udata, sel->widget, &ddata);
-        free(stripstr);
-        return 0;
      }
-   cnp_debug("Notify handler text %d %d %p\n", data->format,
-             data->length, data->data);
-   mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
-   cnp_debug("String is %s (from %s)\n", stripstr, data->data);
-   /* TODO BUG: should never NEVER assume it's an elm_entry! */
-   _elm_entry_entry_paste(sel->requestwidget, mkupstr);
-   free(stripstr);
-   free(mkupstr);
+   else
+     {
+        char *stripstr, *mkupstr;
+
+        stripstr = malloc(data->length + 1);
+        if (!stripstr) return 0;
+        strncpy(stripstr, (char *)data->data, data->length);
+        stripstr[data->length] = '\0';
+        cnp_debug("Notify handler text %d %d %p\n", data->format,
+                  data->length, data->data);
+        mkupstr = _elm_util_text_to_mkup((const char *)stripstr);
+        cnp_debug("String is %s (from %s)\n", stripstr, data->data);
+        /* TODO BUG: should never NEVER assume it's an elm_entry! */
+        _elm_entry_entry_paste(sel->requestwidget, mkupstr);
+        free(stripstr);
+        free(mkupstr);
+     }
    return 0;
 }
 
