@@ -1661,7 +1661,8 @@ EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
  * @brief
  * Create a new deformable cloth physics body.
  *
- * A cloth has its points of deformation conceptually split into rows and columns
+ * A cloth has its points of deformation conceptually split into rows and
+ * columns
  * where every square is also split into two triangles - afore named nodes. To
  * fine tune the deformation one can increase this granularity by increasing the
  * @p granularity parameter.
@@ -1670,15 +1671,15 @@ EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
  * example passing @p granularity of 20 will create a cloth with 20 rows and 20
  * columns.
  *
- * By default EPhysics creates a cloth with 10 rows and 10 columns, these default
- * values will generally fit the most common scenarios.
+ * By default EPhysics creates a cloth with 10 rows and 10 columns, these
+ * default values will generally fit the most common scenarios.
  *
  * If the informed @p granularity is of 0 then the default value - of 10 - is
  * assumed.
  *
  * @param world The world this body will belong to.
- * @granularity Define - proportionally - the number of rows and columns, if 0
- * the default value - of 10 - is assumed.
+ * @param granularity Define - proportionally - the number of rows and columns,
+ * if 0 the default value - of 10 - is assumed.
  * @return a bew body or @c NULL on erros.
  *
  * @see ephysics_body_del().
@@ -3056,7 +3057,7 @@ EAPI double ephysics_body_density_get(const EPhysics_Body *body);
  *
  * So, for example, if @ref EPHYSICS_BODY_MATERIAL_WOOD is set, it will
  * set body's density to @ref EPHYSICS_BODY_DENSITY_WOOD, restitution
- * to @ref EPHSYICS_BODY_RESTITUTION_WOOD and friction to
+ * to @ref EPHYSICS_BODY_RESTITUTION_WOOD and friction to
  * @ref EPHYSICS_BODY_FRICTION_WOOD.
  *
  * If any of these values are later explicitely set, the material will
