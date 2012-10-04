@@ -347,10 +347,20 @@ _ephysics_body_soft_body_constraints_rebuild(EPhysics_Body *body)
    _ephysics_body_soft_body_points_distance_get(body, body->distances);
 }
 
+inline static double
+_ephysics_body_volume_get(const EPhysics_Body *body)
+{
+   btVector3 vector = body->collision_shape->getLocalScaling();
+   return vector.x() * vector.y() * vector.z();
+}
+
 static void
 _ephysics_body_mass_set(EPhysics_Body *body, double mass)
 {
    btVector3 inertia(0, 0, 0);
+
+   if (body->density)
+     mass = body->density * _ephysics_body_volume_get(body);
 
    if (body->soft_body)
      body->soft_body->setTotalMass(mass);
@@ -1408,6 +1418,7 @@ ephysics_body_mass_set(EPhysics_Body *body, double mass)
      }
 
    ephysics_world_lock_take(body->world);
+   body->density = 0;
    _ephysics_body_mass_set(body, mass);
    ephysics_world_lock_release(body->world);
 }
@@ -2010,6 +2021,33 @@ ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y)
 
    if (x) *x = body->cm.x;
    if (y) *y = body->cm.y;
+}
+
+EAPI void
+ephysics_body_density_set(EPhysics_Body *body, double density)
+{
+   if (!body)
+     {
+        ERR("Can't set the density of a null body's material.");
+        return;
+     }
+
+   body->density = density;
+   ephysics_world_lock_take(body->world);
+   _ephysics_body_mass_set(body, 0);
+   ephysics_world_lock_release(body->world);
+}
+
+EAPI double
+ephysics_body_density_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't get the density of a null body's material.");
+        return 0;
+     }
+
+   return body->density;
 }
 
 #ifdef  __cplusplus

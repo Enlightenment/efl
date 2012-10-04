@@ -80,6 +80,7 @@ struct _EPhysics_Body {
      Eina_List *collision_groups;
      Eina_List *to_delete;
      double mass;
+     double density;
      struct {
           double x;
           double y;

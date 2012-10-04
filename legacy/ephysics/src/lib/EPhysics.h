@@ -2699,6 +2699,47 @@ EAPI void ephysics_body_forces_clear(EPhysics_Body *body);
 EAPI void ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y);
 
 /**
+ * @brief
+ * Set body's material density.
+ *
+ * The density of a material is its mass per unit volume. It will set the
+ * body mass considering its volume. While a density is set, resizing
+ * a body will always recalculate its mass.
+ *
+ * When a mass is explicitely set with @ref ephysics_body_mass_set(),
+ * the density will be unset.
+ *
+ * It's useful in cases where a specific material needs to be simulated,
+ * so its density can be set and ephysics will calcute the body's mass.
+ *
+ * By default, no density is set.
+ *
+ * @note The unit used for density is kilograms / meters ^ 3.
+ *
+ * @param body The body to has its material density set.
+ * @param density The @p body's material density, in kilograms / meters ^ 3.
+ *
+ * @see ephysics_body_density_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_density_set(EPhysics_Body *body, double density);
+
+/**
+ * @brief
+ * Get body's material density.
+ *
+ * @param body The physics body.
+ * @return the @p body material's density, in kilograms / meters ^ 3 or 0
+ * if no density is set.
+ *
+ * @see ephysics_body_density_set() for details.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI double ephysics_body_density_get(const EPhysics_Body *body);
+
+/**
  * @}
  */
 
