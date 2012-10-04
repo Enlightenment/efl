@@ -137,7 +137,7 @@ _world_populate(Camera_Data *camera_data)
 }
 
 static void
-_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Camera_Data *camera_data = data;
 
@@ -196,7 +196,7 @@ test_camera(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
      }
 
    test_win_add((Test_Data *)camera_data, "Camera", EINA_FALSE);
-   evas_object_smart_callback_add(camera_data->base.win, "delete,request",
+   evas_object_event_callback_add(camera_data->base.win, EVAS_CALLBACK_DEL,
                                   _win_del, camera_data);
 
    elm_layout_signal_callback_add(camera_data->base.layout, "restart",

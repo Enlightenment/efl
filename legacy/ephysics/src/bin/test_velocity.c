@@ -138,7 +138,7 @@ _restart(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED_
 }
 
 static void
-_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Velocity_Data *velocity_data = data;
 
@@ -148,6 +148,7 @@ _win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    free(velocity_data);
    ephysics_shutdown();
 }
+
 void
 test_velocity(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -167,8 +168,8 @@ test_velocity(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
      }
 
    test_win_add((Test_Data *)velocity_data, "Velocity Getters", EINA_FALSE);
-   evas_object_smart_callback_add(velocity_data->base.win,
-                                  "delete,request", _win_del, velocity_data);
+   evas_object_event_callback_add(velocity_data->base.win, EVAS_CALLBACK_DEL,
+                                  _win_del, velocity_data);
    elm_layout_signal_callback_add(velocity_data->base.layout, "restart",
                                   "test-theme", _restart, velocity_data);
 

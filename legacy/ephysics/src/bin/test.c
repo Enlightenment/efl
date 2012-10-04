@@ -72,7 +72,7 @@ _win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 }
 
 static void
-_subwin_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_subwin_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    test_data_del(data);
    ephysics_shutdown();
@@ -157,8 +157,8 @@ test_win_add(Test_Data *test_data, const char *title, Eina_Bool autodel)
    evas_object_show(win);
    test_data->win = win;
    if (autodel)
-     evas_object_smart_callback_add(win, "delete,request", _subwin_del,
-                                    test_data);
+     evas_object_event_callback_add(win, EVAS_CALLBACK_DEL,
+                                    _subwin_del_cb, test_data);
 
    ly = elm_layout_add(win);
    elm_win_resize_object_add(win, ly);
@@ -196,6 +196,7 @@ _main_win_add(char *autorun)
    win = elm_win_add(NULL, "main", ELM_WIN_BASIC);
    elm_win_title_set(win, "EPhysics Tests");
    evas_object_smart_callback_add(win, "delete,request", _win_del, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
    evas_object_resize(win, 460, 560);
    evas_object_show(win);
 

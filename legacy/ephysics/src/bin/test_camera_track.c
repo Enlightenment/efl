@@ -161,7 +161,7 @@ _restart(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED_
 }
 
 static void
-_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Track_Data *track_data = data;
 
@@ -192,8 +192,8 @@ test_camera_track(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
      }
 
    test_win_add((Test_Data *) track_data, "Camera Track", EINA_FALSE);
-   evas_object_smart_callback_add(track_data->base.win,
-                                  "delete,request", _win_del, track_data);
+   evas_object_event_callback_add(track_data->base.win, EVAS_CALLBACK_DEL,
+                                  _win_del, track_data);
 
    elm_layout_signal_callback_add(track_data->base.layout, "restart",
                                   "test-theme", _restart, track_data);

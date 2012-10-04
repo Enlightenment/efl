@@ -72,7 +72,7 @@ _restart(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED_
 }
 
 static void
-_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Speed_Data *speed_data = data;
 
@@ -106,8 +106,8 @@ test_collision_speed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
                 EINA_FALSE);
    elm_object_signal_emit(speed_data->base.layout, "borders,show",
                           "ephysics_test");
-   evas_object_smart_callback_add(speed_data->base.win,
-                                  "delete,request", _win_del, speed_data);
+   evas_object_event_callback_add(speed_data->base.win, EVAS_CALLBACK_DEL,
+                                  _win_del, speed_data);
    elm_layout_signal_callback_add(speed_data->base.layout, "restart",
                                   "test-theme", _restart, speed_data);
 

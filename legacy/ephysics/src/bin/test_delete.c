@@ -135,7 +135,7 @@ _restart(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED_
 }
 
 static void
-_win_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Collision_Data *collision_data = data;
 
@@ -165,8 +165,8 @@ test_delete(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
      }
 
    test_win_add((Test_Data *)collision_data, "Delete Body", EINA_FALSE);
-   evas_object_smart_callback_add(collision_data->base.win,
-                                  "delete,request", _win_del, collision_data);
+   evas_object_event_callback_add(collision_data->base.win, EVAS_CALLBACK_DEL,
+                                  _win_del, collision_data);
    elm_object_signal_emit(collision_data->base.layout, "borders,show",
                           "ephysics_test");
    elm_layout_signal_callback_add(collision_data->base.layout, "restart",

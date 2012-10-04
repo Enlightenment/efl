@@ -12,7 +12,7 @@ struct _Old_Rate {
 };
 
 static void
-_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    free(data);
 }
@@ -175,8 +175,8 @@ test_win_resize(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_size_hint_weight_set(test_data->layout, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    elm_win_aspect_set(test_data->win, (double) WIDTH / HEIGHT);
-   evas_object_smart_callback_add(test_data->win, "delete,request", _del_cb,
-                                  test_data->data);
+   evas_object_event_callback_add(test_data->win, EVAS_CALLBACK_DEL,
+                                  _win_del, test_data->data);
 
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
