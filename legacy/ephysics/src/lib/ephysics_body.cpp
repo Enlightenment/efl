@@ -808,7 +808,9 @@ _ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape
    body = _ephysics_body_add(world, collision_shape, "soft box", 0.5, 0.5);
    if (!body)
      {
-        ephysics_body_del(body);
+        if (body->deleted) return NULL;
+        body->deleted = EINA_TRUE;
+        ephysics_world_body_del(body->world, body);
         return NULL;
      }
    body->soft_body = soft_body;
