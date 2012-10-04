@@ -229,6 +229,24 @@
             }
          }
 
+         part {
+            name: "loading_bar";
+            type: GROUP;
+            source: "loading_bar";
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               align: 0.5 1;
+               visible: 0;
+               rel2.offset: -1 -5;
+            }
+            description {
+               state: "visible" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
+
       }
 
       programs {
@@ -266,6 +284,14 @@
             target: "linear_acc";
             target: "angular_vel";
             target: "angular_acc";
+          }
+
+          program {
+            name: "loading_bar,show";
+            source: "ephysics_test";
+            signal: "loading_bar,show";
+            action: STATE_SET "visible" 0.0;
+            target: "loading_bar";
           }
 
       }

@@ -29,6 +29,7 @@ test_delete.c \
 test_falling_letters.c \
 test_forces.c \
 test_growing_balls.c \
+test_heavy.c \
 test_jumping_balls.c \
 test_material.c \
 test_no_gravity.c \

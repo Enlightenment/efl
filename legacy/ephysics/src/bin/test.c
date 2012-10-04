@@ -29,6 +29,7 @@ void test_falling_letters(void *data, Evas_Object *obj, void *event_info);
 void test_flag(void *data, Evas_Object *obj, void *event_info);
 void test_forces(void *data, Evas_Object *obj, void *event_info);
 void test_growing_balls(void *data, Evas_Object *obj, void *event_info);
+void test_heavy(void *data, Evas_Object *obj, void *event_info);
 void test_jumping_balls(void *data, Evas_Object *obj, void *event_info);
 void test_material(void *data, Evas_Object *obj, void *event_info);
 void test_no_gravity(void *data, Evas_Object *obj, void *event_info);
@@ -56,6 +57,7 @@ static const EPhysics_Test tests[] = {
        {"Flag - Cloth", test_flag},
        {"Forces", test_forces},
        {"Growing Balls", test_growing_balls},
+       {"Heavy", test_heavy},
        {"Jumping Balls", test_jumping_balls},
        {"Material", test_material},
        {"No Gravity", test_no_gravity},

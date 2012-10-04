@@ -1,0 +1,69 @@
+   group {
+      name: "loading_bar";
+      min: 440 16;
+      max: 440 16;
+
+      images {
+         image: "loading_bar.png" COMP;
+         image: "loading_knob.png" COMP;
+      }
+
+      parts {
+
+         part {
+            name: "bar";
+            type: IMAGE;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               min: 440 8;
+               max: 440 8;
+               image.normal: "loading_bar.png";
+            }
+         }
+
+         part {
+            name: "knob";
+            type: IMAGE;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               min: 56 16;
+               max: 56 16;
+               rel1.to: "bar";
+               rel2.to: "bar";
+               align: 0 0.5;
+               image.normal: "loading_knob.png";
+            }
+            description {
+               state: "end" 0.0;
+               inherit: "default" 0.0;
+               align: 1 0.5;
+            }
+         }
+
+      }
+
+      programs {
+
+          program {
+            name: "loading_bar,show";
+            source: "ephysics_test";
+            signal: "loading_bar,show";
+            action: STATE_SET "end" 0.0;
+            transition: LINEAR 1.5;
+            target: "knob";
+            after: "knob,restart";
+          }
+
+          program {
+            name: "knob,restart";
+            action: STATE_SET "default" 0.0;
+            transition: LINEAR 1.5;
+            target: "knob";
+            after: "loading_bar,show";
+          }
+
+      }
+
+   }

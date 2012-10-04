@@ -19,6 +19,7 @@ EXTRA_DIST = \
 	ephysics_test.edc \
 	frame.edc \
 	list.edc \
+	loading_bar.edc \
 	shadows.edc \
 	shapes.edc \
 	spinner.edc \
@@ -47,6 +48,8 @@ EXTRA_DIST = \
 	images/list-item-corner.png \
 	images/list-item-corner-pressed.png \
 	images/list-item-pressed.png \
+	images/loading_bar.png \
+	images/loading_knob.png \
 	images/pentagon.png \
 	images/shadow-ball.png \
 	images/shadow-cube.png \
