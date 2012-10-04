@@ -19,15 +19,6 @@
 #ifndef EINA_INLINE_LOCK_POSIX_X_
 #define EINA_INLINE_LOCK_POSIX_X_
 
-#ifdef EINA_UNUSED
-# undef EINA_UNUSED
-#endif
-#ifdef __GNUC__
-# define EINA_UNUSED __attribute__((unused))
-#else
-# define EINA_UNUSED
-#endif
-
 #include <errno.h>
 #ifndef __USE_UNIX98
 # define __USE_UNIX98

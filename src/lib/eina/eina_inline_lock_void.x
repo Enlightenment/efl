@@ -19,15 +19,6 @@
 #ifndef EINA_INLINE_LOCK_VOID_X_
 #define EINA_INLINE_LOCK_VOID_X_
 
-#ifdef EINA_UNUSED
-# undef EINA_UNUSED
-#endif
-#ifdef __GNUC__
-# define EINA_UNUSED __attribute__((unused))
-#else
-# define EINA_UNUSED
-#endif
-
 /**
  * @addtogroup Eina_Lock_Group Lock
  *

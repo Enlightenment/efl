@@ -19,16 +19,11 @@
 #ifndef EINA_INLINE_LOCK_WIN32_X_
 #define EINA_INLINE_LOCK_WIN32_X_
 
-#ifdef EINA_UNUSED
-# undef EINA_UNUSED
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
 #endif
-#ifdef __GNUC__
-# define EINA_UNUSED __attribute__((unused))
-#else
-# define EINA_UNUSED
-#endif
-
 #include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
 
 EAPI extern Eina_Bool _threads_activated;
 
