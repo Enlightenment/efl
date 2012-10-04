@@ -34,6 +34,8 @@ Fixes:
    * Escape theme filename correctly.
    * Fix diskselector selection of middle item.
    * Fix multibuttonentry list corruption.
+   * Fix copy&paste error in elm_flip.
+   * Fix possible invalid memory access in elm_access.
    
 Removals:
 

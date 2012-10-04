@@ -555,3 +555,8 @@
 
         * add elm_calendar_displayed_time_get
         * add a signal display,changed to elm_calendar
+
+2012-10-04  Igor Murzov
+
+	* fix copy&paste error in elm_flip.
+	* fix possible invalid memory access in elm_access.

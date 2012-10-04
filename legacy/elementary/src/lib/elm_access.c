@@ -691,13 +691,13 @@ _access_item_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 EAPI void
 _elm_access_widget_item_register(Elm_Widget_Item *item)
 {
-   Evas_Object *ao;
-   Evas_Object *ho = item->view;
+   Evas_Object *ao, *ho;
    Evas_Coord x, y, w, h;
 
    if (!item) return;
 
    // create access object
+   ho = item->view;
    ao = _elm_access_add(item->widget);
    evas_object_event_callback_add(ho, EVAS_CALLBACK_RESIZE,
                                   _content_resize, ao);

@@ -79,7 +79,7 @@ _button_create(Evas_Object *parent, const char *label)
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
-    Evas_Object *win, *bg, *btn, *layout, *tbl_items[3];
+    Evas_Object *win, *bg, *btn, *layout, *tbl_items[6];
     const char *labels[] = {"One", "Two", "Three", "Four", "Five", "Six"};
     int i;
 
