@@ -68,8 +68,29 @@ _ecore_x_input_handler(XEvent *xevent)
 {
 #ifdef ECORE_XI2
    XIDeviceEvent *evd = (XIDeviceEvent *)(xevent->xcookie.data);
+   /* XIRawEvent *evr = (XIRawEvent *)(xevent->xcookie.data); */
    int devid = evd->deviceid;
    int i;
+
+   /* No filter for this events */
+   switch (xevent->xcookie.evtype)
+     {
+#ifdef XI_RawButtonPress
+      case XI_RawButtonPress:
+         ecore_event_add(ECORE_X_RAW_BUTTON_PRESS, NULL, NULL, NULL);
+         break;
+#endif
+#ifdef XI_RawButtonRelease
+      case XI_RawButtonRelease:
+         ecore_event_add(ECORE_X_RAW_BUTTON_RELEASE, NULL, NULL, NULL);
+         break;
+#endif
+#ifdef XI_RawMotion
+      case XI_RawMotion:
+         ecore_event_add(ECORE_X_RAW_MOTION, NULL, NULL, NULL);
+         break;
+#endif
+     }
 
    if (_ecore_x_xi2_devs)
      {
@@ -279,5 +300,39 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 #else /* ifdef ECORE_XI2 */
    return EINA_FALSE;
 #endif /* ifdef ECORE_XI2 */
+}
+
+EAPI Eina_Bool
+ecore_x_input_raw_select(Ecore_X_Window win)
+{
+#ifdef ECORE_XI2
+   XIEventMask emask;
+   int i;
+   Eina_Bool find = EINA_FALSE;
+   unsigned char mask[4] = { 0 };
+
+   if (!_ecore_x_xi2_devs)
+     return EINA_FALSE;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   emask.deviceid = XIAllMasterDevices;
+   emask.mask_len = sizeof(mask);
+   emask.mask = mask;
+#ifdef XI_RawButtonPress
+   XISetMask(emask.mask, XI_RawButtonPress);
+#endif
+#ifdef XI_RawButtonRelease
+   XISetMask(emask.mask, XI_RawButtonRelease);
+#endif
+#ifdef XI_RawMotion
+   XISetMask(emask.mask, XI_RawMotion);
+#endif
+
+   XISelectEvents(_ecore_x_disp, win, &emask, 1);
+
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
 }
 

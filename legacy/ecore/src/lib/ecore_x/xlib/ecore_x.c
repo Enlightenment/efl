@@ -144,6 +144,10 @@ EAPI int ECORE_X_LOCK_NUM = 0;
 EAPI int ECORE_X_LOCK_CAPS = 0;
 EAPI int ECORE_X_LOCK_SHIFT = 0;
 
+EAPI int ECORE_X_RAW_BUTTON_PRESS = 0;
+EAPI int ECORE_X_RAW_BUTTON_RELEASE = 0;
+EAPI int ECORE_X_RAW_MOTION = 0;
+
 #ifdef LOGRT
 static double t0 = 0.0;
 static Status (*_logrt_real_reply)(Display *disp,
@@ -612,6 +616,10 @@ ecore_x_init(const char *name)
         ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = ecore_event_type_new();
 	
         ECORE_X_EVENT_GENERIC = ecore_event_type_new();
+
+	ECORE_X_RAW_BUTTON_PRESS = ecore_event_type_new();
+	ECORE_X_RAW_BUTTON_RELEASE = ecore_event_type_new();
+	ECORE_X_RAW_MOTION = ecore_event_type_new();
      }
 
    _ecore_x_modifiers_get();

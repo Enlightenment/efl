@@ -1068,6 +1068,10 @@ EAPI extern int ECORE_X_LOCK_NUM;
 EAPI extern int ECORE_X_LOCK_CAPS;
 EAPI extern int ECORE_X_LOCK_SHIFT;
 
+EAPI extern int ECORE_X_RAW_BUTTON_PRESS;   /**< @since 1.8 */
+EAPI extern int ECORE_X_RAW_BUTTON_RELEASE; /**< @since 1.8 */
+EAPI extern int ECORE_X_RAW_MOTION;         /**< @since 1.8 */
+
 typedef enum _Ecore_X_WM_Protocol
 {
    /** If enabled the window manager will be asked to send a
@@ -2229,6 +2233,7 @@ EAPI Eina_Bool      ecore_x_image_is_argb32_get(Ecore_X_Image *im);
 EAPI Eina_Bool      ecore_x_image_to_argb_convert(void *src, int sbpp, int sbpl, Ecore_X_Colormap c, Ecore_X_Visual v, int x, int y, int w, int h, unsigned int *dst, int dbpl, int dx, int dy);
 
 EAPI Eina_Bool      ecore_x_input_multi_select(Ecore_X_Window win);
+EAPI Eina_Bool	    ecore_x_input_raw_select(Ecore_X_Window win); /**< @since 1.8 */
 
 EAPI Eina_Bool      ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win);
 

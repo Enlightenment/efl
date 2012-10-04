@@ -184,6 +184,10 @@ EAPI int ECORE_X_EVENT_XKB_STATE_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_GENERIC = 0;
 
+EAPI int ECORE_X_RAW_BUTTON_PRESS = 0;
+EAPI int ECORE_X_RAW_BUTTON_RELEASE = 0;
+EAPI int ECORE_X_RAW_MOTION = 0;
+
 void
 _ecore_xcb_events_init(void)
 {
@@ -248,6 +252,10 @@ _ecore_xcb_events_init(void)
         ECORE_X_EVENT_XKB_STATE_NOTIFY = ecore_event_type_new();
         ECORE_X_EVENT_XKB_NEWKBD_NOTIFY = ecore_event_type_new();
         ECORE_X_EVENT_GENERIC = ecore_event_type_new();
+
+	ECORE_X_RAW_BUTTON_PRESS = ecore_event_type_new();
+	ECORE_X_RAW_BUTTON_RELEASE = ecore_event_type_new();
+	ECORE_X_RAW_MOTION = ecore_event_type_new();
      }
 }
 

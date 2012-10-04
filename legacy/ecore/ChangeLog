@@ -977,3 +977,7 @@
 
 2012-10-03  Daniel Wilmann
        * Fix memory allocation size in ecore_x xcb randr function
+
+2012-10-04  Cedric Bail
+
+	* Add ecore_x_input_raw_select and ECORE_X_RAW_*.

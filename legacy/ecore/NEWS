@@ -7,15 +7,13 @@ Additions:
     * ecore_con:
      - Add Ecore_Con_Eet API to help using Eet_Data with Ecore_Con.
     * ecore_x:
-     - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP
-     - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN
-     - Fix ecore_x_randr to actually return outputs properly.
-     - Fix ecore_x_randr to actually return crtcs properly.
-     - Fix ecore_x_randr to actually return crtcs possible outputs properly.
-     - Fix ecore_x_randr to actually return crtcs outputs properly.
+     - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_UP.
+     - ECORE_X_ATOM_E_ILLUME_ACCESS_ACTION_DOWN.
+     - ecore_x_input_raw_select.
+     - ECORE_X_RAW_MOTION, ECORE_X_RAW_BUTTON_PRESS and ECORE_X_RAW_BUTTON_RELEASE.
     * ecore_imf:
-     - Add ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
-     - Add ECORE_IMF_PREEDIT_TYPE_SUB4~7 style
+     - ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
+     - ECORE_IMF_PREEDIT_TYPE_SUB4~7 style.
 
 Fixes:
     * ecore_con_url:
@@ -23,9 +21,14 @@ Fixes:
        completion callback).
     * ecore_evas rotation handling on some driver implementations
     * ecore_file_escape_name() escape taba nd newline right.
-    * ecore_x_image_is_argb32_get() returns correctly given endianness.
     * ecore_imf ibus module potential segv fixed.
     * ecore_thread_feedback() memory allocation and corruption fixed.
+    * ecore_x:
+     - ecore_x_image_is_argb32_get() returns correctly given endianness.
+     - ecore_x_randr to actually return outputs properly.
+     - ecore_x_randr to actually return crtcs properly.
+     - ecore_x_randr to actually return crtcs possible outputs properly.
+     - ecore_x_randr to actually return crtcs outputs properly.
 
 Improvements:
 
