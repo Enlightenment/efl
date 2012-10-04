@@ -15,7 +15,7 @@
 
 #define DATA32  unsigned int
 
-#define GST_DBG
+//#define GST_DBG
 
 #ifdef GST_DBG
 #define D(fmt, args...) fprintf(stderr, fmt, ## args)
