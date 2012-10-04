@@ -1,0 +1,42 @@
+   images {
+      image: "green-flag.png" COMP;
+      image: "brown-pole.png" COMP;
+   }
+
+   group {
+      name: "green-flag";
+
+      parts {
+
+         part {
+            name: "flag";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "green-flag.png";
+            }
+         }
+
+      }
+
+   }
+
+   group {
+      name: "brown-pole";
+
+      parts {
+
+         part {
+            name: "pole";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "brown-pole.png";
+            }
+         }
+
+      }
+
+   }

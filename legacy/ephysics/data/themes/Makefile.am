@@ -55,7 +55,9 @@ EXTRA_DIST = \
 	images/spinner_bt_left_pressed.png \
 	images/spinner_bt_right.png \
 	images/spinner_bt_right_pressed.png \
-	images/star.png
+	images/star.png \
+	images/green-flag.png \
+	images/brown-pole.png
 
 ephysics_test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

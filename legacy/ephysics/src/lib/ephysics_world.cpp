@@ -171,9 +171,10 @@ _ephysics_world_tick(btDynamicsWorld *dynamics_world)
 {
    Eina_Bool world_active, camera_moved, tx, ty;
    btCollisionObjectArray objects;
-   btRigidBody *rigid_body;
+   btCollisionObject *collision;
    EPhysics_World *world;
    EPhysics_Body *body;
+   btRigidBody *rigid_body;
 
    world = (EPhysics_World *) dynamics_world->getWorldUserInfo();
 
@@ -192,12 +193,13 @@ _ephysics_world_tick(btDynamicsWorld *dynamics_world)
    objects = dynamics_world->getCollisionObjectArray();
    for (int i = 0; i < objects.size(); i++)
      {
-        btRigidBody *rigid_body = btRigidBody::upcast(objects[i]);
-        if (!rigid_body)
+        collision = objects[i];
+
+        if (!collision)
           continue;
 
-        body = (EPhysics_Body *) rigid_body->getUserPointer();
-        if (rigid_body->isActive())
+        body = (EPhysics_Body *) collision->getUserPointer();
+        if (collision->isActive())
           {
              ephysics_body_active_set(body, EINA_TRUE);
              ephysics_body_evas_object_update_select(body);
@@ -260,7 +262,8 @@ _ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
 {
    btSoftBody *soft_body;
 
-   world->dynamics_world->removeRigidBody(ephysics_body_rigid_body_get(body));
+   if (ephysics_body_rigid_body_get(body))
+     world->dynamics_world->removeRigidBody(ephysics_body_rigid_body_get(body));
 
    soft_body = ephysics_body_soft_body_get(body);
    if (soft_body)
@@ -291,10 +294,7 @@ ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
       and body 2 will stay freezed in the air. Gravity won't start to
       act over it until it's activated again. */
    EINA_INLIST_FOREACH(world->bodies, bd)
-     {
-        btRigidBody *rigid_body = ephysics_body_rigid_body_get(bd);
-        rigid_body->activate(1);
-     }
+     ephysics_body_activate(bd, EINA_TRUE);
 
    return EINA_TRUE;
 }

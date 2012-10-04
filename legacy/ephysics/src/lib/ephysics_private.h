@@ -65,6 +65,13 @@ struct _EPhysics_Point {
      double y;
 };
 
+typedef enum _EPhysics_Body_Type
+{
+  EPHYSICS_BODY_TYPE_RIGID,
+  EPHYSICS_BODY_TYPE_SOFT,
+  EPHYSICS_BODY_TYPE_CLOTH,
+} EPhysics_Body_Type;
+
 struct _EPhysics_Body {
      EINA_INLIST;
      btCollisionShape *collision_shape;
@@ -95,6 +102,10 @@ struct _EPhysics_Body {
      Eina_Bool deleted:1;
      int slices;
      int *points_deform;
+     EPhysics_Body_Type type;
+     int cloth_columns;
+     int cloth_rows;
+     int anchor_prop;
 };
 
 extern int _ephysics_log_dom;
@@ -116,6 +127,8 @@ void ephysics_world_boundary_set(EPhysics_World *world, EPhysics_World_Boundary 
 EPhysics_Body *ephysics_world_boundary_get(const EPhysics_World *world, EPhysics_World_Boundary boundary);
 Eina_Bool ephysics_world_bodies_outside_autodel_get(const EPhysics_World *world);
 btSoftBodyWorldInfo *ephysics_world_info_get(const EPhysics_World *world);
+void ephysics_world_lock_take(EPhysics_World *world);
+void ephysics_world_lock_release(EPhysics_World *world);
 
 /* Body */
 Eina_Bool ephysics_body_filter_collision(EPhysics_Body *body0, EPhysics_Body *body1);
@@ -127,8 +140,7 @@ btSoftBody *ephysics_body_soft_body_get(const EPhysics_Body *body);
 void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
 void ephysics_body_recalc(EPhysics_Body *body, double rate);
 void ephysics_body_forces_apply(EPhysics_Body *body);
-void ephysics_world_lock_take(EPhysics_World *world);
-void ephysics_world_lock_release(EPhysics_World *world);
+void ephysics_body_activate(const EPhysics_Body *body, Eina_Bool activate);
 
 /* Camera */
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);

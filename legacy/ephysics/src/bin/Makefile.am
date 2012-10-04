@@ -39,7 +39,8 @@ test_shapes.c \
 test_sleeping_threshold.c \
 test_slider.c \
 test_soft_body.c \
-test_win_resize.c
+test_win_resize.c \
+test_flag.c
 
 ephysics_logo_SOURCES = \
 ephysics_logo.c

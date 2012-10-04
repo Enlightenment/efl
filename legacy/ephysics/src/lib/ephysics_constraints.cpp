@@ -119,6 +119,13 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
         return NULL;
      }
 
+   if (body->type == EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        ERR("Constraints are allowed only between rigid -> rigid bodies or "
+            "rigid -> soft bodies");
+        return NULL;
+     }
+
    constraint = (EPhysics_Constraint *) calloc(1, sizeof(EPhysics_Constraint));
    if (!constraint)
      {
@@ -277,8 +284,16 @@ ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coo
    if ((body2) &&
        (ephysics_body_world_get(body1) != ephysics_body_world_get(body2)))
      {
-        ERR("To create a constraint both bodies must to belong to the same"
+        ERR("To create a constraint both bodies must belong to the same"
             "world.");
+        return NULL;
+     }
+
+   if (body1->type == EPHYSICS_BODY_TYPE_CLOTH ||
+       body2->type == EPHYSICS_BODY_TYPE_CLOTH)
+     {
+        ERR("Constraints are allowed only between rigid -> rigid bodies or"
+            "rigid -> soft bodies");
         return NULL;
      }
 

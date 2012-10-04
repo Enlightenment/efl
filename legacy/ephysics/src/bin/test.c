@@ -26,6 +26,7 @@ void test_collision_speed(void *data, Evas_Object *obj, void *event_info);
 void test_constraint(void *data, Evas_Object *obj, void *event_info);
 void test_delete(void *data, Evas_Object *obj, void *event_info);
 void test_falling_letters(void *data, Evas_Object *obj, void *event_info);
+void test_flag(void *data, Evas_Object *obj, void *event_info);
 void test_forces(void *data, Evas_Object *obj, void *event_info);
 void test_growing_balls(void *data, Evas_Object *obj, void *event_info);
 void test_jumping_balls(void *data, Evas_Object *obj, void *event_info);
@@ -52,6 +53,7 @@ static const EPhysics_Test tests[] = {
        {"Constraint", test_constraint},
        {"Delete Body", test_delete},
        {"Falling Letters", test_falling_letters},
+       {"Flag - Cloth", test_flag},
        {"Forces", test_forces},
        {"Growing Balls", test_growing_balls},
        {"Jumping Balls", test_jumping_balls},

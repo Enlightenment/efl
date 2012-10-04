@@ -1427,6 +1427,24 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
 #define EPHYSICS_BODY_RESTITUTION_PLASTIC (0.6)
 
 /**
+ * @enum _EPhysics_Body_Cloth_Anchor_Side
+ * @typedef EPhysics_Body_Cloth_Anchor_Side
+ *
+ * Identifier of cloth anchor sides.
+ *
+ * @see ephysics_body_cloth_anchor_full_add()
+ *
+ * @ingroup EPhysics_Body
+ */
+typedef enum _EPhysics_Body_Cloth_Anchor_Side
+{
+  EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT,
+  EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_RIGHT,
+  EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_TOP,
+  EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_BOTTOM,
+} EPhysics_Body_Cloth_Anchor_Side;
+
+/**
  * @typedef EPhysics_Body_Collision
  *
  * Body collision wraps collision informations.
@@ -1628,8 +1646,8 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  *
  * For a rigid circle, check @ref ephysics_body_circle_add().
  *
- * @param world The world this body will belongs to.
- * @return a new body or @c NULL, on errors.
+ * @param world The world this body will belong to.
+ * @return a new body or @c NULL on errors.
  *
  * @see ephysics_body_del().
  * @see ephysics_body_evas_object_set().
@@ -1638,6 +1656,102 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  * @ingroup EPhysics_Body
  */
 EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
+
+/**
+ * @brief
+ * Create a new deformable cloth physics body.
+ *
+ * A cloth has its points of deformation conceptually split into rows and columns
+ * where every square is also split into two triangles - afore named nodes. To
+ * fine tune the deformation one can increase this granularity by increasing the
+ * @p granularity parameter.
+ *
+ * The number of rows is always proportional to the number of columns, for
+ * example passing @p granularity of 20 will create a cloth with 20 rows and 20
+ * columns.
+ *
+ * By default EPhysics creates a cloth with 10 rows and 10 columns, these default
+ * values will generally fit the most common scenarios.
+ *
+ * If the informed @p granularity is of 0 then the default value - of 10 - is
+ * assumed.
+ *
+ * @param world The world this body will belong to.
+ * @granularity Define - proportionally - the number of rows and columns, if 0
+ * the default value - of 10 - is assumed.
+ * @return a bew body or @c NULL on erros.
+ *
+ * @see ephysics_body_del().
+ * @see ephysics_body_evas_object_set().
+ * @see ephysics_world_simulation_set().
+ * @see ephysics_body_cloth_anchor_add().
+ * @see ephysics_body_cloth_anchor_full_add().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity);
+
+/**
+ * @brief
+ * Anchors a cloth with a rigid body.
+ *
+ * All the informed @p side of @p body1 will be anchored to @p body1 wherever
+ * it's in time of anchoring. That is, all the nodes in the informed "edge".
+ *
+ * An anchor assumes the @p body1 positions, if it's 20px far from @p body2 then
+ * this distance is always kept, moving @p body1 or @p body2 will respect a 20px
+ * difference.
+ *
+ * @param body1 The cloth body to be anchored.
+ * @param body2 The body to be anchored to.
+ * @param side The side to be anchored.
+ *
+ * @see ephysics_body_cloth_anchor_add().
+ * @see ephysics_body_cloth_anchor_del().
+ * @see ephysics_body_cloth_add() to know more about the cloth physics
+ * representation.
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_cloth_anchor_full_add(EPhysics_Body *body1, EPhysics_Body *body2, EPhysics_Body_Cloth_Anchor_Side side);
+
+/**
+ * @brief
+ * Anchors an arbitrary cloth's node with a rigid body.
+ *
+ * The informed @p node of @p body1 will be anchored to @p body2 wherever it's
+ * in time of anchoring.
+ *
+ * @see ephysics_body_cloth_add() to know more about the cloth physics
+ * representation, nodes and so on.
+ *
+ * An anchor assumes the @p body1 positions, if it's 20px far from @p body2 then
+ * this distance is always kept, moving @p body1 or @p body2 will respect a 20px
+ * difference.
+ *
+ * @param body1 The cloth body to be anchored.
+ * @param body2 The body to be anchored to.
+ * @param node The node index to be anchored.
+ *
+ * @see ephysics_body_cloth_anchor_full_add().
+ * @see ephysics_body_cloth_anchor_del().
+
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_cloth_anchor_add(EPhysics_Body *body1, EPhysics_Body *body2, int node);
+
+/**
+ * @brief
+ * Removes the anchors in a cloth body.
+ *
+ * @param body The body to delete anchors from.
+ *
+ * @see ephysics_body_cloth_anchor_full_add().
+ * @see ephysics_body_cloth_anchor_add().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_cloth_anchor_del(EPhysics_Body *body);
 
 /**
  * @brief
