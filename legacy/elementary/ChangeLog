@@ -564,3 +564,8 @@
 2012-10-04  Cedric Bail
 
 	* Add a color picker to elm_colorselector.
+
+2012-10-04  Sebastian Dransfeld
+
+	* Use ecore_x_selection_converter_text to convert text data so we can
+	  support COMPOUND_TEXT

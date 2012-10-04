@@ -30,6 +30,7 @@ enum
 //   CNP_ATOM_text_html,
    CNP_ATOM_UTF8STRING,
    CNP_ATOM_STRING,
+   CNP_ATOM_COMPOUND_TEXT,
    CNP_ATOM_TEXT,
    CNP_ATOM_text_plain_utf8,
    CNP_ATOM_text_plain,
@@ -337,6 +338,14 @@ static X11_Cnp_Atom _x11_atoms[CNP_N_ATOMS] = {
       _x11_text_converter,
       NULL,
       _x11_notify_handler_text,
+      0
+   },
+   [CNP_ATOM_COMPOUND_TEXT] = {
+      "COMPOUND_TEXT",
+      ELM_SEL_FORMAT_TEXT | ELM_SEL_FORMAT_MARKUP | ELM_SEL_FORMAT_HTML,
+      _x11_text_converter,
+      NULL,
+      NULL,
       0
    },
    [CNP_ATOM_TEXT] = {
@@ -868,7 +877,7 @@ _x11_notify_handler_html(X11_Cnp_Selection *sel, Ecore_X_Event_Selection_Notify 
 */
 
 static Eina_Bool
-_x11_text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
+_x11_text_converter(char *target, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize)
 {
    X11_Cnp_Selection *sel;
 
@@ -896,8 +905,10 @@ _x11_text_converter(char *target __UNUSED__, void *data, int size, void **data_r
      }
    else if (sel->format & ELM_SEL_FORMAT_TEXT)
      {
-        *data_ret = strdup(sel->selbuf);
-        *size_ret = strlen(sel->selbuf);
+        ecore_x_selection_converter_text(target, sel->selbuf,
+                                         strlen(sel->selbuf),
+                                         data_ret, size_ret,
+                                         ttype, typesize);
      }
    else if (sel->format & ELM_SEL_FORMAT_IMAGE)
      {

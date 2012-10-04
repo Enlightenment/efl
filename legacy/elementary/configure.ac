@@ -292,11 +292,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if test "x$want_elementary_x" != "xno"; then
    PKG_CHECK_MODULES([ELEMENTARY_X],
-      [ecore-x >= 1.6.99],
+      [ecore-x >= 1.7.99],
       [
        AC_DEFINE(HAVE_ELEMENTARY_X, 1, [X11 support for Elementary])
        have_elementary_x="yes"
-       requirement_elm="ecore-x >= 1.6.99 ${requirement_elm}"
+       requirement_elm="ecore-x >= 1.7.99 ${requirement_elm}"
       ],
       [have_elementary_x="no"]
    )
