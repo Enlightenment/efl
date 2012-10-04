@@ -14,6 +14,7 @@
  * @li @ref tutorial_ephysics_forces
  * @li @ref tutorial_ephysics_growing_balls
  * @li @ref tutorial_ephysics_gravity
+ * @li @ref tutorial_ephysics_rotating_forever
  * @li @ref tutorial_ephysics_velocity
  * @li @ref tutorial_ephysics_shapes
  * @li @ref tutorial_ephysics_sleeping_threshold
@@ -1093,6 +1094,122 @@
  * @include test_no_gravity.c
  *
  * @example test_no_gravity.c
+ */
+
+ /**
+ * @page tutorial_ephysics_rotating_forever EPhysics - Rotating Forever
+ *
+ * The purpose of this example is to demonstrate the EPhysics Rotate usage -
+ * The code applies different ways to rotate an EPhysics_Body, such as torque,
+ * torque impulse and rotation set.
+ *
+ * For this example we'll have an EPhysics_World with gravity setted to zero,
+ * and four basic EPhysics_Bodys.
+ *
+ * The basic concepts like - defining an EPhysics_World, render geometry,
+ * physics limiting boundaries, add an EPhysics_Body, associate it to evas
+ * objects, change restitution, friction and impulse properties, were
+ * already covered in
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * @section add-rotate Rotating
+ * @dontinclude test_rotating_forever.c
+ *
+ * For the first body we'll apply a torque impulse to make it rotate around Z
+ * axis (rotate on x-y plane). Will make the body rolls on clockwise rotation,
+ * if the value is negative, the impulse will be on counter clockwise.
+ *
+ * @skipline ephysics_body_torque_impulse_apply(body, 1);
+ *
+ * For the second body we'll use an offset to apply the force, the two
+ * last parameters are responsible to set a relative position to apply the
+ * force.In other words, the force applied with an offset will make the body
+ * rotates and move around the other cubes.
+ *
+ * @skipline ephysics_body_impulse_apply(body, 30, 0
+ *
+ * For the third body we'll use a timer to rotate the body and a callback to
+ * delete it.
+ *
+ * @skip timer = ecore_timer_add(1, _rotate_cb
+ * @until _del_cb, timer);
+ *
+ * @dontinclude test_rotating_forever.c
+ * @skip _del_cb(void *data
+ * @until }
+ *
+ * In the function we'll get the body rotation on z axis in degrees and handle
+ * it increasing 5 degrees on its position on z axis on each tick of the timer.
+ *
+ * @dontinclude test_rotating_forever.c
+ * @skip _rotate_cb(void *data
+ * @until }
+ *
+ * For the forth body we'll use 2 timers, but before that, we'll apply an
+ * initial torque, changing the body angular acceleration and a callback to
+ * delete the timers we'll add.
+ *
+ * @skipline ephysics_body_torque_apply(body, 2
+ * @skipline ephysics_body_event_callback_add(body,
+ * @skipline EPHYSICS_CALLBACK_BODY_DEL,
+ * @skipline _del_torque_cb, cube);
+ *
+ * Just the callback function to delete the timers.
+ *
+ * @dontinclude test_rotating_forever.c
+ * @skip _del_torque_cb(void *data
+ * @until }
+ *
+ * As we commented we'll use 2 timers, one to increase the torque and
+ * another to stop the torque, cleaning the forces related to the body.
+ *
+ * @skip timer = ecore_timer_add(3, _increase
+ * @until "stop_timer", timer);
+ *
+ * In the increase function we'll apply a torque over the body, changing
+ * its angular acceleration, it will leads to a change on angular velocity
+ * over time. We're using a timer to increase the angular acceleration on
+ * each tick of the timer.
+ *
+ * @dontinclude test_rotating_forever.c
+ * @skip _increase_torque_cb(void *data
+ * @until }
+ *
+ * In the stop function we'll clear all the forces applied to the body,
+ * setting its linear and angular acceleration to zero. We're using this
+ * timer to "control" the body velocity, since we are increasing it by
+ * another timer. Note that we set the acceleration to zero not the
+ * velocity.
+ *
+ * @skip _stop_torque_cb(void *data
+ * @until }
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref test_rotating_forever_c.
+ *
+ */
+
+ /**
+ * @page test_rotating_forever_c test_rotating_forever.c
+ *
+ * @section ephysics-test-h ephysics_test.h
+ * @include ephysics_test.h
+ *
+ * @section test-rotating-forever-c test_rotating_forever.c
+ * @dontinclude test.c
+ *
+ * @skip test_clean
+ * @until }
+ *
+ * @skip test_data_new
+ * @until }
+ *
+ * @skip test_win_add
+ * @until }
+ *
+ * @include test_rotating_forever.c
+ *
+ * @example test_rotating_forever.c
  */
 
 /**
