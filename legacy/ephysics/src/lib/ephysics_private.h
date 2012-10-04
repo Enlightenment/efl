@@ -97,6 +97,10 @@ struct _EPhysics_Body {
 
 extern int _ephysics_log_dom;
 
+/* Main */
+void ephysics_dom_count_inc(void);
+void ephysics_dom_count_dec(void);
+
 /* World */
 int ephysics_world_init(void);
 int ephysics_world_shutdown(void);

@@ -340,6 +340,7 @@ _ephysics_world_free(EPhysics_World *world)
 
    free(world);
    INF("World %p deleted.", world);
+   ephysics_dom_count_dec();
 }
 
 static Eina_Bool
@@ -717,6 +718,7 @@ ephysics_world_new(void)
    if (!_anim_simulate)
      _anim_simulate = ecore_animator_add(_simulate_worlds, NULL);
 
+   ephysics_dom_count_inc();
    INF("World %p added.", world);
    return world;
 
