@@ -33,6 +33,7 @@
  *
  * @author Bruno Dilly <bdilly@@profusion.mobi>
  * @author Leandro Dorileo <dorileo@@profusion.mobi>
+ * @author Ricardo de Almeida Gonzaga <ricardo@@profusion.mobi>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
