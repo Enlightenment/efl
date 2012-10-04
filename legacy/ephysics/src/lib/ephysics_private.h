@@ -79,6 +79,7 @@ struct _EPhysics_Body {
      Eina_Inlist *callbacks;
      Eina_List *collision_groups;
      Eina_List *to_delete;
+     EPhysics_Body_Material material;
      double mass;
      double density;
      struct {

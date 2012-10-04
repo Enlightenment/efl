@@ -10,6 +10,7 @@
 
 #include "ephysics_private.h"
 #include "ephysics_trimesh.h"
+#include "ephysics_body_materials.h"
 
 #ifdef  __cplusplus
 extern "C" {
@@ -1418,6 +1419,7 @@ ephysics_body_mass_set(EPhysics_Body *body, double mass)
      }
 
    ephysics_world_lock_take(body->world);
+   body->material = EPHYSICS_BODY_MATERIAL_CUSTOM;
    body->density = 0;
    _ephysics_body_mass_set(body, mass);
    ephysics_world_lock_release(body->world);
@@ -1673,6 +1675,13 @@ ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_Callback_Bod
    return cb_data;
 }
 
+static void
+_ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
+{
+   body->rigid_body->setRestitution(btScalar(restitution));
+   DBG("Body %p restitution set to %lf", body, restitution);
+}
+
 EAPI void
 ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
 {
@@ -1683,8 +1692,8 @@ ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
      }
 
    ephysics_world_lock_take(body->world);
-   body->rigid_body->setRestitution(btScalar(restitution));
-   DBG("Body %p restitution set to %lf", body, restitution);
+   body->material = EPHYSICS_BODY_MATERIAL_CUSTOM;
+   _ephysics_body_restitution_set(body, restitution);
    ephysics_world_lock_release(body->world);
 }
 
@@ -1700,6 +1709,13 @@ ephysics_body_restitution_get(const EPhysics_Body *body)
    return body->rigid_body->getRestitution();
 }
 
+static void
+_ephysics_body_friction_set(EPhysics_Body *body, double friction)
+{
+   body->rigid_body->setFriction(btScalar(friction));
+   DBG("Body %p friction set to %lf", body, friction);
+}
+
 EAPI void
 ephysics_body_friction_set(EPhysics_Body *body, double friction)
 {
@@ -1710,8 +1726,8 @@ ephysics_body_friction_set(EPhysics_Body *body, double friction)
      }
 
    ephysics_world_lock_take(body->world);
-   body->rigid_body->setFriction(btScalar(friction));
-   DBG("Body %p friction set to %lf", body, friction);
+   body->material = EPHYSICS_BODY_MATERIAL_CUSTOM;
+   _ephysics_body_friction_set(body, friction);
    ephysics_world_lock_release(body->world);
 }
 
@@ -2032,6 +2048,7 @@ ephysics_body_density_set(EPhysics_Body *body, double density)
         return;
      }
 
+   body->material = EPHYSICS_BODY_MATERIAL_CUSTOM;
    body->density = density;
    ephysics_world_lock_take(body->world);
    _ephysics_body_mass_set(body, 0);
@@ -2048,6 +2065,50 @@ ephysics_body_density_get(const EPhysics_Body *body)
      }
 
    return body->density;
+}
+
+EAPI void
+ephysics_body_material_set(EPhysics_Body *body, EPhysics_Body_Material material)
+{
+   if (!body)
+     {
+        ERR("Can't set body's material.");
+        return;
+     }
+
+   if (material >= EPHYSICS_BODY_MATERIAL_LAST)
+     {
+        ERR("Invalid material.");
+        return;
+     }
+
+   if (material != ephysics_material_props[material].material)
+     {
+        ERR("Material properties weren't found.");
+        return;
+     }
+
+   ephysics_world_lock_take(body->world);
+   body->density = ephysics_material_props[material].density;
+   _ephysics_body_mass_set(body, 0);
+   _ephysics_body_friction_set(body,
+                               ephysics_material_props[material].friction);
+   _ephysics_body_restitution_set(
+      body, ephysics_material_props[material].restitution);
+   body->material = material;
+   ephysics_world_lock_release(body->world);
+}
+
+EAPI EPhysics_Body_Material
+ephysics_body_material_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("Can't get body's material.");
+        return EPHYSICS_BODY_MATERIAL_LAST;
+     }
+
+   return body->material;
 }
 
 #ifdef  __cplusplus

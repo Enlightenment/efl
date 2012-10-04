@@ -1465,6 +1465,28 @@ typedef enum _EPhysics_Callback_Body_Type
    EPHYSICS_CALLBACK_BODY_LAST, /**< kept as sentinel, not really an event */
 } EPhysics_Callback_Body_Type; /**< The types of events triggering a callback */
 
+/**
+ * @enum _EPhysics_Body_Material
+ * @typedef EPhysics_Body_Material
+ *
+ * EPhysics bodies materials. Each material has specific properties to be
+ * applied on the body, as density, friction and restitution.
+ *
+ * @see ephysics_body_material_set() for details.
+ *
+ * @ingroup EPhysics_Body
+ */
+typedef enum _EPhysics_Body_Material
+{
+   EPHYSICS_BODY_MATERIAL_CUSTOM, /**< Custom properties set by the user */
+   EPHYSICS_BODY_MATERIAL_CONCRETE, /**< Density:2300,Fric:0.65,Rest:0.75 */
+   EPHYSICS_BODY_MATERIAL_IRON, /**< Density:7400,Fric:0.8,Rest:0.85 */
+   EPHYSICS_BODY_MATERIAL_PLASTIC, /**< Density:1300,Fric:0.35,Rest:0.6 */
+   EPHYSICS_BODY_MATERIAL_POLYSTYRENE, /**< Density:80,Fric:0.5,Rest:0.5*/
+   EPHYSICS_BODY_MATERIAL_RUBBER, /**< Density:920,Fric:0.75,Rest:0.3*/
+   EPHYSICS_BODY_MATERIAL_WOOD, /**< Density:680,Fric:0.4,Rest:0.7*/
+   EPHYSICS_BODY_MATERIAL_LAST, /**< kept as sentinel, not really a material */
+} EPhysics_Body_Material; /**< The types of materials to be set on a body */
 
 /**
  * @typedef EPhysics_Body_Event_Cb
@@ -2891,6 +2913,46 @@ EAPI void ephysics_body_density_set(EPhysics_Body *body, double density);
  * @ingroup EPhysics_Body
  */
 EAPI double ephysics_body_density_get(const EPhysics_Body *body);
+
+/**
+ * @brief
+ * Set body's material.
+ *
+ * This function makes properties setting easy. When a material is set to
+ * a body, it will update its friction, restitution and density,
+ * recalculating its mass.
+ *
+ * EPhysics support some materials defined by @ref EPhysics_Body_Material.
+ *
+ * So, for example, if @ref EPHYSICS_BODY_MATERIAL_WOOD is set, it will
+ * set body's density to @ref EPHYSICS_BODY_DENSITY_WOOD, restitution
+ * to @ref EPHSYICS_BODY_RESTITUTION_WOOD and friction to
+ * @ref EPHYSICS_BODY_FRICTION_WOOD.
+ *
+ * If any of these values are later explicitely set, the material will
+ * be set back to @ref EPHYSICS_BODY_MATERIAL_CUSTOM, the default.
+ *
+ * @param body The body to has its material set.
+ * @param material The @p material to be used by the body.
+ *
+ * @see ephysics_body_material_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_material_set(EPhysics_Body *body, EPhysics_Body_Material material);
+
+/**
+ * @brief
+ * Get body's material.
+ *
+ * @param body The physics body.
+ * @return the @p material used by the body.
+ *
+ * @see ephysics_body_body_set() for more details.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body_Material ephysics_body_material_get(const EPhysics_Body *body);
 
 /**
  * @}
