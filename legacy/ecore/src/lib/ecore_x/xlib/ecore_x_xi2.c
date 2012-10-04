@@ -307,8 +307,6 @@ ecore_x_input_raw_select(Ecore_X_Window win)
 {
 #ifdef ECORE_XI2
    XIEventMask emask;
-   int i;
-   Eina_Bool find = EINA_FALSE;
    unsigned char mask[4] = { 0 };
 
    if (!_ecore_x_xi2_devs)
