@@ -974,3 +974,6 @@
 2012-10-02  Daniel Willmann
 
        * Fix memory allocation size in ecore_thread_feedback()
+
+2012-10-03  Daniel Wilmann
+       * Fix memory allocation size in ecore_x xcb randr function
