@@ -490,22 +490,6 @@ eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
                   outalloc += 64;
                   outb += 64;
                }
-             else if (errno == EILSEQ)
-               {
-                  if (new_txt)
-                     free(new_txt);
-
-                  new_txt = NULL;
-                  break;
-               }
-             else if (errno == EINVAL)
-               {
-                  if (new_txt)
-                     free(new_txt);
-
-                  new_txt = NULL;
-                  break;
-               }
              else
                {
                   if (new_txt)

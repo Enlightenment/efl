@@ -59,8 +59,6 @@ main(int argc, const char *argv[])
    int saved_entry_size = sizeof("Alceu Valenca");
    const char *phone = NULL;
    Eina_Bool r;
-   Eina_Iterator *it;
-   void *data;
 
    eina_init();
 

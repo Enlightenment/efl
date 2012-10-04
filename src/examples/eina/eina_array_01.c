@@ -23,8 +23,6 @@ main(int argc, char **argv)
       "skulls", "bulldog", "flat top", "hammerhead", "gonzo"
    };
    Eina_Array *array;
-   Eina_Array_Iterator iterator;
-   char *item;
    unsigned int i;
 
    eina_init();

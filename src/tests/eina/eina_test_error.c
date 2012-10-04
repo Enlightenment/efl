@@ -158,7 +158,7 @@ START_TEST(eina_error_test_lots)
 
    for (i = 0; i < sizeof(codes)/sizeof(codes[0]); i++)
      {
-        snprintf(buf, sizeof(buf), "myerr-%d", i);
+        snprintf(buf, sizeof(buf), "myerr-%u", i);
         codes[i] = eina_error_msg_register(buf);
         ck_assert_int_ne(codes[i], 0);
      }
@@ -167,7 +167,7 @@ START_TEST(eina_error_test_lots)
      {
         int found;
 
-        snprintf(buf, sizeof(buf), "myerr-%d", i);
+        snprintf(buf, sizeof(buf), "myerr-%u", i);
 
         found = eina_error_find(buf);
         ck_assert_int_eq(codes[i], found);

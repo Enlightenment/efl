@@ -47,7 +47,7 @@ main(int argc, char **argv)
 
    eina_array_remove(array, keep, NULL);
    EINA_ARRAY_ITER_NEXT(array, i, item, iterator)
-     printf("item #%d: %s\n", i, item);
+     printf("item #%u: %s\n", i, item);
 
    eina_array_free(array);
 

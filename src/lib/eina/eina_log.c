@@ -320,7 +320,7 @@ eina_log_win32_color_convert(const char *color, const char **endptr)
                     attr |= BACKGROUND_RED;
                   else if (code == 42)
                     attr |= BACKGROUND_GREEN;
-                  else if (code == 44)
+                  else if (code == 43)
                     attr |= BACKGROUND_RED | BACKGROUND_GREEN;
                   else if (code == 44)
                     attr |= BACKGROUND_BLUE;

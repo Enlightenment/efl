@@ -241,7 +241,7 @@ _eina_share_common_population_stats(Eina_Share *share)
         sizeof (share->population_group[0]);
         ++i)
       fprintf(stderr,
-              "DDD: %i strings of length %i, max strings: %i\n",
+              "DDD: %i strings of length %u, max strings: %i\n",
               share->population_group[i].count,
               i,
               share->population_group[i].max);
@@ -935,7 +935,7 @@ eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
         sizeof (share->population_group[0]);
         ++i)
       fprintf(stderr,
-              "DDD: %i strings of length %i, max strings: %i\n",
+              "DDD: %i strings of length %u, max strings: %i\n",
               share->population_group[i].count,
               i,
               share->population_group[i].max);

@@ -407,7 +407,6 @@ _eina_file_win32_direct_ls_iterator_next(Eina_File_Direct_Iterator *it, void **d
      it->info.type = EINA_FILE_LNK;
    else if (attr & (FILE_ATTRIBUTE_ARCHIVE |
                     FILE_ATTRIBUTE_COMPRESSED |
-                    FILE_ATTRIBUTE_COMPRESSED |
                     FILE_ATTRIBUTE_HIDDEN |
                     FILE_ATTRIBUTE_NORMAL |
                     FILE_ATTRIBUTE_SPARSE_FILE |
