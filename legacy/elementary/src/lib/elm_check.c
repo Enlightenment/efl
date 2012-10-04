@@ -41,27 +41,13 @@ _activate(Evas_Object *obj)
      {
         elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-          {
-             if (!elm_layout_text_get(obj, "on"))
-               {
-                  _elm_access_say(E_("State: On"));
-               }
-             else
-               _elm_access_say(E_("State: On"));
-          }
+             _elm_access_say(E_("State: On"));
      }
    else
      {
         elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
-          {
-             if (!elm_layout_text_get(obj, "off"))
-               {
-                  _elm_access_say(E_("State: Off"));
-               }
-             else
-               _elm_access_say(E_("State: Off"));
-          }
+             _elm_access_say(E_("State: Off"));
      }
 
    evas_object_smart_callback_call(obj, SIG_CHANGED, NULL);

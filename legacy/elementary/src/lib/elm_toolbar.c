@@ -833,16 +833,8 @@ _sizing_eval(Evas_Object *obj)
 
    if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_NONE)
      {
-        if (sd->vertical)
-          {
-             minw = minw_bx + (w - vw);
-             minh = minh_bx + (h - vh);
-          }
-        else
-          {
-             minw = minw_bx + (w - vw);
-             minh = minh_bx + (h - vh);
-          }
+        minw = minw_bx + (w - vw);
+        minh = minh_bx + (h - vh);
      }
    else if (sd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
      {

@@ -110,8 +110,6 @@ _submenu_sizing_eval(Elm_Menu_Item *parent_it)
 
    if (y_p + bh > py + ph)
      y_p -= y_p + bh - (py + ph);
-   if (y_p < py)
-     y_p += y_p - y_p;
 
    evas_object_move(parent_it->submenu.location, x_p, y_p);
    evas_object_resize(parent_it->submenu.location, bw, h_p);
@@ -149,10 +147,10 @@ _sizing_eval(Evas_Object *obj)
    if (elm_widget_mirrored_get(obj)) x_p -= w_p;
 
    if (x_p + bw > x2 + w2) x_p -= x_p + bw - (x2 + w2);
-   if (x_p < x2) x_p += x2 - x_p;
+   if (x_p < x2) x_p = x2;
 
    if (y_p + h_p + bh > y2 + h2) y_p -= y_p + h_p + bh - (y2 + h2);
-   if (y_p < y2) y_p += y2 - y_p;
+   if (y_p < y2) y_p = y2;
 
    evas_object_move(sd->location, x_p, y_p);
    evas_object_resize(sd->location, bw, h_p);
