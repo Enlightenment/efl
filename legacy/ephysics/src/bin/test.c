@@ -246,6 +246,7 @@ elm_main(int argc, char **argv)
      }
 
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   elm_policy_set(ELM_POLICY_EXIT, ELM_POLICY_EXIT_WINDOWS_DEL);
 
    elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
    elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
