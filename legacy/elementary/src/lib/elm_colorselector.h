@@ -60,7 +60,9 @@ typedef enum
 {
    ELM_COLORSELECTOR_PALETTE = 0, /**< only color palette is displayed */
    ELM_COLORSELECTOR_COMPONENTS, /**< only color selector is displayed */
-   ELM_COLORSELECTOR_BOTH /**< Both Palette and selector is displayed, default */
+   ELM_COLORSELECTOR_BOTH, /**< Both Palette and selector is displayed, default */
+   ELM_COLORSELECTOR_PICKER, /**< only color picker is displayed */
+   ELM_COLORSELECTOR_ALL /**< all possible color selector is displayed */
 } Elm_Colorselector_Mode;
 
 /**

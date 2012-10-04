@@ -88,6 +88,94 @@ _color_with_lightness(Elm_Colorselector_Smart_Data *sd)
 }
 
 static void
+_color_picker_init(Elm_Colorselector_Smart_Data *sd)
+{
+   char buf[12];
+   unsigned int *pixels;
+   unsigned int *copy;
+   int color;
+   int x, y, w, h;
+
+   snprintf(buf, 12, "%i", sd->r);
+   elm_object_text_set(sd->entries[0], buf);
+
+   snprintf(buf, 12, "%i", sd->g);
+   elm_object_text_set(sd->entries[1], buf);
+
+   snprintf(buf, 12, "%i", sd->b);
+   elm_object_text_set(sd->entries[2], buf);
+
+   snprintf(buf, 12, "%i", sd->a);
+   elm_object_text_set(sd->entries[3], buf);
+
+   color = (sd->a << 24) + (sd->r << 16) + (sd->g << 8) + sd->b;
+
+   if (sd->b == 255)
+     evas_object_image_alpha_set(sd->picker_display, EINA_FALSE);
+   else
+     evas_object_image_alpha_set(sd->picker_display, EINA_TRUE);
+   
+   pixels = evas_object_image_data_get(sd->picker_display, EINA_TRUE);
+   copy = pixels;
+   for (y = 0; y < 17; y++)
+     for (x = 0; x < 17; x++)
+       {
+          *(pixels++) = color;
+       }
+   evas_object_image_data_set(sd->picker_display, copy);
+   evas_object_geometry_get(sd->picker_display, NULL, NULL, &w, &h);
+   evas_object_image_data_update_add(sd->picker_display, 0, 0, w, h);
+}
+
+
+static void
+_rgb_to_hsl(Elm_Colorselector_Smart_Data *sd)
+{
+   double r2, g2, b2;
+   double v, m, vm;
+   double r, g, b;
+
+   r = sd->r;
+   g = sd->g;
+   b = sd->b;
+
+   r /= 255.0;
+   g /= 255.0;
+   b /= 255.0;
+
+   v = (r > g) ? r : g;
+   v = (v > b) ? v : b;
+
+   m = (r < g) ? r : g;
+   m = (m < b) ? m : b;
+
+   sd->h = 0.0;
+   sd->s = 0.0;
+   sd->l = 0.0;
+
+   sd->l = (m + v) / 2.0;
+
+   if (sd->l <= 0.0) return;
+
+   vm = v - m;
+   sd->s = vm;
+
+   if (sd->s > 0.0) sd->s /= (sd->l <= 0.5) ? (v + m) : (2.0 - v - m);
+   else return;
+
+   r2 = (v - r) / vm;
+   g2 = (v - g) / vm;
+   b2 = (v - b) / vm;
+
+   if (r == v) sd->h = (g == m ? 5.0 + b2 : 1.0 - g2);
+   else if (g == v)
+     sd->h = (b == m ? 1.0 + r2 : 3.0 - b2);
+   else sd->h = (r == m ? 3.0 + g2 : 5.0 - r2);
+
+   sd->h *= 60.0;
+}
+
+static void
 _hsl_to_rgb(Elm_Colorselector_Smart_Data *sd)
 {
    double sv, vsf, f, p, q, t, v;
@@ -272,6 +360,355 @@ _rectangles_redraw(Color_Bar_Data *cb_data, double x)
      }
 
    _hsl_to_rgb(sd);
+   _color_picker_init(sd);
+}
+
+static void
+_colors_set(Evas_Object *obj,
+            int r,
+            int g,
+            int b,
+            int a)
+{
+   double x, y;
+
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   sd->r = r;
+   sd->g = g;
+   sd->b = b;
+   sd->a = a;
+
+   _rgb_to_hsl(sd);
+
+   edje_object_part_drag_value_get
+     (sd->cb_data[0]->colorbar, "elm.arrow", &x, &y);
+   x = sd->h / 360.0;
+   edje_object_part_drag_value_set
+     (sd->cb_data[0]->colorbar, "elm.arrow", x, y);
+   _rectangles_redraw(sd->cb_data[0], x);
+
+   edje_object_part_drag_value_get
+     (sd->cb_data[1]->colorbar, "elm.arrow", &x, &y);
+   x = 1.0 - sd->s;
+   edje_object_part_drag_value_set
+     (sd->cb_data[1]->colorbar, "elm.arrow", x, y);
+   _rectangles_redraw(sd->cb_data[1], x);
+
+   edje_object_part_drag_value_get
+     (sd->cb_data[2]->colorbar, "elm.arrow", &x, &y);
+   x = sd->l;
+   edje_object_part_drag_value_set(sd->cb_data[2]->colorbar, "elm.arrow", x, y);
+   _rectangles_redraw(sd->cb_data[2], x);
+
+   edje_object_part_drag_value_get
+     (sd->cb_data[3]->colorbar, "elm.arrow", &x, &y);
+   x = sd->a / 255.0;
+   edje_object_part_drag_value_set
+     (sd->cb_data[3]->colorbar, "elm.arrow", x, y);
+
+   _rectangles_redraw(sd->cb_data[3], x);
+}
+
+static void
+_entry_changed_cb(void *data,
+                  Evas_Object *obj,
+                  void *event_info __UNUSED__)
+{
+   Elm_Colorselector_Smart_Data *sd = data;
+   Evas_Object *parent;
+   const char *text;
+   int i;
+   int v;
+
+   for (i = 0; i < 4 && sd->entries[i] != obj; i++)
+     ;
+
+   parent = evas_object_data_get(obj, "parent");
+   text = elm_object_text_get(obj);
+   v = atoi(text);
+   if (v > 255) v = 255;
+   else if (v < 0) v = 0;
+
+   switch (i)
+     {
+      case 0:
+         if (v != sd->r)
+           _colors_set(parent, v, sd->g, sd->b, sd->a);
+         break;
+      case 1:
+         if (v != sd->g)
+           _colors_set(parent, sd->r, v, sd->b, sd->a);
+         break;
+      case 2:
+         if (v != sd->b)
+           _colors_set(parent, sd->r, sd->g, v, sd->a);
+         break;
+      case 3:
+         if (v != sd->a)
+           _colors_set(parent, sd->r, sd->g, sd->b, v);
+         break;
+     }
+}
+
+#ifdef HAVE_ELEMENTARY_X
+static Ecore_X_Window
+_x11_elm_widget_xwin_get(const Evas_Object *obj)
+{
+   Evas_Object *top;
+   Ecore_X_Window xwin = 0;
+
+   top = elm_widget_top_get(obj);
+   if (!top) top = elm_widget_top_get(elm_widget_parent_widget_get(obj));
+   if (top) xwin = elm_win_xwindow_get(top);
+   if (!xwin)
+     {
+        Ecore_Evas *ee;
+        Evas *evas = evas_object_evas_get(obj);
+        if (!evas) return 0;
+        ee = ecore_evas_ecore_evas_get(evas);
+        if (!ee) return 0;
+        xwin = _elm_ee_xwin_get(ee);
+     }
+   return xwin;
+}
+#endif
+
+#ifdef HAVE_ELEMENTARY_X
+static Eina_Bool _mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__);
+
+static void
+_start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *o = data;
+
+   ELM_COLORSELECTOR_DATA_GET(o, sd);
+
+   elm_object_disabled_set(obj, EINA_TRUE);
+
+   ecore_event_handler_del(sd->grab.mouse_motion);
+   sd->grab.mouse_motion = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _mouse_grab_pixels, o);
+
+   ecore_x_keyboard_grab(sd->grab.xroot);
+   ecore_x_pointer_grab(sd->grab.xroot);
+}
+
+static Eina_Bool
+_key_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
+{
+   Evas_Object *o = data;
+
+   /* key => cancel */
+   ELM_COLORSELECTOR_DATA_GET(o, sd);
+
+   elm_object_disabled_set(sd->button, EINA_FALSE);
+   ecore_x_keyboard_ungrab();
+   ecore_x_pointer_ungrab();
+   ecore_event_handler_del(sd->grab.mouse_motion);
+   sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, o);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_mouse_up_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
+{
+   const unsigned int *pixels;
+   Evas_Object *o = data;
+
+   /* mouse up => check it */
+   ELM_COLORSELECTOR_DATA_GET(o, sd);
+
+   elm_object_disabled_set(sd->button, EINA_FALSE);
+   ecore_x_keyboard_ungrab();
+   ecore_x_pointer_ungrab();
+   ecore_event_handler_del(sd->grab.mouse_motion);
+   sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, o);
+
+   pixels = evas_object_image_data_get(sd->picker_display, EINA_FALSE);
+   sd->a = 0xff;
+   sd->r = (pixels[17 * 9 + 9] >> 16) & 0xFF;
+   sd->g = (pixels[17 * 9 + 9] >> 8) & 0xFF;
+   sd->b = pixels[17 * 9 + 9] & 0xFF;
+
+   _color_picker_init(sd);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__)
+{
+   Evas_Object *obj = data;
+   Ecore_X_Visual visual;
+   Ecore_X_Display *display;
+   Ecore_X_Screen *scr;
+   Ecore_X_Image *img;
+   Ecore_X_Window xwin;
+   int *src;
+   int bpl = 0, rows = 0, bpp = 0;
+   int x, y, w, h;
+
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   if (sd->grab.in) return EINA_TRUE;
+
+   xwin = _x11_elm_widget_xwin_get(obj);
+   sd->grab.xroot = ecore_x_window_root_get(xwin);
+   ecore_x_pointer_xy_get(sd->grab.xroot, &x, &y);
+
+   if (x < 8) x += 8;
+   if (y < 8) y += 8;
+
+   if (sd->grab.x == x && sd->grab.y == y) return EINA_TRUE;
+   sd->grab.x = x;
+   sd->grab.y = y;
+
+   evas_object_image_alpha_set(sd->picker_display, EINA_FALSE);
+
+   display = ecore_x_display_get();
+   scr = ecore_x_default_screen_get();
+   visual = ecore_x_default_visual_get(display, scr);
+   img = ecore_x_image_new(17, 17, visual, ecore_x_window_depth_get(sd->grab.xroot));
+   ecore_x_image_get(img, sd->grab.xroot, x - 8, y - 8, 0, 0, 17, 17);
+   src = ecore_x_image_data_get(img, &bpl, &rows, &bpp);
+   if (!ecore_x_image_is_argb32_get(img))
+     {
+        Ecore_X_Colormap colormap;
+        unsigned int *pixels;
+
+        colormap = ecore_x_default_colormap_get(display, scr);
+        pixels = evas_object_image_data_get(sd->picker_display, EINA_TRUE);
+        ecore_x_image_to_argb_convert(src, bpp, bpl, colormap, visual,
+                                      0, 0, 17, 17,
+                                      pixels, (17 * sizeof(int)), 0, 0);
+     }
+   else
+     {
+        evas_object_image_data_copy_set(sd->picker_display, src);
+     }
+
+   ecore_x_image_free(img);
+
+   evas_object_geometry_get(sd->picker_display, NULL, NULL, &w, &h);
+   evas_object_image_data_update_add(sd->picker_display, 0, 0, w, h);
+
+   return EINA_TRUE;
+}
+#endif   
+
+static void
+_mouse_in_canvas(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   sd->grab.in = EINA_TRUE;
+}
+
+static void
+_mouse_out_canvas(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *obj = data;
+   ELM_COLORSELECTOR_DATA_GET(obj, sd);
+
+   sd->grab.in = EINA_FALSE;
+}
+
+static void
+_color_picker_add(Evas_Object *obj, Elm_Colorselector_Smart_Data *sd)
+{
+   Evas_Object *ed;
+   Evas_Object *im;
+   Evas_Object *label;
+   Evas_Object *entry;
+   Evas_Object *table;
+   Evas_Object *bx;
+   static const char *labels[4] = { "R:", "G:", "B:", "A:" };
+   int i;
+#ifdef HAVE_ELEMENTARY_X
+   Ecore_X_Window xwin;
+
+   xwin = _x11_elm_widget_xwin_get(obj);
+   sd->grab.xroot = ecore_x_window_root_get(xwin);
+   ecore_x_input_raw_select(sd->grab.xroot);
+
+   sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, obj);
+   sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, obj);
+   sd->grab.mouse_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _mouse_up_cb, obj);
+#endif
+
+   bx = elm_box_add(sd->picker);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(sd->picker, bx);
+   evas_object_show(bx);
+
+   ed = edje_object_add(evas_object_evas_get(sd->picker));
+   elm_widget_theme_object_set(obj, ed, "colorselector", "picker", elm_widget_style_get(obj));
+   evas_object_size_hint_weight_set(ed, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ed, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, ed);
+   evas_object_show(ed);
+
+#ifdef HAVE_ELEMENTARY_X
+   sd->button = elm_button_add(sd->picker);
+   elm_object_text_set(sd->button, "Pick a color");
+   evas_object_smart_callback_add(sd->button, "clicked", _start_grab_pick_cb, obj);
+   elm_box_pack_end(bx, sd->button);
+   evas_object_show(sd->button);
+#endif
+
+   im = evas_object_image_add(evas_object_evas_get(sd->picker));
+   evas_object_size_hint_aspect_set(im, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
+   evas_object_image_smooth_scale_set(im, EINA_FALSE);
+   evas_object_image_colorspace_set(im, EVAS_COLORSPACE_ARGB8888);
+   evas_object_image_size_set(im, 17, 17);
+   evas_object_image_alpha_set(im, 1);
+   evas_object_image_filled_set(im, EINA_TRUE);
+   edje_object_part_swallow(ed, "elm.picker", im);
+   elm_widget_sub_object_add(obj, im);
+
+   sd->picker_display = im;
+
+   table = elm_table_add(sd->picker);
+   evas_object_size_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(table, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(sd->picker, table);
+   evas_object_show(table);
+
+   for (i = 0; i < 4; i++)
+     {
+        static Elm_Entry_Filter_Accept_Set accept_set = {
+          .accepted = "0123456789",
+          .rejected = NULL
+        };
+
+        label = elm_label_add(table);
+        elm_object_text_set(label, labels[i]);
+        evas_object_size_hint_weight_set(label, 0.0, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(label, 0.0, EVAS_HINT_FILL);
+        elm_table_pack(table, label, 0, i, 1, 1);
+        evas_object_show(label);
+
+        entry = elm_entry_add(table);
+        elm_entry_markup_filter_append(entry, elm_entry_filter_accept_set, &accept_set);
+        elm_entry_single_line_set(entry, EINA_TRUE);
+        elm_entry_scrollable_set(entry, EINA_TRUE);
+        evas_object_data_set(entry, "parent", obj);
+        evas_object_smart_callback_add(entry, "changed", _entry_changed_cb, sd);
+        evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_table_pack(table, entry, 1, i, 1, 1);
+        evas_object_show(entry);
+
+        sd->entries[i] = entry;
+     }
+
+   evas_event_callback_add(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_IN, _mouse_in_canvas, obj);
+   evas_event_callback_add(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _mouse_out_canvas, obj);
+
+   _color_picker_init(sd);
 }
 
 static void
@@ -995,100 +1432,6 @@ _palette_colors_load(Evas_Object *obj)
 }
 
 static void
-_rgb_to_hsl(Elm_Colorselector_Smart_Data *sd)
-{
-   double r2, g2, b2;
-   double v, m, vm;
-   double r, g, b;
-
-   r = sd->r;
-   g = sd->g;
-   b = sd->b;
-
-   r /= 255.0;
-   g /= 255.0;
-   b /= 255.0;
-
-   v = (r > g) ? r : g;
-   v = (v > b) ? v : b;
-
-   m = (r < g) ? r : g;
-   m = (m < b) ? m : b;
-
-   sd->h = 0.0;
-   sd->s = 0.0;
-   sd->l = 0.0;
-
-   sd->l = (m + v) / 2.0;
-
-   if (sd->l <= 0.0) return;
-
-   vm = v - m;
-   sd->s = vm;
-
-   if (sd->s > 0.0) sd->s /= (sd->l <= 0.5) ? (v + m) : (2.0 - v - m);
-   else return;
-
-   r2 = (v - r) / vm;
-   g2 = (v - g) / vm;
-   b2 = (v - b) / vm;
-
-   if (r == v) sd->h = (g == m ? 5.0 + b2 : 1.0 - g2);
-   else if (g == v)
-     sd->h = (b == m ? 1.0 + r2 : 3.0 - b2);
-   else sd->h = (r == m ? 3.0 + g2 : 5.0 - r2);
-
-   sd->h *= 60.0;
-}
-
-static void
-_colors_set(Evas_Object *obj,
-            int r,
-            int g,
-            int b,
-            int a)
-{
-   double x, y;
-
-   ELM_COLORSELECTOR_DATA_GET(obj, sd);
-
-   sd->r = r;
-   sd->g = g;
-   sd->b = b;
-   sd->a = a;
-
-   _rgb_to_hsl(sd);
-
-   edje_object_part_drag_value_get
-     (sd->cb_data[0]->colorbar, "elm.arrow", &x, &y);
-   x = sd->h / 360.0;
-   edje_object_part_drag_value_set
-     (sd->cb_data[0]->colorbar, "elm.arrow", x, y);
-   _rectangles_redraw(sd->cb_data[0], x);
-
-   edje_object_part_drag_value_get
-     (sd->cb_data[1]->colorbar, "elm.arrow", &x, &y);
-   x = 1.0 - sd->s;
-   edje_object_part_drag_value_set
-     (sd->cb_data[1]->colorbar, "elm.arrow", x, y);
-   _rectangles_redraw(sd->cb_data[1], x);
-
-   edje_object_part_drag_value_get
-     (sd->cb_data[2]->colorbar, "elm.arrow", &x, &y);
-   x = sd->l;
-   edje_object_part_drag_value_set(sd->cb_data[2]->colorbar, "elm.arrow", x, y);
-   _rectangles_redraw(sd->cb_data[2], x);
-
-   edje_object_part_drag_value_get
-     (sd->cb_data[3]->colorbar, "elm.arrow", &x, &y);
-   x = sd->a / 255.0;
-   edje_object_part_drag_value_set
-     (sd->cb_data[3]->colorbar, "elm.arrow", x, y);
-
-   _rectangles_redraw(sd->cb_data[3], x);
-}
-
-static void
 _elm_colorselector_smart_add(Evas_Object *obj)
 {
    const char *hpadstr, *vpadstr;
@@ -1136,6 +1479,17 @@ _elm_colorselector_smart_add(Evas_Object *obj)
      elm_widget_style_get(obj));
    elm_layout_content_set(obj, "selector", priv->col_bars_area);
 
+   /* setup the color picker */
+   priv->picker = elm_box_add(obj);
+   elm_box_horizontal_set(priv->picker, EINA_TRUE);
+   evas_object_size_hint_weight_set(priv->picker, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(priv->picker, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   elm_box_padding_set(priv->picker,
+                       (h_pad * elm_widget_scale_get(obj) * elm_config_scale_get()),
+                       (v_pad * elm_widget_scale_get(obj) * elm_config_scale_get()));
+   elm_box_align_set(priv->palette_box, 0.5, 0.5);
+
    priv->mode = ELM_COLORSELECTOR_BOTH;
    priv->focused = ELM_COLORSELECTOR_PALETTE;
    priv->sel_color_type = HUE;
@@ -1147,9 +1501,17 @@ _elm_colorselector_smart_add(Evas_Object *obj)
    priv->s = 1.0;
    priv->l = 0.0;
    priv->a = 255;
+   priv->grab.x = -1;
+   priv->grab.y = -1;
+   priv->grab.xroot = -1;
+   priv->grab.mouse_motion = NULL;
+   priv->grab.mouse_up = NULL;
+   priv->grab.key_up = NULL;
+   priv->grab.in = EINA_TRUE;
 
    _hsl_to_rgb(priv);
    _color_bars_add(obj);
+   _color_picker_add(obj, priv);
 
    elm_layout_sizing_eval(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -1163,8 +1525,14 @@ _elm_colorselector_smart_del(Evas_Object *obj)
 
    ELM_COLORSELECTOR_DATA_GET(obj, sd);
 
+   evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_IN, _mouse_in_canvas, obj);
+   evas_event_callback_del_full(evas_object_evas_get(obj), EVAS_CALLBACK_CANVAS_FOCUS_OUT, _mouse_out_canvas, obj);
+
    if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
    if (sd->palette_name) eina_stringshare_del(sd->palette_name);
+   if (sd->grab.mouse_motion) ecore_event_handler_del(sd->grab.mouse_motion);
+   if (sd->grab.mouse_up) ecore_event_handler_del(sd->grab.mouse_up);
+   if (sd->grab.key_up) ecore_event_handler_del(sd->grab.key_up);
 
    _items_del(sd);
    /* This cb_data are used during the destruction process of base.del */
@@ -1447,6 +1815,7 @@ elm_colorselector_mode_set(Evas_Object *obj,
 
    evas_object_hide(elm_layout_content_unset(obj, "selector"));
    evas_object_hide(elm_layout_content_unset(obj, "palette"));
+   evas_object_hide(elm_layout_content_unset(obj, "picker"));
 
    switch (sd->mode)
      {
@@ -1468,6 +1837,21 @@ elm_colorselector_mode_set(Evas_Object *obj,
         elm_layout_content_set(obj, "palette", sd->palette_box);
         elm_layout_content_set(obj, "selector", sd->col_bars_area);
         elm_layout_signal_emit(obj, "elm,state,both", "elm");
+        sd->focused = ELM_COLORSELECTOR_PALETTE;
+        sd->selected = sd->items;
+        break;
+
+      case ELM_COLORSELECTOR_PICKER:
+        elm_layout_content_set(obj, "picker", sd->picker);
+        elm_layout_signal_emit(obj, "elm,state,picker", "elm");
+        sd->focused = ELM_COLORSELECTOR_PICKER;
+        break;
+         
+      case ELM_COLORSELECTOR_ALL:
+        elm_layout_content_set(obj, "picker", sd->picker);
+        elm_layout_content_set(obj, "palette", sd->palette_box);
+        elm_layout_content_set(obj, "selector", sd->col_bars_area);
+        elm_layout_signal_emit(obj, "elm,state,all", "elm");
         sd->focused = ELM_COLORSELECTOR_PALETTE;
         sd->selected = sd->items;
         break;

@@ -560,3 +560,7 @@
 
 	* fix copy&paste error in elm_flip.
 	* fix possible invalid memory access in elm_access.
+
+2012-10-04  Cedric Bail
+
+	* Add a color picker to elm_colorselector.

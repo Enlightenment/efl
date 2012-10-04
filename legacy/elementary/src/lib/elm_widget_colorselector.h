@@ -125,9 +125,24 @@ struct _Elm_Colorselector_Smart_Data
 {
    Elm_Layout_Smart_Data  base;
 
-   /* for the 2 displaying modes of the widget */
+   /* for the 3 displaying modes of the widget */
    Evas_Object           *col_bars_area;
    Evas_Object           *palette_box;
+   Evas_Object           *picker;
+   Evas_Object           *picker_display;
+   Evas_Object           *entries[4];
+   Evas_Object           *button;
+
+   struct {
+      int                 x, y;
+      Eina_Bool           in;
+#ifdef HAVE_ELEMENTARY_X
+      Ecore_X_Window       xroot;
+      Ecore_Event_Handler *mouse_motion;
+      Ecore_Event_Handler *key_up;
+      Ecore_Event_Handler *mouse_up;
+#endif
+   } grab;
 
    Eina_List             *items, *selected;
    Color_Bar_Data        *cb_data[4];
