@@ -1578,12 +1578,16 @@ EAPI EPhysics_Body *ephysics_body_circle_add(EPhysics_World *world);
  * Just like rotation, deformation will be applied on associated
  * evas object using evas map.
  *
+ * @note When working with soft bodies it's importante to adjust the simulation's
+ * fixed time step due its multi point nature.
+ *
  * For a rigid circle, check @ref ephysics_body_circle_add().
  *
  * @param world The world this body will belongs to.
  * @return a new body or @c NULL, on errors.
  *
  * @see ephysics_body_del().
+ * @see ephysics_world_simulation_set().
  *
  * @ingroup EPhysics_Body
  */
@@ -1619,6 +1623,9 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  * Just like rotation, deformation will be applied on associated
  * evas object using evas map.
  *
+ * @note When working with soft bodies it's importante to adjust the simulation's
+ * fixed time step due its multi point nature.
+ *
  * For a rigid circle, check @ref ephysics_body_circle_add().
  *
  * @param world The world this body will belongs to.
@@ -1626,6 +1633,7 @@ EAPI EPhysics_Body *ephysics_body_box_add(EPhysics_World *world);
  *
  * @see ephysics_body_del().
  * @see ephysics_body_evas_object_set().
+ * @see ephysics_world_simulation_set().
  *
  * @ingroup EPhysics_Body
  */
@@ -1768,19 +1776,27 @@ EAPI EPhysics_World *ephysics_body_world_get(const EPhysics_Body *body);
  * updates of associated evas objects, or complement updates, like changing
  * evas objects properties under certain conditions of position or rotation.
  *
+ * Case @p body is a soft one a new evas_object will be returned, actually
+ * this is an smart object which maps many slices of @p evas_obj to reflect
+ * the soft body deformation.
+ *
  * @param body The body to associate to an evas object.
  * @param evas_obj The evas object that will be associated to this @p body.
  * @param use_obj_pos If @c EINA_TRUE it will set the physics body position
  * to match evas object position taking world rate on consideration.
+ * @return NULL on failure, @p evas_obj case @p body is a rigid body or a
+ * new Evas_Object if @p body is a soft body.
  *
  * @see ephysics_body_box_add().
+ * @see ephysics_body_soft_box_add().
  * @see ephysics_body_circle_add().
+ * @see ephysics_body_soft_circle_add().
  * @see ephysics_body_evas_object_unset().
  * @see ephysics_world_rate_set().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_Bool use_obj_pos);
+EAPI Evas_Object *ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_Bool use_obj_pos);
 
 /**
  * @brief

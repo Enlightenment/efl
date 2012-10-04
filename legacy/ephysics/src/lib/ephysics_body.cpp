@@ -32,6 +32,323 @@ struct _EPhysics_Body_Collision {
      Evas_Coord y;
 };
 
+typedef struct _EPhysics_Body_Soft_Body_Slice
+{
+     int index;
+     Evas_Object *evas_obj;
+} EPhysics_Body_Soft_Body_Slice;
+
+static const Evas_Smart_Cb_Description _smart_callbacks[] =
+{
+   {"children,changed", "i"},
+   {NULL, NULL}
+};
+
+typedef struct _EPhysics_Body_Soft_Body_Smart_Data
+{
+   Evas_Object_Smart_Clipped_Data base;
+   Evas_Object *base_obj;
+   EPhysics_Body *body;
+   Eina_List *slices;
+} EPhysics_Body_Soft_Body_Smart_Data;
+
+#define SMART_CLASS_NAME "EPhysics_Body_Soft_Body"
+
+#define EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(o, ptr)                  \
+  ptr = (EPhysics_Body_Soft_Body_Smart_Data *) evas_object_smart_data_get(o) \
+
+EVAS_SMART_SUBCLASS_NEW(SMART_CLASS_NAME,
+			_ephysics_body_soft_body_evas, Evas_Smart_Class,
+			Evas_Smart_Class, evas_object_smart_clipped_class_get,
+                        _smart_callbacks);
+
+static void
+_ephysics_body_soft_body_slices_apply(Evas_Object *obj)
+{
+   double rate;
+   void *data;
+   Eina_List *l;
+   Evas_Coord x, y, h, wy, wh, y0, y1, y2, x0, x1, x2;
+   Evas_Map *map;
+   btVector3 p0, p1, p2;
+   btSoftBody::tFaceArray faces;
+   EPhysics_Body_Soft_Body_Slice *slice;
+   EPhysics_Body_Soft_Body_Smart_Data *smart_data;
+   EPhysics_Body *body;
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
+   body = smart_data->body;
+   rate = ephysics_world_rate_get(body->world);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &wh);
+   EINA_LIST_FOREACH(smart_data->slices, l, data)
+     {
+        slice = (EPhysics_Body_Soft_Body_Slice *)data;
+        evas_object_geometry_get(slice->evas_obj, &x, &y, NULL, &h);
+
+        faces = body->soft_body->m_faces;
+        p0 = faces[slice->index].m_n[0]->m_x;
+        p1 = faces[slice->index].m_n[1]->m_x;
+        p2 = faces[slice->index].m_n[2]->m_x;
+
+        y0 = wh + wy - (p0.y() * rate);
+        y1 = wh + wy - (p1.y() * rate);
+        y2 = wh + wy - (p2.y() * rate);
+
+        x0 = p0.x() * rate;
+        x1 = p1.x() * rate;
+        x2 = p2.x() * rate;
+
+        evas_object_map_enable_set(slice->evas_obj, EINA_FALSE);
+        map = (Evas_Map *)evas_object_map_get((const Evas_Object *)
+                                              slice->evas_obj);
+
+        evas_object_image_smooth_scale_set(slice->evas_obj, EINA_TRUE);
+
+        evas_map_point_coord_set(map, 0, x0, y0, 0);
+        evas_map_point_coord_set(map, 1, x1, y1, 0);
+        evas_map_point_coord_set(map, 2, x2, y2, 0);
+        evas_map_point_coord_set(map, 3, x2, y2, 0);
+
+        evas_object_map_set(slice->evas_obj, map);
+        evas_object_map_enable_set(slice->evas_obj, EINA_TRUE);
+     }
+}
+
+static EPhysics_Body_Soft_Body_Slice *
+_ephysics_body_soft_body_slice_new(int index, Evas_Object *evas_obj)
+{
+   EPhysics_Body_Soft_Body_Slice *slice;
+
+   slice = (EPhysics_Body_Soft_Body_Slice *)malloc(
+                                          sizeof(EPhysics_Body_Soft_Body_Slice));
+   if (!slice)
+     {
+        ERR("Couldn't allocate EPhysics_Soft_Body_Slice memory.");
+        return NULL;
+     }
+
+   slice->index = index;
+   slice->evas_obj = evas_obj;
+   return slice;
+}
+
+static Eina_Bool
+_ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj)
+{
+   double rate;
+   Evas_Coord x, y, w, h, wy, wh, y0, y1, y2, x0, x1, x2;
+   Evas_Map *map;
+   Evas *evas;
+   EPhysics_Body_Soft_Body_Smart_Data *smart_data;
+   btSoftBody::tFaceArray faces;
+   EPhysics_Body_Soft_Body_Slice *slice;
+   btVector3 p0, p1, p2;
+
+   evas = evas_object_evas_get(body->evas_obj);
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &wh);
+   rate = ephysics_world_rate_get(body->world);
+
+   for (int i = 0; i < body->slices; i++)
+     {
+        slice = _ephysics_body_soft_body_slice_new(body->points_deform[i],
+                                             evas_object_image_filled_add(evas));
+
+        if (!slice)
+          return EINA_FALSE;
+
+        evas_object_image_source_set(slice->evas_obj, smart_data->base_obj);
+
+        evas_object_geometry_get(smart_data->base_obj, &x, &y, &w, &h);
+        evas_object_resize(slice->evas_obj, w, h);
+        evas_object_move(slice->evas_obj, x, y);
+        evas_object_show(slice->evas_obj);
+
+        faces = body->soft_body->m_faces;
+        p0 = faces[slice->index].m_n[0]->m_x;
+        p1 = faces[slice->index].m_n[1]->m_x;
+        p2 = faces[slice->index].m_n[2]->m_x;
+
+        y0 = wh + wy - (p0.y() * rate);
+        y1 = wh + wy - (p1.y() * rate);
+        y2 = wh + wy - (p2.y() * rate);
+
+        x0 = p0.x() * rate;
+        x1 = p1.x() * rate;
+        x2 = p2.x() * rate;
+
+        map = evas_map_new(4);
+        evas_map_util_points_populate_from_object(map, slice->evas_obj);
+
+        evas_map_point_image_uv_set(map, 0, x0 - x, y0 - y);
+        evas_map_point_image_uv_set(map, 1, x1 - x, y1 - y);
+        evas_map_point_image_uv_set(map, 2, x2 - x, y2 - y);
+        evas_map_point_image_uv_set(map, 3, x2 - x, y2 - y);
+
+        evas_map_point_coord_set(map, 0, x0, y0, 0);
+        evas_map_point_coord_set(map, 1, x1, y1, 0);
+        evas_map_point_coord_set(map, 2, x2, y2, 0);
+        evas_map_point_coord_set(map, 3, x2, y2, 0);
+
+        evas_object_map_set(slice->evas_obj, map);
+        evas_object_map_enable_set(slice->evas_obj, EINA_TRUE);
+        evas_map_free(map);
+
+        smart_data->slices = eina_list_append(smart_data->slices, slice);
+        evas_object_smart_member_add(slice->evas_obj, obj);
+     }
+
+   return EINA_TRUE;
+}
+
+static void
+_ephysics_body_soft_body_evas_smart_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *smart_data;
+   Eina_List *l;
+   void *data;
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
+   EINA_LIST_FOREACH(smart_data->slices, l, data)
+     {
+        EPhysics_Body_Soft_Body_Slice *slice;
+
+        slice = (EPhysics_Body_Soft_Body_Slice *)data;
+        evas_object_move(slice->evas_obj, x, y);
+     }
+   _ephysics_body_soft_body_slices_apply(obj);
+}
+
+static void
+_ephysics_body_soft_body_evas_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *smart_data;
+   Eina_List *l;
+   void *data;
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
+   EINA_LIST_FOREACH(smart_data->slices, l, data)
+     {
+        EPhysics_Body_Soft_Body_Slice *slice;
+
+        slice = (EPhysics_Body_Soft_Body_Slice *)data;
+        evas_object_resize(slice->evas_obj, w, h);
+     }
+   _ephysics_body_soft_body_slices_apply(obj);
+}
+
+static void
+_ephysics_body_soft_body_evas_smart_hide(Evas_Object *obj)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *smart_data;
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
+   evas_object_hide(smart_data->base_obj);
+}
+
+static void
+_ephysics_body_soft_body_evas_smart_show(Evas_Object *obj)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *smart_data;
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
+   evas_object_show(smart_data->base_obj);
+}
+
+static void
+_ephysics_body_soft_body_evas_smart_del(Evas_Object *obj)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *smart_data;
+   void *data;
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
+   EINA_LIST_FREE(smart_data->slices, data)
+     {
+        EPhysics_Body_Soft_Body_Slice *slice;
+
+        slice = (EPhysics_Body_Soft_Body_Slice *)data;
+        evas_object_del(slice->evas_obj);
+        free(slice);
+     }
+   _ephysics_body_soft_body_evas_parent_sc->del(obj);
+}
+
+static void
+_ephysics_body_soft_body_evas_smart_calculate(Evas_Object *obj)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *smart_data;
+   Evas_Coord x, y, w, h;
+   Eina_List *l;
+   void *data;
+
+   evas_object_geometry_get(obj, &x, &y, &w, &h);
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
+   EINA_LIST_FOREACH(smart_data->slices, l, data)
+     {
+        EPhysics_Body_Soft_Body_Slice *slice;
+
+        slice = (EPhysics_Body_Soft_Body_Slice *)data;
+        evas_object_move(slice->evas_obj, x, y);
+        evas_object_resize(slice->evas_obj, w, h);
+     }
+}
+
+static void
+_ephysics_body_soft_body_evas_smart_add(Evas_Object *obj)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *priv;
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, priv);
+   if (!priv) {
+      priv = (EPhysics_Body_Soft_Body_Smart_Data *)calloc(1,
+                                     sizeof(EPhysics_Body_Soft_Body_Smart_Data));
+      if (!priv) return;
+      evas_object_smart_data_set(obj, priv);
+   }
+
+   _ephysics_body_soft_body_evas_parent_sc->add(obj);
+}
+
+static void
+_ephysics_body_soft_body_evas_smart_set_user(Evas_Smart_Class *sc)
+{
+   sc->add = _ephysics_body_soft_body_evas_smart_add;
+   sc->move = _ephysics_body_soft_body_evas_smart_move;
+   sc->del = _ephysics_body_soft_body_evas_smart_del;
+   sc->resize = _ephysics_body_soft_body_evas_smart_resize;
+   sc->hide = _ephysics_body_soft_body_evas_smart_hide;
+   sc->show = _ephysics_body_soft_body_evas_smart_show;
+   sc->calculate = _ephysics_body_soft_body_evas_smart_calculate;
+}
+
+static Evas_Object *
+_ephysics_body_soft_body_evas_add(EPhysics_Body *body)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *priv;
+   Evas *evas;
+   Evas_Object *obj;
+   Evas_Coord x, y, w, h;
+
+   evas = evas_object_evas_get(body->evas_obj);
+   obj = evas_object_smart_add(evas,
+                               _ephysics_body_soft_body_evas_smart_class_new());
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, priv);
+   priv->base_obj = body->evas_obj;
+   priv->body = body;
+
+   evas_object_geometry_get(body->evas_obj, &x, &y, &w, &h);
+   evas_object_move(obj, x, y);
+   evas_object_resize(obj, w, h);
+   evas_object_show(obj);
+
+   if(!_ephysics_body_soft_body_slices_init(body, obj))
+     return NULL;
+
+   evas_object_move(priv->base_obj, 0, -h);
+   return obj;
+}
+
 static void
 _ephysics_body_forces_update(EPhysics_Body *body)
 {
@@ -288,32 +605,6 @@ _ephysics_body_evas_obj_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 }
 
 static void
-_ephysics_body_soft_body_points_distance_get(const EPhysics_Body *body, double distances[4][3])
-{
-   btVector3 center;
-   btScalar raius;
-
-   body->soft_body->getCollisionShape()->getBoundingSphere(center, raius);
-
-   for (int m = 0; m < 4; m++)
-     {
-        for (int n = 0; n < 3; n++)
-          {
-             btVector3 node;
-             double distance;
-
-             node = body->soft_body->
-                         m_faces[body->points_deform[m][n]].m_n[1]->m_x;
-
-             distance = sqrt(pow(center.x() - node.x(), 2) +
-                        pow(center.y() - node.y(), 2));
-
-             distances[m][n] = distance;
-          }
-     }
-}
-
-static void
 _ephysics_body_soft_body_anchors_rebuild(int node, btRigidBody *rigid_body, btSoftBody *soft_body)
 {
    btTransform world_trans = rigid_body->getWorldTransform();
@@ -345,7 +636,6 @@ _ephysics_body_soft_body_constraints_rebuild(EPhysics_Body *body)
 
    soft_body->generateClusters(0);
    soft_body->generateBendingConstraints(10, soft_body->m_materials[0]);
-   _ephysics_body_soft_body_points_distance_get(body, body->distances);
 }
 
 inline static double
@@ -479,32 +769,6 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 }
 
 static void
-_ephysics_body_soft_body_deform(EPhysics_Body *body, double rate, Evas_Map *map)
-{
-   double curr_distances[4][3];
-
-   _ephysics_body_soft_body_points_distance_get(body, curr_distances);
-
-   for (int m = 0; m < 4; m++)
-     {
-        Evas_Coord px, py, pz;
-        double dx = 0, dy = 0;
-
-        evas_map_point_coord_get(map, m, &px, &py, &pz);
-
-        for (int n = 0; n < 3; n++)
-          {
-             double diff = (curr_distances[m][n] - body->distances[m][n]);
-             dx += diff;
-             dy += diff;
-          }
-
-        evas_map_point_coord_set(map, m, px - (dx * rate), py - (dy * rate),
-                                 pz);
-     }
-}
-
-static void
 _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = (EPhysics_Body *) data;
@@ -544,6 +808,8 @@ _ephysics_body_del(EPhysics_Body *body)
 
    EINA_LIST_FREE(body->collision_groups, group)
       eina_stringshare_del((Eina_Stringshare *)group);
+
+   free(body->points_deform);
 
    delete body->rigid_body->getMotionState();
    delete body->collision_shape;
@@ -587,14 +853,14 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
         return;
      }
 
+   if (body->soft_body)
+     return;
+
    rot = - trans.getRotation().getAngle() * RAD_TO_DEG *
       trans.getRotation().getAxis().getZ();
 
    map = evas_map_new(4);
    evas_map_util_points_populate_from_object(map, body->evas_obj);
-
-   if (body->soft_body)
-     _ephysics_body_soft_body_deform(body, rate, map);
 
    evas_map_util_rotate(map, rot, x + (w * body->cm.x), y +
                         (h * body->cm.y));
@@ -749,10 +1015,10 @@ static void
 _ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
 {
    btSoftBody *soft_body = body->soft_body;
-   soft_body->m_cfg.kAHR = (hardness / 100) * 0.6;
-   soft_body->m_materials[0]->m_kVST = (hardness / 100);
-   soft_body->m_materials[0]->m_kLST = (hardness / 100);
-   soft_body->m_materials[0]->m_kAST = (hardness / 100);
+   soft_body->m_cfg.kAHR = (hardness / 1000) * 0.6;
+   soft_body->m_materials[0]->m_kVST = (hardness / 1000);
+   soft_body->m_materials[0]->m_kLST = (hardness / 1000);
+   soft_body->m_materials[0]->m_kAST = (hardness / 1000);
    DBG("Soft body %p hardness set to %lf.", body, hardness);
 }
 
@@ -801,7 +1067,7 @@ ephysics_body_soft_body_hardness_get(const EPhysics_Body *body)
 }
 
 static EPhysics_Body *
-_ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape, btSoftBody *soft_body)
+_ephysics_body_soft_body_add(EPhysics_World *world, btCollisionShape *collision_shape, btSoftBody *soft_body)
 {
    EPhysics_Body *body;
 
@@ -814,6 +1080,8 @@ _ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape
         return NULL;
      }
    body->soft_body = soft_body;
+
+   body->soft_body->getCollisionShape()->setMargin(btScalar(0.02));
    body->soft_body->setUserPointer(body);
    body->soft_body->setTotalMass(body->mass);
 
@@ -821,7 +1089,6 @@ _ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape
    body->soft_body->m_cfg.collisions += btSoftBody::fCollision::VF_SS;
 
    _ephysics_body_soft_body_hardness_set(body, 100);
-
    body->rigid_body->setCollisionFlags(
                                       btCollisionObject::CF_NO_CONTACT_RESPONSE);
 
@@ -837,6 +1104,8 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
    btCollisionShape *shape;
    btSoftBodyWorldInfo *world_info;
    btSoftBody *soft_body;
+   int points[19] = {16, 58, 44, 79, 97, 35, 6, 27, 45, 1, 38, 18, 21, 10, 26,
+                     7, 86, 37, 55};
 
    if (!world)
      {
@@ -845,7 +1114,8 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
      }
 
    ephysics_world_lock_take(world);
-   shape = new btCylinderShapeZ(btVector3(0.25, 0.25, 0.25));
+   shape = new btCylinderShapeZ(btVector3(0.5, 0.5, 0.5));
+
    if (!shape)
      {
         ERR("Couldn't create a new cylinder shape.");
@@ -862,25 +1132,20 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
         goto no_soft_body;
      }
 
-   body = _ephysics_body_soft_add(world, shape, soft_body);
+   body = _ephysics_body_soft_body_add(world, shape, soft_body);
    if (!body)
      goto no_body;
 
-   body->points_deform[0][0] = 72;
-   body->points_deform[0][1] = 69;
-   body->points_deform[0][2] = 3;
+   body->slices = 19;
+   body->points_deform = (int *)malloc(body->slices * sizeof(int));
+   if (!body->points_deform)
+     {
+        ERR("Couldn't create points of deformation.");
+        goto no_deform;
+     }
 
-   body->points_deform[1][0] = 72;
-   body->points_deform[1][1] = 6;
-   body->points_deform[1][2] = 65;
-
-   body->points_deform[2][0] = 54;
-   body->points_deform[2][1] = 47;
-   body->points_deform[2][2] = 65;
-
-   body->points_deform[3][0] = 57;
-   body->points_deform[3][1] = 3;
-   body->points_deform[3][2] = 76;
+   for (int i = 0; i < body->slices; i++)
+     body->points_deform[i] = points[i];
 
    ephysics_world_lock_release(world);
    return body;
@@ -889,6 +1154,8 @@ no_body:
    delete soft_body;
 no_soft_body:
    delete shape;
+no_deform:
+   ephysics_world_body_del(world, body);
 no_collision_shape:
    ephysics_world_lock_release(world);
    return NULL;
@@ -926,6 +1193,9 @@ ephysics_body_soft_box_add(EPhysics_World *world)
    btCollisionShape *shape;
    btSoftBodyWorldInfo *world_info;
    btSoftBody *soft_body;
+   int points[16] = {14, 85, 88, 28, 41, 55, 10, 24, 93, 79, 56, 86, 91, 8,
+                     27, 1};
+
 
    if (!world)
      {
@@ -951,25 +1221,20 @@ ephysics_body_soft_box_add(EPhysics_World *world)
         goto no_soft_body;
      }
 
-   body = _ephysics_body_soft_add(world, shape, soft_body);
+   body = _ephysics_body_soft_body_add(world, shape, soft_body);
    if (!body)
      goto no_body;
 
-   body->points_deform[0][0] = 85;
-   body->points_deform[0][1] = 12;
-   body->points_deform[0][2] = 30;
+   body->slices = 16;
+   body->points_deform = (int *)malloc(body->slices * sizeof(int));
+   if (!body->points_deform)
+     {
+        ERR("Couldn't create points of deformation.");
+        goto no_deform;
+     }
 
-   body->points_deform[1][0] = 27;
-   body->points_deform[1][1] = 80;
-   body->points_deform[1][2] = 69;
-
-   body->points_deform[2][0] = 50;
-   body->points_deform[2][1] = 40;
-   body->points_deform[2][2] = 60;
-
-   body->points_deform[3][0] = 18;
-   body->points_deform[3][1] = 62;
-   body->points_deform[3][2] = 8;
+   for (int i = 0; i < body->slices; i++)
+     body->points_deform[i] = points[i];
 
    ephysics_world_lock_release(world);
    return body;
@@ -978,6 +1243,8 @@ no_body:
    delete soft_body;
 no_soft_body:
    delete shape;
+no_deform:
+   ephysics_world_body_del(world, body);
 no_collision_shape:
    ephysics_world_lock_release(world);
    return NULL;
@@ -1244,7 +1511,7 @@ ephysics_body_del(EPhysics_Body *body)
    ephysics_world_lock_release(body->world);
 }
 
-EAPI void
+EAPI Evas_Object *
 ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
 {
    int obj_x, obj_y, obj_w, obj_h;
@@ -1252,13 +1519,13 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
    if (!body)
      {
         ERR("Can't set evas object to body, the last wasn't provided.");
-        return;
+        return NULL;
      }
 
    if (!evas_obj)
      {
         ERR("Can't set evas object to body, the first wasn't provided.");
-        return;
+        return NULL;
      }
 
    if (body->evas_obj)
@@ -1271,19 +1538,32 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
 
    body->evas_obj = evas_obj;
 
+
    evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_DEL,
                                   _ephysics_body_evas_obj_del_cb, body);
 
    if (!use_obj_pos)
-     return;
+     return evas_obj;
 
    evas_object_geometry_get(body->evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
    ephysics_world_lock_take(body->world);
    _ephysics_body_geometry_set(body, obj_x, obj_y, obj_w, obj_h,
                                ephysics_world_rate_get(body->world));
+
+   if (body->soft_body)
+     {
+        body->evas_obj = _ephysics_body_soft_body_evas_add(body);
+        evas_object_event_callback_del(evas_obj, EVAS_CALLBACK_DEL,
+                                       _ephysics_body_evas_obj_del_cb);
+        evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_DEL,
+                                       _ephysics_body_evas_obj_del_cb, body);
+     }
+
    ephysics_world_lock_release(body->world);
-   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
+   evas_object_event_callback_add(body->evas_obj, EVAS_CALLBACK_RESIZE,
                                   _ephysics_body_evas_obj_resize_cb, body);
+
+   return evas_obj;
 }
 
 EAPI Evas_Object *

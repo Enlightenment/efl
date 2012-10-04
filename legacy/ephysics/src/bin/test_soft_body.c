@@ -26,7 +26,33 @@ _world_populate(Test_Data *test_data)
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
-   fall_body = ephysics_body_circle_add(test_data->world);
+   fall_body = ephysics_body_soft_circle_add(test_data->world);
+   ephysics_body_soft_body_hardness_set(fall_body, 10);
+   ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
+   ephysics_body_restitution_set(fall_body, 0.95);
+   ephysics_body_friction_set(fall_body, 0.1);
+   ephysics_body_event_callback_add(fall_body, EPHYSICS_CALLBACK_BODY_UPDATE,
+                                    update_object_cb, shadow);
+   test_data->bodies = eina_list_append(test_data->bodies, fall_body);
+
+   shadow = elm_layout_add(test_data->win);
+   elm_layout_file_set(
+      shadow, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "shadow-ball");
+   evas_object_move(shadow, 200, FLOOR_Y);
+   evas_object_resize(shadow, 70, 3);
+   evas_object_show(shadow);
+   test_data->evas_objs = eina_list_append(test_data->evas_objs, shadow);
+
+   evas_obj = elm_image_add(test_data->win);
+   elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
+                      "big-blue-ball");
+   evas_object_move(evas_obj, 300, 100);
+   evas_object_resize(evas_obj, 70, 70);
+   evas_object_show(evas_obj);
+   test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
+
+   fall_body = ephysics_body_soft_circle_add(test_data->world);
+   ephysics_body_soft_body_hardness_set(fall_body, 30);
    ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
    ephysics_body_restitution_set(fall_body, 0.95);
    ephysics_body_friction_set(fall_body, 0.1);
@@ -45,7 +71,7 @@ _world_populate(Test_Data *test_data)
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
                       "big-blue-ball");
-   evas_object_move(evas_obj, 100, 100);
+   evas_object_move(evas_obj, 200, 10);
    evas_object_resize(evas_obj, 70, 70);
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
@@ -76,12 +102,13 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
 
    fall_body = ephysics_body_soft_box_add(test_data->world);
-   ephysics_body_soft_body_hardness_set(fall_body, 50);
-   ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
+   ephysics_body_soft_body_hardness_set(fall_body, 10);
+   evas_obj = ephysics_body_evas_object_set(fall_body, evas_obj, EINA_TRUE);
    ephysics_body_event_callback_add(fall_body, EPHYSICS_CALLBACK_BODY_UPDATE,
                                     update_object_cb, shadow);
    ephysics_body_restitution_set(fall_body, 0.5);
    ephysics_body_friction_set(fall_body, 0.1);
+   test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
    test_data->bodies = eina_list_append(test_data->bodies, fall_body);
 }
 
@@ -113,6 +140,7 @@ test_soft_body(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_object_signal_emit(test_data->layout, "borders,show", "ephysics_test");
 
    world = ephysics_world_new();
+   ephysics_world_simulation_set(world, 1/150.f, 5);
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
    test_data->world = world;
 

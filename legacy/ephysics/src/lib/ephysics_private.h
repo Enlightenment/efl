@@ -93,8 +93,8 @@ struct _EPhysics_Body {
      } cm;
      Eina_Bool active:1;
      Eina_Bool deleted:1;
-     double distances[4][3];
-     int points_deform[4][3];
+     int slices;
+     int *points_deform;
 };
 
 extern int _ephysics_log_dom;
