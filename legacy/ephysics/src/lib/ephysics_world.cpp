@@ -12,6 +12,16 @@ extern "C" {
 
 #define DEFAULT_GRAVITY btVector3(0, -9.8, 0)
 
+typedef struct _Simulation_Msg Simulation_Msg;
+
+struct _Simulation_Msg {
+     EPhysics_Body *body_0;
+     EPhysics_Body *body_1;
+     btVector3 pos_a;
+     btVector3 pos_b;
+     Eina_Bool tick:1;
+};
+
 typedef struct _EPhysics_World_Callback EPhysics_World_Callback;
 
 struct _EPhysics_World_Callback {
@@ -41,14 +51,18 @@ struct _EPhysics_World {
      Eina_List *to_delete;
      Eina_List *cb_to_delete;
      Eina_List *constraints;
+     Ecore_Thread *simulation_th;
+     Ecore_Thread *cur_th;
      int max_sub_steps;
-     int walking;
      int cb_walking;
      int soft_body_ref;
+     int pending_ticks;
      double last_update;
      double rate;
      double fixed_time_step;
      double max_sleeping_time;
+     Eina_Lock mutex;
+     Eina_Condition condition;
      Eina_Bool running:1;
      Eina_Bool active:1;
      Eina_Bool deleted:1;
@@ -57,6 +71,7 @@ struct _EPhysics_World {
      Eina_Bool outside_bottom:1;
      Eina_Bool outside_left:1;
      Eina_Bool outside_right:1;
+     Eina_Bool pending_simulation:1;
 };
 
 static int _ephysics_world_init_count = 0;
@@ -98,6 +113,14 @@ _ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double 
    gravity = btVector3(gx / rate, -gy / rate, 0);
    world->dynamics_world->setGravity(gravity);
    world->world_info->m_gravity = gravity;
+}
+
+static void
+_ephysics_world_th_cancel(EPhysics_World *world)
+{
+   _worlds = eina_inlist_remove(_worlds, EINA_INLIST_GET(world));
+   if (!ecore_thread_cancel(world->simulation_th))
+     eina_condition_signal(&world->condition);
 }
 
 static void
@@ -144,7 +167,7 @@ _ephysics_world_event_callback_del(EPhysics_World *world, EPhysics_World_Callbac
 }
 
 static void
-_ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep __UNUSED__)
+_ephysics_world_tick(btDynamicsWorld *dynamics_world)
 {
    Eina_Bool world_active, camera_moved, tx, ty;
    btCollisionObjectArray objects;
@@ -195,13 +218,41 @@ _ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep __UNU
            world, EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED, world->camera);
      }
 
-
-   if (world->active == world_active) return;
+   if (world->active == world_active) goto body_del;
    world->active = world_active;
-   if (world_active) return;
+   if (world_active) goto body_del;
 
    _ephysics_world_event_callback_call(world, EPHYSICS_CALLBACK_WORLD_STOPPED,
                                        NULL);
+
+body_del:
+   world->pending_ticks--;
+   if (!world->pending_ticks)
+     {
+        void *bd;
+        EINA_LIST_FREE(world->to_delete, bd)
+           ephysics_world_body_del(world, (EPhysics_Body*)bd);
+     }
+
+   if ((world->pending_simulation) && (!world->pending_ticks))
+     {
+        world->pending_simulation = EINA_FALSE;
+        eina_condition_signal(&world->condition);
+     }
+}
+
+static void
+_ephysics_world_tick_cb(btDynamicsWorld *dynamics_world, btScalar timeStep __UNUSED__)
+{
+   EPhysics_World *world;
+   Simulation_Msg *msg;
+
+   msg = (Simulation_Msg *) calloc(1, sizeof(Simulation_Msg));
+   msg->tick = EINA_TRUE;
+
+   world = (EPhysics_World *) dynamics_world->getWorldUserInfo();
+   world->pending_ticks++;
+   ecore_thread_feedback(world->cur_th, msg);
 }
 
 static void
@@ -227,7 +278,7 @@ ephysics_world_body_del(EPhysics_World *world, EPhysics_Body *body)
 {
    EPhysics_Body *bd;
 
-   if (world->walking)
+   if (world->pending_ticks)
      {
         world->to_delete = eina_list_append(world->to_delete, body);
         return EINA_FALSE;
@@ -254,8 +305,6 @@ _ephysics_world_free(EPhysics_World *world)
    EPhysics_World_Callback *cb;
    EPhysics_Body *body;
    void *constraint;
-
-   _worlds = eina_inlist_remove(_worlds, EINA_INLIST_GET(world));
 
    while (world->callbacks)
      {
@@ -286,6 +335,9 @@ _ephysics_world_free(EPhysics_World *world)
    delete world->soft_solver;
    delete world->world_info;
 
+   eina_condition_free(&world->condition);
+   eina_lock_free(&world->mutex);
+
    free(world);
    INF("World %p deleted.", world);
 }
@@ -294,46 +346,24 @@ static Eina_Bool
 _simulate_worlds(void *data __UNUSED__)
 {
    EPhysics_World *world;
-   void *wrld, *bd;
+   void *wrld;
 
    ephysics_init();
    _worlds_walking++;
    EINA_INLIST_FOREACH(_worlds, world)
      {
-        double time_now, delta;
-        EPhysics_Body *body;
-
         if (!world->running)
           continue;
 
-        world->walking++;
-
-        EINA_INLIST_FOREACH(world->bodies, body)
-           ephysics_body_forces_apply(body);
-
-        time_now = ecore_time_get();
-        delta = time_now - world->last_update;
-        world->last_update = time_now;
-
-        gDeactivationTime = world->max_sleeping_time;
-
-        if (world->soft_body_ref)
+        if (world->pending_ticks)
           {
-             world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
-                                                world->fixed_time_step);
-             world->world_info->m_sparsesdf.GarbageCollect();
+             world->pending_simulation = EINA_TRUE;
+             continue;
           }
-        else
-          ((btDiscreteDynamicsWorld *)world->dynamics_world)->stepSimulation(
-             delta, world->max_sub_steps, world->fixed_time_step);
 
-        world->walking--;
+        world->pending_simulation = EINA_FALSE;
 
-        if (!world->walking)
-          {
-             EINA_LIST_FREE(world->to_delete, bd)
-                ephysics_world_body_del(world, (EPhysics_Body*)bd);
-          }
+        eina_condition_signal(&world->condition);
      }
    _worlds_walking--;
 
@@ -344,7 +374,7 @@ _simulate_worlds(void *data __UNUSED__)
      }
 
    EINA_LIST_FREE(_worlds_to_delete, wrld)
-      _ephysics_world_free((EPhysics_World *)wrld);
+      _ephysics_world_th_cancel((EPhysics_World *)wrld);
 
    ephysics_shutdown();
 
@@ -356,6 +386,8 @@ _ephysics_world_contact_processed_cb(btManifoldPoint &cp, void *b0, void *b1)
 {
    btRigidBody *rigid_body_0, *rigid_body_1;
    EPhysics_Body *body_0, *body_1;
+   EPhysics_World *world;
+   Simulation_Msg *msg;
 
    rigid_body_0 = (btRigidBody *) b0;
    rigid_body_1 = (btRigidBody *) b1;
@@ -363,8 +395,14 @@ _ephysics_world_contact_processed_cb(btManifoldPoint &cp, void *b0, void *b1)
    body_0 = (EPhysics_Body *) rigid_body_0->getUserPointer();
    body_1 = (EPhysics_Body *) rigid_body_1->getUserPointer();
 
-   ephysics_body_contact_processed(body_0, body_1, cp.getPositionWorldOnA());
-   ephysics_body_contact_processed(body_1, body_0, cp.getPositionWorldOnB());
+   world = ephysics_body_world_get(body_0);
+
+   msg = (Simulation_Msg *) calloc(1, sizeof(Simulation_Msg));
+   msg->body_0 = body_0;
+   msg->body_1 = body_1;
+   msg->pos_a = cp.getPositionWorldOnA();
+   msg->pos_b = cp.getPositionWorldOnB();
+   ecore_thread_feedback(world->cur_th, msg);
 
    return EINA_TRUE;
 }
@@ -485,6 +523,85 @@ ephysics_world_boundary_get(const EPhysics_World *world, EPhysics_World_Boundary
    return world->boundaries[boundary];
 }
 
+static void
+_th_simulate(void *data, Ecore_Thread *th)
+{
+   EPhysics_World *world = (EPhysics_World *) data;
+
+   while (1)
+     {
+        double time_now, delta;
+        EPhysics_Body *body;
+
+        eina_condition_wait(&world->condition);
+        if (ecore_thread_check(th))
+          {
+             INF("Thread canceled by main loop thread");
+             eina_lock_release(&world->mutex);
+             return;
+          }
+
+        world->pending_ticks++;
+        world->cur_th = th;
+
+        EINA_INLIST_FOREACH(world->bodies, body)
+           ephysics_body_forces_apply(body);
+
+        time_now = ecore_time_get();
+        delta = time_now - world->last_update;
+        world->last_update = time_now;
+
+        gDeactivationTime = world->max_sleeping_time;
+
+        if (world->soft_body_ref)
+          {
+             world->dynamics_world->stepSimulation(delta, world->max_sub_steps,
+                                                world->fixed_time_step);
+             world->world_info->m_sparsesdf.GarbageCollect();
+          }
+        else
+          ((btDiscreteDynamicsWorld *)world->dynamics_world)->stepSimulation(
+             delta, world->max_sub_steps, world->fixed_time_step);
+
+        world->pending_ticks--;
+        eina_lock_release(&world->mutex);
+     }
+}
+
+static void
+_th_msg_cb(void *data, Ecore_Thread *th __UNUSED__, void *msg_data)
+{
+   EPhysics_World *world = (EPhysics_World *) data;
+   Simulation_Msg *msg = (Simulation_Msg *) msg_data;
+
+   if (msg->tick)
+     _ephysics_world_tick(world->dynamics_world);
+   else
+     {
+        ephysics_body_contact_processed(msg->body_0, msg->body_1, msg->pos_a);
+        ephysics_body_contact_processed(msg->body_1, msg->body_0, msg->pos_b);
+     }
+   free(msg);
+}
+
+static void
+_th_end_cb(void *data, Ecore_Thread *th)
+{
+   EPhysics_World *world = (EPhysics_World *) data;
+   INF("World %p simulation thread %p end", world, th);
+   world->simulation_th = NULL;
+   _ephysics_world_free(world);
+}
+
+static void
+_th_cancel_cb(void *data, Ecore_Thread *th)
+{
+   EPhysics_World *world = (EPhysics_World *) data;
+   INF("World %p simulation thread %p canceled", world, th);
+   world->simulation_th = NULL;
+   _ephysics_world_free(world);
+}
+
 EAPI EPhysics_World *
 ephysics_world_new(void)
 {
@@ -566,6 +683,15 @@ ephysics_world_new(void)
         ERR("Couldn't add world to worlds list.");
         goto no_list;
      }
+   world->simulation_th = ecore_thread_feedback_run(
+      _th_simulate, _th_msg_cb, _th_end_cb, _th_cancel_cb, world, EINA_TRUE);
+   if (!world->simulation_th)
+     {
+        ERR("Failed to create simulation thread.");
+        goto no_thread;
+     }
+   eina_lock_new(&world->mutex);
+   eina_condition_new(&world->condition, &world->mutex);
 
    world->dynamics_world->getSolverInfo().m_solverMode ^=
       EPHYSICS_WORLD_SOLVER_SIMD;
@@ -594,6 +720,8 @@ ephysics_world_new(void)
    INF("World %p added.", world);
    return world;
 
+no_thread:
+   _worlds = eina_inlist_remove(_worlds, EINA_INLIST_GET(world));
 no_list:
    delete world->world_info;
 no_world_info:
@@ -616,7 +744,7 @@ no_camera:
 }
 
 EAPI Eina_Bool
-ephysics_world_serialize(const EPhysics_World *world, const char *path)
+ephysics_world_serialize(EPhysics_World *world, const char *path)
 {
    btDefaultSerializer *serializer;
    FILE *file;
@@ -627,10 +755,13 @@ ephysics_world_serialize(const EPhysics_World *world, const char *path)
         return EINA_FALSE;
       }
 
+   eina_lock_take(&world->mutex);
+
    file = fopen(path, "wb");
    if (!file)
      {
         WRN("Could not serialize, could not open file: %s", path);
+        eina_lock_release(&world->mutex);
         return EINA_FALSE;
      }
 
@@ -643,6 +774,7 @@ ephysics_world_serialize(const EPhysics_World *world, const char *path)
         WRN("Problems on writing to: %s.", path);
         fclose(file);
         delete serializer;
+        eina_lock_release(&world->mutex);
         return EINA_FALSE;
      }
 
@@ -651,44 +783,13 @@ ephysics_world_serialize(const EPhysics_World *world, const char *path)
 
    INF("Serialization of world %p written to file: %s.", world, path);
 
+   eina_lock_release(&world->mutex);
    return EINA_TRUE;
 }
 
-EAPI void
-ephysics_world_del(EPhysics_World *world)
+static void
+_ephysics_world_running_set(EPhysics_World *world, Eina_Bool running)
 {
-   if (!world)
-     {
-        ERR("Can't delete world, it wasn't provided.");
-        return;
-     }
-
-   if (world->deleted) return;
-
-   world->deleted = EINA_TRUE;
-   _ephysics_world_event_callback_call(world, EPHYSICS_CALLBACK_WORLD_DEL,
-                                       NULL);
-   ephysics_world_running_set(world, EINA_FALSE);
-
-   if (_worlds_walking > 0)
-     {
-        _worlds_to_delete = eina_list_append(_worlds_to_delete, world);
-        INF("World %p marked to delete.", world);
-        return;
-     }
-
-   _ephysics_world_free(world);
-}
-
-EAPI void
-ephysics_world_running_set(EPhysics_World *world, Eina_Bool running)
-{
-   if (!world)
-     {
-        ERR("Can't (un)pause world, it wasn't provided.");
-        return;
-     }
-
    if ((!!running) == world->running) return;
 
    world->running = !!running;
@@ -721,6 +822,50 @@ ephysics_world_running_set(EPhysics_World *world, Eina_Bool running)
    _anim_simulate = ecore_animator_add(_simulate_worlds, NULL);
 }
 
+EAPI void
+ephysics_world_del(EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't delete world, it wasn't provided.");
+        return;
+     }
+
+   if (world->deleted) return;
+
+   eina_lock_take(&world->mutex);
+
+   world->deleted = EINA_TRUE;
+   _ephysics_world_event_callback_call(world, EPHYSICS_CALLBACK_WORLD_DEL,
+                                       NULL);
+   _ephysics_world_running_set(world, EINA_FALSE);
+
+   if (_worlds_walking > 0)
+     {
+        _worlds_to_delete = eina_list_append(_worlds_to_delete, world);
+        INF("World %p marked to delete.", world);
+        eina_lock_release(&world->mutex);
+        return;
+     }
+
+   eina_lock_release(&world->mutex);
+   _ephysics_world_th_cancel(world);
+}
+
+EAPI void
+ephysics_world_running_set(EPhysics_World *world, Eina_Bool running)
+{
+   if (!world)
+     {
+        ERR("Can't (un)pause world, it wasn't provided.");
+        return;
+     }
+
+   eina_lock_take(&world->mutex);
+   _ephysics_world_running_set(world, running);
+   eina_lock_release(&world->mutex);
+}
+
 EAPI Eina_Bool
 ephysics_world_running_get(const EPhysics_World *world)
 {
@@ -742,7 +887,9 @@ ephysics_world_max_sleeping_time_set(EPhysics_World *world, double sleeping_time
 	return;
      }
 
+   eina_lock_take(&world->mutex);
    world->max_sleeping_time = sleeping_time;
+   eina_lock_release(&world->mutex);
 }
 
 EAPI double
@@ -766,8 +913,10 @@ ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
         return;
      }
 
+   eina_lock_take(&world->mutex);
    _ephysics_world_gravity_set(world, gx, gy, world->rate);
    DBG("World %p gravity set to X:%lf, Y:%lf.", world, gx, gy);
+   eina_lock_release(&world->mutex);
 }
 
 EAPI void
@@ -779,7 +928,9 @@ ephysics_world_constraint_solver_iterations_set(EPhysics_World *world, int itera
         return;
      }
 
+   eina_lock_take(&world->mutex);
    world->dynamics_world->getSolverInfo().m_numIterations = iterations;
+   eina_lock_release(&world->mutex);
 }
 
 EAPI int
@@ -804,10 +955,12 @@ ephysics_world_constraint_solver_mode_enable_set(EPhysics_World *world, EPhysics
         return;
      }
 
+   eina_lock_take(&world->mutex);
    current_solver_mode = world->dynamics_world->getSolverInfo().m_solverMode;
    if ((enable && !(current_solver_mode & solver_mode)) ||
        (!enable && (current_solver_mode & solver_mode)))
      world->dynamics_world->getSolverInfo().m_solverMode ^= solver_mode;
+   eina_lock_release(&world->mutex);
 }
 
 EAPI Eina_Bool
@@ -860,6 +1013,7 @@ ephysics_world_rate_set(EPhysics_World *world, double rate)
         return;
      }
 
+   eina_lock_take(&world->mutex);
    /* Force to recalculate sizes, velocities and accelerations with new rate */
    ephysics_world_gravity_get(world, &gx, &gy);
    _ephysics_world_gravity_set(world, gx, gy, rate);
@@ -871,6 +1025,7 @@ ephysics_world_rate_set(EPhysics_World *world, double rate)
         ephysics_constraint_recalc((EPhysics_Constraint *)constraint, rate);
 
    world->rate = rate;
+   eina_lock_release(&world->mutex);
 }
 
 EAPI double
@@ -1050,7 +1205,9 @@ ephysics_world_linear_slop_set(EPhysics_World *world, double linear_slop)
         return;
      }
 
+   eina_lock_take(&world->mutex);
    world->dynamics_world->getSolverInfo().m_linearSlop = btScalar(linear_slop);
+   eina_lock_release(&world->mutex);
 }
 
 EAPI double
@@ -1202,11 +1359,13 @@ ephysics_world_simulation_set(EPhysics_World *world, double fixed_time_step, int
         return;
      }
 
+   eina_lock_take(&world->mutex);
    world->max_sub_steps = max_sub_steps;
    world->fixed_time_step = fixed_time_step;
 
    DBG("World %p simulation set to fixed time step: %lf, max substeps:%i.",
        world, fixed_time_step, max_sub_steps);
+   eina_lock_release(&world->mutex);
 }
 
 EAPI void
@@ -1220,6 +1379,18 @@ ephysics_world_simulation_get(const EPhysics_World *world, double *fixed_time_st
 
    if (fixed_time_step) *fixed_time_step = world->fixed_time_step;
    if (max_sub_steps) *max_sub_steps = world->max_sub_steps;
+}
+
+void
+ephysics_world_lock_take(EPhysics_World *world)
+{
+   eina_lock_take(&world->mutex);
+}
+
+void
+ephysics_world_lock_release(EPhysics_World *world)
+{
+   eina_lock_release(&world->mutex);
 }
 
 #ifdef  __cplusplus

@@ -602,7 +602,7 @@ EAPI void ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_C
  *
  * @ingroup EPhysics_World
  */
-EAPI Eina_Bool ephysics_world_serialize(const EPhysics_World *world, const char *path);
+EAPI Eina_Bool ephysics_world_serialize(EPhysics_World *world, const char *path);
 
 /**
  * @brief

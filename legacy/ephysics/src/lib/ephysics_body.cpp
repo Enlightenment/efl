@@ -141,15 +141,18 @@ ephysics_body_collision_group_add(EPhysics_Body *body, const char *group)
         return EINA_FALSE;
      }
 
+   ephysics_world_lock_take(body->world);
    group_str = eina_stringshare_add(group);
    if (eina_list_data_find(body->collision_groups, group_str))
      {
         INF("Body already added to group: %s", group);
         eina_stringshare_del(group_str);
+        ephysics_world_lock_release(body->world);
         return EINA_TRUE;
      }
 
    body->collision_groups = eina_list_append(body->collision_groups, group_str);
+   ephysics_world_lock_release(body->world);
    return EINA_TRUE;
 }
 
@@ -164,17 +167,20 @@ ephysics_body_collision_group_del(EPhysics_Body *body, const char *group)
         return EINA_FALSE;
      }
 
+   ephysics_world_lock_take(body->world);
    group_str = eina_stringshare_add(group);
    if (!eina_list_data_find(body->collision_groups, group_str))
      {
         INF("Body isn't part of group: %s", group);
         eina_stringshare_del(group_str);
+        ephysics_world_lock_release(body->world);
         return EINA_TRUE;
      }
 
    body->collision_groups = eina_list_remove(body->collision_groups, group_str);
    eina_stringshare_del(group_str);
    eina_stringshare_del(group_str);
+   ephysics_world_lock_release(body->world);
    return EINA_TRUE;
 }
 
@@ -342,6 +348,24 @@ _ephysics_body_soft_body_constraints_rebuild(EPhysics_Body *body)
 }
 
 static void
+_ephysics_body_mass_set(EPhysics_Body *body, double mass)
+{
+   btVector3 inertia(0, 0, 0);
+
+   if (body->soft_body)
+     body->soft_body->setTotalMass(mass);
+   else
+     {
+        body->collision_shape->calculateLocalInertia(mass, inertia);
+        body->rigid_body->setMassProps(mass, inertia);
+        body->rigid_body->updateInertiaTensor();
+     }
+
+   body->mass = mass;
+   DBG("Body %p mass changed to %lf.", body, mass);
+}
+
+static void
 _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
 {
    double rate, sx, sy;
@@ -360,7 +384,7 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
         body->collision_shape->setLocalScaling(btVector3(sx, sy, 1));
 
         if(!body->rigid_body->isStaticObject())
-          ephysics_body_mass_set(body, ephysics_body_mass_get(body));
+          _ephysics_body_mass_set(body, ephysics_body_mass_get(body));
      }
 
    body->w = w;
@@ -429,7 +453,7 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
         body->rigid_body->proceedToTransform(trans);
 
         if (!body->rigid_body->isStaticObject())
-          ephysics_body_mass_set(body, ephysics_body_mass_get(body));
+          _ephysics_body_mass_set(body, ephysics_body_mass_get(body));
      }
 
    body->rigid_body->getMotionState()->setWorldTransform(trans);
@@ -480,7 +504,9 @@ _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
      return;
 
    DBG("Resizing body %p to w=%i, h=%i", body, w, h);
+   ephysics_world_lock_take(body->world);
    _ephysics_body_resize(body, w, h);
+   ephysics_world_lock_release(body->world);
 }
 
 static void
@@ -708,11 +734,20 @@ ephysics_body_soft_body_get(const EPhysics_Body *body)
    return body->soft_body;
 }
 
+static void
+_ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
+{
+   btSoftBody *soft_body = body->soft_body;
+   soft_body->m_cfg.kAHR = (hardness / 100) * 0.6;
+   soft_body->m_materials[0]->m_kVST = (hardness / 100);
+   soft_body->m_materials[0]->m_kLST = (hardness / 100);
+   soft_body->m_materials[0]->m_kAST = (hardness / 100);
+   DBG("Soft body %p hardness set to %lf.", body, hardness);
+}
+
 EAPI void
 ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
 {
-   btSoftBody *soft_body;
-
    if (!body)
      {
         ERR("Can't set soft body's hardness, body is null.");
@@ -731,12 +766,9 @@ ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
         return;
      }
 
-   soft_body = body->soft_body;
-   soft_body->m_cfg.kAHR = (hardness / 100) * 0.6;
-   soft_body->m_materials[0]->m_kVST = (hardness / 100);
-   soft_body->m_materials[0]->m_kLST = (hardness / 100);
-   soft_body->m_materials[0]->m_kAST = (hardness / 100);
-   DBG("Soft body hardness set.");
+   ephysics_world_lock_take(body->world);
+   _ephysics_body_soft_body_hardness_set(body, hardness);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI double
@@ -775,7 +807,7 @@ _ephysics_body_soft_add(EPhysics_World *world, btCollisionShape *collision_shape
    body->soft_body->m_cfg.collisions += btSoftBody::fCollision::SDF_RS;
    body->soft_body->m_cfg.collisions += btSoftBody::fCollision::VF_SS;
 
-   ephysics_body_soft_body_hardness_set(body, 100);
+   _ephysics_body_soft_body_hardness_set(body, 100);
 
    body->rigid_body->setCollisionFlags(
                                       btCollisionObject::CF_NO_CONTACT_RESPONSE);
@@ -799,6 +831,7 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
         return NULL;
      }
 
+   ephysics_world_lock_take(world);
    shape = new btCylinderShapeZ(btVector3(0.25, 0.25, 0.25));
    if (!shape)
      {
@@ -836,6 +869,7 @@ ephysics_body_soft_circle_add(EPhysics_World *world)
    body->points_deform[3][1] = 3;
    body->points_deform[3][2] = 76;
 
+   ephysics_world_lock_release(world);
    return body;
 
 no_body:
@@ -843,6 +877,7 @@ no_body:
 no_soft_body:
    delete shape;
 no_collision_shape:
+   ephysics_world_lock_release(world);
    return NULL;
 }
 
@@ -850,6 +885,7 @@ EAPI EPhysics_Body *
 ephysics_body_circle_add(EPhysics_World *world)
 {
    btCollisionShape *collision_shape;
+   EPhysics_Body *body;
 
    if (!world)
      {
@@ -864,7 +900,10 @@ ephysics_body_circle_add(EPhysics_World *world)
         return NULL;
      }
 
-   return _ephysics_body_add(world, collision_shape, "circle", 0.5, 0.5);
+   ephysics_world_lock_take(world);
+   body = _ephysics_body_add(world, collision_shape, "circle", 0.5, 0.5);
+   ephysics_world_lock_release(world);
+   return body;
 }
 
 EAPI EPhysics_Body *
@@ -881,6 +920,7 @@ ephysics_body_soft_box_add(EPhysics_World *world)
         return NULL;
      }
 
+   ephysics_world_lock_take(world);
    shape = new btBoxShape(btVector3(0.25, 0.25, 0.25));
    if (!shape)
      {
@@ -918,6 +958,7 @@ ephysics_body_soft_box_add(EPhysics_World *world)
    body->points_deform[3][1] = 62;
    body->points_deform[3][2] = 8;
 
+   ephysics_world_lock_release(world);
    return body;
 
 no_body:
@@ -925,6 +966,7 @@ no_body:
 no_soft_body:
    delete shape;
 no_collision_shape:
+   ephysics_world_lock_release(world);
    return NULL;
 }
 
@@ -932,6 +974,7 @@ EAPI EPhysics_Body *
 ephysics_body_box_add(EPhysics_World *world)
 {
    btCollisionShape *collision_shape;
+   EPhysics_Body *body;
 
    if (!world)
      {
@@ -941,7 +984,10 @@ ephysics_body_box_add(EPhysics_World *world)
 
    collision_shape = new btBoxShape(btVector3(0.5, 0.5, 0.5));
 
-   return _ephysics_body_add(world, collision_shape, "box", 0.5, 0.5);
+   ephysics_world_lock_take(world);
+   body = _ephysics_body_add(world, collision_shape, "box", 0.5, 0.5);
+   ephysics_world_lock_release(world);
+   return body;
 }
 
 EAPI EPhysics_Body *
@@ -952,6 +998,7 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
    btAlignedObjectArray<btVector3> vertexes, planes;
    const Eina_Inlist *points;
    EPhysics_Point *point;
+   EPhysics_Body *body;
    int array_size, i;
    btShapeHull *hull;
    btVector3 point3d;
@@ -1052,9 +1099,12 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
         return NULL;
      }
 
-   return _ephysics_body_add(world, (btCollisionShape *)simplified_shape,
+   ephysics_world_lock_take(world);
+   body = _ephysics_body_add(world, (btCollisionShape *)simplified_shape,
                              "generic", (cm_x - min_x) / range_x,
                              1 - (cm_y - min_y) / range_y);
+   ephysics_world_lock_release(world);
+   return body;
 }
 
 void
@@ -1111,37 +1161,49 @@ _ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary bound
 EAPI EPhysics_Body *
 ephysics_body_top_boundary_add(EPhysics_World *world)
 {
+   EPhysics_Body *body;
    Evas_Coord x, y, w;
+
    ephysics_world_render_geometry_get(world, &x, &y, &w, NULL);
-   return _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_TOP,
-                                      0, y - 10, x + w, 10);
+   body =  _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_TOP,
+                                       0, y - 10, x + w, 10);
+   return body;
 }
 
 EAPI EPhysics_Body *
 ephysics_body_bottom_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, w, h;
+   EPhysics_Body *body;
+
    ephysics_world_render_geometry_get(world, &x, &y, &w, &h);
-   return _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_BOTTOM,
+   body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_BOTTOM,
                                       x, y + h, w, 10);
+   return body;
 }
 
 EAPI EPhysics_Body *
 ephysics_body_left_boundary_add(EPhysics_World *world)
 {
+   EPhysics_Body *body;
    Evas_Coord x, y, h;
+
    ephysics_world_render_geometry_get(world, &x, &y, NULL, &h);
-   return _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_LEFT,
+   body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_LEFT,
                                       x - 10, 0, 10, y + h);
+   return body;
 }
 
 EAPI EPhysics_Body *
 ephysics_body_right_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, w, h;
+   EPhysics_Body *body;
+
    ephysics_world_render_geometry_get(world, &x, &y, &w, &h);
-   return _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_RIGHT,
+   body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_RIGHT,
                                       x + w, 0, 10, y + h);
+   return body;
 }
 
 void
@@ -1163,8 +1225,10 @@ ephysics_body_del(EPhysics_Body *body)
      }
 
    if (body->deleted) return;
+   ephysics_world_lock_take(body->world);
    body->deleted = EINA_TRUE;
    ephysics_world_body_del(body->world, body);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1200,11 +1264,13 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
    if (!use_obj_pos)
      return;
 
-   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
-                                  _ephysics_body_evas_obj_resize_cb, body);
    evas_object_geometry_get(body->evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
+   ephysics_world_lock_take(body->world);
    _ephysics_body_geometry_set(body, obj_x, obj_y, obj_w, obj_h,
                                ephysics_world_rate_get(body->world));
+   ephysics_world_lock_release(body->world);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_RESIZE,
+                                  _ephysics_body_evas_obj_resize_cb, body);
 }
 
 EAPI Evas_Object *
@@ -1258,8 +1324,10 @@ ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    _ephysics_body_geometry_set(body, x, y, w, h,
                                ephysics_world_rate_get(body->world));
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1277,7 +1345,9 @@ ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    _ephysics_body_resize(body, w, h);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1289,7 +1359,9 @@ ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    _ephysics_body_move(body, x, y);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1329,18 +1401,9 @@ ephysics_body_mass_set(EPhysics_Body *body, double mass)
         return;
      }
 
-   btVector3 inertia(0, 0, 0);
-   if (body->soft_body)
-     body->soft_body->setTotalMass(mass);
-   else
-     {
-        body->collision_shape->calculateLocalInertia(mass, inertia);
-        body->rigid_body->setMassProps(mass, inertia);
-        body->rigid_body->updateInertiaTensor();
-     }
-   body->mass = mass;
-
-   DBG("Body %p mass changed to %lf.", body, mass);
+   ephysics_world_lock_take(body->world);
+   _ephysics_body_mass_set(body, mass);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI double
@@ -1394,8 +1457,10 @@ ephysics_body_angular_velocity_set(EPhysics_Body *body, double z)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->setAngularVelocity(btVector3(0, 0, -z/RAD_TO_DEG));
    DBG("Angular velocity of body %p set to %lf", body, z);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI double
@@ -1419,9 +1484,11 @@ ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_threshol
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    _ephysics_body_sleeping_threshold_set(body, linear_threshold,
                                          angular_threshold,
                                          ephysics_world_rate_get(body->world));
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1452,8 +1519,10 @@ ephysics_body_stop(EPhysics_Body *body)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->setLinearVelocity(btVector3(0, 0, 0));
    body->rigid_body->setAngularVelocity(btVector3(0, 0, 0));
+   ephysics_world_lock_release(body->world);
 
    DBG("Body %p stopped", body);
 }
@@ -1467,8 +1536,10 @@ ephysics_body_damping_set(EPhysics_Body *body, double linear_damping, double ang
         return;
      }
 
+   ephysics_world_lock_take(body->world);
     body->rigid_body->setDamping(btScalar(linear_damping),
                                  btScalar(angular_damping));
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1594,7 +1665,10 @@ ephysics_body_restitution_set(EPhysics_Body *body, double restitution)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->setRestitution(btScalar(restitution));
+   DBG("Body %p restitution set to %lf", body, restitution);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI double
@@ -1618,7 +1692,10 @@ ephysics_body_friction_set(EPhysics_Body *body, double friction)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->setFriction(btScalar(friction));
+   DBG("Body %p friction set to %lf", body, friction);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI double
@@ -1658,8 +1735,10 @@ ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y)
 
    rate = ephysics_world_rate_get(body->world);
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->activate(1);
    body->rigid_body->applyCentralImpulse(btVector3(x / rate, - y / rate, 0));
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1675,10 +1754,12 @@ ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, Evas_Coord 
 
    rate = ephysics_world_rate_get(body->world);
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->activate(1);
    body->rigid_body->applyImpulse(btVector3(x / rate, - y / rate, 0),
                                   btVector3((double) pos_x / rate,
                                             (double) pos_y / rate, 0));
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1690,7 +1771,9 @@ ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->setLinearFactor(btVector3(!!enable_x, !!enable_y, 0));
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1715,8 +1798,10 @@ ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->activate(1);
    body->rigid_body->applyTorqueImpulse(btVector3(0, 0, -roll));
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1728,10 +1813,12 @@ ephysics_body_rotation_on_z_axis_enable_set(EPhysics_Body *body, Eina_Bool enabl
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    if (!enable)
      body->rigid_body->setAngularFactor(btVector3(0, 0, 0));
    else
      body->rigid_body->setAngularFactor(btVector3(0, 0, 1));
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI Eina_Bool
@@ -1777,6 +1864,7 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rotation)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    body->rigid_body->activate(1);
    body->rigid_body->getMotionState()->getWorldTransform(trans);
    quat.setEuler(0, 0, -rotation / RAD_TO_DEG);
@@ -1789,6 +1877,7 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rotation)
    body->rigid_body->getMotionState()->setWorldTransform(trans);
 
    DBG("Body %p rotation set to %lf", body, rotation);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1826,10 +1915,12 @@ ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    rate = ephysics_world_rate_get(body->world);
    ephysics_body_forces_apply(body);
    body->rigid_body->applyCentralForce(btVector3(x / rate, - y / rate, 0));
    _ephysics_body_forces_update(body);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1844,11 +1935,13 @@ ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Evas_Coord po
      }
 
    rate = ephysics_world_rate_get(body->world);
+   ephysics_world_lock_take(body->world);
    ephysics_body_forces_apply(body);
    body->rigid_body->applyForce(btVector3(x / rate, - y / rate, 0),
                                 btVector3((double) pos_x / rate,
                                           (double) pos_y / rate, 0));
    _ephysics_body_forces_update(body);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void
@@ -1860,9 +1953,11 @@ ephysics_body_torque_apply(EPhysics_Body *body, double torque)
         return;
      }
 
+   ephysics_world_lock_take(body->world);
    ephysics_body_forces_apply(body);
    body->rigid_body->applyTorque(btVector3(0, 0, -torque));
    _ephysics_body_forces_update(body);
+   ephysics_world_lock_release(body->world);
 }
 
 EAPI void

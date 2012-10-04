@@ -121,6 +121,8 @@ btSoftBody *ephysics_body_soft_body_get(const EPhysics_Body *body);
 void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
 void ephysics_body_recalc(EPhysics_Body *body, double rate);
 void ephysics_body_forces_apply(EPhysics_Body *body);
+void ephysics_world_lock_take(EPhysics_World *world);
+void ephysics_world_lock_release(EPhysics_World *world);
 
 /* Camera */
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);

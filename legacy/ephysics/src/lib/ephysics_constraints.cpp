@@ -56,7 +56,6 @@ _ephysics_constraint_p2p_set(EPhysics_Constraint *constraint, double rate)
      }
 
    constraint->type = EPHYSICS_CONSTRAINT_P2P;
-   constraint->world = ephysics_body_world_get(constraint->p2p.body1);
    ephysics_world_constraint_add(constraint->world, constraint,
                                  constraint->bt_constraint);
 
@@ -127,6 +126,7 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
         return NULL;
      }
 
+   ephysics_world_lock_take(ephysics_body_world_get(body));
    trans.setIdentity();
    constraint->bt_constraint = new
        btGeneric6DofConstraint(*ephysics_body_rigid_body_get(body), trans,
@@ -145,6 +145,7 @@ ephysics_constraint_slider_add(EPhysics_Body *body)
                                  constraint->bt_constraint);
 
    INF("Constraint added.");
+   ephysics_world_lock_release(ephysics_body_world_get(body));
    return constraint;
 }
 
@@ -163,9 +164,11 @@ ephysics_constraint_slider_linear_limit_set(EPhysics_Constraint *constraint, Eva
         return;
      }
 
+   ephysics_world_lock_take(constraint->world);
    _ephysics_constraint_slider_linear_limit_set(
       constraint, left_x, under_y, right_x, above_y,
       ephysics_world_rate_get(constraint->world));
+   ephysics_world_lock_release(constraint->world);
 }
 
 EAPI void
@@ -219,11 +222,13 @@ ephysics_constraint_slider_angular_limit_set(EPhysics_Constraint *constraint, do
         return;
      }
 
+   ephysics_world_lock_take(constraint->world);
    slider_constraint = (btGeneric6DofConstraint *)constraint->bt_constraint;
    slider_constraint->setAngularLowerLimit(btVector3(0, 0,
                                                  -counter_clock_z/RAD_TO_DEG));
    slider_constraint->setAngularUpperLimit(btVector3(0, 0,
                                                  clock_wise_z/RAD_TO_DEG));
+   ephysics_world_lock_release(constraint->world);
 }
 
 EAPI void
@@ -284,6 +289,7 @@ ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coo
         return NULL;
      }
 
+   constraint->world = ephysics_body_world_get(body1);
    constraint->p2p.body1 = body1;
    constraint->p2p.body2 = body2;
    constraint->p2p.anchor_b1_x = anchor_b1_x;
@@ -291,11 +297,17 @@ ephysics_constraint_p2p_add(EPhysics_Body *body1, EPhysics_Body *body2, Evas_Coo
    constraint->p2p.anchor_b2_x = anchor_b2_x;
    constraint->p2p.anchor_b2_y = anchor_b2_y;
 
+   ephysics_world_lock_take(constraint->world);
    if (!_ephysics_constraint_p2p_set(
          constraint, ephysics_world_rate_get(ephysics_body_world_get(
                constraint->p2p.body1))))
-     return NULL;
+     {
+        ephysics_world_lock_release(constraint->world);
+        free(constraint);
+        return NULL;
+     }
 
+   ephysics_world_lock_release(constraint->world);
    INF("Constraint added.");
    return constraint;
 }
@@ -309,12 +321,14 @@ ephysics_constraint_del(EPhysics_Constraint *constraint)
         return;
      }
 
+   ephysics_world_lock_take(constraint->world);
    ephysics_world_constraint_del(constraint->world, constraint,
                                  constraint->bt_constraint);
    delete constraint->bt_constraint;
    free(constraint);
 
    INF("Constraint deleted.");
+   ephysics_world_lock_release(constraint->world);
 }
 
 
