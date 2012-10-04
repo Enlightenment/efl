@@ -14,6 +14,7 @@
  * @li @ref tutorial_ephysics_forces
  * @li @ref tutorial_ephysics_growing_balls
  * @li @ref tutorial_ephysics_gravity
+ * @li @ref tutorial_ephysics_logo
  * @li @ref tutorial_ephysics_rotating_forever
  * @li @ref tutorial_ephysics_velocity
  * @li @ref tutorial_ephysics_shapes
@@ -1094,6 +1095,192 @@
  * @include test_no_gravity.c
  *
  * @example test_no_gravity.c
+ */
+
+/**
+ * @page tutorial_ephysics_logo EPhysics - Logo
+ *
+ * The purpose of this example is to demonstrate the EPhysics_Logo.
+ *
+ * For this example we'll have an EPhysics_World.
+ *
+ * The basic concepts like - initializing an EPhysics_World, render geometry,
+ * physics limiting boundaries, were already covered in 
+ * @ref tutorial_ephysics_bouncing_ball
+ *
+ * @section add-logostruct Logo Data Struct
+ * @dontinclude ephysics_logo.c
+ *
+ * While in this example we'll be working with a struct to hold some objects
+ * in our code. For clarity sake we present you the struct declaration in the
+ * following block.
+ *
+ * @skip struct letter_desc {
+ * @until };
+ *
+ * @section add-lett Adding the letters
+ * @dontinclude ephysics_logo.c
+ *
+ * To add the letters we'll use this function that creates the shadow, light
+ * and letter images.
+ *
+ * @skip _letter_add(Evas *evas
+ * @until }
+ *
+ * In this loop we'll use the function letter_add using the falling_letters
+ * declared in logo data struct.
+ *
+ * @skip for (i = 0; i < EINA_C_ARRAY
+ * @until (image, &w, &h);
+ *
+ * Place image and light on top, above what the viewport can show, to fall
+ * later on.
+ *
+ * @skip evas_object_move(image, x,
+ * @until evas_object_move(light, x, -h * (i + 1) - 50);
+ *
+ * Place shadow below the hit-line: FLOOR_Y, centered at image.
+ *
+ * @skipline evas_object_move(shadow, x + CENTER(w, sh_w
+ *
+ * Here we set the letters padding and add letter body using the function
+ * below and setting its friction.
+ *
+ * @skip x += falling_letters[i].padd
+ * @until }
+ *
+ * Here we call another function that will be common to the circle body as
+ * well, note that we add a callback that will be explained later.
+ * @dontinclude ephysics_logo.c
+ *
+ * @skip _letter_body_box_add(EPhysics_World *world
+ * @until }
+ *
+ * This function is used to create the body setting its properties. Note that
+ * we disable the rotation on Z axis to this letters don't tilt or recline.
+ * @dontinclude ephysics_logo.c
+ *
+ * @skip _letter_body_setup_common(EPhysics_Body *body
+ * @until }
+ *
+ * In this callback function that we added to our letter body we'll update its
+ * light and shadow.
+ *
+ * First we'll update the body, get its image geometry and set the floor
+ * distance based on images height.
+ *
+ * @dontinclude ephysics_logo.c
+ *
+ * @skip _update_box_cb(void *data
+ * @until floor_distance = FLOOR_Y - h;
+ *
+ * As long as the letter approaches the floor, its shadow is darker, with bigger y.
+ *
+ * @skip if (y > SH_THRESHOLD)
+ * @until &sh_h);
+ * @skipline alpha = 255 * (y - SH_THRESHOLD)
+ *
+ * And with bigger x -- its proportional to x / WIDTH, but varies from 100 to
+ * 255
+ *
+ * @skip pos_x = (double) x /
+ * @until PROP_GET(pos_x, 100, 255);
+ *
+ * Note that the box shadow is not resized, just moved. And here set also the
+ * colors.
+ *
+ * @skip evas_object_move(shadow, x +
+ * @until alpha, alpha);
+ *
+ * As long as the letter approaches the floor, its lighter, with bigger x and y.
+ *
+ * @skipline evas_object_move(light, x
+ * @skipline alpha = (y <= 0) ? 0 : y * 255
+ * @skip alpha = alpha * (x - OFFSET_X + 80)
+ * @until }
+ *
+ * @section add-lettere Adding the letter E
+ *
+ * Here we'll add the last letter, "E" is a circle that comes rolling on
+ * the floor.
+ *
+ * First we use the letter_add function, set its shadow color and get
+ * its sizes.
+ *
+ * @skip _letter_add(evas, "E", &image
+ * @until evas_object_image_size_get(image, &w, &h);
+ *
+ * Place image and light above the floor and to the left of viewport, to comes
+ * rolling later on.
+ *
+ * @skip evas_object_move(image, -w - 1, FLOOR_Y
+ * @until evas_object_move(light, -w - 1, FLOOR_Y - h + 1);
+ *
+ * Place the shadow below the hit-line: FLOOR_Y centered at image.
+ *
+ * @skipline evas_object_move(shadow, -w - 1 + CENTER(w, sh_w)
+ *
+ * Here we create the body using body_circle function and enable its rotation
+ * on Z axis.
+ *
+ * @skip letter_body = _letter_body_circle_add
+ * @until letter_body, EINA_TRUE);
+ *
+ * Make the "E" logo get into the viewport by applying a horizontal force.
+ *
+ * @skipline ephysics_body_central_impulse_apply(letter_body
+ *
+ * Here we use the letter_body_setup_common to create the body and set its
+ * properties, note that we add a callback that will be explained below.
+ * @dontinclude ephysics_logo.c
+ *
+ * @skip _letter_body_circle_add(EPhysics_World *world
+ * @until }
+ *
+ * In this callback function that we added to our "E" letter body we'll update
+ * its light and shadow.
+ *
+ * First we'll update the body and get its image geometry.
+ *
+ * @dontinclude ephysics_logo.c
+ *
+ * @skip _update_circle_cb(void *data
+ * @until geometry_get(image, &x, &y, &w, &h);
+ *
+ * As long as the letter approaches the floor, its lighter, with bigger x.
+ *
+ * @skip evas_object_move(light, x
+ * @until alpha, alpha);
+ *
+ * Use the same map from image to the light (rotate it).
+ *
+ * @skip map = evas_object_map_get(image
+ * @until light, EINA_TRUE);
+ *
+ * As long as the letter approaches the floor, its shadow is darker, with
+ * bigger y.
+ *
+ * @skip evas_object_image_size_get(shadow,
+ * @until alpha, alpha);
+ *
+ * When the letter "E" passes the viewport, we send it to the begin again to
+ * collide with the other letters.
+ *
+ * @skip if (x > E_THRESHOLD)
+ * @until }
+ *
+ * Here we finish the example. The full source code can be found at
+ * @ref ephysics_logo_c.
+ *
+ */
+
+ /**
+ * @page ephysics_logo_c ephysics_logo.c
+ *
+ * @section ephysics-logo-c ephysics_logo.c
+ * @include ephysics_logo.c
+ *
+ * @example ephysics_logo.c
  */
 
  /**
