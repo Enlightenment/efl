@@ -1298,6 +1298,135 @@ EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fix
 #define EPHYSICS_BODY_MASS_STATIC (0.0)
 
 /**
+ * @def EPHYSICS_BODY_DENSITY_WOOD
+ * @brief Density of wood in kg / m ^ 3.
+ *
+ * It can be set to a body with @ref ephysics_body_density_set().
+ */
+#define EPHYSICS_BODY_DENSITY_WOOD (680.0)
+/**
+ * @def EPHYSICS_BODY_DENSITY_IRON
+ * @brief Density of iron in kg / m ^ 3.
+ *
+ * It can be set to a body with @ref ephysics_body_density_set().
+ */
+#define EPHYSICS_BODY_DENSITY_IRON (7400.0)
+/**
+ * @def EPHYSICS_BODY_DENSITY_CONCRETE
+ * @brief Density of concrete in kg / m ^ 3.
+ *
+ * It can be set to a body with @ref ephysics_body_density_set().
+ */
+#define EPHYSICS_BODY_DENSITY_CONCRETE (2300.0)
+/**
+ * @def EPHYSICS_BODY_DENSITY_RUBBER
+ * @brief Density of rubber in kg / m ^ 3.
+ *
+ * It can be set to a body with @ref ephysics_body_density_set().
+ */
+#define EPHYSICS_BODY_DENSITY_RUBBER (920.0)
+/**
+ * @def EPHYSICS_BODY_DENSITY_POLYSTYRENE
+ * @brief Density of polystyrene in kg / m ^ 3.
+ *
+ * It can be set to a body with @ref ephysics_body_density_set().
+ */
+#define EPHYSICS_BODY_DENSITY_POLYSTYRENE (80.0)
+/**
+ * @def EPHYSICS_BODY_DENSITY_PLASTIC
+ * @brief Density of plastic in kg / m ^ 3.
+ *
+ * It can be set to a body with @ref ephysics_body_density_set().
+ */
+#define EPHYSICS_BODY_DENSITY_PLASTIC (1300.0)
+
+/**
+ * @def EPHYSICS_BODY_FRICTION_WOOD
+ * @brief Friction coefficient of wood.
+ *
+ * It can be set to a body with @ref ephysics_body_friction_set().
+ */
+#define EPHYSICS_BODY_FRICTION_WOOD (0.4)
+/**
+ * @def EPHYSICS_BODY_FRICTION_IRON
+ * @brief Friction coefficient of iron.
+ *
+ * It can be set to a body with @ref ephysics_body_friction_set().
+ */
+#define EPHYSICS_BODY_FRICTION_IRON (0.8)
+/**
+ * @def EPHYSICS_BODY_FRICTION_CONCRETE
+ * @brief Friction coefficient of concrete.
+ *
+ * It can be set to a body with @ref ephysics_body_friction_set().
+ */
+#define EPHYSICS_BODY_FRICTION_CONCRETE (0.65)
+/**
+ * @def EPHYSICS_BODY_FRICTION_RUBBER
+ * @brief Friction coefficient of rubber.
+ *
+ * It can be set to a body with @ref ephysics_body_friction_set().
+ */
+#define EPHYSICS_BODY_FRICTION_RUBBER (0.75)
+/**
+ * @def EPHYSICS_BODY_FRICTION_POLYSTYRENE
+ * @brief Friction coefficient of polystyrene.
+ *
+ * It can be set to a body with @ref ephysics_body_friction_set().
+ */
+#define EPHYSICS_BODY_FRICTION_POLYSTYRENE (0.5)
+/**
+ * @def EPHYSICS_BODY_FRICTION_PLASTIC
+ * @brief Friction coefficient of plastic.
+ *
+ * It can be set to a body with @ref ephysics_body_friction_set().
+ */
+#define EPHYSICS_BODY_FRICTION_PLASTIC (0.35)
+
+/**
+ * @def EPHYSICS_BODY_RESTITUTION_WOOD
+ * @brief Restitution coefficient of wood.
+ *
+ * It can be set to a body with @ref ephysics_body_restitution_set().
+ */
+#define EPHYSICS_BODY_RESTITUTION_WOOD (0.7)
+/**
+ * @def EPHYSICS_BODY_RESTITUTION_IRON
+ * @brief Restitution coefficient of iron.
+ *
+ * It can be set to a body with @ref ephysics_body_restitution_set().
+ */
+#define EPHYSICS_BODY_RESTITUTION_IRON (0.85)
+/**
+ * @def EPHYSICS_BODY_RESTITUTION_CONCRETE
+ * @brief Restitution coefficient of concrete.
+ *
+ * It can be set to a body with @ref ephysics_body_restitution_set().
+ */
+#define EPHYSICS_BODY_RESTITUTION_CONCRETE (0.75)
+/**
+ * @def EPHYSICS_BODY_RESTITUTION_RUBBER
+ * @brief Restitution coefficient of rubber.
+ *
+ * It can be set to a body with @ref ephysics_body_restitution_set().
+ */
+#define EPHYSICS_BODY_RESTITUTION_RUBBER (0.3)
+/**
+ * @def EPHYSICS_BODY_RESTITUTION_POLYSTYRENE
+ * @brief Restitution coefficient of polystyrene.
+ *
+ * It can be set to a body with @ref ephysics_body_restitution_set().
+ */
+#define EPHYSICS_BODY_RESTITUTION_POLYSTYRENE (0.5)
+/**
+ * @def EPHYSICS_BODY_RESTITUTION_PLASTIC
+ * @brief Restitution coefficient of plastic.
+ *
+ * It can be set to a body with @ref ephysics_body_restitution_set().
+ */
+#define EPHYSICS_BODY_RESTITUTION_PLASTIC (0.6)
+
+/**
  * @typedef EPhysics_Body_Collision
  *
  * Body collision wraps collision informations.
@@ -2244,6 +2373,14 @@ EAPI EPhysics_Body *ephysics_body_collision_contact_body_get(const EPhysics_Body
  *
  * By default restitution coefficient of each body is 0.
  *
+ * EPhysics has some pre-defined restitution coefficients for materials:
+ * @li @ref EPHYSICS_BODY_RESTITUTION_CONCRETE
+ * @li @ref EPHYSICS_BODY_RESTITUTION_IRON
+ * @li @ref EPHYSICS_BODY_RESTITUTION_PLASTIC
+ * @li @ref EPHYSICS_BODY_RESTITUTION_POLYSTYRENE
+ * @li @ref EPHYSICS_BODY_RESTITUTION_RUBBER
+ * @li @ref EPHYSICS_BODY_RESTITUTION_WOOD
+ *
  * @param body The body to has its restitution coefficient set.
  * @param restitution The new @p body's restitution coefficient.
  *
@@ -2278,6 +2415,14 @@ EAPI double ephysics_body_restitution_get(const EPhysics_Body *body);
  *
  * By default friction value is 0.5 and simulation results will be better
  * when friction in non-zero.
+ *
+ * EPhysics has some pre-defined friction coefficients for materials:
+ * @li @ref EPHYSICS_BODY_FRICTION_CONCRETE
+ * @li @ref EPHYSICS_BODY_FRICTION_IRON
+ * @li @ref EPHYSICS_BODY_FRICTION_PLASTIC
+ * @li @ref EPHYSICS_BODY_FRICTION_POLYSTYRENE
+ * @li @ref EPHYSICS_BODY_FRICTION_RUBBER
+ * @li @ref EPHYSICS_BODY_FRICTION_WOOD
  *
  * @param body The body to has its friction set.
  * @param friction The new @p body's friction value.
@@ -2713,6 +2858,14 @@ EAPI void ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, do
  * so its density can be set and ephysics will calcute the body's mass.
  *
  * By default, no density is set.
+ *
+ * EPhysics has some pre-defined density values for materials:
+ * @li @ref EPHYSICS_BODY_DENSITY_CONCRETE
+ * @li @ref EPHYSICS_BODY_DENSITY_IRON
+ * @li @ref EPHYSICS_BODY_DENSITY_PLASTIC
+ * @li @ref EPHYSICS_BODY_DENSITY_POLYSTYRENE
+ * @li @ref EPHYSICS_BODY_DENSITY_RUBBER
+ * @li @ref EPHYSICS_BODY_DENSITY_WOOD
  *
  * @note The unit used for density is kilograms / meters ^ 3.
  *
