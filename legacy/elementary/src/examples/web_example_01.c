@@ -13,7 +13,7 @@
 EAPI_MAIN int
 elm_main(int argc, char *argv[])
 {
-   Evas_Object *win, *bg, *web;
+   Evas_Object *win, *web;
 
    /* The program will proceed only if Ewebkit library is available. */
    if (elm_need_web() == EINA_FALSE)
