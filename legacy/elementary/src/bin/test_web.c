@@ -226,7 +226,7 @@ _file_selector_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Eina_Boo
 static void
 _console_message_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *message, unsigned int line_number, const char *source_id)
 {
-   printf("CONSOLE: %s:%d:%s\n", source_id, line_number, message);
+   printf("CONSOLE: %s:%u:%s\n", source_id, line_number, message);
 }
 
 static void

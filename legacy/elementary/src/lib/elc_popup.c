@@ -447,9 +447,9 @@ _button_remove(Evas_Object *obj,
           {
              sd->buttons[i] = sd->buttons[i + 1];
 
-             snprintf(buf, sizeof(buf), "actionbtn%u", pos + 1);
+             snprintf(buf, sizeof(buf), "actionbtn%d", pos + 1);
              elm_object_part_content_unset(sd->action_area, buf);
-             snprintf(buf, sizeof(buf), "actionbtn%u", pos);
+             snprintf(buf, sizeof(buf), "actionbtn%d", pos);
              elm_object_part_content_set
                (sd->action_area, buf, sd->buttons[i]->btn);
           }

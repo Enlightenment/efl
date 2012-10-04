@@ -129,7 +129,7 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_size_hint_weight_set(fp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    for (i = 1990; i <= 2099; i++)
      {
-        snprintf(buf, 8, "%d", i);
+        snprintf(buf, 8, "%u", i);
         elm_flipselector_item_append(fp, buf, _sel_cb, NULL);
      }
 
