@@ -9,6 +9,7 @@ Fixes:
 	- fix monitor shutdown when mainloop did never run.
 	- fix build with xattr and without splice.
 	- don't stop on limited access right.
+	- Fix memory corruption by allocating enough memory in eio_eet_data_read_cipher().
 
 Improvements:
 

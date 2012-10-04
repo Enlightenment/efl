@@ -458,7 +458,7 @@ eio_eet_data_read_cipher(Eet_File *ef,
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   er = malloc(sizeof (er));
+   er = malloc(sizeof (Eio_Eet_Read));
    EINA_SAFETY_ON_NULL_RETURN_VAL(er, NULL);
 
    er->ef = ef;

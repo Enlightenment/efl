@@ -51,3 +51,7 @@
 2012-09-27  Cedric Bail
 
 	* Don't stop on limited access right.
+
+2012-10-03  Daniel Willmann
+	* Fix memory corruption by allocating enough memory in
+	eio_eet_data_read_cipher().
