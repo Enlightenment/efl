@@ -77,6 +77,8 @@ static void _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Wind
 static void _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int timestamp);
 static void _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int value, unsigned int timestamp);
 
+static unsigned int _ecore_wl_event_modifiers(unsigned int state);
+
 /* static int _ecore_wl_input_keysym_to_string(unsigned int symbol, char *buffer, int len); */
 
 /* wayland interfaces */
@@ -595,7 +597,7 @@ _ecore_wl_input_cb_keyboard_key(void *data, struct wl_keyboard *keyboard __UNUSE
    e->window = win->id;
    e->event_window = win->id;
    e->timestamp = timestamp;
-   e->modifiers = input->modifiers;
+   e->modifiers = _ecore_wl_event_modifiers(input->modifiers);
 
    if (state)
      ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
@@ -973,7 +975,7 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    ev->y = input->sy;
    /* ev->root.x = input->sx; */
    /* ev->root.y = input->sy; */
-   ev->modifiers = input->modifiers;
+   ev->modifiers = _ecore_wl_event_modifiers(input->modifiers);
    ev->multi.device = 0;
    ev->multi.radius = 1;
    ev->multi.radius_x = 1;
@@ -1005,7 +1007,7 @@ _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsig
    ev->y = input->sy;
    /* ev->root.x = input->sx; */
    /* ev->root.y = input->sy; */
-   ev->modifiers = input->modifiers;
+   ev->modifiers = _ecore_wl_event_modifiers(input->modifiers);
    ev->timestamp = timestamp;
 
    if (win)
@@ -1030,7 +1032,7 @@ _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsi
    ev->y = input->sy;
    /* ev->root.x = input->sx; */
    /* ev->root.y = input->sy; */
-   ev->modifiers = input->modifiers;
+   ev->modifiers = _ecore_wl_event_modifiers(input->modifiers);
    ev->timestamp = timestamp;
 
    if (win)
@@ -1091,7 +1093,7 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, uns
    ev->y = input->sy;
    /* ev->root.x = input->sx; */
    /* ev->root.y = input->sy; */
-   ev->modifiers = input->modifiers;
+   ev->modifiers = _ecore_wl_event_modifiers(input->modifiers);
 
    /* FIXME: Need to get these from wayland somehow */
    ev->double_click = 0;
@@ -1138,7 +1140,7 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsig
    ev->y = input->sy;
    /* ev->root.x = input->sx; */
    /* ev->root.y = input->sy; */
-   ev->modifiers = input->modifiers;
+   ev->modifiers = _ecore_wl_event_modifiers(input->modifiers);
 
    /* FIXME: Need to get these from wayland somehow */
    ev->double_click = 0;
@@ -1172,7 +1174,7 @@ _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int v
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Wheel)))) return;
 
    ev->timestamp = timestamp;
-   ev->modifiers = input->modifiers;
+   ev->modifiers = _ecore_wl_event_modifiers(input->modifiers);
    ev->x = input->sx;
    ev->y = input->sy;
    /* ev->root.x = input->sx; */
@@ -1203,8 +1205,24 @@ _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int v
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 }
 
+static unsigned int
+_ecore_wl_event_modifiers(unsigned int state)
+{
+   unsigned int modifiers = 0;
+
+   if (state & MOD_SHIFT_MASK)
+     modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+
+   if (state & MOD_CONTROL_MASK)
+     modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+
+   if (state & MOD_ALT_MASK)
+     modifiers |= ECORE_EVENT_MODIFIER_ALT;
+}
+
 void
 _ecore_wl_input_set_selection(Ecore_Wl_Input *input, struct wl_data_source *source)
 {
    wl_data_device_set_selection(input->data_device, source, input->display->serial);
 }
+
