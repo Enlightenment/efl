@@ -669,7 +669,8 @@ struct _Evas_Point
 
 struct _Evas_Coord_Point
 {
-   Evas_Coord x, y;
+   Evas_Coord x; /**< x co-ordinate */
+   Evas_Coord y; /**< y co-ordinate */
 };
 
 struct _Evas_Coord_Precision_Point
@@ -681,7 +682,7 @@ struct _Evas_Coord_Precision_Point
 struct _Evas_Position
 {
    Evas_Point       output;
-   Evas_Coord_Point canvas;
+   Evas_Coord_Point canvas; /**< position on the canvas */
 };
 
 struct _Evas_Precision_Position
@@ -975,7 +976,8 @@ struct _Evas_Event_Mouse_Move /** Mouse move event */
 {
    int              buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
 
-   Evas_Position    cur, prev;
+   Evas_Position    cur; /**< Current mouse position */
+   Evas_Position    prev; /**< Previous mouse position */
 
    void            *data;
    Evas_Modifier    *modifiers; /**< modifier keys pressed during the event */
