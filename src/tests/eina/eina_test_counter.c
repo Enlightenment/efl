@@ -38,7 +38,7 @@ struct log_ctx {
 //#define SHOW_LOG 1
 
 static void
-_eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args __UNUSED__)
+_eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args EINA_UNUSED)
 {
    struct log_ctx *ctx = data;
    va_list cp_args;

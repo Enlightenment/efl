@@ -197,7 +197,7 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 #### Additional options to configure
 
 EFL_ENABLE_LIB([eet], [yes])
-EFL_ENABLE_LIB([eo], [no])
+EFL_ENABLE_LIB([eo], [yes])
 
 
 # Assert or fail.
@@ -275,7 +275,6 @@ EFL_CHECK_PATH_MAX
 
 AC_C_BIGENDIAN
 AC_C_INLINE
-EFL_ATTRIBUTE_UNUSED
 # EFL_CHECK_COMPILER_FLAGS([MY_LIB], [-Wall -Wextra])
 
 
@@ -1162,7 +1161,10 @@ AC_MSG_NOTICE([Eo checks])
 
 requirements_pc_eo="eina >= 1.7.99"
 
-PKG_CHECK_MODULES([EO], [${requirements_pc_eo}])
+AC_ARG_VAR([EO_CFLAGS], [preprocessor flags for Eo])
+AC_SUBST([EO_CFLAGS])
+AC_ARG_VAR([EO_LIBS], [linker flags for Eo])
+AC_SUBST([EO_LIBS])
 
 # Example (evas one)
 

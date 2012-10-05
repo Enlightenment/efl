@@ -83,7 +83,7 @@ struct _One_Big
 };
 
 static void *
-eina_one_big_malloc(void *data, __UNUSED__ unsigned int size)
+eina_one_big_malloc(void *data, EINA_UNUSED unsigned int size)
 {
    One_Big *pool = data;
    unsigned char *mem = NULL;
@@ -198,16 +198,16 @@ eina_one_big_free(void *data, void *ptr)
 }
 
 static void *
-eina_one_big_realloc(__UNUSED__ void *data,
-                     __UNUSED__ void *element,
-                     __UNUSED__ unsigned int size)
+eina_one_big_realloc(EINA_UNUSED void *data,
+                     EINA_UNUSED void *element,
+                     EINA_UNUSED unsigned int size)
 {
    return NULL;
 }
 
 static void *
 eina_one_big_init(const char *context,
-                  __UNUSED__ const char *option,
+                  EINA_UNUSED const char *option,
                   va_list args)
 {
    One_Big *pool;

@@ -100,7 +100,7 @@ struct _Chained_Pool
 };
 
 static inline Eina_Rbtree_Direction
-_eina_chained_mp_pool_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, __UNUSED__ void *data)
+_eina_chained_mp_pool_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, EINA_UNUSED void *data)
 {
    if (left < right) return EINA_RBTREE_LEFT;
    return EINA_RBTREE_RIGHT;
@@ -108,7 +108,7 @@ _eina_chained_mp_pool_cmp(const Eina_Rbtree *left, const Eina_Rbtree *right, __U
 
 static inline int
 _eina_chained_mp_pool_key_cmp(const Eina_Rbtree *node, const void *key,
-                              __UNUSED__ int length, __UNUSED__ void *data)
+                              EINA_UNUSED int length, EINA_UNUSED void *data)
 {
    const Chained_Pool *r = EINA_RBTREE_CONTAINER_GET(node, const Chained_Pool);
 
@@ -256,7 +256,7 @@ _eina_chained_mempool_free_in(Chained_Mempool *pool, Chained_Pool *p, void *ptr)
 }
 
 static void *
-eina_chained_mempool_malloc(void *data, __UNUSED__ unsigned int size)
+eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
 {
    Chained_Mempool *pool = data;
    Chained_Pool *p = NULL;
@@ -434,16 +434,16 @@ eina_chained_mempool_repack(void *data,
 }
 
 static void *
-eina_chained_mempool_realloc(__UNUSED__ void *data,
-                             __UNUSED__ void *element,
-                             __UNUSED__ unsigned int size)
+eina_chained_mempool_realloc(EINA_UNUSED void *data,
+                             EINA_UNUSED void *element,
+                             EINA_UNUSED unsigned int size)
 {
    return NULL;
 }
 
 static void *
 eina_chained_mempool_init(const char *context,
-                          __UNUSED__ const char *option,
+                          EINA_UNUSED const char *option,
                           va_list args)
 {
    Chained_Mempool *mp;

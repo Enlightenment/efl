@@ -24,6 +24,7 @@
 #include "evil_private.h"
 #define APICHAR char
 #include "evil_print.h"
+#include "evil_private.h"
 
 #ifdef __MINGW32CE__
 # define _get_osfhandle(FILEDES) ((long)FILEDES)
@@ -34,7 +35,7 @@
 
 
 void *
-mmap(void  *addr __UNUSED__,
+mmap(void  *addr EVIL_UNUSED,
      size_t len,
      int    prot,
      int    flags,
@@ -189,7 +190,7 @@ mmap(void  *addr __UNUSED__,
 
 int
 munmap(void  *addr,
-       size_t len __UNUSED__)
+       size_t len EVIL_UNUSED)
 {
 #ifdef _WIN32_WCE
    OSVERSIONINFO os_version;

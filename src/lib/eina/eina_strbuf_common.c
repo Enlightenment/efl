@@ -109,7 +109,7 @@ _eina_strbuf_common_init(size_t csize, Eina_Strbuf *buf)
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  */
 static Eina_Bool
-_eina_strbuf_common_manage_init(size_t csize __UNUSED__,
+_eina_strbuf_common_manage_init(size_t csize EINA_UNUSED,
                                  Eina_Strbuf *buf,
                                  void *str,
                                  size_t len)

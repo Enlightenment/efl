@@ -39,7 +39,7 @@ struct _Eina_Ememoa_Fixed_Mempool
 };
 
 static void *
-eina_ememoa_fixed_malloc(void *data, __UNUSED__ unsigned int size)
+eina_ememoa_fixed_malloc(void *data, EINA_UNUSED unsigned int size)
 {
    Eina_Ememoa_Fixed_Mempool *efm = data;
 
@@ -55,9 +55,9 @@ eina_ememoa_fixed_free(void *data, void *ptr)
 }
 
 static void *
-eina_ememoa_fixed_realloc(__UNUSED__ void *data,
-                          __UNUSED__ void *element,
-                          __UNUSED__ unsigned int size)
+eina_ememoa_fixed_realloc(EINA_UNUSED void *data,
+                          EINA_UNUSED void *element,
+                          EINA_UNUSED unsigned int size)
 {
    return NULL;
 }
@@ -81,7 +81,7 @@ eina_ememoa_fixed_statistics(void *data)
 
 static void *
 eina_ememoa_fixed_init(const char *context,
-                       __UNUSED__ const char *option,
+                       EINA_UNUSED const char *option,
                        va_list args)
 {
    struct ememoa_mempool_desc_s *desc = NULL;

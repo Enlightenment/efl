@@ -5,10 +5,10 @@
 #include <Elementary.h>
 
 #include "Eo.h"
-#include "evas_obj.h"
-#include "elw_box.h"
-#include "elw_button.h"
-#include "elw_boxedbutton.h"
+#include "evas_evas_obj.h"
+#include "evas_elw_box.h"
+#include "evas_elw_button.h"
+#include "evas_elw_boxedbutton.h"
 
 typedef struct
 {

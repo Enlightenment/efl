@@ -10,8 +10,8 @@
 #define MAX_ROWS 10
 #define MAX_COLS 10
 
-static void eina_matrixsparse_free_cell_cb(void *user_data __UNUSED__,
-                                           void *cell_data __UNUSED__)
+static void eina_matrixsparse_free_cell_cb(void *user_data EINA_UNUSED,
+                                           void *cell_data EINA_UNUSED)
 {
 }
 
@@ -35,8 +35,8 @@ static void matrixsparse_initialize(Eina_Matrixsparse *matrix,
 
 static void matrixsparse_check(Eina_Matrixsparse *matrix,
                                long data[MAX_ROWS][MAX_COLS],
-                               unsigned long nrows __UNUSED__,
-                               unsigned long ncols __UNUSED__)
+                               unsigned long nrows EINA_UNUSED,
+                               unsigned long ncols EINA_UNUSED)
 {
    unsigned long i, j;
    long *test1;

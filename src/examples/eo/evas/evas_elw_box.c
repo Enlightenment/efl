@@ -5,8 +5,8 @@
 #include <Elementary.h>
 
 #include "Eo.h"
-#include "evas_obj.h"
-#include "elw_box.h"
+#include "evas_evas_obj.h"
+#include "evas_elw_box.h"
 
 EAPI Eo_Op ELW_BOX_BASE_ID = 0;
 

@@ -342,7 +342,7 @@ _JPEGFatalErrorHandler(j_common_ptr cinfo)
 }
 
 static void
-_JPEGErrorHandler(j_common_ptr cinfo __UNUSED__)
+_JPEGErrorHandler(j_common_ptr cinfo EINA_UNUSED)
 {
    /*   emptr errmgr; */
 
@@ -353,8 +353,8 @@ _JPEGErrorHandler(j_common_ptr cinfo __UNUSED__)
 }
 
 static void
-_JPEGErrorHandler2(j_common_ptr cinfo __UNUSED__,
-                   int          msg_level __UNUSED__)
+_JPEGErrorHandler2(j_common_ptr cinfo EINA_UNUSED,
+                   int          msg_level EINA_UNUSED)
 {
    /*   emptr errmgr; */
 

@@ -40,7 +40,7 @@ struct log_ctx {
 //#define SHOW_LOG 1
 
 static void
-_eina_test_log(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args __UNUSED__)
+_eina_test_log(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args EINA_UNUSED)
 {
    struct log_ctx *ctx = data;
    ck_assert_int_eq(ctx->level, level);
@@ -57,7 +57,7 @@ _eina_test_log(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file,
 }
 
 static void
-_eina_test_log_domain(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args __UNUSED__)
+_eina_test_log_domain(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args EINA_UNUSED)
 {
    struct log_ctx *ctx = data;
    ck_assert_int_eq(ctx->level, level);
@@ -73,7 +73,7 @@ _eina_test_log_domain(const Eina_Log_Domain *d, Eina_Log_Level level, const char
 }
 
 static void
-_eina_test_log_safety(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args __UNUSED__)
+_eina_test_log_safety(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args EINA_UNUSED)
 {
    struct log_ctx *ctx = data;
    va_list cp_args;

@@ -87,7 +87,7 @@ struct _Eina_Rbtree_Int
 static Eina_Rbtree_Direction
 eina_rbtree_int_cmp(const Eina_Rbtree_Int *left,
                     const Eina_Rbtree_Int *right,
-                    __UNUSED__ void *data)
+                    EINA_UNUSED void *data)
 {
    fail_if(!left);
    fail_if(!right);
@@ -101,8 +101,8 @@ eina_rbtree_int_cmp(const Eina_Rbtree_Int *left,
 static int
 eina_rbtree_int_key(const Eina_Rbtree_Int *node,
                     const int *key,
-                    __UNUSED__ int length,
-                    __UNUSED__ void *data)
+                    EINA_UNUSED int length,
+                    EINA_UNUSED void *data)
 {
    fail_if(!node);
    return node->value - *key;

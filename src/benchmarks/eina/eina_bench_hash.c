@@ -52,8 +52,8 @@ _eina_string_key_length(const char *key)
 }
 
 static int
-_eina_string_key_cmp(const char *key1, __UNUSED__ int key1_length,
-                     const char *key2, __UNUSED__ int key2_length)
+_eina_string_key_cmp(const char *key1, EINA_UNUSED int key1_length,
+                     const char *key2, EINA_UNUSED int key2_length)
 {
    return strcmp(key1, key2);
 }
@@ -71,7 +71,7 @@ struct _Eina_Bench_Rbtree
 static Eina_Rbtree_Direction
 _eina_bench_rbtree_cmp(const Eina_Bench_Rbtree *left,
                        const Eina_Bench_Rbtree *right,
-                       __UNUSED__ void *data)
+                       EINA_UNUSED void *data)
 {
    if (!left)
       return EINA_RBTREE_RIGHT;
@@ -87,13 +87,13 @@ static inline int
 _eina_bench_rbtree_key(const Eina_Bench_Rbtree *node,
                        const char *key,
                        int length,
-                       __UNUSED__ void *data)
+                       EINA_UNUSED void *data)
 {
    return strncmp(node->key, key, length);
 }
 
 static void
-_eina_bench_rbtree_free(Eina_Rbtree *node, __UNUSED__ void *data)
+_eina_bench_rbtree_free(Eina_Rbtree *node, EINA_UNUSED void *data)
 {
    free(node);
 }

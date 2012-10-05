@@ -289,7 +289,7 @@ START_TEST(eina_inarray_test_reverse)
 END_TEST
 
 static Eina_Bool
-array_foreach(const void *array __UNUSED__, void *p, void *user_data __UNUSED__)
+array_foreach(const void *array EINA_UNUSED, void *p, void *user_data EINA_UNUSED)
 {
    short *member = p;
    int *i = user_data;
@@ -299,7 +299,7 @@ array_foreach(const void *array __UNUSED__, void *p, void *user_data __UNUSED__)
 }
 
 static Eina_Bool
-array_foreach_stop_2nd(const void *array __UNUSED__, void *p, void *user_data __UNUSED__)
+array_foreach_stop_2nd(const void *array EINA_UNUSED, void *p, void *user_data EINA_UNUSED)
 {
    short *member = p;
    int *i = user_data;

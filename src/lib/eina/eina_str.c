@@ -514,9 +514,9 @@ eina_str_convert(const char *enc_from, const char *enc_to, const char *text)
 }
 #else
 EAPI char *
-eina_str_convert(const char *enc_from __UNUSED__,
-                 const char *enc_to __UNUSED__,
-                 const char *text __UNUSED__)
+eina_str_convert(const char *enc_from EINA_UNUSED,
+                 const char *enc_to EINA_UNUSED,
+                 const char *text EINA_UNUSED)
 {
    return NULL;
 }

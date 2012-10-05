@@ -26,7 +26,7 @@
 #include "Eina.h"
 
 static Eina_Bool
-eina_accessor_check(__UNUSED__ const Eina_Array *array,
+eina_accessor_check(EINA_UNUSED const Eina_Array *array,
                     int *data,  int *fdata)
 {
    fail_if(*fdata > *data);
@@ -97,7 +97,7 @@ _eina_test_inlist_build(int i)
 }
 
 static Eina_Bool
-eina_accessor_inlist_data_check(__UNUSED__ const Eina_Inlist *in_list,
+eina_accessor_inlist_data_check(EINA_UNUSED const Eina_Inlist *in_list,
                                 Eina_Test_Inlist *data,
                                 int *fdata)
 {
@@ -167,7 +167,7 @@ START_TEST(eina_accessor_inlist_simple)
 END_TEST
 
 static Eina_Bool
-eina_iterator_list_data_check(__UNUSED__ const Eina_List *list,
+eina_iterator_list_data_check(EINA_UNUSED const Eina_List *list,
                               int *data,
                               int *fdata)
 {

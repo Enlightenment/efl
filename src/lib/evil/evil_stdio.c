@@ -15,7 +15,7 @@
  *
  */
 
-void evil_perror (const char *s __UNUSED__)
+void evil_perror (const char *s EVIL_UNUSED)
 {
    fprintf(stderr, "[Windows CE] error\n");
 }

@@ -168,7 +168,7 @@ static int _eina_list_log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_list_log_dom, __VA_ARGS__)
 
 static inline Eina_List_Accounting *
-_eina_list_mempool_accounting_new(__UNUSED__ Eina_List *list)
+_eina_list_mempool_accounting_new(EINA_UNUSED Eina_List *list)
 {
    Eina_List_Accounting *tmp;
 
@@ -192,7 +192,7 @@ _eina_list_mempool_accounting_free(Eina_List_Accounting *accounting)
 }
 
 static inline Eina_List *
-_eina_list_mempool_list_new(__UNUSED__ Eina_List *list)
+_eina_list_mempool_list_new(EINA_UNUSED Eina_List *list)
 {
    Eina_List *tmp;
 

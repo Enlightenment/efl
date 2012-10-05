@@ -80,7 +80,7 @@ eina_ememoa_unknown_size_statistics(void *data)
 
 static void *
 eina_ememoa_unknown_size_init(const char *context,
-                              __UNUSED__ const char *option,
+                              EINA_UNUSED const char *option,
                               va_list args)
 {
    struct ememoa_mempool_desc_s *desc = NULL;

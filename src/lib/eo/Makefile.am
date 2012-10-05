@@ -8,6 +8,12 @@ AM_CPPFLAGS = \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
+if HAVE_WINDOWS
+AM_CPPFLAGS += \
+-I$(top_srcdir)/src/lib/evil \
+-I$(top_builddir)/src/lib/evil
+endif
+
 installed_headerdir = $(includedir)/eo-@VMAJ@
 dist_installed_header_DATA = Eo.h
 

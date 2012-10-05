@@ -164,10 +164,11 @@
 #  define EINA_SENTINEL
 # endif
 
-#elif defined(_WIN32)
+#elif defined(_MSC_VER)
+# define EINA_UNUSED
 # define EINA_WARN_UNUSED_RESULT
 # define EINA_ARG_NONNULL(...)
-# if defined(_MSC_VER) && _MSC_VER >= 1300
+# if _MSC_VER >= 1300
 #  define EINA_DEPRECATED __declspec(deprecated)
 # else
 #  define EINA_DEPRECATED
@@ -184,6 +185,7 @@
 # define EINA_SENTINEL
 
 #elif defined(__SUNPRO_C)
+# define EINA_UNUSED
 # define EINA_WARN_UNUSED_RESULT
 # define EINA_ARG_NONNULL(...)
 # define EINA_DEPRECATED
@@ -207,7 +209,13 @@
 # define EINA_LIKELY(exp)   exp
 # define EINA_SENTINEL
 
-#else /* ! __GNUC__ && ! _WIN32 && ! __SUNPRO_C */
+#else /* ! __GNUC__ && ! _MSC_VER && ! __SUNPRO_C */
+
+/**
+ * @def EINA_UNUSED
+ * Used to warn when an argument of the function is not used.
+ */
+# define EINA_UNUSED
 
 /**
  * @def EINA_WARN_UNUSED_RESULT

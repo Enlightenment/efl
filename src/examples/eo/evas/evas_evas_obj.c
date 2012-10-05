@@ -5,7 +5,7 @@
 #include <Elementary.h>
 
 #include "Eo.h"
-#include "evas_obj.h"
+#include "evas_evas_obj.h"
 
 #define MY_CLASS EXEVAS_OBJ_CLASS
 

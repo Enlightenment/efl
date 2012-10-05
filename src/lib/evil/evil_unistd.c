@@ -68,7 +68,7 @@ evil_time_get(void)
 
 #ifdef _MSC_VER
 int
-evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
+evil_gettimeofday(struct timeval *tp, void *tzp EVIL_UNUSED)
 {
    LARGE_INTEGER count;
    LONGLONG      diff;
@@ -423,7 +423,7 @@ evil_pipe(int *fds)
 
 #ifdef _WIN32_WCE
 
-int execvp (const char *file __UNUSED__, char *const argv[] __UNUSED__)
+int execvp (const char *file EVIL_UNUSED, char *const argv[] EVIL_UNUSED)
 {
    return 1;
 }

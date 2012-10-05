@@ -4,11 +4,11 @@
 
 #include <Elementary.h>
 
-#include "evas_obj.h"
-#include "elw_button.h"
-#include "elw_box.h"
-#include "elw_boxedbutton.h"
-#include "elw_win.h"
+#include "evas_evas_obj.h"
+#include "evas_elw_button.h"
+#include "evas_elw_box.h"
+#include "evas_elw_boxedbutton.h"
+#include "evas_elw_win.h"
 
 Eina_Bool
 _btn_clicked_cb(void *data, Eo *obj, const Eo_Event_Description *desc, void *event_info)

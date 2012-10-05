@@ -997,8 +997,8 @@ static inline void _splitter_del(Eina_Tiler *t)
 }
 
 static inline void _splitter_tile_size_set(Eina_Tiler *t,
-                                           int w __UNUSED__,
-                                           int h __UNUSED__)
+                                           int w EINA_UNUSED,
+                                           int h EINA_UNUSED)
 {
    /* TODO are w and h used for something? */
    t->splitter.rects = list_zeroed;

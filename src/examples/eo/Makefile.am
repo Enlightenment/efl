@@ -2,7 +2,9 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I. \
+-I$(top_srcdir)/src/lib/eina \
 -I$(top_srcdir)/src/lib/eo \
+-I$(top_builddir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eo \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
@@ -29,6 +31,8 @@ isa/eo_isa_simple.h
 eo_isa_LDADD = $(top_builddir)/src/lib/eo/libeo.la @EO_LIBS@
 
 if EO_BUILD_EXAMPLE_EVAS
+
+AM_CPPFLAGS += @ELM_CFLAGS@
 
 eo_evas_SOURCES = \
 evas/evas_elw_box.c \

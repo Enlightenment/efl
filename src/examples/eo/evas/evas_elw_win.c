@@ -5,8 +5,8 @@
 #include <Elementary.h>
 
 #include "Eo.h"
-#include "evas_obj.h"
-#include "elw_win.h"
+#include "evas_evas_obj.h"
+#include "evas_elw_win.h"
 
 typedef struct
 {

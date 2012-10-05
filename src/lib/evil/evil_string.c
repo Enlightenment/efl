@@ -3,6 +3,7 @@
 #endif /* HAVE_CONFIG_H */
 
 #include "Evil.h"
+#include "evil_private.h"
 
 
 #ifdef _WIN32_WCE
@@ -12,7 +13,7 @@
  *
  */
 
-char *strerror (int errnum __UNUSED__)
+char *strerror (int errnum EVIL_UNUSED)
 {
    return "[Windows CE] error\n";
 }

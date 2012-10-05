@@ -28,33 +28,33 @@
 #include "eina_private.h"
 
 static void *
-eina_pass_through_malloc(__UNUSED__ void *data, unsigned int size)
+eina_pass_through_malloc(EINA_UNUSED void *data, unsigned int size)
 {
    return malloc(size);
 }
 
 static void
-eina_pass_through_free(__UNUSED__ void *data, void *ptr)
+eina_pass_through_free(EINA_UNUSED void *data, void *ptr)
 {
    free(ptr);
 }
 
 static void *
-eina_pass_through_realloc(__UNUSED__ void *data, void *ptr, unsigned int size)
+eina_pass_through_realloc(EINA_UNUSED void *data, void *ptr, unsigned int size)
 {
    return realloc(ptr, size);
 }
 
 static void *
-eina_pass_through_init(__UNUSED__ const char *context,
-                       __UNUSED__ const char *option,
-                       __UNUSED__ va_list args)
+eina_pass_through_init(EINA_UNUSED const char *context,
+                       EINA_UNUSED const char *option,
+                       EINA_UNUSED va_list args)
 {
    return (void *)0x1;
 }
 
 static void
-eina_pass_through_shutdown(__UNUSED__ void *data)
+eina_pass_through_shutdown(EINA_UNUSED void *data)
 {
 }
 

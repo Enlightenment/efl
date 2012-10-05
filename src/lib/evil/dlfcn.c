@@ -21,6 +21,7 @@
 #endif
 
 #include "Evil.h"
+#include "evil_private.h"
 
 #include "dlfcn.h"
 
@@ -57,7 +58,7 @@ get_last_error(char *desc)
 }
 
 void *
-dlopen(const char* path, int mode __UNUSED__)
+dlopen(const char* path, int mode EVIL_UNUSED)
 {
    HMODULE module = NULL;
 
@@ -190,7 +191,7 @@ dlsym(void *handle, const char *symbol)
 }
 
 int
-dladdr (const void *addr __UNUSED__, Dl_info *info)
+dladdr (const void *addr EVIL_UNUSED, Dl_info *info)
 {
    TCHAR  tpath[PATH_MAX];
    MEMORY_BASIC_INFORMATION mbi;

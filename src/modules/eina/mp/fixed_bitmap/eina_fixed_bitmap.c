@@ -70,7 +70,7 @@ _eina_rbtree_inlist_delta(void)
 static Eina_Rbtree_Direction
 _eina_fixed_cmp(const Eina_Rbtree *left,
                 const Eina_Rbtree *right,
-                __UNUSED__ void *data)
+                EINA_UNUSED void *data)
 {
    if (left - right < 0)
       return EINA_RBTREE_LEFT;
@@ -81,7 +81,7 @@ _eina_fixed_cmp(const Eina_Rbtree *left,
 static int
 _eina_fixed_cmp_key(const Eina_Rbtree *node,
                     const void *key,
-                    __UNUSED__ int length,
+                    EINA_UNUSED int length,
                     Eina_Fixed_Bitmap *mp)
 {
    const void *a = node;
@@ -103,13 +103,13 @@ _eina_fixed_cmp_key(const Eina_Rbtree *node,
 
 static void
 _eina_fixed_bitmap_pool_free(Eina_Fixed_Bitmap_Pool *pool,
-                             __UNUSED__ void *data)
+                             EINA_UNUSED void *data)
 {
    free(pool);
 }
 
 static void *
-eina_fixed_bitmap_malloc(void *data, __UNUSED__ unsigned int size)
+eina_fixed_bitmap_malloc(void *data, EINA_UNUSED unsigned int size)
 {
    Eina_Fixed_Bitmap *mp = data;
    Eina_Fixed_Bitmap_Pool *pool = NULL;
@@ -200,16 +200,16 @@ eina_fixed_bitmap_free(void *data, void *ptr)
 }
 
 static void *
-eina_fixed_bitmap_realloc(__UNUSED__ void *data,
-                          __UNUSED__ void *element,
-                          __UNUSED__ unsigned int size)
+eina_fixed_bitmap_realloc(EINA_UNUSED void *data,
+                          EINA_UNUSED void *element,
+                          EINA_UNUSED unsigned int size)
 {
    return NULL;
 }
 
 static void *
-eina_fixed_bitmap_init(__UNUSED__ const char *context,
-                       __UNUSED__ const char *option,
+eina_fixed_bitmap_init(EINA_UNUSED const char *context,
+                       EINA_UNUSED const char *option,
                        va_list args)
 {
    Eina_Fixed_Bitmap *mp;

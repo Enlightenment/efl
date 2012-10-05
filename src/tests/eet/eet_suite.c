@@ -679,7 +679,7 @@ _eet_test_ex_check(Eet_Test_Ex_Type *stuff,
 } /* _eet_test_ex_check */
 
 static Eina_Bool
-func(__UNUSED__ const Eina_Hash *hash,
+func(EINA_UNUSED const Eina_Hash *hash,
      const void                 *key,
      void                       *data,
      void                       *fdata)
@@ -697,8 +697,8 @@ func(__UNUSED__ const Eina_Hash *hash,
 } /* func */
 
 static Eina_Bool
-func7(__UNUSED__ const Eina_Hash *hash,
-      __UNUSED__ const void      *key,
+func7(EINA_UNUSED const Eina_Hash *hash,
+      EINA_UNUSED const void      *key,
       void                       *data,
       void                       *fdata)
 {
@@ -1743,8 +1743,8 @@ END_TEST
 static int
 pass_get(char            *pass,
          int              size,
-         __UNUSED__ int   rwflags,
-         __UNUSED__ void *u)
+         EINA_UNUSED int   rwflags,
+         EINA_UNUSED void *u)
 {
    memset(pass, 0, size);
 
@@ -1758,8 +1758,8 @@ pass_get(char            *pass,
 static int
 badpass_get(char            *pass,
             int              size,
-            __UNUSED__ int   rwflags,
-            __UNUSED__ void *u)
+            EINA_UNUSED int   rwflags,
+            EINA_UNUSED void *u)
 {
    memset(pass, 0, size);
 

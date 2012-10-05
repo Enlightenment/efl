@@ -2465,7 +2465,7 @@ _eina_model_interface_properties_hash_constructor(Eina_Model *model)
 }
 
 static Eina_Bool
-_eina_model_interface_properties_hash_destructor_foreach(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *data, void *fdata __UNUSED__)
+_eina_model_interface_properties_hash_destructor_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED, void *data, void *fdata EINA_UNUSED)
 {
    eina_value_free(data);
    return EINA_TRUE;
@@ -2551,7 +2551,7 @@ _eina_model_interface_properties_hash_del(Eina_Model *model, const char *name)
 }
 
 static Eina_Bool
-_eina_model_interface_properties_hash_names_list_foreach(const Eina_Hash *hash __UNUSED__, const void *key, void *data __UNUSED__, void *fdata)
+_eina_model_interface_properties_hash_names_list_foreach(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data EINA_UNUSED, void *fdata)
 {
    Eina_List **p_list = fdata;
    *p_list = eina_list_append(*p_list, eina_stringshare_add(key));
@@ -2686,7 +2686,7 @@ _eina_model_interface_properties_struct_set(Eina_Model *model, const char *name,
 }
 
 static Eina_Bool
-_eina_model_interface_properties_struct_del(Eina_Model *model __UNUSED__, const char *name __UNUSED__)
+_eina_model_interface_properties_struct_del(Eina_Model *model EINA_UNUSED, const char *name EINA_UNUSED)
 {
    return EINA_FALSE; /* not allowed */
 }
@@ -4888,7 +4888,7 @@ eina_model_type_subclass_check(const Eina_Model_Type *type, const Eina_Model_Typ
 }
 
 static inline const Eina_Model_Interface *
-_eina_model_type_interface_get(const Eina_Model_Type *type, const char *name, Eina_Bool ptr_cmp __UNUSED__)
+_eina_model_type_interface_get(const Eina_Model_Type *type, const char *name, Eina_Bool ptr_cmp EINA_UNUSED)
 {
    const Eina_Model_Interface **itr;
 

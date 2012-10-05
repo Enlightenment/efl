@@ -156,8 +156,8 @@ struct _Eina_Hash_Each
 static inline int
 _eina_hash_hash_rbtree_cmp_hash(const Eina_Hash_Head *hash_head,
                                 const int *hash,
-                                __UNUSED__ int key_length,
-                                __UNUSED__ void *data)
+                                EINA_UNUSED int key_length,
+                                EINA_UNUSED void *data)
 {
    return hash_head->hash - *hash;
 }
@@ -165,7 +165,7 @@ _eina_hash_hash_rbtree_cmp_hash(const Eina_Hash_Head *hash_head,
 static Eina_Rbtree_Direction
 _eina_hash_hash_rbtree_cmp_node(const Eina_Hash_Head *left,
                                 const Eina_Hash_Head *right,
-                                __UNUSED__ void *data)
+                                EINA_UNUSED void *data)
 {
    if (left->hash - right->hash < 0)
      return EINA_RBTREE_LEFT;
@@ -176,7 +176,7 @@ _eina_hash_hash_rbtree_cmp_node(const Eina_Hash_Head *left,
 static inline int
 _eina_hash_key_rbtree_cmp_key_data(const Eina_Hash_Element *hash_element,
                                    const Eina_Hash_Tuple *tuple,
-                                   __UNUSED__ unsigned int key_length,
+                                   EINA_UNUSED unsigned int key_length,
                                    Eina_Key_Cmp cmp)
 {
    int result;
@@ -307,7 +307,7 @@ on_error:
 }
 
 static Eina_Bool
-_eina_hash_rbtree_each(__UNUSED__ const Eina_Rbtree *container,
+_eina_hash_rbtree_each(EINA_UNUSED const Eina_Rbtree *container,
                        const Eina_Hash_Head *hash_head,
                        Eina_Hash_Each *data)
 {
@@ -507,41 +507,41 @@ _eina_string_key_length(const char *key)
 }
 
 static int
-_eina_string_key_cmp(const char *key1, __UNUSED__ int key1_length,
-                     const char *key2, __UNUSED__ int key2_length)
+_eina_string_key_cmp(const char *key1, EINA_UNUSED int key1_length,
+                     const char *key2, EINA_UNUSED int key2_length)
 {
    return strcmp(key1, key2);
 }
 
 static int
-_eina_stringshared_key_cmp(const char *key1, __UNUSED__ int key1_length,
-                           const char *key2, __UNUSED__ int key2_length)
+_eina_stringshared_key_cmp(const char *key1, EINA_UNUSED int key1_length,
+                           const char *key2, EINA_UNUSED int key2_length)
 {
    return key1 - key2;
 }
 
 static unsigned int
-_eina_int32_key_length(__UNUSED__ const uint32_t *key)
+_eina_int32_key_length(EINA_UNUSED const uint32_t *key)
 {
    return 4;
 }
 
 static int
-_eina_int32_key_cmp(const uint32_t *key1, __UNUSED__ int key1_length,
-                    const uint32_t *key2, __UNUSED__ int key2_length)
+_eina_int32_key_cmp(const uint32_t *key1, EINA_UNUSED int key1_length,
+                    const uint32_t *key2, EINA_UNUSED int key2_length)
 {
    return *key1 - *key2;
 }
 
 static unsigned int
-_eina_int64_key_length(__UNUSED__ const uint32_t *key)
+_eina_int64_key_length(EINA_UNUSED const uint32_t *key)
 {
    return 8;
 }
 
 static int
-_eina_int64_key_cmp(const uint64_t *key1, __UNUSED__ int key1_length,
-                    const uint64_t *key2, __UNUSED__ int key2_length)
+_eina_int64_key_cmp(const uint64_t *key1, EINA_UNUSED int key1_length,
+                    const uint64_t *key2, EINA_UNUSED int key2_length)
 {
    return *key1 - *key2;
 }

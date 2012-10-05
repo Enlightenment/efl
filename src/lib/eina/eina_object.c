@@ -176,7 +176,7 @@ static unsigned int _eina_object_item_size = 0;
 
 static int
 _eina_rbtree_cmp_range(const Eina_Rbtree *node, const void *key,
-		       __UNUSED__ int length, __UNUSED__ void *data)
+		       EINA_UNUSED int length, EINA_UNUSED void *data)
 {
   Eina_Class_Range *range;
   Eina_Object_ID id;
@@ -192,7 +192,7 @@ _eina_rbtree_cmp_range(const Eina_Rbtree *node, const void *key,
 static Eina_Rbtree_Direction
 _eina_class_direction_range(const Eina_Rbtree *left,
 			    const Eina_Rbtree *right,
-			    __UNUSED__ void *data)
+			    EINA_UNUSED void *data)
 {
   Eina_Class_Range *rl;
   Eina_Class_Range *rr;

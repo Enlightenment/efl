@@ -469,21 +469,21 @@ _eina_file_map_close(Eina_File_Map *map)
 }
 
 static unsigned int
-_eina_file_map_key_length(const void *key __UNUSED__)
+_eina_file_map_key_length(const void *key EINA_UNUSED)
 {
    return sizeof (unsigned long int) * 2;
 }
 
 static int
-_eina_file_map_key_cmp(const unsigned long int *key1, int key1_length __UNUSED__,
-                       const unsigned long int *key2, int key2_length __UNUSED__)
+_eina_file_map_key_cmp(const unsigned long int *key1, int key1_length EINA_UNUSED,
+                       const unsigned long int *key2, int key2_length EINA_UNUSED)
 {
    if (key1[0] - key2[0] == 0) return key1[1] - key2[1];
    return key1[0] - key2[0];
 }
 
 static int
-_eina_file_map_key_hash(const unsigned long int *key, int key_length __UNUSED__)
+_eina_file_map_key_hash(const unsigned long int *key, int key_length EINA_UNUSED)
 {
    return eina_hash_int64(&key[0], sizeof (unsigned long int))
      ^ eina_hash_int64(&key[1], sizeof (unsigned long int));
@@ -1122,18 +1122,18 @@ eina_file_filename_get(Eina_File *file)
    return file->filename;
 }
 
-EAPI Eina_Iterator *eina_file_xattr_get(Eina_File *file __UNUSED__)
+EAPI Eina_Iterator *eina_file_xattr_get(Eina_File *file EINA_UNUSED)
 {
    return NULL;
 }
 
-EAPI Eina_Iterator *eina_file_xattr_value_get(Eina_File *file __UNUSED__)
+EAPI Eina_Iterator *eina_file_xattr_value_get(Eina_File *file EINA_UNUSED)
 {
    return NULL;
 }
 
 EAPI void *
-eina_file_map_all(Eina_File *file, Eina_File_Populate rule __UNUSED__)
+eina_file_map_all(Eina_File *file, Eina_File_Populate rule EINA_UNUSED)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
@@ -1342,7 +1342,7 @@ eina_file_map_faulted(Eina_File *file, void *map)
 }
 
 EAPI int
-eina_file_statat(void *container __UNUSED__, Eina_File_Direct_Info *info, Eina_Stat *st)
+eina_file_statat(void *container EINA_UNUSED, Eina_File_Direct_Info *info, Eina_Stat *st)
 {
    struct __stat64 buf;
 

@@ -402,21 +402,21 @@ _eina_file_map_close(Eina_File_Map *map)
 }
 
 static unsigned int
-_eina_file_map_key_length(const void *key __UNUSED__)
+_eina_file_map_key_length(const void *key EINA_UNUSED)
 {
    return sizeof (unsigned long int) * 2;
 }
 
 static int
-_eina_file_map_key_cmp(const unsigned long int *key1, int key1_length __UNUSED__,
-                       const unsigned long int *key2, int key2_length __UNUSED__)
+_eina_file_map_key_cmp(const unsigned long int *key1, int key1_length EINA_UNUSED,
+                       const unsigned long int *key2, int key2_length EINA_UNUSED)
 {
    if (key1[0] - key2[0] == 0) return key1[1] - key2[1];
    return key1[0] - key2[0];
 }
 
 static int
-_eina_file_map_key_hash(const unsigned long int *key, int key_length __UNUSED__)
+_eina_file_map_key_hash(const unsigned long int *key, int key_length EINA_UNUSED)
 {
    return eina_hash_int64(&key[0], sizeof (unsigned long int))
      ^ eina_hash_int64(&key[1], sizeof (unsigned long int));

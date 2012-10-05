@@ -28,10 +28,10 @@
 #include "Eina.h"
 
 static Eina_Bool
-eina_foreach_check(__UNUSED__ const Eina_Hash *hash,
+eina_foreach_check(EINA_UNUSED const Eina_Hash *hash,
                    const void *key,
                    void *data,
-                   __UNUSED__ void *fdata)
+                   EINA_UNUSED void *fdata)
 {
    int *j = data;
    int i;

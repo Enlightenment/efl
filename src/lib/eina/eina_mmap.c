@@ -76,9 +76,9 @@ static long _eina_mmap_pagesize = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_eina_mmap_log_dom, __VA_ARGS__)
 
 static void
-_eina_mmap_safe_sigbus(int sig __UNUSED__,
+_eina_mmap_safe_sigbus(int sig EINA_UNUSED,
                        siginfo_t *siginfo,
-                       void *ptr __UNUSED__)
+                       void *ptr EINA_UNUSED)
 {
    unsigned char *addr = (unsigned char *)(siginfo->si_addr);
    int perrno;

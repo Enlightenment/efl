@@ -624,7 +624,7 @@ static int _eet_data_words_bigendian = -1;
 
 /* CHAR TYPE */
 static int
-eet_data_get_char(const Eet_Dictionary *ed __UNUSED__,
+eet_data_get_char(const Eet_Dictionary *ed EINA_UNUSED,
                   const void           *src,
                   const void           *src_end,
                   void                 *dst)
@@ -642,7 +642,7 @@ eet_data_get_char(const Eet_Dictionary *ed __UNUSED__,
 }
 
 static void *
-eet_data_put_char(Eet_Dictionary *ed __UNUSED__,
+eet_data_put_char(Eet_Dictionary *ed EINA_UNUSED,
                   const void     *src,
                   int            *size_ret)
 {
@@ -661,7 +661,7 @@ eet_data_put_char(Eet_Dictionary *ed __UNUSED__,
 
 /* SHORT TYPE */
 static int
-eet_data_get_short(const Eet_Dictionary *ed __UNUSED__,
+eet_data_get_short(const Eet_Dictionary *ed EINA_UNUSED,
                    const void           *src,
                    const void           *src_end,
                    void                 *dst)
@@ -678,7 +678,7 @@ eet_data_get_short(const Eet_Dictionary *ed __UNUSED__,
 }
 
 static void *
-eet_data_put_short(Eet_Dictionary *ed __UNUSED__,
+eet_data_put_short(Eet_Dictionary *ed EINA_UNUSED,
                    const void     *src,
                    int            *size_ret)
 {
@@ -697,7 +697,7 @@ eet_data_put_short(Eet_Dictionary *ed __UNUSED__,
 
 /* INT TYPE */
 static inline int
-eet_data_get_int(const Eet_Dictionary *ed __UNUSED__,
+eet_data_get_int(const Eet_Dictionary *ed EINA_UNUSED,
                  const void           *src,
                  const void           *src_end,
                  void                 *dst)
@@ -714,7 +714,7 @@ eet_data_get_int(const Eet_Dictionary *ed __UNUSED__,
 }
 
 static void *
-eet_data_put_int(Eet_Dictionary *ed __UNUSED__,
+eet_data_put_int(Eet_Dictionary *ed EINA_UNUSED,
                  const void     *src,
                  int            *size_ret)
 {
@@ -733,7 +733,7 @@ eet_data_put_int(Eet_Dictionary *ed __UNUSED__,
 
 /* LONG LONG TYPE */
 static int
-eet_data_get_long_long(const Eet_Dictionary *ed __UNUSED__,
+eet_data_get_long_long(const Eet_Dictionary *ed EINA_UNUSED,
                        const void           *src,
                        const void           *src_end,
                        void                 *dst)
@@ -750,7 +750,7 @@ eet_data_get_long_long(const Eet_Dictionary *ed __UNUSED__,
 }
 
 static void *
-eet_data_put_long_long(Eet_Dictionary *ed __UNUSED__,
+eet_data_put_long_long(Eet_Dictionary *ed EINA_UNUSED,
                        const void     *src,
                        int            *size_ret)
 {
@@ -863,7 +863,7 @@ eet_data_put_string(Eet_Dictionary *ed,
 
 /* ALWAYS INLINED STRING TYPE */
 static int
-eet_data_get_istring(const Eet_Dictionary *ed __UNUSED__,
+eet_data_get_istring(const Eet_Dictionary *ed EINA_UNUSED,
                      const void           *src,
                      const void           *src_end,
                      void                 *dst)
@@ -872,7 +872,7 @@ eet_data_get_istring(const Eet_Dictionary *ed __UNUSED__,
 }
 
 static void *
-eet_data_put_istring(Eet_Dictionary *ed __UNUSED__,
+eet_data_put_istring(Eet_Dictionary *ed EINA_UNUSED,
                      const void     *src,
                      int            *size_ret)
 {
@@ -881,9 +881,9 @@ eet_data_put_istring(Eet_Dictionary *ed __UNUSED__,
 
 /* ALWAYS NULL TYPE */
 static int
-eet_data_get_null(const Eet_Dictionary *ed __UNUSED__,
-                  const void           *src __UNUSED__,
-                  const void           *src_end __UNUSED__,
+eet_data_get_null(const Eet_Dictionary *ed EINA_UNUSED,
+                  const void           *src EINA_UNUSED,
+                  const void           *src_end EINA_UNUSED,
                   void                 *dst)
 {
    char **d;
@@ -895,8 +895,8 @@ eet_data_get_null(const Eet_Dictionary *ed __UNUSED__,
 }
 
 static void *
-eet_data_put_null(Eet_Dictionary *ed __UNUSED__,
-                  const void     *src __UNUSED__,
+eet_data_put_null(Eet_Dictionary *ed EINA_UNUSED,
+                  const void     *src EINA_UNUSED,
                   int            *size_ret)
 {
    *size_ret = 0;
@@ -1725,7 +1725,7 @@ _eet_str_direct_alloc(const char *str)
 }
 
 static void
-_eet_str_direct_free(const char *str __UNUSED__)
+_eet_str_direct_free(const char *str EINA_UNUSED)
 {
 }
 
@@ -2512,7 +2512,7 @@ _eet_freelist_all_unref(Eet_Free_Context *freelist_context)
 }
 
 static int
-eet_data_descriptor_encode_hash_cb(void       *hash __UNUSED__,
+eet_data_descriptor_encode_hash_cb(void       *hash EINA_UNUSED,
                                    const char *cipher_key,
                                    void       *hdata,
                                    void       *fdata)
@@ -3506,7 +3506,7 @@ eet_data_get_list(Eet_Free_Context     *context,
                   Eet_Data_Element     *ede,
                   Eet_Data_Chunk       *echnk,
                   int                   type,
-                  int                   group_type __UNUSED__,
+                  int                   group_type EINA_UNUSED,
                   void                 *data,
                   char                **p,
                   int                  *size)
@@ -3573,7 +3573,7 @@ eet_data_get_hash(Eet_Free_Context     *context,
                   Eet_Data_Element     *ede,
                   Eet_Data_Chunk       *echnk,
                   int                   type,
-                  int                   group_type __UNUSED__,
+                  int                   group_type EINA_UNUSED,
                   void                 *data,
                   char                **p,
                   int                  *size)
@@ -3817,7 +3817,7 @@ on_error:
 
 static void
 eet_data_put_union(Eet_Dictionary      *ed,
-                   Eet_Data_Descriptor *edd __UNUSED__,
+                   Eet_Data_Descriptor *edd EINA_UNUSED,
                    Eet_Data_Element    *ede,
                    Eet_Data_Stream     *ds,
                    void                *data_in)
@@ -3874,7 +3874,7 @@ eet_data_put_union(Eet_Dictionary      *ed,
 static int
 eet_data_get_union(Eet_Free_Context     *context,
                    const Eet_Dictionary *ed,
-                   Eet_Data_Descriptor  *edd __UNUSED__,
+                   Eet_Data_Descriptor  *edd EINA_UNUSED,
                    Eet_Data_Element     *ede,
                    Eet_Data_Chunk       *echnk,
                    int                   type,
@@ -3971,7 +3971,7 @@ on_error:
 
 static void
 eet_data_put_variant(Eet_Dictionary      *ed,
-                     Eet_Data_Descriptor *edd __UNUSED__,
+                     Eet_Data_Descriptor *edd EINA_UNUSED,
                      Eet_Data_Element    *ede,
                      Eet_Data_Stream     *ds,
                      void                *data_in)
@@ -4083,11 +4083,11 @@ eet_data_put_variant(Eet_Dictionary      *ed,
 static int
 eet_data_get_variant(Eet_Free_Context     *context,
                      const Eet_Dictionary *ed,
-                     Eet_Data_Descriptor  *edd __UNUSED__,
+                     Eet_Data_Descriptor  *edd EINA_UNUSED,
                      Eet_Data_Element     *ede,
                      Eet_Data_Chunk       *echnk,
-                     int                   type __UNUSED__,
-                     int                   group_type __UNUSED__,
+                     int                   type EINA_UNUSED,
+                     int                   group_type EINA_UNUSED,
                      void                 *data,
                      char                **p,
                      int                  *size)
@@ -4279,10 +4279,10 @@ eet_data_get_unknown(Eet_Free_Context     *context,
                      Eet_Data_Element     *ede,
                      Eet_Data_Chunk       *echnk,
                      int                   type,
-                     int                   group_type __UNUSED__,
+                     int                   group_type EINA_UNUSED,
                      void                 *data,
-                     char                **p __UNUSED__,
-                     int                  *size __UNUSED__)
+                     char                **p EINA_UNUSED,
+                     int                  *size EINA_UNUSED)
 {
    int ret;
    void *data_ret;
@@ -4390,7 +4390,7 @@ eet_data_get_unknown(Eet_Free_Context     *context,
 
 static void
 eet_data_put_array(Eet_Dictionary      *ed,
-                   Eet_Data_Descriptor *edd __UNUSED__,
+                   Eet_Data_Descriptor *edd EINA_UNUSED,
                    Eet_Data_Element    *ede,
                    Eet_Data_Stream     *ds,
                    void                *data_in)
@@ -4466,7 +4466,7 @@ eet_data_put_array(Eet_Dictionary      *ed,
 
 static void
 eet_data_put_unknown(Eet_Dictionary      *ed,
-                     Eet_Data_Descriptor *edd __UNUSED__,
+                     Eet_Data_Descriptor *edd EINA_UNUSED,
                      Eet_Data_Element    *ede,
                      Eet_Data_Stream     *ds,
                      void                *data_in)
