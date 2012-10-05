@@ -652,7 +652,7 @@ _programs_parse(Evas_Object *ed)
 {
    Eina_Bool ret = EINA_TRUE;
    Eina_List *programs, *l;
-   const char *name, *source, *sig, *description;
+   const char *name, *source = NULL, *sig = NULL, *description;
    char *apiname;
    Edje_Action_Type type;
 
