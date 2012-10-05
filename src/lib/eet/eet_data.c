@@ -1943,6 +1943,8 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    Eet_Data_Element *ede;
    Eet_Data_Element *tmp;
 
+   EINA_SAFETY_ON_NULL_RETURN(edd);
+
    /* Sanity check to avoid crash later at runtime */
    if (type < EET_T_UNKNOW ||
        type >= EET_T_LAST)

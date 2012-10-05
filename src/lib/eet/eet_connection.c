@@ -185,6 +185,8 @@ eet_connection_send(Eet_Connection      *conn,
    int data_size;
    Eina_Bool ret = EINA_FALSE;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
+
    flat_data = eet_data_descriptor_encode_cipher(edd,
                                                  data_in,
                                                  cipher_key,
@@ -203,6 +205,8 @@ eet_connection_node_send(Eet_Connection *conn,
    void *data;
    int data_size;
    Eina_Bool ret = EINA_FALSE;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(conn, EINA_FALSE);
 
    data = eet_data_node_encode_cipher(node, cipher_key, &data_size);
    if (!data) return EINA_FALSE;
