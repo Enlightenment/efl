@@ -1540,8 +1540,15 @@ static Eina_Bool
 _ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Fd_Handler *fdh;
+   long ms;
+
    EINA_LIST_FREE(_fd_hd_list, fdh) ecore_main_fd_handler_del(fdh);
-   ecore_timer_interval_set(_curl_timer, 0.1);
+
+   curl_multi_timeout(_curlm, &ms);
+   if (ms >= CURL_MIN_TIMEOUT || ms <= 0) ms = CURL_MIN_TIMEOUT;
+
+   ecore_timer_interval_set(_curl_timer, (double)ms / 1000);
+
    return ECORE_CALLBACK_CANCEL;
 }
 

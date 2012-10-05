@@ -985,3 +985,7 @@
 2012-10-04  Sebastian Dransfeld
 
 	* Expose ecore_x_selection_converter_text
+
+2012-10-05  Cedric Bail
+
+	* Properly reschedule call to curl.

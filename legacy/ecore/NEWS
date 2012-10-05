@@ -20,6 +20,7 @@ Fixes:
     * ecore_con_url:
      - Timeouts are handled correctly now (passing HTTP status 408 to
        completion callback).
+     - properly reschedule call to curl.
     * ecore_evas rotation handling on some driver implementations
     * ecore_file_escape_name() escape taba nd newline right.
     * ecore_imf ibus module potential segv fixed.
