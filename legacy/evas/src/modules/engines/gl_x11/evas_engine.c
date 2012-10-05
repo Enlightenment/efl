@@ -2509,7 +2509,7 @@ eng_image_map_draw(void *data, void *context, void *surface, void *image, RGBA_M
 }
 
 static void
-eng_image_map_clean(void *data, RGBA_Map *m)
+eng_image_map_clean(void *data __UNUSED__, RGBA_Map *m __UNUSED__)
 {
 }
 
