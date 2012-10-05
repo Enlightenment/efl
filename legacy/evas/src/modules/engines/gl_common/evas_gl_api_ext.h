@@ -1,8 +1,6 @@
 #ifndef _EVAS_GL_API_EXT_H
 #define _EVAS_GL_API_EXT_H
 
-typedef char             GLchar;
-
 #include "evas_gl_core_private.h"
 
 #ifdef GL_GLES
