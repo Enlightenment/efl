@@ -452,6 +452,8 @@ _entry_changed_cb(void *data,
 }
 
 #ifdef HAVE_ELEMENTARY_X
+static Eina_Bool _mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__);
+
 static Ecore_X_Window
 _x11_elm_widget_xwin_get(const Evas_Object *obj)
 {
@@ -472,10 +474,6 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
      }
    return xwin;
 }
-#endif
-
-#ifdef HAVE_ELEMENTARY_X
-static Eina_Bool _mouse_grab_pixels(void *data, int type __UNUSED__, void *event __UNUSED__);
 
 static void
 _start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
@@ -630,12 +628,15 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Smart_Data *sd)
    Ecore_X_Window xwin;
 
    xwin = _x11_elm_widget_xwin_get(obj);
-   sd->grab.xroot = ecore_x_window_root_get(xwin);
-   ecore_x_input_raw_select(sd->grab.xroot);
+   if (xwin)
+     {
+        sd->grab.xroot = ecore_x_window_root_get(xwin);
+        ecore_x_input_raw_select(sd->grab.xroot);
 
-   sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, obj);
-   sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, obj);
-   sd->grab.mouse_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _mouse_up_cb, obj);
+        sd->grab.mouse_motion = ecore_event_handler_add(ECORE_X_RAW_MOTION, _mouse_grab_pixels, obj);
+        sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, obj);
+        sd->grab.mouse_up = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _mouse_up_cb, obj);
+     }
 #endif
 
    bx = elm_box_add(sd->picker);
@@ -652,11 +653,14 @@ _color_picker_add(Evas_Object *obj, Elm_Colorselector_Smart_Data *sd)
    evas_object_show(ed);
 
 #ifdef HAVE_ELEMENTARY_X
-   sd->button = elm_button_add(sd->picker);
-   elm_object_text_set(sd->button, "Pick a color");
-   evas_object_smart_callback_add(sd->button, "clicked", _start_grab_pick_cb, obj);
-   elm_box_pack_end(bx, sd->button);
-   evas_object_show(sd->button);
+   if (xwin)
+     {
+        sd->button = elm_button_add(sd->picker);
+        elm_object_text_set(sd->button, "Pick a color");
+        evas_object_smart_callback_add(sd->button, "clicked", _start_grab_pick_cb, obj);
+        elm_box_pack_end(bx, sd->button);
+        evas_object_show(sd->button);
+     }
 #endif
 
    im = evas_object_image_add(evas_object_evas_get(sd->picker));
