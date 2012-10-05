@@ -1071,3 +1071,13 @@
 2012-10-03  Mike Blumenkrantz
 
        * evas_object_del() now accepts NULL more peacefully
+
+2012-10-05  Sung W. Park (sung_)
+
+       * Added Debug feature for Evas GL's GL APIs. It can be set with 
+       EVAS_GL_API_DEBUG=1 and when it is set, all the GL calls will check
+       if make_current has been properly called.  Also, it'll check if all
+       the GL calls are called within the Pixel Getter function for Direct
+       Rendering option.
+
+

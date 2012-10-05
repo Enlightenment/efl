@@ -8,6 +8,33 @@
 
 //#include "evas_gl_ext.h"
 
+extern int _evas_gl_log_dom;
+
+#ifdef ERR
+# undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_evas_gl_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_evas_gl_log_dom, __VA_ARGS__) 
+#ifdef INF
+# undef INF
+#endif
+#define INF(...) EINA_LOG_DOM_INFO(_evas_gl_log_dom, __VA_ARGS__)
+
+#ifdef WRN
+# undef WRN
+#endif
+#define WRN(...) EINA_LOG_DOM_WARN(_evas_gl_log_dom, __VA_ARGS__)
+
+#ifdef CRIT
+# undef CRIT
+#endif
+#define CRIT(...) EINA_LOG_DOM_CRIT(_evas_gl_log_dom, __VA_ARGS__)
+
+
 struct _EVGL_Interface
 {
    // Returns the native display of evas engine.
@@ -68,16 +95,12 @@ struct _EVGL_Surface
 
    // Direct Rendering Option
    int     direct_fb_opt;
-   //int     direct_override;
 
    int     cfg_index;
 
    // Attached Context
    int     fbo_attached;
    //-------------------------//
-
-   int          direct_enabled;
-   Evas_Object *direct_img_obj;
 
    EVGL_Context *current_ctx;
 };
@@ -173,8 +196,8 @@ struct _EVGL_Resource
    EVGLNative_Surface   surface;
 
    EVGL_Context        *current_ctx;
-   //EVGL_Surface   *current_sfc;
 
+   int                  direct_enabled;
    Evas_Object         *direct_img_obj;
 };
 
@@ -206,6 +229,7 @@ struct _EVGL_Engine
 
 
    int                direct_override;
+   int                api_debug_mode;
 
    // Force Off fo Debug purposes
    int                force_direct_off;
@@ -213,12 +237,14 @@ struct _EVGL_Engine
    void              *engine_data;  
 };
 
+
 // Evas GL Engine
 extern EVGL_Engine   *evgl_engine;
 
 // Internally used functions
-extern void           _evgl_api_get(Evas_GL_API *api);
-extern EVGL_Resource *_evgl_tls_resource_get();
+extern void           _evgl_api_get(Evas_GL_API *api, int debug);
+extern EVGL_Resource *_evgl_tls_resource_get(EVGL_Engine *ee);
 extern EVGL_Context  *_evgl_current_context_get();
+extern int            _evgl_not_in_pixel_get();
 
 #endif //_EVAS_GL_CORE_PRIVATE_H

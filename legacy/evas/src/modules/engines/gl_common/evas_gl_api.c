@@ -1,64 +1,61 @@
 #include "evas_gl_core_private.h"
 #include "evas_gl_api_ext.h"
 
-#define EVGL_FUNC_BEGIN()
+#define EVGL_FUNC_BEGIN() \
+{ \
+   _func_begin_debug(__FUNCTION__); \
+}
+
 #define EVGL_FUNC_END()
 #define _EVGL_INT_INIT_VALUE -3
 
-void
-evgl_glActiveTexture(GLenum texture)
-{
-   EVGL_FUNC_BEGIN();
-   glActiveTexture(texture);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glAttachShader(GLuint program, GLuint shader)
-{
-   EVGL_FUNC_BEGIN();
-   glAttachShader(program, shader);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBindAttribLocation(GLuint program, GLuint index, const char* name)
-{
-   EVGL_FUNC_BEGIN();
-   glBindAttribLocation(program, index, name);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBindBuffer(GLenum target, GLuint buffer)
-{
-   EVGL_FUNC_BEGIN();
-   glBindBuffer(target, buffer);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
+//---------------------------------------//
+// API Debug Error Checking Code
+static
+void _make_current_check(const char* api)
 {
    EVGL_Context *ctx = NULL;
 
-   EVGL_FUNC_BEGIN();
+   ctx = _evgl_current_context_get();
+
+   if (!ctx)
+     {
+        CRIT("\e[1;33m%s\e[m: Current Context NOT SET: GL Call Should NOT Be Called without MakeCurrent!!!", api); 
+     }
+}
+
+static
+void _direct_rendering_check(const char *api)
+{
+   EVGL_Context *ctx = NULL;
+
+   ctx = _evgl_current_context_get();
+   if (!ctx)
+     {
+        ERR("Current Context Not Set");
+        return;
+     }
+
+   if (_evgl_not_in_pixel_get(evgl_engine))
+     {
+        CRIT("\e[1;33m%s\e[m: This API is being called outside Pixel Get Callback Function.", api);
+     }
+}
+
+static
+void _func_begin_debug(const char *api)
+{
+   _make_current_check(api);
+   _direct_rendering_check(api);
+}
+
+//-------------------------------------------------------------//
+// GL to GLES Compatibility Functions
+//-------------------------------------------------------------//
+void
+_evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
+{
+   EVGL_Context *ctx = NULL;
 
    ctx = _evgl_current_context_get();
 
@@ -84,870 +81,31 @@ evgl_glBindFramebuffer(GLenum target, GLuint framebuffer)
         // Save this for restore when doing make current
         ctx->current_fbo = framebuffer;
      }
-
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
 }
 
 void
-evgl_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
+_evgl_glClearDepthf(GLclampf depth)
 {
-   EVGL_FUNC_BEGIN();
-   glBindRenderbuffer(target, renderbuffer);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBindTexture(GLenum target, GLuint texture)
-{
-   EVGL_FUNC_BEGIN();
-   glBindTexture(target, texture);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
-{
-   EVGL_FUNC_BEGIN();
-   glBlendColor(red, green, blue, alpha);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBlendEquation(GLenum mode)
-{
-   EVGL_FUNC_BEGIN();
-   glBlendEquation(mode);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
-{
-   EVGL_FUNC_BEGIN();
-   glBlendEquationSeparate(modeRGB, modeAlpha);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBlendFunc(GLenum sfactor, GLenum dfactor)
-{
-   EVGL_FUNC_BEGIN();
-   glBlendFunc(sfactor, dfactor);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBlendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
-{
-   EVGL_FUNC_BEGIN();
-   glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage)
-{
-   EVGL_FUNC_BEGIN();
-   glBufferData(target, size, data, usage);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void* data)
-{
-   EVGL_FUNC_BEGIN();
-   glBufferSubData(target, offset, size, data);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-GLenum
-evgl_glCheckFramebufferStatus(GLenum target)
-{
-   GLenum ret = GL_NONE;
-
-   EVGL_FUNC_BEGIN();
-   ret = glCheckFramebufferStatus(target);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-   return ret;
-}
-
-#ifdef NO_DIRECT_RENDERING
-void
-evgl_glClear(GLbitfield mask)
-{
-   EVGL_FUNC_BEGIN();
-   glClear(mask);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-#endif
-
-void
-evgl_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
-{
-   EVGL_FUNC_BEGIN();
-   glClearColor(red, green, blue, alpha);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glClearDepthf(GLclampf depth)
-{
-   EVGL_FUNC_BEGIN();
-
 #ifdef GL_GLES
    glClearDepthf(depth);
 #else
    glClearDepth(depth);
 #endif
-
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
 }
 
 void
-evgl_glClearStencil(GLint s)
+_evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
 {
-   EVGL_FUNC_BEGIN();
-   glClearStencil(s);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha)
-{
-   EVGL_FUNC_BEGIN();
-   glColorMask(red, green, blue, alpha);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glCompileShader(GLuint shader)
-{
-   EVGL_FUNC_BEGIN();
-   glCompileShader(shader);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void* data)
-{
-   EVGL_FUNC_BEGIN();
-   glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glCompressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void* data)
-{
-   EVGL_FUNC_BEGIN();
-   glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
-{
-   EVGL_FUNC_BEGIN();
-   glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
-{
-   EVGL_FUNC_BEGIN();
-   glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-GLuint
-evgl_glCreateProgram(void)
-{
-   GLuint ret = _EVGL_INT_INIT_VALUE;
-
-   EVGL_FUNC_BEGIN();
-   ret = glCreateProgram();
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-   return ret;
-}
-
-GLuint
-evgl_glCreateShader(GLenum type)
-{
-   GLuint ret = _EVGL_INT_INIT_VALUE;
-   EVGL_FUNC_BEGIN();
-   ret = glCreateShader(type);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-   return ret;
-}
-
-void
-evgl_glCullFace(GLenum mode)
-{
-   EVGL_FUNC_BEGIN();
-   glCullFace(mode);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDeleteBuffers(GLsizei n, const GLuint* buffers)
-{
-   EVGL_FUNC_BEGIN();
-   glDeleteBuffers(n, buffers);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDeleteFramebuffers(GLsizei n, const GLuint* framebuffers)
-{
-   EVGL_FUNC_BEGIN();
-   glDeleteFramebuffers(n, framebuffers);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDeleteProgram(GLuint program)
-{
-   EVGL_FUNC_BEGIN();
-   glDeleteProgram(program);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDeleteRenderbuffers(GLsizei n, const GLuint* renderbuffers)
-{
-   EVGL_FUNC_BEGIN();
-   glDeleteRenderbuffers(n, renderbuffers);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDeleteShader(GLuint shader)
-{
-   EVGL_FUNC_BEGIN();
-   glDeleteShader(shader);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDeleteTextures(GLsizei n, const GLuint* textures)
-{
-   EVGL_FUNC_BEGIN();
-   glDeleteTextures(n, textures);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDepthFunc(GLenum func)
-{
-   EVGL_FUNC_BEGIN();
-   glDepthFunc(func);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDepthMask(GLboolean flag)
-{
-   EVGL_FUNC_BEGIN();
-   glDepthMask(flag);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDepthRangef(GLclampf zNear, GLclampf zFar)
-{
-   EVGL_FUNC_BEGIN();
-
 #ifdef GL_GLES
    glDepthRangef(zNear, zFar);
 #else
    glDepthRange(zNear, zFar);
 #endif
-
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
 }
 
 void
-evgl_glDetachShader(GLuint program, GLuint shader)
+_evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision)
 {
-   EVGL_FUNC_BEGIN();
-   glDetachShader(program, shader);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-#ifdef NO_DIRECT_RENDERING
-void
-evgl_glDisable(GLenum cap)
-{
-   EVGL_FUNC_BEGIN();
-   glDisable(cap);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-#endif
-
-void
-evgl_glDisableVertexAttribArray(GLuint index)
-{
-   EVGL_FUNC_BEGIN();
-   glDisableVertexAttribArray(index);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDrawArrays(GLenum mode, GLint first, GLsizei count)
-{
-   EVGL_FUNC_BEGIN();
-   glDrawArrays(mode, first, count);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices)
-{
-   EVGL_FUNC_BEGIN();
-   glDrawElements(mode, count, type, indices);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-#ifdef NO_DIRECT_RENDERING
-void
-evgl_glEnable(GLenum cap)
-{
-   EVGL_FUNC_BEGIN();
-   glEnable(cap);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-#endif
-
-void
-evgl_glEnableVertexAttribArray(GLuint index)
-{
-   EVGL_FUNC_BEGIN();
-   glEnableVertexAttribArray(index);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glFinish(void)
-{
-   EVGL_FUNC_BEGIN();
-   glFinish();
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glFlush(void)
-{
-   EVGL_FUNC_BEGIN();
-   glFlush();
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
-{
-   EVGL_FUNC_BEGIN();
-   glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
-{
-   EVGL_FUNC_BEGIN();
-   glFramebufferTexture2D(target, attachment, textarget, texture, level);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glFrontFace(GLenum mode)
-{
-   EVGL_FUNC_BEGIN();
-   glFrontFace(mode);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetVertexAttribfv(GLuint index, GLenum pname, GLfloat* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetVertexAttribfv(index, pname, params);
-
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetVertexAttribiv(GLuint index, GLenum pname, GLint* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetVertexAttribiv(index, pname, params);
-
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetVertexAttribPointerv(GLuint index, GLenum pname, void** pointer)
-{
-   EVGL_FUNC_BEGIN();
-   glGetVertexAttribPointerv(index, pname, pointer);
-
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glHint(GLenum target, GLenum mode)
-{
-   EVGL_FUNC_BEGIN();
-   glHint(target, mode);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGenBuffers(GLsizei n, GLuint* buffers)
-{
-   EVGL_FUNC_BEGIN();
-   glGenBuffers(n, buffers);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGenerateMipmap(GLenum target)
-{
-   EVGL_FUNC_BEGIN();
-   glGenerateMipmap(target);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGenFramebuffers(GLsizei n, GLuint* framebuffers)
-{
-   EVGL_FUNC_BEGIN();
-   glGenFramebuffers(n, framebuffers);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGenRenderbuffers(GLsizei n, GLuint* renderbuffers)
-{
-   EVGL_FUNC_BEGIN();
-   glGenRenderbuffers(n, renderbuffers);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGenTextures(GLsizei n, GLuint* textures)
-{
-   EVGL_FUNC_BEGIN();
-   glGenTextures(n, textures);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetActiveAttrib(GLuint program, GLuint index, GLsizei bufsize, GLsizei* length, GLint* size, GLenum* type, char* name)
-{
-   EVGL_FUNC_BEGIN();
-   glGetActiveAttrib(program, index, bufsize, length, size, type, name);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetActiveUniform(GLuint program, GLuint index, GLsizei bufsize, GLsizei* length, GLint* size, GLenum* type, char* name)
-{
-   EVGL_FUNC_BEGIN();
-   glGetActiveUniform(program, index, bufsize, length, size, type, name);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetAttachedShaders(GLuint program, GLsizei maxcount, GLsizei* count, GLuint* shaders)
-{
-   EVGL_FUNC_BEGIN();
-   glGetAttachedShaders(program, maxcount, count, shaders);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-int
-evgl_glGetAttribLocation(GLuint program, const char* name)
-{
-   int ret = _EVGL_INT_INIT_VALUE;
-   EVGL_FUNC_BEGIN();
-   ret = glGetAttribLocation(program, name);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-   return ret;
-}
-
-void
-evgl_glGetBooleanv(GLenum pname, GLboolean* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetBooleanv(pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetBufferParameteriv(GLenum target, GLenum pname, GLint* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetBufferParameteriv(target, pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-GLenum
-evgl_glGetError(void)
-{
-   GLenum ret = GL_NONE;
-
-   EVGL_FUNC_BEGIN();
-   ret = glGetError();
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-   return ret;
-}
-
-void
-evgl_glGetFloatv(GLenum pname, GLfloat* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetFloatv(pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetFramebufferAttachmentParameteriv(target, attachment, pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetIntegerv(GLenum pname, GLint* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetIntegerv(pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetProgramiv(GLuint program, GLenum pname, GLint* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetProgramiv(program, pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetProgramInfoLog(GLuint program, GLsizei bufsize, GLsizei* length, char* infolog)
-{
-   EVGL_FUNC_BEGIN();
-   glGetProgramInfoLog(program, bufsize, length, infolog);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetRenderbufferParameteriv(target, pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetShaderiv(GLuint shader, GLenum pname, GLint* params)
-{
-   EVGL_FUNC_BEGIN();
-   glGetShaderiv(shader, pname, params);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetShaderInfoLog(GLuint shader, GLsizei bufsize, GLsizei* length, char* infolog)
-{
-   EVGL_FUNC_BEGIN();
-   glGetShaderInfoLog(shader, bufsize, length, infolog);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-void
-evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision)
-{
-   EVGL_FUNC_BEGIN();
-
 #ifdef GL_GLES
    glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
 #else
@@ -963,6 +121,996 @@ evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* 
    return;
    shadertype = precisiontype = 0;
 #endif
+}
+
+void
+_evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length)
+{
+#ifdef GL_GLES
+   glShaderBinary(n, shaders, binaryformat, binary, length);
+#else
+   // FIXME: need to dlsym/getprocaddress for this
+   ERR("Binary Shader is not supported here yet.");
+   return;
+   n = binaryformat = length = 0;
+   shaders = binary = 0;
+#endif
+}
+
+void
+_evgl_glReleaseShaderCompiler(void)
+{
+#ifdef GL_GLES
+   glReleaseShaderCompiler();
+#else
+#endif
+}
+
+
+//-------------------------------------------------------------//
+// Calls related to Evas GL Direct Rendering
+//-------------------------------------------------------------//
+// Transform from Evas Coordinat to GL Coordinate
+// returns: oc[4] original image object dimension in gl coord
+// returns: nc[4] tranformed  (x, y, width, heigth) in gl coord
+static void
+compute_gl_coordinates(Evas_Object *obj, int rot, int clip,
+                       int x, int y, int width, int height,
+                       int imgc[4], int objc[4])
+{
+   if (rot == 0)
+     {
+        // oringinal image object coordinate in gl coordinate
+        imgc[0] = obj->cur.geometry.x;
+        imgc[1] = obj->layer->evas->output.h - obj->cur.geometry.y - obj->cur.geometry.h;
+        imgc[2] = imgc[0] + obj->cur.geometry.w;
+        imgc[3] = imgc[1] + obj->cur.geometry.h;
+
+        // transformed (x,y,width,height) in gl coordinate
+        objc[0] = imgc[0] + x;
+        objc[1] = imgc[1] + y;
+        objc[2] = objc[0] + width;
+        objc[3] = objc[1] + height;
+     }
+   else if (rot == 180)
+     {
+        // oringinal image object coordinate in gl coordinate
+        imgc[0] = obj->layer->evas->output.w - obj->cur.geometry.x - obj->cur.geometry.w;
+        imgc[1] = obj->cur.geometry.y;
+        imgc[2] = imgc[0] + obj->cur.geometry.w;
+        imgc[3] = imgc[1] + obj->cur.geometry.h;
+
+        // transformed (x,y,width,height) in gl coordinate
+        objc[0] = imgc[0] + obj->cur.geometry.w - x - width;
+        objc[1] = imgc[1] + obj->cur.geometry.h - y - height;
+        objc[2] = objc[0] + width;
+        objc[3] = objc[1] + height;
+
+     }
+   else if (rot == 90)
+     {
+        // oringinal image object coordinate in gl coordinate
+        imgc[0] = obj->cur.geometry.y;
+        imgc[1] = obj->cur.geometry.x;
+        imgc[2] = imgc[0] + obj->cur.geometry.h;
+        imgc[3] = imgc[1] + obj->cur.geometry.w;
+
+        // transformed (x,y,width,height) in gl coordinate
+        objc[0] = imgc[0] + obj->cur.geometry.h - y - height;
+        objc[1] = imgc[1] + x;
+        objc[2] = objc[0] + height;
+        objc[3] = objc[1] + width;
+     }
+   else if (rot == 270)
+     {
+        // oringinal image object coordinate in gl coordinate
+        imgc[0] = obj->layer->evas->output.h - obj->cur.geometry.y - obj->cur.geometry.h;
+        imgc[1] = obj->layer->evas->output.w - obj->cur.geometry.x - obj->cur.geometry.w;
+        imgc[2] = imgc[0] + obj->cur.geometry.h;
+        imgc[3] = imgc[1] + obj->cur.geometry.w;
+
+        // transformed (x,y,width,height) in gl coordinate
+        objc[0] = imgc[0] + y;
+        objc[1] = imgc[1] + obj->cur.geometry.w - x - width;
+        objc[2] = objc[0] + height;
+        objc[3] = objc[1] + width;
+     }
+   else
+     {
+        ERR("Invalid rotation angle %d.", rot);
+        return;
+     }
+
+   if (clip)
+     {
+        // Clip against original image object
+        if (objc[0] < imgc[0]) objc[0] = imgc[0];
+        if (objc[0] > imgc[2]) objc[0] = 0;
+
+        if (objc[1] < imgc[1]) objc[1] = imgc[1];
+        if (objc[1] > imgc[3]) objc[1] = 0;
+
+        if (objc[2] < imgc[0]) objc[0] = 0;
+        if (objc[2] > imgc[2]) objc[2] = imgc[2];
+
+        if (objc[3] < imgc[1]) objc[1] = 0;
+        if (objc[3] > imgc[3]) objc[3] = imgc[3];
+     }
+
+   imgc[2] = imgc[2]-imgc[0];     // width
+   imgc[3] = imgc[3]-imgc[1];     // height
+
+   objc[2] = objc[2]-objc[0];     // width
+   objc[3] = objc[3]-objc[1];     // height
+}
+
+static void
+_evgl_glClear(GLbitfield mask)
+{
+   EVGL_Engine *ee = evgl_engine;
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   Evas_Object *img;
+   int rot = 0;
+   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+
+   if (!(rsc=_evgl_tls_resource_get(ee)))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (evgl_direct_enabled(evgl_engine))
+     {
+        if (!(rsc->current_ctx->current_fbo))
+          {
+             if ((!ctx->direct_scissor))
+               {
+                  glEnable(GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 1;
+               }
+
+             img = rsc->direct_img_obj;
+             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+
+             compute_gl_coordinates(img, rot, 0, 0, 0, 0, 0, oc, nc);
+
+             if ((ctx->scissor_upated) && (ctx->scissor_enabled))
+               {
+                  glScissor(ctx->scissor_coord[0], ctx->scissor_coord[1],
+                            ctx->scissor_coord[2], ctx->scissor_coord[3]);
+                  ctx->direct_scissor = 0;
+               }
+             else
+                glScissor(oc[0], oc[1], oc[2], oc[3]);
+
+             glClear(mask);
+          }
+        else
+          {
+             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+               {
+                  glDisable(GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 0;
+               }
+
+             glClear(mask);
+          }
+     }
+   else
+     {
+        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+          {
+             glDisable(GL_SCISSOR_TEST);
+             ctx->direct_scissor = 0;
+          }
+
+        glClear(mask);
+     }
+}
+
+static void
+_evgl_glEnable(GLenum cap)
+{
+   EVGL_Context *ctx;
+
+   ctx = _evgl_current_context_get();
+
+   if (cap == GL_SCISSOR_TEST)
+      if (ctx) ctx->scissor_enabled = 1;
+   glEnable(cap);
+}
+
+static void
+_evgl_glDisable(GLenum cap)
+{
+   EVGL_Context *ctx;
+
+   ctx = _evgl_current_context_get();
+
+   if (cap == GL_SCISSOR_TEST)
+      if (ctx) ctx->scissor_enabled = 0;
+   glDisable(cap);
+}
+
+
+static void
+_evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
+{
+   EVGL_Engine *ee = evgl_engine;
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   Evas_Object *img;
+   int rot = 0;
+   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+
+   if (!(rsc=_evgl_tls_resource_get(ee)))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (evgl_direct_enabled(evgl_engine))
+     {
+
+        if (!(rsc->current_ctx->current_fbo))
+          {
+             img = rsc->direct_img_obj;
+             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+
+             compute_gl_coordinates(img, rot, 1, x, y, width, height, oc, nc);
+             glReadPixels(nc[0], nc[1], nc[2], nc[3], format, type, pixels);
+          }
+        else
+          {
+             glReadPixels(x, y, width, height, format, type, pixels);
+          }
+     }
+   else
+     {
+        glReadPixels(x, y, width, height, format, type, pixels);
+     }
+}
+
+static void
+_evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+   EVGL_Engine *ee = evgl_engine;
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   Evas_Object *img;
+   int rot = 0;
+   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+
+   if (!(rsc=_evgl_tls_resource_get(ee)))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (evgl_direct_enabled(evgl_engine))
+     {
+        if (!(rsc->current_ctx->current_fbo))
+          {
+             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+               {
+                  glDisable(GL_SCISSOR_TEST);
+               }
+
+             img = rsc->direct_img_obj;
+             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+             
+             compute_gl_coordinates(img, rot, 1, x, y, width, height, oc, nc);
+             glScissor(nc[0], nc[1], nc[2], nc[3]);
+
+             // Update coordinates
+             ctx->scissor_coord[0] = nc[0];
+             ctx->scissor_coord[1] = nc[1];
+             ctx->scissor_coord[2] = nc[2];
+             ctx->scissor_coord[3] = nc[3];
+
+             ctx->direct_scissor = 0;
+
+             // Check....!!!!
+             ctx->scissor_upated = 1;
+          }
+        else
+          {
+             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+               {
+                  glDisable(GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 0;
+               }
+
+             glScissor(x, y, width, height);
+
+             ctx->scissor_upated = 0;
+          }
+     }
+   else
+     {
+        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+          {
+             glDisable(GL_SCISSOR_TEST);
+             ctx->direct_scissor = 0;
+          }
+
+        glScissor(x, y, width, height);
+     }
+}
+
+static void
+_evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+   EVGL_Engine *ee = evgl_engine;
+   EVGL_Resource *rsc;
+   EVGL_Context *ctx;
+   Evas_Object *img;
+   int rot = 0;
+   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+
+   if (!(rsc=_evgl_tls_resource_get(ee)))
+     {
+        ERR("Unable to execute GL command. Error retrieving tls");
+        return;
+     }
+
+   ctx = rsc->current_ctx;
+   if (!ctx)
+     {
+        ERR("Unable to retrive Current Context");
+        return;
+     }
+
+   if (evgl_direct_enabled(evgl_engine))
+     {
+        if (!(rsc->current_ctx->current_fbo))
+          {
+             if ((!ctx->direct_scissor))
+               {
+                  glEnable(GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 1;
+               }
+
+             img = rsc->direct_img_obj;
+             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+
+             compute_gl_coordinates(img, rot, 0, x, y, width, height, oc, nc);
+
+             if ((ctx->scissor_upated) && (ctx->scissor_enabled))
+               {
+                  glScissor(ctx->scissor_coord[0], ctx->scissor_coord[1],
+                            ctx->scissor_coord[2], ctx->scissor_coord[3]);
+                  ctx->direct_scissor = 0;
+               }
+             else
+                glScissor(oc[0], oc[1], oc[2], oc[3]);
+
+             glViewport(nc[0], nc[1], nc[2], nc[3]);
+          }
+        else
+          {
+             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+               {
+                  glDisable(GL_SCISSOR_TEST);
+                  ctx->direct_scissor = 0;
+               }
+
+             glViewport(x, y, width, height);
+          }
+     }
+   else
+     {
+        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
+          {
+             glDisable(GL_SCISSOR_TEST);
+             ctx->direct_scissor = 0;
+          }
+
+        glViewport(x, y, width, height);
+     }
+}
+//-------------------------------------------------------------//
+
+
+
+//-------------------------------------------------------------//
+// Debug Evas GL APIs
+//  - GL APIs Overriden for debugging purposes
+//-------------------------------------------------------------//
+
+void
+_evgld_glActiveTexture(GLenum texture)
+{
+   EVGL_FUNC_BEGIN();
+   glActiveTexture(texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glAttachShader(GLuint program, GLuint shader)
+{
+   EVGL_FUNC_BEGIN();
+   glAttachShader(program, shader);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBindAttribLocation(GLuint program, GLuint index, const char* name)
+{
+   EVGL_FUNC_BEGIN();
+   glBindAttribLocation(program, index, name);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBindBuffer(GLenum target, GLuint buffer)
+{
+   EVGL_FUNC_BEGIN();
+   glBindBuffer(target, buffer);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBindFramebuffer(GLenum target, GLuint framebuffer)
+{
+   EVGL_FUNC_BEGIN();
+
+   _evgl_glBindFramebuffer(target, framebuffer);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
+{
+   EVGL_FUNC_BEGIN();
+   glBindRenderbuffer(target, renderbuffer);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBindTexture(GLenum target, GLuint texture)
+{
+   EVGL_FUNC_BEGIN();
+   glBindTexture(target, texture);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBlendColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+{
+   EVGL_FUNC_BEGIN();
+   glBlendColor(red, green, blue, alpha);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBlendEquation(GLenum mode)
+{
+   EVGL_FUNC_BEGIN();
+   glBlendEquation(mode);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBlendEquationSeparate(GLenum modeRGB, GLenum modeAlpha)
+{
+   EVGL_FUNC_BEGIN();
+   glBlendEquationSeparate(modeRGB, modeAlpha);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBlendFunc(GLenum sfactor, GLenum dfactor)
+{
+   EVGL_FUNC_BEGIN();
+   glBlendFunc(sfactor, dfactor);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBlendFuncSeparate(GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha)
+{
+   EVGL_FUNC_BEGIN();
+   glBlendFuncSeparate(srcRGB, dstRGB, srcAlpha, dstAlpha);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBufferData(GLenum target, GLsizeiptr size, const void* data, GLenum usage)
+{
+   EVGL_FUNC_BEGIN();
+   glBufferData(target, size, data, usage);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, const void* data)
+{
+   EVGL_FUNC_BEGIN();
+   glBufferSubData(target, offset, size, data);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+GLenum
+_evgld_glCheckFramebufferStatus(GLenum target)
+{
+   GLenum ret = GL_NONE;
+
+   EVGL_FUNC_BEGIN();
+   ret = glCheckFramebufferStatus(target);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+   return ret;
+}
+
+void
+_evgld_glClearColor(GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha)
+{
+   EVGL_FUNC_BEGIN();
+   glClearColor(red, green, blue, alpha);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glClearDepthf(GLclampf depth)
+{
+   EVGL_FUNC_BEGIN();
+
+   _evgl_glClearDepthf(depth);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glClearStencil(GLint s)
+{
+   EVGL_FUNC_BEGIN();
+   glClearStencil(s);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glColorMask(GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha)
+{
+   EVGL_FUNC_BEGIN();
+   glColorMask(red, green, blue, alpha);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glCompileShader(GLuint shader)
+{
+   EVGL_FUNC_BEGIN();
+   glCompileShader(shader);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width, GLsizei height, GLint border, GLsizei imageSize, const void* data)
+{
+   EVGL_FUNC_BEGIN();
+   glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glCompressedTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLsizei imageSize, const void* data)
+{
+   EVGL_FUNC_BEGIN();
+   glCompressedTexSubImage2D(target, level, xoffset, yoffset, width, height, format, imageSize, data);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glCopyTexImage2D(GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border)
+{
+   EVGL_FUNC_BEGIN();
+   glCopyTexImage2D(target, level, internalformat, x, y, width, height, border);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glCopyTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height)
+{
+   EVGL_FUNC_BEGIN();
+   glCopyTexSubImage2D(target, level, xoffset, yoffset, x, y, width, height);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+GLuint
+_evgld_glCreateProgram(void)
+{
+   GLuint ret = _EVGL_INT_INIT_VALUE;
+
+   EVGL_FUNC_BEGIN();
+   ret = glCreateProgram();
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+   return ret;
+}
+
+GLuint
+_evgld_glCreateShader(GLenum type)
+{
+   GLuint ret = _EVGL_INT_INIT_VALUE;
+   EVGL_FUNC_BEGIN();
+   ret = glCreateShader(type);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+   return ret;
+}
+
+void
+_evgld_glCullFace(GLenum mode)
+{
+   EVGL_FUNC_BEGIN();
+   glCullFace(mode);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDeleteBuffers(GLsizei n, const GLuint* buffers)
+{
+   EVGL_FUNC_BEGIN();
+   glDeleteBuffers(n, buffers);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDeleteFramebuffers(GLsizei n, const GLuint* framebuffers)
+{
+   EVGL_FUNC_BEGIN();
+   glDeleteFramebuffers(n, framebuffers);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDeleteProgram(GLuint program)
+{
+   EVGL_FUNC_BEGIN();
+   glDeleteProgram(program);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDeleteRenderbuffers(GLsizei n, const GLuint* renderbuffers)
+{
+   EVGL_FUNC_BEGIN();
+   glDeleteRenderbuffers(n, renderbuffers);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDeleteShader(GLuint shader)
+{
+   EVGL_FUNC_BEGIN();
+   glDeleteShader(shader);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDeleteTextures(GLsizei n, const GLuint* textures)
+{
+   EVGL_FUNC_BEGIN();
+   glDeleteTextures(n, textures);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDepthFunc(GLenum func)
+{
+   EVGL_FUNC_BEGIN();
+   glDepthFunc(func);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDepthMask(GLboolean flag)
+{
+   EVGL_FUNC_BEGIN();
+   glDepthMask(flag);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDepthRangef(GLclampf zNear, GLclampf zFar)
+{
+   EVGL_FUNC_BEGIN();
+
+   _evgl_glDepthRangef(zNear, zFar);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDetachShader(GLuint program, GLuint shader)
+{
+   EVGL_FUNC_BEGIN();
+   glDetachShader(program, shader);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDisableVertexAttribArray(GLuint index)
+{
+   EVGL_FUNC_BEGIN();
+   glDisableVertexAttribArray(index);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDrawArrays(GLenum mode, GLint first, GLsizei count)
+{
+   EVGL_FUNC_BEGIN();
+   glDrawArrays(mode, first, count);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glDrawElements(GLenum mode, GLsizei count, GLenum type, const void* indices)
+{
+   EVGL_FUNC_BEGIN();
+   glDrawElements(mode, count, type, indices);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glEnableVertexAttribArray(GLuint index)
+{
+   EVGL_FUNC_BEGIN();
+   glEnableVertexAttribArray(index);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glFinish(void)
+{
+   EVGL_FUNC_BEGIN();
+   glFinish();
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glFlush(void)
+{
+   EVGL_FUNC_BEGIN();
+   glFlush();
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glFramebufferRenderbuffer(GLenum target, GLenum attachment, GLenum renderbuffertarget, GLuint renderbuffer)
+{
+   EVGL_FUNC_BEGIN();
+   glFramebufferRenderbuffer(target, attachment, renderbuffertarget, renderbuffer);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glFramebufferTexture2D(GLenum target, GLenum attachment, GLenum textarget, GLuint texture, GLint level)
+{
+   EVGL_FUNC_BEGIN();
+   glFramebufferTexture2D(target, attachment, textarget, texture, level);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glFrontFace(GLenum mode)
+{
+   EVGL_FUNC_BEGIN();
+   glFrontFace(mode);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetVertexAttribfv(GLuint index, GLenum pname, GLfloat* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetVertexAttribfv(index, pname, params);
 
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    goto finish;
@@ -972,7 +1120,304 @@ finish:
 }
 
 void
-evgl_glGetShaderSource(GLuint shader, GLsizei bufsize, GLsizei* length, char* source)
+_evgld_glGetVertexAttribiv(GLuint index, GLenum pname, GLint* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetVertexAttribiv(index, pname, params);
+
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetVertexAttribPointerv(GLuint index, GLenum pname, void** pointer)
+{
+   EVGL_FUNC_BEGIN();
+   glGetVertexAttribPointerv(index, pname, pointer);
+
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glHint(GLenum target, GLenum mode)
+{
+   EVGL_FUNC_BEGIN();
+   glHint(target, mode);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGenBuffers(GLsizei n, GLuint* buffers)
+{
+   EVGL_FUNC_BEGIN();
+   glGenBuffers(n, buffers);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGenerateMipmap(GLenum target)
+{
+   EVGL_FUNC_BEGIN();
+   glGenerateMipmap(target);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGenFramebuffers(GLsizei n, GLuint* framebuffers)
+{
+   EVGL_FUNC_BEGIN();
+   glGenFramebuffers(n, framebuffers);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGenRenderbuffers(GLsizei n, GLuint* renderbuffers)
+{
+   EVGL_FUNC_BEGIN();
+   glGenRenderbuffers(n, renderbuffers);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGenTextures(GLsizei n, GLuint* textures)
+{
+   EVGL_FUNC_BEGIN();
+   glGenTextures(n, textures);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetActiveAttrib(GLuint program, GLuint index, GLsizei bufsize, GLsizei* length, GLint* size, GLenum* type, char* name)
+{
+   EVGL_FUNC_BEGIN();
+   glGetActiveAttrib(program, index, bufsize, length, size, type, name);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetActiveUniform(GLuint program, GLuint index, GLsizei bufsize, GLsizei* length, GLint* size, GLenum* type, char* name)
+{
+   EVGL_FUNC_BEGIN();
+   glGetActiveUniform(program, index, bufsize, length, size, type, name);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetAttachedShaders(GLuint program, GLsizei maxcount, GLsizei* count, GLuint* shaders)
+{
+   EVGL_FUNC_BEGIN();
+   glGetAttachedShaders(program, maxcount, count, shaders);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+int
+_evgld_glGetAttribLocation(GLuint program, const char* name)
+{
+   int ret = _EVGL_INT_INIT_VALUE;
+   EVGL_FUNC_BEGIN();
+   ret = glGetAttribLocation(program, name);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+   return ret;
+}
+
+void
+_evgld_glGetBooleanv(GLenum pname, GLboolean* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetBooleanv(pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetBufferParameteriv(GLenum target, GLenum pname, GLint* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetBufferParameteriv(target, pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+GLenum
+_evgld_glGetError(void)
+{
+   GLenum ret = GL_NONE;
+
+   EVGL_FUNC_BEGIN();
+   ret = glGetError();
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+   return ret;
+}
+
+void
+_evgld_glGetFloatv(GLenum pname, GLfloat* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetFloatv(pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetFramebufferAttachmentParameteriv(GLenum target, GLenum attachment, GLenum pname, GLint* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetFramebufferAttachmentParameteriv(target, attachment, pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetIntegerv(GLenum pname, GLint* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetIntegerv(pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetProgramiv(GLuint program, GLenum pname, GLint* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetProgramiv(program, pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetProgramInfoLog(GLuint program, GLsizei bufsize, GLsizei* length, char* infolog)
+{
+   EVGL_FUNC_BEGIN();
+   glGetProgramInfoLog(program, bufsize, length, infolog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetRenderbufferParameteriv(GLenum target, GLenum pname, GLint* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetRenderbufferParameteriv(target, pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetShaderiv(GLuint shader, GLenum pname, GLint* params)
+{
+   EVGL_FUNC_BEGIN();
+   glGetShaderiv(shader, pname, params);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetShaderInfoLog(GLuint shader, GLsizei bufsize, GLsizei* length, char* infolog)
+{
+   EVGL_FUNC_BEGIN();
+   glGetShaderInfoLog(shader, bufsize, length, infolog);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision)
+{
+   EVGL_FUNC_BEGIN();
+
+   _evgl_glGetShaderPrecisionFormat(shadertype, precisiontype, range, precision);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   goto finish;
+
+finish:
+   EVGL_FUNC_END();
+}
+
+void
+_evgld_glGetShaderSource(GLuint shader, GLsizei bufsize, GLsizei* length, char* source)
 {
    EVGL_FUNC_BEGIN();
    glGetShaderSource(shader, bufsize, length, source);
@@ -984,7 +1429,7 @@ finish:
 }
 
 const GLubyte *
-evgl_glGetString(GLenum name)
+_evgld_glGetString(GLenum name)
 {
    const GLubyte *ret = NULL;
 
@@ -1005,7 +1450,7 @@ finish:
 }
 
 void
-evgl_glGetTexParameterfv(GLenum target, GLenum pname, GLfloat* params)
+_evgld_glGetTexParameterfv(GLenum target, GLenum pname, GLfloat* params)
 {
    EVGL_FUNC_BEGIN();
    glGetTexParameterfv(target, pname, params);
@@ -1017,7 +1462,7 @@ finish:
 }
 
 void
-evgl_glGetTexParameteriv(GLenum target, GLenum pname, GLint* params)
+_evgld_glGetTexParameteriv(GLenum target, GLenum pname, GLint* params)
 {
    EVGL_FUNC_BEGIN();
    glGetTexParameteriv(target, pname, params);
@@ -1029,7 +1474,7 @@ finish:
 }
 
 void
-evgl_glGetUniformfv(GLuint program, GLint location, GLfloat* params)
+_evgld_glGetUniformfv(GLuint program, GLint location, GLfloat* params)
 {
    EVGL_FUNC_BEGIN();
    glGetUniformfv(program, location, params);
@@ -1041,7 +1486,7 @@ finish:
 }
 
 void
-evgl_glGetUniformiv(GLuint program, GLint location, GLint* params)
+_evgld_glGetUniformiv(GLuint program, GLint location, GLint* params)
 {
    EVGL_FUNC_BEGIN();
    glGetUniformiv(program, location, params);
@@ -1052,7 +1497,7 @@ finish:
    EVGL_FUNC_END();
 }
 int
-evgl_glGetUniformLocation(GLuint program, const char* name)
+_evgld_glGetUniformLocation(GLuint program, const char* name)
 {
    int ret = _EVGL_INT_INIT_VALUE;
 
@@ -1067,7 +1512,7 @@ finish:
 }
 
 GLboolean
-evgl_glIsBuffer(GLuint buffer)
+_evgld_glIsBuffer(GLuint buffer)
 {
    GLboolean ret = GL_FALSE;
 
@@ -1082,7 +1527,7 @@ finish:
 }
 
 GLboolean
-evgl_glIsEnabled(GLenum cap)
+_evgld_glIsEnabled(GLenum cap)
 {
    GLboolean ret = GL_FALSE;
 
@@ -1097,7 +1542,7 @@ finish:
 }
 
 GLboolean
-evgl_glIsFramebuffer(GLuint framebuffer)
+_evgld_glIsFramebuffer(GLuint framebuffer)
 {
    GLboolean ret = GL_FALSE;
 
@@ -1112,7 +1557,7 @@ finish:
 }
 
 GLboolean
-evgl_glIsProgram(GLuint program)
+_evgld_glIsProgram(GLuint program)
 {
    GLboolean ret;
    EVGL_FUNC_BEGIN();
@@ -1126,7 +1571,7 @@ finish:
 }
 
 GLboolean
-evgl_glIsRenderbuffer(GLuint renderbuffer)
+_evgld_glIsRenderbuffer(GLuint renderbuffer)
 {
    GLboolean ret;
    EVGL_FUNC_BEGIN();
@@ -1140,7 +1585,7 @@ finish:
 }
 
 GLboolean
-evgl_glIsShader(GLuint shader)
+_evgld_glIsShader(GLuint shader)
 {
    GLboolean ret;
    EVGL_FUNC_BEGIN();
@@ -1154,7 +1599,7 @@ finish:
 }
 
 GLboolean
-evgl_glIsTexture(GLuint texture)
+_evgld_glIsTexture(GLuint texture)
 {
    GLboolean ret;
    EVGL_FUNC_BEGIN();
@@ -1168,7 +1613,7 @@ finish:
 }
 
 void
-evgl_glLineWidth(GLfloat width)
+_evgld_glLineWidth(GLfloat width)
 {
    EVGL_FUNC_BEGIN();
    glLineWidth(width);
@@ -1180,7 +1625,7 @@ finish:
 }
 
 void
-evgl_glLinkProgram(GLuint program)
+_evgld_glLinkProgram(GLuint program)
 {
    EVGL_FUNC_BEGIN();
    glLinkProgram(program);
@@ -1192,7 +1637,7 @@ finish:
 }
 
 void
-evgl_glPixelStorei(GLenum pname, GLint param)
+_evgld_glPixelStorei(GLenum pname, GLint param)
 {
    EVGL_FUNC_BEGIN();
    glPixelStorei(pname, param);
@@ -1204,7 +1649,7 @@ finish:
 }
 
 void
-evgl_glPolygonOffset(GLfloat factor, GLfloat units)
+_evgld_glPolygonOffset(GLfloat factor, GLfloat units)
 {
    EVGL_FUNC_BEGIN();
    glPolygonOffset(factor, units);
@@ -1215,31 +1660,14 @@ finish:
    EVGL_FUNC_END();
 }
 
-#ifdef NO_DIRECT_RENDERING
 void
-evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
-{
-   EVGL_FUNC_BEGIN();
-   glReadPixels(x, y, width, height, format, type, pixels);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-#endif
-
-void
-evgl_glReleaseShaderCompiler(void)
+_evgld_glReleaseShaderCompiler(void)
 {
    EVGL_FUNC_BEGIN();
 
-#ifdef GL_GLES
-   glReleaseShaderCompiler();
-#else
-#endif
-
+   _evgl_glReleaseShaderCompiler();
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
    goto finish;
 
 finish:
@@ -1247,7 +1675,7 @@ finish:
 }
 
 void
-evgl_glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
+_evgld_glRenderbufferStorage(GLenum target, GLenum internalformat, GLsizei width, GLsizei height)
 {
    EVGL_FUNC_BEGIN();
    glRenderbufferStorage(target, internalformat, width, height);
@@ -1259,7 +1687,7 @@ finish:
 }
 
 void
-evgl_glSampleCoverage(GLclampf value, GLboolean invert)
+_evgld_glSampleCoverage(GLclampf value, GLboolean invert)
 {
    EVGL_FUNC_BEGIN();
    glSampleCoverage(value, invert);
@@ -1270,36 +1698,14 @@ finish:
    EVGL_FUNC_END();
 }
 
-#ifdef NO_DIRECT_RENDERING
 void
-evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-   EVGL_FUNC_BEGIN();
-   glScissor(x, y, width, height);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-#endif
-
-void
-evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length)
+_evgld_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length)
 {
    EVGL_FUNC_BEGIN();
 
-#ifdef GL_GLES
-   glShaderBinary(n, shaders, binaryformat, binary, length);
-#else
-   // FIXME: need to dlsym/getprocaddress for this
-   ERR("Binary Shader is not supported here yet.");
-   return;
-   n = binaryformat = length = 0;
-   shaders = binary = 0;
-#endif
-
+   _evgl_glShaderBinary(n, shaders, binaryformat, binary, length);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
    goto finish;
 
 finish:
@@ -1307,7 +1713,7 @@ finish:
 }
 
 void
-evgl_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLint* length)
+_evgld_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLint* length)
 {
    EVGL_FUNC_BEGIN();
    glShaderSource(shader, count, string, length);
@@ -1319,7 +1725,7 @@ finish:
 }
 
 void
-evgl_glStencilFunc(GLenum func, GLint ref, GLuint mask)
+_evgld_glStencilFunc(GLenum func, GLint ref, GLuint mask)
 {
    EVGL_FUNC_BEGIN();
    glStencilFunc(func, ref, mask);
@@ -1331,7 +1737,7 @@ finish:
 }
 
 void
-evgl_glStencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
+_evgld_glStencilFuncSeparate(GLenum face, GLenum func, GLint ref, GLuint mask)
 {
    EVGL_FUNC_BEGIN();
    glStencilFuncSeparate(face, func, ref, mask);
@@ -1343,7 +1749,7 @@ finish:
 }
 
 void
-evgl_glStencilMask(GLuint mask)
+_evgld_glStencilMask(GLuint mask)
 {
    EVGL_FUNC_BEGIN();
    glStencilMask(mask);
@@ -1355,7 +1761,7 @@ finish:
 }
 
 void
-evgl_glStencilMaskSeparate(GLenum face, GLuint mask)
+_evgld_glStencilMaskSeparate(GLenum face, GLuint mask)
 {
    EVGL_FUNC_BEGIN();
    glStencilMaskSeparate(face, mask);
@@ -1367,7 +1773,7 @@ finish:
 }
 
 void
-evgl_glStencilOp(GLenum fail, GLenum zfail, GLenum zpass)
+_evgld_glStencilOp(GLenum fail, GLenum zfail, GLenum zpass)
 {
    EVGL_FUNC_BEGIN();
    glStencilOp(fail, zfail, zpass);
@@ -1379,7 +1785,7 @@ finish:
 }
 
 void
-evgl_glStencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass)
+_evgld_glStencilOpSeparate(GLenum face, GLenum fail, GLenum zfail, GLenum zpass)
 {
    EVGL_FUNC_BEGIN();
    glStencilOpSeparate(face, fail, zfail, zpass);
@@ -1391,7 +1797,7 @@ finish:
 }
 
 void
-evgl_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* pixels)
+_evgld_glTexImage2D(GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void* pixels)
 {
    EVGL_FUNC_BEGIN();
    glTexImage2D(target, level, internalformat, width, height, border, format, type, pixels);
@@ -1403,7 +1809,7 @@ finish:
 }
 
 void
-evgl_glTexParameterf(GLenum target, GLenum pname, GLfloat param)
+_evgld_glTexParameterf(GLenum target, GLenum pname, GLfloat param)
 {
    EVGL_FUNC_BEGIN();
    glTexParameterf(target, pname, param);
@@ -1415,7 +1821,7 @@ finish:
 }
 
 void
-evgl_glTexParameterfv(GLenum target, GLenum pname, const GLfloat* params)
+_evgld_glTexParameterfv(GLenum target, GLenum pname, const GLfloat* params)
 {
    EVGL_FUNC_BEGIN();
    glTexParameterfv(target, pname, params);
@@ -1427,7 +1833,7 @@ finish:
 }
 
 void
-evgl_glTexParameteri(GLenum target, GLenum pname, GLint param)
+_evgld_glTexParameteri(GLenum target, GLenum pname, GLint param)
 {
    EVGL_FUNC_BEGIN();
    glTexParameteri(target, pname, param);
@@ -1439,7 +1845,7 @@ finish:
 }
 
 void
-evgl_glTexParameteriv(GLenum target, GLenum pname, const GLint* params)
+_evgld_glTexParameteriv(GLenum target, GLenum pname, const GLint* params)
 {
    EVGL_FUNC_BEGIN();
    glTexParameteriv(target, pname, params);
@@ -1451,7 +1857,7 @@ finish:
 }
 
 void
-evgl_glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels)
+_evgld_glTexSubImage2D(GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void* pixels)
 {
    EVGL_FUNC_BEGIN();
    glTexSubImage2D(target, level, xoffset, yoffset, width, height, format, type, pixels);
@@ -1463,7 +1869,7 @@ finish:
 }
 
 void
-evgl_glUniform1f(GLint location, GLfloat x)
+_evgld_glUniform1f(GLint location, GLfloat x)
 {
    EVGL_FUNC_BEGIN();
    glUniform1f(location, x);
@@ -1475,7 +1881,7 @@ finish:
 }
 
 void
-evgl_glUniform1fv(GLint location, GLsizei count, const GLfloat* v)
+_evgld_glUniform1fv(GLint location, GLsizei count, const GLfloat* v)
 {
    EVGL_FUNC_BEGIN();
    glUniform1fv(location, count, v);
@@ -1487,7 +1893,7 @@ finish:
 }
 
 void
-evgl_glUniform1i(GLint location, GLint x)
+_evgld_glUniform1i(GLint location, GLint x)
 {
    EVGL_FUNC_BEGIN();
    glUniform1i(location, x);
@@ -1499,7 +1905,7 @@ finish:
 }
 
 void
-evgl_glUniform1iv(GLint location, GLsizei count, const GLint* v)
+_evgld_glUniform1iv(GLint location, GLsizei count, const GLint* v)
 {
    EVGL_FUNC_BEGIN();
    glUniform1iv(location, count, v);
@@ -1511,7 +1917,7 @@ finish:
 }
 
 void
-evgl_glUniform2f(GLint location, GLfloat x, GLfloat y)
+_evgld_glUniform2f(GLint location, GLfloat x, GLfloat y)
 {
    EVGL_FUNC_BEGIN();
    glUniform2f(location, x, y);
@@ -1523,7 +1929,7 @@ finish:
 }
 
 void
-evgl_glUniform2fv(GLint location, GLsizei count, const GLfloat* v)
+_evgld_glUniform2fv(GLint location, GLsizei count, const GLfloat* v)
 {
    EVGL_FUNC_BEGIN();
    glUniform2fv(location, count, v);
@@ -1535,7 +1941,7 @@ finish:
 }
 
 void
-evgl_glUniform2i(GLint location, GLint x, GLint y)
+_evgld_glUniform2i(GLint location, GLint x, GLint y)
 {
    EVGL_FUNC_BEGIN();
    glUniform2i(location, x, y);
@@ -1547,7 +1953,7 @@ finish:
 }
 
 void
-evgl_glUniform2iv(GLint location, GLsizei count, const GLint* v)
+_evgld_glUniform2iv(GLint location, GLsizei count, const GLint* v)
 {
    EVGL_FUNC_BEGIN();
    glUniform2iv(location, count, v);
@@ -1559,7 +1965,7 @@ finish:
 }
 
 void
-evgl_glUniform3f(GLint location, GLfloat x, GLfloat y, GLfloat z)
+_evgld_glUniform3f(GLint location, GLfloat x, GLfloat y, GLfloat z)
 {
    EVGL_FUNC_BEGIN();
    glUniform3f(location, x, y, z);
@@ -1571,7 +1977,7 @@ finish:
 }
 
 void
-evgl_glUniform3fv(GLint location, GLsizei count, const GLfloat* v)
+_evgld_glUniform3fv(GLint location, GLsizei count, const GLfloat* v)
 {
    EVGL_FUNC_BEGIN();
    glUniform3fv(location, count, v);
@@ -1583,7 +1989,7 @@ finish:
 }
 
 void
-evgl_glUniform3i(GLint location, GLint x, GLint y, GLint z)
+_evgld_glUniform3i(GLint location, GLint x, GLint y, GLint z)
 {
    EVGL_FUNC_BEGIN();
    glUniform3i(location, x, y, z);
@@ -1595,7 +2001,7 @@ finish:
 }
 
 void
-evgl_glUniform3iv(GLint location, GLsizei count, const GLint* v)
+_evgld_glUniform3iv(GLint location, GLsizei count, const GLint* v)
 {
    EVGL_FUNC_BEGIN();
    glUniform3iv(location, count, v);
@@ -1607,7 +2013,7 @@ finish:
 }
 
 void
-evgl_glUniform4f(GLint location, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+_evgld_glUniform4f(GLint location, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
    EVGL_FUNC_BEGIN();
    glUniform4f(location, x, y, z, w);
@@ -1619,7 +2025,7 @@ finish:
 }
 
 void
-evgl_glUniform4fv(GLint location, GLsizei count, const GLfloat* v)
+_evgld_glUniform4fv(GLint location, GLsizei count, const GLfloat* v)
 {
    EVGL_FUNC_BEGIN();
    glUniform4fv(location, count, v);
@@ -1631,7 +2037,7 @@ finish:
 }
 
 void
-evgl_glUniform4i(GLint location, GLint x, GLint y, GLint z, GLint w)
+_evgld_glUniform4i(GLint location, GLint x, GLint y, GLint z, GLint w)
 {
    EVGL_FUNC_BEGIN();
    glUniform4i(location, x, y, z, w);
@@ -1643,7 +2049,7 @@ finish:
 }
 
 void
-evgl_glUniform4iv(GLint location, GLsizei count, const GLint* v)
+_evgld_glUniform4iv(GLint location, GLsizei count, const GLint* v)
 {
    EVGL_FUNC_BEGIN();
    glUniform4iv(location, count, v);
@@ -1655,7 +2061,7 @@ finish:
 }
 
 void
-evgl_glUniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
+_evgld_glUniformMatrix2fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
 {
    EVGL_FUNC_BEGIN();
    glUniformMatrix2fv(location, count, transpose, value);
@@ -1667,7 +2073,7 @@ finish:
 }
 
 void
-evgl_glUniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
+_evgld_glUniformMatrix3fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
 {
    EVGL_FUNC_BEGIN();
    glUniformMatrix3fv(location, count, transpose, value);
@@ -1679,7 +2085,7 @@ finish:
 }
 
 void
-evgl_glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
+_evgld_glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat* value)
 {
    EVGL_FUNC_BEGIN();
    glUniformMatrix4fv(location, count, transpose, value);
@@ -1691,7 +2097,7 @@ finish:
 }
 
 void
-evgl_glUseProgram(GLuint program)
+_evgld_glUseProgram(GLuint program)
 {
    EVGL_FUNC_BEGIN();
    glUseProgram(program);
@@ -1703,7 +2109,7 @@ finish:
 }
 
 void
-evgl_glValidateProgram(GLuint program)
+_evgld_glValidateProgram(GLuint program)
 {
    EVGL_FUNC_BEGIN();
    glValidateProgram(program);
@@ -1715,7 +2121,7 @@ finish:
 }
 
 void
-evgl_glVertexAttrib1f(GLuint indx, GLfloat x)
+_evgld_glVertexAttrib1f(GLuint indx, GLfloat x)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttrib1f(indx, x);
@@ -1727,7 +2133,7 @@ finish:
 }
 
 void
-evgl_glVertexAttrib1fv(GLuint indx, const GLfloat* values)
+_evgld_glVertexAttrib1fv(GLuint indx, const GLfloat* values)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttrib1fv(indx, values);
@@ -1739,7 +2145,7 @@ finish:
 }
 
 void
-evgl_glVertexAttrib2f(GLuint indx, GLfloat x, GLfloat y)
+_evgld_glVertexAttrib2f(GLuint indx, GLfloat x, GLfloat y)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttrib2f(indx, x, y);
@@ -1751,7 +2157,7 @@ finish:
 }
 
 void
-evgl_glVertexAttrib2fv(GLuint indx, const GLfloat* values)
+_evgld_glVertexAttrib2fv(GLuint indx, const GLfloat* values)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttrib2fv(indx, values);
@@ -1763,7 +2169,7 @@ finish:
 }
 
 void
-evgl_glVertexAttrib3f(GLuint indx, GLfloat x, GLfloat y, GLfloat z)
+_evgld_glVertexAttrib3f(GLuint indx, GLfloat x, GLfloat y, GLfloat z)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttrib3f(indx, x, y, z);
@@ -1775,7 +2181,7 @@ finish:
 }
 
 void
-evgl_glVertexAttrib3fv(GLuint indx, const GLfloat* values)
+_evgld_glVertexAttrib3fv(GLuint indx, const GLfloat* values)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttrib3fv(indx, values);
@@ -1787,7 +2193,7 @@ finish:
 }
 
 void
-evgl_glVertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
+_evgld_glVertexAttrib4f(GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttrib4f(indx, x, y, z, w);
@@ -1799,7 +2205,7 @@ finish:
 }
 
 void
-evgl_glVertexAttrib4fv(GLuint indx, const GLfloat* values)
+_evgld_glVertexAttrib4fv(GLuint indx, const GLfloat* values)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttrib4fv(indx, values);
@@ -1811,7 +2217,7 @@ finish:
 }
 
 void
-evgl_glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* ptr)
+_evgld_glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void* ptr)
 {
    EVGL_FUNC_BEGIN();
    glVertexAttribPointer(indx, size, type, normalized, stride, ptr);
@@ -1821,20 +2227,6 @@ evgl_glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean norma
 finish:
    EVGL_FUNC_END();
 }
-
-#ifdef NO_DIRECT_RENDERING
-void
-evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-   EVGL_FUNC_BEGIN();
-   glViewport(x, y, width, height);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-#endif
 
 //-------------------------------------------------------------//
 // Calls for stripping precision string in the shader
@@ -2046,7 +2438,7 @@ shadersrc_gles_to_gl(GLsizei count, const char** string, char **s, const GLint* 
 
 
 void
-evgl_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLint* length)
+_evgld_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLint* length)
 {
    EVGL_FUNC_BEGIN();
 
@@ -2103,198 +2495,14 @@ finish:
 //-------------------------------------------------------------//
 // Calls related to Evas GL Direct Rendering
 //-------------------------------------------------------------//
-
-// Transform from Evas Coordinat to GL Coordinate
-// returns: oc[4] original image object dimension in gl coord
-// returns: nc[4] tranformed  (x, y, width, heigth) in gl coord
 static void
-compute_gl_coordinates(Evas_Object *obj, int rot, int clip,
-                       int x, int y, int width, int height,
-                       int imgc[4], int objc[4])
+_evgld_glClear(GLbitfield mask)
 {
-   if (rot == 0)
-     {
-        // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj->cur.geometry.x;
-        imgc[1] = obj->layer->evas->output.h - obj->cur.geometry.y - obj->cur.geometry.h;
-        imgc[2] = imgc[0] + obj->cur.geometry.w;
-        imgc[3] = imgc[1] + obj->cur.geometry.h;
-
-        // transformed (x,y,width,height) in gl coordinate
-        objc[0] = imgc[0] + x;
-        objc[1] = imgc[1] + y;
-        objc[2] = objc[0] + width;
-        objc[3] = objc[1] + height;
-     }
-   else if (rot == 180)
-     {
-        // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj->layer->evas->output.w - obj->cur.geometry.x - obj->cur.geometry.w;
-        imgc[1] = obj->cur.geometry.y;
-        imgc[2] = imgc[0] + obj->cur.geometry.w;
-        imgc[3] = imgc[1] + obj->cur.geometry.h;
-
-        // transformed (x,y,width,height) in gl coordinate
-        objc[0] = imgc[0] + obj->cur.geometry.w - x - width;
-        objc[1] = imgc[1] + obj->cur.geometry.h - y - height;
-        objc[2] = objc[0] + width;
-        objc[3] = objc[1] + height;
-
-     }
-   else if (rot == 90)
-     {
-        // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj->cur.geometry.y;
-        imgc[1] = obj->cur.geometry.x;
-        imgc[2] = imgc[0] + obj->cur.geometry.h;
-        imgc[3] = imgc[1] + obj->cur.geometry.w;
-
-        // transformed (x,y,width,height) in gl coordinate
-        objc[0] = imgc[0] + obj->cur.geometry.h - y - height;
-        objc[1] = imgc[1] + x;
-        objc[2] = objc[0] + height;
-        objc[3] = objc[1] + width;
-     }
-   else if (rot == 270)
-     {
-        // oringinal image object coordinate in gl coordinate
-        imgc[0] = obj->layer->evas->output.h - obj->cur.geometry.y - obj->cur.geometry.h;
-        imgc[1] = obj->layer->evas->output.w - obj->cur.geometry.x - obj->cur.geometry.w;
-        imgc[2] = imgc[0] + obj->cur.geometry.h;
-        imgc[3] = imgc[1] + obj->cur.geometry.w;
-
-        // transformed (x,y,width,height) in gl coordinate
-        objc[0] = imgc[0] + y;
-        objc[1] = imgc[1] + obj->cur.geometry.w - x - width;
-        objc[2] = objc[0] + height;
-        objc[3] = objc[1] + width;
-     }
-   else
-     {
-        ERR("Invalid rotation angle %d.", rot);
-        return;
-     }
-
-   if (clip)
-     {
-        // Clip against original image object
-        if (objc[0] < imgc[0]) objc[0] = imgc[0];
-        if (objc[0] > imgc[2]) objc[0] = 0;
-
-        if (objc[1] < imgc[1]) objc[1] = imgc[1];
-        if (objc[1] > imgc[3]) objc[1] = 0;
-
-        if (objc[2] < imgc[0]) objc[0] = 0;
-        if (objc[2] > imgc[2]) objc[2] = imgc[2];
-
-        if (objc[3] < imgc[1]) objc[1] = 0;
-        if (objc[3] > imgc[3]) objc[3] = imgc[3];
-     }
-
-   imgc[2] = imgc[2]-imgc[0];     // width
-   imgc[3] = imgc[3]-imgc[1];     // height
-
-   objc[2] = objc[2]-objc[0];     // width
-   objc[3] = objc[3]-objc[1];     // height
-}
-
-static void
-evgl_glClear(GLbitfield mask)
-{
-   EVGL_Engine *ee = evgl_engine;
-   EVGL_Resource *rsc;
-   EVGL_Context *ctx;
-   Evas_Object *img;
-   int rot = 0;
-   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
-
    EVGL_FUNC_BEGIN();
 
-   if (!(rsc=_evgl_tls_resource_get(ee)))
-     {
-        ERR("Unable to execute GL command. Error retrieving tls");
-        return;
-     }
-
-   ctx = rsc->current_ctx;
-   if (!ctx)
-     {
-        ERR("Unable to retrive Current Context");
-        return;
-     }
-
-   if (evgl_direct_enabled(evgl_engine))
-     {
-        if (!(rsc->current_ctx->current_fbo))
-          {
-             if ((!ctx->direct_scissor))
-               {
-                  glEnable(GL_SCISSOR_TEST);
-                  ctx->direct_scissor = 1;
-               }
-
-             img = rsc->direct_img_obj;
-             rot = ee->funcs->rotation_angle_get(ee->engine_data);
-
-             compute_gl_coordinates(img, rot, 0, 0, 0, 0, 0, oc, nc);
-
-
-             if ((ctx->scissor_upated) && (ctx->scissor_enabled))
-               {
-                  glScissor(ctx->scissor_coord[0], ctx->scissor_coord[1],
-                            ctx->scissor_coord[2], ctx->scissor_coord[3]);
-                  ctx->direct_scissor = 0;
-               }
-             else
-                glScissor(oc[0], oc[1], oc[2], oc[3]);
-
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
-             glClear(mask);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        else
-          {
-             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
-               {
-                  glDisable(GL_SCISSOR_TEST);
-                  ctx->direct_scissor = 0;
-               }
-
-             glClear(mask);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-     }
-   else
-     {
-        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
-          {
-             glDisable(GL_SCISSOR_TEST);
-             ctx->direct_scissor = 0;
-          }
-
-        glClear(mask);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
-   goto finish;
-
-finish:
-   EVGL_FUNC_END();
-}
-
-static void
-evgl_glEnable(GLenum cap)
-{
-   EVGL_Context *ctx;
-
-   EVGL_FUNC_BEGIN();
-
-   ctx = _evgl_current_context_get();
-
-   if (cap == GL_SCISSOR_TEST)
-      if (ctx) ctx->scissor_enabled = 1;
-   glEnable(cap);
+   _evgl_glClear(mask);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
    goto finish;
 
 finish:
@@ -2302,156 +2510,42 @@ finish:
 }
 
 static void
-evgl_glDisable(GLenum cap)
+_evgld_glEnable(GLenum cap)
 {
-   EVGL_Context *ctx;
-
    EVGL_FUNC_BEGIN();
 
-   ctx = _evgl_current_context_get();
-
-   if (cap == GL_SCISSOR_TEST)
-      if (ctx) ctx->scissor_enabled = 0;
-   glDisable(cap);
+   _evgl_glEnable(cap);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
    goto finish;
 
 finish:
    EVGL_FUNC_END();
 }
 
-
 static void
-evgl_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
+_evgld_glDisable(GLenum cap)
 {
-   EVGL_Engine *ee = evgl_engine;
-   EVGL_Resource *rsc;
-   EVGL_Context *ctx;
-   Evas_Object *img;
-   int rot = 0;
-   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
-
    EVGL_FUNC_BEGIN();
 
-   if (!(rsc=_evgl_tls_resource_get(ee)))
-     {
-        ERR("Unable to execute GL command. Error retrieving tls");
-        return;
-     }
+   _evgl_glDisable(cap);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-   ctx = rsc->current_ctx;
-   if (!ctx)
-     {
-        ERR("Unable to retrive Current Context");
-        return;
-     }
-
-   if (evgl_direct_enabled(evgl_engine))
-     {
-
-        if (!(rsc->current_ctx->current_fbo))
-          {
-             img = rsc->direct_img_obj;
-             rot = ee->funcs->rotation_angle_get(ee->engine_data);
-
-             compute_gl_coordinates(img, rot, 1, x, y, width, height, oc, nc);
-             glReadPixels(nc[0], nc[1], nc[2], nc[3], format, type, pixels);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        else
-          {
-             glReadPixels(x, y, width, height, format, type, pixels);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-     }
-   else
-     {
-        glReadPixels(x, y, width, height, format, type, pixels);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
    goto finish;
 
 finish:
    EVGL_FUNC_END();
 }
 
-static void
-evgl_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
-{
-   EVGL_Engine *ee = evgl_engine;
-   EVGL_Resource *rsc;
-   EVGL_Context *ctx;
-   Evas_Object *img;
-   int rot = 0;
-   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
 
+static void
+_evgld_glReadPixels(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void* pixels)
+{
    EVGL_FUNC_BEGIN();
 
-   if (!(rsc=_evgl_tls_resource_get(ee)))
-     {
-        ERR("Unable to execute GL command. Error retrieving tls");
-        return;
-     }
+   _evgl_glReadPixels(x, y, width, height, format, type, pixels);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-   ctx = rsc->current_ctx;
-   if (!ctx)
-     {
-        ERR("Unable to retrive Current Context");
-        return;
-     }
-
-   if (evgl_direct_enabled(evgl_engine))
-     {
-        if (!(rsc->current_ctx->current_fbo))
-          {
-             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
-               {
-                  glDisable(GL_SCISSOR_TEST);
-               }
-
-             img = rsc->direct_img_obj;
-             rot = ee->funcs->rotation_angle_get(ee->engine_data);
-             
-             compute_gl_coordinates(img, rot, 1, x, y, width, height, oc, nc);
-             glScissor(nc[0], nc[1], nc[2], nc[3]);
-
-             // Update coordinates
-             ctx->scissor_coord[0] = nc[0];
-             ctx->scissor_coord[1] = nc[1];
-             ctx->scissor_coord[2] = nc[2];
-             ctx->scissor_coord[3] = nc[3];
-
-             ctx->direct_scissor = 0;
-
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             // Check....!!!!
-             ctx->scissor_upated = 1;
-          }
-        else
-          {
-             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
-               {
-                  glDisable(GL_SCISSOR_TEST);
-                  ctx->direct_scissor = 0;
-               }
-
-             glScissor(x, y, width, height);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
-             ctx->scissor_upated = 0;
-          }
-     }
-   else
-     {
-        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
-          {
-             glDisable(GL_SCISSOR_TEST);
-             ctx->direct_scissor = 0;
-          }
-
-        glScissor(x, y, width, height);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
    goto finish;
 
 finish:
@@ -2459,77 +2553,27 @@ finish:
 }
 
 static void
-evgl_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+_evgld_glScissor(GLint x, GLint y, GLsizei width, GLsizei height)
 {
-   EVGL_Engine *ee = evgl_engine;
-   EVGL_Resource *rsc;
-   EVGL_Context *ctx;
-   Evas_Object *img;
-   int rot = 0;
-   int oc[4] = {0,0,0,0}, nc[4] = {0,0,0,0};
+   EVGL_FUNC_BEGIN();
 
-   if (!(rsc=_evgl_tls_resource_get(ee)))
-     {
-        ERR("Unable to execute GL command. Error retrieving tls");
-        return;
-     }
+   _evgl_glScissor(x, y, width, height);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-   ctx = rsc->current_ctx;
-   if (!ctx)
-     {
-        ERR("Unable to retrive Current Context");
-        return;
-     }
+   goto finish;
 
-   if (evgl_direct_enabled(evgl_engine))
-     {
-        if (!(rsc->current_ctx->current_fbo))
-          {
-             if ((!ctx->direct_scissor))
-               {
-                  glEnable(GL_SCISSOR_TEST);
-                  ctx->direct_scissor = 1;
-               }
+finish:
+   EVGL_FUNC_END();
+}
 
-             img = rsc->direct_img_obj;
-             rot = ee->funcs->rotation_angle_get(ee->engine_data);
+static void
+_evgld_glViewport(GLint x, GLint y, GLsizei width, GLsizei height)
+{
+   EVGL_FUNC_BEGIN();
 
-             compute_gl_coordinates(img, rot, 0, x, y, width, height, oc, nc);
+   _evgl_glViewport(x, y, width, height);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-             if ((ctx->scissor_upated) && (ctx->scissor_enabled))
-               {
-                  glScissor(ctx->scissor_coord[0], ctx->scissor_coord[1],
-                            ctx->scissor_coord[2], ctx->scissor_coord[3]);
-                  ctx->direct_scissor = 0;
-               }
-             else
-                glScissor(oc[0], oc[1], oc[2], oc[3]);
-
-             glViewport(nc[0], nc[1], nc[2], nc[3]);
-          }
-        else
-          {
-             if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
-               {
-                  glDisable(GL_SCISSOR_TEST);
-                  ctx->direct_scissor = 0;
-               }
-
-             glViewport(x, y, width, height);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-     }
-   else
-     {
-        if ((ctx->direct_scissor) && (!ctx->scissor_enabled))
-          {
-             glDisable(GL_SCISSOR_TEST);
-             ctx->direct_scissor = 0;
-          }
-
-        glViewport(x, y, width, height);
-        GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-     }
    goto finish;
 
 finish:
@@ -2537,14 +2581,190 @@ finish:
 }
 //-------------------------------------------------------------//
 
-
-
-void
-_evgl_api_get(Evas_GL_API *funcs)
+static void
+_normal_gl_api_get(Evas_GL_API *funcs)
 {
    funcs->version = EVAS_GL_API_VERSION;
 
-#define ORD(f) EVAS_API_OVERRIDE(f, funcs, evgl_)
+#define ORD(f) EVAS_API_OVERRIDE(f, funcs,)
+   // GLES 2.0
+   ORD(glActiveTexture);
+   ORD(glAttachShader);
+   ORD(glBindAttribLocation);
+   ORD(glBindBuffer);
+   ORD(glBindTexture);
+   ORD(glBlendColor);
+   ORD(glBlendEquation);
+   ORD(glBlendEquationSeparate);
+   ORD(glBlendFunc);
+   ORD(glBlendFuncSeparate);
+   ORD(glBufferData);
+   ORD(glBufferSubData);
+   ORD(glCheckFramebufferStatus);
+//   ORD(glClear);
+   ORD(glClearColor);
+//   ORD(glClearDepthf);
+   ORD(glClearStencil);
+   ORD(glColorMask);
+   ORD(glCompileShader);
+   ORD(glCompressedTexImage2D);
+   ORD(glCompressedTexSubImage2D);
+   ORD(glCopyTexImage2D);
+   ORD(glCopyTexSubImage2D);
+   ORD(glCreateProgram);
+   ORD(glCreateShader);
+   ORD(glCullFace);
+   ORD(glDeleteBuffers);
+   ORD(glDeleteFramebuffers);
+   ORD(glDeleteProgram);
+   ORD(glDeleteRenderbuffers);
+   ORD(glDeleteShader);
+   ORD(glDeleteTextures);
+   ORD(glDepthFunc);
+   ORD(glDepthMask);
+//   ORD(glDepthRangef);
+   ORD(glDetachShader);
+//   ORD(glDisable);
+   ORD(glDisableVertexAttribArray);
+   ORD(glDrawArrays);
+   ORD(glDrawElements);
+//   ORD(glEnable);
+   ORD(glEnableVertexAttribArray);
+   ORD(glFinish);
+   ORD(glFlush);
+   ORD(glFramebufferRenderbuffer);
+   ORD(glFramebufferTexture2D);
+   ORD(glFrontFace);
+   ORD(glGenBuffers);
+   ORD(glGenerateMipmap);
+   ORD(glGenFramebuffers);
+   ORD(glGenRenderbuffers);
+   ORD(glGenTextures);
+   ORD(glGetActiveAttrib);
+   ORD(glGetActiveUniform);
+   ORD(glGetAttachedShaders);
+   ORD(glGetAttribLocation);
+   ORD(glGetBooleanv);
+   ORD(glGetBufferParameteriv);
+   ORD(glGetError);
+   ORD(glGetFloatv);
+   ORD(glGetFramebufferAttachmentParameteriv);
+   ORD(glGetIntegerv);
+   ORD(glGetProgramiv);
+   ORD(glGetProgramInfoLog);
+   ORD(glGetRenderbufferParameteriv);
+   ORD(glGetShaderiv);
+   ORD(glGetShaderInfoLog);
+//   ORD(glGetShaderPrecisionFormat);
+   ORD(glGetShaderSource);
+   ORD(glGetString);
+   ORD(glGetTexParameterfv);
+   ORD(glGetTexParameteriv);
+   ORD(glGetUniformfv);
+   ORD(glGetUniformiv);
+   ORD(glGetUniformLocation);
+   ORD(glGetVertexAttribfv);
+   ORD(glGetVertexAttribiv);
+   ORD(glGetVertexAttribPointerv);
+   ORD(glHint);
+   ORD(glIsBuffer);
+   ORD(glIsEnabled);
+   ORD(glIsFramebuffer);
+   ORD(glIsProgram);
+   ORD(glIsRenderbuffer);
+   ORD(glIsShader);
+   ORD(glIsTexture);
+   ORD(glLineWidth);
+   ORD(glLinkProgram);
+   ORD(glPixelStorei);
+   ORD(glPolygonOffset);
+//   ORD(glReadPixels);
+//   ORD(glReleaseShaderCompiler);
+   ORD(glRenderbufferStorage);
+   ORD(glSampleCoverage);
+//   ORD(glScissor);
+//   ORD(glShaderBinary);
+   ORD(glShaderSource);
+   ORD(glStencilFunc);
+   ORD(glStencilFuncSeparate);
+   ORD(glStencilMask);
+   ORD(glStencilMaskSeparate);
+   ORD(glStencilOp);
+   ORD(glStencilOpSeparate);
+   ORD(glTexImage2D);
+   ORD(glTexParameterf);
+   ORD(glTexParameterfv);
+   ORD(glTexParameteri);
+   ORD(glTexParameteriv);
+   ORD(glTexSubImage2D);
+   ORD(glUniform1f);
+   ORD(glUniform1fv);
+   ORD(glUniform1i);
+   ORD(glUniform1iv);
+   ORD(glUniform2f);
+   ORD(glUniform2fv);
+   ORD(glUniform2i);
+   ORD(glUniform2iv);
+   ORD(glUniform3f);
+   ORD(glUniform3fv);
+   ORD(glUniform3i);
+   ORD(glUniform3iv);
+   ORD(glUniform4f);
+   ORD(glUniform4fv);
+   ORD(glUniform4i);
+   ORD(glUniform4iv);
+   ORD(glUniformMatrix2fv);
+   ORD(glUniformMatrix3fv);
+   ORD(glUniformMatrix4fv);
+   ORD(glUseProgram);
+   ORD(glValidateProgram);
+   ORD(glVertexAttrib1f);
+   ORD(glVertexAttrib1fv);
+   ORD(glVertexAttrib2f);
+   ORD(glVertexAttrib2fv);
+   ORD(glVertexAttrib3f);
+   ORD(glVertexAttrib3fv);
+   ORD(glVertexAttrib4f);
+   ORD(glVertexAttrib4fv);
+   ORD(glVertexAttribPointer);
+//   ORD(glViewport);
+
+//   ORD(glBindFramebuffer);
+   ORD(glBindRenderbuffer);
+#undef ORD
+
+
+#define ORD(f) EVAS_API_OVERRIDE(f, funcs, _evgl_)
+   // For Surface FBO
+   ORD(glBindFramebuffer);
+
+   // For Direct Rendering
+   ORD(glClear);
+   ORD(glDisable);
+   ORD(glEnable);
+   ORD(glReadPixels);
+   ORD(glScissor);
+   ORD(glViewport);
+
+   // GLES 2 Compat for Desktop
+   ORD(glClearDepthf);
+   ORD(glDepthRangef);
+   ORD(glGetShaderPrecisionFormat);
+   ORD(glShaderBinary);
+   ORD(glReleaseShaderCompiler);
+ 
+#undef ORD
+
+   evgl_api_ext_get(funcs);
+}
+
+
+static void
+_debug_gl_api_get(Evas_GL_API *funcs)
+{
+   funcs->version = EVAS_GL_API_VERSION;
+
+#define ORD(f) EVAS_API_OVERRIDE(f, funcs, _evgld_)
    // GLES 2.0
    ORD(glActiveTexture);
    ORD(glAttachShader);
@@ -2694,3 +2914,11 @@ _evgl_api_get(Evas_GL_API *funcs)
    evgl_api_ext_get(funcs);
 }
 
+void
+_evgl_api_get(Evas_GL_API *funcs, int debug)
+{
+   if (debug)
+      _debug_gl_api_get(funcs);
+   else
+      _normal_gl_api_get(funcs);
+}

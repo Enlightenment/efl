@@ -11,6 +11,7 @@ typedef struct _GL_Format
 // Globals
 static Evas_GL_API gl_funcs;
 EVGL_Engine *evgl_engine = NULL;
+int _evas_gl_log_dom = -1;
 
 static void _surface_cap_print(EVGL_Engine *ee, int error);
 
@@ -159,8 +160,6 @@ _internal_resources_create(EVGL_Engine *ee)
            goto error;
         }
 
-
-      //rsc->surface = ee->funcs->surface_create(ee->engine_data);
    if (!rsc->surface)
      {
         ERR("Internal resource surface failed.");
@@ -924,7 +923,7 @@ _internal_config_set(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_GL_Config *cfg)
              sfc->msaa_samples      = ee->caps.fbo_fmts[i].samples;
 
              // Direct Rendering Option
-             if (!stencil_bit)
+             if ( (!stencil_bit) || (ee->direct_override) )
                 sfc->direct_fb_opt = cfg->options_bits & EVAS_GL_OPTIONS_DIRECT;
 
              cfg_index = i;
@@ -950,6 +949,22 @@ _internal_config_set(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_GL_Config *cfg)
         sfc->cfg_index = cfg_index;
         return 1;
      }
+}
+
+static int
+_evgl_direct_renderable(EVGL_Engine *ee, EVGL_Context *ctx, EVGL_Surface *sfc)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get(ee))) return 0;
+
+   if (ee->force_direct_off) return 0;
+   if (rsc->id != ee->main_tid) return 0;
+   if (!ctx) return 0;
+   if (!sfc->direct_fb_opt) return 0;
+   if (!rsc->direct_img_obj) return 0;
+
+   return 1;
 }
 
 //---------------------------------------------------------------//
@@ -1010,8 +1025,17 @@ _evgl_current_context_get()
 EVGL_Engine *
 evgl_engine_create(EVGL_Interface *efunc, void *engine_data)
 {
-   int direct_off = 0;
+   int direct_off = 0, debug_mode = 0;
    char *s = NULL;
+
+   // Initialize Log Domain
+   if (_evas_gl_log_dom < 0)
+      _evas_gl_log_dom = eina_log_domain_register("EvasGL", EVAS_DEFAULT_LOG_COLOR);
+   if (_evas_gl_log_dom < 0)
+     {
+        EINA_LOG_ERR("Can not create a module log domain.");
+        return NULL;
+     }
 
    // Check the validity of the efunc
    if ((!efunc) ||
@@ -1072,6 +1096,14 @@ evgl_engine_create(EVGL_Interface *efunc, void *engine_data)
    if (direct_off == 1)
       evgl_engine->force_direct_off = 1;
 
+   // Check if API Debug mode is on
+   s = getenv("EVAS_GL_API_DEBUG");
+   if (s) debug_mode = atoi(s);
+   if (debug_mode == 1)
+      evgl_engine->api_debug_mode = 1;
+
+
+   // Maint Thread ID (get tid not available in eina thread yet)
    evgl_engine->main_tid = 0;
 
    // Clear Function Pointers
@@ -1098,7 +1130,12 @@ int evgl_engine_destroy(EVGL_Engine *ee)
         ERR("EVGL Engine not valid!");
         return 0;
      }
-   
+
+   // Log
+   if (_evas_gl_log_dom >= 0) return 0;
+   eina_log_domain_unregister(_evas_gl_log_dom);
+   _evas_gl_log_dom = -1;
+  
    // Destroy internal resources
    _internal_resources_destroy(ee);
 
@@ -1147,6 +1184,15 @@ evgl_surface_create(EVGL_Engine *ee, Evas_GL_Config *cfg, int w, int h)
         return NULL;
      }
 
+   // Check for Direct rendering override env var.
+   if (!ee->direct_override)
+      if ((s = getenv("EVAS_GL_DIRECT_OVERRIDE")))
+        {
+           direct_override = atoi(s);
+           if (direct_override == 1)
+              ee->direct_override = 1;
+        }
+
    // Allocate surface structure
    sfc = calloc(1, sizeof(EVGL_Surface));
    if (!sfc)
@@ -1173,14 +1219,6 @@ evgl_surface_create(EVGL_Engine *ee, Evas_GL_Config *cfg, int w, int h)
         goto error;
      };
    
-   if (!ee->direct_override)
-      if ((s = getenv("EVAS_GL_DIRECT_OVERRIDE")))
-        {
-           direct_override = atoi(s);
-           if (direct_override == 1)
-              ee->direct_override = 1;
-        }
-
    return sfc;
 
 error:
@@ -1210,8 +1248,16 @@ evgl_surface_destroy(EVGL_Engine *ee, EVGL_Surface *sfc)
 
    if ((rsc->current_ctx) && (rsc->current_ctx->current_sfc == sfc) )
      {
-        ERR("The surface is still current before it's being destroyed.");
-        ERR("Doing make_current(NULL, NULL)");
+        if (ee->api_debug_mode)
+          {
+             ERR("The surface is still current before it's being destroyed.");
+             ERR("Doing make_current(NULL, NULL)");
+          }
+        else
+          {
+             WRN("The surface is still current before it's being destroyed.");
+             WRN("Doing make_current(NULL, NULL)");
+          }
         evgl_make_current(ee, NULL, NULL);
      }
 
@@ -1379,22 +1425,8 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
    if (!ctx->surface_fbo)
       glGenFramebuffers(1, &ctx->surface_fbo);
 
-   // Attach fbo and the buffers
-   if (ctx->current_sfc != sfc)
-     {
-        if (!_surface_buffers_fbo_set(sfc, ctx->surface_fbo))
-          {
-             ERR("Attaching buffers to context fbo failed. Engine: %p  Surface: %p Context FBO: %u", ee, sfc, ctx->surface_fbo);
-             return 0;
-          }
-
-        // Bind to the previously bound buffer
-        if (ctx->current_fbo)
-           glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
-     }
-
    // Direct Rendering
-   if (evgl_direct_enabled(ee))
+   if (_evgl_direct_renderable(ee, ctx, sfc))
      {
         // This is to transition from FBO rendering to direct rendering
         glGetIntegerv(GL_FRAMEBUFFER_BINDING, &curr_fbo);
@@ -1403,10 +1435,28 @@ evgl_make_current(EVGL_Engine *ee, EVGL_Surface *sfc, EVGL_Context *ctx)
              glBindFramebuffer(GL_FRAMEBUFFER, 0);
              ctx->current_fbo = 0;
           }
+        rsc->direct_enabled = 1;
+     }
+   else
+     {
+        // Attach fbo and the buffers
+        if (ctx->current_sfc != sfc)
+          {
+             if (!_surface_buffers_fbo_set(sfc, ctx->surface_fbo))
+               {
+                  ERR("Attaching buffers to context fbo failed. Engine: %p  Surface: %p Context FBO: %u", ee, sfc, ctx->surface_fbo);
+                  return 0;
+               }
+
+             // Bind to the previously bound buffer
+             if (ctx->current_fbo)
+                glBindFramebuffer(GL_FRAMEBUFFER, ctx->current_fbo);
+          }
+
+        rsc->direct_enabled = 0;
      }
 
    ctx->current_sfc = sfc;
-
    rsc->current_ctx = ctx;
 
    return 1;
@@ -1457,23 +1507,30 @@ evgl_native_surface_get(EVGL_Engine *ee, EVGL_Surface *sfc, Evas_Native_Surface 
 }
 
 int
+_evgl_not_in_pixel_get(EVGL_Engine *ee)
+{
+   EVGL_Resource *rsc;
+
+   if (!(rsc=_evgl_tls_resource_get(ee))) return 1;
+
+   EVGL_Context *ctx = rsc->current_ctx;
+
+   if ((!ee->force_direct_off) && (rsc->id == ee->main_tid) &&
+       (ctx) && (ctx->current_sfc) && (ctx->current_sfc->direct_fb_opt) &&
+       (!rsc->direct_img_obj))
+      return 1;
+   else
+      return 0;
+}
+
+int
 evgl_direct_enabled(EVGL_Engine *ee)
 {
    EVGL_Resource *rsc;
 
    if (!(rsc=_evgl_tls_resource_get(ee))) return 0;
 
-   EVGL_Context *ctx = rsc->current_ctx;
-
-   if (ee->force_direct_off) return 0;
-
-   if (rsc->id != ee->main_tid) return 0;
-   if (!ctx) return 0;
-   if (!ctx->current_sfc) return 0;
-   if (!ctx->current_sfc->direct_fb_opt) return 0;
-   if (!rsc->direct_img_obj) return 0;
-      
-   return 1;
+   return rsc->direct_enabled;
 }
 
 void
@@ -1497,9 +1554,9 @@ evgl_direct_img_obj_get(EVGL_Engine *ee)
 }
 
 Evas_GL_API *
-evgl_api_get(EVGL_Engine *ee __UNUSED__)
+evgl_api_get(EVGL_Engine *ee)
 {
-   _evgl_api_get(&gl_funcs);
+   _evgl_api_get(&gl_funcs, ee->api_debug_mode);
 
    return &gl_funcs;
 }
