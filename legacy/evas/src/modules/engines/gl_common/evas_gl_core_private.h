@@ -16,7 +16,7 @@ struct _EVGL_Interface
    // Returns the Window surface that evas uses for direct rendering opt. 
    void       *(*evas_surface_get)(void *data);
    void       *(*native_window_create)(void *data);
-   int        *(*native_window_destroy)(void *data, void *window);
+   int        (*native_window_destroy)(void *data, void *window);
 
    // Creates/Destroys the native surface from evas engine.
    void       *(*surface_create)(void *data, void *native_window);
