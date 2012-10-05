@@ -1,0 +1,15 @@
+# EPhysics valgrind suppressions file
+
+{
+   libz check
+   Memcheck:Cond
+   ...
+   obj:*libz.so.*
+}
+
+{
+   libfontconfig check
+   Memcheck:Addr4
+   ...
+   obj:*libfontconfig.so.*
+}
