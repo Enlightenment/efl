@@ -35,8 +35,6 @@
 # define BTN_BACK 0x116
 #endif
 
-#include <Ecore_Input.h>
-
 Ecore_Wl_Dnd *glb_dnd = NULL;
 
 /* local function prototypes */
