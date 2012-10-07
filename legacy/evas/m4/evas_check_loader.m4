@@ -231,7 +231,7 @@ requirement=""
 have_esvg="no"
 evas_image_loader_[]$1[]_cflags=""
 evas_image_loader_[]$1[]_libs=""
-version_esvg="0.0.17"
+version_esvg="0.0.18"
 version_ender="0.0.6"
 
 PKG_CHECK_MODULES([SVG],

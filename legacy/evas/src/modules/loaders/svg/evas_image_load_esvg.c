@@ -80,7 +80,7 @@ evas_image_load_file_head_svg(Image_Entry *ie, const char *file, const char *key
         return EINA_FALSE;
      }
 
-   e = esvg_parser_load(file, NULL, NULL);
+   e = esvg_parser_load(file);
    if (!e)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -159,7 +159,7 @@ evas_image_load_file_data_svg(Image_Entry *ie, const char *file, const char *key
         return EINA_FALSE;
      }
 
-   e = esvg_parser_load(file, NULL, NULL);
+   e = esvg_parser_load(file);
    if (!e)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
