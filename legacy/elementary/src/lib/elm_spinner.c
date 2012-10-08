@@ -855,9 +855,20 @@ elm_spinner_special_value_add(Evas_Object *obj,
                               const char *label)
 {
    Elm_Spinner_Special_Value *sv;
+   Eina_List *l;
 
    ELM_SPINNER_CHECK(obj);
    ELM_SPINNER_DATA_GET(obj, sd);
+
+   EINA_LIST_FOREACH(sd->special_values, l, sv)
+     {
+        if (sv->value != value)
+          continue;
+
+        eina_stringshare_replace(&sv->label, label);
+        _label_write(obj);
+        return;
+     }
 
    sv = calloc(1, sizeof(*sv));
    if (!sv) return;
