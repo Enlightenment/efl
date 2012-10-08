@@ -15,6 +15,10 @@ Additions:
     * ecore_imf:
      - ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN.
      - ECORE_IMF_PREEDIT_TYPE_SUB4~7 style.
+    * ecore_evas:
+     - Wayland SHM engine now features a mechanism to synchronize rendering with
+       the compositor, removing the tearing effect in animations when using that
+       engine.
 
 Fixes:
     * ecore_con_url:

@@ -566,46 +566,72 @@ _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore)
 }
 
 int
+_ecore_evas_wl_common_pre_render(Ecore_Evas *ee)
+{
+   int rend = 0;
+   Eina_List *ll = NULL;
+   Ecore_Evas *ee2 = NULL;
+
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+
+   EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
+     {
+        if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+        if (ee2->engine.func->fn_render)
+          rend |= ee2->engine.func->fn_render(ee2);
+        if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+     }
+
+   return rend;
+}
+
+int
+_ecore_evas_wl_common_render_updates(Ecore_Evas *ee)
+{
+   int rend = 0;
+   Eina_List *updates = NULL;
+
+   if ((updates = evas_render_updates(ee->evas)))
+     {
+        Eina_List *l = NULL;
+        Eina_Rectangle *r;
+
+        EINA_LIST_FOREACH(updates, l, r)
+          ecore_wl_window_damage(ee->engine.wl.win,
+                                 r->x, r->y, r->w, r->h);
+
+        ecore_wl_flush();
+
+        evas_render_updates_free(updates);
+        rend = 1;
+     }
+
+   return rend;
+}
+
+void
+_ecore_evas_wl_common_post_render(Ecore_Evas *ee)
+{
+   _ecore_evas_idle_timeout_update(ee);
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+}
+
+int
 _ecore_evas_wl_common_render(Ecore_Evas *ee)
 {
    int rend = 0;
 
    if (!ee) return 0;
    if (!ee->visible)
-     evas_norender(ee->evas);
-   else
      {
-        Eina_List *ll = NULL, *updates = NULL;
-        Ecore_Evas *ee2 = NULL;
-
-        if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-
-        EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
-          {
-             if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-             if (ee2->engine.func->fn_render)
-               rend |= ee2->engine.func->fn_render(ee2);
-             if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-          }
-
-        if ((updates = evas_render_updates(ee->evas)))
-          {
-             Eina_List *l = NULL;
-             Eina_Rectangle *r;
-
-             EINA_LIST_FOREACH(updates, l, r)
-               ecore_wl_window_damage(ee->engine.wl.win,
-                                      r->x, r->y, r->w, r->h);
-
-             ecore_wl_flush();
-
-             evas_render_updates_free(updates);
-             _ecore_evas_idle_timeout_update(ee);
-             rend = 1;
-          }
-
-        if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+        evas_norender(ee->evas);
+        return 0;
      }
+
+   rend = _ecore_evas_wl_common_pre_render(ee);
+   rend |= _ecore_evas_wl_common_render_updates(ee);
+   _ecore_evas_wl_common_post_render(ee);
+
    return rend;
 }
 

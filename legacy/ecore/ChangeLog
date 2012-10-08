@@ -989,3 +989,9 @@
 2012-10-05  Cedric Bail
 
 	* Properly reschedule call to curl.
+
+2012-10-05  Eduardo Lima (Etrunko)
+
+       * Wayland SHM now features a mechanism to synchronize rendering with
+       the compositor, removing tearing effect in animations when using that
+       engine.
