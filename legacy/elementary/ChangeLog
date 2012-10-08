@@ -551,10 +551,23 @@
 
         * Fix list corruption issue in multibuttonentry.
 
+2012-09-28  Bruno Dilly
+
+        * add elm_bg as external
+
 2012-10-03  Michael Bouchaud (yoz)
 
         * add elm_calendar_displayed_time_get
         * add a signal display,changed to elm_calendar
+
+2012-10-02  Bruno Dilly
+
+        * add policy for elm_exit
+
+2012-10-03  Bruno Dilly
+
+        * fix init counts
+        * immediately shutdown elm on external shutdown
 
 2012-10-04  Igor Murzov
 
@@ -569,3 +582,8 @@
 
 	* Use ecore_x_selection_converter_text to convert text data so we can
 	  support COMPOUND_TEXT
+
+2012-10-08  Bruno Dilly
+
+        * fix elm_spinner_special_value_add()
+        * add elm_spinner_special_value_get() / del()
