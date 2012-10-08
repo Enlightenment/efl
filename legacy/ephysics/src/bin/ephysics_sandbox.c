@@ -852,7 +852,7 @@ elm_main()
 
    if (!ephysics_init())
      {
-        printf("\nFailed to init ephysics");//ERR
+        fprintf(stderr, "Failed to init ephysics\n");
         r = -1;
         goto shutdown;
      }
@@ -860,7 +860,7 @@ elm_main()
    sandie = calloc(1, sizeof(Sandie_Data));
    if (!sandie)
      {
-        printf("Failed to alloc sandie data");//ERR
+        fprintf(stderr, "Failed to alloc sandie data\n");
         r = -1;
         return r;
      }
