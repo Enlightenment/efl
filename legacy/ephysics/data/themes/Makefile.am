@@ -20,6 +20,7 @@ TEST_FILES = \
 	frame.edc \
 	list.edc \
 	loading_bar.edc \
+	others.edc \
 	shadows.edc \
 	shapes.edc \
 	spinner.edc \
