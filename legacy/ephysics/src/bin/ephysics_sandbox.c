@@ -132,7 +132,9 @@ static void
 _body_material_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-   //Evas_Object *body_image;
+   Evas_Object *body_image;
+   const char *material;
+   int x, y, w, h;
 
    ephysics_body_material_set(body, elm_spinner_value_get(obj));
 
@@ -142,19 +144,19 @@ _body_material_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
                          ephysics_body_friction_get(body));
    elm_spinner_value_set(evas_object_data_get(obj, "restitution"),
                          ephysics_body_restitution_get(body));
-/*
 
-   img_name = elm_spinner_value_get(obj); //name if its possible
-   evas_object_del(ephysics_body_evas_object_unset(body));
+   body_image = ephysics_body_evas_object_unset(body);
+   evas_object_geometry_get(body_image, &x, &y, &w, &h);
+   evas_object_del(body_image);
 
+   material = elm_spinner_special_value_get(obj, elm_spinner_value_get(obj));
    body_image = elm_image_add(evas_object_data_get(obj, "win"));
    elm_image_file_set(
-      body_image, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj", img_name);
-   evas_object_resize(body_image, 70, 70);
-   evas_object_move(body_image, 150, 150);//FIX!
+      body_image, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj", material);
+   evas_object_resize(body_image, w, h);
+   evas_object_move(body_image, x, y);
    evas_object_show(body_image);
-   ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
-*/
+   ephysics_body_evas_object_set(body, body_image, EINA_FALSE);
 }
 
 static void

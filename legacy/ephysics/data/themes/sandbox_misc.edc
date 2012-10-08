@@ -60,7 +60,7 @@
    }
 
    group {
-      name: "0";
+      name: "Custom";
       parts {
          part {
             name: "ball";
@@ -73,9 +73,9 @@
          }
       }
    }
-   
+
    group {
-      name: "1";
+      name: "Concrete";
       parts {
          part {
             name: "ball";
@@ -90,7 +90,7 @@
    }
 
    group {
-      name: "2";
+      name: "Iron";
       parts {
          part {
             name: "ball";
@@ -105,7 +105,7 @@
    }
 
    group {
-      name: "3";
+      name: "Plastic";
       parts {
          part {
             name: "ball";
@@ -120,7 +120,7 @@
    }
 
    group {
-      name: "4";
+      name: "Polystyrene";
       parts {
          part {
             name: "ball";
@@ -135,7 +135,7 @@
    }
 
    group {
-      name: "5";
+      name: "Rubber";
       parts {
          part {
             name: "ball";
@@ -150,7 +150,7 @@
    }
 
    group {
-      name: "6";
+      name: "Wood";
       parts {
          part {
             name: "ball";
