@@ -438,6 +438,7 @@ _ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_thresho
 static inline void
 _ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, double rate)
 {
+   ephysics_body_activate(body, EINA_TRUE);
    body->rigid_body->setLinearVelocity(btVector3(x / rate, -y / rate, 0));
 }
 
