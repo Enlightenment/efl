@@ -2789,17 +2789,13 @@ EAPI void
 ecore_evas_wayland_move(Ecore_Evas *ee, int x, int y)
 {
    if (!ee) return;
-   if (!strcmp(ee->driver, "wayland_shm"))
+   if (!strncmp(ee->driver, "wayland", 7))
      {
-#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
-        _ecore_evas_wayland_shm_move(ee, x, y);
-#endif
-     }
-   else if (!strcmp(ee->driver, "wayland_egl"))
-     {
-#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-        _ecore_evas_wayland_egl_move(ee, x, y);
-#endif
+        if (ee->engine.wl.win)
+          {
+             ee->engine.wl.win->moving = EINA_TRUE;
+             ecore_wl_window_move(ee->engine.wl.win, x, y);
+          }
      }
 }
 

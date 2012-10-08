@@ -132,6 +132,11 @@ ecore_evas_wayland_shm.c \
 ecore_evas_wayland_egl.c \
 ecore_evas_extn.c
 
+if BUILD_ECORE_WAYLAND
+libecore_evas_la_SOURCES += \
+ecore_evas_wayland_common.c
+endif
+
 libecore_evas_la_LIBADD = \
 $(ECORE_X_LIB) \
 $(ECORE_FB_LIB) \

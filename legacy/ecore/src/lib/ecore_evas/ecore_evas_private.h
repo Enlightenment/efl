@@ -431,14 +431,44 @@ void _ecore_evas_ews_events_init(void);
 int _ecore_evas_ews_shutdown(void);
 #endif
 
+#if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined(BUILD_ECORE_EVAS_WAYLAND_EGL)
+int  _ecore_evas_wl_common_init(void);
+int  _ecore_evas_wl_common_shutdown(void);
+void _ecore_evas_wl_common_pre_free(Ecore_Evas *ee);
+void _ecore_evas_wl_common_free(Ecore_Evas *ee);
+void _ecore_evas_wl_common_callback_resize_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+void _ecore_evas_wl_common_callback_move_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+void _ecore_evas_wl_common_callback_delete_request_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+void _ecore_evas_wl_common_callback_focus_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+void _ecore_evas_wl_common_callback_focus_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+void _ecore_evas_wl_common_callback_mouse_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+void _ecore_evas_wl_common_callback_mouse_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+void _ecore_evas_wl_common_move(Ecore_Evas *ee, int x, int y);
+void _ecore_evas_wl_common_raise(Ecore_Evas *ee);
+void _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title);
+void _ecore_evas_wl_common_name_class_set(Ecore_Evas *ee, const char *n, const char *c);
+void _ecore_evas_wl_common_size_min_set(Ecore_Evas *ee, int w, int h);
+void _ecore_evas_wl_common_size_max_set(Ecore_Evas *ee, int w, int h);
+void _ecore_evas_wl_common_size_base_set(Ecore_Evas *ee, int w, int h);
+void _ecore_evas_wl_common_size_step_set(Ecore_Evas *ee, int w, int h);
+void _ecore_evas_wl_common_layer_set(Ecore_Evas *ee, int layer);
+void _ecore_evas_wl_common_iconified_set(Ecore_Evas *ee, int iconify);
+void _ecore_evas_wl_common_maximized_set(Ecore_Evas *ee, int max);
+void _ecore_evas_wl_common_fullscreen_set(Ecore_Evas *ee, int full);
+void _ecore_evas_wl_common_ignore_events_set(Ecore_Evas *ee, int ignore);
+int  _ecore_evas_wl_common_render(Ecore_Evas *ee);
+void _ecore_evas_wl_common_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+void _ecore_evas_wl_common_screen_dpi_get(const Ecore_Evas *ee, int *xdpi, int *ydpi);
+
+Evas_Object * _ecore_evas_wl_common_frame_add(Evas *evas);
+
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
-void _ecore_evas_wayland_shm_move(Ecore_Evas *ee, int x, int y);
 #endif
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
 void _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location);
-void _ecore_evas_wayland_egl_move(Ecore_Evas *ee, int x, int y);
+#endif
 #endif
 
 void _ecore_evas_fps_debug_init(void);
