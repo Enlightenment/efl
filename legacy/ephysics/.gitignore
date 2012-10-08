@@ -35,8 +35,10 @@ m4/ltsugar.m4
 m4/ltversion.m4
 m4/lt~obsolete.m4
 data/themes/ephysics_test.edj
+data/themes/ephysics_sandbox.edj
 src/bin/ephysics_test
 src/bin/ephysics_logo
+src/bin/ephysics_sandbox
 doc/html/
 doc/latex/
 doc/man/

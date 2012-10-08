@@ -8,7 +8,7 @@
 #include<Elementary.h>
 #include<EPhysics.h>
 
-#define EPHYSICS_TEST_THEME "ephysics_test"
+#define SANDBOX_THEME "ephysics_sandbox"
 #define WIDTH (1280)
 #define HEIGHT (720)
 
@@ -151,7 +151,7 @@ _body_material_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    body_image = elm_image_add(evas_object_data_get(obj, "win"));
    elm_image_file_set(
-      body_image, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", img_name);
+      body_image, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj", img_name);
    evas_object_resize(body_image, 70, 70);
    evas_object_move(body_image, 150, 150);//FIX!
    evas_object_show(body_image);
@@ -681,7 +681,7 @@ _sandie_body_add(Evas_Object *win, EPhysics_World *world, int x, int y)
 
    body_image = elm_image_add(win);
    elm_image_file_set(
-      body_image, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "big-blue-ball");
+      body_image, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj", "big-blue-ball");
    evas_object_resize(body_image, 70, 70);
    evas_object_move(body_image, x, y);
    evas_object_show(body_image);
@@ -838,7 +838,7 @@ elm_main()
         return r;
      }
 
-   elm_theme_extension_add(NULL, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj");
+   elm_theme_extension_add(NULL, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj");
 
    sandie->win = elm_win_add(NULL, "Sandbox", ELM_WIN_BASIC);
 
@@ -851,7 +851,7 @@ elm_main()
    layout = elm_layout_add(sandie->win);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(sandie->win, layout);
-   elm_layout_file_set(layout, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
+   elm_layout_file_set(layout, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj",
                        "sandbox");
    evas_object_show(layout);
    evas_object_data_set(sandie->win, "layout", layout);

@@ -8,9 +8,9 @@ EDJE_FLAGS = $(EDJE_FLAGS_$(V)) -id $(top_srcdir)/data/themes/images -fd $(top_s
 
 filesdir = $(datadir)/ephysics/
 
-files_DATA = ephysics_test.edj
+files_DATA = ephysics_test.edj ephysics_sandbox.edj
 
-EXTRA_DIST = \
+TEST_FILES = \
 	ephysics_test.edc \
 	balls.edc \
 	buttons.edc \
@@ -20,7 +20,6 @@ EXTRA_DIST = \
 	frame.edc \
 	list.edc \
 	loading_bar.edc \
-	sandbox.edc \
 	shadows.edc \
 	shapes.edc \
 	spinner.edc \
@@ -33,6 +32,7 @@ EXTRA_DIST = \
 	images/ball-red.png \
 	images/ball-red70.png \
 	images/bg_floor.jpg \
+	images/brown-pole.png \
 	images/bt_jump.png \
 	images/bt_jump_pressed.png \
 	images/bt_restart.png \
@@ -44,6 +44,7 @@ EXTRA_DIST = \
 	images/collisionL.png \
 	images/cube-blue.png \
 	images/cube-purple.png \
+	images/green-flag.png \
 	images/hexagon.png \
 	images/list-item.png \
 	images/list-item-corner.png \
@@ -59,9 +60,13 @@ EXTRA_DIST = \
 	images/spinner_bt_left_pressed.png \
 	images/spinner_bt_right.png \
 	images/spinner_bt_right_pressed.png \
-	images/star.png \
-	images/green-flag.png \
-	images/brown-pole.png \
+	images/star.png
+
+SANDBOX_FILES = \
+	ephysics_sandbox.edc \
+	sandbox_misc.edc \
+	images/background.jpg \
+	images/ball-blue70.png \
 	images/ball-custom.png \
 	images/ball-concrete.png \
 	images/ball-iron.png \
@@ -70,10 +75,19 @@ EXTRA_DIST = \
 	images/ball-rubber.png \
 	images/ball-wood.png
 
-ephysics_test.edj: Makefile $(EXTRA_DIST)
+EXTRA_DIST = \
+    $(TEST_FILES) \
+    $(SANDBOX_FILES)
+
+ephysics_test.edj: Makefile $(TEST_FILES)
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/themes/ephysics_test.edc \
 	$(top_builddir)/data/themes/ephysics_test.edj
+
+ephysics_sandbox.edj: Makefile $(SANDBOX_FILES)
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/themes/ephysics_sandbox.edc \
+	$(top_builddir)/data/themes/ephysics_sandbox.edj
 
 clean-local:
 	rm -f *.edj

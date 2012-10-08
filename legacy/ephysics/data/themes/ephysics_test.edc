@@ -10,7 +10,6 @@ collections {
 #include "frame.edc"
 #include "list.edc"
 #include "loading_bar.edc"
-#include "sandbox.edc"
 #include "shadows.edc"
 #include "shapes.edc"
 #include "spinner.edc"

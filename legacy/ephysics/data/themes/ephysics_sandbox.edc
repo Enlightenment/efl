@@ -1,0 +1,8 @@
+externals {
+   external: "elm";
+}
+
+collections {
+#include "balls.edc"
+#include "sandbox_misc.edc"
+}
