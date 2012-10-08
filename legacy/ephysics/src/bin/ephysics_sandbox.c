@@ -49,7 +49,6 @@ static void
 _world_rate_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_World *world = data;
-
    ephysics_world_rate_set(world, elm_spinner_value_get(obj));
 }
 
@@ -58,8 +57,7 @@ _world_max_sleeping_time_cb(void *data, Evas_Object *obj,
                             void *event_info __UNUSED__)
 {
    EPhysics_World *world = data;
-
-   ephysics_world_max_sleeping_time_set(world, elm_spinner_value_get(obj)); 
+   ephysics_world_max_sleeping_time_set(world, elm_spinner_value_get(obj));
 }
 
 static void
@@ -68,13 +66,13 @@ _world_friction_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
 
    ephysics_body_friction_set(evas_object_data_get(win, "top"),
-                              elm_spinner_value_get(obj)); 
+                              elm_spinner_value_get(obj));
    ephysics_body_friction_set(evas_object_data_get(win, "bottom"),
-                              elm_spinner_value_get(obj)); 
+                              elm_spinner_value_get(obj));
    ephysics_body_friction_set(evas_object_data_get(win, "left"),
-                              elm_spinner_value_get(obj)); 
+                              elm_spinner_value_get(obj));
    ephysics_body_friction_set(evas_object_data_get(win, "right"),
-                              elm_spinner_value_get(obj)); 
+                              elm_spinner_value_get(obj));
 }
 
 static void
@@ -83,13 +81,13 @@ _world_restitution_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Evas_Object *win = data;
 
    ephysics_body_restitution_set(evas_object_data_get(win, "top"),
-                                 elm_spinner_value_get(obj)); 
+                                 elm_spinner_value_get(obj));
    ephysics_body_restitution_set(evas_object_data_get(win, "bottom"),
-                                 elm_spinner_value_get(obj)); 
+                                 elm_spinner_value_get(obj));
    ephysics_body_restitution_set(evas_object_data_get(win, "left"),
-                                 elm_spinner_value_get(obj)); 
+                                 elm_spinner_value_get(obj));
    ephysics_body_restitution_set(evas_object_data_get(win, "right"),
-                                 elm_spinner_value_get(obj)); 
+                                 elm_spinner_value_get(obj));
 }
 /*
 static void
@@ -163,9 +161,7 @@ static void
 _body_mass_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-
    ephysics_body_mass_set(body, elm_spinner_value_get(obj));
-
    elm_spinner_value_set(evas_object_data_get(obj, "density"), 0);
 }
 
@@ -173,9 +169,7 @@ static void
 _body_density_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-
    ephysics_body_density_set(body, elm_spinner_value_get(obj));
-
    elm_spinner_value_set(evas_object_data_get(obj, "mass"),
                          ephysics_body_mass_get(body));
 }
@@ -184,73 +178,73 @@ static void
 _body_rotation_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-
-   ephysics_body_rotation_set(body, elm_spinner_value_get(obj)); 
+   ephysics_body_rotation_set(body, elm_spinner_value_get(obj));
 }
 
 static void
 _body_friction_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-
-   ephysics_body_friction_set(body, elm_spinner_value_get(obj)); 
+   ephysics_body_friction_set(body, elm_spinner_value_get(obj));
 }
 
 static void
 _body_restitution_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-
-   ephysics_body_restitution_set(body, elm_spinner_value_get(obj)); 
+   ephysics_body_restitution_set(body, elm_spinner_value_get(obj));
 }
 
 static void
-_body_damping_linear_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_damping_linear_cb(void *data, Evas_Object *obj,
+                        void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
    double angular_damping;
 
    ephysics_body_damping_get(body, NULL, &angular_damping);
-   ephysics_body_damping_set(body, elm_spinner_value_get(obj), angular_damping); 
+   ephysics_body_damping_set(body, elm_spinner_value_get(obj), angular_damping);
 }
 
 static void
-_body_damping_angular_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_damping_angular_cb(void *data, Evas_Object *obj,
+                         void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
    double linear_damping;
 
    ephysics_body_damping_get(body, &linear_damping, NULL);
-   ephysics_body_damping_set(body, linear_damping, elm_spinner_value_get(obj)); 
+   ephysics_body_damping_set(body, linear_damping, elm_spinner_value_get(obj));
 }
 
 static void
-_body_sleeping_threshold_linear_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_sleeping_threshold_linear_cb(void *data, Evas_Object *obj,
+                                   void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
    double angular_sleeping;
 
    ephysics_body_sleeping_threshold_get(body, NULL, &angular_sleeping);
    ephysics_body_sleeping_threshold_set(body, elm_spinner_value_get(obj),
-                                        angular_sleeping); 
+                                        angular_sleeping);
 }
 
 static void
-_body_sleeping_threshold_angular_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_sleeping_threshold_angular_cb(void *data, Evas_Object *obj,
+                                    void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
    double linear_sleeping;
 
    ephysics_body_sleeping_threshold_get(body, &linear_sleeping, NULL);
    ephysics_body_sleeping_threshold_set(body, linear_sleeping,
-                                        elm_spinner_value_get(obj)); 
+                                        elm_spinner_value_get(obj));
 }
 
 static void
 _body_torque_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-
    ephysics_body_torque_apply(body, elm_spinner_value_get(obj));
 }
 
@@ -270,7 +264,8 @@ _body_impulse_x_x_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_body_impulse_x_rel_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_impulse_x_rel_cb(void *data, Evas_Object *obj,
+                       void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
    Evas_Object *aux;
@@ -305,7 +300,8 @@ _body_impulse_y_y_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_body_impulse_y_rel_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_impulse_y_rel_cb(void *data, Evas_Object *obj,
+                       void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
    Evas_Object *aux;
@@ -387,30 +383,32 @@ _body_force_y_rel_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_body_linear_velocity_x_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_linear_velocity_x_cb(void *data, Evas_Object *obj,
+                           void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
    double ylinear;
 
    ylinear = elm_spinner_value_get(evas_object_data_get(obj, "y"));
-   ephysics_body_linear_velocity_set(body, elm_spinner_value_get(obj), ylinear); 
+   ephysics_body_linear_velocity_set(body, elm_spinner_value_get(obj), ylinear);
 }
 
 static void
-_body_linear_velocity_y_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_linear_velocity_y_cb(void *data, Evas_Object *obj,
+                           void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
    double xlinear;
 
    xlinear = elm_spinner_value_get(evas_object_data_get(obj, "x"));
-   ephysics_body_linear_velocity_set(body, xlinear, elm_spinner_value_get(obj)); 
+   ephysics_body_linear_velocity_set(body, xlinear, elm_spinner_value_get(obj));
 }
 
 static void
-_body_angular_velocity_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_body_angular_velocity_cb(void *data, Evas_Object *obj,
+                          void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-
    ephysics_body_angular_velocity_set(body, elm_spinner_value_get(obj));
 }
 /*
@@ -451,10 +449,12 @@ _sandie_enum_add(Evas_Object *win, Evas_Object *bxparent,
    elm_spinner_editable_set(sp, EINA_FALSE);
 
    elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_CUSTOM, "Custom");
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_CONCRETE, "Concrete");
+   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_CONCRETE,
+                                 "Concrete");
    elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_IRON, "Iron");
    elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_PLASTIC, "Plastic");
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_POLYSTYRENE, "Polystyrene");
+   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_POLYSTYRENE,
+                                 "Polystyrene");
    elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_RUBBER, "Rubber");
    elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_WOOD, "Wood");
 
@@ -570,38 +570,49 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
                                 0, 9999, 0, 2);
    evas_object_data_set(aux_widget, "density", widget);
    evas_object_data_set(material_widget, "density", widget);
-   evas_object_smart_callback_add(aux_widget, "delay,changed", _body_mass_cb, body);
+   evas_object_smart_callback_add(aux_widget, "delay,changed", _body_mass_cb,
+                                  body);
    evas_object_data_set(widget, "mass", aux_widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_density_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed", _body_density_cb,
+                                  body);
    widget = _sandie_spinner_add(win, bx, "Rotation", "%1.0fº",
                                 -360, 360, 0, 2);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_rotation_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed", _body_rotation_cb,
+                                  body);
    widget = _sandie_spinner_add(win, bx, "Friction", "%1.3f",
                                 0, 1, 0.5, 0.05);
    evas_object_data_set(material_widget, "friction", widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_friction_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed", _body_friction_cb,
+                                  body);
    widget = _sandie_spinner_add(win, bx, "Restitution", "%1.3f",
                                 0, 1, 0, 0.05);
    evas_object_data_set(material_widget, "restitution", widget);
-   evas_object_smart_callback_add(material_widget, "delay,changed", _body_material_cb, body);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_restitution_cb, body);
+   evas_object_smart_callback_add(material_widget, "delay,changed",
+                                  _body_material_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_restitution_cb, body);
    dbx = _sandie_double_spinner_box_add(win, bx, "Damping");
    widget = _sandie_spinner_add(win, dbx, "Linear:", "%1.3f",
                                 0, 1, 0, 0.05);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_damping_linear_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_damping_linear_cb, body);
    widget = _sandie_spinner_add(win, dbx, "Angular:", "%1.3f",
                                 0, 1, 0, 0.05);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_damping_angular_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_damping_angular_cb, body);
    dbx = _sandie_double_spinner_box_add(win, bx, "Sleeping Threshold");
    widget = _sandie_spinner_add(win, dbx, "Linear:", "%1.2f p/s",
                                 0, 100, 0, 2);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_sleeping_threshold_linear_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_sleeping_threshold_linear_cb, body);
    widget = _sandie_spinner_add(win, dbx, "Angular:", "%1.2f º/s",
                                 0, 360, 0, 2);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_sleeping_threshold_angular_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_sleeping_threshold_angular_cb, body);
    widget = _sandie_spinner_add(win, bx, "Torque", "%1.3f",
                                 0, 1, 0.5, 0.05);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_torque_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed", _body_torque_cb,
+                                  body);
 
    //Impulse needs four values
    dbx = _sandie_double_spinner_box_add(win, bx, "Impulse X");
@@ -617,15 +628,19 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
    widget = _sandie_spinner_add(win, dbx, "Rel Position Y:", "%1.2f",
                                 0, 360, 0, 2);
    evas_object_data_set(aux_widget, "rely", widget);
-   evas_object_smart_callback_add(aux_widget, "delay,changed", _body_impulse_x_x_cb, body);
+   evas_object_smart_callback_add(aux_widget, "delay,changed",
+                                  _body_impulse_x_x_cb, body);
    evas_object_data_set(widget, "x", aux_widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_impulse_x_rel_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_impulse_x_rel_cb, body);
    widget = evas_object_data_get(aux_widget, "y");
    evas_object_data_set(widget, "x", aux_widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_impulse_y_y_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_impulse_y_y_cb, body);
    widget = evas_object_data_get(aux_widget, "relx");
    evas_object_data_set(widget, "x", aux_widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_impulse_y_rel_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_impulse_y_rel_cb, body);
 
    //Force needs four values
    dbx = _sandie_double_spinner_box_add(win, bx, "Force X");
@@ -641,15 +656,19 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
    widget = _sandie_spinner_add(win, dbx, "Rel Position Y:", "%1.2f",
                                 0, 360, 0, 2);
    evas_object_data_set(aux_widget, "rely", widget);
-   evas_object_smart_callback_add(aux_widget, "delay,changed", _body_force_x_x_cb, body);
+   evas_object_smart_callback_add(aux_widget, "delay,changed",
+                                  _body_force_x_x_cb, body);
    evas_object_data_set(widget, "x", aux_widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_force_x_rel_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_force_x_rel_cb, body);
    widget = evas_object_data_get(aux_widget, "y");
    evas_object_data_set(widget, "x", aux_widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_force_y_y_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_force_y_y_cb, body);
    widget = evas_object_data_get(aux_widget, "relx");
    evas_object_data_set(widget, "x", aux_widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_force_y_rel_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_force_y_rel_cb, body);
 
    dbx = _sandie_double_spinner_box_add(win, bx, "Linear Velocity");
    aux_widget = _sandie_spinner_add(win, dbx, "X:", "%1.2f p/s",
@@ -657,13 +676,16 @@ _menu_body_items_create(Evas_Object *win, Evas_Object *bxparent,
    widget = _sandie_spinner_add(win, dbx, "Y:", "%1.2f p/s",
                                 -800, 800, 0, 2);
    evas_object_data_set(aux_widget, "y", widget);
-   evas_object_smart_callback_add(aux_widget, "delay,changed", _body_linear_velocity_x_cb, body);
+   evas_object_smart_callback_add(aux_widget, "delay,changed",
+                                  _body_linear_velocity_x_cb, body);
    evas_object_data_set(widget, "x", aux_widget);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_linear_velocity_y_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_linear_velocity_y_cb, body);
 
    widget = _sandie_spinner_add(win, bx, "Angular Velocity", "%1.2f º/s",
                                 0, 360, 0, 2);
-   evas_object_smart_callback_add(widget, "delay,changed", _body_angular_velocity_cb, body);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _body_angular_velocity_cb, body);
 /* widget = _sandie_spinner_add(win, bx, "Soft Body Hardness", "%1.2f%%",
                                 0, 100, 100, 2);
    elm_object_disabled_set(widget, EINA_TRUE);
@@ -685,7 +707,7 @@ _sandie_body_add(Evas_Object *win, EPhysics_World *world, int x, int y)
    evas_object_resize(body_image, 70, 70);
    evas_object_move(body_image, x, y);
    evas_object_show(body_image);
-   
+
    body = ephysics_body_circle_add(world);
    ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
    ephysics_body_mass_set(body, 20);
@@ -705,25 +727,31 @@ _menu_items_create(Evas_Object *win, Evas_Object *bxparent,
    dbx = _sandie_double_spinner_box_add(win, bx, "Gravity");
    widget = _sandie_spinner_add(win, dbx, "X:", "%1.2f m/s²",
                                 0, 100, 0, 2);
-   evas_object_smart_callback_add(widget, "delay,changed", _world_gravity_x_cb, world);
+   evas_object_smart_callback_add(widget, "delay,changed", _world_gravity_x_cb,
+                                  world);
    widget = _sandie_spinner_add(win, dbx, "Y:", "%1.2f m/s²",
                                 0, 100, 9.81, 2);
-   evas_object_smart_callback_add(widget, "delay,changed", _world_gravity_y_cb, world);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _world_gravity_y_cb, world);
    widget = _sandie_spinner_add(win, bx, "Rate", "%1.0f pixel/meter",
                                 0, 100, 20, 2);
-   evas_object_smart_callback_add(widget, "delay,changed", _world_rate_cb, world);
+   evas_object_smart_callback_add(widget, "delay,changed", _world_rate_cb,
+                                  world);
    widget = _sandie_spinner_add(win, bx, "Max Sleeping Time", "%1.0f s",
                                 0, 100, 2, 2);
-   evas_object_smart_callback_add(widget, "delay,changed", _world_max_sleeping_time_cb, world);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _world_max_sleeping_time_cb, world);
 
    bx = _category_add(win, bxparent, "EPhysics Boundaries");
    widget = _sandie_spinner_add(win, bx, "Friction", "%1.3f",
                                 0, 1, 0.5, 0.05);
    evas_object_data_set(widget, "win", win);
-   evas_object_smart_callback_add(widget, "delay,changed", _world_friction_cb, win);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _world_friction_cb, win);
    widget = _sandie_spinner_add(win, bx, "Restitution", "%1.3f",
                                 0, 1, 0, 0.05);
-   evas_object_smart_callback_add(widget, "delay,changed", _world_restitution_cb, win);
+   evas_object_smart_callback_add(widget, "delay,changed",
+                                  _world_restitution_cb, win);
 }
 
 static void
@@ -738,14 +766,12 @@ _world_populate(Sandie_Data *sandie, Evas_Object *bxparent)
                            sandie->body1);
    _menu_body_items_create(sandie->win, bxparent, "EPhysics Body 2",
                            sandie->body2);
-
 }
 
 static void
 _restart(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Sandie_Data *sandie = data;
-
    ephysics_body_del(sandie->body1);
    ephysics_body_del(sandie->body2);
 }
@@ -809,7 +835,8 @@ _sandie_world_add(Evas_Object *win)
    ephysics_world_render_geometry_set(world, 80, 80, (int) WIDTH * 0.7 - 160,
                                       HEIGHT - 160);
    evas_object_data_set(win, "top", ephysics_body_top_boundary_add(world));
-   evas_object_data_set(win, "bottom", ephysics_body_bottom_boundary_add(world));
+   evas_object_data_set(win, "bottom",
+                        ephysics_body_bottom_boundary_add(world));
    evas_object_data_set(win, "left", ephysics_body_left_boundary_add(world));
    evas_object_data_set(win, "right", ephysics_body_right_boundary_add(world));
 
