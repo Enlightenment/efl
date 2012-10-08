@@ -333,6 +333,7 @@ EAPI void        elm_spinner_special_value_add(Evas_Object *obj, double value, c
  * @see elm_spinner_special_value_add() for more details.
  *
  * @ingroup Spinner
+ * @since 1.8
  */
 EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
 
@@ -346,6 +347,7 @@ EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
  * @see elm_spinner_special_value_add() for more details.
  *
  * @ingroup Spinner
+ * @since 1.8
  */
 EAPI const char *elm_spinner_special_value_get(Evas_Object *obj, double value);
 
