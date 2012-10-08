@@ -1,0 +1,165 @@
+   images {
+      image: "ball-custom.png" COMP;
+      image: "ball-concrete.png" COMP;
+      image: "ball-iron.png" COMP;
+      image: "ball-plastic.png" COMP;
+      image: "ball-polystyrene.png" COMP;
+      image: "ball-rubber.png" COMP;
+      image: "ball-wood.png" COMP;
+   }
+
+   group {
+      name: "sandbox";
+      min: 1280 720;
+      max: 1280 720;
+
+      externals {
+         external: "elm";
+      }
+
+      images{
+         image: "background.jpg" COMP;
+      }
+
+      parts {
+        part {
+            name: "bg";
+            type: EXTERNAL;
+            source: "elm/bg";
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0.7 0;
+               rel2.relative: 1 1;
+               fixed: 1 1;
+               align: 1 0.5;
+            }
+         }
+         part {
+            name: "bg_world";
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0.0 0.0;
+               rel2.relative: 0.7 1.0;
+               fixed: 1 1;
+               image.normal: "background.jpg";
+            }
+         }
+         part {
+            name: "swallow";
+            type: SWALLOW;
+            description {
+               state: "default" 0;
+               rel1.relative: 0.7 0;
+               rel2.relative: 1 1;
+               fixed: 1 1;
+            }
+         }
+      }
+   }
+
+   group {
+      name: "0";
+      parts {
+         part {
+            name: "ball";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "ball-custom.png";
+            }
+         }
+      }
+   }
+   
+   group {
+      name: "1";
+      parts {
+         part {
+            name: "ball";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "ball-concrete.png";
+            }
+         }
+      }
+   }
+
+   group {
+      name: "2";
+      parts {
+         part {
+            name: "ball";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "ball-iron.png";
+            }
+         }
+      }
+   }
+
+   group {
+      name: "3";
+      parts {
+         part {
+            name: "ball";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "ball-plastic.png";
+            }
+         }
+      }
+   }
+
+   group {
+      name: "4";
+      parts {
+         part {
+            name: "ball";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "ball-polystyrene.png";
+            }
+         }
+      }
+   }
+
+   group {
+      name: "5";
+      parts {
+         part {
+            name: "ball";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "ball-rubber.png";
+            }
+         }
+      }
+   }
+
+   group {
+      name: "6";
+      parts {
+         part {
+            name: "ball";
+            mouse_events: 0;
+            type: IMAGE;
+            description {
+               state: "default" 0.0;
+               image.normal: "ball-wood.png";
+            }
+         }
+      }
+   }

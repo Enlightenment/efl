@@ -20,6 +20,7 @@ EXTRA_DIST = \
 	frame.edc \
 	list.edc \
 	loading_bar.edc \
+	sandbox.edc \
 	shadows.edc \
 	shapes.edc \
 	spinner.edc \
@@ -60,7 +61,14 @@ EXTRA_DIST = \
 	images/spinner_bt_right_pressed.png \
 	images/star.png \
 	images/green-flag.png \
-	images/brown-pole.png
+	images/brown-pole.png \
+	images/ball-custom.png \
+	images/ball-concrete.png \
+	images/ball-iron.png \
+	images/ball-plastic.png \
+	images/ball-polystyrene.png \
+	images/ball-rubber.png \
+	images/ball-wood.png
 
 ephysics_test.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \

@@ -10,9 +10,9 @@ AM_CPPFLAGS = \
     -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
     @EPHYSICS_TEST_CFLAGS@
 
-bin_PROGRAMS = ephysics_test ephysics_logo
+bin_PROGRAMS = ephysics_test ephysics_logo ephysics_sandbox
 
-EXTRA_PROGRAMS = ephysics_test ephysics_logo
+EXTRA_PROGRAMS = ephysics_test ephysics_logo ephysics_sandbox
 
 ephysics_test_SOURCES = \
 test.c \
@@ -47,6 +47,9 @@ test_flag.c
 ephysics_logo_SOURCES = \
 ephysics_logo.c
 
+ephysics_sandbox_SOURCES = \
+ephysics_sandbox.c
+
 ephysics_test_LDADD = \
     $(top_builddir)/src/lib/libephysics.la \
     @EPHYSICS_TEST_LIBS@
@@ -55,9 +58,15 @@ ephysics_logo_LDADD = \
     $(top_builddir)/src/lib/libephysics.la \
     @EPHYSICS_TEST_LIBS@
 
+ephysics_sandbox_LDADD = \
+    $(top_builddir)/src/lib/libephysics.la \
+    @EPHYSICS_TEST_LIBS@
+
 ephysics_logo_LDFLAGS =
 
 ephysics_test_LDFLAGS =
+
+ephysics_sandbox_LDFLAGS =
 
 EXTRA_DIST = ephysics_test.h
 endif
