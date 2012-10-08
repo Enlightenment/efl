@@ -880,6 +880,48 @@ elm_spinner_special_value_add(Evas_Object *obj,
 }
 
 EAPI void
+elm_spinner_special_value_del(Evas_Object *obj,
+                              double value)
+{
+   Elm_Spinner_Special_Value *sv;
+   Eina_List *l;
+
+   ELM_SPINNER_CHECK(obj);
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   EINA_LIST_FOREACH(sd->special_values, l, sv)
+     {
+        if (sv->value != value)
+          continue;
+
+        sd->special_values = eina_list_remove(sd->special_values, sv);
+        eina_stringshare_del(sv->label);
+        free(sv);
+        _label_write(obj);
+        return;
+     }
+}
+
+EAPI const char *
+elm_spinner_special_value_get(Evas_Object *obj,
+                              double value)
+{
+   Elm_Spinner_Special_Value *sv;
+   Eina_List *l;
+
+   ELM_SPINNER_CHECK(obj) NULL;
+   ELM_SPINNER_DATA_GET(obj, sd);
+
+   EINA_LIST_FOREACH(sd->special_values, l, sv)
+     {
+        if (sv->value == value)
+          return sv->label;
+     }
+
+   return NULL;
+}
+
+EAPI void
 elm_spinner_editable_set(Evas_Object *obj,
                          Eina_Bool editable)
 {

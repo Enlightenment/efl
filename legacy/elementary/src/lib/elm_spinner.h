@@ -311,9 +311,43 @@ EAPI Eina_Bool   elm_spinner_editable_get(const Evas_Object *obj);
  * evas_object_show(sp);
  * @endcode
  *
+ * @note If another label was previously set to @p value, it will be replaced
+ * by the new label.
+ *
+ * @see elm_spinner_special_value_get().
+ * @see elm_spinner_special_value_del().
+ *
  * @ingroup Spinner
  */
 EAPI void        elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label);
+
+/**
+ * Delete the special string display in the place of the numerical value.
+ *
+ * @param obj The spinner object.
+ * @param value The replaced value.
+ *
+ * It will remove a previously added special value. After this, the spinner
+ * will display the value itself instead of a label.
+ *
+ * @see elm_spinner_special_value_add() for more details.
+ *
+ * @ingroup Spinner
+ */
+EAPI void elm_spinner_special_value_del(Evas_Object *obj, double value);
+
+/**
+ * Get the special string display in the place of the numerical value.
+ *
+ * @param obj The spinner object.
+ * @param value The replaced value.
+ * @return The used label.
+ *
+ * @see elm_spinner_special_value_add() for more details.
+ *
+ * @ingroup Spinner
+ */
+EAPI const char *elm_spinner_special_value_get(Evas_Object *obj, double value);
 
 /**
  * Set the interval on time updates for an user mouse button hold
