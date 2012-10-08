@@ -856,7 +856,7 @@ elm_main()
      {
         fprintf(stderr, "Failed to init ephysics\n");
         r = -1;
-        goto shutdown;
+        goto ephysics_error;
      }
 
    sandie = calloc(1, sizeof(Sandie_Data));
@@ -864,7 +864,7 @@ elm_main()
      {
         fprintf(stderr, "Failed to alloc sandie data\n");
         r = -1;
-        return r;
+        goto data_error;
      }
 
    elm_theme_extension_add(NULL, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj");
@@ -895,9 +895,10 @@ elm_main()
 
    elm_run();
 
-shutdown:
+   free(sandie);
+data_error:
    ephysics_shutdown();
-
+ephysics_error:
    elm_shutdown();
 
    return r;
