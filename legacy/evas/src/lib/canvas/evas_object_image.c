@@ -753,7 +753,7 @@ static void
 _image_border_scale_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    const Evas_Object_Image *o = _pd;
-   double *scale = va_arg(list, double *);
+   double *scale = va_arg(*list, double *);
    if (scale) *scale = o->cur.border.scale;
 }
 
