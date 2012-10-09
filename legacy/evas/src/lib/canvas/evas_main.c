@@ -776,7 +776,7 @@ _canvas_pointer_inside_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
 
    const Evas_Public_Data *e = _pd;
-   *ret = (int)e->pointer.inside;
+   *ret = e->pointer.inside;
 }
 
 EAPI void
