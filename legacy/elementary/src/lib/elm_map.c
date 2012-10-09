@@ -2349,7 +2349,7 @@ _overlay_scale_show(Overlay_Scale *ovl)
 
    sd = ovl->wsd;
 
-   if ((int)sizeof(_scale_tb) <= sd->zoom)
+   if ((int)(sizeof(_scale_tb)/sizeof(double)) <= sd->zoom)
      {
         ERR("Zoom level is too high");
         return;
