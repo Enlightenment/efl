@@ -16,7 +16,8 @@ bin_PROGRAMS = \
 efreet_test \
 efreet_spec_test \
 efreet_cache_test \
-efreet_icon_cache_dump
+efreet_icon_cache_dump \
+efreet_user_dir
 
 efreet_test_LDADD = $(top_builddir)/src/lib/libefreet.la \
                     $(top_builddir)/src/lib/libefreet_mime.la \
@@ -64,3 +65,6 @@ $(top_builddir)/src/lib/libefreet.la \
 
 efreet_icon_cache_dump_SOURCES = \
 efreet_icon_cache_dump.c
+
+efreet_user_dir_SOURCES = efreet_user_dir.c
+efreet_user_dir_LDADD = $(top_builddir)/src/lib/libefreet.la @EFREET_LIBS@
