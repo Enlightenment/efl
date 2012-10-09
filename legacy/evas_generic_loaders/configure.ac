@@ -121,8 +121,16 @@ AC_ARG_ENABLE([svg],
    [want_svg="yes"]
 )
 
+have_svg_2_36="no"
 if test "x$want_svg" = "xyes" ; then
    PKG_CHECK_MODULES([SVG],  [librsvg-2.0 >= 2.14.0 cairo >= 1.0.0], [have_svg="yes"], [have_svg="no"])
+   PKG_CHECK_MODULES(
+      [SVG_2_36], [librsvg-2.0 >= 2.36.0 cairo >= 1.0.0],
+      [
+       have_svg_2_36="yes"
+       AC_DEFINE(HAVE_SVG_2_36, 1, [Have librsvg >= 2.36])
+      ],
+      [have_svg_2_36="no"])
 else
    have_svg=no
 fi

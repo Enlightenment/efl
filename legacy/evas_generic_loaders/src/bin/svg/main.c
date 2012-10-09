@@ -56,7 +56,11 @@ static inline Eina_Bool evas_image_load_file_is_svg(const char *file)
 static int
 _svg_init(const char *file)
 {
+#ifdef HAVE_SVG_2_36
+   g_type_init();
+#else
    rsvg_init();
+#endif
 
    if (!evas_image_load_file_is_svg(file)) return 0;
 
@@ -74,7 +78,9 @@ _svg_shutdown(void)
         g_object_unref(rsvg);
      }
    // Maybe it's not crashing anymore, let's try it.
+#ifndef HAVE_SVG_2_36
    rsvg_term();
+#endif
 }
 
 static int
