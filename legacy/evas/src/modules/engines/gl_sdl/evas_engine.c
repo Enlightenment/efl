@@ -1,4 +1,5 @@
 #include "evas_common.h" /* Also includes international specific stuff */
+#include "evas_private.h"
 #include "evas_engine.h"
 
 static void*                     _sdl_output_setup	(int w, int h, int fullscreen, int noframe);
@@ -27,8 +28,9 @@ eng_info_free(Evas *e __UNUSED__, void *info)
 }
 
 static int
-eng_setup(Evas *e, void *in)
+eng_setup(Evas *eo_e, void *in)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_GL_SDL *info;
 
