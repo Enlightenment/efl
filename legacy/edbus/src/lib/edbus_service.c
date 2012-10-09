@@ -121,7 +121,7 @@ _introspect_append_method(Eina_Strbuf *buf, const EDBus_Method *method)
 static void
 _introspect_append_interface(Eina_Strbuf *buf, EDBus_Service_Interface *iface)
 {
-   EDBus_Real_Method *method;
+   EDBus_Method *method;
    Eina_Iterator *iterator;
    unsigned short i;
    unsigned int size;
@@ -129,7 +129,7 @@ _introspect_append_interface(Eina_Strbuf *buf, EDBus_Service_Interface *iface)
    eina_strbuf_append_printf(buf, "<interface name=\"%s\">", iface->name);
    iterator = eina_hash_iterator_data_new(iface->methods);
    EINA_ITERATOR_FOREACH(iterator, method)
-     _introspect_append_method(buf, method->method);
+     _introspect_append_method(buf, method);
    eina_iterator_free(iterator);
 
    size = eina_array_count(iface->sign_of_signals);
@@ -180,30 +180,20 @@ static const EDBus_Method instrospect = { "Introspect", EDBUS_ARGS({ "", "" }),
 static void
 _introspectable_create(void)
 {
-   EDBus_Real_Method *r_instrospect;
    introspectable = calloc(1, sizeof(EDBus_Service_Interface));
    EINA_SAFETY_ON_NULL_RETURN(introspectable);
-
-   r_instrospect = malloc(sizeof(EDBus_Real_Method));
-   EINA_SAFETY_ON_NULL_RETURN(r_instrospect);
-   r_instrospect->in = "";
-   r_instrospect->method = &instrospect;
 
    EINA_MAGIC_SET(introspectable, EDBUS_SERVICE_INTERFACE_MAGIC);
    introspectable->sign_of_signals = eina_array_new(1);
    introspectable->name = eina_stringshare_add("org.freedesktop.DBus.Introspectable");
    introspectable->methods = eina_hash_string_small_new(NULL);
 
-   eina_hash_add(introspectable->methods, instrospect.member, r_instrospect);
+   eina_hash_add(introspectable->methods, instrospect.member, &instrospect);
 }
 
 static void
 _instrospectable_free(void)
 {
-   EDBus_Real_Method *method;
-   method = eina_hash_find(introspectable->methods, instrospect.member);
-   eina_stringshare_del(method->in);
-   free(method);
    eina_hash_free(introspectable->methods);
    eina_stringshare_del(introspectable->name);
    eina_array_free(introspectable->sign_of_signals);
@@ -270,47 +260,37 @@ _edbus_service_interface_add(EDBus_Service_Object *obj, const char *interface)
 }
 
 static Eina_Bool
+_have_signature(const EDBus_Arg_Info *args, EDBus_Message *msg)
+{
+   const char *sig = dbus_message_get_signature(msg->dbus_msg);
+   const char *p = NULL;
+
+   for (; args->signature && *args->signature && *sig; args++)
+     {
+        p = args->signature;
+        for (; *sig && *p; sig++, p++)
+          {
+             if (*p != *sig)
+               return EINA_FALSE;
+          }
+      }
+
+   if (*sig || (p && *p) || (args->signature && *args->signature))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 _edbus_service_method_add(EDBus_Service_Interface *interface, EDBus_Method *method)
 {
-   EDBus_Real_Method *rm;
-   Eina_Strbuf *buf;
-   int z;
    EINA_SAFETY_ON_TRUE_RETURN_VAL(!!eina_hash_find(interface->methods,
                                   method->member), EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(method->member, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(method->cb, EINA_FALSE);
 
-   buf = eina_strbuf_new();
-   for (z = 0; &method->in[z] && method->in[z].signature; z++)
-     eina_strbuf_append(buf, method->in[z].signature);
-   EINA_SAFETY_ON_FALSE_GOTO(
-            dbus_signature_validate(eina_strbuf_string_get(buf), NULL),
-            error);
-
-   rm = malloc(sizeof(EDBus_Real_Method));
-   EINA_SAFETY_ON_NULL_GOTO(rm, error);
-   rm->method = method;
-   rm->in = eina_stringshare_add(eina_strbuf_string_get(buf));
-   eina_strbuf_free(buf);
-
-   //check if out is valid
-   buf = eina_strbuf_new();
-   for (z = 0; &method->out[z] && method->out[z].signature; z++)
-     eina_strbuf_append(buf, method->out[z].signature);
-   EINA_SAFETY_ON_FALSE_GOTO(
-               dbus_signature_validate(eina_strbuf_string_get(buf), NULL),
-               invalid_out);
-
-   eina_strbuf_free(buf);
-   eina_hash_add(interface->methods, method->member, rm);
+   eina_hash_add(interface->methods, method->member, method);
    return EINA_TRUE;
-
-invalid_out:
-   eina_stringshare_del(rm->in);
-   free(rm);
-error:
-   eina_strbuf_free(buf);
-   return EINA_FALSE;
 }
 
 EAPI EDBus_Service_Interface *
@@ -377,17 +357,8 @@ static void
 _interface_free(EDBus_Service_Interface *interface)
 {
    unsigned size, i;
-   Eina_Iterator *iterator;
-   EDBus_Real_Method *method;
    if (interface == introspectable) return;
 
-   iterator = eina_hash_iterator_data_new(interface->methods);
-   EINA_ITERATOR_FOREACH(iterator, method)
-     {
-        eina_stringshare_del(method->in);
-        free(method);
-     }
-   eina_iterator_free(iterator);
    eina_hash_free(interface->methods);
    eina_stringshare_del(interface->name);
    size = eina_array_count(interface->sign_of_signals);
@@ -458,7 +429,7 @@ _object_handler(DBusConnection *conn, DBusMessage *msg, void *user_data)
 {
    EDBus_Service_Object *obj;
    EDBus_Service_Interface *iface;
-   EDBus_Real_Method *method;
+   EDBus_Method *method;
    EDBus_Message *edbus_msg;
    EDBus_Message *reply;
 
@@ -488,18 +459,16 @@ _object_handler(DBusConnection *conn, DBusMessage *msg, void *user_data)
    edbus_msg->dbus_msg = msg;
    dbus_message_iter_init(edbus_msg->dbus_msg, &edbus_msg->iterator->dbus_iterator);
 
-   if (method->in && !dbus_message_has_signature(msg, method->in))
+   if (!_have_signature(method->in, edbus_msg))
      {
-        char buf[DBUS_MAXIMUM_SIGNATURE_LENGTH +
-                 sizeof("Expected signature: ")];
-        snprintf(buf, sizeof(buf), "Expected signature: %s", method->in);
         reply = edbus_message_error_new(edbus_msg,
-                                        DBUS_ERROR_INVALID_SIGNATURE, buf);
+                                        DBUS_ERROR_INVALID_SIGNATURE,
+                                        "See introspectable to know the expected signature");
      }
    else
      {
         if (iface->obj)
-          reply = method->method->cb(iface, edbus_msg);
+          reply = method->cb(iface, edbus_msg);
         else
           {
              //if iface does have obj it is some of FreeDesktop interfaces:
@@ -513,7 +482,7 @@ _object_handler(DBusConnection *conn, DBusMessage *msg, void *user_data)
                   return DBUS_HANDLER_RESULT_NEED_MEMORY;
                }
              cpy->obj = obj;
-             reply = method->method->cb(cpy, edbus_msg);
+             reply = method->cb(cpy, edbus_msg);
              free(cpy);
           }
      }

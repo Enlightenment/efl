@@ -159,10 +159,4 @@ typedef struct _Signal_Argument
    const char *value;
 } Signal_Argument;
 
-typedef struct _EDBus_Real_Method
-{
-   const EDBus_Method *method;
-   const char *in;
-} EDBus_Real_Method;
-
 #endif
