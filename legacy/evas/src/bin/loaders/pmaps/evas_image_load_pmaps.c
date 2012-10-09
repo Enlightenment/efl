@@ -322,7 +322,7 @@ pmaps_buffer_plain_update(Pmaps_Buffer *b)
    if (b->position + max > eina_file_size_get(b->file))
      max = eina_file_size_get(b->file) - b->position;
 
-   memcpy(&b->buffer[b->unread_len], b->map + b->position, max);
+   memcpy(&b->buffer[b->unread_len], (char *)b->map + b->position, max);
    b->position += max;
    r = max + b->unread_len;
 
@@ -369,7 +369,7 @@ pmaps_buffer_raw_update(Pmaps_Buffer *b)
    if (b->position + max > eina_file_size_get(b->file))
      max = eina_file_size_get(b->file) - b->position;
 
-   memcpy(&b->buffer[b->unread_len], b->map + b->position, max);
+   memcpy(&b->buffer[b->unread_len], (char *)b->map + b->position, max);
    b->position += max;
    r = max + b->unread_len;
 

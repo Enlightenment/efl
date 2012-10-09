@@ -181,7 +181,7 @@ _get_orientation(void *map, size_t length)
      }
    else return 0;
 
-   buf = map + 22;
+   buf = (char *)map + 22;
 
    if (length < (12 * num_directory + 22)) return 0;
 
