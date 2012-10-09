@@ -774,7 +774,7 @@ static Eina_Bool
 _parse_parts(Evas_Object *ed)
 {
    Eina_List *parts, *l, *parts_external = NULL;
-   const char *name, *typename, *description;
+   const char *name, *description;
    char *apiname;
    Edje_Part_Type type;
    Eina_Bool draggable, ret = EINA_TRUE;
