@@ -705,7 +705,7 @@ _sandie_body_add(Evas_Object *win, EPhysics_World *world, int x, int y)
 
    body_image = elm_image_add(win);
    elm_image_file_set(
-      body_image, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj", "big-blue-ball");
+      body_image, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj", "Custom");
    evas_object_resize(body_image, 70, 70);
    evas_object_move(body_image, x, y);
    evas_object_show(body_image);

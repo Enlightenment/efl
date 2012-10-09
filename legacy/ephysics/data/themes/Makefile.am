@@ -67,7 +67,6 @@ SANDBOX_FILES = \
 	ephysics_sandbox.edc \
 	sandbox_misc.edc \
 	images/background.jpg \
-	images/ball-blue70.png \
 	images/ball-custom.png \
 	images/ball-concrete.png \
 	images/ball-iron.png \
