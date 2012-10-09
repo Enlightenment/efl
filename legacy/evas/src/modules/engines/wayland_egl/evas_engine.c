@@ -1,4 +1,5 @@
 #include "evas_common.h" /* Also includes international specific stuff */
+#include "evas_private.h"
 #include "evas_engine.h"
 
 #ifdef HAVE_DLSYM
@@ -639,8 +640,9 @@ _destroy_internal_glue_resources(void *data)
 }
 
 static int
-eng_setup(Evas *e, void *in)
+eng_setup(Evas *eo_e, void *in)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_Wayland_Egl *info;
    Evas_GL_Wl_Window *new_win = NULL;
