@@ -813,7 +813,7 @@ EAPI void ephysics_world_gravity_get(const EPhysics_World *world, double *gx, do
  * It will be used by automatic updates of evas objects associated to
  * physics bodies.
  *
- * By default its value is 20 Evas coordinates (pixels) per meter.
+ * By default its value is 30 Evas coordinates (pixels) per meter.
  *
  * If you change the rate but wants to keep gravity as (0, 9.8 m/s^2),
  * you well need to set world gravity with: 9.8 * new_rate.
