@@ -2194,7 +2194,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 {
    int count, num;
    size_t buf_len, buf_offset;
-   const void *buf;
+   const unsigned char *buf;
 
    DBG("(svr=%p,buf=%p)", svr, svr->buf);
 #ifdef _WIN32
