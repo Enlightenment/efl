@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
+-DNDEBUG \
 @EFL_EO_BUILD@ \
 @EO_CFLAGS@
 
