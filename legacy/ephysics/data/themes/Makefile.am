@@ -67,11 +67,11 @@ SANDBOX_FILES = \
 	ephysics_sandbox.edc \
 	sandbox_misc.edc \
 	images/background.jpg \
-	images/ball-custom.png \
 	images/ball-concrete.png \
 	images/ball-iron.png \
 	images/ball-plastic.png \
 	images/ball-polystyrene.png \
+	images/ball-red70.png \
 	images/ball-rubber.png \
 	images/ball-wood.png
 

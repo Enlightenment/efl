@@ -1,5 +1,5 @@
    images {
-      image: "ball-custom.png" COMP;
+      image: "ball-red70.png" COMP;
       image: "ball-concrete.png" COMP;
       image: "ball-iron.png" COMP;
       image: "ball-plastic.png" COMP;
@@ -68,7 +68,7 @@
             type: IMAGE;
             description {
                state: "default" 0.0;
-               image.normal: "ball-custom.png";
+               image.normal: "ball-red70.png";
             }
          }
       }
