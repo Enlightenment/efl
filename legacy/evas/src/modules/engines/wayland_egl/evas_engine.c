@@ -3021,10 +3021,11 @@ evgl_glBindRenderbuffer(GLenum target, GLuint renderbuffer)
 // returns: oc[4] original image object dimension in gl coord
 // returns: nc[4] tranformed  (x, y, width, heigth) in gl coord
 static void
-compute_gl_coordinates(Evas_Object *obj, int rot, int clip,
+compute_gl_coordinates(Evas_Object *eo_obj, int rot, int clip,
                        int x, int y, int width, int height,
                        int imgc[4], int objc[4])
 {
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (rot == 0)
      {
         // oringinal image object coordinate in gl coordinate
