@@ -502,10 +502,10 @@ _sandie_spinner_add(Evas_Object *win, Evas_Object *bxparent,
 
    sp = elm_spinner_add(win);
    elm_spinner_label_format_set(sp, itemlb);
-   elm_spinner_step_set(sp, step);
-   elm_spinner_wrap_set(sp, ELM_WRAP_CHAR);
-   elm_spinner_value_set(sp, initial);
    elm_spinner_min_max_set(sp, min, max);
+   elm_spinner_step_set(sp, step);
+   elm_spinner_wrap_set(sp, EINA_TRUE);
+   elm_spinner_value_set(sp, initial);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_box_pack_end(bxparent, sp);
@@ -727,16 +727,16 @@ _menu_items_create(Evas_Object *win, Evas_Object *bxparent,
 
    bx = _category_add(win, bxparent, "EPhysics World");
    dbx = _sandie_double_spinner_box_add(win, bx, "Gravity");
-   widget = _sandie_spinner_add(win, dbx, "X:", "%1.2f m/s²",
-                                0, 100, 0, 2);
+   widget = _sandie_spinner_add(win, dbx, "X:", "%1.2f px/s²",
+                                -1000, 1000, 0, 2);
    evas_object_smart_callback_add(widget, "delay,changed", _world_gravity_x_cb,
                                   world);
-   widget = _sandie_spinner_add(win, dbx, "Y:", "%1.2f m/s²",
-                                0, 100, 9.81, 2);
+   widget = _sandie_spinner_add(win, dbx, "Y:", "%1.2f px/s²",
+                                -1000, 1000, 294, 2);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _world_gravity_y_cb, world);
    widget = _sandie_spinner_add(win, bx, "Rate", "%1.0f pixel/meter",
-                                0, 100, 20, 2);
+                                1, 100, 30, 2);
    evas_object_smart_callback_add(widget, "delay,changed", _world_rate_cb,
                                   world);
    widget = _sandie_spinner_add(win, bx, "Max Sleeping Time", "%1.0f s",
