@@ -32,21 +32,41 @@ evas_key_lock_number(const Evas_Lock *l, const char *keyname)
 /* public calls */
 
 EAPI const Evas_Modifier *
-evas_key_modifier_get(const Evas *e)
+evas_key_modifier_get(const Evas *eo_e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return &(e->modifiers);
+   const Evas_Modifier *ret = NULL;
+   eo_do((Eo *)eo_e, evas_canvas_key_modifier_get(&ret));
+   return ret;
+}
+
+void
+_canvas_key_modifier_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const Evas_Modifier **ret = va_arg(*list, const Evas_Modifier **);
+   const Evas_Public_Data *e = _pd;
+   *ret = &(e->modifiers);
 }
 
 EAPI const Evas_Lock *
-evas_key_lock_get(const Evas *e)
+evas_key_lock_get(const Evas *eo_e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   return &(e->locks);
+   const Evas_Lock *ret = NULL;
+   eo_do((Eo *)eo_e, evas_canvas_key_lock_get(&ret));
+   return ret;
+}
+
+void
+_canvas_key_lock_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const Evas_Lock **ret = va_arg(*list, const Evas_Lock **);
+   const Evas_Public_Data *e = _pd;
+   *ret = &(e->locks);
 }
 
 EAPI Eina_Bool
@@ -82,14 +102,23 @@ evas_key_lock_is_set(const Evas_Lock *l, const char *keyname)
 }
 
 EAPI void
-evas_key_modifier_add(Evas *e, const char *keyname)
+evas_key_modifier_add(Evas *eo_e, const char *keyname)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_key_modifier_add(keyname));
+}
+
+void
+_canvas_key_modifier_add(Eo *eo_e, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+
+   Evas_Public_Data *e = _pd;
    if (!keyname) return;
    if (e->modifiers.mod.count >= 64) return;
-   evas_key_modifier_del(e, keyname);
+   evas_key_modifier_del(eo_e, keyname);
    e->modifiers.mod.count++;
    e->modifiers.mod.list = realloc(e->modifiers.mod.list, e->modifiers.mod.count * sizeof(char *));
    e->modifiers.mod.list[e->modifiers.mod.count - 1] = strdup(keyname);
@@ -97,13 +126,23 @@ evas_key_modifier_add(Evas *e, const char *keyname)
 }
 
 EAPI void
-evas_key_modifier_del(Evas *e, const char *keyname)
+evas_key_modifier_del(Evas *eo_e, const char *keyname)
 {
-   int i;
-
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   if (!eo_e) return;
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_key_modifier_del(keyname));
+}
+
+void
+_canvas_key_modifier_del(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+
+   Evas_Public_Data *e = _pd;
+   int i;
+
    if (!keyname) return;
    for (i = 0; i < e->modifiers.mod.count; i++)
      {
@@ -122,14 +161,23 @@ evas_key_modifier_del(Evas *e, const char *keyname)
 }
 
 EAPI void
-evas_key_lock_add(Evas *e, const char *keyname)
+evas_key_lock_add(Evas *eo_e, const char *keyname)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_key_lock_add(keyname));
+}
+
+void
+_canvas_key_lock_add(Eo *eo_e, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+
    if (!keyname) return;
+   Evas_Public_Data *e = _pd;
    if (e->locks.lock.count >= 64) return;
-   evas_key_lock_del(e, keyname);
+   evas_key_lock_del(eo_e, keyname);
    e->locks.lock.count++;
    e->locks.lock.list = realloc(e->locks.lock.list, e->locks.lock.count * sizeof(char *));
    e->locks.lock.list[e->locks.lock.count - 1] = strdup(keyname);
@@ -137,13 +185,21 @@ evas_key_lock_add(Evas *e, const char *keyname)
 }
 
 EAPI void
-evas_key_lock_del(Evas *e, const char *keyname)
+evas_key_lock_del(Evas *eo_e, const char *keyname)
 {
-   int i;
-
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_key_lock_del(keyname));
+}
+
+void
+_canvas_key_lock_del(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+
+   int i;
+   Evas_Public_Data *e = _pd;
    if (!keyname) return;
    e->locks.mask = 0;
    for (i = 0; i < e->locks.lock.count; i++)
@@ -163,14 +219,23 @@ evas_key_lock_del(Evas *e, const char *keyname)
 }
 
 EAPI void
-evas_key_modifier_on(Evas *e, const char *keyname)
+evas_key_modifier_on(Evas *eo_e, const char *keyname)
 {
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_key_modifier_on(keyname));
+}
+
+void
+_canvas_key_modifier_on(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+
    Evas_Modifier_Mask num;
    int n;
 
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   Evas_Public_Data *e = _pd;
    n = (Evas_Modifier_Mask)evas_key_modifier_number(&(e->modifiers), keyname);
    if (n < 0) return;
    num = (Evas_Modifier_Mask)n;
@@ -179,14 +244,23 @@ evas_key_modifier_on(Evas *e, const char *keyname)
 }
 
 EAPI void
-evas_key_modifier_off(Evas *e, const char *keyname)
+evas_key_modifier_off(Evas *eo_e, const char *keyname)
 {
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_key_modifier_off(keyname));
+}
+
+void
+_canvas_key_modifier_off(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+
    Evas_Modifier_Mask num;
    int n;
 
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   Evas_Public_Data *e = _pd;
    n = evas_key_modifier_number(&(e->modifiers), keyname);
    if (n < 0) return;
    num = (Evas_Modifier_Mask)n;
@@ -195,14 +269,23 @@ evas_key_modifier_off(Evas *e, const char *keyname)
 }
 
 EAPI void
-evas_key_lock_on(Evas *e, const char *keyname)
+evas_key_lock_on(Evas *eo_e, const char *keyname)
 {
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_key_lock_on(keyname));
+}
+
+void
+_canvas_key_lock_on(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+
    Evas_Modifier_Mask num;
    int n;
 
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   Evas_Public_Data *e = _pd;
    n = evas_key_lock_number(&(e->locks), keyname);
    if (n < 0) return;
    num = (Evas_Modifier_Mask)n;
@@ -211,14 +294,23 @@ evas_key_lock_on(Evas *e, const char *keyname)
 }
 
 EAPI void
-evas_key_lock_off(Evas *e, const char *keyname)
+evas_key_lock_off(Evas *eo_e, const char *keyname)
 {
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_key_lock_off(keyname));
+}
+
+void
+_canvas_key_lock_off(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+
    Evas_Modifier_Mask num;
    int n;
 
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   Evas_Public_Data *e = _pd;
    n = evas_key_lock_number(&(e->locks), keyname);
    if (n < 0) return;
    num = (Evas_Modifier_Mask)n;
@@ -229,17 +321,34 @@ evas_key_lock_off(Evas *e, const char *keyname)
 /* errr need to add key grabbing/ungrabbing calls - missing modifier stuff. */
 
 EAPI Evas_Modifier_Mask
-evas_key_modifier_mask_get(const Evas *e, const char *keyname)
+evas_key_modifier_mask_get(const Evas *eo_e, const char *keyname)
 {
-   Evas_Modifier_Mask num;
-   int n;
-
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return 0;
    MAGIC_CHECK_END();
-   if (!keyname) return 0;
+   Evas_Modifier_Mask ret = 0;
+   eo_do((Eo *)eo_e, evas_canvas_key_modifier_mask_get(keyname, &ret));
+   return ret;
+}
+
+void
+_canvas_key_modifier_mask_get(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+   Evas_Modifier_Mask *ret = va_arg(*list, Evas_Modifier_Mask *);
+
+   Evas_Modifier_Mask num;
+   int n;
+   *ret = 0;
+
+   if (!keyname) return;
+   const Evas_Public_Data *e = _pd;
    n = evas_key_modifier_number(&(e->modifiers), keyname);
-   if (n < 0) return 0;
+   if (n < 0)
+     {
+        *ret = 0;
+        return;
+     }
    num = (Evas_Modifier_Mask)n;
-   return 1 << num;
+   *ret = 1 << num;
 }

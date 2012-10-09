@@ -321,6 +321,9 @@
 
 #include <Eina.h>
 
+/* This include has been added to support Eo in Evas */
+#include <Eo.h>
+
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -450,6 +453,74 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_LAST /**< kept as last element/sentinel -- not really an event */
 } Evas_Callback_Type; /**< The types of events triggering a callback */
 
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MOUSE_IN;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MOUSE_OUT;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MOUSE_DOWN;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MOUSE_UP;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MOUSE_MOVE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MOUSE_WHEEL;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MULTI_DOWN;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MULTI_UP;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MULTI_MOVE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_FREE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_KEY_DOWN;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_KEY_UP;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_FOCUS_IN;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_FOCUS_OUT;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_SHOW;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_HIDE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_MOVE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_RESIZE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_RESTACK;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_DEL;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_HOLD;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_CHANGED_SIZE_HINTS;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_IMAGE_PRELOADED;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_IMAGE_RESIZE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_CANVAS_FOCUS_IN;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_CANVAS_FOCUS_OUT;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_RENDER_FLUSH_PRE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_RENDER_FLUSH_POST;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_CANVAS_OBJECT_FOCUS_IN;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_CANVAS_OBJECT_FOCUS_OUT;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_IMAGE_UNLOADED;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_RENDER_PRE;
+EAPI extern const Eo_Event_Description _EVAS_EVENT_RENDER_POST;
+
+#define EVAS_EVENT_MOUSE_IN (&(_EVAS_EVENT_MOUSE_IN))
+#define EVAS_EVENT_MOUSE_OUT (&(_EVAS_EVENT_MOUSE_OUT))
+#define EVAS_EVENT_MOUSE_DOWN (&(_EVAS_EVENT_MOUSE_DOWN))
+#define EVAS_EVENT_MOUSE_UP (&(_EVAS_EVENT_MOUSE_UP))
+#define EVAS_EVENT_MOUSE_MOVE (&(_EVAS_EVENT_MOUSE_MOVE))
+#define EVAS_EVENT_MOUSE_WHEEL (&(_EVAS_EVENT_MOUSE_WHEEL))
+#define EVAS_EVENT_MULTI_DOWN (&(_EVAS_EVENT_MULTI_DOWN))
+#define EVAS_EVENT_MULTI_UP (&(_EVAS_EVENT_MULTI_UP))
+#define EVAS_EVENT_MULTI_MOVE (&(_EVAS_EVENT_MULTI_MOVE))
+#define EVAS_EVENT_FREE (&(_EVAS_EVENT_FREE))
+#define EVAS_EVENT_KEY_DOWN (&(_EVAS_EVENT_KEY_DOWN))
+#define EVAS_EVENT_KEY_UP (&(_EVAS_EVENT_KEY_UP))
+#define EVAS_EVENT_FOCUS_IN (&(_EVAS_EVENT_FOCUS_IN))
+#define EVAS_EVENT_FOCUS_OUT (&(_EVAS_EVENT_FOCUS_OUT))
+#define EVAS_EVENT_SHOW (&(_EVAS_EVENT_SHOW))
+#define EVAS_EVENT_HIDE (&(_EVAS_EVENT_HIDE))
+#define EVAS_EVENT_MOVE (&(_EVAS_EVENT_MOVE))
+#define EVAS_EVENT_RESIZE (&(_EVAS_EVENT_RESIZE))
+#define EVAS_EVENT_RESTACK (&(_EVAS_EVENT_RESTACK))
+#define EVAS_EVENT_DEL (&(_EVAS_EVENT_DEL))
+#define EVAS_EVENT_HOLD (&(_EVAS_EVENT_HOLD))
+#define EVAS_EVENT_CHANGED_SIZE_HINTS (&(_EVAS_EVENT_CHANGED_SIZE_HINTS))
+#define EVAS_EVENT_IMAGE_PRELOADED (&(_EVAS_EVENT_IMAGE_PRELOADED))
+#define EVAS_EVENT_IMAGE_RESIZE (&(_EVAS_EVENT_IMAGE_RESIZE))
+#define EVAS_EVENT_CANVAS_FOCUS_IN (&(_EVAS_EVENT_CANVAS_FOCUS_IN))
+#define EVAS_EVENT_CANVAS_FOCUS_OUT (&(_EVAS_EVENT_CANVAS_FOCUS_OUT))
+#define EVAS_EVENT_RENDER_FLUSH_PRE (&(_EVAS_EVENT_RENDER_FLUSH_PRE))
+#define EVAS_EVENT_RENDER_FLUSH_POST (&(_EVAS_EVENT_RENDER_FLUSH_POST))
+#define EVAS_EVENT_CANVAS_OBJECT_FOCUS_IN (&(_EVAS_EVENT_CANVAS_OBJECT_FOCUS_IN))
+#define EVAS_EVENT_CANVAS_OBJECT_FOCUS_OUT (&(_EVAS_EVENT_CANVAS_OBJECT_FOCUS_OUT))
+#define EVAS_EVENT_IMAGE_UNLOADED (&(_EVAS_EVENT_IMAGE_UNLOADED))
+#define EVAS_EVENT_RENDER_PRE (&(_EVAS_EVENT_RENDER_PRE))
+#define EVAS_EVENT_RENDER_POST (&(_EVAS_EVENT_RENDER_POST))
+
 /**
  * @def EVAS_CALLBACK_PRIORITY_BEFORE
  * Slightly more prioritized than default.
@@ -481,7 +552,85 @@ typedef enum _Evas_Callback_Type
  *
  * @since 1.1
  */
-typedef short Evas_Callback_Priority;
+typedef Eo_Callback_Priority Evas_Callback_Priority;
+
+EAPI extern const Eo_Event_Description _CLICKED_EVENT;
+EAPI extern const Eo_Event_Description _CLICKED_DOUBLE_EVENT;
+EAPI extern const Eo_Event_Description _CLICKED_TRIPLE_EVENT;
+EAPI extern const Eo_Event_Description _PRESSED_EVENT;
+EAPI extern const Eo_Event_Description _UNPRESSED_EVENT;
+EAPI extern const Eo_Event_Description _LONGPRESSED_EVENT;
+EAPI extern const Eo_Event_Description _REPEATED_EVENT;
+EAPI extern const Eo_Event_Description _SCROLL_EVENT;
+EAPI extern const Eo_Event_Description _SCROLL_ANIM_START_EVENT;
+EAPI extern const Eo_Event_Description _SCROLL_ANIM_STOP_EVENT;
+EAPI extern const Eo_Event_Description _SCROLL_DRAG_START_EVENT;
+EAPI extern const Eo_Event_Description _SCROLL_DRAG_STOP_EVENT;
+EAPI extern const Eo_Event_Description _ZOOM_START_EVENT;
+EAPI extern const Eo_Event_Description _ZOOM_STOP_EVENT;
+EAPI extern const Eo_Event_Description _ZOOM_CHANGE_EVENT;
+EAPI extern const Eo_Event_Description _SELECTED_EVENT;
+EAPI extern const Eo_Event_Description _UNSELECTED_EVENT;
+EAPI extern const Eo_Event_Description _SELECTION_PASTE_EVENT;
+EAPI extern const Eo_Event_Description _SELECTION_COPY_EVENT;
+EAPI extern const Eo_Event_Description _SELECTION_CUT_EVENT;
+EAPI extern const Eo_Event_Description _SELECTION_START_EVENT;
+EAPI extern const Eo_Event_Description _SELECTION_CHANGED_EVENT;
+EAPI extern const Eo_Event_Description _SELECTION_CLEARED_EVENT;
+EAPI extern const Eo_Event_Description _DRAG_EVENT;
+EAPI extern const Eo_Event_Description _DRAG_START_EVENT;
+EAPI extern const Eo_Event_Description _DRAG_STOP_EVENT;
+EAPI extern const Eo_Event_Description _DRAG_END_EVENT;
+EAPI extern const Eo_Event_Description _DRAG_START_UP_EVENT;
+EAPI extern const Eo_Event_Description _DRAG_START_DOWN_EVENT;
+EAPI extern const Eo_Event_Description _DRAG_START_RIGHT_EVENT;
+EAPI extern const Eo_Event_Description _DRAG_START_LEFT_EVENT;
+
+#define EVAS_SMART_CLICKED_EVENT (&(_CLICKED_EVENT))
+#define EVAS_SMART_CLICKED_DOUBLE_EVENT (&(_CLICKED_DOUBLE_EVENT))
+#define EVAS_SMART_CLICKED_TRIPLE_EVENT (&(_CLICKED_TRIPLE_EVENT))
+#define EVAS_SMART_PRESSED_EVENT (&(_PRESSED_EVENT))
+#define EVAS_SMART_UNPRESSED_EVENT (&(_UNPRESSED_EVENT))
+#define EVAS_SMART_LONGPRESSED_EVENT (&(_LONGPRESSED_EVENT))
+#define EVAS_SMART_REPEATED_EVENT (&(_REPEATED_EVENT))
+#define EVAS_SMART_SCROLL_EVENT (&(_SCROLL_EVENT))
+#define EVAS_SMART_SCROLL_ANIM_START_EVENT (&(_SCROLL_ANIM_START_EVENT))
+#define EVAS_SMART_SCROLL_ANIM_STOP_EVENT (&(_SCROLL_ANIM_STOP_EVENT))
+#define EVAS_SMART_SCROLL_DRAG_START_EVENT (&(_SCROLL_DRAG_START_EVENT))
+#define EVAS_SMART_SCROLL_DRAG_STOP_EVENT (&(_SCROLL_DRAG_STOP_EVENT))
+#define EVAS_SMART_ZOOM_START_EVENT (&(_ZOOM_START_EVENT))
+#define EVAS_SMART_ZOOM_STOP_EVENT (&(_ZOOM_STOP_EVENT))
+#define EVAS_SMART_ZOOM_CHANGE_EVENT (&(_ZOOM_CHANGE_EVENT))
+#define EVAS_SMART_SELECTED_EVENT (&(_SELECTED_EVENT))
+#define EVAS_SMART_UNSELECTED_EVENT (&(_UNSELECTED_EVENT))
+#define EVAS_SMART_SELECTION_PASTE_EVENT (&(_SELECTION_PASTE_EVENT))
+#define EVAS_SMART_SELECTION_COPY_EVENT (&(_SELECTION_COPY_EVENT))
+#define EVAS_SMART_SELECTION_CUT_EVENT (&(_SELECTION_CUT_EVENT))
+#define EVAS_SMART_SELECTION_START_EVENT (&(_SELECTION_START_EVENT))
+#define EVAS_SMART_SELECTION_CHANGED_EVENT (&(_SELECTION_CHANGED_EVENT))
+#define EVAS_SMART_SELECTION_CLEARED_EVENT (&(_SELECTION_CLEARED_EVENT))
+#define EVAS_SMART_DRAG_EVENT (&(_DRAG_EVENT))
+#define EVAS_SMART_DRAG_START_EVENT (&(_DRAG_START_EVENT))
+#define EVAS_SMART_DRAG_STOP_EVENT (&(_DRAG_STOP_EVENT))
+#define EVAS_SMART_DRAG_END_EVENT (&(_DRAG_END_EVENT))
+#define EVAS_SMART_DRAG_START_UP_EVENT (&(_DRAG_START_UP_EVENT))
+#define EVAS_SMART_DRAG_START_DOWN_EVENT (&(_DRAG_START_DOWN_EVENT))
+#define EVAS_SMART_DRAG_START_RIGHT_EVENT (&(_DRAG_START_RIGHT_EVENT))
+#define EVAS_SMART_DRAG_START_LEFT_EVENT (&(_DRAG_START_LEFT_EVENT))
+
+const Eo_Class *evas_smart_signal_interface_get(void) EINA_CONST;
+const Eo_Class *evas_smart_clickable_interface_get(void) EINA_CONST;
+const Eo_Class *evas_smart_scrollable_interface_get(void) EINA_CONST;
+const Eo_Class *evas_smart_zoomable_interface_get(void) EINA_CONST;
+const Eo_Class *evas_smart_selectable_interface_get(void) EINA_CONST;
+const Eo_Class *evas_smart_draggable_interface_get(void) EINA_CONST;
+
+#define EVAS_SMART_SIGNAL_INTERFACE evas_smart_signal_interface_get()
+#define EVAS_SMART_CLICKABLE_INTERFACE evas_smart_clickable_interface_get()
+#define EVAS_SMART_SCROLLABLE_INTERFACE evas_smart_scrollable_interface_get()
+#define EVAS_SMART_ZOOMABLE_INTERFACE evas_smart_zoomable_interface_get()
+#define EVAS_SMART_SELECTABLE_INTERFACE evas_smart_selectable_interface_get()
+#define EVAS_SMART_DRAGGABLE_INTERFACE evas_smart_draggable_interface_get()
 
 /**
  * Flags for Mouse Button events
@@ -623,14 +772,28 @@ typedef struct _Evas_Map Evas_Map;
  *
  * @ingroup Evas_Canvas
  */
-typedef struct _Evas Evas;
+typedef Eo                 Evas;
+
+/**
+ * @typedef Evas_Public_Data
+ * Public data for an Evas.
+ * @ingroup Evas_Canvas
+ */
+typedef struct _Evas_Public_Data  Evas_Public_Data;
 
 /**
  * @typedef Evas_Object
  * An Evas Object handle.
  * @ingroup Evas_Object_Group
  */
-typedef struct _Evas_Object         Evas_Object;
+typedef Eo                 Evas_Object;
+
+/**
+ * @typedef Evas_Object_Protected_Data
+ * Protected data for an Evas Object.
+ * @ingroup Evas_Object_Group
+ */
+typedef struct _Evas_Object_Protected_Data Evas_Object_Protected_Data;
 
 typedef void                        Evas_Performance; /**< An Evas Performance handle */
 typedef struct _Evas_Modifier       Evas_Modifier; /**< An opaque type containing information on which modifier keys are registered in an Evas canvas */
@@ -2188,6 +2351,223 @@ EAPI int               evas_pointer_button_down_mask_get(const Evas *e) EINA_WAR
 EAPI Eina_Bool         evas_pointer_inside_get(const Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 EAPI void              evas_sync(Evas *e) EINA_ARG_NONNULL(1);
+
+#define EVAS_CLASS evas_class_get()
+
+const Eo_Class *evas_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_CANVAS_BASE_ID;
+
+enum
+{
+   EVAS_CANVAS_SUB_ID_OUTPUT_METHOD_SET,
+   EVAS_CANVAS_SUB_ID_OUTPUT_METHOD_GET,
+   EVAS_CANVAS_SUB_ID_ENGINE_INFO_GET,
+   EVAS_CANVAS_SUB_ID_ENGINE_INFO_SET,
+   EVAS_CANVAS_SUB_ID_OUTPUT_SIZE_SET,
+   EVAS_CANVAS_SUB_ID_OUTPUT_SIZE_GET,
+   EVAS_CANVAS_SUB_ID_OUTPUT_VIEWPORT_SET,
+   EVAS_CANVAS_SUB_ID_OUTPUT_VIEWPORT_GET,
+   EVAS_CANVAS_SUB_ID_OUTPUT_FRAMESPACE_SET,
+   EVAS_CANVAS_SUB_ID_OUTPUT_FRAMESPACE_GET,
+   EVAS_CANVAS_SUB_ID_COORD_SCREEN_X_TO_WORLD,
+   EVAS_CANVAS_SUB_ID_COORD_SCREEN_Y_TO_WORLD,
+   EVAS_CANVAS_SUB_ID_COORD_WORLD_X_TO_SCREEN,
+   EVAS_CANVAS_SUB_ID_COORD_WORLD_Y_TO_SCREEN,
+   EVAS_CANVAS_SUB_ID_POINTER_OUTPUT_XY_GET,
+   EVAS_CANVAS_SUB_ID_POINTER_CANVAS_XY_GET,
+   EVAS_CANVAS_SUB_ID_POINTER_BUTTON_DOWN_MASK_GET,
+   EVAS_CANVAS_SUB_ID_POINTER_INSIDE_GET,
+   EVAS_CANVAS_SUB_ID_DATA_ATTACH_SET,
+   EVAS_CANVAS_SUB_ID_DATA_ATTACH_GET,
+   EVAS_CANVAS_SUB_ID_FOCUS_IN,
+   EVAS_CANVAS_SUB_ID_FOCUS_OUT,
+   EVAS_CANVAS_SUB_ID_FOCUS_STATE_GET,
+   EVAS_CANVAS_SUB_ID_NOCHANGE_PUSH,
+   EVAS_CANVAS_SUB_ID_NOCHANGE_POP,
+   EVAS_CANVAS_SUB_ID_EVENT_DEFAULT_FLAGS_SET,
+   EVAS_CANVAS_SUB_ID_EVENT_DEFAULT_FLAGS_GET,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_DOWN,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_UP,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_CANCEL,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_WHEEL,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_MOVE,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_IN,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_OUT,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_DOWN,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_UP,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_MOVE,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_KEY_DOWN,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_KEY_UP,
+   EVAS_CANVAS_SUB_ID_EVENT_FEED_HOLD,
+   EVAS_CANVAS_SUB_ID_EVENT_REFEED_EVENT,
+   EVAS_CANVAS_SUB_ID_EVENT_DOWN_COUNT_GET,
+   EVAS_CANVAS_SUB_ID_FOCUS_GET,
+   EVAS_CANVAS_SUB_ID_FONT_PATH_CLEAR,
+   EVAS_CANVAS_SUB_ID_FONT_PATH_APPEND,
+   EVAS_CANVAS_SUB_ID_FONT_PATH_PREPEND,
+   EVAS_CANVAS_SUB_ID_FONT_PATH_LIST,
+   EVAS_CANVAS_SUB_ID_FONT_HINTING_SET,
+   EVAS_CANVAS_SUB_ID_FONT_HINTING_GET,
+   EVAS_CANVAS_SUB_ID_FONT_HINTING_CAN_HINT,
+   EVAS_CANVAS_SUB_ID_FONT_CACHE_FLUSH,
+   EVAS_CANVAS_SUB_ID_FONT_CACHE_SET,
+   EVAS_CANVAS_SUB_ID_FONT_CACHE_GET,
+   EVAS_CANVAS_SUB_ID_FONT_AVAILABLE_LIST,
+   EVAS_CANVAS_SUB_ID_KEY_MODIFIER_GET,
+   EVAS_CANVAS_SUB_ID_KEY_LOCK_GET,
+   EVAS_CANVAS_SUB_ID_KEY_MODIFIER_ADD,
+   EVAS_CANVAS_SUB_ID_KEY_MODIFIER_DEL,
+   EVAS_CANVAS_SUB_ID_KEY_LOCK_ADD,
+   EVAS_CANVAS_SUB_ID_KEY_LOCK_DEL,
+   EVAS_CANVAS_SUB_ID_KEY_MODIFIER_ON,
+   EVAS_CANVAS_SUB_ID_KEY_MODIFIER_OFF,
+   EVAS_CANVAS_SUB_ID_KEY_LOCK_ON,
+   EVAS_CANVAS_SUB_ID_KEY_LOCK_OFF,
+   EVAS_CANVAS_SUB_ID_KEY_MODIFIER_MASK_GET,
+   EVAS_CANVAS_SUB_ID_DAMAGE_RECTANGLE_ADD,
+   EVAS_CANVAS_SUB_ID_OBSCURED_RECTANGLE_ADD,
+   EVAS_CANVAS_SUB_ID_OBSCURED_CLEAR,
+   EVAS_CANVAS_SUB_ID_RENDER_UPDATES,
+   EVAS_CANVAS_SUB_ID_RENDER,
+   EVAS_CANVAS_SUB_ID_NORENDER,
+   EVAS_CANVAS_SUB_ID_RENDER_IDLE_FLUSH,
+   EVAS_CANVAS_SUB_ID_SYNC,
+   EVAS_CANVAS_SUB_ID_RENDER_DUMP,
+   EVAS_CANVAS_SUB_ID_OBJECT_BOTTOM_GET,
+   EVAS_CANVAS_SUB_ID_OBJECT_TOP_GET,
+   EVAS_CANVAS_SUB_ID_TOUCH_POINT_LIST_COUNT,
+   EVAS_CANVAS_SUB_ID_TOUCH_POINT_LIST_NTH_XY_GET,
+   EVAS_CANVAS_SUB_ID_TOUCH_POINT_LIST_NTH_ID_GET,
+   EVAS_CANVAS_SUB_ID_TOUCH_POINT_LIST_NTH_STATE_GET,
+   EVAS_CANVAS_SUB_ID_IMAGE_CACHE_FLUSH,
+   EVAS_CANVAS_SUB_ID_IMAGE_CACHE_RELOAD,
+   EVAS_CANVAS_SUB_ID_IMAGE_CACHE_SET,
+   EVAS_CANVAS_SUB_ID_IMAGE_CACHE_GET,
+   EVAS_CANVAS_SUB_ID_IMAGE_MAX_SIZE_GET,
+   EVAS_CANVAS_SUB_ID_OBJECT_NAME_FIND,
+   EVAS_CANVAS_SUB_ID_OBJECT_TOP_AT_XY_GET,
+   EVAS_CANVAS_SUB_ID_OBJECT_TOP_IN_RECTANGLE_GET,
+   EVAS_CANVAS_SUB_ID_OBJECTS_AT_XY_GET,
+   EVAS_CANVAS_SUB_ID_OBJECTS_IN_RECTANGLE_GET,
+   EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE,
+   EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE_COUNT_GET,
+   EVAS_CANVAS_SUB_ID_LAST
+};
+
+#define EVAS_CANVAS_ID(sub_id) (EVAS_CANVAS_BASE_ID + sub_id)
+
+#define evas_canvas_output_method_set(render_method) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OUTPUT_METHOD_SET), EO_TYPECHECK(int, render_method)
+#define evas_canvas_output_method_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OUTPUT_METHOD_GET), EO_TYPECHECK(int *, ret)
+#define evas_canvas_engine_info_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_ENGINE_INFO_GET), EO_TYPECHECK(Evas_Engine_Info **, ret)
+#define evas_canvas_engine_info_set(info, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_ENGINE_INFO_SET), EO_TYPECHECK(Evas_Engine_Info *, info), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_canvas_output_size_set(w, h) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OUTPUT_SIZE_SET), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+#define evas_canvas_output_size_get(w, h) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OUTPUT_SIZE_GET), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h)
+#define evas_canvas_output_viewport_set(x, y, w, h) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OUTPUT_VIEWPORT_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+#define evas_canvas_output_viewport_get(x, y, w, h) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OUTPUT_VIEWPORT_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+#define evas_canvas_output_framespace_set(x, y, w, h) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OUTPUT_FRAMESPACE_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+#define evas_canvas_output_framespace_get(x, y, w, h) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OUTPUT_FRAMESPACE_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+#define evas_canvas_coord_screen_x_to_world(x, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_COORD_SCREEN_X_TO_WORLD), EO_TYPECHECK(int, x), EO_TYPECHECK(Evas_Coord *, ret)
+#define evas_canvas_coord_screen_y_to_world(y, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_COORD_SCREEN_Y_TO_WORLD), EO_TYPECHECK(int, y), EO_TYPECHECK(Evas_Coord *, ret)
+#define evas_canvas_coord_world_x_to_screen(x, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_COORD_WORLD_X_TO_SCREEN), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(int *, ret)
+#define evas_canvas_coord_world_y_to_screen(y, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_COORD_WORLD_Y_TO_SCREEN), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(int *, ret)
+#define evas_canvas_pointer_output_xy_get(x, y) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_POINTER_OUTPUT_XY_GET), EO_TYPECHECK(int *, x), EO_TYPECHECK(int *, y)
+#define evas_canvas_pointer_canvas_xy_get(x, y) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_POINTER_CANVAS_XY_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y)
+#define evas_canvas_pointer_button_down_mask_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_POINTER_BUTTON_DOWN_MASK_GET), EO_TYPECHECK(int *, ret)
+#define evas_canvas_pointer_inside_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_POINTER_INSIDE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_canvas_data_attach_set(data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_DATA_ATTACH_SET), EO_TYPECHECK(void *, data)
+#define evas_canvas_data_attach_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_DATA_ATTACH_GET), EO_TYPECHECK(void **, ret)
+#define evas_canvas_focus_in() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FOCUS_IN)
+#define evas_canvas_focus_out() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FOCUS_OUT)
+#define evas_canvas_focus_state_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FOCUS_STATE_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_canvas_nochange_push() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_NOCHANGE_PUSH)
+#define evas_canvas_nochange_pop() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_NOCHANGE_POP)
+
+#define evas_canvas_event_default_flags_set(flags) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_DEFAULT_FLAGS_SET), EO_TYPECHECK(Evas_Event_Flags, flags)
+#define evas_canvas_event_default_flags_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_DEFAULT_FLAGS_GET), EO_TYPECHECK(Evas_Event_Flags *, ret)
+#define evas_canvas_event_freeze() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FREEZE)
+#define evas_canvas_event_thaw() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_THAW)
+#define evas_canvas_event_freeze_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FREEZE_GET), EO_TYPECHECK(int *, ret)
+#define evas_canvas_event_thaw_eval() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_THAW_EVAL)
+#define evas_canvas_event_feed_mouse_down(b, flags, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_DOWN), EO_TYPECHECK(int, b), EO_TYPECHECK(Evas_Button_Flags, flags), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_mouse_up(b, flags, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_UP), EO_TYPECHECK(int, b), EO_TYPECHECK(Evas_Button_Flags, flags), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_mouse_cancel(timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_CANCEL), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_mouse_wheel(direction, z, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_WHEEL), EO_TYPECHECK(int, direction), EO_TYPECHECK(int, z), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_mouse_move(x, y, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_MOVE), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_mouse_in(timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_IN), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_mouse_out(timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MOUSE_OUT), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_multi_down(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_DOWN), EO_TYPECHECK(int, d), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(double, rad), EO_TYPECHECK(double, radx), EO_TYPECHECK(double, rady), EO_TYPECHECK(double, pres), EO_TYPECHECK(double, ang), EO_TYPECHECK(double, fx), EO_TYPECHECK(double, fy), EO_TYPECHECK(Evas_Button_Flags, flags), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_multi_up(d, x, y, rad, radx, rady, pres, ang, fx, fy, flags, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_UP), EO_TYPECHECK(int, d), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(double, rad), EO_TYPECHECK(double, radx), EO_TYPECHECK(double, rady), EO_TYPECHECK(double, pres), EO_TYPECHECK(double, ang), EO_TYPECHECK(double, fx), EO_TYPECHECK(double, fy), EO_TYPECHECK(Evas_Button_Flags, flags), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_multi_move(d, x, y, rad, radx, rady, pres, ang, fx, fy, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_MULTI_MOVE), EO_TYPECHECK(int, d), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(double, rad), EO_TYPECHECK(double, radx), EO_TYPECHECK(double, rady), EO_TYPECHECK(double, pres), EO_TYPECHECK(double, ang), EO_TYPECHECK(double, fx), EO_TYPECHECK(double, fy), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_key_down(keyname, key, string, compose, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_KEY_DOWN), EO_TYPECHECK(const char *, keyname), EO_TYPECHECK(const char *, key), EO_TYPECHECK(const char *, string), EO_TYPECHECK(const char *, compose), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_key_up(keyname, key, string, compose, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_KEY_UP), EO_TYPECHECK(const char *, keyname), EO_TYPECHECK(const char *, key), EO_TYPECHECK(const char *, string), EO_TYPECHECK(const char *, compose), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_feed_hold(hold, timestamp, data) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_FEED_HOLD), EO_TYPECHECK(int, hold), EO_TYPECHECK(unsigned int, timestamp), EO_TYPECHECK(const void *, data)
+#define evas_canvas_event_refeed_event(event_copy, event_type) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_REFEED_EVENT), EO_TYPECHECK(void *, event_copy), EO_TYPECHECK(Evas_Callback_Type, event_type)
+#define evas_canvas_event_down_count_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_EVENT_DOWN_COUNT_GET), EO_TYPECHECK(int *, ret)
+
+#define evas_canvas_focus_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FOCUS_GET), EO_TYPECHECK(Evas_Object **, ret)
+
+#define evas_canvas_font_path_clear() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_PATH_CLEAR)
+#define evas_canvas_font_path_append(path) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_PATH_APPEND), EO_TYPECHECK(const char *, path)
+#define evas_canvas_font_path_prepend(path) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_PATH_PREPEND), EO_TYPECHECK(const char *, path)
+#define evas_canvas_font_path_list(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_PATH_LIST), EO_TYPECHECK(const Eina_List **, ret)
+#define evas_canvas_font_hinting_set(hinting) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_HINTING_SET), EO_TYPECHECK(Evas_Font_Hinting_Flags, hinting)
+#define evas_canvas_font_hinting_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_HINTING_GET), EO_TYPECHECK(Evas_Font_Hinting_Flags *, ret)
+#define evas_canvas_font_hinting_can_hint(hinting, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_HINTING_CAN_HINT), EO_TYPECHECK(Evas_Font_Hinting_Flags, hinting), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_canvas_font_cache_flush() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_CACHE_FLUSH)
+#define evas_canvas_font_cache_set(size) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_CACHE_SET), EO_TYPECHECK(int, size)
+#define evas_canvas_font_cache_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_CACHE_GET), EO_TYPECHECK(int *, ret)
+#define evas_canvas_font_available_list(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_FONT_AVAILABLE_LIST), EO_TYPECHECK(Eina_List **, ret)
+
+#define evas_canvas_key_modifier_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_MODIFIER_GET), EO_TYPECHECK(const Evas_Modifier **, ret)
+#define evas_canvas_key_lock_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_LOCK_GET), EO_TYPECHECK(const Evas_Lock **, ret)
+#define evas_canvas_key_modifier_add(keyname) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_MODIFIER_ADD), EO_TYPECHECK(const char *, keyname)
+#define evas_canvas_key_modifier_del(keyname) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_MODIFIER_DEL), EO_TYPECHECK(const char *, keyname)
+#define evas_canvas_key_lock_add(keyname) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_LOCK_ADD), EO_TYPECHECK(const char *, keyname)
+#define evas_canvas_key_lock_del(keyname) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_LOCK_DEL), EO_TYPECHECK(const char *, keyname)
+#define evas_canvas_key_modifier_on(keyname) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_MODIFIER_ON), EO_TYPECHECK(const char *, keyname)
+#define evas_canvas_key_modifier_off(keyname) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_MODIFIER_OFF), EO_TYPECHECK(const char *, keyname)
+#define evas_canvas_key_lock_on(keyname) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_LOCK_ON), EO_TYPECHECK(const char *, keyname)
+#define evas_canvas_key_lock_off(keyname) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_LOCK_OFF), EO_TYPECHECK(const char *, keyname)
+#define evas_canvas_key_modifier_mask_get(keyname, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_KEY_MODIFIER_MASK_GET), EO_TYPECHECK(const char *, keyname), EO_TYPECHECK(Evas_Modifier_Mask *, ret)
+
+#define evas_canvas_damage_rectangle_add(x, y, w, h) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_DAMAGE_RECTANGLE_ADD), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+#define evas_canvas_obscured_rectangle_add(x, y, w, h) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBSCURED_RECTANGLE_ADD), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+#define evas_canvas_obscured_clear() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBSCURED_CLEAR)
+#define evas_canvas_render_updates(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER_UPDATES), EO_TYPECHECK(Eina_List **, ret)
+#define evas_canvas_render() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER)
+#define evas_canvas_norender() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_NORENDER)
+#define evas_canvas_render_idle_flush() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER_IDLE_FLUSH)
+#define evas_canvas_sync() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_SYNC)
+#define evas_canvas_render_dump() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_RENDER_DUMP)
+
+#define evas_canvas_object_bottom_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECT_BOTTOM_GET), EO_TYPECHECK(Evas_Object **, ret)
+#define evas_canvas_object_top_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECT_TOP_GET), EO_TYPECHECK(Evas_Object **, ret)
+
+#define evas_canvas_touch_point_list_count(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_TOUCH_POINT_LIST_COUNT), EO_TYPECHECK(unsigned int *, ret)
+#define evas_canvas_touch_point_list_nth_xy_get(n, x, y) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_TOUCH_POINT_LIST_NTH_XY_GET), EO_TYPECHECK(unsigned int, n), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y)
+#define evas_canvas_touch_point_list_nth_id_get(n, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_TOUCH_POINT_LIST_NTH_ID_GET), EO_TYPECHECK(unsigned int, n), EO_TYPECHECK(int *, ret)
+#define evas_canvas_touch_point_list_nth_state_get(n, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_TOUCH_POINT_LIST_NTH_STATE_GET), EO_TYPECHECK(unsigned int, n), EO_TYPECHECK(Evas_Touch_Point_State *, ret)
+
+#define evas_canvas_image_cache_flush() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_IMAGE_CACHE_FLUSH)
+#define evas_canvas_image_cache_reload() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_IMAGE_CACHE_RELOAD)
+#define evas_canvas_image_cache_set(size) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_IMAGE_CACHE_SET), EO_TYPECHECK(int, size)
+#define evas_canvas_image_cache_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_IMAGE_CACHE_GET), EO_TYPECHECK(int *, ret)
+#define evas_canvas_image_max_size_get(maxw, maxh, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_IMAGE_MAX_SIZE_GET), EO_TYPECHECK(int *, maxw), EO_TYPECHECK(int *, maxh), EO_TYPECHECK(Eina_Bool *, ret)
+
+#define evas_canvas_object_name_find(name, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECT_NAME_FIND),EO_TYPECHECK(const char *, name),  EO_TYPECHECK(Evas_Object **, ret)
+
+#define evas_canvas_object_top_at_xy_get(x, y, include_pass_events_objects, include_hidden_objects, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECT_TOP_AT_XY_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Eina_Bool, include_pass_events_objects), EO_TYPECHECK(Eina_Bool, include_hidden_objects), EO_TYPECHECK(Evas_Object **, ret)
+#define evas_canvas_object_top_in_rectangle_get(x, y, w, h, include_pass_events_objects, include_hidden_objects, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECT_TOP_IN_RECTANGLE_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h), EO_TYPECHECK(Eina_Bool, include_pass_events_objects), EO_TYPECHECK(Eina_Bool, include_hidden_objects), EO_TYPECHECK(Evas_Object **, ret)
+#define evas_canvas_objects_at_xy_get(x, y, include_pass_events_objects, include_hidden_objects, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECTS_AT_XY_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Eina_Bool, include_pass_events_objects), EO_TYPECHECK(Eina_Bool, include_hidden_objects), EO_TYPECHECK(Eina_List **, ret)
+#define evas_canvas_objects_in_rectangle_get(x, y, w, h, include_pass_events_objects, include_hidden_objects, ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_OBJECTS_IN_RECTANGLE_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h), EO_TYPECHECK(Eina_Bool, include_pass_events_objects), EO_TYPECHECK(Eina_Bool, include_hidden_objects), EO_TYPECHECK(Eina_List **, ret)
+
+#define evas_canvas_smart_objects_calculate() EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE)
+#define evas_canvas_smart_objects_calculate_count_get(ret) EVAS_CANVAS_ID(EVAS_CANVAS_SUB_ID_SMART_OBJECTS_CALCULATE_COUNT_GET), EO_TYPECHECK(int *, ret)
+
+
+
+
    
 /**
  * @defgroup Evas_Canvas_Events Canvas Events
@@ -6397,6 +6777,19 @@ EAPI void *evas_object_intercept_clip_unset_callback_del(Evas_Object *obj, Evas_
  * @ingroup Evas_Object_Specific
  */
 
+#define EVAS_OBJ_RECTANGLE_CLASS evas_object_rectangle_class_get()
+
+const Eo_Class *evas_object_rectangle_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_RECTANGLE_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_RECTANGLE_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_RECTANGLE_ID(sub_id) (EVAS_OBJ_RECTANGLE_BASE_ID + sub_id)
+
 /**
  * Adds a rectangle to the given evas.
  * @param   e The given evas.
@@ -7904,6 +8297,408 @@ typedef enum _Evas_Text_Style_Type
    EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT = (0x7 << 4)             /**< shadow growing to the right */
 } Evas_Text_Style_Type;      /**< Types of styles to be applied on text objects. The @c EVAS_TEXT_STYLE_SHADOW_DIRECTION_* ones are to be ORed together with others imposing shadow, to change shadow's direction */
 
+#define EVAS_OBJ_TEXT_CLASS evas_object_text_class_get()
+
+const Eo_Class *evas_object_text_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_TEXT_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_SET,
+   EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_GET,
+   EVAS_OBJ_TEXT_SUB_ID_FONT_SET,
+   EVAS_OBJ_TEXT_SUB_ID_FONT_GET,
+   EVAS_OBJ_TEXT_SUB_ID_TEXT_SET,
+   EVAS_OBJ_TEXT_SUB_ID_BIDI_DELIMITERS_SET,
+   EVAS_OBJ_TEXT_SUB_ID_BIDI_DELIMITERS_GET,
+   EVAS_OBJ_TEXT_SUB_ID_TEXT_GET,
+   EVAS_OBJ_TEXT_SUB_ID_DIRECTION_GET,
+   EVAS_OBJ_TEXT_SUB_ID_ASCENT_GET,
+   EVAS_OBJ_TEXT_SUB_ID_DESCENT_GET,
+   EVAS_OBJ_TEXT_SUB_ID_MAX_ASCENT_GET,
+   EVAS_OBJ_TEXT_SUB_ID_MAX_DESCENT_GET,
+   EVAS_OBJ_TEXT_SUB_ID_INSET_GET,
+   EVAS_OBJ_TEXT_SUB_ID_HORIZ_ADVANCE_GET,
+   EVAS_OBJ_TEXT_SUB_ID_VERT_ADVANCE_GET,
+   EVAS_OBJ_TEXT_SUB_ID_CHAR_POS_GET,
+   EVAS_OBJ_TEXT_SUB_ID_LAST_UP_TO_POS,
+   EVAS_OBJ_TEXT_SUB_ID_CHAR_COORDS_GET,
+   EVAS_OBJ_TEXT_SUB_ID_STYLE_SET,
+   EVAS_OBJ_TEXT_SUB_ID_STYLE_GET,
+   EVAS_OBJ_TEXT_SUB_ID_SHADOW_COLOR_SET,
+   EVAS_OBJ_TEXT_SUB_ID_SHADOW_COLOR_GET,
+   EVAS_OBJ_TEXT_SUB_ID_GLOW_COLOR_SET,
+   EVAS_OBJ_TEXT_SUB_ID_GLOW_COLOR_GET,
+   EVAS_OBJ_TEXT_SUB_ID_GLOW2_COLOR_SET,
+   EVAS_OBJ_TEXT_SUB_ID_GLOW2_COLOR_GET,
+   EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_SET,
+   EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_GET,
+   EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET,
+   EVAS_OBJ_TEXT_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_TEXT_ID(sub_id) (EVAS_OBJ_TEXT_BASE_ID + sub_id)
+
+/**
+ * @def evas_obj_text_font_source_set
+ *
+ * Set the font (source) file to be used on a given text object.
+ *
+ * @param[in] font_source in
+ *
+ * @see evas_object_text_font_source_set
+ */
+#define evas_obj_text_font_source_set(font_source) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_SET), EO_TYPECHECK(const char *, font_source)
+
+/**
+ * @def evas_obj_text_font_source_get
+ *
+ * Get the font file's path which is being used on a given text
+ * object.
+ *
+ * @param[out] font_source out
+ *
+ * @see evas_object_text_font_source_get
+ */
+#define evas_obj_text_font_source_get(font_source) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SOURCE_GET), EO_TYPECHECK(const char **, font_source)
+
+/**
+ * @def evas_obj_text_font_set
+ *
+ * Set the font family and size on a given text object.
+ *
+ * @param[in] font in
+ * @param[in] size in
+ *
+ * @see evas_object_text_font_set
+ */
+#define evas_obj_text_font_set(font, size) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_SET), EO_TYPECHECK(const char *, font), EO_TYPECHECK(Evas_Font_Size, size)
+
+/**
+ * @def evas_obj_text_font_get
+ *
+ * Retrieve the font family and size in use on a given text object.
+ *
+ * @param[out] font out
+ * @param[out] size out
+ *
+ * @see evas_object_text_font_get
+ */
+#define evas_obj_text_font_get(font, size) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_FONT_GET), EO_TYPECHECK(const char **, font), EO_TYPECHECK(Evas_Font_Size *, size)
+
+/**
+ * @def evas_obj_text_text_set
+ *
+ * Sets the text string to be displayed by the given text object.
+ *
+ * @param[in] text
+ *
+ * @see evas_object_text_text_set
+ */
+#define evas_obj_text_text_set(text) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_TEXT_SET), EO_TYPECHECK(const char *, text)
+
+/**
+ * @def evas_obj_text_bidi_delimiters_set
+ *
+ * Retrieves the text string currently being displayed by the given
+ * text object.
+ *
+ * @param[in] delim in
+ *
+ * @see evas_object_text_text_get
+ */
+#define evas_obj_text_text_get(text) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_TEXT_GET), EO_TYPECHECK(const char **, text)
+
+/**
+ * @def evas_obj_text_bidi_delimiters_set
+ *
+ * Sets the BiDi delimiters used in the textblock.
+ *
+ * @param[in] delim in
+ *
+ * @see evas_object_text_bidi_delimiters_set
+ */
+#define evas_obj_text_bidi_delimiters_set(delim) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_BIDI_DELIMITERS_SET), EO_TYPECHECK(const char *, delim)
+
+/**
+ * @def evas_obj_text_bidi_delimiters_get
+ *
+ * Gets the BiDi delimiters used in the textblock.
+ *
+ * @param[out] delim out
+ *
+ * @see evas_object_text_bidi_delimiters_get
+ */
+#define evas_obj_text_bidi_delimiters_get(delim) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_BIDI_DELIMITERS_GET), EO_TYPECHECK(const char **, delim)
+
+/**
+ * @def evas_obj_text_direction_get
+ *
+ * Retrieves the direction of the text currently being displayed in the
+ * text object.
+ *
+ * @param[out] bidi_dir out
+ *
+ * @see evas_object_text_direction_get
+ */
+#define evas_obj_text_direction_get(bidi_dir) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_DIRECTION_GET), EO_TYPECHECK(Evas_BiDi_Direction *, bidi_dir)
+
+/**
+ * @def evas_obj_text_ascent_get
+ *
+ * @param[out] ascent out
+ *
+ * @see evas_object_text_ascent_get
+ */
+#define evas_obj_text_ascent_get(ascent) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_ASCENT_GET), EO_TYPECHECK(Evas_Coord *, ascent)
+
+/**
+ * @def evas_obj_text_descent_get
+ *
+ * @param[out] descent out
+ *
+ * @see evas_object_text_descent_get
+ */
+#define evas_obj_text_descent_get(descent) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_DESCENT_GET), EO_TYPECHECK(Evas_Coord *, descent)
+
+/**
+ * @def evas_obj_text_max_ascent_get
+ *
+ * @param[out] max_ascent out
+ *
+ * @see evas_object_text_max_ascent_get
+ */
+#define evas_obj_text_max_ascent_get(max_ascent) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_MAX_ASCENT_GET), EO_TYPECHECK(Evas_Coord *, max_ascent)
+
+/**
+ * @def evas_obj_text_max_descent_get
+ *
+ * @param[out] max_descent out
+ *
+ * @see evas_object_text_max_descent_get
+ */
+#define evas_obj_text_max_descent_get(max_descent) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_MAX_DESCENT_GET), EO_TYPECHECK(Evas_Coord *, max_descent)
+
+/**
+ * @def evas_obj_text_inset_get
+ *
+ * @param[out] inset out
+ *
+ * @see evas_object_text_inset_get
+ */
+#define evas_obj_text_inset_get(inset) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_INSET_GET), EO_TYPECHECK(Evas_Coord *, inset)
+
+/**
+ * @def evas_obj_text_horiz_advance_get
+ *
+ * @param[out] horiz out
+ *
+ * @see evas_object_text_horiz_advance_get
+ */
+#define evas_obj_text_horiz_advance_get(horiz) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_HORIZ_ADVANCE_GET), EO_TYPECHECK(Evas_Coord *, horiz)
+
+/**
+ * @def evas_obj_text_vert_advance_get_
+ *
+ * @param[out] vert out
+ *
+ * @see evas_object_text_vert_advance_get
+ */
+#define evas_obj_text_vert_advance_get(vert) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_VERT_ADVANCE_GET), EO_TYPECHECK(Evas_Coord *, vert)
+/**
+ * @def evas_obj_text_char_pos_get
+ *
+ * Retrieve position and dimension information of a character within a text @c Evas_Object.
+ *
+ * @param[in] pos in
+ * @param[out] cx out
+ * @param[out] cy out
+ * @param[out] cw out
+ * @param[out] ch out
+ * @param[out] ret out
+ *
+ * @see evas_object_text_char_pos_get
+ */
+#define evas_obj_text_char_pos_get(pos, cx, cy, cw, ch, ret) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_CHAR_POS_GET), EO_TYPECHECK(int, pos), EO_TYPECHECK(Evas_Coord *, cx), EO_TYPECHECK(Evas_Coord *, cy), EO_TYPECHECK(Evas_Coord *, cw), EO_TYPECHECK(Evas_Coord *, ch), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def evas_obj_text_last_up_to_pos
+ *
+ * Returns the logical position of the last char in the text
+ * up to the pos given. this is NOT the position of the last char
+ * because of the possibility of RTL in the text.
+ *
+ * @param[in] x in
+ * @param[in] y in
+ * @param[out] res out
+ *
+ * @see evas_object_text_last_up_to_pos
+ */
+#define evas_obj_text_last_up_to_pos(x, y, res) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_LAST_UP_TO_POS), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(int *, res)
+/**
+ * @def evas_obj_text_char_coords_get
+ *
+ * @param[in] x in
+ * @param[in] y in
+ * @param[out] cx out
+ * @param[out] cy out
+ * @param[out] cw out
+ * @param[out] ch out
+ * @param[out] res out
+ *
+ * @see evas_object_text_char_coords_get
+ */
+#define evas_obj_text_char_coords_get(x, y, cx, cy, cw, ch, res) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_CHAR_COORDS_GET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord *, cx), EO_TYPECHECK(Evas_Coord *, cy), EO_TYPECHECK(Evas_Coord *, cw), EO_TYPECHECK(Evas_Coord *, ch), EO_TYPECHECK(int *, res)
+
+/**
+ * @def evas_obj_text_style_set
+ *
+ * Sets the style to apply on the given text object.
+ *
+ * @param[in] style in
+ *
+ * @see evas_object_text_style_set
+ */
+#define evas_obj_text_style_set(style) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_STYLE_SET), EO_TYPECHECK(Evas_Text_Style_Type, style)
+
+/**
+ * @def evas_obj_text_style_get
+ *
+ * Retrieves the style on use on the given text object.
+ *
+ * @param[out] style out
+ *
+ * @see evas_object_text_style_get
+ */
+#define evas_obj_text_style_get(style) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_STYLE_GET), EO_TYPECHECK(Evas_Text_Style_Type *, style)
+
+/**
+ * @def evas_obj_text_shadow_color_set
+ *
+ * Sets the shadow color for the given text object.
+ *
+ * @param[in] r in
+ * @param[in] g in
+ * @param[in] b in
+ * @param[in] a in
+ *
+ * @see evas_object_text_shadow_color_set
+ */
+#define evas_obj_text_shadow_color_set(r, g, b, a) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_SHADOW_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+
+/**
+ * @def evas_obj_text_shadow_color_get
+ *
+ * Retrieves the shadow color for the given text object.
+ *
+ * @param[out] r out
+ * @param[out] g out
+ * @param[out] b out
+ * @param[out] a out
+ *
+ * @see evas_object_text_shadow_color_get
+ */
+#define evas_obj_text_shadow_color_get(r, g, b, a) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_SHADOW_COLOR_GET), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
+
+/**
+ * @def evas_obj_text_glow_color_set
+ *
+ * Sets the glow color for the given text object.
+ *
+ * @param[in] r in
+ * @param[in] g in
+ * @param[in] b in
+ * @param[in] a in
+ *
+ * @see evas_object_text_glow_color_set
+ */
+#define evas_obj_text_glow_color_set(r, g, b, a) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_GLOW_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+
+/**
+ * @def evas_obj_text_glow_color_get
+ *
+ * Retrieves the glow color for the given text object.
+ *
+ * @param[out] r out
+ * @param[out] g out
+ * @param[out] b out
+ * @param[out] a out
+ *
+ * @see evas_object_text_glow_color_get
+ */
+#define evas_obj_text_glow_color_get(r, g, b, a) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_GLOW_COLOR_GET), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
+
+/**
+ * @def evas_obj_text_glow2_color_set
+ *
+ * Sets the 'glow 2' color for the given text object.
+ *
+ * @param[in] r in
+ * @param[in] g in
+ * @param[in] b in
+ * @param[in] a in
+ *
+ * @see evas_object_text_glow2_color_set
+ */
+#define evas_obj_text_glow2_color_set(r, g, b, a) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_GLOW2_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+
+/**
+ * @def evas_obj_text_glow2_color_get
+ *
+ * Retrieves the 'glow 2' color for the given text object.
+ *
+ * @param[out] r out
+ * @param[out] g out
+ * @param[out] b out
+ * @param[out] a out
+ *
+ * @see evas_object_text_glow2_color_get
+ */
+#define evas_obj_text_glow2_color_get(r, g, b, a) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_GLOW2_COLOR_GET), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
+
+/**
+ * @def evas_obj_text_outline_color_set
+ *
+ * Sets the outline color for the given text object.
+ *
+ * @param[in] r in
+ * @param[in] g in
+ * @param[in] b in
+ * @param[in] a in
+ *
+ * @see evas_object_text_outline_color_set
+ */
+#define evas_obj_text_outline_color_set(r, g, b, a) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+
+/**
+ * @def evas_obj_text_outline_color_get
+ *
+ * Retrieves the outline color for the given text object.
+ *
+ * @param[out] r out
+ * @param[out] g out
+ * @param[out] b out
+ * @param[out] a out
+ *
+ * @see evas_object_text_outline_color_get
+ */
+#define evas_obj_text_outline_color_get(r, g, b, a) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_OUTLINE_COLOR_GET), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
+
+/**
+ * @def evas_obj_text_style_pad_get
+ *
+ * Gets the text style pad of a text object.
+ *
+ * @param[out] l out
+ * @param[out] r out
+ * @param[out] t out
+ * @param[out] b out
+ *
+ * @see evas_object_text_style_pad_get
+ */
+#define evas_obj_text_style_pad_get(l, r, t, b) EVAS_OBJ_TEXT_ID(EVAS_OBJ_TEXT_SUB_ID_STYLE_PAD_GET), EO_TYPECHECK(int *, l), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, t), EO_TYPECHECK(int *, b)
+
 /**
  * Creates a new text object on the provided canvas.
  *
@@ -8447,6 +9242,72 @@ typedef enum _Evas_Textblock_Cursor_Type
    EVAS_TEXTBLOCK_CURSOR_UNDER,
    EVAS_TEXTBLOCK_CURSOR_BEFORE
 } Evas_Textblock_Cursor_Type;
+
+#define EVAS_OBJ_TEXTBLOCK_CLASS evas_object_textblock_class_get()
+
+const Eo_Class *evas_object_textblock_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_TEXTBLOCK_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_SET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_USER_PUSH,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_USER_PEEK,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_USER_POP,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_REPLACE_CHAR_SET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_LEGACY_NEWLINE_SET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_LEGACY_NEWLINE_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_VALIGN_SET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_VALIGN_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_BIDI_DELIMITERS_SET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_BIDI_DELIMITERS_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_REPLACE_CHAR_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_TEXT_MARKUP_SET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_TEXT_MARKUP_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_CURSOR_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_CURSOR_NEW,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_LIST_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_FIRST_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_LAST_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_REMOVE_PAIR,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_LINE_NUMBER_GEOMETRY_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_CLEAR,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_SIZE_FORMATTED_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_SIZE_NATIVE_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_INSETS_GET,
+   EVAS_OBJ_TEXTBLOCK_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_TEXTBLOCK_ID(sub_id) (EVAS_OBJ_TEXTBLOCK_BASE_ID + sub_id)
+
+#define evas_obj_textblock_style_set(ts) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_SET), EO_TYPECHECK(Evas_Textblock_Style *, ts)
+#define evas_obj_textblock_style_get(ts) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_GET), EO_TYPECHECK(const Evas_Textblock_Style **, ts)
+#define evas_obj_textblock_style_user_push(ts) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_USER_PUSH), EO_TYPECHECK(Evas_Textblock_Style *, ts)
+#define evas_obj_textblock_style_user_peek(ts) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_USER_PEEK), EO_TYPECHECK(const Evas_Textblock_Style **, ts)
+#define evas_obj_textblock_style_user_pop() EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_USER_POP)
+#define evas_obj_textblock_replace_char_set(ch) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_REPLACE_CHAR_SET), EO_TYPECHECK(const char *, ch)
+#define evas_obj_textblock_legacy_newline_set(mode) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_LEGACY_NEWLINE_SET), EO_TYPECHECK(Eina_Bool, mode)
+#define evas_obj_textblock_legacy_newline_get(newline) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_LEGACY_NEWLINE_GET), EO_TYPECHECK(Eina_Bool *, newline)
+#define evas_obj_textblock_valign_set(align) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_VALIGN_SET), EO_TYPECHECK(double, align)
+#define evas_obj_textblock_valign_get(valign) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_VALIGN_GET), EO_TYPECHECK(double *, valign)
+#define evas_obj_textblock_bidi_delimiters_set(delim) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_BIDI_DELIMITERS_SET), EO_TYPECHECK(const char *, delim)
+#define evas_obj_textblock_bidi_delimiters_get(delim) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_BIDI_DELIMITERS_GET), EO_TYPECHECK(const char **, delim)
+#define evas_obj_textblock_replace_char_get(repch) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_REPLACE_CHAR_GET), EO_TYPECHECK(const char **, repch)
+#define evas_obj_textblock_text_markup_set(text) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_TEXT_MARKUP_SET), EO_TYPECHECK(const char *, text)
+#define evas_obj_textblock_text_markup_get(markup) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_TEXT_MARKUP_GET), EO_TYPECHECK(const char **, markup)
+#define evas_obj_textblock_cursor_get(cursor) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_CURSOR_GET), EO_TYPECHECK(Evas_Textblock_Cursor **, cursor)
+#define evas_obj_textblock_cursor_new(cur) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_CURSOR_NEW), EO_TYPECHECK(Evas_Textblock_Cursor **, cur)
+#define evas_obj_textblock_node_format_list_get(obj, anchor, list) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_LIST_GET), EO_TYPECHECK(const char *, anchor), EO_TYPECHECK(const Eina_List **, list)
+#define evas_obj_textblock_node_format_first_get(format) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_FIRST_GET), EO_TYPECHECK(const Evas_Object_Textblock_Node_Format **, format)
+#define evas_obj_textblock_node_format_last_get(format) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_LAST_GET), EO_TYPECHECK(const Evas_Object_Textblock_Node_Format **, format)
+#define evas_obj_textblock_node_format_remove_pair(n) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_NODE_FORMAT_REMOVE_PAIR), EO_TYPECHECK(Evas_Object_Textblock_Node_Format *, n)
+#define evas_obj_textblock_line_number_geometry_get(line, cx, cy, cw, ch, result) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_LINE_NUMBER_GEOMETRY_GET), EO_TYPECHECK(int, line), EO_TYPECHECK(Evas_Coord *, cx), EO_TYPECHECK(Evas_Coord *, cy), EO_TYPECHECK(Evas_Coord *, cw), EO_TYPECHECK(Evas_Coord *, ch), EO_TYPECHECK(Eina_Bool *, result)
+#define evas_obj_textblock_clear() EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_CLEAR)
+#define evas_obj_textblock_size_formatted_get(w, h) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_SIZE_FORMATTED_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+#define evas_obj_textblock_size_native_get(w, h) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_SIZE_NATIVE_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+#define evas_obj_textblock_style_insets_get(l, r, t, b) EVAS_OBJ_TEXTBLOCK_ID(EVAS_OBJ_TEXTBLOCK_SUB_ID_STYLE_INSETS_GET), EO_TYPECHECK(Evas_Coord *, l), EO_TYPECHECK(Evas_Coord *, r), EO_TYPECHECK(Evas_Coord *, t), EO_TYPECHECK(Evas_Coord *, b)
 
 /**
  * Adds a textblock to the given evas.
@@ -9318,6 +10179,48 @@ EAPI void                                     evas_object_textblock_style_insets
  * @{
  */
 
+#define EVAS_OBJ_TEXTGRID_CLASS evas_object_textgrid_class_get()
+
+const Eo_Class *evas_object_textgrid_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_TEXTGRID_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_TEXTGRID_SUB_ID_SIZE_SET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_SIZE_GET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_FONT_SOURCE_SET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_FONT_SOURCE_GET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_FONT_SET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_FONT_GET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_CELL_SIZE_GET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_PALETTE_SET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_PALETTE_GET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_SUPPORTED_FONT_STYLES_SET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_SUPPORTED_FONT_STYLES_GET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_CELLROW_SET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_CELLROW_GET,
+   EVAS_OBJ_TEXTGRID_SUB_ID_UPDATE_ADD,
+   EVAS_OBJ_TEXTGRID_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_TEXTGRID_ID(sub_id) (EVAS_OBJ_TEXTGRID_BASE_ID + sub_id)
+
+#define evas_obj_textgrid_size_set(w, h) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_SIZE_SET), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+#define evas_obj_textgrid_size_get(w, h) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_SIZE_GET), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h)
+#define evas_obj_textgrid_font_source_set(font_source) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_FONT_SOURCE_SET), EO_TYPECHECK(const char *, font_source)
+#define evas_obj_textgrid_font_source_get(ret) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_FONT_SOURCE_GET), EO_TYPECHECK(const char **, ret)
+#define evas_obj_textgrid_font_set(font_name, font_size) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_FONT_SET), EO_TYPECHECK(const char *, font_name), EO_TYPECHECK(Evas_Font_Size, font_size)
+#define evas_obj_textgrid_font_get(font_name, font_size) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_FONT_GET), EO_TYPECHECK(const char **, font_name), EO_TYPECHECK(Evas_Font_Size *, font_size)
+#define evas_obj_textgrid_cell_size_get(width, height) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_CELL_SIZE_GET), EO_TYPECHECK(int *, width), EO_TYPECHECK(int *, height)
+#define evas_obj_textgrid_palette_set(pal, idx, r, g, b, a) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_PALETTE_SET), EO_TYPECHECK(Evas_Textgrid_Palette, pal), EO_TYPECHECK(int, idx), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+#define evas_obj_textgrid_palette_get(pal, idx, r, g, b, a) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_PALETTE_GET), EO_TYPECHECK(Evas_Textgrid_Palette, pal), EO_TYPECHECK(int, idx), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
+#define evas_obj_textgrid_supported_font_styles_set(styles) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_SUPPORTED_FONT_STYLES_SET), EO_TYPECHECK(Evas_Textgrid_Font_Style, styles)
+#define evas_obj_textgrid_supported_font_styles_get(ret) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_SUPPORTED_FONT_STYLES_GET), EO_TYPECHECK(Evas_Textgrid_Font_Style *, ret)
+#define evas_obj_textgrid_cellrow_set(y, row) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_CELLROW_SET), EO_TYPECHECK(int, y), EO_TYPECHECK(const Evas_Textgrid_Cell *, row)
+#define evas_obj_textgrid_cellrow_get(y, ret) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_CELLROW_GET), EO_TYPECHECK(int, y), EO_TYPECHECK(Evas_Textgrid_Cell **, ret)
+#define evas_obj_textgrid_update_add(x, y, w, h) EVAS_OBJ_TEXTGRID_ID(EVAS_OBJ_TEXTGRID_SUB_ID_UPDATE_ADD), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+
 /**
  * @typedef Evas_Textgrid_Palette
  *
@@ -9671,6 +10574,23 @@ EAPI void evas_object_textgrid_update_add(Evas_Object *obj, int x, int y, int w,
  * @{
  */
 
+#define EVAS_OBJ_LINE_CLASS evas_object_line_class_get()
+const Eo_Class *evas_object_line_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_LINE_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_LINE_SUB_ID_XY_SET,
+   EVAS_OBJ_LINE_SUB_ID_XY_GET,
+   EVAS_OBJ_LINE_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_LINE_ID(sub_id) (EVAS_OBJ_LINE_BASE_ID + sub_id)
+
+#define evas_obj_line_xy_set(x1, y1, x2, y2) EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_SET), EO_TYPECHECK(Evas_Coord, x1), EO_TYPECHECK(Evas_Coord, y1), EO_TYPECHECK(Evas_Coord, x2), EO_TYPECHECK(Evas_Coord, y2)
+#define evas_obj_line_xy_get(x1, y1, x2, y2) EVAS_OBJ_LINE_ID(EVAS_OBJ_LINE_SUB_ID_XY_GET), EO_TYPECHECK(Evas_Coord *, x1), EO_TYPECHECK(Evas_Coord *, y1), EO_TYPECHECK(Evas_Coord *, x2), EO_TYPECHECK(Evas_Coord *, y2)
+
 /**
  * Adds a new evas line object to the given evas.
  * @param   e The given evas.
@@ -9720,6 +10640,23 @@ EAPI void         evas_object_line_xy_get(const Evas_Object *obj, Evas_Coord *x1
  *
  * @{
  */
+
+#define EVAS_OBJ_POLYGON_CLASS evas_object_polygon_class_get()
+const Eo_Class *evas_object_polygon_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_POLYGON_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_POLYGON_SUB_ID_POINT_ADD,
+   EVAS_OBJ_POLYGON_SUB_ID_POINTS_CLEAR,
+   EVAS_OBJ_POLYGON_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_POLYGON_ID(sub_id) (EVAS_OBJ_POLYGON_BASE_ID + sub_id)
+
+#define evas_obj_polygon_point_add(x, y) EVAS_OBJ_POLYGON_ID(EVAS_OBJ_POLYGON_SUB_ID_POINT_ADD), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y)
+#define evas_obj_polygon_points_clear() EVAS_OBJ_POLYGON_ID(EVAS_OBJ_POLYGON_SUB_ID_POINTS_CLEAR)
 
 /**
  * Adds a new evas polygon object to the given evas.
@@ -10167,6 +11104,248 @@ struct _Evas_Smart_Cb_Description
        if (!priv) return;                                \
        evas_object_smart_data_set(o, priv);              \
     }
+
+#define EVAS_OBJ_SMART_CLASS evas_object_smart_class_get()
+
+const Eo_Class *evas_object_smart_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_SMART_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_SMART_SUB_ID_DATA_SET,
+   EVAS_OBJ_SMART_SUB_ID_SMART_GET,
+   EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD,
+   EVAS_OBJ_SMART_SUB_ID_MEMBER_DEL,
+   EVAS_OBJ_SMART_SUB_ID_MEMBERS_GET,
+   EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_SET,
+   EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_GET,
+   EVAS_OBJ_SMART_SUB_ID_CALLBACK_DESCRIPTION_FIND,
+   EVAS_OBJ_SMART_SUB_ID_NEED_RECALCULATE_SET,
+   EVAS_OBJ_SMART_SUB_ID_NEED_RECALCULATE_GET,
+   EVAS_OBJ_SMART_SUB_ID_CALCULATE,
+   EVAS_OBJ_SMART_SUB_ID_CHANGED,
+   EVAS_OBJ_SMART_SUB_ID_ATTACH,
+   // Specific Smart functions that can be overriden by the inherit classes
+   EVAS_OBJ_SMART_SUB_ID_ADD,
+   EVAS_OBJ_SMART_SUB_ID_DEL,
+   EVAS_OBJ_SMART_SUB_ID_RESIZE,
+   EVAS_OBJ_SMART_SUB_ID_MOVE,
+   EVAS_OBJ_SMART_SUB_ID_SHOW,
+   EVAS_OBJ_SMART_SUB_ID_HIDE,
+   EVAS_OBJ_SMART_SUB_ID_COLOR_SET,
+   EVAS_OBJ_SMART_SUB_ID_CLIP_SET,
+   EVAS_OBJ_SMART_SUB_ID_CLIP_UNSET,
+   EVAS_OBJ_SMART_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_SMART_ID(sub_id) (EVAS_OBJ_SMART_BASE_ID + sub_id)
+
+/**
+ * @def evas_obj_smart_data_set
+ *
+ * Store a pointer to user data for a given smart object.
+ *
+ * @param[in] data in
+ *
+ * @see evas_object_smart_data_set
+ */
+#define evas_obj_smart_data_set(data) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DATA_SET), EO_TYPECHECK(void *, data)
+
+/**
+ * @def evas_obj_smart_smart_get
+ *
+ * Get the #Evas_Smart from which smart object was created.
+ *
+ * @param[out] smart out
+ *
+ * @see evas_object_smart_smart_get
+ */
+#define evas_obj_smart_smart_get(smart) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SMART_GET), EO_TYPECHECK(Evas_Smart **, smart)
+
+/**
+ * @def evas_obj_smart_member_add
+ *
+ * Set an Evas object as a member of a given smart object.
+ *
+ * @param[in] obj in
+ *
+ * @see evas_object_smart_member_add
+ */
+#define evas_obj_smart_member_add(obj) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_ADD), EO_TYPECHECK(Evas_Object *, obj)
+
+/**
+ * @def evas_obj_smart_member_del
+ *
+ * Removes a member object from a given smart object.
+ *
+ * @param[in] obj in
+ *
+ * @see evas_object_smart_member_del
+ */
+#define evas_obj_smart_member_del(obj) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBER_DEL), EO_TYPECHECK(Evas_Object *, obj)
+
+/**
+ * @def evas_obj_smart_members_get
+ *
+ * Retrieves the list of the member objects of a given Evas smart
+ * object
+ *
+ * @param[out] list out
+ *
+ * @see evas_object_smart_members_get
+ */
+#define evas_obj_smart_members_get(list) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MEMBERS_GET), EO_TYPECHECK(Eina_List **, list)
+
+/**
+ * @def evas_obj_smart_callback_priority_add
+ *
+ * Add (register) a callback function to the smart event specified by
+ * @p event on the smart object. Except for the priority field,
+ * it's exactly the same as @ref evas_object_smart_callback_add
+ *
+ * @param[in] event in
+ * @param[in] priority in
+ * @param[in] func in
+ * @param[in] data in
+ *
+ * @see evas_object_smart_callback_priority_add
+ */
+#define evas_obj_smart_callback_priority_add(event, priority, func, data) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACK_PRIORITY_ADD), EO_TYPECHECK(const char *, event), EO_TYPECHECK(Evas_Callback_Priority, priority), EO_TYPECHECK(Evas_Smart_Cb, func), EO_TYPECHECK(const void *, data)
+
+/**
+ * @def evas_obj_smart_callback_del
+ *
+ * Delete (unregister) a callback function from the smart event
+ * specified by @p event on the smart object.
+ *
+ * @param[in] event in
+ * @param[in] func in
+ * @param[out] ret_data out
+ *
+ * @see evas_object_smart_callback_del
+ */
+#define evas_obj_smart_callback_del(event, func, ret_data) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACK_DEL), EO_TYPECHECK(const char *, event), EO_TYPECHECK(Evas_Smart_Cb, func), EO_TYPECHECK(void **, ret_data)
+
+/**
+ * @def evas_obj_smart_callback_del_full
+ *
+ * Delete (unregister) a callback function from the smart event
+ * specified by @p event on the smart object.
+ *
+ * @param[in] event in
+ * @param[in] func in
+ * @param[in] data in
+ * @param[out] ret_data out
+ *
+ * @see evas_object_smart_callback_del_full
+ */
+#define evas_obj_smart_callback_del_full(event, func, data, ret_data) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACK_DEL_FULL), EO_TYPECHECK(const char *, event), EO_TYPECHECK(Evas_Smart_Cb, func), EO_TYPECHECK(const void *, data), EO_TYPECHECK(void **, ret_data)
+
+/**
+ * @def evas_obj_smart_callback_call
+ *
+ * Call a given smart callback on the smart object.
+ *
+ * @param[in] event
+ * @param[in] event_info
+ *
+ * @see evas_object_smart_callback_call
+ */
+#define evas_obj_smart_callback_call(event, event_info) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACK_CALL), EO_TYPECHECK(const char *, event), EO_TYPECHECK(void *, event_info)
+
+/**
+ * @def evas_obj_smart_callbacks_descriptions_set
+ *
+ * Set an smart object @b instance's smart callbacks descriptions.
+ *
+ * @param[in] descriptions in
+ * @param[out] result out
+ *
+ * @see evas_object_smart_callbacks_descriptions_set
+ */
+#define evas_obj_smart_callbacks_descriptions_set(descriptions, result) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_SET), EO_TYPECHECK(const Evas_Smart_Cb_Description *, descriptions), EO_TYPECHECK(Eina_Bool *, result)
+
+/**
+ * @def evas_obj_smart_callbacks_descriptions_get
+ *
+ * Retrieve an smart object's know smart callback descriptions (both
+ * instance and class ones).
+ *
+ * @param[out] class_descriptions out
+ * @param[out] class_count out
+ * @param[out] instance_descriptions out
+ * @param[out] instance_count out
+ *
+ * @see evas_object_smart_callbacks_descriptions_get
+ */
+#define evas_obj_smart_callbacks_descriptions_get(class_descriptions, class_count, instance_descriptions, instance_count) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACKS_DESCRIPTIONS_GET), EO_TYPECHECK(const Evas_Smart_Cb_Description ***, class_descriptions), EO_TYPECHECK(unsigned int *, class_count), EO_TYPECHECK(const Evas_Smart_Cb_Description ***, instance_descriptions), EO_TYPECHECK(unsigned int *, instance_count)
+
+/**
+ * @def evas_obj_smart_callback_description_find
+ *
+ * Find callback description for callback called @a name.
+ *
+ * @param[in] name in
+ * @param[out] class_description out
+ * @param[out] instance_description out
+ *
+ * @see evas_object_smart_callback_description_find
+ */
+#define evas_obj_smart_callback_description_find(name, class_description, instance_description) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALLBACK_DESCRIPTION_FIND), EO_TYPECHECK(const char *, name), EO_TYPECHECK(const Evas_Smart_Cb_Description **, class_description), EO_TYPECHECK(const Evas_Smart_Cb_Description **, instance_description)
+
+/**
+ * @def evas_obj_smart_need_recalculate_set
+ *
+ * Set or unset the flag signalling that a given smart object needs to
+ * get recalculated.
+ *
+ * @param[in] value in
+ *
+ * @see evas_object_smart_need_recalculate_set
+ */
+#define evas_obj_smart_need_recalculate_set(value) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_NEED_RECALCULATE_SET), EO_TYPECHECK(Eina_Bool, value)
+
+/**
+ * @def evas_obj_smart_need_recalculate_get
+ *
+ * Get the value of the flag signalling that a given smart object needs to
+ * get recalculated.
+ *
+ * @param[out] need_recalculate out
+ *
+ * @see evas_object_smart_need_recalculate_get
+ */
+#define evas_obj_smart_need_recalculate_get(need_recalculate) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_NEED_RECALCULATE_GET), EO_TYPECHECK(Eina_Bool *, need_recalculate)
+
+/**
+ * @def evas_obj_smart_calculate
+ *
+ * Call the @b calculate() smart function immediately on a given smart
+ * object.
+ *
+ * @see evas_object_smart_calculate
+ */
+#define evas_obj_smart_calculate() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALCULATE)
+
+/**
+ * @def evas_obj_smart_changed
+ *
+ * Mark smart object as changed, dirty.
+ *
+ * @see evas_object_smart_changed
+ */
+#define evas_obj_smart_changed() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CHANGED)
+
+#define evas_obj_smart_add() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD)
+#define evas_obj_smart_del() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL)
+#define evas_obj_smart_resize(w, h) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+#define evas_obj_smart_move(x, y) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_MOVE), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y)
+#define evas_obj_smart_show() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_SHOW)
+#define evas_obj_smart_hide() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_HIDE)
+#define evas_obj_smart_color_set(r, g, b, a) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+#define evas_obj_smart_clip_set(clip) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_SET), EO_TYPECHECK(Evas_Object *, clip)
+#define evas_obj_smart_clip_unset() EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CLIP_UNSET)
 
 /**
  * Free an #Evas_Smart struct
@@ -10942,6 +12121,17 @@ EAPI void         evas_object_smart_move_children_relative(Evas_Object *obj, Eva
  * @{
  */
 
+#define EVAS_OBJ_SMART_CLIPPED_CLASS evas_object_smart_clipped_eo_class_get()
+
+const Eo_Class *evas_object_smart_clipped_eo_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_SMART_CLIPPED_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_SMART_CLIPPED_SUB_ID_LAST
+};
+
 /**
  * Every subclass should provide this at the beginning of their own
  * data set with evas_object_smart_data_set().
@@ -11264,6 +12454,98 @@ struct _Evas_Object_Box_Option
    Eina_Bool    min_reached : 1;
    Evas_Coord   alloc_size;
 };    /**< #Evas_Object_Box_Option struct fields */
+
+#define EVAS_OBJ_BOX_CLASS evas_object_box_class_get()
+
+const Eo_Class *evas_object_box_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_BOX_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_APPEND,
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_PREPEND,
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_BEFORE,
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_AFTER,
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_AT,
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_REMOVE,
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_REMOVE_AT,
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_OPTION_NEW,
+   EVAS_OBJ_BOX_SUB_ID_INTERNAL_OPTION_FREE,
+
+   EVAS_OBJ_BOX_SUB_ID_ADD_TO,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_SET,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_HORIZONTAL,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_VERTICAL,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_HOMOGENEOUS_HORIZONTAL,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_HOMOGENEOUS_VERTICAL,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_HOMOGENEOUS_MAX_SIZE_HORIZONTAL,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_HOMOGENEOUS_MAX_SIZE_VERTICAL,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_FLOW_HORIZONTAL,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_FLOW_VERTICAL,
+   EVAS_OBJ_BOX_SUB_ID_LAYOUT_STACK,
+   EVAS_OBJ_BOX_SUB_ID_ALIGN_SET,
+   EVAS_OBJ_BOX_SUB_ID_ALIGN_GET,
+   EVAS_OBJ_BOX_SUB_ID_PADDING_SET,
+   EVAS_OBJ_BOX_SUB_ID_PADDING_GET,
+   EVAS_OBJ_BOX_SUB_ID_APPEND,
+   EVAS_OBJ_BOX_SUB_ID_PREPEND,
+   EVAS_OBJ_BOX_SUB_ID_INSERT_BEFORE,
+   EVAS_OBJ_BOX_SUB_ID_INSERT_AFTER,
+   EVAS_OBJ_BOX_SUB_ID_INSERT_AT,
+   EVAS_OBJ_BOX_SUB_ID_REMOVE,
+   EVAS_OBJ_BOX_SUB_ID_REMOVE_AT,
+   EVAS_OBJ_BOX_SUB_ID_REMOVE_ALL,
+   EVAS_OBJ_BOX_SUB_ID_ITERATOR_NEW,
+   EVAS_OBJ_BOX_SUB_ID_ACCESSOR_NEW,
+   EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_NAME_GET,
+   EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_ID_GET,
+   EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VSET,
+   EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VGET,
+   EVAS_OBJ_BOX_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_BOX_ID(sub_id) (EVAS_OBJ_BOX_BASE_ID + sub_id)
+
+#define evas_obj_box_internal_append(child, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_APPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_internal_prepend(child, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_PREPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_internal_insert_before(child, reference, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_BEFORE), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(const Evas_Object *, reference), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_internal_insert_after(child, reference, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_AFTER), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(const Evas_Object *, reference), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_internal_insert_at(child, pos, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_INSERT_AT), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(unsigned int, pos), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_internal_remove(child, result) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_REMOVE), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object **, result)
+#define evas_obj_box_internal_remove_at(pos, result) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_REMOVE_AT), EO_TYPECHECK(unsigned int, pos), EO_TYPECHECK(Evas_Object **, result)
+#define evas_obj_box_internal_option_new(child, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_OPTION_NEW), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object_Box_Option **, ret)
+#define evas_obj_box_internal_option_free(opt) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INTERNAL_OPTION_FREE), EO_TYPECHECK(Evas_Object_Box_Option *, opt)
+
+#define evas_obj_box_add_to(o) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_ADD_TO), EO_TYPECHECK(Evas_Object **, o)
+#define evas_obj_box_layout_set(cb, data, free_data) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_SET), EO_TYPECHECK(Evas_Object_Box_Layout, cb), EO_TYPECHECK(const void *, data), EO_TYPECHECK(Eina_Free_Cb, free_data)
+#define evas_obj_box_layout_horizontal() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_HORIZONTAL)
+#define evas_obj_box_layout_vertical() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_VERTICAL)
+#define evas_obj_box_layout_homogeneous_horizontal() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_HOMOGENEOUS_HORIZONTAL)
+#define evas_obj_box_layout_homogeneous_vertical() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_HOMOGENEOUS_VERTICAL)
+#define evas_obj_box_layout_homogeneous_max_size_horizontal() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_HOMOGENEOUS_MAX_SIZE_HORIZONTAL)
+#define evas_obj_box_layout_homogeneous_max_size_vertical() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_HOMOGENEOUS_MAX_SIZE_VERTICAL)
+#define evas_obj_box_layout_flow_horizontal() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_FLOW_HORIZONTAL)
+#define evas_obj_box_layout_flow_vertical() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_FLOW_VERTICAL)
+#define evas_obj_box_layout_stack() EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_LAYOUT_STACK)
+#define evas_obj_box_align_set(horizontal, vertical) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_ALIGN_SET), EO_TYPECHECK(double, horizontal), EO_TYPECHECK(double, vertical)
+#define evas_obj_box_align_get(horizontal, vertical) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_ALIGN_GET), EO_TYPECHECK(double *, horizontal), EO_TYPECHECK(double *, vertical)
+#define evas_obj_box_padding_set(horizontal, vertical) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_PADDING_SET), EO_TYPECHECK(Evas_Coord, horizontal), EO_TYPECHECK(Evas_Coord, vertical)
+#define evas_obj_box_padding_get(horizontal, vertical) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_PADDING_GET), EO_TYPECHECK(Evas_Coord *, horizontal), EO_TYPECHECK(Evas_Coord *, vertical)
+#define evas_obj_box_append(child, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_APPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_prepend(child, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_PREPEND), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_insert_before(child, reference, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INSERT_BEFORE), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(const Evas_Object *, reference), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_insert_after(child, reference, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INSERT_AFTER), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(const Evas_Object *, reference), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_insert_at(child, pos, option) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_INSERT_AT), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(unsigned int, pos), EO_TYPECHECK(Evas_Object_Box_Option **, option)
+#define evas_obj_box_remove(child, result) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_REMOVE), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Eina_Bool *, result)
+#define evas_obj_box_remove_at(pos, result) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_REMOVE_AT), EO_TYPECHECK(unsigned int, pos), EO_TYPECHECK(Eina_Bool *, result)
+#define evas_obj_box_remove_all(clear, result) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_REMOVE_ALL), EO_TYPECHECK(Eina_Bool, clear), EO_TYPECHECK(Eina_Bool *, result)
+#define evas_obj_box_iterator_new(itr) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_ITERATOR_NEW), EO_TYPECHECK(Eina_Iterator **, itr)
+#define evas_obj_box_accessor_new(accessor) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_ACCESSOR_NEW), EO_TYPECHECK(Eina_Accessor **, accessor)
+#define evas_obj_box_option_property_name_get(property, name) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_NAME_GET), EO_TYPECHECK(int, property), EO_TYPECHECK(const char **, name)
+#define evas_obj_box_option_property_id_get(name, id) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_ID_GET), EO_TYPECHECK(const char *, name), EO_TYPECHECK(int *, id)
+#define evas_obj_box_option_property_vset(opt, property, args, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VSET), EO_TYPECHECK(Evas_Object_Box_Option *, opt), EO_TYPECHECK(int, property), EO_TYPECHECK(va_list, args), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_box_option_property_vget(opt, property, args, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VGET), EO_TYPECHECK(Evas_Object_Box_Option *, opt), EO_TYPECHECK(int, property), EO_TYPECHECK(va_list, args), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * Set the default box @a api struct (Evas_Object_Box_Api)
@@ -12009,6 +13291,54 @@ EAPI Eina_Bool                  evas_object_box_option_property_vget(const Evas_
  * @{
  */
 
+#define EVAS_OBJ_TABLE_CLASS evas_object_table_class_get()
+
+const Eo_Class *evas_object_table_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_TABLE_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_TABLE_SUB_ID_ADD_TO,
+   EVAS_OBJ_TABLE_SUB_ID_HOMOGENEOUS_SET,
+   EVAS_OBJ_TABLE_SUB_ID_HOMOGENEOUS_GET,
+   EVAS_OBJ_TABLE_SUB_ID_ALIGN_SET,
+   EVAS_OBJ_TABLE_SUB_ID_ALIGN_GET,
+   EVAS_OBJ_TABLE_SUB_ID_PADDING_SET,
+   EVAS_OBJ_TABLE_SUB_ID_PADDING_GET,
+   EVAS_OBJ_TABLE_SUB_ID_PACK_GET,
+   EVAS_OBJ_TABLE_SUB_ID_PACK,
+   EVAS_OBJ_TABLE_SUB_ID_UNPACK,
+   EVAS_OBJ_TABLE_SUB_ID_CLEAR,
+   EVAS_OBJ_TABLE_SUB_ID_COL_ROW_SIZE_GET,
+   EVAS_OBJ_TABLE_SUB_ID_ITERATOR_NEW,
+   EVAS_OBJ_TABLE_SUB_ID_ACCESSOR_NEW,
+   EVAS_OBJ_TABLE_SUB_ID_CHILDREN_GET,
+   EVAS_OBJ_TABLE_SUB_ID_MIRRORED_GET,
+   EVAS_OBJ_TABLE_SUB_ID_MIRRORED_SET,
+   EVAS_OBJ_TABLE_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_TABLE_ID(sub_id) (EVAS_OBJ_TABLE_BASE_ID + sub_id)
+
+#define evas_obj_table_add_to(ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ADD_TO), EO_TYPECHECK(Evas_Object **, ret)
+#define evas_obj_table_homogeneous_set(homogeneous) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_HOMOGENEOUS_SET), EO_TYPECHECK(Evas_Object_Table_Homogeneous_Mode, homogeneous)
+#define evas_obj_table_homogeneous_get(ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_HOMOGENEOUS_GET), EO_TYPECHECK(Evas_Object_Table_Homogeneous_Mode *, ret)
+#define evas_obj_table_align_set(horizontal, vertical) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ALIGN_SET), EO_TYPECHECK(double, horizontal), EO_TYPECHECK(double, vertical)
+#define evas_obj_table_align_get(horizontal, vertical) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ALIGN_GET), EO_TYPECHECK(double *, horizontal), EO_TYPECHECK(double *, vertical)
+#define evas_obj_table_padding_set(horizontal, vertical) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_PADDING_SET), EO_TYPECHECK(Evas_Coord, horizontal), EO_TYPECHECK(Evas_Coord, vertical)
+#define evas_obj_table_padding_get(horizontal, vertical) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_PADDING_GET), EO_TYPECHECK(Evas_Coord *, horizontal), EO_TYPECHECK(Evas_Coord *, vertical)
+#define evas_obj_table_pack_get(child, col, row, colspan, rowspan, ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_PACK_GET), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(unsigned short *, col), EO_TYPECHECK(unsigned short *, row), EO_TYPECHECK(unsigned short *, colspan), EO_TYPECHECK(unsigned short *, rowspan), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_table_pack(child, col, row, colspan, rowspan, ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_PACK), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(unsigned short, col), EO_TYPECHECK(unsigned short, row), EO_TYPECHECK(unsigned short, colspan), EO_TYPECHECK(unsigned short, rowspan), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_table_unpack(child, ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_UNPACK), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_table_clear(clear) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_CLEAR), EO_TYPECHECK(Eina_Bool, clear)
+#define evas_obj_table_col_row_size_get(cols, rows) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_COL_ROW_SIZE_GET), EO_TYPECHECK(int *, cols), EO_TYPECHECK(int *, rows)
+#define evas_obj_table_iterator_new(ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ITERATOR_NEW), EO_TYPECHECK(Eina_Iterator **, ret)
+#define evas_obj_table_accessor_new(ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ACCESSOR_NEW), EO_TYPECHECK(Eina_Accessor **, ret)
+#define evas_obj_table_children_get(ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_CHILDREN_GET), EO_TYPECHECK(Eina_List **, ret)
+#define evas_obj_table_mirrored_get(ret) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_MIRRORED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_table_mirrored_set(mirrored) EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_MIRRORED_SET), EO_TYPECHECK(Eina_Bool, mirrored)
+
 /**
  * @brief Create a new table.
  *
@@ -12222,6 +13552,45 @@ EAPI Evas_Object                       *evas_object_table_child_get(const Evas_O
  * @addtogroup Evas_Object_Grid
  * @{
  */
+
+#define EVAS_OBJ_GRID_CLASS evas_object_grid_class_get()
+
+const Eo_Class *evas_object_grid_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_GRID_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_GRID_SUB_ID_ADD_TO,
+   EVAS_OBJ_GRID_SUB_ID_SIZE_SET,
+   EVAS_OBJ_GRID_SUB_ID_SIZE_GET,
+   EVAS_OBJ_GRID_SUB_ID_PACK,
+   EVAS_OBJ_GRID_SUB_ID_UNPACK,
+   EVAS_OBJ_GRID_SUB_ID_CLEAR,
+   EVAS_OBJ_GRID_SUB_ID_PACK_GET,
+   EVAS_OBJ_GRID_SUB_ID_ITERATOR_NEW,
+   EVAS_OBJ_GRID_SUB_ID_ACCESSOR_NEW,
+   EVAS_OBJ_GRID_SUB_ID_CHILDREN_GET,
+   EVAS_OBJ_GRID_SUB_ID_MIRRORED_GET,
+   EVAS_OBJ_GRID_SUB_ID_MIRRORED_SET,
+   EVAS_OBJ_GRID_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_GRID_ID(sub_id) (EVAS_OBJ_GRID_BASE_ID + sub_id)
+
+#define evas_obj_grid_add(ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_ADD), EO_TYPECHECK(Evas_Object **, ret)
+#define evas_obj_grid_add_to(ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_ADD_TO), EO_TYPECHECK(Evas_Object **, ret)
+#define evas_obj_grid_size_set(w, h) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_SIZE_SET), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+#define evas_obj_grid_size_get(w, h) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_SIZE_GET), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h)
+#define evas_obj_grid_pack(child, x, y, w, h, ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_PACK), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_grid_unpack(child, ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_UNPACK), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_grid_clear(clear) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_CLEAR), EO_TYPECHECK(Eina_Bool, clear)
+#define evas_obj_grid_pack_get(child, x, y, w, h, ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_PACK_GET), EO_TYPECHECK(Evas_Object *, child), EO_TYPECHECK(int *, x), EO_TYPECHECK(int *, y), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_grid_iterator_new(ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_ITERATOR_NEW), EO_TYPECHECK(Eina_Iterator **, ret)
+#define evas_obj_grid_accessor_new(ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_ACCESSOR_NEW), EO_TYPECHECK(Eina_Accessor **, ret)
+#define evas_obj_grid_children_get(ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_CHILDREN_GET), EO_TYPECHECK(Eina_List **, ret)
+#define evas_obj_grid_mirrored_get(ret) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_MIRRORED_GET), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_grid_mirrored_set(mirrored) EVAS_OBJ_GRID_ID(EVAS_OBJ_GRID_SUB_ID_MIRRORED_SET), EO_TYPECHECK(Eina_Bool, mirrored)
 
 /**
  * Create a new grid.
@@ -13214,6 +14583,1850 @@ EAPI Evas_Touch_Point_State evas_touch_point_list_nth_state_get(Evas *e, unsigne
 /**
  * @}
  */
+
+#define EVAS_COMMON_CLASS evas_common_class_get()
+
+const Eo_Class *evas_common_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_COMMON_BASE_ID;
+
+enum
+{
+   EVAS_COMMON_SUB_ID_EVAS_GET,
+   EVAS_COMMON_SUB_ID_LAST
+};
+
+#define EVAS_COMMON_ID(sub_id) (EVAS_COMMON_BASE_ID + sub_id)
+
+#define evas_common_evas_get(ret) EVAS_COMMON_ID(EVAS_COMMON_SUB_ID_EVAS_GET), EO_TYPECHECK(Evas **, ret)
+
+extern EAPI Eo_Op EVAS_OBJ_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_SUB_ID_POSITION_SET,
+   EVAS_OBJ_SUB_ID_POSITION_GET,
+   EVAS_OBJ_SUB_ID_SIZE_SET,
+   EVAS_OBJ_SUB_ID_SIZE_GET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_MIN_SET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_MIN_GET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_MAX_SET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_MAX_GET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_REQUEST_SET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_REQUEST_GET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_ASPECT_SET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_ASPECT_GET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_ALIGN_SET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_ALIGN_GET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_WEIGHT_SET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_WEIGHT_GET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_PADDING_SET,
+   EVAS_OBJ_SUB_ID_SIZE_HINT_PADDING_GET,
+   EVAS_OBJ_SUB_ID_VISIBILITY_SET,
+   EVAS_OBJ_SUB_ID_VISIBILITY_GET,
+   EVAS_OBJ_SUB_ID_COLOR_SET,
+   EVAS_OBJ_SUB_ID_COLOR_GET,
+   EVAS_OBJ_SUB_ID_ANTI_ALIAS_SET,
+   EVAS_OBJ_SUB_ID_ANTI_ALIAS_GET,
+   EVAS_OBJ_SUB_ID_SCALE_SET,
+   EVAS_OBJ_SUB_ID_SCALE_GET,
+   EVAS_OBJ_SUB_ID_RENDER_OP_SET,
+   EVAS_OBJ_SUB_ID_RENDER_OP_GET,
+   EVAS_OBJ_SUB_ID_TYPE_SET,
+   EVAS_OBJ_SUB_ID_TYPE_GET,
+   EVAS_OBJ_SUB_ID_PRECISE_IS_INSIDE_SET,
+   EVAS_OBJ_SUB_ID_PRECISE_IS_INSIDE_GET,
+   EVAS_OBJ_SUB_ID_STATIC_CLIP_SET,
+   EVAS_OBJ_SUB_ID_STATIC_CLIP_GET,
+   EVAS_OBJ_SUB_ID_IS_FRAME_OBJECT_SET,
+   EVAS_OBJ_SUB_ID_IS_FRAME_OBJECT_GET,
+   EVAS_OBJ_SUB_ID_FREEZE_EVENTS_SET,
+   EVAS_OBJ_SUB_ID_FREEZE_EVENTS_GET,
+   EVAS_OBJ_SUB_ID_PASS_EVENTS_SET,
+   EVAS_OBJ_SUB_ID_PASS_EVENTS_GET,
+   EVAS_OBJ_SUB_ID_REPEAT_EVENTS_SET,
+   EVAS_OBJ_SUB_ID_REPEAT_EVENTS_GET,
+   EVAS_OBJ_SUB_ID_PROPAGATE_EVENTS_SET,
+   EVAS_OBJ_SUB_ID_PROPAGATE_EVENTS_GET,
+   EVAS_OBJ_SUB_ID_POINTER_MODE_SET,
+   EVAS_OBJ_SUB_ID_POINTER_MODE_GET,
+   EVAS_OBJ_SUB_ID_KEY_GRAB,
+   EVAS_OBJ_SUB_ID_KEY_UNGRAB,
+   EVAS_OBJ_SUB_ID_FOCUS_SET,
+   EVAS_OBJ_SUB_ID_FOCUS_GET,
+   EVAS_OBJ_SUB_ID_NAME_SET,
+   EVAS_OBJ_SUB_ID_NAME_GET,
+   EVAS_OBJ_SUB_ID_NAME_CHILD_FIND,
+   EVAS_OBJ_SUB_ID_LAYER_SET,
+   EVAS_OBJ_SUB_ID_LAYER_GET,
+   EVAS_OBJ_SUB_ID_CLIP_SET,
+   EVAS_OBJ_SUB_ID_CLIP_GET,
+   EVAS_OBJ_SUB_ID_CLIP_UNSET,
+   EVAS_OBJ_SUB_ID_CLIPEES_GET,
+   EVAS_OBJ_SUB_ID_MAP_ENABLE_SET,
+   EVAS_OBJ_SUB_ID_MAP_ENABLE_GET,
+   EVAS_OBJ_SUB_ID_MAP_SET,
+   EVAS_OBJ_SUB_ID_MAP_GET,
+   EVAS_OBJ_SUB_ID_SMART_PARENT_GET,
+   EVAS_OBJ_SUB_ID_SMART_DATA_GET,
+   EVAS_OBJ_SUB_ID_SMART_TYPE_CHECK,
+   EVAS_OBJ_SUB_ID_SMART_TYPE_CHECK_PTR,
+   EVAS_OBJ_SUB_ID_SMART_MOVE_CHILDREN_RELATIVE,
+   EVAS_OBJ_SUB_ID_SMART_CLIPPED_CLIPPER_GET,
+   EVAS_OBJ_SUB_ID_RAISE,
+   EVAS_OBJ_SUB_ID_LOWER,
+   EVAS_OBJ_SUB_ID_STACK_ABOVE,
+   EVAS_OBJ_SUB_ID_STACK_BELOW,
+   EVAS_OBJ_SUB_ID_ABOVE_GET,
+   EVAS_OBJ_SUB_ID_BELOW_GET,
+   EVAS_OBJ_SUB_ID_TYPE_CHECK,
+   EVAS_OBJ_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_ID(sub_id) (EVAS_OBJ_BASE_ID + sub_id)
+
+/**
+ * @def evas_obj_position_set
+ *
+ * Move the given Evas object to the given location inside its
+ * canvas' viewport.
+ *
+ * @param[in] x   in
+ * @param[in] y   in
+ *
+ * @see evas_object_move
+ */
+#define evas_obj_position_set(x, y) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y)
+
+/**
+ * @def evas_obj_position_get
+ *
+ * Retrieves the position of the given Evas object.
+ *
+ * @param[out] x out
+ * @param[out] y out
+ *
+ * @see evas_object_geometry_get
+ */
+#define evas_obj_position_get(x, y) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POSITION_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y)
+
+/**
+ * @def evas_obj_size_set
+ * Changes the size of the given Evas object.
+ *
+ * @param w[in] in
+ * @param h[in] in
+ *
+ * @see evas_object_resize
+ */
+#define evas_obj_size_set(w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_SET), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def evas_obj_size_get
+ *
+ * Retrieves the (rectangular) size of the given Evas object.
+ *
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_geometry_get
+ */
+#define evas_obj_size_get(w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def evas_obj_size_hint_min_set
+ *
+ * Sets the hints for an object's minimum size.
+ *
+ * @param[in] w in
+ * @param[in] h in
+ *
+ * @see evas_object_size_hint_min_set
+ */
+#define evas_obj_size_hint_min_set(w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_MIN_SET), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def evas_obj_size_hint_min_get
+ *
+ * Retrieves the hints for an object's minimum size.
+ *
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_size_hint_min_get
+ */
+#define evas_obj_size_hint_min_get(w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_MIN_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def evas_obj_size_hint_max_set
+ *
+ * Sets the hints for an object's maximum size.
+ *
+ * @param[in] w in
+ * @param[in] h in
+ *
+ * @see evas_object_size_hint_max_set
+ */
+#define evas_obj_size_hint_max_set(w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_MAX_SET), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def evas_obj_size_hint_max_get
+ *
+ * Retrieves the hints for an object's maximum size.
+ *
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_size_hint_max_get
+ */
+#define evas_obj_size_hint_max_get(w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_MAX_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def evas_obj_size_hint_request_set
+ *
+ * Sets the hints for an object's optimum size.
+ *
+ * @param[in] w in
+ * @param[in] h in
+ *
+ * @see evas_object_size_hint_request_set
+ */
+#define evas_obj_size_hint_request_set(w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_REQUEST_SET), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def evas_obj_size_hint_request_get
+ *
+ * Retrieves the hints for an object's optimum size.
+ *
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_size_hint_request_get
+ */
+#define evas_obj_size_hint_request_get(w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_REQUEST_GET), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def evas_obj_size_hint_aspect_set
+ *
+ * Sets the hints for an object's aspect ratio.
+ *
+ * @param[in] aspect in
+ * @param[in] w in
+ * @param[in] h in
+ *
+ * @see evas_object_size_hint_aspect_set
+ */
+#define evas_obj_size_hint_aspect_set(aspect, w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_ASPECT_SET), EO_TYPECHECK(Evas_Aspect_Control, aspect), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def evas_obj_size_hint_aspect_get
+ *
+ * Retrieves the hints for an object's aspect ratio.
+ *
+ * @param[out] aspect out
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_size_hint_aspect_get
+ */
+#define evas_obj_size_hint_aspect_get(aspect, w, h) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_ASPECT_GET), EO_TYPECHECK(Evas_Aspect_Control *, aspect), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def evas_obj_size_hint_align_set
+ *
+ * Sets the hints for an object's alignment.
+ *
+ * @param[in] x in
+ * @param[in] y in
+ *
+ * @see evas_object_size_hint_align_set
+ */
+#define evas_obj_size_hint_align_set(x, y) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_ALIGN_SET), EO_TYPECHECK(double, x), EO_TYPECHECK(double, y)
+
+/**
+ * @def evas_obj_size_hint_align_get
+ *
+ * Retrieves the hints for on object's alignment.
+ *
+ * @param[out] x out
+ * @param[out] y out
+ *
+ * @see evas_object_size_hint_align_get
+ */
+#define evas_obj_size_hint_align_get(x, y) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_ALIGN_GET), EO_TYPECHECK(double *, x), EO_TYPECHECK(double *, y)
+
+/**
+ * @def evas_obj_size_hint_weight_set
+ *
+ * Sets the hints for an object's weight.
+ *
+ * @param[in] x in
+ * @param[in] y in
+ *
+ * @see evas_object_size_hint_weight_set
+ */
+#define evas_obj_size_hint_weight_set(x, y) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_WEIGHT_SET), EO_TYPECHECK(double, x), EO_TYPECHECK(double, y)
+
+/**
+ * @def evas_obj_size_hint_weight_get
+ *
+ * Retrieves the hints for an object's weight.
+ *
+ * @param[out] x out
+ * @param[out] y out
+ *
+ * @see evas_object_size_hint_weight_get
+ */
+#define evas_obj_size_hint_weight_get(x, y) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_WEIGHT_GET), EO_TYPECHECK(double *, x), EO_TYPECHECK(double *, y)
+
+/**
+ * @def evas_obj_size_hint_padding_set
+ *
+ * Sets the hints for an object's padding space.
+ *
+ * @param[in] l in
+ * @param[in] r in
+ * @param[in] t in
+ * @param[in] b in
+ *
+ * @see evas_object_size_hint_padding_set
+ */
+#define evas_obj_size_hint_padding_set(l, r, t, b) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_PADDING_SET), EO_TYPECHECK(Evas_Coord, l), EO_TYPECHECK(Evas_Coord, r), EO_TYPECHECK(Evas_Coord, t), EO_TYPECHECK(Evas_Coord, b)
+
+/**
+ * @def evas_obj_size_hint_padding_get
+ *
+ * Retrieves the hints for an object's padding space.
+ *
+ * @param[out] l out
+ * @param[out] r out
+ * @param[out] t out
+ * @param[out] b out
+ *
+ * @see evas_object_size_hint_padding_get
+ */
+#define evas_obj_size_hint_padding_get(l, r, t, b) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SIZE_HINT_PADDING_GET), EO_TYPECHECK(Evas_Coord *, l), EO_TYPECHECK(Evas_Coord *, r), EO_TYPECHECK(Evas_Coord *, t), EO_TYPECHECK(Evas_Coord *, b)
+
+/**
+ * @def evas_obj_visibility_set
+ *
+ * Makes the given Evas object visible or invisible.
+ * @param[in] v @c EINA_TRUE if to make the object visible, @c EINA_FALSE
+ * otherwise.
+ *
+ * @see evas_object_show
+ * @see evas_object_hide
+ */
+#define evas_obj_visibility_set(v) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_VISIBILITY_SET), EO_TYPECHECK(Eina_Bool, v)
+
+/**
+ * @def evas_obj_visibility_get
+ *
+ * Retrieves whether or not the given Evas object is visible.
+ *
+ * @param[out] v @c EINA_TRUE if the object is visible, @c EINA_FALSE
+ * otherwise.
+ *
+ * @see evas_object_visible_get
+ */
+#define evas_obj_visibility_get(v) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_VISIBILITY_GET), EO_TYPECHECK(Eina_Bool *, v)
+
+/**
+ * @def evas_obj_color_set
+ *
+ * Sets the general/main color of the given Evas object to the given
+ * one.
+ *
+ * @param[in] r   in
+ * @param[in] g   in
+ * @param[in] b   in
+ * @param[in] a   in
+ *
+ * @see evas_object_color_set
+ */
+#define evas_obj_color_set(r, g, b, a) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_SET), EO_TYPECHECK(int, r), EO_TYPECHECK(int, g), EO_TYPECHECK(int, b), EO_TYPECHECK(int, a)
+
+/**
+ * @def evas_obj_color_get
+ * Retrieves the general/main color of the given Evas object.
+ *
+ * @param r out
+ * @param g out
+ * @param b out
+ * @param a out
+ *
+ * @see evas_object_color_get
+ */
+#define evas_obj_color_get(r, g, b, a) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_COLOR_GET), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, g), EO_TYPECHECK(int *, b), EO_TYPECHECK(int *, a)
+
+/**
+ * @def evas_obj_anti_alias_set
+ *
+ * Sets whether or not the given Evas object is to be drawn anti-aliased.
+ *
+ * @param[in] anti_alias in
+ *
+ * @see evas_object_anti_alias_set
+ */
+#define evas_obj_anti_alias_set(anti_alias) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_ANTI_ALIAS_SET), EO_TYPECHECK(Eina_Bool, anti_alias)
+
+/**
+ * @def evas_obj_anti_alias_get
+ *
+ * Retrieves whether or not the given Evas object is to be drawn anti_aliased.
+ *
+ * @param[out] anti_alias out
+ *
+ * @see evas_object_anti_alias_get
+ */
+#define evas_obj_anti_alias_get(anti_alias) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_ANTI_ALIAS_GET), EO_TYPECHECK(Eina_Bool *, anti_alias)
+
+/**
+ * @def evas_obj_scale_set
+ *
+ * Sets the scaling factor for an Evas object. Does not affect all
+ * objects.
+ *
+ * @param[in] scale in
+ *
+ * @see evas_object_scale_set
+ */
+#define evas_obj_scale_set(scale) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SCALE_SET), EO_TYPECHECK(double, scale)
+
+/**
+ * @def evas_obj_scale_get
+ *
+ * Retrieves the scaling factor for the given Evas object.
+ *
+ * @param[out] scale out
+ *
+ * @see evas_object_scale_get
+ */
+#define evas_obj_scale_get(scale) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SCALE_GET), EO_TYPECHECK(double *, scale)
+
+/**
+ * @def evas_obj_render_op_set
+ *
+ * Sets the render_op to be used for rendering the Evas object.
+ *
+ * @param[in] render_op in
+ *
+ * @see evas_object_render_op_set
+ */
+#define evas_obj_render_op_set(render_op) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_RENDER_OP_SET), EO_TYPECHECK(Evas_Render_Op, render_op)
+
+/**
+ * @def evas_obj_render_op_get
+ *
+ * Retrieves the current value of the operation used for rendering the Evas object.
+ *
+ * @param[out] render_op
+ *
+ * @see evas_object_render_op_get
+ */
+#define evas_obj_render_op_get(render_op) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_RENDER_OP_GET), EO_TYPECHECK(Evas_Render_Op *, render_op)
+
+/**
+ * @def evas_obj_evas_get
+ * Retrieves the Evas canvas that the given object lives on.
+ *
+ * @param[out] out.
+ * @see evas_object_evas_get
+ */
+#define evas_obj_evas_get(evas) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_EVAS_GET), EO_TYPECHECK(Evas **, evas)
+
+/**
+ * @def evas_obj_type_get
+ * Retrieves the type of the given Evas object.
+ *
+ * @param[out] type out
+ * @see evas_object_type_get
+ */
+#define evas_obj_type_get(type) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_GET), EO_TYPECHECK(const char **, type)
+
+/**
+ * @def evas_obj_type_set
+ * Sets the type of the given Evas object.
+ *
+ * @param[in] type in
+ */
+#define evas_obj_type_set(type) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_SET), EO_TYPECHECK(const char *, type)
+
+/**
+ * @def evas_obj_precise_is_inside_set
+ *
+ * Set whether to use precise (usually expensive) point collision
+ * detection for a given Evas object.
+ *
+ * @param[in] precise in
+ *
+ * @see evas_object_precise_is_inside_set
+ */
+#define evas_obj_precise_is_inside_set(precise) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PRECISE_IS_INSIDE_SET), EO_TYPECHECK(Eina_Bool, precise)
+
+/**
+ * @def evas_obj_precise_is_inside_get
+ *
+ * Determine whether an object is set to use precise point collision
+ * detection.
+ *
+ * @param[out] precise out
+ *
+ * @see evas_object_precise_is_inside_get
+ */
+#define evas_obj_precise_is_inside_get(precise) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PRECISE_IS_INSIDE_GET), EO_TYPECHECK(Eina_Bool *, precise)
+
+/**
+ * @def evas_obj_static_clip_set
+ *
+ * Set a hint flag on the given Evas object that it's used as a "static
+ * clipper".
+ *
+ * @param[in] is_static_clip in
+ *
+ * @see evas_object_static_clip_set
+ */
+#define evas_obj_static_clip_set(is_static_clip) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STATIC_CLIP_SET), EO_TYPECHECK(Eina_Bool, is_static_clip)
+
+/**
+ * @def evas_obj_static_clip_get
+ *
+ * Get the "static clipper" hint flag for a given Evas object.
+ *
+ * @param[out] is_static_clip out
+ *
+ * @see evas_object_static_clip_get
+ */
+#define evas_obj_static_clip_get(is_static_clip) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STATIC_CLIP_GET), EO_TYPECHECK(Eina_Bool *, is_static_clip)
+
+/**
+ * @def evas_obj_is_frame_object_set
+ *
+ * @param[in] is_frame in
+ *
+ * @see evas_object_is_frame_object_set
+ */
+#define evas_obj_is_frame_object_set(is_frame) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_IS_FRAME_OBJECT_SET), EO_TYPECHECK(Eina_Bool, is_frame)
+
+/**
+ * @def evas_obj_is_frame_object_get
+ *
+ * @param[out] is_frame out
+ *
+ * @see evas_object_is_frame_object_get
+ */
+#define evas_obj_is_frame_object_get(is_frame) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_IS_FRAME_OBJECT_GET), EO_TYPECHECK(Eina_Bool *, is_frame)
+
+/**
+ * @def evas_obj_freeze_events_set
+ *
+ * Set whether an Evas object is to freeze (discard) events.
+ *
+ * @param[in] freeze in
+ *
+ * @see evas_object_freeze_events_set
+ */
+#define evas_obj_freeze_events_set(freeze) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FREEZE_EVENTS_SET), EO_TYPECHECK(Eina_Bool, freeze)
+
+/**
+ * @def evas_obj_freeze_events_get
+ *
+ * Determine whether an object is set to freeze (discard) events.
+ *
+ * @param[out] freeze out
+ *
+ * @see evas_object_freeze_events_get
+ */
+#define evas_obj_freeze_events_get(freeze) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FREEZE_EVENTS_GET), EO_TYPECHECK(Eina_Bool *, freeze)
+
+/**
+ * @def evas_obj_pass_events_set
+ *
+ * Set whether an Evas object is to pass (ignore) events.
+ *
+ * @param[in] pass in
+ *
+ * @see evas_object_pass_events_set
+ */
+#define evas_obj_pass_events_set(pass) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PASS_EVENTS_SET), EO_TYPECHECK(Eina_Bool, pass)
+
+/**
+ * @def evas_obj_pass_events_get
+ *
+ * Determine whether an object is set to pass (ignore) events.
+ *
+ * @param[out] pass
+ *
+ * @see evas_object_pass_events_get
+ */
+#define evas_obj_pass_events_get(pass) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PASS_EVENTS_GET), EO_TYPECHECK(Eina_Bool *, pass)
+
+/**
+ * @def evas_obj_repeat_events_set
+ *
+ * Set whether an Evas object is to repeat events.
+ *
+ * @param[in] repeat in
+ *
+ * @see evas_object_repeat_events_set
+ */
+#define evas_obj_repeat_events_set(repeat) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_REPEAT_EVENTS_SET), EO_TYPECHECK(Eina_Bool, repeat)
+
+/**
+ * @def evas_obj_repeat_events_get
+ *
+ * Determine whether an object is set to repeat events.
+ *
+ * @param[out] repeat out
+ *
+ * @see evas_object_repeat_events_get
+ */
+#define evas_obj_repeat_events_get(repeat) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_REPEAT_EVENTS_GET), EO_TYPECHECK(Eina_Bool *, repeat)
+
+/**
+ * @def evas_obj_propagate_events_set
+ *
+ * Set whether events on a smart object's member should get propagated
+ * up to its parent.
+ *
+ * @param[in] propagate in
+ * @see evas_object_propagate_events_set
+ */
+#define evas_obj_propagate_events_set(propagate) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PROPAGATE_EVENTS_SET), EO_TYPECHECK(Eina_Bool, propagate)
+
+/**
+ * @def evas_obj_propagate_events_get
+ *
+ * Retrieve whether an Evas object is set to propagate events.
+ *
+ * @param[out] propagate out
+ *
+ * @see evas_object_propagate_events_get
+ */
+#define evas_obj_propagate_events_get(propagate) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_PROPAGATE_EVENTS_GET), EO_TYPECHECK(Eina_Bool *, propagate)
+
+/**
+ * @def evas_obj_pointer_mode_set
+ *
+ * Set pointer behavior.
+ *
+ * @param[in] setting in
+ *
+ * @see evas_object_pointer_mode_set
+ */
+#define evas_obj_pointer_mode_set(pointer_mode) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POINTER_MODE_SET), EO_TYPECHECK(Evas_Object_Pointer_Mode, pointer_mode)
+
+/**
+ * @def evas_obj_pointer_mode_get
+ *
+ * Determine how pointer will behave.
+ *
+ * @param[out] setting out
+ *
+ * @see evas_object_pointer_mode_get
+ */
+#define evas_obj_pointer_mode_get(pointer_mode) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_POINTER_MODE_GET), EO_TYPECHECK(Evas_Object_Pointer_Mode *, pointer_mode)
+
+/**
+ * @def evas_obj_clip_set
+ * Clip one object to another.
+ *
+ * @parami[in] clip in
+ *
+ * @see evas_object_clip_set
+ */
+#define evas_obj_clip_set(clip) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIP_SET), EO_TYPECHECK(Evas_Object *, clip)
+
+/**
+ * @def evas_obj_clip_get
+ * Get the object clipping @p obj (if any).
+ *
+ * @param[out] clip out
+ *
+ * @see evas_object_clip_get
+ */
+#define evas_obj_clip_get(clip) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIP_GET), EO_TYPECHECK(Evas_Object **, clip)
+
+/**
+ * @def evas_obj_clip_unset
+ * Disable/cease clipping on a clipped @p obj object.
+ *
+ * @see evas_object_clip_unset
+ */
+#define evas_obj_clip_unset() EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIP_UNSET)
+
+/**
+ * @def evas_obj_clipees_get
+ * Return a list of objects currently clipped by @p obj.
+ *
+ * @param[out] clipees out
+ *
+ * @see evas_object_clipees_get
+ */
+#define evas_obj_clipees_get(clipees) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_CLIPEES_GET), EO_TYPECHECK(const Eina_List **, clipees)
+
+/**
+ * @def evas_obj_focus_set
+ * Sets or unsets a given object as the currently focused one on its
+ * canvas.
+ * @param[in] focus in
+ *
+ * @see evas_object_focus_set
+ */
+#define evas_obj_focus_set(focus) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FOCUS_SET), EO_TYPECHECK(Eina_Bool, focus)
+
+/**
+ * @def evas_obj_focus_get
+ * Retrieve whether an object has the focus.
+ *
+ * @param[out] focus out
+ *
+ * @see evas_object_focus_get
+ */
+#define evas_obj_focus_get(focus) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_FOCUS_GET), EO_TYPECHECK(Eina_Bool *, focus)
+
+/**
+ * @def evas_obj_name_set
+ * Sets the name of the given Evas object to the given name.
+ *
+ * @param[in]   name in
+ *
+ * @see evas_object_name_set
+ */
+#define evas_obj_name_set(name) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_NAME_SET), EO_TYPECHECK(const char *, name)
+
+/**
+ * @def evas_obj_name_get
+ *
+ * Retrieves the name of the given Evas object.
+ *
+ * @param[out] name out
+ *
+ * @see evas_object_name_get
+ *
+ */
+#define evas_obj_name_get(name) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_NAME_GET), EO_TYPECHECK(const char **, name)
+
+/**
+ * @def evas_obj_name_child_find
+ *
+ * Retrieves the object from children of the given object with the given name.
+ * @param[in] name in
+ * @param[in] recurse in
+ * @param[out] child out
+ *
+ * @see evas_object_name_child_find
+ */
+#define evas_obj_name_child_find(name, recurse, child) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_NAME_CHILD_FIND), EO_TYPECHECK(const char *, name), EO_TYPECHECK(int, recurse), EO_TYPECHECK(Evas_Object **, child)
+
+/**
+ * @def evas_obj_key_grab
+ *
+ * Requests @p keyname key events be directed to the obj.
+ * @param[in] keyname in
+ * @param[in] modifiers in
+ * @param[in] not_modifiers in
+ * @param[in] exclusive in
+ * @param[out] ret out
+ *
+ * @see evas_object_key_grab
+ */
+#define evas_obj_key_grab(keyname, modifiers, not_modifiers, exclusive, ret) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_KEY_GRAB), EO_TYPECHECK(const char *, keyname), EO_TYPECHECK(Evas_Modifier_Mask, modifiers), EO_TYPECHECK(Evas_Modifier_Mask, not_modifiers), EO_TYPECHECK(Eina_Bool, exclusive), EO_TYPECHECK(Eina_Bool *, ret)
+
+/**
+ * @def evas_obj_key_ungrab
+ *
+ * Removes the grab on @p keyname key events by the obj.
+ *
+ * @param[in] keyname
+ * @param[in] modifiers
+ * @param[in] not_modifiers
+ *
+ * @see evas_object_key_ungrab
+ */
+#define evas_obj_key_ungrab(keyname, modifiers, not_modifiers) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_KEY_UNGRAB), EO_TYPECHECK(const char *, keyname), EO_TYPECHECK(Evas_Modifier_Mask, modifiers), EO_TYPECHECK(Evas_Modifier_Mask, not_modifiers)
+
+/**
+ * @def evas_obj_layer_set
+ * Sets the layer of the its canvas that the given object will be part
+ * of.
+ *
+ * @param[in]   l   in
+ *
+ * @see evas_object_layer_set()
+ */
+#define evas_obj_layer_set(l) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_LAYER_SET), EO_TYPECHECK(short, l)
+
+/**
+ * @def evas_obj_layer_get
+ * Retrieves the layer of its canvas that the given object is part of.
+ *
+ * @param  Number of the its layer
+ */
+#define evas_obj_layer_get(l) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_LAYER_GET), EO_TYPECHECK(short *, l)
+
+/**
+ * @def evas_obj_map_enable_set
+ *
+ * Enable or disable the map that is set.
+ *
+ * @param[in] enabled in
+ *
+ * @see evas_object_map_enable_set
+ */
+#define evas_obj_map_enable_set(enabled) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_ENABLE_SET), EO_TYPECHECK(Eina_Bool, enabled)
+
+/**
+ * @def evas_obj_map_enable_get
+ *
+ * Get the map enabled state
+ *
+ * @param[out] enabled out
+ *
+ * @see evas_object_map_enable_get
+ */
+#define evas_obj_map_enable_get(enabled) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_ENABLE_GET), EO_TYPECHECK(Eina_Bool *, enabled)
+
+/**
+ * @def evas_obj_map_source_set
+ *
+ * Set the map source object
+ *
+ * @param[in] source in
+ *
+ * @see evas_object_map_source_set
+ */
+#define evas_obj_map_source_set(source) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_SOURCE_SET), EO_TYPECHECK(Evas_Object *, source)
+
+/**
+ * @def evas_obj_map_source_get
+ *
+ * Get the map source object
+ *
+ * @param[out] source out
+ *
+ * @see evas_object_map_source_get
+ */
+#define evas_obj_map_source_get(source) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_SOURCE_GET), EO_TYPECHECK(Evas_Object **, source)
+
+/**
+ * @def evas_obj_map_set
+ *
+ * Set current object transformation map.
+ *
+ * @param[in] map in
+ *
+ * @see evas_object_map_set
+ */
+#define evas_obj_map_set(map) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_SET), EO_TYPECHECK(const Evas_Map *, map)
+
+/**
+ * @def evas_obj_map_get
+ *
+ * Get current object transformation map.
+ *
+ * @param[out] map out
+ *
+ * @see evas_object_map_get
+ */
+#define evas_obj_map_get(map) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_MAP_GET), EO_TYPECHECK(const Evas_Map **, map)
+
+/**
+ * @def evas_obj_smart_parent_get
+ *
+ * Gets the parent smart object of a given Evas object, if it has one.
+ *
+ * @param[out] smart_parent out
+ *
+ * @see evas_object_smart_parent_get
+ */
+#define evas_obj_smart_parent_get(smart_parent) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_PARENT_GET), EO_TYPECHECK(Evas_Object **, smart_parent)
+/**
+ * @def evas_obj_smart_data_get
+ *
+ * Retrieve user data stored on a given smart object.
+ *
+ * @param[out] data out
+ *
+ * @see evas_object_smart_data_get
+ */
+#define evas_obj_smart_data_get(data) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_DATA_GET), EO_TYPECHECK(void **, data)
+
+/**
+ * @def evas_obj_smart_type_check
+ *
+ * Checks whether a given smart object or any of its smart object
+ * parents is of a given smart class.
+ *
+ * @param[in] type in
+ * @param[out] type_check out
+ *
+ * @see evas_object_smart_type_check
+ */
+#define evas_obj_smart_type_check(type, type_check) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_TYPE_CHECK), EO_TYPECHECK(const char *, type), EO_TYPECHECK(Eina_Bool *, type_check)
+
+/**
+ * @def evas_obj_smart_type_check_ptr
+ *
+ * Checks whether a given smart object or any of its smart object
+ * parents is of a given smart class, <b>using pointer comparison</b>.
+ *
+ * @param[in] type in
+ * @param[out] type_check out
+ *
+ * @see evas_object_smart_type_check_ptr
+ */
+#define evas_obj_smart_type_check_ptr(type, type_check) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_TYPE_CHECK_PTR), EO_TYPECHECK(const char *, type), EO_TYPECHECK(Eina_Bool *, type_check)
+
+/**
+ * @def evas_obj_smart_move_children_relative
+ *
+ * Moves all children objects of a given smart object relative to a
+ * given offset.
+ *
+ * @param[in] dx in
+ * @param[in] dy in
+ *
+ * @see evas_object_smart_move_children_relative
+ */
+#define evas_obj_smart_move_children_relative(dx, dy) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_MOVE_CHILDREN_RELATIVE), EO_TYPECHECK(Evas_Coord, dx), EO_TYPECHECK(Evas_Coord, dy)
+
+/**
+ * @def evas_obj_smart_clipped_clipper_get
+ *
+ * Get the clipper object for the given clipped smart object.
+ *
+ * @param[out] ret out
+ *
+ * @see evas_object_smart_clipped_clipper_get
+ */
+#define evas_obj_smart_clipped_clipper_get(ret) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_SMART_CLIPPED_CLIPPER_GET), EO_TYPECHECK(Evas_Object **, ret)
+
+/**
+ * @def evas_obj_raise
+ *
+ * Raise obj to the top of its layer.
+ *
+ * @see evas_object_raise
+ */
+#define evas_obj_raise() EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_RAISE)
+
+/**
+ * @def evas_obj_lower
+ *
+ * Lower obj to the bottom of its layer.
+ *
+ * @see evas_object_lower
+ */
+#define evas_obj_lower() EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_LOWER)
+
+/**
+ * @def evas_obj_stack_above
+ *
+ * Stack the object immediately above @p above
+ *
+ * @param[in] above in
+ *
+ * @see evas_object_stack_above
+ */
+#define evas_obj_stack_above(above) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STACK_ABOVE), EO_TYPECHECK(Evas_Object *, above)
+
+/**
+ * @def evas_obj_stack_below
+ *
+ * Stack the object immediately below @p below
+ *
+ * @param[in] below in
+ *
+ * @see evas_object_stack_below
+ */
+#define evas_obj_stack_below(below) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_STACK_BELOW), EO_TYPECHECK(Evas_Object *, below)
+
+/**
+ * @def evas_obj_above_get
+ *
+ * Get the Evas object stacked right above the object
+ *
+ * @param[out] ret out
+ *
+ * @see evas_object_above_get
+ */
+#define evas_obj_above_get(ret) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_ABOVE_GET), EO_TYPECHECK(Evas_Object **, ret)
+
+/**
+ * @def evas_obj_below_get
+ *
+ * Get the Evas object stacked right below the object
+ *
+ * @param[out] ret out
+ *
+ * @see evas_object_below_get
+ */
+#define evas_obj_below_get(ret) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_BELOW_GET), EO_TYPECHECK(Evas_Object **, ret)
+
+/**
+ * @def evas_obj_type_check
+ *
+ * Checks whether a given object is of a given class.
+ *
+ * @param[in] type in
+ * @param[out] type_check out
+ *
+ * This function has been implemented to support legacy smart inheritance
+ * and needs to be removed when all the objects are Eo objects (inc. Edje and ELM)
+ * @see evas_object_smart_type_check
+ */
+#define evas_obj_type_check(type, type_check) EVAS_OBJ_ID(EVAS_OBJ_SUB_ID_TYPE_CHECK), EO_TYPECHECK(const char *, type), EO_TYPECHECK(Eina_Bool *, type_check)
+
+#define EVAS_OBJ_CLASS evas_object_class_get()
+
+const Eo_Class *evas_object_class_get(void) EINA_CONST;
+
+#define EVAS_OBJ_IMAGE_CLASS evas_object_image_class_get()
+const Eo_Class *evas_object_image_class_get(void) EINA_CONST;
+
+extern EAPI Eo_Op EVAS_OBJ_IMAGE_BASE_ID;
+
+enum
+{
+   EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_FILE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_FILE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_SOURCE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_SOURCE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_BORDER_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_BORDER_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_BORDER_CENTER_FILL_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_BORDER_CENTER_FILL_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_FILLED_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_FILLED_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_BORDER_SCALE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_BORDER_SCALE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_FILL_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_FILL_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_FILL_SPREAD_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_FILL_SPREAD_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_SIZE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_SIZE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_STRIDE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_ERROR_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_DATA_CONVERT,
+   EVAS_OBJ_IMAGE_SUB_ID_DATA_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_DATA_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_PRELOAD,
+   EVAS_OBJ_IMAGE_SUB_ID_DATA_COPY_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_DATA_UPDATE_ADD,
+   EVAS_OBJ_IMAGE_SUB_ID_ALPHA_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_ALPHA_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_RELOAD,
+   EVAS_OBJ_IMAGE_SUB_ID_SAVE,
+   EVAS_OBJ_IMAGE_SUB_ID_PIXELS_IMPORT,
+   EVAS_OBJ_IMAGE_SUB_ID_PIXELS_GET_CALLBACK_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_PIXELS_DIRTY_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_PIXELS_DIRTY_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_DPI_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_DPI_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_SIZE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_SIZE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_SCALE_DOWN_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_SCALE_DOWN_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_REGION_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_REGION_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_ORIENTATION_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_LOAD_ORIENTATION_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_COLORSPACE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_COLORSPACE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_SCALE_HINT_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_SCALE_HINT_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_CONTENT_HINT_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_CONTENT_HINT_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_REGION_SUPPORT_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_COUNT_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_LOOP_TYPE_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_LOOP_COUNT_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_DURATION_GET,
+   EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET,
+   EVAS_OBJ_IMAGE_SUB_ID_LAST
+};
+
+#define EVAS_OBJ_IMAGE_ID(sub_id) (EVAS_OBJ_IMAGE_BASE_ID + sub_id)
+
+/**
+ * @def evas_obj_image_memfile_set
+ *
+ * Sets the data for an image from memory to be loaded
+ *
+ * @param[in] data in
+ * @param[in] size in
+ * @param[in] format in
+ * @param[in] key in
+ *
+ * @see evas_object_image_memfile_set
+ */
+#define evas_obj_image_memfile_set(data, size, format, key) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_MEMFILE_SET), EO_TYPECHECK(void *, data), EO_TYPECHECK(int, size), EO_TYPECHECK(char *, format), EO_TYPECHECK(char *, key)
+
+/**
+ * @def evas_obj_image_file_set
+ *
+ * Set the source file from where an image object must fetch the real
+ * image data (it may be an Eet file, besides pure image ones).
+ *
+ * @param[in] file in
+ * @param[in] key in
+ *
+ * @see evas_object_image_file_set
+ */
+#define evas_obj_image_file_set(file, key) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILE_SET), EO_TYPECHECK(const char *, file), EO_TYPECHECK(const char*, key)
+
+/**
+ * @def evas_obj_image_file_get
+ *
+ * This is the same as evas_object_image_file_set() but the file to be loaded
+ * may exist at an address in memory (the data for the file, not the filename
+ * itself). The @p data at the address is copied and stored for future use, so
+ * no @p data needs to be kept after this call is made. It will be managed and
+ * freed for you when no longer needed. The @p size is limited to 2 gigabytes
+ * in size, and must be greater than 0. A @c NULL @p data pointer is also
+ * invalid. Set the filename to @c NULL to reset to empty state and have the
+ * image file data freed from memory using evas_object_image_file_set().
+ *
+ * @param[in] file out
+ * @param[in] key out
+ *
+ * @see evas_object_image_file_get
+ */
+#define evas_obj_image_file_get(file, key) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILE_GET), EO_TYPECHECK(const char **, file), EO_TYPECHECK(const char **, key)
+
+/**
+ * @def evas_obj_image_source_set
+ *
+ * Set the source object on an image object to used as a @b proxy.
+ *
+ * @param[in] src in
+ * @param[out] result out
+ *
+ * @see evas_object_image_source_set
+ */
+#define evas_obj_image_source_set(src, result) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_SET), EO_TYPECHECK(Evas_Object *, src), EO_TYPECHECK(Eina_Bool *, result)
+
+/**
+ * @def evas_obj_image_source_get
+ *
+ * Get the current source object of an image object.
+ *
+ * @param[out] src out
+ *
+ * @see evas_object_image_source_get
+ */
+#define evas_obj_image_source_get(src) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SOURCE_GET), EO_TYPECHECK(Evas_Object **, src)
+
+/**
+ * @def evas_obj_image_border_set
+ *
+ * Set the dimensions for an image object's border, a region which @b
+ * won't ever be scaled together with its center.
+ *
+ * @param[in] l in
+ * @param[in] r in
+ * @param[in] t in
+ * @param[in] b in
+ *
+ * @see evas_object_image_border_set
+ */
+#define evas_obj_image_border_set(l, r, t, b) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_BORDER_SET), EO_TYPECHECK(int, l), EO_TYPECHECK(int, r), EO_TYPECHECK(int, t), EO_TYPECHECK(int, b)
+
+/**
+ * @def evas_obj_image_border_get
+ *
+ * Retrieve the dimensions for an image object's border, a region
+ * which @b won't ever be scaled together with its center.
+ *
+ * @param[out] l in
+ * @param[out] r in
+ * @param[out] t in
+ * @param[out] b in
+ *
+ * @see evas_object_image_border_get
+ */
+#define evas_obj_image_border_get(l, r, t, b) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_BORDER_GET), EO_TYPECHECK(int *, l), EO_TYPECHECK(int *, r), EO_TYPECHECK(int *, t), EO_TYPECHECK(int *, b)
+
+/**
+ * @def evas_obj_image_border_center_fill_set
+ *
+ * Sets @b how the center part of the given image object (not the
+ * borders) should be drawn when Evas is rendering it.
+ *
+ * @param[in] fill in
+ *
+ * @see evas_object_image_border_center_fill_set
+ */
+#define evas_obj_image_border_center_fill_set(fill) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_BORDER_CENTER_FILL_SET), EO_TYPECHECK(Evas_Border_Fill_Mode, fill)
+
+/**
+ * @def evas_obj_image_border_center_fill_get
+ *
+ * Retrieves @b how the center part of the given image object (not the
+ * borders) is to be drawn when Evas is rendering it.
+ *
+ * @param[out] fill out
+ *
+ * @see evas_object_image_border_center_fill_get
+ */
+#define evas_obj_image_border_center_fill_get(fill) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_BORDER_CENTER_FILL_GET), EO_TYPECHECK(Evas_Border_Fill_Mode *, fill)
+
+/**
+ * @def evas_obj_image_filled_set
+ *
+ * Set whether the image object's fill property should track the
+ * object's size.
+ *
+ * @param[in] filled in
+ *
+ * @see evas_object_image_filled_set
+ */
+#define evas_obj_image_filled_set(filled) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILLED_SET), EO_TYPECHECK(Eina_Bool, filled)
+
+/**
+ * @def evas_obj_image_filled_get
+ *
+ * Retrieve whether the image object's fill property should track the
+ * object's size.
+ *
+ * @param[out] filled out
+ *
+ * @see evas_object_image_filled_get
+ */
+#define evas_obj_image_filled_get(filled) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILLED_GET), EO_TYPECHECK(Eina_Bool *, filled)
+
+/**
+ * @def evas_obj_image_border_scale_set
+ *
+ * Sets the scaling factor (multiplier) for the borders of an image
+ * object.
+ *
+ * @param[in] scale in
+ *
+ * @see evas_object_image_border_scale_set
+ */
+#define evas_obj_image_border_scale_set(scale) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_BORDER_SCALE_SET), EO_TYPECHECK(double, scale)
+
+/**
+ * @def evas_obj_image_border_scale_get
+ *
+ * Retrieves the scaling factor (multiplier) for the borders of an
+ * image object.
+ *
+ * @param[out] scale out
+ *
+ * @see evas_object_image_border_scale_get
+ */
+#define evas_obj_image_border_scale_get(scale) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_BORDER_SCALE_GET), EO_TYPECHECK(double *, scale)
+
+/**
+ * @def evas_obj_image_fill_set
+ *
+ * Set how to fill an image object's drawing rectangle given the
+ * (real) image bound to it.
+ *
+ * @param[in] x in
+ * @param[in] y in
+ * @param[in] w in
+ * @param[in] h in
+ *
+ * @see evas_object_image_fill_set
+ */
+#define evas_obj_image_fill_set(x, y, w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILL_SET), EO_TYPECHECK(Evas_Coord, x), EO_TYPECHECK(Evas_Coord, y), EO_TYPECHECK(Evas_Coord, w), EO_TYPECHECK(Evas_Coord, h)
+
+/**
+ * @def evas_obj_image_fill_get
+ *
+ * Retrieve how an image object is to fill its drawing rectangle,
+ * given the (real) image bound to it.
+ *
+ * @param[out] x out
+ * @param[out] y out
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_image_fill_get
+ */
+#define evas_obj_image_fill_get(x, y, w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILL_GET), EO_TYPECHECK(Evas_Coord *, x), EO_TYPECHECK(Evas_Coord *, y), EO_TYPECHECK(Evas_Coord *, w), EO_TYPECHECK(Evas_Coord *, h)
+
+/**
+ * @def evas_obj_image_fill_spread_set
+ *
+ * Sets the tiling mode for the given evas image object's fill.
+ *
+ * @param[in] spread in
+ *
+ * @see evas_object_image_fill_spread_set
+ */
+#define evas_obj_image_fill_spread_set(spread) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILL_SPREAD_SET), EO_TYPECHECK(Evas_Fill_Spread, spread)
+
+/**
+ * @def evas_obj_image_fill_spread_get
+ *
+ * Retrieves the spread (tiling mode) for the given image object's
+ * fill.
+ *
+ * @param[out] spread out
+ *
+ * @see evas_object_image_fill_spread_get
+ */
+#define evas_obj_image_fill_spread_get(spread) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_FILL_SPREAD_GET), EO_TYPECHECK(Evas_Fill_Spread *, spread)
+
+/**
+ * @def evas_obj_image_size_set
+ *
+ * Sets the size of the given image object.
+ *
+ * @param[in] w in
+ * @param[in] h in
+ *
+ * @see evas_object_image_size_set
+ */
+#define evas_obj_image_size_set(w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SIZE_SET), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+
+/**
+ * @def evas_obj_image_size_get
+ *
+ * Retrieves the size of the given image object.
+ *
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_image_size_get
+ */
+#define evas_obj_image_size_get(w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SIZE_GET), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h)
+
+/**
+ * @def evas_obj_image_stride_get
+ *
+ * Retrieves the row stride of the given image object.
+ *
+ * @param[out] stride out
+ *
+ * @see evas_object_image_stride_get
+ */
+#define evas_obj_image_stride_get(stride) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_STRIDE_GET), EO_TYPECHECK(int *, stride)
+
+/**
+ * @de evas_obj_image_load_error_get
+ *
+ * Retrieves a number representing any error that occurred during the
+ * last loading of the given image object's source image.
+ *
+ * @param[out] load_error out
+ *
+ * @see evas_object_image_load_error_get
+ */
+#define evas_obj_image_load_error_get(load_error) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_ERROR_GET), EO_TYPECHECK(Evas_Load_Error *, load_error)
+
+/**
+ * @def evas_obj_image_data_convert
+ *
+ * Converts the raw image data of the given image object to the
+ * specified colorspace.
+ *
+ * @param[in] cspace in
+ * @param[out] data out
+ *
+ * @see evas_object_image_data_convert
+ */
+#define evas_obj_image_data_convert(to_cspace, data) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_CONVERT), EO_TYPECHECK(Evas_Colorspace, to_cspace), EO_TYPECHECK(void **, data)
+
+/**
+ * @def evas_obj_image_data_set
+ *
+ * Sets the raw image data of the given image object.
+ *
+ * @param[in] data in
+ *
+ * @see evas_object_image_data_set
+ */
+#define evas_obj_image_data_set(data) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_SET), EO_TYPECHECK(void *, data)
+
+/**
+ * @def evas_obj_image_data_get
+ *
+ * Get a pointer to the raw image data of the given image object.
+ *
+ * @param[in] for_writing in
+ * @param[out] data out
+ *
+ * @see evas_object_image_data_get
+ */
+#define evas_obj_image_data_get(for_writing, data) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_GET), EO_TYPECHECK(Eina_Bool, for_writing), EO_TYPECHECK(void **, data)
+
+/**
+ * @def evas_obj_image_data_copy_set
+ *
+ * Replaces the raw image data of the given image object.
+ *
+ * @param[in] data in
+ *
+ * @see evas_object_image_data_copy_set
+ */
+#define evas_obj_image_data_copy_set(data) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_COPY_SET), EO_TYPECHECK(void *, data)
+
+/**
+ * @def evas_obj_image_data_update_add
+ *
+ * Mark a sub-region of the given image object to be redrawn.
+ *
+ * @param[in] x in
+ * @param[in] y in
+ * @param[in] r in
+ * @param[in] h in
+ *
+ * @see evas_object_image_data_update_add
+ */
+#define evas_obj_image_data_update_add(x, y, w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_DATA_UPDATE_ADD), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+
+/**
+ * @def evas_obj_image_alpha_set
+ *
+ * Enable or disable alpha channel usage on the given image object.
+ *
+ * @param[in] alpha in
+ *
+ * @see evas_object_image_alpha_set
+ */
+#define evas_obj_image_alpha_set(alpha) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ALPHA_SET), EO_TYPECHECK(Eina_Bool, alpha)
+
+/**
+ * @def evas_obj_image_alpha_get
+ *
+ * Retrieve whether alpha channel data is being used on the given
+ * image object.
+ *
+ * @param[out] alpha out
+ *
+ * @see evas_object_image_alpha_get
+ */
+#define evas_obj_image_alpha_get(alpha) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ALPHA_GET), EO_TYPECHECK(Eina_Bool *, alpha)
+
+/**
+ * @def evas_obj_image_smooth_scale_set
+ *
+ * Sets whether to use high-quality image scaling algorithm on the
+ * given image object.
+ *
+ * @param[in] smooth_scale in
+ *
+ * @see evas_object_image_smooth_scale_set
+ */
+#define evas_obj_image_smooth_scale_set(smooth_scale) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_SET), EO_TYPECHECK(Eina_Bool, smooth_scale)
+
+/**
+ * @def evas_obj_image_smooth_scale_get
+ *
+ * Retrieves whether the given image object is using high-quality
+ * image scaling algorithm.
+ *
+ * @param[out] smooth_scale out
+ *
+ * @see evas_object_image_smooth_scale_get
+ */
+#define evas_obj_image_smooth_scale_get(smooth_scale) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SMOOTH_SCALE_GET), EO_TYPECHECK(Eina_Bool *, smooth_scale)
+
+/**
+ * @def evas_obj_image_preload
+ *
+ * Preload an image object's image data in the background
+ *
+ * @param[in] cancel in
+ *
+ * @see evas_object_image_preload
+ */
+#define evas_obj_image_preload(cancel) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PRELOAD), EO_TYPECHECK(Eina_Bool, cancel)
+
+/**
+ * @def evas_obj_image_reload
+ *
+ * Reload an image object's image data.
+ *
+ * @see evas_object_image_reload
+ */
+#define evas_obj_image_reload() EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_RELOAD)
+
+/**
+ * @def evas_obj_image_save
+ *
+ * Save the given image object's contents to an (image) file.
+ *
+ * @param[in] file in
+ * @param[in] key in
+ * @param[in] flags in
+ * @param[out] result out
+ *
+ * @see evas_object_image_save
+ */
+#define evas_obj_image_save(file, key, flags, result) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SAVE), EO_TYPECHECK(const char *, file), EO_TYPECHECK(const char *, key), EO_TYPECHECK(const char *, flags), EO_TYPECHECK(Eina_Bool *, result)
+
+/**
+ * @def evas_obj_image_pixels_import
+ *
+ * Import pixels from given source to a given canvas image object.
+ *
+ * @param[in] pixels in
+ * @param[out] result out
+ *
+ * @see evas_object_image_pixels_import
+ */
+#define evas_obj_image_pixels_import(pixels, result) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PIXELS_IMPORT), EO_TYPECHECK(Evas_Pixel_Import_Source *, pixels), EO_TYPECHECK(Eina_Bool *, result)
+
+/**
+ * @def evas_obj_image_pixels_get_callback_set
+ *
+ * Set the callback function to get pixels from a canvas' image.
+ *
+ * @param[in] func in
+ * @param[in] data in
+ *
+ * @see evas_object_image_pixels_get_callback_set
+ */
+#define evas_obj_image_pixels_get_callback_set(func, data) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PIXELS_GET_CALLBACK_SET), EO_TYPECHECK(Evas_Object_Image_Pixels_Get_Cb, func), EO_TYPECHECK(void *, data)
+
+/**
+ * @def evas_obj_image_pixels_dirty_set
+ *
+ * Mark whether the given image object is dirty (needs to be redrawn).
+ *
+ * @param[in] dirty in
+ *
+ * @see evas_object_image_pixels_get_callback_set
+ */
+#define evas_obj_image_pixels_dirty_set(dirty) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PIXELS_DIRTY_SET), EO_TYPECHECK(Eina_Bool, dirty)
+
+/**
+ * @def evas_obj_image_pixels_dirty_get
+ *
+ * Retrieves whether the given image object is dirty (needs to be redrawn).
+ *
+ * @param[out] dirty out
+ *
+ * @see evas_object_image_pixels_dirty_get
+ */
+#define evas_obj_image_pixels_dirty_get(dirty) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_PIXELS_DIRTY_GET), EO_TYPECHECK(Eina_Bool *, dirty)
+
+/**
+ * @def evas_obj_image_load_dpi_set
+ *
+ * Set the DPI resolution of an image object's source image.
+ *
+ * @param[in] dpi in
+ *
+ * @see evas_object_image_load_dpi_set
+ */
+#define evas_obj_image_load_dpi_set(dpi) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_DPI_SET), EO_TYPECHECK(double, dpi)
+
+/**
+ * @def evas_obj_image_load_dpi_get
+ *
+ * Get the DPI resolution of a loaded image object in the canvas.
+ *
+ * @param[out] dpi out
+ *
+ * @see evas_object_image_load_dpi_get
+ */
+#define evas_obj_image_load_dpi_get(dpi) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_DPI_GET), EO_TYPECHECK(double *, dpi)
+
+/**
+ * @def evas_obj_image_load_size_set
+ *
+ * Set the size of a given image object's source image, when loading
+ * it.
+ *
+ * @param[in] w in
+ * @param[in] h in
+ *
+ * @see evas_object_image_load_size_set
+ */
+#define evas_obj_image_load_size_set(w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_SIZE_SET), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+
+/**
+ * @def evas_obj_image_load_size_get
+ *
+ * Get the size of a given image object's source image, when loading
+ * it.
+ *
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_image_load_size_get
+ */
+#define evas_obj_image_load_size_get(w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_SIZE_GET), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h)
+
+/**
+ * @def evas_obj_image_load_scale_down_set
+ *
+ * Set the scale down factor of a given image object's source image,
+ * when loading it.
+ *
+ * @param[in] scale_down in
+ *
+ * @see evas_object_image_load_scale_down_set
+ */
+#define evas_obj_image_load_scale_down_set(scale_down) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_SCALE_DOWN_SET), EO_TYPECHECK(int, scale_down)
+
+/**
+ * @def evas_obj_image_load_scale_down_get
+ *
+ * Get the scale down factor of a given image object's source image,
+ * when loading it.
+ *
+ * @param[out] scale_down out
+ *
+ * @see evas_object_image_load_scale_down_get
+ */
+#define evas_obj_image_load_scale_down_get(scale_down) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_SCALE_DOWN_GET), EO_TYPECHECK(int *, scale_down)
+
+/**
+ * @def evas_obj_image_load_region_set
+ *
+ * Inform a given image object to load a selective region of its
+ * source image.
+ *
+ * @param[in] x in
+ * @param[in] y in
+ * @param[in] w in
+ * @param[in] h in
+ *
+ * @see evas_object_image_load_region_set
+ */
+#define evas_obj_image_load_region_set(x, y, w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_REGION_SET), EO_TYPECHECK(int, x), EO_TYPECHECK(int, y), EO_TYPECHECK(int, w), EO_TYPECHECK(int, h)
+
+/**
+ * Retrieve the coordinates of a given image object's selective
+ * (source image) load region.
+ *
+ * @param[out] x out
+ * @param[out] y out
+ * @param[out] w out
+ * @param[out] h out
+ *
+ * @see evas_object_image_load_region_get
+ */
+#define evas_obj_image_load_region_get(x, y, w, h) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_REGION_GET), EO_TYPECHECK(int *, x), EO_TYPECHECK(int *, y), EO_TYPECHECK(int *, w), EO_TYPECHECK(int *, h)
+
+/**
+ * @def evas_obj_image_load_orientation_set
+ *
+ * Define if the orientation information in the image file should be honored.
+ *
+ * @param[in] enable in
+ *
+ * @see evas_object_image_load_orientation_set
+ */
+#define evas_obj_image_load_orientation_set(enable) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_ORIENTATION_SET), EO_TYPECHECK(Eina_Bool, enable)
+
+/**
+ * @def evas_obj_image_load_orientation_get
+ *
+ * Get if the orientation information in the image file should be honored.
+ *
+ * @param[out] enable out
+ *
+ * @see evas_object_image_load_orientation_get
+ */
+#define evas_obj_image_load_orientation_get(enable) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_LOAD_ORIENTATION_GET), EO_TYPECHECK(Eina_Bool *, enable)
+
+/**
+ * @def evas_obj_image_colorspace_set
+ *
+ * Set the colorspace of a given image of the canvas.
+ *
+ * @param[in] cspace in
+ *
+ * @see evas_object_image_colorspace_set
+ */
+#define evas_obj_image_colorspace_set(cspace) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_COLORSPACE_SET), EO_TYPECHECK(Evas_Colorspace, cspace)
+
+/**
+ * @def evas_obj_image_colorspace_get
+ *
+ * Get the colorspace of a given image of the canvas.
+ *
+ * @param[out] cspace out
+ *
+ * @see evas_object_image_colorspace_get
+ */
+#define evas_obj_image_colorspace_get(cspace) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_COLORSPACE_GET), EO_TYPECHECK(Evas_Colorspace *, cspace)
+
+/**
+ * @def evas_obj_image_video_surface_set
+ *
+ * Set the video surface linked to a given image of the canvas
+ *
+ * @param[in] surf in
+ *
+ * @see evas_object_image_video_surface_set
+ */
+#define evas_obj_image_video_surface_set(surf) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_SET), EO_TYPECHECK(Evas_Video_Surface *, surf)
+
+/**
+ * @def evas_obj_image_video_surface_get
+ *
+ * Get the video surface linked to a given image of the canvas
+ *
+ * @param[out] surf out
+ *
+ * @see evas_object_image_video_surface_get
+ */
+#define evas_obj_image_video_surface_get(surf) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_VIDEO_SURFACE_GET), EO_TYPECHECK(const Evas_Video_Surface **, surf)
+
+/**
+ * @def evas_obj_image_native_surface_set
+ *
+ * Set the native surface of a given image of the canvas
+ *
+ * @param[in] surf in
+ *
+ * @see evas_object_image_native_surface_set
+ */
+#define evas_obj_image_native_surface_set(surf) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_SET), EO_TYPECHECK(Evas_Native_Surface *, surf)
+
+/**
+ * @def evas_obj_image_native_surface_get
+ *
+ * Get the native surface of a given image of the canvas
+ *
+ * @param[out] surf out
+ *
+ * @see evas_object_image_native_surface_get
+ */
+#define evas_obj_image_native_surface_get(surf) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_NATIVE_SURFACE_GET), EO_TYPECHECK(Evas_Native_Surface **, surf)
+
+/**
+ * @def evas_obj_image_scale_hint_set
+ *
+ * Set the scale hint of a given image of the canvas.
+ *
+ * @param[in] hint in
+ *
+ * @see evas_object_image_scale_hint_set
+ */
+#define evas_obj_image_scale_hint_set(hint) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SCALE_HINT_SET), EO_TYPECHECK(Evas_Image_Scale_Hint, hint)
+
+/**
+ * @def evas_obj_image_scale_hint_get
+ *
+ * Get the scale hint of a given image of the canvas.
+ *
+ * @param[out] hint out
+ *
+ * @see evas_object_image_scale_hint_get
+ */
+#define evas_obj_image_scale_hint_get(hint) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_SCALE_HINT_GET), EO_TYPECHECK(Evas_Image_Scale_Hint *, hint)
+
+/**
+ * @def evas_obj_image_content_hint_set
+ *
+ * Set the content hint setting of a given image object of the canvas.
+ *
+ * @param[in] hint in
+ *
+ * @see evas_object_image_content_hint_set
+ */
+#define evas_obj_image_content_hint_set(hint) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_CONTENT_HINT_SET), EO_TYPECHECK(Evas_Image_Content_Hint, hint)
+
+/**
+ * @def evas_obj_image_content_hint_get
+ *
+ * Get the content hint setting of a given image object of the canvas.
+ *
+ * @param[out] hint out
+ *
+ * @see evas_object_image_content_hint_get
+ */
+#define evas_obj_image_content_hint_get(hint) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_CONTENT_HINT_GET), EO_TYPECHECK(Evas_Image_Content_Hint *, hint)
+
+/**
+ * @def evas_obj_image_region_support_get
+ *
+ * Get the support state of a given image
+ *
+ * @param[out] region out
+ *
+ * @see evas_object_image_region_support_get
+ */
+#define evas_obj_image_region_support_get(region) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_REGION_SUPPORT_GET), EO_TYPECHECK(Eina_Bool *, region)
+
+/**
+ * @def evas_obj_image_animated_get
+ *
+ * Check if an image object can be animated (have multiple frames)
+ *
+ * @param[out] animated out
+ *
+ * @see evas_object_image_animated_get
+ */
+#define evas_obj_image_animated_get(animated) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_GET), EO_TYPECHECK(Eina_Bool *, animated)
+
+/**
+ * @def evas_obj_image_animated_frame_count_get
+ *
+ * Get the total number of frames of the image object.
+ *
+ * @param[out] frame_count out
+ *
+ * @see evas_object_image_animated_frame_count_get
+ */
+#define evas_obj_image_animated_frame_count_get(frame_count) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_COUNT_GET), EO_TYPECHECK(int *, frame_count)
+
+/**
+ * @def evas_obj_image_animated_loop_type_get
+ *
+ * Get the kind of looping the image object does.
+ *
+ * @param[out] hint out
+ *
+ * @see evas_object_image_animated_loop_type_get
+ */
+#define evas_obj_image_animated_loop_type_get(hint) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_LOOP_TYPE_GET), EO_TYPECHECK(Evas_Image_Animated_Loop_Hint *, hint)
+
+/**
+ * @def evas_obj_image_animated_loop_count_get
+ *
+ * Get the number times the animation of the object loops.
+ *
+ * @param[out] loop_count out
+ *
+ * @see evas_object_image_animated_loop_count_get
+ */
+#define evas_obj_image_animated_loop_count_get(loop_count) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_LOOP_COUNT_GET), EO_TYPECHECK(int *, loop_count)
+
+/**
+ * @def evas_obj_image_animated_frame_duration_get
+ *
+ * Get the duration of a sequence of frames.
+ *
+ * @param[in] start_frame in
+ * @param[in] frame_num in
+ * @param[out] frame_duration out
+ *
+ * @see evas_object_image_animated_frame_duration_get
+ */
+#define evas_obj_image_animated_frame_duration_get(start_frame, frame_num, frame_duration) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_DURATION_GET), EO_TYPECHECK(int, start_frame), EO_TYPECHECK(int, frame_num), EO_TYPECHECK(double *, frame_duration)
+
+/**
+ * @def evas_obj_image_animated_frame_set
+ *
+ * Set the frame to current frame of an image object
+ *
+ * @param[in] frame_index in
+ *
+ * @see evas_object_image_animated_frame_set
+ */
+#define evas_obj_image_animated_frame_set(frame_index) EVAS_OBJ_IMAGE_ID(EVAS_OBJ_IMAGE_SUB_ID_ANIMATED_FRAME_SET), EO_TYPECHECK(int, frame_index)
 
 #ifdef __cplusplus
 }

@@ -23,9 +23,9 @@ struct _Render_Engine
 /* prototypes we will use here */
 static void *_output_setup(int w, int h, int rot, int vt, int dev, int refresh);
 
-static void *eng_info(Evas *e);
-static void eng_info_free(Evas *e, void *info);
-static int eng_setup(Evas *e, void *info);
+static void *eng_info(Evas *eo_e);
+static void eng_info_free(Evas *eo_e, void *info);
+static int eng_setup(Evas *eo_e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -74,7 +74,7 @@ _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *e __UNUSED__)
+eng_info(Evas *eo_e __UNUSED__)
 {
    Evas_Engine_Info_FB *info;
    info = calloc(1, sizeof(Evas_Engine_Info_FB));
@@ -85,7 +85,7 @@ eng_info(Evas *e __UNUSED__)
 }
 
 static void
-eng_info_free(Evas *e __UNUSED__, void *info)
+eng_info_free(Evas *eo_e __UNUSED__, void *info)
 {
    Evas_Engine_Info_FB *in;
    in = (Evas_Engine_Info_FB *)info;
@@ -93,8 +93,9 @@ eng_info_free(Evas *e __UNUSED__, void *info)
 }
 
 static int
-eng_setup(Evas *e, void *in)
+eng_setup(Evas *eo_e, void *in)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_FB *info;
 

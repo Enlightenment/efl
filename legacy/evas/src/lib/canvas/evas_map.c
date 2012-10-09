@@ -3,39 +3,40 @@
 #include <math.h>
 
 static void
-_evas_map_calc_geom_change(Evas_Object *obj)
+_evas_map_calc_geom_change(Evas_Object *eo_obj)
 {
    int is, was = 0;
-
-   evas_object_change(obj);
-   evas_object_clip_dirty(obj);
-   if (obj->layer->evas->events_frozen <= 0)
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   evas_object_change(eo_obj, obj);
+   evas_object_clip_dirty(eo_obj, obj);
+   if (!(obj->layer->evas->is_frozen))
      {
-        evas_object_recalc_clippees(obj);
-        if (!obj->smart.smart)
+        evas_object_recalc_clippees(eo_obj, obj);
+        if (!obj->is_smart)
           {
-             is = evas_object_is_in_output_rect(obj,
+             is = evas_object_is_in_output_rect(eo_obj, obj,
                                                 obj->layer->evas->pointer.x,
                                                 obj->layer->evas->pointer.y, 1, 1);
              if ((is ^ was) && obj->cur.visible)
-               evas_event_feed_mouse_move(obj->layer->evas,
+               evas_event_feed_mouse_move(obj->layer->evas->evas,
                                           obj->layer->evas->pointer.x,
                                           obj->layer->evas->pointer.y,
                                           obj->layer->evas->last_timestamp,
                                           NULL);
           }
      }
-   evas_object_inform_call_move(obj);
-   evas_object_inform_call_resize(obj);
+   evas_object_inform_call_move(eo_obj, obj);
+   evas_object_inform_call_resize(eo_obj);
 }
 
 static void
-_evas_map_calc_map_geometry(Evas_Object *obj)
+_evas_map_calc_map_geometry(Evas_Object *eo_obj)
 {
    Evas_Coord x1, x2, yy1, yy2;
    const Evas_Map_Point *p, *p_end;
    Eina_Bool ch = EINA_FALSE;
 
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (!obj->cur.map) return;
    // WARN: Do not merge below code to SLP until it is fixed.
    // It has an infinite loop bug.
@@ -99,8 +100,8 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
    // This shouldn't really be needed, but without it we do have case
    // where the clip is wrong when a map doesn't change, so always forcing
    // it, as long as someone doesn't find a better fix.
-   evas_object_clip_dirty(obj);
-   if (ch) _evas_map_calc_geom_change(obj);
+   evas_object_clip_dirty(eo_obj, obj);
+   if (ch) _evas_map_calc_geom_change(eo_obj);
 }
 
 static inline Evas_Map *
@@ -162,10 +163,11 @@ _evas_map_dup(const Evas_Map *orig)
 }
 
 static inline void
-_evas_map_free(Evas_Object *obj, Evas_Map *m)
+_evas_map_free(Evas_Object *eo_obj, Evas_Map *m)
 {
-   if (obj)
+   if (eo_obj)
      {
+        Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
         if (obj->spans)
           {
              obj->layer->evas->engine.func->image_map_clean(obj->layer->evas->engine.data.output, obj->spans);
@@ -367,13 +369,13 @@ evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y)
 }
 
 static Eina_Bool
-_evas_object_map_parent_check(Evas_Object *parent)
+_evas_object_map_parent_check(Evas_Object *eo_parent)
 {
    const Eina_Inlist *list;
-   const Evas_Object *o;
+   const Evas_Object_Protected_Data *o;
 
-   if (!parent) return EINA_FALSE;
-
+   if (!eo_parent) return EINA_FALSE;
+   Evas_Object_Protected_Data *parent = eo_data_get(eo_parent, EVAS_OBJ_CLASS);
    list = evas_object_smart_members_get_direct(parent->smart.parent);
    EINA_INLIST_FOREACH(list, o)
      if (o->cur.usemap) break ;
@@ -384,12 +386,20 @@ _evas_object_map_parent_check(Evas_Object *parent)
 }
 
 EAPI void
-evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
+evas_object_map_enable_set(Evas_Object *eo_obj, Eina_Bool enabled)
 {
-   Evas_Object *parents;
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_obj, evas_obj_map_enable_set(enabled));
+}
+
+void
+_map_enable_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+   Eina_Bool enabled = va_arg(*list, int);
+
+   Evas_Object_Protected_Data *obj = _pd;
    Eina_Bool pchange = EINA_FALSE;
 
    enabled = !!enabled;
@@ -400,7 +410,7 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
      {
         if (!obj->cur.map)
           obj->cur.map = _evas_map_new(4);
-        evas_object_mapped_clip_across_mark(obj);
+        evas_object_mapped_clip_across_mark(eo_obj, obj);
 //        obj->cur.map->normal_geometry = obj->cur.geometry;
      }
    else
@@ -414,44 +424,67 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
           }
         if (obj->cur.map)
           {
-             _evas_map_calc_geom_change(obj);
-             evas_object_mapped_clip_across_mark(obj);
+             _evas_map_calc_geom_change(eo_obj);
+             evas_object_mapped_clip_across_mark(eo_obj, obj);
           }
      }
-   _evas_map_calc_map_geometry(obj);
+   _evas_map_calc_map_geometry(eo_obj);
    /* This is a bit heavy handed, but it fixes the case of same geometry, but
     * changed colour or UV settings. */
-   evas_object_change(obj);
+   evas_object_change(eo_obj, obj);
    if (!obj->changed_pchange) obj->changed_pchange = pchange;
    obj->changed_map = EINA_TRUE;
 
    if (enabled)
      {
-        for (parents = obj->smart.parent; parents; parents = parents->smart.parent)
-          parents->child_has_map = EINA_TRUE;
+        Evas_Object *eo_parents;
+        Evas_Object_Protected_Data *parents = NULL;
+        for (eo_parents = obj->smart.parent; eo_parents; eo_parents = parents->smart.parent)
+          {
+             parents = eo_data_get(eo_parents, EVAS_OBJ_CLASS);
+             parents->child_has_map = EINA_TRUE;
+          }
      }
    else
      {
         if (_evas_object_map_parent_check(obj->smart.parent))
-          evas_object_update_bounding_box(obj);
+          evas_object_update_bounding_box(eo_obj, obj);
      }
 }
 
 EAPI Eina_Bool
-evas_object_map_enable_get(const Evas_Object *obj)
+evas_object_map_enable_get(const Evas_Object *eo_obj)
 {
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return EINA_FALSE;
    MAGIC_CHECK_END();
-   return obj->cur.usemap;
+   Eina_Bool enabled = EINA_FALSE;
+   eo_do((Eo *)eo_obj, evas_obj_map_enable_get(&enabled));
+   return enabled;
+}
+
+void
+_map_enable_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *enabled = va_arg(*list, Eina_Bool *);
+   const Evas_Object_Protected_Data *obj = _pd;
+   *enabled = obj->cur.usemap;
 }
 
 EAPI void
-evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
+evas_object_map_set(Evas_Object *eo_obj, const Evas_Map *map)
 {
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_obj, evas_obj_map_set(map));
+}
+
+void
+_map_set(Eo *eo_obj, void *_pd, va_list *list)
+{
+   const Evas_Map *map = va_arg(*list, const Evas_Map *);
+   Evas_Object_Protected_Data *obj = _pd;
 
    if ((!map) || (map->count < 4))
      {
@@ -476,20 +509,20 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
                }
              else
                {
-                  _evas_map_free(obj, obj->cur.map);
+                  _evas_map_free(eo_obj, obj->cur.map);
                   obj->cur.map = NULL;
                }
 
              if (!obj->prev.map)
                {
-                  evas_object_mapped_clip_across_mark(obj);
+                  evas_object_mapped_clip_across_mark(eo_obj, obj);
                   return;
                }
 
-             if (!obj->cur.usemap) _evas_map_calc_geom_change(obj);
-             else _evas_map_calc_map_geometry(obj);
+             if (!obj->cur.usemap) _evas_map_calc_geom_change(eo_obj);
+             else _evas_map_calc_map_geometry(eo_obj);
              if (obj->cur.usemap)
-               evas_object_mapped_clip_across_mark(obj);
+               evas_object_mapped_clip_across_mark(eo_obj, obj);
           }
         return;
      }
@@ -508,23 +541,33 @@ evas_object_map_set(Evas_Object *obj, const Evas_Map *map)
      _evas_map_copy(obj->cur.map, map);
    else
      {
-        if (obj->cur.map) _evas_map_free(obj, obj->cur.map);
+        if (obj->cur.map) _evas_map_free(eo_obj, obj->cur.map);
         obj->cur.map = _evas_map_dup(map);
         if (obj->cur.usemap)
-           evas_object_mapped_clip_across_mark(obj);
+           evas_object_mapped_clip_across_mark(eo_obj, obj);
      }
 
-   _evas_map_calc_map_geometry(obj);
+   _evas_map_calc_map_geometry(eo_obj);
 }
 
 EAPI const Evas_Map *
-evas_object_map_get(const Evas_Object *obj)
+evas_object_map_get(const Evas_Object *eo_obj)
 {
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   const Evas_Map *map = NULL;
+   eo_do((Eo *)eo_obj, evas_obj_map_get(&map));
+   return map;
+}
 
-   return obj->cur.map;
+void
+_map_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   const Evas_Map **map = va_arg(*list, const Evas_Map **);
+   const Evas_Object_Protected_Data *obj = _pd;
+
+   *map = obj->cur.map;
 }
 
 EAPI Evas_Map *
@@ -717,11 +760,12 @@ evas_map_point_color_get(const Evas_Map *m, int idx, int *r, int *g, int *b, int
 }
 
 EAPI void
-evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *obj, Evas_Coord z)
+evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *eo_obj, Evas_Coord z)
 {
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
 
    if (m->count != 4)
      {
@@ -733,15 +777,16 @@ evas_map_util_points_populate_from_object_full(Evas_Map *m, const Evas_Object *o
 }
 
 EAPI void
-evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *obj)
+evas_map_util_points_populate_from_object(Evas_Map *m, const Evas_Object *eo_obj)
 {
    MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
    return;
    MAGIC_CHECK_END();
 
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
 
    if (m->count != 4)
      {
@@ -1092,11 +1137,12 @@ evas_map_util_clockwise_get(Evas_Map *m)
 }
 
 void
-evas_object_map_update(Evas_Object *obj,
+evas_object_map_update(Evas_Object *eo_obj,
                        int x, int y,
                        int imagew, int imageh,
                        int uvw, int uvh)
 {
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    const Evas_Map_Point *p, *p_end;
    RGBA_Map_Point *pts, *pt;
 

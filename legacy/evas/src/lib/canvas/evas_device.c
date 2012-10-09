@@ -2,20 +2,21 @@
 #include "evas_private.h"
 
 EAPI Evas_Device *
-evas_device_new(Evas *e)
+evas_device_new(Evas *eo_e)
 {
    Evas_Device *dev;
    
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
    dev = calloc(1, sizeof(Evas_Device));
    if (!dev) return NULL;
    dev->magic = MAGIC_DEV;
-   dev->evas = e;
+   dev->evas = eo_e;
    dev->ref = 1;
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    e->devices = eina_list_append(e->devices, dev);
-   evas_event_callback_call(e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
+   evas_event_callback_call(eo_e, EVAS_CALLBACK_DEVICE_CHANGED, dev);
    return dev;
 }
 
@@ -45,14 +46,15 @@ evas_device_free(Evas_Device *dev)
 }
 
 EAPI void
-evas_device_push(Evas *e, Evas_Device *dev)
+evas_device_push(Evas *eo_e, Evas_Device *dev)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
    MAGIC_CHECK(dev, Evas_Device, MAGIC_DEV);
    return;
    MAGIC_CHECK_END();
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    if (!e->cur_device)
      {
         e->cur_device = eina_array_new(4);
@@ -63,21 +65,22 @@ evas_device_push(Evas *e, Evas_Device *dev)
 }
 
 EAPI void
-evas_device_pop(Evas *e)
+evas_device_pop(Evas *eo_e)
 {
    Evas_Device *dev;
    
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    dev = eina_array_pop(e->cur_device);
    if (dev) _evas_device_unref(dev);
 }
 
 EAPI const Eina_List *
-evas_device_list(Evas *e, const Evas_Device *dev)
+evas_device_list(Evas *eo_e, const Evas_Device *dev)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
    if (dev)
@@ -87,6 +90,7 @@ evas_device_list(Evas *e, const Evas_Device *dev)
         MAGIC_CHECK_END();
      }
    if (dev) return dev->children;
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    return e->devices;
 }
 
@@ -206,10 +210,11 @@ evas_device_emulation_source_get(const Evas_Device *dev)
 }
 
 void
-_evas_device_cleanup(Evas *e)
+_evas_device_cleanup(Evas *eo_e)
 {
    Evas_Device *dev;
    
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    if (e->cur_device)
      {
         while ((dev = eina_array_pop(e->cur_device)))
@@ -224,10 +229,11 @@ _evas_device_cleanup(Evas *e)
 }
 
 Evas_Device *
-_evas_device_top_get(const Evas *e)
+_evas_device_top_get(const Evas *eo_e)
 {
    int num;
    
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    if (!e->cur_device) return NULL;
    num = eina_array_count(e->cur_device);
    if (num < 1) return NULL;

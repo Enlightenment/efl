@@ -1,5 +1,14 @@
 #include "evas_common.h"
+#include "evas_private.h"
 #include <errno.h>
+
+#include <Eo.h>
+
+EAPI Eo_Op EVAS_OBJ_TABLE_BASE_ID = EO_NOOP;
+
+#define MY_CLASS EVAS_OBJ_TABLE_CLASS
+
+#define MY_CLASS_NAME "Evas_Object_Table"
 
 typedef struct _Evas_Object_Table_Data       Evas_Object_Table_Data;
 typedef struct _Evas_Object_Table_Option     Evas_Object_Table_Option;
@@ -53,7 +62,6 @@ struct _Evas_Object_Table_Cache
 
 struct _Evas_Object_Table_Data
 {
-   Evas_Object_Smart_Clipped_Data base;
    Eina_List *children;
    struct {
       Evas_Coord h, v;
@@ -89,7 +97,7 @@ struct _Evas_Object_Table_Accessor
 };
 
 #define EVAS_OBJECT_TABLE_DATA_GET(o, ptr)                              \
-   Evas_Object_Table_Data *ptr = evas_object_smart_data_get(o)
+   Evas_Object_Table_Data *ptr = eo_data_get(o, MY_CLASS)
 
 #define EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, ptr)                    \
    EVAS_OBJECT_TABLE_DATA_GET(o, ptr);                                  \
@@ -867,15 +875,10 @@ _evas_object_table_smart_calculate_regular(Evas_Object *o, Evas_Object_Table_Dat
    _evas_object_table_calculate_layout_regular(o, priv);
 }
 
-EVAS_SMART_SUBCLASS_NEW("Evas_Object_Table", _evas_object_table,
-                        Evas_Smart_Class, Evas_Smart_Class,
-                        evas_object_smart_clipped_class_get, NULL)
-
 static void
-_evas_object_table_smart_add(Evas_Object *o)
+_smart_add(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_SMART_DATA_ALLOC(o, Evas_Object_Table_Data)
-
+   Evas_Object_Table_Data *priv = _pd;
    priv->pad.h = 0;
    priv->pad.v = 0;
    priv->align.h = 0.5;
@@ -888,20 +891,20 @@ _evas_object_table_smart_add(Evas_Object *o)
    priv->expand_h = 0;
    priv->expand_v = 0;
 
-   _evas_object_table_parent_sc->add(o);
+   eo_do_super(obj, evas_obj_smart_add());
 }
 
 static void
-_evas_object_table_smart_del(Evas_Object *o)
+_smart_del(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_OBJECT_TABLE_DATA_GET(o, priv);
+   Evas_Object_Table_Data *priv = _pd;
    Eina_List *l;
 
    l = priv->children;
    while (l)
      {
         Evas_Object_Table_Option *opt = l->data;
-        _evas_object_table_child_disconnect(o, opt->obj);
+        _evas_object_table_child_disconnect(obj, opt->obj);
         _evas_object_table_option_del(opt->obj);
         free(opt);
         l = eina_list_remove_list(l, l);
@@ -913,22 +916,24 @@ _evas_object_table_smart_del(Evas_Object *o)
         priv->cache = NULL;
      }
 
-   _evas_object_table_parent_sc->del(o);
+   eo_do_super(obj, evas_obj_smart_del());
 }
 
 static void
-_evas_object_table_smart_resize(Evas_Object *o, Evas_Coord w, Evas_Coord h)
+_smart_resize(Eo *obj, void *_pd EINA_UNUSED, va_list *list)
 {
+   Evas_Coord w = va_arg(*list, Evas_Coord);
+   Evas_Coord h = va_arg(*list, Evas_Coord);
    Evas_Coord ow, oh;
-   evas_object_geometry_get(o, NULL, NULL, &ow, &oh);
+   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
-   evas_object_smart_changed(o);
+   evas_object_smart_changed(obj);
 }
 
 static void
-_evas_object_table_smart_calculate(Evas_Object *o)
+_smart_calculate(Eo *o, void *_pd, va_list *list EINA_UNUSED)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, priv);
+   Evas_Object_Table_Data *priv = _pd;
 
    if ((priv->size.cols < 1) || (priv->size.rows < 1))
      {
@@ -943,37 +948,52 @@ _evas_object_table_smart_calculate(Evas_Object *o)
      _evas_object_table_smart_calculate_regular(o, priv);
 }
 
-static void
-_evas_object_table_smart_set_user(Evas_Smart_Class *sc)
-{
-   sc->add = _evas_object_table_smart_add;
-   sc->del = _evas_object_table_smart_del;
-   sc->resize = _evas_object_table_smart_resize;
-   sc->calculate = _evas_object_table_smart_calculate;
-}
-
 EAPI Evas_Object *
 evas_object_table_add(Evas *evas)
 {
-   return evas_object_smart_add(evas, _evas_object_table_smart_class_new());
+   Evas_Object *obj = eo_add(MY_CLASS, evas);
+   eo_unref(obj);
+   return obj;
+}
+
+static void
+_constructor(Eo *obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(obj, eo_constructor());
+   eo_do(obj, evas_obj_type_set(MY_CLASS_NAME));
 }
 
 EAPI Evas_Object *
 evas_object_table_add_to(Evas_Object *parent)
 {
+   Evas_Object *ret = NULL;
+   eo_do(parent, evas_obj_table_add_to(&ret));
+   return ret;
+}
+
+static void
+_add_to(Eo *parent, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Object **ret = va_arg(*list, Evas_Object **);
    Evas *evas;
-   Evas_Object *o;
 
    evas = evas_object_evas_get(parent);
-   o = evas_object_table_add(evas);
-   evas_object_smart_member_add(o, parent);
-   return o;
+   *ret = evas_object_table_add(evas);
+   evas_object_smart_member_add(*ret, parent);
 }
 
 EAPI void
 evas_object_table_homogeneous_set(Evas_Object *o, Evas_Object_Table_Homogeneous_Mode homogeneous)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, priv);
+   eo_do(o, evas_obj_table_homogeneous_set(homogeneous));
+}
+
+static void
+_homogeneous_set(Eo *o, void *_pd, va_list *list)
+{
+   Evas_Object_Table_Homogeneous_Mode homogeneous = va_arg(*list, Evas_Object_Table_Homogeneous_Mode);
+
+   Evas_Object_Table_Data *priv = _pd;
    if (priv->homogeneous == homogeneous)
      return;
    priv->homogeneous = homogeneous;
@@ -984,14 +1004,32 @@ evas_object_table_homogeneous_set(Evas_Object *o, Evas_Object_Table_Homogeneous_
 EAPI Evas_Object_Table_Homogeneous_Mode
 evas_object_table_homogeneous_get(const Evas_Object *o)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
-   return priv->homogeneous;
+   Evas_Object_Table_Homogeneous_Mode ret = EVAS_OBJECT_TABLE_HOMOGENEOUS_NONE;
+   eo_do((Eo *)o, evas_obj_table_homogeneous_get(&ret));
+   return ret;
+}
+
+static void
+_homogeneous_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Object_Table_Homogeneous_Mode *ret = va_arg(*list, Evas_Object_Table_Homogeneous_Mode *);
+   const Evas_Object_Table_Data *priv = _pd;
+   *ret = priv->homogeneous;
 }
 
 EAPI void
 evas_object_table_align_set(Evas_Object *o, double horizontal, double vertical)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, priv);
+   eo_do(o, evas_obj_table_align_set(horizontal, vertical));
+}
+
+static void
+_align_set(Eo *o, void *_pd, va_list *list)
+{
+   double horizontal = va_arg(*list, double);
+   double vertical = va_arg(*list, double);
+
+   Evas_Object_Table_Data *priv = _pd;
    if (priv->align.h == horizontal && priv->align.v == vertical)
      return;
    priv->align.h = horizontal;
@@ -1002,7 +1040,16 @@ evas_object_table_align_set(Evas_Object *o, double horizontal, double vertical)
 EAPI void
 evas_object_table_align_get(const Evas_Object *o, double *horizontal, double *vertical)
 {
-   EVAS_OBJECT_TABLE_DATA_GET(o, priv);
+   eo_do((Eo *)o, evas_obj_table_align_get(horizontal, vertical));
+}
+
+static void
+_align_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
+{
+   double *horizontal = va_arg(*list, double *);
+   double *vertical = va_arg(*list, double *);
+
+   const Evas_Object_Table_Data *priv = _pd;
    if (priv)
      {
         if (horizontal) *horizontal = priv->align.h;
@@ -1018,7 +1065,16 @@ evas_object_table_align_get(const Evas_Object *o, double *horizontal, double *ve
 EAPI void
 evas_object_table_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord vertical)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, priv);
+   eo_do(o, evas_obj_table_padding_set(horizontal, vertical));
+}
+
+static void
+_padding_set(Eo *o, void *_pd, va_list *list)
+{
+   Evas_Coord horizontal = va_arg(*list, Evas_Coord);
+   Evas_Coord vertical = va_arg(*list, Evas_Coord);
+
+   Evas_Object_Table_Data *priv = _pd;
    if (priv->pad.h == horizontal && priv->pad.v == vertical)
      return;
    priv->pad.h = horizontal;
@@ -1030,7 +1086,16 @@ evas_object_table_padding_set(Evas_Object *o, Evas_Coord horizontal, Evas_Coord 
 EAPI void
 evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas_Coord *vertical)
 {
-   EVAS_OBJECT_TABLE_DATA_GET(o, priv);
+   eo_do((Eo *)o, evas_obj_table_padding_get(horizontal, vertical));
+}
+
+static void
+_padding_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
+{
+   Evas_Coord *horizontal = va_arg(*list, Evas_Coord *);
+   Evas_Coord *vertical = va_arg(*list, Evas_Coord *);
+
+   const Evas_Object_Table_Data *priv = _pd;
    if (priv)
      {
         if (horizontal) *horizontal = priv->pad.h;
@@ -1046,9 +1111,24 @@ evas_object_table_padding_get(const Evas_Object *o, Evas_Coord *horizontal, Evas
 EAPI Eina_Bool
 evas_object_table_pack_get(const Evas_Object *o, Evas_Object *child, unsigned short *col, unsigned short *row, unsigned short *colspan, unsigned short *rowspan)
 {
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *)o, evas_obj_table_pack_get(child, col, row, colspan, rowspan, &ret));
+   return ret;
+}
+
+static void
+_pack_get(Eo *o EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list)
+{
+   Evas_Object *child = va_arg(*list, Evas_Object *);
+   unsigned short *col = va_arg(*list, unsigned short *);
+   unsigned short *row = va_arg(*list, unsigned short *);
+   unsigned short *colspan = va_arg(*list, unsigned short *);
+   unsigned short *rowspan = va_arg(*list, unsigned short *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
    Evas_Object_Table_Option *opt;
 
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
    opt = _evas_object_table_option_get(child);
    if (!opt)
      {
@@ -1056,31 +1136,47 @@ evas_object_table_pack_get(const Evas_Object *o, Evas_Object *child, unsigned sh
         if (row) *row = 0;
         if (colspan) *colspan = 0;
         if (rowspan) *rowspan = 0;
-        return EINA_FALSE;
+        return;
      }
    if (col) *col = opt->col;
    if (row) *row = opt->row;
    if (colspan) *colspan = opt->colspan;
    if (rowspan) *rowspan = opt->rowspan;
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI Eina_Bool
 evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(o, evas_obj_table_pack(child, col, row, colspan, rowspan, &ret));
+   return ret;
+}
+
+static void
+_pack(Eo *o, void *_pd, va_list *list)
+{
+   Evas_Object *child = va_arg(*list, Evas_Object *);
+   unsigned short col = va_arg(*list, int);
+   unsigned short row = va_arg(*list, int);
+   unsigned short colspan = va_arg(*list, int);
+   unsigned short rowspan = va_arg(*list, int);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
    Evas_Object_Table_Option *opt;
 
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
+   Evas_Object_Table_Data *priv = _pd;
 
    if (rowspan < 1)
      {
         ERR("rowspan < 1");
-        return EINA_FALSE;
+        return;
      }
    if (colspan < 1)
      {
         ERR("colspan < 1");
-        return EINA_FALSE;
+        return;
      }
 
    opt = _evas_object_table_option_get(child);
@@ -1090,7 +1186,7 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
         if (!opt)
           {
              ERR("could not allocate table option data.");
-             return EINA_FALSE;
+             return;
           }
      }
 
@@ -1158,7 +1254,7 @@ evas_object_table_pack(Evas_Object *o, Evas_Object *child, unsigned short col, u
      }
    _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 static void
@@ -1210,21 +1306,33 @@ _evas_object_table_remove_opt(Evas_Object_Table_Data *priv, Evas_Object_Table_Op
 EAPI Eina_Bool
 evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
 {
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(o, evas_obj_table_unpack(child, &ret));
+   return ret;
+}
+
+static void
+_unpack(Eo *o, void *_pd, va_list *list)
+{
+   Evas_Object *child = va_arg(*list, Evas_Object *);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   if (ret) *ret = EINA_FALSE;
+
    Evas_Object_Table_Option *opt;
 
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, 0);
+   Evas_Object_Table_Data *priv = _pd;
 
    if (o != evas_object_smart_parent_get(child))
      {
         ERR("cannot unpack child from incorrect table!");
-        return EINA_FALSE;
+        return;
      }
 
    opt = _evas_object_table_option_del(child);
    if (!opt)
      {
         ERR("cannot unpack child with no packing option!");
-        return EINA_FALSE;
+        return;
      }
 
    _evas_object_table_child_disconnect(o, child);
@@ -1234,15 +1342,23 @@ evas_object_table_unpack(Evas_Object *o, Evas_Object *child)
    _evas_object_table_cache_invalidate(priv);
    evas_object_smart_changed(o);
 
-   return EINA_TRUE;
+   if (ret) *ret = EINA_TRUE;
 }
 
 EAPI void
 evas_object_table_clear(Evas_Object *o, Eina_Bool clear)
 {
+   eo_do(o, evas_obj_table_clear(clear));
+}
+
+static void
+_clear(Eo *o, void *_pd, va_list *list)
+{
+   Eina_Bool clear = va_arg(*list, int);
+
    Evas_Object_Table_Option *opt;
 
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(o, priv);
+   Evas_Object_Table_Data *priv = _pd;
 
    EINA_LIST_FREE(priv->children, opt)
      {
@@ -1262,7 +1378,16 @@ evas_object_table_clear(Evas_Object *o, Eina_Bool clear)
 EAPI void
 evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows)
 {
-   EVAS_OBJECT_TABLE_DATA_GET(o, priv);
+   eo_do((Eo *)o, evas_obj_table_col_row_size_get(cols, rows));
+}
+
+static void
+_col_row_size_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *cols = va_arg(*list, int *);
+   int *rows = va_arg(*list, int *);
+
+   const Evas_Object_Table_Data *priv = _pd;
    if (priv)
      {
         if (cols) *cols = priv->size.cols;
@@ -1278,14 +1403,32 @@ evas_object_table_col_row_size_get(const Evas_Object *o, int *cols, int *rows)
 EAPI Eina_Iterator *
 evas_object_table_iterator_new(const Evas_Object *o)
 {
+   Eina_Iterator *ret = NULL;
+   eo_do((Eo *)o, evas_obj_table_iterator_new(&ret));
+   return ret;
+}
+
+static void
+_iterator_new(Eo *o, void *_pd, va_list *list)
+{
+   Eina_Iterator **ret = va_arg(*list, Eina_Iterator **);
+
    Evas_Object_Table_Iterator *it;
 
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+   const Evas_Object_Table_Data *priv = _pd;
 
-   if (!priv->children) return NULL;
+   if (!priv->children)
+     {
+        *ret = NULL;
+        return;
+     }
 
    it = calloc(1, sizeof(Evas_Object_Table_Iterator));
-   if (!it) return NULL;
+   if (!it)
+     {
+        *ret = NULL;
+        return;
+     }
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
@@ -1296,20 +1439,38 @@ evas_object_table_iterator_new(const Evas_Object *o)
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_evas_object_table_iterator_get_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_evas_object_table_iterator_free);
 
-   return &it->iterator;
+   *ret = &it->iterator;
 }
 
 EAPI Eina_Accessor *
 evas_object_table_accessor_new(const Evas_Object *o)
 {
+   Eina_Accessor *ret = NULL;
+   eo_do((Eo *)o, evas_obj_table_accessor_new(&ret));
+   return ret;
+}
+
+static void
+_accessor_new(Eo *o, void *_pd, va_list *list)
+{
+   Eina_Accessor **ret = va_arg(*list, Eina_Accessor **);
+
    Evas_Object_Table_Accessor *it;
 
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+   const Evas_Object_Table_Data *priv = _pd;
 
-   if (!priv->children) return NULL;
+   if (!priv->children)
+     {
+        *ret = NULL;
+        return;
+     }
 
    it = calloc(1, sizeof(Evas_Object_Table_Accessor));
-   if (!it) return NULL;
+   if (!it)
+     {
+        *ret = NULL;
+        return;
+     }
 
    EINA_MAGIC_SET(&it->accessor, EINA_MAGIC_ACCESSOR);
 
@@ -1320,21 +1481,31 @@ evas_object_table_accessor_new(const Evas_Object *o)
    it->accessor.get_container = FUNC_ACCESSOR_GET_CONTAINER(_evas_object_table_accessor_get_container);
    it->accessor.free = FUNC_ACCESSOR_FREE(_evas_object_table_accessor_free);
 
-   return &it->accessor;
+   *ret = &it->accessor;
 }
 
 EAPI Eina_List *
 evas_object_table_children_get(const Evas_Object *o)
 {
+   Eina_List *ret = NULL;
+   eo_do((Eo *)o, evas_obj_table_children_get(&ret));
+   return ret;
+}
+
+static void
+_children_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_List **ret = va_arg(*list, Eina_List **);
+
    Eina_List *new_list = NULL, *l;
    Evas_Object_Table_Option *opt;
 
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(o, priv, NULL);
+   const Evas_Object_Table_Data *priv = _pd;
 
    EINA_LIST_FOREACH(priv->children, l, opt)
       new_list = eina_list_append(new_list, opt->obj);
 
-   return new_list;
+   *ret = new_list;
 }
 
 Evas_Object *
@@ -1354,18 +1525,100 @@ evas_object_table_child_get(const Evas_Object *o, unsigned short col, unsigned s
 EAPI Eina_Bool
 evas_object_table_mirrored_get(const Evas_Object *obj)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN_VAL(obj, priv, EINA_FALSE);
+   Eina_Bool ret = EINA_FALSE;
+   eo_do((Eo *)obj, evas_obj_table_mirrored_get(&ret));
+   return ret;
+}
 
-   return priv->is_mirrored;
+static void
+_mirrored_get(Eo *o EINA_UNUSED, void *_pd, va_list *list)
+{
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
+   const Evas_Object_Table_Data *priv = _pd;
+
+   *ret = priv->is_mirrored;
 }
 
 EAPI void
 evas_object_table_mirrored_set(Evas_Object *obj, Eina_Bool mirrored)
 {
-   EVAS_OBJECT_TABLE_DATA_GET_OR_RETURN(obj, priv);
+   eo_do(obj, evas_obj_table_mirrored_set(mirrored));
+}
+
+static void
+_mirrored_set(Eo *o, void *_pd, va_list *list)
+{
+   Eina_Bool mirrored = va_arg(*list, int);
+
+   Evas_Object_Table_Data *priv = _pd;
    if (priv->is_mirrored != mirrored)
      {
         priv->is_mirrored = mirrored;
-        _evas_object_table_smart_calculate(obj);
+        eo_do(o, evas_obj_smart_calculate());
      }
 }
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ADD_TO), _add_to),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_HOMOGENEOUS_SET), _homogeneous_set),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_HOMOGENEOUS_GET), _homogeneous_get),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ALIGN_SET), _align_set),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ALIGN_GET), _align_get),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_PADDING_SET), _padding_set),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_PADDING_GET), _padding_get),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_PACK_GET), _pack_get),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_PACK), _pack),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_UNPACK), _unpack),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_CLEAR), _clear),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_COL_ROW_SIZE_GET), _col_row_size_get),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ITERATOR_NEW), _iterator_new),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_ACCESSOR_NEW), _accessor_new),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_CHILDREN_GET), _children_get),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_MIRRORED_GET), _mirrored_get),
+        EO_OP_FUNC(EVAS_OBJ_TABLE_ID(EVAS_OBJ_TABLE_SUB_ID_MIRRORED_SET), _mirrored_set),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ADD), _smart_add),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_DEL), _smart_del),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_RESIZE), _smart_resize),
+        EO_OP_FUNC(EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_CALCULATE), _smart_calculate),
+        EO_OP_FUNC_SENTINEL
+   };
+   eo_class_funcs_set(klass, func_desc);
+}
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_ADD_TO, "Create a table that is child of a given element parent."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_HOMOGENEOUS_SET, "Set how this table should layout children."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_HOMOGENEOUS_GET, "Get the current layout homogeneous mode."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_ALIGN_SET, "Set the alignment of the whole bounding box of contents."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_ALIGN_GET, "Get alignment of the whole bounding box of contents."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_PADDING_SET, "Set padding between cells."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_PADDING_GET, "Get padding between cells."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_PACK_GET, "Get packing location of a child of table."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_PACK, "Add a new child to a table object or set its current packing."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_UNPACK, "Remove child from table."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_CLEAR, "Faster way to remove all child objects from a table object."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_COL_ROW_SIZE_GET, "Get the number of columns and rows this table takes."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_ITERATOR_NEW, "Get an iterator to walk the list of children for the table."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_ACCESSOR_NEW, "Get an accessor to get random access to the list of children for the table."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_CHILDREN_GET, "Get the list of children for the table."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_MIRRORED_GET, "Gets the mirrored mode of the table."),
+     EO_OP_DESCRIPTION(EVAS_OBJ_TABLE_SUB_ID_MIRRORED_SET, "Sets the mirrored mode of the table."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     "Evas_Object_Table",
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_TABLE_BASE_ID, op_desc, EVAS_OBJ_TABLE_SUB_ID_LAST),
+     NULL,
+     sizeof(Evas_Object_Table_Data),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(evas_object_table_class_get, &class_desc, EVAS_OBJ_SMART_CLIPPED_CLASS, NULL);
+

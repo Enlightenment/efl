@@ -31,9 +31,9 @@ int _evas_engine_way_shm_log_dom = -1;
 static void *_output_setup(int w, int h, int rotation, Eina_Bool alpha, void *dest);
 
 /* engine function prototypes */
-static void *eng_info(Evas *evas __UNUSED__);
-static void eng_info_free(Evas *evas __UNUSED__, void *info);
-static int eng_setup(Evas *evas, void *info);
+static void *eng_info(Evas *eo_evas __UNUSED__);
+static void eng_info_free(Evas *eo_evas __UNUSED__, void *info);
+static int eng_setup(Evas *eo_evas, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -75,7 +75,7 @@ _output_setup(int w, int h, int rotation, Eina_Bool alpha, void *dest)
 
 /* engine functions */
 static void *
-eng_info(Evas *evas __UNUSED__) 
+eng_info(Evas *eo_evas __UNUSED__) 
 {
    Evas_Engine_Info_Wayland_Shm *info;
 
@@ -91,7 +91,7 @@ eng_info(Evas *evas __UNUSED__)
 }
 
 static void 
-eng_info_free(Evas *evas __UNUSED__, void *info) 
+eng_info_free(Evas *eo_evas __UNUSED__, void *info) 
 {
    Evas_Engine_Info_Wayland_Shm *in;
 
@@ -102,8 +102,9 @@ eng_info_free(Evas *evas __UNUSED__, void *info)
 }
 
 static int 
-eng_setup(Evas *evas, void *info) 
+eng_setup(Evas *eo_evas, void *info) 
 {
+   Evas_Public_Data *evas = eo_data_get(eo_evas, EVAS_CLASS);
    Evas_Engine_Info_Wayland_Shm *in;
    Render_Engine *re = NULL;
 

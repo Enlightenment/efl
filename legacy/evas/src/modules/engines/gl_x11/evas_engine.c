@@ -592,7 +592,7 @@ int _evas_engine_GL_X11_log_dom = -1;
 static Evas_Func func, pfunc;
 
 static void *
-eng_info(Evas *e)
+eng_info(Evas *eo_e)
 {
    Evas_Engine_Info_GL_X11 *info;
 
@@ -603,11 +603,11 @@ eng_info(Evas *e)
    info->func.best_depth_get = eng_best_depth_get;
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
-   e = NULL;
+   eo_e = NULL;
 }
 
 static void
-eng_info_free(Evas *e __UNUSED__, void *info)
+eng_info_free(Evas *eo_e __UNUSED__, void *info)
 {
    Evas_Engine_Info_GL_X11 *in;
 // dont free! why bother? its not worth it
@@ -637,8 +637,9 @@ _re_winfree(Render_Engine *re)
 }
 
 static int
-eng_setup(Evas *e, void *in)
+eng_setup(Evas *eo_e, void *in)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_GL_X11 *info;
    const char *s;
@@ -1271,6 +1272,7 @@ eng_output_idle_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   (void) re;
 }
 
 static void
@@ -1335,6 +1337,7 @@ eng_polygon_point_add(void *data, void *context __UNUSED__, void *polygon, int x
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   (void) re;
    return evas_gl_common_poly_point_add(polygon, x, y);
 }
 
@@ -1344,6 +1347,7 @@ eng_polygon_points_clear(void *data, void *context __UNUSED__, void *polygon)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   (void) re;
    return evas_gl_common_poly_points_clear(polygon);
 }
 
@@ -1483,6 +1487,7 @@ eng_image_format_get(void *data __UNUSED__, void *image)
 
 //   re = (Render_Engine *)data;
    im = image;
+   (void) im;
    return NULL;
 }
 

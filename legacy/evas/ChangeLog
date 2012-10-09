@@ -1080,4 +1080,9 @@
        the GL calls are called within the Pixel Getter function for Direct
        Rendering option.
 
+2012-10-09 Daniel Zaoui and Tom Hacohen
+
+	* Evas: change Evas to use Eo.
+	This change adds Eo support to Evas while keeping the old API intact.
+	For more information, go to Eo.
 

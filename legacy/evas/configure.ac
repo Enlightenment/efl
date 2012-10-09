@@ -266,6 +266,11 @@ PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
 
 requirement_evas="freetype2 eina >= 1.6.0 ${requirement_evas}"
 
+# Eo
+
+PKG_CHECK_MODULES([EO], [eo])
+requirement_evas="eo ${requirement_evas}"
+
 ## optional dependencies
 
 # FontConfig
@@ -1699,8 +1704,8 @@ AC_SUBST(EVAS_LIBS)
 
 # General CFLAGS
 
-EVAS_GENERAL_CFLAGS="${EINA_CFLAGS}"
-EVAS_GENERAL_LIBS="${EINA_LIBS}"
+EVAS_GENERAL_CFLAGS="${EINA_CFLAGS} ${EO_CFLAGS}"
+EVAS_GENERAL_LIBS="${EINA_LIBS} ${EO_LIBS}"
 AC_SUBST(EVAS_GENERAL_CFLAGS)
 AC_SUBST(EVAS_GENERAL_LIBS)
 

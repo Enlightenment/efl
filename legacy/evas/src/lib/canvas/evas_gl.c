@@ -6,7 +6,7 @@
 struct _Evas_GL
 {
    DATA32      magic;
-   Evas       *evas;
+   Evas_Public_Data *evas;
 
    Eina_List  *contexts;
    Eina_List  *surfaces;
@@ -35,7 +35,7 @@ evas_gl_new(Evas *e)
    if (!evas_gl) return NULL;
 
    evas_gl->magic = MAGIC_EVAS_GL;
-   evas_gl->evas = e;
+   evas_gl->evas = eo_data_get(e, EVAS_CLASS);
 
    if (!evas_gl->evas->engine.func->gl_context_create)
      {

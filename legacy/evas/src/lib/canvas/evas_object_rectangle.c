@@ -1,6 +1,12 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+#include "Eo.h"
+
+EAPI Eo_Op EVAS_OBJ_RECTANGLE_BASE_ID = EO_NOOP;
+
+#define MY_CLASS EVAS_OBJ_RECTANGLE_CLASS
+
 /* private magic number for rectangle objects */
 static const char o_type[] = "rectangle";
 
@@ -11,38 +17,35 @@ typedef struct _Evas_Object_Rectangle      Evas_Object_Rectangle;
 
 struct _Evas_Object_Rectangle
 {
-   DATA32            magic;
    void             *engine_data;
 };
 
 /* private methods for rectangle objects */
-static void evas_object_rectangle_init(Evas_Object *obj);
-static void *evas_object_rectangle_new(void);
-static void evas_object_rectangle_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y);
-static void evas_object_rectangle_free(Evas_Object *obj);
-static void evas_object_rectangle_render_pre(Evas_Object *obj);
-static void evas_object_rectangle_render_post(Evas_Object *obj);
+static void evas_object_rectangle_init(Evas_Object *eo_obj);
+static void evas_object_rectangle_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y);
+static void evas_object_rectangle_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static void evas_object_rectangle_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
-static unsigned int evas_object_rectangle_id_get(Evas_Object *obj);
-static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *obj);
-static void *evas_object_rectangle_engine_data_get(Evas_Object *obj);
+static unsigned int evas_object_rectangle_id_get(Evas_Object *eo_obj);
+static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *eo_obj);
+static void *evas_object_rectangle_engine_data_get(Evas_Object *eo_obj);
 
-static int evas_object_rectangle_is_opaque(Evas_Object *obj);
-static int evas_object_rectangle_was_opaque(Evas_Object *obj);
+static int evas_object_rectangle_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
+static int evas_object_rectangle_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
 #if 0 /* usless calls for a rect object. much more useful for images etc. */
-static void evas_object_rectangle_store(Evas_Object *obj);
-static void evas_object_rectangle_unstore(Evas_Object *obj);
-static int evas_object_rectangle_is_visible(Evas_Object *obj);
-static int evas_object_rectangle_was_visible(Evas_Object *obj);
-static int evas_object_rectangle_is_inside(Evas_Object *obj, double x, double y);
-static int evas_object_rectangle_was_inside(Evas_Object *obj, double x, double y);
+static void evas_object_rectangle_store(Evas_Object *eo_obj);
+static void evas_object_rectangle_unstore(Evas_Object *eo_obj);
+static int evas_object_rectangle_is_visible(Evas_Object *eo_obj);
+static int evas_object_rectangle_was_visible(Evas_Object *eo_obj);
+static int evas_object_rectangle_is_inside(Evas_Object *eo_obj, double x, double y);
+static int evas_object_rectangle_was_inside(Evas_Object *eo_obj, double x, double y);
 #endif
 
 static const Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
-   evas_object_rectangle_free,
+   NULL,
      evas_object_rectangle_render,
      evas_object_rectangle_render_pre,
      evas_object_rectangle_render_post,
@@ -68,28 +71,32 @@ static const Evas_Object_Func object_func =
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
 
-EVAS_MEMPOOL(_mp_obj);
-
 EAPI Evas_Object *
 evas_object_rectangle_add(Evas *e)
 {
-   Evas_Object *obj;
-
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   obj = evas_object_new(e);
-   evas_object_rectangle_init(obj);
-   evas_object_inject(obj, e);
-   return obj;
+   Evas_Object *eo_obj = eo_add(EVAS_OBJ_RECTANGLE_CLASS, e);
+   eo_unref(eo_obj);
+   return eo_obj;
+}
+
+static void
+_constructor(Eo *eo_obj, void *class_data EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_do_super(eo_obj, eo_constructor());
+
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   evas_object_rectangle_init(eo_obj);
+   evas_object_inject(eo_obj, obj, evas_object_evas_get(eo_parent_get(eo_obj)));
 }
 
 /* all nice and private */
 static void
-evas_object_rectangle_init(Evas_Object *obj)
+evas_object_rectangle_init(Evas_Object *eo_obj)
 {
-   /* alloc image ob, setup methods and default values */
-   obj->object_data = evas_object_rectangle_new();
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    /* set up default settings for this kind of object */
    obj->cur.color.r = 255;
    obj->cur.color.g = 255;
@@ -108,37 +115,14 @@ evas_object_rectangle_init(Evas_Object *obj)
    obj->type = o_type;
 }
 
-static void *
-evas_object_rectangle_new(void)
+static void
+_destructor(Eo *eo_obj, void *_obj EINA_UNUSED, va_list *list EINA_UNUSED)
 {
-   Evas_Object_Rectangle *o;
-
-   /* alloc obj private data */
-   EVAS_MEMPOOL_INIT(_mp_obj, "evas_object_rectangle", Evas_Object_Rectangle, 16, NULL);
-   o = EVAS_MEMPOOL_ALLOC(_mp_obj, Evas_Object_Rectangle);
-   if (!o) return NULL;
-   EVAS_MEMPOOL_PREP(_mp_obj, o, Evas_Object_Rectangle);
-   o->magic = MAGIC_OBJ_RECTANGLE;
-   return o;
+   eo_do_super(eo_obj, eo_destructor());
 }
 
 static void
-evas_object_rectangle_free(Evas_Object *obj)
-{
-   Evas_Object_Rectangle *o;
-
-   /* frees private object data. very simple here */
-   o = (Evas_Object_Rectangle *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Rectangle, MAGIC_OBJ_RECTANGLE);
-   return;
-   MAGIC_CHECK_END();
-   /* free obj */
-   o->magic = 0;
-   EVAS_MEMPOOL_FREE(_mp_obj, o);
-}
-
-static void
-evas_object_rectangle_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
+evas_object_rectangle_render(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, void *output, void *context, void *surface, int x, int y)
 {
    /* render object to surface with context, and offxet by x,y */
    obj->layer->evas->engine.func->context_color_set(output,
@@ -165,7 +149,7 @@ evas_object_rectangle_render(Evas_Object *obj, void *output, void *context, void
 }
 
 static void
-evas_object_rectangle_render_pre(Evas_Object *obj)
+evas_object_rectangle_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    int is_v, was_v;
 
@@ -180,40 +164,40 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
-	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.clipper);
-	obj->cur.clipper->func->render_pre(obj->cur.clipper);
+        Evas_Object_Protected_Data *cur_clipper_obj = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
+        if (obj->cur.cache.clip.dirty)
+          evas_object_clip_recalc(obj->cur.clipper, cur_clipper_obj);
+        cur_clipper_obj->func->render_pre(obj->cur.clipper, cur_clipper_obj);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
-   is_v = evas_object_is_visible(obj);
-   was_v = evas_object_was_visible(obj);
+   is_v = evas_object_is_visible(eo_obj, obj);
+   was_v = evas_object_was_visible(eo_obj,obj);
    if (!(is_v | was_v)) goto done;
    if (is_v != was_v)
      {
-	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, obj, is_v, was_v);
+	evas_object_render_pre_visible_change(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
 	goto done;
      }
    if (obj->changed_map)
      {
-        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
-                                            obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
         goto done;
      }
    /* it's not visible - we accounted for it appearing or not so just abort */
    if (!is_v) goto done;
    /* clipper changed this is in addition to anything else for obj */
-   evas_object_render_pre_clipper_change(&obj->layer->evas->clip_changes, obj);
+   evas_object_render_pre_clipper_change(&obj->layer->evas->clip_changes, eo_obj);
    /* if we restacked (layer or just within a layer) and don't clip anyone */
    if ((obj->restack) && (!obj->clip.clipees))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
      }
    /* if it changed render op */
    if (obj->cur.render_op != obj->prev.render_op)
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
      }
    /* if it changed color */
@@ -222,7 +206,7 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
        (obj->cur.color.b != obj->prev.color.b) ||
        (obj->cur.color.a != obj->prev.color.a))
      {
-	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, obj);
+	evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
 	goto done;
      }
    /* if it changed geometry - and obviously not visibility or color */
@@ -256,8 +240,8 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
  /*
-   if (evas_object_is_visible(obj) &&
-       evas_object_is_opaque(obj) &&
+   if (evas_object_is_visible(eo_obj) &&
+       evas_object_is_opaque(eo_obj) &&
        (!obj->clip.clipees))
      obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
 							    obj->cur.cache.clip.x,
@@ -266,24 +250,24 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
 							    obj->cur.cache.clip.h);
   */
    done:
-   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, obj, is_v, was_v);
+   evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
 }
 
 static void
-evas_object_rectangle_render_post(Evas_Object *obj)
+evas_object_rectangle_render_post(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj EINA_UNUSED)
 {
 
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */
    /* data anymore we can free it if the object deems this is a good idea */
    /* remove those pesky changes */
-   evas_object_clip_changes_clean(obj);
+   evas_object_clip_changes_clean(eo_obj);
    /* move cur to prev safely for object data */
-   evas_object_cur_prev(obj);
+   evas_object_cur_prev(eo_obj);
 }
 
 static int
-evas_object_rectangle_is_opaque(Evas_Object *obj)
+evas_object_rectangle_is_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
@@ -296,7 +280,7 @@ evas_object_rectangle_is_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_rectangle_was_opaque(Evas_Object *obj)
+evas_object_rectangle_was_opaque(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire rectangle it occupies */
@@ -307,37 +291,59 @@ evas_object_rectangle_was_opaque(Evas_Object *obj)
    return 1;
 }
 
-static unsigned int evas_object_rectangle_id_get(Evas_Object *obj)
+static unsigned int evas_object_rectangle_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o;
-
-   o = (Evas_Object_Rectangle *)(obj->object_data);
+   Evas_Object_Rectangle *o = eo_data_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_RECTANGLE;
 }
 
-static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *obj)
+static unsigned int evas_object_rectangle_visual_id_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o;
-
-   o = (Evas_Object_Rectangle *)(obj->object_data);
+   Evas_Object_Rectangle *o = eo_data_get(eo_obj, MY_CLASS);
    if (!o) return 0;
    return MAGIC_OBJ_SHAPE;
 }
 
-static void *evas_object_rectangle_engine_data_get(Evas_Object *obj)
+static void *evas_object_rectangle_engine_data_get(Evas_Object *eo_obj)
 {
-   Evas_Object_Rectangle *o;
-
-   o = (Evas_Object_Rectangle *)(obj->object_data);
-   if (!o) return NULL;
+   Evas_Object_Rectangle *o = eo_data_get(eo_obj, MY_CLASS);
    return o->engine_data;
 }
+
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION_SENTINEL
+};
+
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     "Evas_Object_Rectangle",
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&EVAS_OBJ_RECTANGLE_BASE_ID, op_desc, EVAS_OBJ_RECTANGLE_SUB_ID_LAST),
+     NULL,
+     sizeof(Evas_Object_Rectangle),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(evas_object_rectangle_class_get, &class_desc, EVAS_OBJ_CLASS, NULL);
 
 
 #if 0 /* usless calls for a rect object. much more useful for images etc. */
 static void
-evas_object_rectangle_store(Evas_Object *obj)
+evas_object_rectangle_store(Evas_Object *eo_obj)
 {
    /* store... nothing for rectangle objects... it's a bit silly */
    /* but for others that may have expensive caluclations to do to */
@@ -346,13 +352,13 @@ evas_object_rectangle_store(Evas_Object *obj)
 }
 
 static void
-evas_object_rectangle_unstore(Evas_Object *obj)
+evas_object_rectangle_unstore(Evas_Object *eo_obj)
 {
    /* store... nothing for rectangle objects... it's a bit silly */
 }
 
 static int
-evas_object_rectangle_is_visible(Evas_Object *obj)
+evas_object_rectangle_is_visible(Evas_Object *eo_obj)
 {
    /* this returns 1 if the internal object data would imply that it is */
    /* visible (ie drawing it draws something. this is not to do with events */
@@ -360,7 +366,7 @@ evas_object_rectangle_is_visible(Evas_Object *obj)
 }
 
 static int
-evas_object_rectangle_was_visible(Evas_Object *obj)
+evas_object_rectangle_was_visible(Evas_Object *eo_obj)
 {
    /* this returns 1 if the internal object data would imply that it was */
    /* visible (ie drawing it draws something. this is not to do with events */
@@ -368,7 +374,7 @@ evas_object_rectangle_was_visible(Evas_Object *obj)
 }
 
 static int
-evas_object_rectangle_is_inside(Evas_Object *obj, double x, double y)
+evas_object_rectangle_is_inside(Evas_Object *eo_obj, double x, double y)
 {
    /* this returns 1 if the canvas co-ordinates are inside the object based */
    /* on object private data. not much use for rects, but for polys, images */
@@ -377,7 +383,7 @@ evas_object_rectangle_is_inside(Evas_Object *obj, double x, double y)
 }
 
 static int
-evas_object_rectangle_was_inside(Evas_Object *obj, double x, double y)
+evas_object_rectangle_was_inside(Evas_Object *eo_obj, double x, double y)
 {
    /* this returns 1 if the canvas co-ordinates were inside the object based */
    /* on object private data. not much use for rects, but for polys, images */

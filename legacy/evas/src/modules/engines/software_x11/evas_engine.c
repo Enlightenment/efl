@@ -54,9 +54,9 @@ static void *_best_visual_get(int backend, void *connection, int screen);
 static unsigned int _best_colormap_get(int backend, void *connection, int screen);
 static int _best_depth_get(int backend, void *connection, int screen);
 
-static void *eng_info(Evas *e);
-static void eng_info_free(Evas *e, void *info);
-static int eng_setup(Evas *e, void *info);
+static void *eng_info(Evas *eo_e);
+static void eng_info_free(Evas *eo_e, void *info);
+static int eng_setup(Evas *eo_e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
 static void eng_output_tile_size_set(void *data, int w, int h);
@@ -355,7 +355,7 @@ _best_depth_get(int backend, void *connection, int screen)
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *e __UNUSED__)
+eng_info(Evas *eo_e __UNUSED__)
 {
    Evas_Engine_Info_Software_X11 *info;
 
@@ -374,7 +374,7 @@ eng_info(Evas *e __UNUSED__)
 }
 
 static void
-eng_info_free(Evas *e __UNUSED__, void *info)
+eng_info_free(Evas *eo_e __UNUSED__, void *info)
 {
    Evas_Engine_Info_Software_X11 *in;
 
@@ -383,8 +383,9 @@ eng_info_free(Evas *e __UNUSED__, void *info)
 }
 
 static int
-eng_setup(Evas *e, void *in)
+eng_setup(Evas *eo_e, void *in)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Engine_Info_Software_X11 *info;
    Render_Engine *re = NULL;
 

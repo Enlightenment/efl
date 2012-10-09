@@ -50,16 +50,28 @@ rend_dbg(const char *txt)
 #endif
 
 static Eina_List *
-evas_render_updates_internal(Evas *e, unsigned char make_updates, unsigned char do_draw);
+evas_render_updates_internal(Evas *eo_e, unsigned char make_updates, unsigned char do_draw);
 
 EAPI void
-evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
+evas_damage_rectangle_add(Evas *eo_e, int x, int y, int w, int h)
 {
-   Eina_Rectangle *r;
-
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_damage_rectangle_add(x, y, w, h));
+}
+
+void
+_canvas_damage_rectangle_add(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   int w = va_arg(*list, int);
+   int h = va_arg(*list, int);
+
+   Eina_Rectangle *r;
+
+   Evas_Public_Data *e = _pd;
    NEW_RECT(r, x, y, w, h);
    if (!r) return;
    e->damages = eina_list_append(e->damages, r);
@@ -67,26 +79,45 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
 }
 
 EAPI void
-evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
+evas_obscured_rectangle_add(Evas *eo_e, int x, int y, int w, int h)
 {
-   Eina_Rectangle *r;
-
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_obscured_rectangle_add(x, y, w, h));
+}
+
+void
+_canvas_obscured_rectangle_add(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list)
+{
+   int x = va_arg(*list, int);
+   int y = va_arg(*list, int);
+   int w = va_arg(*list, int);
+   int h = va_arg(*list, int);
+
+   Eina_Rectangle *r;
+
+   Evas_Public_Data *e = _pd;
    NEW_RECT(r, x, y, w, h);
    if (!r) return;
    e->obscures = eina_list_append(e->obscures, r);
 }
 
 EAPI void
-evas_obscured_clear(Evas *e)
+evas_obscured_clear(Evas *eo_e)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_obscured_clear());
+}
+
+void
+_canvas_obscured_clear(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Eina_Rectangle *r;
 
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
+   Evas_Public_Data *e = _pd;
    EINA_LIST_FREE(e->obscures, r)
      {
         eina_rectangle_free(r);
@@ -94,28 +125,33 @@ evas_obscured_clear(Evas *e)
 }
 
 static Eina_Bool
-_evas_render_had_map(Evas_Object *obj)
+_evas_render_had_map(Evas_Object *eo_obj)
 {
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    return ((obj->prev.map) && (obj->prev.usemap));
    //   return ((!obj->cur.map) && (obj->prev.usemap));
 }
 
 static Eina_Bool
-_evas_render_is_relevant(Evas_Object *obj)
+_evas_render_is_relevant(Evas_Object *eo_obj)
 {
-   return ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
-           (evas_object_was_visible(obj) && (!obj->prev.have_clipees)));
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   return ((evas_object_is_visible(eo_obj, obj) && (!obj->cur.have_clipees)) ||
+           (evas_object_was_visible(eo_obj, obj) && (!obj->prev.have_clipees)));
 }
 
 static Eina_Bool
-_evas_render_can_render(Evas_Object *obj)
+_evas_render_can_render(Evas_Object *eo_obj)
 {
-   return (evas_object_is_visible(obj) && (!obj->cur.have_clipees));
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   return (evas_object_is_visible(eo_obj, obj) && (!obj->cur.have_clipees));
 }
 
 static void
-_evas_render_prev_cur_clip_cache_add(Evas *e, Evas_Object *obj)
+_evas_render_prev_cur_clip_cache_add(Evas *eo_e, Evas_Object *eo_obj)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    e->engine.func->output_redraws_rect_add(e->engine.data.output,
                                            obj->prev.cache.clip.x,
                                            obj->prev.cache.clip.y,
@@ -129,8 +165,10 @@ _evas_render_prev_cur_clip_cache_add(Evas *e, Evas_Object *obj)
 }
 
 static void
-_evas_render_cur_clip_cache_del(Evas *e, Evas_Object *obj)
+_evas_render_cur_clip_cache_del(Evas *eo_e, Evas_Object *eo_obj)
 {
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Coord x, y, w, h;
 
    x = obj->cur.cache.clip.x;
@@ -139,89 +177,96 @@ _evas_render_cur_clip_cache_del(Evas *e, Evas_Object *obj)
    h = obj->cur.cache.clip.h;
    if (obj->cur.clipper)
      {
+        Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
         RECTS_CLIP_TO_RECT(x, y, w, h,
-                           obj->cur.clipper->cur.cache.clip.x,
-                           obj->cur.clipper->cur.cache.clip.y,
-                           obj->cur.clipper->cur.cache.clip.w,
-                           obj->cur.clipper->cur.cache.clip.h);
+                           cur_clipper->cur.cache.clip.x,
+                           cur_clipper->cur.cache.clip.y,
+                           cur_clipper->cur.cache.clip.w,
+                           cur_clipper->cur.cache.clip.h);
      }
    e->engine.func->output_redraws_rect_del(e->engine.data.output,
                                            x, y, w, h);
 }
 
 static void
-_evas_render_phase1_direct(Evas *e,
+_evas_render_phase1_direct(Evas *eo_e,
                            Eina_Array *active_objects,
-                           Eina_Array *restack_objects __UNUSED__,
-                           Eina_Array *delete_objects __UNUSED__,
+                           Eina_Array *restack_objects EINA_UNUSED,
+                           Eina_Array *delete_objects EINA_UNUSED,
                            Eina_Array *render_objects)
 {
    unsigned int i;
    Eina_List *l;
-   Evas_Object *proxy;
+   Evas_Object *eo_proxy;
 
    RD("  [--- PHASE 1 DIRECT\n");
    for (i = 0; i < active_objects->count; i++)
      {
-        Evas_Object *obj;
+        Evas_Object *eo_obj;
 
-        obj = eina_array_data_get(active_objects, i);
+        Evas_Object_Protected_Data *obj = eina_array_data_get(active_objects, i);
+        eo_obj = obj->object;
         if (obj->changed)
           {
              /* Flag need redraw on proxy too */
-             evas_object_clip_recalc(obj);
-	     EINA_LIST_FOREACH(obj->proxy.proxies, l, proxy)
-               proxy->proxy.redraw = EINA_TRUE;
+             evas_object_clip_recalc(eo_obj, obj);
+             EINA_LIST_FOREACH(obj->proxy.proxies, l, eo_proxy)
+               {
+                  Evas_Object_Protected_Data *proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
+                  proxy->proxy.redraw = EINA_TRUE;
+               }
           }
      }
    for (i = 0; i < render_objects->count; i++)
      {
-        Evas_Object *obj;
+        Evas_Object *eo_obj;
 
-        obj = eina_array_data_get(render_objects, i);
+        Evas_Object_Protected_Data *obj = eina_array_data_get(render_objects, i);
+        eo_obj = obj->object;
         RD("    OBJ [%p] changed %i\n", obj, obj->changed);
         if (obj->changed)
           {
              /* Flag need redraw on proxy too */
-             evas_object_clip_recalc(obj);
-             obj->func->render_pre(obj);
+             evas_object_clip_recalc(eo_obj, obj);
+             obj->func->render_pre(eo_obj, obj);
              if (obj->proxy.redraw)
-               _evas_render_prev_cur_clip_cache_add(e, obj);
+               _evas_render_prev_cur_clip_cache_add(eo_e, eo_obj);
              if (obj->proxy.proxies)
                {
                   obj->proxy.redraw = EINA_TRUE;
-                  EINA_LIST_FOREACH(obj->proxy.proxies, l, proxy)
+                  EINA_LIST_FOREACH(obj->proxy.proxies, l, eo_proxy)
                     {
-                       proxy->func->render_pre(proxy);
-                       _evas_render_prev_cur_clip_cache_add(e, proxy);
+                       Evas_Object_Protected_Data *proxy = eo_data_get(eo_proxy, EVAS_OBJ_CLASS);
+                       proxy->func->render_pre(eo_proxy, proxy);
+                       _evas_render_prev_cur_clip_cache_add(eo_e, eo_proxy);
                     }
                }
 
              RD("      pre-render-done smart:%p|%p  [%p, %i] | [%p, %i] has_map:%i had_map:%i\n",
                 obj->smart.smart,
-                evas_object_smart_members_get_direct(obj),
+                evas_object_smart_members_get_direct(eo_obj),
                 obj->cur.map, obj->cur.usemap,
                 obj->prev.map, obj->prev.usemap,
-                _evas_render_has_map(obj),
-                _evas_render_had_map(obj));
-             if ((obj->smart.smart) &&
-                 (_evas_render_has_map(obj)))
+                _evas_render_has_map(eo_obj),
+                _evas_render_had_map(eo_obj));
+             if ((obj->is_smart) &&
+                 (_evas_render_has_map(eo_obj)))
                {
                   RD("      has map + smart\n");
-                  _evas_render_prev_cur_clip_cache_add(e, obj);
+                  _evas_render_prev_cur_clip_cache_add(eo_e, eo_obj);
                }
           }
         else
           {
-             if (obj->smart.smart)
+             if (obj->is_smart)
                {
-                  //                  obj->func->render_pre(obj);
+                  //                  obj->func->render_pre(eo_obj);
                }
              else if ((obj->rect_del) ||
-                      (evas_object_is_opaque(obj) && evas_object_is_visible(obj)))
+                      (evas_object_is_opaque(eo_obj, obj) && evas_object_is_visible(eo_obj, obj)))
                {
                   RD("    rect del\n");
-                  _evas_render_cur_clip_cache_del(e, obj);
+                  _evas_render_cur_clip_cache_del(eo_e, eo_obj);
                }
           }
      }
@@ -229,7 +274,7 @@ _evas_render_phase1_direct(Evas *e,
 }
 
 static Eina_Bool
-_evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
+_evas_render_phase1_object_process(Evas *eo_e, Evas_Object *eo_obj,
                                    Eina_Array *active_objects,
                                    Eina_Array *restack_objects,
                                    Eina_Array *delete_objects,
@@ -242,11 +287,12 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
 #endif
                                   )
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Eina_Bool clean_them = EINA_FALSE;
-   Evas_Object *obj2;
    int is_active;
    Eina_Bool map, hmap;
 
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    //Need pre render for the children of mapped object.
    //But only when they have changed.
    if (mapped_parent && (!obj->changed)) return EINA_FALSE;
@@ -255,14 +301,14 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    obj->render_pre = EINA_FALSE;
 
    if (obj->delete_me == 2)
-     eina_array_push(delete_objects, obj);
+      eina_array_push(delete_objects, obj);
    else if (obj->delete_me != 0) obj->delete_me++;
    /* If the object will be removed, we should not cache anything during this run. */
    if (obj->delete_me != 0) clean_them = EINA_TRUE;
 
    /* build active object list */
-   evas_object_clip_recalc(obj);
-   is_active = evas_object_is_active(obj);
+   evas_object_clip_recalc(eo_obj, obj);
+   is_active = evas_object_is_active(eo_obj, obj);
    obj->is_active = is_active;
 
    RDI(level);
@@ -279,8 +325,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
      }
 #endif
 
-   map = _evas_render_has_map(obj);
-   hmap = _evas_render_had_map(obj);
+   map = _evas_render_has_map(eo_obj);
+   hmap = _evas_render_had_map(eo_obj);
 
    if ((restack) && (!map))
      {
@@ -302,18 +348,19 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
              if (map != hmap) *redraw_all = 1;
 
              if ((is_active) && (!obj->clip.clipees) &&
-                 ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) ||
-                  (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+                 ((evas_object_is_visible(eo_obj, obj) && (!obj->cur.have_clipees)) ||
+                  (evas_object_was_visible(eo_obj, obj) && (!obj->prev.have_clipees))))
                {
                   eina_array_push(render_objects, obj);
-                  _evas_render_prev_cur_clip_cache_add(e, obj);
+                  _evas_render_prev_cur_clip_cache_add(eo_e, eo_obj);
                   obj->render_pre = EINA_TRUE;
 
-                  if (obj->smart.smart)
+                  if (obj->is_smart)
                     {
-                       EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
+                       Evas_Object_Protected_Data *obj2;
+                       EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
                          {
-                            _evas_render_phase1_object_process(e, obj2,
+                            _evas_render_phase1_object_process(eo_e, obj2->object,
                                                                active_objects,
                                                                restack_objects,
                                                                delete_objects,
@@ -336,7 +383,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         RDI(level);
         RD("      had map - restack objs\n");
         //        eina_array_push(restack_objects, obj);
-        _evas_render_prev_cur_clip_cache_add(e, obj);
+        _evas_render_prev_cur_clip_cache_add(eo_e, eo_obj);
         if (obj->changed)
           {
              if (!map)
@@ -353,16 +400,17 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    /* handle normal rendering. this object knows how to handle maps */
    if (obj->changed)
      {
-        if (obj->smart.smart)
+        if (obj->is_smart)
           {
              RDI(level);
              RD("      changed + smart - render ok\n");
              eina_array_push(render_objects, obj);
              obj->render_pre = EINA_TRUE;
-             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj),
+             Evas_Object_Protected_Data *obj2;
+             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj),
                                  obj2)
                {
-                  _evas_render_phase1_object_process(e, obj2,
+                  _evas_render_phase1_object_process(eo_e, obj2->object,
                                                      active_objects,
                                                      restack_objects,
                                                      delete_objects,
@@ -379,7 +427,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
         else
           {
              if ((is_active) && (!obj->clip.clipees) &&
-                 _evas_render_is_relevant(obj))
+                 _evas_render_is_relevant(eo_obj))
                {
                   RDI(level);
                   RD("      relevant + active\n");
@@ -401,24 +449,25 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
    else
      {
         RD("      not changed... [%i] -> (%i %i %p %i) [%i]\n",
-           evas_object_is_visible(obj),
+           evas_object_is_visible(eo_obj, obj),
            obj->cur.visible, obj->cur.cache.clip.visible, obj->smart.smart,
-           obj->cur.cache.clip.a, evas_object_was_visible(obj));
+           obj->cur.cache.clip.a, evas_object_was_visible(eo_obj, obj));
 
         if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
-            (_evas_render_can_render(obj) ||
-             (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+            (_evas_render_can_render(eo_obj) ||
+             (evas_object_was_visible(eo_obj, obj) && (!obj->prev.have_clipees))))
           {
-             if (obj->smart.smart)
+             if (obj->is_smart)
                {
                   RDI(level);
                   RD("      smart + visible/was visible + not clip\n");
                   eina_array_push(render_objects, obj);
                   obj->render_pre = EINA_TRUE;
+                  Evas_Object_Protected_Data *obj2;
                   EINA_INLIST_FOREACH
-                     (evas_object_smart_members_get_direct(obj), obj2)
+                     (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
-                          _evas_render_phase1_object_process(e, obj2,
+                          _evas_render_phase1_object_process(eo_e, obj2->object,
                                                              active_objects,
                                                              restack_objects,
                                                              delete_objects,
@@ -434,15 +483,15 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
                }
              else
                {
-                  if (evas_object_is_opaque(obj) &&
-                      evas_object_is_visible(obj))
+                  if (evas_object_is_opaque(eo_obj, obj) &&
+                      evas_object_is_visible(eo_obj, obj))
                     {
                        RDI(level);
                        RD("      opaque + visible\n");
                        eina_array_push(render_objects, obj);
                        obj->rect_del = EINA_TRUE;
                     }
-                  else if (evas_object_is_visible(obj))
+                  else if (evas_object_is_visible(eo_obj, obj))
                     {
                        RDI(level);
                        RD("      visible\n");
@@ -462,10 +511,10 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
              RD("      smart + mot visible/was visible\n");
              eina_array_push(render_objects, obj);
              obj->render_pre = 1;
-             EINA_INLIST_FOREACH (evas_object_smart_members_get_direct(obj),
+             EINA_INLIST_FOREACH (evas_object_smart_members_get_direct(eo_obj),
                                   obj2)
                {
-                  _evas_render_phase1_object_process(e, obj2,
+                  _evas_render_phase1_object_process(eo_e, obj2,
                                                      active_objects,
                                                      restack_objects,
                                                      delete_objects,
@@ -487,25 +536,26 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj,
 }
 
 static Eina_Bool
-_evas_render_phase1_process(Evas *e,
+_evas_render_phase1_process(Evas *eo_e,
                             Eina_Array *active_objects,
                             Eina_Array *restack_objects,
                             Eina_Array *delete_objects,
                             Eina_Array *render_objects,
                             int *redraw_all)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Layer *lay;
    Eina_Bool clean_them = EINA_FALSE;
 
    RD("  [--- PHASE 1\n");
    EINA_INLIST_FOREACH(e->layers, lay)
      {
-        Evas_Object *obj;
+        Evas_Object_Protected_Data *obj;
 
         EINA_INLIST_FOREACH(lay->objects, obj)
           {
              clean_them |= _evas_render_phase1_object_process
-                (e, obj, active_objects, restack_objects, delete_objects,
+                (eo_e, obj->object, active_objects, restack_objects, delete_objects,
                  render_objects, 0, redraw_all, EINA_FALSE
 #ifdef REND_DBG
                  , 1
@@ -518,24 +568,27 @@ _evas_render_phase1_process(Evas *e,
 }
 
 static void
-_evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
+_evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_UNUSED, Evas_Public_Data *e)
 {
    unsigned int i;
 
    for (i = 0; i < pending_objects->count; ++i)
      {
-        Evas_Object *obj;
+        Evas_Object *eo_obj;
         int is_active;
         Eina_Bool ok = EINA_FALSE;
-        obj = eina_array_data_get(pending_objects, i);
+
+        Evas_Object_Protected_Data *obj = eina_array_data_get(pending_objects, i);
+        eo_obj = obj->object;
+
         if (!obj->layer) goto clean_stuff;
 
        //If the children are in active objects, They should be cleaned up.
-       if (obj->changed_map && _evas_render_has_map(obj))
+       if (obj->changed_map && _evas_render_has_map(eo_obj))
          goto clean_stuff;
 
-        evas_object_clip_recalc(obj);
-        is_active = evas_object_is_active(obj);
+        evas_object_clip_recalc(eo_obj, obj);
+        is_active = evas_object_is_active(eo_obj, obj);
 
         if ((!is_active) && (!obj->is_active) && (!obj->render_pre) &&
             (!obj->rect_del))
@@ -548,22 +601,22 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
           {
              if (obj->changed)
                {
-                  if (obj->smart.smart)
+                  if (obj->is_smart)
                     {
                        if (obj->render_pre || obj->rect_del) ok = EINA_TRUE;
                     }
                   else
                     if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
-                        (_evas_render_can_render(obj) ||
-                         (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+                        (_evas_render_can_render(eo_obj) ||
+                         (evas_object_was_visible(eo_obj, obj) && (!obj->prev.have_clipees))))
                       {
                          if (!(obj->render_pre || obj->rect_del))
                            ok = EINA_TRUE;
                       }
                     else
                       if (is_active && (!obj->clip.clipees) &&
-                          (_evas_render_can_render(obj) ||
-                           (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
+                          (_evas_render_can_render(eo_obj) ||
+                           (evas_object_was_visible(eo_obj, obj) && (!obj->prev.have_clipees))))
                         {
                            if (obj->render_pre || obj->rect_del) ok = EINA_TRUE;
                         }
@@ -571,10 +624,10 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *e)
              else
                {
                   if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
-                      (!obj->cur.have_clipees || (evas_object_was_visible(obj) && (!obj->prev.have_clipees)))
-                      && evas_object_is_opaque(obj) && evas_object_is_visible(obj))
+                      (!obj->cur.have_clipees || (evas_object_was_visible(eo_obj, obj) && (!obj->prev.have_clipees)))
+                      && evas_object_is_opaque(eo_obj, obj) && evas_object_is_visible(eo_obj, obj))
                     {
-                       if (obj->rect_del || obj->smart.smart) ok = EINA_TRUE;
+                       if (obj->rect_del || obj->is_smart) ok = EINA_TRUE;
                     }
                }
           }
@@ -593,27 +646,29 @@ clean_stuff:
 }
 
 Eina_Bool
-pending_change(void *data, void *gdata __UNUSED__)
+pending_change(void *data, void *gdata EINA_UNUSED)
 {
-   Evas_Object *obj;
+   Evas_Object *eo_obj;
 
-   obj = data;
+   Evas_Object_Protected_Data *obj = data;
+   eo_obj = obj->object;
    if (obj->delete_me) return EINA_FALSE;
    if (obj->pre_render_done)
      {
         RD("  OBJ [%p] pending change %i -> 0, pre %i\n", obj, obj->changed, obj->pre_render_done);
-        obj->func->render_post(obj);
+        obj->func->render_post(eo_obj, obj);
         obj->pre_render_done = EINA_FALSE;
-        evas_object_change_reset(obj);
+        evas_object_change_reset(eo_obj);
      }
    return obj->changed ? EINA_TRUE : EINA_FALSE;
 }
 
 static Eina_Bool
-_evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
+_evas_render_can_use_overlay(Evas *eo_e, Evas_Object *eo_obj)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Eina_Rectangle *r;
-   Evas_Object *tmp;
+   Evas_Object *eo_tmp;
    Eina_List *alphas = NULL;
    Eina_List *opaques = NULL;
    Evas_Object *video_parent = NULL;
@@ -622,16 +677,20 @@ _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
    unsigned int i;
    Eina_Bool nooverlay;
 
-   video_parent = _evas_object_image_video_parent_get(obj);
+   video_parent = _evas_object_image_video_parent_get(eo_obj);
 
    /* Check if any one is the stack make this object mapped */
-   tmp = obj;
-   while (tmp && !_evas_render_has_map(tmp))
-     tmp = tmp->smart.parent;
+   eo_tmp = eo_obj;
+   while (eo_tmp && !_evas_render_has_map(eo_tmp))
+     {
+        Evas_Object_Protected_Data *tmp = eo_data_get(eo_tmp, EVAS_OBJ_CLASS);
+        eo_tmp = tmp->smart.parent;
+     }
 
-   if (tmp && _evas_render_has_map(tmp)) return EINA_FALSE; /* we are mapped, we can't be an overlay */
+   if (eo_tmp && _evas_render_has_map(eo_tmp)) return EINA_FALSE; /* we are mapped, we can't be an overlay */
 
-   if (!evas_object_is_visible(obj)) return EINA_FALSE; /* no need to update the overlay if it's not visible */
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   if (!evas_object_is_visible(eo_obj, obj)) return EINA_FALSE; /* no need to update the overlay if it's not visible */
 
    /* If any recoloring of the surface is needed, n overlay to */
    if ((obj->cur.cache.clip.r != 255) ||
@@ -651,14 +710,15 @@ _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
      {
         Eina_Rectangle self;
         Eina_Rectangle *match;
-        Evas_Object *current;
+        Evas_Object *eo_current;
         Eina_List *l;
         int xm1, ym1, xm2, ym2;
 
-        current = eina_array_data_get(&e->active_objects, i);
+        Evas_Object_Protected_Data *current = eina_array_data_get(&e->active_objects, i);
+        eo_current = current->object;
 
         /* Did we find the video object in the stack ? */
-        if (current == video_parent || current == obj)
+        if (eo_current == video_parent || eo_current == eo_obj)
           break;
 
         EINA_RECTANGLE_SET(&self,
@@ -676,18 +736,18 @@ _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
         xc2 = current->cur.cache.clip.x + current->cur.cache.clip.w;
         yc2 = current->cur.cache.clip.y + current->cur.cache.clip.h;
 
-        if (evas_object_is_visible(current) &&
+        if (evas_object_is_visible(eo_current, current) &&
             (!current->clip.clipees) &&
             (current->cur.visible) &&
             (!current->delete_me) &&
             (current->cur.cache.clip.visible) &&
-            (!current->smart.smart))
+            (!eo_isa(eo_current, EVAS_OBJ_SMART_CLASS)))
           {
              Eina_Bool included = EINA_FALSE;
 
-             if (evas_object_is_opaque(current) ||
+             if (evas_object_is_opaque(eo_current, current) ||
                  ((current->func->has_opaque_rect) &&
-                  (current->func->has_opaque_rect(current))))
+                  (current->func->has_opaque_rect(eo_current, current))))
                {
                   /* The object is opaque */
 
@@ -804,7 +864,8 @@ _evas_render_can_use_overlay(Evas *e, Evas_Object *obj)
 }
 
 Eina_Bool
-evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
+evas_render_mapped(Evas *eo_e, Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
+                   void *context, void *surface,
                    int off_x, int off_y, int mapped,
                    int ecx, int ecy, int ecw, int ech
 #ifdef REND_DBG
@@ -812,17 +873,18 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
 #endif
                   )
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    void *ctx;
-   Evas_Object *obj2;
+   Evas_Object_Protected_Data *obj2;
    Eina_Bool clean_them = EINA_FALSE;
 
-   evas_object_clip_recalc(obj);
+   evas_object_clip_recalc(eo_obj, obj);
 
    RDI(level);
    RD("      { evas_render_mapped(%p, %p,   %p, %p,   %i, %i,   %i,   %i)\n", e, obj, context, surface, off_x, off_y, mapped, level);
    if (mapped)
      {
-        if ((!evas_object_is_visible(obj)) || (obj->clip.clipees) ||
+        if ((!evas_object_is_visible(eo_obj, obj)) || (obj->clip.clipees) ||
             (obj->cur.have_clipees))
           {
              RDI(level);
@@ -830,8 +892,8 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              return clean_them;
           }
      }
-   else if (!(((evas_object_is_active(obj) && (!obj->clip.clipees) &&
-                (_evas_render_can_render(obj))))
+   else if (!(((evas_object_is_active(eo_obj, obj) && (!obj->clip.clipees) &&
+                (_evas_render_can_render(eo_obj))))
              ))
      {
         RDI(level);
@@ -842,10 +904,10 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
    // set render_pre - for child objs that may not have gotten it.
    obj->pre_render_done = EINA_TRUE;
    RD("          Hasmap: %p (%d) %p %d -> %d\n",obj->func->can_map,
-      obj->func->can_map ? obj->func->can_map(obj): -1,
+      obj->func->can_map ? obj->func->can_map(eo_obj): -1,
       obj->cur.map, obj->cur.usemap,
-      _evas_render_has_map(obj));
-   if (_evas_render_has_map(obj))
+      _evas_render_has_map(eo_obj));
+   if (_evas_render_has_map(eo_obj))
      {
         int sw, sh;
         Eina_Bool changed = EINA_FALSE, rendered = EINA_FALSE;
@@ -862,7 +924,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              RD("      }\n");
              return clean_them;
           }
-        evas_object_map_update(obj, off_x, off_y, sw, sh, sw, sh);
+        evas_object_map_update(eo_obj, off_x, off_y, sw, sh, sw, sh);
 
         if (obj->map.surface)
           {
@@ -890,14 +952,16 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              RD("        fisrt surf: %ix%i\n", sw, sh);
              changed = EINA_TRUE;
           }
-        if (obj->smart.smart)
+        if (obj->is_smart)
           {
-             Evas_Object *o2;
+             Evas_Object *eo_o2;
+             Evas_Object_Protected_Data *o2;
 
-             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), o2)
+             EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), o2)
                {
-                  if (!evas_object_is_visible(o2) &&
-                      !evas_object_was_visible(o2))
+                  eo_o2 = o2->object;
+                  if (!evas_object_is_visible(eo_o2, o2) &&
+                      !evas_object_was_visible(eo_o2, o2))
                     {
                        continue;
                     }
@@ -948,12 +1012,12 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              ctx = e->engine.func->context_new(e->engine.data.output);
              off_x2 = -obj->cur.geometry.x;
              off_y2 = -obj->cur.geometry.y;
-             if (obj->smart.smart)
+             if (obj->is_smart)
                {
                   EINA_INLIST_FOREACH
-                     (evas_object_smart_members_get_direct(obj), obj2)
+                     (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
-                          clean_them |= evas_render_mapped(e, obj2, ctx,
+                          clean_them |= evas_render_mapped(eo_e, obj2->object, obj2, ctx,
                                                            obj->map.surface,
                                                            off_x2, off_y2, 1,
                                                            ecx, ecy, ecw, ech
@@ -977,7 +1041,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
 
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    ctx, x, y, w, h);
-                  obj->func->render(obj, e->engine.data.output, ctx,
+                  obj->func->render(eo_obj, obj, e->engine.data.output, ctx,
                                     obj->map.surface, off_x2, off_y2);
                }
              e->engine.func->context_free(e->engine.data.output, ctx);
@@ -1000,33 +1064,33 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           {
              if (obj->cur.clipper)
                {
+                  Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
                   int x, y, w, h;
-                  evas_object_clip_recalc(obj);
+                  evas_object_clip_recalc(eo_obj, obj);
                   x = obj->cur.cache.clip.x;
                   y = obj->cur.cache.clip.y;
                   w = obj->cur.cache.clip.w;
                   h = obj->cur.cache.clip.h;
 
-                  if (obj->smart.smart)
+                  if (obj->is_smart)
                     {
                        Evas_Object *tobj;
 
                        obj->cur.cache.clip.dirty = EINA_TRUE;
                        tobj = obj->cur.map_parent;
-                       obj->cur.map_parent = obj->cur.clipper->cur.map_parent;
+                       obj->cur.map_parent = cur_clipper->cur.map_parent;
                        obj->cur.map_parent = tobj;
                     }
 
                   RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->cur.clipper->cur.cache.clip.x,
-                                     obj->cur.clipper->cur.cache.clip.y,
-                                     obj->cur.clipper->cur.cache.clip.w,
-                                     obj->cur.clipper->cur.cache.clip.h);
+                                     cur_clipper->cur.cache.clip.x,
+                                     cur_clipper->cur.cache.clip.y,
+                                     cur_clipper->cur.cache.clip.w,
+                                     cur_clipper->cur.cache.clip.h);
 
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    context,
                                                    x + off_x, y + off_y, w, h);
-
                }
           }
 //        if (surface == e->engine.data.output)
@@ -1052,7 +1116,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
      {
         if (0 && obj->cur.cached_surface)
           fprintf(stderr, "We should cache '%s' [%i, %i, %i, %i]\n",
-                  evas_object_type_get(obj),
+                  evas_object_type_get(eo_obj),
                   obj->cur.bounding_box.x, obj->cur.bounding_box.x,
                   obj->cur.bounding_box.w, obj->cur.bounding_box.h);
         if (mapped)
@@ -1060,12 +1124,12 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
              RDI(level);
              RD("        draw child of mapped obj\n");
              ctx = e->engine.func->context_new(e->engine.data.output);
-             if (obj->smart.smart)
+             if (obj->is_smart)
                {
                   EINA_INLIST_FOREACH
-                     (evas_object_smart_members_get_direct(obj), obj2)
+                     (evas_object_smart_members_get_direct(eo_obj), obj2)
                        {
-                          clean_them |= evas_render_mapped(e, obj2, ctx,
+                          clean_them |= evas_render_mapped(eo_e, obj2->object, obj2, ctx,
                                                            surface,
                                                            off_x, off_y, 1,
                                                            ecx, ecy, ecw, ech
@@ -1091,16 +1155,17 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                           obj->cur.geometry.w,
                           obj->cur.geometry.h);
 
+                       Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
                        RD("        clipper: %i %i %ix%i\n",
-                          obj->cur.clipper->cur.cache.clip.x + off_x,
-                          obj->cur.clipper->cur.cache.clip.y + off_y,
-                          obj->cur.clipper->cur.cache.clip.w,
-                          obj->cur.clipper->cur.cache.clip.h);
+                          cur_clipper->cur.cache.clip.x + off_x,
+                          cur_clipper->cur.cache.clip.y + off_y,
+                          cur_clipper->cur.cache.clip.w,
+                          cur_clipper->cur.cache.clip.h);
 
                        int x, y, w, h;
 
-                       if (_evas_render_has_map(obj))
-                         evas_object_clip_recalc(obj);
+                       if (_evas_render_has_map(eo_obj))
+                         evas_object_clip_recalc(eo_obj, obj);
 
                        x = obj->cur.cache.clip.x + off_x;
                        y = obj->cur.cache.clip.y + off_y;
@@ -1108,15 +1173,15 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                        h = obj->cur.cache.clip.h;
 
                        RECTS_CLIP_TO_RECT(x, y, w, h,
-                                          obj->cur.clipper->cur.cache.clip.x + off_x,
-                                          obj->cur.clipper->cur.cache.clip.y + off_y,
-                                          obj->cur.clipper->cur.cache.clip.w,
-                                          obj->cur.clipper->cur.cache.clip.h);
+                                          cur_clipper->cur.cache.clip.x + off_x,
+                                          cur_clipper->cur.cache.clip.y + off_y,
+                                          cur_clipper->cur.cache.clip.w,
+                                          cur_clipper->cur.cache.clip.h);
 
                        e->engine.func->context_clip_set(e->engine.data.output,
                                                         ctx, x, y, w, h);
                     }
-                  obj->func->render(obj, e->engine.data.output, ctx,
+                  obj->func->render(eo_obj, obj, e->engine.data.output, ctx,
                                     surface, off_x, off_y);
                }
              e->engine.func->context_free(e->engine.data.output, ctx);
@@ -1125,19 +1190,20 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
           {
              if (obj->cur.clipper)
                {
+                  Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
                   int x, y, w, h;
 
-                  if (_evas_render_has_map(obj))
-                    evas_object_clip_recalc(obj);
+                  if (_evas_render_has_map(eo_obj))
+                    evas_object_clip_recalc(eo_obj, obj);
                   x = obj->cur.cache.clip.x;
                   y = obj->cur.cache.clip.y;
                   w = obj->cur.cache.clip.w;
                   h = obj->cur.cache.clip.h;
                   RECTS_CLIP_TO_RECT(x, y, w, h,
-                                     obj->cur.clipper->cur.cache.clip.x,
-                                     obj->cur.clipper->cur.cache.clip.y,
-                                     obj->cur.clipper->cur.cache.clip.w,
-                                     obj->cur.clipper->cur.cache.clip.h);
+                                     cur_clipper->cur.cache.clip.x,
+                                     cur_clipper->cur.cache.clip.y,
+                                     cur_clipper->cur.cache.clip.w,
+                                     cur_clipper->cur.cache.clip.h);
                   e->engine.func->context_clip_set(e->engine.data.output,
                                                    context,
                                                    x + off_x, y + off_y, w, h);
@@ -1148,7 +1214,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
 
              RDI(level);
              RD("        draw normal obj\n");
-             obj->func->render(obj, e->engine.data.output, context, surface,
+             obj->func->render(eo_obj, obj, e->engine.data.output, context, surface,
                                off_x, off_y);
           }
         if (obj->changed_map) clean_them = EINA_TRUE;
@@ -1160,9 +1226,11 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
 }
 
 static void
-_evas_render_cutout_add(Evas *e, Evas_Object *obj, int off_x, int off_y)
+_evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
 {
-   if (evas_object_is_opaque(obj))
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   if (evas_object_is_opaque(eo_obj, obj))
      {
         Evas_Coord cox, coy, cow, coh;
 
@@ -1172,12 +1240,14 @@ _evas_render_cutout_add(Evas *e, Evas_Object *obj, int off_x, int off_y)
         coh = obj->cur.cache.clip.h;
         if ((obj->cur.map) && (obj->cur.usemap))
           {
-             Evas_Object *oo;
+             Evas_Object *eo_oo;
 
-             oo = obj;
+             eo_oo = eo_obj;
+             Evas_Object_Protected_Data *oo = eo_data_get(eo_oo, EVAS_OBJ_CLASS);
              while (oo->cur.clipper)
                {
-                  if ((oo->cur.clipper->cur.map_parent
+                  Evas_Object_Protected_Data *oo_cur_clipper = eo_data_get(oo->cur.clipper, EVAS_OBJ_CLASS);
+                  if ((oo_cur_clipper->cur.map_parent
                        != oo->cur.map_parent) &&
                       (!((oo->cur.map) && (oo->cur.usemap))))
                     break;
@@ -1186,7 +1256,8 @@ _evas_render_cutout_add(Evas *e, Evas_Object *obj, int off_x, int off_y)
                                      oo->cur.geometry.y,
                                      oo->cur.geometry.w,
                                      oo->cur.geometry.h);
-                  oo = oo->cur.clipper;
+                  eo_oo = oo->cur.clipper;
+                  oo = eo_data_get(eo_oo, EVAS_OBJ_CLASS);
                }
           }
         e->engine.func->context_cutout_add
@@ -1199,7 +1270,7 @@ _evas_render_cutout_add(Evas *e, Evas_Object *obj, int off_x, int off_y)
           {
              Evas_Coord obx, oby, obw, obh;
 
-             obj->func->get_opaque_rect(obj, &obx, &oby, &obw, &obh);
+             obj->func->get_opaque_rect(eo_obj, obj, &obx, &oby, &obw, &obh);
              if ((obw > 0) && (obh > 0))
                {
                   obx += off_x;
@@ -1218,11 +1289,12 @@ _evas_render_cutout_add(Evas *e, Evas_Object *obj, int off_x, int off_y)
 }
 
 static Eina_List *
-evas_render_updates_internal(Evas *e,
+evas_render_updates_internal(Evas *eo_e,
                              unsigned char make_updates,
                              unsigned char do_draw)
 {
-   Evas_Object *obj;
+   Evas_Object *eo_obj;
+   Evas_Object_Protected_Data *obj;
    Eina_List *updates = NULL;
    Eina_List *ll;
    void *surface;
@@ -1235,28 +1307,29 @@ evas_render_updates_internal(Evas *e,
    int redraw_all = 0;
    Eina_Bool haveup = 0;
 
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    if (!e->changed) return NULL;
 
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
       evas_cserve2_dispatch();
 #endif
-   evas_call_smarts_calculate(e);
+   evas_call_smarts_calculate(eo_e);
 
    RD("[--- RENDER EVAS (size: %ix%i)\n", e->viewport.w, e->viewport.h);
 
-   evas_event_callback_call(e, EVAS_CALLBACK_RENDER_PRE, NULL);
+   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_PRE, NULL);
 
    /* Check if the modified object mean recalculating every thing */
    if (!e->invalidate)
-     _evas_render_check_pending_objects(&e->pending_objects, e);
+     _evas_render_check_pending_objects(&e->pending_objects, eo_e, e);
 
    /* phase 1. add extra updates for changed objects */
    if (e->invalidate || e->render_objects.count <= 0)
-     clean_them = _evas_render_phase1_process(e,
+     clean_them = _evas_render_phase1_process(eo_e,
                                               &e->active_objects,
                                               &e->restack_objects,
                                               &e->delete_objects,
@@ -1265,26 +1338,27 @@ evas_render_updates_internal(Evas *e,
 
    /* phase 1.5. check if the video should be inlined or stay in their overlay */
    alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
-                                            e->engine.data.context);
+					    e->engine.data.context);
 
-   EINA_LIST_FOREACH(e->video_objects, ll, obj)
+   EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
      {
         /* we need the surface to be transparent to display the underlying overlay */
-        if (alpha && _evas_render_can_use_overlay(e, obj))
-          _evas_object_image_video_overlay_show(obj);
+        if (alpha && _evas_render_can_use_overlay(eo_e, eo_obj))
+          _evas_object_image_video_overlay_show(eo_obj);
         else
-          _evas_object_image_video_overlay_hide(obj);
+          _evas_object_image_video_overlay_hide(eo_obj);
      }
    /* phase 1.8. pre render for proxy */
-   _evas_render_phase1_direct(e, &e->active_objects, &e->restack_objects,
+   _evas_render_phase1_direct(eo_e, &e->active_objects, &e->restack_objects,
                               &e->delete_objects, &e->render_objects);
 
    /* phase 2. force updates for restacks */
    for (i = 0; i < e->restack_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->restack_objects, i);
-        obj->func->render_pre(obj);
-        _evas_render_prev_cur_clip_cache_add(e, obj);
+        eo_obj = obj->object;
+        obj->func->render_pre(eo_obj, obj);
+        _evas_render_prev_cur_clip_cache_add(eo_e, eo_obj);
      }
    eina_array_clean(&e->restack_objects);
 
@@ -1343,7 +1417,7 @@ evas_render_updates_internal(Evas *e,
         /* see if the master clip has been added yet, if not, then create */
         if (!e->framespace.clip)
           {
-             e->framespace.clip = evas_object_rectangle_add(e);
+             e->framespace.clip = evas_object_rectangle_add(eo_e);
              evas_object_color_set(e->framespace.clip, 255, 255, 255, 255);
              evas_object_move(e->framespace.clip,
                               e->framespace.x, e->framespace.y);
@@ -1367,11 +1441,12 @@ evas_render_updates_internal(Evas *e,
                }
           }
 
+        Evas_Object_Protected_Data *framespace_clip = eo_data_get(e->framespace.clip, EVAS_OBJ_CLASS);
         EINA_RECTANGLE_SET(&clip_rect,
-                           e->framespace.clip->cur.geometry.x,
-                           e->framespace.clip->cur.geometry.y,
-                           e->framespace.clip->cur.geometry.w,
-                           e->framespace.clip->cur.geometry.h)
+                           framespace_clip->cur.geometry.x,
+                           framespace_clip->cur.geometry.y,
+                           framespace_clip->cur.geometry.w,
+                           framespace_clip->cur.geometry.h)
 
         /* With the master clip all setup, we need to loop the objects on this 
          * canvas and determine if the object is in the viewport space. If it 
@@ -1396,14 +1471,14 @@ evas_render_updates_internal(Evas *e,
              if (!eina_rectangles_intersect(&clip_rect, &obj_rect))
                continue;
 
-             if (!(pclip = evas_object_clip_get(obj)))
+             if (!(pclip = evas_object_clip_get(eo_obj)))
                {
                   /* skip clipping if the object is itself the 
                    * framespace clip */
-                  if (obj == e->framespace.clip) continue;
+                  if (eo_obj == e->framespace.clip) continue;
 
                   /* clip this object so it does not draw on the window frame */
-                  evas_object_clip_set(obj, e->framespace.clip);
+                  evas_object_clip_set(eo_obj, e->framespace.clip);
                }
           }
      }
@@ -1424,15 +1499,16 @@ evas_render_updates_internal(Evas *e,
    for (i = 0; i < e->active_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->active_objects, i);
-        if (UNLIKELY((evas_object_is_opaque(obj) ||
+        eo_obj = obj->object;
+        if (UNLIKELY((evas_object_is_opaque(eo_obj, obj) ||
                       ((obj->func->has_opaque_rect) &&
-                       (obj->func->has_opaque_rect(obj)))) &&
-                     evas_object_is_visible(obj) &&
+                       (obj->func->has_opaque_rect(eo_obj, obj)))) &&
+                     evas_object_is_visible(eo_obj, obj) &&
                      (!obj->clip.clipees) &&
                      (obj->cur.visible) &&
                      (!obj->delete_me) &&
                      (obj->cur.cache.clip.visible) &&
-                     (!obj->smart.smart)))
+                     (!obj->is_smart)))
           /*	  obscuring_objects = eina_list_append(obscuring_objects, obj); */
           eina_array_push(&e->obscuring_objects, obj);
      }
@@ -1474,15 +1550,16 @@ evas_render_updates_internal(Evas *e,
                }
              for (i = 0; i < e->obscuring_objects.count; ++i)
                {
-                  obj = (Evas_Object *)eina_array_data_get
+                  obj = (Evas_Object_Protected_Data *)eina_array_data_get
                      (&e->obscuring_objects, i);
-                  if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
+                  eo_obj = obj->object;
+                  if (evas_object_is_in_output_rect(eo_obj, obj, ux, uy, uw, uh))
                     {
                        eina_array_push(&e->temporary_objects, obj);
 
                        /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
                        if (alpha)
-                         _evas_render_cutout_add(e, obj, off_x, off_y);
+                         _evas_render_cutout_add(eo_e, eo_obj, off_x, off_y);
                     }
                }
              if (alpha)
@@ -1509,16 +1586,17 @@ evas_render_updates_internal(Evas *e,
              for (i = 0; i < e->active_objects.count; ++i)
                {
                   obj = eina_array_data_get(&e->active_objects, i);
+                  eo_obj = obj->object;
 
                   /* if it's in our outpout rect and it doesn't clip anything */
                   RD("    OBJ: [%p] '%s' %i %i %ix%i\n", obj, obj->type, obj->cur.geometry.x, obj->cur.geometry.y, obj->cur.geometry.w, obj->cur.geometry.h);
-                  if ((evas_object_is_in_output_rect(obj, ux, uy, uw, uh) ||
-                       (obj->smart.smart)) &&
+                  if ((evas_object_is_in_output_rect(eo_obj, obj, ux, uy, uw, uh) ||
+                       (obj->is_smart)) &&
                       (!obj->clip.clipees) &&
                       (obj->cur.visible) &&
                       (!obj->delete_me) &&
                       (obj->cur.cache.clip.visible) &&
-//		      (!obj->smart.smart) &&
+//		      (!obj->is_smart) &&
                       ((obj->cur.color.a > 0 || obj->cur.render_op != EVAS_RENDER_BLEND)))
                     {
                        int x, y, w, h;
@@ -1528,9 +1606,9 @@ evas_render_updates_internal(Evas *e,
                            (eina_array_data_get(&e->temporary_objects, offset) == obj))
                          offset++;
                        x = cx; y = cy; w = cw; h = ch;
-                       if (((w > 0) && (h > 0)) || (obj->smart.smart))
+                       if (((w > 0) && (h > 0)) || (obj->is_smart))
                          {
-                            if (!obj->smart.smart)
+                            if (!obj->is_smart)
                               {
                                  RECTS_CLIP_TO_RECT(x, y, w, h,
                                                     obj->cur.cache.clip.x + off_x,
@@ -1539,13 +1617,16 @@ evas_render_updates_internal(Evas *e,
                                                     obj->cur.cache.clip.h);
                               }
                             if (obj->cur.mask)
-                              e->engine.func->context_mask_set(e->engine.data.output,
+                              {
+                                 Evas_Object_Protected_Data *cur_mask = eo_data_get(obj->cur.mask, EVAS_OBJ_CLASS);
+                                 e->engine.func->context_mask_set(e->engine.data.output,
                                                                e->engine.data.context,
-                                                               obj->cur.mask->func->engine_data_get(obj->cur.mask),
-                                                               obj->cur.mask->cur.geometry.x + off_x,
-                                                               obj->cur.mask->cur.geometry.y + off_y,
-                                                               obj->cur.mask->cur.geometry.w,
-                                                               obj->cur.mask->cur.geometry.h);
+                                                               cur_mask->func->engine_data_get(obj->cur.mask),
+                                                               cur_mask->cur.geometry.x + off_x,
+                                                               cur_mask->cur.geometry.y + off_y,
+                                                               cur_mask->cur.geometry.w,
+                                                               cur_mask->cur.geometry.h);
+                              }
                             else
                               e->engine.func->context_mask_unset(e->engine.data.output,
                                                                  e->engine.data.context);
@@ -1555,14 +1636,14 @@ evas_render_updates_internal(Evas *e,
 #if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
                             for (j = offset; j < e->temporary_objects.count; ++j)
                               {
-                                 Evas_Object *obj2;
+                                 Evas_Object_Protected_Data *obj2;
 
-                                 obj2 = (Evas_Object *)eina_array_data_get
+                                 obj2 = (Evas_Object_Protected_Data *)eina_array_data_get
                                    (&e->temporary_objects, j);
-                                 _evas_render_cutout_add(e, obj2, off_x, off_y);
+                                 _evas_render_cutout_add(eo_e, obj2->object, off_x, off_y);
                               }
 #endif
-                            clean_them |= evas_render_mapped(e, obj, e->engine.data.context,
+                            clean_them |= evas_render_mapped(eo_e, eo_obj, obj, e->engine.data.context,
                                                              surface, off_x, off_y, 0,
                                                              cx, cy, cw, ch
 #ifdef REND_DBG
@@ -1585,9 +1666,9 @@ evas_render_updates_internal(Evas *e,
         /* flush redraws */
         if (haveup)
           {
-             evas_event_callback_call(e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
+             evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_PRE, NULL);
              e->engine.func->output_flush(e->engine.data.output);
-             evas_event_callback_call(e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
+             evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_FLUSH_POST, NULL);
           }
      }
    /* clear redraws */
@@ -1596,21 +1677,22 @@ evas_render_updates_internal(Evas *e,
    for (i = 0; i < e->active_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->active_objects, i);
+        eo_obj = obj->object;
         obj->pre_render_done = EINA_FALSE;
         RD("    OBJ [%p] post... %i %i\n", obj, obj->changed, do_draw);
         if ((obj->changed) && (do_draw))
           {
              RD("    OBJ [%p] post... func1\n", obj);
-             obj->func->render_post(obj);
+             obj->func->render_post(eo_obj, obj);
              obj->restack = EINA_FALSE;
-             evas_object_change_reset(obj);
+             evas_object_change_reset(eo_obj);
           }
         else if (clean_them)
           {
              RD("    OBJ [%p] post... func2\n", obj);
-             obj->func->render_post(obj);
+             obj->func->render_post(eo_obj, obj);
              obj->restack = EINA_FALSE;
-             evas_object_change_reset(obj);
+             evas_object_change_reset(eo_obj);
           }
         /* moved to other pre-process phase 1
            if (obj->delete_me == 2)
@@ -1630,12 +1712,13 @@ evas_render_updates_internal(Evas *e,
    for (i = 0; i < e->render_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->render_objects, i);
+        eo_obj = obj->object;
         obj->pre_render_done = EINA_FALSE;
         if ((obj->changed) && (do_draw))
           {
-             obj->func->render_post(obj);
+             obj->func->render_post(eo_obj, obj);
              obj->restack = EINA_FALSE;
-             evas_object_change_reset(obj);
+             evas_object_change_reset(eo_obj);
           }
      }
 
@@ -1643,7 +1726,8 @@ evas_render_updates_internal(Evas *e,
    for (i = 0; i < e->delete_objects.count; ++i)
      {
         obj = eina_array_data_get(&e->delete_objects, i);
-        evas_object_free(obj, 1);
+        eo_obj = obj->object;
+        evas_object_free(eo_obj, 1);
      }
    eina_array_clean(&e->delete_objects);
 
@@ -1677,7 +1761,7 @@ evas_render_updates_internal(Evas *e,
 
    evas_module_clean();
 
-   evas_event_callback_call(e, EVAS_CALLBACK_RENDER_POST, NULL);
+   evas_event_callback_call(eo_e, EVAS_CALLBACK_RENDER_POST, NULL);
 
    RD("---]\n");
 
@@ -1694,46 +1778,80 @@ evas_render_updates_free(Eina_List *updates)
 }
 
 EAPI Eina_List *
-evas_render_updates(Evas *e)
+evas_render_updates(Evas *eo_e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
+   Eina_List *ret = NULL;
+   eo_do(eo_e, evas_canvas_render_updates(&ret));
+   return ret;
+}
 
-   if (!e->changed) return NULL;
-   return evas_render_updates_internal(e, 1, 1);
+void
+_canvas_render_updates(Eo *eo_e, void *_pd, va_list *list)
+{
+   Eina_List **ret = va_arg(*list, Eina_List **);
+
+   Evas_Public_Data *e = _pd;
+
+   if (!e->changed)
+     {
+        *ret = NULL;
+        return;
+     }
+   *ret = evas_render_updates_internal(eo_e, 1, 1);
 }
 
 EAPI void
-evas_render(Evas *e)
+evas_render(Evas *eo_e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_render());
+}
+
+void
+_canvas_render(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
+{
+   Evas_Public_Data *e = _pd;
 
    if (!e->changed) return;
-   evas_render_updates_internal(e, 0, 1);
+   evas_render_updates_internal(eo_e, 0, 1);
 }
 
 EAPI void
-evas_norender(Evas *e)
+evas_norender(Evas *eo_e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_norender());
+}
 
+void
+_canvas_norender(Eo *eo_e, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
    //   if (!e->changed) return;
-   evas_render_updates_internal(e, 0, 0);
+   evas_render_updates_internal(eo_e, 0, 0);
 }
 
 EAPI void
-evas_render_idle_flush(Evas *e)
+evas_render_idle_flush(Evas *eo_e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_render_idle_flush());
+}
 
-   evas_fonts_zero_presure(e);
+void
+_canvas_render_idle_flush(Eo *eo_e, void *_pd, va_list *list EINA_UNUSED)
+{
+   Evas_Public_Data *e = _pd;
+
+   evas_fonts_zero_presure(eo_e);
 
    if ((e->engine.func) && (e->engine.func->output_idle_flush) &&
        (e->engine.data.output))
@@ -1751,14 +1869,20 @@ evas_render_idle_flush(Evas *e)
 }
 
 EAPI void
-evas_sync(Evas *e)
+evas_sync(Evas *eo_e)
 {
-  (void) e;
+   eo_do(eo_e, evas_canvas_sync());
 }
 
-static void
-_evas_render_dump_map_surfaces(Evas_Object *obj)
+void
+_canvas_sync(Eo *eo_e EINA_UNUSED, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
 {
+}
+
+void
+_evas_render_dump_map_surfaces(Evas_Object *eo_obj)
+{
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if ((obj->cur.map) && obj->map.surface)
      {
         obj->layer->evas->engine.func->image_map_surface_free
@@ -1766,33 +1890,39 @@ _evas_render_dump_map_surfaces(Evas_Object *obj)
         obj->map.surface = NULL;
      }
 
-   if (obj->smart.smart)
+   if (obj->is_smart)
      {
-        Evas_Object *obj2;
+        Evas_Object_Protected_Data *obj2;
 
-        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(obj), obj2)
-           _evas_render_dump_map_surfaces(obj2);
+        EINA_INLIST_FOREACH(evas_object_smart_members_get_direct(eo_obj), obj2)
+           _evas_render_dump_map_surfaces(obj2->object);
      }
 }
 
 EAPI void
-evas_render_dump(Evas *e)
+evas_render_dump(Evas *eo_e)
+{
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_e, evas_canvas_render_dump());
+}
+
+void
+_canvas_render_dump(Eo *eo_e EINA_UNUSED, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Layer *lay;
 
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
+   Evas_Public_Data *e = _pd;
    EINA_INLIST_FOREACH(e->layers, lay)
      {
-        Evas_Object *obj;
+        Evas_Object_Protected_Data *obj;
 
         EINA_INLIST_FOREACH(lay->objects, obj)
           {
              if ((obj->type) && (!strcmp(obj->type, "image")))
-               evas_object_inform_call_image_unloaded(obj);
-             _evas_render_dump_map_surfaces(obj);
+               evas_object_inform_call_image_unloaded(obj->object);
+             _evas_render_dump_map_surfaces(obj->object);
           }
      }
    if ((e->engine.func) && (e->engine.func->output_dump) &&
@@ -1801,11 +1931,12 @@ evas_render_dump(Evas *e)
 }
 
 void
-evas_render_invalidate(Evas *e)
+evas_render_invalidate(Evas *eo_e)
 {
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   MAGIC_CHECK(eo_e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
 
    eina_array_clean(&e->active_objects);
    eina_array_clean(&e->render_objects);
@@ -1817,15 +1948,15 @@ evas_render_invalidate(Evas *e)
 }
 
 void
-evas_render_object_recalc(Evas_Object *obj)
+evas_render_object_recalc(Evas_Object *eo_obj)
 {
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if ((!obj->changed) && (obj->delete_me < 2))
      {
-       Evas *e;
+       Evas_Public_Data *e;
 
        e = obj->layer->evas;
        if ((!e) || (e->cleanup)) return;

@@ -7,18 +7,18 @@
 /* Evas and then a linked lists of grabs for that key and what */
 /* modifiers/not_modifers they use */
 
-static Evas_Key_Grab *evas_key_grab_new  (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive);
-static Evas_Key_Grab *evas_key_grab_find (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive);
+static Evas_Key_Grab *evas_key_grab_new  (Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive);
+static Evas_Key_Grab *evas_key_grab_find (Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive);
 
 static Evas_Key_Grab *
-evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
+evas_key_grab_new(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
 
    g = evas_mem_calloc(sizeof(Evas_Key_Grab));
    if (!g) return NULL;
-   g->object = obj;
+   g->object = eo_obj;
    g->modifiers = modifiers;
    g->not_modifiers = not_modifiers;
    g->exclusive = exclusive;
@@ -39,12 +39,12 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
              return NULL;
           }
      }
-   g->object->grabs = eina_list_append(g->object->grabs, g);
+   obj->grabs = eina_list_append(obj->grabs, g);
    if (eina_error_get())
      {
         MERR_BAD();
         evas_mem_free(sizeof(Eina_List));
-        g->object->grabs = eina_list_append(g->object->grabs, g);
+        obj->grabs = eina_list_append(obj->grabs, g);
         if (eina_error_get())
           {
              MERR_FATAL();
@@ -62,7 +62,7 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
         if (eina_error_get())
           {
              MERR_FATAL();
-             g->object->grabs = eina_list_remove(g->object->grabs, g);
+             obj->grabs = eina_list_remove(obj->grabs, g);
              free(g->keyname);
              free(g);
              return NULL;
@@ -72,7 +72,7 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
 }
 
 static Evas_Key_Grab *
-evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
+evas_key_grab_find(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
 {
    /* MEM OK */
    Eina_List *l;
@@ -84,7 +84,7 @@ evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
             (g->not_modifiers == not_modifiers) &&
             (!strcmp(g->keyname, keyname)))
           {
-             if ((exclusive) ||  (obj == g->object)) return g;
+             if ((exclusive) ||  (eo_obj == g->object)) return g;
           }
      }
    return NULL;
@@ -93,7 +93,7 @@ evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
 /* local calls */
 
 void
-evas_object_grabs_cleanup(Evas_Object *obj)
+evas_object_grabs_cleanup(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if (obj->layer->evas->walking_grabs)
      {
@@ -118,14 +118,15 @@ evas_object_grabs_cleanup(Evas_Object *obj)
 }
 
 void
-evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+evas_key_grab_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
 
-   g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, 0);
+   g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers, 0);
    if (!g) return;
-   g->object->grabs = eina_list_remove(g->object->grabs, g);
+   Evas_Object_Protected_Data *g_object = eo_data_get(g->object, EVAS_OBJ_CLASS);
+   g_object->grabs = eina_list_remove(g_object->grabs, g);
    obj->layer->evas->grabs = eina_list_remove(obj->layer->evas->grabs, g);
    if (g->keyname) free(g->keyname);
    free(g);
@@ -134,46 +135,74 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
 /* public calls */
 
 EAPI Eina_Bool
-evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
+evas_object_key_grab(Evas_Object *eo_obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Eina_Bool exclusive)
 {
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+   Eina_Bool ret = EINA_FALSE;
+   eo_do(eo_obj, evas_obj_key_grab(keyname, modifiers, not_modifiers, exclusive, &ret));
+   return ret;
+}
+
+void
+_key_grab(Eo *eo_obj, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+   Evas_Modifier_Mask modifiers = va_arg(*list, Evas_Modifier_Mask);
+   Evas_Modifier_Mask not_modifiers = va_arg(*list, Evas_Modifier_Mask);
+   Eina_Bool exclusive = va_arg(*list, int);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+
    /* MEM OK */
    Evas_Key_Grab *g;
 
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return EINA_FALSE;
-   MAGIC_CHECK_END();
-   if (!keyname) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = _pd;
+   if (!keyname)
+      *ret = EINA_FALSE;
    if (exclusive)
      {
-        g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers,
+        g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers,
                                exclusive);
-        if (g) return EINA_FALSE;
+        if (g)
+           *ret = EINA_FALSE;
      }
-   g = evas_key_grab_new(obj, keyname, modifiers, not_modifiers, exclusive);
-   if (!g) return EINA_FALSE;
-   return EINA_TRUE;
+   g = evas_key_grab_new(eo_obj, obj, keyname, modifiers, not_modifiers, exclusive);
+   *ret = (!g) ? EINA_FALSE : EINA_TRUE;
 }
 
 EAPI void
-evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+evas_object_key_ungrab(Evas_Object *eo_obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
+   MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   eo_do(eo_obj, evas_obj_key_ungrab(keyname, modifiers, not_modifiers));
+}
+
+void
+_key_ungrab(Eo *eo_obj, void *_pd, va_list *list)
+{
+   const char *keyname = va_arg(*list, const char *);
+   Evas_Modifier_Mask modifiers = va_arg(*list, Evas_Modifier_Mask);
+   Evas_Modifier_Mask not_modifiers = va_arg(*list, Evas_Modifier_Mask);
+
    /* MEM OK */
    Evas_Key_Grab *g;
 
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
    if (!keyname) return;
-   g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, 0);
+   Evas_Object_Protected_Data *obj = _pd;
+   g = evas_key_grab_find(eo_obj, obj, keyname, modifiers, not_modifiers, 0);
    if (!g) return;
-   if (g->object->layer->evas->walking_grabs)
+   Evas_Object_Protected_Data *g_object = eo_data_get(g->object, EVAS_OBJ_CLASS);
+   if (g_object->layer->evas->walking_grabs)
      {
         if (!g->delete_me)
           {
-             g->object->layer->evas->delete_grabs++;
+             g_object->layer->evas->delete_grabs++;
              g->delete_me = EINA_TRUE;
           }
      }
    else
-     evas_key_grab_free(g->object, keyname, modifiers, not_modifiers);
+     evas_key_grab_free(g->object, g_object, keyname, modifiers, not_modifiers);
 }

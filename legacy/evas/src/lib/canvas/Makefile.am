@@ -20,8 +20,10 @@ AM_CPPFLAGS = \
 
 noinst_LTLIBRARIES   = libevas_canvas.la
 libevas_canvas_la_SOURCES  = \
+common_interfaces.c \
 evas_callbacks.c \
 evas_clip.c \
+evas_common_interface.c \
 evas_data.c \
 evas_device.c \
 evas_events.c \

@@ -171,6 +171,7 @@ AM_CPPFLAGS = \
 @EET_CFLAGS@ \
 @FONTCONFIG_CFLAGS@ \
 @pthread_cflags@ \
+@EO_CFLAGS@ \
 @PIXMAN_CFLAGS@
 
 lib_LTLIBRARIES = libevas.la
@@ -209,6 +210,7 @@ engines/common/libevas_engine_common.la \
 $(EVAS_STATIC_MODULE) \
 $(EVAS_STATIC_LIBADD) \
 @PIXMAN_LIBS@ \
+@EO_LIBS@ \
 -lm
 
 libevas_la_DEPENDENCIES = \

@@ -2,9 +2,10 @@
 #define EVAS_INLINE_H
 
 static inline Eina_Bool
-_evas_render_has_map(Evas_Object *obj)
+_evas_render_has_map(Evas_Object *eo_obj)
 {
-   return ((!((obj->func->can_map) && (obj->func->can_map(obj)))) &&
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   return ((!((obj->func->can_map) && (obj->func->can_map(eo_obj)))) &&
            ((obj->cur.map) && (obj->cur.usemap)));
    //   return ((obj->cur.map) && (obj->cur.usemap));
 }
@@ -16,15 +17,15 @@ _evas_object_event_new(void)
 }
 
 static inline int
-evas_object_was_visible(Evas_Object *obj)
+evas_object_was_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if ((obj->prev.visible) &&
-       ((obj->prev.cache.clip.visible) || (obj->smart.smart)) &&
+       ((obj->prev.cache.clip.visible) || obj->is_smart) &&
        ((obj->prev.cache.clip.a > 0 && obj->prev.render_op == EVAS_RENDER_BLEND)
        || obj->prev.render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->was_visible)
-          return obj->func->was_visible(obj);
+          return obj->func->was_visible(eo_obj);
         return 1;
      }
    return 0;
@@ -62,15 +63,15 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
 }
 
 static inline int
-evas_object_is_opaque(Evas_Object *obj)
+evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (obj->smart.smart) return 0;
+   if (obj->is_smart) return 0;
    /* If a mask: Assume alpha */
    if (obj->cur.mask) return 0;
    if (obj->cur.cache.clip.a == 255)
      {
         if (obj->func->is_opaque)
-          return obj->func->is_opaque(obj);
+          return obj->func->is_opaque(eo_obj, obj);
         return 1;
      }
    if (obj->cur.render_op == EVAS_RENDER_COPY)
@@ -79,60 +80,66 @@ evas_object_is_opaque(Evas_Object *obj)
 }
 
 static inline int
-evas_event_freezes_through(Evas_Object *obj)
+evas_event_freezes_through(Evas_Object *eo_obj __UNUSED__, Evas_Object_Protected_Data *obj)
 {
    if (obj->freeze_events) return 1;
    if (obj->parent_cache.freeze_events_valid)
      return obj->parent_cache.freeze_events;
    if (!obj->smart.parent) return 0;
+   Evas_Object_Protected_Data *smart_parent_pd = eo_data_get(obj->smart.parent, EVAS_OBJ_CLASS);
    obj->parent_cache.freeze_events =
-      evas_event_freezes_through(obj->smart.parent);
+      evas_event_freezes_through(obj->smart.parent, smart_parent_pd);
    obj->parent_cache.freeze_events_valid = EINA_TRUE;
    return obj->parent_cache.freeze_events;
 }
 
 static inline int
-evas_event_passes_through(Evas_Object *obj)
+evas_event_passes_through(Evas_Object *eo_obj __UNUSED__, Evas_Object_Protected_Data *obj)
 {
    if (obj->pass_events) return 1;
    if (obj->parent_cache.pass_events_valid)
      return obj->parent_cache.pass_events;
    if (!obj->smart.parent) return 0;
+   Evas_Object_Protected_Data *smart_parent_pd = eo_data_get(obj->smart.parent, EVAS_OBJ_CLASS);
    obj->parent_cache.pass_events =
-      evas_event_passes_through(obj->smart.parent);
+      evas_event_passes_through(obj->smart.parent, smart_parent_pd);
    obj->parent_cache.pass_events_valid = EINA_TRUE;
    return obj->parent_cache.pass_events;
 }
 
 static inline int
-evas_object_is_visible(Evas_Object *obj)
+evas_object_is_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {                        /* post 1.0 -> enable? */
    if ((obj->cur.visible)/* && (obj->cur.color.a > 0)*/ &&
-       ((obj->cur.cache.clip.visible) || (obj->smart.smart)) &&
+       ((obj->cur.cache.clip.visible) || (obj->is_smart)) &&
        ((obj->cur.cache.clip.a > 0 && obj->cur.render_op == EVAS_RENDER_BLEND)
        || obj->cur.render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->is_visible)
-          return obj->func->is_visible(obj);
+          return obj->func->is_visible(eo_obj);
         return 1;
      }
    return 0;
 }
 
 static inline int
-evas_object_clippers_is_visible(Evas_Object *obj)
+evas_object_clippers_is_visible(Evas_Object *eo_obj __UNUSED__, Evas_Object_Protected_Data *obj)
 {
    if (obj->cur.visible)
      {
+        Evas_Object_Protected_Data *clipper_pd = NULL;
         if (obj->cur.clipper)
-          return evas_object_clippers_is_visible(obj->cur.clipper);
+          {
+             clipper_pd = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
+             return evas_object_clippers_is_visible(obj->cur.clipper, clipper_pd);
+          }
         return 1;
      }
    return 0;
 }
 
 static inline int
-evas_object_is_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
+evas_object_is_in_output_rect(Evas_Object *eo_obj __UNUSED__, Evas_Object_Protected_Data *obj, int x, int y, int w, int h)
 {
    /* assumes coords have been recalced */
    if ((RECTS_INTERSECT(x, y, w, h,
@@ -145,26 +152,26 @@ evas_object_is_in_output_rect(Evas_Object *obj, int x, int y, int w, int h)
 }
 
 static inline int
-evas_object_is_active(Evas_Object *obj)
+evas_object_is_active(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (evas_object_is_visible(obj) || evas_object_was_visible(obj))
+   if (evas_object_is_visible(eo_obj, obj) || evas_object_was_visible(eo_obj, obj))
      {
-        if (obj->smart.smart)
+        if (obj->is_smart)
           {
              int mapsmt = 0;
-             if (obj->smart.smart && (obj->cur.map && obj->cur.usemap)) mapsmt = 1;
+             if (obj->cur.map && obj->cur.usemap) mapsmt = 1;
              if (!mapsmt) return 1;
-             if (evas_object_is_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
+             if (evas_object_is_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
                                                obj->layer->evas->output.h) ||
-                 evas_object_was_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
+                 evas_object_was_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
                                                 obj->layer->evas->output.h))
                return 1;
           }
         else
           {
-             if (evas_object_is_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
+             if (evas_object_is_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
                                                obj->layer->evas->output.h) ||
-                 evas_object_was_in_output_rect(obj, 0, 0, obj->layer->evas->output.w,
+                 evas_object_was_in_output_rect(eo_obj, obj, 0, 0, obj->layer->evas->output.w,
                                                 obj->layer->evas->output.h))
                return 1;
           }
@@ -177,7 +184,7 @@ evas_object_is_active(Evas_Object *obj)
 }
 
 static inline void
-evas_object_coords_recalc(Evas_Object *obj)
+evas_object_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
 ////   if (obj->cur.cache.geometry.validity == obj->layer->evas->output_validity)
 ////     return;
@@ -191,23 +198,27 @@ evas_object_coords_recalc(Evas_Object *obj)
 ////   obj->cur.cache.geometry.h =
 ////     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.h) -
 ////     evas_coord_world_y_to_screen(obj->layer->evas, 0);
-   if (obj->func->coords_recalc) obj->func->coords_recalc(obj);
+   if (obj->func->coords_recalc) obj->func->coords_recalc(eo_obj, obj);
 ////   obj->cur.cache.geometry.validity = obj->layer->evas->output_validity;
 }
 
 static inline void
-evas_object_clip_recalc(Evas_Object *obj)
+evas_object_clip_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    int cx, cy, cw, ch, cr, cg, cb, ca;
    int nx, ny, nw, nh, nr, ng, nb, na;
    Eina_Bool cvis, nvis;
 
+   Evas_Object_Protected_Data *clipper = NULL;
+   if (obj->cur.clipper)
+      clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
+
    if ((!obj->cur.cache.clip.dirty) &&
-       !(!obj->cur.clipper || obj->cur.clipper->cur.cache.clip.dirty)) return;
+       !(!obj->cur.clipper || clipper->cur.cache.clip.dirty)) return;
 
-   if (obj->layer->evas->events_frozen > 0) return;
+   if (obj->layer->evas->is_frozen) return;
 
-   evas_object_coords_recalc(obj);
+   evas_object_coords_recalc(eo_obj, obj);
 
    if ((obj->cur.map) && (obj->cur.usemap))
      {
@@ -225,7 +236,7 @@ evas_object_clip_recalc(Evas_Object *obj)
      }
 
    if (obj->cur.color.a == 0 && obj->cur.render_op == EVAS_RENDER_BLEND)
-     cvis = EINA_FALSE;
+      cvis = EINA_FALSE;
    else cvis = obj->cur.visible;
 
    cr = obj->cur.color.r; cg = obj->cur.color.g;
@@ -234,26 +245,26 @@ evas_object_clip_recalc(Evas_Object *obj)
    if (obj->cur.clipper)
      {
         // this causes problems... hmmm ?????
-        if (obj->cur.clipper->cur.cache.clip.dirty)
-          evas_object_clip_recalc(obj->cur.clipper);
+        if (clipper->cur.cache.clip.dirty)
+          evas_object_clip_recalc(obj->cur.clipper, clipper);
 
         // I don't know why this test was here in the first place. As I have
         // no issue showing up due to this, I keep it and move color out of it.
         // breaks cliping of mapped images!!!
-        if (obj->cur.clipper->cur.map_parent == obj->cur.map_parent)
+        if (clipper->cur.map_parent == obj->cur.map_parent)
           {
-             nx = obj->cur.clipper->cur.cache.clip.x;
-             ny = obj->cur.clipper->cur.cache.clip.y;
-             nw = obj->cur.clipper->cur.cache.clip.w;
-             nh = obj->cur.clipper->cur.cache.clip.h;
+             nx = clipper->cur.cache.clip.x;
+             ny = clipper->cur.cache.clip.y;
+             nw = clipper->cur.cache.clip.w;
+             nh = clipper->cur.cache.clip.h;
              RECTS_CLIP_TO_RECT(cx, cy, cw, ch, nx, ny, nw, nh);
           }
 
-        nvis = obj->cur.clipper->cur.cache.clip.visible;
-        nr = obj->cur.clipper->cur.cache.clip.r;
-        ng = obj->cur.clipper->cur.cache.clip.g;
-        nb = obj->cur.clipper->cur.cache.clip.b;
-        na = obj->cur.clipper->cur.cache.clip.a;
+        nvis = clipper->cur.cache.clip.visible;
+        nr = clipper->cur.cache.clip.r;
+        ng = clipper->cur.cache.clip.g;
+        nb = clipper->cur.cache.clip.b;
+        na = clipper->cur.cache.clip.a;
         cvis = (cvis & nvis);
         cr = (cr * (nr + 1)) >> 8;
         cg = (cg * (ng + 1)) >> 8;

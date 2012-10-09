@@ -128,11 +128,9 @@ OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
 # define MAGIC_CHECK_FAILED(o, t, m) \
 {evas_debug_error(); \
  if (!o) evas_debug_input_null(); \
- else if (((t *)o)->magic == 0) evas_debug_magic_null(); \
- else evas_debug_magic_wrong((m), ((t *)o)->magic); \
 }
 # define MAGIC_CHECK(o, t, m) \
-{if (EINA_UNLIKELY((!o) || (!(((t *)o)->magic == (m))))) { \
+{if (EINA_UNLIKELY(!o)) { \
 MAGIC_CHECK_FAILED(o, t, m)
 # define MAGIC_CHECK_END() }}
 #else
@@ -255,6 +253,16 @@ struct _Evas_Smart_Interfaces_Array
    const Evas_Smart_Interface **array;
 };
 
+/**
+ * @def evas_obj_smart_attach
+ *
+ * Attach a given smart data to a given smart object.
+ *
+ * @param[in] s in
+ *
+ */
+#define evas_obj_smart_attach(s) EVAS_OBJ_SMART_ID(EVAS_OBJ_SMART_SUB_ID_ATTACH), EO_TYPECHECK(Evas_Smart *, s)
+
 struct _Evas_Smart
 {
    DATA32            magic;
@@ -304,11 +312,12 @@ struct _Evas_Callbacks
    unsigned char     deletions_waiting : 1;
 };
 
-struct _Evas
+struct _Evas_Public_Data
 {
    EINA_INLIST;
 
    DATA32            magic;
+   Evas              *evas;
 
    struct {
       unsigned char  inside : 1;
@@ -350,7 +359,6 @@ struct _Evas
    int               output_validity;
 
    int               walking_list;
-   int               events_frozen;
    Evas_Event_Flags  default_event_flags;
 
    struct {
@@ -383,6 +391,7 @@ struct _Evas
    Eina_List     *post_events; // free me on evas_free
 
    Evas_Callbacks *callbacks;
+   Eina_Inlist    *callbacks_infos;
 
    int            delete_grabs;
    int            walking_grabs;
@@ -407,6 +416,7 @@ struct _Evas
    unsigned char  invalidate : 1;
    unsigned char  cleanup : 1;
    unsigned char  focus : 1;
+   Eina_Bool      is_frozen : 1;
 
    Eina_List     *touch_points;
    Eina_List     *devices;
@@ -418,9 +428,9 @@ struct _Evas_Layer
    EINA_INLIST;
 
    short             layer;
-   Evas_Object      *objects;
+   Evas_Object_Protected_Data      *objects;
 
-   Evas             *evas;
+   Evas_Public_Data *evas;
 
    void             *engine_data;
    int               usage;
@@ -509,11 +519,9 @@ EAPI Evas_Software_Filter_Fn evas_filter_software_get(Evas_Filter_Info *info);
 void evas_filter_free(Evas_Object *o);
 #endif
 
-struct _Evas_Object
+struct _Evas_Object_Protected_Data
 {
    EINA_INLIST;
-
-   DATA32                   magic;
 
    const char              *type;
    Evas_Layer              *layer;
@@ -575,8 +583,6 @@ struct _Evas_Object
 
    const Evas_Object_Func     *func;
 
-   void                       *object_data;
-
    struct {
       Evas_Smart              *smart;
       Evas_Object             *parent;
@@ -589,6 +595,8 @@ struct _Evas_Object
       Eina_Bool                redraw;
    } proxy;
 
+   // Pointer to the Evas_Object itself
+   Evas_Object                *object;
 #if 0 // filtering disabled
    Evas_Filter_Info           *filter;
 #endif
@@ -601,6 +609,8 @@ struct _Evas_Object
    int                         last_mouse_up_counter;
    int                         mouse_grabbed;
 
+   // Daniel: Added because the destructor can't take parameters, at least for the moment
+   int                         clean_layer;
    int                         last_event;
    Evas_Callback_Type          last_event_type;
 
@@ -613,6 +623,7 @@ struct _Evas_Object
    void                      **interface_privates;
 
    unsigned int                ref;
+   Eina_List                  *supported_types;
 
    unsigned char               delete_me;
 
@@ -654,6 +665,8 @@ struct _Evas_Object
 
    Eina_Bool                   is_frame : 1;
    Eina_Bool                   child_has_map : 1;
+   Eina_Bool                   eo_del_called : 1;
+   Eina_Bool                   is_smart : 1;
 };
 
 struct _Evas_Func_Node
@@ -730,10 +743,10 @@ struct _Evas_Device
 
 struct _Evas_Object_Func
 {
-   void (*free) (Evas_Object *obj);
-   void (*render) (Evas_Object *obj, void *output, void *context, void *surface, int x, int y);
-   void (*render_pre) (Evas_Object *obj);
-   void (*render_post) (Evas_Object *obj);
+   void (*free) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
+   void (*render) (Evas_Object *obj, Evas_Object_Protected_Data *pd, void *output, void *context, void *surface, int x, int y);
+   void (*render_pre) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
+   void (*render_post) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
 
    unsigned int  (*type_id_get) (Evas_Object *obj);
    unsigned int  (*visual_id_get) (Evas_Object *obj);
@@ -745,18 +758,18 @@ struct _Evas_Object_Func
    int  (*is_visible) (Evas_Object *obj);
    int  (*was_visible) (Evas_Object *obj);
 
-   int  (*is_opaque) (Evas_Object *obj);
-   int  (*was_opaque) (Evas_Object *obj);
+   int  (*is_opaque) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
+   int  (*was_opaque) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
 
-   int  (*is_inside) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-   int  (*was_inside) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+   int  (*is_inside) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
+   int  (*was_inside) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
 
-   void (*coords_recalc) (Evas_Object *obj);
+   void (*coords_recalc) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
 
    void (*scale_update) (Evas_Object *obj);
 
-   int (*has_opaque_rect) (Evas_Object *obj);
-   int (*get_opaque_rect) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+   int (*has_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd);
+   int (*get_opaque_rect) (Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
    int (*can_map) (Evas_Object *obj);
 };
@@ -931,6 +944,13 @@ struct _Evas_Image_Save_Func
   int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 };
 
+
+typedef struct
+{
+   Eo_Event_Description *eo_desc;
+   Eina_Bool is_desc_allocated : 1;
+} _Evas_Event_Description;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -939,19 +959,19 @@ Evas_Object *evas_object_new(Evas *e);
 void evas_object_change_reset(Evas_Object *obj);
 void evas_object_cur_prev(Evas_Object *obj);
 void evas_object_free(Evas_Object *obj, int clean_layer);
-void evas_object_update_bounding_box(Evas_Object *obj);
-void evas_object_inject(Evas_Object *obj, Evas *e);
-void evas_object_release(Evas_Object *obj, int clean_layer);
-void evas_object_change(Evas_Object *obj);
+void evas_object_update_bounding_box(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_object_inject(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas *e);
+void evas_object_release(Evas_Object *obj, Evas_Object_Protected_Data *pd, int clean_layer);
+void evas_object_change(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_clip_changes_clean(Evas_Object *obj);
 void evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v);
 void evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj);
-void evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj);
+void evas_object_render_pre_prev_cur_add(Eina_Array *rects, Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v);
 void evas_rects_return_difference_rects(Eina_Array *rects, int x, int y, int w, int h, int xx, int yy, int ww, int hh);
 
-void evas_object_clip_dirty(Evas_Object *obj);
-void evas_object_recalc_clippees(Evas_Object *obj);
+void evas_object_clip_dirty(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_object_recalc_clippees(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 Evas_Layer *evas_layer_new(Evas *e);
 void evas_layer_pre_free(Evas_Layer *lay);
 void evas_layer_free_objects(Evas_Layer *lay);
@@ -960,17 +980,17 @@ Evas_Layer *evas_layer_find(Evas *e, short layer_num);
 void evas_layer_add(Evas_Layer *lay);
 void evas_layer_del(Evas_Layer *lay);
 
-int evas_object_was_in_output_rect(Evas_Object *obj, int x, int y, int w, int h);
+int evas_object_was_in_output_rect(Evas_Object *obj, Evas_Object_Protected_Data *pd, int x, int y, int w, int h);
 
-int evas_object_was_opaque(Evas_Object *obj);
-int evas_object_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-int evas_object_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-int evas_object_clippers_was_visible(Evas_Object *obj);
-void evas_object_clip_across_check(Evas_Object *obj);
-void evas_object_clip_across_clippees_check(Evas_Object *obj);
-void evas_object_mapped_clip_across_mark(Evas_Object *obj);
+int evas_object_was_opaque(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+int evas_object_is_inside(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
+int evas_object_was_inside(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
+int evas_object_clippers_was_visible(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_object_clip_across_check(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_object_clip_across_clippees_check(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_object_mapped_clip_across_mark(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info);
-void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info, int event_id);
+void evas_object_event_callback_call(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Callback_Type type, void *event_info, int event_id);
 Eina_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 int evas_mem_free(int mem_required);
 int evas_mem_degrade(int mem_required);
@@ -1004,7 +1024,7 @@ void evas_call_smarts_calculate(Evas *e);
 void evas_object_smart_bouding_box_update(Evas_Object *obj);
 void evas_object_smart_need_bounding_box_update(Evas_Object *obj);
 void *evas_mem_calloc(int size);
-void _evas_post_event_callback_call(Evas *e);
+void _evas_post_event_callback_call(Evas *e, Evas_Public_Data* e_pd);
 void _evas_post_event_callback_free(Evas *e);
 void evas_event_callback_list_post_free(Eina_Inlist **list);
 void evas_object_event_callback_all_del(Evas_Object *obj);
@@ -1013,7 +1033,7 @@ void evas_event_callback_all_del(Evas *e);
 void evas_event_callback_cleanup(Evas *e);
 void evas_object_inform_call_show(Evas_Object *obj);
 void evas_object_inform_call_hide(Evas_Object *obj);
-void evas_object_inform_call_move(Evas_Object *obj);
+void evas_object_inform_call_move(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_object_inform_call_resize(Evas_Object *obj);
 void evas_object_inform_call_restack(Evas_Object *obj);
 void evas_object_inform_call_changed_size_hints(Evas_Object *obj);
@@ -1023,7 +1043,7 @@ void evas_object_inform_call_image_resize(Evas_Object *obj);
 void evas_object_intercept_cleanup(Evas_Object *obj);
 int evas_object_intercept_call_show(Evas_Object *obj);
 int evas_object_intercept_call_hide(Evas_Object *obj);
-int evas_object_intercept_call_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+int evas_object_intercept_call_move(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Coord x, Evas_Coord y);
 int evas_object_intercept_call_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 int evas_object_intercept_call_raise(Evas_Object *obj);
 int evas_object_intercept_call_lower(Evas_Object *obj);
@@ -1031,10 +1051,10 @@ int evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object *above)
 int evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object *below);
 int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
 int evas_object_intercept_call_color_set(Evas_Object *obj, int r, int g, int b, int a);
-int evas_object_intercept_call_clip_set(Evas_Object *obj, Evas_Object *clip);
+int evas_object_intercept_call_clip_set(Evas_Object *obj, Evas_Object_Protected_Data *pd, Evas_Object *clip);
 int evas_object_intercept_call_clip_unset(Evas_Object *obj);
-void evas_object_grabs_cleanup(Evas_Object *obj);
-void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
+void evas_object_grabs_cleanup(Evas_Object *obj, Evas_Object_Protected_Data *pd);
+void evas_key_grab_free(Evas_Object *obj, Evas_Object_Protected_Data *pd, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);
 const char *evas_font_dir_cache_find(char *dir, char *font);
 Eina_List *evas_font_dir_available_list(const Evas* evas);
@@ -1055,6 +1075,123 @@ void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
 void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
+
+
+void _freeze_events_set(Eo *obj, void *_pd, va_list *list);
+void _freeze_events_get(Eo *obj, void *_pd, va_list *list);
+void _pass_events_set(Eo *obj, void *_pd, va_list *list);
+void _pass_events_get(Eo *obj, void *_pd, va_list *list);
+void _repeat_events_set(Eo *obj, void *_pd, va_list *list);
+void _repeat_events_get(Eo *obj, void *_pd, va_list *list);
+void _propagate_events_set(Eo *obj, void *_pd, va_list *list);
+void _propagate_events_get(Eo *obj, void *_pd, va_list *list);
+void _pointer_mode_set(Eo *obj, void *_pd, va_list *list);
+void _pointer_mode_get(Eo *obj, void *_pd, va_list *list);
+void _key_grab(Eo *obj, void *_pd, va_list *list);
+void _key_ungrab(Eo *obj, void *_pd, va_list *list);
+void _focus_set(Eo *obj, void *_pd, va_list *list);
+void _focus_get(Eo *obj, void *_pd, va_list *list);
+void _name_set(Eo *obj, void *_pd, va_list *list);
+void _name_get(Eo *obj, void *_pd, va_list *list);
+void _name_child_find(Eo *obj, void *_pd, va_list *list);
+void _layer_set(Eo *obj, void *_pd, va_list *list);
+void _layer_get(Eo *obj, void *_pd, va_list *list);
+void _clip_set(Eo *obj, void *_pd, va_list *list);
+void _clip_get(Eo *obj, void *_pd, va_list *list);
+void _clip_unset(Eo *obj, void *_pd, va_list *list);
+void _clipees_get(Eo *obj, void *_pd, va_list *list);
+void _map_enable_set(Eo *obj, void *_pd, va_list *list);
+void _map_enable_get(Eo *obj, void *_pd, va_list *list);
+void _map_source_set(Eo *obj, void *_pd, va_list *list);
+void _map_source_get(Eo *obj, void *_pd, va_list *list);
+void _map_set(Eo *obj, void *_pd, va_list *list);
+void _map_get(Eo *obj, void *_pd, va_list *list);
+void _raise(Eo *obj, void *_pd, va_list *list);
+void _lower(Eo *obj, void *_pd, va_list *list);
+void _stack_above(Eo *obj, void *_pd, va_list *list);
+void _stack_below(Eo *obj, void *_pd, va_list *list);
+void _above_get(Eo *obj, void *_pd, va_list *list);
+void _below_get(Eo *obj, void *_pd, va_list *list);
+void _smart_move_children_relative(Eo *obj, void *_pd, va_list *list);
+void _smart_clipped_clipper_get(Eo *obj, void *_pd, va_list *list);
+
+void _canvas_event_default_flags_set(Eo *e, void *_pd, va_list *list);
+void _canvas_event_default_flags_get(Eo *e, void *_pd, va_list *list);
+void _canvas_event_freeze(Eo *e, void *_pd, va_list *list);
+void _canvas_event_thaw(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_mouse_down(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_mouse_up(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_mouse_cancel(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_mouse_wheel(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_mouse_move(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_mouse_in(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_mouse_out(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_multi_down(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_multi_up(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_multi_move(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_key_down(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_key_up(Eo *e, void *_pd, va_list *list);
+void _canvas_event_feed_hold(Eo *e, void *_pd, va_list *list);
+void _canvas_event_refeed_event(Eo *e, void *_pd, va_list *list);
+void _canvas_event_down_count_get(Eo *e, void *_pd, va_list *list);
+void _canvas_focus_get(Eo *e, void *_pd, va_list *list);
+void _canvas_font_path_clear(Eo *e, void *_pd, va_list *list);
+void _canvas_font_path_append(Eo *e, void *_pd, va_list *list);
+void _canvas_font_path_prepend(Eo *e, void *_pd, va_list *list);
+void _canvas_font_path_list(Eo *e, void *_pd, va_list *list);
+void _canvas_font_hinting_set(Eo *e, void *_pd, va_list *list);
+void _canvas_font_hinting_get(Eo *e, void *_pd, va_list *list);
+void _canvas_font_hinting_can_hint(Eo *e, void *_pd, va_list *list);
+void _canvas_font_cache_flush(Eo *e, void *_pd, va_list *list);
+void _canvas_font_cache_set(Eo *e, void *_pd, va_list *list);
+void _canvas_font_cache_get(Eo *e, void *_pd, va_list *list);
+void _canvas_font_available_list(Eo *e, void *_pd, va_list *list);
+
+void _canvas_key_modifier_get(Eo *e, void *_pd, va_list *list);
+void _canvas_key_lock_get(Eo *e, void *_pd, va_list *list);
+void _canvas_key_modifier_add(Eo *e, void *_pd, va_list *list);
+void _canvas_key_modifier_del(Eo *e, void *_pd, va_list *list);
+void _canvas_key_lock_add(Eo *e, void *_pd, va_list *list);
+void _canvas_key_lock_del(Eo *e, void *_pd, va_list *list);
+void _canvas_key_modifier_on(Eo *e, void *_pd, va_list *list);
+void _canvas_key_modifier_off(Eo *e, void *_pd, va_list *list);
+void _canvas_key_lock_on(Eo *e, void *_pd, va_list *list);
+void _canvas_key_lock_off(Eo *e, void *_pd, va_list *list);
+void _canvas_key_modifier_mask_get(Eo *e, void *_pd, va_list *list);
+
+void _canvas_damage_rectangle_add(Eo *obj, void *_pd, va_list *list);
+void _canvas_obscured_rectangle_add(Eo *obj, void *_pd, va_list *list);
+void _canvas_obscured_clear(Eo *obj, void *_pd, va_list *list);
+void _canvas_render_updates(Eo *obj, void *_pd, va_list *list);
+void _canvas_render(Eo *e, void *_pd, va_list *list);
+void _canvas_norender(Eo *e, void *_pd, va_list *list);
+void _canvas_render_idle_flush(Eo *e, void *_pd, va_list *list);
+void _canvas_sync(Eo *obj, void *_pd, va_list *list);
+void _canvas_render_dump(Eo *obj, void *_pd, va_list *list);
+
+void _canvas_object_bottom_get(Eo *e, void *_pd, va_list *list);
+void _canvas_object_top_get(Eo *e, void *_pd, va_list *list);
+
+void _canvas_touch_point_list_count(Eo *obj, void *_pd, va_list *list);
+void _canvas_touch_point_list_nth_xy_get(Eo *obj, void *_pd, va_list *list);
+void _canvas_touch_point_list_nth_id_get(Eo *obj, void *_pd, va_list *list);
+void _canvas_touch_point_list_nth_state_get(Eo *obj, void *_pd, va_list *list);
+
+void _canvas_image_cache_flush(Eo *e, void *_pd, va_list *list);
+void _canvas_image_cache_reload(Eo *e, void *_pd, va_list *list);
+void _canvas_image_cache_set(Eo *e, void *_pd, va_list *list);
+void _canvas_image_cache_get(Eo *e, void *_pd, va_list *list);
+void _canvas_image_max_size_get(Eo *e, void *_pd, va_list *list);
+
+void _canvas_object_name_find(Eo *e, void *_pd, va_list *list);
+
+void _canvas_object_top_at_xy_get(Eo *e, void *_pd, va_list *list);
+void _canvas_object_top_in_rectangle_get(Eo *e, void *_pd, va_list *list);
+void _canvas_objects_at_xy_get(Eo *e, void *_pd, va_list *list);
+void _canvas_objects_in_rectangle_get(Eo *obj, void *_pd, va_list *list);
+
+void _canvas_smart_objects_calculate(Eo *e, void *_pd, va_list *list);
+void _canvas_smart_objects_calculate_count_get(Eo *e, void *_pd, va_list *list);
 
 extern int _evas_alloc_error;
 extern int _evas_event_counter;
@@ -1081,14 +1218,14 @@ Evas_Preload_Pthread *evas_preload_thread_run(void (*func_heavy)(void *data),
                                               const void *data);
 Eina_Bool evas_preload_thread_cancel(Evas_Preload_Pthread *thread);
 
-void _evas_walk(Evas *e);
-void _evas_unwalk(Evas *e);
+void _evas_walk(Evas_Public_Data *e_pd);
+void _evas_unwalk(Evas_Public_Data *e_pd);
 
 // expose for use in engines
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 EAPI const char *_evas_module_libdir_get(void);
          
-Eina_Bool evas_render_mapped(Evas *e, Evas_Object *obj, 
+Eina_Bool evas_render_mapped(Evas *e, Evas_Object *obj, Evas_Object_Protected_Data *source_pd,
                              void *context, void *surface,
                              int off_x, int off_y, int mapped,
                              int ecx, int ecy, int ecw, int ech
