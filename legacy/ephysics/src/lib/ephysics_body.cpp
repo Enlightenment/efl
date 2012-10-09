@@ -36,6 +36,7 @@ typedef struct _EPhysics_Body_Soft_Body_Slice
 {
      int index;
      Evas_Object *evas_obj;
+     int stacking;
 } EPhysics_Body_Soft_Body_Slice;
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
@@ -62,6 +63,23 @@ EVAS_SMART_SUBCLASS_NEW(SMART_CLASS_NAME,
 			Evas_Smart_Class, evas_object_smart_clipped_class_get,
                         _smart_callbacks);
 
+static int
+_ephysics_body_soft_body_slice_stacking_sort_cb(const void *d1, const void *d2)
+{
+   const EPhysics_Body_Soft_Body_Slice *slice1, *slice2;
+
+   slice1 = (const EPhysics_Body_Soft_Body_Slice *)d1;
+   slice2 = (const EPhysics_Body_Soft_Body_Slice *)d2;
+
+   if (!slice1) return 1;
+   if (!slice2) return -1;
+
+   if (slice1->stacking < slice2->stacking) return -1;
+   if (slice2->stacking > slice2->stacking) return 1;
+
+   return 0;
+}
+
 static void
 _ephysics_body_soft_body_slices_apply(Evas_Object *obj)
 {
@@ -75,7 +93,7 @@ _ephysics_body_soft_body_slices_apply(Evas_Object *obj)
    EPhysics_Body_Soft_Body_Slice *slice;
    EPhysics_Body_Soft_Body_Smart_Data *smart_data;
    EPhysics_Body *body;
-   short z_factor;
+   Evas_Object *prev_obj = NULL;
 
    EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
    body = smart_data->body;
@@ -103,10 +121,8 @@ _ephysics_body_soft_body_slices_apply(Evas_Object *obj)
         z1 = p1.z() * rate;
         z2 = p2.z() * rate;
 
-        z_factor = p0.z() + p1.z() + p2.z();
-        z_factor = (z_factor < 0) ? -z_factor : z_factor;
+        slice->stacking = p0.z() + p1.z() + p2.z();
 
-        evas_object_layer_set(slice->evas_obj, z_factor);
         evas_object_map_enable_set(slice->evas_obj, EINA_FALSE);
         map = (Evas_Map *)evas_object_map_get((const Evas_Object *)
                                               slice->evas_obj);
@@ -121,6 +137,22 @@ _ephysics_body_soft_body_slices_apply(Evas_Object *obj)
         evas_object_map_set(slice->evas_obj, map);
         evas_object_map_enable_set(slice->evas_obj, EINA_TRUE);
         evas_object_show(slice->evas_obj);
+     }
+
+   smart_data->slices = eina_list_sort(smart_data->slices,
+                                eina_list_count(smart_data->slices),
+                                _ephysics_body_soft_body_slice_stacking_sort_cb);
+
+   EINA_LIST_FOREACH(smart_data->slices, l, data)
+     {
+        slice = (EPhysics_Body_Soft_Body_Slice *)data;
+
+        if (!prev_obj)
+          evas_object_lower(slice->evas_obj);
+        else
+          evas_object_stack_above(slice->evas_obj, prev_obj);
+
+        prev_obj = slice->evas_obj;
      }
 }
 
@@ -209,6 +241,7 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj)
         evas_map_free(map);
 
         smart_data->slices = eina_list_append(smart_data->slices, slice);
+        evas_object_smart_member_add(slice->evas_obj, obj);
      }
 
    return EINA_TRUE;
