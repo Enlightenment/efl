@@ -143,3 +143,6 @@
 2012-10-09  Gustavo Sverzut Barbieri (k-s)
 
 	* Add $XDG_RUNTIME_DIR support
+	* Add user directories $XDG_PICTURES_DIR, $XDG_VIDEOS_DIR,
+	$XDG_DOWNLOAD_DIR, $XDG_TEMPLATES_DIR, $XDG_PUBLICSHARE_DIR,
+	$XDG_DOCUMENTS_DIR and $XDG_MUSIC_DIR.

@@ -8,7 +8,10 @@ Fixes:
 
 Additions:
 
-    * Support XDG_RUNTIME_DIR
+    * Support XDG_RUNTIME_DIR.
+    * Support user directories $XDG_PICTURES_DIR, $XDG_VIDEOS_DIR,
+      $XDG_DOWNLOAD_DIR, $XDG_TEMPLATES_DIR, $XDG_PUBLICSHARE_DIR,
+      $XDG_DOCUMENTS_DIR and $XDG_MUSIC_DIR.
 
 
 Changes since Efreet 1.2.0:

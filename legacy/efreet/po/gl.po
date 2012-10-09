@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: efreet\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-08-30 19:32+0200\n"
+"POT-Creation-Date: 2012-10-09 15:16-0300\n"
 "PO-Revision-Date: 2012-09-16 11:07+0200\n"
 "Last-Translator: Aníbal Garrido <khany@member.trisquel.info>\n"
 "Language-Team: http://trasno.net/ <proxecto@trasno.net>\n"
@@ -15,7 +15,34 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/efreet_base.c:127
+#: src/lib/efreet_base.c:144
 msgid "Desktop"
 msgstr "Escritorio"
 
+#: src/lib/efreet_base.c:152
+msgid "Downloads"
+msgstr ""
+
+#: src/lib/efreet_base.c:161
+msgid "Templates"
+msgstr ""
+
+#: src/lib/efreet_base.c:170
+msgid "Public"
+msgstr ""
+
+#: src/lib/efreet_base.c:179
+msgid "Documents"
+msgstr ""
+
+#: src/lib/efreet_base.c:187
+msgid "Music"
+msgstr ""
+
+#: src/lib/efreet_base.c:195
+msgid "Pictures"
+msgstr ""
+
+#: src/lib/efreet_base.c:203
+msgid "Videos"
+msgstr ""

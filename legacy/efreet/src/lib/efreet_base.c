@@ -50,6 +50,13 @@ static const char *xdg_runtime_dir = NULL;
 static Eina_List  *xdg_data_dirs = NULL;
 static Eina_List  *xdg_config_dirs = NULL;
 static const char *xdg_desktop_dir = NULL;
+static const char *xdg_download_dir = NULL;
+static const char *xdg_templates_dir = NULL;
+static const char *xdg_publicshare_dir = NULL;
+static const char *xdg_documents_dir = NULL;
+static const char *xdg_music_dir = NULL;
+static const char *xdg_pictures_dir = NULL;
+static const char *xdg_videos_dir = NULL;
 static const char *hostname = NULL;
 
 static const char *efreet_dir_get(const char *key, const char *fallback);
@@ -85,6 +92,14 @@ efreet_base_shutdown(void)
 {
     IF_RELEASE(efreet_home_dir);
     IF_RELEASE(xdg_desktop_dir);
+    IF_RELEASE(xdg_download_dir);
+    IF_RELEASE(xdg_templates_dir);
+    IF_RELEASE(xdg_publicshare_dir);
+    IF_RELEASE(xdg_documents_dir);
+    IF_RELEASE(xdg_music_dir);
+    IF_RELEASE(xdg_pictures_dir);
+    IF_RELEASE(xdg_videos_dir);
+
     IF_RELEASE(xdg_data_home);
     IF_RELEASE(xdg_config_home);
     IF_RELEASE(xdg_cache_home);
@@ -128,6 +143,65 @@ efreet_desktop_dir_get(void)
     if (xdg_desktop_dir) return xdg_desktop_dir;
     xdg_desktop_dir = efreet_user_dir_get("XDG_DESKTOP_DIR", _("Desktop"));
     return xdg_desktop_dir;
+}
+
+EAPI const char *
+efreet_download_dir_get(void)
+{
+    if (xdg_download_dir) return xdg_download_dir;
+    xdg_download_dir = efreet_user_dir_get("XDG_DOWNLOAD_DIR", _("Downloads"));
+    return xdg_download_dir;
+}
+
+EAPI const char *
+efreet_templates_dir_get(void)
+{
+    if (xdg_templates_dir) return xdg_templates_dir;
+    xdg_templates_dir = efreet_user_dir_get("XDG_TEMPLATES_DIR",
+                                            _("Templates"));
+    return xdg_templates_dir;
+}
+
+EAPI const char *
+efreet_public_share_dir_get(void)
+{
+    if (xdg_publicshare_dir) return xdg_publicshare_dir;
+    xdg_publicshare_dir = efreet_user_dir_get("XDG_PUBLICSHARE_DIR",
+                                              _("Public"));
+    return xdg_publicshare_dir;
+}
+
+EAPI const char *
+efreet_documents_dir_get(void)
+{
+    if (xdg_documents_dir) return xdg_documents_dir;
+    xdg_documents_dir = efreet_user_dir_get("XDG_DOCUMENTS_DIR",
+                                            _("Documents"));
+    return xdg_documents_dir;
+}
+
+EAPI const char *
+efreet_music_dir_get(void)
+{
+    if (xdg_music_dir) return xdg_music_dir;
+    xdg_music_dir = efreet_user_dir_get("XDG_MUSIC_DIR", _("Music"));
+    return xdg_music_dir;
+}
+
+EAPI const char *
+efreet_pictures_dir_get(void)
+{
+    if (xdg_pictures_dir) return xdg_pictures_dir;
+    xdg_pictures_dir = efreet_user_dir_get("XDG_PICTURES_DIR", _("Pictures"));
+    return xdg_pictures_dir;
+}
+
+EAPI const char *
+efreet_videos_dir_get(void)
+{
+    if (xdg_videos_dir) return xdg_videos_dir;
+    xdg_videos_dir = efreet_user_dir_get("XDG_VIDEOS_DIR", _("Videos"));
+    return xdg_videos_dir;
 }
 
 EAPI const char *
@@ -206,6 +280,13 @@ void
 efreet_dirs_reset(void)
 {
     eina_stringshare_replace(&xdg_desktop_dir, NULL);
+    eina_stringshare_replace(&xdg_download_dir, NULL);
+    eina_stringshare_replace(&xdg_templates_dir, NULL);
+    eina_stringshare_replace(&xdg_publicshare_dir, NULL);
+    eina_stringshare_replace(&xdg_documents_dir, NULL);
+    eina_stringshare_replace(&xdg_music_dir, NULL);
+    eina_stringshare_replace(&xdg_pictures_dir, NULL);
+    eina_stringshare_replace(&xdg_videos_dir, NULL);
 }
 
 /**
