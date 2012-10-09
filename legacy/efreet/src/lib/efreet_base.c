@@ -46,6 +46,7 @@ static const char *efreet_home_dir = NULL;
 static const char *xdg_data_home = NULL;
 static const char *xdg_config_home = NULL;
 static const char *xdg_cache_home = NULL;
+static const char *xdg_runtime_dir = NULL;
 static Eina_List  *xdg_data_dirs = NULL;
 static Eina_List  *xdg_config_dirs = NULL;
 static const char *xdg_desktop_dir = NULL;
@@ -87,6 +88,7 @@ efreet_base_shutdown(void)
     IF_RELEASE(xdg_data_home);
     IF_RELEASE(xdg_config_home);
     IF_RELEASE(xdg_cache_home);
+    IF_RELEASE(xdg_runtime_dir);
 
     IF_FREE_LIST(xdg_data_dirs, eina_stringshare_del);
     IF_FREE_LIST(xdg_config_dirs, eina_stringshare_del);
@@ -177,6 +179,14 @@ efreet_cache_home_get(void)
     if (xdg_cache_home) return xdg_cache_home;
     xdg_cache_home = efreet_dir_get("XDG_CACHE_HOME", "/.cache");
     return xdg_cache_home;
+}
+
+EAPI const char *
+efreet_runtime_dir_get(void)
+{
+    if (xdg_runtime_dir) return xdg_runtime_dir;
+    xdg_runtime_dir = efreet_dir_get("XDG_RUNTIME_DIR", "/tmp");
+    return xdg_runtime_dir;
 }
 
 EAPI const char *

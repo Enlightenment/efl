@@ -6,6 +6,11 @@ Changes since Efreet 1.7.0:
 Fixes:
     * Fix insane delay added to desktop/icon updates.
 
+Additions:
+
+    * Support XDG_RUNTIME_DIR
+
+
 Changes since Efreet 1.2.0:
 ---------------------------
 

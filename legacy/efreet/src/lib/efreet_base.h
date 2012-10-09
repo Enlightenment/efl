@@ -60,6 +60,13 @@ EAPI Eina_List *efreet_config_dirs_get(void);
 EAPI const char *efreet_cache_home_get(void);
 
 /**
+ * @return Returns the XDG User Runtime directory.
+ * @brief Retrieves the XDG User Runtime directory.
+ * @since 1.8
+ */
+EAPI const char *efreet_runtime_dir_get(void);
+
+/**
  * @return Returns the current hostname
  * @brief Returns the current hostname or empty string if not found
  */

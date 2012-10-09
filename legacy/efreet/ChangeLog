@@ -139,3 +139,7 @@
 
         * Fix long lurking bug where desktop/icon cache updates get
         delayed by silly long amounts of time.
+
+2012-10-09  Gustavo Sverzut Barbieri (k-s)
+
+	* Add $XDG_RUNTIME_DIR support
