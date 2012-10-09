@@ -374,7 +374,9 @@ append_basic(char type, va_list *vl, DBusMessageIter *iter)
         }
       case DBUS_TYPE_BOOLEAN:
       case DBUS_TYPE_INT32:
+#ifdef DBUS_TYPE_UNIX_FD
       case DBUS_TYPE_UNIX_FD:
+#endif
         {
            int32_t int32 = va_arg(*vl, int32_t);
            return dbus_message_iter_append_basic(iter, type, &int32);
@@ -571,7 +573,9 @@ get_basic(char type, DBusMessageIter *iter, va_list *vl)
            break;
         }
       case DBUS_TYPE_INT32:
+#ifdef DBUS_TYPE_UNIX_FD
       case DBUS_TYPE_UNIX_FD:
+#endif
         {
            int32_t *int32 = va_arg(*vl, int32_t *);
            dbus_message_iter_get_basic(iter, int32);
