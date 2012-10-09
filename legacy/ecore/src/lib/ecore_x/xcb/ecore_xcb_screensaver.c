@@ -347,7 +347,7 @@ ecore_x_screensaver_custom_blanking_enable(void)
      (_ecore_xcb_conn,
          ((xcb_screen_t *)_ecore_xcb_screen)->root,
          -9999, -9999, 1, 1, 0,
-         XCB_WINDOW_CLASS_INPUT_ONLY.
+         XCB_WINDOW_CLASS_INPUT_ONLY,
          XCB_COPY_FROM_PARENT, XCB_COPY_FROM_PARENT,
          0, mask_list);
    return EINA_TRUE;
