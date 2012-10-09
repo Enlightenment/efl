@@ -1923,7 +1923,7 @@ cserve2_cache_file_open(Client *client, unsigned int client_file_id, const char 
    entry->key = strdup(key);
    entry->base.id = file_id;
    eina_hash_add(file_entries, &file_id, entry);
-   eina_hash_add(file_ids, buf, (intptr_t*)(int64_t)file_id);
+   eina_hash_add(file_ids, buf, (void*)(intptr_t)file_id);
    ref = _entry_reference_add((Entry *)entry, client, client_file_id);
    eina_hash_add(client->files.referencing, &client_file_id, ref);
 
@@ -2024,7 +2024,7 @@ cserve2_cache_image_opts_set(Client *client, Msg_Setopts *msg)
 
    entry->base.id = image_id;
    eina_hash_add(image_entries, &image_id, entry);
-   eina_hash_add(image_ids, buf, (intptr_t *)(int64_t)image_id);
+   eina_hash_add(image_ids, buf, (void *)(intptr_t)image_id);
    ref = _entry_reference_add((Entry *)entry, client, msg->image_id);
 
    if (oldref)
