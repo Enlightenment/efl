@@ -1,13 +1,3 @@
-   images {
-      image: "ball-red70.png" COMP;
-      image: "ball-concrete.png" COMP;
-      image: "ball-iron.png" COMP;
-      image: "ball-plastic.png" COMP;
-      image: "ball-polystyrene.png" COMP;
-      image: "ball-rubber.png" COMP;
-      image: "ball-wood.png" COMP;
-   }
-
    group {
       name: "sandbox";
       min: 1280 720;
@@ -59,107 +49,31 @@
       }
    }
 
-   group {
-      name: "Custom";
-      parts {
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-red70.png";
-            }
-         }
-      }
+#define SANDBOX_BALL_ADD(_name, _img) \
+   images { \
+      image: #_img##".png" COMP; \
+   } \
+   group { \
+      name: #_name; \
+      parts { \
+         part { \
+            name: "ball"; \
+            mouse_events: 0; \
+            type: IMAGE; \
+            description { \
+               state: "default" 0.0; \
+               image.normal: #_img##".png"; \
+            } \
+         } \
+      } \
    }
 
-   group {
-      name: "Concrete";
-      parts {
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-concrete.png";
-            }
-         }
-      }
-   }
+SANDBOX_BALL_ADD(Custom, ball-red70)
+SANDBOX_BALL_ADD(Concrete, ball-concrete)
+SANDBOX_BALL_ADD(Iron, ball-iron)
+SANDBOX_BALL_ADD(Plastic, ball-plastic)
+SANDBOX_BALL_ADD(Polystyrene, ball-polystyrene)
+SANDBOX_BALL_ADD(Rubber, ball-rubber)
+SANDBOX_BALL_ADD(Wood, ball-wood)
 
-   group {
-      name: "Iron";
-      parts {
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-iron.png";
-            }
-         }
-      }
-   }
-
-   group {
-      name: "Plastic";
-      parts {
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-plastic.png";
-            }
-         }
-      }
-   }
-
-   group {
-      name: "Polystyrene";
-      parts {
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-polystyrene.png";
-            }
-         }
-      }
-   }
-
-   group {
-      name: "Rubber";
-      parts {
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-rubber.png";
-            }
-         }
-      }
-   }
-
-   group {
-      name: "Wood";
-      parts {
-         part {
-            name: "ball";
-            mouse_events: 0;
-            type: IMAGE;
-            description {
-               state: "default" 0.0;
-               image.normal: "ball-wood.png";
-            }
-         }
-      }
-   }
+#undef SANDBOX_BALL_ADD
