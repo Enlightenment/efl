@@ -362,6 +362,15 @@ _ephysics_body_soft_body_evas_add(EPhysics_Body *body)
    return obj;
 }
 
+static Evas_Object *
+_ephysics_body_soft_body_evas_base_obj_get(Evas_Object *obj)
+{
+   EPhysics_Body_Soft_Body_Smart_Data *priv;
+
+   EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, priv);
+   return priv->base_obj;
+}
+
 static btTransform
 _ephysics_body_transform_get(const EPhysics_Body *body)
 {
@@ -1862,7 +1871,8 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
 EAPI Evas_Object *
 ephysics_body_evas_object_unset(EPhysics_Body *body)
 {
-   Evas_Object *obj;
+   Evas_Object *obj, *smart;
+
    if (!body)
      {
         ERR("Can't unset evas object from body, it wasn't provided.");
@@ -1878,6 +1888,13 @@ ephysics_body_evas_object_unset(EPhysics_Body *body)
                                        _ephysics_body_evas_obj_del_cb);
         evas_object_event_callback_del(obj, EVAS_CALLBACK_RESIZE,
                                        _ephysics_body_evas_obj_resize_cb);
+     }
+
+   if (evas_object_smart_type_check(obj, SMART_CLASS_NAME))
+     {
+        smart = obj;
+        obj = _ephysics_body_soft_body_evas_base_obj_get(obj);
+        evas_object_del(smart);
      }
 
    return obj;
