@@ -556,6 +556,8 @@ struct _Evas_Object_Protected_Data
       Eina_Bool             valid_bounding_box : 1;
       Eina_Bool             cached_surface : 1;
       Eina_Bool             parent_cached_surface : 1;
+      Eina_Bool             opaque_valid : 1;
+      Eina_Bool             opaque : 1;
    } cur, prev;
 
    struct {

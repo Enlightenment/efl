@@ -53,8 +53,6 @@ struct _Evas_Object_Image
 
       unsigned char  smooth_scale : 1;
       unsigned char  has_alpha :1;
-      unsigned char  opaque :1;
-      unsigned char  opaque_valid :1;
    } cur, prev;
 
    int               pixels_checked_out;
@@ -156,9 +154,9 @@ static const Evas_Object_Func object_func =
 };
 
 static void
-_evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Image *o)
+_evas_object_image_cleanup(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object_Image *o)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   obj->cur.opaque_valid = 0;
    if ((o->preloading) && (o->engine_data))
      {
         o->preloading = EINA_FALSE;
@@ -518,7 +516,7 @@ _image_source_set(Eo *eo_obj, void *_pd, va_list *list)
         return;
      }
 
-   _evas_object_image_cleanup(eo_obj, o);
+   _evas_object_image_cleanup(eo_obj, obj, o);
    /* Kill the image if any */
    if (o->cur.file || o->cur.key)
       evas_object_image_file_set(eo_obj, NULL, NULL);
@@ -589,7 +587,6 @@ _image_border_set(Eo *eo_obj, void *_pd, va_list *list)
    o->cur.border.r = r;
    o->cur.border.t = t;
    o->cur.border.b = b;
-   o->cur.opaque_valid = 0;
    o->changed = EINA_TRUE;
    evas_object_change(eo_obj, obj);
 }
@@ -769,6 +766,7 @@ evas_object_image_fill_set(Evas_Object *eo_obj, Evas_Coord x, Evas_Coord y, Evas
 static void
 _image_fill_set(Eo *eo_obj, void *_pd, va_list *list)
 {
+   Evas_Object_Protected_Data *obj;
    Evas_Object_Image *o = _pd;
 
    Evas_Coord x = va_arg(*list, Evas_Coord);
@@ -789,9 +787,9 @@ _image_fill_set(Eo *eo_obj, void *_pd, va_list *list)
    o->cur.fill.y = y;
    o->cur.fill.w = w;
    o->cur.fill.h = h;
-   o->cur.opaque_valid = 0;
    o->changed = EINA_TRUE;
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+   obj->cur.opaque_valid = 0;   
    evas_object_change(eo_obj, obj);
 }
 
@@ -877,13 +875,14 @@ evas_object_image_size_set(Evas_Object *eo_obj, int w, int h)
 static void
 _image_size_set(Eo *eo_obj, void *_pd, va_list *list)
 {
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    int w = va_arg(*list, int);
    int h = va_arg(*list, int);
 
    Evas_Object_Image *o = _pd;
    int stride = 0;
 
-   _evas_object_image_cleanup(eo_obj, o);
+   _evas_object_image_cleanup(eo_obj, obj, o);
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    if (w > 32768) return;
@@ -892,7 +891,7 @@ _image_size_set(Eo *eo_obj, void *_pd, va_list *list)
        (h == o->cur.image.h)) return;
    o->cur.image.w = w;
    o->cur.image.h = h;
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+
    if (o->engine_data)
       o->engine_data = obj->layer->evas->engine.func->image_size_set(obj->layer->evas->engine.data.output, o->engine_data, w, h);
    else
@@ -1053,7 +1052,7 @@ _image_data_set(Eo *eo_obj, void *_pd, va_list *list)
 
    void *data = va_arg(*list, void *);
 
-   _evas_object_image_cleanup(eo_obj, o);
+   _evas_object_image_cleanup(eo_obj, obj, o);
    p_data = o->engine_data;
    if (data)
      {
@@ -1250,14 +1249,14 @@ evas_object_image_data_copy_set(Evas_Object *eo_obj, void *data)
 static void
 _image_data_copy_set(Eo *eo_obj, void *_pd, va_list *list)
 {
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = _pd;
    void *data = va_arg(*list, void *);
 
    if (!data) return;
-   _evas_object_image_cleanup(eo_obj, o);
+   _evas_object_image_cleanup(eo_obj, obj, o);
    if ((o->cur.image.w <= 0) ||
        (o->cur.image.h <= 0)) return;
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    if (o->engine_data)
      obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
                                                o->engine_data);
@@ -1565,15 +1564,16 @@ evas_object_image_pixels_import(Evas_Object *eo_obj, Evas_Pixel_Import_Source *p
 static void
 _image_pixels_import(Eo *eo_obj, void *_pd, va_list *list)
 {
+   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = _pd;
 
    Evas_Pixel_Import_Source *pixels = va_arg(*list, Evas_Pixel_Import_Source *);
    Eina_Bool *result = va_arg(*list, Eina_Bool *);
    if (result) *result = 0;
 
-   _evas_object_image_cleanup(eo_obj, o);
+   _evas_object_image_cleanup(eo_obj, obj, o);
    if ((pixels->w != o->cur.image.w) || (pixels->h != o->cur.image.h)) return;
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
+
    switch (pixels->format)
      {
 #if 0
@@ -1959,7 +1959,7 @@ _image_colorspace_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = _pd;
 
-   _evas_object_image_cleanup(eo_obj, o);
+   _evas_object_image_cleanup(eo_obj, obj, o);
 
    o->cur.cspace = cspace;
    if (o->engine_data)
@@ -2001,7 +2001,7 @@ _image_video_surface_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = _pd;
 
-   _evas_object_image_cleanup(eo_obj, o);
+   _evas_object_image_cleanup(eo_obj, obj, o);
    if (o->video_surface)
      {
         o->video_surface = EINA_FALSE;
@@ -2074,7 +2074,7 @@ _image_native_surface_set(Eo *eo_obj, void *_pd, va_list *list)
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Image *o = _pd;
 
-   _evas_object_image_cleanup(eo_obj, o);
+   _evas_object_image_cleanup(eo_obj, obj, o);
    if (!obj->layer->evas->engine.func->image_native_set) return;
    if ((surf) &&
        ((surf->version < 2) ||
@@ -3063,6 +3063,7 @@ evas_object_image_init(Evas_Object *eo_obj)
    /* set up methods (compulsory) */
    obj->func = &object_func;
    obj->type = o_type;
+   obj->cur.opaque_valid = 0;
 }
 
 static void
@@ -3076,7 +3077,6 @@ evas_object_image_new(Evas_Object *eo_obj)
    o->cur.border.scale = 1.0;
    o->cur.cspace = EVAS_COLORSPACE_ARGB8888;
    o->cur.spread = EVAS_TEXTURE_REPEAT;
-   o->cur.opaque_valid = 0;
    o->cur.source = NULL;
    o->prev = o->cur;
    o->tmpf_fd = -1;
@@ -3855,44 +3855,44 @@ static void *evas_object_image_engine_data_get(Evas_Object *eo_obj)
 static int
 evas_object_image_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
-
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
 /*  disable caching due tyo maps screwing with this
-   o->cur.opaque_valid = 0;
-   if (o->cur.opaque_valid)
+    o->cur.opaque_valid = 0;*/
+   if (obj->cur.opaque_valid)
      {
-        if (!o->cur.opaque) return 0;
+        if (!obj->cur.opaque) return 0;
      }
    else
-*/
      {
-        o->cur.opaque = 0;
-/* disable caching */
-/*        o->cur.opaque_valid = 1; */
+        Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
+
+        obj->cur.opaque = 0;
+        obj->cur.opaque_valid = 1;
         if ((o->cur.fill.w < 1) || (o->cur.fill.h < 1))
-           return o->cur.opaque;
+          return obj->cur.opaque;
         if (((o->cur.border.l != 0) ||
              (o->cur.border.r != 0) ||
              (o->cur.border.t != 0) ||
              (o->cur.border.b != 0)) &&
-            (!o->cur.border.fill)) return o->cur.opaque;
-        if (!o->engine_data) return o->cur.opaque;
-        o->cur.opaque = 1;
+            (!o->cur.border.fill))
+          return obj->cur.opaque;
+        if (!o->engine_data)
+          return obj->cur.opaque;
+
+        // FIXME: use proxy
+        if (o->cur.source)
+          {
+             Evas_Object_Protected_Data *cur_source = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
+             obj->cur.opaque = evas_object_is_opaque(o->cur.source, cur_source);
+             return obj->cur.opaque; /* FIXME: Should go poke at the object */
+          }
+        if (o->cur.has_alpha)
+          return obj->cur.opaque;
+
+        obj->cur.opaque = 1;
      }
-   // FIXME: use proxy
-   if (o->cur.source)
-     {
-        Evas_Object_Protected_Data *cur_source = eo_data_get(o->cur.source, EVAS_OBJ_CLASS);
-        o->cur.opaque = evas_object_is_opaque(o->cur.source, cur_source);
-        return o->cur.opaque; /* FIXME: Should go poke at the object */
-     }
-   if (o->cur.has_alpha)
-     {
-        o->cur.opaque = 0;
-        return o->cur.opaque;
-     }
+
    if ((obj->cur.map) && (obj->cur.usemap))
      {
         Evas_Map *m = obj->cur.map;
@@ -3918,48 +3918,97 @@ evas_object_image_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
                       (m->points[0].y == obj->cur.geometry.y) &&
                       (m->points[2].x == (obj->cur.geometry.x + obj->cur.geometry.w)) &&
                       (m->points[2].y == (obj->cur.geometry.y + obj->cur.geometry.h)))
-                    return o->cur.opaque;
+                    return obj->cur.opaque;
                }
           }
-        o->cur.opaque = 0;
-        return o->cur.opaque;
+        obj->cur.opaque = 0;
+        return obj->cur.opaque;
      }
-   if (obj->cur.render_op == EVAS_RENDER_COPY) return o->cur.opaque;
-   return o->cur.opaque;
+   if (obj->cur.render_op == EVAS_RENDER_COPY)
+     {
+        obj->cur.opaque = 1;
+        return obj->cur.opaque;
+     }
+   return obj->cur.opaque;
 }
 
 static int
 evas_object_image_was_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
-
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire rectangle it occupies */
-   if (o->prev.opaque_valid)
+   if (obj->prev.opaque_valid)
      {
-        if (!o->prev.opaque) return 0;
+        if (!obj->prev.opaque) return 0;
      }
    else
      {
-        o->prev.opaque = 0;
-        o->prev.opaque_valid = 1;
+        Evas_Object_Image *o = eo_data_get(eo_obj, MY_CLASS);
+
+        obj->prev.opaque = 0;
+        obj->prev.opaque_valid = 1;
         if ((o->prev.fill.w < 1) || (o->prev.fill.h < 1))
-           return 0;
+          return obj->prev.opaque;
         if (((o->prev.border.l != 0) ||
              (o->prev.border.r != 0) ||
              (o->prev.border.t != 0) ||
              (o->prev.border.b != 0)) &&
-            (!o->prev.border.fill)) return 0;
-        if (!o->engine_data) return 0;
-        o->prev.opaque = 1;
+            (!o->prev.border.fill))
+          return obj->prev.opaque;
+        if (!o->engine_data)
+          return obj->prev.opaque;
+
+        // FIXME: use proxy
+        if (o->prev.source)
+          return obj->prev.opaque; /* FIXME: Should go poke at the object */
+        if (o->prev.has_alpha)
+          return obj->prev.opaque;
+
+        obj->prev.opaque = 1;
      }
-   // FIXME: use proxy
-   if (o->prev.source) return 0; /* FIXME: Should go poke at the object */
-   if (obj->prev.usemap) return 0;
-   if (obj->prev.render_op == EVAS_RENDER_COPY) return 1;
-   if (o->prev.has_alpha) return 0;
-   if (obj->prev.render_op != EVAS_RENDER_BLEND) return 0;
-   return 1;
+   if (obj->prev.usemap)
+     {
+        Evas_Map *m = obj->prev.map;
+
+        if ((m->points[0].a == 255) &&
+            (m->points[1].a == 255) &&
+            (m->points[2].a == 255) &&
+            (m->points[3].a == 255))
+          {
+             if (
+                 ((m->points[0].x == m->points[3].x) &&
+                     (m->points[1].x == m->points[2].x) &&
+                     (m->points[0].y == m->points[1].y) &&
+                     (m->points[2].y == m->points[3].y))
+                 ||
+                 ((m->points[0].x == m->points[1].x) &&
+                     (m->points[2].x == m->points[3].x) &&
+                     (m->points[0].y == m->points[3].y) &&
+                     (m->points[1].y == m->points[2].y))
+                )
+               {
+                  if ((m->points[0].x == obj->prev.geometry.x) &&
+                      (m->points[0].y == obj->prev.geometry.y) &&
+                      (m->points[2].x == (obj->prev.geometry.x + obj->prev.geometry.w)) &&
+                      (m->points[2].y == (obj->prev.geometry.y + obj->prev.geometry.h)))
+                    return obj->prev.opaque;
+               }
+          }
+
+        obj->prev.opaque = 0;
+        return obj->prev.opaque;
+     }
+   if (obj->prev.render_op == EVAS_RENDER_COPY)
+     {
+        obj->prev.opaque = 1;
+        return obj->prev.opaque;
+     }
+   if (obj->prev.render_op != EVAS_RENDER_BLEND)
+     {
+        obj->prev.opaque = 0;
+        return obj->prev.opaque;
+     }
+   return obj->prev.opaque;
 }
 
 static int
