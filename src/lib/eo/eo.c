@@ -386,7 +386,7 @@ _eo_op_internal(Eo *obj, Eo_Op_Type op_type, Eo_Op op, va_list *p_list)
 }
 
 static inline Eina_Bool
-_eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list p_list)
+_eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list *p_list)
 {
    Eina_Bool prev_error;
    Eina_Bool ret = EINA_TRUE;
@@ -396,18 +396,18 @@ _eo_dov_internal(Eo *obj, Eo_Op_Type op_type, va_list p_list)
    prev_error = obj->do_error;
    _eo_ref(obj);
 
-   op = va_arg(p_list, Eo_Op);
+   op = va_arg(*p_list, Eo_Op);
    while (op)
      {
         _eo_kls_itr_init(obj->klass, &obj->mro_itr, &prev_state);
-        if (!_eo_op_internal(obj, op_type, op, &p_list))
+        if (!_eo_op_internal(obj, op_type, op, p_list))
           {
              _EO_OP_ERR_NO_OP_PRINT(op, obj->klass);
              ret = EINA_FALSE;
              _eo_kls_itr_end(&obj->mro_itr, &prev_state);
              break;
           }
-        op = va_arg(p_list, Eo_Op);
+        op = va_arg(*p_list, Eo_Op);
         _eo_kls_itr_end(&obj->mro_itr, &prev_state);
      }
 
@@ -431,7 +431,7 @@ eo_do_internal(Eo *obj, Eo_Op_Type op_type, ...)
 
    va_start(p_list, op_type);
 
-   ret = _eo_dov_internal(obj, op_type, p_list);
+   ret = _eo_dov_internal(obj, op_type, &p_list);
 
    va_end(p_list);
 
@@ -1142,7 +1142,7 @@ eo_add_internal(const Eo_Class *klass, Eo *parent, ...)
      {
         va_list p_list;
         va_start(p_list, parent);
-        do_err = !_eo_dov_internal(obj, EO_OP_TYPE_REGULAR, p_list);
+        do_err = !_eo_dov_internal(obj, EO_OP_TYPE_REGULAR, &p_list);
         va_end(p_list);
      }
 
