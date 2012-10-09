@@ -33,6 +33,8 @@ static int _efreet_base_log_dom = -1;
 #include "Efreet.h"
 #include "efreet_private.h"
 
+#include <Ecore_File.h>
+
 static Efreet_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Efreet_Version *efreet_version = &_version;
 
@@ -258,8 +260,38 @@ efreet_cache_home_get(void)
 EAPI const char *
 efreet_runtime_dir_get(void)
 {
+    struct stat st;
     if (xdg_runtime_dir) return xdg_runtime_dir;
     xdg_runtime_dir = efreet_dir_get("XDG_RUNTIME_DIR", "/tmp");
+    if (stat(xdg_runtime_dir, &st) == -1)
+      {
+         ERR("$XDG_RUNTIME_DIR did not exist, creating '%s' (breaks spec)",
+             xdg_runtime_dir);
+         if (ecore_file_mkpath(xdg_runtime_dir))
+           chmod(xdg_runtime_dir, 0700);
+         else
+           {
+              CRITICAL("Failed to create XDG_RUNTIME_DIR=%s", xdg_runtime_dir);
+              eina_stringshare_replace(&xdg_runtime_dir, NULL);
+           }
+      }
+    else if (!S_ISDIR(st.st_mode))
+      {
+         CRITICAL("XDG_RUNTIME_DIR=%s is not a directory!", xdg_runtime_dir);
+         eina_stringshare_replace(&xdg_runtime_dir, NULL);
+      }
+    else if ((st.st_mode & 0777) != 0700)
+      {
+         ERR("XDG_RUNTIME_DIR=%s is mode %o, changing to 0700",
+             xdg_runtime_dir, st.st_mode & 0777);
+         if (chmod(xdg_runtime_dir, 0700) != 0)
+           {
+              CRITICAL("Cannot fix XDG_RUNTIME_DIR=%s incorrect mode %o: %s",
+                       xdg_runtime_dir, st.st_mode & 0777, strerror(errno));
+              eina_stringshare_replace(&xdg_runtime_dir, NULL);
+           }
+      }
+
     return xdg_runtime_dir;
 }
 

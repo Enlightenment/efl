@@ -90,6 +90,10 @@
  * four macros are defined ERR, WRN, DGB, INF. 
  * EFREET_MODULE_LOG_DOM should be defined individually for each module
  */
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(EFREET_MODULE_LOG_DOM, __VA_ARGS__)
 #ifdef ERR
 #undef ERR
 #endif
