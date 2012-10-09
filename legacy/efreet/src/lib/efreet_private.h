@@ -39,23 +39,20 @@
  * @def IF_RELEASE(x)
  * If x is set, eina_stringshare_del x and set to NULL
  */
-#define IF_RELEASE(x) do { \
-    if (x) { \
-        const char *__tmp; __tmp = (x); (x) = NULL; eina_stringshare_del(__tmp); \
-    } \
-    (x) = NULL; \
-} while (0)
+#define IF_RELEASE(x) eina_stringshare_replace(&(x), NULL)
 
 /**
  * @def IF_FREE_LIST(x)
  * If x is a valid pointer destroy x and set to NULL
  */
-#define IF_FREE_LIST(list, free_cb) do { \
-    void *_data; \
-    EINA_LIST_FREE(list, _data) \
-    free_cb(_data); \
-    list = NULL; \
-} while (0)
+#define IF_FREE_LIST(list, free_cb) \
+  do                                     \
+    {                                    \
+       void *_data;                      \
+       EINA_LIST_FREE(list, _data)       \
+         free_cb(_data);                 \
+    }                                    \
+  while (0)
 
 /**
  * @def IF_FREE_HASH(x)
