@@ -921,6 +921,8 @@ ephysics_world_max_sleeping_time_get(const EPhysics_World *world)
 EAPI void
 ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
 {
+   EPhysics_Body *bd;
+
    if (!world)
      {
         ERR("Can't set gravity, no world provided.");
@@ -928,6 +930,8 @@ ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
      }
 
    eina_lock_take(&world->mutex);
+   EINA_INLIST_FOREACH(world->bodies, bd)
+      ephysics_body_activate(bd, EINA_TRUE);
    _ephysics_world_gravity_set(world, gx, gy, world->rate);
    DBG("World %p gravity set to X:%lf, Y:%lf.", world, gx, gy);
    eina_lock_release(&world->mutex);
