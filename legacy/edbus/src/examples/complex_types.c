@@ -206,7 +206,7 @@ main(void)
    array_of_string = edbus_message_iter_container_new(iter, 'a',"s");
    if (!array_of_string) printf("array_of_string == NULL\n\n");
    for (i = 0; i < 5; i++)
-     edbus_message_iter_append_basic(array_of_string, 's', array[i]);
+     edbus_message_iter_basic_append(array_of_string, 's', array[i]);
    edbus_message_iter_container_close(iter, array_of_string);
    pending = edbus_proxy_send(test2_proxy, msg, on_receive_array, NULL, -1);
    if (!pending) printf("Error in edbus_proxy_send()\n\n");
@@ -230,7 +230,7 @@ main(void)
    msg = edbus_proxy_method_call_new(test2_proxy, "SendVariantData");
    iter = edbus_message_iter_get(msg);
    variant = edbus_message_iter_container_new(iter, 'v', "s");
-   edbus_message_iter_append_basic(variant, 's', "test");
+   edbus_message_iter_basic_append(variant, 's', "test");
    edbus_message_iter_container_close(iter, variant);
    pending = edbus_proxy_send(test2_proxy, msg, on_send_variant, NULL, -1);
    edbus_message_unref(msg);
@@ -242,17 +242,21 @@ main(void)
     * this will cause a error, we could not open another container until
     * we close the first one
     */
-   array_itr = edbus_message_iter_container_new(iter, 'a', "(ii)");
-   edbus_message_iter_arguments_set(array_itr, "(ii)", &structure);
+   edbus_message_iter_arguments_set(iter, "a(ii)", &array_itr);
    for (i = 0; i < 5; i++)
-     edbus_message_iter_arguments_set(structure, "ii", i, i*i);
-   edbus_message_iter_container_close(array_itr, structure);
+     {
+        edbus_message_iter_arguments_set(array_itr, "(ii)", &structure);
+        edbus_message_iter_arguments_set(structure, "ii", i, i*i);
+        edbus_message_iter_container_close(array_itr, structure);
+     }
    edbus_message_iter_container_close(iter, array_itr);
-   array_itr = edbus_message_iter_container_new(iter, 'a', "(ii)");
-   edbus_message_iter_arguments_set(array_itr, "(ii)", &structure);
+   edbus_message_iter_arguments_set(iter, "a(ii)", &array_itr);
    for (i = 0; i < 7; i++)
-     edbus_message_iter_arguments_set(structure, "ii", i, i*i*i);
-   edbus_message_iter_container_close(array_itr, structure);
+     {
+        edbus_message_iter_arguments_set(array_itr, "(ii)", &structure);
+        edbus_message_iter_arguments_set(structure, "ii", i, i*i*i);
+        edbus_message_iter_container_close(array_itr, structure);
+     }
    edbus_message_iter_container_close(iter, array_itr);
    edbus_proxy_send(test2_proxy, msg, NULL, NULL, -1);
    edbus_message_unref(msg);
