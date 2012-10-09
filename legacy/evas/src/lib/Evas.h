@@ -12544,8 +12544,8 @@ enum
 #define evas_obj_box_accessor_new(accessor) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_ACCESSOR_NEW), EO_TYPECHECK(Eina_Accessor **, accessor)
 #define evas_obj_box_option_property_name_get(property, name) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_NAME_GET), EO_TYPECHECK(int, property), EO_TYPECHECK(const char **, name)
 #define evas_obj_box_option_property_id_get(name, id) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_ID_GET), EO_TYPECHECK(const char *, name), EO_TYPECHECK(int *, id)
-#define evas_obj_box_option_property_vset(opt, property, args, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VSET), EO_TYPECHECK(Evas_Object_Box_Option *, opt), EO_TYPECHECK(int, property), EO_TYPECHECK(va_list, args), EO_TYPECHECK(Eina_Bool *, ret)
-#define evas_obj_box_option_property_vget(opt, property, args, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VGET), EO_TYPECHECK(Evas_Object_Box_Option *, opt), EO_TYPECHECK(int, property), EO_TYPECHECK(va_list, args), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_box_option_property_vset(opt, property, args, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VSET), EO_TYPECHECK(Evas_Object_Box_Option *, opt), EO_TYPECHECK(int, property), EO_TYPECHECK(va_list *, args), EO_TYPECHECK(Eina_Bool *, ret)
+#define evas_obj_box_option_property_vget(opt, property, args, ret) EVAS_OBJ_BOX_ID(EVAS_OBJ_BOX_SUB_ID_OPTION_PROPERTY_VGET), EO_TYPECHECK(Evas_Object_Box_Option *, opt), EO_TYPECHECK(int, property), EO_TYPECHECK(va_list *, args), EO_TYPECHECK(Eina_Bool *, ret)
 
 /**
  * Set the default box @a api struct (Evas_Object_Box_Api)

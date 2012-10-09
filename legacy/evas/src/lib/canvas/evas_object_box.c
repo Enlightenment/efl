@@ -2231,7 +2231,7 @@ EAPI Eina_Bool
 evas_object_box_option_property_vset(Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do(o, evas_obj_box_option_property_vset(opt, property, args, &ret));
+   eo_do(o, evas_obj_box_option_property_vset(opt, property, &args, &ret));
    return ret;
 }
 
@@ -2240,7 +2240,7 @@ _box_option_property_vset(Eo *o EINA_UNUSED, void *_pd EINA_UNUSED, va_list *lis
 {
    va_arg(*list, Evas_Object_Box_Option *);
    va_arg(*list, int);
-   va_arg(*list, va_list);
+   va_arg(*list, va_list *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    if (ret) *ret = EINA_FALSE;
 }
@@ -2262,7 +2262,7 @@ EAPI Eina_Bool
 evas_object_box_option_property_vget(const Evas_Object *o, Evas_Object_Box_Option *opt, int property, va_list args)
 {
    Eina_Bool ret = EINA_FALSE;
-   eo_do((Eo *)o, evas_obj_box_option_property_vget(opt, property, args, &ret));
+   eo_do((Eo *)o, evas_obj_box_option_property_vget(opt, property, &args, &ret));
    return ret;
 }
 
@@ -2271,7 +2271,7 @@ _box_option_property_vget(Eo *o EINA_UNUSED, void *_pd EINA_UNUSED, va_list *lis
 {
    va_arg(*list, Evas_Object_Box_Option *);
    va_arg(*list, int);
-   va_arg(*list, va_list);
+   va_arg(*list, va_list *);
    Eina_Bool *ret = va_arg(*list, Eina_Bool *);
    *ret = EINA_FALSE;
 }
