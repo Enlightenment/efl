@@ -2733,7 +2733,7 @@ EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *
  * @param enable_y If @c EINA_TRUE allow movement on y axis, if @c EINA_FALSE
  * disallow it.
  *
- * @see ephysics_body_linear_movement_enable_set().
+ * @see ephysics_body_linear_movement_enable_get().
  * @see ephysics_body_rotation_on_z_axis_enable_set().
  *
  * @ingroup EPhysics_Body
@@ -2750,7 +2750,7 @@ EAPI void ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Boo
  * @param enable_y @c EINA_TRUE if movement on y axis is allowed, or
  * @c EINA_FALSE if it's not.
  *
- * @see ephysics_body_linear_movement_enable_get().
+ * @see ephysics_body_linear_movement_enable_set().
  * @see ephysics_body_rotation_on_z_axis_enable_get().
  *
  * @ingroup EPhysics_Body
