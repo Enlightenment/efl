@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/lib/cserve2 \
 -I$(top_srcdir)/src/bin \
+@EVAS_GENERAL_CFLAGS@ \
 @EINA_CFLAGS@ \
 @evas_image_loader_webp_cflags@ \
 @EVIL_CFLAGS@
