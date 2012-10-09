@@ -894,7 +894,7 @@ elm_spinner_special_value_del(Evas_Object *obj,
         if (sv->value != value)
           continue;
 
-        sd->special_values = eina_list_remove(sd->special_values, sv);
+        sd->special_values = eina_list_remove_list(sd->special_values, l);
         eina_stringshare_del(sv->label);
         free(sv);
         _label_write(obj);
