@@ -242,15 +242,6 @@ struct _Ecore_Con_Lookup
    const void *data;
 };
 
-#define ECORE_CON_SOCKS_CAST_ELSE(X) \
-   Ecore_Con_Socks_v4 *v4 = NULL; \
-   Ecore_Con_Socks_v5 *v5 = NULL; \
-   if ((X) && ((X)->version == 4)) \
-     v4 = (Ecore_Con_Socks_v4*)(X); \
-   else if ((X) && ((X)->version == 5)) \
-     v5 = (Ecore_Con_Socks_v5*)(X); \
-   else
-
 struct Ecore_Con_Socks /* v4 */
 {
    unsigned char version;

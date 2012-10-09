@@ -83,6 +83,23 @@ static int ECORE_CON_SOCKS_V5_METHODS[] =
    _ecore_con_server_kill((svr)); \
 } while (0)
 
+#define ECORE_CON_SOCKS_VERSION_CHECK(X) do { \
+   if (!(X) || ((X)->version < 4) || ((X)->version > 5)) \
+     return; \
+} while (0)
+#define ECORE_CON_SOCKS_VERSION_CHECK_RETURN(X, ret) do { \
+   if (!(X) || ((X)->version < 4) || ((X)->version > 5)) \
+     return (ret); \
+} while (0)
+
+#define ECORE_CON_SOCKS_CAST(X) \
+   Ecore_Con_Socks_v4 *v4 = NULL; \
+   Ecore_Con_Socks_v5 *v5 = NULL; \
+   if ((X) && ((X)->version == 4)) \
+     v4 = (Ecore_Con_Socks_v4 *)(X); \
+   else if ((X) && ((X)->version == 5)) \
+     v5 = (Ecore_Con_Socks_v5 *)(X);
+
 Eina_List *ecore_con_socks_proxies = NULL;
 
 static Ecore_Con_Socks *
@@ -113,7 +130,7 @@ _ecore_con_socks_find(unsigned char version, const char *ip, int port, const cha
 static void
 _ecore_con_socks_free(Ecore_Con_Socks *ecs)
 {
-   ECORE_CON_SOCKS_CAST_ELSE(ecs) return;
+   ECORE_CON_SOCKS_VERSION_CHECK(ecs);
 
    if (_ecore_con_proxy_once == ecs) _ecore_con_proxy_once = NULL;
    if (_ecore_con_proxy_global == ecs) _ecore_con_proxy_global = NULL;
@@ -502,7 +519,8 @@ ecore_con_socks_shutdown(void)
 void
 ecore_con_socks_read(Ecore_Con_Server *svr, unsigned char *buf, int num)
 {
-   ECORE_CON_SOCKS_CAST_ELSE(svr->ecs) return;
+   ECORE_CON_SOCKS_VERSION_CHECK(svr->ecs);
+   ECORE_CON_SOCKS_CAST(svr->ecs);
 
    if (svr->ecs_state < ECORE_CON_PROXY_STATE_READ) return;
 
@@ -513,7 +531,8 @@ ecore_con_socks_read(Ecore_Con_Server *svr, unsigned char *buf, int num)
 Eina_Bool
 ecore_con_socks_svr_init(Ecore_Con_Server *svr)
 {
-   ECORE_CON_SOCKS_CAST_ELSE(svr->ecs) return EINA_FALSE;
+   ECORE_CON_SOCKS_VERSION_CHECK_RETURN(svr->ecs, EINA_FALSE);
+   ECORE_CON_SOCKS_CAST(svr->ecs);
 
    if (!svr->ip) return EINA_FALSE;
    if (svr->ecs_buf) return EINA_FALSE;
@@ -813,7 +832,7 @@ ecore_con_socks5_remote_del(const char *ip, int port, const char *username, cons
 EAPI void
 ecore_con_socks_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable)
 {
-   ECORE_CON_SOCKS_CAST_ELSE(ecs) return;
+   ECORE_CON_SOCKS_VERSION_CHECK(ecs);
    ecs->lookup = !!enable;
 }
 
@@ -832,7 +851,7 @@ ecore_con_socks_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable)
 EAPI Eina_Bool
 ecore_con_socks_lookup_get(Ecore_Con_Socks *ecs)
 {
-   ECORE_CON_SOCKS_CAST_ELSE(ecs) return EINA_FALSE;
+   ECORE_CON_SOCKS_VERSION_CHECK_RETURN(ecs, EINA_FALSE);
    return ecs->lookup;
 }
 
@@ -850,6 +869,7 @@ EAPI void
 ecore_con_socks_bind_set(Ecore_Con_Socks *ecs, Eina_Bool is_bind)
 {
    EINA_SAFETY_ON_NULL_RETURN(ecs);
+   ECORE_CON_SOCKS_VERSION_CHECK(ecs);
    ecs->bind = !!is_bind;
 }
 
@@ -866,6 +886,7 @@ EAPI Eina_Bool
 ecore_con_socks_bind_get(Ecore_Con_Socks *ecs)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ecs, EINA_FALSE);
+   ECORE_CON_SOCKS_VERSION_CHECK_RETURN(ecs, EINA_FALSE);
    return ecs->bind;
 }
 
@@ -881,6 +902,7 @@ EAPI unsigned int
 ecore_con_socks_version_get(Ecore_Con_Socks *ecs)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(ecs, 0);
+   ECORE_CON_SOCKS_VERSION_CHECK_RETURN(ecs, 0);
    return ecs->version;
 }
 
