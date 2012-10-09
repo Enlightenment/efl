@@ -42,7 +42,19 @@ well, that showcases EPhysics capabilites. Run
 
 to see these examples.
 
-It supports to launch a specified test on command line, like
+------------------------------------------------------------------------------
+
+TESTS
+
+Tests require elementary to be build.
+
+List of test applications:
+ * ephysics_test => List with many tests to exemplify specific features
+ * ephysics_logo => Example of logo / loading screen made using ephysics
+ * ephysics_sandbox => Application to set many different properties to bodies
+                       and see they interacting.
+
+ephysics_test supports to launch a specified test on command line, like
 
  $ ephysics_test "Jumping Balls"
 
@@ -51,7 +63,9 @@ Also, it can run only the test, avoiding the main menu, with parameter
 
  $ ephysics_test -to Camera
 
-----
+The other programs don't accept parameters.
+
+------------------------------------------------------------------------------
 
 DOCS
 
