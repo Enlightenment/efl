@@ -172,7 +172,6 @@ struct _Elm_Genlist_Smart_Data
    Evas_Coord                            reorder_old_pan_y, w, h, realminw,
                                          prev_viewport_w;
    Ecore_Job                            *update_job;
-   double                                q_start;
    Ecore_Idle_Enterer                   *queue_idle_enterer;
    Ecore_Idler                          *must_recalc_idler;
    Eina_List                            *queue;

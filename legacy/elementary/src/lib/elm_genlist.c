@@ -3666,11 +3666,7 @@ _item_idle_enterer(void *data)
         if (sd->calc_job) ecore_job_del(sd->calc_job);
         sd->calc_job = ecore_job_add(_calc_job, sd);
      }
-   if (ok == ECORE_CALLBACK_CANCEL)
-     {
-        printf("queue time: %3.3f\n", ecore_time_get() - sd->q_start);
-        sd->queue_idle_enterer = NULL;
-     }
+   if (ok == ECORE_CALLBACK_CANCEL) sd->queue_idle_enterer = NULL;
 
    return ok;
 }
@@ -3712,10 +3708,7 @@ _item_queue(Elm_Genlist_Smart_Data *sd,
 //   evas_event_thaw(evas_object_evas_get(sd->obj));
 //   evas_event_thaw_eval(evas_object_evas_get(sd->obj));
    if (!sd->queue_idle_enterer)
-     {
-        sd->q_start = ecore_time_get();
-        sd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, sd);
-     }
+     sd->queue_idle_enterer = ecore_idle_enterer_add(_item_idle_enterer, sd);
 }
 
 /* If the application wants to know the relative item, use
