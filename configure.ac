@@ -692,6 +692,11 @@ fi
 # libjpeg and zlib
 
 EFL_CHECK_LIBS([EET], [libjpeg zlib])
+# TODO: better way to force those instead of is secondary check
+if test "x${efl_lib_zlib}" != "xyes" -o "x${efl_lib_libjpeg}" != "xyes" ; then
+   AC_MSG_ERROR([Required EET libraries were not found.])
+fi
+
 
 # Eina library
 
@@ -742,10 +747,6 @@ esac
 ### Checks for library functions
 
 ### Check availability
-
-if test "x${efl_lib_zlib}" = "xyes" && test "x${efl_lib_libjpeg}" = "xyes" ; then
-   efl_have_eet="yes"
-fi
 
 #### End of Eet
 
