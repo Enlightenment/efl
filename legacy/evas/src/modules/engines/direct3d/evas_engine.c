@@ -91,8 +91,9 @@ eng_info_free(Evas *e, void *info)
 }
 
 static int
-eng_setup(Evas *e, void *info)
+eng_setup(Evas *eo_e, void *info)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_Direct3D *in;
    re = (Render_Engine *)e->engine.data.output;   

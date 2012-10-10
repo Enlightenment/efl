@@ -163,8 +163,9 @@ eng_info_free(Evas *e __UNUSED__, void *info)
 }
 
 static int
-eng_setup(Evas *e, void *in)
+eng_setup(Evas *eo_e, void *in)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Engine_Info_PSL1GHT *info;
 
    printf ("eng_setup called\n");

@@ -100,8 +100,9 @@ _tmp_out_alloc(Render_Engine *re)
 
 
 static int
-eng_setup(Evas *e, void *in)
+eng_setup(Evas *eo_e, void *in)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Render_Engine *re;
    Evas_Engine_Info_Software_16_X11 *info;
 /*    X_Output_Buffer *xob; */
