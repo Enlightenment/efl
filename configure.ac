@@ -509,7 +509,6 @@ AC_MSG_RESULT([${enable_log}])
 
 if test "x${enable_log}" = "xyes"; then
     EINA_CONFIGURE_ENABLE_LOG="#define EINA_ENABLE_LOG"
-    AC_DEFINE([HAVE_LOG], [1], [Define to 1 if we log support is on])
 fi
 AC_SUBST([EINA_CONFIGURE_ENABLE_LOG])
 
