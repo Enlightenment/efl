@@ -343,23 +343,7 @@ if test "x${have_stringshare_usage}" = "xyes"; then
 fi
 
 # Choose best memory pool
-AC_ARG_ENABLE([default-mempool],
-   [AC_HELP_STRING([--enable-default-mempool], [Default memory allocator could be faster for some computer. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes"; then
-       have_default_mempool="yes"
-    else
-       have_default_mempool="no"
-    fi
-   ],
-   [have_default_mempool="no"])
-
-AC_MSG_CHECKING([whether to use default mempool allocator])
-AC_MSG_RESULT([${have_default_mempool}])
-
-if test "x${have_default_mempool}" = "xyes" ; then
-   EINA_CONFIGURE_DEFAULT_MEMPOOL="#define EINA_DEFAULT_MEMPOOL"
-fi
+EINA_CONFIGURE_DEFAULT_MEMPOOL="#define EINA_DEFAULT_MEMPOOL"
 AC_SUBST([EINA_CONFIGURE_DEFAULT_MEMPOOL])
 
 ### Checks for programs
@@ -431,34 +415,9 @@ if test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_mall
 fi
 
 ## Modules
-
-# Check ememoa memory pool library
-
-AC_ARG_ENABLE([ememoa],
-   [AC_HELP_STRING([--enable-ememoa], [build ememoa memory pool module @<:@default=yes@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_ememoa="yes"
-    else
-       enable_ememoa="no"
-    fi
-   ],
-   [enable_ememoa="yes"])
-
-AC_MSG_CHECKING([whether to use ememoa for memory pool])
-AC_MSG_RESULT([${enable_ememoa}])
-
-if test "x${enable_ememoa}" = "xyes" ; then
-   PKG_CHECK_MODULES([EMEMOA],
-      [ememoa >= 0.0.26 ],
-      [enable_ememoa="yes"],
-      [enable_ememoa="no"])
-fi
-
 if ! test "x${requirements_pc_deps_eina}" = "x" ; then
    PKG_CHECK_MODULES([EINA], [${requirements_pc_deps_eina}])
 fi
-
 
 
 ## Examples
@@ -596,24 +555,9 @@ AC_SUBST(EINA_CONFIGURE_HAVE_ON_OFF_THREADS)
 AM_CONDITIONAL([EINA_ON_OFF_THREADS], [! test "x${efl_have_on_off_threads}" = "xno"])
 
 ### Modules
-
-if test "x${have_default_mempool}" = "xyes" ; then
-   enable_chained_pool="no"
-   enable_pass_through="static"
-else
-   enable_chained_pool="static"
-   enable_pass_through="no"
-fi
-
-enable_one_big="static"
-
-EINA_CHECK_MODULE([chained-pool],   [${enable_chained_pool}], [chained pool])
-EINA_CHECK_MODULE([ememoa-fixed],   [${enable_ememoa}],       [ememoa fixed])
-EINA_CHECK_MODULE([ememoa-unknown], [${enable_ememoa}],       [ememoa unknown])
-EINA_CHECK_MODULE([fixed-bitmap],   [no],                     [fixed bitmap])
-EINA_CHECK_MODULE([pass-through],   [${enable_pass_through}], [pass through])
-EINA_CHECK_MODULE([buddy],          [no],                     [buddy])
-EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
+EINA_CHECK_MODULE([chained-pool],   [static], [chained pool])
+EINA_CHECK_MODULE([pass-through],   [static], [pass through])
+EINA_CHECK_MODULE([one-big],        [static], [one big])
 
 
 #### End of Eina
@@ -912,11 +856,7 @@ src/modules/Makefile
 src/modules/eina/Makefile
 src/modules/eina/mp/Makefile
 src/modules/eina/mp/chained_pool/Makefile
-src/modules/eina/mp/ememoa_fixed/Makefile
-src/modules/eina/mp/ememoa_unknown/Makefile
 src/modules/eina/mp/pass_through/Makefile
-src/modules/eina/mp/fixed_bitmap/Makefile
-src/modules/eina/mp/buddy/Makefile
 src/modules/eina/mp/one_big/Makefile
 src/scripts/Makefile
 src/scripts/eina/Makefile
@@ -965,15 +905,6 @@ echo "  Iconv support........: ${efl_func_iconv}"
 echo "  File dirfd...........: ${efl_func_dirfd}"
 echo "  File xattr...........: ${efl_func_setxattr}"
 echo "  shm_open.............: ${efl_func_shm_open}"
-echo
-echo "  Memory pools:"
-echo "    Buddy..............: ${enable_buddy}"
-echo "    Chained pool.......: ${enable_chained_pool}"
-echo "    Ememoa fixed.......: ${enable_ememoa_fixed}"
-echo "    Ememoa unknown.....: ${enable_ememoa_unknown}"
-echo "    Fixed bitmap.......: ${enable_fixed_bitmap}"
-echo "    One big............: ${enable_one_big}"
-echo "    Pass through.......: ${enable_pass_through}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"

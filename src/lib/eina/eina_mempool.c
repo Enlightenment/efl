@@ -114,29 +114,9 @@ on_error:
 
 /* Built-in backend's prototypes */
 
-#ifdef EINA_STATIC_BUILD_BUDDY
-Eina_Bool buddy_init(void);
-void      buddy_shutdown(void);
-#endif
-
 #ifdef EINA_STATIC_BUILD_CHAINED_POOL
 Eina_Bool chained_init(void);
 void      chained_shutdown(void);
-#endif
-
-#ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
-Eina_Bool ememoa_fixed_init(void);
-void      ememoa_fixed_shutdown(void);
-#endif
-
-#ifdef EINA_STATIC_BUILD_EMEMOA_UNKNOWN
-Eina_Bool ememoa_unknown_init(void);
-void      ememoa_unknown_shutdown(void);
-#endif
-
-#ifdef EINA_STATIC_BUILD_FIXED_BITMAP
-Eina_Bool fixed_bitmap_init(void);
-void      fixed_bitmap_shutdown(void);
 #endif
 
 #ifdef EINA_STATIC_BUILD_ONE_BIG
@@ -235,20 +215,8 @@ eina_mempool_init(void)
    eina_module_list_load(_modules);
 
    /* builtin backends */
-#ifdef EINA_STATIC_BUILD_BUDDY
-   buddy_init();
-#endif
 #ifdef EINA_STATIC_BUILD_CHAINED_POOL
    chained_init();
-#endif
-#ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
-   ememoa_fixed_init();
-#endif
-#ifdef EINA_STATIC_BUILD_EMEMOA_UNKNOWN
-   ememoa_unknown_init();
-#endif
-#ifdef EINA_STATIC_BUILD_FIXED_BITMAP
-   fixed_bitmap_init();
 #endif
 #ifdef EINA_STATIC_BUILD_ONE_BIG
    one_big_init();
@@ -270,20 +238,8 @@ Eina_Bool
 eina_mempool_shutdown(void)
 {
    /* builtin backends */
-#ifdef EINA_STATIC_BUILD_BUDDY
-   buddy_shutdown();
-#endif
 #ifdef EINA_STATIC_BUILD_CHAINED_POOL
    chained_shutdown();
-#endif
-#ifdef EINA_STATIC_BUILD_EMEMOA_FIXED
-   ememoa_fixed_shutdown();
-#endif
-#ifdef EINA_STATIC_BUILD_EMEMOA_UNKNOWN
-   ememoa_unknown_shutdown();
-#endif
-#ifdef EINA_STATIC_BUILD_FIXED_BITMAP
-   fixed_bitmap_shutdown();
 #endif
 #ifdef EINA_STATIC_BUILD_ONE_BIG
    one_big_shutdown();

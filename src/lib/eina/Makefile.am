@@ -173,24 +173,8 @@ eina_binbuf_template_c.x
 
 
 
-if EINA_STATIC_BUILD_BUDDY
-libeina_la_SOURCES += $(top_srcdir)/src/modules/eina/mp/buddy/eina_buddy.c
-endif
-
 if EINA_STATIC_BUILD_CHAINED_POOL
 libeina_la_SOURCES += $(top_srcdir)/src/modules/eina/mp/chained_pool/eina_chained_mempool.c
-endif
-
-if EINA_STATIC_BUILD_EMEMOA_FIXED
-libeina_la_SOURCES += $(top_srcdir)/src/modules/eina/mp/ememoa_fixed/eina_ememoa_fixed.c
-endif
-
-if EINA_STATIC_BUILD_EMEMOA_UNKNOWN
-libeina_la_SOURCES += $(top_srcdir)/src/modules/eina/mp/ememoa_unknown/eina_ememoa_unknown.c
-endif
-
-if EINA_STATIC_BUILD_FIXED_BITMAP
-libeina_la_SOURCES += $(top_srcdir)/src/modules/eina/mp/fixed_bitmap/eina_fixed_bitmap.c
 endif
 
 if EINA_STATIC_BUILD_ONE_BIG
