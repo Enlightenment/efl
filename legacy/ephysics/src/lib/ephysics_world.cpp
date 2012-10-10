@@ -49,13 +49,13 @@ struct _EPhysics_Light {
 
 struct _EPhysics_World {
      EINA_INLIST;
-     btBroadphaseInterface* broadphase;
-     btDefaultCollisionConfiguration* collision;
-     btCollisionDispatcher* dispatcher;
-     btSequentialImpulseConstraintSolver* solver;
-     btSoftRigidDynamicsWorld* dynamics_world;
-     btSoftBodyWorldInfo* world_info;
-     btSoftBodySolver* soft_solver;
+     btBroadphaseInterface *broadphase;
+     btDefaultCollisionConfiguration *collision;
+     btCollisionDispatcher *dispatcher;
+     btSequentialImpulseConstraintSolver *solver;
+     btSoftRigidDynamicsWorld *dynamics_world;
+     btSoftBodyWorldInfo *world_info;
+     btSoftBodySolver *soft_solver;
      btOverlapFilterCallback *filter_cb;
 
      EPhysics_Body *boundaries[4];
