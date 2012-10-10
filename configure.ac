@@ -341,8 +341,6 @@ if test "x${have_safety_checks}" = "xyes" ; then
 fi
 AC_SUBST([EINA_CONFIGURE_SAFETY_CHECKS])
 
-AM_CONDITIONAL([SAFETY_CHECKS], [test "x$have_safety_checks" = "xyes"])
-
 if test -n "$with_max_log_level"; then
    AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${with_max_log_level}])
    AC_DEFINE_UNQUOTED([EINA_LOG_LEVEL_MAXIMUM], [${with_max_log_level}], [if set, logging is limited to this amount.])
@@ -351,10 +349,6 @@ fi
 if test "x${have_stringshare_usage}" = "xyes"; then
    AC_DEFINE([EINA_STRINGSHARE_USAGE], [1], [Report Eina stringshare usage pattern])
 fi
-
-# Choose best memory pool
-EINA_CONFIGURE_DEFAULT_MEMPOOL="#define EINA_DEFAULT_MEMPOOL"
-AC_SUBST([EINA_CONFIGURE_DEFAULT_MEMPOOL])
 
 ### Checks for programs
 
@@ -529,9 +523,6 @@ fi
 AC_SUBST([EINA_CONFIGURE_ENABLE_LOG])
 
 EFL_CHECK_THREADS
-
-EINA_CONFIGURE_HAVE_THREADS="#define EINA_HAVE_THREADS"
-AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
 
 if test "$want_debug_threads" = "yes"; then
    EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_HAVE_DEBUG_THREADS"
