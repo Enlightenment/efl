@@ -51,106 +51,36 @@ AC_SUBST([VMAJ])
 
 #### Default values
 
-want_evas="yes"
-want_ecore="yes"
-want_embryo="yes"
-want_eio="yes"
-want_edje="yes"
-want_efreet="yes"
-want_e_dbus="yes"
-want_eeze="yes"
-want_emotion="yes"
-want_ethumb="yes"
-want_elementary="yes"
 
 requirements_libs_evil=""
 requirements_libs_eina=""
+requirements_libs_eo=""
 requirements_libs_eet=""
-requirements_libs_evas=""
-requirements_libs_ecore=""
-requirements_libs_embryo=""
-requirements_libs_eio=""
-requirements_libs_edje=""
-requirements_libs_efreet=""
-requirements_libs_e_dbus=""
-requirements_libs_eeze=""
-requirements_libs_emotion=""
-requirements_libs_ethumb=""
-requirements_libs_elementary=""
 
 requirements_libs_deps_evil=""
 requirements_libs_deps_eina=""
+requirements_libs_deps_eo=""
 requirements_libs_deps_eet=""
-requirements_libs_deps_evas=""
-requirements_libs_deps_ecore=""
-requirements_libs_deps_embryo=""
-requirements_libs_deps_eio=""
-requirements_libs_deps_edje=""
-requirements_libs_deps_efreet=""
-requirements_libs_deps_e_dbus=""
-requirements_libs_deps_eeze=""
-requirements_libs_deps_emotion=""
-requirements_libs_deps_ethumb=""
-requirements_libs_deps_elementary=""
 
+requirements_pc_evil=""
 requirements_pc_eina=""
-requirements_pc_eet=""
 requirements_pc_eo=""
-requirements_pc_evas=""
-requirements_pc_ecore=""
-requirements_pc_embryo=""
-requirements_pc_eio=""
-requirements_pc_edje=""
-requirements_pc_efreet=""
-requirements_pc_e_dbus=""
-requirements_pc_eeze=""
-requirements_pc_emotion=""
-requirements_pc_ethumb=""
-requirements_pc_elementary=""
+requirements_pc_eet=""
 
+requirements_pc_deps_evil=""
 requirements_pc_deps_eina=""
+requirements_pc_deps_eo=""
 requirements_pc_deps_eet=""
-requirements_pc_deps_evas=""
-requirements_pc_deps_ecore=""
-requirements_pc_deps_embryo=""
-requirements_pc_deps_eio=""
-requirements_pc_deps_edje=""
-requirements_pc_deps_efreet=""
-requirements_pc_deps_e_dbus=""
-requirements_pc_deps_eeze=""
-requirements_pc_deps_emotion=""
-requirements_pc_deps_ethumb=""
-requirements_pc_deps_elementary=""
 
 AC_SUBST([requirements_libs_evil])
 AC_SUBST([requirements_libs_eina])
+AC_SUBST([requirements_libs_eo])
 AC_SUBST([requirements_libs_eet])
-AC_SUBST([requirements_libs_evas])
-AC_SUBST([requirements_libs_ecore])
-AC_SUBST([requirements_libs_embryo])
-AC_SUBST([requirements_libs_eio])
-AC_SUBST([requirements_libs_edje])
-AC_SUBST([requirements_libs_efreet])
-AC_SUBST([requirements_libs_e_dbus])
-AC_SUBST([requirements_libs_eeze])
-AC_SUBST([requirements_libs_emotion])
-AC_SUBST([requirements_libs_ethumb])
-AC_SUBST([requirements_libs_elementary])
 
+AC_SUBST([requirements_pc_evil])
 AC_SUBST([requirements_pc_eina])
-AC_SUBST([requirements_pc_eet])
 AC_SUBST([requirements_pc_eo])
-AC_SUBST([requirements_pc_evas])
-AC_SUBST([requirements_pc_ecore])
-AC_SUBST([requirements_pc_embryo])
-AC_SUBST([requirements_pc_eio])
-AC_SUBST([requirements_pc_edje])
-AC_SUBST([requirements_pc_efreet])
-AC_SUBST([requirements_pc_e_dbus])
-AC_SUBST([requirements_pc_eeze])
-AC_SUBST([requirements_pc_emotion])
-AC_SUBST([requirements_pc_ethumb])
-AC_SUBST([requirements_pc_elementary])
+AC_SUBST([requirements_pc_eet])
 
 
 AC_CANONICAL_HOST
@@ -165,18 +95,12 @@ case "$host_os" in
    mingw32ce*)
       have_wince="yes"
       have_windows="yes"
-      want_efreet="no"
-      want_e_dbus="no"
-      want_eeze="no"
-      want_emotion="no"
-      want_ethumb="no"
       MODULE_ARCH="$host_os-$host_cpu"
       MODULE_EXT=".dll"
    ;;
    mingw*)
       have_win32="yes"
       have_windows="yes"
-      want_eeze="no"
       MODULE_ARCH="$host_os-$host_cpu-v_maj.v_min.v_mic"
       MODULE_EXT=".dll"
    ;;
@@ -626,10 +550,11 @@ fi
 
 ## Examples
 
-PKG_CHECK_MODULES([ECORE_EVAS],
-   [ecore-evas ecore evas],
-   [build_tiler_example="yes"],
-   [build_tiler_example="no"])
+# TODO: add once ecore-evas is merged:
+#PKG_CHECK_MODULES([ECORE_EVAS],
+#   [ecore-evas ecore evas],
+#   [build_tiler_example="yes"],
+#   [build_tiler_example="no"])
 
 AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
@@ -1160,7 +1085,8 @@ AC_SUBST([EO_LIBS])
 
 # Example (evas one)
 
-PKG_CHECK_MODULES([ELM], [elementary >= 1.7.0], [have_elm="yes"], [have_elm="no"])
+# TODO: add once elementary is merged
+#PKG_CHECK_MODULES([ELM], [elementary >= 1.7.0], [have_elm="yes"], [have_elm="no"])
 AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [test "x${have_elm}" = "xyes"])
 
 ### Checks for header files
@@ -1188,24 +1114,6 @@ AC_SUBST([EFL_EO_BUILD])
 efl_have_eo="yes"
 
 #### End of Eo
-
-
-#### Evas
-
-#AC_MSG_NOTICE([Evas checks])
-
-### Default values
-### Additional options to configure
-### Checks for programs
-### Checks for libraries
-### Checks for header files
-### Checks for types
-### Checks for structures
-### Checks for compiler characteristics
-### Checks for linker characteristics
-### Checks for library functions
-
-#### End of Evas
 
 
 AC_CONFIG_FILES([
