@@ -555,7 +555,7 @@ icon_theme_index_read(Efreet_Cache_Icon_Theme *theme, const char *path)
         s = t;
         p = s;
 
-        while (p)
+        while ((p) && (*s))
         {
             p = strchr(s, ',');
 
