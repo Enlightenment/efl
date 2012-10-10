@@ -223,6 +223,55 @@ case "$build_profile" in
      ;;
 esac
 
+# Common Checks (keep names sorted for ease of use):
+AC_HEADER_DIRENT
+AC_HEADER_TIME
+
+AC_CHECK_HEADERS([ \
+execinfo.h \
+inttypes.h \
+libgen.h \
+mcheck.h \
+netinet/in.h \
+siginfo.h \
+stdint.h \
+strings.h \
+sys/types.h \
+unistd.h \
+])
+
+AC_CHECK_FUNCS([\
+backtrace \
+backtrace_symbols \
+execvp \
+fpathconf \
+fstatat \
+malloc_usable_size \
+mtrace \
+openat \
+strlcpy \
+])
+
+# wchar_t
+AC_CHECK_SIZEOF([wchar_t])
+EINA_SIZEOF_WCHAR_T=$ac_cv_sizeof_wchar_t
+AC_SUBST([EINA_SIZEOF_WCHAR_T])
+AC_CHECK_TYPES([siginfo_t], [], [],
+   [[
+#include <signal.h>
+#if HAVE_SIGINFO_H
+# include <siginfo.h>
+#endif
+   ]])
+
+# struct dirent
+
+AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
+   [[
+#include <dirent.h>
+   ]])
+
+
 
 #### Evil
 
@@ -420,11 +469,6 @@ fi
 
 ### Checks for header files
 
-AC_HEADER_TIME
-AC_HEADER_DIRENT
-
-AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h strings.h execinfo.h mcheck.h])
-
 # sys/mman.h could be provided by evil/escape/exotic so we need to set CFLAGS accordingly
 CFLAGS_save="${CFLAGS}"
 CFLAGS="${CFLAGS} ${EINA_CFLAGS}"
@@ -435,27 +479,6 @@ EINA_CONFIG(HAVE_INTTYPES_H, test "x${ac_cv_header_inttypes_h}" = "xyes")
 EINA_CONFIG(HAVE_STDINT_H, test "x${ac_cv_header_stdint_h}" = "xyes")
 
 ### Checks for types
-
-# wchar_t
-
-AC_CHECK_SIZEOF([wchar_t])
-EINA_SIZEOF_WCHAR_T=$ac_cv_sizeof_wchar_t
-AC_SUBST([EINA_SIZEOF_WCHAR_T])
-AC_CHECK_TYPES([siginfo_t], [], [],
-   [[
-#include <signal.h>
-#if HAVE_SIGINFO_H
-# include <siginfo.h>
-#endif
-   ]])
-
-# struct dirent
-
-AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
-   [[
-#include <dirent.h>
-   ]])
-
 EINA_CONFIG(HAVE_DIRENT_H, test "x${have_dirent}" = "xyes")
 AC_DEFINE_IF([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"],
    [1], [Define to 1 if you have a valid <dirent.h> header file.])
@@ -476,9 +499,6 @@ EFL_CHECK_COMPILER_FLAGS([EINA], [-Wshadow -Wpointer-arith])
 EFL_CHECK_LINKER_FLAGS([EINA], [-fno-strict-aliasing])
 
 ### Checks for library functions
-
-AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp backtrace backtrace_symbols malloc_usable_size mtrace])
-
 EFL_CHECK_FUNCS([EINA], [dirfd dlopen dladdr fnmatch iconv shm_open setxattr])
 
 enable_log="no"
@@ -647,8 +667,6 @@ esac
 EET_LIBS="${EET_LIBS} ${requirements_libs_deps_eet}"
 
 ### Checks for header files
-
-AC_CHECK_HEADERS(netinet/in.h unistd.h)
 
 ### Checks for types
 
