@@ -655,67 +655,21 @@ else
    AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 0, [support old eet file format])
 fi
 
-# Openssl support
+AC_ARG_WITH([crypto],
+   [AC_HELP_STRING([--with-crypto=CRYPTO],
+                   [use the predefined build crypto, one of:
+                    openssl, gnutls or none.
+                    @<:@default=openssl@:>@])],
+   [build_crypto=${withval}],
+   [build_crypto=openssl])
 
-AC_ARG_ENABLE([openssl],
-   [AC_HELP_STRING([--disable-openssl], [disable openssl eet support @<:@default=auto@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_openssl="yes"
-    else
-       want_openssl="no"
-    fi
-   ],
-   [want_openssl="auto"])
-
-AC_MSG_CHECKING([whether to use OpenSSL])
-AC_MSG_RESULT([${want_openssl}])
-
-# GnuTLS support
-
-AC_ARG_ENABLE([gnutls],
-   [AC_HELP_STRING([--disable-gnutls], [disable gnutls eet support @<:@default=auto@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_gnutls="yes"
-    else
-       want_gnutls="no"
-    fi
-   ],
-   [want_gnutls="auto"])
-
-AC_MSG_CHECKING([whether to use Gnutls])
-AC_MSG_RESULT([${want_gnutls}])
-
-# Cryptography support
-
-AC_ARG_ENABLE([cipher],
-   [AC_HELP_STRING([--disable-cipher], [disable cipher support for eet API @<:@default=yes@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_cipher="yes"
-    else
-       want_cipher="no"
-    fi
-   ],
-   [want_cipher="yes"])
-
-AC_MSG_CHECKING([whether to use cipher])
-AC_MSG_RESULT([${want_cipher}])
-
-AC_ARG_ENABLE([signature],
-   [AC_HELP_STRING([--disable-signature], [disable signature file support for eet @<:@default=yes@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_signature="yes"
-    else
-       want_signature="no"
-    fi
-   ],
-   [want_signature="yes"])
-
-AC_MSG_CHECKING([whether to use signature])
-AC_MSG_RESULT([${want_signature}])
+case "$build_crypto" in
+   openssl|gnutls|none)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build crypto --with-crypto=${build_crypto}])
+     ;;
+esac
 
 ### Checks for programs
 
@@ -749,149 +703,71 @@ AC_SUBST(EFL_EET_BUILD)
 
 ## Secure layer
 
-# Gnutls library
+case "$build_crypto" in
+   gnutls)
+      PKG_CHECK_MODULES([GNUTLS], [gnutls >= 1.7.6])
+      AC_DEFINE([HAVE_GNUTLS], [1], [Have Gnutls support])
+      requirements_pc_eet="gnutls >= 1.7.6 ${requirements_pc_eet}"
+      requirements_pc_deps_eet="gnutls >= 1.7.6 ${requirements_pc_deps_eet}"
 
-have_gnutls="no"
-if test "x${want_gnutls}" = "xyes" || test "x${want_gnutls}" = "xauto" ; then
-   PKG_CHECK_MODULES([GNUTLS], [gnutls >= 1.7.6],
-      [
-       have_gnutls="yes"
-       want_openssl="no"
-       AC_DEFINE([HAVE_GNUTLS], [1], [Have Gnutls support])
-       requirements_pc_eet="gnutls >= 1.7.6 ${requirements_pc_eet}"
-       requirements_pc_deps_eet="gnutls >= 1.7.6 ${requirements_pc_deps_eet}"
-      ],
-      [have_gnutls="no"])
-fi
-
-# libgcrypt
-
-if test "x${have_gnutls}" = "xyes" ; then
-   AC_PATH_GENERIC([libgcrypt], [], [have_gnutls="yes"], [have_gnutls="no"])
-   if test "x${have_gnutls}" = "xyes" ; then
+      # TODO: do we need this?
+      # libgcrypt
+      AC_PATH_GENERIC([libgcrypt], [], [:],
+         [AC_MSG_ERROR([libgcrypt required but not found])])
       requirements_libs_eet="${LIBGCRYPT_LIBS} ${requirements_libs_eet}"
       requirements_libs_deps_eet="${LIBGCRYPT_LIBS} ${requirements_libs_deps_eet}"
-   fi
-fi
 
-# Specific GNUTLS improvement
+      # TODO: do we need this? can't we just bump required version?
+      # Specific GNUTLS improvement
+      CFLAGS_save="${CFLAGS}"
+      LIBS_save="${LIBS}"
+      CFLAGS="${GNUTLS_CFLAGS}"
+      LIBS="${GNUTLS_LIBS}"
+      AC_CHECK_LIB([gnutls], [gnutls_x509_crt_verify_hash],
+         [
+          AC_DEFINE([EET_USE_NEW_GNUTLS_API], [1], [use gnutls_x509_crt_verify_hash])
+         ], [AC_MSG_NOTICE([Optional gnutls_x509_crt_verify_hash not present.])])
+      CFLAGS="${CFLAGS_save}"
+      LIBS="${LIBS_save}"
 
-AC_ARG_ENABLE(new-gnutls-api,
-   [AC_HELP_STRING(
-      [--disable-new-gnutls-api],
-      [enable use of gnutls_x509_crt_verify_hash. @<:@default=yes@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       new_gnutls_api="yes"
-    else
-       new_gnutls_api="no"
-    fi
-   ],
-   [new_gnutls_api="yes"])
+      # TODO: do we need this? can't we just bump required version?
+      CFLAGS_save="${CFLAGS}"
+      LIBS_save="${LIBS}"
+      CFLAGS="${GNUTLS_CFLAGS}"
+      LIBS="${GNUTLS_LIBS}"
+      AC_CHECK_LIB([gnutls], [gnutls_privkey_sign_data],
+         [
+          AC_DEFINE([EET_USE_NEW_PRIVKEY_SIGN_DATA], [1], [use gnutls_privkey_sign_data])
+         ], [AC_MSG_NOTICE([Optional gnutls_privkey_sign_data not present.])])
+      CFLAGS="${CFLAGS_save}"
+      LIBS="${LIBS_save}"
 
-AC_MSG_CHECKING([whether to use gnutls_x509_crt_verify_hash])
-AC_MSG_RESULT([${new_gnutls_api}])
+      # TODO: do we need this? can't we just bump required version?
+      CFLAGS_save="${CFLAGS}"
+      LIBS_save="${LIBS}"
+      CFLAGS="${GNUTLS_CFLAGS}"
+      LIBS="${GNUTLS_LIBS}"
+      AC_CHECK_LIB([gnutls], [gnutls_pubkey_verify_hash],
+         [
+          AC_DEFINE([EET_USE_NEW_PUBKEY_VERIFY_HASH], [1], [use gnutls_pubkey_verify_hash])
+         ])
+      CFLAGS="${CFLAGS_save}"
+      LIBS="${LIBS_save}"
+      ;;
 
-if test "x${have_gnutls}" = "xyes" && test "x${new_gnutls_api}" = "xyes" ; then
-   CFLAGS_save="${CFLAGS}"
-   LIBS_save="${LIBS}"
-   CFLAGS="${GNUTLS_CFLAGS}"
-   LIBS="${GNUTLS_LIBS}"
-   AC_CHECK_LIB([gnutls], [gnutls_x509_crt_verify_hash],
-      [
-       AC_DEFINE([EET_USE_NEW_GNUTLS_API], [1], [use gnutls_x509_crt_verify_hash])
-       new_gnutls_api="yes"
-      ],
-      [new_gnutls_api="no"])
-   CFLAGS="${CFLAGS_save}"
-   LIBS="${LIBS_save}"
-fi
-
-use_gnutls_privkey_sign_data="no"
-if test "x${have_gnutls}" = "xyes" ; then
-   CFLAGS_save="${CFLAGS}"
-   LIBS_save="${LIBS}"
-   CFLAGS="${GNUTLS_CFLAGS}"
-   LIBS="${GNUTLS_LIBS}"
-   AC_CHECK_LIB([gnutls], [gnutls_privkey_sign_data],
-      [
-       AC_DEFINE([EET_USE_NEW_PRIVKEY_SIGN_DATA], [1], [use gnutls_privkey_sign_data])
-       use_gnutls_privkey_sign_data="yes"
-      ],
-      [use_gnutls_privkey_sign_data="no"])
-   CFLAGS="${CFLAGS_save}"
-   LIBS="${LIBS_save}"
-fi
-
-AC_MSG_CHECKING([whether to use gnutls_privkey_sign_data])
-AC_MSG_RESULT([${use_gnutls_privkey_sign_data}])
-
-use_gnutls_pubkey_verify_hash="no"
-if test "x${have_gnutls}" = "xyes" ; then
-   CFLAGS_save="${CFLAGS}"
-   LIBS_save="${LIBS}"
-   CFLAGS="${GNUTLS_CFLAGS}"
-   LIBS="${GNUTLS_LIBS}"
-   AC_CHECK_LIB([gnutls], [gnutls_pubkey_verify_hash],
-      [
-       AC_DEFINE([EET_USE_NEW_PUBKEY_VERIFY_HASH], [1], [use gnutls_pubkey_verify_hash])
-       use_gnutls_pubkey_verify_hash="yes"
-      ],
-      [use_gnutls_pubkey_verify_hash="no"])
-   CFLAGS="${CFLAGS_save}"
-   LIBS="${LIBS_save}"
-fi
-
-AC_MSG_CHECKING([whether to use gnutls_pubkey_verify_hash])
-AC_MSG_RESULT([${use_gnutls_pubkey_verify_hash}])
-
-# Openssl library
-
-have_openssl="no"
-if test "x${want_openssl}" = "xyes" || test "x${want_openssl}" = "xauto" ; then
-   PKG_CHECK_EXISTS([openssl],
-      [
-       have_openssl="yes"
-       AC_DEFINE([HAVE_OPENSSL], [1], [Have Openssl support])
-       requirements_pc_eet="openssl ${requirements_pc_eet}"
-       requirements_pc_deps_eet="openssl ${requirements_pc_deps_eet}"
-      ],
-      [have_openssl="no"])
-fi
-
-if test "x${have_gnutls}" = "xyes" ; then
-   secure_layer="GnuTLS"
-elif test "x${have_openssl}" = "xyes" ; then
-   secure_layer="OpenSSL"
-else
-   secure_layer="no"
-fi
+   openssl)
+      PKG_CHECK_MODULES([OPENSSL], [openssl])
+      AC_DEFINE([HAVE_OPENSSL], [1], [Have Openssl support])
+      requirements_pc_eet="openssl ${requirements_pc_eet}"
+      requirements_pc_deps_eet="openssl ${requirements_pc_deps_eet}"
+      ;;
+esac
 
 # Cryptography support
-
-have_cipher="no"
-if test "x${have_gnutls}" = "xyes" && test "x${want_cipher}" = "xyes" ; then
-   have_cipher="yes"
+if test "$build_crypto" != "none" ; then
    AC_DEFINE([HAVE_CIPHER], [1], [Have cipher support built in eet])
-elif test "x${have_openssl}" = "xyes" && test "x${want_cipher}" = "xyes" ; then
-   have_cipher="yes"
-   AC_DEFINE([HAVE_CIPHER], [1], [Have cipher support built in eet])
-fi
-
-AC_MSG_CHECKING([whether to activate cipher support in eet])
-AC_MSG_RESULT([${have_cipher}])
-
-have_signature="no"
-if test "x${have_gnutls}" = "xyes" && test "x${want_signature}" = "xyes" ; then
-   have_signature="yes"
-   AC_DEFINE([HAVE_SIGNATURE], [1], [Have signature support for eet file])
-elif test "x${have_openssl}" = "xyes" && test "x${want_signature}" = "xyes" ; then
-   have_signature="yes"
    AC_DEFINE([HAVE_SIGNATURE], [1], [Have signature support for eet file])
 fi
-
-AC_MSG_CHECKING([whether to activate signature support in eet])
-AC_MSG_RESULT([${have_signature}])
 
 # libjpeg and zlib
 
@@ -1146,11 +1022,7 @@ echo
 else
 echo "Eet"
 echo
-echo "  Secure layer.........: ${secure_layer}"
-if test "x${have_gnutls}" = "xyes" || test "x${have_openssl}" = "xyes" ; then
-   echo "    Cipher support.....: ${have_cipher}"
-   echo "    Signature..........: ${have_signature}"
-fi
+echo "  Secure layer.........: ${build_crypto}"
 echo
 echo "  Old eet file format..: ${old_eet_file_format}"
 echo
