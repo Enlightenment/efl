@@ -38,6 +38,7 @@ Fixes:
    * Fix multibuttonentry list corruption.
    * Fix copy&paste error in elm_flip.
    * Fix possible invalid memory access in elm_access.
+   * Fix diskselector bug with more than 4 items.
    
 Removals:
 

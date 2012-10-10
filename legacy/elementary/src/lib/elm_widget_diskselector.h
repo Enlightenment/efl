@@ -130,8 +130,6 @@ struct _Elm_Diskselector_Smart_Data
    const Elm_Scrollable_Smart_Interface *s_iface;
 
    Evas_Object                          *main_box;
-   Evas_Object                          *left_blank;
-   Evas_Object                          *right_blank;
    Elm_Diskselector_Item                *selected_item;
    Elm_Diskselector_Item                *first;
    Elm_Diskselector_Item                *second;
@@ -141,6 +139,8 @@ struct _Elm_Diskselector_Smart_Data
    Eina_List                            *r_items;
    Eina_List                            *over_items;
    Eina_List                            *under_items;
+   Eina_List                            *left_blanks;
+   Eina_List                            *right_blanks;
    Ecore_Idle_Enterer                   *idler;
    Ecore_Idle_Enterer                   *check_idler;
 

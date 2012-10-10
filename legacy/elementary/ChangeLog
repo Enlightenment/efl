@@ -591,3 +591,5 @@
 2012-10-10  Shinwoo Kim (kimcinoo)
 
         * Add access features to multibuttonentry
+        * Fix diskselector bug on round with appended items with more
+        than 4 items.
