@@ -2556,9 +2556,7 @@ _overlay_place(Elm_Map_Smart_Data *sd)
    EINA_LIST_FOREACH(sd->overlays, l, overlay)
      {
         // Reset groups
-        if ((overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS) ||
-            (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS))
-          continue;
+        if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS) continue;
         overlay->grp->in = EINA_FALSE;
         overlay->grp->boss = EINA_FALSE;
         _overlay_group_hide(overlay->grp);
@@ -2795,7 +2793,9 @@ _xml_name_attrs_dump_cb(void *data,
 {
    Name_Dump *dump = (Name_Dump *)data;
 
-   if (!dump) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dump, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
 
    if (!strncmp(key, NOMINATIM_ATTR_LON, sizeof(NOMINATIM_ATTR_LON)))
      dump->lon = _elm_atof(value);
@@ -2814,7 +2814,8 @@ _xml_route_dump_cb(void *data,
 {
    Route_Dump *dump = data;
 
-   if (!dump) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dump, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
 
    switch (type)
      {
@@ -2870,7 +2871,8 @@ _xml_name_dump_cb(void *data,
 {
    Name_Dump *dump = data;
 
-   if (!dump) return EINA_FALSE;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dump, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
 
    switch (type)
      {
