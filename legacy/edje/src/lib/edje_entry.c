@@ -3751,6 +3751,34 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx __UN
                                             attr->end_index - attr->start_index);
                        eina_strbuf_append(buf, "</preedit_sel>");
                     }
+                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB4)
+                    {
+                       eina_strbuf_append(buf, "<preedit_sub1>");
+                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
+                                            attr->end_index - attr->start_index);
+                       eina_strbuf_append(buf, "</preedit_sub1>");
+                    }
+                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB5)
+                    {
+                       eina_strbuf_append(buf, "<preedit_sub2>");
+                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
+                                            attr->end_index - attr->start_index);
+                       eina_strbuf_append(buf, "</preedit_sub2>");
+                    }
+                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB6)
+                    {
+                       eina_strbuf_append(buf, "<preedit_sub3>");
+                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
+                                            attr->end_index - attr->start_index);
+                       eina_strbuf_append(buf, "</preedit_sub3>");
+                    }
+                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB7)
+                    {
+                       eina_strbuf_append(buf, "<preedit_sub4>");
+                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
+                                            attr->end_index - attr->start_index);
+                       eina_strbuf_append(buf, "</preedit_sub4>");
+                    }
                }
           }
         else

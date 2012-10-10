@@ -8,6 +8,7 @@ Additions:
     * Add nested parts support.
     * Add EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SIGNIN
     * Add edje_codegen - A code generator to working with edje files.
+    * Add more tags(preedit_sub1~4) for a variety of preediting states.
 
 Improvements:
     * Check the number of parameter for image in edc.
