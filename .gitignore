@@ -35,3 +35,4 @@ Makefile.in
 /spec/efl.spec
 /src/bin/eet/eet
 /src/lib/eina/eina_config.h
+/INSTALL
