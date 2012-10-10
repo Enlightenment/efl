@@ -947,21 +947,14 @@ echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
 echo "  Build Profile........: ${build_profile}"
+echo "  Cryptographic System.: ${build_crypto}"
 if test "x${have_windows}" = "xyes" ; then
    echo "  Windows version......: ${_efl_windows_version}"
 fi
-echo
 echo "  Documentation........: ${build_doc}"
 echo
 echo "Eina"
 echo
-echo "  Magic debug..........: ${have_magic_debug}"
-echo "  Safety checks........: ${have_safety_checks}"
-echo "  Maximum log level....: ${with_max_log_level}"
-echo "  Report string usage..: ${have_stringshare_usage}"
-echo "  Valgrind support.....: ${have_valgrind}"
-echo "  Default mempool......: ${have_default_mempool}"
-echo "  Log support..........: ${enable_log}"
 echo "  Thread Support.......: ${efl_have_threads}"
 if test "${efl_have_threads}" = "POSIX" ; then
 echo "    spinlock...........: ${efl_have_posix_threads_spinlock}"
@@ -973,16 +966,6 @@ echo "  File dirfd...........: ${efl_func_dirfd}"
 echo "  File xattr...........: ${efl_func_setxattr}"
 echo "  shm_open.............: ${efl_func_shm_open}"
 echo
-echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
-echo "  Examples.............: make examples"
-echo "    Tiler Example......: ${build_tiler_example}"
-echo "    installation.......: make install-examples"
-echo "  Benchmark............: make benchmark"
-if test "x${enable_benchmark}" = "xyes" ; then
-echo "    Glib...............: ${enable_benchmark_glib}"
-echo "    E17 real data......: ${enable_benchmark_e17}"
-fi
-echo
 echo "  Memory pools:"
 echo "    Buddy..............: ${enable_buddy}"
 echo "    Chained pool.......: ${enable_chained_pool}"
@@ -992,35 +975,14 @@ echo "    Fixed bitmap.......: ${enable_fixed_bitmap}"
 echo "    One big............: ${enable_one_big}"
 echo "    Pass through.......: ${enable_pass_through}"
 echo
-if test "x${efl_have_eet}" = "xno" ; then
-echo "Eet....................: no"
-echo
-else
-echo "Eet"
-echo
-echo "  Secure layer.........: ${build_crypto}"
-echo
-echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
-echo "  Examples.............: make examples"
-echo "    installation.......: make install-examples"
-fi
-if test "x${efl_have_eo}" = "xno" ; then
-echo "Eo.....................: no"
-echo
-else
-echo "Eo"
-echo
-echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
-echo "  Examples.............: make examples"
-echo "    installation.......: make install-examples"
-fi
-echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
 echo "  CFLAGS...............: $CFLAGS"
 echo "  CXXFLAGS.............: $CXXFLAGS"
 echo "  LDFLAGS..............: $LDFLAGS"
 echo
+echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"
+echo "Examples...............: make examples (also install-examples)"
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
 echo
