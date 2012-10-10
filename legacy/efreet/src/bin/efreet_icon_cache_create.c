@@ -247,8 +247,27 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
         }
         else if (icon->theme && strcmp(icon->theme, theme->name.internal))
         {
+            const char *ext2;
+            int has_ext = 0;
+            unsigned int j;
+            /* Check if we already has this extension */
+            for (i = 0; i < icon->icons_count; ++i)
+            {
+                for (j = 0; j < icon->icons[i]->paths_count; ++j)
+                {
+                    ext2 = strrchr(icon->icons[i]->paths[j], '.');
+                    if (ext2)
+                    {
+                        ext2++;
+                        has_ext = !strcmp((ext + 1), ext2);
+                        if (has_ext) break;
+                    }
+                }
+                if (has_ext) break;
+            }
             /* We got this icon from a parent theme */
-            continue;
+            if (has_ext)
+                continue;
         }
 
         /* find if we have the same icon in another type */
