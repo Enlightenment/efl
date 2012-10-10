@@ -172,7 +172,7 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
-   ret = FONT_MERTIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
+   ret = FONT_METRIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
    return ret;
 }
 
@@ -202,7 +202,7 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
-   ret = FONT_MERTIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
+   ret = FONT_METRIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
    return ret;
 }
 

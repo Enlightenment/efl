@@ -455,7 +455,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
    if (fi->src->ft.face->units_per_EM != 0)
      {
         dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
-        ret = FONT_MERTIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
+        ret = FONT_METRIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
      }
    else
      {
@@ -470,7 +470,7 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
    if (fi->src->ft.face->units_per_EM != 0)
      {
         dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
-        ret = FONT_MERTIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
+        ret = FONT_METRIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
      }
    else
      {
