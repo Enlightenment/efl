@@ -57,15 +57,10 @@ if HAVE_WINDOWS
 pkgconfig_DATA += pc/evil.pc
 endif
 
-pkgconfig_DATA += pc/eina.pc
-
-if EFL_BUILD_EET
-pkgconfig_DATA += pc/eet.pc
-endif
-
-if EFL_BUILD_EO
-pkgconfig_DATA += pc/eo.pc
-endif
+pkgconfig_DATA += \
+pc/eina.pc \
+pc/eo.pc \
+pc/eet.pc
 
 
 .PHONY: doc benchmark examples install-examples
@@ -100,12 +95,8 @@ check-local:
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-reset
 endif
-if EFL_BUILD_EET
 	@./src/tests/eet/eet_suite$(EXEEXT)
-endif
-if EFL_BUILD_EO
 	@./src/tests/eo/eo_suite$(EXEEXT)
-endif
 if EFL_ENABLE_COVERAGE
 	@$(MAKE) $(AM_MAKEFLAGS) lcov-report
 endif
@@ -117,9 +108,7 @@ endif
 benchmark:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark
 	@mkdir benchmark || true
-if EFL_BUILD_EO
 	@cd benchmark && ../src/benchmarks/eo/eo_bench$(EXEEXT) `date +%F_%s`
-endif
 
 benchmark-e17:
 	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark-e17

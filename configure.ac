@@ -196,8 +196,6 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 
 #### Additional options to configure
 
-EFL_ENABLE_LIB([eet], [yes])
-EFL_ENABLE_LIB([eo], [yes])
 
 
 # Assert or fail.
@@ -787,8 +785,6 @@ EINA_CHECK_MODULE([one-big],        [${enable_one_big}],      [one big])
 
 efl_have_eet="no"
 
-if test "x${efl_want_build_eet}" = "xyes" ; then
-
 AC_MSG_NOTICE([Eet checks])
 
 ### Default values
@@ -1136,16 +1132,12 @@ if test "x${efl_lib_zlib}" = "xyes" && test "x${efl_lib_libjpeg}" = "xyes" ; the
    efl_have_eet="yes"
 fi
 
-fi
-
 #### End of Eet
 
 
 #### Eo
 
 efl_have_eo="no"
-
-if test "x${efl_want_build_eo}" = "xyes" ; then
 
 AC_MSG_NOTICE([Eo checks])
 
@@ -1194,12 +1186,6 @@ AC_SUBST([EFL_EO_BUILD])
 ### Check availability
 
 efl_have_eo="yes"
-
-else
-
-AM_CONDITIONAL([EO_BUILD_EXAMPLE_EVAS], [false])
-
-fi
 
 #### End of Eo
 
