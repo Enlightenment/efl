@@ -73,7 +73,7 @@ _world_populate(Test_Data *test_data)
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj",
                       "big-blue-ball");
-   evas_object_move(evas_obj, 200, 10);
+   evas_object_move(evas_obj, 200, 50);
    evas_object_resize(evas_obj, 70, 70);
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
