@@ -3,6 +3,9 @@ Efreet 1.8.0
 Changes since Efreet 1.7.0:
 ---------------------------
 
+Improvements:
+    * Find more possible icons for more extensions
+
 Fixes:
     * Fix insane delay added to desktop/icon updates.
 

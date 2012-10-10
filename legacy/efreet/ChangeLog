@@ -146,3 +146,10 @@
 	* Add user directories $XDG_PICTURES_DIR, $XDG_VIDEOS_DIR,
 	$XDG_DOWNLOAD_DIR, $XDG_TEMPLATES_DIR, $XDG_PUBLICSHARE_DIR,
 	$XDG_DOCUMENTS_DIR and $XDG_MUSIC_DIR.
+
+2012-10-10  Sebastian Dransfeld
+
+	* Icon cache continues searching in inherited themes to get icon paths
+	for all possible extensions. This will mainly help those which do not
+	build evas .svg loader, as many themes only provides .svg, and we can
+	find .png in inherited themes.
