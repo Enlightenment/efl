@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Efreet\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-10-09 15:16-0300\n"
-"PO-Revision-Date: 2012-06-24 17:10+0900\n"
+"POT-Creation-Date: 2012-10-11 00:04+0200\n"
+"PO-Revision-Date: 2012-10-11 00:06+0200\n"
 "Last-Translator: Jerome Pinot <ngc891@gmail.com>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: \n"
@@ -15,34 +15,34 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: src/lib/efreet_base.c:144
+#: src/lib/efreet_base.c:146
 msgid "Desktop"
 msgstr "Scrivania"
 
-#: src/lib/efreet_base.c:152
+#: src/lib/efreet_base.c:154
 msgid "Downloads"
-msgstr ""
+msgstr "Scaricati"
 
-#: src/lib/efreet_base.c:161
+#: src/lib/efreet_base.c:163
 msgid "Templates"
-msgstr ""
+msgstr "Modelli"
 
-#: src/lib/efreet_base.c:170
+#: src/lib/efreet_base.c:172
 msgid "Public"
-msgstr ""
+msgstr "Pubblici"
 
-#: src/lib/efreet_base.c:179
+#: src/lib/efreet_base.c:181
 msgid "Documents"
-msgstr ""
+msgstr "Documenti"
 
-#: src/lib/efreet_base.c:187
+#: src/lib/efreet_base.c:189
 msgid "Music"
-msgstr ""
+msgstr "Musica"
 
-#: src/lib/efreet_base.c:195
+#: src/lib/efreet_base.c:197
 msgid "Pictures"
-msgstr ""
+msgstr "Immagini"
 
-#: src/lib/efreet_base.c:203
+#: src/lib/efreet_base.c:205
 msgid "Videos"
-msgstr ""
+msgstr "Video"
