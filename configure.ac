@@ -330,9 +330,9 @@ if test -n "$with_max_log_level"; then
    AC_DEFINE_UNQUOTED([EINA_LOG_LEVEL_MAXIMUM], [${with_max_log_level}], [if set, logging is limited to this amount.])
 fi
 
-if test "x${have_stringshare_usage}" = "xyes"; then
-   AC_DEFINE([EINA_STRINGSHARE_USAGE], [1], [Report Eina stringshare usage pattern])
-fi
+AC_DEFINE_IF([EINA_STRINGSHARE_USAGE],
+   [test "x${have_stringshare_usage}" = "xyes"],
+   [1], [Report Eina stringshare usage pattern])
 
 ### Checks for programs
 
@@ -383,9 +383,9 @@ else
     AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
 fi
 
-if test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_malloc}" = "xyes"; then
-   AC_DEFINE([EINA_DEBUG_MALLOC], [1], [Turn on debugging overhead in mempool])
-fi
+AC_DEFINE_IF([EINA_DEBUG_MALLOC],
+   [test "x${ac_cv_func_malloc_usable_size}" = "xyes" -a "x${want_debug_malloc}" = "xyes"],
+   [1], [Turn on debugging overhead in mempool])
 
 ## Modules
 if ! test "x${requirements_pc_deps_eina}" = "x" ; then
@@ -434,14 +434,6 @@ CFLAGS="${CFLAGS_save}"
 EINA_CONFIG(HAVE_INTTYPES_H, test "x${ac_cv_header_inttypes_h}" = "xyes")
 EINA_CONFIG(HAVE_STDINT_H, test "x${ac_cv_header_inttypes_h}" = "xyes")
 
-if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
-   AC_DEFINE([HAVE_INTTYPES_H], [1], [Define to 1 if you have the <inttypes.h> header file.])
-fi
-
-if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
-    AC_DEFINE([HAVE_STDINT_H], [1], [Define to 1 if you have the <stdint.h> header file.])
-fi
-
 ### Checks for types
 
 # wchar_t
@@ -465,9 +457,8 @@ AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
    ]])
 
 EINA_CONFIG(HAVE_DIRENT_H, test "x${have_dirent}" = "xyes")
-if test "x${have_dirent}" = "xyes" ; then
-    AC_DEFINE([HAVE_DIRENT_H], [1], [Define to 1 if you have a valid <dirent.h> header file.])
-fi
+AC_DEFINE_IF([HAVE_DIRENT_H], [test "x${have_dirent}" = "xyes"],
+   [1], [Define to 1 if you have a valid <dirent.h> header file.])
 
 ### Checks for structures
 
