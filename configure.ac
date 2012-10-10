@@ -85,6 +85,7 @@ AC_SUBST([requirements_pc_eet])
 
 AC_CANONICAL_HOST
 
+# TODO: move me to m4 file that setups module/so related variables
 have_wince="no"
 have_win32="no"
 have_windows="no"
@@ -113,6 +114,7 @@ esac
 AC_DEFINE_UNQUOTED([MODULE_ARCH], ["${MODULE_ARCH}"], ["Module architecture"])
 AC_DEFINE_UNQUOTED([SHARED_LIB_SUFFIX], ["${MODULE_EXT}"], [Suffix for shared objects])
 
+# TODO: move me to m4 file that setups the windows related variables
 AM_CONDITIONAL([HAVE_WINCE], [test "x${have_wince}" = "xyes"])
 AM_CONDITIONAL([HAVE_WIN32], [test "x${have_win32}" = "xyes"])
 AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
@@ -202,6 +204,9 @@ AC_C_INLINE
 
 #### Checks for linker characteristics
 
+# TODO: do we really need this? maybe setup in the specific m4 file that
+# does the windows related variables? Do we need to manually specify this
+# for every module? it's annoying and easy to forget!
 lt_enable_auto_import=""
 case "${host_os}" in
    mingw*)
@@ -233,6 +238,7 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
+# TODO: are these needed here? parts of this are replicated for EVERY LIB :-(
 EVIL_LIBS=""
 EVIL_DLFCN_LIBS=""
 case "$host_os" in
@@ -438,7 +444,8 @@ AC_MSG_RESULT([${want_valgrind}])
 EFL_EINA_BUILD=""
 case "$host_os" in
    mingw*)
-      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
+# TODO: WHAT? evil was build before, so it should already define this
+#      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
       requirements_pc_eina="${requirements_pc_eina} evil"
       EFL_EINA_BUILD="-DEFL_EINA_BUILD"
    ;;
@@ -449,22 +456,24 @@ AC_SUBST([EFL_EINA_BUILD])
 
 case "$host_vendor" in
   ps3*)
-      PKG_CHECK_EXISTS([escape])
-      AC_DEFINE([HAVE_ESCAPE], [1], [Set to 1 if Escape package is installed])
-      requirements_pc_eina="${requirements_pc_eina} escape"
+# TODO: add back whenever escape is merged into efl single tree
+#      PKG_CHECK_EXISTS([escape])
+#      AC_DEFINE([HAVE_ESCAPE], [1], [Set to 1 if Escape package is installed])
+#      requirements_pc_eina="${requirements_pc_eina} escape"
     ;;
 esac
 
 # Exotic library for compilation on Coyote
 
-PKG_CHECK_EXISTS([exotic],
-   [
-    enable_exotic="yes"
-    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
-    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
-    requirements_pc_eina="exotic ${requirements_pc_eina}"
-   ],
-   [enable_exotic="no"])
+# TODO: add back whenever exotic is merged into efl single tree
+#PKG_CHECK_EXISTS([exotic],
+#   [
+#    enable_exotic="yes"
+#    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
+#    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
+#    requirements_pc_eina="exotic ${requirements_pc_eina}"
+#   ],
+#   [enable_exotic="no"])
 
 AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
 AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
@@ -815,7 +824,8 @@ AC_MSG_RESULT([${want_signature}])
 EFL_EET_BUILD=""
 case "$host_os" in
    mingw*)
-      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
+# TODO: WHAT? evil was build before, so it should already define this
+#      AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil package is installed])
       requirements_pc_eet="evil ${requirements_pc_eet}"
       EFL_EET_BUILD="-DEFL_EET_BUILD"
    ;;
@@ -824,13 +834,14 @@ AC_SUBST(EFL_EET_BUILD)
 
 # Exotic library for compilation on Coyote
 
-PKG_CHECK_EXISTS([exotic],
-   [
-    enable_exotic="yes"
-    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
-    requirements_pc_eet="exotic ${requirements_pc_eet}"
-   ],
-   [enable_exotic="no"])
+# TODO: add back whenever exotic is merged into efl single tree
+#PKG_CHECK_EXISTS([exotic],
+#   [
+#    enable_exotic="yes"
+#    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
+#    requirements_pc_eet="exotic ${requirements_pc_eet}"
+#   ],
+#   [enable_exotic="no"])
 
 ## Secure layer
 
@@ -992,10 +1003,12 @@ PKG_CHECK_MODULES([EET], [${requirements_pc_deps_eet}])
 
 case "$host_os" in
    mingw32ce*)
+# TODO: are these needed here? parts of this are replicated for EVERY LIB :-(
       requirements_libs_eet="${requirements_libs_eet} -lws2"
       requirements_libs_deps_eet="${requirements_libs_deps_eet} -lws2"
       ;;
    mingw*)
+# TODO: are these needed here? parts of this are replicated for EVERY LIB :-(
       requirements_libs_eet="${requirements_libs_eet} -lws2_32"
       requirements_libs_deps_eet="${requirements_libs_deps_eet} -lws2_32"
       ;;
@@ -1045,6 +1058,7 @@ case "${host_os}" in
    openbsd*)
    ;;
    *)
+# TODO: here? Why don't do everywhere or let user specify it?
       EFL_CHECK_LINKER_FLAGS([EET], [-Wl,--as-needed])
    ;;
 esac
@@ -1076,6 +1090,7 @@ AC_MSG_NOTICE([Eo checks])
 
 # Eina library
 
+# TODO: really? do we need this? it's a local eina!
 requirements_pc_eo="eina >= 1.7.99"
 
 AC_ARG_VAR([EO_CFLAGS], [preprocessor flags for Eo])
