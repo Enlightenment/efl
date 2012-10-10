@@ -2483,7 +2483,7 @@ ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll)
 }
 
 EAPI void
-ephysics_body_rotation_on_z_axis_enable_set(EPhysics_Body *body, Eina_Bool enable)
+ephysics_body_angular_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y, Eina_Bool enable_z)
 {
    if (!body)
      {
@@ -2492,23 +2492,23 @@ ephysics_body_rotation_on_z_axis_enable_set(EPhysics_Body *body, Eina_Bool enabl
      }
 
    ephysics_world_lock_take(body->world);
-   if (!enable)
-     body->rigid_body->setAngularFactor(btVector3(0, 0, 0));
-   else
-     body->rigid_body->setAngularFactor(btVector3(0, 0, 1));
+   body->rigid_body->setAngularFactor(btVector3(!!enable_x, !!enable_y,
+                                                !!enable_z));
    ephysics_world_lock_release(body->world);
 }
 
-EAPI Eina_Bool
-ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *body)
+EAPI void
+ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y, Eina_Bool *enable_z)
 {
    if (!body)
      {
         ERR("Can't check if rotation is enabled, body is null.");
-        return EINA_FALSE;
+        return;
      }
 
-   return !!body->rigid_body->getAngularFactor().z();
+   if (enable_x) *enable_x = !!body->rigid_body->getAngularFactor().x();
+   if (enable_y) *enable_y = !!body->rigid_body->getAngularFactor().y();
+   if (enable_z) *enable_z = !!body->rigid_body->getAngularFactor().z();
 }
 
 EAPI double

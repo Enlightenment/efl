@@ -143,7 +143,8 @@ _letter_body_setup_common(EPhysics_Body *body, Evas_Object *view)
    ephysics_body_evas_object_set(body, view, EINA_TRUE);
    ephysics_body_mass_set(body, 1.2);
    ephysics_body_restitution_set(body, 0.6);
-   ephysics_body_rotation_on_z_axis_enable_set(body, EINA_FALSE);
+   ephysics_body_angular_movement_enable_set(body, EINA_FALSE, EINA_FALSE,
+                                             EINA_FALSE);
 }
 
 static EPhysics_Body *
@@ -260,7 +261,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    letter_body = _letter_body_circle_add(world, image);
    ephysics_body_friction_set(letter_body, 1);
    ephysics_body_mass_set(letter_body, 1);
-   ephysics_body_rotation_on_z_axis_enable_set(letter_body, EINA_TRUE);
+   ephysics_body_angular_movement_enable_set(letter_body, EINA_FALSE,
+                                             EINA_FALSE, EINA_TRUE);
 
    /* make the "E" logo get into the viewport by applying an horizontal force */
    ephysics_body_central_impulse_apply(letter_body, 390, 0);

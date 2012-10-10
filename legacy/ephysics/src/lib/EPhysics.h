@@ -2693,33 +2693,39 @@ EAPI void ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, E
  * @brief
  * Enable or disable body's rotation on z axis.
  *
- * Enabled by default.
- *
- * If disabled, body won't rotate on x-y plane.
+ * Enabled by default for z axis, so the body only will rotate on x-y plane.
  *
  * @param body The physics body.
- * @param enable If @c EINA_TRUE enable rotation on z axis, if @c EINA_FALSE
- * disable it.
+ * @param enable_x If @c EINA_TRUE allow rotation on x axis (y-z plane),
+ * if @c EINA_FALSE disallow it.
+ * @param enable_y If @c EINA_TRUE allow rotation on y axis (x-z plane),
+ *if @c EINA_FALSE disallow it.
+ * @param enable_z If @c EINA_TRUE allow rotation on z axis (x-y plane),
+ * if @c EINA_FALSE disallow it.
  *
- * @see ephysics_body_rotation_on_z_axis_enable_get().
+ * @see ephysics_body_angular_movement_enable_get().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_rotation_on_z_axis_enable_set(EPhysics_Body *body, Eina_Bool enable);
+EAPI void ephysics_body_angular_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y, Eina_Bool enable_z);
 
 /**
  * @brief
  * Return body's rotation on z axis state.
  *
  * @param body The physics body.
- * @return @c EINA_TRUE if rotation on z axis is enabled, or @c EINA_FALSE
- * if disabled (or on error).
+ * @param enable_x @c EINA_TRUE if rotation on x axis (y-z plane) is allowed, or
+ * @c EINA_FALSE if it's not.
+ * @param enable_y @c EINA_TRUE if rotation on y axis (x-z plane) is allowed, or
+ * @c EINA_FALSE if it's not.
+ * @param enable_z @c EINA_TRUE if rotation on z axis (x-y plane) is allowed, or
+ * @c EINA_FALSE if it's not.
  *
- * @see ephysics_body_rotation_on_z_axis_enable_set() for more details.
+ * @see ephysics_body_angular_movement_enable_set() for more details.
  *
  * @ingroup EPhysics_Body
  */
-EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *body);
+EAPI void ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y, Eina_Bool *enable_z);
 
 /**
  * @brief
@@ -2736,7 +2742,7 @@ EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *
  * disallow it.
  *
  * @see ephysics_body_linear_movement_enable_get().
- * @see ephysics_body_rotation_on_z_axis_enable_set().
+ * @see ephysics_body_angular_movement_enable_set().
  *
  * @ingroup EPhysics_Body
  */
@@ -2755,7 +2761,7 @@ EAPI void ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Boo
  * @c EINA_FALSE if it's not.
  *
  * @see ephysics_body_linear_movement_enable_set().
- * @see ephysics_body_rotation_on_z_axis_enable_get().
+ * @see ephysics_body_angular_movement_enable_get().
  *
  * @ingroup EPhysics_Body
  */
