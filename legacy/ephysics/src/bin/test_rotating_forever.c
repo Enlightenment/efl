@@ -193,7 +193,7 @@ test_rotating_forever(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
    test_data->world = world;
-   ephysics_world_gravity_set(world, 0, 0);
+   ephysics_world_gravity_set(world, 0, 0, 0);
 
    _world_populate(test_data);
 }

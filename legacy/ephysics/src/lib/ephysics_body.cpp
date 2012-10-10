@@ -2674,7 +2674,7 @@ ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double
      }
 
    rate = ephysics_world_rate_get(body->world);
-   ephysics_world_gravity_get(body->world, &gx, &gy);
+   ephysics_world_gravity_get(body->world, &gx, &gy, NULL);
 
    if (x) *x = body->force.x * rate + gx;
    if (y) *y = -body->force.y * rate + gy;

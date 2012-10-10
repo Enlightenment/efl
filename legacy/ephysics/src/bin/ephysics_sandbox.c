@@ -29,20 +29,22 @@ static void
 _world_gravity_x_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_World *world = data;
-   double gravity_y;
+   double gravity_y, gravity_z;
 
-   ephysics_world_gravity_get(world, NULL, &gravity_y);
-   ephysics_world_gravity_set(world, elm_spinner_value_get(obj), gravity_y);
+   ephysics_world_gravity_get(world, NULL, &gravity_y, &gravity_z);
+   ephysics_world_gravity_set(world, elm_spinner_value_get(obj), gravity_y,
+                              gravity_z);
 }
 
 static void
 _world_gravity_y_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_World *world = data;
-   double gravity_x;
+   double gravity_x, gravity_z;
 
-   ephysics_world_gravity_get(world, &gravity_x, NULL);
-   ephysics_world_gravity_set(world, gravity_x, elm_spinner_value_get(obj));
+   ephysics_world_gravity_get(world, &gravity_x, NULL, &gravity_z);
+   ephysics_world_gravity_set(world, gravity_x, elm_spinner_value_get(obj),
+                              gravity_z);
 }
 
 static void

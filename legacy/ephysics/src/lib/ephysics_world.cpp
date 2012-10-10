@@ -107,11 +107,11 @@ struct _ephysics_world_ovelap_filter_cb : public btOverlapFilterCallback
 };
 
 static inline void
-_ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double rate)
+_ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double gz, double rate)
 {
    btVector3 gravity;
 
-   gravity = btVector3(gx / rate, -gy / rate, 0);
+   gravity = btVector3(gx / rate, -gy / rate, gz / rate);
    world->dynamics_world->setGravity(gravity);
    world->world_info->m_gravity = gravity;
 }
@@ -919,7 +919,7 @@ ephysics_world_max_sleeping_time_get(const EPhysics_World *world)
 }
 
 EAPI void
-ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
+ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double gz)
 {
    EPhysics_Body *bd;
 
@@ -932,8 +932,8 @@ ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy)
    eina_lock_take(&world->mutex);
    EINA_INLIST_FOREACH(world->bodies, bd)
       ephysics_body_activate(bd, EINA_TRUE);
-   _ephysics_world_gravity_set(world, gx, gy, world->rate);
-   DBG("World %p gravity set to X:%lf, Y:%lf.", world, gx, gy);
+   _ephysics_world_gravity_set(world, gx, gy, gz, world->rate);
+   DBG("World %p gravity set to X:%lf, Y:%lf, Z: %lf.", world, gx, gy, gz);
    eina_lock_release(&world->mutex);
 }
 
@@ -994,7 +994,7 @@ ephysics_world_constraint_solver_mode_enable_get(const EPhysics_World *world, EP
 }
 
 EAPI void
-ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy)
+ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy, double *gz)
 {
    btVector3 vector;
 
@@ -1008,14 +1008,15 @@ ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy)
 
    if (gx) *gx = vector.x() * world->rate;
    if (gy) *gy = -vector.y() * world->rate;
+   if (gz) *gz = vector.z() * world->rate;
 }
 
 EAPI void
 ephysics_world_rate_set(EPhysics_World *world, double rate)
 {
    EPhysics_Body *body;
+   double gx, gy, gz;
    void *constraint;
-   double gx, gy;
    Eina_List *l;
 
    if (!world)
@@ -1033,8 +1034,8 @@ ephysics_world_rate_set(EPhysics_World *world, double rate)
 
    eina_lock_take(&world->mutex);
    /* Force to recalculate sizes, velocities and accelerations with new rate */
-   ephysics_world_gravity_get(world, &gx, &gy);
-   _ephysics_world_gravity_set(world, gx, gy, rate);
+   ephysics_world_gravity_get(world, &gx, &gy, &gz);
+   _ephysics_world_gravity_set(world, gx, gy, gz, rate);
 
    EINA_INLIST_FOREACH(world->bodies, body)
       ephysics_body_recalc(body, rate);

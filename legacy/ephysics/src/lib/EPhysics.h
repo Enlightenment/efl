@@ -678,11 +678,11 @@ EAPI double ephysics_world_max_sleeping_time_get(const EPhysics_World *world);
 
 /**
  * @brief
- * Set world gravity in 2 axes (x, y).
+ * Set world gravity in the 3 axes (x, y, z).
  *
  * Gravity will act over bodies with mass over all the time.
  *
- * By default values are 0, 294 Evas Coordinates per second ^ 2
+ * By default values are 0, 294, 0 Evas Coordinates per second ^ 2
  * (9.8 m/s^2, since we've a default rate of 30 pixels).
  *
  * If you change the rate but wants to keep 9.8 m/s^2, you well need
@@ -691,6 +691,7 @@ EAPI double ephysics_world_max_sleeping_time_get(const EPhysics_World *world);
  * @param world The world object.
  * @param gx Gravity on x axis.
  * @param gy Gravity on y axis.
+ * @param gz Gravity on z axis.
  *
  * @note The unit used for acceleration is Evas coordinates per second ^ 2.
  *
@@ -699,7 +700,7 @@ EAPI double ephysics_world_max_sleeping_time_get(const EPhysics_World *world);
  *
  * @ingroup EPhysics_World
  */
-EAPI void ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy);
+EAPI void ephysics_world_gravity_set(EPhysics_World *world, double gx, double gy, double gz);
 
 /**
  * @brief
@@ -794,17 +795,18 @@ EAPI Eina_Bool ephysics_world_constraint_solver_mode_enable_get(const EPhysics_W
 
 /**
  * @brief
- * Get world gravity values for axis x and y.
+ * Get world gravity values for axis x, y and z.
  *
  * @param world The world object.
  * @param gx Gravity on x axis.
  * @param gy Gravity on y axis.
+ * @param gz Gravity on y axis.
  *
  * @see ephysics_world_gravity_set().
  *
  * @ingroup EPhysics_World
  */
-EAPI void ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy);
+EAPI void ephysics_world_gravity_get(const EPhysics_World *world, double *gx, double *gy, double *gz);
 
 /**
  * @brief

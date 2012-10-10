@@ -107,5 +107,5 @@ test_forces(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    ephysics_body_friction_set(boundary, 0);
 
    _world_populate(test_data);
-   ephysics_world_gravity_set(world, 0, 0);
+   ephysics_world_gravity_set(world, 0, 0, 0);
 }
