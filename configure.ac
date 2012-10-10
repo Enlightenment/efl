@@ -536,11 +536,8 @@ AC_SUBST([EINA_CONFIGURE_ENABLE_LOG])
 
 EFL_CHECK_THREADS
 
-if ! test "x${efl_have_threads}" = "xno" ; then
-   EINA_CONFIGURE_HAVE_THREADS="#define EINA_HAVE_THREADS"
-fi
+EINA_CONFIGURE_HAVE_THREADS="#define EINA_HAVE_THREADS"
 AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
-AM_CONDITIONAL([EINA_HAVE_THREADS], [! test "x${efl_have_threads}" = "xno"])
 
 if test "x${efl_have_debug_threads}" = "xyes"; then
    EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_HAVE_DEBUG_THREADS"

@@ -87,7 +87,6 @@ eina_inline_value.x
 # eina_model.h
 # eina_object.h
 
-if EINA_HAVE_THREADS
 if HAVE_WINCE
 EINAHEADERS += eina_inline_lock_wince.x
 else
@@ -96,9 +95,6 @@ EINAHEADERS += eina_inline_lock_win32.x
 else
 EINAHEADERS += eina_inline_lock_posix.x
 endif
-endif
-else
-EINAHEADERS += eina_inline_lock_void.x
 endif
 
 installed_mainheaderdir = $(includedir)/eina-@VMAJ@

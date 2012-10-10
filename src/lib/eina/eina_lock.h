@@ -42,16 +42,12 @@ typedef enum
    EINA_LOCK_DEADLOCK
 } Eina_Lock_Result;
 
-#ifdef EINA_HAVE_THREADS
-# ifdef _WIN32_WCE
-#  include "eina_inline_lock_wince.x"
-# elif defined(_WIN32)
-#  include "eina_inline_lock_win32.x"
-# else
-#  include "eina_inline_lock_posix.x"
-# endif
+#ifdef _WIN32_WCE
+# include "eina_inline_lock_wince.x"
+#elif defined(_WIN32)
+# include "eina_inline_lock_win32.x"
 #else
-# include "eina_inline_lock_void.x"
+# include "eina_inline_lock_posix.x"
 #endif
 
 EAPI extern Eina_Error EINA_ERROR_NOT_MAIN_LOOP;

@@ -145,5 +145,8 @@ if test "x${_efl_have_posix_threads}" = "xyes" && test "x${_efl_enable_debug_thr
    AC_DEFINE([EFL_DEBUG_THREADS], [1], [Assert when forgot to call eina_threads_init])
 fi
 
-AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"], [$1], [$2])
+AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"],
+   [$1],
+   [m4_if([$2], [$2], [AC_MSG_ERROR([Threads are required.])])])
+
 ])
