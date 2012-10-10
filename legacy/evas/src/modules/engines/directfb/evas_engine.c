@@ -531,7 +531,7 @@ evas_cache_image_dfb_dirty(Engine_Image_Entry *dst, const Engine_Image_Entry *sr
 }
 
 static void
-evas_cache_image_dfb_dirty_region(Engine_Image_Entry *eim, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__)
+evas_cache_image_dfb_dirty_region(Engine_Image_Entry *eim, unsigned int x __UNUSED__, unsigned int y __UNUSED__, unsigned int w __UNUSED__, unsigned int h __UNUSED__)
 {
    RGBA_Image *im;
 
@@ -832,8 +832,9 @@ _dfb_output_setup(int w, int h, const struct Evas_Engine_DirectFB_Spec *spec)
 }
 
 static int
-evas_engine_dfb_setup(Evas *e, void *in)
+evas_engine_dfb_setup(Evas *eo_e, void *in)
 {
+   Evas_Public_Data *e = eo_data_get(eo_e, EVAS_CLASS);
    Evas_Engine_Info_DirectFB *info = in;
 
    if (!e->engine.data.output)
@@ -1036,7 +1037,7 @@ evas_engine_dfb_output_idle_flush(void *data)
  * memory.
  */
 static void
-evas_engine_dfb_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, Evas_Text_Props *intl_props)
+evas_engine_dfb_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font __UNUSED__, int x, int y, int w __UNUSED__, int h __UNUSED__, int ow __UNUSED__, int oh __UNUSED__, Evas_Text_Props *intl_props)
 {
    DirectFB_Engine_Image_Entry *eim = surface;
    IDirectFBSurface *screen;
@@ -1269,7 +1270,7 @@ evas_engine_dfb_image_dirty_region(void *data __UNUSED__, void *image, int x, in
 }
 
 static void *
-evas_engine_dfb_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32** image_data)
+evas_engine_dfb_image_data_get(void *data __UNUSED__, void *image, int to_write, DATA32** image_data, int *err __UNUSED__)
 {
    DirectFB_Engine_Image_Entry *deie = image;
    Engine_Image_Entry *ce;
