@@ -309,7 +309,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                                       slen = strlen(s);
                                       k += slen;
                                       if (slen == 1 && *s == 'c') iscolor = 1;
-                                      if ((slen == 1 && ((s[0] == 'm') || (s[0] == 's') || (s[0] == 'g')) || (s[0] == 'c')) ||
+                                      if ((slen == 1 && ((s[0] == 'm') || (s[0] == 's') || (s[0] == 'g') || (s[0] == 'c'))) ||
 					  (slen == 2 && (s[0] == 'g') && (s[1] == '4')) ||
 					  (k >= len))
                                         {
