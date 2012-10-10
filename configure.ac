@@ -386,21 +386,6 @@ case "$host_vendor" in
     ;;
 esac
 
-# Exotic library for compilation on Coyote
-
-# TODO: add back whenever exotic is merged into efl single tree
-#PKG_CHECK_EXISTS([exotic],
-#   [
-#    enable_exotic="yes"
-#    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
-#    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
-#    requirements_pc_eina="exotic ${requirements_pc_eina}"
-#   ],
-#   [enable_exotic="no"])
-
-AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
-AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
-
 ## Options
 
 # Valgrind
@@ -604,17 +589,6 @@ case "$host_os" in
    ;;
 esac
 AC_SUBST(EFL_EET_BUILD)
-
-# Exotic library for compilation on Coyote
-
-# TODO: add back whenever exotic is merged into efl single tree
-#PKG_CHECK_EXISTS([exotic],
-#   [
-#    enable_exotic="yes"
-#    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
-#    requirements_pc_eet="exotic ${requirements_pc_eet}"
-#   ],
-#   [enable_exotic="no"])
 
 ## Secure layer
 

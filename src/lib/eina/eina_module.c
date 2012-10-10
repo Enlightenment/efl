@@ -58,7 +58,7 @@ void *alloca (size_t);
 # include <Escape.h>
 #endif
 
-#ifdef HAVE_EXOTIC_H
+#ifdef HAVE_EXOTIC
 # include <Exotic.h>
 #endif
 
