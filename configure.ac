@@ -564,9 +564,6 @@ EINA_CHECK_MODULE([one-big],        [static], [one big])
 
 
 #### Eet
-
-efl_have_eet="no"
-
 AC_MSG_NOTICE([Eet checks])
 
 ### Default values
@@ -752,9 +749,6 @@ esac
 
 
 #### Eo
-
-efl_have_eo="no"
-
 AC_MSG_NOTICE([Eo checks])
 
 ### Default values
@@ -802,8 +796,6 @@ AC_SUBST([EFL_EO_BUILD])
 ### Checks for library functions
 
 ### Check availability
-
-efl_have_eo="yes"
 
 #### End of Eo
 
