@@ -1093,6 +1093,8 @@ ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h)
 {
    float a;
 
+   EINA_SAFETY_ON_NULL_RETURN(e);
+
    *w = e->tw;
    *h = e->th;
 
@@ -1115,6 +1117,9 @@ ethumb_calculate_aspect(Ethumb *e, int iw, int ih, int *w, int *h)
 {
    float ia;
 
+   if (ih == 0)
+     return;
+
    ia = iw / (float)ih;
 
    ethumb_calculate_aspect_from_ratio(e, ia, w, h);
@@ -1124,6 +1129,8 @@ EAPI void
 ethumb_calculate_fill_from_ratio(Ethumb *e, float ia, int *fx, int *fy, int *fw, int *fh)
 {
    float a;
+
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    *fw = e->tw;
    *fh = e->th;
@@ -1158,6 +1165,10 @@ EAPI void
 ethumb_calculate_fill(Ethumb *e, int iw, int ih, int *fx, int *fy, int *fw, int *fh)
 {
    float ia;
+
+   if (ih == 0)
+     return;
+
    ia = iw / (float)ih;
 
    ethumb_calculate_fill_from_ratio(e, ia, fx, fy, fw, fh);
@@ -1204,6 +1215,8 @@ ethumb_plugin_image_resize(Ethumb *e, int w, int h)
 {
    Evas_Object *img;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
+
    img = e->img;
 
    if (e->frame)
@@ -1235,6 +1248,8 @@ ethumb_image_save(Ethumb *e)
    Eina_Bool r;
    char *dname;
    char flags[256];
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(e, 0);
 
    evas_damage_rectangle_add(e->sub_e, 0, 0, e->rw, e->rh);
    evas_render(e->sub_e);
