@@ -261,8 +261,8 @@ _body_impulse_x_x_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    rel_x = elm_spinner_value_get(evas_object_data_get(obj, "relx"));
    rel_y = elm_spinner_value_get(evas_object_data_get(obj, "rely"));
 
-   ephysics_body_impulse_apply(body, elm_spinner_value_get(obj), y, rel_x,
-                               rel_y);
+   ephysics_body_impulse_apply(body, elm_spinner_value_get(obj), y, 0,
+                               rel_x, rel_y, 0);
 }
 
 static void
@@ -280,7 +280,8 @@ _body_impulse_x_rel_cb(void *data, Evas_Object *obj,
    y = elm_spinner_value_get(evas_object_data_get(aux, "y"));
    rel_y = elm_spinner_value_get(evas_object_data_get(aux, "rely"));
 
-   ephysics_body_impulse_apply(body, x, y, elm_spinner_value_get(obj), rel_y);
+   ephysics_body_impulse_apply(body, x, y, 0,
+                               elm_spinner_value_get(obj), rel_y, 0);
 }
 
 static void
@@ -297,8 +298,8 @@ _body_impulse_y_y_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    rel_x = elm_spinner_value_get(evas_object_data_get(aux, "relx"));
    rel_y = elm_spinner_value_get(evas_object_data_get(aux, "rely"));
 
-   ephysics_body_impulse_apply(body, x, elm_spinner_value_get(obj), rel_x,
-                               rel_y);
+   ephysics_body_impulse_apply(body, x, elm_spinner_value_get(obj), 0,
+                               rel_x, rel_y, 0);
 }
 
 static void
@@ -316,7 +317,8 @@ _body_impulse_y_rel_cb(void *data, Evas_Object *obj,
    y = elm_spinner_value_get(evas_object_data_get(aux, "y"));
    rel_x = elm_spinner_value_get(evas_object_data_get(aux, "relx"));
 
-   ephysics_body_impulse_apply(body, x, y, rel_x, elm_spinner_value_get(obj));
+   ephysics_body_impulse_apply(body, x, y, 0,
+                               rel_x, 0, elm_spinner_value_get(obj));
 }
 
 static void
@@ -715,7 +717,7 @@ _sandie_body_add(Evas_Object *win, EPhysics_World *world, int x, int y)
    body = ephysics_body_circle_add(world);
    ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
    ephysics_body_mass_set(body, 20);
-   ephysics_body_central_impulse_apply(body, 8201, 2110);
+   ephysics_body_central_impulse_apply(body, 8201, 2110, 0);
    ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_DEL,
                                     _body_del, NULL);
 

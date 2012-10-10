@@ -99,7 +99,7 @@ _world_populate(Test_Data *test_data)
                                     EPHYSICS_CALLBACK_BODY_UPDATE,
                                     _update_object_cb, NULL);
 
-   ephysics_body_torque_impulse_apply(body, 1);
+   ephysics_body_torque_impulse_apply(body, 0, 0, 1);
 
    cube = elm_image_add(test_data->win);
    elm_image_file_set(
@@ -116,7 +116,7 @@ _world_populate(Test_Data *test_data)
                                     EPHYSICS_CALLBACK_BODY_UPDATE,
                                     _update_object_cb, NULL);
 
-   ephysics_body_impulse_apply(body, 30, 0, 0, -10);
+   ephysics_body_impulse_apply(body, 30, 0, 0, 0, -10, 0);
 
    cube = elm_image_add(test_data->win);
    elm_image_file_set(

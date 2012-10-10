@@ -23,7 +23,7 @@ _shoot(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    impulse = elm_spinner_value_get(speed_data->sp);
 
    elm_object_disabled_set(obj, EINA_TRUE);
-   ephysics_body_central_impulse_apply(speed_data->ball, impulse * rate, 0);
+   ephysics_body_central_impulse_apply(speed_data->ball, impulse * rate, 0, 0);
 }
 
 static void

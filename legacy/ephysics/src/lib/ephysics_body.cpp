@@ -2418,7 +2418,7 @@ ephysics_body_world_get(const EPhysics_Body *body)
 }
 
 EAPI void
-ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y)
+ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y, double z)
 {
    double rate;
 
@@ -2432,12 +2432,13 @@ ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y)
 
    ephysics_world_lock_take(body->world);
    ephysics_body_activate(body, EINA_TRUE);
-   body->rigid_body->applyCentralImpulse(btVector3(x / rate, - y / rate, 0));
+   body->rigid_body->applyCentralImpulse(btVector3(x / rate, - y / rate,
+                                                   z / rate));
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
-ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, Evas_Coord pos_x, Evas_Coord pos_y)
+ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, double z, Evas_Coord pos_x, Evas_Coord pos_y, Evas_Coord pos_z)
 {
    double rate;
 
@@ -2451,9 +2452,10 @@ ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, Evas_Coord 
 
    ephysics_world_lock_take(body->world);
    ephysics_body_activate(body, EINA_TRUE);
-   body->rigid_body->applyImpulse(btVector3(x / rate, - y / rate, 0),
+   body->rigid_body->applyImpulse(btVector3(x / rate, - y / rate, z / rate),
                                   btVector3((double) pos_x / rate,
-                                            (double) pos_y / rate, 0));
+                                            (double) pos_y / rate,
+                                            (double) pos_z / rate));
    ephysics_world_lock_release(body->world);
 }
 
@@ -2487,7 +2489,7 @@ ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *e
 }
 
 EAPI void
-ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll)
+ephysics_body_torque_impulse_apply(EPhysics_Body *body, double pitch, double yaw, double roll)
 {
    if (!body)
      {
@@ -2497,7 +2499,7 @@ ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll)
 
    ephysics_world_lock_take(body->world);
    ephysics_body_activate(body, EINA_TRUE);
-   body->rigid_body->applyTorqueImpulse(btVector3(0, 0, -roll));
+   body->rigid_body->applyTorqueImpulse(btVector3(-pitch, -yaw, -roll));
    ephysics_world_lock_release(body->world);
 }
 

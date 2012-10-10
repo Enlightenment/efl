@@ -2626,7 +2626,7 @@ EAPI double ephysics_body_friction_get(const EPhysics_Body *body);
  * After a impulse of 30 kg * p / s in the same direction is applied,
  * the velocity will be * 45 p/s.
  *
- *    (0, 30) + (0, 300) / 2 = (0, 30) + (0, 15) = (0, 45)
+ *    (0, 30, 0) + (0, 300, 0) / 2 = (0, 30, 0) + (0, 15, 0) = (0, 45, 0)
  *
  * When a impulse is applied over a body, it will has its velocity changed.
  * This impulse will be applied on body's center, so it won't implies in
@@ -2638,13 +2638,14 @@ EAPI double ephysics_body_friction_get(const EPhysics_Body *body);
  * @param body The physics body that will receive the impulse.
  * @param x The axis x component of impulse.
  * @param y The axis y component of impulse.
+ * @param z The axis z component of impulse.
  *
  * @see ephysics_body_torque_impulse_apply().
  * @see ephysics_body_impulse_apply().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y);
+EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, double y, double z);
 
 /**
  * @brief
@@ -2657,6 +2658,10 @@ EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, dou
  * torque impulse and body's inertia.
  *
  * @param body The physics body that will receive the impulse.
+ * @param pitch Impulse to rotate body around Z axis (rotate on y - z plane).
+ * Negative values will impulse body on counter clockwise rotation.
+ * @param yaw Impulse to rotate body around Y axis (rotate on x - z plane).
+ * Negative values will impulse body on counter clockwise rotation.
  * @param roll Impulse to rotate body around Z axis (rotate on x - y plane).
  * Negative values will impulse body on counter clockwise rotation.
  *
@@ -2665,7 +2670,7 @@ EAPI void ephysics_body_central_impulse_apply(EPhysics_Body *body, double x, dou
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll);
+EAPI void ephysics_body_torque_impulse_apply(EPhysics_Body *body, double pitch, double yaw, double roll);
 
 /**
  * @brief
@@ -2688,8 +2693,10 @@ EAPI void ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll);
  * @param body The physics body that will receive the impulse.
  * @param x The axis x component of impulse.
  * @param y The axis y component of impulse.
+ * @param z The axis z component of impulse.
  * @param pos_x The axis x component of the relative position to apply impulse.
  * @param pos_y The axis y component of the relative position to apply impulse.
+ * @param pos_z The axis z component of the relative position to apply impulse.
  *
  * @note Impulse is measured in kg * p / s and position in pixels
  * (Evas coordinates).
@@ -2699,7 +2706,7 @@ EAPI void ephysics_body_torque_impulse_apply(EPhysics_Body *body, double roll);
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, Evas_Coord pos_x, Evas_Coord pos_y);
+EAPI void ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, double z, Evas_Coord pos_x, Evas_Coord pos_y, Evas_Coord pos_z);
 
 /**
  * @brief
