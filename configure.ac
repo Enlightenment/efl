@@ -310,6 +310,7 @@ case "$build_profile" in
      have_stringshare_usage="yes"
      want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
      want_debug_malloc="yes"
+     want_debug_threads="yes"
      ;;
 
    release)
@@ -317,6 +318,7 @@ case "$build_profile" in
      have_stringshare_usage="no"
      want_valgrind="no"
      want_debug_malloc="no"
+     want_debug_threads="no"
      ;;
 esac
 
@@ -539,7 +541,7 @@ EFL_CHECK_THREADS
 EINA_CONFIGURE_HAVE_THREADS="#define EINA_HAVE_THREADS"
 AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
 
-if test "$build_profile" = "dev"; then
+if test "$want_debug_threads" = "yes"; then
    EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_HAVE_DEBUG_THREADS"
    AC_DEFINE([EFL_DEBUG_THREADS], [1], [Assert when forgot to call eina_threads_init])
 fi
