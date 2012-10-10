@@ -1227,6 +1227,118 @@ EAPI void ephysics_world_simulation_set(EPhysics_World *world, double fixed_time
 EAPI void ephysics_world_simulation_get(const EPhysics_World *world, double *fixed_time_step, int *max_sub_steps);
 
 /**
+ * @brief
+ * Set light properties to be applied on the scene.
+ *
+ * It will perform lighting calculations on the evas map applied on evas
+ * objects associated with all the bodies to have light applied over.
+ *
+ * This is used to apply lighting calculations (from a single light source)
+ * to a given object. The R, G and B values of each vertex will be modified to
+ * reflect the lighting based on the lixth point coordinates, the light color
+ * and the ambient color, and at what angle the map is facing the light source.
+ * A surface should have its points be declared in a clockwise fashion if the
+ * face is "facing" towards you (as opposed to away from you) as faces have a
+ * "logical" side for lighting.
+ *
+ * More details can be found on evas_map_util_3d_lighting() documentation,
+ * since this function is used internally by EPhysics.
+ *
+ * There are two ways of setting a body to receive lighting. One is to simple
+ * set all the bodies to be affected, with
+ * @ref ephysics_world_light_all_bodies_set(). The other, is to set each body
+ * individually, with @ref ephysics_body_light_set().
+ *
+ * By default, no light is set. And after a light is set, by default,
+ * no body will be affected. No change will be visible until
+ * some bodies are set to be enlightened.
+ *
+ * @param world The physics world.
+ * @param lx X coordinate in space of light point
+ * @param ly Y coordinate in space of light point
+ * @param lz Z coordinate in space of light point
+ * @param lr light red value (0 - 255)
+ * @param lg light green value (0 - 255)
+ * @param lb light blue value (0 - 255)
+ * @param ar ambient color red value (0 - 255)
+ * @param ag ambient color green value (0 - 255)
+ * @param ab ambient color blue value (0 - 255)
+ *
+ * @see ephysics_world_light_get().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_light_set(EPhysics_World *world, Evas_Coord lx, Evas_Coord ly, Evas_Coord lz, int lr, int lg, int lb, int ar, int ag, int ab);
+
+/**
+ * @brief
+ * Get light properties.
+ *
+ * @param world The physics world.
+ * @param lx X coordinate in space of light point
+ * @param ly Y coordinate in space of light point
+ * @param lz Z coordinate in space of light point
+ * @param lr light red value (0 - 255)
+ * @param lg light green value (0 - 255)
+ * @param lb light blue value (0 - 255)
+ * @param ar ambient color red value (0 - 255)
+ * @param ag ambient color green value (0 - 255)
+ * @param ab ambient color blue value (0 - 255)
+ * @return @c EINA_TRUE if light is set, or @c EINA_FALSE if it isn't set,
+ * or on error. On this case the other parameters won't be set.
+ *
+ * @see ephysics_world_light_set() for more details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_light_get(const EPhysics_World *world, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lz, int *lr, int *lg, int *lb, int *ar, int *ag, int *ab);
+
+/**
+ * @brief
+ * Unset light on the scene.
+ *
+ * It will unset light, so no body will be enlightened anymore.
+ *
+ * @param world The physics world.
+ *
+ * @see ephysics_world_light_set() for more details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_light_unset(EPhysics_World *world);
+
+/**
+ * @brief
+ * Set if light should be applied over all the bodies.
+ *
+ * @param world The physics world.
+ * @param enable @c EINA_TRUE if light should be obligatory applied over
+ * all the bodies, or @c EINA_FALSE if it only should be applied on bodies with
+ * light property set.
+ *
+ * @see ephysics_world_light_set() for more details.
+ * @see ephysics_world_light_all_bodies_get().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_light_all_bodies_set(EPhysics_World *world, Eina_Bool enable);
+
+/**
+ * @brief
+ * Get light setting regarding being applied over all the bodies.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if light will be obligatory applied over all the bodies,
+ * or @c EINA_FALSE if it only will be applied on bodies with light property
+ * set, or on error.
+ *
+ * @see ephysics_world_light_all_bodies_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_light_all_bodies_get(const EPhysics_World *world);
+
+/**
  * @}
  */
 
@@ -3159,11 +3271,55 @@ EAPI void ephysics_body_material_set(EPhysics_Body *body, EPhysics_Body_Material
  * @param body The physics body.
  * @return the @p material used by the body.
  *
- * @see ephysics_body_body_set() for more details.
+ * @see ephysics_body_material_set() for more details.
  *
  * @ingroup EPhysics_Body
  */
 EAPI EPhysics_Body_Material ephysics_body_material_get(const EPhysics_Body *body);
+
+/**
+ * @brief
+ * Set light effect over body.
+ *
+ * @param body The physics body.
+ * @param enable If @c EINA_TRUE, light will be applied over this @p body,
+ * otherwise it won't.
+ *
+ * It's possible to set the light to apply over all the bodies with
+ * @ref ephysics_world_light_all_bodies_set(). This will have priority
+ * over body's individual light settings.
+ *
+ * So, if @p body is set to doesn't be affect by the light, but light
+ * is set to be applied over all the bodies, @p body will be displayed
+ * with light over it.
+ *
+ * Also, if no light is set on the world with @ref ephysics_world_light_set(),
+ * nothing will happens.
+ *
+ * @see ephysics_body_light_get().
+ * @see ephysics_world_light_set() for more details regarding lighting.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_light_set(EPhysics_Body *body, Eina_Bool enable);
+
+/**
+ * @brief
+ * Get light effect over body.
+ *
+ * @param body The physics body.
+ * @return @c EINA_TRUE if light is applied over this @p body or @c EINA_FALSE
+ * in the other case, or on error.
+ *
+ * @note If light is applied over all the bodies it may return @c EINA_FALSE
+ * even if it's being affect by lights. This need to be checked with
+ * @ref ephysics_world_light_all_bodies_get().
+ *
+ * @see ephysics_body_light_set() for more details.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI Eina_Bool ephysics_body_light_get(const EPhysics_Body *body);
 
 /**
  * @}

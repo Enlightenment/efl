@@ -1045,6 +1045,18 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 
    evas_map_util_rotate(map, rot, x + (w * body->cm.x), y +
                         (h * body->cm.y));
+
+   if ((body->light_apply) ||
+       (ephysics_world_light_all_bodies_get(body->world)))
+     {
+        int lr, lg, lb, ar, ag, ab;
+        Evas_Coord lx, ly, lz;
+
+        if (ephysics_world_light_get(body->world, &lx, &ly, &lz,
+                                     &lr, &lg, &lb, &ar, &ag, &ab))
+          evas_map_util_3d_lighting(map, lx, ly, lz, lr, lg, lb, ar, ag, ab);
+     }
+
    evas_object_map_set(body->evas_obj, map);
    evas_object_map_enable_set(body->evas_obj, EINA_TRUE);
    evas_map_free(map);
@@ -2815,6 +2827,31 @@ ephysics_body_material_get(const EPhysics_Body *body)
 
    return body->material;
 }
+
+EAPI void
+ephysics_body_light_set(EPhysics_Body *body, Eina_Bool enable)
+{
+   if (!body)
+     {
+        ERR("No body, no light.");
+        return;
+     }
+
+   body->light_apply = !!enable;
+}
+
+EAPI Eina_Bool
+ephysics_body_light_get(const EPhysics_Body *body)
+{
+   if (!body)
+     {
+        ERR("No body, no light.");
+        return EINA_FALSE;
+     }
+
+   return body->light_apply;
+}
+
 
 #ifdef  __cplusplus
 }

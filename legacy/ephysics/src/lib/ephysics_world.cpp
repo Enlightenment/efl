@@ -32,6 +32,21 @@ struct _EPhysics_World_Callback {
      Eina_Bool deleted:1;
 };
 
+typedef struct _EPhysics_Light EPhysics_Light;
+
+struct _EPhysics_Light {
+     Evas_Coord lx;
+     Evas_Coord ly;
+     Evas_Coord lz;
+     int lr;
+     int lg;
+     int lb;
+     int ar;
+     int ag;
+     int ab;
+     Eina_Bool all_bodies:1;
+};
+
 struct _EPhysics_World {
      EINA_INLIST;
      btBroadphaseInterface* broadphase;
@@ -45,6 +60,7 @@ struct _EPhysics_World {
 
      EPhysics_Body *boundaries[4];
      EPhysics_Camera *camera;
+     EPhysics_Light *light;
      Evas_Coord x, y, w, h;
      Eina_Inlist *callbacks;
      Eina_Inlist *bodies;
@@ -348,6 +364,9 @@ _ephysics_world_free(EPhysics_World *world)
 
    eina_condition_free(&world->condition);
    eina_lock_free(&world->mutex);
+
+   if (world->light)
+     free(world->light);
 
    free(world);
    INF("World %p deleted.", world);
@@ -1410,6 +1429,122 @@ void
 ephysics_world_lock_release(EPhysics_World *world)
 {
    eina_lock_release(&world->mutex);
+}
+
+EAPI void
+ephysics_world_light_set(EPhysics_World *world,
+                         Evas_Coord lx, Evas_Coord ly, Evas_Coord lz,
+                         int lr, int lg, int lb,
+                         int ar, int ag, int ab)
+{
+   if (!world)
+     {
+	ERR("No world, can't set light.");
+	return;
+     }
+
+   if (!world->light)
+     world->light = (EPhysics_Light *) calloc(1, sizeof(EPhysics_Light));
+
+   if (!world->light)
+     {
+	ERR("Failed to create light.");
+	return;
+     }
+
+   world->light->lx = lx;
+   world->light->ly = ly;
+   world->light->lz = lz;
+   world->light->lr = lr;
+   world->light->lg = lg;
+   world->light->lb = lb;
+   world->light->ar = ar;
+   world->light->ag = ag;
+   world->light->ab = ab;
+   world->light->all_bodies = EINA_FALSE;
+}
+
+EAPI Eina_Bool
+ephysics_world_light_get(const EPhysics_World *world,
+                         Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lz,
+                         int *lr, int *lg, int *lb,
+                         int *ar, int *ag, int *ab)
+{
+   if (!world)
+     {
+	ERR("No world, can't get light.");
+	return EINA_FALSE;
+     }
+
+   if (!world->light)
+     {
+	INF("Light isn't set.");
+	return EINA_FALSE;
+     }
+
+   if (lx) *lx = world->light->lx;
+   if (ly) *ly = world->light->ly;
+   if (lz) *lz = world->light->lz;
+   if (lr) *lr = world->light->lr;
+   if (lg) *lg = world->light->lg;
+   if (lb) *lb = world->light->lb;
+   if (ar) *ar = world->light->ar;
+   if (ag) *ag = world->light->ag;
+   if (ab) *ab = world->light->ab;
+
+   return EINA_TRUE;
+}
+
+EAPI void
+ephysics_world_light_unset(EPhysics_World *world)
+{
+   if (!world)
+     {
+	ERR("No world, can't unset light.");
+	return;
+     }
+
+   if (!world->light)
+     return;
+
+   free(world->light);
+   world->light = NULL;
+}
+
+EAPI void
+ephysics_world_light_all_bodies_set(EPhysics_World *world, Eina_Bool enable)
+{
+   if (!world)
+     {
+	ERR("No world, can't set light property.");
+	return;
+     }
+
+   if (!world->light)
+     {
+	ERR("Light isn't set, can't apply on bodies");
+	return;
+     }
+
+   world->light->all_bodies = !!enable;
+}
+
+EAPI Eina_Bool
+ephysics_world_light_all_bodies_get(const EPhysics_World *world)
+{
+   if (!world)
+     {
+	ERR("No world, can't get light property.");
+	return EINA_FALSE;
+     }
+
+   if (!world->light)
+     {
+	INF("Light isn't set, can't get light property");
+	return EINA_FALSE;
+     }
+
+   return world->light->all_bodies;
 }
 
 #ifdef  __cplusplus

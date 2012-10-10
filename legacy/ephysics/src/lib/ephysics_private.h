@@ -104,14 +104,15 @@ struct _EPhysics_Body {
           double y;
           double z;
      } cm;
-     Eina_Bool active:1;
-     Eina_Bool deleted:1;
      int slices;
      int *points_deform;
      EPhysics_Body_Type type;
      int cloth_columns;
      int cloth_rows;
      int anchor_prop;
+     Eina_Bool active:1;
+     Eina_Bool deleted:1;
+     Eina_Bool light_apply:1;
 };
 
 extern int _ephysics_log_dom;
