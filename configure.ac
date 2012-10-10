@@ -432,7 +432,7 @@ AC_CHECK_HEADERS([sys/mman.h])
 CFLAGS="${CFLAGS_save}"
 
 EINA_CONFIG(HAVE_INTTYPES_H, test "x${ac_cv_header_inttypes_h}" = "xyes")
-EINA_CONFIG(HAVE_STDINT_H, test "x${ac_cv_header_inttypes_h}" = "xyes")
+EINA_CONFIG(HAVE_STDINT_H, test "x${ac_cv_header_stdint_h}" = "xyes")
 
 ### Checks for types
 
