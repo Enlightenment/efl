@@ -117,19 +117,6 @@ if test "x${efl_have_posix_threads_spinlock}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_POSIX_THREADS_SPINLOCK], [1], [Define to mention that POSIX threads spinlocks are supported])
 fi
 
-dnl Check debug threads
-
-_efl_enable_debug_threads="no"
-AC_ARG_ENABLE([debug-threads],
-   [AC_HELP_STRING([--enable-debug-threads], [disable assert when you forgot to call eina_threads_init])],
-   [_efl_enable_debug_threads="${enableval}"])
-
-efl_have_debug_threads="no"
-if test "x${_efl_have_posix_threads}" = "xyes" && test "x${_efl_enable_debug_threads}" = "xyes"; then
-   efl_have_debug_threads="yes"
-   AC_DEFINE([EFL_DEBUG_THREADS], [1], [Assert when forgot to call eina_threads_init])
-fi
-
 AS_IF([test "x$_efl_have_posix_threads" = "xyes" || test "x$_efl_have_win32_threads" = "xyes"],
    [$1],
    [m4_if([$2], [$2], [AC_MSG_ERROR([Threads are required.])])])

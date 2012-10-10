@@ -539,11 +539,11 @@ EFL_CHECK_THREADS
 EINA_CONFIGURE_HAVE_THREADS="#define EINA_HAVE_THREADS"
 AC_SUBST(EINA_CONFIGURE_HAVE_THREADS)
 
-if test "x${efl_have_debug_threads}" = "xyes"; then
+if test "$build_profile" = "dev"; then
    EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_HAVE_DEBUG_THREADS"
+   AC_DEFINE([EFL_DEBUG_THREADS], [1], [Assert when forgot to call eina_threads_init])
 fi
 AC_SUBST(EINA_CONFIGURE_HAVE_DEBUG_THREADS)
-AM_CONDITIONAL([EINA_DEBUG_THREADS], [test "x${efl_have_debug_threads}" = "xyes"])
 
 ### Modules
 EINA_CHECK_MODULE([chained-pool],   [static], [chained pool])
@@ -866,7 +866,6 @@ echo
 echo "  Thread Support.......: ${efl_have_threads}"
 if test "${efl_have_threads}" = "POSIX" ; then
 echo "    spinlock...........: ${efl_have_posix_threads_spinlock}"
-echo "    debug usage........: ${efl_have_debug_threads}"
 fi
 echo
 echo "Compilation............: make (or gmake)"
