@@ -308,10 +308,10 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                                       sscanf(&line[k], "%255s", s);
                                       slen = strlen(s);
                                       k += slen;
-                                      if (!strcmp(s, "c")) iscolor = 1;
-                                      if ((!strcmp(s, "m")) || (!strcmp(s, "s"))
-                                          || (!strcmp(s, "g4")) || (!strcmp(s, "g"))
-                                          || (!strcmp(s, "c")) || (k >= len))
+                                      if (slen == 1 && *s == 'c') iscolor = 1;
+                                      if ((slen == 1 && ((s[0] == 'm') || (s[0] == 's') || (s[0] == 'g')) || (s[0] == 'c')) ||
+					  (slen == 2 && (s[0] == 'g') && (s[0] == '4')) ||
+					  (k >= len))
                                         {
                                            if (k >= len)
                                              {
