@@ -92,6 +92,15 @@ AC_ARG_WITH([profile],
    [build_profile=${withval}],
    [build_profile=dev])
 
+case "$build_profile" in
+   dev|release)
+     ;;
+   *)
+     AC_MSG_ERROR([Unknown build profile --with-profile=${build_profile}])
+     ;;
+esac
+
+
 # TODO: move me to m4 file that setups module/so related variables
 have_wince="no"
 have_win32="no"
