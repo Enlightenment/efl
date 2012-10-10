@@ -52,8 +52,8 @@ _update_vel_cb(void *data, EPhysics_Body *body, void *event_info __UNUSED__)
    delta_time = time_now - velocity_data->last_time;
    velocity_data->last_time = time_now;
 
-   vaz = ephysics_body_angular_velocity_get(body);
-   ephysics_body_linear_velocity_get(body, &vx, &vy);
+   ephysics_body_angular_velocity_get(body, NULL, NULL, &vaz);
+   ephysics_body_linear_velocity_get(body, &vx, &vy, NULL);
    vx = (vx > 0 || vx <= -0.01) ? vx : 0;
    vy = (vy > 0 || vy <= -0.01) ? vy : 0;
 

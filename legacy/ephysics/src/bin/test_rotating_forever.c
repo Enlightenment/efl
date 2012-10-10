@@ -69,7 +69,7 @@ _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info _
    double rot, vrot, torque;
 
    ephysics_body_rotation_get(body, NULL, NULL, &rot);
-   vrot = ephysics_body_angular_velocity_get(body);
+   ephysics_body_angular_velocity_get(body, NULL, NULL, &vrot);
    ephysics_body_forces_get(body, NULL, NULL, &torque);
 
    ephysics_body_evas_object_update(body);

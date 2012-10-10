@@ -479,10 +479,11 @@ _ephysics_body_sleeping_threshold_set(EPhysics_Body *body, double linear_thresho
 }
 
 static inline void
-_ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, double rate)
+_ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, double z, double rate)
 {
    ephysics_body_activate(body, EINA_TRUE);
-   body->rigid_body->setLinearVelocity(btVector3(x / rate, -y / rate, 0));
+   body->rigid_body->setLinearVelocity(btVector3(x / rate, -y / rate,
+                                                 z / rate));
 }
 
 static void
@@ -1087,14 +1088,14 @@ void
 ephysics_body_recalc(EPhysics_Body *body, double rate)
 {
    Evas_Coord x, y, z, w, h, d;
-   double vx, vy, lt, at;
+   double vx, vy, vz, lt, at;
 
    ephysics_body_geometry_get(body, &x, &y, &z, &w, &h, &d);
-   ephysics_body_linear_velocity_get(body, &vx, &vy);
+   ephysics_body_linear_velocity_get(body, &vx, &vy, &vz);
    ephysics_body_sleeping_threshold_get(body, &lt, &at);
 
    _ephysics_body_geometry_set(body, x, y, z, w, h, d, rate);
-   _ephysics_body_linear_velocity_set(body, vx, vy, rate);
+   _ephysics_body_linear_velocity_set(body, vx, vy, vz, rate);
    _ephysics_body_sleeping_threshold_set(body, lt, at, rate);
 }
 
@@ -2076,7 +2077,7 @@ ephysics_body_mass_get(const EPhysics_Body *body)
 }
 
 EAPI void
-ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y)
+ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, double z)
 {
    if (!body)
      {
@@ -2084,13 +2085,13 @@ ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y)
         return;
      }
 
-   _ephysics_body_linear_velocity_set(body, x, y,
+   _ephysics_body_linear_velocity_set(body, x, y, z,
                                       ephysics_world_rate_get(body->world));
-   DBG("Linear velocity of body %p set to %lf, %lf", body, x, y);
+   DBG("Linear velocity of body %p set to (%lf, %lf, %lf).", body, x, y, z);
 }
 
 EAPI void
-ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y)
+ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
    double rate;
 
@@ -2103,10 +2104,11 @@ ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *
    rate = ephysics_world_rate_get(body->world);
    if (x) *x = body->rigid_body->getLinearVelocity().getX() * rate;
    if (y) *y = -body->rigid_body->getLinearVelocity().getY() * rate;
+   if (z) *z = body->rigid_body->getLinearVelocity().getZ() * rate;
 }
 
 EAPI void
-ephysics_body_angular_velocity_set(EPhysics_Body *body, double z)
+ephysics_body_angular_velocity_set(EPhysics_Body *body, double x, double y, double z)
 {
    if (!body)
      {
@@ -2115,21 +2117,25 @@ ephysics_body_angular_velocity_set(EPhysics_Body *body, double z)
      }
 
    ephysics_world_lock_take(body->world);
-   body->rigid_body->setAngularVelocity(btVector3(0, 0, -z/RAD_TO_DEG));
-   DBG("Angular velocity of body %p set to %lf", body, z);
+   body->rigid_body->setAngularVelocity(btVector3(-x / RAD_TO_DEG,
+                                                  -y / RAD_TO_DEG,
+                                                  -z/RAD_TO_DEG));
+   DBG("Angular velocity of body %p set to (%lf, %lf, %lf).", body, x, y, z);
    ephysics_world_lock_release(body->world);
 }
 
-EAPI double
-ephysics_body_angular_velocity_get(const EPhysics_Body *body)
+EAPI void
+ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
    if (!body)
      {
         ERR("Can't get angular velocity, body is null.");
-        return 0;
+        return;
      }
 
-   return -body->rigid_body->getAngularVelocity().getZ() * RAD_TO_DEG;
+   if (x) *x = -body->rigid_body->getAngularVelocity().getX() * RAD_TO_DEG;
+   if (y) *y = -body->rigid_body->getAngularVelocity().getY() * RAD_TO_DEG;
+   if (z) *z = -body->rigid_body->getAngularVelocity().getZ() * RAD_TO_DEG;
 }
 
 EAPI void

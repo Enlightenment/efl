@@ -13,8 +13,8 @@ _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info _
    ephysics_body_forces_get(body, &x, &y, &torque);
    DBG("Body %p, fx: %lf, fy: %lf, torque: %lf", body, x, y, torque);
 
-   ephysics_body_linear_velocity_get(body, &vx, &vy);
-   va = ephysics_body_angular_velocity_get(body);
+   ephysics_body_linear_velocity_get(body, &vx, &vy, NULL);
+   ephysics_body_angular_velocity_get(body, NULL, NULL, &va);
    DBG("Body %p, vx: %lf, vy: %lf, va: %lf", body, vx, vy, va);
 }
 

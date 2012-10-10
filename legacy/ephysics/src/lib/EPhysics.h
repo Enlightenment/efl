@@ -2102,11 +2102,12 @@ EAPI double ephysics_body_mass_get(const EPhysics_Body *body);
 
 /**
  * @brief
- * Set body's linear velocity on x and y axis.
+ * Set body's linear velocity on x, y and z axes.
  *
  * @param body The physics body.
  * @param x The linear velocity on axis x.
  * @param y The linear velocity on axis y.
+ * @param z The linear velocity on axis z.
  *
  * @note EPhysics unit for linear velocity is Evas coordinates per second.
  *
@@ -2115,15 +2116,16 @@ EAPI double ephysics_body_mass_get(const EPhysics_Body *body);
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y);
+EAPI void ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, double y, double z);
 
 /**
  * @brief
- * Get body's linear velocity on x and y axis.
+ * Get body's linear velocity on x, y and z axes.
  *
  * @param body The physics body.
  * @param x The linear velocity on axis x.
  * @param y The linear velocity on axis y.
+ * @param z The linear velocity on axis z.
  *
  * @note EPhysics unit for linear velocity is Evas coordinates per second.
  *
@@ -2132,13 +2134,15 @@ EAPI void ephysics_body_linear_velocity_set(EPhysics_Body *body, double x, doubl
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y);
+EAPI void ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x, double *y, double *z);
 
 /**
  * @brief
- * Set body's angular velocity on z axis.
+ * Set body's angular velocity on x, y and z axes.
  *
  * @param body The physics body.
+ * @param x The angular velocity on axis x.
+ * @param y The angular velocity on axis y.
  * @param z The angular velocity on axis z.
  *
  * @note EPhysics unit for angular velocity is degrees per second.
@@ -2148,14 +2152,16 @@ EAPI void ephysics_body_linear_velocity_get(const EPhysics_Body *body, double *x
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_angular_velocity_set(EPhysics_Body *body, double z);
+EAPI void ephysics_body_angular_velocity_set(EPhysics_Body *body, double x, double y, double z);
 
 /**
  * @brief
- * Get body's angular velocity on z axis.
+ * Get body's angular velocity on x, y and z axes.
  *
  * @param body The physics body.
- * @return The angular velocity on axis z, or 0 on error.
+ * @param x The angular velocity on axis x.
+ * @param y The angular velocity on axis y.
+ * @param z The angular velocity on axis z.
  *
  * @note EPhysics unit for angular velocity is degrees per second.
  *
@@ -2164,7 +2170,7 @@ EAPI void ephysics_body_angular_velocity_set(EPhysics_Body *body, double z);
  *
  * @ingroup EPhysics_Body
  */
-EAPI double ephysics_body_angular_velocity_get(const EPhysics_Body *body);
+EAPI void ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *x, double *y, double *z);
 
 /**
  * @brief

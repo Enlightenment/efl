@@ -392,7 +392,8 @@ _body_linear_velocity_x_cb(void *data, Evas_Object *obj,
    double ylinear;
 
    ylinear = elm_spinner_value_get(evas_object_data_get(obj, "y"));
-   ephysics_body_linear_velocity_set(body, elm_spinner_value_get(obj), ylinear);
+   ephysics_body_linear_velocity_set(body, elm_spinner_value_get(obj), ylinear,
+                                     0);
 }
 
 static void
@@ -403,7 +404,8 @@ _body_linear_velocity_y_cb(void *data, Evas_Object *obj,
    double xlinear;
 
    xlinear = elm_spinner_value_get(evas_object_data_get(obj, "x"));
-   ephysics_body_linear_velocity_set(body, xlinear, elm_spinner_value_get(obj));
+   ephysics_body_linear_velocity_set(body, xlinear, elm_spinner_value_get(obj),
+                                     0);
 }
 
 static void
@@ -411,7 +413,7 @@ _body_angular_velocity_cb(void *data, Evas_Object *obj,
                           void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-   ephysics_body_angular_velocity_set(body, elm_spinner_value_get(obj));
+   ephysics_body_angular_velocity_set(body, 0, 0, elm_spinner_value_get(obj));
 }
 /*
 static void
