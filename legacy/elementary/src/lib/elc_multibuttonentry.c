@@ -315,7 +315,6 @@ _view_update(Evas_Object *obj)
      _shrink_mode_set(obj, EINA_TRUE);
 
    // update guidetext
-   if (sd->guide_text_vis_enable)
      _visual_guide_text_set(obj);
 }
 
@@ -1266,17 +1265,15 @@ _item_max_height_calculate(Evas_Object *box,
 static void
 _box_layout_cb(Evas_Object *o,
                Evas_Object_Box_Data *priv,
-               void *data)
+               void *data __UNUSED__)
 {
    Evas_Coord cw = 0, ch = 0, cmaxh = 0, obj_index = 0;
    Evas_Coord x, y, w, h, xx, yy;
    Evas_Object_Box_Option *opt;
    Evas_Coord minw, minh;
-   const Eina_List *l;
+   const Eina_List *l, *l_next;
    Evas_Object *obj;
    double ax, ay;
-   
-   ELM_MULTIBUTTONENTRY_DATA_GET(data, sd);
    
    _box_min_size_calculate(o, priv);
 
@@ -1298,9 +1295,7 @@ _box_layout_cb(Evas_Object *o,
    xx = x;
    yy = y;
 
-   sd->guide_text_vis_enable = EINA_FALSE;
-
-   EINA_LIST_FOREACH(priv->children, l, opt)
+   EINA_LIST_FOREACH_SAFE(priv->children, l, l_next, opt)
      {
         Evas_Coord mnw, mnh, mxw, mxh;
         Evas_Coord ww, hh, ow, oh;
@@ -1350,7 +1345,6 @@ _box_layout_cb(Evas_Object *o,
 
         obj_index++;
      }
-   sd->guide_text_vis_enable = EINA_TRUE;
 }
 
 static void
@@ -1363,7 +1357,7 @@ _view_init(Evas_Object *obj)
    sd->box = elm_box_add(obj);
 
    if (!sd->box) return;
-   elm_box_layout_set(sd->box, _box_layout_cb, obj, NULL);
+   elm_box_layout_set(sd->box, _box_layout_cb, NULL, NULL);
    elm_box_homogeneous_set(sd->box, EINA_FALSE);
    elm_layout_content_set(obj, "box.swallow", sd->box);
 
@@ -1521,7 +1515,6 @@ _elm_multibuttonentry_smart_add(Evas_Object *obj)
    priv->add_callback = NULL;
    priv->add_callback_data = NULL;
    priv->editable = EINA_TRUE;
-   priv->guide_text_vis_enable = EINA_TRUE;
 
    _view_init(obj);
    _callbacks_register(obj);
