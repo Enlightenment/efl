@@ -224,6 +224,14 @@ AC_FUNC_ALLOCA
 
 ######################  EFL  ######################
 
+prefer_assert="no"
+case "$build_profile" in
+   dev)
+     prefer_assert="yes"
+     ;;
+esac
+
+
 #### Evil
 
 if test "x${have_windows}" = "xyes" ; then
@@ -449,7 +457,6 @@ fi
 
 ### Checks for header files
 
-AC_HEADER_ASSERT
 AC_HEADER_TIME
 AC_HEADER_DIRENT
 
