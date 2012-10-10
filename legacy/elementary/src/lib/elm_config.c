@@ -1641,6 +1641,7 @@ elm_config_scale_get(void)
 EAPI void
 elm_config_scale_set(double scale)
 {
+   if (scale < 0.0) return;
    if (_elm_config->scale == scale) return;
    _elm_config->scale = scale;
    _elm_rescale();
@@ -1669,6 +1670,7 @@ elm_config_password_show_last_timeout_get(void)
 EAPI void
 elm_config_password_show_last_timeout_set(double password_show_last_timeout)
 {
+   if (password_show_last_timeout < 0.0) return;
    if (_elm_config->password_show_last_timeout == password_show_last_timeout) return;
    _elm_config->password_show_last_timeout = password_show_last_timeout;
    edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
@@ -1777,6 +1779,7 @@ elm_config_font_overlay_set(const char    *text_class,
                      Evas_Font_Size size)
 {
    EINA_SAFETY_ON_NULL_RETURN(text_class);
+   if (size < 0) return;
    _elm_config_font_overlay_set(text_class, font, size);
 }
 
@@ -1803,6 +1806,7 @@ elm_config_finger_size_get(void)
 EAPI void
 elm_config_finger_size_set(Evas_Coord size)
 {
+   if (size < 0) return;
    if (_elm_config->finger_size == size) return;
    _elm_config->finger_size = size;
    _elm_rescale();
@@ -1849,6 +1853,7 @@ elm_config_cache_font_cache_size_get(void)
 EAPI void
 elm_config_cache_font_cache_size_set(int size)
 {
+   if (size < 0) return;
    if (_elm_config->font_cache == size) return;
    _elm_config->font_cache = size;
 
@@ -1864,6 +1869,7 @@ elm_config_cache_image_cache_size_get(void)
 EAPI void
 elm_config_cache_image_cache_size_set(int size)
 {
+   if (size < 0) return;
    if (_elm_config->image_cache == size) return;
    _elm_config->image_cache = size;
 
@@ -1879,6 +1885,7 @@ elm_config_cache_edje_file_cache_size_get()
 EAPI void
 elm_config_cache_edje_file_cache_size_set(int size)
 {
+   if (size < 0) return;
    if (_elm_config->edje_cache == size) return;
    _elm_config->edje_cache = size;
 
