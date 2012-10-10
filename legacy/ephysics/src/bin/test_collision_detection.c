@@ -19,18 +19,18 @@ _collision_cb(void *data, EPhysics_Body *body __UNUSED__, void *event_info)
    EPhysics_Body *contact_body;
    Collision_Data *collision_data = data;
    EPhysics_Body_Collision *collision = event_info;
-   int x, y;
+   int x, y, z;
 
    contact_body = ephysics_body_collision_contact_body_get(collision);
    if (contact_body != collision_data->sphere2) return;
 
-   ephysics_body_collision_position_get(collision, &x, &y);
+   ephysics_body_collision_position_get(collision, &x, &y, &z);
 
    evas_object_move(collision_data->impact, x - 10, y - 40);
    elm_object_signal_emit(collision_data->impact, "impact,show",
                           "ephysics_test");
 
-   INF("Collision Detected at (%i, %i)", x, y);
+   INF("Collision Detected at (%i, %i, %i)", x, y, z);
 }
 
 static void

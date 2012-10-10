@@ -30,6 +30,7 @@ struct _EPhysics_Body_Collision {
      EPhysics_Body *contact_body;
      Evas_Coord x;
      Evas_Coord y;
+     Evas_Coord z;
 };
 
 typedef struct _EPhysics_Body_Soft_Body_Slice
@@ -1116,7 +1117,7 @@ ephysics_body_evas_object_update_select(EPhysics_Body *body)
 }
 
 EAPI void
-ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, Evas_Coord *x, Evas_Coord *y)
+ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z)
 {
    if (!collision)
      {
@@ -1126,6 +1127,7 @@ ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, E
 
    if (x) *x = collision->x;
    if (y) *y = collision->y;
+   if (z) *z = collision->z;
 }
 
 EAPI EPhysics_Body *
@@ -1167,6 +1169,7 @@ ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body
    collision->contact_body = contact_body;
    collision->x = position.getX() * rate;
    collision->y = wh + wy - (position.getY() * rate);
+   collision->z = position.getZ() * rate;
 
    _ephysics_body_event_callback_call(body, EPHYSICS_CALLBACK_BODY_COLLISION,
                                       (void *) collision);

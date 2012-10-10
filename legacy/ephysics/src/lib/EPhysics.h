@@ -2489,14 +2489,15 @@ EAPI void *ephysics_body_event_callback_del_full(EPhysics_Body *body, EPhysics_C
  * where the collision occurred.
  *
  * @param collision The body collision data of interest.
- * @param x The x pointer to set the x coordinate to.
- * @param y The y pointer to set the y coordinate to.
+ * @param x The x coordinate of collision point, in pixels.
+ * @param y The y coordinate of collision point, in pixels.
+ * @param z The z coordinate of collision point, in pixels.
  *
  * @see EPHYSICS_CALLBACK_BODY_COLLISION and @ref
  * ephysics_body_event_callback_add() for collision callback.
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, Evas_Coord *x, Evas_Coord *y);
+EAPI void ephysics_body_collision_position_get(const EPhysics_Body_Collision *collision, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z);
 
 /**
  * @brief
