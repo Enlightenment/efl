@@ -1415,14 +1415,10 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
           }
      }
    else
-     {
-        format = ecore_x_window_prop_property_get(xevent->xselection.requestor,
-                                                  xevent->xselection.property,
-                                                  AnyPropertyType, 8, &data,
-                                                  &num_ret);
-        if (!format)
-          return;
-     }
+     format = ecore_x_window_prop_property_get(xevent->xselection.requestor,
+                                               xevent->xselection.property,
+                                               AnyPropertyType, 8, &data,
+                                               &num_ret);
 
    e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
    if (!e)

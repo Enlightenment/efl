@@ -998,3 +998,7 @@
        * Wayland SHM now features a mechanism to synchronize rendering with
        the compositor, removing tearing effect in animations when using that
        engine.
+       
+2012-10-10 Michal Pakula vel Rutka
+
+       * Fix: Send ECORE_X_EVENT_SELECTION_NOTIFY even if there is no data.

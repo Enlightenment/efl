@@ -810,7 +810,7 @@ _ecore_x_selection_parser_files(const char *target,
    if (!sel) return NULL;
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_files_free;
 
-   if (data[size - 1])
+   if (data && data[size - 1])
      {
         /* Isn't nul terminated */
         size++;
@@ -909,7 +909,7 @@ _ecore_x_selection_parser_text(const char *target __UNUSED__,
 
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Text));
    if (!sel) return NULL;
-   if (data[size - 1])
+   if (data && data[size - 1])
      {
         /* Isn't nul terminated */
         size++;

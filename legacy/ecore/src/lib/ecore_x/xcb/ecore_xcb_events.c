@@ -1356,13 +1356,9 @@ _ecore_xcb_event_handle_selection_notify(xcb_generic_event_t *event)
           }
      }
    else
-     {
-        format =
-          ecore_x_window_prop_property_get(ev->requestor, ev->property,
-                                           XCB_GET_PROPERTY_TYPE_ANY, 8,
-                                           &data, &num);
-        if (!format) return;
-     }
+     format = ecore_x_window_prop_property_get(ev->requestor, ev->property,
+                                               XCB_GET_PROPERTY_TYPE_ANY, 8,
+                                               &data, &num);
 
    e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
    if (!e) return;
