@@ -10,7 +10,8 @@ _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info _
    double x, y, torque, vx, vy, va;
 
    ephysics_body_evas_object_update(body);
-   ephysics_body_forces_get(body, &x, &y, &torque);
+   ephysics_body_forces_get(body, &x, &y, NULL);
+   ephysics_body_torques_get(body, NULL, NULL, &torque);
    DBG("Body %p, fx: %lf, fy: %lf, torque: %lf", body, x, y, torque);
 
    ephysics_body_linear_velocity_get(body, &vx, &vy, NULL);
@@ -38,7 +39,7 @@ _world_populate(Test_Data *test_data)
                                     _update_object_cb, NULL);
    ephysics_body_restitution_set(box_body1, 0.7);
    ephysics_body_friction_set(box_body1, 0);
-   ephysics_body_force_apply(box_body1, 60, 0, 0, 10);
+   ephysics_body_force_apply(box_body1, 60, 0, 0, 0, 10, 0);
    test_data->bodies = eina_list_append(test_data->bodies, box_body1);
 
    box2 = elm_image_add(test_data->win);
@@ -55,7 +56,7 @@ _world_populate(Test_Data *test_data)
                                     _update_object_cb, NULL);
    ephysics_body_restitution_set(box_body2, 0.7);
    ephysics_body_friction_set(box_body2, 0);
-   ephysics_body_central_force_apply(box_body2, 60, 0);
+   ephysics_body_central_force_apply(box_body2, 60, 0, 0);
    test_data->bodies = eina_list_append(test_data->bodies, box_body2);
    test_data->data = box_body2;
 }

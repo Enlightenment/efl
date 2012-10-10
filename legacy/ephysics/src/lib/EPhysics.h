@@ -2895,14 +2895,16 @@ EAPI void *ephysics_body_data_get(const EPhysics_Body *body);
  * @param body The physics body which over the force will be applied.
  * @param x The axis x component of force.
  * @param y The axis y component of force.
+ * @param z The axis z component of force.
  *
  * @see ephysics_body_torque_apply().
  * @see ephysics_body_force_apply().
  * @see ephysics_body_forces_get().
+ * @see ephysics_body_torques_get().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y);
+EAPI void ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y, double z);
 
 /**
  * @brief
@@ -2913,17 +2915,24 @@ EAPI void ephysics_body_central_force_apply(EPhysics_Body *body, double x, doubl
  * And the body will rotate around Z axis considering this angular velocity.
  *
  * @param body The physics body that will receive the torque.
- * @param torque Torque to change angular acceleration of the body around Z
+ * @param torque_x Torque to change angular acceleration of the body around X
+ * axis (rotate on y - z plane).
+ * Negative values will accelerate it on counter clockwise rotation.
+ * @param torque_y Torque to change angular acceleration of the body around Y
+ * axis (rotate on x - z plane).
+ * Negative values will accelerate it on counter clockwise rotation.
+ * @param torque_z Torque to change angular acceleration of the body around Z
  * axis (rotate on x - y plane).
  * Negative values will accelerate it on counter clockwise rotation.
  *
  * @see ephysics_body_central_force_apply().
  * @see ephysics_body_force_apply().
  * @see ephysics_body_forces_get().
+ * @see ephysics_body_torques_get().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_torque_apply(EPhysics_Body *body, double torque);
+EAPI void ephysics_body_torque_apply(EPhysics_Body *body, double torque_x, double torque_y, double torque_z);
 
 /**
  * @brief
@@ -2938,15 +2947,17 @@ EAPI void ephysics_body_torque_apply(EPhysics_Body *body, double torque);
  * @ref ephysics_body_torque_apply(), or can be used to lead to both
  * behaviors with @ref ephysics_body_force_apply().
  *
- * It will result in a central force with force (@p x, @p y) and a
+ * It will result in a central force with force (@p x, @p y, @p z) and a
  * torque that will be calculated as a cross product on force
  * and relative position.
  *
  * @param body The physics body that will receive the impulse.
  * @param x The axis x component of force.
  * @param y The axis y component of force.
+ * @param z The axis z component of force.
  * @param pos_x The axis x component of the relative position to apply force.
  * @param pos_y The axis y component of the relative position to apply force.
+ * @param pos_z The axis z component of the relative position to apply force.
  *
  * @note Force is measured in kg * p / s / s and position in p (pixels, or
  * Evas coordinates).
@@ -2954,10 +2965,11 @@ EAPI void ephysics_body_torque_apply(EPhysics_Body *body, double torque);
  * @see ephysics_body_central_force_apply().
  * @see ephysics_body_torque_apply().
  * @see ephysics_body_forces_get().
+ * @see ephysics_body_torques_get().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Evas_Coord pos_x, Evas_Coord pos_y);
+EAPI void ephysics_body_force_apply(EPhysics_Body *body, double x, double y, double z, Evas_Coord pos_x, Evas_Coord pos_y, Evas_Coord pos_z);
 
 /**
  * @brief
@@ -2969,17 +2981,38 @@ EAPI void ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Eva
  * @param body The physics body.
  * @param x The axis x component of total force.
  * @param y The axis y component of total force.
- * @param torque The torque.
+ * @param z The axis z component of total force.
  *
  * @see ephysics_body_force_apply() for more details.
  * @see ephysics_body_central_force_apply().
  * @see ephysics_body_torque_apply().
+ * @see ephysics_body_torques_get().
  * @see ephysics_body_forces_clear().
  * @see ephysics_world_gravity_set().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double *torque);
+EAPI void ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double *z);
+
+/**
+ * @brief
+ * Get physics body torques.
+ *
+ * Get all the torques applied over a body.
+ * Damping is not considered.
+ *
+ * @param body The physics body.
+ * @param x The torque on x axis.
+ * @param y The torque on y axis.
+ * @param z The torque on z axis.
+ *
+ * @see ephysics_body_torque_apply() for more details.
+ * @see ephysics_body_force_apply().
+ * @see ephysics_body_forces_clear().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_torques_get(const EPhysics_Body *body, double *x, double *y, double *z);
 
 /**
  * @brief
@@ -2999,6 +3032,7 @@ EAPI void ephysics_body_forces_get(const EPhysics_Body *body, double *x, double 
  * @see ephysics_body_torque_apply().
  * @see ephysics_body_force_apply().
  * @see ephysics_body_forces_get().
+ * @see ephysics_body_torques_get().
  *
  * @ingroup EPhysics_Body
  */

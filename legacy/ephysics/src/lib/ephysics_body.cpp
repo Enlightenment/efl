@@ -467,7 +467,10 @@ _ephysics_body_forces_update(EPhysics_Body *body)
 {
    body->force.x = body->rigid_body->getTotalForce().getX();
    body->force.y = body->rigid_body->getTotalForce().getY();
-   body->force.torque = body->rigid_body->getTotalTorque().getZ();
+   body->force.z = body->rigid_body->getTotalForce().getZ();
+   body->force.torque_x = body->rigid_body->getTotalTorque().getX();
+   body->force.torque_y = body->rigid_body->getTotalTorque().getY();
+   body->force.torque_z = body->rigid_body->getTotalTorque().getZ();
    body->rigid_body->clearForces();
 }
 
@@ -1074,14 +1077,19 @@ ephysics_body_forces_apply(EPhysics_Body *body)
 {
    double rate;
 
-   if (!((body->force.x) || (body->force.y) || (body->force.torque)))
+   if (!((body->force.x) || (body->force.y) || (body->force.z) ||
+         (body->force.torque_x) || (body->force.torque_y) ||
+         (body->force.torque_z)))
        return;
 
    rate = ephysics_world_rate_get(body->world);
    ephysics_body_activate(body, EINA_TRUE);
    body->rigid_body->applyCentralForce(btVector3(body->force.x / rate,
-                                                 body->force.y / rate, 0));
-   body->rigid_body->applyTorque(btVector3(0, 0, body->force.torque));
+                                                 body->force.y / rate,
+                                                 body->force.z / rate));
+   body->rigid_body->applyTorque(btVector3(body->force.torque_x,
+                                           body->force.torque_y,
+                                           body->force.torque_z));
 }
 
 void
@@ -2607,7 +2615,7 @@ ephysics_body_data_get(const EPhysics_Body *body)
 }
 
 EAPI void
-ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y)
+ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y, double z)
 {
    double rate;
 
@@ -2620,13 +2628,14 @@ ephysics_body_central_force_apply(EPhysics_Body *body, double x, double y)
    ephysics_world_lock_take(body->world);
    rate = ephysics_world_rate_get(body->world);
    ephysics_body_forces_apply(body);
-   body->rigid_body->applyCentralForce(btVector3(x / rate, - y / rate, 0));
+   body->rigid_body->applyCentralForce(btVector3(x / rate, - y / rate,
+                                                 z / rate));
    _ephysics_body_forces_update(body);
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
-ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Evas_Coord pos_x, Evas_Coord pos_y)
+ephysics_body_force_apply(EPhysics_Body *body, double x, double y, double z, Evas_Coord pos_x, Evas_Coord pos_y, Evas_Coord pos_z)
 {
    double rate;
 
@@ -2639,15 +2648,16 @@ ephysics_body_force_apply(EPhysics_Body *body, double x, double y, Evas_Coord po
    rate = ephysics_world_rate_get(body->world);
    ephysics_world_lock_take(body->world);
    ephysics_body_forces_apply(body);
-   body->rigid_body->applyForce(btVector3(x / rate, - y / rate, 0),
+   body->rigid_body->applyForce(btVector3(x / rate, - y / rate, z / rate),
                                 btVector3((double) pos_x / rate,
-                                          (double) pos_y / rate, 0));
+                                          (double) pos_y / rate,
+                                          (double) pos_z / rate));
    _ephysics_body_forces_update(body);
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
-ephysics_body_torque_apply(EPhysics_Body *body, double torque)
+ephysics_body_torque_apply(EPhysics_Body *body, double torque_x, double torque_y, double torque_z)
 {
    if (!body)
      {
@@ -2657,15 +2667,15 @@ ephysics_body_torque_apply(EPhysics_Body *body, double torque)
 
    ephysics_world_lock_take(body->world);
    ephysics_body_forces_apply(body);
-   body->rigid_body->applyTorque(btVector3(0, 0, -torque));
+   body->rigid_body->applyTorque(btVector3(-torque_x, -torque_y, -torque_z));
    _ephysics_body_forces_update(body);
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
-ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double *torque)
+ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
-   double rate, gx, gy;
+   double rate, gx, gy, gz;
 
    if (!body)
      {
@@ -2674,11 +2684,25 @@ ephysics_body_forces_get(const EPhysics_Body *body, double *x, double *y, double
      }
 
    rate = ephysics_world_rate_get(body->world);
-   ephysics_world_gravity_get(body->world, &gx, &gy, NULL);
+   ephysics_world_gravity_get(body->world, &gx, &gy, &gz);
 
    if (x) *x = body->force.x * rate + gx;
    if (y) *y = -body->force.y * rate + gy;
-   if (torque) *torque = -body->force.torque;
+   if (z) *z = body->force.z * rate + gz;
+}
+
+EAPI void
+ephysics_body_torques_get(const EPhysics_Body *body, double *x, double *y, double *z)
+{
+   if (!body)
+     {
+        ERR("Can't get torques from a null body.");
+        return;
+     }
+
+   if (x) *x = -body->force.torque_x;
+   if (y) *y = -body->force.torque_y;
+   if (z) *z = -body->force.torque_z;
 }
 
 EAPI void
@@ -2692,7 +2716,10 @@ ephysics_body_forces_clear(EPhysics_Body *body)
 
    body->force.x = 0;
    body->force.y = 0;
-   body->force.torque = 0;
+   body->force.z = 0;
+   body->force.torque_x = 0;
+   body->force.torque_y = 0;
+   body->force.torque_z = 0;
 }
 
 EAPI void

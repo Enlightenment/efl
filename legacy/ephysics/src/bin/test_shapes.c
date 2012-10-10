@@ -51,7 +51,7 @@ _world_populate(Test_Data *test_data)
    ephysics_body_evas_object_set(hexagon_body, hexagon, EINA_TRUE);
    ephysics_body_restitution_set(hexagon_body, 1);
    test_data->bodies = eina_list_append(test_data->bodies, hexagon_body);
-   ephysics_body_torque_apply(hexagon_body, -3);
+   ephysics_body_torque_apply(hexagon_body, 0, 0, -3);
 
    ephysics_shape_del(pentagon_shape);
    ephysics_shape_del(hexagon_shape);

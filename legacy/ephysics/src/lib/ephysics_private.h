@@ -93,7 +93,10 @@ struct _EPhysics_Body {
      struct {
           double x;
           double y;
-          double torque;
+          double z;
+          double torque_x;
+          double torque_y;
+          double torque_z;
      } force;
      struct {
           double x;

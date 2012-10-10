@@ -22,7 +22,7 @@ _increase_torque_cb(void *data)
    EPhysics_Body *body = data;
    Evas_Object *obj;
 
-   ephysics_body_torque_apply(body, 2);
+   ephysics_body_torque_apply(body, 0, 0, 2);
    obj = ephysics_body_evas_object_get(body);
    evas_object_data_set(obj, "increase_timer", NULL);
 
@@ -70,7 +70,7 @@ _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info _
 
    ephysics_body_rotation_get(body, NULL, NULL, &rot);
    ephysics_body_angular_velocity_get(body, NULL, NULL, &vrot);
-   ephysics_body_forces_get(body, NULL, NULL, &torque);
+   ephysics_body_torques_get(body, NULL, NULL, &torque);
 
    ephysics_body_evas_object_update(body);
 
@@ -154,7 +154,7 @@ _world_populate(Test_Data *test_data)
                                     EPHYSICS_CALLBACK_BODY_UPDATE,
                                     _update_object_cb, NULL);
 
-   ephysics_body_torque_apply(body, 2);
+   ephysics_body_torque_apply(body, 0, 0, 2);
    ephysics_body_event_callback_add(body,
                                     EPHYSICS_CALLBACK_BODY_DEL,
                                     _del_torque_cb, cube);
