@@ -1216,8 +1216,9 @@ evas_object_smart_need_bounding_box_update(Evas_Object *eo_obj)
 }
 
 void
-evas_object_smart_bouding_box_update(Evas_Object *eo_obj)
+evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
+   Evas_Object_Smart *os;
    Eina_Inlist *list;
    Evas_Object_Protected_Data *o;
    Evas_Coord minx;
@@ -1228,8 +1229,8 @@ evas_object_smart_bouding_box_update(Evas_Object *eo_obj)
    MAGIC_CHECK(eo_obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
-   Evas_Object_Smart *os = eo_data_get(eo_obj, MY_CLASS);
+
+   os = eo_data_get(eo_obj, MY_CLASS);
 
    if (!os->update_boundingbox_needed) return ;
    os->update_boundingbox_needed = EINA_FALSE;
@@ -1250,7 +1251,7 @@ evas_object_smart_bouding_box_update(Evas_Object *eo_obj)
 
         if (eo_isa(o->object, EVAS_OBJ_SMART_CLASS))
           {
-             evas_object_smart_bouding_box_update(o->object);
+             evas_object_smart_bounding_box_update(o->object, o);
 
              tx = o->cur.bounding_box.x;
              ty = o->cur.bounding_box.y;

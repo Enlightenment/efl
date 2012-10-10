@@ -204,26 +204,20 @@ evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
 
-   Evas_Object_Protected_Data *cur_clipper = NULL;
-   Evas_Object_Protected_Data *prev_clipper = NULL;
    if (obj->is_smart) return;
    if (obj->cur.clipper == obj->prev.clipper) return;
-   if (obj->cur.clipper)
-      cur_clipper = eo_data_get(obj->cur.clipper, MY_CLASS);
-   if (obj->prev.clipper)
-      prev_clipper = eo_data_get(obj->prev.clipper, MY_CLASS);
    if ((obj->cur.clipper) && (obj->prev.clipper))
      {
         /* get difference rects between clippers */
         evas_rects_return_difference_rects(rects,
-                                           cur_clipper->cur.cache.clip.x,
-                                           cur_clipper->cur.cache.clip.y,
-                                           cur_clipper->cur.cache.clip.w,
-                                           cur_clipper->cur.cache.clip.h,
-                                           prev_clipper->prev.cache.clip.x,
-                                           prev_clipper->prev.cache.clip.y,
-                                           prev_clipper->prev.cache.clip.w,
-                                           prev_clipper->prev.cache.clip.h);
+                                           obj->cur.clipper->cur.cache.clip.x,
+                                           obj->cur.clipper->cur.cache.clip.y,
+                                           obj->cur.clipper->cur.cache.clip.w,
+                                           obj->cur.clipper->cur.cache.clip.h,
+                                           obj->prev.clipper->prev.cache.clip.x,
+                                           obj->prev.clipper->prev.cache.clip.y,
+                                           obj->prev.clipper->prev.cache.clip.w,
+                                           obj->prev.clipper->prev.cache.clip.h);
      }
    else if (obj->cur.clipper)
      {
@@ -236,10 +230,10 @@ evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *eo_obj)
 ////						obj->cur.cache.geometry.y,
 ////						obj->cur.cache.geometry.w,
 ////						obj->cur.cache.geometry.h,
-                                           cur_clipper->cur.cache.clip.x,
-                                           cur_clipper->cur.cache.clip.y,
-                                           cur_clipper->cur.cache.clip.w,
-                                           cur_clipper->cur.cache.clip.h);
+                                           obj->cur.clipper->cur.cache.clip.x,
+                                           obj->cur.clipper->cur.cache.clip.y,
+                                           obj->cur.clipper->cur.cache.clip.w,
+                                           obj->cur.clipper->cur.cache.clip.h);
      }
    else if (obj->prev.clipper)
      {
@@ -252,10 +246,10 @@ evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *eo_obj)
 ////						obj->prev.cache.geometry.y,
 ////						obj->prev.cache.geometry.w,
 ////						obj->prev.cache.geometry.h,
-                                        prev_clipper->prev.cache.clip.x,
-                                        prev_clipper->prev.cache.clip.y,
-                                        prev_clipper->prev.cache.clip.w,
-                                        prev_clipper->prev.cache.clip.h);
+                                        obj->prev.clipper->prev.cache.clip.x,
+                                        obj->prev.clipper->prev.cache.clip.y,
+                                        obj->prev.clipper->prev.cache.clip.w,
+                                        obj->prev.clipper->prev.cache.clip.h);
      }
 }
 
@@ -312,14 +306,13 @@ void
 evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, int is_v, int was_v EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, MY_CLASS);
-   if (!obj) return;
-
    Eina_Rectangle *r;
-   Evas_Object *eo_clipper;
    Eina_List *l;
    unsigned int i;
    Eina_Array_Iterator it;
    int x, y, w, h;
+
+   if (!obj) return;
 
    if (obj->is_smart) goto end;
    /* FIXME: was_v isn't used... why? */
@@ -357,10 +350,11 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
         /* if the object is actually visible, take any parent clip changes */
         if (is_v)
           {
-             eo_clipper = obj->cur.clipper;
-             while (eo_clipper)
+             Evas_Object_Protected_Data *clipper;
+
+             clipper = obj->cur.clipper;
+             while (clipper)
                {
-                  Evas_Object_Protected_Data *clipper = eo_data_get(eo_clipper, MY_CLASS);
                   EINA_LIST_FOREACH(clipper->clip.changes, l, r)
                     {
                        /* get updates and clip to current clip */
@@ -384,7 +378,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
                          obj->layer->evas->engine.func->output_redraws_rect_add(obj->layer->evas->engine.data.output,
                                                                                 x, y, w, h);
                     }
-                  eo_clipper = clipper->cur.clipper;
+                  clipper = clipper->cur.clipper;
                }
           }
      }

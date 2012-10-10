@@ -95,7 +95,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
                   else
                     {
                        if (!obj->child_has_map)
-                         evas_object_smart_bouding_box_update(eo_obj);
+                         evas_object_smart_bounding_box_update(eo_obj, obj);
                        if (obj->child_has_map ||
                            (obj->cur.bounding_box.x <= x &&
                             obj->cur.bounding_box.x + obj->cur.bounding_box.w >= x &&

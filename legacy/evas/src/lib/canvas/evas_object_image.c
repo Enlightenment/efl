@@ -2703,7 +2703,7 @@ _proxy_subrender(Evas *eo_e, Evas_Object *eo_source)
    e->engine.func->context_free(e->engine.data.output, ctx);
 
    ctx = e->engine.func->context_new(e->engine.data.output);
-   evas_render_mapped(eo_e, eo_source, source, ctx, source->proxy.surface,
+   evas_render_mapped(e, eo_source, source, ctx, source->proxy.surface,
                       -source->cur.geometry.x,
                       -source->cur.geometry.y,
                       1, 0, 0, e->output.w, e->output.h
@@ -3556,10 +3556,9 @@ evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
-        Evas_Object_Protected_Data *clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
 	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.clipper, clipper);
-	clipper->func->render_pre(obj->cur.clipper, clipper);
+	  evas_object_clip_recalc(obj->cur.eo_clipper, obj->cur.clipper);
+	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
      }
    /* Proxy: Do it early */
    if (o->cur.source)
@@ -3797,12 +3796,11 @@ evas_object_image_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         h = obj->cur.cache.clip.h;
         if (obj->cur.clipper)
           {
-             Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
              RECTS_CLIP_TO_RECT(x, y, w, h,
-                                cur_clipper->cur.cache.clip.x,
-                                cur_clipper->cur.cache.clip.y,
-                                cur_clipper->cur.cache.clip.w,
-                                cur_clipper->cur.cache.clip.h);
+                                obj->cur.clipper->cur.cache.clip.x,
+                                obj->cur.clipper->cur.cache.clip.y,
+                                obj->cur.clipper->cur.cache.clip.w,
+                                obj->cur.clipper->cur.cache.clip.h);
           }
         e->engine.func->output_redraws_rect_del(e->engine.data.output,
                                                 x, y, w, h);

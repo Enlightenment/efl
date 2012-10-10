@@ -528,7 +528,8 @@ struct _Evas_Object_Protected_Data
 
    struct {
       Evas_Map             *map;
-      Evas_Object          *clipper;
+      Evas_Object_Protected_Data *clipper;
+      Evas_Object          *eo_clipper;
       Evas_Object          *mask;
       Evas_Object          *map_parent;
       double                scale;
@@ -1023,7 +1024,7 @@ void evas_object_smart_member_stack_below(Evas_Object *member, Evas_Object *othe
 const Eina_Inlist *evas_object_smart_members_get_direct(const Evas_Object *obj);
 void _evas_object_smart_members_all_del(Evas_Object *obj);
 void evas_call_smarts_calculate(Evas *e);
-void evas_object_smart_bouding_box_update(Evas_Object *obj);
+void evas_object_smart_bounding_box_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 void evas_object_smart_need_bounding_box_update(Evas_Object *obj);
 void *evas_mem_calloc(int size);
 void _evas_post_event_callback_call(Evas *e, Evas_Public_Data* e_pd);
@@ -1227,7 +1228,7 @@ void _evas_unwalk(Evas_Public_Data *e_pd);
 EAPI int _evas_module_engine_inherit(Evas_Func *funcs, char *name);
 EAPI const char *_evas_module_libdir_get(void);
          
-Eina_Bool evas_render_mapped(Evas *e, Evas_Object *obj, Evas_Object_Protected_Data *source_pd,
+Eina_Bool evas_render_mapped(Evas_Public_Data *e, Evas_Object *obj, Evas_Object_Protected_Data *source_pd,
                              void *context, void *surface,
                              int off_x, int off_y, int mapped,
                              int ecx, int ecy, int ecw, int ech

@@ -709,10 +709,9 @@ evas_object_textgrid_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
-        Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
 	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.clipper, cur_clipper);
-	cur_clipper->func->render_pre(obj->cur.clipper, cur_clipper);
+	  evas_object_clip_recalc(obj->cur.eo_clipper, obj->cur.clipper);
+	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */

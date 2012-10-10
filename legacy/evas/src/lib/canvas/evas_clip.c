@@ -42,9 +42,7 @@ evas_object_clippers_was_visible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pr
      {
 	if (obj->prev.clipper)
           {
-             Evas_Object_Protected_Data *prev_clipper =
-                eo_data_get(obj->prev.clipper, EVAS_OBJ_CLASS);
-             return evas_object_clippers_is_visible(obj->prev.clipper, prev_clipper);
+             return evas_object_clippers_is_visible(obj->prev.eo_clipper, obj->prev.clipper);
           }
 	return 1;
      }
@@ -127,8 +125,7 @@ evas_object_clip_across_check(Evas_Object *eo_obj, Evas_Object_Protected_Data *o
 {
 #ifdef MAP_ACROSS
    if (!obj->cur.clipper) return;
-   Evas_Object_Protected_Data *clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
-   if (clipper->cur.map_parent != obj->cur.map_parent)
+   if (obj->cur.clipper->cur.map_parent != obj->cur.map_parent)
       evas_object_child_map_across_mark(eo_obj, obj, obj->cur.map_parent, 1);
 #endif
 }
@@ -198,18 +195,22 @@ evas_object_clip_set(
 void
 _clip_set(Eo *eo_obj, void *_pd, va_list *list)
 {
+   Evas_Object_Protected_Data *clip;
    Evas_Object *eo_clip = va_arg(*list, Evas_Object *);
    Evas_Object_Protected_Data *obj = _pd;
+
    if (!eo_clip)
      {
         evas_object_clip_unset(eo_obj);
         return;
      }
+
    MAGIC_CHECK(eo_clip, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   Evas_Object_Protected_Data *clip = eo_data_get(eo_clip, EVAS_OBJ_CLASS);
-   if (obj->cur.clipper == eo_clip) return;
+
+   clip = eo_data_get(eo_clip, EVAS_OBJ_CLASS);
+   if (obj->cur.eo_clipper == eo_clip) return;
    if (eo_obj == eo_clip)
      {
         CRIT("Setting clip %p on itself", eo_obj);
@@ -255,21 +256,21 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
    if (obj->cur.clipper)
      {
 	/* unclip */
-        Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
-        cur_clipper->clip.clipees = eina_list_remove(cur_clipper->clip.clipees, eo_obj);
-        if (!cur_clipper->clip.clipees)
+        obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, eo_obj);
+        if (!obj->cur.clipper->clip.clipees)
           {
-             cur_clipper->cur.have_clipees = 0;
-             if (cur_clipper->cur.visible)
-               evas_damage_rectangle_add(cur_clipper->layer->evas->evas,
-                                         cur_clipper->cur.geometry.x,
-                                         cur_clipper->cur.geometry.y,
-                                         cur_clipper->cur.geometry.w,
-                                         cur_clipper->cur.geometry.h);
+             obj->cur.clipper->cur.have_clipees = 0;
+             if (obj->cur.clipper->cur.visible)
+               evas_damage_rectangle_add(obj->cur.clipper->layer->evas->evas,
+                                         obj->cur.clipper->cur.geometry.x,
+                                         obj->cur.clipper->cur.geometry.y,
+                                         obj->cur.clipper->cur.geometry.w,
+                                         obj->cur.clipper->cur.geometry.h);
           }
-        evas_object_change(obj->cur.clipper, cur_clipper);
+        evas_object_change(obj->cur.eo_clipper, obj->cur.clipper);
         evas_object_change(eo_obj, obj);
         obj->cur.clipper = NULL;
+	obj->cur.eo_clipper = NULL;	
      }
    /* clip me */
    if ((!clip->clip.clipees) && (clip->cur.visible))
@@ -281,7 +282,8 @@ _clip_set(Eo *eo_obj, void *_pd, va_list *list)
                                   clip->cur.geometry.x, clip->cur.geometry.y,
                                   clip->cur.geometry.w, clip->cur.geometry.h);
      }
-   obj->cur.clipper = eo_clip;
+   obj->cur.eo_clipper = eo_clip;
+   obj->cur.clipper = clip;
    clip->clip.clipees = eina_list_append(clip->clip.clipees, eo_obj);
    if (clip->clip.clipees)
      {
@@ -339,7 +341,7 @@ _clip_get(Eo *eo_obj EINA_UNUSED, void *_pd, va_list *list)
 {
    Evas_Object **clip = va_arg(*list, Evas_Object **);
    const Evas_Object_Protected_Data *obj = _pd;
-   *clip = obj->cur.clipper;
+   *clip = obj->cur.eo_clipper;
 }
 
 EAPI void
@@ -355,6 +357,7 @@ void
 _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
 {
    Evas_Object_Protected_Data *obj = _pd;
+
    if (!obj->cur.clipper) return;
    /* unclip */
    if (evas_object_intercept_call_clip_unset(eo_obj)) return;
@@ -364,21 +367,21 @@ _clip_unset(Eo *eo_obj, void *_pd, va_list *list EINA_UNUSED)
      }
    if (obj->cur.clipper)
      {
-        Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
-        cur_clipper->clip.clipees = eina_list_remove(cur_clipper->clip.clipees, eo_obj);
-        if (!cur_clipper->clip.clipees)
+        obj->cur.clipper->clip.clipees = eina_list_remove(obj->cur.clipper->clip.clipees, eo_obj);
+        if (!obj->cur.clipper->clip.clipees)
           {
-             cur_clipper->cur.have_clipees = 0;
-             if (cur_clipper->cur.visible)
-                evas_damage_rectangle_add(cur_clipper->layer->evas->evas,
-                                         cur_clipper->cur.geometry.x,
-                                         cur_clipper->cur.geometry.y,
-                                         cur_clipper->cur.geometry.w,
-                                         cur_clipper->cur.geometry.h);
+             obj->cur.clipper->cur.have_clipees = 0;
+             if (obj->cur.clipper->cur.visible)
+                evas_damage_rectangle_add(obj->cur.clipper->layer->evas->evas,
+                                         obj->cur.clipper->cur.geometry.x,
+                                         obj->cur.clipper->cur.geometry.y,
+                                         obj->cur.clipper->cur.geometry.w,
+                                         obj->cur.clipper->cur.geometry.h);
           }
-	evas_object_change(obj->cur.clipper, cur_clipper);
+	evas_object_change(obj->cur.eo_clipper, obj->cur.clipper);
      }
    obj->cur.clipper = NULL;
+   obj->cur.eo_clipper = NULL;
    evas_object_change(eo_obj, obj);
    evas_object_clip_dirty(eo_obj, obj);
    evas_object_recalc_clippees(eo_obj, obj);

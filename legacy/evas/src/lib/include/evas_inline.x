@@ -2,9 +2,8 @@
 #define EVAS_INLINE_H
 
 static inline Eina_Bool
-_evas_render_has_map(Evas_Object *eo_obj)
+_evas_render_has_map(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    return ((!((obj->func->can_map) && (obj->func->can_map(eo_obj)))) &&
            ((obj->cur.map) && (obj->cur.usemap)));
    //   return ((obj->cur.map) && (obj->cur.usemap));
@@ -127,11 +126,10 @@ evas_object_clippers_is_visible(Evas_Object *eo_obj __UNUSED__, Evas_Object_Prot
 {
    if (obj->cur.visible)
      {
-        Evas_Object_Protected_Data *clipper_pd = NULL;
         if (obj->cur.clipper)
           {
-             clipper_pd = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
-             return evas_object_clippers_is_visible(obj->cur.clipper, clipper_pd);
+             return evas_object_clippers_is_visible(obj->cur.eo_clipper,
+                                                    obj->cur.clipper);
           }
         return 1;
      }
@@ -205,13 +203,12 @@ evas_object_coords_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 static inline void
 evas_object_clip_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
+   Evas_Object_Protected_Data *clipper = NULL;
    int cx, cy, cw, ch, cr, cg, cb, ca;
    int nx, ny, nw, nh, nr, ng, nb, na;
    Eina_Bool cvis, nvis;
 
-   Evas_Object_Protected_Data *clipper = NULL;
-   if (obj->cur.clipper)
-      clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
+   clipper = obj->cur.clipper;
 
    if ((!obj->cur.cache.clip.dirty) &&
        !(!obj->cur.clipper || clipper->cur.cache.clip.dirty)) return;
@@ -242,11 +239,11 @@ evas_object_clip_recalc(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    cr = obj->cur.color.r; cg = obj->cur.color.g;
    cb = obj->cur.color.b; ca = obj->cur.color.a;
 
-   if (obj->cur.clipper)
+   if (clipper)
      {
         // this causes problems... hmmm ?????
         if (clipper->cur.cache.clip.dirty)
-          evas_object_clip_recalc(obj->cur.clipper, clipper);
+          evas_object_clip_recalc(obj->cur.eo_clipper, clipper);
 
         // I don't know why this test was here in the first place. As I have
         // no issue showing up due to this, I keep it and move color out of it.

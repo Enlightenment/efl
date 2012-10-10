@@ -1617,12 +1617,11 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 #define COLOR_SET(object, sub, col) \
         if (obj->cur.clipper)\
         { \
-           Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS); \
 	   ENFN->context_color_set(output, context, \
-				((int)object->sub.col.r * ((int)cur_clipper->cur.cache.clip.r + 1)) >> 8, \
-				((int)object->sub.col.g * ((int)cur_clipper->cur.cache.clip.g + 1)) >> 8, \
-				((int)object->sub.col.b * ((int)cur_clipper->cur.cache.clip.b + 1)) >> 8, \
-				((int)object->sub.col.a * ((int)cur_clipper->cur.cache.clip.a + 1)) >> 8); \
+				((int)object->sub.col.r * ((int)obj->cur.clipper->cur.cache.clip.r + 1)) >> 8, \
+				((int)object->sub.col.g * ((int)obj->cur.clipper->cur.cache.clip.g + 1)) >> 8, \
+				((int)object->sub.col.b * ((int)obj->cur.clipper->cur.cache.clip.b + 1)) >> 8, \
+				((int)object->sub.col.a * ((int)obj->cur.clipper->cur.cache.clip.a + 1)) >> 8); \
         } \
         else\
 	   ENFN->context_color_set(output, context, \
@@ -1634,12 +1633,11 @@ evas_object_text_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, vo
 #define COLOR_SET_AMUL(object, sub, col, amul) \
         if (obj->cur.clipper) \
         { \
-            Evas_Object_Protected_Data *cur_clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS); \
 	    ENFN->context_color_set(output, context, \
-				(((int)object->sub.col.r) * ((int)cur_clipper->cur.cache.clip.r) * (amul)) / 65025, \
-				(((int)object->sub.col.g) * ((int)cur_clipper->cur.cache.clip.g) * (amul)) / 65025, \
-				(((int)object->sub.col.b) * ((int)cur_clipper->cur.cache.clip.b) * (amul)) / 65025, \
-				(((int)object->sub.col.a) * ((int)cur_clipper->cur.cache.clip.a) * (amul)) / 65025); \
+				(((int)object->sub.col.r) * ((int)obj->cur.clipper->cur.cache.clip.r) * (amul)) / 65025, \
+				(((int)object->sub.col.g) * ((int)obj->cur.clipper->cur.cache.clip.g) * (amul)) / 65025, \
+				(((int)object->sub.col.b) * ((int)obj->cur.clipper->cur.cache.clip.b) * (amul)) / 65025, \
+				(((int)object->sub.col.a) * ((int)obj->cur.clipper->cur.cache.clip.a) * (amul)) / 65025); \
         } \
         else \
 	    ENFN->context_color_set(output, context, \
@@ -1834,10 +1832,9 @@ evas_object_text_render_pre(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
-        Evas_Object_Protected_Data *clipper = eo_data_get(obj->cur.clipper, EVAS_OBJ_CLASS);
 	if (obj->cur.cache.clip.dirty)
-	  evas_object_clip_recalc(obj->cur.clipper, clipper);
-	clipper->func->render_pre(obj->cur.clipper, clipper);
+	  evas_object_clip_recalc(obj->cur.eo_clipper, obj->cur.clipper);
+	obj->cur.clipper->func->render_pre(obj->cur.eo_clipper, obj->cur.clipper);
      }
    /* now figure what changed and add draw rects
     if it just became visible or invisible */
