@@ -130,13 +130,13 @@ test_jumping_balls(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    ephysics_world_event_callback_add(world, EPHYSICS_CALLBACK_WORLD_STOPPED,
                                      _world_stopped_cb, bt);
 
-   boundary = ephysics_body_bottom_boundary_add(test_data->world);
+   boundary = ephysics_body_bottom_boundary_add(test_data->world, 10);
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 2);
 
-   ephysics_body_top_boundary_add(test_data->world);
-   ephysics_body_left_boundary_add(test_data->world);
-   ephysics_body_right_boundary_add(test_data->world);
+   ephysics_body_top_boundary_add(test_data->world, 10);
+   ephysics_body_left_boundary_add(test_data->world, 10);
+   ephysics_body_right_boundary_add(test_data->world, 10);
 
    _world_populate(test_data);
 }

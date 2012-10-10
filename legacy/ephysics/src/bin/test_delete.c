@@ -176,12 +176,12 @@ test_delete(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
    collision_data->base.world = world;
 
-   boundary = ephysics_body_bottom_boundary_add(collision_data->base.world);
+   boundary = ephysics_body_bottom_boundary_add(collision_data->base.world, 10);
    ephysics_body_restitution_set(boundary, 0);
    ephysics_body_friction_set(boundary, 20);
 
-   ephysics_body_left_boundary_add(collision_data->base.world);
-   ephysics_body_right_boundary_add(collision_data->base.world);
+   ephysics_body_left_boundary_add(collision_data->base.world, 10);
+   ephysics_body_right_boundary_add(collision_data->base.world, 10);
 
    _world_populate(collision_data);
 

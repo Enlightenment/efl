@@ -846,11 +846,12 @@ _sandie_world_add(Evas_Object *win)
    world = ephysics_world_new();
    ephysics_world_render_geometry_set(world, 80, 80, (int) WIDTH * 0.7 - 160,
                                       HEIGHT - 160);
-   evas_object_data_set(win, "top", ephysics_body_top_boundary_add(world));
+   evas_object_data_set(win, "top", ephysics_body_top_boundary_add(world, 10));
    evas_object_data_set(win, "bottom",
-                        ephysics_body_bottom_boundary_add(world));
-   evas_object_data_set(win, "left", ephysics_body_left_boundary_add(world));
-   evas_object_data_set(win, "right", ephysics_body_right_boundary_add(world));
+                        ephysics_body_bottom_boundary_add(world, 10));
+   evas_object_data_set(win, "left", ephysics_body_left_boundary_add(world, 10));
+   evas_object_data_set(win, "right", ephysics_body_right_boundary_add(world,
+                                                                       10));
 
    return world;
 }

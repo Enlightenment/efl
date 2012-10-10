@@ -91,19 +91,19 @@ test_bouncing_ball(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
    test_data->world = world;
 
-   boundary = ephysics_body_bottom_boundary_add(test_data->world);
+   boundary = ephysics_body_bottom_boundary_add(test_data->world, 10);
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 4);
 
-   boundary = ephysics_body_right_boundary_add(test_data->world);
+   boundary = ephysics_body_right_boundary_add(test_data->world, 10);
    ephysics_body_restitution_set(boundary, 0.4);
    ephysics_body_friction_set(boundary, 3);
 
-   boundary = ephysics_body_left_boundary_add(test_data->world);
+   boundary = ephysics_body_left_boundary_add(test_data->world, 10);
    ephysics_body_restitution_set(boundary, 0.4);
    ephysics_body_friction_set(boundary, 3);
 
-   ephysics_body_top_boundary_add(test_data->world);
+   ephysics_body_top_boundary_add(test_data->world, 10);
 
    _world_populate(test_data);
    elm_object_event_callback_add(test_data->win, _on_keydown, test_data->data);
