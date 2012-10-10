@@ -214,11 +214,16 @@ EAPI void ephysics_shape_del(EPhysics_Shape *shape);
  * @code
  * EPhysics_Shape *shape = ephysics_shape_new();
  *
- * ephysics_shape_point_add(shape, 0, 24);
- * ephysics_shape_point_add(shape, 35, 0);
- * ephysics_shape_point_add(shape, 70, 24);
- * ephysics_shape_point_add(shape, 56, 66);
- * ephysics_shape_point_add(shape, 14, 66);
+ * ephysics_shape_point_add(shape, 0, 24, -10);
+ * ephysics_shape_point_add(shape, 0, 24, 10);
+ * ephysics_shape_point_add(shape, 35, 0, -10);
+ * ephysics_shape_point_add(shape, 35, 0, 10);
+ * ephysics_shape_point_add(shape, 70, 24, -10);
+ * ephysics_shape_point_add(shape, 70, 24, 10);
+ * ephysics_shape_point_add(shape, 56, 66, -10);
+ * ephysics_shape_point_add(shape, 56, 66, 10);
+ * ephysics_shape_point_add(shape, 14, 66, -10);
+ * ephysics_shape_point_add(shape, 14, 66, 10);
  *
  * ephysics_body_shape_add(world, shape);
  *
@@ -228,13 +233,14 @@ EAPI void ephysics_shape_del(EPhysics_Shape *shape);
  * @param shape The shape to be modified.
  * @param x Point position at x axis.
  * @param y Point position at y axis.
+ * @param z Point position at z axis.
  * @return @c EINA_TRUE on success or EINA_FALSE on error.
  *
  * @see ephysics_shape_new().
  *
  * @ingroup EPhysics_Shape
  */
-EAPI Eina_Bool ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y);
+EAPI Eina_Bool ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y, double z);
 
 /**
  * @brief
@@ -1765,7 +1771,7 @@ EAPI void ephysics_body_cloth_anchor_del(EPhysics_Body *body);
  * @ref ephysics_shape_new().
  *
  * To change it's size @ref ephysics_body_geometry_set() should be used,
- * so it can be deformed on x and y axes.
+ * so it can be deformed on x, y and z axes.
  *
  * The center of mass of this body can be get with
  * @ref ephysics_body_center_mass_get().
@@ -3043,14 +3049,14 @@ EAPI void ephysics_body_forces_clear(EPhysics_Body *body);
  * Get the center of mass of physics body.
  *
  * It returns a value from 0 to 1 representing where is the center of the mass
- * considering the height and width of the body.
+ * considering the height, width and depth of the body.
  *
- * If a body of width = 30 and height = 20 has the center of mass at
- * center of mass x component = 20 and y component = 10, it will return
- * @p x = 0.666 and @p y = 0.5.
+ * If a body of width = 30, height = 20 and depth = 20, and has the center of
+ * mass at x component = 20, y component = 10 and z = 10, it will return
+ * @p x = 0.666, @p y = 0.5 and @z = 0.5.
  *
  * For primitive shapes, like box and circle, the center of mass
- * is (0.5, 0.5).
+ * is (0.5, 0.5, 0.5).
  *
  * This function can be useful when updating evas objects for bodies
  * with custom shapes.
@@ -3058,12 +3064,13 @@ EAPI void ephysics_body_forces_clear(EPhysics_Body *body);
  * @param body The physics body.
  * @param x The axis x component of center of mass.
  * @param y The axis y component of center of mass.
+ * @param z The axis z component of center of mass.
  *
  * @see ephysics_body_shape_add().
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y);
+EAPI void ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y, double *z);
 
 /**
  * @brief

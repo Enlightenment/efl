@@ -70,7 +70,7 @@ ephysics_shape_del(EPhysics_Shape *shape)
 }
 
 EAPI Eina_Bool
-ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y)
+ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y, double z)
 {
    EPhysics_Point *point;
 
@@ -86,6 +86,7 @@ ephysics_shape_point_add(EPhysics_Shape *shape, double x, double y)
 
    point->x = x;
    point->y = y;
+   point->z = z;
 
    shape->points = eina_inlist_append(shape->points, EINA_INLIST_GET(point));
 

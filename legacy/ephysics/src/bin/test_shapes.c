@@ -20,11 +20,16 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, pentagon);
 
    pentagon_shape = ephysics_shape_new();
-   ephysics_shape_point_add(pentagon_shape, -1, -9/33.);
-   ephysics_shape_point_add(pentagon_shape, 0, -1);
-   ephysics_shape_point_add(pentagon_shape, 1, -9/33.);
-   ephysics_shape_point_add(pentagon_shape, -21/35., 1);
-   ephysics_shape_point_add(pentagon_shape, 21/35., 1);
+   ephysics_shape_point_add(pentagon_shape, -1, -9/33., -1);
+   ephysics_shape_point_add(pentagon_shape, -1, -9/33., 1);
+   ephysics_shape_point_add(pentagon_shape, 0, -1, -1);
+   ephysics_shape_point_add(pentagon_shape, 0, -1, 1);
+   ephysics_shape_point_add(pentagon_shape, 1, -9/33., -1);
+   ephysics_shape_point_add(pentagon_shape, 1, -9/33., 1);
+   ephysics_shape_point_add(pentagon_shape, -21/35., 1, -1);
+   ephysics_shape_point_add(pentagon_shape, -21/35., 1, 1);
+   ephysics_shape_point_add(pentagon_shape, 21/35., 1, -1);
+   ephysics_shape_point_add(pentagon_shape, 21/35., 1, 1);
 
    pentagon_body = ephysics_body_shape_add(test_data->world, pentagon_shape);
    ephysics_body_evas_object_set(pentagon_body, pentagon, EINA_TRUE);
@@ -40,12 +45,18 @@ _world_populate(Test_Data *test_data)
    test_data->evas_objs = eina_list_append(test_data->evas_objs, hexagon);
 
    hexagon_shape = ephysics_shape_new();
-   ephysics_shape_point_add(hexagon_shape, 0, 30);
-   ephysics_shape_point_add(hexagon_shape, 18, 0);
-   ephysics_shape_point_add(hexagon_shape, 52, 0);
-   ephysics_shape_point_add(hexagon_shape, 70, 30);
-   ephysics_shape_point_add(hexagon_shape, 52, 60);
-   ephysics_shape_point_add(hexagon_shape, 18, 60);
+   ephysics_shape_point_add(hexagon_shape, 0, 30, -10);
+   ephysics_shape_point_add(hexagon_shape, 0, 30, 10);
+   ephysics_shape_point_add(hexagon_shape, 18, 0, -10);
+   ephysics_shape_point_add(hexagon_shape, 18, 0, 10);
+   ephysics_shape_point_add(hexagon_shape, 52, 0, -10);
+   ephysics_shape_point_add(hexagon_shape, 52, 0, 10);
+   ephysics_shape_point_add(hexagon_shape, 70, 30, -10);
+   ephysics_shape_point_add(hexagon_shape, 70, 30, 10);
+   ephysics_shape_point_add(hexagon_shape, 52, 60, -10);
+   ephysics_shape_point_add(hexagon_shape, 52, 60, 10);
+   ephysics_shape_point_add(hexagon_shape, 18, 60, -10);
+   ephysics_shape_point_add(hexagon_shape, 18, 60, 10);
 
    hexagon_body = ephysics_body_shape_add(test_data->world, hexagon_shape);
    ephysics_body_evas_object_set(hexagon_body, hexagon, EINA_TRUE);

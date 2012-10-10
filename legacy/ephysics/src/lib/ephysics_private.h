@@ -63,6 +63,7 @@ struct _EPhysics_Point {
      EINA_INLIST;
      double x;
      double y;
+     double z;
 };
 
 typedef enum _EPhysics_Body_Type
@@ -101,6 +102,7 @@ struct _EPhysics_Body {
      struct {
           double x;
           double y;
+          double z;
      } cm;
      Eina_Bool active:1;
      Eina_Bool deleted:1;

@@ -633,7 +633,7 @@ ephysics_body_collision_group_list_get(const EPhysics_Body *body)
 }
 
 static EPhysics_Body *
-_ephysics_body_new(EPhysics_World *world, btScalar mass, double cm_x, double cm_y)
+_ephysics_body_new(EPhysics_World *world, btScalar mass, double cm_x, double cm_y, double cm_z)
 {
    EPhysics_Body *body;
 
@@ -648,12 +648,13 @@ _ephysics_body_new(EPhysics_World *world, btScalar mass, double cm_x, double cm_
    body->world = world;
    body->cm.x = cm_x;
    body->cm.y = cm_y;
+   body->cm.z = cm_z;
 
    return body;
 }
 
 static EPhysics_Body *
-_ephysics_body_rigid_body_add(EPhysics_World *world, btCollisionShape *collision_shape, const char *type, double cm_x, double cm_y)
+_ephysics_body_rigid_body_add(EPhysics_World *world, btCollisionShape *collision_shape, const char *type, double cm_x, double cm_y, double cm_z)
 {
    btRigidBody::btRigidBodyConstructionInfo *rigid_body_ci;
    btDefaultMotionState *motion_state;
@@ -668,7 +669,7 @@ _ephysics_body_rigid_body_add(EPhysics_World *world, btCollisionShape *collision
         return NULL;
      }
 
-   body = _ephysics_body_new(world, mass, cm_x, cm_y);
+   body = _ephysics_body_new(world, mass, cm_x, cm_y, cm_z);
    if (!body)
      {
         ERR("Couldn't create a new body instance.");
@@ -1273,7 +1274,7 @@ _ephysics_body_soft_body_add(EPhysics_World *world, btCollisionShape *collision_
    EPhysics_Body *body;
 
    body = _ephysics_body_rigid_body_add(world, collision_shape, "soft box", 0.5,
-                                        0.5);
+                                        0.5, 0.5);
    if (!body)
      {
         if (body->deleted) return NULL;
@@ -1411,7 +1412,7 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
         return NULL;
      }
 
-   body = _ephysics_body_new(world, 1, 0.5, 0.5);
+   body = _ephysics_body_new(world, 1, 0.5, 0.5, 0.5);
    if (!body)
      goto no_body;
 
@@ -1530,7 +1531,7 @@ ephysics_body_circle_add(EPhysics_World *world)
 
    ephysics_world_lock_take(world);
    body = _ephysics_body_rigid_body_add(world, collision_shape, "circle", 0.5,
-                                        0.5);
+                                        0.5, 0.5);
    ephysics_world_lock_release(world);
    return body;
 }
@@ -1614,7 +1615,8 @@ ephysics_body_box_add(EPhysics_World *world)
    collision_shape = new btBoxShape(btVector3(0.5, 0.5, 0.5));
 
    ephysics_world_lock_take(world);
-   body = _ephysics_body_rigid_body_add(world, collision_shape, "box", 0.5, 0.5);
+   body = _ephysics_body_rigid_body_add(world, collision_shape, "box", 0.5,
+                                        0.5, 0.5);
    ephysics_world_lock_release(world);
    return body;
 }
@@ -1622,7 +1624,8 @@ ephysics_body_box_add(EPhysics_World *world)
 EAPI EPhysics_Body *
 ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
 {
-   double max_x, max_y, min_x, min_y, cm_x, cm_y, range_x, range_y;
+   double max_x, max_y, max_z, min_x, min_y, min_z, cm_x, cm_y, cm_z,
+          range_x, range_y, range_z;
    btConvexHullShape *full_shape, *simplified_shape;
    btAlignedObjectArray<btVector3> vertexes, planes;
    const Eina_Inlist *points;
@@ -1662,7 +1665,8 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
    point = EINA_INLIST_CONTAINER_GET(points, EPhysics_Point);
    max_x = min_x = point->x;
    max_y = min_y = point->y;
-   cm_x = cm_y = 0;
+   max_z = min_z = point->z;
+   cm_x = cm_y = cm_z = 0;
 
    /* FIXME : only vertices should be used to calculate the center of mass */
    EINA_INLIST_FOREACH(points, point)
@@ -1671,27 +1675,30 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
         if (point->x < min_x) min_x = point->x;
         if (point->y > max_y) max_y = point->y;
         if (point->y < min_y) min_y = point->y;
+        if (point->z > max_z) max_z = point->z;
+        if (point->z < min_z) min_z = point->z;
 
         cm_x += point->x;
         cm_y += point->y;
+        cm_z += point->z;
      }
 
    cm_x /= eina_inlist_count(points);
    cm_y /= eina_inlist_count(points);
+   cm_z /= eina_inlist_count(points);
    range_x = max_x - min_x;
    range_y = max_y - min_y;
+   range_z = max_z - min_z;
 
    EINA_INLIST_FOREACH(points, point)
      {
-        double x, y;
+        double x, y, z;
 
         x = (point->x - cm_x) / range_x;
         y = - (point->y - cm_y) / range_y;
+        z = (point->z - cm_z) / range_z;
 
-        point3d = btVector3(x, y, -0.5);
-        vertexes.push_back(point3d);
-
-        point3d = btVector3(x, y, 0.5);
+        point3d = btVector3(x, y, z);
         vertexes.push_back(point3d);
      }
 
@@ -1732,7 +1739,8 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
    body = _ephysics_body_rigid_body_add(world,
                                         (btCollisionShape *)simplified_shape,
                                         "generic", (cm_x - min_x) / range_x,
-                                        1 - (cm_y - min_y) / range_y);
+                                        1 - (cm_y - min_y) / range_y,
+                                        (cm_z - min_z) / range_z);
    ephysics_world_lock_release(world);
    return body;
 }
@@ -2723,7 +2731,7 @@ ephysics_body_forces_clear(EPhysics_Body *body)
 }
 
 EAPI void
-ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y)
+ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y, double *z)
 {
    if (!body)
      {
@@ -2733,6 +2741,7 @@ ephysics_body_center_mass_get(const EPhysics_Body *body, double *x, double *y)
 
    if (x) *x = body->cm.x;
    if (y) *y = body->cm.y;
+   if (z) *z = body->cm.z;
 }
 
 EAPI void
