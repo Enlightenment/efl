@@ -4,8 +4,6 @@ AM_CPPFLAGS = \
 -I. \
 -I$(top_srcdir)/src/lib/eina \
 -I$(top_builddir)/src/lib/eina \
--I$(top_srcdir)/src/lib/eina \
--I$(top_builddir)/src/lib/eina \
 @EFL_EINA_BUILD@ \
 @VALGRIND_CFLAGS@
 
