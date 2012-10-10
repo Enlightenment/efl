@@ -1112,6 +1112,7 @@ main(int argc, char **argv)
     INF("done");
 on_error_efreet:
     efreet_shutdown();
+    if (theme_ef) eet_close(theme_ef);
 
 on_error:
     if (lockfd >= 0) close(lockfd);
