@@ -631,30 +631,6 @@ AC_MSG_NOTICE([Eet checks])
 
 EFL_ENABLE_BIN([eet])
 
-# Old eet file format support
-
-AC_ARG_ENABLE(old-eet-file-format,
-   [AC_HELP_STRING(
-      [--disable-old-eet-file-format],
-      [disable old eet file format support @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       old_eet_file_format="yes"
-    else
-       old_eet_file_format="no"
-    fi
-   ],
-   [old_eet_file_format="yes"])
-
-AC_MSG_CHECKING([whether to support old eet file format])
-AC_MSG_RESULT([${old_eet_file_format}])
-
-if test "x${old_eet_file_format}" = "xyes" ; then
-   AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 1, [support old eet file format])
-else
-   AC_DEFINE(EET_OLD_EET_FILE_FORMAT, 0, [support old eet file format])
-fi
-
 AC_ARG_WITH([crypto],
    [AC_HELP_STRING([--with-crypto=CRYPTO],
                    [use the predefined build crypto, one of:
@@ -1023,8 +999,6 @@ else
 echo "Eet"
 echo
 echo "  Secure layer.........: ${build_crypto}"
-echo
-echo "  Old eet file format..: ${old_eet_file_format}"
 echo
 echo "  Tests................: make check (Coverage: ${_efl_enable_coverage})"
 echo "  Examples.............: make examples"

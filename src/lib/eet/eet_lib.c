@@ -1042,7 +1042,7 @@ eet_internal_read2(Eet_File *ef)
    return ef;
 }
 
-#if EET_OLD_EET_FILE_FORMAT
+#ifdef EET_OLD_EET_FILE_FORMAT
 static Eet_File *
 eet_internal_read1(Eet_File *ef)
 {
@@ -1224,7 +1224,7 @@ eet_internal_read1(Eet_File *ef)
    return ef;
 }
 
-#endif /* if EET_OLD_EET_FILE_FORMAT */
+#endif /* ifdef EET_OLD_EET_FILE_FORMAT */
 
 /*
  * this should only be called when the cache lock is already held
@@ -1245,11 +1245,11 @@ eet_internal_read(Eet_File *ef)
 
    switch (ntohl(*data))
      {
-#if EET_OLD_EET_FILE_FORMAT
+#ifdef EET_OLD_EET_FILE_FORMAT
       case EET_MAGIC_FILE:
         return eet_internal_read1(ef);
 
-#endif /* if EET_OLD_EET_FILE_FORMAT */
+#endif /* ifdef EET_OLD_EET_FILE_FORMAT */
       case EET_MAGIC_FILE2:
         return eet_internal_read2(ef);
 
