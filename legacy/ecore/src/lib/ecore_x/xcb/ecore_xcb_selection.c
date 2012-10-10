@@ -748,7 +748,7 @@ _ecore_xcb_selection_parser_text(const char *target __UNUSED__,
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Text));
    if (!sel) return NULL;
 
-   if (data && data[size - 1])
+   if (_data && _data[size - 1])
      {
         size++;
         t = realloc(_data, size);
@@ -790,7 +790,7 @@ _ecore_xcb_selection_parser_files(const char *target,
 
    ECORE_XCB_SELECTION_DATA(sel)->free = _ecore_xcb_selection_data_files_free;
 
-   if (data && data[size - 1])
+   if (_data && _data[size - 1])
      {
         size++;
         t = realloc(_data, size);
