@@ -2511,27 +2511,29 @@ ephysics_body_angular_movement_enable_get(const EPhysics_Body *body, Eina_Bool *
    if (enable_z) *enable_z = !!body->rigid_body->getAngularFactor().z();
 }
 
-EAPI double
-ephysics_body_rotation_get(const EPhysics_Body *body)
+EAPI void
+ephysics_body_rotation_get(const EPhysics_Body *body, double *rot_x, double *rot_y, double *rot_z)
 {
    btTransform trans;
-   double rot;
 
    if (!body)
      {
         ERR("Can't get rotation, body is null.");
-        return 0;
+        return;
      }
 
    trans = _ephysics_body_transform_get(body);
-   rot = - trans.getRotation().getAngle() * RAD_TO_DEG *
-      trans.getRotation().getAxis().getZ();
 
-   return rot;
+   if (rot_x) *rot_x = - trans.getRotation().getAngle() * RAD_TO_DEG *
+     trans.getRotation().getAxis().getX();
+   if (rot_y) *rot_y = - trans.getRotation().getAngle() * RAD_TO_DEG *
+     trans.getRotation().getAxis().getY();
+   if (rot_z) *rot_z = - trans.getRotation().getAngle() * RAD_TO_DEG *
+     trans.getRotation().getAxis().getZ();
 }
 
 EAPI void
-ephysics_body_rotation_set(EPhysics_Body *body, double rotation)
+ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, double rot_z)
 {
    btTransform trans;
    btQuaternion quat;
@@ -2546,7 +2548,7 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rotation)
    ephysics_body_activate(body, EINA_TRUE);
    trans = _ephysics_body_transform_get(body);
 
-   quat.setEuler(0, 0, -rotation / RAD_TO_DEG);
+   quat.setEuler(-rot_x / RAD_TO_DEG, -rot_y / RAD_TO_DEG, -rot_z / RAD_TO_DEG);
    trans.setRotation(quat);
 
    if (body->soft_body)
@@ -2555,7 +2557,7 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rotation)
    body->rigid_body->proceedToTransform(trans);
    body->rigid_body->getMotionState()->setWorldTransform(trans);
 
-   DBG("Body %p rotation set to %lf", body, rotation);
+   DBG("Body %p rotation set to (%lf, %lf, %lf)", body, rot_x, rot_y, rot_z);
    ephysics_world_lock_release(body->world);
 }
 

@@ -2769,38 +2769,42 @@ EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Ei
 
 /**
  * @brief
- * Return body's rotation on z axis.
+ * Get body's rotation on x, y and z axes.
  *
- * By default rotation is 0 degrees.
+ * By default rotation is 0 degree on all axes.
  *
  * @note The unit used for rotation is degrees.
  *
  * @param body The physics body.
- * @return The amount of degrees @p body is rotated, from 0.0 to 360.0.
+ * @param rot_x The amount of degrees @p body is rotated on x axis.
+ * @param rot_y The amount of degrees @p body is rotated on y axis.
+ * @param rot_z The amount of degrees @p body is rotated on z axis.
  *
  * @see ephysics_body_rotation_set()
  *
  * @ingroup EPhysics_Body
  */
-EAPI double ephysics_body_rotation_get(const EPhysics_Body *body);
+EAPI void ephysics_body_rotation_get(const EPhysics_Body *body, double *rot_x, double *rot_y, double *rot_z);
 
 /**
  * @brief
  * Set body's rotation on z axis.
  *
- * By default rotation is 0 degrees.
+ * By default rotation is 0 degrees on all axes.
  * Negative values indicates rotation on counter clockwise direction.
  *
  * @note The unit used for rotation is degrees.
  *
  * @param body The physics body.
- * @param rotation The amount of degrees @p body should be rotated.
+ * @param rot_x The amount of degrees @p body should be rotated on x axis.
+ * @param rot_y The amount of degrees @p body should be rotated on y axis.
+ * @param rot_z The amount of degrees @p body should be rotated on z axis.
  *
  * @see ephysics_body_rotation_get()
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_rotation_set(EPhysics_Body *body, double rotation);
+EAPI void ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, double rot_z);
 
 /**
  * @brief

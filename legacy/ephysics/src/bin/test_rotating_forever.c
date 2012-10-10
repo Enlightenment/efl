@@ -10,8 +10,8 @@ _rotate_cb(void *data)
    EPhysics_Body *body = data;
    double rotation;
 
-   rotation = ephysics_body_rotation_get(body);
-   ephysics_body_rotation_set(body, ((int) round(rotation) + 5) % 360);
+   ephysics_body_rotation_get(body, NULL, NULL, &rotation);
+   ephysics_body_rotation_set(body, 0, 0, ((int) round(rotation) + 5) % 360);
 
    return EINA_TRUE;
 }
@@ -68,7 +68,7 @@ _update_object_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info _
 {
    double rot, vrot, torque;
 
-   rot = ephysics_body_rotation_get(body);
+   ephysics_body_rotation_get(body, NULL, NULL, &rot);
    vrot = ephysics_body_angular_velocity_get(body);
    ephysics_body_forces_get(body, NULL, NULL, &torque);
 

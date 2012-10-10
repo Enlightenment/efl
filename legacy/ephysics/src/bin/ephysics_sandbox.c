@@ -180,7 +180,7 @@ static void
 _body_rotation_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body *body = data;
-   ephysics_body_rotation_set(body, elm_spinner_value_get(obj));
+   ephysics_body_rotation_set(body, 0, 0, elm_spinner_value_get(obj));
 }
 
 static void
