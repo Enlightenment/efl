@@ -6,7 +6,7 @@ includedir=@includedir@
 Name: Eo
 Description: EFL's generic object system library.
 Version: @PACKAGE_VERSION@
-@pkgconfig_requires_private@: @requirements_pc_eo@
+Requires.private: @requirements_pc_eo@
 Libs: -L${libdir} -leo
 Libs.private:
 Cflags: -I${includedir}/eo-@VMAJ@

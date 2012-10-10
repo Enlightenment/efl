@@ -169,14 +169,6 @@ if test "x${PKG_CONFIG}" = "x" ; then
    AC_MSG_ERROR([pkg-config tool not found. Install it or set PKG_CONFIG environment variable to that path tool. Exiting...])
 fi
 
-# Check whether pkg-config supports Requires.private
-if ${PKG_CONFIG} --atleast-pkgconfig-version 0.22 ; then
-   pkgconfig_requires_private="Requires.private"
-else
-   pkgconfig_requires_private="Requires"
-fi
-AC_SUBST([pkgconfig_requires_private])
-
 # doxygen program for documentation building
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
