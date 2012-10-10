@@ -18,10 +18,6 @@ static int _efreet_icon_cache_log_dom = -1;
 #include "efreet_private.h"
 #include "efreet_cache_private.h"
 
-/* TODO:
- * - Need to handle programs using different exts
- */
-
 static Eina_Array *exts = NULL;
 static Eina_Array *extra_dirs = NULL;
 static Eina_Array *strs = NULL;
@@ -245,30 +241,6 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
             eina_array_push(strs, icon->theme);
             eina_hash_add(icons, name, icon);
         }
-        else if (icon->theme && strcmp(icon->theme, theme->name.internal))
-        {
-            const char *ext2;
-            int has_ext = 0;
-            unsigned int j;
-            /* Check if we already has this extension */
-            for (i = 0; i < icon->icons_count; ++i)
-            {
-                for (j = 0; j < icon->icons[i]->paths_count; ++j)
-                {
-                    ext2 = strrchr(icon->icons[i]->paths[j], '.');
-                    if (ext2)
-                    {
-                        ext2++;
-                        has_ext = !strcmp((ext + 1), ext2);
-                        if (has_ext) break;
-                    }
-                }
-                if (has_ext) break;
-            }
-            /* We got this icon from a parent theme */
-            if (has_ext)
-                continue;
-        }
 
         /* find if we have the same icon in another type */
         for (i = 0; i < icon->icons_count; ++i)
@@ -293,9 +265,32 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
 
             if (j != icon->icons[i]->paths_count)
                 continue;
+
+            /* If we are inherited, check if we already have extension */
+            if (strcmp(icon->theme, theme->name.internal))
+            {
+                const char *ext2;
+                int has_ext = 0;
+                for (j = 0; j < icon->icons[i]->paths_count; ++j)
+                {
+                    ext2 = strrchr(icon->icons[i]->paths[j], '.');
+                    if (ext2)
+                    {
+                        ext2++;
+                        has_ext = !strcmp((ext + 1), ext2);
+                        if (has_ext) break;
+                    }
+                }
+                if (has_ext)
+                    continue;
+            }
         }
         /* no icon match so add a new one */
-        else
+        /* only allow to add new icon for main theme
+         * if we allow inherited theme to add new icons,
+         * we will get weird effects when icon scales
+         */
+        else if (!strcmp(icon->theme, theme->name.internal))
         {
             icon->icons = realloc(icon->icons,
                                   sizeof (Efreet_Cache_Icon_Element*) * (++icon->icons_count));
@@ -306,6 +301,10 @@ cache_scan_path_dir(Efreet_Icon_Theme *theme,
             icon->icons[i]->max = dir->size.max;
             icon->icons[i]->paths = NULL;
             icon->icons[i]->paths_count = 0;
+        }
+        else
+        {
+            continue;
         }
 
         /* and finally store the path */
