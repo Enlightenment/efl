@@ -545,12 +545,6 @@ fi
 AC_SUBST(EINA_CONFIGURE_HAVE_DEBUG_THREADS)
 AM_CONDITIONAL([EINA_DEBUG_THREADS], [test "x${efl_have_debug_threads}" = "xyes"])
 
-if ! test "x${efl_have_on_off_threads}" = "xno"; then
-   EINA_CONFIGURE_HAVE_ON_OFF_THREADS="#define EINA_HAVE_ON_OFF_THREADS"
-fi
-AC_SUBST(EINA_CONFIGURE_HAVE_ON_OFF_THREADS)
-AM_CONDITIONAL([EINA_ON_OFF_THREADS], [! test "x${efl_have_on_off_threads}" = "xno"])
-
 ### Modules
 EINA_CHECK_MODULE([chained-pool],   [static], [chained pool])
 EINA_CHECK_MODULE([pass-through],   [static], [pass through])
@@ -873,7 +867,6 @@ echo "  Thread Support.......: ${efl_have_threads}"
 if test "${efl_have_threads}" = "POSIX" ; then
 echo "    spinlock...........: ${efl_have_posix_threads_spinlock}"
 echo "    debug usage........: ${efl_have_debug_threads}"
-echo "    on/off support.....: ${efl_have_on_off_threads}"
 fi
 echo
 echo "Compilation............: make (or gmake)"

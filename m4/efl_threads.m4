@@ -117,21 +117,6 @@ if test "x${efl_have_posix_threads_spinlock}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_POSIX_THREADS_SPINLOCK], [1], [Define to mention that POSIX threads spinlocks are supported])
 fi
 
-dnl Check ON-OFF threads
-
-_efl_enable_on_off_threads="no"
-AC_ARG_ENABLE([on-off-threads],
-   [AC_HELP_STRING([--enable-on-off-threads], [only turn this on if you know what you are doing, and do not complain if the world freeze])],
-   [_efl_enable_on_off_threads="${enableval}"])
-
-efl_have_on_off_threads="no"
-if test "x${_efl_have_posix_threads}" = "xyes" && test "x${_efl_enable_on_off_threads}" = "xyes"; then
-   efl_have_on_off_threads="yes"
-   AC_DEFINE([EFL_ON_OFF_THREADS], [1], [make it possible to disable all locks])
-fi
-AC_MSG_CHECKING([whether to turn on/off threads lock on demand])
-AC_MSG_RESULT([${efl_have_on_off_threads}])
-
 dnl Check debug threads
 
 _efl_enable_debug_threads="no"
