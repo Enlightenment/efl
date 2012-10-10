@@ -904,7 +904,7 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 
    mx = (x + w * body->cm.x) / rate;
    my = (height - (y + h * body->cm.y)) / rate;
-   mz = z / rate;
+   mz = (z + d * body->cm.z) / rate;
    sx = w / rate;
    sy = h / rate;
    sz = d / rate;
