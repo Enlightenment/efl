@@ -529,10 +529,10 @@ _ecore_xcb_dnd_drag(Ecore_X_Window root,
    Ecore_X_Xdnd_Position pos;
    int num = 0;
 
-   if (_source->state != ECORE_X_DND_SOURCE_DRAGGING) return;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
+
+   if (_source->state != ECORE_X_DND_SOURCE_DRAGGING) return;
 
    memset(&ev, 0, sizeof(xcb_client_message_event_t));
 
