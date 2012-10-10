@@ -2723,14 +2723,16 @@ EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *
 
 /**
  * @brief
- * Enable or disable body's movement on x and y axes.
+ * Enable or disable body's movement on x, y and z axes.
  *
- * Enabled by default on both axes.
+ * Enabled by default on x and y axes, disabled on z axis.
  *
  * @param body The physics body.
  * @param enable_x If @c EINA_TRUE allow movement on x axis, if @c EINA_FALSE
  * disallow it.
  * @param enable_y If @c EINA_TRUE allow movement on y axis, if @c EINA_FALSE
+ * disallow it.
+ * @param enable_z If @c EINA_TRUE allow movement on z axis, if @c EINA_FALSE
  * disallow it.
  *
  * @see ephysics_body_linear_movement_enable_get().
@@ -2738,16 +2740,18 @@ EAPI Eina_Bool ephysics_body_rotation_on_z_axis_enable_get(const EPhysics_Body *
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y);
+EAPI void ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y, Eina_Bool enable_z);
 
 /**
  * @brief
- * Get body's movement on x and y axes behavior.
+ * Get body's movement on x, y and z axes behavior.
  *
  * @param body The physics body.
  * @param enable_x @c EINA_TRUE if movement on x axis is allowed, or
  * @c EINA_FALSE if it's not.
  * @param enable_y @c EINA_TRUE if movement on y axis is allowed, or
+ * @c EINA_FALSE if it's not.
+ * @param enable_z @c EINA_TRUE if movement on z axis is allowed, or
  * @c EINA_FALSE if it's not.
  *
  * @see ephysics_body_linear_movement_enable_set().
@@ -2755,7 +2759,7 @@ EAPI void ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Boo
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y);
+EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y, Eina_Bool *enable_z);
 
 /**
  * @brief

@@ -2439,7 +2439,7 @@ ephysics_body_impulse_apply(EPhysics_Body *body, double x, double y, Evas_Coord 
 }
 
 EAPI void
-ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y)
+ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x, Eina_Bool enable_y, Eina_Bool enable_z)
 {
    if (!body)
      {
@@ -2448,12 +2448,13 @@ ephysics_body_linear_movement_enable_set(EPhysics_Body *body, Eina_Bool enable_x
      }
 
    ephysics_world_lock_take(body->world);
-   body->rigid_body->setLinearFactor(btVector3(!!enable_x, !!enable_y, 0));
+   body->rigid_body->setLinearFactor(btVector3(!!enable_x, !!enable_y,
+                                               !!enable_z));
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
-ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y)
+ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *enable_x, Eina_Bool *enable_y, Eina_Bool *enable_z)
 {
    if (!body)
      {
@@ -2463,6 +2464,7 @@ ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Eina_Bool *e
 
    if (enable_x) *enable_x = !!body->rigid_body->getLinearFactor().x();
    if (enable_y) *enable_y = !!body->rigid_body->getLinearFactor().y();
+   if (enable_z) *enable_z = !!body->rigid_body->getLinearFactor().z();
 }
 
 EAPI void
