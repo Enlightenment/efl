@@ -328,7 +328,6 @@ fi
 AC_SUBST([EINA_CONFIGURE_MAGIC_DEBUG])
 
 if test "x${have_safety_checks}" = "xyes" ; then
-   AC_DEFINE([EINA_SAFETY_CHECKS], [1], [disable safety checks for NULL pointers and like.])
    EINA_CONFIGURE_SAFETY_CHECKS="#define EINA_SAFETY_CHECKS"
 fi
 AC_SUBST([EINA_CONFIGURE_SAFETY_CHECKS])
