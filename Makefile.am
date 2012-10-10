@@ -110,11 +110,6 @@ benchmark:
 	@mkdir benchmark || true
 	@cd benchmark && ../src/benchmarks/eo/eo_bench$(EXEEXT) `date +%F_%s`
 
-benchmark-e17:
-	@$(MAKE) $(AM_MAKEFLAGS) -C src benchmark-e17
-	@mkdir benchmark || true
-	@cd benchmark && ../src/benchmarks/eina/eina_bench$(EXEEXT) `date +%F_%s`
-
 # examples
 
 examples:

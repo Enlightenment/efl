@@ -85,6 +85,13 @@ AC_SUBST([requirements_pc_eet])
 
 AC_CANONICAL_HOST
 
+AC_ARG_WITH([profile],
+   [AC_HELP_STRING([--with-profile=PROFILE],
+                   [use the predefined build profile, one of: dev, release.
+                    @<:@default=dev@:>@])],
+   [build_profile=${withval}],
+   [build_profile=dev])
+
 # TODO: move me to m4 file that setups module/so related variables
 have_wince="no"
 have_win32="no"
@@ -121,21 +128,6 @@ AM_CONDITIONAL([HAVE_WINDOWS], [test "x${have_windows}" = "xyes"])
 
 
 #### Additional options to configure
-
-
-
-# Assert or fail.
-
-AC_ARG_ENABLE([assert],
-   [AC_HELP_STRING([--enable-assert], [enable assert, @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       prefer_assert="yes"
-    else
-       prefer_assert="no"
-    fi
-   ],
-   [prefer_assert="no"])
 
 
 #### Checks for programs
@@ -300,40 +292,29 @@ AC_MSG_NOTICE([Eina checks])
 
 ### Additional options to configure
 
-# Magic debug
-AC_ARG_ENABLE([magic-debug],
-   [AC_HELP_STRING([--disable-magic-debug], [disable magic debug of eina structure @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       have_magic_debug="yes"
-    else
-       have_magic_debug="no"
-    fi
-   ],
-   [have_magic_debug="yes"])
+have_magic_debug="yes"
+have_safety_checks="yes"
+want_log="yes"
+case "$build_profile" in
+   dev)
+     with_max_log_level=""
+     have_stringshare_usage="yes"
+     want_valgrind="no" # TODO: "yes" is not working: relocation R_X86_64_32S against `vgPlain_interim_stack' can not be used when making a shared object; recompile with -fPIC
+     want_debug_malloc="yes"
+     ;;
 
-AC_MSG_CHECKING([whether magic debug is enable])
-AC_MSG_RESULT([${have_magic_debug}])
+   release)
+     with_max_log_level="3"
+     have_stringshare_usage="no"
+     want_valgrind="no"
+     want_debug_malloc="no"
+     ;;
+esac
 
 if test "x${have_magic_debug}" = "xyes" ; then
    EINA_CONFIGURE_MAGIC_DEBUG="#define EINA_MAGIC_DEBUG"
 fi
 AC_SUBST([EINA_CONFIGURE_MAGIC_DEBUG])
-
-# Safety checks (avoid crashes on wrong api usage)
-AC_ARG_ENABLE([safety-checks],
-   [AC_HELP_STRING([--disable-safety-checks], [disable safety checks for NULL pointers and like. @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       have_safety_checks="yes"
-    else
-       have_safety_checks="no"
-    fi
-   ],
-   [have_safety_checks="yes"])
-
-AC_MSG_CHECKING([whether to do safety checking on api parameters])
-AC_MSG_RESULT([${have_safety_checks}])
 
 if test "x${have_safety_checks}" = "xyes" ; then
    AC_DEFINE([EINA_SAFETY_CHECKS], [1], [disable safety checks for NULL pointers and like.])
@@ -343,23 +324,14 @@ AC_SUBST([EINA_CONFIGURE_SAFETY_CHECKS])
 
 AM_CONDITIONAL([SAFETY_CHECKS], [test "x$have_safety_checks" = "xyes"])
 
-# Miximum log level
-with_max_log_level="<unset>"
-AC_ARG_WITH([internal-maximum-log-level],
-   [AC_HELP_STRING([--with-internal-maximum-log-level=NUMBER],
-                   [limit eina internal log level to the given number, any call to EINA_LOG() with values greater than this will be compiled out, ignoring runtime settings, but saving function calls.])],
-   [
-    if test "x${withval}" != "xno" ; then
-       if echo "${withval}" | grep -E '^[[0-9]]+$' >/dev/null 2>/dev/null; then
-          AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${withval}])
-          AC_DEFINE_UNQUOTED([EINA_LOG_LEVEL_MAXIMUM], [${withval}], [if set, logging is limited to this amount.])
-          with_max_log_level="${withval}"
-       else
-          AC_MSG_ERROR([--with-internal-maximum-log-level takes a decimal number, got "${withval}" instead.])
-       fi
-    fi
-    ],
-    [:])
+if test -n "$with_max_log_level"; then
+   AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${with_max_log_level}])
+   AC_DEFINE_UNQUOTED([EINA_LOG_LEVEL_MAXIMUM], [${with_max_log_level}], [if set, logging is limited to this amount.])
+fi
+
+if test "x${have_stringshare_usage}" = "xyes"; then
+   AC_DEFINE([EINA_STRINGSHARE_USAGE], [1], [Report Eina stringshare usage pattern])
+fi
 
 # Choose best memory pool
 AC_ARG_ENABLE([default-mempool],
@@ -380,58 +352,6 @@ if test "x${have_default_mempool}" = "xyes" ; then
    EINA_CONFIGURE_DEFAULT_MEMPOOL="#define EINA_DEFAULT_MEMPOOL"
 fi
 AC_SUBST([EINA_CONFIGURE_DEFAULT_MEMPOOL])
-
-# Report stringshare usage
-AC_ARG_ENABLE([stringshare-usage],
-   [AC_HELP_STRING([--enable-stringshare-usage], [Report stringshare usage on stringshare shutdown. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes"; then
-       have_stringshare_usage="yes"
-    else
-       have_stringshare_usage="no"
-    fi
-   ],
-   [have_stringshare_usage="no"]
-)
-AC_MSG_CHECKING([whether to report stringshare usage])
-AC_MSG_RESULT([${have_stringshare_usage}])
-
-if test "x${have_stringshare_usage}" = "xyes"; then
-   AC_DEFINE([EINA_STRINGSHARE_USAGE], [1], [Report Eina stringshare usage pattern])
-fi
-
-# Check if we want to benchmark on real data
-AC_ARG_ENABLE([e17],
-   [AC_HELP_STRING([--enable-e17], [enable heavy benchmark @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_benchmark_e17="yes"
-    else
-       enable_benchmark_e17="no"
-    fi
-   ],
-   [enable_benchmark_e17="no"])
-
-AC_MSG_CHECKING([whether e17 real data benchmark are built])
-AC_MSG_RESULT([${enable_benchmark_e17}])
-
-AM_CONDITIONAL([EINA_ENABLE_BENCHMARK_E17], [test "x${enable_benchmark_e17}" = "xyes"])
-
-# Valgrind
-
-AC_ARG_ENABLE([valgrind],
-   [AC_HELP_STRING([--enable-valgrind], [improve valgrind support by hinting it of our memory usages, having it to report proper mempool leaks. @<:@default=no@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_valgrind="yes"
-    else
-       want_valgrind="no"
-    fi
-   ],
-   [want_valgrind="no"])
-
-AC_MSG_CHECKING([whether to enable build with valgrind])
-AC_MSG_RESULT([${want_valgrind}])
 
 ### Checks for programs
 
@@ -482,7 +402,7 @@ AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
 
 # Valgrind
 
-if test "x${want_valgrind}" = "xyes" || test "x${want_valgrind}" = "xauto"; then
+if test "x${want_valgrind}" = "xyes"; then
    PKG_CHECK_MODULES([VALGRIND], [valgrind >= 2.4.0],
       [
        have_valgrind="yes"
@@ -491,40 +411,15 @@ if test "x${want_valgrind}" = "xyes" || test "x${want_valgrind}" = "xauto"; then
       ],
       [
        have_valgrind="no"
-       AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
-       if test "x${want_valgrind}" = "xyes"; then
-          AC_MSG_ERROR([Valgrind >= 2.4.0 is required])
-       fi
+       AC_MSG_ERROR([Valgrind >= 2.4.0 is required])
       ])
 else
     AC_DEFINE([NVALGRIND], [1], [Valgrind support disabled])
 fi
 
-AC_ARG_ENABLE([debug-malloc],
-   [AC_HELP_STRING([--enable-debug-malloc], [enable debugging of malloc usage overhead in our allocator @<:@default=enabled@:>@])],
-   [
-     if test "x${enableval}" = "xyes" ; then
-     	want_debug_malloc="yes"
-     else
-	want_debug_malloc="no"
-     fi
-   ],
-   [want_debug_malloc="no"])
-
 if test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_malloc}" = "xyes"; then
    AC_DEFINE([EINA_DEBUG_MALLOC], [1], [Turn on debugging overhead in mempool])
 fi
-
-AC_ARG_ENABLE([log],
-   [AC_HELP_STRING([--disable-log], [disable Eina_Log infrastructure completly @<:@default=enabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_log="yes"
-    else
-       want_log="no"
-    fi
-   ],
-   [want_log="yes"])
 
 ## Modules
 
@@ -1190,6 +1085,7 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
+echo "  Build Profile........: ${build_profile}"
 if test "x${have_windows}" = "xyes" ; then
    echo "  Windows version......: ${_efl_windows_version}"
 fi

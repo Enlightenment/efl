@@ -2,15 +2,11 @@ MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = lib modules bin scripts benchmarks tests examples
 
-.PHONY: benchmark benchmark-e17 examples
+.PHONY: benchmark examples
 
 benchmark:
 	@$(MAKE) $(AM_MAKEFLAGS) -C lib
 	@$(MAKE) $(AM_MAKEFLAGS) -C benchmarks benchmark
-
-benchmark-e17:
-	@$(MAKE) $(AM_MAKEFLAGS) -C lib
-	@$(MAKE) $(AM_MAKEFLAGS) -C benchmarks benchmark-e17
 
 examples:
 	@make -C lib

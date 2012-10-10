@@ -5,15 +5,13 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/lib/eina \
 -DPACKAGE_BUILD_DIR=\"`pwd`/$(top_builddir)\" \
 -DCITYHASH_BENCH \
+-DEINA_ENABLE_BENCH_E17 \
 @EINA_CFLAGS@ \
 @GLIB_CFLAGS@
 
 EXTRA_PROGRAMS = eina_bench
 
 benchmark: eina_bench libcity.la
-
-benchmark-e17: eina_bench
-	  @$(MAKE) $(AM_MAKEFLAGS) AM_CPPFLAGS="${AM_CPPFLAGS} -DEINA_ENABLE_BENCH_E17"
 
 eina_bench_SOURCES = \
 eina_bench.c \
