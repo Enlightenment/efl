@@ -217,6 +217,7 @@ _text_filter_text_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *text)
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
 
+   EINA_SAFETY_ON_NULL_RETURN(text);
    text2 = strdup(text);
    EINA_LIST_FOREACH(en->rp->edje->text_insert_filter_callbacks, l, cb)
      {
@@ -243,6 +244,7 @@ _text_filter_format_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *tex
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
 
+   EINA_SAFETY_ON_NULL_RETURN(text);
    text2 = strdup(text);
    EINA_LIST_FOREACH(en->rp->edje->text_insert_filter_callbacks, l, cb)
      {
@@ -319,6 +321,7 @@ _text_filter_markup_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *tex
    Edje_Text_Insert_Filter_Callback *cb;
    Eina_List *l;
 
+   EINA_SAFETY_ON_NULL_RETURN(text);
    text2 = strdup(text);
    EINA_LIST_FOREACH(en->rp->edje->text_insert_filter_callbacks, l, cb)
      {
