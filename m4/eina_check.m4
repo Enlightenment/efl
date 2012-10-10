@@ -4,22 +4,21 @@ AC_DEFUN([EINA_CHECK_MODULE],
 m4_pushdef([UP], m4_translit([$1], [-a-z], [_A-Z]))dnl
 m4_pushdef([DOWN], m4_translit([$1], [-A-Z], [_a-z]))dnl
 
-default_value=$2
-
-AC_ARG_ENABLE([mempool-$1],
-   [AC_HELP_STRING([--enable-mempool-$1], [enable build of $3 @<:@default=$@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       enable_module="yes"
-    else
-       if test "x${enableval}" = "xstatic" ; then
-          enable_module="static"
-       else
-          enable_module="no"
-       fi
-    fi
-   ],
-   [enable_module=$2])
+# AC_ARG_ENABLE([mempool-$1],
+#    [AC_HELP_STRING([--enable-mempool-$1], [enable build of $3 @<:@default=$2@:>@])],
+#    [
+#     if test "x${enableval}" = "xyes" ; then
+#        enable_module="yes"
+#     else
+#        if test "x${enableval}" = "xstatic" ; then
+#           enable_module="static"
+#        else
+#           enable_module="no"
+#        fi
+#     fi
+#    ],
+#    [enable_module=$2])
+enable_module=$2
 
 have_module="no"
 if test "x${enable_module}" = "xyes" || test "x${enable_module}" = "xstatic" ; then
