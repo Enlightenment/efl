@@ -726,30 +726,6 @@ AC_CHECK_HEADERS(netinet/in.h unistd.h)
 
 ### Checks for compiler characteristics
 
-# Check whether the null pointer is zero on this arch
-AC_TRY_RUN(
-   [
-#include <stdlib.h>
-#include <inttypes.h>
-int main (int argc, char **argv) {
-  void *foo = NULL;
-  uintptr_t bar = (uintptr_t)foo;
-  return (uintptr_t)foo;
-}
-   ],
-   [have_null="yes"],
-   [have_null="no"],
-   [
-    AC_MSG_WARN([Cannot check when cross-compiling -- assuming null is okay])
-    have_null="yes"
-   ])
-AC_MSG_CHECKING([value of the null pointer])
-AC_MSG_RESULT([${have_null}])
-
-if test ! "x${have_null}" = "xyes" ; then
-   AC_MSG_WARN([Your system is a bit too funny, eet might not work properly])
-fi
-
 EFL_CHECK_COMPILER_FLAGS([EET], [-Wshadow -Wpointer-arith])
 
 ### Checks for linker characteristics
