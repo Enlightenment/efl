@@ -864,18 +864,12 @@ echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
 echo "  Build Profile........: ${build_profile}"
+echo "  Threads Type.........: ${efl_have_threads} (spinlocks: ${efl_have_posix_threads_spinlock})"
 echo "  Cryptographic System.: ${build_crypto}"
 if test "x${have_windows}" = "xyes" ; then
    echo "  Windows version......: ${_efl_windows_version}"
 fi
 echo "  Documentation........: ${build_doc}"
-echo
-echo "Eina"
-echo
-echo "  Thread Support.......: ${efl_have_threads}"
-if test "${efl_have_threads}" = "POSIX" ; then
-echo "    spinlock...........: ${efl_have_posix_threads_spinlock}"
-fi
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
