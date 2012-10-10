@@ -516,7 +516,6 @@ EFL_CHECK_THREADS
 
 if test "$want_debug_threads" = "yes"; then
    EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_HAVE_DEBUG_THREADS"
-   AC_DEFINE([EFL_DEBUG_THREADS], [1], [Assert when forgot to call eina_threads_init])
 fi
 AC_SUBST(EINA_CONFIGURE_HAVE_DEBUG_THREADS)
 
