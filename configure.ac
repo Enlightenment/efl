@@ -322,15 +322,8 @@ case "$build_profile" in
      ;;
 esac
 
-if test "x${have_magic_debug}" = "xyes" ; then
-   EINA_CONFIGURE_MAGIC_DEBUG="#define EINA_MAGIC_DEBUG"
-fi
-AC_SUBST([EINA_CONFIGURE_MAGIC_DEBUG])
-
-if test "x${have_safety_checks}" = "xyes" ; then
-   EINA_CONFIGURE_SAFETY_CHECKS="#define EINA_SAFETY_CHECKS"
-fi
-AC_SUBST([EINA_CONFIGURE_SAFETY_CHECKS])
+EINA_CONFIG(MAGIC_DEBUG, test "x${have_magic_debug}" = "xyes")
+EINA_CONFIG(SAFETY_CHECKS, test "x${have_safety_checks}" = "xyes")
 
 if test -n "$with_max_log_level"; then
    AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${with_max_log_level}])
@@ -438,17 +431,16 @@ CFLAGS="${CFLAGS} ${EINA_CFLAGS}"
 AC_CHECK_HEADERS([sys/mman.h])
 CFLAGS="${CFLAGS_save}"
 
-if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
-   EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"
-   AC_DEFINE([HAVE_INTTYPES_H], [1], [Define to 1 if you have the <inttypes.h> header file.])
-fi
-AC_SUBST([EINA_CONFIGURE_HAVE_INTTYPES_H])
+EINA_CONFIG(HAVE_INTTYPES_H, test "x${ac_cv_header_inttypes_h}" = "xyes")
+EINA_CONFIG(HAVE_STDINT_H, test "x${ac_cv_header_inttypes_h}" = "xyes")
 
 if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
-    EINA_CONFIGURE_HAVE_STDINT_H="#define EINA_HAVE_STDINT_H"
+   AC_DEFINE([HAVE_INTTYPES_H], [1], [Define to 1 if you have the <inttypes.h> header file.])
+fi
+
+if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
     AC_DEFINE([HAVE_STDINT_H], [1], [Define to 1 if you have the <stdint.h> header file.])
 fi
-AC_SUBST([EINA_CONFIGURE_HAVE_STDINT_H])
 
 ### Checks for types
 
@@ -472,11 +464,10 @@ AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
 #include <dirent.h>
    ]])
 
+EINA_CONFIG(HAVE_DIRENT_H, test "x${have_dirent}" = "xyes")
 if test "x${have_dirent}" = "xyes" ; then
-    EINA_CONFIGURE_HAVE_DIRENT_H="#define EINA_HAVE_DIRENT_H"
     AC_DEFINE([HAVE_DIRENT_H], [1], [Define to 1 if you have a valid <dirent.h> header file.])
 fi
-AC_SUBST([EINA_CONFIGURE_HAVE_DIRENT_H])
 
 ### Checks for structures
 
@@ -507,17 +498,11 @@ fi
 AC_MSG_CHECKING([wether to build Eina_Log infrastructure])
 AC_MSG_RESULT([${enable_log}])
 
-if test "x${enable_log}" = "xyes"; then
-    EINA_CONFIGURE_ENABLE_LOG="#define EINA_ENABLE_LOG"
-fi
-AC_SUBST([EINA_CONFIGURE_ENABLE_LOG])
+EINA_CONFIG(ENABLE_LOG, test "x${enable_log}" = "xyes")
 
 EFL_CHECK_THREADS
 
-if test "$want_debug_threads" = "yes"; then
-   EINA_CONFIGURE_HAVE_DEBUG_THREADS="#define EINA_HAVE_DEBUG_THREADS"
-fi
-AC_SUBST(EINA_CONFIGURE_HAVE_DEBUG_THREADS)
+EINA_CONFIG(HAVE_DEBUG_THREADS, test "$want_debug_threads" = "yes")
 
 ### Modules
 EINA_CHECK_MODULE([chained-pool],   [static], [chained pool])
