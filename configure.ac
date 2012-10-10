@@ -869,7 +869,6 @@ echo "  Cryptographic System.: ${build_crypto}"
 if test "x${have_windows}" = "xyes" ; then
    echo "  Windows version......: ${_efl_windows_version}"
 fi
-echo "  Documentation........: ${build_doc}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
@@ -879,6 +878,9 @@ echo "  LDFLAGS..............: $LDFLAGS"
 echo
 echo "Tests..................: make check (Coverage: ${_efl_enable_coverage})"
 echo "Examples...............: make examples (also install-examples)"
+if test "x${build_doc}" = "xyes"; then
+echo "Documentation..........: make doc"
+fi
 echo "Installation...........: make install (as root if needed, with 'su' or 'sudo')"
 echo "  prefix...............: $prefix"
 echo
