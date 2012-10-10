@@ -12,7 +12,8 @@ Requirements:
 
 Must:
   libc
-  eina (1.1.0 or better)
+  eina (1.6.0 or better)
+  eobj
   freetype (2.1.9 or better)
 
 Recommended:
@@ -27,7 +28,7 @@ Recommended:
   liblinebreak
 
 Optional:
-  XCB SDL OpenGL esvg libtiff libgif edb DirectFB evas_generic_loaders
+  XCB SDL esvg libtiff libwebp libgif edb DirectFB evas_generic_loaders
 
 Evas is a clean display canvas API for several target display systems
 that can draw anti-aliased text, smooth super and sub-sampled scaled
@@ -682,7 +683,7 @@ native colorspace
 
 --enable-convert-32-bgr-8888
 
-conversion (reduces toa memory copy) from evas's native colorspace to
+conversion (reduces to a memory copy) from evas's native colorspace to
 the same color format.
 
 
@@ -785,7 +786,7 @@ with tasks, like pre-loading image files
 
 --enable-async-preload
 
-evas can load images (preload) them in the background using a thread
+evas can load images (preload) in the background using a thread
 if you ask it to, and provide events when done. this goes hand-in-hand
 with --enable-pthreads and --enable-async-events. you really want all
 of these available.
