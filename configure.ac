@@ -878,10 +878,6 @@ echo "    spinlock...........: ${efl_have_posix_threads_spinlock}"
 echo "    debug usage........: ${efl_have_debug_threads}"
 echo "    on/off support.....: ${efl_have_on_off_threads}"
 fi
-echo "  Iconv support........: ${efl_func_iconv}"
-echo "  File dirfd...........: ${efl_func_dirfd}"
-echo "  File xattr...........: ${efl_func_setxattr}"
-echo "  shm_open.............: ${efl_func_shm_open}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
