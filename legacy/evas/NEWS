@@ -25,6 +25,7 @@ Fixes:
    * Fix evas_object_image_alpha_set when image data not loaded yet.
    * Fix map surface leak.
    * Fix native surface set to null crash bug in gl engine.
+   * Fix font sizing issue with some rare sizes and fonts when rounding wrong.
 
 Removal:
    * No more support s3c6410.

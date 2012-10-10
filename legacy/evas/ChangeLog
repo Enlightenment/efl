@@ -1086,3 +1086,8 @@
 	This change adds Eo support to Evas while keeping the old API intact.
 	For more information, go to Eo.
 
+2012-10-10  Carsten Haitzler (The Rasterman)
+
+       * Fix font sizing issues when size scaling happens to down down
+       when it should round up. happens in rare sizing situations and fonts.
+

@@ -46,5 +46,20 @@ void evas_common_font_int_reload(RGBA_Font_Int *fi);
       ((0x202A <= (x)) && ((x) <= 0x202E)) /* BIDI stuff */ \
       )
 
+# if 1
+// do proper round (up or down like 1.4 -> 1 and 1.6 -> 2 etc
+#  define FONT_MERTIC_CONV(val, dv, scale) \
+   (((long long)((val) * (scale)) + (long long)((dv) * (dv) / 2LL)) \
+     / (long long)((dv) * (dv)))
+#  define FONT_METRIC_ROUNDUP(val) \
+   (((val) + 31) >> 6)
+# else
+// truncate/round down
+#  define FONT_MERTIC_CONV(val, dv, scale) \
+   (((val) * (scale)) / ((dv) * (dv)))
+#  define FONT_METRIC_ROUNDUP(val) \
+   ((val) >> 6)
+# endif
+
 # include "evas_font_default_walk.x"
 #endif /* !_EVAS_FONT_PRIVATE_H */

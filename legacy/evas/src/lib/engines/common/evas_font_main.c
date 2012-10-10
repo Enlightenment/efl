@@ -112,7 +112,7 @@ evas_common_font_ascent_get(RGBA_Font *fn)
         WRN("NOT SCALABLE!");
      }
    val = (int)fi->src->ft.face->size->metrics.ascender;
-   return val >> 6;
+   return FONT_METRIC_ROUNDUP(val);
 //   printf("%i | %i\n", val, val >> 6);
 //   if (fi->src->ft.face->units_per_EM == 0)
 //     return val;
@@ -138,7 +138,7 @@ evas_common_font_descent_get(RGBA_Font *fn)
         fi->src->current_size = fi->size;
      }
    val = -(int)fi->src->ft.face->size->metrics.descender;
-   return val >> 6;
+   return FONT_METRIC_ROUNDUP(val);
 //   if (fi->src->ft.face->units_per_EM == 0)
 //     return val;
 //   dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
@@ -166,13 +166,13 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    if ((fi->src->ft.face->bbox.yMax == 0) &&
        (fi->src->ft.face->bbox.yMin == 0) &&
        (fi->src->ft.face->units_per_EM == 0))
-     val = (int)fi->src->ft.face->size->metrics.ascender / 64;
+     val = FONT_METRIC_ROUNDUP((int)fi->src->ft.face->size->metrics.ascender);
    else
      val = (int)fi->src->ft.face->bbox.yMax;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
-   ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
+   ret = FONT_MERTIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
    return ret;
 }
 
@@ -196,13 +196,13 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    if ((fi->src->ft.face->bbox.yMax == 0) &&
        (fi->src->ft.face->bbox.yMin == 0) &&
        (fi->src->ft.face->units_per_EM == 0))
-     val = -(int)fi->src->ft.face->size->metrics.descender / 64;
+     val = FONT_METRIC_ROUNDUP(-(int)fi->src->ft.face->size->metrics.descender);
    else
      val = -(int)fi->src->ft.face->bbox.yMin;
    if (fi->src->ft.face->units_per_EM == 0)
      return val;
    dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
-   ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
+   ret = FONT_MERTIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
    return ret;
 }
 
@@ -226,10 +226,10 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
    if ((fi->src->ft.face->bbox.yMax == 0) &&
        (fi->src->ft.face->bbox.yMin == 0) &&
        (fi->src->ft.face->units_per_EM == 0))
-     return val >> 6;
+     return FONT_METRIC_ROUNDUP(val);
    else if (fi->src->ft.face->units_per_EM == 0)
      return val;
-   return val >> 6;
+   return FONT_METRIC_ROUNDUP(val);
 //   dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
 //   ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
 //   return ret;

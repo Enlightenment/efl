@@ -455,13 +455,13 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
    if (fi->src->ft.face->units_per_EM != 0)
      {
         dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
-        ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
+        ret = FONT_MERTIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
      }
    else
      {
         if ((fi->src->ft.face->bbox.yMax == 0) &&
             (fi->src->ft.face->bbox.yMin == 0))
-          ret = (int)fi->ft.size->metrics.ascender / 64;
+          ret = FONT_METRIC_ROUNDUP((int)fi->ft.size->metrics.ascender);
         else
           ret = val;
      }
@@ -470,13 +470,13 @@ evas_common_font_int_load_complete(RGBA_Font_Int *fi)
    if (fi->src->ft.face->units_per_EM != 0)
      {
         dv = (fi->src->ft.orig_upem * 2048) / fi->src->ft.face->units_per_EM;
-        ret = (val * fi->src->ft.face->size->metrics.y_scale) / (dv * dv);
+        ret = FONT_MERTIC_CONV(val, dv, fi->src->ft.face->size->metrics.y_scale);
      }
    else
      {
         if ((fi->src->ft.face->bbox.yMax == 0) &&
             (fi->src->ft.face->bbox.yMin == 0))
-          ret = -(int)fi->ft.size->metrics.descender / 64;
+          ret = FONT_METRIC_ROUNDUP(-(int)fi->ft.size->metrics.descender);
         else
           ret = val;
      }
