@@ -16,8 +16,7 @@ AM_CPPFLAGS += \
 -I$(top_builddir)/src/lib/evil
 endif
 
-bin_PROGRAMS = @EET_PRG@
-EXTRA_PROGRAMS = eet
+bin_PROGRAMS = eet
 
 eet_SOURCES = eet_main.c
 eet_LDADD = \

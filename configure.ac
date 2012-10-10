@@ -570,8 +570,6 @@ AC_MSG_NOTICE([Eet checks])
 
 ### Additional options to configure
 
-EFL_ENABLE_BIN([eet])
-
 AC_ARG_WITH([crypto],
    [AC_HELP_STRING([--with-crypto=CRYPTO],
                    [use the predefined build crypto, one of:
