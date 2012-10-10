@@ -82,6 +82,7 @@ struct _EPhysics_Body {
      int walking;
      Evas_Coord w;
      Evas_Coord h;
+     Evas_Coord d;
      void *data;
      Eina_Inlist *callbacks;
      Eina_List *collision_groups;

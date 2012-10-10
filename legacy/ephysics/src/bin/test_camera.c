@@ -227,7 +227,7 @@ test_camera(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    boundary = ephysics_body_box_add(camera_data->base.world);
    ephysics_body_mass_set(boundary, 0);
-   ephysics_body_geometry_set(boundary, 0, FLOOR_Y, WIDTH * 2, 10);
+   ephysics_body_geometry_set(boundary, 0, FLOOR_Y, -15, WIDTH * 2, 10, 30);
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 4);
 

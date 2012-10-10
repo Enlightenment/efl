@@ -62,7 +62,7 @@ _mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
   if (nx < 0 || ny < 0) return;
 
   evas_object_geometry_get(obj, &x, &y, &w, &h);
-  ephysics_body_move(dragging->body, nx, ny);
+  ephysics_body_move(dragging->body, nx, ny, -15);
 }
 
 static void

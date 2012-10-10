@@ -828,22 +828,23 @@ _ephysics_body_mass_set(EPhysics_Body *body, double mass)
 }
 
 static void
-_ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
+_ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
-   double rate, sx, sy;
+   double rate, sx, sy, sz;
 
    rate = ephysics_world_rate_get(body->world);
    sx = w / rate;
    sy = h / rate;
+   sz = d / rate;
 
    if (body->soft_body)
      {
-        body->soft_body->scale(btVector3(sx, sy, 1));
+        body->soft_body->scale(btVector3(sx, sy, sz));
         _ephysics_body_soft_body_constraints_rebuild(body);
      }
    else
      {
-        body->collision_shape->setLocalScaling(btVector3(sx, sy, 1));
+        body->collision_shape->setLocalScaling(btVector3(sx, sy, sz));
 
         if(!body->rigid_body->isStaticObject())
           _ephysics_body_mass_set(body, ephysics_body_mass_get(body));
@@ -851,16 +852,17 @@ _ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
 
    body->w = w;
    body->h = h;
+   body->d = d;
 
    ephysics_body_activate(body, EINA_TRUE);
 
-   DBG("Body %p scale changed to %lf, %lf.", body, sx, sy);
+   DBG("Body %p scale changed to (%lf, %lf, %lf).", body, sx, sy, sz);
 }
 
 static void
-_ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
+_ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
-   double rate, mx, my;
+   double rate, mx, my, mz;
    btTransform trans;
    int wy, height;
    btVector3 body_scale;
@@ -871,21 +873,22 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
 
    mx = (x + body->w * body->cm.x) / rate;
    my = (height - (y + body->h * body->cm.y)) / rate;
+   mz = z / rate;
 
    trans = _ephysics_body_transform_get(body);
-   trans.setOrigin(btVector3(mx, my, 0));
+   trans.setOrigin(btVector3(mx, my, mz));
    body->rigid_body->proceedToTransform(trans);
    body->rigid_body->getMotionState()->setWorldTransform(trans);
 
    ephysics_body_activate(body, EINA_TRUE);
 
-   DBG("Body %p position changed to %lf, %lf.", body, mx, my);
+   DBG("Body %p position changed to (%lf, %lf, %lf).", body, mx, my, mz);
 }
 
 static void
-_ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, double rate)
+_ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d, double rate)
 {
-   double mx, my, sx, sy;
+   double mx, my, mz, sx, sy, sz;
    btTransform trans;
    int wy, height;
    btVector3 body_scale;
@@ -895,12 +898,14 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 
    mx = (x + w * body->cm.x) / rate;
    my = (height - (y + h * body->cm.y)) / rate;
+   mz = z / rate;
    sx = w / rate;
    sy = h / rate;
+   sz = d / rate;
 
    trans = _ephysics_body_transform_get(body);
-   trans.setOrigin(btVector3(mx, my, trans.getOrigin().z()));
-   body_scale = btVector3(sx, sy, 1);
+   trans.setOrigin(btVector3(mx, my, mz));
+   body_scale = btVector3(sx, sy, sz);
 
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
      {
@@ -929,9 +934,10 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
 
    body->w = w;
    body->h = h;
+   body->d = d;
 
-   DBG("Body %p position changed to %lf, %lf.", body, mx, my);
-   DBG("Body %p scale changed to %lf, %lf.", body, sx, sy);
+   DBG("Body %p position changed to (%lf, %lf, %lf).", body, mx, my, mz);
+   DBG("Body %p scale changed to (%lf, %lf, %lf).", body, sx, sy, sz);
 }
 
 static void
@@ -944,9 +950,9 @@ _ephysics_body_evas_obj_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *o
    if ((w == body->w) && (h == body->h))
      return;
 
-   DBG("Resizing body %p to w=%i, h=%i", body, w, h);
+   DBG("Resizing body %p to w=%i, h=%i, d=%i", body, w, h, body->d);
    ephysics_world_lock_take(body->world);
-   _ephysics_body_resize(body, w, h);
+   _ephysics_body_resize(body, w, h, body->d);
    ephysics_world_lock_release(body->world);
 }
 
@@ -1044,7 +1050,7 @@ _ephysics_body_outside_render_area_check(EPhysics_Body *body)
    int wx, wy, ww, wh, bx, by, bw, bh;
 
    ephysics_world_render_geometry_get(body->world, &wx, &wy, &ww, &wh);
-   ephysics_body_geometry_get(body, &bx, &by, &bw, &bh);
+   ephysics_body_geometry_get(body, &bx, &by, NULL, &bw, &bh, NULL);
 
    // FIXME: check what should be done regarding rotated bodies
    if (((ephysics_world_bodies_outside_top_autodel_get(body->world)) &&
@@ -1079,14 +1085,14 @@ ephysics_body_forces_apply(EPhysics_Body *body)
 void
 ephysics_body_recalc(EPhysics_Body *body, double rate)
 {
-   Evas_Coord x, y, w, h;
+   Evas_Coord x, y, z, w, h, d;
    double vx, vy, lt, at;
 
-   ephysics_body_geometry_get(body, &x, &y, &w, &h);
+   ephysics_body_geometry_get(body, &x, &y, &z, &w, &h, &d);
    ephysics_body_linear_velocity_get(body, &vx, &vy);
    ephysics_body_sleeping_threshold_get(body, &lt, &at);
 
-   _ephysics_body_geometry_set(body, x, y, w, h, rate);
+   _ephysics_body_geometry_set(body, x, y, z, w, h, d, rate);
    _ephysics_body_linear_velocity_set(body, vx, vy, rate);
    _ephysics_body_sleeping_threshold_set(body, lt, at, rate);
 }
@@ -1729,19 +1735,19 @@ ephysics_body_world_boundaries_resize(EPhysics_World *world)
 
    bottom = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_BOTTOM);
    if (bottom)
-     ephysics_body_geometry_set(bottom, x, y + height, width, 10);
+     ephysics_body_geometry_set(bottom, x, y + height, -5, width, 10, 10);
 
    right = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_RIGHT);
    if (right)
-     ephysics_body_geometry_set(right, x + width, 0, 10, y + height);
+     ephysics_body_geometry_set(right, x + width, 0, -5, 10, y + height, 10);
 
    left = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_LEFT);
    if (left)
-     ephysics_body_geometry_set(left,  x - 10, 0, 10, y + height);
+     ephysics_body_geometry_set(left,  x - 10, 0, -5, 10, y + height, 10);
 
    top = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_TOP);
    if (top)
-     ephysics_body_geometry_set(top, 0, y - 10, x + width, 10);
+     ephysics_body_geometry_set(top, 0, y - 10, -5, x + width, 10, 10);
 }
 
 static EPhysics_Body *
@@ -1765,7 +1771,7 @@ _ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary bound
 
    ephysics_body_mass_set(body, 0);
    ephysics_world_boundary_set(world, boundary, body);
-   ephysics_body_geometry_set(body, x, y, w, h);
+   ephysics_body_geometry_set(body, x, y, -5, w, h, 10);
 
    return body;
 }
@@ -1847,6 +1853,7 @@ EAPI Evas_Object *
 ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_Bool use_obj_pos)
 {
    int obj_x, obj_y, obj_w, obj_h;
+   double rate;
 
    if (!body)
      {
@@ -1878,9 +1885,10 @@ ephysics_body_evas_object_set(EPhysics_Body *body, Evas_Object *evas_obj, Eina_B
      return evas_obj;
 
    evas_object_geometry_get(body->evas_obj, &obj_x, &obj_y, &obj_w, &obj_h);
+   rate = ephysics_world_rate_get(body->world);
    ephysics_world_lock_take(body->world);
-   _ephysics_body_geometry_set(body, obj_x, obj_y, obj_w, obj_h,
-                               ephysics_world_rate_get(body->world));
+   _ephysics_body_geometry_set(body, obj_x, obj_y, - rate / 2,
+                               obj_w, obj_h, rate, rate);
 
    if (body->soft_body)
      {
@@ -1946,7 +1954,7 @@ ephysics_body_evas_object_get(const EPhysics_Body *body)
 }
 
 EAPI void
-ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    if (!body)
      {
@@ -1954,20 +1962,20 @@ ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas
         return;
      }
 
-   if ((w <= 0) || (h <= 0))
+   if ((w <= 0) || (h <= 0) || (d <= 0))
      {
-        ERR("Width and height must to be a non-null, positive value.");
+        ERR("Width, height and depth must to be a non-null, positive value.");
         return;
      }
 
    ephysics_world_lock_take(body->world);
-   _ephysics_body_geometry_set(body, x, y, w, h,
+   _ephysics_body_geometry_set(body, x, y, z, w, h, d,
                                ephysics_world_rate_get(body->world));
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
-ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
+ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    if (!body)
      {
@@ -1975,19 +1983,19 @@ ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h)
         return;
      }
 
-   if ((w <= 0) || (h <= 0))
+   if ((w <= 0) || (h <= 0) || (d <= 0))
      {
-        ERR("Width and height must to be a non-null, positive value.");
+        ERR("Width, height and depth must to be a non-null, positive value.");
         return;
      }
 
    ephysics_world_lock_take(body->world);
-   _ephysics_body_resize(body, w, h);
+   _ephysics_body_resize(body, w, h, d);
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
-ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
+ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z)
 {
    if (!body)
      {
@@ -1996,12 +2004,12 @@ ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
      }
 
    ephysics_world_lock_take(body->world);
-   _ephysics_body_move(body, x, y);
+   _ephysics_body_move(body, x, y, z);
    ephysics_world_lock_release(body->world);
 }
 
 EAPI void
-ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z, Evas_Coord *w, Evas_Coord *h, Evas_Coord *d)
 {
    btTransform trans;
    btVector3 scale;
@@ -2024,8 +2032,10 @@ ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord 
    if (x) *x = round((trans.getOrigin().getX() - scale.x() / 2) * rate);
    if (y) *y = height - round((trans.getOrigin().getY() + scale.y() / 2)
                               * rate);
+   if (z) *z = round((trans.getOrigin().getZ() - scale.z() / 2) * rate);
    if (w) *w = body->w;
    if (h) *h = body->h;
+   if (d) *d = body->d;
 }
 
 EAPI void

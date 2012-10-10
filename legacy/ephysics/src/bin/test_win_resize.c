@@ -62,7 +62,7 @@ _win_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
    evas_object_geometry_get(sphere, &x, &y, NULL, NULL);
 
    ephysics_body_move(sphere_body, x * (ratew / old_rate->w),
-                      y * (rateh / old_rate->h));
+                      y * (rateh / old_rate->h), -15);
    evas_object_resize(sphere, 70 * ratew, 70 * rateh);
 
    old_rate->w = ratew;

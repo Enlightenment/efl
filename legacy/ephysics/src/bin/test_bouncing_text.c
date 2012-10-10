@@ -22,7 +22,7 @@ _world_populate(Test_Data *test_data)
 
    text_body = ephysics_body_box_add(test_data->world);
    ephysics_body_evas_object_set(text_body, text, EINA_FALSE);
-   ephysics_body_geometry_set(text_body, x, y, w * 5 / 6, 46);
+   ephysics_body_geometry_set(text_body, x, y, -15, w * 5 / 6, 46, 30);
    ephysics_body_restitution_set(text_body, 0.95);
    ephysics_body_friction_set(text_body, 0.1);
    test_data->bodies = eina_list_append(test_data->bodies, text_body);

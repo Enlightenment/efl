@@ -75,7 +75,8 @@ test_collision_filter(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
    ephysics_body_friction_set(boundary, 2);
 
    boundary = ephysics_body_box_add(test_data->world);
-   ephysics_body_geometry_set(boundary, 60, FLOOR_Y - 16, WIDTH - 120, 10);
+   ephysics_body_geometry_set(boundary, 60, FLOOR_Y - 16, -15, WIDTH - 120, 10,
+                              30);
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 2);
    ephysics_body_mass_set(boundary, 0);

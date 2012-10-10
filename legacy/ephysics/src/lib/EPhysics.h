@@ -1945,9 +1945,8 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
  * @brief
  * Set physics body size.
  *
- * All the physics bodies are and with canonical dimensions.
- * Circles have diameter 1, boxes have dimensions 1
- * on all the axes.
+ * By default circles have diameter equal to 1 meter * rate, boxes have
+ * dimensions 1 meter * rate on all the axes.
  *
  * There are three direct ways of modifying it's size:
  * @li With @ref ephysics_body_resize();
@@ -1960,6 +1959,7 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
  * @param body The body to be resized.
  * @param w The body width, in pixels.
  * @param h The body height, in pixels.
+ * @param d The body depth, in pixels.
  *
  * @see ephysics_body_geometry_get().
  * @see ephysics_body_geometry_set().
@@ -1967,13 +1967,13 @@ EAPI Evas_Object *ephysics_body_evas_object_get(const EPhysics_Body *body);
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h);
+EAPI void ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h, Evas_Coord d);
 
 /**
  * @brief
  * Set physics body position.
  *
- * All the physics bodies are created centered on origin (0, 0).
+ * All the physics bodies are created centered on origin (0, 0, 0).
  *
  * There are three direct ways of modifying this position:
  * @li With @ref ephysics_body_move();
@@ -1989,6 +1989,7 @@ EAPI void ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h);
  * @param body The body to be positioned.
  * @param x The position on axis x, in pixels.
  * @param y The position on axis y, in pixels.
+ * @param z The position on axis z, in pixels.
  *
  * @see ephysics_body_geometry_get().
  * @see ephysics_body_geometry_set().
@@ -1996,7 +1997,7 @@ EAPI void ephysics_body_resize(EPhysics_Body *body, Evas_Coord w, Evas_Coord h);
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y);
+EAPI void ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z);
 
 /**
  * @brief
@@ -2025,8 +2026,10 @@ EAPI void ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y);
  * @param body The body to be modified.
  * @param x The position on axis x, in pixels.
  * @param y The position on axis y, in pixels.
+ * @param z The position on axis z, in pixels.
  * @param w The body width, in pixels.
  * @param h The body height, in pixels.
+ * @param d The body depth, in pixels.
  *
  * @see ephysics_body_geometry_get().
  * @see ephysics_body_move().
@@ -2034,7 +2037,7 @@ EAPI void ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y);
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+EAPI void ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d);
 
 /**
  * @brief
@@ -2043,8 +2046,10 @@ EAPI void ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coo
  * @param body The physics body.
  * @param x The position on axis x, in pixels.
  * @param y The position on axis y, in pixels.
+ * @param z The position on axis z, in pixels.
  * @param w The body width, in pixels.
  * @param h The body height, in pixels.
+ * @param d The body depth, in pixels.
  *
  * @see ephysics_body_geometry_set() for more details.
  * @see ephysics_body_move().
@@ -2052,7 +2057,7 @@ EAPI void ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coo
  *
  * @ingroup EPhysics_Body
  */
-EAPI void ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI void ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z, Evas_Coord *w, Evas_Coord *h, Evas_Coord *d);
 
 /**
  * @brief

@@ -99,7 +99,7 @@ _update_circle_cb(void *data __UNUSED__, EPhysics_Body *body, void *event_info)
    evas_object_color_set(shadow, alpha, alpha, alpha, alpha);
 
    if (x > E_THRESHOLD)
-     ephysics_body_move(body, -w - 1, y);
+     ephysics_body_move(body, -w - 1, y, -15);
 }
 
 static void
@@ -218,7 +218,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    ground_body = ephysics_body_box_add(world);
    ephysics_body_mass_set(ground_body, EPHYSICS_BODY_MASS_STATIC);
-   ephysics_body_geometry_set(ground_body, -100, FLOOR_Y, WIDTH + 800, 10);
+   ephysics_body_geometry_set(ground_body, -100, FLOOR_Y, -15, WIDTH + 800, 10,
+                              30);
    ephysics_body_restitution_set(ground_body, 0.65);
    ephysics_body_friction_set(ground_body, 0.8);
 
