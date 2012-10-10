@@ -359,16 +359,16 @@ void ecore_mempool_shutdown(void);
 #define GENERIC_ALLOC_SIZE_DECLARE(TYPE)      \
   size_t _ecore_sizeof_##TYPE = sizeof (TYPE);
 
-GENERIC_ALLOC_FREE_HEADER(Ecore_Animator, ecore_animator);
+//GENERIC_ALLOC_FREE_HEADER(Ecore_Animator, ecore_animator);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Event_Handler, ecore_event_handler);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Event_Filter, ecore_event_filter);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Event, ecore_event);
-GENERIC_ALLOC_FREE_HEADER(Ecore_Idle_Exiter, ecore_idle_exiter);
-GENERIC_ALLOC_FREE_HEADER(Ecore_Idle_Enterer, ecore_idle_enterer);
-GENERIC_ALLOC_FREE_HEADER(Ecore_Idler, ecore_idler);
-GENERIC_ALLOC_FREE_HEADER(Ecore_Job, ecore_job);
-GENERIC_ALLOC_FREE_HEADER(Ecore_Timer, ecore_timer);
-GENERIC_ALLOC_FREE_HEADER(Ecore_Poller, ecore_poller);
+//GENERIC_ALLOC_FREE_HEADER(Ecore_Idle_Exiter, ecore_idle_exiter);
+//GENERIC_ALLOC_FREE_HEADER(Ecore_Idle_Enterer, ecore_idle_enterer);
+//GENERIC_ALLOC_FREE_HEADER(Ecore_Idler, ecore_idler);
+//GENERIC_ALLOC_FREE_HEADER(Ecore_Job, ecore_job);
+//GENERIC_ALLOC_FREE_HEADER(Ecore_Timer, ecore_timer);
+//GENERIC_ALLOC_FREE_HEADER(Ecore_Poller, ecore_poller);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Pipe, ecore_pipe);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Fd_Handler, ecore_fd_handler);
 #ifdef _WIN32
@@ -376,5 +376,9 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
 #endif
 
 #undef GENERIC_ALLOC_FREE_HEADER
+
+EAPI extern Eo *_ecore_parent;
+#define ECORE_PARENT_CLASS ecore_parent_class_get()
+const Eo_Class *ecore_parent_class_get(void) EINA_CONST;
 
 #endif

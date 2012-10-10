@@ -565,6 +565,13 @@ requirements_ecore_win32="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_wi
 requirements_ecore_wince="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_wince}"
 requirements_ecore_x="ecore >= 1.6.99 eina >= 1.6.99 ${requirements_ecore_x}"
 
+# Eo
+
+PKG_CHECK_MODULES([EO], [eo])
+requirements_ecore="eo ${requirements_ecore}"
+
+EINA_CFLAGS="$EINA_CFLAGS $EO_CFLAGS"
+EINA_LIBS="$EINA_LIBS $EO_LIBS"
 
 # glib support (main loop integration)
 AC_ARG_ENABLE([glib],

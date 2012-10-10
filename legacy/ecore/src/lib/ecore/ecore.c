@@ -36,6 +36,9 @@
 #if HAVE_MALLINFO
 #include <malloc.h>
 
+
+EAPI Eo *_ecore_parent = NULL;
+
 static Ecore_Version _version = { VERS_MAJ, VERS_MIN, VERS_MIC, VERS_REV };
 EAPI Ecore_Version *ecore_version = &_version;
 
@@ -138,6 +141,8 @@ ecore_init(void)
    if (++_ecore_init_count != 1)
      return _ecore_init_count;
 
+   eo_init();
+
 #ifdef HAVE_LOCALE_H
    setlocale(LC_CTYPE, "");
 #endif
@@ -194,6 +199,7 @@ ecore_init(void)
 #if defined(GLIB_INTEGRATION_ALWAYS)
    if (_ecore_glib_always_integrate) ecore_main_loop_glib_integrate();
 #endif
+   _ecore_parent = eo_add(ECORE_PARENT_CLASS, NULL);
 
    return _ecore_init_count;
 
@@ -205,6 +211,9 @@ shutdown_evil:
 #ifdef HAVE_EVIL
    evil_shutdown();
 #endif
+
+   eo_shutdown();
+
    return --_ecore_init_count;
 }
 
@@ -299,6 +308,9 @@ ecore_shutdown(void)
 #ifdef HAVE_EVIL
      evil_shutdown();
 #endif
+
+     eo_unref(_ecore_parent);
+     eo_shutdown();
 unlock:
      _ecore_unlock();
 
@@ -852,3 +864,15 @@ _thread_callback(void        *data __UNUSED__,
    _ecore_main_call_flush();
 }
 
+static const Eo_Class_Description parent_class_desc = {
+     EO_VERSION,
+     "ecore_parent",
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(NULL, NULL, 0),
+     NULL,
+     0,
+     NULL,
+     NULL
+};
+
+EO_DEFINE_CLASS(ecore_parent_class_get, &parent_class_desc, EO_BASE_CLASS, NULL);

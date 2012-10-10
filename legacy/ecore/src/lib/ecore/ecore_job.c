@@ -2,10 +2,18 @@
 # include <config.h>
 #endif
 
+#include <Eo.h>
+
 #include <stdlib.h>
 
 #include "Ecore.h"
 #include "ecore_private.h"
+
+#define MY_CLASS ECORE_JOB_CLASS
+
+#define MY_CLASS_NAME "ecore_job"
+
+EAPI Eo_Op ECORE_JOB_BASE_ID = EO_NOOP;
 
 static Eina_Bool _ecore_job_event_handler(void *data,
                                           int   type,
@@ -16,14 +24,14 @@ static void _ecore_job_event_free(void *data,
 static int ecore_event_job_type = 0;
 static Ecore_Event_Handler *_ecore_job_handler = NULL;
 
-struct _Ecore_Job
+typedef struct _Ecore_Job_Private_Data Ecore_Job_Private_Data;
+
+struct _Ecore_Job_Private_Data
 {
-   ECORE_MAGIC;
    Ecore_Event *event;
    Ecore_Cb     func;
    void        *data;
 };
-GENERIC_ALLOC_SIZE_DECLARE(Ecore_Job);
 
 void
 _ecore_job_init(void)
@@ -58,23 +66,50 @@ EAPI Ecore_Job *
 ecore_job_add(Ecore_Cb    func,
               const void *data)
 {
-   Ecore_Job *job;
+   Ecore_Job *job = eo_add_custom(MY_CLASS, _ecore_parent, ecore_job_constructor(func, data));
+   eo_unref(job);
+   return job;
+}
 
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!func) return NULL;
+static void
+_job_constructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Ecore_Cb func = va_arg(*list, Ecore_Cb);
+   const void *data = va_arg(*list, const void *);
 
-   job = ecore_job_calloc(1);
-   if (!job) return NULL;
-   ECORE_MAGIC_SET(job, ECORE_MAGIC_JOB);
-   job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, NULL);
+   if (EINA_UNLIKELY(!eina_main_loop_is()))
+     {
+        eo_error_set(obj);
+        EINA_MAIN_LOOP_CHECK_RETURN;
+     }
+   eo_do_super(obj, eo_constructor());
+   eo_manual_free_set(obj, EINA_TRUE);
+
+   if (!func)
+     {
+        eo_error_set(obj);
+        ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
+        return;
+     }
+
+   Ecore_Job_Private_Data *job = _pd;
+
+   job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, obj);
    if (!job->event)
      {
-        ecore_job_mp_free(job);
-        return NULL;
+        eo_error_set(obj);
+        ERR("no event was assigned to object '%p' of class '%s'", obj, MY_CLASS_NAME);
+        return;
      }
    job->func = func;
    job->data = (void *)data;
-   return job;
+}
+
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_error_set(obj);
+   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
 }
 
 /**
@@ -83,21 +118,23 @@ ecore_job_add(Ecore_Cb    func,
  * @return  The data pointer that was to be passed to the job.
  */
 EAPI void *
-ecore_job_del(Ecore_Job *job)
+ecore_job_del(Ecore_Job *obj)
 {
    void *data;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_JOB))
-     {
-        ECORE_MAGIC_FAIL(job, ECORE_MAGIC_JOB,
-                         "ecore_job_del");
-        return NULL;
-     }
+   Ecore_Job_Private_Data *job = eo_data_get(obj, MY_CLASS);
    data = job->data;
-   ECORE_MAGIC_SET(job, ECORE_MAGIC_NONE);
    ecore_event_del(job->event);
+   eo_parent_set(obj, NULL);
    return data;
+}
+
+static void
+_destructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   /*FIXME: check if ecore_event_del should be called from here*/
+   eo_do_super(obj, eo_destructor());
 }
 
 /**
@@ -109,7 +146,7 @@ _ecore_job_event_handler(void *data __UNUSED__,
                          int   type __UNUSED__,
                          void *ev)
 {
-   Ecore_Job *job;
+   Ecore_Job_Private_Data *job;
 
    job = ev;
    job->func(job->data);
@@ -117,9 +154,45 @@ _ecore_job_event_handler(void *data __UNUSED__,
 }
 
 static void
-_ecore_job_event_free(void *data __UNUSED__,
-                      void *job)
+_ecore_job_event_free(void *data,
+                      void *job __UNUSED__)
 {
-   ecore_job_mp_free(job);
+   eo_parent_set(data, NULL);
+
+   Ecore_Job *obj = data;
+
+   if (eo_destructed_is(obj))
+      eo_manual_free(obj);
+   else
+      eo_manual_free_set(obj, EINA_FALSE);
 }
 
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(ECORE_JOB_ID(ECORE_JOB_SUB_ID_CONSTRUCTOR), _job_constructor),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ECORE_JOB_SUB_ID_CONSTRUCTOR, "Add a job to the event queue."),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ECORE_JOB_BASE_ID, op_desc, ECORE_JOB_SUB_ID_LAST),
+     NULL,
+     sizeof(Ecore_Job_Private_Data),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(ecore_job_class_get, &class_desc, EO_BASE_CLASS, NULL);

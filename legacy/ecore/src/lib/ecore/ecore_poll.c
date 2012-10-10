@@ -7,16 +7,30 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-struct _Ecore_Poller
+#include "Eo.h"
+
+#define MY_CLASS ECORE_POLLER_CLASS
+
+#define MY_CLASS_NAME "ecore_poller"
+
+EAPI Eo_Op ECORE_POLLER_BASE_ID = EO_NOOP;
+
+#define ECORE_POLLER_CHECK(obj)                       \
+  if (!eo_isa((obj), ECORE_POLLER_CLASS)) \
+    return
+
+struct _Ecore_Poller_Private_Data
 {
    EINA_INLIST;
    ECORE_MAGIC;
+   Ecore_Poller *obj;
    int           ibit;
    unsigned char delete_me : 1;
    Ecore_Task_Cb func;
    void         *data;
 };
-GENERIC_ALLOC_SIZE_DECLARE(Ecore_Poller);
+
+typedef struct _Ecore_Poller_Private_Data Ecore_Poller_Private_Data;
 
 static Ecore_Timer *timer = NULL;
 static int min_interval = -1;
@@ -28,7 +42,7 @@ static int poller_walking = 0;
 static double poll_interval = 0.125;
 static double poll_cur_interval = 0.0;
 static double last_tick = 0.0;
-static Ecore_Poller *pollers[16] =
+static Ecore_Poller_Private_Data *pollers[16] =
 {
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL,
    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
@@ -105,7 +119,7 @@ static Eina_Bool
 _ecore_poller_cb_timer(void *data __UNUSED__)
 {
    int i;
-   Ecore_Poller *poller, *l;
+   Ecore_Poller_Private_Data *poller, *l;
    int changes = 0;
 
    at_tick++;
@@ -156,11 +170,17 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
               for (l = pollers[i]; l; )
                 {
                    poller = l;
-                   l = (Ecore_Poller *)EINA_INLIST_GET(l)->next;
+                   l = (Ecore_Poller_Private_Data *)EINA_INLIST_GET(l)->next;
                    if (poller->delete_me)
                      {
-                        pollers[i] = (Ecore_Poller *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(poller));
-                        ecore_poller_mp_free(poller);
+                        pollers[i] = (Ecore_Poller_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(poller));
+
+                        eo_parent_set(poller->obj, NULL);
+                        if (eo_destructed_is(poller->obj))
+                           eo_manual_free(poller->obj);
+                        else
+                           eo_manual_free_set(poller->obj, EINA_FALSE);
+
                         poller_delete_count--;
                         changes++;
                         if (poller_delete_count <= 0) break;
@@ -212,6 +232,13 @@ ecore_poller_poll_interval_get(Ecore_Poller_Type type __UNUSED__)
    return poll_interval;
 }
 
+static void
+_constructor(Eo *obj, void *_pd EINA_UNUSED, va_list *list EINA_UNUSED)
+{
+   eo_error_set(obj);
+   ERR("only custom constructor can be used with '%s' class", MY_CLASS_NAME);
+}
+
 EAPI Ecore_Poller *
 ecore_poller_add(Ecore_Poller_Type type __UNUSED__,
                  int               interval,
@@ -219,15 +246,43 @@ ecore_poller_add(Ecore_Poller_Type type __UNUSED__,
                  const void       *data)
 {
    Ecore_Poller *poller;
+   poller = eo_add_custom(MY_CLASS, _ecore_parent,
+                          ecore_poller_constructor(type, interval, func, data));
+   eo_unref(poller);
+   return poller;
+}
+
+static void
+_poller_constructor(Eo *obj, void *_pd, va_list *list)
+{
+   Ecore_Poller_Type type = va_arg(*list, Ecore_Poller_Type);
+   (void)type;
+   int interval = va_arg(*list, int);
+   Ecore_Task_Cb func = va_arg(*list, Ecore_Task_Cb);
+   const void *data = va_arg(*list, const void *);
+
+
+   Ecore_Poller_Private_Data *poller = _pd;
+   poller->obj = obj;
+
    int ibit;
 
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!func) return NULL;
-   if (interval < 1) interval = 1;
+    if (EINA_UNLIKELY(!eina_main_loop_is()))
+      {
+         eo_error_set(obj);
+         EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FLASE);
+      }
 
-   poller = ecore_poller_calloc(1);
-   if (!poller) return NULL;
-   ECORE_MAGIC_SET(poller, ECORE_MAGIC_POLLER);
+   eo_do_super(obj, eo_constructor());
+   eo_manual_free_set(obj, EINA_TRUE);
+
+   if (!func)
+     {
+        eo_error_set(obj);
+        ERR("callback function must be set up for an object of class: '%s'", MY_CLASS_NAME);
+        return;
+     }
+
    /* interval MUST be a power of 2, so enforce it */
    if (interval < 1) interval = 1;
    ibit = -1;
@@ -242,27 +297,35 @@ ecore_poller_add(Ecore_Poller_Type type __UNUSED__,
    poller->ibit = ibit;
    poller->func = func;
    poller->data = (void *)data;
-   pollers[poller->ibit] = (Ecore_Poller *)eina_inlist_prepend(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
+   pollers[poller->ibit] = (Ecore_Poller_Private_Data *)eina_inlist_prepend(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
    if (poller_walking)
      just_added_poller++;
    else
      _ecore_poller_next_tick_eval();
-   return poller;
 }
 
 EAPI Eina_Bool
-ecore_poller_poller_interval_set(Ecore_Poller *poller,
+ecore_poller_poller_interval_set(Ecore_Poller *obj,
                                  int           interval)
 {
+   Eina_Bool ret;
+   ECORE_POLLER_CHECK(obj) EINA_FALSE;
+   eo_do(obj, ecore_poller_interval_set(interval, &ret));
+   return ret;
+}
+
+static void
+_poller_interval_set(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int interval = va_arg(*list, int);
+   Eina_Bool *ret = va_arg(*list, Eina_Bool *);
+   Eina_Bool int_ret;
+
+   EINA_MAIN_LOOP_CHECK_RETURN;
+
    int ibit;
 
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
-   if (!ECORE_MAGIC_CHECK(poller, ECORE_MAGIC_POLLER))
-     {
-        ECORE_MAGIC_FAIL(poller, ECORE_MAGIC_POLLER,
-                         "ecore_poller_poller_interval_set");
-        return EINA_FALSE;
-     }
+   Ecore_Poller_Private_Data *poller = _pd;
 
    /* interval MUST be a power of 2, so enforce it */
    if (interval < 1) interval = 1;
@@ -276,29 +339,44 @@ ecore_poller_poller_interval_set(Ecore_Poller *poller,
    if (ibit > 15) ibit = 15;
    /* if interval specified is the same as interval set, return true without wasting time */
    if (poller->ibit == ibit)
-     return EINA_TRUE;
-   pollers[poller->ibit] = (Ecore_Poller *)eina_inlist_remove(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
+     {
+        int_ret = EINA_TRUE;
+        goto end;
+     }
+
+   pollers[poller->ibit] = (Ecore_Poller_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
    poller->ibit = ibit;
-   pollers[poller->ibit] = (Ecore_Poller *)eina_inlist_prepend(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
+   pollers[poller->ibit] = (Ecore_Poller_Private_Data *)eina_inlist_prepend(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
    if (poller_walking)
      just_added_poller++;
    else
      _ecore_poller_next_tick_eval();
-   return EINA_TRUE;
+
+   int_ret = EINA_TRUE;
+
+end:
+   if (ret) *ret = int_ret;
 }
 
 EAPI int
-ecore_poller_poller_interval_get(Ecore_Poller *poller)
+ecore_poller_poller_interval_get(Ecore_Poller *obj)
 {
+   int ret;
+   ECORE_POLLER_CHECK(obj) EINA_FALSE;
+   eo_do(obj, ecore_poller_interval_get(&ret));
+   return ret;
+}
+
+static void
+_poller_interval_get(Eo *obj EINA_UNUSED, void *_pd, va_list *list)
+{
+   int *ret = va_arg(*list, int *);
+   *ret =0;
+
    int ibit, interval = 1;
 
-   EINA_MAIN_LOOP_CHECK_RETURN_VAL(0);
-   if (!ECORE_MAGIC_CHECK(poller, ECORE_MAGIC_POLLER))
-     {
-        ECORE_MAGIC_FAIL(poller, ECORE_MAGIC_POLLER,
-                         "ecore_poller_poller_interval_get");
-        return 0;
-     }
+   EINA_MAIN_LOOP_CHECK_RETURN;
+   Ecore_Poller_Private_Data *poller = _pd;
 
    ibit = poller->ibit;
    while (ibit != 0)
@@ -306,21 +384,16 @@ ecore_poller_poller_interval_get(Ecore_Poller *poller)
         ibit--;
         interval <<= 1;
      }
-   return interval;
+   *ret = interval;
 }
 
 EAPI void *
-ecore_poller_del(Ecore_Poller *poller)
+ecore_poller_del(Ecore_Poller *obj)
 {
    void *data;
 
    EINA_MAIN_LOOP_CHECK_RETURN_VAL(NULL);
-   if (!ECORE_MAGIC_CHECK(poller, ECORE_MAGIC_POLLER))
-     {
-        ECORE_MAGIC_FAIL(poller, ECORE_MAGIC_POLLER,
-                         "ecore_poller_del");
-        return NULL;
-     }
+   Ecore_Poller_Private_Data *poller = eo_data_get(obj, MY_CLASS);
    /* we are walking the poller list - a bad idea to remove from it while
     * walking it, so just flag it as delete_me and come back to it after
     * the loop has finished */
@@ -332,10 +405,30 @@ ecore_poller_del(Ecore_Poller *poller)
      }
    /* not in loop so safe - delete immediately */
    data = poller->data;
-   pollers[poller->ibit] = (Ecore_Poller *)eina_inlist_remove(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
-   ecore_poller_mp_free(poller);
+   pollers[poller->ibit] = (Ecore_Poller_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
+
+   eo_parent_set(poller->obj, NULL);
+   if (eo_destructed_is(poller->obj))
+      eo_manual_free(obj);
+   else
+      eo_manual_free_set(obj, EINA_FALSE);
+
    _ecore_poller_next_tick_eval();
    return data;
+}
+
+static void
+_destructor(Eo *obj, void *_pd, va_list *list EINA_UNUSED)
+{
+   Ecore_Poller_Private_Data *pd = _pd;
+
+   if (!pd->delete_me)
+   {
+     pd->delete_me = 1;
+     poller_delete_count++;
+   }
+
+   eo_do_super(obj, eo_destructor());
 }
 
 /**
@@ -346,15 +439,52 @@ void
 _ecore_poller_shutdown(void)
 {
    int i;
-   Ecore_Poller *poller;
+   Ecore_Poller_Private_Data *poller;
 
    for (i = 0; i < 15; i++)
      {
         while ((poller = pollers[i]))
           {
-             pollers[i] = (Ecore_Poller *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(pollers[i]));
-             ecore_poller_mp_free(poller);
+             pollers[i] = (Ecore_Poller_Private_Data *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(pollers[i]));
+             eo_parent_set(poller->obj, NULL);
+             if (eo_destructed_is(poller->obj))
+                eo_manual_free(poller->obj);
+             else
+                eo_manual_free_set(poller->obj, EINA_FALSE);
           }
      }
 }
 
+static void
+_class_constructor(Eo_Class *klass)
+{
+   const Eo_Op_Func_Description func_desc[] = {
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_CONSTRUCTOR), _constructor),
+        EO_OP_FUNC(EO_BASE_ID(EO_BASE_SUB_ID_DESTRUCTOR), _destructor),
+        EO_OP_FUNC(ECORE_POLLER_ID(ECORE_POLLER_SUB_ID_CONSTRUCTOR), _poller_constructor),
+        EO_OP_FUNC(ECORE_POLLER_ID(ECORE_POLLER_SUB_ID_INTERVAL_SET), _poller_interval_set),
+        EO_OP_FUNC(ECORE_POLLER_ID(ECORE_POLLER_SUB_ID_INTERVAL_GET), _poller_interval_get),
+        EO_OP_FUNC_SENTINEL
+   };
+
+   eo_class_funcs_set(klass, func_desc);
+}
+
+static const Eo_Op_Description op_desc[] = {
+     EO_OP_DESCRIPTION(ECORE_POLLER_SUB_ID_CONSTRUCTOR, "Add an idle enterer handler."),
+     EO_OP_DESCRIPTION(ECORE_POLLER_SUB_ID_INTERVAL_SET, "Changes the polling interval rate of poller."),
+     EO_OP_DESCRIPTION(ECORE_POLLER_SUB_ID_INTERVAL_GET, "Gets the polling interval rate of poller"),
+     EO_OP_DESCRIPTION_SENTINEL
+};
+static const Eo_Class_Description class_desc = {
+     EO_VERSION,
+     MY_CLASS_NAME,
+     EO_CLASS_TYPE_REGULAR,
+     EO_CLASS_DESCRIPTION_OPS(&ECORE_POLLER_BASE_ID, op_desc, ECORE_POLLER_SUB_ID_LAST),
+     NULL,
+     sizeof(Ecore_Poller_Private_Data),
+     _class_constructor,
+     NULL
+};
+
+EO_DEFINE_CLASS(ecore_poller_class_get, &class_desc, EO_BASE_CLASS, NULL)
