@@ -32,6 +32,7 @@ void test_grab(void *data, Evas_Object *obj, void *event_info);
 void test_growing_balls(void *data, Evas_Object *obj, void *event_info);
 void test_heavy(void *data, Evas_Object *obj, void *event_info);
 void test_jumping_balls(void *data, Evas_Object *obj, void *event_info);
+void test_light(void *data, Evas_Object *obj, void *event_info);
 void test_material(void *data, Evas_Object *obj, void *event_info);
 void test_no_gravity(void *data, Evas_Object *obj, void *event_info);
 void test_rotate(void *data, Evas_Object *obj, void *event_info);
@@ -61,6 +62,7 @@ static const EPhysics_Test tests[] = {
        {"Growing Balls", test_growing_balls},
        {"Heavy", test_heavy},
        {"Jumping Balls", test_jumping_balls},
+       {"Light", test_light},
        {"Material", test_material},
        {"No Gravity", test_no_gravity},
        {"Rotate", test_rotate},
