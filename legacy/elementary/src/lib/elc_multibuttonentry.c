@@ -329,6 +329,9 @@ _elm_multibuttonentry_smart_on_focus(Evas_Object *obj)
 
    if (elm_widget_focus_get(obj))
      {
+        // ACCESS
+        if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON)) return EINA_TRUE;
+
         if (sd->editable)
           {
              if ((sd->selected_it))
@@ -457,6 +460,28 @@ _button_select(Evas_Object *obj,
           {
              elm_object_focus_set(sd->entry, EINA_FALSE);
              evas_object_focus_set(btn, EINA_TRUE);
+
+             // ACCESS
+             if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+               {
+                  Evas_Object *ao, *po;
+                  Eina_Strbuf *buf;
+                  const char *part, *text;
+
+                  part = "elm.btn.text";
+                  po = (Evas_Object *)edje_object_part_object_get(btn, part);
+                  ao = evas_object_data_get(po, "_part_access_obj");
+                  _elm_access_highlight_set(ao);
+
+                  buf = eina_strbuf_new();
+                  eina_strbuf_append_printf(buf,
+                    "multi button entry item %s is selected",
+                    edje_object_part_text_get(btn, part));
+
+                  text = (const char*)eina_strbuf_string_steal(buf);
+                  _elm_access_say(text);
+                  eina_strbuf_free(buf);
+               }
           }
      }
    else
@@ -562,6 +587,54 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
+static void
+_access_multibuttonentry_label_register(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_MULTIBUTTONENTRY_DATA_GET(obj, sd);
+
+   Evas_Object *po;
+   po = (Evas_Object *)edje_object_part_object_get(sd->label, "mbe.label");
+
+   if (is_access)
+     {
+        Evas_Object *ao;
+        ao = _elm_access_edje_object_part_object_register
+                            (obj, sd->label, "mbe.label");
+        _elm_access_text_set(_elm_access_object_get(ao),
+                             ELM_ACCESS_TYPE, E_("multi button entry label"));
+     }
+   else
+     _elm_access_edje_object_part_object_unregister
+                      (obj, sd->label, "mbe.label");
+
+
+   evas_object_pass_events_set(po, !is_access);
+   evas_object_propagate_events_set(sd->label, !is_access);
+}
+
+static void
+_access_multibuttonentry_item_register(Evas_Object *obj,
+                                       Elm_Multibuttonentry_Item *item,
+                                       Eina_Bool is_access)
+{
+   if (is_access)
+     {
+        Evas_Object *ao;
+        ao = _elm_access_edje_object_part_object_register
+                      (obj, item->button, "elm.btn.text");
+        _elm_access_text_set(_elm_access_object_get(ao),
+                             ELM_ACCESS_TYPE, E_("multi button entry item"));
+     }
+   else
+     _elm_access_edje_object_part_object_unregister
+                (obj, item->button, "elm.btn.text");
+
+   /* cannot read item->button because mouse-in event is delivered to
+      the multibuttonentry resize_obj which is registered as an access
+      object, so the mouse-in event should be blocked here */
+   evas_object_propagate_events_set(item->button, !is_access);
+}
+
 static Elm_Object_Item *
 _button_item_add(Evas_Object *obj,
                  const char *str,
@@ -620,6 +693,24 @@ _button_item_add(Evas_Object *obj,
    item->rw = rw;
    item->vw = vw;
    item->visible = EINA_TRUE;
+
+   // ACCESS
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON))
+     {
+        const char *text;
+        Eina_Strbuf *buf;
+        buf = eina_strbuf_new();
+
+        eina_strbuf_append_printf(buf,
+          "multi button entry item %s is added",
+          edje_object_part_text_get(item->button, "elm.btn.text"));
+
+        text = (const char*)eina_strbuf_string_steal(buf);
+        _elm_access_say(text);
+        eina_strbuf_free(buf);
+
+        _access_multibuttonentry_item_register(obj, item, EINA_TRUE);
+     }
 
    if (func)
      {
@@ -742,6 +833,9 @@ _elm_multibuttonentry_smart_event(Evas_Object *obj,
                                   void *event_info __UNUSED__)
 {
    if (elm_widget_disabled_get(obj)) return EINA_FALSE;
+
+   // ACCESS
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON)) return EINA_FALSE;
 
    return EINA_TRUE;
 }
@@ -1281,6 +1375,10 @@ _view_init(Evas_Object *obj)
    _label_set(obj, "");
    elm_widget_sub_object_add(obj, sd->label);
 
+   // ACCESS
+   if ((_elm_config->access_mode == ELM_ACCESS_MODE_ON))
+     _access_multibuttonentry_label_register(obj, EINA_TRUE);
+
    sd->entry = elm_entry_add(obj);
    if (!sd->entry) return;
    elm_entry_single_line_set(sd->entry, EINA_TRUE);
@@ -1364,6 +1462,46 @@ _elm_multibuttonentry_smart_text_get(const Evas_Object *obj,
    else return _elm_multibuttonentry_parent_sc->text_get(obj, part);
 }
 
+static char *
+_access_info_cb(void *data __UNUSED__,
+                Evas_Object *obj,
+                Elm_Widget_Item *item __UNUSED__)
+{
+   char *ret;
+   Eina_Strbuf *buf;
+   Eina_List *l = NULL;
+   Elm_Multibuttonentry_Item *it;
+
+   ELM_MULTIBUTTONENTRY_DATA_GET(obj, sd);
+
+   if (sd->view_state == MULTIBUTTONENTRY_VIEW_GUIDETEXT)
+     {
+        if (sd->guide_text_str) return strdup(sd->guide_text_str);
+        return NULL;
+     }
+
+   buf = eina_strbuf_new();
+
+   if (sd->label_str) eina_strbuf_append(buf, sd->label_str);
+
+   int invisible_its = 0;
+   EINA_LIST_FOREACH (sd->items, l, it)
+     {
+        if (it->visible)
+          eina_strbuf_append_printf(buf, ", %s",
+            edje_object_part_text_get(it->button, "elm.btn.text"));
+        else
+           invisible_its++;
+     }
+
+   if (invisible_its)
+     eina_strbuf_append_printf(buf, ", and %d more", invisible_its);
+
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 static void
 _elm_multibuttonentry_smart_add(Evas_Object *obj)
 {
@@ -1387,6 +1525,13 @@ _elm_multibuttonentry_smart_add(Evas_Object *obj)
 
    _view_init(obj);
    _callbacks_register(obj);
+
+   // ACCESS
+   _elm_access_object_register(obj, ELM_WIDGET_DATA(priv)->resize_obj);
+   _elm_access_text_set
+     (_elm_access_object_get(obj), ELM_ACCESS_TYPE, E_("multi button entry"));
+   _elm_access_callback_set
+     (_elm_access_object_get(obj), ELM_ACCESS_INFO, _access_info_cb, NULL);
 }
 
 static void
@@ -1416,6 +1561,89 @@ _elm_multibuttonentry_smart_del(Evas_Object *obj)
    ELM_WIDGET_CLASS(_elm_multibuttonentry_parent_sc)->base.del(obj);
 }
 
+static Eina_Bool
+_elm_multibuttonentry_smart_focus_next(const Evas_Object *obj,
+                                       Elm_Focus_Direction dir,
+                                       Evas_Object **next)
+{
+   Eina_List *items = NULL;
+   Eina_List *l = NULL;
+   Elm_Multibuttonentry_Item *it;
+   Evas_Object *ao;
+   Evas_Object *po;
+   Eina_Bool ret = EINA_FALSE;
+
+   ELM_MULTIBUTTONENTRY_DATA_GET(obj, sd);
+
+   if (!elm_widget_focus_get(obj))
+     {
+        *next = (Evas_Object *)obj;
+        return EINA_TRUE;
+     }
+
+   if (sd->label)
+     {
+        po = (Evas_Object *)edje_object_part_object_get(sd->label, "mbe.label");
+        ao = evas_object_data_get(po, "_part_access_obj");
+        ret = elm_widget_focus_get(ao);
+        items = eina_list_append(items, ao);
+     }
+
+   EINA_LIST_FOREACH (sd->items, l, it)
+     {
+        po = (Evas_Object *)edje_object_part_object_get
+                           (it->button, "elm.btn.text");
+        ao = evas_object_data_get(po, "_part_access_obj");
+        ret = ret || elm_widget_focus_get(ao);
+        items = eina_list_append(items, ao);
+     }
+
+   if (sd->entry)
+     {
+        ret = ret || elm_widget_focus_get(sd->entry);
+        /* elm_widget_list_focus_liset_next_get() check parent of item
+           because parent sd->entry is not multibuttnentry but sd->box
+           so append sd->box instead of sd->entry, is this proper? */
+        items = eina_list_append(items, sd->box);
+     }
+
+   if (ret)
+     return elm_widget_focus_list_next_get
+              (obj, items, eina_list_data_get, dir, next);
+
+   return EINA_FALSE;
+}
+
+static void
+_access_obj_process(Evas_Object *obj, Eina_Bool is_access)
+{
+   Eina_List *l;
+   Elm_Multibuttonentry_Item *it;
+
+   ELM_MULTIBUTTONENTRY_DATA_GET(obj, sd);
+
+   /* label */
+   _access_multibuttonentry_label_register(obj, is_access);
+
+   /* buttons */
+   EINA_LIST_FOREACH (sd->items, l, it)
+     _access_multibuttonentry_item_register(obj, it, is_access);
+}
+
+static void
+_elm_multibuttonentry_smart_access(Evas_Object *obj, Eina_Bool is_access)
+{
+   ELM_MULTIBUTTONENTRY_CHECK(obj);
+   ELM_MULTIBUTTONENTRY_DATA_GET(obj, sd);
+
+   if (is_access)
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =
+       _elm_multibuttonentry_smart_focus_next;
+   else
+     ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next = NULL;
+   _access_obj_process(obj, is_access);
+}
+
 static void
 _elm_multibuttonentry_smart_set_user(Elm_Multibuttonentry_Smart_Class *sc)
 {
@@ -1433,6 +1661,12 @@ _elm_multibuttonentry_smart_set_user(Elm_Multibuttonentry_Smart_Class *sc)
    ELM_LAYOUT_CLASS(sc)->text_set = _elm_multibuttonentry_smart_text_set;
    ELM_LAYOUT_CLASS(sc)->text_get = _elm_multibuttonentry_smart_text_get;
    ELM_LAYOUT_CLASS(sc)->sizing_eval = _elm_multibuttonentry_smart_sizing_eval;
+
+   // ACCESS
+   if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
+     ELM_WIDGET_CLASS(sc)->focus_next = _elm_multibuttonentry_smart_focus_next;
+
+   ELM_WIDGET_CLASS(sc)->access = _elm_multibuttonentry_smart_access;
 }
 
 EAPI const Elm_Multibuttonentry_Smart_Class *

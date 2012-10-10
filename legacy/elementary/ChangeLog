@@ -587,3 +587,7 @@
 
         * fix elm_spinner_special_value_add()
         * add elm_spinner_special_value_get() / del()
+
+2012-10-10  Shinwoo Kim (kimcinoo)
+
+        * Add access features to multibuttonentry
