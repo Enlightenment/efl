@@ -589,6 +589,7 @@ EAPI Evas_GL_API             *evas_gl_api_get            (Evas_GL *evas_gl) EINA
  *-----------------------------------------------------------------------*/
 
 typedef void             GLvoid;
+typedef char             GLchar;
 typedef unsigned int     GLenum;
 typedef unsigned char    GLboolean;
 typedef unsigned int     GLbitfield;
