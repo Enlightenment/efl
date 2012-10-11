@@ -62,17 +62,25 @@ _entry_focus_out_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 _canvas_focus_in_cb(void *data, Evas *e, void *event_info)
 {
+   Entry *en;
    Evas_Object *obj = evas_focus_get(e);
-   if (obj)
-     _entry_focus_in_cb(obj, NULL, NULL, NULL);
+   if (!obj) return;
+
+   en = evas_object_data_get(obj, "Entry");
+   if (en)
+     _entry_focus_in_cb(en, NULL, NULL, NULL);
 }
 
 static void
 _canvas_focus_out_cb(void *data, Evas *e, void *event_info)
 {
+   Entry *en;
    Evas_Object *obj = evas_focus_get(e);
-   if (obj)
-     _entry_focus_out_cb(obj, NULL, NULL, NULL);
+   if (!obj) return;
+
+   en = evas_object_data_get(obj, "Entry");
+   if (en)
+     _entry_focus_out_cb(en, NULL, NULL, NULL);
 }
 
 static void
@@ -399,6 +407,7 @@ create_input_field(Evas *evas, Entry *en, Evas_Coord x, Evas_Coord y, Evas_Coord
    evas_object_move(en->rect, x, y);
    evas_object_resize(en->rect, w, h);
    evas_object_show(en->rect);
+   evas_object_data_set(en->rect, "Entry", en);
 
    /* create text object for displaying text */
    en->txt_obj = evas_object_textblock_add(evas);
