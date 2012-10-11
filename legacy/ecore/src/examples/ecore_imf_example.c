@@ -33,6 +33,9 @@ _mouse_up_cb(void *data, Evas *e, Evas_Object *o, void *event_info)
    Entry *en = data;
    if (!en) return;
 
+   if (en->imf_context)
+     ecore_imf_context_reset(en->imf_context);
+
    evas_object_focus_set(en->rect, EINA_TRUE);
 }
 
