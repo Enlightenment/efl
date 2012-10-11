@@ -48,7 +48,7 @@ _ecore_idle_enterer_add(Ecore_Idle_Enterer *obj,
     if (EINA_UNLIKELY(!eina_main_loop_is()))
       {
          eo_error_set(obj);
-         EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FLASE);
+         EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
       }
 
    ie->obj = obj;

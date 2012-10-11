@@ -270,7 +270,7 @@ _poller_constructor(Eo *obj, void *_pd, va_list *list)
     if (EINA_UNLIKELY(!eina_main_loop_is()))
       {
          eo_error_set(obj);
-         EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FLASE);
+         EINA_MAIN_LOOP_CHECK_RETURN_VAL(EINA_FALSE);
       }
 
    eo_do_super(obj, eo_constructor());
