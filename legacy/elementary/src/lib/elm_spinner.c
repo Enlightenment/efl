@@ -529,7 +529,7 @@ _access_spinner_register(Evas_Object *obj)
    sd->increment_btn_access =
      _elm_access_edje_object_part_object_register
        (obj, elm_layout_edje_get(obj), increment_part);
-  
+
    ai = _elm_access_object_get(sd->increment_btn_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner increment button"));
 
@@ -541,7 +541,7 @@ _access_spinner_register(Evas_Object *obj)
    ai = _elm_access_object_get(sd->decrement_btn_access);
    _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("spinner decrement button"));
 
-   // spinner label 
+   // spinner label
    sd->access_obj = _elm_access_edje_object_part_object_register
                        (obj, elm_layout_edje_get(obj), "access_text");
 
@@ -663,7 +663,7 @@ _access_hook(Evas_Object *obj, Eina_Bool is_access)
 {
    ELM_SPINNER_CHECK(obj);
    ELM_SPINNER_DATA_GET(obj, sd);
-   
+
    if (is_access)
      {
         ELM_WIDGET_CLASS(ELM_WIDGET_DATA(sd)->api)->focus_next =

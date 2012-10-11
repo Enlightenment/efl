@@ -205,24 +205,24 @@ _elm_win_state_eval(void *data __UNUSED__)
 {
    Eina_List *l;
    Evas_Object *obj;
-   
+
    _elm_win_state_eval_job = NULL;
-   
+
    if (_elm_config->auto_norender_withdrawn)
      {
         EINA_LIST_FOREACH(_elm_win_list, l, obj)
           {
              if ((elm_win_withdrawn_get(obj)) ||
-                 ((elm_win_iconified_get(obj) && 
+                 ((elm_win_iconified_get(obj) &&
                    (_elm_config->auto_norender_iconified_same_as_withdrawn))))
                {
                   if (!evas_object_data_get(obj, "__win_auto_norender"))
                     {
                        Evas *evas = evas_object_evas_get(obj);
-                       
+
                        elm_win_norender_push(obj);
                        evas_object_data_set(obj, "__win_auto_norender", obj);
-                       
+
                        if (_elm_config->auto_flush_withdrawn)
                          {
                             edje_file_cache_flush();
@@ -258,7 +258,7 @@ _elm_win_state_eval(void *data __UNUSED__)
           }
         else
           {
-             if ((_elm_win_count_iconified + _elm_win_count_withdrawn) >= 
+             if ((_elm_win_count_iconified + _elm_win_count_withdrawn) >=
                  _elm_win_count_shown)
                {
                   if (!_elm_win_auto_throttled)
@@ -780,7 +780,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    obj = ELM_WIDGET_DATA(sd)->obj;
-   
+
    _elm_widget_top_win_focused_set(obj, EINA_TRUE);
    if (!elm_widget_focus_order_get(obj))
      {
@@ -846,7 +846,7 @@ _elm_win_state_change(Ecore_Evas *ee)
 
    if (sd->withdrawn) _elm_win_count_withdrawn--;
    if (sd->iconified) _elm_win_count_iconified--;
-   
+
    if (sd->withdrawn != ecore_evas_withdrawn_get(sd->ee))
      {
         sd->withdrawn = ecore_evas_withdrawn_get(sd->ee);
@@ -876,7 +876,7 @@ _elm_win_state_change(Ecore_Evas *ee)
    if (sd->withdrawn) _elm_win_count_withdrawn++;
    if (sd->iconified) _elm_win_count_iconified++;
    _elm_win_state_eval_queue();
-   
+
    if ((ch_withdrawn) || (ch_iconified))
      {
         if (sd->withdrawn)
@@ -1305,7 +1305,7 @@ _elm_win_smart_del(Evas_Object *obj)
    if (evas_object_visible_get(obj)) _elm_win_count_shown--;
    _elm_win_count--;
    _elm_win_state_eval_queue();
-   
+
    if (sd->ee)
      {
         ecore_evas_callback_delete_request_set(sd->ee, NULL);
@@ -1978,16 +1978,16 @@ _elm_win_frame_cb_resize_show(void *data,
    else if (!strcmp(source, "elm.event.resize.r"))
      ecore_wl_window_cursor_from_name_set(sd->wl.win, ELM_CURSOR_RIGHT_SIDE);
    else if (!strcmp(source, "elm.event.resize.tl"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, 
+     ecore_wl_window_cursor_from_name_set(sd->wl.win,
                                           ELM_CURSOR_TOP_LEFT_CORNER);
    else if (!strcmp(source, "elm.event.resize.tr"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, 
+     ecore_wl_window_cursor_from_name_set(sd->wl.win,
                                           ELM_CURSOR_TOP_RIGHT_CORNER);
    else if (!strcmp(source, "elm.event.resize.bl"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, 
+     ecore_wl_window_cursor_from_name_set(sd->wl.win,
                                           ELM_CURSOR_BOTTOM_LEFT_CORNER);
    else if (!strcmp(source, "elm.event.resize.br"))
-     ecore_wl_window_cursor_from_name_set(sd->wl.win, 
+     ecore_wl_window_cursor_from_name_set(sd->wl.win,
                                           ELM_CURSOR_BOTTOM_RIGHT_CORNER);
    else
      ecore_wl_window_cursor_default_restore(sd->wl.win);
@@ -2085,15 +2085,15 @@ _elm_win_frame_cb_close(void *data,
    Evas_Object *win;
 
    /* FIXME: After the current freeze, this should be handled differently.
-    * 
-    * Ideally, we would want to mimic the X11 backend and use something 
-    * like ECORE_WL_EVENT_WINDOW_DELETE and handle the delete_request 
-    * inside of ecore_evas. That would be the 'proper' way, but since we are 
-    * in a freeze right now, I cannot add a new event value, or a new 
+    *
+    * Ideally, we would want to mimic the X11 backend and use something
+    * like ECORE_WL_EVENT_WINDOW_DELETE and handle the delete_request
+    * inside of ecore_evas. That would be the 'proper' way, but since we are
+    * in a freeze right now, I cannot add a new event value, or a new
     * event structure to ecore_wayland.
-    * 
-    * So yes, this is a temporary 'stop-gap' solution which will be fixed 
-    * when the freeze is over, but it does fix a trac bug for now, and in a 
+    *
+    * So yes, this is a temporary 'stop-gap' solution which will be fixed
+    * when the freeze is over, but it does fix a trac bug for now, and in a
     * way which does not break API or the freeze. - dh
     */
 
@@ -2153,7 +2153,7 @@ _elm_win_frame_add(Elm_Win_Smart_Data *sd,
      }
 }
 
-static void 
+static void
 _elm_win_frame_del(Elm_Win_Smart_Data *sd)
 {
    if (sd->frame_obj)
@@ -2177,7 +2177,7 @@ _elm_win_frame_del(Elm_Win_Smart_Data *sd)
           (sd->frame_obj, "elm,action,maximize", "elm",
               _elm_win_frame_cb_maximize);
         edje_object_signal_callback_del
-          (sd->frame_obj, "elm,action,close", "elm", 
+          (sd->frame_obj, "elm,action,close", "elm",
               _elm_win_frame_cb_close);
 
         evas_object_del(sd->frame_obj);
@@ -2700,7 +2700,7 @@ elm_win_add(Evas_Object *parent,
 
    _elm_win_list = eina_list_append(_elm_win_list, obj);
    _elm_win_count++;
-   
+
    if (((fallback) && (!strcmp(fallback, "Software FB"))) ||
        ((!fallback) && (ENGINE_COMPARE(ELM_SOFTWARE_FB))))
      {
@@ -3400,7 +3400,7 @@ elm_win_norender_push(Evas_Object *obj)
 {
    ELM_WIN_CHECK(obj);
    ELM_WIN_DATA_GET_OR_RETURN(obj, sd);
-   
+
    sd->norender++;
    if (sd->norender == 1) ecore_evas_manual_render_set(sd->ee, EINA_TRUE);
 }

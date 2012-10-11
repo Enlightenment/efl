@@ -146,7 +146,7 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
           }
         eina_lock_release(&sti->lock);
         eina_lock_free(&sti->lock);
-	st->items = NULL;
+        st->items = NULL;
         free(sti);
      }
    // FIXME: kill threads and more
@@ -398,7 +398,7 @@ _store_filesystem_list_do(void *data, Ecore_Thread *th __UNUSED__)
         Eina_Bool ok;
         size_t pathsz = finf->path_length + 1;
 
-	if (finf->path[finf->name_start] == '.') continue ;
+        if (finf->path[finf->name_start] == '.') continue ;
 
         info = calloc(1, sizeof(Elm_Store_Item_Info_Filesystem) + pathsz);
         if (!info) continue;

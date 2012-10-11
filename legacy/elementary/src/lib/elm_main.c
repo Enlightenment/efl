@@ -147,7 +147,7 @@ _prefix_check(void)
    dirs[1] = app_compile_lib_dir;
    dirs[2] = app_compile_data_dir;
    dirs[3] = app_compile_locale_dir;
-   
+
    if (!dirs[0]) dirs[0] = "/usr/local/bin";
    if (!dirs[1]) dirs[1] = "/usr/local/lib";
    if (!dirs[2])
@@ -422,7 +422,7 @@ elm_quicklaunch_init(int    argc,
    ecore_file_init();
 
    _elm_exit_handler = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, _elm_signal_exit, NULL);
-   
+
    if (argv) _elm_appname = strdup(ecore_file_file_get(argv[0]));
 
    pfx = eina_prefix_new(argv ? argv[0] : NULL, elm_quicklaunch_init,
@@ -455,7 +455,7 @@ elm_quicklaunch_sub_init(int    argc,
         return _elm_sub_init_count;
 #endif
      }
-   
+
    if (!quicklaunch_on)
      {
         ecore_app_args_set(argc, (const char **)argv);
@@ -721,7 +721,7 @@ elm_quicklaunch_fork(int    argc,
         _elm_appname = NULL;
         if ((argv) && (argv[0]))
           _elm_appname = strdup(ecore_file_file_get(argv[0]));
-        
+
 #ifdef SEMI_BROKEN_QUICKLAUNCH
         ecore_app_args_set(argc, (const char **)argv);
         evas_init();
@@ -1060,15 +1060,15 @@ elm_object_focus_set(Evas_Object *obj,
    if (elm_widget_is(obj))
      {
         const char *type;
-        
+
         if (focus == elm_widget_focus_get(obj)) return;
-        
+
         // ugly, but, special case for inlined windows
         type = evas_object_type_get(obj);
         if ((type) && (!strcmp(type, "elm_win")))
           {
              Evas_Object *inlined = elm_win_inlined_image_object_get(obj);
-             
+
              if (inlined)
                {
                   evas_object_focus_set(inlined, focus);

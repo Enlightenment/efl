@@ -315,7 +315,7 @@ _view_update(Evas_Object *obj)
      _shrink_mode_set(obj, EINA_TRUE);
 
    // update guidetext
-     _visual_guide_text_set(obj);
+   _visual_guide_text_set(obj);
 }
 
 static Eina_Bool
@@ -1274,7 +1274,7 @@ _box_layout_cb(Evas_Object *o,
    const Eina_List *l, *l_next;
    Evas_Object *obj;
    double ax, ay;
-   
+
    _box_min_size_calculate(o, priv);
 
    evas_object_geometry_get(o, &x, &y, &w, &h);
