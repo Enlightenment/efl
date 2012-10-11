@@ -881,8 +881,8 @@ _video_resize(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface 
    Emotion_Gstreamer_Video *ev = data;
 
    ecore_x_window_resize(ev->win, w, h);
-#endif
    fprintf(stderr, "resize: %i, %i\n", w, h);
+#endif
 }
 
 static void
@@ -979,6 +979,13 @@ _image_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info
    int image_area, src_area;
    double ratio;
 
+   GstElementFactory *cfactory = NULL;
+   GstElement *convert = NULL, *filter = NULL, *queue = NULL;
+   GstPad *pad = NULL, *teepad = NULL;
+   GstCaps *caps = NULL;
+   Eina_List *l, *engines;
+   const char *ename, *engine = NULL;
+
    evas_object_geometry_get(obj, NULL, NULL, &width, &height);
    image_area = width * height;
    src_area = ev->src_width * ev->src_height;
@@ -986,50 +993,112 @@ _image_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info
 
    // when an image is much smaller than original video size,
    // add fimcconvert element to the pipeline
-   if (ratio < 0.8 && !ev->priority && !ev->convert)
+   if (ratio < 0.8 && ev->stream && !ev->convert)
      {
-        GstElementFactory *cfactory = NULL;
-
         cfactory = gst_element_factory_find("fimcconvert");
-        if (cfactory)
+        if (!cfactory) return;
+
+        convert = gst_element_factory_create(cfactory, NULL);
+        if (!convert) return;
+
+        // add capsfilter to limit size and formats based on the backend
+        filter = gst_element_factory_make("capsfilter", "fimccapsfilter");
+        if (!filter)
           {
-             GstElement *convert = NULL;
+             gst_object_unref(convert);
+             return;
+          }
 
-             convert = gst_element_factory_create(cfactory, NULL);
-             if (convert)
+        engines = evas_render_method_list();
+        EINA_LIST_FOREACH(engines, l, ename)
+          {
+             if (evas_render_method_lookup(ename) ==
+                 evas_output_method_get(evas_object_evas_get(obj)))
                {
-                  GstElement *queue = NULL;
-                  GstPad *pad, *teepad;
-
-                  queue = gst_bin_get_by_name(GST_BIN(ev->sink), "equeue");
-                  gst_element_unlink(ev->tee, queue);
-                  gst_element_release_request_pad(ev->tee, ev->eteepad);
-                  gst_object_unref(ev->eteepad);
-
-                  gst_bin_add(GST_BIN(ev->sink), convert);
-                  gst_element_link_many(ev->tee, convert, queue, NULL);
-                  pad = gst_element_get_pad(convert, "sink");
-                  teepad = gst_element_get_request_pad(ev->tee, "src%d");
-                  gst_pad_link(teepad, pad);
-                  gst_object_unref(pad);
-
-                  g_object_set(G_OBJECT(convert), "src-width", width, NULL);
-                  g_object_set(G_OBJECT(convert), "src-height", height, NULL);
-                  g_object_set(G_OBJECT(convert), "qos", TRUE, NULL);
-                  gst_element_sync_state_with_parent(convert);
-
-                  ev->eteepad = teepad;
-                  ev->convert = convert;
+                  engine = ename;
+                  break;
                }
           }
+
+        if (strstr(engine, "software") != NULL)
+          {
+             caps = gst_caps_new_simple("video/x-raw-rgb",
+                                        "width", G_TYPE_INT, width,
+                                        "height", G_TYPE_INT, height,
+                                        NULL);
+          }
+        else if (strstr(engine, "gl") != NULL)
+          {
+             caps = gst_caps_new_simple("video/x-raw-yuv",
+                                        "width", G_TYPE_INT, width,
+                                        "height", G_TYPE_INT, height,
+                                        NULL);
+          }
+        g_object_set(G_OBJECT(filter), "caps", caps, NULL);
+        gst_caps_unref(caps);
+
+        // add new elements to the pipeline
+        queue = gst_bin_get_by_name(GST_BIN(ev->sink), "equeue");
+        gst_element_unlink(ev->tee, queue);
+        gst_element_release_request_pad(ev->tee, ev->eteepad);
+        gst_object_unref(ev->eteepad);
+
+        gst_bin_add_many(GST_BIN(ev->sink), convert, filter, NULL);
+        gst_element_link_many(ev->tee, convert, filter, queue, NULL);
+
+        pad = gst_element_get_pad(convert, "sink");
+        teepad = gst_element_get_request_pad(ev->tee, "src%d");
+        gst_pad_link(teepad, pad);
+        gst_object_unref(pad);
+
+        gst_element_sync_state_with_parent(convert);
+        gst_element_sync_state_with_parent(filter);
+
+        ev->eteepad = teepad;
+        ev->convert = convert;
+        evas_render_method_list_free(engines);
+
+        INF("add fimcconvert element. video size: %dx%d. emotion object size: %dx%d",
+            ev->src_width, ev->src_height, width, height);
      }
-   // TODO: when an image is resized(e.g rotation), set size again to fimcconvert
-   // TODO: fimcconvert has an issue about resetting 
-   //else if (ev->convert)
-   //  {
-   //     g_object_set(G_OBJECT(ev->convert), "src-width", w, NULL);
-   //     g_object_set(G_OBJECT(ev->convert), "src-height", h, NULL);
-   //  }
+   // set size again to the capsfilter when the image is resized
+   else if (ev->convert)
+     {
+        filter = gst_bin_get_by_name(GST_BIN(ev->sink), "fimccapsfilter");
+
+        engines = evas_render_method_list();
+        EINA_LIST_FOREACH(engines, l, ename)
+          {
+             if (evas_render_method_lookup(ename) ==
+                 evas_output_method_get(evas_object_evas_get(obj)))
+               {
+                  engine = ename;
+                  break;
+               }
+          }
+
+        if (strstr(engine, "software") != NULL)
+          {
+             caps = gst_caps_new_simple("video/x-raw-rgb",
+                                        "width", G_TYPE_INT, width,
+                                        "height", G_TYPE_INT, height,
+                                        NULL);
+          }
+        else if (strstr(engine, "gl") != NULL)
+          {
+             caps = gst_caps_new_simple("video/x-raw-yuv",
+                                        "width", G_TYPE_INT, width,
+                                        "height", G_TYPE_INT, height,
+                                        NULL);
+          }
+
+        g_object_set(G_OBJECT(filter), "caps", caps, NULL);
+        gst_caps_unref(caps);
+        evas_render_method_list_free(engines);
+
+        INF("set capsfilter size again:. video size: %dx%d. emotion object size: %dx%d",
+            ev->src_width, ev->src_height, width, height);
+     }
 }
 
 GstElement *

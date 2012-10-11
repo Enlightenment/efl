@@ -9,6 +9,7 @@ Additions:
 	- Sync rendering with Ecore_Animator.
 	- Track pending object for proper shutdown.
 	- Start handling embedded hardware customization.
+	- Add fimcconvert and capsfilter element for device 
 
 Fixes:
 	- build out of tree.
