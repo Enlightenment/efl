@@ -128,7 +128,7 @@ _notify_theme_apply(Evas_Object *obj)
 /**
  * Moves notification to orientation.
  *
- * This fucntion moves notification to orientation
+ * This function moves notification to orientation
  * according to object RTL orientation.
  *
  * @param obj notification object.
