@@ -1512,7 +1512,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
         mb_h = (mb_h / 32 + (mb_h % 32 ? 1 : 0));
 
         mb_w = w / 2;
-        mb_w = (mb_w / 32 + (mb_w % 32 ? 1 : 0));
+        mb_w = (mb_w / 64 + (mb_w % 64 ? 1 : 0));
 
 	for (mb_y = 0; mb_y < (mb_h >> 1); mb_y++)
 	  {

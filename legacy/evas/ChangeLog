@@ -1091,3 +1091,8 @@
        * Fix font sizing issues when size scaling happens to down down
        when it should round up. happens in rare sizing situations and fonts.
 
+2012-10-11 Sohyun Kim 
+
+       * Fix texture size issues when the image has nv12 format
+
+

@@ -215,6 +215,7 @@ Fixes:
     * evas_object_image_data_convert
     * TGA loader detects false positives less and handles alpha TGAs better
     * repeat event flag not inherited from parent smart like pass events
+    * texture size for nv12 format
 
 Improvements:
 
