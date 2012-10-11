@@ -63,6 +63,9 @@ GCRY_THREAD_OPTION_PTHREAD_IMPL;
 # endif /* ifdef HAVE_GNUTLS */
 #endif /* ifdef EINA_HAVE_THREADS */
 
+/* this has to be here until 2.0 */
+#define EET_OLD_EET_FILE_FORMAT 1
+
 #include "Eet.h"
 #include "Eet_private.h"
 
