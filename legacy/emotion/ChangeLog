@@ -54,3 +54,7 @@
 2012-09-06  Sohyun Kim
 
 	* Add capsfilter to limit format and size for fimc on device.
+
+2012-10-11  Sohyun Kim
+
+	* Fix to call correct render function based on the format.

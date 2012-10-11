@@ -962,13 +962,19 @@ _video_update_pixels(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_S
 {
    Emotion_Gstreamer_Video *ev = data;
    Emotion_Gstreamer_Buffer *send;
+   EvasVideoSinkPrivate *priv = NULL;
 
    if (!ev->send) return ;
 
    send = ev->send;
+   priv = send->sink;
    send->force = EINA_TRUE;
    ev->send = NULL;
-   evas_video_sink_main_render(send);
+
+   if (priv->samsung)
+      evas_video_sink_samsung_main_render(send);
+   else
+      evas_video_sink_main_render(send);
 }
 
 static void

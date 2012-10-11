@@ -18,6 +18,7 @@ Fixes:
 	- fix priority set/get for gstreamer.
 	- reset VLC pipeline on EOS.
 	- fix race condition on shutdown when still saving a file position.
+	- fix to call correct render function. 
 
 Improvements:
 
