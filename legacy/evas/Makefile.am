@@ -55,9 +55,7 @@ m4/efl_shm_open.m4 \
 m4/efl_tests.m4 \
 m4/evas_check_engine.m4 \
 m4/evas_check_loader.m4 \
-m4/evas_converter.m4 \
-m4/evas_dither.m4 \
-m4/evas_scaler.m4
+m4/evas_dither.m4
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = evas.pc
