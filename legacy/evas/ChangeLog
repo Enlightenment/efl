@@ -1095,4 +1095,7 @@
 
        * Fix texture size issues when the image has nv12 format
 
+2012-10-11  Carsten Haitzler (The Rasterman)
+
+       * Fix C code fallback line rendering path in software
 

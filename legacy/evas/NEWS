@@ -19,13 +19,13 @@ Improvements:
    * evas_object_del() now takes NULL parameters
 
 Fixes:
-
    * Fix segmentation fault with the esvg loader.
    * Fix EGL/GLES dest alpha rendering bug (no rendering).
    * Fix evas_object_image_alpha_set when image data not loaded yet.
    * Fix map surface leak.
    * Fix native surface set to null crash bug in gl engine.
    * Fix font sizing issue with some rare sizes and fonts when rounding wrong.
+   * Fix software line drawing c fallback code.
 
 Removal:
    * No more support s3c6410.

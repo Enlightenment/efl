@@ -77,7 +77,7 @@ init_blend_mask_color_span_funcs_c(void)
 static void
 _op_blend_pt_mas_c_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
    s = MUL_SYM(m, c);
-   m = 256 - (s >> 24);
+   m = 255 - (s >> 24);
    *d = s + MUL_256(m, *d);
 }
 
