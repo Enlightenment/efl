@@ -497,7 +497,7 @@ group { name: "elm/map/marker/radio/default";
       item: size_max_h 58;
    }
    images {
-      image: "radio2.png" COMP;
+      image: "map_item.png" COMP;
    }
    parts {
       part { name: "whole";
@@ -508,7 +508,8 @@ group { name: "elm/map/marker/radio/default";
       part { name: "base";
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            image.normal: "radio2.png";
+            image.normal: "map_item.png";
+            min: 24 24;
          }
       }
       part { name: "elm.icon";
@@ -518,6 +519,7 @@ group { name: "elm/map/marker/radio/default";
          description { state: "default" 0.0;
             rel1.relative: 0.27 0.27;
             rel2.relative: 0.73 0.73;
+            min: 24 24;
          }
       }
       part { name: "elm.text";
@@ -553,56 +555,7 @@ group { name: "elm/map/marker/radio/default";
       }
    }
 }
-group { name: "elm/map/marker/radio2/default";
-   data {
-      item: size_w 24;
-      item: size_h 24;
-      item: size_max_w 58;
-      item: size_max_h 58;
-   }
-   images {
-      image: "map_item_2.png" COMP;
-   }
-   parts {
-      part { name: "base";
-         ignore_flags: ON_HOLD;
-         description { state: "default" 0.0;
-            image.normal: "map_item_2.png";
-         }
-      }
-      part { name: "elm.text";
-         type:          TEXT;
-         effect:        SOFT_SHADOW;
-         mouse_events:  0;
-         scale: 1;
-         description { state: "default" 0.0;
-            align:    0.5 0.5;
-            color: 224 224 224 255;
-            color3: 0 0 0 64;
-            rel1.relative: 0.28 0.25;
-            rel2.relative: 0.75 0.75;
-            text {
-               font:     "Sans,Edje-Vera";
-               size:     10;
-               min:      0 0;
-               align:    0.5 0.5;
-            }
-         }
-      }
-   }
-   programs {
-      program { name: "open";
-         signal: "mouse,clicked,1";
-         source: "base";
-         action: SIGNAL_EMIT "open" "elm";
-      }
-      program { name: "bringin";
-         signal: "mouse,down,1,double";
-         source: "base";
-         action: SIGNAL_EMIT "bringin" "elm";
-      }
-   }
-}
+
 group { name: "elm/map/marker/empty/default";
    data {
       item: size_w 22;
@@ -627,6 +580,7 @@ group { name: "elm/map/marker/empty/default";
          clip_to: "whole";
          mouse_events:  0;
          description { state: "default" 0.0;
+            min: 24 24;
          }
       }
       part { name: "elm.text";
@@ -718,7 +672,7 @@ group { name: "elm/map/marker_bubble/default";
       part { name: "shine";
          mouse_events:  0;
          clip_to: "clipper";
-         description { state:    "default" 0.0;
+         description { state: "default" 0.0;
             rel1 {
                to: "base0";
             }

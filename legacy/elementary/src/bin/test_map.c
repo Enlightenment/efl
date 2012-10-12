@@ -117,6 +117,7 @@ _label_get(Evas_Object *obj)
    Evas_Object *label;
    label = elm_label_add(obj);
    elm_object_text_set(label, "Here is a parking lot.");
+   evas_object_show(label);
    return label;
 }
 

@@ -285,7 +285,6 @@ emo-wink.png \
 emo-worried.png \
 emo-wtf.png \
 map_item.png \
-map_item_2.png \
 shadow.png \
 black.png \
 tooltip-corner-top-left-tip.png \

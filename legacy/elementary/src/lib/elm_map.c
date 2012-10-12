@@ -1372,29 +1372,25 @@ _region_max_min_get(Eina_List *overlays,
 }
 
 static Evas_Object *
-_icon_dup(const Evas_Object *icon,
+_icon_dup(Evas_Object *icon,
           Evas_Object *parent)
 {
-   // Evas_Object do not support object duplication??
-   const char *file = NULL, *group = NULL;
-   Eina_Bool size_up, size_down;
    Evas_Object *dupp;
+   Evas_Coord w, h;
 
    if (!icon || !parent) return NULL;
-
-   dupp = elm_icon_add(parent);
-   elm_image_file_get(icon, &file, &group);
-   elm_image_file_set(dupp, file, group);
-   elm_image_animated_set(dupp, elm_image_animated_get(icon));
-   elm_image_animated_play_set(dupp, elm_image_animated_play_get(icon));
-   elm_icon_standard_set(dupp, elm_icon_standard_get(icon));
-   elm_icon_order_lookup_set(dupp, elm_icon_order_lookup_get(icon));
-   elm_image_no_scale_set(dupp, elm_image_no_scale_get(icon));
-   elm_image_resizable_get(icon, &size_up, &size_down);
-   elm_image_resizable_set(dupp, size_up, size_down);
-   elm_image_fill_outside_set(dupp, elm_image_fill_outside_get(icon));
-   elm_image_prescale_set(dupp, elm_image_prescale_get(icon));
-   elm_image_aspect_fixed_set(dupp, elm_image_aspect_fixed_get(icon));
+   dupp = evas_object_image_filled_add(evas_object_evas_get(parent));
+   evas_object_image_source_set(dupp, icon);
+   // Set size as origin' sizse for proxy
+   evas_object_geometry_get(icon, NULL, NULL, &w, &h);
+   if (w <= 0 || h <= 0)
+     {
+        evas_object_size_hint_min_get(icon, &w, &h);
+        evas_object_size_hint_min_set(dupp, w, h);
+     }
+   else evas_object_resize(dupp, w, h);
+   // Original should have size for proxy
+   evas_object_resize(icon, w, h);
 
    return dupp;
 }
@@ -1441,6 +1437,8 @@ _overlay_default_show(Overlay_Default *ovl)
         disp = ovl->content;
         evas_object_geometry_get(disp, NULL, NULL, &w, &h);
         if (w <= 0 || h <= 0) evas_object_size_hint_min_get(disp, &w, &h);
+		ovl->w = w;
+		ovl->h = h;
      }
    else if (!(ovl->icon) && ovl->clas_content)
      {
@@ -1522,17 +1520,6 @@ _overlay_default_content_update(Overlay_Default *ovl,
 }
 
 static void
-_overlay_default_class_content_update(Overlay_Default *ovl,
-                                      const Evas_Object *content __UNUSED__)
-{
-   EINA_SAFETY_ON_NULL_RETURN(ovl);
-
-   if (ovl->clas_content) evas_object_del(ovl->clas_content);
-   // Evas_Object can not be duplicated.
-   //ovl->clas_content = _content_dup(content);
-}
-
-static void
 _overlay_default_layout_update(Overlay_Default *ovl)
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
@@ -1564,6 +1551,17 @@ _overlay_default_layout_update(Overlay_Default *ovl)
 }
 
 static void
+_overlay_default_class_content_update(Overlay_Default *ovl,
+                                      Evas_Object *content)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+
+   if (ovl->clas_content) evas_object_del(ovl->clas_content);
+   ovl->clas_content = _icon_dup(content, ovl->layout);
+   _overlay_default_layout_update(ovl);
+}
+
+static void
 _overlay_default_icon_update(Overlay_Default *ovl,
                              Evas_Object *icon)
 {
@@ -1578,7 +1576,7 @@ _overlay_default_icon_update(Overlay_Default *ovl,
 
 static void
 _overlay_default_class_icon_update(Overlay_Default *ovl,
-                                   const Evas_Object *icon)
+                                   Evas_Object *icon)
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
 
@@ -1682,7 +1680,7 @@ _overlay_group_coord_member_update(Overlay_Group *grp,
 
 static void
 _overlay_group_icon_update(Overlay_Group *grp,
-                           const Evas_Object *icon)
+                           Evas_Object *icon)
 {
    EINA_SAFETY_ON_NULL_RETURN(grp);
 
@@ -1692,13 +1690,15 @@ _overlay_group_icon_update(Overlay_Group *grp,
 }
 
 static void
-_overlay_group_content_update(Overlay_Group *grp __UNUSED__,
-                              const Evas_Object *content __UNUSED__)
+_overlay_group_content_update(Overlay_Group *grp,
+                              Evas_Object *content,
+                              Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN(grp);
 
-   // Evas_Object can not be duplicated.
-   //_overlay_default_content_update(grp->ovl, _content_dup(content));
+   _overlay_default_content_update
+      (grp->ovl, _icon_dup(content, ELM_WIDGET_DATA(grp->wsd)->obj), overlay);
+
    return;
 }
 
@@ -1778,6 +1778,10 @@ _overlay_class_icon_update(Overlay_Class *ovl,
    if (ovl->icon == icon) return;
    if (ovl->icon) evas_object_del(ovl->icon);
    ovl->icon = icon;
+   // For using proxy, it should have size and be shown but moved away to hide.
+   evas_object_resize(icon, 32, 32);
+   evas_object_move(icon, -9999, -9999);
+   evas_object_show(icon);
 
    // Update class members' class icons
    EINA_LIST_FOREACH(ovl->members, l, overlay)
@@ -1801,11 +1805,14 @@ _overlay_class_content_update(Overlay_Class *ovl,
    if (ovl->content == content) return;
    if (ovl->content) evas_object_del(ovl->content);
    ovl->content = content;
+   // For using proxy, it should have size and be shown but moved away to hide.
+   // content should have it's own size
+   evas_object_move(content, -9999, -9999);
 
    // Update class members' class contents
    EINA_LIST_FOREACH(ovl->members, l, overlay)
      {
-        _overlay_group_content_update(overlay->grp, content);
+        _overlay_group_content_update(overlay->grp, content, overlay);
 
         if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
           _overlay_default_class_content_update(overlay->ovl, content);
@@ -1838,7 +1845,7 @@ _overlay_class_free(Overlay_Class *clas)
    EINA_LIST_FOREACH(clas->members, l, overlay)
      {
         overlay->grp->klass = NULL;
-        _overlay_group_content_update(overlay->grp, NULL);
+        _overlay_group_content_update(overlay->grp, NULL, NULL);
         _overlay_group_icon_update(overlay->grp, NULL);
 
         if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
@@ -5661,7 +5668,7 @@ elm_map_overlay_class_append(Elm_Map_Overlay *klass,
    // Update group by class
    overlay->grp->klass = klass;
    _overlay_group_icon_update(overlay->grp, class_ovl->icon);
-   _overlay_group_content_update(overlay->grp, class_ovl->content);
+   _overlay_group_content_update(overlay->grp, class_ovl->content, overlay);
    _overlay_group_color_update(overlay->grp, klass->c);
    _overlay_group_cb_set(overlay->grp, klass->cb, klass->data);
    if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
@@ -5696,7 +5703,7 @@ elm_map_overlay_class_remove(Elm_Map_Overlay *klass,
 
    overlay->grp->klass = NULL;
    _overlay_group_icon_update(overlay->grp, NULL);
-   _overlay_group_content_update(overlay->grp, NULL);
+   _overlay_group_content_update(overlay->grp, NULL, NULL);
    if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
      {
         _overlay_default_class_icon_update(overlay->ovl, NULL);
