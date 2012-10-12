@@ -293,7 +293,7 @@ EAPI void                  elm_slideshow_timeout_set(Evas_Object *obj, double ti
  * widget.
  *
  * @param obj The slideshow object
- * @return Returns the timeout set on it
+ * @return Returns the timeout set on it or -1.0, on errors
  *
  * @see elm_slideshow_timeout_set() for more details
  *
