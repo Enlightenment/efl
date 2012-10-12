@@ -10,6 +10,7 @@ Additions:
    * Add the toolbar API which expand the transverse length.
    * Add a way to know which month is displayed in elm_calendar
    * Add color picker to elm_colorselector.
+   * Add a search API to list all localisations corresponding to a name in map
 
 Improvements:
 

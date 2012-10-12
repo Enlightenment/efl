@@ -119,6 +119,7 @@ typedef struct _Elm_Map_Smart_Class
  */
 typedef struct _Elm_Map_Smart_Data     Elm_Map_Smart_Data;
 
+typedef struct _Elm_Map_Name_List      Elm_Map_Name_List;
 typedef char *(*Elm_Map_Module_Source_Name_Func)(void);
 typedef int   (*Elm_Map_Module_Tile_Zoom_Min_Func)(void);
 typedef int   (*Elm_Map_Module_Tile_Zoom_Max_Func)(void);
@@ -426,6 +427,19 @@ struct _Elm_Map_Name
    char                    *fname;
    Ecore_File_Download_Job *job;
    Elm_Map_Name_Cb          cb;
+   void                    *data;
+};
+
+struct _Elm_Map_Name_List
+{
+   Elm_Map_Smart_Data      *wsd;
+
+   Eina_List               *names;
+   double                   lon, lat;
+
+   char                    *fname;
+   Ecore_File_Download_Job *job;
+   Elm_Map_Name_List_Cb     cb;
    void                    *data;
 };
 

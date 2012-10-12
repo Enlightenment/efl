@@ -33,6 +33,7 @@ EAPI const char ELM_MAP_PAN_SMART_NAME[] = "elm_map_pan";
 #define NOMINATIM_PLACE        "place"
 #define NOMINATIM_ATTR_LON     "lon"
 #define NOMINATIM_ATTR_LAT     "lat"
+#define NOMINATIM_ATTR_ADDRESS "display_name"
 
 #ifdef HAVE_ELEMENTARY_ECORE_CON
 
@@ -2801,6 +2802,11 @@ _xml_name_attrs_dump_cb(void *data,
      dump->lon = _elm_atof(value);
    else if (!strncmp(key, NOMINATIM_ATTR_LAT, sizeof(NOMINATIM_ATTR_LAT)))
      dump->lat = _elm_atof(value);
+   else if (!strncmp(key, NOMINATIM_ATTR_ADDRESS, sizeof(NOMINATIM_ATTR_ADDRESS)))
+     {
+        if (!dump->address)
+          dump->address = strdup(value);
+     }
 
    return EINA_TRUE;
 }
@@ -2912,6 +2918,32 @@ _xml_name_dump_cb(void *data,
 
    return EINA_TRUE;
 }
+
+static Eina_Bool
+_xml_name_dump_list_cb(void *data,
+                       Eina_Simple_XML_Type type,
+                       const char *value,
+                       unsigned offset,
+                       unsigned length)
+{
+   Elm_Map_Name_List *name_list = data;
+   Elm_Map_Name *name;
+   Name_Dump dump = {0, NULL, 0.0, 0.0};
+   _xml_name_dump_cb(&dump, type, value, offset, length);
+   name = calloc(1, sizeof(Elm_Map_Name));
+   if (!name) return EINA_FALSE;
+   if (dump.address)
+     {
+        name->address = strdup(dump.address);
+        name->lon = dump.lon;
+        name->lat = dump.lat;
+        name->wsd = name_list->wsd;
+        name_list->names = eina_list_append(name_list->names, name);
+        name->wsd->names = eina_list_append(name->wsd->names, name);
+     }
+   return EINA_TRUE;
+}
+
 
 static void
 _kml_parse(Elm_Map_Route *r)
@@ -3053,6 +3085,39 @@ _name_parse(Elm_Map_Name *n)
 }
 
 static void
+_name_list_parse(Elm_Map_Name_List *nl)
+{
+   FILE *f;
+   EINA_SAFETY_ON_NULL_RETURN(nl);
+   EINA_SAFETY_ON_NULL_RETURN(nl->fname);
+
+   f = fopen(nl->fname, "rb");
+   if (f)
+     {
+        long sz;
+
+        fseek(f, 0, SEEK_END);
+        sz = ftell(f);
+        if (sz > 0)
+          {
+             char *buf;
+
+             fseek(f, 0, SEEK_SET);
+             buf = malloc(sz);
+             if (buf)
+               {
+                  if (fread(buf, 1, sz, f))
+                    {
+                       eina_simple_xml_parse
+                         (buf, sz, EINA_TRUE, _xml_name_dump_list_cb, nl);
+                    }
+               }
+          }
+        fclose(f);
+     }
+}
+
+static void
 _route_cb(void *data,
           const char *file,
           int status)
@@ -3123,6 +3188,68 @@ _name_cb(void *data,
                            "elm,state,busy,stop", "elm");
 }
 
+static void
+_name_list_cb(void *data,
+              const char *file,
+              int status)
+{
+   Elm_Map_Name_List *name_list;
+   Elm_Map_Smart_Data *sd;
+
+   EINA_SAFETY_ON_NULL_RETURN(data);
+   EINA_SAFETY_ON_NULL_RETURN(file);
+
+   name_list = data;
+   sd = name_list->wsd;
+
+   name_list->job = NULL;
+   if (status == 200)
+     {
+        _name_list_parse(name_list);
+        INF("Name List request success address");
+        if (name_list->cb)
+          name_list->cb(name_list->data, ELM_WIDGET_DATA(sd)->obj,
+                        name_list->names);
+        evas_object_smart_callback_call
+          (ELM_WIDGET_DATA(sd)->obj, SIG_NAME_LOADED, NULL);
+     }
+   else
+     {
+        ERR("Name List request failed: %d", status);
+        if (name_list->cb)
+          name_list->cb(name_list->data, ELM_WIDGET_DATA(sd)->obj, NULL);
+        evas_object_smart_callback_call
+          (ELM_WIDGET_DATA(sd)->obj, SIG_NAME_LOADED_FAIL, NULL);
+     }
+   edje_object_signal_emit(ELM_WIDGET_DATA(sd)->resize_obj,
+                           "elm,state,busy,stop", "elm");
+   free(name_list->fname);
+   free(name_list);
+}
+
+
+static char *
+_prepare_download()
+{
+   char fname[PATH_MAX];
+     {
+        const char *cachedir;
+
+#ifdef ELM_EFREET
+        snprintf(fname, sizeof(fname), "%s" CACHE_NAME_ROOT,
+                 efreet_cache_home_get());
+        (void)cachedir;
+#else
+        cachedir = getenv("XDG_CACHE_HOME");
+        snprintf(fname, sizeof(fname), "%s/%s" CACHE_NAME_ROOT, getenv("HOME"),
+                 cachedir ? : "/.config");
+#endif
+        if (!ecore_file_exists(fname)) ecore_file_mkpath(fname);
+     }
+   return strdup(fname);
+}
+
+
 static Elm_Map_Name *
 _name_request(const Evas_Object *obj,
               int method,
@@ -3134,31 +3261,18 @@ _name_request(const Evas_Object *obj,
 {
    char *url;
    Elm_Map_Name *name;
-   char fname[PATH_MAX], fname2[PATH_MAX];
+   char *fname, fname2[PATH_MAX];
 
    ELM_MAP_DATA_GET(obj, sd);
    EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
 
-   {
-      const char *cachedir;
-
-#ifdef ELM_EFREET
-      snprintf(fname, sizeof(fname), "%s" CACHE_NAME_ROOT,
-               efreet_cache_home_get());
-      (void)cachedir;
-#else
-      cachedir = getenv("XDG_CACHE_HOME");
-      snprintf(fname, sizeof(fname), "%s/%s" CACHE_NAME_ROOT, getenv("HOME"),
-               cachedir ? : "/.config");
-#endif
-      if (!ecore_file_exists(fname)) ecore_file_mkpath(fname);
-   }
-
+   fname = _prepare_download();
    url = sd->src_name->url_cb
-       (ELM_WIDGET_DATA(sd)->obj, method, address, lon, lat);
+   (ELM_WIDGET_DATA(sd)->obj, method, address, lon, lat);
    if (!url)
      {
         ERR("Name URL is NULL");
+        free(fname);
         return NULL;
      }
 
@@ -3183,10 +3297,12 @@ _name_request(const Evas_Object *obj,
         if (name->address) free(name->address);
         free(name->fname);
         free(name);
+        free(fname);
         return NULL;
      }
    INF("Name requested from %s to %s", url, name->fname);
    free(url);
+   free(fname);
 
    sd->names = eina_list_append(sd->names, name);
    evas_object_smart_callback_call
@@ -3195,6 +3311,60 @@ _name_request(const Evas_Object *obj,
                            "elm,state,busy,start", "elm");
    return name;
 }
+
+
+static Eina_List *
+_name_list_request(const Evas_Object *obj,
+              int method,
+              const char *address,
+              double lon,
+              double lat,
+              Elm_Map_Name_List_Cb name_cb,
+              void *data)
+{
+   char *url;
+   Elm_Map_Name_List *name_list;
+   char *fname, fname2[PATH_MAX];
+
+   ELM_MAP_DATA_GET(obj, sd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->src_name, NULL);
+
+   fname = _prepare_download();
+   url = sd->src_name->url_cb
+   (ELM_WIDGET_DATA(sd)->obj, method, address, lon, lat);
+   if (!url)
+     {
+        ERR("Name URL is NULL");
+        free(fname);
+        return NULL;
+     }
+   name_list = ELM_NEW(Elm_Map_Name_List);
+   name_list->wsd = sd;
+   snprintf(fname2, sizeof(fname2), "%s/%d", fname, rand());
+   name_list->fname = strdup(fname2);
+   name_list->cb = name_cb;
+   name_list->data = data;
+   if (!ecore_file_download_full(url, name_list->fname, _name_list_cb,
+                                 NULL, name_list,
+                                 &(name_list->job), sd->ua) || !(name_list->job))
+     {
+        ERR("Can't request Name from %s to %s", url, name_list->fname);
+        free(name_list->fname);
+        free(name_list);
+        free(fname);
+        return NULL;
+     }
+   INF("Name requested from %s to %s", url, name_list->fname);
+   free(url);
+   free(fname);
+
+   evas_object_smart_callback_call
+     (ELM_WIDGET_DATA(sd)->obj, SIG_NAME_LOAD, name_list->names);
+   edje_object_signal_emit(ELM_WIDGET_DATA(sd)->resize_obj,
+                           "elm,state,busy,start", "elm");
+   return name_list->names;
+}
+
 
 static Evas_Event_Flags
 _pinch_zoom_start_cb(void *data,
@@ -4743,6 +4913,25 @@ elm_map_name_add(const Evas_Object *obj,
    (void)name_cb;
    (void)data;
    return NULL;
+#endif
+}
+
+EAPI void
+elm_map_name_search(const Evas_Object *obj,
+                  const char *address,
+                  Elm_Map_Name_List_Cb name_cb,
+                  void *data)
+{
+#ifdef HAVE_ELEMENTARY_ECORE_CON
+   ELM_MAP_CHECK(obj);
+   if (address)
+     _name_list_request(obj, ELM_MAP_NAME_METHOD_SEARCH, address, 0, 0,
+                        name_cb, data);
+#else
+   (void) obj;
+   (void address);
+   (void) name_cb;
+   (void) data;
 #endif
 }
 

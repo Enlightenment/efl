@@ -593,3 +593,6 @@
         * Add access features to multibuttonentry
         * Fix diskselector bug on round with appended items with more
         than 4 items.
+
+2012-10-12  Michael Bouchaud (yoz)
+        * Add elm_map_name_search

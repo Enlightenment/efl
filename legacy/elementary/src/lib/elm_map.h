@@ -197,6 +197,7 @@ typedef Evas_Object               *(*Elm_Map_Group_Icon_Get_Func)(Evas_Object *o
 typedef void                       (*Elm_Map_Overlay_Get_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Get callback function for the overlay. */
 typedef void                       (*Elm_Map_Overlay_Del_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Det callback function for the overlay. @since 1.7 */
 typedef void                       (*Elm_Map_Name_Cb)(void *data, Evas_Object *map, Elm_Map_Name *name);                /**< Async-callback function for the name request. */
+typedef void                       (*Elm_Map_Name_List_Cb)(void *data, Evas_Object *map, Eina_List *name_list);                /**< Async-callback function for the name list request. */
 typedef void                       (*Elm_Map_Route_Cb)(void *data, Evas_Object *map, Elm_Map_Route *route);             /**< Async-callback function for the route request. */
 
 /**
@@ -1484,6 +1485,22 @@ EAPI const char           *elm_map_route_waypoint_get(const Elm_Map_Route *route
  * @ingroup Map
  */
 EAPI Elm_Map_Name         *elm_map_name_add(const Evas_Object *obj, const char *address, double lon, double lat, Elm_Map_Name_Cb name_cb, void *data);
+
+/**
+ * Request a list of addresses corresponding to a given name
+ *
+ * @param obj The map object.
+ * @param address The address.
+ * @param name_cb The callback function.
+ * @param data The user callback data.
+ *
+ * If you want to search address from a name.
+ *
+ * @since 1.8
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_name_search(const Evas_Object *obj, const char *address, Elm_Map_Name_List_Cb name_cb, void *data);
 
 /**
  * Get the address of the name.
