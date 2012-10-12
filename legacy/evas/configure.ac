@@ -87,11 +87,10 @@ esac
 AC_SUBST(MODULE_ARCH)
 AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
 
-want_fontconfig="auto"
-want_fribidi="auto"
+want_fontconfig="yes"
+want_fribidi="yes"
 want_harfbuzz="auto"
 want_pixman="no"
-want_evas_cserve="yes"
 want_evas_cserve2="yes"
 
 want_evas_engine_buffer="yes"
@@ -111,38 +110,22 @@ want_evas_engine_psl1ght="no"
 want_evas_engine_wayland_shm="no"
 want_evas_engine_wayland_egl="no"
 
-want_evas_image_loader_edb="yes"
-want_evas_image_loader_eet="yes"
-want_evas_image_loader_gif="yes"
-want_evas_image_loader_jpeg="yes"
-want_evas_image_loader_pmaps="yes"
-want_evas_image_loader_png="yes"
-want_evas_image_loader_svg="yes"
-want_evas_image_loader_tiff="yes"
-want_evas_image_loader_xpm="yes"
-want_evas_image_loader_bmp="yes"
-want_evas_image_loader_tga="yes"
-want_evas_image_loader_wbmp="yes"
 want_evas_image_loader_webp="yes"
-want_evas_image_loader_ico="yes"
-want_evas_image_loader_psd="yes"
-want_evas_image_loader_generic="yes"
-
-want_evas_font_loader_eet="yes"
+want_evas_image_loader_gif="yes"
+want_evas_image_loader_tiff="yes"
+want_evas_image_loader_svg="yes"
 
 case "$host_os" in
    mingw32ce*)
       want_fontconfig="no"
-      want_evas_image_loader_edb="no"
       want_evas_image_loader_gif="no"
-      want_evas_image_loader_svg="no"
       want_evas_image_loader_tiff="no"
+      want_evas_image_loader_svg="no"
       ;;
    mingw*)
       want_evas_engine_software_gdi="yes"
       want_evas_engine_software_ddraw="yes"
       want_evas_engine_direct3d="yes"
-      want_evas_image_loader_edb="no"
       want_evas_image_loader_svg="yes"
       ;;
    darwin*)
@@ -286,8 +269,7 @@ AC_ARG_ENABLE([fontconfig],
     fi
    ])
 
-
-if test "x${want_fontconfig}" = "xyes" -o "x${want_fontconfig}" = "xauto" ; then
+if test "x${want_fontconfig}" = "xyes"; then
    PKG_CHECK_MODULES([FONTCONFIG],
       [fontconfig >= 2.5.0],
       [
@@ -295,11 +277,7 @@ if test "x${want_fontconfig}" = "xyes" -o "x${want_fontconfig}" = "xauto" ; then
        AC_DEFINE(HAVE_FONTCONFIG, 1, [have fontconfig searching capabilities])
        requirement_evas="fontconfig ${requirement_evas}"
       ],
-      [
-       if test "x${want_fontconfig}" = "xyes" -a "x${use_strict}" = "xyes" ; then
-          AC_MSG_ERROR([Fontconfig not found (strict dependencies checking)])
-       fi
-      ])
+      [AC_MSG_ERROR([Fontconfig not found])])
 fi
 
 # linebreak
@@ -342,7 +320,7 @@ AC_ARG_ENABLE([fribidi],
     fi
    ])
 
-if test "x${want_fribidi}" = "xyes" -o "x${want_fribidi}" = "xauto" ; then
+if test "x${want_fribidi}" = "xyes"; then
    PKG_CHECK_MODULES([FRIBIDI],
       [fribidi >= 0.19.2],
       [
@@ -355,14 +333,8 @@ if test "x${want_fribidi}" = "xyes" -o "x${want_fribidi}" = "xauto" ; then
        CPPFLAGS="$CPPFLAGS_SAVE"
       ],
       [
-       if test "x$want_fribidi" = "xyes" -a "x$use_strict" = "xyes" ; then
-          AC_MSG_ERROR([Fribidi not found (strict dependencies checking)])
-       fi
+       AC_MSG_ERROR([Fribidi not found])
       ])
-fi
-
-if test "x${have_fribidi}" = "xno"; then
-  HAS_BIDI=0
 fi
 
 # harfbuzz support
@@ -429,7 +401,6 @@ AC_ARG_ENABLE([pixman],
        want_pixman="no"
     fi
    ])
-
 
 if test "x${want_pixman}" = "xyes" -o "x${want_pixman}" = "xauto" ; then
    PKG_CHECK_MODULES([PIXMAN],
@@ -591,75 +562,28 @@ if test "x${want_evas_image_loader_generic}" = "xyes" ; then
    EFL_CHECK_SHM_OPEN
 fi
 
-# (shm_open (for cache server)
-AC_ARG_ENABLE([evas-cserve],
-   AC_HELP_STRING([--disable-evas-cserve],
-      [disable shared cache server support. @<:@default=enabled@:>@]),
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_cserve="yes"
-    else
-       want_evas_cserve="no"
-    fi
-   ])
-AC_MSG_CHECKING(whether to build shared cache server and support)
-AC_MSG_RESULT(${want_evas_cserve})
-
-# (shm_open (for cache server)
-AC_ARG_ENABLE([evas-cserve2],
-   AC_HELP_STRING([--disable-evas-cserve2],
-      [disable shared cache server 2 support. @<:@default=enabled@:>@]),
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_evas_cserve2="yes"
-    else
-       want_evas_cserve2="no"
-    fi
-   ])
-AC_MSG_CHECKING(whether to build shared cache server 2 and support)
-AC_MSG_RESULT(${want_evas_cserve2})
-
+want_evas_cserve2="yes"
 # cserve2 only works on Linux so far.
 if test "x${want_evas_cserve2}" = "xyes" ; then
    AC_CHECK_HEADERS(
       [sys/epoll.h sys/inotify.h sys/signalfd.h],
       [],
-      [
-       want_evas_cserve2="no"
-      ]
+      [ want_evas_cserve2="no" ]
    )
 fi
 
-if test "x${want_evas_cserve2}" = "xyes"; then
-   want_evas_cserve="no"
-fi
-
 shm_open_libs=""
-if test "x${want_evas_cserve}" = "xyes" -o "x${want_evas_cserve2}" = "xyes" ; then
+if test "x${want_evas_cserve2}" = "xyes" ; then
    EFL_CHECK_SHM_OPEN(
-      [
-       shm_open_libs=${EFL_SHM_OPEN_LIBS}
-      ],
-      [
-       want_evas_cserve="no"
-       want_evas_cserve2="no"
-      ])
+      [ shm_open_libs=${EFL_SHM_OPEN_LIBS} ],
+      [ want_evas_cserve2="no" ])
 fi
 AC_SUBST([shm_open_libs])
-
-if test "x${want_evas_cserve}" = "xyes" ; then
-  AC_DEFINE(EVAS_CSERVE, 1, [Shared cache server.])
-fi
-
-AM_CONDITIONAL([EVAS_CSERVE], [test "x${want_evas_cserve}" = "xyes"])
 
 if test "x${want_evas_cserve2}" = "xyes" ; then
   AC_DEFINE(EVAS_CSERVE2, 1, [Shared cache server.])
 fi
-
 AM_CONDITIONAL([EVAS_CSERVE2], [test "x${want_evas_cserve2}" = "xyes"])
-
-
 
 #######################################
 ## GL force flavor gles
@@ -687,27 +611,16 @@ AC_ARG_ENABLE(gl-flavor-gles,
 ## Engines
 
 EVAS_CHECK_ENGINE([buffer], [${want_evas_engine_buffer}], [yes], [Buffer])
-
 EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Software GDI])
-
 EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
-
 EVAS_CHECK_ENGINE([direct3d], [${want_evas_engine_direct3d}], [no], [Direct3D])
-
 EVAS_CHECK_ENGINE([psl1ght], [${want_evas_engine_psl1ght}], [no], [PSL1GHT])
-
 EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [no], [OpenGL SDL])
-
 EVAS_CHECK_ENGINE([gl-cocoa], [${want_evas_engine_gl_cocoa}], [no], [OpenGL Cocoa])
-
 EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [no], [Framebuffer])
-
 EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
-
 EVAS_CHECK_ENGINE([software-8-x11], [${want_evas_engine_software_8_x11}], [no], [Software X11 8 bits grayscale])
-
 EVAS_CHECK_ENGINE([wayland-shm], [${want_evas_engine_wayland_shm}], [no], [Wayland Shm])
-
 EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
 
 # SDL primitive
@@ -925,77 +838,168 @@ if test "x${have_static_software_8}" = "xyes"; then
 fi
 
 #####################################################################
+## Font Loaders
+
+PKG_CHECK_MODULES([EET], [eet >= 1.7.0], [], [AC_MSG_ERROR([EET not found])])
+AC_DEFINE([BUILD_FONT_LOADER_EET], [1], [EET Font Loader Support])
+requirement_evas="eet >= 1.7.0 ${requirement_evas}"
+
+#####################################################################
 ## Image loaders
 
-EVAS_CHECK_IMAGE_LOADER([Edb], [${want_evas_image_loader_edb}])
+#have_static_module="yes"
+do_module="true"
+do_static="false"
 
-EVAS_CHECK_IMAGE_LOADER([Eet], [${want_evas_image_loader_eet}])
-EVAS_CHECK_FONT_LOADER([${want_evas_font_loader_eet}])
+#####################################################################
+evas_image_loader_generic_cflags=""
+evas_image_loader_generic_libs=""
+AC_SUBST([evas_image_loader_generic_cflags])
+AC_SUBST([evas_image_loader_generic_libs])
+AM_CONDITIONAL(BUILD_LOADER_GENERIC, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_GENERIC, [${do_static}])
+AC_DEFINE(BUILD_LOADER_GENERIC, [1], [Generic Loader])
 
-EVAS_CHECK_IMAGE_LOADER([Gif], [${want_evas_image_loader_gif}])
+#####################################################################
+evas_image_loader_xpm_cflags=""
+evas_image_loader_xpm_libs=""
+AC_SUBST([evas_image_loader_xpm_cflags])
+AC_SUBST([evas_image_loader_xpm_libs])
+AM_CONDITIONAL(BUILD_LOADER_XPM, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_XPM, [${do_static}])
+AC_DEFINE(BUILD_LOADER_XPM, [1], [XPM Loader])
 
+#####################################################################
+evas_image_loader_bmp_cflags=""
+evas_image_loader_bmp_libs=""
+AC_SUBST([evas_image_loader_bmp_cflags])
+AC_SUBST([evas_image_loader_bmp_libs])
+AM_CONDITIONAL(BUILD_LOADER_BMP, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_BMP, [${do_static}])
+AC_DEFINE(BUILD_LOADER_BMP, [1], [BMP Loader])
+
+#####################################################################
+evas_image_loader_ico_cflags=""
+evas_image_loader_ico_libs=""
+AC_SUBST([evas_image_loader_ico_cflags])
+AC_SUBST([evas_image_loader_ico_libs])
+AM_CONDITIONAL(BUILD_LOADER_ICO, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_ICO, [${do_static}])
+AC_DEFINE(BUILD_LOADER_ICO, [1], [ICO Loader])
+
+#####################################################################
+evas_image_loader_pmaps_cflags=""
+evas_image_loader_pmaps_libs=""
+AC_SUBST([evas_image_loader_pmaps_cflags])
+AC_SUBST([evas_image_loader_pmaps_libs])
+AM_CONDITIONAL(BUILD_LOADER_PMAPS, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_PMAPS, [${do_static}])
+AC_DEFINE(BUILD_LOADER_PMAPS, [1], [PMAPS Loader])
+
+#####################################################################
+evas_image_loader_psd_cflags=""
+evas_image_loader_psd_libs=""
+AC_SUBST([evas_image_loader_psd_cflags])
+AC_SUBST([evas_image_loader_psd_libs])
+AM_CONDITIONAL(BUILD_LOADER_PSD, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_PSD, [${do_static}])
+AC_DEFINE(BUILD_LOADER_PSD, [1], [PSD Loader])
+
+#####################################################################
+evas_image_loader_tga_cflags=""
+evas_image_loader_tga_libs=""
+AC_SUBST([evas_image_loader_tga_cflags])
+AC_SUBST([evas_image_loader_tga_libs])
+AM_CONDITIONAL(BUILD_LOADER_TGA, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_TGA, [${do_static}])
+AC_DEFINE(BUILD_LOADER_TGA, [1], [TGA Loader])
+
+#####################################################################
+evas_image_loader_wbmp_cflags=""
+evas_image_loader_wbmp_libs=""
+AC_SUBST([evas_image_loader_wbmp_cflags])
+AC_SUBST([evas_image_loader_wbmp_libs])
+AM_CONDITIONAL(BUILD_LOADER_WBMP, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_WBMP, [${do_static}])
+AC_DEFINE(BUILD_LOADER_WBMP, [1], [WBMP Loader])
+
+#####################################################################
+PKG_CHECK_MODULES([EET], [eet >= 1.7.0], [requirement="eet >= 1.7.0"], [AC_MSG_ERROR([Eet not found])])
+dnl requirement_evas="${requirement} ${requirement_evas}"
+evas_image_loader_eet_cflags="${EET_CFLAGS}"
+evas_image_loader_eet_libs="${EET_LIBS}"
+AC_SUBST([evas_image_loader_eet_cflags])
+AC_SUBST([evas_image_loader_eet_libs])
+AM_CONDITIONAL(BUILD_LOADER_EET, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_EET, [${do_static}])
+AC_DEFINE(BUILD_LOADER_EET, [1], [EET Loader])
+
+#####################################################################
 have_evas_image_saver_jpeg="no"
-EVAS_CHECK_IMAGE_LOADER([Jpeg], [${want_evas_image_loader_jpeg}])
-
-dnl Windows has no sigsetjmp function, nor equivalent.
-dnl So we disable the jpeg saver.
-dnl TODO: must find a workaround
+evas_image_loader_jpeg_cflags=""
+AC_CHECK_HEADER([jpeglib.h], [], [AC_MSG_ERROR([JPEG header not found])])
+AC_CHECK_LIB([jpeg], [jpeg_CreateDecompress],
+             [ evas_image_loader_jpeg_libs="-ljpeg"
+               AC_COMPILE_IFELSE(
+               [  AC_LANG_PROGRAM([[
+#include <stdio.h>
+#include <jpeglib.h>
+#include <setjmp.h>
+                  ]],
+                  [[
+struct jpeg_decompress_struct decomp;
+decomp.region_x = 0;
+                  ]])],
+                  [have_jpeg_region="yes"],
+                  [have_jpeg_region="no"])
+             ],[ AC_MSG_ERROR([JPEG missing jpeg_CreateDecompress]) ])
+AC_SUBST([evas_image_loader_jpeg_cflags])
+AC_SUBST([evas_image_loader_jpeg_libs])
+AM_CONDITIONAL(BUILD_LOADER_JPEG, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_JPEG, [${do_static}])
+AC_DEFINE(BUILD_LOADER_JPEG, [1], [JPEG Loader])
 case "$host_os" in
    mingw*)
       ;;
    *)
-      if test "x${have_evas_image_loader_jpeg}" = "xyes" ; then
-         AC_DEFINE(EVAS_BUILD_SAVER_JPEG, [1], [Build JPEG saver])
-         have_evas_image_saver_jpeg="yes"
-      fi
+      AC_DEFINE(EVAS_BUILD_SAVER_JPEG, [1], [Build JPEG saver])
+      AM_CONDITIONAL([BUILD_SAVER_JPEG], [true])
+      have_evas_image_saver_jpeg="yes"
       ;;
 esac
-AM_CONDITIONAL([BUILD_SAVER_JPEG], [test "x${have_evas_image_saver_jpeg}" = "xyes"])
 
-EVAS_CHECK_IMAGE_LOADER([PMAPS], [${want_evas_image_loader_pmaps}])
-
-EVAS_CHECK_IMAGE_LOADER([PNG], [${want_evas_image_loader_png}])
-
-EVAS_CHECK_IMAGE_LOADER([SVG], [${want_evas_image_loader_svg}])
-
-EVAS_CHECK_IMAGE_LOADER([Tiff], [${want_evas_image_loader_tiff}])
-
-EVAS_CHECK_IMAGE_LOADER([XPM], [${want_evas_image_loader_xpm}])
-
-EVAS_CHECK_IMAGE_LOADER([BMP], [${want_evas_image_loader_bmp}])
-
-EVAS_CHECK_IMAGE_LOADER([TGA], [${want_evas_image_loader_tga}])
-
-EVAS_CHECK_IMAGE_LOADER([WBMP], [${want_evas_image_loader_wbmp}])
+#####################################################################
+PKG_CHECK_MODULES([PNG], [libpng >= 1.2.10], [requirement="libpng >= 1.2.10"], [
+  PKG_CHECK_MODULES([PNG], [libpng15], [requirement="libpng15"], [
+    PKG_CHECK_MODULES([PNG], [libpng14], [requirement="libpng14"], [
+      PKG_CHECK_MODULES([PNG], [libpng12], [requirement="libpng12"], [
+        AC_MSG_ERROR([PNG not found])
+      ])
+    ])
+  ])
+])
+dnl requirement_evas="${requirement} ${requirement_evas}"
+evas_image_loader_png_cflags="${PNG_CFLAGS}"
+evas_image_loader_png_libs="${PNG_LIBS}"
+AC_SUBST([evas_image_loader_png_cflags])
+AC_SUBST([evas_image_loader_png_libs])
+AM_CONDITIONAL(BUILD_LOADER_PNG, [${do_module}])
+AM_CONDITIONAL(EVAS_STATIC_BUILD_PNG, [${do_static}])
+AC_DEFINE(BUILD_LOADER_PNG, [1], [PNG Loader])
 
 EVAS_CHECK_IMAGE_LOADER([WEBP], [${want_evas_image_loader_webp}])
-
-EVAS_CHECK_IMAGE_LOADER([ICO], [${want_evas_image_loader_ico}])
-
-EVAS_CHECK_IMAGE_LOADER([PSD], [${want_evas_image_loader_psd}])
-
-EVAS_CHECK_IMAGE_LOADER([GENERIC], [${want_evas_image_loader_generic}])
+EVAS_CHECK_IMAGE_LOADER([Gif], [${want_evas_image_loader_gif}])
+EVAS_CHECK_IMAGE_LOADER([Tiff], [${want_evas_image_loader_tiff}])
+EVAS_CHECK_IMAGE_LOADER([SVG], [${want_evas_image_loader_svg}])
 
 #####################################################################
 ## Cpu based optimizations
 
 #######################################
 ## PTHREADS
-pthread_cflags=""
-pthread_libs=""
-build_pthreads="no"
-has_pthreads="no"
-need_pthreads="no"
-# basic pthread support
-AC_CHECK_HEADER(pthread.h,
-  [
-   has_pthreads="yes"
-  ],
-  [
-   has_pthreads="no"
-  ]
-)
 
+# basic pthread support
+AC_CHECK_HEADER(pthread.h, [], [AC_MSG_ERROR([Pthread support missing.])])
 # sched_getaffinity pthread_attr_setaffinity_np
 AC_CHECK_HEADERS([pthread.h sched.h],
    [
@@ -1011,49 +1015,16 @@ AC_CHECK_HEADERS([pthread.h sched.h],
                        [[
 pthread_attr_setaffinity_np(NULL, 0, NULL);
 pthread_barrier_wait(NULL);
-                       ]])],
-      [build_pthreads="yes"],
-      [build_pthreads="no"])
+                       ]])], [],
+      [AC_MSG_ERROR([Missing pthread_attr_setaffinity_np or pthread_barrier_wait.])])
    CFLAGS=${CFLAGS_save}
    LIBS=${LIBS_save}
   ],
-  [build_pthreads="no"])
-
-AC_MSG_CHECKING([whether pthread_attr_setaffinity_np() and pthread_barrier_wait() are supported])
-AC_MSG_RESULT([${build_pthreads}])
-
-#######################################
-## Pthread
-AC_MSG_CHECKING(whether to build pthread code)
-AC_ARG_ENABLE(pthreads,
-  AC_HELP_STRING([--enable-pthreads], [enable threaded rendering]),
-  [
-    if test "x$enableval" = "xyes" ; then
-      if test "x$build_pthreads" = "xyes"; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
-        build_pthreads="yes"
-        need_pthreads="yes"
-      else
-        if "x$use_strict" = "xyes"; then
-          AC_MSG_ERROR(pthreads headers or functions not found (strict dependencies checking))
-        else
-          AC_MSG_RESULT(no: pthread headers or functions not found)
-        fi
-      fi
-    else
-      AC_MSG_RESULT(no)
-      build_pthreads="no"
-    fi
-  ],
-  [
-    AC_MSG_RESULT($build_pthreads)
-    if test "x$build_pthreads" = "xyes" ; then
-      AC_DEFINE(BUILD_PTHREAD, 1, [Build Threaded Rendering])
-      need_pthreads="yes"
-    fi
-  ]
-)
+  [AC_MSG_ERROR([Missing sched.h])])
+pthread_cflags="-pthread"
+pthread_libs="-pthread"
+AC_DEFINE(BUILD_ASYNC_EVENTS, 1, [Build async events support])
+AC_DEFINE(BUILD_ASYNC_PRELOAD, 1, [Build async image preload support])
 
 #######################################
 ## Pipe Renderer
@@ -1069,154 +1040,97 @@ build_pipe_render="no"
 #  [ build_pipe_render=$enableval ]
 #)
 #AC_MSG_RESULT($build_pipe_render)
-
 #AC_MSG_CHECKING(whether we can build Threaded Pipe Rendering support)
 #if test \( "x$build_pipe_render" = "xyes" -o "x$build_pipe_render" = "xauto" \); then
 #  AC_MSG_RESULT(yes)
 #  AC_DEFINE(BUILD_PIPE_RENDER, 1, [Build pipe render support])
 #  build_pipe_render="yes"
-#  need_pthreads="yes"
 #else
 #  AC_MSG_RESULT(no)
 #  build_pipe_render="no"
 #fi
 
 #######################################
-## Async events
-build_async_events="auto"
-AC_MSG_CHECKING(whether to build Async Events support)
-AC_ARG_ENABLE(async-events,
-  AC_HELP_STRING([--enable-async-events], [enable async events support]),
-  [ build_async_events=$enableval ]
-)
-AC_MSG_RESULT($build_async_events)
+## CPU architecture specific assembly
 
-AC_MSG_CHECKING(whether we can build Async Events support)
-if test "x$build_async_events" = "xyes" || test "x$build_async_events" = "xauto" ; then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(BUILD_ASYNC_EVENTS, 1, [Build async events support])
-  build_async_events="yes"
-else
-  AC_MSG_RESULT(no)
-  build_async_events="no"
-fi
+AC_DEFINE(BUILD_C, 1, [Build plain C code])
 
-#######################################
-## Async image preload
-build_async_preload="auto"
-AC_MSG_CHECKING(whether to build Async Image Preload support)
-AC_ARG_ENABLE(async-preload,
-  AC_HELP_STRING([--enable-async-preload], [enable async image preloading support]),
-  [ build_async_preload=$enableval ]
-)
-AC_MSG_RESULT($build_async_preload)
-
-AC_MSG_CHECKING(whether we can build Async Image Preload support)
-if test \( "x$build_async_preload" = "xyes" -o "x$build_async_preload" = "xauto" \) -a "x$build_async_events" = "xyes"; then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(BUILD_ASYNC_PRELOAD, 1, [Build async image preload support])
-  build_async_preload="yes"
-  need_pthreads="yes"
-else
-  AC_MSG_RESULT(no)
-  build_async_preload="no"
-fi
-
-#######################################
-## Link with pthread if needed
-AC_MSG_CHECKING(whether we should link with pthread)
-if test "x$need_pthreads" = "xyes"; then
-  AC_MSG_RESULT(yes)
-  pthread_cflags="-pthread"
-  pthread_libs="-pthread"
-else
-  AC_MSG_RESULT(no)
-fi
-
-#######################################
-## MMX
 build_cpu_mmx="no"
-case $host_cpu in
-  i*86)
-    build_cpu_mmx="yes"
-    ;;
-  x86_64)
-    build_cpu_mmx="yes"
-    ;;
-  amd64)
-    build_cpu_mmx="yes"
-    ;;
-esac
-AC_MSG_CHECKING(whether to build mmx code)
-AC_ARG_ENABLE(cpu-mmx,
-  AC_HELP_STRING([--enable-cpu-mmx], [enable mmx code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_MMX, 1, [Build MMX Code])
-        build_cpu_mmx="yes"
-      else
-        AC_MSG_RESULT(no)
-        build_cpu_mmx="no"
-      fi
-  ],
-  [
-    AC_MSG_RESULT($build_cpu_mmx)
-    if test "x$build_cpu_mmx" = "xyes" ; then
-      AC_DEFINE(BUILD_MMX, 1, [Build MMX Code])
-    fi
-  ]
-)
-
-#######################################
-## SSE
-build_cpu_sse="no"
-case $host_cpu in
-  i*86)
-    build_cpu_sse="yes"
-    ;;
-  x86_64)
-    build_cpu_sse="yes"
-    ;;
-  amd64)
-    build_cpu_sse="yes"
-    ;;
-esac
-AC_MSG_CHECKING(whether to build sse code)
-AC_ARG_ENABLE(cpu-sse,
-  AC_HELP_STRING([--enable-cpu-sse], [enable sse code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
-        build_cpu_sse="yes"
-      else
-        AC_MSG_RESULT(no)
-        build_cpu_sse="no"
-      fi
-  ],
-  [
-    AC_MSG_RESULT($build_cpu_sse)
-    if test "x$build_cpu_sse" = "xyes" ; then
-      AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
-    fi
-  ]
-)
-
-#######################################
-## SSE3
 build_cpu_sse3="no"
+build_cpu_altivec="no"
+build_cpu_neon="no"
+
 case $host_cpu in
-  i*86)
+  i*86|x86_64|amd64)
+    AC_DEFINE(BUILD_MMX, 1, [Build MMX Code])
+    AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
+    build_cpu_mmx="yes"
     build_cpu_sse3="yes"
     ;;
-  x86_64)
-    build_cpu_sse3="yes"
+    
+  *power* | *ppc*)
+    build_cpu_altivec="yes"
+    AC_CHECK_HEADER(altivec.h,
+      [
+        AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
+        AC_DEFINE(HAVE_ALTIVEC_H, 1, [Have altivec.h header file])
+        build_cpu_altivec="yes"
+      ],
+      [
+        save_CFLAGS=$CFLAGS
+        save_CPPFLAGS=$CPPFLAGS
+        CFLAGS=$CFLAGS" -maltivec"
+        CPPFLAGS=$CPPFLAGS" -maltivec"
+        unset ac_cv_header_altivec_h
+        AC_CHECK_HEADER(altivec.h,
+          [
+            AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
+            AC_DEFINE(HAVE_ALTIVEC_H, 1, [Have altivec.h header file])
+            build_cpu_altivec="yes"
+          ],
+          [
+            build_cpu_altivec="no"
+          ]
+        )
+        CFLAGS=$save_CFLAGS
+        CPPFLAGS=$save_CPPFLAGS
+      ]
+    )
+    if test "x$build_cpu_altivec" = "xyes"; then
+       AC_MSG_CHECKING(whether to use altivec compiler flag)
+       if test "x$GCC" = "xyes"; then
+          if echo "int main(){return 0;}" | ${CPP} -faltivec - > /dev/null 2>&1; then
+             altivec_cflags="-faltivec"
+             AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
+          elif echo "int main(){return 0;}" | ${CPP} -maltivec - > /dev/null 2>&1; then
+             altivec_cflags="-maltivec"
+             AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
+          fi
+       fi
+       AC_MSG_RESULT($altivec_cflags)
+       CFLAGS="$CFLAGS $altivec_cflags"
+    fi
     ;;
-  amd64)
-    build_cpu_sse3="yes"
+    
+  arm*)
+    build_cpu_neon="yes"
+    AC_TRY_COMPILE([#include <arm_neon.h>],
+      [asm volatile ("vqadd.u8 d0, d1, d0\n")],
+      [
+        AC_MSG_RESULT(yes)
+        AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
+        build_cpu_neon="yes"
+      ],[
+        AC_MSG_RESULT(no)
+        build_cpu_neon="no"
+      ])
     ;;
 esac
+
+#######################################
+## CHECK SSE3
+## sse3 is still an option because older gcc's dont have support for
+## intrinsics used
 AC_MSG_CHECKING(whether to build sse3 code)
 AC_ARG_ENABLE(cpu-sse3,
   AS_HELP_STRING([--enable-cpu-sse3], [enable sse3 code]),
@@ -1254,164 +1168,13 @@ AC_ARG_ENABLE(cpu-sse3,
   ]
 )
 
-
-# as a big warning flag to anyone doing stuff like this...
-# NEVER EVER EVER EVER put **OPTIMIZATION** flags in
-# build flags in makefiles (from configure or anywhere else)
-# EVER as this screws your ability to build 1 binary and
-# cover ALL x86 arch's. This is the HEIGHT of WRONG. If the
-# person building choses to add optimization flags themselves
-# and decide the minimum baseline cpu arch is X then that's
-# their business, but NEVER should it be done here. NEVER.
-# I now have to do this due to the way this sse3 code was done - using
-# intrinsics and "functions" (opcodes) and types that only compile *IF*
-# you compile with -msse3. this ALSO tries to optimize REGULAR c code
-# with sse3 asm.. and this breaks things so badly. so... sse3 will be
-# off until further notice for 32bit x86.
 EVAS_SSE3_CFLAGS=" "
 if test "x$build_cpu_sse3" = "xyes" ; then
     EVAS_SSE3_CFLAGS="-msse3 "
-#   CFLAGS="${CFLAGS} ${EVAS_SSE3_CFLAGS}"
 fi
 
 AC_SUBST(CFLAGS)
 AC_SUBST(EVAS_SSE3_CFLAGS)
-
-#######################################
-## ALTIVEC
-build_cpu_altivec="no"
-case $host_cpu in
-  *power* | *ppc*)
-    build_cpu_altivec="auto"
-    ;;
-esac
-altivec_cflags=""
-AC_MSG_CHECKING(whether to build altivec code)
-AC_ARG_ENABLE(cpu-altivec,
-  AC_HELP_STRING([--enable-cpu-altivec], [enable altivec code]),
-  [ build_cpu_altivec=$enableval ],
-  [
-    if test ! "x$build_cpu_altivec" = "xauto"; then
-      build_cpu_altivec="no"
-    fi
-  ]
-)
-AC_MSG_RESULT($build_cpu_altivec)
-
-if test "x$build_cpu_altivec" = "xyes"; then
-   AC_CHECK_HEADER(altivec.h,
-     [
-        AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
-        AC_DEFINE(HAVE_ALTIVEC_H, 1, [Have altivec.h header file])
-        build_cpu_altivec="yes"
-     ],
-     [
-       save_CFLAGS=$CFLAGS
-       save_CPPFLAGS=$CPPFLAGS
-       CFLAGS=$CFLAGS" -maltivec"
-       CPPFLAGS=$CPPFLAGS" -maltivec"
-       unset ac_cv_header_altivec_h
-       AC_CHECK_HEADER(altivec.h,
-         [
-            AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
-            AC_DEFINE(HAVE_ALTIVEC_H, 1, [Have altivec.h header file])
-            build_cpu_altivec="yes"
-         ],
-         [
-            if test "x$build_cpu_altivec" = "xyes" -a "x$use_strict" = "xyes" ; then
-              AC_MSG_ERROR(Altivec not found (strict dependencies checking))
-            fi
-            build_cpu_altivec="no"
-         ]
-       )
-       CFLAGS=$save_CFLAGS
-       CPPFLAGS=$save_CPPFLAGS
-     ]
-   )
-fi
-
-if test "x$build_cpu_altivec" = "xyes"; then
-   AC_MSG_CHECKING(whether to use altivec compiler flag)
-   if test "x$GCC" = "xyes"; then
-      if echo "int main(){return 0;}" | ${CPP} -faltivec - > /dev/null 2>&1; then
-         altivec_cflags="-faltivec"
-         AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
-      elif echo "int main(){return 0;}" | ${CPP} -maltivec - > /dev/null 2>&1; then
-         altivec_cflags="-maltivec"
-         AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
-      fi
-   fi
-  AC_MSG_RESULT($altivec_cflags)
-   CFLAGS="$CFLAGS $altivec_cflags"
-fi
-
-#######################################
-## NEON
-build_cpu_neon="no"
-case $host_cpu in
-  arm*)
-    build_cpu_neon="yes"
-    ;;
-esac
-AC_MSG_CHECKING(whether to build neon code)
-AC_ARG_ENABLE(cpu-neon,
-  AC_HELP_STRING([--enable-cpu-neon], [build neon code, the code will be
-	  checked at run time to see if the CPU supports it]),
-  [
-     if test "x$enableval" = "xyes" ; then
-       AC_TRY_COMPILE([],
-        [asm volatile (".fpu neon\nvqadd.u8 d0, d1, d0\n")],
-        [
-          AC_MSG_RESULT(yes)
-          AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
-          build_cpu_neon="yes"
-        ],[
-          AC_MSG_RESULT(no)
-          build_cpu_neon="no"
-        ])
-      else
-        AC_MSG_RESULT(no)
-        build_cpu_neon="no"
-      fi
-  ],
-  [
-    if test "x$build_cpu_neon" = "xyes" ; then
-       AC_TRY_COMPILE([#include <arm_neon.h>],
-        [asm volatile ("vqadd.u8 d0, d1, d0\n")],
-        [
-          AC_MSG_RESULT(yes)
-          AC_DEFINE(BUILD_NEON, 1, [Build NEON Code])
-          build_cpu_neon="yes"
-        ],[
-          AC_MSG_RESULT(no)
-          build_cpu_neon="no"
-        ])
-    fi
-  ]
-)
-     
-#######################################
-## C
-build_cpu_c="yes"
-AC_MSG_CHECKING(whether to build c code)
-AC_ARG_ENABLE(cpu-c,
-  AC_HELP_STRING([--enable-cpu-c], [enable C code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_C, 1, [Build plain C code])
-        build_cpu_c="yes"
-      else
-        AC_MSG_RESULT(no)
-        build_cpu_c="no"
-      fi
-  ], [
-      AC_MSG_RESULT($build_cpu_c)
-      if test "x$build_cpu_c" = "xyes" ; then
-        AC_DEFINE(BUILD_C, 1, [Build plain C code])
-      fi
-  ]
-)
 
 #######################################
 ## MAGIC_DEBUG
@@ -1432,42 +1195,8 @@ if test "x$want_evas_magic_debug" = "xyes"; then
 fi
 
 #####################################################################
-## ARGB engine options
+## dither options
 
-#######################################
-## Nearest sampling scaler
-EVAS_CHECK_SCALER([scale-sample], [sampling scaler], [scaler_sample="yes"], [scaler_sample="no"])
-## Smooth super and sub sampling scaler
-EVAS_CHECK_SCALER([scale-smooth], [smooth scaler], [scaler_smooth="yes"], [scaler_smooth="no"])
-
-#######################################
-## YUV -> ARGB converter
-conv_yuv="no"
-conv_yuv="yes"
-AC_MSG_CHECKING(whether to build yuv converter code)
-AC_ARG_ENABLE(convert-yuv,
-  AC_HELP_STRING([--enable-convert-yuv], [enable yuv converter code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV Converter Support])
-        conv_yuv="yes"
-      else
-        AC_MSG_RESULT(no)
-        conv_yuv="no"
-      fi
-  ], [
-      AC_MSG_RESULT($conv_yuv)
-      if test "x$conv_yuv" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV Converter Support])
-      fi
-  ]
-)
-
-#####################################################################
-## Output rendering features
-
-#######################################
 ## Small dither mask instead of big one (lower quality)
 EVAS_CHECK_DITHER([small-dither-mask], [small dither mask], [conv_small_dither="yes"], [conv_small_dither="no"])
 ## Alternate Line dither mask instead of big one (lower quality - but fastest)
@@ -1475,153 +1204,43 @@ EVAS_CHECK_DITHER([line-dither-mask], [line dither mask], [conv_line_dither="yes
 ## No dither mask at all for 16bpp
 EVAS_CHECK_DITHER([no-dither-mask], [conversion to 16bpp without dither mask], [conv_no_dither="yes"], [conv_no_dither="no"])
 
-#######################################
-## Convert to 8bpp RGB 332
-EVAS_CONVERT_COLOR(8, RGB, 332, [yes])
-## Convert to 8bpp RGB 666
-EVAS_CONVERT_COLOR(8, RGB, 666, [yes])
-## Convert to 8bpp RGB 232
-EVAS_CONVERT_COLOR(8, RGB, 232, [yes])
-## Convert to 8bpp RGB 222
-EVAS_CONVERT_COLOR(8, RGB, 222, [yes])
-## Convert to 8bpp RGB 221
-EVAS_CONVERT_COLOR(8, RGB, 221, [yes])
-## Convert to 8bpp RGB 121
-EVAS_CONVERT_COLOR(8, RGB, 121, [yes])
-## Convert to 8bpp RGB 111
-EVAS_CONVERT_COLOR(8, RGB, 111, [yes])
-## Convert to 16bpp RGB 565
-EVAS_CONVERT_COLOR(16, RGB, 565)
-## Convert to 16bpp BGR 565
-EVAS_CONVERT_COLOR(16, BGR, 565)
-## Convert to 16bpp RGB 555
-EVAS_CONVERT_COLOR(16, RGB, 555)
-## Convert to 16bpp RGB 444
-EVAS_CONVERT_COLOR(16, RGB, 444)
+#####################################################################
+## no longer options - turn on.
 
-#######################################
-## Convert to 16bpp RGB 565 (444 ipaq)
-conv_16_rgb_ipq="yes"
-AC_MSG_CHECKING(whether to build 16bpp 565 (444 ipaq) converter code)
-AC_ARG_ENABLE(convert-16-rgb-ipq,
-  AC_HELP_STRING([--disable-convert-16-rgb-ipq], [disable 16bpp 565 (444 ipaq) converter code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp 565 (444 ipaq) Converter Support])
-        conv_16_rgb_ipq="yes"
-      else
-        conv_16_rgb_ipq="no"
-      fi
-  ], [
-      if test "x$conv_16_rgb_ipq" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp 565 (444 ipaq) Converter Support])
-      fi
-  ]
-)
-AC_MSG_RESULT($conv_16_rgb_ipq)
-
-#######################################
-## Convert to 16bpp RGB with rotation of 0
-EVAS_CONVERT_ROT(16, RGB, 0)
-## Convert to 16bpp RGB with rotation of 180
-EVAS_CONVERT_ROT(16, RGB, 180)
-## Convert to 16bpp RGB with rotation of 270
-EVAS_CONVERT_ROT(16, RGB, 270)
-## Convert to 16bpp RGB with rotation of 90
-EVAS_CONVERT_ROT(16, RGB, 90)
-
-#######################################
-## Convert to 24bpp RGB 888
-EVAS_CONVERT_COLOR(24, RGB, 888)
-## Convert to 24bpp BGR 888
-EVAS_CONVERT_COLOR(24, BGR, 888)
-## Convert to 32bpp RGB 8888
-EVAS_CONVERT_COLOR(32, RGB, 8888)
-## Convert to 32bpp RGBX 8888
-EVAS_CONVERT_COLOR(32, RGBX, 8888)
-## Convert to 32bpp BGR 8888
-EVAS_CONVERT_COLOR(32, BGR, 8888)
-## Convert to 32bpp BGRX 8888
-EVAS_CONVERT_COLOR(32, BGRX, 8888)
-
-#######################################
-## Convert to 24bpp RGB 666 (666 ezx)
-conv_24_rgb_ezx="yes"
-AC_MSG_CHECKING(whether to build 24bpp 666 (666 ezx) converter code)
-AC_ARG_ENABLE(convert-24-rgb-ezx,
-  AC_HELP_STRING([--disable-convert-24-rgb-ezx], [disable 24bpp 666 (666 ezx) converter code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_24_RGB_666, 1, [24bpp 666 (666 ezx) Converter Support])
-        conv_24_rgb_ezx="yes"
-      else
-        conv_24_rgb_ezx="no"
-      fi
-  ], [
-      if test "x$conv_24_rgb_ezx" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_24_RGB_666, 1, [24bpp 666 (666 ezx) Converter Support])
-      fi
-  ]
-)
-AC_MSG_RESULT($conv_24_rgb_ezx)
-
-#######################################
-## Convert to 32bpp RGB 666 (666 ezx)
-conv_32_rgb_ezx="yes"
-AC_MSG_CHECKING(whether to build 32bpp 666 (666 ezx) converter code)
-AC_ARG_ENABLE(convert-32-rgb-ezx,
-  AC_HELP_STRING([--disable-convert-32-rgb-ezx], [disable 32bpp 666 (666 ezx) converter code]),
-  [
-      if test "x$enableval" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_RGB_666, 1, [32bpp 666 (666 ezx) Converter Support])
-        conv_32_rgb_ezx="yes"
-      else
-        conv_32_rgb_ezx="no"
-      fi
-  ], [
-      if test "x$conv_32_rgb_ezx" = "xyes" ; then
-        AC_DEFINE(BUILD_CONVERT_32_RGB_666, 1, [32bpp 666 (666 ezx) Converter Support])
-      fi
-  ]
-)
-AC_MSG_RESULT($conv_32_rgb_ezx)
-
-#######################################
-## Convert to 32bpp RGB with rotation of 0
-EVAS_CONVERT_ROT(32, RGB, 0)
-## Convert to 32bpp RGB with rotation of 180
-EVAS_CONVERT_ROT(32, RGB, 180)
-## Convert to 32bpp RGB with rotation of 270
-EVAS_CONVERT_ROT(32, RGB, 270)
-## Convert to 32bpp RGB with rotation of 90
-EVAS_CONVERT_ROT(32, RGB, 90)
-
-#######################################
-## Convert to 8bpp grayscale with 256 value, no palette
-EVAS_CONVERT_COLOR(8, GRY, 1)
-## Convert to 8bpp grayscale with 16 value, no palette
-EVAS_CONVERT_COLOR(8, GRY, 16)
-
-#######################################
-## Convert to 8bpp grayscale, 64-palette
-conv_8_grayscale_64="yes"
-AC_MSG_CHECKING(whether to build 8bpp grayscale 64-palette converter code)
-AC_ARG_ENABLE(convert-8-grayscale-64,
-  AC_HELP_STRING([--disable-convert-8-grayscale-64], [disable 8bpp grayscale 64-palette converter code]),
-  [
-     if test "x$enableval" = "xyes"; then
-       AC_DEFINE(BUILD_CONVERT_8_GRAYSCALE_64, 1, [8bpp Grayscale 64-palette Converter Support])
-       conv_8_grayscale_64="yes"
-     else
-       conv_8_grayscale_64="no"
-     fi
-  ], [
-     if test "x$conv_8_grayscale_64" = "xyes"; then
-       AC_DEFINE(BUILD_CONVERT_8_GRAYSCALE_64, 1, [32bpp Grayscale 64-palette Converter Support])
-     fi
-  ]
-)
-AC_MSG_RESULT($conv_8_grayscale_64)
+AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [YUV])
+AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [YUV])
+AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV])
+AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp RGB 332])
+AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp RGB 666])
+AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp RGB 232])
+AC_DEFINE(BUILD_CONVERT_8_RGB_222, 1, [8bpp RGB 222])
+AC_DEFINE(BUILD_CONVERT_8_RGB_221, 1, [8bpp RGB 221])
+AC_DEFINE(BUILD_CONVERT_8_RGB_121, 1, [8bpp RGB 121])
+AC_DEFINE(BUILD_CONVERT_8_RGB_111, 1, [8bpp RGB 111])
+AC_DEFINE(BUILD_CONVERT_16_BGR_565, 1, [16bpp BGR 565])
+AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp RGB 565])
+AC_DEFINE(BUILD_CONVERT_16_RGB_555, 1, [16bpp RGB 555])
+AC_DEFINE(BUILD_CONVERT_16_RGB_444, 1, [16bpp RGB 444])
+AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp RGB 565 (444 ipaq)])
+AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0, 1, [16bpp 0 dgeree rotation])
+AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90, 1, [16bpp 90 dgeree rotation])
+AC_DEFINE(BUILD_CONVERT_16_RGB_ROT180, 1, [16bpp 180 dgeree rotation])
+AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270, 1, [16bpp 270 dgeree rotation])
+AC_DEFINE(BUILD_CONVERT_24_RGB_888, 1, [24bpp RGB 888])
+AC_DEFINE(BUILD_CONVERT_24_BGR_888, 1, [24bpp BGR 888])
+AC_DEFINE(BUILD_CONVERT_32_RGB_8888, 1, [32bpp RGB 8888])
+AC_DEFINE(BUILD_CONVERT_32_RGBX_8888, 1, [32bpp RGBX 8888])
+AC_DEFINE(BUILD_CONVERT_32_BGR_8888, 1, [32bpp BGR 8888])
+AC_DEFINE(BUILD_CONVERT_32_BGRX_8888, 1, [32bpp BGRX 8888])
+AC_DEFINE(BUILD_CONVERT_24_RGB_666, 1, [24bpp RGB 666 (666 ezx)])
+AC_DEFINE(BUILD_CONVERT_32_RGB_666, 1, [32bpp RGB 666 (666 ezx)])
+AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0, 1, [32bpp 0 dgeree rotation])
+AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90, 1, [32bpp 90 dgeree rotation])
+AC_DEFINE(BUILD_CONVERT_32_RGB_ROT180, 1, [32bpp 180 dgeree rotation])
+AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270, 1, [32bpp 270 dgeree rotation])
+AC_DEFINE(BUILD_CONVERT_8_GRY_1, 1, [1bpp Mono])
+AC_DEFINE(BUILD_CONVERT_8_GRY_16, 1, [4bpp Greyscale])
+AC_DEFINE(BUILD_CONVERT_8_GRAYSCALE_64, 1, [32bpp Grayscale 64 palette])
 
 ## valgrind
 want_valgrind="no"
@@ -1717,7 +1336,6 @@ AC_SUBST(pthread_cflags)
 AC_SUBST(pthread_libs)
 AC_SUBST(requirement_evas)
 
-
 #####################################################################
 ## Output
 
@@ -1762,7 +1380,6 @@ src/lib/canvas/Makefile
 src/lib/file/Makefile
 src/lib/cache/Makefile
 src/lib/cache2/Makefile
-src/lib/cserve/Makefile
 src/lib/cserve2/Makefile
 src/lib/engines/Makefile
 src/lib/engines/common/Makefile
@@ -1793,7 +1410,6 @@ src/modules/engines/software_8_x11/Makefile
 src/modules/engines/wayland_shm/Makefile
 src/modules/engines/wayland_egl/Makefile
 src/modules/loaders/Makefile
-src/modules/loaders/edb/Makefile
 src/modules/loaders/eet/Makefile
 src/modules/loaders/gif/Makefile
 src/modules/loaders/jpeg/Makefile
@@ -1810,7 +1426,6 @@ src/modules/loaders/webp/Makefile
 src/modules/loaders/psd/Makefile
 src/modules/loaders/generic/Makefile
 src/modules/savers/Makefile
-src/modules/savers/edb/Makefile
 src/modules/savers/eet/Makefile
 src/modules/savers/jpeg/Makefile
 src/modules/savers/png/Makefile
@@ -1823,25 +1438,6 @@ src/tests/Makefile
 data/Makefile
 evas.spec
 ])
-
-#####################################################################
-## Sanity Checks
-
-if test "x$build_pthreads" = "xno" ; then
-  if test "x$build_pipe_render" = "xyes" ; then
-    echo "ERROR: PThreads off, but pipe rendering on. Pipe rendering"
-    echo "  needs thread support."
-    exit 1
-  fi
-fi
-
-if test "x${has_pthreads}" = "xno" ; then
-  if test "x$build_async_preload" = "xyes" ; then
-    echo "ERROR: PThreads off, but Async Preload on. Async Preload"
-    echo "  needs thread support."
-    exit 1
-  fi
-fi
 
 #####################################################################
 ## Info
@@ -1882,25 +1478,11 @@ echo "  Wayland Shm................: $have_evas_engine_wayland_shm"
 echo "  Wayland Egl................: $have_evas_engine_wayland_egl"
 echo
 echo "Image Loaders:"
-echo "  BMP.....................: $have_evas_image_loader_bmp"
-echo "  EDB.....................: $have_evas_image_loader_edb"
-echo "  EET.....................: $have_evas_image_loader_eet"
-echo "  GENERIC.................: $have_evas_image_loader_generic"
-echo "  GIF.....................: $have_evas_image_loader_gif"
-echo "  ICO.....................: $have_evas_image_loader_ico"
-echo "  JPEG....................: $have_evas_image_loader_jpeg (region: $have_jpeg_region)"
-echo "  PMAPS...................: $have_evas_image_loader_pmaps"
-echo "  PNG.....................: $have_evas_image_loader_png"
-echo "  PSD.....................: $have_evas_image_loader_psd"
-echo "  SVG.....................: $have_evas_image_loader_svg"
-echo "  TGA.....................: $have_evas_image_loader_tga"
-echo "  TIFF....................: $have_evas_image_loader_tiff"
-echo "  WBMP....................: $have_evas_image_loader_wbmp"
+echo "  JPEG region decode......: $have_jpeg_region"
 echo "  WEBP....................: $have_evas_image_loader_webp"
-echo "  XPM.....................: $have_evas_image_loader_xpm"
-echo
-echo "Font Sourcing Systems:"
-echo "  EET.....................: $have_evas_font_loader_eet"
+echo "  GIF.....................: $have_evas_image_loader_gif"
+echo "  TIFF....................: $have_evas_image_loader_tiff"
+echo "  SVG.....................: $have_evas_image_loader_svg"
 echo
 echo "Font Searching Systems:"
 echo "  Fontconfig..............: $have_fontconfig"
@@ -1913,27 +1495,15 @@ echo "  liblinebreak............: $have_linebreak"
 # FIXME: make freetype2 optional
 echo
 echo "CPU Specific Extensions:"
-echo "  Fallback C Code.........: $build_cpu_c"
-echo "  MMX.....................: $build_cpu_mmx"
-echo "  SSE.....................: $build_cpu_sse"
+echo "  MMX/SSE.................: $build_cpu_mmx"
 echo "  SSE3....................: $build_cpu_sse3"
 echo "  ALTIVEC.................: $build_cpu_altivec"
 echo "  NEON....................: $build_cpu_neon"
-echo "  Thread Support..........: $build_pthreads"
 echo
 echo "Features:"
 echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
-echo "  Cache Server............: $want_evas_cserve"
 echo "  Cache Server 2..........: $want_evas_cserve2"
-echo
-dnl
-dnl ... DISABLED! some testing has shown that this seems to have some
-dnl nasty bugs on both x86 and arm (tegra2 dual core tested), so just
-dnl disabling this for now until it can be fixed
-dnl 
 echo "  Threaded Pipe Rendering.: $build_pipe_render"
-echo "  Async Events............: $build_async_events"
-echo "  Async Image Preload.....: $build_async_preload"
 echo
 echo "  Pixman..................: $have_pixman"
 echo "  Pixman Fonts............: $have_pixman_font"
@@ -1945,54 +1515,10 @@ echo "  Pixman Image ScaleSample: $have_pixman_image_scale_sample"
 echo 
 echo "  Tiled 32BPP rotate......: $have_tile_rotate"
 echo
-echo "ARGB Software Engine Options:"
-echo "  Sampling Scaler.........: $scaler_sample"
-echo "  Smooth Scaler...........: $scaler_smooth"
-# FIXME: add an mmx scaler routine
-echo "  YUV Converter...........: $conv_yuv"
-# FIXME: add more YUV format and colorvariant support
-echo
-echo "ARGB Conversion Options:"
+echo "Conversion Options:"
 echo "  Smaller Dither Mask.....: $conv_small_dither"
 echo "  Line Dither Mask........: $conv_line_dither"
 echo "  No Dither Mask for 16bpp: $conv_no_dither"
-echo "  8bpp RGB 332............: $conv_8_rgb_332"
-echo "  8bpp RGB 666............: $conv_8_rgb_666"
-echo "  8bpp RGB 232............: $conv_8_rgb_232"
-echo "  8bpp RGB 222............: $conv_8_rgb_222"
-echo "  8bpp RGB 221............: $conv_8_rgb_221"
-echo "  8bpp RGB 121............: $conv_8_rgb_121"
-echo "  8bpp RGB 111............: $conv_8_rgb_111"
-echo "  8bpp Grayscale (256)....: $conv_8_gry_1"
-echo "  8bpp Grayscale (16).....: $conv_8_gry_16"
-echo "  8bpp Grayscale 64-pal...: $conv_8_grayscale_64"
-# FIXME: add grayscale and B&W support to standard x converters
-echo "  16bpp RGB 565...........: $conv_16_rgb_565"
-echo "  16bpp BGR 565...........: $conv_16_bgr_565"
-echo "  16bpp RGB 555...........: $conv_16_rgb_555"
-echo "  16bpp RGB 444...........: $conv_16_rgb_444"
-echo "  16bpp RGB 565 (444 ipaq): $conv_16_rgb_ipq"
-# FIXME: add 555 (444 ipaq) support
-# FIXME: add 30bpp support
-# FIXME: add palletted support (ugh!)
-# FIXME: add 8bpp and below rotation
-echo "  16bpp Rotation 0........: $conv_16_rgb_rot_0"
-echo "  16bpp Rotation 90.......: $conv_16_rgb_rot_90"
-echo "  16bpp Rotation 180......: $conv_16_rgb_rot_180"
-echo "  16bpp Rotation 270......: $conv_16_rgb_rot_270"
-echo "  24bpp RGB 888...........: $conv_24_rgb_888"
-echo "  24bpp BGR 888...........: $conv_24_bgr_888"
-echo "  24bpp RGB 666 (666 ezx).: $conv_24_rgb_ezx"
-# FIXME: add 24bpp rotation
-echo "  32bpp RGB 8888..........: $conv_32_rgb_8888"
-echo "  32bpp RGBX 8888.........: $conv_32_rgbx_8888"
-echo "  32bpp BGR 8888..........: $conv_32_bgr_8888"
-echo "  32bpp BGRX 8888.........: $conv_32_bgrx_8888"
-echo "  32bpp RGB 666 (666 ezx).: $conv_32_rgb_ezx"
-echo "  32bpp Rotation 0........: $conv_32_rgb_rot_0"
-echo "  32bpp Rotation 90.......: $conv_32_rgb_rot_90"
-echo "  32bpp Rotation 180......: $conv_32_rgb_rot_180"
-echo "  32bpp Rotation 270......: $conv_32_rgb_rot_270"
 echo
 echo "Documentation.............: ${build_doc}"
 echo "Examples..................: install:${install_examples} build:${build_examples}"

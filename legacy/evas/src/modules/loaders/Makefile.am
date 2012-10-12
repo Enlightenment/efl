@@ -8,12 +8,6 @@ SUBDIRS += bmp
 endif
 endif
 
-if BUILD_LOADER_EDB
-if !EVAS_STATIC_BUILD_EDB
-SUBDIRS += edb
-endif
-endif
-
 if BUILD_LOADER_EET
 if !EVAS_STATIC_BUILD_EET
 SUBDIRS += eet
