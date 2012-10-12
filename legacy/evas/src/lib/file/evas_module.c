@@ -106,7 +106,6 @@ EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_gdi);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_generic);
 EVAS_EINA_STATIC_MODULE_DEFINE(engine, software_x11);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, bmp);
-EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, edb);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, generic);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, gif);
@@ -121,7 +120,6 @@ EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, tiff);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, wbmp);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, webp);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_loader, xpm);
-EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, edb);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, eet);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, jpeg);
 EVAS_EINA_STATIC_MODULE_DEFINE(image_saver, png);
@@ -179,9 +177,6 @@ static const struct {
 #ifdef EVAS_STATIC_BUILD_BMP
   EVAS_EINA_STATIC_MODULE_USE(image_loader, bmp),
 #endif
-#ifdef EVAS_STATIC_BUILD_EDB
-  EVAS_EINA_STATIC_MODULE_USE(image_loader, edb),
-#endif
 #ifdef EVAS_STATIC_BUILD_EET
   EVAS_EINA_STATIC_MODULE_USE(image_loader, eet),
 #endif
@@ -223,9 +218,6 @@ static const struct {
 #endif
 #ifdef EVAS_STATIC_BUILD_XPM
   EVAS_EINA_STATIC_MODULE_USE(image_loader, xpm),
-#endif
-#ifdef EVAS_STATIC_BUILD_EDB
-  EVAS_EINA_STATIC_MODULE_USE(image_saver, edb),
 #endif
 #ifdef EVAS_STATIC_BUILD_EET
   EVAS_EINA_STATIC_MODULE_USE(image_saver, eet),

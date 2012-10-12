@@ -15,8 +15,6 @@
 %endif
 
 ## disabled features
-%bcond_with    module_loader_edb
-%bcond_with    module_saver_edb
 %bcond_with    module_engine_directfb
 %bcond_with    module_engine_gl_x11
 %bcond_with    module_engine_software_sdl
@@ -55,7 +53,6 @@
 %define ac_with_module_loader_png --%{?with_module_loader_png:en}%{!?with_module_loader_png:dis}able-image-loader-png
 %define ac_with_module_loader_tiff --%{?with_module_loader_tiff:en}%{!?with_module_loader_tiff:dis}able-image-loader-tiff
 %define ac_with_module_loader_gif --%{?with_module_loader_gif:en}%{!?with_module_loader_gif:dis}able-image-loader-gif
-%define ac_with_module_loader_edb --%{?with_module_loader_edb:en}%{!?with_module_loader_edb:dis}able-image-loader-edb
 %define ac_with_module_loader_xpm --%{?with_module_loader_xpm:en}%{!?with_module_loader_xpm:dis}able-image-loader-xpm
 %define ac_with_module_loader_svg --%{?with_module_loader_svg:en}%{!?with_module_loader_svg:dis}able-image-loader-svg
 %define ac_with_module_loader_bmp --%{?with_module_loader_bmp:en}%{!?with_module_loader_bmp:dis}able-image-loader-bmp
@@ -69,7 +66,6 @@
 %define ac_with_module_saver_png --%{?with_module_saver_png:en}%{!?with_module_saver_png:dis}able-image-saver-png
 %define ac_with_module_saver_tiff --%{?with_module_saver_tiff:en}%{!?with_module_saver_tiff:dis}able-image-saver-tiff
 %define ac_with_module_saver_gif --%{?with_module_saver_gif:en}%{!?with_module_saver_gif:dis}able-image-saver-gif
-%define ac_with_module_saver_edb --%{?with_module_saver_edb:en}%{!?with_module_saver_edb:dis}able-image-saver-edb
 %define ac_with_module_saver_xpm --%{?with_module_saver_xpm:en}%{!?with_module_saver_xpm:dis}able-image-saver-xpm
 %define ac_with_module_engine_software-x11 --%{?with_module_engine_software_x11:en}%{!?with_module_engine_software_x11:dis}able-software-x11
 %define ac_with_module_engine_buffer --%{?with_module_engine_buffer:en}%{!?with_module_engine_buffer:dis}able-buffer
@@ -198,24 +194,6 @@ Group: System Environment/Libraries
 BuildRequires: /usr/include/gif_lib.h
 %description module_loader_gif
 GIF Image loader module for Evas
-%endif
-
-%if %{with module_loader_edb}
-%package module_loader_edb
-Summary: EDB Image loader module for Evas
-Group: System Environment/Libraries
-BuildRequires: edb-devel
-%description module_loader_edb
-EDB Image loader module for Evas
-%endif
-
-%if %{with module_saver_edb}
-%package module_saver_edb
-Summary: EDB Image saver module for Evas
-Group: System Environment/Libraries
-BuildRequires: edb-devel
-%description module_saver_edb
-EDB Image saver module for Evas
 %endif
 
 %if %{with module_loader_xpm}
@@ -387,8 +365,6 @@ Software XCB X11 rendering engine module for Evas
     %{?ac_with_module_loader_tiff} \
     %{?ac_with_module_saver_tiff} \
     %{?ac_with_module_loader_gif} \
-    %{?ac_with_module_loader_edb} \
-    %{?ac_with_module_saver_edb} \
     %{?ac_with_module_loader_xpm} \
     %{?ac_with_module_loader_svg} \
     %{?ac_with_module_loader_bmp} \
@@ -501,18 +477,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_loader_gif
 %defattr(-, root, root)
 %{_libdir}/evas/modules/loaders/gif/*/module.so
-%endif
-
-%if %{with module_loader_edb}
-%files module_loader_edb
-%defattr(-, root, root)
-%{_libdir}/evas/modules/loaders/edb/*/module.so
-%endif
-
-%if %{with module_saver_edb}
-%files module_saver_edb
-%defattr(-, root, root)
-%{_libdir}/evas/modules/savers/edb/*/module.so
 %endif
 
 %if %{with module_loader_xpm}
