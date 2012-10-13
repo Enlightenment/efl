@@ -595,4 +595,5 @@
         than 4 items.
 
 2012-10-12  Michael Bouchaud (yoz)
+
         * Add elm_map_name_search
