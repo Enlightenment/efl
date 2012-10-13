@@ -239,7 +239,6 @@ _transit_chain_go(Elm_Transit *transit)
 {
    ELM_TRANSIT_CHECK_OR_RETURN(transit);
    elm_transit_go(transit);
-   _transit_animate_cb(transit);
 }
 
 static void
@@ -675,6 +674,7 @@ elm_transit_go(Elm_Transit *transit)
    transit->time.delayed = 0;
    transit->time.begin = ecore_loop_time_get();
    transit->animator = ecore_animator_add(_transit_animate_cb, transit);
+   _transit_animate_cb(transit);
 }
 
 EAPI void

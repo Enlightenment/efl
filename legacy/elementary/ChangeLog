@@ -602,3 +602,7 @@
 
         * Fix conform widget to be part of focus chain.
 
+2012-10-13  ChunEon Park (Hermet)
+
+        * Fix the transit to launch the effect directly when elm_transit_go is called.
+
