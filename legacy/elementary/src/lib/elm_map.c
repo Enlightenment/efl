@@ -4936,7 +4936,7 @@ elm_map_name_search(const Evas_Object *obj,
                         name_cb, data);
 #else
    (void) obj;
-   (void address);
+   (void) address;
    (void) name_cb;
    (void) data;
 #endif
