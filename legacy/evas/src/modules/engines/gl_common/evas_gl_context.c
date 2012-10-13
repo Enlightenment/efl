@@ -2646,18 +2646,6 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         glVertexAttribPointer(SHAD_COLOR, 4, GL_UNSIGNED_BYTE, GL_TRUE, 0, (void *)color_ptr);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        if (gc->pipe[i].array.use_texuv)
-          {
-             glEnableVertexAttribArray(SHAD_TEXUV);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-             glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0, (void *)texuv_ptr);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
-        else
-          {
-             glDisableVertexAttribArray(SHAD_TEXUV);
-             GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-          }
 
         if (gc->pipe[i].array.line)
           {
@@ -2672,9 +2660,23 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
           }
         else
           {
-	     if (gc->pipe[i].array.use_texm)
-	       {
-		  glEnableVertexAttribArray(SHAD_TEXM);
+             if (gc->pipe[i].array.use_texuv)
+               {
+                  glEnableVertexAttribArray(SHAD_TEXUV);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+                  glVertexAttribPointer(SHAD_TEXUV, 2, GL_FLOAT, GL_FALSE, 0,
+                                        (void *)texuv_ptr);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+             else
+               {
+                  glDisableVertexAttribArray(SHAD_TEXUV);
+                  GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+               }
+
+             if (gc->pipe[i].array.use_texm)
+               {
+                  glEnableVertexAttribArray(SHAD_TEXM);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
                   glVertexAttribPointer(SHAD_TEXM, 2, GL_FLOAT, GL_FALSE, 0, (void *)texm_ptr);
                   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
