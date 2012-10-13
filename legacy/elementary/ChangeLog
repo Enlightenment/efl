@@ -597,3 +597,8 @@
 2012-10-12  Michael Bouchaud (yoz)
 
         * Add elm_map_name_search
+
+2012-10-12  Shinwoo Kim (kimcinoo)
+
+        * Fix conform widget to be part of focus chain.
+

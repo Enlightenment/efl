@@ -542,10 +542,6 @@ _elm_conformant_smart_set_user(Elm_Conformant_Smart_Class *sc)
    ELM_WIDGET_CLASS(sc)->parent_set = _elm_conformant_smart_parent_set;
    ELM_WIDGET_CLASS(sc)->theme = _elm_conformant_smart_theme;
 
-   /* not a 'focus chain manager' */
-   ELM_WIDGET_CLASS(sc)->focus_next = NULL;
-   ELM_WIDGET_CLASS(sc)->focus_direction = NULL;
-
    ELM_LAYOUT_CLASS(sc)->content_aliases = _content_aliases;
 }
 

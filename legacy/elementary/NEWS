@@ -40,7 +40,8 @@ Fixes:
    * Fix copy&paste error in elm_flip.
    * Fix possible invalid memory access in elm_access.
    * Fix diskselector bug with more than 4 items.
-   
+   * Fix conform widget to be part of focus chain.
+        
 Removals:
 
    * All internal widget hooks (and related macros) were removed, due
