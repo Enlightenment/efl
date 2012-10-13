@@ -142,6 +142,16 @@ evas_common_cpu_feature_test(void (*feature)(void))
    sigaction(SIGSEGV, &oact2, NULL);
    return enabled;
 #else
+   Eina_Cpu_Features f;
+
+   f = eina_cpu_features_get();
+   if (feature == evas_common_cpu_mmx_test)
+     return (f & EINA_CPU_MMX) == EINA_CPU_MMX;
+   /* no mmx2 support in eina */
+   if (feature == evas_common_cpu_sse_test)
+     return (f & EINA_CPU_SSE) == EINA_CPU_SSE;
+   if (feature == evas_common_cpu_sse3_test)
+     return (f & EINA_CPU_SSE3) == EINA_CPU_SSE3;
    return 0;
 #endif
 }
