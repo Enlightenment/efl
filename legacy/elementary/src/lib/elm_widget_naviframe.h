@@ -126,6 +126,7 @@ struct _Elm_Naviframe_Smart_Data
    Eina_Inlist          *stack; /* top item is the list's LAST item */
    Evas_Object          *dummy_edje;
    Ecore_Animator       *animator;
+   Evas_Display_Mode     dispmode;
 
    Eina_Bool             preserve : 1;
    Eina_Bool             on_deletion : 1;

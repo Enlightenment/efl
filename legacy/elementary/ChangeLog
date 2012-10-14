@@ -606,3 +606,7 @@
 
         * Fix the transit to launch the effect directly when elm_transit_go is called.
 
+2012-10-14  Jiyoun Park (jypark)
+
+        * Add display mode change feature related with keypad state chante
+	to elm conformant and naviframe.

@@ -3533,6 +3533,72 @@ elm_widget_activate(Evas_Object *obj, Elm_Activate act)
 /**
  * @internal
  *
+ * Returns the widget's Evas_Display_Mode
+ *
+ * @param obj The widget.
+ * @return Evas_Display_Mode of the object.
+ *
+ * @see elm_widget_display_mode_set().
+ * @ingroup Widget
+ **/
+EAPI Evas_Display_Mode
+elm_widget_display_mode_get(Evas_Object *obj)
+{
+   Evas_Display_Mode new_mode;
+   Evas_Object *parent;
+
+   API_ENTRY return EVAS_DISPLAY_MODE_NONE;
+
+   new_mode = evas_object_size_hint_display_mode_get(obj);
+   parent = elm_widget_parent_get(obj);
+
+   if ((new_mode == EVAS_DISPLAY_MODE_INHERIT) && parent)
+     return elm_widget_display_mode_get(parent);
+   return new_mode;
+
+}
+
+/**
+ * @internal
+ *
+ * Sets the widget and child widget's Evas_Display_Mode.
+ *
+ * @param obj The widget.
+ * @param dispmode Evas_Display_Mode to set widget's mode.
+ *
+ * Widgets are resized by several reasons.
+ * Evas_Display_Mode can help for widgets to get more reson of resize.
+ * For example, elm conform widget resize it's contents when keypad state changed.
+ * After keypad showing, conform widget can change child's Evas_Display_Mode.
+ * @ingroup Widget
+ */
+EAPI void
+elm_widget_display_mode_set(Evas_Object *obj, Evas_Display_Mode dispmode)
+{
+   Evas_Display_Mode child_mode;
+   Evas_Object *child;
+   Eina_List *l;
+
+   API_ENTRY return;
+
+   if (elm_widget_display_mode_get(obj) == dispmode) return;
+   evas_object_size_hint_display_mode_set(obj, dispmode);
+
+   //TODO: Need to deal with EVAS_DISPLAY_MODE_INHERIT efficiently.
+   EINA_LIST_FOREACH (sd->subobjs, l, child)
+     {
+        child_mode = evas_object_size_hint_display_mode_get(child);
+        if (child_mode != EVAS_DISPLAY_MODE_DONT_CHANGE)
+          {
+             elm_widget_display_mode_set(child, dispmode);
+          }
+     }
+
+}
+
+/**
+ * @internal
+ *
  * Allocate a new Elm_Widget_Item-derived structure.
  *
  * The goal of this structure is to provide common ground for actions

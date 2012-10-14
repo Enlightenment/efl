@@ -446,16 +446,26 @@ _on_prop_change(void *data,
    else if (ev->atom == ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE)
      {
         Ecore_X_Window zone;
+        Ecore_X_Virtual_Keyboard_State vkb_state;
 
         DBG("Keyboard Geometry Changed\n");
         zone = ecore_x_e_illume_zone_get(ev->win);
-        sd->vkb_state = ecore_x_e_virtual_keyboard_state_get(zone);
-        if (sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF)
+        vkb_state = ecore_x_e_virtual_keyboard_state_get(zone);
+        if (sd->vkb_state != vkb_state)
           {
-             evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
-             evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
+             sd->vkb_state = vkb_state;
+             if (sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF)
+               {
+                  evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
+                  evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
+                  elm_widget_display_mode_set(data,EVAS_DISPLAY_MODE_NONE);
+               }
+             else if (sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_ON)
+               {
+                  elm_widget_display_mode_set(data,EVAS_DISPLAY_MODE_COMPRESS);
+                  _autoscroll_objects_update(data);
+               }
           }
-        else _autoscroll_objects_update(data);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE)
      {

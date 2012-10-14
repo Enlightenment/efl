@@ -1015,6 +1015,34 @@ _item_new(Evas_Object *obj,
    return it;
 }
 
+
+static void
+_on_obj_size_hints_changed(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Elm_Naviframe_Item *it;
+   Evas_Display_Mode dispmode;
+
+   ELM_NAVIFRAME_DATA_GET(obj, sd);
+
+   it = elm_naviframe_top_item_get(obj);
+   if (!it) return;
+
+   dispmode = evas_object_size_hint_display_mode_get(obj);
+   if (sd->dispmode == dispmode) return;
+
+   sd->dispmode = dispmode;
+
+   switch (dispmode)
+     {
+      case EVAS_DISPLAY_MODE_COMPRESS:
+        edje_object_signal_emit(VIEW(it), "display,mode,compress", "");
+        break;
+      default:
+        edje_object_signal_emit(VIEW(it), "display,mode,default", "");
+        break;
+     }
+}
+
 static Eina_Bool
 _elm_naviframe_smart_focus_next(const Evas_Object *obj,
                                 Elm_Focus_Direction dir,
@@ -1083,6 +1111,7 @@ _elm_naviframe_smart_add(Evas_Object *obj)
    priv->auto_pushed = EINA_TRUE;
    priv->freeze_events = EINA_TRUE;
 
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_obj_size_hints_changed, obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 }
 
