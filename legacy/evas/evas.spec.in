@@ -88,7 +88,8 @@ Source: http://download.enlightenment.org/releases/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-BuildRequires: /usr/bin/freetype-config
+BuildRequires: /usr/bin/freetype-config, eo-devel
+Requires: eo
 Provides: evas
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
