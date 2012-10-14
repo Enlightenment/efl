@@ -175,6 +175,7 @@ AC_SUBST([requirements_pc_eo])
 AC_CONFIG_FILES([
 Makefile
 eo.pc
+eo.spec
 doc/Doxyfile
 doc/Makefile
 src/Makefile

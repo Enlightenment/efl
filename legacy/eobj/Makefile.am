@@ -35,6 +35,7 @@ COPYING \
 README \
 autogen.sh \
 eo.pc.in \
+eo.spec \
 m4/efl_doxygen.m4
 
 .PHONY: doc benchmark examples
