@@ -76,7 +76,7 @@ test_memcpy_tests_run(suite *s, size_t align1, size_t align2, size_t len)
    for (i = 0, j = 1; i < len; i++, j += 23)
      s1[i] = j;
 
-   printf ("length: %6d, align %2d/%2d:", (int)len, align1, align2);
+   printf ("length: %6d, align %2Iu/%2Iu:", (int)len, align1, align2);
 
    test_memcpy_test_run(s, memcpy, s2, s1, len);
 #ifdef _WIN32_WCE

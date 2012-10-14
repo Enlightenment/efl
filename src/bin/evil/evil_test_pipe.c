@@ -110,7 +110,7 @@ test_pipe_test(void)
 }
 
 static int
-test_pipe_run(suite *s __UNUSED__)
+test_pipe_run(suite *s)
 {
    int res;
 

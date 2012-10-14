@@ -89,7 +89,7 @@ static int test_path_absolute_test_6(void)
 }
 
 static int
-test_path_absolute_run(suite *s __UNUSED__)
+test_path_absolute_run(suite *s)
 {
    int res;
 

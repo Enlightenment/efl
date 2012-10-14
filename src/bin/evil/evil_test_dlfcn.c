@@ -62,7 +62,7 @@ test_dlfcn_test_dlsym(void)
 }
 
 static int
-test_dlfcn_tests_run(suite *s __UNUSED__)
+test_dlfcn_tests_run(suite *s)
 {
    int res;
 

@@ -30,7 +30,7 @@ test_print_test(void)
 }
 
 static int
-test_print_run(suite *s __UNUSED__)
+test_print_run(suite *s)
 {
    int res;
 

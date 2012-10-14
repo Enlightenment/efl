@@ -28,7 +28,7 @@ test_realpath_test(void)
 }
 
 static int
-test_realpath_run(suite *s __UNUSED__)
+test_realpath_run(suite *s)
 {
    int res;
 
