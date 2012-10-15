@@ -1431,7 +1431,9 @@ evas_render_updates_internal(Evas *eo_e,
                }
           }
 
-        Evas_Object_Protected_Data *framespace_clip = eo_data_get(e->framespace.clip, EVAS_OBJ_CLASS);
+        Evas_Object_Protected_Data *framespace_clip = 
+          eo_data_get(e->framespace.clip, EVAS_OBJ_CLASS);
+
         EINA_RECTANGLE_SET(&clip_rect,
                            framespace_clip->cur.geometry.x,
                            framespace_clip->cur.geometry.y,
@@ -1453,6 +1455,12 @@ evas_render_updates_internal(Evas *eo_e,
 
              if (obj->delete_me) continue;
 
+             eo_obj = obj->object;
+
+             /* skip clipping if the object is itself the 
+              * framespace clip */
+             if (eo_obj == framespace_clip->object) continue;
+
              EINA_RECTANGLE_SET(&obj_rect,
                                 obj->cur.geometry.x, obj->cur.geometry.y,
                                 obj->cur.geometry.w, obj->cur.geometry.h);
@@ -1463,12 +1471,8 @@ evas_render_updates_internal(Evas *eo_e,
 
              if (!(pclip = evas_object_clip_get(eo_obj)))
                {
-                  /* skip clipping if the object is itself the 
-                   * framespace clip */
-                  if (eo_obj == e->framespace.clip) continue;
-
                   /* clip this object so it does not draw on the window frame */
-                  evas_object_clip_set(eo_obj, e->framespace.clip);
+                  evas_object_clip_set(eo_obj, framespace_clip->object);
                }
           }
      }
