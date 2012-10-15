@@ -1555,7 +1555,7 @@ _ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __
    if ((ms >= CURL_MIN_TIMEOUT) || (ms <= 0)) ms = CURL_MIN_TIMEOUT;
    ecore_timer_interval_set(_curl_timer, (double)ms / 1000.0);
    
-   if (!_curl_timer)
+   if (!_curl_idler)
      _curl_idler = ecore_idler_add(_ecore_con_url_timer, NULL);
 
    return ECORE_CALLBACK_CANCEL;
