@@ -92,7 +92,6 @@ ecore_con_url_init(void)
    _curl_timer = ecore_timer_add((double)ms / 1000.0,
                                  _ecore_con_url_timer, NULL);
    ecore_timer_freeze(_curl_timer);
-   _curl_idler = NULL;
 
    return _init_count;
 #else
