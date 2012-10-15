@@ -97,6 +97,8 @@ struct _EPhysics_World {
      Eina_Bool outside_bottom:1;
      Eina_Bool outside_left:1;
      Eina_Bool outside_right:1;
+     Eina_Bool outside_front:1;
+     Eina_Bool outside_back:1;
      Eina_Bool pending_simulation:1;
 };
 
@@ -1284,7 +1286,8 @@ ephysics_world_bodies_outside_top_autodel_set(EPhysics_World *world, Eina_Bool a
 
    world->outside_top = !!autodel;
    world->outside_autodel = world->outside_top || world->outside_bottom ||
-      world->outside_left || world->outside_right;
+      world->outside_left || world->outside_right ||
+      world->outside_front || world->outside_back;
 }
 
 EAPI Eina_Bool
@@ -1310,7 +1313,8 @@ ephysics_world_bodies_outside_bottom_autodel_set(EPhysics_World *world, Eina_Boo
 
    world->outside_bottom = !!autodel;
    world->outside_autodel = world->outside_top || world->outside_bottom ||
-      world->outside_left || world->outside_right;
+      world->outside_left || world->outside_right ||
+      world->outside_front || world->outside_back;
 }
 
 EAPI Eina_Bool
@@ -1336,7 +1340,8 @@ ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, Eina_Bool 
 
    world->outside_left = !!autodel;
    world->outside_autodel = world->outside_top || world->outside_bottom ||
-      world->outside_left || world->outside_right;
+      world->outside_left || world->outside_right ||
+      world->outside_front || world->outside_back;
 }
 
 EAPI Eina_Bool
@@ -1362,7 +1367,8 @@ ephysics_world_bodies_outside_right_autodel_set(EPhysics_World *world, Eina_Bool
 
    world->outside_right = !!autodel;
    world->outside_autodel = world->outside_top || world->outside_bottom ||
-      world->outside_left || world->outside_right;
+      world->outside_left || world->outside_right ||
+      world->outside_front || world->outside_back;
 }
 
 EAPI Eina_Bool
@@ -1375,6 +1381,60 @@ ephysics_world_bodies_outside_right_autodel_get(const EPhysics_World *world)
      }
 
    return world->outside_right;
+}
+
+EAPI void
+ephysics_world_bodies_outside_front_autodel_set(EPhysics_World *world, Eina_Bool autodel)
+{
+   if (!world)
+     {
+        ERR("Can't set autodelete mode, world is null.");
+        return;
+     }
+
+   world->outside_front = !!autodel;
+   world->outside_autodel = world->outside_top || world->outside_bottom ||
+      world->outside_left || world->outside_right ||
+      world->outside_front || world->outside_back;
+}
+
+EAPI Eina_Bool
+ephysics_world_bodies_outside_front_autodel_get(const EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get autodelete mode, world is null.");
+        return EINA_FALSE;
+     }
+
+   return world->outside_front;
+}
+
+EAPI void
+ephysics_world_bodies_outside_back_autodel_set(EPhysics_World *world, Eina_Bool autodel)
+{
+   if (!world)
+     {
+        ERR("Can't set autodelete mode, world is null.");
+        return;
+     }
+
+   world->outside_back = !!autodel;
+   world->outside_autodel = world->outside_top || world->outside_bottom ||
+      world->outside_left || world->outside_right ||
+      world->outside_front || world->outside_back;
+}
+
+EAPI Eina_Bool
+ephysics_world_bodies_outside_back_autodel_get(const EPhysics_World *world)
+{
+   if (!world)
+     {
+        ERR("Can't get autodelete mode, world is null.");
+        return EINA_FALSE;
+     }
+
+   return world->outside_back;
 }
 
 EAPI Eina_Bool

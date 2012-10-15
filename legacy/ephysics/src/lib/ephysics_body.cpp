@@ -1071,11 +1071,11 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 static void
 _ephysics_body_outside_render_area_check(EPhysics_Body *body)
 {
-   int wx, wy, ww, wh, bx, by, bw, bh;
+   int wx, wy, wz, ww, wh, wd, bx, by, bz, bw, bh, bd;
 
-   ephysics_world_render_geometry_get(body->world, &wx, &wy, NULL,
-                                      &ww, &wh, NULL);
-   ephysics_body_geometry_get(body, &bx, &by, NULL, &bw, &bh, NULL);
+   ephysics_world_render_geometry_get(body->world, &wx, &wy, &wz,
+                                      &ww, &wh, &wd);
+   ephysics_body_geometry_get(body, &bx, &by, &bz, &bw, &bh, &bd);
 
    // FIXME: check what should be done regarding rotated bodies
    if (((ephysics_world_bodies_outside_top_autodel_get(body->world)) &&
@@ -1085,7 +1085,11 @@ _ephysics_body_outside_render_area_check(EPhysics_Body *body)
        ((ephysics_world_bodies_outside_left_autodel_get(body->world)) &&
         (bx + bh < wx)) ||
        ((ephysics_world_bodies_outside_right_autodel_get(body->world)) &&
-        (bx > wx + ww)))
+        (bx > wx + ww)) ||
+       ((ephysics_world_bodies_outside_front_autodel_get(body->world)) &&
+        (bz + bd < wz)) ||
+       ((ephysics_world_bodies_outside_back_autodel_get(body->world)) &&
+        (bz > wz + wd)))
      {
         DBG("Body %p out of render area", body);
         ephysics_body_del(body);

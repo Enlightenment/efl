@@ -1033,6 +1033,8 @@ EAPI double ephysics_world_linear_slop_get(const EPhysics_World *world);
  * @see ephysics_world_bodies_outside_bottom_autodel_set().
  * @see ephysics_world_bodies_outside_left_autodel_set().
  * @see ephysics_world_bodies_outside_right_autodel_set().
+ * @see ephysics_world_bodies_outside_front_autodel_set().
+ * @see ephysics_world_bodies_outside_back_autodel_set().
  *
  * @ingroup EPhysics_World
  */
@@ -1066,6 +1068,8 @@ EAPI Eina_Bool ephysics_world_bodies_outside_top_autodel_get(const EPhysics_Worl
  * @see ephysics_world_bodies_outside_bottom_autodel_get().
  * @see ephysics_world_bodies_outside_left_autodel_set().
  * @see ephysics_world_bodies_outside_right_autodel_set().
+ * @see ephysics_world_bodies_outside_front_autodel_set().
+ * @see ephysics_world_bodies_outside_back_autodel_set().
  *
  * @ingroup EPhysics_World
  */
@@ -1099,6 +1103,8 @@ EAPI Eina_Bool ephysics_world_bodies_outside_bottom_autodel_get(const EPhysics_W
  * @see ephysics_world_bodies_outside_right_autodel_get().
  * @see ephysics_world_bodies_outside_bottom_autodel_set().
  * @see ephysics_world_bodies_outside_left_autodel_set().
+ * @see ephysics_world_bodies_outside_front_autodel_set().
+ * @see ephysics_world_bodies_outside_back_autodel_set().
  *
  * @ingroup EPhysics_World
  */
@@ -1132,6 +1138,8 @@ EAPI Eina_Bool ephysics_world_bodies_outside_right_autodel_get(const EPhysics_Wo
  * @see ephysics_world_bodies_outside_left_autodel_get().
  * @see ephysics_world_bodies_outside_bottom_autodel_set().
  * @see ephysics_world_bodies_outside_right_autodel_set().
+ * @see ephysics_world_bodies_outside_front_autodel_set().
+ * @see ephysics_world_bodies_outside_back_autodel_set().
  *
  * @ingroup EPhysics_World
  */
@@ -1151,6 +1159,76 @@ EAPI void ephysics_world_bodies_outside_left_autodel_set(EPhysics_World *world, 
  * @ingroup EPhysics_World
  */
 EAPI Eina_Bool ephysics_world_bodies_outside_left_autodel_get(const EPhysics_World *world);
+
+/**
+ * @brief
+ * Set world autodeleting bodies mode when they're outside of render area
+ * by the front.
+ *
+ * @param world The physics world.
+ * @param autodel If @c EINA_TRUE delete bodies when they are outside render
+ * area, otherwise, don't delete.
+ *
+ * @see ephysics_world_bodies_outside_top_autodel_set() for more details.
+ * @see ephysics_world_bodies_outside_left_autodel_get().
+ * @see ephysics_world_bodies_outside_bottom_autodel_set().
+ * @see ephysics_world_bodies_outside_right_autodel_set().
+ * @see ephysics_world_bodies_outside_front_autodel_set().
+ * @see ephysics_world_bodies_outside_back_autodel_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_bodies_outside_front_autodel_set(EPhysics_World *world, Eina_Bool autodel);
+
+/**
+ * @brief
+ * Get world autodeleting bodies mode when they're outside of render area by
+ * the front.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if bodies will be deleted or @c EINA_FALSE if they
+ * won't, or on error.
+ *
+ * @see ephysics_world_bodies_outside_front_autodel_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_bodies_outside_front_autodel_get(const EPhysics_World *world);
+
+/**
+ * @brief
+ * Set world autodeleting bodies mode when they're outside of render area
+ * by the back.
+ *
+ * @param world The physics world.
+ * @param autodel If @c EINA_TRUE delete bodies when they are outside render
+ * area, otherwise, don't delete.
+ *
+ * @see ephysics_world_bodies_outside_top_autodel_set() for more details.
+ * @see ephysics_world_bodies_outside_left_autodel_get().
+ * @see ephysics_world_bodies_outside_bottom_autodel_set().
+ * @see ephysics_world_bodies_outside_right_autodel_set().
+ * @see ephysics_world_bodies_outside_front_autodel_set().
+ * @see ephysics_world_bodies_outside_back_autodel_set().
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI void ephysics_world_bodies_outside_back_autodel_set(EPhysics_World *world, Eina_Bool autodel);
+
+/**
+ * @brief
+ * Get world autodeleting bodies mode when they're outside of render area by
+ * the back.
+ *
+ * @param world The physics world.
+ * @return @c EINA_TRUE if bodies will be deleted or @c EINA_FALSE if they
+ * won't, or on error.
+ *
+ * @see ephysics_world_bodies_outside_back_autodel_set() for details.
+ *
+ * @ingroup EPhysics_World
+ */
+EAPI Eina_Bool ephysics_world_bodies_outside_back_autodel_get(const EPhysics_World *world);
 
 /**
  * @brief
