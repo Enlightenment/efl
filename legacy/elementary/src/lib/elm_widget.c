@@ -3542,7 +3542,7 @@ elm_widget_activate(Evas_Object *obj, Elm_Activate act)
  * @ingroup Widget
  **/
 EAPI Evas_Display_Mode
-elm_widget_display_mode_get(Evas_Object *obj)
+elm_widget_display_mode_get(const Evas_Object *obj)
 {
    Evas_Display_Mode new_mode;
    Evas_Object *parent;
