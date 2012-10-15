@@ -1772,15 +1772,15 @@ ephysics_body_world_boundaries_resize(EPhysics_World *world)
 
    right = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_RIGHT);
    if (right)
-     ephysics_body_geometry_set(right, x + width, 0, -5, 10, y + height, 10);
+     ephysics_body_geometry_set(right, x + width, y, -5, 10, height, 10);
 
    left = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_LEFT);
    if (left)
-     ephysics_body_geometry_set(left,  x - 10, 0, -5, 10, y + height, 10);
+     ephysics_body_geometry_set(left,  x - 10, y, -5, 10, height, 10);
 
    top = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_TOP);
    if (top)
-     ephysics_body_geometry_set(top, 0, y - 10, -5, x + width, 10, 10);
+     ephysics_body_geometry_set(top, x, y - 10, -5, width, 10, 10);
 }
 
 static EPhysics_Body *
@@ -1817,7 +1817,7 @@ ephysics_body_top_boundary_add(EPhysics_World *world)
 
    ephysics_world_render_geometry_get(world, &x, &y, &w, NULL);
    body =  _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_TOP,
-                                       0, y - 10, x + w, 10);
+                                       x, y - 10, w, 10);
    return body;
 }
 
@@ -1841,7 +1841,7 @@ ephysics_body_left_boundary_add(EPhysics_World *world)
 
    ephysics_world_render_geometry_get(world, &x, &y, NULL, &h);
    body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_LEFT,
-                                      x - 10, 0, 10, y + h);
+                                      x - 10, y, 10, h);
    return body;
 }
 
@@ -1853,7 +1853,7 @@ ephysics_body_right_boundary_add(EPhysics_World *world)
 
    ephysics_world_render_geometry_get(world, &x, &y, &w, &h);
    body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_RIGHT,
-                                      x + w, 0, 10, y + h);
+                                      x + w, y, 10, h);
    return body;
 }
 
