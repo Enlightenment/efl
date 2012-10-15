@@ -216,15 +216,6 @@
  */
 
 /**
- * @page ephysics_logo_c ephysics_logo.c
- *
- * @section ephysics-logo-c ephysics_logo.c
- * @include ephysics_logo.c
- *
- * @example ephysics_logo.c
- */
-
-/**
  * @page tutorial_ephysics_bouncing_text EPhysics - Bouncing Text
  *
  * The purpose of this example is to demonstrate the EPhysics_Body binding to
@@ -1105,7 +1096,7 @@
  * For this example we'll have an EPhysics_World.
  *
  * The basic concepts like - initializing an EPhysics_World, render geometry,
- * physics limiting boundaries, were already covered in 
+ * physics limiting boundaries, were already covered in
  * @ref tutorial_ephysics_bouncing_ball
  *
  * @section add-logostruct Logo Data Struct
