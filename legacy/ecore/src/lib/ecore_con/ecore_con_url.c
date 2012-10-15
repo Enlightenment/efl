@@ -1620,8 +1620,11 @@ _ecore_con_url_timer(void *data __UNUSED__)
         ERR("curl_multi_perform() failed: %s", curl_multi_strerror(ret));
         _ecore_con_url_curl_clear();
         ecore_timer_freeze(_curl_timer);
-        if (_curl_idler) ecore_idler_del(_curl_idler);
-        _curl_idler = NULL;
+        if (_curl_idler)
+          {
+             ecore_idler_del(_curl_idler);
+             _curl_idler = NULL;
+          }
      }
 
    if (still_running)
@@ -1639,8 +1642,11 @@ _ecore_con_url_timer(void *data __UNUSED__)
         _ecore_con_url_info_read();
         _ecore_con_url_curl_clear();
         ecore_timer_freeze(_curl_timer);
-        if (_curl_idler) ecore_idler_del(_curl_idler);
-        _curl_idler = NULL;
+        if (_curl_idler)
+          {
+             ecore_idler_del(_curl_idler);
+             _curl_idler = NULL;
+          }
      }
 
    return ECORE_CALLBACK_RENEW;
