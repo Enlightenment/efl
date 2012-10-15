@@ -2317,8 +2317,10 @@ EAPI void ephysics_body_angular_velocity_get(const EPhysics_Body *body, double *
  * is measured in degrees per second.
  *
  * @param body The body to be set.
- * @param linear_threshold The linear sleeping threshold factor.
- * @param angular_threshold The angular sleeping threshold factor.
+ * @param linear_threshold The linear sleeping threshold factor, default value
+ * is 24.
+ * @param angular_threshold The angular sleeping threshold factor, default value
+ * is 57.29 (1 rad).
  *
  * @see ephysics_body_sleeping_threshold_get().
  * @see ephysics_world_max_sleeping_time_set() for sleeping time details.
