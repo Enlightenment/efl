@@ -56,7 +56,7 @@ static CURLM *_curlm = NULL;
 static int _init_count = 0;
 static Ecore_Timer *_curl_timer = NULL;
 static Eina_Bool pipelining = EINA_FALSE;
-Ecore_Idler *_curl_idler;
+static Ecore_Idler *_curl_idler = NULL;
 #endif
 
 /**
