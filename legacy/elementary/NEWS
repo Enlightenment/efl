@@ -42,6 +42,7 @@ Fixes:
    * Fix possible invalid memory access in elm_access.
    * Fix diskselector bug with more than 4 items.
    * Fix conform widget to be part of focus chain.
+   * Fix genlist reorder mode item not being resized on genlist resize.
         
 Removals:
 

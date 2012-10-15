@@ -614,3 +614,7 @@
 2012-10-15  Shinwoo Kim (kimcinoo)
 
         * Add access features to toolbar items
+
+2012-10-15  Prince Dubey Kumar <prince.dubey@samsung.com>
+
+        * Fix genlist reorder mode item not being resized on genlist resize.

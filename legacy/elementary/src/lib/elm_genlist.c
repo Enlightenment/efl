@@ -670,6 +670,12 @@ _calc_job(void *data)
         sd->minh = minh;
         evas_object_smart_callback_call(sd->pan_obj, "changed", NULL);
         elm_layout_sizing_eval(ELM_WIDGET_DATA(sd)->obj);
+        if (sd->reorder_it)
+          {
+              Elm_Gen_Item *it;
+              it = sd->reorder_it;
+              it->item->w = minw;
+          }
         if ((sd->anchor_item) && (sd->anchor_item->item->block)
             && (!sd->auto_scroll_enabled))
           {
