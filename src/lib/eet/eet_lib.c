@@ -1598,6 +1598,9 @@ EAPI const void *
 eet_identity_x509(Eet_File *ef,
                   int      *der_length)
 {
+   if (eet_check_pointer(ef))
+     return NULL;
+
    if (!ef->x509_der)
      return NULL;
 
@@ -1611,6 +1614,9 @@ EAPI const void *
 eet_identity_signature(Eet_File *ef,
                        int      *signature_length)
 {
+   if (eet_check_pointer(ef))
+     return NULL;
+
    if (!ef->signature)
      return NULL;
 
@@ -1624,6 +1630,9 @@ EAPI const void *
 eet_identity_sha1(Eet_File *ef,
                   int      *sha1_length)
 {
+   if (eet_check_pointer(ef))
+     return NULL;
+
    if (!ef->sha1)
      ef->sha1 = eet_identity_compute_sha1(ef->data,
                                           ef->data_size,
