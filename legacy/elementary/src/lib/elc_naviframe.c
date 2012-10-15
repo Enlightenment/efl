@@ -1017,7 +1017,8 @@ _item_new(Evas_Object *obj,
 
 
 static void
-_on_obj_size_hints_changed(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_on_obj_size_hints_changed(void *data __UNUSED__, Evas *e __UNUSED__,
+                           Evas_Object *obj, void *event_info __UNUSED__)
 {
    Elm_Object_Item *it;
    Evas_Display_Mode dispmode;
@@ -1111,7 +1112,8 @@ _elm_naviframe_smart_add(Evas_Object *obj)
    priv->auto_pushed = EINA_TRUE;
    priv->freeze_events = EINA_TRUE;
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_obj_size_hints_changed, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _on_obj_size_hints_changed, obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 }
 
