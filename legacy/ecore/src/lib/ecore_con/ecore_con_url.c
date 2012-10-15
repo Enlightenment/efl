@@ -87,9 +87,10 @@ ecore_con_url_init(void)
      }
 
    curl_multi_timeout(_curlm, &ms);
-   if (ms >= CURL_MIN_TIMEOUT || ms <= 0) ms = CURL_MIN_TIMEOUT;
+   if ((ms >= CURL_MIN_TIMEOUT) || (ms <= 0)) ms = CURL_MIN_TIMEOUT;
 
-   _curl_timer = ecore_timer_add((double)ms / 1000, _ecore_con_url_timer, NULL);
+   _curl_timer = ecore_timer_add((double)ms / 1000.0,
+                                 _ecore_con_url_timer, NULL);
    ecore_timer_freeze(_curl_timer);
    _curl_idler = NULL;
 
@@ -115,8 +116,11 @@ ecore_con_url_shutdown(void)
         _curl_timer = NULL;
      }
 
-   if (_curl_idler) ecore_idler_del(_curl_idler);
-   _curl_idler = NULL;
+   if (_curl_idler)
+     {
+        ecore_idler_del(_curl_idler);
+        _curl_idler = NULL;
+     }
 
    EINA_LIST_FREE(_url_con_list, url_con)
      ecore_con_url_free(url_con);
@@ -1549,10 +1553,9 @@ _ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __
    EINA_LIST_FREE(_fd_hd_list, fdh) ecore_main_fd_handler_del(fdh);
 
    curl_multi_timeout(_curlm, &ms);
-   if (ms >= CURL_MIN_TIMEOUT || ms <= 0) ms = CURL_MIN_TIMEOUT;
-
-   ecore_timer_interval_set(_curl_timer, (double)ms / 1000);
-
+   if ((ms >= CURL_MIN_TIMEOUT) || (ms <= 0)) ms = CURL_MIN_TIMEOUT;
+   ecore_timer_interval_set(_curl_timer, (double)ms / 1000.0);
+   
    if (!_curl_timer)
      _curl_idler = ecore_idler_add(_ecore_con_url_timer, NULL);
 
@@ -1628,8 +1631,8 @@ _ecore_con_url_timer(void *data __UNUSED__)
         _ecore_con_url_fdset();
         curl_multi_timeout(_curlm, &ms);
         DBG("multiperform is still running: %d, timeout: %ld", still_running, ms);
-        if (ms >= CURL_MIN_TIMEOUT || ms <= 0) ms = CURL_MIN_TIMEOUT;
-        ecore_timer_interval_set(_curl_timer, (double)ms / 1000);
+        if ((ms >= CURL_MIN_TIMEOUT) || (ms <= 0)) ms = CURL_MIN_TIMEOUT;
+        ecore_timer_interval_set(_curl_timer, (double)ms / 1000.0);
      }
    else
      {
