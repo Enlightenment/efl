@@ -33,10 +33,6 @@
 # include <Evas_Engine_Software_8_X11.h>
 #endif
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
-# include <Evas_Engine_Software_16_X11.h>
-#endif
-
 #ifdef BUILD_ECORE_EVAS_FB
 # include <Evas_Engine_FB.h>
 #endif
@@ -64,14 +60,6 @@
 # ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
 #  include <Evas_Engine_GL_Glew.h>
 # endif
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
-#  include <Evas_Engine_Software_16_DDraw.h>
-# endif
-#endif
-
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-# include "Ecore_WinCE.h"
-# include <Evas_Engine_Software_16_WinCE.h>
 #endif
 
 #ifdef BUILD_ECORE_EVAS_GL_COCOA
@@ -266,14 +254,6 @@ struct _Ecore_Evas_Engine
       } state;
    } win32;
 #endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-   struct {
-      Ecore_WinCE_Window *window;
-      struct {
-         unsigned char fullscreen : 1;
-      } state;
-   } wince;
-#endif
 #ifdef BUILD_ECORE_EVAS_EWS
    struct {
       Evas_Object *image;
@@ -422,9 +402,6 @@ int _ecore_evas_directfb_shutdown(void);
 #endif
 #ifdef BUILD_ECORE_EVAS_WIN32
 int _ecore_evas_win32_shutdown(void);
-#endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-int _ecore_evas_wince_shutdown(void);
 #endif
 #ifdef BUILD_ECORE_EVAS_EWS
 void _ecore_evas_ews_events_init(void);

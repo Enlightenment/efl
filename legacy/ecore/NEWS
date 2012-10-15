@@ -39,6 +39,9 @@ Fixes:
      - ecore_x_randr to actually return crtcs outputs properly.
      - send ECORE_X_EVENT_SELECTION_NOTIFY even if there is no data.
 
+Removal:
+    * 16bpp evas engine support removed (API still there, but inactive).
+    
 Improvements:
 
 Ecore 1.7.0

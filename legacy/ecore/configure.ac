@@ -157,21 +157,18 @@ want_ecore_evas="yes"
 want_ecore_evas_software_buffer="yes"
 want_ecore_evas_software_x11="no"
 want_ecore_evas_opengl_x11="no"
-want_ecore_evas_software_16_x11="no"
 want_ecore_evas_software_8_x11="no"
 want_ecore_evas_software_xcb="no"
 want_ecore_evas_software_gdi="no"
 want_ecore_evas_software_ddraw="no"
 want_ecore_evas_direct3d="no"
 want_ecore_evas_opengl_glew="no"
-want_ecore_evas_software_16_ddraw="no"
 want_ecore_evas_software_sdl="no"
 want_ecore_evas_gl_sdl="no"
 want_ecore_evas_gl_cocoa="no"
 want_ecore_evas_psl1ght="no"
 want_ecore_evas_directfb="no"
 want_ecore_evas_fb="no"
-want_ecore_evas_software_16_wince="no"
 want_ecore_evas_ews="yes"
 want_ecore_evas_extn="yes"
 want_ecore_evas_wayland_shm="no"
@@ -188,7 +185,6 @@ case "$host_os" in
       want_ecore_con_eet="no"
       want_ecore_ipc="no"
       want_ecore_wince="yes"
-      want_ecore_evas_software_16_wince="yes"
       want_ecore_evas_extn="no"
       ;;
    mingw*)
@@ -203,7 +199,6 @@ case "$host_os" in
       want_ecore_evas_software_ddraw="yes"
       want_ecore_evas_direct3d="yes"
       want_ecore_evas_opengl_glew="yes"
-      want_ecore_evas_software_16_ddraw="auto"
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
       ;;
@@ -234,7 +229,6 @@ case "$host_os" in
       want_ecore_wayland="yes"
       want_ecore_evas_software_x11="yes"
       want_ecore_evas_opengl_x11="yes"
-      want_ecore_evas_software_16_x11="yes"
       want_ecore_evas_software_8_x11="yes"
       want_ecore_evas_software_xcb="no"
       want_ecore_evas_software_sdl="yes"
@@ -1826,12 +1820,7 @@ if test "x${have_ecore_evas_opengl_x11}" = "xyes" -o "x${have_ecore_evas_opengl_
     fi
 fi
 
-# ecore_evas_software_x11 16 bits
-
-ECORE_EVAS_CHECK_MODULE([software-16-x11],
-   [${want_ecore_evas_software_16_x11}],
-   [Software Xlib 16 bits],
-   [${have_ecore_x_xlib}])
+# ecore_evas_software_x11 8 bits
 
 ECORE_EVAS_CHECK_MODULE([software-8-x11],
     [$want_ecore_evas_software_8_x11],
@@ -1842,7 +1831,6 @@ ECORE_EVAS_CHECK_MODULE([software-8-x11],
 if test "x$have_ecore_evas_software_x11" = "xyes" -o \
         "x$have_ecore_evas_opengl_x11" = "xyes" -o \
         "x$have_ecore_evas_software_8_x11" = "xyes" -o \
-        "x$have_ecore_evas_software_16_x11" = "xyes" -o \
         "x$have_ecore_evas_software_xcb" = "xyes"; then
    AC_DEFINE(BUILD_ECORE_EVAS_X11, 1, [Support for X Window Engines in Ecore_Evas])
    requirements_ecore_evas="ecore-x >= 1.6.99 ${requirements_ecore_evas}"
@@ -1870,16 +1858,10 @@ ECORE_EVAS_CHECK_MODULE([opengl-glew],
    [Glew OpenGL],
    [${have_ecore_win32}])
 
-ECORE_EVAS_CHECK_MODULE([software-16-ddraw],
-   [${want_ecore_evas_software_16_ddraw}],
-   [16 bpp Software DirectDraw],
-   [${have_ecore_win32}])
-
 if test "x${have_ecore_evas_software_gdi}" = "xyes" -o \
         "x${have_ecore_evas_software_ddraw}" = "xyes" -o \
         "x${have_ecore_evas_direct3d}" = "xyes" -o \
-        "x${have_ecore_evas_opengl_glew}" = "xyes" -o \
-        "x${have_ecore_evas_software_16_ddraw}" = "xyes" ; then
+        "x${have_ecore_evas_opengl_glew}" = "xyes" ; then
    AC_DEFINE(BUILD_ECORE_EVAS_WIN32, 1, [Support for Win32 Engine in Ecore_Evas])
    requirements_ecore_evas="ecore-win32 >= 1.6.99 ${requirements_ecore_evas}"
 fi
@@ -1925,14 +1907,6 @@ ECORE_EVAS_CHECK_MODULE([fb],
    [Linux Framebuffer],
    [${have_ecore_fb}],
    [requirements_ecore_evas="ecore-fb >= 1.6.99 ${requirements_ecore_evas}"])
-
-# ecore_evas_wince
-
-ECORE_EVAS_CHECK_MODULE([software-16-wince],
-   [${want_ecore_evas_software_16_wince}],
-   [16 bpp Software Windows CE],
-   [${have_ecore_wince}],
-   [requirements_ecore_evas="ecore-wince >= 1.6.99 ${requirements_ecore_evas}"])
 
 # ecore_evas_ews
 
@@ -2249,9 +2223,6 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    PSL1GHT....................: $have_ecore_evas_psl1ght"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
   echo "    Software 8bit grayscale XCB: $have_ecore_evas_software_8_x11"
-  echo "    Software 16bit X11.........: $have_ecore_evas_software_16_x11"
-  echo "    Software 16bit DirectDraw..: $have_ecore_evas_software_16_ddraw"
-  echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
   echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"
   echo "    Wayland Shm................: $have_ecore_evas_wayland_shm"
   echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"

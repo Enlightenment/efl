@@ -166,23 +166,12 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #endif
 
       case ECORE_EVAS_ENGINE_SOFTWARE_16_X11:
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
-        return EINA_TRUE;
-#else
         return EINA_FALSE;
-#endif
       case ECORE_EVAS_ENGINE_SOFTWARE_16_DDRAW:
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
-        return EINA_TRUE;
-#else
         return EINA_FALSE;
-#endif
       case ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE:
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-        return EINA_TRUE;
-#else
         return EINA_FALSE;
-#endif
+
       case ECORE_EVAS_ENGINE_OPENGL_COCOA:
 #ifdef BUILD_ECORE_EVAS_OPENGL_COCOA
         return EINA_TRUE;
@@ -317,9 +306,6 @@ ecore_evas_shutdown(void)
 #endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
    while (_ecore_evas_directfb_shutdown());
-#endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-   while (_ecore_evas_wince_shutdown());
 #endif
 
    if (_ecore_evas_async_events_fd)
@@ -492,22 +478,6 @@ _ecore_evas_constructor_software_8_x11(int x, int y, int w, int h, const char *e
 }
 #endif
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
-static Ecore_Evas *
-_ecore_evas_constructor_software_16_x11(int x, int y, int w, int h, const char *extra_options)
-{
-   Ecore_X_Window parent = 0;
-   char *disp_name = NULL;
-   Ecore_Evas *ee;
-
-   _ecore_evas_parse_extra_options_x(extra_options, &disp_name, &parent);
-   ee = ecore_evas_software_x11_16_new(disp_name, parent, x, y, w, h);
-   free(disp_name);
-
-   return ee;
-}
-#endif
-
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
 static Ecore_Evas *
 _ecore_evas_constructor_sdl(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
@@ -669,40 +639,6 @@ _ecore_evas_constructor_opengl_glew(int x, int y, int w, int h, const char *extr
 }
 #endif
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
-static Ecore_Evas *
-_ecore_evas_constructor_software_16_ddraw(int x, int y, int w, int h, const char *extra_options)
-{
-   return ecore_evas_software_16_ddraw_new(NULL, x, y, w, h);
-}
-#endif
-
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-static Ecore_Evas *
-_ecore_evas_constructor_software_16_wince(int x, int y, int w, int h, const char *extra_options __UNUSED__)
-{
-   return ecore_evas_software_wince_new(NULL, x, y, w, h);
-}
-
-static Ecore_Evas *
-_ecore_evas_constructor_software_16_wince_fb(int x, int y, int w, int h, const char *extra_options __UNUSED__)
-{
-   return ecore_evas_software_wince_fb_new(NULL, x, y, w, h);
-}
-
-static Ecore_Evas *
-_ecore_evas_constructor_software_16_wince_gapi(int x, int y, int w, int h, const char *extra_options __UNUSED__)
-{
-   return ecore_evas_software_wince_gapi_new(NULL, x, y, w, h);
-}
-
-static Ecore_Evas *
-_ecore_evas_constructor_software_16_wince_gdi(int x, int y, int w, int h, const char *extra_options __UNUSED__)
-{
-   return ecore_evas_software_wince_gdi_new(NULL, x, y, w, h);
-}
-#endif
-
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_BUFFER
 static Ecore_Evas *
 _ecore_evas_constructor_buffer(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options __UNUSED__)
@@ -731,9 +667,6 @@ static const struct ecore_evas_engine _engines[] = {
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_8_X11
   {"software_8_x11", _ecore_evas_constructor_software_8_x11},
 #endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_X11
-  {"software_16_x11", _ecore_evas_constructor_software_16_x11},
-#endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
   {"directfb", _ecore_evas_constructor_directfb},
 #endif
@@ -753,15 +686,6 @@ static const struct ecore_evas_engine _engines[] = {
 #endif
 #ifdef BUILD_ECORE_EVAS_OPENGL_GLEW
   {"opengl_glew", _ecore_evas_constructor_opengl_glew},
-#endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
-  {"software_16_ddraw", _ecore_evas_constructor_software_16_ddraw},
-#endif
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
-  {"software_16_wince", _ecore_evas_constructor_software_16_wince},
-  {"software_16_wince_fb", _ecore_evas_constructor_software_16_wince_fb},
-  {"software_16_wince_gapi", _ecore_evas_constructor_software_16_wince_gapi},
-  {"software_16_wince_gdi", _ecore_evas_constructor_software_16_wince_gdi},
 #endif
 
   /* Apple */

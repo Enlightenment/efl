@@ -1002,3 +1002,8 @@
 2012-10-10 Michal Pakula vel Rutka
 
        * Fix: Send ECORE_X_EVENT_SELECTION_NOTIFY even if there is no data.
+
+2012-10-15  Carsten Haitzler (The Rasterman)
+
+       * Since evas has 16bit engines removed, remove support from ecore-evas.
+

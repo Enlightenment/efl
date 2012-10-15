@@ -1290,49 +1290,6 @@ _ecore_evas_engine_opengl_glew_init(Ecore_Evas *ee)
 }
 #endif /* BUILD_ECORE_EVAS_OPENGL_GLEW */
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
-static int
-_ecore_evas_engine_software_16_ddraw_init(Ecore_Evas *ee)
-{
-   Evas_Engine_Info_Software_DDraw *einfo;
-   const char                      *driver;
-   int                              rmethod;
-
-   driver = "software_16_ddraw";
-
-   rmethod = evas_render_method_lookup(driver);
-   if (!rmethod)
-     return 0;
-
-   ee->driver = driver;
-   evas_output_method_set(ee->evas, rmethod);
-
-   if (ecore_win32_screen_depth_get() != 16)
-     return 0;
-
-   einfo = (Evas_Engine_Info_Software_16_DDraw *)evas_engine_info_get(ee->evas);
-   if (einfo)
-     {
-        /* FIXME: REDRAW_DEBUG missing for now */
-        einfo->info.window = ((struct _Ecore_Win32_Window *)ee->prop.window)->window;
-        einfo->info.depth = ecore_win32_screen_depth_get();
-        einfo->info.rotation = 0;
-        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-          {
-             ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-             return 0;
-          }
-     }
-   else
-     {
-        ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
-        return 0;
-     }
-
-   return 1;
-}
-#endif /* BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW */
-
 #ifdef BUILD_ECORE_EVAS_WIN32
 static Ecore_Evas *
 _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
@@ -1474,25 +1431,6 @@ ecore_evas_software_ddraw_new(Ecore_Win32_Window *parent __UNUSED__,
 #endif /* ! BUILD_ECORE_EVAS_SOFTWARE_DDRAW */
 
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW
-
-EAPI Ecore_Evas *
-ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent,
-                                 int                 x,
-                                 int                 y,
-                                 int                 width,
-                                 int                 height)
-{
-   return _ecore_evas_win32_new_internal(_ecore_evas_engine_software_16_ddraw_init,
-                                         parent,
-                                         x,
-                                         y,
-                                         width,
-                                         height);
-}
-
-#else
-
 EAPI Ecore_Evas *
 ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent __UNUSED__,
                                  int                 x __UNUSED__,
@@ -1502,9 +1440,6 @@ ecore_evas_software_16_ddraw_new(Ecore_Win32_Window *parent __UNUSED__,
 {
    return NULL;
 }
-
-#endif /* ! BUILD_ECORE_EVAS_SOFTWARE_16_DDRAW */
-
 
 #ifdef BUILD_ECORE_EVAS_DIRECT3D
 
