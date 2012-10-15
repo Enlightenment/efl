@@ -1922,8 +1922,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
              else
                ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
-             if (!ee->engine.x.mask)
-               ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1);
+//             if (!ee->engine.x.mask)
+//               ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1);
           }
         else
           {
@@ -2125,8 +2125,8 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
                ee->prop.window = ecore_x_window_override_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
              else
                ee->prop.window = ecore_x_window_argb_new(ee->engine.x.win_root, ee->req.x, ee->req.y, ee->req.w, ee->req.h);
-             if (!ee->engine.x.mask)
-               ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1);
+//             if (!ee->engine.x.mask)
+//               ee->engine.x.mask = ecore_x_pixmap_new(ee->prop.window, ee->req.w, ee->req.h, 1);
           }
         else
           {
