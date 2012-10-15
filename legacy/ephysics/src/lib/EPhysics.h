@@ -1908,13 +1908,12 @@ EAPI EPhysics_Body *ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shap
  * @ref ephysics_world_render_geometry_set().
  *
  * @param world The world this body will belong to.
- * @param d The boundary depth, in pixels.
  * @return a new body or @c NULL, on erros.
  * @see ephysics_world_render_geometry_set()
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Body *ephysics_body_top_boundary_add(EPhysics_World *world, Evas_Coord d);
+EAPI EPhysics_Body *ephysics_body_top_boundary_add(EPhysics_World *world);
 
 /**
  * @brief
@@ -1925,13 +1924,12 @@ EAPI EPhysics_Body *ephysics_body_top_boundary_add(EPhysics_World *world, Evas_C
  * @ref ephysics_world_render_geometry_set().
  *
  * @param world The world this body will belong to.
- * @param d The boundary depth, in pixels.
  * @return a new body or @c NULL, on erros.
  * @see ephysics_world_render_geometry_set()
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Body *ephysics_body_bottom_boundary_add(EPhysics_World *world, Evas_Coord d);
+EAPI EPhysics_Body *ephysics_body_bottom_boundary_add(EPhysics_World *world);
 
 /**
  * @brief
@@ -1942,13 +1940,12 @@ EAPI EPhysics_Body *ephysics_body_bottom_boundary_add(EPhysics_World *world, Eva
  * @ref ephysics_world_render_geometry_set().
  *
  * @param world The world this body will belong to.
- * @param d The boundary depth, in pixels.
  * @return a new body or @c NULL, on erros.
  * @see ephysics_world_render_geometry_set()
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Body *ephysics_body_left_boundary_add(EPhysics_World *world, Evas_Coord d);
+EAPI EPhysics_Body *ephysics_body_left_boundary_add(EPhysics_World *world);
 
 /**
  * @brief
@@ -1959,13 +1956,12 @@ EAPI EPhysics_Body *ephysics_body_left_boundary_add(EPhysics_World *world, Evas_
  * @ref ephysics_world_render_geometry_set().
  *
  * @param world The world this body will belong to.
- * @param d The boundary depth, in pixels.
  * @return a new body or @c NULL, on erros.
  * @see ephysics_world_render_geometry_set()
  *
  * @ingroup EPhysics_Body
  */
-EAPI EPhysics_Body *ephysics_body_right_boundary_add(EPhysics_World *world, Evas_Coord d);
+EAPI EPhysics_Body *ephysics_body_right_boundary_add(EPhysics_World *world);
 
 /**
  * @brief

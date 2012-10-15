@@ -130,19 +130,19 @@ test_collision_speed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    ephysics_world_simulation_set(world, 1/260.f, 5);
    speed_data->base.world = world;
 
-   boundary = ephysics_body_bottom_boundary_add(world, 10);
+   boundary = ephysics_body_bottom_boundary_add(world);
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 4);
 
-   boundary = ephysics_body_right_boundary_add(world, 10);
+   boundary = ephysics_body_right_boundary_add(world);
    ephysics_body_restitution_set(boundary, 0.4);
    ephysics_body_friction_set(boundary, 3);
 
-   boundary = ephysics_body_left_boundary_add(world, 10);
+   boundary = ephysics_body_left_boundary_add(world);
    ephysics_body_restitution_set(boundary, 0.4);
    ephysics_body_friction_set(boundary, 3);
 
-   ephysics_body_top_boundary_add(world, 10);
+   ephysics_body_top_boundary_add(world);
 
    _world_populate(speed_data);
 }

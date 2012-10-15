@@ -70,7 +70,7 @@ test_collision_filter(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
    ephysics_world_render_geometry_set(world, 60, 40, WIDTH - 120, FLOOR_Y - 32);
    test_data->world = world;
 
-   boundary = ephysics_body_bottom_boundary_add(test_data->world, 30);
+   boundary = ephysics_body_bottom_boundary_add(test_data->world);
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 2);
 
@@ -82,9 +82,9 @@ test_collision_filter(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
    ephysics_body_mass_set(boundary, 0);
    ephysics_body_collision_group_add(boundary, "blue-ball");
 
-   ephysics_body_top_boundary_add(test_data->world, 30);
-   ephysics_body_left_boundary_add(test_data->world, 30);
-   ephysics_body_right_boundary_add(test_data->world, 30);
+   ephysics_body_top_boundary_add(test_data->world);
+   ephysics_body_left_boundary_add(test_data->world);
+   ephysics_body_right_boundary_add(test_data->world);
 
    _world_populate(test_data);
 }

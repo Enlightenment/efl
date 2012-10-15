@@ -168,15 +168,15 @@ test_collision(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
    collision_data->base.world = world;
 
-   boundary = ephysics_body_bottom_boundary_add(collision_data->base.world, 10);
+   boundary = ephysics_body_bottom_boundary_add(collision_data->base.world);
    ephysics_body_restitution_set(boundary, 0);
    ephysics_body_friction_set(boundary, 20);
 
-   boundary = ephysics_body_right_boundary_add(collision_data->base.world, 10);
+   boundary = ephysics_body_right_boundary_add(collision_data->base.world);
    ephysics_body_restitution_set(boundary, 0.8);
 
-   ephysics_body_left_boundary_add(collision_data->base.world, 10);
-   ephysics_body_top_boundary_add(collision_data->base.world, 10);
+   ephysics_body_left_boundary_add(collision_data->base.world);
+   ephysics_body_top_boundary_add(collision_data->base.world);
 
    _world_populate(collision_data);
 

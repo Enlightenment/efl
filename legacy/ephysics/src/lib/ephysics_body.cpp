@@ -1784,7 +1784,7 @@ ephysics_body_world_boundaries_resize(EPhysics_World *world)
 }
 
 static EPhysics_Body *
-_ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary boundary, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Coord d)
+_ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary boundary, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    EPhysics_Body *body;
 
@@ -1804,56 +1804,56 @@ _ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary bound
 
    ephysics_body_mass_set(body, 0);
    ephysics_world_boundary_set(world, boundary, body);
-   ephysics_body_geometry_set(body, x, y, -20, w, h,
-                              d * ephysics_world_rate_get(body->world));
+   ephysics_body_geometry_set(body, x, y, -5, w, h, 10);
+
    return body;
 }
 
 EAPI EPhysics_Body *
-ephysics_body_top_boundary_add(EPhysics_World *world, Evas_Coord d)
+ephysics_body_top_boundary_add(EPhysics_World *world)
 {
    EPhysics_Body *body;
    Evas_Coord x, y, w;
 
    ephysics_world_render_geometry_get(world, &x, &y, &w, NULL);
    body =  _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_TOP,
-                                       0, y - 10, x + w, 10, d);
+                                       0, y - 10, x + w, 10);
    return body;
 }
 
 EAPI EPhysics_Body *
-ephysics_body_bottom_boundary_add(EPhysics_World *world, Evas_Coord d)
+ephysics_body_bottom_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, w, h;
    EPhysics_Body *body;
 
    ephysics_world_render_geometry_get(world, &x, &y, &w, &h);
    body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_BOTTOM,
-                                      x, y + h, w, 10, d);
+                                      x, y + h, w, 10);
    return body;
 }
 
 EAPI EPhysics_Body *
-ephysics_body_left_boundary_add(EPhysics_World *world, Evas_Coord d)
+ephysics_body_left_boundary_add(EPhysics_World *world)
 {
    EPhysics_Body *body;
    Evas_Coord x, y, h;
 
    ephysics_world_render_geometry_get(world, &x, &y, NULL, &h);
    body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_LEFT,
-                                      x - 10, 0, 10, y + h, d);
+                                      x - 10, 0, 10, y + h);
    return body;
 }
 
 EAPI EPhysics_Body *
-ephysics_body_right_boundary_add(EPhysics_World *world, Evas_Coord d)
+ephysics_body_right_boundary_add(EPhysics_World *world)
 {
    Evas_Coord x, y, w, h;
    EPhysics_Body *body;
 
    ephysics_world_render_geometry_get(world, &x, &y, &w, &h);
    body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_RIGHT,
-                                      x + w, 0, 10, y + h, d);
+                                      x + w, 0, 10, y + h);
    return body;
 }
 

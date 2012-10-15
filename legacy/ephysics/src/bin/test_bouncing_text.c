@@ -58,7 +58,7 @@ test_bouncing_text(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
    test_data->world = world;
 
-   boundary = ephysics_body_bottom_boundary_add(test_data->world, 10);
+   boundary = ephysics_body_bottom_boundary_add(test_data->world);
    ephysics_body_restitution_set(boundary, 0.65);
    ephysics_body_friction_set(boundary, 2);
 
