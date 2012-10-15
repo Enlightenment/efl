@@ -230,7 +230,8 @@ test_camera_track(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    evas_object_data_set(track_data->base.layout, "floor2", floor_obj);
 
    world = ephysics_world_new();
-   ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
+   ephysics_world_render_geometry_set(world, 50, 40, -50,
+                                      WIDTH - 100, FLOOR_Y - 40, DEPTH);
    track_data->base.world = world;
    ephysics_world_event_callback_add(world,
                                      EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED,

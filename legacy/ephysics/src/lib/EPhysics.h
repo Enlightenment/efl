@@ -559,13 +559,17 @@ EAPI EPhysics_World *ephysics_world_new(void);
  * @li @ref ephysics_body_top_boundary_add(),
  * @li @ref ephysics_body_bottom_boundary_add(),
  * @li @ref ephysics_body_left_boundary_add(),
- * @li @ref ephysics_body_right_boundary_add().
+ * @li @ref ephysics_body_right_boundary_add(),
+ * @li @ref ephysics_body_front_boundary_add(),
+ * @li @ref ephysics_body_back_boundary_add().
  *
  * @param world the world to be configured.
  * @param x Coordinate x of the top left point of rendered area, in pixels.
  * @param y Coordinate y of the top left point of rendered area, in pixels.
+ * @param z Coordinate z of the rendered area, in pixels.
  * @param w rendered area width, in pixels.
  * @param h rendered area height, in pixels.
+ * @param d rendered area depth, in pixels.
  *
  * @note The unit used for geometry is Evas coordinates.
  *
@@ -575,7 +579,7 @@ EAPI EPhysics_World *ephysics_world_new(void);
  *
  * @ingroup EPhysics_World
  */
-EAPI void ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+EAPI void ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d);
 
 /**
  * @brief
@@ -584,14 +588,16 @@ EAPI void ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x
  * @param world the world to be configured.
  * @param x Coordinate x of the top left point of rendered area, in pixels.
  * @param y Coordinate y of the top left point of rendered area, in pixels.
+ * @param z Coordinate z of the rendered area, in pixels.
  * @param w rendered area width, in pixels.
  * @param h rendered area height, in pixels.
+ * @param d rendered area depth, in pixels.
  *
  * @see ephysics_world_render_geometry_set() for more information.
  *
  * @ingroup EPhysics_World
  */
-EAPI void ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+EAPI void ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z, Evas_Coord *w, Evas_Coord *h, Evas_Coord *d);
 
 /**
  * @brief
@@ -1962,6 +1968,40 @@ EAPI EPhysics_Body *ephysics_body_left_boundary_add(EPhysics_World *world);
  * @ingroup EPhysics_Body
  */
 EAPI EPhysics_Body *ephysics_body_right_boundary_add(EPhysics_World *world);
+
+/**
+ * @brief
+ * Create a physic front boundary.
+ *
+ * A physic front boundary will limit the bodies area and placed on the
+ * front of worlds render geometry - defined with
+ * @ref ephysics_world_render_geometry_set().
+ * It is placed on x-y plane, from x to x + width, from y to y + height.
+ *
+ * @param world The world this body will belong to.
+ * @return a new body or @c NULL, on erros.
+ * @see ephysics_world_render_geometry_set()
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_front_boundary_add(EPhysics_World *world);
+
+/**
+ * @brief
+ * Create a physic back boundary.
+ *
+ * A physic front boundary will limit the bodies area and placed on the
+ * back of worlds render geometry - defined with
+ * @ref ephysics_world_render_geometry_set().
+ * It is placed on x-y plane, from x to x + width, from y to y + height.
+ *
+ * @param world The world this body will belong to.
+ * @return a new body or @c NULL, on erros.
+ * @see ephysics_world_render_geometry_set()
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI EPhysics_Body *ephysics_body_back_boundary_add(EPhysics_World *world);
 
 /**
  * @brief

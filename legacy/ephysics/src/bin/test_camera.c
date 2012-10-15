@@ -53,7 +53,7 @@ _camera_move_cb(void *data)
    int x, y, w;
 
    ephysics_world_render_geometry_get(camera_data->base.world,
-                                      NULL, NULL, &w, NULL);
+                                      NULL, NULL, NULL, &w, NULL, NULL);
 
    camera = ephysics_world_camera_get(camera_data->base.world);
    ephysics_camera_position_get(camera, &x, &y);
@@ -219,7 +219,8 @@ test_camera(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_data_set(camera_data->base.layout, "floor2", floor_obj);
 
    world = ephysics_world_new();
-   ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
+   ephysics_world_render_geometry_set(world, 50, 40, -50,
+                                      WIDTH - 100, FLOOR_Y - 40, DEPTH);
    ephysics_world_event_callback_add(world,
                                      EPHYSICS_CALLBACK_WORLD_CAMERA_MOVED,
                                      _camera_moved_cb, camera_data);

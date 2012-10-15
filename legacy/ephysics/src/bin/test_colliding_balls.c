@@ -74,7 +74,8 @@ test_colliding_balls(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
                                   _restart, test_data);
 
    world = ephysics_world_new();
-   ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
+   ephysics_world_render_geometry_set(world, 50, 40, -50,
+                                      WIDTH - 100, FLOOR_Y - 40, DEPTH);
    test_data->world = world;
 
    boundary = ephysics_body_bottom_boundary_add(test_data->world);

@@ -67,7 +67,8 @@ test_collision_filter(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
                                   _restart, test_data);
 
    world = ephysics_world_new();
-   ephysics_world_render_geometry_set(world, 60, 40, WIDTH - 120, FLOOR_Y - 32);
+   ephysics_world_render_geometry_set(world, 60, 40, -50,
+                                      WIDTH - 120, FLOOR_Y - 32, DEPTH);
    test_data->world = world;
 
    boundary = ephysics_body_bottom_boundary_add(test_data->world);

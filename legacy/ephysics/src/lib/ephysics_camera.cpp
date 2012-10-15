@@ -37,7 +37,8 @@ ephysics_camera_target_moved(EPhysics_Camera *camera, EPhysics_Body *body)
    int x, y, w, h, ww, wh, new_x, new_y;
 
    ephysics_body_geometry_get(body, &x, &y, NULL, &w, &h, NULL);
-   ephysics_world_render_geometry_get(camera->world, NULL, NULL, &ww, &wh);
+   ephysics_world_render_geometry_get(camera->world, NULL, NULL, NULL,
+                                      &ww, &wh, NULL);
 
    if (camera->track_horizontal)
      {

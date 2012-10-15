@@ -49,6 +49,16 @@ struct _EPhysics_Light {
 
 struct _EPhysics_World {
      EINA_INLIST;
+
+     struct {
+          Evas_Coord x;
+          Evas_Coord y;
+          Evas_Coord z;
+          Evas_Coord w;
+          Evas_Coord h;
+          Evas_Coord d;
+     } geometry;
+
      btBroadphaseInterface *broadphase;
      btDefaultCollisionConfiguration *collision;
      btCollisionDispatcher *dispatcher;
@@ -58,10 +68,9 @@ struct _EPhysics_World {
      btSoftBodySolver *soft_solver;
      btOverlapFilterCallback *filter_cb;
 
-     EPhysics_Body *boundaries[4];
+     EPhysics_Body *boundaries[6];
      EPhysics_Camera *camera;
      EPhysics_Light *light;
-     Evas_Coord x, y, w, h;
      Eina_Inlist *callbacks;
      Eina_Inlist *bodies;
      Eina_List *to_delete;
@@ -1196,7 +1205,7 @@ ephysics_world_bodies_get(const EPhysics_World *world)
 }
 
 EAPI void
-ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    if (!world)
      {
@@ -1204,23 +1213,25 @@ ephysics_world_render_geometry_set(EPhysics_World *world, Evas_Coord x, Evas_Coo
         return;
      }
 
-   if ((w <= 0) || (h <= 0))
+   if ((w <= 0) || (h <= 0) || (d <= 0))
      {
         ERR("Invalid width or height sizes. They must to be positive values.");
         return;
      }
 
-   world->x = x;
-   world->y = y;
-   world->w = w;
-   world->h = h;
+   world->geometry.x = x;
+   world->geometry.y = y;
+   world->geometry.z = z;
+   world->geometry.w = w;
+   world->geometry.h = h;
+   world->geometry.d = d;
 
    ephysics_body_world_boundaries_resize(world);
    ephysics_camera_position_set(world->camera, x, y);
 }
 
 EAPI void
-ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, Evas_Coord *y, Evas_Coord *z, Evas_Coord *w, Evas_Coord *h, Evas_Coord *d)
 {
    if (!world)
      {
@@ -1228,10 +1239,12 @@ ephysics_world_render_geometry_get(const EPhysics_World *world, Evas_Coord *x, E
         return;
      }
 
-   if (x) *x = world->x;
-   if (y) *y = world->y;
-   if (w) *w = world->w;
-   if (h) *h = world->h;
+   if (x) *x = world->geometry.x;
+   if (y) *y = world->geometry.y;
+   if (z) *z = world->geometry.z;
+   if (w) *w = world->geometry.w;
+   if (h) *h = world->geometry.h;
+   if (d) *d = world->geometry.d;
 }
 
 EAPI void

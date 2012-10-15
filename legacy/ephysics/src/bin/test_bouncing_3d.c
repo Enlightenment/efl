@@ -122,7 +122,8 @@ test_bouncing_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_object_signal_emit(test_data->layout, "controls,show", "ephysics_test");
 
    world = ephysics_world_new();
-   ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
+   ephysics_world_render_geometry_set(world, 50, 40, -50,
+                                      WIDTH - 100, FLOOR_Y - 40, DEPTH);
    test_data->world = world;
 
    boundary = ephysics_body_bottom_boundary_add(test_data->world);
@@ -134,6 +135,14 @@ test_bouncing_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    ephysics_body_friction_set(boundary, 3);
 
    boundary = ephysics_body_left_boundary_add(test_data->world);
+   ephysics_body_restitution_set(boundary, 0.4);
+   ephysics_body_friction_set(boundary, 3);
+
+   boundary = ephysics_body_front_boundary_add(test_data->world);
+   ephysics_body_restitution_set(boundary, 0.4);
+   ephysics_body_friction_set(boundary, 3);
+
+   boundary = ephysics_body_back_boundary_add(test_data->world);
    ephysics_body_restitution_set(boundary, 0.4);
    ephysics_body_friction_set(boundary, 3);
 

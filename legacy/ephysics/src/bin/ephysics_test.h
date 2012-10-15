@@ -41,6 +41,7 @@
 #define EPHYSICS_TEST_THEME "ephysics_test"
 #define WIDTH (512)
 #define HEIGHT (384)
+#define DEPTH (100)
 #define SHADOW_ALPHA_ID (1)
 #define FLOOR_Y (344)
 #define FLOOR_WIDTH (750)

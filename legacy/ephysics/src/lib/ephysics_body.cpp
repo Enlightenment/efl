@@ -99,7 +99,8 @@ _ephysics_body_soft_body_slices_apply(Evas_Object *obj)
    EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
    body = smart_data->body;
    rate = ephysics_world_rate_get(body->world);
-   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &wh);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
+                                      NULL, &wh, NULL);
    EINA_LIST_FOREACH(smart_data->slices, l, data)
      {
         slice = (EPhysics_Body_Soft_Body_Slice *)data;
@@ -189,7 +190,8 @@ _ephysics_body_soft_body_slices_init(EPhysics_Body *body, Evas_Object *obj)
 
    evas = evas_object_evas_get(body->evas_obj);
    EPHYSICS_BODY_SOFT_BODY_SMART_DATA_GET(obj, smart_data);
-   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &wh);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, NULL,
+                                      &wh, NULL);
    rate = ephysics_world_rate_get(body->world);
 
    for (int i = 0; i < body->slices; i++)
@@ -874,7 +876,8 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord 
    btVector3 body_scale;
 
    rate = ephysics_world_rate_get(body->world);
-   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
+                                      NULL, &height, NULL);
    height += wy;
 
    mx = (x + body->w * body->cm.x) / rate;
@@ -899,7 +902,8 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    int wy, height;
    btVector3 body_scale;
 
-   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
+                                      NULL, &height, NULL);
    height += wy;
 
    mx = (x + w * body->cm.x) / rate;
@@ -1015,7 +1019,8 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
      return;
 
    trans = _ephysics_body_transform_get(body);
-   ephysics_world_render_geometry_get(body->world, &wx, &wy, NULL, &wh);
+   ephysics_world_render_geometry_get(body->world, &wx, &wy, NULL,
+                                      NULL, &wh, NULL);
    camera = ephysics_world_camera_get(body->world);
    ephysics_camera_position_get(camera, &cx, &cy);
    cx -= wx;
@@ -1068,7 +1073,8 @@ _ephysics_body_outside_render_area_check(EPhysics_Body *body)
 {
    int wx, wy, ww, wh, bx, by, bw, bh;
 
-   ephysics_world_render_geometry_get(body->world, &wx, &wy, &ww, &wh);
+   ephysics_world_render_geometry_get(body->world, &wx, &wy, NULL,
+                                      &ww, &wh, NULL);
    ephysics_body_geometry_get(body, &bx, &by, NULL, &bw, &bh, NULL);
 
    // FIXME: check what should be done regarding rotated bodies
@@ -1186,7 +1192,7 @@ ephysics_body_contact_processed(EPhysics_Body *body, EPhysics_Body *contact_body
      }
 
    world = contact_body->world;
-   ephysics_world_render_geometry_get(world, NULL, &wy, NULL, &wh);
+   ephysics_world_render_geometry_get(world, NULL, &wy, NULL, NULL, &wh, NULL);
    rate = ephysics_world_rate_get(world);
 
    collision->contact_body = contact_body;
@@ -1761,30 +1767,38 @@ ephysics_body_shape_add(EPhysics_World *world, EPhysics_Shape *shape)
 void
 ephysics_body_world_boundaries_resize(EPhysics_World *world)
 {
-   Evas_Coord x, y, width, height;
-   EPhysics_Body *bottom, *top, *left, *right;
+   Evas_Coord x, y, z, w, h, d;
+   EPhysics_Body *bound;
 
-   ephysics_world_render_geometry_get(world, &x, &y, &width, &height);
+   ephysics_world_render_geometry_get(world, &x, &y, &z, &w, &h, &d);
 
-   bottom = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_BOTTOM);
-   if (bottom)
-     ephysics_body_geometry_set(bottom, x, y + height, -5, width, 10, 10);
+   bound = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_BOTTOM);
+   if (bound)
+     ephysics_body_geometry_set(bound, x, y + h, z, w, 10, d);
 
-   right = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_RIGHT);
-   if (right)
-     ephysics_body_geometry_set(right, x + width, y, -5, 10, height, 10);
+   bound = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_RIGHT);
+   if (bound)
+     ephysics_body_geometry_set(bound, x + w, y, z, 10, h, d);
 
-   left = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_LEFT);
-   if (left)
-     ephysics_body_geometry_set(left,  x - 10, y, -5, 10, height, 10);
+   bound = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_LEFT);
+   if (bound)
+     ephysics_body_geometry_set(bound,  x - 10, y, z, 10, h, d);
 
-   top = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_TOP);
-   if (top)
-     ephysics_body_geometry_set(top, x, y - 10, -5, width, 10, 10);
+   bound = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_TOP);
+   if (bound)
+     ephysics_body_geometry_set(bound, x, y - 10, z, w, 10, d);
+
+   bound = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_FRONT);
+   if (bound)
+     ephysics_body_geometry_set(bound, x, y, z - 10, w, h, 10);
+
+   bound = ephysics_world_boundary_get(world, EPHYSICS_WORLD_BOUNDARY_BACK);
+   if (bound)
+     ephysics_body_geometry_set(bound, x, y, z + d, w, h, 10);
 }
 
 static EPhysics_Body *
-_ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary boundary, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary boundary, Evas_Coord x, Evas_Coord y, Evas_Coord z, Evas_Coord w, Evas_Coord h, Evas_Coord d)
 {
    EPhysics_Body *body;
 
@@ -1804,7 +1818,7 @@ _ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary bound
 
    ephysics_body_mass_set(body, 0);
    ephysics_world_boundary_set(world, boundary, body);
-   ephysics_body_geometry_set(body, x, y, -5, w, h, 10);
+   ephysics_body_geometry_set(body, x, y, z, w, h, d);
 
    return body;
 }
@@ -1812,48 +1826,72 @@ _ephysics_body_boundary_add(EPhysics_World *world, EPhysics_World_Boundary bound
 EAPI EPhysics_Body *
 ephysics_body_top_boundary_add(EPhysics_World *world)
 {
+   Evas_Coord x, y, z, w, d;
    EPhysics_Body *body;
-   Evas_Coord x, y, w;
 
-   ephysics_world_render_geometry_get(world, &x, &y, &w, NULL);
+   ephysics_world_render_geometry_get(world, &x, &y, &z, &w, NULL, &d);
    body =  _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_TOP,
-                                       x, y - 10, w, 10);
+                                       x, y - 10, z, w, 10, d);
    return body;
 }
 
 EAPI EPhysics_Body *
 ephysics_body_bottom_boundary_add(EPhysics_World *world)
 {
-   Evas_Coord x, y, w, h;
+   Evas_Coord x, y, z, w, h, d;
    EPhysics_Body *body;
 
-   ephysics_world_render_geometry_get(world, &x, &y, &w, &h);
+   ephysics_world_render_geometry_get(world, &x, &y, &z, &w, &h, &d);
    body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_BOTTOM,
-                                      x, y + h, w, 10);
+                                      x, y + h, z, w, 10, d);
    return body;
 }
 
 EAPI EPhysics_Body *
 ephysics_body_left_boundary_add(EPhysics_World *world)
 {
+   Evas_Coord x, y, z, h, d;
    EPhysics_Body *body;
-   Evas_Coord x, y, h;
 
-   ephysics_world_render_geometry_get(world, &x, &y, NULL, &h);
+   ephysics_world_render_geometry_get(world, &x, &y, &z, NULL, &h, &d);
    body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_LEFT,
-                                      x - 10, y, 10, h);
+                                      x - 10, y, z, 10, h, d);
    return body;
 }
 
 EAPI EPhysics_Body *
 ephysics_body_right_boundary_add(EPhysics_World *world)
 {
-   Evas_Coord x, y, w, h;
+   Evas_Coord x, y, z, w, h, d;
    EPhysics_Body *body;
 
-   ephysics_world_render_geometry_get(world, &x, &y, &w, &h);
+   ephysics_world_render_geometry_get(world, &x, &y, &z, &w, &h, &d);
    body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_RIGHT,
-                                      x + w, y, 10, h);
+                                      x + w, y, z, 10, h, d);
+   return body;
+}
+
+EAPI EPhysics_Body *
+ephysics_body_front_boundary_add(EPhysics_World *world)
+{
+   Evas_Coord x, y, z, w, h;
+   EPhysics_Body *body;
+
+   ephysics_world_render_geometry_get(world, &x, &y, &z, &w, &h, NULL);
+   body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_FRONT,
+                                      x, y, z - 10, w, h, 10);
+   return body;
+}
+
+EAPI EPhysics_Body *
+ephysics_body_back_boundary_add(EPhysics_World *world)
+{
+   Evas_Coord x, y, z, w, h, d;
+   EPhysics_Body *body;
+
+   ephysics_world_render_geometry_get(world, &x, &y, &z, &w, &h, &d);
+   body = _ephysics_body_boundary_add(world, EPHYSICS_WORLD_BOUNDARY_BACK,
+                                      x, y, z + d, w, h, 10);
    return body;
 }
 
@@ -2059,7 +2097,8 @@ ephysics_body_geometry_get(const EPhysics_Body *body, Evas_Coord *x, Evas_Coord 
    scale = _ephysics_body_scale_get(body);
 
    rate = ephysics_world_rate_get(body->world);
-   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL, &height);
+   ephysics_world_render_geometry_get(body->world, NULL, &wy, NULL,
+                                      NULL, &height, NULL);
    height += wy;
 
    if (x) *x = round((trans.getOrigin().getX() - scale.x() / 2) * rate);

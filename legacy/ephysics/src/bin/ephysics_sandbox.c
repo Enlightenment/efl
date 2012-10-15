@@ -11,6 +11,7 @@
 #define SANDBOX_THEME "ephysics_sandbox"
 #define WIDTH (1280)
 #define HEIGHT (720)
+#define DEPTH (100)
 
 typedef struct _Sandie_Data {
    Evas_Object *win;
@@ -844,8 +845,9 @@ _sandie_world_add(Evas_Object *win)
    EPhysics_World *world;
 
    world = ephysics_world_new();
-   ephysics_world_render_geometry_set(world, 80, 80, (int) WIDTH * 0.7 - 160,
-                                      HEIGHT - 160);
+   ephysics_world_render_geometry_set(world, 80, 80, -50,
+                                      (int) WIDTH * 0.7 - 160, HEIGHT - 160,
+                                      DEPTH);
    evas_object_data_set(win, "top", ephysics_body_top_boundary_add(world));
    evas_object_data_set(win, "bottom",
                         ephysics_body_bottom_boundary_add(world));

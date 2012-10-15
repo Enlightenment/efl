@@ -126,7 +126,8 @@ test_collision_speed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    speed_data->sp = sp;
 
    world = ephysics_world_new();
-   ephysics_world_render_geometry_set(world, 50, 40, WIDTH - 100, FLOOR_Y - 40);
+   ephysics_world_render_geometry_set(world, 50, 40, -50,
+                                      WIDTH - 100, FLOOR_Y - 40, DEPTH);
    ephysics_world_simulation_set(world, 1/260.f, 5);
    speed_data->base.world = world;
 

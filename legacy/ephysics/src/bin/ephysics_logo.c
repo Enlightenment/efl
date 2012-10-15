@@ -8,6 +8,7 @@
 
 #define WIDTH (512)
 #define HEIGHT (384)
+#define DEPTH (100)
 #define FLOOR_Y (HEIGHT - 80)
 #define SH_THRESHOLD (250)
 #define SH_OFFSET_X (- 16)
@@ -214,7 +215,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(bg);
 
    world = ephysics_world_new();
-   ephysics_world_render_geometry_set(world, 0, 0, WIDTH, HEIGHT);
+   ephysics_world_render_geometry_set(world, 0, 0, -50, WIDTH, HEIGHT, DEPTH);
 
    ground_body = ephysics_body_box_add(world);
    ephysics_body_mass_set(ground_body, EPHYSICS_BODY_MASS_STATIC);
