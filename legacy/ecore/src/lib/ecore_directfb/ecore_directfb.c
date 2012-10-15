@@ -67,7 +67,7 @@ static DFBResult _err; // useful for DFBCHECK
 static void
 _ecore_directfb_event_free_key_down(void *data __UNUSED__, void *ev)
 {
-   Ecore_DirectFB_Event_Key_Up *e;
+   Ecore_DirectFB_Event_Key_Down *e;
 
    e = ev;
    if(e->name)
