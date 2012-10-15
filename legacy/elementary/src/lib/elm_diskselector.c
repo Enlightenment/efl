@@ -725,7 +725,7 @@ _theme_data_get(Evas_Object *obj)
         if (str)
           {
              sd->display_item_num = MAX(DISPLAY_ITEM_NUM_MIN, atoi(str));
-             _blank_item_check(obj, sd->display_item_num);
+             if (!sd->round) _blank_item_check(obj, sd->display_item_num);
           }
 
         else sd->display_item_num = DISPLAY_ITEM_NUM_MIN;
