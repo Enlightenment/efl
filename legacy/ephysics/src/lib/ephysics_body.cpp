@@ -2612,6 +2612,28 @@ ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, doub
 }
 
 EAPI void
+ephysics_body_rotation_quaternion_get(const EPhysics_Body *body, double *x, double *y, double *z, double *w)
+{
+   btTransform trans;
+   btQuaternion quat;
+
+   if (!body)
+     {
+        ERR("Can't get rotation, body is null.");
+        return;
+     }
+
+   trans = _ephysics_body_transform_get(body);
+   quat = trans.getRotation();
+   quat.normalize();
+
+   if (x) *x = quat.x();
+   if (y) *y = quat.y();
+   if (z) *z = quat.z();
+   if (w) *w = -quat.w();
+}
+
+EAPI void
 ephysics_body_data_set(EPhysics_Body *body, void *data)
 {
    if (!body)

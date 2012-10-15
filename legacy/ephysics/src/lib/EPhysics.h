@@ -2924,6 +2924,7 @@ EAPI void ephysics_body_linear_movement_enable_get(const EPhysics_Body *body, Ei
  * @param rot_z The amount of degrees @p body is rotated on z axis.
  *
  * @see ephysics_body_rotation_set()
+ * @see ephysics_body_rotation_quaternion_get()
  *
  * @ingroup EPhysics_Body
  */
@@ -2948,6 +2949,24 @@ EAPI void ephysics_body_rotation_get(const EPhysics_Body *body, double *rot_x, d
  * @ingroup EPhysics_Body
  */
 EAPI void ephysics_body_rotation_set(EPhysics_Body *body, double rot_x, double rot_y, double rot_z);
+
+/**
+ * @brief
+ * Get body's normalized rotation quaternion (x, y, z and w).
+ *
+ * @param body The physics body.
+ * @param x the x component of the imaginary part of the quaternion.
+ * @param y the y component of the imaginary part of the quaternion.
+ * @param z the z component of the imaginary part of the quaternion.
+ * @param w the w component of the real part of the quaternion.
+ *
+ * @see ephysics_body_rotation_set()
+ * @see ephysics_body_rotation_get()
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void
+ephysics_body_rotation_quaternion_get(const EPhysics_Body *body, double *x, double *y, double *z, double *w);
 
 /**
  * @brief
@@ -3169,7 +3188,7 @@ EAPI void ephysics_body_forces_clear(EPhysics_Body *body);
  *
  * If a body of width = 30, height = 20 and depth = 20, and has the center of
  * mass at x component = 20, y component = 10 and z = 10, it will return
- * @p x = 0.666, @p y = 0.5 and @z = 0.5.
+ * @p x = 0.666, @p y = 0.5 and @p z = 0.5.
  *
  * For primitive shapes, like box and circle, the center of mass
  * is (0.5, 0.5, 0.5).
