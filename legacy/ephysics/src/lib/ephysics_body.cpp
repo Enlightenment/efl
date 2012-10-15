@@ -879,7 +879,7 @@ _ephysics_body_move(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Evas_Coord 
 
    mx = (x + body->w * body->cm.x) / rate;
    my = (height - (y + body->h * body->cm.y)) / rate;
-   mz = z / rate;
+   mz = (z + body->d * body->cm.z) / rate;
 
    trans = _ephysics_body_transform_get(body);
    trans.setOrigin(btVector3(mx, my, mz));
@@ -1004,11 +1004,12 @@ _ephysics_body_del(EPhysics_Body *body)
 static void
 _ephysics_body_evas_object_default_update(EPhysics_Body *body)
 {
-   int x, y, w, h, wx, wy, wh, cx, cy;
+   int x, y, z, w, h, wx, wy, wh, cx, cy;
    EPhysics_Camera *camera;
    btTransform trans;
-   double rate, rot;
+   btQuaternion quat;
    Evas_Map *map;
+   double rate;
 
    if (!body->evas_obj)
      return;
@@ -1024,6 +1025,7 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
    rate = ephysics_world_rate_get(body->world);
    x = (int) (trans.getOrigin().getX() * rate) - w * body->cm.x - cx;
    y = wh + wy - (int) (trans.getOrigin().getY() * rate) - h * body->cm.y - cy;
+   z = (int) (trans.getOrigin().getZ() * rate);
 
    evas_object_move(body->evas_obj, x, y);
 
@@ -1037,14 +1039,13 @@ _ephysics_body_evas_object_default_update(EPhysics_Body *body)
    if (body->type != EPHYSICS_BODY_TYPE_RIGID)
      return;
 
-   rot = - trans.getRotation().getAngle() * RAD_TO_DEG *
-      trans.getRotation().getAxis().getZ();
-
    map = evas_map_new(4);
    evas_map_util_points_populate_from_object(map, body->evas_obj);
 
-   evas_map_util_rotate(map, rot, x + (w * body->cm.x), y +
-                        (h * body->cm.y));
+   quat = trans.getRotation();
+   quat.normalize();
+   evas_map_util_quat_rotate(map, quat.x(), quat.y(), quat.z(), -quat.w(),
+                             x + (w * body->cm.x), y + (h * body->cm.y), z);
 
    if ((body->light_apply) ||
        (ephysics_world_light_all_bodies_get(body->world)))
