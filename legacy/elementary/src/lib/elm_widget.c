@@ -3567,8 +3567,8 @@ elm_widget_display_mode_get(Evas_Object *obj)
  * @param dispmode Evas_Display_Mode to set widget's mode.
  *
  * Widgets are resized by several reasons.
- * Evas_Display_Mode can help for widgets to get more reson of resize.
- * For example, elm conform widget resize it's contents when keypad state changed.
+ * Evas_Display_Mode can help for widgets to get one more reason of resize.
+ * For example, elm conform widget resizes it's contents when keypad state changed.
  * After keypad showing, conform widget can change child's Evas_Display_Mode.
  * @ingroup Widget
  */

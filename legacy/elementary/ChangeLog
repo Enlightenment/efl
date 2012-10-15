@@ -608,5 +608,5 @@
 
 2012-10-14  Jiyoun Park (jypark)
 
-        * Add display mode change feature related with keypad state chante
+        * Add display mode change feature related with keypad state change
 	to elm conformant and naviframe.

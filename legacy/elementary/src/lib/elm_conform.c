@@ -458,11 +458,11 @@ _on_prop_change(void *data,
                {
                   evas_object_size_hint_min_set(sd->virtualkeypad, -1, 0);
                   evas_object_size_hint_max_set(sd->virtualkeypad, -1, 0);
-                  elm_widget_display_mode_set(data,EVAS_DISPLAY_MODE_NONE);
+                  elm_widget_display_mode_set(data, EVAS_DISPLAY_MODE_NONE);
                }
              else if (sd->vkb_state == ECORE_X_VIRTUAL_KEYBOARD_STATE_ON)
                {
-                  elm_widget_display_mode_set(data,EVAS_DISPLAY_MODE_COMPRESS);
+                  elm_widget_display_mode_set(data, EVAS_DISPLAY_MODE_COMPRESS);
                   _autoscroll_objects_update(data);
                }
           }
