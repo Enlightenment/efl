@@ -1501,12 +1501,12 @@ _layout(Evas_Object *o,
 }
 
 static char *
-_access_info_cb(void *data __UNUSED__,
+_access_info_cb(void *data,
                 Evas_Object *obj __UNUSED__,
-                Elm_Widget_Item *item)
+                Elm_Widget_Item *item __UNUSED__)
 {
-   Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)item;
-   const char *txt = item->access_info;
+   Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)data;
+   const char *txt = ((Elm_Widget_Item *)it)->access_info;
 
    if (!txt) txt = it->label;
    if (txt) return strdup(txt);
@@ -1515,11 +1515,11 @@ _access_info_cb(void *data __UNUSED__,
 }
 
 static char *
-_access_state_cb(void *data __UNUSED__,
+_access_state_cb(void *data,
                  Evas_Object *obj __UNUSED__,
                  Elm_Widget_Item *item __UNUSED__)
 {
-   Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)item;
+   Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)data;
 
    if (it->separator)
      return strdup(E_("Separator"));
@@ -1605,14 +1605,13 @@ _item_new(Evas_Object *obj,
 
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
 
-   _elm_access_item_register(&it->base, VIEW(it));
-   _elm_access_text_set
-     (_elm_access_item_get(&it->base), ELM_ACCESS_TYPE, E_("Tool Item"));
+   Elm_Access_Info *ai;
+   _elm_access_widget_item_register((Elm_Widget_Item *)it);
+   ai = _elm_access_object_get(it->base.access_obj);
 
-   _elm_access_callback_set
-     (_elm_access_item_get(&it->base), ELM_ACCESS_INFO, _access_info_cb, it);
-   _elm_access_callback_set
-     (_elm_access_item_get(&it->base), ELM_ACCESS_STATE, _access_state_cb, it);
+   _elm_access_text_set(ai, ELM_ACCESS_TYPE, E_("Toolbar Item"));
+   _elm_access_callback_set(ai, ELM_ACCESS_INFO, _access_info_cb, it);
+   _elm_access_callback_set(ai, ELM_ACCESS_STATE, _access_state_cb, it);
 
    if (_item_icon_set(icon_obj, "toolbar/", icon))
      {

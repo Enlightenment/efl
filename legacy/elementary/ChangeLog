@@ -610,3 +610,7 @@
 
         * Add display mode change feature related with keypad state change
 	to elm conformant and naviframe.
+
+2012-10-15  Shinwoo Kim (kimcinoo)
+
+        * Add access features to toolbar items
