@@ -15,6 +15,7 @@ struct _EPhysics_Test {
 };
 
 /* examples prototypes */
+void test_bouncing_3d(void *data, Evas_Object *obj, void *event_info);
 void test_bouncing_ball(void *data, Evas_Object *obj, void *event_info);
 void test_bouncing_text(void *data, Evas_Object *obj, void *event_info);
 void test_camera(void *data, Evas_Object *obj, void *event_info);
@@ -45,6 +46,7 @@ void test_soft_body(void *data, Evas_Object *obj, void *event_info);
 void test_win_resize(void *data, Evas_Object *obj, void *event_info);
 
 static const EPhysics_Test tests[] = {
+       {"Bouncing 3D", test_bouncing_3d},
        {"Bouncing Ball", test_bouncing_ball},
        {"Bouncing Text", test_bouncing_text},
        {"Camera", test_camera},

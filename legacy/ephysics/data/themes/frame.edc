@@ -30,6 +30,15 @@
          image: "background.jpg" COMP;
       }
 
+      styles {
+         style {
+            name: "test_style";
+            base: "font=Sans font_size=20 align=justify color=#c6b19a";
+            tag: "br" "\n";
+            tag: "tab" "\t";
+         }
+      }
+
       parts {
 
          part {
@@ -85,7 +94,7 @@
             mouse_events: 0;
             description {
                state: "default" 0.0;
-               color: 232 224 215 0;
+               color: 0 0 0 0;
                rel1.relative: 0.08 0.96;
                rel2.relative: 0.92 1.0;
                text {
@@ -103,12 +112,46 @@
          }
 
          part {
+            name: "controls_msg";
+            type: TEXTBLOCK;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               rel1.relative: 0.5 0.5;
+               rel2.relative: 0.5 0.5;
+               color: 0 0 0 0;
+               text {
+                  style: "test_style";
+                  min: 1 1;
+                  max: 1 1;
+                  text: "Impulse Controls:<br>"
+                        "  X Axis <tab> H - L<br>"
+                        "  Y Axis  <tab> J - K<br>"
+                        "  Z Axis <tab> F - G";
+               }
+            }
+            description {
+               state: "msg1" 0.0;
+               inherit: "default" 0.0;
+               color: 95 56 19 255;
+            }
+            description {
+               state: "msg2" 0.0;
+               inherit: "msg1" 0.0;
+               text.text: "Impulse Controls:<br>"
+                          "  Pitch <tab> Y - O<br>"
+                          "  Yaw  <tab> U - I<br>"
+                          "  Roll  <tab> R - T";
+            }
+         }
+
+         part {
             name: "grab_msg";
             type: TEXT;
             mouse_events: 0;
             description {
                state: "default" 0.0;
-               color: 232 224 215 0;
+               color: 0 0 0 0;
                rel1.relative: 0.08 0.96;
                rel2.relative: 0.92 1.0;
                text {
@@ -287,6 +330,31 @@
             action: STATE_SET "visible" 0.0;
             target: "arrows";
             target: "arrows_msg";
+          }
+
+          program {
+            name: "controls,show";
+            source: "ephysics_test";
+            signal: "controls,show";
+            action: STATE_SET "msg1" 0.0;
+            target: "controls_msg";
+            after: "controls,show,2";
+          }
+
+          program {
+            name: "controls,show,2";
+            in: 4 0;
+            action: STATE_SET "msg2" 0.0;
+            target: "controls_msg";
+            after: "controls,show,3";
+          }
+
+          program {
+            name: "controls,show,3";
+            in: 4 0;
+            action: STATE_SET "msg1" 0.0;
+            target: "controls_msg";
+            after: "controls,show,2";
           }
 
           program {

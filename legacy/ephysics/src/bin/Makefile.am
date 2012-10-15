@@ -16,6 +16,7 @@ EXTRA_PROGRAMS = ephysics_test ephysics_logo ephysics_sandbox
 
 ephysics_test_SOURCES = \
 test.c \
+test_bouncing_3d.c \
 test_bouncing_ball.c \
 test_bouncing_text.c \
 test_camera.c \
