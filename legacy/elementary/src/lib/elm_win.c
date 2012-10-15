@@ -2706,8 +2706,9 @@ elm_win_add(Evas_Object *parent,
      {
         TRAP(sd, fullscreen_set, 1);
      }
-   else if (ENGINE_COMPARE(ELM_WAYLAND_SHM) ||
-            ENGINE_COMPARE(ELM_WAYLAND_EGL))
+   else if ((type != ELM_WIN_INLINED_IMAGE) &&
+            (ENGINE_COMPARE(ELM_WAYLAND_SHM) ||
+             ENGINE_COMPARE(ELM_WAYLAND_EGL)))
      _elm_win_frame_add(sd, "default");
 
    if (_elm_config->focus_highlight_enable)
