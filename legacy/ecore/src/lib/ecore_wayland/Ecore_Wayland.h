@@ -75,6 +75,7 @@ struct _Ecore_Wl_Display
    struct 
      {
         struct wl_display *display;
+        struct wl_registry *registry;
         struct wl_compositor *compositor;
         struct wl_shell *shell;
         struct wl_shell *desktop_shell;
