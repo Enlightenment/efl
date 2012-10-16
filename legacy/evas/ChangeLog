@@ -1100,7 +1100,7 @@
        * Fix C code fallback line rendering path in software
 
 
-2012-10-17  Carsten Haitzler (The Rasterman)
+2012-10-16  Carsten Haitzler (The Rasterman)
 
        * Like 16bpp engine, 8bpp engine goes the way of the dodo.
 
