@@ -920,8 +920,8 @@ _scroller_box_add(Evas_Object *parent, Evas_Object *scbx)
    evas_object_show(sc);
 
    bx = elm_box_add(parent);
-   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0);
    evas_object_show(bx);
 
    elm_object_content_set(sc, bx);
