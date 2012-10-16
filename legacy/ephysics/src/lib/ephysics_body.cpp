@@ -222,14 +222,18 @@ static void
 _ephysics_body_soft_body_evas_del_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    EPhysics_Body_Soft_Body_Data *soft_data;
-   void *slice;
+   void *ldata;
+   EPhysics_Body_Soft_Body_Slice *slice;
 
    soft_data = (EPhysics_Body_Soft_Body_Data *)evas_object_data_del(obj,
                                                                     SOFT_DATA);
 
-   evas_object_del(soft_data->base_obj);
-   EINA_LIST_FREE(soft_data->slices, slice)
+   EINA_LIST_FREE(soft_data->slices, ldata)
+     {
+        slice = (EPhysics_Body_Soft_Body_Slice *)ldata;
+        evas_object_del(slice->evas_obj);
         free(slice);
+     }
 
    free(soft_data);
 }
@@ -908,6 +912,7 @@ _ephysics_body_geometry_set(EPhysics_Body *body, Evas_Coord x, Evas_Coord y, Eva
    if (body->type == EPHYSICS_BODY_TYPE_SOFT)
      {
         body->soft_body->scale(body_scale);
+        body->soft_body->getCollisionShape()->setLocalScaling(body_scale);
         body->rigid_body->proceedToTransform(trans);
         body->soft_body->transform(trans);
         _ephysics_body_soft_body_constraints_rebuild(body);
@@ -2182,6 +2187,7 @@ EAPI Evas_Object *
 ephysics_body_evas_object_unset(EPhysics_Body *body)
 {
    Evas_Object *obj, *wrapper;
+   Evas_Coord x, y;
 
    if (!body)
      {
@@ -2205,6 +2211,8 @@ ephysics_body_evas_object_unset(EPhysics_Body *body)
         wrapper = obj;
         obj = _ephysics_body_soft_body_evas_base_obj_get(obj);
         evas_object_del(wrapper);
+        ephysics_body_geometry_get(body, &x, &y, NULL, NULL, NULL, NULL);
+        evas_object_move(obj, x, y);
      }
 
    return obj;
