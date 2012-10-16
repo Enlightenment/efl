@@ -1764,6 +1764,42 @@ EAPI double ephysics_body_soft_body_hardness_get(const EPhysics_Body *body);
 
 /**
  * @brief
+ * Get the triangle index of a soft body in @p x and @p y.
+ *
+ * Given a point in @p x and @p y a ray cast is performed and if a triangle is
+ * found its index is returned.
+ *
+ * @param body The body to get the triangle index from.
+ * @param x The x coord.
+ * @param y The y coord.
+ * @return -1 If no triangle is found, a triangle index otherwise.
+ *
+ * @see ephysics_body_soft_body_triangle_move().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI int ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Coord x, Evas_Coord y);
+
+/**
+ * @brief
+ * Move a body's triangle.
+ *
+ * Move the triangle of @p idx of @p body to @p x, @p y and @p z.
+ *
+ * @param body The body of interest.
+ * @param idx The triangle index.
+ * @param x The x coordinate.
+ * @param y The y coordinate.
+ * @param z The z coordinate.
+ *
+ * @see ephysics_body_soft_body_triangle_index_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z);
+
+/**
+ * @brief
  * Create a new circle physics body.
  *
  * Its collision shape will be a circle of diameter 1. To change it's size
@@ -1875,15 +1911,15 @@ EAPI EPhysics_Body *ephysics_body_soft_box_add(EPhysics_World *world);
  * example passing @p granularity of 20 will create a cloth with 20 rows and 20
  * columns.
  *
- * By default EPhysics creates a cloth with 10 rows and 10 columns, these
+ * By default EPhysics creates a cloth with 15 rows and 15 columns, these
  * default values will generally fit the most common scenarios.
  *
- * If the informed @p granularity is of 0 then the default value - of 10 - is
+ * If the informed @p granularity is of 0 then the default value - of 15 - is
  * assumed.
  *
  * @param world The world this body will belong to.
  * @param granularity Define - proportionally - the number of rows and columns,
- * if 0 the default value - of 10 - is assumed.
+ * if 0 the default value - of 15 - is assumed.
  * @return a bew body or @c NULL on erros.
  *
  * @see ephysics_body_del().

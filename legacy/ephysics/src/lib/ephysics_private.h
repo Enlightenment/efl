@@ -115,6 +115,7 @@ struct _EPhysics_Body {
      Eina_Bool active:1;
      Eina_Bool deleted:1;
      Eina_Bool light_apply:1;
+     int material_index;
 };
 
 extern int _ephysics_log_dom;

@@ -3,6 +3,7 @@
 #endif
 
 #include <Evas.h>
+#include <Ecore.h>
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
 #include <LinearMath/btGeometryUtil.h>
 
@@ -37,7 +38,7 @@ typedef struct _EPhysics_Body_Soft_Body_Slice
 {
      int index;
      Evas_Object *evas_obj;
-     int stacking;
+     double stacking;
 } EPhysics_Body_Soft_Body_Slice;
 
 static const Evas_Smart_Cb_Description _smart_callbacks[] =
@@ -781,9 +782,9 @@ _ephysics_body_cloth_constraints_rebuild(EPhysics_Body *body)
                }
           }
      }
-
    soft_body->generateClusters(0);
-   soft_body->generateBendingConstraints(2, soft_body->m_materials[0]);
+   soft_body->generateBendingConstraints(2, soft_body->m_materials[
+                                                          body->material_index]);
 }
 
 static void
@@ -804,7 +805,8 @@ _ephysics_body_soft_body_constraints_rebuild(EPhysics_Body *body)
      }
 
    soft_body->generateClusters(0);
-   soft_body->generateBendingConstraints(10, soft_body->m_materials[0]);
+   soft_body->generateBendingConstraints(10, soft_body->m_materials[
+                                                          body->material_index]);
 }
 
 inline static double
@@ -1225,11 +1227,12 @@ ephysics_body_soft_body_get(const EPhysics_Body *body)
 static void
 _ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
 {
+   int m = body->material_index;
    btSoftBody *soft_body = body->soft_body;
    soft_body->m_cfg.kAHR = (hardness / body->anchor_prop) * 0.6;
-   soft_body->m_materials[0]->m_kVST = (hardness / 1000);
-   soft_body->m_materials[0]->m_kLST = (hardness / 1000);
-   soft_body->m_materials[0]->m_kAST = (hardness / 1000);
+   soft_body->m_materials[m]->m_kVST = (hardness / 1000);
+   soft_body->m_materials[m]->m_kLST = (hardness / 1000);
+   soft_body->m_materials[m]->m_kAST = (hardness / 1000);
    DBG("Soft body %p hardness set to %lf.", body, hardness);
 }
 
@@ -1274,7 +1277,7 @@ ephysics_body_soft_body_hardness_get(const EPhysics_Body *body)
         return 0;
      }
 
-   return (body->soft_body->m_materials[0]->m_kVST * 100);
+   return (body->soft_body->m_materials[body->material_index]->m_kVST * 100);
 }
 
 static void
@@ -1287,7 +1290,6 @@ _ephysics_body_soft_body_default_config(EPhysics_Body *body, btSoftBody *soft_bo
 
    body->soft_body->m_cfg.collisions += btSoftBody::fCollision::SDF_RS;
    body->soft_body->m_cfg.collisions += btSoftBody::fCollision::VF_SS;
-
    _ephysics_body_soft_body_hardness_set(body, 100);
 }
 
@@ -1306,6 +1308,7 @@ _ephysics_body_soft_body_add(EPhysics_World *world, btCollisionShape *collision_
         return NULL;
      }
 
+   body->material_index = 0;
    body->anchor_prop = 1000;
    body->type = EPHYSICS_BODY_TYPE_SOFT;
    _ephysics_body_soft_body_default_config(body, soft_body);
@@ -1413,8 +1416,8 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
    EPhysics_Body *body;
    btSoftBodyWorldInfo *world_info;
    btSoftBody *soft_body;
-   const int rows = (!granularity) ? 10 : granularity;
-   const int columns = (!granularity) ? 10 : granularity;
+   const int rows = (!granularity) ? 15 : granularity;
+   const int columns = (!granularity) ? 15 : granularity;
 
    if (!world)
      {
@@ -1424,10 +1427,10 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
 
    world_info = ephysics_world_info_get(world);
    soft_body = btSoftBodyHelpers::CreatePatch(*world_info,
-                                              btVector3(1, 2, 0.5),
-                                              btVector3(1, 1, 0.5),
-                                              btVector3(2, 2, 0.5),
-                                              btVector3(2, 1, 0.5),
+                                              btVector3(1, 2, 0),
+                                              btVector3(1, 1, 0),
+                                              btVector3(2, 2, 0),
+                                              btVector3(2, 1, 0),
                                               rows, columns, 0, false);
    if (!soft_body)
      {
@@ -1439,8 +1442,13 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
    if (!body)
      goto no_body;
 
+   soft_body->setPose(false, true);
+
+   soft_body->appendMaterial();
+   body->material_index = 1;
+   soft_body->m_cfg.piterations = 5;
+
    _ephysics_body_soft_body_default_config(body, soft_body);
-   soft_body->m_cfg.piterations = 10;
    _ephysics_body_cloth_constraints_rebuild(body);
 
    body->slices = soft_body->m_faces.size();
@@ -1456,7 +1464,7 @@ ephysics_body_cloth_add(EPhysics_World *world, unsigned short granularity)
 
    body->cloth_columns = columns;
    body->cloth_rows = rows;
-   body->anchor_prop = 100;
+   body->anchor_prop = 1;
    body->type = EPHYSICS_BODY_TYPE_CLOTH;
 
    ephysics_world_soft_body_add(world, body);
@@ -1467,6 +1475,118 @@ no_deform:
 no_body:
    delete soft_body;
    return NULL;
+}
+
+static void
+_ephysics_body_soft_body_single_face_transform(btSoftBody *soft_body, int face_idx, int node_idx, btTransform trans, btScalar vel_reduction)
+{
+   btSoftBody::Node *node;
+   ATTRIBUTE_ALIGNED16(btDbvtVolume) vol;
+   const btScalar margin = soft_body->getCollisionShape()->getMargin();
+
+   node = soft_body->m_faces[face_idx].m_n[node_idx];
+   node->m_x = trans * node->m_x;
+   node->m_q = trans * node->m_q;
+   node->m_n = trans.getBasis() * node->m_n;
+   node->m_v *= vel_reduction;
+   vol = btDbvtVolume::FromCR(node->m_x, margin);
+   soft_body->m_ndbvt.update(node->m_leaf, vol);
+}
+
+EAPI void
+ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x, Evas_Coord y, Evas_Coord z)
+{
+   btScalar xx, yy, zz;
+   Evas_Coord wh;
+   double rate;
+   btVector3 new_pos;
+   btTransform diff;
+   btSoftBody::Face face;
+   btSoftBody::Node *node;
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Could not move soft body triangle, body must be soft or cloth.");
+        return;
+     }
+
+   if (idx < 0 || idx >= body->soft_body->m_faces.size())
+     {
+        ERR("Could not move soft body triangle, provided body triangle index "
+            "ranges from 0 to %d", body->soft_body->m_faces.size());
+        return;
+     }
+
+   rate = ephysics_world_rate_get(body->world);
+   ephysics_world_render_geometry_get(body->world, NULL, NULL, NULL, &wh);
+
+   xx = x / rate;
+   yy = (wh -  y) / rate;
+   zz = z / rate;
+
+   new_pos = btVector3(xx, yy, zz);
+   ephysics_world_lock_take(body->world);
+
+   face = body->soft_body->m_faces[idx];
+   for (int i = 0; i < 3; i++)
+     {
+        node = face.m_n[i];
+        diff.setIdentity();
+        diff.setOrigin(new_pos - node->m_x);
+        _ephysics_body_soft_body_single_face_transform(body->soft_body, idx, i,
+                                                       diff, 0.25);
+
+        if (!i) continue;
+
+        diff.setOrigin(diff.getOrigin() * 0.1);
+        for (int m = 0; m < body->soft_body->m_faces.size(); m++)
+          {
+             if (m == idx) continue;
+             _ephysics_body_soft_body_single_face_transform(body->soft_body, m,
+                                                            i, diff, 0.05);
+          }
+     }
+
+   body->soft_body->updateClusters();
+   body->soft_body->updateBounds();
+   body->soft_body->updateNormals();
+   body->soft_body->updatePose();
+   ephysics_world_lock_release(body->world);
+}
+
+EAPI int
+ephysics_body_soft_body_triangle_index_get(EPhysics_Body *body, Evas_Coord x, Evas_Coord y)
+{
+   btVector3 ray_from;
+   btVector3 ray_to;
+   btSoftBody::sRayCast result;
+   Evas_Coord wh, bw;
+   btScalar xx, yy;
+   double rate;
+   int index = -1;
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Can't get node index, operation not permited to rigid bodies");
+        return -1;
+     }
+
+   ephysics_world_lock_take(body->world);
+   rate = ephysics_world_rate_get(body->world);
+   ephysics_world_render_geometry_get(body->world, NULL, NULL, NULL, &wh);
+   ephysics_body_geometry_get(body, NULL, NULL, NULL, &bw, NULL, NULL);
+
+   xx =  x / rate;
+   yy = (wh -  y) / rate;
+
+   ray_from = btVector3(xx, yy, -100);
+   ray_to = btVector3(xx, yy, 100);
+
+   if (body->soft_body->rayTest(ray_from, ray_to, result))
+     index = result.index;
+   ephysics_world_lock_release(body->world);
+
+   return index;
 }
 
 EAPI EPhysics_Body *
