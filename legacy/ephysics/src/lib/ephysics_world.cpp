@@ -241,6 +241,8 @@ _ephysics_world_tick(btDynamicsWorld *dynamics_world)
           }
      }
 
+   ephysics_body_evas_objects_restack(world);
+
    if (camera_moved)
      {
         ephysics_camera_moved_set(world->camera, EINA_FALSE);

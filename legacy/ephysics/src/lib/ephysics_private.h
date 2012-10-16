@@ -116,6 +116,7 @@ struct _EPhysics_Body {
      Eina_Bool deleted:1;
      Eina_Bool light_apply:1;
      int material_index;
+     Eina_Bool rebounding;
 };
 
 extern int _ephysics_log_dom;
@@ -151,6 +152,7 @@ void ephysics_body_active_set(EPhysics_Body *body, Eina_Bool active);
 void ephysics_body_recalc(EPhysics_Body *body, double rate);
 void ephysics_body_forces_apply(EPhysics_Body *body);
 void ephysics_body_activate(const EPhysics_Body *body, Eina_Bool activate);
+void ephysics_body_evas_objects_restack(EPhysics_World *world);
 
 /* Camera */
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);
