@@ -558,7 +558,6 @@ _menu_move_resize_cb(void *data,
 static void
 _item_select(Elm_Toolbar_Item *it)
 {
-   Evas_Coord w = 0, h = 0;
    Elm_Toolbar_Item *it2;
    Evas_Object *obj2;
    Eina_Bool sel;
@@ -568,8 +567,6 @@ _item_select(Elm_Toolbar_Item *it)
    if (elm_widget_item_disabled_get(it) || (it->separator) || (it->object))
      return;
    sel = it->selected;
-
-   if (it->object) evas_object_geometry_get(it->object, NULL, NULL, &w, &h);
 
    if (sd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
      {
