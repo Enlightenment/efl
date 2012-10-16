@@ -71,10 +71,8 @@ EAPI Eo_Op EVAS_OBJ_TEXTBLOCK_BASE_ID = EO_NOOP;
 
 #define MY_CLASS EVAS_OBJ_TEXTBLOCK_CLASS
 
-#ifdef HAVE_LINEBREAK
 #include "linebreak.h"
 #include "wordbreak.h"
-#endif
 
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
@@ -3330,18 +3328,10 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 }
 
 /* -1 means no wrap */
-#ifdef HAVE_LINEBREAK
-
 /* Allow break means: if we can break after the current char */
 #define ALLOW_BREAK(i) \
    (breaks[i] <= LINEBREAK_ALLOWBREAK)
 
-#else
-
-#define ALLOW_BREAK(i) \
-   (_is_white(str[i]))
-
-#endif
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
       const Evas_Object_Textblock_Item *it, Eina_Bool mixed_wrap,
@@ -3354,10 +3344,6 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
          it->text_node->unicode);
    int item_start = it->text_pos;
    size_t len = eina_ustrbuf_length_get(it->text_node->unicode);
-#ifndef HAVE_LINEBREAK
-   /* Not used without liblinebreak ATM. */
-   (void) breaks;
-#endif
 
      {
         int swrap = -1;
@@ -3754,7 +3740,6 @@ _layout_par(Ctxt *c)
                      1 : _ITEM_TEXT(it)->text_props.text_len;
 
 
-#ifdef HAVE_LINEBREAK
                   /* If we haven't calculated the linebreaks yet,
                    * do */
                   if (!line_breaks)
@@ -3775,7 +3760,6 @@ _layout_par(Ctxt *c)
                                   len, lang, line_breaks);
                          }
                     }
-#endif
                   if (c->ln->items)
                      line_start = c->ln->items->text_pos;
                   else
@@ -3912,10 +3896,8 @@ _layout_par(Ctxt *c)
      }
 
 end:
-#ifdef HAVE_LINEBREAK
    if (line_breaks)
       free(line_breaks);
-#endif
 
    return ret;
 }
@@ -6323,44 +6305,29 @@ evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
    return EINA_FALSE;
 }
 
-#ifdef HAVE_LINEBREAK
-
 /* BREAK_AFTER: true if we can break after the current char.
  * Both macros assume str[i] is not the terminating nul */
 #define BREAK_AFTER(i) \
    (breaks[i] == WORDBREAK_BREAK)
-
-#else
-
-#define BREAK_AFTER(i) \
-   ((!text[i + 1]) || \
-    (_is_white(text[i]) && !_is_white(text[i + 1])) || \
-    (!_is_white(text[i]) && _is_white(text[i + 1])))
-
-#endif
 
 EAPI Eina_Bool
 evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur)
 {
    const Eina_Unicode *text;
    size_t i;
-#ifdef HAVE_LINEBREAK
    char *breaks;
-#endif
 
    if (!cur) return EINA_FALSE;
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
-#ifdef HAVE_LINEBREAK
      {
         const char *lang = ""; /* FIXME: get lang */
         size_t len = eina_ustrbuf_length_get(cur->node->unicode);
         breaks = malloc(len);
         set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
      }
-#endif
 
    i = cur->pos;
 
@@ -6374,9 +6341,7 @@ evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur)
 
    cur->pos = i;
 
-#ifdef HAVE_LINEBREAK
    free(breaks);
-#endif
    return EINA_TRUE;
 }
 
@@ -6385,23 +6350,19 @@ evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
 {
    const Eina_Unicode *text;
    size_t i;
-#ifdef HAVE_LINEBREAK
    char *breaks;
-#endif
 
    if (!cur) return EINA_FALSE;
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
-#ifdef HAVE_LINEBREAK
      {
         const char *lang = ""; /* FIXME: get lang */
         size_t len = eina_ustrbuf_length_get(cur->node->unicode);
         breaks = malloc(len);
         set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
      }
-#endif
 
    i = cur->pos;
 
@@ -6416,9 +6377,7 @@ evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
 
    cur->pos = i;
 
-#ifdef HAVE_LINEBREAK
    free(breaks);
-#endif
    return EINA_TRUE;
 }
 
@@ -9571,7 +9530,6 @@ evas_object_textblock_init(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = eo_data_get(eo_obj, EVAS_OBJ_CLASS);
    Evas_Object_Textblock *o = eo_data_get(eo_obj, MY_CLASS);
-#ifdef HAVE_LINEBREAK
    static Eina_Bool linebreak_init = EINA_FALSE;
    if (!linebreak_init)
      {
@@ -9579,7 +9537,6 @@ evas_object_textblock_init(Evas_Object *eo_obj)
         init_linebreak();
         init_wordbreak();
      }
-#endif
 
    /* set up default settings for this kind of object */
    obj->cur.color.r = 255;

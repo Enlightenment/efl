@@ -2,7 +2,6 @@
 # define _EVAS_FONT_PRIVATE_H
 #include "evas_font_ot.h"
 
-#ifdef BUILD_PTHREAD
 extern LK(lock_font_draw); // for freetype2 API calls
 extern LK(lock_bidi); // for fribidi API calls
 extern LK(lock_ot); // for harfbuzz calls
@@ -15,17 +14,6 @@ extern LK(lock_ot); // for harfbuzz calls
 /* Macros for text walking */
 #  define OTLOCK()   LKL(lock_ot)
 #  define OTUNLOCK() LKU(lock_ot)
-#else
-#  define FTLOCK()
-#  define FTUNLOCK()
-
-#  define BIDILOCK()
-#  define BIDIUNLOCK()
-
-/* Macros for text walking */
-#  define OTLOCK()
-#  define OTUNLOCK()
-#endif
 
 void evas_common_font_source_unload(RGBA_Font_Source *fs);
 void evas_common_font_source_reload(RGBA_Font_Source *fs);

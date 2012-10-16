@@ -16,7 +16,8 @@ AM_CPPFLAGS = \
 @EVAS_GENERAL_CFLAGS@ \
 @EVIL_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
-@FRIBIDI_CFLAGS@
+@FRIBIDI_CFLAGS@ \
+@LINEBREAK_CFLAGS@
 
 noinst_LTLIBRARIES   = libevas_canvas.la
 libevas_canvas_la_SOURCES  = \
@@ -60,14 +61,7 @@ evas_touch_point.c \
 evas_map.c \
 evas_gl.c
 
-#evas_object_textgrid.c
-
-libevas_canvas_la_LIBADD = @EVAS_LIBS@ @EVIL_LIBS@
-
-if EVAS_USE_LINEBREAK
-AM_CPPFLAGS += @LINEBREAK_CFLAGS@
-libevas_canvas_la_LIBADD += @LINEBREAK_LIBS@
-endif
+libevas_canvas_la_LIBADD = @EVAS_LIBS@ @EVIL_LIBS@ @LINEBREAK_LIBS@
 
 clean-local:
 	rm -rf *.gcno

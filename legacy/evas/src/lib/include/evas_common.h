@@ -173,14 +173,6 @@ extern EAPI int _evas_log_dom_global;
 # define __ARM_ARCH__ 73
 #endif
 
-#ifndef BUILD_PTHREAD
-# undef BUILD_PIPE_RENDER
-#endif
-
-#if defined(BUILD_ASYNC_PRELOAD) && !defined(BUILD_PTHREAD)
-# define BUILD_PTHREAD
-#endif
-
 #define LK(x)  Eina_Lock x
 #define LKI(x) eina_lock_new(&(x))
 #define LKD(x) eina_lock_free(&(x))
@@ -197,18 +189,9 @@ extern EAPI int _evas_log_dom_global;
 #define WRLKL(x) eina_rwlock_take_write(&(x))
 #define RWLKU(x) eina_rwlock_release(&(x))
 
-#ifdef BUILD_PTHREAD
-
 # define TH(x)  pthread_t x
 # define THI(x) int x
 # define TH_MAX 8
-
-#else
-# define TH(x)
-# define THI(x)
-# define TH_MAX 0
-
-#endif
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -535,11 +518,10 @@ struct _Image_Entry_Flags
 
    Eina_Bool lru          : 1;
    Eina_Bool alpha_sparse : 1;
-#ifdef BUILD_ASYNC_PRELOAD
    Eina_Bool preload_done : 1;
    Eina_Bool delete_me    : 1;
+   
    Eina_Bool pending      : 1;
-#endif
    Eina_Bool animated     : 1;
    Eina_Bool rotated      : 1;
 };
@@ -613,11 +595,9 @@ struct _Image_Entry
         void		*loader;
      } info;
 
-#ifdef BUILD_ASYNC_PRELOAD
    LK(lock);
    LK(lock_cancel);
    Eina_Bool unload_cancel : 1;
-#endif
 
    Image_Entry_Flags      flags;
    Evas_Image_Scale_Hint  scale_hint;

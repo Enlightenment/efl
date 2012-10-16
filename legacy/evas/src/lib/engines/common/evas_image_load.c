@@ -172,21 +172,6 @@ evas_common_load_rgba_image_module_from_file(Image_Entry *ie)
    int                   len, ret = EVAS_LOAD_ERROR_NONE;
    struct evas_image_foreach_loader_data fdata;
 
-
-#ifdef EVAS_CSERVE
-   if (evas_cserve_use_get())
-     {
-	// TODO: handle errors from server and return them?
-	DBG("try cserve '%s' '%s'", ie->file, ie->key ? ie->key : "");
-        if (evas_cserve_image_load(ie, ie->file, ie->key, &(ie->load_opts)))
-          {
-	     DBG("try cserve '%s' '%s' loaded!",
-		 ie->file, ie->key ? ie->key : "");
-             return EVAS_LOAD_ERROR_NONE;
-          }
-     }
-#endif
-
 #ifdef EVAS_CSERVE2
    if (evas_cserve2_use_get())
      {
@@ -331,24 +316,6 @@ evas_common_load_rgba_image_data_from_file(Image_Entry *ie)
    int ret = EVAS_LOAD_ERROR_NONE;
 
    if ((ie->flags.loaded) && (!ie->flags.animated)) return EVAS_LOAD_ERROR_GENERIC;
-
-#ifdef EVAS_CSERVE
-   if (ie->data1)
-     {
-        if (evas_cserve_image_data_load(ie))
-          {
-             RGBA_Image *im = (RGBA_Image *)ie;
-             Mem *mem = ie->data2;
-             if (mem)
-               {
-		  im->image.data = (void*) (mem->data + mem->offset);
-                  im->image.no_free = 1;
-                  return EVAS_LOAD_ERROR_NONE;
-               }
-          }
-	return EVAS_LOAD_ERROR_GENERIC;
-     }
-#endif
 
 #ifdef EVAS_CSERVE2
    if (ie->data1)

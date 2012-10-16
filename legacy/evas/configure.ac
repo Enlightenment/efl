@@ -277,32 +277,10 @@ if test "x${want_fontconfig}" = "xyes"; then
       [AC_MSG_ERROR([Fontconfig not found])])
 fi
 
-# linebreak
-have_linebreak="no"
-want_linebreak="yes"
-AC_ARG_ENABLE([liblinebreak],
-   AC_HELP_STRING([--disable-liblinebreak],
-      [disable linking against liblinebreak. @<:@default=enabled@:>@]),
-   [
-    if test "x${enableval}" = "xyes" ; then
-       want_linebreak="yes"
-    else
-       want_linebreak="no"
-    fi
-   ])
-
-
-AM_CONDITIONAL(EVAS_USE_LINEBREAK, test "x${want_linebreak}" = "xyes")
-if test "x${want_linebreak}" = "xyes" ; then
-   have_linebreak="yes"
-   LINEBREAK_CFLAGS='-I$(top_srcdir)/src/static_deps/liblinebreak'
-   LINEBREAK_LIBS='$(top_builddir)/src/static_deps/liblinebreak/liblinebreak.la'
-   AC_SUBST(LINEBREAK_CFLAGS)
-   AC_SUBST(LINEBREAK_LIBS)
-   AC_DEFINE(HAVE_LINEBREAK, 1, [have liblinebreak support])
-else
-   have_linebreak="no"
-fi
+LINEBREAK_CFLAGS='-I$(top_srcdir)/src/static_deps/liblinebreak'
+LINEBREAK_LIBS='$(top_builddir)/src/static_deps/liblinebreak/liblinebreak.la'
+AC_SUBST(LINEBREAK_CFLAGS)
+AC_SUBST(LINEBREAK_LIBS)
 
 # fribidi support
 have_fribidi="no"
@@ -329,9 +307,7 @@ if test "x${want_fribidi}" = "xyes"; then
        AC_CHECK_SIZEOF(FriBidiChar,, [#include <fribidi/fribidi.h>])
        CPPFLAGS="$CPPFLAGS_SAVE"
       ],
-      [
-       AC_MSG_ERROR([Fribidi not found])
-      ])
+      [AC_MSG_ERROR([Fribidi not found])])
 fi
 
 # harfbuzz support
@@ -814,7 +790,7 @@ fi
 #####################################################################
 ## Font Loaders
 
-PKG_CHECK_MODULES([EET], [eet >= 1.7.0], [], [AC_MSG_ERROR([EET not found])])
+PKG_CHECK_MODULES([EET], [eet >= 1.7.0])
 requirement_evas="eet >= 1.7.0 ${requirement_evas}"
 
 #####################################################################
@@ -897,8 +873,6 @@ AM_CONDITIONAL(EVAS_STATIC_BUILD_WBMP, [${do_static}])
 AC_DEFINE(BUILD_LOADER_WBMP, [1], [WBMP Loader])
 
 #####################################################################
-PKG_CHECK_MODULES([EET], [eet >= 1.7.0], [requirement="eet >= 1.7.0"], [AC_MSG_ERROR([Eet not found])])
-dnl requirement_evas="${requirement} ${requirement_evas}"
 evas_image_loader_eet_cflags="${EET_CFLAGS}"
 evas_image_loader_eet_libs="${EET_LIBS}"
 AC_SUBST([evas_image_loader_eet_cflags])
@@ -974,7 +948,7 @@ EVAS_CHECK_IMAGE_LOADER([SVG], [${want_evas_image_loader_svg}])
 # basic pthread support
 AC_CHECK_HEADER(pthread.h, [], [AC_MSG_ERROR([Pthread support missing.])])
 # sched_getaffinity pthread_attr_setaffinity_np
-AC_CHECK_HEADERS([pthread.h sched.h],
+AC_CHECK_HEADERS([pthread.h],
    [
     CFLAGS_save="${CFLAGS}"
     CFLAGS="${CFLAGS} -pthread"
@@ -982,18 +956,29 @@ AC_CHECK_HEADERS([pthread.h sched.h],
     LIBS="${LIBS} -pthread"
     AC_LINK_IFELSE(
       [AC_LANG_PROGRAM([[
+#include <stdlib.h>
+#include <pthread.h>
+                       ]],
+                       [[
+pthread_barrier_wait(NULL);
+                       ]])],
+      [],
+      [AC_MSG_ERROR([Your pthread implementation does not have pthread_barrier_wait])])
+    AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <stdlib.h>
 #include <pthread.h>
 #include <sched.h>
                        ]],
                        [[
 pthread_attr_setaffinity_np(NULL, 0, NULL);
-pthread_barrier_wait(NULL);
-                       ]])], [],
-      [AC_MSG_ERROR([Missing pthread_attr_setaffinity_np or pthread_barrier_wait.])])
+                       ]])],
+      [AC_DEFINE(HAVE_PTHREAD_AFFINITY, 1, [Pthread pthread_attr_setaffinity_np])],
+      [])
    CFLAGS=${CFLAGS_save}
    LIBS=${LIBS_save}
   ],
-  [AC_MSG_ERROR([Missing sched.h])])
+  [AC_MSG_ERROR([Missing pthread.h])])
 pthread_cflags="-pthread"
 pthread_libs="-pthread"
 AC_DEFINE(BUILD_ASYNC_EVENTS, 1, [Build async events support])
@@ -1175,40 +1160,6 @@ EVAS_CHECK_DITHER([line-dither-mask], [line dither mask], [conv_line_dither="yes
 EVAS_CHECK_DITHER([no-dither-mask], [conversion to 16bpp without dither mask], [conv_no_dither="yes"], [conv_no_dither="no"])
 
 #####################################################################
-## no longer options - turn on.
-
-AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp RGB 332])
-AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp RGB 666])
-AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp RGB 232])
-AC_DEFINE(BUILD_CONVERT_8_RGB_222, 1, [8bpp RGB 222])
-AC_DEFINE(BUILD_CONVERT_8_RGB_221, 1, [8bpp RGB 221])
-AC_DEFINE(BUILD_CONVERT_8_RGB_121, 1, [8bpp RGB 121])
-AC_DEFINE(BUILD_CONVERT_8_RGB_111, 1, [8bpp RGB 111])
-AC_DEFINE(BUILD_CONVERT_16_BGR_565, 1, [16bpp BGR 565])
-AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp RGB 565])
-AC_DEFINE(BUILD_CONVERT_16_RGB_555, 1, [16bpp RGB 555])
-AC_DEFINE(BUILD_CONVERT_16_RGB_444, 1, [16bpp RGB 444])
-AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp RGB 565 (444 ipaq)])
-AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0, 1, [16bpp 0 dgeree rotation])
-AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90, 1, [16bpp 90 dgeree rotation])
-AC_DEFINE(BUILD_CONVERT_16_RGB_ROT180, 1, [16bpp 180 dgeree rotation])
-AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270, 1, [16bpp 270 dgeree rotation])
-AC_DEFINE(BUILD_CONVERT_24_RGB_888, 1, [24bpp RGB 888])
-AC_DEFINE(BUILD_CONVERT_24_BGR_888, 1, [24bpp BGR 888])
-AC_DEFINE(BUILD_CONVERT_32_RGB_8888, 1, [32bpp RGB 8888])
-AC_DEFINE(BUILD_CONVERT_32_RGBX_8888, 1, [32bpp RGBX 8888])
-AC_DEFINE(BUILD_CONVERT_32_BGR_8888, 1, [32bpp BGR 8888])
-AC_DEFINE(BUILD_CONVERT_32_BGRX_8888, 1, [32bpp BGRX 8888])
-AC_DEFINE(BUILD_CONVERT_24_RGB_666, 1, [24bpp RGB 666 (666 ezx)])
-AC_DEFINE(BUILD_CONVERT_32_RGB_666, 1, [32bpp RGB 666 (666 ezx)])
-AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0, 1, [32bpp 0 dgeree rotation])
-AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90, 1, [32bpp 90 dgeree rotation])
-AC_DEFINE(BUILD_CONVERT_32_RGB_ROT180, 1, [32bpp 180 dgeree rotation])
-AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270, 1, [32bpp 270 dgeree rotation])
-AC_DEFINE(BUILD_CONVERT_8_GRY_1, 1, [1bpp Mono])
-AC_DEFINE(BUILD_CONVERT_8_GRY_16, 1, [4bpp Greyscale])
-AC_DEFINE(BUILD_CONVERT_8_GRAYSCALE_64, 1, [32bpp Grayscale 64 palette])
-
 ## valgrind
 want_valgrind="no"
 have_valgrind="no"
@@ -1262,7 +1213,7 @@ AC_ARG_ENABLE([build-examples],
        # put in here the dependencies for Evas' examples. they are
        # meant to be 'real world' usage examples, thus one will be
        # using higher level libraries on these programs
-       PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore], [], [build_examples="no"])
+       PKG_CHECK_MODULES([ECORE_EVAS], [ecore-evas ecore], [build_examples="no"])
        PKG_CHECK_MODULES([EDJE], [edje],
         [edje_cc=$($PKG_CONFIG --variable=prefix edje)/bin/edje_cc],
         [build_examples="no"])
@@ -1452,7 +1403,6 @@ echo
 echo "Font Rendering Helpers:"
 echo "  Fribidi.................: $have_fribidi"
 echo "  Harfbuzz................: $have_harfbuzz"
-echo "  liblinebreak............: $have_linebreak"
 # FIXME: add non freetype2 font engine support
 # FIXME: make freetype2 optional
 echo
@@ -1467,6 +1417,7 @@ echo "  MAGIC_DEBUG.............: $want_evas_magic_debug"
 echo "  Cache Server 2..........: $want_evas_cserve2"
 echo "  Threaded Pipe Rendering.: $build_pipe_render"
 echo
+echo "Optional pixman rendering path:"
 echo "  Pixman..................: $have_pixman"
 echo "  Pixman Fonts............: $have_pixman_font"
 echo "  Pixman Rects............: $have_pixman_rect"
@@ -1475,12 +1426,11 @@ echo "  Pixman Polygons.........: $have_pixman_poly"
 echo "  Pixman Images...........: $have_pixman_image"
 echo "  Pixman Image ScaleSample: $have_pixman_image_scale_sample"
 echo 
-echo "  Tiled 32BPP rotate......: $have_tile_rotate"
-echo
 echo "Conversion Options:"
 echo "  Smaller Dither Mask.....: $conv_small_dither"
 echo "  Line Dither Mask........: $conv_line_dither"
 echo "  No Dither Mask for 16bpp: $conv_no_dither"
+echo "  Tiled 32BPP rotate......: $have_tile_rotate"
 echo
 echo "Documentation.............: ${build_doc}"
 echo "Examples..................: install:${install_examples} build:${build_examples}"

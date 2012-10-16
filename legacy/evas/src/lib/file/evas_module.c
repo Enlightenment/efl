@@ -446,9 +446,7 @@ evas_module_load(Evas_Module *em)
    if (!em->definition->func.open(em)) return 0;
    em->loaded = 1;
 
-#ifdef BUILD_ASYNC_PRELOAD
    LKI(em->lock);
-#endif
    return 1;
 }
 
@@ -464,33 +462,23 @@ evas_module_unload(Evas_Module *em)
 //   em->definition->func.close(em);
 //   em->loaded = 0;
 
-#ifdef BUILD_ASYNC_PRELOAD
    LKD(em->lock);
-#endif
 }
 
 void
 evas_module_ref(Evas_Module *em)
 {
-#ifdef BUILD_ASYNC_PRELOAD
    LKL(em->lock);
-#endif
    em->ref++;
-#ifdef BUILD_ASYNC_PRELOAD
    LKU(em->lock);
-#endif
 }
 
 void
 evas_module_unref(Evas_Module *em)
 {
-#ifdef BUILD_ASYNC_PRELOAD
    LKL(em->lock);
-#endif
    em->ref--;
-#ifdef BUILD_ASYNC_PRELOAD
    LKU(em->lock);
-#endif
 }
 
 static int use_count = 0;

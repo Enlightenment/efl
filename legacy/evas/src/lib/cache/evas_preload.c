@@ -1,23 +1,16 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
 #endif
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
-
-#ifdef BUILD_ASYNC_PRELOAD
-# include <pthread.h>
-# ifdef __linux__
+#include <pthread.h>
+#ifdef __linux__
 # include <sys/syscall.h>
-# endif
 #endif
-
 #include "evas_common.h"
 #include "evas_private.h"
 #include "Evas.h"
-
-#ifdef BUILD_ASYNC_PRELOAD
 
 static int _threads_max = 0;
 
@@ -123,24 +116,20 @@ on_error:
    evas_async_events_put(pth, 0, work, _evas_preload_thread_done);
    return pth;
 }
-#endif
 
 void
 _evas_preload_thread_init(void)
 {
-#ifdef BUILD_ASYNC_PRELOAD
    _threads_max = eina_cpu_count();
    if (_threads_max < 1) _threads_max = 1;
 
    LKI(_mutex);
-#endif
 }
 
 void
 _evas_preload_thread_shutdown(void)
 {
    /* FIXME: If function are still running in the background, should we kill them ? */
-#ifdef BUILD_ASYNC_PRELOAD
    Evas_Preload_Pthread_Worker *work;
 
    /* Force processing of async events. */
@@ -158,7 +147,6 @@ _evas_preload_thread_shutdown(void)
    LKU(_mutex);
 
    LKD(_mutex);
-#endif
 }
 
 Evas_Preload_Pthread *
@@ -167,7 +155,6 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
 			void (*func_cancel) (void *data),
 			const void *data)
 {
-#ifdef BUILD_ASYNC_PRELOAD
    Evas_Preload_Pthread_Worker *work;
    Evas_Preload_Pthread_Data *pth;
 
@@ -220,22 +207,11 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
      }
    LKU(_mutex);
    return NULL;
-#else
-   /*
-    If no thread and as we don't want to break app that rely on this
-    facility, we will lock the interface until we are done.
-    */
-   (void)func_cancel;
-   func_heavy((void *)data);
-   func_end((void *)data);
-   return (void *)1;
-#endif
 }
 
 Eina_Bool
 evas_preload_thread_cancel(Evas_Preload_Pthread *thread)
 {
-#ifdef BUILD_ASYNC_PRELOAD
    Evas_Preload_Pthread_Worker *work;
 
    if (!thread) return EINA_TRUE;
@@ -259,8 +235,4 @@ evas_preload_thread_cancel(Evas_Preload_Pthread *thread)
    work = (Evas_Preload_Pthread_Worker *)thread;
    work->cancel = EINA_TRUE;
    return EINA_FALSE;
-#else
-   (void) thread;
-   return EINA_TRUE;
-#endif
 }

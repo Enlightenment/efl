@@ -51,27 +51,18 @@ evas_init(void)
      }
 
    evas_module_init();
-#ifdef BUILD_ASYNC_EVENTS
    if (!evas_async_events_init())
      goto shutdown_module;
-#endif
-#ifdef EVAS_CSERVE
-   if (getenv("EVAS_CSERVE")) evas_cserve_init();
-#endif
 #ifdef EVAS_CSERVE2
    if (getenv("EVAS_CSERVE2")) evas_cserve2_init();
 #endif
-#ifdef BUILD_ASYNC_PRELOAD
    _evas_preload_thread_init();
-#endif
 
    return _evas_init_count;
 
-#ifdef BUILD_ASYNC_EVENTS
  shutdown_module:
    evas_module_shutdown();
    eina_log_domain_unregister(_evas_log_dom_global);
-#endif
  shutdown_eina:
    eina_shutdown();
  shutdown_evil:
@@ -93,15 +84,8 @@ evas_shutdown(void)
    if (--_evas_init_count != 0)
      return _evas_init_count;
 
-#ifdef BUILD_ASYNC_EVENTS
    _evas_preload_thread_shutdown();
-#endif
-#ifdef EVAS_CSERVE
-   if (getenv("EVAS_CSERVE")) evas_cserve_shutdown();
-#endif
-#ifdef BUILD_ASYNC_EVENTS
    evas_async_events_shutdown();
-#endif
    evas_font_dir_cache_free();
    evas_common_shutdown();
    evas_module_shutdown();

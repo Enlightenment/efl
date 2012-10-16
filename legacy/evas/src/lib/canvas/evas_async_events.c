@@ -2,20 +2,14 @@
 # include <config.h>
 #endif
 
-#ifdef BUILD_ASYNC_EVENTS
-
-# ifndef _MSC_VER
-#  include <unistd.h>
-# endif
-# include <fcntl.h>
-# include <errno.h>
-
+#ifndef _MSC_VER
+# include <unistd.h>
 #endif
+#include <fcntl.h>
+#include <errno.h>
 
 #include "evas_common.h"
 #include "evas_private.h"
-
-#ifdef BUILD_ASYNC_EVENTS
 
 static int _fd_write = -1;
 static int _fd_read = -1;
@@ -81,23 +75,16 @@ _evas_async_events_fork_handle(void)
    for (i = 0; i < count; i++) evas_async_events_init();
 }
 
-#endif
-
 EAPI int
 evas_async_events_fd_get(void)
 {
-#ifdef BUILD_ASYNC_EVENTS
    _evas_async_events_fork_handle();
    return _fd_read;
-#else
-   return -1;
-#endif
 }
 
 EAPI int
 evas_async_events_process(void)
 {
-#ifdef BUILD_ASYNC_EVENTS
    Evas_Event_Async *ev;
    int check;
    int count = 0;
@@ -134,15 +121,11 @@ evas_async_events_process(void)
      }
 
    return count;
-#else
-   return 0;
-#endif
 }
 
 EAPI Eina_Bool
 evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_info, Evas_Async_Events_Put_Cb func)
 {
-#ifdef BUILD_ASYNC_EVENTS
    Evas_Event_Async *ev;
    ssize_t check;
    Eina_Bool result = EINA_FALSE;
@@ -184,8 +167,4 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
      }
 
    return result;
-#else
-   func((void*) target, type, event_info);
-   return EINA_TRUE;
-#endif
 }

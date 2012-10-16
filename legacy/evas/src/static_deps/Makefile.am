@@ -1,7 +1,3 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS =
-
-if EVAS_USE_LINEBREAK
-SUBDIRS += liblinebreak
-endif
+SUBDIRS = liblinebreak

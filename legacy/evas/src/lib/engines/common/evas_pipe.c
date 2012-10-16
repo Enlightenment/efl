@@ -1,9 +1,12 @@
 #include "evas_common.h"
 #include <unistd.h>
+#include <pthread.h>
+#ifdef HAVE_PTHREAD_AFFINITY
+#include <sched.h>
+#endif
 
 #ifdef BUILD_PIPE_RENDER
 
-# ifdef BUILD_PTHREAD
 typedef struct _Thinfo
 {
    RGBA_Image            *im;
@@ -14,7 +17,6 @@ typedef struct _Thinfo
    Eina_Array             cutout_trash;
    Eina_Array             rects_task;
 } Thinfo;
-#endif
 
 static RGBA_Pipe *evas_common_pipe_add(RGBA_Pipe *pipe, RGBA_Pipe_Op **op);
 static void evas_common_pipe_draw_context_copy(RGBA_Draw_Context *dc, RGBA_Pipe_Op *op);
@@ -71,7 +73,6 @@ evas_common_pipe_op_free(RGBA_Pipe_Op *op)
    evas_common_draw_context_apply_clean_cutouts(&op->context.cutout);
 }
 
-#ifdef BUILD_PTHREAD
 /* main api calls */
 static void *
 evas_common_pipe_thread(void *data)
@@ -109,9 +110,7 @@ evas_common_pipe_thread(void *data)
      }
    return NULL;
 }
-#endif
 
-#ifdef BUILD_PTHREAD
 static Eina_List *im_task = NULL;
 static Eina_List *text_task = NULL;
 static Thinfo task_thinfo[TH_MAX];
@@ -164,13 +163,10 @@ evas_pipe_prepare_push(RGBA_Pipe_Op *op)
    current++;
 }
 
-#endif
-
 static void
 evas_common_pipe_begin(RGBA_Image *im)
 {
 #define SZ 128
-#ifdef BUILD_PTHREAD
    unsigned int x, y, cpu;
    RGBA_Pipe_Thread_Info *info;
    unsigned int estimatex, estimatey;
@@ -217,21 +213,18 @@ evas_common_pipe_begin(RGBA_Image *im)
 
    /* tell worker threads to start */
    pthread_barrier_wait(&(thbarrier[0]));
-#endif
 }
 
 EAPI void
 evas_common_pipe_flush(RGBA_Image *im)
 {
    if (!im->cache_entry.pipe) return;
-#ifdef BUILD_PTHREAD
    if (thread_num > 1)
      {
        /* sync worker threads */
        pthread_barrier_wait(&(thbarrier[1]));
      }
    else
-#endif
      {
         RGBA_Pipe_Thread_Info info;
         RGBA_Pipe *p;
@@ -698,7 +691,6 @@ evas_common_pipe_map_render(RGBA_Image *root)
   evas_common_pipe_flush(root);
 }
 
-#ifdef BUILD_PTHREAD
 static void*
 evas_common_pipe_load(void *data)
 {
@@ -765,14 +757,12 @@ evas_common_pipe_load(void *data)
 
   return NULL;
 }
-#endif
 
 static volatile int bval = 0;
 
 static void
 evas_common_pipe_load_do(RGBA_Image *im)
 {
-#ifdef BUILD_PTHREAD
    int i;
 
    for (i = 0; i < thread_num; i++)
@@ -783,7 +773,6 @@ evas_common_pipe_load_do(RGBA_Image *im)
 
    /* sync worker threads */
    pthread_barrier_wait(&(task_thbarrier[1]));
-#endif
 }
 
 EAPI void
@@ -884,12 +873,16 @@ evas_common_pipe_init(void)
 	for (i = 0; i < thread_num; i++)
 	  {
 	     pthread_attr_t attr;
+#ifdef HAVE_PTHREAD_AFFINITY             
 	     cpu_set_t cpu;
-
+#endif
+             
 	     pthread_attr_init(&attr);
+#ifdef HAVE_PTHREAD_AFFINITY             
 	     CPU_ZERO(&cpu);
 	     CPU_SET(i % cpunum, &cpu);
 	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+#endif             
 	     thinfo[i].thread_num = i;
 	     thinfo[i].tasks = NULL;
 	     thinfo[i].barrier = thbarrier;
@@ -904,12 +897,16 @@ evas_common_pipe_init(void)
 	for (i = 0; i < thread_num; i++)
 	  {
 	     pthread_attr_t attr;
+#ifdef HAVE_PTHREAD_AFFINITY             
 	     cpu_set_t cpu;
-
-	     pthread_attr_init(&attr);
+#endif
+	     
+             pthread_attr_init(&attr);
+#ifdef HAVE_PTHREAD_AFFINITY             
 	     CPU_ZERO(&cpu);
 	     CPU_SET(i % cpunum, &cpu);
 	     pthread_attr_setaffinity_np(&attr, sizeof(cpu), &cpu);
+#endif             
 	     task_thinfo[i].thread_num = i;
 	     task_thinfo[i].tasks = NULL;
 	     task_thinfo[i].barrier = task_thbarrier;
