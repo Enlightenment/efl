@@ -1,6 +1,5 @@
 /* mask pixel x color --> dst */
 
-#ifdef BUILD_C
 static void
 _op_mask_p_c_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
@@ -50,9 +49,7 @@ init_mask_pixel_color_span_funcs_c(void)
    op_mask_span_funcs[SP_AS][SM_N][SC_AA][DP_AN][CPU_C] = _op_mask_pas_caa_dpan;
    op_mask_span_funcs[SP_AN][SM_N][SC_AA][DP_AN][CPU_C] = _op_mask_pan_caa_dpan;
 }
-#endif
 
-#ifdef BUILD_C
 static void
 _op_mask_pt_p_c_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	c = 1 + ((((c >> 24) * (s >> 24)) + 255) >> 8);
@@ -97,4 +94,3 @@ init_mask_pixel_color_pt_funcs_c(void)
    op_mask_pt_funcs[SP_AS][SM_N][SC_AA][DP_AN][CPU_C] = _op_mask_pt_pas_caa_dpan;
    op_mask_pt_funcs[SP_AN][SM_N][SC_AA][DP_AN][CPU_C] = _op_mask_pt_pan_caa_dpan;
 }
-#endif

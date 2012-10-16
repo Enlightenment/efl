@@ -1,7 +1,7 @@
 #include "evas_common.h"
 #include "evas_blend_private.h"
 
-#if defined BUILD_MMX || defined BUILD_SSE
+#ifdef BUILD_MMX
 #include "evas_mmx.h"
 #endif
 

@@ -1,11 +1,11 @@
 #include "evas_common.h"
 #include "evas_convert_yuv.h"
 
-#if defined BUILD_MMX
+#ifdef BUILD_MMX
 # include "evas_mmx.h"
 #endif
 
-#if defined HAVE_ALTIVEC_H
+#ifdef HAVE_ALTIVEC_H
 # include <altivec.h>
 #ifdef CONFIG_DARWIN
 #define AVV(x...) (x)
@@ -45,7 +45,7 @@ static void _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb,
 #define RZ(i)  (i >> (BITRES - RES))
 #define FOUR(i) {i, i, i, i}
 
-#if defined BUILD_MMX || defined BUILD_SSE
+#ifdef BUILD_MMX
 __attribute__ ((aligned (8))) const volatile unsigned short _const_crvcrv[4] = FOUR(RZ(CRV));
 __attribute__ ((aligned (8))) const volatile unsigned short _const_cbucbu[4] = FOUR(RZ(CBU));
 __attribute__ ((aligned (8))) const volatile unsigned short _const_cgucgu[4] = FOUR(RZ(CGU));
@@ -123,17 +123,10 @@ static int initted = 0;
 void
 evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 {
-   int mmx, sse, sse2;
+   int mmx = 0, sse = 0, sse2 = 0;
 
-#if defined BUILD_MMX || defined BUILD_SSE
+#ifdef BUILD_MMX
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
-#endif
-#ifndef BUILD_SSE
-   sse = 0;
-   sse2 = 0;
-#endif
-#ifndef BUILD_MMX
-   mmx = 0;
 #endif
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
      _evas_yv12torgb_sse(src, dst, w, h);
@@ -172,7 +165,7 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 static void
 _evas_yv12torgb_sse(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
-#ifdef BUILD_SSE
+#ifdef BUILD_MMX
    int xx, yy;
    register unsigned char *yp1, *up, *vp;
    unsigned char *dp1;

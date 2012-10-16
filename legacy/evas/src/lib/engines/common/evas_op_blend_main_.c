@@ -129,7 +129,6 @@ op_blend_init(void)
    init_blend_color_pt_funcs_neon();
    init_blend_mask_color_pt_funcs_neon();
 #endif
-#ifdef BUILD_C
    init_blend_pixel_span_funcs_c();
    init_blend_pixel_color_span_funcs_c();
    init_blend_pixel_mask_span_funcs_c();
@@ -141,7 +140,6 @@ op_blend_init(void)
    init_blend_pixel_mask_pt_funcs_c();
    init_blend_color_pt_funcs_c();
    init_blend_mask_color_pt_funcs_c();
-#endif
 }
 
 static void
@@ -178,11 +176,9 @@ blend_gfx_span_func_cpu(int s, int m, int c, int d)
 	if (func) return func;
      }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_blend_span_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 
@@ -302,11 +298,9 @@ blend_gfx_pt_func_cpu(int s, int m, int c, int d)
 	if (func) return func;
      }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_blend_pt_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 
@@ -420,7 +414,6 @@ op_blend_rel_init(void)
    init_blend_rel_color_pt_funcs_neon();
    init_blend_rel_mask_color_pt_funcs_neon();
 #endif
-#ifdef BUILD_C
    init_blend_rel_pixel_span_funcs_c();
    init_blend_rel_pixel_color_span_funcs_c();
    init_blend_rel_pixel_mask_span_funcs_c();
@@ -432,7 +425,6 @@ op_blend_rel_init(void)
    init_blend_rel_pixel_mask_pt_funcs_c();
    init_blend_rel_color_pt_funcs_c();
    init_blend_rel_mask_color_pt_funcs_c();
-#endif
 }
 
 static void
@@ -469,11 +461,9 @@ blend_rel_gfx_span_func_cpu(int s, int m, int c, int d)
 	if (func) return func;
      }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_blend_rel_span_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 
@@ -588,11 +578,9 @@ blend_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
 	if (func) return func;
      }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_blend_rel_pt_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 

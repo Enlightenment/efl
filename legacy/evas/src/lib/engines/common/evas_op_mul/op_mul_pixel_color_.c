@@ -1,6 +1,5 @@
 /* mul pixel x color --> dst */
 
-#ifdef BUILD_C
 static void
 _op_mul_p_c_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e = d + l;
@@ -64,9 +63,7 @@ init_mul_pixel_color_span_funcs_c(void)
    op_mul_span_funcs[SP_AS][SM_N][SC_AA][DP_AN][CPU_C] = _op_mul_pas_caa_dpan;
    op_mul_span_funcs[SP_AN][SM_N][SC_AA][DP_AN][CPU_C] = _op_mul_pan_caa_dpan;
 }
-#endif
 
-#ifdef BUILD_C
 static void
 _op_mul_pt_p_c_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
 	s = MUL4_SYM(c, s);
@@ -119,4 +116,3 @@ init_mul_pixel_color_pt_funcs_c(void)
    op_mul_pt_funcs[SP_AS][SM_N][SC_AA][DP_AN][CPU_C] = _op_mul_pt_pas_caa_dpan;
    op_mul_pt_funcs[SP_AN][SM_N][SC_AA][DP_AN][CPU_C] = _op_mul_pt_pan_caa_dpan;
 }
-#endif

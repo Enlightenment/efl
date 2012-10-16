@@ -126,7 +126,6 @@ op_copy_init(void)
    init_copy_color_pt_funcs_neon();
    init_copy_mask_color_pt_funcs_neon();
 #endif
-#ifdef BUILD_C
    init_copy_pixel_span_funcs_c();
    init_copy_pixel_color_span_funcs_c();
    init_copy_pixel_mask_span_funcs_c();
@@ -138,7 +137,6 @@ op_copy_init(void)
    init_copy_pixel_mask_pt_funcs_c();
    init_copy_color_pt_funcs_c();
    init_copy_mask_color_pt_funcs_c();
-#endif
 }
 
 static void
@@ -167,11 +165,9 @@ copy_gfx_span_func_cpu(int s, int m, int c, int d)
       if (func) return func;
     }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_copy_span_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 
@@ -285,11 +281,9 @@ copy_gfx_pt_func_cpu(int s, int m, int c, int d)
       if (func) return func;
     }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_copy_pt_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 
@@ -414,7 +408,6 @@ op_copy_rel_init(void)
    init_copy_rel_color_pt_funcs_neon();
    init_copy_rel_mask_color_pt_funcs_neon();
 #endif
-#ifdef BUILD_C
    init_copy_rel_pixel_span_funcs_c();
    init_copy_rel_pixel_color_span_funcs_c();
    init_copy_rel_pixel_mask_span_funcs_c();
@@ -426,7 +419,6 @@ op_copy_rel_init(void)
    init_copy_rel_pixel_mask_pt_funcs_c();
    init_copy_rel_color_pt_funcs_c();
    init_copy_rel_mask_color_pt_funcs_c();
-#endif
 }
 
 static void
@@ -455,11 +447,9 @@ copy_rel_gfx_span_func_cpu(int s, int m, int c, int d)
       if (func) return func;
     }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_copy_rel_span_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 
@@ -574,11 +564,9 @@ copy_rel_gfx_pt_func_cpu(int s, int m, int c, int d)
       if (func) return func;
     }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_copy_rel_pt_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 

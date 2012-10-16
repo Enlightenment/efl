@@ -1,6 +1,5 @@
 /* copy pixel x mask --> dst */
 
-#ifdef BUILD_C
 static void 
 _op_copy_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c __UNUSED__, DATA32 *d, int l) {
    DATA32 *e;
@@ -43,9 +42,7 @@ init_copy_pixel_mask_span_funcs_c(void)
    op_copy_span_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_C] = _op_copy_pan_mas_dpan;
    op_copy_span_funcs[SP_AS][SM_AS][SC_N][DP_AN][CPU_C] = _op_copy_pas_mas_dpan;
 }
-#endif
 
-#ifdef BUILD_C
 static void
 _op_copy_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c __UNUSED__, DATA32 *d) {
    *d = INTERP_256(m + 1, s, *d);
@@ -69,13 +66,11 @@ init_copy_pixel_mask_pt_funcs_c(void)
    op_copy_pt_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_C] = _op_copy_pt_pan_mas_dpan;
    op_copy_pt_funcs[SP_AS][SM_AS][SC_N][DP_AN][CPU_C] = _op_copy_pt_pas_mas_dpan;
 }
-#endif
 
 /*-----*/
 
 /* copy_rel pixel x mask --> dst */
 
-#ifdef BUILD_C
 static void
 _op_copy_rel_p_mas_dp(DATA32 *s, DATA8 *m, DATA32 c, DATA32 *d, int l) {
    DATA32 *e;
@@ -119,9 +114,7 @@ init_copy_rel_pixel_mask_span_funcs_c(void)
    op_copy_rel_span_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_C] = _op_copy_rel_pan_mas_dpan;
    op_copy_rel_span_funcs[SP_AS][SM_AS][SC_N][DP_AN][CPU_C] = _op_copy_rel_pas_mas_dpan;
 }
-#endif
 
-#ifdef BUILD_C
 static void
 _op_copy_rel_pt_p_mas_dp(DATA32 s, DATA8 m, DATA32 c, DATA32 *d) {
    c = MUL_SYM(*d >> 24, s);
@@ -147,4 +140,3 @@ init_copy_rel_pixel_mask_pt_funcs_c(void)
    op_copy_rel_pt_funcs[SP_AN][SM_AS][SC_N][DP_AN][CPU_C] = _op_copy_rel_pt_pan_mas_dpan;
    op_copy_rel_pt_funcs[SP_AS][SM_AS][SC_N][DP_AN][CPU_C] = _op_copy_rel_pt_pas_mas_dpan;
 }
-#endif

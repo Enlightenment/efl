@@ -1,6 +1,5 @@
 /* mul pixel --> dst */
 
-#ifdef BUILD_C
 static void
 _op_mul_p_dp(DATA32 *s, DATA8 *m __UNUSED__, DATA32 c __UNUSED__, DATA32 *d, int l) {
    DATA32 *e = d + l;
@@ -27,9 +26,7 @@ init_mul_pixel_span_funcs_c(void)
    op_mul_span_funcs[SP_AS][SM_N][SC_N][DP_AN][CPU_C] = _op_mul_pas_dpan;
    op_mul_span_funcs[SP_AN][SM_N][SC_N][DP_AN][CPU_C] = _op_mul_pan_dpan;
 }
-#endif
 
-#ifdef BUILD_C
 static void
 _op_mul_pt_p_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c __UNUSED__, DATA32 *d) {
       *d = MUL4_SYM(s, *d);
@@ -53,4 +50,3 @@ init_mul_pixel_pt_funcs_c(void)
    op_mul_pt_funcs[SP_AS][SM_N][SC_N][DP_AN][CPU_C] = _op_mul_pt_pas_dpan;
    op_mul_pt_funcs[SP_AN][SM_N][SC_N][DP_AN][CPU_C] = _op_mul_pt_pan_dpan;
 }
-#endif

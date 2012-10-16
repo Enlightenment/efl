@@ -67,7 +67,6 @@ op_mul_init(void)
    init_mul_color_pt_funcs_mmx();
    init_mul_mask_color_pt_funcs_mmx();
 #endif
-#ifdef BUILD_C
    init_mul_pixel_span_funcs_c();
    init_mul_pixel_color_span_funcs_c();
    init_mul_pixel_mask_span_funcs_c();
@@ -79,7 +78,6 @@ op_mul_init(void)
    init_mul_pixel_mask_pt_funcs_c();
    init_mul_color_pt_funcs_c();
    init_mul_mask_color_pt_funcs_c();
-#endif
 }
 
 static void
@@ -100,11 +98,9 @@ mul_gfx_span_func_cpu(int s, int m, int c, int d)
 	if (func) return func;
      }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_mul_span_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 
@@ -210,11 +206,9 @@ mul_gfx_pt_func_cpu(int s, int m, int c, int d)
       if (func) return func;
     }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_mul_pt_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 

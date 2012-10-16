@@ -1,8 +1,7 @@
 #include "evas_common.h"
-#if defined BUILD_MMX || defined BUILD_SSE
+#ifdef BUILD_MMX
 #include "evas_mmx.h"
 #endif
-
 #if defined BUILD_SSE3
 #include <immintrin.h>
 #endif
@@ -57,7 +56,7 @@ evas_common_cpu_mmx2_test(void)
 void
 evas_common_cpu_sse_test(void)
 {
-#ifdef BUILD_SSE
+#ifdef BUILD_MMX
    int blah[16];
 
    movntq_r2m(mm0, blah);
@@ -174,31 +173,29 @@ evas_common_cpu_init(void)
    evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_MMX2"))
      cpu_feature_mask &= ~CPU_FEATURE_MMX2;
-#ifdef BUILD_SSE
    cpu_feature_mask |= CPU_FEATURE_SSE *
      evas_common_cpu_feature_test(evas_common_cpu_sse_test);
    evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_SSE"))
      cpu_feature_mask &= ~CPU_FEATURE_SSE;
-#ifdef BUILD_SSE3
+# ifdef BUILD_SSE3
    cpu_feature_mask |= CPU_FEATURE_SSE3 *
      evas_common_cpu_feature_test(evas_common_cpu_sse3_test); 
    evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_SSE3"))
      cpu_feature_mask &= ~CPU_FEATURE_SSE3; 
-#endif /* BUILD_SSE3 */
-#endif /* BUILD_SSE */
+# endif /* BUILD_SSE3 */
 #endif /* BUILD_MMX */
 #ifdef BUILD_ALTIVEC
-#ifdef __POWERPC__
-#ifdef __VEC__
+# ifdef __POWERPC__
+#  ifdef __VEC__
    cpu_feature_mask |= CPU_FEATURE_ALTIVEC *
      evas_common_cpu_feature_test(evas_common_cpu_altivec_test);
    evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_ALTIVEC"))
      cpu_feature_mask &= ~CPU_FEATURE_ALTIVEC;
-#endif /* __VEC__ */
-#endif /* __POWERPC__ */
+#  endif /* __VEC__ */
+# endif /* __POWERPC__ */
 #endif /* BUILD_ALTIVEC */
 #ifdef __SPARC__
    cpu_feature_mask |= CPU_FEATURE_VIS *
@@ -208,13 +205,13 @@ evas_common_cpu_init(void)
      cpu_feature_mask &= ~CPU_FEATURE_VIS;
 #endif /* __SPARC__ */
 #if defined(__ARM_ARCH__)
-#ifdef BUILD_NEON
+# ifdef BUILD_NEON
    cpu_feature_mask |= CPU_FEATURE_NEON *
      evas_common_cpu_feature_test(evas_common_cpu_neon_test);
    evas_common_cpu_end_opt();
    if (getenv("EVAS_CPU_NO_NEON"))
      cpu_feature_mask &= ~CPU_FEATURE_NEON;
-#endif
+# endif
 #endif
 }
 
@@ -270,8 +267,7 @@ evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 EAPI void
 evas_common_cpu_end_opt(void)
 {
-   if (cpu_feature_mask &
-       (CPU_FEATURE_MMX | CPU_FEATURE_MMX2))
+   if (cpu_feature_mask & (CPU_FEATURE_MMX | CPU_FEATURE_MMX2))
      {
 	emms();
      }

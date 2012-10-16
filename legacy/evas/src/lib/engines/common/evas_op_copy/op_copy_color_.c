@@ -1,6 +1,5 @@
 /* copy color --> dst */
 
-#ifdef BUILD_C
 static void
 _op_copy_c_dp(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e;
@@ -33,9 +32,7 @@ init_copy_color_span_funcs_c(void)
    op_copy_span_funcs[SP_N][SM_N][SC_AN][DP_AN][CPU_C] = _op_copy_can_dpan;
    op_copy_span_funcs[SP_N][SM_N][SC_AA][DP_AN][CPU_C] = _op_copy_caa_dpan;
 }
-#endif
-
-#ifdef BUILD_C
+ 
 static void
 _op_copy_pt_c_dp(DATA32 s __UNUSED__, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
    *d = c;
@@ -63,13 +60,11 @@ init_copy_color_pt_funcs_c(void)
    op_copy_pt_funcs[SP_N][SM_N][SC_AN][DP_AN][CPU_C] = _op_copy_pt_can_dpan;
    op_copy_pt_funcs[SP_N][SM_N][SC_AA][DP_AN][CPU_C] = _op_copy_pt_caa_dpan;
 }
-#endif
 
 /*-----*/
 
 /* copy_rel color --> dst */
 
-#ifdef BUILD_C
 static void
 _op_copy_rel_c_dp(DATA32 *s __UNUSED__, DATA8 *m __UNUSED__, DATA32 c, DATA32 *d, int l) {
    DATA32 *e;
@@ -103,9 +98,7 @@ init_copy_rel_color_span_funcs_c(void)
    op_copy_rel_span_funcs[SP_N][SM_N][SC_AN][DP_AN][CPU_C] = _op_copy_rel_can_dpan;
    op_copy_rel_span_funcs[SP_N][SM_N][SC_AA][DP_AN][CPU_C] = _op_copy_rel_caa_dpan;
 }
-#endif
 
-#ifdef BUILD_C
 static void
 _op_copy_rel_pt_c_dp(DATA32 s, DATA8 m __UNUSED__, DATA32 c, DATA32 *d) {
    s = 1 + (*d >> 24);
@@ -135,4 +128,4 @@ init_copy_rel_color_pt_funcs_c(void)
    op_copy_rel_pt_funcs[SP_N][SM_N][SC_AN][DP_AN][CPU_C] = _op_copy_rel_pt_can_dpan;
    op_copy_rel_pt_funcs[SP_N][SM_N][SC_AA][DP_AN][CPU_C] = _op_copy_rel_pt_caa_dpan;
 }
-#endif
+

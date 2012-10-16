@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-#if defined BUILD_MMX || defined BUILD_SSE
+#ifdef BUILD_MMX
 #include "evas_mmx.h"
 #endif
 
@@ -233,7 +233,6 @@ evas_common_copy_pixels_rev_neon(DATA32 *src, DATA32 *dst, int len)
 #endif
 
 
-#ifdef BUILD_C
 static void
 evas_common_copy_pixels_c(DATA32 *src, DATA32 *dst, int len)
 {
@@ -241,7 +240,6 @@ evas_common_copy_pixels_c(DATA32 *src, DATA32 *dst, int len)
    
    while (dst < dst_end) *dst++ = *src++;
 }
-#endif
 
 #ifdef BUILD_MMX
 static void
@@ -259,11 +257,9 @@ evas_common_copy_pixels_mmx(DATA32 *src, DATA32 *dst, int len)
    if ((src_align != dst_align) ||
        ((src_align & 0x3) != 0))
      {
-#ifdef BUILD_C
 	evas_common_copy_pixels_c(src, dst, len);
 	return;
      }
-#endif
 
    while ((src_align > 0) && (len > 0))
      {
@@ -301,9 +297,7 @@ evas_common_copy_pixels_mmx2(DATA32 *src, DATA32 *dst, int len)
    if ((src_align != dst_align) ||
        ((src_align & 0x3) != 0))
      {
-#ifdef BUILD_C
 	evas_common_copy_pixels_c(src, dst, len);
-#endif
 	return;
      }
 
@@ -420,7 +414,7 @@ evas_common_copy_pixels_neon(DATA32 *src, DATA32 *dst, int len){
 }
 #endif /* BUILD_NEON */
 
-#ifdef BUILD_SSE
+#ifdef BUILD_MMX
 static void
 evas_common_copy_pixels_sse(DATA32 *src, DATA32 *dst, int len)
 {
@@ -454,9 +448,7 @@ evas_common_copy_pixels_sse(DATA32 *src, DATA32 *dst, int len)
    if ((src_align != dst_align) ||
        ((src_align & 0x3) != 0))
      {
-#ifdef BUILD_C
 	evas_common_copy_pixels_c(src, dst, len);
-#endif
 	return;
      }
 
@@ -494,7 +486,6 @@ evas_common_copy_pixels_sse(DATA32 *src, DATA32 *dst, int len)
 
 /****************************************************************************/
 
-#ifdef BUILD_C
 static void
 evas_common_copy_pixels_rev_c(DATA32 *src, DATA32 *dst, int len)
 {
@@ -506,7 +497,6 @@ evas_common_copy_pixels_rev_c(DATA32 *src, DATA32 *dst, int len)
 
    while (dst > dst_end) *dst-- = *src--;
 }
-#endif
 
 #ifdef BUILD_MMX
 static void
@@ -543,7 +533,7 @@ evas_common_copy_pixels_rev_mmx(DATA32 *src, DATA32 *dst, int len)
 }
 #endif
 
-#ifdef BUILD_SSE
+#ifdef BUILD_MMX
 static void
 evas_common_copy_pixels_rev_sse(DATA32 *src, DATA32 *dst, int len)
 {
@@ -586,7 +576,6 @@ evas_common_copy_pixels_rev_sse(DATA32 *src, DATA32 *dst, int len)
 }
 #endif
 
-
 Gfx_Func_Copy
 evas_common_draw_func_copy_get(int pixels, int reverse)
 {
@@ -594,107 +583,32 @@ evas_common_draw_func_copy_get(int pixels, int reverse)
 	return evas_common_copy_rev_pixels_c;
    if (reverse)
      {
-#ifdef  BUILD_SSE
-	if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
-	  return evas_common_copy_pixels_rev_sse;
-#endif
 #ifdef BUILD_MMX
-# ifdef BUILD_SSE
-	else
-# endif
-	  if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-	    return evas_common_copy_pixels_rev_mmx;
+	if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
+	  return evas_common_copy_pixels_rev_sse;
+	else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+          return evas_common_copy_pixels_rev_mmx;
 #endif
 #ifdef BUILD_NEON
-# if defined(BUILD_SSE) || defined(BUILD_MMX)
-	else
-# endif
-	  if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
-	    return evas_common_copy_pixels_rev_neon;
+        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+          return evas_common_copy_pixels_rev_neon;
 #endif
-
-#ifdef BUILD_C
-# if defined(BUILD_MMX) || defined(BUILD_NEON)
-	else
-# endif
-	  return evas_common_copy_pixels_rev_c;
-#endif
+        return evas_common_copy_pixels_rev_c;
      }
    else
      {
-#if 1
-
-# ifdef BUILD_MMX
-# ifdef BUILD_C
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif
-	       return evas_common_copy_pixels_mmx2;
-# ifdef BUILD_SSE
-	     else
-# endif
-#endif
-#ifdef BUILD_SSE
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
-# endif
-		 return evas_common_copy_pixels_sse;
-# ifdef BUILD_MMX
-	     else
-# endif
-#endif
-# ifdef BUILD_NEON
-# ifdef BUILD_C
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
-# endif
-	       return evas_common_copy_pixels_neon;
-# ifdef BUILD_SSE
-	     else
-# endif
-#endif
 #ifdef BUILD_MMX
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif
-		 return evas_common_copy_pixels_mmx;
-# ifdef BUILD_C
-	     else
-# endif
+        if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
+          return evas_common_copy_pixels_sse;
+        else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
+          return evas_common_copy_pixels_mmx2;
+        else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+          return evas_common_copy_pixels_mmx;
 #endif
-#ifdef BUILD_C
-	       return evas_common_copy_pixels_c;
-#endif
-
-#else
-
-# ifdef BUILD_SSE
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
-	       return evas_common_copy_pixels_sse;
-# ifdef BUILD_MMX
-	     else
-# endif
-#endif
-#ifdef BUILD_MMX
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif
-		 return evas_common_copy_pixels_mmx2;
-# ifdef BUILD_C
-	       else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif
-		 return evas_common_copy_pixels_mmx;
-# ifdef BUILD_C
-	     else
-# endif
-#endif
-#ifdef BUILD_C
-	       return evas_common_copy_pixels_c;
-#endif
-
+#ifdef BUILD_NEON
+        if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+          return evas_common_copy_pixels_neon;
 #endif
      }
-#ifdef BUILD_C
    return evas_common_copy_pixels_c;
-#else
-   return NULL;
-#endif
 }

@@ -68,7 +68,6 @@ op_mask_init(void)
    init_mask_color_pt_funcs_mmx();
    init_mask_mask_color_pt_funcs_mmx();
 #endif
-#ifdef BUILD_C
    init_mask_pixel_span_funcs_c();
    init_mask_pixel_color_span_funcs_c();
    init_mask_pixel_mask_span_funcs_c();
@@ -80,7 +79,6 @@ op_mask_init(void)
    init_mask_pixel_mask_pt_funcs_c();
    init_mask_color_pt_funcs_c();
    init_mask_mask_color_pt_funcs_c();
-#endif
 }
 
 static void
@@ -101,11 +99,9 @@ mask_gfx_span_func_cpu(int s, int m, int c, int d)
       if (func) return func;
     }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_mask_span_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 
@@ -211,11 +207,9 @@ mask_gfx_pt_func_cpu(int s, int m, int c, int d)
       if (func) return func;
     }
 #endif
-#ifdef BUILD_C
    cpu = CPU_C;
    func = op_mask_pt_funcs[s][m][c][d][cpu];
    if (func) return func;
-#endif
    return func;
 }
 

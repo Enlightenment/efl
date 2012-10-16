@@ -1027,8 +1027,6 @@ build_pipe_render="no"
 #######################################
 ## CPU architecture specific assembly
 
-AC_DEFINE(BUILD_C, 1, [Build plain C code])
-
 build_cpu_mmx="no"
 build_cpu_sse3="no"
 build_cpu_altivec="no"
@@ -1037,7 +1035,6 @@ build_cpu_neon="no"
 case $host_cpu in
   i*86|x86_64|amd64)
     AC_DEFINE(BUILD_MMX, 1, [Build MMX Code])
-    AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
     build_cpu_mmx="yes"
     build_cpu_sse3="yes"
     ;;
