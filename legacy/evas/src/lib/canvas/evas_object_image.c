@@ -1607,7 +1607,6 @@ _image_pixels_import(Eo *eo_obj, void *_pd, va_list *list)
 	  }
 	break;
 #endif
-#ifdef BUILD_CONVERT_YUV
       case EVAS_PIXEL_FORMAT_YUV420P_601:
           {
              if (o->engine_data)
@@ -1629,7 +1628,6 @@ _image_pixels_import(Eo *eo_obj, void *_pd, va_list *list)
                }
           }
         break;
-#endif
       default:
         return;
         break;
