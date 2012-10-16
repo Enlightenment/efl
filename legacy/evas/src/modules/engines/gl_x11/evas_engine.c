@@ -656,7 +656,7 @@ eng_setup(Evas *eo_e, void *in)
         re = calloc(1, sizeof(Render_Engine));
         if (!re) return 0;
         re->info = info;
-        re->evas = e;
+        re->evas = (Evas *)e;
         re->w = e->output.w;
         re->h = e->output.h;
         re->win = eng_window_new(re->info->info.display,
