@@ -63,7 +63,8 @@ include_HEADERS = \
 	src/lib/edbus_pending.h \
 	src/lib/edbus_proxy.h \
 	src/lib/edbus_service.h \
-	src/lib/edbus_signal_handler.h
+	src/lib/edbus_signal_handler.h \
+	src/lib/edbus_message_helper.h
 
 libedbus2_la_LIBADD = @ECORE_LIBS@ @DBUS_LIBS@
 libedbus2_la_SOURCES = \
@@ -76,7 +77,8 @@ libedbus2_la_SOURCES = \
 	src/lib/edbus_pending.c \
 	src/lib/edbus_freedesktop.c \
 	src/lib/edbus_service.c \
-	src/lib/edbus_signal_handler.c
+	src/lib/edbus_signal_handler.c \
+	src/lib/edbus_message_helper.c
 
 if EFL_BUILD_EXAMPLES
 noinst_PROGRAMS = \

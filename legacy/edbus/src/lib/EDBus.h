@@ -133,6 +133,7 @@ typedef void (*EDBus_Signal_Cb)(void *data, const EDBus_Message *msg);
 #include "edbus_proxy.h"
 #include "edbus_freedesktop.h"
 #include "edbus_service.h"
+#include "edbus_message_helper.h"
 
 #ifdef __cplusplus
 }

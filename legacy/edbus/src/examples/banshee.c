@@ -46,6 +46,45 @@ on_get_playlists(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 }
 
 static void
+iterate_dict(void *data, const void *key, EDBus_Message_Iter *var)
+{
+   const char *skey = key;
+
+   if (!strcmp(skey, "PlaylistCount"))
+     {
+        unsigned count;
+        if (!edbus_message_iter_arguments_get(var, "u", &count))
+          printf("error2\n");
+        printf("PlaylistCount=%d\n", count);
+     }
+   else if (!strcmp(skey, "Orderings"))
+     {
+        EDBus_Message_Iter *as;
+        const char *txt;
+        printf("- Orderings\n");
+        if (!edbus_message_iter_arguments_get(var, "as", &as))
+          printf("error1\n");
+        while (edbus_message_iter_get_and_next(as, 's', &txt))
+          printf("\t%s\n", txt);
+     }
+}
+
+static void
+playlist_get_all_cb(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
+{
+   const char *errname, *errmsg;
+   EDBus_Message_Iter *array;
+
+   if (edbus_message_error_get(msg, &errname, &errmsg))
+     {
+        fprintf(stderr, "Error: %s %s\n", errname, errmsg);
+        return;
+     }
+   if (edbus_message_arguments_get(msg, "a{sv}", &array))
+     edbus_message_iter_dict_iterate(array, "sv", iterate_dict, NULL);
+}
+
+static void
 on_introspect(void *data, const EDBus_Message *msg, EDBus_Pending *pending)
 {
    const char *errname, *errmsg, *string;
@@ -215,6 +254,8 @@ main(void)
    edbus_proxy_signal_handler_add(player_engine, "StateChanged", on_state_changed, NULL);
 
    playlists = edbus_proxy_get(mediaplayer2_obj, "org.mpris.MediaPlayer2.Playlists");
+
+   edbus_proxy_property_get_all(playlists, playlist_get_all_cb, NULL);
 
    pending = edbus_proxy_call(introspectable, "Introspect", on_introspect, NULL, -1, "");
    if (!pending)
