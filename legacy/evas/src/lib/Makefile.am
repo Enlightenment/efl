@@ -48,15 +48,6 @@ SUBDIRS += ../modules/engines/psl1ght/
 EVAS_STATIC_MODULE += ../modules/engines/psl1ght/libevas_engine_psl1ght.la
 EVAS_STATIC_LIBADD += @evas_engine_psl1ght_libs@
 endif
-if EVAS_STATIC_BUILD_SOFTWARE_8
-SUBDIRS += ../modules/engines/software_8/
-EVAS_STATIC_MODULE += ../modules/engines/software_8/libevas_engine_software_8.la
-endif
-if EVAS_STATIC_BUILD_SOFTWARE_8_X11
-SUBDIRS += ../modules/engines/software_8_x11/
-EVAS_STATIC_MODULE += ../modules/engines/software_8_x11/libevas_engine_software_8_x11.la
-EVAS_STATIC_LIBADD += @evas_engine_software_8_x11_libs@
-endif
 if EVAS_STATIC_BUILD_SOFTWARE_DDRAW
 SUBDIRS += ../modules/engines/software_ddraw/
 EVAS_STATIC_MODULE += ../modules/engines/software_ddraw/libevas_engine_software_ddraw.la
@@ -212,11 +203,6 @@ libevas_la_LIBADD += \
 cache2/libevas_cache2.la
 libevas_la_DEPENDENCIES += \
 cache2/libevas_cache2.la
-endif
-
-if BUILD_ENGINE_SOFTWARE_8
-libevas_la_LIBADD += engines/common_8/libevas_engine_common_8.la
-libevas_la_DEPENDENCIES += engines/common_8/libevas_engine_common_8.la
 endif
 
 libevas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@

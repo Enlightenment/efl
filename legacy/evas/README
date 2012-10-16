@@ -353,45 +353,6 @@ software-rendered with evas's default software rendering core.
 opengl (and opengl-es2.0) rendering engine that uses sdl as the front
 end interface. see --enable-gl-x11 etc. for information.
 
-
---enable-software-8-x11[=static]
-
-8bit only rendering core. intended for greyscale output on things like
-e-paper or simplistic greyscale LCD devices which have no color, such
-as ebook readers.
-
-if compiling with =static suffix, then must
-"./configure --enable-static-software-8" as well.
-
-
---enable-software-16-x11[=static]
-
-16bit specific renderer. lower quality than the default. also limited
-in abilities (no support for smooth scale or transformations/map). in
-a state of disrepair. do not use unless your hardware is just 16bpp
-and very limited in CPU and memory.
-
-if compiling with =static suffix, then must
-"./configure  --enable-static-software-16" as well.
-
-
---enable-software-16-ddraw[=static]
-
-16bit renderer for direct-draw. same as software-16-x11 - don't use.
-in disrepair.
-
-if compiling with =static suffix, then must
-"./configure --enable-static-software-16" as well.
-
-
---enable-software-16-wince[=static]
-
-same as software-16-ddraw but for windows-ce. in disrepair. don't use.
-
-if compiling with =static suffix, then must
-"./configure --enable-static-software-16" as well.
-
-
 ------------------------------------------------------------------------------
 CPU:
 --enable-cpu-c

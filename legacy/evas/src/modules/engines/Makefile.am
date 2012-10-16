@@ -35,12 +35,6 @@ if !EVAS_STATIC_BUILD_GL_COCOA
 SUBDIRS += gl_cocoa
 endif
 
-if !EVAS_STATIC_BUILD_SOFTWARE_8
-SUBDIRS += software_8
-endif
-if !EVAS_STATIC_BUILD_SOFTWARE_8_X11
-SUBDIRS += software_8_x11
-endif
 if !EVAS_STATIC_BUILD_SOFTWARE_DDRAW
 SUBDIRS += software_ddraw
 endif

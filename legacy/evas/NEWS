@@ -29,6 +29,8 @@ Fixes:
 
 Removal:
    * No more support s3c6410.
+   * 16bpp engine removed.
+   * 8bpp engine removed.
 
 Evas 1.7.0
 

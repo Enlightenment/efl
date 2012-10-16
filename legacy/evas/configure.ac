@@ -98,7 +98,6 @@ want_evas_engine_software_xlib="no"
 want_evas_engine_software_xcb="no"
 want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
-want_evas_engine_software_8_x11="no"
 want_evas_engine_gl_xlib="no"
 want_evas_engine_gl_xcb="no"
 want_evas_engine_gl_sdl="no"
@@ -140,8 +139,6 @@ case "$host_os" in
       want_evas_engine_fb="auto"
       want_evas_engine_wayland_shm="auto"
       want_evas_engine_wayland_egl="auto"
-### no - not ready/usable/complete
-#      want_evas_engine_software_8_x11="auto"
       ;;
 esac
 
@@ -619,7 +616,6 @@ EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [no], [OpenGL SDL])
 EVAS_CHECK_ENGINE([gl-cocoa], [${want_evas_engine_gl_cocoa}], [no], [OpenGL Cocoa])
 EVAS_CHECK_ENGINE([fb], [${want_evas_engine_fb}], [no], [Framebuffer])
 EVAS_CHECK_ENGINE([directfb], [${want_evas_engine_directfb}], [no], [DirectFB])
-EVAS_CHECK_ENGINE([software-8-x11], [${want_evas_engine_software_8_x11}], [no], [Software X11 8 bits grayscale])
 EVAS_CHECK_ENGINE([wayland-shm], [${want_evas_engine_wayland_shm}], [no], [Wayland Shm])
 EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
 
@@ -813,28 +809,6 @@ if test "x$gl_flavor_gles" = "xyes"; then
    AC_CHECK_DECL(SDL_OPENGLES,
       [AC_DEFINE(HAVE_SDL_FLAG_OPENGLES, [1], [SDL_OPENGLES flag is present])],,
       [#include <SDL/SDL_video.h>])
-fi
-
-# if software 8 x11 is enabled - build software_8 (the generic 8bit
-# engine).
-have_evas_engine_software_8="no"
-if test "x$have_evas_engine_software_8_x11" = "xyes" -o "x$have_evas_engine_software_8_x11" = "xstatic"; then
-   have_evas_engine_software_8="yes"
-fi
-AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_8, test "x$have_evas_engine_software_8" = "xyes")
-
-# if software 8 need to be build as part of libevas.so
-have_static_software_8="no"
-AC_ARG_ENABLE([static-software-8],
-   [AC_HELP_STRING([--enable-static-software-8], [Build software 8 engine as part of libevas])],
-   [have_static_software_8=${enableval}]
-)
-AC_MSG_CHECKING([Whether to build software 8 engine as part of libevas])
-AC_MSG_RESULT([${have_static_software_8}])
-
-AM_CONDITIONAL(EVAS_STATIC_BUILD_SOFTWARE_8, test "x${have_static_software_8}" = "xyes")
-if test "x${have_static_software_8}" = "xyes"; then
-   AC_DEFINE(EVAS_STATIC_BUILD_SOFTWARE_8, [1], [Build software 8 engine as part of libevas])
 fi
 
 #####################################################################
@@ -1348,7 +1322,6 @@ evas-opengl-sdl.pc
 evas-opengl-cocoa.pc
 evas-software-buffer.pc
 evas-software-x11.pc
-evas-software-8-x11.pc
 evas-software-gdi.pc
 evas-software-ddraw.pc
 evas-direct3d.pc
@@ -1389,7 +1362,6 @@ src/lib/engines/common/evas_op_copy/Makefile
 src/lib/engines/common/evas_op_mask/Makefile
 src/lib/engines/common/evas_op_mul/Makefile
 src/lib/engines/common/evas_op_sub/Makefile
-src/lib/engines/common_8/Makefile
 src/modules/Makefile
 src/modules/engines/Makefile
 src/modules/engines/software_generic/Makefile
@@ -1405,8 +1377,6 @@ src/modules/engines/gl_x11/Makefile
 src/modules/engines/gl_sdl/Makefile
 src/modules/engines/gl_cocoa/Makefile
 src/modules/engines/psl1ght/Makefile
-src/modules/engines/software_8/Makefile
-src/modules/engines/software_8_x11/Makefile
 src/modules/engines/wayland_shm/Makefile
 src/modules/engines/wayland_egl/Makefile
 src/modules/loaders/Makefile
@@ -1473,7 +1443,6 @@ echo "  OpenGL Cocoa...............: $have_evas_engine_gl_cocoa"
 echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
 echo "  PSL1GHT....................: $have_evas_engine_psl1ght"
-echo "  Software 8bit grayscale....: $have_evas_engine_software_8"
 echo "  Wayland Shm................: $have_evas_engine_wayland_shm"
 echo "  Wayland Egl................: $have_evas_engine_wayland_egl"
 echo
