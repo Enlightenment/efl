@@ -12,6 +12,7 @@
 #define WIDTH (1280)
 #define HEIGHT (720)
 #define DEPTH (100)
+#define INITIAL_IMPULSE (9500)
 
 typedef struct _Sandie_Data {
    Evas_Object *win;
@@ -155,6 +156,8 @@ _body_material_set(Evas_Object *obj, EPhysics_Body *body)
 
    ephysics_body_material_set(body, elm_spinner_value_get(obj));
 
+   elm_spinner_value_set(evas_object_data_get(obj, "mass"),
+                         ephysics_body_mass_get(body));
    elm_spinner_value_set(evas_object_data_get(obj, "density"),
                          ephysics_body_density_get(body));
    elm_spinner_value_set(evas_object_data_get(obj, "friction"),
@@ -903,6 +906,7 @@ _menu_body_items_create(void *data, Evas_Object *bxparent)
    material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
    aux_widget = _sandie_spinner_add(sandie->win, bx, "Mass", "%1.3f kg",
                                 0, 9999, 15, 2);
+   evas_object_data_set(material_widget, "mass", aux_widget);
    widget = _sandie_spinner_add(sandie->win, bx, "Density", "%1.3f kg/m³",
                                 0, 9999, 0, 2);
    evas_object_data_set(aux_widget, "density", widget);
@@ -954,7 +958,8 @@ _menu_body_items_create(void *data, Evas_Object *bxparent)
    //Impulse needs four values
    dbx = _sandie_double_spinner_box_add(sandie->win, bx, "Impulse X");
    aux_widget = _sandie_spinner_add(sandie->win, dbx, "X:", "%1.3f kg * p/s",
-                                    -9999, 9999, 0, 100);
+                                    -9999, 9999, INITIAL_IMPULSE, 100);
+   evas_object_data_set(sandie->win, "body1_impulsex", aux_widget);
    widget = _sandie_spinner_add(sandie->win, dbx, "Rel Position X:", "%1.2f",
                                 -360, 360, 0, 5);
    evas_object_data_set(aux_widget, "relx", widget);
@@ -1039,6 +1044,7 @@ _menu_body_items_create(void *data, Evas_Object *bxparent)
    material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
    aux_widget = _sandie_spinner_add(sandie->win, bx, "Mass", "%1.3f kg",
                                 0, 9999, 15, 2);
+   evas_object_data_set(material_widget, "mass", aux_widget);
    widget = _sandie_spinner_add(sandie->win, bx, "Density", "%1.3f kg/m³",
                                 0, 9999, 0, 2);
    evas_object_data_set(aux_widget, "density", widget);
@@ -1090,7 +1096,8 @@ _menu_body_items_create(void *data, Evas_Object *bxparent)
    //Impulse needs four values
    dbx = _sandie_double_spinner_box_add(sandie->win, bx, "Impulse X");
    aux_widget = _sandie_spinner_add(sandie->win, dbx, "X:", "%1.3f kg * p/s",
-                                    -9999, 9999, 0, 100);
+                                    -9999, 9999, -INITIAL_IMPULSE, 100);
+   evas_object_data_set(sandie->win, "body2_impulsex", aux_widget);
    widget = _sandie_spinner_add(sandie->win, dbx, "Rel Position X:", "%1.2f",
                                 -360, 360, 0, 5);
    evas_object_data_set(aux_widget, "relx", widget);
@@ -1185,7 +1192,6 @@ _sandie_body_add(Evas_Object *win, EPhysics_World *world, int x, int y)
    body = ephysics_body_circle_add(world);
    ephysics_body_evas_object_set(body, body_image, EINA_TRUE);
    ephysics_body_mass_set(body, 20);
-   ephysics_body_central_impulse_apply(body, 8201, 2110, 0);
    ephysics_body_event_callback_add(body, EPHYSICS_CALLBACK_BODY_DEL,
                                     _body_del, NULL);
 
@@ -1236,6 +1242,9 @@ _world_populate(Sandie_Data *sandie, Evas_Object *bxparent)
    sandie->body2 = _sandie_body_add(sandie->win, sandie->world, (int) WIDTH / 2,
                                     (int) HEIGHT / 5);
 
+   ephysics_body_central_impulse_apply(sandie->body1, INITIAL_IMPULSE, 0, 0);
+   ephysics_body_central_impulse_apply(sandie->body2, -INITIAL_IMPULSE, 0, 0);
+
    _menu_body_items_create(sandie, bxparent);
 }
 
@@ -1243,8 +1252,22 @@ static void
 _restart(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Sandie_Data *sandie = data;
-   ephysics_body_del(sandie->body1);
-   ephysics_body_del(sandie->body2);
+
+   ephysics_body_geometry_set(sandie->body1, (int) WIDTH / 5, (int) HEIGHT / 5,
+                              -15, 70, 70, 30);
+   ephysics_body_geometry_set(sandie->body2, (int) WIDTH / 2, (int) HEIGHT / 5,
+                              -15, 70, 70, 30);
+
+   ephysics_body_stop(sandie->body1);
+   ephysics_body_stop(sandie->body2);
+
+   ephysics_body_central_impulse_apply(sandie->body1, INITIAL_IMPULSE, 0, 0);
+   ephysics_body_central_impulse_apply(sandie->body2, -INITIAL_IMPULSE, 0, 0);
+
+   elm_spinner_value_set(evas_object_data_get(sandie->win, "body1_impulsex"),
+                                              INITIAL_IMPULSE);
+   elm_spinner_value_set(evas_object_data_get(sandie->win, "body2_impulsex"),
+                                              -INITIAL_IMPULSE);
 }
 
 static Evas_Object *
