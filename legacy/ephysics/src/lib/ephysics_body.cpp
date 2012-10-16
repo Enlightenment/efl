@@ -1307,6 +1307,12 @@ ephysics_body_soft_body_dragging_unset(EPhysics_Body *body)
         return;
      }
 
+   if (!body->dragging_data.dragging)
+     {
+        INF("Dragging isn't set");
+        return;
+     }
+
    ephysics_world_lock_take(body->world);
    face = body->soft_body->m_faces[body->dragging_data.triangle];
    for (int i = 0; i < 3; i++)
@@ -1562,7 +1568,7 @@ ephysics_body_soft_body_dragging_apply(EPhysics_Body *body)
      {
         node = face.m_n[i];
         node->m_v *= 0;
-	node->m_im *= 0;
+        node->m_im *= 0;
      }
 }
 
