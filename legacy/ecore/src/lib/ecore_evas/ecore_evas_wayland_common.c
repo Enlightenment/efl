@@ -451,8 +451,8 @@ _ecore_evas_wl_common_title_set(Ecore_Evas *ee, const char *title)
      {
         EE_Wl_Smart_Data *sd;
 
-        if (!(sd = evas_object_smart_data_get(ee->engine.wl.frame))) return;
-        evas_object_text_text_set(sd->text, ee->prop.title);
+        if ((sd = evas_object_smart_data_get(ee->engine.wl.frame)))
+          evas_object_text_text_set(sd->text, ee->prop.title);
      }
 
    if ((ee->prop.title) && (ee->engine.wl.win->shell_surface))
