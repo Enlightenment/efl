@@ -911,7 +911,8 @@ _scroller_box_add(Evas_Object *parent, Evas_Object *scbx)
 
    sc = elm_scroller_add(parent);
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
-   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_ON);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF,
+                           ELM_SCROLLER_POLICY_AUTO);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(scbx, sc);
