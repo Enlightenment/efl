@@ -14,6 +14,11 @@
 #define DEPTH (100)
 #define INITIAL_IMPULSE (9500)
 
+static const char *materials[] =
+{
+   "Custom", "Concrete", "Iron", "Plastic", "Polystyrene", "Rubber", "Wood"
+};
+
 typedef struct _Sandie_Data {
    Evas_Object *win, *tb, *nf, *sl_hardness1, *sl_hardness2;
    EPhysics_World *world;
@@ -156,13 +161,13 @@ _body2_type_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_body_material_set(Evas_Object *obj, EPhysics_Body *body)
+_body_material_set(Evas_Object *obj, Evas_Object *win, EPhysics_Body *body,
+                   EPhysics_Body_Material material)
 {
    Evas_Object *body_image;
-   const char *material;
    int x, y, w, h;
 
-   ephysics_body_material_set(body, elm_spinner_value_get(obj));
+   ephysics_body_material_set(body, material);
 
    elm_slider_value_set(evas_object_data_get(obj, "mass"),
                          ephysics_body_mass_get(body));
@@ -177,28 +182,14 @@ _body_material_set(Evas_Object *obj, EPhysics_Body *body)
    evas_object_geometry_get(body_image, &x, &y, &w, &h);
    evas_object_del(body_image);
 
-   material = elm_spinner_special_value_get(obj, elm_spinner_value_get(obj));
-   body_image = elm_image_add(evas_object_data_get(obj, "win"));
+   body_image = elm_image_add(win);
    elm_image_file_set(
-      body_image, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj", material);
+      body_image, PACKAGE_DATA_DIR "/" SANDBOX_THEME ".edj",
+      materials[material]);
    evas_object_resize(body_image, w, h);
    evas_object_move(body_image, x, y);
    evas_object_show(body_image);
    ephysics_body_evas_object_set(body, body_image, EINA_FALSE);
-}
-
-static void
-_body1_material_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
-{
-   Sandie_Data *sandie = data;
-   _body_material_set(obj, sandie->body1);
-}
-
-static void
-_body2_material_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
-{
-   Sandie_Data *sandie = data;
-   _body_material_set(obj, sandie->body2);
 }
 
 static void
@@ -786,45 +777,73 @@ _sandie_label_add(Evas_Object *win, Evas_Object *bxparent,
    evas_object_show(label);
 }
 
-static Evas_Object *
-_sandie_enum_add(Evas_Object *win, Evas_Object *bxparent,
-                 const char *subcategory)
+static void
+_material_sel_cb1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Evas_Object *sp;
-
-   _sandie_label_add(win, bxparent, subcategory);
-
-   sp = elm_spinner_add(win);
-   elm_spinner_wrap_set(sp, EINA_TRUE);
-   elm_spinner_min_max_set(sp, 0, 6);
-   elm_spinner_value_set(sp, 0);
-   elm_spinner_step_set(sp, 1);
-   elm_spinner_label_format_set(sp, "%.0f");
-   elm_spinner_editable_set(sp, EINA_FALSE);
-
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_CUSTOM, "Custom");
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_CONCRETE,
-                                 "Concrete");
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_IRON, "Iron");
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_PLASTIC, "Plastic");
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_POLYSTYRENE,
-                                 "Polystyrene");
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_RUBBER, "Rubber");
-   elm_spinner_special_value_add(sp, EPHYSICS_BODY_MATERIAL_WOOD, "Wood");
-
-   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
-   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_pack_end(bxparent, sp);
-   evas_object_show(sp);
-
-   evas_object_data_set(sp, "win", win);
-
-   return sp;
+   Sandie_Data *sd = evas_object_data_get(obj, "sd");
+   elm_object_text_set(obj, materials[(int) data]);
+   _body_material_set(obj, sd->win, sd->body1, (EPhysics_Body_Material) data);
 }
 
 static void
-_type_radio_add(Sandie_Data *data, Evas_Object *bxparent,
-                void (*func) (void *data, Evas_Object *obj, void *event_info))
+_material_sel_cb2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Sandie_Data *sd = evas_object_data_get(obj, "sd");
+   elm_object_text_set(obj, materials[(int) data]);
+   _body_material_set(obj, sd->win, sd->body2, (EPhysics_Body_Material) data);
+}
+
+static Evas_Object *
+_material_selector_add(Sandie_Data *sd, Evas_Object *bxparent,
+                       Evas_Smart_Cb func)
+{
+   Evas_Object *box, *hv;
+
+   box = elm_box_add(sd->win);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(box, EVAS_HINT_FILL, 0.0);
+   evas_object_show(box);
+   elm_box_pack_end(bxparent, box);
+
+   _sandie_label_add(sd->win, box, "Body Material");
+
+   hv = elm_hoversel_add(sd->win);
+   elm_hoversel_hover_parent_set(hv, sd->nf);
+   elm_object_text_set(hv, materials[EPHYSICS_BODY_MATERIAL_CUSTOM]);
+   elm_hoversel_item_add(hv, materials[EPHYSICS_BODY_MATERIAL_CUSTOM],
+                         NULL, ELM_ICON_NONE, func,
+                         (void *) EPHYSICS_BODY_MATERIAL_CUSTOM);
+   elm_hoversel_item_add(hv, materials[EPHYSICS_BODY_MATERIAL_CONCRETE],
+                         NULL, ELM_ICON_NONE, func,
+                         (void *) EPHYSICS_BODY_MATERIAL_CONCRETE);
+   elm_hoversel_item_add(hv, materials[EPHYSICS_BODY_MATERIAL_IRON],
+                         NULL, ELM_ICON_NONE, func,
+                         (void *) EPHYSICS_BODY_MATERIAL_IRON);
+   elm_hoversel_item_add(hv, materials[EPHYSICS_BODY_MATERIAL_PLASTIC],
+                         NULL, ELM_ICON_NONE, func,
+                         (void *) EPHYSICS_BODY_MATERIAL_PLASTIC);
+   elm_hoversel_item_add(hv, materials[EPHYSICS_BODY_MATERIAL_POLYSTYRENE],
+                         NULL, ELM_ICON_NONE, func,
+                         (void *) EPHYSICS_BODY_MATERIAL_POLYSTYRENE);
+   elm_hoversel_item_add(hv, materials[EPHYSICS_BODY_MATERIAL_RUBBER],
+                         NULL, ELM_ICON_NONE, func,
+                         (void *) EPHYSICS_BODY_MATERIAL_RUBBER);
+   elm_hoversel_item_add(hv, materials[EPHYSICS_BODY_MATERIAL_WOOD],
+                         NULL, ELM_ICON_NONE, func,
+                         (void *) EPHYSICS_BODY_MATERIAL_WOOD);
+
+   evas_object_size_hint_align_set(hv, 1, 0.5);
+   elm_box_pack_end(box, hv);
+   evas_object_show(hv);
+
+   evas_object_data_set(hv, "sd", sd);
+
+   return hv;
+}
+
+static void
+_type_radio_add(Sandie_Data *data, Evas_Object *bxparent, Evas_Smart_Cb func)
 {
    Evas_Object *dbx, *rd, *rdg;
 
@@ -957,7 +976,7 @@ _menu_body_items_create(void *data)
 
    _type_radio_add(sandie, bx, _body1_type_cb);
 
-   material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
+   material_widget = _material_selector_add(sandie, bx, _material_sel_cb1);
 
    bx = _category_add(sandie->win, bxbody1, "Properties", EINA_TRUE);
 
@@ -985,8 +1004,6 @@ _menu_body_items_create(void *data)
    widget = _sandie_slider_add(sandie->win, bx, "Restitution", "%1.3f",
                                0, 1, 0);
    evas_object_data_set(material_widget, "restitution", widget);
-   evas_object_smart_callback_add(material_widget, "delay,changed",
-                                  _body1_material_cb, sandie);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body1_restitution_cb, sandie);
    widget = _sandie_slider_add(sandie->win, bx, "Torque", "%1.3f",
@@ -1108,7 +1125,7 @@ _menu_body_items_create(void *data)
 
    _type_radio_add(sandie, bx, _body2_type_cb);
 
-   material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
+   material_widget = _material_selector_add(sandie, bx, _material_sel_cb2);
 
    bx = _category_add(sandie->win, bxbody2, "Properties", EINA_TRUE);
 
@@ -1136,8 +1153,6 @@ _menu_body_items_create(void *data)
    widget = _sandie_slider_add(sandie->win, bx, "Restitution", "%1.3f",
                                0, 1, 0);
    evas_object_data_set(material_widget, "restitution", widget);
-   evas_object_smart_callback_add(material_widget, "delay,changed",
-                                  _body2_material_cb, sandie);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body2_restitution_cb, sandie);
    widget = _sandie_slider_add(sandie->win, bx, "Torque", "%1.3f",
