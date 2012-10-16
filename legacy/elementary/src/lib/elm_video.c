@@ -120,12 +120,12 @@ _elm_video_smart_sizing_eval(Evas_Object *obj)
 
 #ifdef HAVE_EMOTION
 static void
-_on_size_hints_changed(void *data,
+_on_size_hints_changed(void *data __UNUSED__,
                        Evas *e __UNUSED__,
-                       Evas_Object *obj __UNUSED__,
+                       Evas_Object *obj,
                        void *event_info __UNUSED__)
 {
-   elm_layout_sizing_eval(data);
+   elm_layout_sizing_eval(obj);
 }
 
 static void
