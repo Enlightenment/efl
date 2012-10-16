@@ -981,8 +981,6 @@ pthread_attr_setaffinity_np(NULL, 0, NULL);
   [AC_MSG_ERROR([Missing pthread.h])])
 pthread_cflags="-pthread"
 pthread_libs="-pthread"
-AC_DEFINE(BUILD_ASYNC_EVENTS, 1, [Build async events support])
-AC_DEFINE(BUILD_ASYNC_PRELOAD, 1, [Build async image preload support])
 
 #######################################
 ## Pipe Renderer

@@ -123,11 +123,6 @@ static int initted = 0;
 void
 evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 {
-   int mmx = 0, sse = 0, sse2 = 0;
-
-#ifdef BUILD_MMX
-   evas_common_cpu_can_do(&mmx, &sse, &sse2);
-#endif
    if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
      _evas_yv12torgb_sse(src, dst, w, h);
    else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
