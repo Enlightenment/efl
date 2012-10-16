@@ -1011,3 +1011,6 @@
 
        * Since evas has 8bit engines removed, remove support from ecore-evas.
 
+2012-10-16  Christopher Michael
+
+       * Update Ecore_Wayland to build & work with newest wayland (0.99) from git
