@@ -67,6 +67,7 @@
  * @author JiHyeon Seol <jihyeon.seol@@samsung.com>
  * @author Flavio Ceolin <flavio.ceolin@@profusion.mobi>
  * @author Igor Murzov <e-mail@@date.by>
+ * @author Jiyoun Park <jy0703.park@@samsung.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
