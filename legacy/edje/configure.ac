@@ -107,6 +107,7 @@ EFL_ENABLE_BIN([edje-inspector])
 EFL_ENABLE_BIN([edje-external-inspector])
 EFL_ENABLE_BIN([edje-watch])
 EFL_ENABLE_BIN([edje-codegen])
+EFL_ENABLE_BIN([edje-pick])
 
 # Optional EDJE_PROGRAM_CACHE (use much more ram, but increase speed in some cases)
 want_edje_program_cache="no"
