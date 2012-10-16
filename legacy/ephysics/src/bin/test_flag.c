@@ -4,11 +4,71 @@
 
 #include "ephysics_test.h"
 
+typedef struct _Grabbing_Data
+{
+  int mouse_status; // 0, up, 1, down
+  EPhysics_Body *body;
+  struct {
+    int x;
+    int y;
+    int node;
+  } click_data;
+} Grabbing_Data;
+
+static void
+_on_delete(void *data __UNUSED__, EPhysics_Body *body, void *event_info __UNUSED__)
+{
+   Grabbing_Data *grabbing = ephysics_body_data_get(body);
+   free(grabbing);
+}
+
+static void
+_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
+{
+  Grabbing_Data *grabbing = data;
+  Evas_Event_Mouse_Down *mdown = event_info;
+  Evas_Coord x, y;
+
+  evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+  grabbing->mouse_status = 1;
+  grabbing->click_data.x = mdown->output.x - x;
+  grabbing->click_data.y = mdown->output.y - y;
+  grabbing->click_data.node = ephysics_body_soft_body_triangle_index_get(
+                               grabbing->body, mdown->output.x, mdown->output.y);
+}
+
+static void
+_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+  Grabbing_Data *grabbing = data;
+  grabbing->mouse_status = 0;
+}
+
+static void
+_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+  Grabbing_Data *grabbing = data;
+  Evas_Event_Mouse_Move *mmove = event_info;
+  Evas_Coord nx, ny;
+
+  if (!grabbing->mouse_status) return;
+
+  nx = mmove->cur.output.x;
+  ny = mmove->cur.output.y;
+
+  if (nx < 0 || ny < 0 || grabbing->click_data.node < 0) return;
+
+  DBG("node: %d, nx: %d, ny: %d\n", grabbing->click_data.node, nx, ny);
+  ephysics_body_soft_body_triangle_move(grabbing->body,
+                                        grabbing->click_data.node, nx, ny, 10);
+}
+
 static void
 _world_populate(Test_Data *test_data)
 {
    Evas_Object *evas_obj;
    EPhysics_Body *flag_body, *pole_body;
+   Grabbing_Data *grabbing;
 
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(
@@ -28,7 +88,7 @@ _world_populate(Test_Data *test_data)
    evas_obj = elm_image_add(test_data->win);
    elm_image_file_set(
       evas_obj, PACKAGE_DATA_DIR "/" EPHYSICS_TEST_THEME ".edj", "green-flag");
-   evas_object_move(evas_obj, 150 + 17, FLOOR_Y - 280 + 14);
+   evas_object_move(evas_obj, 150 + 12, FLOOR_Y - 280 + 14);
    evas_object_resize(evas_obj, 180, 126);
    evas_object_show(evas_obj);
    test_data->evas_objs = eina_list_append(test_data->evas_objs, evas_obj);
@@ -43,6 +103,20 @@ _world_populate(Test_Data *test_data)
    test_data->bodies = eina_list_append(test_data->bodies, flag_body);
    ephysics_body_cloth_anchor_full_add(flag_body, pole_body,
                                        EPHYSICS_BODY_CLOTH_ANCHOR_SIDE_LEFT);
+
+   grabbing = calloc(1, sizeof(Grabbing_Data));
+   grabbing->body = flag_body;
+   ephysics_body_data_set(flag_body, grabbing);
+
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _mouse_down_cb, grabbing);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_UP,
+                                  _mouse_up_cb, grabbing);
+   evas_object_event_callback_add(evas_obj, EVAS_CALLBACK_MOUSE_MOVE,
+                                  _mouse_move_cb, grabbing);
+
+  ephysics_body_event_callback_add(flag_body, EPHYSICS_CALLBACK_BODY_DEL,
+                                    _on_delete, NULL);
 }
 
 static void
