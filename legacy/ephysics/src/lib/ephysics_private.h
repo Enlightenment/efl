@@ -117,6 +117,11 @@ struct _EPhysics_Body {
      Eina_Bool light_apply:1;
      int material_index;
      Eina_Bool rebounding;
+     struct {
+       int triangle;
+       double mass[3];
+       Eina_Bool dragging;
+     } dragging_data;
 };
 
 extern int _ephysics_log_dom;
@@ -153,6 +158,7 @@ void ephysics_body_recalc(EPhysics_Body *body, double rate);
 void ephysics_body_forces_apply(EPhysics_Body *body);
 void ephysics_body_activate(const EPhysics_Body *body, Eina_Bool activate);
 void ephysics_body_evas_objects_restack(EPhysics_World *world);
+void ephysics_body_soft_body_dragging_apply(EPhysics_Body *body);
 
 /* Camera */
 EPhysics_Camera *ephysics_camera_add(EPhysics_World *world);

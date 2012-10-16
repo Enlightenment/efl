@@ -1764,6 +1764,44 @@ EAPI double ephysics_body_soft_body_hardness_get(const EPhysics_Body *body);
 
 /**
  * @brief
+ * Set the soft body dragging status.
+ *
+ * While dragging a soft body the user may want to freeze a specific trimesh
+ * face, after calling this function EPhysics will do freeze the @p triangle
+ * untill it gets a call to unset it with
+ * ephysics_body_soft_body_dragging_unset().
+ *
+ * @note Freezing a specific trimesh face means no forces are applied to it, no
+ * gravity enforced, that's @p triangle will have no mass untill it dragging gets
+ * unset.
+ *
+ * @param body The body of interest.
+ * @param triangle The triangle to freeze.
+ *
+ * @see ephysics_body_soft_body_dragging_unset().
+ * @see ephysics_body_soft_body_triangle_index_get().
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_dragging_set(EPhysics_Body *body, int triangle);
+
+/**
+ * @brief
+ * Unset the soft body dragging status.
+ *
+ * This function will tell EPhysics to not freeze - the previously dragging
+ * triangle set - any more.
+ *
+ * @param body The body to unset the dragging status.
+ *
+ * @see ephysics_body_soft_body_dragging_set() for dragging details.
+ *
+ * @ingroup EPhysics_Body
+ */
+EAPI void ephysics_body_soft_body_dragging_unset(EPhysics_Body *body);
+
+/**
+ * @brief
  * Get the triangle index of a soft body in @p x and @p y.
  *
  * Given a point in @p x and @p y a ray cast is performed and if a triangle is

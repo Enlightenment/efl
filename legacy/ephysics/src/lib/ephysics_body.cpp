@@ -780,6 +780,23 @@ _ephysics_body_volume_get(const EPhysics_Body *body)
    return vector.x() * vector.y() * vector.z();
 }
 
+void
+_ephysics_body_soft_body_dragging_set(EPhysics_Body *body, int triangle)
+{
+   btSoftBody::Face face;
+   btSoftBody::Node *node;
+
+   body->dragging_data.triangle = triangle;
+   body->dragging_data.dragging = EINA_TRUE;
+
+   face = body->soft_body->m_faces[triangle];
+   for (int i = 0; i < 3; i++)
+     {
+        node = face.m_n[i];
+        body->dragging_data.mass[i] = node->m_im;
+     }
+}
+
 static void
 _ephysics_body_mass_set(EPhysics_Body *body, double mass)
 {
@@ -789,7 +806,12 @@ _ephysics_body_mass_set(EPhysics_Body *body, double mass)
      mass = body->density * _ephysics_body_volume_get(body);
 
    if (body->soft_body)
-     body->soft_body->setTotalMass(mass);
+     {
+        body->soft_body->setTotalMass(mass);
+        if (body->dragging_data.dragging)
+          _ephysics_body_soft_body_dragging_set(body,
+                                                body->dragging_data.triangle);
+     }
    else
      {
         body->collision_shape->calculateLocalInertia(mass, inertia);
@@ -1232,6 +1254,68 @@ ephysics_body_soft_body_hardness_set(EPhysics_Body *body, double hardness)
    ephysics_world_lock_release(body->world);
 }
 
+EAPI void
+ephysics_body_soft_body_dragging_set(EPhysics_Body *body, int triangle)
+{
+   if (!body)
+     {
+        ERR("Can't set soft body dragging status, body is null.");
+        return;
+     }
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Can set soft body dragging status, body must not be a rigid body.");
+        return;
+     }
+
+   if (triangle < 0 || triangle >= body->soft_body->m_faces.size())
+     {
+        ERR("Could not move soft body triangle, provided body triangle index "
+            "ranges from 0 to %d", body->soft_body->m_faces.size());
+        return;
+     }
+
+   ephysics_world_lock_take(body->world);
+   _ephysics_body_soft_body_dragging_set(body, triangle);
+   ephysics_world_lock_release(body->world);
+
+   DBG("Body %p appended to world's dragging bodies list.", body);
+}
+
+EAPI void
+ephysics_body_soft_body_dragging_unset(EPhysics_Body *body)
+{
+   btSoftBody::Face face;
+   btSoftBody::Node *node;
+
+   if (!body)
+     {
+        ERR("Can't unset soft body dragging status, body is null.");
+        return;
+     }
+
+   if (body->type == EPHYSICS_BODY_TYPE_RIGID)
+     {
+        ERR("Can unset soft body dragging status, body must not be a rigid"
+            " body.");
+        return;
+     }
+
+   ephysics_world_lock_take(body->world);
+   face = body->soft_body->m_faces[body->dragging_data.triangle];
+   for (int i = 0; i < 3; i++)
+     {
+        node = face.m_n[i];
+        node->m_im = body->dragging_data.mass[i];
+        body->dragging_data.mass[i] = 0;
+     }
+
+   body->dragging_data.dragging = EINA_FALSE;
+   body->dragging_data.triangle = 0;
+   ephysics_world_lock_release(body->world);
+}
+
 EAPI double
 ephysics_body_soft_body_hardness_get(const EPhysics_Body *body)
 {
@@ -1448,7 +1532,7 @@ no_body:
 }
 
 static void
-_ephysics_body_soft_body_single_face_transform(btSoftBody *soft_body, int face_idx, int node_idx, btTransform trans, btScalar vel_reduction)
+_ephysics_body_soft_body_single_face_transform(btSoftBody *soft_body, int face_idx, int node_idx, btTransform trans)
 {
    btSoftBody::Node *node;
    ATTRIBUTE_ALIGNED16(btDbvtVolume) vol;
@@ -1458,9 +1542,23 @@ _ephysics_body_soft_body_single_face_transform(btSoftBody *soft_body, int face_i
    node->m_x = trans * node->m_x;
    node->m_q = trans * node->m_q;
    node->m_n = trans.getBasis() * node->m_n;
-   node->m_v *= vel_reduction;
    vol = btDbvtVolume::FromCR(node->m_x, margin);
    soft_body->m_ndbvt.update(node->m_leaf, vol);
+}
+
+void
+ephysics_body_soft_body_dragging_apply(EPhysics_Body *body)
+{
+   btSoftBody::Face face;
+   btSoftBody::Node *node;
+
+   face = body->soft_body->m_faces[body->dragging_data.triangle];
+   for (int i = 0; i < 3; i++)
+     {
+        node = face.m_n[i];
+        node->m_v *= 0;
+	node->m_im *= 0;
+     }
 }
 
 EAPI void
@@ -1505,7 +1603,7 @@ ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x
         diff.setIdentity();
         diff.setOrigin(new_pos - node->m_x);
         _ephysics_body_soft_body_single_face_transform(body->soft_body, idx, i,
-                                                       diff, 0.25);
+                                                       diff);
 
         if (!i) continue;
 
@@ -1514,7 +1612,7 @@ ephysics_body_soft_body_triangle_move(EPhysics_Body *body, int idx, Evas_Coord x
           {
              if (m == idx) continue;
              _ephysics_body_soft_body_single_face_transform(body->soft_body, m,
-                                                            i, diff, 0.05);
+                                                            i, diff);
           }
      }
 

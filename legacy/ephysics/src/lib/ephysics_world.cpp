@@ -589,7 +589,11 @@ _th_simulate(void *data, Ecore_Thread *th)
         world->cur_th = th;
 
         EINA_INLIST_FOREACH(world->bodies, body)
-           ephysics_body_forces_apply(body);
+          {
+             ephysics_body_forces_apply(body);
+             if (body->dragging_data.dragging)
+               ephysics_body_soft_body_dragging_apply(body);
+          }
 
         time_now = ecore_time_get();
         delta = time_now - world->last_update;

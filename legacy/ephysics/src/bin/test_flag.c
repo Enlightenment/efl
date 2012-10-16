@@ -35,12 +35,16 @@ _mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_inf
   grabbing->click_data.y = mdown->output.y - y;
   grabbing->click_data.node = ephysics_body_soft_body_triangle_index_get(
                                grabbing->body, mdown->output.x, mdown->output.y);
+
+  ephysics_body_soft_body_dragging_set(grabbing->body,
+                                       grabbing->click_data.node);
 }
 
 static void
 _mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
   Grabbing_Data *grabbing = data;
+  ephysics_body_soft_body_dragging_unset(grabbing->body);
   grabbing->mouse_status = 0;
 }
 
