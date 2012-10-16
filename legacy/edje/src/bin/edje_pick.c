@@ -66,8 +66,6 @@ struct _Edje_Pick_Font
 };
 typedef struct _Edje_Pick_Font Edje_Pick_Font;
 
-typedef struct _Edje_Pick_Data Edje_Pick_Data;
-
 struct _Edje_Pick
 {
    Eina_Bool v; /* Verbose */
