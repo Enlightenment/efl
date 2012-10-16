@@ -1229,10 +1229,10 @@ _evas_render_cutout_add(Evas *eo_e, Evas_Object *eo_obj, int off_x, int off_y)
         if ((obj->cur.map) && (obj->cur.usemap))
           {
              Evas_Object *eo_oo;
-	     Evas_Object_Protected_Data *oo;
+             Evas_Object_Protected_Data *oo;
 
-	     eo_oo = eo_obj;
-	     oo = eo_data_get(eo_oo, EVAS_OBJ_CLASS);
+             eo_oo = eo_obj;
+             oo = eo_data_get(eo_oo, EVAS_OBJ_CLASS);
              while (oo->cur.clipper)
                {
                   if ((oo->cur.clipper->cur.map_parent
@@ -1328,7 +1328,7 @@ evas_render_updates_internal(Evas *eo_e,
 
    /* phase 1.5. check if the video should be inlined or stay in their overlay */
    alpha = e->engine.func->canvas_alpha_get(e->engine.data.output,
-					    e->engine.data.context);
+                                            e->engine.data.context);
 
    EINA_LIST_FOREACH(e->video_objects, ll, eo_obj)
      {
