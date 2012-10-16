@@ -37,32 +37,14 @@
 /*#define BUILD_CONVERT_32_RGB_ROT0*/
 /*#define BUILD_CONVERT_32_RGB_ROT270*/
 
-/*#define BUILD_SCALE_SAMPLE*/
-/*#define BUILD_SCALE_SMOOTH*/
-/*#define BUILD_SCALE_TRILINEAR*/
-
 /*#define BUILD_MMX*/
-/*#define BUILD_SSE*/
 /*#define BUILD_SSE3*/
-/*#define BUILD_C*/
 
 /*#define BUILD_LOADER_PNG*/
 /*#define BUILD_LOADER_JPEG*/
 /*#define BUILD_LOADER_EET*/
-/*#define BUILD_LOADER_EDB*/
 
 /*#define BUILD_FMEMOPEN*/
-
-/* check in that the user configured it right */
-#ifndef BUILD_MMX
-# ifndef BUILD_SSE3
-#  ifndef BUILD_SSE
-#   ifndef BUILD_C
-#   error "Please Read the README"
-    #endif
-#  endif
-# endif
-#endif
 
 #define DIRECT_SCALE
 

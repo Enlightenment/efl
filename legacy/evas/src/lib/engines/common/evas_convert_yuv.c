@@ -1,7 +1,7 @@
 #include "evas_common.h"
 #include "evas_convert_yuv.h"
 
-#if defined BUILD_MMX || defined BUILD_SSE
+#if defined BUILD_MMX
 # include "evas_mmx.h"
 #endif
 
@@ -14,8 +14,6 @@
 #endif
 
 #endif
-
-#ifdef BUILD_CONVERT_YUV
 
 static void _evas_yuv_init         (void);
 static void _evas_yv12torgb_sse    (unsigned char **yuv, unsigned char *rgb, int w, int h);
@@ -108,8 +106,6 @@ const vector unsigned char pickrgb2 = AVV(0x3, 0x1, 0x2, 0x19,
 #endif
 #endif
 
-#ifdef BUILD_C
-
 /* shortcut speedup lookup-tables */
 static short _v1164[256];
 static short _v1596[256];
@@ -123,8 +119,6 @@ static unsigned char _clip_lut[1024];
 #define CMP_CLIP(i) ((i&256)? (~(i>>10)) : i);
 
 static int initted = 0;
-
-#endif
 
 void
 evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
@@ -151,12 +145,10 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 #endif
    else
      {
-#ifdef BUILD_C
 	if (!initted) _evas_yuv_init();
 	initted = 1;
 	/* FIXME: diz may be faster sometimes */
 	_evas_yv12torgb_raster(src, dst, w, h);
-#endif
      }
 }
 
@@ -724,7 +716,6 @@ _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
 static void
 _evas_yuv_init(void)
 {
-#ifdef BUILD_C
    int i;
 
    for (i = 0; i < 256; i++)
@@ -742,14 +733,12 @@ _evas_yuv_init(void)
      {
 	_clip_lut[i+384] = i < 0 ? 0 : (i > 255) ? 255 : i;
      }
-#endif
 }
 
 #ifdef BUILD_ALTIVEC
 static void
 _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
-#ifdef BUILD_C
    int xx, yy;
    int y, u, v, r, g, b;
    unsigned char *yp1, *yp2, *up, *vp;
@@ -820,14 +809,12 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	dp1 += (w * 4);
 	dp2 += (w * 4);
      }
-#endif
 }
 #endif
 
 static void
 _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
-#ifdef BUILD_C
    int xx, yy;
    int y, u, v;
    unsigned char *yp1, *yp2, *up, *vp;
@@ -887,43 +874,35 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	dp1 += (w * 4);
 	dp2 += (w * 4);
      }
-#endif
 }
 
 void
 evas_common_convert_yuv_422_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 {
-#ifdef BUILD_C
    if (!initted) _evas_yuv_init();
    initted = 1;
    _evas_yuy2torgb_raster(src, dst, w, h);
-#endif
 }
 
 void
 evas_common_convert_yuv_420_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 {
-#ifdef BUILD_C
    if (!initted) _evas_yuv_init();
    initted = 1;
    _evas_nv12torgb_raster(src, dst, w, h);
-#endif
 }
 
 void
 evas_common_convert_yuv_420T_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 {
-#ifdef BUILD_C
    if (initted) _evas_yuv_init();
    initted = 1;
    _evas_nv12tiledtorgb_raster(src, dst, w, h);
-#endif
 }
 
 static void
 _evas_yuy2torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
-#ifdef BUILD_C
    int xx, yy;
    int y, u, v;
    unsigned char *yp1, *yp2, *up, *vp;
@@ -972,10 +951,8 @@ _evas_yuy2torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     yp1 += 4; yp2 += 4; up += 4; vp += 4;
 	  }
      }
-#endif
 }
 
-#ifdef BUILD_C
 static inline void
 _evas_yuv2rgb_420_raster(unsigned char *yp1, unsigned char *yp2, unsigned char *up, unsigned char *vp,
                          unsigned char *dp1, unsigned char *dp2)
@@ -1055,13 +1032,10 @@ _evas_yuv2rgb_420_raster(unsigned char *yp1, unsigned char *yp2, unsigned char *
 #endif
    *((DATA32 *) dp2) = 0xff000000 + rgb;
 }
-#endif
 
 static void
 _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
-#ifdef BUILD_C
-
 #define HANDLE_MACROBLOCK(YP1, YP2, UP, VP, DP1, DP2)                   \
    {                                                                    \
      int i;                                                             \
@@ -1211,13 +1185,11 @@ _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int 
              HANDLE_MACROBLOCK(yp1, yp2, up, vp, dp1, dp2);
           }
      }
-#endif
 }
 
 static void
 _evas_nv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
-#ifdef BUILD_C
    int xx, yy;
    unsigned char *yp1, *yp2, *up, *vp;
    unsigned char *dp1;
@@ -1251,8 +1223,5 @@ _evas_nv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
         yp1 += w;
         yp2 += w;
      }
-#endif
 }
-
-#endif
 

@@ -1181,9 +1181,6 @@ EVAS_CHECK_DITHER([no-dither-mask], [conversion to 16bpp without dither mask], [
 #####################################################################
 ## no longer options - turn on.
 
-AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [YUV])
-AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [YUV])
-AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV])
 AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp RGB 332])
 AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp RGB 666])
 AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp RGB 232])

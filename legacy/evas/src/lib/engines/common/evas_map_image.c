@@ -5,11 +5,9 @@
 #include "evas_cs2_private.h"
 #endif
 
-#ifdef BUILD_SCALE_SMOOTH
-# ifdef BUILD_MMX
-#  undef SCALE_USING_MMX
-#  define SCALE_USING_MMX
-# endif
+#ifdef BUILD_MMX
+# undef SCALE_USING_MMX
+# define SCALE_USING_MMX
 #endif
 
 #define FPI 8
@@ -630,25 +628,22 @@ evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
    return EINA_TRUE;
 }
 
-#ifdef BUILD_SCALE_SMOOTH
-# ifdef BUILD_MMX
-#  undef FUNC_NAME
-#  undef FUNC_NAME_DO
-#  define FUNC_NAME evas_common_map_rgba_internal_mmx
-#  define FUNC_NAME_DO evas_common_map_rgba_internal_mmx_do
-#  undef SCALE_USING_MMX
-#  define SCALE_USING_MMX
-#  include "evas_map_image_internal.c"
-# endif
-# ifdef BUILD_C
-#  undef FUNC_NAME
-#  undef FUNC_NAME_DO
-#  define FUNC_NAME evas_common_map_rgba_internal
-#  define FUNC_NAME_DO evas_common_map_rgba_internal_do
-#  undef SCALE_USING_MMX
-#  include "evas_map_image_internal.c"
-# endif
+#ifdef BUILD_MMX
+# undef FUNC_NAME
+# undef FUNC_NAME_DO
+# define FUNC_NAME evas_common_map_rgba_internal_mmx
+# define FUNC_NAME_DO evas_common_map_rgba_internal_mmx_do
+# undef SCALE_USING_MMX
+# define SCALE_USING_MMX
+# include "evas_map_image_internal.c"
 #endif
+
+#undef FUNC_NAME
+#undef FUNC_NAME_DO
+#define FUNC_NAME evas_common_map_rgba_internal
+#define FUNC_NAME_DO evas_common_map_rgba_internal_do
+#undef SCALE_USING_MMX
+#include "evas_map_image_internal.c"
 
 EAPI void
 evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
@@ -685,9 +680,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
           evas_common_map_rgba_internal_mmx(src, dst, dc, p, smooth, level);
         else
 #endif
-#ifdef BUILD_C
           evas_common_map_rgba_internal(src, dst, dc, p, smooth, level);
-#endif
         return;
      }
    /* save out clip info */
@@ -709,9 +702,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
           evas_common_map_rgba_internal_mmx(src, dst, dc, p, smooth, level);
         else
 #endif
-#ifdef BUILD_C
           evas_common_map_rgba_internal(src, dst, dc, p, smooth, level);
-#endif        
      }
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
@@ -749,11 +740,9 @@ evas_common_map_rgba_do(const Eina_Rectangle *clip,
                                                &spans->spans[0], smooth, level);
         else
 #endif
-#ifdef BUILD_C
           evas_common_map_rgba_internal_do(src, dst, dc,
                                            &spans->spans[0], smooth, level);
-#endif
-        return ;                                         
+        return;
      }
 
    for (i = 0; i < rects->active; ++i)
@@ -769,9 +758,7 @@ evas_common_map_rgba_do(const Eina_Rectangle *clip,
                                                &spans->spans[i], smooth, level);
         else
 #endif
-#ifdef BUILD_C
           evas_common_map_rgba_internal_do(src, dst, dc,
                                            &spans->spans[i], smooth, level);
-#endif
      }
 }

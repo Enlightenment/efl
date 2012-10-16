@@ -89,373 +89,26 @@ scale_calc_a_points(int *p, int s, int d, int c, int cc)
      }
 }
 
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_C
-EAPI void
-evas_common_scale_rgba_mipmap_down_2x2_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *src_ptr2, *dst_ptr;
-
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   src_ptr = src;
-   src_ptr2 = src + src_w;
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	src_ptr = src + (y * src_w * 2);
-	src_ptr2 = src_ptr + src_w;
-	for (x = 0; x < dst_w; x++)
-	  {
-	     R_VAL(dst_ptr) = (R_VAL(src_ptr) + R_VAL(src_ptr + 1) + R_VAL(src_ptr2) + R_VAL(src_ptr2 + 1)) >> 2;
-	     G_VAL(dst_ptr) = (G_VAL(src_ptr) + G_VAL(src_ptr + 1) + G_VAL(src_ptr2) + G_VAL(src_ptr2 + 1)) >> 2;
-	     B_VAL(dst_ptr) = (B_VAL(src_ptr) + B_VAL(src_ptr + 1) + B_VAL(src_ptr2) + B_VAL(src_ptr2 + 1)) >> 2;
-	     A_VAL(dst_ptr) = (A_VAL(src_ptr) + A_VAL(src_ptr + 1) + A_VAL(src_ptr2) + A_VAL(src_ptr2 + 1)) >> 2;
-
-	     src_ptr+=2;
-	     src_ptr2+=2;
-	     dst_ptr++;
-	  }
-     }
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_C
-EAPI void
-evas_common_scale_rgba_mipmap_down_2x1_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *dst_ptr;
-
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   src_ptr = src;
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	src_ptr = src + (y * src_w * 2);
-	for (x = 0; x < dst_w; x++)
-	  {
-	     R_VAL(dst_ptr) = (R_VAL(src_ptr) + R_VAL(src_ptr + 1)) >> 1;
-	     G_VAL(dst_ptr) = (G_VAL(src_ptr) + G_VAL(src_ptr + 1)) >> 1;
-	     B_VAL(dst_ptr) = (B_VAL(src_ptr) + B_VAL(src_ptr + 1)) >> 1;
-	     A_VAL(dst_ptr) = (A_VAL(src_ptr) + A_VAL(src_ptr + 1)) >> 1;
-
-	     src_ptr+=2;
-	     dst_ptr++;
-	  }
-     }
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_C
-EAPI void
-evas_common_scale_rgba_mipmap_down_1x2_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *src_ptr2, *dst_ptr;
-
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   src_ptr = src;
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	src_ptr = src + (y * src_w * 2);
-	src_ptr2 = src_ptr + src_w;
-	for (x = 0; x < dst_w; x++)
-	  {
-	     R_VAL(dst_ptr) = (R_VAL(src_ptr) + R_VAL(src_ptr2)) >> 1;
-	     G_VAL(dst_ptr) = (G_VAL(src_ptr) + G_VAL(src_ptr2)) >> 1;
-	     B_VAL(dst_ptr) = (B_VAL(src_ptr) + B_VAL(src_ptr2)) >> 1;
-	     A_VAL(dst_ptr) = (A_VAL(src_ptr) + A_VAL(src_ptr2)) >> 1;
-
-	     src_ptr+=2;
-	     src_ptr2+=2;
-	     dst_ptr++;
-	  }
-     }
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_C
-EAPI void
-evas_common_scale_rgb_mipmap_down_2x2_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *src_ptr2, *dst_ptr;
-
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   src_ptr = src;
-   src_ptr2 = src + src_w;
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	for (x = 0; x < dst_w; x++)
-	  {
-	     R_VAL(dst_ptr) = (R_VAL(src_ptr) + R_VAL(src_ptr + 1) + R_VAL(src_ptr2) + R_VAL(src_ptr2 + 1)) >> 2;
-	     G_VAL(dst_ptr) = (G_VAL(src_ptr) + G_VAL(src_ptr + 1) + G_VAL(src_ptr2) + G_VAL(src_ptr2 + 1)) >> 2;
-	     B_VAL(dst_ptr) = (B_VAL(src_ptr) + B_VAL(src_ptr + 1) + B_VAL(src_ptr2) + B_VAL(src_ptr2 + 1)) >> 2;
-	     A_VAL(dst_ptr) = 0xff;
-
-	     src_ptr+=2;
-	     src_ptr2+=2;
-	     dst_ptr++;
-	  }
-	src_ptr += src_w;
-	src_ptr2 += src_w;
-     }
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_C
-EAPI void
-evas_common_scale_rgb_mipmap_down_2x1_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *dst_ptr;
-
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   src_ptr = src;
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	for (x = 0; x < dst_w; x++)
-	  {
-	     R_VAL(dst_ptr) = (R_VAL(src_ptr) + R_VAL(src_ptr + 1)) >> 1;
-	     G_VAL(dst_ptr) = (G_VAL(src_ptr) + G_VAL(src_ptr + 1)) >> 1;
-	     B_VAL(dst_ptr) = (B_VAL(src_ptr) + B_VAL(src_ptr + 1)) >> 1;
-	     A_VAL(dst_ptr) = 0xff;
-
-	     src_ptr+=2;
-	     dst_ptr++;
-	  }
-	src_ptr += src_w;
-     }
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_C
-EAPI void
-evas_common_scale_rgb_mipmap_down_1x2_c(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *src_ptr2, *dst_ptr;
-
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   src_ptr = src;
-   src_ptr2 = src + src_w;
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	for (x = 0; x < dst_w; x++)
-	  {
-	     R_VAL(dst_ptr) = (R_VAL(src_ptr) + R_VAL(src_ptr2)) >> 1;
-	     G_VAL(dst_ptr) = (G_VAL(src_ptr) + G_VAL(src_ptr2)) >> 1;
-	     B_VAL(dst_ptr) = (B_VAL(src_ptr) + B_VAL(src_ptr2)) >> 1;
-	     A_VAL(dst_ptr) = 0xff;
-
-	     src_ptr+=2;
-	     src_ptr2+=2;
-	     dst_ptr++;
-	  }
-	src_ptr += src_w;
-	src_ptr2 += src_w;
-     }
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
 #ifdef BUILD_MMX
-EAPI void
-evas_common_scale_rgba_mipmap_down_2x2_mmx(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *src_ptr2, *dst_ptr;
-
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   /* NB: Dead assignments (reassigned to different values below)
-   src_ptr = src;
-   src_ptr2 = src + src_w;
-    */
-
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	src_ptr = src + (y * src_w * 2);
-	src_ptr2 = src_ptr + src_w;
-	for (x = 0; x < dst_w; x++)
-	  {
-	     punpcklbw_m2r(src_ptr[0], mm0);
-	     punpcklbw_m2r(src_ptr[1], mm1);
-	     punpcklbw_m2r(src_ptr2[0], mm2);
-	     punpcklbw_m2r(src_ptr2[1], mm3);
-	     psrlw_i2r(8, mm0);
-	     psrlw_i2r(8, mm1);
-	     psrlw_i2r(8, mm2);
-	     psrlw_i2r(8, mm3);
-	     paddw_r2r(mm1, mm0);
-	     paddw_r2r(mm2, mm0);
-	     paddw_r2r(mm3, mm0);
-	     psrlw_i2r(2, mm0);
-	     packuswb_r2r(mm0, mm0);
-	     movd_r2m(mm0, dst_ptr[0]);
-
-	     src_ptr+=2;
-	     src_ptr2+=2;
-	     dst_ptr++;
-	  }
-     }
-}
-#endif
+# undef SCALE_FUNC
+# define SCALE_FUNC evas_common_scale_rgba_in_to_out_clip_smooth_mmx
+# undef SCALE_USING_MMX
+# define SCALE_USING_MMX
+# include "evas_scale_smooth_scaler.c"
 #endif
 
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_MMX
-EAPI void
-evas_common_scale_rgba_mipmap_down_2x1_mmx(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *dst_ptr;
+#undef SCALE_FUNC
+#define SCALE_FUNC evas_common_scale_rgba_in_to_out_clip_smooth_c
+#undef SCALE_USING_MMX
+#include "evas_scale_smooth_scaler.c"
 
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   src_ptr = src;
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	src_ptr = src + (y * src_w * 2);
-	for (x = 0; x < dst_w; x++)
-	  {
-	     punpcklbw_m2r(src_ptr[0], mm0);
-	     punpcklbw_m2r(src_ptr[1], mm1);
-	     psrlw_i2r(8, mm0);
-	     psrlw_i2r(8, mm1);
-	     paddw_r2r(mm1, mm0);
-	     psrlw_i2r(1, mm0);
-	     packuswb_r2r(mm0, mm0);
-	     movd_r2m(mm0, dst_ptr[0]);
-
-	     src_ptr+=2;
-	     dst_ptr++;
-	  }
-     }
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_MMX
-EAPI void
-evas_common_scale_rgba_mipmap_down_1x2_mmx(DATA32 *src, DATA32 *dst, int src_w, int src_h)
-{
-   int x, y, dst_w, dst_h;
-   DATA32 *src_ptr, *src_ptr2, *dst_ptr;
-
-   dst_w = src_w >> 1;
-   dst_h = src_h >> 1;
-
-   if (dst_w < 1) dst_w = 1;
-   if (dst_h < 1) dst_h = 1;
-
-   /* NB: Dead assignment (gets reassigned later) */
-//   src_ptr = src;
-
-   src_ptr2 = src + src_w;
-   dst_ptr = dst;
-   for (y = 0; y < dst_h; y++)
-     {
-	src_ptr = src + (y * src_w * 2);
-	src_ptr2 = src_ptr + src_w;
-	for (x = 0; x < dst_w; x++)
-	  {
-	     punpcklbw_m2r(src_ptr[0], mm0);
-	     punpcklbw_m2r(src_ptr2[0], mm1);
-	     psrlw_i2r(8, mm0);
-	     psrlw_i2r(8, mm1);
-	     paddw_r2r(mm1, mm0);
-	     psrlw_i2r(1, mm0);
-	     packuswb_r2r(mm0, mm0);
-	     movd_r2m(mm0, dst_ptr[0]);
-
-	     src_ptr+=2;
-	     src_ptr2+=2;
-	     dst_ptr++;
-	  }
-     }
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-# ifdef BUILD_MMX
-#  undef SCALE_FUNC
-#  define SCALE_FUNC evas_common_scale_rgba_in_to_out_clip_smooth_mmx
-#  undef SCALE_USING_MMX
-#  define SCALE_USING_MMX
-#  include "evas_scale_smooth_scaler.c"
-# endif
-# ifdef BUILD_C
-#  undef SCALE_FUNC
-#  define SCALE_FUNC evas_common_scale_rgba_in_to_out_clip_smooth_c
-#  undef SCALE_USING_MMX
-#  include "evas_scale_smooth_scaler.c"
-# endif
 EAPI void
 evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
-				 RGBA_Draw_Context *dc,
-				 int src_region_x, int src_region_y,
-				 int src_region_w, int src_region_h,
-				 int dst_region_x, int dst_region_y,
-				 int dst_region_w, int dst_region_h)
+                                             RGBA_Draw_Context *dc,
+                                             int src_region_x, int src_region_y,
+                                             int src_region_w, int src_region_h,
+                                             int dst_region_x, int dst_region_y,
+                                             int dst_region_w, int dst_region_h)
 {
 # ifdef BUILD_MMX
    int mmx, sse, sse2;
@@ -517,13 +170,11 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 					       dst_region_w, dst_region_h);
 	else
 # endif
-# ifdef BUILD_C
 	  evas_common_scale_rgba_in_to_out_clip_smooth_c(src, dst, dc,
-					     src_region_x, src_region_y,
-					     src_region_w, src_region_h,
-					     dst_region_x, dst_region_y,
-					     dst_region_w, dst_region_h);
-# endif
+                                                         src_region_x, src_region_y,
+                                                         src_region_w, src_region_h,
+                                                         dst_region_x, dst_region_y,
+                                                         dst_region_w, dst_region_h);
      }
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
@@ -561,14 +212,12 @@ evas_common_scale_rgba_in_to_out_clip_smooth_do(const Cutout_Rects *reuse,
 					       dst_region_w, dst_region_h);
 	else
 # endif
-# ifdef BUILD_C
 	  evas_common_scale_rgba_in_to_out_clip_smooth_c(src, dst, dc,
-					     src_region_x, src_region_y,
-					     src_region_w, src_region_h,
-					     dst_region_x, dst_region_y,
-					     dst_region_w, dst_region_h);
-# endif
-        return ;
+                                                         src_region_x, src_region_y,
+                                                         src_region_w, src_region_h,
+                                                         dst_region_x, dst_region_y,
+                                                         dst_region_w, dst_region_h);
+        return;
      }
 
    for (i = 0; i < reuse->active; ++i)
@@ -587,14 +236,10 @@ evas_common_scale_rgba_in_to_out_clip_smooth_do(const Cutout_Rects *reuse,
 					       dst_region_w, dst_region_h);
 	else
 # endif
-# ifdef BUILD_C
 	  evas_common_scale_rgba_in_to_out_clip_smooth_c(src, dst, dc,
-					     src_region_x, src_region_y,
-					     src_region_w, src_region_h,
-					     dst_region_x, dst_region_y,
-					     dst_region_w, dst_region_h);
-# endif
+                                                         src_region_x, src_region_y,
+                                                         src_region_w, src_region_h,
+                                                         dst_region_x, dst_region_y,
+                                                         dst_region_w, dst_region_h);
      }
 }
-
-#endif
