@@ -1331,8 +1331,6 @@ elm_naviframe_item_insert_before(Evas_Object *obj,
        (sd->stack, EINA_INLIST_GET(it),
        EINA_INLIST_GET(((Elm_Naviframe_Item *)before)));
 
-   evas_object_hide(VIEW(it));
-
    elm_layout_sizing_eval(obj);
 
    return (Elm_Object_Item *)it;
@@ -1369,8 +1367,6 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
         evas_object_show(VIEW(it));
         evas_object_hide(VIEW(after));
      }
-   else
-     evas_object_hide(VIEW(it));
 
    elm_layout_sizing_eval(obj);
 
