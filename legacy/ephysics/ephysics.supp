@@ -13,17 +13,3 @@
    ...
    obj:*libfontconfig.so.*
 }
-
-{
-   eina_mempool check
-   Memcheck:Leak
-   ...
-   fun:eina_mempool_add
-}
-
-{
-   eet_mem_alloc check
-   Memcheck:Leak
-   ...
-   fun:_eet_mem_alloc
-}
