@@ -893,12 +893,13 @@ _sandie_double_spinner_box_add(Evas_Object *win, Evas_Object *bxparent,
 }
 
 static Evas_Object *
-_category_add(Evas_Object *win, Evas_Object *bxparent, const char *label)
+_category_add(Evas_Object *win, Evas_Object *bxparent, const char *label,
+              Eina_Bool collapse)
 {
    Evas_Object *cfr, *cbx;
 
    cfr = elm_frame_add(win);
-   elm_frame_autocollapse_set(cfr, EINA_TRUE);
+   elm_frame_autocollapse_set(cfr, collapse);
    elm_object_text_set(cfr, label);
    evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
@@ -963,10 +964,14 @@ _menu_body_items_create(void *data)
 
 
    //Body 1
-   bx = _category_add(sandie->win, bxbody1, "EPhysics Body 1");
+   bx = _category_add(sandie->win, bxbody1, "", EINA_FALSE);
+
    type_widget = _sandie_radio_add(sandie->win, bx, "<b>Body Type</b>", "Solid",
                                     "Soft");
    material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
+
+   bx = _category_add(sandie->win, bxbody1, "Properties", EINA_TRUE);
+
    aux_widget = _sandie_spinner_add(sandie->win, bx, "Mass", "%1.3f kg",
                                 0, 9999, 15, 2);
    evas_object_data_set(material_widget, "mass", aux_widget);
@@ -995,6 +1000,10 @@ _menu_body_items_create(void *data)
                                   _body1_material_cb, sandie);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body1_restitution_cb, sandie);
+   widget = _sandie_spinner_add(sandie->win, bx, "Torque", "%1.3f",
+                                0, 1, 0, 0.05);
+   evas_object_smart_callback_add(widget, "delay,changed", _body1_torque_cb,
+                                  sandie);
    dbx = _sandie_double_spinner_box_add(sandie->win, bx, "Damping");
    widget = _sandie_spinner_add(sandie->win, dbx, "Linear:", "%1.3f",
                                 0, 1, 0, 0.05);
@@ -1013,10 +1022,8 @@ _menu_body_items_create(void *data)
                                 0, 360, 57.29, 5);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body1_sleeping_threshold_angular_cb, sandie);
-   widget = _sandie_spinner_add(sandie->win, bx, "Torque", "%1.3f",
-                                0, 1, 0, 0.05);
-   evas_object_smart_callback_add(widget, "delay,changed", _body1_torque_cb,
-                                  sandie);
+
+   bx = _category_add(sandie->win, bxbody1, "Actions", EINA_TRUE);
 
    //Impulse needs four values
    dbx = _sandie_double_spinner_box_add(sandie->win, bx, "Impulse X");
@@ -1091,7 +1098,10 @@ _menu_body_items_create(void *data)
                                 "%1.2f º/s", -360, 360, 0, 2);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body1_angular_velocity_cb, sandie);
-   widget = _sandie_spinner_add(sandie->win, bx, "Soft Body Hardness",
+
+   bx = _category_add(sandie->win, bxbody1, "Soft Body", EINA_TRUE);
+
+   widget = _sandie_spinner_add(sandie->win, bx, "Hardness",
                                 "%1.2f%%", 0, 100, 100, 2);
    elm_object_disabled_set(widget, EINA_TRUE);
    evas_object_smart_callback_add(widget, "delay,changed", _body1_hardness_cb,
@@ -1109,10 +1119,14 @@ _menu_body_items_create(void *data)
    it = elm_toolbar_item_append(sandie->tb, NULL, "Body 1", _promote, it);
 
    //Body 2
-   bx = _category_add(sandie->win, bxbody2, "EPhysics Body 2");
+   bx = _category_add(sandie->win, bxbody2, "", EINA_FALSE);
+
    type_widget = _sandie_radio_add(sandie->win, bx, "<b>Body Type</b>", "Solid",
                                     "Soft");
    material_widget = _sandie_enum_add(sandie->win, bx, "Body Material");
+
+   bx = _category_add(sandie->win, bxbody2, "Properties", EINA_TRUE);
+
    aux_widget = _sandie_spinner_add(sandie->win, bx, "Mass", "%1.3f kg",
                                 0, 9999, 15, 2);
    evas_object_data_set(material_widget, "mass", aux_widget);
@@ -1141,6 +1155,10 @@ _menu_body_items_create(void *data)
                                   _body2_material_cb, sandie);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body2_restitution_cb, sandie);
+   widget = _sandie_spinner_add(sandie->win, bx, "Torque", "%1.3f",
+                                0, 1, 0, 0.05);
+   evas_object_smart_callback_add(widget, "delay,changed", _body2_torque_cb,
+                                  sandie);
    dbx = _sandie_double_spinner_box_add(sandie->win, bx, "Damping");
    widget = _sandie_spinner_add(sandie->win, dbx, "Linear:", "%1.3f",
                                 0, 1, 0, 0.05);
@@ -1159,10 +1177,8 @@ _menu_body_items_create(void *data)
                                 0, 360, 57.29, 5);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body2_sleeping_threshold_angular_cb, sandie);
-   widget = _sandie_spinner_add(sandie->win, bx, "Torque", "%1.3f",
-                                0, 1, 0, 0.05);
-   evas_object_smart_callback_add(widget, "delay,changed", _body2_torque_cb,
-                                  sandie);
+
+   bx = _category_add(sandie->win, bxbody2, "Actions", EINA_TRUE);
 
    //Impulse needs four values
    dbx = _sandie_double_spinner_box_add(sandie->win, bx, "Impulse X");
@@ -1237,7 +1253,10 @@ _menu_body_items_create(void *data)
                                 "%1.2f º/s", -360, 360, 0, 2);
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _body2_angular_velocity_cb, sandie);
-   widget = _sandie_spinner_add(sandie->win, bx, "Soft Body Hardness",
+
+   bx = _category_add(sandie->win, bxbody2, "Soft Body", EINA_TRUE);
+
+   widget = _sandie_spinner_add(sandie->win, bx, "Hardness",
                                 "%1.2f%%", 0, 100, 100, 2);
    elm_object_disabled_set(widget, EINA_TRUE);
    evas_object_smart_callback_add(widget, "delay,changed", _body2_hardness_cb,
@@ -1283,7 +1302,7 @@ _menu_items_create(Evas_Object *win, Evas_Object *bxparent,
 {
    Evas_Object *bx, *dbx, *widget;
 
-   bx = _category_add(win, bxparent, "World");
+   bx = _category_add(win, bxparent, "World", EINA_TRUE);
    dbx = _sandie_double_spinner_box_add(win, bx, "Gravity");
    widget = _sandie_spinner_add(win, dbx, "X:", "%1.2f px/s²",
                                 -1000, 1000, 0, 2);
@@ -1302,7 +1321,7 @@ _menu_items_create(Evas_Object *win, Evas_Object *bxparent,
    evas_object_smart_callback_add(widget, "delay,changed",
                                   _world_max_sleeping_time_cb, world);
 
-   bx = _category_add(win, bxparent, "Boundaries");
+   bx = _category_add(win, bxparent, "Boundaries", EINA_TRUE);
    widget = _sandie_spinner_add(win, bx, "Friction", "%1.3f",
                                 0, 1, 0.5, 0.05);
    evas_object_data_set(widget, "win", win);
