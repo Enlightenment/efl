@@ -176,13 +176,18 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
    /* try to get this cursor from the theme */
    if (!(cursor = ecore_wl_cursor_get(input->cursor_name)))
      {
+        printf("No Cursor %s in Theme\n", input->cursor_name);
         /* if the theme does not have this cursor, default to left pointer */
         if (!(cursor = ecore_wl_cursor_get("left_ptr")))
-          return;
+          {
+             printf("Failed to get Left Pointer Cursor\n");
+             return;
+          }
      }
 
    if ((!cursor->images) || (!cursor->images[0]))
      {
+        printf("Cursor %s has no images\n", input->cursor_name);
         ecore_wl_input_pointer_set(input, NULL, 0, 0);
         return;
      }
@@ -196,10 +201,13 @@ ecore_wl_input_cursor_from_name_set(Ecore_Wl_Input *input, const char *cursor_na
         wl_surface_attach(input->cursor_surface, buffer, 0, 0);
         wl_surface_damage(input->cursor_surface, 0, 0, 
                           cursor_image->width, cursor_image->height);
+        wl_surface_commit(input->cursor_surface);
 
         if (!input->cursor_frame_cb)
           _ecore_wl_input_cb_pointer_frame(input, NULL, 0);
      }
+   else
+     printf("No Buffer from Cursor Image\n");
 }
 
 EAPI void
@@ -230,8 +238,9 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
    input->keyboard_focus = NULL;
 
    input->seat = 
-     wl_display_bind(ewd->wl.display, id, &wl_seat_interface);
+     wl_registry_bind(ewd->wl.registry, id, &wl_seat_interface, 1);
    wl_list_insert(ewd->inputs.prev, &input->link);
+
    wl_seat_add_listener(input->seat, 
                         &_ecore_wl_seat_listener, input);
    wl_seat_set_user_data(input->seat, input);
@@ -321,15 +330,19 @@ _ecore_wl_input_seat_handle_capabilities(void *data, struct wl_seat *seat, enum 
 {
    Ecore_Wl_Input *input;
 
+   printf("Seat Handle Capabilities\n");
    if (!(input = data)) return;
+   printf("\tInput Valid\n");
    if ((caps & WL_SEAT_CAPABILITY_POINTER) && (!input->pointer))
      {
+        printf("\tCreate New Pointer\n");
         input->pointer = wl_seat_get_pointer(seat);
         wl_pointer_set_user_data(input->pointer, input);
         wl_pointer_add_listener(input->pointer, &pointer_listener, input);
      }
    else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && (input->pointer))
      {
+        printf("\tDestroy POinter\n");
         wl_pointer_destroy(input->pointer);
         input->pointer = NULL;
      }
@@ -366,6 +379,8 @@ _ecore_wl_input_cb_pointer_motion(void *data, struct wl_pointer *pointer __UNUSE
    Ecore_Wl_Input *input;
 
    /* LOGFN(__FILE__, __LINE__, __FUNCTION__); */
+
+   printf("Input Cb Pointer Motion\n");
 
    if (!(input = data)) return;
 
@@ -674,6 +689,8 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer __UNUSED
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
+   printf("Input Cb Pointer Enter\n");
+
    if (!surface) return;
    if (!(input = data)) return;
 
@@ -690,16 +707,16 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_pointer *pointer __UNUSED
    input->display->serial = serial;
    input->pointer_enter_serial = serial;
 
-   if (!(win = wl_surface_get_user_data(surface))) return;
-
-   win->pointer_device = input;
-   input->pointer_focus = win;
-
-   /* _ecore_wl_input_mouse_move_send(input, win, input->timestamp); */
-   _ecore_wl_input_mouse_in_send(input, win, input->timestamp);
-
    /* The cursor on the surface is undefined until we set it */
    ecore_wl_input_cursor_from_name_set(input, "left_ptr");
+
+   if ((win = wl_surface_get_user_data(surface)))
+     {
+        win->pointer_device = input;
+        input->pointer_focus = win;
+
+        _ecore_wl_input_mouse_in_send(input, win, input->timestamp);
+     }
 
    /* NB: This whole 'if' below is a major HACK due to wayland's stupidness 
     * of not sending a mouse_up (or any notification at all for that matter) 
@@ -741,6 +758,8 @@ _ecore_wl_input_cb_pointer_leave(void *data, struct wl_pointer *pointer __UNUSED
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win;
 
+   printf("Input Cb Pointer Leave\n");
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!surface) return;
@@ -770,6 +789,8 @@ _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_keyboard *keyboard __UNU
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
+
+   printf("Keyboard Enter Event\n");
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
