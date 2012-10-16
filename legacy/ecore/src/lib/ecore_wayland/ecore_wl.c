@@ -138,7 +138,7 @@ ecore_wl_init(const char *name)
 
    _ecore_wl_disp->fd_hdl = 
      ecore_main_fd_handler_add(_ecore_wl_disp->fd, 
-                               ECORE_FD_READ | ECORE_FD_WRITE, 
+                               ECORE_FD_READ | ECORE_FD_WRITE,
                                _ecore_wl_cb_handle_data, _ecore_wl_disp, 
                                NULL, NULL);
 
@@ -151,8 +151,6 @@ ecore_wl_init(const char *name)
                             &_ecore_wl_registry_listener, _ecore_wl_disp);
 
    wl_display_dispatch(_ecore_wl_disp->wl.display);
-
-   /* TODO: create pointer surfaces */
 
    if (!_ecore_wl_xkb_init(_ecore_wl_disp))
      {
@@ -408,6 +406,8 @@ _ecore_wl_cb_handle_data(void *data, Ecore_Fd_Handler *hdl)
 
    /* FIXME: This should also catch ECORE_FD_ERROR and exit */
 
+   /* wl_display_dispatch_pending(ewd->wl.display); */
+
    if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_READ))
      wl_display_dispatch(ewd->wl.display);
    else if (ecore_main_fd_handler_active_get(hdl, ECORE_FD_WRITE))
@@ -421,7 +421,7 @@ _ecore_wl_cb_handle_global(void *data, struct wl_registry *registry, unsigned in
 {
    Ecore_Wl_Display *ewd;
 
-//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ewd = data;
 
